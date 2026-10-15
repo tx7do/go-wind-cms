@@ -965,6 +965,102 @@ var (
 			},
 		},
 	}
+	// ExperimentsColumns holds the columns for the "experiments" table.
+	ExperimentsColumns = []*schema.Column{
+		{Name: "id", Type: field.TypeUint32, Increment: true, Comment: "id"},
+		{Name: "created_at", Type: field.TypeTime, Nullable: true, Comment: "创建时间"},
+		{Name: "updated_at", Type: field.TypeTime, Nullable: true, Comment: "更新时间"},
+		{Name: "deleted_at", Type: field.TypeTime, Nullable: true, Comment: "删除时间"},
+		{Name: "created_by", Type: field.TypeUint32, Nullable: true, Comment: "创建者ID"},
+		{Name: "updated_by", Type: field.TypeUint32, Nullable: true, Comment: "更新者ID"},
+		{Name: "deleted_by", Type: field.TypeUint32, Nullable: true, Comment: "删除者ID"},
+		{Name: "tenant_id", Type: field.TypeUint32, Nullable: true, Comment: "租户ID", Default: 0},
+		{Name: "name", Type: field.TypeString, Comment: "实验名称"},
+		{Name: "page_id", Type: field.TypeUint32, Nullable: true, Comment: "目标页面 ID（实验作用于该页面的 sections）"},
+		{Name: "status", Type: field.TypeEnum, Nullable: true, Comment: "状态：draft 草稿 / running 运行中 / paused 暂停 / ended 已结束", Enums: []string{"draft", "running", "paused", "ended"}, Default: "draft"},
+		{Name: "assignment_type", Type: field.TypeEnum, Nullable: true, Comment: "分配方式：random 随机权重分流（A/B）/ rule 受众规则定向（个性化）", Enums: []string{"random", "rule"}, Default: "random"},
+		{Name: "description", Type: field.TypeString, Nullable: true, Comment: "实验说明"},
+	}
+	// ExperimentsTable holds the schema information for the "experiments" table.
+	ExperimentsTable = &schema.Table{
+		Name:       "experiments",
+		Comment:    "内容实验表（A/B 测试与受众定向）",
+		Columns:    ExperimentsColumns,
+		PrimaryKey: []*schema.Column{ExperimentsColumns[0]},
+		Indexes: []*schema.Index{
+			{
+				Name:    "experiment_page_id",
+				Unique:  false,
+				Columns: []*schema.Column{ExperimentsColumns[9]},
+			},
+			{
+				Name:    "experiment_status",
+				Unique:  false,
+				Columns: []*schema.Column{ExperimentsColumns[10]},
+			},
+		},
+	}
+	// ExperimentParticipantsColumns holds the columns for the "experiment_participants" table.
+	ExperimentParticipantsColumns = []*schema.Column{
+		{Name: "id", Type: field.TypeUint32, Increment: true, Comment: "id"},
+		{Name: "created_at", Type: field.TypeTime, Nullable: true, Comment: "创建时间"},
+		{Name: "updated_at", Type: field.TypeTime, Nullable: true, Comment: "更新时间"},
+		{Name: "deleted_at", Type: field.TypeTime, Nullable: true, Comment: "删除时间"},
+		{Name: "tenant_id", Type: field.TypeUint32, Nullable: true, Comment: "租户ID", Default: 0},
+		{Name: "experiment_id", Type: field.TypeUint32, Nullable: true, Comment: "实验 ID"},
+		{Name: "visitor_hash", Type: field.TypeString, Comment: "访客标识哈希（cookie vid + 实验 ID 派生，不落原始身份）"},
+		{Name: "variant_name", Type: field.TypeString, Comment: "被分配的变体名称快照"},
+	}
+	// ExperimentParticipantsTable holds the schema information for the "experiment_participants" table.
+	ExperimentParticipantsTable = &schema.Table{
+		Name:       "experiment_participants",
+		Comment:    "内容实验参与记录表",
+		Columns:    ExperimentParticipantsColumns,
+		PrimaryKey: []*schema.Column{ExperimentParticipantsColumns[0]},
+		Indexes: []*schema.Index{
+			{
+				Name:    "experimentparticipant_experiment_id_visitor_hash",
+				Unique:  true,
+				Columns: []*schema.Column{ExperimentParticipantsColumns[5], ExperimentParticipantsColumns[6]},
+			},
+			{
+				Name:    "experimentparticipant_experiment_id_variant_name",
+				Unique:  false,
+				Columns: []*schema.Column{ExperimentParticipantsColumns[5], ExperimentParticipantsColumns[7]},
+			},
+		},
+	}
+	// ExperimentVariantsColumns holds the columns for the "experiment_variants" table.
+	ExperimentVariantsColumns = []*schema.Column{
+		{Name: "id", Type: field.TypeUint32, Increment: true, Comment: "id"},
+		{Name: "created_at", Type: field.TypeTime, Nullable: true, Comment: "创建时间"},
+		{Name: "updated_at", Type: field.TypeTime, Nullable: true, Comment: "更新时间"},
+		{Name: "deleted_at", Type: field.TypeTime, Nullable: true, Comment: "删除时间"},
+		{Name: "created_by", Type: field.TypeUint32, Nullable: true, Comment: "创建者ID"},
+		{Name: "updated_by", Type: field.TypeUint32, Nullable: true, Comment: "更新者ID"},
+		{Name: "deleted_by", Type: field.TypeUint32, Nullable: true, Comment: "删除者ID"},
+		{Name: "tenant_id", Type: field.TypeUint32, Nullable: true, Comment: "租户ID", Default: 0},
+		{Name: "experiment_id", Type: field.TypeUint32, Nullable: true, Comment: "所属实验 ID"},
+		{Name: "name", Type: field.TypeString, Comment: "变体名称（如 A / B；参与记录按名称快照）"},
+		{Name: "weight", Type: field.TypeInt, Nullable: true, Comment: "分流权重（百分比 0-100，random 型按权重比例分流）", Default: 50},
+		{Name: "conditions", Type: field.TypeString, Nullable: true, Size: 2147483647, Comment: "受众条件 JSON（rule 型；数组 [{field,op,value}] 全部满足才命中）"},
+		{Name: "sections", Type: field.TypeString, Nullable: true, Size: 2147483647, Comment: "该变体的页面区块快照（protojson 数组，命中后整页替换 sections）"},
+		{Name: "sort_order", Type: field.TypeUint32, Nullable: true, Comment: "排序（rule 型即求值顺序）", Default: 0},
+	}
+	// ExperimentVariantsTable holds the schema information for the "experiment_variants" table.
+	ExperimentVariantsTable = &schema.Table{
+		Name:       "experiment_variants",
+		Comment:    "内容实验变体表",
+		Columns:    ExperimentVariantsColumns,
+		PrimaryKey: []*schema.Column{ExperimentVariantsColumns[0]},
+		Indexes: []*schema.Index{
+			{
+				Name:    "experimentvariant_experiment_id",
+				Unique:  false,
+				Columns: []*schema.Column{ExperimentVariantsColumns[8]},
+			},
+		},
+	}
 	// FieldDefinitionsColumns holds the columns for the "field_definitions" table.
 	FieldDefinitionsColumns = []*schema.Column{
 		{Name: "id", Type: field.TypeUint32, Increment: true, Comment: "id"},
@@ -4808,6 +4904,9 @@ var (
 		SysDictEntryI18nTable,
 		SysDictTypesTable,
 		EmailProvidersTable,
+		ExperimentsTable,
+		ExperimentParticipantsTable,
+		ExperimentVariantsTable,
 		FieldDefinitionsTable,
 		FieldDefinitionTranslationsTable,
 		FilesTable,
@@ -4979,6 +5078,21 @@ func init() {
 	}
 	EmailProvidersTable.Annotation = &entsql.Annotation{
 		Table:     "email_providers",
+		Charset:   "utf8mb4",
+		Collation: "utf8mb4_bin",
+	}
+	ExperimentsTable.Annotation = &entsql.Annotation{
+		Table:     "experiments",
+		Charset:   "utf8mb4",
+		Collation: "utf8mb4_bin",
+	}
+	ExperimentParticipantsTable.Annotation = &entsql.Annotation{
+		Table:     "experiment_participants",
+		Charset:   "utf8mb4",
+		Collation: "utf8mb4_bin",
+	}
+	ExperimentVariantsTable.Annotation = &entsql.Annotation{
+		Table:     "experiment_variants",
 		Charset:   "utf8mb4",
 		Collation: "utf8mb4_bin",
 	}

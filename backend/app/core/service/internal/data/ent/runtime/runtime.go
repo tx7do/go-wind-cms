@@ -25,6 +25,9 @@ import (
 	"go-wind-cms/app/core/service/internal/data/ent/dictentryi18n"
 	"go-wind-cms/app/core/service/internal/data/ent/dicttype"
 	"go-wind-cms/app/core/service/internal/data/ent/emailprovider"
+	"go-wind-cms/app/core/service/internal/data/ent/experiment"
+	"go-wind-cms/app/core/service/internal/data/ent/experimentparticipant"
+	"go-wind-cms/app/core/service/internal/data/ent/experimentvariant"
 	"go-wind-cms/app/core/service/internal/data/ent/fielddefinition"
 	"go-wind-cms/app/core/service/internal/data/ent/fielddefinitiontranslation"
 	"go-wind-cms/app/core/service/internal/data/ent/file"
@@ -692,6 +695,102 @@ func init() {
 	emailproviderDescID := emailproviderMixinFields0[0].Descriptor()
 	// emailprovider.IDValidator is a validator for the "id" field. It is called by the builders before save.
 	emailprovider.IDValidator = emailproviderDescID.Validators[0].(func(uint32) error)
+	experimentMixin := schema.Experiment{}.Mixin()
+	experiment.Policy = privacy.NewPolicies(experimentMixin[3], schema.Experiment{})
+	experiment.Hooks[0] = func(next ent.Mutator) ent.Mutator {
+		return ent.MutateFunc(func(ctx context.Context, m ent.Mutation) (ent.Value, error) {
+			if err := experiment.Policy.EvalMutation(ctx, m); err != nil {
+				return nil, err
+			}
+			return next.Mutate(ctx, m)
+		})
+	}
+	experimentMixinFields0 := experimentMixin[0].Fields()
+	_ = experimentMixinFields0
+	experimentMixinFields3 := experimentMixin[3].Fields()
+	_ = experimentMixinFields3
+	experimentFields := schema.Experiment{}.Fields()
+	_ = experimentFields
+	// experimentDescTenantID is the schema descriptor for tenant_id field.
+	experimentDescTenantID := experimentMixinFields3[0].Descriptor()
+	// experiment.DefaultTenantID holds the default value on creation for the tenant_id field.
+	experiment.DefaultTenantID = experimentDescTenantID.Default.(uint32)
+	// experimentDescName is the schema descriptor for name field.
+	experimentDescName := experimentFields[0].Descriptor()
+	// experiment.NameValidator is a validator for the "name" field. It is called by the builders before save.
+	experiment.NameValidator = experimentDescName.Validators[0].(func(string) error)
+	// experimentDescID is the schema descriptor for id field.
+	experimentDescID := experimentMixinFields0[0].Descriptor()
+	// experiment.IDValidator is a validator for the "id" field. It is called by the builders before save.
+	experiment.IDValidator = experimentDescID.Validators[0].(func(uint32) error)
+	experimentparticipantMixin := schema.ExperimentParticipant{}.Mixin()
+	experimentparticipant.Policy = privacy.NewPolicies(experimentparticipantMixin[2], schema.ExperimentParticipant{})
+	experimentparticipant.Hooks[0] = func(next ent.Mutator) ent.Mutator {
+		return ent.MutateFunc(func(ctx context.Context, m ent.Mutation) (ent.Value, error) {
+			if err := experimentparticipant.Policy.EvalMutation(ctx, m); err != nil {
+				return nil, err
+			}
+			return next.Mutate(ctx, m)
+		})
+	}
+	experimentparticipantMixinFields0 := experimentparticipantMixin[0].Fields()
+	_ = experimentparticipantMixinFields0
+	experimentparticipantMixinFields2 := experimentparticipantMixin[2].Fields()
+	_ = experimentparticipantMixinFields2
+	experimentparticipantFields := schema.ExperimentParticipant{}.Fields()
+	_ = experimentparticipantFields
+	// experimentparticipantDescTenantID is the schema descriptor for tenant_id field.
+	experimentparticipantDescTenantID := experimentparticipantMixinFields2[0].Descriptor()
+	// experimentparticipant.DefaultTenantID holds the default value on creation for the tenant_id field.
+	experimentparticipant.DefaultTenantID = experimentparticipantDescTenantID.Default.(uint32)
+	// experimentparticipantDescVisitorHash is the schema descriptor for visitor_hash field.
+	experimentparticipantDescVisitorHash := experimentparticipantFields[1].Descriptor()
+	// experimentparticipant.VisitorHashValidator is a validator for the "visitor_hash" field. It is called by the builders before save.
+	experimentparticipant.VisitorHashValidator = experimentparticipantDescVisitorHash.Validators[0].(func(string) error)
+	// experimentparticipantDescVariantName is the schema descriptor for variant_name field.
+	experimentparticipantDescVariantName := experimentparticipantFields[2].Descriptor()
+	// experimentparticipant.VariantNameValidator is a validator for the "variant_name" field. It is called by the builders before save.
+	experimentparticipant.VariantNameValidator = experimentparticipantDescVariantName.Validators[0].(func(string) error)
+	// experimentparticipantDescID is the schema descriptor for id field.
+	experimentparticipantDescID := experimentparticipantMixinFields0[0].Descriptor()
+	// experimentparticipant.IDValidator is a validator for the "id" field. It is called by the builders before save.
+	experimentparticipant.IDValidator = experimentparticipantDescID.Validators[0].(func(uint32) error)
+	experimentvariantMixin := schema.ExperimentVariant{}.Mixin()
+	experimentvariant.Policy = privacy.NewPolicies(experimentvariantMixin[3], schema.ExperimentVariant{})
+	experimentvariant.Hooks[0] = func(next ent.Mutator) ent.Mutator {
+		return ent.MutateFunc(func(ctx context.Context, m ent.Mutation) (ent.Value, error) {
+			if err := experimentvariant.Policy.EvalMutation(ctx, m); err != nil {
+				return nil, err
+			}
+			return next.Mutate(ctx, m)
+		})
+	}
+	experimentvariantMixinFields0 := experimentvariantMixin[0].Fields()
+	_ = experimentvariantMixinFields0
+	experimentvariantMixinFields3 := experimentvariantMixin[3].Fields()
+	_ = experimentvariantMixinFields3
+	experimentvariantFields := schema.ExperimentVariant{}.Fields()
+	_ = experimentvariantFields
+	// experimentvariantDescTenantID is the schema descriptor for tenant_id field.
+	experimentvariantDescTenantID := experimentvariantMixinFields3[0].Descriptor()
+	// experimentvariant.DefaultTenantID holds the default value on creation for the tenant_id field.
+	experimentvariant.DefaultTenantID = experimentvariantDescTenantID.Default.(uint32)
+	// experimentvariantDescName is the schema descriptor for name field.
+	experimentvariantDescName := experimentvariantFields[1].Descriptor()
+	// experimentvariant.NameValidator is a validator for the "name" field. It is called by the builders before save.
+	experimentvariant.NameValidator = experimentvariantDescName.Validators[0].(func(string) error)
+	// experimentvariantDescWeight is the schema descriptor for weight field.
+	experimentvariantDescWeight := experimentvariantFields[2].Descriptor()
+	// experimentvariant.DefaultWeight holds the default value on creation for the weight field.
+	experimentvariant.DefaultWeight = experimentvariantDescWeight.Default.(int)
+	// experimentvariantDescSortOrder is the schema descriptor for sort_order field.
+	experimentvariantDescSortOrder := experimentvariantFields[5].Descriptor()
+	// experimentvariant.DefaultSortOrder holds the default value on creation for the sort_order field.
+	experimentvariant.DefaultSortOrder = experimentvariantDescSortOrder.Default.(uint32)
+	// experimentvariantDescID is the schema descriptor for id field.
+	experimentvariantDescID := experimentvariantMixinFields0[0].Descriptor()
+	// experimentvariant.IDValidator is a validator for the "id" field. It is called by the builders before save.
+	experimentvariant.IDValidator = experimentvariantDescID.Validators[0].(func(uint32) error)
 	fielddefinitionMixin := schema.FieldDefinition{}.Mixin()
 	fielddefinition.Policy = privacy.NewPolicies(fielddefinitionMixin[4], schema.FieldDefinition{})
 	fielddefinition.Hooks[0] = func(next ent.Mutator) ent.Mutator {

@@ -31,6 +31,9 @@ import (
 	"go-wind-cms/app/core/service/internal/data/ent/dictentryi18n"
 	"go-wind-cms/app/core/service/internal/data/ent/dicttype"
 	"go-wind-cms/app/core/service/internal/data/ent/emailprovider"
+	"go-wind-cms/app/core/service/internal/data/ent/experiment"
+	"go-wind-cms/app/core/service/internal/data/ent/experimentparticipant"
+	"go-wind-cms/app/core/service/internal/data/ent/experimentvariant"
 	"go-wind-cms/app/core/service/internal/data/ent/fielddefinition"
 	"go-wind-cms/app/core/service/internal/data/ent/fielddefinitiontranslation"
 	"go-wind-cms/app/core/service/internal/data/ent/file"
@@ -146,6 +149,12 @@ type Client struct {
 	DictType *DictTypeClient
 	// EmailProvider is the client for interacting with the EmailProvider builders.
 	EmailProvider *EmailProviderClient
+	// Experiment is the client for interacting with the Experiment builders.
+	Experiment *ExperimentClient
+	// ExperimentParticipant is the client for interacting with the ExperimentParticipant builders.
+	ExperimentParticipant *ExperimentParticipantClient
+	// ExperimentVariant is the client for interacting with the ExperimentVariant builders.
+	ExperimentVariant *ExperimentVariantClient
 	// FieldDefinition is the client for interacting with the FieldDefinition builders.
 	FieldDefinition *FieldDefinitionClient
 	// FieldDefinitionTranslation is the client for interacting with the FieldDefinitionTranslation builders.
@@ -303,6 +312,9 @@ func (c *Client) init() {
 	c.DictEntryI18n = NewDictEntryI18nClient(c.config)
 	c.DictType = NewDictTypeClient(c.config)
 	c.EmailProvider = NewEmailProviderClient(c.config)
+	c.Experiment = NewExperimentClient(c.config)
+	c.ExperimentParticipant = NewExperimentParticipantClient(c.config)
+	c.ExperimentVariant = NewExperimentVariantClient(c.config)
 	c.FieldDefinition = NewFieldDefinitionClient(c.config)
 	c.FieldDefinitionTranslation = NewFieldDefinitionTranslationClient(c.config)
 	c.File = NewFileClient(c.config)
@@ -478,6 +490,9 @@ func (c *Client) Tx(ctx context.Context) (*Tx, error) {
 		DictEntryI18n:              NewDictEntryI18nClient(cfg),
 		DictType:                   NewDictTypeClient(cfg),
 		EmailProvider:              NewEmailProviderClient(cfg),
+		Experiment:                 NewExperimentClient(cfg),
+		ExperimentParticipant:      NewExperimentParticipantClient(cfg),
+		ExperimentVariant:          NewExperimentVariantClient(cfg),
 		FieldDefinition:            NewFieldDefinitionClient(cfg),
 		FieldDefinitionTranslation: NewFieldDefinitionTranslationClient(cfg),
 		File:                       NewFileClient(cfg),
@@ -580,6 +595,9 @@ func (c *Client) BeginTx(ctx context.Context, opts *sql.TxOptions) (*Tx, error) 
 		DictEntryI18n:              NewDictEntryI18nClient(cfg),
 		DictType:                   NewDictTypeClient(cfg),
 		EmailProvider:              NewEmailProviderClient(cfg),
+		Experiment:                 NewExperimentClient(cfg),
+		ExperimentParticipant:      NewExperimentParticipantClient(cfg),
+		ExperimentVariant:          NewExperimentVariantClient(cfg),
 		FieldDefinition:            NewFieldDefinitionClient(cfg),
 		FieldDefinitionTranslation: NewFieldDefinitionTranslationClient(cfg),
 		File:                       NewFileClient(cfg),
@@ -676,8 +694,9 @@ func (c *Client) Use(hooks ...Hook) {
 		c.AiProvider, c.AiUsageLog, c.Api, c.ApiAuditLog, c.Category,
 		c.CategoryTranslation, c.Comment, c.CommentLike, c.ContentModel,
 		c.ContentModelTranslation, c.DataAccessAuditLog, c.DictEntry, c.DictEntryI18n,
-		c.DictType, c.EmailProvider, c.FieldDefinition, c.FieldDefinitionTranslation,
-		c.File, c.FormSubmission, c.InteractionCounter, c.InternalMessage,
+		c.DictType, c.EmailProvider, c.Experiment, c.ExperimentParticipant,
+		c.ExperimentVariant, c.FieldDefinition, c.FieldDefinitionTranslation, c.File,
+		c.FormSubmission, c.InteractionCounter, c.InternalMessage,
 		c.InternalMessageCategory, c.InternalMessageRecipient, c.Language,
 		c.LoginAuditLog, c.LoginPolicy, c.MediaAsset, c.MediaVariant, c.Membership,
 		c.MembershipOrgUnit, c.MembershipPosition, c.MembershipRole, c.Menu,
@@ -704,8 +723,9 @@ func (c *Client) Intercept(interceptors ...Interceptor) {
 		c.AiProvider, c.AiUsageLog, c.Api, c.ApiAuditLog, c.Category,
 		c.CategoryTranslation, c.Comment, c.CommentLike, c.ContentModel,
 		c.ContentModelTranslation, c.DataAccessAuditLog, c.DictEntry, c.DictEntryI18n,
-		c.DictType, c.EmailProvider, c.FieldDefinition, c.FieldDefinitionTranslation,
-		c.File, c.FormSubmission, c.InteractionCounter, c.InternalMessage,
+		c.DictType, c.EmailProvider, c.Experiment, c.ExperimentParticipant,
+		c.ExperimentVariant, c.FieldDefinition, c.FieldDefinitionTranslation, c.File,
+		c.FormSubmission, c.InteractionCounter, c.InternalMessage,
 		c.InternalMessageCategory, c.InternalMessageRecipient, c.Language,
 		c.LoginAuditLog, c.LoginPolicy, c.MediaAsset, c.MediaVariant, c.Membership,
 		c.MembershipOrgUnit, c.MembershipPosition, c.MembershipRole, c.Menu,
@@ -767,6 +787,12 @@ func (c *Client) Mutate(ctx context.Context, m Mutation) (Value, error) {
 		return c.DictType.mutate(ctx, m)
 	case *EmailProviderMutation:
 		return c.EmailProvider.mutate(ctx, m)
+	case *ExperimentMutation:
+		return c.Experiment.mutate(ctx, m)
+	case *ExperimentParticipantMutation:
+		return c.ExperimentParticipant.mutate(ctx, m)
+	case *ExperimentVariantMutation:
+		return c.ExperimentVariant.mutate(ctx, m)
 	case *FieldDefinitionMutation:
 		return c.FieldDefinition.mutate(ctx, m)
 	case *FieldDefinitionTranslationMutation:
@@ -3797,6 +3823,408 @@ func (c *EmailProviderClient) mutate(ctx context.Context, m *EmailProviderMutati
 		return (&EmailProviderDelete{config: c.config, hooks: c.Hooks(), mutation: m}).Exec(ctx)
 	default:
 		return nil, fmt.Errorf("ent: unknown EmailProvider mutation op: %q", m.Op())
+	}
+}
+
+// ExperimentClient is a client for the Experiment schema.
+type ExperimentClient struct {
+	config
+}
+
+// NewExperimentClient returns a client for the Experiment from the given config.
+func NewExperimentClient(c config) *ExperimentClient {
+	return &ExperimentClient{config: c}
+}
+
+// Use adds a list of mutation hooks to the hooks stack.
+// A call to `Use(f, g, h)` equals to `experiment.Hooks(f(g(h())))`.
+func (c *ExperimentClient) Use(hooks ...Hook) {
+	c.hooks.Experiment = append(c.hooks.Experiment, hooks...)
+}
+
+// Intercept adds a list of query interceptors to the interceptors stack.
+// A call to `Intercept(f, g, h)` equals to `experiment.Intercept(f(g(h())))`.
+func (c *ExperimentClient) Intercept(interceptors ...Interceptor) {
+	c.inters.Experiment = append(c.inters.Experiment, interceptors...)
+}
+
+// Create returns a builder for creating a Experiment entity.
+func (c *ExperimentClient) Create() *ExperimentCreate {
+	mutation := newExperimentMutation(c.config, OpCreate)
+	return &ExperimentCreate{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// CreateBulk returns a builder for creating a bulk of Experiment entities.
+func (c *ExperimentClient) CreateBulk(builders ...*ExperimentCreate) *ExperimentCreateBulk {
+	return &ExperimentCreateBulk{config: c.config, builders: builders}
+}
+
+// MapCreateBulk creates a bulk creation builder from the given slice. For each item in the slice, the function creates
+// a builder and applies setFunc on it.
+func (c *ExperimentClient) MapCreateBulk(slice any, setFunc func(*ExperimentCreate, int)) *ExperimentCreateBulk {
+	rv := reflect.ValueOf(slice)
+	if rv.Kind() != reflect.Slice {
+		return &ExperimentCreateBulk{err: fmt.Errorf("calling to ExperimentClient.MapCreateBulk with wrong type %T, need slice", slice)}
+	}
+	builders := make([]*ExperimentCreate, rv.Len())
+	for i := 0; i < rv.Len(); i++ {
+		builders[i] = c.Create()
+		setFunc(builders[i], i)
+	}
+	return &ExperimentCreateBulk{config: c.config, builders: builders}
+}
+
+// Update returns an update builder for Experiment.
+func (c *ExperimentClient) Update() *ExperimentUpdate {
+	mutation := newExperimentMutation(c.config, OpUpdate)
+	return &ExperimentUpdate{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// UpdateOne returns an update builder for the given entity.
+func (c *ExperimentClient) UpdateOne(_m *Experiment) *ExperimentUpdateOne {
+	mutation := newExperimentMutation(c.config, OpUpdateOne, withExperiment(_m))
+	return &ExperimentUpdateOne{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// UpdateOneID returns an update builder for the given id.
+func (c *ExperimentClient) UpdateOneID(id uint32) *ExperimentUpdateOne {
+	mutation := newExperimentMutation(c.config, OpUpdateOne, withExperimentID(id))
+	return &ExperimentUpdateOne{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// Delete returns a delete builder for Experiment.
+func (c *ExperimentClient) Delete() *ExperimentDelete {
+	mutation := newExperimentMutation(c.config, OpDelete)
+	return &ExperimentDelete{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// DeleteOne returns a builder for deleting the given entity.
+func (c *ExperimentClient) DeleteOne(_m *Experiment) *ExperimentDeleteOne {
+	return c.DeleteOneID(_m.ID)
+}
+
+// DeleteOneID returns a builder for deleting the given entity by its id.
+func (c *ExperimentClient) DeleteOneID(id uint32) *ExperimentDeleteOne {
+	builder := c.Delete().Where(experiment.ID(id))
+	builder.mutation.id = &id
+	builder.mutation.op = OpDeleteOne
+	return &ExperimentDeleteOne{builder}
+}
+
+// Query returns a query builder for Experiment.
+func (c *ExperimentClient) Query() *ExperimentQuery {
+	return &ExperimentQuery{
+		config: c.config,
+		ctx:    &QueryContext{Type: TypeExperiment},
+		inters: c.Interceptors(),
+	}
+}
+
+// Get returns a Experiment entity by its id.
+func (c *ExperimentClient) Get(ctx context.Context, id uint32) (*Experiment, error) {
+	return c.Query().Where(experiment.ID(id)).Only(ctx)
+}
+
+// GetX is like Get, but panics if an error occurs.
+func (c *ExperimentClient) GetX(ctx context.Context, id uint32) *Experiment {
+	obj, err := c.Get(ctx, id)
+	if err != nil {
+		panic(err)
+	}
+	return obj
+}
+
+// Hooks returns the client hooks.
+func (c *ExperimentClient) Hooks() []Hook {
+	hooks := c.hooks.Experiment
+	return append(hooks[:len(hooks):len(hooks)], experiment.Hooks[:]...)
+}
+
+// Interceptors returns the client interceptors.
+func (c *ExperimentClient) Interceptors() []Interceptor {
+	return c.inters.Experiment
+}
+
+func (c *ExperimentClient) mutate(ctx context.Context, m *ExperimentMutation) (Value, error) {
+	switch m.Op() {
+	case OpCreate:
+		return (&ExperimentCreate{config: c.config, hooks: c.Hooks(), mutation: m}).Save(ctx)
+	case OpUpdate:
+		return (&ExperimentUpdate{config: c.config, hooks: c.Hooks(), mutation: m}).Save(ctx)
+	case OpUpdateOne:
+		return (&ExperimentUpdateOne{config: c.config, hooks: c.Hooks(), mutation: m}).Save(ctx)
+	case OpDelete, OpDeleteOne:
+		return (&ExperimentDelete{config: c.config, hooks: c.Hooks(), mutation: m}).Exec(ctx)
+	default:
+		return nil, fmt.Errorf("ent: unknown Experiment mutation op: %q", m.Op())
+	}
+}
+
+// ExperimentParticipantClient is a client for the ExperimentParticipant schema.
+type ExperimentParticipantClient struct {
+	config
+}
+
+// NewExperimentParticipantClient returns a client for the ExperimentParticipant from the given config.
+func NewExperimentParticipantClient(c config) *ExperimentParticipantClient {
+	return &ExperimentParticipantClient{config: c}
+}
+
+// Use adds a list of mutation hooks to the hooks stack.
+// A call to `Use(f, g, h)` equals to `experimentparticipant.Hooks(f(g(h())))`.
+func (c *ExperimentParticipantClient) Use(hooks ...Hook) {
+	c.hooks.ExperimentParticipant = append(c.hooks.ExperimentParticipant, hooks...)
+}
+
+// Intercept adds a list of query interceptors to the interceptors stack.
+// A call to `Intercept(f, g, h)` equals to `experimentparticipant.Intercept(f(g(h())))`.
+func (c *ExperimentParticipantClient) Intercept(interceptors ...Interceptor) {
+	c.inters.ExperimentParticipant = append(c.inters.ExperimentParticipant, interceptors...)
+}
+
+// Create returns a builder for creating a ExperimentParticipant entity.
+func (c *ExperimentParticipantClient) Create() *ExperimentParticipantCreate {
+	mutation := newExperimentParticipantMutation(c.config, OpCreate)
+	return &ExperimentParticipantCreate{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// CreateBulk returns a builder for creating a bulk of ExperimentParticipant entities.
+func (c *ExperimentParticipantClient) CreateBulk(builders ...*ExperimentParticipantCreate) *ExperimentParticipantCreateBulk {
+	return &ExperimentParticipantCreateBulk{config: c.config, builders: builders}
+}
+
+// MapCreateBulk creates a bulk creation builder from the given slice. For each item in the slice, the function creates
+// a builder and applies setFunc on it.
+func (c *ExperimentParticipantClient) MapCreateBulk(slice any, setFunc func(*ExperimentParticipantCreate, int)) *ExperimentParticipantCreateBulk {
+	rv := reflect.ValueOf(slice)
+	if rv.Kind() != reflect.Slice {
+		return &ExperimentParticipantCreateBulk{err: fmt.Errorf("calling to ExperimentParticipantClient.MapCreateBulk with wrong type %T, need slice", slice)}
+	}
+	builders := make([]*ExperimentParticipantCreate, rv.Len())
+	for i := 0; i < rv.Len(); i++ {
+		builders[i] = c.Create()
+		setFunc(builders[i], i)
+	}
+	return &ExperimentParticipantCreateBulk{config: c.config, builders: builders}
+}
+
+// Update returns an update builder for ExperimentParticipant.
+func (c *ExperimentParticipantClient) Update() *ExperimentParticipantUpdate {
+	mutation := newExperimentParticipantMutation(c.config, OpUpdate)
+	return &ExperimentParticipantUpdate{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// UpdateOne returns an update builder for the given entity.
+func (c *ExperimentParticipantClient) UpdateOne(_m *ExperimentParticipant) *ExperimentParticipantUpdateOne {
+	mutation := newExperimentParticipantMutation(c.config, OpUpdateOne, withExperimentParticipant(_m))
+	return &ExperimentParticipantUpdateOne{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// UpdateOneID returns an update builder for the given id.
+func (c *ExperimentParticipantClient) UpdateOneID(id uint32) *ExperimentParticipantUpdateOne {
+	mutation := newExperimentParticipantMutation(c.config, OpUpdateOne, withExperimentParticipantID(id))
+	return &ExperimentParticipantUpdateOne{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// Delete returns a delete builder for ExperimentParticipant.
+func (c *ExperimentParticipantClient) Delete() *ExperimentParticipantDelete {
+	mutation := newExperimentParticipantMutation(c.config, OpDelete)
+	return &ExperimentParticipantDelete{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// DeleteOne returns a builder for deleting the given entity.
+func (c *ExperimentParticipantClient) DeleteOne(_m *ExperimentParticipant) *ExperimentParticipantDeleteOne {
+	return c.DeleteOneID(_m.ID)
+}
+
+// DeleteOneID returns a builder for deleting the given entity by its id.
+func (c *ExperimentParticipantClient) DeleteOneID(id uint32) *ExperimentParticipantDeleteOne {
+	builder := c.Delete().Where(experimentparticipant.ID(id))
+	builder.mutation.id = &id
+	builder.mutation.op = OpDeleteOne
+	return &ExperimentParticipantDeleteOne{builder}
+}
+
+// Query returns a query builder for ExperimentParticipant.
+func (c *ExperimentParticipantClient) Query() *ExperimentParticipantQuery {
+	return &ExperimentParticipantQuery{
+		config: c.config,
+		ctx:    &QueryContext{Type: TypeExperimentParticipant},
+		inters: c.Interceptors(),
+	}
+}
+
+// Get returns a ExperimentParticipant entity by its id.
+func (c *ExperimentParticipantClient) Get(ctx context.Context, id uint32) (*ExperimentParticipant, error) {
+	return c.Query().Where(experimentparticipant.ID(id)).Only(ctx)
+}
+
+// GetX is like Get, but panics if an error occurs.
+func (c *ExperimentParticipantClient) GetX(ctx context.Context, id uint32) *ExperimentParticipant {
+	obj, err := c.Get(ctx, id)
+	if err != nil {
+		panic(err)
+	}
+	return obj
+}
+
+// Hooks returns the client hooks.
+func (c *ExperimentParticipantClient) Hooks() []Hook {
+	hooks := c.hooks.ExperimentParticipant
+	return append(hooks[:len(hooks):len(hooks)], experimentparticipant.Hooks[:]...)
+}
+
+// Interceptors returns the client interceptors.
+func (c *ExperimentParticipantClient) Interceptors() []Interceptor {
+	return c.inters.ExperimentParticipant
+}
+
+func (c *ExperimentParticipantClient) mutate(ctx context.Context, m *ExperimentParticipantMutation) (Value, error) {
+	switch m.Op() {
+	case OpCreate:
+		return (&ExperimentParticipantCreate{config: c.config, hooks: c.Hooks(), mutation: m}).Save(ctx)
+	case OpUpdate:
+		return (&ExperimentParticipantUpdate{config: c.config, hooks: c.Hooks(), mutation: m}).Save(ctx)
+	case OpUpdateOne:
+		return (&ExperimentParticipantUpdateOne{config: c.config, hooks: c.Hooks(), mutation: m}).Save(ctx)
+	case OpDelete, OpDeleteOne:
+		return (&ExperimentParticipantDelete{config: c.config, hooks: c.Hooks(), mutation: m}).Exec(ctx)
+	default:
+		return nil, fmt.Errorf("ent: unknown ExperimentParticipant mutation op: %q", m.Op())
+	}
+}
+
+// ExperimentVariantClient is a client for the ExperimentVariant schema.
+type ExperimentVariantClient struct {
+	config
+}
+
+// NewExperimentVariantClient returns a client for the ExperimentVariant from the given config.
+func NewExperimentVariantClient(c config) *ExperimentVariantClient {
+	return &ExperimentVariantClient{config: c}
+}
+
+// Use adds a list of mutation hooks to the hooks stack.
+// A call to `Use(f, g, h)` equals to `experimentvariant.Hooks(f(g(h())))`.
+func (c *ExperimentVariantClient) Use(hooks ...Hook) {
+	c.hooks.ExperimentVariant = append(c.hooks.ExperimentVariant, hooks...)
+}
+
+// Intercept adds a list of query interceptors to the interceptors stack.
+// A call to `Intercept(f, g, h)` equals to `experimentvariant.Intercept(f(g(h())))`.
+func (c *ExperimentVariantClient) Intercept(interceptors ...Interceptor) {
+	c.inters.ExperimentVariant = append(c.inters.ExperimentVariant, interceptors...)
+}
+
+// Create returns a builder for creating a ExperimentVariant entity.
+func (c *ExperimentVariantClient) Create() *ExperimentVariantCreate {
+	mutation := newExperimentVariantMutation(c.config, OpCreate)
+	return &ExperimentVariantCreate{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// CreateBulk returns a builder for creating a bulk of ExperimentVariant entities.
+func (c *ExperimentVariantClient) CreateBulk(builders ...*ExperimentVariantCreate) *ExperimentVariantCreateBulk {
+	return &ExperimentVariantCreateBulk{config: c.config, builders: builders}
+}
+
+// MapCreateBulk creates a bulk creation builder from the given slice. For each item in the slice, the function creates
+// a builder and applies setFunc on it.
+func (c *ExperimentVariantClient) MapCreateBulk(slice any, setFunc func(*ExperimentVariantCreate, int)) *ExperimentVariantCreateBulk {
+	rv := reflect.ValueOf(slice)
+	if rv.Kind() != reflect.Slice {
+		return &ExperimentVariantCreateBulk{err: fmt.Errorf("calling to ExperimentVariantClient.MapCreateBulk with wrong type %T, need slice", slice)}
+	}
+	builders := make([]*ExperimentVariantCreate, rv.Len())
+	for i := 0; i < rv.Len(); i++ {
+		builders[i] = c.Create()
+		setFunc(builders[i], i)
+	}
+	return &ExperimentVariantCreateBulk{config: c.config, builders: builders}
+}
+
+// Update returns an update builder for ExperimentVariant.
+func (c *ExperimentVariantClient) Update() *ExperimentVariantUpdate {
+	mutation := newExperimentVariantMutation(c.config, OpUpdate)
+	return &ExperimentVariantUpdate{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// UpdateOne returns an update builder for the given entity.
+func (c *ExperimentVariantClient) UpdateOne(_m *ExperimentVariant) *ExperimentVariantUpdateOne {
+	mutation := newExperimentVariantMutation(c.config, OpUpdateOne, withExperimentVariant(_m))
+	return &ExperimentVariantUpdateOne{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// UpdateOneID returns an update builder for the given id.
+func (c *ExperimentVariantClient) UpdateOneID(id uint32) *ExperimentVariantUpdateOne {
+	mutation := newExperimentVariantMutation(c.config, OpUpdateOne, withExperimentVariantID(id))
+	return &ExperimentVariantUpdateOne{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// Delete returns a delete builder for ExperimentVariant.
+func (c *ExperimentVariantClient) Delete() *ExperimentVariantDelete {
+	mutation := newExperimentVariantMutation(c.config, OpDelete)
+	return &ExperimentVariantDelete{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// DeleteOne returns a builder for deleting the given entity.
+func (c *ExperimentVariantClient) DeleteOne(_m *ExperimentVariant) *ExperimentVariantDeleteOne {
+	return c.DeleteOneID(_m.ID)
+}
+
+// DeleteOneID returns a builder for deleting the given entity by its id.
+func (c *ExperimentVariantClient) DeleteOneID(id uint32) *ExperimentVariantDeleteOne {
+	builder := c.Delete().Where(experimentvariant.ID(id))
+	builder.mutation.id = &id
+	builder.mutation.op = OpDeleteOne
+	return &ExperimentVariantDeleteOne{builder}
+}
+
+// Query returns a query builder for ExperimentVariant.
+func (c *ExperimentVariantClient) Query() *ExperimentVariantQuery {
+	return &ExperimentVariantQuery{
+		config: c.config,
+		ctx:    &QueryContext{Type: TypeExperimentVariant},
+		inters: c.Interceptors(),
+	}
+}
+
+// Get returns a ExperimentVariant entity by its id.
+func (c *ExperimentVariantClient) Get(ctx context.Context, id uint32) (*ExperimentVariant, error) {
+	return c.Query().Where(experimentvariant.ID(id)).Only(ctx)
+}
+
+// GetX is like Get, but panics if an error occurs.
+func (c *ExperimentVariantClient) GetX(ctx context.Context, id uint32) *ExperimentVariant {
+	obj, err := c.Get(ctx, id)
+	if err != nil {
+		panic(err)
+	}
+	return obj
+}
+
+// Hooks returns the client hooks.
+func (c *ExperimentVariantClient) Hooks() []Hook {
+	hooks := c.hooks.ExperimentVariant
+	return append(hooks[:len(hooks):len(hooks)], experimentvariant.Hooks[:]...)
+}
+
+// Interceptors returns the client interceptors.
+func (c *ExperimentVariantClient) Interceptors() []Interceptor {
+	return c.inters.ExperimentVariant
+}
+
+func (c *ExperimentVariantClient) mutate(ctx context.Context, m *ExperimentVariantMutation) (Value, error) {
+	switch m.Op() {
+	case OpCreate:
+		return (&ExperimentVariantCreate{config: c.config, hooks: c.Hooks(), mutation: m}).Save(ctx)
+	case OpUpdate:
+		return (&ExperimentVariantUpdate{config: c.config, hooks: c.Hooks(), mutation: m}).Save(ctx)
+	case OpUpdateOne:
+		return (&ExperimentVariantUpdateOne{config: c.config, hooks: c.Hooks(), mutation: m}).Save(ctx)
+	case OpDelete, OpDeleteOne:
+		return (&ExperimentVariantDelete{config: c.config, hooks: c.Hooks(), mutation: m}).Exec(ctx)
+	default:
+		return nil, fmt.Errorf("ent: unknown ExperimentVariant mutation op: %q", m.Op())
 	}
 }
 
@@ -12436,7 +12864,8 @@ type (
 		AiChunk, AiConversation, AiDoc, AiKnowledgeBase, AiMessage, AiProvider,
 		AiUsageLog, Api, ApiAuditLog, Category, CategoryTranslation, Comment,
 		CommentLike, ContentModel, ContentModelTranslation, DataAccessAuditLog,
-		DictEntry, DictEntryI18n, DictType, EmailProvider, FieldDefinition,
+		DictEntry, DictEntryI18n, DictType, EmailProvider, Experiment,
+		ExperimentParticipant, ExperimentVariant, FieldDefinition,
 		FieldDefinitionTranslation, File, FormSubmission, InteractionCounter,
 		InternalMessage, InternalMessageCategory, InternalMessageRecipient, Language,
 		LoginAuditLog, LoginPolicy, MediaAsset, MediaVariant, Membership,
@@ -12454,7 +12883,8 @@ type (
 		AiChunk, AiConversation, AiDoc, AiKnowledgeBase, AiMessage, AiProvider,
 		AiUsageLog, Api, ApiAuditLog, Category, CategoryTranslation, Comment,
 		CommentLike, ContentModel, ContentModelTranslation, DataAccessAuditLog,
-		DictEntry, DictEntryI18n, DictType, EmailProvider, FieldDefinition,
+		DictEntry, DictEntryI18n, DictType, EmailProvider, Experiment,
+		ExperimentParticipant, ExperimentVariant, FieldDefinition,
 		FieldDefinitionTranslation, File, FormSubmission, InteractionCounter,
 		InternalMessage, InternalMessageCategory, InternalMessageRecipient, Language,
 		LoginAuditLog, LoginPolicy, MediaAsset, MediaVariant, Membership,

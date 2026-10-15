@@ -1,0 +1,211 @@
+syntax = "proto3";
+
+package content.service.v1;
+
+import "gnostic/openapi/v3/annotations.proto";
+import "google/protobuf/empty.proto";
+import "google/protobuf/timestamp.proto";
+import "google/protobuf/field_mask.proto";
+import "pagination/v1/pagination.proto";
+
+// 内容实验服务（A/B 分流 + 受众定向）。
+// 实验挂在页面上：running 状态的实验由 app BFF 在取页面时做访客分配
+//（random 按变体权重分流；rule 按变体受众条件依序首中，未中回退权重），
+// 命中变体以变体 sections 快照整页替换。参与记录 (experiment, visitor_hash)
+// 幂等，变体名快照归因。
+service ExperimentService {
+  // 获取实验列表
+  rpc List (pagination.PagingRequest) returns (ListExperimentsResponse) {}
+
+  // 获取实验数据（含变体）
+  rpc Get (GetExperimentRequest) returns (Experiment) {}
+
+  // 创建实验（连同变体）
+  rpc Create (CreateExperimentRequest) returns (Experiment) {}
+
+  // 更新实验（变体整组替换）
+  rpc Update (UpdateExperimentRequest) returns (Experiment) {}
+
+  // 删除实验
+  rpc Delete (DeleteExperimentRequest) returns (google.protobuf.Empty) {}
+
+  // 设置实验状态（draft/running/paused/ended 状态机在服务层校验）
+  rpc SetStatus (SetExperimentStatusRequest) returns (Experiment) {}
+
+  // 取某页面上运行中的实验（app BFF 页面渲染分流用；匿名链路）
+  rpc ListRunningByPage (ListRunningExperimentsByPageRequest) returns (ListExperimentsResponse) {}
+
+  // 记录一次访客分配（(experiment_id, visitor_hash) 幂等）
+  rpc RecordParticipant (RecordExperimentParticipantRequest) returns (google.protobuf.Empty) {}
+
+  // 变体参与统计（按变体名快照计数）
+  rpc GetVariantStats (GetExperimentVariantStatsRequest) returns (ExperimentVariantStatsResponse) {}
+}
+
+// 内容实验
+message Experiment {
+  // 实验状态
+  enum Status {
+    EXPERIMENT_STATUS_UNSPECIFIED = 0;
+    EXPERIMENT_STATUS_DRAFT = 1;    // 草稿
+    EXPERIMENT_STATUS_RUNNING = 2;  // 运行中
+    EXPERIMENT_STATUS_PAUSED = 3;   // 暂停
+    EXPERIMENT_STATUS_ENDED = 4;    // 已结束
+  }
+
+  // 分配方式
+  enum AssignmentType {
+    ASSIGNMENT_TYPE_UNSPECIFIED = 0;
+    ASSIGNMENT_TYPE_RANDOM = 1;  // 随机权重分流（A/B）
+    ASSIGNMENT_TYPE_RULE = 2;    // 受众规则定向（个性化，未中回退权重分流）
+  }
+
+  optional uint32 id = 1 [
+    json_name = "id",
+    (gnostic.openapi.v3.property) = {description: "实验ID"}
+  ]; // 实验ID
+
+  optional string name = 2 [
+    json_name = "name",
+    (gnostic.openapi.v3.property) = {description: "实验名称"}
+  ]; // 实验名称
+
+  optional uint32 page_id = 3 [
+    json_name = "pageId",
+    (gnostic.openapi.v3.property) = {description: "目标页面ID"}
+  ]; // 目标页面ID
+
+  optional Status status = 4 [
+    json_name = "status",
+    (gnostic.openapi.v3.property) = {description: "实验状态"}
+  ]; // 实验状态
+
+  optional AssignmentType assignment_type = 5 [
+    json_name = "assignmentType",
+    (gnostic.openapi.v3.property) = {description: "分配方式"}
+  ]; // 分配方式
+
+  optional string description = 6 [
+    json_name = "description",
+    (gnostic.openapi.v3.property) = {description: "实验说明"}
+  ]; // 实验说明
+
+  repeated ExperimentVariant variants = 20 [
+    json_name = "variants",
+    (gnostic.openapi.v3.property) = {description: "实验变体（随实验整组托管）"}
+  ]; // 实验变体
+
+  optional uint32 created_by = 100 [json_name = "createdBy", (gnostic.openapi.v3.property) = {description: "创建者用户ID"}]; // 创建者用户ID
+  optional uint32 updated_by = 101 [json_name = "updatedBy", (gnostic.openapi.v3.property) = {description: "更新者用户ID"}]; // 更新者用户ID
+
+  optional google.protobuf.Timestamp created_at = 200 [json_name = "createdAt", (gnostic.openapi.v3.property) = {description: "创建时间"}]; // 创建时间
+  optional google.protobuf.Timestamp updated_at = 201 [json_name = "updatedAt", (gnostic.openapi.v3.property) = {description: "更新时间"}]; // 更新时间
+}
+
+// 实验变体
+message ExperimentVariant {
+  optional uint32 id = 1 [
+    json_name = "id",
+    (gnostic.openapi.v3.property) = {description: "变体ID"}
+  ]; // 变体ID
+
+  optional uint32 experiment_id = 2 [
+    json_name = "experimentId",
+    (gnostic.openapi.v3.property) = {description: "所属实验ID"}
+  ]; // 所属实验ID
+
+  optional string name = 3 [
+    json_name = "name",
+    (gnostic.openapi.v3.property) = {description: "变体名称（如 A / B）"}
+  ]; // 变体名称
+
+  optional int32 weight = 4 [
+    json_name = "weight",
+    (gnostic.openapi.v3.property) = {description: "分流权重（百分比 0-100）"}
+  ]; // 分流权重
+
+  optional string conditions = 5 [
+    json_name = "conditions",
+    (gnostic.openapi.v3.property) = {description: "受众条件 JSON（rule 型；[{field,op,value}] 全部满足才命中）"}
+  ]; // 受众条件 JSON
+
+  optional string sections = 6 [
+    json_name = "sections",
+    (gnostic.openapi.v3.property) = {description: "变体页面区块快照（protojson 数组，命中后整页替换）"}
+  ]; // 变体页面区块快照
+
+  optional uint32 sort_order = 7 [
+    json_name = "sortOrder",
+    (gnostic.openapi.v3.property) = {description: "排序（rule 型即求值顺序）"}
+  ]; // 排序
+}
+
+// 回应 - 实验列表
+message ListExperimentsResponse {
+  repeated Experiment items = 1;
+  uint64 total = 2;
+}
+
+// 请求 - 实验数据
+message GetExperimentRequest {
+  uint32 id = 1;
+}
+
+// 请求 - 创建实验
+message CreateExperimentRequest {
+  Experiment data = 1;
+}
+
+// 请求 - 更新实验
+message UpdateExperimentRequest {
+  uint32 id = 1;
+
+  Experiment data = 2;
+
+  google.protobuf.FieldMask update_mask = 3 [
+    (gnostic.openapi.v3.property) = {description: "要更新的字段列表"},
+    json_name = "updateMask"
+  ]; // 要更新的字段列表
+
+  optional bool allow_missing = 4 [
+    (gnostic.openapi.v3.property) = {description: "不存在则新增"},
+    json_name = "allowMissing"
+  ]; // 不存在则新增
+}
+
+// 请求 - 删除实验
+message DeleteExperimentRequest {
+  uint32 id = 1;
+}
+
+// 请求 - 设置实验状态
+message SetExperimentStatusRequest {
+  uint32 id = 1;
+  Experiment.Status status = 2;
+}
+
+// 请求 - 页面运行中的实验
+message ListRunningExperimentsByPageRequest {
+  uint32 page_id = 1 [json_name = "pageId"]; // 目标页面ID
+}
+
+// 请求 - 记录访客分配
+message RecordExperimentParticipantRequest {
+  uint32 experiment_id = 1 [json_name = "experimentId"]; // 实验ID
+  string visitor_hash = 2 [json_name = "visitorHash"];   // 访客标识哈希
+  string variant_name = 3 [json_name = "variantName"];   // 变体名称快照
+}
+
+// 回应 - 变体参与统计
+message ExperimentVariantStatsResponse {
+  message VariantCount {
+    string variant_name = 1 [json_name = "variantName"]; // 变体名称
+    uint64 participants = 2;                             // 参与人数
+  }
+  repeated VariantCount items = 1;
+}
+
+// 请求 - 变体参与统计
+message GetExperimentVariantStatsRequest {
+  uint32 experiment_id = 1 [json_name = "experimentId"]; // 实验ID
+}

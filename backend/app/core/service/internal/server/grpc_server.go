@@ -112,6 +112,7 @@ func NewGrpcServer(
 	formSubmissionService *service.FormSubmissionService,
 	redirectService *service.RedirectService,
 	emailProviderService *service.EmailProviderService,
+	experimentService *service.ExperimentService,
 
 	// register:param ── 新模块服务形参在此行后注册(make register 工具锚点,勿删)
 ) (*grpc.Server, error) {
@@ -194,6 +195,7 @@ func NewGrpcServer(
 	webhookV1.RegisterWebhookServiceServer(srv, webhookService)
 	contentV1.RegisterFormSubmissionServiceServer(srv, formSubmissionService)
 	contentV1.RegisterRedirectServiceServer(srv, redirectService)
+	contentV1.RegisterExperimentServiceServer(srv, experimentService)
 	notifyV1.RegisterEmailProviderServiceServer(srv, emailProviderService)
 
 	// register:route ── 新模块路由在此行后注册(make register 工具锚点,勿删)

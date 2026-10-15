@@ -591,6 +591,78 @@ func (f EmailProviderMutationRuleFunc) EvalMutation(ctx context.Context, m ent.M
 	return Denyf("ent/privacy: unexpected mutation type %T, expect *ent.EmailProviderMutation", m)
 }
 
+// The ExperimentQueryRuleFunc type is an adapter to allow the use of ordinary
+// functions as a query rule.
+type ExperimentQueryRuleFunc func(context.Context, *ent.ExperimentQuery) error
+
+// EvalQuery return f(ctx, q).
+func (f ExperimentQueryRuleFunc) EvalQuery(ctx context.Context, q ent.Query) error {
+	if q, ok := q.(*ent.ExperimentQuery); ok {
+		return f(ctx, q)
+	}
+	return Denyf("ent/privacy: unexpected query type %T, expect *ent.ExperimentQuery", q)
+}
+
+// The ExperimentMutationRuleFunc type is an adapter to allow the use of ordinary
+// functions as a mutation rule.
+type ExperimentMutationRuleFunc func(context.Context, *ent.ExperimentMutation) error
+
+// EvalMutation calls f(ctx, m).
+func (f ExperimentMutationRuleFunc) EvalMutation(ctx context.Context, m ent.Mutation) error {
+	if m, ok := m.(*ent.ExperimentMutation); ok {
+		return f(ctx, m)
+	}
+	return Denyf("ent/privacy: unexpected mutation type %T, expect *ent.ExperimentMutation", m)
+}
+
+// The ExperimentParticipantQueryRuleFunc type is an adapter to allow the use of ordinary
+// functions as a query rule.
+type ExperimentParticipantQueryRuleFunc func(context.Context, *ent.ExperimentParticipantQuery) error
+
+// EvalQuery return f(ctx, q).
+func (f ExperimentParticipantQueryRuleFunc) EvalQuery(ctx context.Context, q ent.Query) error {
+	if q, ok := q.(*ent.ExperimentParticipantQuery); ok {
+		return f(ctx, q)
+	}
+	return Denyf("ent/privacy: unexpected query type %T, expect *ent.ExperimentParticipantQuery", q)
+}
+
+// The ExperimentParticipantMutationRuleFunc type is an adapter to allow the use of ordinary
+// functions as a mutation rule.
+type ExperimentParticipantMutationRuleFunc func(context.Context, *ent.ExperimentParticipantMutation) error
+
+// EvalMutation calls f(ctx, m).
+func (f ExperimentParticipantMutationRuleFunc) EvalMutation(ctx context.Context, m ent.Mutation) error {
+	if m, ok := m.(*ent.ExperimentParticipantMutation); ok {
+		return f(ctx, m)
+	}
+	return Denyf("ent/privacy: unexpected mutation type %T, expect *ent.ExperimentParticipantMutation", m)
+}
+
+// The ExperimentVariantQueryRuleFunc type is an adapter to allow the use of ordinary
+// functions as a query rule.
+type ExperimentVariantQueryRuleFunc func(context.Context, *ent.ExperimentVariantQuery) error
+
+// EvalQuery return f(ctx, q).
+func (f ExperimentVariantQueryRuleFunc) EvalQuery(ctx context.Context, q ent.Query) error {
+	if q, ok := q.(*ent.ExperimentVariantQuery); ok {
+		return f(ctx, q)
+	}
+	return Denyf("ent/privacy: unexpected query type %T, expect *ent.ExperimentVariantQuery", q)
+}
+
+// The ExperimentVariantMutationRuleFunc type is an adapter to allow the use of ordinary
+// functions as a mutation rule.
+type ExperimentVariantMutationRuleFunc func(context.Context, *ent.ExperimentVariantMutation) error
+
+// EvalMutation calls f(ctx, m).
+func (f ExperimentVariantMutationRuleFunc) EvalMutation(ctx context.Context, m ent.Mutation) error {
+	if m, ok := m.(*ent.ExperimentVariantMutation); ok {
+		return f(ctx, m)
+	}
+	return Denyf("ent/privacy: unexpected mutation type %T, expect *ent.ExperimentVariantMutation", m)
+}
+
 // The FieldDefinitionQueryRuleFunc type is an adapter to allow the use of ordinary
 // functions as a query rule.
 type FieldDefinitionQueryRuleFunc func(context.Context, *ent.FieldDefinitionQuery) error
@@ -2178,6 +2250,12 @@ func queryFilter(q ent.Query) (Filter, error) {
 		return q.Filter(), nil
 	case *ent.EmailProviderQuery:
 		return q.Filter(), nil
+	case *ent.ExperimentQuery:
+		return q.Filter(), nil
+	case *ent.ExperimentParticipantQuery:
+		return q.Filter(), nil
+	case *ent.ExperimentVariantQuery:
+		return q.Filter(), nil
 	case *ent.FieldDefinitionQuery:
 		return q.Filter(), nil
 	case *ent.FieldDefinitionTranslationQuery:
@@ -2350,6 +2428,12 @@ func mutationFilter(m ent.Mutation) (Filter, error) {
 	case *ent.DictTypeMutation:
 		return m.Filter(), nil
 	case *ent.EmailProviderMutation:
+		return m.Filter(), nil
+	case *ent.ExperimentMutation:
+		return m.Filter(), nil
+	case *ent.ExperimentParticipantMutation:
+		return m.Filter(), nil
+	case *ent.ExperimentVariantMutation:
 		return m.Filter(), nil
 	case *ent.FieldDefinitionMutation:
 		return m.Filter(), nil

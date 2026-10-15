@@ -146,6 +146,7 @@ func initApp(ctx *bootstrap.Context) (*kratos.App, func(), error) {
 	webhookServiceClient := data.NewWebhookServiceClient(ctx, discovery)
 	formSubmissionServiceClient := data.NewFormSubmissionServiceClient(ctx, discovery)
 	redirectServiceClient := data.NewRedirectServiceClient(ctx, discovery)
+	experimentServiceClient := data.NewExperimentServiceClient(ctx, discovery)
 	emailProviderServiceClient := data.NewEmailProviderServiceClient(ctx, discovery)
 
 	// ── register:client ── 新模块服务客户端在此行后注册(make register 工具锚点,勿删)
@@ -231,6 +232,7 @@ func initApp(ctx *bootstrap.Context) (*kratos.App, func(), error) {
 	webhookService := service.NewWebhookService(ctx, webhookServiceClient)
 	formSubmissionService := service.NewFormSubmissionService(ctx, formSubmissionServiceClient)
 	redirectService := service.NewRedirectService(ctx, redirectServiceClient)
+	experimentService := service.NewExperimentService(ctx, experimentServiceClient)
 	emailProviderService := service.NewEmailProviderService(ctx, emailProviderServiceClient)
 
 	// ── register:service ── 新模块服务在此行后注册(make register 工具锚点,勿删)
@@ -263,6 +265,7 @@ func initApp(ctx *bootstrap.Context) (*kratos.App, func(), error) {
 		webhookService,
 		formSubmissionService,
 		redirectService,
+		experimentService,
 		emailProviderService,
 		// register:rest-arg ── 新模块服务实参在此行后追加(make register 工具锚点,勿删)
 	)

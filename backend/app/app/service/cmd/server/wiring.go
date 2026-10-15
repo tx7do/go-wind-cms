@@ -70,6 +70,7 @@ func initApp(ctx *bootstrap.Context) (*kratos.App, func(), error) {
 	interactionServiceClient := data.NewInteractionServiceClient(ctx, discovery)
 	tagServiceClient := data.NewTagServiceClient(ctx, discovery)
 	pageServiceClient := data.NewPageServiceClient(ctx, discovery)
+	experimentServiceClient := data.NewExperimentServiceClient(ctx, discovery)
 
 	// 站点配置
 	siteServiceClient := data.NewSiteServiceClient(ctx, discovery)
@@ -98,7 +99,7 @@ func initApp(ctx *bootstrap.Context) (*kratos.App, func(), error) {
 	redirectService := service.NewRedirectService(ctx, data.NewRedirectServiceClient(ctx, discovery), tenantResolver)
 	seoService := service.NewSeoService(ctx, postServiceClient, pageServiceClient)
 	tagService := service.NewTagService(ctx, tagServiceClient)
-	pageService := service.NewPageService(ctx, pageServiceClient)
+	pageService := service.NewPageService(ctx, pageServiceClient, experimentServiceClient)
 
 	// 站点配置
 	navigationService := service.NewNavigationService(ctx, navigationServiceClient)

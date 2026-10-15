@@ -21,13 +21,15 @@ type PageService struct {
 	appV1.PageServiceHTTPServer
 
 	pageServiceClient contentV1.PageServiceClient
+	experimentClient  contentV1.ExperimentServiceClient
 	log               *log.Helper
 }
 
-func NewPageService(ctx *bootstrap.Context, pageServiceClient contentV1.PageServiceClient) *PageService {
+func NewPageService(ctx *bootstrap.Context, pageServiceClient contentV1.PageServiceClient, experimentClient contentV1.ExperimentServiceClient) *PageService {
 	return &PageService{
 		log:               ctx.NewLoggerHelper("page/service/app-service"),
 		pageServiceClient: pageServiceClient,
+		experimentClient:  experimentClient,
 	}
 }
 
@@ -67,6 +69,8 @@ func (s *PageService) Get(ctx context.Context, req *contentV1.GetPageRequest) (*
 			return nil, contentV1.ErrorNotFound("page not found")
 		}
 	}
+	// 运行中的内容实验：命中变体时以变体 sections 整页替换（best-effort）
+	s.applyExperiment(ctx, resp, req.GetLocale())
 	return resp, nil
 }
 
@@ -104,6 +108,8 @@ func (s *PageService) GetBySlug(ctx context.Context, req *appV1.GetPageBySlugReq
 	if resp == nil || resp.GetStatus() != contentV1.Page_PAGE_STATUS_PUBLISHED {
 		return nil, contentV1.ErrorNotFound("page not found")
 	}
+	// 运行中的内容实验：命中变体时以变体 sections 整页替换（best-effort）
+	s.applyExperiment(ctx, resp, req.GetLocale())
 	return resp, nil
 }
 

@@ -248,6 +248,42 @@ func (f EmailProviderFunc) Mutate(ctx context.Context, m ent.Mutation) (ent.Valu
 	return nil, fmt.Errorf("unexpected mutation type %T. expect *ent.EmailProviderMutation", m)
 }
 
+// The ExperimentFunc type is an adapter to allow the use of ordinary
+// function as Experiment mutator.
+type ExperimentFunc func(context.Context, *ent.ExperimentMutation) (ent.Value, error)
+
+// Mutate calls f(ctx, m).
+func (f ExperimentFunc) Mutate(ctx context.Context, m ent.Mutation) (ent.Value, error) {
+	if mv, ok := m.(*ent.ExperimentMutation); ok {
+		return f(ctx, mv)
+	}
+	return nil, fmt.Errorf("unexpected mutation type %T. expect *ent.ExperimentMutation", m)
+}
+
+// The ExperimentParticipantFunc type is an adapter to allow the use of ordinary
+// function as ExperimentParticipant mutator.
+type ExperimentParticipantFunc func(context.Context, *ent.ExperimentParticipantMutation) (ent.Value, error)
+
+// Mutate calls f(ctx, m).
+func (f ExperimentParticipantFunc) Mutate(ctx context.Context, m ent.Mutation) (ent.Value, error) {
+	if mv, ok := m.(*ent.ExperimentParticipantMutation); ok {
+		return f(ctx, mv)
+	}
+	return nil, fmt.Errorf("unexpected mutation type %T. expect *ent.ExperimentParticipantMutation", m)
+}
+
+// The ExperimentVariantFunc type is an adapter to allow the use of ordinary
+// function as ExperimentVariant mutator.
+type ExperimentVariantFunc func(context.Context, *ent.ExperimentVariantMutation) (ent.Value, error)
+
+// Mutate calls f(ctx, m).
+func (f ExperimentVariantFunc) Mutate(ctx context.Context, m ent.Mutation) (ent.Value, error) {
+	if mv, ok := m.(*ent.ExperimentVariantMutation); ok {
+		return f(ctx, mv)
+	}
+	return nil, fmt.Errorf("unexpected mutation type %T. expect *ent.ExperimentVariantMutation", m)
+}
+
 // The FieldDefinitionFunc type is an adapter to allow the use of ordinary
 // function as FieldDefinition mutator.
 type FieldDefinitionFunc func(context.Context, *ent.FieldDefinitionMutation) (ent.Value, error)

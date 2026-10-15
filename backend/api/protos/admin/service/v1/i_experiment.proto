@@ -1,0 +1,64 @@
+syntax = "proto3";
+
+package admin.service.v1;
+
+import "google/api/annotations.proto";
+import "google/protobuf/empty.proto";
+
+import "pagination/v1/pagination.proto";
+import "content/service/v1/experiment.proto";
+
+// 内容实验管理服务（A/B 分流 + 受众定向）
+service ExperimentService {
+  // 获取实验列表
+  rpc List (pagination.PagingRequest) returns (content.service.v1.ListExperimentsResponse) {
+    option (google.api.http) = {
+      get: "/admin/v1/experiments"
+    };
+  }
+
+  // 获取实验数据（含变体）
+  rpc Get (content.service.v1.GetExperimentRequest) returns (content.service.v1.Experiment) {
+    option (google.api.http) = {
+      get: "/admin/v1/experiments/{id}"
+    };
+  }
+
+  // 创建实验（连同变体）
+  rpc Create (content.service.v1.CreateExperimentRequest) returns (content.service.v1.Experiment) {
+    option (google.api.http) = {
+      post: "/admin/v1/experiments"
+      body: "*"
+    };
+  }
+
+  // 更新实验（变体整组替换）
+  rpc Update (content.service.v1.UpdateExperimentRequest) returns (content.service.v1.Experiment) {
+    option (google.api.http) = {
+      put: "/admin/v1/experiments/{id}"
+      body: "*"
+    };
+  }
+
+  // 删除实验
+  rpc Delete (content.service.v1.DeleteExperimentRequest) returns (google.protobuf.Empty) {
+    option (google.api.http) = {
+      delete: "/admin/v1/experiments/{id}"
+    };
+  }
+
+  // 设置实验状态
+  rpc SetStatus (content.service.v1.SetExperimentStatusRequest) returns (content.service.v1.Experiment) {
+    option (google.api.http) = {
+      put: "/admin/v1/experiments/{id}/status"
+      body: "*"
+    };
+  }
+
+  // 变体参与统计
+  rpc GetVariantStats (content.service.v1.GetExperimentVariantStatsRequest) returns (content.service.v1.ExperimentVariantStatsResponse) {
+    option (google.api.http) = {
+      get: "/admin/v1/experiments/{experiment_id}/variant-stats"
+    };
+  }
+}

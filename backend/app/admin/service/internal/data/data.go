@@ -583,6 +583,15 @@ func NewRedirectServiceClient(ctx *bootstrap.Context, r registry.Discovery) cont
 	return contentV1.NewRedirectServiceClient(cli)
 }
 
+func NewExperimentServiceClient(ctx *bootstrap.Context, r registry.Discovery) contentV1.ExperimentServiceClient {
+	cli, err := rpc.CreateGrpcClient(ctx.Context(), r, serviceid.NewDiscoveryName(serviceid.CoreService), ctx.GetConfig())
+	if err != nil {
+		return nil
+	}
+
+	return contentV1.NewExperimentServiceClient(cli)
+}
+
 func NewWebhookServiceClient(ctx *bootstrap.Context, r registry.Discovery) webhookV1.WebhookServiceClient {
 	cli, err := rpc.CreateGrpcClient(ctx.Context(), r, serviceid.NewDiscoveryName(serviceid.CoreService), ctx.GetConfig())
 	if err != nil {

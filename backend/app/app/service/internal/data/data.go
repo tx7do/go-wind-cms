@@ -203,6 +203,15 @@ func NewRedirectServiceClient(ctx *bootstrap.Context, r registry.Discovery) cont
 	return contentV1.NewRedirectServiceClient(cli)
 }
 
+func NewExperimentServiceClient(ctx *bootstrap.Context, r registry.Discovery) contentV1.ExperimentServiceClient {
+	cli, err := rpc.CreateGrpcClient(ctx.Context(), r, serviceid.NewDiscoveryName(serviceid.CoreService), ctx.GetConfig())
+	if err != nil {
+		return nil
+	}
+
+	return contentV1.NewExperimentServiceClient(cli)
+}
+
 func NewFormSubmissionServiceClient(ctx *bootstrap.Context, r registry.Discovery) contentV1.FormSubmissionServiceClient {
 	cli, err := rpc.CreateGrpcClient(ctx.Context(), r, serviceid.NewDiscoveryName(serviceid.CoreService), ctx.GetConfig())
 	if err != nil {

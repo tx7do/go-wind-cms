@@ -26,6 +26,9 @@ import (
 	"go-wind-cms/app/core/service/internal/data/ent/dictentryi18n"
 	"go-wind-cms/app/core/service/internal/data/ent/dicttype"
 	"go-wind-cms/app/core/service/internal/data/ent/emailprovider"
+	"go-wind-cms/app/core/service/internal/data/ent/experiment"
+	"go-wind-cms/app/core/service/internal/data/ent/experimentparticipant"
+	"go-wind-cms/app/core/service/internal/data/ent/experimentvariant"
 	"go-wind-cms/app/core/service/internal/data/ent/fielddefinition"
 	"go-wind-cms/app/core/service/internal/data/ent/fielddefinitiontranslation"
 	"go-wind-cms/app/core/service/internal/data/ent/file"
@@ -175,6 +178,9 @@ func checkColumn(t, c string) error {
 			dictentryi18n.Table:              dictentryi18n.ValidColumn,
 			dicttype.Table:                   dicttype.ValidColumn,
 			emailprovider.Table:              emailprovider.ValidColumn,
+			experiment.Table:                 experiment.ValidColumn,
+			experimentparticipant.Table:      experimentparticipant.ValidColumn,
+			experimentvariant.Table:          experimentvariant.ValidColumn,
 			fielddefinition.Table:            fielddefinition.ValidColumn,
 			fielddefinitiontranslation.Table: fielddefinitiontranslation.ValidColumn,
 			file.Table:                       file.ValidColumn,
