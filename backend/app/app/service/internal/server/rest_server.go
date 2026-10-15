@@ -106,6 +106,11 @@ func NewRestMiddleware(
 		// RedirectService.ListEnabled：公开重定向查询（C 端路由中间件 3xx 匹配）。
 		appV1.OperationRedirectServiceListEnabled,
 
+		// PostService/PageService.GetBySlug：公开 SEO 路由（/post/{slug}、/page/{slug}
+		// 的数据源），仅返回已发布内容，匿名可访问。
+		appV1.OperationPostServiceGetBySlug,
+		appV1.OperationPageServiceGetBySlug,
+
 		// SeoService（手工挂载非 proto 路由）：sitemap.xml / robots.txt，
 		// 搜索引擎抓取必须匿名可达；操作名为约定字符串非 proto 生成。
 		OperationSeoServiceSitemap,

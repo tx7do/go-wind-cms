@@ -12,6 +12,8 @@ import (
 	"github.com/tx7do/kratos-bootstrap/bootstrap"
 	"google.golang.org/protobuf/types/known/emptypb"
 
+	"github.com/tx7do/go-utils/trans"
+
 	appV1 "go-wind-cms/api/gen/go/app/service/v1"
 	contentV1 "go-wind-cms/api/gen/go/content/service/v1"
 	entmiddleware "go-wind-cms/pkg/middleware/ent"
@@ -70,6 +72,29 @@ func (s *PostService) Get(ctx context.Context, req *contentV1.GetPostRequest) (*
 
 // hasValidPreviewToken 校验请求 query 里的 preview_token：令牌有效且指向该文章
 // 时放行；令牌存在但无效按"不存在"处理，不暴露令牌有效性细节。
+// GetBySlug 按 slug 获取已发布帖子（SEO 路由 /post/{slug} 的数据源）。
+func (s *PostService) GetBySlug(ctx context.Context, req *appV1.GetPostBySlugRequest) (*contentV1.Post, error) {
+	if req == nil || req.GetSlug() == "" {
+		return nil, contentV1.ErrorBadRequest("invalid parameter")
+	}
+	// 帖子的 SEO 别名走 code 字段（唯一编码，demo 数据即 slug 形态）；
+	// core GetPostRequest 的 query_by 不含 slug oneof，Code 语义等同。
+	coreReq := &contentV1.GetPostRequest{
+		QueryBy: &contentV1.GetPostRequest_Code{Code: req.GetSlug()},
+	}
+	if req.GetLocale() != "" {
+		coreReq.Locale = trans.Ptr(req.GetLocale())
+	}
+	resp, err := s.postClient.Get(ctx, coreReq)
+	if err != nil {
+		return nil, err
+	}
+	// 公开 SEO 路由仅返回已发布文章
+	if resp == nil || resp.GetStatus() != contentV1.Post_POST_STATUS_PUBLISHED {
+		return nil, contentV1.ErrorNotFound("post not found")
+	}
+	return resp, nil
+}
 func (s *PostService) hasValidPreviewToken(ctx context.Context, targetID uint32) bool {
 	token := rawQueryValue(ctx, "preview_token")
 	if token == "" {

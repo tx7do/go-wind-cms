@@ -7,12 +7,11 @@ const nextConfig: NextConfig = {
     // 启用 React 严格模式
     reactStrictMode: true,
 
-    // 静态导出模式（部署到 Nginx / CDN / 对象存储）
-    output: 'export',
-
-    // 所有 URL 以 / 结尾，生成 /path/index.html 目录结构
-    // Nginx try_files 可以方便地做 fallback
-    trailingSlash: true,
+    // SSR 模式（Node 服务部署：next build && next start -p $PORT）。
+    // 公开内容页（帖子/CMS 页面详情）为服务端组件，爬虫可直接抓取正文与 meta；
+    // 认证与交互页仍为客户端组件。静态导出模式如需恢复，加回 output: 'export'
+    // 并将 server 组件取数路径改回客户端 useEffect 拉取。
+    // trailingSlash: true, // SSR 模式下关闭尾斜杠强制，canonical 由 generateMetadata 输出
 
     distDir: 'dist',
 };

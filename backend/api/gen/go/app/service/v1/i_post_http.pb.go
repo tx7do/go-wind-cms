@@ -25,6 +25,7 @@ const _ = http.SupportPackageIsVersion1
 const OperationPostServiceCreate = "/app.service.v1.PostService/Create"
 const OperationPostServiceDelete = "/app.service.v1.PostService/Delete"
 const OperationPostServiceGet = "/app.service.v1.PostService/Get"
+const OperationPostServiceGetBySlug = "/app.service.v1.PostService/GetBySlug"
 const OperationPostServiceGetTranslation = "/app.service.v1.PostService/GetTranslation"
 const OperationPostServiceList = "/app.service.v1.PostService/List"
 const OperationPostServiceSearchPosts = "/app.service.v1.PostService/SearchPosts"
@@ -37,6 +38,8 @@ type PostServiceHTTPServer interface {
 	Delete(context.Context, *v11.DeletePostRequest) (*emptypb.Empty, error)
 	// Get 获取帖子数据
 	Get(context.Context, *v11.GetPostRequest) (*v11.Post, error)
+	// GetBySlug 按 slug 获取帖子（公开，SEO 路由 /post/{slug} 的数据源）
+	GetBySlug(context.Context, *GetPostBySlugRequest) (*v11.Post, error)
 	// GetTranslation 获取翻译数据
 	GetTranslation(context.Context, *v11.GetPostRequest) (*v11.PostTranslation, error)
 	// List 获取帖子列表
@@ -59,6 +62,7 @@ func RegisterPostServiceHTTPServer(s *http.Server, srv PostServiceHTTPServer) {
 	r.PUT("/app/v1/posts/{id}", _PostService_Update4_HTTP_Handler(srv))
 	r.DELETE("/app/v1/posts/{id}", _PostService_Delete4_HTTP_Handler(srv))
 	r.GET("/app/v1/posts/{id}/translation", _PostService_GetTranslation2_HTTP_Handler(srv))
+	r.GET("/app/v1/posts/by-slug/{slug}", _PostService_GetBySlug1_HTTP_Handler(srv))
 }
 
 func _PostService_List4_HTTP_Handler(srv PostServiceHTTPServer) func(ctx http.Context) error {
@@ -212,6 +216,28 @@ func _PostService_GetTranslation2_HTTP_Handler(srv PostServiceHTTPServer) func(c
 	}
 }
 
+func _PostService_GetBySlug1_HTTP_Handler(srv PostServiceHTTPServer) func(ctx http.Context) error {
+	return func(ctx http.Context) error {
+		var in GetPostBySlugRequest
+		if err := ctx.BindQuery(&in); err != nil {
+			return err
+		}
+		if err := ctx.BindVars(&in); err != nil {
+			return err
+		}
+		http.SetOperation(ctx, OperationPostServiceGetBySlug)
+		h := ctx.Middleware(func(ctx context.Context, req interface{}) (interface{}, error) {
+			return srv.GetBySlug(ctx, req.(*GetPostBySlugRequest))
+		})
+		out, err := h(ctx, &in)
+		if err != nil {
+			return err
+		}
+		reply := out.(*v11.Post)
+		return ctx.Result(200, reply)
+	}
+}
+
 type PostServiceHTTPClient interface {
 	// Create 创建帖子
 	Create(ctx context.Context, req *v11.CreatePostRequest, opts ...http.CallOption) (rsp *v11.Post, err error)
@@ -219,6 +245,8 @@ type PostServiceHTTPClient interface {
 	Delete(ctx context.Context, req *v11.DeletePostRequest, opts ...http.CallOption) (rsp *emptypb.Empty, err error)
 	// Get 获取帖子数据
 	Get(ctx context.Context, req *v11.GetPostRequest, opts ...http.CallOption) (rsp *v11.Post, err error)
+	// GetBySlug 按 slug 获取帖子（公开，SEO 路由 /post/{slug} 的数据源）
+	GetBySlug(ctx context.Context, req *GetPostBySlugRequest, opts ...http.CallOption) (rsp *v11.Post, err error)
 	// GetTranslation 获取翻译数据
 	GetTranslation(ctx context.Context, req *v11.GetPostRequest, opts ...http.CallOption) (rsp *v11.PostTranslation, err error)
 	// List 获取帖子列表
@@ -274,6 +302,20 @@ func (c *PostServiceHTTPClientImpl) Get(ctx context.Context, in *v11.GetPostRequ
 	pattern := "/app/v1/posts/{id}"
 	path := binding.EncodeURL(pattern, in, true)
 	opts = append(opts, http.Operation(OperationPostServiceGet))
+	opts = append(opts, http.PathTemplate(pattern))
+	err := c.cc.Invoke(ctx, "GET", path, nil, &out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return &out, nil
+}
+
+// GetBySlug 按 slug 获取帖子（公开，SEO 路由 /post/{slug} 的数据源）
+func (c *PostServiceHTTPClientImpl) GetBySlug(ctx context.Context, in *GetPostBySlugRequest, opts ...http.CallOption) (*v11.Post, error) {
+	var out v11.Post
+	pattern := "/app/v1/posts/by-slug/{slug}"
+	path := binding.EncodeURL(pattern, in, true)
+	opts = append(opts, http.Operation(OperationPostServiceGetBySlug))
 	opts = append(opts, http.PathTemplate(pattern))
 	err := c.cc.Invoke(ctx, "GET", path, nil, &out, opts...)
 	if err != nil {

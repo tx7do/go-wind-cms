@@ -54,4 +54,22 @@ service PageService {
       get: "/app/v1/pages/{id}/translation"
     };
   }
+
+  // 按 slug 获取页面（公开，SEO 路由 /page/{slug} 的数据源）
+  rpc GetBySlug (GetPageBySlugRequest) returns (content.service.v1.Page) {
+    option (google.api.http) = {
+      get: "/app/v1/pages/by-slug/{slug}"
+    };
+  }
+}
+
+// 请求 - 按 slug 获取页面
+message GetPageBySlugRequest {
+  string slug = 1 [
+    (gnostic.openapi.v3.property) = {description: "页面 slug（主表或任一语言翻译的 slug）"}
+  ];
+
+  string locale = 2 [
+    (gnostic.openapi.v3.property) = {description: "语言代码，指定返回哪个语言版本的翻译"}
+  ];
 }

@@ -36,14 +36,16 @@ import XIcon from '@/plugins/xicon';
 import {useI18nRouter} from "@/i18n/helpers";
 import Image from '@/components/ui/image';
 
-export default function PostDetailPage() {
+export default function PostDetailPage({ initialPost }: { initialPost?: contentservicev1_Post | null }) {
     const t = useTranslations('page');
     const router = useI18nRouter();
     const searchParams = useSearchParams();
 
-    const [post, setPost] = useState<contentservicev1_Post | null>(null);
+    // SSR 下传 initialPost 时跳过客户端首拉（无骨架闪烁，SEO 由服务端组件输出）
+    const skipClientFetch = Boolean(initialPost);
+    const [post, setPost] = useState<contentservicev1_Post | null>(initialPost ?? null);
     const [postLoading, setPostLoading] = useState(false);
-    const [localLoading, setLocalLoading] = useState(true);
+    const [localLoading, setLocalLoading] = useState(!initialPost);
     const isLoading = localLoading || (postLoading && !post);
     // likeCount/watchCount：点赞/收藏计数缓存。初始读 GetCounts，写操作后用 RPC 返回的最新值更新。
     const [likeCount, setLikeCount] = useState<number | undefined>(undefined);
@@ -116,9 +118,9 @@ export default function PostDetailPage() {
                 setPostLoading(false);
             }
         }
+        if (skipClientFetch) return;
         loadPost();
-        // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [postId, previewToken]);
+    }, [postId, previewToken, skipClientFetch]);
 
     const [viewCount, setViewCount] = useState<number | undefined>(undefined);
 

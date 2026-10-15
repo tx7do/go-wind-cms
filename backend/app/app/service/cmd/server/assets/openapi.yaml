@@ -1080,6 +1080,29 @@ paths:
                         application/json:
                             schema:
                                 $ref: '#/components/schemas/content.service.v1.Page'
+    /app/v1/pages/by-slug/{slug}:
+        get:
+            tags:
+                - PageService
+            description: 按 slug 获取页面（公开，SEO 路由 /page/{slug} 的数据源）
+            operationId: PageService_GetBySlug
+            parameters:
+                - name: slug
+                  in: path
+                  required: true
+                  schema:
+                    type: string
+                - name: locale
+                  in: query
+                  schema:
+                    type: string
+            responses:
+                "200":
+                    description: OK
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/content.service.v1.Page'
     /app/v1/pages/{id}:
         get:
             tags:
@@ -1283,11 +1306,38 @@ paths:
                         application/json:
                             schema:
                                 $ref: '#/components/schemas/content.service.v1.Post'
+    /app/v1/posts/by-slug/{slug}:
+        get:
+            tags:
+                - PostService
+            description: 按 slug 获取帖子（公开，SEO 路由 /post/{slug} 的数据源）
+            operationId: PostService_GetBySlug
+            parameters:
+                - name: slug
+                  in: path
+                  required: true
+                  schema:
+                    type: string
+                - name: locale
+                  in: query
+                  schema:
+                    type: string
+            responses:
+                "200":
+                    description: OK
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/content.service.v1.Post'
     /app/v1/posts/search:
         get:
             tags:
                 - PostService
-            description: "全文搜索帖子（前台，基于 OpenSearch）\r\n\r\n 仅返回 PUBLISHED 状态内容；tenant_id 由服务端从登录用户上下文注入，\r\n 客户端无法指定或绕过。故此端点不进鉴权白名单——必须登录后方可搜索。"
+            description: |-
+                全文搜索帖子（前台，基于 OpenSearch）
+
+                 仅返回 PUBLISHED 状态内容；tenant_id 由服务端从登录用户上下文注入，
+                 客户端无法指定或绕过。故此端点不进鉴权白名单——必须登录后方可搜索。
             operationId: PostService_SearchPosts
             parameters:
                 - name: query

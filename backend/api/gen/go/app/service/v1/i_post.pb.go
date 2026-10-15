@@ -15,6 +15,7 @@ import (
 	protoimpl "google.golang.org/protobuf/runtime/protoimpl"
 	emptypb "google.golang.org/protobuf/types/known/emptypb"
 	reflect "reflect"
+	sync "sync"
 	unsafe "unsafe"
 )
 
@@ -25,11 +26,67 @@ const (
 	_ = protoimpl.EnforceVersion(protoimpl.MaxVersion - 20)
 )
 
+// 请求 - 按 slug 获取帖子
+type GetPostBySlugRequest struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	Slug          string                 `protobuf:"bytes,1,opt,name=slug,proto3" json:"slug,omitempty"`
+	Locale        string                 `protobuf:"bytes,2,opt,name=locale,proto3" json:"locale,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *GetPostBySlugRequest) Reset() {
+	*x = GetPostBySlugRequest{}
+	mi := &file_app_service_v1_i_post_proto_msgTypes[0]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *GetPostBySlugRequest) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*GetPostBySlugRequest) ProtoMessage() {}
+
+func (x *GetPostBySlugRequest) ProtoReflect() protoreflect.Message {
+	mi := &file_app_service_v1_i_post_proto_msgTypes[0]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use GetPostBySlugRequest.ProtoReflect.Descriptor instead.
+func (*GetPostBySlugRequest) Descriptor() ([]byte, []int) {
+	return file_app_service_v1_i_post_proto_rawDescGZIP(), []int{0}
+}
+
+func (x *GetPostBySlugRequest) GetSlug() string {
+	if x != nil {
+		return x.Slug
+	}
+	return ""
+}
+
+func (x *GetPostBySlugRequest) GetLocale() string {
+	if x != nil {
+		return x.Locale
+	}
+	return ""
+}
+
 var File_app_service_v1_i_post_proto protoreflect.FileDescriptor
 
 const file_app_service_v1_i_post_proto_rawDesc = "" +
 	"\n" +
-	"\x1bapp/service/v1/i_post.proto\x12\x0eapp.service.v1\x1a$gnostic/openapi/v3/annotations.proto\x1a\x1cgoogle/api/annotations.proto\x1a\x1bgoogle/protobuf/empty.proto\x1a\x1epagination/v1/pagination.proto\x1a\x1dcontent/service/v1/post.proto2\x84\x06\n" +
+	"\x1bapp/service/v1/i_post.proto\x12\x0eapp.service.v1\x1a$gnostic/openapi/v3/annotations.proto\x1a\x1cgoogle/api/annotations.proto\x1a\x1bgoogle/protobuf/empty.proto\x1a\x1epagination/v1/pagination.proto\x1a\x1dcontent/service/v1/post.proto\"\x89\x01\n" +
+	"\x14GetPostBySlugRequest\x12E\n" +
+	"\x04slug\x18\x01 \x01(\tB1\xbaG.\x92\x02+帖子 slug（任一语言翻译的 slug）R\x04slug\x12*\n" +
+	"\x06locale\x18\x02 \x01(\tB\x12\xbaG\x0f\x92\x02\f语言代码R\x06locale2\xf7\x06\n" +
 	"\vPostService\x12^\n" +
 	"\x04List\x12\x19.pagination.PagingRequest\x1a$.content.service.v1.ListPostResponse\"\x15\x82\xd3\xe4\x93\x02\x0f\x12\r/app/v1/posts\x12|\n" +
 	"\vSearchPosts\x12&.content.service.v1.SearchPostsRequest\x1a'.content.service.v1.SearchPostsResponse\"\x1c\x82\xd3\xe4\x93\x02\x16\x12\x14/app/v1/posts/search\x12_\n" +
@@ -37,40 +94,57 @@ const file_app_service_v1_i_post_proto_rawDesc = "" +
 	"\x06Create\x12%.content.service.v1.CreatePostRequest\x1a\x18.content.service.v1.Post\"\x18\x82\xd3\xe4\x93\x02\x12:\x01*\"\r/app/v1/posts\x12h\n" +
 	"\x06Update\x12%.content.service.v1.UpdatePostRequest\x1a\x18.content.service.v1.Post\"\x1d\x82\xd3\xe4\x93\x02\x17:\x01*\x1a\x12/app/v1/posts/{id}\x12c\n" +
 	"\x06Delete\x12%.content.service.v1.DeletePostRequest\x1a\x16.google.protobuf.Empty\"\x1a\x82\xd3\xe4\x93\x02\x14*\x12/app/v1/posts/{id}\x12\x81\x01\n" +
-	"\x0eGetTranslation\x12\".content.service.v1.GetPostRequest\x1a#.content.service.v1.PostTranslation\"&\x82\xd3\xe4\x93\x02 \x12\x1e/app/v1/posts/{id}/translationB\xab\x01\n" +
+	"\x0eGetTranslation\x12\".content.service.v1.GetPostRequest\x1a#.content.service.v1.PostTranslation\"&\x82\xd3\xe4\x93\x02 \x12\x1e/app/v1/posts/{id}/translation\x12q\n" +
+	"\tGetBySlug\x12$.app.service.v1.GetPostBySlugRequest\x1a\x18.content.service.v1.Post\"$\x82\xd3\xe4\x93\x02\x1e\x12\x1c/app/v1/posts/by-slug/{slug}B\xab\x01\n" +
 	"\x12com.app.service.v1B\n" +
 	"IPostProtoP\x01Z/go-wind-cms/api/gen/go/app/service/v1;servicev1\xa2\x02\x03ASX\xaa\x02\x0eApp.Service.V1\xca\x02\x0eApp\\Service\\V1\xe2\x02\x1aApp\\Service\\V1\\GPBMetadata\xea\x02\x10App::Service::V1b\x06proto3"
 
+var (
+	file_app_service_v1_i_post_proto_rawDescOnce sync.Once
+	file_app_service_v1_i_post_proto_rawDescData []byte
+)
+
+func file_app_service_v1_i_post_proto_rawDescGZIP() []byte {
+	file_app_service_v1_i_post_proto_rawDescOnce.Do(func() {
+		file_app_service_v1_i_post_proto_rawDescData = protoimpl.X.CompressGZIP(unsafe.Slice(unsafe.StringData(file_app_service_v1_i_post_proto_rawDesc), len(file_app_service_v1_i_post_proto_rawDesc)))
+	})
+	return file_app_service_v1_i_post_proto_rawDescData
+}
+
+var file_app_service_v1_i_post_proto_msgTypes = make([]protoimpl.MessageInfo, 1)
 var file_app_service_v1_i_post_proto_goTypes = []any{
-	(*v1.PagingRequest)(nil),        // 0: pagination.PagingRequest
-	(*v11.SearchPostsRequest)(nil),  // 1: content.service.v1.SearchPostsRequest
-	(*v11.GetPostRequest)(nil),      // 2: content.service.v1.GetPostRequest
-	(*v11.CreatePostRequest)(nil),   // 3: content.service.v1.CreatePostRequest
-	(*v11.UpdatePostRequest)(nil),   // 4: content.service.v1.UpdatePostRequest
-	(*v11.DeletePostRequest)(nil),   // 5: content.service.v1.DeletePostRequest
-	(*v11.ListPostResponse)(nil),    // 6: content.service.v1.ListPostResponse
-	(*v11.SearchPostsResponse)(nil), // 7: content.service.v1.SearchPostsResponse
-	(*v11.Post)(nil),                // 8: content.service.v1.Post
-	(*emptypb.Empty)(nil),           // 9: google.protobuf.Empty
-	(*v11.PostTranslation)(nil),     // 10: content.service.v1.PostTranslation
+	(*GetPostBySlugRequest)(nil),    // 0: app.service.v1.GetPostBySlugRequest
+	(*v1.PagingRequest)(nil),        // 1: pagination.PagingRequest
+	(*v11.SearchPostsRequest)(nil),  // 2: content.service.v1.SearchPostsRequest
+	(*v11.GetPostRequest)(nil),      // 3: content.service.v1.GetPostRequest
+	(*v11.CreatePostRequest)(nil),   // 4: content.service.v1.CreatePostRequest
+	(*v11.UpdatePostRequest)(nil),   // 5: content.service.v1.UpdatePostRequest
+	(*v11.DeletePostRequest)(nil),   // 6: content.service.v1.DeletePostRequest
+	(*v11.ListPostResponse)(nil),    // 7: content.service.v1.ListPostResponse
+	(*v11.SearchPostsResponse)(nil), // 8: content.service.v1.SearchPostsResponse
+	(*v11.Post)(nil),                // 9: content.service.v1.Post
+	(*emptypb.Empty)(nil),           // 10: google.protobuf.Empty
+	(*v11.PostTranslation)(nil),     // 11: content.service.v1.PostTranslation
 }
 var file_app_service_v1_i_post_proto_depIdxs = []int32{
-	0,  // 0: app.service.v1.PostService.List:input_type -> pagination.PagingRequest
-	1,  // 1: app.service.v1.PostService.SearchPosts:input_type -> content.service.v1.SearchPostsRequest
-	2,  // 2: app.service.v1.PostService.Get:input_type -> content.service.v1.GetPostRequest
-	3,  // 3: app.service.v1.PostService.Create:input_type -> content.service.v1.CreatePostRequest
-	4,  // 4: app.service.v1.PostService.Update:input_type -> content.service.v1.UpdatePostRequest
-	5,  // 5: app.service.v1.PostService.Delete:input_type -> content.service.v1.DeletePostRequest
-	2,  // 6: app.service.v1.PostService.GetTranslation:input_type -> content.service.v1.GetPostRequest
-	6,  // 7: app.service.v1.PostService.List:output_type -> content.service.v1.ListPostResponse
-	7,  // 8: app.service.v1.PostService.SearchPosts:output_type -> content.service.v1.SearchPostsResponse
-	8,  // 9: app.service.v1.PostService.Get:output_type -> content.service.v1.Post
-	8,  // 10: app.service.v1.PostService.Create:output_type -> content.service.v1.Post
-	8,  // 11: app.service.v1.PostService.Update:output_type -> content.service.v1.Post
-	9,  // 12: app.service.v1.PostService.Delete:output_type -> google.protobuf.Empty
-	10, // 13: app.service.v1.PostService.GetTranslation:output_type -> content.service.v1.PostTranslation
-	7,  // [7:14] is the sub-list for method output_type
-	0,  // [0:7] is the sub-list for method input_type
+	1,  // 0: app.service.v1.PostService.List:input_type -> pagination.PagingRequest
+	2,  // 1: app.service.v1.PostService.SearchPosts:input_type -> content.service.v1.SearchPostsRequest
+	3,  // 2: app.service.v1.PostService.Get:input_type -> content.service.v1.GetPostRequest
+	4,  // 3: app.service.v1.PostService.Create:input_type -> content.service.v1.CreatePostRequest
+	5,  // 4: app.service.v1.PostService.Update:input_type -> content.service.v1.UpdatePostRequest
+	6,  // 5: app.service.v1.PostService.Delete:input_type -> content.service.v1.DeletePostRequest
+	3,  // 6: app.service.v1.PostService.GetTranslation:input_type -> content.service.v1.GetPostRequest
+	0,  // 7: app.service.v1.PostService.GetBySlug:input_type -> app.service.v1.GetPostBySlugRequest
+	7,  // 8: app.service.v1.PostService.List:output_type -> content.service.v1.ListPostResponse
+	8,  // 9: app.service.v1.PostService.SearchPosts:output_type -> content.service.v1.SearchPostsResponse
+	9,  // 10: app.service.v1.PostService.Get:output_type -> content.service.v1.Post
+	9,  // 11: app.service.v1.PostService.Create:output_type -> content.service.v1.Post
+	9,  // 12: app.service.v1.PostService.Update:output_type -> content.service.v1.Post
+	10, // 13: app.service.v1.PostService.Delete:output_type -> google.protobuf.Empty
+	11, // 14: app.service.v1.PostService.GetTranslation:output_type -> content.service.v1.PostTranslation
+	9,  // 15: app.service.v1.PostService.GetBySlug:output_type -> content.service.v1.Post
+	8,  // [8:16] is the sub-list for method output_type
+	0,  // [0:8] is the sub-list for method input_type
 	0,  // [0:0] is the sub-list for extension type_name
 	0,  // [0:0] is the sub-list for extension extendee
 	0,  // [0:0] is the sub-list for field type_name
@@ -87,12 +161,13 @@ func file_app_service_v1_i_post_proto_init() {
 			GoPackagePath: reflect.TypeOf(x{}).PkgPath(),
 			RawDescriptor: unsafe.Slice(unsafe.StringData(file_app_service_v1_i_post_proto_rawDesc), len(file_app_service_v1_i_post_proto_rawDesc)),
 			NumEnums:      0,
-			NumMessages:   0,
+			NumMessages:   1,
 			NumExtensions: 0,
 			NumServices:   1,
 		},
 		GoTypes:           file_app_service_v1_i_post_proto_goTypes,
 		DependencyIndexes: file_app_service_v1_i_post_proto_depIdxs,
+		MessageInfos:      file_app_service_v1_i_post_proto_msgTypes,
 	}.Build()
 	File_app_service_v1_i_post_proto = out.File
 	file_app_service_v1_i_post_proto_goTypes = nil

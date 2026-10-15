@@ -29,6 +29,7 @@ const (
 	PostService_Update_FullMethodName         = "/app.service.v1.PostService/Update"
 	PostService_Delete_FullMethodName         = "/app.service.v1.PostService/Delete"
 	PostService_GetTranslation_FullMethodName = "/app.service.v1.PostService/GetTranslation"
+	PostService_GetBySlug_FullMethodName      = "/app.service.v1.PostService/GetBySlug"
 )
 
 // PostServiceClient is the client API for PostService service.
@@ -54,6 +55,8 @@ type PostServiceClient interface {
 	Delete(ctx context.Context, in *v11.DeletePostRequest, opts ...grpc.CallOption) (*emptypb.Empty, error)
 	// 获取翻译数据
 	GetTranslation(ctx context.Context, in *v11.GetPostRequest, opts ...grpc.CallOption) (*v11.PostTranslation, error)
+	// 按 slug 获取帖子（公开，SEO 路由 /post/{slug} 的数据源）
+	GetBySlug(ctx context.Context, in *GetPostBySlugRequest, opts ...grpc.CallOption) (*v11.Post, error)
 }
 
 type postServiceClient struct {
@@ -134,6 +137,16 @@ func (c *postServiceClient) GetTranslation(ctx context.Context, in *v11.GetPostR
 	return out, nil
 }
 
+func (c *postServiceClient) GetBySlug(ctx context.Context, in *GetPostBySlugRequest, opts ...grpc.CallOption) (*v11.Post, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(v11.Post)
+	err := c.cc.Invoke(ctx, PostService_GetBySlug_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 // PostServiceServer is the server API for PostService service.
 // All implementations must embed UnimplementedPostServiceServer
 // for forward compatibility.
@@ -157,6 +170,8 @@ type PostServiceServer interface {
 	Delete(context.Context, *v11.DeletePostRequest) (*emptypb.Empty, error)
 	// 获取翻译数据
 	GetTranslation(context.Context, *v11.GetPostRequest) (*v11.PostTranslation, error)
+	// 按 slug 获取帖子（公开，SEO 路由 /post/{slug} 的数据源）
+	GetBySlug(context.Context, *GetPostBySlugRequest) (*v11.Post, error)
 	mustEmbedUnimplementedPostServiceServer()
 }
 
@@ -187,6 +202,9 @@ func (UnimplementedPostServiceServer) Delete(context.Context, *v11.DeletePostReq
 }
 func (UnimplementedPostServiceServer) GetTranslation(context.Context, *v11.GetPostRequest) (*v11.PostTranslation, error) {
 	return nil, status.Error(codes.Unimplemented, "method GetTranslation not implemented")
+}
+func (UnimplementedPostServiceServer) GetBySlug(context.Context, *GetPostBySlugRequest) (*v11.Post, error) {
+	return nil, status.Error(codes.Unimplemented, "method GetBySlug not implemented")
 }
 func (UnimplementedPostServiceServer) mustEmbedUnimplementedPostServiceServer() {}
 func (UnimplementedPostServiceServer) testEmbeddedByValue()                     {}
@@ -335,6 +353,24 @@ func _PostService_GetTranslation_Handler(srv interface{}, ctx context.Context, d
 	return interceptor(ctx, in, info, handler)
 }
 
+func _PostService_GetBySlug_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(GetPostBySlugRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(PostServiceServer).GetBySlug(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: PostService_GetBySlug_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(PostServiceServer).GetBySlug(ctx, req.(*GetPostBySlugRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 // PostService_ServiceDesc is the grpc.ServiceDesc for PostService service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
@@ -369,6 +405,10 @@ var PostService_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "GetTranslation",
 			Handler:    _PostService_GetTranslation_Handler,
+		},
+		{
+			MethodName: "GetBySlug",
+			Handler:    _PostService_GetBySlug_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},

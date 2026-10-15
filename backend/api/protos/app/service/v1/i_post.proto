@@ -64,4 +64,22 @@ service PostService {
       get: "/app/v1/posts/{id}/translation"
     };
   }
+
+  // 按 slug 获取帖子（公开，SEO 路由 /post/{slug} 的数据源）
+  rpc GetBySlug (GetPostBySlugRequest) returns (content.service.v1.Post) {
+    option (google.api.http) = {
+      get: "/app/v1/posts/by-slug/{slug}"
+    };
+  }
+}
+
+// 请求 - 按 slug 获取帖子
+message GetPostBySlugRequest {
+  string slug = 1 [
+    (gnostic.openapi.v3.property) = {description: "帖子 slug（任一语言翻译的 slug）"}
+  ];
+
+  string locale = 2 [
+    (gnostic.openapi.v3.property) = {description: "语言代码"}
+  ];
 }

@@ -28,6 +28,7 @@ const (
 	PageService_Update_FullMethodName         = "/app.service.v1.PageService/Update"
 	PageService_Delete_FullMethodName         = "/app.service.v1.PageService/Delete"
 	PageService_GetTranslation_FullMethodName = "/app.service.v1.PageService/GetTranslation"
+	PageService_GetBySlug_FullMethodName      = "/app.service.v1.PageService/GetBySlug"
 )
 
 // PageServiceClient is the client API for PageService service.
@@ -48,6 +49,8 @@ type PageServiceClient interface {
 	Delete(ctx context.Context, in *v11.DeletePageRequest, opts ...grpc.CallOption) (*emptypb.Empty, error)
 	// 获取翻译数据
 	GetTranslation(ctx context.Context, in *v11.GetPageRequest, opts ...grpc.CallOption) (*v11.PageTranslation, error)
+	// 按 slug 获取页面（公开，SEO 路由 /page/{slug} 的数据源）
+	GetBySlug(ctx context.Context, in *GetPageBySlugRequest, opts ...grpc.CallOption) (*v11.Page, error)
 }
 
 type pageServiceClient struct {
@@ -118,6 +121,16 @@ func (c *pageServiceClient) GetTranslation(ctx context.Context, in *v11.GetPageR
 	return out, nil
 }
 
+func (c *pageServiceClient) GetBySlug(ctx context.Context, in *GetPageBySlugRequest, opts ...grpc.CallOption) (*v11.Page, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(v11.Page)
+	err := c.cc.Invoke(ctx, PageService_GetBySlug_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 // PageServiceServer is the server API for PageService service.
 // All implementations must embed UnimplementedPageServiceServer
 // for forward compatibility.
@@ -136,6 +149,8 @@ type PageServiceServer interface {
 	Delete(context.Context, *v11.DeletePageRequest) (*emptypb.Empty, error)
 	// 获取翻译数据
 	GetTranslation(context.Context, *v11.GetPageRequest) (*v11.PageTranslation, error)
+	// 按 slug 获取页面（公开，SEO 路由 /page/{slug} 的数据源）
+	GetBySlug(context.Context, *GetPageBySlugRequest) (*v11.Page, error)
 	mustEmbedUnimplementedPageServiceServer()
 }
 
@@ -163,6 +178,9 @@ func (UnimplementedPageServiceServer) Delete(context.Context, *v11.DeletePageReq
 }
 func (UnimplementedPageServiceServer) GetTranslation(context.Context, *v11.GetPageRequest) (*v11.PageTranslation, error) {
 	return nil, status.Error(codes.Unimplemented, "method GetTranslation not implemented")
+}
+func (UnimplementedPageServiceServer) GetBySlug(context.Context, *GetPageBySlugRequest) (*v11.Page, error) {
+	return nil, status.Error(codes.Unimplemented, "method GetBySlug not implemented")
 }
 func (UnimplementedPageServiceServer) mustEmbedUnimplementedPageServiceServer() {}
 func (UnimplementedPageServiceServer) testEmbeddedByValue()                     {}
@@ -293,6 +311,24 @@ func _PageService_GetTranslation_Handler(srv interface{}, ctx context.Context, d
 	return interceptor(ctx, in, info, handler)
 }
 
+func _PageService_GetBySlug_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(GetPageBySlugRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(PageServiceServer).GetBySlug(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: PageService_GetBySlug_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(PageServiceServer).GetBySlug(ctx, req.(*GetPageBySlugRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 // PageService_ServiceDesc is the grpc.ServiceDesc for PageService service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
@@ -323,6 +359,10 @@ var PageService_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "GetTranslation",
 			Handler:    _PageService_GetTranslation_Handler,
+		},
+		{
+			MethodName: "GetBySlug",
+			Handler:    _PageService_GetBySlug_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},

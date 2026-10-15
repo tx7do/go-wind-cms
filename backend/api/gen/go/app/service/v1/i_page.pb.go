@@ -15,6 +15,7 @@ import (
 	protoimpl "google.golang.org/protobuf/runtime/protoimpl"
 	emptypb "google.golang.org/protobuf/types/known/emptypb"
 	reflect "reflect"
+	sync "sync"
 	unsafe "unsafe"
 )
 
@@ -25,47 +26,120 @@ const (
 	_ = protoimpl.EnforceVersion(protoimpl.MaxVersion - 20)
 )
 
+// 请求 - 按 slug 获取页面
+type GetPageBySlugRequest struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	Slug          string                 `protobuf:"bytes,1,opt,name=slug,proto3" json:"slug,omitempty"`
+	Locale        string                 `protobuf:"bytes,2,opt,name=locale,proto3" json:"locale,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *GetPageBySlugRequest) Reset() {
+	*x = GetPageBySlugRequest{}
+	mi := &file_app_service_v1_i_page_proto_msgTypes[0]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *GetPageBySlugRequest) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*GetPageBySlugRequest) ProtoMessage() {}
+
+func (x *GetPageBySlugRequest) ProtoReflect() protoreflect.Message {
+	mi := &file_app_service_v1_i_page_proto_msgTypes[0]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use GetPageBySlugRequest.ProtoReflect.Descriptor instead.
+func (*GetPageBySlugRequest) Descriptor() ([]byte, []int) {
+	return file_app_service_v1_i_page_proto_rawDescGZIP(), []int{0}
+}
+
+func (x *GetPageBySlugRequest) GetSlug() string {
+	if x != nil {
+		return x.Slug
+	}
+	return ""
+}
+
+func (x *GetPageBySlugRequest) GetLocale() string {
+	if x != nil {
+		return x.Locale
+	}
+	return ""
+}
+
 var File_app_service_v1_i_page_proto protoreflect.FileDescriptor
 
 const file_app_service_v1_i_page_proto_rawDesc = "" +
 	"\n" +
-	"\x1bapp/service/v1/i_page.proto\x12\x0eapp.service.v1\x1a$gnostic/openapi/v3/annotations.proto\x1a\x1cgoogle/api/annotations.proto\x1a\x1bgoogle/protobuf/empty.proto\x1a\x1epagination/v1/pagination.proto\x1a\x1dcontent/service/v1/page.proto2\x86\x05\n" +
+	"\x1bapp/service/v1/i_page.proto\x12\x0eapp.service.v1\x1a$gnostic/openapi/v3/annotations.proto\x1a\x1cgoogle/api/annotations.proto\x1a\x1bgoogle/protobuf/empty.proto\x1a\x1epagination/v1/pagination.proto\x1a\x1dcontent/service/v1/page.proto\"\xbc\x01\n" +
+	"\x14GetPageBySlugRequest\x12N\n" +
+	"\x04slug\x18\x01 \x01(\tB:\xbaG7\x92\x024页面 slug（主表或任一语言翻译的 slug）R\x04slug\x12T\n" +
+	"\x06locale\x18\x02 \x01(\tB<\xbaG9\x92\x026语言代码，指定返回哪个语言版本的翻译R\x06locale2\xf9\x05\n" +
 	"\vPageService\x12^\n" +
 	"\x04List\x12\x19.pagination.PagingRequest\x1a$.content.service.v1.ListPageResponse\"\x15\x82\xd3\xe4\x93\x02\x0f\x12\r/app/v1/pages\x12_\n" +
 	"\x03Get\x12\".content.service.v1.GetPageRequest\x1a\x18.content.service.v1.Page\"\x1a\x82\xd3\xe4\x93\x02\x14\x12\x12/app/v1/pages/{id}\x12c\n" +
 	"\x06Create\x12%.content.service.v1.CreatePageRequest\x1a\x18.content.service.v1.Page\"\x18\x82\xd3\xe4\x93\x02\x12:\x01*\"\r/app/v1/pages\x12h\n" +
 	"\x06Update\x12%.content.service.v1.UpdatePageRequest\x1a\x18.content.service.v1.Page\"\x1d\x82\xd3\xe4\x93\x02\x17:\x01*\x1a\x12/app/v1/pages/{id}\x12c\n" +
 	"\x06Delete\x12%.content.service.v1.DeletePageRequest\x1a\x16.google.protobuf.Empty\"\x1a\x82\xd3\xe4\x93\x02\x14*\x12/app/v1/pages/{id}\x12\x81\x01\n" +
-	"\x0eGetTranslation\x12\".content.service.v1.GetPageRequest\x1a#.content.service.v1.PageTranslation\"&\x82\xd3\xe4\x93\x02 \x12\x1e/app/v1/pages/{id}/translationB\xab\x01\n" +
+	"\x0eGetTranslation\x12\".content.service.v1.GetPageRequest\x1a#.content.service.v1.PageTranslation\"&\x82\xd3\xe4\x93\x02 \x12\x1e/app/v1/pages/{id}/translation\x12q\n" +
+	"\tGetBySlug\x12$.app.service.v1.GetPageBySlugRequest\x1a\x18.content.service.v1.Page\"$\x82\xd3\xe4\x93\x02\x1e\x12\x1c/app/v1/pages/by-slug/{slug}B\xab\x01\n" +
 	"\x12com.app.service.v1B\n" +
 	"IPageProtoP\x01Z/go-wind-cms/api/gen/go/app/service/v1;servicev1\xa2\x02\x03ASX\xaa\x02\x0eApp.Service.V1\xca\x02\x0eApp\\Service\\V1\xe2\x02\x1aApp\\Service\\V1\\GPBMetadata\xea\x02\x10App::Service::V1b\x06proto3"
 
+var (
+	file_app_service_v1_i_page_proto_rawDescOnce sync.Once
+	file_app_service_v1_i_page_proto_rawDescData []byte
+)
+
+func file_app_service_v1_i_page_proto_rawDescGZIP() []byte {
+	file_app_service_v1_i_page_proto_rawDescOnce.Do(func() {
+		file_app_service_v1_i_page_proto_rawDescData = protoimpl.X.CompressGZIP(unsafe.Slice(unsafe.StringData(file_app_service_v1_i_page_proto_rawDesc), len(file_app_service_v1_i_page_proto_rawDesc)))
+	})
+	return file_app_service_v1_i_page_proto_rawDescData
+}
+
+var file_app_service_v1_i_page_proto_msgTypes = make([]protoimpl.MessageInfo, 1)
 var file_app_service_v1_i_page_proto_goTypes = []any{
-	(*v1.PagingRequest)(nil),      // 0: pagination.PagingRequest
-	(*v11.GetPageRequest)(nil),    // 1: content.service.v1.GetPageRequest
-	(*v11.CreatePageRequest)(nil), // 2: content.service.v1.CreatePageRequest
-	(*v11.UpdatePageRequest)(nil), // 3: content.service.v1.UpdatePageRequest
-	(*v11.DeletePageRequest)(nil), // 4: content.service.v1.DeletePageRequest
-	(*v11.ListPageResponse)(nil),  // 5: content.service.v1.ListPageResponse
-	(*v11.Page)(nil),              // 6: content.service.v1.Page
-	(*emptypb.Empty)(nil),         // 7: google.protobuf.Empty
-	(*v11.PageTranslation)(nil),   // 8: content.service.v1.PageTranslation
+	(*GetPageBySlugRequest)(nil),  // 0: app.service.v1.GetPageBySlugRequest
+	(*v1.PagingRequest)(nil),      // 1: pagination.PagingRequest
+	(*v11.GetPageRequest)(nil),    // 2: content.service.v1.GetPageRequest
+	(*v11.CreatePageRequest)(nil), // 3: content.service.v1.CreatePageRequest
+	(*v11.UpdatePageRequest)(nil), // 4: content.service.v1.UpdatePageRequest
+	(*v11.DeletePageRequest)(nil), // 5: content.service.v1.DeletePageRequest
+	(*v11.ListPageResponse)(nil),  // 6: content.service.v1.ListPageResponse
+	(*v11.Page)(nil),              // 7: content.service.v1.Page
+	(*emptypb.Empty)(nil),         // 8: google.protobuf.Empty
+	(*v11.PageTranslation)(nil),   // 9: content.service.v1.PageTranslation
 }
 var file_app_service_v1_i_page_proto_depIdxs = []int32{
-	0, // 0: app.service.v1.PageService.List:input_type -> pagination.PagingRequest
-	1, // 1: app.service.v1.PageService.Get:input_type -> content.service.v1.GetPageRequest
-	2, // 2: app.service.v1.PageService.Create:input_type -> content.service.v1.CreatePageRequest
-	3, // 3: app.service.v1.PageService.Update:input_type -> content.service.v1.UpdatePageRequest
-	4, // 4: app.service.v1.PageService.Delete:input_type -> content.service.v1.DeletePageRequest
-	1, // 5: app.service.v1.PageService.GetTranslation:input_type -> content.service.v1.GetPageRequest
-	5, // 6: app.service.v1.PageService.List:output_type -> content.service.v1.ListPageResponse
-	6, // 7: app.service.v1.PageService.Get:output_type -> content.service.v1.Page
-	6, // 8: app.service.v1.PageService.Create:output_type -> content.service.v1.Page
-	6, // 9: app.service.v1.PageService.Update:output_type -> content.service.v1.Page
-	7, // 10: app.service.v1.PageService.Delete:output_type -> google.protobuf.Empty
-	8, // 11: app.service.v1.PageService.GetTranslation:output_type -> content.service.v1.PageTranslation
-	6, // [6:12] is the sub-list for method output_type
-	0, // [0:6] is the sub-list for method input_type
+	1, // 0: app.service.v1.PageService.List:input_type -> pagination.PagingRequest
+	2, // 1: app.service.v1.PageService.Get:input_type -> content.service.v1.GetPageRequest
+	3, // 2: app.service.v1.PageService.Create:input_type -> content.service.v1.CreatePageRequest
+	4, // 3: app.service.v1.PageService.Update:input_type -> content.service.v1.UpdatePageRequest
+	5, // 4: app.service.v1.PageService.Delete:input_type -> content.service.v1.DeletePageRequest
+	2, // 5: app.service.v1.PageService.GetTranslation:input_type -> content.service.v1.GetPageRequest
+	0, // 6: app.service.v1.PageService.GetBySlug:input_type -> app.service.v1.GetPageBySlugRequest
+	6, // 7: app.service.v1.PageService.List:output_type -> content.service.v1.ListPageResponse
+	7, // 8: app.service.v1.PageService.Get:output_type -> content.service.v1.Page
+	7, // 9: app.service.v1.PageService.Create:output_type -> content.service.v1.Page
+	7, // 10: app.service.v1.PageService.Update:output_type -> content.service.v1.Page
+	8, // 11: app.service.v1.PageService.Delete:output_type -> google.protobuf.Empty
+	9, // 12: app.service.v1.PageService.GetTranslation:output_type -> content.service.v1.PageTranslation
+	7, // 13: app.service.v1.PageService.GetBySlug:output_type -> content.service.v1.Page
+	7, // [7:14] is the sub-list for method output_type
+	0, // [0:7] is the sub-list for method input_type
 	0, // [0:0] is the sub-list for extension type_name
 	0, // [0:0] is the sub-list for extension extendee
 	0, // [0:0] is the sub-list for field type_name
@@ -82,12 +156,13 @@ func file_app_service_v1_i_page_proto_init() {
 			GoPackagePath: reflect.TypeOf(x{}).PkgPath(),
 			RawDescriptor: unsafe.Slice(unsafe.StringData(file_app_service_v1_i_page_proto_rawDesc), len(file_app_service_v1_i_page_proto_rawDesc)),
 			NumEnums:      0,
-			NumMessages:   0,
+			NumMessages:   1,
 			NumExtensions: 0,
 			NumServices:   1,
 		},
 		GoTypes:           file_app_service_v1_i_page_proto_goTypes,
 		DependencyIndexes: file_app_service_v1_i_page_proto_depIdxs,
+		MessageInfos:      file_app_service_v1_i_page_proto_msgTypes,
 	}.Build()
 	File_app_service_v1_i_page_proto = out.File
 	file_app_service_v1_i_page_proto_goTypes = nil

@@ -10,6 +10,8 @@ import (
 	"github.com/tx7do/kratos-bootstrap/bootstrap"
 	"google.golang.org/protobuf/types/known/emptypb"
 
+	"github.com/tx7do/go-utils/trans"
+
 	appV1 "go-wind-cms/api/gen/go/app/service/v1"
 	contentV1 "go-wind-cms/api/gen/go/content/service/v1"
 	"go-wind-cms/pkg/preview"
@@ -81,6 +83,28 @@ func (s *PageService) hasValidPreviewToken(ctx context.Context, kind string, tar
 		return false
 	}
 	return id != 0 && id == targetID
+}
+
+// GetBySlug 按 slug 获取已发布页面（SEO 路由 /page/{slug} 的数据源）。
+func (s *PageService) GetBySlug(ctx context.Context, req *appV1.GetPageBySlugRequest) (*contentV1.Page, error) {
+	if req == nil || req.GetSlug() == "" {
+		return nil, contentV1.ErrorBadRequest("invalid parameter")
+	}
+	coreReq := &contentV1.GetPageRequest{
+		QueryBy: &contentV1.GetPageRequest_Slug{Slug: req.GetSlug()},
+	}
+	if req.GetLocale() != "" {
+		coreReq.Locale = trans.Ptr(req.GetLocale())
+	}
+	resp, err := s.pageServiceClient.Get(ctx, coreReq)
+	if err != nil {
+		return nil, err
+	}
+	// 公开 SEO 路由仅返回已发布页面
+	if resp == nil || resp.GetStatus() != contentV1.Page_PAGE_STATUS_PUBLISHED {
+		return nil, contentV1.ErrorNotFound("page not found")
+	}
+	return resp, nil
 }
 
 // rawQueryValue 从 kratos transport 读原始 HTTP 请求的 query 参数

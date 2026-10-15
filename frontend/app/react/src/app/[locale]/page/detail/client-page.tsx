@@ -11,11 +11,13 @@ import SectionContainer from '@/components/layout/SectionContainer';
 import {recordView} from '@/api/hooks/interaction';
 
 /**
- * CMS Page 公开渲染页（静态导出，query 传参）：
+ * CMS Page 公开渲染页（query 传参）：
  *   /[locale]/page/detail?slug=about  或  ?id=5
  * 仅返回已发布页面（app BFF Get 过滤）；携带 preview_token 时放行草稿供后台预览。
+ * SSR 包装（page.tsx 服务端组件）会下传 initialPage —— 有值时跳过客户端拉取，
+ * 正文与 meta 由服务端输出（爬虫可见）。
  */
-export default function PageDetailClient() {
+export default function PageDetailClient({ initialPage }: { initialPage?: contentservicev1_Page | null }) {
     const t = useTranslations('page');
     const searchParams = useSearchParams();
 
@@ -26,10 +28,13 @@ export default function PageDetailClient() {
     }, [searchParams]);
     const previewToken = useMemo(() => searchParams.get('preview_token') || '', [searchParams]);
 
-    const [page, setPage] = useState<contentservicev1_Page | null>(null);
-    const [loading, setLoading] = useState(true);
+    // SSR 下传 initialPage 时跳过客户端首拉
+    const skipClientFetch = Boolean(initialPage);
+    const [page, setPage] = useState<contentservicev1_Page | null>(initialPage ?? null);
+    const [loading, setLoading] = useState(!initialPage);
 
     useEffect(() => {
+        if (skipClientFetch) return;
         let cancelled = false;
         async function load() {
             if (!slug && !id) {
@@ -55,7 +60,7 @@ export default function PageDetailClient() {
         return () => {
             cancelled = true;
         };
-    }, [slug, id, previewToken]);
+    }, [slug, id, previewToken, skipClientFetch]);
 
     // 标题随页面翻译更新
     useEffect(() => {
