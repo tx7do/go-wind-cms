@@ -7,10 +7,13 @@ import 'package:url_launcher/url_launcher.dart';
 import 'package:flutter_app/generated/api/app/service/v1/index.dart'
     show
         ContentServiceV1EditorType,
+        ContentServiceV1FormSubmission,
         ContentServiceV1Section,
         ContentServiceV1SectionTranslation,
         ContentServiceV1SectionType;
+import 'package:flutter_app/src/core/transport/http/status.dart';
 import 'package:flutter_app/src/core/utils/translation_helpers.dart';
+import 'package:flutter_app/src/features/cms/services/form_submission_service.dart';
 import 'package:flutter_app/src/features/cms/widgets/content_viewer.dart';
 
 /// Section 内容键契约（三端渲染器共用，与 react SectionRenderer.tsx / vue
@@ -293,26 +296,9 @@ class SectionRenderer extends StatelessWidget {
     }
 
     if (type == ContentServiceV1SectionType.sectionTypeForm) {
-      // 表单提交后端（form_submission）落地前的占位：可见但不误导访客输入
-      final label = pickSectionTranslation(section)?.content?['title'] ??
-          section.name ??
-          '';
-      if (label.isEmpty) return const SizedBox.shrink();
-      return Container(
-        width: double.infinity,
-        padding: EdgeInsets.all(isMobile ? 14.w : 16),
-        decoration: BoxDecoration(
-          border: Border.all(color: theme.colorScheme.onSurface.withAlpha(40)),
-          borderRadius: BorderRadius.circular(isMobile ? 12.r : 12),
-        ),
-        child: Text(
-          label,
-          textAlign: TextAlign.center,
-          style: TextStyle(
-            fontSize: isMobile ? 13.sp : 13,
-            color: theme.colorScheme.onSurface.withAlpha(150),
-          ),
-        ),
+      return _FormSection(
+        section: section,
+        isMobile: isMobile,
       );
     }
 
@@ -373,6 +359,209 @@ class _VideoLaunchTile extends StatelessWidget {
             ),
           ),
         ),
+      ),
+    );
+  }
+}
+
+
+/// FORM 区块：字段定义在 config.fields（JSON 数组 name/type/required），
+/// 标签在翻译 content 的 `<字段名>` 键，content.title 为表单标题。
+/// 提交走 FormSubmissionService（匿名可调用，校验在 core）。
+class _FormSection extends StatefulWidget {
+  final ContentServiceV1Section section;
+  final bool isMobile;
+
+  const _FormSection({required this.section, required this.isMobile});
+
+  @override
+  State<_FormSection> createState() => _FormSectionState();
+}
+
+class _FormSectionState extends State<_FormSection> {
+  final _formKey = GlobalKey<FormState>();
+  final _controllers = <String, TextEditingController>{};
+  final _formService = FormSubmissionService();
+
+  bool _submitting = false;
+  bool _done = false;
+  String? _error;
+
+  List<({String name, String type, bool required})> parseFields() {
+    final raw = widget.section.config?['fields'] ?? '[]';
+    try {
+      final decoded = jsonDecode(raw);
+      if (decoded is! List) return const [];
+      return decoded
+          .whereType<Map>()
+          .map((m) => (
+                name: (m['name'] as String?) ?? '',
+                type: (m['type'] as String?) ?? 'text',
+                required: (m['required'] as bool?) ?? false,
+              ))
+          .where((f) => f.name.isNotEmpty)
+          .toList();
+    } catch (_) {
+      // 字段定义非法：渲染为空表单（仅标题），不中断整页
+      return const [];
+    }
+  }
+
+  String fieldLabel(String name) {
+    return pickSectionTranslation(widget.section)?.content?[name] ?? name;
+  }
+
+  @override
+  void dispose() {
+    for (final c in _controllers.values) {
+      c.dispose();
+    }
+    super.dispose();
+  }
+
+  Future<void> _submit() async {
+    final fields = parseFields();
+    if (!_formKey.currentState!.validate()) return;
+
+    final pageId = widget.section.pageId ?? 0;
+    final sectionId = widget.section.id ?? 0;
+    if (pageId == 0 || sectionId == 0) {
+      setState(() => _error = 'invalid form target');
+      return;
+    }
+
+    setState(() {
+      _submitting = true;
+      _error = null;
+    });
+    final result = await _formService.submit(
+      pageId: pageId,
+      sectionId: sectionId,
+      data: {
+        for (final f in fields) f.name: _controllers[f.name]?.text ?? '',
+      },
+    );
+    if (!mounted) return;
+    if (result is ContentServiceV1FormSubmission) {
+      setState(() {
+        _submitting = false;
+        _done = true;
+      });
+    } else {
+      setState(() {
+        _submitting = false;
+        _error = result is Status ? 'submit failed' : 'submit failed';
+      });
+    }
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+    final tr = pickSectionTranslation(widget.section);
+    final title = tr?.content?['title'] ?? widget.section.name ?? '';
+
+    if (_done) {
+      return Container(
+        width: double.infinity,
+        padding: EdgeInsets.all(widget.isMobile ? 14.w : 16),
+        decoration: BoxDecoration(
+          color: theme.colorScheme.surfaceContainerHighest.withAlpha(80),
+          borderRadius: BorderRadius.circular(widget.isMobile ? 12.r : 12),
+        ),
+        child: Text(
+          tr?.content?['successText'] ?? title,
+          textAlign: TextAlign.center,
+          style: TextStyle(
+            fontSize: widget.isMobile ? 13.sp : 13,
+            color: theme.colorScheme.onSurface.withAlpha(160),
+          ),
+        ),
+      );
+    }
+
+    final fields = parseFields();
+    for (final f in fields) {
+      _controllers.putIfAbsent(f.name, () => TextEditingController());
+    }
+
+    return Form(
+      key: _formKey,
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          if (title.isNotEmpty)
+            Padding(
+              padding: EdgeInsets.only(bottom: widget.isMobile ? 12.h : 12),
+              child: Text(
+                title,
+                style: theme.textTheme.titleMedium?.copyWith(
+                  fontSize: widget.isMobile ? 16.sp : 18,
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
+            ),
+          for (final f in fields)
+            Padding(
+              padding: EdgeInsets.only(bottom: widget.isMobile ? 12.h : 12),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Padding(
+                    padding: EdgeInsets.only(bottom: widget.isMobile ? 4.h : 4),
+                    child: Text(
+                      fieldLabel(f.name) + (f.required ? ' *' : ''),
+                      style: TextStyle(
+                        fontSize: widget.isMobile ? 13.sp : 13,
+                        fontWeight: FontWeight.w500,
+                      ),
+                    ),
+                  ),
+                  TextFormField(
+                    controller: _controllers[f.name],
+                    obscureText: false,
+                    keyboardType: f.type == 'email'
+                        ? TextInputType.emailAddress
+                        : (f.type == 'tel'
+                            ? TextInputType.phone
+                            : TextInputType.text),
+                    maxLines: f.type == 'textarea' ? 4 : 1,
+                    validator: f.required
+                        ? (v) =>
+                            (v == null || v.isEmpty) ? fieldLabel(f.name) : null
+                        : null,
+                    style: TextStyle(fontSize: widget.isMobile ? 13.sp : 13),
+                    decoration: InputDecoration(
+                      isDense: true,
+                      border: OutlineInputBorder(
+                        borderRadius:
+                            BorderRadius.circular(widget.isMobile ? 10.r : 10),
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          if (_error != null)
+            Padding(
+              padding: EdgeInsets.only(bottom: widget.isMobile ? 8.h : 8),
+              child: Text(
+                tr?.content?['errorText'] ?? _error!,
+                style: TextStyle(
+                  fontSize: widget.isMobile ? 12.sp : 12,
+                  color: theme.colorScheme.error,
+                ),
+              ),
+            ),
+          FilledButton(
+            onPressed: _submitting ? null : _submit,
+            child: Text(
+              _submitting
+                  ? '...'
+                  : tr?.content?['submitText'] ?? 'Submit',
+            ),
+          ),
+        ],
       ),
     );
   }

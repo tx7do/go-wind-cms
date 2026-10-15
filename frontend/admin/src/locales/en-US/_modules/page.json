@@ -97,5 +97,15 @@
   },
   "versionHistory": "Version History",
   "versionNeedSave": "Available after save",
-  "previewOnCend": "Preview"
+  "previewOnCend": "Preview",
+  "transfer": {
+    "importJson": "Import JSON",
+    "exportJson": "Export JSON",
+    "exportSuccess": "Exported {{count}} pages (with sections)",
+    "exportFailed": "Export failed",
+    "importSuccess": "Imported {{count}} pages (as drafts)",
+    "importPartial": "Import finished: {{ok}} succeeded, failed rows: {{failed}} (nothing published)",
+    "importFailed": "Import failed: file parse error",
+    "noPages": "No pages found in file"
+  }
 }

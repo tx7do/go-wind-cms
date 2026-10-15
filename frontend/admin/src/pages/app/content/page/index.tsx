@@ -1,6 +1,7 @@
 import { useRef, useState } from 'react';
 import type { ProColumns, ActionType } from '@ant-design/pro-components';
 import TableExportButton from '@/components/common/TableExportButton';
+import PagesTransferButtons from './PagesTransferButtons';
 import ListTable from '@/components/common/ListTable';
 import { Button, Popconfirm, Tag, App } from 'antd';
 import { EditOutlined, DeleteOutlined, PlusOutlined } from '@ant-design/icons';
@@ -224,6 +225,10 @@ const PageList = () => {
             fetcher={fetchListPages}
             columns={columns}
             filename="pages"
+          />,
+          <PagesTransferButtons
+            key="transfer"
+            onChanged={() => actionRef.current?.reload()}
           />,
           <Button
             key="create"
