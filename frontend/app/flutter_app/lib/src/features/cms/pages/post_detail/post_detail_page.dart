@@ -62,6 +62,11 @@ class _PostDetailPageState extends State<PostDetailPage> {
   void initState() {
     super.initState();
     _loadData();
+    // 浏览量上报（PV +1，best-effort 静默）：每次进入详情记一次
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      _interactionService.recordView(
+          InteractionServiceV1TargetType.targetTypePost, widget.postId);
+    });
   }
 
   Future<void> _loadData() async {

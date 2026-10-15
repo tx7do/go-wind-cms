@@ -26,6 +26,7 @@ const OperationInteractionServiceGetCounts = "/app.service.v1.InteractionService
 const OperationInteractionServiceGetInteractionStatus = "/app.service.v1.InteractionService/GetInteractionStatus"
 const OperationInteractionServiceLike = "/app.service.v1.InteractionService/Like"
 const OperationInteractionServiceListWatchedPosts = "/app.service.v1.InteractionService/ListWatchedPosts"
+const OperationInteractionServiceRecordView = "/app.service.v1.InteractionService/RecordView"
 const OperationInteractionServiceUnlike = "/app.service.v1.InteractionService/Unlike"
 const OperationInteractionServiceUnwatch = "/app.service.v1.InteractionService/Unwatch"
 const OperationInteractionServiceWatch = "/app.service.v1.InteractionService/Watch"
@@ -39,6 +40,8 @@ type InteractionServiceHTTPServer interface {
 	Like(context.Context, *v1.LikeRequest) (*v1.LikeResponse, error)
 	// ListWatchedPosts 列出当前 viewer 收藏的 post
 	ListWatchedPosts(context.Context, *v11.PagingRequest) (*v12.ListPostResponse, error)
+	// RecordView 上报一次浏览（PV +1）。匿名可调用；C 端详情页挂载时触发一次。
+	RecordView(context.Context, *v1.RecordViewRequest) (*v1.RecordViewResponse, error)
 	// Unlike 取消点赞
 	Unlike(context.Context, *v1.LikeRequest) (*v1.LikeResponse, error)
 	// Unwatch 取消收藏 post
@@ -56,6 +59,7 @@ func RegisterInteractionServiceHTTPServer(s *http.Server, srv InteractionService
 	r.POST("/app/v1/interactions/status", _InteractionService_GetInteractionStatus0_HTTP_Handler(srv))
 	r.GET("/app/v1/interactions/watched-posts", _InteractionService_ListWatchedPosts0_HTTP_Handler(srv))
 	r.POST("/app/v1/interactions/counts:list", _InteractionService_GetCounts0_HTTP_Handler(srv))
+	r.POST("/app/v1/interactions/views", _InteractionService_RecordView0_HTTP_Handler(srv))
 }
 
 func _InteractionService_Like0_HTTP_Handler(srv InteractionServiceHTTPServer) func(ctx http.Context) error {
@@ -209,6 +213,28 @@ func _InteractionService_GetCounts0_HTTP_Handler(srv InteractionServiceHTTPServe
 	}
 }
 
+func _InteractionService_RecordView0_HTTP_Handler(srv InteractionServiceHTTPServer) func(ctx http.Context) error {
+	return func(ctx http.Context) error {
+		var in v1.RecordViewRequest
+		if err := ctx.Bind(&in); err != nil {
+			return err
+		}
+		if err := ctx.BindQuery(&in); err != nil {
+			return err
+		}
+		http.SetOperation(ctx, OperationInteractionServiceRecordView)
+		h := ctx.Middleware(func(ctx context.Context, req interface{}) (interface{}, error) {
+			return srv.RecordView(ctx, req.(*v1.RecordViewRequest))
+		})
+		out, err := h(ctx, &in)
+		if err != nil {
+			return err
+		}
+		reply := out.(*v1.RecordViewResponse)
+		return ctx.Result(200, reply)
+	}
+}
+
 type InteractionServiceHTTPClient interface {
 	// GetCounts 批量查询计数
 	GetCounts(ctx context.Context, req *v1.GetCountsRequest, opts ...http.CallOption) (rsp *v1.GetCountsResponse, err error)
@@ -218,6 +244,8 @@ type InteractionServiceHTTPClient interface {
 	Like(ctx context.Context, req *v1.LikeRequest, opts ...http.CallOption) (rsp *v1.LikeResponse, err error)
 	// ListWatchedPosts 列出当前 viewer 收藏的 post
 	ListWatchedPosts(ctx context.Context, req *v11.PagingRequest, opts ...http.CallOption) (rsp *v12.ListPostResponse, err error)
+	// RecordView 上报一次浏览（PV +1）。匿名可调用；C 端详情页挂载时触发一次。
+	RecordView(ctx context.Context, req *v1.RecordViewRequest, opts ...http.CallOption) (rsp *v1.RecordViewResponse, err error)
 	// Unlike 取消点赞
 	Unlike(ctx context.Context, req *v1.LikeRequest, opts ...http.CallOption) (rsp *v1.LikeResponse, err error)
 	// Unwatch 取消收藏 post
@@ -284,6 +312,20 @@ func (c *InteractionServiceHTTPClientImpl) ListWatchedPosts(ctx context.Context,
 	opts = append(opts, http.Operation(OperationInteractionServiceListWatchedPosts))
 	opts = append(opts, http.PathTemplate(pattern))
 	err := c.cc.Invoke(ctx, "GET", path, nil, &out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return &out, nil
+}
+
+// RecordView 上报一次浏览（PV +1）。匿名可调用；C 端详情页挂载时触发一次。
+func (c *InteractionServiceHTTPClientImpl) RecordView(ctx context.Context, in *v1.RecordViewRequest, opts ...http.CallOption) (*v1.RecordViewResponse, error) {
+	var out v1.RecordViewResponse
+	pattern := "/app/v1/interactions/views"
+	path := binding.EncodeURL(pattern, in, false)
+	opts = append(opts, http.Operation(OperationInteractionServiceRecordView))
+	opts = append(opts, http.PathTemplate(pattern))
+	err := c.cc.Invoke(ctx, "POST", path, in, &out, opts...)
 	if err != nil {
 		return nil, err
 	}

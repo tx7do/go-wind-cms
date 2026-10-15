@@ -16,6 +16,7 @@ import {
 } from '@/api/generated/app/service/v1';
 import { apiClient } from '@/api/client';
 import { queryClient } from '@/core';
+import { requestApi } from '@/core/transport/rest';
 import {useIsLogin} from '@/store/core/access/store';
 
 // ==============================
@@ -158,6 +159,25 @@ export function useGetCounts(
     staleTime: 0,
     ...options,
   });
+}
+
+/**
+/**
+ * recordView —— 上报一次浏览（PV +1）。匿名可调用。
+ * best-effort：失败仅记日志（PV 丢失不影响主功能）。
+ * preview_token 存在时同样上报（预览也是一次真实访问，计数口径从宽）。
+ */
+export async function recordView(targetType: 'TARGET_TYPE_POST' | 'TARGET_TYPE_PAGE', targetId: number) {
+  if (!targetId) return;
+  try {
+    await requestApi({
+      path: 'app/v1/interactions/views',
+      method: 'POST',
+      body: JSON.stringify({targetType, targetId}),
+    });
+  } catch (error) {
+    console.error('Record view failed:', error);
+  }
 }
 
 /**

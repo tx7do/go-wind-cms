@@ -92,7 +92,7 @@ func initApp(ctx *bootstrap.Context) (*kratos.App, func(), error) {
 	postService := service.NewPostService(ctx, postServiceClient, tenantResolver)
 	categoryService := service.NewCategoryService(ctx, categoryServiceClient)
 	commentService := service.NewCommentService(ctx, commentServiceClient, tenantResolver, accessTokenChecker)
-	interactionService := service.NewInteractionService(ctx, interactionServiceClient)
+	interactionService := service.NewInteractionService(ctx, interactionServiceClient, tenantResolver)
 	tagService := service.NewTagService(ctx, tagServiceClient)
 	pageService := service.NewPageService(ctx, pageServiceClient)
 

@@ -572,6 +572,25 @@ paths:
                         application/json:
                             schema:
                                 $ref: '#/components/schemas/interaction.service.v1.WatchResponse'
+    /app/v1/interactions/views:
+        post:
+            tags:
+                - InteractionService
+            description: 上报一次浏览（PV +1）。匿名可调用；C 端详情页挂载时触发一次。
+            operationId: InteractionService_RecordView
+            requestBody:
+                content:
+                    application/json:
+                        schema:
+                            $ref: '#/components/schemas/interaction.service.v1.RecordViewRequest'
+                required: true
+            responses:
+                "200":
+                    description: OK
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/interaction.service.v1.RecordViewResponse'
     /app/v1/interactions/watch:
         post:
             tags:
@@ -3291,6 +3310,7 @@ components:
                             - COUNTER_METRIC_UNSPECIFIED
                             - COUNTER_METRIC_LIKE
                             - COUNTER_METRIC_WATCH
+                            - COUNTER_METRIC_VIEW
                         type: string
                         format: enum
         interaction.service.v1.GetCountsResponse:
@@ -3361,6 +3381,7 @@ components:
                         - COUNTER_METRIC_UNSPECIFIED
                         - COUNTER_METRIC_LIKE
                         - COUNTER_METRIC_WATCH
+                        - COUNTER_METRIC_VIEW
                     type: string
                     format: enum
                 count:
@@ -3368,6 +3389,26 @@ components:
             description: |-
                 单个 (target, metric) 的计数条目。用于 GetCountsResponse 的内层结构。
                  注意：proto3 不允许枚举类型作 map key，故内层用 repeated MetricCount 而非 map<CounterMetric,int64>。
+        interaction.service.v1.RecordViewRequest:
+            type: object
+            properties:
+                targetType:
+                    enum:
+                        - TARGET_TYPE_UNSPECIFIED
+                        - TARGET_TYPE_POST
+                        - TARGET_TYPE_COMMENT
+                    type: string
+                    format: enum
+                targetId:
+                    type: integer
+                    format: uint32
+            description: 请求 - 上报浏览
+        interaction.service.v1.RecordViewResponse:
+            type: object
+            properties:
+                viewCount:
+                    type: string
+            description: 回应 - 上报浏览（返回累加后的浏览量，便于前端直接展示）
         interaction.service.v1.WatchRequest:
             type: object
             properties:

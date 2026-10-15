@@ -30,6 +30,7 @@ const (
 	TargetType_TARGET_TYPE_UNSPECIFIED TargetType = 0
 	TargetType_TARGET_TYPE_POST        TargetType = 1
 	TargetType_TARGET_TYPE_COMMENT     TargetType = 2
+	TargetType_TARGET_TYPE_PAGE        TargetType = 3 // 仅 VIEW 计数使用（页面浏览量）
 )
 
 // Enum value maps for TargetType.
@@ -38,11 +39,13 @@ var (
 		0: "TARGET_TYPE_UNSPECIFIED",
 		1: "TARGET_TYPE_POST",
 		2: "TARGET_TYPE_COMMENT",
+		3: "TARGET_TYPE_PAGE",
 	}
 	TargetType_value = map[string]int32{
 		"TARGET_TYPE_UNSPECIFIED": 0,
 		"TARGET_TYPE_POST":        1,
 		"TARGET_TYPE_COMMENT":     2,
+		"TARGET_TYPE_PAGE":        3,
 	}
 )
 
@@ -74,13 +77,14 @@ func (TargetType) EnumDescriptor() ([]byte, []int) {
 }
 
 // 计数指标类型。与 interaction_counter 表的 metric 列对应。
-// 当前仅点赞计数活跃；后续若新增浏览量/点踩等，在此扩展枚举值即可，无需改 schema。
+// VIEW（浏览量）为只增计数：无 ledger 行，不支持取消；匿名可上报。
 type CounterMetric int32
 
 const (
 	CounterMetric_COUNTER_METRIC_UNSPECIFIED CounterMetric = 0
 	CounterMetric_COUNTER_METRIC_LIKE        CounterMetric = 1
 	CounterMetric_COUNTER_METRIC_WATCH       CounterMetric = 2
+	CounterMetric_COUNTER_METRIC_VIEW        CounterMetric = 3
 )
 
 // Enum value maps for CounterMetric.
@@ -89,11 +93,13 @@ var (
 		0: "COUNTER_METRIC_UNSPECIFIED",
 		1: "COUNTER_METRIC_LIKE",
 		2: "COUNTER_METRIC_WATCH",
+		3: "COUNTER_METRIC_VIEW",
 	}
 	CounterMetric_value = map[string]int32{
 		"COUNTER_METRIC_UNSPECIFIED": 0,
 		"COUNTER_METRIC_LIKE":        1,
 		"COUNTER_METRIC_WATCH":       2,
+		"COUNTER_METRIC_VIEW":        3,
 	}
 )
 
@@ -965,6 +971,104 @@ func (x *ResetCounterResponse) GetRecount() int64 {
 	return 0
 }
 
+// 请求 - 上报浏览
+type RecordViewRequest struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	TargetType    TargetType             `protobuf:"varint,1,opt,name=target_type,json=targetType,proto3,enum=interaction.service.v1.TargetType" json:"target_type,omitempty"`
+	TargetId      uint32                 `protobuf:"varint,2,opt,name=target_id,json=targetId,proto3" json:"target_id,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *RecordViewRequest) Reset() {
+	*x = RecordViewRequest{}
+	mi := &file_interaction_service_v1_interaction_proto_msgTypes[17]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *RecordViewRequest) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*RecordViewRequest) ProtoMessage() {}
+
+func (x *RecordViewRequest) ProtoReflect() protoreflect.Message {
+	mi := &file_interaction_service_v1_interaction_proto_msgTypes[17]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use RecordViewRequest.ProtoReflect.Descriptor instead.
+func (*RecordViewRequest) Descriptor() ([]byte, []int) {
+	return file_interaction_service_v1_interaction_proto_rawDescGZIP(), []int{17}
+}
+
+func (x *RecordViewRequest) GetTargetType() TargetType {
+	if x != nil {
+		return x.TargetType
+	}
+	return TargetType_TARGET_TYPE_UNSPECIFIED
+}
+
+func (x *RecordViewRequest) GetTargetId() uint32 {
+	if x != nil {
+		return x.TargetId
+	}
+	return 0
+}
+
+// 回应 - 上报浏览（返回累加后的浏览量，便于前端直接展示）
+type RecordViewResponse struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	ViewCount     int64                  `protobuf:"varint,1,opt,name=view_count,json=viewCount,proto3" json:"view_count,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *RecordViewResponse) Reset() {
+	*x = RecordViewResponse{}
+	mi := &file_interaction_service_v1_interaction_proto_msgTypes[18]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *RecordViewResponse) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*RecordViewResponse) ProtoMessage() {}
+
+func (x *RecordViewResponse) ProtoReflect() protoreflect.Message {
+	mi := &file_interaction_service_v1_interaction_proto_msgTypes[18]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use RecordViewResponse.ProtoReflect.Descriptor instead.
+func (*RecordViewResponse) Descriptor() ([]byte, []int) {
+	return file_interaction_service_v1_interaction_proto_rawDescGZIP(), []int{18}
+}
+
+func (x *RecordViewResponse) GetViewCount() int64 {
+	if x != nil {
+		return x.ViewCount
+	}
+	return 0
+}
+
 var File_interaction_service_v1_interaction_proto protoreflect.FileDescriptor
 
 const file_interaction_service_v1_interaction_proto_rawDesc = "" +
@@ -1029,16 +1133,25 @@ const file_interaction_service_v1_interaction_proto_rawDesc = "" +
 	"\ttarget_id\x18\x02 \x01(\rR\btargetId\x12=\n" +
 	"\x06metric\x18\x03 \x01(\x0e2%.interaction.service.v1.CounterMetricR\x06metric\"0\n" +
 	"\x14ResetCounterResponse\x12\x18\n" +
-	"\arecount\x18\x01 \x01(\x03R\arecount*X\n" +
+	"\arecount\x18\x01 \x01(\x03R\arecount\"u\n" +
+	"\x11RecordViewRequest\x12C\n" +
+	"\vtarget_type\x18\x01 \x01(\x0e2\".interaction.service.v1.TargetTypeR\n" +
+	"targetType\x12\x1b\n" +
+	"\ttarget_id\x18\x02 \x01(\rR\btargetId\"3\n" +
+	"\x12RecordViewResponse\x12\x1d\n" +
+	"\n" +
+	"view_count\x18\x01 \x01(\x03R\tviewCount*n\n" +
 	"\n" +
 	"TargetType\x12\x1b\n" +
 	"\x17TARGET_TYPE_UNSPECIFIED\x10\x00\x12\x14\n" +
 	"\x10TARGET_TYPE_POST\x10\x01\x12\x17\n" +
-	"\x13TARGET_TYPE_COMMENT\x10\x02*b\n" +
+	"\x13TARGET_TYPE_COMMENT\x10\x02\x12\x14\n" +
+	"\x10TARGET_TYPE_PAGE\x10\x03*{\n" +
 	"\rCounterMetric\x12\x1e\n" +
 	"\x1aCOUNTER_METRIC_UNSPECIFIED\x10\x00\x12\x17\n" +
 	"\x13COUNTER_METRIC_LIKE\x10\x01\x12\x18\n" +
-	"\x14COUNTER_METRIC_WATCH\x10\x022\xb3\x05\n" +
+	"\x14COUNTER_METRIC_WATCH\x10\x02\x12\x17\n" +
+	"\x13COUNTER_METRIC_VIEW\x10\x032\x9a\x06\n" +
 	"\x12InteractionService\x12S\n" +
 	"\x04Like\x12#.interaction.service.v1.LikeRequest\x1a$.interaction.service.v1.LikeResponse\"\x00\x12U\n" +
 	"\x06Unlike\x12#.interaction.service.v1.LikeRequest\x1a$.interaction.service.v1.LikeResponse\"\x00\x12V\n" +
@@ -1046,7 +1159,9 @@ const file_interaction_service_v1_interaction_proto_rawDesc = "" +
 	"\aUnwatch\x12$.interaction.service.v1.WatchRequest\x1a%.interaction.service.v1.WatchResponse\"\x00\x12\x83\x01\n" +
 	"\x14GetInteractionStatus\x123.interaction.service.v1.GetInteractionStatusRequest\x1a4.interaction.service.v1.GetInteractionStatusResponse\"\x00\x12U\n" +
 	"\x10ListWatchedPosts\x12\x19.pagination.PagingRequest\x1a$.content.service.v1.ListPostResponse\"\x00\x12b\n" +
-	"\tGetCounts\x12(.interaction.service.v1.GetCountsRequest\x1a).interaction.service.v1.GetCountsResponse\"\x002\x9e\x03\n" +
+	"\tGetCounts\x12(.interaction.service.v1.GetCountsRequest\x1a).interaction.service.v1.GetCountsResponse\"\x00\x12e\n" +
+	"\n" +
+	"RecordView\x12).interaction.service.v1.RecordViewRequest\x1a*.interaction.service.v1.RecordViewResponse\"\x002\x9e\x03\n" +
 	"\x17InteractionAdminService\x12\x8c\x01\n" +
 	"\x17PurgeTargetInteractions\x126.interaction.service.v1.PurgeTargetInteractionsRequest\x1a7.interaction.service.v1.PurgeTargetInteractionsResponse\"\x00\x12\x86\x01\n" +
 	"\x15PurgeUserInteractions\x124.interaction.service.v1.PurgeUserInteractionsRequest\x1a5.interaction.service.v1.PurgeUserInteractionsResponse\"\x00\x12k\n" +
@@ -1066,7 +1181,7 @@ func file_interaction_service_v1_interaction_proto_rawDescGZIP() []byte {
 }
 
 var file_interaction_service_v1_interaction_proto_enumTypes = make([]protoimpl.EnumInfo, 2)
-var file_interaction_service_v1_interaction_proto_msgTypes = make([]protoimpl.MessageInfo, 19)
+var file_interaction_service_v1_interaction_proto_msgTypes = make([]protoimpl.MessageInfo, 21)
 var file_interaction_service_v1_interaction_proto_goTypes = []any{
 	(TargetType)(0),                         // 0: interaction.service.v1.TargetType
 	(CounterMetric)(0),                      // 1: interaction.service.v1.CounterMetric
@@ -1087,50 +1202,55 @@ var file_interaction_service_v1_interaction_proto_goTypes = []any{
 	(*PurgeUserInteractionsResponse)(nil),   // 16: interaction.service.v1.PurgeUserInteractionsResponse
 	(*ResetCounterRequest)(nil),             // 17: interaction.service.v1.ResetCounterRequest
 	(*ResetCounterResponse)(nil),            // 18: interaction.service.v1.ResetCounterResponse
-	nil,                                     // 19: interaction.service.v1.GetInteractionStatusResponse.StatusesEntry
-	nil,                                     // 20: interaction.service.v1.GetCountsResponse.CountsEntry
-	(*v1.PagingRequest)(nil),                // 21: pagination.PagingRequest
-	(*v11.ListPostResponse)(nil),            // 22: content.service.v1.ListPostResponse
+	(*RecordViewRequest)(nil),               // 19: interaction.service.v1.RecordViewRequest
+	(*RecordViewResponse)(nil),              // 20: interaction.service.v1.RecordViewResponse
+	nil,                                     // 21: interaction.service.v1.GetInteractionStatusResponse.StatusesEntry
+	nil,                                     // 22: interaction.service.v1.GetCountsResponse.CountsEntry
+	(*v1.PagingRequest)(nil),                // 23: pagination.PagingRequest
+	(*v11.ListPostResponse)(nil),            // 24: content.service.v1.ListPostResponse
 }
 var file_interaction_service_v1_interaction_proto_depIdxs = []int32{
 	0,  // 0: interaction.service.v1.LikeRequest.target_type:type_name -> interaction.service.v1.TargetType
 	0,  // 1: interaction.service.v1.GetInteractionStatusRequest.target_type:type_name -> interaction.service.v1.TargetType
-	19, // 2: interaction.service.v1.GetInteractionStatusResponse.statuses:type_name -> interaction.service.v1.GetInteractionStatusResponse.StatusesEntry
+	21, // 2: interaction.service.v1.GetInteractionStatusResponse.statuses:type_name -> interaction.service.v1.GetInteractionStatusResponse.StatusesEntry
 	1,  // 3: interaction.service.v1.MetricCount.metric:type_name -> interaction.service.v1.CounterMetric
 	9,  // 4: interaction.service.v1.CountMap.counts:type_name -> interaction.service.v1.MetricCount
 	0,  // 5: interaction.service.v1.GetCountsRequest.target_type:type_name -> interaction.service.v1.TargetType
 	1,  // 6: interaction.service.v1.GetCountsRequest.metrics:type_name -> interaction.service.v1.CounterMetric
-	20, // 7: interaction.service.v1.GetCountsResponse.counts:type_name -> interaction.service.v1.GetCountsResponse.CountsEntry
+	22, // 7: interaction.service.v1.GetCountsResponse.counts:type_name -> interaction.service.v1.GetCountsResponse.CountsEntry
 	0,  // 8: interaction.service.v1.PurgeTargetInteractionsRequest.target_type:type_name -> interaction.service.v1.TargetType
 	0,  // 9: interaction.service.v1.ResetCounterRequest.target_type:type_name -> interaction.service.v1.TargetType
 	1,  // 10: interaction.service.v1.ResetCounterRequest.metric:type_name -> interaction.service.v1.CounterMetric
-	7,  // 11: interaction.service.v1.GetInteractionStatusResponse.StatusesEntry.value:type_name -> interaction.service.v1.InteractionStatus
-	10, // 12: interaction.service.v1.GetCountsResponse.CountsEntry.value:type_name -> interaction.service.v1.CountMap
-	2,  // 13: interaction.service.v1.InteractionService.Like:input_type -> interaction.service.v1.LikeRequest
-	2,  // 14: interaction.service.v1.InteractionService.Unlike:input_type -> interaction.service.v1.LikeRequest
-	4,  // 15: interaction.service.v1.InteractionService.Watch:input_type -> interaction.service.v1.WatchRequest
-	4,  // 16: interaction.service.v1.InteractionService.Unwatch:input_type -> interaction.service.v1.WatchRequest
-	6,  // 17: interaction.service.v1.InteractionService.GetInteractionStatus:input_type -> interaction.service.v1.GetInteractionStatusRequest
-	21, // 18: interaction.service.v1.InteractionService.ListWatchedPosts:input_type -> pagination.PagingRequest
-	11, // 19: interaction.service.v1.InteractionService.GetCounts:input_type -> interaction.service.v1.GetCountsRequest
-	13, // 20: interaction.service.v1.InteractionAdminService.PurgeTargetInteractions:input_type -> interaction.service.v1.PurgeTargetInteractionsRequest
-	15, // 21: interaction.service.v1.InteractionAdminService.PurgeUserInteractions:input_type -> interaction.service.v1.PurgeUserInteractionsRequest
-	17, // 22: interaction.service.v1.InteractionAdminService.ResetCounter:input_type -> interaction.service.v1.ResetCounterRequest
-	3,  // 23: interaction.service.v1.InteractionService.Like:output_type -> interaction.service.v1.LikeResponse
-	3,  // 24: interaction.service.v1.InteractionService.Unlike:output_type -> interaction.service.v1.LikeResponse
-	5,  // 25: interaction.service.v1.InteractionService.Watch:output_type -> interaction.service.v1.WatchResponse
-	5,  // 26: interaction.service.v1.InteractionService.Unwatch:output_type -> interaction.service.v1.WatchResponse
-	8,  // 27: interaction.service.v1.InteractionService.GetInteractionStatus:output_type -> interaction.service.v1.GetInteractionStatusResponse
-	22, // 28: interaction.service.v1.InteractionService.ListWatchedPosts:output_type -> content.service.v1.ListPostResponse
-	12, // 29: interaction.service.v1.InteractionService.GetCounts:output_type -> interaction.service.v1.GetCountsResponse
-	14, // 30: interaction.service.v1.InteractionAdminService.PurgeTargetInteractions:output_type -> interaction.service.v1.PurgeTargetInteractionsResponse
-	16, // 31: interaction.service.v1.InteractionAdminService.PurgeUserInteractions:output_type -> interaction.service.v1.PurgeUserInteractionsResponse
-	18, // 32: interaction.service.v1.InteractionAdminService.ResetCounter:output_type -> interaction.service.v1.ResetCounterResponse
-	23, // [23:33] is the sub-list for method output_type
-	13, // [13:23] is the sub-list for method input_type
-	13, // [13:13] is the sub-list for extension type_name
-	13, // [13:13] is the sub-list for extension extendee
-	0,  // [0:13] is the sub-list for field type_name
+	0,  // 11: interaction.service.v1.RecordViewRequest.target_type:type_name -> interaction.service.v1.TargetType
+	7,  // 12: interaction.service.v1.GetInteractionStatusResponse.StatusesEntry.value:type_name -> interaction.service.v1.InteractionStatus
+	10, // 13: interaction.service.v1.GetCountsResponse.CountsEntry.value:type_name -> interaction.service.v1.CountMap
+	2,  // 14: interaction.service.v1.InteractionService.Like:input_type -> interaction.service.v1.LikeRequest
+	2,  // 15: interaction.service.v1.InteractionService.Unlike:input_type -> interaction.service.v1.LikeRequest
+	4,  // 16: interaction.service.v1.InteractionService.Watch:input_type -> interaction.service.v1.WatchRequest
+	4,  // 17: interaction.service.v1.InteractionService.Unwatch:input_type -> interaction.service.v1.WatchRequest
+	6,  // 18: interaction.service.v1.InteractionService.GetInteractionStatus:input_type -> interaction.service.v1.GetInteractionStatusRequest
+	23, // 19: interaction.service.v1.InteractionService.ListWatchedPosts:input_type -> pagination.PagingRequest
+	11, // 20: interaction.service.v1.InteractionService.GetCounts:input_type -> interaction.service.v1.GetCountsRequest
+	19, // 21: interaction.service.v1.InteractionService.RecordView:input_type -> interaction.service.v1.RecordViewRequest
+	13, // 22: interaction.service.v1.InteractionAdminService.PurgeTargetInteractions:input_type -> interaction.service.v1.PurgeTargetInteractionsRequest
+	15, // 23: interaction.service.v1.InteractionAdminService.PurgeUserInteractions:input_type -> interaction.service.v1.PurgeUserInteractionsRequest
+	17, // 24: interaction.service.v1.InteractionAdminService.ResetCounter:input_type -> interaction.service.v1.ResetCounterRequest
+	3,  // 25: interaction.service.v1.InteractionService.Like:output_type -> interaction.service.v1.LikeResponse
+	3,  // 26: interaction.service.v1.InteractionService.Unlike:output_type -> interaction.service.v1.LikeResponse
+	5,  // 27: interaction.service.v1.InteractionService.Watch:output_type -> interaction.service.v1.WatchResponse
+	5,  // 28: interaction.service.v1.InteractionService.Unwatch:output_type -> interaction.service.v1.WatchResponse
+	8,  // 29: interaction.service.v1.InteractionService.GetInteractionStatus:output_type -> interaction.service.v1.GetInteractionStatusResponse
+	24, // 30: interaction.service.v1.InteractionService.ListWatchedPosts:output_type -> content.service.v1.ListPostResponse
+	12, // 31: interaction.service.v1.InteractionService.GetCounts:output_type -> interaction.service.v1.GetCountsResponse
+	20, // 32: interaction.service.v1.InteractionService.RecordView:output_type -> interaction.service.v1.RecordViewResponse
+	14, // 33: interaction.service.v1.InteractionAdminService.PurgeTargetInteractions:output_type -> interaction.service.v1.PurgeTargetInteractionsResponse
+	16, // 34: interaction.service.v1.InteractionAdminService.PurgeUserInteractions:output_type -> interaction.service.v1.PurgeUserInteractionsResponse
+	18, // 35: interaction.service.v1.InteractionAdminService.ResetCounter:output_type -> interaction.service.v1.ResetCounterResponse
+	25, // [25:36] is the sub-list for method output_type
+	14, // [14:25] is the sub-list for method input_type
+	14, // [14:14] is the sub-list for extension type_name
+	14, // [14:14] is the sub-list for extension extendee
+	0,  // [0:14] is the sub-list for field type_name
 }
 
 func init() { file_interaction_service_v1_interaction_proto_init() }
@@ -1144,7 +1264,7 @@ func file_interaction_service_v1_interaction_proto_init() {
 			GoPackagePath: reflect.TypeOf(x{}).PkgPath(),
 			RawDescriptor: unsafe.Slice(unsafe.StringData(file_interaction_service_v1_interaction_proto_rawDesc), len(file_interaction_service_v1_interaction_proto_rawDesc)),
 			NumEnums:      2,
-			NumMessages:   19,
+			NumMessages:   21,
 			NumExtensions: 0,
 			NumServices:   2,
 		},

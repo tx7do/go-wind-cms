@@ -1193,6 +1193,10 @@ export interface InteractionService {
   GetCounts(
     request: interactionservicev1_GetCountsRequest,
   ): Promise<interactionservicev1_GetCountsResponse>;
+  // 上报一次浏览（PV +1）。匿名可调用；C 端详情页挂载时触发一次。
+  RecordView(
+    request: interactionservicev1_RecordViewRequest,
+  ): Promise<interactionservicev1_RecordViewResponse>;
 }
 
 export function createInteractionServiceClient(
@@ -1362,6 +1366,14 @@ export function createInteractionServiceClient(
         method: 'GetCounts',
       }) as Promise<interactionservicev1_GetCountsResponse>;
     },
+    RecordView(request) {
+      const path = `app/v1/interactions/views`;
+      const body = JSON.stringify(request);
+      return transport.unary(path, 'POST', body, {
+        service: 'InteractionService',
+        method: 'RecordView',
+      }) as Promise<interactionservicev1_RecordViewResponse>;
+    },
   };
 }
 export type interactionservicev1_LikeRequest = {
@@ -1372,6 +1384,7 @@ export type interactionservicev1_LikeRequest = {
 // 交互目标类型
 export type interactionservicev1_TargetType =
   | 'TARGET_TYPE_COMMENT'
+  | 'TARGET_TYPE_PAGE'
   | 'TARGET_TYPE_POST'
   | 'TARGET_TYPE_UNSPECIFIED';
 export type interactionservicev1_LikeResponse = {
@@ -1482,10 +1495,11 @@ export type interactionservicev1_GetCountsRequest = {
 };
 
 // 计数指标类型。与 interaction_counter 表的 metric 列对应。
-// 当前仅点赞计数活跃；后续若新增浏览量/点踩等，在此扩展枚举值即可，无需改 schema。
+// VIEW（浏览量）为只增计数：无 ledger 行，不支持取消；匿名可上报。
 export type interactionservicev1_CounterMetric =
   | 'COUNTER_METRIC_LIKE'
   | 'COUNTER_METRIC_UNSPECIFIED'
+  | 'COUNTER_METRIC_VIEW'
   | 'COUNTER_METRIC_WATCH';
 // target_id → 该目标下各 metric 的计数集合。
 // 未在 counter 表中记录的 (target, metric) 组合不出现在响应中，前端按 0 兜底。
@@ -1503,6 +1517,17 @@ export type interactionservicev1_CountMap = {
 export type interactionservicev1_MetricCount = {
   count: number | undefined;
   metric: interactionservicev1_CounterMetric | undefined;
+};
+
+// 请求 - 上报浏览
+export type interactionservicev1_RecordViewRequest = {
+  targetId: number | undefined;
+  targetType: interactionservicev1_TargetType | undefined;
+};
+
+// 回应 - 上报浏览（返回累加后的浏览量，便于前端直接展示）
+export type interactionservicev1_RecordViewResponse = {
+  viewCount: number | undefined;
 };
 
 // 导航服务

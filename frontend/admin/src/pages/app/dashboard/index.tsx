@@ -194,7 +194,53 @@ const InteractionTopChart = () => {
   return <ReactECharts option={option} notMerge style={chartBaseStyle} />;
 };
 
-/** 互动类型分布（点赞/收藏 环形图） */
+/** 浏览 TOP 榜（真实 PV，VIEW 计数横向条形图，TOP1 在顶部） */
+const ViewTopChart = () => {
+  const { t } = useI18n('dashboard');
+  const { data, isLoading } = useGetInteractionStats();
+
+  const option = useMemo(() => {
+    const items = data?.topViewedPosts ?? [];
+    const titles = items
+      .map((item) => displayTitle(item.title, t('analytics.titleFallback')))
+      .reverse();
+    const counts = items.map((item) => toNum(item.likeCount)).reverse();
+    const fullTitles = items
+      .map((item) => item.title || t('analytics.titleFallback'))
+      .reverse();
+    return {
+      grid: { bottom: 0, containLabel: true, left: '1%', right: '5%', top: '2%' },
+      series: [
+        {
+          data: counts,
+          itemStyle: { color: '#5ab1ef' },
+          label: { position: 'right', show: true },
+          name: t('analytics.totalViews'),
+          type: 'bar',
+        },
+      ],
+      tooltip: {
+        formatter: (params: unknown) => {
+          const p = params as { dataIndex: number } | { dataIndex: number }[];
+          const idx = Array.isArray(p) ? p[0].dataIndex : p.dataIndex;
+          return `${fullTitles[idx]}<br/>${t('analytics.totalViews')}: ${counts[idx]}`;
+        },
+        trigger: 'axis',
+      },
+      xAxis: { minInterval: 1, type: 'value' },
+      yAxis: {
+        axisTick: { show: false },
+        data: titles,
+        type: 'category',
+      },
+    };
+  }, [data, t]);
+
+  if (isLoading) return <Spin style={spinStyle} />;
+  return <ReactECharts option={option} notMerge style={chartBaseStyle} />;
+};
+
+/** 互动类型分布（点赞/收藏/浏览 环形图） */
 const InteractionDistributionChart = () => {
   const { t } = useI18n('dashboard');
   const { data, isLoading } = useGetInteractionStats();
@@ -215,6 +261,11 @@ const InteractionDistributionChart = () => {
               itemStyle: { color: '#5ab1ef' },
               name: t('analytics.totalWatches'),
               value: toNum(data?.totalWatches),
+            },
+            {
+              itemStyle: { color: '#d48265' },
+              name: t('analytics.totalViews'),
+              value: toNum(data?.totalViews),
             },
           ],
           emphasis: {
@@ -349,9 +400,17 @@ const Dashboard = () => {
         <ContentTrendChart />
       </Card>
 
-      {/* 互动 TOP 榜 / 互动类型分布 / 登录活跃 */}
+      {/* 浏览 TOP 榜（真实 PV）/ 互动 TOP 榜 / 互动类型分布 / 登录活跃 */}
       <Row gutter={[16, 16]} style={{ marginTop: 16 }}>
-        <Col lg={8} xs={24}>
+        <Col lg={12} xs={24}>
+          <Card
+            title={t('analytics.viewTop')}
+            styles={{ body: { paddingTop: 12 } }}
+          >
+            <ViewTopChart />
+          </Card>
+        </Col>
+        <Col lg={12} xs={24}>
           <Card
             title={t('analytics.interactionTop')}
             styles={{ body: { paddingTop: 12 } }}

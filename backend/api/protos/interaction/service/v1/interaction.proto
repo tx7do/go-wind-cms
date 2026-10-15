@@ -35,6 +35,10 @@ service InteractionService {
 
   // 批量查询指定目标的计数（如点赞数）。供前端列表/详情渲染计数展示。
   rpc GetCounts (GetCountsRequest) returns (GetCountsResponse) {}
+
+  // 上报一次浏览（PV +1）。匿名可调用（C 端详情页挂载时触发一次）；
+  // 只增计数，无 ledger、无去重——同一访客刷新会重复计数，PV 口径即如此。
+  rpc RecordView (RecordViewRequest) returns (RecordViewResponse) {}
 }
 
 // 交互管理服务（运营清数据面）
@@ -62,14 +66,16 @@ enum TargetType {
   TARGET_TYPE_UNSPECIFIED = 0;
   TARGET_TYPE_POST = 1;
   TARGET_TYPE_COMMENT = 2;
+  TARGET_TYPE_PAGE = 3; // 仅 VIEW 计数使用（页面浏览量）
 }
 
 // 计数指标类型。与 interaction_counter 表的 metric 列对应。
-// 当前仅点赞计数活跃；后续若新增浏览量/点踩等，在此扩展枚举值即可，无需改 schema。
+// VIEW（浏览量）为只增计数：无 ledger 行，不支持取消；匿名可上报。
 enum CounterMetric {
   COUNTER_METRIC_UNSPECIFIED = 0;
   COUNTER_METRIC_LIKE = 1;
   COUNTER_METRIC_WATCH = 2;
+  COUNTER_METRIC_VIEW = 3;
 }
 
 message LikeRequest {
@@ -156,4 +162,15 @@ message ResetCounterRequest {
 
 message ResetCounterResponse {
   int64 recount = 1; // 按 ledger 重算后的真实计数
+}
+
+// 请求 - 上报浏览
+message RecordViewRequest {
+  TargetType target_type = 1;
+  uint32 target_id = 2;
+}
+
+// 回应 - 上报浏览（返回累加后的浏览量，便于前端直接展示）
+message RecordViewResponse {
+  int64 view_count = 1;
 }

@@ -29,6 +29,7 @@ const (
 	InteractionService_GetInteractionStatus_FullMethodName = "/app.service.v1.InteractionService/GetInteractionStatus"
 	InteractionService_ListWatchedPosts_FullMethodName     = "/app.service.v1.InteractionService/ListWatchedPosts"
 	InteractionService_GetCounts_FullMethodName            = "/app.service.v1.InteractionService/GetCounts"
+	InteractionService_RecordView_FullMethodName           = "/app.service.v1.InteractionService/RecordView"
 )
 
 // InteractionServiceClient is the client API for InteractionService service.
@@ -51,6 +52,8 @@ type InteractionServiceClient interface {
 	ListWatchedPosts(ctx context.Context, in *v11.PagingRequest, opts ...grpc.CallOption) (*v12.ListPostResponse, error)
 	// 批量查询计数
 	GetCounts(ctx context.Context, in *v1.GetCountsRequest, opts ...grpc.CallOption) (*v1.GetCountsResponse, error)
+	// 上报一次浏览（PV +1）。匿名可调用；C 端详情页挂载时触发一次。
+	RecordView(ctx context.Context, in *v1.RecordViewRequest, opts ...grpc.CallOption) (*v1.RecordViewResponse, error)
 }
 
 type interactionServiceClient struct {
@@ -131,6 +134,16 @@ func (c *interactionServiceClient) GetCounts(ctx context.Context, in *v1.GetCoun
 	return out, nil
 }
 
+func (c *interactionServiceClient) RecordView(ctx context.Context, in *v1.RecordViewRequest, opts ...grpc.CallOption) (*v1.RecordViewResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(v1.RecordViewResponse)
+	err := c.cc.Invoke(ctx, InteractionService_RecordView_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 // InteractionServiceServer is the server API for InteractionService service.
 // All implementations must embed UnimplementedInteractionServiceServer
 // for forward compatibility.
@@ -151,6 +164,8 @@ type InteractionServiceServer interface {
 	ListWatchedPosts(context.Context, *v11.PagingRequest) (*v12.ListPostResponse, error)
 	// 批量查询计数
 	GetCounts(context.Context, *v1.GetCountsRequest) (*v1.GetCountsResponse, error)
+	// 上报一次浏览（PV +1）。匿名可调用；C 端详情页挂载时触发一次。
+	RecordView(context.Context, *v1.RecordViewRequest) (*v1.RecordViewResponse, error)
 	mustEmbedUnimplementedInteractionServiceServer()
 }
 
@@ -181,6 +196,9 @@ func (UnimplementedInteractionServiceServer) ListWatchedPosts(context.Context, *
 }
 func (UnimplementedInteractionServiceServer) GetCounts(context.Context, *v1.GetCountsRequest) (*v1.GetCountsResponse, error) {
 	return nil, status.Error(codes.Unimplemented, "method GetCounts not implemented")
+}
+func (UnimplementedInteractionServiceServer) RecordView(context.Context, *v1.RecordViewRequest) (*v1.RecordViewResponse, error) {
+	return nil, status.Error(codes.Unimplemented, "method RecordView not implemented")
 }
 func (UnimplementedInteractionServiceServer) mustEmbedUnimplementedInteractionServiceServer() {}
 func (UnimplementedInteractionServiceServer) testEmbeddedByValue()                            {}
@@ -329,6 +347,24 @@ func _InteractionService_GetCounts_Handler(srv interface{}, ctx context.Context,
 	return interceptor(ctx, in, info, handler)
 }
 
+func _InteractionService_RecordView_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(v1.RecordViewRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(InteractionServiceServer).RecordView(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: InteractionService_RecordView_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(InteractionServiceServer).RecordView(ctx, req.(*v1.RecordViewRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 // InteractionService_ServiceDesc is the grpc.ServiceDesc for InteractionService service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
@@ -363,6 +399,10 @@ var InteractionService_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "GetCounts",
 			Handler:    _InteractionService_GetCounts_Handler,
+		},
+		{
+			MethodName: "RecordView",
+			Handler:    _InteractionService_RecordView_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},

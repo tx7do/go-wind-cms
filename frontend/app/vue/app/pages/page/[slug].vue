@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import type { contentservicev1_Page } from '@/api/generated/app/service/v1'
 import { fetchPage, fetchPageBySlug, fetchPagePreview, getPageTranslation } from '@/api/composables/page'
+import { recordView } from '@/api/composables/interaction''
 
 /**
  * CMS Page 公开渲染页：
@@ -38,6 +39,17 @@ async function load() {
 }
 
 watch([slugParam, previewToken], load, { immediate: true })
+
+// 浏览量上报（PV +1）：页面加载成功且拿到 id 后记一次
+const viewReportedId = ref<number | null>(null)
+watch(
+  () => page.value?.id,
+  (pid) => {
+    if (!pid || viewReportedId.value === pid) return
+    viewReportedId.value = pid
+    recordView('TARGET_TYPE_PAGE', pid)
+  },
+)
 
 // SSR/CSR 都生效的标题与 SEO meta
 useHead(() => {

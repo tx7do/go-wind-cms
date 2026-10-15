@@ -272,7 +272,7 @@ func TestStatsRepo_TenantIsolation(t *testing.T) {
 	assert.Equal(t, int64(0), counts.PostCount, "租户 2 应看不到租户 1 的帖子")
 	assert.Equal(t, int64(0), counts.InteractionCount, "租户 2 应看不到租户 1 的互动计数")
 
-	likes, watches, err := repo.GetInteractionTotals(ctx2)
+	likes, watches, _, err := repo.GetInteractionTotals(ctx2)
 	require.NoError(t, err)
 	assert.Equal(t, int64(0), likes)
 	assert.Equal(t, int64(0), watches)

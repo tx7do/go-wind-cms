@@ -25,6 +25,7 @@ import {
     useInteractionStatus,
     useGetCounts,
     extractCount,
+    recordView,
     useLike,
     useUnlike,
     useWatch,
@@ -69,7 +70,7 @@ export default function PostDetailPage() {
     const countsResp = useGetCounts(
         'TARGET_TYPE_POST',
         postId ? [postId] : [],
-        ['COUNTER_METRIC_LIKE', 'COUNTER_METRIC_WATCH'],
+        ['COUNTER_METRIC_LIKE', 'COUNTER_METRIC_WATCH', 'COUNTER_METRIC_VIEW'],
     );
     const likeMutation = useLike();
     const unlikeMutation = useUnlike();
@@ -119,14 +120,25 @@ export default function PostDetailPage() {
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [postId, previewToken]);
 
-    // 从 GetCounts 响应同步点赞/收藏计数到缓存。
+    const [viewCount, setViewCount] = useState<number | undefined>(undefined);
+
+    // 从 GetCounts 响应同步点赞/收藏/浏览计数到缓存。
     // 计数由 interaction_counter 表提供（post 表的散落计数列已移除）。
     useEffect(() => {
         if (countsResp.data && postId) {
             setLikeCount(extractCount(countsResp.data, postId, 'COUNTER_METRIC_LIKE'));
             setWatchCount(extractCount(countsResp.data, postId, 'COUNTER_METRIC_WATCH'));
+            setViewCount(extractCount(countsResp.data, postId, 'COUNTER_METRIC_VIEW'));
         }
     }, [countsResp.data, postId]);
+
+    // 浏览量上报（PV +1）：每次进入详情记一次；ref 守卫避免 StrictMode 双挂载重复计数
+    const viewReportedRef = useRef<number | null>(null);
+    useEffect(() => {
+        if (!postId || viewReportedRef.current === postId) return;
+        viewReportedRef.current = postId;
+        recordView('TARGET_TYPE_POST', postId);
+    }, [postId]);
 
     // Handlers
     const handleBack = () => {
@@ -244,6 +256,7 @@ export default function PostDetailPage() {
                                 createdAt={post.createdAt}
                                 likes={likeCount}
                                 watchCount={watchCount}
+                                views={viewCount}
                             />
                         </header>
 

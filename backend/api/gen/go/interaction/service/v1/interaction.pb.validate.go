@@ -1925,3 +1925,213 @@ var _ interface {
 	Cause() error
 	ErrorName() string
 } = ResetCounterResponseValidationError{}
+
+// Validate checks the field values on RecordViewRequest with the rules defined
+// in the proto definition for this message. If any rules are violated, the
+// first error encountered is returned, or nil if there are no violations.
+func (m *RecordViewRequest) Validate() error {
+	return m.validate(false)
+}
+
+// ValidateAll checks the field values on RecordViewRequest with the rules
+// defined in the proto definition for this message. If any rules are
+// violated, the result is a list of violation errors wrapped in
+// RecordViewRequestMultiError, or nil if none found.
+func (m *RecordViewRequest) ValidateAll() error {
+	return m.validate(true)
+}
+
+func (m *RecordViewRequest) validate(all bool) error {
+	if m == nil {
+		return nil
+	}
+
+	var errors []error
+
+	// no validation rules for TargetType
+
+	// no validation rules for TargetId
+
+	if len(errors) > 0 {
+		return RecordViewRequestMultiError(errors)
+	}
+
+	return nil
+}
+
+// RecordViewRequestMultiError is an error wrapping multiple validation errors
+// returned by RecordViewRequest.ValidateAll() if the designated constraints
+// aren't met.
+type RecordViewRequestMultiError []error
+
+// Error returns a concatenation of all the error messages it wraps.
+func (m RecordViewRequestMultiError) Error() string {
+	msgs := make([]string, 0, len(m))
+	for _, err := range m {
+		msgs = append(msgs, err.Error())
+	}
+	return strings.Join(msgs, "; ")
+}
+
+// AllErrors returns a list of validation violation errors.
+func (m RecordViewRequestMultiError) AllErrors() []error { return m }
+
+// RecordViewRequestValidationError is the validation error returned by
+// RecordViewRequest.Validate if the designated constraints aren't met.
+type RecordViewRequestValidationError struct {
+	field  string
+	reason string
+	cause  error
+	key    bool
+}
+
+// Field function returns field value.
+func (e RecordViewRequestValidationError) Field() string { return e.field }
+
+// Reason function returns reason value.
+func (e RecordViewRequestValidationError) Reason() string { return e.reason }
+
+// Cause function returns cause value.
+func (e RecordViewRequestValidationError) Cause() error { return e.cause }
+
+// Key function returns key value.
+func (e RecordViewRequestValidationError) Key() bool { return e.key }
+
+// ErrorName returns error name.
+func (e RecordViewRequestValidationError) ErrorName() string {
+	return "RecordViewRequestValidationError"
+}
+
+// Error satisfies the builtin error interface
+func (e RecordViewRequestValidationError) Error() string {
+	cause := ""
+	if e.cause != nil {
+		cause = fmt.Sprintf(" | caused by: %v", e.cause)
+	}
+
+	key := ""
+	if e.key {
+		key = "key for "
+	}
+
+	return fmt.Sprintf(
+		"invalid %sRecordViewRequest.%s: %s%s",
+		key,
+		e.field,
+		e.reason,
+		cause)
+}
+
+var _ error = RecordViewRequestValidationError{}
+
+var _ interface {
+	Field() string
+	Reason() string
+	Key() bool
+	Cause() error
+	ErrorName() string
+} = RecordViewRequestValidationError{}
+
+// Validate checks the field values on RecordViewResponse with the rules
+// defined in the proto definition for this message. If any rules are
+// violated, the first error encountered is returned, or nil if there are no violations.
+func (m *RecordViewResponse) Validate() error {
+	return m.validate(false)
+}
+
+// ValidateAll checks the field values on RecordViewResponse with the rules
+// defined in the proto definition for this message. If any rules are
+// violated, the result is a list of violation errors wrapped in
+// RecordViewResponseMultiError, or nil if none found.
+func (m *RecordViewResponse) ValidateAll() error {
+	return m.validate(true)
+}
+
+func (m *RecordViewResponse) validate(all bool) error {
+	if m == nil {
+		return nil
+	}
+
+	var errors []error
+
+	// no validation rules for ViewCount
+
+	if len(errors) > 0 {
+		return RecordViewResponseMultiError(errors)
+	}
+
+	return nil
+}
+
+// RecordViewResponseMultiError is an error wrapping multiple validation errors
+// returned by RecordViewResponse.ValidateAll() if the designated constraints
+// aren't met.
+type RecordViewResponseMultiError []error
+
+// Error returns a concatenation of all the error messages it wraps.
+func (m RecordViewResponseMultiError) Error() string {
+	msgs := make([]string, 0, len(m))
+	for _, err := range m {
+		msgs = append(msgs, err.Error())
+	}
+	return strings.Join(msgs, "; ")
+}
+
+// AllErrors returns a list of validation violation errors.
+func (m RecordViewResponseMultiError) AllErrors() []error { return m }
+
+// RecordViewResponseValidationError is the validation error returned by
+// RecordViewResponse.Validate if the designated constraints aren't met.
+type RecordViewResponseValidationError struct {
+	field  string
+	reason string
+	cause  error
+	key    bool
+}
+
+// Field function returns field value.
+func (e RecordViewResponseValidationError) Field() string { return e.field }
+
+// Reason function returns reason value.
+func (e RecordViewResponseValidationError) Reason() string { return e.reason }
+
+// Cause function returns cause value.
+func (e RecordViewResponseValidationError) Cause() error { return e.cause }
+
+// Key function returns key value.
+func (e RecordViewResponseValidationError) Key() bool { return e.key }
+
+// ErrorName returns error name.
+func (e RecordViewResponseValidationError) ErrorName() string {
+	return "RecordViewResponseValidationError"
+}
+
+// Error satisfies the builtin error interface
+func (e RecordViewResponseValidationError) Error() string {
+	cause := ""
+	if e.cause != nil {
+		cause = fmt.Sprintf(" | caused by: %v", e.cause)
+	}
+
+	key := ""
+	if e.key {
+		key = "key for "
+	}
+
+	return fmt.Sprintf(
+		"invalid %sRecordViewResponse.%s: %s%s",
+		key,
+		e.field,
+		e.reason,
+		cause)
+}
+
+var _ error = RecordViewResponseValidationError{}
+
+var _ interface {
+	Field() string
+	Reason() string
+	Key() bool
+	Cause() error
+	ErrorName() string
+} = RecordViewResponseValidationError{}

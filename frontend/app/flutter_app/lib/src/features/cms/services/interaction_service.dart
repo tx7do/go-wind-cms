@@ -1,4 +1,5 @@
 import 'package:dio/dio.dart' show DioException;
+import 'package:flutter/foundation.dart' show debugPrint;
 import 'package:get_it/get_it.dart' show GetIt;
 
 import 'package:flutter_app/generated/api/app/service/v1/index.dart'
@@ -13,6 +14,8 @@ import 'package:flutter_app/generated/api/app/service/v1/index.dart'
         InteractionServiceV1TargetType,
         InteractionServiceV1GetCountsRequest,
         InteractionServiceV1GetCountsResponse,
+        InteractionServiceV1RecordViewRequest,
+        InteractionServiceV1RecordViewResponse,
         InteractionServiceV1CounterMetric,
         ContentServiceV1ListPostResponse;
 import 'package:flutter_app/src/core/services/pagination_query.dart';
@@ -113,6 +116,20 @@ class InteractionService extends BaseService {
           metrics: metrics));
     } on DioException catch (e) {
       handleDioError(e);
+      return null;
+    }
+  }
+
+  /// 上报一次浏览（PV +1）。匿名可调用；详情页挂载时触发一次。
+  /// 失败静默（best-effort：PV 丢失不影响主功能），返回累加后的浏览量或 null。
+  Future<int?> recordView(
+      InteractionServiceV1TargetType targetType, int targetId) async {
+    try {
+      final resp = await _api.recordView(InteractionServiceV1RecordViewRequest(
+          targetType: targetType, targetId: targetId));
+      return resp.viewCount;
+    } on DioException catch (e) {
+      debugPrint('record view failed: ${e.message}');
       return null;
     }
   }

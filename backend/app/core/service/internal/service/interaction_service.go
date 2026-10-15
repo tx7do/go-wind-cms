@@ -2,9 +2,12 @@ package service
 
 import (
 	"context"
+	"strconv"
 
 	"github.com/go-kratos/kratos/v2/log"
+	kratosMetadata "github.com/go-kratos/kratos/v2/metadata"
 	paginationV1 "github.com/tx7do/go-crud/api/gen/go/pagination/v1"
+	"github.com/tx7do/go-crud/viewer"
 	"github.com/tx7do/kratos-bootstrap/bootstrap"
 
 	"go-wind-cms/app/core/service/internal/data"
@@ -129,4 +132,41 @@ func (s *InteractionService) GetCounts(ctx context.Context, req *interactionV1.G
 		return nil, err
 	}
 	return &interactionV1.GetCountsResponse{Counts: counts}, nil
+}
+
+// RecordView 浏览量上报（匿名可调用）。
+//
+// 租户归属解析顺序与评论链路一致：viewer 携带租户（登录态）优先；
+// 匿名链路 app BFF 经内网可信元数据 x-md-global-tenant-id 注入（不可被外部伪造）；
+// 两者皆缺省（本地直连 core 等）按 0（平台）落库。
+func (s *InteractionService) RecordView(ctx context.Context, req *interactionV1.RecordViewRequest) (*interactionV1.RecordViewResponse, error) {
+	if req == nil || req.GetTargetId() == 0 || req.GetTargetType() == interactionV1.TargetType_TARGET_TYPE_UNSPECIFIED {
+		return nil, interactionV1.ErrorBadRequest("invalid parameter")
+	}
+
+	var tid uint32
+	if vc, exist := viewer.FromContext(ctx); exist && vc != nil && vc.TenantID() > 0 {
+		tid = uint32(vc.TenantID())
+	} else {
+		tid = tenantIDFromInternalMetadata(ctx)
+	}
+
+	count, err := s.interactionRepo.RecordView(ctx, tid, req.GetTargetId(), req.GetTargetType())
+	if err != nil {
+		return nil, err
+	}
+	return &interactionV1.RecordViewResponse{ViewCount: count}, nil
+}
+
+// tenantIDFromInternalMetadata 从内网可信元数据 x-md-global-tenant-id 读租户
+//（app BFF 按请求 Host 解析后注入；该 header 仅内网 gRPC 可达，外部不可伪造）。
+func tenantIDFromInternalMetadata(ctx context.Context) uint32 {
+	if md, ok := kratosMetadata.FromServerContext(ctx); ok {
+		if v := md.Get("x-md-global-tenant-id"); v != "" {
+			if tid, err := strconv.ParseUint(v, 10, 32); err == nil && tid > 0 {
+				return uint32(tid)
+			}
+		}
+	}
+	return 0
 }

@@ -12267,6 +12267,7 @@ components:
                         - COUNTER_METRIC_UNSPECIFIED
                         - COUNTER_METRIC_LIKE
                         - COUNTER_METRIC_WATCH
+                        - COUNTER_METRIC_VIEW
                     type: string
                     format: enum
         interaction.service.v1.ResetCounterResponse:
@@ -14403,6 +14404,12 @@ components:
                 totalLikes:
                     type: string
                 totalWatches:
+                    type: string
+                topViewedPosts:
+                    type: array
+                    items:
+                        $ref: '#/components/schemas/stats.service.v1.InteractionTopItem'
+                totalViews:
                     type: string
         stats.service.v1.GetLoginActivityResponse:
             type: object

@@ -28,6 +28,7 @@ const (
 	InteractionService_GetInteractionStatus_FullMethodName = "/interaction.service.v1.InteractionService/GetInteractionStatus"
 	InteractionService_ListWatchedPosts_FullMethodName     = "/interaction.service.v1.InteractionService/ListWatchedPosts"
 	InteractionService_GetCounts_FullMethodName            = "/interaction.service.v1.InteractionService/GetCounts"
+	InteractionService_RecordView_FullMethodName           = "/interaction.service.v1.InteractionService/RecordView"
 )
 
 // InteractionServiceClient is the client API for InteractionService service.
@@ -58,6 +59,9 @@ type InteractionServiceClient interface {
 	ListWatchedPosts(ctx context.Context, in *v1.PagingRequest, opts ...grpc.CallOption) (*v11.ListPostResponse, error)
 	// 批量查询指定目标的计数（如点赞数）。供前端列表/详情渲染计数展示。
 	GetCounts(ctx context.Context, in *GetCountsRequest, opts ...grpc.CallOption) (*GetCountsResponse, error)
+	// 上报一次浏览（PV +1）。匿名可调用（C 端详情页挂载时触发一次）；
+	// 只增计数，无 ledger、无去重——同一访客刷新会重复计数，PV 口径即如此。
+	RecordView(ctx context.Context, in *RecordViewRequest, opts ...grpc.CallOption) (*RecordViewResponse, error)
 }
 
 type interactionServiceClient struct {
@@ -138,6 +142,16 @@ func (c *interactionServiceClient) GetCounts(ctx context.Context, in *GetCountsR
 	return out, nil
 }
 
+func (c *interactionServiceClient) RecordView(ctx context.Context, in *RecordViewRequest, opts ...grpc.CallOption) (*RecordViewResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(RecordViewResponse)
+	err := c.cc.Invoke(ctx, InteractionService_RecordView_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 // InteractionServiceServer is the server API for InteractionService service.
 // All implementations must embed UnimplementedInteractionServiceServer
 // for forward compatibility.
@@ -166,6 +180,9 @@ type InteractionServiceServer interface {
 	ListWatchedPosts(context.Context, *v1.PagingRequest) (*v11.ListPostResponse, error)
 	// 批量查询指定目标的计数（如点赞数）。供前端列表/详情渲染计数展示。
 	GetCounts(context.Context, *GetCountsRequest) (*GetCountsResponse, error)
+	// 上报一次浏览（PV +1）。匿名可调用（C 端详情页挂载时触发一次）；
+	// 只增计数，无 ledger、无去重——同一访客刷新会重复计数，PV 口径即如此。
+	RecordView(context.Context, *RecordViewRequest) (*RecordViewResponse, error)
 	mustEmbedUnimplementedInteractionServiceServer()
 }
 
@@ -196,6 +213,9 @@ func (UnimplementedInteractionServiceServer) ListWatchedPosts(context.Context, *
 }
 func (UnimplementedInteractionServiceServer) GetCounts(context.Context, *GetCountsRequest) (*GetCountsResponse, error) {
 	return nil, status.Error(codes.Unimplemented, "method GetCounts not implemented")
+}
+func (UnimplementedInteractionServiceServer) RecordView(context.Context, *RecordViewRequest) (*RecordViewResponse, error) {
+	return nil, status.Error(codes.Unimplemented, "method RecordView not implemented")
 }
 func (UnimplementedInteractionServiceServer) mustEmbedUnimplementedInteractionServiceServer() {}
 func (UnimplementedInteractionServiceServer) testEmbeddedByValue()                            {}
@@ -344,6 +364,24 @@ func _InteractionService_GetCounts_Handler(srv interface{}, ctx context.Context,
 	return interceptor(ctx, in, info, handler)
 }
 
+func _InteractionService_RecordView_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(RecordViewRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(InteractionServiceServer).RecordView(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: InteractionService_RecordView_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(InteractionServiceServer).RecordView(ctx, req.(*RecordViewRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 // InteractionService_ServiceDesc is the grpc.ServiceDesc for InteractionService service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
@@ -378,6 +416,10 @@ var InteractionService_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "GetCounts",
 			Handler:    _InteractionService_GetCounts_Handler,
+		},
+		{
+			MethodName: "RecordView",
+			Handler:    _InteractionService_RecordView_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},

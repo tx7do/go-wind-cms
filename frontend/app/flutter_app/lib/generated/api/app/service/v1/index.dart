@@ -5704,6 +5704,17 @@ class InteractionServiceClient {
     ), headers: headers);
     return InteractionServiceV1GetCountsResponse.fromJson(result as Map<String, dynamic>);
   }
+
+  /// 上报一次浏览（PV +1）。匿名可调用；C 端详情页挂载时触发一次。
+  Future<InteractionServiceV1RecordViewResponse> recordView(InteractionServiceV1RecordViewRequest request, {Map<String, String>? headers}) async {
+    final path = '/app/v1/interactions/views';
+    final body = jsonEncode(request.toJson());
+    final result = await _transport.unary(path, 'POST', body, TransportMeta(
+      service: 'InteractionService',
+      method: 'RecordView',
+    ), headers: headers);
+    return InteractionServiceV1RecordViewResponse.fromJson(result as Map<String, dynamic>);
+  }
 }
 
 class InteractionServiceV1LikeRequest {
@@ -5810,6 +5821,7 @@ class InteractionServiceV1LikeRequest {
 /// 交互目标类型
 enum InteractionServiceV1TargetType {
   targetTypeComment('TARGET_TYPE_COMMENT', 2),
+  targetTypePage('TARGET_TYPE_PAGE', 3),
   targetTypePost('TARGET_TYPE_POST', 1),
   targetTypeUnspecified('TARGET_TYPE_UNSPECIFIED', 0);
 
@@ -7596,10 +7608,11 @@ class InteractionServiceV1GetCountsRequest {
 }
 
 /// 计数指标类型。与 interaction_counter 表的 metric 列对应。
-/// 当前仅点赞计数活跃；后续若新增浏览量/点踩等，在此扩展枚举值即可，无需改 schema。
+/// VIEW（浏览量）为只增计数：无 ledger 行，不支持取消；匿名可上报。
 enum InteractionServiceV1CounterMetric {
   counterMetricLike('COUNTER_METRIC_LIKE', 1),
   counterMetricUnspecified('COUNTER_METRIC_UNSPECIFIED', 0),
+  counterMetricView('COUNTER_METRIC_VIEW', 3),
   counterMetricWatch('COUNTER_METRIC_WATCH', 2);
 
   final String value;
@@ -7898,6 +7911,192 @@ class InteractionServiceV1MetricCount {
         // field 2: count
         case 2: {
           m.count = r.readInt64();
+          break;
+        }
+        default: {
+          r.skip();
+        }
+      }
+    }
+    return m;
+  }
+
+}
+
+/// 请求 - 上报浏览
+class InteractionServiceV1RecordViewRequest {
+  int? targetId;
+  InteractionServiceV1TargetType? targetType;
+
+  InteractionServiceV1RecordViewRequest({
+    this.targetId,
+    this.targetType,
+  });
+
+  factory InteractionServiceV1RecordViewRequest.fromJson(Map<String, dynamic> json) {
+    return InteractionServiceV1RecordViewRequest(
+      targetId: json['targetId'] as int?,
+      targetType: json['targetType'] != null ? InteractionServiceV1TargetType.fromString(json['targetType'] as String) : null,
+    );
+  }
+
+  Map<String, dynamic> toJson() {
+    final json = <String, dynamic>{};
+    if (targetId != null) json['targetId'] = targetId;
+    if (targetType != null) json['targetType'] = targetType!.value;
+    return json;
+  }
+
+  @override
+  String toString() {
+    return 'InteractionServiceV1RecordViewRequest(targetId: $targetId, targetType: $targetType)';
+  }
+
+  @override
+  bool operator ==(Object other) =>
+    identical(this, other) ||
+    other is InteractionServiceV1RecordViewRequest &&
+      runtimeType == other.runtimeType
+      && targetId == other.targetId
+      && targetType == other.targetType
+    ;
+
+  @override
+  int get hashCode => Object.hashAll([
+    targetId,
+    targetType,
+  ]);
+
+  InteractionServiceV1RecordViewRequest copyWith({
+    int? targetId,
+    InteractionServiceV1TargetType? targetType,
+  }) {
+    return InteractionServiceV1RecordViewRequest(
+      targetId: targetId ?? this.targetId,
+      targetType: targetType ?? this.targetType,
+    );
+  }
+
+  /// 二进制 proto 编码（MQTT 等二进制传输用；字段按编号升序写出）
+  Uint8List writeToBuffer() {
+    final w = ProtoWireWriter();
+    _writeTo(w);
+    return w.toBuffer();
+  }
+
+  void _writeTo(ProtoWireWriter w) {
+    // field 1: targetType
+    final f1 = targetType;
+    if (f1 != null) {
+      w.writeEnum(1, f1!.wire); // InteractionServiceV1TargetType
+    }
+    // field 2: targetId
+    final f2 = targetId;
+    if (f2 != null) {
+      w.writeUint32(2, f2!);
+    }
+  }
+
+  factory InteractionServiceV1RecordViewRequest.fromBuffer(List<int> bytes) {
+    return InteractionServiceV1RecordViewRequest._readFrom(ProtoWireReader(bytes));
+  }
+
+  static InteractionServiceV1RecordViewRequest _readFrom(ProtoWireReader r) {
+    final m = InteractionServiceV1RecordViewRequest();
+    while (r.next()) {
+      switch (r.fieldNumber) {
+        // field 1: targetType
+        case 1: {
+          m.targetType = InteractionServiceV1TargetType.fromWire(r.readEnum());
+          break;
+        }
+        // field 2: targetId
+        case 2: {
+          m.targetId = r.readUint32();
+          break;
+        }
+        default: {
+          r.skip();
+        }
+      }
+    }
+    return m;
+  }
+
+}
+
+/// 回应 - 上报浏览（返回累加后的浏览量，便于前端直接展示）
+class InteractionServiceV1RecordViewResponse {
+  int? viewCount;
+
+  InteractionServiceV1RecordViewResponse({
+    this.viewCount,
+  });
+
+  factory InteractionServiceV1RecordViewResponse.fromJson(Map<String, dynamic> json) {
+    return InteractionServiceV1RecordViewResponse(
+      viewCount: json['viewCount'] != null ? int.parse(json['viewCount'].toString()) : null,
+    );
+  }
+
+  Map<String, dynamic> toJson() {
+    final json = <String, dynamic>{};
+    if (viewCount != null) json['viewCount'] = viewCount.toString();
+    return json;
+  }
+
+  @override
+  String toString() {
+    return 'InteractionServiceV1RecordViewResponse(viewCount: $viewCount)';
+  }
+
+  @override
+  bool operator ==(Object other) =>
+    identical(this, other) ||
+    other is InteractionServiceV1RecordViewResponse &&
+      runtimeType == other.runtimeType
+      && viewCount == other.viewCount
+    ;
+
+  @override
+  int get hashCode => Object.hashAll([
+    viewCount,
+  ]);
+
+  InteractionServiceV1RecordViewResponse copyWith({
+    int? viewCount,
+  }) {
+    return InteractionServiceV1RecordViewResponse(
+      viewCount: viewCount ?? this.viewCount,
+    );
+  }
+
+  /// 二进制 proto 编码（MQTT 等二进制传输用；字段按编号升序写出）
+  Uint8List writeToBuffer() {
+    final w = ProtoWireWriter();
+    _writeTo(w);
+    return w.toBuffer();
+  }
+
+  void _writeTo(ProtoWireWriter w) {
+    // field 1: viewCount
+    final f1 = viewCount;
+    if (f1 != null) {
+      w.writeInt64(1, f1!);
+    }
+  }
+
+  factory InteractionServiceV1RecordViewResponse.fromBuffer(List<int> bytes) {
+    return InteractionServiceV1RecordViewResponse._readFrom(ProtoWireReader(bytes));
+  }
+
+  static InteractionServiceV1RecordViewResponse _readFrom(ProtoWireReader r) {
+    final m = InteractionServiceV1RecordViewResponse();
+    while (r.next()) {
+      switch (r.fieldNumber) {
+        // field 1: viewCount
+        case 1: {
+          m.viewCount = r.readInt64();
           break;
         }
         default: {

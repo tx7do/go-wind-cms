@@ -15,6 +15,7 @@ import {
   type interactionservicev1_CounterMetric,
 } from '@/api/generated/app/service/v1';
 import { apiClient } from '@/api/client';
+import { requestApi } from '@/core/transport/rest';
 import { useAccessStore } from '@/stores/modules/core/access.state';
 
 // ==============================
@@ -198,6 +199,26 @@ export function extractCount(
 //
 // 写操作成功后主动 invalidate 对应的 interaction-status / interaction-counts 查询，
 // 使列表中相关按钮态与计数立即刷新。
+
+/**
+ * 上报一次浏览（PV +1）。匿名可调用。
+ * best-effort：失败仅记日志（PV 丢失不影响主功能）。
+ */
+export async function recordView(
+  targetType: 'TARGET_TYPE_POST' | 'TARGET_TYPE_PAGE',
+  targetId: number,
+) {
+  if (!targetId) return
+  try {
+    await requestApi({
+      path: 'app/v1/interactions/views',
+      method: 'POST',
+      body: JSON.stringify({ targetType, targetId }),
+    })
+  } catch (error) {
+    console.error('Record view failed:', error)
+  }
+}
 
 export function useLike(
   options?: UseMutationOptions<

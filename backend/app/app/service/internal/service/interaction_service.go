@@ -2,13 +2,17 @@ package service
 
 import (
 	"context"
+	"strconv"
 
 	"github.com/go-kratos/kratos/v2/log"
+	khttp "github.com/go-kratos/kratos/v2/transport/http"
+	kratosMetadata "github.com/go-kratos/kratos/v2/metadata"
 	paginationV1 "github.com/tx7do/go-crud/api/gen/go/pagination/v1"
 	"github.com/tx7do/kratos-bootstrap/bootstrap"
 
 	appV1 "go-wind-cms/api/gen/go/app/service/v1"
 	interactionV1 "go-wind-cms/api/gen/go/interaction/service/v1"
+	entmiddleware "go-wind-cms/pkg/middleware/ent"
 
 	contentV1 "go-wind-cms/api/gen/go/content/service/v1"
 )
@@ -26,13 +30,15 @@ type InteractionService struct {
 	appV1.InteractionServiceHTTPServer
 
 	interactionClient interactionV1.InteractionServiceClient
+	tenantResolve     entmiddleware.TenantResolver
 	log               *log.Helper
 }
 
-func NewInteractionService(ctx *bootstrap.Context, interactionClient interactionV1.InteractionServiceClient) *InteractionService {
+func NewInteractionService(ctx *bootstrap.Context, interactionClient interactionV1.InteractionServiceClient, tenantResolve entmiddleware.TenantResolver) *InteractionService {
 	return &InteractionService{
 		log:               ctx.NewLoggerHelper("interaction/service/app-service"),
 		interactionClient: interactionClient,
+		tenantResolve:     tenantResolve,
 	}
 }
 
@@ -62,4 +68,20 @@ func (s *InteractionService) ListWatchedPosts(ctx context.Context, req *paginati
 
 func (s *InteractionService) GetCounts(ctx context.Context, req *interactionV1.GetCountsRequest) (*interactionV1.GetCountsResponse, error) {
 	return s.interactionClient.GetCounts(ctx, req)
+}
+
+// RecordView 浏览量上报（匿名可调用）。
+//
+// 匿名请求无 OperatorMetadata，core 侧 viewer 租户为 0；与评论/搜索链路同款
+// 处理：按请求 Host 解析租户后经 x-md-global-tenant-id 传给 core 显式归属
+//（仅本服务内网 gRPC 可达，header 不可被外部调用方伪造注入）。
+func (s *InteractionService) RecordView(ctx context.Context, req *interactionV1.RecordViewRequest) (*interactionV1.RecordViewResponse, error) {
+	if s.tenantResolve != nil {
+		if hr, ok := khttp.RequestFromServerContext(ctx); ok && hr != nil && hr.Host != "" {
+			if tid, err := s.tenantResolve.ResolveTenantIDByDomain(ctx, hr.Host); err == nil && tid > 0 {
+				ctx = kratosMetadata.AppendToClientContext(ctx, "x-md-global-tenant-id", strconv.FormatUint(uint64(tid), 10))
+			}
+		}
+	}
+	return s.interactionClient.RecordView(ctx, req)
 }

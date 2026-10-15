@@ -4808,10 +4808,11 @@ export type interactionservicev1_ResetCounterRequest = {
 };
 
 // 计数指标类型。与 interaction_counter 表的 metric 列对应。
-// 当前仅点赞计数活跃；后续若新增浏览量/点踩等，在此扩展枚举值即可，无需改 schema。
+// VIEW（浏览量）为只增计数：无 ledger 行，不支持取消；匿名可上报。
 export type interactionservicev1_CounterMetric =
   | 'COUNTER_METRIC_LIKE'
   | 'COUNTER_METRIC_UNSPECIFIED'
+  | 'COUNTER_METRIC_VIEW'
   | 'COUNTER_METRIC_WATCH';
 export type interactionservicev1_ResetCounterResponse = {
   recount: number | undefined;
@@ -11631,7 +11632,9 @@ export type statsservicev1_GetInteractionStatsRequest = {
 
 export type statsservicev1_GetInteractionStatsResponse = {
   topLikedPosts: statsservicev1_InteractionTopItem[] | undefined;
+  topViewedPosts: statsservicev1_InteractionTopItem[] | undefined;
   totalLikes: number | undefined;
+  totalViews: number | undefined;
   totalWatches: number | undefined;
 };
 

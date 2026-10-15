@@ -591,3 +591,38 @@ func TestPurgeTargetInteractions_CrossTenantIsolated(t *testing.T) {
 	_ = cntB
 	assert.True(t, existsB, "tenant 2 的 counter 行应仍存在（跨租户隔离）")
 }
+
+// TestRecordView_IncrementOnly 验证浏览量上报：只增计数、无 ledger、匿名（租户显式传入）可用。
+func TestRecordView_IncrementOnly(t *testing.T) {
+	repo, db, cleanup := newTestInteractionRepo(t)
+	defer cleanup()
+
+	pid := createTestPost(t, db, 1)
+	ctx := viewerCtx(1, 100)
+
+	// 首次上报：从 1 起计
+	count, err := repo.RecordView(ctx, 1, pid, interactionV1.TargetType_TARGET_TYPE_POST)
+	require.NoError(t, err)
+	assert.Equal(t, int64(1), count, "首次上报 viewCount 应为 1")
+
+	// 重复上报：累加不去重（PV 口径）
+	count, err = repo.RecordView(ctx, 1, pid, interactionV1.TargetType_TARGET_TYPE_POST)
+	require.NoError(t, err)
+	assert.Equal(t, int64(2), count, "重复上报应累加到 2")
+
+	// VIEW 行存在且只影响 VIEW metric
+	viewCnt, viewExists := readCounterRow(t, db, 1, pid, interactionV1.TargetType_TARGET_TYPE_POST, interactionV1.CounterMetric_COUNTER_METRIC_VIEW)
+	assert.True(t, viewExists, "上报后 interaction_counter 应有 VIEW 行")
+	assert.Equal(t, int64(2), viewCnt)
+	_, likeExists := readCounterRow(t, db, 1, pid, interactionV1.TargetType_TARGET_TYPE_POST, interactionV1.CounterMetric_COUNTER_METRIC_LIKE)
+	assert.False(t, likeExists, "浏览上报不应产生 LIKE 行")
+
+	// GetCounts 能读到 VIEW metric
+	counts, err := repo.GetCounts(ctx, interactionV1.TargetType_TARGET_TYPE_POST, []uint32{pid},
+		[]interactionV1.CounterMetric{interactionV1.CounterMetric_COUNTER_METRIC_VIEW})
+	require.NoError(t, err)
+	if cm, ok := counts[pid]; assert.True(t, ok, "目标应有条目") && assert.Len(t, cm.Counts, 1) {
+		assert.Equal(t, interactionV1.CounterMetric_COUNTER_METRIC_VIEW, cm.Counts[0].Metric)
+		assert.Equal(t, int64(2), cm.Counts[0].Count)
+	}
+}

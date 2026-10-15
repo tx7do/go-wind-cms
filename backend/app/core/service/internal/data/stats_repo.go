@@ -213,7 +213,7 @@ func (r *StatsRepo) GetOverview(ctx context.Context) (*OverviewCounts, error) {
 		return nil, statsV1.ErrorInternalServerError("count new likes failed")
 	}
 
-	likes, watches, err := r.GetInteractionTotals(ctx)
+	likes, watches, _, err := r.GetInteractionTotals(ctx)
 	if err != nil {
 		return nil, err
 	}
@@ -256,7 +256,7 @@ func (r *StatsRepo) GetDailyTrend(ctx context.Context, days int32) (users, posts
 }
 
 // GetInteractionTotals 各 metric 的计数累计总量。
-func (r *StatsRepo) GetInteractionTotals(ctx context.Context) (likes, watches int64, err error) {
+func (r *StatsRepo) GetInteractionTotals(ctx context.Context) (likes, watches, views int64, err error) {
 	tid, hasTenant := maybeTenantFromViewer(ctx)
 
 	query := r.entClient.Client().InteractionCounter.Query()
@@ -276,7 +276,7 @@ func (r *StatsRepo) GetInteractionTotals(ctx context.Context) (likes, watches in
 		Scan(ctx, &rows)
 	if err != nil {
 		r.log.Errorf("aggregate interaction totals failed: %s", err.Error())
-		return 0, 0, statsV1.ErrorInternalServerError("aggregate interaction totals failed")
+		return 0, 0, 0, statsV1.ErrorInternalServerError("aggregate interaction totals failed")
 	}
 
 	for _, row := range rows {
@@ -285,9 +285,11 @@ func (r *StatsRepo) GetInteractionTotals(ctx context.Context) (likes, watches in
 			likes = row.Total
 		case uint8(interactionV1.CounterMetric_COUNTER_METRIC_WATCH):
 			watches = row.Total
+		case uint8(interactionV1.CounterMetric_COUNTER_METRIC_VIEW):
+			views = row.Total
 		}
 	}
-	return likes, watches, nil
+	return likes, watches, views, nil
 }
 
 // GetTopLikedPosts 帖子点赞 TOP N（降序）。回收站/已不存在的帖子被剔除。
@@ -371,6 +373,90 @@ func (r *StatsRepo) GetTopLikedPosts(ctx context.Context, topN int32) ([]TopLike
 			TargetID:  row.TargetID,
 			Title:     titles[row.TargetID],
 			LikeCount: row.Total,
+		})
+	}
+	return out, nil
+}
+
+// GetTopViewedPosts 帖子浏览量 TOP N（降序）。回收站/已不存在的帖子被剔除。
+func (r *StatsRepo) GetTopViewedPosts(ctx context.Context, topN int32) ([]TopLikedPost, error) {
+	tid, hasTenant := maybeTenantFromViewer(ctx)
+	client := r.entClient.Client()
+
+	query := client.InteractionCounter.Query().Where(
+		interactioncounter.TargetTypeEQ(uint8(interactionV1.TargetType_TARGET_TYPE_POST)),
+		interactioncounter.MetricEQ(uint8(interactionV1.CounterMetric_COUNTER_METRIC_VIEW)),
+	)
+	if hasTenant {
+		query = query.Where(interactioncounter.TenantIDEQ(tid))
+	}
+
+	var rows []struct {
+		TargetID uint32 `json:"target_id"`
+		Total    int64  `json:"total"`
+	}
+	err := query.
+		Modify(func(s *sql.Selector) {
+			s.Select(sql.As("target_id", "target_id"), sql.As(sql.Sum("count"), "total"))
+			s.GroupBy("target_id")
+			s.OrderBy(sql.Desc("total"))
+			s.Limit(int(topN))
+		}).
+		Scan(ctx, &rows)
+	if err != nil {
+		r.log.Errorf("aggregate top viewed posts failed: %s", err.Error())
+		return nil, statsV1.ErrorInternalServerError("aggregate top viewed posts failed")
+	}
+	if len(rows) == 0 {
+		return nil, nil
+	}
+
+	ids := make([]uint32, 0, len(rows))
+	for _, row := range rows {
+		ids = append(ids, row.TargetID)
+	}
+	existQ := client.Post.Query().Where(post.IDIn(ids...), post.StatusNEQ(post.StatusPostStatusTrashed))
+	if hasTenant {
+		existQ = existQ.Where(post.TenantIDEQ(tid))
+	}
+	existing, err := existQ.IDs(ctx)
+	if err != nil {
+		r.log.Errorf("query existing posts failed: %s", err.Error())
+		return nil, statsV1.ErrorInternalServerError("query existing posts failed")
+	}
+	existingSet := make(map[uint32]struct{}, len(existing))
+	for _, id := range existing {
+		existingSet[id] = struct{}{}
+	}
+
+	titleQ := client.PostTranslation.Query().Where(posttranslation.PostIDIn(existing...))
+	if hasTenant {
+		titleQ = titleQ.Where(posttranslation.TenantIDEQ(tid))
+	}
+	titleRows, err := titleQ.All(ctx)
+	if err != nil {
+		r.log.Errorf("query post titles failed: %s", err.Error())
+		return nil, statsV1.ErrorInternalServerError("query post titles failed")
+	}
+	titles := make(map[uint32]string, len(titleRows))
+	for _, t := range titleRows {
+		if t.PostID == nil || t.Title == nil || *t.Title == "" {
+			continue
+		}
+		if _, ok := titles[*t.PostID]; !ok {
+			titles[*t.PostID] = *t.Title
+		}
+	}
+
+	out := make([]TopLikedPost, 0, len(rows))
+	for _, row := range rows {
+		if _, ok := existingSet[row.TargetID]; !ok {
+			continue
+		}
+		out = append(out, TopLikedPost{
+			TargetID:  row.TargetID,
+			Title:     titles[row.TargetID],
+			LikeCount: row.Total, // 复用结构体：此处语义为浏览计数
 		})
 	}
 	return out, nil

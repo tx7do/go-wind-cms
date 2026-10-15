@@ -1,6 +1,6 @@
 'use client';
 
-import {useEffect, useMemo, useState} from 'react';
+import {useEffect, useMemo, useRef, useState} from 'react';
 import {useSearchParams} from 'next/navigation';
 import {useTranslations} from 'next-intl';
 
@@ -8,6 +8,7 @@ import type {contentservicev1_Page} from '@/api/generated/app/service/v1';
 import {fetchPage, fetchPageBySlug, fetchPagePreview} from '@/api/hooks/page';
 import CmsPageView from '@/components/page/CmsPageView';
 import SectionContainer from '@/components/layout/SectionContainer';
+import {recordView} from '@/api/hooks/interaction';
 
 /**
  * CMS Page 公开渲染页（静态导出，query 传参）：
@@ -61,6 +62,14 @@ export default function PageDetailClient() {
         const tr = page?.translations?.find((x) => x.title);
         if (tr?.title) document.title = `${tr.title} - GoWind Content Hub`;
     }, [page]);
+
+    // 浏览量上报（PV +1）：ref 守卫避免 StrictMode 双挂载重复计数
+    const viewReportedRef = useRef<number | null>(null);
+    useEffect(() => {
+        if (!page?.id || viewReportedRef.current === page.id) return;
+        viewReportedRef.current = page.id;
+        recordView('TARGET_TYPE_PAGE', page.id);
+    }, [page?.id]);
 
     if (loading) {
         return (

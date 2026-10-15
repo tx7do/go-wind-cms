@@ -422,12 +422,14 @@ func (x *InteractionTopItem) GetLikeCount() int64 {
 }
 
 type GetInteractionStatsResponse struct {
-	state         protoimpl.MessageState `protogen:"open.v1"`
-	TopLikedPosts []*InteractionTopItem  `protobuf:"bytes,1,rep,name=top_liked_posts,json=topLikedPosts,proto3" json:"top_liked_posts,omitempty"` // 点赞数降序 TOP N
-	TotalLikes    int64                  `protobuf:"varint,2,opt,name=total_likes,json=totalLikes,proto3" json:"total_likes,omitempty"`           // 全站点赞累计总量
-	TotalWatches  int64                  `protobuf:"varint,3,opt,name=total_watches,json=totalWatches,proto3" json:"total_watches,omitempty"`     // 全站收藏累计总量
-	unknownFields protoimpl.UnknownFields
-	sizeCache     protoimpl.SizeCache
+	state          protoimpl.MessageState `protogen:"open.v1"`
+	TopLikedPosts  []*InteractionTopItem  `protobuf:"bytes,1,rep,name=top_liked_posts,json=topLikedPosts,proto3" json:"top_liked_posts,omitempty"`    // 点赞数降序 TOP N
+	TotalLikes     int64                  `protobuf:"varint,2,opt,name=total_likes,json=totalLikes,proto3" json:"total_likes,omitempty"`              // 全站点赞累计总量
+	TotalWatches   int64                  `protobuf:"varint,3,opt,name=total_watches,json=totalWatches,proto3" json:"total_watches,omitempty"`        // 全站收藏累计总量
+	TopViewedPosts []*InteractionTopItem  `protobuf:"bytes,4,rep,name=top_viewed_posts,json=topViewedPosts,proto3" json:"top_viewed_posts,omitempty"` // 浏览量降序 TOP N（真实 PV，来自 VIEW 计数）
+	TotalViews     int64                  `protobuf:"varint,5,opt,name=total_views,json=totalViews,proto3" json:"total_views,omitempty"`              // 全站浏览累计总量
+	unknownFields  protoimpl.UnknownFields
+	sizeCache      protoimpl.SizeCache
 }
 
 func (x *GetInteractionStatsResponse) Reset() {
@@ -477,6 +479,20 @@ func (x *GetInteractionStatsResponse) GetTotalLikes() int64 {
 func (x *GetInteractionStatsResponse) GetTotalWatches() int64 {
 	if x != nil {
 		return x.TotalWatches
+	}
+	return 0
+}
+
+func (x *GetInteractionStatsResponse) GetTopViewedPosts() []*InteractionTopItem {
+	if x != nil {
+		return x.TopViewedPosts
+	}
+	return nil
+}
+
+func (x *GetInteractionStatsResponse) GetTotalViews() int64 {
+	if x != nil {
+		return x.TotalViews
 	}
 	return 0
 }
@@ -611,12 +627,15 @@ const file_stats_service_v1_stats_proto_rawDesc = "" +
 	"\ttarget_id\x18\x01 \x01(\rR\btargetId\x12\x14\n" +
 	"\x05title\x18\x02 \x01(\tR\x05title\x12\x1d\n" +
 	"\n" +
-	"like_count\x18\x03 \x01(\x03R\tlikeCount\"\xb1\x01\n" +
+	"like_count\x18\x03 \x01(\x03R\tlikeCount\"\xa2\x02\n" +
 	"\x1bGetInteractionStatsResponse\x12L\n" +
 	"\x0ftop_liked_posts\x18\x01 \x03(\v2$.stats.service.v1.InteractionTopItemR\rtopLikedPosts\x12\x1f\n" +
 	"\vtotal_likes\x18\x02 \x01(\x03R\n" +
 	"totalLikes\x12#\n" +
-	"\rtotal_watches\x18\x03 \x01(\x03R\ftotalWatches\"-\n" +
+	"\rtotal_watches\x18\x03 \x01(\x03R\ftotalWatches\x12N\n" +
+	"\x10top_viewed_posts\x18\x04 \x03(\v2$.stats.service.v1.InteractionTopItemR\x0etopViewedPosts\x12\x1f\n" +
+	"\vtotal_views\x18\x05 \x01(\x03R\n" +
+	"totalViews\"-\n" +
 	"\x17GetLoginActivityRequest\x12\x12\n" +
 	"\x04days\x18\x01 \x01(\x05R\x04days\"\x88\x01\n" +
 	"\x18GetLoginActivityResponse\x126\n" +
@@ -660,21 +679,22 @@ var file_stats_service_v1_stats_proto_depIdxs = []int32{
 	3,  // 1: stats.service.v1.GetContentTrendResponse.posts:type_name -> stats.service.v1.DailyCount
 	3,  // 2: stats.service.v1.GetContentTrendResponse.comments:type_name -> stats.service.v1.DailyCount
 	6,  // 3: stats.service.v1.GetInteractionStatsResponse.top_liked_posts:type_name -> stats.service.v1.InteractionTopItem
-	3,  // 4: stats.service.v1.GetLoginActivityResponse.success:type_name -> stats.service.v1.DailyCount
-	3,  // 5: stats.service.v1.GetLoginActivityResponse.failed:type_name -> stats.service.v1.DailyCount
-	0,  // 6: stats.service.v1.StatsService.GetDashboardOverview:input_type -> stats.service.v1.GetDashboardOverviewRequest
-	2,  // 7: stats.service.v1.StatsService.GetContentTrend:input_type -> stats.service.v1.GetContentTrendRequest
-	5,  // 8: stats.service.v1.StatsService.GetInteractionStats:input_type -> stats.service.v1.GetInteractionStatsRequest
-	8,  // 9: stats.service.v1.StatsService.GetLoginActivity:input_type -> stats.service.v1.GetLoginActivityRequest
-	1,  // 10: stats.service.v1.StatsService.GetDashboardOverview:output_type -> stats.service.v1.GetDashboardOverviewResponse
-	4,  // 11: stats.service.v1.StatsService.GetContentTrend:output_type -> stats.service.v1.GetContentTrendResponse
-	7,  // 12: stats.service.v1.StatsService.GetInteractionStats:output_type -> stats.service.v1.GetInteractionStatsResponse
-	9,  // 13: stats.service.v1.StatsService.GetLoginActivity:output_type -> stats.service.v1.GetLoginActivityResponse
-	10, // [10:14] is the sub-list for method output_type
-	6,  // [6:10] is the sub-list for method input_type
-	6,  // [6:6] is the sub-list for extension type_name
-	6,  // [6:6] is the sub-list for extension extendee
-	0,  // [0:6] is the sub-list for field type_name
+	6,  // 4: stats.service.v1.GetInteractionStatsResponse.top_viewed_posts:type_name -> stats.service.v1.InteractionTopItem
+	3,  // 5: stats.service.v1.GetLoginActivityResponse.success:type_name -> stats.service.v1.DailyCount
+	3,  // 6: stats.service.v1.GetLoginActivityResponse.failed:type_name -> stats.service.v1.DailyCount
+	0,  // 7: stats.service.v1.StatsService.GetDashboardOverview:input_type -> stats.service.v1.GetDashboardOverviewRequest
+	2,  // 8: stats.service.v1.StatsService.GetContentTrend:input_type -> stats.service.v1.GetContentTrendRequest
+	5,  // 9: stats.service.v1.StatsService.GetInteractionStats:input_type -> stats.service.v1.GetInteractionStatsRequest
+	8,  // 10: stats.service.v1.StatsService.GetLoginActivity:input_type -> stats.service.v1.GetLoginActivityRequest
+	1,  // 11: stats.service.v1.StatsService.GetDashboardOverview:output_type -> stats.service.v1.GetDashboardOverviewResponse
+	4,  // 12: stats.service.v1.StatsService.GetContentTrend:output_type -> stats.service.v1.GetContentTrendResponse
+	7,  // 13: stats.service.v1.StatsService.GetInteractionStats:output_type -> stats.service.v1.GetInteractionStatsResponse
+	9,  // 14: stats.service.v1.StatsService.GetLoginActivity:output_type -> stats.service.v1.GetLoginActivityResponse
+	11, // [11:15] is the sub-list for method output_type
+	7,  // [7:11] is the sub-list for method input_type
+	7,  // [7:7] is the sub-list for extension type_name
+	7,  // [7:7] is the sub-list for extension extendee
+	0,  // [0:7] is the sub-list for field type_name
 }
 
 func init() { file_stats_service_v1_stats_proto_init() }

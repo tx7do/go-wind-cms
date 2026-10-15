@@ -426,6 +426,54 @@ func (r *InteractionRepo) adjustCounterRow(ctx context.Context, tx *ent.Tx, tid,
 	return nil
 }
 
+// RecordView 浏览量上报：只增计数（VIEW 指标），无 ledger、无去重。
+// 与 Like/Unwatch 的差别：匿名即可调用（租户归属由服务层从 viewer/内网元数据解析），
+// 计数行只增不删（ VIEW 归零仅经 admin ResetCounter/Purge 显式操作）。
+// 返回累加后的浏览量。
+func (r *InteractionRepo) RecordView(ctx context.Context, tid, targetID uint32, targetType interactionV1.TargetType) (int64, error) {
+	var count int64
+	txErr := r.txn(ctx, func(tx *ent.Tx) error {
+		existing, err := tx.InteractionCounter.Query().
+			Where(
+				interactioncounter.TenantIDEQ(tid),
+				interactioncounter.TargetTypeEQ(uint8(targetType)),
+				interactioncounter.TargetIDEQ(targetID),
+				interactioncounter.MetricEQ(uint8(interactionV1.CounterMetric_COUNTER_METRIC_VIEW)),
+			).
+			Only(ctx)
+		if err != nil {
+			if !ent.IsNotFound(err) {
+				r.log.Errorf("query interaction_counter row failed: %s", err.Error())
+				return interactionV1.ErrorInternalServerError("query interaction_counter row failed")
+			}
+			// 行不存在：从 1 起计
+			if _, cerr := tx.InteractionCounter.Create().
+				SetTenantID(tid).
+				SetTargetType(uint8(targetType)).
+				SetTargetID(targetID).
+				SetMetric(uint8(interactionV1.CounterMetric_COUNTER_METRIC_VIEW)).
+				SetCount(1).
+				Save(ctx); cerr != nil {
+				r.log.Errorf("create interaction_counter row failed: %s", cerr.Error())
+				return interactionV1.ErrorInternalServerError("create interaction_counter row failed")
+			}
+			count = 1
+			return nil
+		}
+		newVal := *existing.Count + 1
+		if _, uerr := tx.InteractionCounter.UpdateOneID(existing.ID).SetCount(newVal).Save(ctx); uerr != nil {
+			r.log.Errorf("update interaction_counter row failed: %s", uerr.Error())
+			return interactionV1.ErrorInternalServerError("update interaction_counter row failed")
+		}
+		count = newVal
+		return nil
+	})
+	if txErr != nil {
+		return 0, txErr
+	}
+	return count, nil
+}
+
 // GetCounts 批量查询 interaction_counter 表中指定 (target_type, target_ids, metrics) 的计数。
 // 返回 target_id → metric → count 的嵌套 map。未记录的 (target, metric) 不出现在响应中。
 func (r *InteractionRepo) GetCounts(ctx context.Context, targetType interactionV1.TargetType, targetIDs []uint32, metrics []interactionV1.CounterMetric) (map[uint32]*interactionV1.CountMap, error) {

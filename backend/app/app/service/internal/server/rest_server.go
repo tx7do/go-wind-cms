@@ -88,6 +88,10 @@ func NewRestMiddleware(
 		// 仅按 tenant 隔离、不依赖 viewer 身份。Like/Unlike/Watch 等写操作
 		// 及 GetInteractionStatus（含 viewer 个人状态）仍需登录，故不在此登记。
 		appV1.OperationInteractionServiceGetCounts,
+
+		// InteractionService.RecordView：浏览量上报，匿名可调用（PV 语义，
+		// 无 viewer 个人状态；租户归属由服务层按 Host 解析内网注入）。
+		appV1.OperationInteractionServiceRecordView,
 	)
 
 	ms = append(ms, applogging.Server(

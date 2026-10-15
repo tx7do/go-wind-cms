@@ -9,6 +9,7 @@ export interface PostMetaBarProps {
     createdAt?: string;
     likes?: number | string;
     watchCount?: number | string;
+    views?: number | string;
 }
 
 /**
@@ -16,7 +17,7 @@ export interface PostMetaBarProps {
  *
  * 用于 post/[id] 详情页 header 区域
  */
-const PostMetaBar: React.FC<PostMetaBarProps> = ({authorName, createdAt, likes, watchCount}) => {
+const PostMetaBar: React.FC<PostMetaBarProps> = ({authorName, createdAt, likes, watchCount, views}) => {
     return (
         <div className="flex flex-wrap items-center gap-x-5 gap-y-2 pb-5 text-sm font-medium text-muted-foreground border-b border-border/40">
             {authorName && (
@@ -38,6 +39,10 @@ const PostMetaBar: React.FC<PostMetaBarProps> = ({authorName, createdAt, likes, 
             <div className="flex items-center gap-1.5">
                 <XIcon name="carbon:bookmark" size={16}/>
                 <span>{watchCount || 0}</span>
+            </div>
+            <div className="flex items-center gap-1.5">
+                <XIcon name="carbon:view" size={16}/>
+                <span>{views || 0}</span>
             </div>
         </div>
     );

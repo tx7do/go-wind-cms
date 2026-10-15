@@ -9,6 +9,9 @@ import 'package:flutter_app/src/core/utils/translation_helpers.dart';
 import 'package:flutter_app/src/core/widgets/app_back_button.dart';
 import 'package:flutter_app/src/core/widgets/responsive_layout.dart';
 import 'package:flutter_app/src/features/cms/pages/page_detail/widgets/section_renderer.dart';
+import 'package:flutter_app/generated/api/app/service/v1/index.dart'
+    show InteractionServiceV1TargetType;
+import 'package:flutter_app/src/features/cms/services/interaction_service.dart';
 import 'package:flutter_app/src/features/cms/services/page_service.dart';
 
 typedef PageModel = ContentServiceV1Page;
@@ -29,6 +32,7 @@ class PageDetailPage extends StatefulWidget {
 
 class _PageDetailPageState extends State<PageDetailPage> {
   final _pageService = PageService();
+  final _interactionService = InteractionService();
 
   PageModel? _page;
   bool _isLoading = true;
@@ -37,6 +41,13 @@ class _PageDetailPageState extends State<PageDetailPage> {
   void initState() {
     super.initState();
     _loadData();
+    // 浏览量上报（PV +1，best-effort 静默）：每次进入详情记一次
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (widget.pageId > 0) {
+        _interactionService.recordView(
+            InteractionServiceV1TargetType.targetTypePage, widget.pageId);
+      }
+    });
   }
 
   Future<void> _loadData() async {

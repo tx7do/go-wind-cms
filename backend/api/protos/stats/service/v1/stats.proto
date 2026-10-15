@@ -70,6 +70,8 @@ message GetInteractionStatsResponse {
   repeated InteractionTopItem top_liked_posts = 1; // 点赞数降序 TOP N
   int64 total_likes = 2;                           // 全站点赞累计总量
   int64 total_watches = 3;                         // 全站收藏累计总量
+  repeated InteractionTopItem top_viewed_posts = 4; // 浏览量降序 TOP N（真实 PV，来自 VIEW 计数）
+  int64 total_views = 5;                            // 全站浏览累计总量
 }
 
 // 天数参数。服务端 clamp：缺省/非正数取 30，上限 90。

@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import {XIcon} from '@/plugins/xicon'
 import {fetchPost, fetchPostPreview, getPostTitle, getPostContent, getPostThumbnail} from '@/api/composables/post'
-import {useGetCounts, extractCount, useWatch, useUnwatch, useLike, useUnlike} from '@/api/composables/interaction'
+import {useGetCounts, extractCount, recordView, useWatch, useUnwatch, useLike, useUnlike} from '@/api/composables/interaction'
 
 const {t} = useI18n()
 const localePath = useLocalePath()
@@ -25,18 +25,32 @@ const postIdArray = computed(() => (postId.value ? [postId.value] : []))
 const countsResp = useGetCounts(
   'TARGET_TYPE_POST',
   postIdArray,
-  ['COUNTER_METRIC_LIKE', 'COUNTER_METRIC_WATCH'],
+  ['COUNTER_METRIC_LIKE', 'COUNTER_METRIC_WATCH', 'COUNTER_METRIC_VIEW'],
 )
 const likeCount = ref<number | undefined>(undefined)
 const watchCount = ref<number | undefined>(undefined)
+const viewCount = ref<number | undefined>(undefined)
 watch(
   [() => countsResp.data?.value, () => postId.value],
   ([data, pid]) => {
     if (data && pid) {
       likeCount.value = extractCount(data, pid, 'COUNTER_METRIC_LIKE')
       watchCount.value = extractCount(data, pid, 'COUNTER_METRIC_WATCH')
+      viewCount.value = extractCount(data, pid, 'COUNTER_METRIC_VIEW')
     }
   },
+)
+
+// 浏览量上报（PV +1）：每次进入详情记一次
+const viewReportedId = ref<number | null>(null)
+watch(
+  postId,
+  (pid) => {
+    if (!pid || viewReportedId.value === pid) return
+    viewReportedId.value = pid
+    recordView('TARGET_TYPE_POST', pid)
+  },
+  { immediate: true },
 )
 const likeMutation = useLike()
 const unlikeMutation = useUnlike()
@@ -255,6 +269,7 @@ onMounted(() => {
                   :created-at="post.createdAt"
                   :likes="likeCount"
                   :watch-count="watchCount"
+                  :views="viewCount"
               />
             </header>
 

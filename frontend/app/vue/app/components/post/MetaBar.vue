@@ -12,6 +12,7 @@ defineProps<{
   createdAt?: string
   likes?: number | string
   watchCount?: number | string
+  views?: number | string
 }>()
 </script>
 
@@ -32,6 +33,10 @@ defineProps<{
             <div class="flex items-center gap-1.5">
                 <XIcon icon="carbon:bookmark" :size="16" />
                 <span>{{ watchCount || 0 }}</span>
+            </div>
+            <div class="flex items-center gap-1.5">
+                <XIcon icon="carbon:view" :size="16" />
+                <span>{{ views || 0 }}</span>
             </div>
   </div>
 </template>

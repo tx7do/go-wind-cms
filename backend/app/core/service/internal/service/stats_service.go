@@ -79,7 +79,11 @@ func (s *StatsService) GetInteractionStats(ctx context.Context, req *statsV1.Get
 	if err != nil {
 		return nil, err
 	}
-	likes, watches, err := s.statsRepo.GetInteractionTotals(ctx)
+	topViewed, err := s.statsRepo.GetTopViewedPosts(ctx, topN)
+	if err != nil {
+		return nil, err
+	}
+	likes, watches, views, err := s.statsRepo.GetInteractionTotals(ctx)
 	if err != nil {
 		return nil, err
 	}
@@ -92,10 +96,20 @@ func (s *StatsService) GetInteractionStats(ctx context.Context, req *statsV1.Get
 			LikeCount: item.LikeCount,
 		})
 	}
+	viewedItems := make([]*statsV1.InteractionTopItem, 0, len(topViewed))
+	for _, item := range topViewed {
+		viewedItems = append(viewedItems, &statsV1.InteractionTopItem{
+			TargetId:  item.TargetID,
+			Title:     item.Title,
+			LikeCount: item.LikeCount, // 复用字段：此处语义为浏览计数
+		})
+	}
 	return &statsV1.GetInteractionStatsResponse{
-		TopLikedPosts: items,
-		TotalLikes:    likes,
-		TotalWatches:  watches,
+		TopLikedPosts:  items,
+		TotalLikes:     likes,
+		TotalWatches:   watches,
+		TopViewedPosts: viewedItems,
+		TotalViews:     views,
 	}, nil
 }
 
