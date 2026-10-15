@@ -9869,6 +9869,108 @@ class SiteServiceV1DeleteNavigationRequest {
 
 }
 
+/// 请求 - 按 slug 获取页面
+class GetPageBySlugRequest {
+  String? locale;
+  String? slug;
+
+  GetPageBySlugRequest({
+    this.locale,
+    this.slug,
+  });
+
+  factory GetPageBySlugRequest.fromJson(Map<String, dynamic> json) {
+    return GetPageBySlugRequest(
+      locale: json['locale'] as String?,
+      slug: json['slug'] as String?,
+    );
+  }
+
+  Map<String, dynamic> toJson() {
+    final json = <String, dynamic>{};
+    if (locale != null) json['locale'] = locale;
+    if (slug != null) json['slug'] = slug;
+    return json;
+  }
+
+  @override
+  String toString() {
+    return 'GetPageBySlugRequest(locale: $locale, slug: $slug)';
+  }
+
+  @override
+  bool operator ==(Object other) =>
+    identical(this, other) ||
+    other is GetPageBySlugRequest &&
+      runtimeType == other.runtimeType
+      && locale == other.locale
+      && slug == other.slug
+    ;
+
+  @override
+  int get hashCode => Object.hashAll([
+    locale,
+    slug,
+  ]);
+
+  GetPageBySlugRequest copyWith({
+    String? locale,
+    String? slug,
+  }) {
+    return GetPageBySlugRequest(
+      locale: locale ?? this.locale,
+      slug: slug ?? this.slug,
+    );
+  }
+
+  /// 二进制 proto 编码（MQTT 等二进制传输用；字段按编号升序写出）
+  Uint8List writeToBuffer() {
+    final w = ProtoWireWriter();
+    _writeTo(w);
+    return w.toBuffer();
+  }
+
+  void _writeTo(ProtoWireWriter w) {
+    // field 1: slug
+    final f1 = slug;
+    if (f1 != null) {
+      w.writeString(1, f1!);
+    }
+    // field 2: locale
+    final f2 = locale;
+    if (f2 != null) {
+      w.writeString(2, f2!);
+    }
+  }
+
+  factory GetPageBySlugRequest.fromBuffer(List<int> bytes) {
+    return GetPageBySlugRequest._readFrom(ProtoWireReader(bytes));
+  }
+
+  static GetPageBySlugRequest _readFrom(ProtoWireReader r) {
+    final m = GetPageBySlugRequest();
+    while (r.next()) {
+      switch (r.fieldNumber) {
+        // field 1: slug
+        case 1: {
+          m.slug = r.readString();
+          break;
+        }
+        // field 2: locale
+        case 2: {
+          m.locale = r.readString();
+          break;
+        }
+        default: {
+          r.skip();
+        }
+      }
+    }
+    return m;
+  }
+
+}
+
 /// 页面服务
 class PageServiceClient {
   final ClientTransport _transport;
@@ -10015,6 +10117,27 @@ class PageServiceClient {
       method: 'GetTranslation',
     ), headers: headers);
     return ContentServiceV1PageTranslation.fromJson(result as Map<String, dynamic>);
+  }
+
+  /// 按 slug 获取页面（公开，SEO 路由 /page/{slug} 的数据源）
+  Future<ContentServiceV1Page> getBySlug(GetPageBySlugRequest request, {Map<String, String>? headers}) async {
+    if (request.slug == null) {
+      throw ArgumentError('missing required field request.slug');
+    }
+    final path = '/app/v1/pages/by-slug/${request.slug}';
+    final queryParams = <String>[];
+    if (request.locale != null) {
+      queryParams.add('locale=${Uri.encodeComponent(request.locale!.toString())}');
+    }
+    var uri = path;
+    if (queryParams.isNotEmpty) {
+      uri += '?${queryParams.join("&")}';
+    }
+    final result = await _transport.unary(uri, 'GET', null, TransportMeta(
+      service: 'PageService',
+      method: 'GetBySlug',
+    ), headers: headers);
+    return ContentServiceV1Page.fromJson(result as Map<String, dynamic>);
   }
 }
 
@@ -12178,6 +12301,108 @@ class ContentServiceV1DeletePageRequest {
 
 }
 
+/// 请求 - 按 slug 获取帖子
+class GetPostBySlugRequest {
+  String? locale;
+  String? slug;
+
+  GetPostBySlugRequest({
+    this.locale,
+    this.slug,
+  });
+
+  factory GetPostBySlugRequest.fromJson(Map<String, dynamic> json) {
+    return GetPostBySlugRequest(
+      locale: json['locale'] as String?,
+      slug: json['slug'] as String?,
+    );
+  }
+
+  Map<String, dynamic> toJson() {
+    final json = <String, dynamic>{};
+    if (locale != null) json['locale'] = locale;
+    if (slug != null) json['slug'] = slug;
+    return json;
+  }
+
+  @override
+  String toString() {
+    return 'GetPostBySlugRequest(locale: $locale, slug: $slug)';
+  }
+
+  @override
+  bool operator ==(Object other) =>
+    identical(this, other) ||
+    other is GetPostBySlugRequest &&
+      runtimeType == other.runtimeType
+      && locale == other.locale
+      && slug == other.slug
+    ;
+
+  @override
+  int get hashCode => Object.hashAll([
+    locale,
+    slug,
+  ]);
+
+  GetPostBySlugRequest copyWith({
+    String? locale,
+    String? slug,
+  }) {
+    return GetPostBySlugRequest(
+      locale: locale ?? this.locale,
+      slug: slug ?? this.slug,
+    );
+  }
+
+  /// 二进制 proto 编码（MQTT 等二进制传输用；字段按编号升序写出）
+  Uint8List writeToBuffer() {
+    final w = ProtoWireWriter();
+    _writeTo(w);
+    return w.toBuffer();
+  }
+
+  void _writeTo(ProtoWireWriter w) {
+    // field 1: slug
+    final f1 = slug;
+    if (f1 != null) {
+      w.writeString(1, f1!);
+    }
+    // field 2: locale
+    final f2 = locale;
+    if (f2 != null) {
+      w.writeString(2, f2!);
+    }
+  }
+
+  factory GetPostBySlugRequest.fromBuffer(List<int> bytes) {
+    return GetPostBySlugRequest._readFrom(ProtoWireReader(bytes));
+  }
+
+  static GetPostBySlugRequest _readFrom(ProtoWireReader r) {
+    final m = GetPostBySlugRequest();
+    while (r.next()) {
+      switch (r.fieldNumber) {
+        // field 1: slug
+        case 1: {
+          m.slug = r.readString();
+          break;
+        }
+        // field 2: locale
+        case 2: {
+          m.locale = r.readString();
+          break;
+        }
+        default: {
+          r.skip();
+        }
+      }
+    }
+    return m;
+  }
+
+}
+
 /// 帖子服务
 class PostServiceClient {
   final ClientTransport _transport;
@@ -12233,7 +12458,6 @@ class PostServiceClient {
   }
 
   /// 全文搜索帖子（前台，基于 OpenSearch）
-  /// 
   /// 仅返回 PUBLISHED 状态内容；tenant_id 由服务端从登录用户上下文注入，
   /// 客户端无法指定或绕过。故此端点不进鉴权白名单——必须登录后方可搜索。
   Future<ContentServiceV1SearchPostsResponse> searchPosts(ContentServiceV1SearchPostsRequest request, {Map<String, String>? headers}) async {
@@ -12354,6 +12578,27 @@ class PostServiceClient {
       method: 'GetTranslation',
     ), headers: headers);
     return ContentServiceV1PostTranslation.fromJson(result as Map<String, dynamic>);
+  }
+
+  /// 按 slug 获取帖子（公开，SEO 路由 /post/{slug} 的数据源）
+  Future<ContentServiceV1Post> getBySlug(GetPostBySlugRequest request, {Map<String, String>? headers}) async {
+    if (request.slug == null) {
+      throw ArgumentError('missing required field request.slug');
+    }
+    final path = '/app/v1/posts/by-slug/${request.slug}';
+    final queryParams = <String>[];
+    if (request.locale != null) {
+      queryParams.add('locale=${Uri.encodeComponent(request.locale!.toString())}');
+    }
+    var uri = path;
+    if (queryParams.isNotEmpty) {
+      uri += '?${queryParams.join("&")}';
+    }
+    final result = await _transport.unary(uri, 'GET', null, TransportMeta(
+      service: 'PostService',
+      method: 'GetBySlug',
+    ), headers: headers);
+    return ContentServiceV1Post.fromJson(result as Map<String, dynamic>);
   }
 }
 

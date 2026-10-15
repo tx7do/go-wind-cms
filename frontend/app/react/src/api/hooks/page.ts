@@ -58,10 +58,12 @@ export async function getPage(id: number) {
 export async function getPageBySlug(slug: string) {
   const locale = currentLocaleLanguageCode();
   const numericId = Number(slug);
+  // 纯数字别名直接按 id 走详情；否则走 by-slug 专用端点
+  // （Get({id:0, slug}) 会让 id+slug 双绑定冲突 oneof，后端 400）
   if (Number.isInteger(numericId) && numericId > 0) {
     return apiClient.pageService.Get({id: numericId, locale});
   }
-  return apiClient.pageService.Get({id: 0, slug, locale});
+  return apiClient.pageService.GetBySlug({slug, locale});
 }
 
 /**

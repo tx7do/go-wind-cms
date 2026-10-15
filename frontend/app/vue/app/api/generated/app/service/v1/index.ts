@@ -1862,6 +1862,12 @@ export type siteservicev1_DeleteNavigationRequest = {
   id?: number;
 };
 
+// 请求 - 按 slug 获取页面
+export type GetPageBySlugRequest = {
+  locale: string | undefined;
+  slug: string | undefined;
+};
+
 // 页面服务
 export interface PageService {
   // 获取页面列表
@@ -1888,6 +1894,10 @@ export interface PageService {
   GetTranslation(
     request: contentservicev1_GetPageRequest,
   ): Promise<contentservicev1_PageTranslation>;
+  // 按 slug 获取页面（公开，SEO 路由 /page/{slug} 的数据源）
+  GetBySlug(
+    request: GetPageBySlugRequest,
+  ): Promise<contentservicev1_Page>;
 }
 
 export function createPageServiceClient(
@@ -2101,6 +2111,27 @@ export function createPageServiceClient(
         method: 'GetTranslation',
       }) as Promise<contentservicev1_PageTranslation>;
     },
+    GetBySlug(request) {
+      if (request.slug === undefined || request.slug === null) {
+        throw new Error('missing required field request.slug');
+      }
+      const path = `app/v1/pages/by-slug/${request.slug}`;
+      const body = null;
+      const queryParams: string[] = [];
+      if (request.locale) {
+        queryParams.push(
+          `locale=${encodeURIComponent(request.locale.toString())}`,
+        );
+      }
+      let uri = path;
+      if (queryParams.length > 0) {
+        uri += `?${queryParams.join('&')}`;
+      }
+      return transport.unary(uri, 'GET', body, {
+        service: 'PageService',
+        method: 'GetBySlug',
+      }) as Promise<contentservicev1_Page>;
+    },
   };
 }
 // 回应 - 页面列表
@@ -2251,6 +2282,12 @@ export type contentservicev1_DeletePageRequest = {
   id?: number;
 };
 
+// 请求 - 按 slug 获取帖子
+export type GetPostBySlugRequest = {
+  locale: string | undefined;
+  slug: string | undefined;
+};
+
 // 帖子服务
 export interface PostService {
   // 获取帖子列表
@@ -2258,7 +2295,6 @@ export interface PostService {
     request: pagination_PagingRequest,
   ): Promise<contentservicev1_ListPostResponse>;
   // 全文搜索帖子（前台，基于 OpenSearch）
-  // 
   // 仅返回 PUBLISHED 状态内容；tenant_id 由服务端从登录用户上下文注入，
   // 客户端无法指定或绕过。故此端点不进鉴权白名单——必须登录后方可搜索。
   SearchPosts(
@@ -2284,6 +2320,10 @@ export interface PostService {
   GetTranslation(
     request: contentservicev1_GetPostRequest,
   ): Promise<contentservicev1_PostTranslation>;
+  // 按 slug 获取帖子（公开，SEO 路由 /post/{slug} 的数据源）
+  GetBySlug(
+    request: GetPostBySlugRequest,
+  ): Promise<contentservicev1_Post>;
 }
 
 export function createPostServiceClient(
@@ -2529,6 +2569,27 @@ export function createPostServiceClient(
         service: 'PostService',
         method: 'GetTranslation',
       }) as Promise<contentservicev1_PostTranslation>;
+    },
+    GetBySlug(request) {
+      if (request.slug === undefined || request.slug === null) {
+        throw new Error('missing required field request.slug');
+      }
+      const path = `app/v1/posts/by-slug/${request.slug}`;
+      const body = null;
+      const queryParams: string[] = [];
+      if (request.locale) {
+        queryParams.push(
+          `locale=${encodeURIComponent(request.locale.toString())}`,
+        );
+      }
+      let uri = path;
+      if (queryParams.length > 0) {
+        uri += `?${queryParams.join('&')}`;
+      }
+      return transport.unary(uri, 'GET', body, {
+        service: 'PostService',
+        method: 'GetBySlug',
+      }) as Promise<contentservicev1_Post>;
     },
   };
 }
