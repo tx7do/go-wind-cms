@@ -363,7 +363,7 @@ const SocialDistributionList = () => {
 
   return (
     <>
-      <div ref={containerRef} className="page-container-content" style={{ padding: '0 8px', height: '100%', display: 'flex', flexDirection: 'column' }}>
+      <div ref={containerRef} className="page-container-content" style={{ padding: '12px 8px 8px', height: '100%', display: 'flex', flexDirection: 'column' }}>
         <Row gutter={12} style={{ marginBottom: 12 }}>
           <Col span={6}>
             <Card size="small" bordered={false}>
