@@ -63,6 +63,9 @@ type DictEntryI18n func(*sql.Selector)
 // DictType is the predicate function for dicttype builders.
 type DictType func(*sql.Selector)
 
+// EmailProvider is the predicate function for emailprovider builders.
+type EmailProvider func(*sql.Selector)
+
 // FieldDefinition is the predicate function for fielddefinition builders.
 type FieldDefinition func(*sql.Selector)
 

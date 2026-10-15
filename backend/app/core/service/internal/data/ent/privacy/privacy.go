@@ -567,6 +567,30 @@ func (f DictTypeMutationRuleFunc) EvalMutation(ctx context.Context, m ent.Mutati
 	return Denyf("ent/privacy: unexpected mutation type %T, expect *ent.DictTypeMutation", m)
 }
 
+// The EmailProviderQueryRuleFunc type is an adapter to allow the use of ordinary
+// functions as a query rule.
+type EmailProviderQueryRuleFunc func(context.Context, *ent.EmailProviderQuery) error
+
+// EvalQuery return f(ctx, q).
+func (f EmailProviderQueryRuleFunc) EvalQuery(ctx context.Context, q ent.Query) error {
+	if q, ok := q.(*ent.EmailProviderQuery); ok {
+		return f(ctx, q)
+	}
+	return Denyf("ent/privacy: unexpected query type %T, expect *ent.EmailProviderQuery", q)
+}
+
+// The EmailProviderMutationRuleFunc type is an adapter to allow the use of ordinary
+// functions as a mutation rule.
+type EmailProviderMutationRuleFunc func(context.Context, *ent.EmailProviderMutation) error
+
+// EvalMutation calls f(ctx, m).
+func (f EmailProviderMutationRuleFunc) EvalMutation(ctx context.Context, m ent.Mutation) error {
+	if m, ok := m.(*ent.EmailProviderMutation); ok {
+		return f(ctx, m)
+	}
+	return Denyf("ent/privacy: unexpected mutation type %T, expect *ent.EmailProviderMutation", m)
+}
+
 // The FieldDefinitionQueryRuleFunc type is an adapter to allow the use of ordinary
 // functions as a query rule.
 type FieldDefinitionQueryRuleFunc func(context.Context, *ent.FieldDefinitionQuery) error
@@ -2152,6 +2176,8 @@ func queryFilter(q ent.Query) (Filter, error) {
 		return q.Filter(), nil
 	case *ent.DictTypeQuery:
 		return q.Filter(), nil
+	case *ent.EmailProviderQuery:
+		return q.Filter(), nil
 	case *ent.FieldDefinitionQuery:
 		return q.Filter(), nil
 	case *ent.FieldDefinitionTranslationQuery:
@@ -2322,6 +2348,8 @@ func mutationFilter(m ent.Mutation) (Filter, error) {
 	case *ent.DictEntryI18nMutation:
 		return m.Filter(), nil
 	case *ent.DictTypeMutation:
+		return m.Filter(), nil
+	case *ent.EmailProviderMutation:
 		return m.Filter(), nil
 	case *ent.FieldDefinitionMutation:
 		return m.Filter(), nil

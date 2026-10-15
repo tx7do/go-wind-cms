@@ -50,6 +50,8 @@ type Tx struct {
 	DictEntryI18n *DictEntryI18nClient
 	// DictType is the client for interacting with the DictType builders.
 	DictType *DictTypeClient
+	// EmailProvider is the client for interacting with the EmailProvider builders.
+	EmailProvider *EmailProviderClient
 	// FieldDefinition is the client for interacting with the FieldDefinition builders.
 	FieldDefinition *FieldDefinitionClient
 	// FieldDefinitionTranslation is the client for interacting with the FieldDefinitionTranslation builders.
@@ -326,6 +328,7 @@ func (tx *Tx) init() {
 	tx.DictEntry = NewDictEntryClient(tx.config)
 	tx.DictEntryI18n = NewDictEntryI18nClient(tx.config)
 	tx.DictType = NewDictTypeClient(tx.config)
+	tx.EmailProvider = NewEmailProviderClient(tx.config)
 	tx.FieldDefinition = NewFieldDefinitionClient(tx.config)
 	tx.FieldDefinitionTranslation = NewFieldDefinitionTranslationClient(tx.config)
 	tx.File = NewFileClient(tx.config)

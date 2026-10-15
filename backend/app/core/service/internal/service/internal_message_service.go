@@ -40,6 +40,7 @@ type InternalMessageService struct {
 	internalMessageRecipientRepo *data.InternalMessageRecipientRepo
 
 	userRepo data.UserRepo
+	emailProviderRepo *data.EmailProviderRepo
 	taskService *TaskService
 
 	// redisClient 用于把系统通知事件发布到 Redis Pub/Sub（admin 服务订阅后转
@@ -55,6 +56,7 @@ func NewInternalMessageService(
 	userRepo data.UserRepo,
 	redisClient *redis.Client,
 	taskService *TaskService,
+	emailProviderRepo *data.EmailProviderRepo,
 ) *InternalMessageService {
 	return &InternalMessageService{
 		log:                          ctx.NewLoggerHelper("internal-message/service/core-service"),
@@ -64,6 +66,7 @@ func NewInternalMessageService(
 		userRepo:                     userRepo,
 		redisClient:                  redisClient,
 		taskService:                  taskService,
+		emailProviderRepo:            emailProviderRepo,
 	}
 }
 
@@ -393,16 +396,16 @@ func (s *InternalMessageService) SendEmailWorker(taskType string, payload *task.
 	if payload == nil || payload.UserID == 0 {
 		return nil
 	}
-	cfg := mailer.FromEnv()
-	if !cfg.Enabled() {
-		s.log.Warnf("notify email: smtp not configured, drop (user=%d)", payload.UserID)
-		return nil
-	}
 	if s.taskService == nil {
 		return nil
 	}
 
 	ctx := appViewer.NewSystemViewerContext(context.Background())
+	cfg := s.resolveMailerConfig(ctx)
+	if !cfg.Enabled() {
+		s.log.Warnf("notify email: smtp not configured (DB/env), drop (user=%d)", payload.UserID)
+		return nil
+	}
 	user, err := s.userRepo.Get(ctx, &identityV1.GetUserRequest{
 		QueryBy: &identityV1.GetUserRequest_Id{Id: payload.UserID},
 	})
@@ -421,6 +424,26 @@ func (s *InternalMessageService) SendEmailWorker(taskType string, payload *task.
 	}
 	s.log.Infof("notify email: sent to %s (user=%d)", to, payload.UserID)
 	return nil
+}
+
+// resolveMailerConfig 邮件配置解析：DB 启用项（管理页可视化配置）优先，
+// 未配置时回退 SMTP_* 环境变量（兼容未启用可视化配置的部署）。
+func (s *InternalMessageService) resolveMailerConfig(ctx context.Context) mailer.Config {
+	if s.emailProviderRepo != nil {
+		if cfg, err := s.emailProviderRepo.GetActive(ctx); err == nil && cfg != nil {
+			return mailer.Config{
+				Host:     cfg.Host,
+				Port:     int(cfg.Port),
+				Username: cfg.Username,
+				Password: cfg.Password,
+				From:     cfg.From,
+				TLSMode:  cfg.TLSMode,
+			}
+		} else if err != nil {
+			s.log.Errorf("notify email: load db provider config failed, fallback to env: %v", err)
+		}
+	}
+	return mailer.FromEnv()
 }
 
 // buildNotifyEmailHTML 系统通知邮件的最小 HTML 模板。

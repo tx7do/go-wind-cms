@@ -22,6 +22,7 @@ import (
 	permissionV1 "go-wind-cms/api/gen/go/permission/service/v1"
 	statsV1 "go-wind-cms/api/gen/go/stats/service/v1"
 	webhookV1 "go-wind-cms/api/gen/go/webhook/service/v1"
+	notifyV1 "go-wind-cms/api/gen/go/notify/service/v1"
 	aiV1 "go-wind-cms/api/gen/go/ai/service/v1"
 	siteV1 "go-wind-cms/api/gen/go/site/service/v1"
 	socialV1 "go-wind-cms/api/gen/go/social/service/v1"
@@ -110,6 +111,7 @@ func NewGrpcServer(
 	webhookService *service.WebhookService,
 	formSubmissionService *service.FormSubmissionService,
 	redirectService *service.RedirectService,
+	emailProviderService *service.EmailProviderService,
 
 	// register:param ── 新模块服务形参在此行后注册(make register 工具锚点,勿删)
 ) (*grpc.Server, error) {
@@ -192,6 +194,7 @@ func NewGrpcServer(
 	webhookV1.RegisterWebhookServiceServer(srv, webhookService)
 	contentV1.RegisterFormSubmissionServiceServer(srv, formSubmissionService)
 	contentV1.RegisterRedirectServiceServer(srv, redirectService)
+	notifyV1.RegisterEmailProviderServiceServer(srv, emailProviderService)
 
 	// register:route ── 新模块路由在此行后注册(make register 工具锚点,勿删)
 

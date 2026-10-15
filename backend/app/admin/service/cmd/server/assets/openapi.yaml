@@ -2394,6 +2394,189 @@ paths:
                 "200":
                     description: OK
                     content: {}
+    /admin/v1/email-providers:
+        get:
+            tags:
+                - EmailProviderService
+            description: 获取配置列表
+            operationId: EmailProviderService_List
+            parameters:
+                - name: page
+                  in: query
+                  description: 当前页码（从1开始，默认1）
+                  schema:
+                    type: integer
+                    format: uint32
+                - name: pageSize
+                  in: query
+                  description: 每页条数（默认10，建议设置上限如100）
+                  schema:
+                    type: integer
+                    format: uint32
+                - name: offset
+                  in: query
+                  description: 跳过的记录数（从0开始，默认0）
+                  schema:
+                    type: string
+                - name: limit
+                  in: query
+                  description: 最多返回的记录数（默认10，建议设置上限如100）
+                  schema:
+                    type: integer
+                    format: uint32
+                - name: token
+                  in: query
+                  description: 上一页最后一条记录的游标（如ID/时间戳+ID，首次请求为空）
+                  schema:
+                    type: string
+                - name: noPaging
+                  in: query
+                  description: 是否不分页，如果为true，则page和pageSize参数无效。
+                  schema:
+                    type: boolean
+                - name: query
+                  in: query
+                  description: JSON字符串过滤条件，基础语法：{"field1":"val1", "field2___icontains":"val2"}，具体请参见：https://github.com/tx7do/go-crud/tree/main/pagination/filter/README.md
+                  schema:
+                    type: string
+                - name: filter
+                  in: query
+                  description: Google AIP规范字符串过滤条件
+                  schema:
+                    type: string
+                - name: filterExpr.type
+                  in: query
+                  description: 过滤表达式类型
+                  schema:
+                    enum:
+                        - EXPR_TYPE_UNSPECIFIED
+                        - AND
+                        - OR
+                    type: string
+                    format: enum
+                - name: orderBy
+                  in: query
+                  description: 排序条件
+                  schema:
+                    type: string
+                - name: fieldMask
+                  in: query
+                  description: 字段掩码，其作用为SELECT中的字段，其语法为使用逗号分隔字段名，例如：id,realName,userName。如果为空则选中所有字段，即SELECT *。
+                  schema:
+                    type: string
+                    format: field-mask
+            responses:
+                "200":
+                    description: OK
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/notify.service.v1.ListEmailProvidersResponse'
+        post:
+            tags:
+                - EmailProviderService
+            description: 创建配置
+            operationId: EmailProviderService_Create
+            requestBody:
+                content:
+                    application/json:
+                        schema:
+                            $ref: '#/components/schemas/notify.service.v1.CreateEmailProviderRequest'
+                required: true
+            responses:
+                "200":
+                    description: OK
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/notify.service.v1.EmailProvider'
+    /admin/v1/email-providers/{id}:
+        get:
+            tags:
+                - EmailProviderService
+            description: 获取配置数据
+            operationId: EmailProviderService_Get
+            parameters:
+                - name: id
+                  in: path
+                  required: true
+                  schema:
+                    type: integer
+                    format: uint32
+            responses:
+                "200":
+                    description: OK
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/notify.service.v1.EmailProvider'
+        put:
+            tags:
+                - EmailProviderService
+            description: 更新配置
+            operationId: EmailProviderService_Update
+            parameters:
+                - name: id
+                  in: path
+                  required: true
+                  schema:
+                    type: integer
+                    format: uint32
+            requestBody:
+                content:
+                    application/json:
+                        schema:
+                            $ref: '#/components/schemas/notify.service.v1.UpdateEmailProviderRequest'
+                required: true
+            responses:
+                "200":
+                    description: OK
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/notify.service.v1.EmailProvider'
+        delete:
+            tags:
+                - EmailProviderService
+            description: 删除配置
+            operationId: EmailProviderService_Delete
+            parameters:
+                - name: id
+                  in: path
+                  required: true
+                  schema:
+                    type: integer
+                    format: uint32
+            responses:
+                "200":
+                    description: OK
+                    content: {}
+    /admin/v1/email-providers/{id}/test-send:
+        post:
+            tags:
+                - EmailProviderService
+            description: 发送测试邮件
+            operationId: EmailProviderService_TestSend
+            parameters:
+                - name: id
+                  in: path
+                  required: true
+                  schema:
+                    type: integer
+                    format: uint32
+            requestBody:
+                content:
+                    application/json:
+                        schema:
+                            $ref: '#/components/schemas/notify.service.v1.TestEmailSendRequest'
+                required: true
+            responses:
+                "200":
+                    description: OK
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/notify.service.v1.TestEmailSendResponse'
     /admin/v1/file/asset/upload:
         post:
             tags:
@@ -13289,6 +13472,109 @@ components:
                     type: boolean
                     description: 如果设置为true的时候，资源不存在则会新增(插入)，并且在这种情况下`updateMask`字段将会被忽略。
             description: 请求 - 更新媒体资源库
+        notify.service.v1.CreateEmailProviderRequest:
+            type: object
+            properties:
+                data:
+                    $ref: '#/components/schemas/notify.service.v1.EmailProvider'
+            description: 请求 - 创建配置
+        notify.service.v1.EmailProvider:
+            type: object
+            properties:
+                id:
+                    type: integer
+                    description: 配置ID
+                    format: uint32
+                name:
+                    type: string
+                    description: 配置名称
+                host:
+                    type: string
+                    description: SMTP 主机
+                port:
+                    type: integer
+                    description: 端口
+                    format: uint32
+                username:
+                    type: string
+                    description: 认证用户名
+                password:
+                    type: string
+                    description: 认证密码（写入专用，读取恒为空）
+                from:
+                    type: string
+                    description: 发件人地址
+                tlsMode:
+                    type: string
+                    description: TLS 模式（starttls/ssl/none）
+                enabled:
+                    type: boolean
+                    description: 是否启用
+                description:
+                    type: string
+                    description: 用途说明
+                createdBy:
+                    type: integer
+                    description: 创建者用户ID
+                    format: uint32
+                updatedBy:
+                    type: integer
+                    description: 更新者用户ID
+                    format: uint32
+                createdAt:
+                    type: string
+                    description: 创建时间
+                    format: date-time
+                updatedAt:
+                    type: string
+                    description: 更新时间
+                    format: date-time
+            description: 邮件 SMTP 配置
+        notify.service.v1.ListEmailProvidersResponse:
+            type: object
+            properties:
+                items:
+                    type: array
+                    items:
+                        $ref: '#/components/schemas/notify.service.v1.EmailProvider'
+                total:
+                    type: string
+            description: 回应 - 配置列表
+        notify.service.v1.TestEmailSendRequest:
+            type: object
+            properties:
+                id:
+                    type: integer
+                    description: 配置ID
+                    format: uint32
+                to:
+                    type: string
+                    description: 目标邮箱地址
+            description: 请求 - 发送测试邮件
+        notify.service.v1.TestEmailSendResponse:
+            type: object
+            properties:
+                success:
+                    type: boolean
+                error:
+                    type: string
+            description: 回应 - 发送测试邮件
+        notify.service.v1.UpdateEmailProviderRequest:
+            type: object
+            properties:
+                id:
+                    type: integer
+                    format: uint32
+                data:
+                    $ref: '#/components/schemas/notify.service.v1.EmailProvider'
+                updateMask:
+                    type: string
+                    description: 要更新的字段列表
+                    format: field-mask
+                allowMissing:
+                    type: boolean
+                    description: 不存在则新增
+            description: 请求 - 更新配置
         permission.service.v1.Api:
             type: object
             properties:
@@ -15594,6 +15880,8 @@ tags:
       description: 数据字典条目管理服务
     - name: DictTypeService
       description: 数据字典分类管理服务
+    - name: EmailProviderService
+      description: 邮件出站 SMTP 配置管理服务（平台基础设施）
     - name: FileService
       description: 文件管理服务
     - name: FileTransferService

@@ -30,6 +30,7 @@ import (
 	"go-wind-cms/app/core/service/internal/data/ent/dictentry"
 	"go-wind-cms/app/core/service/internal/data/ent/dictentryi18n"
 	"go-wind-cms/app/core/service/internal/data/ent/dicttype"
+	"go-wind-cms/app/core/service/internal/data/ent/emailprovider"
 	"go-wind-cms/app/core/service/internal/data/ent/fielddefinition"
 	"go-wind-cms/app/core/service/internal/data/ent/fielddefinitiontranslation"
 	"go-wind-cms/app/core/service/internal/data/ent/file"
@@ -143,6 +144,8 @@ type Client struct {
 	DictEntryI18n *DictEntryI18nClient
 	// DictType is the client for interacting with the DictType builders.
 	DictType *DictTypeClient
+	// EmailProvider is the client for interacting with the EmailProvider builders.
+	EmailProvider *EmailProviderClient
 	// FieldDefinition is the client for interacting with the FieldDefinition builders.
 	FieldDefinition *FieldDefinitionClient
 	// FieldDefinitionTranslation is the client for interacting with the FieldDefinitionTranslation builders.
@@ -299,6 +302,7 @@ func (c *Client) init() {
 	c.DictEntry = NewDictEntryClient(c.config)
 	c.DictEntryI18n = NewDictEntryI18nClient(c.config)
 	c.DictType = NewDictTypeClient(c.config)
+	c.EmailProvider = NewEmailProviderClient(c.config)
 	c.FieldDefinition = NewFieldDefinitionClient(c.config)
 	c.FieldDefinitionTranslation = NewFieldDefinitionTranslationClient(c.config)
 	c.File = NewFileClient(c.config)
@@ -473,6 +477,7 @@ func (c *Client) Tx(ctx context.Context) (*Tx, error) {
 		DictEntry:                  NewDictEntryClient(cfg),
 		DictEntryI18n:              NewDictEntryI18nClient(cfg),
 		DictType:                   NewDictTypeClient(cfg),
+		EmailProvider:              NewEmailProviderClient(cfg),
 		FieldDefinition:            NewFieldDefinitionClient(cfg),
 		FieldDefinitionTranslation: NewFieldDefinitionTranslationClient(cfg),
 		File:                       NewFileClient(cfg),
@@ -574,6 +579,7 @@ func (c *Client) BeginTx(ctx context.Context, opts *sql.TxOptions) (*Tx, error) 
 		DictEntry:                  NewDictEntryClient(cfg),
 		DictEntryI18n:              NewDictEntryI18nClient(cfg),
 		DictType:                   NewDictTypeClient(cfg),
+		EmailProvider:              NewEmailProviderClient(cfg),
 		FieldDefinition:            NewFieldDefinitionClient(cfg),
 		FieldDefinitionTranslation: NewFieldDefinitionTranslationClient(cfg),
 		File:                       NewFileClient(cfg),
@@ -670,8 +676,8 @@ func (c *Client) Use(hooks ...Hook) {
 		c.AiProvider, c.AiUsageLog, c.Api, c.ApiAuditLog, c.Category,
 		c.CategoryTranslation, c.Comment, c.CommentLike, c.ContentModel,
 		c.ContentModelTranslation, c.DataAccessAuditLog, c.DictEntry, c.DictEntryI18n,
-		c.DictType, c.FieldDefinition, c.FieldDefinitionTranslation, c.File,
-		c.FormSubmission, c.InteractionCounter, c.InternalMessage,
+		c.DictType, c.EmailProvider, c.FieldDefinition, c.FieldDefinitionTranslation,
+		c.File, c.FormSubmission, c.InteractionCounter, c.InternalMessage,
 		c.InternalMessageCategory, c.InternalMessageRecipient, c.Language,
 		c.LoginAuditLog, c.LoginPolicy, c.MediaAsset, c.MediaVariant, c.Membership,
 		c.MembershipOrgUnit, c.MembershipPosition, c.MembershipRole, c.Menu,
@@ -698,8 +704,8 @@ func (c *Client) Intercept(interceptors ...Interceptor) {
 		c.AiProvider, c.AiUsageLog, c.Api, c.ApiAuditLog, c.Category,
 		c.CategoryTranslation, c.Comment, c.CommentLike, c.ContentModel,
 		c.ContentModelTranslation, c.DataAccessAuditLog, c.DictEntry, c.DictEntryI18n,
-		c.DictType, c.FieldDefinition, c.FieldDefinitionTranslation, c.File,
-		c.FormSubmission, c.InteractionCounter, c.InternalMessage,
+		c.DictType, c.EmailProvider, c.FieldDefinition, c.FieldDefinitionTranslation,
+		c.File, c.FormSubmission, c.InteractionCounter, c.InternalMessage,
 		c.InternalMessageCategory, c.InternalMessageRecipient, c.Language,
 		c.LoginAuditLog, c.LoginPolicy, c.MediaAsset, c.MediaVariant, c.Membership,
 		c.MembershipOrgUnit, c.MembershipPosition, c.MembershipRole, c.Menu,
@@ -759,6 +765,8 @@ func (c *Client) Mutate(ctx context.Context, m Mutation) (Value, error) {
 		return c.DictEntryI18n.mutate(ctx, m)
 	case *DictTypeMutation:
 		return c.DictType.mutate(ctx, m)
+	case *EmailProviderMutation:
+		return c.EmailProvider.mutate(ctx, m)
 	case *FieldDefinitionMutation:
 		return c.FieldDefinition.mutate(ctx, m)
 	case *FieldDefinitionTranslationMutation:
@@ -3655,6 +3663,140 @@ func (c *DictTypeClient) mutate(ctx context.Context, m *DictTypeMutation) (Value
 		return (&DictTypeDelete{config: c.config, hooks: c.Hooks(), mutation: m}).Exec(ctx)
 	default:
 		return nil, fmt.Errorf("ent: unknown DictType mutation op: %q", m.Op())
+	}
+}
+
+// EmailProviderClient is a client for the EmailProvider schema.
+type EmailProviderClient struct {
+	config
+}
+
+// NewEmailProviderClient returns a client for the EmailProvider from the given config.
+func NewEmailProviderClient(c config) *EmailProviderClient {
+	return &EmailProviderClient{config: c}
+}
+
+// Use adds a list of mutation hooks to the hooks stack.
+// A call to `Use(f, g, h)` equals to `emailprovider.Hooks(f(g(h())))`.
+func (c *EmailProviderClient) Use(hooks ...Hook) {
+	c.hooks.EmailProvider = append(c.hooks.EmailProvider, hooks...)
+}
+
+// Intercept adds a list of query interceptors to the interceptors stack.
+// A call to `Intercept(f, g, h)` equals to `emailprovider.Intercept(f(g(h())))`.
+func (c *EmailProviderClient) Intercept(interceptors ...Interceptor) {
+	c.inters.EmailProvider = append(c.inters.EmailProvider, interceptors...)
+}
+
+// Create returns a builder for creating a EmailProvider entity.
+func (c *EmailProviderClient) Create() *EmailProviderCreate {
+	mutation := newEmailProviderMutation(c.config, OpCreate)
+	return &EmailProviderCreate{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// CreateBulk returns a builder for creating a bulk of EmailProvider entities.
+func (c *EmailProviderClient) CreateBulk(builders ...*EmailProviderCreate) *EmailProviderCreateBulk {
+	return &EmailProviderCreateBulk{config: c.config, builders: builders}
+}
+
+// MapCreateBulk creates a bulk creation builder from the given slice. For each item in the slice, the function creates
+// a builder and applies setFunc on it.
+func (c *EmailProviderClient) MapCreateBulk(slice any, setFunc func(*EmailProviderCreate, int)) *EmailProviderCreateBulk {
+	rv := reflect.ValueOf(slice)
+	if rv.Kind() != reflect.Slice {
+		return &EmailProviderCreateBulk{err: fmt.Errorf("calling to EmailProviderClient.MapCreateBulk with wrong type %T, need slice", slice)}
+	}
+	builders := make([]*EmailProviderCreate, rv.Len())
+	for i := 0; i < rv.Len(); i++ {
+		builders[i] = c.Create()
+		setFunc(builders[i], i)
+	}
+	return &EmailProviderCreateBulk{config: c.config, builders: builders}
+}
+
+// Update returns an update builder for EmailProvider.
+func (c *EmailProviderClient) Update() *EmailProviderUpdate {
+	mutation := newEmailProviderMutation(c.config, OpUpdate)
+	return &EmailProviderUpdate{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// UpdateOne returns an update builder for the given entity.
+func (c *EmailProviderClient) UpdateOne(_m *EmailProvider) *EmailProviderUpdateOne {
+	mutation := newEmailProviderMutation(c.config, OpUpdateOne, withEmailProvider(_m))
+	return &EmailProviderUpdateOne{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// UpdateOneID returns an update builder for the given id.
+func (c *EmailProviderClient) UpdateOneID(id uint32) *EmailProviderUpdateOne {
+	mutation := newEmailProviderMutation(c.config, OpUpdateOne, withEmailProviderID(id))
+	return &EmailProviderUpdateOne{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// Delete returns a delete builder for EmailProvider.
+func (c *EmailProviderClient) Delete() *EmailProviderDelete {
+	mutation := newEmailProviderMutation(c.config, OpDelete)
+	return &EmailProviderDelete{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// DeleteOne returns a builder for deleting the given entity.
+func (c *EmailProviderClient) DeleteOne(_m *EmailProvider) *EmailProviderDeleteOne {
+	return c.DeleteOneID(_m.ID)
+}
+
+// DeleteOneID returns a builder for deleting the given entity by its id.
+func (c *EmailProviderClient) DeleteOneID(id uint32) *EmailProviderDeleteOne {
+	builder := c.Delete().Where(emailprovider.ID(id))
+	builder.mutation.id = &id
+	builder.mutation.op = OpDeleteOne
+	return &EmailProviderDeleteOne{builder}
+}
+
+// Query returns a query builder for EmailProvider.
+func (c *EmailProviderClient) Query() *EmailProviderQuery {
+	return &EmailProviderQuery{
+		config: c.config,
+		ctx:    &QueryContext{Type: TypeEmailProvider},
+		inters: c.Interceptors(),
+	}
+}
+
+// Get returns a EmailProvider entity by its id.
+func (c *EmailProviderClient) Get(ctx context.Context, id uint32) (*EmailProvider, error) {
+	return c.Query().Where(emailprovider.ID(id)).Only(ctx)
+}
+
+// GetX is like Get, but panics if an error occurs.
+func (c *EmailProviderClient) GetX(ctx context.Context, id uint32) *EmailProvider {
+	obj, err := c.Get(ctx, id)
+	if err != nil {
+		panic(err)
+	}
+	return obj
+}
+
+// Hooks returns the client hooks.
+func (c *EmailProviderClient) Hooks() []Hook {
+	hooks := c.hooks.EmailProvider
+	return append(hooks[:len(hooks):len(hooks)], emailprovider.Hooks[:]...)
+}
+
+// Interceptors returns the client interceptors.
+func (c *EmailProviderClient) Interceptors() []Interceptor {
+	return c.inters.EmailProvider
+}
+
+func (c *EmailProviderClient) mutate(ctx context.Context, m *EmailProviderMutation) (Value, error) {
+	switch m.Op() {
+	case OpCreate:
+		return (&EmailProviderCreate{config: c.config, hooks: c.Hooks(), mutation: m}).Save(ctx)
+	case OpUpdate:
+		return (&EmailProviderUpdate{config: c.config, hooks: c.Hooks(), mutation: m}).Save(ctx)
+	case OpUpdateOne:
+		return (&EmailProviderUpdateOne{config: c.config, hooks: c.Hooks(), mutation: m}).Save(ctx)
+	case OpDelete, OpDeleteOne:
+		return (&EmailProviderDelete{config: c.config, hooks: c.Hooks(), mutation: m}).Exec(ctx)
+	default:
+		return nil, fmt.Errorf("ent: unknown EmailProvider mutation op: %q", m.Op())
 	}
 }
 
@@ -12294,7 +12436,7 @@ type (
 		AiChunk, AiConversation, AiDoc, AiKnowledgeBase, AiMessage, AiProvider,
 		AiUsageLog, Api, ApiAuditLog, Category, CategoryTranslation, Comment,
 		CommentLike, ContentModel, ContentModelTranslation, DataAccessAuditLog,
-		DictEntry, DictEntryI18n, DictType, FieldDefinition,
+		DictEntry, DictEntryI18n, DictType, EmailProvider, FieldDefinition,
 		FieldDefinitionTranslation, File, FormSubmission, InteractionCounter,
 		InternalMessage, InternalMessageCategory, InternalMessageRecipient, Language,
 		LoginAuditLog, LoginPolicy, MediaAsset, MediaVariant, Membership,
@@ -12312,7 +12454,7 @@ type (
 		AiChunk, AiConversation, AiDoc, AiKnowledgeBase, AiMessage, AiProvider,
 		AiUsageLog, Api, ApiAuditLog, Category, CategoryTranslation, Comment,
 		CommentLike, ContentModel, ContentModelTranslation, DataAccessAuditLog,
-		DictEntry, DictEntryI18n, DictType, FieldDefinition,
+		DictEntry, DictEntryI18n, DictType, EmailProvider, FieldDefinition,
 		FieldDefinitionTranslation, File, FormSubmission, InteractionCounter,
 		InternalMessage, InternalMessageCategory, InternalMessageRecipient, Language,
 		LoginAuditLog, LoginPolicy, MediaAsset, MediaVariant, Membership,

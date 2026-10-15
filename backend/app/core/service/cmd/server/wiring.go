@@ -178,6 +178,9 @@ func initApp(ctx *bootstrap.Context) (*kratos.App, func(), error) {
 	// URL 重定向
 	redirectRepo := data.NewRedirectRepo(ctx, entClient)
 
+	// 邮件出站 SMTP 配置（凭据加密落库）
+	emailProviderRepo := data.NewEmailProviderRepo(ctx, entClient)
+
 	// 站点配置
 	siteRepo := data.NewSiteRepo(ctx, entClient)
 	siteSettingRepo := data.NewSiteSettingRepo(ctx, entClient)
@@ -214,6 +217,9 @@ func initApp(ctx *bootstrap.Context) (*kratos.App, func(), error) {
 
 	// URL 重定向
 	redirectService := service.NewRedirectService(ctx, redirectRepo)
+
+	// 邮件出站 SMTP 配置
+	emailProviderService := service.NewEmailProviderService(ctx, emailProviderRepo)
 	fileService := service.NewFileService(ctx, fileRepo, minIOClient)
 
 	// 字典与多语言
@@ -243,7 +249,7 @@ func initApp(ctx *bootstrap.Context) (*kratos.App, func(), error) {
 	dataAccessAuditLogService := service.NewDataAccessAuditLogService(ctx, dataAccessAuditLogRepo)
 
 	// 站内信
-	internalMessageService := service.NewInternalMessageService(ctx, internalMessageRepo, internalMessageCategoryRepo, internalMessageRecipientRepo, userRepo, redisClient, taskService)
+	internalMessageService := service.NewInternalMessageService(ctx, internalMessageRepo, internalMessageCategoryRepo, internalMessageRecipientRepo, userRepo, redisClient, taskService, emailProviderRepo)
 	internalMessageCategoryService := service.NewInternalMessageCategoryService(ctx, internalMessageCategoryRepo)
 	internalMessageRecipientService := service.NewInternalMessageRecipientService(ctx, internalMessageRepo, internalMessageRecipientRepo)
 
@@ -311,6 +317,7 @@ func initApp(ctx *bootstrap.Context) (*kratos.App, func(), error) {
 		webhookService,
 		formSubmissionService,
 		redirectService,
+		emailProviderService,
 		// register:grpc-arg ── 新模块服务实参在此行后追加(make register 工具锚点,勿删)
 	)
 	if err != nil {

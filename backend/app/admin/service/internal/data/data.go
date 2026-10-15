@@ -29,6 +29,7 @@ import (
 	socialV1 "go-wind-cms/api/gen/go/social/service/v1"
 	webhookV1 "go-wind-cms/api/gen/go/webhook/service/v1"
 	contentV1 "go-wind-cms/api/gen/go/content/service/v1"
+	notifyV1 "go-wind-cms/api/gen/go/notify/service/v1"
 	dictV1 "go-wind-cms/api/gen/go/dict/service/v1"
 	identityV1 "go-wind-cms/api/gen/go/identity/service/v1"
 	internalMessageV1 "go-wind-cms/api/gen/go/internal_message/service/v1"
@@ -562,6 +563,15 @@ func NewFormSubmissionServiceClient(ctx *bootstrap.Context, r registry.Discovery
 	}
 
 	return contentV1.NewFormSubmissionServiceClient(cli)
+}
+
+func NewEmailProviderServiceClient(ctx *bootstrap.Context, r registry.Discovery) notifyV1.EmailProviderServiceClient {
+	cli, err := rpc.CreateGrpcClient(ctx.Context(), r, serviceid.NewDiscoveryName(serviceid.CoreService), ctx.GetConfig())
+	if err != nil {
+		return nil
+	}
+
+	return notifyV1.NewEmailProviderServiceClient(cli)
 }
 
 func NewRedirectServiceClient(ctx *bootstrap.Context, r registry.Discovery) contentV1.RedirectServiceClient {

@@ -78,5 +78,6 @@
   "social-inbox": "Social Inbox",
   "webhooks": "Webhooks",
   "content-form-submissions": "Form Submissions",
-  "redirects": "Redirects"
+  "redirects": "Redirects",
+  "email-provider": "Email Outbound"
 }

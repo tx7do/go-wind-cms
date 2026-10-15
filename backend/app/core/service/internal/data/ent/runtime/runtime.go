@@ -24,6 +24,7 @@ import (
 	"go-wind-cms/app/core/service/internal/data/ent/dictentry"
 	"go-wind-cms/app/core/service/internal/data/ent/dictentryi18n"
 	"go-wind-cms/app/core/service/internal/data/ent/dicttype"
+	"go-wind-cms/app/core/service/internal/data/ent/emailprovider"
 	"go-wind-cms/app/core/service/internal/data/ent/fielddefinition"
 	"go-wind-cms/app/core/service/internal/data/ent/fielddefinitiontranslation"
 	"go-wind-cms/app/core/service/internal/data/ent/file"
@@ -643,6 +644,54 @@ func init() {
 	dicttypeDescID := dicttypeMixinFields0[0].Descriptor()
 	// dicttype.IDValidator is a validator for the "id" field. It is called by the builders before save.
 	dicttype.IDValidator = dicttypeDescID.Validators[0].(func(uint32) error)
+	emailproviderMixin := schema.EmailProvider{}.Mixin()
+	emailprovider.Policy = privacy.NewPolicies(emailproviderMixin[3], schema.EmailProvider{})
+	emailprovider.Hooks[0] = func(next ent.Mutator) ent.Mutator {
+		return ent.MutateFunc(func(ctx context.Context, m ent.Mutation) (ent.Value, error) {
+			if err := emailprovider.Policy.EvalMutation(ctx, m); err != nil {
+				return nil, err
+			}
+			return next.Mutate(ctx, m)
+		})
+	}
+	emailproviderMixinFields0 := emailproviderMixin[0].Fields()
+	_ = emailproviderMixinFields0
+	emailproviderMixinFields3 := emailproviderMixin[3].Fields()
+	_ = emailproviderMixinFields3
+	emailproviderFields := schema.EmailProvider{}.Fields()
+	_ = emailproviderFields
+	// emailproviderDescTenantID is the schema descriptor for tenant_id field.
+	emailproviderDescTenantID := emailproviderMixinFields3[0].Descriptor()
+	// emailprovider.DefaultTenantID holds the default value on creation for the tenant_id field.
+	emailprovider.DefaultTenantID = emailproviderDescTenantID.Default.(uint32)
+	// emailproviderDescName is the schema descriptor for name field.
+	emailproviderDescName := emailproviderFields[0].Descriptor()
+	// emailprovider.NameValidator is a validator for the "name" field. It is called by the builders before save.
+	emailprovider.NameValidator = emailproviderDescName.Validators[0].(func(string) error)
+	// emailproviderDescHost is the schema descriptor for host field.
+	emailproviderDescHost := emailproviderFields[1].Descriptor()
+	// emailprovider.HostValidator is a validator for the "host" field. It is called by the builders before save.
+	emailprovider.HostValidator = emailproviderDescHost.Validators[0].(func(string) error)
+	// emailproviderDescPort is the schema descriptor for port field.
+	emailproviderDescPort := emailproviderFields[2].Descriptor()
+	// emailprovider.DefaultPort holds the default value on creation for the port field.
+	emailprovider.DefaultPort = emailproviderDescPort.Default.(uint32)
+	// emailproviderDescFrom is the schema descriptor for from field.
+	emailproviderDescFrom := emailproviderFields[5].Descriptor()
+	// emailprovider.FromValidator is a validator for the "from" field. It is called by the builders before save.
+	emailprovider.FromValidator = emailproviderDescFrom.Validators[0].(func(string) error)
+	// emailproviderDescTLSMode is the schema descriptor for tls_mode field.
+	emailproviderDescTLSMode := emailproviderFields[6].Descriptor()
+	// emailprovider.DefaultTLSMode holds the default value on creation for the tls_mode field.
+	emailprovider.DefaultTLSMode = emailproviderDescTLSMode.Default.(string)
+	// emailproviderDescEnabled is the schema descriptor for enabled field.
+	emailproviderDescEnabled := emailproviderFields[7].Descriptor()
+	// emailprovider.DefaultEnabled holds the default value on creation for the enabled field.
+	emailprovider.DefaultEnabled = emailproviderDescEnabled.Default.(bool)
+	// emailproviderDescID is the schema descriptor for id field.
+	emailproviderDescID := emailproviderMixinFields0[0].Descriptor()
+	// emailprovider.IDValidator is a validator for the "id" field. It is called by the builders before save.
+	emailprovider.IDValidator = emailproviderDescID.Validators[0].(func(uint32) error)
 	fielddefinitionMixin := schema.FieldDefinition{}.Mixin()
 	fielddefinition.Policy = privacy.NewPolicies(fielddefinitionMixin[4], schema.FieldDefinition{})
 	fielddefinition.Hooks[0] = func(next ent.Mutator) ent.Mutator {

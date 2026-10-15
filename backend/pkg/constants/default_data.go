@@ -800,4 +800,19 @@ var DefaultMenus = []*permissionV1.Menu{
 			Authority: []string{"sys:platform_admin", "sys:tenant_manager"},
 		},
 	},
+	{
+		Id:        trans.Ptr(uint32(69)),
+		ParentId:  trans.Ptr(uint32(60)),
+		Type:      permissionV1.Menu_MENU.Enum(),
+		Name:      trans.Ptr("EmailProviderManagement"),
+		Path:      trans.Ptr("email-provider"),
+		Component: trans.Ptr("app/system/email_provider/index.vue"),
+		CreatedAt: timeutil.TimeToTimestamppb(trans.Ptr(time.Now())),
+		Meta: &permissionV1.MenuMeta{
+			Title:     trans.Ptr("menu.system.emailProvider"),
+			Icon:      trans.Ptr("lucide:mail"),
+			Order:     trans.Ptr(int32(9)),
+			Authority: []string{"sys:platform_admin"},
+		},
+	},
 }

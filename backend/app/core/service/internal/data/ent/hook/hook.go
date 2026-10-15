@@ -236,6 +236,18 @@ func (f DictTypeFunc) Mutate(ctx context.Context, m ent.Mutation) (ent.Value, er
 	return nil, fmt.Errorf("unexpected mutation type %T. expect *ent.DictTypeMutation", m)
 }
 
+// The EmailProviderFunc type is an adapter to allow the use of ordinary
+// function as EmailProvider mutator.
+type EmailProviderFunc func(context.Context, *ent.EmailProviderMutation) (ent.Value, error)
+
+// Mutate calls f(ctx, m).
+func (f EmailProviderFunc) Mutate(ctx context.Context, m ent.Mutation) (ent.Value, error) {
+	if mv, ok := m.(*ent.EmailProviderMutation); ok {
+		return f(ctx, mv)
+	}
+	return nil, fmt.Errorf("unexpected mutation type %T. expect *ent.EmailProviderMutation", m)
+}
+
 // The FieldDefinitionFunc type is an adapter to allow the use of ordinary
 // function as FieldDefinition mutator.
 type FieldDefinitionFunc func(context.Context, *ent.FieldDefinitionMutation) (ent.Value, error)

@@ -70,6 +70,7 @@
     "tasks": "tasks",
     "login-policies": "login-policies",
     "languages": "languages",
-    "webhook": "Webhooks"
+    "webhook": "Webhooks",
+    "emailProvider": "Email Outbound"
   }
 }

@@ -1,0 +1,21 @@
+{
+  "title": "Outbound SMTP",
+  "save": "Save",
+  "testSend": "Send Test",
+  "namePlaceholder": "Config name (e.g. Primary SMTP)",
+  "hostPlaceholder": "SMTP host (e.g. smtp.example.com)",
+  "fromPlaceholder": "From address",
+  "usernamePlaceholder": "Auth username (optional)",
+  "passwordPlaceholder": "Auth password",
+  "passwordKeepPlaceholder": "Leave empty to keep password",
+  "descriptionPlaceholder": "Note (optional)",
+  "enabled": "Enabled",
+  "testToPlaceholder": "Test recipient email",
+  "requiredFields": "Host and From are required",
+  "saveSuccess": "Saved",
+  "saveBeforeTest": "Save the config first",
+  "testToRequired": "Test recipient is required",
+  "testSuccess": "Test email sent",
+  "testFailed": "Test send failed",
+  "hint": "The email chain uses the first enabled provider; falls back to SMTP_* env vars when unset. Password is AES-GCM encrypted at rest and never displayed."
+}

@@ -1,0 +1,149 @@
+syntax = "proto3";
+
+package notify.service.v1;
+
+import "gnostic/openapi/v3/annotations.proto";
+import "google/api/annotations.proto";
+import "google/protobuf/empty.proto";
+import "google/protobuf/field_mask.proto";
+import "google/protobuf/timestamp.proto";
+import "pagination/v1/pagination.proto";
+
+// 邮件出站 SMTP 配置服务（平台基础设施）。
+// 凭据 AES-GCM 加密落库（ENCRYPTION_KEY 同源），接口永不回显密码。
+// notify.email worker 取第一个启用项；无配置时回退 SMTP_* 环境变量。
+service EmailProviderService {
+  // 获取配置列表
+  rpc List (pagination.PagingRequest) returns (ListEmailProvidersResponse) {}
+
+  // 获取配置数据
+  rpc Get (GetEmailProviderRequest) returns (EmailProvider) {}
+
+  // 创建配置
+  rpc Create (CreateEmailProviderRequest) returns (EmailProvider) {}
+
+  // 更新配置
+  rpc Update (UpdateEmailProviderRequest) returns (EmailProvider) {}
+
+  // 删除配置
+  rpc Delete (DeleteEmailProviderRequest) returns (google.protobuf.Empty) {}
+
+  // 发送测试邮件（用指定配置向目标地址投递，即时返回结果）
+  rpc TestSend (TestEmailSendRequest) returns (TestEmailSendResponse) {}
+}
+
+// 邮件 SMTP 配置
+message EmailProvider {
+  optional uint32 id = 1 [
+    json_name = "id",
+    (gnostic.openapi.v3.property) = {description: "配置ID"}
+  ]; // 配置ID
+
+  optional string name = 2 [
+    json_name = "name",
+    (gnostic.openapi.v3.property) = {description: "配置名称"}
+  ]; // 配置名称
+
+  optional string host = 3 [
+    json_name = "host",
+    (gnostic.openapi.v3.property) = {description: "SMTP 主机"}
+  ]; // SMTP 主机
+
+  optional uint32 port = 4 [
+    json_name = "port",
+    (gnostic.openapi.v3.property) = {description: "端口"}
+  ]; // 端口
+
+  optional string username = 5 [
+    json_name = "username",
+    (gnostic.openapi.v3.property) = {description: "认证用户名"}
+  ]; // 认证用户名
+
+  optional string password = 6 [
+    json_name = "password",
+    (gnostic.openapi.v3.property) = {description: "认证密码（写入专用，读取恒为空）"}
+  ]; // 认证密码
+
+  optional string from = 7 [
+    json_name = "from",
+    (gnostic.openapi.v3.property) = {description: "发件人地址"}
+  ]; // 发件人地址
+
+  optional string tls_mode = 8 [
+    json_name = "tlsMode",
+    (gnostic.openapi.v3.property) = {description: "TLS 模式（starttls/ssl/none）"}
+  ]; // TLS 模式
+
+  optional bool enabled = 9 [
+    json_name = "enabled",
+    (gnostic.openapi.v3.property) = {description: "是否启用"}
+  ]; // 是否启用
+
+  optional string description = 10 [
+    json_name = "description",
+    (gnostic.openapi.v3.property) = {description: "用途说明"}
+  ]; // 用途说明
+
+  optional uint32 created_by = 100 [json_name = "createdBy", (gnostic.openapi.v3.property) = {description: "创建者用户ID"}]; // 创建者用户ID
+  optional uint32 updated_by = 101 [json_name = "updatedBy", (gnostic.openapi.v3.property) = {description: "更新者用户ID"}]; // 更新者用户ID
+
+  optional google.protobuf.Timestamp created_at = 200 [json_name = "createdAt", (gnostic.openapi.v3.property) = {description: "创建时间"}];// 创建时间
+  optional google.protobuf.Timestamp updated_at = 201 [json_name = "updatedAt", (gnostic.openapi.v3.property) = {description: "更新时间"}];// 更新时间
+}
+
+// 回应 - 配置列表
+message ListEmailProvidersResponse {
+  repeated EmailProvider items = 1;
+  uint64 total = 2;
+}
+
+// 请求 - 配置数据
+message GetEmailProviderRequest {
+  uint32 id = 1;
+}
+
+// 请求 - 创建配置
+message CreateEmailProviderRequest {
+  EmailProvider data = 1;
+}
+
+// 请求 - 更新配置
+message UpdateEmailProviderRequest {
+  uint32 id = 1;
+
+  EmailProvider data = 2;
+
+  google.protobuf.FieldMask update_mask = 3 [
+    (gnostic.openapi.v3.property) = {description: "要更新的字段列表"},
+    json_name = "updateMask"
+  ]; // 要更新的字段列表
+
+  optional bool allow_missing = 4 [
+    (gnostic.openapi.v3.property) = {description: "不存在则新增"},
+    json_name = "allowMissing"
+  ]; // 不存在则新增
+}
+
+// 请求 - 删除配置
+message DeleteEmailProviderRequest {
+  uint32 id = 1;
+}
+
+// 请求 - 发送测试邮件
+message TestEmailSendRequest {
+  uint32 id = 1 [
+    json_name = "id",
+    (gnostic.openapi.v3.property) = {description: "配置ID"}
+  ];
+
+  string to = 2 [
+    (gnostic.openapi.v3.property) = {description: "目标邮箱地址"}
+  ];
+}
+
+// 回应 - 发送测试邮件
+message TestEmailSendResponse {
+  bool success = 1 [json_name = "success"];
+
+  string error = 2 [json_name = "error"]; // 失败原因（成功为空）
+}
