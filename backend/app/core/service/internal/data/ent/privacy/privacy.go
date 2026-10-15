@@ -639,6 +639,30 @@ func (f FileMutationRuleFunc) EvalMutation(ctx context.Context, m ent.Mutation) 
 	return Denyf("ent/privacy: unexpected mutation type %T, expect *ent.FileMutation", m)
 }
 
+// The FormSubmissionQueryRuleFunc type is an adapter to allow the use of ordinary
+// functions as a query rule.
+type FormSubmissionQueryRuleFunc func(context.Context, *ent.FormSubmissionQuery) error
+
+// EvalQuery return f(ctx, q).
+func (f FormSubmissionQueryRuleFunc) EvalQuery(ctx context.Context, q ent.Query) error {
+	if q, ok := q.(*ent.FormSubmissionQuery); ok {
+		return f(ctx, q)
+	}
+	return Denyf("ent/privacy: unexpected query type %T, expect *ent.FormSubmissionQuery", q)
+}
+
+// The FormSubmissionMutationRuleFunc type is an adapter to allow the use of ordinary
+// functions as a mutation rule.
+type FormSubmissionMutationRuleFunc func(context.Context, *ent.FormSubmissionMutation) error
+
+// EvalMutation calls f(ctx, m).
+func (f FormSubmissionMutationRuleFunc) EvalMutation(ctx context.Context, m ent.Mutation) error {
+	if m, ok := m.(*ent.FormSubmissionMutation); ok {
+		return f(ctx, m)
+	}
+	return Denyf("ent/privacy: unexpected mutation type %T, expect *ent.FormSubmissionMutation", m)
+}
+
 // The InteractionCounterQueryRuleFunc type is an adapter to allow the use of ordinary
 // functions as a query rule.
 type InteractionCounterQueryRuleFunc func(context.Context, *ent.InteractionCounterQuery) error
@@ -2110,6 +2134,8 @@ func queryFilter(q ent.Query) (Filter, error) {
 		return q.Filter(), nil
 	case *ent.FileQuery:
 		return q.Filter(), nil
+	case *ent.FormSubmissionQuery:
+		return q.Filter(), nil
 	case *ent.InteractionCounterQuery:
 		return q.Filter(), nil
 	case *ent.InternalMessageQuery:
@@ -2276,6 +2302,8 @@ func mutationFilter(m ent.Mutation) (Filter, error) {
 	case *ent.FieldDefinitionTranslationMutation:
 		return m.Filter(), nil
 	case *ent.FileMutation:
+		return m.Filter(), nil
+	case *ent.FormSubmissionMutation:
 		return m.Filter(), nil
 	case *ent.InteractionCounterMutation:
 		return m.Filter(), nil

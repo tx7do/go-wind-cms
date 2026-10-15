@@ -477,6 +477,25 @@ paths:
                         application/json:
                             schema:
                                 $ref: '#/components/schemas/storage.service.v1.UploadFileResponse'
+    /app/v1/form-submissions:
+        post:
+            tags:
+                - FormSubmissionService
+            description: 提交表单（匿名可调用）
+            operationId: FormSubmissionService_Submit
+            requestBody:
+                content:
+                    application/json:
+                        schema:
+                            $ref: '#/components/schemas/content.service.v1.SubmitFormSubmissionRequest'
+                required: true
+            responses:
+                "200":
+                    description: OK
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/content.service.v1.FormSubmission'
     /app/v1/interactions/counts:list:
         post:
             tags:
@@ -2232,6 +2251,35 @@ components:
                 data:
                     $ref: '#/components/schemas/content.service.v1.Tag'
             description: 请求 - 创建标签
+        content.service.v1.FormSubmission:
+            type: object
+            properties:
+                id:
+                    type: integer
+                    description: 提交ID
+                    format: uint32
+                pageId:
+                    type: integer
+                    description: 所属页面ID
+                    format: uint32
+                sectionId:
+                    type: integer
+                    description: 所属区块ID
+                    format: uint32
+                data:
+                    type: object
+                    additionalProperties:
+                        type: string
+                    description: 提交数据（字段名→值）
+                userId:
+                    type: integer
+                    description: 提交者用户ID（匿名提交为 0）
+                    format: uint32
+                createdAt:
+                    type: string
+                    description: 提交时间
+                    format: date-time
+            description: 表单提交
         content.service.v1.ListCategoryResponse:
             type: object
             properties:
@@ -2816,6 +2864,23 @@ components:
                     type: string
                     description: 规范 URL（SEO 用，格式：/{locale}/tag/{slug}，如 /zh-CN/tag/golang，允许自定义以覆盖默认生成的 URL）
             description: SEO 元信息结构设计
+        content.service.v1.SubmitFormSubmissionRequest:
+            type: object
+            properties:
+                pageId:
+                    type: integer
+                    description: 页面ID
+                    format: uint32
+                sectionId:
+                    type: integer
+                    description: 区块ID（须为该页面的 FORM 区块）
+                    format: uint32
+                data:
+                    type: object
+                    additionalProperties:
+                        type: string
+                    description: 提交数据（字段名→值）
+            description: 请求 - 提交表单
         content.service.v1.Tag:
             type: object
             properties:
@@ -3296,6 +3361,7 @@ components:
                         - TARGET_TYPE_UNSPECIFIED
                         - TARGET_TYPE_POST
                         - TARGET_TYPE_COMMENT
+                        - TARGET_TYPE_PAGE
                     type: string
                     format: enum
                 targetIds:
@@ -3331,6 +3397,7 @@ components:
                         - TARGET_TYPE_UNSPECIFIED
                         - TARGET_TYPE_POST
                         - TARGET_TYPE_COMMENT
+                        - TARGET_TYPE_PAGE
                     type: string
                     format: enum
                 targetIds:
@@ -3360,6 +3427,7 @@ components:
                         - TARGET_TYPE_UNSPECIFIED
                         - TARGET_TYPE_POST
                         - TARGET_TYPE_COMMENT
+                        - TARGET_TYPE_PAGE
                     type: string
                     format: enum
                 targetId:
@@ -3397,6 +3465,7 @@ components:
                         - TARGET_TYPE_UNSPECIFIED
                         - TARGET_TYPE_POST
                         - TARGET_TYPE_COMMENT
+                        - TARGET_TYPE_PAGE
                     type: string
                     format: enum
                 targetId:
@@ -3825,6 +3894,11 @@ tags:
       description: 评论服务
     - name: FileTransferService
       description: 文件传输服务
+    - name: FormSubmissionService
+      description: |-
+        表单提交服务（公开站点）：
+         仅暴露 Submit；列表/管理能力在 admin 门面。租户归属由 BFF 按请求 Host 解析后
+         经内网可信元数据 x-md-global-tenant-id 注入（与评论/浏览上报链路同款）。
     - name: InteractionService
       description: 交互服务（点赞/收藏）
     - name: NavigationService

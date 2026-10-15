@@ -92,6 +92,10 @@ func NewRestMiddleware(
 		// InteractionService.RecordView：浏览量上报，匿名可调用（PV 语义，
 		// 无 viewer 个人状态；租户归属由服务层按 Host 解析内网注入）。
 		appV1.OperationInteractionServiceRecordView,
+
+		// FormSubmissionService.Submit：页面 FORM 区块的访客提交，匿名可调用
+		//（校验在 core：页面须已发布、区块须为该页面的 FORM 区块、字段集受限）。
+		appV1.OperationFormSubmissionServiceSubmit,
 	)
 
 	ms = append(ms, applogging.Server(
@@ -140,6 +144,7 @@ func NewRestServer(
 	interactionService *service.InteractionService,
 	tagService *service.TagService,
 	pageService *service.PageService,
+	formSubmissionService *service.FormSubmissionService,
 	navigationService *service.NavigationService,
 	siteService *service.SiteService,
 
@@ -187,6 +192,7 @@ func NewRestServer(
 	appV1.RegisterCategoryServiceHTTPServer(srv, categoryService)
 	appV1.RegisterTagServiceHTTPServer(srv, tagService)
 	appV1.RegisterPageServiceHTTPServer(srv, pageService)
+	appV1.RegisterFormSubmissionServiceHTTPServer(srv, formSubmissionService)
 
 	appV1.RegisterCommentServiceHTTPServer(srv, commentService)
 

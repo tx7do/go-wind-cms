@@ -4723,6 +4723,191 @@ export type storageservicev1_UploadMediaAssetRequest = {
   userId?: number;
 };
 
+// 表单提交管理服务（页面 FORM 区块的访客提交）
+export interface FormSubmissionService {
+  // 获取提交列表
+  List(
+    request: pagination_PagingRequest,
+  ): Promise<contentservicev1_ListFormSubmissionsResponse>;
+  // 获取提交详情
+  Get(
+    request: contentservicev1_GetFormSubmissionRequest,
+  ): Promise<contentservicev1_FormSubmission>;
+  // 删除提交
+  Delete(
+    request: contentservicev1_DeleteFormSubmissionRequest,
+  ): Promise<wellKnownEmpty>;
+}
+
+export function createFormSubmissionServiceClient(
+  transport: ClientTransport,
+): FormSubmissionService {
+  return {
+    List(request) {
+      const path = `admin/v1/form-submissions`;
+      const body = null;
+      const queryParams: string[] = [];
+      if (request.page) {
+        queryParams.push(
+          `page=${encodeURIComponent(request.page.toString())}`,
+        );
+      }
+      if (request.pageSize) {
+        queryParams.push(
+          `pageSize=${encodeURIComponent(request.pageSize.toString())}`,
+        );
+      }
+      if (request.offset) {
+        queryParams.push(
+          `offset=${encodeURIComponent(request.offset.toString())}`,
+        );
+      }
+      if (request.limit) {
+        queryParams.push(
+          `limit=${encodeURIComponent(request.limit.toString())}`,
+        );
+      }
+      if (request.token) {
+        queryParams.push(
+          `token=${encodeURIComponent(request.token.toString())}`,
+        );
+      }
+      if (request.noPaging) {
+        queryParams.push(
+          `noPaging=${encodeURIComponent(request.noPaging.toString())}`,
+        );
+      }
+      if (request.query) {
+        queryParams.push(
+          `query=${encodeURIComponent(request.query.toString())}`,
+        );
+      }
+      if (request.filter) {
+        queryParams.push(
+          `filter=${encodeURIComponent(request.filter.toString())}`,
+        );
+      }
+      if (request.filterExpr?.type) {
+        queryParams.push(
+          `filterExpr.type=${encodeURIComponent(request.filterExpr.type.toString())}`,
+        );
+      }
+      if (request.filterExpr?.conditions?.field) {
+        queryParams.push(
+          `filterExpr.conditions.field=${encodeURIComponent(request.filterExpr.conditions.field.toString())}`,
+        );
+      }
+      if (request.filterExpr?.conditions?.op) {
+        queryParams.push(
+          `filterExpr.conditions.op=${encodeURIComponent(request.filterExpr.conditions.op.toString())}`,
+        );
+      }
+      if (request.filterExpr?.conditions?.value) {
+        queryParams.push(
+          `filterExpr.conditions.value=${encodeURIComponent(request.filterExpr.conditions.value.toString())}`,
+        );
+      }
+      if (request.filterExpr?.conditions?.jsonValue) {
+        queryParams.push(
+          `filterExpr.conditions.jsonValue=${encodeURIComponent(request.filterExpr.conditions.jsonValue.toString())}`,
+        );
+      }
+      if (request.filterExpr?.conditions?.values) {
+        request.filterExpr.conditions.values.forEach((x) => {
+          queryParams.push(
+            `filterExpr.conditions.values=${encodeURIComponent(x.toString())}`,
+          );
+        });
+      }
+      if (request.filterExpr?.conditions?.datePart) {
+        queryParams.push(
+          `filterExpr.conditions.datePart=${encodeURIComponent(request.filterExpr.conditions.datePart.toString())}`,
+        );
+      }
+      if (request.filterExpr?.conditions?.jsonPath) {
+        queryParams.push(
+          `filterExpr.conditions.jsonPath=${encodeURIComponent(request.filterExpr.conditions.jsonPath.toString())}`,
+        );
+      }
+      if (request.orderBy) {
+        queryParams.push(
+          `orderBy=${encodeURIComponent(request.orderBy.toString())}`,
+        );
+      }
+      if (request.sorting?.field) {
+        queryParams.push(
+          `sorting.field=${encodeURIComponent(request.sorting.field.toString())}`,
+        );
+      }
+      if (request.sorting?.direction) {
+        queryParams.push(
+          `sorting.direction=${encodeURIComponent(request.sorting.direction.toString())}`,
+        );
+      }
+      if (request.fieldMask) {
+        queryParams.push(
+          `fieldMask=${encodeURIComponent(request.fieldMask.toString())}`,
+        );
+      }
+      let uri = path;
+      if (queryParams.length > 0) {
+        uri += `?${queryParams.join('&')}`;
+      }
+      return transport.unary(uri, 'GET', body, {
+        service: 'FormSubmissionService',
+        method: 'List',
+      }) as Promise<contentservicev1_ListFormSubmissionsResponse>;
+    },
+    Get(request) {
+      if (request.id === undefined || request.id === null) {
+        throw new Error('missing required field request.id');
+      }
+      const path = `admin/v1/form-submissions/${request.id}`;
+      const body = null;
+      return transport.unary(path, 'GET', body, {
+        service: 'FormSubmissionService',
+        method: 'Get',
+      }) as Promise<contentservicev1_FormSubmission>;
+    },
+    Delete(request) {
+      if (request.id === undefined || request.id === null) {
+        throw new Error('missing required field request.id');
+      }
+      const path = `admin/v1/form-submissions/${request.id}`;
+      const body = null;
+      return transport.unary(path, 'DELETE', body, {
+        service: 'FormSubmissionService',
+        method: 'Delete',
+      }) as Promise<wellKnownEmpty>;
+    },
+  };
+}
+// 回应 - 提交列表
+export type contentservicev1_ListFormSubmissionsResponse = {
+  items: contentservicev1_FormSubmission[] | undefined;
+  total: number | undefined;
+};
+
+// 表单提交
+export type contentservicev1_FormSubmission = {
+  createdAt?: wellKnownTimestamp;
+  data: { [key: string]: string } | undefined;
+  id?: number;
+  pageId?: number;
+  sectionId?: number;
+  userId?: number;
+};
+
+// 请求 - 提交详情
+export type contentservicev1_GetFormSubmissionRequest = {
+  id: number | undefined;
+};
+
+// 请求 - 删除提交
+export type contentservicev1_DeleteFormSubmissionRequest = {
+  id: number | undefined;
+};
+
 // 交互管理服务（运营清数据面）。仅转发至 core InteractionAdminService，
 // 调用方须为平台管理员（由 core 侧运营上下文 guard 校验）。
 export interface InteractionAdminService {
@@ -4787,6 +4972,7 @@ export type interactionservicev1_PurgeTargetInteractionsRequest = {
 // 交互目标类型
 export type interactionservicev1_TargetType =
   | 'TARGET_TYPE_COMMENT'
+  | 'TARGET_TYPE_PAGE'
   | 'TARGET_TYPE_POST'
   | 'TARGET_TYPE_UNSPECIFIED';
 export type interactionservicev1_PurgeTargetInteractionsResponse = {
@@ -13583,6 +13769,7 @@ export class ApiClient {
   private _dictTypeService?: DictTypeService;
   private _fileService?: FileService;
   private _fileTransferService?: FileTransferService;
+  private _formSubmissionService?: FormSubmissionService;
   private _interactionAdminService?: InteractionAdminService;
   private _internalMessageCategoryService?: InternalMessageCategoryService;
   private _internalMessageRecipientService?: InternalMessageRecipientService;
@@ -13700,6 +13887,10 @@ export class ApiClient {
 
   get fileTransferService(): FileTransferService {
     return this._fileTransferService ??= createFileTransferServiceClient(this._transport);
+  }
+
+  get formSubmissionService(): FormSubmissionService {
+    return this._formSubmissionService ??= createFormSubmissionServiceClient(this._transport);
   }
 
   get interactionAdminService(): InteractionAdminService {

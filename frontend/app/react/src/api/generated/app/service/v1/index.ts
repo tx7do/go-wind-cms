@@ -1163,6 +1163,47 @@ export type storageservicev1_UploadFileResponse = {
   presignedUrl?: string;
 };
 
+// 表单提交服务（公开站点）：
+// 仅暴露 Submit；列表/管理能力在 admin 门面。租户归属由 BFF 按请求 Host 解析后
+// 经内网可信元数据 x-md-global-tenant-id 注入（与评论/浏览上报链路同款）。
+export interface FormSubmissionService {
+  // 提交表单（匿名可调用）
+  Submit(
+    request: contentservicev1_SubmitFormSubmissionRequest,
+  ): Promise<contentservicev1_FormSubmission>;
+}
+
+export function createFormSubmissionServiceClient(
+  transport: ClientTransport,
+): FormSubmissionService {
+  return {
+    Submit(request) {
+      const path = `app/v1/form-submissions`;
+      const body = JSON.stringify(request);
+      return transport.unary(path, 'POST', body, {
+        service: 'FormSubmissionService',
+        method: 'Submit',
+      }) as Promise<contentservicev1_FormSubmission>;
+    },
+  };
+}
+// 请求 - 提交表单
+export type contentservicev1_SubmitFormSubmissionRequest = {
+  data: { [key: string]: string } | undefined;
+  pageId: number | undefined;
+  sectionId: number | undefined;
+};
+
+// 表单提交
+export type contentservicev1_FormSubmission = {
+  createdAt?: wellKnownTimestamp;
+  data: { [key: string]: string } | undefined;
+  id?: number;
+  pageId?: number;
+  sectionId?: number;
+  userId?: number;
+};
+
 // 交互服务（点赞/收藏）
 export interface InteractionService {
   // 点赞
@@ -3316,6 +3357,7 @@ export class ApiClient {
   private _categoryService?: CategoryService;
   private _commentService?: CommentService;
   private _fileTransferService?: FileTransferService;
+  private _formSubmissionService?: FormSubmissionService;
   private _interactionService?: InteractionService;
   private _navigationService?: NavigationService;
   private _pageService?: PageService;
@@ -3343,6 +3385,10 @@ export class ApiClient {
 
   get fileTransferService(): FileTransferService {
     return this._fileTransferService ??= createFileTransferServiceClient(this._transport);
+  }
+
+  get formSubmissionService(): FormSubmissionService {
+    return this._formSubmissionService ??= createFormSubmissionServiceClient(this._transport);
   }
 
   get interactionService(): InteractionService {

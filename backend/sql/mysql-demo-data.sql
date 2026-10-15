@@ -1879,7 +1879,7 @@ INSERT INTO sections (
     2,
     'SECTION_TYPE_FORM',
     'about-contact-form',
-    '{}'
+    '{"fields": "[{\"name\":\"name\",\"type\":\"text\",\"required\":true},{\"name\":\"email\",\"type\":\"email\",\"required\":true},{\"name\":\"message\",\"type\":\"textarea\"}]"}'
 )
 )
 ;

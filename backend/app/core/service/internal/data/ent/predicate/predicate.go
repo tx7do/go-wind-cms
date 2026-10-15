@@ -72,6 +72,9 @@ type FieldDefinitionTranslation func(*sql.Selector)
 // File is the predicate function for file builders.
 type File func(*sql.Selector)
 
+// FormSubmission is the predicate function for formsubmission builders.
+type FormSubmission func(*sql.Selector)
+
 // InteractionCounter is the predicate function for interactioncounter builders.
 type InteractionCounter func(*sql.Selector)
 

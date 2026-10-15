@@ -43,14 +43,14 @@ type MediaAssetServiceHTTPServer interface {
 
 func RegisterMediaAssetServiceHTTPServer(s *http.Server, srv MediaAssetServiceHTTPServer) {
 	r := s.Route("/")
-	r.GET("/admin/v1/media-assets", _MediaAssetService_List18_HTTP_Handler(srv))
-	r.GET("/admin/v1/media-assets/{id}", _MediaAssetService_Get17_HTTP_Handler(srv))
+	r.GET("/admin/v1/media-assets", _MediaAssetService_List19_HTTP_Handler(srv))
+	r.GET("/admin/v1/media-assets/{id}", _MediaAssetService_Get18_HTTP_Handler(srv))
 	r.POST("/admin/v1/media-assets", _MediaAssetService_Create12_HTTP_Handler(srv))
 	r.PUT("/admin/v1/media-assets/{id}", _MediaAssetService_Update13_HTTP_Handler(srv))
-	r.DELETE("/admin/v1/media-assets/{id}", _MediaAssetService_Delete14_HTTP_Handler(srv))
+	r.DELETE("/admin/v1/media-assets/{id}", _MediaAssetService_Delete15_HTTP_Handler(srv))
 }
 
-func _MediaAssetService_List18_HTTP_Handler(srv MediaAssetServiceHTTPServer) func(ctx http.Context) error {
+func _MediaAssetService_List19_HTTP_Handler(srv MediaAssetServiceHTTPServer) func(ctx http.Context) error {
 	return func(ctx http.Context) error {
 		var in v1.PagingRequest
 		if err := ctx.BindQuery(&in); err != nil {
@@ -69,7 +69,7 @@ func _MediaAssetService_List18_HTTP_Handler(srv MediaAssetServiceHTTPServer) fun
 	}
 }
 
-func _MediaAssetService_Get17_HTTP_Handler(srv MediaAssetServiceHTTPServer) func(ctx http.Context) error {
+func _MediaAssetService_Get18_HTTP_Handler(srv MediaAssetServiceHTTPServer) func(ctx http.Context) error {
 	return func(ctx http.Context) error {
 		var in v11.GetMediaAssetRequest
 		if err := ctx.BindQuery(&in); err != nil {
@@ -138,7 +138,7 @@ func _MediaAssetService_Update13_HTTP_Handler(srv MediaAssetServiceHTTPServer) f
 	}
 }
 
-func _MediaAssetService_Delete14_HTTP_Handler(srv MediaAssetServiceHTTPServer) func(ctx http.Context) error {
+func _MediaAssetService_Delete15_HTTP_Handler(srv MediaAssetServiceHTTPServer) func(ctx http.Context) error {
 	return func(ctx http.Context) error {
 		var in v11.DeleteMediaAssetRequest
 		if err := ctx.BindQuery(&in); err != nil {

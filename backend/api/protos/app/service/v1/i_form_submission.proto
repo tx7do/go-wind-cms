@@ -1,0 +1,20 @@
+syntax = "proto3";
+
+package app.service.v1;
+
+import "google/api/annotations.proto";
+
+import "content/service/v1/form.proto";
+
+// 表单提交服务（公开站点）：
+// 仅暴露 Submit；列表/管理能力在 admin 门面。租户归属由 BFF 按请求 Host 解析后
+// 经内网可信元数据 x-md-global-tenant-id 注入（与评论/浏览上报链路同款）。
+service FormSubmissionService {
+  // 提交表单（匿名可调用）
+  rpc Submit (content.service.v1.SubmitFormSubmissionRequest) returns (content.service.v1.FormSubmission) {
+    option (google.api.http) = {
+      post: "/app/v1/form-submissions"
+      body: "*"
+    };
+  }
+}

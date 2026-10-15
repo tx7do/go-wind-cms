@@ -272,6 +272,18 @@ func (f FileFunc) Mutate(ctx context.Context, m ent.Mutation) (ent.Value, error)
 	return nil, fmt.Errorf("unexpected mutation type %T. expect *ent.FileMutation", m)
 }
 
+// The FormSubmissionFunc type is an adapter to allow the use of ordinary
+// function as FormSubmission mutator.
+type FormSubmissionFunc func(context.Context, *ent.FormSubmissionMutation) (ent.Value, error)
+
+// Mutate calls f(ctx, m).
+func (f FormSubmissionFunc) Mutate(ctx context.Context, m ent.Mutation) (ent.Value, error) {
+	if mv, ok := m.(*ent.FormSubmissionMutation); ok {
+		return f(ctx, mv)
+	}
+	return nil, fmt.Errorf("unexpected mutation type %T. expect *ent.FormSubmissionMutation", m)
+}
+
 // The InteractionCounterFunc type is an adapter to allow the use of ordinary
 // function as InteractionCounter mutator.
 type InteractionCounterFunc func(context.Context, *ent.InteractionCounterMutation) (ent.Value, error)

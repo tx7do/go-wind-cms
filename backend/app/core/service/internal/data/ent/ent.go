@@ -28,6 +28,7 @@ import (
 	"go-wind-cms/app/core/service/internal/data/ent/fielddefinition"
 	"go-wind-cms/app/core/service/internal/data/ent/fielddefinitiontranslation"
 	"go-wind-cms/app/core/service/internal/data/ent/file"
+	"go-wind-cms/app/core/service/internal/data/ent/formsubmission"
 	"go-wind-cms/app/core/service/internal/data/ent/interactioncounter"
 	"go-wind-cms/app/core/service/internal/data/ent/internalmessage"
 	"go-wind-cms/app/core/service/internal/data/ent/internalmessagecategory"
@@ -174,6 +175,7 @@ func checkColumn(t, c string) error {
 			fielddefinition.Table:            fielddefinition.ValidColumn,
 			fielddefinitiontranslation.Table: fielddefinitiontranslation.ValidColumn,
 			file.Table:                       file.ValidColumn,
+			formsubmission.Table:             formsubmission.ValidColumn,
 			interactioncounter.Table:         interactioncounter.ValidColumn,
 			internalmessage.Table:            internalmessage.ValidColumn,
 			internalmessagecategory.Table:    internalmessagecategory.ValidColumn,

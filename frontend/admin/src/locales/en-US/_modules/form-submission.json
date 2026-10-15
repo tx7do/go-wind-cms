@@ -1,0 +1,15 @@
+{
+  "title": "Form Submissions",
+  "pageId": "Page ID",
+  "sectionId": "Section ID",
+  "dataSummary": "Summary",
+  "submittedAt": "Submitted At",
+  "action": "Actions",
+  "detail": "Detail",
+  "delete": "Delete",
+  "deleteConfirm": "Delete this submission?",
+  "deleteSuccess": "Deleted",
+  "exportCsv": "Export CSV",
+  "nothingToExport": "Nothing to export",
+  "noData": "No data"
+}

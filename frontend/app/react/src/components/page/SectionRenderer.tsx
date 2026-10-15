@@ -1,16 +1,26 @@
 'use client';
 
-import React, {useMemo} from 'react';
+import React, {useMemo, useState} from 'react';
 import {cn} from '@/lib/utils';
 import ContentViewer from '@/components/content/ContentViewer';
 import {Button} from '@/components/ui/button';
 import Image from '@/components/ui/image';
 
+import {
+    apiClient,
+} from '@/api/client';
 import type {
     contentservicev1_Section,
     contentservicev1_SectionTranslation,
 } from '@/api/generated/app/service/v1';
 import {currentLocaleLanguageCode} from '@/i18n';
+
+/** FORM 区块字段定义（config.fields JSON 数组元素；与 core 侧校验契约一致） */
+interface FormFieldDef {
+    name: string;
+    type?: string;
+    required?: boolean;
+}
 
 /**
  * Section 内容键契约（三端渲染器共用，改键先同步 vue/flutter 端与本文档）
@@ -274,13 +284,93 @@ function HtmlSection({section}: SectionProps) {
 }
 
 function FormSection({section}: SectionProps) {
-    // 表单提交后端（form_submission）落地前的占位：可见但不误导访客输入
-    const label = pickSectionTranslation(section)?.content?.title || section.name || '';
-    if (!label) return null;
+    // 契约：config.fields = JSON 数组（语言无关结构）；翻译 content 的
+    // `<字段名>` 键为标签（随语言变化），content.title 为表单标题。
+    const [values, setValues] = useState<Record<string, string>>({});
+    const [state, setState] = useState<'idle' | 'submitting' | 'done' | 'error'>('idle');
+
+    const tr = pickSectionTranslation(section);
+    const title = tr?.content?.title || section.name || '';
+
+    let fields: FormFieldDef[] = [];
+    try {
+        const parsed = JSON.parse(section.config?.fields || '[]');
+        if (Array.isArray(parsed)) {
+            fields = parsed.filter(
+                (f: unknown): f is FormFieldDef => !!f && typeof (f as FormFieldDef).name === 'string',
+            );
+        }
+    } catch {
+        // 字段定义非法：渲染为空表单（仅标题），不中断整页
+    }
+
+    if (fields.length === 0 && !title) return null;
+
+    const handleSubmit = async (e: React.FormEvent) => {
+        e.preventDefault();
+        if (!section.pageId || state === 'submitting') return;
+        setState('submitting');
+        try {
+            await apiClient.formSubmissionService.Submit({
+                pageId: section.pageId,
+                sectionId: section.id ?? 0,
+                data: values,
+            });
+            setState('done');
+            setValues({});
+        } catch (error) {
+            console.error('Form submit failed:', error);
+            setState('error');
+        }
+    };
+
+    if (state === 'done') {
+        return (
+            <div className="rounded-xl border border-border bg-muted/40 p-6 text-center text-sm text-muted-foreground">
+                {tr?.content?.successText || title}
+            </div>
+        );
+    }
+
+    const inputClass =
+        'w-full rounded-lg border border-border bg-background px-3 py-2 text-sm text-foreground outline-none focus:border-primary';
+
     return (
-        <div className="rounded-xl border border-dashed border-border bg-muted/40 p-6 text-center text-sm text-muted-foreground">
-            {label}
-        </div>
+        <form className="space-y-4" onSubmit={handleSubmit}>
+            {title && <div className="text-lg font-semibold text-foreground">{title}</div>}
+            {fields.map((field) => {
+                const label = tr?.content?.[field.name] || field.name;
+                const common = {
+                    id: `f-${section.id}-${field.name}`,
+                    required: field.required,
+                    value: values[field.name] || '',
+                    onChange: (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) =>
+                        setValues((v) => ({...v, [field.name]: e.target.value})),
+                    className: inputClass,
+                };
+                return (
+                    <div key={field.name} className="space-y-1">
+                        <label htmlFor={common.id} className="text-sm font-medium text-foreground">
+                            {label}
+                            {field.required && <span className="text-destructive"> *</span>}
+                        </label>
+                        {field.type === 'textarea' ? (
+                            <textarea {...common} rows={4}/>
+                        ) : (
+                            <input {...common} type={field.type === 'email' ? 'email' : field.type === 'tel' ? 'tel' : 'text'}/>
+                        )}
+                    </div>
+                );
+            })}
+            {state === 'error' && (
+                <div className="text-sm text-destructive">
+                    {tr?.content?.errorText || 'Submit failed, please retry'}
+                </div>
+            )}
+            <Button type="submit" disabled={state === 'submitting'}>
+                {state === 'submitting' ? '…' : tr?.content?.submitText || 'Submit'}
+            </Button>
+        </form>
     );
 }
 

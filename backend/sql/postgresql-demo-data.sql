@@ -1855,7 +1855,7 @@ INSERT INTO sections (
     2,
     'SECTION_TYPE_FORM',
     'about-contact-form',
-    '{}'::jsonb
+    '{"fields": "[{\"name\":\"name\",\"type\":\"text\",\"required\":true},{\"name\":\"email\",\"type\":\"email\",\"required\":true},{\"name\":\"message\",\"type\":\"textarea\"}]"}'::jsonb
 );
 
 SELECT setval('sections_id_seq', (SELECT MAX(id) FROM sections));

@@ -43,14 +43,14 @@ type SiteServiceHTTPServer interface {
 
 func RegisterSiteServiceHTTPServer(s *http.Server, srv SiteServiceHTTPServer) {
 	r := s.Route("/")
-	r.GET("/admin/v1/sites", _SiteService_List32_HTTP_Handler(srv))
-	r.GET("/admin/v1/sites/{id}", _SiteService_Get31_HTTP_Handler(srv))
+	r.GET("/admin/v1/sites", _SiteService_List33_HTTP_Handler(srv))
+	r.GET("/admin/v1/sites/{id}", _SiteService_Get32_HTTP_Handler(srv))
 	r.POST("/admin/v1/sites", _SiteService_Create23_HTTP_Handler(srv))
 	r.PUT("/admin/v1/sites/{id}", _SiteService_Update24_HTTP_Handler(srv))
-	r.DELETE("/admin/v1/sites/{id}", _SiteService_Delete25_HTTP_Handler(srv))
+	r.DELETE("/admin/v1/sites/{id}", _SiteService_Delete26_HTTP_Handler(srv))
 }
 
-func _SiteService_List32_HTTP_Handler(srv SiteServiceHTTPServer) func(ctx http.Context) error {
+func _SiteService_List33_HTTP_Handler(srv SiteServiceHTTPServer) func(ctx http.Context) error {
 	return func(ctx http.Context) error {
 		var in v1.PagingRequest
 		if err := ctx.BindQuery(&in); err != nil {
@@ -69,7 +69,7 @@ func _SiteService_List32_HTTP_Handler(srv SiteServiceHTTPServer) func(ctx http.C
 	}
 }
 
-func _SiteService_Get31_HTTP_Handler(srv SiteServiceHTTPServer) func(ctx http.Context) error {
+func _SiteService_Get32_HTTP_Handler(srv SiteServiceHTTPServer) func(ctx http.Context) error {
 	return func(ctx http.Context) error {
 		var in v11.GetSiteRequest
 		if err := ctx.BindQuery(&in); err != nil {
@@ -138,7 +138,7 @@ func _SiteService_Update24_HTTP_Handler(srv SiteServiceHTTPServer) func(ctx http
 	}
 }
 
-func _SiteService_Delete25_HTTP_Handler(srv SiteServiceHTTPServer) func(ctx http.Context) error {
+func _SiteService_Delete26_HTTP_Handler(srv SiteServiceHTTPServer) func(ctx http.Context) error {
 	return func(ctx http.Context) error {
 		var in v11.DeleteSiteRequest
 		if err := ctx.BindQuery(&in); err != nil {

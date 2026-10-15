@@ -108,6 +108,7 @@ func NewGrpcServer(
 
 	socialService *service.SocialService,
 	webhookService *service.WebhookService,
+	formSubmissionService *service.FormSubmissionService,
 
 	// register:param ── 新模块服务形参在此行后注册(make register 工具锚点,勿删)
 ) (*grpc.Server, error) {
@@ -188,6 +189,7 @@ func NewGrpcServer(
 
 	socialV1.RegisterSocialServiceServer(srv, socialService)
 	webhookV1.RegisterWebhookServiceServer(srv, webhookService)
+	contentV1.RegisterFormSubmissionServiceServer(srv, formSubmissionService)
 
 	// register:route ── 新模块路由在此行后注册(make register 工具锚点,勿删)
 

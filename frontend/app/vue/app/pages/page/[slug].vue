@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import type { contentservicev1_Page } from '@/api/generated/app/service/v1'
 import { fetchPage, fetchPageBySlug, fetchPagePreview, getPageTranslation } from '@/api/composables/page'
-import { recordView } from '@/api/composables/interaction''
+import { recordView } from '@/api/composables/interaction'
 
 /**
  * CMS Page 公开渲染页：

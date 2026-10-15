@@ -43,14 +43,14 @@ type PositionServiceHTTPServer interface {
 
 func RegisterPositionServiceHTTPServer(s *http.Server, srv PositionServiceHTTPServer) {
 	r := s.Route("/")
-	r.GET("/admin/v1/positions", _PositionService_List29_HTTP_Handler(srv))
-	r.GET("/admin/v1/positions/{id}", _PositionService_Get28_HTTP_Handler(srv))
+	r.GET("/admin/v1/positions", _PositionService_List30_HTTP_Handler(srv))
+	r.GET("/admin/v1/positions/{id}", _PositionService_Get29_HTTP_Handler(srv))
 	r.POST("/admin/v1/positions", _PositionService_Create20_HTTP_Handler(srv))
 	r.PUT("/admin/v1/positions/{id}", _PositionService_Update21_HTTP_Handler(srv))
-	r.DELETE("/admin/v1/positions/{id}", _PositionService_Delete22_HTTP_Handler(srv))
+	r.DELETE("/admin/v1/positions/{id}", _PositionService_Delete23_HTTP_Handler(srv))
 }
 
-func _PositionService_List29_HTTP_Handler(srv PositionServiceHTTPServer) func(ctx http.Context) error {
+func _PositionService_List30_HTTP_Handler(srv PositionServiceHTTPServer) func(ctx http.Context) error {
 	return func(ctx http.Context) error {
 		var in v1.PagingRequest
 		if err := ctx.BindQuery(&in); err != nil {
@@ -69,7 +69,7 @@ func _PositionService_List29_HTTP_Handler(srv PositionServiceHTTPServer) func(ct
 	}
 }
 
-func _PositionService_Get28_HTTP_Handler(srv PositionServiceHTTPServer) func(ctx http.Context) error {
+func _PositionService_Get29_HTTP_Handler(srv PositionServiceHTTPServer) func(ctx http.Context) error {
 	return func(ctx http.Context) error {
 		var in v11.GetPositionRequest
 		if err := ctx.BindQuery(&in); err != nil {
@@ -138,7 +138,7 @@ func _PositionService_Update21_HTTP_Handler(srv PositionServiceHTTPServer) func(
 	}
 }
 
-func _PositionService_Delete22_HTTP_Handler(srv PositionServiceHTTPServer) func(ctx http.Context) error {
+func _PositionService_Delete23_HTTP_Handler(srv PositionServiceHTTPServer) func(ctx http.Context) error {
 	return func(ctx http.Context) error {
 		var in v11.DeletePositionRequest
 		if err := ctx.BindQuery(&in); err != nil {

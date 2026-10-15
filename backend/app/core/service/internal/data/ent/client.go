@@ -33,6 +33,7 @@ import (
 	"go-wind-cms/app/core/service/internal/data/ent/fielddefinition"
 	"go-wind-cms/app/core/service/internal/data/ent/fielddefinitiontranslation"
 	"go-wind-cms/app/core/service/internal/data/ent/file"
+	"go-wind-cms/app/core/service/internal/data/ent/formsubmission"
 	"go-wind-cms/app/core/service/internal/data/ent/interactioncounter"
 	"go-wind-cms/app/core/service/internal/data/ent/internalmessage"
 	"go-wind-cms/app/core/service/internal/data/ent/internalmessagecategory"
@@ -147,6 +148,8 @@ type Client struct {
 	FieldDefinitionTranslation *FieldDefinitionTranslationClient
 	// File is the client for interacting with the File builders.
 	File *FileClient
+	// FormSubmission is the client for interacting with the FormSubmission builders.
+	FormSubmission *FormSubmissionClient
 	// InteractionCounter is the client for interacting with the InteractionCounter builders.
 	InteractionCounter *InteractionCounterClient
 	// InternalMessage is the client for interacting with the InternalMessage builders.
@@ -296,6 +299,7 @@ func (c *Client) init() {
 	c.FieldDefinition = NewFieldDefinitionClient(c.config)
 	c.FieldDefinitionTranslation = NewFieldDefinitionTranslationClient(c.config)
 	c.File = NewFileClient(c.config)
+	c.FormSubmission = NewFormSubmissionClient(c.config)
 	c.InteractionCounter = NewInteractionCounterClient(c.config)
 	c.InternalMessage = NewInternalMessageClient(c.config)
 	c.InternalMessageCategory = NewInternalMessageCategoryClient(c.config)
@@ -468,6 +472,7 @@ func (c *Client) Tx(ctx context.Context) (*Tx, error) {
 		FieldDefinition:            NewFieldDefinitionClient(cfg),
 		FieldDefinitionTranslation: NewFieldDefinitionTranslationClient(cfg),
 		File:                       NewFileClient(cfg),
+		FormSubmission:             NewFormSubmissionClient(cfg),
 		InteractionCounter:         NewInteractionCounterClient(cfg),
 		InternalMessage:            NewInternalMessageClient(cfg),
 		InternalMessageCategory:    NewInternalMessageCategoryClient(cfg),
@@ -567,6 +572,7 @@ func (c *Client) BeginTx(ctx context.Context, opts *sql.TxOptions) (*Tx, error) 
 		FieldDefinition:            NewFieldDefinitionClient(cfg),
 		FieldDefinitionTranslation: NewFieldDefinitionTranslationClient(cfg),
 		File:                       NewFileClient(cfg),
+		FormSubmission:             NewFormSubmissionClient(cfg),
 		InteractionCounter:         NewInteractionCounterClient(cfg),
 		InternalMessage:            NewInternalMessageClient(cfg),
 		InternalMessageCategory:    NewInternalMessageCategoryClient(cfg),
@@ -659,19 +665,20 @@ func (c *Client) Use(hooks ...Hook) {
 		c.CategoryTranslation, c.Comment, c.CommentLike, c.ContentModel,
 		c.ContentModelTranslation, c.DataAccessAuditLog, c.DictEntry, c.DictEntryI18n,
 		c.DictType, c.FieldDefinition, c.FieldDefinitionTranslation, c.File,
-		c.InteractionCounter, c.InternalMessage, c.InternalMessageCategory,
-		c.InternalMessageRecipient, c.Language, c.LoginAuditLog, c.LoginPolicy,
-		c.MediaAsset, c.MediaVariant, c.Membership, c.MembershipOrgUnit,
-		c.MembershipPosition, c.MembershipRole, c.Menu, c.Navigation, c.NavigationItem,
-		c.OperationAuditLog, c.OrgUnit, c.Page, c.PageTranslation, c.PageVersion,
-		c.Permission, c.PermissionApi, c.PermissionAuditLog, c.PermissionGroup,
-		c.PermissionMenu, c.PermissionPolicy, c.PolicyEvaluationLog, c.Position,
-		c.Post, c.PostCategory, c.PostLike, c.PostTag, c.PostTranslation,
-		c.PostVersion, c.PostWatch, c.Role, c.RoleMetadata, c.RolePermission,
-		c.Section, c.SectionTranslation, c.Site, c.SiteSetting, c.SocialAccount,
-		c.SocialDistribution, c.SocialInboxItem, c.SocialStatsHistory, c.Tag,
-		c.TagTranslation, c.Task, c.Tenant, c.User, c.UserCredential, c.UserOrgUnit,
-		c.UserPosition, c.UserRole, c.Webhook, c.WebhookDelivery,
+		c.FormSubmission, c.InteractionCounter, c.InternalMessage,
+		c.InternalMessageCategory, c.InternalMessageRecipient, c.Language,
+		c.LoginAuditLog, c.LoginPolicy, c.MediaAsset, c.MediaVariant, c.Membership,
+		c.MembershipOrgUnit, c.MembershipPosition, c.MembershipRole, c.Menu,
+		c.Navigation, c.NavigationItem, c.OperationAuditLog, c.OrgUnit, c.Page,
+		c.PageTranslation, c.PageVersion, c.Permission, c.PermissionApi,
+		c.PermissionAuditLog, c.PermissionGroup, c.PermissionMenu, c.PermissionPolicy,
+		c.PolicyEvaluationLog, c.Position, c.Post, c.PostCategory, c.PostLike,
+		c.PostTag, c.PostTranslation, c.PostVersion, c.PostWatch, c.Role,
+		c.RoleMetadata, c.RolePermission, c.Section, c.SectionTranslation, c.Site,
+		c.SiteSetting, c.SocialAccount, c.SocialDistribution, c.SocialInboxItem,
+		c.SocialStatsHistory, c.Tag, c.TagTranslation, c.Task, c.Tenant, c.User,
+		c.UserCredential, c.UserOrgUnit, c.UserPosition, c.UserRole, c.Webhook,
+		c.WebhookDelivery,
 	} {
 		n.Use(hooks...)
 	}
@@ -686,19 +693,20 @@ func (c *Client) Intercept(interceptors ...Interceptor) {
 		c.CategoryTranslation, c.Comment, c.CommentLike, c.ContentModel,
 		c.ContentModelTranslation, c.DataAccessAuditLog, c.DictEntry, c.DictEntryI18n,
 		c.DictType, c.FieldDefinition, c.FieldDefinitionTranslation, c.File,
-		c.InteractionCounter, c.InternalMessage, c.InternalMessageCategory,
-		c.InternalMessageRecipient, c.Language, c.LoginAuditLog, c.LoginPolicy,
-		c.MediaAsset, c.MediaVariant, c.Membership, c.MembershipOrgUnit,
-		c.MembershipPosition, c.MembershipRole, c.Menu, c.Navigation, c.NavigationItem,
-		c.OperationAuditLog, c.OrgUnit, c.Page, c.PageTranslation, c.PageVersion,
-		c.Permission, c.PermissionApi, c.PermissionAuditLog, c.PermissionGroup,
-		c.PermissionMenu, c.PermissionPolicy, c.PolicyEvaluationLog, c.Position,
-		c.Post, c.PostCategory, c.PostLike, c.PostTag, c.PostTranslation,
-		c.PostVersion, c.PostWatch, c.Role, c.RoleMetadata, c.RolePermission,
-		c.Section, c.SectionTranslation, c.Site, c.SiteSetting, c.SocialAccount,
-		c.SocialDistribution, c.SocialInboxItem, c.SocialStatsHistory, c.Tag,
-		c.TagTranslation, c.Task, c.Tenant, c.User, c.UserCredential, c.UserOrgUnit,
-		c.UserPosition, c.UserRole, c.Webhook, c.WebhookDelivery,
+		c.FormSubmission, c.InteractionCounter, c.InternalMessage,
+		c.InternalMessageCategory, c.InternalMessageRecipient, c.Language,
+		c.LoginAuditLog, c.LoginPolicy, c.MediaAsset, c.MediaVariant, c.Membership,
+		c.MembershipOrgUnit, c.MembershipPosition, c.MembershipRole, c.Menu,
+		c.Navigation, c.NavigationItem, c.OperationAuditLog, c.OrgUnit, c.Page,
+		c.PageTranslation, c.PageVersion, c.Permission, c.PermissionApi,
+		c.PermissionAuditLog, c.PermissionGroup, c.PermissionMenu, c.PermissionPolicy,
+		c.PolicyEvaluationLog, c.Position, c.Post, c.PostCategory, c.PostLike,
+		c.PostTag, c.PostTranslation, c.PostVersion, c.PostWatch, c.Role,
+		c.RoleMetadata, c.RolePermission, c.Section, c.SectionTranslation, c.Site,
+		c.SiteSetting, c.SocialAccount, c.SocialDistribution, c.SocialInboxItem,
+		c.SocialStatsHistory, c.Tag, c.TagTranslation, c.Task, c.Tenant, c.User,
+		c.UserCredential, c.UserOrgUnit, c.UserPosition, c.UserRole, c.Webhook,
+		c.WebhookDelivery,
 	} {
 		n.Intercept(interceptors...)
 	}
@@ -751,6 +759,8 @@ func (c *Client) Mutate(ctx context.Context, m Mutation) (Value, error) {
 		return c.FieldDefinitionTranslation.mutate(ctx, m)
 	case *FileMutation:
 		return c.File.mutate(ctx, m)
+	case *FormSubmissionMutation:
+		return c.FormSubmission.mutate(ctx, m)
 	case *InteractionCounterMutation:
 		return c.InteractionCounter.mutate(ctx, m)
 	case *InternalMessageMutation:
@@ -4038,6 +4048,140 @@ func (c *FileClient) mutate(ctx context.Context, m *FileMutation) (Value, error)
 		return (&FileDelete{config: c.config, hooks: c.Hooks(), mutation: m}).Exec(ctx)
 	default:
 		return nil, fmt.Errorf("ent: unknown File mutation op: %q", m.Op())
+	}
+}
+
+// FormSubmissionClient is a client for the FormSubmission schema.
+type FormSubmissionClient struct {
+	config
+}
+
+// NewFormSubmissionClient returns a client for the FormSubmission from the given config.
+func NewFormSubmissionClient(c config) *FormSubmissionClient {
+	return &FormSubmissionClient{config: c}
+}
+
+// Use adds a list of mutation hooks to the hooks stack.
+// A call to `Use(f, g, h)` equals to `formsubmission.Hooks(f(g(h())))`.
+func (c *FormSubmissionClient) Use(hooks ...Hook) {
+	c.hooks.FormSubmission = append(c.hooks.FormSubmission, hooks...)
+}
+
+// Intercept adds a list of query interceptors to the interceptors stack.
+// A call to `Intercept(f, g, h)` equals to `formsubmission.Intercept(f(g(h())))`.
+func (c *FormSubmissionClient) Intercept(interceptors ...Interceptor) {
+	c.inters.FormSubmission = append(c.inters.FormSubmission, interceptors...)
+}
+
+// Create returns a builder for creating a FormSubmission entity.
+func (c *FormSubmissionClient) Create() *FormSubmissionCreate {
+	mutation := newFormSubmissionMutation(c.config, OpCreate)
+	return &FormSubmissionCreate{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// CreateBulk returns a builder for creating a bulk of FormSubmission entities.
+func (c *FormSubmissionClient) CreateBulk(builders ...*FormSubmissionCreate) *FormSubmissionCreateBulk {
+	return &FormSubmissionCreateBulk{config: c.config, builders: builders}
+}
+
+// MapCreateBulk creates a bulk creation builder from the given slice. For each item in the slice, the function creates
+// a builder and applies setFunc on it.
+func (c *FormSubmissionClient) MapCreateBulk(slice any, setFunc func(*FormSubmissionCreate, int)) *FormSubmissionCreateBulk {
+	rv := reflect.ValueOf(slice)
+	if rv.Kind() != reflect.Slice {
+		return &FormSubmissionCreateBulk{err: fmt.Errorf("calling to FormSubmissionClient.MapCreateBulk with wrong type %T, need slice", slice)}
+	}
+	builders := make([]*FormSubmissionCreate, rv.Len())
+	for i := 0; i < rv.Len(); i++ {
+		builders[i] = c.Create()
+		setFunc(builders[i], i)
+	}
+	return &FormSubmissionCreateBulk{config: c.config, builders: builders}
+}
+
+// Update returns an update builder for FormSubmission.
+func (c *FormSubmissionClient) Update() *FormSubmissionUpdate {
+	mutation := newFormSubmissionMutation(c.config, OpUpdate)
+	return &FormSubmissionUpdate{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// UpdateOne returns an update builder for the given entity.
+func (c *FormSubmissionClient) UpdateOne(_m *FormSubmission) *FormSubmissionUpdateOne {
+	mutation := newFormSubmissionMutation(c.config, OpUpdateOne, withFormSubmission(_m))
+	return &FormSubmissionUpdateOne{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// UpdateOneID returns an update builder for the given id.
+func (c *FormSubmissionClient) UpdateOneID(id uint32) *FormSubmissionUpdateOne {
+	mutation := newFormSubmissionMutation(c.config, OpUpdateOne, withFormSubmissionID(id))
+	return &FormSubmissionUpdateOne{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// Delete returns a delete builder for FormSubmission.
+func (c *FormSubmissionClient) Delete() *FormSubmissionDelete {
+	mutation := newFormSubmissionMutation(c.config, OpDelete)
+	return &FormSubmissionDelete{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// DeleteOne returns a builder for deleting the given entity.
+func (c *FormSubmissionClient) DeleteOne(_m *FormSubmission) *FormSubmissionDeleteOne {
+	return c.DeleteOneID(_m.ID)
+}
+
+// DeleteOneID returns a builder for deleting the given entity by its id.
+func (c *FormSubmissionClient) DeleteOneID(id uint32) *FormSubmissionDeleteOne {
+	builder := c.Delete().Where(formsubmission.ID(id))
+	builder.mutation.id = &id
+	builder.mutation.op = OpDeleteOne
+	return &FormSubmissionDeleteOne{builder}
+}
+
+// Query returns a query builder for FormSubmission.
+func (c *FormSubmissionClient) Query() *FormSubmissionQuery {
+	return &FormSubmissionQuery{
+		config: c.config,
+		ctx:    &QueryContext{Type: TypeFormSubmission},
+		inters: c.Interceptors(),
+	}
+}
+
+// Get returns a FormSubmission entity by its id.
+func (c *FormSubmissionClient) Get(ctx context.Context, id uint32) (*FormSubmission, error) {
+	return c.Query().Where(formsubmission.ID(id)).Only(ctx)
+}
+
+// GetX is like Get, but panics if an error occurs.
+func (c *FormSubmissionClient) GetX(ctx context.Context, id uint32) *FormSubmission {
+	obj, err := c.Get(ctx, id)
+	if err != nil {
+		panic(err)
+	}
+	return obj
+}
+
+// Hooks returns the client hooks.
+func (c *FormSubmissionClient) Hooks() []Hook {
+	hooks := c.hooks.FormSubmission
+	return append(hooks[:len(hooks):len(hooks)], formsubmission.Hooks[:]...)
+}
+
+// Interceptors returns the client interceptors.
+func (c *FormSubmissionClient) Interceptors() []Interceptor {
+	return c.inters.FormSubmission
+}
+
+func (c *FormSubmissionClient) mutate(ctx context.Context, m *FormSubmissionMutation) (Value, error) {
+	switch m.Op() {
+	case OpCreate:
+		return (&FormSubmissionCreate{config: c.config, hooks: c.Hooks(), mutation: m}).Save(ctx)
+	case OpUpdate:
+		return (&FormSubmissionUpdate{config: c.config, hooks: c.Hooks(), mutation: m}).Save(ctx)
+	case OpUpdateOne:
+		return (&FormSubmissionUpdateOne{config: c.config, hooks: c.Hooks(), mutation: m}).Save(ctx)
+	case OpDelete, OpDeleteOne:
+		return (&FormSubmissionDelete{config: c.config, hooks: c.Hooks(), mutation: m}).Exec(ctx)
+	default:
+		return nil, fmt.Errorf("ent: unknown FormSubmission mutation op: %q", m.Op())
 	}
 }
 
@@ -12009,12 +12153,12 @@ type (
 		AiUsageLog, Api, ApiAuditLog, Category, CategoryTranslation, Comment,
 		CommentLike, ContentModel, ContentModelTranslation, DataAccessAuditLog,
 		DictEntry, DictEntryI18n, DictType, FieldDefinition,
-		FieldDefinitionTranslation, File, InteractionCounter, InternalMessage,
-		InternalMessageCategory, InternalMessageRecipient, Language, LoginAuditLog,
-		LoginPolicy, MediaAsset, MediaVariant, Membership, MembershipOrgUnit,
-		MembershipPosition, MembershipRole, Menu, Navigation, NavigationItem,
-		OperationAuditLog, OrgUnit, Page, PageTranslation, PageVersion, Permission,
-		PermissionApi, PermissionAuditLog, PermissionGroup, PermissionMenu,
+		FieldDefinitionTranslation, File, FormSubmission, InteractionCounter,
+		InternalMessage, InternalMessageCategory, InternalMessageRecipient, Language,
+		LoginAuditLog, LoginPolicy, MediaAsset, MediaVariant, Membership,
+		MembershipOrgUnit, MembershipPosition, MembershipRole, Menu, Navigation,
+		NavigationItem, OperationAuditLog, OrgUnit, Page, PageTranslation, PageVersion,
+		Permission, PermissionApi, PermissionAuditLog, PermissionGroup, PermissionMenu,
 		PermissionPolicy, PolicyEvaluationLog, Position, Post, PostCategory, PostLike,
 		PostTag, PostTranslation, PostVersion, PostWatch, Role, RoleMetadata,
 		RolePermission, Section, SectionTranslation, Site, SiteSetting, SocialAccount,
@@ -12027,12 +12171,12 @@ type (
 		AiUsageLog, Api, ApiAuditLog, Category, CategoryTranslation, Comment,
 		CommentLike, ContentModel, ContentModelTranslation, DataAccessAuditLog,
 		DictEntry, DictEntryI18n, DictType, FieldDefinition,
-		FieldDefinitionTranslation, File, InteractionCounter, InternalMessage,
-		InternalMessageCategory, InternalMessageRecipient, Language, LoginAuditLog,
-		LoginPolicy, MediaAsset, MediaVariant, Membership, MembershipOrgUnit,
-		MembershipPosition, MembershipRole, Menu, Navigation, NavigationItem,
-		OperationAuditLog, OrgUnit, Page, PageTranslation, PageVersion, Permission,
-		PermissionApi, PermissionAuditLog, PermissionGroup, PermissionMenu,
+		FieldDefinitionTranslation, File, FormSubmission, InteractionCounter,
+		InternalMessage, InternalMessageCategory, InternalMessageRecipient, Language,
+		LoginAuditLog, LoginPolicy, MediaAsset, MediaVariant, Membership,
+		MembershipOrgUnit, MembershipPosition, MembershipRole, Menu, Navigation,
+		NavigationItem, OperationAuditLog, OrgUnit, Page, PageTranslation, PageVersion,
+		Permission, PermissionApi, PermissionAuditLog, PermissionGroup, PermissionMenu,
 		PermissionPolicy, PolicyEvaluationLog, Position, Post, PostCategory, PostLike,
 		PostTag, PostTranslation, PostVersion, PostWatch, Role, RoleMetadata,
 		RolePermission, Section, SectionTranslation, Site, SiteSetting, SocialAccount,

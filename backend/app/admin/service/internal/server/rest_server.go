@@ -164,6 +164,7 @@ func NewRestServer(
 	mediaAssetService *service.MediaAssetService,
 	socialService *service.SocialService,
 	webhookService *service.WebhookService,
+	formSubmissionService *service.FormSubmissionService,
 
 	// register:param ── 新模块服务形参在此行后注册(make register 工具锚点,勿删)
 ) *http.Server {
@@ -238,6 +239,7 @@ func NewRestServer(
 	adminV1.RegisterCommentServiceHTTPServer(srv, commentService)
 	adminV1.RegisterSocialServiceHTTPServer(srv, socialService)
 	adminV1.RegisterWebhookServiceHTTPServer(srv, webhookService)
+	adminV1.RegisterFormSubmissionServiceHTTPServer(srv, formSubmissionService)
 	adminV1.RegisterInteractionAdminServiceHTTPServer(srv, interactionAdminService)
 	adminV1.RegisterStatsServiceHTTPServer(srv, statsService)
 	adminV1.RegisterAiProviderServiceHTTPServer(srv, aiProviderService)

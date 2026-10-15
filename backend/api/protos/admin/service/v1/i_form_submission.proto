@@ -1,0 +1,33 @@
+syntax = "proto3";
+
+package admin.service.v1;
+
+import "google/api/annotations.proto";
+import "google/protobuf/empty.proto";
+
+import "pagination/v1/pagination.proto";
+import "content/service/v1/form.proto";
+
+// 表单提交管理服务（页面 FORM 区块的访客提交）
+service FormSubmissionService {
+  // 获取提交列表
+  rpc List (pagination.PagingRequest) returns (content.service.v1.ListFormSubmissionsResponse) {
+    option (google.api.http) = {
+      get: "/admin/v1/form-submissions"
+    };
+  }
+
+  // 获取提交详情
+  rpc Get (content.service.v1.GetFormSubmissionRequest) returns (content.service.v1.FormSubmission) {
+    option (google.api.http) = {
+      get: "/admin/v1/form-submissions/{id}"
+    };
+  }
+
+  // 删除提交
+  rpc Delete (content.service.v1.DeleteFormSubmissionRequest) returns (google.protobuf.Empty) {
+    option (google.api.http) = {
+      delete: "/admin/v1/form-submissions/{id}"
+    };
+  }
+}

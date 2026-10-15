@@ -1,0 +1,93 @@
+syntax = "proto3";
+
+package content.service.v1;
+
+import "gnostic/openapi/v3/annotations.proto";
+import "google/protobuf/empty.proto";
+import "google/protobuf/timestamp.proto";
+import "pagination/v1/pagination.proto";
+
+// 表单提交服务：页面 FORM 区块的访客提交数据。
+//
+// 契约（与三端 SectionRenderer / admin 编辑器对齐）：
+//   - 字段定义存区块 config.fields（JSON 数组，语言无关）：
+//     [{"name":"email","type":"email","required":true}, ...]，type ∈ text|textarea|email|tel
+//   - 字段标签存区块翻译 content 的 `<字段名>` 键（随语言变化）；content.title 为表单标题
+//   - 提交数据为 {字段名: 值}，服务端校验字段集 ⊆ config.fields 且 required 齐全
+service FormSubmissionService {
+  // 提交表单（公开端点，app BFF 暴露；admin 侧不开放提交）
+  rpc Submit (SubmitFormSubmissionRequest) returns (FormSubmission) {}
+
+  // 获取提交列表（admin）
+  rpc List (pagination.PagingRequest) returns (ListFormSubmissionsResponse) {}
+
+  // 获取提交详情（admin）
+  rpc Get (GetFormSubmissionRequest) returns (FormSubmission) {}
+
+  // 删除提交（admin）
+  rpc Delete (DeleteFormSubmissionRequest) returns (google.protobuf.Empty) {}
+}
+
+// 表单提交
+message FormSubmission {
+  optional uint32 id = 1 [
+    json_name = "id",
+    (gnostic.openapi.v3.property) = {description: "提交ID"}
+  ]; // 提交ID
+
+  optional uint32 page_id = 2 [
+    json_name = "pageId",
+    (gnostic.openapi.v3.property) = {description: "所属页面ID"}
+  ]; // 所属页面ID
+
+  optional uint32 section_id = 3 [
+    json_name = "sectionId",
+    (gnostic.openapi.v3.property) = {description: "所属区块ID"}
+  ]; // 所属区块ID
+
+  map<string, string> data = 4 [
+    json_name = "data",
+    (gnostic.openapi.v3.property) = {description: "提交数据（字段名→值）"}
+  ]; // 提交数据
+
+  optional uint32 user_id = 5 [
+    json_name = "userId",
+    (gnostic.openapi.v3.property) = {description: "提交者用户ID（匿名提交为 0）"}
+  ]; // 提交者用户ID
+
+  optional google.protobuf.Timestamp created_at = 200 [json_name = "createdAt", (gnostic.openapi.v3.property) = {description: "提交时间"}]; // 提交时间
+}
+
+// 回应 - 提交列表
+message ListFormSubmissionsResponse {
+  repeated FormSubmission items = 1;
+  uint64 total = 2;
+}
+
+// 请求 - 提交表单
+message SubmitFormSubmissionRequest {
+  uint32 page_id = 1 [
+    json_name = "pageId",
+    (gnostic.openapi.v3.property) = {description: "页面ID"}
+  ];
+
+  uint32 section_id = 2 [
+    json_name = "sectionId",
+    (gnostic.openapi.v3.property) = {description: "区块ID（须为该页面的 FORM 区块）"}
+  ];
+
+  map<string, string> data = 3 [
+    json_name = "data",
+    (gnostic.openapi.v3.property) = {description: "提交数据（字段名→值）"}
+  ];
+}
+
+// 请求 - 提交详情
+message GetFormSubmissionRequest {
+  uint32 id = 1;
+}
+
+// 请求 - 删除提交
+message DeleteFormSubmissionRequest {
+  uint32 id = 1;
+}

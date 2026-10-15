@@ -160,6 +160,17 @@ export const contentRoutes: AppRouteObject[] = [
           authority: ['sys:platform_admin', 'sys:tenant_manager'],
         },
       },
+      {
+        name: 'content-form-submissions',
+        path: 'form-submissions',
+        element: createLazyRoute(() => import('@/pages/app/content/form-submissions')),
+        meta: {
+          title: 'routes:content-form-submissions',
+          icon: 'lucide:inbox',
+          order: 9,
+          authority: ['sys:platform_admin', 'sys:tenant_manager'],
+        },
+      },
     ],
   },
 ];

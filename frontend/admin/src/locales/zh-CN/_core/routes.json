@@ -76,5 +76,6 @@
   "ai-usage": "用量统计",
   "ai-query": "智能问数",
   "social-inbox": "社交收件箱",
-  "webhooks": "Webhook 订阅"
+  "webhooks": "Webhook 订阅",
+  "content-form-submissions": "表单提交"
 }

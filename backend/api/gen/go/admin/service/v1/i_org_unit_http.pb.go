@@ -43,14 +43,14 @@ type OrgUnitServiceHTTPServer interface {
 
 func RegisterOrgUnitServiceHTTPServer(s *http.Server, srv OrgUnitServiceHTTPServer) {
 	r := s.Route("/")
-	r.GET("/admin/v1/org-units", _OrgUnitService_List23_HTTP_Handler(srv))
-	r.GET("/admin/v1/org-units/{id}", _OrgUnitService_Get22_HTTP_Handler(srv))
+	r.GET("/admin/v1/org-units", _OrgUnitService_List24_HTTP_Handler(srv))
+	r.GET("/admin/v1/org-units/{id}", _OrgUnitService_Get23_HTTP_Handler(srv))
 	r.POST("/admin/v1/org-units", _OrgUnitService_Create16_HTTP_Handler(srv))
 	r.PUT("/admin/v1/org-units/{id}", _OrgUnitService_Update17_HTTP_Handler(srv))
-	r.DELETE("/admin/v1/org-units/{id}", _OrgUnitService_Delete18_HTTP_Handler(srv))
+	r.DELETE("/admin/v1/org-units/{id}", _OrgUnitService_Delete19_HTTP_Handler(srv))
 }
 
-func _OrgUnitService_List23_HTTP_Handler(srv OrgUnitServiceHTTPServer) func(ctx http.Context) error {
+func _OrgUnitService_List24_HTTP_Handler(srv OrgUnitServiceHTTPServer) func(ctx http.Context) error {
 	return func(ctx http.Context) error {
 		var in v1.PagingRequest
 		if err := ctx.BindQuery(&in); err != nil {
@@ -69,7 +69,7 @@ func _OrgUnitService_List23_HTTP_Handler(srv OrgUnitServiceHTTPServer) func(ctx 
 	}
 }
 
-func _OrgUnitService_Get22_HTTP_Handler(srv OrgUnitServiceHTTPServer) func(ctx http.Context) error {
+func _OrgUnitService_Get23_HTTP_Handler(srv OrgUnitServiceHTTPServer) func(ctx http.Context) error {
 	return func(ctx http.Context) error {
 		var in v11.GetOrgUnitRequest
 		if err := ctx.BindQuery(&in); err != nil {
@@ -138,7 +138,7 @@ func _OrgUnitService_Update17_HTTP_Handler(srv OrgUnitServiceHTTPServer) func(ct
 	}
 }
 
-func _OrgUnitService_Delete18_HTTP_Handler(srv OrgUnitServiceHTTPServer) func(ctx http.Context) error {
+func _OrgUnitService_Delete19_HTTP_Handler(srv OrgUnitServiceHTTPServer) func(ctx http.Context) error {
 	return func(ctx http.Context) error {
 		var in v11.DeleteOrgUnitRequest
 		if err := ctx.BindQuery(&in); err != nil {

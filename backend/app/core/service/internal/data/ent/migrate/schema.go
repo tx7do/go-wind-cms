@@ -1083,6 +1083,37 @@ var (
 			},
 		},
 	}
+	// FormSubmissionsColumns holds the columns for the "form_submissions" table.
+	FormSubmissionsColumns = []*schema.Column{
+		{Name: "id", Type: field.TypeUint32, Increment: true, Comment: "id"},
+		{Name: "created_at", Type: field.TypeTime, Nullable: true, Comment: "创建时间"},
+		{Name: "updated_at", Type: field.TypeTime, Nullable: true, Comment: "更新时间"},
+		{Name: "deleted_at", Type: field.TypeTime, Nullable: true, Comment: "删除时间"},
+		{Name: "tenant_id", Type: field.TypeUint32, Nullable: true, Comment: "租户ID", Default: 0},
+		{Name: "page_id", Type: field.TypeUint32, Nullable: true, Comment: "所属页面ID"},
+		{Name: "section_id", Type: field.TypeUint32, Nullable: true, Comment: "所属区块ID（FORM 类型 Section）"},
+		{Name: "data", Type: field.TypeJSON, Nullable: true, Comment: "提交数据（字段名→值；字段集须为该区块 config.fields 的子集）"},
+		{Name: "user_id", Type: field.TypeUint32, Nullable: true, Comment: "提交者用户ID（匿名提交为 0）", Default: 0},
+	}
+	// FormSubmissionsTable holds the schema information for the "form_submissions" table.
+	FormSubmissionsTable = &schema.Table{
+		Name:       "form_submissions",
+		Comment:    "表单提交表（页面 FORM 区块的访客提交数据，只增不改）",
+		Columns:    FormSubmissionsColumns,
+		PrimaryKey: []*schema.Column{FormSubmissionsColumns[0]},
+		Indexes: []*schema.Index{
+			{
+				Name:    "formsubmission_page_id_created_at",
+				Unique:  false,
+				Columns: []*schema.Column{FormSubmissionsColumns[5], FormSubmissionsColumns[1]},
+			},
+			{
+				Name:    "formsubmission_section_id",
+				Unique:  false,
+				Columns: []*schema.Column{FormSubmissionsColumns[6]},
+			},
+		},
+	}
 	// InteractionCountersColumns holds the columns for the "interaction_counters" table.
 	InteractionCountersColumns = []*schema.Column{
 		{Name: "id", Type: field.TypeUint32, Increment: true, Comment: "id"},
@@ -4709,6 +4740,7 @@ var (
 		FieldDefinitionsTable,
 		FieldDefinitionTranslationsTable,
 		FilesTable,
+		FormSubmissionsTable,
 		InteractionCountersTable,
 		InternalMessagesTable,
 		InternalMessageCategoriesTable,
@@ -4885,6 +4917,11 @@ func init() {
 	}
 	FilesTable.Annotation = &entsql.Annotation{
 		Table:     "files",
+		Charset:   "utf8mb4",
+		Collation: "utf8mb4_bin",
+	}
+	FormSubmissionsTable.Annotation = &entsql.Annotation{
+		Table:     "form_submissions",
 		Charset:   "utf8mb4",
 		Collation: "utf8mb4_bin",
 	}

@@ -32,6 +32,7 @@ import (
 	"go-wind-cms/app/core/service/internal/data/ent/fielddefinition"
 	"go-wind-cms/app/core/service/internal/data/ent/fielddefinitiontranslation"
 	"go-wind-cms/app/core/service/internal/data/ent/file"
+	"go-wind-cms/app/core/service/internal/data/ent/formsubmission"
 	"go-wind-cms/app/core/service/internal/data/ent/interactioncounter"
 	"go-wind-cms/app/core/service/internal/data/ent/internalmessage"
 	"go-wind-cms/app/core/service/internal/data/ent/internalmessagecategory"
@@ -130,6 +131,7 @@ const (
 	TypeFieldDefinition            = "FieldDefinition"
 	TypeFieldDefinitionTranslation = "FieldDefinitionTranslation"
 	TypeFile                       = "File"
+	TypeFormSubmission             = "FormSubmission"
 	TypeInteractionCounter         = "InteractionCounter"
 	TypeInternalMessage            = "InternalMessage"
 	TypeInternalMessageCategory    = "InternalMessageCategory"
@@ -34905,6 +34907,1010 @@ func (m *FileMutation) ClearEdge(name string) error {
 // It returns an error if the edge is not defined in the schema.
 func (m *FileMutation) ResetEdge(name string) error {
 	return fmt.Errorf("unknown File edge %s", name)
+}
+
+// FormSubmissionMutation represents an operation that mutates the FormSubmission nodes in the graph.
+type FormSubmissionMutation struct {
+	config
+	op            Op
+	typ           string
+	id            *uint32
+	created_at    *time.Time
+	updated_at    *time.Time
+	deleted_at    *time.Time
+	tenant_id     *uint32
+	addtenant_id  *int32
+	page_id       *uint32
+	addpage_id    *int32
+	section_id    *uint32
+	addsection_id *int32
+	data          **map[string]string
+	user_id       *uint32
+	adduser_id    *int32
+	clearedFields map[string]struct{}
+	done          bool
+	oldValue      func(context.Context) (*FormSubmission, error)
+	predicates    []predicate.FormSubmission
+}
+
+var _ ent.Mutation = (*FormSubmissionMutation)(nil)
+
+// formsubmissionOption allows management of the mutation configuration using functional options.
+type formsubmissionOption func(*FormSubmissionMutation)
+
+// newFormSubmissionMutation creates new mutation for the FormSubmission entity.
+func newFormSubmissionMutation(c config, op Op, opts ...formsubmissionOption) *FormSubmissionMutation {
+	m := &FormSubmissionMutation{
+		config:        c,
+		op:            op,
+		typ:           TypeFormSubmission,
+		clearedFields: make(map[string]struct{}),
+	}
+	for _, opt := range opts {
+		opt(m)
+	}
+	return m
+}
+
+// withFormSubmissionID sets the ID field of the mutation.
+func withFormSubmissionID(id uint32) formsubmissionOption {
+	return func(m *FormSubmissionMutation) {
+		var (
+			err   error
+			once  sync.Once
+			value *FormSubmission
+		)
+		m.oldValue = func(ctx context.Context) (*FormSubmission, error) {
+			once.Do(func() {
+				if m.done {
+					err = errors.New("querying old values post mutation is not allowed")
+				} else {
+					value, err = m.Client().FormSubmission.Get(ctx, id)
+				}
+			})
+			return value, err
+		}
+		m.id = &id
+	}
+}
+
+// withFormSubmission sets the old FormSubmission of the mutation.
+func withFormSubmission(node *FormSubmission) formsubmissionOption {
+	return func(m *FormSubmissionMutation) {
+		m.oldValue = func(context.Context) (*FormSubmission, error) {
+			return node, nil
+		}
+		m.id = &node.ID
+	}
+}
+
+// Client returns a new `ent.Client` from the mutation. If the mutation was
+// executed in a transaction (ent.Tx), a transactional client is returned.
+func (m FormSubmissionMutation) Client() *Client {
+	client := &Client{config: m.config}
+	client.init()
+	return client
+}
+
+// Tx returns an `ent.Tx` for mutations that were executed in transactions;
+// it returns an error otherwise.
+func (m FormSubmissionMutation) Tx() (*Tx, error) {
+	if _, ok := m.driver.(*txDriver); !ok {
+		return nil, errors.New("ent: mutation is not running in a transaction")
+	}
+	tx := &Tx{config: m.config}
+	tx.init()
+	return tx, nil
+}
+
+// SetID sets the value of the id field. Note that this
+// operation is only accepted on creation of FormSubmission entities.
+func (m *FormSubmissionMutation) SetID(id uint32) {
+	m.id = &id
+}
+
+// ID returns the ID value in the mutation. Note that the ID is only available
+// if it was provided to the builder or after it was returned from the database.
+func (m *FormSubmissionMutation) ID() (id uint32, exists bool) {
+	if m.id == nil {
+		return
+	}
+	return *m.id, true
+}
+
+// IDs queries the database and returns the entity ids that match the mutation's predicate.
+// That means, if the mutation is applied within a transaction with an isolation level such
+// as sql.LevelSerializable, the returned ids match the ids of the rows that will be updated
+// or updated by the mutation.
+func (m *FormSubmissionMutation) IDs(ctx context.Context) ([]uint32, error) {
+	switch {
+	case m.op.Is(OpUpdateOne | OpDeleteOne):
+		id, exists := m.ID()
+		if exists {
+			return []uint32{id}, nil
+		}
+		fallthrough
+	case m.op.Is(OpUpdate | OpDelete):
+		return m.Client().FormSubmission.Query().Where(m.predicates...).IDs(ctx)
+	default:
+		return nil, fmt.Errorf("IDs is not allowed on %s operations", m.op)
+	}
+}
+
+// SetCreatedAt sets the "created_at" field.
+func (m *FormSubmissionMutation) SetCreatedAt(t time.Time) {
+	m.created_at = &t
+}
+
+// CreatedAt returns the value of the "created_at" field in the mutation.
+func (m *FormSubmissionMutation) CreatedAt() (r time.Time, exists bool) {
+	v := m.created_at
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldCreatedAt returns the old "created_at" field's value of the FormSubmission entity.
+// If the FormSubmission object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *FormSubmissionMutation) OldCreatedAt(ctx context.Context) (v *time.Time, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldCreatedAt is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldCreatedAt requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldCreatedAt: %w", err)
+	}
+	return oldValue.CreatedAt, nil
+}
+
+// ClearCreatedAt clears the value of the "created_at" field.
+func (m *FormSubmissionMutation) ClearCreatedAt() {
+	m.created_at = nil
+	m.clearedFields[formsubmission.FieldCreatedAt] = struct{}{}
+}
+
+// CreatedAtCleared returns if the "created_at" field was cleared in this mutation.
+func (m *FormSubmissionMutation) CreatedAtCleared() bool {
+	_, ok := m.clearedFields[formsubmission.FieldCreatedAt]
+	return ok
+}
+
+// ResetCreatedAt resets all changes to the "created_at" field.
+func (m *FormSubmissionMutation) ResetCreatedAt() {
+	m.created_at = nil
+	delete(m.clearedFields, formsubmission.FieldCreatedAt)
+}
+
+// SetUpdatedAt sets the "updated_at" field.
+func (m *FormSubmissionMutation) SetUpdatedAt(t time.Time) {
+	m.updated_at = &t
+}
+
+// UpdatedAt returns the value of the "updated_at" field in the mutation.
+func (m *FormSubmissionMutation) UpdatedAt() (r time.Time, exists bool) {
+	v := m.updated_at
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldUpdatedAt returns the old "updated_at" field's value of the FormSubmission entity.
+// If the FormSubmission object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *FormSubmissionMutation) OldUpdatedAt(ctx context.Context) (v *time.Time, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldUpdatedAt is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldUpdatedAt requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldUpdatedAt: %w", err)
+	}
+	return oldValue.UpdatedAt, nil
+}
+
+// ClearUpdatedAt clears the value of the "updated_at" field.
+func (m *FormSubmissionMutation) ClearUpdatedAt() {
+	m.updated_at = nil
+	m.clearedFields[formsubmission.FieldUpdatedAt] = struct{}{}
+}
+
+// UpdatedAtCleared returns if the "updated_at" field was cleared in this mutation.
+func (m *FormSubmissionMutation) UpdatedAtCleared() bool {
+	_, ok := m.clearedFields[formsubmission.FieldUpdatedAt]
+	return ok
+}
+
+// ResetUpdatedAt resets all changes to the "updated_at" field.
+func (m *FormSubmissionMutation) ResetUpdatedAt() {
+	m.updated_at = nil
+	delete(m.clearedFields, formsubmission.FieldUpdatedAt)
+}
+
+// SetDeletedAt sets the "deleted_at" field.
+func (m *FormSubmissionMutation) SetDeletedAt(t time.Time) {
+	m.deleted_at = &t
+}
+
+// DeletedAt returns the value of the "deleted_at" field in the mutation.
+func (m *FormSubmissionMutation) DeletedAt() (r time.Time, exists bool) {
+	v := m.deleted_at
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldDeletedAt returns the old "deleted_at" field's value of the FormSubmission entity.
+// If the FormSubmission object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *FormSubmissionMutation) OldDeletedAt(ctx context.Context) (v *time.Time, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldDeletedAt is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldDeletedAt requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldDeletedAt: %w", err)
+	}
+	return oldValue.DeletedAt, nil
+}
+
+// ClearDeletedAt clears the value of the "deleted_at" field.
+func (m *FormSubmissionMutation) ClearDeletedAt() {
+	m.deleted_at = nil
+	m.clearedFields[formsubmission.FieldDeletedAt] = struct{}{}
+}
+
+// DeletedAtCleared returns if the "deleted_at" field was cleared in this mutation.
+func (m *FormSubmissionMutation) DeletedAtCleared() bool {
+	_, ok := m.clearedFields[formsubmission.FieldDeletedAt]
+	return ok
+}
+
+// ResetDeletedAt resets all changes to the "deleted_at" field.
+func (m *FormSubmissionMutation) ResetDeletedAt() {
+	m.deleted_at = nil
+	delete(m.clearedFields, formsubmission.FieldDeletedAt)
+}
+
+// SetTenantID sets the "tenant_id" field.
+func (m *FormSubmissionMutation) SetTenantID(u uint32) {
+	m.tenant_id = &u
+	m.addtenant_id = nil
+}
+
+// TenantID returns the value of the "tenant_id" field in the mutation.
+func (m *FormSubmissionMutation) TenantID() (r uint32, exists bool) {
+	v := m.tenant_id
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldTenantID returns the old "tenant_id" field's value of the FormSubmission entity.
+// If the FormSubmission object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *FormSubmissionMutation) OldTenantID(ctx context.Context) (v *uint32, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldTenantID is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldTenantID requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldTenantID: %w", err)
+	}
+	return oldValue.TenantID, nil
+}
+
+// AddTenantID adds u to the "tenant_id" field.
+func (m *FormSubmissionMutation) AddTenantID(u int32) {
+	if m.addtenant_id != nil {
+		*m.addtenant_id += u
+	} else {
+		m.addtenant_id = &u
+	}
+}
+
+// AddedTenantID returns the value that was added to the "tenant_id" field in this mutation.
+func (m *FormSubmissionMutation) AddedTenantID() (r int32, exists bool) {
+	v := m.addtenant_id
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// ClearTenantID clears the value of the "tenant_id" field.
+func (m *FormSubmissionMutation) ClearTenantID() {
+	m.tenant_id = nil
+	m.addtenant_id = nil
+	m.clearedFields[formsubmission.FieldTenantID] = struct{}{}
+}
+
+// TenantIDCleared returns if the "tenant_id" field was cleared in this mutation.
+func (m *FormSubmissionMutation) TenantIDCleared() bool {
+	_, ok := m.clearedFields[formsubmission.FieldTenantID]
+	return ok
+}
+
+// ResetTenantID resets all changes to the "tenant_id" field.
+func (m *FormSubmissionMutation) ResetTenantID() {
+	m.tenant_id = nil
+	m.addtenant_id = nil
+	delete(m.clearedFields, formsubmission.FieldTenantID)
+}
+
+// SetPageID sets the "page_id" field.
+func (m *FormSubmissionMutation) SetPageID(u uint32) {
+	m.page_id = &u
+	m.addpage_id = nil
+}
+
+// PageID returns the value of the "page_id" field in the mutation.
+func (m *FormSubmissionMutation) PageID() (r uint32, exists bool) {
+	v := m.page_id
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldPageID returns the old "page_id" field's value of the FormSubmission entity.
+// If the FormSubmission object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *FormSubmissionMutation) OldPageID(ctx context.Context) (v *uint32, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldPageID is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldPageID requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldPageID: %w", err)
+	}
+	return oldValue.PageID, nil
+}
+
+// AddPageID adds u to the "page_id" field.
+func (m *FormSubmissionMutation) AddPageID(u int32) {
+	if m.addpage_id != nil {
+		*m.addpage_id += u
+	} else {
+		m.addpage_id = &u
+	}
+}
+
+// AddedPageID returns the value that was added to the "page_id" field in this mutation.
+func (m *FormSubmissionMutation) AddedPageID() (r int32, exists bool) {
+	v := m.addpage_id
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// ClearPageID clears the value of the "page_id" field.
+func (m *FormSubmissionMutation) ClearPageID() {
+	m.page_id = nil
+	m.addpage_id = nil
+	m.clearedFields[formsubmission.FieldPageID] = struct{}{}
+}
+
+// PageIDCleared returns if the "page_id" field was cleared in this mutation.
+func (m *FormSubmissionMutation) PageIDCleared() bool {
+	_, ok := m.clearedFields[formsubmission.FieldPageID]
+	return ok
+}
+
+// ResetPageID resets all changes to the "page_id" field.
+func (m *FormSubmissionMutation) ResetPageID() {
+	m.page_id = nil
+	m.addpage_id = nil
+	delete(m.clearedFields, formsubmission.FieldPageID)
+}
+
+// SetSectionID sets the "section_id" field.
+func (m *FormSubmissionMutation) SetSectionID(u uint32) {
+	m.section_id = &u
+	m.addsection_id = nil
+}
+
+// SectionID returns the value of the "section_id" field in the mutation.
+func (m *FormSubmissionMutation) SectionID() (r uint32, exists bool) {
+	v := m.section_id
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldSectionID returns the old "section_id" field's value of the FormSubmission entity.
+// If the FormSubmission object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *FormSubmissionMutation) OldSectionID(ctx context.Context) (v *uint32, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldSectionID is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldSectionID requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldSectionID: %w", err)
+	}
+	return oldValue.SectionID, nil
+}
+
+// AddSectionID adds u to the "section_id" field.
+func (m *FormSubmissionMutation) AddSectionID(u int32) {
+	if m.addsection_id != nil {
+		*m.addsection_id += u
+	} else {
+		m.addsection_id = &u
+	}
+}
+
+// AddedSectionID returns the value that was added to the "section_id" field in this mutation.
+func (m *FormSubmissionMutation) AddedSectionID() (r int32, exists bool) {
+	v := m.addsection_id
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// ClearSectionID clears the value of the "section_id" field.
+func (m *FormSubmissionMutation) ClearSectionID() {
+	m.section_id = nil
+	m.addsection_id = nil
+	m.clearedFields[formsubmission.FieldSectionID] = struct{}{}
+}
+
+// SectionIDCleared returns if the "section_id" field was cleared in this mutation.
+func (m *FormSubmissionMutation) SectionIDCleared() bool {
+	_, ok := m.clearedFields[formsubmission.FieldSectionID]
+	return ok
+}
+
+// ResetSectionID resets all changes to the "section_id" field.
+func (m *FormSubmissionMutation) ResetSectionID() {
+	m.section_id = nil
+	m.addsection_id = nil
+	delete(m.clearedFields, formsubmission.FieldSectionID)
+}
+
+// SetData sets the "data" field.
+func (m *FormSubmissionMutation) SetData(value *map[string]string) {
+	m.data = &value
+}
+
+// Data returns the value of the "data" field in the mutation.
+func (m *FormSubmissionMutation) Data() (r *map[string]string, exists bool) {
+	v := m.data
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldData returns the old "data" field's value of the FormSubmission entity.
+// If the FormSubmission object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *FormSubmissionMutation) OldData(ctx context.Context) (v *map[string]string, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldData is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldData requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldData: %w", err)
+	}
+	return oldValue.Data, nil
+}
+
+// ClearData clears the value of the "data" field.
+func (m *FormSubmissionMutation) ClearData() {
+	m.data = nil
+	m.clearedFields[formsubmission.FieldData] = struct{}{}
+}
+
+// DataCleared returns if the "data" field was cleared in this mutation.
+func (m *FormSubmissionMutation) DataCleared() bool {
+	_, ok := m.clearedFields[formsubmission.FieldData]
+	return ok
+}
+
+// ResetData resets all changes to the "data" field.
+func (m *FormSubmissionMutation) ResetData() {
+	m.data = nil
+	delete(m.clearedFields, formsubmission.FieldData)
+}
+
+// SetUserID sets the "user_id" field.
+func (m *FormSubmissionMutation) SetUserID(u uint32) {
+	m.user_id = &u
+	m.adduser_id = nil
+}
+
+// UserID returns the value of the "user_id" field in the mutation.
+func (m *FormSubmissionMutation) UserID() (r uint32, exists bool) {
+	v := m.user_id
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldUserID returns the old "user_id" field's value of the FormSubmission entity.
+// If the FormSubmission object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *FormSubmissionMutation) OldUserID(ctx context.Context) (v *uint32, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldUserID is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldUserID requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldUserID: %w", err)
+	}
+	return oldValue.UserID, nil
+}
+
+// AddUserID adds u to the "user_id" field.
+func (m *FormSubmissionMutation) AddUserID(u int32) {
+	if m.adduser_id != nil {
+		*m.adduser_id += u
+	} else {
+		m.adduser_id = &u
+	}
+}
+
+// AddedUserID returns the value that was added to the "user_id" field in this mutation.
+func (m *FormSubmissionMutation) AddedUserID() (r int32, exists bool) {
+	v := m.adduser_id
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// ClearUserID clears the value of the "user_id" field.
+func (m *FormSubmissionMutation) ClearUserID() {
+	m.user_id = nil
+	m.adduser_id = nil
+	m.clearedFields[formsubmission.FieldUserID] = struct{}{}
+}
+
+// UserIDCleared returns if the "user_id" field was cleared in this mutation.
+func (m *FormSubmissionMutation) UserIDCleared() bool {
+	_, ok := m.clearedFields[formsubmission.FieldUserID]
+	return ok
+}
+
+// ResetUserID resets all changes to the "user_id" field.
+func (m *FormSubmissionMutation) ResetUserID() {
+	m.user_id = nil
+	m.adduser_id = nil
+	delete(m.clearedFields, formsubmission.FieldUserID)
+}
+
+// Where appends a list predicates to the FormSubmissionMutation builder.
+func (m *FormSubmissionMutation) Where(ps ...predicate.FormSubmission) {
+	m.predicates = append(m.predicates, ps...)
+}
+
+// WhereP appends storage-level predicates to the FormSubmissionMutation builder. Using this method,
+// users can use type-assertion to append predicates that do not depend on any generated package.
+func (m *FormSubmissionMutation) WhereP(ps ...func(*sql.Selector)) {
+	p := make([]predicate.FormSubmission, len(ps))
+	for i := range ps {
+		p[i] = ps[i]
+	}
+	m.Where(p...)
+}
+
+// Op returns the operation name.
+func (m *FormSubmissionMutation) Op() Op {
+	return m.op
+}
+
+// SetOp allows setting the mutation operation.
+func (m *FormSubmissionMutation) SetOp(op Op) {
+	m.op = op
+}
+
+// Type returns the node type of this mutation (FormSubmission).
+func (m *FormSubmissionMutation) Type() string {
+	return m.typ
+}
+
+// Fields returns all fields that were changed during this mutation. Note that in
+// order to get all numeric fields that were incremented/decremented, call
+// AddedFields().
+func (m *FormSubmissionMutation) Fields() []string {
+	fields := make([]string, 0, 8)
+	if m.created_at != nil {
+		fields = append(fields, formsubmission.FieldCreatedAt)
+	}
+	if m.updated_at != nil {
+		fields = append(fields, formsubmission.FieldUpdatedAt)
+	}
+	if m.deleted_at != nil {
+		fields = append(fields, formsubmission.FieldDeletedAt)
+	}
+	if m.tenant_id != nil {
+		fields = append(fields, formsubmission.FieldTenantID)
+	}
+	if m.page_id != nil {
+		fields = append(fields, formsubmission.FieldPageID)
+	}
+	if m.section_id != nil {
+		fields = append(fields, formsubmission.FieldSectionID)
+	}
+	if m.data != nil {
+		fields = append(fields, formsubmission.FieldData)
+	}
+	if m.user_id != nil {
+		fields = append(fields, formsubmission.FieldUserID)
+	}
+	return fields
+}
+
+// Field returns the value of a field with the given name. The second boolean
+// return value indicates that this field was not set, or was not defined in the
+// schema.
+func (m *FormSubmissionMutation) Field(name string) (ent.Value, bool) {
+	switch name {
+	case formsubmission.FieldCreatedAt:
+		return m.CreatedAt()
+	case formsubmission.FieldUpdatedAt:
+		return m.UpdatedAt()
+	case formsubmission.FieldDeletedAt:
+		return m.DeletedAt()
+	case formsubmission.FieldTenantID:
+		return m.TenantID()
+	case formsubmission.FieldPageID:
+		return m.PageID()
+	case formsubmission.FieldSectionID:
+		return m.SectionID()
+	case formsubmission.FieldData:
+		return m.Data()
+	case formsubmission.FieldUserID:
+		return m.UserID()
+	}
+	return nil, false
+}
+
+// OldField returns the old value of the field from the database. An error is
+// returned if the mutation operation is not UpdateOne, or the query to the
+// database failed.
+func (m *FormSubmissionMutation) OldField(ctx context.Context, name string) (ent.Value, error) {
+	switch name {
+	case formsubmission.FieldCreatedAt:
+		return m.OldCreatedAt(ctx)
+	case formsubmission.FieldUpdatedAt:
+		return m.OldUpdatedAt(ctx)
+	case formsubmission.FieldDeletedAt:
+		return m.OldDeletedAt(ctx)
+	case formsubmission.FieldTenantID:
+		return m.OldTenantID(ctx)
+	case formsubmission.FieldPageID:
+		return m.OldPageID(ctx)
+	case formsubmission.FieldSectionID:
+		return m.OldSectionID(ctx)
+	case formsubmission.FieldData:
+		return m.OldData(ctx)
+	case formsubmission.FieldUserID:
+		return m.OldUserID(ctx)
+	}
+	return nil, fmt.Errorf("unknown FormSubmission field %s", name)
+}
+
+// SetField sets the value of a field with the given name. It returns an error if
+// the field is not defined in the schema, or if the type mismatched the field
+// type.
+func (m *FormSubmissionMutation) SetField(name string, value ent.Value) error {
+	switch name {
+	case formsubmission.FieldCreatedAt:
+		v, ok := value.(time.Time)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetCreatedAt(v)
+		return nil
+	case formsubmission.FieldUpdatedAt:
+		v, ok := value.(time.Time)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetUpdatedAt(v)
+		return nil
+	case formsubmission.FieldDeletedAt:
+		v, ok := value.(time.Time)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetDeletedAt(v)
+		return nil
+	case formsubmission.FieldTenantID:
+		v, ok := value.(uint32)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetTenantID(v)
+		return nil
+	case formsubmission.FieldPageID:
+		v, ok := value.(uint32)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetPageID(v)
+		return nil
+	case formsubmission.FieldSectionID:
+		v, ok := value.(uint32)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetSectionID(v)
+		return nil
+	case formsubmission.FieldData:
+		v, ok := value.(*map[string]string)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetData(v)
+		return nil
+	case formsubmission.FieldUserID:
+		v, ok := value.(uint32)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetUserID(v)
+		return nil
+	}
+	return fmt.Errorf("unknown FormSubmission field %s", name)
+}
+
+// AddedFields returns all numeric fields that were incremented/decremented during
+// this mutation.
+func (m *FormSubmissionMutation) AddedFields() []string {
+	var fields []string
+	if m.addtenant_id != nil {
+		fields = append(fields, formsubmission.FieldTenantID)
+	}
+	if m.addpage_id != nil {
+		fields = append(fields, formsubmission.FieldPageID)
+	}
+	if m.addsection_id != nil {
+		fields = append(fields, formsubmission.FieldSectionID)
+	}
+	if m.adduser_id != nil {
+		fields = append(fields, formsubmission.FieldUserID)
+	}
+	return fields
+}
+
+// AddedField returns the numeric value that was incremented/decremented on a field
+// with the given name. The second boolean return value indicates that this field
+// was not set, or was not defined in the schema.
+func (m *FormSubmissionMutation) AddedField(name string) (ent.Value, bool) {
+	switch name {
+	case formsubmission.FieldTenantID:
+		return m.AddedTenantID()
+	case formsubmission.FieldPageID:
+		return m.AddedPageID()
+	case formsubmission.FieldSectionID:
+		return m.AddedSectionID()
+	case formsubmission.FieldUserID:
+		return m.AddedUserID()
+	}
+	return nil, false
+}
+
+// AddField adds the value to the field with the given name. It returns an error if
+// the field is not defined in the schema, or if the type mismatched the field
+// type.
+func (m *FormSubmissionMutation) AddField(name string, value ent.Value) error {
+	switch name {
+	case formsubmission.FieldTenantID:
+		v, ok := value.(int32)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.AddTenantID(v)
+		return nil
+	case formsubmission.FieldPageID:
+		v, ok := value.(int32)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.AddPageID(v)
+		return nil
+	case formsubmission.FieldSectionID:
+		v, ok := value.(int32)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.AddSectionID(v)
+		return nil
+	case formsubmission.FieldUserID:
+		v, ok := value.(int32)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.AddUserID(v)
+		return nil
+	}
+	return fmt.Errorf("unknown FormSubmission numeric field %s", name)
+}
+
+// ClearedFields returns all nullable fields that were cleared during this
+// mutation.
+func (m *FormSubmissionMutation) ClearedFields() []string {
+	var fields []string
+	if m.FieldCleared(formsubmission.FieldCreatedAt) {
+		fields = append(fields, formsubmission.FieldCreatedAt)
+	}
+	if m.FieldCleared(formsubmission.FieldUpdatedAt) {
+		fields = append(fields, formsubmission.FieldUpdatedAt)
+	}
+	if m.FieldCleared(formsubmission.FieldDeletedAt) {
+		fields = append(fields, formsubmission.FieldDeletedAt)
+	}
+	if m.FieldCleared(formsubmission.FieldTenantID) {
+		fields = append(fields, formsubmission.FieldTenantID)
+	}
+	if m.FieldCleared(formsubmission.FieldPageID) {
+		fields = append(fields, formsubmission.FieldPageID)
+	}
+	if m.FieldCleared(formsubmission.FieldSectionID) {
+		fields = append(fields, formsubmission.FieldSectionID)
+	}
+	if m.FieldCleared(formsubmission.FieldData) {
+		fields = append(fields, formsubmission.FieldData)
+	}
+	if m.FieldCleared(formsubmission.FieldUserID) {
+		fields = append(fields, formsubmission.FieldUserID)
+	}
+	return fields
+}
+
+// FieldCleared returns a boolean indicating if a field with the given name was
+// cleared in this mutation.
+func (m *FormSubmissionMutation) FieldCleared(name string) bool {
+	_, ok := m.clearedFields[name]
+	return ok
+}
+
+// ClearField clears the value of the field with the given name. It returns an
+// error if the field is not defined in the schema.
+func (m *FormSubmissionMutation) ClearField(name string) error {
+	switch name {
+	case formsubmission.FieldCreatedAt:
+		m.ClearCreatedAt()
+		return nil
+	case formsubmission.FieldUpdatedAt:
+		m.ClearUpdatedAt()
+		return nil
+	case formsubmission.FieldDeletedAt:
+		m.ClearDeletedAt()
+		return nil
+	case formsubmission.FieldTenantID:
+		m.ClearTenantID()
+		return nil
+	case formsubmission.FieldPageID:
+		m.ClearPageID()
+		return nil
+	case formsubmission.FieldSectionID:
+		m.ClearSectionID()
+		return nil
+	case formsubmission.FieldData:
+		m.ClearData()
+		return nil
+	case formsubmission.FieldUserID:
+		m.ClearUserID()
+		return nil
+	}
+	return fmt.Errorf("unknown FormSubmission nullable field %s", name)
+}
+
+// ResetField resets all changes in the mutation for the field with the given name.
+// It returns an error if the field is not defined in the schema.
+func (m *FormSubmissionMutation) ResetField(name string) error {
+	switch name {
+	case formsubmission.FieldCreatedAt:
+		m.ResetCreatedAt()
+		return nil
+	case formsubmission.FieldUpdatedAt:
+		m.ResetUpdatedAt()
+		return nil
+	case formsubmission.FieldDeletedAt:
+		m.ResetDeletedAt()
+		return nil
+	case formsubmission.FieldTenantID:
+		m.ResetTenantID()
+		return nil
+	case formsubmission.FieldPageID:
+		m.ResetPageID()
+		return nil
+	case formsubmission.FieldSectionID:
+		m.ResetSectionID()
+		return nil
+	case formsubmission.FieldData:
+		m.ResetData()
+		return nil
+	case formsubmission.FieldUserID:
+		m.ResetUserID()
+		return nil
+	}
+	return fmt.Errorf("unknown FormSubmission field %s", name)
+}
+
+// AddedEdges returns all edge names that were set/added in this mutation.
+func (m *FormSubmissionMutation) AddedEdges() []string {
+	edges := make([]string, 0, 0)
+	return edges
+}
+
+// AddedIDs returns all IDs (to other nodes) that were added for the given edge
+// name in this mutation.
+func (m *FormSubmissionMutation) AddedIDs(name string) []ent.Value {
+	return nil
+}
+
+// RemovedEdges returns all edge names that were removed in this mutation.
+func (m *FormSubmissionMutation) RemovedEdges() []string {
+	edges := make([]string, 0, 0)
+	return edges
+}
+
+// RemovedIDs returns all IDs (to other nodes) that were removed for the edge with
+// the given name in this mutation.
+func (m *FormSubmissionMutation) RemovedIDs(name string) []ent.Value {
+	return nil
+}
+
+// ClearedEdges returns all edge names that were cleared in this mutation.
+func (m *FormSubmissionMutation) ClearedEdges() []string {
+	edges := make([]string, 0, 0)
+	return edges
+}
+
+// EdgeCleared returns a boolean which indicates if the edge with the given name
+// was cleared in this mutation.
+func (m *FormSubmissionMutation) EdgeCleared(name string) bool {
+	return false
+}
+
+// ClearEdge clears the value of the edge with the given name. It returns an error
+// if that edge is not defined in the schema.
+func (m *FormSubmissionMutation) ClearEdge(name string) error {
+	return fmt.Errorf("unknown FormSubmission unique edge %s", name)
+}
+
+// ResetEdge resets all changes to the edge with the given name in this mutation.
+// It returns an error if the edge is not defined in the schema.
+func (m *FormSubmissionMutation) ResetEdge(name string) error {
+	return fmt.Errorf("unknown FormSubmission edge %s", name)
 }
 
 // InteractionCounterMutation represents an operation that mutates the InteractionCounter nodes in the graph.

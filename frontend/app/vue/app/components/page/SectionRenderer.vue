@@ -1,10 +1,11 @@
 <script setup lang="ts">
-import { computed } from 'vue'
+import { computed, ref } from 'vue'
 import type {
   contentservicev1_Section,
   contentservicev1_SectionTranslation,
 } from '@/api/generated/app/service/v1'
 import { getCurrentLocale } from '@/utils/locale'
+import { apiClient } from '@/api/client'
 
 /**
  * Section 内容键契约（三端渲染器共用，与 react SectionRenderer.tsx 保持同步）
@@ -122,6 +123,64 @@ function isExternal(href: string): boolean {
 
 function sectionKey(section: contentservicev1_Section, index: number): string {
   return section.id != null ? `s-${section.id}` : `s-${index}`
+}
+
+/** FORM 区块字段定义（config.fields JSON 数组元素；与 core 侧校验契约一致） */
+interface FormFieldDef {
+  name: string
+  type?: string
+  required?: boolean
+}
+
+// FORM 区块状态：按区块 id 隔离（页面可能多个表单区块）
+const formValues = ref<Record<string, Record<string, string>>>({})
+const formState = ref<Record<string, 'idle' | 'submitting' | 'done' | 'error'>>({})
+
+function formFields(section: contentservicev1_Section): FormFieldDef[] {
+  try {
+    const parsed = JSON.parse(section.config?.fields || '[]')
+    if (Array.isArray(parsed)) {
+      return parsed.filter(
+        (f: unknown): f is FormFieldDef => !!f && typeof (f as FormFieldDef).name === 'string',
+      )
+    }
+  } catch {
+    // 字段定义非法：渲染为空表单（仅标题），不中断整页
+  }
+  return []
+}
+
+function formStateOf(section: contentservicev1_Section): string {
+  return formState.value[section.id ?? 0] ?? 'idle'
+}
+
+/** 表单值记录（惰性初始化，模板 v-model 直接绑定到返回对象） */
+function formValuesOf(section: contentservicev1_Section): Record<string, string> {
+  const sid = section.id ?? 0
+  if (!formValues.value[sid]) formValues.value[sid] = {}
+  return formValues.value[sid]
+}
+
+function fieldLabel(section: contentservicev1_Section, field: FormFieldDef): string {
+  return pickTranslation(section)?.content?.[field.name] || field.name
+}
+
+async function submitForm(section: contentservicev1_Section) {
+  const sid = section.id ?? 0
+  if (!section.pageId || formState.value[sid] === 'submitting') return
+  formState.value[sid] = 'submitting'
+  try {
+    await apiClient.formSubmissionService.Submit({
+      pageId: section.pageId,
+      sectionId: sid,
+      data: formValues.value[sid] ?? {},
+    })
+    formState.value[sid] = 'done'
+    formValues.value[sid] = {}
+  } catch (e) {
+    console.error('Form submit failed:', e)
+    formState.value[sid] = 'error'
+  }
 }
 </script>
 
@@ -260,13 +319,55 @@ function sectionKey(section: contentservicev1_Section, index: number): string {
         type="html"
       />
 
-      <!-- 表单：提交后端（form_submission）落地前的占位 -->
-      <div
-        v-else-if="section.type === 'SECTION_TYPE_FORM' && (pickTranslation(section)?.content?.title || section.name)"
-        class="rounded-xl border border-dashed border-border bg-muted/40 p-6 text-center text-sm text-muted-foreground"
+      <!-- 表单：字段定义在 config.fields，标签在翻译 content 的 <字段名> 键 -->
+      <form
+        v-else-if="section.type === 'SECTION_TYPE_FORM'"
+        class="space-y-4"
+        @submit.prevent="submitForm(section)"
       >
-        {{ pickTranslation(section)?.content?.title || section.name }}
-      </div>
+        <div
+          v-if="pickTranslation(section)?.content?.title || section.name"
+          class="text-lg font-semibold text-foreground"
+        >
+          {{ pickTranslation(section)?.content?.title || section.name }}
+        </div>
+        <template v-if="formStateOf(section) !== 'done'">
+          <div v-for="field in formFields(section)" :key="field.name" class="space-y-1">
+            <label :for="`f-${section.id}-${field.name}`" class="text-sm font-medium text-foreground">
+              {{ fieldLabel(section, field) }}
+              <span v-if="field.required" class="text-destructive"> *</span>
+            </label>
+            <textarea
+              v-if="field.type === 'textarea'"
+              :id="`f-${section.id}-${field.name}`"
+              v-model="formValuesOf(section)[field.name]"
+              :required="field.required"
+              rows="4"
+              class="w-full rounded-lg border border-border bg-background px-3 py-2 text-sm text-foreground outline-none focus:border-primary"
+            />
+            <input
+              v-else
+              :id="`f-${section.id}-${field.name}`"
+              v-model="formValuesOf(section)[field.name]"
+              :type="field.type === 'email' ? 'email' : field.type === 'tel' ? 'tel' : 'text'"
+              :required="field.required"
+              class="w-full rounded-lg border border-border bg-background px-3 py-2 text-sm text-foreground outline-none focus:border-primary"
+            />
+          </div>
+          <div v-if="formStateOf(section) === 'error'" class="text-sm text-destructive">
+            {{ pickTranslation(section)?.content?.errorText || 'Submit failed, please retry' }}
+          </div>
+          <UiButton type="submit" :disabled="formStateOf(section) === 'submitting'">
+            {{ pickTranslation(section)?.content?.submitText || 'Submit' }}
+          </UiButton>
+        </template>
+        <div
+          v-else
+          class="rounded-xl border border-border bg-muted/40 p-6 text-center text-sm text-muted-foreground"
+        >
+          {{ pickTranslation(section)?.content?.successText || pickTranslation(section)?.content?.title }}
+        </div>
+      </form>
 
       <!-- 自定义/未知类型：按 Markdown 兜底渲染 value -->
       <ContentViewer

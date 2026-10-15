@@ -144,6 +144,7 @@ func initApp(ctx *bootstrap.Context) (*kratos.App, func(), error) {
 	// 社交分发
 	socialServiceClient := data.NewSocialServiceClient(ctx, discovery)
 	webhookServiceClient := data.NewWebhookServiceClient(ctx, discovery)
+	formSubmissionServiceClient := data.NewFormSubmissionServiceClient(ctx, discovery)
 
 	// ── register:client ── 新模块服务客户端在此行后注册(make register 工具锚点,勿删)
 
@@ -226,6 +227,7 @@ func initApp(ctx *bootstrap.Context) (*kratos.App, func(), error) {
 	// 社交分发
 	socialService := service.NewSocialService(ctx, socialServiceClient)
 	webhookService := service.NewWebhookService(ctx, webhookServiceClient)
+	formSubmissionService := service.NewFormSubmissionService(ctx, formSubmissionServiceClient)
 
 	// ── register:service ── 新模块服务在此行后注册(make register 工具锚点,勿删)
 
@@ -255,6 +257,7 @@ func initApp(ctx *bootstrap.Context) (*kratos.App, func(), error) {
 		mediaAssetService,
 		socialService,
 		webhookService,
+		formSubmissionService,
 		// register:rest-arg ── 新模块服务实参在此行后追加(make register 工具锚点,勿删)
 	)
 

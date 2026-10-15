@@ -172,6 +172,9 @@ func initApp(ctx *bootstrap.Context) (*kratos.App, func(), error) {
 	// Webhook 订阅与投递记录
 	webhookRepo := data.NewWebhookRepo(ctx, entClient)
 
+	// 表单提交（页面 FORM 区块）
+	formSubmissionRepo := data.NewFormSubmissionRepo(ctx, entClient)
+
 	// 站点配置
 	siteRepo := data.NewSiteRepo(ctx, entClient)
 	siteSettingRepo := data.NewSiteSettingRepo(ctx, entClient)
@@ -202,6 +205,9 @@ func initApp(ctx *bootstrap.Context) (*kratos.App, func(), error) {
 
 	// Webhook 事件外发（订阅 CRUD + 扇出/投递 worker；依赖 taskService）
 	webhookService := service.NewWebhookService(ctx, webhookRepo, taskService)
+
+	// 表单提交（页面 FORM 区块；校验依赖 pageRepo）
+	formSubmissionService := service.NewFormSubmissionService(ctx, formSubmissionRepo, pageRepo)
 	fileService := service.NewFileService(ctx, fileRepo, minIOClient)
 
 	// 字典与多语言
@@ -297,6 +303,7 @@ func initApp(ctx *bootstrap.Context) (*kratos.App, func(), error) {
 		mediaAssetService,
 		socialService,
 		webhookService,
+		formSubmissionService,
 		// register:grpc-arg ── 新模块服务实参在此行后追加(make register 工具锚点,勿删)
 	)
 	if err != nil {

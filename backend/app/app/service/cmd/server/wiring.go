@@ -93,6 +93,8 @@ func initApp(ctx *bootstrap.Context) (*kratos.App, func(), error) {
 	categoryService := service.NewCategoryService(ctx, categoryServiceClient)
 	commentService := service.NewCommentService(ctx, commentServiceClient, tenantResolver, accessTokenChecker)
 	interactionService := service.NewInteractionService(ctx, interactionServiceClient, tenantResolver)
+	formSubmissionServiceClient := data.NewFormSubmissionServiceClient(ctx, discovery)
+	formSubmissionService := service.NewFormSubmissionService(ctx, formSubmissionServiceClient, tenantResolver)
 	tagService := service.NewTagService(ctx, tagServiceClient)
 	pageService := service.NewPageService(ctx, pageServiceClient)
 
@@ -111,6 +113,7 @@ func initApp(ctx *bootstrap.Context) (*kratos.App, func(), error) {
 		fileTransferService,
 		userProfileService,
 		postService, categoryService, commentService, interactionService, tagService, pageService,
+		formSubmissionService,
 		navigationService, siteService,
 		// register:rest-arg ── 新模块服务实参在此行后追加(make register 工具锚点,勿删)
 	)

@@ -27,6 +27,7 @@ import (
 	"go-wind-cms/app/core/service/internal/data/ent/fielddefinition"
 	"go-wind-cms/app/core/service/internal/data/ent/fielddefinitiontranslation"
 	"go-wind-cms/app/core/service/internal/data/ent/file"
+	"go-wind-cms/app/core/service/internal/data/ent/formsubmission"
 	"go-wind-cms/app/core/service/internal/data/ent/interactioncounter"
 	"go-wind-cms/app/core/service/internal/data/ent/internalmessage"
 	"go-wind-cms/app/core/service/internal/data/ent/internalmessagecategory"
@@ -716,6 +717,34 @@ func init() {
 	fileDescID := fileMixinFields0[0].Descriptor()
 	// file.IDValidator is a validator for the "id" field. It is called by the builders before save.
 	file.IDValidator = fileDescID.Validators[0].(func(uint32) error)
+	formsubmissionMixin := schema.FormSubmission{}.Mixin()
+	formsubmission.Policy = privacy.NewPolicies(formsubmissionMixin[2], schema.FormSubmission{})
+	formsubmission.Hooks[0] = func(next ent.Mutator) ent.Mutator {
+		return ent.MutateFunc(func(ctx context.Context, m ent.Mutation) (ent.Value, error) {
+			if err := formsubmission.Policy.EvalMutation(ctx, m); err != nil {
+				return nil, err
+			}
+			return next.Mutate(ctx, m)
+		})
+	}
+	formsubmissionMixinFields0 := formsubmissionMixin[0].Fields()
+	_ = formsubmissionMixinFields0
+	formsubmissionMixinFields2 := formsubmissionMixin[2].Fields()
+	_ = formsubmissionMixinFields2
+	formsubmissionFields := schema.FormSubmission{}.Fields()
+	_ = formsubmissionFields
+	// formsubmissionDescTenantID is the schema descriptor for tenant_id field.
+	formsubmissionDescTenantID := formsubmissionMixinFields2[0].Descriptor()
+	// formsubmission.DefaultTenantID holds the default value on creation for the tenant_id field.
+	formsubmission.DefaultTenantID = formsubmissionDescTenantID.Default.(uint32)
+	// formsubmissionDescUserID is the schema descriptor for user_id field.
+	formsubmissionDescUserID := formsubmissionFields[3].Descriptor()
+	// formsubmission.DefaultUserID holds the default value on creation for the user_id field.
+	formsubmission.DefaultUserID = formsubmissionDescUserID.Default.(uint32)
+	// formsubmissionDescID is the schema descriptor for id field.
+	formsubmissionDescID := formsubmissionMixinFields0[0].Descriptor()
+	// formsubmission.IDValidator is a validator for the "id" field. It is called by the builders before save.
+	formsubmission.IDValidator = formsubmissionDescID.Validators[0].(func(uint32) error)
 	interactioncounterMixin := schema.InteractionCounter{}.Mixin()
 	interactioncounter.Policy = privacy.NewPolicies(interactioncounterMixin[2], schema.InteractionCounter{})
 	interactioncounter.Hooks[0] = func(next ent.Mutator) ent.Mutator {

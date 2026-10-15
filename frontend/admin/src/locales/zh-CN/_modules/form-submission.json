@@ -1,0 +1,15 @@
+{
+  "title": "表单提交",
+  "pageId": "页面ID",
+  "sectionId": "区块ID",
+  "dataSummary": "提交内容",
+  "submittedAt": "提交时间",
+  "action": "操作",
+  "detail": "详情",
+  "delete": "删除",
+  "deleteConfirm": "确认删除该提交？",
+  "deleteSuccess": "已删除",
+  "exportCsv": "导出 CSV",
+  "nothingToExport": "暂无数据可导出",
+  "noData": "无数据"
+}
