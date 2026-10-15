@@ -92,7 +92,7 @@ const PostList = () => {
     gate.inFlight = true;
     gate.lastAt = now;
     try {
-      const keys = [ALL_STATUS, ...postStatusOptions(t).map((o) => o.value as string)];
+      const keys = [ALL_STATUS, ...postStatusOptions(t).map((o) => o.value as string), REVIEW_STATUS];
       const entries = await Promise.all(
         keys.map(async (key) => {
           try {
