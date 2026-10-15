@@ -52,7 +52,9 @@ func NewApiService(
 func (s *ApiService) init() {
 	ctx := appViewer.NewSystemViewerContext(context.Background())
 	if resp, _ := s.apiServiceClient.Count(ctx, nil); resp != nil && resp.Count == 0 {
-		_, _ = s.SyncApis(ctx, &emptypb.Empty{})
+		if _, serr := s.SyncApis(ctx, &emptypb.Empty{}); serr != nil {
+			s.log.Errorf("startup sync apis failed: %v", serr)
+		}
 	}
 }
 
@@ -178,9 +180,13 @@ func (s *ApiService) syncWithOpenAPI(ctx context.Context) error {
 		}
 	}
 
-	_, _ = s.apiServiceClient.SyncApis(ctx, &permissionV1.SyncApisRequest{
+	if _, err := s.apiServiceClient.SyncApis(ctx, &permissionV1.SyncApisRequest{
 		Apis: apiList,
-	})
+	}); err != nil {
+		// 不吞错：同步失败必须暴露给管理页（否则界面显示成功而权限表未更新）
+		s.log.Errorf("sync apis via OpenAPI failed: %v", err)
+		return adminV1.ErrorInternalServerError("sync apis failed")
+	}
 
 	return nil
 }
@@ -218,9 +224,12 @@ func (s *ApiService) syncWithWalkRoute(ctx context.Context) error {
 		return apiList[i].GetPath() < apiList[j].GetPath()
 	})
 
-	_, _ = s.apiServiceClient.SyncApis(ctx, &permissionV1.SyncApisRequest{
+	if _, err := s.apiServiceClient.SyncApis(ctx, &permissionV1.SyncApisRequest{
 		Apis: apiList,
-	})
+	}); err != nil {
+		s.log.Errorf("sync apis via WalkRoute failed: %v", err)
+		return adminV1.ErrorInternalServerError("sync apis failed")
+	}
 
 	return nil
 }
