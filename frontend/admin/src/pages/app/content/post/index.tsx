@@ -1,6 +1,7 @@
 import { useEffect, useRef, useState } from 'react';
 import type { ProColumns, ActionType } from '@ant-design/pro-components';
 import TableExportButton from '@/components/common/TableExportButton';
+import PostTransferButtons from './PostTransferButtons';
 import ListTable from '@/components/common/ListTable';
 import { Button, Popconfirm, Tabs, Tag, App } from 'antd';
 import { EditOutlined, DeleteOutlined, PlusOutlined } from '@ant-design/icons';
@@ -333,6 +334,10 @@ const PostList = () => {
             fetcher={fetchListPosts}
             columns={columns}
             filename="posts"
+          />,
+          <PostTransferButtons
+            key="transfer"
+            onChanged={() => actionRef.current?.reload()}
           />,
           <Button
             key="create"

@@ -90,5 +90,17 @@
   "distributeNeedSave": "Save the post before distributing",
   "versionHistory": "Version History",
   "versionNeedSave": "Available after save",
-  "previewOnCend": "Preview"
+  "previewOnCend": "Preview",
+  "transfer": {
+    "import": "Import",
+    "importXlsx": "Bulk import (Excel)",
+    "importJson": "Import JSON",
+    "exportJson": "Export JSON",
+    "exportSuccess": "Exported {{count}} posts (with translations)",
+    "exportFailed": "Export failed",
+    "importSuccess": "Imported {{count}} posts (as drafts)",
+    "importPartial": "Import finished: {{ok}} succeeded, failed rows: {{failed}} (nothing published)",
+    "importFailed": "Import failed: file parse error",
+    "noPosts": "No posts found in file"
+  }
 }

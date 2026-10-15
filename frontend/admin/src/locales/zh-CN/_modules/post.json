@@ -90,5 +90,17 @@
   "distributeNeedSave": "请先保存文章再分发",
   "versionHistory": "版本历史",
   "versionNeedSave": "保存后可用",
-  "previewOnCend": "预览"
+  "previewOnCend": "预览",
+  "transfer": {
+    "import": "导入",
+    "importXlsx": "Excel 批量导入",
+    "importJson": "JSON 导入",
+    "exportJson": "导出 JSON",
+    "exportSuccess": "已导出 {{count}} 篇（含翻译全文）",
+    "exportFailed": "导出失败",
+    "importSuccess": "已导入 {{count}} 篇（均为草稿）",
+    "importPartial": "导入完成：成功 {{ok}} 篇，失败行：{{failed}}（均未发布）",
+    "importFailed": "导入失败：文件解析错误",
+    "noPosts": "文件中没有帖子数据"
+  }
 }
