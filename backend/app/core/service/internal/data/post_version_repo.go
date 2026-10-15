@@ -94,16 +94,21 @@ func (r *PostVersionRepo) nextVersionNumber(ctx context.Context, postID uint32) 
 	if tenantConds, has := r.tenantGuard(ctx); has {
 		conds = append(conds, tenantConds...)
 	}
-	max, err := r.entClient.Client().PostVersion.Query().
+	// 取列后 Go 内求最大：MAX() 在空集合返回 NULL，Aggregate.Int 扫描会报错，
+	// 导致每个帖子的第一个版本永远创建失败（空表鸡生蛋问题）。
+	nums, err := r.entClient.Client().PostVersion.Query().
 		Where(conds...).
-		Aggregate(ent.Max(postversion.FieldVersionNumber)).
-		Int(ctx)
+		Select(postversion.FieldVersionNumber).
+		Ints(ctx)
 	if err != nil {
-		r.log.Errorf("query max version number failed (post=%d): %s", postID, err.Error())
+		r.log.Errorf("query version numbers failed (post=%d): %s", postID, err.Error())
 		return 0, err
 	}
-	if max < 0 {
-		max = 0
+	max := 0
+	for _, n := range nums {
+		if n > max {
+			max = n
+		}
 	}
 	return uint32(max) + 1, nil
 }
