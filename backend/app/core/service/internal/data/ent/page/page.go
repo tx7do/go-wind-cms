@@ -51,6 +51,8 @@ const (
 	FieldDisallowComment = "disallow_comment"
 	// FieldRedirectURL holds the string denoting the redirect_url field in the database.
 	FieldRedirectURL = "redirect_url"
+	// FieldInProgress holds the string denoting the in_progress field in the database.
+	FieldInProgress = "in_progress"
 	// FieldShowInNavigation holds the string denoting the show_in_navigation field in the database.
 	FieldShowInNavigation = "show_in_navigation"
 	// FieldTemplate holds the string denoting the template field in the database.
@@ -102,6 +104,7 @@ var Columns = []string{
 	FieldAuthorName,
 	FieldDisallowComment,
 	FieldRedirectURL,
+	FieldInProgress,
 	FieldShowInNavigation,
 	FieldTemplate,
 	FieldIsCustomTemplate,
@@ -139,6 +142,8 @@ var (
 	DefaultAuthorID uint32
 	// DefaultDisallowComment holds the default value on creation for the "disallow_comment" field.
 	DefaultDisallowComment bool
+	// DefaultInProgress holds the default value on creation for the "in_progress" field.
+	DefaultInProgress bool
 	// DefaultShowInNavigation holds the default value on creation for the "show_in_navigation" field.
 	DefaultShowInNavigation bool
 	// DefaultIsCustomTemplate holds the default value on creation for the "is_custom_template" field.
@@ -331,6 +336,11 @@ func ByDisallowComment(opts ...sql.OrderTermOption) OrderOption {
 // ByRedirectURL orders the results by the redirect_url field.
 func ByRedirectURL(opts ...sql.OrderTermOption) OrderOption {
 	return sql.OrderByField(FieldRedirectURL, opts...).ToFunc()
+}
+
+// ByInProgress orders the results by the in_progress field.
+func ByInProgress(opts ...sql.OrderTermOption) OrderOption {
+	return sql.OrderByField(FieldInProgress, opts...).ToFunc()
 }
 
 // ByShowInNavigation orders the results by the show_in_navigation field.

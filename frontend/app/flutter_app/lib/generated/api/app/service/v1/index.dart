@@ -10259,6 +10259,7 @@ class ContentServiceV1Page {
   bool? disallowComment;
   ContentServiceV1EditorType? editorType;
   int? id;
+  bool? inProgress;
   bool? isCustomTemplate;
   int? parentId;
   String? path;
@@ -10291,6 +10292,7 @@ class ContentServiceV1Page {
     this.disallowComment,
     this.editorType,
     this.id,
+    this.inProgress,
     this.isCustomTemplate,
     this.parentId,
     this.path,
@@ -10324,6 +10326,7 @@ class ContentServiceV1Page {
       disallowComment: json['disallowComment'] as bool?,
       editorType: json['editorType'] != null ? ContentServiceV1EditorType.fromString(json['editorType'] as String) : null,
       id: json['id'] as int?,
+      inProgress: json['inProgress'] as bool?,
       isCustomTemplate: json['isCustomTemplate'] as bool?,
       parentId: json['parentId'] as int?,
       path: json['path'] as String?,
@@ -10358,6 +10361,7 @@ class ContentServiceV1Page {
     if (disallowComment != null) json['disallowComment'] = disallowComment;
     if (editorType != null) json['editorType'] = editorType!.value;
     if (id != null) json['id'] = id;
+    if (inProgress != null) json['inProgress'] = inProgress;
     if (isCustomTemplate != null) json['isCustomTemplate'] = isCustomTemplate;
     if (parentId != null) json['parentId'] = parentId;
     if (path != null) json['path'] = path;
@@ -10378,7 +10382,7 @@ class ContentServiceV1Page {
 
   @override
   String toString() {
-    return 'ContentServiceV1Page(authorId: $authorId, authorName: $authorName, availableLanguages: $availableLanguages, children: $children, contentModelId: $contentModelId, createdAt: $createdAt, createdBy: $createdBy, customFields: $customFields, deletedAt: $deletedAt, deletedBy: $deletedBy, depth: $depth, disallowComment: $disallowComment, editorType: $editorType, id: $id, isCustomTemplate: $isCustomTemplate, parentId: $parentId, path: $path, redirectUrl: $redirectUrl, sections: $sections, showInNavigation: $showInNavigation, slug: $slug, sortOrder: $sortOrder, status: $status, template: $template, thumbnail: $thumbnail, translations: $translations, type: $type, updatedAt: $updatedAt, updatedBy: $updatedBy)';
+    return 'ContentServiceV1Page(authorId: $authorId, authorName: $authorName, availableLanguages: $availableLanguages, children: $children, contentModelId: $contentModelId, createdAt: $createdAt, createdBy: $createdBy, customFields: $customFields, deletedAt: $deletedAt, deletedBy: $deletedBy, depth: $depth, disallowComment: $disallowComment, editorType: $editorType, id: $id, inProgress: $inProgress, isCustomTemplate: $isCustomTemplate, parentId: $parentId, path: $path, redirectUrl: $redirectUrl, sections: $sections, showInNavigation: $showInNavigation, slug: $slug, sortOrder: $sortOrder, status: $status, template: $template, thumbnail: $thumbnail, translations: $translations, type: $type, updatedAt: $updatedAt, updatedBy: $updatedBy)';
   }
 
   @override
@@ -10400,6 +10404,7 @@ class ContentServiceV1Page {
       && disallowComment == other.disallowComment
       && editorType == other.editorType
       && id == other.id
+      && inProgress == other.inProgress
       && isCustomTemplate == other.isCustomTemplate
       && parentId == other.parentId
       && path == other.path
@@ -10433,6 +10438,7 @@ class ContentServiceV1Page {
     disallowComment,
     editorType,
     id,
+    inProgress,
     isCustomTemplate,
     parentId,
     path,
@@ -10465,6 +10471,7 @@ class ContentServiceV1Page {
     bool? disallowComment,
     ContentServiceV1EditorType? editorType,
     int? id,
+    bool? inProgress,
     bool? isCustomTemplate,
     int? parentId,
     String? path,
@@ -10496,6 +10503,7 @@ class ContentServiceV1Page {
       disallowComment: disallowComment ?? this.disallowComment,
       editorType: editorType ?? this.editorType,
       id: id ?? this.id,
+      inProgress: inProgress ?? this.inProgress,
       isCustomTemplate: isCustomTemplate ?? this.isCustomTemplate,
       parentId: parentId ?? this.parentId,
       path: path ?? this.path,
@@ -10591,6 +10599,11 @@ class ContentServiceV1Page {
     final f14 = thumbnail;
     if (f14 != null) {
       w.writeString(14, f14!);
+    }
+    // field 15: inProgress
+    final f15 = inProgress;
+    if (f15 != null) {
+      w.writeBool(15, f15!);
     }
     // field 21: customFields
     final f21 = customFields;
@@ -10750,6 +10763,11 @@ class ContentServiceV1Page {
         // field 14: thumbnail
         case 14: {
           m.thumbnail = r.readString();
+          break;
+        }
+        // field 15: inProgress
+        case 15: {
+          m.inProgress = r.readBool();
           break;
         }
         // field 21: customFields

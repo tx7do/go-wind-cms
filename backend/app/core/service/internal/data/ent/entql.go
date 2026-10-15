@@ -1309,6 +1309,7 @@ var schemaGraph = func() *sqlgraph.Schema {
 			page.FieldAuthorName:       {Type: field.TypeString, Column: page.FieldAuthorName},
 			page.FieldDisallowComment:  {Type: field.TypeBool, Column: page.FieldDisallowComment},
 			page.FieldRedirectURL:      {Type: field.TypeString, Column: page.FieldRedirectURL},
+			page.FieldInProgress:       {Type: field.TypeBool, Column: page.FieldInProgress},
 			page.FieldShowInNavigation: {Type: field.TypeBool, Column: page.FieldShowInNavigation},
 			page.FieldTemplate:         {Type: field.TypeString, Column: page.FieldTemplate},
 			page.FieldIsCustomTemplate: {Type: field.TypeBool, Column: page.FieldIsCustomTemplate},
@@ -8016,6 +8017,11 @@ func (f *PageFilter) WhereDisallowComment(p entql.BoolP) {
 // WhereRedirectURL applies the entql string predicate on the redirect_url field.
 func (f *PageFilter) WhereRedirectURL(p entql.StringP) {
 	f.Where(p.Field(page.FieldRedirectURL))
+}
+
+// WhereInProgress applies the entql bool predicate on the in_progress field.
+func (f *PageFilter) WhereInProgress(p entql.BoolP) {
+	f.Where(p.Field(page.FieldInProgress))
 }
 
 // WhereShowInNavigation applies the entql bool predicate on the show_in_navigation field.

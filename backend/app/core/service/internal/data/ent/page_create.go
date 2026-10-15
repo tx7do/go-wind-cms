@@ -274,6 +274,20 @@ func (_c *PageCreate) SetNillableRedirectURL(v *string) *PageCreate {
 	return _c
 }
 
+// SetInProgress sets the "in_progress" field.
+func (_c *PageCreate) SetInProgress(v bool) *PageCreate {
+	_c.mutation.SetInProgress(v)
+	return _c
+}
+
+// SetNillableInProgress sets the "in_progress" field if the given value is not nil.
+func (_c *PageCreate) SetNillableInProgress(v *bool) *PageCreate {
+	if v != nil {
+		_c.SetInProgress(*v)
+	}
+	return _c
+}
+
 // SetShowInNavigation sets the "show_in_navigation" field.
 func (_c *PageCreate) SetShowInNavigation(v bool) *PageCreate {
 	_c.mutation.SetShowInNavigation(v)
@@ -455,6 +469,10 @@ func (_c *PageCreate) defaults() error {
 		v := page.DefaultDisallowComment
 		_c.mutation.SetDisallowComment(v)
 	}
+	if _, ok := _c.mutation.InProgress(); !ok {
+		v := page.DefaultInProgress
+		_c.mutation.SetInProgress(v)
+	}
 	if _, ok := _c.mutation.ShowInNavigation(); !ok {
 		v := page.DefaultShowInNavigation
 		_c.mutation.SetShowInNavigation(v)
@@ -597,6 +615,10 @@ func (_c *PageCreate) createSpec() (*Page, *sqlgraph.CreateSpec) {
 	if value, ok := _c.mutation.RedirectURL(); ok {
 		_spec.SetField(page.FieldRedirectURL, field.TypeString, value)
 		_node.RedirectURL = &value
+	}
+	if value, ok := _c.mutation.InProgress(); ok {
+		_spec.SetField(page.FieldInProgress, field.TypeBool, value)
+		_node.InProgress = &value
 	}
 	if value, ok := _c.mutation.ShowInNavigation(); ok {
 		_spec.SetField(page.FieldShowInNavigation, field.TypeBool, value)
@@ -1026,6 +1048,24 @@ func (u *PageUpsert) UpdateRedirectURL() *PageUpsert {
 // ClearRedirectURL clears the value of the "redirect_url" field.
 func (u *PageUpsert) ClearRedirectURL() *PageUpsert {
 	u.SetNull(page.FieldRedirectURL)
+	return u
+}
+
+// SetInProgress sets the "in_progress" field.
+func (u *PageUpsert) SetInProgress(v bool) *PageUpsert {
+	u.Set(page.FieldInProgress, v)
+	return u
+}
+
+// UpdateInProgress sets the "in_progress" field to the value that was provided on create.
+func (u *PageUpsert) UpdateInProgress() *PageUpsert {
+	u.SetExcluded(page.FieldInProgress)
+	return u
+}
+
+// ClearInProgress clears the value of the "in_progress" field.
+func (u *PageUpsert) ClearInProgress() *PageUpsert {
+	u.SetNull(page.FieldInProgress)
 	return u
 }
 
@@ -1589,6 +1629,27 @@ func (u *PageUpsertOne) UpdateRedirectURL() *PageUpsertOne {
 func (u *PageUpsertOne) ClearRedirectURL() *PageUpsertOne {
 	return u.Update(func(s *PageUpsert) {
 		s.ClearRedirectURL()
+	})
+}
+
+// SetInProgress sets the "in_progress" field.
+func (u *PageUpsertOne) SetInProgress(v bool) *PageUpsertOne {
+	return u.Update(func(s *PageUpsert) {
+		s.SetInProgress(v)
+	})
+}
+
+// UpdateInProgress sets the "in_progress" field to the value that was provided on create.
+func (u *PageUpsertOne) UpdateInProgress() *PageUpsertOne {
+	return u.Update(func(s *PageUpsert) {
+		s.UpdateInProgress()
+	})
+}
+
+// ClearInProgress clears the value of the "in_progress" field.
+func (u *PageUpsertOne) ClearInProgress() *PageUpsertOne {
+	return u.Update(func(s *PageUpsert) {
+		s.ClearInProgress()
 	})
 }
 
@@ -2341,6 +2402,27 @@ func (u *PageUpsertBulk) UpdateRedirectURL() *PageUpsertBulk {
 func (u *PageUpsertBulk) ClearRedirectURL() *PageUpsertBulk {
 	return u.Update(func(s *PageUpsert) {
 		s.ClearRedirectURL()
+	})
+}
+
+// SetInProgress sets the "in_progress" field.
+func (u *PageUpsertBulk) SetInProgress(v bool) *PageUpsertBulk {
+	return u.Update(func(s *PageUpsert) {
+		s.SetInProgress(v)
+	})
+}
+
+// UpdateInProgress sets the "in_progress" field to the value that was provided on create.
+func (u *PageUpsertBulk) UpdateInProgress() *PageUpsertBulk {
+	return u.Update(func(s *PageUpsert) {
+		s.UpdateInProgress()
+	})
+}
+
+// ClearInProgress clears the value of the "in_progress" field.
+func (u *PageUpsertBulk) ClearInProgress() *PageUpsertBulk {
+	return u.Update(func(s *PageUpsert) {
+		s.ClearInProgress()
 	})
 }
 

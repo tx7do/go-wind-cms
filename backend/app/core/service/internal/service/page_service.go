@@ -5,8 +5,10 @@ import (
 
 	"github.com/go-kratos/kratos/v2/log"
 	paginationV1 "github.com/tx7do/go-crud/api/gen/go/pagination/v1"
+	"github.com/tx7do/go-utils/trans"
 	"github.com/tx7do/kratos-bootstrap/bootstrap"
 	"google.golang.org/protobuf/encoding/protojson"
+	"google.golang.org/protobuf/types/known/fieldmaskpb"
 	"google.golang.org/protobuf/types/known/emptypb"
 
 	"go-wind-cms/app/core/service/internal/data"
@@ -22,16 +24,18 @@ type PageService struct {
 	pageRepo         *data.PageRepo
 	pageVersionRepo  *data.PageVersionRepo
 	webhookService   *WebhookService
+	notifySvc        *InternalMessageService
 	contentModelRepo *data.ContentModelRepo
 	log              *log.Helper
 }
 
-func NewPageService(ctx *bootstrap.Context, uc *data.PageRepo, contentModelRepo *data.ContentModelRepo, pageVersionRepo *data.PageVersionRepo, webhookService *WebhookService) *PageService {
+func NewPageService(ctx *bootstrap.Context, uc *data.PageRepo, contentModelRepo *data.ContentModelRepo, pageVersionRepo *data.PageVersionRepo, webhookService *WebhookService, notifySvc *InternalMessageService) *PageService {
 	return &PageService{
 		log:              ctx.NewLoggerHelper("page/service/core-service"),
 		pageRepo:         uc,
 		pageVersionRepo:  pageVersionRepo,
 		webhookService:   webhookService,
+		notifySvc:        notifySvc,
 		contentModelRepo: contentModelRepo,
 	}
 }
@@ -236,4 +240,133 @@ func (s *PageService) snapshotPageVersion(ctx context.Context, pageID uint32) {
 	if _, err = s.pageVersionRepo.CreateSnapshot(ctx, pageID, full, ""); err != nil {
 		s.log.Errorf("snapshot page version: create snapshot failed (page=%d): %v", pageID, err)
 	}
+}
+
+// ─── 页面审批工作流：DRAFT →（提交审核）审核中 →（通过）PUBLISHED /（驳回）DRAFT ───
+//
+// 权限卡点在 admin 门面侧的接口 RBAC：接口管理为 review/approve/reject 三个
+// 端点绑定可调用角色即完成分权（无需新的权限码机制）。状态机本身在此处强校验。
+
+// loadPageForReview 取页面并校验可流转状态；返回 (page, error)。
+func (s *PageService) loadPageForReview(ctx context.Context, pageID uint32) (*contentV1.Page, error) {
+	page, err := s.pageRepo.Get(ctx, &contentV1.GetPageRequest{
+		QueryBy: &contentV1.GetPageRequest_Id{Id: pageID},
+	})
+	if err != nil {
+		return nil, err
+	}
+	return page, nil
+}
+
+// SubmitReview 提交审核：DRAFT（非审核中）→ in_progress=true。
+func (s *PageService) SubmitReview(ctx context.Context, req *contentV1.SubmitPageReviewRequest) (*contentV1.Page, error) {
+	if req == nil || req.GetPageId() == 0 {
+		return nil, contentV1.ErrorBadRequest("invalid parameter")
+	}
+	page, err := s.loadPageForReview(ctx, req.GetPageId())
+	if err != nil {
+		return nil, err
+	}
+	if page.GetStatus() != contentV1.Page_PAGE_STATUS_DRAFT {
+		return nil, contentV1.ErrorBadRequest("only draft pages can be submitted for review")
+	}
+	if page.GetInProgress() {
+		return nil, contentV1.ErrorBadRequest("page is already under review")
+	}
+
+	updated, err := s.pageRepo.Update(ctx, &contentV1.UpdatePageRequest{
+		Id:         req.GetPageId(),
+		Data:       &contentV1.Page{InProgress: trans.Ptr(true)},
+		UpdateMask: &fieldmaskpb.FieldMask{Paths: []string{"inProgress"}},
+	})
+	if err != nil {
+		return nil, err
+	}
+	return updated, nil
+}
+
+// ApproveReview 审核通过：审核中 → PUBLISHED，dispatch page.published Webhook 并通知作者。
+func (s *PageService) ApproveReview(ctx context.Context, req *contentV1.ReviewPageRequest) (*contentV1.Page, error) {
+	if req == nil || req.GetPageId() == 0 {
+		return nil, contentV1.ErrorBadRequest("invalid parameter")
+	}
+	page, err := s.loadPageForReview(ctx, req.GetPageId())
+	if err != nil {
+		return nil, err
+	}
+	if !page.GetInProgress() {
+		return nil, contentV1.ErrorBadRequest("page is not under review")
+	}
+
+	updated, err := s.pageRepo.Update(ctx, &contentV1.UpdatePageRequest{
+		Id:         req.GetPageId(),
+		Data:       &contentV1.Page{
+			Status:     trans.Ptr(contentV1.Page_PAGE_STATUS_PUBLISHED),
+			InProgress: trans.Ptr(false),
+		},
+		UpdateMask: &fieldmaskpb.FieldMask{Paths: []string{"status", "inProgress"}},
+	})
+	if err != nil {
+		return nil, err
+	}
+
+	// 发布链路钩子：Webhook published 事件（页面无 ES 索引，无重索引链）
+	if s.webhookService != nil {
+		s.webhookService.DispatchEvent(ctx, task.WebhookEventPagePublished, req.GetPageId())
+	}
+
+	s.notifyPageReviewResult(ctx, page, true, "")
+	return updated, nil
+}
+
+// RejectReview 审核驳回：审核中 → DRAFT，带理由通知作者。
+func (s *PageService) RejectReview(ctx context.Context, req *contentV1.RejectPageReviewRequest) (*contentV1.Page, error) {
+	if req == nil || req.GetPageId() == 0 {
+		return nil, contentV1.ErrorBadRequest("invalid parameter")
+	}
+	page, err := s.loadPageForReview(ctx, req.GetPageId())
+	if err != nil {
+		return nil, err
+	}
+	if !page.GetInProgress() {
+		return nil, contentV1.ErrorBadRequest("page is not under review")
+	}
+
+	updated, err := s.pageRepo.Update(ctx, &contentV1.UpdatePageRequest{
+		Id: req.GetPageId(),
+		Data: &contentV1.Page{
+			InProgress: trans.Ptr(false),
+		},
+		UpdateMask: &fieldmaskpb.FieldMask{Paths: []string{"inProgress"}},
+	})
+	if err != nil {
+		return nil, err
+	}
+
+	s.notifyPageReviewResult(ctx, page, false, req.GetReason())
+	return updated, nil
+}
+
+// notifyPageReviewResult 审核结果通知作者（站内信→SSE/邮件出站链自动跟进；best-effort）。
+func (s *PageService) notifyPageReviewResult(ctx context.Context, page *contentV1.Page, approved bool, reason string) {
+	if s.notifySvc == nil || page.GetAuthorId() == 0 {
+		return
+	}
+	title := ""
+	for _, tr := range page.GetTranslations() {
+		if tr.GetTitle() != "" {
+			title = tr.GetTitle()
+			break
+		}
+	}
+	var content string
+	if approved {
+		content = "您提交的页面《" + title + "》已审核通过并发布。"
+	} else {
+		content = "您提交的页面《" + title + "》审核未通过。"
+		if reason != "" {
+			content += "理由：" + reason
+		}
+	}
+	s.notifySvc.NotifyUser(ctx, page.GetAuthorId(), title, content)
 }

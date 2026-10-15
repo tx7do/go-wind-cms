@@ -28,7 +28,8 @@ var File_admin_service_v1_i_page_proto protoreflect.FileDescriptor
 
 const file_admin_service_v1_i_page_proto_rawDesc = "" +
 	"\n" +
-	"\x1dadmin/service/v1/i_page.proto\x12\x10admin.service.v1\x1a\x1cgoogle/api/annotations.proto\x1a\x1bgoogle/protobuf/empty.proto\x1a\x1epagination/v1/pagination.proto\x1a\x1dcontent/service/v1/page.proto2\xc5\a\n" +
+	"\x1dadmin/service/v1/i_page.proto\x12\x10admin.service.v1\x1a\x1cgoogle/api/annotations.proto\x1a\x1bgoogle/protobuf/empty.proto\x1a\x1epagination/v1/pagination.proto\x1a\x1dcontent/service/v1/page.proto2\xe5\n" +
+	"\n" +
 	"\vPageService\x12`\n" +
 	"\x04List\x12\x19.pagination.PagingRequest\x1a$.content.service.v1.ListPageResponse\"\x17\x82\xd3\xe4\x93\x02\x11\x12\x0f/admin/v1/pages\x12a\n" +
 	"\x03Get\x12\".content.service.v1.GetPageRequest\x1a\x18.content.service.v1.Page\"\x1c\x82\xd3\xe4\x93\x02\x16\x12\x14/admin/v1/pages/{id}\x12e\n" +
@@ -38,7 +39,10 @@ const file_admin_service_v1_i_page_proto_rawDesc = "" +
 	"\fListVersions\x12+.content.service.v1.ListPageVersionsRequest\x1a,.content.service.v1.ListPageVersionsResponse\"*\x82\xd3\xe4\x93\x02$\x12\"/admin/v1/pages/{page_id}/versions\x12\x7f\n" +
 	"\n" +
 	"GetVersion\x12).content.service.v1.GetPageVersionRequest\x1a\x1f.content.service.v1.PageVersion\"%\x82\xd3\xe4\x93\x02\x1f\x12\x1d/admin/v1/pages/versions/{id}\x12\x9d\x01\n" +
-	"\x0eRestoreVersion\x12-.content.service.v1.RestorePageVersionRequest\x1a\x18.content.service.v1.Page\"B\x82\xd3\xe4\x93\x02<:\x01*\"7/admin/v1/pages/{page_id}/versions/{version_id}/restoreB\xb5\x01\n" +
+	"\x0eRestoreVersion\x12-.content.service.v1.RestorePageVersionRequest\x1a\x18.content.service.v1.Page\"B\x82\xd3\xe4\x93\x02<:\x01*\"7/admin/v1/pages/{page_id}/versions/{version_id}/restore\x12\x89\x01\n" +
+	"\fSubmitReview\x12+.content.service.v1.SubmitPageReviewRequest\x1a\x18.content.service.v1.Page\"2\x82\xd3\xe4\x93\x02,:\x01*\"'/admin/v1/pages/{page_id}/review/submit\x12\x85\x01\n" +
+	"\rApproveReview\x12%.content.service.v1.ReviewPageRequest\x1a\x18.content.service.v1.Page\"3\x82\xd3\xe4\x93\x02-:\x01*\"(/admin/v1/pages/{page_id}/review/approve\x12\x89\x01\n" +
+	"\fRejectReview\x12+.content.service.v1.RejectPageReviewRequest\x1a\x18.content.service.v1.Page\"2\x82\xd3\xe4\x93\x02,:\x01*\"'/admin/v1/pages/{page_id}/review/rejectB\xb5\x01\n" +
 	"\x14com.admin.service.v1B\n" +
 	"IPageProtoP\x01Z/go-wind-cms/api/gen/go/admin/service/v1;adminpb\xa2\x02\x03ASX\xaa\x02\x10Admin.Service.V1\xca\x02\x10Admin\\Service\\V1\xe2\x02\x1cAdmin\\Service\\V1\\GPBMetadata\xea\x02\x12Admin::Service::V1b\x06proto3"
 
@@ -51,11 +55,14 @@ var file_admin_service_v1_i_page_proto_goTypes = []any{
 	(*v11.ListPageVersionsRequest)(nil),   // 5: content.service.v1.ListPageVersionsRequest
 	(*v11.GetPageVersionRequest)(nil),     // 6: content.service.v1.GetPageVersionRequest
 	(*v11.RestorePageVersionRequest)(nil), // 7: content.service.v1.RestorePageVersionRequest
-	(*v11.ListPageResponse)(nil),          // 8: content.service.v1.ListPageResponse
-	(*v11.Page)(nil),                      // 9: content.service.v1.Page
-	(*emptypb.Empty)(nil),                 // 10: google.protobuf.Empty
-	(*v11.ListPageVersionsResponse)(nil),  // 11: content.service.v1.ListPageVersionsResponse
-	(*v11.PageVersion)(nil),               // 12: content.service.v1.PageVersion
+	(*v11.SubmitPageReviewRequest)(nil),   // 8: content.service.v1.SubmitPageReviewRequest
+	(*v11.ReviewPageRequest)(nil),         // 9: content.service.v1.ReviewPageRequest
+	(*v11.RejectPageReviewRequest)(nil),   // 10: content.service.v1.RejectPageReviewRequest
+	(*v11.ListPageResponse)(nil),          // 11: content.service.v1.ListPageResponse
+	(*v11.Page)(nil),                      // 12: content.service.v1.Page
+	(*emptypb.Empty)(nil),                 // 13: google.protobuf.Empty
+	(*v11.ListPageVersionsResponse)(nil),  // 14: content.service.v1.ListPageVersionsResponse
+	(*v11.PageVersion)(nil),               // 15: content.service.v1.PageVersion
 }
 var file_admin_service_v1_i_page_proto_depIdxs = []int32{
 	0,  // 0: admin.service.v1.PageService.List:input_type -> pagination.PagingRequest
@@ -66,16 +73,22 @@ var file_admin_service_v1_i_page_proto_depIdxs = []int32{
 	5,  // 5: admin.service.v1.PageService.ListVersions:input_type -> content.service.v1.ListPageVersionsRequest
 	6,  // 6: admin.service.v1.PageService.GetVersion:input_type -> content.service.v1.GetPageVersionRequest
 	7,  // 7: admin.service.v1.PageService.RestoreVersion:input_type -> content.service.v1.RestorePageVersionRequest
-	8,  // 8: admin.service.v1.PageService.List:output_type -> content.service.v1.ListPageResponse
-	9,  // 9: admin.service.v1.PageService.Get:output_type -> content.service.v1.Page
-	9,  // 10: admin.service.v1.PageService.Create:output_type -> content.service.v1.Page
-	9,  // 11: admin.service.v1.PageService.Update:output_type -> content.service.v1.Page
-	10, // 12: admin.service.v1.PageService.Delete:output_type -> google.protobuf.Empty
-	11, // 13: admin.service.v1.PageService.ListVersions:output_type -> content.service.v1.ListPageVersionsResponse
-	12, // 14: admin.service.v1.PageService.GetVersion:output_type -> content.service.v1.PageVersion
-	9,  // 15: admin.service.v1.PageService.RestoreVersion:output_type -> content.service.v1.Page
-	8,  // [8:16] is the sub-list for method output_type
-	0,  // [0:8] is the sub-list for method input_type
+	8,  // 8: admin.service.v1.PageService.SubmitReview:input_type -> content.service.v1.SubmitPageReviewRequest
+	9,  // 9: admin.service.v1.PageService.ApproveReview:input_type -> content.service.v1.ReviewPageRequest
+	10, // 10: admin.service.v1.PageService.RejectReview:input_type -> content.service.v1.RejectPageReviewRequest
+	11, // 11: admin.service.v1.PageService.List:output_type -> content.service.v1.ListPageResponse
+	12, // 12: admin.service.v1.PageService.Get:output_type -> content.service.v1.Page
+	12, // 13: admin.service.v1.PageService.Create:output_type -> content.service.v1.Page
+	12, // 14: admin.service.v1.PageService.Update:output_type -> content.service.v1.Page
+	13, // 15: admin.service.v1.PageService.Delete:output_type -> google.protobuf.Empty
+	14, // 16: admin.service.v1.PageService.ListVersions:output_type -> content.service.v1.ListPageVersionsResponse
+	15, // 17: admin.service.v1.PageService.GetVersion:output_type -> content.service.v1.PageVersion
+	12, // 18: admin.service.v1.PageService.RestoreVersion:output_type -> content.service.v1.Page
+	12, // 19: admin.service.v1.PageService.SubmitReview:output_type -> content.service.v1.Page
+	12, // 20: admin.service.v1.PageService.ApproveReview:output_type -> content.service.v1.Page
+	12, // 21: admin.service.v1.PageService.RejectReview:output_type -> content.service.v1.Page
+	11, // [11:22] is the sub-list for method output_type
+	0,  // [0:11] is the sub-list for method input_type
 	0,  // [0:0] is the sub-list for extension type_name
 	0,  // [0:0] is the sub-list for extension extendee
 	0,  // [0:0] is the sub-list for field type_name

@@ -674,12 +674,18 @@ func (r *PostRepo) Update(ctx context.Context, req *contentV1.UpdatePostRequest)
 		func(dto *contentV1.Post) {
 			// author_id / password_hash 在 Update 时不再接受客户端值（创建时设置），
 			// updated_by 强制取调用者身份，保证审计归属真实。
+			// 显式状态变更自动退出审核态：直接发布/下架均视为离开审核流
+			//（审批 approve/reject 走显式 in_progress 字段，不受影响）
+			inProgressDTO := req.Data.InProgress
+			if req.Data.Status != nil {
+				inProgressDTO = trans.Ptr(false)
+			}
 			builder.
 				SetNillableStatus(r.statusConverter.ToEntity(req.Data.Status)).
 				SetNillableEditorType(r.editorTypeConverter.ToEntity(req.Data.EditorType)).
 				SetNillableCode(req.Data.Code).
 				SetNillableDisallowComment(req.Data.DisallowComment).
-				SetNillableInProgress(req.Data.InProgress).
+				SetNillableInProgress(inProgressDTO).
 				SetNillableAutoSummary(req.Data.AutoSummary).
 				SetNillableIsFeatured(req.Data.IsFeatured).
 				SetNillableSortOrder(req.Data.SortOrder).

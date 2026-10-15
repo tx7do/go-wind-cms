@@ -188,6 +188,10 @@ func (m *Page) validate(all bool) error {
 		// no validation rules for AuthorName
 	}
 
+	if m.InProgress != nil {
+		// no validation rules for InProgress
+	}
+
 	if m.DisallowComment != nil {
 		// no validation rules for DisallowComment
 	}
@@ -2797,3 +2801,317 @@ var _ interface {
 	Cause() error
 	ErrorName() string
 } = RestorePageVersionRequestValidationError{}
+
+// Validate checks the field values on SubmitPageReviewRequest with the rules
+// defined in the proto definition for this message. If any rules are
+// violated, the first error encountered is returned, or nil if there are no violations.
+func (m *SubmitPageReviewRequest) Validate() error {
+	return m.validate(false)
+}
+
+// ValidateAll checks the field values on SubmitPageReviewRequest with the
+// rules defined in the proto definition for this message. If any rules are
+// violated, the result is a list of violation errors wrapped in
+// SubmitPageReviewRequestMultiError, or nil if none found.
+func (m *SubmitPageReviewRequest) ValidateAll() error {
+	return m.validate(true)
+}
+
+func (m *SubmitPageReviewRequest) validate(all bool) error {
+	if m == nil {
+		return nil
+	}
+
+	var errors []error
+
+	// no validation rules for PageId
+
+	if len(errors) > 0 {
+		return SubmitPageReviewRequestMultiError(errors)
+	}
+
+	return nil
+}
+
+// SubmitPageReviewRequestMultiError is an error wrapping multiple validation
+// errors returned by SubmitPageReviewRequest.ValidateAll() if the designated
+// constraints aren't met.
+type SubmitPageReviewRequestMultiError []error
+
+// Error returns a concatenation of all the error messages it wraps.
+func (m SubmitPageReviewRequestMultiError) Error() string {
+	msgs := make([]string, 0, len(m))
+	for _, err := range m {
+		msgs = append(msgs, err.Error())
+	}
+	return strings.Join(msgs, "; ")
+}
+
+// AllErrors returns a list of validation violation errors.
+func (m SubmitPageReviewRequestMultiError) AllErrors() []error { return m }
+
+// SubmitPageReviewRequestValidationError is the validation error returned by
+// SubmitPageReviewRequest.Validate if the designated constraints aren't met.
+type SubmitPageReviewRequestValidationError struct {
+	field  string
+	reason string
+	cause  error
+	key    bool
+}
+
+// Field function returns field value.
+func (e SubmitPageReviewRequestValidationError) Field() string { return e.field }
+
+// Reason function returns reason value.
+func (e SubmitPageReviewRequestValidationError) Reason() string { return e.reason }
+
+// Cause function returns cause value.
+func (e SubmitPageReviewRequestValidationError) Cause() error { return e.cause }
+
+// Key function returns key value.
+func (e SubmitPageReviewRequestValidationError) Key() bool { return e.key }
+
+// ErrorName returns error name.
+func (e SubmitPageReviewRequestValidationError) ErrorName() string {
+	return "SubmitPageReviewRequestValidationError"
+}
+
+// Error satisfies the builtin error interface
+func (e SubmitPageReviewRequestValidationError) Error() string {
+	cause := ""
+	if e.cause != nil {
+		cause = fmt.Sprintf(" | caused by: %v", e.cause)
+	}
+
+	key := ""
+	if e.key {
+		key = "key for "
+	}
+
+	return fmt.Sprintf(
+		"invalid %sSubmitPageReviewRequest.%s: %s%s",
+		key,
+		e.field,
+		e.reason,
+		cause)
+}
+
+var _ error = SubmitPageReviewRequestValidationError{}
+
+var _ interface {
+	Field() string
+	Reason() string
+	Key() bool
+	Cause() error
+	ErrorName() string
+} = SubmitPageReviewRequestValidationError{}
+
+// Validate checks the field values on ReviewPageRequest with the rules defined
+// in the proto definition for this message. If any rules are violated, the
+// first error encountered is returned, or nil if there are no violations.
+func (m *ReviewPageRequest) Validate() error {
+	return m.validate(false)
+}
+
+// ValidateAll checks the field values on ReviewPageRequest with the rules
+// defined in the proto definition for this message. If any rules are
+// violated, the result is a list of violation errors wrapped in
+// ReviewPageRequestMultiError, or nil if none found.
+func (m *ReviewPageRequest) ValidateAll() error {
+	return m.validate(true)
+}
+
+func (m *ReviewPageRequest) validate(all bool) error {
+	if m == nil {
+		return nil
+	}
+
+	var errors []error
+
+	// no validation rules for PageId
+
+	if len(errors) > 0 {
+		return ReviewPageRequestMultiError(errors)
+	}
+
+	return nil
+}
+
+// ReviewPageRequestMultiError is an error wrapping multiple validation errors
+// returned by ReviewPageRequest.ValidateAll() if the designated constraints
+// aren't met.
+type ReviewPageRequestMultiError []error
+
+// Error returns a concatenation of all the error messages it wraps.
+func (m ReviewPageRequestMultiError) Error() string {
+	msgs := make([]string, 0, len(m))
+	for _, err := range m {
+		msgs = append(msgs, err.Error())
+	}
+	return strings.Join(msgs, "; ")
+}
+
+// AllErrors returns a list of validation violation errors.
+func (m ReviewPageRequestMultiError) AllErrors() []error { return m }
+
+// ReviewPageRequestValidationError is the validation error returned by
+// ReviewPageRequest.Validate if the designated constraints aren't met.
+type ReviewPageRequestValidationError struct {
+	field  string
+	reason string
+	cause  error
+	key    bool
+}
+
+// Field function returns field value.
+func (e ReviewPageRequestValidationError) Field() string { return e.field }
+
+// Reason function returns reason value.
+func (e ReviewPageRequestValidationError) Reason() string { return e.reason }
+
+// Cause function returns cause value.
+func (e ReviewPageRequestValidationError) Cause() error { return e.cause }
+
+// Key function returns key value.
+func (e ReviewPageRequestValidationError) Key() bool { return e.key }
+
+// ErrorName returns error name.
+func (e ReviewPageRequestValidationError) ErrorName() string {
+	return "ReviewPageRequestValidationError"
+}
+
+// Error satisfies the builtin error interface
+func (e ReviewPageRequestValidationError) Error() string {
+	cause := ""
+	if e.cause != nil {
+		cause = fmt.Sprintf(" | caused by: %v", e.cause)
+	}
+
+	key := ""
+	if e.key {
+		key = "key for "
+	}
+
+	return fmt.Sprintf(
+		"invalid %sReviewPageRequest.%s: %s%s",
+		key,
+		e.field,
+		e.reason,
+		cause)
+}
+
+var _ error = ReviewPageRequestValidationError{}
+
+var _ interface {
+	Field() string
+	Reason() string
+	Key() bool
+	Cause() error
+	ErrorName() string
+} = ReviewPageRequestValidationError{}
+
+// Validate checks the field values on RejectPageReviewRequest with the rules
+// defined in the proto definition for this message. If any rules are
+// violated, the first error encountered is returned, or nil if there are no violations.
+func (m *RejectPageReviewRequest) Validate() error {
+	return m.validate(false)
+}
+
+// ValidateAll checks the field values on RejectPageReviewRequest with the
+// rules defined in the proto definition for this message. If any rules are
+// violated, the result is a list of violation errors wrapped in
+// RejectPageReviewRequestMultiError, or nil if none found.
+func (m *RejectPageReviewRequest) ValidateAll() error {
+	return m.validate(true)
+}
+
+func (m *RejectPageReviewRequest) validate(all bool) error {
+	if m == nil {
+		return nil
+	}
+
+	var errors []error
+
+	// no validation rules for PageId
+
+	// no validation rules for Reason
+
+	if len(errors) > 0 {
+		return RejectPageReviewRequestMultiError(errors)
+	}
+
+	return nil
+}
+
+// RejectPageReviewRequestMultiError is an error wrapping multiple validation
+// errors returned by RejectPageReviewRequest.ValidateAll() if the designated
+// constraints aren't met.
+type RejectPageReviewRequestMultiError []error
+
+// Error returns a concatenation of all the error messages it wraps.
+func (m RejectPageReviewRequestMultiError) Error() string {
+	msgs := make([]string, 0, len(m))
+	for _, err := range m {
+		msgs = append(msgs, err.Error())
+	}
+	return strings.Join(msgs, "; ")
+}
+
+// AllErrors returns a list of validation violation errors.
+func (m RejectPageReviewRequestMultiError) AllErrors() []error { return m }
+
+// RejectPageReviewRequestValidationError is the validation error returned by
+// RejectPageReviewRequest.Validate if the designated constraints aren't met.
+type RejectPageReviewRequestValidationError struct {
+	field  string
+	reason string
+	cause  error
+	key    bool
+}
+
+// Field function returns field value.
+func (e RejectPageReviewRequestValidationError) Field() string { return e.field }
+
+// Reason function returns reason value.
+func (e RejectPageReviewRequestValidationError) Reason() string { return e.reason }
+
+// Cause function returns cause value.
+func (e RejectPageReviewRequestValidationError) Cause() error { return e.cause }
+
+// Key function returns key value.
+func (e RejectPageReviewRequestValidationError) Key() bool { return e.key }
+
+// ErrorName returns error name.
+func (e RejectPageReviewRequestValidationError) ErrorName() string {
+	return "RejectPageReviewRequestValidationError"
+}
+
+// Error satisfies the builtin error interface
+func (e RejectPageReviewRequestValidationError) Error() string {
+	cause := ""
+	if e.cause != nil {
+		cause = fmt.Sprintf(" | caused by: %v", e.cause)
+	}
+
+	key := ""
+	if e.key {
+		key = "key for "
+	}
+
+	return fmt.Sprintf(
+		"invalid %sRejectPageReviewRequest.%s: %s%s",
+		key,
+		e.field,
+		e.reason,
+		cause)
+}
+
+var _ error = RejectPageReviewRequestValidationError{}
+
+var _ interface {
+	Field() string
+	Reason() string
+	Key() bool
+	Cause() error
+	ErrorName() string
+} = RejectPageReviewRequestValidationError{}

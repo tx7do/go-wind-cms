@@ -2442,6 +2442,9 @@ components:
                 authorName:
                     type: string
                     description: 页面作者名称
+                inProgress:
+                    type: boolean
+                    description: 审核中
                 disallowComment:
                     type: boolean
                     description: 是否禁止评论（默认 true，页面通常关闭评论）

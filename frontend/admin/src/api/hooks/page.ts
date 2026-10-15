@@ -9,6 +9,9 @@ import {
   type contentservicev1_GetPageRequest,
   type contentservicev1_ListPageResponse,
   type contentservicev1_Page,
+  type contentservicev1_ReviewPageRequest,
+  type contentservicev1_RejectPageReviewRequest,
+  type contentservicev1_SubmitPageReviewRequest,
 } from '@/api/generated/admin/service/v1';
 import { makeUpdateMask, type PaginationQuery } from '@/core/transport/rest';
 import { queryClient } from '@/core';
@@ -74,6 +77,33 @@ export function useUpdatePage(
           Object.keys(data ?? {}).filter((k) => !excludeMaskKeys?.includes(k)),
         ),
       }),
+    ...options,
+  });
+}
+
+export function useSubmitPageReview(
+  options?: UseMutationOptions<contentservicev1_Page, Error, contentservicev1_SubmitPageReviewRequest>,
+) {
+  return useMutation({
+    mutationFn: (req) => apiClient.pageService.SubmitReview(req),
+    ...options,
+  });
+}
+
+export function useApprovePageReview(
+  options?: UseMutationOptions<contentservicev1_Page, Error, contentservicev1_ReviewPageRequest>,
+) {
+  return useMutation({
+    mutationFn: (req) => apiClient.pageService.ApproveReview(req),
+    ...options,
+  });
+}
+
+export function useRejectPageReview(
+  options?: UseMutationOptions<contentservicev1_Page, Error, contentservicev1_RejectPageReviewRequest>,
+) {
+  return useMutation({
+    mutationFn: (req) => apiClient.pageService.RejectReview(req),
     ...options,
   });
 }

@@ -1410,16 +1410,20 @@ func init() {
 	pageDescDisallowComment := pageFields[5].Descriptor()
 	// page.DefaultDisallowComment holds the default value on creation for the disallow_comment field.
 	page.DefaultDisallowComment = pageDescDisallowComment.Default.(bool)
+	// pageDescInProgress is the schema descriptor for in_progress field.
+	pageDescInProgress := pageFields[7].Descriptor()
+	// page.DefaultInProgress holds the default value on creation for the in_progress field.
+	page.DefaultInProgress = pageDescInProgress.Default.(bool)
 	// pageDescShowInNavigation is the schema descriptor for show_in_navigation field.
-	pageDescShowInNavigation := pageFields[7].Descriptor()
+	pageDescShowInNavigation := pageFields[8].Descriptor()
 	// page.DefaultShowInNavigation holds the default value on creation for the show_in_navigation field.
 	page.DefaultShowInNavigation = pageDescShowInNavigation.Default.(bool)
 	// pageDescIsCustomTemplate is the schema descriptor for is_custom_template field.
-	pageDescIsCustomTemplate := pageFields[9].Descriptor()
+	pageDescIsCustomTemplate := pageFields[10].Descriptor()
 	// page.DefaultIsCustomTemplate holds the default value on creation for the is_custom_template field.
 	page.DefaultIsCustomTemplate = pageDescIsCustomTemplate.Default.(bool)
 	// pageDescDepth is the schema descriptor for depth field.
-	pageDescDepth := pageFields[13].Descriptor()
+	pageDescDepth := pageFields[14].Descriptor()
 	// page.DefaultDepth holds the default value on creation for the depth field.
 	page.DefaultDepth = pageDescDepth.Default.(int32)
 	// pageDescID is the schema descriptor for id field.

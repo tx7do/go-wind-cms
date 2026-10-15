@@ -89,3 +89,15 @@ func (s *PageService) GetVersion(ctx context.Context, req *contentV1.GetPageVers
 func (s *PageService) RestoreVersion(ctx context.Context, req *contentV1.RestorePageVersionRequest) (*contentV1.Page, error) {
 	return s.pageServiceClient.RestoreVersion(ctx, req)
 }
+
+func (s *PageService) SubmitReview(ctx context.Context, req *contentV1.SubmitPageReviewRequest) (*contentV1.Page, error) {
+	return s.pageServiceClient.SubmitReview(ctx, req)
+}
+
+func (s *PageService) ApproveReview(ctx context.Context, req *contentV1.ReviewPageRequest) (*contentV1.Page, error) {
+	return s.pageServiceClient.ApproveReview(ctx, req)
+}
+
+func (s *PageService) RejectReview(ctx context.Context, req *contentV1.RejectPageReviewRequest) (*contentV1.Page, error) {
+	return s.pageServiceClient.RejectReview(ctx, req)
+}

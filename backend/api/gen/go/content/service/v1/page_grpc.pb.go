@@ -34,6 +34,9 @@ const (
 	PageService_ListVersions_FullMethodName      = "/content.service.v1.PageService/ListVersions"
 	PageService_GetVersion_FullMethodName        = "/content.service.v1.PageService/GetVersion"
 	PageService_RestoreVersion_FullMethodName    = "/content.service.v1.PageService/RestoreVersion"
+	PageService_SubmitReview_FullMethodName      = "/content.service.v1.PageService/SubmitReview"
+	PageService_ApproveReview_FullMethodName     = "/content.service.v1.PageService/ApproveReview"
+	PageService_RejectReview_FullMethodName      = "/content.service.v1.PageService/RejectReview"
 )
 
 // PageServiceClient is the client API for PageService service.
@@ -68,6 +71,12 @@ type PageServiceClient interface {
 	GetVersion(ctx context.Context, in *GetPageVersionRequest, opts ...grpc.CallOption) (*PageVersion, error)
 	// 恢复页面到指定版本（恢复动作本身会生成一个新版本）
 	RestoreVersion(ctx context.Context, in *RestorePageVersionRequest, opts ...grpc.CallOption) (*Page, error)
+	// 提交审核：DRAFT（非审核中）→ in_progress=true
+	SubmitReview(ctx context.Context, in *SubmitPageReviewRequest, opts ...grpc.CallOption) (*Page, error)
+	// 审核通过：审核中 → PUBLISHED，并通知作者
+	ApproveReview(ctx context.Context, in *ReviewPageRequest, opts ...grpc.CallOption) (*Page, error)
+	// 审核驳回：审核中 → DRAFT，带理由通知作者
+	RejectReview(ctx context.Context, in *RejectPageReviewRequest, opts ...grpc.CallOption) (*Page, error)
 }
 
 type pageServiceClient struct {
@@ -208,6 +217,36 @@ func (c *pageServiceClient) RestoreVersion(ctx context.Context, in *RestorePageV
 	return out, nil
 }
 
+func (c *pageServiceClient) SubmitReview(ctx context.Context, in *SubmitPageReviewRequest, opts ...grpc.CallOption) (*Page, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(Page)
+	err := c.cc.Invoke(ctx, PageService_SubmitReview_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *pageServiceClient) ApproveReview(ctx context.Context, in *ReviewPageRequest, opts ...grpc.CallOption) (*Page, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(Page)
+	err := c.cc.Invoke(ctx, PageService_ApproveReview_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *pageServiceClient) RejectReview(ctx context.Context, in *RejectPageReviewRequest, opts ...grpc.CallOption) (*Page, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(Page)
+	err := c.cc.Invoke(ctx, PageService_RejectReview_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 // PageServiceServer is the server API for PageService service.
 // All implementations must embed UnimplementedPageServiceServer
 // for forward compatibility.
@@ -240,6 +279,12 @@ type PageServiceServer interface {
 	GetVersion(context.Context, *GetPageVersionRequest) (*PageVersion, error)
 	// 恢复页面到指定版本（恢复动作本身会生成一个新版本）
 	RestoreVersion(context.Context, *RestorePageVersionRequest) (*Page, error)
+	// 提交审核：DRAFT（非审核中）→ in_progress=true
+	SubmitReview(context.Context, *SubmitPageReviewRequest) (*Page, error)
+	// 审核通过：审核中 → PUBLISHED，并通知作者
+	ApproveReview(context.Context, *ReviewPageRequest) (*Page, error)
+	// 审核驳回：审核中 → DRAFT，带理由通知作者
+	RejectReview(context.Context, *RejectPageReviewRequest) (*Page, error)
 	mustEmbedUnimplementedPageServiceServer()
 }
 
@@ -288,6 +333,15 @@ func (UnimplementedPageServiceServer) GetVersion(context.Context, *GetPageVersio
 }
 func (UnimplementedPageServiceServer) RestoreVersion(context.Context, *RestorePageVersionRequest) (*Page, error) {
 	return nil, status.Error(codes.Unimplemented, "method RestoreVersion not implemented")
+}
+func (UnimplementedPageServiceServer) SubmitReview(context.Context, *SubmitPageReviewRequest) (*Page, error) {
+	return nil, status.Error(codes.Unimplemented, "method SubmitReview not implemented")
+}
+func (UnimplementedPageServiceServer) ApproveReview(context.Context, *ReviewPageRequest) (*Page, error) {
+	return nil, status.Error(codes.Unimplemented, "method ApproveReview not implemented")
+}
+func (UnimplementedPageServiceServer) RejectReview(context.Context, *RejectPageReviewRequest) (*Page, error) {
+	return nil, status.Error(codes.Unimplemented, "method RejectReview not implemented")
 }
 func (UnimplementedPageServiceServer) mustEmbedUnimplementedPageServiceServer() {}
 func (UnimplementedPageServiceServer) testEmbeddedByValue()                     {}
@@ -544,6 +598,60 @@ func _PageService_RestoreVersion_Handler(srv interface{}, ctx context.Context, d
 	return interceptor(ctx, in, info, handler)
 }
 
+func _PageService_SubmitReview_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(SubmitPageReviewRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(PageServiceServer).SubmitReview(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: PageService_SubmitReview_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(PageServiceServer).SubmitReview(ctx, req.(*SubmitPageReviewRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _PageService_ApproveReview_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(ReviewPageRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(PageServiceServer).ApproveReview(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: PageService_ApproveReview_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(PageServiceServer).ApproveReview(ctx, req.(*ReviewPageRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _PageService_RejectReview_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(RejectPageReviewRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(PageServiceServer).RejectReview(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: PageService_RejectReview_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(PageServiceServer).RejectReview(ctx, req.(*RejectPageReviewRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 // PageService_ServiceDesc is the grpc.ServiceDesc for PageService service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
@@ -602,6 +710,18 @@ var PageService_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "RestoreVersion",
 			Handler:    _PageService_RestoreVersion_Handler,
+		},
+		{
+			MethodName: "SubmitReview",
+			Handler:    _PageService_SubmitReview_Handler,
+		},
+		{
+			MethodName: "ApproveReview",
+			Handler:    _PageService_ApproveReview_Handler,
+		},
+		{
+			MethodName: "RejectReview",
+			Handler:    _PageService_RejectReview_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},

@@ -52,6 +52,15 @@ service PageService {
 
   // 恢复页面到指定版本（恢复动作本身会生成一个新版本）
   rpc RestoreVersion (RestorePageVersionRequest) returns (Page) {}
+
+  // 提交审核：DRAFT（非审核中）→ in_progress=true
+  rpc SubmitReview (SubmitPageReviewRequest) returns (Page) {}
+
+  // 审核通过：审核中 → PUBLISHED，并通知作者
+  rpc ApproveReview (ReviewPageRequest) returns (Page) {}
+
+  // 审核驳回：审核中 → DRAFT，带理由通知作者
+  rpc RejectReview (RejectPageReviewRequest) returns (Page) {}
 }
 
 // 页面
@@ -116,6 +125,11 @@ message Page {
     json_name = "authorName",
     (gnostic.openapi.v3.property) = {description: "页面作者名称"}
   ]; // 页面作者名称
+  optional bool in_progress = 15 [
+    json_name = "inProgress",
+    (gnostic.openapi.v3.property) = {description: "审核中"}
+  ]; // 审核中
+
   optional bool disallow_comment = 8 [
     json_name = "disallowComment",
     (gnostic.openapi.v3.property) = {
@@ -493,5 +507,33 @@ message RestorePageVersionRequest {
   uint32 version_id = 2 [
     json_name = "versionId",
     (gnostic.openapi.v3.property) = {description: "要恢复到的版本记录ID"}
+  ];
+}
+
+// 请求 - 提交页面审核
+message SubmitPageReviewRequest {
+  uint32 page_id = 1 [
+    json_name = "pageId",
+    (gnostic.openapi.v3.property) = {description: "页面ID"}
+  ];
+}
+
+// 请求 - 页面审核通过/驳回的公共载体
+message ReviewPageRequest {
+  uint32 page_id = 1 [
+    json_name = "pageId",
+    (gnostic.openapi.v3.property) = {description: "页面ID"}
+  ];
+}
+
+// 请求 - 页面审核驳回（带理由）
+message RejectPageReviewRequest {
+  uint32 page_id = 1 [
+    json_name = "pageId",
+    (gnostic.openapi.v3.property) = {description: "页面ID"}
+  ];
+
+  string reason = 2 [
+    (gnostic.openapi.v3.property) = {description: "驳回理由（通知作者）"}
   ];
 }

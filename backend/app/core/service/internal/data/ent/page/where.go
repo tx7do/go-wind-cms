@@ -130,6 +130,11 @@ func RedirectURL(v string) predicate.Page {
 	return predicate.Page(sql.FieldEQ(FieldRedirectURL, v))
 }
 
+// InProgress applies equality check predicate on the "in_progress" field. It's identical to InProgressEQ.
+func InProgress(v bool) predicate.Page {
+	return predicate.Page(sql.FieldEQ(FieldInProgress, v))
+}
+
 // ShowInNavigation applies equality check predicate on the "show_in_navigation" field. It's identical to ShowInNavigationEQ.
 func ShowInNavigation(v bool) predicate.Page {
 	return predicate.Page(sql.FieldEQ(FieldShowInNavigation, v))
@@ -1048,6 +1053,26 @@ func RedirectURLEqualFold(v string) predicate.Page {
 // RedirectURLContainsFold applies the ContainsFold predicate on the "redirect_url" field.
 func RedirectURLContainsFold(v string) predicate.Page {
 	return predicate.Page(sql.FieldContainsFold(FieldRedirectURL, v))
+}
+
+// InProgressEQ applies the EQ predicate on the "in_progress" field.
+func InProgressEQ(v bool) predicate.Page {
+	return predicate.Page(sql.FieldEQ(FieldInProgress, v))
+}
+
+// InProgressNEQ applies the NEQ predicate on the "in_progress" field.
+func InProgressNEQ(v bool) predicate.Page {
+	return predicate.Page(sql.FieldNEQ(FieldInProgress, v))
+}
+
+// InProgressIsNil applies the IsNil predicate on the "in_progress" field.
+func InProgressIsNil() predicate.Page {
+	return predicate.Page(sql.FieldIsNull(FieldInProgress))
+}
+
+// InProgressNotNil applies the NotNil predicate on the "in_progress" field.
+func InProgressNotNil() predicate.Page {
+	return predicate.Page(sql.FieldNotNull(FieldInProgress))
 }
 
 // ShowInNavigationEQ applies the EQ predicate on the "show_in_navigation" field.

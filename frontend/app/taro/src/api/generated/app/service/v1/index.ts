@@ -2156,6 +2156,7 @@ export type contentservicev1_Page = {
   disallowComment?: boolean;
   editorType?: contentservicev1_EditorType;
   id?: number;
+  inProgress?: boolean;
   isCustomTemplate?: boolean;
   parentId?: number;
   path?: string;

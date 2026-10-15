@@ -67706,6 +67706,7 @@ type PageMutation struct {
 	author_name         *string
 	disallow_comment    *bool
 	redirect_url        *string
+	in_progress         *bool
 	show_in_navigation  *bool
 	template            *string
 	is_custom_template  *bool
@@ -68838,6 +68839,55 @@ func (m *PageMutation) ResetRedirectURL() {
 	delete(m.clearedFields, page.FieldRedirectURL)
 }
 
+// SetInProgress sets the "in_progress" field.
+func (m *PageMutation) SetInProgress(b bool) {
+	m.in_progress = &b
+}
+
+// InProgress returns the value of the "in_progress" field in the mutation.
+func (m *PageMutation) InProgress() (r bool, exists bool) {
+	v := m.in_progress
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldInProgress returns the old "in_progress" field's value of the Page entity.
+// If the Page object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *PageMutation) OldInProgress(ctx context.Context) (v *bool, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldInProgress is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldInProgress requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldInProgress: %w", err)
+	}
+	return oldValue.InProgress, nil
+}
+
+// ClearInProgress clears the value of the "in_progress" field.
+func (m *PageMutation) ClearInProgress() {
+	m.in_progress = nil
+	m.clearedFields[page.FieldInProgress] = struct{}{}
+}
+
+// InProgressCleared returns if the "in_progress" field was cleared in this mutation.
+func (m *PageMutation) InProgressCleared() bool {
+	_, ok := m.clearedFields[page.FieldInProgress]
+	return ok
+}
+
+// ResetInProgress resets all changes to the "in_progress" field.
+func (m *PageMutation) ResetInProgress() {
+	m.in_progress = nil
+	delete(m.clearedFields, page.FieldInProgress)
+}
+
 // SetShowInNavigation sets the "show_in_navigation" field.
 func (m *PageMutation) SetShowInNavigation(b bool) {
 	m.show_in_navigation = &b
@@ -69338,7 +69388,7 @@ func (m *PageMutation) Type() string {
 // order to get all numeric fields that were incremented/decremented, call
 // AddedFields().
 func (m *PageMutation) Fields() []string {
-	fields := make([]string, 0, 25)
+	fields := make([]string, 0, 26)
 	if m.created_at != nil {
 		fields = append(fields, page.FieldCreatedAt)
 	}
@@ -69392,6 +69442,9 @@ func (m *PageMutation) Fields() []string {
 	}
 	if m.redirect_url != nil {
 		fields = append(fields, page.FieldRedirectURL)
+	}
+	if m.in_progress != nil {
+		fields = append(fields, page.FieldInProgress)
 	}
 	if m.show_in_navigation != nil {
 		fields = append(fields, page.FieldShowInNavigation)
@@ -69458,6 +69511,8 @@ func (m *PageMutation) Field(name string) (ent.Value, bool) {
 		return m.DisallowComment()
 	case page.FieldRedirectURL:
 		return m.RedirectURL()
+	case page.FieldInProgress:
+		return m.InProgress()
 	case page.FieldShowInNavigation:
 		return m.ShowInNavigation()
 	case page.FieldTemplate:
@@ -69517,6 +69572,8 @@ func (m *PageMutation) OldField(ctx context.Context, name string) (ent.Value, er
 		return m.OldDisallowComment(ctx)
 	case page.FieldRedirectURL:
 		return m.OldRedirectURL(ctx)
+	case page.FieldInProgress:
+		return m.OldInProgress(ctx)
 	case page.FieldShowInNavigation:
 		return m.OldShowInNavigation(ctx)
 	case page.FieldTemplate:
@@ -69665,6 +69722,13 @@ func (m *PageMutation) SetField(name string, value ent.Value) error {
 			return fmt.Errorf("unexpected type %T for field %s", value, name)
 		}
 		m.SetRedirectURL(v)
+		return nil
+	case page.FieldInProgress:
+		v, ok := value.(bool)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetInProgress(v)
 		return nil
 	case page.FieldShowInNavigation:
 		v, ok := value.(bool)
@@ -69898,6 +69962,9 @@ func (m *PageMutation) ClearedFields() []string {
 	if m.FieldCleared(page.FieldRedirectURL) {
 		fields = append(fields, page.FieldRedirectURL)
 	}
+	if m.FieldCleared(page.FieldInProgress) {
+		fields = append(fields, page.FieldInProgress)
+	}
 	if m.FieldCleared(page.FieldShowInNavigation) {
 		fields = append(fields, page.FieldShowInNavigation)
 	}
@@ -69987,6 +70054,9 @@ func (m *PageMutation) ClearField(name string) error {
 	case page.FieldRedirectURL:
 		m.ClearRedirectURL()
 		return nil
+	case page.FieldInProgress:
+		m.ClearInProgress()
+		return nil
 	case page.FieldShowInNavigation:
 		m.ClearShowInNavigation()
 		return nil
@@ -70069,6 +70139,9 @@ func (m *PageMutation) ResetField(name string) error {
 		return nil
 	case page.FieldRedirectURL:
 		m.ResetRedirectURL()
+		return nil
+	case page.FieldInProgress:
+		m.ResetInProgress()
 		return nil
 	case page.FieldShowInNavigation:
 		m.ResetShowInNavigation()

@@ -384,6 +384,26 @@ func (_u *PageUpdate) ClearRedirectURL() *PageUpdate {
 	return _u
 }
 
+// SetInProgress sets the "in_progress" field.
+func (_u *PageUpdate) SetInProgress(v bool) *PageUpdate {
+	_u.mutation.SetInProgress(v)
+	return _u
+}
+
+// SetNillableInProgress sets the "in_progress" field if the given value is not nil.
+func (_u *PageUpdate) SetNillableInProgress(v *bool) *PageUpdate {
+	if v != nil {
+		_u.SetInProgress(*v)
+	}
+	return _u
+}
+
+// ClearInProgress clears the value of the "in_progress" field.
+func (_u *PageUpdate) ClearInProgress() *PageUpdate {
+	_u.mutation.ClearInProgress()
+	return _u
+}
+
 // SetShowInNavigation sets the "show_in_navigation" field.
 func (_u *PageUpdate) SetShowInNavigation(v bool) *PageUpdate {
 	_u.mutation.SetShowInNavigation(v)
@@ -762,6 +782,12 @@ func (_u *PageUpdate) sqlSave(ctx context.Context) (_node int, err error) {
 	}
 	if _u.mutation.RedirectURLCleared() {
 		_spec.ClearField(page.FieldRedirectURL, field.TypeString)
+	}
+	if value, ok := _u.mutation.InProgress(); ok {
+		_spec.SetField(page.FieldInProgress, field.TypeBool, value)
+	}
+	if _u.mutation.InProgressCleared() {
+		_spec.ClearField(page.FieldInProgress, field.TypeBool)
 	}
 	if value, ok := _u.mutation.ShowInNavigation(); ok {
 		_spec.SetField(page.FieldShowInNavigation, field.TypeBool, value)
@@ -1262,6 +1288,26 @@ func (_u *PageUpdateOne) ClearRedirectURL() *PageUpdateOne {
 	return _u
 }
 
+// SetInProgress sets the "in_progress" field.
+func (_u *PageUpdateOne) SetInProgress(v bool) *PageUpdateOne {
+	_u.mutation.SetInProgress(v)
+	return _u
+}
+
+// SetNillableInProgress sets the "in_progress" field if the given value is not nil.
+func (_u *PageUpdateOne) SetNillableInProgress(v *bool) *PageUpdateOne {
+	if v != nil {
+		_u.SetInProgress(*v)
+	}
+	return _u
+}
+
+// ClearInProgress clears the value of the "in_progress" field.
+func (_u *PageUpdateOne) ClearInProgress() *PageUpdateOne {
+	_u.mutation.ClearInProgress()
+	return _u
+}
+
 // SetShowInNavigation sets the "show_in_navigation" field.
 func (_u *PageUpdateOne) SetShowInNavigation(v bool) *PageUpdateOne {
 	_u.mutation.SetShowInNavigation(v)
@@ -1670,6 +1716,12 @@ func (_u *PageUpdateOne) sqlSave(ctx context.Context) (_node *Page, err error) {
 	}
 	if _u.mutation.RedirectURLCleared() {
 		_spec.ClearField(page.FieldRedirectURL, field.TypeString)
+	}
+	if value, ok := _u.mutation.InProgress(); ok {
+		_spec.SetField(page.FieldInProgress, field.TypeBool, value)
+	}
+	if _u.mutation.InProgressCleared() {
+		_spec.ClearField(page.FieldInProgress, field.TypeBool)
 	}
 	if value, ok := _u.mutation.ShowInNavigation(); ok {
 		_spec.SetField(page.FieldShowInNavigation, field.TypeBool, value)

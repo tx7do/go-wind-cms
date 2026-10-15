@@ -55,6 +55,8 @@ type Page struct {
 	DisallowComment *bool `json:"disallow_comment,omitempty"`
 	// 重定向 URL
 	RedirectURL *string `json:"redirect_url,omitempty"`
+	// 审核中
+	InProgress *bool `json:"in_progress,omitempty"`
 	// 是否在主导航中显示
 	ShowInNavigation *bool `json:"show_in_navigation,omitempty"`
 	// 页面模板名称
@@ -113,7 +115,7 @@ func (*Page) scanValues(columns []string) ([]any, error) {
 		switch columns[i] {
 		case page.FieldCustomFields:
 			values[i] = new([]byte)
-		case page.FieldDisallowComment, page.FieldShowInNavigation, page.FieldIsCustomTemplate:
+		case page.FieldDisallowComment, page.FieldInProgress, page.FieldShowInNavigation, page.FieldIsCustomTemplate:
 			values[i] = new(sql.NullBool)
 		case page.FieldID, page.FieldCreatedBy, page.FieldUpdatedBy, page.FieldDeletedBy, page.FieldSortOrder, page.FieldParentID, page.FieldTenantID, page.FieldAuthorID, page.FieldContentModelID, page.FieldDepth:
 			values[i] = new(sql.NullInt64)
@@ -267,6 +269,13 @@ func (_m *Page) assignValues(columns []string, values []any) error {
 			} else if value.Valid {
 				_m.RedirectURL = new(string)
 				*_m.RedirectURL = value.String
+			}
+		case page.FieldInProgress:
+			if value, ok := values[i].(*sql.NullBool); !ok {
+				return fmt.Errorf("unexpected type %T for field in_progress", values[i])
+			} else if value.Valid {
+				_m.InProgress = new(bool)
+				*_m.InProgress = value.Bool
 			}
 		case page.FieldShowInNavigation:
 			if value, ok := values[i].(*sql.NullBool); !ok {
@@ -452,6 +461,11 @@ func (_m *Page) String() string {
 	if v := _m.RedirectURL; v != nil {
 		builder.WriteString("redirect_url=")
 		builder.WriteString(*v)
+	}
+	builder.WriteString(", ")
+	if v := _m.InProgress; v != nil {
+		builder.WriteString("in_progress=")
+		builder.WriteString(fmt.Sprintf("%v", *v))
 	}
 	builder.WriteString(", ")
 	if v := _m.ShowInNavigation; v != nil {

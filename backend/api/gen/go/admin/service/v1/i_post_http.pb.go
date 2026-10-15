@@ -73,9 +73,9 @@ func RegisterPostServiceHTTPServer(s *http.Server, srv PostServiceHTTPServer) {
 	r.GET("/admin/v1/posts/{post_id}/versions", _PostService_ListVersions1_HTTP_Handler(srv))
 	r.GET("/admin/v1/posts/versions/{id}", _PostService_GetVersion1_HTTP_Handler(srv))
 	r.POST("/admin/v1/posts/{post_id}/versions/{version_id}/restore", _PostService_RestoreVersion1_HTTP_Handler(srv))
-	r.POST("/admin/v1/posts/{post_id}/review/submit", _PostService_SubmitReview0_HTTP_Handler(srv))
-	r.POST("/admin/v1/posts/{post_id}/review/approve", _PostService_ApproveReview0_HTTP_Handler(srv))
-	r.POST("/admin/v1/posts/{post_id}/review/reject", _PostService_RejectReview0_HTTP_Handler(srv))
+	r.POST("/admin/v1/posts/{post_id}/review/submit", _PostService_SubmitReview1_HTTP_Handler(srv))
+	r.POST("/admin/v1/posts/{post_id}/review/approve", _PostService_ApproveReview1_HTTP_Handler(srv))
+	r.POST("/admin/v1/posts/{post_id}/review/reject", _PostService_RejectReview1_HTTP_Handler(srv))
 }
 
 func _PostService_List32_HTTP_Handler(srv PostServiceHTTPServer) func(ctx http.Context) error {
@@ -279,7 +279,7 @@ func _PostService_RestoreVersion1_HTTP_Handler(srv PostServiceHTTPServer) func(c
 	}
 }
 
-func _PostService_SubmitReview0_HTTP_Handler(srv PostServiceHTTPServer) func(ctx http.Context) error {
+func _PostService_SubmitReview1_HTTP_Handler(srv PostServiceHTTPServer) func(ctx http.Context) error {
 	return func(ctx http.Context) error {
 		var in v11.SubmitPostReviewRequest
 		if err := ctx.Bind(&in); err != nil {
@@ -304,7 +304,7 @@ func _PostService_SubmitReview0_HTTP_Handler(srv PostServiceHTTPServer) func(ctx
 	}
 }
 
-func _PostService_ApproveReview0_HTTP_Handler(srv PostServiceHTTPServer) func(ctx http.Context) error {
+func _PostService_ApproveReview1_HTTP_Handler(srv PostServiceHTTPServer) func(ctx http.Context) error {
 	return func(ctx http.Context) error {
 		var in v11.ReviewPostRequest
 		if err := ctx.Bind(&in); err != nil {
@@ -329,7 +329,7 @@ func _PostService_ApproveReview0_HTTP_Handler(srv PostServiceHTTPServer) func(ct
 	}
 }
 
-func _PostService_RejectReview0_HTTP_Handler(srv PostServiceHTTPServer) func(ctx http.Context) error {
+func _PostService_RejectReview1_HTTP_Handler(srv PostServiceHTTPServer) func(ctx http.Context) error {
 	return func(ctx http.Context) error {
 		var in v11.RejectPostReviewRequest
 		if err := ctx.Bind(&in); err != nil {

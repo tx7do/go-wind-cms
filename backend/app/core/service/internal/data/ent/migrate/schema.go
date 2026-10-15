@@ -2510,6 +2510,7 @@ var (
 		{Name: "author_name", Type: field.TypeString, Nullable: true, Comment: "评论作者名称"},
 		{Name: "disallow_comment", Type: field.TypeBool, Nullable: true, Comment: "是否禁止评论", Default: false},
 		{Name: "redirect_url", Type: field.TypeString, Nullable: true, Comment: "重定向 URL"},
+		{Name: "in_progress", Type: field.TypeBool, Nullable: true, Comment: "审核中", Default: false},
 		{Name: "show_in_navigation", Type: field.TypeBool, Nullable: true, Comment: "是否在主导航中显示", Default: false},
 		{Name: "template", Type: field.TypeString, Nullable: true, Comment: "页面模板名称"},
 		{Name: "is_custom_template", Type: field.TypeBool, Nullable: true, Comment: "是否使用自定义模板代码", Default: false},
@@ -2528,7 +2529,7 @@ var (
 		ForeignKeys: []*schema.ForeignKey{
 			{
 				Symbol:     "pages_pages_children",
-				Columns:    []*schema.Column{PagesColumns[25]},
+				Columns:    []*schema.Column{PagesColumns[26]},
 				RefColumns: []*schema.Column{PagesColumns[0]},
 				OnDelete:   schema.SetNull,
 			},
@@ -2557,12 +2558,12 @@ var (
 			{
 				Name:    "page_show_in_navigation",
 				Unique:  false,
-				Columns: []*schema.Column{PagesColumns[18]},
+				Columns: []*schema.Column{PagesColumns[19]},
 			},
 			{
 				Name:    "page_parent_id",
 				Unique:  false,
-				Columns: []*schema.Column{PagesColumns[25]},
+				Columns: []*schema.Column{PagesColumns[26]},
 			},
 			{
 				Name:    "page_disallow_comment",
@@ -2577,7 +2578,7 @@ var (
 			{
 				Name:    "page_status_show_in_navigation",
 				Unique:  false,
-				Columns: []*schema.Column{PagesColumns[11], PagesColumns[18]},
+				Columns: []*schema.Column{PagesColumns[11], PagesColumns[19]},
 			},
 		},
 	}

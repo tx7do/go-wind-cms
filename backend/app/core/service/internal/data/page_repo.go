@@ -440,8 +440,14 @@ func (r *PageRepo) Update(ctx context.Context, req *contentV1.UpdatePageRequest)
 	}
 	result, err := r.repository.UpdateOne(ctx, builder, req.Data, req.GetUpdateMask(),
 		func(dto *contentV1.Page) {
+			// 显式状态变更自动退出审核态：直接发布/下架均视为离开审核流
+			//（审批 approve/reject 走显式 in_progress 字段，不受影响）
+			if req.Data.Status != nil {
+				builder.SetNillableInProgress(trans.Ptr(false))
+			}
 			builder.
 				SetNillableStatus(r.statusConverter.ToEntity(req.Data.Status)).
+				SetNillableInProgress(req.Data.InProgress).
 				SetNillableType(r.typeConverter.ToEntity(req.Data.Type)).
 				SetNillableEditorType(r.editorTypeConverter.ToEntity(req.Data.EditorType)).
 				SetNillableSlug(req.Data.Slug).
@@ -451,10 +457,10 @@ func (r *PageRepo) Update(ctx context.Context, req *contentV1.UpdatePageRequest)
 				SetNillableRedirectURL(req.Data.RedirectUrl).
 				SetNillableShowInNavigation(req.Data.ShowInNavigation).
 				SetNillableSortOrder(req.Data.SortOrder).
-			SetNillableTemplate(req.Data.Template).
-			SetNillableIsCustomTemplate(req.Data.IsCustomTemplate).
-			SetNillableThumbnail(req.Data.Thumbnail).
-			SetNillableParentID(req.Data.ParentId).
+				SetNillableTemplate(req.Data.Template).
+				SetNillableIsCustomTemplate(req.Data.IsCustomTemplate).
+				SetNillableThumbnail(req.Data.Thumbnail).
+				SetNillableParentID(req.Data.ParentId).
 				SetNillableDepth(req.Data.Depth).
 				SetNillablePath(req.Data.Path).
 				SetUpdatedAt(time.Now())

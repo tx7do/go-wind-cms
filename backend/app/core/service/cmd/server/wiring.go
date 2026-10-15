@@ -270,7 +270,7 @@ func initApp(ctx *bootstrap.Context) (*kratos.App, func(), error) {
 	postService := service.NewPostService(ctx, postRepo, searchService, taskService, contentModelRepo, postVersionRepo, webhookService, internalMessageService)
 	categoryService := service.NewCategoryService(ctx, categoryRepo, contentModelRepo)
 	tagService := service.NewTagService(ctx, tagRepo)
-	pageService := service.NewPageService(ctx, pageRepo, contentModelRepo, pageVersionRepo, webhookService)
+	pageService := service.NewPageService(ctx, pageRepo, contentModelRepo, pageVersionRepo, webhookService, internalMessageService)
 	contentModelService := service.NewContentModelService(ctx, contentModelRepo)
 
 	// 站点配置

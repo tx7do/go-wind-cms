@@ -107,5 +107,17 @@
     "importPartial": "导入完成：成功 {{ok}} 个，失败行：{{failed}}（均未发布）",
     "importFailed": "导入失败：文件解析错误",
     "noPages": "文件中没有页面数据"
+  },
+  "review": {
+    "submit": "提交审核",
+    "submitTitle": "提交审核",
+    "submitted": "已提交审核",
+    "approve": "通过",
+    "approveTitle": "审核通过并发布",
+    "approved": "已通过并发布",
+    "reject": "驳回",
+    "rejectTitle": "驳回（退回草稿）",
+    "rejected": "已驳回",
+    "reasonPlaceholder": "驳回理由（将通知作者，可留空）"
   }
 }

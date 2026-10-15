@@ -83,6 +83,12 @@ func (Page) Fields() []ent.Field {
 			Optional().
 			Nillable(),
 
+		field.Bool("in_progress").
+			Comment("审核中").
+			Default(false).
+			Optional().
+			Nillable(),
+
 		field.Bool("show_in_navigation").
 			Comment("是否在主导航中显示").
 			Default(false).

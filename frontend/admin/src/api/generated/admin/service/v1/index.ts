@@ -8353,6 +8353,18 @@ export interface PageService {
   RestoreVersion(
     request: contentservicev1_RestorePageVersionRequest,
   ): Promise<contentservicev1_Page>;
+  // 提交页面审核：DRAFT → 审核中
+  SubmitReview(
+    request: contentservicev1_SubmitPageReviewRequest,
+  ): Promise<contentservicev1_Page>;
+  // 审核页面通过：审核中 → 已发布（角色经接口管理绑定到该端点即完成卡点）
+  ApproveReview(
+    request: contentservicev1_ReviewPageRequest,
+  ): Promise<contentservicev1_Page>;
+  // 页面审核驳回：审核中 → 草稿（带理由通知作者）
+  RejectReview(
+    request: contentservicev1_RejectPageReviewRequest,
+  ): Promise<contentservicev1_Page>;
 }
 
 export function createPageServiceClient(
@@ -8571,6 +8583,39 @@ export function createPageServiceClient(
         method: 'RestoreVersion',
       }) as Promise<contentservicev1_Page>;
     },
+    SubmitReview(request) {
+      if (request.pageId === undefined || request.pageId === null) {
+        throw new Error('missing required field request.page_id');
+      }
+      const path = `admin/v1/pages/${request.pageId}/review/submit`;
+      const body = JSON.stringify(request);
+      return transport.unary(path, 'POST', body, {
+        service: 'PageService',
+        method: 'SubmitReview',
+      }) as Promise<contentservicev1_Page>;
+    },
+    ApproveReview(request) {
+      if (request.pageId === undefined || request.pageId === null) {
+        throw new Error('missing required field request.page_id');
+      }
+      const path = `admin/v1/pages/${request.pageId}/review/approve`;
+      const body = JSON.stringify(request);
+      return transport.unary(path, 'POST', body, {
+        service: 'PageService',
+        method: 'ApproveReview',
+      }) as Promise<contentservicev1_Page>;
+    },
+    RejectReview(request) {
+      if (request.pageId === undefined || request.pageId === null) {
+        throw new Error('missing required field request.page_id');
+      }
+      const path = `admin/v1/pages/${request.pageId}/review/reject`;
+      const body = JSON.stringify(request);
+      return transport.unary(path, 'POST', body, {
+        service: 'PageService',
+        method: 'RejectReview',
+      }) as Promise<contentservicev1_Page>;
+    },
   };
 }
 // 回应 - 页面列表
@@ -8595,6 +8640,7 @@ export type contentservicev1_Page = {
   disallowComment?: boolean;
   editorType?: contentservicev1_EditorType;
   id?: number;
+  inProgress?: boolean;
   isCustomTemplate?: boolean;
   parentId?: number;
   path?: string;
@@ -8762,6 +8808,22 @@ export type contentservicev1_GetPageVersionRequest = {
 export type contentservicev1_RestorePageVersionRequest = {
   pageId: number | undefined;
   versionId: number | undefined;
+};
+
+// 请求 - 提交页面审核
+export type contentservicev1_SubmitPageReviewRequest = {
+  pageId: number | undefined;
+};
+
+// 请求 - 页面审核通过/驳回的公共载体
+export type contentservicev1_ReviewPageRequest = {
+  pageId: number | undefined;
+};
+
+// 请求 - 页面审核驳回（带理由）
+export type contentservicev1_RejectPageReviewRequest = {
+  pageId: number | undefined;
+  reason: string | undefined;
 };
 
 // 权限点管理服务

@@ -22,16 +22,21 @@ var _ = binding.EncodeURL
 
 const _ = http.SupportPackageIsVersion1
 
+const OperationPageServiceApproveReview = "/admin.service.v1.PageService/ApproveReview"
 const OperationPageServiceCreate = "/admin.service.v1.PageService/Create"
 const OperationPageServiceDelete = "/admin.service.v1.PageService/Delete"
 const OperationPageServiceGet = "/admin.service.v1.PageService/Get"
 const OperationPageServiceGetVersion = "/admin.service.v1.PageService/GetVersion"
 const OperationPageServiceList = "/admin.service.v1.PageService/List"
 const OperationPageServiceListVersions = "/admin.service.v1.PageService/ListVersions"
+const OperationPageServiceRejectReview = "/admin.service.v1.PageService/RejectReview"
 const OperationPageServiceRestoreVersion = "/admin.service.v1.PageService/RestoreVersion"
+const OperationPageServiceSubmitReview = "/admin.service.v1.PageService/SubmitReview"
 const OperationPageServiceUpdate = "/admin.service.v1.PageService/Update"
 
 type PageServiceHTTPServer interface {
+	// ApproveReview 审核页面通过：审核中 → 已发布（角色经接口管理绑定到该端点即完成卡点）
+	ApproveReview(context.Context, *v11.ReviewPageRequest) (*v11.Page, error)
 	// Create 创建页面
 	Create(context.Context, *v11.CreatePageRequest) (*v11.Page, error)
 	// Delete 删除页面
@@ -44,8 +49,12 @@ type PageServiceHTTPServer interface {
 	List(context.Context, *v1.PagingRequest) (*v11.ListPageResponse, error)
 	// ListVersions 列出页面版本（按版本号倒序）
 	ListVersions(context.Context, *v11.ListPageVersionsRequest) (*v11.ListPageVersionsResponse, error)
+	// RejectReview 页面审核驳回：审核中 → 草稿（带理由通知作者）
+	RejectReview(context.Context, *v11.RejectPageReviewRequest) (*v11.Page, error)
 	// RestoreVersion 恢复页面到指定版本（恢复动作本身会生成一个新版本）
 	RestoreVersion(context.Context, *v11.RestorePageVersionRequest) (*v11.Page, error)
+	// SubmitReview 提交页面审核：DRAFT → 审核中
+	SubmitReview(context.Context, *v11.SubmitPageReviewRequest) (*v11.Page, error)
 	// Update 更新页面
 	Update(context.Context, *v11.UpdatePageRequest) (*v11.Page, error)
 }
@@ -60,6 +69,9 @@ func RegisterPageServiceHTTPServer(s *http.Server, srv PageServiceHTTPServer) {
 	r.GET("/admin/v1/pages/{page_id}/versions", _PageService_ListVersions0_HTTP_Handler(srv))
 	r.GET("/admin/v1/pages/versions/{id}", _PageService_GetVersion0_HTTP_Handler(srv))
 	r.POST("/admin/v1/pages/{page_id}/versions/{version_id}/restore", _PageService_RestoreVersion0_HTTP_Handler(srv))
+	r.POST("/admin/v1/pages/{page_id}/review/submit", _PageService_SubmitReview0_HTTP_Handler(srv))
+	r.POST("/admin/v1/pages/{page_id}/review/approve", _PageService_ApproveReview0_HTTP_Handler(srv))
+	r.POST("/admin/v1/pages/{page_id}/review/reject", _PageService_RejectReview0_HTTP_Handler(srv))
 }
 
 func _PageService_List26_HTTP_Handler(srv PageServiceHTTPServer) func(ctx http.Context) error {
@@ -241,7 +253,84 @@ func _PageService_RestoreVersion0_HTTP_Handler(srv PageServiceHTTPServer) func(c
 	}
 }
 
+func _PageService_SubmitReview0_HTTP_Handler(srv PageServiceHTTPServer) func(ctx http.Context) error {
+	return func(ctx http.Context) error {
+		var in v11.SubmitPageReviewRequest
+		if err := ctx.Bind(&in); err != nil {
+			return err
+		}
+		if err := ctx.BindQuery(&in); err != nil {
+			return err
+		}
+		if err := ctx.BindVars(&in); err != nil {
+			return err
+		}
+		http.SetOperation(ctx, OperationPageServiceSubmitReview)
+		h := ctx.Middleware(func(ctx context.Context, req interface{}) (interface{}, error) {
+			return srv.SubmitReview(ctx, req.(*v11.SubmitPageReviewRequest))
+		})
+		out, err := h(ctx, &in)
+		if err != nil {
+			return err
+		}
+		reply := out.(*v11.Page)
+		return ctx.Result(200, reply)
+	}
+}
+
+func _PageService_ApproveReview0_HTTP_Handler(srv PageServiceHTTPServer) func(ctx http.Context) error {
+	return func(ctx http.Context) error {
+		var in v11.ReviewPageRequest
+		if err := ctx.Bind(&in); err != nil {
+			return err
+		}
+		if err := ctx.BindQuery(&in); err != nil {
+			return err
+		}
+		if err := ctx.BindVars(&in); err != nil {
+			return err
+		}
+		http.SetOperation(ctx, OperationPageServiceApproveReview)
+		h := ctx.Middleware(func(ctx context.Context, req interface{}) (interface{}, error) {
+			return srv.ApproveReview(ctx, req.(*v11.ReviewPageRequest))
+		})
+		out, err := h(ctx, &in)
+		if err != nil {
+			return err
+		}
+		reply := out.(*v11.Page)
+		return ctx.Result(200, reply)
+	}
+}
+
+func _PageService_RejectReview0_HTTP_Handler(srv PageServiceHTTPServer) func(ctx http.Context) error {
+	return func(ctx http.Context) error {
+		var in v11.RejectPageReviewRequest
+		if err := ctx.Bind(&in); err != nil {
+			return err
+		}
+		if err := ctx.BindQuery(&in); err != nil {
+			return err
+		}
+		if err := ctx.BindVars(&in); err != nil {
+			return err
+		}
+		http.SetOperation(ctx, OperationPageServiceRejectReview)
+		h := ctx.Middleware(func(ctx context.Context, req interface{}) (interface{}, error) {
+			return srv.RejectReview(ctx, req.(*v11.RejectPageReviewRequest))
+		})
+		out, err := h(ctx, &in)
+		if err != nil {
+			return err
+		}
+		reply := out.(*v11.Page)
+		return ctx.Result(200, reply)
+	}
+}
+
 type PageServiceHTTPClient interface {
+	// ApproveReview 审核页面通过：审核中 → 已发布（角色经接口管理绑定到该端点即完成卡点）
+	ApproveReview(ctx context.Context, req *v11.ReviewPageRequest, opts ...http.CallOption) (rsp *v11.Page, err error)
 	// Create 创建页面
 	Create(ctx context.Context, req *v11.CreatePageRequest, opts ...http.CallOption) (rsp *v11.Page, err error)
 	// Delete 删除页面
@@ -254,8 +343,12 @@ type PageServiceHTTPClient interface {
 	List(ctx context.Context, req *v1.PagingRequest, opts ...http.CallOption) (rsp *v11.ListPageResponse, err error)
 	// ListVersions 列出页面版本（按版本号倒序）
 	ListVersions(ctx context.Context, req *v11.ListPageVersionsRequest, opts ...http.CallOption) (rsp *v11.ListPageVersionsResponse, err error)
+	// RejectReview 页面审核驳回：审核中 → 草稿（带理由通知作者）
+	RejectReview(ctx context.Context, req *v11.RejectPageReviewRequest, opts ...http.CallOption) (rsp *v11.Page, err error)
 	// RestoreVersion 恢复页面到指定版本（恢复动作本身会生成一个新版本）
 	RestoreVersion(ctx context.Context, req *v11.RestorePageVersionRequest, opts ...http.CallOption) (rsp *v11.Page, err error)
+	// SubmitReview 提交页面审核：DRAFT → 审核中
+	SubmitReview(ctx context.Context, req *v11.SubmitPageReviewRequest, opts ...http.CallOption) (rsp *v11.Page, err error)
 	// Update 更新页面
 	Update(ctx context.Context, req *v11.UpdatePageRequest, opts ...http.CallOption) (rsp *v11.Page, err error)
 }
@@ -266,6 +359,20 @@ type PageServiceHTTPClientImpl struct {
 
 func NewPageServiceHTTPClient(client *http.Client) PageServiceHTTPClient {
 	return &PageServiceHTTPClientImpl{client}
+}
+
+// ApproveReview 审核页面通过：审核中 → 已发布（角色经接口管理绑定到该端点即完成卡点）
+func (c *PageServiceHTTPClientImpl) ApproveReview(ctx context.Context, in *v11.ReviewPageRequest, opts ...http.CallOption) (*v11.Page, error) {
+	var out v11.Page
+	pattern := "/admin/v1/pages/{page_id}/review/approve"
+	path := binding.EncodeURL(pattern, in, false)
+	opts = append(opts, http.Operation(OperationPageServiceApproveReview))
+	opts = append(opts, http.PathTemplate(pattern))
+	err := c.cc.Invoke(ctx, "POST", path, in, &out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return &out, nil
 }
 
 // Create 创建页面
@@ -352,12 +459,40 @@ func (c *PageServiceHTTPClientImpl) ListVersions(ctx context.Context, in *v11.Li
 	return &out, nil
 }
 
+// RejectReview 页面审核驳回：审核中 → 草稿（带理由通知作者）
+func (c *PageServiceHTTPClientImpl) RejectReview(ctx context.Context, in *v11.RejectPageReviewRequest, opts ...http.CallOption) (*v11.Page, error) {
+	var out v11.Page
+	pattern := "/admin/v1/pages/{page_id}/review/reject"
+	path := binding.EncodeURL(pattern, in, false)
+	opts = append(opts, http.Operation(OperationPageServiceRejectReview))
+	opts = append(opts, http.PathTemplate(pattern))
+	err := c.cc.Invoke(ctx, "POST", path, in, &out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return &out, nil
+}
+
 // RestoreVersion 恢复页面到指定版本（恢复动作本身会生成一个新版本）
 func (c *PageServiceHTTPClientImpl) RestoreVersion(ctx context.Context, in *v11.RestorePageVersionRequest, opts ...http.CallOption) (*v11.Page, error) {
 	var out v11.Page
 	pattern := "/admin/v1/pages/{page_id}/versions/{version_id}/restore"
 	path := binding.EncodeURL(pattern, in, false)
 	opts = append(opts, http.Operation(OperationPageServiceRestoreVersion))
+	opts = append(opts, http.PathTemplate(pattern))
+	err := c.cc.Invoke(ctx, "POST", path, in, &out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return &out, nil
+}
+
+// SubmitReview 提交页面审核：DRAFT → 审核中
+func (c *PageServiceHTTPClientImpl) SubmitReview(ctx context.Context, in *v11.SubmitPageReviewRequest, opts ...http.CallOption) (*v11.Page, error) {
+	var out v11.Page
+	pattern := "/admin/v1/pages/{page_id}/review/submit"
+	path := binding.EncodeURL(pattern, in, false)
+	opts = append(opts, http.Operation(OperationPageServiceSubmitReview))
 	opts = append(opts, http.PathTemplate(pattern))
 	err := c.cc.Invoke(ctx, "POST", path, in, &out, opts...)
 	if err != nil {
