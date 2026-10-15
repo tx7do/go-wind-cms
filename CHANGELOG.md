@@ -7,6 +7,57 @@
 > 条目基于 Git 提交记录回溯整理（自 2026-06 项目起步至 2026-10-08），
 > 仅记录对使用者有影响的功能性变更、安全加固与重要缺陷修复。
 
+## [Unreleased]
+
+对标主流 Headless CMS（Strapi/Directus/Contentful/Sanity/Payload）的差距整改：
+补齐内容版本化、草稿预览、Webhook、页面搭建前台渲染等行业默认能力，并将
+自有的 AI 与社交分发优势延伸到出站邮件与审批协作场景。
+
+### 新增
+
+#### 内容与前台
+
+- 页面搭建前台渲染闭环：react（`/page/detail?slug=`）/ vue（`/page/[slug]`，
+  SSR 可用）/ flutter 三端 SectionRenderer，按 14 种区块类型渲染 CMS Page
+  （统一内容键契约，缺译回退，HTML 经 DOMPurify 消毒）；about/contact 改为
+  CMS 优先、静态兜底。
+- 表单提交闭环：FORM 区块三端真实渲染（字段定义存区块 config.fields、标签随
+  语言），公开提交端点（页面须已发布/字段集校验/大小上限）；管理端提交列表、
+  详情与 CSV 导出。
+- 草稿预览：admin 编辑页一键新标签预览——无状态 HMAC 令牌（15 分钟），
+  C 端公开 BFF 校验后放行非已发布内容（无效令牌按 404 不泄露状态）。
+- URL 重定向管理：`/site-setting/redirects`（301/302/307/308、启停），导出
+  nginx 双 map 配置与 JSON；公开查询端点供 vue SSR 路由中间件 3xx 匹配。
+- 帖子/页面导入导出：Excel 批量导入（复用通用 ImportModal）、全保真 JSON
+  导出/导入（含翻译与区块全文）；一切导入强制落 DRAFT。
+
+#### 协作与安全
+
+- 发布审批工作流：提交审核（in_progress）→ 通过（发布，复用索引/Webhook/
+  快照链路）/ 驳回（带理由退回草稿），结果自动通知作者（站内信+邮件出站链）；
+  权限卡点=接口 RBAC 绑定 review 端点到审核角色。
+- 内容版本化：帖子/页面保存自动落全量快照（密码字段剔除、2MB 上限），
+  版本列表 + 与当前内容的行级 diff + 一键恢复（恢复本身生成新版本）。
+- Webhook 内容事件外发：post/page 的 created/updated/published/deleted 订阅，
+  两段式异步投递（事件扇出→单订阅重试），HMAC-SHA256 签名头，投递记录可查、
+  支持测试 ping。
+- 邮件出站渠道：系统通知异步 SMTP 投递（best-effort，失败不阻断站内信）；
+  SMTP 配置可视化（`/system/email-provider`，凭据 AES-GCM 加密落库、永不
+  回显）+ 测试发送；未配置回退 `SMTP_*` 环境变量。
+
+#### 统计与集成
+
+- 浏览量统计：`COUNTER_METRIC_VIEW` 只增计数（匿名可报，PV 口径），三端
+  详情页上报、meta 区展示，仪表盘新增浏览 TOP 榜与浏览总量。
+- sitemap.xml / robots.txt 端点：已发布内容按语言生成多语言 URL 条目，路径
+  模板环境变量可配（适配静态导出与 SSR 两类部署）。
+
+### 修复
+
+- 管理页「接口同步」失败仍显示成功：admin BFF 用 `_, _ =` 忽略 core 同步
+  错误，权限表未更新而无感知；改为错误传播到管理页（同步本身自 1.2.0 起已
+  是对账式 upsert，非空表安全）。
+
 ## [1.2.0] - 2026-10-15
 
 社交分发功能完整交付：图片分发、看板、收件箱、KPI 汇总、实时通知、
