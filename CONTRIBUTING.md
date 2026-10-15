@@ -43,6 +43,7 @@
 | TypeScript HTTP 客户端 | `make ts` | 一条命令依次跑五个 buf 模板：admin、react、taro、vue 各自的 `src/api/generated/`，外加 admin OpenAPI |
 | Ent ORM 代码 | `gow ent admin` 或 `make ent` | 由 `app/core/service/internal/data/ent/schema/` 下的 schema 生成 |
 | 新模块接入装配 | `make register ENTITY=xxx [SVC=core] [PKG=contentV1]` | 把仓储/服务构造行与路由注册注入手写的 `cmd/server/wiring.go` 和 `internal/server/rest_server.go`（靠锚点行定位，幂等可重跑） |
+| GraphQL schema 代码生成 | `GOSUMDB=sum.golang.org GOTOOLCHAIN=go1.26.4 go run github.com/99designs/gqlgen@v0.17.89 generate`（在 `backend/api/graphql/` 下执行） | 契约 `schema.graphql` → exec/models 至 `api/gen/go/graphql/`，resolver 骨架至 `app/app/service/internal/graphql/resolver.go`；**注意 gow api 的 buf 清扫会连带清掉非 buf 管辖的 `api/gen/go/graphql/`**——schema 未变时 `git checkout HEAD -- backend/api/gen/go/graphql backend/app/app/service/internal/graphql` 即可恢复；schema 变了才需重跑 gqlgen（它会重写 resolver.go 的脚手架，Resolver 结构体的自定义字段需手工并回） |
 
 `gow` 与 `make` 产出完全一致，选 `gow` 的理由很实际：Windows 没有原生 make，且本仓 Makefile 是嵌套结构、需要跨目录 cd（`gow` 会自动发现 `app/*/service`，见根 [AGENTS.md](./AGENTS.md)）。`make ts` / `make openapi` 目前只有 Makefile 入口。
 

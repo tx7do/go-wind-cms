@@ -51,6 +51,21 @@
   审批中间态首次在列表可见；行内「提交审核/通过/驳回」按状态显隐。
 - Webhook 投递记录防膨胀：fanout worker 顺手裁剪 90 天前投递记录（限批）。
 
+#### P3 差距项
+
+- GraphQL 只读内容 API：gqlgen 基座独立服务器（`GRAPHQL_ADDR`，默认 `:6702`，
+  路径 `/graphql`），帖子/页面（含 sections 内容键值对）/分类/标签查询，语义与
+  REST app BFF 同源（仅已发布、翻译 locale 回退）；契约与产物分层在
+  `api/graphql/` 与 `api/gen/go/graphql/`，resolver 复用 BFF 服务。
+- 内容实验（A/B 分流 + 受众定向）：实验挂页面、变体整组托管 sections 快照；
+  访客按 `gwc_vid` cookie 稳定哈希分桶（随机分流）或受众规则（locale/设备/
+  登录态/URL 参数）依序首中，命中整页替换并幂等记录参与；管理端 `/content/
+  experiments`（状态机 draft→running↔paused→ended、变体编辑、参与统计、
+  从页面导入区块）。
+- 协同编辑 v1（编辑锁）：Redis 120s 软锁（心跳续期、进程死亡自动释放），
+  帖子/页面编辑页他人持锁时顶部提示横幅；只做感知不拦保存，冲突由内容版本化
+  兜底。
+
 #### 统计与集成
 
 - 浏览量统计：`COUNTER_METRIC_VIEW` 只增计数（匿名可报，PV 口径），三端

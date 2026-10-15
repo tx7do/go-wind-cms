@@ -106,6 +106,8 @@ FengXing (GoWind HCH) is an out-of-the-box enterprise-grade Golang full-stack He
 | Site Configuration | Basic info, SEO, upload limits, email/SMS global params |
 | Page Builder | Section-based page editor (rich text / gallery / form etc., 14 block types), rendered on all three frontends |
 | Review Workflow | Post submit-for-review → approve/reject with author notifications; permission gate via API role binding |
+| Content Experiments | A/B random splits and audience targeting (locale/device/login/params), full-page variant replacement, participant stats |
+| Collaborative Edit Locks | Holder banner on post/page editors (Redis soft lock with heartbeat); prevents blind concurrent overwrites |
 | Content Versioning | Automatic full snapshots on save, version list, line diff vs current, one-click restore |
 | Draft Preview | One-click new-tab draft preview from the editor (short-lived signed tokens) |
 | Redirect Management | 301/302 redirect rules, nginx map export, public lookup endpoint for SSR middleware |
@@ -124,7 +126,7 @@ FengXing (GoWind HCH) is an out-of-the-box enterprise-grade Golang full-stack He
 | Login Logs | Login success/failure logs with account, IP, location, device, time |
 | Operation Logs | Full-link audit trail with operator, IP, params & results |
 | Personal Center | Profile editing, avatar, password reset, login history |
-| Headless API | Complete OpenAPI for content CRUD, multi-terminal support |
+| Headless API | Complete OpenAPI for content CRUD, multi-terminal support; plus a read-only GraphQL content API (posts/pages/categories/tags on `:6702`) |
 | Webhook Events | Content events (publish/update/delete) delivered asynchronously with HMAC signatures; delivery log & test ping |
 | Email Outbound | System notifications via async SMTP; visual SMTP configuration (credentials encrypted) + test send |
 | API Sync | OpenAPI reconciliation sync for the API table (safe on non-empty tables, stable IDs protect role bindings) |
