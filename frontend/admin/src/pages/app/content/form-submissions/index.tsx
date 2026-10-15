@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from 'react';
+import { useRef, useState } from 'react';
 import type { ActionType } from '@ant-design/pro-components';
 import { App, Button, Drawer, Popconfirm, Space } from 'antd';
 import { DeleteOutlined, DownloadOutlined, EyeOutlined } from '@ant-design/icons';
@@ -30,16 +30,20 @@ const FormSubmissionManagement = () => {
   const listMutation = useFormSubmissionsList();
   const deleteMutation = useDeleteFormSubmission();
 
-  const reload = async (params = lastParamsRef.current) => {
-    lastParamsRef.current = params;
+  // ListTable request：首载与重试都走这里；增删后用 actionRef.reload() 重跑
+  const loadItems = async () => {
     const q = new PaginationQuery({
       paging: { page: 1, pageSize: 200 },
-      formValues: params.pageId || params.sectionId ? params : undefined,
+      formValues:
+        lastParamsRef.current.pageId || lastParamsRef.current.sectionId
+          ? lastParamsRef.current
+          : undefined,
       orderBy: ['-id'],
     });
     const resp = await listMutation.mutateAsync(q);
-    setItems((resp?.items ?? []) as FormSubmission[]);
-    actionRef.current?.reload();
+    const rows = (resp?.items ?? []) as FormSubmission[];
+    setItems(rows);
+    return { data: rows, total: Number(resp?.total) || rows.length, success: true };
   };
 
   const handleDelete = async (record: FormSubmission) => {
@@ -47,7 +51,7 @@ const FormSubmissionManagement = () => {
     try {
       await deleteMutation.mutateAsync({ id: record.id });
       message.success(t('deleteSuccess'));
-      await reload();
+      actionRef.current?.reload();
     } catch (error) {
       console.error('Delete form submission failed:', error);
     }
@@ -66,14 +70,6 @@ const FormSubmissionManagement = () => {
     a.click();
     URL.revokeObjectURL(url);
   };
-
-  // 首次进入自动加载（effect 体内不直接 setState，异步回调里才写状态）
-  useEffect(() => {
-    reload({}).catch((error) => {
-      console.error('Load form submissions failed:', error);
-    });
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
 
   const columns = [
     { title: 'ID', dataIndex: 'id', width: 70 },
@@ -124,6 +120,7 @@ const FormSubmissionManagement = () => {
         loading={listMutation.isPending}
         rowKey="id"
         columns={columns}
+        request={loadItems}
         dataSource={items}
         toolBarRender={() => [
           <Button key="export" icon={<DownloadOutlined />} onClick={handleExportCsv}>

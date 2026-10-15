@@ -54,9 +54,11 @@ const WebhookManagement = () => {
     { enabled: !!deliveriesTarget },
   );
 
-  const reload = async () => {
-    await listMutation.mutateAsync();
-    actionRef.current?.reload();
+  const loadItems = async () => {
+    const resp = await listMutation.mutateAsync();
+    const items = (resp?.items ?? []) as Webhook[];
+    setDataSource(items);
+    return { data: items, total: Number(resp?.total) || items.length, success: true };
   };
 
   const openCreate = () => {
@@ -97,7 +99,7 @@ const WebhookManagement = () => {
         message.success(t('saveSuccess'));
       }
       setFormOpen(false);
-      await reload();
+      await loadItems();
     } catch (error) {
       console.error('Save webhook failed:', error);
     }
@@ -108,7 +110,7 @@ const WebhookManagement = () => {
     try {
       await deleteMutation.mutateAsync({ id: record.id });
       message.success(t('deleteSuccess'));
-      await reload();
+      await loadItems();
     } catch (error) {
       console.error('Delete webhook failed:', error);
     }
@@ -122,7 +124,7 @@ const WebhookManagement = () => {
         data: { events: record.events ?? [], enabled: checked },
         updateMask: 'enabled',
       });
-      await reload();
+      await loadItems();
     } catch (error) {
       console.error('Toggle webhook failed:', error);
     }
@@ -145,7 +147,7 @@ const WebhookManagement = () => {
     }
   };
 
-  const dataSource = listMutation.data?.items ?? [];
+  const [dataSource, setDataSource] = useState<Webhook[]>([]);
 
   const columns = [
     { title: 'ID', dataIndex: 'id', width: 60 },
@@ -218,6 +220,7 @@ const WebhookManagement = () => {
         loading={listMutation.isPending}
         rowKey="id"
         columns={columns}
+        request={loadItems}
         dataSource={dataSource}
         toolBarRender={() => [
           <Button key="create" type="primary" icon={<PlusOutlined />} onClick={openCreate}>

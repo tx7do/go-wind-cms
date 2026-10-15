@@ -27,7 +27,7 @@ export function useEmailProvidersList(
         offset: 0,
         limit: 20,
         sorting: [],
-      }),
+      } as never),
     ...options,
   });
 }

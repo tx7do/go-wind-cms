@@ -32,7 +32,7 @@ export function useListWebhooks(
         offset: 0,
         limit: 200,
         sorting: [],
-      }),
+      } as never),
     ...options,
   });
 }
