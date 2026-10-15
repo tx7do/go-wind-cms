@@ -182,6 +182,11 @@ func (s *WebhookService) FanoutWorker(taskType string, payload *task.WebhookFano
 		s.log.Errorf("webhook fanout: list webhooks failed (event=%s): %v", payload.Event, err)
 		return err // 查库失败：可重试
 	}
+
+	// 顺手裁剪 90 天前的投递记录（限批，防止表无限膨胀；best-effort）
+	if pruned, perr := s.webhookRepo.PruneDeliveriesOlderThan(ctx, time.Now().Add(-90*24*time.Hour), 1000); perr == nil && pruned != 0 {
+		s.log.Infof("webhook fanout: pruned %d stale delivery rows", pruned)
+	}
 	for _, wh := range webhooks {
 		if err = s.taskService.EnqueueWebhookDeliver(&task.WebhookDeliverPayload{
 			WebhookID: wh.GetId(),

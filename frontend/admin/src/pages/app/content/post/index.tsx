@@ -31,8 +31,9 @@ import {
   pickTranslation,
 } from './constants';
 
-/** 状态 Tab：ALL 之外为 POST_STATUS_* 枚举名 */
+/** 状态 Tab：ALL 之外为 POST_STATUS_* 枚举名；REVIEW 为审核中（DRAFT + in_progress 组合过滤） */
 const ALL_STATUS = 'ALL';
+const REVIEW_STATUS = 'REVIEW';
 const COUNT_REFRESH_THROTTLE_MS = 3000;
 
 // 列表字段掩码（对齐 vben 侧，避免大字段拖慢列表）
@@ -98,7 +99,12 @@ const PostList = () => {
             const resp = await fetchListPosts(
               new PaginationQuery({
                 paging: { page: 1, pageSize: 1 },
-                formValues: key === ALL_STATUS ? {} : { status: key },
+                formValues:
+                  key === ALL_STATUS
+                    ? {}
+                    : key === REVIEW_STATUS
+                      ? { status: 'POST_STATUS_DRAFT', in_progress: true }
+                      : { status: key },
                 fieldMask: 'id',
               }),
             );
@@ -328,6 +334,7 @@ const PostList = () => {
   const statusTabs = [
     { key: ALL_STATUS, label: t('statusAll') },
     ...postStatusOptions(t).map((o) => ({ key: o.value as string, label: o.label as string })),
+    { key: REVIEW_STATUS, label: t('statusInReview') },
   ];
 
   return (
@@ -370,9 +377,12 @@ const PostList = () => {
               ([key]) => !['current', 'pageSize', 'activeStatus'].includes(key),
             ),
           );
-          // 状态 Tab 是唯一的状态筛选入口，ALL 表示不过滤
+          // 状态 Tab 是唯一的状态筛选入口，ALL 表示不过滤；REVIEW=草稿中的审核中
           if (activeStatus === ALL_STATUS) {
             delete query.status;
+          } else if (activeStatus === REVIEW_STATUS) {
+            query.status = 'POST_STATUS_DRAFT';
+            query.in_progress = true;
           } else {
             query.status = activeStatus;
           }

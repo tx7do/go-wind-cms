@@ -114,5 +114,6 @@
     "rejectTitle": "驳回（退回草稿）",
     "rejected": "已驳回",
     "reasonPlaceholder": "驳回理由（将通知作者，可留空）"
-  }
+  },
+  "statusInReview": "审核中"
 }

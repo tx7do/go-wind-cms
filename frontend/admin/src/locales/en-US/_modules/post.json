@@ -114,5 +114,6 @@
     "rejectTitle": "Reject (back to draft)",
     "rejected": "Rejected",
     "reasonPlaceholder": "Reason (notifies the author, optional)"
-  }
+  },
+  "statusInReview": "In Review"
 }

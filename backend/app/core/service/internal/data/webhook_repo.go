@@ -2,6 +2,7 @@ package data
 
 import (
 	"context"
+	"time"
 
 	"github.com/go-kratos/kratos/v2/log"
 	"github.com/tx7do/kratos-bootstrap/bootstrap"
@@ -276,6 +277,33 @@ func (r *WebhookRepo) ListDeliveries(ctx context.Context, webhookID uint32, limi
 		items = append(items, dto)
 	}
 	return items, len(items), nil
+}
+
+// PruneDeliveriesOlderThan 裁剪指定时间之前的投递记录（限批，防长事务）。
+// 表只增不改：旧数据由周期任务定期裁剪，防止无限膨胀。
+func (r *WebhookRepo) PruneDeliveriesOlderThan(ctx context.Context, before time.Time, limit int) (int, error) {
+	ids, err := r.entClient.Client().WebhookDelivery.Query().
+		Where(webhookdelivery.CreatedAtLT(before)).
+		Select(webhookdelivery.FieldID).
+		IDs(ctx)
+	if err != nil {
+		r.log.Errorf("prune webhook deliveries: list ids failed: %s", err.Error())
+		return 0, err
+	}
+	if len(ids) > limit {
+		ids = ids[:limit]
+	}
+	if len(ids) == 0 {
+		return 0, nil
+	}
+	n, err := r.entClient.Client().WebhookDelivery.Delete().
+		Where(webhookdelivery.IDIn(ids...)).
+		Exec(ctx)
+	if err != nil {
+		r.log.Errorf("prune webhook deliveries failed: %s", err.Error())
+		return 0, err
+	}
+	return n, nil
 }
 
 // ─── 内部 ───
