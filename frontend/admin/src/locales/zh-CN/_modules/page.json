@@ -119,5 +119,6 @@
     "rejectTitle": "驳回（退回草稿）",
     "rejected": "已驳回",
     "reasonPlaceholder": "驳回理由（将通知作者，可留空）"
-  }
+  },
+  "editLockHeld": "{{name}} 正在编辑此内容（{{since}}），同时保存可能互相覆盖"
 }

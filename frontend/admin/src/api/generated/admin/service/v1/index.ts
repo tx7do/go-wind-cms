@@ -4284,6 +4284,60 @@ export type dictservicev1_DeleteDictTypeRequest = {
   ids: number[] | undefined;
 };
 
+// 编辑锁管理服务（协同编辑 v1）
+export interface EditLockService {
+  // 获取/续期编辑锁（重复调用即心跳）
+  Acquire(
+    request: contentservicev1_AcquireEditLockRequest,
+  ): Promise<contentservicev1_EditLock>;
+  // 释放编辑锁（仅持锁者可释放）
+  Release(
+    request: contentservicev1_ReleaseEditLockRequest,
+  ): Promise<wellKnownEmpty>;
+}
+
+export function createEditLockServiceClient(
+  transport: ClientTransport,
+): EditLockService {
+  return {
+    Acquire(request) {
+      const path = `admin/v1/edit-locks/acquire`;
+      const body = JSON.stringify(request);
+      return transport.unary(path, 'POST', body, {
+        service: 'EditLockService',
+        method: 'Acquire',
+      }) as Promise<contentservicev1_EditLock>;
+    },
+    Release(request) {
+      const path = `admin/v1/edit-locks/release`;
+      const body = JSON.stringify(request);
+      return transport.unary(path, 'POST', body, {
+        service: 'EditLockService',
+        method: 'Release',
+      }) as Promise<wellKnownEmpty>;
+    },
+  };
+}
+// 请求 - 获取/续期编辑锁
+export type contentservicev1_AcquireEditLockRequest = {
+  targetId: number | undefined;
+  targetType: string | undefined;
+};
+
+// 编辑锁
+export type contentservicev1_EditLock = {
+  acquired?: boolean;
+  acquiredAt?: wellKnownTimestamp;
+  holderId?: number;
+  holderName?: string;
+};
+
+// 请求 - 释放编辑锁
+export type contentservicev1_ReleaseEditLockRequest = {
+  targetId: number | undefined;
+  targetType: string | undefined;
+};
+
 // 邮件出站 SMTP 配置管理服务（平台基础设施）
 export interface EmailProviderService {
   // 获取配置列表
@@ -14683,6 +14737,7 @@ export class ApiClient {
   private _dataAccessAuditLogService?: DataAccessAuditLogService;
   private _dictEntryService?: DictEntryService;
   private _dictTypeService?: DictTypeService;
+  private _editLockService?: EditLockService;
   private _emailProviderService?: EmailProviderService;
   private _experimentService?: ExperimentService;
   private _fileService?: FileService;
@@ -14798,6 +14853,10 @@ export class ApiClient {
 
   get dictTypeService(): DictTypeService {
     return this._dictTypeService ??= createDictTypeServiceClient(this._transport);
+  }
+
+  get editLockService(): EditLockService {
+    return this._editLockService ??= createEditLockServiceClient(this._transport);
   }
 
   get emailProviderService(): EmailProviderService {

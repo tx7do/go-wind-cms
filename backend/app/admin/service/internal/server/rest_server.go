@@ -167,6 +167,7 @@ func NewRestServer(
 	formSubmissionService *service.FormSubmissionService,
 	redirectService *service.RedirectService,
 	experimentService *service.ExperimentService,
+	editLockService *service.EditLockService,
 	emailProviderService *service.EmailProviderService,
 
 	// register:param ── 新模块服务形参在此行后注册(make register 工具锚点,勿删)
@@ -245,6 +246,7 @@ func NewRestServer(
 	adminV1.RegisterFormSubmissionServiceHTTPServer(srv, formSubmissionService)
 	adminV1.RegisterRedirectServiceHTTPServer(srv, redirectService)
 	adminV1.RegisterExperimentServiceHTTPServer(srv, experimentService)
+	adminV1.RegisterEditLockServiceHTTPServer(srv, editLockService)
 	adminV1.RegisterEmailProviderServiceHTTPServer(srv, emailProviderService)
 	adminV1.RegisterInteractionAdminServiceHTTPServer(srv, interactionAdminService)
 	adminV1.RegisterStatsServiceHTTPServer(srv, statsService)

@@ -1,0 +1,68 @@
+syntax = "proto3";
+
+package content.service.v1;
+
+import "gnostic/openapi/v3/annotations.proto";
+import "google/protobuf/empty.proto";
+import "google/protobuf/timestamp.proto";
+
+// 编辑锁服务（协同编辑 v1：编辑感知 + 冲突防护）。
+// 锁是 Redis 短 TTL 软锁（120s，心跳续期）：同一资源同一时刻只有一位编辑者
+// 持锁；持锁者重复 Acquire 即心跳续期；持锁进程退出后 TTL 到期自动释放。
+// 锁只做感知与提示，不做强制写拦截（最后写入胜出由内容版本化兜底）。
+service EditLockService {
+  // 获取/续期编辑锁（重复调用即心跳；返回锁当前归属，acquired 表示调用者持锁）
+  rpc Acquire (AcquireEditLockRequest) returns (EditLock) {}
+
+  // 释放编辑锁（仅持锁者可释放）
+  rpc Release (ReleaseEditLockRequest) returns (google.protobuf.Empty) {}
+}
+
+// 编辑锁
+message EditLock {
+  optional bool acquired = 1 [
+    json_name = "acquired",
+    (gnostic.openapi.v3.property) = {description: "调用者是否持锁"}
+  ]; // 调用者是否持锁
+
+  optional uint32 holder_id = 2 [
+    json_name = "holderId",
+    (gnostic.openapi.v3.property) = {description: "持锁者用户ID"}
+  ]; // 持锁者用户ID
+
+  optional string holder_name = 3 [
+    json_name = "holderName",
+    (gnostic.openapi.v3.property) = {description: "持锁者用户名"}
+  ]; // 持锁者用户名
+
+  optional google.protobuf.Timestamp acquired_at = 4 [
+    json_name = "acquiredAt",
+    (gnostic.openapi.v3.property) = {description: "获锁时间"}
+  ]; // 获锁时间
+}
+
+// 请求 - 获取/续期编辑锁
+message AcquireEditLockRequest {
+  string target_type = 1 [
+    json_name = "targetType",
+    (gnostic.openapi.v3.property) = {description: "目标类型（post/page）"}
+  ]; // 目标类型
+
+  uint32 target_id = 2 [
+    json_name = "targetId",
+    (gnostic.openapi.v3.property) = {description: "目标ID"}
+  ]; // 目标ID
+}
+
+// 请求 - 释放编辑锁
+message ReleaseEditLockRequest {
+  string target_type = 1 [
+    json_name = "targetType",
+    (gnostic.openapi.v3.property) = {description: "目标类型（post/page）"}
+  ]; // 目标类型
+
+  uint32 target_id = 2 [
+    json_name = "targetId",
+    (gnostic.openapi.v3.property) = {description: "目标ID"}
+  ]; // 目标ID
+}

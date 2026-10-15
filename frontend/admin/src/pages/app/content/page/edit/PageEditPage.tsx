@@ -1,5 +1,6 @@
 import { useCallback, useEffect, useMemo, useState } from 'react';
 import {
+  Alert,
   App,
   Button,
   Col,
@@ -27,6 +28,7 @@ import AiGenerateButton from '@/components/common/AiGenerateButton';
 import VersionHistoryDrawer from '@/components/version/VersionHistoryDrawer';
 import { cendBaseUrl, useCreatePagePreviewToken } from '@/api/hooks/preview';
 import ContentContainer from '@/layouts/components/PageContainer/ContentContainer';
+import { useEditLock } from '@/api/hooks/edit-lock';
 import { Editor, EditorType } from '@/components/common/Editor';
 import {
   fetchListContentModels,
@@ -117,6 +119,8 @@ const PageEditPage = () => {
   const initLang = searchParams.get('lang') || 'zh-CN';
   const isCreateMode = !id;
   const pageId = isCreateMode ? null : Number(id);
+  // 编辑锁（协同 v1）：他人持锁时展示提示横幅
+  const editLock = useEditLock('page', pageId);
 
   const [lang, setLang] = useState(initLang);
   const [formData, setFormData] = useState<PageEditProps>(() => emptyForm(initLang));
@@ -597,6 +601,14 @@ const PageEditPage = () => {
   return (
     <ContentContainer heightMode="fixed" padding="0" bottomMargin={0}>
       <div style={{ height: '100%', display: 'flex', flexDirection: 'column', overflow: 'hidden' }}>
+        {editLock.heldByName && (
+          <Alert
+            type="warning"
+            showIcon
+            style={{ margin: '8px 16px 0' }}
+            message={t('editLockHeld', { name: editLock.heldByName, since: editLock.heldSince ?? '' })}
+          />
+        )}
         {/* 头部：返回 + 标题 + 别名 + 语言 + 翻译 + 编辑器/状态/类型 */}
         <div style={{ display: 'flex', alignItems: 'center', gap: 8, padding: '12px 16px 8px', flexWrap: 'wrap' }}>
           <Button type="text" icon={<ArrowLeftOutlined />} onClick={goBack} />

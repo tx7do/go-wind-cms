@@ -2394,6 +2394,41 @@ paths:
                 "200":
                     description: OK
                     content: {}
+    /admin/v1/edit-locks/acquire:
+        post:
+            tags:
+                - EditLockService
+            description: 获取/续期编辑锁（重复调用即心跳）
+            operationId: EditLockService_Acquire
+            requestBody:
+                content:
+                    application/json:
+                        schema:
+                            $ref: '#/components/schemas/content.service.v1.AcquireEditLockRequest'
+                required: true
+            responses:
+                "200":
+                    description: OK
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/content.service.v1.EditLock'
+    /admin/v1/edit-locks/release:
+        post:
+            tags:
+                - EditLockService
+            description: 释放编辑锁（仅持锁者可释放）
+            operationId: EditLockService_Release
+            requestBody:
+                content:
+                    application/json:
+                        schema:
+                            $ref: '#/components/schemas/content.service.v1.ReleaseEditLockRequest'
+                required: true
+            responses:
+                "200":
+                    description: OK
+                    content: {}
     /admin/v1/email-providers:
         get:
             tags:
@@ -10670,6 +10705,17 @@ components:
                     type: boolean
                     description: 如果设置为true的时候，资源不存在则会新增(插入)，并且在这种情况下`updateMask`字段将会被忽略。
             description: 请求 - 更新评论
+        content.service.v1.AcquireEditLockRequest:
+            type: object
+            properties:
+                targetType:
+                    type: string
+                    description: 目标类型（post/page）
+                targetId:
+                    type: integer
+                    description: 目标ID
+                    format: uint32
+            description: 请求 - 获取/续期编辑锁
         content.service.v1.Category:
             type: object
             properties:
@@ -10949,6 +10995,24 @@ components:
                 data:
                     $ref: '#/components/schemas/content.service.v1.Tag'
             description: 请求 - 创建标签
+        content.service.v1.EditLock:
+            type: object
+            properties:
+                acquired:
+                    type: boolean
+                    description: 调用者是否持锁
+                holderId:
+                    type: integer
+                    description: 持锁者用户ID
+                    format: uint32
+                holderName:
+                    type: string
+                    description: 持锁者用户名
+                acquiredAt:
+                    type: string
+                    description: 获锁时间
+                    format: date-time
+            description: 编辑锁
         content.service.v1.Experiment:
             type: object
             properties:
@@ -11802,6 +11866,17 @@ components:
                     description: 可选：限定目标 post 所属分类
                     format: uint32
             description: relation 类型字段的引用配置
+        content.service.v1.ReleaseEditLockRequest:
+            type: object
+            properties:
+                targetType:
+                    type: string
+                    description: 目标类型（post/page）
+                targetId:
+                    type: integer
+                    description: 目标ID
+                    format: uint32
+            description: 请求 - 释放编辑锁
         content.service.v1.RestorePageVersionRequest:
             type: object
             properties:
@@ -16340,6 +16415,8 @@ tags:
       description: 数据字典条目管理服务
     - name: DictTypeService
       description: 数据字典分类管理服务
+    - name: EditLockService
+      description: 编辑锁管理服务（协同编辑 v1）
     - name: EmailProviderService
       description: 邮件出站 SMTP 配置管理服务（平台基础设施）
     - name: ExperimentService

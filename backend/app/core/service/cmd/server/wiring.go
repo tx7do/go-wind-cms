@@ -222,6 +222,9 @@ func initApp(ctx *bootstrap.Context) (*kratos.App, func(), error) {
 	// 内容实验（A/B 分流 + 受众定向）
 	experimentService := service.NewExperimentService(ctx, experimentRepo)
 
+	// 编辑锁（协同编辑 v1，Redis 软锁）
+	editLockService := service.NewEditLockService(ctx, redisClient, userRepo)
+
 	// 邮件出站 SMTP 配置
 	emailProviderService := service.NewEmailProviderService(ctx, emailProviderRepo)
 	fileService := service.NewFileService(ctx, fileRepo, minIOClient)
@@ -323,6 +326,7 @@ func initApp(ctx *bootstrap.Context) (*kratos.App, func(), error) {
 		redirectService,
 		emailProviderService,
 		experimentService,
+		editLockService,
 		// register:grpc-arg ── 新模块服务实参在此行后追加(make register 工具锚点,勿删)
 	)
 	if err != nil {

@@ -1,0 +1,27 @@
+syntax = "proto3";
+
+package admin.service.v1;
+
+import "google/api/annotations.proto";
+import "google/protobuf/empty.proto";
+
+import "content/service/v1/edit_lock.proto";
+
+// 编辑锁管理服务（协同编辑 v1）
+service EditLockService {
+  // 获取/续期编辑锁（重复调用即心跳）
+  rpc Acquire (content.service.v1.AcquireEditLockRequest) returns (content.service.v1.EditLock) {
+    option (google.api.http) = {
+      post: "/admin/v1/edit-locks/acquire"
+      body: "*"
+    };
+  }
+
+  // 释放编辑锁（仅持锁者可释放）
+  rpc Release (content.service.v1.ReleaseEditLockRequest) returns (google.protobuf.Empty) {
+    option (google.api.http) = {
+      post: "/admin/v1/edit-locks/release"
+      body: "*"
+    };
+  }
+}

@@ -115,5 +115,6 @@
     "rejected": "Rejected",
     "reasonPlaceholder": "Reason (notifies the author, optional)"
   },
-  "statusInReview": "In Review"
+  "statusInReview": "In Review",
+  "editLockHeld": "{{name}} is editing this content ({{since}}). Concurrent saves may overwrite each other"
 }

@@ -119,5 +119,6 @@
     "rejectTitle": "Reject (back to draft)",
     "rejected": "Rejected",
     "reasonPlaceholder": "Reason (notifies the author, optional)"
-  }
+  },
+  "editLockHeld": "{{name}} is editing this content ({{since}}). Concurrent saves may overwrite each other"
 }
