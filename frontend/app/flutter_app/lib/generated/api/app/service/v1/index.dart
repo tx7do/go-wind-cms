@@ -5585,6 +5585,366 @@ class StorageServiceV1UploadFileResponse {
 
 }
 
+/// 表单提交服务（公开站点）：
+/// 仅暴露 Submit；列表/管理能力在 admin 门面。租户归属由 BFF 按请求 Host 解析后
+/// 经内网可信元数据 x-md-global-tenant-id 注入（与评论/浏览上报链路同款）。
+class FormSubmissionServiceClient {
+  final ClientTransport _transport;
+
+  FormSubmissionServiceClient(this._transport);
+
+  /// 提交表单（匿名可调用）
+  Future<ContentServiceV1FormSubmission> submit(ContentServiceV1SubmitFormSubmissionRequest request, {Map<String, String>? headers}) async {
+    final path = '/app/v1/form-submissions';
+    final body = jsonEncode(request.toJson());
+    final result = await _transport.unary(path, 'POST', body, TransportMeta(
+      service: 'FormSubmissionService',
+      method: 'Submit',
+    ), headers: headers);
+    return ContentServiceV1FormSubmission.fromJson(result as Map<String, dynamic>);
+  }
+}
+
+/// 请求 - 提交表单
+class ContentServiceV1SubmitFormSubmissionRequest {
+  Map<String, String>? data;
+  int? pageId;
+  int? sectionId;
+
+  ContentServiceV1SubmitFormSubmissionRequest({
+    this.data,
+    this.pageId,
+    this.sectionId,
+  });
+
+  factory ContentServiceV1SubmitFormSubmissionRequest.fromJson(Map<String, dynamic> json) {
+    return ContentServiceV1SubmitFormSubmissionRequest(
+      data: (json['data'] as Map<String, dynamic>?)?.map((k, v) => MapEntry(k, v as String)),
+      pageId: json['pageId'] as int?,
+      sectionId: json['sectionId'] as int?,
+    );
+  }
+
+  Map<String, dynamic> toJson() {
+    final json = <String, dynamic>{};
+    if (data != null) json['data'] = data;
+    if (pageId != null) json['pageId'] = pageId;
+    if (sectionId != null) json['sectionId'] = sectionId;
+    return json;
+  }
+
+  @override
+  String toString() {
+    return 'ContentServiceV1SubmitFormSubmissionRequest(data: $data, pageId: $pageId, sectionId: $sectionId)';
+  }
+
+  @override
+  bool operator ==(Object other) =>
+    identical(this, other) ||
+    other is ContentServiceV1SubmitFormSubmissionRequest &&
+      runtimeType == other.runtimeType
+      && data == other.data
+      && pageId == other.pageId
+      && sectionId == other.sectionId
+    ;
+
+  @override
+  int get hashCode => Object.hashAll([
+    data,
+    pageId,
+    sectionId,
+  ]);
+
+  ContentServiceV1SubmitFormSubmissionRequest copyWith({
+    Map<String, String>? data,
+    int? pageId,
+    int? sectionId,
+  }) {
+    return ContentServiceV1SubmitFormSubmissionRequest(
+      data: data ?? this.data,
+      pageId: pageId ?? this.pageId,
+      sectionId: sectionId ?? this.sectionId,
+    );
+  }
+
+  /// 二进制 proto 编码（MQTT 等二进制传输用；字段按编号升序写出）
+  Uint8List writeToBuffer() {
+    final w = ProtoWireWriter();
+    _writeTo(w);
+    return w.toBuffer();
+  }
+
+  void _writeTo(ProtoWireWriter w) {
+    // field 1: pageId
+    final f1 = pageId;
+    if (f1 != null) {
+      w.writeUint32(1, f1!);
+    }
+    // field 2: sectionId
+    final f2 = sectionId;
+    if (f2 != null) {
+      w.writeUint32(2, f2!);
+    }
+    // field 3: data
+    final f3 = data;
+    if (f3 != null) {
+      f3!.forEach((k, v) {
+        final ew = ProtoWireWriter();
+        ew.writeString(1, k);
+        ew.writeString(2, v);
+        w.writeRaw(3, ew.toBuffer());
+      });
+    }
+  }
+
+  factory ContentServiceV1SubmitFormSubmissionRequest.fromBuffer(List<int> bytes) {
+    return ContentServiceV1SubmitFormSubmissionRequest._readFrom(ProtoWireReader(bytes));
+  }
+
+  static ContentServiceV1SubmitFormSubmissionRequest _readFrom(ProtoWireReader r) {
+    final m = ContentServiceV1SubmitFormSubmissionRequest();
+    while (r.next()) {
+      switch (r.fieldNumber) {
+        // field 1: pageId
+        case 1: {
+          m.pageId = r.readUint32();
+          break;
+        }
+        // field 2: sectionId
+        case 2: {
+          m.sectionId = r.readUint32();
+          break;
+        }
+        // field 3: data
+        case 3: {
+          final er = r.readNested();
+          String? k;
+          String? v;
+          while (er.next()) {
+            switch (er.fieldNumber) {
+              case 1: {
+                k = er.readString();
+                break;
+              }
+              case 2: {
+                v = er.readString();
+                break;
+              }
+              default: er.skip();
+            }
+          }
+          if (k != null && v != null) {
+            (m.data ??= {})[k!] = v!;
+          }
+          break;
+        }
+        default: {
+          r.skip();
+        }
+      }
+    }
+    return m;
+  }
+
+}
+
+/// 表单提交
+class ContentServiceV1FormSubmission {
+  String? createdAt;
+  Map<String, String>? data;
+  int? id;
+  int? pageId;
+  int? sectionId;
+  int? userId;
+
+  ContentServiceV1FormSubmission({
+    this.createdAt,
+    this.data,
+    this.id,
+    this.pageId,
+    this.sectionId,
+    this.userId,
+  });
+
+  factory ContentServiceV1FormSubmission.fromJson(Map<String, dynamic> json) {
+    return ContentServiceV1FormSubmission(
+      createdAt: json['createdAt'] as String?,
+      data: (json['data'] as Map<String, dynamic>?)?.map((k, v) => MapEntry(k, v as String)),
+      id: json['id'] as int?,
+      pageId: json['pageId'] as int?,
+      sectionId: json['sectionId'] as int?,
+      userId: json['userId'] as int?,
+    );
+  }
+
+  Map<String, dynamic> toJson() {
+    final json = <String, dynamic>{};
+    if (createdAt != null) json['createdAt'] = createdAt;
+    if (data != null) json['data'] = data;
+    if (id != null) json['id'] = id;
+    if (pageId != null) json['pageId'] = pageId;
+    if (sectionId != null) json['sectionId'] = sectionId;
+    if (userId != null) json['userId'] = userId;
+    return json;
+  }
+
+  @override
+  String toString() {
+    return 'ContentServiceV1FormSubmission(createdAt: $createdAt, data: $data, id: $id, pageId: $pageId, sectionId: $sectionId, userId: $userId)';
+  }
+
+  @override
+  bool operator ==(Object other) =>
+    identical(this, other) ||
+    other is ContentServiceV1FormSubmission &&
+      runtimeType == other.runtimeType
+      && createdAt == other.createdAt
+      && data == other.data
+      && id == other.id
+      && pageId == other.pageId
+      && sectionId == other.sectionId
+      && userId == other.userId
+    ;
+
+  @override
+  int get hashCode => Object.hashAll([
+    createdAt,
+    data,
+    id,
+    pageId,
+    sectionId,
+    userId,
+  ]);
+
+  ContentServiceV1FormSubmission copyWith({
+    String? createdAt,
+    Map<String, String>? data,
+    int? id,
+    int? pageId,
+    int? sectionId,
+    int? userId,
+  }) {
+    return ContentServiceV1FormSubmission(
+      createdAt: createdAt ?? this.createdAt,
+      data: data ?? this.data,
+      id: id ?? this.id,
+      pageId: pageId ?? this.pageId,
+      sectionId: sectionId ?? this.sectionId,
+      userId: userId ?? this.userId,
+    );
+  }
+
+  /// 二进制 proto 编码（MQTT 等二进制传输用；字段按编号升序写出）
+  Uint8List writeToBuffer() {
+    final w = ProtoWireWriter();
+    _writeTo(w);
+    return w.toBuffer();
+  }
+
+  void _writeTo(ProtoWireWriter w) {
+    // field 1: id
+    final f1 = id;
+    if (f1 != null) {
+      w.writeUint32(1, f1!);
+    }
+    // field 2: pageId
+    final f2 = pageId;
+    if (f2 != null) {
+      w.writeUint32(2, f2!);
+    }
+    // field 3: sectionId
+    final f3 = sectionId;
+    if (f3 != null) {
+      w.writeUint32(3, f3!);
+    }
+    // field 4: data
+    final f4 = data;
+    if (f4 != null) {
+      f4!.forEach((k, v) {
+        final ew = ProtoWireWriter();
+        ew.writeString(1, k);
+        ew.writeString(2, v);
+        w.writeRaw(4, ew.toBuffer());
+      });
+    }
+    // field 5: userId
+    final f5 = userId;
+    if (f5 != null) {
+      w.writeUint32(5, f5!);
+    }
+    // field 200: createdAt
+    final f200 = createdAt;
+    if (f200 != null) {
+      w.writeTimestamp(200, f200!);
+    }
+  }
+
+  factory ContentServiceV1FormSubmission.fromBuffer(List<int> bytes) {
+    return ContentServiceV1FormSubmission._readFrom(ProtoWireReader(bytes));
+  }
+
+  static ContentServiceV1FormSubmission _readFrom(ProtoWireReader r) {
+    final m = ContentServiceV1FormSubmission();
+    while (r.next()) {
+      switch (r.fieldNumber) {
+        // field 1: id
+        case 1: {
+          m.id = r.readUint32();
+          break;
+        }
+        // field 2: pageId
+        case 2: {
+          m.pageId = r.readUint32();
+          break;
+        }
+        // field 3: sectionId
+        case 3: {
+          m.sectionId = r.readUint32();
+          break;
+        }
+        // field 4: data
+        case 4: {
+          final er = r.readNested();
+          String? k;
+          String? v;
+          while (er.next()) {
+            switch (er.fieldNumber) {
+              case 1: {
+                k = er.readString();
+                break;
+              }
+              case 2: {
+                v = er.readString();
+                break;
+              }
+              default: er.skip();
+            }
+          }
+          if (k != null && v != null) {
+            (m.data ??= {})[k!] = v!;
+          }
+          break;
+        }
+        // field 5: userId
+        case 5: {
+          m.userId = r.readUint32();
+          break;
+        }
+        // field 200: createdAt
+        case 200: {
+          m.createdAt = r.readTimestampIso();
+          break;
+        }
+        default: {
+          r.skip();
+        }
+      }
+    }
+    return m;
+  }
+
+}
+
 /// 交互服务（点赞/收藏）
 class InteractionServiceClient {
   final ClientTransport _transport;
@@ -17079,6 +17439,7 @@ class ApiClient {
   CategoryServiceClient? _categoryService;
   CommentServiceClient? _commentService;
   FileTransferServiceClient? _fileTransferService;
+  FormSubmissionServiceClient? _formSubmissionService;
   InteractionServiceClient? _interactionService;
   NavigationServiceClient? _navigationService;
   PageServiceClient? _pageService;
@@ -17107,6 +17468,11 @@ class ApiClient {
   FileTransferServiceClient get fileTransferService {
     _fileTransferService ??= FileTransferServiceClient(_transport);
     return _fileTransferService!;
+  }
+
+  FormSubmissionServiceClient get formSubmissionService {
+    _formSubmissionService ??= FormSubmissionServiceClient(_transport);
+    return _formSubmissionService!;
   }
 
   InteractionServiceClient get interactionService {
@@ -17150,6 +17516,7 @@ class ApiClient {
     _categoryService = null;
     _commentService = null;
     _fileTransferService = null;
+    _formSubmissionService = null;
     _interactionService = null;
     _navigationService = null;
     _pageService = null;
