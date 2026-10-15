@@ -1,0 +1,17 @@
+{
+    "title": "Version History",
+    "noVersions": "No versions yet",
+    "view": "View",
+    "restore": "Restore",
+    "restoreConfirm": "Restore to this version?",
+    "restoreConfirmDesc": "Current content will be overwritten by this snapshot. The restore itself creates a new version, so you can always roll back again.",
+    "restoreSuccess": "Restored, a new version was created",
+    "backToList": "Back to list",
+    "snapshotTitle": "Snapshot title",
+    "snapshotUnreadable": "Snapshot content is unreadable",
+    "loadDetailFailed": "Failed to load version detail",
+    "operator": "Operator",
+    "diffLegend": "Diff against current editor content: green lines exist in this snapshot but not currently; red lines exist currently but not in this snapshot.",
+    "sectionCount": "{{count}} sections",
+    "pageSectionRestoreNote": "Page versions restore sections wholesale: after restoring, the page's sections, translations and settings are replaced by the snapshot."
+}
