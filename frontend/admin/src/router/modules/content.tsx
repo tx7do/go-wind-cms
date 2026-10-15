@@ -171,6 +171,17 @@ export const contentRoutes: AppRouteObject[] = [
           authority: ['sys:platform_admin', 'sys:tenant_manager'],
         },
       },
+      {
+        name: 'content-experiments',
+        path: 'experiments',
+        element: createLazyRoute(() => import('@/pages/app/content/experiments')),
+        meta: {
+          title: 'routes:content-experiments',
+          icon: 'lucide:flask-conical',
+          order: 10,
+          authority: ['sys:platform_admin', 'sys:tenant_manager'],
+        },
+      },
     ],
   },
 ];

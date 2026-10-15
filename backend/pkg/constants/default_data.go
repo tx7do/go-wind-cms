@@ -815,4 +815,19 @@ var DefaultMenus = []*permissionV1.Menu{
 			Authority: []string{"sys:platform_admin"},
 		},
 	},
+	{
+		Id:        trans.Ptr(uint32(70)),
+		ParentId:  trans.Ptr(uint32(60)),
+		Type:      permissionV1.Menu_MENU.Enum(),
+		Name:      trans.Ptr("ExperimentManagement"),
+		Path:      trans.Ptr("experiments"),
+		Component: trans.Ptr("app/content/experiments/index.vue"),
+		CreatedAt: timeutil.TimeToTimestamppb(trans.Ptr(time.Now())),
+		Meta: &permissionV1.MenuMeta{
+			Title:     trans.Ptr("menu.system.experiment"),
+			Icon:      trans.Ptr("lucide:flask-conical"),
+			Order:     trans.Ptr(int32(10)),
+			Authority: []string{"sys:platform_admin", "sys:tenant_manager"},
+		},
+	},
 }

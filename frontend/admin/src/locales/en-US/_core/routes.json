@@ -79,5 +79,6 @@
   "webhooks": "Webhooks",
   "content-form-submissions": "Form Submissions",
   "redirects": "Redirects",
-  "email-provider": "Email Outbound"
+  "email-provider": "Email Outbound",
+  "content-experiments": "Content Experiments"
 }

@@ -79,5 +79,6 @@
   "webhooks": "Webhook 订阅",
   "content-form-submissions": "表单提交",
   "redirects": "重定向管理",
-  "email-provider": "邮件出站"
+  "email-provider": "邮件出站",
+  "content-experiments": "内容实验"
 }

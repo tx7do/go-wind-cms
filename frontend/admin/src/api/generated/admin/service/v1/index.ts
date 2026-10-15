@@ -4544,6 +4544,310 @@ export type notifyservicev1_TestEmailSendResponse = {
   success: boolean | undefined;
 };
 
+// 内容实验管理服务（A/B 分流 + 受众定向）
+export interface ExperimentService {
+  // 获取实验列表
+  List(
+    request: pagination_PagingRequest,
+  ): Promise<contentservicev1_ListExperimentsResponse>;
+  // 获取实验数据（含变体）
+  Get(
+    request: contentservicev1_GetExperimentRequest,
+  ): Promise<contentservicev1_Experiment>;
+  // 创建实验（连同变体）
+  Create(
+    request: contentservicev1_CreateExperimentRequest,
+  ): Promise<contentservicev1_Experiment>;
+  // 更新实验（变体整组替换）
+  Update(
+    request: contentservicev1_UpdateExperimentRequest,
+  ): Promise<contentservicev1_Experiment>;
+  // 删除实验
+  Delete(
+    request: contentservicev1_DeleteExperimentRequest,
+  ): Promise<wellKnownEmpty>;
+  // 设置实验状态
+  SetStatus(
+    request: contentservicev1_SetExperimentStatusRequest,
+  ): Promise<contentservicev1_Experiment>;
+  // 变体参与统计
+  GetVariantStats(
+    request: contentservicev1_GetExperimentVariantStatsRequest,
+  ): Promise<contentservicev1_ExperimentVariantStatsResponse>;
+}
+
+export function createExperimentServiceClient(
+  transport: ClientTransport,
+): ExperimentService {
+  return {
+    List(request) {
+      const path = `admin/v1/experiments`;
+      const body = null;
+      const queryParams: string[] = [];
+      if (request.page) {
+        queryParams.push(
+          `page=${encodeURIComponent(request.page.toString())}`,
+        );
+      }
+      if (request.pageSize) {
+        queryParams.push(
+          `pageSize=${encodeURIComponent(request.pageSize.toString())}`,
+        );
+      }
+      if (request.offset) {
+        queryParams.push(
+          `offset=${encodeURIComponent(request.offset.toString())}`,
+        );
+      }
+      if (request.limit) {
+        queryParams.push(
+          `limit=${encodeURIComponent(request.limit.toString())}`,
+        );
+      }
+      if (request.token) {
+        queryParams.push(
+          `token=${encodeURIComponent(request.token.toString())}`,
+        );
+      }
+      if (request.noPaging) {
+        queryParams.push(
+          `noPaging=${encodeURIComponent(request.noPaging.toString())}`,
+        );
+      }
+      if (request.query) {
+        queryParams.push(
+          `query=${encodeURIComponent(request.query.toString())}`,
+        );
+      }
+      if (request.filter) {
+        queryParams.push(
+          `filter=${encodeURIComponent(request.filter.toString())}`,
+        );
+      }
+      if (request.filterExpr?.type) {
+        queryParams.push(
+          `filterExpr.type=${encodeURIComponent(request.filterExpr.type.toString())}`,
+        );
+      }
+      if (request.filterExpr?.conditions?.field) {
+        queryParams.push(
+          `filterExpr.conditions.field=${encodeURIComponent(request.filterExpr.conditions.field.toString())}`,
+        );
+      }
+      if (request.filterExpr?.conditions?.op) {
+        queryParams.push(
+          `filterExpr.conditions.op=${encodeURIComponent(request.filterExpr.conditions.op.toString())}`,
+        );
+      }
+      if (request.filterExpr?.conditions?.value) {
+        queryParams.push(
+          `filterExpr.conditions.value=${encodeURIComponent(request.filterExpr.conditions.value.toString())}`,
+        );
+      }
+      if (request.filterExpr?.conditions?.jsonValue) {
+        queryParams.push(
+          `filterExpr.conditions.jsonValue=${encodeURIComponent(request.filterExpr.conditions.jsonValue.toString())}`,
+        );
+      }
+      if (request.filterExpr?.conditions?.values) {
+        request.filterExpr.conditions.values.forEach((x) => {
+          queryParams.push(
+            `filterExpr.conditions.values=${encodeURIComponent(x.toString())}`,
+          );
+        });
+      }
+      if (request.filterExpr?.conditions?.datePart) {
+        queryParams.push(
+          `filterExpr.conditions.datePart=${encodeURIComponent(request.filterExpr.conditions.datePart.toString())}`,
+        );
+      }
+      if (request.filterExpr?.conditions?.jsonPath) {
+        queryParams.push(
+          `filterExpr.conditions.jsonPath=${encodeURIComponent(request.filterExpr.conditions.jsonPath.toString())}`,
+        );
+      }
+      if (request.orderBy) {
+        queryParams.push(
+          `orderBy=${encodeURIComponent(request.orderBy.toString())}`,
+        );
+      }
+      if (request.sorting?.field) {
+        queryParams.push(
+          `sorting.field=${encodeURIComponent(request.sorting.field.toString())}`,
+        );
+      }
+      if (request.sorting?.direction) {
+        queryParams.push(
+          `sorting.direction=${encodeURIComponent(request.sorting.direction.toString())}`,
+        );
+      }
+      if (request.fieldMask) {
+        queryParams.push(
+          `fieldMask=${encodeURIComponent(request.fieldMask.toString())}`,
+        );
+      }
+      let uri = path;
+      if (queryParams.length > 0) {
+        uri += `?${queryParams.join('&')}`;
+      }
+      return transport.unary(uri, 'GET', body, {
+        service: 'ExperimentService',
+        method: 'List',
+      }) as Promise<contentservicev1_ListExperimentsResponse>;
+    },
+    Get(request) {
+      if (request.id === undefined || request.id === null) {
+        throw new Error('missing required field request.id');
+      }
+      const path = `admin/v1/experiments/${request.id}`;
+      const body = null;
+      return transport.unary(path, 'GET', body, {
+        service: 'ExperimentService',
+        method: 'Get',
+      }) as Promise<contentservicev1_Experiment>;
+    },
+    Create(request) {
+      const path = `admin/v1/experiments`;
+      const body = JSON.stringify(request);
+      return transport.unary(path, 'POST', body, {
+        service: 'ExperimentService',
+        method: 'Create',
+      }) as Promise<contentservicev1_Experiment>;
+    },
+    Update(request) {
+      if (request.id === undefined || request.id === null) {
+        throw new Error('missing required field request.id');
+      }
+      const path = `admin/v1/experiments/${request.id}`;
+      const body = JSON.stringify(request);
+      return transport.unary(path, 'PUT', body, {
+        service: 'ExperimentService',
+        method: 'Update',
+      }) as Promise<contentservicev1_Experiment>;
+    },
+    Delete(request) {
+      if (request.id === undefined || request.id === null) {
+        throw new Error('missing required field request.id');
+      }
+      const path = `admin/v1/experiments/${request.id}`;
+      const body = null;
+      return transport.unary(path, 'DELETE', body, {
+        service: 'ExperimentService',
+        method: 'Delete',
+      }) as Promise<wellKnownEmpty>;
+    },
+    SetStatus(request) {
+      if (request.id === undefined || request.id === null) {
+        throw new Error('missing required field request.id');
+      }
+      const path = `admin/v1/experiments/${request.id}/status`;
+      const body = JSON.stringify(request);
+      return transport.unary(path, 'PUT', body, {
+        service: 'ExperimentService',
+        method: 'SetStatus',
+      }) as Promise<contentservicev1_Experiment>;
+    },
+    GetVariantStats(request) {
+      if (request.experimentId === undefined || request.experimentId === null) {
+        throw new Error('missing required field request.experiment_id');
+      }
+      const path = `admin/v1/experiments/${request.experimentId}/variant-stats`;
+      const body = null;
+      return transport.unary(path, 'GET', body, {
+        service: 'ExperimentService',
+        method: 'GetVariantStats',
+      }) as Promise<contentservicev1_ExperimentVariantStatsResponse>;
+    },
+  };
+}
+// 回应 - 实验列表
+export type contentservicev1_ListExperimentsResponse = {
+  items: contentservicev1_Experiment[] | undefined;
+  total: number | undefined;
+};
+
+// 内容实验
+export type contentservicev1_Experiment = {
+  assignmentType?: contentservicev1_Experiment_AssignmentType;
+  createdAt?: wellKnownTimestamp;
+  createdBy?: number;
+  description?: string;
+  id?: number;
+  name?: string;
+  pageId?: number;
+  status?: contentservicev1_Experiment_Status;
+  updatedAt?: wellKnownTimestamp;
+  updatedBy?: number;
+  variants: contentservicev1_ExperimentVariant[] | undefined;
+};
+
+// 实验状态
+export type contentservicev1_Experiment_Status =
+  | 'EXPERIMENT_STATUS_DRAFT'
+  | 'EXPERIMENT_STATUS_ENDED'
+  | 'EXPERIMENT_STATUS_PAUSED'
+  | 'EXPERIMENT_STATUS_RUNNING'
+  | 'EXPERIMENT_STATUS_UNSPECIFIED';
+// 分配方式
+export type contentservicev1_Experiment_AssignmentType =
+  | 'ASSIGNMENT_TYPE_RANDOM'
+  | 'ASSIGNMENT_TYPE_RULE'
+  | 'ASSIGNMENT_TYPE_UNSPECIFIED';
+// 实验变体
+export type contentservicev1_ExperimentVariant = {
+  conditions?: string;
+  experimentId?: number;
+  id?: number;
+  name?: string;
+  sections?: string;
+  sortOrder?: number;
+  weight?: number;
+};
+
+// 请求 - 实验数据
+export type contentservicev1_GetExperimentRequest = {
+  id: number | undefined;
+};
+
+// 请求 - 创建实验
+export type contentservicev1_CreateExperimentRequest = {
+  data: contentservicev1_Experiment | undefined;
+};
+
+// 请求 - 更新实验
+export type contentservicev1_UpdateExperimentRequest = {
+  allowMissing?: boolean;
+  data: contentservicev1_Experiment | undefined;
+  id: number | undefined;
+  updateMask: undefined | wellKnownFieldMask;
+};
+
+// 请求 - 删除实验
+export type contentservicev1_DeleteExperimentRequest = {
+  id: number | undefined;
+};
+
+// 请求 - 设置实验状态
+export type contentservicev1_SetExperimentStatusRequest = {
+  id: number | undefined;
+  status: contentservicev1_Experiment_Status | undefined;
+};
+
+// 请求 - 变体参与统计
+export type contentservicev1_GetExperimentVariantStatsRequest = {
+  experimentId: number | undefined;
+};
+
+// 回应 - 变体参与统计
+export type contentservicev1_ExperimentVariantStatsResponse = {
+  items: contentservicev1_ExperimentVariantStatsResponse_VariantCount[] | undefined;
+};
+
+export type contentservicev1_ExperimentVariantStatsResponse_VariantCount = {
+  participants: number | undefined;
+  variantName: string | undefined;
+};
+
 // 文件管理服务
 export interface FileService {
   // 查询文件列表
@@ -14380,6 +14684,7 @@ export class ApiClient {
   private _dictEntryService?: DictEntryService;
   private _dictTypeService?: DictTypeService;
   private _emailProviderService?: EmailProviderService;
+  private _experimentService?: ExperimentService;
   private _fileService?: FileService;
   private _fileTransferService?: FileTransferService;
   private _formSubmissionService?: FormSubmissionService;
@@ -14497,6 +14802,10 @@ export class ApiClient {
 
   get emailProviderService(): EmailProviderService {
     return this._emailProviderService ??= createEmailProviderServiceClient(this._transport);
+  }
+
+  get experimentService(): ExperimentService {
+    return this._experimentService ??= createExperimentServiceClient(this._transport);
   }
 
   get fileService(): FileService {
