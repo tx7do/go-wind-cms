@@ -1787,10 +1787,196 @@ INSERT INTO page_translations (
     '/images/covers/about-zh.jpg',
     '/about'
 )
+),,
+(
+    NOW() - INTERVAL 25 DAY,
+    NOW(),
+    2,
+    'en-US',
+    'About Us - GoWind Content Hub',
+    'about',
+    '/images/covers/about-en.jpg',
+    '/en/about'
+)
 )
 ;
 
 ALTER TABLE page_translations AUTO_INCREMENT = (SELECT COALESCE(MAX(id) + 1, 1) FROM page_translations);
+
+-- ----------------------------
+-- 插入 sections 表（页面区块，挂 about 页）测试数据
+-- 内容键契约与三端 SectionRenderer 对齐：主内容键 value，样式存 config
+-- ----------------------------
+INSERT INTO sections (
+    created_at, updated_at, sort_order,
+    page_id, type, name, config
+) VALUES
+
+(
+    NOW() - INTERVAL 25 DAY,
+    NOW(),
+    1,
+    2,
+    'SECTION_TYPE_TITLE',
+    'about-hero-title',
+    '{"level": "2", "align": "center"}'
+)
+),,
+(
+    NOW() - INTERVAL 25 DAY,
+    NOW(),
+    2,
+    2,
+    'SECTION_TYPE_MARKDOWN',
+    'about-intro',
+    '{}'
+)
+),,
+(
+    NOW() - INTERVAL 25 DAY,
+    NOW(),
+    3,
+    2,
+    'SECTION_TYPE_BUTTON',
+    'about-cta',
+    '{"href": "/post", "variant": "primary"}'
+)
+),,
+(
+    NOW() - INTERVAL 25 DAY,
+    NOW(),
+    4,
+    2,
+    'SECTION_TYPE_DIVIDER',
+    'about-divider',
+    '{}'
+)
+),,
+(
+    NOW() - INTERVAL 25 DAY,
+    NOW(),
+    5,
+    2,
+    'SECTION_TYPE_SPACER',
+    'about-spacer',
+    '{"height": "48"}'
+)
+),,
+(
+    NOW() - INTERVAL 25 DAY,
+    NOW(),
+    6,
+    2,
+    'SECTION_TYPE_CODE',
+    'about-code',
+    '{"language": "go"}'
+)
+),,
+(
+    NOW() - INTERVAL 25 DAY,
+    NOW(),
+    7,
+    2,
+    'SECTION_TYPE_FORM',
+    'about-contact-form',
+    '{}'
+)
+)
+;
+
+ALTER TABLE sections AUTO_INCREMENT = (SELECT COALESCE(MAX(id) + 1, 1) FROM sections);
+
+-- ----------------------------
+-- 插入 section_translations 表（区块多语言内容）测试数据
+-- ----------------------------
+INSERT INTO section_translations (
+    created_at, updated_at,
+    section_id, language_code, content
+) VALUES
+
+(
+    NOW() - INTERVAL 25 DAY,
+    NOW(),
+    1,
+    'zh-CN',
+    '{"value": "关于风行内容中台"}'
+)
+),,
+(
+    NOW() - INTERVAL 25 DAY,
+    NOW(),
+    1,
+    'en-US',
+    '{"value": "About GoWind Content Hub"}'
+)
+),,
+(
+    NOW() - INTERVAL 25 DAY,
+    NOW(),
+    2,
+    'zh-CN',
+    '{"value": "风行内容中台（GoWind Content Hub）是一个 **Go 后端 + 四端前端** 的无头内容中枢：一次创作，多站点、多语言、多终端分发。\n\n- 高性能 Go + Kratos + Ent 后端\n- React / Vue / Taro / Flutter 四套 C 端\n- 内置 AI 创作助手与社交分发"}'
+)
+),,
+(
+    NOW() - INTERVAL 25 DAY,
+    NOW(),
+    2,
+    'en-US',
+    '{"value": "GoWind Content Hub is a **Go backend + four frontend stacks** headless content hub: create once, distribute to multiple sites, languages and terminals.\n\n- High-performance Go + Kratos + Ent backend\n- React / Vue / Taro / Flutter C-end clients\n- Built-in AI assistant and social distribution"}'
+)
+),,
+(
+    NOW() - INTERVAL 25 DAY,
+    NOW(),
+    3,
+    'zh-CN',
+    '{"value": "浏览文章"}'
+)
+),,
+(
+    NOW() - INTERVAL 25 DAY,
+    NOW(),
+    3,
+    'en-US',
+    '{"value": "Browse Posts"}'
+)
+),,
+(
+    NOW() - INTERVAL 25 DAY,
+    NOW(),
+    6,
+    'zh-CN',
+    '{"value": "package main\n\nimport \"fmt\"\n\nfunc main() {\n\tfmt.Println(\"Hello, GoWind!\")\n}"}'
+)
+),,
+(
+    NOW() - INTERVAL 25 DAY,
+    NOW(),
+    6,
+    'en-US',
+    '{"value": "package main\n\nimport \"fmt\"\n\nfunc main() {\n\tfmt.Println(\"Hello, GoWind!\")\n}"}'
+)
+),,
+(
+    NOW() - INTERVAL 25 DAY,
+    NOW(),
+    7,
+    'zh-CN',
+    '{"title": "表单区块（提交后端建设中，敬请期待）"}'
+)
+),,
+(
+    NOW() - INTERVAL 25 DAY,
+    NOW(),
+    7,
+    'en-US',
+    '{"title": "Form section (submission backend coming soon)"}'
+)
+)
+;
+
+ALTER TABLE section_translations AUTO_INCREMENT = (SELECT COALESCE(MAX(id) + 1, 1) FROM section_translations);
 
 -- ----------------------------
 -- 插入 categories 表（分类主表）测试数据

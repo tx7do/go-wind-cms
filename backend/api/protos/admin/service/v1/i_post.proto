@@ -53,4 +53,26 @@ service PostService {
       get: "/admin/v1/posts/{post_id}/translations/{language_code}"
     };
   }
+
+  // 列出帖子版本（按版本号倒序）
+  rpc ListVersions(content.service.v1.ListPostVersionsRequest) returns (content.service.v1.ListPostVersionsResponse) {
+    option (google.api.http) = {
+      get: "/admin/v1/posts/{post_id}/versions"
+    };
+  }
+
+  // 获取帖子版本详情
+  rpc GetVersion(content.service.v1.GetPostVersionRequest) returns (content.service.v1.PostVersion) {
+    option (google.api.http) = {
+      get: "/admin/v1/posts/versions/{id}"
+    };
+  }
+
+  // 恢复帖子到指定版本（恢复动作本身会生成一个新版本）
+  rpc RestoreVersion(content.service.v1.RestorePostVersionRequest) returns (content.service.v1.Post) {
+    option (google.api.http) = {
+      post: "/admin/v1/posts/{post_id}/versions/{version_id}/restore"
+      body: "*"
+    };
+  }
 }

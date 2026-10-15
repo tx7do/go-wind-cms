@@ -53,6 +53,7 @@ import (
 	"go-wind-cms/app/core/service/internal/data/ent/orgunit"
 	"go-wind-cms/app/core/service/internal/data/ent/page"
 	"go-wind-cms/app/core/service/internal/data/ent/pagetranslation"
+	"go-wind-cms/app/core/service/internal/data/ent/pageversion"
 	"go-wind-cms/app/core/service/internal/data/ent/permission"
 	"go-wind-cms/app/core/service/internal/data/ent/permissionapi"
 	"go-wind-cms/app/core/service/internal/data/ent/permissionauditlog"
@@ -66,6 +67,7 @@ import (
 	"go-wind-cms/app/core/service/internal/data/ent/postlike"
 	"go-wind-cms/app/core/service/internal/data/ent/posttag"
 	"go-wind-cms/app/core/service/internal/data/ent/posttranslation"
+	"go-wind-cms/app/core/service/internal/data/ent/postversion"
 	"go-wind-cms/app/core/service/internal/data/ent/postwatch"
 	"go-wind-cms/app/core/service/internal/data/ent/role"
 	"go-wind-cms/app/core/service/internal/data/ent/rolemetadata"
@@ -183,6 +185,8 @@ type Client struct {
 	Page *PageClient
 	// PageTranslation is the client for interacting with the PageTranslation builders.
 	PageTranslation *PageTranslationClient
+	// PageVersion is the client for interacting with the PageVersion builders.
+	PageVersion *PageVersionClient
 	// Permission is the client for interacting with the Permission builders.
 	Permission *PermissionClient
 	// PermissionApi is the client for interacting with the PermissionApi builders.
@@ -209,6 +213,8 @@ type Client struct {
 	PostTag *PostTagClient
 	// PostTranslation is the client for interacting with the PostTranslation builders.
 	PostTranslation *PostTranslationClient
+	// PostVersion is the client for interacting with the PostVersion builders.
+	PostVersion *PostVersionClient
 	// PostWatch is the client for interacting with the PostWatch builders.
 	PostWatch *PostWatchClient
 	// Role is the client for interacting with the Role builders.
@@ -304,6 +310,7 @@ func (c *Client) init() {
 	c.OrgUnit = NewOrgUnitClient(c.config)
 	c.Page = NewPageClient(c.config)
 	c.PageTranslation = NewPageTranslationClient(c.config)
+	c.PageVersion = NewPageVersionClient(c.config)
 	c.Permission = NewPermissionClient(c.config)
 	c.PermissionApi = NewPermissionApiClient(c.config)
 	c.PermissionAuditLog = NewPermissionAuditLogClient(c.config)
@@ -317,6 +324,7 @@ func (c *Client) init() {
 	c.PostLike = NewPostLikeClient(c.config)
 	c.PostTag = NewPostTagClient(c.config)
 	c.PostTranslation = NewPostTranslationClient(c.config)
+	c.PostVersion = NewPostVersionClient(c.config)
 	c.PostWatch = NewPostWatchClient(c.config)
 	c.Role = NewRoleClient(c.config)
 	c.RoleMetadata = NewRoleMetadataClient(c.config)
@@ -472,6 +480,7 @@ func (c *Client) Tx(ctx context.Context) (*Tx, error) {
 		OrgUnit:                    NewOrgUnitClient(cfg),
 		Page:                       NewPageClient(cfg),
 		PageTranslation:            NewPageTranslationClient(cfg),
+		PageVersion:                NewPageVersionClient(cfg),
 		Permission:                 NewPermissionClient(cfg),
 		PermissionApi:              NewPermissionApiClient(cfg),
 		PermissionAuditLog:         NewPermissionAuditLogClient(cfg),
@@ -485,6 +494,7 @@ func (c *Client) Tx(ctx context.Context) (*Tx, error) {
 		PostLike:                   NewPostLikeClient(cfg),
 		PostTag:                    NewPostTagClient(cfg),
 		PostTranslation:            NewPostTranslationClient(cfg),
+		PostVersion:                NewPostVersionClient(cfg),
 		PostWatch:                  NewPostWatchClient(cfg),
 		Role:                       NewRoleClient(cfg),
 		RoleMetadata:               NewRoleMetadataClient(cfg),
@@ -567,6 +577,7 @@ func (c *Client) BeginTx(ctx context.Context, opts *sql.TxOptions) (*Tx, error) 
 		OrgUnit:                    NewOrgUnitClient(cfg),
 		Page:                       NewPageClient(cfg),
 		PageTranslation:            NewPageTranslationClient(cfg),
+		PageVersion:                NewPageVersionClient(cfg),
 		Permission:                 NewPermissionClient(cfg),
 		PermissionApi:              NewPermissionApiClient(cfg),
 		PermissionAuditLog:         NewPermissionAuditLogClient(cfg),
@@ -580,6 +591,7 @@ func (c *Client) BeginTx(ctx context.Context, opts *sql.TxOptions) (*Tx, error) 
 		PostLike:                   NewPostLikeClient(cfg),
 		PostTag:                    NewPostTagClient(cfg),
 		PostTranslation:            NewPostTranslationClient(cfg),
+		PostVersion:                NewPostVersionClient(cfg),
 		PostWatch:                  NewPostWatchClient(cfg),
 		Role:                       NewRoleClient(cfg),
 		RoleMetadata:               NewRoleMetadataClient(cfg),
@@ -639,14 +651,15 @@ func (c *Client) Use(hooks ...Hook) {
 		c.InternalMessageRecipient, c.Language, c.LoginAuditLog, c.LoginPolicy,
 		c.MediaAsset, c.MediaVariant, c.Membership, c.MembershipOrgUnit,
 		c.MembershipPosition, c.MembershipRole, c.Menu, c.Navigation, c.NavigationItem,
-		c.OperationAuditLog, c.OrgUnit, c.Page, c.PageTranslation, c.Permission,
-		c.PermissionApi, c.PermissionAuditLog, c.PermissionGroup, c.PermissionMenu,
-		c.PermissionPolicy, c.PolicyEvaluationLog, c.Position, c.Post, c.PostCategory,
-		c.PostLike, c.PostTag, c.PostTranslation, c.PostWatch, c.Role, c.RoleMetadata,
-		c.RolePermission, c.Section, c.SectionTranslation, c.Site, c.SiteSetting,
-		c.SocialAccount, c.SocialDistribution, c.SocialInboxItem, c.SocialStatsHistory,
-		c.Tag, c.TagTranslation, c.Task, c.Tenant, c.User, c.UserCredential,
-		c.UserOrgUnit, c.UserPosition, c.UserRole,
+		c.OperationAuditLog, c.OrgUnit, c.Page, c.PageTranslation, c.PageVersion,
+		c.Permission, c.PermissionApi, c.PermissionAuditLog, c.PermissionGroup,
+		c.PermissionMenu, c.PermissionPolicy, c.PolicyEvaluationLog, c.Position,
+		c.Post, c.PostCategory, c.PostLike, c.PostTag, c.PostTranslation,
+		c.PostVersion, c.PostWatch, c.Role, c.RoleMetadata, c.RolePermission,
+		c.Section, c.SectionTranslation, c.Site, c.SiteSetting, c.SocialAccount,
+		c.SocialDistribution, c.SocialInboxItem, c.SocialStatsHistory, c.Tag,
+		c.TagTranslation, c.Task, c.Tenant, c.User, c.UserCredential, c.UserOrgUnit,
+		c.UserPosition, c.UserRole,
 	} {
 		n.Use(hooks...)
 	}
@@ -665,14 +678,15 @@ func (c *Client) Intercept(interceptors ...Interceptor) {
 		c.InternalMessageRecipient, c.Language, c.LoginAuditLog, c.LoginPolicy,
 		c.MediaAsset, c.MediaVariant, c.Membership, c.MembershipOrgUnit,
 		c.MembershipPosition, c.MembershipRole, c.Menu, c.Navigation, c.NavigationItem,
-		c.OperationAuditLog, c.OrgUnit, c.Page, c.PageTranslation, c.Permission,
-		c.PermissionApi, c.PermissionAuditLog, c.PermissionGroup, c.PermissionMenu,
-		c.PermissionPolicy, c.PolicyEvaluationLog, c.Position, c.Post, c.PostCategory,
-		c.PostLike, c.PostTag, c.PostTranslation, c.PostWatch, c.Role, c.RoleMetadata,
-		c.RolePermission, c.Section, c.SectionTranslation, c.Site, c.SiteSetting,
-		c.SocialAccount, c.SocialDistribution, c.SocialInboxItem, c.SocialStatsHistory,
-		c.Tag, c.TagTranslation, c.Task, c.Tenant, c.User, c.UserCredential,
-		c.UserOrgUnit, c.UserPosition, c.UserRole,
+		c.OperationAuditLog, c.OrgUnit, c.Page, c.PageTranslation, c.PageVersion,
+		c.Permission, c.PermissionApi, c.PermissionAuditLog, c.PermissionGroup,
+		c.PermissionMenu, c.PermissionPolicy, c.PolicyEvaluationLog, c.Position,
+		c.Post, c.PostCategory, c.PostLike, c.PostTag, c.PostTranslation,
+		c.PostVersion, c.PostWatch, c.Role, c.RoleMetadata, c.RolePermission,
+		c.Section, c.SectionTranslation, c.Site, c.SiteSetting, c.SocialAccount,
+		c.SocialDistribution, c.SocialInboxItem, c.SocialStatsHistory, c.Tag,
+		c.TagTranslation, c.Task, c.Tenant, c.User, c.UserCredential, c.UserOrgUnit,
+		c.UserPosition, c.UserRole,
 	} {
 		n.Intercept(interceptors...)
 	}
@@ -765,6 +779,8 @@ func (c *Client) Mutate(ctx context.Context, m Mutation) (Value, error) {
 		return c.Page.mutate(ctx, m)
 	case *PageTranslationMutation:
 		return c.PageTranslation.mutate(ctx, m)
+	case *PageVersionMutation:
+		return c.PageVersion.mutate(ctx, m)
 	case *PermissionMutation:
 		return c.Permission.mutate(ctx, m)
 	case *PermissionApiMutation:
@@ -791,6 +807,8 @@ func (c *Client) Mutate(ctx context.Context, m Mutation) (Value, error) {
 		return c.PostTag.mutate(ctx, m)
 	case *PostTranslationMutation:
 		return c.PostTranslation.mutate(ctx, m)
+	case *PostVersionMutation:
+		return c.PostVersion.mutate(ctx, m)
 	case *PostWatchMutation:
 		return c.PostWatch.mutate(ctx, m)
 	case *RoleMutation:
@@ -6846,6 +6864,140 @@ func (c *PageTranslationClient) mutate(ctx context.Context, m *PageTranslationMu
 	}
 }
 
+// PageVersionClient is a client for the PageVersion schema.
+type PageVersionClient struct {
+	config
+}
+
+// NewPageVersionClient returns a client for the PageVersion from the given config.
+func NewPageVersionClient(c config) *PageVersionClient {
+	return &PageVersionClient{config: c}
+}
+
+// Use adds a list of mutation hooks to the hooks stack.
+// A call to `Use(f, g, h)` equals to `pageversion.Hooks(f(g(h())))`.
+func (c *PageVersionClient) Use(hooks ...Hook) {
+	c.hooks.PageVersion = append(c.hooks.PageVersion, hooks...)
+}
+
+// Intercept adds a list of query interceptors to the interceptors stack.
+// A call to `Intercept(f, g, h)` equals to `pageversion.Intercept(f(g(h())))`.
+func (c *PageVersionClient) Intercept(interceptors ...Interceptor) {
+	c.inters.PageVersion = append(c.inters.PageVersion, interceptors...)
+}
+
+// Create returns a builder for creating a PageVersion entity.
+func (c *PageVersionClient) Create() *PageVersionCreate {
+	mutation := newPageVersionMutation(c.config, OpCreate)
+	return &PageVersionCreate{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// CreateBulk returns a builder for creating a bulk of PageVersion entities.
+func (c *PageVersionClient) CreateBulk(builders ...*PageVersionCreate) *PageVersionCreateBulk {
+	return &PageVersionCreateBulk{config: c.config, builders: builders}
+}
+
+// MapCreateBulk creates a bulk creation builder from the given slice. For each item in the slice, the function creates
+// a builder and applies setFunc on it.
+func (c *PageVersionClient) MapCreateBulk(slice any, setFunc func(*PageVersionCreate, int)) *PageVersionCreateBulk {
+	rv := reflect.ValueOf(slice)
+	if rv.Kind() != reflect.Slice {
+		return &PageVersionCreateBulk{err: fmt.Errorf("calling to PageVersionClient.MapCreateBulk with wrong type %T, need slice", slice)}
+	}
+	builders := make([]*PageVersionCreate, rv.Len())
+	for i := 0; i < rv.Len(); i++ {
+		builders[i] = c.Create()
+		setFunc(builders[i], i)
+	}
+	return &PageVersionCreateBulk{config: c.config, builders: builders}
+}
+
+// Update returns an update builder for PageVersion.
+func (c *PageVersionClient) Update() *PageVersionUpdate {
+	mutation := newPageVersionMutation(c.config, OpUpdate)
+	return &PageVersionUpdate{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// UpdateOne returns an update builder for the given entity.
+func (c *PageVersionClient) UpdateOne(_m *PageVersion) *PageVersionUpdateOne {
+	mutation := newPageVersionMutation(c.config, OpUpdateOne, withPageVersion(_m))
+	return &PageVersionUpdateOne{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// UpdateOneID returns an update builder for the given id.
+func (c *PageVersionClient) UpdateOneID(id uint32) *PageVersionUpdateOne {
+	mutation := newPageVersionMutation(c.config, OpUpdateOne, withPageVersionID(id))
+	return &PageVersionUpdateOne{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// Delete returns a delete builder for PageVersion.
+func (c *PageVersionClient) Delete() *PageVersionDelete {
+	mutation := newPageVersionMutation(c.config, OpDelete)
+	return &PageVersionDelete{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// DeleteOne returns a builder for deleting the given entity.
+func (c *PageVersionClient) DeleteOne(_m *PageVersion) *PageVersionDeleteOne {
+	return c.DeleteOneID(_m.ID)
+}
+
+// DeleteOneID returns a builder for deleting the given entity by its id.
+func (c *PageVersionClient) DeleteOneID(id uint32) *PageVersionDeleteOne {
+	builder := c.Delete().Where(pageversion.ID(id))
+	builder.mutation.id = &id
+	builder.mutation.op = OpDeleteOne
+	return &PageVersionDeleteOne{builder}
+}
+
+// Query returns a query builder for PageVersion.
+func (c *PageVersionClient) Query() *PageVersionQuery {
+	return &PageVersionQuery{
+		config: c.config,
+		ctx:    &QueryContext{Type: TypePageVersion},
+		inters: c.Interceptors(),
+	}
+}
+
+// Get returns a PageVersion entity by its id.
+func (c *PageVersionClient) Get(ctx context.Context, id uint32) (*PageVersion, error) {
+	return c.Query().Where(pageversion.ID(id)).Only(ctx)
+}
+
+// GetX is like Get, but panics if an error occurs.
+func (c *PageVersionClient) GetX(ctx context.Context, id uint32) *PageVersion {
+	obj, err := c.Get(ctx, id)
+	if err != nil {
+		panic(err)
+	}
+	return obj
+}
+
+// Hooks returns the client hooks.
+func (c *PageVersionClient) Hooks() []Hook {
+	hooks := c.hooks.PageVersion
+	return append(hooks[:len(hooks):len(hooks)], pageversion.Hooks[:]...)
+}
+
+// Interceptors returns the client interceptors.
+func (c *PageVersionClient) Interceptors() []Interceptor {
+	return c.inters.PageVersion
+}
+
+func (c *PageVersionClient) mutate(ctx context.Context, m *PageVersionMutation) (Value, error) {
+	switch m.Op() {
+	case OpCreate:
+		return (&PageVersionCreate{config: c.config, hooks: c.Hooks(), mutation: m}).Save(ctx)
+	case OpUpdate:
+		return (&PageVersionUpdate{config: c.config, hooks: c.Hooks(), mutation: m}).Save(ctx)
+	case OpUpdateOne:
+		return (&PageVersionUpdateOne{config: c.config, hooks: c.Hooks(), mutation: m}).Save(ctx)
+	case OpDelete, OpDeleteOne:
+		return (&PageVersionDelete{config: c.config, hooks: c.Hooks(), mutation: m}).Exec(ctx)
+	default:
+		return nil, fmt.Errorf("ent: unknown PageVersion mutation op: %q", m.Op())
+	}
+}
+
 // PermissionClient is a client for the Permission schema.
 type PermissionClient struct {
 	config
@@ -8617,6 +8769,140 @@ func (c *PostTranslationClient) mutate(ctx context.Context, m *PostTranslationMu
 		return (&PostTranslationDelete{config: c.config, hooks: c.Hooks(), mutation: m}).Exec(ctx)
 	default:
 		return nil, fmt.Errorf("ent: unknown PostTranslation mutation op: %q", m.Op())
+	}
+}
+
+// PostVersionClient is a client for the PostVersion schema.
+type PostVersionClient struct {
+	config
+}
+
+// NewPostVersionClient returns a client for the PostVersion from the given config.
+func NewPostVersionClient(c config) *PostVersionClient {
+	return &PostVersionClient{config: c}
+}
+
+// Use adds a list of mutation hooks to the hooks stack.
+// A call to `Use(f, g, h)` equals to `postversion.Hooks(f(g(h())))`.
+func (c *PostVersionClient) Use(hooks ...Hook) {
+	c.hooks.PostVersion = append(c.hooks.PostVersion, hooks...)
+}
+
+// Intercept adds a list of query interceptors to the interceptors stack.
+// A call to `Intercept(f, g, h)` equals to `postversion.Intercept(f(g(h())))`.
+func (c *PostVersionClient) Intercept(interceptors ...Interceptor) {
+	c.inters.PostVersion = append(c.inters.PostVersion, interceptors...)
+}
+
+// Create returns a builder for creating a PostVersion entity.
+func (c *PostVersionClient) Create() *PostVersionCreate {
+	mutation := newPostVersionMutation(c.config, OpCreate)
+	return &PostVersionCreate{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// CreateBulk returns a builder for creating a bulk of PostVersion entities.
+func (c *PostVersionClient) CreateBulk(builders ...*PostVersionCreate) *PostVersionCreateBulk {
+	return &PostVersionCreateBulk{config: c.config, builders: builders}
+}
+
+// MapCreateBulk creates a bulk creation builder from the given slice. For each item in the slice, the function creates
+// a builder and applies setFunc on it.
+func (c *PostVersionClient) MapCreateBulk(slice any, setFunc func(*PostVersionCreate, int)) *PostVersionCreateBulk {
+	rv := reflect.ValueOf(slice)
+	if rv.Kind() != reflect.Slice {
+		return &PostVersionCreateBulk{err: fmt.Errorf("calling to PostVersionClient.MapCreateBulk with wrong type %T, need slice", slice)}
+	}
+	builders := make([]*PostVersionCreate, rv.Len())
+	for i := 0; i < rv.Len(); i++ {
+		builders[i] = c.Create()
+		setFunc(builders[i], i)
+	}
+	return &PostVersionCreateBulk{config: c.config, builders: builders}
+}
+
+// Update returns an update builder for PostVersion.
+func (c *PostVersionClient) Update() *PostVersionUpdate {
+	mutation := newPostVersionMutation(c.config, OpUpdate)
+	return &PostVersionUpdate{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// UpdateOne returns an update builder for the given entity.
+func (c *PostVersionClient) UpdateOne(_m *PostVersion) *PostVersionUpdateOne {
+	mutation := newPostVersionMutation(c.config, OpUpdateOne, withPostVersion(_m))
+	return &PostVersionUpdateOne{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// UpdateOneID returns an update builder for the given id.
+func (c *PostVersionClient) UpdateOneID(id uint32) *PostVersionUpdateOne {
+	mutation := newPostVersionMutation(c.config, OpUpdateOne, withPostVersionID(id))
+	return &PostVersionUpdateOne{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// Delete returns a delete builder for PostVersion.
+func (c *PostVersionClient) Delete() *PostVersionDelete {
+	mutation := newPostVersionMutation(c.config, OpDelete)
+	return &PostVersionDelete{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// DeleteOne returns a builder for deleting the given entity.
+func (c *PostVersionClient) DeleteOne(_m *PostVersion) *PostVersionDeleteOne {
+	return c.DeleteOneID(_m.ID)
+}
+
+// DeleteOneID returns a builder for deleting the given entity by its id.
+func (c *PostVersionClient) DeleteOneID(id uint32) *PostVersionDeleteOne {
+	builder := c.Delete().Where(postversion.ID(id))
+	builder.mutation.id = &id
+	builder.mutation.op = OpDeleteOne
+	return &PostVersionDeleteOne{builder}
+}
+
+// Query returns a query builder for PostVersion.
+func (c *PostVersionClient) Query() *PostVersionQuery {
+	return &PostVersionQuery{
+		config: c.config,
+		ctx:    &QueryContext{Type: TypePostVersion},
+		inters: c.Interceptors(),
+	}
+}
+
+// Get returns a PostVersion entity by its id.
+func (c *PostVersionClient) Get(ctx context.Context, id uint32) (*PostVersion, error) {
+	return c.Query().Where(postversion.ID(id)).Only(ctx)
+}
+
+// GetX is like Get, but panics if an error occurs.
+func (c *PostVersionClient) GetX(ctx context.Context, id uint32) *PostVersion {
+	obj, err := c.Get(ctx, id)
+	if err != nil {
+		panic(err)
+	}
+	return obj
+}
+
+// Hooks returns the client hooks.
+func (c *PostVersionClient) Hooks() []Hook {
+	hooks := c.hooks.PostVersion
+	return append(hooks[:len(hooks):len(hooks)], postversion.Hooks[:]...)
+}
+
+// Interceptors returns the client interceptors.
+func (c *PostVersionClient) Interceptors() []Interceptor {
+	return c.inters.PostVersion
+}
+
+func (c *PostVersionClient) mutate(ctx context.Context, m *PostVersionMutation) (Value, error) {
+	switch m.Op() {
+	case OpCreate:
+		return (&PostVersionCreate{config: c.config, hooks: c.Hooks(), mutation: m}).Save(ctx)
+	case OpUpdate:
+		return (&PostVersionUpdate{config: c.config, hooks: c.Hooks(), mutation: m}).Save(ctx)
+	case OpUpdateOne:
+		return (&PostVersionUpdateOne{config: c.config, hooks: c.Hooks(), mutation: m}).Save(ctx)
+	case OpDelete, OpDeleteOne:
+		return (&PostVersionDelete{config: c.config, hooks: c.Hooks(), mutation: m}).Exec(ctx)
+	default:
+		return nil, fmt.Errorf("ent: unknown PostVersion mutation op: %q", m.Op())
 	}
 }
 
@@ -11443,13 +11729,14 @@ type (
 		InternalMessageCategory, InternalMessageRecipient, Language, LoginAuditLog,
 		LoginPolicy, MediaAsset, MediaVariant, Membership, MembershipOrgUnit,
 		MembershipPosition, MembershipRole, Menu, Navigation, NavigationItem,
-		OperationAuditLog, OrgUnit, Page, PageTranslation, Permission, PermissionApi,
-		PermissionAuditLog, PermissionGroup, PermissionMenu, PermissionPolicy,
-		PolicyEvaluationLog, Position, Post, PostCategory, PostLike, PostTag,
-		PostTranslation, PostWatch, Role, RoleMetadata, RolePermission, Section,
-		SectionTranslation, Site, SiteSetting, SocialAccount, SocialDistribution,
-		SocialInboxItem, SocialStatsHistory, Tag, TagTranslation, Task, Tenant, User,
-		UserCredential, UserOrgUnit, UserPosition, UserRole []ent.Hook
+		OperationAuditLog, OrgUnit, Page, PageTranslation, PageVersion, Permission,
+		PermissionApi, PermissionAuditLog, PermissionGroup, PermissionMenu,
+		PermissionPolicy, PolicyEvaluationLog, Position, Post, PostCategory, PostLike,
+		PostTag, PostTranslation, PostVersion, PostWatch, Role, RoleMetadata,
+		RolePermission, Section, SectionTranslation, Site, SiteSetting, SocialAccount,
+		SocialDistribution, SocialInboxItem, SocialStatsHistory, Tag, TagTranslation,
+		Task, Tenant, User, UserCredential, UserOrgUnit, UserPosition,
+		UserRole []ent.Hook
 	}
 	inters struct {
 		AiChunk, AiConversation, AiDoc, AiKnowledgeBase, AiMessage, AiProvider,
@@ -11460,12 +11747,13 @@ type (
 		InternalMessageCategory, InternalMessageRecipient, Language, LoginAuditLog,
 		LoginPolicy, MediaAsset, MediaVariant, Membership, MembershipOrgUnit,
 		MembershipPosition, MembershipRole, Menu, Navigation, NavigationItem,
-		OperationAuditLog, OrgUnit, Page, PageTranslation, Permission, PermissionApi,
-		PermissionAuditLog, PermissionGroup, PermissionMenu, PermissionPolicy,
-		PolicyEvaluationLog, Position, Post, PostCategory, PostLike, PostTag,
-		PostTranslation, PostWatch, Role, RoleMetadata, RolePermission, Section,
-		SectionTranslation, Site, SiteSetting, SocialAccount, SocialDistribution,
-		SocialInboxItem, SocialStatsHistory, Tag, TagTranslation, Task, Tenant, User,
-		UserCredential, UserOrgUnit, UserPosition, UserRole []ent.Interceptor
+		OperationAuditLog, OrgUnit, Page, PageTranslation, PageVersion, Permission,
+		PermissionApi, PermissionAuditLog, PermissionGroup, PermissionMenu,
+		PermissionPolicy, PolicyEvaluationLog, Position, Post, PostCategory, PostLike,
+		PostTag, PostTranslation, PostVersion, PostWatch, Role, RoleMetadata,
+		RolePermission, Section, SectionTranslation, Site, SiteSetting, SocialAccount,
+		SocialDistribution, SocialInboxItem, SocialStatsHistory, Tag, TagTranslation,
+		Task, Tenant, User, UserCredential, UserOrgUnit, UserPosition,
+		UserRole []ent.Interceptor
 	}
 )

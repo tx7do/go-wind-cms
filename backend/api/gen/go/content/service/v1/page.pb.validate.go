@@ -2189,3 +2189,611 @@ var _ interface {
 	Cause() error
 	ErrorName() string
 } = DeletePageTranslationRequestValidationError{}
+
+// Validate checks the field values on PageVersion with the rules defined in
+// the proto definition for this message. If any rules are violated, the first
+// error encountered is returned, or nil if there are no violations.
+func (m *PageVersion) Validate() error {
+	return m.validate(false)
+}
+
+// ValidateAll checks the field values on PageVersion with the rules defined in
+// the proto definition for this message. If any rules are violated, the
+// result is a list of violation errors wrapped in PageVersionMultiError, or
+// nil if none found.
+func (m *PageVersion) ValidateAll() error {
+	return m.validate(true)
+}
+
+func (m *PageVersion) validate(all bool) error {
+	if m == nil {
+		return nil
+	}
+
+	var errors []error
+
+	if m.Id != nil {
+		// no validation rules for Id
+	}
+
+	if m.PageId != nil {
+		// no validation rules for PageId
+	}
+
+	if m.VersionNumber != nil {
+		// no validation rules for VersionNumber
+	}
+
+	if m.Content != nil {
+		// no validation rules for Content
+	}
+
+	if m.Comment != nil {
+		// no validation rules for Comment
+	}
+
+	if m.CreatedBy != nil {
+		// no validation rules for CreatedBy
+	}
+
+	if m.CreatedAt != nil {
+
+		if all {
+			switch v := interface{}(m.GetCreatedAt()).(type) {
+			case interface{ ValidateAll() error }:
+				if err := v.ValidateAll(); err != nil {
+					errors = append(errors, PageVersionValidationError{
+						field:  "CreatedAt",
+						reason: "embedded message failed validation",
+						cause:  err,
+					})
+				}
+			case interface{ Validate() error }:
+				if err := v.Validate(); err != nil {
+					errors = append(errors, PageVersionValidationError{
+						field:  "CreatedAt",
+						reason: "embedded message failed validation",
+						cause:  err,
+					})
+				}
+			}
+		} else if v, ok := interface{}(m.GetCreatedAt()).(interface{ Validate() error }); ok {
+			if err := v.Validate(); err != nil {
+				return PageVersionValidationError{
+					field:  "CreatedAt",
+					reason: "embedded message failed validation",
+					cause:  err,
+				}
+			}
+		}
+
+	}
+
+	if len(errors) > 0 {
+		return PageVersionMultiError(errors)
+	}
+
+	return nil
+}
+
+// PageVersionMultiError is an error wrapping multiple validation errors
+// returned by PageVersion.ValidateAll() if the designated constraints aren't met.
+type PageVersionMultiError []error
+
+// Error returns a concatenation of all the error messages it wraps.
+func (m PageVersionMultiError) Error() string {
+	msgs := make([]string, 0, len(m))
+	for _, err := range m {
+		msgs = append(msgs, err.Error())
+	}
+	return strings.Join(msgs, "; ")
+}
+
+// AllErrors returns a list of validation violation errors.
+func (m PageVersionMultiError) AllErrors() []error { return m }
+
+// PageVersionValidationError is the validation error returned by
+// PageVersion.Validate if the designated constraints aren't met.
+type PageVersionValidationError struct {
+	field  string
+	reason string
+	cause  error
+	key    bool
+}
+
+// Field function returns field value.
+func (e PageVersionValidationError) Field() string { return e.field }
+
+// Reason function returns reason value.
+func (e PageVersionValidationError) Reason() string { return e.reason }
+
+// Cause function returns cause value.
+func (e PageVersionValidationError) Cause() error { return e.cause }
+
+// Key function returns key value.
+func (e PageVersionValidationError) Key() bool { return e.key }
+
+// ErrorName returns error name.
+func (e PageVersionValidationError) ErrorName() string { return "PageVersionValidationError" }
+
+// Error satisfies the builtin error interface
+func (e PageVersionValidationError) Error() string {
+	cause := ""
+	if e.cause != nil {
+		cause = fmt.Sprintf(" | caused by: %v", e.cause)
+	}
+
+	key := ""
+	if e.key {
+		key = "key for "
+	}
+
+	return fmt.Sprintf(
+		"invalid %sPageVersion.%s: %s%s",
+		key,
+		e.field,
+		e.reason,
+		cause)
+}
+
+var _ error = PageVersionValidationError{}
+
+var _ interface {
+	Field() string
+	Reason() string
+	Key() bool
+	Cause() error
+	ErrorName() string
+} = PageVersionValidationError{}
+
+// Validate checks the field values on ListPageVersionsRequest with the rules
+// defined in the proto definition for this message. If any rules are
+// violated, the first error encountered is returned, or nil if there are no violations.
+func (m *ListPageVersionsRequest) Validate() error {
+	return m.validate(false)
+}
+
+// ValidateAll checks the field values on ListPageVersionsRequest with the
+// rules defined in the proto definition for this message. If any rules are
+// violated, the result is a list of violation errors wrapped in
+// ListPageVersionsRequestMultiError, or nil if none found.
+func (m *ListPageVersionsRequest) ValidateAll() error {
+	return m.validate(true)
+}
+
+func (m *ListPageVersionsRequest) validate(all bool) error {
+	if m == nil {
+		return nil
+	}
+
+	var errors []error
+
+	// no validation rules for PageId
+
+	if len(errors) > 0 {
+		return ListPageVersionsRequestMultiError(errors)
+	}
+
+	return nil
+}
+
+// ListPageVersionsRequestMultiError is an error wrapping multiple validation
+// errors returned by ListPageVersionsRequest.ValidateAll() if the designated
+// constraints aren't met.
+type ListPageVersionsRequestMultiError []error
+
+// Error returns a concatenation of all the error messages it wraps.
+func (m ListPageVersionsRequestMultiError) Error() string {
+	msgs := make([]string, 0, len(m))
+	for _, err := range m {
+		msgs = append(msgs, err.Error())
+	}
+	return strings.Join(msgs, "; ")
+}
+
+// AllErrors returns a list of validation violation errors.
+func (m ListPageVersionsRequestMultiError) AllErrors() []error { return m }
+
+// ListPageVersionsRequestValidationError is the validation error returned by
+// ListPageVersionsRequest.Validate if the designated constraints aren't met.
+type ListPageVersionsRequestValidationError struct {
+	field  string
+	reason string
+	cause  error
+	key    bool
+}
+
+// Field function returns field value.
+func (e ListPageVersionsRequestValidationError) Field() string { return e.field }
+
+// Reason function returns reason value.
+func (e ListPageVersionsRequestValidationError) Reason() string { return e.reason }
+
+// Cause function returns cause value.
+func (e ListPageVersionsRequestValidationError) Cause() error { return e.cause }
+
+// Key function returns key value.
+func (e ListPageVersionsRequestValidationError) Key() bool { return e.key }
+
+// ErrorName returns error name.
+func (e ListPageVersionsRequestValidationError) ErrorName() string {
+	return "ListPageVersionsRequestValidationError"
+}
+
+// Error satisfies the builtin error interface
+func (e ListPageVersionsRequestValidationError) Error() string {
+	cause := ""
+	if e.cause != nil {
+		cause = fmt.Sprintf(" | caused by: %v", e.cause)
+	}
+
+	key := ""
+	if e.key {
+		key = "key for "
+	}
+
+	return fmt.Sprintf(
+		"invalid %sListPageVersionsRequest.%s: %s%s",
+		key,
+		e.field,
+		e.reason,
+		cause)
+}
+
+var _ error = ListPageVersionsRequestValidationError{}
+
+var _ interface {
+	Field() string
+	Reason() string
+	Key() bool
+	Cause() error
+	ErrorName() string
+} = ListPageVersionsRequestValidationError{}
+
+// Validate checks the field values on ListPageVersionsResponse with the rules
+// defined in the proto definition for this message. If any rules are
+// violated, the first error encountered is returned, or nil if there are no violations.
+func (m *ListPageVersionsResponse) Validate() error {
+	return m.validate(false)
+}
+
+// ValidateAll checks the field values on ListPageVersionsResponse with the
+// rules defined in the proto definition for this message. If any rules are
+// violated, the result is a list of violation errors wrapped in
+// ListPageVersionsResponseMultiError, or nil if none found.
+func (m *ListPageVersionsResponse) ValidateAll() error {
+	return m.validate(true)
+}
+
+func (m *ListPageVersionsResponse) validate(all bool) error {
+	if m == nil {
+		return nil
+	}
+
+	var errors []error
+
+	for idx, item := range m.GetItems() {
+		_, _ = idx, item
+
+		if all {
+			switch v := interface{}(item).(type) {
+			case interface{ ValidateAll() error }:
+				if err := v.ValidateAll(); err != nil {
+					errors = append(errors, ListPageVersionsResponseValidationError{
+						field:  fmt.Sprintf("Items[%v]", idx),
+						reason: "embedded message failed validation",
+						cause:  err,
+					})
+				}
+			case interface{ Validate() error }:
+				if err := v.Validate(); err != nil {
+					errors = append(errors, ListPageVersionsResponseValidationError{
+						field:  fmt.Sprintf("Items[%v]", idx),
+						reason: "embedded message failed validation",
+						cause:  err,
+					})
+				}
+			}
+		} else if v, ok := interface{}(item).(interface{ Validate() error }); ok {
+			if err := v.Validate(); err != nil {
+				return ListPageVersionsResponseValidationError{
+					field:  fmt.Sprintf("Items[%v]", idx),
+					reason: "embedded message failed validation",
+					cause:  err,
+				}
+			}
+		}
+
+	}
+
+	// no validation rules for Total
+
+	if len(errors) > 0 {
+		return ListPageVersionsResponseMultiError(errors)
+	}
+
+	return nil
+}
+
+// ListPageVersionsResponseMultiError is an error wrapping multiple validation
+// errors returned by ListPageVersionsResponse.ValidateAll() if the designated
+// constraints aren't met.
+type ListPageVersionsResponseMultiError []error
+
+// Error returns a concatenation of all the error messages it wraps.
+func (m ListPageVersionsResponseMultiError) Error() string {
+	msgs := make([]string, 0, len(m))
+	for _, err := range m {
+		msgs = append(msgs, err.Error())
+	}
+	return strings.Join(msgs, "; ")
+}
+
+// AllErrors returns a list of validation violation errors.
+func (m ListPageVersionsResponseMultiError) AllErrors() []error { return m }
+
+// ListPageVersionsResponseValidationError is the validation error returned by
+// ListPageVersionsResponse.Validate if the designated constraints aren't met.
+type ListPageVersionsResponseValidationError struct {
+	field  string
+	reason string
+	cause  error
+	key    bool
+}
+
+// Field function returns field value.
+func (e ListPageVersionsResponseValidationError) Field() string { return e.field }
+
+// Reason function returns reason value.
+func (e ListPageVersionsResponseValidationError) Reason() string { return e.reason }
+
+// Cause function returns cause value.
+func (e ListPageVersionsResponseValidationError) Cause() error { return e.cause }
+
+// Key function returns key value.
+func (e ListPageVersionsResponseValidationError) Key() bool { return e.key }
+
+// ErrorName returns error name.
+func (e ListPageVersionsResponseValidationError) ErrorName() string {
+	return "ListPageVersionsResponseValidationError"
+}
+
+// Error satisfies the builtin error interface
+func (e ListPageVersionsResponseValidationError) Error() string {
+	cause := ""
+	if e.cause != nil {
+		cause = fmt.Sprintf(" | caused by: %v", e.cause)
+	}
+
+	key := ""
+	if e.key {
+		key = "key for "
+	}
+
+	return fmt.Sprintf(
+		"invalid %sListPageVersionsResponse.%s: %s%s",
+		key,
+		e.field,
+		e.reason,
+		cause)
+}
+
+var _ error = ListPageVersionsResponseValidationError{}
+
+var _ interface {
+	Field() string
+	Reason() string
+	Key() bool
+	Cause() error
+	ErrorName() string
+} = ListPageVersionsResponseValidationError{}
+
+// Validate checks the field values on GetPageVersionRequest with the rules
+// defined in the proto definition for this message. If any rules are
+// violated, the first error encountered is returned, or nil if there are no violations.
+func (m *GetPageVersionRequest) Validate() error {
+	return m.validate(false)
+}
+
+// ValidateAll checks the field values on GetPageVersionRequest with the rules
+// defined in the proto definition for this message. If any rules are
+// violated, the result is a list of violation errors wrapped in
+// GetPageVersionRequestMultiError, or nil if none found.
+func (m *GetPageVersionRequest) ValidateAll() error {
+	return m.validate(true)
+}
+
+func (m *GetPageVersionRequest) validate(all bool) error {
+	if m == nil {
+		return nil
+	}
+
+	var errors []error
+
+	// no validation rules for Id
+
+	if len(errors) > 0 {
+		return GetPageVersionRequestMultiError(errors)
+	}
+
+	return nil
+}
+
+// GetPageVersionRequestMultiError is an error wrapping multiple validation
+// errors returned by GetPageVersionRequest.ValidateAll() if the designated
+// constraints aren't met.
+type GetPageVersionRequestMultiError []error
+
+// Error returns a concatenation of all the error messages it wraps.
+func (m GetPageVersionRequestMultiError) Error() string {
+	msgs := make([]string, 0, len(m))
+	for _, err := range m {
+		msgs = append(msgs, err.Error())
+	}
+	return strings.Join(msgs, "; ")
+}
+
+// AllErrors returns a list of validation violation errors.
+func (m GetPageVersionRequestMultiError) AllErrors() []error { return m }
+
+// GetPageVersionRequestValidationError is the validation error returned by
+// GetPageVersionRequest.Validate if the designated constraints aren't met.
+type GetPageVersionRequestValidationError struct {
+	field  string
+	reason string
+	cause  error
+	key    bool
+}
+
+// Field function returns field value.
+func (e GetPageVersionRequestValidationError) Field() string { return e.field }
+
+// Reason function returns reason value.
+func (e GetPageVersionRequestValidationError) Reason() string { return e.reason }
+
+// Cause function returns cause value.
+func (e GetPageVersionRequestValidationError) Cause() error { return e.cause }
+
+// Key function returns key value.
+func (e GetPageVersionRequestValidationError) Key() bool { return e.key }
+
+// ErrorName returns error name.
+func (e GetPageVersionRequestValidationError) ErrorName() string {
+	return "GetPageVersionRequestValidationError"
+}
+
+// Error satisfies the builtin error interface
+func (e GetPageVersionRequestValidationError) Error() string {
+	cause := ""
+	if e.cause != nil {
+		cause = fmt.Sprintf(" | caused by: %v", e.cause)
+	}
+
+	key := ""
+	if e.key {
+		key = "key for "
+	}
+
+	return fmt.Sprintf(
+		"invalid %sGetPageVersionRequest.%s: %s%s",
+		key,
+		e.field,
+		e.reason,
+		cause)
+}
+
+var _ error = GetPageVersionRequestValidationError{}
+
+var _ interface {
+	Field() string
+	Reason() string
+	Key() bool
+	Cause() error
+	ErrorName() string
+} = GetPageVersionRequestValidationError{}
+
+// Validate checks the field values on RestorePageVersionRequest with the rules
+// defined in the proto definition for this message. If any rules are
+// violated, the first error encountered is returned, or nil if there are no violations.
+func (m *RestorePageVersionRequest) Validate() error {
+	return m.validate(false)
+}
+
+// ValidateAll checks the field values on RestorePageVersionRequest with the
+// rules defined in the proto definition for this message. If any rules are
+// violated, the result is a list of violation errors wrapped in
+// RestorePageVersionRequestMultiError, or nil if none found.
+func (m *RestorePageVersionRequest) ValidateAll() error {
+	return m.validate(true)
+}
+
+func (m *RestorePageVersionRequest) validate(all bool) error {
+	if m == nil {
+		return nil
+	}
+
+	var errors []error
+
+	// no validation rules for PageId
+
+	// no validation rules for VersionId
+
+	if len(errors) > 0 {
+		return RestorePageVersionRequestMultiError(errors)
+	}
+
+	return nil
+}
+
+// RestorePageVersionRequestMultiError is an error wrapping multiple validation
+// errors returned by RestorePageVersionRequest.ValidateAll() if the
+// designated constraints aren't met.
+type RestorePageVersionRequestMultiError []error
+
+// Error returns a concatenation of all the error messages it wraps.
+func (m RestorePageVersionRequestMultiError) Error() string {
+	msgs := make([]string, 0, len(m))
+	for _, err := range m {
+		msgs = append(msgs, err.Error())
+	}
+	return strings.Join(msgs, "; ")
+}
+
+// AllErrors returns a list of validation violation errors.
+func (m RestorePageVersionRequestMultiError) AllErrors() []error { return m }
+
+// RestorePageVersionRequestValidationError is the validation error returned by
+// RestorePageVersionRequest.Validate if the designated constraints aren't met.
+type RestorePageVersionRequestValidationError struct {
+	field  string
+	reason string
+	cause  error
+	key    bool
+}
+
+// Field function returns field value.
+func (e RestorePageVersionRequestValidationError) Field() string { return e.field }
+
+// Reason function returns reason value.
+func (e RestorePageVersionRequestValidationError) Reason() string { return e.reason }
+
+// Cause function returns cause value.
+func (e RestorePageVersionRequestValidationError) Cause() error { return e.cause }
+
+// Key function returns key value.
+func (e RestorePageVersionRequestValidationError) Key() bool { return e.key }
+
+// ErrorName returns error name.
+func (e RestorePageVersionRequestValidationError) ErrorName() string {
+	return "RestorePageVersionRequestValidationError"
+}
+
+// Error satisfies the builtin error interface
+func (e RestorePageVersionRequestValidationError) Error() string {
+	cause := ""
+	if e.cause != nil {
+		cause = fmt.Sprintf(" | caused by: %v", e.cause)
+	}
+
+	key := ""
+	if e.key {
+		key = "key for "
+	}
+
+	return fmt.Sprintf(
+		"invalid %sRestorePageVersionRequest.%s: %s%s",
+		key,
+		e.field,
+		e.reason,
+		cause)
+}
+
+var _ error = RestorePageVersionRequestValidationError{}
+
+var _ interface {
+	Field() string
+	Reason() string
+	Key() bool
+	Cause() error
+	ErrorName() string
+} = RestorePageVersionRequestValidationError{}

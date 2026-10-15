@@ -512,6 +512,18 @@ func (f PageTranslationFunc) Mutate(ctx context.Context, m ent.Mutation) (ent.Va
 	return nil, fmt.Errorf("unexpected mutation type %T. expect *ent.PageTranslationMutation", m)
 }
 
+// The PageVersionFunc type is an adapter to allow the use of ordinary
+// function as PageVersion mutator.
+type PageVersionFunc func(context.Context, *ent.PageVersionMutation) (ent.Value, error)
+
+// Mutate calls f(ctx, m).
+func (f PageVersionFunc) Mutate(ctx context.Context, m ent.Mutation) (ent.Value, error) {
+	if mv, ok := m.(*ent.PageVersionMutation); ok {
+		return f(ctx, mv)
+	}
+	return nil, fmt.Errorf("unexpected mutation type %T. expect *ent.PageVersionMutation", m)
+}
+
 // The PermissionFunc type is an adapter to allow the use of ordinary
 // function as Permission mutator.
 type PermissionFunc func(context.Context, *ent.PermissionMutation) (ent.Value, error)
@@ -666,6 +678,18 @@ func (f PostTranslationFunc) Mutate(ctx context.Context, m ent.Mutation) (ent.Va
 		return f(ctx, mv)
 	}
 	return nil, fmt.Errorf("unexpected mutation type %T. expect *ent.PostTranslationMutation", m)
+}
+
+// The PostVersionFunc type is an adapter to allow the use of ordinary
+// function as PostVersion mutator.
+type PostVersionFunc func(context.Context, *ent.PostVersionMutation) (ent.Value, error)
+
+// Mutate calls f(ctx, m).
+func (f PostVersionFunc) Mutate(ctx context.Context, m ent.Mutation) (ent.Value, error) {
+	if mv, ok := m.(*ent.PostVersionMutation); ok {
+		return f(ctx, mv)
+	}
+	return nil, fmt.Errorf("unexpected mutation type %T. expect *ent.PostVersionMutation", m)
 }
 
 // The PostWatchFunc type is an adapter to allow the use of ordinary

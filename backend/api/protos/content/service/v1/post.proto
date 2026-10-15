@@ -49,6 +49,15 @@ service PostService {
 
   // 删除翻译
   rpc DeleteTranslation(DeletePostTranslationRequest) returns (google.protobuf.Empty) {}
+
+  // 列出帖子版本（按版本号倒序）
+  rpc ListVersions (ListPostVersionsRequest) returns (ListPostVersionsResponse) {}
+
+  // 获取帖子版本详情
+  rpc GetVersion (GetPostVersionRequest) returns (PostVersion) {}
+
+  // 恢复帖子到指定版本（恢复动作本身会生成一个新版本）
+  rpc RestoreVersion (RestorePostVersionRequest) returns (Post) {}
 }
 
 // 帖子
@@ -426,4 +435,69 @@ message SearchPostHit {
 
   // 标题（来自翻译，用于搜索结果展示）
   string title = 3 [json_name = "title"];
+}
+
+// 帖子版本（内容快照）
+message PostVersion {
+  optional uint32 id = 1 [
+    json_name = "id",
+    (gnostic.openapi.v3.property) = {description: "版本记录ID"}
+  ]; // 版本记录ID
+
+  optional uint32 post_id = 2 [
+    json_name = "postId",
+    (gnostic.openapi.v3.property) = {description: "关联的帖子ID"}
+  ]; // 关联的帖子ID
+
+  optional uint32 version_number = 3 [
+    json_name = "versionNumber",
+    (gnostic.openapi.v3.property) = {description: "版本号（每帖递增，1 起）"}
+  ]; // 版本号
+
+  optional string content = 4 [
+    json_name = "content",
+    (gnostic.openapi.v3.property) = {description: "快照 JSON（Post DTO 全量，不含 password_hash）"}
+  ]; // 快照 JSON
+
+  optional string comment = 5 [
+    json_name = "comment",
+    (gnostic.openapi.v3.property) = {description: "版本说明（自动保存为空）"}
+  ]; // 版本说明
+
+  optional uint32 created_by = 100 [json_name = "createdBy", (gnostic.openapi.v3.property) = {description: "创建者用户ID"}]; // 创建者用户ID
+  optional google.protobuf.Timestamp created_at = 200 [json_name = "createdAt", (gnostic.openapi.v3.property) = {description: "创建时间"}]; // 创建时间
+}
+
+// 请求 - 列出帖子版本
+message ListPostVersionsRequest {
+  uint32 post_id = 1 [
+    json_name = "postId",
+    (gnostic.openapi.v3.property) = {description: "帖子ID"}
+  ];
+}
+
+// 回应 - 帖子版本列表（按版本号倒序）
+message ListPostVersionsResponse {
+  repeated PostVersion items = 1 [json_name = "items"];
+  uint64 total = 2;
+}
+
+// 请求 - 帖子版本详情
+message GetPostVersionRequest {
+  uint32 id = 1 [
+    (gnostic.openapi.v3.property) = {description: "版本记录ID"}
+  ];
+}
+
+// 请求 - 恢复帖子版本
+message RestorePostVersionRequest {
+  uint32 post_id = 1 [
+    json_name = "postId",
+    (gnostic.openapi.v3.property) = {description: "帖子ID"}
+  ];
+
+  uint32 version_id = 2 [
+    json_name = "versionId",
+    (gnostic.openapi.v3.property) = {description: "要恢复到的版本记录ID"}
+  ];
 }

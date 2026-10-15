@@ -46,6 +46,11 @@ func (s *PageService) List(ctx context.Context, req *paginationV1.PagingRequest)
 }
 
 func (s *PageService) Get(ctx context.Context, req *contentV1.GetPageRequest) (*contentV1.Page, error) {
+	// HTTP 路径变量 id 恒被绑定（生成客户端以 /pages/{id} 发请求），0 表示"未提供"。
+	// 此时若带 slug 查询串，则改按 slug 解析，支撑 /page/detail?slug=about 这类前台路由。
+	if req.GetId() == 0 && req.GetSlug() != "" {
+		req.QueryBy = &contentV1.GetPageRequest_Slug{Slug: req.GetSlug()}
+	}
 	resp, err := s.pageServiceClient.Get(ctx, req)
 	if err != nil {
 		return nil, err

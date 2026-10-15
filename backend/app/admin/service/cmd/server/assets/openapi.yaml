@@ -4570,6 +4570,26 @@ paths:
                         application/json:
                             schema:
                                 $ref: '#/components/schemas/content.service.v1.Page'
+    /admin/v1/pages/versions/{id}:
+        get:
+            tags:
+                - PageService
+            description: 获取页面版本详情
+            operationId: PageService_GetVersion
+            parameters:
+                - name: id
+                  in: path
+                  required: true
+                  schema:
+                    type: integer
+                    format: uint32
+            responses:
+                "200":
+                    description: OK
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/content.service.v1.PageVersion'
     /admin/v1/pages/{id}:
         get:
             tags:
@@ -4644,6 +4664,58 @@ paths:
                 "200":
                     description: OK
                     content: {}
+    /admin/v1/pages/{pageId}/versions:
+        get:
+            tags:
+                - PageService
+            description: 列出页面版本（按版本号倒序）
+            operationId: PageService_ListVersions
+            parameters:
+                - name: pageId
+                  in: path
+                  required: true
+                  schema:
+                    type: integer
+                    format: uint32
+            responses:
+                "200":
+                    description: OK
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/content.service.v1.ListPageVersionsResponse'
+    /admin/v1/pages/{pageId}/versions/{versionId}/restore:
+        post:
+            tags:
+                - PageService
+            description: 恢复页面到指定版本（恢复动作本身会生成一个新版本）
+            operationId: PageService_RestoreVersion
+            parameters:
+                - name: pageId
+                  in: path
+                  required: true
+                  schema:
+                    type: integer
+                    format: uint32
+                - name: versionId
+                  in: path
+                  required: true
+                  schema:
+                    type: integer
+                    format: uint32
+            requestBody:
+                content:
+                    application/json:
+                        schema:
+                            $ref: '#/components/schemas/content.service.v1.RestorePageVersionRequest'
+                required: true
+            responses:
+                "200":
+                    description: OK
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/content.service.v1.Page'
     /admin/v1/perm-codes:
         get:
             tags:
@@ -5462,6 +5534,26 @@ paths:
                         application/json:
                             schema:
                                 $ref: '#/components/schemas/content.service.v1.Post'
+    /admin/v1/posts/versions/{id}:
+        get:
+            tags:
+                - PostService
+            description: 获取帖子版本详情
+            operationId: PostService_GetVersion
+            parameters:
+                - name: id
+                  in: path
+                  required: true
+                  schema:
+                    type: integer
+                    format: uint32
+            responses:
+                "200":
+                    description: OK
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/content.service.v1.PostVersion'
     /admin/v1/posts/{id}:
         get:
             tags:
@@ -5561,6 +5653,58 @@ paths:
                         application/json:
                             schema:
                                 $ref: '#/components/schemas/content.service.v1.PostTranslationExistsResponse'
+    /admin/v1/posts/{postId}/versions:
+        get:
+            tags:
+                - PostService
+            description: 列出帖子版本（按版本号倒序）
+            operationId: PostService_ListVersions
+            parameters:
+                - name: postId
+                  in: path
+                  required: true
+                  schema:
+                    type: integer
+                    format: uint32
+            responses:
+                "200":
+                    description: OK
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/content.service.v1.ListPostVersionsResponse'
+    /admin/v1/posts/{postId}/versions/{versionId}/restore:
+        post:
+            tags:
+                - PostService
+            description: 恢复帖子到指定版本（恢复动作本身会生成一个新版本）
+            operationId: PostService_RestoreVersion
+            parameters:
+                - name: postId
+                  in: path
+                  required: true
+                  schema:
+                    type: integer
+                    format: uint32
+                - name: versionId
+                  in: path
+                  required: true
+                  schema:
+                    type: integer
+                    format: uint32
+            requestBody:
+                content:
+                    application/json:
+                        schema:
+                            $ref: '#/components/schemas/content.service.v1.RestorePostVersionRequest'
+                required: true
+            responses:
+                "200":
+                    description: OK
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/content.service.v1.Post'
     /admin/v1/refresh-token:
         post:
             tags:
@@ -9830,6 +9974,16 @@ components:
                 total:
                     type: string
             description: 回应 - 页面列表
+        content.service.v1.ListPageVersionsResponse:
+            type: object
+            properties:
+                items:
+                    type: array
+                    items:
+                        $ref: '#/components/schemas/content.service.v1.PageVersion'
+                total:
+                    type: string
+            description: 回应 - 页面版本列表（按版本号倒序）
         content.service.v1.ListPostResponse:
             type: object
             properties:
@@ -9840,6 +9994,16 @@ components:
                 total:
                     type: string
             description: 回应 - 帖子列表
+        content.service.v1.ListPostVersionsResponse:
+            type: object
+            properties:
+                items:
+                    type: array
+                    items:
+                        $ref: '#/components/schemas/content.service.v1.PostVersion'
+                total:
+                    type: string
+            description: 回应 - 帖子版本列表（按版本号倒序）
         content.service.v1.ListTagResponse:
             type: object
             properties:
@@ -10040,6 +10204,36 @@ components:
                     description: 删除时间
                     format: date-time
             description: 页面翻译
+        content.service.v1.PageVersion:
+            type: object
+            properties:
+                id:
+                    type: integer
+                    description: 版本记录ID
+                    format: uint32
+                pageId:
+                    type: integer
+                    description: 关联的页面ID
+                    format: uint32
+                versionNumber:
+                    type: integer
+                    description: 版本号（每页递增，1 起）
+                    format: uint32
+                content:
+                    type: string
+                    description: 快照 JSON（Page DTO 全量，含 translations/sections）
+                comment:
+                    type: string
+                    description: 版本说明（自动保存为空）
+                createdBy:
+                    type: integer
+                    description: 创建者用户ID
+                    format: uint32
+                createdAt:
+                    type: string
+                    description: 创建时间
+                    format: date-time
+            description: 页面版本（内容快照）
         content.service.v1.Post:
             type: object
             properties:
@@ -10227,6 +10421,36 @@ components:
                 exists:
                     type: boolean
                     description: 翻译是否存在
+        content.service.v1.PostVersion:
+            type: object
+            properties:
+                id:
+                    type: integer
+                    description: 版本记录ID
+                    format: uint32
+                postId:
+                    type: integer
+                    description: 关联的帖子ID
+                    format: uint32
+                versionNumber:
+                    type: integer
+                    description: 版本号（每帖递增，1 起）
+                    format: uint32
+                content:
+                    type: string
+                    description: 快照 JSON（Post DTO 全量，不含 password_hash）
+                comment:
+                    type: string
+                    description: 版本说明（自动保存为空）
+                createdBy:
+                    type: integer
+                    description: 创建者用户ID
+                    format: uint32
+                createdAt:
+                    type: string
+                    description: 创建时间
+                    format: date-time
+            description: 帖子版本（内容快照）
         content.service.v1.RelationConfig:
             type: object
             properties:
@@ -10241,6 +10465,30 @@ components:
                     description: 可选：限定目标 post 所属分类
                     format: uint32
             description: relation 类型字段的引用配置
+        content.service.v1.RestorePageVersionRequest:
+            type: object
+            properties:
+                pageId:
+                    type: integer
+                    description: 页面ID
+                    format: uint32
+                versionId:
+                    type: integer
+                    description: 要恢复到的版本记录ID
+                    format: uint32
+            description: 请求 - 恢复页面版本
+        content.service.v1.RestorePostVersionRequest:
+            type: object
+            properties:
+                postId:
+                    type: integer
+                    description: 帖子ID
+                    format: uint32
+                versionId:
+                    type: integer
+                    description: 要恢复到的版本记录ID
+                    format: uint32
+            description: 请求 - 恢复帖子版本
         content.service.v1.Section:
             type: object
             properties:

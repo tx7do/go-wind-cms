@@ -13,6 +13,7 @@ import {
   CheckOutlined,
   CloseOutlined,
   DownOutlined,
+  HistoryOutlined,
   TranslationOutlined,
   UpOutlined,
 } from '@ant-design/icons';
@@ -22,6 +23,7 @@ import { useTranslation } from 'react-i18next';
 import { apiClient } from '@/api/client';
 import { PaginationQuery } from '@/core';
 import AiGenerateButton from '@/components/common/AiGenerateButton';
+import VersionHistoryDrawer from '@/components/version/VersionHistoryDrawer';
 import ContentContainer from '@/layouts/components/PageContainer/ContentContainer';
 import { Editor, EditorType } from '@/components/common/Editor';
 import {
@@ -117,6 +119,7 @@ const PageEditPage = () => {
   const [lang, setLang] = useState(initLang);
   const [formData, setFormData] = useState<PageEditProps>(() => emptyForm(initLang));
   const [languageOptions, setLanguageOptions] = useState<LanguageOption[]>([]);
+  const [versionsOpen, setVersionsOpen] = useState(false);
   const [needTranslate, setNeedTranslate] = useState(false);
   const [saving, setSaving] = useState(false);
   const [contentModelOptions, setContentModelOptions] = useState<
@@ -852,9 +855,33 @@ const PageEditPage = () => {
             <Button type="primary" danger loading={saving} onClick={handlePublish}>
               {t('publish')}
             </Button>
+            <Button
+              icon={<HistoryOutlined />}
+              disabled={!pageId}
+              title={pageId ? undefined : t('versionNeedSave')}
+              onClick={() => setVersionsOpen(true)}
+            >
+              {t('versionHistory')}
+            </Button>
           </Space>
         </div>
       </div>
+
+      {/* 版本历史：页面以区块整体快照恢复 */}
+      <VersionHistoryDrawer
+        open={versionsOpen}
+        onClose={() => setVersionsOpen(false)}
+        kind="page"
+        targetId={pageId}
+        lang={lang}
+        currentContent=""
+        onRestored={() => {
+          clearDraft(lang);
+          fetchPage(lang).catch((error) => {
+            console.error('Refetch page after restore failed:', error);
+          });
+        }}
+      />
     </ContentContainer>
   );
 };

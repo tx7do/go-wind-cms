@@ -94,5 +94,7 @@
     "SECTION_TYPE_FORM": "表单",
     "SECTION_TYPE_CAROUSEL": "轮播",
     "SECTION_TYPE_CUSTOM": "自定义"
-  }
+  },
+  "versionHistory": "版本历史",
+  "versionNeedSave": "保存后可用"
 }

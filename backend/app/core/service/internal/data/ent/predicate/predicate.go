@@ -132,6 +132,9 @@ type Page func(*sql.Selector)
 // PageTranslation is the predicate function for pagetranslation builders.
 type PageTranslation func(*sql.Selector)
 
+// PageVersion is the predicate function for pageversion builders.
+type PageVersion func(*sql.Selector)
+
 // Permission is the predicate function for permission builders.
 type Permission func(*sql.Selector)
 
@@ -170,6 +173,9 @@ type PostTag func(*sql.Selector)
 
 // PostTranslation is the predicate function for posttranslation builders.
 type PostTranslation func(*sql.Selector)
+
+// PostVersion is the predicate function for postversion builders.
+type PostVersion func(*sql.Selector)
 
 // PostWatch is the predicate function for postwatch builders.
 type PostWatch func(*sql.Selector)

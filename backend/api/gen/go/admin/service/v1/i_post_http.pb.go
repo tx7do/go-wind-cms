@@ -25,7 +25,10 @@ const _ = http.SupportPackageIsVersion1
 const OperationPostServiceCreate = "/admin.service.v1.PostService/Create"
 const OperationPostServiceDelete = "/admin.service.v1.PostService/Delete"
 const OperationPostServiceGet = "/admin.service.v1.PostService/Get"
+const OperationPostServiceGetVersion = "/admin.service.v1.PostService/GetVersion"
 const OperationPostServiceList = "/admin.service.v1.PostService/List"
+const OperationPostServiceListVersions = "/admin.service.v1.PostService/ListVersions"
+const OperationPostServiceRestoreVersion = "/admin.service.v1.PostService/RestoreVersion"
 const OperationPostServiceTranslationExists = "/admin.service.v1.PostService/TranslationExists"
 const OperationPostServiceUpdate = "/admin.service.v1.PostService/Update"
 
@@ -36,8 +39,14 @@ type PostServiceHTTPServer interface {
 	Delete(context.Context, *v11.DeletePostRequest) (*emptypb.Empty, error)
 	// Get 获取帖子数据
 	Get(context.Context, *v11.GetPostRequest) (*v11.Post, error)
+	// GetVersion 获取帖子版本详情
+	GetVersion(context.Context, *v11.GetPostVersionRequest) (*v11.PostVersion, error)
 	// List 获取帖子列表
 	List(context.Context, *v1.PagingRequest) (*v11.ListPostResponse, error)
+	// ListVersions 列出帖子版本（按版本号倒序）
+	ListVersions(context.Context, *v11.ListPostVersionsRequest) (*v11.ListPostVersionsResponse, error)
+	// RestoreVersion 恢复帖子到指定版本（恢复动作本身会生成一个新版本）
+	RestoreVersion(context.Context, *v11.RestorePostVersionRequest) (*v11.Post, error)
 	// TranslationExists 检查翻译是否存在
 	TranslationExists(context.Context, *v11.PostTranslationExistsRequest) (*v11.PostTranslationExistsResponse, error)
 	// Update 更新帖子
@@ -52,6 +61,9 @@ func RegisterPostServiceHTTPServer(s *http.Server, srv PostServiceHTTPServer) {
 	r.PUT("/admin/v1/posts/{id}", _PostService_Update22_HTTP_Handler(srv))
 	r.DELETE("/admin/v1/posts/{id}", _PostService_Delete23_HTTP_Handler(srv))
 	r.GET("/admin/v1/posts/{post_id}/translations/{language_code}", _PostService_TranslationExists0_HTTP_Handler(srv))
+	r.GET("/admin/v1/posts/{post_id}/versions", _PostService_ListVersions1_HTTP_Handler(srv))
+	r.GET("/admin/v1/posts/versions/{id}", _PostService_GetVersion1_HTTP_Handler(srv))
+	r.POST("/admin/v1/posts/{post_id}/versions/{version_id}/restore", _PostService_RestoreVersion1_HTTP_Handler(srv))
 }
 
 func _PostService_List30_HTTP_Handler(srv PostServiceHTTPServer) func(ctx http.Context) error {
@@ -186,6 +198,75 @@ func _PostService_TranslationExists0_HTTP_Handler(srv PostServiceHTTPServer) fun
 	}
 }
 
+func _PostService_ListVersions1_HTTP_Handler(srv PostServiceHTTPServer) func(ctx http.Context) error {
+	return func(ctx http.Context) error {
+		var in v11.ListPostVersionsRequest
+		if err := ctx.BindQuery(&in); err != nil {
+			return err
+		}
+		if err := ctx.BindVars(&in); err != nil {
+			return err
+		}
+		http.SetOperation(ctx, OperationPostServiceListVersions)
+		h := ctx.Middleware(func(ctx context.Context, req interface{}) (interface{}, error) {
+			return srv.ListVersions(ctx, req.(*v11.ListPostVersionsRequest))
+		})
+		out, err := h(ctx, &in)
+		if err != nil {
+			return err
+		}
+		reply := out.(*v11.ListPostVersionsResponse)
+		return ctx.Result(200, reply)
+	}
+}
+
+func _PostService_GetVersion1_HTTP_Handler(srv PostServiceHTTPServer) func(ctx http.Context) error {
+	return func(ctx http.Context) error {
+		var in v11.GetPostVersionRequest
+		if err := ctx.BindQuery(&in); err != nil {
+			return err
+		}
+		if err := ctx.BindVars(&in); err != nil {
+			return err
+		}
+		http.SetOperation(ctx, OperationPostServiceGetVersion)
+		h := ctx.Middleware(func(ctx context.Context, req interface{}) (interface{}, error) {
+			return srv.GetVersion(ctx, req.(*v11.GetPostVersionRequest))
+		})
+		out, err := h(ctx, &in)
+		if err != nil {
+			return err
+		}
+		reply := out.(*v11.PostVersion)
+		return ctx.Result(200, reply)
+	}
+}
+
+func _PostService_RestoreVersion1_HTTP_Handler(srv PostServiceHTTPServer) func(ctx http.Context) error {
+	return func(ctx http.Context) error {
+		var in v11.RestorePostVersionRequest
+		if err := ctx.Bind(&in); err != nil {
+			return err
+		}
+		if err := ctx.BindQuery(&in); err != nil {
+			return err
+		}
+		if err := ctx.BindVars(&in); err != nil {
+			return err
+		}
+		http.SetOperation(ctx, OperationPostServiceRestoreVersion)
+		h := ctx.Middleware(func(ctx context.Context, req interface{}) (interface{}, error) {
+			return srv.RestoreVersion(ctx, req.(*v11.RestorePostVersionRequest))
+		})
+		out, err := h(ctx, &in)
+		if err != nil {
+			return err
+		}
+		reply := out.(*v11.Post)
+		return ctx.Result(200, reply)
+	}
+}
+
 type PostServiceHTTPClient interface {
 	// Create 创建帖子
 	Create(ctx context.Context, req *v11.CreatePostRequest, opts ...http.CallOption) (rsp *v11.Post, err error)
@@ -193,8 +274,14 @@ type PostServiceHTTPClient interface {
 	Delete(ctx context.Context, req *v11.DeletePostRequest, opts ...http.CallOption) (rsp *emptypb.Empty, err error)
 	// Get 获取帖子数据
 	Get(ctx context.Context, req *v11.GetPostRequest, opts ...http.CallOption) (rsp *v11.Post, err error)
+	// GetVersion 获取帖子版本详情
+	GetVersion(ctx context.Context, req *v11.GetPostVersionRequest, opts ...http.CallOption) (rsp *v11.PostVersion, err error)
 	// List 获取帖子列表
 	List(ctx context.Context, req *v1.PagingRequest, opts ...http.CallOption) (rsp *v11.ListPostResponse, err error)
+	// ListVersions 列出帖子版本（按版本号倒序）
+	ListVersions(ctx context.Context, req *v11.ListPostVersionsRequest, opts ...http.CallOption) (rsp *v11.ListPostVersionsResponse, err error)
+	// RestoreVersion 恢复帖子到指定版本（恢复动作本身会生成一个新版本）
+	RestoreVersion(ctx context.Context, req *v11.RestorePostVersionRequest, opts ...http.CallOption) (rsp *v11.Post, err error)
 	// TranslationExists 检查翻译是否存在
 	TranslationExists(ctx context.Context, req *v11.PostTranslationExistsRequest, opts ...http.CallOption) (rsp *v11.PostTranslationExistsResponse, err error)
 	// Update 更新帖子
@@ -251,6 +338,20 @@ func (c *PostServiceHTTPClientImpl) Get(ctx context.Context, in *v11.GetPostRequ
 	return &out, nil
 }
 
+// GetVersion 获取帖子版本详情
+func (c *PostServiceHTTPClientImpl) GetVersion(ctx context.Context, in *v11.GetPostVersionRequest, opts ...http.CallOption) (*v11.PostVersion, error) {
+	var out v11.PostVersion
+	pattern := "/admin/v1/posts/versions/{id}"
+	path := binding.EncodeURL(pattern, in, true)
+	opts = append(opts, http.Operation(OperationPostServiceGetVersion))
+	opts = append(opts, http.PathTemplate(pattern))
+	err := c.cc.Invoke(ctx, "GET", path, nil, &out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return &out, nil
+}
+
 // List 获取帖子列表
 func (c *PostServiceHTTPClientImpl) List(ctx context.Context, in *v1.PagingRequest, opts ...http.CallOption) (*v11.ListPostResponse, error) {
 	var out v11.ListPostResponse
@@ -259,6 +360,34 @@ func (c *PostServiceHTTPClientImpl) List(ctx context.Context, in *v1.PagingReque
 	opts = append(opts, http.Operation(OperationPostServiceList))
 	opts = append(opts, http.PathTemplate(pattern))
 	err := c.cc.Invoke(ctx, "GET", path, nil, &out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return &out, nil
+}
+
+// ListVersions 列出帖子版本（按版本号倒序）
+func (c *PostServiceHTTPClientImpl) ListVersions(ctx context.Context, in *v11.ListPostVersionsRequest, opts ...http.CallOption) (*v11.ListPostVersionsResponse, error) {
+	var out v11.ListPostVersionsResponse
+	pattern := "/admin/v1/posts/{post_id}/versions"
+	path := binding.EncodeURL(pattern, in, true)
+	opts = append(opts, http.Operation(OperationPostServiceListVersions))
+	opts = append(opts, http.PathTemplate(pattern))
+	err := c.cc.Invoke(ctx, "GET", path, nil, &out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return &out, nil
+}
+
+// RestoreVersion 恢复帖子到指定版本（恢复动作本身会生成一个新版本）
+func (c *PostServiceHTTPClientImpl) RestoreVersion(ctx context.Context, in *v11.RestorePostVersionRequest, opts ...http.CallOption) (*v11.Post, error) {
+	var out v11.Post
+	pattern := "/admin/v1/posts/{post_id}/versions/{version_id}/restore"
+	path := binding.EncodeURL(pattern, in, false)
+	opts = append(opts, http.Operation(OperationPostServiceRestoreVersion))
+	opts = append(opts, http.PathTemplate(pattern))
+	err := c.cc.Invoke(ctx, "POST", path, in, &out, opts...)
 	if err != nil {
 		return nil, err
 	}

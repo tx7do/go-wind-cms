@@ -2500,3 +2500,611 @@ var _ interface {
 	Cause() error
 	ErrorName() string
 } = SearchPostHitValidationError{}
+
+// Validate checks the field values on PostVersion with the rules defined in
+// the proto definition for this message. If any rules are violated, the first
+// error encountered is returned, or nil if there are no violations.
+func (m *PostVersion) Validate() error {
+	return m.validate(false)
+}
+
+// ValidateAll checks the field values on PostVersion with the rules defined in
+// the proto definition for this message. If any rules are violated, the
+// result is a list of violation errors wrapped in PostVersionMultiError, or
+// nil if none found.
+func (m *PostVersion) ValidateAll() error {
+	return m.validate(true)
+}
+
+func (m *PostVersion) validate(all bool) error {
+	if m == nil {
+		return nil
+	}
+
+	var errors []error
+
+	if m.Id != nil {
+		// no validation rules for Id
+	}
+
+	if m.PostId != nil {
+		// no validation rules for PostId
+	}
+
+	if m.VersionNumber != nil {
+		// no validation rules for VersionNumber
+	}
+
+	if m.Content != nil {
+		// no validation rules for Content
+	}
+
+	if m.Comment != nil {
+		// no validation rules for Comment
+	}
+
+	if m.CreatedBy != nil {
+		// no validation rules for CreatedBy
+	}
+
+	if m.CreatedAt != nil {
+
+		if all {
+			switch v := interface{}(m.GetCreatedAt()).(type) {
+			case interface{ ValidateAll() error }:
+				if err := v.ValidateAll(); err != nil {
+					errors = append(errors, PostVersionValidationError{
+						field:  "CreatedAt",
+						reason: "embedded message failed validation",
+						cause:  err,
+					})
+				}
+			case interface{ Validate() error }:
+				if err := v.Validate(); err != nil {
+					errors = append(errors, PostVersionValidationError{
+						field:  "CreatedAt",
+						reason: "embedded message failed validation",
+						cause:  err,
+					})
+				}
+			}
+		} else if v, ok := interface{}(m.GetCreatedAt()).(interface{ Validate() error }); ok {
+			if err := v.Validate(); err != nil {
+				return PostVersionValidationError{
+					field:  "CreatedAt",
+					reason: "embedded message failed validation",
+					cause:  err,
+				}
+			}
+		}
+
+	}
+
+	if len(errors) > 0 {
+		return PostVersionMultiError(errors)
+	}
+
+	return nil
+}
+
+// PostVersionMultiError is an error wrapping multiple validation errors
+// returned by PostVersion.ValidateAll() if the designated constraints aren't met.
+type PostVersionMultiError []error
+
+// Error returns a concatenation of all the error messages it wraps.
+func (m PostVersionMultiError) Error() string {
+	msgs := make([]string, 0, len(m))
+	for _, err := range m {
+		msgs = append(msgs, err.Error())
+	}
+	return strings.Join(msgs, "; ")
+}
+
+// AllErrors returns a list of validation violation errors.
+func (m PostVersionMultiError) AllErrors() []error { return m }
+
+// PostVersionValidationError is the validation error returned by
+// PostVersion.Validate if the designated constraints aren't met.
+type PostVersionValidationError struct {
+	field  string
+	reason string
+	cause  error
+	key    bool
+}
+
+// Field function returns field value.
+func (e PostVersionValidationError) Field() string { return e.field }
+
+// Reason function returns reason value.
+func (e PostVersionValidationError) Reason() string { return e.reason }
+
+// Cause function returns cause value.
+func (e PostVersionValidationError) Cause() error { return e.cause }
+
+// Key function returns key value.
+func (e PostVersionValidationError) Key() bool { return e.key }
+
+// ErrorName returns error name.
+func (e PostVersionValidationError) ErrorName() string { return "PostVersionValidationError" }
+
+// Error satisfies the builtin error interface
+func (e PostVersionValidationError) Error() string {
+	cause := ""
+	if e.cause != nil {
+		cause = fmt.Sprintf(" | caused by: %v", e.cause)
+	}
+
+	key := ""
+	if e.key {
+		key = "key for "
+	}
+
+	return fmt.Sprintf(
+		"invalid %sPostVersion.%s: %s%s",
+		key,
+		e.field,
+		e.reason,
+		cause)
+}
+
+var _ error = PostVersionValidationError{}
+
+var _ interface {
+	Field() string
+	Reason() string
+	Key() bool
+	Cause() error
+	ErrorName() string
+} = PostVersionValidationError{}
+
+// Validate checks the field values on ListPostVersionsRequest with the rules
+// defined in the proto definition for this message. If any rules are
+// violated, the first error encountered is returned, or nil if there are no violations.
+func (m *ListPostVersionsRequest) Validate() error {
+	return m.validate(false)
+}
+
+// ValidateAll checks the field values on ListPostVersionsRequest with the
+// rules defined in the proto definition for this message. If any rules are
+// violated, the result is a list of violation errors wrapped in
+// ListPostVersionsRequestMultiError, or nil if none found.
+func (m *ListPostVersionsRequest) ValidateAll() error {
+	return m.validate(true)
+}
+
+func (m *ListPostVersionsRequest) validate(all bool) error {
+	if m == nil {
+		return nil
+	}
+
+	var errors []error
+
+	// no validation rules for PostId
+
+	if len(errors) > 0 {
+		return ListPostVersionsRequestMultiError(errors)
+	}
+
+	return nil
+}
+
+// ListPostVersionsRequestMultiError is an error wrapping multiple validation
+// errors returned by ListPostVersionsRequest.ValidateAll() if the designated
+// constraints aren't met.
+type ListPostVersionsRequestMultiError []error
+
+// Error returns a concatenation of all the error messages it wraps.
+func (m ListPostVersionsRequestMultiError) Error() string {
+	msgs := make([]string, 0, len(m))
+	for _, err := range m {
+		msgs = append(msgs, err.Error())
+	}
+	return strings.Join(msgs, "; ")
+}
+
+// AllErrors returns a list of validation violation errors.
+func (m ListPostVersionsRequestMultiError) AllErrors() []error { return m }
+
+// ListPostVersionsRequestValidationError is the validation error returned by
+// ListPostVersionsRequest.Validate if the designated constraints aren't met.
+type ListPostVersionsRequestValidationError struct {
+	field  string
+	reason string
+	cause  error
+	key    bool
+}
+
+// Field function returns field value.
+func (e ListPostVersionsRequestValidationError) Field() string { return e.field }
+
+// Reason function returns reason value.
+func (e ListPostVersionsRequestValidationError) Reason() string { return e.reason }
+
+// Cause function returns cause value.
+func (e ListPostVersionsRequestValidationError) Cause() error { return e.cause }
+
+// Key function returns key value.
+func (e ListPostVersionsRequestValidationError) Key() bool { return e.key }
+
+// ErrorName returns error name.
+func (e ListPostVersionsRequestValidationError) ErrorName() string {
+	return "ListPostVersionsRequestValidationError"
+}
+
+// Error satisfies the builtin error interface
+func (e ListPostVersionsRequestValidationError) Error() string {
+	cause := ""
+	if e.cause != nil {
+		cause = fmt.Sprintf(" | caused by: %v", e.cause)
+	}
+
+	key := ""
+	if e.key {
+		key = "key for "
+	}
+
+	return fmt.Sprintf(
+		"invalid %sListPostVersionsRequest.%s: %s%s",
+		key,
+		e.field,
+		e.reason,
+		cause)
+}
+
+var _ error = ListPostVersionsRequestValidationError{}
+
+var _ interface {
+	Field() string
+	Reason() string
+	Key() bool
+	Cause() error
+	ErrorName() string
+} = ListPostVersionsRequestValidationError{}
+
+// Validate checks the field values on ListPostVersionsResponse with the rules
+// defined in the proto definition for this message. If any rules are
+// violated, the first error encountered is returned, or nil if there are no violations.
+func (m *ListPostVersionsResponse) Validate() error {
+	return m.validate(false)
+}
+
+// ValidateAll checks the field values on ListPostVersionsResponse with the
+// rules defined in the proto definition for this message. If any rules are
+// violated, the result is a list of violation errors wrapped in
+// ListPostVersionsResponseMultiError, or nil if none found.
+func (m *ListPostVersionsResponse) ValidateAll() error {
+	return m.validate(true)
+}
+
+func (m *ListPostVersionsResponse) validate(all bool) error {
+	if m == nil {
+		return nil
+	}
+
+	var errors []error
+
+	for idx, item := range m.GetItems() {
+		_, _ = idx, item
+
+		if all {
+			switch v := interface{}(item).(type) {
+			case interface{ ValidateAll() error }:
+				if err := v.ValidateAll(); err != nil {
+					errors = append(errors, ListPostVersionsResponseValidationError{
+						field:  fmt.Sprintf("Items[%v]", idx),
+						reason: "embedded message failed validation",
+						cause:  err,
+					})
+				}
+			case interface{ Validate() error }:
+				if err := v.Validate(); err != nil {
+					errors = append(errors, ListPostVersionsResponseValidationError{
+						field:  fmt.Sprintf("Items[%v]", idx),
+						reason: "embedded message failed validation",
+						cause:  err,
+					})
+				}
+			}
+		} else if v, ok := interface{}(item).(interface{ Validate() error }); ok {
+			if err := v.Validate(); err != nil {
+				return ListPostVersionsResponseValidationError{
+					field:  fmt.Sprintf("Items[%v]", idx),
+					reason: "embedded message failed validation",
+					cause:  err,
+				}
+			}
+		}
+
+	}
+
+	// no validation rules for Total
+
+	if len(errors) > 0 {
+		return ListPostVersionsResponseMultiError(errors)
+	}
+
+	return nil
+}
+
+// ListPostVersionsResponseMultiError is an error wrapping multiple validation
+// errors returned by ListPostVersionsResponse.ValidateAll() if the designated
+// constraints aren't met.
+type ListPostVersionsResponseMultiError []error
+
+// Error returns a concatenation of all the error messages it wraps.
+func (m ListPostVersionsResponseMultiError) Error() string {
+	msgs := make([]string, 0, len(m))
+	for _, err := range m {
+		msgs = append(msgs, err.Error())
+	}
+	return strings.Join(msgs, "; ")
+}
+
+// AllErrors returns a list of validation violation errors.
+func (m ListPostVersionsResponseMultiError) AllErrors() []error { return m }
+
+// ListPostVersionsResponseValidationError is the validation error returned by
+// ListPostVersionsResponse.Validate if the designated constraints aren't met.
+type ListPostVersionsResponseValidationError struct {
+	field  string
+	reason string
+	cause  error
+	key    bool
+}
+
+// Field function returns field value.
+func (e ListPostVersionsResponseValidationError) Field() string { return e.field }
+
+// Reason function returns reason value.
+func (e ListPostVersionsResponseValidationError) Reason() string { return e.reason }
+
+// Cause function returns cause value.
+func (e ListPostVersionsResponseValidationError) Cause() error { return e.cause }
+
+// Key function returns key value.
+func (e ListPostVersionsResponseValidationError) Key() bool { return e.key }
+
+// ErrorName returns error name.
+func (e ListPostVersionsResponseValidationError) ErrorName() string {
+	return "ListPostVersionsResponseValidationError"
+}
+
+// Error satisfies the builtin error interface
+func (e ListPostVersionsResponseValidationError) Error() string {
+	cause := ""
+	if e.cause != nil {
+		cause = fmt.Sprintf(" | caused by: %v", e.cause)
+	}
+
+	key := ""
+	if e.key {
+		key = "key for "
+	}
+
+	return fmt.Sprintf(
+		"invalid %sListPostVersionsResponse.%s: %s%s",
+		key,
+		e.field,
+		e.reason,
+		cause)
+}
+
+var _ error = ListPostVersionsResponseValidationError{}
+
+var _ interface {
+	Field() string
+	Reason() string
+	Key() bool
+	Cause() error
+	ErrorName() string
+} = ListPostVersionsResponseValidationError{}
+
+// Validate checks the field values on GetPostVersionRequest with the rules
+// defined in the proto definition for this message. If any rules are
+// violated, the first error encountered is returned, or nil if there are no violations.
+func (m *GetPostVersionRequest) Validate() error {
+	return m.validate(false)
+}
+
+// ValidateAll checks the field values on GetPostVersionRequest with the rules
+// defined in the proto definition for this message. If any rules are
+// violated, the result is a list of violation errors wrapped in
+// GetPostVersionRequestMultiError, or nil if none found.
+func (m *GetPostVersionRequest) ValidateAll() error {
+	return m.validate(true)
+}
+
+func (m *GetPostVersionRequest) validate(all bool) error {
+	if m == nil {
+		return nil
+	}
+
+	var errors []error
+
+	// no validation rules for Id
+
+	if len(errors) > 0 {
+		return GetPostVersionRequestMultiError(errors)
+	}
+
+	return nil
+}
+
+// GetPostVersionRequestMultiError is an error wrapping multiple validation
+// errors returned by GetPostVersionRequest.ValidateAll() if the designated
+// constraints aren't met.
+type GetPostVersionRequestMultiError []error
+
+// Error returns a concatenation of all the error messages it wraps.
+func (m GetPostVersionRequestMultiError) Error() string {
+	msgs := make([]string, 0, len(m))
+	for _, err := range m {
+		msgs = append(msgs, err.Error())
+	}
+	return strings.Join(msgs, "; ")
+}
+
+// AllErrors returns a list of validation violation errors.
+func (m GetPostVersionRequestMultiError) AllErrors() []error { return m }
+
+// GetPostVersionRequestValidationError is the validation error returned by
+// GetPostVersionRequest.Validate if the designated constraints aren't met.
+type GetPostVersionRequestValidationError struct {
+	field  string
+	reason string
+	cause  error
+	key    bool
+}
+
+// Field function returns field value.
+func (e GetPostVersionRequestValidationError) Field() string { return e.field }
+
+// Reason function returns reason value.
+func (e GetPostVersionRequestValidationError) Reason() string { return e.reason }
+
+// Cause function returns cause value.
+func (e GetPostVersionRequestValidationError) Cause() error { return e.cause }
+
+// Key function returns key value.
+func (e GetPostVersionRequestValidationError) Key() bool { return e.key }
+
+// ErrorName returns error name.
+func (e GetPostVersionRequestValidationError) ErrorName() string {
+	return "GetPostVersionRequestValidationError"
+}
+
+// Error satisfies the builtin error interface
+func (e GetPostVersionRequestValidationError) Error() string {
+	cause := ""
+	if e.cause != nil {
+		cause = fmt.Sprintf(" | caused by: %v", e.cause)
+	}
+
+	key := ""
+	if e.key {
+		key = "key for "
+	}
+
+	return fmt.Sprintf(
+		"invalid %sGetPostVersionRequest.%s: %s%s",
+		key,
+		e.field,
+		e.reason,
+		cause)
+}
+
+var _ error = GetPostVersionRequestValidationError{}
+
+var _ interface {
+	Field() string
+	Reason() string
+	Key() bool
+	Cause() error
+	ErrorName() string
+} = GetPostVersionRequestValidationError{}
+
+// Validate checks the field values on RestorePostVersionRequest with the rules
+// defined in the proto definition for this message. If any rules are
+// violated, the first error encountered is returned, or nil if there are no violations.
+func (m *RestorePostVersionRequest) Validate() error {
+	return m.validate(false)
+}
+
+// ValidateAll checks the field values on RestorePostVersionRequest with the
+// rules defined in the proto definition for this message. If any rules are
+// violated, the result is a list of violation errors wrapped in
+// RestorePostVersionRequestMultiError, or nil if none found.
+func (m *RestorePostVersionRequest) ValidateAll() error {
+	return m.validate(true)
+}
+
+func (m *RestorePostVersionRequest) validate(all bool) error {
+	if m == nil {
+		return nil
+	}
+
+	var errors []error
+
+	// no validation rules for PostId
+
+	// no validation rules for VersionId
+
+	if len(errors) > 0 {
+		return RestorePostVersionRequestMultiError(errors)
+	}
+
+	return nil
+}
+
+// RestorePostVersionRequestMultiError is an error wrapping multiple validation
+// errors returned by RestorePostVersionRequest.ValidateAll() if the
+// designated constraints aren't met.
+type RestorePostVersionRequestMultiError []error
+
+// Error returns a concatenation of all the error messages it wraps.
+func (m RestorePostVersionRequestMultiError) Error() string {
+	msgs := make([]string, 0, len(m))
+	for _, err := range m {
+		msgs = append(msgs, err.Error())
+	}
+	return strings.Join(msgs, "; ")
+}
+
+// AllErrors returns a list of validation violation errors.
+func (m RestorePostVersionRequestMultiError) AllErrors() []error { return m }
+
+// RestorePostVersionRequestValidationError is the validation error returned by
+// RestorePostVersionRequest.Validate if the designated constraints aren't met.
+type RestorePostVersionRequestValidationError struct {
+	field  string
+	reason string
+	cause  error
+	key    bool
+}
+
+// Field function returns field value.
+func (e RestorePostVersionRequestValidationError) Field() string { return e.field }
+
+// Reason function returns reason value.
+func (e RestorePostVersionRequestValidationError) Reason() string { return e.reason }
+
+// Cause function returns cause value.
+func (e RestorePostVersionRequestValidationError) Cause() error { return e.cause }
+
+// Key function returns key value.
+func (e RestorePostVersionRequestValidationError) Key() bool { return e.key }
+
+// ErrorName returns error name.
+func (e RestorePostVersionRequestValidationError) ErrorName() string {
+	return "RestorePostVersionRequestValidationError"
+}
+
+// Error satisfies the builtin error interface
+func (e RestorePostVersionRequestValidationError) Error() string {
+	cause := ""
+	if e.cause != nil {
+		cause = fmt.Sprintf(" | caused by: %v", e.cause)
+	}
+
+	key := ""
+	if e.key {
+		key = "key for "
+	}
+
+	return fmt.Sprintf(
+		"invalid %sRestorePostVersionRequest.%s: %s%s",
+		key,
+		e.field,
+		e.reason,
+		cause)
+}
+
+var _ error = RestorePostVersionRequestValidationError{}
+
+var _ interface {
+	Field() string
+	Reason() string
+	Key() bool
+	Cause() error
+	ErrorName() string
+} = RestorePostVersionRequestValidationError{}

@@ -165,6 +165,10 @@ func initApp(ctx *bootstrap.Context) (*kratos.App, func(), error) {
 	sectionRepo := data.NewSectionRepo(ctx, entClient, sectionTranslationRepo)
 	pageRepo := data.NewPageRepo(ctx, entClient, pageTranslationRepo, sectionRepo)
 
+	// 内容版本快照（保存自动落版本，恢复走常规 Update 链路）
+	postVersionRepo := data.NewPostVersionRepo(ctx, entClient)
+	pageVersionRepo := data.NewPageVersionRepo(ctx, entClient)
+
 	// 站点配置
 	siteRepo := data.NewSiteRepo(ctx, entClient)
 	siteSettingRepo := data.NewSiteSettingRepo(ctx, entClient)
@@ -239,10 +243,10 @@ func initApp(ctx *bootstrap.Context) (*kratos.App, func(), error) {
 	aiUsageLogService := service.NewAiUsageLogService(ctx, aiUsageLogRepo)
 	aiQueryService := service.NewAiQueryService(ctx, aiProviderRepo, aiUsageLogRepo, entClient, internalMessageRepo, internalMessageService)
 	searchService := service.NewSearchService(ctx, searchRepo, postRepo)
-	postService := service.NewPostService(ctx, postRepo, searchService, taskService, contentModelRepo)
+	postService := service.NewPostService(ctx, postRepo, searchService, taskService, contentModelRepo, postVersionRepo)
 	categoryService := service.NewCategoryService(ctx, categoryRepo, contentModelRepo)
 	tagService := service.NewTagService(ctx, tagRepo)
-	pageService := service.NewPageService(ctx, pageRepo, contentModelRepo)
+	pageService := service.NewPageService(ctx, pageRepo, contentModelRepo, pageVersionRepo)
 	contentModelService := service.NewContentModelService(ctx, contentModelRepo)
 
 	// 站点配置

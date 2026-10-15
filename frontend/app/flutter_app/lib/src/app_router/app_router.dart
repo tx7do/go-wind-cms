@@ -19,6 +19,7 @@ import 'package:flutter_app/src/features/cms/pages/search/search_page.dart';
 import 'package:flutter_app/src/features/auth/pages/login_page.dart';
 import 'package:flutter_app/src/core/utils/responsive_utils.dart';
 import 'package:flutter_app/src/features/cms/pages/explore/explore_page.dart';
+import 'package:flutter_app/src/features/cms/pages/page_detail/page_detail_page.dart';
 import 'package:flutter_app/src/features/cms/pages/profile/profile_page.dart';
 import 'package:flutter_app/src/features/cms/pages/settings/settings_page.dart';
 import 'package:flutter_app/src/features/cms/pages/my_comments/my_comments_page.dart';
@@ -92,15 +93,25 @@ class AppRouter {
                   return const SearchPage();
                 },
               ),
-              // 页面详情（复用 PostDetailPage）
+              // CMS 页面详情（Page + Section 区块渲染）
               GoRoute(
                 name: RouteNames.pageDetail,
                 path: 'page/:id',
                 builder: (context, state) {
                   final pageId =
                       int.tryParse(state.pathParameters['id'] ?? '0') ?? 0;
-                  return PostDetailPage(postId: pageId);
+                  return PageDetailPage(pageId: pageId);
                 },
+                routes: [
+                  GoRoute(
+                    path: 'slug/:slug',
+                    builder: (context, state) {
+                      return PageDetailPage(
+                        slug: state.pathParameters['slug'] ?? '',
+                      );
+                    },
+                  ),
+                ],
               ),
             ],
           ),

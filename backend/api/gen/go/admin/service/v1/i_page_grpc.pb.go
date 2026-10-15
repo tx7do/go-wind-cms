@@ -22,11 +22,14 @@ import (
 const _ = grpc.SupportPackageIsVersion9
 
 const (
-	PageService_List_FullMethodName   = "/admin.service.v1.PageService/List"
-	PageService_Get_FullMethodName    = "/admin.service.v1.PageService/Get"
-	PageService_Create_FullMethodName = "/admin.service.v1.PageService/Create"
-	PageService_Update_FullMethodName = "/admin.service.v1.PageService/Update"
-	PageService_Delete_FullMethodName = "/admin.service.v1.PageService/Delete"
+	PageService_List_FullMethodName           = "/admin.service.v1.PageService/List"
+	PageService_Get_FullMethodName            = "/admin.service.v1.PageService/Get"
+	PageService_Create_FullMethodName         = "/admin.service.v1.PageService/Create"
+	PageService_Update_FullMethodName         = "/admin.service.v1.PageService/Update"
+	PageService_Delete_FullMethodName         = "/admin.service.v1.PageService/Delete"
+	PageService_ListVersions_FullMethodName   = "/admin.service.v1.PageService/ListVersions"
+	PageService_GetVersion_FullMethodName     = "/admin.service.v1.PageService/GetVersion"
+	PageService_RestoreVersion_FullMethodName = "/admin.service.v1.PageService/RestoreVersion"
 )
 
 // PageServiceClient is the client API for PageService service.
@@ -45,6 +48,12 @@ type PageServiceClient interface {
 	Update(ctx context.Context, in *v11.UpdatePageRequest, opts ...grpc.CallOption) (*v11.Page, error)
 	// 删除页面
 	Delete(ctx context.Context, in *v11.DeletePageRequest, opts ...grpc.CallOption) (*emptypb.Empty, error)
+	// 列出页面版本（按版本号倒序）
+	ListVersions(ctx context.Context, in *v11.ListPageVersionsRequest, opts ...grpc.CallOption) (*v11.ListPageVersionsResponse, error)
+	// 获取页面版本详情
+	GetVersion(ctx context.Context, in *v11.GetPageVersionRequest, opts ...grpc.CallOption) (*v11.PageVersion, error)
+	// 恢复页面到指定版本（恢复动作本身会生成一个新版本）
+	RestoreVersion(ctx context.Context, in *v11.RestorePageVersionRequest, opts ...grpc.CallOption) (*v11.Page, error)
 }
 
 type pageServiceClient struct {
@@ -105,6 +114,36 @@ func (c *pageServiceClient) Delete(ctx context.Context, in *v11.DeletePageReques
 	return out, nil
 }
 
+func (c *pageServiceClient) ListVersions(ctx context.Context, in *v11.ListPageVersionsRequest, opts ...grpc.CallOption) (*v11.ListPageVersionsResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(v11.ListPageVersionsResponse)
+	err := c.cc.Invoke(ctx, PageService_ListVersions_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *pageServiceClient) GetVersion(ctx context.Context, in *v11.GetPageVersionRequest, opts ...grpc.CallOption) (*v11.PageVersion, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(v11.PageVersion)
+	err := c.cc.Invoke(ctx, PageService_GetVersion_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *pageServiceClient) RestoreVersion(ctx context.Context, in *v11.RestorePageVersionRequest, opts ...grpc.CallOption) (*v11.Page, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(v11.Page)
+	err := c.cc.Invoke(ctx, PageService_RestoreVersion_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 // PageServiceServer is the server API for PageService service.
 // All implementations must embed UnimplementedPageServiceServer
 // for forward compatibility.
@@ -121,6 +160,12 @@ type PageServiceServer interface {
 	Update(context.Context, *v11.UpdatePageRequest) (*v11.Page, error)
 	// 删除页面
 	Delete(context.Context, *v11.DeletePageRequest) (*emptypb.Empty, error)
+	// 列出页面版本（按版本号倒序）
+	ListVersions(context.Context, *v11.ListPageVersionsRequest) (*v11.ListPageVersionsResponse, error)
+	// 获取页面版本详情
+	GetVersion(context.Context, *v11.GetPageVersionRequest) (*v11.PageVersion, error)
+	// 恢复页面到指定版本（恢复动作本身会生成一个新版本）
+	RestoreVersion(context.Context, *v11.RestorePageVersionRequest) (*v11.Page, error)
 	mustEmbedUnimplementedPageServiceServer()
 }
 
@@ -145,6 +190,15 @@ func (UnimplementedPageServiceServer) Update(context.Context, *v11.UpdatePageReq
 }
 func (UnimplementedPageServiceServer) Delete(context.Context, *v11.DeletePageRequest) (*emptypb.Empty, error) {
 	return nil, status.Error(codes.Unimplemented, "method Delete not implemented")
+}
+func (UnimplementedPageServiceServer) ListVersions(context.Context, *v11.ListPageVersionsRequest) (*v11.ListPageVersionsResponse, error) {
+	return nil, status.Error(codes.Unimplemented, "method ListVersions not implemented")
+}
+func (UnimplementedPageServiceServer) GetVersion(context.Context, *v11.GetPageVersionRequest) (*v11.PageVersion, error) {
+	return nil, status.Error(codes.Unimplemented, "method GetVersion not implemented")
+}
+func (UnimplementedPageServiceServer) RestoreVersion(context.Context, *v11.RestorePageVersionRequest) (*v11.Page, error) {
+	return nil, status.Error(codes.Unimplemented, "method RestoreVersion not implemented")
 }
 func (UnimplementedPageServiceServer) mustEmbedUnimplementedPageServiceServer() {}
 func (UnimplementedPageServiceServer) testEmbeddedByValue()                     {}
@@ -257,6 +311,60 @@ func _PageService_Delete_Handler(srv interface{}, ctx context.Context, dec func(
 	return interceptor(ctx, in, info, handler)
 }
 
+func _PageService_ListVersions_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(v11.ListPageVersionsRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(PageServiceServer).ListVersions(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: PageService_ListVersions_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(PageServiceServer).ListVersions(ctx, req.(*v11.ListPageVersionsRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _PageService_GetVersion_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(v11.GetPageVersionRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(PageServiceServer).GetVersion(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: PageService_GetVersion_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(PageServiceServer).GetVersion(ctx, req.(*v11.GetPageVersionRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _PageService_RestoreVersion_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(v11.RestorePageVersionRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(PageServiceServer).RestoreVersion(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: PageService_RestoreVersion_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(PageServiceServer).RestoreVersion(ctx, req.(*v11.RestorePageVersionRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 // PageService_ServiceDesc is the grpc.ServiceDesc for PageService service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
@@ -283,6 +391,18 @@ var PageService_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "Delete",
 			Handler:    _PageService_Delete_Handler,
+		},
+		{
+			MethodName: "ListVersions",
+			Handler:    _PageService_ListVersions_Handler,
+		},
+		{
+			MethodName: "GetVersion",
+			Handler:    _PageService_GetVersion_Handler,
+		},
+		{
+			MethodName: "RestoreVersion",
+			Handler:    _PageService_RestoreVersion_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},

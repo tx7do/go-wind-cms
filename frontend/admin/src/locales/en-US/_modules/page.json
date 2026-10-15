@@ -94,5 +94,7 @@
     "SECTION_TYPE_FORM": "Form",
     "SECTION_TYPE_CAROUSEL": "Carousel",
     "SECTION_TYPE_CUSTOM": "Custom"
-  }
+  },
+  "versionHistory": "Version History",
+  "versionNeedSave": "Available after save"
 }

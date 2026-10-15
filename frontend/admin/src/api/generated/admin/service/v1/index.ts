@@ -7894,6 +7894,18 @@ export interface PageService {
   Delete(
     request: contentservicev1_DeletePageRequest,
   ): Promise<wellKnownEmpty>;
+  // 列出页面版本（按版本号倒序）
+  ListVersions(
+    request: contentservicev1_ListPageVersionsRequest,
+  ): Promise<contentservicev1_ListPageVersionsResponse>;
+  // 获取页面版本详情
+  GetVersion(
+    request: contentservicev1_GetPageVersionRequest,
+  ): Promise<contentservicev1_PageVersion>;
+  // 恢复页面到指定版本（恢复动作本身会生成一个新版本）
+  RestoreVersion(
+    request: contentservicev1_RestorePageVersionRequest,
+  ): Promise<contentservicev1_Page>;
 }
 
 export function createPageServiceClient(
@@ -8076,6 +8088,42 @@ export function createPageServiceClient(
         method: 'Delete',
       }) as Promise<wellKnownEmpty>;
     },
+    ListVersions(request) {
+      if (request.pageId === undefined || request.pageId === null) {
+        throw new Error('missing required field request.page_id');
+      }
+      const path = `admin/v1/pages/${request.pageId}/versions`;
+      const body = null;
+      return transport.unary(path, 'GET', body, {
+        service: 'PageService',
+        method: 'ListVersions',
+      }) as Promise<contentservicev1_ListPageVersionsResponse>;
+    },
+    GetVersion(request) {
+      if (request.id === undefined || request.id === null) {
+        throw new Error('missing required field request.id');
+      }
+      const path = `admin/v1/pages/versions/${request.id}`;
+      const body = null;
+      return transport.unary(path, 'GET', body, {
+        service: 'PageService',
+        method: 'GetVersion',
+      }) as Promise<contentservicev1_PageVersion>;
+    },
+    RestoreVersion(request) {
+      if (request.pageId === undefined || request.pageId === null) {
+        throw new Error('missing required field request.page_id');
+      }
+      if (request.versionId === undefined || request.versionId === null) {
+        throw new Error('missing required field request.version_id');
+      }
+      const path = `admin/v1/pages/${request.pageId}/versions/${request.versionId}/restore`;
+      const body = JSON.stringify(request);
+      return transport.unary(path, 'POST', body, {
+        service: 'PageService',
+        method: 'RestoreVersion',
+      }) as Promise<contentservicev1_Page>;
+    },
   };
 }
 // 回应 - 页面列表
@@ -8234,6 +8282,39 @@ export type contentservicev1_UpdatePageRequest = {
 // 请求 - 删除页面
 export type contentservicev1_DeletePageRequest = {
   id?: number;
+};
+
+// 请求 - 列出页面版本
+export type contentservicev1_ListPageVersionsRequest = {
+  pageId: number | undefined;
+};
+
+// 回应 - 页面版本列表（按版本号倒序）
+export type contentservicev1_ListPageVersionsResponse = {
+  items: contentservicev1_PageVersion[] | undefined;
+  total: number | undefined;
+};
+
+// 页面版本（内容快照）
+export type contentservicev1_PageVersion = {
+  comment?: string;
+  content?: string;
+  createdAt?: wellKnownTimestamp;
+  createdBy?: number;
+  id?: number;
+  pageId?: number;
+  versionNumber?: number;
+};
+
+// 请求 - 页面版本详情
+export type contentservicev1_GetPageVersionRequest = {
+  id: number | undefined;
+};
+
+// 请求 - 恢复页面版本
+export type contentservicev1_RestorePageVersionRequest = {
+  pageId: number | undefined;
+  versionId: number | undefined;
 };
 
 // 权限点管理服务
@@ -9467,6 +9548,18 @@ export interface PostService {
   TranslationExists(
     request: contentservicev1_PostTranslationExistsRequest,
   ): Promise<contentservicev1_PostTranslationExistsResponse>;
+  // 列出帖子版本（按版本号倒序）
+  ListVersions(
+    request: contentservicev1_ListPostVersionsRequest,
+  ): Promise<contentservicev1_ListPostVersionsResponse>;
+  // 获取帖子版本详情
+  GetVersion(
+    request: contentservicev1_GetPostVersionRequest,
+  ): Promise<contentservicev1_PostVersion>;
+  // 恢复帖子到指定版本（恢复动作本身会生成一个新版本）
+  RestoreVersion(
+    request: contentservicev1_RestorePostVersionRequest,
+  ): Promise<contentservicev1_Post>;
 }
 
 export function createPostServiceClient(
@@ -9663,6 +9756,42 @@ export function createPostServiceClient(
         method: 'TranslationExists',
       }) as Promise<contentservicev1_PostTranslationExistsResponse>;
     },
+    ListVersions(request) {
+      if (request.postId === undefined || request.postId === null) {
+        throw new Error('missing required field request.post_id');
+      }
+      const path = `admin/v1/posts/${request.postId}/versions`;
+      const body = null;
+      return transport.unary(path, 'GET', body, {
+        service: 'PostService',
+        method: 'ListVersions',
+      }) as Promise<contentservicev1_ListPostVersionsResponse>;
+    },
+    GetVersion(request) {
+      if (request.id === undefined || request.id === null) {
+        throw new Error('missing required field request.id');
+      }
+      const path = `admin/v1/posts/versions/${request.id}`;
+      const body = null;
+      return transport.unary(path, 'GET', body, {
+        service: 'PostService',
+        method: 'GetVersion',
+      }) as Promise<contentservicev1_PostVersion>;
+    },
+    RestoreVersion(request) {
+      if (request.postId === undefined || request.postId === null) {
+        throw new Error('missing required field request.post_id');
+      }
+      if (request.versionId === undefined || request.versionId === null) {
+        throw new Error('missing required field request.version_id');
+      }
+      const path = `admin/v1/posts/${request.postId}/versions/${request.versionId}/restore`;
+      const body = JSON.stringify(request);
+      return transport.unary(path, 'POST', body, {
+        service: 'PostService',
+        method: 'RestoreVersion',
+      }) as Promise<contentservicev1_Post>;
+    },
   };
 }
 // 回应 - 帖子列表
@@ -9761,6 +9890,39 @@ export type contentservicev1_PostTranslationExistsRequest = {
 
 export type contentservicev1_PostTranslationExistsResponse = {
   exists: boolean | undefined;
+};
+
+// 请求 - 列出帖子版本
+export type contentservicev1_ListPostVersionsRequest = {
+  postId: number | undefined;
+};
+
+// 回应 - 帖子版本列表（按版本号倒序）
+export type contentservicev1_ListPostVersionsResponse = {
+  items: contentservicev1_PostVersion[] | undefined;
+  total: number | undefined;
+};
+
+// 帖子版本（内容快照）
+export type contentservicev1_PostVersion = {
+  comment?: string;
+  content?: string;
+  createdAt?: wellKnownTimestamp;
+  createdBy?: number;
+  id?: number;
+  postId?: number;
+  versionNumber?: number;
+};
+
+// 请求 - 帖子版本详情
+export type contentservicev1_GetPostVersionRequest = {
+  id: number | undefined;
+};
+
+// 请求 - 恢复帖子版本
+export type contentservicev1_RestorePostVersionRequest = {
+  postId: number | undefined;
+  versionId: number | undefined;
 };
 
 // 角色管理服务

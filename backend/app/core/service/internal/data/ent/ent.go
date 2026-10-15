@@ -48,6 +48,7 @@ import (
 	"go-wind-cms/app/core/service/internal/data/ent/orgunit"
 	"go-wind-cms/app/core/service/internal/data/ent/page"
 	"go-wind-cms/app/core/service/internal/data/ent/pagetranslation"
+	"go-wind-cms/app/core/service/internal/data/ent/pageversion"
 	"go-wind-cms/app/core/service/internal/data/ent/permission"
 	"go-wind-cms/app/core/service/internal/data/ent/permissionapi"
 	"go-wind-cms/app/core/service/internal/data/ent/permissionauditlog"
@@ -61,6 +62,7 @@ import (
 	"go-wind-cms/app/core/service/internal/data/ent/postlike"
 	"go-wind-cms/app/core/service/internal/data/ent/posttag"
 	"go-wind-cms/app/core/service/internal/data/ent/posttranslation"
+	"go-wind-cms/app/core/service/internal/data/ent/postversion"
 	"go-wind-cms/app/core/service/internal/data/ent/postwatch"
 	"go-wind-cms/app/core/service/internal/data/ent/role"
 	"go-wind-cms/app/core/service/internal/data/ent/rolemetadata"
@@ -190,6 +192,7 @@ func checkColumn(t, c string) error {
 			orgunit.Table:                    orgunit.ValidColumn,
 			page.Table:                       page.ValidColumn,
 			pagetranslation.Table:            pagetranslation.ValidColumn,
+			pageversion.Table:                pageversion.ValidColumn,
 			permission.Table:                 permission.ValidColumn,
 			permissionapi.Table:              permissionapi.ValidColumn,
 			permissionauditlog.Table:         permissionauditlog.ValidColumn,
@@ -203,6 +206,7 @@ func checkColumn(t, c string) error {
 			postlike.Table:                   postlike.ValidColumn,
 			posttag.Table:                    posttag.ValidColumn,
 			posttranslation.Table:            posttranslation.ValidColumn,
+			postversion.Table:                postversion.ValidColumn,
 			postwatch.Table:                  postwatch.ValidColumn,
 			role.Table:                       role.ValidColumn,
 			rolemetadata.Table:               rolemetadata.ValidColumn,

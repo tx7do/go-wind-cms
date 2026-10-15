@@ -5,9 +5,17 @@ import {Button} from '@/components/ui/button';
 
 import XIcon from '@/plugins/xicon';
 import PageHero from '@/components/layout/PageHero';
+import CmsPageView from '@/components/page/CmsPageView';
+import {useCmsPage} from '@/api/hooks/page';
 
 export default function AboutPage() {
     const t = useTranslations('page.about');
+    // CMS 优先：后台有 slug=about 的已发布页面则整页走 CMS 渲染，否则回退静态内容
+    const {page, loading} = useCmsPage('about');
+
+    if (!loading && page && (page.sections?.length ?? 0) > 0) {
+        return <CmsPageView page={page}/>;
+    }
 
     const features = [
         {

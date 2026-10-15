@@ -52,6 +52,7 @@ import (
 	"go-wind-cms/app/core/service/internal/data/ent/orgunit"
 	"go-wind-cms/app/core/service/internal/data/ent/page"
 	"go-wind-cms/app/core/service/internal/data/ent/pagetranslation"
+	"go-wind-cms/app/core/service/internal/data/ent/pageversion"
 	"go-wind-cms/app/core/service/internal/data/ent/permission"
 	"go-wind-cms/app/core/service/internal/data/ent/permissionapi"
 	"go-wind-cms/app/core/service/internal/data/ent/permissionauditlog"
@@ -65,6 +66,7 @@ import (
 	"go-wind-cms/app/core/service/internal/data/ent/postlike"
 	"go-wind-cms/app/core/service/internal/data/ent/posttag"
 	"go-wind-cms/app/core/service/internal/data/ent/posttranslation"
+	"go-wind-cms/app/core/service/internal/data/ent/postversion"
 	"go-wind-cms/app/core/service/internal/data/ent/postwatch"
 	"go-wind-cms/app/core/service/internal/data/ent/predicate"
 	"go-wind-cms/app/core/service/internal/data/ent/role"
@@ -146,6 +148,7 @@ const (
 	TypeOrgUnit                    = "OrgUnit"
 	TypePage                       = "Page"
 	TypePageTranslation            = "PageTranslation"
+	TypePageVersion                = "PageVersion"
 	TypePermission                 = "Permission"
 	TypePermissionApi              = "PermissionApi"
 	TypePermissionAuditLog         = "PermissionAuditLog"
@@ -159,6 +162,7 @@ const (
 	TypePostLike                   = "PostLike"
 	TypePostTag                    = "PostTag"
 	TypePostTranslation            = "PostTranslation"
+	TypePostVersion                = "PostVersion"
 	TypePostWatch                  = "PostWatch"
 	TypeRole                       = "Role"
 	TypeRoleMetadata               = "RoleMetadata"
@@ -69090,6 +69094,1297 @@ func (m *PageTranslationMutation) ResetEdge(name string) error {
 	return fmt.Errorf("unknown PageTranslation edge %s", name)
 }
 
+// PageVersionMutation represents an operation that mutates the PageVersion nodes in the graph.
+type PageVersionMutation struct {
+	config
+	op                Op
+	typ               string
+	id                *uint32
+	created_at        *time.Time
+	updated_at        *time.Time
+	deleted_at        *time.Time
+	created_by        *uint32
+	addcreated_by     *int32
+	updated_by        *uint32
+	addupdated_by     *int32
+	deleted_by        *uint32
+	adddeleted_by     *int32
+	tenant_id         *uint32
+	addtenant_id      *int32
+	page_id           *uint32
+	addpage_id        *int32
+	version_number    *uint32
+	addversion_number *int32
+	content           *string
+	comment           *string
+	clearedFields     map[string]struct{}
+	done              bool
+	oldValue          func(context.Context) (*PageVersion, error)
+	predicates        []predicate.PageVersion
+}
+
+var _ ent.Mutation = (*PageVersionMutation)(nil)
+
+// pageversionOption allows management of the mutation configuration using functional options.
+type pageversionOption func(*PageVersionMutation)
+
+// newPageVersionMutation creates new mutation for the PageVersion entity.
+func newPageVersionMutation(c config, op Op, opts ...pageversionOption) *PageVersionMutation {
+	m := &PageVersionMutation{
+		config:        c,
+		op:            op,
+		typ:           TypePageVersion,
+		clearedFields: make(map[string]struct{}),
+	}
+	for _, opt := range opts {
+		opt(m)
+	}
+	return m
+}
+
+// withPageVersionID sets the ID field of the mutation.
+func withPageVersionID(id uint32) pageversionOption {
+	return func(m *PageVersionMutation) {
+		var (
+			err   error
+			once  sync.Once
+			value *PageVersion
+		)
+		m.oldValue = func(ctx context.Context) (*PageVersion, error) {
+			once.Do(func() {
+				if m.done {
+					err = errors.New("querying old values post mutation is not allowed")
+				} else {
+					value, err = m.Client().PageVersion.Get(ctx, id)
+				}
+			})
+			return value, err
+		}
+		m.id = &id
+	}
+}
+
+// withPageVersion sets the old PageVersion of the mutation.
+func withPageVersion(node *PageVersion) pageversionOption {
+	return func(m *PageVersionMutation) {
+		m.oldValue = func(context.Context) (*PageVersion, error) {
+			return node, nil
+		}
+		m.id = &node.ID
+	}
+}
+
+// Client returns a new `ent.Client` from the mutation. If the mutation was
+// executed in a transaction (ent.Tx), a transactional client is returned.
+func (m PageVersionMutation) Client() *Client {
+	client := &Client{config: m.config}
+	client.init()
+	return client
+}
+
+// Tx returns an `ent.Tx` for mutations that were executed in transactions;
+// it returns an error otherwise.
+func (m PageVersionMutation) Tx() (*Tx, error) {
+	if _, ok := m.driver.(*txDriver); !ok {
+		return nil, errors.New("ent: mutation is not running in a transaction")
+	}
+	tx := &Tx{config: m.config}
+	tx.init()
+	return tx, nil
+}
+
+// SetID sets the value of the id field. Note that this
+// operation is only accepted on creation of PageVersion entities.
+func (m *PageVersionMutation) SetID(id uint32) {
+	m.id = &id
+}
+
+// ID returns the ID value in the mutation. Note that the ID is only available
+// if it was provided to the builder or after it was returned from the database.
+func (m *PageVersionMutation) ID() (id uint32, exists bool) {
+	if m.id == nil {
+		return
+	}
+	return *m.id, true
+}
+
+// IDs queries the database and returns the entity ids that match the mutation's predicate.
+// That means, if the mutation is applied within a transaction with an isolation level such
+// as sql.LevelSerializable, the returned ids match the ids of the rows that will be updated
+// or updated by the mutation.
+func (m *PageVersionMutation) IDs(ctx context.Context) ([]uint32, error) {
+	switch {
+	case m.op.Is(OpUpdateOne | OpDeleteOne):
+		id, exists := m.ID()
+		if exists {
+			return []uint32{id}, nil
+		}
+		fallthrough
+	case m.op.Is(OpUpdate | OpDelete):
+		return m.Client().PageVersion.Query().Where(m.predicates...).IDs(ctx)
+	default:
+		return nil, fmt.Errorf("IDs is not allowed on %s operations", m.op)
+	}
+}
+
+// SetCreatedAt sets the "created_at" field.
+func (m *PageVersionMutation) SetCreatedAt(t time.Time) {
+	m.created_at = &t
+}
+
+// CreatedAt returns the value of the "created_at" field in the mutation.
+func (m *PageVersionMutation) CreatedAt() (r time.Time, exists bool) {
+	v := m.created_at
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldCreatedAt returns the old "created_at" field's value of the PageVersion entity.
+// If the PageVersion object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *PageVersionMutation) OldCreatedAt(ctx context.Context) (v *time.Time, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldCreatedAt is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldCreatedAt requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldCreatedAt: %w", err)
+	}
+	return oldValue.CreatedAt, nil
+}
+
+// ClearCreatedAt clears the value of the "created_at" field.
+func (m *PageVersionMutation) ClearCreatedAt() {
+	m.created_at = nil
+	m.clearedFields[pageversion.FieldCreatedAt] = struct{}{}
+}
+
+// CreatedAtCleared returns if the "created_at" field was cleared in this mutation.
+func (m *PageVersionMutation) CreatedAtCleared() bool {
+	_, ok := m.clearedFields[pageversion.FieldCreatedAt]
+	return ok
+}
+
+// ResetCreatedAt resets all changes to the "created_at" field.
+func (m *PageVersionMutation) ResetCreatedAt() {
+	m.created_at = nil
+	delete(m.clearedFields, pageversion.FieldCreatedAt)
+}
+
+// SetUpdatedAt sets the "updated_at" field.
+func (m *PageVersionMutation) SetUpdatedAt(t time.Time) {
+	m.updated_at = &t
+}
+
+// UpdatedAt returns the value of the "updated_at" field in the mutation.
+func (m *PageVersionMutation) UpdatedAt() (r time.Time, exists bool) {
+	v := m.updated_at
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldUpdatedAt returns the old "updated_at" field's value of the PageVersion entity.
+// If the PageVersion object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *PageVersionMutation) OldUpdatedAt(ctx context.Context) (v *time.Time, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldUpdatedAt is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldUpdatedAt requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldUpdatedAt: %w", err)
+	}
+	return oldValue.UpdatedAt, nil
+}
+
+// ClearUpdatedAt clears the value of the "updated_at" field.
+func (m *PageVersionMutation) ClearUpdatedAt() {
+	m.updated_at = nil
+	m.clearedFields[pageversion.FieldUpdatedAt] = struct{}{}
+}
+
+// UpdatedAtCleared returns if the "updated_at" field was cleared in this mutation.
+func (m *PageVersionMutation) UpdatedAtCleared() bool {
+	_, ok := m.clearedFields[pageversion.FieldUpdatedAt]
+	return ok
+}
+
+// ResetUpdatedAt resets all changes to the "updated_at" field.
+func (m *PageVersionMutation) ResetUpdatedAt() {
+	m.updated_at = nil
+	delete(m.clearedFields, pageversion.FieldUpdatedAt)
+}
+
+// SetDeletedAt sets the "deleted_at" field.
+func (m *PageVersionMutation) SetDeletedAt(t time.Time) {
+	m.deleted_at = &t
+}
+
+// DeletedAt returns the value of the "deleted_at" field in the mutation.
+func (m *PageVersionMutation) DeletedAt() (r time.Time, exists bool) {
+	v := m.deleted_at
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldDeletedAt returns the old "deleted_at" field's value of the PageVersion entity.
+// If the PageVersion object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *PageVersionMutation) OldDeletedAt(ctx context.Context) (v *time.Time, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldDeletedAt is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldDeletedAt requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldDeletedAt: %w", err)
+	}
+	return oldValue.DeletedAt, nil
+}
+
+// ClearDeletedAt clears the value of the "deleted_at" field.
+func (m *PageVersionMutation) ClearDeletedAt() {
+	m.deleted_at = nil
+	m.clearedFields[pageversion.FieldDeletedAt] = struct{}{}
+}
+
+// DeletedAtCleared returns if the "deleted_at" field was cleared in this mutation.
+func (m *PageVersionMutation) DeletedAtCleared() bool {
+	_, ok := m.clearedFields[pageversion.FieldDeletedAt]
+	return ok
+}
+
+// ResetDeletedAt resets all changes to the "deleted_at" field.
+func (m *PageVersionMutation) ResetDeletedAt() {
+	m.deleted_at = nil
+	delete(m.clearedFields, pageversion.FieldDeletedAt)
+}
+
+// SetCreatedBy sets the "created_by" field.
+func (m *PageVersionMutation) SetCreatedBy(u uint32) {
+	m.created_by = &u
+	m.addcreated_by = nil
+}
+
+// CreatedBy returns the value of the "created_by" field in the mutation.
+func (m *PageVersionMutation) CreatedBy() (r uint32, exists bool) {
+	v := m.created_by
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldCreatedBy returns the old "created_by" field's value of the PageVersion entity.
+// If the PageVersion object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *PageVersionMutation) OldCreatedBy(ctx context.Context) (v *uint32, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldCreatedBy is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldCreatedBy requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldCreatedBy: %w", err)
+	}
+	return oldValue.CreatedBy, nil
+}
+
+// AddCreatedBy adds u to the "created_by" field.
+func (m *PageVersionMutation) AddCreatedBy(u int32) {
+	if m.addcreated_by != nil {
+		*m.addcreated_by += u
+	} else {
+		m.addcreated_by = &u
+	}
+}
+
+// AddedCreatedBy returns the value that was added to the "created_by" field in this mutation.
+func (m *PageVersionMutation) AddedCreatedBy() (r int32, exists bool) {
+	v := m.addcreated_by
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// ClearCreatedBy clears the value of the "created_by" field.
+func (m *PageVersionMutation) ClearCreatedBy() {
+	m.created_by = nil
+	m.addcreated_by = nil
+	m.clearedFields[pageversion.FieldCreatedBy] = struct{}{}
+}
+
+// CreatedByCleared returns if the "created_by" field was cleared in this mutation.
+func (m *PageVersionMutation) CreatedByCleared() bool {
+	_, ok := m.clearedFields[pageversion.FieldCreatedBy]
+	return ok
+}
+
+// ResetCreatedBy resets all changes to the "created_by" field.
+func (m *PageVersionMutation) ResetCreatedBy() {
+	m.created_by = nil
+	m.addcreated_by = nil
+	delete(m.clearedFields, pageversion.FieldCreatedBy)
+}
+
+// SetUpdatedBy sets the "updated_by" field.
+func (m *PageVersionMutation) SetUpdatedBy(u uint32) {
+	m.updated_by = &u
+	m.addupdated_by = nil
+}
+
+// UpdatedBy returns the value of the "updated_by" field in the mutation.
+func (m *PageVersionMutation) UpdatedBy() (r uint32, exists bool) {
+	v := m.updated_by
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldUpdatedBy returns the old "updated_by" field's value of the PageVersion entity.
+// If the PageVersion object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *PageVersionMutation) OldUpdatedBy(ctx context.Context) (v *uint32, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldUpdatedBy is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldUpdatedBy requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldUpdatedBy: %w", err)
+	}
+	return oldValue.UpdatedBy, nil
+}
+
+// AddUpdatedBy adds u to the "updated_by" field.
+func (m *PageVersionMutation) AddUpdatedBy(u int32) {
+	if m.addupdated_by != nil {
+		*m.addupdated_by += u
+	} else {
+		m.addupdated_by = &u
+	}
+}
+
+// AddedUpdatedBy returns the value that was added to the "updated_by" field in this mutation.
+func (m *PageVersionMutation) AddedUpdatedBy() (r int32, exists bool) {
+	v := m.addupdated_by
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// ClearUpdatedBy clears the value of the "updated_by" field.
+func (m *PageVersionMutation) ClearUpdatedBy() {
+	m.updated_by = nil
+	m.addupdated_by = nil
+	m.clearedFields[pageversion.FieldUpdatedBy] = struct{}{}
+}
+
+// UpdatedByCleared returns if the "updated_by" field was cleared in this mutation.
+func (m *PageVersionMutation) UpdatedByCleared() bool {
+	_, ok := m.clearedFields[pageversion.FieldUpdatedBy]
+	return ok
+}
+
+// ResetUpdatedBy resets all changes to the "updated_by" field.
+func (m *PageVersionMutation) ResetUpdatedBy() {
+	m.updated_by = nil
+	m.addupdated_by = nil
+	delete(m.clearedFields, pageversion.FieldUpdatedBy)
+}
+
+// SetDeletedBy sets the "deleted_by" field.
+func (m *PageVersionMutation) SetDeletedBy(u uint32) {
+	m.deleted_by = &u
+	m.adddeleted_by = nil
+}
+
+// DeletedBy returns the value of the "deleted_by" field in the mutation.
+func (m *PageVersionMutation) DeletedBy() (r uint32, exists bool) {
+	v := m.deleted_by
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldDeletedBy returns the old "deleted_by" field's value of the PageVersion entity.
+// If the PageVersion object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *PageVersionMutation) OldDeletedBy(ctx context.Context) (v *uint32, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldDeletedBy is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldDeletedBy requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldDeletedBy: %w", err)
+	}
+	return oldValue.DeletedBy, nil
+}
+
+// AddDeletedBy adds u to the "deleted_by" field.
+func (m *PageVersionMutation) AddDeletedBy(u int32) {
+	if m.adddeleted_by != nil {
+		*m.adddeleted_by += u
+	} else {
+		m.adddeleted_by = &u
+	}
+}
+
+// AddedDeletedBy returns the value that was added to the "deleted_by" field in this mutation.
+func (m *PageVersionMutation) AddedDeletedBy() (r int32, exists bool) {
+	v := m.adddeleted_by
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// ClearDeletedBy clears the value of the "deleted_by" field.
+func (m *PageVersionMutation) ClearDeletedBy() {
+	m.deleted_by = nil
+	m.adddeleted_by = nil
+	m.clearedFields[pageversion.FieldDeletedBy] = struct{}{}
+}
+
+// DeletedByCleared returns if the "deleted_by" field was cleared in this mutation.
+func (m *PageVersionMutation) DeletedByCleared() bool {
+	_, ok := m.clearedFields[pageversion.FieldDeletedBy]
+	return ok
+}
+
+// ResetDeletedBy resets all changes to the "deleted_by" field.
+func (m *PageVersionMutation) ResetDeletedBy() {
+	m.deleted_by = nil
+	m.adddeleted_by = nil
+	delete(m.clearedFields, pageversion.FieldDeletedBy)
+}
+
+// SetTenantID sets the "tenant_id" field.
+func (m *PageVersionMutation) SetTenantID(u uint32) {
+	m.tenant_id = &u
+	m.addtenant_id = nil
+}
+
+// TenantID returns the value of the "tenant_id" field in the mutation.
+func (m *PageVersionMutation) TenantID() (r uint32, exists bool) {
+	v := m.tenant_id
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldTenantID returns the old "tenant_id" field's value of the PageVersion entity.
+// If the PageVersion object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *PageVersionMutation) OldTenantID(ctx context.Context) (v *uint32, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldTenantID is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldTenantID requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldTenantID: %w", err)
+	}
+	return oldValue.TenantID, nil
+}
+
+// AddTenantID adds u to the "tenant_id" field.
+func (m *PageVersionMutation) AddTenantID(u int32) {
+	if m.addtenant_id != nil {
+		*m.addtenant_id += u
+	} else {
+		m.addtenant_id = &u
+	}
+}
+
+// AddedTenantID returns the value that was added to the "tenant_id" field in this mutation.
+func (m *PageVersionMutation) AddedTenantID() (r int32, exists bool) {
+	v := m.addtenant_id
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// ClearTenantID clears the value of the "tenant_id" field.
+func (m *PageVersionMutation) ClearTenantID() {
+	m.tenant_id = nil
+	m.addtenant_id = nil
+	m.clearedFields[pageversion.FieldTenantID] = struct{}{}
+}
+
+// TenantIDCleared returns if the "tenant_id" field was cleared in this mutation.
+func (m *PageVersionMutation) TenantIDCleared() bool {
+	_, ok := m.clearedFields[pageversion.FieldTenantID]
+	return ok
+}
+
+// ResetTenantID resets all changes to the "tenant_id" field.
+func (m *PageVersionMutation) ResetTenantID() {
+	m.tenant_id = nil
+	m.addtenant_id = nil
+	delete(m.clearedFields, pageversion.FieldTenantID)
+}
+
+// SetPageID sets the "page_id" field.
+func (m *PageVersionMutation) SetPageID(u uint32) {
+	m.page_id = &u
+	m.addpage_id = nil
+}
+
+// PageID returns the value of the "page_id" field in the mutation.
+func (m *PageVersionMutation) PageID() (r uint32, exists bool) {
+	v := m.page_id
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldPageID returns the old "page_id" field's value of the PageVersion entity.
+// If the PageVersion object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *PageVersionMutation) OldPageID(ctx context.Context) (v *uint32, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldPageID is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldPageID requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldPageID: %w", err)
+	}
+	return oldValue.PageID, nil
+}
+
+// AddPageID adds u to the "page_id" field.
+func (m *PageVersionMutation) AddPageID(u int32) {
+	if m.addpage_id != nil {
+		*m.addpage_id += u
+	} else {
+		m.addpage_id = &u
+	}
+}
+
+// AddedPageID returns the value that was added to the "page_id" field in this mutation.
+func (m *PageVersionMutation) AddedPageID() (r int32, exists bool) {
+	v := m.addpage_id
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// ClearPageID clears the value of the "page_id" field.
+func (m *PageVersionMutation) ClearPageID() {
+	m.page_id = nil
+	m.addpage_id = nil
+	m.clearedFields[pageversion.FieldPageID] = struct{}{}
+}
+
+// PageIDCleared returns if the "page_id" field was cleared in this mutation.
+func (m *PageVersionMutation) PageIDCleared() bool {
+	_, ok := m.clearedFields[pageversion.FieldPageID]
+	return ok
+}
+
+// ResetPageID resets all changes to the "page_id" field.
+func (m *PageVersionMutation) ResetPageID() {
+	m.page_id = nil
+	m.addpage_id = nil
+	delete(m.clearedFields, pageversion.FieldPageID)
+}
+
+// SetVersionNumber sets the "version_number" field.
+func (m *PageVersionMutation) SetVersionNumber(u uint32) {
+	m.version_number = &u
+	m.addversion_number = nil
+}
+
+// VersionNumber returns the value of the "version_number" field in the mutation.
+func (m *PageVersionMutation) VersionNumber() (r uint32, exists bool) {
+	v := m.version_number
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldVersionNumber returns the old "version_number" field's value of the PageVersion entity.
+// If the PageVersion object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *PageVersionMutation) OldVersionNumber(ctx context.Context) (v *uint32, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldVersionNumber is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldVersionNumber requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldVersionNumber: %w", err)
+	}
+	return oldValue.VersionNumber, nil
+}
+
+// AddVersionNumber adds u to the "version_number" field.
+func (m *PageVersionMutation) AddVersionNumber(u int32) {
+	if m.addversion_number != nil {
+		*m.addversion_number += u
+	} else {
+		m.addversion_number = &u
+	}
+}
+
+// AddedVersionNumber returns the value that was added to the "version_number" field in this mutation.
+func (m *PageVersionMutation) AddedVersionNumber() (r int32, exists bool) {
+	v := m.addversion_number
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// ClearVersionNumber clears the value of the "version_number" field.
+func (m *PageVersionMutation) ClearVersionNumber() {
+	m.version_number = nil
+	m.addversion_number = nil
+	m.clearedFields[pageversion.FieldVersionNumber] = struct{}{}
+}
+
+// VersionNumberCleared returns if the "version_number" field was cleared in this mutation.
+func (m *PageVersionMutation) VersionNumberCleared() bool {
+	_, ok := m.clearedFields[pageversion.FieldVersionNumber]
+	return ok
+}
+
+// ResetVersionNumber resets all changes to the "version_number" field.
+func (m *PageVersionMutation) ResetVersionNumber() {
+	m.version_number = nil
+	m.addversion_number = nil
+	delete(m.clearedFields, pageversion.FieldVersionNumber)
+}
+
+// SetContent sets the "content" field.
+func (m *PageVersionMutation) SetContent(s string) {
+	m.content = &s
+}
+
+// Content returns the value of the "content" field in the mutation.
+func (m *PageVersionMutation) Content() (r string, exists bool) {
+	v := m.content
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldContent returns the old "content" field's value of the PageVersion entity.
+// If the PageVersion object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *PageVersionMutation) OldContent(ctx context.Context) (v *string, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldContent is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldContent requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldContent: %w", err)
+	}
+	return oldValue.Content, nil
+}
+
+// ClearContent clears the value of the "content" field.
+func (m *PageVersionMutation) ClearContent() {
+	m.content = nil
+	m.clearedFields[pageversion.FieldContent] = struct{}{}
+}
+
+// ContentCleared returns if the "content" field was cleared in this mutation.
+func (m *PageVersionMutation) ContentCleared() bool {
+	_, ok := m.clearedFields[pageversion.FieldContent]
+	return ok
+}
+
+// ResetContent resets all changes to the "content" field.
+func (m *PageVersionMutation) ResetContent() {
+	m.content = nil
+	delete(m.clearedFields, pageversion.FieldContent)
+}
+
+// SetComment sets the "comment" field.
+func (m *PageVersionMutation) SetComment(s string) {
+	m.comment = &s
+}
+
+// Comment returns the value of the "comment" field in the mutation.
+func (m *PageVersionMutation) Comment() (r string, exists bool) {
+	v := m.comment
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldComment returns the old "comment" field's value of the PageVersion entity.
+// If the PageVersion object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *PageVersionMutation) OldComment(ctx context.Context) (v *string, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldComment is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldComment requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldComment: %w", err)
+	}
+	return oldValue.Comment, nil
+}
+
+// ClearComment clears the value of the "comment" field.
+func (m *PageVersionMutation) ClearComment() {
+	m.comment = nil
+	m.clearedFields[pageversion.FieldComment] = struct{}{}
+}
+
+// CommentCleared returns if the "comment" field was cleared in this mutation.
+func (m *PageVersionMutation) CommentCleared() bool {
+	_, ok := m.clearedFields[pageversion.FieldComment]
+	return ok
+}
+
+// ResetComment resets all changes to the "comment" field.
+func (m *PageVersionMutation) ResetComment() {
+	m.comment = nil
+	delete(m.clearedFields, pageversion.FieldComment)
+}
+
+// Where appends a list predicates to the PageVersionMutation builder.
+func (m *PageVersionMutation) Where(ps ...predicate.PageVersion) {
+	m.predicates = append(m.predicates, ps...)
+}
+
+// WhereP appends storage-level predicates to the PageVersionMutation builder. Using this method,
+// users can use type-assertion to append predicates that do not depend on any generated package.
+func (m *PageVersionMutation) WhereP(ps ...func(*sql.Selector)) {
+	p := make([]predicate.PageVersion, len(ps))
+	for i := range ps {
+		p[i] = ps[i]
+	}
+	m.Where(p...)
+}
+
+// Op returns the operation name.
+func (m *PageVersionMutation) Op() Op {
+	return m.op
+}
+
+// SetOp allows setting the mutation operation.
+func (m *PageVersionMutation) SetOp(op Op) {
+	m.op = op
+}
+
+// Type returns the node type of this mutation (PageVersion).
+func (m *PageVersionMutation) Type() string {
+	return m.typ
+}
+
+// Fields returns all fields that were changed during this mutation. Note that in
+// order to get all numeric fields that were incremented/decremented, call
+// AddedFields().
+func (m *PageVersionMutation) Fields() []string {
+	fields := make([]string, 0, 11)
+	if m.created_at != nil {
+		fields = append(fields, pageversion.FieldCreatedAt)
+	}
+	if m.updated_at != nil {
+		fields = append(fields, pageversion.FieldUpdatedAt)
+	}
+	if m.deleted_at != nil {
+		fields = append(fields, pageversion.FieldDeletedAt)
+	}
+	if m.created_by != nil {
+		fields = append(fields, pageversion.FieldCreatedBy)
+	}
+	if m.updated_by != nil {
+		fields = append(fields, pageversion.FieldUpdatedBy)
+	}
+	if m.deleted_by != nil {
+		fields = append(fields, pageversion.FieldDeletedBy)
+	}
+	if m.tenant_id != nil {
+		fields = append(fields, pageversion.FieldTenantID)
+	}
+	if m.page_id != nil {
+		fields = append(fields, pageversion.FieldPageID)
+	}
+	if m.version_number != nil {
+		fields = append(fields, pageversion.FieldVersionNumber)
+	}
+	if m.content != nil {
+		fields = append(fields, pageversion.FieldContent)
+	}
+	if m.comment != nil {
+		fields = append(fields, pageversion.FieldComment)
+	}
+	return fields
+}
+
+// Field returns the value of a field with the given name. The second boolean
+// return value indicates that this field was not set, or was not defined in the
+// schema.
+func (m *PageVersionMutation) Field(name string) (ent.Value, bool) {
+	switch name {
+	case pageversion.FieldCreatedAt:
+		return m.CreatedAt()
+	case pageversion.FieldUpdatedAt:
+		return m.UpdatedAt()
+	case pageversion.FieldDeletedAt:
+		return m.DeletedAt()
+	case pageversion.FieldCreatedBy:
+		return m.CreatedBy()
+	case pageversion.FieldUpdatedBy:
+		return m.UpdatedBy()
+	case pageversion.FieldDeletedBy:
+		return m.DeletedBy()
+	case pageversion.FieldTenantID:
+		return m.TenantID()
+	case pageversion.FieldPageID:
+		return m.PageID()
+	case pageversion.FieldVersionNumber:
+		return m.VersionNumber()
+	case pageversion.FieldContent:
+		return m.Content()
+	case pageversion.FieldComment:
+		return m.Comment()
+	}
+	return nil, false
+}
+
+// OldField returns the old value of the field from the database. An error is
+// returned if the mutation operation is not UpdateOne, or the query to the
+// database failed.
+func (m *PageVersionMutation) OldField(ctx context.Context, name string) (ent.Value, error) {
+	switch name {
+	case pageversion.FieldCreatedAt:
+		return m.OldCreatedAt(ctx)
+	case pageversion.FieldUpdatedAt:
+		return m.OldUpdatedAt(ctx)
+	case pageversion.FieldDeletedAt:
+		return m.OldDeletedAt(ctx)
+	case pageversion.FieldCreatedBy:
+		return m.OldCreatedBy(ctx)
+	case pageversion.FieldUpdatedBy:
+		return m.OldUpdatedBy(ctx)
+	case pageversion.FieldDeletedBy:
+		return m.OldDeletedBy(ctx)
+	case pageversion.FieldTenantID:
+		return m.OldTenantID(ctx)
+	case pageversion.FieldPageID:
+		return m.OldPageID(ctx)
+	case pageversion.FieldVersionNumber:
+		return m.OldVersionNumber(ctx)
+	case pageversion.FieldContent:
+		return m.OldContent(ctx)
+	case pageversion.FieldComment:
+		return m.OldComment(ctx)
+	}
+	return nil, fmt.Errorf("unknown PageVersion field %s", name)
+}
+
+// SetField sets the value of a field with the given name. It returns an error if
+// the field is not defined in the schema, or if the type mismatched the field
+// type.
+func (m *PageVersionMutation) SetField(name string, value ent.Value) error {
+	switch name {
+	case pageversion.FieldCreatedAt:
+		v, ok := value.(time.Time)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetCreatedAt(v)
+		return nil
+	case pageversion.FieldUpdatedAt:
+		v, ok := value.(time.Time)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetUpdatedAt(v)
+		return nil
+	case pageversion.FieldDeletedAt:
+		v, ok := value.(time.Time)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetDeletedAt(v)
+		return nil
+	case pageversion.FieldCreatedBy:
+		v, ok := value.(uint32)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetCreatedBy(v)
+		return nil
+	case pageversion.FieldUpdatedBy:
+		v, ok := value.(uint32)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetUpdatedBy(v)
+		return nil
+	case pageversion.FieldDeletedBy:
+		v, ok := value.(uint32)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetDeletedBy(v)
+		return nil
+	case pageversion.FieldTenantID:
+		v, ok := value.(uint32)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetTenantID(v)
+		return nil
+	case pageversion.FieldPageID:
+		v, ok := value.(uint32)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetPageID(v)
+		return nil
+	case pageversion.FieldVersionNumber:
+		v, ok := value.(uint32)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetVersionNumber(v)
+		return nil
+	case pageversion.FieldContent:
+		v, ok := value.(string)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetContent(v)
+		return nil
+	case pageversion.FieldComment:
+		v, ok := value.(string)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetComment(v)
+		return nil
+	}
+	return fmt.Errorf("unknown PageVersion field %s", name)
+}
+
+// AddedFields returns all numeric fields that were incremented/decremented during
+// this mutation.
+func (m *PageVersionMutation) AddedFields() []string {
+	var fields []string
+	if m.addcreated_by != nil {
+		fields = append(fields, pageversion.FieldCreatedBy)
+	}
+	if m.addupdated_by != nil {
+		fields = append(fields, pageversion.FieldUpdatedBy)
+	}
+	if m.adddeleted_by != nil {
+		fields = append(fields, pageversion.FieldDeletedBy)
+	}
+	if m.addtenant_id != nil {
+		fields = append(fields, pageversion.FieldTenantID)
+	}
+	if m.addpage_id != nil {
+		fields = append(fields, pageversion.FieldPageID)
+	}
+	if m.addversion_number != nil {
+		fields = append(fields, pageversion.FieldVersionNumber)
+	}
+	return fields
+}
+
+// AddedField returns the numeric value that was incremented/decremented on a field
+// with the given name. The second boolean return value indicates that this field
+// was not set, or was not defined in the schema.
+func (m *PageVersionMutation) AddedField(name string) (ent.Value, bool) {
+	switch name {
+	case pageversion.FieldCreatedBy:
+		return m.AddedCreatedBy()
+	case pageversion.FieldUpdatedBy:
+		return m.AddedUpdatedBy()
+	case pageversion.FieldDeletedBy:
+		return m.AddedDeletedBy()
+	case pageversion.FieldTenantID:
+		return m.AddedTenantID()
+	case pageversion.FieldPageID:
+		return m.AddedPageID()
+	case pageversion.FieldVersionNumber:
+		return m.AddedVersionNumber()
+	}
+	return nil, false
+}
+
+// AddField adds the value to the field with the given name. It returns an error if
+// the field is not defined in the schema, or if the type mismatched the field
+// type.
+func (m *PageVersionMutation) AddField(name string, value ent.Value) error {
+	switch name {
+	case pageversion.FieldCreatedBy:
+		v, ok := value.(int32)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.AddCreatedBy(v)
+		return nil
+	case pageversion.FieldUpdatedBy:
+		v, ok := value.(int32)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.AddUpdatedBy(v)
+		return nil
+	case pageversion.FieldDeletedBy:
+		v, ok := value.(int32)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.AddDeletedBy(v)
+		return nil
+	case pageversion.FieldTenantID:
+		v, ok := value.(int32)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.AddTenantID(v)
+		return nil
+	case pageversion.FieldPageID:
+		v, ok := value.(int32)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.AddPageID(v)
+		return nil
+	case pageversion.FieldVersionNumber:
+		v, ok := value.(int32)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.AddVersionNumber(v)
+		return nil
+	}
+	return fmt.Errorf("unknown PageVersion numeric field %s", name)
+}
+
+// ClearedFields returns all nullable fields that were cleared during this
+// mutation.
+func (m *PageVersionMutation) ClearedFields() []string {
+	var fields []string
+	if m.FieldCleared(pageversion.FieldCreatedAt) {
+		fields = append(fields, pageversion.FieldCreatedAt)
+	}
+	if m.FieldCleared(pageversion.FieldUpdatedAt) {
+		fields = append(fields, pageversion.FieldUpdatedAt)
+	}
+	if m.FieldCleared(pageversion.FieldDeletedAt) {
+		fields = append(fields, pageversion.FieldDeletedAt)
+	}
+	if m.FieldCleared(pageversion.FieldCreatedBy) {
+		fields = append(fields, pageversion.FieldCreatedBy)
+	}
+	if m.FieldCleared(pageversion.FieldUpdatedBy) {
+		fields = append(fields, pageversion.FieldUpdatedBy)
+	}
+	if m.FieldCleared(pageversion.FieldDeletedBy) {
+		fields = append(fields, pageversion.FieldDeletedBy)
+	}
+	if m.FieldCleared(pageversion.FieldTenantID) {
+		fields = append(fields, pageversion.FieldTenantID)
+	}
+	if m.FieldCleared(pageversion.FieldPageID) {
+		fields = append(fields, pageversion.FieldPageID)
+	}
+	if m.FieldCleared(pageversion.FieldVersionNumber) {
+		fields = append(fields, pageversion.FieldVersionNumber)
+	}
+	if m.FieldCleared(pageversion.FieldContent) {
+		fields = append(fields, pageversion.FieldContent)
+	}
+	if m.FieldCleared(pageversion.FieldComment) {
+		fields = append(fields, pageversion.FieldComment)
+	}
+	return fields
+}
+
+// FieldCleared returns a boolean indicating if a field with the given name was
+// cleared in this mutation.
+func (m *PageVersionMutation) FieldCleared(name string) bool {
+	_, ok := m.clearedFields[name]
+	return ok
+}
+
+// ClearField clears the value of the field with the given name. It returns an
+// error if the field is not defined in the schema.
+func (m *PageVersionMutation) ClearField(name string) error {
+	switch name {
+	case pageversion.FieldCreatedAt:
+		m.ClearCreatedAt()
+		return nil
+	case pageversion.FieldUpdatedAt:
+		m.ClearUpdatedAt()
+		return nil
+	case pageversion.FieldDeletedAt:
+		m.ClearDeletedAt()
+		return nil
+	case pageversion.FieldCreatedBy:
+		m.ClearCreatedBy()
+		return nil
+	case pageversion.FieldUpdatedBy:
+		m.ClearUpdatedBy()
+		return nil
+	case pageversion.FieldDeletedBy:
+		m.ClearDeletedBy()
+		return nil
+	case pageversion.FieldTenantID:
+		m.ClearTenantID()
+		return nil
+	case pageversion.FieldPageID:
+		m.ClearPageID()
+		return nil
+	case pageversion.FieldVersionNumber:
+		m.ClearVersionNumber()
+		return nil
+	case pageversion.FieldContent:
+		m.ClearContent()
+		return nil
+	case pageversion.FieldComment:
+		m.ClearComment()
+		return nil
+	}
+	return fmt.Errorf("unknown PageVersion nullable field %s", name)
+}
+
+// ResetField resets all changes in the mutation for the field with the given name.
+// It returns an error if the field is not defined in the schema.
+func (m *PageVersionMutation) ResetField(name string) error {
+	switch name {
+	case pageversion.FieldCreatedAt:
+		m.ResetCreatedAt()
+		return nil
+	case pageversion.FieldUpdatedAt:
+		m.ResetUpdatedAt()
+		return nil
+	case pageversion.FieldDeletedAt:
+		m.ResetDeletedAt()
+		return nil
+	case pageversion.FieldCreatedBy:
+		m.ResetCreatedBy()
+		return nil
+	case pageversion.FieldUpdatedBy:
+		m.ResetUpdatedBy()
+		return nil
+	case pageversion.FieldDeletedBy:
+		m.ResetDeletedBy()
+		return nil
+	case pageversion.FieldTenantID:
+		m.ResetTenantID()
+		return nil
+	case pageversion.FieldPageID:
+		m.ResetPageID()
+		return nil
+	case pageversion.FieldVersionNumber:
+		m.ResetVersionNumber()
+		return nil
+	case pageversion.FieldContent:
+		m.ResetContent()
+		return nil
+	case pageversion.FieldComment:
+		m.ResetComment()
+		return nil
+	}
+	return fmt.Errorf("unknown PageVersion field %s", name)
+}
+
+// AddedEdges returns all edge names that were set/added in this mutation.
+func (m *PageVersionMutation) AddedEdges() []string {
+	edges := make([]string, 0, 0)
+	return edges
+}
+
+// AddedIDs returns all IDs (to other nodes) that were added for the given edge
+// name in this mutation.
+func (m *PageVersionMutation) AddedIDs(name string) []ent.Value {
+	return nil
+}
+
+// RemovedEdges returns all edge names that were removed in this mutation.
+func (m *PageVersionMutation) RemovedEdges() []string {
+	edges := make([]string, 0, 0)
+	return edges
+}
+
+// RemovedIDs returns all IDs (to other nodes) that were removed for the edge with
+// the given name in this mutation.
+func (m *PageVersionMutation) RemovedIDs(name string) []ent.Value {
+	return nil
+}
+
+// ClearedEdges returns all edge names that were cleared in this mutation.
+func (m *PageVersionMutation) ClearedEdges() []string {
+	edges := make([]string, 0, 0)
+	return edges
+}
+
+// EdgeCleared returns a boolean which indicates if the edge with the given name
+// was cleared in this mutation.
+func (m *PageVersionMutation) EdgeCleared(name string) bool {
+	return false
+}
+
+// ClearEdge clears the value of the edge with the given name. It returns an error
+// if that edge is not defined in the schema.
+func (m *PageVersionMutation) ClearEdge(name string) error {
+	return fmt.Errorf("unknown PageVersion unique edge %s", name)
+}
+
+// ResetEdge resets all changes to the edge with the given name in this mutation.
+// It returns an error if the edge is not defined in the schema.
+func (m *PageVersionMutation) ResetEdge(name string) error {
+	return fmt.Errorf("unknown PageVersion edge %s", name)
+}
+
 // PermissionMutation represents an operation that mutates the Permission nodes in the graph.
 type PermissionMutation struct {
 	config
@@ -86379,6 +87674,1297 @@ func (m *PostTranslationMutation) ClearEdge(name string) error {
 // It returns an error if the edge is not defined in the schema.
 func (m *PostTranslationMutation) ResetEdge(name string) error {
 	return fmt.Errorf("unknown PostTranslation edge %s", name)
+}
+
+// PostVersionMutation represents an operation that mutates the PostVersion nodes in the graph.
+type PostVersionMutation struct {
+	config
+	op                Op
+	typ               string
+	id                *uint32
+	created_at        *time.Time
+	updated_at        *time.Time
+	deleted_at        *time.Time
+	created_by        *uint32
+	addcreated_by     *int32
+	updated_by        *uint32
+	addupdated_by     *int32
+	deleted_by        *uint32
+	adddeleted_by     *int32
+	tenant_id         *uint32
+	addtenant_id      *int32
+	post_id           *uint32
+	addpost_id        *int32
+	version_number    *uint32
+	addversion_number *int32
+	content           *string
+	comment           *string
+	clearedFields     map[string]struct{}
+	done              bool
+	oldValue          func(context.Context) (*PostVersion, error)
+	predicates        []predicate.PostVersion
+}
+
+var _ ent.Mutation = (*PostVersionMutation)(nil)
+
+// postversionOption allows management of the mutation configuration using functional options.
+type postversionOption func(*PostVersionMutation)
+
+// newPostVersionMutation creates new mutation for the PostVersion entity.
+func newPostVersionMutation(c config, op Op, opts ...postversionOption) *PostVersionMutation {
+	m := &PostVersionMutation{
+		config:        c,
+		op:            op,
+		typ:           TypePostVersion,
+		clearedFields: make(map[string]struct{}),
+	}
+	for _, opt := range opts {
+		opt(m)
+	}
+	return m
+}
+
+// withPostVersionID sets the ID field of the mutation.
+func withPostVersionID(id uint32) postversionOption {
+	return func(m *PostVersionMutation) {
+		var (
+			err   error
+			once  sync.Once
+			value *PostVersion
+		)
+		m.oldValue = func(ctx context.Context) (*PostVersion, error) {
+			once.Do(func() {
+				if m.done {
+					err = errors.New("querying old values post mutation is not allowed")
+				} else {
+					value, err = m.Client().PostVersion.Get(ctx, id)
+				}
+			})
+			return value, err
+		}
+		m.id = &id
+	}
+}
+
+// withPostVersion sets the old PostVersion of the mutation.
+func withPostVersion(node *PostVersion) postversionOption {
+	return func(m *PostVersionMutation) {
+		m.oldValue = func(context.Context) (*PostVersion, error) {
+			return node, nil
+		}
+		m.id = &node.ID
+	}
+}
+
+// Client returns a new `ent.Client` from the mutation. If the mutation was
+// executed in a transaction (ent.Tx), a transactional client is returned.
+func (m PostVersionMutation) Client() *Client {
+	client := &Client{config: m.config}
+	client.init()
+	return client
+}
+
+// Tx returns an `ent.Tx` for mutations that were executed in transactions;
+// it returns an error otherwise.
+func (m PostVersionMutation) Tx() (*Tx, error) {
+	if _, ok := m.driver.(*txDriver); !ok {
+		return nil, errors.New("ent: mutation is not running in a transaction")
+	}
+	tx := &Tx{config: m.config}
+	tx.init()
+	return tx, nil
+}
+
+// SetID sets the value of the id field. Note that this
+// operation is only accepted on creation of PostVersion entities.
+func (m *PostVersionMutation) SetID(id uint32) {
+	m.id = &id
+}
+
+// ID returns the ID value in the mutation. Note that the ID is only available
+// if it was provided to the builder or after it was returned from the database.
+func (m *PostVersionMutation) ID() (id uint32, exists bool) {
+	if m.id == nil {
+		return
+	}
+	return *m.id, true
+}
+
+// IDs queries the database and returns the entity ids that match the mutation's predicate.
+// That means, if the mutation is applied within a transaction with an isolation level such
+// as sql.LevelSerializable, the returned ids match the ids of the rows that will be updated
+// or updated by the mutation.
+func (m *PostVersionMutation) IDs(ctx context.Context) ([]uint32, error) {
+	switch {
+	case m.op.Is(OpUpdateOne | OpDeleteOne):
+		id, exists := m.ID()
+		if exists {
+			return []uint32{id}, nil
+		}
+		fallthrough
+	case m.op.Is(OpUpdate | OpDelete):
+		return m.Client().PostVersion.Query().Where(m.predicates...).IDs(ctx)
+	default:
+		return nil, fmt.Errorf("IDs is not allowed on %s operations", m.op)
+	}
+}
+
+// SetCreatedAt sets the "created_at" field.
+func (m *PostVersionMutation) SetCreatedAt(t time.Time) {
+	m.created_at = &t
+}
+
+// CreatedAt returns the value of the "created_at" field in the mutation.
+func (m *PostVersionMutation) CreatedAt() (r time.Time, exists bool) {
+	v := m.created_at
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldCreatedAt returns the old "created_at" field's value of the PostVersion entity.
+// If the PostVersion object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *PostVersionMutation) OldCreatedAt(ctx context.Context) (v *time.Time, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldCreatedAt is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldCreatedAt requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldCreatedAt: %w", err)
+	}
+	return oldValue.CreatedAt, nil
+}
+
+// ClearCreatedAt clears the value of the "created_at" field.
+func (m *PostVersionMutation) ClearCreatedAt() {
+	m.created_at = nil
+	m.clearedFields[postversion.FieldCreatedAt] = struct{}{}
+}
+
+// CreatedAtCleared returns if the "created_at" field was cleared in this mutation.
+func (m *PostVersionMutation) CreatedAtCleared() bool {
+	_, ok := m.clearedFields[postversion.FieldCreatedAt]
+	return ok
+}
+
+// ResetCreatedAt resets all changes to the "created_at" field.
+func (m *PostVersionMutation) ResetCreatedAt() {
+	m.created_at = nil
+	delete(m.clearedFields, postversion.FieldCreatedAt)
+}
+
+// SetUpdatedAt sets the "updated_at" field.
+func (m *PostVersionMutation) SetUpdatedAt(t time.Time) {
+	m.updated_at = &t
+}
+
+// UpdatedAt returns the value of the "updated_at" field in the mutation.
+func (m *PostVersionMutation) UpdatedAt() (r time.Time, exists bool) {
+	v := m.updated_at
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldUpdatedAt returns the old "updated_at" field's value of the PostVersion entity.
+// If the PostVersion object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *PostVersionMutation) OldUpdatedAt(ctx context.Context) (v *time.Time, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldUpdatedAt is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldUpdatedAt requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldUpdatedAt: %w", err)
+	}
+	return oldValue.UpdatedAt, nil
+}
+
+// ClearUpdatedAt clears the value of the "updated_at" field.
+func (m *PostVersionMutation) ClearUpdatedAt() {
+	m.updated_at = nil
+	m.clearedFields[postversion.FieldUpdatedAt] = struct{}{}
+}
+
+// UpdatedAtCleared returns if the "updated_at" field was cleared in this mutation.
+func (m *PostVersionMutation) UpdatedAtCleared() bool {
+	_, ok := m.clearedFields[postversion.FieldUpdatedAt]
+	return ok
+}
+
+// ResetUpdatedAt resets all changes to the "updated_at" field.
+func (m *PostVersionMutation) ResetUpdatedAt() {
+	m.updated_at = nil
+	delete(m.clearedFields, postversion.FieldUpdatedAt)
+}
+
+// SetDeletedAt sets the "deleted_at" field.
+func (m *PostVersionMutation) SetDeletedAt(t time.Time) {
+	m.deleted_at = &t
+}
+
+// DeletedAt returns the value of the "deleted_at" field in the mutation.
+func (m *PostVersionMutation) DeletedAt() (r time.Time, exists bool) {
+	v := m.deleted_at
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldDeletedAt returns the old "deleted_at" field's value of the PostVersion entity.
+// If the PostVersion object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *PostVersionMutation) OldDeletedAt(ctx context.Context) (v *time.Time, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldDeletedAt is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldDeletedAt requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldDeletedAt: %w", err)
+	}
+	return oldValue.DeletedAt, nil
+}
+
+// ClearDeletedAt clears the value of the "deleted_at" field.
+func (m *PostVersionMutation) ClearDeletedAt() {
+	m.deleted_at = nil
+	m.clearedFields[postversion.FieldDeletedAt] = struct{}{}
+}
+
+// DeletedAtCleared returns if the "deleted_at" field was cleared in this mutation.
+func (m *PostVersionMutation) DeletedAtCleared() bool {
+	_, ok := m.clearedFields[postversion.FieldDeletedAt]
+	return ok
+}
+
+// ResetDeletedAt resets all changes to the "deleted_at" field.
+func (m *PostVersionMutation) ResetDeletedAt() {
+	m.deleted_at = nil
+	delete(m.clearedFields, postversion.FieldDeletedAt)
+}
+
+// SetCreatedBy sets the "created_by" field.
+func (m *PostVersionMutation) SetCreatedBy(u uint32) {
+	m.created_by = &u
+	m.addcreated_by = nil
+}
+
+// CreatedBy returns the value of the "created_by" field in the mutation.
+func (m *PostVersionMutation) CreatedBy() (r uint32, exists bool) {
+	v := m.created_by
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldCreatedBy returns the old "created_by" field's value of the PostVersion entity.
+// If the PostVersion object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *PostVersionMutation) OldCreatedBy(ctx context.Context) (v *uint32, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldCreatedBy is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldCreatedBy requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldCreatedBy: %w", err)
+	}
+	return oldValue.CreatedBy, nil
+}
+
+// AddCreatedBy adds u to the "created_by" field.
+func (m *PostVersionMutation) AddCreatedBy(u int32) {
+	if m.addcreated_by != nil {
+		*m.addcreated_by += u
+	} else {
+		m.addcreated_by = &u
+	}
+}
+
+// AddedCreatedBy returns the value that was added to the "created_by" field in this mutation.
+func (m *PostVersionMutation) AddedCreatedBy() (r int32, exists bool) {
+	v := m.addcreated_by
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// ClearCreatedBy clears the value of the "created_by" field.
+func (m *PostVersionMutation) ClearCreatedBy() {
+	m.created_by = nil
+	m.addcreated_by = nil
+	m.clearedFields[postversion.FieldCreatedBy] = struct{}{}
+}
+
+// CreatedByCleared returns if the "created_by" field was cleared in this mutation.
+func (m *PostVersionMutation) CreatedByCleared() bool {
+	_, ok := m.clearedFields[postversion.FieldCreatedBy]
+	return ok
+}
+
+// ResetCreatedBy resets all changes to the "created_by" field.
+func (m *PostVersionMutation) ResetCreatedBy() {
+	m.created_by = nil
+	m.addcreated_by = nil
+	delete(m.clearedFields, postversion.FieldCreatedBy)
+}
+
+// SetUpdatedBy sets the "updated_by" field.
+func (m *PostVersionMutation) SetUpdatedBy(u uint32) {
+	m.updated_by = &u
+	m.addupdated_by = nil
+}
+
+// UpdatedBy returns the value of the "updated_by" field in the mutation.
+func (m *PostVersionMutation) UpdatedBy() (r uint32, exists bool) {
+	v := m.updated_by
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldUpdatedBy returns the old "updated_by" field's value of the PostVersion entity.
+// If the PostVersion object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *PostVersionMutation) OldUpdatedBy(ctx context.Context) (v *uint32, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldUpdatedBy is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldUpdatedBy requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldUpdatedBy: %w", err)
+	}
+	return oldValue.UpdatedBy, nil
+}
+
+// AddUpdatedBy adds u to the "updated_by" field.
+func (m *PostVersionMutation) AddUpdatedBy(u int32) {
+	if m.addupdated_by != nil {
+		*m.addupdated_by += u
+	} else {
+		m.addupdated_by = &u
+	}
+}
+
+// AddedUpdatedBy returns the value that was added to the "updated_by" field in this mutation.
+func (m *PostVersionMutation) AddedUpdatedBy() (r int32, exists bool) {
+	v := m.addupdated_by
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// ClearUpdatedBy clears the value of the "updated_by" field.
+func (m *PostVersionMutation) ClearUpdatedBy() {
+	m.updated_by = nil
+	m.addupdated_by = nil
+	m.clearedFields[postversion.FieldUpdatedBy] = struct{}{}
+}
+
+// UpdatedByCleared returns if the "updated_by" field was cleared in this mutation.
+func (m *PostVersionMutation) UpdatedByCleared() bool {
+	_, ok := m.clearedFields[postversion.FieldUpdatedBy]
+	return ok
+}
+
+// ResetUpdatedBy resets all changes to the "updated_by" field.
+func (m *PostVersionMutation) ResetUpdatedBy() {
+	m.updated_by = nil
+	m.addupdated_by = nil
+	delete(m.clearedFields, postversion.FieldUpdatedBy)
+}
+
+// SetDeletedBy sets the "deleted_by" field.
+func (m *PostVersionMutation) SetDeletedBy(u uint32) {
+	m.deleted_by = &u
+	m.adddeleted_by = nil
+}
+
+// DeletedBy returns the value of the "deleted_by" field in the mutation.
+func (m *PostVersionMutation) DeletedBy() (r uint32, exists bool) {
+	v := m.deleted_by
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldDeletedBy returns the old "deleted_by" field's value of the PostVersion entity.
+// If the PostVersion object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *PostVersionMutation) OldDeletedBy(ctx context.Context) (v *uint32, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldDeletedBy is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldDeletedBy requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldDeletedBy: %w", err)
+	}
+	return oldValue.DeletedBy, nil
+}
+
+// AddDeletedBy adds u to the "deleted_by" field.
+func (m *PostVersionMutation) AddDeletedBy(u int32) {
+	if m.adddeleted_by != nil {
+		*m.adddeleted_by += u
+	} else {
+		m.adddeleted_by = &u
+	}
+}
+
+// AddedDeletedBy returns the value that was added to the "deleted_by" field in this mutation.
+func (m *PostVersionMutation) AddedDeletedBy() (r int32, exists bool) {
+	v := m.adddeleted_by
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// ClearDeletedBy clears the value of the "deleted_by" field.
+func (m *PostVersionMutation) ClearDeletedBy() {
+	m.deleted_by = nil
+	m.adddeleted_by = nil
+	m.clearedFields[postversion.FieldDeletedBy] = struct{}{}
+}
+
+// DeletedByCleared returns if the "deleted_by" field was cleared in this mutation.
+func (m *PostVersionMutation) DeletedByCleared() bool {
+	_, ok := m.clearedFields[postversion.FieldDeletedBy]
+	return ok
+}
+
+// ResetDeletedBy resets all changes to the "deleted_by" field.
+func (m *PostVersionMutation) ResetDeletedBy() {
+	m.deleted_by = nil
+	m.adddeleted_by = nil
+	delete(m.clearedFields, postversion.FieldDeletedBy)
+}
+
+// SetTenantID sets the "tenant_id" field.
+func (m *PostVersionMutation) SetTenantID(u uint32) {
+	m.tenant_id = &u
+	m.addtenant_id = nil
+}
+
+// TenantID returns the value of the "tenant_id" field in the mutation.
+func (m *PostVersionMutation) TenantID() (r uint32, exists bool) {
+	v := m.tenant_id
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldTenantID returns the old "tenant_id" field's value of the PostVersion entity.
+// If the PostVersion object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *PostVersionMutation) OldTenantID(ctx context.Context) (v *uint32, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldTenantID is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldTenantID requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldTenantID: %w", err)
+	}
+	return oldValue.TenantID, nil
+}
+
+// AddTenantID adds u to the "tenant_id" field.
+func (m *PostVersionMutation) AddTenantID(u int32) {
+	if m.addtenant_id != nil {
+		*m.addtenant_id += u
+	} else {
+		m.addtenant_id = &u
+	}
+}
+
+// AddedTenantID returns the value that was added to the "tenant_id" field in this mutation.
+func (m *PostVersionMutation) AddedTenantID() (r int32, exists bool) {
+	v := m.addtenant_id
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// ClearTenantID clears the value of the "tenant_id" field.
+func (m *PostVersionMutation) ClearTenantID() {
+	m.tenant_id = nil
+	m.addtenant_id = nil
+	m.clearedFields[postversion.FieldTenantID] = struct{}{}
+}
+
+// TenantIDCleared returns if the "tenant_id" field was cleared in this mutation.
+func (m *PostVersionMutation) TenantIDCleared() bool {
+	_, ok := m.clearedFields[postversion.FieldTenantID]
+	return ok
+}
+
+// ResetTenantID resets all changes to the "tenant_id" field.
+func (m *PostVersionMutation) ResetTenantID() {
+	m.tenant_id = nil
+	m.addtenant_id = nil
+	delete(m.clearedFields, postversion.FieldTenantID)
+}
+
+// SetPostID sets the "post_id" field.
+func (m *PostVersionMutation) SetPostID(u uint32) {
+	m.post_id = &u
+	m.addpost_id = nil
+}
+
+// PostID returns the value of the "post_id" field in the mutation.
+func (m *PostVersionMutation) PostID() (r uint32, exists bool) {
+	v := m.post_id
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldPostID returns the old "post_id" field's value of the PostVersion entity.
+// If the PostVersion object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *PostVersionMutation) OldPostID(ctx context.Context) (v *uint32, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldPostID is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldPostID requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldPostID: %w", err)
+	}
+	return oldValue.PostID, nil
+}
+
+// AddPostID adds u to the "post_id" field.
+func (m *PostVersionMutation) AddPostID(u int32) {
+	if m.addpost_id != nil {
+		*m.addpost_id += u
+	} else {
+		m.addpost_id = &u
+	}
+}
+
+// AddedPostID returns the value that was added to the "post_id" field in this mutation.
+func (m *PostVersionMutation) AddedPostID() (r int32, exists bool) {
+	v := m.addpost_id
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// ClearPostID clears the value of the "post_id" field.
+func (m *PostVersionMutation) ClearPostID() {
+	m.post_id = nil
+	m.addpost_id = nil
+	m.clearedFields[postversion.FieldPostID] = struct{}{}
+}
+
+// PostIDCleared returns if the "post_id" field was cleared in this mutation.
+func (m *PostVersionMutation) PostIDCleared() bool {
+	_, ok := m.clearedFields[postversion.FieldPostID]
+	return ok
+}
+
+// ResetPostID resets all changes to the "post_id" field.
+func (m *PostVersionMutation) ResetPostID() {
+	m.post_id = nil
+	m.addpost_id = nil
+	delete(m.clearedFields, postversion.FieldPostID)
+}
+
+// SetVersionNumber sets the "version_number" field.
+func (m *PostVersionMutation) SetVersionNumber(u uint32) {
+	m.version_number = &u
+	m.addversion_number = nil
+}
+
+// VersionNumber returns the value of the "version_number" field in the mutation.
+func (m *PostVersionMutation) VersionNumber() (r uint32, exists bool) {
+	v := m.version_number
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldVersionNumber returns the old "version_number" field's value of the PostVersion entity.
+// If the PostVersion object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *PostVersionMutation) OldVersionNumber(ctx context.Context) (v *uint32, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldVersionNumber is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldVersionNumber requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldVersionNumber: %w", err)
+	}
+	return oldValue.VersionNumber, nil
+}
+
+// AddVersionNumber adds u to the "version_number" field.
+func (m *PostVersionMutation) AddVersionNumber(u int32) {
+	if m.addversion_number != nil {
+		*m.addversion_number += u
+	} else {
+		m.addversion_number = &u
+	}
+}
+
+// AddedVersionNumber returns the value that was added to the "version_number" field in this mutation.
+func (m *PostVersionMutation) AddedVersionNumber() (r int32, exists bool) {
+	v := m.addversion_number
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// ClearVersionNumber clears the value of the "version_number" field.
+func (m *PostVersionMutation) ClearVersionNumber() {
+	m.version_number = nil
+	m.addversion_number = nil
+	m.clearedFields[postversion.FieldVersionNumber] = struct{}{}
+}
+
+// VersionNumberCleared returns if the "version_number" field was cleared in this mutation.
+func (m *PostVersionMutation) VersionNumberCleared() bool {
+	_, ok := m.clearedFields[postversion.FieldVersionNumber]
+	return ok
+}
+
+// ResetVersionNumber resets all changes to the "version_number" field.
+func (m *PostVersionMutation) ResetVersionNumber() {
+	m.version_number = nil
+	m.addversion_number = nil
+	delete(m.clearedFields, postversion.FieldVersionNumber)
+}
+
+// SetContent sets the "content" field.
+func (m *PostVersionMutation) SetContent(s string) {
+	m.content = &s
+}
+
+// Content returns the value of the "content" field in the mutation.
+func (m *PostVersionMutation) Content() (r string, exists bool) {
+	v := m.content
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldContent returns the old "content" field's value of the PostVersion entity.
+// If the PostVersion object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *PostVersionMutation) OldContent(ctx context.Context) (v *string, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldContent is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldContent requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldContent: %w", err)
+	}
+	return oldValue.Content, nil
+}
+
+// ClearContent clears the value of the "content" field.
+func (m *PostVersionMutation) ClearContent() {
+	m.content = nil
+	m.clearedFields[postversion.FieldContent] = struct{}{}
+}
+
+// ContentCleared returns if the "content" field was cleared in this mutation.
+func (m *PostVersionMutation) ContentCleared() bool {
+	_, ok := m.clearedFields[postversion.FieldContent]
+	return ok
+}
+
+// ResetContent resets all changes to the "content" field.
+func (m *PostVersionMutation) ResetContent() {
+	m.content = nil
+	delete(m.clearedFields, postversion.FieldContent)
+}
+
+// SetComment sets the "comment" field.
+func (m *PostVersionMutation) SetComment(s string) {
+	m.comment = &s
+}
+
+// Comment returns the value of the "comment" field in the mutation.
+func (m *PostVersionMutation) Comment() (r string, exists bool) {
+	v := m.comment
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldComment returns the old "comment" field's value of the PostVersion entity.
+// If the PostVersion object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *PostVersionMutation) OldComment(ctx context.Context) (v *string, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldComment is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldComment requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldComment: %w", err)
+	}
+	return oldValue.Comment, nil
+}
+
+// ClearComment clears the value of the "comment" field.
+func (m *PostVersionMutation) ClearComment() {
+	m.comment = nil
+	m.clearedFields[postversion.FieldComment] = struct{}{}
+}
+
+// CommentCleared returns if the "comment" field was cleared in this mutation.
+func (m *PostVersionMutation) CommentCleared() bool {
+	_, ok := m.clearedFields[postversion.FieldComment]
+	return ok
+}
+
+// ResetComment resets all changes to the "comment" field.
+func (m *PostVersionMutation) ResetComment() {
+	m.comment = nil
+	delete(m.clearedFields, postversion.FieldComment)
+}
+
+// Where appends a list predicates to the PostVersionMutation builder.
+func (m *PostVersionMutation) Where(ps ...predicate.PostVersion) {
+	m.predicates = append(m.predicates, ps...)
+}
+
+// WhereP appends storage-level predicates to the PostVersionMutation builder. Using this method,
+// users can use type-assertion to append predicates that do not depend on any generated package.
+func (m *PostVersionMutation) WhereP(ps ...func(*sql.Selector)) {
+	p := make([]predicate.PostVersion, len(ps))
+	for i := range ps {
+		p[i] = ps[i]
+	}
+	m.Where(p...)
+}
+
+// Op returns the operation name.
+func (m *PostVersionMutation) Op() Op {
+	return m.op
+}
+
+// SetOp allows setting the mutation operation.
+func (m *PostVersionMutation) SetOp(op Op) {
+	m.op = op
+}
+
+// Type returns the node type of this mutation (PostVersion).
+func (m *PostVersionMutation) Type() string {
+	return m.typ
+}
+
+// Fields returns all fields that were changed during this mutation. Note that in
+// order to get all numeric fields that were incremented/decremented, call
+// AddedFields().
+func (m *PostVersionMutation) Fields() []string {
+	fields := make([]string, 0, 11)
+	if m.created_at != nil {
+		fields = append(fields, postversion.FieldCreatedAt)
+	}
+	if m.updated_at != nil {
+		fields = append(fields, postversion.FieldUpdatedAt)
+	}
+	if m.deleted_at != nil {
+		fields = append(fields, postversion.FieldDeletedAt)
+	}
+	if m.created_by != nil {
+		fields = append(fields, postversion.FieldCreatedBy)
+	}
+	if m.updated_by != nil {
+		fields = append(fields, postversion.FieldUpdatedBy)
+	}
+	if m.deleted_by != nil {
+		fields = append(fields, postversion.FieldDeletedBy)
+	}
+	if m.tenant_id != nil {
+		fields = append(fields, postversion.FieldTenantID)
+	}
+	if m.post_id != nil {
+		fields = append(fields, postversion.FieldPostID)
+	}
+	if m.version_number != nil {
+		fields = append(fields, postversion.FieldVersionNumber)
+	}
+	if m.content != nil {
+		fields = append(fields, postversion.FieldContent)
+	}
+	if m.comment != nil {
+		fields = append(fields, postversion.FieldComment)
+	}
+	return fields
+}
+
+// Field returns the value of a field with the given name. The second boolean
+// return value indicates that this field was not set, or was not defined in the
+// schema.
+func (m *PostVersionMutation) Field(name string) (ent.Value, bool) {
+	switch name {
+	case postversion.FieldCreatedAt:
+		return m.CreatedAt()
+	case postversion.FieldUpdatedAt:
+		return m.UpdatedAt()
+	case postversion.FieldDeletedAt:
+		return m.DeletedAt()
+	case postversion.FieldCreatedBy:
+		return m.CreatedBy()
+	case postversion.FieldUpdatedBy:
+		return m.UpdatedBy()
+	case postversion.FieldDeletedBy:
+		return m.DeletedBy()
+	case postversion.FieldTenantID:
+		return m.TenantID()
+	case postversion.FieldPostID:
+		return m.PostID()
+	case postversion.FieldVersionNumber:
+		return m.VersionNumber()
+	case postversion.FieldContent:
+		return m.Content()
+	case postversion.FieldComment:
+		return m.Comment()
+	}
+	return nil, false
+}
+
+// OldField returns the old value of the field from the database. An error is
+// returned if the mutation operation is not UpdateOne, or the query to the
+// database failed.
+func (m *PostVersionMutation) OldField(ctx context.Context, name string) (ent.Value, error) {
+	switch name {
+	case postversion.FieldCreatedAt:
+		return m.OldCreatedAt(ctx)
+	case postversion.FieldUpdatedAt:
+		return m.OldUpdatedAt(ctx)
+	case postversion.FieldDeletedAt:
+		return m.OldDeletedAt(ctx)
+	case postversion.FieldCreatedBy:
+		return m.OldCreatedBy(ctx)
+	case postversion.FieldUpdatedBy:
+		return m.OldUpdatedBy(ctx)
+	case postversion.FieldDeletedBy:
+		return m.OldDeletedBy(ctx)
+	case postversion.FieldTenantID:
+		return m.OldTenantID(ctx)
+	case postversion.FieldPostID:
+		return m.OldPostID(ctx)
+	case postversion.FieldVersionNumber:
+		return m.OldVersionNumber(ctx)
+	case postversion.FieldContent:
+		return m.OldContent(ctx)
+	case postversion.FieldComment:
+		return m.OldComment(ctx)
+	}
+	return nil, fmt.Errorf("unknown PostVersion field %s", name)
+}
+
+// SetField sets the value of a field with the given name. It returns an error if
+// the field is not defined in the schema, or if the type mismatched the field
+// type.
+func (m *PostVersionMutation) SetField(name string, value ent.Value) error {
+	switch name {
+	case postversion.FieldCreatedAt:
+		v, ok := value.(time.Time)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetCreatedAt(v)
+		return nil
+	case postversion.FieldUpdatedAt:
+		v, ok := value.(time.Time)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetUpdatedAt(v)
+		return nil
+	case postversion.FieldDeletedAt:
+		v, ok := value.(time.Time)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetDeletedAt(v)
+		return nil
+	case postversion.FieldCreatedBy:
+		v, ok := value.(uint32)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetCreatedBy(v)
+		return nil
+	case postversion.FieldUpdatedBy:
+		v, ok := value.(uint32)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetUpdatedBy(v)
+		return nil
+	case postversion.FieldDeletedBy:
+		v, ok := value.(uint32)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetDeletedBy(v)
+		return nil
+	case postversion.FieldTenantID:
+		v, ok := value.(uint32)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetTenantID(v)
+		return nil
+	case postversion.FieldPostID:
+		v, ok := value.(uint32)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetPostID(v)
+		return nil
+	case postversion.FieldVersionNumber:
+		v, ok := value.(uint32)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetVersionNumber(v)
+		return nil
+	case postversion.FieldContent:
+		v, ok := value.(string)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetContent(v)
+		return nil
+	case postversion.FieldComment:
+		v, ok := value.(string)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetComment(v)
+		return nil
+	}
+	return fmt.Errorf("unknown PostVersion field %s", name)
+}
+
+// AddedFields returns all numeric fields that were incremented/decremented during
+// this mutation.
+func (m *PostVersionMutation) AddedFields() []string {
+	var fields []string
+	if m.addcreated_by != nil {
+		fields = append(fields, postversion.FieldCreatedBy)
+	}
+	if m.addupdated_by != nil {
+		fields = append(fields, postversion.FieldUpdatedBy)
+	}
+	if m.adddeleted_by != nil {
+		fields = append(fields, postversion.FieldDeletedBy)
+	}
+	if m.addtenant_id != nil {
+		fields = append(fields, postversion.FieldTenantID)
+	}
+	if m.addpost_id != nil {
+		fields = append(fields, postversion.FieldPostID)
+	}
+	if m.addversion_number != nil {
+		fields = append(fields, postversion.FieldVersionNumber)
+	}
+	return fields
+}
+
+// AddedField returns the numeric value that was incremented/decremented on a field
+// with the given name. The second boolean return value indicates that this field
+// was not set, or was not defined in the schema.
+func (m *PostVersionMutation) AddedField(name string) (ent.Value, bool) {
+	switch name {
+	case postversion.FieldCreatedBy:
+		return m.AddedCreatedBy()
+	case postversion.FieldUpdatedBy:
+		return m.AddedUpdatedBy()
+	case postversion.FieldDeletedBy:
+		return m.AddedDeletedBy()
+	case postversion.FieldTenantID:
+		return m.AddedTenantID()
+	case postversion.FieldPostID:
+		return m.AddedPostID()
+	case postversion.FieldVersionNumber:
+		return m.AddedVersionNumber()
+	}
+	return nil, false
+}
+
+// AddField adds the value to the field with the given name. It returns an error if
+// the field is not defined in the schema, or if the type mismatched the field
+// type.
+func (m *PostVersionMutation) AddField(name string, value ent.Value) error {
+	switch name {
+	case postversion.FieldCreatedBy:
+		v, ok := value.(int32)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.AddCreatedBy(v)
+		return nil
+	case postversion.FieldUpdatedBy:
+		v, ok := value.(int32)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.AddUpdatedBy(v)
+		return nil
+	case postversion.FieldDeletedBy:
+		v, ok := value.(int32)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.AddDeletedBy(v)
+		return nil
+	case postversion.FieldTenantID:
+		v, ok := value.(int32)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.AddTenantID(v)
+		return nil
+	case postversion.FieldPostID:
+		v, ok := value.(int32)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.AddPostID(v)
+		return nil
+	case postversion.FieldVersionNumber:
+		v, ok := value.(int32)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.AddVersionNumber(v)
+		return nil
+	}
+	return fmt.Errorf("unknown PostVersion numeric field %s", name)
+}
+
+// ClearedFields returns all nullable fields that were cleared during this
+// mutation.
+func (m *PostVersionMutation) ClearedFields() []string {
+	var fields []string
+	if m.FieldCleared(postversion.FieldCreatedAt) {
+		fields = append(fields, postversion.FieldCreatedAt)
+	}
+	if m.FieldCleared(postversion.FieldUpdatedAt) {
+		fields = append(fields, postversion.FieldUpdatedAt)
+	}
+	if m.FieldCleared(postversion.FieldDeletedAt) {
+		fields = append(fields, postversion.FieldDeletedAt)
+	}
+	if m.FieldCleared(postversion.FieldCreatedBy) {
+		fields = append(fields, postversion.FieldCreatedBy)
+	}
+	if m.FieldCleared(postversion.FieldUpdatedBy) {
+		fields = append(fields, postversion.FieldUpdatedBy)
+	}
+	if m.FieldCleared(postversion.FieldDeletedBy) {
+		fields = append(fields, postversion.FieldDeletedBy)
+	}
+	if m.FieldCleared(postversion.FieldTenantID) {
+		fields = append(fields, postversion.FieldTenantID)
+	}
+	if m.FieldCleared(postversion.FieldPostID) {
+		fields = append(fields, postversion.FieldPostID)
+	}
+	if m.FieldCleared(postversion.FieldVersionNumber) {
+		fields = append(fields, postversion.FieldVersionNumber)
+	}
+	if m.FieldCleared(postversion.FieldContent) {
+		fields = append(fields, postversion.FieldContent)
+	}
+	if m.FieldCleared(postversion.FieldComment) {
+		fields = append(fields, postversion.FieldComment)
+	}
+	return fields
+}
+
+// FieldCleared returns a boolean indicating if a field with the given name was
+// cleared in this mutation.
+func (m *PostVersionMutation) FieldCleared(name string) bool {
+	_, ok := m.clearedFields[name]
+	return ok
+}
+
+// ClearField clears the value of the field with the given name. It returns an
+// error if the field is not defined in the schema.
+func (m *PostVersionMutation) ClearField(name string) error {
+	switch name {
+	case postversion.FieldCreatedAt:
+		m.ClearCreatedAt()
+		return nil
+	case postversion.FieldUpdatedAt:
+		m.ClearUpdatedAt()
+		return nil
+	case postversion.FieldDeletedAt:
+		m.ClearDeletedAt()
+		return nil
+	case postversion.FieldCreatedBy:
+		m.ClearCreatedBy()
+		return nil
+	case postversion.FieldUpdatedBy:
+		m.ClearUpdatedBy()
+		return nil
+	case postversion.FieldDeletedBy:
+		m.ClearDeletedBy()
+		return nil
+	case postversion.FieldTenantID:
+		m.ClearTenantID()
+		return nil
+	case postversion.FieldPostID:
+		m.ClearPostID()
+		return nil
+	case postversion.FieldVersionNumber:
+		m.ClearVersionNumber()
+		return nil
+	case postversion.FieldContent:
+		m.ClearContent()
+		return nil
+	case postversion.FieldComment:
+		m.ClearComment()
+		return nil
+	}
+	return fmt.Errorf("unknown PostVersion nullable field %s", name)
+}
+
+// ResetField resets all changes in the mutation for the field with the given name.
+// It returns an error if the field is not defined in the schema.
+func (m *PostVersionMutation) ResetField(name string) error {
+	switch name {
+	case postversion.FieldCreatedAt:
+		m.ResetCreatedAt()
+		return nil
+	case postversion.FieldUpdatedAt:
+		m.ResetUpdatedAt()
+		return nil
+	case postversion.FieldDeletedAt:
+		m.ResetDeletedAt()
+		return nil
+	case postversion.FieldCreatedBy:
+		m.ResetCreatedBy()
+		return nil
+	case postversion.FieldUpdatedBy:
+		m.ResetUpdatedBy()
+		return nil
+	case postversion.FieldDeletedBy:
+		m.ResetDeletedBy()
+		return nil
+	case postversion.FieldTenantID:
+		m.ResetTenantID()
+		return nil
+	case postversion.FieldPostID:
+		m.ResetPostID()
+		return nil
+	case postversion.FieldVersionNumber:
+		m.ResetVersionNumber()
+		return nil
+	case postversion.FieldContent:
+		m.ResetContent()
+		return nil
+	case postversion.FieldComment:
+		m.ResetComment()
+		return nil
+	}
+	return fmt.Errorf("unknown PostVersion field %s", name)
+}
+
+// AddedEdges returns all edge names that were set/added in this mutation.
+func (m *PostVersionMutation) AddedEdges() []string {
+	edges := make([]string, 0, 0)
+	return edges
+}
+
+// AddedIDs returns all IDs (to other nodes) that were added for the given edge
+// name in this mutation.
+func (m *PostVersionMutation) AddedIDs(name string) []ent.Value {
+	return nil
+}
+
+// RemovedEdges returns all edge names that were removed in this mutation.
+func (m *PostVersionMutation) RemovedEdges() []string {
+	edges := make([]string, 0, 0)
+	return edges
+}
+
+// RemovedIDs returns all IDs (to other nodes) that were removed for the edge with
+// the given name in this mutation.
+func (m *PostVersionMutation) RemovedIDs(name string) []ent.Value {
+	return nil
+}
+
+// ClearedEdges returns all edge names that were cleared in this mutation.
+func (m *PostVersionMutation) ClearedEdges() []string {
+	edges := make([]string, 0, 0)
+	return edges
+}
+
+// EdgeCleared returns a boolean which indicates if the edge with the given name
+// was cleared in this mutation.
+func (m *PostVersionMutation) EdgeCleared(name string) bool {
+	return false
+}
+
+// ClearEdge clears the value of the edge with the given name. It returns an error
+// if that edge is not defined in the schema.
+func (m *PostVersionMutation) ClearEdge(name string) error {
+	return fmt.Errorf("unknown PostVersion unique edge %s", name)
+}
+
+// ResetEdge resets all changes to the edge with the given name in this mutation.
+// It returns an error if the edge is not defined in the schema.
+func (m *PostVersionMutation) ResetEdge(name string) error {
+	return fmt.Errorf("unknown PostVersion edge %s", name)
 }
 
 // PostWatchMutation represents an operation that mutates the PostWatch nodes in the graph.

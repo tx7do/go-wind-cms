@@ -2,12 +2,15 @@ import 'package:get_it/get_it.dart';
 
 import 'package:flutter_app/generated/api/app/service/v1/index.dart'
     show ContentServiceV1Category, ContentServiceV1CategoryTranslation,
+        ContentServiceV1Page, ContentServiceV1PageTranslation,
         ContentServiceV1Post, ContentServiceV1PostTranslation,
         ContentServiceV1Tag, ContentServiceV1TagTranslation;
 import 'package:flutter_app/src/core/preference/user_preference_cache.dart';
 
 typedef Category = ContentServiceV1Category;
 typedef CategoryTranslation = ContentServiceV1CategoryTranslation;
+typedef Page = ContentServiceV1Page;
+typedef PageTranslation = ContentServiceV1PageTranslation;
 typedef Post = ContentServiceV1Post;
 typedef PostTranslation = ContentServiceV1PostTranslation;
 typedef Tag = ContentServiceV1Tag;
@@ -122,4 +125,27 @@ TagTranslation? getTagTranslation(Tag? tag) {
 /// 获取标签名称
 String getTagName(Tag? tag, {String fallback = ''}) {
   return getTagTranslation(tag)?.name ?? fallback;
+}
+
+// ==============================
+// Page 翻译辅助
+// ==============================
+
+/// 获取页面的匹配翻译（优先当前语言，fallback 到第一个翻译）
+PageTranslation? getPageTranslation(Page? page) {
+  if (page?.translations == null || page!.translations!.isEmpty) return null;
+  final locale = getCurrentLocale();
+  if (locale != null) {
+    final match = page.translations!.whereType<PageTranslation?>().firstWhere(
+          (t) => t?.languageCode == locale,
+          orElse: () => null,
+        );
+    if (match != null) return match;
+  }
+  return page.translations!.first;
+}
+
+/// 获取页面标题
+String getPageTitle(Page? page, {String fallback = ''}) {
+  return getPageTranslation(page)?.title ?? fallback;
 }

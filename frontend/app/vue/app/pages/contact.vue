@@ -1,9 +1,27 @@
 <script setup lang="ts">
 import { XIcon } from '@/plugins/xicon'
+import type { contentservicev1_Page } from '@/api/generated/app/service/v1'
+import { fetchPageBySlug } from '@/api/composables/page'
 
 const { t } = useI18n()
 
 useHead({ title: t('page.legal.contact.title') })
+
+// CMS 优先：后台有 slug=contact 的已发布页面（带区块）则整页走 CMS 渲染，否则回退静态内容
+const cmsPage = ref<contentservicev1_Page | null>(null)
+const cmsLoading = ref(true)
+
+onMounted(async () => {
+  try {
+    const fetched = await fetchPageBySlug('contact')
+    cmsPage.value = fetched?.sections?.length ? fetched : null
+  } catch (e) {
+    console.error('[Contact] Load cms page failed:', e)
+    cmsPage.value = null
+  } finally {
+    cmsLoading.value = false
+  }
+})
 
 const cards = [
   {
@@ -30,7 +48,8 @@ const cards = [
 </script>
 
 <template>
-  <div class="w-full">
+  <PageCmsPageView v-if="!cmsLoading && cmsPage" :page="cmsPage" />
+  <div v-else class="w-full">
     <LayoutPageHero
       :title="t('page.legal.contact.title')"
       :description="t('page.legal.contact.description')"

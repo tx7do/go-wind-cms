@@ -25,7 +25,10 @@ const _ = http.SupportPackageIsVersion1
 const OperationPageServiceCreate = "/admin.service.v1.PageService/Create"
 const OperationPageServiceDelete = "/admin.service.v1.PageService/Delete"
 const OperationPageServiceGet = "/admin.service.v1.PageService/Get"
+const OperationPageServiceGetVersion = "/admin.service.v1.PageService/GetVersion"
 const OperationPageServiceList = "/admin.service.v1.PageService/List"
+const OperationPageServiceListVersions = "/admin.service.v1.PageService/ListVersions"
+const OperationPageServiceRestoreVersion = "/admin.service.v1.PageService/RestoreVersion"
 const OperationPageServiceUpdate = "/admin.service.v1.PageService/Update"
 
 type PageServiceHTTPServer interface {
@@ -35,8 +38,14 @@ type PageServiceHTTPServer interface {
 	Delete(context.Context, *v11.DeletePageRequest) (*emptypb.Empty, error)
 	// Get 获取页面数据
 	Get(context.Context, *v11.GetPageRequest) (*v11.Page, error)
+	// GetVersion 获取页面版本详情
+	GetVersion(context.Context, *v11.GetPageVersionRequest) (*v11.PageVersion, error)
 	// List 获取页面列表
 	List(context.Context, *v1.PagingRequest) (*v11.ListPageResponse, error)
+	// ListVersions 列出页面版本（按版本号倒序）
+	ListVersions(context.Context, *v11.ListPageVersionsRequest) (*v11.ListPageVersionsResponse, error)
+	// RestoreVersion 恢复页面到指定版本（恢复动作本身会生成一个新版本）
+	RestoreVersion(context.Context, *v11.RestorePageVersionRequest) (*v11.Page, error)
 	// Update 更新页面
 	Update(context.Context, *v11.UpdatePageRequest) (*v11.Page, error)
 }
@@ -48,6 +57,9 @@ func RegisterPageServiceHTTPServer(s *http.Server, srv PageServiceHTTPServer) {
 	r.POST("/admin/v1/pages", _PageService_Create17_HTTP_Handler(srv))
 	r.PUT("/admin/v1/pages/{id}", _PageService_Update18_HTTP_Handler(srv))
 	r.DELETE("/admin/v1/pages/{id}", _PageService_Delete19_HTTP_Handler(srv))
+	r.GET("/admin/v1/pages/{page_id}/versions", _PageService_ListVersions0_HTTP_Handler(srv))
+	r.GET("/admin/v1/pages/versions/{id}", _PageService_GetVersion0_HTTP_Handler(srv))
+	r.POST("/admin/v1/pages/{page_id}/versions/{version_id}/restore", _PageService_RestoreVersion0_HTTP_Handler(srv))
 }
 
 func _PageService_List24_HTTP_Handler(srv PageServiceHTTPServer) func(ctx http.Context) error {
@@ -160,6 +172,75 @@ func _PageService_Delete19_HTTP_Handler(srv PageServiceHTTPServer) func(ctx http
 	}
 }
 
+func _PageService_ListVersions0_HTTP_Handler(srv PageServiceHTTPServer) func(ctx http.Context) error {
+	return func(ctx http.Context) error {
+		var in v11.ListPageVersionsRequest
+		if err := ctx.BindQuery(&in); err != nil {
+			return err
+		}
+		if err := ctx.BindVars(&in); err != nil {
+			return err
+		}
+		http.SetOperation(ctx, OperationPageServiceListVersions)
+		h := ctx.Middleware(func(ctx context.Context, req interface{}) (interface{}, error) {
+			return srv.ListVersions(ctx, req.(*v11.ListPageVersionsRequest))
+		})
+		out, err := h(ctx, &in)
+		if err != nil {
+			return err
+		}
+		reply := out.(*v11.ListPageVersionsResponse)
+		return ctx.Result(200, reply)
+	}
+}
+
+func _PageService_GetVersion0_HTTP_Handler(srv PageServiceHTTPServer) func(ctx http.Context) error {
+	return func(ctx http.Context) error {
+		var in v11.GetPageVersionRequest
+		if err := ctx.BindQuery(&in); err != nil {
+			return err
+		}
+		if err := ctx.BindVars(&in); err != nil {
+			return err
+		}
+		http.SetOperation(ctx, OperationPageServiceGetVersion)
+		h := ctx.Middleware(func(ctx context.Context, req interface{}) (interface{}, error) {
+			return srv.GetVersion(ctx, req.(*v11.GetPageVersionRequest))
+		})
+		out, err := h(ctx, &in)
+		if err != nil {
+			return err
+		}
+		reply := out.(*v11.PageVersion)
+		return ctx.Result(200, reply)
+	}
+}
+
+func _PageService_RestoreVersion0_HTTP_Handler(srv PageServiceHTTPServer) func(ctx http.Context) error {
+	return func(ctx http.Context) error {
+		var in v11.RestorePageVersionRequest
+		if err := ctx.Bind(&in); err != nil {
+			return err
+		}
+		if err := ctx.BindQuery(&in); err != nil {
+			return err
+		}
+		if err := ctx.BindVars(&in); err != nil {
+			return err
+		}
+		http.SetOperation(ctx, OperationPageServiceRestoreVersion)
+		h := ctx.Middleware(func(ctx context.Context, req interface{}) (interface{}, error) {
+			return srv.RestoreVersion(ctx, req.(*v11.RestorePageVersionRequest))
+		})
+		out, err := h(ctx, &in)
+		if err != nil {
+			return err
+		}
+		reply := out.(*v11.Page)
+		return ctx.Result(200, reply)
+	}
+}
+
 type PageServiceHTTPClient interface {
 	// Create 创建页面
 	Create(ctx context.Context, req *v11.CreatePageRequest, opts ...http.CallOption) (rsp *v11.Page, err error)
@@ -167,8 +248,14 @@ type PageServiceHTTPClient interface {
 	Delete(ctx context.Context, req *v11.DeletePageRequest, opts ...http.CallOption) (rsp *emptypb.Empty, err error)
 	// Get 获取页面数据
 	Get(ctx context.Context, req *v11.GetPageRequest, opts ...http.CallOption) (rsp *v11.Page, err error)
+	// GetVersion 获取页面版本详情
+	GetVersion(ctx context.Context, req *v11.GetPageVersionRequest, opts ...http.CallOption) (rsp *v11.PageVersion, err error)
 	// List 获取页面列表
 	List(ctx context.Context, req *v1.PagingRequest, opts ...http.CallOption) (rsp *v11.ListPageResponse, err error)
+	// ListVersions 列出页面版本（按版本号倒序）
+	ListVersions(ctx context.Context, req *v11.ListPageVersionsRequest, opts ...http.CallOption) (rsp *v11.ListPageVersionsResponse, err error)
+	// RestoreVersion 恢复页面到指定版本（恢复动作本身会生成一个新版本）
+	RestoreVersion(ctx context.Context, req *v11.RestorePageVersionRequest, opts ...http.CallOption) (rsp *v11.Page, err error)
 	// Update 更新页面
 	Update(ctx context.Context, req *v11.UpdatePageRequest, opts ...http.CallOption) (rsp *v11.Page, err error)
 }
@@ -223,6 +310,20 @@ func (c *PageServiceHTTPClientImpl) Get(ctx context.Context, in *v11.GetPageRequ
 	return &out, nil
 }
 
+// GetVersion 获取页面版本详情
+func (c *PageServiceHTTPClientImpl) GetVersion(ctx context.Context, in *v11.GetPageVersionRequest, opts ...http.CallOption) (*v11.PageVersion, error) {
+	var out v11.PageVersion
+	pattern := "/admin/v1/pages/versions/{id}"
+	path := binding.EncodeURL(pattern, in, true)
+	opts = append(opts, http.Operation(OperationPageServiceGetVersion))
+	opts = append(opts, http.PathTemplate(pattern))
+	err := c.cc.Invoke(ctx, "GET", path, nil, &out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return &out, nil
+}
+
 // List 获取页面列表
 func (c *PageServiceHTTPClientImpl) List(ctx context.Context, in *v1.PagingRequest, opts ...http.CallOption) (*v11.ListPageResponse, error) {
 	var out v11.ListPageResponse
@@ -231,6 +332,34 @@ func (c *PageServiceHTTPClientImpl) List(ctx context.Context, in *v1.PagingReque
 	opts = append(opts, http.Operation(OperationPageServiceList))
 	opts = append(opts, http.PathTemplate(pattern))
 	err := c.cc.Invoke(ctx, "GET", path, nil, &out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return &out, nil
+}
+
+// ListVersions 列出页面版本（按版本号倒序）
+func (c *PageServiceHTTPClientImpl) ListVersions(ctx context.Context, in *v11.ListPageVersionsRequest, opts ...http.CallOption) (*v11.ListPageVersionsResponse, error) {
+	var out v11.ListPageVersionsResponse
+	pattern := "/admin/v1/pages/{page_id}/versions"
+	path := binding.EncodeURL(pattern, in, true)
+	opts = append(opts, http.Operation(OperationPageServiceListVersions))
+	opts = append(opts, http.PathTemplate(pattern))
+	err := c.cc.Invoke(ctx, "GET", path, nil, &out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return &out, nil
+}
+
+// RestoreVersion 恢复页面到指定版本（恢复动作本身会生成一个新版本）
+func (c *PageServiceHTTPClientImpl) RestoreVersion(ctx context.Context, in *v11.RestorePageVersionRequest, opts ...http.CallOption) (*v11.Page, error) {
+	var out v11.Page
+	pattern := "/admin/v1/pages/{page_id}/versions/{version_id}/restore"
+	path := binding.EncodeURL(pattern, in, false)
+	opts = append(opts, http.Operation(OperationPageServiceRestoreVersion))
+	opts = append(opts, http.PathTemplate(pattern))
+	err := c.cc.Invoke(ctx, "POST", path, in, &out, opts...)
 	if err != nil {
 		return nil, err
 	}

@@ -4,6 +4,7 @@ import {
   ArrowLeftOutlined,
   CheckOutlined,
   CloseOutlined,
+  HistoryOutlined,
   MenuFoldOutlined,
   SettingOutlined,
   ShareAltOutlined,
@@ -27,6 +28,7 @@ import {
   getPostStatusLabel,
 } from '../constants';
 import AiGenerateButton from '@/components/common/AiGenerateButton';
+import VersionHistoryDrawer from '@/components/version/VersionHistoryDrawer';
 import SocialDistributionDrawer from '@/pages/app/social/distribution/SocialDistributionDrawer';
 import PostSettingsPanel from './PostSettingsPanel';
 import type { PostEditProps } from './types';
@@ -92,6 +94,7 @@ const PostEditPage = () => {
   const [saving, setSaving] = useState(false);
   const [settingsOpen, setSettingsOpen] = useState(true);
   const [socialDistOpen, setSocialDistOpen] = useState(false);
+  const [versionsOpen, setVersionsOpen] = useState(false);
   const [categoryOptions, setCategoryOptions] = useState<{ label: string; value: number }[]>([]);
   const [categoryOptionsLoading, setCategoryOptionsLoading] = useState(false);
 
@@ -739,6 +742,14 @@ ${content}` : content });
             >
               {t('distributeToSocial')}
             </Button>
+            <Button
+              icon={<HistoryOutlined />}
+              disabled={!postId}
+              title={postId ? undefined : t('versionNeedSave')}
+              onClick={() => setVersionsOpen(true)}
+            >
+              {t('versionHistory')}
+            </Button>
           </Space>
         </div>
       </div>
@@ -753,6 +764,23 @@ ${content}` : content });
         }}
         onClose={() => setSocialDistOpen(false)}
         onSuccess={() => setSocialDistOpen(false)}
+      />
+
+      {/* 版本历史：查看快照/与当前内容 diff/一键恢复 */}
+      <VersionHistoryDrawer
+        open={versionsOpen}
+        onClose={() => setVersionsOpen(false)}
+        kind="post"
+        targetId={postId}
+        lang={lang}
+        currentContent={formData.content ?? ''}
+        onRestored={() => {
+          // 恢复后重新拉取服务端数据覆盖表单（本地草稿不再相关）
+          clearDraft(lang);
+          fetchPost(lang).catch((error) => {
+            console.error('Refetch post after restore failed:', error);
+          });
+        }}
       />
     </ContentContainer>
   );

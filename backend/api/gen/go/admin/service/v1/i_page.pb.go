@@ -28,42 +28,57 @@ var File_admin_service_v1_i_page_proto protoreflect.FileDescriptor
 
 const file_admin_service_v1_i_page_proto_rawDesc = "" +
 	"\n" +
-	"\x1dadmin/service/v1/i_page.proto\x12\x10admin.service.v1\x1a\x1cgoogle/api/annotations.proto\x1a\x1bgoogle/protobuf/empty.proto\x1a\x1epagination/v1/pagination.proto\x1a\x1dcontent/service/v1/page.proto2\x8c\x04\n" +
+	"\x1dadmin/service/v1/i_page.proto\x12\x10admin.service.v1\x1a\x1cgoogle/api/annotations.proto\x1a\x1bgoogle/protobuf/empty.proto\x1a\x1epagination/v1/pagination.proto\x1a\x1dcontent/service/v1/page.proto2\xc5\a\n" +
 	"\vPageService\x12`\n" +
 	"\x04List\x12\x19.pagination.PagingRequest\x1a$.content.service.v1.ListPageResponse\"\x17\x82\xd3\xe4\x93\x02\x11\x12\x0f/admin/v1/pages\x12a\n" +
 	"\x03Get\x12\".content.service.v1.GetPageRequest\x1a\x18.content.service.v1.Page\"\x1c\x82\xd3\xe4\x93\x02\x16\x12\x14/admin/v1/pages/{id}\x12e\n" +
 	"\x06Create\x12%.content.service.v1.CreatePageRequest\x1a\x18.content.service.v1.Page\"\x1a\x82\xd3\xe4\x93\x02\x14:\x01*\"\x0f/admin/v1/pages\x12j\n" +
 	"\x06Update\x12%.content.service.v1.UpdatePageRequest\x1a\x18.content.service.v1.Page\"\x1f\x82\xd3\xe4\x93\x02\x19:\x01*\x1a\x14/admin/v1/pages/{id}\x12e\n" +
-	"\x06Delete\x12%.content.service.v1.DeletePageRequest\x1a\x16.google.protobuf.Empty\"\x1c\x82\xd3\xe4\x93\x02\x16*\x14/admin/v1/pages/{id}B\xb5\x01\n" +
+	"\x06Delete\x12%.content.service.v1.DeletePageRequest\x1a\x16.google.protobuf.Empty\"\x1c\x82\xd3\xe4\x93\x02\x16*\x14/admin/v1/pages/{id}\x12\x95\x01\n" +
+	"\fListVersions\x12+.content.service.v1.ListPageVersionsRequest\x1a,.content.service.v1.ListPageVersionsResponse\"*\x82\xd3\xe4\x93\x02$\x12\"/admin/v1/pages/{page_id}/versions\x12\x7f\n" +
+	"\n" +
+	"GetVersion\x12).content.service.v1.GetPageVersionRequest\x1a\x1f.content.service.v1.PageVersion\"%\x82\xd3\xe4\x93\x02\x1f\x12\x1d/admin/v1/pages/versions/{id}\x12\x9d\x01\n" +
+	"\x0eRestoreVersion\x12-.content.service.v1.RestorePageVersionRequest\x1a\x18.content.service.v1.Page\"B\x82\xd3\xe4\x93\x02<:\x01*\"7/admin/v1/pages/{page_id}/versions/{version_id}/restoreB\xb5\x01\n" +
 	"\x14com.admin.service.v1B\n" +
 	"IPageProtoP\x01Z/go-wind-cms/api/gen/go/admin/service/v1;adminpb\xa2\x02\x03ASX\xaa\x02\x10Admin.Service.V1\xca\x02\x10Admin\\Service\\V1\xe2\x02\x1cAdmin\\Service\\V1\\GPBMetadata\xea\x02\x12Admin::Service::V1b\x06proto3"
 
 var file_admin_service_v1_i_page_proto_goTypes = []any{
-	(*v1.PagingRequest)(nil),      // 0: pagination.PagingRequest
-	(*v11.GetPageRequest)(nil),    // 1: content.service.v1.GetPageRequest
-	(*v11.CreatePageRequest)(nil), // 2: content.service.v1.CreatePageRequest
-	(*v11.UpdatePageRequest)(nil), // 3: content.service.v1.UpdatePageRequest
-	(*v11.DeletePageRequest)(nil), // 4: content.service.v1.DeletePageRequest
-	(*v11.ListPageResponse)(nil),  // 5: content.service.v1.ListPageResponse
-	(*v11.Page)(nil),              // 6: content.service.v1.Page
-	(*emptypb.Empty)(nil),         // 7: google.protobuf.Empty
+	(*v1.PagingRequest)(nil),              // 0: pagination.PagingRequest
+	(*v11.GetPageRequest)(nil),            // 1: content.service.v1.GetPageRequest
+	(*v11.CreatePageRequest)(nil),         // 2: content.service.v1.CreatePageRequest
+	(*v11.UpdatePageRequest)(nil),         // 3: content.service.v1.UpdatePageRequest
+	(*v11.DeletePageRequest)(nil),         // 4: content.service.v1.DeletePageRequest
+	(*v11.ListPageVersionsRequest)(nil),   // 5: content.service.v1.ListPageVersionsRequest
+	(*v11.GetPageVersionRequest)(nil),     // 6: content.service.v1.GetPageVersionRequest
+	(*v11.RestorePageVersionRequest)(nil), // 7: content.service.v1.RestorePageVersionRequest
+	(*v11.ListPageResponse)(nil),          // 8: content.service.v1.ListPageResponse
+	(*v11.Page)(nil),                      // 9: content.service.v1.Page
+	(*emptypb.Empty)(nil),                 // 10: google.protobuf.Empty
+	(*v11.ListPageVersionsResponse)(nil),  // 11: content.service.v1.ListPageVersionsResponse
+	(*v11.PageVersion)(nil),               // 12: content.service.v1.PageVersion
 }
 var file_admin_service_v1_i_page_proto_depIdxs = []int32{
-	0, // 0: admin.service.v1.PageService.List:input_type -> pagination.PagingRequest
-	1, // 1: admin.service.v1.PageService.Get:input_type -> content.service.v1.GetPageRequest
-	2, // 2: admin.service.v1.PageService.Create:input_type -> content.service.v1.CreatePageRequest
-	3, // 3: admin.service.v1.PageService.Update:input_type -> content.service.v1.UpdatePageRequest
-	4, // 4: admin.service.v1.PageService.Delete:input_type -> content.service.v1.DeletePageRequest
-	5, // 5: admin.service.v1.PageService.List:output_type -> content.service.v1.ListPageResponse
-	6, // 6: admin.service.v1.PageService.Get:output_type -> content.service.v1.Page
-	6, // 7: admin.service.v1.PageService.Create:output_type -> content.service.v1.Page
-	6, // 8: admin.service.v1.PageService.Update:output_type -> content.service.v1.Page
-	7, // 9: admin.service.v1.PageService.Delete:output_type -> google.protobuf.Empty
-	5, // [5:10] is the sub-list for method output_type
-	0, // [0:5] is the sub-list for method input_type
-	0, // [0:0] is the sub-list for extension type_name
-	0, // [0:0] is the sub-list for extension extendee
-	0, // [0:0] is the sub-list for field type_name
+	0,  // 0: admin.service.v1.PageService.List:input_type -> pagination.PagingRequest
+	1,  // 1: admin.service.v1.PageService.Get:input_type -> content.service.v1.GetPageRequest
+	2,  // 2: admin.service.v1.PageService.Create:input_type -> content.service.v1.CreatePageRequest
+	3,  // 3: admin.service.v1.PageService.Update:input_type -> content.service.v1.UpdatePageRequest
+	4,  // 4: admin.service.v1.PageService.Delete:input_type -> content.service.v1.DeletePageRequest
+	5,  // 5: admin.service.v1.PageService.ListVersions:input_type -> content.service.v1.ListPageVersionsRequest
+	6,  // 6: admin.service.v1.PageService.GetVersion:input_type -> content.service.v1.GetPageVersionRequest
+	7,  // 7: admin.service.v1.PageService.RestoreVersion:input_type -> content.service.v1.RestorePageVersionRequest
+	8,  // 8: admin.service.v1.PageService.List:output_type -> content.service.v1.ListPageResponse
+	9,  // 9: admin.service.v1.PageService.Get:output_type -> content.service.v1.Page
+	9,  // 10: admin.service.v1.PageService.Create:output_type -> content.service.v1.Page
+	9,  // 11: admin.service.v1.PageService.Update:output_type -> content.service.v1.Page
+	10, // 12: admin.service.v1.PageService.Delete:output_type -> google.protobuf.Empty
+	11, // 13: admin.service.v1.PageService.ListVersions:output_type -> content.service.v1.ListPageVersionsResponse
+	12, // 14: admin.service.v1.PageService.GetVersion:output_type -> content.service.v1.PageVersion
+	9,  // 15: admin.service.v1.PageService.RestoreVersion:output_type -> content.service.v1.Page
+	8,  // [8:16] is the sub-list for method output_type
+	0,  // [0:8] is the sub-list for method input_type
+	0,  // [0:0] is the sub-list for extension type_name
+	0,  // [0:0] is the sub-list for extension extendee
+	0,  // [0:0] is the sub-list for field type_name
 }
 
 func init() { file_admin_service_v1_i_page_proto_init() }

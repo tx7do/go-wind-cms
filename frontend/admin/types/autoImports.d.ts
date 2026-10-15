@@ -85,6 +85,7 @@ declare global {
   const TiptapEditor: typeof import('../src/components/common/Editor/src/TiptapEditor').default
   const Toolbar: typeof import('../src/components/common/Editor/src/TiptapEditor/index').Toolbar
   const UpdateBtn: typeof import('../src/components/Buttons/index').UpdateBtn
+  const VersionHistoryDrawer: typeof import('../src/components/version/VersionHistoryDrawer').default
   const VideoModal: typeof import('../src/components/common/Editor/src/TiptapEditor/modals').VideoModal
   const VirtualWrapper: typeof import('../src/components/Table/components/VirtualWrapper').default
   const addComponent: typeof import('../src/components/common/Form/utils/componentMap').addComponent
@@ -97,6 +98,7 @@ declare global {
   const dayjsRang2StringRang: typeof import('../src/components/common/Dates/utils/helper').dayjsRang2StringRang
   const defaultImageUpload: typeof import('../src/components/common/Editor/src/TiptapEditor/defaultImageUpload').defaultImageUpload
   const deleteComponent: typeof import('../src/components/common/Form/utils/componentMap').deleteComponent
+  const diffLines: typeof import('../src/components/version/lineDiff').diffLines
   const disconnectSSEServer: typeof import('../src/hooks/useTokenRefresh').disconnectSSEServer
   const extractImageFiles: typeof import('../src/components/common/Editor/src/TiptapEditor/defaultImageUpload').extractImageFiles
   const fetchAllDictEntries: typeof import('../src/hooks/useDictCache').fetchAllDictEntries
@@ -190,6 +192,6 @@ declare global {
 // for type re-export
 declare global {
   // @ts-ignore
-  export type { TableExportServerExport, TableSkeletonProps, TableExportButtonProps, ImportModalProps, FC, ECOption, AuthLayoutProps, EditorProps, CodeEditorProps, JsonEditorProps, MarkdownEditorProps, PlainTextEditorProps, TiptapEditorProps, CodeBlockModalProps, VideoModalProps, IframeModalProps, ThemeLoadingProps, TokenPayload, AuthState, UserState, TabItem } from './autoImports.d'
+  export type { VersionHistoryDrawerProps, DiffLineType, DiffLine, TableExportServerExport, TableSkeletonProps, TableExportButtonProps, ImportModalProps, FC, ECOption, AuthLayoutProps, EditorProps, CodeEditorProps, JsonEditorProps, MarkdownEditorProps, PlainTextEditorProps, TiptapEditorProps, CodeBlockModalProps, VideoModalProps, IframeModalProps, ThemeLoadingProps, TokenPayload, AuthState, UserState, TabItem } from './autoImports.d'
   import('./autoImports.d')
 }

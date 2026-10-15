@@ -10,6 +10,7 @@ import (
 	"github.com/tx7do/go-utils/trans"
 	"github.com/tx7do/kratos-bootstrap/bootstrap"
 	"github.com/tx7do/go-crud/viewer"
+	"google.golang.org/protobuf/encoding/protojson"
 	"google.golang.org/protobuf/types/known/emptypb"
 	"google.golang.org/protobuf/types/known/fieldmaskpb"
 	"google.golang.org/protobuf/types/known/timestamppb"
@@ -30,16 +31,18 @@ type PostService struct {
 	contentV1.UnimplementedPostServiceServer
 
 	postRepo          *data.PostRepo
+	postVersionRepo   *data.PostVersionRepo
 	searchService     *SearchService
 	taskService       *TaskService
 	contentModelRepo  *data.ContentModelRepo
 	log               *log.Helper
 }
 
-func NewPostService(ctx *bootstrap.Context, uc *data.PostRepo, searchService *SearchService, taskService *TaskService, contentModelRepo *data.ContentModelRepo) *PostService {
+func NewPostService(ctx *bootstrap.Context, uc *data.PostRepo, searchService *SearchService, taskService *TaskService, contentModelRepo *data.ContentModelRepo, postVersionRepo *data.PostVersionRepo) *PostService {
 	return &PostService{
 		log:              ctx.NewLoggerHelper("post/service/core-service"),
 		postRepo:         uc,
+		postVersionRepo:  postVersionRepo,
 		searchService:    searchService,
 		taskService:      taskService,
 		contentModelRepo: contentModelRepo,
@@ -131,6 +134,9 @@ func (s *PostService) Create(ctx context.Context, req *contentV1.CreatePostReque
 	// best-effort：失败仅记日志，不回滚 DB；漏掉的文档由周期 ReindexAll 修复。
 	s.enqueuePostReindex(ctx, dto.GetId(), "index")
 
+	// 版本快照钩子：创建即 v1（best-effort，失败不阻断保存）
+	s.snapshotPostVersion(ctx, dto.GetId())
+
 	// 定时发布钩子：SCHEDULED 落库后入队到点转正任务（失败显式报错）。
 	if err := s.enqueueScheduledPublish(dto); err != nil {
 		return nil, err
@@ -166,6 +172,9 @@ func (s *PostService) Update(ctx context.Context, req *contentV1.UpdatePostReque
 
 	// 双写钩子：更新后入队 ES 重索引（worker 会从 DB 取最新数据 upsert ES）。
 	s.enqueuePostReindex(ctx, dto.GetId(), "index")
+
+	// 版本快照钩子：每次保存落一版（best-effort，失败不阻断保存）
+	s.snapshotPostVersion(ctx, dto.GetId())
 
 	// 定时发布钩子：以 SCHEDULED 终态保存（含改期）时重新入队到点转正任务。
 	if err := s.enqueueScheduledPublish(dto); err != nil {
@@ -404,4 +413,89 @@ func (s *PostService) PublishSweepWorker(taskType string, payload *task.PublishS
 		s.log.Infof("post publish sweep: re-enqueued %d due scheduled posts", len(ids))
 	}
 	return nil
+}
+
+// ─── 版本化：保存自动落快照，恢复走常规 Update 链路再落新版本 ───
+
+// ListVersions 列出帖子版本（版本号倒序，仅元数据）。
+func (s *PostService) ListVersions(ctx context.Context, req *contentV1.ListPostVersionsRequest) (*contentV1.ListPostVersionsResponse, error) {
+	if req == nil || req.GetPostId() == 0 {
+		return nil, contentV1.ErrorBadRequest("invalid parameter")
+	}
+	items, err := s.postVersionRepo.ListByPost(ctx, req.GetPostId())
+	if err != nil {
+		return nil, contentV1.ErrorInternalServerError("list post versions failed")
+	}
+	return &contentV1.ListPostVersionsResponse{
+		Items: items,
+		Total: uint64(len(items)),
+	}, nil
+}
+
+// GetVersion 取版本详情（含快照 JSON）。
+func (s *PostService) GetVersion(ctx context.Context, req *contentV1.GetPostVersionRequest) (*contentV1.PostVersion, error) {
+	if req == nil || req.GetId() == 0 {
+		return nil, contentV1.ErrorBadRequest("invalid parameter")
+	}
+	return s.postVersionRepo.Get(ctx, req.GetId())
+}
+
+// RestoreVersion 恢复帖子到指定版本：快照反序列化后走常规 Update 链路
+// （翻译按语言 upsert、分类标签替换、ES 重索引钩子），随后重新快照为新版本。
+func (s *PostService) RestoreVersion(ctx context.Context, req *contentV1.RestorePostVersionRequest) (*contentV1.Post, error) {
+	if req == nil || req.GetPostId() == 0 || req.GetVersionId() == 0 {
+		return nil, contentV1.ErrorBadRequest("invalid parameter")
+	}
+
+	ver, err := s.postVersionRepo.Get(ctx, req.GetVersionId())
+	if err != nil {
+		return nil, err
+	}
+	if ver.GetPostId() != req.GetPostId() {
+		return nil, contentV1.ErrorBadRequest("version does not belong to this post")
+	}
+
+	var snapshot contentV1.Post
+	if uErr := (protojson.UnmarshalOptions{DiscardUnknown: true}).
+		Unmarshal([]byte(ver.GetContent()), &snapshot); uErr != nil {
+		s.log.Errorf("restore post version: corrupted snapshot (version=%d): %v", ver.GetId(), uErr)
+		return nil, contentV1.ErrorInternalServerError("corrupted version snapshot")
+	}
+
+	// 快照里的 password_hash 已在落版本时剔除；author_id 类归属字段不受 Update 影响
+	snapshot.Id = nil
+	if _, err = s.postRepo.Update(ctx, &contentV1.UpdatePostRequest{
+		Id:   req.GetPostId(),
+		Data: &snapshot,
+	}); err != nil {
+		return nil, err
+	}
+
+	// 恢复动作本身落一个新版本，保证版本链完整可回溯
+	s.snapshotPostVersion(ctx, req.GetPostId())
+
+	// ES/AI 索引随恢复内容刷新
+	s.enqueuePostReindex(ctx, req.GetPostId(), "index")
+
+	return s.postRepo.Get(ctx, &contentV1.GetPostRequest{
+		QueryBy: &contentV1.GetPostRequest_Id{Id: req.GetPostId()},
+	})
+}
+
+// snapshotPostVersion 写入当前帖子完整状态快照。
+// best-effort：版本化失败只记日志不阻断保存——内容保存是主链路，版本是附加保障。
+func (s *PostService) snapshotPostVersion(ctx context.Context, postID uint32) {
+	if postID == 0 {
+		return
+	}
+	full, err := s.postRepo.Get(ctx, &contentV1.GetPostRequest{
+		QueryBy: &contentV1.GetPostRequest_Id{Id: postID},
+	})
+	if err != nil {
+		s.log.Errorf("snapshot post version: load post %d failed: %v", postID, err)
+		return
+	}
+	if _, err = s.postVersionRepo.CreateSnapshot(ctx, postID, full, ""); err != nil {
+		s.log.Errorf("snapshot post version: create snapshot failed (post=%d): %v", postID, err)
+	}
 }

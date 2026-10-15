@@ -4,6 +4,8 @@ import React from 'react';
 import {useTranslations} from 'next-intl';
 
 import PageHero from '@/components/layout/PageHero';
+import CmsPageView from '@/components/page/CmsPageView';
+import {useCmsPage} from '@/api/hooks/page';
 import {XIcon} from '@/plugins/xicon';
 import {cn} from '@/lib/utils';
 
@@ -16,6 +18,12 @@ import {cn} from '@/lib/utils';
  */
 export default function ContactPage() {
     const t = useTranslations('page.legal.contact');
+    // CMS 优先：后台有 slug=contact 的已发布页面则整页走 CMS 渲染，否则回退静态内容
+    const {page, loading} = useCmsPage('contact');
+
+    if (!loading && page && (page.sections?.length ?? 0) > 0) {
+        return <CmsPageView page={page}/>;
+    }
 
     const cards: Array<{
         icon: string;

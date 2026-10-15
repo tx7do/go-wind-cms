@@ -43,6 +43,15 @@ service PageService {
 
   // 删除翻译
   rpc DeleteTranslation(DeletePageTranslationRequest) returns (google.protobuf.Empty) {}
+
+  // 列出页面版本（按版本号倒序）
+  rpc ListVersions (ListPageVersionsRequest) returns (ListPageVersionsResponse) {}
+
+  // 获取页面版本详情
+  rpc GetVersion (GetPageVersionRequest) returns (PageVersion) {}
+
+  // 恢复页面到指定版本（恢复动作本身会生成一个新版本）
+  rpc RestoreVersion (RestorePageVersionRequest) returns (Page) {}
 }
 
 // 页面
@@ -420,4 +429,69 @@ message DeletePageTranslationRequest {
       (gnostic.openapi.v3.property) = {description: "通过 page_id 和 language_code 组合唯一确定一条翻译记录（优先级高于 ID）"}
     ]; // 通过 page_id 和 language_code 组合唯一确定一条翻译记录（优先级高于 ID）
   }
+}
+
+// 页面版本（内容快照）
+message PageVersion {
+  optional uint32 id = 1 [
+    json_name = "id",
+    (gnostic.openapi.v3.property) = {description: "版本记录ID"}
+  ]; // 版本记录ID
+
+  optional uint32 page_id = 2 [
+    json_name = "pageId",
+    (gnostic.openapi.v3.property) = {description: "关联的页面ID"}
+  ]; // 关联的页面ID
+
+  optional uint32 version_number = 3 [
+    json_name = "versionNumber",
+    (gnostic.openapi.v3.property) = {description: "版本号（每页递增，1 起）"}
+  ]; // 版本号
+
+  optional string content = 4 [
+    json_name = "content",
+    (gnostic.openapi.v3.property) = {description: "快照 JSON（Page DTO 全量，含 translations/sections）"}
+  ]; // 快照 JSON
+
+  optional string comment = 5 [
+    json_name = "comment",
+    (gnostic.openapi.v3.property) = {description: "版本说明（自动保存为空）"}
+  ]; // 版本说明
+
+  optional uint32 created_by = 100 [json_name = "createdBy", (gnostic.openapi.v3.property) = {description: "创建者用户ID"}]; // 创建者用户ID
+  optional google.protobuf.Timestamp created_at = 200 [json_name = "createdAt", (gnostic.openapi.v3.property) = {description: "创建时间"}]; // 创建时间
+}
+
+// 请求 - 列出页面版本
+message ListPageVersionsRequest {
+  uint32 page_id = 1 [
+    json_name = "pageId",
+    (gnostic.openapi.v3.property) = {description: "页面ID"}
+  ];
+}
+
+// 回应 - 页面版本列表（按版本号倒序）
+message ListPageVersionsResponse {
+  repeated PageVersion items = 1 [json_name = "items"];
+  uint64 total = 2;
+}
+
+// 请求 - 页面版本详情
+message GetPageVersionRequest {
+  uint32 id = 1 [
+    (gnostic.openapi.v3.property) = {description: "版本记录ID"}
+  ];
+}
+
+// 请求 - 恢复页面版本
+message RestorePageVersionRequest {
+  uint32 page_id = 1 [
+    json_name = "pageId",
+    (gnostic.openapi.v3.property) = {description: "页面ID"}
+  ];
+
+  uint32 version_id = 2 [
+    json_name = "versionId",
+    (gnostic.openapi.v3.property) = {description: "要恢复到的版本记录ID"}
+  ];
 }

@@ -70,6 +70,7 @@ require (
 	github.com/tx7do/kratos-swagger-ui v0.0.1
 	github.com/tx7do/kratos-transport/broker v1.3.3
 	github.com/tx7do/kratos-transport/transport/asynq v1.3.13
+	github.com/tx7do/kratos-transport/transport/mcp v1.3.4
 	github.com/tx7do/kratos-transport/transport/sse v1.3.8
 	github.com/xiaoqidun/entps v1.56.0
 	github.com/xuri/excelize/v2 v2.9.1
@@ -242,7 +243,6 @@ require (
 	github.com/tx7do/kratos-transport/tracing v1.1.2 // indirect
 	github.com/tx7do/kratos-transport/transport v1.3.4 // indirect
 	github.com/tx7do/kratos-transport/transport/keepalive v1.3.5 // indirect
-	github.com/tx7do/kratos-transport/transport/mcp v1.3.4 // indirect
 	github.com/valyala/fastjson v1.6.10 // indirect
 	github.com/vearutop/statigz v1.5.0 // indirect
 	github.com/vektah/gqlparser/v2 v2.5.33 // indirect

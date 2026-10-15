@@ -28,6 +28,9 @@ const (
 	PostService_Update_FullMethodName            = "/admin.service.v1.PostService/Update"
 	PostService_Delete_FullMethodName            = "/admin.service.v1.PostService/Delete"
 	PostService_TranslationExists_FullMethodName = "/admin.service.v1.PostService/TranslationExists"
+	PostService_ListVersions_FullMethodName      = "/admin.service.v1.PostService/ListVersions"
+	PostService_GetVersion_FullMethodName        = "/admin.service.v1.PostService/GetVersion"
+	PostService_RestoreVersion_FullMethodName    = "/admin.service.v1.PostService/RestoreVersion"
 )
 
 // PostServiceClient is the client API for PostService service.
@@ -48,6 +51,12 @@ type PostServiceClient interface {
 	Delete(ctx context.Context, in *v11.DeletePostRequest, opts ...grpc.CallOption) (*emptypb.Empty, error)
 	// 检查翻译是否存在
 	TranslationExists(ctx context.Context, in *v11.PostTranslationExistsRequest, opts ...grpc.CallOption) (*v11.PostTranslationExistsResponse, error)
+	// 列出帖子版本（按版本号倒序）
+	ListVersions(ctx context.Context, in *v11.ListPostVersionsRequest, opts ...grpc.CallOption) (*v11.ListPostVersionsResponse, error)
+	// 获取帖子版本详情
+	GetVersion(ctx context.Context, in *v11.GetPostVersionRequest, opts ...grpc.CallOption) (*v11.PostVersion, error)
+	// 恢复帖子到指定版本（恢复动作本身会生成一个新版本）
+	RestoreVersion(ctx context.Context, in *v11.RestorePostVersionRequest, opts ...grpc.CallOption) (*v11.Post, error)
 }
 
 type postServiceClient struct {
@@ -118,6 +127,36 @@ func (c *postServiceClient) TranslationExists(ctx context.Context, in *v11.PostT
 	return out, nil
 }
 
+func (c *postServiceClient) ListVersions(ctx context.Context, in *v11.ListPostVersionsRequest, opts ...grpc.CallOption) (*v11.ListPostVersionsResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(v11.ListPostVersionsResponse)
+	err := c.cc.Invoke(ctx, PostService_ListVersions_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *postServiceClient) GetVersion(ctx context.Context, in *v11.GetPostVersionRequest, opts ...grpc.CallOption) (*v11.PostVersion, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(v11.PostVersion)
+	err := c.cc.Invoke(ctx, PostService_GetVersion_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *postServiceClient) RestoreVersion(ctx context.Context, in *v11.RestorePostVersionRequest, opts ...grpc.CallOption) (*v11.Post, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(v11.Post)
+	err := c.cc.Invoke(ctx, PostService_RestoreVersion_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 // PostServiceServer is the server API for PostService service.
 // All implementations must embed UnimplementedPostServiceServer
 // for forward compatibility.
@@ -136,6 +175,12 @@ type PostServiceServer interface {
 	Delete(context.Context, *v11.DeletePostRequest) (*emptypb.Empty, error)
 	// 检查翻译是否存在
 	TranslationExists(context.Context, *v11.PostTranslationExistsRequest) (*v11.PostTranslationExistsResponse, error)
+	// 列出帖子版本（按版本号倒序）
+	ListVersions(context.Context, *v11.ListPostVersionsRequest) (*v11.ListPostVersionsResponse, error)
+	// 获取帖子版本详情
+	GetVersion(context.Context, *v11.GetPostVersionRequest) (*v11.PostVersion, error)
+	// 恢复帖子到指定版本（恢复动作本身会生成一个新版本）
+	RestoreVersion(context.Context, *v11.RestorePostVersionRequest) (*v11.Post, error)
 	mustEmbedUnimplementedPostServiceServer()
 }
 
@@ -163,6 +208,15 @@ func (UnimplementedPostServiceServer) Delete(context.Context, *v11.DeletePostReq
 }
 func (UnimplementedPostServiceServer) TranslationExists(context.Context, *v11.PostTranslationExistsRequest) (*v11.PostTranslationExistsResponse, error) {
 	return nil, status.Error(codes.Unimplemented, "method TranslationExists not implemented")
+}
+func (UnimplementedPostServiceServer) ListVersions(context.Context, *v11.ListPostVersionsRequest) (*v11.ListPostVersionsResponse, error) {
+	return nil, status.Error(codes.Unimplemented, "method ListVersions not implemented")
+}
+func (UnimplementedPostServiceServer) GetVersion(context.Context, *v11.GetPostVersionRequest) (*v11.PostVersion, error) {
+	return nil, status.Error(codes.Unimplemented, "method GetVersion not implemented")
+}
+func (UnimplementedPostServiceServer) RestoreVersion(context.Context, *v11.RestorePostVersionRequest) (*v11.Post, error) {
+	return nil, status.Error(codes.Unimplemented, "method RestoreVersion not implemented")
 }
 func (UnimplementedPostServiceServer) mustEmbedUnimplementedPostServiceServer() {}
 func (UnimplementedPostServiceServer) testEmbeddedByValue()                     {}
@@ -293,6 +347,60 @@ func _PostService_TranslationExists_Handler(srv interface{}, ctx context.Context
 	return interceptor(ctx, in, info, handler)
 }
 
+func _PostService_ListVersions_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(v11.ListPostVersionsRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(PostServiceServer).ListVersions(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: PostService_ListVersions_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(PostServiceServer).ListVersions(ctx, req.(*v11.ListPostVersionsRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _PostService_GetVersion_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(v11.GetPostVersionRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(PostServiceServer).GetVersion(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: PostService_GetVersion_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(PostServiceServer).GetVersion(ctx, req.(*v11.GetPostVersionRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _PostService_RestoreVersion_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(v11.RestorePostVersionRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(PostServiceServer).RestoreVersion(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: PostService_RestoreVersion_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(PostServiceServer).RestoreVersion(ctx, req.(*v11.RestorePostVersionRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 // PostService_ServiceDesc is the grpc.ServiceDesc for PostService service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
@@ -323,6 +431,18 @@ var PostService_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "TranslationExists",
 			Handler:    _PostService_TranslationExists_Handler,
+		},
+		{
+			MethodName: "ListVersions",
+			Handler:    _PostService_ListVersions_Handler,
+		},
+		{
+			MethodName: "GetVersion",
+			Handler:    _PostService_GetVersion_Handler,
+		},
+		{
+			MethodName: "RestoreVersion",
+			Handler:    _PostService_RestoreVersion_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},

@@ -77,3 +77,15 @@ func (s *PageService) Update(ctx context.Context, req *contentV1.UpdatePageReque
 func (s *PageService) Delete(ctx context.Context, req *contentV1.DeletePageRequest) (*emptypb.Empty, error) {
 	return s.pageServiceClient.Delete(ctx, req)
 }
+
+func (s *PageService) ListVersions(ctx context.Context, req *contentV1.ListPageVersionsRequest) (*contentV1.ListPageVersionsResponse, error) {
+	return s.pageServiceClient.ListVersions(ctx, req)
+}
+
+func (s *PageService) GetVersion(ctx context.Context, req *contentV1.GetPageVersionRequest) (*contentV1.PageVersion, error) {
+	return s.pageServiceClient.GetVersion(ctx, req)
+}
+
+func (s *PageService) RestoreVersion(ctx context.Context, req *contentV1.RestorePageVersionRequest) (*contentV1.Page, error) {
+	return s.pageServiceClient.RestoreVersion(ctx, req)
+}

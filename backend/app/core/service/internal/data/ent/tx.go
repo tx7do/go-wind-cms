@@ -96,6 +96,8 @@ type Tx struct {
 	Page *PageClient
 	// PageTranslation is the client for interacting with the PageTranslation builders.
 	PageTranslation *PageTranslationClient
+	// PageVersion is the client for interacting with the PageVersion builders.
+	PageVersion *PageVersionClient
 	// Permission is the client for interacting with the Permission builders.
 	Permission *PermissionClient
 	// PermissionApi is the client for interacting with the PermissionApi builders.
@@ -122,6 +124,8 @@ type Tx struct {
 	PostTag *PostTagClient
 	// PostTranslation is the client for interacting with the PostTranslation builders.
 	PostTranslation *PostTranslationClient
+	// PostVersion is the client for interacting with the PostVersion builders.
+	PostVersion *PostVersionClient
 	// PostWatch is the client for interacting with the PostWatch builders.
 	PostWatch *PostWatchClient
 	// Role is the client for interacting with the Role builders.
@@ -337,6 +341,7 @@ func (tx *Tx) init() {
 	tx.OrgUnit = NewOrgUnitClient(tx.config)
 	tx.Page = NewPageClient(tx.config)
 	tx.PageTranslation = NewPageTranslationClient(tx.config)
+	tx.PageVersion = NewPageVersionClient(tx.config)
 	tx.Permission = NewPermissionClient(tx.config)
 	tx.PermissionApi = NewPermissionApiClient(tx.config)
 	tx.PermissionAuditLog = NewPermissionAuditLogClient(tx.config)
@@ -350,6 +355,7 @@ func (tx *Tx) init() {
 	tx.PostLike = NewPostLikeClient(tx.config)
 	tx.PostTag = NewPostTagClient(tx.config)
 	tx.PostTranslation = NewPostTranslationClient(tx.config)
+	tx.PostVersion = NewPostVersionClient(tx.config)
 	tx.PostWatch = NewPostWatchClient(tx.config)
 	tx.Role = NewRoleClient(tx.config)
 	tx.RoleMetadata = NewRoleMetadataClient(tx.config)

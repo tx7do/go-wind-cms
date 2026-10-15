@@ -90,3 +90,15 @@ func (s *PostService) Delete(ctx context.Context, req *contentV1.DeletePostReque
 func (s *PostService) TranslationExists(ctx context.Context, req *contentV1.PostTranslationExistsRequest) (*contentV1.PostTranslationExistsResponse, error) {
 	return s.postServiceClient.TranslationExists(ctx, req)
 }
+
+func (s *PostService) ListVersions(ctx context.Context, req *contentV1.ListPostVersionsRequest) (*contentV1.ListPostVersionsResponse, error) {
+	return s.postServiceClient.ListVersions(ctx, req)
+}
+
+func (s *PostService) GetVersion(ctx context.Context, req *contentV1.GetPostVersionRequest) (*contentV1.PostVersion, error) {
+	return s.postServiceClient.GetVersion(ctx, req)
+}
+
+func (s *PostService) RestoreVersion(ctx context.Context, req *contentV1.RestorePostVersionRequest) (*contentV1.Post, error) {
+	return s.postServiceClient.RestoreVersion(ctx, req)
+}

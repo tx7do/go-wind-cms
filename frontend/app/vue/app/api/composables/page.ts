@@ -50,6 +50,20 @@ export async function getPage(id: number) {
 }
 
 /**
+ * 按 slug（或纯数字 id）获取单个页面，附当前语言。
+ * 后端对 id=0 且带 slug 的请求按 slug 解析（app BFF Get 内重写 query_by）。
+ */
+export async function getPageBySlug(slug: string) {
+  const locale = getCurrentLocale();
+  const numericId = Number(slug);
+  if (Number.isInteger(numericId) && numericId > 0) {
+    return await apiClient.pageService.Get({ id: numericId, locale });
+  }
+  // @ts-ignore proto generated code is error.
+  return await apiClient.pageService.Get({ id: 0, slug, locale });
+}
+
+/**
  * 创建页面
  */
 export async function createPage(values: Record<string, any> = {}) {
@@ -141,6 +155,16 @@ export async function fetchPage(id: number) {
   return queryClient.fetchQuery({
     queryKey: ['getPage', id],
     queryFn: () => getPage(id),
+    retry: 0,
+  });
+}
+
+/** 按 slug 获取单个页面（公开页面渲染用，键含 locale 避免语言串缓存） */
+export async function fetchPageBySlug(slug: string) {
+  const locale = getCurrentLocale();
+  return queryClient.fetchQuery({
+    queryKey: ['getPageBySlug', slug, locale],
+    queryFn: () => getPageBySlug(slug),
     retry: 0,
   });
 }

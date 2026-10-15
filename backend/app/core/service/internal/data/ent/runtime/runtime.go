@@ -47,6 +47,7 @@ import (
 	"go-wind-cms/app/core/service/internal/data/ent/orgunit"
 	"go-wind-cms/app/core/service/internal/data/ent/page"
 	"go-wind-cms/app/core/service/internal/data/ent/pagetranslation"
+	"go-wind-cms/app/core/service/internal/data/ent/pageversion"
 	"go-wind-cms/app/core/service/internal/data/ent/permission"
 	"go-wind-cms/app/core/service/internal/data/ent/permissionapi"
 	"go-wind-cms/app/core/service/internal/data/ent/permissionauditlog"
@@ -60,6 +61,7 @@ import (
 	"go-wind-cms/app/core/service/internal/data/ent/postlike"
 	"go-wind-cms/app/core/service/internal/data/ent/posttag"
 	"go-wind-cms/app/core/service/internal/data/ent/posttranslation"
+	"go-wind-cms/app/core/service/internal/data/ent/postversion"
 	"go-wind-cms/app/core/service/internal/data/ent/postwatch"
 	"go-wind-cms/app/core/service/internal/data/ent/role"
 	"go-wind-cms/app/core/service/internal/data/ent/rolemetadata"
@@ -1367,6 +1369,34 @@ func init() {
 	pagetranslationDescID := pagetranslationMixinFields0[0].Descriptor()
 	// pagetranslation.IDValidator is a validator for the "id" field. It is called by the builders before save.
 	pagetranslation.IDValidator = pagetranslationDescID.Validators[0].(func(uint32) error)
+	pageversionMixin := schema.PageVersion{}.Mixin()
+	pageversion.Policy = privacy.NewPolicies(pageversionMixin[3], schema.PageVersion{})
+	pageversion.Hooks[0] = func(next ent.Mutator) ent.Mutator {
+		return ent.MutateFunc(func(ctx context.Context, m ent.Mutation) (ent.Value, error) {
+			if err := pageversion.Policy.EvalMutation(ctx, m); err != nil {
+				return nil, err
+			}
+			return next.Mutate(ctx, m)
+		})
+	}
+	pageversionMixinFields0 := pageversionMixin[0].Fields()
+	_ = pageversionMixinFields0
+	pageversionMixinFields3 := pageversionMixin[3].Fields()
+	_ = pageversionMixinFields3
+	pageversionFields := schema.PageVersion{}.Fields()
+	_ = pageversionFields
+	// pageversionDescTenantID is the schema descriptor for tenant_id field.
+	pageversionDescTenantID := pageversionMixinFields3[0].Descriptor()
+	// pageversion.DefaultTenantID holds the default value on creation for the tenant_id field.
+	pageversion.DefaultTenantID = pageversionDescTenantID.Default.(uint32)
+	// pageversionDescVersionNumber is the schema descriptor for version_number field.
+	pageversionDescVersionNumber := pageversionFields[1].Descriptor()
+	// pageversion.DefaultVersionNumber holds the default value on creation for the version_number field.
+	pageversion.DefaultVersionNumber = pageversionDescVersionNumber.Default.(uint32)
+	// pageversionDescID is the schema descriptor for id field.
+	pageversionDescID := pageversionMixinFields0[0].Descriptor()
+	// pageversion.IDValidator is a validator for the "id" field. It is called by the builders before save.
+	pageversion.IDValidator = pageversionDescID.Validators[0].(func(uint32) error)
 	permissionMixin := schema.Permission{}.Mixin()
 	permission.Policy = privacy.NewPolicies(permissionMixin[5], schema.Permission{})
 	permission.Hooks[0] = func(next ent.Mutator) ent.Mutator {
@@ -1777,6 +1807,34 @@ func init() {
 	posttranslationDescID := posttranslationMixinFields0[0].Descriptor()
 	// posttranslation.IDValidator is a validator for the "id" field. It is called by the builders before save.
 	posttranslation.IDValidator = posttranslationDescID.Validators[0].(func(uint32) error)
+	postversionMixin := schema.PostVersion{}.Mixin()
+	postversion.Policy = privacy.NewPolicies(postversionMixin[3], schema.PostVersion{})
+	postversion.Hooks[0] = func(next ent.Mutator) ent.Mutator {
+		return ent.MutateFunc(func(ctx context.Context, m ent.Mutation) (ent.Value, error) {
+			if err := postversion.Policy.EvalMutation(ctx, m); err != nil {
+				return nil, err
+			}
+			return next.Mutate(ctx, m)
+		})
+	}
+	postversionMixinFields0 := postversionMixin[0].Fields()
+	_ = postversionMixinFields0
+	postversionMixinFields3 := postversionMixin[3].Fields()
+	_ = postversionMixinFields3
+	postversionFields := schema.PostVersion{}.Fields()
+	_ = postversionFields
+	// postversionDescTenantID is the schema descriptor for tenant_id field.
+	postversionDescTenantID := postversionMixinFields3[0].Descriptor()
+	// postversion.DefaultTenantID holds the default value on creation for the tenant_id field.
+	postversion.DefaultTenantID = postversionDescTenantID.Default.(uint32)
+	// postversionDescVersionNumber is the schema descriptor for version_number field.
+	postversionDescVersionNumber := postversionFields[1].Descriptor()
+	// postversion.DefaultVersionNumber holds the default value on creation for the version_number field.
+	postversion.DefaultVersionNumber = postversionDescVersionNumber.Default.(uint32)
+	// postversionDescID is the schema descriptor for id field.
+	postversionDescID := postversionMixinFields0[0].Descriptor()
+	// postversion.IDValidator is a validator for the "id" field. It is called by the builders before save.
+	postversion.IDValidator = postversionDescID.Validators[0].(func(uint32) error)
 	postwatchMixin := schema.PostWatch{}.Mixin()
 	postwatch.Policy = privacy.NewPolicies(postwatchMixin[2], schema.PostWatch{})
 	postwatch.Hooks[0] = func(next ent.Mutator) ent.Mutator {

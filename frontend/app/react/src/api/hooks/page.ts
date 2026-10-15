@@ -2,9 +2,11 @@ import {
   useMutation,
   type UseMutationOptions,
 } from '@tanstack/react-query';
+import {useEffect, useState} from 'react';
 import {
   type contentservicev1_Page,
   type contentservicev1_ListPageResponse,
+  type contentservicev1_PageTranslation,
 } from '@/api/generated/app/service/v1';
 import { apiClient } from '@/api/client';
 import { queryClient } from '@/core';
@@ -46,6 +48,19 @@ export async function listPagesRaw(params: {
  */
 export async function getPage(id: number) {
   return apiClient.pageService.Get({id});
+}
+
+/**
+ * 按 slug（或纯数字 id）获取单个页面，附当前语言。
+ * 后端对 id=0 且带 slug 的请求按 slug 解析（app BFF Get 内重写 query_by）。
+ */
+export async function getPageBySlug(slug: string) {
+  const locale = currentLocaleLanguageCode();
+  const numericId = Number(slug);
+  if (Number.isInteger(numericId) && numericId > 0) {
+    return apiClient.pageService.Get({id: numericId, locale});
+  }
+  return apiClient.pageService.Get({id: 0, slug, locale});
 }
 
 /**
@@ -136,6 +151,61 @@ export async function fetchPage(id: number) {
     queryFn: () => getPage(id),
     retry: 0,
   });
+}
+
+// ==============================================
+// 按 slug 获取单个页面 【公开页面渲染用】
+// ==============================================
+export async function fetchPageBySlug(slug: string) {
+  return queryClient.fetchQuery({
+    queryKey: ['getPageBySlug', slug, currentLocaleLanguageCode()],
+    queryFn: () => getPageBySlug(slug),
+    retry: 0,
+  });
+}
+
+// ==============================
+// 页面翻译辅助（对齐 post.getTranslation 约定：匹配当前语言 → 回退第一条）
+// ==============================
+export function getPageTranslation(page: contentservicev1_Page): contentservicev1_PageTranslation | null {
+  if (!page?.translations || page.translations.length === 0) return null;
+  const locale = currentLocaleLanguageCode();
+  const translation = page.translations?.find(
+    (tr: contentservicev1_PageTranslation) => tr.languageCode === locale,
+  );
+  return translation || page.translations?.[0];
+}
+
+export function getPageTitle(page: contentservicev1_Page): string {
+  return getPageTranslation(page)?.title || '';
+}
+
+// ==============================
+// CMS 页面渲染 Hook：slug 拉取已发布页面
+// found=false 时调用方回退本地静态内容（公开页遇错静默，不弹登录）
+// ==============================
+export function useCmsPage(slug: string): {page: contentservicev1_Page | null; loading: boolean} {
+  // 结果带 slug 标记：请求归属与当前 slug 不符即视为加载中，避免 effect 体内同步 setState
+  const [result, setResult] = useState<{slug: string; page: contentservicev1_Page | null} | null>(null);
+  const loading = result?.slug !== slug;
+
+  useEffect(() => {
+    let cancelled = false;
+    const settle = (page: contentservicev1_Page | null) => {
+      if (!cancelled) setResult({slug, page});
+    };
+    fetchPageBySlug(slug)
+      .then((fetched) => settle(fetched ?? null))
+      .catch((error) => {
+        console.error(`Load cms page "${slug}" failed:`, error);
+        settle(null);
+      });
+    return () => {
+      cancelled = true;
+    };
+  }, [slug]);
+
+  return {page: loading ? null : (result?.page ?? null), loading};
 }
 
 // ==============================

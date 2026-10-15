@@ -87,5 +87,7 @@
     "EDITOR_TYPE_RICH_TEXT": "Rich Text"
   },
   "distributeToSocial": "Distribute to Social",
-  "distributeNeedSave": "Save the post before distributing"
+  "distributeNeedSave": "Save the post before distributing",
+  "versionHistory": "Version History",
+  "versionNeedSave": "Available after save"
 }

@@ -1773,9 +1773,177 @@ INSERT INTO page_translations (
     'about',
     '/images/covers/about-zh.jpg',
     '/about'
+),
+(
+    NOW() - INTERVAL '25 days',
+    NOW(),
+    2,
+    'en-US',
+    'About Us - GoWind Content Hub',
+    'about',
+    '/images/covers/about-en.jpg',
+    '/en/about'
 );
 
 SELECT setval('page_translations_id_seq', (SELECT MAX(id) FROM page_translations));
+-- ----------------------------
+-- 插入 sections 表（页面区块，挂 about 页）测试数据
+-- 内容键契约与三端 SectionRenderer 对齐：主内容键 value，样式存 config
+-- ----------------------------
+INSERT INTO sections (
+    created_at, updated_at, sort_order,
+    page_id, type, name, config
+) VALUES
+(
+    NOW() - INTERVAL '25 days',
+    NOW(),
+    1,
+    2,
+    'SECTION_TYPE_TITLE',
+    'about-hero-title',
+    '{"level": "2", "align": "center"}'::jsonb
+),
+(
+    NOW() - INTERVAL '25 days',
+    NOW(),
+    2,
+    2,
+    'SECTION_TYPE_MARKDOWN',
+    'about-intro',
+    '{}'::jsonb
+),
+(
+    NOW() - INTERVAL '25 days',
+    NOW(),
+    3,
+    2,
+    'SECTION_TYPE_BUTTON',
+    'about-cta',
+    '{"href": "/post", "variant": "primary"}'::jsonb
+),
+(
+    NOW() - INTERVAL '25 days',
+    NOW(),
+    4,
+    2,
+    'SECTION_TYPE_DIVIDER',
+    'about-divider',
+    '{}'::jsonb
+),
+(
+    NOW() - INTERVAL '25 days',
+    NOW(),
+    5,
+    2,
+    'SECTION_TYPE_SPACER',
+    'about-spacer',
+    '{"height": "48"}'::jsonb
+),
+(
+    NOW() - INTERVAL '25 days',
+    NOW(),
+    6,
+    2,
+    'SECTION_TYPE_CODE',
+    'about-code',
+    '{"language": "go"}'::jsonb
+),
+(
+    NOW() - INTERVAL '25 days',
+    NOW(),
+    7,
+    2,
+    'SECTION_TYPE_FORM',
+    'about-contact-form',
+    '{}'::jsonb
+);
+
+SELECT setval('sections_id_seq', (SELECT MAX(id) FROM sections));
+-- ----------------------------
+-- 插入 section_translations 表（区块多语言内容）测试数据
+-- ----------------------------
+INSERT INTO section_translations (
+    created_at, updated_at,
+    section_id, language_code, content
+) VALUES
+-- TITLE 区块（section 1）
+(
+    NOW() - INTERVAL '25 days',
+    NOW(),
+    1,
+    'zh-CN',
+    '{"value": "关于风行内容中台"}'::jsonb
+),
+(
+    NOW() - INTERVAL '25 days',
+    NOW(),
+    1,
+    'en-US',
+    '{"value": "About GoWind Content Hub"}'::jsonb
+),
+-- MARKDOWN 区块（section 2）
+(
+    NOW() - INTERVAL '25 days',
+    NOW(),
+    2,
+    'zh-CN',
+    '{"value": "风行内容中台（GoWind Content Hub）是一个 **Go 后端 + 四端前端** 的无头内容中枢：一次创作，多站点、多语言、多终端分发。\n\n- 高性能 Go + Kratos + Ent 后端\n- React / Vue / Taro / Flutter 四套 C 端\n- 内置 AI 创作助手与社交分发"}'::jsonb
+),
+(
+    NOW() - INTERVAL '25 days',
+    NOW(),
+    2,
+    'en-US',
+    '{"value": "GoWind Content Hub is a **Go backend + four frontend stacks** headless content hub: create once, distribute to multiple sites, languages and terminals.\n\n- High-performance Go + Kratos + Ent backend\n- React / Vue / Taro / Flutter C-end clients\n- Built-in AI assistant and social distribution"}'::jsonb
+),
+-- BUTTON 区块（section 3）
+(
+    NOW() - INTERVAL '25 days',
+    NOW(),
+    3,
+    'zh-CN',
+    '{"value": "浏览文章"}'::jsonb
+),
+(
+    NOW() - INTERVAL '25 days',
+    NOW(),
+    3,
+    'en-US',
+    '{"value": "Browse Posts"}'::jsonb
+),
+-- SPACER / DIVIDER 无翻译内容
+-- CODE 区块（section 6）
+(
+    NOW() - INTERVAL '25 days',
+    NOW(),
+    6,
+    'zh-CN',
+    '{"value": "package main\n\nimport \"fmt\"\n\nfunc main() {\n\tfmt.Println(\"Hello, GoWind!\")\n}"}'::jsonb
+),
+(
+    NOW() - INTERVAL '25 days',
+    NOW(),
+    6,
+    'en-US',
+    '{"value": "package main\n\nimport \"fmt\"\n\nfunc main() {\n\tfmt.Println(\"Hello, GoWind!\")\n}"}'::jsonb
+),
+-- FORM 区块（section 7）
+(
+    NOW() - INTERVAL '25 days',
+    NOW(),
+    7,
+    'zh-CN',
+    '{"title": "表单区块（提交后端建设中，敬请期待）"}'::jsonb
+),
+(
+    NOW() - INTERVAL '25 days',
+    NOW(),
+    7,
+    'en-US',
+    '{"title": "Form section (submission backend coming soon)"}'::jsonb
+);
+
+SELECT setval('section_translations_id_seq', (SELECT MAX(id) FROM section_translations));
 
 -- ----------------------------
 -- 插入 categories 表（分类主表）测试数据

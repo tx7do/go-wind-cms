@@ -1240,6 +1240,295 @@ func (*DeletePageTranslationRequest_Id) isDeletePageTranslationRequest_QueryBy()
 
 func (*DeletePageTranslationRequest_Identifier) isDeletePageTranslationRequest_QueryBy() {}
 
+// 页面版本（内容快照）
+type PageVersion struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	Id            *uint32                `protobuf:"varint,1,opt,name=id,proto3,oneof" json:"id,omitempty"`                                            // 版本记录ID
+	PageId        *uint32                `protobuf:"varint,2,opt,name=page_id,json=pageId,proto3,oneof" json:"page_id,omitempty"`                      // 关联的页面ID
+	VersionNumber *uint32                `protobuf:"varint,3,opt,name=version_number,json=versionNumber,proto3,oneof" json:"version_number,omitempty"` // 版本号
+	Content       *string                `protobuf:"bytes,4,opt,name=content,proto3,oneof" json:"content,omitempty"`                                   // 快照 JSON
+	Comment       *string                `protobuf:"bytes,5,opt,name=comment,proto3,oneof" json:"comment,omitempty"`                                   // 版本说明
+	CreatedBy     *uint32                `protobuf:"varint,100,opt,name=created_by,json=createdBy,proto3,oneof" json:"created_by,omitempty"`           // 创建者用户ID
+	CreatedAt     *timestamppb.Timestamp `protobuf:"bytes,200,opt,name=created_at,json=createdAt,proto3,oneof" json:"created_at,omitempty"`            // 创建时间
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *PageVersion) Reset() {
+	*x = PageVersion{}
+	mi := &file_content_service_v1_page_proto_msgTypes[13]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *PageVersion) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*PageVersion) ProtoMessage() {}
+
+func (x *PageVersion) ProtoReflect() protoreflect.Message {
+	mi := &file_content_service_v1_page_proto_msgTypes[13]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use PageVersion.ProtoReflect.Descriptor instead.
+func (*PageVersion) Descriptor() ([]byte, []int) {
+	return file_content_service_v1_page_proto_rawDescGZIP(), []int{13}
+}
+
+func (x *PageVersion) GetId() uint32 {
+	if x != nil && x.Id != nil {
+		return *x.Id
+	}
+	return 0
+}
+
+func (x *PageVersion) GetPageId() uint32 {
+	if x != nil && x.PageId != nil {
+		return *x.PageId
+	}
+	return 0
+}
+
+func (x *PageVersion) GetVersionNumber() uint32 {
+	if x != nil && x.VersionNumber != nil {
+		return *x.VersionNumber
+	}
+	return 0
+}
+
+func (x *PageVersion) GetContent() string {
+	if x != nil && x.Content != nil {
+		return *x.Content
+	}
+	return ""
+}
+
+func (x *PageVersion) GetComment() string {
+	if x != nil && x.Comment != nil {
+		return *x.Comment
+	}
+	return ""
+}
+
+func (x *PageVersion) GetCreatedBy() uint32 {
+	if x != nil && x.CreatedBy != nil {
+		return *x.CreatedBy
+	}
+	return 0
+}
+
+func (x *PageVersion) GetCreatedAt() *timestamppb.Timestamp {
+	if x != nil {
+		return x.CreatedAt
+	}
+	return nil
+}
+
+// 请求 - 列出页面版本
+type ListPageVersionsRequest struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	PageId        uint32                 `protobuf:"varint,1,opt,name=page_id,json=pageId,proto3" json:"page_id,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *ListPageVersionsRequest) Reset() {
+	*x = ListPageVersionsRequest{}
+	mi := &file_content_service_v1_page_proto_msgTypes[14]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *ListPageVersionsRequest) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*ListPageVersionsRequest) ProtoMessage() {}
+
+func (x *ListPageVersionsRequest) ProtoReflect() protoreflect.Message {
+	mi := &file_content_service_v1_page_proto_msgTypes[14]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use ListPageVersionsRequest.ProtoReflect.Descriptor instead.
+func (*ListPageVersionsRequest) Descriptor() ([]byte, []int) {
+	return file_content_service_v1_page_proto_rawDescGZIP(), []int{14}
+}
+
+func (x *ListPageVersionsRequest) GetPageId() uint32 {
+	if x != nil {
+		return x.PageId
+	}
+	return 0
+}
+
+// 回应 - 页面版本列表（按版本号倒序）
+type ListPageVersionsResponse struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	Items         []*PageVersion         `protobuf:"bytes,1,rep,name=items,proto3" json:"items,omitempty"`
+	Total         uint64                 `protobuf:"varint,2,opt,name=total,proto3" json:"total,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *ListPageVersionsResponse) Reset() {
+	*x = ListPageVersionsResponse{}
+	mi := &file_content_service_v1_page_proto_msgTypes[15]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *ListPageVersionsResponse) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*ListPageVersionsResponse) ProtoMessage() {}
+
+func (x *ListPageVersionsResponse) ProtoReflect() protoreflect.Message {
+	mi := &file_content_service_v1_page_proto_msgTypes[15]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use ListPageVersionsResponse.ProtoReflect.Descriptor instead.
+func (*ListPageVersionsResponse) Descriptor() ([]byte, []int) {
+	return file_content_service_v1_page_proto_rawDescGZIP(), []int{15}
+}
+
+func (x *ListPageVersionsResponse) GetItems() []*PageVersion {
+	if x != nil {
+		return x.Items
+	}
+	return nil
+}
+
+func (x *ListPageVersionsResponse) GetTotal() uint64 {
+	if x != nil {
+		return x.Total
+	}
+	return 0
+}
+
+// 请求 - 页面版本详情
+type GetPageVersionRequest struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	Id            uint32                 `protobuf:"varint,1,opt,name=id,proto3" json:"id,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *GetPageVersionRequest) Reset() {
+	*x = GetPageVersionRequest{}
+	mi := &file_content_service_v1_page_proto_msgTypes[16]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *GetPageVersionRequest) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*GetPageVersionRequest) ProtoMessage() {}
+
+func (x *GetPageVersionRequest) ProtoReflect() protoreflect.Message {
+	mi := &file_content_service_v1_page_proto_msgTypes[16]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use GetPageVersionRequest.ProtoReflect.Descriptor instead.
+func (*GetPageVersionRequest) Descriptor() ([]byte, []int) {
+	return file_content_service_v1_page_proto_rawDescGZIP(), []int{16}
+}
+
+func (x *GetPageVersionRequest) GetId() uint32 {
+	if x != nil {
+		return x.Id
+	}
+	return 0
+}
+
+// 请求 - 恢复页面版本
+type RestorePageVersionRequest struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	PageId        uint32                 `protobuf:"varint,1,opt,name=page_id,json=pageId,proto3" json:"page_id,omitempty"`
+	VersionId     uint32                 `protobuf:"varint,2,opt,name=version_id,json=versionId,proto3" json:"version_id,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *RestorePageVersionRequest) Reset() {
+	*x = RestorePageVersionRequest{}
+	mi := &file_content_service_v1_page_proto_msgTypes[17]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *RestorePageVersionRequest) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*RestorePageVersionRequest) ProtoMessage() {}
+
+func (x *RestorePageVersionRequest) ProtoReflect() protoreflect.Message {
+	mi := &file_content_service_v1_page_proto_msgTypes[17]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use RestorePageVersionRequest.ProtoReflect.Descriptor instead.
+func (*RestorePageVersionRequest) Descriptor() ([]byte, []int) {
+	return file_content_service_v1_page_proto_rawDescGZIP(), []int{17}
+}
+
+func (x *RestorePageVersionRequest) GetPageId() uint32 {
+	if x != nil {
+		return x.PageId
+	}
+	return 0
+}
+
+func (x *RestorePageVersionRequest) GetVersionId() uint32 {
+	if x != nil {
+		return x.VersionId
+	}
+	return 0
+}
+
 var File_content_service_v1_page_proto protoreflect.FileDescriptor
 
 const file_content_service_v1_page_proto_rawDesc = "" +
@@ -1423,7 +1712,38 @@ const file_content_service_v1_page_proto_rawDesc = "" +
 	"identifier\x18\x02 \x01(\v2-.content.service.v1.PageTranslationIdentifierBc\xbaG`\x92\x02]通过 page_id 和 language_code 组合唯一确定一条翻译记录（优先级高于 ID）H\x00R\n" +
 	"identifierB\n" +
 	"\n" +
-	"\bquery_by2\x9a\a\n" +
+	"\bquery_by\"\xe2\x04\n" +
+	"\vPageVersion\x12)\n" +
+	"\x02id\x18\x01 \x01(\rB\x14\xbaG\x11\x92\x02\x0e版本记录IDH\x00R\x02id\x88\x01\x01\x125\n" +
+	"\apage_id\x18\x02 \x01(\rB\x17\xbaG\x14\x92\x02\x11关联的页面IDH\x01R\x06pageId\x88\x01\x01\x12U\n" +
+	"\x0eversion_number\x18\x03 \x01(\rB)\xbaG&\x92\x02#版本号（每页递增，1 起）H\x02R\rversionNumber\x88\x01\x01\x12a\n" +
+	"\acontent\x18\x04 \x01(\tBB\xbaG?\x92\x02<快照 JSON（Page DTO 全量，含 translations/sections）H\x03R\acontent\x88\x01\x01\x12I\n" +
+	"\acomment\x18\x05 \x01(\tB*\xbaG'\x92\x02$版本说明（自动保存为空）H\x04R\acomment\x88\x01\x01\x12;\n" +
+	"\n" +
+	"created_by\x18d \x01(\rB\x17\xbaG\x14\x92\x02\x11创建者用户IDH\x05R\tcreatedBy\x88\x01\x01\x12S\n" +
+	"\n" +
+	"created_at\x18\xc8\x01 \x01(\v2\x1a.google.protobuf.TimestampB\x12\xbaG\x0f\x92\x02\f创建时间H\x06R\tcreatedAt\x88\x01\x01B\x05\n" +
+	"\x03_idB\n" +
+	"\n" +
+	"\b_page_idB\x11\n" +
+	"\x0f_version_numberB\n" +
+	"\n" +
+	"\b_contentB\n" +
+	"\n" +
+	"\b_commentB\r\n" +
+	"\v_created_byB\r\n" +
+	"\v_created_at\"B\n" +
+	"\x17ListPageVersionsRequest\x12'\n" +
+	"\apage_id\x18\x01 \x01(\rB\x0e\xbaG\v\x92\x02\b页面IDR\x06pageId\"g\n" +
+	"\x18ListPageVersionsResponse\x125\n" +
+	"\x05items\x18\x01 \x03(\v2\x1f.content.service.v1.PageVersionR\x05items\x12\x14\n" +
+	"\x05total\x18\x02 \x01(\x04R\x05total\"=\n" +
+	"\x15GetPageVersionRequest\x12$\n" +
+	"\x02id\x18\x01 \x01(\rB\x14\xbaG\x11\x92\x02\x0e版本记录IDR\x02id\"\x88\x01\n" +
+	"\x19RestorePageVersionRequest\x12'\n" +
+	"\apage_id\x18\x01 \x01(\rB\x0e\xbaG\v\x92\x02\b页面IDR\x06pageId\x12B\n" +
+	"\n" +
+	"version_id\x18\x02 \x01(\rB#\xbaG \x92\x02\x1d要恢复到的版本记录IDR\tversionId2\xc0\t\n" +
 	"\vPageService\x12I\n" +
 	"\x04List\x12\x19.pagination.PagingRequest\x1a$.content.service.v1.ListPageResponse\"\x00\x12E\n" +
 	"\x03Get\x12\".content.service.v1.GetPageRequest\x1a\x18.content.service.v1.Page\"\x00\x12K\n" +
@@ -1434,7 +1754,11 @@ const file_content_service_v1_page_proto_rawDesc = "" +
 	"\x0eGetTranslation\x12\".content.service.v1.GetPageRequest\x1a#.content.service.v1.PageTranslation\"\x00\x12l\n" +
 	"\x11CreateTranslation\x120.content.service.v1.CreatePageTranslationRequest\x1a#.content.service.v1.PageTranslation\"\x00\x12l\n" +
 	"\x11UpdateTranslation\x120.content.service.v1.UpdatePageTranslationRequest\x1a#.content.service.v1.PageTranslation\"\x00\x12_\n" +
-	"\x11DeleteTranslation\x120.content.service.v1.DeletePageTranslationRequest\x1a\x16.google.protobuf.Empty\"\x00B\xc2\x01\n" +
+	"\x11DeleteTranslation\x120.content.service.v1.DeletePageTranslationRequest\x1a\x16.google.protobuf.Empty\"\x00\x12k\n" +
+	"\fListVersions\x12+.content.service.v1.ListPageVersionsRequest\x1a,.content.service.v1.ListPageVersionsResponse\"\x00\x12Z\n" +
+	"\n" +
+	"GetVersion\x12).content.service.v1.GetPageVersionRequest\x1a\x1f.content.service.v1.PageVersion\"\x00\x12[\n" +
+	"\x0eRestoreVersion\x12-.content.service.v1.RestorePageVersionRequest\x1a\x18.content.service.v1.Page\"\x00B\xc2\x01\n" +
 	"\x16com.content.service.v1B\tPageProtoP\x01Z3go-wind-cms/api/gen/go/content/service/v1;contentpb\xa2\x02\x03CSX\xaa\x02\x12Content.Service.V1\xca\x02\x12Content\\Service\\V1\xe2\x02\x1eContent\\Service\\V1\\GPBMetadata\xea\x02\x14Content::Service::V1b\x06proto3"
 
 var (
@@ -1450,7 +1774,7 @@ func file_content_service_v1_page_proto_rawDescGZIP() []byte {
 }
 
 var file_content_service_v1_page_proto_enumTypes = make([]protoimpl.EnumInfo, 2)
-var file_content_service_v1_page_proto_msgTypes = make([]protoimpl.MessageInfo, 14)
+var file_content_service_v1_page_proto_msgTypes = make([]protoimpl.MessageInfo, 19)
 var file_content_service_v1_page_proto_goTypes = []any{
 	(Page_PageStatus)(0),                  // 0: content.service.v1.Page.PageStatus
 	(Page_PageType)(0),                    // 1: content.service.v1.Page.PageType
@@ -1467,64 +1791,77 @@ var file_content_service_v1_page_proto_goTypes = []any{
 	(*UpdatePageTranslationRequest)(nil),  // 12: content.service.v1.UpdatePageTranslationRequest
 	(*PageTranslationIdentifier)(nil),     // 13: content.service.v1.PageTranslationIdentifier
 	(*DeletePageTranslationRequest)(nil),  // 14: content.service.v1.DeletePageTranslationRequest
-	nil,                                   // 15: content.service.v1.Page.CustomFieldsEntry
-	(EditorType)(0),                       // 16: content.service.v1.EditorType
-	(*Section)(nil),                       // 17: content.service.v1.Section
-	(*timestamppb.Timestamp)(nil),         // 18: google.protobuf.Timestamp
-	(*SeoMeta)(nil),                       // 19: content.service.v1.SeoMeta
-	(*fieldmaskpb.FieldMask)(nil),         // 20: google.protobuf.FieldMask
-	(*v1.PagingRequest)(nil),              // 21: pagination.PagingRequest
-	(*emptypb.Empty)(nil),                 // 22: google.protobuf.Empty
+	(*PageVersion)(nil),                   // 15: content.service.v1.PageVersion
+	(*ListPageVersionsRequest)(nil),       // 16: content.service.v1.ListPageVersionsRequest
+	(*ListPageVersionsResponse)(nil),      // 17: content.service.v1.ListPageVersionsResponse
+	(*GetPageVersionRequest)(nil),         // 18: content.service.v1.GetPageVersionRequest
+	(*RestorePageVersionRequest)(nil),     // 19: content.service.v1.RestorePageVersionRequest
+	nil,                                   // 20: content.service.v1.Page.CustomFieldsEntry
+	(EditorType)(0),                       // 21: content.service.v1.EditorType
+	(*Section)(nil),                       // 22: content.service.v1.Section
+	(*timestamppb.Timestamp)(nil),         // 23: google.protobuf.Timestamp
+	(*SeoMeta)(nil),                       // 24: content.service.v1.SeoMeta
+	(*fieldmaskpb.FieldMask)(nil),         // 25: google.protobuf.FieldMask
+	(*v1.PagingRequest)(nil),              // 26: pagination.PagingRequest
+	(*emptypb.Empty)(nil),                 // 27: google.protobuf.Empty
 }
 var file_content_service_v1_page_proto_depIdxs = []int32{
 	0,  // 0: content.service.v1.Page.status:type_name -> content.service.v1.Page.PageStatus
 	1,  // 1: content.service.v1.Page.type:type_name -> content.service.v1.Page.PageType
-	16, // 2: content.service.v1.Page.editor_type:type_name -> content.service.v1.EditorType
-	15, // 3: content.service.v1.Page.custom_fields:type_name -> content.service.v1.Page.CustomFieldsEntry
+	21, // 2: content.service.v1.Page.editor_type:type_name -> content.service.v1.EditorType
+	20, // 3: content.service.v1.Page.custom_fields:type_name -> content.service.v1.Page.CustomFieldsEntry
 	3,  // 4: content.service.v1.Page.translations:type_name -> content.service.v1.PageTranslation
-	17, // 5: content.service.v1.Page.sections:type_name -> content.service.v1.Section
+	22, // 5: content.service.v1.Page.sections:type_name -> content.service.v1.Section
 	2,  // 6: content.service.v1.Page.children:type_name -> content.service.v1.Page
-	18, // 7: content.service.v1.Page.created_at:type_name -> google.protobuf.Timestamp
-	18, // 8: content.service.v1.Page.updated_at:type_name -> google.protobuf.Timestamp
-	18, // 9: content.service.v1.Page.deleted_at:type_name -> google.protobuf.Timestamp
-	19, // 10: content.service.v1.PageTranslation.seo:type_name -> content.service.v1.SeoMeta
-	18, // 11: content.service.v1.PageTranslation.created_at:type_name -> google.protobuf.Timestamp
-	18, // 12: content.service.v1.PageTranslation.updated_at:type_name -> google.protobuf.Timestamp
-	18, // 13: content.service.v1.PageTranslation.deleted_at:type_name -> google.protobuf.Timestamp
+	23, // 7: content.service.v1.Page.created_at:type_name -> google.protobuf.Timestamp
+	23, // 8: content.service.v1.Page.updated_at:type_name -> google.protobuf.Timestamp
+	23, // 9: content.service.v1.Page.deleted_at:type_name -> google.protobuf.Timestamp
+	24, // 10: content.service.v1.PageTranslation.seo:type_name -> content.service.v1.SeoMeta
+	23, // 11: content.service.v1.PageTranslation.created_at:type_name -> google.protobuf.Timestamp
+	23, // 12: content.service.v1.PageTranslation.updated_at:type_name -> google.protobuf.Timestamp
+	23, // 13: content.service.v1.PageTranslation.deleted_at:type_name -> google.protobuf.Timestamp
 	2,  // 14: content.service.v1.ListPageResponse.items:type_name -> content.service.v1.Page
-	20, // 15: content.service.v1.GetPageRequest.view_mask:type_name -> google.protobuf.FieldMask
+	25, // 15: content.service.v1.GetPageRequest.view_mask:type_name -> google.protobuf.FieldMask
 	2,  // 16: content.service.v1.CreatePageRequest.data:type_name -> content.service.v1.Page
 	2,  // 17: content.service.v1.UpdatePageRequest.data:type_name -> content.service.v1.Page
-	20, // 18: content.service.v1.UpdatePageRequest.update_mask:type_name -> google.protobuf.FieldMask
+	25, // 18: content.service.v1.UpdatePageRequest.update_mask:type_name -> google.protobuf.FieldMask
 	3,  // 19: content.service.v1.CreatePageTranslationRequest.data:type_name -> content.service.v1.PageTranslation
 	3,  // 20: content.service.v1.UpdatePageTranslationRequest.data:type_name -> content.service.v1.PageTranslation
-	20, // 21: content.service.v1.UpdatePageTranslationRequest.update_mask:type_name -> google.protobuf.FieldMask
+	25, // 21: content.service.v1.UpdatePageTranslationRequest.update_mask:type_name -> google.protobuf.FieldMask
 	13, // 22: content.service.v1.DeletePageTranslationRequest.identifier:type_name -> content.service.v1.PageTranslationIdentifier
-	21, // 23: content.service.v1.PageService.List:input_type -> pagination.PagingRequest
-	5,  // 24: content.service.v1.PageService.Get:input_type -> content.service.v1.GetPageRequest
-	6,  // 25: content.service.v1.PageService.Create:input_type -> content.service.v1.CreatePageRequest
-	7,  // 26: content.service.v1.PageService.Update:input_type -> content.service.v1.UpdatePageRequest
-	8,  // 27: content.service.v1.PageService.Delete:input_type -> content.service.v1.DeletePageRequest
-	9,  // 28: content.service.v1.PageService.TranslationExists:input_type -> content.service.v1.PageTranslationExistsRequest
-	5,  // 29: content.service.v1.PageService.GetTranslation:input_type -> content.service.v1.GetPageRequest
-	11, // 30: content.service.v1.PageService.CreateTranslation:input_type -> content.service.v1.CreatePageTranslationRequest
-	12, // 31: content.service.v1.PageService.UpdateTranslation:input_type -> content.service.v1.UpdatePageTranslationRequest
-	14, // 32: content.service.v1.PageService.DeleteTranslation:input_type -> content.service.v1.DeletePageTranslationRequest
-	4,  // 33: content.service.v1.PageService.List:output_type -> content.service.v1.ListPageResponse
-	2,  // 34: content.service.v1.PageService.Get:output_type -> content.service.v1.Page
-	2,  // 35: content.service.v1.PageService.Create:output_type -> content.service.v1.Page
-	2,  // 36: content.service.v1.PageService.Update:output_type -> content.service.v1.Page
-	22, // 37: content.service.v1.PageService.Delete:output_type -> google.protobuf.Empty
-	10, // 38: content.service.v1.PageService.TranslationExists:output_type -> content.service.v1.PageTranslationExistsResponse
-	3,  // 39: content.service.v1.PageService.GetTranslation:output_type -> content.service.v1.PageTranslation
-	3,  // 40: content.service.v1.PageService.CreateTranslation:output_type -> content.service.v1.PageTranslation
-	3,  // 41: content.service.v1.PageService.UpdateTranslation:output_type -> content.service.v1.PageTranslation
-	22, // 42: content.service.v1.PageService.DeleteTranslation:output_type -> google.protobuf.Empty
-	33, // [33:43] is the sub-list for method output_type
-	23, // [23:33] is the sub-list for method input_type
-	23, // [23:23] is the sub-list for extension type_name
-	23, // [23:23] is the sub-list for extension extendee
-	0,  // [0:23] is the sub-list for field type_name
+	23, // 23: content.service.v1.PageVersion.created_at:type_name -> google.protobuf.Timestamp
+	15, // 24: content.service.v1.ListPageVersionsResponse.items:type_name -> content.service.v1.PageVersion
+	26, // 25: content.service.v1.PageService.List:input_type -> pagination.PagingRequest
+	5,  // 26: content.service.v1.PageService.Get:input_type -> content.service.v1.GetPageRequest
+	6,  // 27: content.service.v1.PageService.Create:input_type -> content.service.v1.CreatePageRequest
+	7,  // 28: content.service.v1.PageService.Update:input_type -> content.service.v1.UpdatePageRequest
+	8,  // 29: content.service.v1.PageService.Delete:input_type -> content.service.v1.DeletePageRequest
+	9,  // 30: content.service.v1.PageService.TranslationExists:input_type -> content.service.v1.PageTranslationExistsRequest
+	5,  // 31: content.service.v1.PageService.GetTranslation:input_type -> content.service.v1.GetPageRequest
+	11, // 32: content.service.v1.PageService.CreateTranslation:input_type -> content.service.v1.CreatePageTranslationRequest
+	12, // 33: content.service.v1.PageService.UpdateTranslation:input_type -> content.service.v1.UpdatePageTranslationRequest
+	14, // 34: content.service.v1.PageService.DeleteTranslation:input_type -> content.service.v1.DeletePageTranslationRequest
+	16, // 35: content.service.v1.PageService.ListVersions:input_type -> content.service.v1.ListPageVersionsRequest
+	18, // 36: content.service.v1.PageService.GetVersion:input_type -> content.service.v1.GetPageVersionRequest
+	19, // 37: content.service.v1.PageService.RestoreVersion:input_type -> content.service.v1.RestorePageVersionRequest
+	4,  // 38: content.service.v1.PageService.List:output_type -> content.service.v1.ListPageResponse
+	2,  // 39: content.service.v1.PageService.Get:output_type -> content.service.v1.Page
+	2,  // 40: content.service.v1.PageService.Create:output_type -> content.service.v1.Page
+	2,  // 41: content.service.v1.PageService.Update:output_type -> content.service.v1.Page
+	27, // 42: content.service.v1.PageService.Delete:output_type -> google.protobuf.Empty
+	10, // 43: content.service.v1.PageService.TranslationExists:output_type -> content.service.v1.PageTranslationExistsResponse
+	3,  // 44: content.service.v1.PageService.GetTranslation:output_type -> content.service.v1.PageTranslation
+	3,  // 45: content.service.v1.PageService.CreateTranslation:output_type -> content.service.v1.PageTranslation
+	3,  // 46: content.service.v1.PageService.UpdateTranslation:output_type -> content.service.v1.PageTranslation
+	27, // 47: content.service.v1.PageService.DeleteTranslation:output_type -> google.protobuf.Empty
+	17, // 48: content.service.v1.PageService.ListVersions:output_type -> content.service.v1.ListPageVersionsResponse
+	15, // 49: content.service.v1.PageService.GetVersion:output_type -> content.service.v1.PageVersion
+	2,  // 50: content.service.v1.PageService.RestoreVersion:output_type -> content.service.v1.Page
+	38, // [38:51] is the sub-list for method output_type
+	25, // [25:38] is the sub-list for method input_type
+	25, // [25:25] is the sub-list for extension type_name
+	25, // [25:25] is the sub-list for extension extendee
+	0,  // [0:25] is the sub-list for field type_name
 }
 
 func init() { file_content_service_v1_page_proto_init() }
@@ -1549,13 +1886,14 @@ func file_content_service_v1_page_proto_init() {
 		(*DeletePageTranslationRequest_Id)(nil),
 		(*DeletePageTranslationRequest_Identifier)(nil),
 	}
+	file_content_service_v1_page_proto_msgTypes[13].OneofWrappers = []any{}
 	type x struct{}
 	out := protoimpl.TypeBuilder{
 		File: protoimpl.DescBuilder{
 			GoPackagePath: reflect.TypeOf(x{}).PkgPath(),
 			RawDescriptor: unsafe.Slice(unsafe.StringData(file_content_service_v1_page_proto_rawDesc), len(file_content_service_v1_page_proto_rawDesc)),
 			NumEnums:      2,
-			NumMessages:   14,
+			NumMessages:   19,
 			NumExtensions: 0,
 			NumServices:   1,
 		},

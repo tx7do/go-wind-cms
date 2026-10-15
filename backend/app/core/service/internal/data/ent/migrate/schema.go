@@ -2568,6 +2568,40 @@ var (
 			},
 		},
 	}
+	// PageVersionsColumns holds the columns for the "page_versions" table.
+	PageVersionsColumns = []*schema.Column{
+		{Name: "id", Type: field.TypeUint32, Increment: true, Comment: "id"},
+		{Name: "created_at", Type: field.TypeTime, Nullable: true, Comment: "创建时间"},
+		{Name: "updated_at", Type: field.TypeTime, Nullable: true, Comment: "更新时间"},
+		{Name: "deleted_at", Type: field.TypeTime, Nullable: true, Comment: "删除时间"},
+		{Name: "created_by", Type: field.TypeUint32, Nullable: true, Comment: "创建者ID"},
+		{Name: "updated_by", Type: field.TypeUint32, Nullable: true, Comment: "更新者ID"},
+		{Name: "deleted_by", Type: field.TypeUint32, Nullable: true, Comment: "删除者ID"},
+		{Name: "tenant_id", Type: field.TypeUint32, Nullable: true, Comment: "租户ID", Default: 0},
+		{Name: "page_id", Type: field.TypeUint32, Nullable: true, Comment: "关联的页面ID"},
+		{Name: "version_number", Type: field.TypeUint32, Nullable: true, Comment: "版本号（每页递增，1 起；创建为 1，之后每次保存 +1）", Default: 1},
+		{Name: "content", Type: field.TypeString, Nullable: true, Size: 2147483647, Comment: "快照 JSON（Page DTO 全量，含 translations/sections）"},
+		{Name: "comment", Type: field.TypeString, Nullable: true, Comment: "版本说明（自动保存为空）"},
+	}
+	// PageVersionsTable holds the schema information for the "page_versions" table.
+	PageVersionsTable = &schema.Table{
+		Name:       "page_versions",
+		Comment:    "页面版本表（内容快照，保存/恢复时自动落版本）",
+		Columns:    PageVersionsColumns,
+		PrimaryKey: []*schema.Column{PageVersionsColumns[0]},
+		Indexes: []*schema.Index{
+			{
+				Name:    "pageversion_page_id",
+				Unique:  false,
+				Columns: []*schema.Column{PageVersionsColumns[8]},
+			},
+			{
+				Name:    "pageversion_page_id_version_number",
+				Unique:  false,
+				Columns: []*schema.Column{PageVersionsColumns[8], PageVersionsColumns[9]},
+			},
+		},
+	}
 	// SysPermissionsColumns holds the columns for the "sys_permissions" table.
 	SysPermissionsColumns = []*schema.Column{
 		{Name: "id", Type: field.TypeUint32, Increment: true, Comment: "id"},
@@ -3284,6 +3318,40 @@ var (
 				Name:    "posttranslation_language_code_slug",
 				Unique:  false,
 				Columns: []*schema.Column{PostTranslationsColumns[10], PostTranslationsColumns[12]},
+			},
+		},
+	}
+	// PostVersionsColumns holds the columns for the "post_versions" table.
+	PostVersionsColumns = []*schema.Column{
+		{Name: "id", Type: field.TypeUint32, Increment: true, Comment: "id"},
+		{Name: "created_at", Type: field.TypeTime, Nullable: true, Comment: "创建时间"},
+		{Name: "updated_at", Type: field.TypeTime, Nullable: true, Comment: "更新时间"},
+		{Name: "deleted_at", Type: field.TypeTime, Nullable: true, Comment: "删除时间"},
+		{Name: "created_by", Type: field.TypeUint32, Nullable: true, Comment: "创建者ID"},
+		{Name: "updated_by", Type: field.TypeUint32, Nullable: true, Comment: "更新者ID"},
+		{Name: "deleted_by", Type: field.TypeUint32, Nullable: true, Comment: "删除者ID"},
+		{Name: "tenant_id", Type: field.TypeUint32, Nullable: true, Comment: "租户ID", Default: 0},
+		{Name: "post_id", Type: field.TypeUint32, Nullable: true, Comment: "关联的帖子ID"},
+		{Name: "version_number", Type: field.TypeUint32, Nullable: true, Comment: "版本号（每帖递增，1 起；创建为 1，之后每次保存 +1）", Default: 1},
+		{Name: "content", Type: field.TypeString, Nullable: true, Size: 2147483647, Comment: "快照 JSON（Post DTO 全量，含 translations/category_ids/tag_ids，不含 password_hash）"},
+		{Name: "comment", Type: field.TypeString, Nullable: true, Comment: "版本说明（自动保存为空）"},
+	}
+	// PostVersionsTable holds the schema information for the "post_versions" table.
+	PostVersionsTable = &schema.Table{
+		Name:       "post_versions",
+		Comment:    "帖子版本表（内容快照，保存/恢复时自动落版本）",
+		Columns:    PostVersionsColumns,
+		PrimaryKey: []*schema.Column{PostVersionsColumns[0]},
+		Indexes: []*schema.Index{
+			{
+				Name:    "postversion_post_id",
+				Unique:  false,
+				Columns: []*schema.Column{PostVersionsColumns[8]},
+			},
+			{
+				Name:    "postversion_post_id_version_number",
+				Unique:  false,
+				Columns: []*schema.Column{PostVersionsColumns[8], PostVersionsColumns[9]},
 			},
 		},
 	}
@@ -4597,6 +4665,7 @@ var (
 		SysOrgUnitsTable,
 		PagesTable,
 		PageTranslationsTable,
+		PageVersionsTable,
 		SysPermissionsTable,
 		SysPermissionApisTable,
 		SysPermissionAuditLogsTable,
@@ -4610,6 +4679,7 @@ var (
 		PostLikesTable,
 		PostTagsTable,
 		PostTranslationsTable,
+		PostVersionsTable,
 		PostWatchesTable,
 		SysRolesTable,
 		SysRoleMetadataTable,
@@ -4857,6 +4927,11 @@ func init() {
 		Charset:   "utf8mb4",
 		Collation: "utf8mb4_bin",
 	}
+	PageVersionsTable.Annotation = &entsql.Annotation{
+		Table:     "page_versions",
+		Charset:   "utf8mb4",
+		Collation: "utf8mb4_bin",
+	}
 	SysPermissionsTable.Annotation = &entsql.Annotation{
 		Table:     "sys_permissions",
 		Charset:   "utf8mb4",
@@ -4920,6 +4995,11 @@ func init() {
 	}
 	PostTranslationsTable.Annotation = &entsql.Annotation{
 		Table:     "post_translations",
+		Charset:   "utf8mb4",
+		Collation: "utf8mb4_bin",
+	}
+	PostVersionsTable.Annotation = &entsql.Annotation{
+		Table:     "post_versions",
 		Charset:   "utf8mb4",
 		Collation: "utf8mb4_bin",
 	}
