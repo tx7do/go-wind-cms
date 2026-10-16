@@ -2,6 +2,7 @@ package service
 
 import (
 	"context"
+	"fmt"
 
 	"github.com/go-kratos/kratos/v2/log"
 	paginationV1 "github.com/tx7do/go-crud/api/gen/go/pagination/v1"
@@ -19,10 +20,11 @@ type PostService struct {
 	adminV1.PostServiceHTTPServer
 
 	postServiceClient contentV1.PostServiceClient
+	collabDocStateCli contentV1.CollabDocStateServiceClient
 	log               *log.Helper
 }
 
-func NewPostService(ctx *bootstrap.Context, postServiceClient contentV1.PostServiceClient) *PostService {
+func NewPostService(ctx *bootstrap.Context, postServiceClient contentV1.PostServiceClient, collabDocStateCli contentV1.CollabDocStateServiceClient) *PostService {
 	return &PostService{
 		log:               ctx.NewLoggerHelper("post/service/admin-service"),
 		postServiceClient: postServiceClient,
@@ -84,7 +86,16 @@ func (s *PostService) Update(ctx context.Context, req *contentV1.UpdatePostReque
 }
 
 func (s *PostService) Delete(ctx context.Context, req *contentV1.DeletePostRequest) (*emptypb.Empty, error) {
-	return s.postServiceClient.Delete(ctx, req)
+	empty, err := s.postServiceClient.Delete(ctx, req)
+	if err == nil && req.GetId() != 0 && s.collabDocStateCli != nil {
+		// 联动清理协同房间状态（post:{id}:*，best-effort）
+		if _, derr := s.collabDocStateCli.DeleteDocStatesByPrefix(ctx, &contentV1.DeleteCollabDocStatesByPrefixRequest{
+			RoomPrefix: fmt.Sprintf("post:%d:", req.GetId()),
+		}); derr != nil {
+			s.log.Warnf("cleanup collab doc states failed (post=%d): %v", req.GetId(), derr)
+		}
+	}
+	return empty, err
 }
 
 func (s *PostService) TranslationExists(ctx context.Context, req *contentV1.PostTranslationExistsRequest) (*contentV1.PostTranslationExistsResponse, error) {

@@ -17,6 +17,7 @@ import (
 	"go-wind-cms/app/core/service/internal/data/ent/apiauditlog"
 	"go-wind-cms/app/core/service/internal/data/ent/category"
 	"go-wind-cms/app/core/service/internal/data/ent/categorytranslation"
+	"go-wind-cms/app/core/service/internal/data/ent/collabdocstate"
 	"go-wind-cms/app/core/service/internal/data/ent/comment"
 	"go-wind-cms/app/core/service/internal/data/ent/commentlike"
 	"go-wind-cms/app/core/service/internal/data/ent/contentmodel"
@@ -169,6 +170,7 @@ func checkColumn(t, c string) error {
 			apiauditlog.Table:                apiauditlog.ValidColumn,
 			category.Table:                   category.ValidColumn,
 			categorytranslation.Table:        categorytranslation.ValidColumn,
+			collabdocstate.Table:             collabdocstate.ValidColumn,
 			comment.Table:                    comment.ValidColumn,
 			commentlike.Table:                commentlike.ValidColumn,
 			contentmodel.Table:               contentmodel.ValidColumn,

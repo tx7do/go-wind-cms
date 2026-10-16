@@ -140,6 +140,18 @@ func (f CategoryTranslationFunc) Mutate(ctx context.Context, m ent.Mutation) (en
 	return nil, fmt.Errorf("unexpected mutation type %T. expect *ent.CategoryTranslationMutation", m)
 }
 
+// The CollabDocStateFunc type is an adapter to allow the use of ordinary
+// function as CollabDocState mutator.
+type CollabDocStateFunc func(context.Context, *ent.CollabDocStateMutation) (ent.Value, error)
+
+// Mutate calls f(ctx, m).
+func (f CollabDocStateFunc) Mutate(ctx context.Context, m ent.Mutation) (ent.Value, error) {
+	if mv, ok := m.(*ent.CollabDocStateMutation); ok {
+		return f(ctx, mv)
+	}
+	return nil, fmt.Errorf("unexpected mutation type %T. expect *ent.CollabDocStateMutation", m)
+}
+
 // The CommentFunc type is an adapter to allow the use of ordinary
 // function as Comment mutator.
 type CommentFunc func(context.Context, *ent.CommentMutation) (ent.Value, error)

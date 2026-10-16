@@ -114,6 +114,7 @@ func NewGrpcServer(
 	emailProviderService *service.EmailProviderService,
 	experimentService *service.ExperimentService,
 	editLockService *service.EditLockService,
+	collabDocStateService *service.CollabDocStateService,
 
 	// register:param ── 新模块服务形参在此行后注册(make register 工具锚点,勿删)
 ) (*grpc.Server, error) {
@@ -198,6 +199,7 @@ func NewGrpcServer(
 	contentV1.RegisterRedirectServiceServer(srv, redirectService)
 	contentV1.RegisterExperimentServiceServer(srv, experimentService)
 	contentV1.RegisterEditLockServiceServer(srv, editLockService)
+	contentV1.RegisterCollabDocStateServiceServer(srv, collabDocStateService)
 	notifyV1.RegisterEmailProviderServiceServer(srv, emailProviderService)
 
 	// register:route ── 新模块路由在此行后注册(make register 工具锚点,勿删)

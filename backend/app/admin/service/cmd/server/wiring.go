@@ -148,6 +148,7 @@ func initApp(ctx *bootstrap.Context) (*kratos.App, func(), error) {
 	redirectServiceClient := data.NewRedirectServiceClient(ctx, discovery)
 	experimentServiceClient := data.NewExperimentServiceClient(ctx, discovery)
 	editLockServiceClient := data.NewEditLockServiceClient(ctx, discovery)
+	collabDocStateServiceClient := data.NewCollabDocStateServiceClient(ctx, discovery)
 	emailProviderServiceClient := data.NewEmailProviderServiceClient(ctx, discovery)
 
 	// ── register:client ── 新模块服务客户端在此行后注册(make register 工具锚点,勿删)
@@ -215,11 +216,11 @@ func initApp(ctx *bootstrap.Context) (*kratos.App, func(), error) {
 	aiKnowledgeService := service.NewAiKnowledgeService(ctx, aiKnowledgeBaseServiceClient)
 	aiUsageLogService := service.NewAiUsageLogService(ctx, aiUsageLogServiceClient)
 	aiQueryService := service.NewAiQueryService(ctx, aiQueryServiceClient)
-	postService := service.NewPostService(ctx, postServiceClient)
+	postService := service.NewPostService(ctx, postServiceClient, collabDocStateServiceClient)
 	categoryService := service.NewCategoryService(ctx, categoryServiceClient)
 	tagService := service.NewTagService(ctx, tagServiceClient)
 	contentModelService := service.NewContentModelService(ctx, contentModelServiceClient)
-	pageService := service.NewPageService(ctx, pageServiceClient)
+	pageService := service.NewPageService(ctx, pageServiceClient, collabDocStateServiceClient)
 
 	// 站点配置与媒体
 	siteService := service.NewSiteService(ctx, siteServiceClient)
@@ -283,7 +284,7 @@ func initApp(ctx *bootstrap.Context) (*kratos.App, func(), error) {
 	sseServer := server.NewSseServer(ctx, internalMessageService, aiChatService)
 
 	// 协同编辑 ws（COLLAB_ADDR，默认 :6602；off 停用）
-	collabServer := server.NewCollabServer(ctx, authenticationServiceClient)
+	collabServer := server.NewCollabServer(ctx, authenticationServiceClient, collabDocStateServiceClient)
 
 	servers := []kratosTransport.Server{httpServer, grpcServer, sseServer, collabServer}
 	// MCP 服务器（可选）：MCP_ADDR 设置时把 CMS 查询/发布能力暴露给 AI 代理

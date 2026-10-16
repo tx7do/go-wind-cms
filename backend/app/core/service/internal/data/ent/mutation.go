@@ -21,6 +21,7 @@ import (
 	"go-wind-cms/app/core/service/internal/data/ent/apiauditlog"
 	"go-wind-cms/app/core/service/internal/data/ent/category"
 	"go-wind-cms/app/core/service/internal/data/ent/categorytranslation"
+	"go-wind-cms/app/core/service/internal/data/ent/collabdocstate"
 	"go-wind-cms/app/core/service/internal/data/ent/comment"
 	"go-wind-cms/app/core/service/internal/data/ent/commentlike"
 	"go-wind-cms/app/core/service/internal/data/ent/contentmodel"
@@ -125,6 +126,7 @@ const (
 	TypeApiAuditLog                = "ApiAuditLog"
 	TypeCategory                   = "Category"
 	TypeCategoryTranslation        = "CategoryTranslation"
+	TypeCollabDocState             = "CollabDocState"
 	TypeComment                    = "Comment"
 	TypeCommentLike                = "CommentLike"
 	TypeContentModel               = "ContentModel"
@@ -17991,6 +17993,633 @@ func (m *CategoryTranslationMutation) ClearEdge(name string) error {
 // It returns an error if the edge is not defined in the schema.
 func (m *CategoryTranslationMutation) ResetEdge(name string) error {
 	return fmt.Errorf("unknown CategoryTranslation edge %s", name)
+}
+
+// CollabDocStateMutation represents an operation that mutates the CollabDocState nodes in the graph.
+type CollabDocStateMutation struct {
+	config
+	op            Op
+	typ           string
+	id            *uint32
+	created_at    *time.Time
+	updated_at    *time.Time
+	deleted_at    *time.Time
+	room          *string
+	doc_update    *[]byte
+	clearedFields map[string]struct{}
+	done          bool
+	oldValue      func(context.Context) (*CollabDocState, error)
+	predicates    []predicate.CollabDocState
+}
+
+var _ ent.Mutation = (*CollabDocStateMutation)(nil)
+
+// collabdocstateOption allows management of the mutation configuration using functional options.
+type collabdocstateOption func(*CollabDocStateMutation)
+
+// newCollabDocStateMutation creates new mutation for the CollabDocState entity.
+func newCollabDocStateMutation(c config, op Op, opts ...collabdocstateOption) *CollabDocStateMutation {
+	m := &CollabDocStateMutation{
+		config:        c,
+		op:            op,
+		typ:           TypeCollabDocState,
+		clearedFields: make(map[string]struct{}),
+	}
+	for _, opt := range opts {
+		opt(m)
+	}
+	return m
+}
+
+// withCollabDocStateID sets the ID field of the mutation.
+func withCollabDocStateID(id uint32) collabdocstateOption {
+	return func(m *CollabDocStateMutation) {
+		var (
+			err   error
+			once  sync.Once
+			value *CollabDocState
+		)
+		m.oldValue = func(ctx context.Context) (*CollabDocState, error) {
+			once.Do(func() {
+				if m.done {
+					err = errors.New("querying old values post mutation is not allowed")
+				} else {
+					value, err = m.Client().CollabDocState.Get(ctx, id)
+				}
+			})
+			return value, err
+		}
+		m.id = &id
+	}
+}
+
+// withCollabDocState sets the old CollabDocState of the mutation.
+func withCollabDocState(node *CollabDocState) collabdocstateOption {
+	return func(m *CollabDocStateMutation) {
+		m.oldValue = func(context.Context) (*CollabDocState, error) {
+			return node, nil
+		}
+		m.id = &node.ID
+	}
+}
+
+// Client returns a new `ent.Client` from the mutation. If the mutation was
+// executed in a transaction (ent.Tx), a transactional client is returned.
+func (m CollabDocStateMutation) Client() *Client {
+	client := &Client{config: m.config}
+	client.init()
+	return client
+}
+
+// Tx returns an `ent.Tx` for mutations that were executed in transactions;
+// it returns an error otherwise.
+func (m CollabDocStateMutation) Tx() (*Tx, error) {
+	if _, ok := m.driver.(*txDriver); !ok {
+		return nil, errors.New("ent: mutation is not running in a transaction")
+	}
+	tx := &Tx{config: m.config}
+	tx.init()
+	return tx, nil
+}
+
+// SetID sets the value of the id field. Note that this
+// operation is only accepted on creation of CollabDocState entities.
+func (m *CollabDocStateMutation) SetID(id uint32) {
+	m.id = &id
+}
+
+// ID returns the ID value in the mutation. Note that the ID is only available
+// if it was provided to the builder or after it was returned from the database.
+func (m *CollabDocStateMutation) ID() (id uint32, exists bool) {
+	if m.id == nil {
+		return
+	}
+	return *m.id, true
+}
+
+// IDs queries the database and returns the entity ids that match the mutation's predicate.
+// That means, if the mutation is applied within a transaction with an isolation level such
+// as sql.LevelSerializable, the returned ids match the ids of the rows that will be updated
+// or updated by the mutation.
+func (m *CollabDocStateMutation) IDs(ctx context.Context) ([]uint32, error) {
+	switch {
+	case m.op.Is(OpUpdateOne | OpDeleteOne):
+		id, exists := m.ID()
+		if exists {
+			return []uint32{id}, nil
+		}
+		fallthrough
+	case m.op.Is(OpUpdate | OpDelete):
+		return m.Client().CollabDocState.Query().Where(m.predicates...).IDs(ctx)
+	default:
+		return nil, fmt.Errorf("IDs is not allowed on %s operations", m.op)
+	}
+}
+
+// SetCreatedAt sets the "created_at" field.
+func (m *CollabDocStateMutation) SetCreatedAt(t time.Time) {
+	m.created_at = &t
+}
+
+// CreatedAt returns the value of the "created_at" field in the mutation.
+func (m *CollabDocStateMutation) CreatedAt() (r time.Time, exists bool) {
+	v := m.created_at
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldCreatedAt returns the old "created_at" field's value of the CollabDocState entity.
+// If the CollabDocState object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *CollabDocStateMutation) OldCreatedAt(ctx context.Context) (v *time.Time, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldCreatedAt is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldCreatedAt requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldCreatedAt: %w", err)
+	}
+	return oldValue.CreatedAt, nil
+}
+
+// ClearCreatedAt clears the value of the "created_at" field.
+func (m *CollabDocStateMutation) ClearCreatedAt() {
+	m.created_at = nil
+	m.clearedFields[collabdocstate.FieldCreatedAt] = struct{}{}
+}
+
+// CreatedAtCleared returns if the "created_at" field was cleared in this mutation.
+func (m *CollabDocStateMutation) CreatedAtCleared() bool {
+	_, ok := m.clearedFields[collabdocstate.FieldCreatedAt]
+	return ok
+}
+
+// ResetCreatedAt resets all changes to the "created_at" field.
+func (m *CollabDocStateMutation) ResetCreatedAt() {
+	m.created_at = nil
+	delete(m.clearedFields, collabdocstate.FieldCreatedAt)
+}
+
+// SetUpdatedAt sets the "updated_at" field.
+func (m *CollabDocStateMutation) SetUpdatedAt(t time.Time) {
+	m.updated_at = &t
+}
+
+// UpdatedAt returns the value of the "updated_at" field in the mutation.
+func (m *CollabDocStateMutation) UpdatedAt() (r time.Time, exists bool) {
+	v := m.updated_at
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldUpdatedAt returns the old "updated_at" field's value of the CollabDocState entity.
+// If the CollabDocState object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *CollabDocStateMutation) OldUpdatedAt(ctx context.Context) (v *time.Time, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldUpdatedAt is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldUpdatedAt requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldUpdatedAt: %w", err)
+	}
+	return oldValue.UpdatedAt, nil
+}
+
+// ClearUpdatedAt clears the value of the "updated_at" field.
+func (m *CollabDocStateMutation) ClearUpdatedAt() {
+	m.updated_at = nil
+	m.clearedFields[collabdocstate.FieldUpdatedAt] = struct{}{}
+}
+
+// UpdatedAtCleared returns if the "updated_at" field was cleared in this mutation.
+func (m *CollabDocStateMutation) UpdatedAtCleared() bool {
+	_, ok := m.clearedFields[collabdocstate.FieldUpdatedAt]
+	return ok
+}
+
+// ResetUpdatedAt resets all changes to the "updated_at" field.
+func (m *CollabDocStateMutation) ResetUpdatedAt() {
+	m.updated_at = nil
+	delete(m.clearedFields, collabdocstate.FieldUpdatedAt)
+}
+
+// SetDeletedAt sets the "deleted_at" field.
+func (m *CollabDocStateMutation) SetDeletedAt(t time.Time) {
+	m.deleted_at = &t
+}
+
+// DeletedAt returns the value of the "deleted_at" field in the mutation.
+func (m *CollabDocStateMutation) DeletedAt() (r time.Time, exists bool) {
+	v := m.deleted_at
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldDeletedAt returns the old "deleted_at" field's value of the CollabDocState entity.
+// If the CollabDocState object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *CollabDocStateMutation) OldDeletedAt(ctx context.Context) (v *time.Time, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldDeletedAt is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldDeletedAt requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldDeletedAt: %w", err)
+	}
+	return oldValue.DeletedAt, nil
+}
+
+// ClearDeletedAt clears the value of the "deleted_at" field.
+func (m *CollabDocStateMutation) ClearDeletedAt() {
+	m.deleted_at = nil
+	m.clearedFields[collabdocstate.FieldDeletedAt] = struct{}{}
+}
+
+// DeletedAtCleared returns if the "deleted_at" field was cleared in this mutation.
+func (m *CollabDocStateMutation) DeletedAtCleared() bool {
+	_, ok := m.clearedFields[collabdocstate.FieldDeletedAt]
+	return ok
+}
+
+// ResetDeletedAt resets all changes to the "deleted_at" field.
+func (m *CollabDocStateMutation) ResetDeletedAt() {
+	m.deleted_at = nil
+	delete(m.clearedFields, collabdocstate.FieldDeletedAt)
+}
+
+// SetRoom sets the "room" field.
+func (m *CollabDocStateMutation) SetRoom(s string) {
+	m.room = &s
+}
+
+// Room returns the value of the "room" field in the mutation.
+func (m *CollabDocStateMutation) Room() (r string, exists bool) {
+	v := m.room
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldRoom returns the old "room" field's value of the CollabDocState entity.
+// If the CollabDocState object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *CollabDocStateMutation) OldRoom(ctx context.Context) (v string, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldRoom is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldRoom requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldRoom: %w", err)
+	}
+	return oldValue.Room, nil
+}
+
+// ResetRoom resets all changes to the "room" field.
+func (m *CollabDocStateMutation) ResetRoom() {
+	m.room = nil
+}
+
+// SetDocUpdate sets the "doc_update" field.
+func (m *CollabDocStateMutation) SetDocUpdate(b []byte) {
+	m.doc_update = &b
+}
+
+// DocUpdate returns the value of the "doc_update" field in the mutation.
+func (m *CollabDocStateMutation) DocUpdate() (r []byte, exists bool) {
+	v := m.doc_update
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldDocUpdate returns the old "doc_update" field's value of the CollabDocState entity.
+// If the CollabDocState object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *CollabDocStateMutation) OldDocUpdate(ctx context.Context) (v []byte, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldDocUpdate is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldDocUpdate requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldDocUpdate: %w", err)
+	}
+	return oldValue.DocUpdate, nil
+}
+
+// ClearDocUpdate clears the value of the "doc_update" field.
+func (m *CollabDocStateMutation) ClearDocUpdate() {
+	m.doc_update = nil
+	m.clearedFields[collabdocstate.FieldDocUpdate] = struct{}{}
+}
+
+// DocUpdateCleared returns if the "doc_update" field was cleared in this mutation.
+func (m *CollabDocStateMutation) DocUpdateCleared() bool {
+	_, ok := m.clearedFields[collabdocstate.FieldDocUpdate]
+	return ok
+}
+
+// ResetDocUpdate resets all changes to the "doc_update" field.
+func (m *CollabDocStateMutation) ResetDocUpdate() {
+	m.doc_update = nil
+	delete(m.clearedFields, collabdocstate.FieldDocUpdate)
+}
+
+// Where appends a list predicates to the CollabDocStateMutation builder.
+func (m *CollabDocStateMutation) Where(ps ...predicate.CollabDocState) {
+	m.predicates = append(m.predicates, ps...)
+}
+
+// WhereP appends storage-level predicates to the CollabDocStateMutation builder. Using this method,
+// users can use type-assertion to append predicates that do not depend on any generated package.
+func (m *CollabDocStateMutation) WhereP(ps ...func(*sql.Selector)) {
+	p := make([]predicate.CollabDocState, len(ps))
+	for i := range ps {
+		p[i] = ps[i]
+	}
+	m.Where(p...)
+}
+
+// Op returns the operation name.
+func (m *CollabDocStateMutation) Op() Op {
+	return m.op
+}
+
+// SetOp allows setting the mutation operation.
+func (m *CollabDocStateMutation) SetOp(op Op) {
+	m.op = op
+}
+
+// Type returns the node type of this mutation (CollabDocState).
+func (m *CollabDocStateMutation) Type() string {
+	return m.typ
+}
+
+// Fields returns all fields that were changed during this mutation. Note that in
+// order to get all numeric fields that were incremented/decremented, call
+// AddedFields().
+func (m *CollabDocStateMutation) Fields() []string {
+	fields := make([]string, 0, 5)
+	if m.created_at != nil {
+		fields = append(fields, collabdocstate.FieldCreatedAt)
+	}
+	if m.updated_at != nil {
+		fields = append(fields, collabdocstate.FieldUpdatedAt)
+	}
+	if m.deleted_at != nil {
+		fields = append(fields, collabdocstate.FieldDeletedAt)
+	}
+	if m.room != nil {
+		fields = append(fields, collabdocstate.FieldRoom)
+	}
+	if m.doc_update != nil {
+		fields = append(fields, collabdocstate.FieldDocUpdate)
+	}
+	return fields
+}
+
+// Field returns the value of a field with the given name. The second boolean
+// return value indicates that this field was not set, or was not defined in the
+// schema.
+func (m *CollabDocStateMutation) Field(name string) (ent.Value, bool) {
+	switch name {
+	case collabdocstate.FieldCreatedAt:
+		return m.CreatedAt()
+	case collabdocstate.FieldUpdatedAt:
+		return m.UpdatedAt()
+	case collabdocstate.FieldDeletedAt:
+		return m.DeletedAt()
+	case collabdocstate.FieldRoom:
+		return m.Room()
+	case collabdocstate.FieldDocUpdate:
+		return m.DocUpdate()
+	}
+	return nil, false
+}
+
+// OldField returns the old value of the field from the database. An error is
+// returned if the mutation operation is not UpdateOne, or the query to the
+// database failed.
+func (m *CollabDocStateMutation) OldField(ctx context.Context, name string) (ent.Value, error) {
+	switch name {
+	case collabdocstate.FieldCreatedAt:
+		return m.OldCreatedAt(ctx)
+	case collabdocstate.FieldUpdatedAt:
+		return m.OldUpdatedAt(ctx)
+	case collabdocstate.FieldDeletedAt:
+		return m.OldDeletedAt(ctx)
+	case collabdocstate.FieldRoom:
+		return m.OldRoom(ctx)
+	case collabdocstate.FieldDocUpdate:
+		return m.OldDocUpdate(ctx)
+	}
+	return nil, fmt.Errorf("unknown CollabDocState field %s", name)
+}
+
+// SetField sets the value of a field with the given name. It returns an error if
+// the field is not defined in the schema, or if the type mismatched the field
+// type.
+func (m *CollabDocStateMutation) SetField(name string, value ent.Value) error {
+	switch name {
+	case collabdocstate.FieldCreatedAt:
+		v, ok := value.(time.Time)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetCreatedAt(v)
+		return nil
+	case collabdocstate.FieldUpdatedAt:
+		v, ok := value.(time.Time)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetUpdatedAt(v)
+		return nil
+	case collabdocstate.FieldDeletedAt:
+		v, ok := value.(time.Time)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetDeletedAt(v)
+		return nil
+	case collabdocstate.FieldRoom:
+		v, ok := value.(string)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetRoom(v)
+		return nil
+	case collabdocstate.FieldDocUpdate:
+		v, ok := value.([]byte)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetDocUpdate(v)
+		return nil
+	}
+	return fmt.Errorf("unknown CollabDocState field %s", name)
+}
+
+// AddedFields returns all numeric fields that were incremented/decremented during
+// this mutation.
+func (m *CollabDocStateMutation) AddedFields() []string {
+	return nil
+}
+
+// AddedField returns the numeric value that was incremented/decremented on a field
+// with the given name. The second boolean return value indicates that this field
+// was not set, or was not defined in the schema.
+func (m *CollabDocStateMutation) AddedField(name string) (ent.Value, bool) {
+	return nil, false
+}
+
+// AddField adds the value to the field with the given name. It returns an error if
+// the field is not defined in the schema, or if the type mismatched the field
+// type.
+func (m *CollabDocStateMutation) AddField(name string, value ent.Value) error {
+	switch name {
+	}
+	return fmt.Errorf("unknown CollabDocState numeric field %s", name)
+}
+
+// ClearedFields returns all nullable fields that were cleared during this
+// mutation.
+func (m *CollabDocStateMutation) ClearedFields() []string {
+	var fields []string
+	if m.FieldCleared(collabdocstate.FieldCreatedAt) {
+		fields = append(fields, collabdocstate.FieldCreatedAt)
+	}
+	if m.FieldCleared(collabdocstate.FieldUpdatedAt) {
+		fields = append(fields, collabdocstate.FieldUpdatedAt)
+	}
+	if m.FieldCleared(collabdocstate.FieldDeletedAt) {
+		fields = append(fields, collabdocstate.FieldDeletedAt)
+	}
+	if m.FieldCleared(collabdocstate.FieldDocUpdate) {
+		fields = append(fields, collabdocstate.FieldDocUpdate)
+	}
+	return fields
+}
+
+// FieldCleared returns a boolean indicating if a field with the given name was
+// cleared in this mutation.
+func (m *CollabDocStateMutation) FieldCleared(name string) bool {
+	_, ok := m.clearedFields[name]
+	return ok
+}
+
+// ClearField clears the value of the field with the given name. It returns an
+// error if the field is not defined in the schema.
+func (m *CollabDocStateMutation) ClearField(name string) error {
+	switch name {
+	case collabdocstate.FieldCreatedAt:
+		m.ClearCreatedAt()
+		return nil
+	case collabdocstate.FieldUpdatedAt:
+		m.ClearUpdatedAt()
+		return nil
+	case collabdocstate.FieldDeletedAt:
+		m.ClearDeletedAt()
+		return nil
+	case collabdocstate.FieldDocUpdate:
+		m.ClearDocUpdate()
+		return nil
+	}
+	return fmt.Errorf("unknown CollabDocState nullable field %s", name)
+}
+
+// ResetField resets all changes in the mutation for the field with the given name.
+// It returns an error if the field is not defined in the schema.
+func (m *CollabDocStateMutation) ResetField(name string) error {
+	switch name {
+	case collabdocstate.FieldCreatedAt:
+		m.ResetCreatedAt()
+		return nil
+	case collabdocstate.FieldUpdatedAt:
+		m.ResetUpdatedAt()
+		return nil
+	case collabdocstate.FieldDeletedAt:
+		m.ResetDeletedAt()
+		return nil
+	case collabdocstate.FieldRoom:
+		m.ResetRoom()
+		return nil
+	case collabdocstate.FieldDocUpdate:
+		m.ResetDocUpdate()
+		return nil
+	}
+	return fmt.Errorf("unknown CollabDocState field %s", name)
+}
+
+// AddedEdges returns all edge names that were set/added in this mutation.
+func (m *CollabDocStateMutation) AddedEdges() []string {
+	edges := make([]string, 0, 0)
+	return edges
+}
+
+// AddedIDs returns all IDs (to other nodes) that were added for the given edge
+// name in this mutation.
+func (m *CollabDocStateMutation) AddedIDs(name string) []ent.Value {
+	return nil
+}
+
+// RemovedEdges returns all edge names that were removed in this mutation.
+func (m *CollabDocStateMutation) RemovedEdges() []string {
+	edges := make([]string, 0, 0)
+	return edges
+}
+
+// RemovedIDs returns all IDs (to other nodes) that were removed for the edge with
+// the given name in this mutation.
+func (m *CollabDocStateMutation) RemovedIDs(name string) []ent.Value {
+	return nil
+}
+
+// ClearedEdges returns all edge names that were cleared in this mutation.
+func (m *CollabDocStateMutation) ClearedEdges() []string {
+	edges := make([]string, 0, 0)
+	return edges
+}
+
+// EdgeCleared returns a boolean which indicates if the edge with the given name
+// was cleared in this mutation.
+func (m *CollabDocStateMutation) EdgeCleared(name string) bool {
+	return false
+}
+
+// ClearEdge clears the value of the edge with the given name. It returns an error
+// if that edge is not defined in the schema.
+func (m *CollabDocStateMutation) ClearEdge(name string) error {
+	return fmt.Errorf("unknown CollabDocState unique edge %s", name)
+}
+
+// ResetEdge resets all changes to the edge with the given name in this mutation.
+// It returns an error if the edge is not defined in the schema.
+func (m *CollabDocStateMutation) ResetEdge(name string) error {
+	return fmt.Errorf("unknown CollabDocState edge %s", name)
 }
 
 // CommentMutation represents an operation that mutates the Comment nodes in the graph.

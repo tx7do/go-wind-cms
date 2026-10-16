@@ -178,6 +178,7 @@ func initApp(ctx *bootstrap.Context) (*kratos.App, func(), error) {
 	// URL 重定向
 	redirectRepo := data.NewRedirectRepo(ctx, entClient)
 	experimentRepo := data.NewExperimentRepo(ctx, entClient)
+	collabDocStateRepo := data.NewCollabDocStateRepo(ctx, entClient)
 
 	// 邮件出站 SMTP 配置（凭据加密落库）
 	emailProviderRepo := data.NewEmailProviderRepo(ctx, entClient)
@@ -224,6 +225,9 @@ func initApp(ctx *bootstrap.Context) (*kratos.App, func(), error) {
 
 	// 编辑锁（协同编辑 v1，Redis 软锁）
 	editLockService := service.NewEditLockService(ctx, redisClient, userRepo)
+
+	// 协同文档状态（collab ws 引擎的持久化后端）
+	collabDocStateService := service.NewCollabDocStateService(ctx, collabDocStateRepo)
 
 	// 邮件出站 SMTP 配置
 	emailProviderService := service.NewEmailProviderService(ctx, emailProviderRepo)
@@ -327,6 +331,7 @@ func initApp(ctx *bootstrap.Context) (*kratos.App, func(), error) {
 		emailProviderService,
 		experimentService,
 		editLockService,
+		collabDocStateService,
 		// register:grpc-arg ── 新模块服务实参在此行后追加(make register 工具锚点,勿删)
 	)
 	if err != nil {

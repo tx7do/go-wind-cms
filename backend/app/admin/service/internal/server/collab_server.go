@@ -14,6 +14,7 @@ import (
 	"github.com/tx7do/kratos-bootstrap/bootstrap"
 
 	authenticationV1 "go-wind-cms/api/gen/go/authentication/service/v1"
+	contentV1 "go-wind-cms/api/gen/go/content/service/v1"
 	"go-wind-cms/app/admin/service/internal/collab"
 )
 
@@ -33,6 +34,7 @@ const defaultCollabAddr = ":6602"
 func NewCollabServer(
 	ctx *bootstrap.Context,
 	authenticationServiceClient authenticationV1.AuthenticationServiceClient,
+	collabDocStateServiceClient contentV1.CollabDocStateServiceClient,
 ) *CollabServer {
 	addr := strings.TrimSpace(os.Getenv("COLLAB_ADDR"))
 	switch strings.ToLower(addr) {
@@ -47,14 +49,19 @@ func NewCollabServer(
 		origins = []string{"http://localhost:15999"}
 	}
 
-	svc := collab.New(ctx, authenticationServiceClient, origins)
+	if collabDocStateServiceClient == nil {
+		l := ctx.NewLoggerHelper("collab-server/admin-service")
+		l.Warnf("collab doc state client is nil: room persistence DISABLED (rooms are memory-only and lost on restart)")
+	}
+
+	svc := collab.New(ctx, authenticationServiceClient, collabDocStateServiceClient, origins)
 
 	l := ctx.NewLoggerHelper("collab-server/admin-service")
 	return &CollabServer{
-		log:     l,
-		addr:    addr,
-		collab:  svc,
-		http:    &http.Server{ReadHeaderTimeout: 10 * time.Second},
+		log:    l,
+		addr:   addr,
+		collab: svc,
+		http:   &http.Server{ReadHeaderTimeout: 10 * time.Second},
 	}
 }
 

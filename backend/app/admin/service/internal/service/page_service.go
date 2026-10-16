@@ -2,6 +2,7 @@ package service
 
 import (
 	"context"
+	"fmt"
 
 	"github.com/go-kratos/kratos/v2/log"
 	paginationV1 "github.com/tx7do/go-crud/api/gen/go/pagination/v1"
@@ -19,10 +20,11 @@ type PageService struct {
 	adminV1.PageServiceHTTPServer
 
 	pageServiceClient contentV1.PageServiceClient
+	collabDocStateCli contentV1.CollabDocStateServiceClient
 	log               *log.Helper
 }
 
-func NewPageService(ctx *bootstrap.Context, pageServiceClient contentV1.PageServiceClient) *PageService {
+func NewPageService(ctx *bootstrap.Context, pageServiceClient contentV1.PageServiceClient, collabDocStateCli contentV1.CollabDocStateServiceClient) *PageService {
 	return &PageService{
 		log:               ctx.NewLoggerHelper("page/service/admin-service"),
 		pageServiceClient: pageServiceClient,
@@ -75,7 +77,16 @@ func (s *PageService) Update(ctx context.Context, req *contentV1.UpdatePageReque
 }
 
 func (s *PageService) Delete(ctx context.Context, req *contentV1.DeletePageRequest) (*emptypb.Empty, error) {
-	return s.pageServiceClient.Delete(ctx, req)
+	empty, err := s.pageServiceClient.Delete(ctx, req)
+	if err == nil && req.GetId() != 0 && s.collabDocStateCli != nil {
+		// 联动清理协同房间状态（page:{id}:*，best-effort）
+		if _, derr := s.collabDocStateCli.DeleteDocStatesByPrefix(ctx, &contentV1.DeleteCollabDocStatesByPrefixRequest{
+			RoomPrefix: fmt.Sprintf("page:%d:", req.GetId()),
+		}); derr != nil {
+			s.log.Warnf("cleanup collab doc states failed (page=%d): %v", req.GetId(), derr)
+		}
+	}
+	return empty, err
 }
 
 func (s *PageService) ListVersions(ctx context.Context, req *contentV1.ListPageVersionsRequest) (*contentV1.ListPageVersionsResponse, error) {

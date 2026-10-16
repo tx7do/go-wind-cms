@@ -1,0 +1,55 @@
+syntax = "proto3";
+
+package content.service.v1;
+
+import "gnostic/openapi/v3/annotations.proto";
+import "google/protobuf/empty.proto";
+import "google/protobuf/timestamp.proto";
+
+// 协同文档状态服务（collab ws 服务的持久化后端）。
+// 房间 → 最新合并后 V1 update 的键值存储；admin 服务内嵌的协同引擎
+// 经此持久化/恢复协同会话（内容事实源仍是内容表，显式保存链路不变）。
+service CollabDocStateService {
+  // 取房间文档状态（无状态返回空 update）
+  rpc GetDocState (GetCollabDocStateRequest) returns (CollabDocState) {}
+
+  // 存房间文档状态（upsert，整量替换）
+  rpc StoreDocState (StoreCollabDocStateRequest) returns (google.protobuf.Empty) {}
+
+  // 按房间名前缀清理（内容删除时联动）
+  rpc DeleteDocStatesByPrefix (DeleteCollabDocStatesByPrefixRequest) returns (google.protobuf.Empty) {}
+}
+
+// 协同文档状态
+message CollabDocState {
+  optional string room = 1 [
+    json_name = "room",
+    (gnostic.openapi.v3.property) = {description: "房间名"}
+  ]; // 房间名
+
+  optional bytes doc_update = 2 [
+    json_name = "docUpdate",
+    (gnostic.openapi.v3.property) = {description: "最新合并后的 V1 update"}
+  ]; // 最新合并后的 V1 update
+
+  optional google.protobuf.Timestamp updated_at = 3 [
+    json_name = "updatedAt",
+    (gnostic.openapi.v3.property) = {description: "更新时间"}
+  ]; // 更新时间
+}
+
+// 请求 - 取房间文档状态
+message GetCollabDocStateRequest {
+  string room = 1 [json_name = "room"]; // 房间名
+}
+
+// 请求 - 存房间文档状态
+message StoreCollabDocStateRequest {
+  string room = 1 [json_name = "room"];       // 房间名
+  bytes doc_update = 2 [json_name = "docUpdate"]; // 最新合并后的 V1 update
+}
+
+// 请求 - 按前缀清理
+message DeleteCollabDocStatesByPrefixRequest {
+  string room_prefix = 1 [json_name = "roomPrefix"]; // 房间名前缀（如 post:12:）
+}

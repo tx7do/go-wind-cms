@@ -34,6 +34,8 @@ type Tx struct {
 	Category *CategoryClient
 	// CategoryTranslation is the client for interacting with the CategoryTranslation builders.
 	CategoryTranslation *CategoryTranslationClient
+	// CollabDocState is the client for interacting with the CollabDocState builders.
+	CollabDocState *CollabDocStateClient
 	// Comment is the client for interacting with the Comment builders.
 	Comment *CommentClient
 	// CommentLike is the client for interacting with the CommentLike builders.
@@ -326,6 +328,7 @@ func (tx *Tx) init() {
 	tx.ApiAuditLog = NewApiAuditLogClient(tx.config)
 	tx.Category = NewCategoryClient(tx.config)
 	tx.CategoryTranslation = NewCategoryTranslationClient(tx.config)
+	tx.CollabDocState = NewCollabDocStateClient(tx.config)
 	tx.Comment = NewCommentClient(tx.config)
 	tx.CommentLike = NewCommentLikeClient(tx.config)
 	tx.ContentModel = NewContentModelClient(tx.config)

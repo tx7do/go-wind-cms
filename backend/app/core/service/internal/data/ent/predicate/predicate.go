@@ -39,6 +39,9 @@ type Category func(*sql.Selector)
 // CategoryTranslation is the predicate function for categorytranslation builders.
 type CategoryTranslation func(*sql.Selector)
 
+// CollabDocState is the predicate function for collabdocstate builders.
+type CollabDocState func(*sql.Selector)
+
 // Comment is the predicate function for comment builders.
 type Comment func(*sql.Selector)
 

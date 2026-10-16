@@ -511,6 +511,29 @@ var (
 			},
 		},
 	}
+	// CollabDocStatesColumns holds the columns for the "collab_doc_states" table.
+	CollabDocStatesColumns = []*schema.Column{
+		{Name: "id", Type: field.TypeUint32, Increment: true, Comment: "id"},
+		{Name: "created_at", Type: field.TypeTime, Nullable: true, Comment: "创建时间"},
+		{Name: "updated_at", Type: field.TypeTime, Nullable: true, Comment: "更新时间"},
+		{Name: "deleted_at", Type: field.TypeTime, Nullable: true, Comment: "删除时间"},
+		{Name: "room", Type: field.TypeString, Comment: "房间名（如 post:12:zh-CN）"},
+		{Name: "doc_update", Type: field.TypeBytes, Nullable: true, Comment: "最新合并后的 V1 update（ygo 防抖合并产物，整量替换）"},
+	}
+	// CollabDocStatesTable holds the schema information for the "collab_doc_states" table.
+	CollabDocStatesTable = &schema.Table{
+		Name:       "collab_doc_states",
+		Comment:    "协同编辑文档状态表（房间 → 最新 CRDT update）",
+		Columns:    CollabDocStatesColumns,
+		PrimaryKey: []*schema.Column{CollabDocStatesColumns[0]},
+		Indexes: []*schema.Index{
+			{
+				Name:    "collabdocstate_room",
+				Unique:  true,
+				Columns: []*schema.Column{CollabDocStatesColumns[4]},
+			},
+		},
+	}
 	// CommentsColumns holds the columns for the "comments" table.
 	CommentsColumns = []*schema.Column{
 		{Name: "id", Type: field.TypeUint32, Increment: true, Comment: "id"},
@@ -4895,6 +4918,7 @@ var (
 		SysAPIAuditLogsTable,
 		CategoriesTable,
 		CategoryTranslationsTable,
+		CollabDocStatesTable,
 		CommentsTable,
 		CommentLikesTable,
 		ContentModelsTable,
@@ -5030,6 +5054,11 @@ func init() {
 	}
 	CategoryTranslationsTable.Annotation = &entsql.Annotation{
 		Table:     "category_translations",
+		Charset:   "utf8mb4",
+		Collation: "utf8mb4_bin",
+	}
+	CollabDocStatesTable.Annotation = &entsql.Annotation{
+		Table:     "collab_doc_states",
 		Charset:   "utf8mb4",
 		Collation: "utf8mb4_bin",
 	}

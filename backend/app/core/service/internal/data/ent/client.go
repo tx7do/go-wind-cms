@@ -22,6 +22,7 @@ import (
 	"go-wind-cms/app/core/service/internal/data/ent/apiauditlog"
 	"go-wind-cms/app/core/service/internal/data/ent/category"
 	"go-wind-cms/app/core/service/internal/data/ent/categorytranslation"
+	"go-wind-cms/app/core/service/internal/data/ent/collabdocstate"
 	"go-wind-cms/app/core/service/internal/data/ent/comment"
 	"go-wind-cms/app/core/service/internal/data/ent/commentlike"
 	"go-wind-cms/app/core/service/internal/data/ent/contentmodel"
@@ -131,6 +132,8 @@ type Client struct {
 	Category *CategoryClient
 	// CategoryTranslation is the client for interacting with the CategoryTranslation builders.
 	CategoryTranslation *CategoryTranslationClient
+	// CollabDocState is the client for interacting with the CollabDocState builders.
+	CollabDocState *CollabDocStateClient
 	// Comment is the client for interacting with the Comment builders.
 	Comment *CommentClient
 	// CommentLike is the client for interacting with the CommentLike builders.
@@ -303,6 +306,7 @@ func (c *Client) init() {
 	c.ApiAuditLog = NewApiAuditLogClient(c.config)
 	c.Category = NewCategoryClient(c.config)
 	c.CategoryTranslation = NewCategoryTranslationClient(c.config)
+	c.CollabDocState = NewCollabDocStateClient(c.config)
 	c.Comment = NewCommentClient(c.config)
 	c.CommentLike = NewCommentLikeClient(c.config)
 	c.ContentModel = NewContentModelClient(c.config)
@@ -481,6 +485,7 @@ func (c *Client) Tx(ctx context.Context) (*Tx, error) {
 		ApiAuditLog:                NewApiAuditLogClient(cfg),
 		Category:                   NewCategoryClient(cfg),
 		CategoryTranslation:        NewCategoryTranslationClient(cfg),
+		CollabDocState:             NewCollabDocStateClient(cfg),
 		Comment:                    NewCommentClient(cfg),
 		CommentLike:                NewCommentLikeClient(cfg),
 		ContentModel:               NewContentModelClient(cfg),
@@ -586,6 +591,7 @@ func (c *Client) BeginTx(ctx context.Context, opts *sql.TxOptions) (*Tx, error) 
 		ApiAuditLog:                NewApiAuditLogClient(cfg),
 		Category:                   NewCategoryClient(cfg),
 		CategoryTranslation:        NewCategoryTranslationClient(cfg),
+		CollabDocState:             NewCollabDocStateClient(cfg),
 		Comment:                    NewCommentClient(cfg),
 		CommentLike:                NewCommentLikeClient(cfg),
 		ContentModel:               NewContentModelClient(cfg),
@@ -692,15 +698,15 @@ func (c *Client) Use(hooks ...Hook) {
 	for _, n := range []interface{ Use(...Hook) }{
 		c.AiChunk, c.AiConversation, c.AiDoc, c.AiKnowledgeBase, c.AiMessage,
 		c.AiProvider, c.AiUsageLog, c.Api, c.ApiAuditLog, c.Category,
-		c.CategoryTranslation, c.Comment, c.CommentLike, c.ContentModel,
-		c.ContentModelTranslation, c.DataAccessAuditLog, c.DictEntry, c.DictEntryI18n,
-		c.DictType, c.EmailProvider, c.Experiment, c.ExperimentParticipant,
-		c.ExperimentVariant, c.FieldDefinition, c.FieldDefinitionTranslation, c.File,
-		c.FormSubmission, c.InteractionCounter, c.InternalMessage,
-		c.InternalMessageCategory, c.InternalMessageRecipient, c.Language,
-		c.LoginAuditLog, c.LoginPolicy, c.MediaAsset, c.MediaVariant, c.Membership,
-		c.MembershipOrgUnit, c.MembershipPosition, c.MembershipRole, c.Menu,
-		c.Navigation, c.NavigationItem, c.OperationAuditLog, c.OrgUnit, c.Page,
+		c.CategoryTranslation, c.CollabDocState, c.Comment, c.CommentLike,
+		c.ContentModel, c.ContentModelTranslation, c.DataAccessAuditLog, c.DictEntry,
+		c.DictEntryI18n, c.DictType, c.EmailProvider, c.Experiment,
+		c.ExperimentParticipant, c.ExperimentVariant, c.FieldDefinition,
+		c.FieldDefinitionTranslation, c.File, c.FormSubmission, c.InteractionCounter,
+		c.InternalMessage, c.InternalMessageCategory, c.InternalMessageRecipient,
+		c.Language, c.LoginAuditLog, c.LoginPolicy, c.MediaAsset, c.MediaVariant,
+		c.Membership, c.MembershipOrgUnit, c.MembershipPosition, c.MembershipRole,
+		c.Menu, c.Navigation, c.NavigationItem, c.OperationAuditLog, c.OrgUnit, c.Page,
 		c.PageTranslation, c.PageVersion, c.Permission, c.PermissionApi,
 		c.PermissionAuditLog, c.PermissionGroup, c.PermissionMenu, c.PermissionPolicy,
 		c.PolicyEvaluationLog, c.Position, c.Post, c.PostCategory, c.PostLike,
@@ -721,15 +727,15 @@ func (c *Client) Intercept(interceptors ...Interceptor) {
 	for _, n := range []interface{ Intercept(...Interceptor) }{
 		c.AiChunk, c.AiConversation, c.AiDoc, c.AiKnowledgeBase, c.AiMessage,
 		c.AiProvider, c.AiUsageLog, c.Api, c.ApiAuditLog, c.Category,
-		c.CategoryTranslation, c.Comment, c.CommentLike, c.ContentModel,
-		c.ContentModelTranslation, c.DataAccessAuditLog, c.DictEntry, c.DictEntryI18n,
-		c.DictType, c.EmailProvider, c.Experiment, c.ExperimentParticipant,
-		c.ExperimentVariant, c.FieldDefinition, c.FieldDefinitionTranslation, c.File,
-		c.FormSubmission, c.InteractionCounter, c.InternalMessage,
-		c.InternalMessageCategory, c.InternalMessageRecipient, c.Language,
-		c.LoginAuditLog, c.LoginPolicy, c.MediaAsset, c.MediaVariant, c.Membership,
-		c.MembershipOrgUnit, c.MembershipPosition, c.MembershipRole, c.Menu,
-		c.Navigation, c.NavigationItem, c.OperationAuditLog, c.OrgUnit, c.Page,
+		c.CategoryTranslation, c.CollabDocState, c.Comment, c.CommentLike,
+		c.ContentModel, c.ContentModelTranslation, c.DataAccessAuditLog, c.DictEntry,
+		c.DictEntryI18n, c.DictType, c.EmailProvider, c.Experiment,
+		c.ExperimentParticipant, c.ExperimentVariant, c.FieldDefinition,
+		c.FieldDefinitionTranslation, c.File, c.FormSubmission, c.InteractionCounter,
+		c.InternalMessage, c.InternalMessageCategory, c.InternalMessageRecipient,
+		c.Language, c.LoginAuditLog, c.LoginPolicy, c.MediaAsset, c.MediaVariant,
+		c.Membership, c.MembershipOrgUnit, c.MembershipPosition, c.MembershipRole,
+		c.Menu, c.Navigation, c.NavigationItem, c.OperationAuditLog, c.OrgUnit, c.Page,
 		c.PageTranslation, c.PageVersion, c.Permission, c.PermissionApi,
 		c.PermissionAuditLog, c.PermissionGroup, c.PermissionMenu, c.PermissionPolicy,
 		c.PolicyEvaluationLog, c.Position, c.Post, c.PostCategory, c.PostLike,
@@ -769,6 +775,8 @@ func (c *Client) Mutate(ctx context.Context, m Mutation) (Value, error) {
 		return c.Category.mutate(ctx, m)
 	case *CategoryTranslationMutation:
 		return c.CategoryTranslation.mutate(ctx, m)
+	case *CollabDocStateMutation:
+		return c.CollabDocState.mutate(ctx, m)
 	case *CommentMutation:
 		return c.Comment.mutate(ctx, m)
 	case *CommentLikeMutation:
@@ -2522,6 +2530,139 @@ func (c *CategoryTranslationClient) mutate(ctx context.Context, m *CategoryTrans
 		return (&CategoryTranslationDelete{config: c.config, hooks: c.Hooks(), mutation: m}).Exec(ctx)
 	default:
 		return nil, fmt.Errorf("ent: unknown CategoryTranslation mutation op: %q", m.Op())
+	}
+}
+
+// CollabDocStateClient is a client for the CollabDocState schema.
+type CollabDocStateClient struct {
+	config
+}
+
+// NewCollabDocStateClient returns a client for the CollabDocState from the given config.
+func NewCollabDocStateClient(c config) *CollabDocStateClient {
+	return &CollabDocStateClient{config: c}
+}
+
+// Use adds a list of mutation hooks to the hooks stack.
+// A call to `Use(f, g, h)` equals to `collabdocstate.Hooks(f(g(h())))`.
+func (c *CollabDocStateClient) Use(hooks ...Hook) {
+	c.hooks.CollabDocState = append(c.hooks.CollabDocState, hooks...)
+}
+
+// Intercept adds a list of query interceptors to the interceptors stack.
+// A call to `Intercept(f, g, h)` equals to `collabdocstate.Intercept(f(g(h())))`.
+func (c *CollabDocStateClient) Intercept(interceptors ...Interceptor) {
+	c.inters.CollabDocState = append(c.inters.CollabDocState, interceptors...)
+}
+
+// Create returns a builder for creating a CollabDocState entity.
+func (c *CollabDocStateClient) Create() *CollabDocStateCreate {
+	mutation := newCollabDocStateMutation(c.config, OpCreate)
+	return &CollabDocStateCreate{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// CreateBulk returns a builder for creating a bulk of CollabDocState entities.
+func (c *CollabDocStateClient) CreateBulk(builders ...*CollabDocStateCreate) *CollabDocStateCreateBulk {
+	return &CollabDocStateCreateBulk{config: c.config, builders: builders}
+}
+
+// MapCreateBulk creates a bulk creation builder from the given slice. For each item in the slice, the function creates
+// a builder and applies setFunc on it.
+func (c *CollabDocStateClient) MapCreateBulk(slice any, setFunc func(*CollabDocStateCreate, int)) *CollabDocStateCreateBulk {
+	rv := reflect.ValueOf(slice)
+	if rv.Kind() != reflect.Slice {
+		return &CollabDocStateCreateBulk{err: fmt.Errorf("calling to CollabDocStateClient.MapCreateBulk with wrong type %T, need slice", slice)}
+	}
+	builders := make([]*CollabDocStateCreate, rv.Len())
+	for i := 0; i < rv.Len(); i++ {
+		builders[i] = c.Create()
+		setFunc(builders[i], i)
+	}
+	return &CollabDocStateCreateBulk{config: c.config, builders: builders}
+}
+
+// Update returns an update builder for CollabDocState.
+func (c *CollabDocStateClient) Update() *CollabDocStateUpdate {
+	mutation := newCollabDocStateMutation(c.config, OpUpdate)
+	return &CollabDocStateUpdate{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// UpdateOne returns an update builder for the given entity.
+func (c *CollabDocStateClient) UpdateOne(_m *CollabDocState) *CollabDocStateUpdateOne {
+	mutation := newCollabDocStateMutation(c.config, OpUpdateOne, withCollabDocState(_m))
+	return &CollabDocStateUpdateOne{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// UpdateOneID returns an update builder for the given id.
+func (c *CollabDocStateClient) UpdateOneID(id uint32) *CollabDocStateUpdateOne {
+	mutation := newCollabDocStateMutation(c.config, OpUpdateOne, withCollabDocStateID(id))
+	return &CollabDocStateUpdateOne{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// Delete returns a delete builder for CollabDocState.
+func (c *CollabDocStateClient) Delete() *CollabDocStateDelete {
+	mutation := newCollabDocStateMutation(c.config, OpDelete)
+	return &CollabDocStateDelete{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// DeleteOne returns a builder for deleting the given entity.
+func (c *CollabDocStateClient) DeleteOne(_m *CollabDocState) *CollabDocStateDeleteOne {
+	return c.DeleteOneID(_m.ID)
+}
+
+// DeleteOneID returns a builder for deleting the given entity by its id.
+func (c *CollabDocStateClient) DeleteOneID(id uint32) *CollabDocStateDeleteOne {
+	builder := c.Delete().Where(collabdocstate.ID(id))
+	builder.mutation.id = &id
+	builder.mutation.op = OpDeleteOne
+	return &CollabDocStateDeleteOne{builder}
+}
+
+// Query returns a query builder for CollabDocState.
+func (c *CollabDocStateClient) Query() *CollabDocStateQuery {
+	return &CollabDocStateQuery{
+		config: c.config,
+		ctx:    &QueryContext{Type: TypeCollabDocState},
+		inters: c.Interceptors(),
+	}
+}
+
+// Get returns a CollabDocState entity by its id.
+func (c *CollabDocStateClient) Get(ctx context.Context, id uint32) (*CollabDocState, error) {
+	return c.Query().Where(collabdocstate.ID(id)).Only(ctx)
+}
+
+// GetX is like Get, but panics if an error occurs.
+func (c *CollabDocStateClient) GetX(ctx context.Context, id uint32) *CollabDocState {
+	obj, err := c.Get(ctx, id)
+	if err != nil {
+		panic(err)
+	}
+	return obj
+}
+
+// Hooks returns the client hooks.
+func (c *CollabDocStateClient) Hooks() []Hook {
+	return c.hooks.CollabDocState
+}
+
+// Interceptors returns the client interceptors.
+func (c *CollabDocStateClient) Interceptors() []Interceptor {
+	return c.inters.CollabDocState
+}
+
+func (c *CollabDocStateClient) mutate(ctx context.Context, m *CollabDocStateMutation) (Value, error) {
+	switch m.Op() {
+	case OpCreate:
+		return (&CollabDocStateCreate{config: c.config, hooks: c.Hooks(), mutation: m}).Save(ctx)
+	case OpUpdate:
+		return (&CollabDocStateUpdate{config: c.config, hooks: c.Hooks(), mutation: m}).Save(ctx)
+	case OpUpdateOne:
+		return (&CollabDocStateUpdateOne{config: c.config, hooks: c.Hooks(), mutation: m}).Save(ctx)
+	case OpDelete, OpDeleteOne:
+		return (&CollabDocStateDelete{config: c.config, hooks: c.Hooks(), mutation: m}).Exec(ctx)
+	default:
+		return nil, fmt.Errorf("ent: unknown CollabDocState mutation op: %q", m.Op())
 	}
 }
 
@@ -12862,10 +13003,10 @@ func (c *WebhookDeliveryClient) mutate(ctx context.Context, m *WebhookDeliveryMu
 type (
 	hooks struct {
 		AiChunk, AiConversation, AiDoc, AiKnowledgeBase, AiMessage, AiProvider,
-		AiUsageLog, Api, ApiAuditLog, Category, CategoryTranslation, Comment,
-		CommentLike, ContentModel, ContentModelTranslation, DataAccessAuditLog,
-		DictEntry, DictEntryI18n, DictType, EmailProvider, Experiment,
-		ExperimentParticipant, ExperimentVariant, FieldDefinition,
+		AiUsageLog, Api, ApiAuditLog, Category, CategoryTranslation, CollabDocState,
+		Comment, CommentLike, ContentModel, ContentModelTranslation,
+		DataAccessAuditLog, DictEntry, DictEntryI18n, DictType, EmailProvider,
+		Experiment, ExperimentParticipant, ExperimentVariant, FieldDefinition,
 		FieldDefinitionTranslation, File, FormSubmission, InteractionCounter,
 		InternalMessage, InternalMessageCategory, InternalMessageRecipient, Language,
 		LoginAuditLog, LoginPolicy, MediaAsset, MediaVariant, Membership,
@@ -12881,10 +13022,10 @@ type (
 	}
 	inters struct {
 		AiChunk, AiConversation, AiDoc, AiKnowledgeBase, AiMessage, AiProvider,
-		AiUsageLog, Api, ApiAuditLog, Category, CategoryTranslation, Comment,
-		CommentLike, ContentModel, ContentModelTranslation, DataAccessAuditLog,
-		DictEntry, DictEntryI18n, DictType, EmailProvider, Experiment,
-		ExperimentParticipant, ExperimentVariant, FieldDefinition,
+		AiUsageLog, Api, ApiAuditLog, Category, CategoryTranslation, CollabDocState,
+		Comment, CommentLike, ContentModel, ContentModelTranslation,
+		DataAccessAuditLog, DictEntry, DictEntryI18n, DictType, EmailProvider,
+		Experiment, ExperimentParticipant, ExperimentVariant, FieldDefinition,
 		FieldDefinitionTranslation, File, FormSubmission, InteractionCounter,
 		InternalMessage, InternalMessageCategory, InternalMessageRecipient, Language,
 		LoginAuditLog, LoginPolicy, MediaAsset, MediaVariant, Membership,

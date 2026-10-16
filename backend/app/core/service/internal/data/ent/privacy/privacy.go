@@ -375,6 +375,30 @@ func (f CategoryTranslationMutationRuleFunc) EvalMutation(ctx context.Context, m
 	return Denyf("ent/privacy: unexpected mutation type %T, expect *ent.CategoryTranslationMutation", m)
 }
 
+// The CollabDocStateQueryRuleFunc type is an adapter to allow the use of ordinary
+// functions as a query rule.
+type CollabDocStateQueryRuleFunc func(context.Context, *ent.CollabDocStateQuery) error
+
+// EvalQuery return f(ctx, q).
+func (f CollabDocStateQueryRuleFunc) EvalQuery(ctx context.Context, q ent.Query) error {
+	if q, ok := q.(*ent.CollabDocStateQuery); ok {
+		return f(ctx, q)
+	}
+	return Denyf("ent/privacy: unexpected query type %T, expect *ent.CollabDocStateQuery", q)
+}
+
+// The CollabDocStateMutationRuleFunc type is an adapter to allow the use of ordinary
+// functions as a mutation rule.
+type CollabDocStateMutationRuleFunc func(context.Context, *ent.CollabDocStateMutation) error
+
+// EvalMutation calls f(ctx, m).
+func (f CollabDocStateMutationRuleFunc) EvalMutation(ctx context.Context, m ent.Mutation) error {
+	if m, ok := m.(*ent.CollabDocStateMutation); ok {
+		return f(ctx, m)
+	}
+	return Denyf("ent/privacy: unexpected mutation type %T, expect *ent.CollabDocStateMutation", m)
+}
+
 // The CommentQueryRuleFunc type is an adapter to allow the use of ordinary
 // functions as a query rule.
 type CommentQueryRuleFunc func(context.Context, *ent.CommentQuery) error
@@ -2232,6 +2256,8 @@ func queryFilter(q ent.Query) (Filter, error) {
 		return q.Filter(), nil
 	case *ent.CategoryTranslationQuery:
 		return q.Filter(), nil
+	case *ent.CollabDocStateQuery:
+		return q.Filter(), nil
 	case *ent.CommentQuery:
 		return q.Filter(), nil
 	case *ent.CommentLikeQuery:
@@ -2410,6 +2436,8 @@ func mutationFilter(m ent.Mutation) (Filter, error) {
 	case *ent.CategoryMutation:
 		return m.Filter(), nil
 	case *ent.CategoryTranslationMutation:
+		return m.Filter(), nil
+	case *ent.CollabDocStateMutation:
 		return m.Filter(), nil
 	case *ent.CommentMutation:
 		return m.Filter(), nil

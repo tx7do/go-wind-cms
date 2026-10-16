@@ -40,6 +40,30 @@ import {
 
 import './tiptap-editor.css';
 
+// 全量状态上报帧：messageSync(0) + SyncStep2(1) + varbytes(整文档 update)。
+// ygo 服务端不会主动向客户端索要状态（无服务端发起的 SyncStep1），
+// 本地恢复的内容（IndexedDB/离线编辑）须由客户端在同步完成后主动上报；
+// yjs update 幂等可交换，重复上传无害。
+function sendFullState(provider: WebsocketProvider, ydoc: Y.Doc): void {
+  const ws = provider.ws;
+  if (!ws || ws.readyState !== WebSocket.OPEN) return;
+  const update = Y.encodeStateAsUpdate(ydoc);
+  const head = new Uint8Array(update.length + 8);
+  let i = 0;
+  const writeVarUint = (v: number) => {
+    while (v >= 0x80) {
+      head[i++] = (v & 0x7f) | 0x80;
+      v >>>= 7;
+    }
+    head[i++] = v;
+  };
+  writeVarUint(0);
+  writeVarUint(1);
+  writeVarUint(update.length);
+  head.set(update, i);
+  ws.send(head.subarray(0, i + update.length));
+}
+
 // 房间级协同资源缓存（模块级）：React StrictMode 模拟重挂载会复用 useMemo 值，
 // 若在 cleanup 里 destroy，第二个挂载拿到的是已销毁的 provider/ydoc——
 // 因此 bundle 只创建不销毁（随页面生命周期结束），房间数有限内存可控。
@@ -225,17 +249,36 @@ const TiptapEditor: React.FC<TiptapEditorProps> = ({
         // 只有真的灌入才消耗一次性标志：value 异步晚到时（先 synced 后内容）
         // 允许在后续 sync/value 变更时重试
         if (frag.length === 0 && value) {
+          // 种子化持久锁：服务端已持久化协同状态后，任何后续客户端
+          // （含 admin 重启重连、清缓存重开）都不得用 core 旧内容覆盖恢复态。
+          // 锁按房间记在 localStorage；服务端权威种子化（v2）落地后可移除。
+          const lockKey = `gwc-collab-seeded:${collaboration?.room ?? ''}`;
+          if (localStorage.getItem(lockKey)) {
+            seededRef.current = true;
+            return;
+          }
           seededRef.current = true;
+          localStorage.setItem(lockKey, '1');
           editor.commands.setContent(value, { emitUpdate: false });
         }
       } catch (error) {
         console.error('Seed collab document failed:', error);
       }
     };
-    if (yjsBundle.provider.synced) seed();
-    yjsBundle.provider.on('sync', seed);
+    const onSync = (synced?: boolean) => {
+      if (synced === false) return;
+      seed();
+      // 本地全量状态上报（幂等）：覆盖离线编辑/IndexedDB 恢复的上行缺口
+      try {
+        sendFullState(yjsBundle.provider, yjsBundle.ydoc);
+      } catch (error) {
+        console.error('Upload collab state failed:', error);
+      }
+    };
+    if (yjsBundle.provider.synced) onSync(true);
+    yjsBundle.provider.on('sync', onSync);
     return () => {
-      yjsBundle.provider.off('sync', seed);
+      yjsBundle.provider.off('sync', onSync);
     };
   }, [yjsBundle, editor, value]);
 

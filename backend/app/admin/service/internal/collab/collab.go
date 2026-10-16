@@ -17,6 +17,7 @@ import (
 	"github.com/tx7do/kratos-bootstrap/bootstrap"
 
 	authenticationV1 "go-wind-cms/api/gen/go/authentication/service/v1"
+	contentV1 "go-wind-cms/api/gen/go/content/service/v1"
 )
 
 // Service 协同编辑服务。
@@ -27,14 +28,21 @@ type Service struct {
 	ws *websocket.Server
 }
 
-// New 构造协同服务：ws 房间纯内存，upgrade 前经 ValidateToken 准入。
-func New(ctx *bootstrap.Context, authClient authenticationV1.AuthenticationServiceClient, allowedOrigins []string) *Service {
+// New 构造协同服务：upgrade 前经 ValidateToken 准入；传入 docStateClient 时
+// 房间状态持久化到 core（重启可恢复，消除全员断线/重启的丢失窗口），
+// 未传入则纯内存。
+func New(ctx *bootstrap.Context, authClient authenticationV1.AuthenticationServiceClient, docStateClient contentV1.CollabDocStateServiceClient, allowedOrigins []string) *Service {
 	s := &Service{
 		authClient: authClient,
 		log:        ctx.NewLoggerHelper("collab/admin-service"),
 	}
 
-	srv := websocket.NewServer()
+	var srv *websocket.Server
+	if docStateClient != nil {
+		srv = websocket.NewServerWithPersistence(newGRPCPersistence(docStateClient))
+	} else {
+		srv = websocket.NewServer()
+	}
 	// 原生 y-websocket 客户端帧（非 Hocuspocus docName 前缀帧）；
 	// 房间名取自 URL 路径末段（如 /post:12:zh-CN）。
 	srv.AuthFunc = s.authenticate

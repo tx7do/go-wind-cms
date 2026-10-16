@@ -16,6 +16,7 @@ import (
 	"go-wind-cms/app/core/service/internal/data/ent/apiauditlog"
 	"go-wind-cms/app/core/service/internal/data/ent/category"
 	"go-wind-cms/app/core/service/internal/data/ent/categorytranslation"
+	"go-wind-cms/app/core/service/internal/data/ent/collabdocstate"
 	"go-wind-cms/app/core/service/internal/data/ent/comment"
 	"go-wind-cms/app/core/service/internal/data/ent/commentlike"
 	"go-wind-cms/app/core/service/internal/data/ent/contentmodel"
@@ -390,6 +391,19 @@ func init() {
 	categorytranslationDescID := categorytranslationMixinFields0[0].Descriptor()
 	// categorytranslation.IDValidator is a validator for the "id" field. It is called by the builders before save.
 	categorytranslation.IDValidator = categorytranslationDescID.Validators[0].(func(uint32) error)
+	collabdocstateMixin := schema.CollabDocState{}.Mixin()
+	collabdocstateMixinFields0 := collabdocstateMixin[0].Fields()
+	_ = collabdocstateMixinFields0
+	collabdocstateFields := schema.CollabDocState{}.Fields()
+	_ = collabdocstateFields
+	// collabdocstateDescRoom is the schema descriptor for room field.
+	collabdocstateDescRoom := collabdocstateFields[0].Descriptor()
+	// collabdocstate.RoomValidator is a validator for the "room" field. It is called by the builders before save.
+	collabdocstate.RoomValidator = collabdocstateDescRoom.Validators[0].(func(string) error)
+	// collabdocstateDescID is the schema descriptor for id field.
+	collabdocstateDescID := collabdocstateMixinFields0[0].Descriptor()
+	// collabdocstate.IDValidator is a validator for the "id" field. It is called by the builders before save.
+	collabdocstate.IDValidator = collabdocstateDescID.Validators[0].(func(uint32) error)
 	commentMixin := schema.Comment{}.Mixin()
 	comment.Policy = privacy.NewPolicies(commentMixin[4], schema.Comment{})
 	comment.Hooks[0] = func(next ent.Mutator) ent.Mutator {
