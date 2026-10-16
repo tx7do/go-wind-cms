@@ -107,6 +107,24 @@ func (s *Service) seedRoom(room string, doc *crdt.Doc) {
 		s.log.Infof("seed: post %d has no content for locale %s", targetID, locale)
 		return
 	}
+
+	// MARKDOWN 编辑器：内容即 markdown 串，种子化为 YText 'content'
+	//（前端 MarkdownEditor 经 yCollab 绑定 YText 'content'，与富文本的
+	// XmlFragment 'default' 是不同表示，按编辑器类型分流）。
+	if post.GetEditorType() == contentV1.EditorType_EDITOR_TYPE_MARKDOWN {
+		ytext := doc.GetText("content")
+		// OnLoadDocument 每房间仅触发一次，无需判空重入
+		if err := doc.TransactE(func(txn *crdt.Transaction) error {
+			ytext.Insert(txn, 0, content, nil)
+			return nil
+		}); err != nil {
+			s.log.Errorf("seed: ytext insert failed (room=%s): %v", room, err)
+			return
+		}
+		s.log.Infof("collab markdown room seeded: %s (%d chars)", room, len(content))
+		return
+	}
+
 	if err := seedDocFromHTML(doc, content); err != nil {
 		s.log.Errorf("seed: convert html failed (room=%s): %v", room, err)
 		return

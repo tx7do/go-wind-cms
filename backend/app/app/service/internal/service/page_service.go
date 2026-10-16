@@ -2,9 +2,11 @@ package service
 
 import (
 	"context"
+	"strconv"
 	"time"
 
 	"github.com/go-kratos/kratos/v2/log"
+	kratosMetadata "github.com/go-kratos/kratos/v2/metadata"
 	khttp "github.com/go-kratos/kratos/v2/transport/http"
 	paginationV1 "github.com/tx7do/go-crud/api/gen/go/pagination/v1"
 	"github.com/tx7do/kratos-bootstrap/bootstrap"
@@ -14,6 +16,7 @@ import (
 
 	appV1 "go-wind-cms/api/gen/go/app/service/v1"
 	contentV1 "go-wind-cms/api/gen/go/content/service/v1"
+	entmiddleware "go-wind-cms/pkg/middleware/ent"
 	"go-wind-cms/pkg/preview"
 )
 
@@ -22,15 +25,30 @@ type PageService struct {
 
 	pageServiceClient contentV1.PageServiceClient
 	experimentClient  contentV1.ExperimentServiceClient
+	tenantResolve     entmiddleware.TenantResolver
 	log               *log.Helper
 }
 
-func NewPageService(ctx *bootstrap.Context, pageServiceClient contentV1.PageServiceClient, experimentClient contentV1.ExperimentServiceClient) *PageService {
+func NewPageService(ctx *bootstrap.Context, pageServiceClient contentV1.PageServiceClient, experimentClient contentV1.ExperimentServiceClient, tenantResolve entmiddleware.TenantResolver) *PageService {
 	return &PageService{
 		log:               ctx.NewLoggerHelper("page/service/app-service"),
 		pageServiceClient: pageServiceClient,
 		experimentClient:  experimentClient,
+		tenantResolve:     tenantResolve,
 	}
+}
+
+// withTenantMetadata 匿名链路的 BFF→core gRPC 需要 host 解析的租户元数据
+//（SearchPosts/RecordView 同款：x-md-global-tenant-id 仅内网可信注入）。
+func (s *PageService) withTenantMetadata(ctx context.Context) context.Context {
+	if s.tenantResolve != nil {
+		if hr, ok := khttp.RequestFromServerContext(ctx); ok && hr != nil && hr.Host != "" {
+			if tid, err := s.tenantResolve.ResolveTenantIDByDomain(ctx, hr.Host); err == nil && tid > 0 {
+				return kratosMetadata.AppendToClientContext(ctx, "x-md-global-tenant-id", strconv.FormatUint(uint64(tid), 10))
+			}
+		}
+	}
+	return ctx
 }
 
 func (s *PageService) List(ctx context.Context, req *paginationV1.PagingRequest) (*contentV1.ListPageResponse, error) {
@@ -70,7 +88,7 @@ func (s *PageService) Get(ctx context.Context, req *contentV1.GetPageRequest) (*
 		}
 	}
 	// 运行中的内容实验：命中变体时以变体 sections 整页替换（best-effort）
-	s.applyExperiment(ctx, resp, req.GetLocale())
+	s.applyExperiment(s.withTenantMetadata(ctx), resp, req.GetLocale())
 	return resp, nil
 }
 
@@ -109,7 +127,7 @@ func (s *PageService) GetBySlug(ctx context.Context, req *appV1.GetPageBySlugReq
 		return nil, contentV1.ErrorNotFound("page not found")
 	}
 	// 运行中的内容实验：命中变体时以变体 sections 整页替换（best-effort）
-	s.applyExperiment(ctx, resp, req.GetLocale())
+	s.applyExperiment(s.withTenantMetadata(ctx), resp, req.GetLocale())
 	return resp, nil
 }
 
