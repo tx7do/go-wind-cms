@@ -45,7 +45,7 @@ export const Icon401 = () => {
             {/* Warning triangle */}
             <path
                 d="M280 140 L320 140 L300 100 Z"
-                fill="#ff6b6b"
+                fill="var(--fb-coral)"
             />
 
             {/* Exclamation mark */}

@@ -15,6 +15,14 @@
     --fb-navy-deep: #2f2e41; /* 更深藏青物件 */
     --fb-skin: #a0616a; /* 肤色，两态同值 */
     --fb-skin-light: #ffb6b6;
+    /* 暖色件（火箭尾翼/火焰/星点、401 与离线的警示件）——2026-10-13 由 SVG 裸色具名化。
+       按 --fb-paper/--fb-skin 的先例写成**两态同值**（暗色块里不覆写），所以这次只是
+       「裸色 → 令牌」的机制迁移，亮/暗两态渲染逐字节不变；暗色要不要随「月夜」压暗
+       属 docs/design-language.md §5.1 的取值决议，不在本迁移里顺手动。 */
+    --fb-coral: #ff6b6b; /* 尾翼 / 401 断链 / 离线标记 */
+    --fb-flame: #ff9800; /* 火焰外焰 */
+    --fb-flame-core: #ffeb3b; /* 火焰内焰 */
+    --fb-star: #ffd700; /* 星点 */
     --fb-glow: color-mix(in srgb, var(--fb-primary) 14%, transparent);
 
     position: relative;

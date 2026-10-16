@@ -1,6 +1,9 @@
 {
     "title": "Version History",
+    "versionCount": "{{count}} versions",
     "noVersions": "No versions yet",
+    "currentBadge": "Current",
+    "autosave": "Autosave",
     "view": "View",
     "restore": "Restore",
     "restoreConfirm": "Restore to this version?",
@@ -11,7 +14,10 @@
     "snapshotUnreadable": "Snapshot content is unreadable",
     "loadDetailFailed": "Failed to load version detail",
     "operator": "Operator",
-    "diffLegend": "Diff against current editor content: green lines exist in this snapshot but not currently; red lines exist currently but not in this snapshot.",
+    "diffLegend": "Diff vs current editor content",
+    "diffOnlyCurrent": "only in current content",
+    "diffOnlyVersion": "only in this version",
+    "showUnchanged": "Show {{count}} unchanged lines",
     "sectionCount": "{{count}} sections",
     "pageSectionRestoreNote": "Page versions restore sections wholesale: after restoring, the page's sections, translations and settings are replaced by the snapshot."
 }

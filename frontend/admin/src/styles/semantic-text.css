@@ -18,6 +18,8 @@
  * 适用范围只在"文字前景"；**实底填充上的白字不要动**：暗色下 antd 的 colorError 派生成 #DC3355，
  * 白字实测 4.52:1 已达标，而 §2.1 的暗墨 #0B0F19 在其上只有 4.24:1（2026-09-28 大扫测里
  * 我误把暗墨用到暗色徽标/危险实底按钮，新造出 40 条违规，故实底暗墨规则只在浅色生效）。
+ * 2026-10-15 起危险**实底按钮**与**徽标数字**两态都回原生白字（用户裁决：暗墨在红色实底上观感刺眼），
+ * 暗墨只剩开关轨道这类非按钮小字，见下。
  */
 
 :root {
@@ -26,8 +28,23 @@
   --gowind-warning-text: color-mix(in srgb, var(--app-color-warning) 50%, #0b0f19);
   --gowind-danger-text: color-mix(in srgb, var(--app-color-destructive) 70%, #0b0f19);
 
-  /* 实底语义色上的前景 = §2.1 的暗色 L0：白字在 #FF3860 上只有 3.51:1，暗墨有 5.46:1 */
+  /* 实底语义色上的前景 = §2.1 的暗色 L0（现只用于开关轨道这类非按钮小字；
+     危险实底按钮与徽标数字 2026-10-15 起两态都走原生白字）：白字在 #FF3860 上只有 3.51:1，暗墨有 5.46:1 */
   --gowind-solid-ink: #0b0f19;
+
+  /* 「主文字」档（§2.1 表「文字-主」#1F2937 / §2.3 暗色「文字」主 #F8FAFC）。
+     react 端此前没有可直接填的主档——antd 的 colorText 只在组件 token 里，
+     非组件样式表（如 UserLayout 的品牌标题）只能各写各的色，实测同一登录页
+     浅/暗两态分别写成了 #1F1F1F（不是本档）与纯白 #FFF（§2.3 明确弃用纯白）。 */
+  --gowind-text-primary: #1f2937;
+
+  /* 「常规文字」档（§2.2 表「文字-常规」#374151 / §2.3 暗色「表单标签」#DCE3ED）。
+     为什么要单独留一档：次要档 #676E7C 是按**白底系容器**校准的（白 5.12 /
+     #F5F5F5 4.70 / #F0F2F5 4.57），坐到有彩度的面板上就掉下来——
+     认证页左侧品牌面板渐变最暗一档 #D5E0ED 实测只有 3.83（2026-10-14，
+     canvas 逐像素仲裁后算得，同底常规档 7.71）。vue-element 端登录页同处
+     也是这么处理的（.brand-desc 浅态走 --el-text-color-regular）。 */
+  --gowind-text-regular: #374151;
 
   /* 「次要文字」档（§2.2，与 react tokens 的 SECONDARY_TEXT_* 同值）：
      antd 默认 colorTextDescription 浅色 rgba(0,0,0,.45) 实测 3.35:1。
@@ -49,6 +66,8 @@ html[data-theme='dark'] {
   --gowind-danger-text: color-mix(in srgb, var(--app-color-destructive) 90%, #ffffff);
 
   --gowind-secondary-text: #8b949e;
+  --gowind-text-primary: #f8fafc;
+  --gowind-text-regular: #dce3ed;
 
   /* 暗色侧数字保持亮色：#22d3ee 在 L1 上 9.82:1 */
   --metric-cyan: #22d3ee;
@@ -103,19 +122,12 @@ html[data-theme='dark'] .ant-tag.ant-tag-filled.ant-tag-geekblue {
   color: color-mix(in srgb, #5273e0 80%, #ffffff) !important;
 }
 
-/* ---------- 按钮：danger 的文字/链接/描边档，实底档换暗墨（仅浅色，见文件头） ----------
-   原值实测：浅色 #FF3860 on 白 3.51、暗色 #DC3355 on L1 3.93 → 文字档 6.09 / 5.51。 */
+/* ---------- 按钮：danger 的文字/链接/描边档 ----------
+   原值实测：浅色 #FF3860 on 白 3.51、暗色 #DC3355 on L1 3.93 → 文字档 6.09 / 5.51。
+   实底档不再换暗墨（2026-10-15 用户裁决）：暗墨坐在红色实底上观感刺眼，亮/暗两态
+   一律回 antd 原生白字——3.51:1 的数值取舍让位观感，沿革见 docs/design-language.md §2.1。 */
 .ant-btn.ant-btn-color-dangerous:not(.ant-btn-variant-solid) {
   color: var(--gowind-danger-text) !important;
-}
-
-html[data-theme='light'] .ant-btn.ant-btn-color-dangerous.ant-btn-variant-solid {
-  color: var(--gowind-solid-ink) !important;
-}
-
-/* ---------- 徽标实底数字：EP/antd 都在这里写死白字，浅色实底下暗墨才达标（5.46:1） ---------- */
-html[data-theme='light'] .ant-badge-count.ant-scroll-number {
-  color: var(--gowind-solid-ink) !important;
 }
 
 /* ---------- 选中态的主色文字（菜单 4.47 / 标签栏 4.33 → 5.16 / 5.01） ----------
@@ -148,4 +160,17 @@ html[data-theme='light'] .ant-menu-item-selected .ant-menu-title-content .antico
    只在浅色生效：暗色侧大扫测两组（基线/修复后）都没有开关违规，动它只会引入未知。 */
 html[data-theme='light'] .ant-switch[aria-checked='false'] .ant-switch-inner > span {
   color: var(--gowind-solid-ink) !important;
+}
+
+/* ---------- 认证页里的裸 <a>（登录页「忘记密码」、AuthLayout 页脚链接） ----------
+   这两处原先写成 Tailwind 工具类 `text-[color:var(--gowind-primary-text)]`，编译后确实进了
+   CSSOM、也确实命中元素，但**不会生效**：工具类在 `@layer utilities` 里，而层叠第一步比的是
+   layer 顺序，「不属于任何 layer 的规则」永远优先于「任何 @layer 里的规则」（与权重无关）；
+   antd 的 `:where(hash) a { color: var(--ant-color-link) }` 正是不属于 layer 的那一条 → 必输。
+   同一条 antd 规则权重是 0（:where），换成非 layer 的普通类规则就能赢——实测已验证。
+   现状实测（两态都要杀掉 color 过渡再读——后台标签页没有绘制帧，getComputedStyle 会停在
+   切换前的旧值上）：浅色 #006BE6 on 白 4.95、暗色 #4483CD on #111827 4.54，都贴着 4.5 的线；
+   换 §2.1 文字档后 浅色 5.72 / 暗色 5.88。 */
+.gowind-auth-link {
+  color: var(--gowind-primary-text) !important;
 }

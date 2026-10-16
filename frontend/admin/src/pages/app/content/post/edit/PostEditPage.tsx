@@ -36,6 +36,7 @@ import { cendBaseUrl, useCreatePostPreviewToken } from '@/api/hooks/preview';
 import SocialDistributionDrawer from '@/pages/app/social/distribution/SocialDistributionDrawer';
 import PostSettingsPanel from './PostSettingsPanel';
 import type { PostEditProps } from './types';
+import type { dictservicev1_Language as Language } from '@/api/generated/admin/service/v1';
 
 // 文章只提供富文本与 Markdown 两种编辑器；代码/JSON/纯文本编辑器不适合文章场景
 const POST_EDITOR_TYPE_OPTIONS = [
@@ -115,6 +116,11 @@ const PostEditPage = () => {
   const savedSnapshotRef = useRef('');
   const draftSaveTimerRef = useRef<ReturnType<typeof setTimeout> | undefined>(undefined);
   const draftPromptShownRef = useRef(false);
+  /** 最新表单引用：防抖定时器触发时以此复检，避免闭包里的旧值绕过校验 */
+  const formDataRef = useRef(formData);
+  useEffect(() => {
+    formDataRef.current = formData;
+  }, [formData]);
   /** 发布成功后的返回跳过拦截 */
   const leavingBySaveRef = useRef(false);
   /** 新建保存成功后拿到的新文章 id（state 异步，路由切换需同步值） */
@@ -176,7 +182,12 @@ const PostEditPage = () => {
     if (draftSaveTimerRef.current) {
       clearTimeout(draftSaveTimerRef.current);
     }
-    draftSaveTimerRef.current = setTimeout(() => saveDraft(formData), 1500);
+    draftSaveTimerRef.current = setTimeout(() => {
+      // 定时器触发时按最新表单与快照复检：保存成功只刷新快照、不重跑本 effect，
+      // 不拦截会把已入库的内容写回草稿，下次进页误弹「本地草稿恢复」
+      if (!hasUnsavedChanges(formDataRef.current)) return;
+      saveDraft(formDataRef.current);
+    }, 1500);
     return () => {
       if (draftSaveTimerRef.current) clearTimeout(draftSaveTimerRef.current);
     };
@@ -202,6 +213,8 @@ const PostEditPage = () => {
   });
   const hasUnsavedChangesRef = useRef(false);
   useEffect(() => {
+    // ref 而非闭包：router 持有的是旧注册的 blocker 函数时闭包会读到过期脏标记
+    // eslint-disable-next-line react-hooks/immutability
     hasUnsavedChangesRef.current = hasUnsavedChanges(formData);
   }, [formData, hasUnsavedChanges]);
 
@@ -327,8 +340,8 @@ const PostEditPage = () => {
         );
         setLanguageOptions(
           resp.items
-            ?.filter((l: any) => l.isEnabled !== false)
-            .map((l: any) => ({
+            ?.filter((l: Language) => l.isEnabled !== false)
+            .map((l: Language) => ({
               label: l.nativeName || '',
               value: l.languageCode || '',
             })) || [],
@@ -363,6 +376,10 @@ const PostEditPage = () => {
       .then(setCategoryOptions)
       .catch(() => setCategoryOptions([]))
       .finally(() => setCategoryOptionsLoading(false));
+    // 切语言前先把旧语言的未保存修改暂存本地草稿，避免被服务端数据覆盖丢失
+    if (hasUnsavedChanges(formData)) {
+      saveDraft(formData);
+    }
     if (!isCreateMode) {
       await fetchPost(newLang);
     } else {
@@ -465,7 +482,7 @@ const PostEditPage = () => {
     const hasSeo = Object.values(seo).some(
       (v) => typeof v === 'string' && v.length > 0,
     );
-    const data: Record<string, any> = {
+    const data: Record<string, unknown> = {
       editorType: formData.editorType,
       status: nextStatus,
       code: formData.code || '',
@@ -511,6 +528,11 @@ const PostEditPage = () => {
 
       setStatus(nextStatus);
       refreshSavedSnapshot({ ...formData, status: nextStatus });
+      // 保存成功后丢弃挂起的本地暂存定时器，防止其晚于 clearDraft 触发、把已入库内容写回草稿
+      if (draftSaveTimerRef.current) {
+        clearTimeout(draftSaveTimerRef.current);
+        draftSaveTimerRef.current = undefined;
+      }
       return '';
     } catch (error) {
       console.error('Failed to save post:', error);
@@ -655,19 +677,22 @@ const PostEditPage = () => {
         {/* 主体：左侧编辑器 + 右侧内嵌设置栏 */}
         <div style={{ flex: 1, minHeight: 0, display: 'flex', overflow: 'hidden' }}>
           <div style={{ flex: 1, minWidth: 0, minHeight: 0, display: 'flex', flexDirection: 'column' }}>
-            <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'flex-end', padding: '4px 8px' }}>
-              <AiGenerateButton
-                scene="POST_BODY"
-                context={formData.title ? `文章标题：${formData.title}` : undefined}
-                onGenerate={(content) => {
-                  // 正文生成是追加语义：已有内容换行拼接，避免覆盖用户已写内容
-                  const base = formData.content?.trim();
-                  patch({ content: base ? `${base}
+            {/* 富文本：AI 生成收进工具栏右侧；Markdown 等其他编辑器无工具栏槽，保留上方悬浮入口 */}
+            {formData.editorType !== EditorType.RICH_TEXT && (
+              <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'flex-end', padding: '4px 8px' }}>
+                <AiGenerateButton
+                  scene="POST_BODY"
+                  context={formData.title ? `文章标题：${formData.title}` : undefined}
+                  onGenerate={(content) => {
+                    // 正文生成是追加语义：已有内容换行拼接，避免覆盖用户已写内容
+                    const base = formData.content?.trim();
+                    patch({ content: base ? `${base}
 
 ${content}` : content });
-                }}
-              />
-            </div>
+                  }}
+                />
+              </div>
+            )}
             <div style={{ flex: 1, minHeight: 0 }}>
             <Editor
               height="100%"
@@ -676,6 +701,19 @@ ${content}` : content });
               placeholder={t('contentPlaceholder')}
               uploadImage={handleUploadImage}
               collaboration={collaboration}
+              toolbarExtra={
+                <AiGenerateButton
+                  scene="POST_BODY"
+                  context={formData.title ? `文章标题：${formData.title}` : undefined}
+                  onGenerate={(content) => {
+                    // 正文生成是追加语义：已有内容换行拼接，避免覆盖用户已写内容
+                    const base = formData.content?.trim();
+                    patch({ content: base ? `${base}
+
+${content}` : content });
+                  }}
+                />
+              }
               onChange={(v) => patch({ content: v })}
             />
             </div>
@@ -814,11 +852,13 @@ ${content}` : content });
         lang={lang}
         currentContent={formData.content ?? ''}
         onRestored={() => {
-          // 恢复后重新拉取服务端数据覆盖表单（本地草稿不再相关）
-          clearDraft(lang);
-          fetchPost(lang).catch((error) => {
-            console.error('Refetch post after restore failed:', error);
-          });
+          // 恢复后重新拉取服务端数据覆盖表单（本地草稿不再相关）；
+          // 待表单落定后再清草稿，防止拉取期间挂起的暂存定时器把旧内容写回
+          fetchPost(lang)
+            .then(() => clearDraft(lang))
+            .catch((error) => {
+              console.error('Refetch post after restore failed:', error);
+            });
         }}
       />
     </ContentContainer>

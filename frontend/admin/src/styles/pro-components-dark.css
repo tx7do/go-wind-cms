@@ -17,7 +17,9 @@
 .ant-pro-table .ant-table-tbody > tr > td {
   border-bottom: 1px solid;
 }
-.ant-pro-table .ant-table-tbody > tr:hover > td {
+/* 占位行（暂无数据）不参与行 hover：空态占位被撑满整个表体后，
+   行 hover 灰会涂满整块不可交互区域；antd 原生对占位行 hover 本就是容器白底 */
+.ant-pro-table .ant-table-tbody > tr:not(.ant-table-placeholder):hover > td {
   background-color: var(--ant-color-fill-secondary) !important;
 }
 /* 固定列（右侧操作列 / 左侧固定列）hover 时必须仍是不透明底色。
@@ -129,7 +131,7 @@
   padding: 48px 16px !important;
 }
 [data-theme='dark'] .ant-empty-normal {
-  color: var(--ant-color-primary) !important;
+  color: var(--gowind-primary-text) !important;
   margin: 0 auto !important;
 }
 [data-theme='dark'] .ant-empty-image {
@@ -467,7 +469,8 @@ html[data-theme='dark'] .ant-form .ant-input:not(.ant-input-affix-wrapper .ant-i
 [data-theme='dark'] .ant-drawer .ant-form-item-label > label {
   color: #c9d1d9;
 }
-/* 底部按钮区：独立底部容器，最暗底色（#0D1117）与表单彻底隔离，按钮居右 */
+/* 底部按钮区：与抽屉同层 L1 表面（§2.3：抽屉属 #111827 表面层，ele/vben 端 footer 同口径），
+   仅靠顶部发丝线分隔；早前"最暗底色隔离"的做法会在底部留下一道 L0 深色条 */
 .ant-drawer-footer {
   padding: 20px 24px !important;
   display: flex;
@@ -475,7 +478,7 @@ html[data-theme='dark'] .ant-form .ant-input:not(.ant-input-affix-wrapper .ant-i
   gap: 12px;
 }
 [data-theme='dark'] .ant-drawer-footer {
-  background-color: #0b0f19 !important;
+  background-color: #111827 !important;
   border-top: 1px solid rgba(255, 255, 255, 0.08) !important;
 }
 

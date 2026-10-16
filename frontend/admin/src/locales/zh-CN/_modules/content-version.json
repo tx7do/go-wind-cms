@@ -1,6 +1,9 @@
 {
     "title": "版本历史",
+    "versionCount": "{{count}} 个版本",
     "noVersions": "暂无版本记录",
+    "currentBadge": "当前",
+    "autosave": "自动保存",
     "view": "查看",
     "restore": "恢复此版本",
     "restoreConfirm": "确认恢复到此版本？",
@@ -11,7 +14,10 @@
     "snapshotUnreadable": "快照内容无法解析",
     "loadDetailFailed": "版本详情加载失败",
     "operator": "操作人",
-    "diffLegend": "与当前编辑内容的差异：绿色为该版本有而当前没有的行，红色为当前有而该版本没有的行。",
+    "diffLegend": "与当前编辑内容的差异",
+    "diffOnlyCurrent": "仅当前内容有",
+    "diffOnlyVersion": "仅此版本有",
+    "showUnchanged": "展开 {{count}} 行未变更",
     "sectionCount": "{{count}} 个区块",
     "pageSectionRestoreNote": "页面版本以区块（Section）整体快照恢复：恢复后该页的区块、翻译与设置将被快照内容整体替换。"
 }

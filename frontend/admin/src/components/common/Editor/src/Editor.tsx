@@ -20,6 +20,7 @@ const Editor: React.FC<EditorProps> = ({
   markdownOptions,
   jsonOptions,
   codeOptions,
+  toolbarExtra,
   onChange,
   onReady,
 }) => {
@@ -72,6 +73,8 @@ const Editor: React.FC<EditorProps> = ({
           autoDetectLanguage={codeOptions?.autoDetectLanguage}
           // eslint-disable-next-line @typescript-eslint/no-explicit-any
           options={currentOptions as any}
+          // 工具栏扩展槽仅富文本实现（Tiptap Toolbar）渲染
+          toolbarExtra={editorType === EditorType.RICH_TEXT ? toolbarExtra : undefined}
           onChange={onChange}
           onReady={onReady}
         />

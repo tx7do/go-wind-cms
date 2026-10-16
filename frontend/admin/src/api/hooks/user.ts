@@ -38,7 +38,7 @@ function listUsers(query: PaginationQuery) {
 // ==============================
 export function useListUsers(
   query: PaginationQuery,
-  options?: UseQueryOptions<identityservicev1_ListUserResponse, Error>,
+  options?: Partial<UseQueryOptions<identityservicev1_ListUserResponse, Error>>,
 ) {
   return useQuery({
     queryKey: ['listUsers', query],

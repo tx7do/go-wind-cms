@@ -14,7 +14,7 @@ export const METHOD_COLOR_MAP: Record<string, string> = {
   OPTIONS: 'default',
 };
 
-/** 获取 HTTP 方法颜色，未匹配时返回默认颜色 */
+/** 获取 HTTP 方法对应的 Tag 预设色名，未匹配时回退中性 default */
 export function getMethodColor(method: string | undefined): string {
-  return METHOD_COLOR_MAP[method || ''] || '#666';
+  return METHOD_COLOR_MAP[method || ''] || 'default';
 }

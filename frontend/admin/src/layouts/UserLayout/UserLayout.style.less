@@ -11,14 +11,17 @@
   overflow: hidden;
   position: relative;
 
-  /* 亮色模式背景 */
+  /* 亮色模式背景：§2.2 页面画布档 #F1F3F6（原值 #f5f7fa 是 antd 默认底，与 vben
+     --background-deep / ele --el-bg-color-page 不同档）*/
   &.light-mode {
-    background: #f5f7fa;
+    background: #f1f3f6;
   }
 
-  /* 暗黑模式背景 */
+  /* 暗黑模式背景：§2.3 暗色 L0 大底。
+     原先写的是 var(--login-page-bg, #0B0F19)，但 --login-page-bg 全仓只有这一行出现过、
+     没有任何定义点，永远走兜底——留着一个不存在的钩子只会误导后来人。 */
   &:not(.light-mode) {
-    background: var(--login-page-bg, #0B0F19);
+    background: #0b0f19;
   }
 }
 
@@ -104,7 +107,7 @@
       }
 
       .user-layout-wrapper:not(.light-mode) & {
-        background: radial-gradient(circle, rgba(0, 107, 230, 0.15) 0%, transparent 70%);
+        background: radial-gradient(circle, color-mix(in srgb, var(--brand-primary) 15%, transparent) 0%, transparent 70%);
       }
     }
 
@@ -119,7 +122,7 @@
       }
 
       .user-layout-wrapper:not(.light-mode) & {
-        background: radial-gradient(circle, rgba(147, 51, 234, 0.1) 0%, transparent 70%);
+        background: radial-gradient(circle, color-mix(in srgb, var(--brand-primary) 10%, transparent) 0%, transparent 70%);
       }
     }
   }
@@ -143,13 +146,12 @@
     position: relative;
     z-index: 1;
 
-    .user-layout-wrapper.light-mode & {
-      color: #1f1f1f !important;
-      text-shadow: none;
-    }
-
+    /* 两态同一条：档位随 [data-theme] 切换（浅 #1F2937 / 暗 #F8FAFC，见 semantic-text.css）。
+       原先浅态写 #1F1F1F（antd 默认墨，不是本规范的主档）、暗态写纯白 #FFF
+       （§2.3 明确"放弃纯白#fff，用柔和灰白显厚重"）。 */
+    .user-layout-wrapper.light-mode &,
     .user-layout-wrapper:not(.light-mode) & {
-      color: #fff !important;
+      color: var(--gowind-text-primary) !important;
       text-shadow: none;
     }
   }
@@ -162,13 +164,17 @@
     position: relative;
     z-index: 1;
 
+    /* 暗态取次要档 #8B949E（在面板最亮一档 #111827 上实测 5.77）；
+       浅态**不能**也用次要档：品牌面板渐变最暗一档 #D5E0ED 上只有 3.83 < 4.5，
+       所以浅态降用常规档 #374151（同底 7.71）。这条分档差异与 vue-element 端
+       登录页 .brand-desc 的处理逐字一致。 */
     .user-layout-wrapper.light-mode & {
-      color: rgba(0, 0, 0, 0.75) !important;
+      color: var(--gowind-text-regular) !important;
       text-shadow: none;
     }
 
     .user-layout-wrapper:not(.light-mode) & {
-      color: rgba(255, 255, 255, 0.65) !important;
+      color: var(--gowind-secondary-text) !important;
       text-shadow: none;
     }
   }
@@ -187,14 +193,14 @@
 
   /* 亮色模式 */
   .user-layout-wrapper.light-mode & {
-    background: #ffffff;
+    background: var(--app-bg-nav); /* 浅态 = #ffffff */
     border-left: none;
     box-shadow: -10px 0 40px rgba(0, 0, 0, 0.05);
   }
 
   /* 暗黑模式：表单面板用导航层色，极细描边与品牌区勾边 */
   .user-layout-wrapper:not(.light-mode) & {
-    background: #111827;
+    background: var(--app-bg-nav); /* 暗态 = #111827（§2.3 L1 表面） */
     border-left: 1px solid rgba(255, 255, 255, 0.06);
     box-shadow: -20px 0 60px rgba(0, 0, 0, 0.4);
   }
@@ -216,25 +222,28 @@
   }
 }
 
-/* 品牌插画：vben 同款浮动动效（float 5s，translateY -20px 循环） */
-@keyframes slogan-float {
-  0% {
-    transform: translateY(0);
-  }
-  50% {
-    transform: translateY(-20px);
-  }
-  100% {
-    transform: translateY(0);
-  }
-}
+/* 品牌插画：外层不再整体浮动——vben 遗留的 5s 上下 20px 跳动与 SVG 内部
+   24s~70s 慢速旋转体系不搭（快、大幅、linear 两端顿挫）；生命感由 SVG 内
+   光晕呼吸（gw-breathe）承担，整组动效统一在慢速一个频率上。 */
 
-.user-brand-icon {
-  animation: slogan-float 5s linear infinite;
-}
+/* 窄屏断点：与 AuthLayout 的 `hidden lg:flex` 同口径（<1024px 收起品牌区、表单独占全宽）。
+   原先本文件一个断点都没有，而 .user-form-section 写死 min-width: 500px——实测（现页 DOM +
+   现 stylesheet，向 .user-layout-wrapper 注入合成宽度后量子元素 rect）：
+   - 1366×900：品牌区 710 / 表单区 656，无溢出；
+   - 768：品牌区被挤到 268px，360px 的 .user-brand-icon 左溢 46px（left=-46）；
+   - 375：插画整块跑到可视区外（left=-180），wrapper scrollWidth=500 > 375，
+     横向溢出 125px——外层是 overflow:hidden，溢出部分用户既看不见也滚不到。
+   1024 以上不用管：表单区 min-width 500 兜住后品牌区仍有 ≥524px，容得下 360px 插画。 */
+@media (max-width: 1023px) {
+  .user-layout-wrapper {
+    .user-brand-section {
+      display: none;
+    }
 
-@media (prefers-reduced-motion: reduce) {
-  .user-brand-icon {
-    animation: none;
+    .user-form-section {
+      width: 100%;
+      min-width: 0;
+      padding: 32px 20px;
+    }
   }
 }

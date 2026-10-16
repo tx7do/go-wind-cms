@@ -6,14 +6,14 @@ export const AppFooter = () => {
   if (!copyright.enable) return null;
 
   return (
-    <div className="text-center text-gray-400 text-sm py-3">
+    <div className="text-center text-[color:var(--gowind-secondary-text)] text-sm py-3">
       © {copyright.date} {copyright.companyName}
       {copyright.icp && (
         <a
           href={copyright.icpLink}
           target="_blank"
           rel="noopener noreferrer"
-          className="ml-2 hover:text-blue-600 transition"
+          className="ml-2 hover:opacity-80 transition"
         >
           {copyright.icp}
         </a>

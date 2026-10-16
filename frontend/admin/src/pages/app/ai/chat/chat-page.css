@@ -63,7 +63,7 @@
   text-overflow: ellipsis;
   font-size: 11px;
   font-weight: 400;
-  color: var(--ant-color-primary);
+  color: var(--gowind-primary-text);
   white-space: nowrap;
   background: var(--ant-color-primary-bg);
   border: 1px solid var(--ant-color-primary-border);
@@ -180,12 +180,12 @@
 }
 
 .ai-chat-page .row-op:hover {
-  color: var(--ant-color-primary);
+  color: var(--gowind-primary-text);
   background: var(--ant-color-fill-secondary);
 }
 
 .ai-chat-page .row-op--danger:hover {
-  color: var(--ant-color-error);
+  color: var(--gowind-danger-text);
   background: var(--ant-color-error-bg);
 }
 
@@ -224,7 +224,7 @@
   width: 56px;
   height: 56px;
   margin-bottom: 8px;
-  color: var(--ant-color-primary);
+  color: var(--gowind-primary-text);
   background: var(--ant-color-primary-bg);
   border-radius: 50%;
 }
@@ -272,7 +272,7 @@
 }
 
 .ai-chat-page .msg--ai .msg__avatar {
-  color: var(--ant-color-primary);
+  color: var(--gowind-primary-text);
   background: var(--ant-color-primary-bg);
 }
 
@@ -557,7 +557,7 @@
 }
 
 .ai-chat-page .markdown-body a {
-  color: var(--ant-color-primary);
+  color: var(--gowind-primary-text);
   text-decoration: none;
 }
 

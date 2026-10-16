@@ -1,3 +1,5 @@
+import type { ReactNode } from 'react';
+
 export const EditorType = {
   CODE: 'EDITOR_TYPE_CODE',
   JSON: 'EDITOR_TYPE_JSON_BLOCK',
@@ -50,4 +52,6 @@ export interface EditorProps {
   };
   onChange?: (value: string) => void;
   onReady?: () => void;
+  /** 工具栏右侧扩展槽（仅富文本编辑器渲染；用于承载 AI 生成等页级动作，避免悬浮在工具栏上方） */
+  toolbarExtra?: ReactNode;
 }

@@ -53,6 +53,15 @@ export function useProTableScrollY(
         tableBody.style.maxHeight = `${availableHeight}px`;
         tableBody.style.minHeight = `${availableHeight}px`;
 
+        // 空列表时占位行只占自然高度，被 minHeight 撑高的 body 会露出大段白底。
+        // body 高度是 min/max 撑出来的（height 仍为 auto），内层表格写 height:100% 解析不到，
+        // 必须给显式像素值；有数据时还原，行高由内容决定。
+        const bodyTable = tableBody.querySelector(':scope > table') as HTMLElement | null;
+        if (bodyTable) {
+          const isEmpty = !!tableBody.querySelector('.ant-table-placeholder');
+          bodyTable.style.height = isEmpty ? `${availableHeight}px` : '';
+        }
+
         // 根据内容是否溢出动态切换 overflow-y
         // antd 默认设置 overflow-y: scroll，在 Windows 上会始终显示滚动条轨道
         // 内容不超出时用 hidden 隐藏滚动条，超出时用 auto 按需显示

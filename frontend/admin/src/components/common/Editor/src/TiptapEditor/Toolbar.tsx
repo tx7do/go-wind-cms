@@ -1,3 +1,4 @@
+import type { ReactNode } from 'react';
 import { useTranslation } from 'react-i18next';
 
 interface ToolbarProps {
@@ -5,9 +6,11 @@ interface ToolbarProps {
   isActive: (name: string, options?: any) => boolean;
   actions: any;
   isFullscreen?: boolean;
+  /** 工具栏右侧扩展槽（margin-left:auto 顶到最右） */
+  toolbarExtra?: ReactNode;
 }
 
-export const Toolbar: React.FC<ToolbarProps> = ({ editor, isActive, actions, isFullscreen }) => {
+export const Toolbar: React.FC<ToolbarProps> = ({ editor, isActive, actions, isFullscreen, toolbarExtra }) => {
   const { t } = useTranslation();
 
   return (
@@ -477,6 +480,9 @@ export const Toolbar: React.FC<ToolbarProps> = ({ editor, isActive, actions, isF
           {isFullscreen ? '⤓' : '⤢'}
         </button>
       </div>
+
+      {/* 页级动作扩展槽：固定在工具栏最右端（AI 生成等） */}
+      {toolbarExtra && <div className="toolbar-extra">{toolbarExtra}</div>}
     </div>
   );
 };

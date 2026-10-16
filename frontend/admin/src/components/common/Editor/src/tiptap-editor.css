@@ -66,6 +66,14 @@
   align-items: center;
 }
 
+/* 工具栏右侧扩展槽：承载页级动作（AI 生成等），顶到最右；窄屏换行时独立成行右对齐 */
+.toolbar-extra {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  margin-left: auto;
+}
+
 .toolbar-divider {
   width: 1px;
   height: 24px;

@@ -102,10 +102,11 @@ const ApiLogPage: React.FC<ApiLogPageProps> = ({ userId }) => {
           HEAD: 'default',
           OPTIONS: 'default',
         };
+        // Tag 预设色名不能当 CSS color 用：'success' 这类不是 <color>，整条声明被浏览器丢弃
         return (
-          <span style={{ color: colorMap[record.httpMethod || ''] || '#666' }}>
+          <Tag color={colorMap[record.httpMethod || ''] || 'default'}>
             {record.httpMethod}
-          </span>
+          </Tag>
         );
       },
     },

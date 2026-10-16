@@ -25,30 +25,30 @@ export const IconComingSoon = () => {
             {/* Rocket fins */}
             <path
                 d="M250 320 L220 380 L250 350 Z"
-                fill="#ff6b6b"
+                fill="var(--fb-coral)"
             />
             <path
                 d="M350 320 L380 380 L350 350 Z"
-                fill="#ff6b6b"
+                fill="var(--fb-coral)"
             />
 
             {/* Flame */}
             <path
                 d="M280 400 L300 450 L320 400 Z"
-                fill="#ff9800"
+                fill="var(--fb-flame)"
             />
             <path
                 d="M285 400 L300 435 L315 400 Z"
-                fill="#ffeb3b"
+                fill="var(--fb-flame-core)"
             />
 
             {/* Stars */}
-            <circle cx="150" cy="200" fill="#ffd700" r="4" />
-            <circle cx="450" cy="180" fill="#ffd700" r="4" />
-            <circle cx="180" cy="450" fill="#ffd700" r="4" />
-            <circle cx="420" cy="420" fill="#ffd700" r="4" />
-            <circle cx="120" cy="350" fill="#ffd700" r="3" />
-            <circle cx="480" cy="300" fill="#ffd700" r="3" />
+            <circle cx="150" cy="200" fill="var(--fb-star)" r="4" />
+            <circle cx="450" cy="180" fill="var(--fb-star)" r="4" />
+            <circle cx="180" cy="450" fill="var(--fb-star)" r="4" />
+            <circle cx="420" cy="420" fill="var(--fb-star)" r="4" />
+            <circle cx="120" cy="350" fill="var(--fb-star)" r="3" />
+            <circle cx="480" cy="300" fill="var(--fb-star)" r="3" />
 
             {/* Text */}
             <text
@@ -56,7 +56,7 @@ export const IconComingSoon = () => {
                 y="520"
                 fontSize="40"
                 fontWeight="bold"
-                fill="var(--fb-navy)"
+                fill="var(--fb-ink)"
                 textAnchor="middle"
                 fontFamily="Arial, sans-serif"
             >

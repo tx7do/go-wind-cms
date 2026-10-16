@@ -20,7 +20,7 @@ import { EditorContent, useEditor } from '@tiptap/react';
 import Collaboration from '@tiptap/extension-collaboration';
 import CollaborationCaret from '@tiptap/extension-collaboration-caret';
 import { all, createLowlight } from 'lowlight';
-import { useCallback, useEffect, useMemo, useRef } from 'react';
+import { useCallback, useEffect, useMemo, useRef, type ReactNode } from 'react';
 import { WebsocketProvider } from 'y-websocket';
 import { IndexeddbPersistence } from 'y-indexeddb';
 import * as Y from 'yjs';
@@ -114,6 +114,8 @@ export interface TiptapEditorProps {
   onReady?: (editor: any) => void;
   /** 传入即启用实时协同：多编辑者无冲突合并 + 在线光标；保存仍走页面显式保存 */
   collaboration?: CollaborationOptions | null;
+  /** 工具栏右侧扩展槽：渲染在工具栏最右端（AI 生成等页级动作） */
+  toolbarExtra?: ReactNode;
 }
 
 const lowlight = createLowlight(all);
@@ -129,6 +131,7 @@ const TiptapEditor: React.FC<TiptapEditorProps> = ({
   onChange,
   onReady,
   collaboration,
+  toolbarExtra,
 }) => {
   const {
     isDark,
@@ -329,7 +332,15 @@ const TiptapEditor: React.FC<TiptapEditorProps> = ({
       style={{ height: containerHeight }}
     >
       {/* Toolbar */}
-      {showToolbar && <Toolbar editor={editor} isActive={isActive} actions={toolbarActions} isFullscreen={isFullscreen} />}
+      {showToolbar && (
+        <Toolbar
+          editor={editor}
+          isActive={isActive}
+          actions={toolbarActions}
+          isFullscreen={isFullscreen}
+          toolbarExtra={toolbarExtra}
+        />
+      )}
 
       {/* Editor Content */}
       <div className="tiptap-editor-content-wrapper">

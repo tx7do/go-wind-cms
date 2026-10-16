@@ -64,14 +64,16 @@ export const ThemeLoading = ({
         switch (status) {
             case 'success':
                 return {
-                    icon: <span className="text-green-500 text-4xl">✓</span>,
+                    icon: <span className="text-[color:var(--gowind-success-text)] text-4xl">✓</span>,
                     color: themeConfig.token?.colorSuccess,
+                    textColor: 'var(--gowind-success-text)',
                     text: text || t('loading.success'),
                 };
             case 'error':
                 return {
-                    icon: <span className="text-red-500 text-4xl">✕</span>,
+                    icon: <span className="text-[color:var(--gowind-danger-text)] text-4xl">✕</span>,
                     color: themeConfig.token?.colorError,
+                    textColor: 'var(--gowind-danger-text)',
                     text: text || t('loading.failed'),
                 };
             default:
@@ -83,6 +85,7 @@ export const ThemeLoading = ({
                         />
                     ),
                     color: themeConfig.token?.colorPrimary,
+                    textColor: 'var(--gowind-primary-text)',
                     text: text || t('loading.text'),
                 };
         }
@@ -106,12 +109,12 @@ export const ThemeLoading = ({
                 <div className="text-center space-y-1">
                     <div
                         className="font-medium"
-                        style={{color: statusConfig.color}}
+                        style={{color: statusConfig.textColor}}
                     >
                         {statusConfig.text}
                     </div>
                     {subText && (
-                        <div className="text-gray-400 text-xs opacity-80">
+                        <div className="text-[color:var(--gowind-secondary-text)] text-xs">
                             {subText}
                         </div>
                     )}

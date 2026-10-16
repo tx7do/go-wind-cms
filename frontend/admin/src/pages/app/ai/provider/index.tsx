@@ -40,11 +40,11 @@ export default function AiProviderPage() {
       render: (_, record) => (
         <span className="inline-flex items-center gap-2">
           {record.modelType === 'CLOUD' ? (
-            <CloudOutlined style={{ color: 'var(--ant-color-primary)' }} />
+            <CloudOutlined style={{ color: 'var(--gowind-primary-text)' }} />
           ) : (
             // 内联 style 同上：.anticon 的无层规则会压过 Tailwind 颜色类，
             // 原先的 text-green-600 实际从未生效（本地/云端图标一直同色）。
-            <LaptopOutlined style={{ color: 'var(--ant-color-success)' }} />
+            <LaptopOutlined style={{ color: 'var(--gowind-success-text)' }} />
           )}
           {record.name}
           {record.isDefault && (

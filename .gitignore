@@ -167,3 +167,12 @@ frontend/admin/dist/
 frontend/admin/dist.zip
 *.local.xlsx
 *.local.csv
+
+# 本地测试/截图/临时产物（勿入库）
+/*.png
+/.playwright-mcp/
+frontend/admin/.playwright-mcp/
+backend/build/*.prev*.exe
+backend/build/*.out.log
+backend/build/*.err.log
+backend/build/app.exe~

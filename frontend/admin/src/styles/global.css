@@ -110,6 +110,32 @@ body {
     --app-bg-nav: #ffffff;
 }
 
+/* ========== 品牌标识插画令牌（docs/brand/README.md 色板 · 三端同名） ==========
+   渐变三档是品牌资产、不随主题反色，故两态同值；--brand-primary 跟主题主色，
+   原先插画里那颗轨道光点写的 #3B82F6 是 §2.1 沿革中已退役的旧主色。
+   var() 必须带字面量兜底：--app-color-primary 由 ThemeProvider 的 effect 写到 <html>，
+   首帧尚未注入时 color-mix 会整条声明 IACVT（静默失效），有兜底才退到权威值。 */
+:root {
+    --brand-grad-light: #70b3ff;
+    --brand-grad-mid: #0d74f2;
+    --brand-grad-deep: #005ac2;
+    --brand-primary: var(--app-color-primary, #006be6);
+}
+
+/* 认证页左侧品牌面板：底色渐变 + 中心光晕，两态各一档 */
+[data-theme='light'] {
+    --auth-panel-from: #e8ecf1;
+    --auth-panel-via: #d5e0ed;
+    --auth-panel-to: #e8ecf1;
+    --auth-panel-glow: rgba(255, 255, 255, 0.15);
+}
+[data-theme='dark'] {
+    --auth-panel-from: #0a0a0a;
+    --auth-panel-via: #121218;
+    --auth-panel-to: #0a0a0a;
+    --auth-panel-glow: color-mix(in srgb, var(--app-color-primary, #006be6) 18%, transparent);
+}
+
 /* ========== Chrome 自动填充底色覆盖 ==========
    保存过密码的浏览器上，Chrome 密码管理器按 autoComplete=username /
    current-password 填充账号与密码框，并在 app 样式之上强制绘制

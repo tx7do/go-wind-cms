@@ -44,7 +44,7 @@ export const IconOffline = () => {
                 x2="330"
                 y1="310"
                 y2="370"
-                stroke="#ff6b6b"
+                stroke="var(--fb-coral)"
                 strokeLinecap="round"
                 strokeWidth="8"
             />
@@ -53,7 +53,7 @@ export const IconOffline = () => {
                 x2="270"
                 y1="310"
                 y2="370"
-                stroke="#ff6b6b"
+                stroke="var(--fb-coral)"
                 strokeLinecap="round"
                 strokeWidth="8"
             />
@@ -100,7 +100,7 @@ export const IconOffline = () => {
                 y="465"
                 fontSize="50"
                 fontWeight="bold"
-                fill="#ff6b6b"
+                fill="var(--gowind-danger-text)"
                 textAnchor="middle"
                 fontFamily="Arial, sans-serif"
             >

@@ -424,7 +424,7 @@ export const HeaderContent = ({
                 lineHeight: '18px',
                 padding: '0 8px',
                 borderRadius: 10,
-                color: 'var(--ant-color-primary)',
+                color: 'var(--gowind-primary-text)',
                 background: 'rgba(0, 107, 230, 0.12)',
               }}
             >

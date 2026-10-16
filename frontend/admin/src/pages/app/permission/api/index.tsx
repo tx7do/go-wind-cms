@@ -2,7 +2,7 @@ import { useRef, useState } from 'react';
 import type { ProColumns, ActionType } from '@ant-design/pro-components';
 import TableExportButton from '@/components/common/TableExportButton';
 import ListTable from '@/components/common/ListTable';
-import { Button, Popconfirm, App } from 'antd';
+import { Button, Popconfirm, Tag, App } from 'antd';
 import { EditOutlined, DeleteOutlined, PlusOutlined, SyncOutlined } from '@ant-design/icons';
 import { useQueryClient } from '@tanstack/react-query';
 import { useTranslation } from 'react-i18next';
@@ -95,7 +95,8 @@ const ApiManagement = () => {
         METHOD_LIST.map((item) => [item.value, { text: item.label, status: 'Default' }]),
       ),
       render: (_, record) => {
-        return <span style={{ color: getMethodColor(record.method) }}>{record.method}</span>;
+        // Tag 预设色名不能当 CSS color 用：'success' 这类不是 <color>，整条声明被浏览器丢弃
+        return <Tag color={getMethodColor(record.method)}>{record.method}</Tag>;
       },
     },
     {
