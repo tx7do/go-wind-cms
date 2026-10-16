@@ -1,0 +1,20 @@
+{
+  "title": "Email Templates",
+  "code": "Code",
+  "name": "Name",
+  "subject": "Subject Template",
+  "bodyHtml": "Body HTML Template",
+  "enabled": "Enabled",
+  "description": "Description",
+  "create": "Create Template",
+  "edit": "Edit",
+  "delete": "Delete",
+  "deleteConfirm": "Outbound will fall back to the builtin template after deletion. Delete?",
+  "deleteSuccess": "Deleted",
+  "createSuccess": "Created",
+  "updateSuccess": "Saved",
+  "save": "Save",
+  "requiredFields": "code, name and subject are required",
+  "updatedAt": "Updated At",
+  "action": "Actions"
+}

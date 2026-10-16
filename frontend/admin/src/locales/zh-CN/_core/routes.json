@@ -80,5 +80,6 @@
   "content-form-submissions": "表单提交",
   "redirects": "重定向管理",
   "email-provider": "邮件出站",
-  "content-experiments": "内容实验"
+  "content-experiments": "内容实验",
+  "email-template": "邮件模板"
 }
