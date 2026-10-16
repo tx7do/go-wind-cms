@@ -33,6 +33,18 @@ server:
     auto_stream: true
     auto_reply: false
 
+  # MCP 服务器（可选，把 CMS 查询/发布能力暴露给 AI 代理）。未配置时回退
+  # 环境变量 MCP_ADDR；off/disabled 显式停用。鉴权 Token 只走环境变量
+  # MCP_TOKEN（必填，缺失拒绝启动——凭据不入配置文件）。
+  # mcp:
+  #   address: ":6603"
+  #   server_name: "GoWind CMS"
+  #   server_version: "1.1.0"
+  #   server_type: "HTTP"       # SSE/HTTP/STDIO/IN_PROCESS
+  #   instructions: "GoWind CMS content queries and publishing"
+  #   recovery: true
+  #   tool_capabilities: true
+
   grpc:
     addr: "0.0.0.0:0"
     timeout: 10s

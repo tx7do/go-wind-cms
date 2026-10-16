@@ -14,7 +14,9 @@ import (
 	"google.golang.org/protobuf/types/known/timestamppb"
 	paginationV1 "github.com/tx7do/go-crud/api/gen/go/pagination/v1"
 	"github.com/tx7do/go-utils/trans"
+	conf "github.com/tx7do/kratos-bootstrap/api/gen/go/conf/v1"
 	"github.com/tx7do/kratos-bootstrap/bootstrap"
+	bootstrapMcp "github.com/tx7do/kratos-bootstrap/transport/mcp"
 	mcptransport "github.com/tx7do/kratos-transport/transport/mcp"
 
 	contentV1 "go-wind-cms/api/gen/go/content/service/v1"
@@ -31,10 +33,14 @@ import (
 // authorizeMcp 校验——tools/list 元数据对未鉴权请求可见（仅工具名与
 // 描述），调用必须携带正确 Token。
 //
-// 环境变量：
-//   - MCP_ADDR  监听地址（如 ":6602"）；未设置则不启动 MCP 服务器。
-//     生产建议仅绑定内网地址或置于反向代理之后
-//   - MCP_TOKEN 鉴权 Token（必填；缺失拒绝启动）
+// 配置来源：config 的 server.mcp 段（conf.Server_MCP，经 bootstrap 的
+// transport/mcp 适配器映射）优先；未配置回退环境变量 MCP_ADDR（兼容既有
+// 部署，等价 HTTP + Recovery + 默认名/版本）。两处都没有（或显式写
+// off/disabled）则不启动 MCP 服务器。生产建议仅绑定内网地址或置于反向
+// 代理之后。
+//   - server.mcp.address / MCP_ADDR  监听地址（如 ":6602"）
+//   - MCP_TOKEN                      鉴权 Token（必填；缺失拒绝启动）。
+//                                    凭据只走环境变量，不入配置文件
 //
 // 工具集：
 //   - list_recent_posts           最近文章（标题/状态/ID）
@@ -46,28 +52,50 @@ func NewMcpServer(
 	postService *service.PostService,
 	socialService *service.SocialService,
 ) *mcptransport.Server {
-	addr := strings.TrimSpace(os.Getenv("MCP_ADDR"))
-	if addr == "" {
-		return nil
+	// 解析监听地址：yaml server.mcp.address 优先，env MCP_ADDR 兜底
+	var mcpCfg *conf.Server_MCP
+	if cfg := ctx.GetConfig(); cfg != nil {
+		mcpCfg = cfg.GetServer().GetMcp()
 	}
-	token := strings.TrimSpace(os.Getenv("MCP_TOKEN"))
-	if token == "" {
-		log.Warnf("MCP_ADDR set but MCP_TOKEN empty: refusing to start MCP server (auth required)")
+	var addr string
+	if mcpCfg != nil {
+		addr = strings.TrimSpace(mcpCfg.GetAddress())
+	}
+	if addr == "" {
+		addr = strings.TrimSpace(os.Getenv("MCP_ADDR"))
+		if addr != "" {
+			// env 兜底保持旧行为：HTTP + Recovery，其余能力关闭
+			mcpCfg = &conf.Server_MCP{
+				ServerName:    "GoWind CMS",
+				ServerVersion: "1.1.0",
+				ServerType:    "HTTP",
+				Address:       addr,
+				Recovery:      true,
+			}
+		}
+	}
+	switch strings.ToLower(addr) {
+	case "", "off", "disabled", "false", "0":
+		// 未配置或显式停用：不启动（MCP 为可选组件）
 		return nil
 	}
 
-	srv := mcptransport.NewServer(
-		mcptransport.WithServerName("GoWind CMS"),
-		mcptransport.WithServerVersion("1.1.0"),
-		mcptransport.WithMCPServeType(mcptransport.ServerTypeHTTP),
-		mcptransport.WithMCPServeAddress(addr),
-		mcptransport.WithMCPServerOptions(server.WithRecovery()),
+	token := strings.TrimSpace(os.Getenv("MCP_TOKEN"))
+	if token == "" {
+		log.Warnf("MCP server enabled at %s but MCP_TOKEN empty: refusing to start MCP server (auth required)", addr)
+		return nil
+	}
+
+	srv := bootstrapMcp.NewMcpServer(mcpCfg,
 		mcptransport.WithMCPHTTPServerOptions(
 			server.WithHTTPContextFunc(func(ctx context.Context, r *http.Request) context.Context {
 				return context.WithValue(ctx, mcpTokenCtxKey{}, r.Header.Get("Authorization"))
 			}),
 		),
 	)
+	if srv == nil {
+		return nil
+	}
 
 	registerMcpTools(srv, token, postService, socialService)
 
