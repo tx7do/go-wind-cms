@@ -30,14 +30,19 @@ export function useCollaboration(
     );
 
   return useMemo(() => {
+    // eslint-disable-next-line no-console
+    console.log('[useCollaboration] inputs:', { targetType, targetId, locale, hasToken: Boolean(token), userId });
     if (!targetId || !token) return null;
     const id = userId ?? 0;
-    return {
+    const result = {
       room: `${targetType}:${targetId}:${locale || 'zh-CN'}`,
       wsUrl: import.meta.env.VITE_COLLAB_WS_URL ?? 'ws://localhost:6602',
       token,
       userName: userName || `用户${id}`,
       userColor: CURSOR_PALETTE[id % CURSOR_PALETTE.length],
     };
+    // eslint-disable-next-line no-console
+    console.log('[useCollaboration] result room =', result.room, 'wsUrl =', result.wsUrl);
+    return result;
   }, [targetType, targetId, locale, token, userId, userName]);
 }

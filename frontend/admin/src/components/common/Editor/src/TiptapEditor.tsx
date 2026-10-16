@@ -73,6 +73,8 @@ const collabBundleCache = new Map<
 >();
 
 function getCollabBundle(opts: NonNullable<CollaborationOptions>) {
+  // eslint-disable-next-line no-console
+  console.log('[collab] getCollabBundle:', opts.room, 'cached =', collabBundleCache.has(opts.room));
   let bundle = collabBundleCache.get(opts.room);
   if (!bundle) {
     const ydoc = new Y.Doc();
@@ -114,6 +116,8 @@ export interface TiptapEditorProps {
   onReady?: (editor: any) => void;
   /** 传入即启用实时协同：多编辑者无冲突合并 + 在线光标；保存仍走页面显式保存 */
   collaboration?: CollaborationOptions | null;
+  /** 在线协作者变化（协同启用时回调） */
+  onCollaboratorsChange?: (users: { name: string; color: string }[]) => void;
   /** 工具栏右侧扩展槽：渲染在工具栏最右端（AI 生成等页级动作） */
   toolbarExtra?: ReactNode;
 }
@@ -131,6 +135,7 @@ const TiptapEditor: React.FC<TiptapEditorProps> = ({
   onChange,
   onReady,
   collaboration,
+  onCollaboratorsChange,
   toolbarExtra,
 }) => {
   const {
@@ -182,6 +187,8 @@ const TiptapEditor: React.FC<TiptapEditorProps> = ({
   // 协同资源：ydoc/provider 按 room 生命周期创建；room 变化（换语言）即整体重建
   const collabRoom = collaboration?.room;
   const yjsBundle = useMemo(() => {
+    // eslint-disable-next-line no-console
+    console.log('[collab] bundle useMemo, collaboration =', Boolean(collaboration), 'room =', collabRoom);
     if (!collaboration) return null;
     return getCollabBundle(collaboration);
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -255,7 +262,7 @@ const TiptapEditor: React.FC<TiptapEditorProps> = ({
           // 种子化持久锁：服务端已持久化协同状态后，任何后续客户端
           // （含 admin 重启重连、清缓存重开）都不得用 core 旧内容覆盖恢复态。
           // 锁按房间记在 localStorage；服务端权威种子化（v2）落地后可移除。
-          const lockKey = `gwc-collab-seeded:${collaboration?.room ?? ''}`;
+          const lockKey = `gwc-collab-seeded:${collabRoom ?? ''}`;
           if (localStorage.getItem(lockKey)) {
             seededRef.current = true;
             return;
@@ -278,12 +285,61 @@ const TiptapEditor: React.FC<TiptapEditorProps> = ({
         console.error('Upload collab state failed:', error);
       }
     };
+    // 鉴权失败熔断：连续 3 次连接失败（token 失效 401 等）且从未同步成功，
+    // 断开并停用重连，避免 ws 401 无限退避循环
+    let consecutiveFailures = 0;
+    let everSynced = false;
+    const onStatus = (st: { status: string }) => {
+      if (st.status === 'connected') {
+        consecutiveFailures = 0;
+      }
+    };
+    const onFailure = () => {
+      if (everSynced) return;
+      consecutiveFailures += 1;
+      if (consecutiveFailures >= 3) {
+        console.warn('[collab] repeated connection failures, giving up (auth expired?)');
+        try {
+          yjsBundle.provider.disconnect();
+        } catch (error) {
+          console.error('Disconnect collab provider failed:', error);
+        }
+      }
+    };
     if (yjsBundle.provider.synced) onSync(true);
     yjsBundle.provider.on('sync', onSync);
+    yjsBundle.provider.on('status', onStatus);
+    yjsBundle.provider.on('connection-close', onFailure);
+    yjsBundle.provider.on('connection-error', onFailure);
     return () => {
       yjsBundle.provider.off('sync', onSync);
+      yjsBundle.provider.off('status', onStatus);
+      yjsBundle.provider.off('connection-close', onFailure);
+      yjsBundle.provider.off('connection-error', onFailure);
     };
-  }, [yjsBundle, editor, value]);
+  }, [yjsBundle, editor, value, collabRoom]);
+
+  // 在线协作者列表（awareness states，含本人在内）
+  const onCollabChangeRef = useRef(onCollaboratorsChange);
+  useEffect(() => {
+    onCollabChangeRef.current = onCollaboratorsChange;
+  }, [onCollaboratorsChange]);
+  useEffect(() => {
+    if (!yjsBundle) return undefined;
+    const push = () => {
+      const users = Array.from(yjsBundle.provider.awareness.getStates().values())
+        .map((st) => st?.user as { name: string; color: string } | undefined)
+        .filter((u): u is { name: string; color: string } => Boolean(u) && typeof u?.name === 'string');
+      onCollabChangeRef.current?.(users);
+    };
+    yjsBundle.provider.awareness.on('change', push);
+    yjsBundle.provider.on('status', push);
+    return () => {
+      yjsBundle.provider.awareness.off('change', push);
+      yjsBundle.provider.off('status', push);
+      onCollabChangeRef.current?.([]);
+    };
+  }, [yjsBundle, collaboration?.room]);
 
   // Disabled changes
   useEffect(() => {

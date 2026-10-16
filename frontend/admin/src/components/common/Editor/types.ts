@@ -21,6 +21,8 @@ export interface EditorProps {
     userName: string;
     userColor: string;
   } | null;
+  /** 在线协作者变化（协同启用时回调） */
+  onCollaboratorsChange?: (users: { name: string; color: string }[]) => void;
   editorType?: EditorType | string;
   height?: number | string;
   disabled?: boolean;

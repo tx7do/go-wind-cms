@@ -7,8 +7,7 @@ import {
   Input,
   Row,
   Select,
-  Space,
-} from 'antd';
+  Space, Tooltip } from 'antd';
 import {
   ArrowLeftOutlined,
   CheckOutlined,
@@ -126,6 +125,7 @@ const PageEditPage = () => {
 
   const [lang, setLang] = useState(initLang);
   const collaboration = useCollaboration('page', pageId, lang);
+  const [collaborators, setCollaborators] = useState<{ name: string; color: string }[]>([]);
   const [formData, setFormData] = useState<PageEditProps>(() => emptyForm(initLang));
   const [languageOptions, setLanguageOptions] = useState<LanguageOption[]>([]);
   const [versionsOpen, setVersionsOpen] = useState(false);
@@ -679,6 +679,33 @@ const PageEditPage = () => {
             onChange={(v) => updateForm({ type: v })}
             options={pageTypeOptions(t)}
           />
+          {collaborators.length > 0 && (
+            <Tooltip title={collaborators.map((u) => u.name).join('、')}>
+              <Space size={0} style={{ marginLeft: 'auto' }}>
+                {collaborators.map((u) => (
+                  <span
+                    key={u.name}
+                    title={u.name}
+                    style={{
+                      width: 24,
+                      height: 24,
+                      borderRadius: '50%',
+                      background: u.color,
+                      color: '#fff',
+                      fontSize: 12,
+                      display: 'inline-flex',
+                      alignItems: 'center',
+                      justifyContent: 'center',
+                      border: '2px solid var(--ant-color-bg-container)',
+                      marginLeft: -6,
+                    }}
+                  >
+                    {u.name.slice(0, 1)}
+                  </span>
+                ))}
+              </Space>
+            </Tooltip>
+          )}
         </div>
 
         <div style={{ flex: 1, minHeight: 0, display: 'flex', flexDirection: 'column', overflow: 'auto', borderBottom: '1px solid var(--ant-color-split)' }}>
@@ -862,6 +889,7 @@ const PageEditPage = () => {
               placeholder={t('contentPlaceholder')}
               uploadImage={handleUploadImage}
               collaboration={collaboration}
+              onCollaboratorsChange={setCollaborators}
               onChange={(v) => updateForm({ content: v })}
             />
           </div>

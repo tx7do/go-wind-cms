@@ -1,5 +1,5 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
-import { Alert, App, Button, Input, Select, Space, Tag } from 'antd';
+import { Alert, App, Button, Input, Select, Space, Tag , Tooltip } from 'antd';
 import {
   ArrowLeftOutlined,
   CheckOutlined,
@@ -95,6 +95,7 @@ const PostEditPage = () => {
 
   const [lang, setLang] = useState(initLang);
   const collaboration = useCollaboration('post', postId, lang);
+  const [collaborators, setCollaborators] = useState<{ name: string; color: string }[]>([]);
   const [formData, setFormData] = useState<PostEditProps>(() => emptyForm(initLang));
   const [status, setStatus] = useState<string | undefined>(undefined);
   const [languageOptions, setLanguageOptions] = useState<
@@ -672,6 +673,33 @@ const PostEditPage = () => {
             onChange={(v: string) => patch({ editorType: v })}
             options={editorTypeOptions}
           />
+          {collaborators.length > 0 && (
+            <Tooltip title={collaborators.map((u) => u.name).join('、')}>
+              <Space size={0} style={{ marginLeft: 'auto' }}>
+                {collaborators.map((u) => (
+                  <span
+                    key={u.name}
+                    title={u.name}
+                    style={{
+                      width: 24,
+                      height: 24,
+                      borderRadius: '50%',
+                      background: u.color,
+                      color: '#fff',
+                      fontSize: 12,
+                      display: 'inline-flex',
+                      alignItems: 'center',
+                      justifyContent: 'center',
+                      border: '2px solid var(--ant-color-bg-container)',
+                      marginLeft: -6,
+                    }}
+                  >
+                    {u.name.slice(0, 1)}
+                  </span>
+                ))}
+              </Space>
+            </Tooltip>
+          )}
         </div>
 
         {/* 主体：左侧编辑器 + 右侧内嵌设置栏 */}
@@ -701,6 +729,7 @@ ${content}` : content });
               placeholder={t('contentPlaceholder')}
               uploadImage={handleUploadImage}
               collaboration={collaboration}
+              onCollaboratorsChange={setCollaborators}
               toolbarExtra={
                 <AiGenerateButton
                   scene="POST_BODY"

@@ -21,25 +21,24 @@ import (
 // 默认 ws 监听地址；COLLAB_ADDR=off/disabled 停用（与 GRAPHQL_ADDR 同约定）。
 const defaultCollabAddr = ":6602"
 
-// NewCollabServer 协同编辑服务器（ygo 内嵌，admin 编辑页实时协同）。
-//
-// 房间即文档：/post:{id}:{lang}、/page:{id}:{lang}；房间纯内存，
-// 内容事实源仍是 core（编辑页显式保存链路不变）。
+// NewCollab 构造协同服务与 ws 服务器。
 //
 // 环境变量：
-//   - COLLAB_ADDR            监听地址（默认 ":6602"；off/disabled 停用）
+//   - COLLAB_ADDR            监听地址（默认 ":6602"；off/disabled 停用，
+//                            停用时 server 为 nil、service 仍返回供删除踢房 no-op）
 //   - COLLAB_ALLOWED_ORIGINS 允许的 ws 来源，逗号分隔
 //     （默认 "http://localhost:15999"；生产必须改成实际后台来源，
 //     留空回退同源校验）
-func NewCollabServer(
+func NewCollab(
 	ctx *bootstrap.Context,
 	authenticationServiceClient authenticationV1.AuthenticationServiceClient,
 	collabDocStateServiceClient contentV1.CollabDocStateServiceClient,
-) *CollabServer {
+	postServiceClient contentV1.PostServiceClient,
+) (*collab.Service, *CollabServer) {
 	addr := strings.TrimSpace(os.Getenv("COLLAB_ADDR"))
 	switch strings.ToLower(addr) {
 	case "off", "disabled", "false", "0":
-		return nil
+		return collab.New(ctx, authenticationServiceClient, collabDocStateServiceClient, postServiceClient, nil), nil
 	case "":
 		addr = defaultCollabAddr
 	}
@@ -49,29 +48,24 @@ func NewCollabServer(
 		origins = []string{"http://localhost:15999"}
 	}
 
-	if collabDocStateServiceClient == nil {
-		l := ctx.NewLoggerHelper("collab-server/admin-service")
-		l.Warnf("collab doc state client is nil: room persistence DISABLED (rooms are memory-only and lost on restart)")
-	}
-
-	svc := collab.New(ctx, authenticationServiceClient, collabDocStateServiceClient, origins)
+	svc := collab.New(ctx, authenticationServiceClient, collabDocStateServiceClient, postServiceClient, origins)
 
 	l := ctx.NewLoggerHelper("collab-server/admin-service")
-	return &CollabServer{
-		log:    l,
-		addr:   addr,
-		collab: svc,
-		http:   &http.Server{ReadHeaderTimeout: 10 * time.Second},
+	return svc, &CollabServer{
+		log:  l,
+		addr: addr,
+		svc:  svc,
+		http: &http.Server{ReadHeaderTimeout: 10 * time.Second},
 	}
 }
 
 // CollabServer kratos transport.Server 适配：包装 ygo ws handler 的独立端口监听。
 type CollabServer struct {
-	log    *log.Helper
-	addr   string
-	collab *collab.Service
-	http   *http.Server
-	lis    net.Listener
+	log  *log.Helper
+	addr string
+	svc  *collab.Service
+	http *http.Server
+	lis  net.Listener
 }
 
 func (s *CollabServer) Start(ctx context.Context) error {
@@ -80,7 +74,7 @@ func (s *CollabServer) Start(ctx context.Context) error {
 		return err
 	}
 	s.lis = lis
-	s.http.Handler = s.collab.Handler()
+	s.http.Handler = s.svc.Handler()
 	s.log.Infof("collab ws server listening on: %s (rooms: /post:{id}:{lang})", lis.Addr().String())
 
 	go func() {
@@ -99,7 +93,7 @@ func (s *CollabServer) Stop(ctx context.Context) error {
 	if err := s.http.Shutdown(ctx); err != nil {
 		return err
 	}
-	if err := s.collab.Shutdown(ctx); err != nil {
+	if err := s.svc.Shutdown(ctx); err != nil {
 		return err
 	}
 	s.log.Info("collab ws server stopped.")
