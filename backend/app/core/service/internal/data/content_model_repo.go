@@ -1322,3 +1322,73 @@ func (r *ContentModelRepo) validateComponentFieldValue(ctx context.Context, def 
 	}
 	return nil
 }
+
+// FillModelComponents 按模型 fields 里的 COMPONENT/DYNAMIC_ZONE 配置解析引用到的
+// 组件定义 + 字段，填入 dto.Components（公开读侧；无引用时置空切片）。
+func (r *ContentModelRepo) FillModelComponents(ctx context.Context, dto *contentV1.ContentModel) error {
+	dto.Components = make([]*contentV1.ContentModelComponent, 0)
+	codes := make([]string, 0)
+	seen := make(map[string]struct{})
+	for _, f := range dto.GetFields() {
+		cc := f.GetComponentConfig()
+		if cc == nil {
+			continue
+		}
+		if cc.GetComponentCode() != "" {
+			if _, dup := seen[cc.GetComponentCode()]; !dup {
+				seen[cc.GetComponentCode()] = struct{}{}
+				codes = append(codes, cc.GetComponentCode())
+			}
+		}
+		for _, code := range cc.GetAllowedComponentCodes() {
+			if _, dup := seen[code]; !dup {
+				seen[code] = struct{}{}
+				codes = append(codes, code)
+			}
+		}
+	}
+	if len(codes) == 0 {
+		return nil
+	}
+
+	comps, err := r.entClient.Client().ComponentDefinition.Query().
+		Where(componentdefinition.CodeIn(codes...)).
+		All(ctx)
+	if err != nil {
+		r.log.Errorf("query components for model failed: %s", err.Error())
+		return contentV1.ErrorInternalServerError("query components failed")
+	}
+	byID := make(map[uint32]string, len(comps))
+	byCode := make(map[string]*contentV1.ContentModelComponent, len(comps))
+	items := make([]*contentV1.ContentModelComponent, 0, len(comps))
+	for _, c := range comps {
+		byID[c.ID] = c.Code
+		entry := &contentV1.ContentModelComponent{
+			Definition: r.componentMapper.ToDTO(c),
+			Fields:     make([]*contentV1.FieldDefinition, 0),
+		}
+		byCode[c.Code] = entry
+		items = append(items, entry)
+	}
+	if len(byID) == 0 {
+		return nil
+	}
+	rows, err := r.entClient.Client().FieldDefinition.Query().
+		Where(fielddefinition.ComponentIDIn(keysOf(byID)...)).
+		Order(ent.Asc(fielddefinition.FieldSortOrder), ent.Asc(fielddefinition.FieldID)).
+		All(ctx)
+	if err != nil {
+		r.log.Errorf("query component fields for model failed: %s", err.Error())
+		return contentV1.ErrorInternalServerError("query components failed")
+	}
+	for _, row := range rows {
+		code := byID[*row.ComponentID]
+		entry := byCode[code]
+		if entry == nil {
+			continue
+		}
+		entry.Fields = append(entry.Fields, r.fieldDefinitionToDTO(row))
+	}
+	dto.Components = items
+	return nil
+}

@@ -3,7 +3,11 @@
 import {useQuery} from '@tanstack/react-query';
 import {useLocale, useTranslations} from 'next-intl';
 import {apiClient} from '@/api/client';
-import type {contentservicev1_ContentReferenceSummary} from '@/api/generated/app/service/v1';
+import type {
+  contentservicev1_ContentModelComponent,
+  contentservicev1_ContentReferenceSummary,
+  contentservicev1_FieldDefinition,
+} from '@/api/generated/app/service/v1';
 
 /**
  * 自定义字段渲染（内容建模前台读侧）：
@@ -12,12 +16,62 @@ import type {contentservicev1_ContentReferenceSummary} from '@/api/generated/app
  *   - RICHTEXT 按富文本注入；IMAGE/FILE 值形似 URL 时按图片/链接渲染；
  *   - RELATION 值为 "post:12"/"page:7" 引用时批量解析为公开摘要，
  *     渲染成指向目标详情页的链接（草稿/软删目标解析缺失，回退原样字符串）；
+ *   - COMPONENT/DYNAMIC_ZONE 值为组件实例 JSON（模型响应携带组件 schema），
+ *     解析后渲染键值卡（动态区按 _component 分发），解析失败回退原样字符串；
  *   - 其余（TEXT/NUMBER 等）原样展示。
  * 模型未绑定或加载失败静默不渲染（自定义字段是增强信息，不阻断正文）。
  */
 
 /** RELATION 引用值形态（与 core contentRefPattern 对齐；category/tag v1 不解析） */
 const RELATION_REF_RE = /^(post|page):\d+$/;
+
+type FieldDef = Partial<contentservicev1_FieldDefinition>;
+type ComponentSchemaMap = Record<string, contentservicev1_ContentModelComponent | undefined>;
+type InstanceData = {_component?: string; [key: string]: unknown};
+
+function parseInstances(value: string, expectArray: boolean): InstanceData[] | null {
+  if (!value.trim()) return [];
+  try {
+    const parsed = JSON.parse(value) as unknown;
+    if (expectArray) {
+      if (!Array.isArray(parsed)) return null;
+      return parsed.filter(
+        (x): x is InstanceData => Boolean(x) && typeof x === 'object' && !Array.isArray(x),
+      );
+    }
+    if (!parsed || typeof parsed !== 'object' || Array.isArray(parsed)) return null;
+    return [parsed as InstanceData];
+  } catch {
+    return null;
+  }
+}
+
+function isImageUrl(v: string) {
+  return /^https?:\/\/.+\.(png|jpe?g|gif|webp|avif)(\?.*)?$/i.test(v) || /^https?:\/\//.test(v);
+}
+
+function buildComponentMap(components?: contentservicev1_ContentModelComponent[]): ComponentSchemaMap {
+  const map: ComponentSchemaMap = {};
+  for (const c of components ?? []) {
+    if (c.definition?.code) map[c.definition.code] = c;
+  }
+  return map;
+}
+
+/** 组件实例 → 标签/文本/图片对（图片仅 http(s) 直链渲染，引用串原样文本） */
+function instanceRows(schema: contentservicev1_ContentModelComponent | undefined, inst: InstanceData) {
+  const fields = schema?.fields ?? [];
+  const rows: {label: string; text: string; image: boolean}[] = [];
+  for (const f of fields) {
+    const key = f.name ?? '';
+    const raw = inst[key];
+    if (raw == null || typeof raw !== 'string' || raw === '') continue;
+    const type = f.type ?? 'FIELD_TYPE_TEXT';
+    const isImg = type === 'FIELD_TYPE_IMAGE' && isImageUrl(raw);
+    rows.push({label: f.label || key, text: raw, image: isImg});
+  }
+  return rows;
+}
 
 export default function CustomFieldsSection({
     postId,
@@ -67,9 +121,6 @@ export default function CustomFieldsSection({
         (resolveQuery.data?.items ?? []).map((it) => [it.ref ?? '', it]),
     );
 
-    if (!postId || fields.length === 0 || !customFields) return null;
-    if (rows.length === 0) return null;
-
     const renderRelation = (value: string) => {
         const ref = value.trim();
         if (!RELATION_REF_RE.test(ref)) return <span className="break-all">{value}</span>;
@@ -84,6 +135,57 @@ export default function CustomFieldsSection({
             </a>
         );
     };
+
+    const componentMap = buildComponentMap(modelQuery.data?.components);
+
+    const renderComponentValue = (field: FieldDef, value: string) => {
+        const cc = field.componentConfig;
+        if (!cc) return <span className="break-all">{value}</span>;
+        const expectArray = !!cc.repeatable || field.type === 'FIELD_TYPE_DYNAMIC_ZONE';
+        const instances = parseInstances(value, expectArray);
+        // 解析失败（非法 JSON）：回退原样字符串
+        if (instances === null) return <span className="break-all">{value}</span>;
+        if (instances.length === 0) return null;
+
+        return (
+            <div className="flex flex-col gap-2">
+                {instances.map((inst, i) => {
+                    const code = field.type === 'FIELD_TYPE_DYNAMIC_ZONE'
+                        ? String(inst._component ?? '')
+                        : cc.componentCode ?? '';
+                    const schema = componentMap[code];
+                    const compName = schema?.definition?.name ?? code;
+                    const pairs = instanceRows(schema, inst);
+                    return (
+                        <div key={i} className="rounded-lg border border-border p-3">
+                            <div className="mb-1 text-xs font-medium text-muted-foreground">
+                                {compName}
+                            </div>
+                            {pairs.length === 0 ? (
+                                <span className="text-xs text-muted-foreground">—</span>
+                            ) : (
+                                pairs.map((p, j) => (
+                                    <div key={j} className="flex flex-col py-0.5">
+                                        <span className="text-xs text-muted-foreground">{p.label}</span>
+                                        {p.image ? (
+                                            // eslint-disable-next-line @next/next/no-img-element
+                                            <img src={p.text} alt={p.label}
+                                                className="max-h-48 rounded-md object-cover"/>
+                                        ) : (
+                                            <span className="break-all text-sm">{p.text}</span>
+                                        )}
+                                    </div>
+                                ))
+                            )}
+                        </div>
+                    );
+                })}
+            </div>
+        );
+    };
+
+    if (!postId || fields.length === 0 || !customFields) return null;
+    if (rows.length === 0) return null;
 
     return (
         <section className="mb-8 rounded-xl border border-border bg-card p-6">
@@ -107,6 +209,11 @@ export default function CustomFieldsSection({
                                 </a>
                             ) : row.type === 'FIELD_TYPE_RELATION' ? (
                                 renderRelation(row.value)
+                            ) : row.type === 'FIELD_TYPE_COMPONENT' || row.type === 'FIELD_TYPE_DYNAMIC_ZONE' ? (
+                                renderComponentValue(
+                                    fields.find((f) => f.name === row.name) ?? {},
+                                    row.value,
+                                )
                             ) : (
                                 <span className="break-all">{row.value}</span>
                             )}

@@ -1,0 +1,6 @@
+{
+  "addInstance": "添加{{name}}实例",
+  "addBlock": "+ 添加区块…",
+  "mediaRefPlaceholder": "图片/文件引用（media_asset:<id> 或 https://…）",
+  "instance": "实例"
+}

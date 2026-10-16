@@ -37,6 +37,13 @@ export function fetchComponentFieldDefinitions(componentId: number) {
   });
 }
 
+export function fetchListComponentDefinitions() {
+  // AGENTS 铁律：List 禁传空 sorting[]，排序走 orderBy
+  return apiClient.componentDefinitionService.List({
+    orderBy: JSON.stringify([{ field: 'created_at', direction: 'DESC' }]),
+  } as never);
+}
+
 export function useCreateComponentDefinition(
   options?: UseMutationOptions<
     Awaited<ReturnType<typeof apiClient.componentDefinitionService.Create>>,

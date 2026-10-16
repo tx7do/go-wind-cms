@@ -15,6 +15,8 @@ export interface PostEditProps {
 
   code?: string;
   categoryIds?: number[];
+  // 自定义字段（Post 级，全语言共用）：组件值为 JSON 字符串
+  customFields?: Record<string, string>;
   isFeatured?: boolean;
   sortOrder?: number;
   disallowComment?: boolean;

@@ -1,0 +1,6 @@
+{
+  "addInstance": "Add {{name}} instance",
+  "addBlock": "+ Add block…",
+  "mediaRefPlaceholder": "Media reference (media_asset:<id> or https://…)",
+  "instance": "Instance"
+}

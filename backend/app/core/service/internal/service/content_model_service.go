@@ -60,9 +60,18 @@ func (s *ContentModelService) GetModelByPost(ctx context.Context, req *contentV1
 	if modelID == 0 {
 		return &contentV1.ContentModel{}, nil
 	}
-	return s.contentModelRepo.Get(ctx, &contentV1.GetContentModelRequest{
+	model, err := s.contentModelRepo.Get(ctx, &contentV1.GetContentModelRequest{
 		QueryBy: &contentV1.GetContentModelRequest_Id{Id: modelID},
 	})
+	if err != nil {
+		return nil, err
+	}
+	// C 端渲染组件值需要组件 schema：按 fields 里 COMPONENT/DYNAMIC_ZONE 的
+	// 引用解析组件定义 + 字段，嵌入响应（公开读侧最小面）。
+	if cErr := s.contentModelRepo.FillModelComponents(ctx, model); cErr != nil {
+		return nil, cErr
+	}
+	return model, nil
 }
 
 func (s *ContentModelService) List(ctx context.Context, req *paginationV1.PagingRequest) (*contentV1.ListContentModelResponse, error) {

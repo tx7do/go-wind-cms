@@ -11571,6 +11571,11 @@ components:
                     items:
                         $ref: '#/components/schemas/content.service.v1.FieldDefinition'
                     description: 字段定义列表
+                components:
+                    type: array
+                    items:
+                        $ref: '#/components/schemas/content.service.v1.ContentModelComponent'
+                    description: 引用到的组件定义（含字段）
                 translations:
                     type: array
                     items:
@@ -11597,6 +11602,17 @@ components:
                     description: 更新时间
                     format: date-time
             description: 内容模型
+        content.service.v1.ContentModelComponent:
+            type: object
+            properties:
+                definition:
+                    $ref: '#/components/schemas/content.service.v1.ComponentDefinition'
+                fields:
+                    type: array
+                    items:
+                        $ref: '#/components/schemas/content.service.v1.FieldDefinition'
+                    description: 组件字段定义
+            description: 组件定义 + 字段（C 端渲染组件值用最小面）
         content.service.v1.ContentModelTranslation:
             type: object
             properties:

@@ -64,6 +64,7 @@ function snapshotPayload(f: PostEditProps) {
     editorType: f.editorType,
     code: f.code ?? '',
     categoryIds: [...(f.categoryIds ?? [])].sort(),
+    customFields: f.customFields ?? {},
     isFeatured: f.isFeatured ?? false,
     sortOrder: f.sortOrder ?? 0,
     disallowComment: f.disallowComment ?? false,
@@ -275,6 +276,7 @@ const PostEditPage = () => {
           status: item.status ?? undefined,
           code: item.code || '',
           categoryIds: item.categoryIds ? [...item.categoryIds] : [],
+          customFields: (item.customFields as Record<string, string>) ?? {},
           isFeatured: item.isFeatured ?? false,
           sortOrder: item.sortOrder ?? 0,
           disallowComment: item.disallowComment ?? false,
@@ -493,6 +495,11 @@ const PostEditPage = () => {
       categoryIds: formData.categoryIds ?? [],
       // 缩略图为帖子级字段，全语言共用一张
       thumbnail: formData.thumbnail || '',
+      // 自定义字段为帖子级：组件值为 JSON 字符串（后端按模型校验）
+      customFields:
+        formData.customFields && Object.keys(formData.customFields).length > 0
+          ? formData.customFields
+          : undefined,
       translations: [
         {
           title: formData.title,

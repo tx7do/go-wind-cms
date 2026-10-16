@@ -2425,6 +2425,33 @@ components:
                         type: string
                     description: 动态区组件白名单（FIELD_TYPE_DYNAMIC_ZONE 必填非空）
             description: 组件配置（component/dynamic_zone 字段用）
+        content.service.v1.ComponentDefinition:
+            type: object
+            properties:
+                id:
+                    type: integer
+                    description: 组件ID
+                    format: uint32
+                code:
+                    type: string
+                    description: 组件编码（语言无关引用键，租户内唯一）
+                name:
+                    type: string
+                    description: 组件显示名
+                description:
+                    type: string
+                    description: 组件描述
+                fieldCount:
+                    type: integer
+                    description: 字段数（只读统计）
+                    format: uint32
+                createdAt:
+                    type: string
+                    format: date-time
+                updatedAt:
+                    type: string
+                    format: date-time
+            description: 组件定义：具名可复用字段组（字段经 FieldDefinition 面 按 componentId 存取）
         content.service.v1.ContentModel:
             type: object
             properties:
@@ -2450,6 +2477,11 @@ components:
                     items:
                         $ref: '#/components/schemas/content.service.v1.FieldDefinition'
                     description: 字段定义列表
+                components:
+                    type: array
+                    items:
+                        $ref: '#/components/schemas/content.service.v1.ContentModelComponent'
+                    description: 引用到的组件定义（含字段）
                 translations:
                     type: array
                     items:
@@ -2476,6 +2508,17 @@ components:
                     description: 更新时间
                     format: date-time
             description: 内容模型
+        content.service.v1.ContentModelComponent:
+            type: object
+            properties:
+                definition:
+                    $ref: '#/components/schemas/content.service.v1.ComponentDefinition'
+                fields:
+                    type: array
+                    items:
+                        $ref: '#/components/schemas/content.service.v1.FieldDefinition'
+                    description: 组件字段定义
+            description: 组件定义 + 字段（C 端渲染组件值用最小面）
         content.service.v1.ContentModelTranslation:
             type: object
             properties:

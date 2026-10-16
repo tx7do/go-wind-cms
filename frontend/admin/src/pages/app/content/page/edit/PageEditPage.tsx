@@ -34,6 +34,7 @@ import {
   fetchListContentModels,
   fetchListFieldDefinitions,
 } from '@/api/hooks/content-model';
+import CustomFieldsEditor from '@/components/content/CustomFieldsEditor';
 import { fetchListLanguages } from '@/api/hooks/language';
 import { uploadFile } from '@/api/hooks/file-transfer';
 import { useTranslate } from '@/api/hooks/tag';
@@ -569,38 +570,6 @@ const PageEditPage = () => {
     }
   };
 
-  const renderCustomField = (field: any) => {
-    const name = field.name ?? '';
-    const value = formData.customFields?.[name] ?? '';
-    switch (field.type) {
-      case 'FIELD_TYPE_RICHTEXT':
-        return (
-          <Input.TextArea
-            rows={2}
-            value={value}
-            size="small"
-            onChange={(e) =>
-              updateForm({
-                customFields: { ...(formData.customFields ?? {}), [name]: e.target.value },
-              })
-            }
-          />
-        );
-      default:
-        return (
-          <Input
-            size="small"
-            value={value}
-            onChange={(e) =>
-              updateForm({
-                customFields: { ...(formData.customFields ?? {}), [name]: e.target.value },
-              })
-            }
-          />
-        );
-    }
-  };
-
   return (
     <ContentContainer heightMode="fixed" padding="0" bottomMargin={0}>
       <div style={{ height: '100%', display: 'flex', flexDirection: 'column', overflow: 'hidden' }}>
@@ -726,14 +695,13 @@ const PageEditPage = () => {
                     onChange={(v) => updateForm({ contentModelId: v })}
                   />
                 </Col>
-                {fieldDefinitions.map((field) => (
-                  <Col key={field.id} span={8}>
-                    <div style={{ fontSize: 12, color: 'var(--ant-color-text-secondary)', marginBottom: 4 }}>
-                      {field.label || field.name}
-                    </div>
-                    {renderCustomField(field)}
-                  </Col>
-                ))}
+                <Col span={16}>
+                  <CustomFieldsEditor
+                    fields={fieldDefinitions}
+                    value={formData.customFields}
+                    onChange={(next) => updateForm({ customFields: next })}
+                  />
+                </Col>
               </Row>
             </div>
           )}

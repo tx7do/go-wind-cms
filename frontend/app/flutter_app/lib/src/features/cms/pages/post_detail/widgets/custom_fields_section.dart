@@ -1,3 +1,5 @@
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_widget_from_html/flutter_widget_from_html.dart';
@@ -8,6 +10,8 @@ import 'package:flutter_app/generated/api/app/service/v1/index.dart'
     show
         ApiClient,
         ContentServiceV1ContentModel,
+        ContentServiceV1ContentModelComponent,
+        ContentServiceV1ComponentConfig,
         ContentServiceV1ContentReferenceSummary,
         ContentServiceV1FieldDefinition,
         ContentServiceV1FieldDefinition$Type,
@@ -113,7 +117,7 @@ class _CustomFieldsSectionState extends State<CustomFieldsSection> {
                           ),
                         ),
                       ),
-                      Expanded(child: _buildValue(context, row)),
+                      Expanded(child: _buildValue(context, model, row)),
                     ],
                   ),
                 ),
@@ -124,7 +128,8 @@ class _CustomFieldsSectionState extends State<CustomFieldsSection> {
     );
   }
 
-  Widget _buildValue(BuildContext context, _Row row) {
+  Widget _buildValue(
+      BuildContext context, ContentServiceV1ContentModel? model, _Row row) {
     final theme = Theme.of(context);
     switch (row.type) {
       case ContentServiceV1FieldDefinition$Type.fieldTypeRichtext:
@@ -199,9 +204,123 @@ class _CustomFieldsSectionState extends State<CustomFieldsSection> {
             );
           },
         );
+      case ContentServiceV1FieldDefinition$Type.fieldTypeComponent:
+      case ContentServiceV1FieldDefinition$Type.fieldTypeDynamicZone:
+        return _buildComponentValue(theme, model, row);
       default:
         return Text(row.value, style: _regularStyle(theme));
     }
+  }
+
+  /// COMPONENT/DYNAMIC_ZONE 值渲染：解析实例 JSON，按模型携带的组件 schema
+  /// 渲染键值卡（动态区按 _component 分发）；解析失败回退原样字符串。
+  Widget _buildComponentValue(
+      ThemeData theme, ContentServiceV1ContentModel? model, _Row row) {
+    if (model == null) return Text(row.value, style: _mutedStyle(theme));
+    final cfg = _componentConfigOf(model, row.name);
+    if (cfg == null) return Text(row.value, style: _regularStyle(theme));
+    final expectArray = cfg.repeatable == true ||
+        row.type == ContentServiceV1FieldDefinition$Type.fieldTypeDynamicZone;
+    final raw = row.value.trim();
+    if (raw.isEmpty) return const SizedBox.shrink();
+    dynamic decoded;
+    try {
+      decoded = jsonDecode(raw);
+    } catch (_) {
+      return Text(row.value, style: _mutedStyle(theme));
+    }
+    List<dynamic> instances;
+    if (expectArray) {
+      if (decoded is! List) return Text(row.value, style: _mutedStyle(theme));
+      instances = decoded;
+    } else {
+      if (decoded is! Map<String, dynamic>) {
+        return Text(row.value, style: _mutedStyle(theme));
+      }
+      instances = [decoded];
+    }
+    if (instances.isEmpty) return const SizedBox.shrink();
+
+    ContentServiceV1ContentModelComponent? schemaOf(String code) {
+      for (final c in model.components ?? const []) {
+        if (c.definition?.code == code) return c;
+      }
+      return null;
+    }
+
+    final cards = <Widget>[];
+    for (var i = 0; i < instances.length; i++) {
+      final inst = instances[i];
+      if (inst is! Map) continue;
+      final code = row.type == ContentServiceV1FieldDefinition$Type.fieldTypeDynamicZone
+          ? (inst['_component'] as String? ?? '')
+          : (cfg.componentCode ?? '');
+      final schema = schemaOf(code);
+      final children = <Widget>[
+        Text(
+          schema?.definition?.name ?? code,
+          style: TextStyle(
+            fontSize: widget.isMobile ? 12.sp : 12,
+            fontWeight: FontWeight.w600,
+            color: theme.colorScheme.onSurface.withAlpha(180),
+          ),
+        ),
+      ];
+      for (final f in schema?.fields ?? const []) {
+        final raw2 = inst[f.name ?? ''];
+        if (raw2 == null || raw2 !is String || raw2.isEmpty) continue;
+        final isImg = f.type == ContentServiceV1FieldDefinition$Type.fieldTypeImage &&
+            raw2.startsWith('http');
+        children.add(Padding(
+          padding: EdgeInsets.only(top: widget.isMobile ? 4.h : 4),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text(f.label ?? f.name ?? '',
+                  style: TextStyle(
+                    fontSize: widget.isMobile ? 11.sp : 11,
+                    color: theme.colorScheme.onSurface.withAlpha(130),
+                  )),
+              if (isImg)
+                ClipRRect(
+                  borderRadius:
+                      BorderRadius.circular(widget.isMobile ? 8.r : 8),
+                  child: Image.network(raw2,
+                      width: double.infinity, fit: BoxFit.cover),
+                )
+              else
+                Text(raw2,
+                    style: TextStyle(
+                      fontSize: widget.isMobile ? 13.sp : 13,
+                      color: theme.colorScheme.onSurface,
+                    )),
+            ],
+          ),
+        ));
+      }
+      cards.add(Container(
+        margin: EdgeInsets.only(bottom: widget.isMobile ? 6.h : 6),
+        padding: EdgeInsets.all(widget.isMobile ? 8.w : 8),
+        decoration: BoxDecoration(
+          border: Border.all(color: theme.colorScheme.outlineVariant),
+          borderRadius: BorderRadius.circular(widget.isMobile ? 8.r : 8),
+        ),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: children,
+        ),
+      ));
+    }
+    return Column(crossAxisAlignment: CrossAxisAlignment.start, children: cards);
+  }
+
+  /// 从模型 fields 里找字段对应的 componentConfig
+  ContentServiceV1ComponentConfig? _componentConfigOf(
+      ContentServiceV1ContentModel model, String? fieldName) {
+    for (final f in model.fields ?? const []) {
+      if (f.name == fieldName) return f.componentConfig;
+    }
+    return null;
   }
 
   /// 解析 `media_asset:<id>` 引用；非引用形态返回 null

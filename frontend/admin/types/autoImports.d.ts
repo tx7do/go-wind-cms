@@ -35,6 +35,7 @@ declare global {
   const Count: typeof import('../src/components/Count/index').default
   const CreateBusiness: typeof import('../src/components/common/Business/index').CreateBusiness
   const CustomCodeBlockLowlight: typeof import('../src/components/common/Editor/src/TiptapEditor/index').CustomCodeBlockLowlight
+  const CustomFieldsEditor: typeof import('../src/components/content/CustomFieldsEditor').default
   const CustomIframe: typeof import('../src/components/common/Editor/src/TiptapEditor/nodes').CustomIframe
   const CustomVideo: typeof import('../src/components/common/Editor/src/TiptapEditor/nodes').CustomVideo
   const DeleteBtn: typeof import('../src/components/Buttons/index').DeleteBtn
@@ -193,6 +194,6 @@ declare global {
 // for type re-export
 declare global {
   // @ts-ignore
-  export type { CollaborationOptions, VersionHistoryDrawerProps, DiffLineType, DiffLine, TableExportServerExport, TableSkeletonProps, TableExportButtonProps, ImportModalProps, FC, ECOption, AuthLayoutProps, EditorProps, CodeEditorProps, JsonEditorProps, MarkdownEditorProps, PlainTextEditorProps, TiptapEditorProps, CodeBlockModalProps, VideoModalProps, IframeModalProps, ThemeLoadingProps, TokenPayload, AuthState, UserState, TabItem } from './autoImports.d'
+  export type { FC, ECOption, AuthLayoutProps, EditorProps, CodeEditorProps, JsonEditorProps, MarkdownEditorProps, PlainTextEditorProps, CollaborationOptions, TiptapEditorProps, CodeBlockModalProps, VideoModalProps, IframeModalProps, ImportModalProps, TableSkeletonProps, ThemeLoadingProps, TableExportServerExport, TableExportButtonProps, VersionHistoryDrawerProps, DiffLineType, DiffLine, TokenPayload, AuthState, UserState, TabItem } from './autoImports.d'
   import('./autoImports.d')
 }

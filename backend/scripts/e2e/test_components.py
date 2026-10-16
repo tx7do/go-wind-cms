@@ -164,6 +164,41 @@ good = make_post({
 check("合法组件值通过", good.get("id") is not None,
       f"id={good.get('id')} err={str(good)[:120]}")
 
+# ===== 3.5 公开读侧：app 面 content-model 携带组件 schema =====
+import subprocess
+
+def app_json(path):
+    r = subprocess.run(
+        ["curl", "-s", "--noproxy", "*", "--max-time", "15",
+         "http://localhost:6700" + path],
+        capture_output=True, text=True, timeout=30)
+    try:
+        return json.loads(r.stdout)
+    except json.JSONDecodeError:
+        return {}
+
+cm = app_json(f"/app/v1/posts/{good.get('id')}/content-model")
+comps = cm.get("components") or []
+check("公开模型返回组件 schema", len(comps) == 2,
+      f"components={len(comps)}")
+by_code = {c.get("definition", {}).get("code"): c for c in comps}
+cta_schema = by_code.get(f"cta-{TS}")
+check("cta 组件字段下发",
+      cta_schema is not None and
+      len(cta_schema.get("fields") or []) == 2,
+      f"fields={len((cta_schema or {}).get('fields') or [])}")
+hero_schema = by_code.get(f"hero-{TS}")
+check("hero 组件字段下发",
+      hero_schema is not None and
+      len(hero_schema.get("fields") or []) == 1,
+      f"fields={len((hero_schema or {}).get('fields') or [])}")
+fd_by_name = {f.get("name"): f for f in cm.get("fields") or []}
+check("模型字段带 componentConfig",
+      (fd_by_name.get("ctas") or {}).get("componentConfig", {}).get("componentCode") == f"cta-{TS}"
+      and (fd_by_name.get("ctas") or {}).get("componentConfig", {}).get("repeatable") is True
+      and len((fd_by_name.get("sections") or {}).get("componentConfig", {}).get("allowedComponentCodes") or []) == 2,
+      f"ctas={json.dumps(fd_by_name.get('ctas', {}).get('componentConfig'), ensure_ascii=False)[:80]}")
+
 # ===== 4. 校验断言 =====
 cases = [
     ("未知键拒绝", {"ctas": json.dumps([{"label": "x", "oops": "1"}])}),

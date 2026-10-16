@@ -98,6 +98,13 @@ message ContentModel {
     (gnostic.openapi.v3.property) = {description: "字段定义列表"}
   ]; // 字段定义列表
 
+  // 组件定义集（只读，服务端按 fields 里 COMPONENT/DYNAMIC_ZONE 引用解析填充；
+  // C 端渲染组件值所需的最小 schema 面）
+  repeated ContentModelComponent components = 16 [
+    json_name = "components",
+    (gnostic.openapi.v3.property) = {description: "引用到的组件定义（含字段）"}
+  ]; // 引用到的组件定义
+
   repeated ContentModelTranslation translations = 11 [
     json_name = "translations",
     (gnostic.openapi.v3.property) = {description: "名称/描述的多语言翻译"}
@@ -225,6 +232,17 @@ message RelationConfig {
     json_name = "filterCategoryId",
     (gnostic.openapi.v3.property) = {description: "可选：限定目标 post 所属分类"}
   ]; // 限定分类
+}
+
+// 组件定义 + 字段（C 端渲染组件值用最小面）
+message ContentModelComponent {
+  ComponentDefinition definition = 1 [
+    (gnostic.openapi.v3.property) = {description: "组件定义"}
+  ]; // 组件定义
+
+  repeated FieldDefinition fields = 2 [
+    (gnostic.openapi.v3.property) = {description: "组件字段定义"}
+  ]; // 组件字段定义
 }
 
 // 组件配置（component/dynamic_zone 字段用）

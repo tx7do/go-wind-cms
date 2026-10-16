@@ -101,7 +101,10 @@ type ContentModel struct {
 	Description *string                `protobuf:"bytes,4,opt,name=description,proto3,oneof" json:"description,omitempty"`               // 模型描述
 	SortOrder   *uint32                `protobuf:"varint,5,opt,name=sort_order,json=sortOrder,proto3,oneof" json:"sort_order,omitempty"` // 排序顺序
 	// 字段定义随模型整体读写（Create/Update 时整体替换，对齐 post 的 translations 惯例）
-	Fields        []*FieldDefinition         `protobuf:"bytes,10,rep,name=fields,proto3" json:"fields,omitempty"`                            // 字段定义列表
+	Fields []*FieldDefinition `protobuf:"bytes,10,rep,name=fields,proto3" json:"fields,omitempty"` // 字段定义列表
+	// 组件定义集（只读，服务端按 fields 里 COMPONENT/DYNAMIC_ZONE 引用解析填充；
+	// C 端渲染组件值所需的最小 schema 面）
+	Components    []*ContentModelComponent   `protobuf:"bytes,16,rep,name=components,proto3" json:"components,omitempty"`                    // 引用到的组件定义
 	Translations  []*ContentModelTranslation `protobuf:"bytes,11,rep,name=translations,proto3" json:"translations,omitempty"`                // 翻译列表
 	TenantId      *uint32                    `protobuf:"varint,40,opt,name=tenant_id,json=tenantId,proto3,oneof" json:"tenant_id,omitempty"` // 租户ID
 	CreatedBy     *uint32                    `protobuf:"varint,100,opt,name=created_by,json=createdBy,proto3,oneof" json:"created_by,omitempty"`
@@ -180,6 +183,13 @@ func (x *ContentModel) GetSortOrder() uint32 {
 func (x *ContentModel) GetFields() []*FieldDefinition {
 	if x != nil {
 		return x.Fields
+	}
+	return nil
+}
+
+func (x *ContentModel) GetComponents() []*ContentModelComponent {
+	if x != nil {
+		return x.Components
 	}
 	return nil
 }
@@ -460,6 +470,59 @@ func (x *RelationConfig) GetFilterCategoryId() uint32 {
 	return 0
 }
 
+// 组件定义 + 字段（C 端渲染组件值用最小面）
+type ContentModelComponent struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	Definition    *ComponentDefinition   `protobuf:"bytes,1,opt,name=definition,proto3" json:"definition,omitempty"` // 组件定义
+	Fields        []*FieldDefinition     `protobuf:"bytes,2,rep,name=fields,proto3" json:"fields,omitempty"`         // 组件字段定义
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *ContentModelComponent) Reset() {
+	*x = ContentModelComponent{}
+	mi := &file_content_service_v1_content_model_proto_msgTypes[3]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *ContentModelComponent) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*ContentModelComponent) ProtoMessage() {}
+
+func (x *ContentModelComponent) ProtoReflect() protoreflect.Message {
+	mi := &file_content_service_v1_content_model_proto_msgTypes[3]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use ContentModelComponent.ProtoReflect.Descriptor instead.
+func (*ContentModelComponent) Descriptor() ([]byte, []int) {
+	return file_content_service_v1_content_model_proto_rawDescGZIP(), []int{3}
+}
+
+func (x *ContentModelComponent) GetDefinition() *ComponentDefinition {
+	if x != nil {
+		return x.Definition
+	}
+	return nil
+}
+
+func (x *ContentModelComponent) GetFields() []*FieldDefinition {
+	if x != nil {
+		return x.Fields
+	}
+	return nil
+}
+
 // 组件配置（component/dynamic_zone 字段用）
 type ComponentConfig struct {
 	state                 protoimpl.MessageState `protogen:"open.v1"`
@@ -472,7 +535,7 @@ type ComponentConfig struct {
 
 func (x *ComponentConfig) Reset() {
 	*x = ComponentConfig{}
-	mi := &file_content_service_v1_content_model_proto_msgTypes[3]
+	mi := &file_content_service_v1_content_model_proto_msgTypes[4]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -484,7 +547,7 @@ func (x *ComponentConfig) String() string {
 func (*ComponentConfig) ProtoMessage() {}
 
 func (x *ComponentConfig) ProtoReflect() protoreflect.Message {
-	mi := &file_content_service_v1_content_model_proto_msgTypes[3]
+	mi := &file_content_service_v1_content_model_proto_msgTypes[4]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -497,7 +560,7 @@ func (x *ComponentConfig) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use ComponentConfig.ProtoReflect.Descriptor instead.
 func (*ComponentConfig) Descriptor() ([]byte, []int) {
-	return file_content_service_v1_content_model_proto_rawDescGZIP(), []int{3}
+	return file_content_service_v1_content_model_proto_rawDescGZIP(), []int{4}
 }
 
 func (x *ComponentConfig) GetComponentCode() string {
@@ -537,7 +600,7 @@ type ContentModelTranslation struct {
 
 func (x *ContentModelTranslation) Reset() {
 	*x = ContentModelTranslation{}
-	mi := &file_content_service_v1_content_model_proto_msgTypes[4]
+	mi := &file_content_service_v1_content_model_proto_msgTypes[5]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -549,7 +612,7 @@ func (x *ContentModelTranslation) String() string {
 func (*ContentModelTranslation) ProtoMessage() {}
 
 func (x *ContentModelTranslation) ProtoReflect() protoreflect.Message {
-	mi := &file_content_service_v1_content_model_proto_msgTypes[4]
+	mi := &file_content_service_v1_content_model_proto_msgTypes[5]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -562,7 +625,7 @@ func (x *ContentModelTranslation) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use ContentModelTranslation.ProtoReflect.Descriptor instead.
 func (*ContentModelTranslation) Descriptor() ([]byte, []int) {
-	return file_content_service_v1_content_model_proto_rawDescGZIP(), []int{4}
+	return file_content_service_v1_content_model_proto_rawDescGZIP(), []int{5}
 }
 
 func (x *ContentModelTranslation) GetId() uint32 {
@@ -631,7 +694,7 @@ type FieldDefinitionTranslation struct {
 
 func (x *FieldDefinitionTranslation) Reset() {
 	*x = FieldDefinitionTranslation{}
-	mi := &file_content_service_v1_content_model_proto_msgTypes[5]
+	mi := &file_content_service_v1_content_model_proto_msgTypes[6]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -643,7 +706,7 @@ func (x *FieldDefinitionTranslation) String() string {
 func (*FieldDefinitionTranslation) ProtoMessage() {}
 
 func (x *FieldDefinitionTranslation) ProtoReflect() protoreflect.Message {
-	mi := &file_content_service_v1_content_model_proto_msgTypes[5]
+	mi := &file_content_service_v1_content_model_proto_msgTypes[6]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -656,7 +719,7 @@ func (x *FieldDefinitionTranslation) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use FieldDefinitionTranslation.ProtoReflect.Descriptor instead.
 func (*FieldDefinitionTranslation) Descriptor() ([]byte, []int) {
-	return file_content_service_v1_content_model_proto_rawDescGZIP(), []int{5}
+	return file_content_service_v1_content_model_proto_rawDescGZIP(), []int{6}
 }
 
 func (x *FieldDefinitionTranslation) GetId() uint32 {
@@ -726,7 +789,7 @@ type GetModelByPostRequest struct {
 
 func (x *GetModelByPostRequest) Reset() {
 	*x = GetModelByPostRequest{}
-	mi := &file_content_service_v1_content_model_proto_msgTypes[6]
+	mi := &file_content_service_v1_content_model_proto_msgTypes[7]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -738,7 +801,7 @@ func (x *GetModelByPostRequest) String() string {
 func (*GetModelByPostRequest) ProtoMessage() {}
 
 func (x *GetModelByPostRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_content_service_v1_content_model_proto_msgTypes[6]
+	mi := &file_content_service_v1_content_model_proto_msgTypes[7]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -751,7 +814,7 @@ func (x *GetModelByPostRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use GetModelByPostRequest.ProtoReflect.Descriptor instead.
 func (*GetModelByPostRequest) Descriptor() ([]byte, []int) {
-	return file_content_service_v1_content_model_proto_rawDescGZIP(), []int{6}
+	return file_content_service_v1_content_model_proto_rawDescGZIP(), []int{7}
 }
 
 func (x *GetModelByPostRequest) GetPostId() uint32 {
@@ -771,7 +834,7 @@ type ListContentModelResponse struct {
 
 func (x *ListContentModelResponse) Reset() {
 	*x = ListContentModelResponse{}
-	mi := &file_content_service_v1_content_model_proto_msgTypes[7]
+	mi := &file_content_service_v1_content_model_proto_msgTypes[8]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -783,7 +846,7 @@ func (x *ListContentModelResponse) String() string {
 func (*ListContentModelResponse) ProtoMessage() {}
 
 func (x *ListContentModelResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_content_service_v1_content_model_proto_msgTypes[7]
+	mi := &file_content_service_v1_content_model_proto_msgTypes[8]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -796,7 +859,7 @@ func (x *ListContentModelResponse) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use ListContentModelResponse.ProtoReflect.Descriptor instead.
 func (*ListContentModelResponse) Descriptor() ([]byte, []int) {
-	return file_content_service_v1_content_model_proto_rawDescGZIP(), []int{7}
+	return file_content_service_v1_content_model_proto_rawDescGZIP(), []int{8}
 }
 
 func (x *ListContentModelResponse) GetItems() []*ContentModel {
@@ -822,7 +885,7 @@ type CountContentModelResponse struct {
 
 func (x *CountContentModelResponse) Reset() {
 	*x = CountContentModelResponse{}
-	mi := &file_content_service_v1_content_model_proto_msgTypes[8]
+	mi := &file_content_service_v1_content_model_proto_msgTypes[9]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -834,7 +897,7 @@ func (x *CountContentModelResponse) String() string {
 func (*CountContentModelResponse) ProtoMessage() {}
 
 func (x *CountContentModelResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_content_service_v1_content_model_proto_msgTypes[8]
+	mi := &file_content_service_v1_content_model_proto_msgTypes[9]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -847,7 +910,7 @@ func (x *CountContentModelResponse) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use CountContentModelResponse.ProtoReflect.Descriptor instead.
 func (*CountContentModelResponse) Descriptor() ([]byte, []int) {
-	return file_content_service_v1_content_model_proto_rawDescGZIP(), []int{8}
+	return file_content_service_v1_content_model_proto_rawDescGZIP(), []int{9}
 }
 
 func (x *CountContentModelResponse) GetCount() uint64 {
@@ -872,7 +935,7 @@ type GetContentModelRequest struct {
 
 func (x *GetContentModelRequest) Reset() {
 	*x = GetContentModelRequest{}
-	mi := &file_content_service_v1_content_model_proto_msgTypes[9]
+	mi := &file_content_service_v1_content_model_proto_msgTypes[10]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -884,7 +947,7 @@ func (x *GetContentModelRequest) String() string {
 func (*GetContentModelRequest) ProtoMessage() {}
 
 func (x *GetContentModelRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_content_service_v1_content_model_proto_msgTypes[9]
+	mi := &file_content_service_v1_content_model_proto_msgTypes[10]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -897,7 +960,7 @@ func (x *GetContentModelRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use GetContentModelRequest.ProtoReflect.Descriptor instead.
 func (*GetContentModelRequest) Descriptor() ([]byte, []int) {
-	return file_content_service_v1_content_model_proto_rawDescGZIP(), []int{9}
+	return file_content_service_v1_content_model_proto_rawDescGZIP(), []int{10}
 }
 
 func (x *GetContentModelRequest) GetQueryBy() isGetContentModelRequest_QueryBy {
@@ -958,7 +1021,7 @@ type CreateContentModelRequest struct {
 
 func (x *CreateContentModelRequest) Reset() {
 	*x = CreateContentModelRequest{}
-	mi := &file_content_service_v1_content_model_proto_msgTypes[10]
+	mi := &file_content_service_v1_content_model_proto_msgTypes[11]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -970,7 +1033,7 @@ func (x *CreateContentModelRequest) String() string {
 func (*CreateContentModelRequest) ProtoMessage() {}
 
 func (x *CreateContentModelRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_content_service_v1_content_model_proto_msgTypes[10]
+	mi := &file_content_service_v1_content_model_proto_msgTypes[11]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -983,7 +1046,7 @@ func (x *CreateContentModelRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use CreateContentModelRequest.ProtoReflect.Descriptor instead.
 func (*CreateContentModelRequest) Descriptor() ([]byte, []int) {
-	return file_content_service_v1_content_model_proto_rawDescGZIP(), []int{10}
+	return file_content_service_v1_content_model_proto_rawDescGZIP(), []int{11}
 }
 
 func (x *CreateContentModelRequest) GetData() *ContentModel {
@@ -1005,7 +1068,7 @@ type UpdateContentModelRequest struct {
 
 func (x *UpdateContentModelRequest) Reset() {
 	*x = UpdateContentModelRequest{}
-	mi := &file_content_service_v1_content_model_proto_msgTypes[11]
+	mi := &file_content_service_v1_content_model_proto_msgTypes[12]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -1017,7 +1080,7 @@ func (x *UpdateContentModelRequest) String() string {
 func (*UpdateContentModelRequest) ProtoMessage() {}
 
 func (x *UpdateContentModelRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_content_service_v1_content_model_proto_msgTypes[11]
+	mi := &file_content_service_v1_content_model_proto_msgTypes[12]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -1030,7 +1093,7 @@ func (x *UpdateContentModelRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use UpdateContentModelRequest.ProtoReflect.Descriptor instead.
 func (*UpdateContentModelRequest) Descriptor() ([]byte, []int) {
-	return file_content_service_v1_content_model_proto_rawDescGZIP(), []int{11}
+	return file_content_service_v1_content_model_proto_rawDescGZIP(), []int{12}
 }
 
 func (x *UpdateContentModelRequest) GetId() uint32 {
@@ -1067,7 +1130,7 @@ type DeleteContentModelRequest struct {
 
 func (x *DeleteContentModelRequest) Reset() {
 	*x = DeleteContentModelRequest{}
-	mi := &file_content_service_v1_content_model_proto_msgTypes[12]
+	mi := &file_content_service_v1_content_model_proto_msgTypes[13]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -1079,7 +1142,7 @@ func (x *DeleteContentModelRequest) String() string {
 func (*DeleteContentModelRequest) ProtoMessage() {}
 
 func (x *DeleteContentModelRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_content_service_v1_content_model_proto_msgTypes[12]
+	mi := &file_content_service_v1_content_model_proto_msgTypes[13]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -1092,7 +1155,7 @@ func (x *DeleteContentModelRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use DeleteContentModelRequest.ProtoReflect.Descriptor instead.
 func (*DeleteContentModelRequest) Descriptor() ([]byte, []int) {
-	return file_content_service_v1_content_model_proto_rawDescGZIP(), []int{12}
+	return file_content_service_v1_content_model_proto_rawDescGZIP(), []int{13}
 }
 
 func (x *DeleteContentModelRequest) GetQueryBy() isDeleteContentModelRequest_QueryBy {
@@ -1133,7 +1196,7 @@ type ListFieldDefinitionsRequest struct {
 
 func (x *ListFieldDefinitionsRequest) Reset() {
 	*x = ListFieldDefinitionsRequest{}
-	mi := &file_content_service_v1_content_model_proto_msgTypes[13]
+	mi := &file_content_service_v1_content_model_proto_msgTypes[14]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -1145,7 +1208,7 @@ func (x *ListFieldDefinitionsRequest) String() string {
 func (*ListFieldDefinitionsRequest) ProtoMessage() {}
 
 func (x *ListFieldDefinitionsRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_content_service_v1_content_model_proto_msgTypes[13]
+	mi := &file_content_service_v1_content_model_proto_msgTypes[14]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -1158,7 +1221,7 @@ func (x *ListFieldDefinitionsRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use ListFieldDefinitionsRequest.ProtoReflect.Descriptor instead.
 func (*ListFieldDefinitionsRequest) Descriptor() ([]byte, []int) {
-	return file_content_service_v1_content_model_proto_rawDescGZIP(), []int{13}
+	return file_content_service_v1_content_model_proto_rawDescGZIP(), []int{14}
 }
 
 func (x *ListFieldDefinitionsRequest) GetContentModelId() uint32 {
@@ -1193,7 +1256,7 @@ type ListFieldDefinitionsResponse struct {
 
 func (x *ListFieldDefinitionsResponse) Reset() {
 	*x = ListFieldDefinitionsResponse{}
-	mi := &file_content_service_v1_content_model_proto_msgTypes[14]
+	mi := &file_content_service_v1_content_model_proto_msgTypes[15]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -1205,7 +1268,7 @@ func (x *ListFieldDefinitionsResponse) String() string {
 func (*ListFieldDefinitionsResponse) ProtoMessage() {}
 
 func (x *ListFieldDefinitionsResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_content_service_v1_content_model_proto_msgTypes[14]
+	mi := &file_content_service_v1_content_model_proto_msgTypes[15]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -1218,7 +1281,7 @@ func (x *ListFieldDefinitionsResponse) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use ListFieldDefinitionsResponse.ProtoReflect.Descriptor instead.
 func (*ListFieldDefinitionsResponse) Descriptor() ([]byte, []int) {
-	return file_content_service_v1_content_model_proto_rawDescGZIP(), []int{14}
+	return file_content_service_v1_content_model_proto_rawDescGZIP(), []int{15}
 }
 
 func (x *ListFieldDefinitionsResponse) GetItems() []*FieldDefinition {
@@ -1248,7 +1311,7 @@ type ResolveContentReferencesRequest struct {
 
 func (x *ResolveContentReferencesRequest) Reset() {
 	*x = ResolveContentReferencesRequest{}
-	mi := &file_content_service_v1_content_model_proto_msgTypes[15]
+	mi := &file_content_service_v1_content_model_proto_msgTypes[16]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -1260,7 +1323,7 @@ func (x *ResolveContentReferencesRequest) String() string {
 func (*ResolveContentReferencesRequest) ProtoMessage() {}
 
 func (x *ResolveContentReferencesRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_content_service_v1_content_model_proto_msgTypes[15]
+	mi := &file_content_service_v1_content_model_proto_msgTypes[16]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -1273,7 +1336,7 @@ func (x *ResolveContentReferencesRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use ResolveContentReferencesRequest.ProtoReflect.Descriptor instead.
 func (*ResolveContentReferencesRequest) Descriptor() ([]byte, []int) {
-	return file_content_service_v1_content_model_proto_rawDescGZIP(), []int{15}
+	return file_content_service_v1_content_model_proto_rawDescGZIP(), []int{16}
 }
 
 func (x *ResolveContentReferencesRequest) GetRefs() []string {
@@ -1305,7 +1368,7 @@ type ContentReferenceSummary struct {
 
 func (x *ContentReferenceSummary) Reset() {
 	*x = ContentReferenceSummary{}
-	mi := &file_content_service_v1_content_model_proto_msgTypes[16]
+	mi := &file_content_service_v1_content_model_proto_msgTypes[17]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -1317,7 +1380,7 @@ func (x *ContentReferenceSummary) String() string {
 func (*ContentReferenceSummary) ProtoMessage() {}
 
 func (x *ContentReferenceSummary) ProtoReflect() protoreflect.Message {
-	mi := &file_content_service_v1_content_model_proto_msgTypes[16]
+	mi := &file_content_service_v1_content_model_proto_msgTypes[17]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -1330,7 +1393,7 @@ func (x *ContentReferenceSummary) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use ContentReferenceSummary.ProtoReflect.Descriptor instead.
 func (*ContentReferenceSummary) Descriptor() ([]byte, []int) {
-	return file_content_service_v1_content_model_proto_rawDescGZIP(), []int{16}
+	return file_content_service_v1_content_model_proto_rawDescGZIP(), []int{17}
 }
 
 func (x *ContentReferenceSummary) GetRef() string {
@@ -1385,7 +1448,7 @@ type ResolveContentReferencesResponse struct {
 
 func (x *ResolveContentReferencesResponse) Reset() {
 	*x = ResolveContentReferencesResponse{}
-	mi := &file_content_service_v1_content_model_proto_msgTypes[17]
+	mi := &file_content_service_v1_content_model_proto_msgTypes[18]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -1397,7 +1460,7 @@ func (x *ResolveContentReferencesResponse) String() string {
 func (*ResolveContentReferencesResponse) ProtoMessage() {}
 
 func (x *ResolveContentReferencesResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_content_service_v1_content_model_proto_msgTypes[17]
+	mi := &file_content_service_v1_content_model_proto_msgTypes[18]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -1410,7 +1473,7 @@ func (x *ResolveContentReferencesResponse) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use ResolveContentReferencesResponse.ProtoReflect.Descriptor instead.
 func (*ResolveContentReferencesResponse) Descriptor() ([]byte, []int) {
-	return file_content_service_v1_content_model_proto_rawDescGZIP(), []int{17}
+	return file_content_service_v1_content_model_proto_rawDescGZIP(), []int{18}
 }
 
 func (x *ResolveContentReferencesResponse) GetItems() []*ContentReferenceSummary {
@@ -1436,7 +1499,7 @@ type ComponentDefinition struct {
 
 func (x *ComponentDefinition) Reset() {
 	*x = ComponentDefinition{}
-	mi := &file_content_service_v1_content_model_proto_msgTypes[18]
+	mi := &file_content_service_v1_content_model_proto_msgTypes[19]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -1448,7 +1511,7 @@ func (x *ComponentDefinition) String() string {
 func (*ComponentDefinition) ProtoMessage() {}
 
 func (x *ComponentDefinition) ProtoReflect() protoreflect.Message {
-	mi := &file_content_service_v1_content_model_proto_msgTypes[18]
+	mi := &file_content_service_v1_content_model_proto_msgTypes[19]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -1461,7 +1524,7 @@ func (x *ComponentDefinition) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use ComponentDefinition.ProtoReflect.Descriptor instead.
 func (*ComponentDefinition) Descriptor() ([]byte, []int) {
-	return file_content_service_v1_content_model_proto_rawDescGZIP(), []int{18}
+	return file_content_service_v1_content_model_proto_rawDescGZIP(), []int{19}
 }
 
 func (x *ComponentDefinition) GetId() uint32 {
@@ -1524,7 +1587,7 @@ type ListComponentDefinitionsResponse struct {
 
 func (x *ListComponentDefinitionsResponse) Reset() {
 	*x = ListComponentDefinitionsResponse{}
-	mi := &file_content_service_v1_content_model_proto_msgTypes[19]
+	mi := &file_content_service_v1_content_model_proto_msgTypes[20]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -1536,7 +1599,7 @@ func (x *ListComponentDefinitionsResponse) String() string {
 func (*ListComponentDefinitionsResponse) ProtoMessage() {}
 
 func (x *ListComponentDefinitionsResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_content_service_v1_content_model_proto_msgTypes[19]
+	mi := &file_content_service_v1_content_model_proto_msgTypes[20]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -1549,7 +1612,7 @@ func (x *ListComponentDefinitionsResponse) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use ListComponentDefinitionsResponse.ProtoReflect.Descriptor instead.
 func (*ListComponentDefinitionsResponse) Descriptor() ([]byte, []int) {
-	return file_content_service_v1_content_model_proto_rawDescGZIP(), []int{19}
+	return file_content_service_v1_content_model_proto_rawDescGZIP(), []int{20}
 }
 
 func (x *ListComponentDefinitionsResponse) GetItems() []*ComponentDefinition {
@@ -1576,7 +1639,7 @@ type GetComponentDefinitionRequest struct {
 
 func (x *GetComponentDefinitionRequest) Reset() {
 	*x = GetComponentDefinitionRequest{}
-	mi := &file_content_service_v1_content_model_proto_msgTypes[20]
+	mi := &file_content_service_v1_content_model_proto_msgTypes[21]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -1588,7 +1651,7 @@ func (x *GetComponentDefinitionRequest) String() string {
 func (*GetComponentDefinitionRequest) ProtoMessage() {}
 
 func (x *GetComponentDefinitionRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_content_service_v1_content_model_proto_msgTypes[20]
+	mi := &file_content_service_v1_content_model_proto_msgTypes[21]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -1601,7 +1664,7 @@ func (x *GetComponentDefinitionRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use GetComponentDefinitionRequest.ProtoReflect.Descriptor instead.
 func (*GetComponentDefinitionRequest) Descriptor() ([]byte, []int) {
-	return file_content_service_v1_content_model_proto_rawDescGZIP(), []int{20}
+	return file_content_service_v1_content_model_proto_rawDescGZIP(), []int{21}
 }
 
 func (x *GetComponentDefinitionRequest) GetId() uint32 {
@@ -1621,7 +1684,7 @@ type CreateComponentDefinitionRequest struct {
 
 func (x *CreateComponentDefinitionRequest) Reset() {
 	*x = CreateComponentDefinitionRequest{}
-	mi := &file_content_service_v1_content_model_proto_msgTypes[21]
+	mi := &file_content_service_v1_content_model_proto_msgTypes[22]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -1633,7 +1696,7 @@ func (x *CreateComponentDefinitionRequest) String() string {
 func (*CreateComponentDefinitionRequest) ProtoMessage() {}
 
 func (x *CreateComponentDefinitionRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_content_service_v1_content_model_proto_msgTypes[21]
+	mi := &file_content_service_v1_content_model_proto_msgTypes[22]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -1646,7 +1709,7 @@ func (x *CreateComponentDefinitionRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use CreateComponentDefinitionRequest.ProtoReflect.Descriptor instead.
 func (*CreateComponentDefinitionRequest) Descriptor() ([]byte, []int) {
-	return file_content_service_v1_content_model_proto_rawDescGZIP(), []int{21}
+	return file_content_service_v1_content_model_proto_rawDescGZIP(), []int{22}
 }
 
 func (x *CreateComponentDefinitionRequest) GetData() *ComponentDefinition {
@@ -1668,7 +1731,7 @@ type UpdateComponentDefinitionRequest struct {
 
 func (x *UpdateComponentDefinitionRequest) Reset() {
 	*x = UpdateComponentDefinitionRequest{}
-	mi := &file_content_service_v1_content_model_proto_msgTypes[22]
+	mi := &file_content_service_v1_content_model_proto_msgTypes[23]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -1680,7 +1743,7 @@ func (x *UpdateComponentDefinitionRequest) String() string {
 func (*UpdateComponentDefinitionRequest) ProtoMessage() {}
 
 func (x *UpdateComponentDefinitionRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_content_service_v1_content_model_proto_msgTypes[22]
+	mi := &file_content_service_v1_content_model_proto_msgTypes[23]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -1693,7 +1756,7 @@ func (x *UpdateComponentDefinitionRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use UpdateComponentDefinitionRequest.ProtoReflect.Descriptor instead.
 func (*UpdateComponentDefinitionRequest) Descriptor() ([]byte, []int) {
-	return file_content_service_v1_content_model_proto_rawDescGZIP(), []int{22}
+	return file_content_service_v1_content_model_proto_rawDescGZIP(), []int{23}
 }
 
 func (x *UpdateComponentDefinitionRequest) GetId() uint32 {
@@ -1727,7 +1790,7 @@ type DeleteComponentDefinitionRequest struct {
 
 func (x *DeleteComponentDefinitionRequest) Reset() {
 	*x = DeleteComponentDefinitionRequest{}
-	mi := &file_content_service_v1_content_model_proto_msgTypes[23]
+	mi := &file_content_service_v1_content_model_proto_msgTypes[24]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -1739,7 +1802,7 @@ func (x *DeleteComponentDefinitionRequest) String() string {
 func (*DeleteComponentDefinitionRequest) ProtoMessage() {}
 
 func (x *DeleteComponentDefinitionRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_content_service_v1_content_model_proto_msgTypes[23]
+	mi := &file_content_service_v1_content_model_proto_msgTypes[24]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -1752,7 +1815,7 @@ func (x *DeleteComponentDefinitionRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use DeleteComponentDefinitionRequest.ProtoReflect.Descriptor instead.
 func (*DeleteComponentDefinitionRequest) Descriptor() ([]byte, []int) {
-	return file_content_service_v1_content_model_proto_rawDescGZIP(), []int{23}
+	return file_content_service_v1_content_model_proto_rawDescGZIP(), []int{24}
 }
 
 func (x *DeleteComponentDefinitionRequest) GetId() uint32 {
@@ -1773,7 +1836,7 @@ type SaveComponentFieldDefinitionsRequest struct {
 
 func (x *SaveComponentFieldDefinitionsRequest) Reset() {
 	*x = SaveComponentFieldDefinitionsRequest{}
-	mi := &file_content_service_v1_content_model_proto_msgTypes[24]
+	mi := &file_content_service_v1_content_model_proto_msgTypes[25]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -1785,7 +1848,7 @@ func (x *SaveComponentFieldDefinitionsRequest) String() string {
 func (*SaveComponentFieldDefinitionsRequest) ProtoMessage() {}
 
 func (x *SaveComponentFieldDefinitionsRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_content_service_v1_content_model_proto_msgTypes[24]
+	mi := &file_content_service_v1_content_model_proto_msgTypes[25]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -1798,7 +1861,7 @@ func (x *SaveComponentFieldDefinitionsRequest) ProtoReflect() protoreflect.Messa
 
 // Deprecated: Use SaveComponentFieldDefinitionsRequest.ProtoReflect.Descriptor instead.
 func (*SaveComponentFieldDefinitionsRequest) Descriptor() ([]byte, []int) {
-	return file_content_service_v1_content_model_proto_rawDescGZIP(), []int{24}
+	return file_content_service_v1_content_model_proto_rawDescGZIP(), []int{25}
 }
 
 func (x *SaveComponentFieldDefinitionsRequest) GetComponentId() uint32 {
@@ -1819,7 +1882,7 @@ var File_content_service_v1_content_model_proto protoreflect.FileDescriptor
 
 const file_content_service_v1_content_model_proto_rawDesc = "" +
 	"\n" +
-	"&content/service/v1/content_model.proto\x12\x12content.service.v1\x1a$gnostic/openapi/v3/annotations.proto\x1a\x1fgoogle/api/field_behavior.proto\x1a\x1bgoogle/protobuf/empty.proto\x1a\x1fgoogle/protobuf/timestamp.proto\x1a google/protobuf/field_mask.proto\x1a\x1epagination/v1/pagination.proto\"\xef\a\n" +
+	"&content/service/v1/content_model.proto\x12\x12content.service.v1\x1a$gnostic/openapi/v3/annotations.proto\x1a\x1fgoogle/api/field_behavior.proto\x1a\x1bgoogle/protobuf/empty.proto\x1a\x1fgoogle/protobuf/timestamp.proto\x1a google/protobuf/field_mask.proto\x1a\x1epagination/v1/pagination.proto\"\xe9\b\n" +
 	"\fContentModel\x12#\n" +
 	"\x02id\x18\x01 \x01(\rB\x0e\xbaG\v\x92\x02\b模型IDH\x00R\x02id\x88\x01\x01\x12L\n" +
 	"\x04name\x18\x02 \x01(\tB3\xbaG0\x92\x02-模型名称（语言无关，后端标识）H\x01R\x04name\x88\x01\x01\x12@\n" +
@@ -1828,7 +1891,10 @@ const file_content_service_v1_content_model_proto_rawDesc = "" +
 	"\n" +
 	"sort_order\x18\x05 \x01(\rB\x12\xbaG\x0f\x92\x02\f排序顺序H\x04R\tsortOrder\x88\x01\x01\x12U\n" +
 	"\x06fields\x18\n" +
-	" \x03(\v2#.content.service.v1.FieldDefinitionB\x18\xbaG\x15\x92\x02\x12字段定义列表R\x06fields\x12v\n" +
+	" \x03(\v2#.content.service.v1.FieldDefinitionB\x18\xbaG\x15\x92\x02\x12字段定义列表R\x06fields\x12x\n" +
+	"\n" +
+	"components\x18\x10 \x03(\v2).content.service.v1.ContentModelComponentB-\xbaG*\x92\x02'引用到的组件定义（含字段）R\n" +
+	"components\x12v\n" +
 	"\ftranslations\x18\v \x03(\v2+.content.service.v1.ContentModelTranslationB%\xbaG\"\x92\x02\x1f名称/描述的多语言翻译R\ftranslations\x120\n" +
 	"\ttenant_id\x18( \x01(\rB\x0e\xbaG\v\x92\x02\b租户IDH\x05R\btenantId\x88\x01\x01\x12;\n" +
 	"\n" +
@@ -1907,7 +1973,12 @@ const file_content_service_v1_content_model_proto_rawDesc = "" +
 	"\x12filter_category_id\x18\x03 \x01(\rB-\xbaG*\x92\x02'可选：限定目标 post 所属分类H\x02R\x10filterCategoryId\x88\x01\x01B\x15\n" +
 	"\x13_target_entity_typeB\x15\n" +
 	"\x13_allow_cross_tenantB\x15\n" +
-	"\x13_filter_category_id\"\xea\x02\n" +
+	"\x13_filter_category_id\"\xcb\x01\n" +
+	"\x15ContentModelComponent\x12[\n" +
+	"\n" +
+	"definition\x18\x01 \x01(\v2'.content.service.v1.ComponentDefinitionB\x12\xbaG\x0f\x92\x02\f组件定义R\n" +
+	"definition\x12U\n" +
+	"\x06fields\x18\x02 \x03(\v2#.content.service.v1.FieldDefinitionB\x18\xbaG\x15\x92\x02\x12组件字段定义R\x06fields\"\xea\x02\n" +
 	"\x0fComponentConfig\x12_\n" +
 	"\x0ecomponent_code\x18\x01 \x01(\tB3\xbaG0\x92\x02-组件编码（FIELD_TYPE_COMPONENT 必填）H\x00R\rcomponentCode\x88\x01\x01\x12Q\n" +
 	"\n" +
@@ -2076,103 +2147,107 @@ func file_content_service_v1_content_model_proto_rawDescGZIP() []byte {
 }
 
 var file_content_service_v1_content_model_proto_enumTypes = make([]protoimpl.EnumInfo, 1)
-var file_content_service_v1_content_model_proto_msgTypes = make([]protoimpl.MessageInfo, 26)
+var file_content_service_v1_content_model_proto_msgTypes = make([]protoimpl.MessageInfo, 27)
 var file_content_service_v1_content_model_proto_goTypes = []any{
 	(FieldDefinition_Type)(0),                    // 0: content.service.v1.FieldDefinition.Type
 	(*ContentModel)(nil),                         // 1: content.service.v1.ContentModel
 	(*FieldDefinition)(nil),                      // 2: content.service.v1.FieldDefinition
 	(*RelationConfig)(nil),                       // 3: content.service.v1.RelationConfig
-	(*ComponentConfig)(nil),                      // 4: content.service.v1.ComponentConfig
-	(*ContentModelTranslation)(nil),              // 5: content.service.v1.ContentModelTranslation
-	(*FieldDefinitionTranslation)(nil),           // 6: content.service.v1.FieldDefinitionTranslation
-	(*GetModelByPostRequest)(nil),                // 7: content.service.v1.GetModelByPostRequest
-	(*ListContentModelResponse)(nil),             // 8: content.service.v1.ListContentModelResponse
-	(*CountContentModelResponse)(nil),            // 9: content.service.v1.CountContentModelResponse
-	(*GetContentModelRequest)(nil),               // 10: content.service.v1.GetContentModelRequest
-	(*CreateContentModelRequest)(nil),            // 11: content.service.v1.CreateContentModelRequest
-	(*UpdateContentModelRequest)(nil),            // 12: content.service.v1.UpdateContentModelRequest
-	(*DeleteContentModelRequest)(nil),            // 13: content.service.v1.DeleteContentModelRequest
-	(*ListFieldDefinitionsRequest)(nil),          // 14: content.service.v1.ListFieldDefinitionsRequest
-	(*ListFieldDefinitionsResponse)(nil),         // 15: content.service.v1.ListFieldDefinitionsResponse
-	(*ResolveContentReferencesRequest)(nil),      // 16: content.service.v1.ResolveContentReferencesRequest
-	(*ContentReferenceSummary)(nil),              // 17: content.service.v1.ContentReferenceSummary
-	(*ResolveContentReferencesResponse)(nil),     // 18: content.service.v1.ResolveContentReferencesResponse
-	(*ComponentDefinition)(nil),                  // 19: content.service.v1.ComponentDefinition
-	(*ListComponentDefinitionsResponse)(nil),     // 20: content.service.v1.ListComponentDefinitionsResponse
-	(*GetComponentDefinitionRequest)(nil),        // 21: content.service.v1.GetComponentDefinitionRequest
-	(*CreateComponentDefinitionRequest)(nil),     // 22: content.service.v1.CreateComponentDefinitionRequest
-	(*UpdateComponentDefinitionRequest)(nil),     // 23: content.service.v1.UpdateComponentDefinitionRequest
-	(*DeleteComponentDefinitionRequest)(nil),     // 24: content.service.v1.DeleteComponentDefinitionRequest
-	(*SaveComponentFieldDefinitionsRequest)(nil), // 25: content.service.v1.SaveComponentFieldDefinitionsRequest
-	nil,                           // 26: content.service.v1.FieldDefinition.OptionsEntry
-	(*timestamppb.Timestamp)(nil), // 27: google.protobuf.Timestamp
-	(*fieldmaskpb.FieldMask)(nil), // 28: google.protobuf.FieldMask
-	(*v1.PagingRequest)(nil),      // 29: pagination.PagingRequest
-	(*emptypb.Empty)(nil),         // 30: google.protobuf.Empty
+	(*ContentModelComponent)(nil),                // 4: content.service.v1.ContentModelComponent
+	(*ComponentConfig)(nil),                      // 5: content.service.v1.ComponentConfig
+	(*ContentModelTranslation)(nil),              // 6: content.service.v1.ContentModelTranslation
+	(*FieldDefinitionTranslation)(nil),           // 7: content.service.v1.FieldDefinitionTranslation
+	(*GetModelByPostRequest)(nil),                // 8: content.service.v1.GetModelByPostRequest
+	(*ListContentModelResponse)(nil),             // 9: content.service.v1.ListContentModelResponse
+	(*CountContentModelResponse)(nil),            // 10: content.service.v1.CountContentModelResponse
+	(*GetContentModelRequest)(nil),               // 11: content.service.v1.GetContentModelRequest
+	(*CreateContentModelRequest)(nil),            // 12: content.service.v1.CreateContentModelRequest
+	(*UpdateContentModelRequest)(nil),            // 13: content.service.v1.UpdateContentModelRequest
+	(*DeleteContentModelRequest)(nil),            // 14: content.service.v1.DeleteContentModelRequest
+	(*ListFieldDefinitionsRequest)(nil),          // 15: content.service.v1.ListFieldDefinitionsRequest
+	(*ListFieldDefinitionsResponse)(nil),         // 16: content.service.v1.ListFieldDefinitionsResponse
+	(*ResolveContentReferencesRequest)(nil),      // 17: content.service.v1.ResolveContentReferencesRequest
+	(*ContentReferenceSummary)(nil),              // 18: content.service.v1.ContentReferenceSummary
+	(*ResolveContentReferencesResponse)(nil),     // 19: content.service.v1.ResolveContentReferencesResponse
+	(*ComponentDefinition)(nil),                  // 20: content.service.v1.ComponentDefinition
+	(*ListComponentDefinitionsResponse)(nil),     // 21: content.service.v1.ListComponentDefinitionsResponse
+	(*GetComponentDefinitionRequest)(nil),        // 22: content.service.v1.GetComponentDefinitionRequest
+	(*CreateComponentDefinitionRequest)(nil),     // 23: content.service.v1.CreateComponentDefinitionRequest
+	(*UpdateComponentDefinitionRequest)(nil),     // 24: content.service.v1.UpdateComponentDefinitionRequest
+	(*DeleteComponentDefinitionRequest)(nil),     // 25: content.service.v1.DeleteComponentDefinitionRequest
+	(*SaveComponentFieldDefinitionsRequest)(nil), // 26: content.service.v1.SaveComponentFieldDefinitionsRequest
+	nil,                           // 27: content.service.v1.FieldDefinition.OptionsEntry
+	(*timestamppb.Timestamp)(nil), // 28: google.protobuf.Timestamp
+	(*fieldmaskpb.FieldMask)(nil), // 29: google.protobuf.FieldMask
+	(*v1.PagingRequest)(nil),      // 30: pagination.PagingRequest
+	(*emptypb.Empty)(nil),         // 31: google.protobuf.Empty
 }
 var file_content_service_v1_content_model_proto_depIdxs = []int32{
 	2,  // 0: content.service.v1.ContentModel.fields:type_name -> content.service.v1.FieldDefinition
-	5,  // 1: content.service.v1.ContentModel.translations:type_name -> content.service.v1.ContentModelTranslation
-	27, // 2: content.service.v1.ContentModel.created_at:type_name -> google.protobuf.Timestamp
-	27, // 3: content.service.v1.ContentModel.updated_at:type_name -> google.protobuf.Timestamp
-	0,  // 4: content.service.v1.FieldDefinition.type:type_name -> content.service.v1.FieldDefinition.Type
-	26, // 5: content.service.v1.FieldDefinition.options:type_name -> content.service.v1.FieldDefinition.OptionsEntry
-	3,  // 6: content.service.v1.FieldDefinition.relation_config:type_name -> content.service.v1.RelationConfig
-	4,  // 7: content.service.v1.FieldDefinition.component_config:type_name -> content.service.v1.ComponentConfig
-	6,  // 8: content.service.v1.FieldDefinition.translations:type_name -> content.service.v1.FieldDefinitionTranslation
-	27, // 9: content.service.v1.FieldDefinition.created_at:type_name -> google.protobuf.Timestamp
-	27, // 10: content.service.v1.ContentModelTranslation.created_at:type_name -> google.protobuf.Timestamp
-	27, // 11: content.service.v1.FieldDefinitionTranslation.created_at:type_name -> google.protobuf.Timestamp
-	1,  // 12: content.service.v1.ListContentModelResponse.items:type_name -> content.service.v1.ContentModel
-	28, // 13: content.service.v1.GetContentModelRequest.view_mask:type_name -> google.protobuf.FieldMask
-	1,  // 14: content.service.v1.CreateContentModelRequest.data:type_name -> content.service.v1.ContentModel
-	1,  // 15: content.service.v1.UpdateContentModelRequest.data:type_name -> content.service.v1.ContentModel
-	28, // 16: content.service.v1.UpdateContentModelRequest.update_mask:type_name -> google.protobuf.FieldMask
-	28, // 17: content.service.v1.ListFieldDefinitionsRequest.view_mask:type_name -> google.protobuf.FieldMask
-	2,  // 18: content.service.v1.ListFieldDefinitionsResponse.items:type_name -> content.service.v1.FieldDefinition
-	17, // 19: content.service.v1.ResolveContentReferencesResponse.items:type_name -> content.service.v1.ContentReferenceSummary
-	27, // 20: content.service.v1.ComponentDefinition.created_at:type_name -> google.protobuf.Timestamp
-	27, // 21: content.service.v1.ComponentDefinition.updated_at:type_name -> google.protobuf.Timestamp
-	19, // 22: content.service.v1.ListComponentDefinitionsResponse.items:type_name -> content.service.v1.ComponentDefinition
-	19, // 23: content.service.v1.CreateComponentDefinitionRequest.data:type_name -> content.service.v1.ComponentDefinition
-	19, // 24: content.service.v1.UpdateComponentDefinitionRequest.data:type_name -> content.service.v1.ComponentDefinition
-	28, // 25: content.service.v1.UpdateComponentDefinitionRequest.update_mask:type_name -> google.protobuf.FieldMask
-	2,  // 26: content.service.v1.SaveComponentFieldDefinitionsRequest.fields:type_name -> content.service.v1.FieldDefinition
-	29, // 27: content.service.v1.ContentModelService.List:input_type -> pagination.PagingRequest
-	29, // 28: content.service.v1.ContentModelService.Count:input_type -> pagination.PagingRequest
-	10, // 29: content.service.v1.ContentModelService.Get:input_type -> content.service.v1.GetContentModelRequest
-	11, // 30: content.service.v1.ContentModelService.Create:input_type -> content.service.v1.CreateContentModelRequest
-	12, // 31: content.service.v1.ContentModelService.Update:input_type -> content.service.v1.UpdateContentModelRequest
-	13, // 32: content.service.v1.ContentModelService.Delete:input_type -> content.service.v1.DeleteContentModelRequest
-	14, // 33: content.service.v1.ContentModelService.ListFieldDefinitions:input_type -> content.service.v1.ListFieldDefinitionsRequest
-	7,  // 34: content.service.v1.ContentModelService.GetModelByPost:input_type -> content.service.v1.GetModelByPostRequest
-	16, // 35: content.service.v1.ContentModelService.ResolveContentReferences:input_type -> content.service.v1.ResolveContentReferencesRequest
-	29, // 36: content.service.v1.ContentModelService.ListComponentDefinitions:input_type -> pagination.PagingRequest
-	21, // 37: content.service.v1.ContentModelService.GetComponentDefinition:input_type -> content.service.v1.GetComponentDefinitionRequest
-	22, // 38: content.service.v1.ContentModelService.CreateComponentDefinition:input_type -> content.service.v1.CreateComponentDefinitionRequest
-	23, // 39: content.service.v1.ContentModelService.UpdateComponentDefinition:input_type -> content.service.v1.UpdateComponentDefinitionRequest
-	24, // 40: content.service.v1.ContentModelService.DeleteComponentDefinition:input_type -> content.service.v1.DeleteComponentDefinitionRequest
-	25, // 41: content.service.v1.ContentModelService.SaveComponentFieldDefinitions:input_type -> content.service.v1.SaveComponentFieldDefinitionsRequest
-	8,  // 42: content.service.v1.ContentModelService.List:output_type -> content.service.v1.ListContentModelResponse
-	9,  // 43: content.service.v1.ContentModelService.Count:output_type -> content.service.v1.CountContentModelResponse
-	1,  // 44: content.service.v1.ContentModelService.Get:output_type -> content.service.v1.ContentModel
-	1,  // 45: content.service.v1.ContentModelService.Create:output_type -> content.service.v1.ContentModel
-	1,  // 46: content.service.v1.ContentModelService.Update:output_type -> content.service.v1.ContentModel
-	30, // 47: content.service.v1.ContentModelService.Delete:output_type -> google.protobuf.Empty
-	15, // 48: content.service.v1.ContentModelService.ListFieldDefinitions:output_type -> content.service.v1.ListFieldDefinitionsResponse
-	1,  // 49: content.service.v1.ContentModelService.GetModelByPost:output_type -> content.service.v1.ContentModel
-	18, // 50: content.service.v1.ContentModelService.ResolveContentReferences:output_type -> content.service.v1.ResolveContentReferencesResponse
-	20, // 51: content.service.v1.ContentModelService.ListComponentDefinitions:output_type -> content.service.v1.ListComponentDefinitionsResponse
-	19, // 52: content.service.v1.ContentModelService.GetComponentDefinition:output_type -> content.service.v1.ComponentDefinition
-	19, // 53: content.service.v1.ContentModelService.CreateComponentDefinition:output_type -> content.service.v1.ComponentDefinition
-	19, // 54: content.service.v1.ContentModelService.UpdateComponentDefinition:output_type -> content.service.v1.ComponentDefinition
-	30, // 55: content.service.v1.ContentModelService.DeleteComponentDefinition:output_type -> google.protobuf.Empty
-	15, // 56: content.service.v1.ContentModelService.SaveComponentFieldDefinitions:output_type -> content.service.v1.ListFieldDefinitionsResponse
-	42, // [42:57] is the sub-list for method output_type
-	27, // [27:42] is the sub-list for method input_type
-	27, // [27:27] is the sub-list for extension type_name
-	27, // [27:27] is the sub-list for extension extendee
-	0,  // [0:27] is the sub-list for field type_name
+	4,  // 1: content.service.v1.ContentModel.components:type_name -> content.service.v1.ContentModelComponent
+	6,  // 2: content.service.v1.ContentModel.translations:type_name -> content.service.v1.ContentModelTranslation
+	28, // 3: content.service.v1.ContentModel.created_at:type_name -> google.protobuf.Timestamp
+	28, // 4: content.service.v1.ContentModel.updated_at:type_name -> google.protobuf.Timestamp
+	0,  // 5: content.service.v1.FieldDefinition.type:type_name -> content.service.v1.FieldDefinition.Type
+	27, // 6: content.service.v1.FieldDefinition.options:type_name -> content.service.v1.FieldDefinition.OptionsEntry
+	3,  // 7: content.service.v1.FieldDefinition.relation_config:type_name -> content.service.v1.RelationConfig
+	5,  // 8: content.service.v1.FieldDefinition.component_config:type_name -> content.service.v1.ComponentConfig
+	7,  // 9: content.service.v1.FieldDefinition.translations:type_name -> content.service.v1.FieldDefinitionTranslation
+	28, // 10: content.service.v1.FieldDefinition.created_at:type_name -> google.protobuf.Timestamp
+	20, // 11: content.service.v1.ContentModelComponent.definition:type_name -> content.service.v1.ComponentDefinition
+	2,  // 12: content.service.v1.ContentModelComponent.fields:type_name -> content.service.v1.FieldDefinition
+	28, // 13: content.service.v1.ContentModelTranslation.created_at:type_name -> google.protobuf.Timestamp
+	28, // 14: content.service.v1.FieldDefinitionTranslation.created_at:type_name -> google.protobuf.Timestamp
+	1,  // 15: content.service.v1.ListContentModelResponse.items:type_name -> content.service.v1.ContentModel
+	29, // 16: content.service.v1.GetContentModelRequest.view_mask:type_name -> google.protobuf.FieldMask
+	1,  // 17: content.service.v1.CreateContentModelRequest.data:type_name -> content.service.v1.ContentModel
+	1,  // 18: content.service.v1.UpdateContentModelRequest.data:type_name -> content.service.v1.ContentModel
+	29, // 19: content.service.v1.UpdateContentModelRequest.update_mask:type_name -> google.protobuf.FieldMask
+	29, // 20: content.service.v1.ListFieldDefinitionsRequest.view_mask:type_name -> google.protobuf.FieldMask
+	2,  // 21: content.service.v1.ListFieldDefinitionsResponse.items:type_name -> content.service.v1.FieldDefinition
+	18, // 22: content.service.v1.ResolveContentReferencesResponse.items:type_name -> content.service.v1.ContentReferenceSummary
+	28, // 23: content.service.v1.ComponentDefinition.created_at:type_name -> google.protobuf.Timestamp
+	28, // 24: content.service.v1.ComponentDefinition.updated_at:type_name -> google.protobuf.Timestamp
+	20, // 25: content.service.v1.ListComponentDefinitionsResponse.items:type_name -> content.service.v1.ComponentDefinition
+	20, // 26: content.service.v1.CreateComponentDefinitionRequest.data:type_name -> content.service.v1.ComponentDefinition
+	20, // 27: content.service.v1.UpdateComponentDefinitionRequest.data:type_name -> content.service.v1.ComponentDefinition
+	29, // 28: content.service.v1.UpdateComponentDefinitionRequest.update_mask:type_name -> google.protobuf.FieldMask
+	2,  // 29: content.service.v1.SaveComponentFieldDefinitionsRequest.fields:type_name -> content.service.v1.FieldDefinition
+	30, // 30: content.service.v1.ContentModelService.List:input_type -> pagination.PagingRequest
+	30, // 31: content.service.v1.ContentModelService.Count:input_type -> pagination.PagingRequest
+	11, // 32: content.service.v1.ContentModelService.Get:input_type -> content.service.v1.GetContentModelRequest
+	12, // 33: content.service.v1.ContentModelService.Create:input_type -> content.service.v1.CreateContentModelRequest
+	13, // 34: content.service.v1.ContentModelService.Update:input_type -> content.service.v1.UpdateContentModelRequest
+	14, // 35: content.service.v1.ContentModelService.Delete:input_type -> content.service.v1.DeleteContentModelRequest
+	15, // 36: content.service.v1.ContentModelService.ListFieldDefinitions:input_type -> content.service.v1.ListFieldDefinitionsRequest
+	8,  // 37: content.service.v1.ContentModelService.GetModelByPost:input_type -> content.service.v1.GetModelByPostRequest
+	17, // 38: content.service.v1.ContentModelService.ResolveContentReferences:input_type -> content.service.v1.ResolveContentReferencesRequest
+	30, // 39: content.service.v1.ContentModelService.ListComponentDefinitions:input_type -> pagination.PagingRequest
+	22, // 40: content.service.v1.ContentModelService.GetComponentDefinition:input_type -> content.service.v1.GetComponentDefinitionRequest
+	23, // 41: content.service.v1.ContentModelService.CreateComponentDefinition:input_type -> content.service.v1.CreateComponentDefinitionRequest
+	24, // 42: content.service.v1.ContentModelService.UpdateComponentDefinition:input_type -> content.service.v1.UpdateComponentDefinitionRequest
+	25, // 43: content.service.v1.ContentModelService.DeleteComponentDefinition:input_type -> content.service.v1.DeleteComponentDefinitionRequest
+	26, // 44: content.service.v1.ContentModelService.SaveComponentFieldDefinitions:input_type -> content.service.v1.SaveComponentFieldDefinitionsRequest
+	9,  // 45: content.service.v1.ContentModelService.List:output_type -> content.service.v1.ListContentModelResponse
+	10, // 46: content.service.v1.ContentModelService.Count:output_type -> content.service.v1.CountContentModelResponse
+	1,  // 47: content.service.v1.ContentModelService.Get:output_type -> content.service.v1.ContentModel
+	1,  // 48: content.service.v1.ContentModelService.Create:output_type -> content.service.v1.ContentModel
+	1,  // 49: content.service.v1.ContentModelService.Update:output_type -> content.service.v1.ContentModel
+	31, // 50: content.service.v1.ContentModelService.Delete:output_type -> google.protobuf.Empty
+	16, // 51: content.service.v1.ContentModelService.ListFieldDefinitions:output_type -> content.service.v1.ListFieldDefinitionsResponse
+	1,  // 52: content.service.v1.ContentModelService.GetModelByPost:output_type -> content.service.v1.ContentModel
+	19, // 53: content.service.v1.ContentModelService.ResolveContentReferences:output_type -> content.service.v1.ResolveContentReferencesResponse
+	21, // 54: content.service.v1.ContentModelService.ListComponentDefinitions:output_type -> content.service.v1.ListComponentDefinitionsResponse
+	20, // 55: content.service.v1.ContentModelService.GetComponentDefinition:output_type -> content.service.v1.ComponentDefinition
+	20, // 56: content.service.v1.ContentModelService.CreateComponentDefinition:output_type -> content.service.v1.ComponentDefinition
+	20, // 57: content.service.v1.ContentModelService.UpdateComponentDefinition:output_type -> content.service.v1.ComponentDefinition
+	31, // 58: content.service.v1.ContentModelService.DeleteComponentDefinition:output_type -> google.protobuf.Empty
+	16, // 59: content.service.v1.ContentModelService.SaveComponentFieldDefinitions:output_type -> content.service.v1.ListFieldDefinitionsResponse
+	45, // [45:60] is the sub-list for method output_type
+	30, // [30:45] is the sub-list for method input_type
+	30, // [30:30] is the sub-list for extension type_name
+	30, // [30:30] is the sub-list for extension extendee
+	0,  // [0:30] is the sub-list for field type_name
 }
 
 func init() { file_content_service_v1_content_model_proto_init() }
@@ -2183,27 +2258,27 @@ func file_content_service_v1_content_model_proto_init() {
 	file_content_service_v1_content_model_proto_msgTypes[0].OneofWrappers = []any{}
 	file_content_service_v1_content_model_proto_msgTypes[1].OneofWrappers = []any{}
 	file_content_service_v1_content_model_proto_msgTypes[2].OneofWrappers = []any{}
-	file_content_service_v1_content_model_proto_msgTypes[3].OneofWrappers = []any{}
 	file_content_service_v1_content_model_proto_msgTypes[4].OneofWrappers = []any{}
 	file_content_service_v1_content_model_proto_msgTypes[5].OneofWrappers = []any{}
-	file_content_service_v1_content_model_proto_msgTypes[9].OneofWrappers = []any{
+	file_content_service_v1_content_model_proto_msgTypes[6].OneofWrappers = []any{}
+	file_content_service_v1_content_model_proto_msgTypes[10].OneofWrappers = []any{
 		(*GetContentModelRequest_Id)(nil),
 		(*GetContentModelRequest_Code)(nil),
 	}
-	file_content_service_v1_content_model_proto_msgTypes[12].OneofWrappers = []any{
+	file_content_service_v1_content_model_proto_msgTypes[13].OneofWrappers = []any{
 		(*DeleteContentModelRequest_Id)(nil),
 	}
-	file_content_service_v1_content_model_proto_msgTypes[13].OneofWrappers = []any{}
-	file_content_service_v1_content_model_proto_msgTypes[15].OneofWrappers = []any{}
+	file_content_service_v1_content_model_proto_msgTypes[14].OneofWrappers = []any{}
 	file_content_service_v1_content_model_proto_msgTypes[16].OneofWrappers = []any{}
-	file_content_service_v1_content_model_proto_msgTypes[18].OneofWrappers = []any{}
+	file_content_service_v1_content_model_proto_msgTypes[17].OneofWrappers = []any{}
+	file_content_service_v1_content_model_proto_msgTypes[19].OneofWrappers = []any{}
 	type x struct{}
 	out := protoimpl.TypeBuilder{
 		File: protoimpl.DescBuilder{
 			GoPackagePath: reflect.TypeOf(x{}).PkgPath(),
 			RawDescriptor: unsafe.Slice(unsafe.StringData(file_content_service_v1_content_model_proto_rawDesc), len(file_content_service_v1_content_model_proto_rawDesc)),
 			NumEnums:      1,
-			NumMessages:   26,
+			NumMessages:   27,
 			NumExtensions: 0,
 			NumServices:   1,
 		},

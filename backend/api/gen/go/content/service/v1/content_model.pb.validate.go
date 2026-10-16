@@ -91,6 +91,40 @@ func (m *ContentModel) validate(all bool) error {
 
 	}
 
+	for idx, item := range m.GetComponents() {
+		_, _ = idx, item
+
+		if all {
+			switch v := interface{}(item).(type) {
+			case interface{ ValidateAll() error }:
+				if err := v.ValidateAll(); err != nil {
+					errors = append(errors, ContentModelValidationError{
+						field:  fmt.Sprintf("Components[%v]", idx),
+						reason: "embedded message failed validation",
+						cause:  err,
+					})
+				}
+			case interface{ Validate() error }:
+				if err := v.Validate(); err != nil {
+					errors = append(errors, ContentModelValidationError{
+						field:  fmt.Sprintf("Components[%v]", idx),
+						reason: "embedded message failed validation",
+						cause:  err,
+					})
+				}
+			}
+		} else if v, ok := interface{}(item).(interface{ Validate() error }); ok {
+			if err := v.Validate(); err != nil {
+				return ContentModelValidationError{
+					field:  fmt.Sprintf("Components[%v]", idx),
+					reason: "embedded message failed validation",
+					cause:  err,
+				}
+			}
+		}
+
+	}
+
 	for idx, item := range m.GetTranslations() {
 		_, _ = idx, item
 
@@ -694,6 +728,171 @@ var _ interface {
 	Cause() error
 	ErrorName() string
 } = RelationConfigValidationError{}
+
+// Validate checks the field values on ContentModelComponent with the rules
+// defined in the proto definition for this message. If any rules are
+// violated, the first error encountered is returned, or nil if there are no violations.
+func (m *ContentModelComponent) Validate() error {
+	return m.validate(false)
+}
+
+// ValidateAll checks the field values on ContentModelComponent with the rules
+// defined in the proto definition for this message. If any rules are
+// violated, the result is a list of violation errors wrapped in
+// ContentModelComponentMultiError, or nil if none found.
+func (m *ContentModelComponent) ValidateAll() error {
+	return m.validate(true)
+}
+
+func (m *ContentModelComponent) validate(all bool) error {
+	if m == nil {
+		return nil
+	}
+
+	var errors []error
+
+	if all {
+		switch v := interface{}(m.GetDefinition()).(type) {
+		case interface{ ValidateAll() error }:
+			if err := v.ValidateAll(); err != nil {
+				errors = append(errors, ContentModelComponentValidationError{
+					field:  "Definition",
+					reason: "embedded message failed validation",
+					cause:  err,
+				})
+			}
+		case interface{ Validate() error }:
+			if err := v.Validate(); err != nil {
+				errors = append(errors, ContentModelComponentValidationError{
+					field:  "Definition",
+					reason: "embedded message failed validation",
+					cause:  err,
+				})
+			}
+		}
+	} else if v, ok := interface{}(m.GetDefinition()).(interface{ Validate() error }); ok {
+		if err := v.Validate(); err != nil {
+			return ContentModelComponentValidationError{
+				field:  "Definition",
+				reason: "embedded message failed validation",
+				cause:  err,
+			}
+		}
+	}
+
+	for idx, item := range m.GetFields() {
+		_, _ = idx, item
+
+		if all {
+			switch v := interface{}(item).(type) {
+			case interface{ ValidateAll() error }:
+				if err := v.ValidateAll(); err != nil {
+					errors = append(errors, ContentModelComponentValidationError{
+						field:  fmt.Sprintf("Fields[%v]", idx),
+						reason: "embedded message failed validation",
+						cause:  err,
+					})
+				}
+			case interface{ Validate() error }:
+				if err := v.Validate(); err != nil {
+					errors = append(errors, ContentModelComponentValidationError{
+						field:  fmt.Sprintf("Fields[%v]", idx),
+						reason: "embedded message failed validation",
+						cause:  err,
+					})
+				}
+			}
+		} else if v, ok := interface{}(item).(interface{ Validate() error }); ok {
+			if err := v.Validate(); err != nil {
+				return ContentModelComponentValidationError{
+					field:  fmt.Sprintf("Fields[%v]", idx),
+					reason: "embedded message failed validation",
+					cause:  err,
+				}
+			}
+		}
+
+	}
+
+	if len(errors) > 0 {
+		return ContentModelComponentMultiError(errors)
+	}
+
+	return nil
+}
+
+// ContentModelComponentMultiError is an error wrapping multiple validation
+// errors returned by ContentModelComponent.ValidateAll() if the designated
+// constraints aren't met.
+type ContentModelComponentMultiError []error
+
+// Error returns a concatenation of all the error messages it wraps.
+func (m ContentModelComponentMultiError) Error() string {
+	msgs := make([]string, 0, len(m))
+	for _, err := range m {
+		msgs = append(msgs, err.Error())
+	}
+	return strings.Join(msgs, "; ")
+}
+
+// AllErrors returns a list of validation violation errors.
+func (m ContentModelComponentMultiError) AllErrors() []error { return m }
+
+// ContentModelComponentValidationError is the validation error returned by
+// ContentModelComponent.Validate if the designated constraints aren't met.
+type ContentModelComponentValidationError struct {
+	field  string
+	reason string
+	cause  error
+	key    bool
+}
+
+// Field function returns field value.
+func (e ContentModelComponentValidationError) Field() string { return e.field }
+
+// Reason function returns reason value.
+func (e ContentModelComponentValidationError) Reason() string { return e.reason }
+
+// Cause function returns cause value.
+func (e ContentModelComponentValidationError) Cause() error { return e.cause }
+
+// Key function returns key value.
+func (e ContentModelComponentValidationError) Key() bool { return e.key }
+
+// ErrorName returns error name.
+func (e ContentModelComponentValidationError) ErrorName() string {
+	return "ContentModelComponentValidationError"
+}
+
+// Error satisfies the builtin error interface
+func (e ContentModelComponentValidationError) Error() string {
+	cause := ""
+	if e.cause != nil {
+		cause = fmt.Sprintf(" | caused by: %v", e.cause)
+	}
+
+	key := ""
+	if e.key {
+		key = "key for "
+	}
+
+	return fmt.Sprintf(
+		"invalid %sContentModelComponent.%s: %s%s",
+		key,
+		e.field,
+		e.reason,
+		cause)
+}
+
+var _ error = ContentModelComponentValidationError{}
+
+var _ interface {
+	Field() string
+	Reason() string
+	Key() bool
+	Cause() error
+	ErrorName() string
+} = ContentModelComponentValidationError{}
 
 // Validate checks the field values on ComponentConfig with the rules defined
 // in the proto definition for this message. If any rules are violated, the

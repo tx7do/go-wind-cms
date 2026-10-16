@@ -3800,6 +3800,9 @@ export type contentservicev1_ContentModel = {
   //
   // Behaviors: OPTIONAL
   code?: string;
+  // 组件定义集（只读，服务端按 fields 里 COMPONENT/DYNAMIC_ZONE 引用解析填充；
+  // C 端渲染组件值所需的最小 schema 面）
+  components: contentservicev1_ContentModelComponent[] | undefined;
   createdAt?: wellKnownTimestamp;
   createdBy?: number;
   description?: string;
@@ -3812,6 +3815,12 @@ export type contentservicev1_ContentModel = {
   translations: contentservicev1_ContentModelTranslation[] | undefined;
   updatedAt?: wellKnownTimestamp;
   updatedBy?: number;
+};
+
+// 组件定义 + 字段（C 端渲染组件值用最小面）
+export type contentservicev1_ContentModelComponent = {
+  definition: contentservicev1_ComponentDefinition | undefined;
+  fields: contentservicev1_FieldDefinition[] | undefined;
 };
 
 // 内容模型翻译

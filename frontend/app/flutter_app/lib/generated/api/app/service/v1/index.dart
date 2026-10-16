@@ -13713,6 +13713,9 @@ class ContentServiceV1ContentModel {
   ///
   /// Behaviors: OPTIONAL
   String? code;
+  /// 组件定义集（只读，服务端按 fields 里 COMPONENT/DYNAMIC_ZONE 引用解析填充；
+  /// C 端渲染组件值所需的最小 schema 面）
+  List<ContentServiceV1ContentModelComponent>? components;
   String? createdAt;
   int? createdBy;
   String? description;
@@ -13728,6 +13731,7 @@ class ContentServiceV1ContentModel {
 
   ContentServiceV1ContentModel({
     this.code,
+    this.components,
     this.createdAt,
     this.createdBy,
     this.description,
@@ -13744,6 +13748,7 @@ class ContentServiceV1ContentModel {
   factory ContentServiceV1ContentModel.fromJson(Map<String, dynamic> json) {
     return ContentServiceV1ContentModel(
       code: json['code'] as String?,
+      components: (json['components'] as List<dynamic>?)?.map((e) => ContentServiceV1ContentModelComponent.fromJson(e as Map<String, dynamic>)).toList(),
       createdAt: json['createdAt'] as String?,
       createdBy: json['createdBy'] as int?,
       description: json['description'] as String?,
@@ -13761,6 +13766,7 @@ class ContentServiceV1ContentModel {
   Map<String, dynamic> toJson() {
     final json = <String, dynamic>{};
     if (code != null) json['code'] = code;
+    if (components != null) json['components'] = components!.map((e) => e.toJson()).toList();
     if (createdAt != null) json['createdAt'] = createdAt;
     if (createdBy != null) json['createdBy'] = createdBy;
     if (description != null) json['description'] = description;
@@ -13777,7 +13783,7 @@ class ContentServiceV1ContentModel {
 
   @override
   String toString() {
-    return 'ContentServiceV1ContentModel(code: $code, createdAt: $createdAt, createdBy: $createdBy, description: $description, fields: $fields, id: $id, name: $name, sortOrder: $sortOrder, tenantId: $tenantId, translations: $translations, updatedAt: $updatedAt, updatedBy: $updatedBy)';
+    return 'ContentServiceV1ContentModel(code: $code, components: $components, createdAt: $createdAt, createdBy: $createdBy, description: $description, fields: $fields, id: $id, name: $name, sortOrder: $sortOrder, tenantId: $tenantId, translations: $translations, updatedAt: $updatedAt, updatedBy: $updatedBy)';
   }
 
   @override
@@ -13786,6 +13792,7 @@ class ContentServiceV1ContentModel {
     other is ContentServiceV1ContentModel &&
       runtimeType == other.runtimeType
       && code == other.code
+      && components == other.components
       && createdAt == other.createdAt
       && createdBy == other.createdBy
       && description == other.description
@@ -13802,6 +13809,7 @@ class ContentServiceV1ContentModel {
   @override
   int get hashCode => Object.hashAll([
     code,
+    components,
     createdAt,
     createdBy,
     description,
@@ -13817,6 +13825,7 @@ class ContentServiceV1ContentModel {
 
   ContentServiceV1ContentModel copyWith({
     String? code,
+    List<ContentServiceV1ContentModelComponent>? components,
     String? createdAt,
     int? createdBy,
     String? description,
@@ -13831,6 +13840,7 @@ class ContentServiceV1ContentModel {
   }) {
     return ContentServiceV1ContentModel(
       code: code ?? this.code,
+      components: components ?? this.components,
       createdAt: createdAt ?? this.createdAt,
       createdBy: createdBy ?? this.createdBy,
       description: description ?? this.description,
@@ -13887,6 +13897,11 @@ class ContentServiceV1ContentModel {
     final f11 = translations;
     if (f11 != null) {
       for (final e in f11!) { final cw = ProtoWireWriter(); e._writeTo(cw); w.writeRaw(11, cw.toBuffer()); }
+    }
+    // field 16: components
+    final f16 = components;
+    if (f16 != null) {
+      for (final e in f16!) { final cw = ProtoWireWriter(); e._writeTo(cw); w.writeRaw(16, cw.toBuffer()); }
     }
     // field 40: tenantId
     final f40 = tenantId;
@@ -13956,6 +13971,11 @@ class ContentServiceV1ContentModel {
         // field 11: translations
         case 11: {
           m.translations = r.readNestedList().map(ContentServiceV1ContentModelTranslation._readFrom).toList();
+          break;
+        }
+        // field 16: components
+        case 16: {
+          m.components = r.readNestedList().map(ContentServiceV1ContentModelComponent._readFrom).toList();
           break;
         }
         // field 40: tenantId
@@ -14850,6 +14870,300 @@ class ContentServiceV1FieldDefinitionTranslation {
         // field 200: createdAt
         case 200: {
           m.createdAt = r.readTimestampIso();
+          break;
+        }
+        default: {
+          r.skip();
+        }
+      }
+    }
+    return m;
+  }
+
+}
+
+/// 组件定义 + 字段（C 端渲染组件值用最小面）
+class ContentServiceV1ContentModelComponent {
+  ContentServiceV1ComponentDefinition? definition;
+  List<ContentServiceV1FieldDefinition>? fields;
+
+  ContentServiceV1ContentModelComponent({
+    this.definition,
+    this.fields,
+  });
+
+  factory ContentServiceV1ContentModelComponent.fromJson(Map<String, dynamic> json) {
+    return ContentServiceV1ContentModelComponent(
+      definition: json['definition'] != null ? ContentServiceV1ComponentDefinition.fromJson(json['definition'] as Map<String, dynamic>) : null,
+      fields: (json['fields'] as List<dynamic>?)?.map((e) => ContentServiceV1FieldDefinition.fromJson(e as Map<String, dynamic>)).toList(),
+    );
+  }
+
+  Map<String, dynamic> toJson() {
+    final json = <String, dynamic>{};
+    if (definition != null) json['definition'] = definition!.toJson();
+    if (fields != null) json['fields'] = fields!.map((e) => e.toJson()).toList();
+    return json;
+  }
+
+  @override
+  String toString() {
+    return 'ContentServiceV1ContentModelComponent(definition: $definition, fields: $fields)';
+  }
+
+  @override
+  bool operator ==(Object other) =>
+    identical(this, other) ||
+    other is ContentServiceV1ContentModelComponent &&
+      runtimeType == other.runtimeType
+      && definition == other.definition
+      && fields == other.fields
+    ;
+
+  @override
+  int get hashCode => Object.hashAll([
+    definition,
+    fields,
+  ]);
+
+  ContentServiceV1ContentModelComponent copyWith({
+    ContentServiceV1ComponentDefinition? definition,
+    List<ContentServiceV1FieldDefinition>? fields,
+  }) {
+    return ContentServiceV1ContentModelComponent(
+      definition: definition ?? this.definition,
+      fields: fields ?? this.fields,
+    );
+  }
+
+  /// 二进制 proto 编码（MQTT 等二进制传输用；字段按编号升序写出）
+  Uint8List writeToBuffer() {
+    final w = ProtoWireWriter();
+    _writeTo(w);
+    return w.toBuffer();
+  }
+
+  void _writeTo(ProtoWireWriter w) {
+    // field 1: definition
+    final f1 = definition;
+    if (f1 != null) {
+      final cw = ProtoWireWriter(); f1!._writeTo(cw); w.writeRaw(1, cw.toBuffer()); // ContentServiceV1ComponentDefinition
+    }
+    // field 2: fields
+    final f2 = fields;
+    if (f2 != null) {
+      for (final e in f2!) { final cw = ProtoWireWriter(); e._writeTo(cw); w.writeRaw(2, cw.toBuffer()); }
+    }
+  }
+
+  factory ContentServiceV1ContentModelComponent.fromBuffer(List<int> bytes) {
+    return ContentServiceV1ContentModelComponent._readFrom(ProtoWireReader(bytes));
+  }
+
+  static ContentServiceV1ContentModelComponent _readFrom(ProtoWireReader r) {
+    final m = ContentServiceV1ContentModelComponent();
+    while (r.next()) {
+      switch (r.fieldNumber) {
+        // field 1: definition
+        case 1: {
+          m.definition = ContentServiceV1ComponentDefinition._readFrom(r.readNested());
+          break;
+        }
+        // field 2: fields
+        case 2: {
+          m.fields = r.readNestedList().map(ContentServiceV1FieldDefinition._readFrom).toList();
+          break;
+        }
+        default: {
+          r.skip();
+        }
+      }
+    }
+    return m;
+  }
+
+}
+
+/// 组件定义：具名可复用字段组（字段经 FieldDefinition 面 按 componentId 存取）
+class ContentServiceV1ComponentDefinition {
+  String? code;
+  String? createdAt;
+  String? description;
+  int? fieldCount;
+  int? id;
+  String? name;
+  String? updatedAt;
+
+  ContentServiceV1ComponentDefinition({
+    this.code,
+    this.createdAt,
+    this.description,
+    this.fieldCount,
+    this.id,
+    this.name,
+    this.updatedAt,
+  });
+
+  factory ContentServiceV1ComponentDefinition.fromJson(Map<String, dynamic> json) {
+    return ContentServiceV1ComponentDefinition(
+      code: json['code'] as String?,
+      createdAt: json['createdAt'] as String?,
+      description: json['description'] as String?,
+      fieldCount: json['fieldCount'] as int?,
+      id: json['id'] as int?,
+      name: json['name'] as String?,
+      updatedAt: json['updatedAt'] as String?,
+    );
+  }
+
+  Map<String, dynamic> toJson() {
+    final json = <String, dynamic>{};
+    if (code != null) json['code'] = code;
+    if (createdAt != null) json['createdAt'] = createdAt;
+    if (description != null) json['description'] = description;
+    if (fieldCount != null) json['fieldCount'] = fieldCount;
+    if (id != null) json['id'] = id;
+    if (name != null) json['name'] = name;
+    if (updatedAt != null) json['updatedAt'] = updatedAt;
+    return json;
+  }
+
+  @override
+  String toString() {
+    return 'ContentServiceV1ComponentDefinition(code: $code, createdAt: $createdAt, description: $description, fieldCount: $fieldCount, id: $id, name: $name, updatedAt: $updatedAt)';
+  }
+
+  @override
+  bool operator ==(Object other) =>
+    identical(this, other) ||
+    other is ContentServiceV1ComponentDefinition &&
+      runtimeType == other.runtimeType
+      && code == other.code
+      && createdAt == other.createdAt
+      && description == other.description
+      && fieldCount == other.fieldCount
+      && id == other.id
+      && name == other.name
+      && updatedAt == other.updatedAt
+    ;
+
+  @override
+  int get hashCode => Object.hashAll([
+    code,
+    createdAt,
+    description,
+    fieldCount,
+    id,
+    name,
+    updatedAt,
+  ]);
+
+  ContentServiceV1ComponentDefinition copyWith({
+    String? code,
+    String? createdAt,
+    String? description,
+    int? fieldCount,
+    int? id,
+    String? name,
+    String? updatedAt,
+  }) {
+    return ContentServiceV1ComponentDefinition(
+      code: code ?? this.code,
+      createdAt: createdAt ?? this.createdAt,
+      description: description ?? this.description,
+      fieldCount: fieldCount ?? this.fieldCount,
+      id: id ?? this.id,
+      name: name ?? this.name,
+      updatedAt: updatedAt ?? this.updatedAt,
+    );
+  }
+
+  /// 二进制 proto 编码（MQTT 等二进制传输用；字段按编号升序写出）
+  Uint8List writeToBuffer() {
+    final w = ProtoWireWriter();
+    _writeTo(w);
+    return w.toBuffer();
+  }
+
+  void _writeTo(ProtoWireWriter w) {
+    // field 1: id
+    final f1 = id;
+    if (f1 != null) {
+      w.writeUint32(1, f1!);
+    }
+    // field 2: code
+    final f2 = code;
+    if (f2 != null) {
+      w.writeString(2, f2!);
+    }
+    // field 3: name
+    final f3 = name;
+    if (f3 != null) {
+      w.writeString(3, f3!);
+    }
+    // field 4: description
+    final f4 = description;
+    if (f4 != null) {
+      w.writeString(4, f4!);
+    }
+    // field 5: fieldCount
+    final f5 = fieldCount;
+    if (f5 != null) {
+      w.writeUint32(5, f5!);
+    }
+    // field 200: createdAt
+    final f200 = createdAt;
+    if (f200 != null) {
+      w.writeTimestamp(200, f200!);
+    }
+    // field 201: updatedAt
+    final f201 = updatedAt;
+    if (f201 != null) {
+      w.writeTimestamp(201, f201!);
+    }
+  }
+
+  factory ContentServiceV1ComponentDefinition.fromBuffer(List<int> bytes) {
+    return ContentServiceV1ComponentDefinition._readFrom(ProtoWireReader(bytes));
+  }
+
+  static ContentServiceV1ComponentDefinition _readFrom(ProtoWireReader r) {
+    final m = ContentServiceV1ComponentDefinition();
+    while (r.next()) {
+      switch (r.fieldNumber) {
+        // field 1: id
+        case 1: {
+          m.id = r.readUint32();
+          break;
+        }
+        // field 2: code
+        case 2: {
+          m.code = r.readString();
+          break;
+        }
+        // field 3: name
+        case 3: {
+          m.name = r.readString();
+          break;
+        }
+        // field 4: description
+        case 4: {
+          m.description = r.readString();
+          break;
+        }
+        // field 5: fieldCount
+        case 5: {
+          m.fieldCount = r.readUint32();
+          break;
+        }
+        // field 200: createdAt
+        case 200: {
+          m.createdAt = r.readTimestampIso();
+          break;
+        }
+        // field 201: updatedAt
+        case 201: {
+          m.updatedAt = r.readTimestampIso();
           break;
         }
         default: {

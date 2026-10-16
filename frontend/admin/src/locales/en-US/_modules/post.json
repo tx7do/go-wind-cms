@@ -116,5 +116,6 @@
     "reasonPlaceholder": "Reason (notifies the author, optional)"
   },
   "statusInReview": "In Review",
-  "editLockHeld": "{{name}} is editing this content ({{since}}). Concurrent saves may overwrite each other"
+  "editLockHeld": "{{name}} is editing this content ({{since}}). Concurrent saves may overwrite each other",
+  "customFieldsGroup": "Custom Fields"
 }
