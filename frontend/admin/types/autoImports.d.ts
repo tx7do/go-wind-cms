@@ -140,6 +140,7 @@ declare global {
   const useAutoTableHeight: typeof import('../src/hooks/useTableScrollHeight').useAutoTableHeight
   const useCallback: typeof import('react').useCallback
   const useClipboard: typeof import('../src/hooks/useClipboard').useClipboard
+  const useCollaboration: typeof import('../src/hooks/useCollaboration').useCollaboration
   const useCommonStore: typeof import('../src/hooks/useCommonStore').useCommonStore
   const useContext: typeof import('react').useContext
   const useDebugValue: typeof import('react').useDebugValue
@@ -192,6 +193,6 @@ declare global {
 // for type re-export
 declare global {
   // @ts-ignore
-  export type { VersionHistoryDrawerProps, DiffLineType, DiffLine, TableExportServerExport, TableSkeletonProps, TableExportButtonProps, ImportModalProps, FC, ECOption, AuthLayoutProps, EditorProps, CodeEditorProps, JsonEditorProps, MarkdownEditorProps, PlainTextEditorProps, TiptapEditorProps, CodeBlockModalProps, VideoModalProps, IframeModalProps, ThemeLoadingProps, TokenPayload, AuthState, UserState, TabItem } from './autoImports.d'
+  export type { CollaborationOptions, VersionHistoryDrawerProps, DiffLineType, DiffLine, TableExportServerExport, TableSkeletonProps, TableExportButtonProps, ImportModalProps, FC, ECOption, AuthLayoutProps, EditorProps, CodeEditorProps, JsonEditorProps, MarkdownEditorProps, PlainTextEditorProps, TiptapEditorProps, CodeBlockModalProps, VideoModalProps, IframeModalProps, ThemeLoadingProps, TokenPayload, AuthState, UserState, TabItem } from './autoImports.d'
   import('./autoImports.d')
 }

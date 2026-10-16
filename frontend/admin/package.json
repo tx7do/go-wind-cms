@@ -19,6 +19,8 @@
     "@tanstack/react-query": "^5.100.11",
     "@tiptap/core": "^3.23.6",
     "@tiptap/extension-code-block-lowlight": "^3.23.6",
+    "@tiptap/extension-collaboration": "3.23.6",
+    "@tiptap/extension-collaboration-caret": "3.23.6",
     "@tiptap/extension-color": "^3.23.6",
     "@tiptap/extension-heading": "^3.23.6",
     "@tiptap/extension-highlight": "^3.23.6",
@@ -68,6 +70,9 @@
     "react-markdown": "^10.1.0",
     "react-router-dom": "^6.26.0",
     "remark-gfm": "^4.0.1",
+    "y-indexeddb": "^9.0.12",
+    "y-websocket": "^3.1.0",
+    "yjs": "^13.6.33",
     "zustand": "^5.0.13"
   },
   "devDependencies": {

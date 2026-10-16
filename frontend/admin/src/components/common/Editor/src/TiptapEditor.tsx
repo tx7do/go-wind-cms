@@ -17,8 +17,13 @@ import { TextStyle } from '@tiptap/extension-text-style';
 import Underline from '@tiptap/extension-underline';
 import StarterKit from '@tiptap/starter-kit';
 import { EditorContent, useEditor } from '@tiptap/react';
+import Collaboration from '@tiptap/extension-collaboration';
+import CollaborationCaret from '@tiptap/extension-collaboration-caret';
 import { all, createLowlight } from 'lowlight';
-import { useCallback, useEffect, useMemo } from 'react';
+import { useCallback, useEffect, useMemo, useRef } from 'react';
+import { WebsocketProvider } from 'y-websocket';
+import { IndexeddbPersistence } from 'y-indexeddb';
+import * as Y from 'yjs';
 
 import {
   CustomCodeBlockLowlight,
@@ -35,6 +40,42 @@ import {
 
 import './tiptap-editor.css';
 
+// 房间级协同资源缓存（模块级）：React StrictMode 模拟重挂载会复用 useMemo 值，
+// 若在 cleanup 里 destroy，第二个挂载拿到的是已销毁的 provider/ydoc——
+// 因此 bundle 只创建不销毁（随页面生命周期结束），房间数有限内存可控。
+const collabBundleCache = new Map<
+  string,
+  { ydoc: Y.Doc; provider: WebsocketProvider; indexeddb: IndexeddbPersistence }
+>();
+
+function getCollabBundle(opts: NonNullable<CollaborationOptions>) {
+  let bundle = collabBundleCache.get(opts.room);
+  if (!bundle) {
+    const ydoc = new Y.Doc();
+    const provider = new WebsocketProvider(opts.wsUrl, opts.room, ydoc, {
+      params: { token: opts.token },
+    });
+    // 本地持久化：离线草稿 + 服务重启后房间重建的种子来源
+    const indexeddb = new IndexeddbPersistence(`gwc-collab:${opts.room}`, ydoc);
+    bundle = { ydoc, provider, indexeddb };
+    collabBundleCache.set(opts.room, bundle);
+  }
+  return bundle;
+}
+
+export interface CollaborationOptions {
+  /** 协同房间名（如 post:12:zh-CN），即 ws URL 路径末段 */
+  room: string;
+  /** ws 服务地址（如 ws://localhost:6602） */
+  wsUrl: string;
+  /** 准入 token（query 参数传给服务端） */
+  token: string;
+  /** 协作者显示名（光标标签） */
+  userName: string;
+  /** 协作者光标颜色 */
+  userColor: string;
+}
+
 export interface TiptapEditorProps {
   value: string;
   height?: number | string;
@@ -47,6 +88,8 @@ export interface TiptapEditorProps {
   fullHeight?: boolean;
   onChange?: (value: string) => void;
   onReady?: (editor: any) => void;
+  /** 传入即启用实时协同：多编辑者无冲突合并 + 在线光标；保存仍走页面显式保存 */
+  collaboration?: CollaborationOptions | null;
 }
 
 const lowlight = createLowlight(all);
@@ -61,6 +104,7 @@ const TiptapEditor: React.FC<TiptapEditorProps> = ({
   uploadImage,
   onChange,
   onReady,
+  collaboration,
 }) => {
   const {
     isDark,
@@ -108,14 +152,25 @@ const TiptapEditor: React.FC<TiptapEditorProps> = ({
     setupDarkModeTracking,
   } = useTiptapEditor({ value, disabled, placeholder, uploadImage, onChange, onReady });
 
-  const editor = useEditor({
-    ...editorConfig,
-    extensions: [
+  // 协同资源：ydoc/provider 按 room 生命周期创建；room 变化（换语言）即整体重建
+  const collabRoom = collaboration?.room;
+  const yjsBundle = useMemo(() => {
+    if (!collaboration) return null;
+    return getCollabBundle(collaboration);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [collabRoom]);
+
+  const editor = useEditor(
+    {
+      ...editorConfig,
+      extensions: [
       StarterKit.configure({
         link: false,
         underline: false,
         horizontalRule: false,
         codeBlock: false,
+        // Collaboration 自带历史（yjs undo），与内置 undoRedo 互斥
+        undoRedo: yjsBundle ? false : undefined,
       }),
       Underline,
       Subscript,
@@ -137,15 +192,52 @@ const TiptapEditor: React.FC<TiptapEditorProps> = ({
       CustomVideo,
       CustomIframe,
       TextAlign.configure({ types: ['heading', 'paragraph'] }),
-    ],
-  });
+        ...(yjsBundle
+          ? [
+              Collaboration.configure({ document: yjsBundle.ydoc }),
+              CollaborationCaret.configure({
+                provider: yjsBundle.provider,
+                user: { name: collaboration?.userName ?? '匿名', color: collaboration?.userColor ?? '#30b8db' },
+              }),
+            ]
+          : []),
+      ],
+    },
+    [yjsBundle],
+  );
 
-  // Sync external value
+  // Sync external value（协同模式下 value 只作种子，外部回写会与 ydoc 打架）
   useEffect(() => {
-    if (editor) {
+    if (editor && !yjsBundle) {
       syncValue(editor, value);
     }
-  }, [value, editor, syncValue]);
+  }, [value, editor, syncValue, yjsBundle]);
+
+  // 首次同步后种子化：房间为空（新文档/服务重启）时以当前 HTML 灌入
+  const seededRef = useRef(false);
+  useEffect(() => {
+    if (!yjsBundle || !editor) return undefined;
+    seededRef.current = false;
+    const seed = () => {
+      if (seededRef.current) return;
+      try {
+        const frag = yjsBundle.ydoc.getXmlFragment('default');
+        // 只有真的灌入才消耗一次性标志：value 异步晚到时（先 synced 后内容）
+        // 允许在后续 sync/value 变更时重试
+        if (frag.length === 0 && value) {
+          seededRef.current = true;
+          editor.commands.setContent(value, { emitUpdate: false });
+        }
+      } catch (error) {
+        console.error('Seed collab document failed:', error);
+      }
+    };
+    if (yjsBundle.provider.synced) seed();
+    yjsBundle.provider.on('sync', seed);
+    return () => {
+      yjsBundle.provider.off('sync', seed);
+    };
+  }, [yjsBundle, editor, value]);
 
   // Disabled changes
   useEffect(() => {

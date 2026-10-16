@@ -282,7 +282,10 @@ func initApp(ctx *bootstrap.Context) (*kratos.App, func(), error) {
 
 	sseServer := server.NewSseServer(ctx, internalMessageService, aiChatService)
 
-	servers := []kratosTransport.Server{httpServer, grpcServer, sseServer}
+	// 协同编辑 ws（COLLAB_ADDR，默认 :6602；off 停用）
+	collabServer := server.NewCollabServer(ctx, authenticationServiceClient)
+
+	servers := []kratosTransport.Server{httpServer, grpcServer, sseServer, collabServer}
 	// MCP 服务器（可选）：MCP_ADDR 设置时把 CMS 查询/发布能力暴露给 AI 代理
 	if mcpServer := server.NewMcpServer(ctx, postService, socialService); mcpServer != nil {
 		servers = append(servers, mcpServer)

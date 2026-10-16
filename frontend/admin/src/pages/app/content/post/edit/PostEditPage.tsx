@@ -17,6 +17,7 @@ import { apiClient } from '@/api/client';
 import { PaginationQuery } from '@/core';
 import ContentContainer from '@/layouts/components/PageContainer/ContentContainer';
 import { useEditLock } from '@/api/hooks/edit-lock';
+import { useCollaboration } from '@/hooks/useCollaboration';
 import { Editor, EditorType } from '@/components/common/Editor';
 import { fetchListLanguages } from '@/api/hooks/language';
 import { fetchFlattenedCategoryOptions } from '@/api/hooks/category';
@@ -89,8 +90,10 @@ const PostEditPage = () => {
   const postId = isCreateMode ? null : Number(id);
   // 编辑锁（协同 v1）：他人持锁时展示提示横幅
   const editLock = useEditLock('post', postId);
+  // 实时协同（仅富文本；房间按语言隔离，创建模式无 id 不启用）
 
   const [lang, setLang] = useState(initLang);
+  const collaboration = useCollaboration('post', postId, lang);
   const [formData, setFormData] = useState<PostEditProps>(() => emptyForm(initLang));
   const [status, setStatus] = useState<string | undefined>(undefined);
   const [languageOptions, setLanguageOptions] = useState<
@@ -672,6 +675,7 @@ ${content}` : content });
               editorType={formData.editorType}
               placeholder={t('contentPlaceholder')}
               uploadImage={handleUploadImage}
+              collaboration={collaboration}
               onChange={(v) => patch({ content: v })}
             />
             </div>

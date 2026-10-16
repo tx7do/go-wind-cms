@@ -11,6 +11,14 @@ export type EditorType = (typeof EditorType)[keyof typeof EditorType];
 
 export interface EditorProps {
   value?: string;
+  /** 实时协同（仅富文本编辑器支持；传入即启用） */
+  collaboration?: {
+    room: string;
+    wsUrl: string;
+    token: string;
+    userName: string;
+    userColor: string;
+  } | null;
   editorType?: EditorType | string;
   height?: number | string;
   disabled?: boolean;

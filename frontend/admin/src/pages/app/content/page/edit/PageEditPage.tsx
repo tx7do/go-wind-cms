@@ -29,6 +29,7 @@ import VersionHistoryDrawer from '@/components/version/VersionHistoryDrawer';
 import { cendBaseUrl, useCreatePagePreviewToken } from '@/api/hooks/preview';
 import ContentContainer from '@/layouts/components/PageContainer/ContentContainer';
 import { useEditLock } from '@/api/hooks/edit-lock';
+import { useCollaboration } from '@/hooks/useCollaboration';
 import { Editor, EditorType } from '@/components/common/Editor';
 import {
   fetchListContentModels,
@@ -121,8 +122,10 @@ const PageEditPage = () => {
   const pageId = isCreateMode ? null : Number(id);
   // 编辑锁（协同 v1）：他人持锁时展示提示横幅
   const editLock = useEditLock('page', pageId);
+  // 实时协同（仅富文本；房间按语言隔离，创建模式无 id 不启用）
 
   const [lang, setLang] = useState(initLang);
+  const collaboration = useCollaboration('page', pageId, lang);
   const [formData, setFormData] = useState<PageEditProps>(() => emptyForm(initLang));
   const [languageOptions, setLanguageOptions] = useState<LanguageOption[]>([]);
   const [versionsOpen, setVersionsOpen] = useState(false);
@@ -858,6 +861,7 @@ const PageEditPage = () => {
               editorType={formData.editorType}
               placeholder={t('contentPlaceholder')}
               uploadImage={handleUploadImage}
+              collaboration={collaboration}
               onChange={(v) => updateForm({ content: v })}
             />
           </div>

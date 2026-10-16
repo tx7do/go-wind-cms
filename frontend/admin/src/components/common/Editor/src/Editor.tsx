@@ -11,6 +11,7 @@ const LazyCodeEditor = lazy(() => import('./CodeEditor'));
 
 const Editor: React.FC<EditorProps> = ({
   value,
+  collaboration,
   editorType = EditorType.MARKDOWN,
   height = '100%',
   disabled = false,
@@ -67,6 +68,7 @@ const Editor: React.FC<EditorProps> = ({
           disabled={disabled}
           placeholder={placeholder}
           uploadImage={uploadImage}
+          collaboration={editorType === EditorType.RICH_TEXT ? collaboration : undefined}
           autoDetectLanguage={codeOptions?.autoDetectLanguage}
           // eslint-disable-next-line @typescript-eslint/no-explicit-any
           options={currentOptions as any}
