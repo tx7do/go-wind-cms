@@ -76,6 +76,10 @@ gow 未覆盖的任务才退回 Makefile（`backend/` 根目录执行）：`make
 - **新 List 接口禁传空 `sorting=[]`**：生成客户端会序列化成空 `sorting=` 参数，kratos 解析 `pagination.Sorting` 报 400（CODEC）。排序走 `orderBy`（JSON 字符串参数）。
 - **AI 内容生成助手**已落地（`api/protos/ai/`）；本地调试可配任意 OpenAI 兼容 mock 替代真实模型，生产在管理页配真实 provider。
 - **Node 版本**：admin dev（vite 8 / rolldown）要求 Node ≥ 20.19，否则报 `styleText` 不存在——系统默认 20.10 太老，须前置 nvm 的 20.20 再 `npm run dev`。
+- **换代码必须重建对应 exe 再重启**：只重启不重建=旧二进制静默服务（ent 新表不建/新 RPC Unimplemented/新字段运行时 nil）。判定：`ls --time-style=full-iso build/x.exe` 对时间线，或 `go version -m build/x.exe`；strings 工具对 Go Windows PE 全零命中，不可作二进制新旧证据。core 的 etcd 租约长跑会静默失效（admin 报 Zero endpoint found）——重启 core 即恢复。
+- **ygo 协同引擎坑**（内嵌于 admin :6602）：Transact 内禁 doc 级读方法（GetXmlFragment 等，会死锁且无日志——引用事务外取好）；同一容器的子节点须逐个独立事务前向插入（同事务 prelim 混排 YText/YXmlElement 重放乱序）；YText 插入无格式文本也须显式空 Attributes（nil/省略会继承相邻格式）；listItem 等内容模型要求块级子节点（裸文本会被 y-tiptap 整树拒绝→编辑器空白）。种子化单测见 collab 包 seed_test.go。
+- **AI 改 Go 代码的 python replace 静默 no-op**：赋值行对齐空格不匹配即不生效且无报错——replace 后必须 grep 验证或带 assert；曾致构造函数漏赋值（编译过、wiring 对、运行时字段全 nil）。
+- **实验转化归因口径**：表单提交 → gwc_vid → (experiment_id, visitor_hash) 定位参与记录标 converted；不做 viewer 租户过滤（hash 服务端派生，与参与记录口径一致）。纯转化型实验（变体无 sections 覆盖）也须先记参与再判断是否替换内容。
 - **本地 exe 部署模式**（backend/build/{core,admin,app}.exe --conf ...）有守护进程在进程死后数秒内用同路径 exe 重启：换代码必须按「kill → build → start」顺序，或构建后再 kill（守护会用旧镜像拉起并占住端口，新进程静默退出）。服务日志若重定向到 build/*.log 可直接读。
 - **`go test ./...` 偶发** `fork/exec %TEMP%\go-build...\x.test.exe: Access is denied.`（Windows 对刚链接好的测试二进制执行被拦，疑似杀软实时扫描）：属环境问题、**不是代码失败**。复验办法是绕开 Temp——`go test -c -o <工作区内路径>/x.test.exe ./pkg/x` 后直接跑该 exe；判成"测试挂了"之前先这样确认一次。
 
