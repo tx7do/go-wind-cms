@@ -2,6 +2,7 @@ package service
 
 import (
 	"context"
+	"encoding/json"
 	"path"
 	"regexp"
 	"strings"
@@ -60,53 +61,125 @@ func (s *ReferenceTrackingService) SyncPostReferences(ctx context.Context, postI
 	})
 }
 
-// SyncPageReferences 抽取页面的媒体引用。
-// 页面正文在 sections JSON 中（形状随区块类型变化，v1 不解析）；此处仅覆盖
-// 各语言封面图 coverImage（field=cover）。sections 内嵌图为后续扩展。
-func (s *ReferenceTrackingService) SyncPageReferences(ctx context.Context, pageID uint32, translations []*contentV1.PageTranslation) {
+// SyncPageReferences 抽取页面的媒体引用：各语言封面图 coverImage（field=cover）
+// 与 sections 内容值中的图片（field=section）。
+// section 内容值形状随区块类型而异（直接 URL / HTML / Markdown / JSON 图列表），
+// 统一走通用值提取，不感知区块类型。
+func (s *ReferenceTrackingService) SyncPageReferences(ctx context.Context, pageID uint32, translations []*contentV1.PageTranslation, sections []*contentV1.Section) {
 	covers := make([]string, 0, len(translations))
 	for _, tr := range translations {
 		if tr != nil && tr.GetCoverImage() != "" {
 			covers = append(covers, tr.GetCoverImage())
 		}
 	}
-	s.syncCovers(ctx, "page", pageID, "cover", covers)
-}
-
-// syncCovers 仅按一组封面类 URL 同步引用（无正文抽取）。
-func (s *ReferenceTrackingService) syncCovers(ctx context.Context, sourceType string, sourceID uint32, field string, urls []string) {
-	if len(urls) == 0 {
+	sectionURLs := extractSectionContentURLs(sections)
+	if len(covers) == 0 && len(sectionURLs) == 0 {
+		s.syncWithTargets(ctx, "page", pageID, nil)
 		return
 	}
-	paths := make([]string, 0, len(urls))
-	for _, u := range urls {
+
+	candidates := make([]string, 0, len(covers)+len(sectionURLs))
+	candidates = append(candidates, covers...)
+	candidates = append(candidates, sectionURLs...)
+	paths := make([]string, 0, len(candidates))
+	for _, u := range candidates {
 		if p := normalizeMediaPath(u); p != "" {
 			paths = append(paths, p)
 		}
 	}
-	pathByID, urlByID, err := s.mediaAssetRepo.FindByPathCandidates(ctx, paths, urls)
+	pathByID, urlByID, err := s.mediaAssetRepo.FindByPathCandidates(ctx, paths, candidates)
 	if err != nil {
-		s.log.Errorf("resolve cover refs for %s [%d] failed: %s", sourceType, sourceID, err.Error())
+		s.log.Errorf("resolve page refs for page [%d] failed: %s", pageID, err.Error())
 		return
 	}
-	targets := make([]data.RefTarget, 0, len(urls))
-	seen := make(map[string]struct{}, len(urls))
-	for _, u := range urls {
-		if _, dup := seen[u]; dup {
-			continue
+	resolve := func(u string) uint32 {
+		if id := urlByID[u]; id != 0 {
+			return id
 		}
-		seen[u] = struct{}{}
-		id := urlByID[u]
-		if id == 0 {
-			if p := normalizeMediaPath(u); p != "" {
-				id = pathByID[p]
-			}
+		if p := normalizeMediaPath(u); p != "" {
+			return pathByID[p]
 		}
-		if id != 0 {
+		return 0
+	}
+
+	seen := make(map[string]struct{}, len(candidates))
+	targets := make([]data.RefTarget, 0, len(candidates))
+	addRef := func(u, field string) {
+		if _, dup := seen[u+field]; dup {
+			return
+		}
+		seen[u+field] = struct{}{}
+		if id := resolve(u); id != 0 {
 			targets = append(targets, data.RefTarget{TargetType: "media_asset", TargetID: id, Field: field})
 		}
 	}
-	s.syncWithTargets(ctx, sourceType, sourceID, targets)
+	for _, u := range covers {
+		addRef(u, "cover")
+	}
+	for _, u := range sectionURLs {
+		addRef(u, "section")
+	}
+	s.syncWithTargets(ctx, "page", pageID, targets)
+}
+
+// extractSectionContentURLs 遍历区块内容键值对收集候选图片 URL。
+// 三路收集：值本身形似 URL、值内嵌 HTML/Markdown 图片、值为 JSON 数组/对象时
+// 递归取字符串（gallery/carousel 的图列表）。
+func extractSectionContentURLs(sections []*contentV1.Section) []string {
+	seen := make(map[string]struct{})
+	collect := func(str string) {
+		for _, u := range extractImageURLs(str) {
+			seen[u] = struct{}{}
+		}
+		if isURLLike(str) {
+			seen[str] = struct{}{}
+		}
+	}
+	var walk func(v any)
+	walk = func(v any) {
+		switch tv := v.(type) {
+		case string:
+			collect(tv)
+			trimmed := strings.TrimSpace(tv)
+			if strings.HasPrefix(trimmed, "[") || strings.HasPrefix(trimmed, "{") {
+				var decoded any
+				if err := json.Unmarshal([]byte(trimmed), &decoded); err == nil {
+					walk(decoded)
+				}
+			}
+		case []any:
+			for _, item := range tv {
+				walk(item)
+			}
+		case map[string]any:
+			for _, item := range tv {
+				walk(item)
+			}
+		}
+	}
+	for _, sec := range sections {
+		if sec == nil {
+			continue
+		}
+		for _, tr := range sec.GetTranslations() {
+			if tr == nil {
+				continue
+			}
+			for _, v := range tr.GetContent() {
+				walk(v)
+			}
+		}
+	}
+	out := make([]string, 0, len(seen))
+	for u := range seen {
+		out = append(out, u)
+	}
+	return out
+}
+
+// isURLLike 值是否形似媒体 URL（http/https 绝对地址，与上传链路落库的 url 形态一致）。
+func isURLLike(v string) bool {
+	return strings.HasPrefix(v, "http://") || strings.HasPrefix(v, "https://")
 }
 
 // sync 抽取 → URL 解析为资产 ID → 重建引用行 → 回写引用计数。

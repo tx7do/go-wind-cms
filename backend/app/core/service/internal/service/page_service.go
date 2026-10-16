@@ -170,7 +170,7 @@ func (s *PageService) syncPageReferences(ctx context.Context, pageID uint32) {
 		s.log.Errorf("reload page [%d] for reference tracking failed: %v", pageID, err)
 		return
 	}
-	s.referenceTracker.SyncPageReferences(ctx, pageID, page.GetTranslations())
+	s.referenceTracker.SyncPageReferences(ctx, pageID, page.GetTranslations(), page.GetSections())
 }
 
 func (s *PageService) TranslationExists(ctx context.Context, req *contentV1.PageTranslationExistsRequest) (*contentV1.PageTranslationExistsResponse, error) {

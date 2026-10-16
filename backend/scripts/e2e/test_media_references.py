@@ -108,6 +108,43 @@ items = r.get("items") or []
 check("删文章后引用边清除", not any(x.get("sourceId") == post_id for x in items),
       f"items={len(items)}")
 
+# ===== 10. 页面 sections 内嵌图引用（IMAGE 直链值 + RICH_TEXT 内嵌 img）=====
+page = api("/admin/v1/pages", "POST", {"data": {
+    "status": "PUBLISHED",
+    "translations": [{"languageCode": "zh-CN", "title": f"E2E sections {TS}",
+                      "slug": f"e2e-sections-{TS}"}],
+    "sections": [
+        {"type": "SECTION_TYPE_IMAGE",
+         "translations": [{"languageCode": "zh-CN",
+                           "content": {"src": asset_url, "alt": "a"}}]},
+        {"type": "SECTION_TYPE_RICH_TEXT",
+         "translations": [{"languageCode": "zh-CN",
+                           "content": {"html": f'<p><img src="{asset_url}"></p>'}}]},
+    ],
+}})
+page_id = page.get("id")
+check("建页面（含 IMAGE+RICH_TEXT 区块）", bool(page_id), f"id={page_id}")
+
+time.sleep(1)
+r = api(f"/admin/v1/media-assets/{ids[0]}", "GET")
+check("sections 内嵌图 → reference_count>=1", int(r.get("referenceCount") or 0) >= 1,
+      f"referenceCount={r.get('referenceCount')}")
+
+r = api(f"/admin/v1/media-assets/{ids[0]}/references", "GET")
+items = r.get("items") or []
+page_hits = [x for x in items if x.get("sourceType") == "page" and x.get("sourceId") == page_id]
+check("引用关系命中页面", len(page_hits) >= 1, f"pageHits={len(page_hits)}")
+if page_hits:
+    check("引用位置=section", any(x.get("field") == "section" for x in page_hits),
+          f"fields={[x.get('field') for x in page_hits]}")
+
+api(f"/admin/v1/pages/{page_id}", "DELETE")
+time.sleep(1)
+r = api(f"/admin/v1/media-assets/{ids[0]}/references", "GET")
+items = r.get("items") or []
+check("删页面后引用边清除", not any(x.get("sourceId") == page_id and x.get("sourceType") == "page"
+                                 for x in items), f"items={len(items)}")
+
 # 清理重复资产
 for i in ids:
     if i:
