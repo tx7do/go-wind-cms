@@ -34,6 +34,7 @@ import (
 	"go-wind-cms/app/core/service/internal/data/ent/fielddefinition"
 	"go-wind-cms/app/core/service/internal/data/ent/fielddefinitiontranslation"
 	"go-wind-cms/app/core/service/internal/data/ent/file"
+	"go-wind-cms/app/core/service/internal/data/ent/flowrule"
 	"go-wind-cms/app/core/service/internal/data/ent/formsubmission"
 	"go-wind-cms/app/core/service/internal/data/ent/interactioncounter"
 	"go-wind-cms/app/core/service/internal/data/ent/internalmessage"
@@ -1006,6 +1007,84 @@ func init() {
 	fileDescID := fileMixinFields0[0].Descriptor()
 	// file.IDValidator is a validator for the "id" field. It is called by the builders before save.
 	file.IDValidator = fileDescID.Validators[0].(func(uint32) error)
+	flowruleMixin := schema.FlowRule{}.Mixin()
+	flowrule.Policy = privacy.NewPolicies(flowruleMixin[3], schema.FlowRule{})
+	flowrule.Hooks[0] = func(next ent.Mutator) ent.Mutator {
+		return ent.MutateFunc(func(ctx context.Context, m ent.Mutation) (ent.Value, error) {
+			if err := flowrule.Policy.EvalMutation(ctx, m); err != nil {
+				return nil, err
+			}
+			return next.Mutate(ctx, m)
+		})
+	}
+	flowruleMixinFields0 := flowruleMixin[0].Fields()
+	_ = flowruleMixinFields0
+	flowruleMixinFields3 := flowruleMixin[3].Fields()
+	_ = flowruleMixinFields3
+	flowruleFields := schema.FlowRule{}.Fields()
+	_ = flowruleFields
+	// flowruleDescTenantID is the schema descriptor for tenant_id field.
+	flowruleDescTenantID := flowruleMixinFields3[0].Descriptor()
+	// flowrule.DefaultTenantID holds the default value on creation for the tenant_id field.
+	flowrule.DefaultTenantID = flowruleDescTenantID.Default.(uint32)
+	// flowruleDescName is the schema descriptor for name field.
+	flowruleDescName := flowruleFields[0].Descriptor()
+	// flowrule.NameValidator is a validator for the "name" field. It is called by the builders before save.
+	flowrule.NameValidator = func() func(string) error {
+		validators := flowruleDescName.Validators
+		fns := [...]func(string) error{
+			validators[0].(func(string) error),
+			validators[1].(func(string) error),
+		}
+		return func(name string) error {
+			for _, fn := range fns {
+				if err := fn(name); err != nil {
+					return err
+				}
+			}
+			return nil
+		}
+	}()
+	// flowruleDescTriggerEvent is the schema descriptor for trigger_event field.
+	flowruleDescTriggerEvent := flowruleFields[1].Descriptor()
+	// flowrule.TriggerEventValidator is a validator for the "trigger_event" field. It is called by the builders before save.
+	flowrule.TriggerEventValidator = func() func(string) error {
+		validators := flowruleDescTriggerEvent.Validators
+		fns := [...]func(string) error{
+			validators[0].(func(string) error),
+			validators[1].(func(string) error),
+		}
+		return func(trigger_event string) error {
+			for _, fn := range fns {
+				if err := fn(trigger_event); err != nil {
+					return err
+				}
+			}
+			return nil
+		}
+	}()
+	// flowruleDescConditionStatus is the schema descriptor for condition_status field.
+	flowruleDescConditionStatus := flowruleFields[2].Descriptor()
+	// flowrule.ConditionStatusValidator is a validator for the "condition_status" field. It is called by the builders before save.
+	flowrule.ConditionStatusValidator = flowruleDescConditionStatus.Validators[0].(func(string) error)
+	// flowruleDescActions is the schema descriptor for actions field.
+	flowruleDescActions := flowruleFields[3].Descriptor()
+	// flowrule.DefaultActions holds the default value on creation for the actions field.
+	flowrule.DefaultActions = flowruleDescActions.Default.(string)
+	// flowrule.ActionsValidator is a validator for the "actions" field. It is called by the builders before save.
+	flowrule.ActionsValidator = flowruleDescActions.Validators[0].(func(string) error)
+	// flowruleDescEnabled is the schema descriptor for enabled field.
+	flowruleDescEnabled := flowruleFields[4].Descriptor()
+	// flowrule.DefaultEnabled holds the default value on creation for the enabled field.
+	flowrule.DefaultEnabled = flowruleDescEnabled.Default.(bool)
+	// flowruleDescMatchCount is the schema descriptor for match_count field.
+	flowruleDescMatchCount := flowruleFields[5].Descriptor()
+	// flowrule.DefaultMatchCount holds the default value on creation for the match_count field.
+	flowrule.DefaultMatchCount = flowruleDescMatchCount.Default.(uint32)
+	// flowruleDescID is the schema descriptor for id field.
+	flowruleDescID := flowruleMixinFields0[0].Descriptor()
+	// flowrule.IDValidator is a validator for the "id" field. It is called by the builders before save.
+	flowrule.IDValidator = flowruleDescID.Validators[0].(func(uint32) error)
 	formsubmissionMixin := schema.FormSubmission{}.Mixin()
 	formsubmission.Policy = privacy.NewPolicies(formsubmissionMixin[2], schema.FormSubmission{})
 	formsubmission.Hooks[0] = func(next ent.Mutator) ent.Mutator {

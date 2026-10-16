@@ -356,6 +356,18 @@ func (f FileFunc) Mutate(ctx context.Context, m ent.Mutation) (ent.Value, error)
 	return nil, fmt.Errorf("unexpected mutation type %T. expect *ent.FileMutation", m)
 }
 
+// The FlowRuleFunc type is an adapter to allow the use of ordinary
+// function as FlowRule mutator.
+type FlowRuleFunc func(context.Context, *ent.FlowRuleMutation) (ent.Value, error)
+
+// Mutate calls f(ctx, m).
+func (f FlowRuleFunc) Mutate(ctx context.Context, m ent.Mutation) (ent.Value, error) {
+	if mv, ok := m.(*ent.FlowRuleMutation); ok {
+		return f(ctx, mv)
+	}
+	return nil, fmt.Errorf("unexpected mutation type %T. expect *ent.FlowRuleMutation", m)
+}
+
 // The FormSubmissionFunc type is an adapter to allow the use of ordinary
 // function as FormSubmission mutator.
 type FormSubmissionFunc func(context.Context, *ent.FormSubmissionMutation) (ent.Value, error)

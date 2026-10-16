@@ -144,6 +144,7 @@ func initApp(ctx *bootstrap.Context) (*kratos.App, func(), error) {
 	// 社交分发
 	socialServiceClient := data.NewSocialServiceClient(ctx, discovery)
 	webhookServiceClient := data.NewWebhookServiceClient(ctx, discovery)
+	flowRuleServiceClient := data.NewFlowRuleServiceClient(ctx, discovery)
 	formSubmissionServiceClient := data.NewFormSubmissionServiceClient(ctx, discovery)
 	redirectServiceClient := data.NewRedirectServiceClient(ctx, discovery)
 	experimentServiceClient := data.NewExperimentServiceClient(ctx, discovery)
@@ -243,6 +244,7 @@ func initApp(ctx *bootstrap.Context) (*kratos.App, func(), error) {
 	emailTemplateService := service.NewEmailTemplateService(ctx, emailTemplateServiceClient)
 	emailProviderService := service.NewEmailProviderService(ctx, emailProviderServiceClient)
 
+	flowRuleService := service.NewFlowRuleService(ctx, flowRuleServiceClient)
 	// ── register:service ── 新模块服务在此行后注册(make register 工具锚点,勿删)
 
 	// ═══════════════════════ 四、传输层(internal/server) ═══════════════════════
@@ -277,6 +279,7 @@ func initApp(ctx *bootstrap.Context) (*kratos.App, func(), error) {
 		editLockService,
 		emailTemplateService,
 		emailProviderService,
+		flowRuleService,
 		// register:rest-arg ── 新模块服务实参在此行后追加(make register 工具锚点,勿删)
 	)
 

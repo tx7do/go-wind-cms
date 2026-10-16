@@ -174,6 +174,8 @@ func NewRestServer(
 	emailTemplateService *service.EmailTemplateService,
 	emailProviderService *service.EmailProviderService,
 
+	flowRuleService *service.FlowRuleService,
+
 	// register:param ── 新模块服务形参在此行后注册(make register 工具锚点,勿删)
 ) *http.Server {
 	cfg := ctx.GetConfig()
@@ -247,6 +249,8 @@ func NewRestServer(
 	adminV1.RegisterCommentServiceHTTPServer(srv, commentService)
 	adminV1.RegisterSocialServiceHTTPServer(srv, socialService)
 	adminV1.RegisterWebhookServiceHTTPServer(srv, webhookService)
+
+	adminV1.RegisterFlowRuleServiceHTTPServer(srv, flowRuleService)
 	adminV1.RegisterFormSubmissionServiceHTTPServer(srv, formSubmissionService)
 	adminV1.RegisterRedirectServiceHTTPServer(srv, redirectService)
 	adminV1.RegisterExperimentServiceHTTPServer(srv, experimentService)

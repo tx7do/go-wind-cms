@@ -40,6 +40,7 @@ import (
 	"go-wind-cms/app/core/service/internal/data/ent/fielddefinition"
 	"go-wind-cms/app/core/service/internal/data/ent/fielddefinitiontranslation"
 	"go-wind-cms/app/core/service/internal/data/ent/file"
+	"go-wind-cms/app/core/service/internal/data/ent/flowrule"
 	"go-wind-cms/app/core/service/internal/data/ent/formsubmission"
 	"go-wind-cms/app/core/service/internal/data/ent/interactioncounter"
 	"go-wind-cms/app/core/service/internal/data/ent/internalmessage"
@@ -170,6 +171,8 @@ type Client struct {
 	FieldDefinitionTranslation *FieldDefinitionTranslationClient
 	// File is the client for interacting with the File builders.
 	File *FileClient
+	// FlowRule is the client for interacting with the FlowRule builders.
+	FlowRule *FlowRuleClient
 	// FormSubmission is the client for interacting with the FormSubmission builders.
 	FormSubmission *FormSubmissionClient
 	// InteractionCounter is the client for interacting with the InteractionCounter builders.
@@ -330,6 +333,7 @@ func (c *Client) init() {
 	c.FieldDefinition = NewFieldDefinitionClient(c.config)
 	c.FieldDefinitionTranslation = NewFieldDefinitionTranslationClient(c.config)
 	c.File = NewFileClient(c.config)
+	c.FlowRule = NewFlowRuleClient(c.config)
 	c.FormSubmission = NewFormSubmissionClient(c.config)
 	c.InteractionCounter = NewInteractionCounterClient(c.config)
 	c.InternalMessage = NewInternalMessageClient(c.config)
@@ -511,6 +515,7 @@ func (c *Client) Tx(ctx context.Context) (*Tx, error) {
 		FieldDefinition:            NewFieldDefinitionClient(cfg),
 		FieldDefinitionTranslation: NewFieldDefinitionTranslationClient(cfg),
 		File:                       NewFileClient(cfg),
+		FlowRule:                   NewFlowRuleClient(cfg),
 		FormSubmission:             NewFormSubmissionClient(cfg),
 		InteractionCounter:         NewInteractionCounterClient(cfg),
 		InternalMessage:            NewInternalMessageClient(cfg),
@@ -619,6 +624,7 @@ func (c *Client) BeginTx(ctx context.Context, opts *sql.TxOptions) (*Tx, error) 
 		FieldDefinition:            NewFieldDefinitionClient(cfg),
 		FieldDefinitionTranslation: NewFieldDefinitionTranslationClient(cfg),
 		File:                       NewFileClient(cfg),
+		FlowRule:                   NewFlowRuleClient(cfg),
 		FormSubmission:             NewFormSubmissionClient(cfg),
 		InteractionCounter:         NewInteractionCounterClient(cfg),
 		InternalMessage:            NewInternalMessageClient(cfg),
@@ -715,7 +721,7 @@ func (c *Client) Use(hooks ...Hook) {
 		c.DataAccessAuditLog, c.DictEntry, c.DictEntryI18n, c.DictType,
 		c.EmailProvider, c.EmailTemplate, c.Experiment, c.ExperimentParticipant,
 		c.ExperimentVariant, c.FieldDefinition, c.FieldDefinitionTranslation, c.File,
-		c.FormSubmission, c.InteractionCounter, c.InternalMessage,
+		c.FlowRule, c.FormSubmission, c.InteractionCounter, c.InternalMessage,
 		c.InternalMessageCategory, c.InternalMessageRecipient, c.Language,
 		c.LoginAuditLog, c.LoginPolicy, c.MediaAsset, c.MediaVariant, c.Membership,
 		c.MembershipOrgUnit, c.MembershipPosition, c.MembershipRole, c.Menu,
@@ -745,7 +751,7 @@ func (c *Client) Intercept(interceptors ...Interceptor) {
 		c.DataAccessAuditLog, c.DictEntry, c.DictEntryI18n, c.DictType,
 		c.EmailProvider, c.EmailTemplate, c.Experiment, c.ExperimentParticipant,
 		c.ExperimentVariant, c.FieldDefinition, c.FieldDefinitionTranslation, c.File,
-		c.FormSubmission, c.InteractionCounter, c.InternalMessage,
+		c.FlowRule, c.FormSubmission, c.InteractionCounter, c.InternalMessage,
 		c.InternalMessageCategory, c.InternalMessageRecipient, c.Language,
 		c.LoginAuditLog, c.LoginPolicy, c.MediaAsset, c.MediaVariant, c.Membership,
 		c.MembershipOrgUnit, c.MembershipPosition, c.MembershipRole, c.Menu,
@@ -825,6 +831,8 @@ func (c *Client) Mutate(ctx context.Context, m Mutation) (Value, error) {
 		return c.FieldDefinitionTranslation.mutate(ctx, m)
 	case *FileMutation:
 		return c.File.mutate(ctx, m)
+	case *FlowRuleMutation:
+		return c.FlowRule.mutate(ctx, m)
 	case *FormSubmissionMutation:
 		return c.FormSubmission.mutate(ctx, m)
 	case *InteractionCounterMutation:
@@ -5053,6 +5061,140 @@ func (c *FileClient) mutate(ctx context.Context, m *FileMutation) (Value, error)
 		return (&FileDelete{config: c.config, hooks: c.Hooks(), mutation: m}).Exec(ctx)
 	default:
 		return nil, fmt.Errorf("ent: unknown File mutation op: %q", m.Op())
+	}
+}
+
+// FlowRuleClient is a client for the FlowRule schema.
+type FlowRuleClient struct {
+	config
+}
+
+// NewFlowRuleClient returns a client for the FlowRule from the given config.
+func NewFlowRuleClient(c config) *FlowRuleClient {
+	return &FlowRuleClient{config: c}
+}
+
+// Use adds a list of mutation hooks to the hooks stack.
+// A call to `Use(f, g, h)` equals to `flowrule.Hooks(f(g(h())))`.
+func (c *FlowRuleClient) Use(hooks ...Hook) {
+	c.hooks.FlowRule = append(c.hooks.FlowRule, hooks...)
+}
+
+// Intercept adds a list of query interceptors to the interceptors stack.
+// A call to `Intercept(f, g, h)` equals to `flowrule.Intercept(f(g(h())))`.
+func (c *FlowRuleClient) Intercept(interceptors ...Interceptor) {
+	c.inters.FlowRule = append(c.inters.FlowRule, interceptors...)
+}
+
+// Create returns a builder for creating a FlowRule entity.
+func (c *FlowRuleClient) Create() *FlowRuleCreate {
+	mutation := newFlowRuleMutation(c.config, OpCreate)
+	return &FlowRuleCreate{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// CreateBulk returns a builder for creating a bulk of FlowRule entities.
+func (c *FlowRuleClient) CreateBulk(builders ...*FlowRuleCreate) *FlowRuleCreateBulk {
+	return &FlowRuleCreateBulk{config: c.config, builders: builders}
+}
+
+// MapCreateBulk creates a bulk creation builder from the given slice. For each item in the slice, the function creates
+// a builder and applies setFunc on it.
+func (c *FlowRuleClient) MapCreateBulk(slice any, setFunc func(*FlowRuleCreate, int)) *FlowRuleCreateBulk {
+	rv := reflect.ValueOf(slice)
+	if rv.Kind() != reflect.Slice {
+		return &FlowRuleCreateBulk{err: fmt.Errorf("calling to FlowRuleClient.MapCreateBulk with wrong type %T, need slice", slice)}
+	}
+	builders := make([]*FlowRuleCreate, rv.Len())
+	for i := 0; i < rv.Len(); i++ {
+		builders[i] = c.Create()
+		setFunc(builders[i], i)
+	}
+	return &FlowRuleCreateBulk{config: c.config, builders: builders}
+}
+
+// Update returns an update builder for FlowRule.
+func (c *FlowRuleClient) Update() *FlowRuleUpdate {
+	mutation := newFlowRuleMutation(c.config, OpUpdate)
+	return &FlowRuleUpdate{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// UpdateOne returns an update builder for the given entity.
+func (c *FlowRuleClient) UpdateOne(_m *FlowRule) *FlowRuleUpdateOne {
+	mutation := newFlowRuleMutation(c.config, OpUpdateOne, withFlowRule(_m))
+	return &FlowRuleUpdateOne{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// UpdateOneID returns an update builder for the given id.
+func (c *FlowRuleClient) UpdateOneID(id uint32) *FlowRuleUpdateOne {
+	mutation := newFlowRuleMutation(c.config, OpUpdateOne, withFlowRuleID(id))
+	return &FlowRuleUpdateOne{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// Delete returns a delete builder for FlowRule.
+func (c *FlowRuleClient) Delete() *FlowRuleDelete {
+	mutation := newFlowRuleMutation(c.config, OpDelete)
+	return &FlowRuleDelete{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// DeleteOne returns a builder for deleting the given entity.
+func (c *FlowRuleClient) DeleteOne(_m *FlowRule) *FlowRuleDeleteOne {
+	return c.DeleteOneID(_m.ID)
+}
+
+// DeleteOneID returns a builder for deleting the given entity by its id.
+func (c *FlowRuleClient) DeleteOneID(id uint32) *FlowRuleDeleteOne {
+	builder := c.Delete().Where(flowrule.ID(id))
+	builder.mutation.id = &id
+	builder.mutation.op = OpDeleteOne
+	return &FlowRuleDeleteOne{builder}
+}
+
+// Query returns a query builder for FlowRule.
+func (c *FlowRuleClient) Query() *FlowRuleQuery {
+	return &FlowRuleQuery{
+		config: c.config,
+		ctx:    &QueryContext{Type: TypeFlowRule},
+		inters: c.Interceptors(),
+	}
+}
+
+// Get returns a FlowRule entity by its id.
+func (c *FlowRuleClient) Get(ctx context.Context, id uint32) (*FlowRule, error) {
+	return c.Query().Where(flowrule.ID(id)).Only(ctx)
+}
+
+// GetX is like Get, but panics if an error occurs.
+func (c *FlowRuleClient) GetX(ctx context.Context, id uint32) *FlowRule {
+	obj, err := c.Get(ctx, id)
+	if err != nil {
+		panic(err)
+	}
+	return obj
+}
+
+// Hooks returns the client hooks.
+func (c *FlowRuleClient) Hooks() []Hook {
+	hooks := c.hooks.FlowRule
+	return append(hooks[:len(hooks):len(hooks)], flowrule.Hooks[:]...)
+}
+
+// Interceptors returns the client interceptors.
+func (c *FlowRuleClient) Interceptors() []Interceptor {
+	return c.inters.FlowRule
+}
+
+func (c *FlowRuleClient) mutate(ctx context.Context, m *FlowRuleMutation) (Value, error) {
+	switch m.Op() {
+	case OpCreate:
+		return (&FlowRuleCreate{config: c.config, hooks: c.Hooks(), mutation: m}).Save(ctx)
+	case OpUpdate:
+		return (&FlowRuleUpdate{config: c.config, hooks: c.Hooks(), mutation: m}).Save(ctx)
+	case OpUpdateOne:
+		return (&FlowRuleUpdateOne{config: c.config, hooks: c.Hooks(), mutation: m}).Save(ctx)
+	case OpDelete, OpDeleteOne:
+		return (&FlowRuleDelete{config: c.config, hooks: c.Hooks(), mutation: m}).Exec(ctx)
+	default:
+		return nil, fmt.Errorf("ent: unknown FlowRule mutation op: %q", m.Op())
 	}
 }
 
@@ -13293,7 +13435,7 @@ type (
 		Comment, CommentLike, ContentModel, ContentModelTranslation, ContentReference,
 		DataAccessAuditLog, DictEntry, DictEntryI18n, DictType, EmailProvider,
 		EmailTemplate, Experiment, ExperimentParticipant, ExperimentVariant,
-		FieldDefinition, FieldDefinitionTranslation, File, FormSubmission,
+		FieldDefinition, FieldDefinitionTranslation, File, FlowRule, FormSubmission,
 		InteractionCounter, InternalMessage, InternalMessageCategory,
 		InternalMessageRecipient, Language, LoginAuditLog, LoginPolicy, MediaAsset,
 		MediaVariant, Membership, MembershipOrgUnit, MembershipPosition,
@@ -13313,7 +13455,7 @@ type (
 		Comment, CommentLike, ContentModel, ContentModelTranslation, ContentReference,
 		DataAccessAuditLog, DictEntry, DictEntryI18n, DictType, EmailProvider,
 		EmailTemplate, Experiment, ExperimentParticipant, ExperimentVariant,
-		FieldDefinition, FieldDefinitionTranslation, File, FormSubmission,
+		FieldDefinition, FieldDefinitionTranslation, File, FlowRule, FormSubmission,
 		InteractionCounter, InternalMessage, InternalMessageCategory,
 		InternalMessageRecipient, Language, LoginAuditLog, LoginPolicy, MediaAsset,
 		MediaVariant, Membership, MembershipOrgUnit, MembershipPosition,

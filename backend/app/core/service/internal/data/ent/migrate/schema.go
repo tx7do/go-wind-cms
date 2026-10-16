@@ -1319,6 +1319,37 @@ var (
 			},
 		},
 	}
+	// FlowRulesColumns holds the columns for the "flow_rules" table.
+	FlowRulesColumns = []*schema.Column{
+		{Name: "id", Type: field.TypeUint32, Increment: true, Comment: "id"},
+		{Name: "created_at", Type: field.TypeTime, Nullable: true, Comment: "创建时间"},
+		{Name: "updated_at", Type: field.TypeTime, Nullable: true, Comment: "更新时间"},
+		{Name: "deleted_at", Type: field.TypeTime, Nullable: true, Comment: "删除时间"},
+		{Name: "created_by", Type: field.TypeUint32, Nullable: true, Comment: "创建者ID"},
+		{Name: "updated_by", Type: field.TypeUint32, Nullable: true, Comment: "更新者ID"},
+		{Name: "deleted_by", Type: field.TypeUint32, Nullable: true, Comment: "删除者ID"},
+		{Name: "tenant_id", Type: field.TypeUint32, Nullable: true, Comment: "租户ID", Default: 0},
+		{Name: "name", Type: field.TypeString, Size: 128, Comment: "规则名称"},
+		{Name: "trigger_event", Type: field.TypeString, Size: 64, Comment: "触发事件（post.published/post.updated/page.published 等内容事件族）"},
+		{Name: "condition_status", Type: field.TypeString, Nullable: true, Size: 64, Comment: "条件：实体状态等值匹配（如 POST_STATUS_PUBLISHED）；空=无条件"},
+		{Name: "actions", Type: field.TypeString, Comment: "动作链 JSON 数组，元素形如 {'type':'webhook','url':'https://...','secret':'可选签名密钥'}", Default: "[]"},
+		{Name: "enabled", Type: field.TypeBool, Nullable: true, Comment: "是否启用", Default: true},
+		{Name: "match_count", Type: field.TypeUint32, Nullable: true, Comment: "累计命中次数（观测用）", Default: 0},
+	}
+	// FlowRulesTable holds the schema information for the "flow_rules" table.
+	FlowRulesTable = &schema.Table{
+		Name:       "flow_rules",
+		Comment:    "自动化 Flow 规则（内容事件 → 条件 → 动作链）",
+		Columns:    FlowRulesColumns,
+		PrimaryKey: []*schema.Column{FlowRulesColumns[0]},
+		Indexes: []*schema.Index{
+			{
+				Name:    "flowrule_trigger_event_enabled",
+				Unique:  false,
+				Columns: []*schema.Column{FlowRulesColumns[9], FlowRulesColumns[12]},
+			},
+		},
+	}
 	// FormSubmissionsColumns holds the columns for the "form_submissions" table.
 	FormSubmissionsColumns = []*schema.Column{
 		{Name: "id", Type: field.TypeUint32, Increment: true, Comment: "id"},
@@ -5019,6 +5050,7 @@ var (
 		FieldDefinitionsTable,
 		FieldDefinitionTranslationsTable,
 		FilesTable,
+		FlowRulesTable,
 		FormSubmissionsTable,
 		InteractionCountersTable,
 		InternalMessagesTable,
@@ -5232,6 +5264,11 @@ func init() {
 	}
 	FilesTable.Annotation = &entsql.Annotation{
 		Table:     "files",
+		Charset:   "utf8mb4",
+		Collation: "utf8mb4_bin",
+	}
+	FlowRulesTable.Annotation = &entsql.Annotation{
+		Table:     "flow_rules",
 		Charset:   "utf8mb4",
 		Collation: "utf8mb4_bin",
 	}

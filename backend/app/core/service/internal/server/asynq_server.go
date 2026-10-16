@@ -13,7 +13,7 @@ import (
 )
 
 // NewAsynqServer creates a new asynq server.
-func NewAsynqServer(ctx *bootstrap.Context, taskService *service.TaskService, searchService *service.SearchService, aiKnowledgeService *service.AiKnowledgeService, aiQueryService *service.AiQueryService, aiContentService *service.AiContentService, socialService *service.SocialService, postService *service.PostService, webhookService *service.WebhookService, internalMessageService *service.InternalMessageService) *asynq.Server {
+func NewAsynqServer(ctx *bootstrap.Context, taskService *service.TaskService, searchService *service.SearchService, aiKnowledgeService *service.AiKnowledgeService, aiQueryService *service.AiQueryService, aiContentService *service.AiContentService, socialService *service.SocialService, postService *service.PostService, webhookService *service.WebhookService, internalMessageService *service.InternalMessageService, flowService *service.FlowService) *asynq.Server {
 	cfg := ctx.GetConfig()
 
 	if cfg == nil || cfg.Server == nil || cfg.Server.Asynq == nil {
@@ -97,6 +97,9 @@ func NewAsynqServer(ctx *bootstrap.Context, taskService *service.TaskService, se
 		log.Error(err)
 	}
 	if err = asynq.RegisterSubscriber(srv, task.WebhookDeliverTaskType, webhookService.DeliverWorker); err != nil {
+		log.Error(err)
+	}
+	if err = asynq.RegisterSubscriber(srv, task.FlowExecuteTaskType, flowService.ExecuteWorker); err != nil {
 		log.Error(err)
 	}
 

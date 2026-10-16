@@ -38,10 +38,11 @@ type PostService struct {
 	internalMessageSvc    *InternalMessageService
 	contentModelRepo      *data.ContentModelRepo
 	referenceTracker      *ReferenceTrackingService
+	flowSvc               *FlowService
 	log                   *log.Helper
 }
 
-func NewPostService(ctx *bootstrap.Context, uc *data.PostRepo, searchService *SearchService, taskService *TaskService, contentModelRepo *data.ContentModelRepo, postVersionRepo *data.PostVersionRepo, webhookService *WebhookService, internalMessageSvc *InternalMessageService, referenceTracker *ReferenceTrackingService) *PostService {
+func NewPostService(ctx *bootstrap.Context, uc *data.PostRepo, searchService *SearchService, taskService *TaskService, contentModelRepo *data.ContentModelRepo, postVersionRepo *data.PostVersionRepo, webhookService *WebhookService, internalMessageSvc *InternalMessageService, referenceTracker *ReferenceTrackingService, flowSvc *FlowService) *PostService {
 	return &PostService{
 		log:                 ctx.NewLoggerHelper("post/service/core-service"),
 		postRepo:            uc,
@@ -52,6 +53,7 @@ func NewPostService(ctx *bootstrap.Context, uc *data.PostRepo, searchService *Se
 		internalMessageSvc:  internalMessageSvc,
 		contentModelRepo:    contentModelRepo,
 		referenceTracker:    referenceTracker,
+		flowSvc:             flowSvc,
 	}
 }
 
@@ -149,6 +151,11 @@ func (s *PostService) Create(ctx context.Context, req *contentV1.CreatePostReque
 	// Webhook 事件外发（best-effort）
 	s.dispatchWebhookEvent(ctx, task.WebhookEventPostCreated, dto.GetId(), dto.GetStatus())
 
+	// Flow 规则触发（best-effort）
+	if s.flowSvc != nil {
+		s.flowSvc.DispatchFlow(ctx, task.WebhookEventPostCreated, dto.GetId())
+	}
+
 	// 定时发布钩子：SCHEDULED 落库后入队到点转正任务（失败显式报错）。
 	if err := s.enqueueScheduledPublish(dto); err != nil {
 		return nil, err
@@ -208,6 +215,15 @@ func (s *PostService) Update(ctx context.Context, req *contentV1.UpdatePostReque
 		s.dispatchWebhookEvent(ctx, task.WebhookEventPostUpdated, dto.GetId(), dto.GetStatus())
 	}
 
+	// Flow 规则触发：发布转移记 published，其余记 updated（best-effort）
+	if s.flowSvc != nil {
+		if dto.GetStatus() == contentV1.Post_POST_STATUS_PUBLISHED && prevStatus != contentV1.Post_POST_STATUS_PUBLISHED {
+			s.flowSvc.DispatchFlow(ctx, task.WebhookEventPostPublished, dto.GetId())
+		} else {
+			s.flowSvc.DispatchFlow(ctx, task.WebhookEventPostUpdated, dto.GetId())
+		}
+	}
+
 	// 定时发布钩子：以 SCHEDULED 终态保存（含改期）时重新入队到点转正任务。
 	if err := s.enqueueScheduledPublish(dto); err != nil {
 		return nil, err
@@ -232,6 +248,11 @@ func (s *PostService) Delete(ctx context.Context, req *contentV1.DeletePostReque
 
 	// Webhook 事件外发（best-effort）
 	s.dispatchWebhookEvent(ctx, task.WebhookEventPostDeleted, req.GetId(), 0)
+
+	// Flow 规则触发（best-effort）
+	if s.flowSvc != nil {
+		s.flowSvc.DispatchFlow(ctx, task.WebhookEventPostDeleted, req.GetId())
+	}
 
 	return &emptypb.Empty{}, nil
 }
@@ -443,6 +464,12 @@ func (s *PostService) PublishScheduledPostWorker(taskType string, payload *task.
 	// 状态变化影响 ES/AI 索引可见性（C 端只查 PUBLISHED），复用既有重索引链。
 	s.enqueuePostReindex(ctx, payload.PostID, "index")
 
+	// 发布事件外发：webhook 订阅与 Flow 规则同手工发布口径（此前定时转正漏发，顺带修复）
+	s.dispatchWebhookEvent(ctx, task.WebhookEventPostPublished, payload.PostID, updated.GetStatus())
+	if s.flowSvc != nil {
+		s.flowSvc.DispatchFlow(ctx, task.WebhookEventPostPublished, payload.PostID)
+	}
+
 	s.log.Infof("post publish worker: post %d published (publishTime=%s)",
 		payload.PostID, updated.GetPublishTime())
 	return nil
@@ -644,6 +671,11 @@ func (s *PostService) ApproveReview(ctx context.Context, req *contentV1.ReviewPo
 	// 发布链路钩子：索引可见性变化 + Webhook published 事件（repo.Update 不带这些，这里补齐）
 	s.enqueuePostReindex(ctx, req.GetPostId(), "index")
 	s.dispatchWebhookEvent(ctx, task.WebhookEventPostPublished, req.GetPostId(), updated.GetStatus())
+
+	// Flow 规则触发（best-effort）
+	if s.flowSvc != nil {
+		s.flowSvc.DispatchFlow(ctx, task.WebhookEventPostPublished, req.GetPostId())
+	}
 
 	s.notifyReviewResult(ctx, post, true, "")
 	return updated, nil

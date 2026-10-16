@@ -40,6 +40,7 @@ import (
 	statsV1 "go-wind-cms/api/gen/go/stats/service/v1"
 	storageV1 "go-wind-cms/api/gen/go/storage/service/v1"
 	taskV1 "go-wind-cms/api/gen/go/task/service/v1"
+	flowV1 "go-wind-cms/api/gen/go/flow/service/v1"
 	webhookV1 "go-wind-cms/api/gen/go/webhook/service/v1"
 
 	"go-wind-cms/pkg/oss"
@@ -617,6 +618,15 @@ func NewEmailTemplateServiceClient(ctx *bootstrap.Context, r registry.Discovery)
 	}
 
 	return contentV1.NewEmailTemplateServiceClient(cli)
+}
+
+func NewFlowRuleServiceClient(ctx *bootstrap.Context, r registry.Discovery) flowV1.FlowRuleServiceClient {
+	cli, err := rpc.CreateGrpcClient(ctx.Context(), r, serviceid.NewDiscoveryName(serviceid.CoreService), ctx.GetConfig())
+	if err != nil {
+		return nil
+	}
+
+	return flowV1.NewFlowRuleServiceClient(cli)
 }
 
 func NewWebhookServiceClient(ctx *bootstrap.Context, r registry.Discovery) webhookV1.WebhookServiceClient {

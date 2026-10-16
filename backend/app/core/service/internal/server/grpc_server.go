@@ -18,6 +18,7 @@ import (
 	identityV1 "go-wind-cms/api/gen/go/identity/service/v1"
 	interactionV1 "go-wind-cms/api/gen/go/interaction/service/v1"
 	internalMessageV1 "go-wind-cms/api/gen/go/internal_message/service/v1"
+	flowV1 "go-wind-cms/api/gen/go/flow/service/v1"
 	mediaV1 "go-wind-cms/api/gen/go/media/service/v1"
 	permissionV1 "go-wind-cms/api/gen/go/permission/service/v1"
 	statsV1 "go-wind-cms/api/gen/go/stats/service/v1"
@@ -93,6 +94,7 @@ func NewGrpcServer(
 	aiUsageLogService *service.AiUsageLogService,
 	aiQueryService *service.AiQueryService,
 
+	flowService *service.FlowService,
 	postService *service.PostService,
 	categoryService *service.CategoryService,
 	tagService *service.TagService,
@@ -193,6 +195,8 @@ func NewGrpcServer(
 	siteV1.RegisterNavigationItemServiceServer(srv, navigationItemService)
 
 	mediaV1.RegisterMediaAssetServiceServer(srv, mediaAssetService)
+
+	flowV1.RegisterFlowRuleServiceServer(srv, flowService)
 
 	socialV1.RegisterSocialServiceServer(srv, socialService)
 	webhookV1.RegisterWebhookServiceServer(srv, webhookService)

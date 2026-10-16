@@ -630,6 +630,23 @@ func (s *TaskService) EnqueueNotifyEmail(payload *task.NotifyEmailPayload) error
 	return nil
 }
 
+// EnqueueFlowExecute 入队一个 Flow 规则执行任务（best-effort：调度器未注入时静默跳过）。
+func (s *TaskService) EnqueueFlowExecute(payload *task.FlowExecutePayload) error {
+	if payload == nil || payload.Event == "" {
+		return nil
+	}
+	if s.taskScheduler == nil {
+		s.log.Warnf("flow execute skipped: task scheduler not available (event=%s entity=%d)",
+			payload.Event, payload.EntityID)
+		return nil
+	}
+	if err := s.taskScheduler.NewTask(task.FlowExecuteTaskType, payload, asynq.MaxRetry(3)); err != nil {
+		s.log.Errorf("enqueue flow execute failed (event=%s entity=%d): %v", payload.Event, payload.EntityID, err)
+		return err
+	}
+	return nil
+}
+
 // EnqueueWebhookFanout 入队一个 Webhook 事件扇出任务（best-effort：调度器未注入时静默跳过，
 // 内容保存主链路不因外发失败而受阻）。
 func (s *TaskService) EnqueueWebhookFanout(payload *task.WebhookFanoutPayload) error {

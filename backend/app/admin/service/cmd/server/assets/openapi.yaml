@@ -3244,6 +3244,163 @@ paths:
                 "200":
                     description: OK
                     content: {}
+    /admin/v1/flow-rules:
+        get:
+            tags:
+                - FlowRuleService
+            description: 规则列表
+            operationId: FlowRuleService_List
+            parameters:
+                - name: page
+                  in: query
+                  description: 当前页码（从1开始，默认1）
+                  schema:
+                    type: integer
+                    format: uint32
+                - name: pageSize
+                  in: query
+                  description: 每页条数（默认10，建议设置上限如100）
+                  schema:
+                    type: integer
+                    format: uint32
+                - name: offset
+                  in: query
+                  description: 跳过的记录数（从0开始，默认0）
+                  schema:
+                    type: string
+                - name: limit
+                  in: query
+                  description: 最多返回的记录数（默认10，建议设置上限如100）
+                  schema:
+                    type: integer
+                    format: uint32
+                - name: token
+                  in: query
+                  description: 上一页最后一条记录的游标（如ID/时间戳+ID，首次请求为空）
+                  schema:
+                    type: string
+                - name: noPaging
+                  in: query
+                  description: 是否不分页，如果为true，则page和pageSize参数无效。
+                  schema:
+                    type: boolean
+                - name: query
+                  in: query
+                  description: JSON字符串过滤条件，基础语法：{"field1":"val1", "field2___icontains":"val2"}，具体请参见：https://github.com/tx7do/go-crud/tree/main/pagination/filter/README.md
+                  schema:
+                    type: string
+                - name: filter
+                  in: query
+                  description: Google AIP规范字符串过滤条件
+                  schema:
+                    type: string
+                - name: filterExpr.type
+                  in: query
+                  description: 过滤表达式类型
+                  schema:
+                    enum:
+                        - EXPR_TYPE_UNSPECIFIED
+                        - AND
+                        - OR
+                    type: string
+                    format: enum
+                - name: orderBy
+                  in: query
+                  description: 排序条件
+                  schema:
+                    type: string
+                - name: fieldMask
+                  in: query
+                  description: 字段掩码，其作用为SELECT中的字段，其语法为使用逗号分隔字段名，例如：id,realName,userName。如果为空则选中所有字段，即SELECT *。
+                  schema:
+                    type: string
+                    format: field-mask
+            responses:
+                "200":
+                    description: OK
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/flow.service.v1.ListFlowRuleResponse'
+        post:
+            tags:
+                - FlowRuleService
+            description: 创建规则
+            operationId: FlowRuleService_Create
+            requestBody:
+                content:
+                    application/json:
+                        schema:
+                            $ref: '#/components/schemas/flow.service.v1.CreateFlowRuleRequest'
+                required: true
+            responses:
+                "200":
+                    description: OK
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/flow.service.v1.FlowRule'
+    /admin/v1/flow-rules/{id}:
+        get:
+            tags:
+                - FlowRuleService
+            description: 规则详情
+            operationId: FlowRuleService_Get
+            parameters:
+                - name: id
+                  in: path
+                  required: true
+                  schema:
+                    type: integer
+                    format: uint32
+            responses:
+                "200":
+                    description: OK
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/flow.service.v1.FlowRule'
+        put:
+            tags:
+                - FlowRuleService
+            description: 更新规则
+            operationId: FlowRuleService_Update
+            parameters:
+                - name: id
+                  in: path
+                  required: true
+                  schema:
+                    type: integer
+                    format: uint32
+            requestBody:
+                content:
+                    application/json:
+                        schema:
+                            $ref: '#/components/schemas/flow.service.v1.UpdateFlowRuleRequest'
+                required: true
+            responses:
+                "200":
+                    description: OK
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/flow.service.v1.FlowRule'
+        delete:
+            tags:
+                - FlowRuleService
+            description: 删除规则
+            operationId: FlowRuleService_Delete
+            parameters:
+                - name: id
+                  in: path
+                  required: true
+                  schema:
+                    type: integer
+                    format: uint32
+            responses:
+                "200":
+                    description: OK
+                    content: {}
     /admin/v1/form-submissions:
         get:
             tags:
@@ -12973,6 +13130,67 @@ components:
                     type: boolean
                     description: 如果设置为true的时候，资源不存在则会新增(插入)，并且在这种情况下`updateMask`字段将会被忽略。
             description: 更新语言 - 请求
+        flow.service.v1.CreateFlowRuleRequest:
+            type: object
+            properties:
+                data:
+                    $ref: '#/components/schemas/flow.service.v1.FlowRule'
+            description: 请求 - 创建规则
+        flow.service.v1.FlowRule:
+            type: object
+            properties:
+                id:
+                    type: integer
+                    description: 规则 ID
+                    format: uint32
+                name:
+                    type: string
+                    description: 规则名称
+                triggerEvent:
+                    type: string
+                    description: 触发事件（post.created/post.updated/post.published/post.deleted/page.* 同 webhook 事件族）
+                conditionStatus:
+                    type: string
+                    description: 条件：实体状态等值匹配（如 POST_STATUS_PUBLISHED）；留空=无条件
+                actions:
+                    type: string
+                    description: 动作链 JSON 数组：[{"type":"webhook","url":"https://...","secret":"可选签名密钥"}]
+                enabled:
+                    type: boolean
+                    description: 是否启用
+                matchCount:
+                    type: integer
+                    description: 累计命中次数（观测用，只读）
+                    format: uint32
+                createdAt:
+                    type: string
+                    format: date-time
+                updatedAt:
+                    type: string
+                    format: date-time
+            description: 自动化 Flow 规则：内容事件触发，条件命中后执行动作链
+        flow.service.v1.ListFlowRuleResponse:
+            type: object
+            properties:
+                items:
+                    type: array
+                    items:
+                        $ref: '#/components/schemas/flow.service.v1.FlowRule'
+                total:
+                    type: string
+            description: 回应 - 规则列表
+        flow.service.v1.UpdateFlowRuleRequest:
+            type: object
+            properties:
+                id:
+                    type: integer
+                    format: uint32
+                data:
+                    $ref: '#/components/schemas/flow.service.v1.FlowRule'
+                updateMask:
+                    type: string
+                    format: field-mask
+            description: 请求 - 更新规则
         identity.service.v1.BindContactRequest:
             type: object
             properties:
@@ -16834,6 +17052,8 @@ tags:
       description: 文件管理服务
     - name: FileTransferService
       description: 文件传输服务
+    - name: FlowRuleService
+      description: 自动化 Flow 规则服务（admin 门面）
     - name: FormSubmissionService
       description: 表单提交管理服务（页面 FORM 区块的访客提交）
     - name: InteractionAdminService

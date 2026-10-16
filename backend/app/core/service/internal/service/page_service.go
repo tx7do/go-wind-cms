@@ -27,10 +27,11 @@ type PageService struct {
 	notifySvc         *InternalMessageService
 	contentModelRepo  *data.ContentModelRepo
 	referenceTracker  *ReferenceTrackingService
+	flowSvc           *FlowService
 	log               *log.Helper
 }
 
-func NewPageService(ctx *bootstrap.Context, uc *data.PageRepo, contentModelRepo *data.ContentModelRepo, pageVersionRepo *data.PageVersionRepo, webhookService *WebhookService, notifySvc *InternalMessageService, referenceTracker *ReferenceTrackingService) *PageService {
+func NewPageService(ctx *bootstrap.Context, uc *data.PageRepo, contentModelRepo *data.ContentModelRepo, pageVersionRepo *data.PageVersionRepo, webhookService *WebhookService, notifySvc *InternalMessageService, referenceTracker *ReferenceTrackingService, flowSvc *FlowService) *PageService {
 	return &PageService{
 		log:              ctx.NewLoggerHelper("page/service/core-service"),
 		pageRepo:         uc,
@@ -39,6 +40,7 @@ func NewPageService(ctx *bootstrap.Context, uc *data.PageRepo, contentModelRepo 
 		notifySvc:        notifySvc,
 		contentModelRepo: contentModelRepo,
 		referenceTracker: referenceTracker,
+		flowSvc:          flowSvc,
 	}
 }
 
@@ -72,6 +74,10 @@ func (s *PageService) Create(ctx context.Context, req *contentV1.CreatePageReque
 	// Webhook 事件外发（best-effort）
 	if s.webhookService != nil && dto.GetId() != 0 {
 		s.webhookService.DispatchEvent(ctx, task.WebhookEventPageCreated, dto.GetId())
+	}
+	// Flow 规则触发（best-effort）
+	if s.flowSvc != nil && dto.GetId() != 0 {
+		s.flowSvc.DispatchFlow(ctx, task.WebhookEventPageCreated, dto.GetId())
 	}
 	return dto, nil
 }
@@ -121,6 +127,14 @@ func (s *PageService) Update(ctx context.Context, req *contentV1.UpdatePageReque
 			s.webhookService.DispatchEvent(ctx, task.WebhookEventPageUpdated, dto.GetId())
 		}
 	}
+	// Flow 规则触发：同 webhook 的 published/updated 判定（best-effort）
+	if s.flowSvc != nil && dto.GetId() != 0 {
+		if dto.GetStatus() == contentV1.Page_PAGE_STATUS_PUBLISHED && prevStatus != contentV1.Page_PAGE_STATUS_PUBLISHED {
+			s.flowSvc.DispatchFlow(ctx, task.WebhookEventPagePublished, dto.GetId())
+		} else {
+			s.flowSvc.DispatchFlow(ctx, task.WebhookEventPageUpdated, dto.GetId())
+		}
+	}
 	return dto, nil
 }
 
@@ -136,6 +150,10 @@ func (s *PageService) Delete(ctx context.Context, req *contentV1.DeletePageReque
 	// Webhook 事件外发（best-effort）
 	if s.webhookService != nil && req.GetId() != 0 {
 		s.webhookService.DispatchEvent(ctx, task.WebhookEventPageDeleted, req.GetId())
+	}
+	// Flow 规则触发（best-effort）
+	if s.flowSvc != nil && req.GetId() != 0 {
+		s.flowSvc.DispatchFlow(ctx, task.WebhookEventPageDeleted, req.GetId())
 	}
 	return &emptypb.Empty{}, nil
 }
@@ -338,6 +356,10 @@ func (s *PageService) ApproveReview(ctx context.Context, req *contentV1.ReviewPa
 	// 发布链路钩子：Webhook published 事件（页面无 ES 索引，无重索引链）
 	if s.webhookService != nil {
 		s.webhookService.DispatchEvent(ctx, task.WebhookEventPagePublished, req.GetPageId())
+	}
+	// Flow 规则触发（best-effort）
+	if s.flowSvc != nil {
+		s.flowSvc.DispatchFlow(ctx, task.WebhookEventPagePublished, req.GetPageId())
 	}
 
 	s.notifyPageReviewResult(ctx, page, true, "")

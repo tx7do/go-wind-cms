@@ -70,6 +70,8 @@ type Tx struct {
 	FieldDefinitionTranslation *FieldDefinitionTranslationClient
 	// File is the client for interacting with the File builders.
 	File *FileClient
+	// FlowRule is the client for interacting with the FlowRule builders.
+	FlowRule *FlowRuleClient
 	// FormSubmission is the client for interacting with the FormSubmission builders.
 	FormSubmission *FormSubmissionClient
 	// InteractionCounter is the client for interacting with the InteractionCounter builders.
@@ -350,6 +352,7 @@ func (tx *Tx) init() {
 	tx.FieldDefinition = NewFieldDefinitionClient(tx.config)
 	tx.FieldDefinitionTranslation = NewFieldDefinitionTranslationClient(tx.config)
 	tx.File = NewFileClient(tx.config)
+	tx.FlowRule = NewFlowRuleClient(tx.config)
 	tx.FormSubmission = NewFormSubmissionClient(tx.config)
 	tx.InteractionCounter = NewInteractionCounterClient(tx.config)
 	tx.InternalMessage = NewInternalMessageClient(tx.config)

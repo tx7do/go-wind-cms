@@ -81,5 +81,6 @@
   "redirects": "Redirects",
   "email-provider": "Email Outbound",
   "content-experiments": "Content Experiments",
-  "email-template": "Email Templates"
+  "email-template": "Email Templates",
+  "flow-rule": "Automation Flows"
 }

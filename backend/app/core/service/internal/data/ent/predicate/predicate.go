@@ -93,6 +93,9 @@ type FieldDefinitionTranslation func(*sql.Selector)
 // File is the predicate function for file builders.
 type File func(*sql.Selector)
 
+// FlowRule is the predicate function for flowrule builders.
+type FlowRule func(*sql.Selector)
+
 // FormSubmission is the predicate function for formsubmission builders.
 type FormSubmission func(*sql.Selector)
 

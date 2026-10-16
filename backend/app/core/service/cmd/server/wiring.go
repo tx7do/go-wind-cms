@@ -194,6 +194,7 @@ func initApp(ctx *bootstrap.Context) (*kratos.App, func(), error) {
 	mediaVariantRepo := data.NewMediaVariantRepo(ctx, entClient)
 	mediaAssetRepo := data.NewMediaAssetRepo(ctx, entClient, mediaVariantRepo)
 	contentReferenceRepo := data.NewContentReferenceRepo(ctx, entClient)
+	flowRepo := data.NewFlowRepo(ctx, entClient)
 
 	// 社交分发
 	socialAccountRepo := data.NewSocialAccountRepo(ctx, entClient)
@@ -284,10 +285,11 @@ func initApp(ctx *bootstrap.Context) (*kratos.App, func(), error) {
 	aiQueryService := service.NewAiQueryService(ctx, aiProviderRepo, aiUsageLogRepo, entClient, internalMessageRepo, internalMessageService)
 	searchService := service.NewSearchService(ctx, searchRepo, postRepo)
 	referenceTrackingService := service.NewReferenceTrackingService(ctx, mediaAssetRepo, contentReferenceRepo)
-	postService := service.NewPostService(ctx, postRepo, searchService, taskService, contentModelRepo, postVersionRepo, webhookService, internalMessageService, referenceTrackingService)
+	flowService := service.NewFlowService(ctx, flowRepo, postRepo, pageRepo, taskService)
+	postService := service.NewPostService(ctx, postRepo, searchService, taskService, contentModelRepo, postVersionRepo, webhookService, internalMessageService, referenceTrackingService, flowService)
 	categoryService := service.NewCategoryService(ctx, categoryRepo, contentModelRepo)
 	tagService := service.NewTagService(ctx, tagRepo)
-	pageService := service.NewPageService(ctx, pageRepo, contentModelRepo, pageVersionRepo, webhookService, internalMessageService, referenceTrackingService)
+	pageService := service.NewPageService(ctx, pageRepo, contentModelRepo, pageVersionRepo, webhookService, internalMessageService, referenceTrackingService, flowService)
 	contentModelService := service.NewContentModelService(ctx, contentModelRepo)
 
 	// 站点配置
@@ -326,6 +328,7 @@ func initApp(ctx *bootstrap.Context) (*kratos.App, func(), error) {
 		aiKnowledgeService,
 		aiUsageLogService,
 		aiQueryService,
+		flowService,
 		postService, categoryService, tagService, pageService,
 		contentModelService,
 		siteService, siteSettingService, navigationService, navigationItemService,
@@ -346,7 +349,7 @@ func initApp(ctx *bootstrap.Context) (*kratos.App, func(), error) {
 		return nil, nil, err
 	}
 
-	asynqServer := server.NewAsynqServer(ctx, taskService, searchService, aiKnowledgeService, aiQueryService, aiContentService, socialService, postService, webhookService, internalMessageService)
+	asynqServer := server.NewAsynqServer(ctx, taskService, searchService, aiKnowledgeService, aiQueryService, aiContentService, socialService, postService, webhookService, internalMessageService, flowService)
 
 	return newApp(ctx, grpcServer, asynqServer), rollback, nil
 }

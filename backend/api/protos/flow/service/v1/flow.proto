@@ -1,0 +1,107 @@
+syntax = "proto3";
+
+package flow.service.v1;
+
+import "gnostic/openapi/v3/annotations.proto";
+import "google/api/annotations.proto";
+import "google/protobuf/empty.proto";
+import "google/protobuf/timestamp.proto";
+import "google/protobuf/field_mask.proto";
+import "pagination/v1/pagination.proto";
+
+option go_package = "go-wind-cms/api/gen/go/flow/service/v1;flowv1";
+
+// 自动化 Flow 规则服务（内容事件 → 条件 → 动作链）
+service FlowRuleService {
+  // 规则列表
+  rpc List (pagination.PagingRequest) returns (ListFlowRuleResponse) {}
+
+  // 规则详情
+  rpc Get (GetFlowRuleRequest) returns (FlowRule) {}
+
+  // 创建规则
+  rpc Create (CreateFlowRuleRequest) returns (FlowRule) {}
+
+  // 更新规则
+  rpc Update (UpdateFlowRuleRequest) returns (FlowRule) {}
+
+  // 删除规则
+  rpc Delete (DeleteFlowRuleRequest) returns (google.protobuf.Empty) {}
+}
+
+// 自动化 Flow 规则：内容事件触发，条件命中后执行动作链
+message FlowRule {
+  optional uint32 id = 1 [
+    json_name = "id",
+    (gnostic.openapi.v3.property) = {description: "规则 ID"}
+  ]; // 规则 ID
+
+  optional string name = 2 [
+    json_name = "name",
+    (gnostic.openapi.v3.property) = {description: "规则名称"}
+  ]; // 规则名称
+
+  optional string trigger_event = 3 [
+    json_name = "triggerEvent",
+    (gnostic.openapi.v3.property) = {
+      description: "触发事件（post.created/post.updated/post.published/post.deleted/page.* 同 webhook 事件族）"
+    }
+  ]; // 触发事件
+
+  optional string condition_status = 4 [
+    json_name = "conditionStatus",
+    (gnostic.openapi.v3.property) = {
+      description: "条件：实体状态等值匹配（如 POST_STATUS_PUBLISHED）；留空=无条件"
+    }
+  ]; // 状态条件
+
+  optional string actions = 5 [
+    json_name = "actions",
+    (gnostic.openapi.v3.property) = {
+      description: "动作链 JSON 数组：[{\"type\":\"webhook\",\"url\":\"https://...\",\"secret\":\"可选签名密钥\"}]"
+    }
+  ]; // 动作链 JSON
+
+  optional bool enabled = 6 [
+    json_name = "enabled",
+    (gnostic.openapi.v3.property) = {description: "是否启用"}
+  ]; // 是否启用
+
+  optional uint32 match_count = 7 [
+    json_name = "matchCount",
+    (gnostic.openapi.v3.property) = {description: "累计命中次数（观测用，只读）"}
+  ]; // 累计命中次数
+
+  optional google.protobuf.Timestamp created_at = 200 [json_name = "createdAt"]; // 创建时间
+  optional google.protobuf.Timestamp updated_at = 201 [json_name = "updatedAt"]; // 更新时间
+}
+
+// 回应 - 规则列表
+message ListFlowRuleResponse {
+  repeated FlowRule items = 1 [json_name = "items"]; // 规则列表
+  uint64 total = 2 [json_name = "total"]; // 总数
+}
+
+// 请求 - 规则详情
+message GetFlowRuleRequest {
+  uint32 id = 1 [json_name = "id"]; // 规则 ID
+}
+
+// 请求 - 创建规则
+message CreateFlowRuleRequest {
+  FlowRule data = 1 [json_name = "data"]; // 规则
+}
+
+// 请求 - 更新规则
+message UpdateFlowRuleRequest {
+  uint32 id = 1 [json_name = "id"]; // 规则 ID
+
+  FlowRule data = 2 [json_name = "data"]; // 规则
+
+  google.protobuf.FieldMask update_mask = 3 [json_name = "updateMask"]; // 更新字段
+}
+
+// 请求 - 删除规则
+message DeleteFlowRuleRequest {
+  uint32 id = 1 [json_name = "id"]; // 规则 ID
+}

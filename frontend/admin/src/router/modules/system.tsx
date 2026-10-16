@@ -94,6 +94,16 @@ export const systemRoutes: AppRouteObject[] = [
         },
       },
       {
+        name: 'flow-rule',
+        path: 'flow-rule', // 相对路径，最终为 /system/flow-rule
+        element: createLazyRoute(() => import('@/pages/app/system/flow-rule')),
+        meta: {
+          title: 'routes:flow-rule',
+          icon: 'lucide:workflow',
+          authority: ['sys:platform_admin'],
+        },
+      },
+      {
         name: 'webhooks',
         path: 'webhooks', // 相对路径，最终为 /system/webhooks
         element: createLazyRoute(() => import('@/pages/app/system/webhook')),

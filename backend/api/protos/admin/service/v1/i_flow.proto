@@ -1,0 +1,49 @@
+syntax = "proto3";
+
+package admin.service.v1;
+
+import "google/api/annotations.proto";
+import "google/protobuf/empty.proto";
+import "pagination/v1/pagination.proto";
+
+import "flow/service/v1/flow.proto";
+
+// 自动化 Flow 规则服务（admin 门面）
+service FlowRuleService {
+  // 规则列表
+  rpc List (pagination.PagingRequest) returns (flow.service.v1.ListFlowRuleResponse) {
+    option (google.api.http) = {
+      get: "/admin/v1/flow-rules"
+    };
+  }
+
+  // 规则详情
+  rpc Get (flow.service.v1.GetFlowRuleRequest) returns (flow.service.v1.FlowRule) {
+    option (google.api.http) = {
+      get: "/admin/v1/flow-rules/{id}"
+    };
+  }
+
+  // 创建规则
+  rpc Create (flow.service.v1.CreateFlowRuleRequest) returns (flow.service.v1.FlowRule) {
+    option (google.api.http) = {
+      post: "/admin/v1/flow-rules"
+      body: "*"
+    };
+  }
+
+  // 更新规则
+  rpc Update (flow.service.v1.UpdateFlowRuleRequest) returns (flow.service.v1.FlowRule) {
+    option (google.api.http) = {
+      put: "/admin/v1/flow-rules/{id}"
+      body: "*"
+    };
+  }
+
+  // 删除规则
+  rpc Delete (flow.service.v1.DeleteFlowRuleRequest) returns (google.protobuf.Empty) {
+    option (google.api.http) = {
+      delete: "/admin/v1/flow-rules/{id}"
+    };
+  }
+}

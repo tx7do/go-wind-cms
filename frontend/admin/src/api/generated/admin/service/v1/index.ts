@@ -5596,6 +5596,233 @@ export type storageservicev1_UploadMediaAssetRequest = {
   userId?: number;
 };
 
+// 自动化 Flow 规则服务（admin 门面）
+export interface FlowRuleService {
+  // 规则列表
+  List(
+    request: pagination_PagingRequest,
+  ): Promise<flowservicev1_ListFlowRuleResponse>;
+  // 规则详情
+  Get(
+    request: flowservicev1_GetFlowRuleRequest,
+  ): Promise<flowservicev1_FlowRule>;
+  // 创建规则
+  Create(
+    request: flowservicev1_CreateFlowRuleRequest,
+  ): Promise<flowservicev1_FlowRule>;
+  // 更新规则
+  Update(
+    request: flowservicev1_UpdateFlowRuleRequest,
+  ): Promise<flowservicev1_FlowRule>;
+  // 删除规则
+  Delete(
+    request: flowservicev1_DeleteFlowRuleRequest,
+  ): Promise<wellKnownEmpty>;
+}
+
+export function createFlowRuleServiceClient(
+  transport: ClientTransport,
+): FlowRuleService {
+  return {
+    List(request) {
+      const path = `admin/v1/flow-rules`;
+      const body = null;
+      const queryParams: string[] = [];
+      if (request.page) {
+        queryParams.push(
+          `page=${encodeURIComponent(request.page.toString())}`,
+        );
+      }
+      if (request.pageSize) {
+        queryParams.push(
+          `pageSize=${encodeURIComponent(request.pageSize.toString())}`,
+        );
+      }
+      if (request.offset) {
+        queryParams.push(
+          `offset=${encodeURIComponent(request.offset.toString())}`,
+        );
+      }
+      if (request.limit) {
+        queryParams.push(
+          `limit=${encodeURIComponent(request.limit.toString())}`,
+        );
+      }
+      if (request.token) {
+        queryParams.push(
+          `token=${encodeURIComponent(request.token.toString())}`,
+        );
+      }
+      if (request.noPaging) {
+        queryParams.push(
+          `noPaging=${encodeURIComponent(request.noPaging.toString())}`,
+        );
+      }
+      if (request.query) {
+        queryParams.push(
+          `query=${encodeURIComponent(request.query.toString())}`,
+        );
+      }
+      if (request.filter) {
+        queryParams.push(
+          `filter=${encodeURIComponent(request.filter.toString())}`,
+        );
+      }
+      if (request.filterExpr?.type) {
+        queryParams.push(
+          `filterExpr.type=${encodeURIComponent(request.filterExpr.type.toString())}`,
+        );
+      }
+      if (request.filterExpr?.conditions?.field) {
+        queryParams.push(
+          `filterExpr.conditions.field=${encodeURIComponent(request.filterExpr.conditions.field.toString())}`,
+        );
+      }
+      if (request.filterExpr?.conditions?.op) {
+        queryParams.push(
+          `filterExpr.conditions.op=${encodeURIComponent(request.filterExpr.conditions.op.toString())}`,
+        );
+      }
+      if (request.filterExpr?.conditions?.value) {
+        queryParams.push(
+          `filterExpr.conditions.value=${encodeURIComponent(request.filterExpr.conditions.value.toString())}`,
+        );
+      }
+      if (request.filterExpr?.conditions?.jsonValue) {
+        queryParams.push(
+          `filterExpr.conditions.jsonValue=${encodeURIComponent(request.filterExpr.conditions.jsonValue.toString())}`,
+        );
+      }
+      if (request.filterExpr?.conditions?.values) {
+        request.filterExpr.conditions.values.forEach((x) => {
+          queryParams.push(
+            `filterExpr.conditions.values=${encodeURIComponent(x.toString())}`,
+          );
+        });
+      }
+      if (request.filterExpr?.conditions?.datePart) {
+        queryParams.push(
+          `filterExpr.conditions.datePart=${encodeURIComponent(request.filterExpr.conditions.datePart.toString())}`,
+        );
+      }
+      if (request.filterExpr?.conditions?.jsonPath) {
+        queryParams.push(
+          `filterExpr.conditions.jsonPath=${encodeURIComponent(request.filterExpr.conditions.jsonPath.toString())}`,
+        );
+      }
+      if (request.orderBy) {
+        queryParams.push(
+          `orderBy=${encodeURIComponent(request.orderBy.toString())}`,
+        );
+      }
+      if (request.sorting?.field) {
+        queryParams.push(
+          `sorting.field=${encodeURIComponent(request.sorting.field.toString())}`,
+        );
+      }
+      if (request.sorting?.direction) {
+        queryParams.push(
+          `sorting.direction=${encodeURIComponent(request.sorting.direction.toString())}`,
+        );
+      }
+      if (request.fieldMask) {
+        queryParams.push(
+          `fieldMask=${encodeURIComponent(request.fieldMask.toString())}`,
+        );
+      }
+      let uri = path;
+      if (queryParams.length > 0) {
+        uri += `?${queryParams.join('&')}`;
+      }
+      return transport.unary(uri, 'GET', body, {
+        service: 'FlowRuleService',
+        method: 'List',
+      }) as Promise<flowservicev1_ListFlowRuleResponse>;
+    },
+    Get(request) {
+      if (request.id === undefined || request.id === null) {
+        throw new Error('missing required field request.id');
+      }
+      const path = `admin/v1/flow-rules/${request.id}`;
+      const body = null;
+      return transport.unary(path, 'GET', body, {
+        service: 'FlowRuleService',
+        method: 'Get',
+      }) as Promise<flowservicev1_FlowRule>;
+    },
+    Create(request) {
+      const path = `admin/v1/flow-rules`;
+      const body = JSON.stringify(request);
+      return transport.unary(path, 'POST', body, {
+        service: 'FlowRuleService',
+        method: 'Create',
+      }) as Promise<flowservicev1_FlowRule>;
+    },
+    Update(request) {
+      if (request.id === undefined || request.id === null) {
+        throw new Error('missing required field request.id');
+      }
+      const path = `admin/v1/flow-rules/${request.id}`;
+      const body = JSON.stringify(request);
+      return transport.unary(path, 'PUT', body, {
+        service: 'FlowRuleService',
+        method: 'Update',
+      }) as Promise<flowservicev1_FlowRule>;
+    },
+    Delete(request) {
+      if (request.id === undefined || request.id === null) {
+        throw new Error('missing required field request.id');
+      }
+      const path = `admin/v1/flow-rules/${request.id}`;
+      const body = null;
+      return transport.unary(path, 'DELETE', body, {
+        service: 'FlowRuleService',
+        method: 'Delete',
+      }) as Promise<wellKnownEmpty>;
+    },
+  };
+}
+// 回应 - 规则列表
+export type flowservicev1_ListFlowRuleResponse = {
+  items: flowservicev1_FlowRule[] | undefined;
+  total: number | undefined;
+};
+
+// 自动化 Flow 规则：内容事件触发，条件命中后执行动作链
+export type flowservicev1_FlowRule = {
+  actions?: string;
+  conditionStatus?: string;
+  createdAt?: wellKnownTimestamp;
+  enabled?: boolean;
+  id?: number;
+  matchCount?: number;
+  name?: string;
+  triggerEvent?: string;
+  updatedAt?: wellKnownTimestamp;
+};
+
+// 请求 - 规则详情
+export type flowservicev1_GetFlowRuleRequest = {
+  id: number | undefined;
+};
+
+// 请求 - 创建规则
+export type flowservicev1_CreateFlowRuleRequest = {
+  data: flowservicev1_FlowRule | undefined;
+};
+
+// 请求 - 更新规则
+export type flowservicev1_UpdateFlowRuleRequest = {
+  data: flowservicev1_FlowRule | undefined;
+  id: number | undefined;
+  updateMask: undefined | wellKnownFieldMask;
+};
+
+// 请求 - 删除规则
+export type flowservicev1_DeleteFlowRuleRequest = {
+  id: number | undefined;
+};
+
 // 表单提交管理服务（页面 FORM 区块的访客提交）
 export interface FormSubmissionService {
   // 获取提交列表
@@ -15100,6 +15327,7 @@ export class ApiClient {
   private _experimentService?: ExperimentService;
   private _fileService?: FileService;
   private _fileTransferService?: FileTransferService;
+  private _flowRuleService?: FlowRuleService;
   private _formSubmissionService?: FormSubmissionService;
   private _interactionAdminService?: InteractionAdminService;
   private _internalMessageCategoryService?: InternalMessageCategoryService;
@@ -15235,6 +15463,10 @@ export class ApiClient {
 
   get fileTransferService(): FileTransferService {
     return this._fileTransferService ??= createFileTransferServiceClient(this._transport);
+  }
+
+  get flowRuleService(): FlowRuleService {
+    return this._flowRuleService ??= createFlowRuleServiceClient(this._transport);
   }
 
   get formSubmissionService(): FormSubmissionService {
