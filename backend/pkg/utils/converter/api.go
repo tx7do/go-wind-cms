@@ -22,7 +22,10 @@ func NewApiPermissionConverter() *ApiPermissionConverter {
 	return &ApiPermissionConverter{}
 }
 
-// ConvertCodeByOperationID 通过 operationID 生成 resource:action 风格的 code（如 users:delete, users:list）
+// ConvertCodeByOperationID 通过 operationID 生成 resource:action 风格的 code。
+// 动作归一化与 ConvertCodeByPath 同一口径：list/get/retrieve/query/exist→view、
+// create/add/new→create、update/edit/modify/change→edit、delete/remove/del→delete
+// （如 users:view、users:delete）。生产权限 code 走 ConvertCodeByPath，本函数当前仅测试引用。
 func (c *ApiPermissionConverter) ConvertCodeByOperationID(operationID string) string {
 	service, action, name, ok := c.splitOperationID(operationID)
 	if !ok {

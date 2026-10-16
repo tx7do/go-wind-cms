@@ -1,8 +1,10 @@
 package oss
 
 import (
+	"bytes"
 	"fmt"
 	"testing"
+	"time"
 
 	"github.com/go-kratos/kratos/v2/log"
 	"github.com/stretchr/testify/assert"
@@ -59,17 +61,27 @@ func TestDownloadFile(t *testing.T) {
 	cli := createTestClient()
 	assert.NotNil(t, cli)
 
-	resp, err := cli.DownloadFile(t.Context(), &storageV1.DownloadFileRequest{
+	// 自播种：下载测试不再依赖外部 MinIO 里恰好存在的对象（fixture 早已漂移），
+	// 先上传唯一对象再下载，测试自清理。
+	bucket := "images"
+	object := fmt.Sprintf("test/download-seed-%d.png", time.Now().UnixNano())
+	payload := []byte("download-seed-payload")
+	_, _, _, err := cli.UploadFile(t.Context(), bucket, object, "image/png",
+		bytes.NewReader(payload), int64(len(payload)))
+	assert.Nil(t, err)
+	defer func() {
+		_ = cli.DeleteFile(t.Context(), bucket, object)
+	}()
+
+	resp, derr := cli.DownloadFile(t.Context(), &storageV1.DownloadFileRequest{
 		Selector: &storageV1.DownloadFileRequest_StorageObject{
 			StorageObject: &storageV1.StorageObject{
-				BucketName: trans.Ptr("images"),
-				ObjectName: trans.Ptr("DateTimePicker.png"),
+				BucketName: trans.Ptr(bucket),
+				ObjectName: trans.Ptr(object),
 			},
 		},
 		PreferPresignedUrl: trans.Ptr(false),
 	})
-	if err != nil {
-		t.Error(err)
-	}
-	fmt.Println(resp)
+	assert.Nil(t, derr)
+	assert.NotNil(t, resp)
 }
