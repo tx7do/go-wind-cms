@@ -83,6 +83,7 @@ require (
 	github.com/yuin/gopher-lua v1.1.2
 	go.etcd.io/etcd/client/v3 v3.7.1
 	go.opentelemetry.io/otel/trace v1.46.0
+	golang.org/x/image v0.40.0
 	golang.org/x/net v0.58.0
 	google.golang.org/genproto v0.0.0-20260810153831-ec0a7760b754
 	google.golang.org/genproto/googleapis/api v0.0.0-20260825221802-da73d73af1c5
@@ -294,7 +295,6 @@ require (
 	golang.org/x/arch v0.15.0 // indirect
 	golang.org/x/crypto v0.55.0 // indirect
 	golang.org/x/exp v0.0.0-20260410095643-746e56fc9e2f // indirect
-	golang.org/x/image v0.40.0 // indirect
 	golang.org/x/mod v0.40.0 // indirect
 	golang.org/x/oauth2 v0.36.0 // indirect
 	golang.org/x/sync v0.22.0 // indirect

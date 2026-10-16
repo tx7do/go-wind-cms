@@ -2,6 +2,7 @@ package server
 
 import (
 	"context"
+	"strconv"
 
 	"github.com/go-kratos/kratos/v2/middleware"
 	"github.com/go-kratos/kratos/v2/middleware/logging"
@@ -22,6 +23,7 @@ import (
 	appV1 "go-wind-cms/api/gen/go/app/service/v1"
 	auditV1 "go-wind-cms/api/gen/go/audit/service/v1"
 	authenticationV1 "go-wind-cms/api/gen/go/authentication/service/v1"
+	mediaV1 "go-wind-cms/api/gen/go/media/service/v1"
 
 	"go-wind-cms/pkg/middleware/auth"
 	applogging "go-wind-cms/pkg/middleware/logging"
@@ -38,6 +40,9 @@ const (
 	OperationSeoServiceSitemap = "SeoService_Sitemap"
 	OperationSeoServiceRobots  = "SeoService_Robots"
 )
+
+// MediaAsset 域手工挂载端点的操作名（即时图片变换，非 proto 路由）。
+const OperationMediaAssetServiceGetContent = "MediaAssetService_GetContent"
 
 // NewRestMiddleware 创建中间件
 func NewRestMiddleware(
@@ -122,6 +127,11 @@ func NewRestMiddleware(
 		// MediaAssetService.Get：customFields IMAGE 引用（media_asset:<id>）换公开
 		// URL 渲染用；图片本身随文章公开，租户隔离由 core viewer 保证。
 		appV1.OperationMediaAssetServiceGet,
+
+		// MediaAssetService.GetContent（手工挂载非 proto 路由）：即时图片变换
+		// ?w=&h=&q=&fit= 输出图片字节；可见性复用 core Get（租户隔离/软删 404），
+		// 图片随内容公开，匿名可访问。
+		OperationMediaAssetServiceGetContent,
 
 		// SeoService（手工挂载非 proto 路由）：sitemap.xml / robots.txt，
 		// 搜索引擎抓取必须匿名可达；操作名为约定字符串非 proto 生成。
@@ -236,6 +246,23 @@ func NewRestServer(
 				return err
 			}
 			return ctx.Blob(200, "text/plain; charset=utf-8", []byte(body))
+		})
+	}
+
+	// ── 手工挂载:媒体域即时图片变换 ──
+	// GET /app/v1/media-assets/{id}/content?w=&h=&q=&fit=：非 proto 定义的
+	// 二进制端点（输出图片字节流），走 sitemap 同款手工挂载；参数解析/钳位/
+	// 派生对象缓存在 mediaAssetService.ServeContent，可见性经其内部调用
+	// core Get 校验（租户/软删）。
+	{
+		mediaContentRoute := srv.Route("/")
+		mediaContentRoute.GET("/app/v1/media-assets/{id}/content", func(ctx http.Context) error {
+			http.SetOperation(ctx, OperationMediaAssetServiceGetContent)
+			id64, err := strconv.ParseUint(ctx.Vars().Get("id"), 10, 32)
+			if err != nil || id64 == 0 {
+				return mediaV1.ErrorBadRequest("invalid media asset id")
+			}
+			return mediaAssetService.ServeContent(ctx, ctx.Response(), ctx.Request(), uint32(id64))
 		})
 	}
 
