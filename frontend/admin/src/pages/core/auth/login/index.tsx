@@ -1,10 +1,16 @@
-import React, { useCallback, useEffect, useState } from 'react';
+import React, { useCallback, useEffect, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Form, Input, Button, Checkbox, App } from 'antd';
-import { UserOutlined, LockOutlined, SafetyOutlined } from '@ant-design/icons';
+import {
+  UserOutlined,
+  LockOutlined,
+  SafetyOutlined,
+  TeamOutlined,
+} from '@ant-design/icons';
 import { useAuthStore } from '@/stores';
 import { useNavigate, useSearchParams } from 'react-router-dom';
 import { fetchGenerateCaptcha } from '@/api';
+import { apiClient } from '@/api/client';
 
 /**
  * 验证码控件：输入框与图片盒同排，组成单一受控组件挂进 Form.Item。
@@ -40,6 +46,11 @@ const Login: React.FC = () => {
   const [captchaId, setCaptchaId] = useState<string>('');
   const [captchaImage, setCaptchaImage] = useState<string>('');
   const [captchaLoading, setCaptchaLoading] = useState(false);
+
+  // OIDC SSO 状态
+  const [ssoLoading, setSsoLoading] = useState(false);
+  // StrictMode 下 effect 双跑，OIDC 回调只允许消费一次
+  const ssoHandledRef = useRef(false);
 
   // 获取验证码
   const refreshCaptcha = useCallback(async () => {
@@ -80,6 +91,61 @@ const Login: React.FC = () => {
       cancelled = true;
     };
   }, []);
+
+  // ===== OIDC 授权码回调：IdP 携 code+state 跳回本页，直接换发本仓令牌 =====
+  // 登录成功走 store 默认的整页跳 homePath：本页本就经整页跳转到达，
+  // 全页加载让 createBrowserRouter 以最终地址重建，规避 SPA 导航竞态。
+  useEffect(() => {
+    const code = searchParams.get('code');
+    const state = searchParams.get('state');
+    if (!code || !state || ssoHandledRef.current) return;
+    ssoHandledRef.current = true;
+
+    // 消费掉地址栏中的 code/state（服务端 state 一次性，前端同步清理防重放观感）
+    navigate(window.location.pathname, { replace: true });
+
+    setSsoLoading(true);
+    useAuthStore
+      .getState()
+      .login({
+        grant_type: 'authorization_code',
+        code,
+        oidc_state: state,
+      })
+      .catch((error: unknown) => {
+        console.error('OIDC login failed:', error);
+        message.error(
+          error instanceof Error && error.message
+            ? error.message
+            : t('ssoLoginFailed'),
+        );
+      })
+      .finally(() => setSsoLoading(false));
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
+  // 企业 SSO 登录：向后台换取授权跳转地址（state 由服务端生成暂存）后整页跳 IdP
+  const handleSsoLogin = async () => {
+    setSsoLoading(true);
+    try {
+      const resp = await apiClient.authenticationService.GetOidcAuthorizeUrl({
+        redirect_uri: `${window.location.origin}/auth/login`,
+      });
+      if (resp.authorizeUrl) {
+        window.location.href = resp.authorizeUrl;
+        return; // 跳转中，保持 loading 态
+      }
+      setSsoLoading(false);
+    } catch (error: unknown) {
+      console.error('Get OIDC authorize url failed:', error);
+      setSsoLoading(false);
+      message.error(
+        error instanceof Error && error.message
+          ? error.message
+          : t('ssoLoginFailed'),
+      );
+    }
+  };
 
   const handleSubmit = async (values: {
     username: string;
@@ -249,6 +315,28 @@ const Login: React.FC = () => {
               className="login-submit-btn"
             >
               {loginLoading ? t('loggingIn') : t('loginButton')}
+            </Button>
+          </Form.Item>
+
+          {/* 企业 SSO 入口：OIDC 配置未启用时点击会有后端错误提示，不影响密码登录 */}
+          <div className="mt-1 flex items-center gap-3">
+            <div className="h-px flex-1 bg-[color:var(--ant-color-border-secondary)]" />
+            <span className="text-xs text-[color:var(--ant-color-text-quaternary)]">
+              {t('ssoOrDivider')}
+            </span>
+            <div className="h-px flex-1 bg-[color:var(--ant-color-border-secondary)]" />
+          </div>
+
+          <Form.Item className="login-form-item mb-0">
+            <Button
+              block
+              size="large"
+              icon={<TeamOutlined />}
+              loading={ssoLoading}
+              disabled={loginLoading}
+              onClick={handleSsoLogin}
+            >
+              {t('ssoLogin')}
             </Button>
           </Form.Item>
         </Form>

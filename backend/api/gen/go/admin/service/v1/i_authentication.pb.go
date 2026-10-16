@@ -28,9 +28,10 @@ var File_admin_service_v1_i_authentication_proto protoreflect.FileDescriptor
 
 const file_admin_service_v1_i_authentication_proto_rawDesc = "" +
 	"\n" +
-	"'admin/service/v1/i_authentication.proto\x12\x10admin.service.v1\x1a$gnostic/openapi/v3/annotations.proto\x1a\x1cgoogle/api/annotations.proto\x1a\x1bgoogle/protobuf/empty.proto\x1a.authentication/service/v1/authentication.proto2\x91\x05\n" +
+	"'admin/service/v1/i_authentication.proto\x12\x10admin.service.v1\x1a$gnostic/openapi/v3/annotations.proto\x1a\x1cgoogle/api/annotations.proto\x1a\x1bgoogle/protobuf/empty.proto\x1a.authentication/service/v1/authentication.proto2\xc6\x06\n" +
 	"\x15AuthenticationService\x12{\n" +
-	"\x05Login\x12'.authentication.service.v1.LoginRequest\x1a(.authentication.service.v1.LoginResponse\"\x1f\xbaG\x02Z\x00\x82\xd3\xe4\x93\x02\x14:\x01*\"\x0f/admin/v1/login\x12U\n" +
+	"\x05Login\x12'.authentication.service.v1.LoginRequest\x1a(.authentication.service.v1.LoginResponse\"\x1f\xbaG\x02Z\x00\x82\xd3\xe4\x93\x02\x14:\x01*\"\x0f/admin/v1/login\x12\xb2\x01\n" +
+	"\x13GetOidcAuthorizeUrl\x125.authentication.service.v1.GetOidcAuthorizeUrlRequest\x1a6.authentication.service.v1.GetOidcAuthorizeUrlResponse\",\xbaG\x02Z\x00\x82\xd3\xe4\x93\x02!:\x01*\"\x1c/admin/v1/oidc/authorize-url\x12U\n" +
 	"\x06Logout\x12\x16.google.protobuf.Empty\x1a\x16.google.protobuf.Empty\"\x1b\x82\xd3\xe4\x93\x02\x15:\x01*\"\x10/admin/v1/logout\x12\x85\x01\n" +
 	"\fRefreshToken\x12'.authentication.service.v1.LoginRequest\x1a(.authentication.service.v1.LoginResponse\"\"\x82\xd3\xe4\x93\x02\x1c:\x01*\"\x17/admin/v1/refresh-token\x12}\n" +
 	"\x0fGenerateCaptcha\x12\x16.google.protobuf.Empty\x1a2.authentication.service.v1.GenerateCaptchaResponse\"\x1e\xbaG\x02Z\x00\x82\xd3\xe4\x93\x02\x13\x12\x11/admin/v1/captcha\x12\x9c\x01\n" +
@@ -38,26 +39,30 @@ const file_admin_service_v1_i_authentication_proto_rawDesc = "" +
 	"\x14com.admin.service.v1B\x14IAuthenticationProtoP\x01Z/go-wind-cms/api/gen/go/admin/service/v1;adminpb\xa2\x02\x03ASX\xaa\x02\x10Admin.Service.V1\xca\x02\x10Admin\\Service\\V1\xe2\x02\x1cAdmin\\Service\\V1\\GPBMetadata\xea\x02\x12Admin::Service::V1b\x06proto3"
 
 var file_admin_service_v1_i_authentication_proto_goTypes = []any{
-	(*v1.LoginRequest)(nil),            // 0: authentication.service.v1.LoginRequest
-	(*emptypb.Empty)(nil),              // 1: google.protobuf.Empty
-	(*v1.VerifyCaptchaRequest)(nil),    // 2: authentication.service.v1.VerifyCaptchaRequest
-	(*v1.LoginResponse)(nil),           // 3: authentication.service.v1.LoginResponse
-	(*v1.GenerateCaptchaResponse)(nil), // 4: authentication.service.v1.GenerateCaptchaResponse
-	(*v1.VerifyCaptchaResponse)(nil),   // 5: authentication.service.v1.VerifyCaptchaResponse
+	(*v1.LoginRequest)(nil),                // 0: authentication.service.v1.LoginRequest
+	(*v1.GetOidcAuthorizeUrlRequest)(nil),  // 1: authentication.service.v1.GetOidcAuthorizeUrlRequest
+	(*emptypb.Empty)(nil),                  // 2: google.protobuf.Empty
+	(*v1.VerifyCaptchaRequest)(nil),        // 3: authentication.service.v1.VerifyCaptchaRequest
+	(*v1.LoginResponse)(nil),               // 4: authentication.service.v1.LoginResponse
+	(*v1.GetOidcAuthorizeUrlResponse)(nil), // 5: authentication.service.v1.GetOidcAuthorizeUrlResponse
+	(*v1.GenerateCaptchaResponse)(nil),     // 6: authentication.service.v1.GenerateCaptchaResponse
+	(*v1.VerifyCaptchaResponse)(nil),       // 7: authentication.service.v1.VerifyCaptchaResponse
 }
 var file_admin_service_v1_i_authentication_proto_depIdxs = []int32{
 	0, // 0: admin.service.v1.AuthenticationService.Login:input_type -> authentication.service.v1.LoginRequest
-	1, // 1: admin.service.v1.AuthenticationService.Logout:input_type -> google.protobuf.Empty
-	0, // 2: admin.service.v1.AuthenticationService.RefreshToken:input_type -> authentication.service.v1.LoginRequest
-	1, // 3: admin.service.v1.AuthenticationService.GenerateCaptcha:input_type -> google.protobuf.Empty
-	2, // 4: admin.service.v1.AuthenticationService.VerifyCaptcha:input_type -> authentication.service.v1.VerifyCaptchaRequest
-	3, // 5: admin.service.v1.AuthenticationService.Login:output_type -> authentication.service.v1.LoginResponse
-	1, // 6: admin.service.v1.AuthenticationService.Logout:output_type -> google.protobuf.Empty
-	3, // 7: admin.service.v1.AuthenticationService.RefreshToken:output_type -> authentication.service.v1.LoginResponse
-	4, // 8: admin.service.v1.AuthenticationService.GenerateCaptcha:output_type -> authentication.service.v1.GenerateCaptchaResponse
-	5, // 9: admin.service.v1.AuthenticationService.VerifyCaptcha:output_type -> authentication.service.v1.VerifyCaptchaResponse
-	5, // [5:10] is the sub-list for method output_type
-	0, // [0:5] is the sub-list for method input_type
+	1, // 1: admin.service.v1.AuthenticationService.GetOidcAuthorizeUrl:input_type -> authentication.service.v1.GetOidcAuthorizeUrlRequest
+	2, // 2: admin.service.v1.AuthenticationService.Logout:input_type -> google.protobuf.Empty
+	0, // 3: admin.service.v1.AuthenticationService.RefreshToken:input_type -> authentication.service.v1.LoginRequest
+	2, // 4: admin.service.v1.AuthenticationService.GenerateCaptcha:input_type -> google.protobuf.Empty
+	3, // 5: admin.service.v1.AuthenticationService.VerifyCaptcha:input_type -> authentication.service.v1.VerifyCaptchaRequest
+	4, // 6: admin.service.v1.AuthenticationService.Login:output_type -> authentication.service.v1.LoginResponse
+	5, // 7: admin.service.v1.AuthenticationService.GetOidcAuthorizeUrl:output_type -> authentication.service.v1.GetOidcAuthorizeUrlResponse
+	2, // 8: admin.service.v1.AuthenticationService.Logout:output_type -> google.protobuf.Empty
+	4, // 9: admin.service.v1.AuthenticationService.RefreshToken:output_type -> authentication.service.v1.LoginResponse
+	6, // 10: admin.service.v1.AuthenticationService.GenerateCaptcha:output_type -> authentication.service.v1.GenerateCaptchaResponse
+	7, // 11: admin.service.v1.AuthenticationService.VerifyCaptcha:output_type -> authentication.service.v1.VerifyCaptchaResponse
+	6, // [6:12] is the sub-list for method output_type
+	0, // [0:6] is the sub-list for method input_type
 	0, // [0:0] is the sub-list for extension type_name
 	0, // [0:0] is the sub-list for extension extendee
 	0, // [0:0] is the sub-list for field type_name

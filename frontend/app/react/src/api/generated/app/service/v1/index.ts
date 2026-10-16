@@ -184,6 +184,8 @@ export type authenticationservicev1_LoginRequest = {
   grant_type: authenticationservicev1_GrantType | undefined;
   jti?: string;
   mobile?: string;
+  oidcIssuer?: string;
+  oidc_state?: string;
   password?: string;
   redirect_uri?: string;
   refresh_token?: string;

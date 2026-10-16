@@ -2487,6 +2487,10 @@ export interface AuthenticationService {
   Login(
     request: authenticationservicev1_LoginRequest,
   ): Promise<authenticationservicev1_LoginResponse>;
+  // 获取 OIDC 授权跳转地址（core 生成 state 暂存 Redis，防 CSRF；免鉴权）
+  GetOidcAuthorizeUrl(
+    request: authenticationservicev1_GetOidcAuthorizeUrlRequest,
+  ): Promise<authenticationservicev1_GetOidcAuthorizeUrlResponse>;
   // 登出
   Logout(
     request: wellKnownEmpty,
@@ -2516,6 +2520,14 @@ export function createAuthenticationServiceClient(
         service: 'AuthenticationService',
         method: 'Login',
       }) as Promise<authenticationservicev1_LoginResponse>;
+    },
+    GetOidcAuthorizeUrl(request) {
+      const path = `admin/v1/oidc/authorize-url`;
+      const body = JSON.stringify(request);
+      return transport.unary(path, 'POST', body, {
+        service: 'AuthenticationService',
+        method: 'GetOidcAuthorizeUrl',
+      }) as Promise<authenticationservicev1_GetOidcAuthorizeUrlResponse>;
     },
     Logout(request) {
       const path = `admin/v1/logout`;
@@ -2564,6 +2576,8 @@ export type authenticationservicev1_LoginRequest = {
   grant_type: authenticationservicev1_GrantType | undefined;
   jti?: string;
   mobile?: string;
+  oidcIssuer?: string;
+  oidc_state?: string;
   password?: string;
   redirect_uri?: string;
   refresh_token?: string;
@@ -2599,6 +2613,16 @@ export type authenticationservicev1_LoginResponse = {
 export type authenticationservicev1_TokenType =
   | 'bearer'
   | 'mac';
+// OIDC 授权跳转地址 - 请求
+export type authenticationservicev1_GetOidcAuthorizeUrlRequest = {
+  redirect_uri?: string;
+};
+
+// OIDC 授权跳转地址 - 响应
+export type authenticationservicev1_GetOidcAuthorizeUrlResponse = {
+  authorizeUrl?: string;
+};
+
 export type authenticationservicev1_GenerateCaptchaResponse = {
   captchaId: string | undefined;
   imageBase64: string | undefined;

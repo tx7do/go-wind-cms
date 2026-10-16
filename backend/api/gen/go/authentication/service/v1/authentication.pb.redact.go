@@ -60,6 +60,17 @@ func (s *redactedAuthenticationServiceServer) Login(ctx context.Context, in *Log
 	return res, err
 }
 
+// GetOidcAuthorizeUrl is the redacted wrapper for the actual AuthenticationServiceServer.GetOidcAuthorizeUrl method
+// Unary RPC
+func (s *redactedAuthenticationServiceServer) GetOidcAuthorizeUrl(ctx context.Context, in *GetOidcAuthorizeUrlRequest) (*GetOidcAuthorizeUrlResponse, error) {
+	res, err := s.srv.GetOidcAuthorizeUrl(ctx, in)
+	if !s.bypass.CheckInternal(ctx) {
+		// Apply redaction to the response
+		redact.Apply(res)
+	}
+	return res, err
+}
+
 // Logout is the redacted wrapper for the actual AuthenticationServiceServer.Logout method
 // Unary RPC
 func (s *redactedAuthenticationServiceServer) Logout(ctx context.Context, in *LogoutRequest) (*emptypb.Empty, error) {
@@ -181,6 +192,30 @@ func (s *redactedAuthenticationServiceServer) VerifyCaptcha(ctx context.Context,
 	return res, err
 }
 
+// Ensure GetOidcAuthorizeUrlRequest implements the Redactor interface at compile time.
+var _ redact.Redactor = (*GetOidcAuthorizeUrlRequest)(nil)
+
+// Redact method implementation for GetOidcAuthorizeUrlRequest
+func (x *GetOidcAuthorizeUrlRequest) Redact() {
+	if x == nil {
+		return
+	}
+
+	// Safe field: RedirectUri
+}
+
+// Ensure GetOidcAuthorizeUrlResponse implements the Redactor interface at compile time.
+var _ redact.Redactor = (*GetOidcAuthorizeUrlResponse)(nil)
+
+// Redact method implementation for GetOidcAuthorizeUrlResponse
+func (x *GetOidcAuthorizeUrlResponse) Redact() {
+	if x == nil {
+		return
+	}
+
+	// Safe field: AuthorizeUrl
+}
+
 // Ensure LoginRequest implements the Redactor interface at compile time.
 var _ redact.Redactor = (*LoginRequest)(nil)
 
@@ -209,6 +244,10 @@ func (x *LoginRequest) Redact() {
 	// Safe field: RefreshToken
 
 	// Safe field: Code
+
+	// Safe field: OidcState
+
+	// Safe field: OidcIssuer
 
 	// Safe field: ClientType
 

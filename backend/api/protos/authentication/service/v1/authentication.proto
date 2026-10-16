@@ -22,6 +22,9 @@ service AuthenticationService {
   // 用户登录
   rpc Login (LoginRequest) returns (LoginResponse) {}
 
+  // 获取 OIDC 授权跳转地址（服务端生成 state 暂存 Redis，防 CSRF）
+  rpc GetOidcAuthorizeUrl (GetOidcAuthorizeUrlRequest) returns (GetOidcAuthorizeUrlResponse) {}
+
   // 用户登出
   rpc Logout (LogoutRequest) returns (google.protobuf.Empty) {}
 
@@ -86,6 +89,26 @@ enum TokenCategory {
 
   ACCESS = 1;  // 访问令牌
   REFRESH = 2; // 刷新令牌
+}
+
+// OIDC 授权跳转地址 - 请求
+message GetOidcAuthorizeUrlRequest {
+  optional string redirect_uri = 1 [
+    json_name = "redirect_uri",
+    (gnostic.openapi.v3.property) = {
+      description: "授权完成后的回调地址（须与 IdP 注册的 redirect_uri 一致）"
+    }
+  ]; // 回调地址
+}
+
+// OIDC 授权跳转地址 - 响应
+message GetOidcAuthorizeUrlResponse {
+  optional string authorize_url = 1 [
+    json_name = "authorizeUrl",
+    (gnostic.openapi.v3.property) = {
+      description: "IdP 授权端点完整地址（含 client_id/redirect_uri/state/scope），浏览器直接跳转"
+    }
+  ]; // 授权跳转地址
 }
 
 // 用户登录 - 请求
@@ -166,6 +189,20 @@ message LoginRequest {
       description: "授权请求中收到的一次性验证/认证码。(当使用授权码模式时)"
     }
   ]; // 授权请求中收到的一次性验证/认证码。(当使用授权码模式时)
+
+  optional string oidc_state = 31 [
+    json_name = "oidc_state",
+    (gnostic.openapi.v3.property) = {
+      description: "OIDC 授权码模式的 state（防 CSRF；须与授权跳转时生成并暂存的 state 一致）"
+    }
+  ]; // OIDC state
+
+  optional string oidc_issuer = 32 [
+    json_name = "oidcIssuer",
+    (gnostic.openapi.v3.property) = {
+      description: "OIDC Issuer 标识（多 IdP 时区分来源；单 IdP 可留空）"
+    }
+  ]; // OIDC Issuer
 
   optional ClientType client_type = 40 [
     json_name = "client_type",

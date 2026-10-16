@@ -22,6 +22,18 @@ service AuthenticationService {
     };
   }
 
+  // 获取 OIDC 授权跳转地址（core 生成 state 暂存 Redis，防 CSRF；免鉴权）
+  rpc GetOidcAuthorizeUrl (authentication.service.v1.GetOidcAuthorizeUrlRequest) returns (authentication.service.v1.GetOidcAuthorizeUrlResponse) {
+    option (google.api.http) = {
+      post: "/admin/v1/oidc/authorize-url"
+      body: "*"
+    };
+
+    option(gnostic.openapi.v3.operation) = {
+      security: {}
+    };
+  }
+
   // 登出
   rpc Logout (google.protobuf.Empty) returns (google.protobuf.Empty) {
     option (google.api.http) = {

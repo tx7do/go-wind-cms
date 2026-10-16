@@ -35,6 +35,219 @@ var (
 	_ = sort.Sort
 )
 
+// Validate checks the field values on GetOidcAuthorizeUrlRequest with the
+// rules defined in the proto definition for this message. If any rules are
+// violated, the first error encountered is returned, or nil if there are no violations.
+func (m *GetOidcAuthorizeUrlRequest) Validate() error {
+	return m.validate(false)
+}
+
+// ValidateAll checks the field values on GetOidcAuthorizeUrlRequest with the
+// rules defined in the proto definition for this message. If any rules are
+// violated, the result is a list of violation errors wrapped in
+// GetOidcAuthorizeUrlRequestMultiError, or nil if none found.
+func (m *GetOidcAuthorizeUrlRequest) ValidateAll() error {
+	return m.validate(true)
+}
+
+func (m *GetOidcAuthorizeUrlRequest) validate(all bool) error {
+	if m == nil {
+		return nil
+	}
+
+	var errors []error
+
+	if m.RedirectUri != nil {
+		// no validation rules for RedirectUri
+	}
+
+	if len(errors) > 0 {
+		return GetOidcAuthorizeUrlRequestMultiError(errors)
+	}
+
+	return nil
+}
+
+// GetOidcAuthorizeUrlRequestMultiError is an error wrapping multiple
+// validation errors returned by GetOidcAuthorizeUrlRequest.ValidateAll() if
+// the designated constraints aren't met.
+type GetOidcAuthorizeUrlRequestMultiError []error
+
+// Error returns a concatenation of all the error messages it wraps.
+func (m GetOidcAuthorizeUrlRequestMultiError) Error() string {
+	msgs := make([]string, 0, len(m))
+	for _, err := range m {
+		msgs = append(msgs, err.Error())
+	}
+	return strings.Join(msgs, "; ")
+}
+
+// AllErrors returns a list of validation violation errors.
+func (m GetOidcAuthorizeUrlRequestMultiError) AllErrors() []error { return m }
+
+// GetOidcAuthorizeUrlRequestValidationError is the validation error returned
+// by GetOidcAuthorizeUrlRequest.Validate if the designated constraints aren't met.
+type GetOidcAuthorizeUrlRequestValidationError struct {
+	field  string
+	reason string
+	cause  error
+	key    bool
+}
+
+// Field function returns field value.
+func (e GetOidcAuthorizeUrlRequestValidationError) Field() string { return e.field }
+
+// Reason function returns reason value.
+func (e GetOidcAuthorizeUrlRequestValidationError) Reason() string { return e.reason }
+
+// Cause function returns cause value.
+func (e GetOidcAuthorizeUrlRequestValidationError) Cause() error { return e.cause }
+
+// Key function returns key value.
+func (e GetOidcAuthorizeUrlRequestValidationError) Key() bool { return e.key }
+
+// ErrorName returns error name.
+func (e GetOidcAuthorizeUrlRequestValidationError) ErrorName() string {
+	return "GetOidcAuthorizeUrlRequestValidationError"
+}
+
+// Error satisfies the builtin error interface
+func (e GetOidcAuthorizeUrlRequestValidationError) Error() string {
+	cause := ""
+	if e.cause != nil {
+		cause = fmt.Sprintf(" | caused by: %v", e.cause)
+	}
+
+	key := ""
+	if e.key {
+		key = "key for "
+	}
+
+	return fmt.Sprintf(
+		"invalid %sGetOidcAuthorizeUrlRequest.%s: %s%s",
+		key,
+		e.field,
+		e.reason,
+		cause)
+}
+
+var _ error = GetOidcAuthorizeUrlRequestValidationError{}
+
+var _ interface {
+	Field() string
+	Reason() string
+	Key() bool
+	Cause() error
+	ErrorName() string
+} = GetOidcAuthorizeUrlRequestValidationError{}
+
+// Validate checks the field values on GetOidcAuthorizeUrlResponse with the
+// rules defined in the proto definition for this message. If any rules are
+// violated, the first error encountered is returned, or nil if there are no violations.
+func (m *GetOidcAuthorizeUrlResponse) Validate() error {
+	return m.validate(false)
+}
+
+// ValidateAll checks the field values on GetOidcAuthorizeUrlResponse with the
+// rules defined in the proto definition for this message. If any rules are
+// violated, the result is a list of violation errors wrapped in
+// GetOidcAuthorizeUrlResponseMultiError, or nil if none found.
+func (m *GetOidcAuthorizeUrlResponse) ValidateAll() error {
+	return m.validate(true)
+}
+
+func (m *GetOidcAuthorizeUrlResponse) validate(all bool) error {
+	if m == nil {
+		return nil
+	}
+
+	var errors []error
+
+	if m.AuthorizeUrl != nil {
+		// no validation rules for AuthorizeUrl
+	}
+
+	if len(errors) > 0 {
+		return GetOidcAuthorizeUrlResponseMultiError(errors)
+	}
+
+	return nil
+}
+
+// GetOidcAuthorizeUrlResponseMultiError is an error wrapping multiple
+// validation errors returned by GetOidcAuthorizeUrlResponse.ValidateAll() if
+// the designated constraints aren't met.
+type GetOidcAuthorizeUrlResponseMultiError []error
+
+// Error returns a concatenation of all the error messages it wraps.
+func (m GetOidcAuthorizeUrlResponseMultiError) Error() string {
+	msgs := make([]string, 0, len(m))
+	for _, err := range m {
+		msgs = append(msgs, err.Error())
+	}
+	return strings.Join(msgs, "; ")
+}
+
+// AllErrors returns a list of validation violation errors.
+func (m GetOidcAuthorizeUrlResponseMultiError) AllErrors() []error { return m }
+
+// GetOidcAuthorizeUrlResponseValidationError is the validation error returned
+// by GetOidcAuthorizeUrlResponse.Validate if the designated constraints
+// aren't met.
+type GetOidcAuthorizeUrlResponseValidationError struct {
+	field  string
+	reason string
+	cause  error
+	key    bool
+}
+
+// Field function returns field value.
+func (e GetOidcAuthorizeUrlResponseValidationError) Field() string { return e.field }
+
+// Reason function returns reason value.
+func (e GetOidcAuthorizeUrlResponseValidationError) Reason() string { return e.reason }
+
+// Cause function returns cause value.
+func (e GetOidcAuthorizeUrlResponseValidationError) Cause() error { return e.cause }
+
+// Key function returns key value.
+func (e GetOidcAuthorizeUrlResponseValidationError) Key() bool { return e.key }
+
+// ErrorName returns error name.
+func (e GetOidcAuthorizeUrlResponseValidationError) ErrorName() string {
+	return "GetOidcAuthorizeUrlResponseValidationError"
+}
+
+// Error satisfies the builtin error interface
+func (e GetOidcAuthorizeUrlResponseValidationError) Error() string {
+	cause := ""
+	if e.cause != nil {
+		cause = fmt.Sprintf(" | caused by: %v", e.cause)
+	}
+
+	key := ""
+	if e.key {
+		key = "key for "
+	}
+
+	return fmt.Sprintf(
+		"invalid %sGetOidcAuthorizeUrlResponse.%s: %s%s",
+		key,
+		e.field,
+		e.reason,
+		cause)
+}
+
+var _ error = GetOidcAuthorizeUrlResponseValidationError{}
+
+var _ interface {
+	Field() string
+	Reason() string
+	Key() bool
+	Cause() error
+	ErrorName() string
+} = GetOidcAuthorizeUrlResponseValidationError{}
+
 // Validate checks the field values on LoginRequest with the rules defined in
 // the proto definition for this message. If any rules are violated, the first
 // error encountered is returned, or nil if there are no violations.
@@ -130,6 +343,14 @@ func (m *LoginRequest) validate(all bool) error {
 
 	if m.Code != nil {
 		// no validation rules for Code
+	}
+
+	if m.OidcState != nil {
+		// no validation rules for OidcState
+	}
+
+	if m.OidcIssuer != nil {
+		// no validation rules for OidcIssuer
 	}
 
 	if m.ClientType != nil {

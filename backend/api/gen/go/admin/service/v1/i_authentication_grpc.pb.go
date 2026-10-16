@@ -21,11 +21,12 @@ import (
 const _ = grpc.SupportPackageIsVersion9
 
 const (
-	AuthenticationService_Login_FullMethodName           = "/admin.service.v1.AuthenticationService/Login"
-	AuthenticationService_Logout_FullMethodName          = "/admin.service.v1.AuthenticationService/Logout"
-	AuthenticationService_RefreshToken_FullMethodName    = "/admin.service.v1.AuthenticationService/RefreshToken"
-	AuthenticationService_GenerateCaptcha_FullMethodName = "/admin.service.v1.AuthenticationService/GenerateCaptcha"
-	AuthenticationService_VerifyCaptcha_FullMethodName   = "/admin.service.v1.AuthenticationService/VerifyCaptcha"
+	AuthenticationService_Login_FullMethodName               = "/admin.service.v1.AuthenticationService/Login"
+	AuthenticationService_GetOidcAuthorizeUrl_FullMethodName = "/admin.service.v1.AuthenticationService/GetOidcAuthorizeUrl"
+	AuthenticationService_Logout_FullMethodName              = "/admin.service.v1.AuthenticationService/Logout"
+	AuthenticationService_RefreshToken_FullMethodName        = "/admin.service.v1.AuthenticationService/RefreshToken"
+	AuthenticationService_GenerateCaptcha_FullMethodName     = "/admin.service.v1.AuthenticationService/GenerateCaptcha"
+	AuthenticationService_VerifyCaptcha_FullMethodName       = "/admin.service.v1.AuthenticationService/VerifyCaptcha"
 )
 
 // AuthenticationServiceClient is the client API for AuthenticationService service.
@@ -36,6 +37,8 @@ const (
 type AuthenticationServiceClient interface {
 	// 登录
 	Login(ctx context.Context, in *v1.LoginRequest, opts ...grpc.CallOption) (*v1.LoginResponse, error)
+	// 获取 OIDC 授权跳转地址（core 生成 state 暂存 Redis，防 CSRF；免鉴权）
+	GetOidcAuthorizeUrl(ctx context.Context, in *v1.GetOidcAuthorizeUrlRequest, opts ...grpc.CallOption) (*v1.GetOidcAuthorizeUrlResponse, error)
 	// 登出
 	Logout(ctx context.Context, in *emptypb.Empty, opts ...grpc.CallOption) (*emptypb.Empty, error)
 	// 刷新认证令牌
@@ -58,6 +61,16 @@ func (c *authenticationServiceClient) Login(ctx context.Context, in *v1.LoginReq
 	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
 	out := new(v1.LoginResponse)
 	err := c.cc.Invoke(ctx, AuthenticationService_Login_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *authenticationServiceClient) GetOidcAuthorizeUrl(ctx context.Context, in *v1.GetOidcAuthorizeUrlRequest, opts ...grpc.CallOption) (*v1.GetOidcAuthorizeUrlResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(v1.GetOidcAuthorizeUrlResponse)
+	err := c.cc.Invoke(ctx, AuthenticationService_GetOidcAuthorizeUrl_FullMethodName, in, out, cOpts...)
 	if err != nil {
 		return nil, err
 	}
@@ -112,6 +125,8 @@ func (c *authenticationServiceClient) VerifyCaptcha(ctx context.Context, in *v1.
 type AuthenticationServiceServer interface {
 	// 登录
 	Login(context.Context, *v1.LoginRequest) (*v1.LoginResponse, error)
+	// 获取 OIDC 授权跳转地址（core 生成 state 暂存 Redis，防 CSRF；免鉴权）
+	GetOidcAuthorizeUrl(context.Context, *v1.GetOidcAuthorizeUrlRequest) (*v1.GetOidcAuthorizeUrlResponse, error)
 	// 登出
 	Logout(context.Context, *emptypb.Empty) (*emptypb.Empty, error)
 	// 刷新认证令牌
@@ -132,6 +147,9 @@ type UnimplementedAuthenticationServiceServer struct{}
 
 func (UnimplementedAuthenticationServiceServer) Login(context.Context, *v1.LoginRequest) (*v1.LoginResponse, error) {
 	return nil, status.Error(codes.Unimplemented, "method Login not implemented")
+}
+func (UnimplementedAuthenticationServiceServer) GetOidcAuthorizeUrl(context.Context, *v1.GetOidcAuthorizeUrlRequest) (*v1.GetOidcAuthorizeUrlResponse, error) {
+	return nil, status.Error(codes.Unimplemented, "method GetOidcAuthorizeUrl not implemented")
 }
 func (UnimplementedAuthenticationServiceServer) Logout(context.Context, *emptypb.Empty) (*emptypb.Empty, error) {
 	return nil, status.Error(codes.Unimplemented, "method Logout not implemented")
@@ -180,6 +198,24 @@ func _AuthenticationService_Login_Handler(srv interface{}, ctx context.Context, 
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
 		return srv.(AuthenticationServiceServer).Login(ctx, req.(*v1.LoginRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _AuthenticationService_GetOidcAuthorizeUrl_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(v1.GetOidcAuthorizeUrlRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(AuthenticationServiceServer).GetOidcAuthorizeUrl(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: AuthenticationService_GetOidcAuthorizeUrl_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(AuthenticationServiceServer).GetOidcAuthorizeUrl(ctx, req.(*v1.GetOidcAuthorizeUrlRequest))
 	}
 	return interceptor(ctx, in, info, handler)
 }
@@ -266,6 +302,10 @@ var AuthenticationService_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "Login",
 			Handler:    _AuthenticationService_Login_Handler,
+		},
+		{
+			MethodName: "GetOidcAuthorizeUrl",
+			Handler:    _AuthenticationService_GetOidcAuthorizeUrl_Handler,
 		},
 		{
 			MethodName: "Logout",

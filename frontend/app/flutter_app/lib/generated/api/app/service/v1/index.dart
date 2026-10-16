@@ -130,6 +130,8 @@ class AuthenticationServiceV1LoginRequest {
   AuthenticationServiceV1GrantType? grant_type;
   String? jti;
   String? mobile;
+  String? oidc_state;
+  String? oidcIssuer;
   String? password;
   String? redirect_uri;
   String? refresh_token;
@@ -148,6 +150,8 @@ class AuthenticationServiceV1LoginRequest {
     this.grant_type,
     this.jti,
     this.mobile,
+    this.oidc_state,
+    this.oidcIssuer,
     this.password,
     this.redirect_uri,
     this.refresh_token,
@@ -168,6 +172,8 @@ class AuthenticationServiceV1LoginRequest {
       grant_type: json['grant_type'] != null ? AuthenticationServiceV1GrantType.fromString(json['grant_type'] as String) : null,
       jti: json['jti'] as String?,
       mobile: json['mobile'] as String?,
+      oidc_state: json['oidc_state'] as String?,
+      oidcIssuer: json['oidcIssuer'] as String?,
       password: json['password'] as String?,
       redirect_uri: json['redirect_uri'] as String?,
       refresh_token: json['refresh_token'] as String?,
@@ -189,6 +195,8 @@ class AuthenticationServiceV1LoginRequest {
     if (grant_type != null) json['grant_type'] = grant_type!.value;
     if (jti != null) json['jti'] = jti;
     if (mobile != null) json['mobile'] = mobile;
+    if (oidc_state != null) json['oidc_state'] = oidc_state;
+    if (oidcIssuer != null) json['oidcIssuer'] = oidcIssuer;
     if (password != null) json['password'] = password;
     if (redirect_uri != null) json['redirect_uri'] = redirect_uri;
     if (refresh_token != null) json['refresh_token'] = refresh_token;
@@ -201,7 +209,7 @@ class AuthenticationServiceV1LoginRequest {
 
   @override
   String toString() {
-    return 'AuthenticationServiceV1LoginRequest(client_id: $client_id, client_secret: $client_secret, client_type: $client_type, code: $code, device_id: $device_id, email: $email, grant_type: $grant_type, jti: $jti, mobile: $mobile, password: $password, redirect_uri: $redirect_uri, refresh_token: $refresh_token, scope: $scope, tenant_code: $tenant_code, user_id: $user_id, username: $username)';
+    return 'AuthenticationServiceV1LoginRequest(client_id: $client_id, client_secret: $client_secret, client_type: $client_type, code: $code, device_id: $device_id, email: $email, grant_type: $grant_type, jti: $jti, mobile: $mobile, oidc_state: $oidc_state, oidcIssuer: $oidcIssuer, password: $password, redirect_uri: $redirect_uri, refresh_token: $refresh_token, scope: $scope, tenant_code: $tenant_code, user_id: $user_id, username: $username)';
   }
 
   @override
@@ -218,6 +226,8 @@ class AuthenticationServiceV1LoginRequest {
       && grant_type == other.grant_type
       && jti == other.jti
       && mobile == other.mobile
+      && oidc_state == other.oidc_state
+      && oidcIssuer == other.oidcIssuer
       && password == other.password
       && redirect_uri == other.redirect_uri
       && refresh_token == other.refresh_token
@@ -238,6 +248,8 @@ class AuthenticationServiceV1LoginRequest {
     grant_type,
     jti,
     mobile,
+    oidc_state,
+    oidcIssuer,
     password,
     redirect_uri,
     refresh_token,
@@ -257,6 +269,8 @@ class AuthenticationServiceV1LoginRequest {
     AuthenticationServiceV1GrantType? grant_type,
     String? jti,
     String? mobile,
+    String? oidc_state,
+    String? oidcIssuer,
     String? password,
     String? redirect_uri,
     String? refresh_token,
@@ -275,6 +289,8 @@ class AuthenticationServiceV1LoginRequest {
       grant_type: grant_type ?? this.grant_type,
       jti: jti ?? this.jti,
       mobile: mobile ?? this.mobile,
+      oidc_state: oidc_state ?? this.oidc_state,
+      oidcIssuer: oidcIssuer ?? this.oidcIssuer,
       password: password ?? this.password,
       redirect_uri: redirect_uri ?? this.redirect_uri,
       refresh_token: refresh_token ?? this.refresh_token,
@@ -352,6 +368,16 @@ class AuthenticationServiceV1LoginRequest {
     final f30 = code;
     if (f30 != null) {
       w.writeString(30, f30!);
+    }
+    // field 31: oidc_state
+    final f31 = oidc_state;
+    if (f31 != null) {
+      w.writeString(31, f31!);
+    }
+    // field 32: oidcIssuer
+    final f32 = oidcIssuer;
+    if (f32 != null) {
+      w.writeString(32, f32!);
     }
     // field 40: client_type
     final f40 = client_type;
@@ -441,6 +467,16 @@ class AuthenticationServiceV1LoginRequest {
         // field 30: code
         case 30: {
           m.code = r.readString();
+          break;
+        }
+        // field 31: oidc_state
+        case 31: {
+          m.oidc_state = r.readString();
+          break;
+        }
+        // field 32: oidcIssuer
+        case 32: {
+          m.oidcIssuer = r.readString();
           break;
         }
         // field 40: client_type

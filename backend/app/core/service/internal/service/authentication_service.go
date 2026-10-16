@@ -6,6 +6,7 @@ import (
 	"time"
 
 	"github.com/go-kratos/kratos/v2/log"
+	"github.com/redis/go-redis/v9"
 	"github.com/tx7do/go-crud/viewer"
 	"github.com/tx7do/go-utils/timeutil"
 	"github.com/tx7do/go-utils/trans"
@@ -45,6 +46,9 @@ type AuthenticationService struct {
 
 	authenticator *data.Authenticator
 
+	// redisClient 用于 OIDC 授权码 state 的暂存（防 CSRF，一次性消费）
+	redisClient *redis.Client
+
 	log *log.Helper
 }
 
@@ -56,6 +60,7 @@ func NewAuthenticationService(
 	roleRepo *data.RoleRepo,
 	tenantRepo *data.TenantRepo,
 	permissionRepo *data.PermissionRepo,
+	redisClient *redis.Client,
 ) *AuthenticationService {
 	l := log.NewHelper(log.With(ctx.GetLogger(), "module", "authn/service/core-service"))
 	return &AuthenticationService{
@@ -66,6 +71,7 @@ func NewAuthenticationService(
 		roleRepo:           roleRepo,
 		permissionRepo:     permissionRepo,
 		authenticator:      authenticator,
+		redisClient:        redisClient,
 	}
 }
 
@@ -86,6 +92,10 @@ func (s *AuthenticationService) Login(ctx context.Context, req *authenticationV1
 
 	case authenticationV1.GrantType_client_credentials:
 		return s.doGrantTypeClientCredentials(ctx, req)
+
+	case authenticationV1.GrantType_authorization_code:
+		// OIDC 授权码模式：code 由 IdP 颁发，本服务向 IdP 换取身份后映射/建号
+		return s.doGrantTypeOidcAuthorizationCode(ctx, req)
 
 	default:
 		return nil, authenticationV1.ErrorInvalidGrantType("invalid grant type")

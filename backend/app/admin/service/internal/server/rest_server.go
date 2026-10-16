@@ -48,6 +48,9 @@ func NewRestMiddleware(
 		adminV1.OperationAuthenticationServiceLogin,
 		adminV1.OperationAuthenticationServiceGenerateCaptcha,
 		adminV1.OperationAuthenticationServiceVerifyCaptcha,
+		// AuthenticationService.GetOidcAuthorizeUrl：OIDC 登录的前置步骤（登录页
+		// 尚无 token），与 Login 同列免鉴权；state 防 CSRF 由 core 生成校验。
+		adminV1.OperationAuthenticationServiceGetOidcAuthorizeUrl,
 		// AuthenticationService.RefreshToken：access token 过期后凭 refresh_token 换新，
 		// 调用时 bearer 往往已过期，若要求有效 token 刷新将永远 401。
 		adminV1.OperationAuthenticationServiceRefreshToken,

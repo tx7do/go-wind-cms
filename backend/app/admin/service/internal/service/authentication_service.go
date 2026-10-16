@@ -165,12 +165,17 @@ func NewAuthenticationService(
 	}
 }
 
+// GetOidcAuthorizeUrl 获取 OIDC 授权跳转地址（透传 core；state 由 core 生成并落 Redis）。
+// 免鉴权端点（登录前置步骤），不走验证码。
+func (s *AuthenticationService) GetOidcAuthorizeUrl(ctx context.Context, req *authenticationV1.GetOidcAuthorizeUrlRequest) (*authenticationV1.GetOidcAuthorizeUrlResponse, error) {
+	return s.authenticationServiceClient.GetOidcAuthorizeUrl(ctx, req)
+}
+
 // verifyLoginCaptcha 校验登录请求携带的验证码。
 // 验证码 id/value 通过 HTTP Header（X-Captcha-Id / X-Captcha-Value）传递。
 // captchaClient.Verify 已是 verify-and-delete 单次有效语义。
 // 注意：refresh_token / client_credentials 等非密码授权不走此校验（仅 password 授权调用）。
-func (s *AuthenticationService) verifyLoginCaptcha(ctx context.Context) bool {
-	if !CaptchaEnabled {
+func (s *AuthenticationService) verifyLoginCaptcha(ctx context.Context) bool {	if !CaptchaEnabled {
 		// 验证码开关关闭，跳过校验
 		return true
 	}

@@ -4926,6 +4926,27 @@ paths:
                 "200":
                     description: OK
                     content: {}
+    /admin/v1/oidc/authorize-url:
+        post:
+            tags:
+                - AuthenticationService
+            description: 获取 OIDC 授权跳转地址（core 生成 state 暂存 Redis，防 CSRF；免鉴权）
+            operationId: AuthenticationService_GetOidcAuthorizeUrl
+            requestBody:
+                content:
+                    application/json:
+                        schema:
+                            $ref: '#/components/schemas/authentication.service.v1.GetOidcAuthorizeUrlRequest'
+                required: true
+            responses:
+                "200":
+                    description: OK
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/authentication.service.v1.GetOidcAuthorizeUrlResponse'
+            security:
+                - {}
     /admin/v1/operation-audit-logs:
         get:
             tags:
@@ -10528,6 +10549,20 @@ components:
                 imageBase64:
                     type: string
                     description: 验证码图片的Base64编码字符串，客户端可以解码并显示给用户
+        authentication.service.v1.GetOidcAuthorizeUrlRequest:
+            type: object
+            properties:
+                redirect_uri:
+                    type: string
+                    description: 授权完成后的回调地址（须与 IdP 注册的 redirect_uri 一致）
+            description: OIDC 授权跳转地址 - 请求
+        authentication.service.v1.GetOidcAuthorizeUrlResponse:
+            type: object
+            properties:
+                authorizeUrl:
+                    type: string
+                    description: IdP 授权端点完整地址（含 client_id/redirect_uri/state/scope），浏览器直接跳转
+            description: OIDC 授权跳转地址 - 响应
         authentication.service.v1.ListLoginPolicyResponse:
             type: object
             properties:
@@ -10656,6 +10691,12 @@ components:
                 code:
                     type: string
                     description: 授权请求中收到的一次性验证/认证码。(当使用授权码模式时)
+                oidc_state:
+                    type: string
+                    description: OIDC 授权码模式的 state（防 CSRF；须与授权跳转时生成并暂存的 state 一致）
+                oidcIssuer:
+                    type: string
+                    description: OIDC Issuer 标识（多 IdP 时区分来源；单 IdP 可留空）
                 client_type:
                     enum:
                         - admin

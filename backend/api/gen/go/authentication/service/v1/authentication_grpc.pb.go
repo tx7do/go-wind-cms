@@ -20,18 +20,19 @@ import (
 const _ = grpc.SupportPackageIsVersion9
 
 const (
-	AuthenticationService_Login_FullMethodName           = "/authentication.service.v1.AuthenticationService/Login"
-	AuthenticationService_Logout_FullMethodName          = "/authentication.service.v1.AuthenticationService/Logout"
-	AuthenticationService_RegisterUser_FullMethodName    = "/authentication.service.v1.AuthenticationService/RegisterUser"
-	AuthenticationService_RefreshToken_FullMethodName    = "/authentication.service.v1.AuthenticationService/RefreshToken"
-	AuthenticationService_ValidateToken_FullMethodName   = "/authentication.service.v1.AuthenticationService/ValidateToken"
-	AuthenticationService_GetAccessTokens_FullMethodName = "/authentication.service.v1.AuthenticationService/GetAccessTokens"
-	AuthenticationService_RevokeTokenById_FullMethodName = "/authentication.service.v1.AuthenticationService/RevokeTokenById"
-	AuthenticationService_BlockToken_FullMethodName      = "/authentication.service.v1.AuthenticationService/BlockToken"
-	AuthenticationService_UnblockToken_FullMethodName    = "/authentication.service.v1.AuthenticationService/UnblockToken"
-	AuthenticationService_WhoAmI_FullMethodName          = "/authentication.service.v1.AuthenticationService/WhoAmI"
-	AuthenticationService_GenerateCaptcha_FullMethodName = "/authentication.service.v1.AuthenticationService/GenerateCaptcha"
-	AuthenticationService_VerifyCaptcha_FullMethodName   = "/authentication.service.v1.AuthenticationService/VerifyCaptcha"
+	AuthenticationService_Login_FullMethodName               = "/authentication.service.v1.AuthenticationService/Login"
+	AuthenticationService_GetOidcAuthorizeUrl_FullMethodName = "/authentication.service.v1.AuthenticationService/GetOidcAuthorizeUrl"
+	AuthenticationService_Logout_FullMethodName              = "/authentication.service.v1.AuthenticationService/Logout"
+	AuthenticationService_RegisterUser_FullMethodName        = "/authentication.service.v1.AuthenticationService/RegisterUser"
+	AuthenticationService_RefreshToken_FullMethodName        = "/authentication.service.v1.AuthenticationService/RefreshToken"
+	AuthenticationService_ValidateToken_FullMethodName       = "/authentication.service.v1.AuthenticationService/ValidateToken"
+	AuthenticationService_GetAccessTokens_FullMethodName     = "/authentication.service.v1.AuthenticationService/GetAccessTokens"
+	AuthenticationService_RevokeTokenById_FullMethodName     = "/authentication.service.v1.AuthenticationService/RevokeTokenById"
+	AuthenticationService_BlockToken_FullMethodName          = "/authentication.service.v1.AuthenticationService/BlockToken"
+	AuthenticationService_UnblockToken_FullMethodName        = "/authentication.service.v1.AuthenticationService/UnblockToken"
+	AuthenticationService_WhoAmI_FullMethodName              = "/authentication.service.v1.AuthenticationService/WhoAmI"
+	AuthenticationService_GenerateCaptcha_FullMethodName     = "/authentication.service.v1.AuthenticationService/GenerateCaptcha"
+	AuthenticationService_VerifyCaptcha_FullMethodName       = "/authentication.service.v1.AuthenticationService/VerifyCaptcha"
 )
 
 // AuthenticationServiceClient is the client API for AuthenticationService service.
@@ -42,6 +43,8 @@ const (
 type AuthenticationServiceClient interface {
 	// 用户登录
 	Login(ctx context.Context, in *LoginRequest, opts ...grpc.CallOption) (*LoginResponse, error)
+	// 获取 OIDC 授权跳转地址（服务端生成 state 暂存 Redis，防 CSRF）
+	GetOidcAuthorizeUrl(ctx context.Context, in *GetOidcAuthorizeUrlRequest, opts ...grpc.CallOption) (*GetOidcAuthorizeUrlResponse, error)
 	// 用户登出
 	Logout(ctx context.Context, in *LogoutRequest, opts ...grpc.CallOption) (*emptypb.Empty, error)
 	// 注册用户
@@ -78,6 +81,16 @@ func (c *authenticationServiceClient) Login(ctx context.Context, in *LoginReques
 	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
 	out := new(LoginResponse)
 	err := c.cc.Invoke(ctx, AuthenticationService_Login_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *authenticationServiceClient) GetOidcAuthorizeUrl(ctx context.Context, in *GetOidcAuthorizeUrlRequest, opts ...grpc.CallOption) (*GetOidcAuthorizeUrlResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(GetOidcAuthorizeUrlResponse)
+	err := c.cc.Invoke(ctx, AuthenticationService_GetOidcAuthorizeUrl_FullMethodName, in, out, cOpts...)
 	if err != nil {
 		return nil, err
 	}
@@ -202,6 +215,8 @@ func (c *authenticationServiceClient) VerifyCaptcha(ctx context.Context, in *Ver
 type AuthenticationServiceServer interface {
 	// 用户登录
 	Login(context.Context, *LoginRequest) (*LoginResponse, error)
+	// 获取 OIDC 授权跳转地址（服务端生成 state 暂存 Redis，防 CSRF）
+	GetOidcAuthorizeUrl(context.Context, *GetOidcAuthorizeUrlRequest) (*GetOidcAuthorizeUrlResponse, error)
 	// 用户登出
 	Logout(context.Context, *LogoutRequest) (*emptypb.Empty, error)
 	// 注册用户
@@ -236,6 +251,9 @@ type UnimplementedAuthenticationServiceServer struct{}
 
 func (UnimplementedAuthenticationServiceServer) Login(context.Context, *LoginRequest) (*LoginResponse, error) {
 	return nil, status.Error(codes.Unimplemented, "method Login not implemented")
+}
+func (UnimplementedAuthenticationServiceServer) GetOidcAuthorizeUrl(context.Context, *GetOidcAuthorizeUrlRequest) (*GetOidcAuthorizeUrlResponse, error) {
+	return nil, status.Error(codes.Unimplemented, "method GetOidcAuthorizeUrl not implemented")
 }
 func (UnimplementedAuthenticationServiceServer) Logout(context.Context, *LogoutRequest) (*emptypb.Empty, error) {
 	return nil, status.Error(codes.Unimplemented, "method Logout not implemented")
@@ -305,6 +323,24 @@ func _AuthenticationService_Login_Handler(srv interface{}, ctx context.Context, 
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
 		return srv.(AuthenticationServiceServer).Login(ctx, req.(*LoginRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _AuthenticationService_GetOidcAuthorizeUrl_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(GetOidcAuthorizeUrlRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(AuthenticationServiceServer).GetOidcAuthorizeUrl(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: AuthenticationService_GetOidcAuthorizeUrl_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(AuthenticationServiceServer).GetOidcAuthorizeUrl(ctx, req.(*GetOidcAuthorizeUrlRequest))
 	}
 	return interceptor(ctx, in, info, handler)
 }
@@ -517,6 +553,10 @@ var AuthenticationService_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "Login",
 			Handler:    _AuthenticationService_Login_Handler,
+		},
+		{
+			MethodName: "GetOidcAuthorizeUrl",
+			Handler:    _AuthenticationService_GetOidcAuthorizeUrl_Handler,
 		},
 		{
 			MethodName: "Logout",

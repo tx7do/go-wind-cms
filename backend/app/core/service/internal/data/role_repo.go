@@ -380,6 +380,30 @@ func (r *RoleRepo) GetTenantRoleByCode(ctx context.Context, tenantID uint32, cod
 }
 
 // GetTemplateRole 获取角色模板信息
+// GetPlatformRoleByCode 按代码查找平台级角色（tenant_id=0，种子数据约定）。
+// 用于平台上下文内解析受保护角色，如 OIDC 首登自动建号的默认角色绑定。
+func (r *RoleRepo) GetPlatformRoleByCode(ctx context.Context, code string) (*permissionV1.Role, error) {
+	if code == "" {
+		return nil, permissionV1.ErrorBadRequest("invalid parameter")
+	}
+
+	builder := r.entClient.Client().Role.Query().
+		Where(
+			role.CodeEQ(code),
+			role.StatusEQ(role.StatusOn),
+			role.TenantIDEQ(0),
+		)
+
+	ret, err := r.repository.Get(ctx, builder, nil)
+	if err != nil {
+		return nil, err
+	}
+
+	_ = r.fillPermissionIDs(ctx, ret)
+
+	return ret, err
+}
+
 func (r *RoleRepo) GetTemplateRole(ctx context.Context, templateCode string) (*permissionV1.Role, error) {
 	if templateCode == "" {
 		return nil, permissionV1.ErrorBadRequest("invalid parameter")
