@@ -26,6 +26,7 @@ import (
 	"go-wind-cms/app/core/service/internal/data/ent/dictentryi18n"
 	"go-wind-cms/app/core/service/internal/data/ent/dicttype"
 	"go-wind-cms/app/core/service/internal/data/ent/emailprovider"
+	"go-wind-cms/app/core/service/internal/data/ent/emailtemplate"
 	"go-wind-cms/app/core/service/internal/data/ent/experiment"
 	"go-wind-cms/app/core/service/internal/data/ent/experimentparticipant"
 	"go-wind-cms/app/core/service/internal/data/ent/experimentvariant"
@@ -709,6 +710,46 @@ func init() {
 	emailproviderDescID := emailproviderMixinFields0[0].Descriptor()
 	// emailprovider.IDValidator is a validator for the "id" field. It is called by the builders before save.
 	emailprovider.IDValidator = emailproviderDescID.Validators[0].(func(uint32) error)
+	emailtemplateMixin := schema.EmailTemplate{}.Mixin()
+	emailtemplate.Policy = privacy.NewPolicies(emailtemplateMixin[3], schema.EmailTemplate{})
+	emailtemplate.Hooks[0] = func(next ent.Mutator) ent.Mutator {
+		return ent.MutateFunc(func(ctx context.Context, m ent.Mutation) (ent.Value, error) {
+			if err := emailtemplate.Policy.EvalMutation(ctx, m); err != nil {
+				return nil, err
+			}
+			return next.Mutate(ctx, m)
+		})
+	}
+	emailtemplateMixinFields0 := emailtemplateMixin[0].Fields()
+	_ = emailtemplateMixinFields0
+	emailtemplateMixinFields3 := emailtemplateMixin[3].Fields()
+	_ = emailtemplateMixinFields3
+	emailtemplateFields := schema.EmailTemplate{}.Fields()
+	_ = emailtemplateFields
+	// emailtemplateDescTenantID is the schema descriptor for tenant_id field.
+	emailtemplateDescTenantID := emailtemplateMixinFields3[0].Descriptor()
+	// emailtemplate.DefaultTenantID holds the default value on creation for the tenant_id field.
+	emailtemplate.DefaultTenantID = emailtemplateDescTenantID.Default.(uint32)
+	// emailtemplateDescCode is the schema descriptor for code field.
+	emailtemplateDescCode := emailtemplateFields[0].Descriptor()
+	// emailtemplate.CodeValidator is a validator for the "code" field. It is called by the builders before save.
+	emailtemplate.CodeValidator = emailtemplateDescCode.Validators[0].(func(string) error)
+	// emailtemplateDescName is the schema descriptor for name field.
+	emailtemplateDescName := emailtemplateFields[1].Descriptor()
+	// emailtemplate.NameValidator is a validator for the "name" field. It is called by the builders before save.
+	emailtemplate.NameValidator = emailtemplateDescName.Validators[0].(func(string) error)
+	// emailtemplateDescSubject is the schema descriptor for subject field.
+	emailtemplateDescSubject := emailtemplateFields[2].Descriptor()
+	// emailtemplate.SubjectValidator is a validator for the "subject" field. It is called by the builders before save.
+	emailtemplate.SubjectValidator = emailtemplateDescSubject.Validators[0].(func(string) error)
+	// emailtemplateDescEnabled is the schema descriptor for enabled field.
+	emailtemplateDescEnabled := emailtemplateFields[4].Descriptor()
+	// emailtemplate.DefaultEnabled holds the default value on creation for the enabled field.
+	emailtemplate.DefaultEnabled = emailtemplateDescEnabled.Default.(bool)
+	// emailtemplateDescID is the schema descriptor for id field.
+	emailtemplateDescID := emailtemplateMixinFields0[0].Descriptor()
+	// emailtemplate.IDValidator is a validator for the "id" field. It is called by the builders before save.
+	emailtemplate.IDValidator = emailtemplateDescID.Validators[0].(func(uint32) error)
 	experimentMixin := schema.Experiment{}.Mixin()
 	experiment.Policy = privacy.NewPolicies(experimentMixin[3], schema.Experiment{})
 	experiment.Hooks[0] = func(next ent.Mutator) ent.Mutator {

@@ -6,6 +6,7 @@ import (
 	"html"
 	"os"
 	"strings"
+	"text/template"
 	"time"
 
 	"github.com/go-kratos/kratos/v2/log"
@@ -41,6 +42,7 @@ type InternalMessageService struct {
 
 	userRepo data.UserRepo
 	emailProviderRepo *data.EmailProviderRepo
+	emailTemplateRepo *data.EmailTemplateRepo
 	taskService *TaskService
 
 	// redisClient 用于把系统通知事件发布到 Redis Pub/Sub（admin 服务订阅后转
@@ -57,6 +59,7 @@ func NewInternalMessageService(
 	redisClient *redis.Client,
 	taskService *TaskService,
 	emailProviderRepo *data.EmailProviderRepo,
+	emailTemplateRepo *data.EmailTemplateRepo,
 ) *InternalMessageService {
 	return &InternalMessageService{
 		log:                          ctx.NewLoggerHelper("internal-message/service/core-service"),
@@ -272,19 +275,19 @@ func (s *InternalMessageService) SendMessage(ctx context.Context, req *internalM
 				if senderTenantID != 0 && user.GetTenantId() != senderTenantID {
 					continue
 				}
-				_ = s.sendNotification(ctx, msg.GetId(), user.GetId(), senderUserID, &now, msg.GetTitle(), msg.GetContent())
+				_ = s.sendNotification(ctx, msg.GetId(), user.GetId(), senderUserID, &now, msg.GetTitle(), msg.GetContent(), req.GetSendEmail())
 			}
 		}
 	} else {
 		if req.RecipientUserId != nil {
 			if s.isRecipientAllowed(ctx, req.GetRecipientUserId(), senderTenantID) {
-				_ = s.sendNotification(ctx, msg.GetId(), req.GetRecipientUserId(), senderUserID, &now, msg.GetTitle(), msg.GetContent())
+				_ = s.sendNotification(ctx, msg.GetId(), req.GetRecipientUserId(), senderUserID, &now, msg.GetTitle(), msg.GetContent(), req.GetSendEmail())
 			}
 		} else {
 			if len(req.TargetUserIds) != 0 {
 				for _, uid := range req.TargetUserIds {
 					if s.isRecipientAllowed(ctx, uid, senderTenantID) {
-						_ = s.sendNotification(ctx, msg.GetId(), uid, senderUserID, &now, msg.GetTitle(), msg.GetContent())
+						_ = s.sendNotification(ctx, msg.GetId(), uid, senderUserID, &now, msg.GetTitle(), msg.GetContent(), req.GetSendEmail())
 					}
 				}
 			}
@@ -313,6 +316,10 @@ func (s *InternalMessageService) isRecipientAllowed(ctx context.Context, recipie
 	}
 	return true
 }
+
+// NotifyEmailTemplateCode 系统通知出站邮件的模板代码（email_templates.code）。
+// 租户启用模板优先回退平台启用模板，均未配置回退内置最小模板。
+const NotifyEmailTemplateCode = "notify/system"
 
 // NotifyUser 系统级通知：后台任务（无操作人身份）触达指定用户。
 // 借鉴 go-wind-admin Notification 域的"系统发起"语义——不读 viewer/operator，
@@ -373,6 +380,8 @@ func (s *InternalMessageService) NotifyUser(ctx context.Context, recipientUserID
 	}
 
 	// 邮件出站（best-effort）：收件人配有邮箱且 SMTP 已配置时异步投递。
+	// 系统级通知（NotifyUser）保持"有邮箱即出站"口径；群发出站开关在
+	// CreateMessage fan-out 路径（sendNotification 显式传 sendEmailOut）。
 	// 站内信落库为准，邮件是附加触达——任何失败只记日志。
 	if recipient.GetEmail() != "" && s.taskService != nil {
 		if perr := s.taskService.EnqueueNotifyEmail(&task.NotifyEmailPayload{
@@ -418,12 +427,64 @@ func (s *InternalMessageService) SendEmailWorker(taskType string, payload *task.
 		return nil
 	}
 
-	if err = cfg.Send([]string{to}, payload.Title, buildNotifyEmailHTML(payload.Title, payload.Content)); err != nil {
+	subject, bodyHTML := s.renderNotifyEmail(ctx, payload.TenantID, payload.Title, payload.Content)
+	if err = cfg.Send([]string{to}, subject, bodyHTML); err != nil {
 		s.log.Errorf("notify email: send failed (user=%d): %v", payload.UserID, err)
 		return err // SMTP 暂时性失败：asynq 重试
 	}
 	s.log.Infof("notify email: sent to %s (user=%d)", to, payload.UserID)
 	return nil
+}
+
+// renderNotifyEmail 出站邮件渲染：code=notify/system 的启用模板
+//（租户优先回退平台）→ 内置最小模板。模板经 text/template 执行，
+// 数据为 {Title, Content, SiteURL}；模板执行失败回退内置，不阻断出站。
+func (s *InternalMessageService) renderNotifyEmail(ctx context.Context, tenantID uint32, title, content string) (string, string) {
+	fallback := func() (string, string) {
+		return title, buildNotifyEmailHTML(title, content)
+	}
+	if s.emailTemplateRepo == nil {
+		return fallback()
+	}
+
+	tpl, err := s.emailTemplateRepo.FindEnabledByCode(ctx, NotifyEmailTemplateCode)
+	if err != nil {
+		s.log.Warnf("render notify email: load template failed, fallback builtin: %v", err)
+		return fallback()
+	}
+	if tpl == nil || tpl.GetBodyHtml() == "" {
+		return fallback()
+	}
+
+	data := map[string]any{
+		"Title":   title,
+		"Content": content,
+		"SiteURL": strings.TrimRight(os.Getenv("SITE_URL"), "/"),
+	}
+
+	subjectTpl, terr := template.New("subject").Parse(tpl.GetSubject())
+	if terr != nil {
+		s.log.Warnf("render notify email: bad subject template, fallback builtin: %v", terr)
+		return fallback()
+	}
+	var subjectBuf strings.Builder
+	if seterr := subjectTpl.Execute(&subjectBuf, data); seterr != nil {
+		s.log.Warnf("render notify email: subject execute failed, fallback builtin: %v", seterr)
+		return fallback()
+	}
+
+	bodyTpl, berr := template.New("body").Parse(tpl.GetBodyHtml())
+	if berr != nil {
+		s.log.Warnf("render notify email: bad body template, fallback builtin: %v", berr)
+		return fallback()
+	}
+	var bodyBuf strings.Builder
+	if seterr := bodyTpl.Execute(&bodyBuf, data); seterr != nil {
+		s.log.Warnf("render notify email: body execute failed, fallback builtin: %v", seterr)
+		return fallback()
+	}
+
+	return subjectBuf.String(), bodyBuf.String()
 }
 
 // resolveMailerConfig 邮件配置解析：DB 启用项（管理页可视化配置）优先，
@@ -464,7 +525,9 @@ func buildNotifyEmailHTML(title, content string) string {
 }
 
 // sendNotification 向客户端发送通知消息
-func (s *InternalMessageService) sendNotification(ctx context.Context, messageId uint32, recipientUserId uint32, senderUserId uint32, now *time.Time, title, content string) error {
+// sendEmailOut 差异化参数：显式传 true 时该收件人出站邮件（群发开关）；
+// 省略时保持各调用方既有口径（系统级通知=有邮箱即出站，群发=默认不出站）。
+func (s *InternalMessageService) sendNotification(ctx context.Context, messageId uint32, recipientUserId uint32, senderUserId uint32, now *time.Time, title, content string, sendEmailOut ...bool) error {
 	recipient := &internalMessageV1.InternalMessageRecipient{
 		MessageId:       trans.Ptr(messageId),
 		RecipientUserId: trans.Ptr(recipientUserId),

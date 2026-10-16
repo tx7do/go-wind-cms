@@ -1,0 +1,49 @@
+syntax = "proto3";
+
+package admin.service.v1;
+
+import "google/api/annotations.proto";
+import "google/protobuf/empty.proto";
+
+import "pagination/v1/pagination.proto";
+import "content/service/v1/email_template.proto";
+
+// 邮件模板管理服务
+service EmailTemplateService {
+  // 获取模板列表
+  rpc List (pagination.PagingRequest) returns (content.service.v1.ListEmailTemplatesResponse) {
+    option (google.api.http) = {
+      get: "/admin/v1/email-templates"
+    };
+  }
+
+  // 获取模板
+  rpc Get (content.service.v1.GetEmailTemplateRequest) returns (content.service.v1.EmailTemplate) {
+    option (google.api.http) = {
+      get: "/admin/v1/email-templates/{id}"
+    };
+  }
+
+  // 创建模板
+  rpc Create (content.service.v1.CreateEmailTemplateRequest) returns (content.service.v1.EmailTemplate) {
+    option (google.api.http) = {
+      post: "/admin/v1/email-templates"
+      body: "*"
+    };
+  }
+
+  // 更新模板
+  rpc Update (content.service.v1.UpdateEmailTemplateRequest) returns (content.service.v1.EmailTemplate) {
+    option (google.api.http) = {
+      put: "/admin/v1/email-templates/{id}"
+      body: "*"
+    };
+  }
+
+  // 删除模板
+  rpc Delete (content.service.v1.DeleteEmailTemplateRequest) returns (google.protobuf.Empty) {
+    option (google.api.http) = {
+      delete: "/admin/v1/email-templates/{id}"
+    };
+  }
+}

@@ -210,6 +210,11 @@ message SendMessageRequest {
     (gnostic.openapi.v3.property) = { description: "全员发送标志" }
   ]; // 全员发送标志
 
+  optional bool send_email = 8 [
+    json_name = "sendEmail",
+    (gnostic.openapi.v3.property) = { description: "同时出站邮件（群发开关；收件人需配邮箱且 SMTP 可用）" }
+  ]; // 同时出站邮件
+
   optional string title = 10 [
     json_name = "title",
     (gnostic.openapi.v3.property) = { description: "消息标题" }

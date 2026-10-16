@@ -1042,6 +1042,10 @@ func (m *SendMessageRequest) validate(all bool) error {
 		// no validation rules for TargetAll
 	}
 
+	if m.SendEmail != nil {
+		// no validation rules for SendEmail
+	}
+
 	if m.Title != nil {
 		// no validation rules for Title
 	}

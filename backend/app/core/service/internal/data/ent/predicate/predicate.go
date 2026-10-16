@@ -69,6 +69,9 @@ type DictType func(*sql.Selector)
 // EmailProvider is the predicate function for emailprovider builders.
 type EmailProvider func(*sql.Selector)
 
+// EmailTemplate is the predicate function for emailtemplate builders.
+type EmailTemplate func(*sql.Selector)
+
 // Experiment is the predicate function for experiment builders.
 type Experiment func(*sql.Selector)
 

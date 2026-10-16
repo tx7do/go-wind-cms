@@ -179,6 +179,7 @@ func initApp(ctx *bootstrap.Context) (*kratos.App, func(), error) {
 	redirectRepo := data.NewRedirectRepo(ctx, entClient)
 	experimentRepo := data.NewExperimentRepo(ctx, entClient)
 	collabDocStateRepo := data.NewCollabDocStateRepo(ctx, entClient)
+	emailTemplateRepo := data.NewEmailTemplateRepo(ctx, entClient)
 
 	// 邮件出站 SMTP 配置（凭据加密落库）
 	emailProviderRepo := data.NewEmailProviderRepo(ctx, entClient)
@@ -229,6 +230,9 @@ func initApp(ctx *bootstrap.Context) (*kratos.App, func(), error) {
 	// 协同文档状态（collab ws 引擎的持久化后端）
 	collabDocStateService := service.NewCollabDocStateService(ctx, collabDocStateRepo)
 
+	// 邮件模板（系统通知出站可视化模板）
+	emailTemplateService := service.NewEmailTemplateService(ctx, emailTemplateRepo)
+
 	// 邮件出站 SMTP 配置
 	emailProviderService := service.NewEmailProviderService(ctx, emailProviderRepo)
 	fileService := service.NewFileService(ctx, fileRepo, minIOClient)
@@ -260,7 +264,7 @@ func initApp(ctx *bootstrap.Context) (*kratos.App, func(), error) {
 	dataAccessAuditLogService := service.NewDataAccessAuditLogService(ctx, dataAccessAuditLogRepo)
 
 	// 站内信
-	internalMessageService := service.NewInternalMessageService(ctx, internalMessageRepo, internalMessageCategoryRepo, internalMessageRecipientRepo, userRepo, redisClient, taskService, emailProviderRepo)
+	internalMessageService := service.NewInternalMessageService(ctx, internalMessageRepo, internalMessageCategoryRepo, internalMessageRecipientRepo, userRepo, redisClient, taskService, emailProviderRepo, emailTemplateRepo)
 	internalMessageCategoryService := service.NewInternalMessageCategoryService(ctx, internalMessageCategoryRepo)
 	internalMessageRecipientService := service.NewInternalMessageRecipientService(ctx, internalMessageRepo, internalMessageRecipientRepo)
 
@@ -332,6 +336,7 @@ func initApp(ctx *bootstrap.Context) (*kratos.App, func(), error) {
 		experimentService,
 		editLockService,
 		collabDocStateService,
+		emailTemplateService,
 		// register:grpc-arg ── 新模块服务实参在此行后追加(make register 工具锚点,勿删)
 	)
 	if err != nil {

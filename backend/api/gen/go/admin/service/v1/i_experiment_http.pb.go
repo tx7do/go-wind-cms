@@ -49,16 +49,16 @@ type ExperimentServiceHTTPServer interface {
 
 func RegisterExperimentServiceHTTPServer(s *http.Server, srv ExperimentServiceHTTPServer) {
 	r := s.Route("/")
-	r.GET("/admin/v1/experiments", _ExperimentService_List14_HTTP_Handler(srv))
-	r.GET("/admin/v1/experiments/{id}", _ExperimentService_Get13_HTTP_Handler(srv))
-	r.POST("/admin/v1/experiments", _ExperimentService_Create9_HTTP_Handler(srv))
-	r.PUT("/admin/v1/experiments/{id}", _ExperimentService_Update10_HTTP_Handler(srv))
-	r.DELETE("/admin/v1/experiments/{id}", _ExperimentService_Delete11_HTTP_Handler(srv))
+	r.GET("/admin/v1/experiments", _ExperimentService_List15_HTTP_Handler(srv))
+	r.GET("/admin/v1/experiments/{id}", _ExperimentService_Get14_HTTP_Handler(srv))
+	r.POST("/admin/v1/experiments", _ExperimentService_Create10_HTTP_Handler(srv))
+	r.PUT("/admin/v1/experiments/{id}", _ExperimentService_Update11_HTTP_Handler(srv))
+	r.DELETE("/admin/v1/experiments/{id}", _ExperimentService_Delete12_HTTP_Handler(srv))
 	r.PUT("/admin/v1/experiments/{id}/status", _ExperimentService_SetStatus0_HTTP_Handler(srv))
 	r.GET("/admin/v1/experiments/{experiment_id}/variant-stats", _ExperimentService_GetVariantStats0_HTTP_Handler(srv))
 }
 
-func _ExperimentService_List14_HTTP_Handler(srv ExperimentServiceHTTPServer) func(ctx http.Context) error {
+func _ExperimentService_List15_HTTP_Handler(srv ExperimentServiceHTTPServer) func(ctx http.Context) error {
 	return func(ctx http.Context) error {
 		var in v1.PagingRequest
 		if err := ctx.BindQuery(&in); err != nil {
@@ -77,7 +77,7 @@ func _ExperimentService_List14_HTTP_Handler(srv ExperimentServiceHTTPServer) fun
 	}
 }
 
-func _ExperimentService_Get13_HTTP_Handler(srv ExperimentServiceHTTPServer) func(ctx http.Context) error {
+func _ExperimentService_Get14_HTTP_Handler(srv ExperimentServiceHTTPServer) func(ctx http.Context) error {
 	return func(ctx http.Context) error {
 		var in v11.GetExperimentRequest
 		if err := ctx.BindQuery(&in); err != nil {
@@ -99,7 +99,7 @@ func _ExperimentService_Get13_HTTP_Handler(srv ExperimentServiceHTTPServer) func
 	}
 }
 
-func _ExperimentService_Create9_HTTP_Handler(srv ExperimentServiceHTTPServer) func(ctx http.Context) error {
+func _ExperimentService_Create10_HTTP_Handler(srv ExperimentServiceHTTPServer) func(ctx http.Context) error {
 	return func(ctx http.Context) error {
 		var in v11.CreateExperimentRequest
 		if err := ctx.Bind(&in); err != nil {
@@ -121,7 +121,7 @@ func _ExperimentService_Create9_HTTP_Handler(srv ExperimentServiceHTTPServer) fu
 	}
 }
 
-func _ExperimentService_Update10_HTTP_Handler(srv ExperimentServiceHTTPServer) func(ctx http.Context) error {
+func _ExperimentService_Update11_HTTP_Handler(srv ExperimentServiceHTTPServer) func(ctx http.Context) error {
 	return func(ctx http.Context) error {
 		var in v11.UpdateExperimentRequest
 		if err := ctx.Bind(&in); err != nil {
@@ -146,7 +146,7 @@ func _ExperimentService_Update10_HTTP_Handler(srv ExperimentServiceHTTPServer) f
 	}
 }
 
-func _ExperimentService_Delete11_HTTP_Handler(srv ExperimentServiceHTTPServer) func(ctx http.Context) error {
+func _ExperimentService_Delete12_HTTP_Handler(srv ExperimentServiceHTTPServer) func(ctx http.Context) error {
 	return func(ctx http.Context) error {
 		var in v11.DeleteExperimentRequest
 		if err := ctx.BindQuery(&in); err != nil {

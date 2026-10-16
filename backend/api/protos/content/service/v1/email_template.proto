@@ -1,0 +1,119 @@
+syntax = "proto3";
+
+package content.service.v1;
+
+import "gnostic/openapi/v3/annotations.proto";
+import "google/protobuf/empty.proto";
+import "google/protobuf/timestamp.proto";
+import "google/protobuf/field_mask.proto";
+import "pagination/v1/pagination.proto";
+
+// 邮件模板服务（系统通知出站的可视化模板）。
+// code 唯一定位模板；主题/正文支持 text/template 占位符
+//（{{.Title}}/{{.Content}}/{{.SiteURL}}）。渲染顺序：租户启用 → 平台启用 → 内置。
+service EmailTemplateService {
+  // 获取模板列表
+  rpc List (pagination.PagingRequest) returns (ListEmailTemplatesResponse) {}
+
+  // 获取模板
+  rpc Get (GetEmailTemplateRequest) returns (EmailTemplate) {}
+
+  // 创建模板
+  rpc Create (CreateEmailTemplateRequest) returns (EmailTemplate) {}
+
+  // 更新模板
+  rpc Update (UpdateEmailTemplateRequest) returns (EmailTemplate) {}
+
+  // 删除模板
+  rpc Delete (DeleteEmailTemplateRequest) returns (google.protobuf.Empty) {}
+
+  // 按 code 取启用模板（出站 worker 内部调用；租户优先回退平台）
+  rpc FindEnabledByCode (FindEnabledEmailTemplateByCodeRequest) returns (EmailTemplate) {}
+}
+
+// 邮件模板
+message EmailTemplate {
+  optional uint32 id = 1 [
+    json_name = "id",
+    (gnostic.openapi.v3.property) = {description: "模板ID"}
+  ]; // 模板ID
+
+  optional string code = 2 [
+    json_name = "code",
+    (gnostic.openapi.v3.property) = {description: "模板代码（唯一，如 notify/system）"}
+  ]; // 模板代码
+
+  optional string name = 3 [
+    json_name = "name",
+    (gnostic.openapi.v3.property) = {description: "模板名称"}
+  ]; // 模板名称
+
+  optional string subject = 4 [
+    json_name = "subject",
+    (gnostic.openapi.v3.property) = {description: "邮件主题模板"}
+  ]; // 邮件主题模板
+
+  optional string body_html = 5 [
+    json_name = "bodyHtml",
+    (gnostic.openapi.v3.property) = {description: "邮件正文 HTML 模板"}
+  ]; // 邮件正文 HTML 模板
+
+  optional bool enabled = 6 [
+    json_name = "enabled",
+    (gnostic.openapi.v3.property) = {description: "是否启用"}
+  ]; // 是否启用
+
+  optional string description = 7 [
+    json_name = "description",
+    (gnostic.openapi.v3.property) = {description: "用途说明"}
+  ]; // 用途说明
+
+  optional uint32 created_by = 100 [json_name = "createdBy", (gnostic.openapi.v3.property) = {description: "创建者用户ID"}]; // 创建者用户ID
+  optional uint32 updated_by = 101 [json_name = "updatedBy", (gnostic.openapi.v3.property) = {description: "更新者用户ID"}]; // 更新者用户ID
+
+  optional google.protobuf.Timestamp created_at = 200 [json_name = "createdAt", (gnostic.openapi.v3.property) = {description: "创建时间"}]; // 创建时间
+  optional google.protobuf.Timestamp updated_at = 201 [json_name = "updatedAt", (gnostic.openapi.v3.property) = {description: "更新时间"}]; // 更新时间
+}
+
+// 回应 - 模板列表
+message ListEmailTemplatesResponse {
+  repeated EmailTemplate items = 1;
+  uint64 total = 2;
+}
+
+// 请求 - 模板数据
+message GetEmailTemplateRequest {
+  uint32 id = 1;
+}
+
+// 请求 - 创建模板
+message CreateEmailTemplateRequest {
+  EmailTemplate data = 1;
+}
+
+// 请求 - 更新模板
+message UpdateEmailTemplateRequest {
+  uint32 id = 1;
+
+  EmailTemplate data = 2;
+
+  google.protobuf.FieldMask update_mask = 3 [
+    (gnostic.openapi.v3.property) = {description: "要更新的字段列表"},
+    json_name = "updateMask"
+  ]; // 要更新的字段列表
+
+  optional bool allow_missing = 4 [
+    (gnostic.openapi.v3.property) = {description: "不存在则新增"},
+    json_name = "allowMissing"
+  ]; // 不存在则新增
+}
+
+// 请求 - 删除模板
+message DeleteEmailTemplateRequest {
+  uint32 id = 1;
+}
+
+// 请求 - 按 code 取启用模板
+message FindEnabledEmailTemplateByCodeRequest {
+  string code = 1 [json_name = "code"]; // 模板代码
+}

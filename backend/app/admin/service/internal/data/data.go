@@ -610,6 +610,15 @@ func NewCollabDocStateServiceClient(ctx *bootstrap.Context, r registry.Discovery
 	return contentV1.NewCollabDocStateServiceClient(cli)
 }
 
+func NewEmailTemplateServiceClient(ctx *bootstrap.Context, r registry.Discovery) contentV1.EmailTemplateServiceClient {
+	cli, err := rpc.CreateGrpcClient(ctx.Context(), r, serviceid.NewDiscoveryName(serviceid.CoreService), ctx.GetConfig())
+	if err != nil {
+		return nil
+	}
+
+	return contentV1.NewEmailTemplateServiceClient(cli)
+}
+
 func NewWebhookServiceClient(ctx *bootstrap.Context, r registry.Discovery) webhookV1.WebhookServiceClient {
 	cli, err := rpc.CreateGrpcClient(ctx.Context(), r, serviceid.NewDiscoveryName(serviceid.CoreService), ctx.GetConfig())
 	if err != nil {

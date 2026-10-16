@@ -626,6 +626,7 @@ type SendMessageRequest struct {
 	CategoryId      *uint32                `protobuf:"varint,4,opt,name=category_id,json=categoryId,proto3,oneof" json:"category_id,omitempty"`                   // 分类ID
 	TargetUserIds   []uint32               `protobuf:"varint,6,rep,packed,name=target_user_ids,json=targetUserIds,proto3" json:"target_user_ids,omitempty"`       // 定向发送用户ID列表
 	TargetAll       *bool                  `protobuf:"varint,7,opt,name=target_all,json=targetAll,proto3,oneof" json:"target_all,omitempty"`                      // 全员发送标志
+	SendEmail       *bool                  `protobuf:"varint,8,opt,name=send_email,json=sendEmail,proto3,oneof" json:"send_email,omitempty"`                      // 同时出站邮件
 	Title           *string                `protobuf:"bytes,10,opt,name=title,proto3,oneof" json:"title,omitempty"`                                               // 消息标题
 	Content         string                 `protobuf:"bytes,11,opt,name=content,proto3" json:"content,omitempty"`                                                 // 消息内容
 	SendUserId      *uint32                `protobuf:"varint,12,opt,name=send_user_id,json=sendUserId,proto3,oneof" json:"send_user_id,omitempty"`                // 发送者用户ID
@@ -701,6 +702,13 @@ func (x *SendMessageRequest) GetTargetUserIds() []uint32 {
 func (x *SendMessageRequest) GetTargetAll() bool {
 	if x != nil && x.TargetAll != nil {
 		return *x.TargetAll
+	}
+	return false
+}
+
+func (x *SendMessageRequest) GetSendEmail() bool {
+	if x != nil && x.SendEmail != nil {
+		return *x.SendEmail
 	}
 	return false
 }
@@ -910,7 +918,7 @@ const file_internal_message_service_v1_internal_message_proto_rawDesc = "" +
 	"\x02id\x18\x01 \x01(\rB\n" +
 	"\xbaG\a\x18\x01\x92\x02\x02IDH\x00R\x02idB\n" +
 	"\n" +
-	"\bquery_by\"\xb6\x05\n" +
+	"\bquery_by\"\xbc\x06\n" +
 	"\x12SendMessageRequest\x12Y\n" +
 	"\x04type\x18\x01 \x01(\x0e21.internal_message.service.v1.InternalMessage.TypeB\x12\xbaG\x0f\x92\x02\f消息类型R\x04type\x12H\n" +
 	"\x11recipient_user_id\x18\x02 \x01(\rB\x17\xbaG\x14\x92\x02\x11接收者用户IDH\x00R\x0frecipientUserId\x88\x01\x01\x12<\n" +
@@ -919,16 +927,19 @@ const file_internal_message_service_v1_internal_message_proto_rawDesc = "" +
 	"categoryId\x88\x01\x01\x12H\n" +
 	"\x0ftarget_user_ids\x18\x06 \x03(\rB \xbaG\x1d\x92\x02\x1a定向发送用户ID列表R\rtargetUserIds\x12<\n" +
 	"\n" +
-	"target_all\x18\a \x01(\bB\x18\xbaG\x15\x92\x02\x12全员发送标志H\x03R\ttargetAll\x88\x01\x01\x12-\n" +
+	"target_all\x18\a \x01(\bB\x18\xbaG\x15\x92\x02\x12全员发送标志H\x03R\ttargetAll\x88\x01\x01\x12u\n" +
+	"\n" +
+	"send_email\x18\b \x01(\bBQ\xbaGN\x92\x02K同时出站邮件（群发开关；收件人需配邮箱且 SMTP 可用）H\x04R\tsendEmail\x88\x01\x01\x12-\n" +
 	"\x05title\x18\n" +
-	" \x01(\tB\x12\xbaG\x0f\x92\x02\f消息标题H\x04R\x05title\x88\x01\x01\x12,\n" +
+	" \x01(\tB\x12\xbaG\x0f\x92\x02\f消息标题H\x05R\x05title\x88\x01\x01\x12,\n" +
 	"\acontent\x18\v \x01(\tB\x12\xbaG\x0f\x92\x02\f消息内容R\acontent\x12>\n" +
-	"\fsend_user_id\x18\f \x01(\rB\x17\xbaG\x14\x92\x02\x11发送者用户IDH\x05R\n" +
+	"\fsend_user_id\x18\f \x01(\rB\x17\xbaG\x14\x92\x02\x11发送者用户IDH\x06R\n" +
 	"sendUserId\x88\x01\x01B\x14\n" +
 	"\x12_recipient_user_idB\x12\n" +
 	"\x10_conversation_idB\x0e\n" +
 	"\f_category_idB\r\n" +
-	"\v_target_allB\b\n" +
+	"\v_target_allB\r\n" +
+	"\v_send_emailB\b\n" +
 	"\x06_titleB\x0f\n" +
 	"\r_send_user_id\"D\n" +
 	"\x13SendMessageResponse\x12-\n" +

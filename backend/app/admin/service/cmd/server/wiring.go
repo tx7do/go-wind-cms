@@ -149,6 +149,7 @@ func initApp(ctx *bootstrap.Context) (*kratos.App, func(), error) {
 	experimentServiceClient := data.NewExperimentServiceClient(ctx, discovery)
 	editLockServiceClient := data.NewEditLockServiceClient(ctx, discovery)
 	collabDocStateServiceClient := data.NewCollabDocStateServiceClient(ctx, discovery)
+	emailTemplateServiceClient := data.NewEmailTemplateServiceClient(ctx, discovery)
 
 	// 协同服务（COLLAB_ADDR，默认 :6602；off 时仅 service 供删除踢房 no-op）
 	collabSvc, collabServer := server.NewCollab(ctx, authenticationServiceClient, collabDocStateServiceClient, postServiceClient)
@@ -239,6 +240,7 @@ func initApp(ctx *bootstrap.Context) (*kratos.App, func(), error) {
 	redirectService := service.NewRedirectService(ctx, redirectServiceClient)
 	experimentService := service.NewExperimentService(ctx, experimentServiceClient)
 	editLockService := service.NewEditLockService(ctx, editLockServiceClient)
+	emailTemplateService := service.NewEmailTemplateService(ctx, emailTemplateServiceClient)
 	emailProviderService := service.NewEmailProviderService(ctx, emailProviderServiceClient)
 
 	// ── register:service ── 新模块服务在此行后注册(make register 工具锚点,勿删)
@@ -273,6 +275,7 @@ func initApp(ctx *bootstrap.Context) (*kratos.App, func(), error) {
 		redirectService,
 		experimentService,
 		editLockService,
+		emailTemplateService,
 		emailProviderService,
 		// register:rest-arg ── 新模块服务实参在此行后追加(make register 工具锚点,勿删)
 	)
