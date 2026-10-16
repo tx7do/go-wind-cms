@@ -1,0 +1,42 @@
+syntax = "proto3";
+
+package conf.v1;
+
+// BootstrapExtension 本仓库自定义的引导配置扩展段。
+//
+// kratos-bootstrap 的配置装载（config.RegisterConfig → kratos Scan）把每个
+// 注册的 proto 消息从整棵 yaml 树按 protojson 反序列化（DiscardUnknown）。
+// 上游 conf.Bootstrap 没有 collab 字段，自定义段要挂到 server.* 下就必须
+// 提供一个与 yaml 树同构的壳消息：
+//
+//	server:
+//	  collab:
+//	    addr: ":6602"
+//	    allowed_origins:
+//	      - "http://localhost:15999"
+//
+// 注册时机：必须在 LoadBootstrapConfig 之前（扫描列表届时定格），
+// 见 app/admin/service/cmd/server/main.go 的 runApp；
+// 读取：app/admin/service/internal/server/collab_server.go。
+// 待上游 kratos-bootstrap 的 conf.Server 增设 Collab 段后，本文件与注册
+// 逻辑可整体删除，yaml 形状保持不变。
+message BootstrapExtension {
+  // 对应 yaml 根上的 server 段（只承载本项目自定义子段）
+  ServerExtension server = 1;
+}
+
+// ServerExtension 上游 conf.Server 的扩展镜像（仅声明本项目自定义子段）。
+message ServerExtension {
+  // 协同编辑 ws 服务器（admin 编辑页实时协同，NewCollabServer）
+  Collab collab = 1;
+}
+
+// Collab 协同编辑 ws 服务器配置。
+// 字段与既有环境变量一一对应：addr ↔ COLLAB_ADDR、
+// allowed_origins ↔ COLLAB_ALLOWED_ORIGINS；yaml 优先，env 兜底。
+message Collab {
+  // 监听地址（如 ":6602"）；off/disabled/false/0 显式停用
+  string addr = 1;
+  // 允许的 ws Origin 白名单；留空回退 env / 默认本机后台来源
+  repeated string allowed_origins = 2;
+}
