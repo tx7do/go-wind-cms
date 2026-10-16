@@ -115,6 +115,17 @@ class AuthenticationServiceClient {
     ), headers: headers);
     return AuthenticationServiceV1LoginResponse.fromJson(result as Map<String, dynamic>);
   }
+
+  /// 获取 OIDC 授权跳转地址（core 生成 state 暂存 Redis，防 CSRF；免鉴权）
+  Future<AuthenticationServiceV1GetOidcAuthorizeUrlResponse> getOidcAuthorizeUrl(AuthenticationServiceV1GetOidcAuthorizeUrlRequest request, {Map<String, String>? headers}) async {
+    final path = '/app/v1/oidc/authorize-url';
+    final body = jsonEncode(request.toJson());
+    final result = await _transport.unary(path, 'POST', body, TransportMeta(
+      service: 'AuthenticationService',
+      method: 'GetOidcAuthorizeUrl',
+    ), headers: headers);
+    return AuthenticationServiceV1GetOidcAuthorizeUrlResponse.fromJson(result as Map<String, dynamic>);
+  }
 }
 
 /// 用户登录 - 请求
@@ -761,6 +772,174 @@ enum AuthenticationServiceV1TokenType {
 /// Well-known type: Empty
 ///
 /// Maps to Dart: `Map<String, dynamic>`.
+
+/// OIDC 授权跳转地址 - 请求
+class AuthenticationServiceV1GetOidcAuthorizeUrlRequest {
+  String? redirect_uri;
+
+  AuthenticationServiceV1GetOidcAuthorizeUrlRequest({
+    this.redirect_uri,
+  });
+
+  factory AuthenticationServiceV1GetOidcAuthorizeUrlRequest.fromJson(Map<String, dynamic> json) {
+    return AuthenticationServiceV1GetOidcAuthorizeUrlRequest(
+      redirect_uri: json['redirect_uri'] as String?,
+    );
+  }
+
+  Map<String, dynamic> toJson() {
+    final json = <String, dynamic>{};
+    if (redirect_uri != null) json['redirect_uri'] = redirect_uri;
+    return json;
+  }
+
+  @override
+  String toString() {
+    return 'AuthenticationServiceV1GetOidcAuthorizeUrlRequest(redirect_uri: $redirect_uri)';
+  }
+
+  @override
+  bool operator ==(Object other) =>
+    identical(this, other) ||
+    other is AuthenticationServiceV1GetOidcAuthorizeUrlRequest &&
+      runtimeType == other.runtimeType
+      && redirect_uri == other.redirect_uri
+    ;
+
+  @override
+  int get hashCode => Object.hashAll([
+    redirect_uri,
+  ]);
+
+  AuthenticationServiceV1GetOidcAuthorizeUrlRequest copyWith({
+    String? redirect_uri,
+  }) {
+    return AuthenticationServiceV1GetOidcAuthorizeUrlRequest(
+      redirect_uri: redirect_uri ?? this.redirect_uri,
+    );
+  }
+
+  /// 二进制 proto 编码（MQTT 等二进制传输用；字段按编号升序写出）
+  Uint8List writeToBuffer() {
+    final w = ProtoWireWriter();
+    _writeTo(w);
+    return w.toBuffer();
+  }
+
+  void _writeTo(ProtoWireWriter w) {
+    // field 1: redirect_uri
+    final f1 = redirect_uri;
+    if (f1 != null) {
+      w.writeString(1, f1!);
+    }
+  }
+
+  factory AuthenticationServiceV1GetOidcAuthorizeUrlRequest.fromBuffer(List<int> bytes) {
+    return AuthenticationServiceV1GetOidcAuthorizeUrlRequest._readFrom(ProtoWireReader(bytes));
+  }
+
+  static AuthenticationServiceV1GetOidcAuthorizeUrlRequest _readFrom(ProtoWireReader r) {
+    final m = AuthenticationServiceV1GetOidcAuthorizeUrlRequest();
+    while (r.next()) {
+      switch (r.fieldNumber) {
+        // field 1: redirect_uri
+        case 1: {
+          m.redirect_uri = r.readString();
+          break;
+        }
+        default: {
+          r.skip();
+        }
+      }
+    }
+    return m;
+  }
+
+}
+
+/// OIDC 授权跳转地址 - 响应
+class AuthenticationServiceV1GetOidcAuthorizeUrlResponse {
+  String? authorizeUrl;
+
+  AuthenticationServiceV1GetOidcAuthorizeUrlResponse({
+    this.authorizeUrl,
+  });
+
+  factory AuthenticationServiceV1GetOidcAuthorizeUrlResponse.fromJson(Map<String, dynamic> json) {
+    return AuthenticationServiceV1GetOidcAuthorizeUrlResponse(
+      authorizeUrl: json['authorizeUrl'] as String?,
+    );
+  }
+
+  Map<String, dynamic> toJson() {
+    final json = <String, dynamic>{};
+    if (authorizeUrl != null) json['authorizeUrl'] = authorizeUrl;
+    return json;
+  }
+
+  @override
+  String toString() {
+    return 'AuthenticationServiceV1GetOidcAuthorizeUrlResponse(authorizeUrl: $authorizeUrl)';
+  }
+
+  @override
+  bool operator ==(Object other) =>
+    identical(this, other) ||
+    other is AuthenticationServiceV1GetOidcAuthorizeUrlResponse &&
+      runtimeType == other.runtimeType
+      && authorizeUrl == other.authorizeUrl
+    ;
+
+  @override
+  int get hashCode => Object.hashAll([
+    authorizeUrl,
+  ]);
+
+  AuthenticationServiceV1GetOidcAuthorizeUrlResponse copyWith({
+    String? authorizeUrl,
+  }) {
+    return AuthenticationServiceV1GetOidcAuthorizeUrlResponse(
+      authorizeUrl: authorizeUrl ?? this.authorizeUrl,
+    );
+  }
+
+  /// 二进制 proto 编码（MQTT 等二进制传输用；字段按编号升序写出）
+  Uint8List writeToBuffer() {
+    final w = ProtoWireWriter();
+    _writeTo(w);
+    return w.toBuffer();
+  }
+
+  void _writeTo(ProtoWireWriter w) {
+    // field 1: authorizeUrl
+    final f1 = authorizeUrl;
+    if (f1 != null) {
+      w.writeString(1, f1!);
+    }
+  }
+
+  factory AuthenticationServiceV1GetOidcAuthorizeUrlResponse.fromBuffer(List<int> bytes) {
+    return AuthenticationServiceV1GetOidcAuthorizeUrlResponse._readFrom(ProtoWireReader(bytes));
+  }
+
+  static AuthenticationServiceV1GetOidcAuthorizeUrlResponse _readFrom(ProtoWireReader r) {
+    final m = AuthenticationServiceV1GetOidcAuthorizeUrlResponse();
+    while (r.next()) {
+      switch (r.fieldNumber) {
+        // field 1: authorizeUrl
+        case 1: {
+          m.authorizeUrl = r.readString();
+          break;
+        }
+        default: {
+          r.skip();
+        }
+      }
+    }
+    return m;
+  }
+
+}
 
 /// 类别服务
 class CategoryServiceClient {

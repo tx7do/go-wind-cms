@@ -218,6 +218,36 @@ def main():
     status, _ = oidc_login(state3, code="wrong-code")
     check("IdP 拒绝错误 code → 登录 400", status == 400, f"status={status}")
 
+    # ===== 7.5 C 端（app 服务 :6700）OIDC 面：authorize-url + 授权码登录 =====
+    app_base = "http://localhost:6700"
+    def app_raw(method, path, payload=None):
+        req = urllib.request.Request(app_base + path, method=method)
+        req.add_header("Content-Type", "application/json")
+        data = json.dumps(payload).encode() if payload is not None else None
+        try:
+            with urllib.request.urlopen(req, data=data, timeout=15) as resp:
+                return resp.status, json.loads(resp.read().decode() or "{}")
+        except urllib.error.HTTPError as e:
+            try:
+                return e.code, json.loads(e.read().decode() or "{}")
+            except Exception:
+                return e.code, {}
+
+    status, body = app_raw("POST", "/app/v1/oidc/authorize-url",
+                           {"redirect_uri": "http://localhost:15001/login"})
+    check("C 端 authorize-url 200", status == 200, f"status={status}")
+    aurl = body.get("authorizeUrl") or ""
+    astate = (urllib.parse.parse_qs(urllib.parse.urlparse(aurl).query).get("state") or [""])[0]
+    check("C 端 state 签发", bool(astate))
+    status, body = app_raw("POST", "/app/v1/login", {
+        "grant_type": "authorization_code",
+        "code": "e2e-auth-code",
+        "oidc_state": astate,
+        "redirect_uri": "http://localhost:15001/login",
+    })
+    check("C 端授权码登录 200", status == 200, f"status={status} body={json.dumps(body, ensure_ascii=False)[:100]}")
+    check("C 端签发 access_token", bool(body.get("access_token")))
+
     # ===== 8. 密码登录回归：OIDC 接入不影响既有链路 =====
     try:
         admin_login("admin", "admin")

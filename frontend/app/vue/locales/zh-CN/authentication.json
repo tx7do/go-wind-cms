@@ -37,7 +37,9 @@
     "logging_in": "登录中...",
     "coming_soon": "暂未开放,敬请期待",
     "please_login": "请先登录",
-    "back_home": "返回首页"
+    "back_home": "返回首页",
+    "sso_enterprise": "企业 SSO 登录",
+    "sso_redirecting": "正在跳转身份提供商…"
   },
   "register": {
     "title": "欢迎注册账号",

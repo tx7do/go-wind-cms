@@ -47,6 +47,12 @@ func NewAuthenticationService(
 }
 
 // Login 登陆
+// GetOidcAuthorizeUrl 获取 OIDC 授权跳转地址（透传 core；state 由 core 生成并落 Redis）。
+// 免鉴权端点（登录前置步骤）。redirect_uri 由前端按自身回调页传入。
+func (s *AuthenticationService) GetOidcAuthorizeUrl(ctx context.Context, req *authenticationV1.GetOidcAuthorizeUrlRequest) (*authenticationV1.GetOidcAuthorizeUrlResponse, error) {
+	return s.authenticationServiceClient.GetOidcAuthorizeUrl(ctx, req)
+}
+
 func (s *AuthenticationService) Login(ctx context.Context, req *authenticationV1.LoginRequest) (*authenticationV1.LoginResponse, error) {
 	if req == nil {
 		return nil, authenticationV1.ErrorBadRequest("invalid request")

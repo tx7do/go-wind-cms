@@ -29,27 +29,32 @@ var File_app_service_v1_i_authentication_proto protoreflect.FileDescriptor
 
 const file_app_service_v1_i_authentication_proto_rawDesc = "" +
 	"\n" +
-	"%app/service/v1/i_authentication.proto\x12\x0eapp.service.v1\x1a$gnostic/openapi/v3/annotations.proto\x1a\x1cgoogle/api/annotations.proto\x1a\x1bgoogle/protobuf/empty.proto\x1a\x1eidentity/service/v1/user.proto\x1a.authentication/service/v1/authentication.proto2\xed\x02\n" +
+	"%app/service/v1/i_authentication.proto\x12\x0eapp.service.v1\x1a$gnostic/openapi/v3/annotations.proto\x1a\x1cgoogle/api/annotations.proto\x1a\x1bgoogle/protobuf/empty.proto\x1a\x1eidentity/service/v1/user.proto\x1a.authentication/service/v1/authentication.proto2\xa0\x04\n" +
 	"\x15AuthenticationService\x12y\n" +
 	"\x05Login\x12'.authentication.service.v1.LoginRequest\x1a(.authentication.service.v1.LoginResponse\"\x1d\xbaG\x02Z\x00\x82\xd3\xe4\x93\x02\x12:\x01*\"\r/app/v1/login\x12S\n" +
 	"\x06Logout\x12\x16.google.protobuf.Empty\x1a\x16.google.protobuf.Empty\"\x19\x82\xd3\xe4\x93\x02\x13:\x01*\"\x0e/app/v1/logout\x12\x83\x01\n" +
-	"\fRefreshToken\x12'.authentication.service.v1.LoginRequest\x1a(.authentication.service.v1.LoginResponse\" \x82\xd3\xe4\x93\x02\x1a:\x01*\"\x15/app/v1/refresh-tokenB\xb5\x01\n" +
+	"\fRefreshToken\x12'.authentication.service.v1.LoginRequest\x1a(.authentication.service.v1.LoginResponse\" \x82\xd3\xe4\x93\x02\x1a:\x01*\"\x15/app/v1/refresh-token\x12\xb0\x01\n" +
+	"\x13GetOidcAuthorizeUrl\x125.authentication.service.v1.GetOidcAuthorizeUrlRequest\x1a6.authentication.service.v1.GetOidcAuthorizeUrlResponse\"*\xbaG\x02Z\x00\x82\xd3\xe4\x93\x02\x1f:\x01*\"\x1a/app/v1/oidc/authorize-urlB\xb5\x01\n" +
 	"\x12com.app.service.v1B\x14IAuthenticationProtoP\x01Z/go-wind-cms/api/gen/go/app/service/v1;servicev1\xa2\x02\x03ASX\xaa\x02\x0eApp.Service.V1\xca\x02\x0eApp\\Service\\V1\xe2\x02\x1aApp\\Service\\V1\\GPBMetadata\xea\x02\x10App::Service::V1b\x06proto3"
 
 var file_app_service_v1_i_authentication_proto_goTypes = []any{
-	(*v1.LoginRequest)(nil),  // 0: authentication.service.v1.LoginRequest
-	(*emptypb.Empty)(nil),    // 1: google.protobuf.Empty
-	(*v1.LoginResponse)(nil), // 2: authentication.service.v1.LoginResponse
+	(*v1.LoginRequest)(nil),                // 0: authentication.service.v1.LoginRequest
+	(*emptypb.Empty)(nil),                  // 1: google.protobuf.Empty
+	(*v1.GetOidcAuthorizeUrlRequest)(nil),  // 2: authentication.service.v1.GetOidcAuthorizeUrlRequest
+	(*v1.LoginResponse)(nil),               // 3: authentication.service.v1.LoginResponse
+	(*v1.GetOidcAuthorizeUrlResponse)(nil), // 4: authentication.service.v1.GetOidcAuthorizeUrlResponse
 }
 var file_app_service_v1_i_authentication_proto_depIdxs = []int32{
 	0, // 0: app.service.v1.AuthenticationService.Login:input_type -> authentication.service.v1.LoginRequest
 	1, // 1: app.service.v1.AuthenticationService.Logout:input_type -> google.protobuf.Empty
 	0, // 2: app.service.v1.AuthenticationService.RefreshToken:input_type -> authentication.service.v1.LoginRequest
-	2, // 3: app.service.v1.AuthenticationService.Login:output_type -> authentication.service.v1.LoginResponse
-	1, // 4: app.service.v1.AuthenticationService.Logout:output_type -> google.protobuf.Empty
-	2, // 5: app.service.v1.AuthenticationService.RefreshToken:output_type -> authentication.service.v1.LoginResponse
-	3, // [3:6] is the sub-list for method output_type
-	0, // [0:3] is the sub-list for method input_type
+	2, // 3: app.service.v1.AuthenticationService.GetOidcAuthorizeUrl:input_type -> authentication.service.v1.GetOidcAuthorizeUrlRequest
+	3, // 4: app.service.v1.AuthenticationService.Login:output_type -> authentication.service.v1.LoginResponse
+	1, // 5: app.service.v1.AuthenticationService.Logout:output_type -> google.protobuf.Empty
+	3, // 6: app.service.v1.AuthenticationService.RefreshToken:output_type -> authentication.service.v1.LoginResponse
+	4, // 7: app.service.v1.AuthenticationService.GetOidcAuthorizeUrl:output_type -> authentication.service.v1.GetOidcAuthorizeUrlResponse
+	4, // [4:8] is the sub-list for method output_type
+	0, // [0:4] is the sub-list for method input_type
 	0, // [0:0] is the sub-list for extension type_name
 	0, // [0:0] is the sub-list for extension extendee
 	0, // [0:0] is the sub-list for field type_name

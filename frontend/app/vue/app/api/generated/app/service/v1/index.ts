@@ -139,6 +139,10 @@ export interface AuthenticationService {
   RefreshToken(
     request: authenticationservicev1_LoginRequest,
   ): Promise<authenticationservicev1_LoginResponse>;
+  // 获取 OIDC 授权跳转地址（core 生成 state 暂存 Redis，防 CSRF；免鉴权）
+  GetOidcAuthorizeUrl(
+    request: authenticationservicev1_GetOidcAuthorizeUrlRequest,
+  ): Promise<authenticationservicev1_GetOidcAuthorizeUrlResponse>;
 }
 
 export function createAuthenticationServiceClient(
@@ -168,6 +172,14 @@ export function createAuthenticationServiceClient(
         service: 'AuthenticationService',
         method: 'RefreshToken',
       }) as Promise<authenticationservicev1_LoginResponse>;
+    },
+    GetOidcAuthorizeUrl(request) {
+      const path = `app/v1/oidc/authorize-url`;
+      const body = JSON.stringify(request);
+      return transport.unary(path, 'POST', body, {
+        service: 'AuthenticationService',
+        method: 'GetOidcAuthorizeUrl',
+      }) as Promise<authenticationservicev1_GetOidcAuthorizeUrlResponse>;
     },
   };
 }
@@ -223,6 +235,16 @@ export type authenticationservicev1_TokenType =
   | 'mac';
 // An empty JSON object
 type wellKnownEmpty = Record<never, never>;
+
+// OIDC 授权跳转地址 - 请求
+export type authenticationservicev1_GetOidcAuthorizeUrlRequest = {
+  redirect_uri?: string;
+};
+
+// OIDC 授权跳转地址 - 响应
+export type authenticationservicev1_GetOidcAuthorizeUrlResponse = {
+  authorizeUrl?: string;
+};
 
 // 类别服务
 export interface CategoryService {

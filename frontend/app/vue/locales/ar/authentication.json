@@ -37,7 +37,9 @@
     "logging_in": "Logging in...",
     "coming_soon": "Coming soon...",
     "please_login": "Please login first",
-    "back_home": "Back to Home"
+    "back_home": "Back to Home",
+    "sso_enterprise": "تسجيل الدخول الموحد للشركات",
+    "sso_redirecting": "جارٍ التحويل إلى مزود الهوية…"
   },
   "register": {
     "title": "Welcome to Register",

@@ -37,7 +37,9 @@
     "logging_in": "Logging in...",
     "coming_soon": "Not available yet, stay tuned",
     "please_login": "Please login first",
-    "back_home": "Back to Home"
+    "back_home": "Back to Home",
+    "sso_enterprise": "Enterprise SSO",
+    "sso_redirecting": "Redirecting to identity provider…"
   },
   "register": {
     "title": "Welcome to Register",

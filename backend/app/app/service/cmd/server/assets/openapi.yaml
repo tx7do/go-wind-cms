@@ -984,6 +984,27 @@ paths:
                 "200":
                     description: OK
                     content: {}
+    /app/v1/oidc/authorize-url:
+        post:
+            tags:
+                - AuthenticationService
+            description: 获取 OIDC 授权跳转地址（core 生成 state 暂存 Redis，防 CSRF；免鉴权）
+            operationId: AuthenticationService_GetOidcAuthorizeUrl
+            requestBody:
+                content:
+                    application/json:
+                        schema:
+                            $ref: '#/components/schemas/authentication.service.v1.GetOidcAuthorizeUrlRequest'
+                required: true
+            responses:
+                "200":
+                    description: OK
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/authentication.service.v1.GetOidcAuthorizeUrlResponse'
+            security:
+                - {}
     /app/v1/pages:
         get:
             tags:
@@ -1891,6 +1912,20 @@ components:
                     type: object
                     description: 元数据
             description: Kratos错误返回
+        authentication.service.v1.GetOidcAuthorizeUrlRequest:
+            type: object
+            properties:
+                redirect_uri:
+                    type: string
+                    description: 授权完成后的回调地址（须与 IdP 注册的 redirect_uri 一致）
+            description: OIDC 授权跳转地址 - 请求
+        authentication.service.v1.GetOidcAuthorizeUrlResponse:
+            type: object
+            properties:
+                authorizeUrl:
+                    type: string
+                    description: IdP 授权端点完整地址（含 client_id/redirect_uri/state/scope），浏览器直接跳转
+            description: OIDC 授权跳转地址 - 响应
         authentication.service.v1.LoginRequest:
             required:
                 - grant_type

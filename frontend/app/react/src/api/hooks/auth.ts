@@ -124,6 +124,10 @@ export interface LoginParams {
     mobile?: string;
     password: string;
     grant_type?: string;
+    /** OIDC 授权码（grant_type=authorization_code 时必填） */
+    code?: string;
+    /** OIDC state（防 CSRF；须与授权跳转时签发的一致） */
+    oidc_state?: string;
 }
 
 export const DEFAULT_HOME_PATH = '/';

@@ -40,8 +40,11 @@ export const useAuthStore = defineStore('auth', () => {
                 username: params.username,
                 email: params.email,
                 mobile: params.mobile,
-                password: encryptPassword(params.password),
-                grant_type: 'password',
+                // OIDC 授权码登录无本地密码；空值不加密（core 按 grant_type 分派）
+                password: params.password ? encryptPassword(params.password) : '',
+                grant_type: params.grant_type || 'password',
+                code: params.code,
+                oidc_state: params.oidc_state,
             })
 
             // 如果成功获取到 accessToken

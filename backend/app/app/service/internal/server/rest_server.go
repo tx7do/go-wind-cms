@@ -53,6 +53,10 @@ func NewRestMiddleware(
 	rpc.AddWhiteList(
 		appV1.OperationAuthenticationServiceLogin,
 
+	// AuthenticationService.GetOidcAuthorizeUrl：OIDC 登录的前置步骤（登录页
+	// 尚无 token），与 Login 同列免鉴权；state 防 CSRF 由 core 生成校验。
+	appV1.OperationAuthenticationServiceGetOidcAuthorizeUrl,
+
 		appV1.OperationNavigationServiceList,
 
 		// AuthenticationService.RefreshToken：access token 过期后凭 refresh_token 换新，
