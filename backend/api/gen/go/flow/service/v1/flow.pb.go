@@ -34,6 +34,7 @@ type FlowRule struct {
 	Name            *string                `protobuf:"bytes,2,opt,name=name,proto3,oneof" json:"name,omitempty"`                                              // 规则名称
 	TriggerEvent    *string                `protobuf:"bytes,3,opt,name=trigger_event,json=triggerEvent,proto3,oneof" json:"trigger_event,omitempty"`          // 触发事件
 	ConditionStatus *string                `protobuf:"bytes,4,opt,name=condition_status,json=conditionStatus,proto3,oneof" json:"condition_status,omitempty"` // 状态条件
+	TriggerCron     *string                `protobuf:"bytes,8,opt,name=trigger_cron,json=triggerCron,proto3,oneof" json:"trigger_cron,omitempty"`             // 定时触发 cron
 	Actions         *string                `protobuf:"bytes,5,opt,name=actions,proto3,oneof" json:"actions,omitempty"`                                        // 动作链 JSON
 	Enabled         *bool                  `protobuf:"varint,6,opt,name=enabled,proto3,oneof" json:"enabled,omitempty"`                                       // 是否启用
 	MatchCount      *uint32                `protobuf:"varint,7,opt,name=match_count,json=matchCount,proto3,oneof" json:"match_count,omitempty"`               // 累计命中次数
@@ -97,6 +98,13 @@ func (x *FlowRule) GetTriggerEvent() string {
 func (x *FlowRule) GetConditionStatus() string {
 	if x != nil && x.ConditionStatus != nil {
 		return *x.ConditionStatus
+	}
+	return ""
+}
+
+func (x *FlowRule) GetTriggerCron() string {
+	if x != nil && x.TriggerCron != nil {
+		return *x.TriggerCron
 	}
 	return ""
 }
@@ -389,24 +397,26 @@ var File_flow_service_v1_flow_proto protoreflect.FileDescriptor
 
 const file_flow_service_v1_flow_proto_rawDesc = "" +
 	"\n" +
-	"\x1aflow/service/v1/flow.proto\x12\x0fflow.service.v1\x1a$gnostic/openapi/v3/annotations.proto\x1a\x1cgoogle/api/annotations.proto\x1a\x1bgoogle/protobuf/empty.proto\x1a\x1fgoogle/protobuf/timestamp.proto\x1a google/protobuf/field_mask.proto\x1a\x1epagination/v1/pagination.proto\"\x90\a\n" +
+	"\x1aflow/service/v1/flow.proto\x12\x0fflow.service.v1\x1a$gnostic/openapi/v3/annotations.proto\x1a\x1cgoogle/api/annotations.proto\x1a\x1bgoogle/protobuf/empty.proto\x1a\x1fgoogle/protobuf/timestamp.proto\x1a google/protobuf/field_mask.proto\x1a\x1epagination/v1/pagination.proto\"\x96\t\n" +
 	"\bFlowRule\x12$\n" +
 	"\x02id\x18\x01 \x01(\rB\x0f\xbaG\f\x92\x02\t规则 IDH\x00R\x02id\x88\x01\x01\x12+\n" +
 	"\x04name\x18\x02 \x01(\tB\x12\xbaG\x0f\x92\x02\f规则名称H\x01R\x04name\x88\x01\x01\x12\x94\x01\n" +
 	"\rtrigger_event\x18\x03 \x01(\tBj\xbaGg\x92\x02d触发事件（post.created/post.updated/post.published/post.deleted/page.* 同 webhook 事件族）H\x02R\ftriggerEvent\x88\x01\x01\x12\x89\x01\n" +
-	"\x10condition_status\x18\x04 \x01(\tBY\xbaGV\x92\x02S条件：实体状态等值匹配（如 POST_STATUS_PUBLISHED）；留空=无条件H\x03R\x0fconditionStatus\x88\x01\x01\x12\x83\x01\n" +
-	"\aactions\x18\x05 \x01(\tBd\xbaGa\x92\x02^动作链 JSON 数组：[{\"type\":\"webhook\",\"url\":\"https://...\",\"secret\":\"可选签名密钥\"}]H\x04R\aactions\x88\x01\x01\x121\n" +
-	"\aenabled\x18\x06 \x01(\bB\x12\xbaG\x0f\x92\x02\f是否启用H\x05R\aenabled\x88\x01\x01\x12V\n" +
-	"\vmatch_count\x18\a \x01(\rB0\xbaG-\x92\x02*累计命中次数（观测用，只读）H\x06R\n" +
+	"\x10condition_status\x18\x04 \x01(\tBY\xbaGV\x92\x02S条件：实体状态等值匹配（如 POST_STATUS_PUBLISHED）；留空=无条件H\x03R\x0fconditionStatus\x88\x01\x01\x12\xf2\x01\n" +
+	"\ftrigger_cron\x18\b \x01(\tB\xc9\x01\xbaG\xc5\x01\x92\x02\xc1\x01定时触发 cron 表达式（5 段：分 时 日 月 周，如 */5 * * * *）；非空=定时规则：按周期触发（事件固定 schedule、无实体），忽略触发事件与状态条件H\x04R\vtriggerCron\x88\x01\x01\x12\x83\x01\n" +
+	"\aactions\x18\x05 \x01(\tBd\xbaGa\x92\x02^动作链 JSON 数组：[{\"type\":\"webhook\",\"url\":\"https://...\",\"secret\":\"可选签名密钥\"}]H\x05R\aactions\x88\x01\x01\x121\n" +
+	"\aenabled\x18\x06 \x01(\bB\x12\xbaG\x0f\x92\x02\f是否启用H\x06R\aenabled\x88\x01\x01\x12V\n" +
+	"\vmatch_count\x18\a \x01(\rB0\xbaG-\x92\x02*累计命中次数（观测用，只读）H\aR\n" +
 	"matchCount\x88\x01\x01\x12?\n" +
 	"\n" +
-	"created_at\x18\xc8\x01 \x01(\v2\x1a.google.protobuf.TimestampH\aR\tcreatedAt\x88\x01\x01\x12?\n" +
+	"created_at\x18\xc8\x01 \x01(\v2\x1a.google.protobuf.TimestampH\bR\tcreatedAt\x88\x01\x01\x12?\n" +
 	"\n" +
-	"updated_at\x18\xc9\x01 \x01(\v2\x1a.google.protobuf.TimestampH\bR\tupdatedAt\x88\x01\x01B\x05\n" +
+	"updated_at\x18\xc9\x01 \x01(\v2\x1a.google.protobuf.TimestampH\tR\tupdatedAt\x88\x01\x01B\x05\n" +
 	"\x03_idB\a\n" +
 	"\x05_nameB\x10\n" +
 	"\x0e_trigger_eventB\x13\n" +
-	"\x11_condition_statusB\n" +
+	"\x11_condition_statusB\x0f\n" +
+	"\r_trigger_cronB\n" +
 	"\n" +
 	"\b_actionsB\n" +
 	"\n" +

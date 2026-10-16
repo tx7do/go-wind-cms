@@ -104,6 +104,11 @@ func ConditionStatus(v string) predicate.FlowRule {
 	return predicate.FlowRule(sql.FieldEQ(FieldConditionStatus, v))
 }
 
+// TriggerCron applies equality check predicate on the "trigger_cron" field. It's identical to TriggerCronEQ.
+func TriggerCron(v string) predicate.FlowRule {
+	return predicate.FlowRule(sql.FieldEQ(FieldTriggerCron, v))
+}
+
 // Actions applies equality check predicate on the "actions" field. It's identical to ActionsEQ.
 func Actions(v string) predicate.FlowRule {
 	return predicate.FlowRule(sql.FieldEQ(FieldActions, v))
@@ -672,6 +677,81 @@ func ConditionStatusEqualFold(v string) predicate.FlowRule {
 // ConditionStatusContainsFold applies the ContainsFold predicate on the "condition_status" field.
 func ConditionStatusContainsFold(v string) predicate.FlowRule {
 	return predicate.FlowRule(sql.FieldContainsFold(FieldConditionStatus, v))
+}
+
+// TriggerCronEQ applies the EQ predicate on the "trigger_cron" field.
+func TriggerCronEQ(v string) predicate.FlowRule {
+	return predicate.FlowRule(sql.FieldEQ(FieldTriggerCron, v))
+}
+
+// TriggerCronNEQ applies the NEQ predicate on the "trigger_cron" field.
+func TriggerCronNEQ(v string) predicate.FlowRule {
+	return predicate.FlowRule(sql.FieldNEQ(FieldTriggerCron, v))
+}
+
+// TriggerCronIn applies the In predicate on the "trigger_cron" field.
+func TriggerCronIn(vs ...string) predicate.FlowRule {
+	return predicate.FlowRule(sql.FieldIn(FieldTriggerCron, vs...))
+}
+
+// TriggerCronNotIn applies the NotIn predicate on the "trigger_cron" field.
+func TriggerCronNotIn(vs ...string) predicate.FlowRule {
+	return predicate.FlowRule(sql.FieldNotIn(FieldTriggerCron, vs...))
+}
+
+// TriggerCronGT applies the GT predicate on the "trigger_cron" field.
+func TriggerCronGT(v string) predicate.FlowRule {
+	return predicate.FlowRule(sql.FieldGT(FieldTriggerCron, v))
+}
+
+// TriggerCronGTE applies the GTE predicate on the "trigger_cron" field.
+func TriggerCronGTE(v string) predicate.FlowRule {
+	return predicate.FlowRule(sql.FieldGTE(FieldTriggerCron, v))
+}
+
+// TriggerCronLT applies the LT predicate on the "trigger_cron" field.
+func TriggerCronLT(v string) predicate.FlowRule {
+	return predicate.FlowRule(sql.FieldLT(FieldTriggerCron, v))
+}
+
+// TriggerCronLTE applies the LTE predicate on the "trigger_cron" field.
+func TriggerCronLTE(v string) predicate.FlowRule {
+	return predicate.FlowRule(sql.FieldLTE(FieldTriggerCron, v))
+}
+
+// TriggerCronContains applies the Contains predicate on the "trigger_cron" field.
+func TriggerCronContains(v string) predicate.FlowRule {
+	return predicate.FlowRule(sql.FieldContains(FieldTriggerCron, v))
+}
+
+// TriggerCronHasPrefix applies the HasPrefix predicate on the "trigger_cron" field.
+func TriggerCronHasPrefix(v string) predicate.FlowRule {
+	return predicate.FlowRule(sql.FieldHasPrefix(FieldTriggerCron, v))
+}
+
+// TriggerCronHasSuffix applies the HasSuffix predicate on the "trigger_cron" field.
+func TriggerCronHasSuffix(v string) predicate.FlowRule {
+	return predicate.FlowRule(sql.FieldHasSuffix(FieldTriggerCron, v))
+}
+
+// TriggerCronIsNil applies the IsNil predicate on the "trigger_cron" field.
+func TriggerCronIsNil() predicate.FlowRule {
+	return predicate.FlowRule(sql.FieldIsNull(FieldTriggerCron))
+}
+
+// TriggerCronNotNil applies the NotNil predicate on the "trigger_cron" field.
+func TriggerCronNotNil() predicate.FlowRule {
+	return predicate.FlowRule(sql.FieldNotNull(FieldTriggerCron))
+}
+
+// TriggerCronEqualFold applies the EqualFold predicate on the "trigger_cron" field.
+func TriggerCronEqualFold(v string) predicate.FlowRule {
+	return predicate.FlowRule(sql.FieldEqualFold(FieldTriggerCron, v))
+}
+
+// TriggerCronContainsFold applies the ContainsFold predicate on the "trigger_cron" field.
+func TriggerCronContainsFold(v string) predicate.FlowRule {
+	return predicate.FlowRule(sql.FieldContainsFold(FieldTriggerCron, v))
 }
 
 // ActionsEQ applies the EQ predicate on the "actions" field.

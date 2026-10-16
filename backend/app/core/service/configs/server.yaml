@@ -11,7 +11,9 @@ server:
       enable_metadata: true
 
   asynq:
-    uri: "redis://:*Abcd123456@redis:6379/1"
+    # db2 专库：db1 的 asynq:{default} 队列被本机多个项目共用，外来 asynq
+    # worker 会抢走本项目的任务（handler not found → 重试归档，任务丢失）。
+    uri: "redis://:*Abcd123456@redis:6379/2"
     enable_gracefully_shutdown: true
     shutdown_timeout: 3s
     codec: "json"

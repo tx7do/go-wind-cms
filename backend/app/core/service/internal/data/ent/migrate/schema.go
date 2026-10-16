@@ -1332,6 +1332,7 @@ var (
 		{Name: "name", Type: field.TypeString, Size: 128, Comment: "规则名称"},
 		{Name: "trigger_event", Type: field.TypeString, Size: 64, Comment: "触发事件（post.published/post.updated/page.published 等内容事件族）"},
 		{Name: "condition_status", Type: field.TypeString, Nullable: true, Size: 64, Comment: "条件：实体状态等值匹配（如 POST_STATUS_PUBLISHED）；空=无条件"},
+		{Name: "trigger_cron", Type: field.TypeString, Nullable: true, Size: 64, Comment: "定时触发 cron 表达式（5 段：分 时 日 月 周；非空=定时规则，忽略事件触发与状态条件）"},
 		{Name: "actions", Type: field.TypeString, Comment: "动作链 JSON 数组，元素形如 {'type':'webhook','url':'https://...','secret':'可选签名密钥'}", Default: "[]"},
 		{Name: "enabled", Type: field.TypeBool, Nullable: true, Comment: "是否启用", Default: true},
 		{Name: "match_count", Type: field.TypeUint32, Nullable: true, Comment: "累计命中次数（观测用）", Default: 0},
@@ -1346,7 +1347,7 @@ var (
 			{
 				Name:    "flowrule_trigger_event_enabled",
 				Unique:  false,
-				Columns: []*schema.Column{FlowRulesColumns[9], FlowRulesColumns[12]},
+				Columns: []*schema.Column{FlowRulesColumns[9], FlowRulesColumns[13]},
 			},
 		},
 	}

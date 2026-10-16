@@ -6,6 +6,9 @@
   3. 文章草稿态更新（post.updated）→ 不触发
   4. 文章转 PUBLISHED（post.published）→ 触发：body/envelope、HMAC 签名、match_count+1
   5. 条件不满足的事件（文章回 DRAFT 的 post.updated）→ 不触发
+  6. 通知动作：规则触发 → 站内信落库 + 收件人收件箱
+  7. 延时动作：webhook → delay 5s → webhook，第二跳晚于第一跳 ≥5s
+  8. 定时触发：triggerCron 每分钟 → envelope event=schedule/entity=0
 
 前置：core/admin 已启动（taskScheduler 可用，redis 运行中）。
 用法：python test_flow_rules.py
@@ -45,6 +48,7 @@ class ReceiverHandler(BaseHTTPRequestHandler):
             "body": body,
             "signature": self.headers.get("X-Webhook-Signature", ""),
             "event": self.headers.get("X-Flow-Event", ""),
+            "ts": time.time(),
         })
         self.send_response(200)
         self.end_headers()
@@ -189,6 +193,92 @@ def main():
 
     api(f"/admin/v1/flow-rules/{nrule_id}", "DELETE")
     api(f"/admin/v1/posts/{npost_id}", "DELETE")
+
+    # ===== 7. 延时动作：webhook → delay 5s → webhook =====
+    drule = api("/admin/v1/flow-rules", "POST", {"data": {
+        "name": f"e2e-flow-delay-{TS}",
+        "triggerEvent": "post.published",
+        "conditionStatus": "",
+        "actions": json.dumps([
+            {"type": "webhook", "url": f"http://127.0.0.1:{RECEIVER_PORT}/flow-fast"},
+            {"type": "delay", "seconds": 5},
+            {"type": "webhook", "url": f"http://127.0.0.1:{RECEIVER_PORT}/flow-slow"},
+        ]),
+        "enabled": True,
+    }})
+    drule_id = drule.get("id")
+    check("建延时规则", bool(drule_id), f"id={drule_id}")
+
+    bad_d = api("/admin/v1/flow-rules", "POST", {"data": {
+        "name": f"e2e-flow-delay-bad-{TS}",
+        "triggerEvent": "post.published",
+        "actions": json.dumps([{"type": "delay", "seconds": 0}]),
+    }})
+    check("延时秒数非法被拒", bad_d.get("code") == 400, f"code={bad_d.get('code')}")
+
+    dpost = api("/admin/v1/posts", "POST", {"data": {
+        "status": "DRAFT",
+        "translations": [{"languageCode": "zh-CN", "title": f"flow delay e2e {TS}",
+                          "content": "<p>x</p>"}],
+    }})
+    dpost_id = dpost.get("id")
+    api(f"/admin/v1/posts/{dpost_id}/review/submit", "POST", {"postId": dpost_id})
+    api(f"/admin/v1/posts/{dpost_id}/review/approve", "POST", {"postId": dpost_id})
+
+    fast_idx = len(received)
+    ok = wait_for(lambda: any(r["path"] == "/flow-fast" for r in received[fast_idx:]),
+                  timeout=90)
+    check("延时第一跳（立即 webhook）到达", ok)
+    fast_ts = next((r["ts"] for r in received[fast_idx:] if r["path"] == "/flow-fast"), None)
+
+    slow_idx = fast_idx
+    ok = wait_for(lambda: any(r["path"] == "/flow-slow" for r in received[slow_idx:]),
+                  timeout=120)
+    slow_ts = next((r["ts"] for r in received[slow_idx:] if r["path"] == "/flow-slow"), None)
+    check("延时第二跳（续跑 webhook）到达", ok and slow_ts is not None)
+    if fast_ts and slow_ts:
+        gap = slow_ts - fast_ts
+        check("第二跳晚于第一跳 ≥5s（delay 生效）", gap >= 5, f"gap={gap:.1f}s")
+
+    # ===== 8. 定时触发：triggerCron 每分钟 =====
+    bad_c = api("/admin/v1/flow-rules", "POST", {"data": {
+        "name": f"e2e-flow-cron-bad-{TS}",
+        "triggerEvent": "post.published",
+        "triggerCron": "not-a-cron",
+        "actions": json.dumps([{"type": "webhook",
+                                "url": f"http://127.0.0.1:{RECEIVER_PORT}/flow-cron"}]),
+        "enabled": True,
+    }})
+    check("非法 cron 被拒", bad_c.get("code") == 400, f"code={bad_c.get('code')}")
+
+    crule = api("/admin/v1/flow-rules", "POST", {"data": {
+        "name": f"e2e-flow-cron-{TS}",
+        "triggerEvent": "post.published",
+        "triggerCron": "* * * * *",
+        "actions": json.dumps([{"type": "webhook",
+                                "url": f"http://127.0.0.1:{RECEIVER_PORT}/flow-cron"}]),
+        "enabled": True,
+    }})
+    crule_id = crule.get("id")
+    check("建定时规则", bool(crule_id), f"id={crule_id}")
+
+    cron_idx = len(received)
+    ok = wait_for(lambda: any(r["path"] == "/flow-cron" for r in received[cron_idx:]),
+                  timeout=150)
+    check("定时规则触发（≤下一分钟+队列滞后）", ok)
+    if ok:
+        hit = next(r for r in received[cron_idx:] if r["path"] == "/flow-cron")
+        body = json.loads(hit["body"])
+        check("envelope event=schedule", body.get("event") == "schedule",
+              f"event={body.get('event')}")
+        check("envelope entity_id=0", body.get("entity_id") == 0,
+              f"entity={body.get('entity_id')}")
+        check("envelope rule_id 命中", body.get("rule_id") == crule_id,
+              f"rule={body.get('rule_id')}")
+
+    api(f"/admin/v1/flow-rules/{drule_id}", "DELETE")
+    api(f"/admin/v1/posts/{dpost_id}", "DELETE")
+    api(f"/admin/v1/flow-rules/{crule_id}", "DELETE")
 
     # ===== 清理 =====
     api(f"/admin/v1/flow-rules/{rule_id}", "DELETE")

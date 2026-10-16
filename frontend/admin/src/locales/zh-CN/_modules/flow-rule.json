@@ -28,5 +28,13 @@
   "addNotificationAction": "添加站内通知动作",
   "notifyTitlePlaceholder": "通知标题（支持 {event}/{entity_id}/{rule_id} 占位符）",
   "notifyContentPlaceholder": "通知内容（支持 {event}/{entity_id}/{rule_id} 占位符）",
-  "notifyRecipientsPlaceholder": "收件人用户 ID，逗号分隔（如 1,2,3）"
+  "notifyRecipientsPlaceholder": "收件人用户 ID，逗号分隔（如 1,2,3）",
+  "trigger": "触发",
+  "triggerTypeEvent": "事件触发",
+  "triggerTypeCron": "定时触发",
+  "triggerCronPlaceholder": "cron 表达式（5 段：分 时 日 月 周，如 */5 * * * *）",
+  "cronRequired": "请输入 cron 表达式",
+  "actionDelay": "延时",
+  "addDelayAction": "添加延时动作",
+  "delaySecondsPlaceholder": "延时秒数（1-604800，其后动作延后执行）"
 }

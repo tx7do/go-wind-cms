@@ -198,6 +198,26 @@ func (_u *FlowRuleUpdate) ClearConditionStatus() *FlowRuleUpdate {
 	return _u
 }
 
+// SetTriggerCron sets the "trigger_cron" field.
+func (_u *FlowRuleUpdate) SetTriggerCron(v string) *FlowRuleUpdate {
+	_u.mutation.SetTriggerCron(v)
+	return _u
+}
+
+// SetNillableTriggerCron sets the "trigger_cron" field if the given value is not nil.
+func (_u *FlowRuleUpdate) SetNillableTriggerCron(v *string) *FlowRuleUpdate {
+	if v != nil {
+		_u.SetTriggerCron(*v)
+	}
+	return _u
+}
+
+// ClearTriggerCron clears the value of the "trigger_cron" field.
+func (_u *FlowRuleUpdate) ClearTriggerCron() *FlowRuleUpdate {
+	_u.mutation.ClearTriggerCron()
+	return _u
+}
+
 // SetActions sets the "actions" field.
 func (_u *FlowRuleUpdate) SetActions(v string) *FlowRuleUpdate {
 	_u.mutation.SetActions(v)
@@ -308,6 +328,11 @@ func (_u *FlowRuleUpdate) check() error {
 			return &ValidationError{Name: "condition_status", err: fmt.Errorf(`ent: validator failed for field "FlowRule.condition_status": %w`, err)}
 		}
 	}
+	if v, ok := _u.mutation.TriggerCron(); ok {
+		if err := flowrule.TriggerCronValidator(v); err != nil {
+			return &ValidationError{Name: "trigger_cron", err: fmt.Errorf(`ent: validator failed for field "FlowRule.trigger_cron": %w`, err)}
+		}
+	}
 	if v, ok := _u.mutation.Actions(); ok {
 		if err := flowrule.ActionsValidator(v); err != nil {
 			return &ValidationError{Name: "actions", err: fmt.Errorf(`ent: validator failed for field "FlowRule.actions": %w`, err)}
@@ -390,6 +415,12 @@ func (_u *FlowRuleUpdate) sqlSave(ctx context.Context) (_node int, err error) {
 	}
 	if _u.mutation.ConditionStatusCleared() {
 		_spec.ClearField(flowrule.FieldConditionStatus, field.TypeString)
+	}
+	if value, ok := _u.mutation.TriggerCron(); ok {
+		_spec.SetField(flowrule.FieldTriggerCron, field.TypeString, value)
+	}
+	if _u.mutation.TriggerCronCleared() {
+		_spec.ClearField(flowrule.FieldTriggerCron, field.TypeString)
 	}
 	if value, ok := _u.mutation.Actions(); ok {
 		_spec.SetField(flowrule.FieldActions, field.TypeString, value)
@@ -600,6 +631,26 @@ func (_u *FlowRuleUpdateOne) ClearConditionStatus() *FlowRuleUpdateOne {
 	return _u
 }
 
+// SetTriggerCron sets the "trigger_cron" field.
+func (_u *FlowRuleUpdateOne) SetTriggerCron(v string) *FlowRuleUpdateOne {
+	_u.mutation.SetTriggerCron(v)
+	return _u
+}
+
+// SetNillableTriggerCron sets the "trigger_cron" field if the given value is not nil.
+func (_u *FlowRuleUpdateOne) SetNillableTriggerCron(v *string) *FlowRuleUpdateOne {
+	if v != nil {
+		_u.SetTriggerCron(*v)
+	}
+	return _u
+}
+
+// ClearTriggerCron clears the value of the "trigger_cron" field.
+func (_u *FlowRuleUpdateOne) ClearTriggerCron() *FlowRuleUpdateOne {
+	_u.mutation.ClearTriggerCron()
+	return _u
+}
+
 // SetActions sets the "actions" field.
 func (_u *FlowRuleUpdateOne) SetActions(v string) *FlowRuleUpdateOne {
 	_u.mutation.SetActions(v)
@@ -723,6 +774,11 @@ func (_u *FlowRuleUpdateOne) check() error {
 			return &ValidationError{Name: "condition_status", err: fmt.Errorf(`ent: validator failed for field "FlowRule.condition_status": %w`, err)}
 		}
 	}
+	if v, ok := _u.mutation.TriggerCron(); ok {
+		if err := flowrule.TriggerCronValidator(v); err != nil {
+			return &ValidationError{Name: "trigger_cron", err: fmt.Errorf(`ent: validator failed for field "FlowRule.trigger_cron": %w`, err)}
+		}
+	}
 	if v, ok := _u.mutation.Actions(); ok {
 		if err := flowrule.ActionsValidator(v); err != nil {
 			return &ValidationError{Name: "actions", err: fmt.Errorf(`ent: validator failed for field "FlowRule.actions": %w`, err)}
@@ -822,6 +878,12 @@ func (_u *FlowRuleUpdateOne) sqlSave(ctx context.Context) (_node *FlowRule, err 
 	}
 	if _u.mutation.ConditionStatusCleared() {
 		_spec.ClearField(flowrule.FieldConditionStatus, field.TypeString)
+	}
+	if value, ok := _u.mutation.TriggerCron(); ok {
+		_spec.SetField(flowrule.FieldTriggerCron, field.TypeString, value)
+	}
+	if _u.mutation.TriggerCronCleared() {
+		_spec.ClearField(flowrule.FieldTriggerCron, field.TypeString)
 	}
 	if value, ok := _u.mutation.Actions(); ok {
 		_spec.SetField(flowrule.FieldActions, field.TypeString, value)

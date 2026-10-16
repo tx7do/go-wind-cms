@@ -5796,6 +5796,7 @@ export type flowservicev1_FlowRule = {
   id?: number;
   matchCount?: number;
   name?: string;
+  triggerCron?: string;
   triggerEvent?: string;
   updatedAt?: wellKnownTimestamp;
 };

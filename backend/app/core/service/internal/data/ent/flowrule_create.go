@@ -146,6 +146,20 @@ func (_c *FlowRuleCreate) SetNillableConditionStatus(v *string) *FlowRuleCreate 
 	return _c
 }
 
+// SetTriggerCron sets the "trigger_cron" field.
+func (_c *FlowRuleCreate) SetTriggerCron(v string) *FlowRuleCreate {
+	_c.mutation.SetTriggerCron(v)
+	return _c
+}
+
+// SetNillableTriggerCron sets the "trigger_cron" field if the given value is not nil.
+func (_c *FlowRuleCreate) SetNillableTriggerCron(v *string) *FlowRuleCreate {
+	if v != nil {
+		_c.SetTriggerCron(*v)
+	}
+	return _c
+}
+
 // SetActions sets the "actions" field.
 func (_c *FlowRuleCreate) SetActions(v string) *FlowRuleCreate {
 	_c.mutation.SetActions(v)
@@ -273,6 +287,11 @@ func (_c *FlowRuleCreate) check() error {
 			return &ValidationError{Name: "condition_status", err: fmt.Errorf(`ent: validator failed for field "FlowRule.condition_status": %w`, err)}
 		}
 	}
+	if v, ok := _c.mutation.TriggerCron(); ok {
+		if err := flowrule.TriggerCronValidator(v); err != nil {
+			return &ValidationError{Name: "trigger_cron", err: fmt.Errorf(`ent: validator failed for field "FlowRule.trigger_cron": %w`, err)}
+		}
+	}
 	if _, ok := _c.mutation.Actions(); !ok {
 		return &ValidationError{Name: "actions", err: errors.New(`ent: missing required field "FlowRule.actions"`)}
 	}
@@ -358,6 +377,10 @@ func (_c *FlowRuleCreate) createSpec() (*FlowRule, *sqlgraph.CreateSpec) {
 	if value, ok := _c.mutation.ConditionStatus(); ok {
 		_spec.SetField(flowrule.FieldConditionStatus, field.TypeString, value)
 		_node.ConditionStatus = &value
+	}
+	if value, ok := _c.mutation.TriggerCron(); ok {
+		_spec.SetField(flowrule.FieldTriggerCron, field.TypeString, value)
+		_node.TriggerCron = &value
 	}
 	if value, ok := _c.mutation.Actions(); ok {
 		_spec.SetField(flowrule.FieldActions, field.TypeString, value)
@@ -570,6 +593,24 @@ func (u *FlowRuleUpsert) UpdateConditionStatus() *FlowRuleUpsert {
 // ClearConditionStatus clears the value of the "condition_status" field.
 func (u *FlowRuleUpsert) ClearConditionStatus() *FlowRuleUpsert {
 	u.SetNull(flowrule.FieldConditionStatus)
+	return u
+}
+
+// SetTriggerCron sets the "trigger_cron" field.
+func (u *FlowRuleUpsert) SetTriggerCron(v string) *FlowRuleUpsert {
+	u.Set(flowrule.FieldTriggerCron, v)
+	return u
+}
+
+// UpdateTriggerCron sets the "trigger_cron" field to the value that was provided on create.
+func (u *FlowRuleUpsert) UpdateTriggerCron() *FlowRuleUpsert {
+	u.SetExcluded(flowrule.FieldTriggerCron)
+	return u
+}
+
+// ClearTriggerCron clears the value of the "trigger_cron" field.
+func (u *FlowRuleUpsert) ClearTriggerCron() *FlowRuleUpsert {
+	u.SetNull(flowrule.FieldTriggerCron)
 	return u
 }
 
@@ -853,6 +894,27 @@ func (u *FlowRuleUpsertOne) UpdateConditionStatus() *FlowRuleUpsertOne {
 func (u *FlowRuleUpsertOne) ClearConditionStatus() *FlowRuleUpsertOne {
 	return u.Update(func(s *FlowRuleUpsert) {
 		s.ClearConditionStatus()
+	})
+}
+
+// SetTriggerCron sets the "trigger_cron" field.
+func (u *FlowRuleUpsertOne) SetTriggerCron(v string) *FlowRuleUpsertOne {
+	return u.Update(func(s *FlowRuleUpsert) {
+		s.SetTriggerCron(v)
+	})
+}
+
+// UpdateTriggerCron sets the "trigger_cron" field to the value that was provided on create.
+func (u *FlowRuleUpsertOne) UpdateTriggerCron() *FlowRuleUpsertOne {
+	return u.Update(func(s *FlowRuleUpsert) {
+		s.UpdateTriggerCron()
+	})
+}
+
+// ClearTriggerCron clears the value of the "trigger_cron" field.
+func (u *FlowRuleUpsertOne) ClearTriggerCron() *FlowRuleUpsertOne {
+	return u.Update(func(s *FlowRuleUpsert) {
+		s.ClearTriggerCron()
 	})
 }
 
@@ -1311,6 +1373,27 @@ func (u *FlowRuleUpsertBulk) UpdateConditionStatus() *FlowRuleUpsertBulk {
 func (u *FlowRuleUpsertBulk) ClearConditionStatus() *FlowRuleUpsertBulk {
 	return u.Update(func(s *FlowRuleUpsert) {
 		s.ClearConditionStatus()
+	})
+}
+
+// SetTriggerCron sets the "trigger_cron" field.
+func (u *FlowRuleUpsertBulk) SetTriggerCron(v string) *FlowRuleUpsertBulk {
+	return u.Update(func(s *FlowRuleUpsert) {
+		s.SetTriggerCron(v)
+	})
+}
+
+// UpdateTriggerCron sets the "trigger_cron" field to the value that was provided on create.
+func (u *FlowRuleUpsertBulk) UpdateTriggerCron() *FlowRuleUpsertBulk {
+	return u.Update(func(s *FlowRuleUpsert) {
+		s.UpdateTriggerCron()
+	})
+}
+
+// ClearTriggerCron clears the value of the "trigger_cron" field.
+func (u *FlowRuleUpsertBulk) ClearTriggerCron() *FlowRuleUpsertBulk {
+	return u.Update(func(s *FlowRuleUpsert) {
+		s.ClearTriggerCron()
 	})
 }
 

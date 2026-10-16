@@ -43,6 +43,11 @@ func (FlowRule) Fields() []ent.Field {
 			Optional().
 			Nillable().
 			MaxLen(64),
+		field.String("trigger_cron").
+			Comment("定时触发 cron 表达式（5 段：分 时 日 月 周；非空=定时规则，忽略事件触发与状态条件）").
+			Optional().
+			Nillable().
+			MaxLen(64),
 		field.String("actions").
 			Comment("动作链 JSON 数组，元素形如 {'type':'webhook','url':'https://...','secret':'可选签名密钥'}").
 			NotEmpty().

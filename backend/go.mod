@@ -29,6 +29,7 @@ require (
 	github.com/opensearch-project/opensearch-go/v4 v4.6.0
 	github.com/redis/go-redis/v9 v9.22.0
 	github.com/reearth/ygo v1.51.11
+	github.com/robfig/cron/v3 v3.0.1
 	github.com/sashabaranov/go-openai v1.41.2
 	github.com/stretchr/testify v1.12.1
 	github.com/tx7do/go-crud/api v0.0.7
@@ -221,7 +222,6 @@ require (
 	github.com/remyoudompheng/bigfft v0.0.0-20230129092748-24d4a6f8daec // indirect
 	github.com/richardlehane/mscfb v1.0.4 // indirect
 	github.com/richardlehane/msoleps v1.0.4 // indirect
-	github.com/robfig/cron/v3 v3.0.1 // indirect
 	github.com/rs/xid v1.6.0 // indirect
 	github.com/santhosh-tekuri/jsonschema/v6 v6.0.3 // indirect
 	github.com/segmentio/asm v1.2.1 // indirect

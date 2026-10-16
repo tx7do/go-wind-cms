@@ -55,6 +55,13 @@ message FlowRule {
     }
   ]; // 状态条件
 
+  optional string trigger_cron = 8 [
+    json_name = "triggerCron",
+    (gnostic.openapi.v3.property) = {
+      description: "定时触发 cron 表达式（5 段：分 时 日 月 周，如 */5 * * * *）；非空=定时规则：按周期触发（事件固定 schedule、无实体），忽略触发事件与状态条件"
+    }
+  ]; // 定时触发 cron
+
   optional string actions = 5 [
     json_name = "actions",
     (gnostic.openapi.v3.property) = {

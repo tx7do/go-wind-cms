@@ -1,6 +1,17 @@
 import { useRef, useState } from 'react';
 import type { ActionType } from '@ant-design/pro-components';
-import { App, Button, Input, Modal, Popconfirm, Select, Space, Switch, Tag } from 'antd';
+import {
+  App,
+  Button,
+  Input,
+  Modal,
+  Popconfirm,
+  Radio,
+  Select,
+  Space,
+  Switch,
+  Tag,
+} from 'antd';
 import { DeleteOutlined, EditOutlined, PlusOutlined } from '@ant-design/icons';
 import { useTranslation } from 'react-i18next';
 import ListTable from '@/components/common/ListTable';
@@ -15,15 +26,17 @@ import {
   useUpdateFlowRule,
 } from '@/api/hooks/flow-rule';
 
-/** 动作编辑模型：webhook（url+secret）与 notification（title/content/收件人） */
+/** 动作编辑模型：webhook（url+secret）/ notification（title/content/收件人）/ delay（seconds） */
 interface FlowActionForm {
-  type: 'webhook' | 'notification';
+  type: 'webhook' | 'notification' | 'delay';
   url: string;
   secret: string;
   title: string;
   content: string;
   /** 收件人用户 ID 逗号分隔输入态 */
   targetUserIdsText: string;
+  /** delay 动作秒数输入态 */
+  secondsText: string;
 }
 
 const emptyAction = (type: FlowActionForm['type']): FlowActionForm => ({
@@ -33,6 +46,7 @@ const emptyAction = (type: FlowActionForm['type']): FlowActionForm => ({
   title: '',
   content: '',
   targetUserIdsText: '',
+  secondsText: '',
 });
 
 const serializeActions = (actions: FlowActionForm[]) =>
@@ -47,6 +61,11 @@ const serializeActions = (actions: FlowActionForm[]) =>
           };
           if (a.secret.trim()) out.secret = a.secret.trim();
           return out;
+        }
+        if (a.type === 'delay') {
+          const seconds = Number(a.secondsText);
+          if (!Number.isInteger(seconds) || seconds < 1) return null;
+          return { type: 'delay', seconds };
         }
         const ids = a.targetUserIdsText
           .split(/[,，\s]+/)
@@ -73,7 +92,12 @@ const deserializeActions = (actionsJSON: string): FlowActionForm[] => {
           Boolean(a) && typeof a === 'object',
       )
       .map((a) => {
-        const type = a.type === 'notification' ? 'notification' : 'webhook';
+        const type =
+          a.type === 'notification'
+            ? 'notification'
+            : a.type === 'delay'
+              ? 'delay'
+              : 'webhook';
         return {
           type,
           url: String(a.url ?? ''),
@@ -83,6 +107,10 @@ const deserializeActions = (actionsJSON: string): FlowActionForm[] => {
           targetUserIdsText: Array.isArray(a.target_user_ids)
             ? (a.target_user_ids as unknown[]).map(String).join(',')
             : '',
+          secondsText:
+            a.type === 'delay' && Number.isFinite(Number(a.seconds))
+              ? String(a.seconds)
+              : '',
         };
       });
   } catch {
@@ -91,8 +119,9 @@ const deserializeActions = (actionsJSON: string): FlowActionForm[] => {
 };
 
 /**
- * 自动化 Flow 规则管理页：内容事件 → 条件（状态等值）→ 动作链。
- * v1 动作支持 webhook（HMAC 签名投递，与 webhook 订阅同款签名头）；
+ * 自动化 Flow 规则管理页：内容事件/定时（cron）→ 条件（状态等值）→ 动作链。
+ * 动作支持 webhook（HMAC 签名投递）、notification（站内信）与 delay
+ * （延时后由后台任务接续剩余动作）；定时规则的触发事件/状态条件不生效。
  * 命中次数为观测字段。
  */
 const FlowRuleManagement = () => {
@@ -104,13 +133,18 @@ const FlowRuleManagement = () => {
   const [editing, setEditing] = useState<FlowRule | undefined>();
   const [form, setForm] = useState<{
     name: string;
+    /** 触发方式：event=内容事件 / cron=定时（triggerCron 非空） */
+    triggerType: 'event' | 'cron';
     triggerEvent: string;
+    triggerCron: string;
     conditionStatus: string;
     actions: FlowActionForm[];
     enabled: boolean;
   }>({
     name: '',
+    triggerType: 'event',
     triggerEvent: '',
+    triggerCron: '',
     conditionStatus: '',
     actions: [emptyAction('webhook')],
     enabled: true,
@@ -129,7 +163,9 @@ const FlowRuleManagement = () => {
     setEditing(undefined);
     setForm({
       name: '',
+      triggerType: 'event',
       triggerEvent: 'post.published',
+      triggerCron: '',
       conditionStatus: '',
       actions: [emptyAction('webhook')],
       enabled: true,
@@ -139,9 +175,12 @@ const FlowRuleManagement = () => {
 
   const openEdit = (record: FlowRule) => {
     setEditing(record);
+    const triggerCron = record.triggerCron ?? '';
     setForm({
       name: record.name ?? '',
+      triggerType: triggerCron ? 'cron' : 'event',
       triggerEvent: record.triggerEvent ?? 'post.published',
+      triggerCron,
       conditionStatus: record.conditionStatus ?? '',
       actions:
         deserializeActions(record.actions ?? '').length > 0
@@ -157,6 +196,13 @@ const FlowRuleManagement = () => {
       message.warning(t('nameRequired'));
       return;
     }
+    const isCron = form.triggerType === 'cron';
+    if (isCron) {
+      if (!form.triggerCron.trim()) {
+        message.warning(t('cronRequired'));
+        return;
+      }
+    }
     const actions = serializeActions(form.actions);
     if (!Array.isArray(JSON.parse(actions)) || (JSON.parse(actions) as unknown[]).length === 0) {
       message.warning(t('actionRequired'));
@@ -165,6 +211,7 @@ const FlowRuleManagement = () => {
     const payload = {
       name: form.name.trim(),
       triggerEvent: form.triggerEvent,
+      triggerCron: isCron ? form.triggerCron.trim() : undefined,
       conditionStatus: form.conditionStatus || undefined,
       actions,
       enabled: form.enabled,
@@ -174,7 +221,8 @@ const FlowRuleManagement = () => {
         await updateMutation.mutateAsync({
           id: editing.id,
           data: payload,
-          updateMask: 'name,triggerEvent,conditionStatus,actions,enabled',
+          updateMask:
+            'name,triggerEvent,triggerCron,conditionStatus,actions,enabled',
         });
       } else {
         await createMutation.mutateAsync({ data: payload });
@@ -216,12 +264,15 @@ const FlowRuleManagement = () => {
     { title: 'ID', dataIndex: 'id', width: 60 },
     { title: t('name'), dataIndex: 'name', ellipsis: true },
     {
-      title: t('triggerEvent'),
+      title: t('trigger'),
       dataIndex: 'triggerEvent',
-      width: 170,
-      render: (_: unknown, record: FlowRule) => (
-        <Tag color="blue">{record.triggerEvent}</Tag>
-      ),
+      width: 190,
+      render: (_: unknown, record: FlowRule) =>
+        record.triggerCron ? (
+          <Tag color="purple">{`cron: ${record.triggerCron}`}</Tag>
+        ) : (
+          <Tag color="blue">{record.triggerEvent}</Tag>
+        ),
     },
     {
       title: t('conditionStatus'),
@@ -246,12 +297,20 @@ const FlowRuleManagement = () => {
             {actions.map((a, i) => (
               <Tag
                 key={i}
-                color={a.type === 'webhook' ? 'blue' : 'green'}
+                color={
+                  a.type === 'webhook'
+                    ? 'blue'
+                    : a.type === 'delay'
+                      ? 'purple'
+                      : 'green'
+                }
                 style={{ maxWidth: 240, overflow: 'hidden', textOverflow: 'ellipsis' }}
               >
                 {a.type === 'webhook'
                   ? `${t('actionWebhook')}: ${a.url}`
-                  : `${t('actionNotification')}: ${a.title}`}
+                  : a.type === 'delay'
+                    ? `${t('actionDelay')}: ${a.secondsText}s`
+                    : `${t('actionNotification')}: ${a.title}`}
               </Tag>
             ))}
           </Space>
@@ -330,21 +389,40 @@ const FlowRuleManagement = () => {
             value={form.name}
             onChange={(e) => setForm((f) => ({ ...f, name: e.target.value }))}
           />
-          <Select
-            placeholder={t('triggerEventPlaceholder')}
-            value={form.triggerEvent}
-            options={FLOW_EVENT_OPTIONS}
-            onChange={(v: string) => setForm((f) => ({ ...f, triggerEvent: v }))}
-            style={{ width: '100%' }}
-          />
-          <Select
-            allowClear
-            placeholder={t('conditionStatusPlaceholder')}
-            value={form.conditionStatus || undefined}
-            options={FLOW_STATUS_CONDITION_OPTIONS}
-            onChange={(v?: string) => setForm((f) => ({ ...f, conditionStatus: v ?? '' }))}
-            style={{ width: '100%' }}
-          />
+          <Radio.Group
+            value={form.triggerType}
+            onChange={(e) =>
+              setForm((f) => ({ ...f, triggerType: e.target.value }))
+            }
+          >
+            <Radio.Button value="event">{t('triggerTypeEvent')}</Radio.Button>
+            <Radio.Button value="cron">{t('triggerTypeCron')}</Radio.Button>
+          </Radio.Group>
+          {form.triggerType === 'event' ? (
+            <Select
+              placeholder={t('triggerEventPlaceholder')}
+              value={form.triggerEvent}
+              options={FLOW_EVENT_OPTIONS}
+              onChange={(v: string) => setForm((f) => ({ ...f, triggerEvent: v }))}
+              style={{ width: '100%' }}
+            />
+          ) : (
+            <Input
+              placeholder={t('triggerCronPlaceholder')}
+              value={form.triggerCron}
+              onChange={(e) => setForm((f) => ({ ...f, triggerCron: e.target.value }))}
+            />
+          )}
+          {form.triggerType === 'event' && (
+            <Select
+              allowClear
+              placeholder={t('conditionStatusPlaceholder')}
+              value={form.conditionStatus || undefined}
+              options={FLOW_STATUS_CONDITION_OPTIONS}
+              onChange={(v?: string) => setForm((f) => ({ ...f, conditionStatus: v ?? '' }))}
+              style={{ width: '100%' }}
+            />
+          )}
           {form.actions.map((a, i) => {
             const patch = (part: Partial<FlowActionForm>) =>
               setForm((f) => ({
@@ -366,6 +444,7 @@ const FlowRuleManagement = () => {
                     options={[
                       { value: 'webhook', label: t('actionWebhook') },
                       { value: 'notification', label: t('actionNotification') },
+                      { value: 'delay', label: t('actionDelay') },
                     ]}
                     onChange={(v: FlowActionForm['type']) =>
                       setForm((f) => ({
@@ -401,6 +480,14 @@ const FlowRuleManagement = () => {
                       onChange={(e) => patch({ secret: e.target.value })}
                     />
                   </Space>
+                ) : a.type === 'delay' ? (
+                  <Input
+                    type="number"
+                    min={1}
+                    placeholder={t('delaySecondsPlaceholder')}
+                    value={a.secondsText}
+                    onChange={(e) => patch({ secondsText: e.target.value })}
+                  />
                 ) : (
                   <Space direction="vertical" style={{ width: '100%' }} size={6}>
                     <Input
@@ -450,6 +537,19 @@ const FlowRuleManagement = () => {
               }
             >
               {t('addNotificationAction')}
+            </Button>
+            <Button
+              block
+              type="dashed"
+              icon={<PlusOutlined />}
+              onClick={() =>
+                setForm((f) => ({
+                  ...f,
+                  actions: [...f.actions, emptyAction('delay')],
+                }))
+              }
+            >
+              {t('addDelayAction')}
             </Button>
           </Space.Compact>
           <Space>

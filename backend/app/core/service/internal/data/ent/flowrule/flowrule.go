@@ -32,6 +32,8 @@ const (
 	FieldTriggerEvent = "trigger_event"
 	// FieldConditionStatus holds the string denoting the condition_status field in the database.
 	FieldConditionStatus = "condition_status"
+	// FieldTriggerCron holds the string denoting the trigger_cron field in the database.
+	FieldTriggerCron = "trigger_cron"
 	// FieldActions holds the string denoting the actions field in the database.
 	FieldActions = "actions"
 	// FieldEnabled holds the string denoting the enabled field in the database.
@@ -55,6 +57,7 @@ var Columns = []string{
 	FieldName,
 	FieldTriggerEvent,
 	FieldConditionStatus,
+	FieldTriggerCron,
 	FieldActions,
 	FieldEnabled,
 	FieldMatchCount,
@@ -86,6 +89,8 @@ var (
 	TriggerEventValidator func(string) error
 	// ConditionStatusValidator is a validator for the "condition_status" field. It is called by the builders before save.
 	ConditionStatusValidator func(string) error
+	// TriggerCronValidator is a validator for the "trigger_cron" field. It is called by the builders before save.
+	TriggerCronValidator func(string) error
 	// DefaultActions holds the default value on creation for the "actions" field.
 	DefaultActions string
 	// ActionsValidator is a validator for the "actions" field. It is called by the builders before save.
@@ -154,6 +159,11 @@ func ByTriggerEvent(opts ...sql.OrderTermOption) OrderOption {
 // ByConditionStatus orders the results by the condition_status field.
 func ByConditionStatus(opts ...sql.OrderTermOption) OrderOption {
 	return sql.OrderByField(FieldConditionStatus, opts...).ToFunc()
+}
+
+// ByTriggerCron orders the results by the trigger_cron field.
+func ByTriggerCron(opts ...sql.OrderTermOption) OrderOption {
+	return sql.OrderByField(FieldTriggerCron, opts...).ToFunc()
 }
 
 // ByActions orders the results by the actions field.

@@ -28,5 +28,13 @@
   "addNotificationAction": "Add notification action",
   "notifyTitlePlaceholder": "Notification title ({event}/{entity_id}/{rule_id} placeholders)",
   "notifyContentPlaceholder": "Notification content ({event}/{entity_id}/{rule_id} placeholders)",
-  "notifyRecipientsPlaceholder": "Recipient user IDs, comma separated (e.g. 1,2,3)"
+  "notifyRecipientsPlaceholder": "Recipient user IDs, comma separated (e.g. 1,2,3)",
+  "trigger": "Trigger",
+  "triggerTypeEvent": "Event",
+  "triggerTypeCron": "Schedule",
+  "triggerCronPlaceholder": "cron expression (5 fields: min hour day month weekday, e.g. */5 * * * *)",
+  "cronRequired": "Please enter a cron expression",
+  "actionDelay": "Delay",
+  "addDelayAction": "Add delay action",
+  "delaySecondsPlaceholder": "Delay seconds (1-604800, following actions run after it)"
 }

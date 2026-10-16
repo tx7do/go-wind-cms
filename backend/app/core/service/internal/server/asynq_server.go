@@ -75,6 +75,16 @@ func NewAsynqServer(ctx *bootstrap.Context, taskService *service.TaskService, se
 		log.Error(err)
 	}
 
+	// 注册定时发布/社交分发兜底扫描订阅：周期任务每分钟入队（下方 NewPeriodicTask），
+	// 订阅曾整体缺失——任务以 handler not found 无限重试堆积（retry 积压数千条），
+	// 兜底扫描实际从未执行过。
+	if err = asynq.RegisterSubscriber(srv, task.PostPublishSweepTaskType, postService.PublishSweepWorker); err != nil {
+		log.Error(err)
+	}
+	if err = asynq.RegisterSubscriber(srv, task.SocialPublishSweepTaskType, socialService.PublishSweepWorker); err != nil {
+		log.Error(err)
+	}
+
 	// 周期兜底扫描（每分钟）：DELAY 任务在 Redis 丢失/崩溃窗口内可能静默消失，
 	// 到期未处理的 SCHEDULED 记录由此重新入队；worker 幂等，重复入队无害。
 	if _, err = srv.NewPeriodicTask("*/1 * * * *", task.PostPublishSweepTaskType, &task.PublishSweepPayload{}); err != nil {
@@ -100,6 +110,22 @@ func NewAsynqServer(ctx *bootstrap.Context, taskService *service.TaskService, se
 		log.Error(err)
 	}
 	if err = asynq.RegisterSubscriber(srv, task.FlowExecuteTaskType, flowService.ExecuteWorker); err != nil {
+		log.Error(err)
+	}
+
+	// 注册 Flow 延时续跑任务：动作链遇 delay 动作后由该 DELAY 任务接续剩余动作
+	//（同一 handler，按 payload.ActionIndex 分流；任务类型不能以 flow.execute 为
+	// 前缀，见 pkg/task/flow.go 前缀路由约定）。
+	if err = asynq.RegisterSubscriber(srv, task.FlowResumeTaskType, flowService.ExecuteWorker); err != nil {
+		log.Error(err)
+	}
+
+	// Flow 定时规则调度 tick（每分钟）：解析启用规则的 cron，命中当前分钟的
+	// 按其租户入队 flow.execute（Event=schedule、EntityID=0、不走扇出）。
+	if err = asynq.RegisterSubscriber(srv, task.FlowScheduleTickTaskType, flowService.ScheduleTickWorker); err != nil {
+		log.Error(err)
+	}
+	if _, err = srv.NewPeriodicTask("*/1 * * * *", task.FlowScheduleTickTaskType, &task.FlowScheduleTickPayload{}); err != nil {
 		log.Error(err)
 	}
 

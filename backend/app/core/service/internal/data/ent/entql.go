@@ -904,6 +904,7 @@ var schemaGraph = func() *sqlgraph.Schema {
 			flowrule.FieldName:            {Type: field.TypeString, Column: flowrule.FieldName},
 			flowrule.FieldTriggerEvent:    {Type: field.TypeString, Column: flowrule.FieldTriggerEvent},
 			flowrule.FieldConditionStatus: {Type: field.TypeString, Column: flowrule.FieldConditionStatus},
+			flowrule.FieldTriggerCron:     {Type: field.TypeString, Column: flowrule.FieldTriggerCron},
 			flowrule.FieldActions:         {Type: field.TypeString, Column: flowrule.FieldActions},
 			flowrule.FieldEnabled:         {Type: field.TypeBool, Column: flowrule.FieldEnabled},
 			flowrule.FieldMatchCount:      {Type: field.TypeUint32, Column: flowrule.FieldMatchCount},
@@ -6345,6 +6346,11 @@ func (f *FlowRuleFilter) WhereTriggerEvent(p entql.StringP) {
 // WhereConditionStatus applies the entql string predicate on the condition_status field.
 func (f *FlowRuleFilter) WhereConditionStatus(p entql.StringP) {
 	f.Where(p.Field(flowrule.FieldConditionStatus))
+}
+
+// WhereTriggerCron applies the entql string predicate on the trigger_cron field.
+func (f *FlowRuleFilter) WhereTriggerCron(p entql.StringP) {
+	f.Where(p.Field(flowrule.FieldTriggerCron))
 }
 
 // WhereActions applies the entql string predicate on the actions field.

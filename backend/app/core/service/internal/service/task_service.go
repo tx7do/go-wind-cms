@@ -647,6 +647,24 @@ func (s *TaskService) EnqueueFlowExecute(payload *task.FlowExecutePayload) error
 	return nil
 }
 
+// EnqueueFlowResume 入队延时续跑任务（asynq DELAY 语义，ProcessIn 延迟投递）。
+// 动作链遇 delay 动作时由 FlowService 调用：剩余动作由续跑任务接续。
+func (s *TaskService) EnqueueFlowResume(payload *task.FlowExecutePayload, delay time.Duration) error {
+	if payload == nil || payload.RuleID == 0 {
+		return nil
+	}
+	if s.taskScheduler == nil {
+		s.log.Warnf("flow resume skipped: task scheduler not available (rule=%d)", payload.RuleID)
+		return nil
+	}
+	if err := s.taskScheduler.NewTask(task.FlowResumeTaskType, payload,
+		asynq.MaxRetry(3), asynq.ProcessIn(delay)); err != nil {
+		s.log.Errorf("enqueue flow resume failed (rule=%d): %v", payload.RuleID, err)
+		return err
+	}
+	return nil
+}
+
 // EnqueueWebhookFanout 入队一个 Webhook 事件扇出任务（best-effort：调度器未注入时静默跳过，
 // 内容保存主链路不因外发失败而受阻）。
 func (s *TaskService) EnqueueWebhookFanout(payload *task.WebhookFanoutPayload) error {
