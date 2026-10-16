@@ -38,6 +38,8 @@ type FieldDefinition struct {
 	TenantID *uint32 `json:"tenant_id,omitempty"`
 	// 所属内容模型ID
 	ContentModelID *uint32 `json:"content_model_id,omitempty"`
+	// 所属组件定义ID（与 content_model_id 恰好其一非空）
+	ComponentID *uint32 `json:"component_id,omitempty"`
 	// 字段名（语言无关，作为 custom_fields 的键）
 	Name *string `json:"name,omitempty"`
 	// 字段类型
@@ -56,7 +58,9 @@ type FieldDefinition struct {
 	Options *map[string]string `json:"options,omitempty"`
 	// relation 类型字段的引用配置（仅 FIELD_TYPE_RELATION 适用）
 	RelationConfig *schema.RelationConfig `json:"relation_config,omitempty"`
-	selectValues   sql.SelectValues
+	// component/dynamic_zone 类型字段的组件配置
+	ComponentConfig *schema.ComponentConfig `json:"component_config,omitempty"`
+	selectValues    sql.SelectValues
 }
 
 // scanValues returns the types for scanning values from sql.Rows.
@@ -64,11 +68,11 @@ func (*FieldDefinition) scanValues(columns []string) ([]any, error) {
 	values := make([]any, len(columns))
 	for i := range columns {
 		switch columns[i] {
-		case fielddefinition.FieldOptions, fielddefinition.FieldRelationConfig:
+		case fielddefinition.FieldOptions, fielddefinition.FieldRelationConfig, fielddefinition.FieldComponentConfig:
 			values[i] = new([]byte)
 		case fielddefinition.FieldIsRequired:
 			values[i] = new(sql.NullBool)
-		case fielddefinition.FieldID, fielddefinition.FieldCreatedBy, fielddefinition.FieldUpdatedBy, fielddefinition.FieldDeletedBy, fielddefinition.FieldSortOrder, fielddefinition.FieldTenantID, fielddefinition.FieldContentModelID:
+		case fielddefinition.FieldID, fielddefinition.FieldCreatedBy, fielddefinition.FieldUpdatedBy, fielddefinition.FieldDeletedBy, fielddefinition.FieldSortOrder, fielddefinition.FieldTenantID, fielddefinition.FieldContentModelID, fielddefinition.FieldComponentID:
 			values[i] = new(sql.NullInt64)
 		case fielddefinition.FieldName, fielddefinition.FieldType, fielddefinition.FieldLabel, fielddefinition.FieldDescription, fielddefinition.FieldPlaceholder, fielddefinition.FieldValidationRegex:
 			values[i] = new(sql.NullString)
@@ -158,6 +162,13 @@ func (_m *FieldDefinition) assignValues(columns []string, values []any) error {
 				_m.ContentModelID = new(uint32)
 				*_m.ContentModelID = uint32(value.Int64)
 			}
+		case fielddefinition.FieldComponentID:
+			if value, ok := values[i].(*sql.NullInt64); !ok {
+				return fmt.Errorf("unexpected type %T for field component_id", values[i])
+			} else if value.Valid {
+				_m.ComponentID = new(uint32)
+				*_m.ComponentID = uint32(value.Int64)
+			}
 		case fielddefinition.FieldName:
 			if value, ok := values[i].(*sql.NullString); !ok {
 				return fmt.Errorf("unexpected type %T for field name", values[i])
@@ -221,6 +232,14 @@ func (_m *FieldDefinition) assignValues(columns []string, values []any) error {
 			} else if value != nil && len(*value) > 0 {
 				if err := json.Unmarshal(*value, &_m.RelationConfig); err != nil {
 					return fmt.Errorf("unmarshal field relation_config: %w", err)
+				}
+			}
+		case fielddefinition.FieldComponentConfig:
+			if value, ok := values[i].(*[]byte); !ok {
+				return fmt.Errorf("unexpected type %T for field component_config", values[i])
+			} else if value != nil && len(*value) > 0 {
+				if err := json.Unmarshal(*value, &_m.ComponentConfig); err != nil {
+					return fmt.Errorf("unmarshal field component_config: %w", err)
 				}
 			}
 		default:
@@ -304,6 +323,11 @@ func (_m *FieldDefinition) String() string {
 		builder.WriteString(fmt.Sprintf("%v", *v))
 	}
 	builder.WriteString(", ")
+	if v := _m.ComponentID; v != nil {
+		builder.WriteString("component_id=")
+		builder.WriteString(fmt.Sprintf("%v", *v))
+	}
+	builder.WriteString(", ")
 	if v := _m.Name; v != nil {
 		builder.WriteString("name=")
 		builder.WriteString(*v)
@@ -344,6 +368,9 @@ func (_m *FieldDefinition) String() string {
 	builder.WriteString(", ")
 	builder.WriteString("relation_config=")
 	builder.WriteString(fmt.Sprintf("%v", _m.RelationConfig))
+	builder.WriteString(", ")
+	builder.WriteString("component_config=")
+	builder.WriteString(fmt.Sprintf("%v", _m.ComponentConfig))
 	builder.WriteByte(')')
 	return builder.String()
 }

@@ -633,6 +633,34 @@ var (
 			},
 		},
 	}
+	// ComponentDefinitionsColumns holds the columns for the "component_definitions" table.
+	ComponentDefinitionsColumns = []*schema.Column{
+		{Name: "id", Type: field.TypeUint32, Increment: true, Comment: "id"},
+		{Name: "created_at", Type: field.TypeTime, Nullable: true, Comment: "创建时间"},
+		{Name: "updated_at", Type: field.TypeTime, Nullable: true, Comment: "更新时间"},
+		{Name: "deleted_at", Type: field.TypeTime, Nullable: true, Comment: "删除时间"},
+		{Name: "created_by", Type: field.TypeUint32, Nullable: true, Comment: "创建者ID"},
+		{Name: "updated_by", Type: field.TypeUint32, Nullable: true, Comment: "更新者ID"},
+		{Name: "deleted_by", Type: field.TypeUint32, Nullable: true, Comment: "删除者ID"},
+		{Name: "tenant_id", Type: field.TypeUint32, Nullable: true, Comment: "租户ID", Default: 0},
+		{Name: "code", Type: field.TypeString, Size: 64, Comment: "组件编码（语言无关引用键，custom_fields 值里 _component 判别用）"},
+		{Name: "name", Type: field.TypeString, Size: 128, Comment: "组件显示名"},
+		{Name: "description", Type: field.TypeString, Nullable: true, Comment: "组件描述"},
+	}
+	// ComponentDefinitionsTable holds the schema information for the "component_definitions" table.
+	ComponentDefinitionsTable = &schema.Table{
+		Name:       "component_definitions",
+		Comment:    "组件定义表（内容建模 Components）",
+		Columns:    ComponentDefinitionsColumns,
+		PrimaryKey: []*schema.Column{ComponentDefinitionsColumns[0]},
+		Indexes: []*schema.Index{
+			{
+				Name:    "uix_component_definition_tenant_code",
+				Unique:  true,
+				Columns: []*schema.Column{ComponentDefinitionsColumns[8]},
+			},
+		},
+	}
 	// ContentModelsColumns holds the columns for the "content_models" table.
 	ContentModelsColumns = []*schema.Column{
 		{Name: "id", Type: field.TypeUint32, Increment: true, Comment: "id"},
@@ -1179,8 +1207,9 @@ var (
 		{Name: "sort_order", Type: field.TypeUint32, Nullable: true, Comment: "排序值（越小越靠前）", Default: 0},
 		{Name: "tenant_id", Type: field.TypeUint32, Nullable: true, Comment: "租户ID", Default: 0},
 		{Name: "content_model_id", Type: field.TypeUint32, Nullable: true, Comment: "所属内容模型ID"},
+		{Name: "component_id", Type: field.TypeUint32, Nullable: true, Comment: "所属组件定义ID（与 content_model_id 恰好其一非空）"},
 		{Name: "name", Type: field.TypeString, Nullable: true, Comment: "字段名（语言无关，作为 custom_fields 的键）"},
-		{Name: "type", Type: field.TypeEnum, Nullable: true, Comment: "字段类型", Enums: []string{"FIELD_TYPE_TEXT", "FIELD_TYPE_NUMBER", "FIELD_TYPE_RICHTEXT", "FIELD_TYPE_IMAGE", "FIELD_TYPE_FILE", "FIELD_TYPE_RELATION"}, Default: "FIELD_TYPE_TEXT"},
+		{Name: "type", Type: field.TypeEnum, Nullable: true, Comment: "字段类型", Enums: []string{"FIELD_TYPE_TEXT", "FIELD_TYPE_NUMBER", "FIELD_TYPE_RICHTEXT", "FIELD_TYPE_IMAGE", "FIELD_TYPE_FILE", "FIELD_TYPE_RELATION", "FIELD_TYPE_COMPONENT", "FIELD_TYPE_DYNAMIC_ZONE"}, Default: "FIELD_TYPE_TEXT"},
 		{Name: "label", Type: field.TypeString, Nullable: true, Comment: "字段标签（默认语言）"},
 		{Name: "description", Type: field.TypeString, Nullable: true, Comment: "字段描述（默认语言）"},
 		{Name: "placeholder", Type: field.TypeString, Nullable: true, Comment: "输入框占位符（默认语言）"},
@@ -1188,6 +1217,7 @@ var (
 		{Name: "validation_regex", Type: field.TypeString, Nullable: true, Comment: "校验正则（仅 text 类适用）"},
 		{Name: "options", Type: field.TypeJSON, Nullable: true, Comment: "扩展选项（select 类等，预留）"},
 		{Name: "relation_config", Type: field.TypeJSON, Nullable: true, Comment: "relation 类型字段的引用配置（仅 FIELD_TYPE_RELATION 适用）"},
+		{Name: "component_config", Type: field.TypeJSON, Nullable: true, Comment: "component/dynamic_zone 类型字段的组件配置"},
 	}
 	// FieldDefinitionsTable holds the schema information for the "field_definitions" table.
 	FieldDefinitionsTable = &schema.Table{
@@ -1199,7 +1229,12 @@ var (
 			{
 				Name:    "uix_field_definition_model_name",
 				Unique:  true,
-				Columns: []*schema.Column{FieldDefinitionsColumns[9], FieldDefinitionsColumns[10]},
+				Columns: []*schema.Column{FieldDefinitionsColumns[9], FieldDefinitionsColumns[11]},
+			},
+			{
+				Name:    "uix_field_definition_component_name",
+				Unique:  true,
+				Columns: []*schema.Column{FieldDefinitionsColumns[10], FieldDefinitionsColumns[11]},
 			},
 			{
 				Name:    "fielddefinition_content_model_id",
@@ -5037,6 +5072,7 @@ var (
 		CollabDocStatesTable,
 		CommentsTable,
 		CommentLikesTable,
+		ComponentDefinitionsTable,
 		ContentModelsTable,
 		ContentModelTranslationsTable,
 		ContentReferencesTable,
@@ -5189,6 +5225,11 @@ func init() {
 	}
 	CommentLikesTable.Annotation = &entsql.Annotation{
 		Table:     "comment_likes",
+		Charset:   "utf8mb4",
+		Collation: "utf8mb4_bin",
+	}
+	ComponentDefinitionsTable.Annotation = &entsql.Annotation{
+		Table:     "component_definitions",
 		Charset:   "utf8mb4",
 		Collation: "utf8mb4_bin",
 	}

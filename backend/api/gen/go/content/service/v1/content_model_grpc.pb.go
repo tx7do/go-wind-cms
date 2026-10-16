@@ -21,15 +21,21 @@ import (
 const _ = grpc.SupportPackageIsVersion9
 
 const (
-	ContentModelService_List_FullMethodName                     = "/content.service.v1.ContentModelService/List"
-	ContentModelService_Count_FullMethodName                    = "/content.service.v1.ContentModelService/Count"
-	ContentModelService_Get_FullMethodName                      = "/content.service.v1.ContentModelService/Get"
-	ContentModelService_Create_FullMethodName                   = "/content.service.v1.ContentModelService/Create"
-	ContentModelService_Update_FullMethodName                   = "/content.service.v1.ContentModelService/Update"
-	ContentModelService_Delete_FullMethodName                   = "/content.service.v1.ContentModelService/Delete"
-	ContentModelService_ListFieldDefinitions_FullMethodName     = "/content.service.v1.ContentModelService/ListFieldDefinitions"
-	ContentModelService_GetModelByPost_FullMethodName           = "/content.service.v1.ContentModelService/GetModelByPost"
-	ContentModelService_ResolveContentReferences_FullMethodName = "/content.service.v1.ContentModelService/ResolveContentReferences"
+	ContentModelService_List_FullMethodName                          = "/content.service.v1.ContentModelService/List"
+	ContentModelService_Count_FullMethodName                         = "/content.service.v1.ContentModelService/Count"
+	ContentModelService_Get_FullMethodName                           = "/content.service.v1.ContentModelService/Get"
+	ContentModelService_Create_FullMethodName                        = "/content.service.v1.ContentModelService/Create"
+	ContentModelService_Update_FullMethodName                        = "/content.service.v1.ContentModelService/Update"
+	ContentModelService_Delete_FullMethodName                        = "/content.service.v1.ContentModelService/Delete"
+	ContentModelService_ListFieldDefinitions_FullMethodName          = "/content.service.v1.ContentModelService/ListFieldDefinitions"
+	ContentModelService_GetModelByPost_FullMethodName                = "/content.service.v1.ContentModelService/GetModelByPost"
+	ContentModelService_ResolveContentReferences_FullMethodName      = "/content.service.v1.ContentModelService/ResolveContentReferences"
+	ContentModelService_ListComponentDefinitions_FullMethodName      = "/content.service.v1.ContentModelService/ListComponentDefinitions"
+	ContentModelService_GetComponentDefinition_FullMethodName        = "/content.service.v1.ContentModelService/GetComponentDefinition"
+	ContentModelService_CreateComponentDefinition_FullMethodName     = "/content.service.v1.ContentModelService/CreateComponentDefinition"
+	ContentModelService_UpdateComponentDefinition_FullMethodName     = "/content.service.v1.ContentModelService/UpdateComponentDefinition"
+	ContentModelService_DeleteComponentDefinition_FullMethodName     = "/content.service.v1.ContentModelService/DeleteComponentDefinition"
+	ContentModelService_SaveComponentFieldDefinitions_FullMethodName = "/content.service.v1.ContentModelService/SaveComponentFieldDefinitions"
 )
 
 // ContentModelServiceClient is the client API for ContentModelService service.
@@ -60,6 +66,18 @@ type ContentModelServiceClient interface {
 	// 仅 C 端公开语义：post/page 只解析 PUBLISHED（未发布/软删/非法引用静默
 	// 跳过，不报错）；租户隔离由 viewer 保证。category/tag 引用 v1 不解析。
 	ResolveContentReferences(ctx context.Context, in *ResolveContentReferencesRequest, opts ...grpc.CallOption) (*ResolveContentReferencesResponse, error)
+	// 组件定义列表（管理面）
+	ListComponentDefinitions(ctx context.Context, in *v1.PagingRequest, opts ...grpc.CallOption) (*ListComponentDefinitionsResponse, error)
+	// 组件定义详情
+	GetComponentDefinition(ctx context.Context, in *GetComponentDefinitionRequest, opts ...grpc.CallOption) (*ComponentDefinition, error)
+	// 创建组件定义（字段定义经 FieldDefinition 面 按 component_id 存取）
+	CreateComponentDefinition(ctx context.Context, in *CreateComponentDefinitionRequest, opts ...grpc.CallOption) (*ComponentDefinition, error)
+	// 更新组件定义
+	UpdateComponentDefinition(ctx context.Context, in *UpdateComponentDefinitionRequest, opts ...grpc.CallOption) (*ComponentDefinition, error)
+	// 删除组件定义（被模型字段引用时拒绝）
+	DeleteComponentDefinition(ctx context.Context, in *DeleteComponentDefinitionRequest, opts ...grpc.CallOption) (*emptypb.Empty, error)
+	// 保存组件字段定义（replace 语义：整体替换该组件的字段集）
+	SaveComponentFieldDefinitions(ctx context.Context, in *SaveComponentFieldDefinitionsRequest, opts ...grpc.CallOption) (*ListFieldDefinitionsResponse, error)
 }
 
 type contentModelServiceClient struct {
@@ -160,6 +178,66 @@ func (c *contentModelServiceClient) ResolveContentReferences(ctx context.Context
 	return out, nil
 }
 
+func (c *contentModelServiceClient) ListComponentDefinitions(ctx context.Context, in *v1.PagingRequest, opts ...grpc.CallOption) (*ListComponentDefinitionsResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(ListComponentDefinitionsResponse)
+	err := c.cc.Invoke(ctx, ContentModelService_ListComponentDefinitions_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *contentModelServiceClient) GetComponentDefinition(ctx context.Context, in *GetComponentDefinitionRequest, opts ...grpc.CallOption) (*ComponentDefinition, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(ComponentDefinition)
+	err := c.cc.Invoke(ctx, ContentModelService_GetComponentDefinition_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *contentModelServiceClient) CreateComponentDefinition(ctx context.Context, in *CreateComponentDefinitionRequest, opts ...grpc.CallOption) (*ComponentDefinition, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(ComponentDefinition)
+	err := c.cc.Invoke(ctx, ContentModelService_CreateComponentDefinition_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *contentModelServiceClient) UpdateComponentDefinition(ctx context.Context, in *UpdateComponentDefinitionRequest, opts ...grpc.CallOption) (*ComponentDefinition, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(ComponentDefinition)
+	err := c.cc.Invoke(ctx, ContentModelService_UpdateComponentDefinition_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *contentModelServiceClient) DeleteComponentDefinition(ctx context.Context, in *DeleteComponentDefinitionRequest, opts ...grpc.CallOption) (*emptypb.Empty, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(emptypb.Empty)
+	err := c.cc.Invoke(ctx, ContentModelService_DeleteComponentDefinition_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *contentModelServiceClient) SaveComponentFieldDefinitions(ctx context.Context, in *SaveComponentFieldDefinitionsRequest, opts ...grpc.CallOption) (*ListFieldDefinitionsResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(ListFieldDefinitionsResponse)
+	err := c.cc.Invoke(ctx, ContentModelService_SaveComponentFieldDefinitions_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 // ContentModelServiceServer is the server API for ContentModelService service.
 // All implementations must embed UnimplementedContentModelServiceServer
 // for forward compatibility.
@@ -188,6 +266,18 @@ type ContentModelServiceServer interface {
 	// 仅 C 端公开语义：post/page 只解析 PUBLISHED（未发布/软删/非法引用静默
 	// 跳过，不报错）；租户隔离由 viewer 保证。category/tag 引用 v1 不解析。
 	ResolveContentReferences(context.Context, *ResolveContentReferencesRequest) (*ResolveContentReferencesResponse, error)
+	// 组件定义列表（管理面）
+	ListComponentDefinitions(context.Context, *v1.PagingRequest) (*ListComponentDefinitionsResponse, error)
+	// 组件定义详情
+	GetComponentDefinition(context.Context, *GetComponentDefinitionRequest) (*ComponentDefinition, error)
+	// 创建组件定义（字段定义经 FieldDefinition 面 按 component_id 存取）
+	CreateComponentDefinition(context.Context, *CreateComponentDefinitionRequest) (*ComponentDefinition, error)
+	// 更新组件定义
+	UpdateComponentDefinition(context.Context, *UpdateComponentDefinitionRequest) (*ComponentDefinition, error)
+	// 删除组件定义（被模型字段引用时拒绝）
+	DeleteComponentDefinition(context.Context, *DeleteComponentDefinitionRequest) (*emptypb.Empty, error)
+	// 保存组件字段定义（replace 语义：整体替换该组件的字段集）
+	SaveComponentFieldDefinitions(context.Context, *SaveComponentFieldDefinitionsRequest) (*ListFieldDefinitionsResponse, error)
 	mustEmbedUnimplementedContentModelServiceServer()
 }
 
@@ -224,6 +314,24 @@ func (UnimplementedContentModelServiceServer) GetModelByPost(context.Context, *G
 }
 func (UnimplementedContentModelServiceServer) ResolveContentReferences(context.Context, *ResolveContentReferencesRequest) (*ResolveContentReferencesResponse, error) {
 	return nil, status.Error(codes.Unimplemented, "method ResolveContentReferences not implemented")
+}
+func (UnimplementedContentModelServiceServer) ListComponentDefinitions(context.Context, *v1.PagingRequest) (*ListComponentDefinitionsResponse, error) {
+	return nil, status.Error(codes.Unimplemented, "method ListComponentDefinitions not implemented")
+}
+func (UnimplementedContentModelServiceServer) GetComponentDefinition(context.Context, *GetComponentDefinitionRequest) (*ComponentDefinition, error) {
+	return nil, status.Error(codes.Unimplemented, "method GetComponentDefinition not implemented")
+}
+func (UnimplementedContentModelServiceServer) CreateComponentDefinition(context.Context, *CreateComponentDefinitionRequest) (*ComponentDefinition, error) {
+	return nil, status.Error(codes.Unimplemented, "method CreateComponentDefinition not implemented")
+}
+func (UnimplementedContentModelServiceServer) UpdateComponentDefinition(context.Context, *UpdateComponentDefinitionRequest) (*ComponentDefinition, error) {
+	return nil, status.Error(codes.Unimplemented, "method UpdateComponentDefinition not implemented")
+}
+func (UnimplementedContentModelServiceServer) DeleteComponentDefinition(context.Context, *DeleteComponentDefinitionRequest) (*emptypb.Empty, error) {
+	return nil, status.Error(codes.Unimplemented, "method DeleteComponentDefinition not implemented")
+}
+func (UnimplementedContentModelServiceServer) SaveComponentFieldDefinitions(context.Context, *SaveComponentFieldDefinitionsRequest) (*ListFieldDefinitionsResponse, error) {
+	return nil, status.Error(codes.Unimplemented, "method SaveComponentFieldDefinitions not implemented")
 }
 func (UnimplementedContentModelServiceServer) mustEmbedUnimplementedContentModelServiceServer() {}
 func (UnimplementedContentModelServiceServer) testEmbeddedByValue()                             {}
@@ -408,6 +516,114 @@ func _ContentModelService_ResolveContentReferences_Handler(srv interface{}, ctx 
 	return interceptor(ctx, in, info, handler)
 }
 
+func _ContentModelService_ListComponentDefinitions_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(v1.PagingRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(ContentModelServiceServer).ListComponentDefinitions(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: ContentModelService_ListComponentDefinitions_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(ContentModelServiceServer).ListComponentDefinitions(ctx, req.(*v1.PagingRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _ContentModelService_GetComponentDefinition_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(GetComponentDefinitionRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(ContentModelServiceServer).GetComponentDefinition(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: ContentModelService_GetComponentDefinition_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(ContentModelServiceServer).GetComponentDefinition(ctx, req.(*GetComponentDefinitionRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _ContentModelService_CreateComponentDefinition_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(CreateComponentDefinitionRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(ContentModelServiceServer).CreateComponentDefinition(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: ContentModelService_CreateComponentDefinition_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(ContentModelServiceServer).CreateComponentDefinition(ctx, req.(*CreateComponentDefinitionRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _ContentModelService_UpdateComponentDefinition_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(UpdateComponentDefinitionRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(ContentModelServiceServer).UpdateComponentDefinition(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: ContentModelService_UpdateComponentDefinition_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(ContentModelServiceServer).UpdateComponentDefinition(ctx, req.(*UpdateComponentDefinitionRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _ContentModelService_DeleteComponentDefinition_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(DeleteComponentDefinitionRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(ContentModelServiceServer).DeleteComponentDefinition(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: ContentModelService_DeleteComponentDefinition_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(ContentModelServiceServer).DeleteComponentDefinition(ctx, req.(*DeleteComponentDefinitionRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _ContentModelService_SaveComponentFieldDefinitions_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(SaveComponentFieldDefinitionsRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(ContentModelServiceServer).SaveComponentFieldDefinitions(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: ContentModelService_SaveComponentFieldDefinitions_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(ContentModelServiceServer).SaveComponentFieldDefinitions(ctx, req.(*SaveComponentFieldDefinitionsRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 // ContentModelService_ServiceDesc is the grpc.ServiceDesc for ContentModelService service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
@@ -450,6 +666,30 @@ var ContentModelService_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "ResolveContentReferences",
 			Handler:    _ContentModelService_ResolveContentReferences_Handler,
+		},
+		{
+			MethodName: "ListComponentDefinitions",
+			Handler:    _ContentModelService_ListComponentDefinitions_Handler,
+		},
+		{
+			MethodName: "GetComponentDefinition",
+			Handler:    _ContentModelService_GetComponentDefinition_Handler,
+		},
+		{
+			MethodName: "CreateComponentDefinition",
+			Handler:    _ContentModelService_CreateComponentDefinition_Handler,
+		},
+		{
+			MethodName: "UpdateComponentDefinition",
+			Handler:    _ContentModelService_UpdateComponentDefinition_Handler,
+		},
+		{
+			MethodName: "DeleteComponentDefinition",
+			Handler:    _ContentModelService_DeleteComponentDefinition_Handler,
+		},
+		{
+			MethodName: "SaveComponentFieldDefinitions",
+			Handler:    _ContentModelService_SaveComponentFieldDefinitions_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},

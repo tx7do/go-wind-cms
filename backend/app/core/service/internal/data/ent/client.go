@@ -25,6 +25,7 @@ import (
 	"go-wind-cms/app/core/service/internal/data/ent/collabdocstate"
 	"go-wind-cms/app/core/service/internal/data/ent/comment"
 	"go-wind-cms/app/core/service/internal/data/ent/commentlike"
+	"go-wind-cms/app/core/service/internal/data/ent/componentdefinition"
 	"go-wind-cms/app/core/service/internal/data/ent/contentmodel"
 	"go-wind-cms/app/core/service/internal/data/ent/contentmodeltranslation"
 	"go-wind-cms/app/core/service/internal/data/ent/contentreference"
@@ -141,6 +142,8 @@ type Client struct {
 	Comment *CommentClient
 	// CommentLike is the client for interacting with the CommentLike builders.
 	CommentLike *CommentLikeClient
+	// ComponentDefinition is the client for interacting with the ComponentDefinition builders.
+	ComponentDefinition *ComponentDefinitionClient
 	// ContentModel is the client for interacting with the ContentModel builders.
 	ContentModel *ContentModelClient
 	// ContentModelTranslation is the client for interacting with the ContentModelTranslation builders.
@@ -318,6 +321,7 @@ func (c *Client) init() {
 	c.CollabDocState = NewCollabDocStateClient(c.config)
 	c.Comment = NewCommentClient(c.config)
 	c.CommentLike = NewCommentLikeClient(c.config)
+	c.ComponentDefinition = NewComponentDefinitionClient(c.config)
 	c.ContentModel = NewContentModelClient(c.config)
 	c.ContentModelTranslation = NewContentModelTranslationClient(c.config)
 	c.ContentReference = NewContentReferenceClient(c.config)
@@ -500,6 +504,7 @@ func (c *Client) Tx(ctx context.Context) (*Tx, error) {
 		CollabDocState:             NewCollabDocStateClient(cfg),
 		Comment:                    NewCommentClient(cfg),
 		CommentLike:                NewCommentLikeClient(cfg),
+		ComponentDefinition:        NewComponentDefinitionClient(cfg),
 		ContentModel:               NewContentModelClient(cfg),
 		ContentModelTranslation:    NewContentModelTranslationClient(cfg),
 		ContentReference:           NewContentReferenceClient(cfg),
@@ -609,6 +614,7 @@ func (c *Client) BeginTx(ctx context.Context, opts *sql.TxOptions) (*Tx, error) 
 		CollabDocState:             NewCollabDocStateClient(cfg),
 		Comment:                    NewCommentClient(cfg),
 		CommentLike:                NewCommentLikeClient(cfg),
+		ComponentDefinition:        NewComponentDefinitionClient(cfg),
 		ContentModel:               NewContentModelClient(cfg),
 		ContentModelTranslation:    NewContentModelTranslationClient(cfg),
 		ContentReference:           NewContentReferenceClient(cfg),
@@ -717,24 +723,24 @@ func (c *Client) Use(hooks ...Hook) {
 		c.AiChunk, c.AiConversation, c.AiDoc, c.AiKnowledgeBase, c.AiMessage,
 		c.AiProvider, c.AiUsageLog, c.Api, c.ApiAuditLog, c.Category,
 		c.CategoryTranslation, c.CollabDocState, c.Comment, c.CommentLike,
-		c.ContentModel, c.ContentModelTranslation, c.ContentReference,
-		c.DataAccessAuditLog, c.DictEntry, c.DictEntryI18n, c.DictType,
-		c.EmailProvider, c.EmailTemplate, c.Experiment, c.ExperimentParticipant,
-		c.ExperimentVariant, c.FieldDefinition, c.FieldDefinitionTranslation, c.File,
-		c.FlowRule, c.FormSubmission, c.InteractionCounter, c.InternalMessage,
-		c.InternalMessageCategory, c.InternalMessageRecipient, c.Language,
-		c.LoginAuditLog, c.LoginPolicy, c.MediaAsset, c.MediaVariant, c.Membership,
-		c.MembershipOrgUnit, c.MembershipPosition, c.MembershipRole, c.Menu,
-		c.Navigation, c.NavigationItem, c.OperationAuditLog, c.OrgUnit, c.Page,
-		c.PageTranslation, c.PageVersion, c.Permission, c.PermissionApi,
-		c.PermissionAuditLog, c.PermissionGroup, c.PermissionMenu, c.PermissionPolicy,
-		c.PolicyEvaluationLog, c.Position, c.Post, c.PostCategory, c.PostLike,
-		c.PostTag, c.PostTranslation, c.PostVersion, c.PostWatch, c.Redirect, c.Role,
-		c.RoleMetadata, c.RolePermission, c.Section, c.SectionTranslation, c.Site,
-		c.SiteSetting, c.SocialAccount, c.SocialDistribution, c.SocialInboxItem,
-		c.SocialStatsHistory, c.Tag, c.TagTranslation, c.Task, c.Tenant, c.User,
-		c.UserCredential, c.UserOrgUnit, c.UserPosition, c.UserRole, c.Webhook,
-		c.WebhookDelivery,
+		c.ComponentDefinition, c.ContentModel, c.ContentModelTranslation,
+		c.ContentReference, c.DataAccessAuditLog, c.DictEntry, c.DictEntryI18n,
+		c.DictType, c.EmailProvider, c.EmailTemplate, c.Experiment,
+		c.ExperimentParticipant, c.ExperimentVariant, c.FieldDefinition,
+		c.FieldDefinitionTranslation, c.File, c.FlowRule, c.FormSubmission,
+		c.InteractionCounter, c.InternalMessage, c.InternalMessageCategory,
+		c.InternalMessageRecipient, c.Language, c.LoginAuditLog, c.LoginPolicy,
+		c.MediaAsset, c.MediaVariant, c.Membership, c.MembershipOrgUnit,
+		c.MembershipPosition, c.MembershipRole, c.Menu, c.Navigation, c.NavigationItem,
+		c.OperationAuditLog, c.OrgUnit, c.Page, c.PageTranslation, c.PageVersion,
+		c.Permission, c.PermissionApi, c.PermissionAuditLog, c.PermissionGroup,
+		c.PermissionMenu, c.PermissionPolicy, c.PolicyEvaluationLog, c.Position,
+		c.Post, c.PostCategory, c.PostLike, c.PostTag, c.PostTranslation,
+		c.PostVersion, c.PostWatch, c.Redirect, c.Role, c.RoleMetadata,
+		c.RolePermission, c.Section, c.SectionTranslation, c.Site, c.SiteSetting,
+		c.SocialAccount, c.SocialDistribution, c.SocialInboxItem, c.SocialStatsHistory,
+		c.Tag, c.TagTranslation, c.Task, c.Tenant, c.User, c.UserCredential,
+		c.UserOrgUnit, c.UserPosition, c.UserRole, c.Webhook, c.WebhookDelivery,
 	} {
 		n.Use(hooks...)
 	}
@@ -747,24 +753,24 @@ func (c *Client) Intercept(interceptors ...Interceptor) {
 		c.AiChunk, c.AiConversation, c.AiDoc, c.AiKnowledgeBase, c.AiMessage,
 		c.AiProvider, c.AiUsageLog, c.Api, c.ApiAuditLog, c.Category,
 		c.CategoryTranslation, c.CollabDocState, c.Comment, c.CommentLike,
-		c.ContentModel, c.ContentModelTranslation, c.ContentReference,
-		c.DataAccessAuditLog, c.DictEntry, c.DictEntryI18n, c.DictType,
-		c.EmailProvider, c.EmailTemplate, c.Experiment, c.ExperimentParticipant,
-		c.ExperimentVariant, c.FieldDefinition, c.FieldDefinitionTranslation, c.File,
-		c.FlowRule, c.FormSubmission, c.InteractionCounter, c.InternalMessage,
-		c.InternalMessageCategory, c.InternalMessageRecipient, c.Language,
-		c.LoginAuditLog, c.LoginPolicy, c.MediaAsset, c.MediaVariant, c.Membership,
-		c.MembershipOrgUnit, c.MembershipPosition, c.MembershipRole, c.Menu,
-		c.Navigation, c.NavigationItem, c.OperationAuditLog, c.OrgUnit, c.Page,
-		c.PageTranslation, c.PageVersion, c.Permission, c.PermissionApi,
-		c.PermissionAuditLog, c.PermissionGroup, c.PermissionMenu, c.PermissionPolicy,
-		c.PolicyEvaluationLog, c.Position, c.Post, c.PostCategory, c.PostLike,
-		c.PostTag, c.PostTranslation, c.PostVersion, c.PostWatch, c.Redirect, c.Role,
-		c.RoleMetadata, c.RolePermission, c.Section, c.SectionTranslation, c.Site,
-		c.SiteSetting, c.SocialAccount, c.SocialDistribution, c.SocialInboxItem,
-		c.SocialStatsHistory, c.Tag, c.TagTranslation, c.Task, c.Tenant, c.User,
-		c.UserCredential, c.UserOrgUnit, c.UserPosition, c.UserRole, c.Webhook,
-		c.WebhookDelivery,
+		c.ComponentDefinition, c.ContentModel, c.ContentModelTranslation,
+		c.ContentReference, c.DataAccessAuditLog, c.DictEntry, c.DictEntryI18n,
+		c.DictType, c.EmailProvider, c.EmailTemplate, c.Experiment,
+		c.ExperimentParticipant, c.ExperimentVariant, c.FieldDefinition,
+		c.FieldDefinitionTranslation, c.File, c.FlowRule, c.FormSubmission,
+		c.InteractionCounter, c.InternalMessage, c.InternalMessageCategory,
+		c.InternalMessageRecipient, c.Language, c.LoginAuditLog, c.LoginPolicy,
+		c.MediaAsset, c.MediaVariant, c.Membership, c.MembershipOrgUnit,
+		c.MembershipPosition, c.MembershipRole, c.Menu, c.Navigation, c.NavigationItem,
+		c.OperationAuditLog, c.OrgUnit, c.Page, c.PageTranslation, c.PageVersion,
+		c.Permission, c.PermissionApi, c.PermissionAuditLog, c.PermissionGroup,
+		c.PermissionMenu, c.PermissionPolicy, c.PolicyEvaluationLog, c.Position,
+		c.Post, c.PostCategory, c.PostLike, c.PostTag, c.PostTranslation,
+		c.PostVersion, c.PostWatch, c.Redirect, c.Role, c.RoleMetadata,
+		c.RolePermission, c.Section, c.SectionTranslation, c.Site, c.SiteSetting,
+		c.SocialAccount, c.SocialDistribution, c.SocialInboxItem, c.SocialStatsHistory,
+		c.Tag, c.TagTranslation, c.Task, c.Tenant, c.User, c.UserCredential,
+		c.UserOrgUnit, c.UserPosition, c.UserRole, c.Webhook, c.WebhookDelivery,
 	} {
 		n.Intercept(interceptors...)
 	}
@@ -801,6 +807,8 @@ func (c *Client) Mutate(ctx context.Context, m Mutation) (Value, error) {
 		return c.Comment.mutate(ctx, m)
 	case *CommentLikeMutation:
 		return c.CommentLike.mutate(ctx, m)
+	case *ComponentDefinitionMutation:
+		return c.ComponentDefinition.mutate(ctx, m)
 	case *ContentModelMutation:
 		return c.ContentModel.mutate(ctx, m)
 	case *ContentModelTranslationMutation:
@@ -2989,6 +2997,140 @@ func (c *CommentLikeClient) mutate(ctx context.Context, m *CommentLikeMutation) 
 		return (&CommentLikeDelete{config: c.config, hooks: c.Hooks(), mutation: m}).Exec(ctx)
 	default:
 		return nil, fmt.Errorf("ent: unknown CommentLike mutation op: %q", m.Op())
+	}
+}
+
+// ComponentDefinitionClient is a client for the ComponentDefinition schema.
+type ComponentDefinitionClient struct {
+	config
+}
+
+// NewComponentDefinitionClient returns a client for the ComponentDefinition from the given config.
+func NewComponentDefinitionClient(c config) *ComponentDefinitionClient {
+	return &ComponentDefinitionClient{config: c}
+}
+
+// Use adds a list of mutation hooks to the hooks stack.
+// A call to `Use(f, g, h)` equals to `componentdefinition.Hooks(f(g(h())))`.
+func (c *ComponentDefinitionClient) Use(hooks ...Hook) {
+	c.hooks.ComponentDefinition = append(c.hooks.ComponentDefinition, hooks...)
+}
+
+// Intercept adds a list of query interceptors to the interceptors stack.
+// A call to `Intercept(f, g, h)` equals to `componentdefinition.Intercept(f(g(h())))`.
+func (c *ComponentDefinitionClient) Intercept(interceptors ...Interceptor) {
+	c.inters.ComponentDefinition = append(c.inters.ComponentDefinition, interceptors...)
+}
+
+// Create returns a builder for creating a ComponentDefinition entity.
+func (c *ComponentDefinitionClient) Create() *ComponentDefinitionCreate {
+	mutation := newComponentDefinitionMutation(c.config, OpCreate)
+	return &ComponentDefinitionCreate{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// CreateBulk returns a builder for creating a bulk of ComponentDefinition entities.
+func (c *ComponentDefinitionClient) CreateBulk(builders ...*ComponentDefinitionCreate) *ComponentDefinitionCreateBulk {
+	return &ComponentDefinitionCreateBulk{config: c.config, builders: builders}
+}
+
+// MapCreateBulk creates a bulk creation builder from the given slice. For each item in the slice, the function creates
+// a builder and applies setFunc on it.
+func (c *ComponentDefinitionClient) MapCreateBulk(slice any, setFunc func(*ComponentDefinitionCreate, int)) *ComponentDefinitionCreateBulk {
+	rv := reflect.ValueOf(slice)
+	if rv.Kind() != reflect.Slice {
+		return &ComponentDefinitionCreateBulk{err: fmt.Errorf("calling to ComponentDefinitionClient.MapCreateBulk with wrong type %T, need slice", slice)}
+	}
+	builders := make([]*ComponentDefinitionCreate, rv.Len())
+	for i := 0; i < rv.Len(); i++ {
+		builders[i] = c.Create()
+		setFunc(builders[i], i)
+	}
+	return &ComponentDefinitionCreateBulk{config: c.config, builders: builders}
+}
+
+// Update returns an update builder for ComponentDefinition.
+func (c *ComponentDefinitionClient) Update() *ComponentDefinitionUpdate {
+	mutation := newComponentDefinitionMutation(c.config, OpUpdate)
+	return &ComponentDefinitionUpdate{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// UpdateOne returns an update builder for the given entity.
+func (c *ComponentDefinitionClient) UpdateOne(_m *ComponentDefinition) *ComponentDefinitionUpdateOne {
+	mutation := newComponentDefinitionMutation(c.config, OpUpdateOne, withComponentDefinition(_m))
+	return &ComponentDefinitionUpdateOne{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// UpdateOneID returns an update builder for the given id.
+func (c *ComponentDefinitionClient) UpdateOneID(id uint32) *ComponentDefinitionUpdateOne {
+	mutation := newComponentDefinitionMutation(c.config, OpUpdateOne, withComponentDefinitionID(id))
+	return &ComponentDefinitionUpdateOne{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// Delete returns a delete builder for ComponentDefinition.
+func (c *ComponentDefinitionClient) Delete() *ComponentDefinitionDelete {
+	mutation := newComponentDefinitionMutation(c.config, OpDelete)
+	return &ComponentDefinitionDelete{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// DeleteOne returns a builder for deleting the given entity.
+func (c *ComponentDefinitionClient) DeleteOne(_m *ComponentDefinition) *ComponentDefinitionDeleteOne {
+	return c.DeleteOneID(_m.ID)
+}
+
+// DeleteOneID returns a builder for deleting the given entity by its id.
+func (c *ComponentDefinitionClient) DeleteOneID(id uint32) *ComponentDefinitionDeleteOne {
+	builder := c.Delete().Where(componentdefinition.ID(id))
+	builder.mutation.id = &id
+	builder.mutation.op = OpDeleteOne
+	return &ComponentDefinitionDeleteOne{builder}
+}
+
+// Query returns a query builder for ComponentDefinition.
+func (c *ComponentDefinitionClient) Query() *ComponentDefinitionQuery {
+	return &ComponentDefinitionQuery{
+		config: c.config,
+		ctx:    &QueryContext{Type: TypeComponentDefinition},
+		inters: c.Interceptors(),
+	}
+}
+
+// Get returns a ComponentDefinition entity by its id.
+func (c *ComponentDefinitionClient) Get(ctx context.Context, id uint32) (*ComponentDefinition, error) {
+	return c.Query().Where(componentdefinition.ID(id)).Only(ctx)
+}
+
+// GetX is like Get, but panics if an error occurs.
+func (c *ComponentDefinitionClient) GetX(ctx context.Context, id uint32) *ComponentDefinition {
+	obj, err := c.Get(ctx, id)
+	if err != nil {
+		panic(err)
+	}
+	return obj
+}
+
+// Hooks returns the client hooks.
+func (c *ComponentDefinitionClient) Hooks() []Hook {
+	hooks := c.hooks.ComponentDefinition
+	return append(hooks[:len(hooks):len(hooks)], componentdefinition.Hooks[:]...)
+}
+
+// Interceptors returns the client interceptors.
+func (c *ComponentDefinitionClient) Interceptors() []Interceptor {
+	return c.inters.ComponentDefinition
+}
+
+func (c *ComponentDefinitionClient) mutate(ctx context.Context, m *ComponentDefinitionMutation) (Value, error) {
+	switch m.Op() {
+	case OpCreate:
+		return (&ComponentDefinitionCreate{config: c.config, hooks: c.Hooks(), mutation: m}).Save(ctx)
+	case OpUpdate:
+		return (&ComponentDefinitionUpdate{config: c.config, hooks: c.Hooks(), mutation: m}).Save(ctx)
+	case OpUpdateOne:
+		return (&ComponentDefinitionUpdateOne{config: c.config, hooks: c.Hooks(), mutation: m}).Save(ctx)
+	case OpDelete, OpDeleteOne:
+		return (&ComponentDefinitionDelete{config: c.config, hooks: c.Hooks(), mutation: m}).Exec(ctx)
+	default:
+		return nil, fmt.Errorf("ent: unknown ComponentDefinition mutation op: %q", m.Op())
 	}
 }
 
@@ -13432,18 +13574,18 @@ type (
 	hooks struct {
 		AiChunk, AiConversation, AiDoc, AiKnowledgeBase, AiMessage, AiProvider,
 		AiUsageLog, Api, ApiAuditLog, Category, CategoryTranslation, CollabDocState,
-		Comment, CommentLike, ContentModel, ContentModelTranslation, ContentReference,
-		DataAccessAuditLog, DictEntry, DictEntryI18n, DictType, EmailProvider,
-		EmailTemplate, Experiment, ExperimentParticipant, ExperimentVariant,
-		FieldDefinition, FieldDefinitionTranslation, File, FlowRule, FormSubmission,
-		InteractionCounter, InternalMessage, InternalMessageCategory,
-		InternalMessageRecipient, Language, LoginAuditLog, LoginPolicy, MediaAsset,
-		MediaVariant, Membership, MembershipOrgUnit, MembershipPosition,
-		MembershipRole, Menu, Navigation, NavigationItem, OperationAuditLog, OrgUnit,
-		Page, PageTranslation, PageVersion, Permission, PermissionApi,
-		PermissionAuditLog, PermissionGroup, PermissionMenu, PermissionPolicy,
-		PolicyEvaluationLog, Position, Post, PostCategory, PostLike, PostTag,
-		PostTranslation, PostVersion, PostWatch, Redirect, Role, RoleMetadata,
+		Comment, CommentLike, ComponentDefinition, ContentModel,
+		ContentModelTranslation, ContentReference, DataAccessAuditLog, DictEntry,
+		DictEntryI18n, DictType, EmailProvider, EmailTemplate, Experiment,
+		ExperimentParticipant, ExperimentVariant, FieldDefinition,
+		FieldDefinitionTranslation, File, FlowRule, FormSubmission, InteractionCounter,
+		InternalMessage, InternalMessageCategory, InternalMessageRecipient, Language,
+		LoginAuditLog, LoginPolicy, MediaAsset, MediaVariant, Membership,
+		MembershipOrgUnit, MembershipPosition, MembershipRole, Menu, Navigation,
+		NavigationItem, OperationAuditLog, OrgUnit, Page, PageTranslation, PageVersion,
+		Permission, PermissionApi, PermissionAuditLog, PermissionGroup, PermissionMenu,
+		PermissionPolicy, PolicyEvaluationLog, Position, Post, PostCategory, PostLike,
+		PostTag, PostTranslation, PostVersion, PostWatch, Redirect, Role, RoleMetadata,
 		RolePermission, Section, SectionTranslation, Site, SiteSetting, SocialAccount,
 		SocialDistribution, SocialInboxItem, SocialStatsHistory, Tag, TagTranslation,
 		Task, Tenant, User, UserCredential, UserOrgUnit, UserPosition, UserRole,
@@ -13452,18 +13594,18 @@ type (
 	inters struct {
 		AiChunk, AiConversation, AiDoc, AiKnowledgeBase, AiMessage, AiProvider,
 		AiUsageLog, Api, ApiAuditLog, Category, CategoryTranslation, CollabDocState,
-		Comment, CommentLike, ContentModel, ContentModelTranslation, ContentReference,
-		DataAccessAuditLog, DictEntry, DictEntryI18n, DictType, EmailProvider,
-		EmailTemplate, Experiment, ExperimentParticipant, ExperimentVariant,
-		FieldDefinition, FieldDefinitionTranslation, File, FlowRule, FormSubmission,
-		InteractionCounter, InternalMessage, InternalMessageCategory,
-		InternalMessageRecipient, Language, LoginAuditLog, LoginPolicy, MediaAsset,
-		MediaVariant, Membership, MembershipOrgUnit, MembershipPosition,
-		MembershipRole, Menu, Navigation, NavigationItem, OperationAuditLog, OrgUnit,
-		Page, PageTranslation, PageVersion, Permission, PermissionApi,
-		PermissionAuditLog, PermissionGroup, PermissionMenu, PermissionPolicy,
-		PolicyEvaluationLog, Position, Post, PostCategory, PostLike, PostTag,
-		PostTranslation, PostVersion, PostWatch, Redirect, Role, RoleMetadata,
+		Comment, CommentLike, ComponentDefinition, ContentModel,
+		ContentModelTranslation, ContentReference, DataAccessAuditLog, DictEntry,
+		DictEntryI18n, DictType, EmailProvider, EmailTemplate, Experiment,
+		ExperimentParticipant, ExperimentVariant, FieldDefinition,
+		FieldDefinitionTranslation, File, FlowRule, FormSubmission, InteractionCounter,
+		InternalMessage, InternalMessageCategory, InternalMessageRecipient, Language,
+		LoginAuditLog, LoginPolicy, MediaAsset, MediaVariant, Membership,
+		MembershipOrgUnit, MembershipPosition, MembershipRole, Menu, Navigation,
+		NavigationItem, OperationAuditLog, OrgUnit, Page, PageTranslation, PageVersion,
+		Permission, PermissionApi, PermissionAuditLog, PermissionGroup, PermissionMenu,
+		PermissionPolicy, PolicyEvaluationLog, Position, Post, PostCategory, PostLike,
+		PostTag, PostTranslation, PostVersion, PostWatch, Redirect, Role, RoleMetadata,
 		RolePermission, Section, SectionTranslation, Site, SiteSetting, SocialAccount,
 		SocialDistribution, SocialInboxItem, SocialStatsHistory, Tag, TagTranslation,
 		Task, Tenant, User, UserCredential, UserOrgUnit, UserPosition, UserRole,

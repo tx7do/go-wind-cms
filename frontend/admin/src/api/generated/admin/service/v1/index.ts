@@ -3213,6 +3213,352 @@ export type commentservicev1_DeleteCommentRequest = {
   id?: number;
 };
 
+// 组件定义服务（内容建模 Components 的管理面）
+export interface ComponentDefinitionService {
+  // 组件定义列表
+  List(
+    request: pagination_PagingRequest,
+  ): Promise<contentservicev1_ListComponentDefinitionsResponse>;
+  // 组件定义详情
+  Get(
+    request: contentservicev1_GetComponentDefinitionRequest,
+  ): Promise<contentservicev1_ComponentDefinition>;
+  // 创建组件定义
+  Create(
+    request: contentservicev1_CreateComponentDefinitionRequest,
+  ): Promise<contentservicev1_ComponentDefinition>;
+  // 更新组件定义
+  Update(
+    request: contentservicev1_UpdateComponentDefinitionRequest,
+  ): Promise<contentservicev1_ComponentDefinition>;
+  // 删除组件定义（被模型字段引用时拒绝）
+  Delete(
+    request: contentservicev1_DeleteComponentDefinitionRequest,
+  ): Promise<wellKnownEmpty>;
+  // 列组件字段定义
+  ListFieldDefinitions(
+    request: contentservicev1_ListFieldDefinitionsRequest,
+  ): Promise<contentservicev1_ListFieldDefinitionsResponse>;
+  // 保存组件字段定义（replace 语义：整体替换该组件的字段集）
+  SaveFieldDefinitions(
+    request: contentservicev1_SaveComponentFieldDefinitionsRequest,
+  ): Promise<contentservicev1_ListFieldDefinitionsResponse>;
+}
+
+export function createComponentDefinitionServiceClient(
+  transport: ClientTransport,
+): ComponentDefinitionService {
+  return {
+    List(request) {
+      const path = `admin/v1/content-components`;
+      const body = null;
+      const queryParams: string[] = [];
+      if (request.page) {
+        queryParams.push(
+          `page=${encodeURIComponent(request.page.toString())}`,
+        );
+      }
+      if (request.pageSize) {
+        queryParams.push(
+          `pageSize=${encodeURIComponent(request.pageSize.toString())}`,
+        );
+      }
+      if (request.offset) {
+        queryParams.push(
+          `offset=${encodeURIComponent(request.offset.toString())}`,
+        );
+      }
+      if (request.limit) {
+        queryParams.push(
+          `limit=${encodeURIComponent(request.limit.toString())}`,
+        );
+      }
+      if (request.token) {
+        queryParams.push(
+          `token=${encodeURIComponent(request.token.toString())}`,
+        );
+      }
+      if (request.noPaging) {
+        queryParams.push(
+          `noPaging=${encodeURIComponent(request.noPaging.toString())}`,
+        );
+      }
+      if (request.query) {
+        queryParams.push(
+          `query=${encodeURIComponent(request.query.toString())}`,
+        );
+      }
+      if (request.filter) {
+        queryParams.push(
+          `filter=${encodeURIComponent(request.filter.toString())}`,
+        );
+      }
+      if (request.filterExpr?.type) {
+        queryParams.push(
+          `filterExpr.type=${encodeURIComponent(request.filterExpr.type.toString())}`,
+        );
+      }
+      if (request.filterExpr?.conditions?.field) {
+        queryParams.push(
+          `filterExpr.conditions.field=${encodeURIComponent(request.filterExpr.conditions.field.toString())}`,
+        );
+      }
+      if (request.filterExpr?.conditions?.op) {
+        queryParams.push(
+          `filterExpr.conditions.op=${encodeURIComponent(request.filterExpr.conditions.op.toString())}`,
+        );
+      }
+      if (request.filterExpr?.conditions?.value) {
+        queryParams.push(
+          `filterExpr.conditions.value=${encodeURIComponent(request.filterExpr.conditions.value.toString())}`,
+        );
+      }
+      if (request.filterExpr?.conditions?.jsonValue) {
+        queryParams.push(
+          `filterExpr.conditions.jsonValue=${encodeURIComponent(request.filterExpr.conditions.jsonValue.toString())}`,
+        );
+      }
+      if (request.filterExpr?.conditions?.values) {
+        request.filterExpr.conditions.values.forEach((x) => {
+          queryParams.push(
+            `filterExpr.conditions.values=${encodeURIComponent(x.toString())}`,
+          );
+        });
+      }
+      if (request.filterExpr?.conditions?.datePart) {
+        queryParams.push(
+          `filterExpr.conditions.datePart=${encodeURIComponent(request.filterExpr.conditions.datePart.toString())}`,
+        );
+      }
+      if (request.filterExpr?.conditions?.jsonPath) {
+        queryParams.push(
+          `filterExpr.conditions.jsonPath=${encodeURIComponent(request.filterExpr.conditions.jsonPath.toString())}`,
+        );
+      }
+      if (request.orderBy) {
+        queryParams.push(
+          `orderBy=${encodeURIComponent(request.orderBy.toString())}`,
+        );
+      }
+      if (request.sorting?.field) {
+        queryParams.push(
+          `sorting.field=${encodeURIComponent(request.sorting.field.toString())}`,
+        );
+      }
+      if (request.sorting?.direction) {
+        queryParams.push(
+          `sorting.direction=${encodeURIComponent(request.sorting.direction.toString())}`,
+        );
+      }
+      if (request.fieldMask) {
+        queryParams.push(
+          `fieldMask=${encodeURIComponent(request.fieldMask.toString())}`,
+        );
+      }
+      let uri = path;
+      if (queryParams.length > 0) {
+        uri += `?${queryParams.join('&')}`;
+      }
+      return transport.unary(uri, 'GET', body, {
+        service: 'ComponentDefinitionService',
+        method: 'List',
+      }) as Promise<contentservicev1_ListComponentDefinitionsResponse>;
+    },
+    Get(request) {
+      if (request.id === undefined || request.id === null) {
+        throw new Error('missing required field request.id');
+      }
+      const path = `admin/v1/content-components/${request.id}`;
+      const body = null;
+      return transport.unary(path, 'GET', body, {
+        service: 'ComponentDefinitionService',
+        method: 'Get',
+      }) as Promise<contentservicev1_ComponentDefinition>;
+    },
+    Create(request) {
+      const path = `admin/v1/content-components`;
+      const body = JSON.stringify(request);
+      return transport.unary(path, 'POST', body, {
+        service: 'ComponentDefinitionService',
+        method: 'Create',
+      }) as Promise<contentservicev1_ComponentDefinition>;
+    },
+    Update(request) {
+      if (request.id === undefined || request.id === null) {
+        throw new Error('missing required field request.id');
+      }
+      const path = `admin/v1/content-components/${request.id}`;
+      const body = JSON.stringify(request);
+      return transport.unary(path, 'PUT', body, {
+        service: 'ComponentDefinitionService',
+        method: 'Update',
+      }) as Promise<contentservicev1_ComponentDefinition>;
+    },
+    Delete(request) {
+      if (request.id === undefined || request.id === null) {
+        throw new Error('missing required field request.id');
+      }
+      const path = `admin/v1/content-components/${request.id}`;
+      const body = null;
+      return transport.unary(path, 'DELETE', body, {
+        service: 'ComponentDefinitionService',
+        method: 'Delete',
+      }) as Promise<wellKnownEmpty>;
+    },
+    ListFieldDefinitions(request) {
+      if (request.componentId === undefined || request.componentId === null) {
+        throw new Error('missing required field request.component_id');
+      }
+      const path = `admin/v1/content-components/${request.componentId}/field-definitions`;
+      const body = null;
+      const queryParams: string[] = [];
+      if (request.contentModelId) {
+        queryParams.push(
+          `contentModelId=${encodeURIComponent(request.contentModelId.toString())}`,
+        );
+      }
+      if (request.viewMask) {
+        queryParams.push(
+          `viewMask=${encodeURIComponent(request.viewMask.toString())}`,
+        );
+      }
+      let uri = path;
+      if (queryParams.length > 0) {
+        uri += `?${queryParams.join('&')}`;
+      }
+      return transport.unary(uri, 'GET', body, {
+        service: 'ComponentDefinitionService',
+        method: 'ListFieldDefinitions',
+      }) as Promise<contentservicev1_ListFieldDefinitionsResponse>;
+    },
+    SaveFieldDefinitions(request) {
+      if (request.componentId === undefined || request.componentId === null) {
+        throw new Error('missing required field request.component_id');
+      }
+      const path = `admin/v1/content-components/${request.componentId}/field-definitions`;
+      const body = JSON.stringify(request);
+      return transport.unary(path, 'PUT', body, {
+        service: 'ComponentDefinitionService',
+        method: 'SaveFieldDefinitions',
+      }) as Promise<contentservicev1_ListFieldDefinitionsResponse>;
+    },
+  };
+}
+// 组件定义列表 - 回应
+export type contentservicev1_ListComponentDefinitionsResponse = {
+  items: contentservicev1_ComponentDefinition[] | undefined;
+  total: number | undefined;
+};
+
+// 组件定义：具名可复用字段组（字段经 FieldDefinition 面 按 componentId 存取）
+export type contentservicev1_ComponentDefinition = {
+  code?: string;
+  createdAt?: wellKnownTimestamp;
+  description?: string;
+  fieldCount?: number;
+  id?: number;
+  name?: string;
+  updatedAt?: wellKnownTimestamp;
+};
+
+// 组件定义详情 - 请求
+export type contentservicev1_GetComponentDefinitionRequest = {
+  id: number | undefined;
+};
+
+// 创建组件定义 - 请求
+export type contentservicev1_CreateComponentDefinitionRequest = {
+  data: contentservicev1_ComponentDefinition | undefined;
+};
+
+// 更新组件定义 - 请求
+export type contentservicev1_UpdateComponentDefinitionRequest = {
+  data: contentservicev1_ComponentDefinition | undefined;
+  id: number | undefined;
+  updateMask: undefined | wellKnownFieldMask;
+};
+
+// 删除组件定义 - 请求
+export type contentservicev1_DeleteComponentDefinitionRequest = {
+  id: number | undefined;
+};
+
+// 查询字段定义列表 - 请求（component_id 非 0 时列组件字段，content_model_id 忽略）
+export type contentservicev1_ListFieldDefinitionsRequest = {
+  componentId?: number;
+  contentModelId: number | undefined;
+  viewMask?: wellKnownFieldMask;
+};
+
+// 查询字段定义列表 - 回应
+export type contentservicev1_ListFieldDefinitionsResponse = {
+  items: contentservicev1_FieldDefinition[] | undefined;
+  total: number | undefined;
+};
+
+// 字段定义
+export type contentservicev1_FieldDefinition = {
+  componentConfig?: contentservicev1_ComponentConfig;
+  componentId?: number;
+  contentModelId?: number;
+  createdAt?: wellKnownTimestamp;
+  createdBy?: number;
+  description?: string;
+  id?: number;
+  isRequired?: boolean;
+  label?: string;
+  name?: string;
+  options: { [key: string]: string } | undefined;
+  placeholder?: string;
+  relationConfig?: contentservicev1_RelationConfig;
+  sortOrder?: number;
+  translations: contentservicev1_FieldDefinitionTranslation[] | undefined;
+  type?: contentservicev1_FieldDefinition_Type;
+  validationRegex?: string;
+};
+
+// 字段类型
+export type contentservicev1_FieldDefinition_Type =
+  | 'FIELD_TYPE_COMPONENT'
+  | 'FIELD_TYPE_DYNAMIC_ZONE'
+  | 'FIELD_TYPE_FILE'
+  | 'FIELD_TYPE_IMAGE'
+  | 'FIELD_TYPE_NUMBER'
+  | 'FIELD_TYPE_RELATION'
+  | 'FIELD_TYPE_RICHTEXT'
+  | 'FIELD_TYPE_TEXT';
+// relation 类型字段的引用配置
+export type contentservicev1_RelationConfig = {
+  allowCrossTenant?: boolean;
+  filterCategoryId?: number;
+  targetEntityType?: string;
+};
+
+// 组件配置（component/dynamic_zone 字段用）
+export type contentservicev1_ComponentConfig = {
+  allowedComponentCodes: string[] | undefined;
+  componentCode?: string;
+  repeatable?: boolean;
+};
+
+// 字段定义翻译
+export type contentservicev1_FieldDefinitionTranslation = {
+  createdAt?: wellKnownTimestamp;
+  createdBy?: number;
+  description?: string;
+  fieldDefinitionId?: number;
+  id?: number;
+  label?: string;
+  languageCode?: string;
+  placeholder?: string;
+};
+
+// 保存组件字段定义 - 请求（整体替换）
+export type contentservicev1_SaveComponentFieldDefinitionsRequest = {
+  componentId: number | undefined;
+  fields: contentservicev1_FieldDefinition[] | undefined;
+};
+
 // 内容模型管理服务
 export interface ContentModelService {
   // 查询内容模型列表
@@ -3423,6 +3769,11 @@ export function createContentModelServiceClient(
       const path = `admin/v1/content-models/${request.contentModelId}/field-definitions`;
       const body = null;
       const queryParams: string[] = [];
+      if (request.componentId) {
+        queryParams.push(
+          `componentId=${encodeURIComponent(request.componentId.toString())}`,
+        );
+      }
       if (request.viewMask) {
         queryParams.push(
           `viewMask=${encodeURIComponent(request.viewMask.toString())}`,
@@ -3463,52 +3814,6 @@ export type contentservicev1_ContentModel = {
   updatedBy?: number;
 };
 
-// 字段定义
-export type contentservicev1_FieldDefinition = {
-  contentModelId?: number;
-  createdAt?: wellKnownTimestamp;
-  createdBy?: number;
-  description?: string;
-  id?: number;
-  isRequired?: boolean;
-  label?: string;
-  name?: string;
-  options: { [key: string]: string } | undefined;
-  placeholder?: string;
-  relationConfig?: contentservicev1_RelationConfig;
-  sortOrder?: number;
-  translations: contentservicev1_FieldDefinitionTranslation[] | undefined;
-  type?: contentservicev1_FieldDefinition_Type;
-  validationRegex?: string;
-};
-
-// 字段类型
-export type contentservicev1_FieldDefinition_Type =
-  | 'FIELD_TYPE_FILE'
-  | 'FIELD_TYPE_IMAGE'
-  | 'FIELD_TYPE_NUMBER'
-  | 'FIELD_TYPE_RELATION'
-  | 'FIELD_TYPE_RICHTEXT'
-  | 'FIELD_TYPE_TEXT';
-// relation 类型字段的引用配置
-export type contentservicev1_RelationConfig = {
-  allowCrossTenant?: boolean;
-  filterCategoryId?: number;
-  targetEntityType?: string;
-};
-
-// 字段定义翻译
-export type contentservicev1_FieldDefinitionTranslation = {
-  createdAt?: wellKnownTimestamp;
-  createdBy?: number;
-  description?: string;
-  fieldDefinitionId?: number;
-  id?: number;
-  label?: string;
-  languageCode?: string;
-  placeholder?: string;
-};
-
 // 内容模型翻译
 export type contentservicev1_ContentModelTranslation = {
   contentModelId?: number;
@@ -3544,18 +3849,6 @@ export type contentservicev1_UpdateContentModelRequest = {
 // 删除内容模型 - 请求
 export type contentservicev1_DeleteContentModelRequest = {
   id?: number;
-};
-
-// 查询字段定义列表 - 请求
-export type contentservicev1_ListFieldDefinitionsRequest = {
-  contentModelId: number | undefined;
-  viewMask?: wellKnownFieldMask;
-};
-
-// 查询字段定义列表 - 回应
-export type contentservicev1_ListFieldDefinitionsResponse = {
-  items: contentservicev1_FieldDefinition[] | undefined;
-  total: number | undefined;
 };
 
 // 数据访问审计日志管理服务
@@ -15318,6 +15611,7 @@ export class ApiClient {
   private _authenticationService?: AuthenticationService;
   private _categoryService?: CategoryService;
   private _commentService?: CommentService;
+  private _componentDefinitionService?: ComponentDefinitionService;
   private _contentModelService?: ContentModelService;
   private _dataAccessAuditLogService?: DataAccessAuditLogService;
   private _dictEntryService?: DictEntryService;
@@ -15424,6 +15718,10 @@ export class ApiClient {
 
   get commentService(): CommentService {
     return this._commentService ??= createCommentServiceClient(this._transport);
+  }
+
+  get componentDefinitionService(): ComponentDefinitionService {
+    return this._componentDefinitionService ??= createComponentDefinitionServiceClient(this._transport);
   }
 
   get contentModelService(): ContentModelService {

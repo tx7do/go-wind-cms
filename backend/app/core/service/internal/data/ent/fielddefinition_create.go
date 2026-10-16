@@ -149,6 +149,20 @@ func (_c *FieldDefinitionCreate) SetNillableContentModelID(v *uint32) *FieldDefi
 	return _c
 }
 
+// SetComponentID sets the "component_id" field.
+func (_c *FieldDefinitionCreate) SetComponentID(v uint32) *FieldDefinitionCreate {
+	_c.mutation.SetComponentID(v)
+	return _c
+}
+
+// SetNillableComponentID sets the "component_id" field if the given value is not nil.
+func (_c *FieldDefinitionCreate) SetNillableComponentID(v *uint32) *FieldDefinitionCreate {
+	if v != nil {
+		_c.SetComponentID(*v)
+	}
+	return _c
+}
+
 // SetName sets the "name" field.
 func (_c *FieldDefinitionCreate) SetName(v string) *FieldDefinitionCreate {
 	_c.mutation.SetName(v)
@@ -256,6 +270,12 @@ func (_c *FieldDefinitionCreate) SetOptions(v *map[string]string) *FieldDefiniti
 // SetRelationConfig sets the "relation_config" field.
 func (_c *FieldDefinitionCreate) SetRelationConfig(v *schema.RelationConfig) *FieldDefinitionCreate {
 	_c.mutation.SetRelationConfig(v)
+	return _c
+}
+
+// SetComponentConfig sets the "component_config" field.
+func (_c *FieldDefinitionCreate) SetComponentConfig(v *schema.ComponentConfig) *FieldDefinitionCreate {
+	_c.mutation.SetComponentConfig(v)
 	return _c
 }
 
@@ -407,6 +427,10 @@ func (_c *FieldDefinitionCreate) createSpec() (*FieldDefinition, *sqlgraph.Creat
 		_spec.SetField(fielddefinition.FieldContentModelID, field.TypeUint32, value)
 		_node.ContentModelID = &value
 	}
+	if value, ok := _c.mutation.ComponentID(); ok {
+		_spec.SetField(fielddefinition.FieldComponentID, field.TypeUint32, value)
+		_node.ComponentID = &value
+	}
 	if value, ok := _c.mutation.Name(); ok {
 		_spec.SetField(fielddefinition.FieldName, field.TypeString, value)
 		_node.Name = &value
@@ -442,6 +466,10 @@ func (_c *FieldDefinitionCreate) createSpec() (*FieldDefinition, *sqlgraph.Creat
 	if value, ok := _c.mutation.RelationConfig(); ok {
 		_spec.SetField(fielddefinition.FieldRelationConfig, field.TypeJSON, value)
 		_node.RelationConfig = value
+	}
+	if value, ok := _c.mutation.ComponentConfig(); ok {
+		_spec.SetField(fielddefinition.FieldComponentConfig, field.TypeJSON, value)
+		_node.ComponentConfig = value
 	}
 	return _node, _spec
 }
@@ -651,6 +679,30 @@ func (u *FieldDefinitionUpsert) ClearContentModelID() *FieldDefinitionUpsert {
 	return u
 }
 
+// SetComponentID sets the "component_id" field.
+func (u *FieldDefinitionUpsert) SetComponentID(v uint32) *FieldDefinitionUpsert {
+	u.Set(fielddefinition.FieldComponentID, v)
+	return u
+}
+
+// UpdateComponentID sets the "component_id" field to the value that was provided on create.
+func (u *FieldDefinitionUpsert) UpdateComponentID() *FieldDefinitionUpsert {
+	u.SetExcluded(fielddefinition.FieldComponentID)
+	return u
+}
+
+// AddComponentID adds v to the "component_id" field.
+func (u *FieldDefinitionUpsert) AddComponentID(v uint32) *FieldDefinitionUpsert {
+	u.Add(fielddefinition.FieldComponentID, v)
+	return u
+}
+
+// ClearComponentID clears the value of the "component_id" field.
+func (u *FieldDefinitionUpsert) ClearComponentID() *FieldDefinitionUpsert {
+	u.SetNull(fielddefinition.FieldComponentID)
+	return u
+}
+
 // SetName sets the "name" field.
 func (u *FieldDefinitionUpsert) SetName(v string) *FieldDefinitionUpsert {
 	u.Set(fielddefinition.FieldName, v)
@@ -810,6 +862,24 @@ func (u *FieldDefinitionUpsert) UpdateRelationConfig() *FieldDefinitionUpsert {
 // ClearRelationConfig clears the value of the "relation_config" field.
 func (u *FieldDefinitionUpsert) ClearRelationConfig() *FieldDefinitionUpsert {
 	u.SetNull(fielddefinition.FieldRelationConfig)
+	return u
+}
+
+// SetComponentConfig sets the "component_config" field.
+func (u *FieldDefinitionUpsert) SetComponentConfig(v *schema.ComponentConfig) *FieldDefinitionUpsert {
+	u.Set(fielddefinition.FieldComponentConfig, v)
+	return u
+}
+
+// UpdateComponentConfig sets the "component_config" field to the value that was provided on create.
+func (u *FieldDefinitionUpsert) UpdateComponentConfig() *FieldDefinitionUpsert {
+	u.SetExcluded(fielddefinition.FieldComponentConfig)
+	return u
+}
+
+// ClearComponentConfig clears the value of the "component_config" field.
+func (u *FieldDefinitionUpsert) ClearComponentConfig() *FieldDefinitionUpsert {
+	u.SetNull(fielddefinition.FieldComponentConfig)
 	return u
 }
 
@@ -1049,6 +1119,34 @@ func (u *FieldDefinitionUpsertOne) ClearContentModelID() *FieldDefinitionUpsertO
 	})
 }
 
+// SetComponentID sets the "component_id" field.
+func (u *FieldDefinitionUpsertOne) SetComponentID(v uint32) *FieldDefinitionUpsertOne {
+	return u.Update(func(s *FieldDefinitionUpsert) {
+		s.SetComponentID(v)
+	})
+}
+
+// AddComponentID adds v to the "component_id" field.
+func (u *FieldDefinitionUpsertOne) AddComponentID(v uint32) *FieldDefinitionUpsertOne {
+	return u.Update(func(s *FieldDefinitionUpsert) {
+		s.AddComponentID(v)
+	})
+}
+
+// UpdateComponentID sets the "component_id" field to the value that was provided on create.
+func (u *FieldDefinitionUpsertOne) UpdateComponentID() *FieldDefinitionUpsertOne {
+	return u.Update(func(s *FieldDefinitionUpsert) {
+		s.UpdateComponentID()
+	})
+}
+
+// ClearComponentID clears the value of the "component_id" field.
+func (u *FieldDefinitionUpsertOne) ClearComponentID() *FieldDefinitionUpsertOne {
+	return u.Update(func(s *FieldDefinitionUpsert) {
+		s.ClearComponentID()
+	})
+}
+
 // SetName sets the "name" field.
 func (u *FieldDefinitionUpsertOne) SetName(v string) *FieldDefinitionUpsertOne {
 	return u.Update(func(s *FieldDefinitionUpsert) {
@@ -1235,6 +1333,27 @@ func (u *FieldDefinitionUpsertOne) UpdateRelationConfig() *FieldDefinitionUpsert
 func (u *FieldDefinitionUpsertOne) ClearRelationConfig() *FieldDefinitionUpsertOne {
 	return u.Update(func(s *FieldDefinitionUpsert) {
 		s.ClearRelationConfig()
+	})
+}
+
+// SetComponentConfig sets the "component_config" field.
+func (u *FieldDefinitionUpsertOne) SetComponentConfig(v *schema.ComponentConfig) *FieldDefinitionUpsertOne {
+	return u.Update(func(s *FieldDefinitionUpsert) {
+		s.SetComponentConfig(v)
+	})
+}
+
+// UpdateComponentConfig sets the "component_config" field to the value that was provided on create.
+func (u *FieldDefinitionUpsertOne) UpdateComponentConfig() *FieldDefinitionUpsertOne {
+	return u.Update(func(s *FieldDefinitionUpsert) {
+		s.UpdateComponentConfig()
+	})
+}
+
+// ClearComponentConfig clears the value of the "component_config" field.
+func (u *FieldDefinitionUpsertOne) ClearComponentConfig() *FieldDefinitionUpsertOne {
+	return u.Update(func(s *FieldDefinitionUpsert) {
+		s.ClearComponentConfig()
 	})
 }
 
@@ -1640,6 +1759,34 @@ func (u *FieldDefinitionUpsertBulk) ClearContentModelID() *FieldDefinitionUpsert
 	})
 }
 
+// SetComponentID sets the "component_id" field.
+func (u *FieldDefinitionUpsertBulk) SetComponentID(v uint32) *FieldDefinitionUpsertBulk {
+	return u.Update(func(s *FieldDefinitionUpsert) {
+		s.SetComponentID(v)
+	})
+}
+
+// AddComponentID adds v to the "component_id" field.
+func (u *FieldDefinitionUpsertBulk) AddComponentID(v uint32) *FieldDefinitionUpsertBulk {
+	return u.Update(func(s *FieldDefinitionUpsert) {
+		s.AddComponentID(v)
+	})
+}
+
+// UpdateComponentID sets the "component_id" field to the value that was provided on create.
+func (u *FieldDefinitionUpsertBulk) UpdateComponentID() *FieldDefinitionUpsertBulk {
+	return u.Update(func(s *FieldDefinitionUpsert) {
+		s.UpdateComponentID()
+	})
+}
+
+// ClearComponentID clears the value of the "component_id" field.
+func (u *FieldDefinitionUpsertBulk) ClearComponentID() *FieldDefinitionUpsertBulk {
+	return u.Update(func(s *FieldDefinitionUpsert) {
+		s.ClearComponentID()
+	})
+}
+
 // SetName sets the "name" field.
 func (u *FieldDefinitionUpsertBulk) SetName(v string) *FieldDefinitionUpsertBulk {
 	return u.Update(func(s *FieldDefinitionUpsert) {
@@ -1826,6 +1973,27 @@ func (u *FieldDefinitionUpsertBulk) UpdateRelationConfig() *FieldDefinitionUpser
 func (u *FieldDefinitionUpsertBulk) ClearRelationConfig() *FieldDefinitionUpsertBulk {
 	return u.Update(func(s *FieldDefinitionUpsert) {
 		s.ClearRelationConfig()
+	})
+}
+
+// SetComponentConfig sets the "component_config" field.
+func (u *FieldDefinitionUpsertBulk) SetComponentConfig(v *schema.ComponentConfig) *FieldDefinitionUpsertBulk {
+	return u.Update(func(s *FieldDefinitionUpsert) {
+		s.SetComponentConfig(v)
+	})
+}
+
+// UpdateComponentConfig sets the "component_config" field to the value that was provided on create.
+func (u *FieldDefinitionUpsertBulk) UpdateComponentConfig() *FieldDefinitionUpsertBulk {
+	return u.Update(func(s *FieldDefinitionUpsert) {
+		s.UpdateComponentConfig()
+	})
+}
+
+// ClearComponentConfig clears the value of the "component_config" field.
+func (u *FieldDefinitionUpsertBulk) ClearComponentConfig() *FieldDefinitionUpsertBulk {
+	return u.Update(func(s *FieldDefinitionUpsert) {
+		s.ClearComponentConfig()
 	})
 }
 

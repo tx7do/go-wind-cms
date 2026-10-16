@@ -40,6 +40,8 @@ type Tx struct {
 	Comment *CommentClient
 	// CommentLike is the client for interacting with the CommentLike builders.
 	CommentLike *CommentLikeClient
+	// ComponentDefinition is the client for interacting with the ComponentDefinition builders.
+	ComponentDefinition *ComponentDefinitionClient
 	// ContentModel is the client for interacting with the ContentModel builders.
 	ContentModel *ContentModelClient
 	// ContentModelTranslation is the client for interacting with the ContentModelTranslation builders.
@@ -337,6 +339,7 @@ func (tx *Tx) init() {
 	tx.CollabDocState = NewCollabDocStateClient(tx.config)
 	tx.Comment = NewCommentClient(tx.config)
 	tx.CommentLike = NewCommentLikeClient(tx.config)
+	tx.ComponentDefinition = NewComponentDefinitionClient(tx.config)
 	tx.ContentModel = NewContentModelClient(tx.config)
 	tx.ContentModelTranslation = NewContentModelTranslationClient(tx.config)
 	tx.ContentReference = NewContentReferenceClient(tx.config)

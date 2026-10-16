@@ -46,15 +46,15 @@ type EmailProviderServiceHTTPServer interface {
 
 func RegisterEmailProviderServiceHTTPServer(s *http.Server, srv EmailProviderServiceHTTPServer) {
 	r := s.Route("/")
-	r.GET("/admin/v1/email-providers", _EmailProviderService_List13_HTTP_Handler(srv))
-	r.GET("/admin/v1/email-providers/{id}", _EmailProviderService_Get12_HTTP_Handler(srv))
-	r.POST("/admin/v1/email-providers", _EmailProviderService_Create8_HTTP_Handler(srv))
-	r.PUT("/admin/v1/email-providers/{id}", _EmailProviderService_Update9_HTTP_Handler(srv))
-	r.DELETE("/admin/v1/email-providers/{id}", _EmailProviderService_Delete10_HTTP_Handler(srv))
+	r.GET("/admin/v1/email-providers", _EmailProviderService_List14_HTTP_Handler(srv))
+	r.GET("/admin/v1/email-providers/{id}", _EmailProviderService_Get13_HTTP_Handler(srv))
+	r.POST("/admin/v1/email-providers", _EmailProviderService_Create9_HTTP_Handler(srv))
+	r.PUT("/admin/v1/email-providers/{id}", _EmailProviderService_Update10_HTTP_Handler(srv))
+	r.DELETE("/admin/v1/email-providers/{id}", _EmailProviderService_Delete11_HTTP_Handler(srv))
 	r.POST("/admin/v1/email-providers/{id}/test-send", _EmailProviderService_TestSend0_HTTP_Handler(srv))
 }
 
-func _EmailProviderService_List13_HTTP_Handler(srv EmailProviderServiceHTTPServer) func(ctx http.Context) error {
+func _EmailProviderService_List14_HTTP_Handler(srv EmailProviderServiceHTTPServer) func(ctx http.Context) error {
 	return func(ctx http.Context) error {
 		var in v1.PagingRequest
 		if err := ctx.BindQuery(&in); err != nil {
@@ -73,7 +73,7 @@ func _EmailProviderService_List13_HTTP_Handler(srv EmailProviderServiceHTTPServe
 	}
 }
 
-func _EmailProviderService_Get12_HTTP_Handler(srv EmailProviderServiceHTTPServer) func(ctx http.Context) error {
+func _EmailProviderService_Get13_HTTP_Handler(srv EmailProviderServiceHTTPServer) func(ctx http.Context) error {
 	return func(ctx http.Context) error {
 		var in v11.GetEmailProviderRequest
 		if err := ctx.BindQuery(&in); err != nil {
@@ -95,7 +95,7 @@ func _EmailProviderService_Get12_HTTP_Handler(srv EmailProviderServiceHTTPServer
 	}
 }
 
-func _EmailProviderService_Create8_HTTP_Handler(srv EmailProviderServiceHTTPServer) func(ctx http.Context) error {
+func _EmailProviderService_Create9_HTTP_Handler(srv EmailProviderServiceHTTPServer) func(ctx http.Context) error {
 	return func(ctx http.Context) error {
 		var in v11.CreateEmailProviderRequest
 		if err := ctx.Bind(&in); err != nil {
@@ -117,7 +117,7 @@ func _EmailProviderService_Create8_HTTP_Handler(srv EmailProviderServiceHTTPServ
 	}
 }
 
-func _EmailProviderService_Update9_HTTP_Handler(srv EmailProviderServiceHTTPServer) func(ctx http.Context) error {
+func _EmailProviderService_Update10_HTTP_Handler(srv EmailProviderServiceHTTPServer) func(ctx http.Context) error {
 	return func(ctx http.Context) error {
 		var in v11.UpdateEmailProviderRequest
 		if err := ctx.Bind(&in); err != nil {
@@ -142,7 +142,7 @@ func _EmailProviderService_Update9_HTTP_Handler(srv EmailProviderServiceHTTPServ
 	}
 }
 
-func _EmailProviderService_Delete10_HTTP_Handler(srv EmailProviderServiceHTTPServer) func(ctx http.Context) error {
+func _EmailProviderService_Delete11_HTTP_Handler(srv EmailProviderServiceHTTPServer) func(ctx http.Context) error {
 	return func(ctx http.Context) error {
 		var in v11.DeleteEmailProviderRequest
 		if err := ctx.BindQuery(&in); err != nil {

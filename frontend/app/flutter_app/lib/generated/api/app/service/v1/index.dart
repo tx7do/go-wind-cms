@@ -13995,6 +13995,8 @@ class ContentServiceV1ContentModel {
 
 /// 字段定义
 class ContentServiceV1FieldDefinition {
+  ContentServiceV1ComponentConfig? componentConfig;
+  int? componentId;
   int? contentModelId;
   String? createdAt;
   int? createdBy;
@@ -14012,6 +14014,8 @@ class ContentServiceV1FieldDefinition {
   String? validationRegex;
 
   ContentServiceV1FieldDefinition({
+    this.componentConfig,
+    this.componentId,
     this.contentModelId,
     this.createdAt,
     this.createdBy,
@@ -14031,6 +14035,8 @@ class ContentServiceV1FieldDefinition {
 
   factory ContentServiceV1FieldDefinition.fromJson(Map<String, dynamic> json) {
     return ContentServiceV1FieldDefinition(
+      componentConfig: json['componentConfig'] != null ? ContentServiceV1ComponentConfig.fromJson(json['componentConfig'] as Map<String, dynamic>) : null,
+      componentId: json['componentId'] as int?,
       contentModelId: json['contentModelId'] as int?,
       createdAt: json['createdAt'] as String?,
       createdBy: json['createdBy'] as int?,
@@ -14051,6 +14057,8 @@ class ContentServiceV1FieldDefinition {
 
   Map<String, dynamic> toJson() {
     final json = <String, dynamic>{};
+    if (componentConfig != null) json['componentConfig'] = componentConfig!.toJson();
+    if (componentId != null) json['componentId'] = componentId;
     if (contentModelId != null) json['contentModelId'] = contentModelId;
     if (createdAt != null) json['createdAt'] = createdAt;
     if (createdBy != null) json['createdBy'] = createdBy;
@@ -14071,7 +14079,7 @@ class ContentServiceV1FieldDefinition {
 
   @override
   String toString() {
-    return 'ContentServiceV1FieldDefinition(contentModelId: $contentModelId, createdAt: $createdAt, createdBy: $createdBy, description: $description, id: $id, isRequired: $isRequired, label: $label, name: $name, options: $options, placeholder: $placeholder, relationConfig: $relationConfig, sortOrder: $sortOrder, translations: $translations, type: $type, validationRegex: $validationRegex)';
+    return 'ContentServiceV1FieldDefinition(componentConfig: $componentConfig, componentId: $componentId, contentModelId: $contentModelId, createdAt: $createdAt, createdBy: $createdBy, description: $description, id: $id, isRequired: $isRequired, label: $label, name: $name, options: $options, placeholder: $placeholder, relationConfig: $relationConfig, sortOrder: $sortOrder, translations: $translations, type: $type, validationRegex: $validationRegex)';
   }
 
   @override
@@ -14079,6 +14087,8 @@ class ContentServiceV1FieldDefinition {
     identical(this, other) ||
     other is ContentServiceV1FieldDefinition &&
       runtimeType == other.runtimeType
+      && componentConfig == other.componentConfig
+      && componentId == other.componentId
       && contentModelId == other.contentModelId
       && createdAt == other.createdAt
       && createdBy == other.createdBy
@@ -14098,6 +14108,8 @@ class ContentServiceV1FieldDefinition {
 
   @override
   int get hashCode => Object.hashAll([
+    componentConfig,
+    componentId,
     contentModelId,
     createdAt,
     createdBy,
@@ -14116,6 +14128,8 @@ class ContentServiceV1FieldDefinition {
   ]);
 
   ContentServiceV1FieldDefinition copyWith({
+    ContentServiceV1ComponentConfig? componentConfig,
+    int? componentId,
     int? contentModelId,
     String? createdAt,
     int? createdBy,
@@ -14133,6 +14147,8 @@ class ContentServiceV1FieldDefinition {
     String? validationRegex,
   }) {
     return ContentServiceV1FieldDefinition(
+      componentConfig: componentConfig ?? this.componentConfig,
+      componentId: componentId ?? this.componentId,
       contentModelId: contentModelId ?? this.contentModelId,
       createdAt: createdAt ?? this.createdAt,
       createdBy: createdBy ?? this.createdBy,
@@ -14228,6 +14244,16 @@ class ContentServiceV1FieldDefinition {
     final f13 = translations;
     if (f13 != null) {
       for (final e in f13!) { final cw = ProtoWireWriter(); e._writeTo(cw); w.writeRaw(13, cw.toBuffer()); }
+    }
+    // field 14: componentId
+    final f14 = componentId;
+    if (f14 != null) {
+      w.writeUint32(14, f14!);
+    }
+    // field 15: componentConfig
+    final f15 = componentConfig;
+    if (f15 != null) {
+      final cw = ProtoWireWriter(); f15!._writeTo(cw); w.writeRaw(15, cw.toBuffer()); // ContentServiceV1ComponentConfig
     }
     // field 100: createdBy
     final f100 = createdBy;
@@ -14332,6 +14358,16 @@ class ContentServiceV1FieldDefinition {
           m.translations = r.readNestedList().map(ContentServiceV1FieldDefinitionTranslation._readFrom).toList();
           break;
         }
+        // field 14: componentId
+        case 14: {
+          m.componentId = r.readUint32();
+          break;
+        }
+        // field 15: componentConfig
+        case 15: {
+          m.componentConfig = ContentServiceV1ComponentConfig._readFrom(r.readNested());
+          break;
+        }
         // field 100: createdBy
         case 100: {
           m.createdBy = r.readUint32();
@@ -14354,6 +14390,8 @@ class ContentServiceV1FieldDefinition {
 
 /// 字段类型
 enum ContentServiceV1FieldDefinition$Type {
+  fieldTypeComponent('FIELD_TYPE_COMPONENT', 6),
+  fieldTypeDynamicZone('FIELD_TYPE_DYNAMIC_ZONE', 7),
   fieldTypeFile('FIELD_TYPE_FILE', 4),
   fieldTypeImage('FIELD_TYPE_IMAGE', 3),
   fieldTypeNumber('FIELD_TYPE_NUMBER', 1),
@@ -14482,6 +14520,126 @@ class ContentServiceV1RelationConfig {
         // field 3: filterCategoryId
         case 3: {
           m.filterCategoryId = r.readUint32();
+          break;
+        }
+        default: {
+          r.skip();
+        }
+      }
+    }
+    return m;
+  }
+
+}
+
+/// 组件配置（component/dynamic_zone 字段用）
+class ContentServiceV1ComponentConfig {
+  List<String>? allowedComponentCodes;
+  String? componentCode;
+  bool? repeatable;
+
+  ContentServiceV1ComponentConfig({
+    this.allowedComponentCodes,
+    this.componentCode,
+    this.repeatable,
+  });
+
+  factory ContentServiceV1ComponentConfig.fromJson(Map<String, dynamic> json) {
+    return ContentServiceV1ComponentConfig(
+      allowedComponentCodes: (json['allowedComponentCodes'] as List<dynamic>?)?.map((e) => e as String).toList(),
+      componentCode: json['componentCode'] as String?,
+      repeatable: json['repeatable'] as bool?,
+    );
+  }
+
+  Map<String, dynamic> toJson() {
+    final json = <String, dynamic>{};
+    if (allowedComponentCodes != null) json['allowedComponentCodes'] = allowedComponentCodes;
+    if (componentCode != null) json['componentCode'] = componentCode;
+    if (repeatable != null) json['repeatable'] = repeatable;
+    return json;
+  }
+
+  @override
+  String toString() {
+    return 'ContentServiceV1ComponentConfig(allowedComponentCodes: $allowedComponentCodes, componentCode: $componentCode, repeatable: $repeatable)';
+  }
+
+  @override
+  bool operator ==(Object other) =>
+    identical(this, other) ||
+    other is ContentServiceV1ComponentConfig &&
+      runtimeType == other.runtimeType
+      && allowedComponentCodes == other.allowedComponentCodes
+      && componentCode == other.componentCode
+      && repeatable == other.repeatable
+    ;
+
+  @override
+  int get hashCode => Object.hashAll([
+    allowedComponentCodes,
+    componentCode,
+    repeatable,
+  ]);
+
+  ContentServiceV1ComponentConfig copyWith({
+    List<String>? allowedComponentCodes,
+    String? componentCode,
+    bool? repeatable,
+  }) {
+    return ContentServiceV1ComponentConfig(
+      allowedComponentCodes: allowedComponentCodes ?? this.allowedComponentCodes,
+      componentCode: componentCode ?? this.componentCode,
+      repeatable: repeatable ?? this.repeatable,
+    );
+  }
+
+  /// 二进制 proto 编码（MQTT 等二进制传输用；字段按编号升序写出）
+  Uint8List writeToBuffer() {
+    final w = ProtoWireWriter();
+    _writeTo(w);
+    return w.toBuffer();
+  }
+
+  void _writeTo(ProtoWireWriter w) {
+    // field 1: componentCode
+    final f1 = componentCode;
+    if (f1 != null) {
+      w.writeString(1, f1!);
+    }
+    // field 2: repeatable
+    final f2 = repeatable;
+    if (f2 != null) {
+      w.writeBool(2, f2!);
+    }
+    // field 3: allowedComponentCodes
+    final f3 = allowedComponentCodes;
+    if (f3 != null) {
+      w.writeStringList(3, f3!);
+    }
+  }
+
+  factory ContentServiceV1ComponentConfig.fromBuffer(List<int> bytes) {
+    return ContentServiceV1ComponentConfig._readFrom(ProtoWireReader(bytes));
+  }
+
+  static ContentServiceV1ComponentConfig _readFrom(ProtoWireReader r) {
+    final m = ContentServiceV1ComponentConfig();
+    while (r.next()) {
+      switch (r.fieldNumber) {
+        // field 1: componentCode
+        case 1: {
+          m.componentCode = r.readString();
+          break;
+        }
+        // field 2: repeatable
+        case 2: {
+          m.repeatable = r.readBool();
+          break;
+        }
+        // field 3: allowedComponentCodes
+        case 3: {
+          m.allowedComponentCodes = r.readStringList();
           break;
         }
         default: {

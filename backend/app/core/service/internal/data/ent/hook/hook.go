@@ -176,6 +176,18 @@ func (f CommentLikeFunc) Mutate(ctx context.Context, m ent.Mutation) (ent.Value,
 	return nil, fmt.Errorf("unexpected mutation type %T. expect *ent.CommentLikeMutation", m)
 }
 
+// The ComponentDefinitionFunc type is an adapter to allow the use of ordinary
+// function as ComponentDefinition mutator.
+type ComponentDefinitionFunc func(context.Context, *ent.ComponentDefinitionMutation) (ent.Value, error)
+
+// Mutate calls f(ctx, m).
+func (f ComponentDefinitionFunc) Mutate(ctx context.Context, m ent.Mutation) (ent.Value, error) {
+	if mv, ok := m.(*ent.ComponentDefinitionMutation); ok {
+		return f(ctx, mv)
+	}
+	return nil, fmt.Errorf("unexpected mutation type %T. expect *ent.ComponentDefinitionMutation", m)
+}
+
 // The ContentModelFunc type is an adapter to allow the use of ordinary
 // function as ContentModel mutator.
 type ContentModelFunc func(context.Context, *ent.ContentModelMutation) (ent.Value, error)

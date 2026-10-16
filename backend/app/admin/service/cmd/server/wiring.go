@@ -225,6 +225,7 @@ func initApp(ctx *bootstrap.Context) (*kratos.App, func(), error) {
 	categoryService := service.NewCategoryService(ctx, categoryServiceClient)
 	tagService := service.NewTagService(ctx, tagServiceClient)
 	contentModelService := service.NewContentModelService(ctx, contentModelServiceClient)
+	componentDefinitionService := service.NewComponentDefinitionService(ctx, contentModelServiceClient)
 	pageService := service.NewPageService(ctx, pageServiceClient, collabDocStateServiceClient, collabSvc)
 
 	// 站点配置与媒体
@@ -268,7 +269,7 @@ func initApp(ctx *bootstrap.Context) (*kratos.App, func(), error) {
 		aiUsageLogService,
 		aiQueryService,
 		auditExportService,
-		postService, categoryService, tagService, contentModelService, pageService,
+		postService, categoryService, tagService, contentModelService, componentDefinitionService, pageService,
 		siteService, siteSettingService, navigationService, navigationItemService,
 		mediaAssetService,
 		socialService,

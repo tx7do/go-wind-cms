@@ -32,6 +32,8 @@ const (
 	FieldTenantID = "tenant_id"
 	// FieldContentModelID holds the string denoting the content_model_id field in the database.
 	FieldContentModelID = "content_model_id"
+	// FieldComponentID holds the string denoting the component_id field in the database.
+	FieldComponentID = "component_id"
 	// FieldName holds the string denoting the name field in the database.
 	FieldName = "name"
 	// FieldType holds the string denoting the type field in the database.
@@ -50,6 +52,8 @@ const (
 	FieldOptions = "options"
 	// FieldRelationConfig holds the string denoting the relation_config field in the database.
 	FieldRelationConfig = "relation_config"
+	// FieldComponentConfig holds the string denoting the component_config field in the database.
+	FieldComponentConfig = "component_config"
 	// Table holds the table name of the fielddefinition in the database.
 	Table = "field_definitions"
 )
@@ -66,6 +70,7 @@ var Columns = []string{
 	FieldSortOrder,
 	FieldTenantID,
 	FieldContentModelID,
+	FieldComponentID,
 	FieldName,
 	FieldType,
 	FieldLabel,
@@ -75,6 +80,7 @@ var Columns = []string{
 	FieldValidationRegex,
 	FieldOptions,
 	FieldRelationConfig,
+	FieldComponentConfig,
 }
 
 // ValidColumn reports if the column name is valid (part of the table columns).
@@ -115,12 +121,14 @@ const DefaultType = TypeFIELD_TYPE_TEXT
 
 // Type values.
 const (
-	TypeFIELD_TYPE_TEXT     Type = "FIELD_TYPE_TEXT"
-	TypeFIELD_TYPE_NUMBER   Type = "FIELD_TYPE_NUMBER"
-	TypeFIELD_TYPE_RICHTEXT Type = "FIELD_TYPE_RICHTEXT"
-	TypeFIELD_TYPE_IMAGE    Type = "FIELD_TYPE_IMAGE"
-	TypeFIELD_TYPE_FILE     Type = "FIELD_TYPE_FILE"
-	TypeFIELD_TYPE_RELATION Type = "FIELD_TYPE_RELATION"
+	TypeFIELD_TYPE_TEXT         Type = "FIELD_TYPE_TEXT"
+	TypeFIELD_TYPE_NUMBER       Type = "FIELD_TYPE_NUMBER"
+	TypeFIELD_TYPE_RICHTEXT     Type = "FIELD_TYPE_RICHTEXT"
+	TypeFIELD_TYPE_IMAGE        Type = "FIELD_TYPE_IMAGE"
+	TypeFIELD_TYPE_FILE         Type = "FIELD_TYPE_FILE"
+	TypeFIELD_TYPE_RELATION     Type = "FIELD_TYPE_RELATION"
+	TypeFIELD_TYPE_COMPONENT    Type = "FIELD_TYPE_COMPONENT"
+	TypeFIELD_TYPE_DYNAMIC_ZONE Type = "FIELD_TYPE_DYNAMIC_ZONE"
 )
 
 func (_type Type) String() string {
@@ -130,7 +138,7 @@ func (_type Type) String() string {
 // TypeValidator is a validator for the "type" field enum values. It is called by the builders before save.
 func TypeValidator(_type Type) error {
 	switch _type {
-	case TypeFIELD_TYPE_TEXT, TypeFIELD_TYPE_NUMBER, TypeFIELD_TYPE_RICHTEXT, TypeFIELD_TYPE_IMAGE, TypeFIELD_TYPE_FILE, TypeFIELD_TYPE_RELATION:
+	case TypeFIELD_TYPE_TEXT, TypeFIELD_TYPE_NUMBER, TypeFIELD_TYPE_RICHTEXT, TypeFIELD_TYPE_IMAGE, TypeFIELD_TYPE_FILE, TypeFIELD_TYPE_RELATION, TypeFIELD_TYPE_COMPONENT, TypeFIELD_TYPE_DYNAMIC_ZONE:
 		return nil
 	default:
 		return fmt.Errorf("fielddefinition: invalid enum value for type field: %q", _type)
@@ -188,6 +196,11 @@ func ByTenantID(opts ...sql.OrderTermOption) OrderOption {
 // ByContentModelID orders the results by the content_model_id field.
 func ByContentModelID(opts ...sql.OrderTermOption) OrderOption {
 	return sql.OrderByField(FieldContentModelID, opts...).ToFunc()
+}
+
+// ByComponentID orders the results by the component_id field.
+func ByComponentID(opts ...sql.OrderTermOption) OrderOption {
+	return sql.OrderByField(FieldComponentID, opts...).ToFunc()
 }
 
 // ByName orders the results by the name field.

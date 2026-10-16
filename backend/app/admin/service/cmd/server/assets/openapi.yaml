@@ -1551,6 +1551,218 @@ paths:
                 "200":
                     description: OK
                     content: {}
+    /admin/v1/content-components:
+        get:
+            tags:
+                - ComponentDefinitionService
+            description: 组件定义列表
+            operationId: ComponentDefinitionService_List
+            parameters:
+                - name: page
+                  in: query
+                  description: 当前页码（从1开始，默认1）
+                  schema:
+                    type: integer
+                    format: uint32
+                - name: pageSize
+                  in: query
+                  description: 每页条数（默认10，建议设置上限如100）
+                  schema:
+                    type: integer
+                    format: uint32
+                - name: offset
+                  in: query
+                  description: 跳过的记录数（从0开始，默认0）
+                  schema:
+                    type: string
+                - name: limit
+                  in: query
+                  description: 最多返回的记录数（默认10，建议设置上限如100）
+                  schema:
+                    type: integer
+                    format: uint32
+                - name: token
+                  in: query
+                  description: 上一页最后一条记录的游标（如ID/时间戳+ID，首次请求为空）
+                  schema:
+                    type: string
+                - name: noPaging
+                  in: query
+                  description: 是否不分页，如果为true，则page和pageSize参数无效。
+                  schema:
+                    type: boolean
+                - name: query
+                  in: query
+                  description: JSON字符串过滤条件，基础语法：{"field1":"val1", "field2___icontains":"val2"}，具体请参见：https://github.com/tx7do/go-crud/tree/main/pagination/filter/README.md
+                  schema:
+                    type: string
+                - name: filter
+                  in: query
+                  description: Google AIP规范字符串过滤条件
+                  schema:
+                    type: string
+                - name: filterExpr.type
+                  in: query
+                  description: 过滤表达式类型
+                  schema:
+                    enum:
+                        - EXPR_TYPE_UNSPECIFIED
+                        - AND
+                        - OR
+                    type: string
+                    format: enum
+                - name: orderBy
+                  in: query
+                  description: 排序条件
+                  schema:
+                    type: string
+                - name: fieldMask
+                  in: query
+                  description: 字段掩码，其作用为SELECT中的字段，其语法为使用逗号分隔字段名，例如：id,realName,userName。如果为空则选中所有字段，即SELECT *。
+                  schema:
+                    type: string
+                    format: field-mask
+            responses:
+                "200":
+                    description: OK
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/content.service.v1.ListComponentDefinitionsResponse'
+        post:
+            tags:
+                - ComponentDefinitionService
+            description: 创建组件定义
+            operationId: ComponentDefinitionService_Create
+            requestBody:
+                content:
+                    application/json:
+                        schema:
+                            $ref: '#/components/schemas/content.service.v1.CreateComponentDefinitionRequest'
+                required: true
+            responses:
+                "200":
+                    description: OK
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/content.service.v1.ComponentDefinition'
+    /admin/v1/content-components/{componentId}/field-definitions:
+        get:
+            tags:
+                - ComponentDefinitionService
+            description: 列组件字段定义
+            operationId: ComponentDefinitionService_ListFieldDefinitions
+            parameters:
+                - name: componentId
+                  in: path
+                  required: true
+                  schema:
+                    type: integer
+                    format: uint32
+                - name: contentModelId
+                  in: query
+                  schema:
+                    type: integer
+                    format: uint32
+                - name: viewMask
+                  in: query
+                  schema:
+                    type: string
+                    format: field-mask
+            responses:
+                "200":
+                    description: OK
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/content.service.v1.ListFieldDefinitionsResponse'
+        put:
+            tags:
+                - ComponentDefinitionService
+            description: 保存组件字段定义（replace 语义：整体替换该组件的字段集）
+            operationId: ComponentDefinitionService_SaveFieldDefinitions
+            parameters:
+                - name: componentId
+                  in: path
+                  required: true
+                  schema:
+                    type: integer
+                    format: uint32
+            requestBody:
+                content:
+                    application/json:
+                        schema:
+                            $ref: '#/components/schemas/content.service.v1.SaveComponentFieldDefinitionsRequest'
+                required: true
+            responses:
+                "200":
+                    description: OK
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/content.service.v1.ListFieldDefinitionsResponse'
+    /admin/v1/content-components/{id}:
+        get:
+            tags:
+                - ComponentDefinitionService
+            description: 组件定义详情
+            operationId: ComponentDefinitionService_Get
+            parameters:
+                - name: id
+                  in: path
+                  required: true
+                  schema:
+                    type: integer
+                    format: uint32
+            responses:
+                "200":
+                    description: OK
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/content.service.v1.ComponentDefinition'
+        put:
+            tags:
+                - ComponentDefinitionService
+            description: 更新组件定义
+            operationId: ComponentDefinitionService_Update
+            parameters:
+                - name: id
+                  in: path
+                  required: true
+                  schema:
+                    type: integer
+                    format: uint32
+            requestBody:
+                content:
+                    application/json:
+                        schema:
+                            $ref: '#/components/schemas/content.service.v1.UpdateComponentDefinitionRequest'
+                required: true
+            responses:
+                "200":
+                    description: OK
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/content.service.v1.ComponentDefinition'
+        delete:
+            tags:
+                - ComponentDefinitionService
+            description: 删除组件定义（被模型字段引用时拒绝）
+            operationId: ComponentDefinitionService_Delete
+            parameters:
+                - name: id
+                  in: path
+                  required: true
+                  schema:
+                    type: integer
+                    format: uint32
+            responses:
+                "200":
+                    description: OK
+                    content: {}
     /admin/v1/content-models:
         get:
             tags:
@@ -1686,6 +1898,11 @@ paths:
                 - name: contentModelId
                   in: path
                   required: true
+                  schema:
+                    type: integer
+                    format: uint32
+                - name: componentId
+                  in: query
                   schema:
                     type: integer
                     format: uint32
@@ -11287,6 +11504,48 @@ components:
                     description: 删除时间
                     format: date-time
             description: 类别翻译
+        content.service.v1.ComponentConfig:
+            type: object
+            properties:
+                componentCode:
+                    type: string
+                    description: 组件编码（FIELD_TYPE_COMPONENT 必填）
+                repeatable:
+                    type: boolean
+                    description: 是否可重复（true=实例数组）
+                allowedComponentCodes:
+                    type: array
+                    items:
+                        type: string
+                    description: 动态区组件白名单（FIELD_TYPE_DYNAMIC_ZONE 必填非空）
+            description: 组件配置（component/dynamic_zone 字段用）
+        content.service.v1.ComponentDefinition:
+            type: object
+            properties:
+                id:
+                    type: integer
+                    description: 组件ID
+                    format: uint32
+                code:
+                    type: string
+                    description: 组件编码（语言无关引用键，租户内唯一）
+                name:
+                    type: string
+                    description: 组件显示名
+                description:
+                    type: string
+                    description: 组件描述
+                fieldCount:
+                    type: integer
+                    description: 字段数（只读统计）
+                    format: uint32
+                createdAt:
+                    type: string
+                    format: date-time
+                updatedAt:
+                    type: string
+                    format: date-time
+            description: 组件定义：具名可复用字段组（字段经 FieldDefinition 面 按 componentId 存取）
         content.service.v1.ContentModel:
             type: object
             properties:
@@ -11373,6 +11632,12 @@ components:
                 data:
                     $ref: '#/components/schemas/content.service.v1.Category'
             description: 请求 - 创建类别
+        content.service.v1.CreateComponentDefinitionRequest:
+            type: object
+            properties:
+                data:
+                    $ref: '#/components/schemas/content.service.v1.ComponentDefinition'
+            description: 创建组件定义 - 请求
         content.service.v1.CreateContentModelRequest:
             type: object
             properties:
@@ -11600,6 +11865,8 @@ components:
                         - FIELD_TYPE_IMAGE
                         - FIELD_TYPE_FILE
                         - FIELD_TYPE_RELATION
+                        - FIELD_TYPE_COMPONENT
+                        - FIELD_TYPE_DYNAMIC_ZONE
                     type: string
                     description: 字段类型
                     format: enum
@@ -11625,6 +11892,12 @@ components:
                     description: 扩展选项（select 类等，预留）
                 relationConfig:
                     $ref: '#/components/schemas/content.service.v1.RelationConfig'
+                componentId:
+                    type: integer
+                    description: 所属组件定义ID（与 contentModelId 恰好其一非空）
+                    format: uint32
+                componentConfig:
+                    $ref: '#/components/schemas/content.service.v1.ComponentConfig'
                 sortOrder:
                     type: integer
                     description: 排序顺序
@@ -11714,6 +11987,16 @@ components:
                 total:
                     type: string
             description: 回应 - 类别列表
+        content.service.v1.ListComponentDefinitionsResponse:
+            type: object
+            properties:
+                items:
+                    type: array
+                    items:
+                        $ref: '#/components/schemas/content.service.v1.ComponentDefinition'
+                total:
+                    type: string
+            description: 组件定义列表 - 回应
         content.service.v1.ListContentModelResponse:
             type: object
             properties:
@@ -12390,6 +12673,17 @@ components:
                     description: 帖子ID
                     format: uint32
             description: 请求 - 审核通过/驳回的公共载体
+        content.service.v1.SaveComponentFieldDefinitionsRequest:
+            type: object
+            properties:
+                componentId:
+                    type: integer
+                    format: uint32
+                fields:
+                    type: array
+                    items:
+                        $ref: '#/components/schemas/content.service.v1.FieldDefinition'
+            description: 保存组件字段定义 - 请求（整体替换）
         content.service.v1.Section:
             type: object
             properties:
@@ -12718,6 +13012,18 @@ components:
                     type: boolean
                     description: 如果设置为true的时候，资源不存在则会新增(插入)，并且在这种情况下`updateMask`字段将会被忽略。
             description: 请求 - 更新类别
+        content.service.v1.UpdateComponentDefinitionRequest:
+            type: object
+            properties:
+                id:
+                    type: integer
+                    format: uint32
+                data:
+                    $ref: '#/components/schemas/content.service.v1.ComponentDefinition'
+                updateMask:
+                    type: string
+                    format: field-mask
+            description: 更新组件定义 - 请求
         content.service.v1.UpdateContentModelRequest:
             type: object
             properties:
@@ -17037,6 +17343,8 @@ tags:
       description: 类别服务
     - name: CommentService
       description: 评论服务
+    - name: ComponentDefinitionService
+      description: 组件定义服务（内容建模 Components 的管理面）
     - name: ContentModelService
       description: 内容模型管理服务
     - name: DataAccessAuditLogService

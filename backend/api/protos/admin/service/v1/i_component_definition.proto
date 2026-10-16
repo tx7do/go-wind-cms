@@ -1,0 +1,64 @@
+syntax = "proto3";
+
+package admin.service.v1;
+
+import "google/api/annotations.proto";
+import "google/protobuf/empty.proto";
+
+import "pagination/v1/pagination.proto";
+import "content/service/v1/content_model.proto";
+
+// 组件定义服务（内容建模 Components 的管理面）
+service ComponentDefinitionService {
+  // 组件定义列表
+  rpc List (pagination.PagingRequest) returns (content.service.v1.ListComponentDefinitionsResponse) {
+    option (google.api.http) = {
+      get: "/admin/v1/content-components"
+    };
+  }
+
+  // 组件定义详情
+  rpc Get (content.service.v1.GetComponentDefinitionRequest) returns (content.service.v1.ComponentDefinition) {
+    option (google.api.http) = {
+      get: "/admin/v1/content-components/{id}"
+    };
+  }
+
+  // 创建组件定义
+  rpc Create (content.service.v1.CreateComponentDefinitionRequest) returns (content.service.v1.ComponentDefinition) {
+    option (google.api.http) = {
+      post: "/admin/v1/content-components"
+      body: "*"
+    };
+  }
+
+  // 更新组件定义
+  rpc Update (content.service.v1.UpdateComponentDefinitionRequest) returns (content.service.v1.ComponentDefinition) {
+    option (google.api.http) = {
+      put: "/admin/v1/content-components/{id}"
+      body: "*"
+    };
+  }
+
+  // 删除组件定义（被模型字段引用时拒绝）
+  rpc Delete (content.service.v1.DeleteComponentDefinitionRequest) returns (google.protobuf.Empty) {
+    option (google.api.http) = {
+      delete: "/admin/v1/content-components/{id}"
+    };
+  }
+
+  // 列组件字段定义
+  rpc ListFieldDefinitions (content.service.v1.ListFieldDefinitionsRequest) returns (content.service.v1.ListFieldDefinitionsResponse) {
+    option (google.api.http) = {
+      get: "/admin/v1/content-components/{component_id}/field-definitions"
+    };
+  }
+
+  // 保存组件字段定义（replace 语义：整体替换该组件的字段集）
+  rpc SaveFieldDefinitions (content.service.v1.SaveComponentFieldDefinitionsRequest) returns (content.service.v1.ListFieldDefinitionsResponse) {
+    option (google.api.http) = {
+      put: "/admin/v1/content-components/{component_id}/field-definitions"
+      body: "*"
+    };
+  }
+}

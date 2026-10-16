@@ -2780,6 +2780,8 @@ export type contentservicev1_ContentModel = {
 
 // 字段定义
 export type contentservicev1_FieldDefinition = {
+  componentConfig?: contentservicev1_ComponentConfig;
+  componentId?: number;
   contentModelId?: number;
   createdAt?: wellKnownTimestamp;
   createdBy?: number;
@@ -2799,6 +2801,8 @@ export type contentservicev1_FieldDefinition = {
 
 // 字段类型
 export type contentservicev1_FieldDefinition_Type =
+  | 'FIELD_TYPE_COMPONENT'
+  | 'FIELD_TYPE_DYNAMIC_ZONE'
   | 'FIELD_TYPE_FILE'
   | 'FIELD_TYPE_IMAGE'
   | 'FIELD_TYPE_NUMBER'
@@ -2810,6 +2814,13 @@ export type contentservicev1_RelationConfig = {
   allowCrossTenant?: boolean;
   filterCategoryId?: number;
   targetEntityType?: string;
+};
+
+// 组件配置（component/dynamic_zone 字段用）
+export type contentservicev1_ComponentConfig = {
+  allowedComponentCodes: string[] | undefined;
+  componentCode?: string;
+  repeatable?: boolean;
 };
 
 // 字段定义翻译

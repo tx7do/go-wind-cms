@@ -24,6 +24,7 @@ import (
 	"go-wind-cms/app/core/service/internal/data/ent/collabdocstate"
 	"go-wind-cms/app/core/service/internal/data/ent/comment"
 	"go-wind-cms/app/core/service/internal/data/ent/commentlike"
+	"go-wind-cms/app/core/service/internal/data/ent/componentdefinition"
 	"go-wind-cms/app/core/service/internal/data/ent/contentmodel"
 	"go-wind-cms/app/core/service/internal/data/ent/contentmodeltranslation"
 	"go-wind-cms/app/core/service/internal/data/ent/contentreference"
@@ -132,6 +133,7 @@ const (
 	TypeCollabDocState             = "CollabDocState"
 	TypeComment                    = "Comment"
 	TypeCommentLike                = "CommentLike"
+	TypeComponentDefinition        = "ComponentDefinition"
 	TypeContentModel               = "ContentModel"
 	TypeContentModelTranslation    = "ContentModelTranslation"
 	TypeContentReference           = "ContentReference"
@@ -21865,6 +21867,1118 @@ func (m *CommentLikeMutation) ResetEdge(name string) error {
 	return fmt.Errorf("unknown CommentLike edge %s", name)
 }
 
+// ComponentDefinitionMutation represents an operation that mutates the ComponentDefinition nodes in the graph.
+type ComponentDefinitionMutation struct {
+	config
+	op            Op
+	typ           string
+	id            *uint32
+	created_at    *time.Time
+	updated_at    *time.Time
+	deleted_at    *time.Time
+	created_by    *uint32
+	addcreated_by *int32
+	updated_by    *uint32
+	addupdated_by *int32
+	deleted_by    *uint32
+	adddeleted_by *int32
+	tenant_id     *uint32
+	addtenant_id  *int32
+	code          *string
+	name          *string
+	description   *string
+	clearedFields map[string]struct{}
+	done          bool
+	oldValue      func(context.Context) (*ComponentDefinition, error)
+	predicates    []predicate.ComponentDefinition
+}
+
+var _ ent.Mutation = (*ComponentDefinitionMutation)(nil)
+
+// componentdefinitionOption allows management of the mutation configuration using functional options.
+type componentdefinitionOption func(*ComponentDefinitionMutation)
+
+// newComponentDefinitionMutation creates new mutation for the ComponentDefinition entity.
+func newComponentDefinitionMutation(c config, op Op, opts ...componentdefinitionOption) *ComponentDefinitionMutation {
+	m := &ComponentDefinitionMutation{
+		config:        c,
+		op:            op,
+		typ:           TypeComponentDefinition,
+		clearedFields: make(map[string]struct{}),
+	}
+	for _, opt := range opts {
+		opt(m)
+	}
+	return m
+}
+
+// withComponentDefinitionID sets the ID field of the mutation.
+func withComponentDefinitionID(id uint32) componentdefinitionOption {
+	return func(m *ComponentDefinitionMutation) {
+		var (
+			err   error
+			once  sync.Once
+			value *ComponentDefinition
+		)
+		m.oldValue = func(ctx context.Context) (*ComponentDefinition, error) {
+			once.Do(func() {
+				if m.done {
+					err = errors.New("querying old values post mutation is not allowed")
+				} else {
+					value, err = m.Client().ComponentDefinition.Get(ctx, id)
+				}
+			})
+			return value, err
+		}
+		m.id = &id
+	}
+}
+
+// withComponentDefinition sets the old ComponentDefinition of the mutation.
+func withComponentDefinition(node *ComponentDefinition) componentdefinitionOption {
+	return func(m *ComponentDefinitionMutation) {
+		m.oldValue = func(context.Context) (*ComponentDefinition, error) {
+			return node, nil
+		}
+		m.id = &node.ID
+	}
+}
+
+// Client returns a new `ent.Client` from the mutation. If the mutation was
+// executed in a transaction (ent.Tx), a transactional client is returned.
+func (m ComponentDefinitionMutation) Client() *Client {
+	client := &Client{config: m.config}
+	client.init()
+	return client
+}
+
+// Tx returns an `ent.Tx` for mutations that were executed in transactions;
+// it returns an error otherwise.
+func (m ComponentDefinitionMutation) Tx() (*Tx, error) {
+	if _, ok := m.driver.(*txDriver); !ok {
+		return nil, errors.New("ent: mutation is not running in a transaction")
+	}
+	tx := &Tx{config: m.config}
+	tx.init()
+	return tx, nil
+}
+
+// SetID sets the value of the id field. Note that this
+// operation is only accepted on creation of ComponentDefinition entities.
+func (m *ComponentDefinitionMutation) SetID(id uint32) {
+	m.id = &id
+}
+
+// ID returns the ID value in the mutation. Note that the ID is only available
+// if it was provided to the builder or after it was returned from the database.
+func (m *ComponentDefinitionMutation) ID() (id uint32, exists bool) {
+	if m.id == nil {
+		return
+	}
+	return *m.id, true
+}
+
+// IDs queries the database and returns the entity ids that match the mutation's predicate.
+// That means, if the mutation is applied within a transaction with an isolation level such
+// as sql.LevelSerializable, the returned ids match the ids of the rows that will be updated
+// or updated by the mutation.
+func (m *ComponentDefinitionMutation) IDs(ctx context.Context) ([]uint32, error) {
+	switch {
+	case m.op.Is(OpUpdateOne | OpDeleteOne):
+		id, exists := m.ID()
+		if exists {
+			return []uint32{id}, nil
+		}
+		fallthrough
+	case m.op.Is(OpUpdate | OpDelete):
+		return m.Client().ComponentDefinition.Query().Where(m.predicates...).IDs(ctx)
+	default:
+		return nil, fmt.Errorf("IDs is not allowed on %s operations", m.op)
+	}
+}
+
+// SetCreatedAt sets the "created_at" field.
+func (m *ComponentDefinitionMutation) SetCreatedAt(t time.Time) {
+	m.created_at = &t
+}
+
+// CreatedAt returns the value of the "created_at" field in the mutation.
+func (m *ComponentDefinitionMutation) CreatedAt() (r time.Time, exists bool) {
+	v := m.created_at
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldCreatedAt returns the old "created_at" field's value of the ComponentDefinition entity.
+// If the ComponentDefinition object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *ComponentDefinitionMutation) OldCreatedAt(ctx context.Context) (v *time.Time, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldCreatedAt is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldCreatedAt requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldCreatedAt: %w", err)
+	}
+	return oldValue.CreatedAt, nil
+}
+
+// ClearCreatedAt clears the value of the "created_at" field.
+func (m *ComponentDefinitionMutation) ClearCreatedAt() {
+	m.created_at = nil
+	m.clearedFields[componentdefinition.FieldCreatedAt] = struct{}{}
+}
+
+// CreatedAtCleared returns if the "created_at" field was cleared in this mutation.
+func (m *ComponentDefinitionMutation) CreatedAtCleared() bool {
+	_, ok := m.clearedFields[componentdefinition.FieldCreatedAt]
+	return ok
+}
+
+// ResetCreatedAt resets all changes to the "created_at" field.
+func (m *ComponentDefinitionMutation) ResetCreatedAt() {
+	m.created_at = nil
+	delete(m.clearedFields, componentdefinition.FieldCreatedAt)
+}
+
+// SetUpdatedAt sets the "updated_at" field.
+func (m *ComponentDefinitionMutation) SetUpdatedAt(t time.Time) {
+	m.updated_at = &t
+}
+
+// UpdatedAt returns the value of the "updated_at" field in the mutation.
+func (m *ComponentDefinitionMutation) UpdatedAt() (r time.Time, exists bool) {
+	v := m.updated_at
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldUpdatedAt returns the old "updated_at" field's value of the ComponentDefinition entity.
+// If the ComponentDefinition object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *ComponentDefinitionMutation) OldUpdatedAt(ctx context.Context) (v *time.Time, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldUpdatedAt is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldUpdatedAt requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldUpdatedAt: %w", err)
+	}
+	return oldValue.UpdatedAt, nil
+}
+
+// ClearUpdatedAt clears the value of the "updated_at" field.
+func (m *ComponentDefinitionMutation) ClearUpdatedAt() {
+	m.updated_at = nil
+	m.clearedFields[componentdefinition.FieldUpdatedAt] = struct{}{}
+}
+
+// UpdatedAtCleared returns if the "updated_at" field was cleared in this mutation.
+func (m *ComponentDefinitionMutation) UpdatedAtCleared() bool {
+	_, ok := m.clearedFields[componentdefinition.FieldUpdatedAt]
+	return ok
+}
+
+// ResetUpdatedAt resets all changes to the "updated_at" field.
+func (m *ComponentDefinitionMutation) ResetUpdatedAt() {
+	m.updated_at = nil
+	delete(m.clearedFields, componentdefinition.FieldUpdatedAt)
+}
+
+// SetDeletedAt sets the "deleted_at" field.
+func (m *ComponentDefinitionMutation) SetDeletedAt(t time.Time) {
+	m.deleted_at = &t
+}
+
+// DeletedAt returns the value of the "deleted_at" field in the mutation.
+func (m *ComponentDefinitionMutation) DeletedAt() (r time.Time, exists bool) {
+	v := m.deleted_at
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldDeletedAt returns the old "deleted_at" field's value of the ComponentDefinition entity.
+// If the ComponentDefinition object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *ComponentDefinitionMutation) OldDeletedAt(ctx context.Context) (v *time.Time, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldDeletedAt is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldDeletedAt requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldDeletedAt: %w", err)
+	}
+	return oldValue.DeletedAt, nil
+}
+
+// ClearDeletedAt clears the value of the "deleted_at" field.
+func (m *ComponentDefinitionMutation) ClearDeletedAt() {
+	m.deleted_at = nil
+	m.clearedFields[componentdefinition.FieldDeletedAt] = struct{}{}
+}
+
+// DeletedAtCleared returns if the "deleted_at" field was cleared in this mutation.
+func (m *ComponentDefinitionMutation) DeletedAtCleared() bool {
+	_, ok := m.clearedFields[componentdefinition.FieldDeletedAt]
+	return ok
+}
+
+// ResetDeletedAt resets all changes to the "deleted_at" field.
+func (m *ComponentDefinitionMutation) ResetDeletedAt() {
+	m.deleted_at = nil
+	delete(m.clearedFields, componentdefinition.FieldDeletedAt)
+}
+
+// SetCreatedBy sets the "created_by" field.
+func (m *ComponentDefinitionMutation) SetCreatedBy(u uint32) {
+	m.created_by = &u
+	m.addcreated_by = nil
+}
+
+// CreatedBy returns the value of the "created_by" field in the mutation.
+func (m *ComponentDefinitionMutation) CreatedBy() (r uint32, exists bool) {
+	v := m.created_by
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldCreatedBy returns the old "created_by" field's value of the ComponentDefinition entity.
+// If the ComponentDefinition object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *ComponentDefinitionMutation) OldCreatedBy(ctx context.Context) (v *uint32, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldCreatedBy is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldCreatedBy requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldCreatedBy: %w", err)
+	}
+	return oldValue.CreatedBy, nil
+}
+
+// AddCreatedBy adds u to the "created_by" field.
+func (m *ComponentDefinitionMutation) AddCreatedBy(u int32) {
+	if m.addcreated_by != nil {
+		*m.addcreated_by += u
+	} else {
+		m.addcreated_by = &u
+	}
+}
+
+// AddedCreatedBy returns the value that was added to the "created_by" field in this mutation.
+func (m *ComponentDefinitionMutation) AddedCreatedBy() (r int32, exists bool) {
+	v := m.addcreated_by
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// ClearCreatedBy clears the value of the "created_by" field.
+func (m *ComponentDefinitionMutation) ClearCreatedBy() {
+	m.created_by = nil
+	m.addcreated_by = nil
+	m.clearedFields[componentdefinition.FieldCreatedBy] = struct{}{}
+}
+
+// CreatedByCleared returns if the "created_by" field was cleared in this mutation.
+func (m *ComponentDefinitionMutation) CreatedByCleared() bool {
+	_, ok := m.clearedFields[componentdefinition.FieldCreatedBy]
+	return ok
+}
+
+// ResetCreatedBy resets all changes to the "created_by" field.
+func (m *ComponentDefinitionMutation) ResetCreatedBy() {
+	m.created_by = nil
+	m.addcreated_by = nil
+	delete(m.clearedFields, componentdefinition.FieldCreatedBy)
+}
+
+// SetUpdatedBy sets the "updated_by" field.
+func (m *ComponentDefinitionMutation) SetUpdatedBy(u uint32) {
+	m.updated_by = &u
+	m.addupdated_by = nil
+}
+
+// UpdatedBy returns the value of the "updated_by" field in the mutation.
+func (m *ComponentDefinitionMutation) UpdatedBy() (r uint32, exists bool) {
+	v := m.updated_by
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldUpdatedBy returns the old "updated_by" field's value of the ComponentDefinition entity.
+// If the ComponentDefinition object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *ComponentDefinitionMutation) OldUpdatedBy(ctx context.Context) (v *uint32, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldUpdatedBy is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldUpdatedBy requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldUpdatedBy: %w", err)
+	}
+	return oldValue.UpdatedBy, nil
+}
+
+// AddUpdatedBy adds u to the "updated_by" field.
+func (m *ComponentDefinitionMutation) AddUpdatedBy(u int32) {
+	if m.addupdated_by != nil {
+		*m.addupdated_by += u
+	} else {
+		m.addupdated_by = &u
+	}
+}
+
+// AddedUpdatedBy returns the value that was added to the "updated_by" field in this mutation.
+func (m *ComponentDefinitionMutation) AddedUpdatedBy() (r int32, exists bool) {
+	v := m.addupdated_by
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// ClearUpdatedBy clears the value of the "updated_by" field.
+func (m *ComponentDefinitionMutation) ClearUpdatedBy() {
+	m.updated_by = nil
+	m.addupdated_by = nil
+	m.clearedFields[componentdefinition.FieldUpdatedBy] = struct{}{}
+}
+
+// UpdatedByCleared returns if the "updated_by" field was cleared in this mutation.
+func (m *ComponentDefinitionMutation) UpdatedByCleared() bool {
+	_, ok := m.clearedFields[componentdefinition.FieldUpdatedBy]
+	return ok
+}
+
+// ResetUpdatedBy resets all changes to the "updated_by" field.
+func (m *ComponentDefinitionMutation) ResetUpdatedBy() {
+	m.updated_by = nil
+	m.addupdated_by = nil
+	delete(m.clearedFields, componentdefinition.FieldUpdatedBy)
+}
+
+// SetDeletedBy sets the "deleted_by" field.
+func (m *ComponentDefinitionMutation) SetDeletedBy(u uint32) {
+	m.deleted_by = &u
+	m.adddeleted_by = nil
+}
+
+// DeletedBy returns the value of the "deleted_by" field in the mutation.
+func (m *ComponentDefinitionMutation) DeletedBy() (r uint32, exists bool) {
+	v := m.deleted_by
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldDeletedBy returns the old "deleted_by" field's value of the ComponentDefinition entity.
+// If the ComponentDefinition object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *ComponentDefinitionMutation) OldDeletedBy(ctx context.Context) (v *uint32, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldDeletedBy is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldDeletedBy requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldDeletedBy: %w", err)
+	}
+	return oldValue.DeletedBy, nil
+}
+
+// AddDeletedBy adds u to the "deleted_by" field.
+func (m *ComponentDefinitionMutation) AddDeletedBy(u int32) {
+	if m.adddeleted_by != nil {
+		*m.adddeleted_by += u
+	} else {
+		m.adddeleted_by = &u
+	}
+}
+
+// AddedDeletedBy returns the value that was added to the "deleted_by" field in this mutation.
+func (m *ComponentDefinitionMutation) AddedDeletedBy() (r int32, exists bool) {
+	v := m.adddeleted_by
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// ClearDeletedBy clears the value of the "deleted_by" field.
+func (m *ComponentDefinitionMutation) ClearDeletedBy() {
+	m.deleted_by = nil
+	m.adddeleted_by = nil
+	m.clearedFields[componentdefinition.FieldDeletedBy] = struct{}{}
+}
+
+// DeletedByCleared returns if the "deleted_by" field was cleared in this mutation.
+func (m *ComponentDefinitionMutation) DeletedByCleared() bool {
+	_, ok := m.clearedFields[componentdefinition.FieldDeletedBy]
+	return ok
+}
+
+// ResetDeletedBy resets all changes to the "deleted_by" field.
+func (m *ComponentDefinitionMutation) ResetDeletedBy() {
+	m.deleted_by = nil
+	m.adddeleted_by = nil
+	delete(m.clearedFields, componentdefinition.FieldDeletedBy)
+}
+
+// SetTenantID sets the "tenant_id" field.
+func (m *ComponentDefinitionMutation) SetTenantID(u uint32) {
+	m.tenant_id = &u
+	m.addtenant_id = nil
+}
+
+// TenantID returns the value of the "tenant_id" field in the mutation.
+func (m *ComponentDefinitionMutation) TenantID() (r uint32, exists bool) {
+	v := m.tenant_id
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldTenantID returns the old "tenant_id" field's value of the ComponentDefinition entity.
+// If the ComponentDefinition object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *ComponentDefinitionMutation) OldTenantID(ctx context.Context) (v *uint32, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldTenantID is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldTenantID requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldTenantID: %w", err)
+	}
+	return oldValue.TenantID, nil
+}
+
+// AddTenantID adds u to the "tenant_id" field.
+func (m *ComponentDefinitionMutation) AddTenantID(u int32) {
+	if m.addtenant_id != nil {
+		*m.addtenant_id += u
+	} else {
+		m.addtenant_id = &u
+	}
+}
+
+// AddedTenantID returns the value that was added to the "tenant_id" field in this mutation.
+func (m *ComponentDefinitionMutation) AddedTenantID() (r int32, exists bool) {
+	v := m.addtenant_id
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// ClearTenantID clears the value of the "tenant_id" field.
+func (m *ComponentDefinitionMutation) ClearTenantID() {
+	m.tenant_id = nil
+	m.addtenant_id = nil
+	m.clearedFields[componentdefinition.FieldTenantID] = struct{}{}
+}
+
+// TenantIDCleared returns if the "tenant_id" field was cleared in this mutation.
+func (m *ComponentDefinitionMutation) TenantIDCleared() bool {
+	_, ok := m.clearedFields[componentdefinition.FieldTenantID]
+	return ok
+}
+
+// ResetTenantID resets all changes to the "tenant_id" field.
+func (m *ComponentDefinitionMutation) ResetTenantID() {
+	m.tenant_id = nil
+	m.addtenant_id = nil
+	delete(m.clearedFields, componentdefinition.FieldTenantID)
+}
+
+// SetCode sets the "code" field.
+func (m *ComponentDefinitionMutation) SetCode(s string) {
+	m.code = &s
+}
+
+// Code returns the value of the "code" field in the mutation.
+func (m *ComponentDefinitionMutation) Code() (r string, exists bool) {
+	v := m.code
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldCode returns the old "code" field's value of the ComponentDefinition entity.
+// If the ComponentDefinition object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *ComponentDefinitionMutation) OldCode(ctx context.Context) (v string, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldCode is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldCode requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldCode: %w", err)
+	}
+	return oldValue.Code, nil
+}
+
+// ResetCode resets all changes to the "code" field.
+func (m *ComponentDefinitionMutation) ResetCode() {
+	m.code = nil
+}
+
+// SetName sets the "name" field.
+func (m *ComponentDefinitionMutation) SetName(s string) {
+	m.name = &s
+}
+
+// Name returns the value of the "name" field in the mutation.
+func (m *ComponentDefinitionMutation) Name() (r string, exists bool) {
+	v := m.name
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldName returns the old "name" field's value of the ComponentDefinition entity.
+// If the ComponentDefinition object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *ComponentDefinitionMutation) OldName(ctx context.Context) (v string, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldName is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldName requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldName: %w", err)
+	}
+	return oldValue.Name, nil
+}
+
+// ResetName resets all changes to the "name" field.
+func (m *ComponentDefinitionMutation) ResetName() {
+	m.name = nil
+}
+
+// SetDescription sets the "description" field.
+func (m *ComponentDefinitionMutation) SetDescription(s string) {
+	m.description = &s
+}
+
+// Description returns the value of the "description" field in the mutation.
+func (m *ComponentDefinitionMutation) Description() (r string, exists bool) {
+	v := m.description
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldDescription returns the old "description" field's value of the ComponentDefinition entity.
+// If the ComponentDefinition object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *ComponentDefinitionMutation) OldDescription(ctx context.Context) (v *string, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldDescription is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldDescription requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldDescription: %w", err)
+	}
+	return oldValue.Description, nil
+}
+
+// ClearDescription clears the value of the "description" field.
+func (m *ComponentDefinitionMutation) ClearDescription() {
+	m.description = nil
+	m.clearedFields[componentdefinition.FieldDescription] = struct{}{}
+}
+
+// DescriptionCleared returns if the "description" field was cleared in this mutation.
+func (m *ComponentDefinitionMutation) DescriptionCleared() bool {
+	_, ok := m.clearedFields[componentdefinition.FieldDescription]
+	return ok
+}
+
+// ResetDescription resets all changes to the "description" field.
+func (m *ComponentDefinitionMutation) ResetDescription() {
+	m.description = nil
+	delete(m.clearedFields, componentdefinition.FieldDescription)
+}
+
+// Where appends a list predicates to the ComponentDefinitionMutation builder.
+func (m *ComponentDefinitionMutation) Where(ps ...predicate.ComponentDefinition) {
+	m.predicates = append(m.predicates, ps...)
+}
+
+// WhereP appends storage-level predicates to the ComponentDefinitionMutation builder. Using this method,
+// users can use type-assertion to append predicates that do not depend on any generated package.
+func (m *ComponentDefinitionMutation) WhereP(ps ...func(*sql.Selector)) {
+	p := make([]predicate.ComponentDefinition, len(ps))
+	for i := range ps {
+		p[i] = ps[i]
+	}
+	m.Where(p...)
+}
+
+// Op returns the operation name.
+func (m *ComponentDefinitionMutation) Op() Op {
+	return m.op
+}
+
+// SetOp allows setting the mutation operation.
+func (m *ComponentDefinitionMutation) SetOp(op Op) {
+	m.op = op
+}
+
+// Type returns the node type of this mutation (ComponentDefinition).
+func (m *ComponentDefinitionMutation) Type() string {
+	return m.typ
+}
+
+// Fields returns all fields that were changed during this mutation. Note that in
+// order to get all numeric fields that were incremented/decremented, call
+// AddedFields().
+func (m *ComponentDefinitionMutation) Fields() []string {
+	fields := make([]string, 0, 10)
+	if m.created_at != nil {
+		fields = append(fields, componentdefinition.FieldCreatedAt)
+	}
+	if m.updated_at != nil {
+		fields = append(fields, componentdefinition.FieldUpdatedAt)
+	}
+	if m.deleted_at != nil {
+		fields = append(fields, componentdefinition.FieldDeletedAt)
+	}
+	if m.created_by != nil {
+		fields = append(fields, componentdefinition.FieldCreatedBy)
+	}
+	if m.updated_by != nil {
+		fields = append(fields, componentdefinition.FieldUpdatedBy)
+	}
+	if m.deleted_by != nil {
+		fields = append(fields, componentdefinition.FieldDeletedBy)
+	}
+	if m.tenant_id != nil {
+		fields = append(fields, componentdefinition.FieldTenantID)
+	}
+	if m.code != nil {
+		fields = append(fields, componentdefinition.FieldCode)
+	}
+	if m.name != nil {
+		fields = append(fields, componentdefinition.FieldName)
+	}
+	if m.description != nil {
+		fields = append(fields, componentdefinition.FieldDescription)
+	}
+	return fields
+}
+
+// Field returns the value of a field with the given name. The second boolean
+// return value indicates that this field was not set, or was not defined in the
+// schema.
+func (m *ComponentDefinitionMutation) Field(name string) (ent.Value, bool) {
+	switch name {
+	case componentdefinition.FieldCreatedAt:
+		return m.CreatedAt()
+	case componentdefinition.FieldUpdatedAt:
+		return m.UpdatedAt()
+	case componentdefinition.FieldDeletedAt:
+		return m.DeletedAt()
+	case componentdefinition.FieldCreatedBy:
+		return m.CreatedBy()
+	case componentdefinition.FieldUpdatedBy:
+		return m.UpdatedBy()
+	case componentdefinition.FieldDeletedBy:
+		return m.DeletedBy()
+	case componentdefinition.FieldTenantID:
+		return m.TenantID()
+	case componentdefinition.FieldCode:
+		return m.Code()
+	case componentdefinition.FieldName:
+		return m.Name()
+	case componentdefinition.FieldDescription:
+		return m.Description()
+	}
+	return nil, false
+}
+
+// OldField returns the old value of the field from the database. An error is
+// returned if the mutation operation is not UpdateOne, or the query to the
+// database failed.
+func (m *ComponentDefinitionMutation) OldField(ctx context.Context, name string) (ent.Value, error) {
+	switch name {
+	case componentdefinition.FieldCreatedAt:
+		return m.OldCreatedAt(ctx)
+	case componentdefinition.FieldUpdatedAt:
+		return m.OldUpdatedAt(ctx)
+	case componentdefinition.FieldDeletedAt:
+		return m.OldDeletedAt(ctx)
+	case componentdefinition.FieldCreatedBy:
+		return m.OldCreatedBy(ctx)
+	case componentdefinition.FieldUpdatedBy:
+		return m.OldUpdatedBy(ctx)
+	case componentdefinition.FieldDeletedBy:
+		return m.OldDeletedBy(ctx)
+	case componentdefinition.FieldTenantID:
+		return m.OldTenantID(ctx)
+	case componentdefinition.FieldCode:
+		return m.OldCode(ctx)
+	case componentdefinition.FieldName:
+		return m.OldName(ctx)
+	case componentdefinition.FieldDescription:
+		return m.OldDescription(ctx)
+	}
+	return nil, fmt.Errorf("unknown ComponentDefinition field %s", name)
+}
+
+// SetField sets the value of a field with the given name. It returns an error if
+// the field is not defined in the schema, or if the type mismatched the field
+// type.
+func (m *ComponentDefinitionMutation) SetField(name string, value ent.Value) error {
+	switch name {
+	case componentdefinition.FieldCreatedAt:
+		v, ok := value.(time.Time)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetCreatedAt(v)
+		return nil
+	case componentdefinition.FieldUpdatedAt:
+		v, ok := value.(time.Time)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetUpdatedAt(v)
+		return nil
+	case componentdefinition.FieldDeletedAt:
+		v, ok := value.(time.Time)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetDeletedAt(v)
+		return nil
+	case componentdefinition.FieldCreatedBy:
+		v, ok := value.(uint32)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetCreatedBy(v)
+		return nil
+	case componentdefinition.FieldUpdatedBy:
+		v, ok := value.(uint32)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetUpdatedBy(v)
+		return nil
+	case componentdefinition.FieldDeletedBy:
+		v, ok := value.(uint32)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetDeletedBy(v)
+		return nil
+	case componentdefinition.FieldTenantID:
+		v, ok := value.(uint32)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetTenantID(v)
+		return nil
+	case componentdefinition.FieldCode:
+		v, ok := value.(string)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetCode(v)
+		return nil
+	case componentdefinition.FieldName:
+		v, ok := value.(string)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetName(v)
+		return nil
+	case componentdefinition.FieldDescription:
+		v, ok := value.(string)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetDescription(v)
+		return nil
+	}
+	return fmt.Errorf("unknown ComponentDefinition field %s", name)
+}
+
+// AddedFields returns all numeric fields that were incremented/decremented during
+// this mutation.
+func (m *ComponentDefinitionMutation) AddedFields() []string {
+	var fields []string
+	if m.addcreated_by != nil {
+		fields = append(fields, componentdefinition.FieldCreatedBy)
+	}
+	if m.addupdated_by != nil {
+		fields = append(fields, componentdefinition.FieldUpdatedBy)
+	}
+	if m.adddeleted_by != nil {
+		fields = append(fields, componentdefinition.FieldDeletedBy)
+	}
+	if m.addtenant_id != nil {
+		fields = append(fields, componentdefinition.FieldTenantID)
+	}
+	return fields
+}
+
+// AddedField returns the numeric value that was incremented/decremented on a field
+// with the given name. The second boolean return value indicates that this field
+// was not set, or was not defined in the schema.
+func (m *ComponentDefinitionMutation) AddedField(name string) (ent.Value, bool) {
+	switch name {
+	case componentdefinition.FieldCreatedBy:
+		return m.AddedCreatedBy()
+	case componentdefinition.FieldUpdatedBy:
+		return m.AddedUpdatedBy()
+	case componentdefinition.FieldDeletedBy:
+		return m.AddedDeletedBy()
+	case componentdefinition.FieldTenantID:
+		return m.AddedTenantID()
+	}
+	return nil, false
+}
+
+// AddField adds the value to the field with the given name. It returns an error if
+// the field is not defined in the schema, or if the type mismatched the field
+// type.
+func (m *ComponentDefinitionMutation) AddField(name string, value ent.Value) error {
+	switch name {
+	case componentdefinition.FieldCreatedBy:
+		v, ok := value.(int32)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.AddCreatedBy(v)
+		return nil
+	case componentdefinition.FieldUpdatedBy:
+		v, ok := value.(int32)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.AddUpdatedBy(v)
+		return nil
+	case componentdefinition.FieldDeletedBy:
+		v, ok := value.(int32)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.AddDeletedBy(v)
+		return nil
+	case componentdefinition.FieldTenantID:
+		v, ok := value.(int32)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.AddTenantID(v)
+		return nil
+	}
+	return fmt.Errorf("unknown ComponentDefinition numeric field %s", name)
+}
+
+// ClearedFields returns all nullable fields that were cleared during this
+// mutation.
+func (m *ComponentDefinitionMutation) ClearedFields() []string {
+	var fields []string
+	if m.FieldCleared(componentdefinition.FieldCreatedAt) {
+		fields = append(fields, componentdefinition.FieldCreatedAt)
+	}
+	if m.FieldCleared(componentdefinition.FieldUpdatedAt) {
+		fields = append(fields, componentdefinition.FieldUpdatedAt)
+	}
+	if m.FieldCleared(componentdefinition.FieldDeletedAt) {
+		fields = append(fields, componentdefinition.FieldDeletedAt)
+	}
+	if m.FieldCleared(componentdefinition.FieldCreatedBy) {
+		fields = append(fields, componentdefinition.FieldCreatedBy)
+	}
+	if m.FieldCleared(componentdefinition.FieldUpdatedBy) {
+		fields = append(fields, componentdefinition.FieldUpdatedBy)
+	}
+	if m.FieldCleared(componentdefinition.FieldDeletedBy) {
+		fields = append(fields, componentdefinition.FieldDeletedBy)
+	}
+	if m.FieldCleared(componentdefinition.FieldTenantID) {
+		fields = append(fields, componentdefinition.FieldTenantID)
+	}
+	if m.FieldCleared(componentdefinition.FieldDescription) {
+		fields = append(fields, componentdefinition.FieldDescription)
+	}
+	return fields
+}
+
+// FieldCleared returns a boolean indicating if a field with the given name was
+// cleared in this mutation.
+func (m *ComponentDefinitionMutation) FieldCleared(name string) bool {
+	_, ok := m.clearedFields[name]
+	return ok
+}
+
+// ClearField clears the value of the field with the given name. It returns an
+// error if the field is not defined in the schema.
+func (m *ComponentDefinitionMutation) ClearField(name string) error {
+	switch name {
+	case componentdefinition.FieldCreatedAt:
+		m.ClearCreatedAt()
+		return nil
+	case componentdefinition.FieldUpdatedAt:
+		m.ClearUpdatedAt()
+		return nil
+	case componentdefinition.FieldDeletedAt:
+		m.ClearDeletedAt()
+		return nil
+	case componentdefinition.FieldCreatedBy:
+		m.ClearCreatedBy()
+		return nil
+	case componentdefinition.FieldUpdatedBy:
+		m.ClearUpdatedBy()
+		return nil
+	case componentdefinition.FieldDeletedBy:
+		m.ClearDeletedBy()
+		return nil
+	case componentdefinition.FieldTenantID:
+		m.ClearTenantID()
+		return nil
+	case componentdefinition.FieldDescription:
+		m.ClearDescription()
+		return nil
+	}
+	return fmt.Errorf("unknown ComponentDefinition nullable field %s", name)
+}
+
+// ResetField resets all changes in the mutation for the field with the given name.
+// It returns an error if the field is not defined in the schema.
+func (m *ComponentDefinitionMutation) ResetField(name string) error {
+	switch name {
+	case componentdefinition.FieldCreatedAt:
+		m.ResetCreatedAt()
+		return nil
+	case componentdefinition.FieldUpdatedAt:
+		m.ResetUpdatedAt()
+		return nil
+	case componentdefinition.FieldDeletedAt:
+		m.ResetDeletedAt()
+		return nil
+	case componentdefinition.FieldCreatedBy:
+		m.ResetCreatedBy()
+		return nil
+	case componentdefinition.FieldUpdatedBy:
+		m.ResetUpdatedBy()
+		return nil
+	case componentdefinition.FieldDeletedBy:
+		m.ResetDeletedBy()
+		return nil
+	case componentdefinition.FieldTenantID:
+		m.ResetTenantID()
+		return nil
+	case componentdefinition.FieldCode:
+		m.ResetCode()
+		return nil
+	case componentdefinition.FieldName:
+		m.ResetName()
+		return nil
+	case componentdefinition.FieldDescription:
+		m.ResetDescription()
+		return nil
+	}
+	return fmt.Errorf("unknown ComponentDefinition field %s", name)
+}
+
+// AddedEdges returns all edge names that were set/added in this mutation.
+func (m *ComponentDefinitionMutation) AddedEdges() []string {
+	edges := make([]string, 0, 0)
+	return edges
+}
+
+// AddedIDs returns all IDs (to other nodes) that were added for the given edge
+// name in this mutation.
+func (m *ComponentDefinitionMutation) AddedIDs(name string) []ent.Value {
+	return nil
+}
+
+// RemovedEdges returns all edge names that were removed in this mutation.
+func (m *ComponentDefinitionMutation) RemovedEdges() []string {
+	edges := make([]string, 0, 0)
+	return edges
+}
+
+// RemovedIDs returns all IDs (to other nodes) that were removed for the edge with
+// the given name in this mutation.
+func (m *ComponentDefinitionMutation) RemovedIDs(name string) []ent.Value {
+	return nil
+}
+
+// ClearedEdges returns all edge names that were cleared in this mutation.
+func (m *ComponentDefinitionMutation) ClearedEdges() []string {
+	edges := make([]string, 0, 0)
+	return edges
+}
+
+// EdgeCleared returns a boolean which indicates if the edge with the given name
+// was cleared in this mutation.
+func (m *ComponentDefinitionMutation) EdgeCleared(name string) bool {
+	return false
+}
+
+// ClearEdge clears the value of the edge with the given name. It returns an error
+// if that edge is not defined in the schema.
+func (m *ComponentDefinitionMutation) ClearEdge(name string) error {
+	return fmt.Errorf("unknown ComponentDefinition unique edge %s", name)
+}
+
+// ResetEdge resets all changes to the edge with the given name in this mutation.
+// It returns an error if the edge is not defined in the schema.
+func (m *ComponentDefinitionMutation) ResetEdge(name string) error {
+	return fmt.Errorf("unknown ComponentDefinition edge %s", name)
+}
+
 // ContentModelMutation represents an operation that mutates the ContentModel nodes in the graph.
 type ContentModelMutation struct {
 	config
@@ -38587,6 +39701,8 @@ type FieldDefinitionMutation struct {
 	addtenant_id        *int32
 	content_model_id    *uint32
 	addcontent_model_id *int32
+	component_id        *uint32
+	addcomponent_id     *int32
 	name                *string
 	_type               *fielddefinition.Type
 	label               *string
@@ -38596,6 +39712,7 @@ type FieldDefinitionMutation struct {
 	validation_regex    *string
 	options             **map[string]string
 	relation_config     **schema.RelationConfig
+	component_config    **schema.ComponentConfig
 	clearedFields       map[string]struct{}
 	done                bool
 	oldValue            func(context.Context) (*FieldDefinition, error)
@@ -39273,6 +40390,76 @@ func (m *FieldDefinitionMutation) ResetContentModelID() {
 	delete(m.clearedFields, fielddefinition.FieldContentModelID)
 }
 
+// SetComponentID sets the "component_id" field.
+func (m *FieldDefinitionMutation) SetComponentID(u uint32) {
+	m.component_id = &u
+	m.addcomponent_id = nil
+}
+
+// ComponentID returns the value of the "component_id" field in the mutation.
+func (m *FieldDefinitionMutation) ComponentID() (r uint32, exists bool) {
+	v := m.component_id
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldComponentID returns the old "component_id" field's value of the FieldDefinition entity.
+// If the FieldDefinition object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *FieldDefinitionMutation) OldComponentID(ctx context.Context) (v *uint32, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldComponentID is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldComponentID requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldComponentID: %w", err)
+	}
+	return oldValue.ComponentID, nil
+}
+
+// AddComponentID adds u to the "component_id" field.
+func (m *FieldDefinitionMutation) AddComponentID(u int32) {
+	if m.addcomponent_id != nil {
+		*m.addcomponent_id += u
+	} else {
+		m.addcomponent_id = &u
+	}
+}
+
+// AddedComponentID returns the value that was added to the "component_id" field in this mutation.
+func (m *FieldDefinitionMutation) AddedComponentID() (r int32, exists bool) {
+	v := m.addcomponent_id
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// ClearComponentID clears the value of the "component_id" field.
+func (m *FieldDefinitionMutation) ClearComponentID() {
+	m.component_id = nil
+	m.addcomponent_id = nil
+	m.clearedFields[fielddefinition.FieldComponentID] = struct{}{}
+}
+
+// ComponentIDCleared returns if the "component_id" field was cleared in this mutation.
+func (m *FieldDefinitionMutation) ComponentIDCleared() bool {
+	_, ok := m.clearedFields[fielddefinition.FieldComponentID]
+	return ok
+}
+
+// ResetComponentID resets all changes to the "component_id" field.
+func (m *FieldDefinitionMutation) ResetComponentID() {
+	m.component_id = nil
+	m.addcomponent_id = nil
+	delete(m.clearedFields, fielddefinition.FieldComponentID)
+}
+
 // SetName sets the "name" field.
 func (m *FieldDefinitionMutation) SetName(s string) {
 	m.name = &s
@@ -39714,6 +40901,55 @@ func (m *FieldDefinitionMutation) ResetRelationConfig() {
 	delete(m.clearedFields, fielddefinition.FieldRelationConfig)
 }
 
+// SetComponentConfig sets the "component_config" field.
+func (m *FieldDefinitionMutation) SetComponentConfig(sc *schema.ComponentConfig) {
+	m.component_config = &sc
+}
+
+// ComponentConfig returns the value of the "component_config" field in the mutation.
+func (m *FieldDefinitionMutation) ComponentConfig() (r *schema.ComponentConfig, exists bool) {
+	v := m.component_config
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldComponentConfig returns the old "component_config" field's value of the FieldDefinition entity.
+// If the FieldDefinition object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *FieldDefinitionMutation) OldComponentConfig(ctx context.Context) (v *schema.ComponentConfig, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldComponentConfig is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldComponentConfig requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldComponentConfig: %w", err)
+	}
+	return oldValue.ComponentConfig, nil
+}
+
+// ClearComponentConfig clears the value of the "component_config" field.
+func (m *FieldDefinitionMutation) ClearComponentConfig() {
+	m.component_config = nil
+	m.clearedFields[fielddefinition.FieldComponentConfig] = struct{}{}
+}
+
+// ComponentConfigCleared returns if the "component_config" field was cleared in this mutation.
+func (m *FieldDefinitionMutation) ComponentConfigCleared() bool {
+	_, ok := m.clearedFields[fielddefinition.FieldComponentConfig]
+	return ok
+}
+
+// ResetComponentConfig resets all changes to the "component_config" field.
+func (m *FieldDefinitionMutation) ResetComponentConfig() {
+	m.component_config = nil
+	delete(m.clearedFields, fielddefinition.FieldComponentConfig)
+}
+
 // Where appends a list predicates to the FieldDefinitionMutation builder.
 func (m *FieldDefinitionMutation) Where(ps ...predicate.FieldDefinition) {
 	m.predicates = append(m.predicates, ps...)
@@ -39748,7 +40984,7 @@ func (m *FieldDefinitionMutation) Type() string {
 // order to get all numeric fields that were incremented/decremented, call
 // AddedFields().
 func (m *FieldDefinitionMutation) Fields() []string {
-	fields := make([]string, 0, 18)
+	fields := make([]string, 0, 20)
 	if m.created_at != nil {
 		fields = append(fields, fielddefinition.FieldCreatedAt)
 	}
@@ -39775,6 +41011,9 @@ func (m *FieldDefinitionMutation) Fields() []string {
 	}
 	if m.content_model_id != nil {
 		fields = append(fields, fielddefinition.FieldContentModelID)
+	}
+	if m.component_id != nil {
+		fields = append(fields, fielddefinition.FieldComponentID)
 	}
 	if m.name != nil {
 		fields = append(fields, fielddefinition.FieldName)
@@ -39803,6 +41042,9 @@ func (m *FieldDefinitionMutation) Fields() []string {
 	if m.relation_config != nil {
 		fields = append(fields, fielddefinition.FieldRelationConfig)
 	}
+	if m.component_config != nil {
+		fields = append(fields, fielddefinition.FieldComponentConfig)
+	}
 	return fields
 }
 
@@ -39829,6 +41071,8 @@ func (m *FieldDefinitionMutation) Field(name string) (ent.Value, bool) {
 		return m.TenantID()
 	case fielddefinition.FieldContentModelID:
 		return m.ContentModelID()
+	case fielddefinition.FieldComponentID:
+		return m.ComponentID()
 	case fielddefinition.FieldName:
 		return m.Name()
 	case fielddefinition.FieldType:
@@ -39847,6 +41091,8 @@ func (m *FieldDefinitionMutation) Field(name string) (ent.Value, bool) {
 		return m.Options()
 	case fielddefinition.FieldRelationConfig:
 		return m.RelationConfig()
+	case fielddefinition.FieldComponentConfig:
+		return m.ComponentConfig()
 	}
 	return nil, false
 }
@@ -39874,6 +41120,8 @@ func (m *FieldDefinitionMutation) OldField(ctx context.Context, name string) (en
 		return m.OldTenantID(ctx)
 	case fielddefinition.FieldContentModelID:
 		return m.OldContentModelID(ctx)
+	case fielddefinition.FieldComponentID:
+		return m.OldComponentID(ctx)
 	case fielddefinition.FieldName:
 		return m.OldName(ctx)
 	case fielddefinition.FieldType:
@@ -39892,6 +41140,8 @@ func (m *FieldDefinitionMutation) OldField(ctx context.Context, name string) (en
 		return m.OldOptions(ctx)
 	case fielddefinition.FieldRelationConfig:
 		return m.OldRelationConfig(ctx)
+	case fielddefinition.FieldComponentConfig:
+		return m.OldComponentConfig(ctx)
 	}
 	return nil, fmt.Errorf("unknown FieldDefinition field %s", name)
 }
@@ -39964,6 +41214,13 @@ func (m *FieldDefinitionMutation) SetField(name string, value ent.Value) error {
 		}
 		m.SetContentModelID(v)
 		return nil
+	case fielddefinition.FieldComponentID:
+		v, ok := value.(uint32)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetComponentID(v)
+		return nil
 	case fielddefinition.FieldName:
 		v, ok := value.(string)
 		if !ok {
@@ -40027,6 +41284,13 @@ func (m *FieldDefinitionMutation) SetField(name string, value ent.Value) error {
 		}
 		m.SetRelationConfig(v)
 		return nil
+	case fielddefinition.FieldComponentConfig:
+		v, ok := value.(*schema.ComponentConfig)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetComponentConfig(v)
+		return nil
 	}
 	return fmt.Errorf("unknown FieldDefinition field %s", name)
 }
@@ -40053,6 +41317,9 @@ func (m *FieldDefinitionMutation) AddedFields() []string {
 	if m.addcontent_model_id != nil {
 		fields = append(fields, fielddefinition.FieldContentModelID)
 	}
+	if m.addcomponent_id != nil {
+		fields = append(fields, fielddefinition.FieldComponentID)
+	}
 	return fields
 }
 
@@ -40073,6 +41340,8 @@ func (m *FieldDefinitionMutation) AddedField(name string) (ent.Value, bool) {
 		return m.AddedTenantID()
 	case fielddefinition.FieldContentModelID:
 		return m.AddedContentModelID()
+	case fielddefinition.FieldComponentID:
+		return m.AddedComponentID()
 	}
 	return nil, false
 }
@@ -40124,6 +41393,13 @@ func (m *FieldDefinitionMutation) AddField(name string, value ent.Value) error {
 		}
 		m.AddContentModelID(v)
 		return nil
+	case fielddefinition.FieldComponentID:
+		v, ok := value.(int32)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.AddComponentID(v)
+		return nil
 	}
 	return fmt.Errorf("unknown FieldDefinition numeric field %s", name)
 }
@@ -40159,6 +41435,9 @@ func (m *FieldDefinitionMutation) ClearedFields() []string {
 	if m.FieldCleared(fielddefinition.FieldContentModelID) {
 		fields = append(fields, fielddefinition.FieldContentModelID)
 	}
+	if m.FieldCleared(fielddefinition.FieldComponentID) {
+		fields = append(fields, fielddefinition.FieldComponentID)
+	}
 	if m.FieldCleared(fielddefinition.FieldName) {
 		fields = append(fields, fielddefinition.FieldName)
 	}
@@ -40185,6 +41464,9 @@ func (m *FieldDefinitionMutation) ClearedFields() []string {
 	}
 	if m.FieldCleared(fielddefinition.FieldRelationConfig) {
 		fields = append(fields, fielddefinition.FieldRelationConfig)
+	}
+	if m.FieldCleared(fielddefinition.FieldComponentConfig) {
+		fields = append(fields, fielddefinition.FieldComponentConfig)
 	}
 	return fields
 }
@@ -40227,6 +41509,9 @@ func (m *FieldDefinitionMutation) ClearField(name string) error {
 	case fielddefinition.FieldContentModelID:
 		m.ClearContentModelID()
 		return nil
+	case fielddefinition.FieldComponentID:
+		m.ClearComponentID()
+		return nil
 	case fielddefinition.FieldName:
 		m.ClearName()
 		return nil
@@ -40253,6 +41538,9 @@ func (m *FieldDefinitionMutation) ClearField(name string) error {
 		return nil
 	case fielddefinition.FieldRelationConfig:
 		m.ClearRelationConfig()
+		return nil
+	case fielddefinition.FieldComponentConfig:
+		m.ClearComponentConfig()
 		return nil
 	}
 	return fmt.Errorf("unknown FieldDefinition nullable field %s", name)
@@ -40289,6 +41577,9 @@ func (m *FieldDefinitionMutation) ResetField(name string) error {
 	case fielddefinition.FieldContentModelID:
 		m.ResetContentModelID()
 		return nil
+	case fielddefinition.FieldComponentID:
+		m.ResetComponentID()
+		return nil
 	case fielddefinition.FieldName:
 		m.ResetName()
 		return nil
@@ -40315,6 +41606,9 @@ func (m *FieldDefinitionMutation) ResetField(name string) error {
 		return nil
 	case fielddefinition.FieldRelationConfig:
 		m.ResetRelationConfig()
+		return nil
+	case fielddefinition.FieldComponentConfig:
+		m.ResetComponentConfig()
 		return nil
 	}
 	return fmt.Errorf("unknown FieldDefinition field %s", name)

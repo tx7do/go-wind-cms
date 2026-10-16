@@ -99,6 +99,11 @@ func ContentModelID(v uint32) predicate.FieldDefinition {
 	return predicate.FieldDefinition(sql.FieldEQ(FieldContentModelID, v))
 }
 
+// ComponentID applies equality check predicate on the "component_id" field. It's identical to ComponentIDEQ.
+func ComponentID(v uint32) predicate.FieldDefinition {
+	return predicate.FieldDefinition(sql.FieldEQ(FieldComponentID, v))
+}
+
 // Name applies equality check predicate on the "name" field. It's identical to NameEQ.
 func Name(v string) predicate.FieldDefinition {
 	return predicate.FieldDefinition(sql.FieldEQ(FieldName, v))
@@ -574,6 +579,56 @@ func ContentModelIDNotNil() predicate.FieldDefinition {
 	return predicate.FieldDefinition(sql.FieldNotNull(FieldContentModelID))
 }
 
+// ComponentIDEQ applies the EQ predicate on the "component_id" field.
+func ComponentIDEQ(v uint32) predicate.FieldDefinition {
+	return predicate.FieldDefinition(sql.FieldEQ(FieldComponentID, v))
+}
+
+// ComponentIDNEQ applies the NEQ predicate on the "component_id" field.
+func ComponentIDNEQ(v uint32) predicate.FieldDefinition {
+	return predicate.FieldDefinition(sql.FieldNEQ(FieldComponentID, v))
+}
+
+// ComponentIDIn applies the In predicate on the "component_id" field.
+func ComponentIDIn(vs ...uint32) predicate.FieldDefinition {
+	return predicate.FieldDefinition(sql.FieldIn(FieldComponentID, vs...))
+}
+
+// ComponentIDNotIn applies the NotIn predicate on the "component_id" field.
+func ComponentIDNotIn(vs ...uint32) predicate.FieldDefinition {
+	return predicate.FieldDefinition(sql.FieldNotIn(FieldComponentID, vs...))
+}
+
+// ComponentIDGT applies the GT predicate on the "component_id" field.
+func ComponentIDGT(v uint32) predicate.FieldDefinition {
+	return predicate.FieldDefinition(sql.FieldGT(FieldComponentID, v))
+}
+
+// ComponentIDGTE applies the GTE predicate on the "component_id" field.
+func ComponentIDGTE(v uint32) predicate.FieldDefinition {
+	return predicate.FieldDefinition(sql.FieldGTE(FieldComponentID, v))
+}
+
+// ComponentIDLT applies the LT predicate on the "component_id" field.
+func ComponentIDLT(v uint32) predicate.FieldDefinition {
+	return predicate.FieldDefinition(sql.FieldLT(FieldComponentID, v))
+}
+
+// ComponentIDLTE applies the LTE predicate on the "component_id" field.
+func ComponentIDLTE(v uint32) predicate.FieldDefinition {
+	return predicate.FieldDefinition(sql.FieldLTE(FieldComponentID, v))
+}
+
+// ComponentIDIsNil applies the IsNil predicate on the "component_id" field.
+func ComponentIDIsNil() predicate.FieldDefinition {
+	return predicate.FieldDefinition(sql.FieldIsNull(FieldComponentID))
+}
+
+// ComponentIDNotNil applies the NotNil predicate on the "component_id" field.
+func ComponentIDNotNil() predicate.FieldDefinition {
+	return predicate.FieldDefinition(sql.FieldNotNull(FieldComponentID))
+}
+
 // NameEQ applies the EQ predicate on the "name" field.
 func NameEQ(v string) predicate.FieldDefinition {
 	return predicate.FieldDefinition(sql.FieldEQ(FieldName, v))
@@ -1017,6 +1072,16 @@ func RelationConfigIsNil() predicate.FieldDefinition {
 // RelationConfigNotNil applies the NotNil predicate on the "relation_config" field.
 func RelationConfigNotNil() predicate.FieldDefinition {
 	return predicate.FieldDefinition(sql.FieldNotNull(FieldRelationConfig))
+}
+
+// ComponentConfigIsNil applies the IsNil predicate on the "component_config" field.
+func ComponentConfigIsNil() predicate.FieldDefinition {
+	return predicate.FieldDefinition(sql.FieldIsNull(FieldComponentConfig))
+}
+
+// ComponentConfigNotNil applies the NotNil predicate on the "component_config" field.
+func ComponentConfigNotNil() predicate.FieldDefinition {
+	return predicate.FieldDefinition(sql.FieldNotNull(FieldComponentConfig))
 }
 
 // And groups predicates with the AND operator between them.

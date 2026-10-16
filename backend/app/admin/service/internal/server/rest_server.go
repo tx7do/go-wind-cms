@@ -157,6 +157,7 @@ func NewRestServer(
 	categoryService *service.CategoryService,
 	tagService *service.TagService,
 	contentModelService *service.ContentModelService,
+	componentDefinitionService *service.ComponentDefinitionService,
 	pageService *service.PageService,
 
 	siteService *service.SiteService,
@@ -244,6 +245,7 @@ func NewRestServer(
 
 	// 内容模型管理 HTTP 路由
 	adminV1.RegisterContentModelServiceHTTPServer(srv, contentModelService)
+	adminV1.RegisterComponentDefinitionServiceHTTPServer(srv, componentDefinitionService)
 	adminV1.RegisterCategoryServiceHTTPServer(srv, categoryService)
 	adminV1.RegisterTagServiceHTTPServer(srv, tagService)
 	adminV1.RegisterCommentServiceHTTPServer(srv, commentService)

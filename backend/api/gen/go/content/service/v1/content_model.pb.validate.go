@@ -427,6 +427,43 @@ func (m *FieldDefinition) validate(all bool) error {
 
 	}
 
+	if m.ComponentId != nil {
+		// no validation rules for ComponentId
+	}
+
+	if m.ComponentConfig != nil {
+
+		if all {
+			switch v := interface{}(m.GetComponentConfig()).(type) {
+			case interface{ ValidateAll() error }:
+				if err := v.ValidateAll(); err != nil {
+					errors = append(errors, FieldDefinitionValidationError{
+						field:  "ComponentConfig",
+						reason: "embedded message failed validation",
+						cause:  err,
+					})
+				}
+			case interface{ Validate() error }:
+				if err := v.Validate(); err != nil {
+					errors = append(errors, FieldDefinitionValidationError{
+						field:  "ComponentConfig",
+						reason: "embedded message failed validation",
+						cause:  err,
+					})
+				}
+			}
+		} else if v, ok := interface{}(m.GetComponentConfig()).(interface{ Validate() error }); ok {
+			if err := v.Validate(); err != nil {
+				return FieldDefinitionValidationError{
+					field:  "ComponentConfig",
+					reason: "embedded message failed validation",
+					cause:  err,
+				}
+			}
+		}
+
+	}
+
 	if m.SortOrder != nil {
 		// no validation rules for SortOrder
 	}
@@ -657,6 +694,114 @@ var _ interface {
 	Cause() error
 	ErrorName() string
 } = RelationConfigValidationError{}
+
+// Validate checks the field values on ComponentConfig with the rules defined
+// in the proto definition for this message. If any rules are violated, the
+// first error encountered is returned, or nil if there are no violations.
+func (m *ComponentConfig) Validate() error {
+	return m.validate(false)
+}
+
+// ValidateAll checks the field values on ComponentConfig with the rules
+// defined in the proto definition for this message. If any rules are
+// violated, the result is a list of violation errors wrapped in
+// ComponentConfigMultiError, or nil if none found.
+func (m *ComponentConfig) ValidateAll() error {
+	return m.validate(true)
+}
+
+func (m *ComponentConfig) validate(all bool) error {
+	if m == nil {
+		return nil
+	}
+
+	var errors []error
+
+	if m.ComponentCode != nil {
+		// no validation rules for ComponentCode
+	}
+
+	if m.Repeatable != nil {
+		// no validation rules for Repeatable
+	}
+
+	if len(errors) > 0 {
+		return ComponentConfigMultiError(errors)
+	}
+
+	return nil
+}
+
+// ComponentConfigMultiError is an error wrapping multiple validation errors
+// returned by ComponentConfig.ValidateAll() if the designated constraints
+// aren't met.
+type ComponentConfigMultiError []error
+
+// Error returns a concatenation of all the error messages it wraps.
+func (m ComponentConfigMultiError) Error() string {
+	msgs := make([]string, 0, len(m))
+	for _, err := range m {
+		msgs = append(msgs, err.Error())
+	}
+	return strings.Join(msgs, "; ")
+}
+
+// AllErrors returns a list of validation violation errors.
+func (m ComponentConfigMultiError) AllErrors() []error { return m }
+
+// ComponentConfigValidationError is the validation error returned by
+// ComponentConfig.Validate if the designated constraints aren't met.
+type ComponentConfigValidationError struct {
+	field  string
+	reason string
+	cause  error
+	key    bool
+}
+
+// Field function returns field value.
+func (e ComponentConfigValidationError) Field() string { return e.field }
+
+// Reason function returns reason value.
+func (e ComponentConfigValidationError) Reason() string { return e.reason }
+
+// Cause function returns cause value.
+func (e ComponentConfigValidationError) Cause() error { return e.cause }
+
+// Key function returns key value.
+func (e ComponentConfigValidationError) Key() bool { return e.key }
+
+// ErrorName returns error name.
+func (e ComponentConfigValidationError) ErrorName() string { return "ComponentConfigValidationError" }
+
+// Error satisfies the builtin error interface
+func (e ComponentConfigValidationError) Error() string {
+	cause := ""
+	if e.cause != nil {
+		cause = fmt.Sprintf(" | caused by: %v", e.cause)
+	}
+
+	key := ""
+	if e.key {
+		key = "key for "
+	}
+
+	return fmt.Sprintf(
+		"invalid %sComponentConfig.%s: %s%s",
+		key,
+		e.field,
+		e.reason,
+		cause)
+}
+
+var _ error = ComponentConfigValidationError{}
+
+var _ interface {
+	Field() string
+	Reason() string
+	Key() bool
+	Cause() error
+	ErrorName() string
+} = ComponentConfigValidationError{}
 
 // Validate checks the field values on ContentModelTranslation with the rules
 // defined in the proto definition for this message. If any rules are
@@ -1926,6 +2071,10 @@ func (m *ListFieldDefinitionsRequest) validate(all bool) error {
 
 	// no validation rules for ContentModelId
 
+	if m.ComponentId != nil {
+		// no validation rules for ComponentId
+	}
+
 	if m.ViewMask != nil {
 
 		if all {
@@ -2550,3 +2699,984 @@ var _ interface {
 	Cause() error
 	ErrorName() string
 } = ResolveContentReferencesResponseValidationError{}
+
+// Validate checks the field values on ComponentDefinition with the rules
+// defined in the proto definition for this message. If any rules are
+// violated, the first error encountered is returned, or nil if there are no violations.
+func (m *ComponentDefinition) Validate() error {
+	return m.validate(false)
+}
+
+// ValidateAll checks the field values on ComponentDefinition with the rules
+// defined in the proto definition for this message. If any rules are
+// violated, the result is a list of violation errors wrapped in
+// ComponentDefinitionMultiError, or nil if none found.
+func (m *ComponentDefinition) ValidateAll() error {
+	return m.validate(true)
+}
+
+func (m *ComponentDefinition) validate(all bool) error {
+	if m == nil {
+		return nil
+	}
+
+	var errors []error
+
+	if m.Id != nil {
+		// no validation rules for Id
+	}
+
+	if m.Code != nil {
+		// no validation rules for Code
+	}
+
+	if m.Name != nil {
+		// no validation rules for Name
+	}
+
+	if m.Description != nil {
+		// no validation rules for Description
+	}
+
+	if m.FieldCount != nil {
+		// no validation rules for FieldCount
+	}
+
+	if m.CreatedAt != nil {
+
+		if all {
+			switch v := interface{}(m.GetCreatedAt()).(type) {
+			case interface{ ValidateAll() error }:
+				if err := v.ValidateAll(); err != nil {
+					errors = append(errors, ComponentDefinitionValidationError{
+						field:  "CreatedAt",
+						reason: "embedded message failed validation",
+						cause:  err,
+					})
+				}
+			case interface{ Validate() error }:
+				if err := v.Validate(); err != nil {
+					errors = append(errors, ComponentDefinitionValidationError{
+						field:  "CreatedAt",
+						reason: "embedded message failed validation",
+						cause:  err,
+					})
+				}
+			}
+		} else if v, ok := interface{}(m.GetCreatedAt()).(interface{ Validate() error }); ok {
+			if err := v.Validate(); err != nil {
+				return ComponentDefinitionValidationError{
+					field:  "CreatedAt",
+					reason: "embedded message failed validation",
+					cause:  err,
+				}
+			}
+		}
+
+	}
+
+	if m.UpdatedAt != nil {
+
+		if all {
+			switch v := interface{}(m.GetUpdatedAt()).(type) {
+			case interface{ ValidateAll() error }:
+				if err := v.ValidateAll(); err != nil {
+					errors = append(errors, ComponentDefinitionValidationError{
+						field:  "UpdatedAt",
+						reason: "embedded message failed validation",
+						cause:  err,
+					})
+				}
+			case interface{ Validate() error }:
+				if err := v.Validate(); err != nil {
+					errors = append(errors, ComponentDefinitionValidationError{
+						field:  "UpdatedAt",
+						reason: "embedded message failed validation",
+						cause:  err,
+					})
+				}
+			}
+		} else if v, ok := interface{}(m.GetUpdatedAt()).(interface{ Validate() error }); ok {
+			if err := v.Validate(); err != nil {
+				return ComponentDefinitionValidationError{
+					field:  "UpdatedAt",
+					reason: "embedded message failed validation",
+					cause:  err,
+				}
+			}
+		}
+
+	}
+
+	if len(errors) > 0 {
+		return ComponentDefinitionMultiError(errors)
+	}
+
+	return nil
+}
+
+// ComponentDefinitionMultiError is an error wrapping multiple validation
+// errors returned by ComponentDefinition.ValidateAll() if the designated
+// constraints aren't met.
+type ComponentDefinitionMultiError []error
+
+// Error returns a concatenation of all the error messages it wraps.
+func (m ComponentDefinitionMultiError) Error() string {
+	msgs := make([]string, 0, len(m))
+	for _, err := range m {
+		msgs = append(msgs, err.Error())
+	}
+	return strings.Join(msgs, "; ")
+}
+
+// AllErrors returns a list of validation violation errors.
+func (m ComponentDefinitionMultiError) AllErrors() []error { return m }
+
+// ComponentDefinitionValidationError is the validation error returned by
+// ComponentDefinition.Validate if the designated constraints aren't met.
+type ComponentDefinitionValidationError struct {
+	field  string
+	reason string
+	cause  error
+	key    bool
+}
+
+// Field function returns field value.
+func (e ComponentDefinitionValidationError) Field() string { return e.field }
+
+// Reason function returns reason value.
+func (e ComponentDefinitionValidationError) Reason() string { return e.reason }
+
+// Cause function returns cause value.
+func (e ComponentDefinitionValidationError) Cause() error { return e.cause }
+
+// Key function returns key value.
+func (e ComponentDefinitionValidationError) Key() bool { return e.key }
+
+// ErrorName returns error name.
+func (e ComponentDefinitionValidationError) ErrorName() string {
+	return "ComponentDefinitionValidationError"
+}
+
+// Error satisfies the builtin error interface
+func (e ComponentDefinitionValidationError) Error() string {
+	cause := ""
+	if e.cause != nil {
+		cause = fmt.Sprintf(" | caused by: %v", e.cause)
+	}
+
+	key := ""
+	if e.key {
+		key = "key for "
+	}
+
+	return fmt.Sprintf(
+		"invalid %sComponentDefinition.%s: %s%s",
+		key,
+		e.field,
+		e.reason,
+		cause)
+}
+
+var _ error = ComponentDefinitionValidationError{}
+
+var _ interface {
+	Field() string
+	Reason() string
+	Key() bool
+	Cause() error
+	ErrorName() string
+} = ComponentDefinitionValidationError{}
+
+// Validate checks the field values on ListComponentDefinitionsResponse with
+// the rules defined in the proto definition for this message. If any rules
+// are violated, the first error encountered is returned, or nil if there are
+// no violations.
+func (m *ListComponentDefinitionsResponse) Validate() error {
+	return m.validate(false)
+}
+
+// ValidateAll checks the field values on ListComponentDefinitionsResponse with
+// the rules defined in the proto definition for this message. If any rules
+// are violated, the result is a list of violation errors wrapped in
+// ListComponentDefinitionsResponseMultiError, or nil if none found.
+func (m *ListComponentDefinitionsResponse) ValidateAll() error {
+	return m.validate(true)
+}
+
+func (m *ListComponentDefinitionsResponse) validate(all bool) error {
+	if m == nil {
+		return nil
+	}
+
+	var errors []error
+
+	for idx, item := range m.GetItems() {
+		_, _ = idx, item
+
+		if all {
+			switch v := interface{}(item).(type) {
+			case interface{ ValidateAll() error }:
+				if err := v.ValidateAll(); err != nil {
+					errors = append(errors, ListComponentDefinitionsResponseValidationError{
+						field:  fmt.Sprintf("Items[%v]", idx),
+						reason: "embedded message failed validation",
+						cause:  err,
+					})
+				}
+			case interface{ Validate() error }:
+				if err := v.Validate(); err != nil {
+					errors = append(errors, ListComponentDefinitionsResponseValidationError{
+						field:  fmt.Sprintf("Items[%v]", idx),
+						reason: "embedded message failed validation",
+						cause:  err,
+					})
+				}
+			}
+		} else if v, ok := interface{}(item).(interface{ Validate() error }); ok {
+			if err := v.Validate(); err != nil {
+				return ListComponentDefinitionsResponseValidationError{
+					field:  fmt.Sprintf("Items[%v]", idx),
+					reason: "embedded message failed validation",
+					cause:  err,
+				}
+			}
+		}
+
+	}
+
+	// no validation rules for Total
+
+	if len(errors) > 0 {
+		return ListComponentDefinitionsResponseMultiError(errors)
+	}
+
+	return nil
+}
+
+// ListComponentDefinitionsResponseMultiError is an error wrapping multiple
+// validation errors returned by
+// ListComponentDefinitionsResponse.ValidateAll() if the designated
+// constraints aren't met.
+type ListComponentDefinitionsResponseMultiError []error
+
+// Error returns a concatenation of all the error messages it wraps.
+func (m ListComponentDefinitionsResponseMultiError) Error() string {
+	msgs := make([]string, 0, len(m))
+	for _, err := range m {
+		msgs = append(msgs, err.Error())
+	}
+	return strings.Join(msgs, "; ")
+}
+
+// AllErrors returns a list of validation violation errors.
+func (m ListComponentDefinitionsResponseMultiError) AllErrors() []error { return m }
+
+// ListComponentDefinitionsResponseValidationError is the validation error
+// returned by ListComponentDefinitionsResponse.Validate if the designated
+// constraints aren't met.
+type ListComponentDefinitionsResponseValidationError struct {
+	field  string
+	reason string
+	cause  error
+	key    bool
+}
+
+// Field function returns field value.
+func (e ListComponentDefinitionsResponseValidationError) Field() string { return e.field }
+
+// Reason function returns reason value.
+func (e ListComponentDefinitionsResponseValidationError) Reason() string { return e.reason }
+
+// Cause function returns cause value.
+func (e ListComponentDefinitionsResponseValidationError) Cause() error { return e.cause }
+
+// Key function returns key value.
+func (e ListComponentDefinitionsResponseValidationError) Key() bool { return e.key }
+
+// ErrorName returns error name.
+func (e ListComponentDefinitionsResponseValidationError) ErrorName() string {
+	return "ListComponentDefinitionsResponseValidationError"
+}
+
+// Error satisfies the builtin error interface
+func (e ListComponentDefinitionsResponseValidationError) Error() string {
+	cause := ""
+	if e.cause != nil {
+		cause = fmt.Sprintf(" | caused by: %v", e.cause)
+	}
+
+	key := ""
+	if e.key {
+		key = "key for "
+	}
+
+	return fmt.Sprintf(
+		"invalid %sListComponentDefinitionsResponse.%s: %s%s",
+		key,
+		e.field,
+		e.reason,
+		cause)
+}
+
+var _ error = ListComponentDefinitionsResponseValidationError{}
+
+var _ interface {
+	Field() string
+	Reason() string
+	Key() bool
+	Cause() error
+	ErrorName() string
+} = ListComponentDefinitionsResponseValidationError{}
+
+// Validate checks the field values on GetComponentDefinitionRequest with the
+// rules defined in the proto definition for this message. If any rules are
+// violated, the first error encountered is returned, or nil if there are no violations.
+func (m *GetComponentDefinitionRequest) Validate() error {
+	return m.validate(false)
+}
+
+// ValidateAll checks the field values on GetComponentDefinitionRequest with
+// the rules defined in the proto definition for this message. If any rules
+// are violated, the result is a list of violation errors wrapped in
+// GetComponentDefinitionRequestMultiError, or nil if none found.
+func (m *GetComponentDefinitionRequest) ValidateAll() error {
+	return m.validate(true)
+}
+
+func (m *GetComponentDefinitionRequest) validate(all bool) error {
+	if m == nil {
+		return nil
+	}
+
+	var errors []error
+
+	// no validation rules for Id
+
+	if len(errors) > 0 {
+		return GetComponentDefinitionRequestMultiError(errors)
+	}
+
+	return nil
+}
+
+// GetComponentDefinitionRequestMultiError is an error wrapping multiple
+// validation errors returned by GetComponentDefinitionRequest.ValidateAll()
+// if the designated constraints aren't met.
+type GetComponentDefinitionRequestMultiError []error
+
+// Error returns a concatenation of all the error messages it wraps.
+func (m GetComponentDefinitionRequestMultiError) Error() string {
+	msgs := make([]string, 0, len(m))
+	for _, err := range m {
+		msgs = append(msgs, err.Error())
+	}
+	return strings.Join(msgs, "; ")
+}
+
+// AllErrors returns a list of validation violation errors.
+func (m GetComponentDefinitionRequestMultiError) AllErrors() []error { return m }
+
+// GetComponentDefinitionRequestValidationError is the validation error
+// returned by GetComponentDefinitionRequest.Validate if the designated
+// constraints aren't met.
+type GetComponentDefinitionRequestValidationError struct {
+	field  string
+	reason string
+	cause  error
+	key    bool
+}
+
+// Field function returns field value.
+func (e GetComponentDefinitionRequestValidationError) Field() string { return e.field }
+
+// Reason function returns reason value.
+func (e GetComponentDefinitionRequestValidationError) Reason() string { return e.reason }
+
+// Cause function returns cause value.
+func (e GetComponentDefinitionRequestValidationError) Cause() error { return e.cause }
+
+// Key function returns key value.
+func (e GetComponentDefinitionRequestValidationError) Key() bool { return e.key }
+
+// ErrorName returns error name.
+func (e GetComponentDefinitionRequestValidationError) ErrorName() string {
+	return "GetComponentDefinitionRequestValidationError"
+}
+
+// Error satisfies the builtin error interface
+func (e GetComponentDefinitionRequestValidationError) Error() string {
+	cause := ""
+	if e.cause != nil {
+		cause = fmt.Sprintf(" | caused by: %v", e.cause)
+	}
+
+	key := ""
+	if e.key {
+		key = "key for "
+	}
+
+	return fmt.Sprintf(
+		"invalid %sGetComponentDefinitionRequest.%s: %s%s",
+		key,
+		e.field,
+		e.reason,
+		cause)
+}
+
+var _ error = GetComponentDefinitionRequestValidationError{}
+
+var _ interface {
+	Field() string
+	Reason() string
+	Key() bool
+	Cause() error
+	ErrorName() string
+} = GetComponentDefinitionRequestValidationError{}
+
+// Validate checks the field values on CreateComponentDefinitionRequest with
+// the rules defined in the proto definition for this message. If any rules
+// are violated, the first error encountered is returned, or nil if there are
+// no violations.
+func (m *CreateComponentDefinitionRequest) Validate() error {
+	return m.validate(false)
+}
+
+// ValidateAll checks the field values on CreateComponentDefinitionRequest with
+// the rules defined in the proto definition for this message. If any rules
+// are violated, the result is a list of violation errors wrapped in
+// CreateComponentDefinitionRequestMultiError, or nil if none found.
+func (m *CreateComponentDefinitionRequest) ValidateAll() error {
+	return m.validate(true)
+}
+
+func (m *CreateComponentDefinitionRequest) validate(all bool) error {
+	if m == nil {
+		return nil
+	}
+
+	var errors []error
+
+	if all {
+		switch v := interface{}(m.GetData()).(type) {
+		case interface{ ValidateAll() error }:
+			if err := v.ValidateAll(); err != nil {
+				errors = append(errors, CreateComponentDefinitionRequestValidationError{
+					field:  "Data",
+					reason: "embedded message failed validation",
+					cause:  err,
+				})
+			}
+		case interface{ Validate() error }:
+			if err := v.Validate(); err != nil {
+				errors = append(errors, CreateComponentDefinitionRequestValidationError{
+					field:  "Data",
+					reason: "embedded message failed validation",
+					cause:  err,
+				})
+			}
+		}
+	} else if v, ok := interface{}(m.GetData()).(interface{ Validate() error }); ok {
+		if err := v.Validate(); err != nil {
+			return CreateComponentDefinitionRequestValidationError{
+				field:  "Data",
+				reason: "embedded message failed validation",
+				cause:  err,
+			}
+		}
+	}
+
+	if len(errors) > 0 {
+		return CreateComponentDefinitionRequestMultiError(errors)
+	}
+
+	return nil
+}
+
+// CreateComponentDefinitionRequestMultiError is an error wrapping multiple
+// validation errors returned by
+// CreateComponentDefinitionRequest.ValidateAll() if the designated
+// constraints aren't met.
+type CreateComponentDefinitionRequestMultiError []error
+
+// Error returns a concatenation of all the error messages it wraps.
+func (m CreateComponentDefinitionRequestMultiError) Error() string {
+	msgs := make([]string, 0, len(m))
+	for _, err := range m {
+		msgs = append(msgs, err.Error())
+	}
+	return strings.Join(msgs, "; ")
+}
+
+// AllErrors returns a list of validation violation errors.
+func (m CreateComponentDefinitionRequestMultiError) AllErrors() []error { return m }
+
+// CreateComponentDefinitionRequestValidationError is the validation error
+// returned by CreateComponentDefinitionRequest.Validate if the designated
+// constraints aren't met.
+type CreateComponentDefinitionRequestValidationError struct {
+	field  string
+	reason string
+	cause  error
+	key    bool
+}
+
+// Field function returns field value.
+func (e CreateComponentDefinitionRequestValidationError) Field() string { return e.field }
+
+// Reason function returns reason value.
+func (e CreateComponentDefinitionRequestValidationError) Reason() string { return e.reason }
+
+// Cause function returns cause value.
+func (e CreateComponentDefinitionRequestValidationError) Cause() error { return e.cause }
+
+// Key function returns key value.
+func (e CreateComponentDefinitionRequestValidationError) Key() bool { return e.key }
+
+// ErrorName returns error name.
+func (e CreateComponentDefinitionRequestValidationError) ErrorName() string {
+	return "CreateComponentDefinitionRequestValidationError"
+}
+
+// Error satisfies the builtin error interface
+func (e CreateComponentDefinitionRequestValidationError) Error() string {
+	cause := ""
+	if e.cause != nil {
+		cause = fmt.Sprintf(" | caused by: %v", e.cause)
+	}
+
+	key := ""
+	if e.key {
+		key = "key for "
+	}
+
+	return fmt.Sprintf(
+		"invalid %sCreateComponentDefinitionRequest.%s: %s%s",
+		key,
+		e.field,
+		e.reason,
+		cause)
+}
+
+var _ error = CreateComponentDefinitionRequestValidationError{}
+
+var _ interface {
+	Field() string
+	Reason() string
+	Key() bool
+	Cause() error
+	ErrorName() string
+} = CreateComponentDefinitionRequestValidationError{}
+
+// Validate checks the field values on UpdateComponentDefinitionRequest with
+// the rules defined in the proto definition for this message. If any rules
+// are violated, the first error encountered is returned, or nil if there are
+// no violations.
+func (m *UpdateComponentDefinitionRequest) Validate() error {
+	return m.validate(false)
+}
+
+// ValidateAll checks the field values on UpdateComponentDefinitionRequest with
+// the rules defined in the proto definition for this message. If any rules
+// are violated, the result is a list of violation errors wrapped in
+// UpdateComponentDefinitionRequestMultiError, or nil if none found.
+func (m *UpdateComponentDefinitionRequest) ValidateAll() error {
+	return m.validate(true)
+}
+
+func (m *UpdateComponentDefinitionRequest) validate(all bool) error {
+	if m == nil {
+		return nil
+	}
+
+	var errors []error
+
+	// no validation rules for Id
+
+	if all {
+		switch v := interface{}(m.GetData()).(type) {
+		case interface{ ValidateAll() error }:
+			if err := v.ValidateAll(); err != nil {
+				errors = append(errors, UpdateComponentDefinitionRequestValidationError{
+					field:  "Data",
+					reason: "embedded message failed validation",
+					cause:  err,
+				})
+			}
+		case interface{ Validate() error }:
+			if err := v.Validate(); err != nil {
+				errors = append(errors, UpdateComponentDefinitionRequestValidationError{
+					field:  "Data",
+					reason: "embedded message failed validation",
+					cause:  err,
+				})
+			}
+		}
+	} else if v, ok := interface{}(m.GetData()).(interface{ Validate() error }); ok {
+		if err := v.Validate(); err != nil {
+			return UpdateComponentDefinitionRequestValidationError{
+				field:  "Data",
+				reason: "embedded message failed validation",
+				cause:  err,
+			}
+		}
+	}
+
+	if all {
+		switch v := interface{}(m.GetUpdateMask()).(type) {
+		case interface{ ValidateAll() error }:
+			if err := v.ValidateAll(); err != nil {
+				errors = append(errors, UpdateComponentDefinitionRequestValidationError{
+					field:  "UpdateMask",
+					reason: "embedded message failed validation",
+					cause:  err,
+				})
+			}
+		case interface{ Validate() error }:
+			if err := v.Validate(); err != nil {
+				errors = append(errors, UpdateComponentDefinitionRequestValidationError{
+					field:  "UpdateMask",
+					reason: "embedded message failed validation",
+					cause:  err,
+				})
+			}
+		}
+	} else if v, ok := interface{}(m.GetUpdateMask()).(interface{ Validate() error }); ok {
+		if err := v.Validate(); err != nil {
+			return UpdateComponentDefinitionRequestValidationError{
+				field:  "UpdateMask",
+				reason: "embedded message failed validation",
+				cause:  err,
+			}
+		}
+	}
+
+	if len(errors) > 0 {
+		return UpdateComponentDefinitionRequestMultiError(errors)
+	}
+
+	return nil
+}
+
+// UpdateComponentDefinitionRequestMultiError is an error wrapping multiple
+// validation errors returned by
+// UpdateComponentDefinitionRequest.ValidateAll() if the designated
+// constraints aren't met.
+type UpdateComponentDefinitionRequestMultiError []error
+
+// Error returns a concatenation of all the error messages it wraps.
+func (m UpdateComponentDefinitionRequestMultiError) Error() string {
+	msgs := make([]string, 0, len(m))
+	for _, err := range m {
+		msgs = append(msgs, err.Error())
+	}
+	return strings.Join(msgs, "; ")
+}
+
+// AllErrors returns a list of validation violation errors.
+func (m UpdateComponentDefinitionRequestMultiError) AllErrors() []error { return m }
+
+// UpdateComponentDefinitionRequestValidationError is the validation error
+// returned by UpdateComponentDefinitionRequest.Validate if the designated
+// constraints aren't met.
+type UpdateComponentDefinitionRequestValidationError struct {
+	field  string
+	reason string
+	cause  error
+	key    bool
+}
+
+// Field function returns field value.
+func (e UpdateComponentDefinitionRequestValidationError) Field() string { return e.field }
+
+// Reason function returns reason value.
+func (e UpdateComponentDefinitionRequestValidationError) Reason() string { return e.reason }
+
+// Cause function returns cause value.
+func (e UpdateComponentDefinitionRequestValidationError) Cause() error { return e.cause }
+
+// Key function returns key value.
+func (e UpdateComponentDefinitionRequestValidationError) Key() bool { return e.key }
+
+// ErrorName returns error name.
+func (e UpdateComponentDefinitionRequestValidationError) ErrorName() string {
+	return "UpdateComponentDefinitionRequestValidationError"
+}
+
+// Error satisfies the builtin error interface
+func (e UpdateComponentDefinitionRequestValidationError) Error() string {
+	cause := ""
+	if e.cause != nil {
+		cause = fmt.Sprintf(" | caused by: %v", e.cause)
+	}
+
+	key := ""
+	if e.key {
+		key = "key for "
+	}
+
+	return fmt.Sprintf(
+		"invalid %sUpdateComponentDefinitionRequest.%s: %s%s",
+		key,
+		e.field,
+		e.reason,
+		cause)
+}
+
+var _ error = UpdateComponentDefinitionRequestValidationError{}
+
+var _ interface {
+	Field() string
+	Reason() string
+	Key() bool
+	Cause() error
+	ErrorName() string
+} = UpdateComponentDefinitionRequestValidationError{}
+
+// Validate checks the field values on DeleteComponentDefinitionRequest with
+// the rules defined in the proto definition for this message. If any rules
+// are violated, the first error encountered is returned, or nil if there are
+// no violations.
+func (m *DeleteComponentDefinitionRequest) Validate() error {
+	return m.validate(false)
+}
+
+// ValidateAll checks the field values on DeleteComponentDefinitionRequest with
+// the rules defined in the proto definition for this message. If any rules
+// are violated, the result is a list of violation errors wrapped in
+// DeleteComponentDefinitionRequestMultiError, or nil if none found.
+func (m *DeleteComponentDefinitionRequest) ValidateAll() error {
+	return m.validate(true)
+}
+
+func (m *DeleteComponentDefinitionRequest) validate(all bool) error {
+	if m == nil {
+		return nil
+	}
+
+	var errors []error
+
+	// no validation rules for Id
+
+	if len(errors) > 0 {
+		return DeleteComponentDefinitionRequestMultiError(errors)
+	}
+
+	return nil
+}
+
+// DeleteComponentDefinitionRequestMultiError is an error wrapping multiple
+// validation errors returned by
+// DeleteComponentDefinitionRequest.ValidateAll() if the designated
+// constraints aren't met.
+type DeleteComponentDefinitionRequestMultiError []error
+
+// Error returns a concatenation of all the error messages it wraps.
+func (m DeleteComponentDefinitionRequestMultiError) Error() string {
+	msgs := make([]string, 0, len(m))
+	for _, err := range m {
+		msgs = append(msgs, err.Error())
+	}
+	return strings.Join(msgs, "; ")
+}
+
+// AllErrors returns a list of validation violation errors.
+func (m DeleteComponentDefinitionRequestMultiError) AllErrors() []error { return m }
+
+// DeleteComponentDefinitionRequestValidationError is the validation error
+// returned by DeleteComponentDefinitionRequest.Validate if the designated
+// constraints aren't met.
+type DeleteComponentDefinitionRequestValidationError struct {
+	field  string
+	reason string
+	cause  error
+	key    bool
+}
+
+// Field function returns field value.
+func (e DeleteComponentDefinitionRequestValidationError) Field() string { return e.field }
+
+// Reason function returns reason value.
+func (e DeleteComponentDefinitionRequestValidationError) Reason() string { return e.reason }
+
+// Cause function returns cause value.
+func (e DeleteComponentDefinitionRequestValidationError) Cause() error { return e.cause }
+
+// Key function returns key value.
+func (e DeleteComponentDefinitionRequestValidationError) Key() bool { return e.key }
+
+// ErrorName returns error name.
+func (e DeleteComponentDefinitionRequestValidationError) ErrorName() string {
+	return "DeleteComponentDefinitionRequestValidationError"
+}
+
+// Error satisfies the builtin error interface
+func (e DeleteComponentDefinitionRequestValidationError) Error() string {
+	cause := ""
+	if e.cause != nil {
+		cause = fmt.Sprintf(" | caused by: %v", e.cause)
+	}
+
+	key := ""
+	if e.key {
+		key = "key for "
+	}
+
+	return fmt.Sprintf(
+		"invalid %sDeleteComponentDefinitionRequest.%s: %s%s",
+		key,
+		e.field,
+		e.reason,
+		cause)
+}
+
+var _ error = DeleteComponentDefinitionRequestValidationError{}
+
+var _ interface {
+	Field() string
+	Reason() string
+	Key() bool
+	Cause() error
+	ErrorName() string
+} = DeleteComponentDefinitionRequestValidationError{}
+
+// Validate checks the field values on SaveComponentFieldDefinitionsRequest
+// with the rules defined in the proto definition for this message. If any
+// rules are violated, the first error encountered is returned, or nil if
+// there are no violations.
+func (m *SaveComponentFieldDefinitionsRequest) Validate() error {
+	return m.validate(false)
+}
+
+// ValidateAll checks the field values on SaveComponentFieldDefinitionsRequest
+// with the rules defined in the proto definition for this message. If any
+// rules are violated, the result is a list of violation errors wrapped in
+// SaveComponentFieldDefinitionsRequestMultiError, or nil if none found.
+func (m *SaveComponentFieldDefinitionsRequest) ValidateAll() error {
+	return m.validate(true)
+}
+
+func (m *SaveComponentFieldDefinitionsRequest) validate(all bool) error {
+	if m == nil {
+		return nil
+	}
+
+	var errors []error
+
+	// no validation rules for ComponentId
+
+	for idx, item := range m.GetFields() {
+		_, _ = idx, item
+
+		if all {
+			switch v := interface{}(item).(type) {
+			case interface{ ValidateAll() error }:
+				if err := v.ValidateAll(); err != nil {
+					errors = append(errors, SaveComponentFieldDefinitionsRequestValidationError{
+						field:  fmt.Sprintf("Fields[%v]", idx),
+						reason: "embedded message failed validation",
+						cause:  err,
+					})
+				}
+			case interface{ Validate() error }:
+				if err := v.Validate(); err != nil {
+					errors = append(errors, SaveComponentFieldDefinitionsRequestValidationError{
+						field:  fmt.Sprintf("Fields[%v]", idx),
+						reason: "embedded message failed validation",
+						cause:  err,
+					})
+				}
+			}
+		} else if v, ok := interface{}(item).(interface{ Validate() error }); ok {
+			if err := v.Validate(); err != nil {
+				return SaveComponentFieldDefinitionsRequestValidationError{
+					field:  fmt.Sprintf("Fields[%v]", idx),
+					reason: "embedded message failed validation",
+					cause:  err,
+				}
+			}
+		}
+
+	}
+
+	if len(errors) > 0 {
+		return SaveComponentFieldDefinitionsRequestMultiError(errors)
+	}
+
+	return nil
+}
+
+// SaveComponentFieldDefinitionsRequestMultiError is an error wrapping multiple
+// validation errors returned by
+// SaveComponentFieldDefinitionsRequest.ValidateAll() if the designated
+// constraints aren't met.
+type SaveComponentFieldDefinitionsRequestMultiError []error
+
+// Error returns a concatenation of all the error messages it wraps.
+func (m SaveComponentFieldDefinitionsRequestMultiError) Error() string {
+	msgs := make([]string, 0, len(m))
+	for _, err := range m {
+		msgs = append(msgs, err.Error())
+	}
+	return strings.Join(msgs, "; ")
+}
+
+// AllErrors returns a list of validation violation errors.
+func (m SaveComponentFieldDefinitionsRequestMultiError) AllErrors() []error { return m }
+
+// SaveComponentFieldDefinitionsRequestValidationError is the validation error
+// returned by SaveComponentFieldDefinitionsRequest.Validate if the designated
+// constraints aren't met.
+type SaveComponentFieldDefinitionsRequestValidationError struct {
+	field  string
+	reason string
+	cause  error
+	key    bool
+}
+
+// Field function returns field value.
+func (e SaveComponentFieldDefinitionsRequestValidationError) Field() string { return e.field }
+
+// Reason function returns reason value.
+func (e SaveComponentFieldDefinitionsRequestValidationError) Reason() string { return e.reason }
+
+// Cause function returns cause value.
+func (e SaveComponentFieldDefinitionsRequestValidationError) Cause() error { return e.cause }
+
+// Key function returns key value.
+func (e SaveComponentFieldDefinitionsRequestValidationError) Key() bool { return e.key }
+
+// ErrorName returns error name.
+func (e SaveComponentFieldDefinitionsRequestValidationError) ErrorName() string {
+	return "SaveComponentFieldDefinitionsRequestValidationError"
+}
+
+// Error satisfies the builtin error interface
+func (e SaveComponentFieldDefinitionsRequestValidationError) Error() string {
+	cause := ""
+	if e.cause != nil {
+		cause = fmt.Sprintf(" | caused by: %v", e.cause)
+	}
+
+	key := ""
+	if e.key {
+		key = "key for "
+	}
+
+	return fmt.Sprintf(
+		"invalid %sSaveComponentFieldDefinitionsRequest.%s: %s%s",
+		key,
+		e.field,
+		e.reason,
+		cause)
+}
+
+var _ error = SaveComponentFieldDefinitionsRequestValidationError{}
+
+var _ interface {
+	Field() string
+	Reason() string
+	Key() bool
+	Cause() error
+	ErrorName() string
+} = SaveComponentFieldDefinitionsRequestValidationError{}

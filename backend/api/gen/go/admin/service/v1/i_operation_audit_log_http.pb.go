@@ -33,11 +33,11 @@ type OperationAuditLogServiceHTTPServer interface {
 
 func RegisterOperationAuditLogServiceHTTPServer(s *http.Server, srv OperationAuditLogServiceHTTPServer) {
 	r := s.Route("/")
-	r.GET("/admin/v1/operation-audit-logs", _OperationAuditLogService_List27_HTTP_Handler(srv))
-	r.GET("/admin/v1/operation-audit-logs/{id}", _OperationAuditLogService_Get26_HTTP_Handler(srv))
+	r.GET("/admin/v1/operation-audit-logs", _OperationAuditLogService_List28_HTTP_Handler(srv))
+	r.GET("/admin/v1/operation-audit-logs/{id}", _OperationAuditLogService_Get27_HTTP_Handler(srv))
 }
 
-func _OperationAuditLogService_List27_HTTP_Handler(srv OperationAuditLogServiceHTTPServer) func(ctx http.Context) error {
+func _OperationAuditLogService_List28_HTTP_Handler(srv OperationAuditLogServiceHTTPServer) func(ctx http.Context) error {
 	return func(ctx http.Context) error {
 		var in v1.PagingRequest
 		if err := ctx.BindQuery(&in); err != nil {
@@ -56,7 +56,7 @@ func _OperationAuditLogService_List27_HTTP_Handler(srv OperationAuditLogServiceH
 	}
 }
 
-func _OperationAuditLogService_Get26_HTTP_Handler(srv OperationAuditLogServiceHTTPServer) func(ctx http.Context) error {
+func _OperationAuditLogService_Get27_HTTP_Handler(srv OperationAuditLogServiceHTTPServer) func(ctx http.Context) error {
 	return func(ctx http.Context) error {
 		var in v11.GetOperationAuditLogRequest
 		if err := ctx.BindQuery(&in); err != nil {

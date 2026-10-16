@@ -447,6 +447,30 @@ func (f CommentLikeMutationRuleFunc) EvalMutation(ctx context.Context, m ent.Mut
 	return Denyf("ent/privacy: unexpected mutation type %T, expect *ent.CommentLikeMutation", m)
 }
 
+// The ComponentDefinitionQueryRuleFunc type is an adapter to allow the use of ordinary
+// functions as a query rule.
+type ComponentDefinitionQueryRuleFunc func(context.Context, *ent.ComponentDefinitionQuery) error
+
+// EvalQuery return f(ctx, q).
+func (f ComponentDefinitionQueryRuleFunc) EvalQuery(ctx context.Context, q ent.Query) error {
+	if q, ok := q.(*ent.ComponentDefinitionQuery); ok {
+		return f(ctx, q)
+	}
+	return Denyf("ent/privacy: unexpected query type %T, expect *ent.ComponentDefinitionQuery", q)
+}
+
+// The ComponentDefinitionMutationRuleFunc type is an adapter to allow the use of ordinary
+// functions as a mutation rule.
+type ComponentDefinitionMutationRuleFunc func(context.Context, *ent.ComponentDefinitionMutation) error
+
+// EvalMutation calls f(ctx, m).
+func (f ComponentDefinitionMutationRuleFunc) EvalMutation(ctx context.Context, m ent.Mutation) error {
+	if m, ok := m.(*ent.ComponentDefinitionMutation); ok {
+		return f(ctx, m)
+	}
+	return Denyf("ent/privacy: unexpected mutation type %T, expect *ent.ComponentDefinitionMutation", m)
+}
+
 // The ContentModelQueryRuleFunc type is an adapter to allow the use of ordinary
 // functions as a query rule.
 type ContentModelQueryRuleFunc func(context.Context, *ent.ContentModelQuery) error
@@ -2334,6 +2358,8 @@ func queryFilter(q ent.Query) (Filter, error) {
 		return q.Filter(), nil
 	case *ent.CommentLikeQuery:
 		return q.Filter(), nil
+	case *ent.ComponentDefinitionQuery:
+		return q.Filter(), nil
 	case *ent.ContentModelQuery:
 		return q.Filter(), nil
 	case *ent.ContentModelTranslationQuery:
@@ -2520,6 +2546,8 @@ func mutationFilter(m ent.Mutation) (Filter, error) {
 	case *ent.CommentMutation:
 		return m.Filter(), nil
 	case *ent.CommentLikeMutation:
+		return m.Filter(), nil
+	case *ent.ComponentDefinitionMutation:
 		return m.Filter(), nil
 	case *ent.ContentModelMutation:
 		return m.Filter(), nil

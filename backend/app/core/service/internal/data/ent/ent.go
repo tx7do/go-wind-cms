@@ -20,6 +20,7 @@ import (
 	"go-wind-cms/app/core/service/internal/data/ent/collabdocstate"
 	"go-wind-cms/app/core/service/internal/data/ent/comment"
 	"go-wind-cms/app/core/service/internal/data/ent/commentlike"
+	"go-wind-cms/app/core/service/internal/data/ent/componentdefinition"
 	"go-wind-cms/app/core/service/internal/data/ent/contentmodel"
 	"go-wind-cms/app/core/service/internal/data/ent/contentmodeltranslation"
 	"go-wind-cms/app/core/service/internal/data/ent/contentreference"
@@ -176,6 +177,7 @@ func checkColumn(t, c string) error {
 			collabdocstate.Table:             collabdocstate.ValidColumn,
 			comment.Table:                    comment.ValidColumn,
 			commentlike.Table:                commentlike.ValidColumn,
+			componentdefinition.Table:        componentdefinition.ValidColumn,
 			contentmodel.Table:               contentmodel.ValidColumn,
 			contentmodeltranslation.Table:    contentmodeltranslation.ValidColumn,
 			contentreference.Table:           contentreference.ValidColumn,

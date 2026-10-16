@@ -205,6 +205,33 @@ func (_u *FieldDefinitionUpdate) ClearContentModelID() *FieldDefinitionUpdate {
 	return _u
 }
 
+// SetComponentID sets the "component_id" field.
+func (_u *FieldDefinitionUpdate) SetComponentID(v uint32) *FieldDefinitionUpdate {
+	_u.mutation.ResetComponentID()
+	_u.mutation.SetComponentID(v)
+	return _u
+}
+
+// SetNillableComponentID sets the "component_id" field if the given value is not nil.
+func (_u *FieldDefinitionUpdate) SetNillableComponentID(v *uint32) *FieldDefinitionUpdate {
+	if v != nil {
+		_u.SetComponentID(*v)
+	}
+	return _u
+}
+
+// AddComponentID adds value to the "component_id" field.
+func (_u *FieldDefinitionUpdate) AddComponentID(v int32) *FieldDefinitionUpdate {
+	_u.mutation.AddComponentID(v)
+	return _u
+}
+
+// ClearComponentID clears the value of the "component_id" field.
+func (_u *FieldDefinitionUpdate) ClearComponentID() *FieldDefinitionUpdate {
+	_u.mutation.ClearComponentID()
+	return _u
+}
+
 // SetName sets the "name" field.
 func (_u *FieldDefinitionUpdate) SetName(v string) *FieldDefinitionUpdate {
 	_u.mutation.SetName(v)
@@ -369,6 +396,18 @@ func (_u *FieldDefinitionUpdate) ClearRelationConfig() *FieldDefinitionUpdate {
 	return _u
 }
 
+// SetComponentConfig sets the "component_config" field.
+func (_u *FieldDefinitionUpdate) SetComponentConfig(v *schema.ComponentConfig) *FieldDefinitionUpdate {
+	_u.mutation.SetComponentConfig(v)
+	return _u
+}
+
+// ClearComponentConfig clears the value of the "component_config" field.
+func (_u *FieldDefinitionUpdate) ClearComponentConfig() *FieldDefinitionUpdate {
+	_u.mutation.ClearComponentConfig()
+	return _u
+}
+
 // Mutation returns the FieldDefinitionMutation object of the builder.
 func (_u *FieldDefinitionUpdate) Mutation() *FieldDefinitionMutation {
 	return _u.mutation
@@ -497,6 +536,15 @@ func (_u *FieldDefinitionUpdate) sqlSave(ctx context.Context) (_node int, err er
 	if _u.mutation.ContentModelIDCleared() {
 		_spec.ClearField(fielddefinition.FieldContentModelID, field.TypeUint32)
 	}
+	if value, ok := _u.mutation.ComponentID(); ok {
+		_spec.SetField(fielddefinition.FieldComponentID, field.TypeUint32, value)
+	}
+	if value, ok := _u.mutation.AddedComponentID(); ok {
+		_spec.AddField(fielddefinition.FieldComponentID, field.TypeUint32, value)
+	}
+	if _u.mutation.ComponentIDCleared() {
+		_spec.ClearField(fielddefinition.FieldComponentID, field.TypeUint32)
+	}
 	if value, ok := _u.mutation.Name(); ok {
 		_spec.SetField(fielddefinition.FieldName, field.TypeString, value)
 	}
@@ -550,6 +598,12 @@ func (_u *FieldDefinitionUpdate) sqlSave(ctx context.Context) (_node int, err er
 	}
 	if _u.mutation.RelationConfigCleared() {
 		_spec.ClearField(fielddefinition.FieldRelationConfig, field.TypeJSON)
+	}
+	if value, ok := _u.mutation.ComponentConfig(); ok {
+		_spec.SetField(fielddefinition.FieldComponentConfig, field.TypeJSON, value)
+	}
+	if _u.mutation.ComponentConfigCleared() {
+		_spec.ClearField(fielddefinition.FieldComponentConfig, field.TypeJSON)
 	}
 	_spec.AddModifiers(_u.modifiers...)
 	if _node, err = sqlgraph.UpdateNodes(ctx, _u.driver, _spec); err != nil {
@@ -748,6 +802,33 @@ func (_u *FieldDefinitionUpdateOne) ClearContentModelID() *FieldDefinitionUpdate
 	return _u
 }
 
+// SetComponentID sets the "component_id" field.
+func (_u *FieldDefinitionUpdateOne) SetComponentID(v uint32) *FieldDefinitionUpdateOne {
+	_u.mutation.ResetComponentID()
+	_u.mutation.SetComponentID(v)
+	return _u
+}
+
+// SetNillableComponentID sets the "component_id" field if the given value is not nil.
+func (_u *FieldDefinitionUpdateOne) SetNillableComponentID(v *uint32) *FieldDefinitionUpdateOne {
+	if v != nil {
+		_u.SetComponentID(*v)
+	}
+	return _u
+}
+
+// AddComponentID adds value to the "component_id" field.
+func (_u *FieldDefinitionUpdateOne) AddComponentID(v int32) *FieldDefinitionUpdateOne {
+	_u.mutation.AddComponentID(v)
+	return _u
+}
+
+// ClearComponentID clears the value of the "component_id" field.
+func (_u *FieldDefinitionUpdateOne) ClearComponentID() *FieldDefinitionUpdateOne {
+	_u.mutation.ClearComponentID()
+	return _u
+}
+
 // SetName sets the "name" field.
 func (_u *FieldDefinitionUpdateOne) SetName(v string) *FieldDefinitionUpdateOne {
 	_u.mutation.SetName(v)
@@ -912,6 +993,18 @@ func (_u *FieldDefinitionUpdateOne) ClearRelationConfig() *FieldDefinitionUpdate
 	return _u
 }
 
+// SetComponentConfig sets the "component_config" field.
+func (_u *FieldDefinitionUpdateOne) SetComponentConfig(v *schema.ComponentConfig) *FieldDefinitionUpdateOne {
+	_u.mutation.SetComponentConfig(v)
+	return _u
+}
+
+// ClearComponentConfig clears the value of the "component_config" field.
+func (_u *FieldDefinitionUpdateOne) ClearComponentConfig() *FieldDefinitionUpdateOne {
+	_u.mutation.ClearComponentConfig()
+	return _u
+}
+
 // Mutation returns the FieldDefinitionMutation object of the builder.
 func (_u *FieldDefinitionUpdateOne) Mutation() *FieldDefinitionMutation {
 	return _u.mutation
@@ -1070,6 +1163,15 @@ func (_u *FieldDefinitionUpdateOne) sqlSave(ctx context.Context) (_node *FieldDe
 	if _u.mutation.ContentModelIDCleared() {
 		_spec.ClearField(fielddefinition.FieldContentModelID, field.TypeUint32)
 	}
+	if value, ok := _u.mutation.ComponentID(); ok {
+		_spec.SetField(fielddefinition.FieldComponentID, field.TypeUint32, value)
+	}
+	if value, ok := _u.mutation.AddedComponentID(); ok {
+		_spec.AddField(fielddefinition.FieldComponentID, field.TypeUint32, value)
+	}
+	if _u.mutation.ComponentIDCleared() {
+		_spec.ClearField(fielddefinition.FieldComponentID, field.TypeUint32)
+	}
 	if value, ok := _u.mutation.Name(); ok {
 		_spec.SetField(fielddefinition.FieldName, field.TypeString, value)
 	}
@@ -1123,6 +1225,12 @@ func (_u *FieldDefinitionUpdateOne) sqlSave(ctx context.Context) (_node *FieldDe
 	}
 	if _u.mutation.RelationConfigCleared() {
 		_spec.ClearField(fielddefinition.FieldRelationConfig, field.TypeJSON)
+	}
+	if value, ok := _u.mutation.ComponentConfig(); ok {
+		_spec.SetField(fielddefinition.FieldComponentConfig, field.TypeJSON, value)
+	}
+	if _u.mutation.ComponentConfigCleared() {
+		_spec.ClearField(fielddefinition.FieldComponentConfig, field.TypeJSON)
 	}
 	_spec.AddModifiers(_u.modifiers...)
 	_node = &FieldDefinition{config: _u.config}

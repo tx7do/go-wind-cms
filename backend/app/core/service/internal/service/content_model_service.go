@@ -208,3 +208,47 @@ func pickReferenceTranslation[T translationView](lang string, trs []T) (title, s
 	}
 	return title, slug
 }
+
+// ─── 组件定义 CRUD（Components / 可重复字段组 / 动态区，管理面） ───
+
+func (s *ContentModelService) ListComponentDefinitions(ctx context.Context, req *paginationV1.PagingRequest) (*contentV1.ListComponentDefinitionsResponse, error) {
+	return s.contentModelRepo.ListComponentDefinitions(ctx, req)
+}
+
+func (s *ContentModelService) GetComponentDefinition(ctx context.Context, req *contentV1.GetComponentDefinitionRequest) (*contentV1.ComponentDefinition, error) {
+	if req == nil || req.GetId() == 0 {
+		return nil, contentV1.ErrorBadRequest("invalid parameter")
+	}
+	return s.contentModelRepo.GetComponentDefinition(ctx, req.GetId())
+}
+
+func (s *ContentModelService) CreateComponentDefinition(ctx context.Context, req *contentV1.CreateComponentDefinitionRequest) (*contentV1.ComponentDefinition, error) {
+	if req == nil || req.Data == nil {
+		return nil, contentV1.ErrorBadRequest("invalid parameter")
+	}
+	return s.contentModelRepo.CreateComponentDefinition(ctx, req.Data)
+}
+
+func (s *ContentModelService) UpdateComponentDefinition(ctx context.Context, req *contentV1.UpdateComponentDefinitionRequest) (*contentV1.ComponentDefinition, error) {
+	if req == nil || req.Data == nil || req.GetId() == 0 {
+		return nil, contentV1.ErrorBadRequest("invalid parameter")
+	}
+	return s.contentModelRepo.UpdateComponentDefinition(ctx, req.GetId(), req.Data)
+}
+
+func (s *ContentModelService) SaveComponentFieldDefinitions(ctx context.Context, req *contentV1.SaveComponentFieldDefinitionsRequest) (*contentV1.ListFieldDefinitionsResponse, error) {
+	if req == nil || req.GetComponentId() == 0 {
+		return nil, contentV1.ErrorBadRequest("invalid parameter")
+	}
+	return s.contentModelRepo.SaveComponentFieldDefinitions(ctx, req.GetComponentId(), req.GetFields())
+}
+
+func (s *ContentModelService) DeleteComponentDefinition(ctx context.Context, req *contentV1.DeleteComponentDefinitionRequest) (*emptypb.Empty, error) {
+	if req == nil || req.GetId() == 0 {
+		return nil, contentV1.ErrorBadRequest("invalid parameter")
+	}
+	if err := s.contentModelRepo.DeleteComponentDefinition(ctx, req.GetId()); err != nil {
+		return nil, err
+	}
+	return &emptypb.Empty{}, nil
+}

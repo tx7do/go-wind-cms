@@ -2,6 +2,7 @@ package data
 
 import (
 	"context"
+	"encoding/json"
 	"fmt"
 	"regexp"
 	"strconv"
@@ -20,6 +21,7 @@ import (
 
 	"go-wind-cms/app/core/service/internal/data/ent"
 	"go-wind-cms/app/core/service/internal/data/ent/category"
+	"go-wind-cms/app/core/service/internal/data/ent/componentdefinition"
 	"go-wind-cms/app/core/service/internal/data/ent/contentmodel"
 	"go-wind-cms/app/core/service/internal/data/ent/contentmodeltranslation"
 	"go-wind-cms/app/core/service/internal/data/ent/fielddefinition"
@@ -54,7 +56,9 @@ type ContentModelRepo struct {
 	modelTrMapper     *mapper.CopierMapper[contentV1.ContentModelTranslation, ent.ContentModelTranslation]
 	fieldTrMapper     *mapper.CopierMapper[contentV1.FieldDefinitionTranslation, ent.FieldDefinitionTranslation]
 	typeConverter     *mapper.EnumTypeConverter[contentV1.FieldDefinition_Type, fielddefinition.Type]
-	relationConverter *mapper.CopierMapper[contentV1.RelationConfig, schema.RelationConfig]
+	relationConverter  *mapper.CopierMapper[contentV1.RelationConfig, schema.RelationConfig]
+	componentConverter *mapper.CopierMapper[contentV1.ComponentConfig, schema.ComponentConfig]
+	componentMapper    *mapper.CopierMapper[contentV1.ComponentDefinition, ent.ComponentDefinition]
 
 	repository *entCrud.Repository[
 		ent.ContentModelQuery, ent.ContentModelSelect,
@@ -77,7 +81,9 @@ func NewContentModelRepo(ctx *bootstrap.Context, entClient *entCrud.EntClient[*e
 		typeConverter: mapper.NewEnumTypeConverter[contentV1.FieldDefinition_Type, fielddefinition.Type](
 			contentV1.FieldDefinition_Type_name, contentV1.FieldDefinition_Type_value,
 		),
-		relationConverter: mapper.NewCopierMapper[contentV1.RelationConfig, schema.RelationConfig](),
+		relationConverter:  mapper.NewCopierMapper[contentV1.RelationConfig, schema.RelationConfig](),
+		componentConverter: mapper.NewCopierMapper[contentV1.ComponentConfig, schema.ComponentConfig](),
+		componentMapper:    mapper.NewCopierMapper[contentV1.ComponentDefinition, ent.ComponentDefinition](),
 	}
 
 	repo.init()
@@ -359,7 +365,14 @@ func (r *ContentModelRepo) Delete(ctx context.Context, req *contentV1.DeleteCont
 
 // ListFieldDefinitions 列出模型下的字段定义（含各自翻译），供内容编辑器拉动态表单。
 func (r *ContentModelRepo) ListFieldDefinitions(ctx context.Context, req *contentV1.ListFieldDefinitionsRequest) (*contentV1.ListFieldDefinitionsResponse, error) {
-	if req == nil || req.GetContentModelId() == 0 {
+	if req == nil {
+		return nil, contentV1.ErrorBadRequest("invalid parameter")
+	}
+	// component_id 非 0 时列组件字段（组件字段与模型字段同表，按归属二选一）
+	if req.GetComponentId() > 0 {
+		return r.listComponentFieldDefinitions(ctx, req.GetComponentId())
+	}
+	if req.GetContentModelId() == 0 {
 		return nil, contentV1.ErrorBadRequest("invalid parameter")
 	}
 
@@ -456,12 +469,16 @@ func (r *ContentModelRepo) fieldDefinitionToDTO(entity *ent.FieldDefinition) *co
 		IsRequired:      entity.IsRequired,
 		ValidationRegex: entity.ValidationRegex,
 		SortOrder:       entity.SortOrder,
+		ComponentId:     entity.ComponentID,
 	}
 	if entity.Options != nil {
 		dto.Options = *entity.Options
 	}
 	if entity.RelationConfig != nil {
 		dto.RelationConfig = r.relationConverter.ToDTO(entity.RelationConfig)
+	}
+	if entity.ComponentConfig != nil {
+		dto.ComponentConfig = r.componentConverter.ToDTO(entity.ComponentConfig)
 	}
 	return dto
 }
@@ -486,6 +503,12 @@ func (r *ContentModelRepo) newFieldCreateBuilder(fd *ent.FieldDefinitionClient, 
 	if data.RelationConfig != nil {
 		if rc := r.relationConverter.ToEntity(data.RelationConfig); rc != nil {
 			builder.SetRelationConfig(rc)
+		}
+	}
+	builder.SetNillableComponentID(data.ComponentId)
+	if data.ComponentConfig != nil {
+		if cc := r.componentConverter.ToEntity(data.ComponentConfig); cc != nil {
+			builder.SetComponentConfig(cc)
 		}
 	}
 
@@ -720,6 +743,11 @@ func (r *ContentModelRepo) ValidateValues(ctx context.Context, contentModelID ui
 			if !def.RelationConfig.AllowCrossTenant && tenantID != 0 && targetTenant != tenantID {
 				return contentV1.ErrorBadRequest("%s", fmt.Sprintf("custom field %q references a %s from another tenant", name, entityType))
 			}
+
+		case fielddefinition.TypeFIELD_TYPE_COMPONENT, fielddefinition.TypeFIELD_TYPE_DYNAMIC_ZONE:
+			if vErr := r.validateComponentFieldValue(ctx, def, name, value, tenantID); vErr != nil {
+				return vErr
+			}
 		}
 	}
 
@@ -787,4 +815,510 @@ func (r *ContentModelRepo) queryEntityTenant(ctx context.Context, entityType str
 		return 0, nil
 	}
 	return *tenantID, nil
+}
+
+
+// ============ 组件定义（Components / 可重复字段组 / 动态区，见设计文档 §2/§5） ============
+
+// listComponentFieldDefinitions 列组件字段（与模型字段同表，按 component_id 归属）。
+func (r *ContentModelRepo) listComponentFieldDefinitions(ctx context.Context, componentID uint32) (*contentV1.ListFieldDefinitionsResponse, error) {
+	entities, err := r.entClient.Client().FieldDefinition.Query().
+		Where(fielddefinition.ComponentIDEQ(componentID)).
+		Order(ent.Asc(fielddefinition.FieldSortOrder), ent.Asc(fielddefinition.FieldID)).
+		All(ctx)
+	if err != nil {
+		r.log.Errorf("query component field definitions failed: %s", err.Error())
+		return nil, contentV1.ErrorInternalServerError("query field definitions failed")
+	}
+	items := make([]*contentV1.FieldDefinition, 0, len(entities))
+	for _, entity := range entities {
+		dto := r.fieldDefinitionToDTO(entity)
+		translations, tErr := r.listFieldTranslations(ctx, entity.ID)
+		if tErr != nil {
+			return nil, tErr
+		}
+		dto.Translations = translations
+		items = append(items, dto)
+	}
+	return &contentV1.ListFieldDefinitionsResponse{Items: items, Total: uint64(len(items))}, nil
+}
+
+// ListComponentDefinitions 组件定义列表（含字段数统计）。
+func (r *ContentModelRepo) ListComponentDefinitions(ctx context.Context, req *paginationV1.PagingRequest) (*contentV1.ListComponentDefinitionsResponse, error) {
+	builder := r.entClient.Client().ComponentDefinition.Query()
+	total, err := builder.Clone().Count(ctx)
+	if err != nil {
+		r.log.Errorf("count component definitions failed: %s", err.Error())
+		return nil, contentV1.ErrorInternalServerError("list component definitions failed")
+	}
+	rows, err := builder.Order(ent.Desc(componentdefinition.FieldID)).All(ctx)
+	if err != nil {
+		r.log.Errorf("list component definitions failed: %s", err.Error())
+		return nil, contentV1.ErrorInternalServerError("list component definitions failed")
+	}
+
+	counts, cErr := r.componentFieldCounts(ctx)
+	if cErr != nil {
+		return nil, cErr
+	}
+	items := make([]*contentV1.ComponentDefinition, 0, len(rows))
+	for _, row := range rows {
+		dto := r.componentMapper.ToDTO(row)
+		dto.FieldCount = trans.Ptr(counts[row.ID])
+		items = append(items, dto)
+	}
+	return &contentV1.ListComponentDefinitionsResponse{Items: items, Total: uint64(total)}, nil
+}
+
+// componentFieldCounts 一次查询统计各组件的字段数（组件字段行 component_id 非空）。
+func (r *ContentModelRepo) componentFieldCounts(ctx context.Context) (map[uint32]uint32, error) {
+	rows, err := r.entClient.Client().FieldDefinition.Query().
+		Where(fielddefinition.ComponentIDNotNil()).
+		Select(fielddefinition.FieldComponentID).
+		All(ctx)
+	if err != nil {
+		r.log.Errorf("count component fields failed: %s", err.Error())
+		return nil, contentV1.ErrorInternalServerError("count component fields failed")
+	}
+	counts := make(map[uint32]uint32)
+	for _, row := range rows {
+		if row.ComponentID != nil {
+			counts[*row.ComponentID]++
+		}
+	}
+	return counts, nil
+}
+
+// GetComponentDefinition 组件定义详情。
+func (r *ContentModelRepo) GetComponentDefinition(ctx context.Context, id uint32) (*contentV1.ComponentDefinition, error) {
+	row, err := r.entClient.Client().ComponentDefinition.Get(ctx, id)
+	if err != nil {
+		if ent.IsNotFound(err) {
+			return nil, contentV1.ErrorNotFound("component definition not found")
+		}
+		r.log.Errorf("get component definition failed: %s", err.Error())
+		return nil, contentV1.ErrorInternalServerError("get component definition failed")
+	}
+	dto := r.componentMapper.ToDTO(row)
+	counts, cErr := r.componentFieldCounts(ctx)
+	if cErr != nil {
+		return nil, cErr
+	}
+	dto.FieldCount = trans.Ptr(counts[row.ID])
+	return dto, nil
+}
+
+// CreateComponentDefinition 创建组件定义（code 租户内唯一；字段经 FieldDefinition 面另行保存）。
+func (r *ContentModelRepo) CreateComponentDefinition(ctx context.Context, dto *contentV1.ComponentDefinition) (*contentV1.ComponentDefinition, error) {
+	code := strings.TrimSpace(dto.GetCode())
+	if code == "" || strings.TrimSpace(dto.GetName()) == "" {
+		return nil, contentV1.ErrorBadRequest("component code and name are required")
+	}
+	exists, err := r.entClient.Client().ComponentDefinition.Query().
+		Where(componentdefinition.CodeEQ(code)).
+		Exist(ctx)
+	if err != nil {
+		r.log.Errorf("check component code failed: %s", err.Error())
+		return nil, contentV1.ErrorInternalServerError("create component definition failed")
+	}
+	if exists {
+		return nil, contentV1.ErrorConflict("component code %q already exists", code)
+	}
+	row, err := r.entClient.Client().ComponentDefinition.Create().
+		SetCode(code).
+		SetName(dto.GetName()).
+		SetNillableDescription(dto.Description).
+		Save(ctx)
+	if err != nil {
+		r.log.Errorf("create component definition failed: %s", err.Error())
+		return nil, contentV1.ErrorInternalServerError("create component definition failed")
+	}
+	return r.componentMapper.ToDTO(row), nil
+}
+
+// UpdateComponentDefinition 更新组件定义（code 创建后不可改——模型字段按 code 引用）。
+func (r *ContentModelRepo) UpdateComponentDefinition(ctx context.Context, id uint32, dto *contentV1.ComponentDefinition) (*contentV1.ComponentDefinition, error) {
+	if dto.Code != nil && strings.TrimSpace(dto.GetCode()) != "" {
+		existing, err := r.entClient.Client().ComponentDefinition.Get(ctx, id)
+		if err != nil {
+			if ent.IsNotFound(err) {
+				return nil, contentV1.ErrorNotFound("component definition not found")
+			}
+			return nil, contentV1.ErrorInternalServerError("update component definition failed")
+		}
+		if existing.Code != strings.TrimSpace(dto.GetCode()) {
+			return nil, contentV1.ErrorBadRequest("component code is immutable")
+		}
+	}
+	builder := r.entClient.Client().ComponentDefinition.UpdateOneID(id)
+	if dto.Name != nil {
+		if strings.TrimSpace(dto.GetName()) == "" {
+			return nil, contentV1.ErrorBadRequest("component name is required")
+		}
+		builder.SetName(dto.GetName())
+	}
+	if dto.Description != nil {
+		builder.SetNillableDescription(dto.Description)
+	}
+	row, err := builder.Save(ctx)
+	if err != nil {
+		if ent.IsNotFound(err) {
+			return nil, contentV1.ErrorNotFound("component definition not found")
+		}
+		r.log.Errorf("update component definition failed: %s", err.Error())
+		return nil, contentV1.ErrorInternalServerError("update component definition failed")
+	}
+	return r.componentMapper.ToDTO(row), nil
+}
+
+// DeleteComponentDefinition 删除组件定义：被模型字段的 component_config 按 code
+// 引用时拒绝（先解绑再删）；组件自身字段随删（含翻译）。
+func (r *ContentModelRepo) DeleteComponentDefinition(ctx context.Context, id uint32) error {
+	row, err := r.entClient.Client().ComponentDefinition.Get(ctx, id)
+	if err != nil {
+		if ent.IsNotFound(err) {
+			return contentV1.ErrorNotFound("component definition not found")
+		}
+		return contentV1.ErrorInternalServerError("delete component definition failed")
+	}
+
+	refs, err := r.entClient.Client().FieldDefinition.Query().
+		Where(fielddefinition.TypeIn(
+			fielddefinition.TypeFIELD_TYPE_COMPONENT,
+			fielddefinition.TypeFIELD_TYPE_DYNAMIC_ZONE,
+		)).
+		All(ctx)
+	if err != nil {
+		r.log.Errorf("query component references failed: %s", err.Error())
+		return contentV1.ErrorInternalServerError("delete component definition failed")
+	}
+	for _, fd := range refs {
+		cc := fd.ComponentConfig
+		if cc == nil {
+			continue
+		}
+		if cc.ComponentCode == row.Code || containsString(cc.AllowedComponentCodes, row.Code) {
+			return contentV1.ErrorConflict("component %q is referenced by model fields; unbind it first", row.Code)
+		}
+	}
+
+	fieldIDs, err := r.entClient.Client().FieldDefinition.Query().
+		Where(fielddefinition.ComponentIDEQ(id)).
+		IDs(ctx)
+	if err != nil {
+		r.log.Errorf("query component field ids failed: %s", err.Error())
+		return contentV1.ErrorInternalServerError("delete component definition failed")
+	}
+	if len(fieldIDs) > 0 {
+		if _, err = r.entClient.Client().FieldDefinitionTranslation.Delete().
+			Where(fielddefinitiontranslation.FieldDefinitionIDIn(fieldIDs...)).
+			Exec(ctx); err != nil {
+			r.log.Errorf("delete component field translations failed: %s", err.Error())
+			return contentV1.ErrorInternalServerError("delete component definition failed")
+		}
+		if _, err = r.entClient.Client().FieldDefinition.Delete().
+			Where(fielddefinition.ComponentIDEQ(id)).
+			Exec(ctx); err != nil {
+			r.log.Errorf("delete component fields failed: %s", err.Error())
+			return contentV1.ErrorInternalServerError("delete component definition failed")
+		}
+	}
+	if err = r.entClient.Client().ComponentDefinition.DeleteOneID(id).Exec(ctx); err != nil {
+		r.log.Errorf("delete component definition failed: %s", err.Error())
+		return contentV1.ErrorInternalServerError("delete component definition failed")
+	}
+	return nil
+}
+
+// SaveComponentFieldDefinitions 整体替换组件字段集（replace 语义，同模型字段）。
+func (r *ContentModelRepo) SaveComponentFieldDefinitions(ctx context.Context, componentID uint32, fields []*contentV1.FieldDefinition) (*contentV1.ListFieldDefinitionsResponse, error) {
+	if _, err := r.entClient.Client().ComponentDefinition.Get(ctx, componentID); err != nil {
+		if ent.IsNotFound(err) {
+			return nil, contentV1.ErrorNotFound("component definition not found")
+		}
+		return nil, contentV1.ErrorInternalServerError("save component fields failed")
+	}
+
+	tx, err := r.entClient.Client().Tx(ctx)
+	if err != nil {
+		r.log.Errorf("begin tx failed: %s", err.Error())
+		return nil, contentV1.ErrorInternalServerError("save component fields failed")
+	}
+	rollback := func() { _ = tx.Rollback() }
+
+	oldIDs, err := tx.FieldDefinition.Query().
+		Where(fielddefinition.ComponentIDEQ(componentID)).
+		IDs(ctx)
+	if err != nil {
+		rollback()
+		r.log.Errorf("query old component field ids failed: %s", err.Error())
+		return nil, contentV1.ErrorInternalServerError("save component fields failed")
+	}
+	if len(oldIDs) > 0 {
+		if _, err = tx.FieldDefinitionTranslation.Delete().
+			Where(fielddefinitiontranslation.FieldDefinitionIDIn(oldIDs...)).
+			Exec(ctx); err != nil {
+			rollback()
+			r.log.Errorf("delete old component field translations failed: %s", err.Error())
+			return nil, contentV1.ErrorInternalServerError("save component fields failed")
+		}
+		if _, err = tx.FieldDefinition.Delete().
+			Where(fielddefinition.ComponentIDEQ(componentID)).
+			Exec(ctx); err != nil {
+			rollback()
+			r.log.Errorf("delete old component fields failed: %s", err.Error())
+			return nil, contentV1.ErrorInternalServerError("save component fields failed")
+		}
+	}
+	for _, f := range fields {
+		if f == nil || f.GetName() == "" {
+			rollback()
+			return nil, contentV1.ErrorBadRequest("field definition name is required")
+		}
+		if f.GetType() == contentV1.FieldDefinition_FIELD_TYPE_COMPONENT ||
+			f.GetType() == contentV1.FieldDefinition_FIELD_TYPE_DYNAMIC_ZONE {
+			rollback()
+			return nil, contentV1.ErrorBadRequest("nested component fields are not supported")
+		}
+		f.ComponentId = trans.Ptr(componentID)
+		created, err := r.newFieldCreateBuilder(tx.FieldDefinition, f).Save(ctx)
+		if err != nil {
+			rollback()
+			r.log.Errorf("insert component field definition failed: %s", err.Error())
+			return nil, contentV1.ErrorInternalServerError("save component fields failed")
+		}
+		for _, tr := range f.Translations {
+			if tr == nil {
+				continue
+			}
+			tr.FieldDefinitionId = trans.Ptr(created.ID)
+			if _, err = tx.FieldDefinitionTranslation.Create().
+				SetNillableFieldDefinitionID(tr.FieldDefinitionId).
+				SetNillableLanguageCode(tr.LanguageCode).
+				SetNillableLabel(tr.Label).
+				SetNillableDescription(tr.Description).
+				SetNillablePlaceholder(tr.Placeholder).
+				SetNillableCreatedBy(tr.CreatedBy).
+				SetCreatedAt(time.Now()).
+				Save(ctx); err != nil {
+				rollback()
+				r.log.Errorf("insert component field translation failed: %s", err.Error())
+				return nil, contentV1.ErrorInternalServerError("save component fields failed")
+			}
+		}
+	}
+	if err = tx.Commit(); err != nil {
+		r.log.Errorf("commit component fields failed: %s", err.Error())
+		return nil, contentV1.ErrorInternalServerError("save component fields failed")
+	}
+	return r.listComponentFieldDefinitions(ctx, componentID)
+}
+
+func containsString(list []string, target string) bool {
+	for _, v := range list {
+		if v == target {
+			return true
+		}
+	}
+	return false
+}
+
+
+// validateComponentLeafValue 组件叶子字段值校验（文本/数字/媒体引用/关联引用，
+// 与 ValidateValues 主链的叶子规则同款——组件实例内独立成函数，避免动主链）。
+func (r *ContentModelRepo) validateComponentLeafValue(ctx context.Context, fd *ent.FieldDefinition, qualName, value string, tenantID uint32) error {
+	fieldType := fielddefinition.DefaultType
+	if fd.Type != nil {
+		fieldType = *fd.Type
+	}
+	switch fieldType {
+	case fielddefinition.TypeFIELD_TYPE_NUMBER:
+		if _, pErr := strconv.ParseFloat(value, 64); pErr != nil {
+			return contentV1.ErrorBadRequest("%s", fmt.Sprintf("custom field %q must be a number", qualName))
+		}
+	case fielddefinition.TypeFIELD_TYPE_IMAGE, fielddefinition.TypeFIELD_TYPE_FILE:
+		id, ok := parseStringRef(value, mediaRefPrefix)
+		if !ok {
+			return contentV1.ErrorBadRequest("%s", fmt.Sprintf("custom field %q must be a media reference like %s<id>", qualName, mediaRefPrefix))
+		}
+		media, mErr := r.entClient.Client().MediaAsset.Get(ctx, id)
+		if mErr != nil {
+			return contentV1.ErrorBadRequest("%s", fmt.Sprintf("custom field %q references a non-existent media asset", qualName))
+		}
+		if media.TenantID != nil && tenantID != 0 && *media.TenantID != tenantID {
+			return contentV1.ErrorBadRequest("%s", fmt.Sprintf("custom field %q references a media asset from another tenant", qualName))
+		}
+	case fielddefinition.TypeFIELD_TYPE_RELATION:
+		entityType, id, ok := parseEntityRef(value)
+		if !ok {
+			return contentV1.ErrorBadRequest("%s", fmt.Sprintf("custom field %q must be an entity reference like post:<id>", qualName))
+		}
+		if !relationEntityTypeWhitelist[entityType] {
+			return contentV1.ErrorBadRequest("%s", fmt.Sprintf("custom field %q references an unsupported entity type %q", qualName, entityType))
+		}
+		targetTenant, tErr := r.queryEntityTenant(ctx, entityType, id)
+		if tErr != nil {
+			return contentV1.ErrorBadRequest("%s", fmt.Sprintf("custom field %q references a non-existent %s", qualName, entityType))
+		}
+		if tenantID != 0 && targetTenant != tenantID {
+			return contentV1.ErrorBadRequest("%s", fmt.Sprintf("custom field %q references a %s from another tenant", qualName, entityType))
+		}
+	}
+	// TEXT（含 validation_regex）与未约束类型：组件叶子文本不做正则校验
+	//（组件字段定义的 validation_regex 列暂不透出，后续需要时再接）
+	return nil
+}
+
+// componentFieldsByCode 批量加载引用到的组件及其字段定义（校验用）。
+// 返回 code → 字段实体列表；组件缺失/无字段返回错误（模型侧及时暴露配置错误）。
+func (r *ContentModelRepo) componentFieldsByCode(ctx context.Context, codes []string) (map[string][]*ent.FieldDefinition, error) {
+	out := make(map[string][]*ent.FieldDefinition)
+	if len(codes) == 0 {
+		return out, nil
+	}
+	comps, err := r.entClient.Client().ComponentDefinition.Query().
+		Where(componentdefinition.CodeIn(codes...)).
+		All(ctx)
+	if err != nil {
+		r.log.Errorf("query component definitions for validation failed: %s", err.Error())
+		return nil, contentV1.ErrorInternalServerError("query component definitions failed")
+	}
+	byID := make(map[uint32]string, len(comps))
+	for _, c := range comps {
+		byID[c.ID] = c.Code
+	}
+	if len(byID) == 0 {
+		return nil, contentV1.ErrorBadRequest("referenced components do not exist")
+	}
+	rows, err := r.entClient.Client().FieldDefinition.Query().
+		Where(fielddefinition.ComponentIDIn(keysOf(byID)...)).
+		Order(ent.Asc(fielddefinition.FieldSortOrder), ent.Asc(fielddefinition.FieldID)).
+		All(ctx)
+	if err != nil {
+		r.log.Errorf("query component fields for validation failed: %s", err.Error())
+		return nil, contentV1.ErrorInternalServerError("query component definitions failed")
+	}
+	for _, code := range byID {
+		out[code] = nil // 先置位：存在但零字段的组件与不存在区分开
+	}
+	for _, row := range rows {
+		code := byID[*row.ComponentID]
+		out[code] = append(out[code], row)
+	}
+	for _, code := range codes {
+		fields, ok := out[code]
+		if !ok {
+			return nil, contentV1.ErrorBadRequest("referenced component %q does not exist", code)
+		}
+		if len(fields) == 0 {
+			return nil, contentV1.ErrorBadRequest("referenced component %q has no field definitions", code)
+		}
+	}
+	return out, nil
+}
+
+func keysOf(m map[uint32]string) []uint32 {
+	keys := make([]uint32, 0, len(m))
+	for k := range m {
+		keys = append(keys, k)
+	}
+	return keys
+}
+
+// validateComponentInstances 校验组件实例数组/对象：键集 ⊆ 组件字段、组件内
+// 必填、叶子值类型与引用合法性。instances 为解析后的实例切片。
+func (r *ContentModelRepo) validateComponentInstances(ctx context.Context, fields []*ent.FieldDefinition, instances []map[string]any, qualName string, tenantID uint32) error {
+	derefStr := func(p *string) string {
+		if p == nil {
+			return ""
+		}
+		return *p
+	}
+	defMap := make(map[string]*ent.FieldDefinition, len(fields))
+	for _, f := range fields {
+		defMap[derefStr(f.Name)] = f
+	}
+	for i, inst := range instances {
+		instName := fmt.Sprintf("%s[%d]", qualName, i)
+		for key := range inst {
+			if key == "_component" {
+				continue
+			}
+			if _, ok := defMap[key]; !ok {
+				return contentV1.ErrorBadRequest("%s", fmt.Sprintf("custom field %s.%s is not defined in the component", qualName, key))
+			}
+		}
+		for _, f := range fields {
+			fName := derefStr(f.Name)
+			raw, exists := inst[fName]
+			required := f.IsRequired != nil && *f.IsRequired
+			s, isStr := raw.(string)
+			filled := exists && (!isStr || strings.TrimSpace(s) != "")
+			if required && !filled {
+				return contentV1.ErrorBadRequest("%s", fmt.Sprintf("custom field %s.%s is required", qualName, fName))
+			}
+			if !exists || !isStr || s == "" {
+				continue
+			}
+			if vErr := r.validateComponentLeafValue(ctx, f, instName+"."+fName, s, tenantID); vErr != nil {
+				return vErr
+			}
+		}
+	}
+	return nil
+}
+
+// validateComponentFieldValue COMPONENT/DYNAMIC_ZONE 字段值校验（值形状见设计文档 §3）。
+func (r *ContentModelRepo) validateComponentFieldValue(ctx context.Context, def *ent.FieldDefinition, name, value string, tenantID uint32) error {
+	if def.ComponentConfig == nil {
+		return contentV1.ErrorBadRequest("%s", fmt.Sprintf("custom field %q is a component field without component config", name))
+	}
+	cc := def.ComponentConfig
+
+	switch *def.Type {
+	case fielddefinition.TypeFIELD_TYPE_COMPONENT:
+		if cc.ComponentCode == "" {
+			return contentV1.ErrorBadRequest("%s", fmt.Sprintf("custom field %q has no component code configured", name))
+		}
+		comps, err := r.componentFieldsByCode(ctx, []string{cc.ComponentCode})
+		if err != nil {
+			return err
+		}
+		if cc.Repeatable {
+			var instances []map[string]any
+			if err := json.Unmarshal([]byte(value), &instances); err != nil {
+				return contentV1.ErrorBadRequest("%s", fmt.Sprintf("custom field %q must be a JSON array of component instances", name))
+			}
+			return r.validateComponentInstances(ctx, comps[cc.ComponentCode], instances, name, tenantID)
+		}
+		var inst map[string]any
+		if err := json.Unmarshal([]byte(value), &inst); err != nil {
+			return contentV1.ErrorBadRequest("%s", fmt.Sprintf("custom field %q must be a JSON object", name))
+		}
+		return r.validateComponentInstances(ctx, comps[cc.ComponentCode], []map[string]any{inst}, name, tenantID)
+
+	case fielddefinition.TypeFIELD_TYPE_DYNAMIC_ZONE:
+		if len(cc.AllowedComponentCodes) == 0 {
+			return contentV1.ErrorBadRequest("%s", fmt.Sprintf("custom field %q has no allowed component codes configured", name))
+		}
+		comps, err := r.componentFieldsByCode(ctx, cc.AllowedComponentCodes)
+		if err != nil {
+			return err
+		}
+		var instances []map[string]any
+		if err := json.Unmarshal([]byte(value), &instances); err != nil {
+			return contentV1.ErrorBadRequest("%s", fmt.Sprintf("custom field %q must be a JSON array of component instances", name))
+		}
+		for i, inst := range instances {
+			code, _ := inst["_component"].(string)
+			if code == "" || !containsString(cc.AllowedComponentCodes, code) {
+				return contentV1.ErrorBadRequest("%s", fmt.Sprintf("custom field %s._component must be one of the allowed components", fmt.Sprintf("%s[%d]", name, i)))
+			}
+			if vErr := r.validateComponentInstances(ctx, comps[code], []map[string]any{inst}, fmt.Sprintf("%s[%d]", name, i), tenantID); vErr != nil {
+				return vErr
+			}
+		}
+		return nil
+	}
+	return nil
 }

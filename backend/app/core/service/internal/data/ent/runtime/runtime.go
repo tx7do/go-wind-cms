@@ -19,6 +19,7 @@ import (
 	"go-wind-cms/app/core/service/internal/data/ent/collabdocstate"
 	"go-wind-cms/app/core/service/internal/data/ent/comment"
 	"go-wind-cms/app/core/service/internal/data/ent/commentlike"
+	"go-wind-cms/app/core/service/internal/data/ent/componentdefinition"
 	"go-wind-cms/app/core/service/internal/data/ent/contentmodel"
 	"go-wind-cms/app/core/service/internal/data/ent/contentmodeltranslation"
 	"go-wind-cms/app/core/service/internal/data/ent/contentreference"
@@ -467,6 +468,66 @@ func init() {
 	commentlikeDescID := commentlikeMixinFields0[0].Descriptor()
 	// commentlike.IDValidator is a validator for the "id" field. It is called by the builders before save.
 	commentlike.IDValidator = commentlikeDescID.Validators[0].(func(uint32) error)
+	componentdefinitionMixin := schema.ComponentDefinition{}.Mixin()
+	componentdefinition.Policy = privacy.NewPolicies(componentdefinitionMixin[3], schema.ComponentDefinition{})
+	componentdefinition.Hooks[0] = func(next ent.Mutator) ent.Mutator {
+		return ent.MutateFunc(func(ctx context.Context, m ent.Mutation) (ent.Value, error) {
+			if err := componentdefinition.Policy.EvalMutation(ctx, m); err != nil {
+				return nil, err
+			}
+			return next.Mutate(ctx, m)
+		})
+	}
+	componentdefinitionMixinFields0 := componentdefinitionMixin[0].Fields()
+	_ = componentdefinitionMixinFields0
+	componentdefinitionMixinFields3 := componentdefinitionMixin[3].Fields()
+	_ = componentdefinitionMixinFields3
+	componentdefinitionFields := schema.ComponentDefinition{}.Fields()
+	_ = componentdefinitionFields
+	// componentdefinitionDescTenantID is the schema descriptor for tenant_id field.
+	componentdefinitionDescTenantID := componentdefinitionMixinFields3[0].Descriptor()
+	// componentdefinition.DefaultTenantID holds the default value on creation for the tenant_id field.
+	componentdefinition.DefaultTenantID = componentdefinitionDescTenantID.Default.(uint32)
+	// componentdefinitionDescCode is the schema descriptor for code field.
+	componentdefinitionDescCode := componentdefinitionFields[0].Descriptor()
+	// componentdefinition.CodeValidator is a validator for the "code" field. It is called by the builders before save.
+	componentdefinition.CodeValidator = func() func(string) error {
+		validators := componentdefinitionDescCode.Validators
+		fns := [...]func(string) error{
+			validators[0].(func(string) error),
+			validators[1].(func(string) error),
+		}
+		return func(code string) error {
+			for _, fn := range fns {
+				if err := fn(code); err != nil {
+					return err
+				}
+			}
+			return nil
+		}
+	}()
+	// componentdefinitionDescName is the schema descriptor for name field.
+	componentdefinitionDescName := componentdefinitionFields[1].Descriptor()
+	// componentdefinition.NameValidator is a validator for the "name" field. It is called by the builders before save.
+	componentdefinition.NameValidator = func() func(string) error {
+		validators := componentdefinitionDescName.Validators
+		fns := [...]func(string) error{
+			validators[0].(func(string) error),
+			validators[1].(func(string) error),
+		}
+		return func(name string) error {
+			for _, fn := range fns {
+				if err := fn(name); err != nil {
+					return err
+				}
+			}
+			return nil
+		}
+	}()
+	// componentdefinitionDescID is the schema descriptor for id field.
+	componentdefinitionDescID := componentdefinitionMixinFields0[0].Descriptor()
+	// componentdefinition.IDValidator is a validator for the "id" field. It is called by the builders before save.
+	componentdefinition.IDValidator = componentdefinitionDescID.Validators[0].(func(uint32) error)
 	contentmodelMixin := schema.ContentModel{}.Mixin()
 	contentmodel.Policy = privacy.NewPolicies(contentmodelMixin[4], schema.ContentModel{})
 	contentmodel.Hooks[0] = func(next ent.Mutator) ent.Mutator {
@@ -959,11 +1020,11 @@ func init() {
 	// fielddefinition.DefaultTenantID holds the default value on creation for the tenant_id field.
 	fielddefinition.DefaultTenantID = fielddefinitionDescTenantID.Default.(uint32)
 	// fielddefinitionDescName is the schema descriptor for name field.
-	fielddefinitionDescName := fielddefinitionFields[1].Descriptor()
+	fielddefinitionDescName := fielddefinitionFields[2].Descriptor()
 	// fielddefinition.NameValidator is a validator for the "name" field. It is called by the builders before save.
 	fielddefinition.NameValidator = fielddefinitionDescName.Validators[0].(func(string) error)
 	// fielddefinitionDescIsRequired is the schema descriptor for is_required field.
-	fielddefinitionDescIsRequired := fielddefinitionFields[6].Descriptor()
+	fielddefinitionDescIsRequired := fielddefinitionFields[7].Descriptor()
 	// fielddefinition.DefaultIsRequired holds the default value on creation for the is_required field.
 	fielddefinition.DefaultIsRequired = fielddefinitionDescIsRequired.Default.(bool)
 	// fielddefinitionDescID is the schema descriptor for id field.

@@ -2410,6 +2410,21 @@ components:
                     description: 删除时间
                     format: date-time
             description: 类别翻译
+        content.service.v1.ComponentConfig:
+            type: object
+            properties:
+                componentCode:
+                    type: string
+                    description: 组件编码（FIELD_TYPE_COMPONENT 必填）
+                repeatable:
+                    type: boolean
+                    description: 是否可重复（true=实例数组）
+                allowedComponentCodes:
+                    type: array
+                    items:
+                        type: string
+                    description: 动态区组件白名单（FIELD_TYPE_DYNAMIC_ZONE 必填非空）
+            description: 组件配置（component/dynamic_zone 字段用）
         content.service.v1.ContentModel:
             type: object
             properties:
@@ -2559,6 +2574,8 @@ components:
                         - FIELD_TYPE_IMAGE
                         - FIELD_TYPE_FILE
                         - FIELD_TYPE_RELATION
+                        - FIELD_TYPE_COMPONENT
+                        - FIELD_TYPE_DYNAMIC_ZONE
                     type: string
                     description: 字段类型
                     format: enum
@@ -2584,6 +2601,12 @@ components:
                     description: 扩展选项（select 类等，预留）
                 relationConfig:
                     $ref: '#/components/schemas/content.service.v1.RelationConfig'
+                componentId:
+                    type: integer
+                    description: 所属组件定义ID（与 contentModelId 恰好其一非空）
+                    format: uint32
+                componentConfig:
+                    $ref: '#/components/schemas/content.service.v1.ComponentConfig'
                 sortOrder:
                     type: integer
                     description: 排序顺序

@@ -48,6 +48,9 @@ type Comment func(*sql.Selector)
 // CommentLike is the predicate function for commentlike builders.
 type CommentLike func(*sql.Selector)
 
+// ComponentDefinition is the predicate function for componentdefinition builders.
+type ComponentDefinition func(*sql.Selector)
+
 // ContentModel is the predicate function for contentmodel builders.
 type ContentModel func(*sql.Selector)
 

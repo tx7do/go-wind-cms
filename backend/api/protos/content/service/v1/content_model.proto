@@ -44,6 +44,24 @@ service ContentModelService {
   // 仅 C 端公开语义：post/page 只解析 PUBLISHED（未发布/软删/非法引用静默
   // 跳过，不报错）；租户隔离由 viewer 保证。category/tag 引用 v1 不解析。
   rpc ResolveContentReferences (ResolveContentReferencesRequest) returns (ResolveContentReferencesResponse) {}
+
+  // 组件定义列表（管理面）
+  rpc ListComponentDefinitions (pagination.PagingRequest) returns (ListComponentDefinitionsResponse) {}
+
+  // 组件定义详情
+  rpc GetComponentDefinition (GetComponentDefinitionRequest) returns (ComponentDefinition) {}
+
+  // 创建组件定义（字段定义经 FieldDefinition 面 按 component_id 存取）
+  rpc CreateComponentDefinition (CreateComponentDefinitionRequest) returns (ComponentDefinition) {}
+
+  // 更新组件定义
+  rpc UpdateComponentDefinition (UpdateComponentDefinitionRequest) returns (ComponentDefinition) {}
+
+  // 删除组件定义（被模型字段引用时拒绝）
+  rpc DeleteComponentDefinition (DeleteComponentDefinitionRequest) returns (google.protobuf.Empty) {}
+
+  // 保存组件字段定义（replace 语义：整体替换该组件的字段集）
+  rpc SaveComponentFieldDefinitions (SaveComponentFieldDefinitionsRequest) returns (ListFieldDefinitionsResponse) {}
 }
 
 // 内容模型
@@ -107,6 +125,8 @@ message FieldDefinition {
     FIELD_TYPE_IMAGE = 3;      // 图片（media_asset 引用）
     FIELD_TYPE_FILE = 4;       // 文件（media_asset 引用）
     FIELD_TYPE_RELATION = 5;   // 关联（跨实体引用）
+    FIELD_TYPE_COMPONENT = 6;  // 组件（单实例或可重复字段组，值见设计文档 §3）
+    FIELD_TYPE_DYNAMIC_ZONE = 7; // 动态区（混合组件有序数组）
   }
 
   optional uint32 id = 1 [
@@ -164,6 +184,16 @@ message FieldDefinition {
     (gnostic.openapi.v3.property) = {description: "relation 类型字段的引用配置（仅 FIELD_TYPE_RELATION 适用）"}
   ]; // 引用配置
 
+  optional uint32 component_id = 14 [
+    json_name = "componentId",
+    (gnostic.openapi.v3.property) = {description: "所属组件定义ID（与 contentModelId 恰好其一非空）"}
+  ]; // 所属组件定义ID
+
+  optional ComponentConfig component_config = 15 [
+    json_name = "componentConfig",
+    (gnostic.openapi.v3.property) = {description: "component/dynamic_zone 类型字段的组件配置"}
+  ]; // 组件配置
+
   optional uint32 sort_order = 12 [
     json_name = "sortOrder",
     (gnostic.openapi.v3.property) = {description: "排序顺序"}
@@ -195,6 +225,24 @@ message RelationConfig {
     json_name = "filterCategoryId",
     (gnostic.openapi.v3.property) = {description: "可选：限定目标 post 所属分类"}
   ]; // 限定分类
+}
+
+// 组件配置（component/dynamic_zone 字段用）
+message ComponentConfig {
+  optional string component_code = 1 [
+    json_name = "componentCode",
+    (gnostic.openapi.v3.property) = {description: "组件编码（FIELD_TYPE_COMPONENT 必填）"}
+  ]; // 组件编码
+
+  optional bool repeatable = 2 [
+    json_name = "repeatable",
+    (gnostic.openapi.v3.property) = {description: "是否可重复（true=实例数组）"}
+  ]; // 是否可重复
+
+  repeated string allowed_component_codes = 3 [
+    json_name = "allowedComponentCodes",
+    (gnostic.openapi.v3.property) = {description: "动态区组件白名单（FIELD_TYPE_DYNAMIC_ZONE 必填非空）"}
+  ]; // 动态区组件白名单
 }
 
 // 内容模型翻译
@@ -286,12 +334,17 @@ message DeleteContentModelRequest {
   }
 }
 
-// 查询字段定义列表 - 请求
+// 查询字段定义列表 - 请求（component_id 非 0 时列组件字段，content_model_id 忽略）
 message ListFieldDefinitionsRequest {
   uint32 content_model_id = 1 [
     json_name = "contentModelId",
     (gnostic.openapi.v3.property) = {description: "内容模型ID"}
   ]; // 内容模型ID
+
+  optional uint32 component_id = 2 [
+    json_name = "componentId",
+    (gnostic.openapi.v3.property) = {description: "组件定义ID（非 0 时列该组件的字段）"}
+  ]; // 组件定义ID
 
   optional google.protobuf.FieldMask view_mask = 100 [
     json_name = "viewMask",
@@ -352,4 +405,72 @@ message ContentReferenceSummary {
 // 批量解析内容引用 - 回应（仅含解析成功的目标；失败/不可见项不出现）
 message ResolveContentReferencesResponse {
   repeated ContentReferenceSummary items = 1;
+}
+
+// 组件定义：具名可复用字段组（字段经 FieldDefinition 面 按 componentId 存取）
+message ComponentDefinition {
+  optional uint32 id = 1 [
+    json_name = "id",
+    (gnostic.openapi.v3.property) = {description: "组件ID"}
+  ]; // 组件ID
+
+  optional string code = 2 [
+    json_name = "code",
+    (gnostic.openapi.v3.property) = {description: "组件编码（语言无关引用键，租户内唯一）"}
+  ]; // 组件编码
+
+  optional string name = 3 [
+    json_name = "name",
+    (gnostic.openapi.v3.property) = {description: "组件显示名"}
+  ]; // 组件显示名
+
+  optional string description = 4 [
+    json_name = "description",
+    (gnostic.openapi.v3.property) = {description: "组件描述"}
+  ]; // 组件描述
+
+  optional uint32 field_count = 5 [
+    json_name = "fieldCount",
+    (gnostic.openapi.v3.property) = {description: "字段数（只读统计）"}
+  ]; // 字段数
+
+  optional google.protobuf.Timestamp created_at = 200 [json_name = "createdAt"]; // 创建时间
+  optional google.protobuf.Timestamp updated_at = 201 [json_name = "updatedAt"]; // 更新时间
+}
+
+// 组件定义列表 - 回应
+message ListComponentDefinitionsResponse {
+  repeated ComponentDefinition items = 1;
+  uint64 total = 2;
+}
+
+// 组件定义详情 - 请求
+message GetComponentDefinitionRequest {
+  uint32 id = 1 [json_name = "id"]; // 组件ID
+}
+
+// 创建组件定义 - 请求
+message CreateComponentDefinitionRequest {
+  ComponentDefinition data = 1 [json_name = "data"]; // 组件
+}
+
+// 更新组件定义 - 请求
+message UpdateComponentDefinitionRequest {
+  uint32 id = 1 [json_name = "id"]; // 组件ID
+
+  ComponentDefinition data = 2 [json_name = "data"]; // 组件
+
+  google.protobuf.FieldMask update_mask = 3 [json_name = "updateMask"]; // 更新字段
+}
+
+// 删除组件定义 - 请求
+message DeleteComponentDefinitionRequest {
+  uint32 id = 1 [json_name = "id"]; // 组件ID
+}
+
+// 保存组件字段定义 - 请求（整体替换）
+message SaveComponentFieldDefinitionsRequest {
+  uint32 component_id = 1 [json_name = "componentId"]; // 组件ID
+
+  repeated FieldDefinition fields = 2; // 字段定义集
 }

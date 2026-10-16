@@ -18,6 +18,15 @@ type RelationConfig struct {
 	FilterCategoryID uint32 `json:"filter_category_id,omitempty"`
 }
 
+// ComponentConfig component/dynamic_zone 类型字段的组件配置（typed-JSON 存储）。
+// COMPONENT 用 ComponentCode + Repeatable；DYNAMIC_ZONE 用 AllowedComponentCodes
+//（非空白名单）。组件字段不支持嵌套组件（校验器显式拒绝）。
+type ComponentConfig struct {
+	ComponentCode         string   `json:"component_code,omitempty"`
+	Repeatable            bool     `json:"repeatable,omitempty"`
+	AllowedComponentCodes []string `json:"allowed_component_codes,omitempty"`
+}
+
 // FieldDefinition 字段定义：归属 ContentModel，声明一个自定义字段的
 // 名称/类型/校验规则。值存于内容实体（Post/Page/Category）的 custom_fields
 // JSON 列（键为 name，image/file/relation 值为字符串化引用，如 "post:456"）。
@@ -45,6 +54,11 @@ func (FieldDefinition) Fields() []ent.Field {
 			Optional().
 			Nillable(),
 
+		field.Uint32("component_id").
+			Comment("所属组件定义ID（与 content_model_id 恰好其一非空）").
+			Optional().
+			Nillable(),
+
 		field.String("name").
 			Comment("字段名（语言无关，作为 custom_fields 的键）").
 			NotEmpty().
@@ -60,6 +74,8 @@ func (FieldDefinition) Fields() []ent.Field {
 				"FIELD_TYPE_IMAGE", "FIELD_TYPE_IMAGE",
 				"FIELD_TYPE_FILE", "FIELD_TYPE_FILE",
 				"FIELD_TYPE_RELATION", "FIELD_TYPE_RELATION",
+				"FIELD_TYPE_COMPONENT", "FIELD_TYPE_COMPONENT",
+				"FIELD_TYPE_DYNAMIC_ZONE", "FIELD_TYPE_DYNAMIC_ZONE",
 			).
 			Default("FIELD_TYPE_TEXT").
 			Optional().
@@ -98,6 +114,10 @@ func (FieldDefinition) Fields() []ent.Field {
 		field.JSON("relation_config", &RelationConfig{}).
 			Comment("relation 类型字段的引用配置（仅 FIELD_TYPE_RELATION 适用）").
 			Optional(),
+
+		field.JSON("component_config", &ComponentConfig{}).
+			Comment("component/dynamic_zone 类型字段的组件配置").
+			Optional(),
 	}
 }
 
@@ -114,6 +134,7 @@ func (FieldDefinition) Mixin() []ent.Mixin {
 func (FieldDefinition) Indexes() []ent.Index {
 	return []ent.Index{
 		index.Fields("content_model_id", "name").Unique().StorageKey("uix_field_definition_model_name"),
+		index.Fields("component_id", "name").Unique().StorageKey("uix_field_definition_component_name"),
 		index.Fields("content_model_id"),
 	}
 }

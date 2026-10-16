@@ -43,14 +43,14 @@ type EmailTemplateServiceHTTPServer interface {
 
 func RegisterEmailTemplateServiceHTTPServer(s *http.Server, srv EmailTemplateServiceHTTPServer) {
 	r := s.Route("/")
-	r.GET("/admin/v1/email-templates", _EmailTemplateService_List14_HTTP_Handler(srv))
-	r.GET("/admin/v1/email-templates/{id}", _EmailTemplateService_Get13_HTTP_Handler(srv))
-	r.POST("/admin/v1/email-templates", _EmailTemplateService_Create9_HTTP_Handler(srv))
-	r.PUT("/admin/v1/email-templates/{id}", _EmailTemplateService_Update10_HTTP_Handler(srv))
-	r.DELETE("/admin/v1/email-templates/{id}", _EmailTemplateService_Delete11_HTTP_Handler(srv))
+	r.GET("/admin/v1/email-templates", _EmailTemplateService_List15_HTTP_Handler(srv))
+	r.GET("/admin/v1/email-templates/{id}", _EmailTemplateService_Get14_HTTP_Handler(srv))
+	r.POST("/admin/v1/email-templates", _EmailTemplateService_Create10_HTTP_Handler(srv))
+	r.PUT("/admin/v1/email-templates/{id}", _EmailTemplateService_Update11_HTTP_Handler(srv))
+	r.DELETE("/admin/v1/email-templates/{id}", _EmailTemplateService_Delete12_HTTP_Handler(srv))
 }
 
-func _EmailTemplateService_List14_HTTP_Handler(srv EmailTemplateServiceHTTPServer) func(ctx http.Context) error {
+func _EmailTemplateService_List15_HTTP_Handler(srv EmailTemplateServiceHTTPServer) func(ctx http.Context) error {
 	return func(ctx http.Context) error {
 		var in v1.PagingRequest
 		if err := ctx.BindQuery(&in); err != nil {
@@ -69,7 +69,7 @@ func _EmailTemplateService_List14_HTTP_Handler(srv EmailTemplateServiceHTTPServe
 	}
 }
 
-func _EmailTemplateService_Get13_HTTP_Handler(srv EmailTemplateServiceHTTPServer) func(ctx http.Context) error {
+func _EmailTemplateService_Get14_HTTP_Handler(srv EmailTemplateServiceHTTPServer) func(ctx http.Context) error {
 	return func(ctx http.Context) error {
 		var in v11.GetEmailTemplateRequest
 		if err := ctx.BindQuery(&in); err != nil {
@@ -91,7 +91,7 @@ func _EmailTemplateService_Get13_HTTP_Handler(srv EmailTemplateServiceHTTPServer
 	}
 }
 
-func _EmailTemplateService_Create9_HTTP_Handler(srv EmailTemplateServiceHTTPServer) func(ctx http.Context) error {
+func _EmailTemplateService_Create10_HTTP_Handler(srv EmailTemplateServiceHTTPServer) func(ctx http.Context) error {
 	return func(ctx http.Context) error {
 		var in v11.CreateEmailTemplateRequest
 		if err := ctx.Bind(&in); err != nil {
@@ -113,7 +113,7 @@ func _EmailTemplateService_Create9_HTTP_Handler(srv EmailTemplateServiceHTTPServ
 	}
 }
 
-func _EmailTemplateService_Update10_HTTP_Handler(srv EmailTemplateServiceHTTPServer) func(ctx http.Context) error {
+func _EmailTemplateService_Update11_HTTP_Handler(srv EmailTemplateServiceHTTPServer) func(ctx http.Context) error {
 	return func(ctx http.Context) error {
 		var in v11.UpdateEmailTemplateRequest
 		if err := ctx.Bind(&in); err != nil {
@@ -138,7 +138,7 @@ func _EmailTemplateService_Update10_HTTP_Handler(srv EmailTemplateServiceHTTPSer
 	}
 }
 
-func _EmailTemplateService_Delete11_HTTP_Handler(srv EmailTemplateServiceHTTPServer) func(ctx http.Context) error {
+func _EmailTemplateService_Delete12_HTTP_Handler(srv EmailTemplateServiceHTTPServer) func(ctx http.Context) error {
 	return func(ctx http.Context) error {
 		var in v11.DeleteEmailTemplateRequest
 		if err := ctx.BindQuery(&in); err != nil {
