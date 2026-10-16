@@ -76,12 +76,12 @@ require (
 	github.com/tx7do/kratos-transport/transport/graphql v1.4.2-0.20261014230056-d5f78b017544
 	github.com/tx7do/kratos-transport/transport/mcp v1.3.4
 	github.com/tx7do/kratos-transport/transport/sse v1.3.8
-	github.com/vektah/gqlparser/v2 v2.5.33
 	github.com/xiaoqidun/entps v1.56.0
 	github.com/xuri/excelize/v2 v2.9.1
 	github.com/yuin/gopher-lua v1.1.2
 	go.etcd.io/etcd/client/v3 v3.7.1
 	go.opentelemetry.io/otel/trace v1.46.0
+	golang.org/x/net v0.58.0
 	google.golang.org/genproto v0.0.0-20260810153831-ec0a7760b754
 	google.golang.org/genproto/googleapis/api v0.0.0-20260825221802-da73d73af1c5
 	google.golang.org/grpc v1.83.2
@@ -252,6 +252,7 @@ require (
 	github.com/tx7do/kratos-transport/transport/keepalive v1.3.5 // indirect
 	github.com/valyala/fastjson v1.6.10 // indirect
 	github.com/vearutop/statigz v1.5.0 // indirect
+	github.com/vektah/gqlparser/v2 v2.5.33 // indirect
 	github.com/wenlng/go-captcha/v2 v2.0.5 // indirect
 	github.com/xdg-go/pbkdf2 v1.0.0 // indirect
 	github.com/xdg-go/scram v1.2.0 // indirect
@@ -294,7 +295,6 @@ require (
 	golang.org/x/exp v0.0.0-20260410095643-746e56fc9e2f // indirect
 	golang.org/x/image v0.40.0 // indirect
 	golang.org/x/mod v0.40.0 // indirect
-	golang.org/x/net v0.58.0 // indirect
 	golang.org/x/oauth2 v0.36.0 // indirect
 	golang.org/x/sync v0.22.0 // indirect
 	golang.org/x/sys v0.47.0 // indirect
