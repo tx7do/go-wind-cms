@@ -104,6 +104,34 @@ func (_c *ExperimentParticipantCreate) SetVariantName(v string) *ExperimentParti
 	return _c
 }
 
+// SetConverted sets the "converted" field.
+func (_c *ExperimentParticipantCreate) SetConverted(v bool) *ExperimentParticipantCreate {
+	_c.mutation.SetConverted(v)
+	return _c
+}
+
+// SetNillableConverted sets the "converted" field if the given value is not nil.
+func (_c *ExperimentParticipantCreate) SetNillableConverted(v *bool) *ExperimentParticipantCreate {
+	if v != nil {
+		_c.SetConverted(*v)
+	}
+	return _c
+}
+
+// SetConvertedAt sets the "converted_at" field.
+func (_c *ExperimentParticipantCreate) SetConvertedAt(v time.Time) *ExperimentParticipantCreate {
+	_c.mutation.SetConvertedAt(v)
+	return _c
+}
+
+// SetNillableConvertedAt sets the "converted_at" field if the given value is not nil.
+func (_c *ExperimentParticipantCreate) SetNillableConvertedAt(v *time.Time) *ExperimentParticipantCreate {
+	if v != nil {
+		_c.SetConvertedAt(*v)
+	}
+	return _c
+}
+
 // SetID sets the "id" field.
 func (_c *ExperimentParticipantCreate) SetID(v uint32) *ExperimentParticipantCreate {
 	_c.mutation.SetID(v)
@@ -150,6 +178,10 @@ func (_c *ExperimentParticipantCreate) defaults() error {
 	if _, ok := _c.mutation.TenantID(); !ok {
 		v := experimentparticipant.DefaultTenantID
 		_c.mutation.SetTenantID(v)
+	}
+	if _, ok := _c.mutation.Converted(); !ok {
+		v := experimentparticipant.DefaultConverted
+		_c.mutation.SetConverted(v)
 	}
 	return nil
 }
@@ -237,6 +269,14 @@ func (_c *ExperimentParticipantCreate) createSpec() (*ExperimentParticipant, *sq
 	if value, ok := _c.mutation.VariantName(); ok {
 		_spec.SetField(experimentparticipant.FieldVariantName, field.TypeString, value)
 		_node.VariantName = value
+	}
+	if value, ok := _c.mutation.Converted(); ok {
+		_spec.SetField(experimentparticipant.FieldConverted, field.TypeBool, value)
+		_node.Converted = &value
+	}
+	if value, ok := _c.mutation.ConvertedAt(); ok {
+		_spec.SetField(experimentparticipant.FieldConvertedAt, field.TypeTime, value)
+		_node.ConvertedAt = &value
 	}
 	return _node, _spec
 }
@@ -371,6 +411,42 @@ func (u *ExperimentParticipantUpsert) SetVariantName(v string) *ExperimentPartic
 // UpdateVariantName sets the "variant_name" field to the value that was provided on create.
 func (u *ExperimentParticipantUpsert) UpdateVariantName() *ExperimentParticipantUpsert {
 	u.SetExcluded(experimentparticipant.FieldVariantName)
+	return u
+}
+
+// SetConverted sets the "converted" field.
+func (u *ExperimentParticipantUpsert) SetConverted(v bool) *ExperimentParticipantUpsert {
+	u.Set(experimentparticipant.FieldConverted, v)
+	return u
+}
+
+// UpdateConverted sets the "converted" field to the value that was provided on create.
+func (u *ExperimentParticipantUpsert) UpdateConverted() *ExperimentParticipantUpsert {
+	u.SetExcluded(experimentparticipant.FieldConverted)
+	return u
+}
+
+// ClearConverted clears the value of the "converted" field.
+func (u *ExperimentParticipantUpsert) ClearConverted() *ExperimentParticipantUpsert {
+	u.SetNull(experimentparticipant.FieldConverted)
+	return u
+}
+
+// SetConvertedAt sets the "converted_at" field.
+func (u *ExperimentParticipantUpsert) SetConvertedAt(v time.Time) *ExperimentParticipantUpsert {
+	u.Set(experimentparticipant.FieldConvertedAt, v)
+	return u
+}
+
+// UpdateConvertedAt sets the "converted_at" field to the value that was provided on create.
+func (u *ExperimentParticipantUpsert) UpdateConvertedAt() *ExperimentParticipantUpsert {
+	u.SetExcluded(experimentparticipant.FieldConvertedAt)
+	return u
+}
+
+// ClearConvertedAt clears the value of the "converted_at" field.
+func (u *ExperimentParticipantUpsert) ClearConvertedAt() *ExperimentParticipantUpsert {
+	u.SetNull(experimentparticipant.FieldConvertedAt)
 	return u
 }
 
@@ -523,6 +599,48 @@ func (u *ExperimentParticipantUpsertOne) SetVariantName(v string) *ExperimentPar
 func (u *ExperimentParticipantUpsertOne) UpdateVariantName() *ExperimentParticipantUpsertOne {
 	return u.Update(func(s *ExperimentParticipantUpsert) {
 		s.UpdateVariantName()
+	})
+}
+
+// SetConverted sets the "converted" field.
+func (u *ExperimentParticipantUpsertOne) SetConverted(v bool) *ExperimentParticipantUpsertOne {
+	return u.Update(func(s *ExperimentParticipantUpsert) {
+		s.SetConverted(v)
+	})
+}
+
+// UpdateConverted sets the "converted" field to the value that was provided on create.
+func (u *ExperimentParticipantUpsertOne) UpdateConverted() *ExperimentParticipantUpsertOne {
+	return u.Update(func(s *ExperimentParticipantUpsert) {
+		s.UpdateConverted()
+	})
+}
+
+// ClearConverted clears the value of the "converted" field.
+func (u *ExperimentParticipantUpsertOne) ClearConverted() *ExperimentParticipantUpsertOne {
+	return u.Update(func(s *ExperimentParticipantUpsert) {
+		s.ClearConverted()
+	})
+}
+
+// SetConvertedAt sets the "converted_at" field.
+func (u *ExperimentParticipantUpsertOne) SetConvertedAt(v time.Time) *ExperimentParticipantUpsertOne {
+	return u.Update(func(s *ExperimentParticipantUpsert) {
+		s.SetConvertedAt(v)
+	})
+}
+
+// UpdateConvertedAt sets the "converted_at" field to the value that was provided on create.
+func (u *ExperimentParticipantUpsertOne) UpdateConvertedAt() *ExperimentParticipantUpsertOne {
+	return u.Update(func(s *ExperimentParticipantUpsert) {
+		s.UpdateConvertedAt()
+	})
+}
+
+// ClearConvertedAt clears the value of the "converted_at" field.
+func (u *ExperimentParticipantUpsertOne) ClearConvertedAt() *ExperimentParticipantUpsertOne {
+	return u.Update(func(s *ExperimentParticipantUpsert) {
+		s.ClearConvertedAt()
 	})
 }
 
@@ -841,6 +959,48 @@ func (u *ExperimentParticipantUpsertBulk) SetVariantName(v string) *ExperimentPa
 func (u *ExperimentParticipantUpsertBulk) UpdateVariantName() *ExperimentParticipantUpsertBulk {
 	return u.Update(func(s *ExperimentParticipantUpsert) {
 		s.UpdateVariantName()
+	})
+}
+
+// SetConverted sets the "converted" field.
+func (u *ExperimentParticipantUpsertBulk) SetConverted(v bool) *ExperimentParticipantUpsertBulk {
+	return u.Update(func(s *ExperimentParticipantUpsert) {
+		s.SetConverted(v)
+	})
+}
+
+// UpdateConverted sets the "converted" field to the value that was provided on create.
+func (u *ExperimentParticipantUpsertBulk) UpdateConverted() *ExperimentParticipantUpsertBulk {
+	return u.Update(func(s *ExperimentParticipantUpsert) {
+		s.UpdateConverted()
+	})
+}
+
+// ClearConverted clears the value of the "converted" field.
+func (u *ExperimentParticipantUpsertBulk) ClearConverted() *ExperimentParticipantUpsertBulk {
+	return u.Update(func(s *ExperimentParticipantUpsert) {
+		s.ClearConverted()
+	})
+}
+
+// SetConvertedAt sets the "converted_at" field.
+func (u *ExperimentParticipantUpsertBulk) SetConvertedAt(v time.Time) *ExperimentParticipantUpsertBulk {
+	return u.Update(func(s *ExperimentParticipantUpsert) {
+		s.SetConvertedAt(v)
+	})
+}
+
+// UpdateConvertedAt sets the "converted_at" field to the value that was provided on create.
+func (u *ExperimentParticipantUpsertBulk) UpdateConvertedAt() *ExperimentParticipantUpsertBulk {
+	return u.Update(func(s *ExperimentParticipantUpsert) {
+		s.UpdateConvertedAt()
+	})
+}
+
+// ClearConvertedAt clears the value of the "converted_at" field.
+func (u *ExperimentParticipantUpsertBulk) ClearConvertedAt() *ExperimentParticipantUpsertBulk {
+	return u.Update(func(s *ExperimentParticipantUpsert) {
+		s.ClearConvertedAt()
 	})
 }
 

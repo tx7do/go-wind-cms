@@ -38,8 +38,11 @@ service ExperimentService {
   // 记录一次访客分配（(experiment_id, visitor_hash) 幂等）
   rpc RecordParticipant (RecordExperimentParticipantRequest) returns (google.protobuf.Empty) {}
 
-  // 变体参与统计（按变体名快照计数）
+  // 变体参与统计（按变体名快照计数，含转化数）
   rpc GetVariantStats (GetExperimentVariantStatsRequest) returns (ExperimentVariantStatsResponse) {}
+
+  // 标记转化（如表单提交归因到访客已参与的实验；幂等）
+  rpc RecordExperimentConversion (RecordExperimentConversionRequest) returns (google.protobuf.Empty) {}
 }
 
 // 内容实验
@@ -201,6 +204,7 @@ message ExperimentVariantStatsResponse {
   message VariantCount {
     string variant_name = 1 [json_name = "variantName"]; // 变体名称
     uint64 participants = 2;                             // 参与人数
+    uint64 conversions = 3 [json_name = "conversions"];  // 转化数
   }
   repeated VariantCount items = 1;
 }
@@ -208,4 +212,16 @@ message ExperimentVariantStatsResponse {
 // 请求 - 变体参与统计
 message GetExperimentVariantStatsRequest {
   uint32 experiment_id = 1 [json_name = "experimentId"]; // 实验ID
+}
+
+// 请求 - 标记转化
+message RecordExperimentConversionRequest {
+  uint32 experiment_id = 1 [json_name = "experimentId"]; // 实验ID
+  string visitor_hash = 2 [json_name = "visitorHash"];   // 访客标识哈希（与参与记录一致）
+}
+
+// 请求 - 页面运行实验的转化归因（app BFF 表单提交内部调用）
+message RecordPageExperimentConversionRequest {
+  uint32 page_id = 1 [json_name = "pageId"];  // 页面ID
+  string visitor_hash_seed = 2 [json_name = "visitorHashSeed"]; // 访客标识（cookie vid 原值，实验 ID 由服务端派生）
 }

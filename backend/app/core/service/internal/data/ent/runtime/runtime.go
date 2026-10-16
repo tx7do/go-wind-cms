@@ -765,6 +765,10 @@ func init() {
 	experimentparticipantDescVariantName := experimentparticipantFields[2].Descriptor()
 	// experimentparticipant.VariantNameValidator is a validator for the "variant_name" field. It is called by the builders before save.
 	experimentparticipant.VariantNameValidator = experimentparticipantDescVariantName.Validators[0].(func(string) error)
+	// experimentparticipantDescConverted is the schema descriptor for converted field.
+	experimentparticipantDescConverted := experimentparticipantFields[3].Descriptor()
+	// experimentparticipant.DefaultConverted holds the default value on creation for the converted field.
+	experimentparticipant.DefaultConverted = experimentparticipantDescConverted.Default.(bool)
 	// experimentparticipantDescID is the schema descriptor for id field.
 	experimentparticipantDescID := experimentparticipantMixinFields0[0].Descriptor()
 	// experimentparticipant.IDValidator is a validator for the "id" field. It is called by the builders before save.

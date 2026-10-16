@@ -460,7 +460,12 @@ const ExperimentManagement = () => {
             key={row.variantName}
             style={{ display: 'flex', justifyContent: 'space-between', padding: '8px 0', borderBottom: '1px solid var(--ant-color-split)' }}
           >
-            <span>{row.variantName}</span>
+            <span>
+              {row.variantName}
+              <span style={{ color: 'var(--ant-color-text-tertiary)', marginLeft: 8 }}>
+                {t('conversions', { count: row.conversions, rate: row.participants > 0 ? Math.round((row.conversions / row.participants) * 100) : 0 })}
+              </span>
+            </span>
             <strong>{row.participants}</strong>
           </div>
         ))}

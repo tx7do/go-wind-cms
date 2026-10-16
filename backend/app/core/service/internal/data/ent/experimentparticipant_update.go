@@ -124,6 +124,46 @@ func (_u *ExperimentParticipantUpdate) SetNillableVariantName(v *string) *Experi
 	return _u
 }
 
+// SetConverted sets the "converted" field.
+func (_u *ExperimentParticipantUpdate) SetConverted(v bool) *ExperimentParticipantUpdate {
+	_u.mutation.SetConverted(v)
+	return _u
+}
+
+// SetNillableConverted sets the "converted" field if the given value is not nil.
+func (_u *ExperimentParticipantUpdate) SetNillableConverted(v *bool) *ExperimentParticipantUpdate {
+	if v != nil {
+		_u.SetConverted(*v)
+	}
+	return _u
+}
+
+// ClearConverted clears the value of the "converted" field.
+func (_u *ExperimentParticipantUpdate) ClearConverted() *ExperimentParticipantUpdate {
+	_u.mutation.ClearConverted()
+	return _u
+}
+
+// SetConvertedAt sets the "converted_at" field.
+func (_u *ExperimentParticipantUpdate) SetConvertedAt(v time.Time) *ExperimentParticipantUpdate {
+	_u.mutation.SetConvertedAt(v)
+	return _u
+}
+
+// SetNillableConvertedAt sets the "converted_at" field if the given value is not nil.
+func (_u *ExperimentParticipantUpdate) SetNillableConvertedAt(v *time.Time) *ExperimentParticipantUpdate {
+	if v != nil {
+		_u.SetConvertedAt(*v)
+	}
+	return _u
+}
+
+// ClearConvertedAt clears the value of the "converted_at" field.
+func (_u *ExperimentParticipantUpdate) ClearConvertedAt() *ExperimentParticipantUpdate {
+	_u.mutation.ClearConvertedAt()
+	return _u
+}
+
 // Mutation returns the ExperimentParticipantMutation object of the builder.
 func (_u *ExperimentParticipantUpdate) Mutation() *ExperimentParticipantMutation {
 	return _u.mutation
@@ -221,6 +261,18 @@ func (_u *ExperimentParticipantUpdate) sqlSave(ctx context.Context) (_node int, 
 	}
 	if value, ok := _u.mutation.VariantName(); ok {
 		_spec.SetField(experimentparticipant.FieldVariantName, field.TypeString, value)
+	}
+	if value, ok := _u.mutation.Converted(); ok {
+		_spec.SetField(experimentparticipant.FieldConverted, field.TypeBool, value)
+	}
+	if _u.mutation.ConvertedCleared() {
+		_spec.ClearField(experimentparticipant.FieldConverted, field.TypeBool)
+	}
+	if value, ok := _u.mutation.ConvertedAt(); ok {
+		_spec.SetField(experimentparticipant.FieldConvertedAt, field.TypeTime, value)
+	}
+	if _u.mutation.ConvertedAtCleared() {
+		_spec.ClearField(experimentparticipant.FieldConvertedAt, field.TypeTime)
 	}
 	_spec.AddModifiers(_u.modifiers...)
 	if _node, err = sqlgraph.UpdateNodes(ctx, _u.driver, _spec); err != nil {
@@ -336,6 +388,46 @@ func (_u *ExperimentParticipantUpdateOne) SetNillableVariantName(v *string) *Exp
 	if v != nil {
 		_u.SetVariantName(*v)
 	}
+	return _u
+}
+
+// SetConverted sets the "converted" field.
+func (_u *ExperimentParticipantUpdateOne) SetConverted(v bool) *ExperimentParticipantUpdateOne {
+	_u.mutation.SetConverted(v)
+	return _u
+}
+
+// SetNillableConverted sets the "converted" field if the given value is not nil.
+func (_u *ExperimentParticipantUpdateOne) SetNillableConverted(v *bool) *ExperimentParticipantUpdateOne {
+	if v != nil {
+		_u.SetConverted(*v)
+	}
+	return _u
+}
+
+// ClearConverted clears the value of the "converted" field.
+func (_u *ExperimentParticipantUpdateOne) ClearConverted() *ExperimentParticipantUpdateOne {
+	_u.mutation.ClearConverted()
+	return _u
+}
+
+// SetConvertedAt sets the "converted_at" field.
+func (_u *ExperimentParticipantUpdateOne) SetConvertedAt(v time.Time) *ExperimentParticipantUpdateOne {
+	_u.mutation.SetConvertedAt(v)
+	return _u
+}
+
+// SetNillableConvertedAt sets the "converted_at" field if the given value is not nil.
+func (_u *ExperimentParticipantUpdateOne) SetNillableConvertedAt(v *time.Time) *ExperimentParticipantUpdateOne {
+	if v != nil {
+		_u.SetConvertedAt(*v)
+	}
+	return _u
+}
+
+// ClearConvertedAt clears the value of the "converted_at" field.
+func (_u *ExperimentParticipantUpdateOne) ClearConvertedAt() *ExperimentParticipantUpdateOne {
+	_u.mutation.ClearConvertedAt()
 	return _u
 }
 
@@ -466,6 +558,18 @@ func (_u *ExperimentParticipantUpdateOne) sqlSave(ctx context.Context) (_node *E
 	}
 	if value, ok := _u.mutation.VariantName(); ok {
 		_spec.SetField(experimentparticipant.FieldVariantName, field.TypeString, value)
+	}
+	if value, ok := _u.mutation.Converted(); ok {
+		_spec.SetField(experimentparticipant.FieldConverted, field.TypeBool, value)
+	}
+	if _u.mutation.ConvertedCleared() {
+		_spec.ClearField(experimentparticipant.FieldConverted, field.TypeBool)
+	}
+	if value, ok := _u.mutation.ConvertedAt(); ok {
+		_spec.SetField(experimentparticipant.FieldConvertedAt, field.TypeTime, value)
+	}
+	if _u.mutation.ConvertedAtCleared() {
+		_spec.ClearField(experimentparticipant.FieldConvertedAt, field.TypeTime)
 	}
 	_spec.AddModifiers(_u.modifiers...)
 	_node = &ExperimentParticipant{config: _u.config}

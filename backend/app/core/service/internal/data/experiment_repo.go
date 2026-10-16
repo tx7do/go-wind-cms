@@ -5,6 +5,8 @@ import (
 	"strconv"
 
 	"github.com/go-kratos/kratos/v2/errors"
+	"time"
+
 	"github.com/go-kratos/kratos/v2/log"
 	kratosMetadata "github.com/go-kratos/kratos/v2/metadata"
 	paginationV1 "github.com/tx7do/go-crud/api/gen/go/pagination/v1"
@@ -290,21 +292,66 @@ func (r *ExperimentRepo) RecordParticipant(ctx context.Context, experimentID uin
 	return nil
 }
 
-// GetVariantStats 按变体名快照计数（空实验返回空列表）。
+// RecordConversion 幂等标记转化（参与记录存在才更新；不存在静默忽略）。
+func (r *ExperimentRepo) RecordConversion(ctx context.Context, experimentID uint32, visitorHash string) error {
+	// 不做租户过滤：(experiment_id, visitor_hash) 本身全局唯一且服务端派生，
+	// 与参与记录的归属口径一致；viewer 侧租户视角在此只会引入口径歧义
+	conds := []predicate.ExperimentParticipant{
+		experimentparticipant.ExperimentIDEQ(experimentID),
+		experimentparticipant.VisitorHashEQ(visitorHash),
+		experimentparticipant.ConvertedEQ(false),
+	}
+	_, err := r.entClient.Client().ExperimentParticipant.Update().
+		Where(conds...).
+		SetConverted(true).
+		SetNillableConvertedAt(timePtr(time.Now())).
+		Save(ctx)
+	if err != nil {
+		r.log.Errorf("record experiment conversion failed (experiment=%d): %s", experimentID, err.Error())
+		return err
+	}
+	return nil
+}
+
+// GetVariantStats 按变体名快照计数（含转化数；空实验返回空列表）。
 func (r *ExperimentRepo) GetVariantStats(ctx context.Context, experimentID uint32) (*contentV1.ExperimentVariantStatsResponse, error) {
+	var conds []predicate.ExperimentParticipant
+	if tid, hasTenant := maybeTenantFromViewer(ctx); hasTenant {
+		conds = append(conds, experimentparticipant.TenantIDEQ(tid))
+	}
+	conds = append(conds, experimentparticipant.ExperimentIDEQ(experimentID))
+
 	var rows []struct {
 		VariantName string `json:"variant_name"`
 		Count       int    `json:"count"`
 	}
-	err := r.entClient.Client().ExperimentParticipant.Query().
-		Where(experimentparticipant.ExperimentIDEQ(experimentID)).
+	if err := r.entClient.Client().ExperimentParticipant.Query().
+		Where(conds...).
 		GroupBy(experimentparticipant.FieldVariantName).
 		Aggregate(ent.As(ent.Count(), "count")).
-		Scan(ctx, &rows)
-	if err != nil {
+		Scan(ctx, &rows); err != nil {
 		r.log.Errorf("get experiment variant stats failed (experiment=%d): %s", experimentID, err.Error())
 		return nil, err
 	}
+
+	var convertedRows []struct {
+		VariantName string `json:"variant_name"`
+		Count       int    `json:"count"`
+	}
+	convertedConds := append(conds, experimentparticipant.ConvertedEQ(true))
+	if err := r.entClient.Client().ExperimentParticipant.Query().
+		Where(convertedConds...).
+		GroupBy(experimentparticipant.FieldVariantName).
+		Aggregate(ent.As(ent.Count(), "count")).
+		Scan(ctx, &convertedRows); err != nil {
+		r.log.Errorf("get experiment variant conversion stats failed (experiment=%d): %s", experimentID, err.Error())
+		return nil, err
+	}
+	convertedMap := make(map[string]int, len(convertedRows))
+	for _, row := range convertedRows {
+		convertedMap[row.VariantName] = row.Count
+	}
+
 	resp := &contentV1.ExperimentVariantStatsResponse{
 		Items: make([]*contentV1.ExperimentVariantStatsResponse_VariantCount, 0, len(rows)),
 	}
@@ -312,12 +359,12 @@ func (r *ExperimentRepo) GetVariantStats(ctx context.Context, experimentID uint3
 		resp.Items = append(resp.Items, &contentV1.ExperimentVariantStatsResponse_VariantCount{
 			VariantName:  row.VariantName,
 			Participants: uint64(row.Count),
+			Conversions:  uint64(convertedMap[row.VariantName]),
 		})
 	}
 	return resp, nil
 }
 
-// replaceVariants 变体整组替换（写时全删重建）。
 func (r *ExperimentRepo) replaceVariants(ctx context.Context, experimentID uint32, variants []*contentV1.ExperimentVariant) error {
 	if _, err := r.entClient.Client().ExperimentVariant.Delete().
 		Where(experimentvariant.ExperimentIDEQ(experimentID)).Exec(ctx); err != nil {
@@ -494,4 +541,8 @@ func weightToInt32(v *int) *int32 {
 	}
 	w := int32(*v)
 	return &w
+}
+
+func timePtr(t time.Time) *time.Time {
+	return &t
 }

@@ -856,17 +856,124 @@ func (x *GetExperimentVariantStatsRequest) GetExperimentId() uint32 {
 	return 0
 }
 
+// 请求 - 标记转化
+type RecordExperimentConversionRequest struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	ExperimentId  uint32                 `protobuf:"varint,1,opt,name=experiment_id,json=experimentId,proto3" json:"experiment_id,omitempty"` // 实验ID
+	VisitorHash   string                 `protobuf:"bytes,2,opt,name=visitor_hash,json=visitorHash,proto3" json:"visitor_hash,omitempty"`     // 访客标识哈希（与参与记录一致）
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *RecordExperimentConversionRequest) Reset() {
+	*x = RecordExperimentConversionRequest{}
+	mi := &file_content_service_v1_experiment_proto_msgTypes[12]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *RecordExperimentConversionRequest) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*RecordExperimentConversionRequest) ProtoMessage() {}
+
+func (x *RecordExperimentConversionRequest) ProtoReflect() protoreflect.Message {
+	mi := &file_content_service_v1_experiment_proto_msgTypes[12]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use RecordExperimentConversionRequest.ProtoReflect.Descriptor instead.
+func (*RecordExperimentConversionRequest) Descriptor() ([]byte, []int) {
+	return file_content_service_v1_experiment_proto_rawDescGZIP(), []int{12}
+}
+
+func (x *RecordExperimentConversionRequest) GetExperimentId() uint32 {
+	if x != nil {
+		return x.ExperimentId
+	}
+	return 0
+}
+
+func (x *RecordExperimentConversionRequest) GetVisitorHash() string {
+	if x != nil {
+		return x.VisitorHash
+	}
+	return ""
+}
+
+// 请求 - 页面运行实验的转化归因（app BFF 表单提交内部调用）
+type RecordPageExperimentConversionRequest struct {
+	state           protoimpl.MessageState `protogen:"open.v1"`
+	PageId          uint32                 `protobuf:"varint,1,opt,name=page_id,json=pageId,proto3" json:"page_id,omitempty"`                             // 页面ID
+	VisitorHashSeed string                 `protobuf:"bytes,2,opt,name=visitor_hash_seed,json=visitorHashSeed,proto3" json:"visitor_hash_seed,omitempty"` // 访客标识（cookie vid 原值，实验 ID 由服务端派生）
+	unknownFields   protoimpl.UnknownFields
+	sizeCache       protoimpl.SizeCache
+}
+
+func (x *RecordPageExperimentConversionRequest) Reset() {
+	*x = RecordPageExperimentConversionRequest{}
+	mi := &file_content_service_v1_experiment_proto_msgTypes[13]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *RecordPageExperimentConversionRequest) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*RecordPageExperimentConversionRequest) ProtoMessage() {}
+
+func (x *RecordPageExperimentConversionRequest) ProtoReflect() protoreflect.Message {
+	mi := &file_content_service_v1_experiment_proto_msgTypes[13]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use RecordPageExperimentConversionRequest.ProtoReflect.Descriptor instead.
+func (*RecordPageExperimentConversionRequest) Descriptor() ([]byte, []int) {
+	return file_content_service_v1_experiment_proto_rawDescGZIP(), []int{13}
+}
+
+func (x *RecordPageExperimentConversionRequest) GetPageId() uint32 {
+	if x != nil {
+		return x.PageId
+	}
+	return 0
+}
+
+func (x *RecordPageExperimentConversionRequest) GetVisitorHashSeed() string {
+	if x != nil {
+		return x.VisitorHashSeed
+	}
+	return ""
+}
+
 type ExperimentVariantStatsResponse_VariantCount struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
 	VariantName   string                 `protobuf:"bytes,1,opt,name=variant_name,json=variantName,proto3" json:"variant_name,omitempty"` // 变体名称
 	Participants  uint64                 `protobuf:"varint,2,opt,name=participants,proto3" json:"participants,omitempty"`                 // 参与人数
+	Conversions   uint64                 `protobuf:"varint,3,opt,name=conversions,proto3" json:"conversions,omitempty"`                   // 转化数
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
 
 func (x *ExperimentVariantStatsResponse_VariantCount) Reset() {
 	*x = ExperimentVariantStatsResponse_VariantCount{}
-	mi := &file_content_service_v1_experiment_proto_msgTypes[12]
+	mi := &file_content_service_v1_experiment_proto_msgTypes[14]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -878,7 +985,7 @@ func (x *ExperimentVariantStatsResponse_VariantCount) String() string {
 func (*ExperimentVariantStatsResponse_VariantCount) ProtoMessage() {}
 
 func (x *ExperimentVariantStatsResponse_VariantCount) ProtoReflect() protoreflect.Message {
-	mi := &file_content_service_v1_experiment_proto_msgTypes[12]
+	mi := &file_content_service_v1_experiment_proto_msgTypes[14]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -904,6 +1011,13 @@ func (x *ExperimentVariantStatsResponse_VariantCount) GetVariantName() string {
 func (x *ExperimentVariantStatsResponse_VariantCount) GetParticipants() uint64 {
 	if x != nil {
 		return x.Participants
+	}
+	return 0
+}
+
+func (x *ExperimentVariantStatsResponse_VariantCount) GetConversions() uint64 {
+	if x != nil {
+		return x.Conversions
 	}
 	return 0
 }
@@ -993,14 +1107,21 @@ const file_content_service_v1_experiment_proto_rawDesc = "" +
 	"\"RecordExperimentParticipantRequest\x12#\n" +
 	"\rexperiment_id\x18\x01 \x01(\rR\fexperimentId\x12!\n" +
 	"\fvisitor_hash\x18\x02 \x01(\tR\vvisitorHash\x12!\n" +
-	"\fvariant_name\x18\x03 \x01(\tR\vvariantName\"\xce\x01\n" +
+	"\fvariant_name\x18\x03 \x01(\tR\vvariantName\"\xf0\x01\n" +
 	"\x1eExperimentVariantStatsResponse\x12U\n" +
-	"\x05items\x18\x01 \x03(\v2?.content.service.v1.ExperimentVariantStatsResponse.VariantCountR\x05items\x1aU\n" +
+	"\x05items\x18\x01 \x03(\v2?.content.service.v1.ExperimentVariantStatsResponse.VariantCountR\x05items\x1aw\n" +
 	"\fVariantCount\x12!\n" +
 	"\fvariant_name\x18\x01 \x01(\tR\vvariantName\x12\"\n" +
-	"\fparticipants\x18\x02 \x01(\x04R\fparticipants\"G\n" +
+	"\fparticipants\x18\x02 \x01(\x04R\fparticipants\x12 \n" +
+	"\vconversions\x18\x03 \x01(\x04R\vconversions\"G\n" +
 	" GetExperimentVariantStatsRequest\x12#\n" +
-	"\rexperiment_id\x18\x01 \x01(\rR\fexperimentId2\xfd\x06\n" +
+	"\rexperiment_id\x18\x01 \x01(\rR\fexperimentId\"k\n" +
+	"!RecordExperimentConversionRequest\x12#\n" +
+	"\rexperiment_id\x18\x01 \x01(\rR\fexperimentId\x12!\n" +
+	"\fvisitor_hash\x18\x02 \x01(\tR\vvisitorHash\"l\n" +
+	"%RecordPageExperimentConversionRequest\x12\x17\n" +
+	"\apage_id\x18\x01 \x01(\rR\x06pageId\x12*\n" +
+	"\x11visitor_hash_seed\x18\x02 \x01(\tR\x0fvisitorHashSeed2\xec\a\n" +
 	"\x11ExperimentService\x12P\n" +
 	"\x04List\x12\x19.pagination.PagingRequest\x1a+.content.service.v1.ListExperimentsResponse\"\x00\x12Q\n" +
 	"\x03Get\x12(.content.service.v1.GetExperimentRequest\x1a\x1e.content.service.v1.Experiment\"\x00\x12W\n" +
@@ -1010,7 +1131,8 @@ const file_content_service_v1_experiment_proto_rawDesc = "" +
 	"\tSetStatus\x12..content.service.v1.SetExperimentStatusRequest\x1a\x1e.content.service.v1.Experiment\"\x00\x12{\n" +
 	"\x11ListRunningByPage\x127.content.service.v1.ListRunningExperimentsByPageRequest\x1a+.content.service.v1.ListExperimentsResponse\"\x00\x12e\n" +
 	"\x11RecordParticipant\x126.content.service.v1.RecordExperimentParticipantRequest\x1a\x16.google.protobuf.Empty\"\x00\x12}\n" +
-	"\x0fGetVariantStats\x124.content.service.v1.GetExperimentVariantStatsRequest\x1a2.content.service.v1.ExperimentVariantStatsResponse\"\x00B\xc8\x01\n" +
+	"\x0fGetVariantStats\x124.content.service.v1.GetExperimentVariantStatsRequest\x1a2.content.service.v1.ExperimentVariantStatsResponse\"\x00\x12m\n" +
+	"\x1aRecordExperimentConversion\x125.content.service.v1.RecordExperimentConversionRequest\x1a\x16.google.protobuf.Empty\"\x00B\xc8\x01\n" +
 	"\x16com.content.service.v1B\x0fExperimentProtoP\x01Z3go-wind-cms/api/gen/go/content/service/v1;contentpb\xa2\x02\x03CSX\xaa\x02\x12Content.Service.V1\xca\x02\x12Content\\Service\\V1\xe2\x02\x1eContent\\Service\\V1\\GPBMetadata\xea\x02\x14Content::Service::V1b\x06proto3"
 
 var (
@@ -1026,7 +1148,7 @@ func file_content_service_v1_experiment_proto_rawDescGZIP() []byte {
 }
 
 var file_content_service_v1_experiment_proto_enumTypes = make([]protoimpl.EnumInfo, 2)
-var file_content_service_v1_experiment_proto_msgTypes = make([]protoimpl.MessageInfo, 13)
+var file_content_service_v1_experiment_proto_msgTypes = make([]protoimpl.MessageInfo, 15)
 var file_content_service_v1_experiment_proto_goTypes = []any{
 	(Experiment_Status)(0),                              // 0: content.service.v1.Experiment.Status
 	(Experiment_AssignmentType)(0),                      // 1: content.service.v1.Experiment.AssignmentType
@@ -1042,25 +1164,27 @@ var file_content_service_v1_experiment_proto_goTypes = []any{
 	(*RecordExperimentParticipantRequest)(nil),          // 11: content.service.v1.RecordExperimentParticipantRequest
 	(*ExperimentVariantStatsResponse)(nil),              // 12: content.service.v1.ExperimentVariantStatsResponse
 	(*GetExperimentVariantStatsRequest)(nil),            // 13: content.service.v1.GetExperimentVariantStatsRequest
-	(*ExperimentVariantStatsResponse_VariantCount)(nil), // 14: content.service.v1.ExperimentVariantStatsResponse.VariantCount
-	(*timestamppb.Timestamp)(nil),                       // 15: google.protobuf.Timestamp
-	(*fieldmaskpb.FieldMask)(nil),                       // 16: google.protobuf.FieldMask
-	(*v1.PagingRequest)(nil),                            // 17: pagination.PagingRequest
-	(*emptypb.Empty)(nil),                               // 18: google.protobuf.Empty
+	(*RecordExperimentConversionRequest)(nil),           // 14: content.service.v1.RecordExperimentConversionRequest
+	(*RecordPageExperimentConversionRequest)(nil),       // 15: content.service.v1.RecordPageExperimentConversionRequest
+	(*ExperimentVariantStatsResponse_VariantCount)(nil), // 16: content.service.v1.ExperimentVariantStatsResponse.VariantCount
+	(*timestamppb.Timestamp)(nil),                       // 17: google.protobuf.Timestamp
+	(*fieldmaskpb.FieldMask)(nil),                       // 18: google.protobuf.FieldMask
+	(*v1.PagingRequest)(nil),                            // 19: pagination.PagingRequest
+	(*emptypb.Empty)(nil),                               // 20: google.protobuf.Empty
 }
 var file_content_service_v1_experiment_proto_depIdxs = []int32{
 	0,  // 0: content.service.v1.Experiment.status:type_name -> content.service.v1.Experiment.Status
 	1,  // 1: content.service.v1.Experiment.assignment_type:type_name -> content.service.v1.Experiment.AssignmentType
 	3,  // 2: content.service.v1.Experiment.variants:type_name -> content.service.v1.ExperimentVariant
-	15, // 3: content.service.v1.Experiment.created_at:type_name -> google.protobuf.Timestamp
-	15, // 4: content.service.v1.Experiment.updated_at:type_name -> google.protobuf.Timestamp
+	17, // 3: content.service.v1.Experiment.created_at:type_name -> google.protobuf.Timestamp
+	17, // 4: content.service.v1.Experiment.updated_at:type_name -> google.protobuf.Timestamp
 	2,  // 5: content.service.v1.ListExperimentsResponse.items:type_name -> content.service.v1.Experiment
 	2,  // 6: content.service.v1.CreateExperimentRequest.data:type_name -> content.service.v1.Experiment
 	2,  // 7: content.service.v1.UpdateExperimentRequest.data:type_name -> content.service.v1.Experiment
-	16, // 8: content.service.v1.UpdateExperimentRequest.update_mask:type_name -> google.protobuf.FieldMask
+	18, // 8: content.service.v1.UpdateExperimentRequest.update_mask:type_name -> google.protobuf.FieldMask
 	0,  // 9: content.service.v1.SetExperimentStatusRequest.status:type_name -> content.service.v1.Experiment.Status
-	14, // 10: content.service.v1.ExperimentVariantStatsResponse.items:type_name -> content.service.v1.ExperimentVariantStatsResponse.VariantCount
-	17, // 11: content.service.v1.ExperimentService.List:input_type -> pagination.PagingRequest
+	16, // 10: content.service.v1.ExperimentVariantStatsResponse.items:type_name -> content.service.v1.ExperimentVariantStatsResponse.VariantCount
+	19, // 11: content.service.v1.ExperimentService.List:input_type -> pagination.PagingRequest
 	5,  // 12: content.service.v1.ExperimentService.Get:input_type -> content.service.v1.GetExperimentRequest
 	6,  // 13: content.service.v1.ExperimentService.Create:input_type -> content.service.v1.CreateExperimentRequest
 	7,  // 14: content.service.v1.ExperimentService.Update:input_type -> content.service.v1.UpdateExperimentRequest
@@ -1069,17 +1193,19 @@ var file_content_service_v1_experiment_proto_depIdxs = []int32{
 	10, // 17: content.service.v1.ExperimentService.ListRunningByPage:input_type -> content.service.v1.ListRunningExperimentsByPageRequest
 	11, // 18: content.service.v1.ExperimentService.RecordParticipant:input_type -> content.service.v1.RecordExperimentParticipantRequest
 	13, // 19: content.service.v1.ExperimentService.GetVariantStats:input_type -> content.service.v1.GetExperimentVariantStatsRequest
-	4,  // 20: content.service.v1.ExperimentService.List:output_type -> content.service.v1.ListExperimentsResponse
-	2,  // 21: content.service.v1.ExperimentService.Get:output_type -> content.service.v1.Experiment
-	2,  // 22: content.service.v1.ExperimentService.Create:output_type -> content.service.v1.Experiment
-	2,  // 23: content.service.v1.ExperimentService.Update:output_type -> content.service.v1.Experiment
-	18, // 24: content.service.v1.ExperimentService.Delete:output_type -> google.protobuf.Empty
-	2,  // 25: content.service.v1.ExperimentService.SetStatus:output_type -> content.service.v1.Experiment
-	4,  // 26: content.service.v1.ExperimentService.ListRunningByPage:output_type -> content.service.v1.ListExperimentsResponse
-	18, // 27: content.service.v1.ExperimentService.RecordParticipant:output_type -> google.protobuf.Empty
-	12, // 28: content.service.v1.ExperimentService.GetVariantStats:output_type -> content.service.v1.ExperimentVariantStatsResponse
-	20, // [20:29] is the sub-list for method output_type
-	11, // [11:20] is the sub-list for method input_type
+	14, // 20: content.service.v1.ExperimentService.RecordExperimentConversion:input_type -> content.service.v1.RecordExperimentConversionRequest
+	4,  // 21: content.service.v1.ExperimentService.List:output_type -> content.service.v1.ListExperimentsResponse
+	2,  // 22: content.service.v1.ExperimentService.Get:output_type -> content.service.v1.Experiment
+	2,  // 23: content.service.v1.ExperimentService.Create:output_type -> content.service.v1.Experiment
+	2,  // 24: content.service.v1.ExperimentService.Update:output_type -> content.service.v1.Experiment
+	20, // 25: content.service.v1.ExperimentService.Delete:output_type -> google.protobuf.Empty
+	2,  // 26: content.service.v1.ExperimentService.SetStatus:output_type -> content.service.v1.Experiment
+	4,  // 27: content.service.v1.ExperimentService.ListRunningByPage:output_type -> content.service.v1.ListExperimentsResponse
+	20, // 28: content.service.v1.ExperimentService.RecordParticipant:output_type -> google.protobuf.Empty
+	12, // 29: content.service.v1.ExperimentService.GetVariantStats:output_type -> content.service.v1.ExperimentVariantStatsResponse
+	20, // 30: content.service.v1.ExperimentService.RecordExperimentConversion:output_type -> google.protobuf.Empty
+	21, // [21:31] is the sub-list for method output_type
+	11, // [11:21] is the sub-list for method input_type
 	11, // [11:11] is the sub-list for extension type_name
 	11, // [11:11] is the sub-list for extension extendee
 	0,  // [0:11] is the sub-list for field type_name
@@ -1099,7 +1225,7 @@ func file_content_service_v1_experiment_proto_init() {
 			GoPackagePath: reflect.TypeOf(x{}).PkgPath(),
 			RawDescriptor: unsafe.Slice(unsafe.StringData(file_content_service_v1_experiment_proto_rawDesc), len(file_content_service_v1_experiment_proto_rawDesc)),
 			NumEnums:      2,
-			NumMessages:   13,
+			NumMessages:   15,
 			NumExtensions: 0,
 			NumServices:   1,
 		},

@@ -64,7 +64,20 @@ func (s *PageService) applyExperiment(ctx context.Context, page *contentV1.Page,
 	hash := fmt.Sprintf("%d:%s", exp.GetId(), vid)
 	bucket := visitorBucket(hash)
 	variant := assignVariant(exp, bucket, ctx, locale)
-	if variant == nil || variant.GetSections() == "" {
+	if variant == nil {
+		return
+	}
+
+	// 参与记录先于内容替换：纯转化型实验（变体无 sections 覆盖）同样计参与
+	if _, err := s.experimentClient.RecordParticipant(ctx, &contentV1.RecordExperimentParticipantRequest{
+		ExperimentId: exp.GetId(),
+		VisitorHash:  hash,
+		VariantName:  variant.GetName(),
+	}); err != nil {
+		s.log.Warnf("record experiment participant failed (experiment=%d): %v", exp.GetId(), err)
+	}
+
+	if variant.GetSections() == "" {
 		return
 	}
 
@@ -75,14 +88,6 @@ func (s *PageService) applyExperiment(ctx context.Context, page *contentV1.Page,
 		return
 	}
 	page.Sections = wrapper.GetSections()
-
-	if _, err := s.experimentClient.RecordParticipant(ctx, &contentV1.RecordExperimentParticipantRequest{
-		ExperimentId: exp.GetId(),
-		VisitorHash:  hash,
-		VariantName:  variant.GetName(),
-	}); err != nil {
-		s.log.Warnf("record experiment participant failed (experiment=%d): %v", exp.GetId(), err)
-	}
 }
 
 // visitorID 读（或种）访客标识 cookie。isNew 表示本次响应需回种。

@@ -79,6 +79,7 @@ export function useExperimentVariantStats(
       (resp.items ?? []).map((item) => ({
         variantName: item.variantName ?? '',
         participants: Number(item.participants ?? 0),
+        conversions: Number(item.conversions ?? 0),
       })),
   });
 }

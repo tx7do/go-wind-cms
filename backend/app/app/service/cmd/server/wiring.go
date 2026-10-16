@@ -95,7 +95,7 @@ func initApp(ctx *bootstrap.Context) (*kratos.App, func(), error) {
 	commentService := service.NewCommentService(ctx, commentServiceClient, tenantResolver, accessTokenChecker)
 	interactionService := service.NewInteractionService(ctx, interactionServiceClient, tenantResolver)
 	formSubmissionServiceClient := data.NewFormSubmissionServiceClient(ctx, discovery)
-	formSubmissionService := service.NewFormSubmissionService(ctx, formSubmissionServiceClient, tenantResolver)
+	formSubmissionService := service.NewFormSubmissionService(ctx, formSubmissionServiceClient, experimentServiceClient, tenantResolver)
 	redirectService := service.NewRedirectService(ctx, data.NewRedirectServiceClient(ctx, discovery), tenantResolver)
 	seoService := service.NewSeoService(ctx, postServiceClient, pageServiceClient)
 	tagService := service.NewTagService(ctx, tagServiceClient)

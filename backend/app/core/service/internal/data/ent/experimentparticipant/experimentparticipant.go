@@ -26,6 +26,10 @@ const (
 	FieldVisitorHash = "visitor_hash"
 	// FieldVariantName holds the string denoting the variant_name field in the database.
 	FieldVariantName = "variant_name"
+	// FieldConverted holds the string denoting the converted field in the database.
+	FieldConverted = "converted"
+	// FieldConvertedAt holds the string denoting the converted_at field in the database.
+	FieldConvertedAt = "converted_at"
 	// Table holds the table name of the experimentparticipant in the database.
 	Table = "experiment_participants"
 )
@@ -40,6 +44,8 @@ var Columns = []string{
 	FieldExperimentID,
 	FieldVisitorHash,
 	FieldVariantName,
+	FieldConverted,
+	FieldConvertedAt,
 }
 
 // ValidColumn reports if the column name is valid (part of the table columns).
@@ -66,6 +72,8 @@ var (
 	VisitorHashValidator func(string) error
 	// VariantNameValidator is a validator for the "variant_name" field. It is called by the builders before save.
 	VariantNameValidator func(string) error
+	// DefaultConverted holds the default value on creation for the "converted" field.
+	DefaultConverted bool
 	// IDValidator is a validator for the "id" field. It is called by the builders before save.
 	IDValidator func(uint32) error
 )
@@ -111,4 +119,14 @@ func ByVisitorHash(opts ...sql.OrderTermOption) OrderOption {
 // ByVariantName orders the results by the variant_name field.
 func ByVariantName(opts ...sql.OrderTermOption) OrderOption {
 	return sql.OrderByField(FieldVariantName, opts...).ToFunc()
+}
+
+// ByConverted orders the results by the converted field.
+func ByConverted(opts ...sql.OrderTermOption) OrderOption {
+	return sql.OrderByField(FieldConverted, opts...).ToFunc()
+}
+
+// ByConvertedAt orders the results by the converted_at field.
+func ByConvertedAt(opts ...sql.OrderTermOption) OrderOption {
+	return sql.OrderByField(FieldConvertedAt, opts...).ToFunc()
 }

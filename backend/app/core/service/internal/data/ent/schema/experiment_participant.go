@@ -42,6 +42,15 @@ func (ExperimentParticipant) Fields() []ent.Field {
 		field.String("variant_name").
 			Comment("被分配的变体名称快照").
 			NotEmpty(),
+		field.Bool("converted").
+			Comment("是否转化（如表单提交归因）").
+			Default(false).
+			Optional().
+			Nillable(),
+		field.Time("converted_at").
+			Comment("转化时间").
+			Optional().
+			Nillable(),
 	}
 }
 
@@ -58,5 +67,6 @@ func (ExperimentParticipant) Indexes() []ent.Index {
 	return []ent.Index{
 		index.Fields("experiment_id", "visitor_hash").Unique(),
 		index.Fields("experiment_id", "variant_name"),
+		index.Fields("experiment_id", "converted"),
 	}
 }

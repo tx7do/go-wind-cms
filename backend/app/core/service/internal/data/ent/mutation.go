@@ -33573,6 +33573,8 @@ type ExperimentParticipantMutation struct {
 	addexperiment_id *int32
 	visitor_hash     *string
 	variant_name     *string
+	converted        *bool
+	converted_at     *time.Time
 	clearedFields    map[string]struct{}
 	done             bool
 	oldValue         func(context.Context) (*ExperimentParticipant, error)
@@ -34042,6 +34044,104 @@ func (m *ExperimentParticipantMutation) ResetVariantName() {
 	m.variant_name = nil
 }
 
+// SetConverted sets the "converted" field.
+func (m *ExperimentParticipantMutation) SetConverted(b bool) {
+	m.converted = &b
+}
+
+// Converted returns the value of the "converted" field in the mutation.
+func (m *ExperimentParticipantMutation) Converted() (r bool, exists bool) {
+	v := m.converted
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldConverted returns the old "converted" field's value of the ExperimentParticipant entity.
+// If the ExperimentParticipant object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *ExperimentParticipantMutation) OldConverted(ctx context.Context) (v *bool, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldConverted is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldConverted requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldConverted: %w", err)
+	}
+	return oldValue.Converted, nil
+}
+
+// ClearConverted clears the value of the "converted" field.
+func (m *ExperimentParticipantMutation) ClearConverted() {
+	m.converted = nil
+	m.clearedFields[experimentparticipant.FieldConverted] = struct{}{}
+}
+
+// ConvertedCleared returns if the "converted" field was cleared in this mutation.
+func (m *ExperimentParticipantMutation) ConvertedCleared() bool {
+	_, ok := m.clearedFields[experimentparticipant.FieldConverted]
+	return ok
+}
+
+// ResetConverted resets all changes to the "converted" field.
+func (m *ExperimentParticipantMutation) ResetConverted() {
+	m.converted = nil
+	delete(m.clearedFields, experimentparticipant.FieldConverted)
+}
+
+// SetConvertedAt sets the "converted_at" field.
+func (m *ExperimentParticipantMutation) SetConvertedAt(t time.Time) {
+	m.converted_at = &t
+}
+
+// ConvertedAt returns the value of the "converted_at" field in the mutation.
+func (m *ExperimentParticipantMutation) ConvertedAt() (r time.Time, exists bool) {
+	v := m.converted_at
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldConvertedAt returns the old "converted_at" field's value of the ExperimentParticipant entity.
+// If the ExperimentParticipant object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *ExperimentParticipantMutation) OldConvertedAt(ctx context.Context) (v *time.Time, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldConvertedAt is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldConvertedAt requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldConvertedAt: %w", err)
+	}
+	return oldValue.ConvertedAt, nil
+}
+
+// ClearConvertedAt clears the value of the "converted_at" field.
+func (m *ExperimentParticipantMutation) ClearConvertedAt() {
+	m.converted_at = nil
+	m.clearedFields[experimentparticipant.FieldConvertedAt] = struct{}{}
+}
+
+// ConvertedAtCleared returns if the "converted_at" field was cleared in this mutation.
+func (m *ExperimentParticipantMutation) ConvertedAtCleared() bool {
+	_, ok := m.clearedFields[experimentparticipant.FieldConvertedAt]
+	return ok
+}
+
+// ResetConvertedAt resets all changes to the "converted_at" field.
+func (m *ExperimentParticipantMutation) ResetConvertedAt() {
+	m.converted_at = nil
+	delete(m.clearedFields, experimentparticipant.FieldConvertedAt)
+}
+
 // Where appends a list predicates to the ExperimentParticipantMutation builder.
 func (m *ExperimentParticipantMutation) Where(ps ...predicate.ExperimentParticipant) {
 	m.predicates = append(m.predicates, ps...)
@@ -34076,7 +34176,7 @@ func (m *ExperimentParticipantMutation) Type() string {
 // order to get all numeric fields that were incremented/decremented, call
 // AddedFields().
 func (m *ExperimentParticipantMutation) Fields() []string {
-	fields := make([]string, 0, 7)
+	fields := make([]string, 0, 9)
 	if m.created_at != nil {
 		fields = append(fields, experimentparticipant.FieldCreatedAt)
 	}
@@ -34097,6 +34197,12 @@ func (m *ExperimentParticipantMutation) Fields() []string {
 	}
 	if m.variant_name != nil {
 		fields = append(fields, experimentparticipant.FieldVariantName)
+	}
+	if m.converted != nil {
+		fields = append(fields, experimentparticipant.FieldConverted)
+	}
+	if m.converted_at != nil {
+		fields = append(fields, experimentparticipant.FieldConvertedAt)
 	}
 	return fields
 }
@@ -34120,6 +34226,10 @@ func (m *ExperimentParticipantMutation) Field(name string) (ent.Value, bool) {
 		return m.VisitorHash()
 	case experimentparticipant.FieldVariantName:
 		return m.VariantName()
+	case experimentparticipant.FieldConverted:
+		return m.Converted()
+	case experimentparticipant.FieldConvertedAt:
+		return m.ConvertedAt()
 	}
 	return nil, false
 }
@@ -34143,6 +34253,10 @@ func (m *ExperimentParticipantMutation) OldField(ctx context.Context, name strin
 		return m.OldVisitorHash(ctx)
 	case experimentparticipant.FieldVariantName:
 		return m.OldVariantName(ctx)
+	case experimentparticipant.FieldConverted:
+		return m.OldConverted(ctx)
+	case experimentparticipant.FieldConvertedAt:
+		return m.OldConvertedAt(ctx)
 	}
 	return nil, fmt.Errorf("unknown ExperimentParticipant field %s", name)
 }
@@ -34200,6 +34314,20 @@ func (m *ExperimentParticipantMutation) SetField(name string, value ent.Value) e
 			return fmt.Errorf("unexpected type %T for field %s", value, name)
 		}
 		m.SetVariantName(v)
+		return nil
+	case experimentparticipant.FieldConverted:
+		v, ok := value.(bool)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetConverted(v)
+		return nil
+	case experimentparticipant.FieldConvertedAt:
+		v, ok := value.(time.Time)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetConvertedAt(v)
 		return nil
 	}
 	return fmt.Errorf("unknown ExperimentParticipant field %s", name)
@@ -34273,6 +34401,12 @@ func (m *ExperimentParticipantMutation) ClearedFields() []string {
 	if m.FieldCleared(experimentparticipant.FieldExperimentID) {
 		fields = append(fields, experimentparticipant.FieldExperimentID)
 	}
+	if m.FieldCleared(experimentparticipant.FieldConverted) {
+		fields = append(fields, experimentparticipant.FieldConverted)
+	}
+	if m.FieldCleared(experimentparticipant.FieldConvertedAt) {
+		fields = append(fields, experimentparticipant.FieldConvertedAt)
+	}
 	return fields
 }
 
@@ -34302,6 +34436,12 @@ func (m *ExperimentParticipantMutation) ClearField(name string) error {
 	case experimentparticipant.FieldExperimentID:
 		m.ClearExperimentID()
 		return nil
+	case experimentparticipant.FieldConverted:
+		m.ClearConverted()
+		return nil
+	case experimentparticipant.FieldConvertedAt:
+		m.ClearConvertedAt()
+		return nil
 	}
 	return fmt.Errorf("unknown ExperimentParticipant nullable field %s", name)
 }
@@ -34330,6 +34470,12 @@ func (m *ExperimentParticipantMutation) ResetField(name string) error {
 		return nil
 	case experimentparticipant.FieldVariantName:
 		m.ResetVariantName()
+		return nil
+	case experimentparticipant.FieldConverted:
+		m.ResetConverted()
+		return nil
+	case experimentparticipant.FieldConvertedAt:
+		m.ResetConvertedAt()
 		return nil
 	}
 	return fmt.Errorf("unknown ExperimentParticipant field %s", name)

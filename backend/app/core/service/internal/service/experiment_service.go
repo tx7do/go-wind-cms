@@ -116,6 +116,17 @@ func (s *ExperimentService) RecordParticipant(ctx context.Context, req *contentV
 	return &emptypb.Empty{}, nil
 }
 
+// RecordExperimentConversion 标记转化（幂等；无参与记录时静默忽略）。
+func (s *ExperimentService) RecordExperimentConversion(ctx context.Context, req *contentV1.RecordExperimentConversionRequest) (*emptypb.Empty, error) {
+	if req == nil || req.GetExperimentId() == 0 || req.GetVisitorHash() == "" {
+		return nil, contentV1.ErrorBadRequest("invalid parameter")
+	}
+	if err := s.experimentRepo.RecordConversion(ctx, req.GetExperimentId(), req.GetVisitorHash()); err != nil {
+		return nil, err
+	}
+	return &emptypb.Empty{}, nil
+}
+
 // GetVariantStats 变体参与统计。
 func (s *ExperimentService) GetVariantStats(ctx context.Context, req *contentV1.GetExperimentVariantStatsRequest) (*contentV1.ExperimentVariantStatsResponse, error) {
 	if req == nil || req.GetExperimentId() == 0 {

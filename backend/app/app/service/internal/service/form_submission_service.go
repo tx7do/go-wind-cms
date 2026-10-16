@@ -2,6 +2,7 @@ package service
 
 import (
 	"context"
+	"fmt"
 	"strconv"
 
 	"github.com/go-kratos/kratos/v2/log"
@@ -23,14 +24,16 @@ type FormSubmissionService struct {
 	appV1.FormSubmissionServiceHTTPServer
 
 	formSubmissionClient contentV1.FormSubmissionServiceClient
+	experimentClient     contentV1.ExperimentServiceClient
 	tenantResolve        entmiddleware.TenantResolver
 	log                  *log.Helper
 }
 
-func NewFormSubmissionService(ctx *bootstrap.Context, formSubmissionClient contentV1.FormSubmissionServiceClient, tenantResolve entmiddleware.TenantResolver) *FormSubmissionService {
+func NewFormSubmissionService(ctx *bootstrap.Context, formSubmissionClient contentV1.FormSubmissionServiceClient, experimentClient contentV1.ExperimentServiceClient, tenantResolve entmiddleware.TenantResolver) *FormSubmissionService {
 	return &FormSubmissionService{
 		log:                  ctx.NewLoggerHelper("form-submission/service/app-service"),
 		formSubmissionClient: formSubmissionClient,
+		experimentClient:     experimentClient,
 		tenantResolve:        tenantResolve,
 	}
 }
@@ -43,5 +46,40 @@ func (s *FormSubmissionService) Submit(ctx context.Context, req *contentV1.Submi
 			}
 		}
 	}
-	return s.formSubmissionClient.Submit(ctx, req)
+	resp, err := s.formSubmissionClient.Submit(ctx, req)
+	if err == nil {
+		// A/B 实验转化归因：访客（gwc_vid cookie）在页面实验中参与过，
+		// 其表单提交计为该变体的转化（best-effort，不影响提交结果）
+		s.attributeConversion(ctx, req.GetPageId())
+	}
+	return resp, err
+}
+
+// attributeConversion 表单提交 → 实验转化归因。
+// 页面上运行中的首个实验若已记录该访客（gwc_vid cookie 派生 hash）的参与，
+// 则标记转化；全程 best-effort。
+func (s *FormSubmissionService) attributeConversion(ctx context.Context, pageID uint32) {
+	if s.experimentClient == nil || pageID == 0 {
+		return
+	}
+	hr, ok := khttp.RequestFromServerContext(ctx)
+	if !ok || hr == nil {
+		return
+	}
+	vid, err := hr.Cookie(experimentVisitorCookie)
+	if err != nil || vid.Value == "" {
+		return
+	}
+	exps, err := s.experimentClient.ListRunningByPage(ctx, &contentV1.ListRunningExperimentsByPageRequest{PageId: pageID})
+	if err != nil || len(exps.GetItems()) == 0 {
+		return
+	}
+	exp := exps.GetItems()[0]
+	visitorHash := fmt.Sprintf("%d:%s", exp.GetId(), vid.Value)
+	if _, err := s.experimentClient.RecordExperimentConversion(ctx, &contentV1.RecordExperimentConversionRequest{
+		ExperimentId: exp.GetId(),
+		VisitorHash:  visitorHash,
+	}); err != nil {
+		s.log.Warnf("experiment conversion attribution failed (experiment=%d): %v", exp.GetId(), err)
+	}
 }

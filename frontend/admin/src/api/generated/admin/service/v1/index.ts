@@ -4898,6 +4898,7 @@ export type contentservicev1_ExperimentVariantStatsResponse = {
 };
 
 export type contentservicev1_ExperimentVariantStatsResponse_VariantCount = {
+  conversions: number | undefined;
   participants: number | undefined;
   variantName: string | undefined;
 };

@@ -712,6 +712,8 @@ var schemaGraph = func() *sqlgraph.Schema {
 			experimentparticipant.FieldExperimentID: {Type: field.TypeUint32, Column: experimentparticipant.FieldExperimentID},
 			experimentparticipant.FieldVisitorHash:  {Type: field.TypeString, Column: experimentparticipant.FieldVisitorHash},
 			experimentparticipant.FieldVariantName:  {Type: field.TypeString, Column: experimentparticipant.FieldVariantName},
+			experimentparticipant.FieldConverted:    {Type: field.TypeBool, Column: experimentparticipant.FieldConverted},
+			experimentparticipant.FieldConvertedAt:  {Type: field.TypeTime, Column: experimentparticipant.FieldConvertedAt},
 		},
 	}
 	graph.Nodes[23] = &sqlgraph.Node{
@@ -5493,6 +5495,16 @@ func (f *ExperimentParticipantFilter) WhereVisitorHash(p entql.StringP) {
 // WhereVariantName applies the entql string predicate on the variant_name field.
 func (f *ExperimentParticipantFilter) WhereVariantName(p entql.StringP) {
 	f.Where(p.Field(experimentparticipant.FieldVariantName))
+}
+
+// WhereConverted applies the entql bool predicate on the converted field.
+func (f *ExperimentParticipantFilter) WhereConverted(p entql.BoolP) {
+	f.Where(p.Field(experimentparticipant.FieldConverted))
+}
+
+// WhereConvertedAt applies the entql time.Time predicate on the converted_at field.
+func (f *ExperimentParticipantFilter) WhereConvertedAt(p entql.TimeP) {
+	f.Where(p.Field(experimentparticipant.FieldConvertedAt))
 }
 
 // addPredicate implements the predicateAdder interface.

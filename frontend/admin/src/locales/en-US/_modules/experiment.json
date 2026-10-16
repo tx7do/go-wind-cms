@@ -50,5 +50,6 @@
   "endSuccess": "Experiment ended",
   "stats": "Variant Stats",
   "loading": "Loading…",
-  "noData": "No data"
+  "noData": "No data",
+  "conversions": "{count} conversions ({rate}%)"
 }

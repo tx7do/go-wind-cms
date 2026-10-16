@@ -21,15 +21,16 @@ import (
 const _ = grpc.SupportPackageIsVersion9
 
 const (
-	ExperimentService_List_FullMethodName              = "/content.service.v1.ExperimentService/List"
-	ExperimentService_Get_FullMethodName               = "/content.service.v1.ExperimentService/Get"
-	ExperimentService_Create_FullMethodName            = "/content.service.v1.ExperimentService/Create"
-	ExperimentService_Update_FullMethodName            = "/content.service.v1.ExperimentService/Update"
-	ExperimentService_Delete_FullMethodName            = "/content.service.v1.ExperimentService/Delete"
-	ExperimentService_SetStatus_FullMethodName         = "/content.service.v1.ExperimentService/SetStatus"
-	ExperimentService_ListRunningByPage_FullMethodName = "/content.service.v1.ExperimentService/ListRunningByPage"
-	ExperimentService_RecordParticipant_FullMethodName = "/content.service.v1.ExperimentService/RecordParticipant"
-	ExperimentService_GetVariantStats_FullMethodName   = "/content.service.v1.ExperimentService/GetVariantStats"
+	ExperimentService_List_FullMethodName                       = "/content.service.v1.ExperimentService/List"
+	ExperimentService_Get_FullMethodName                        = "/content.service.v1.ExperimentService/Get"
+	ExperimentService_Create_FullMethodName                     = "/content.service.v1.ExperimentService/Create"
+	ExperimentService_Update_FullMethodName                     = "/content.service.v1.ExperimentService/Update"
+	ExperimentService_Delete_FullMethodName                     = "/content.service.v1.ExperimentService/Delete"
+	ExperimentService_SetStatus_FullMethodName                  = "/content.service.v1.ExperimentService/SetStatus"
+	ExperimentService_ListRunningByPage_FullMethodName          = "/content.service.v1.ExperimentService/ListRunningByPage"
+	ExperimentService_RecordParticipant_FullMethodName          = "/content.service.v1.ExperimentService/RecordParticipant"
+	ExperimentService_GetVariantStats_FullMethodName            = "/content.service.v1.ExperimentService/GetVariantStats"
+	ExperimentService_RecordExperimentConversion_FullMethodName = "/content.service.v1.ExperimentService/RecordExperimentConversion"
 )
 
 // ExperimentServiceClient is the client API for ExperimentService service.
@@ -58,8 +59,10 @@ type ExperimentServiceClient interface {
 	ListRunningByPage(ctx context.Context, in *ListRunningExperimentsByPageRequest, opts ...grpc.CallOption) (*ListExperimentsResponse, error)
 	// 记录一次访客分配（(experiment_id, visitor_hash) 幂等）
 	RecordParticipant(ctx context.Context, in *RecordExperimentParticipantRequest, opts ...grpc.CallOption) (*emptypb.Empty, error)
-	// 变体参与统计（按变体名快照计数）
+	// 变体参与统计（按变体名快照计数，含转化数）
 	GetVariantStats(ctx context.Context, in *GetExperimentVariantStatsRequest, opts ...grpc.CallOption) (*ExperimentVariantStatsResponse, error)
+	// 标记转化（如表单提交归因到访客已参与的实验；幂等）
+	RecordExperimentConversion(ctx context.Context, in *RecordExperimentConversionRequest, opts ...grpc.CallOption) (*emptypb.Empty, error)
 }
 
 type experimentServiceClient struct {
@@ -160,6 +163,16 @@ func (c *experimentServiceClient) GetVariantStats(ctx context.Context, in *GetEx
 	return out, nil
 }
 
+func (c *experimentServiceClient) RecordExperimentConversion(ctx context.Context, in *RecordExperimentConversionRequest, opts ...grpc.CallOption) (*emptypb.Empty, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(emptypb.Empty)
+	err := c.cc.Invoke(ctx, ExperimentService_RecordExperimentConversion_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 // ExperimentServiceServer is the server API for ExperimentService service.
 // All implementations must embed UnimplementedExperimentServiceServer
 // for forward compatibility.
@@ -186,8 +199,10 @@ type ExperimentServiceServer interface {
 	ListRunningByPage(context.Context, *ListRunningExperimentsByPageRequest) (*ListExperimentsResponse, error)
 	// 记录一次访客分配（(experiment_id, visitor_hash) 幂等）
 	RecordParticipant(context.Context, *RecordExperimentParticipantRequest) (*emptypb.Empty, error)
-	// 变体参与统计（按变体名快照计数）
+	// 变体参与统计（按变体名快照计数，含转化数）
 	GetVariantStats(context.Context, *GetExperimentVariantStatsRequest) (*ExperimentVariantStatsResponse, error)
+	// 标记转化（如表单提交归因到访客已参与的实验；幂等）
+	RecordExperimentConversion(context.Context, *RecordExperimentConversionRequest) (*emptypb.Empty, error)
 	mustEmbedUnimplementedExperimentServiceServer()
 }
 
@@ -224,6 +239,9 @@ func (UnimplementedExperimentServiceServer) RecordParticipant(context.Context, *
 }
 func (UnimplementedExperimentServiceServer) GetVariantStats(context.Context, *GetExperimentVariantStatsRequest) (*ExperimentVariantStatsResponse, error) {
 	return nil, status.Error(codes.Unimplemented, "method GetVariantStats not implemented")
+}
+func (UnimplementedExperimentServiceServer) RecordExperimentConversion(context.Context, *RecordExperimentConversionRequest) (*emptypb.Empty, error) {
+	return nil, status.Error(codes.Unimplemented, "method RecordExperimentConversion not implemented")
 }
 func (UnimplementedExperimentServiceServer) mustEmbedUnimplementedExperimentServiceServer() {}
 func (UnimplementedExperimentServiceServer) testEmbeddedByValue()                           {}
@@ -408,6 +426,24 @@ func _ExperimentService_GetVariantStats_Handler(srv interface{}, ctx context.Con
 	return interceptor(ctx, in, info, handler)
 }
 
+func _ExperimentService_RecordExperimentConversion_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(RecordExperimentConversionRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(ExperimentServiceServer).RecordExperimentConversion(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: ExperimentService_RecordExperimentConversion_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(ExperimentServiceServer).RecordExperimentConversion(ctx, req.(*RecordExperimentConversionRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 // ExperimentService_ServiceDesc is the grpc.ServiceDesc for ExperimentService service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
@@ -450,6 +486,10 @@ var ExperimentService_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "GetVariantStats",
 			Handler:    _ExperimentService_GetVariantStats_Handler,
+		},
+		{
+			MethodName: "RecordExperimentConversion",
+			Handler:    _ExperimentService_RecordExperimentConversion_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},

@@ -1607,6 +1607,224 @@ var _ interface {
 	ErrorName() string
 } = GetExperimentVariantStatsRequestValidationError{}
 
+// Validate checks the field values on RecordExperimentConversionRequest with
+// the rules defined in the proto definition for this message. If any rules
+// are violated, the first error encountered is returned, or nil if there are
+// no violations.
+func (m *RecordExperimentConversionRequest) Validate() error {
+	return m.validate(false)
+}
+
+// ValidateAll checks the field values on RecordExperimentConversionRequest
+// with the rules defined in the proto definition for this message. If any
+// rules are violated, the result is a list of violation errors wrapped in
+// RecordExperimentConversionRequestMultiError, or nil if none found.
+func (m *RecordExperimentConversionRequest) ValidateAll() error {
+	return m.validate(true)
+}
+
+func (m *RecordExperimentConversionRequest) validate(all bool) error {
+	if m == nil {
+		return nil
+	}
+
+	var errors []error
+
+	// no validation rules for ExperimentId
+
+	// no validation rules for VisitorHash
+
+	if len(errors) > 0 {
+		return RecordExperimentConversionRequestMultiError(errors)
+	}
+
+	return nil
+}
+
+// RecordExperimentConversionRequestMultiError is an error wrapping multiple
+// validation errors returned by
+// RecordExperimentConversionRequest.ValidateAll() if the designated
+// constraints aren't met.
+type RecordExperimentConversionRequestMultiError []error
+
+// Error returns a concatenation of all the error messages it wraps.
+func (m RecordExperimentConversionRequestMultiError) Error() string {
+	msgs := make([]string, 0, len(m))
+	for _, err := range m {
+		msgs = append(msgs, err.Error())
+	}
+	return strings.Join(msgs, "; ")
+}
+
+// AllErrors returns a list of validation violation errors.
+func (m RecordExperimentConversionRequestMultiError) AllErrors() []error { return m }
+
+// RecordExperimentConversionRequestValidationError is the validation error
+// returned by RecordExperimentConversionRequest.Validate if the designated
+// constraints aren't met.
+type RecordExperimentConversionRequestValidationError struct {
+	field  string
+	reason string
+	cause  error
+	key    bool
+}
+
+// Field function returns field value.
+func (e RecordExperimentConversionRequestValidationError) Field() string { return e.field }
+
+// Reason function returns reason value.
+func (e RecordExperimentConversionRequestValidationError) Reason() string { return e.reason }
+
+// Cause function returns cause value.
+func (e RecordExperimentConversionRequestValidationError) Cause() error { return e.cause }
+
+// Key function returns key value.
+func (e RecordExperimentConversionRequestValidationError) Key() bool { return e.key }
+
+// ErrorName returns error name.
+func (e RecordExperimentConversionRequestValidationError) ErrorName() string {
+	return "RecordExperimentConversionRequestValidationError"
+}
+
+// Error satisfies the builtin error interface
+func (e RecordExperimentConversionRequestValidationError) Error() string {
+	cause := ""
+	if e.cause != nil {
+		cause = fmt.Sprintf(" | caused by: %v", e.cause)
+	}
+
+	key := ""
+	if e.key {
+		key = "key for "
+	}
+
+	return fmt.Sprintf(
+		"invalid %sRecordExperimentConversionRequest.%s: %s%s",
+		key,
+		e.field,
+		e.reason,
+		cause)
+}
+
+var _ error = RecordExperimentConversionRequestValidationError{}
+
+var _ interface {
+	Field() string
+	Reason() string
+	Key() bool
+	Cause() error
+	ErrorName() string
+} = RecordExperimentConversionRequestValidationError{}
+
+// Validate checks the field values on RecordPageExperimentConversionRequest
+// with the rules defined in the proto definition for this message. If any
+// rules are violated, the first error encountered is returned, or nil if
+// there are no violations.
+func (m *RecordPageExperimentConversionRequest) Validate() error {
+	return m.validate(false)
+}
+
+// ValidateAll checks the field values on RecordPageExperimentConversionRequest
+// with the rules defined in the proto definition for this message. If any
+// rules are violated, the result is a list of violation errors wrapped in
+// RecordPageExperimentConversionRequestMultiError, or nil if none found.
+func (m *RecordPageExperimentConversionRequest) ValidateAll() error {
+	return m.validate(true)
+}
+
+func (m *RecordPageExperimentConversionRequest) validate(all bool) error {
+	if m == nil {
+		return nil
+	}
+
+	var errors []error
+
+	// no validation rules for PageId
+
+	// no validation rules for VisitorHashSeed
+
+	if len(errors) > 0 {
+		return RecordPageExperimentConversionRequestMultiError(errors)
+	}
+
+	return nil
+}
+
+// RecordPageExperimentConversionRequestMultiError is an error wrapping
+// multiple validation errors returned by
+// RecordPageExperimentConversionRequest.ValidateAll() if the designated
+// constraints aren't met.
+type RecordPageExperimentConversionRequestMultiError []error
+
+// Error returns a concatenation of all the error messages it wraps.
+func (m RecordPageExperimentConversionRequestMultiError) Error() string {
+	msgs := make([]string, 0, len(m))
+	for _, err := range m {
+		msgs = append(msgs, err.Error())
+	}
+	return strings.Join(msgs, "; ")
+}
+
+// AllErrors returns a list of validation violation errors.
+func (m RecordPageExperimentConversionRequestMultiError) AllErrors() []error { return m }
+
+// RecordPageExperimentConversionRequestValidationError is the validation error
+// returned by RecordPageExperimentConversionRequest.Validate if the
+// designated constraints aren't met.
+type RecordPageExperimentConversionRequestValidationError struct {
+	field  string
+	reason string
+	cause  error
+	key    bool
+}
+
+// Field function returns field value.
+func (e RecordPageExperimentConversionRequestValidationError) Field() string { return e.field }
+
+// Reason function returns reason value.
+func (e RecordPageExperimentConversionRequestValidationError) Reason() string { return e.reason }
+
+// Cause function returns cause value.
+func (e RecordPageExperimentConversionRequestValidationError) Cause() error { return e.cause }
+
+// Key function returns key value.
+func (e RecordPageExperimentConversionRequestValidationError) Key() bool { return e.key }
+
+// ErrorName returns error name.
+func (e RecordPageExperimentConversionRequestValidationError) ErrorName() string {
+	return "RecordPageExperimentConversionRequestValidationError"
+}
+
+// Error satisfies the builtin error interface
+func (e RecordPageExperimentConversionRequestValidationError) Error() string {
+	cause := ""
+	if e.cause != nil {
+		cause = fmt.Sprintf(" | caused by: %v", e.cause)
+	}
+
+	key := ""
+	if e.key {
+		key = "key for "
+	}
+
+	return fmt.Sprintf(
+		"invalid %sRecordPageExperimentConversionRequest.%s: %s%s",
+		key,
+		e.field,
+		e.reason,
+		cause)
+}
+
+var _ error = RecordPageExperimentConversionRequestValidationError{}
+
+var _ interface {
+	Field() string
+	Reason() string
+	Key() bool
+	Cause() error
+	ErrorName() string
+} = RecordPageExperimentConversionRequestValidationError{}
+
 // Validate checks the field values on
 // ExperimentVariantStatsResponse_VariantCount with the rules defined in the
 // proto definition for this message. If any rules are violated, the first
@@ -1634,6 +1852,8 @@ func (m *ExperimentVariantStatsResponse_VariantCount) validate(all bool) error {
 	// no validation rules for VariantName
 
 	// no validation rules for Participants
+
+	// no validation rules for Conversions
 
 	if len(errors) > 0 {
 		return ExperimentVariantStatsResponse_VariantCountMultiError(errors)

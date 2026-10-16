@@ -31,7 +31,11 @@ type ExperimentParticipant struct {
 	// 访客标识哈希（cookie vid + 实验 ID 派生，不落原始身份）
 	VisitorHash string `json:"visitor_hash,omitempty"`
 	// 被分配的变体名称快照
-	VariantName  string `json:"variant_name,omitempty"`
+	VariantName string `json:"variant_name,omitempty"`
+	// 是否转化（如表单提交归因）
+	Converted *bool `json:"converted,omitempty"`
+	// 转化时间
+	ConvertedAt  *time.Time `json:"converted_at,omitempty"`
 	selectValues sql.SelectValues
 }
 
@@ -40,11 +44,13 @@ func (*ExperimentParticipant) scanValues(columns []string) ([]any, error) {
 	values := make([]any, len(columns))
 	for i := range columns {
 		switch columns[i] {
+		case experimentparticipant.FieldConverted:
+			values[i] = new(sql.NullBool)
 		case experimentparticipant.FieldID, experimentparticipant.FieldTenantID, experimentparticipant.FieldExperimentID:
 			values[i] = new(sql.NullInt64)
 		case experimentparticipant.FieldVisitorHash, experimentparticipant.FieldVariantName:
 			values[i] = new(sql.NullString)
-		case experimentparticipant.FieldCreatedAt, experimentparticipant.FieldUpdatedAt, experimentparticipant.FieldDeletedAt:
+		case experimentparticipant.FieldCreatedAt, experimentparticipant.FieldUpdatedAt, experimentparticipant.FieldDeletedAt, experimentparticipant.FieldConvertedAt:
 			values[i] = new(sql.NullTime)
 		default:
 			values[i] = new(sql.UnknownType)
@@ -114,6 +120,20 @@ func (_m *ExperimentParticipant) assignValues(columns []string, values []any) er
 			} else if value.Valid {
 				_m.VariantName = value.String
 			}
+		case experimentparticipant.FieldConverted:
+			if value, ok := values[i].(*sql.NullBool); !ok {
+				return fmt.Errorf("unexpected type %T for field converted", values[i])
+			} else if value.Valid {
+				_m.Converted = new(bool)
+				*_m.Converted = value.Bool
+			}
+		case experimentparticipant.FieldConvertedAt:
+			if value, ok := values[i].(*sql.NullTime); !ok {
+				return fmt.Errorf("unexpected type %T for field converted_at", values[i])
+			} else if value.Valid {
+				_m.ConvertedAt = new(time.Time)
+				*_m.ConvertedAt = value.Time
+			}
 		default:
 			_m.selectValues.Set(columns[i], values[i])
 		}
@@ -180,6 +200,16 @@ func (_m *ExperimentParticipant) String() string {
 	builder.WriteString(", ")
 	builder.WriteString("variant_name=")
 	builder.WriteString(_m.VariantName)
+	builder.WriteString(", ")
+	if v := _m.Converted; v != nil {
+		builder.WriteString("converted=")
+		builder.WriteString(fmt.Sprintf("%v", *v))
+	}
+	builder.WriteString(", ")
+	if v := _m.ConvertedAt; v != nil {
+		builder.WriteString("converted_at=")
+		builder.WriteString(v.Format(time.ANSIC))
+	}
 	builder.WriteByte(')')
 	return builder.String()
 }

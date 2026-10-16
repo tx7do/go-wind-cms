@@ -11114,6 +11114,8 @@ components:
                     type: string
                 participants:
                     type: string
+                conversions:
+                    type: string
         content.service.v1.FieldDefinition:
             type: object
             properties:

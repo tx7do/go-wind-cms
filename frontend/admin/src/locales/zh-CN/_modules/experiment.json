@@ -50,5 +50,6 @@
   "endSuccess": "实验已结束",
   "stats": "参与统计",
   "loading": "加载中…",
-  "noData": "暂无数据"
+  "noData": "暂无数据",
+  "conversions": "转化 {count}（{rate}%）"
 }

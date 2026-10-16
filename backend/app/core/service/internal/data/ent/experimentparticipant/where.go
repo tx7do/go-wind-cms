@@ -89,6 +89,16 @@ func VariantName(v string) predicate.ExperimentParticipant {
 	return predicate.ExperimentParticipant(sql.FieldEQ(FieldVariantName, v))
 }
 
+// Converted applies equality check predicate on the "converted" field. It's identical to ConvertedEQ.
+func Converted(v bool) predicate.ExperimentParticipant {
+	return predicate.ExperimentParticipant(sql.FieldEQ(FieldConverted, v))
+}
+
+// ConvertedAt applies equality check predicate on the "converted_at" field. It's identical to ConvertedAtEQ.
+func ConvertedAt(v time.Time) predicate.ExperimentParticipant {
+	return predicate.ExperimentParticipant(sql.FieldEQ(FieldConvertedAt, v))
+}
+
 // CreatedAtEQ applies the EQ predicate on the "created_at" field.
 func CreatedAtEQ(v time.Time) predicate.ExperimentParticipant {
 	return predicate.ExperimentParticipant(sql.FieldEQ(FieldCreatedAt, v))
@@ -467,6 +477,76 @@ func VariantNameEqualFold(v string) predicate.ExperimentParticipant {
 // VariantNameContainsFold applies the ContainsFold predicate on the "variant_name" field.
 func VariantNameContainsFold(v string) predicate.ExperimentParticipant {
 	return predicate.ExperimentParticipant(sql.FieldContainsFold(FieldVariantName, v))
+}
+
+// ConvertedEQ applies the EQ predicate on the "converted" field.
+func ConvertedEQ(v bool) predicate.ExperimentParticipant {
+	return predicate.ExperimentParticipant(sql.FieldEQ(FieldConverted, v))
+}
+
+// ConvertedNEQ applies the NEQ predicate on the "converted" field.
+func ConvertedNEQ(v bool) predicate.ExperimentParticipant {
+	return predicate.ExperimentParticipant(sql.FieldNEQ(FieldConverted, v))
+}
+
+// ConvertedIsNil applies the IsNil predicate on the "converted" field.
+func ConvertedIsNil() predicate.ExperimentParticipant {
+	return predicate.ExperimentParticipant(sql.FieldIsNull(FieldConverted))
+}
+
+// ConvertedNotNil applies the NotNil predicate on the "converted" field.
+func ConvertedNotNil() predicate.ExperimentParticipant {
+	return predicate.ExperimentParticipant(sql.FieldNotNull(FieldConverted))
+}
+
+// ConvertedAtEQ applies the EQ predicate on the "converted_at" field.
+func ConvertedAtEQ(v time.Time) predicate.ExperimentParticipant {
+	return predicate.ExperimentParticipant(sql.FieldEQ(FieldConvertedAt, v))
+}
+
+// ConvertedAtNEQ applies the NEQ predicate on the "converted_at" field.
+func ConvertedAtNEQ(v time.Time) predicate.ExperimentParticipant {
+	return predicate.ExperimentParticipant(sql.FieldNEQ(FieldConvertedAt, v))
+}
+
+// ConvertedAtIn applies the In predicate on the "converted_at" field.
+func ConvertedAtIn(vs ...time.Time) predicate.ExperimentParticipant {
+	return predicate.ExperimentParticipant(sql.FieldIn(FieldConvertedAt, vs...))
+}
+
+// ConvertedAtNotIn applies the NotIn predicate on the "converted_at" field.
+func ConvertedAtNotIn(vs ...time.Time) predicate.ExperimentParticipant {
+	return predicate.ExperimentParticipant(sql.FieldNotIn(FieldConvertedAt, vs...))
+}
+
+// ConvertedAtGT applies the GT predicate on the "converted_at" field.
+func ConvertedAtGT(v time.Time) predicate.ExperimentParticipant {
+	return predicate.ExperimentParticipant(sql.FieldGT(FieldConvertedAt, v))
+}
+
+// ConvertedAtGTE applies the GTE predicate on the "converted_at" field.
+func ConvertedAtGTE(v time.Time) predicate.ExperimentParticipant {
+	return predicate.ExperimentParticipant(sql.FieldGTE(FieldConvertedAt, v))
+}
+
+// ConvertedAtLT applies the LT predicate on the "converted_at" field.
+func ConvertedAtLT(v time.Time) predicate.ExperimentParticipant {
+	return predicate.ExperimentParticipant(sql.FieldLT(FieldConvertedAt, v))
+}
+
+// ConvertedAtLTE applies the LTE predicate on the "converted_at" field.
+func ConvertedAtLTE(v time.Time) predicate.ExperimentParticipant {
+	return predicate.ExperimentParticipant(sql.FieldLTE(FieldConvertedAt, v))
+}
+
+// ConvertedAtIsNil applies the IsNil predicate on the "converted_at" field.
+func ConvertedAtIsNil() predicate.ExperimentParticipant {
+	return predicate.ExperimentParticipant(sql.FieldIsNull(FieldConvertedAt))
+}
+
+// ConvertedAtNotNil applies the NotNil predicate on the "converted_at" field.
+func ConvertedAtNotNil() predicate.ExperimentParticipant {
+	return predicate.ExperimentParticipant(sql.FieldNotNull(FieldConvertedAt))
 }
 
 // And groups predicates with the AND operator between them.

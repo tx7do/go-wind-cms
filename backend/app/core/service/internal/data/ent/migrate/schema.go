@@ -1033,6 +1033,8 @@ var (
 		{Name: "experiment_id", Type: field.TypeUint32, Nullable: true, Comment: "实验 ID"},
 		{Name: "visitor_hash", Type: field.TypeString, Comment: "访客标识哈希（cookie vid + 实验 ID 派生，不落原始身份）"},
 		{Name: "variant_name", Type: field.TypeString, Comment: "被分配的变体名称快照"},
+		{Name: "converted", Type: field.TypeBool, Nullable: true, Comment: "是否转化（如表单提交归因）", Default: false},
+		{Name: "converted_at", Type: field.TypeTime, Nullable: true, Comment: "转化时间"},
 	}
 	// ExperimentParticipantsTable holds the schema information for the "experiment_participants" table.
 	ExperimentParticipantsTable = &schema.Table{
@@ -1050,6 +1052,11 @@ var (
 				Name:    "experimentparticipant_experiment_id_variant_name",
 				Unique:  false,
 				Columns: []*schema.Column{ExperimentParticipantsColumns[5], ExperimentParticipantsColumns[7]},
+			},
+			{
+				Name:    "experimentparticipant_experiment_id_converted",
+				Unique:  false,
+				Columns: []*schema.Column{ExperimentParticipantsColumns[5], ExperimentParticipantsColumns[8]},
 			},
 		},
 	}
