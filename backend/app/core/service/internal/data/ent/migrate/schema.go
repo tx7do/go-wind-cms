@@ -695,6 +695,46 @@ var (
 			},
 		},
 	}
+	// ContentReferencesColumns holds the columns for the "content_references" table.
+	ContentReferencesColumns = []*schema.Column{
+		{Name: "id", Type: field.TypeUint32, Increment: true, Comment: "id"},
+		{Name: "created_at", Type: field.TypeTime, Nullable: true, Comment: "创建时间"},
+		{Name: "updated_at", Type: field.TypeTime, Nullable: true, Comment: "更新时间"},
+		{Name: "deleted_at", Type: field.TypeTime, Nullable: true, Comment: "删除时间"},
+		{Name: "created_by", Type: field.TypeUint32, Nullable: true, Comment: "创建者ID"},
+		{Name: "updated_by", Type: field.TypeUint32, Nullable: true, Comment: "更新者ID"},
+		{Name: "deleted_by", Type: field.TypeUint32, Nullable: true, Comment: "删除者ID"},
+		{Name: "tenant_id", Type: field.TypeUint32, Nullable: true, Comment: "租户ID", Default: 0},
+		{Name: "source_type", Type: field.TypeString, Size: 32, Comment: "源内容类型（post/page）"},
+		{Name: "source_id", Type: field.TypeUint32, Comment: "源内容 ID"},
+		{Name: "target_type", Type: field.TypeString, Size: 32, Comment: "目标资源类型（media_asset）"},
+		{Name: "target_id", Type: field.TypeUint32, Comment: "目标资源 ID"},
+		{Name: "field", Type: field.TypeString, Size: 32, Comment: "引用位置（body=正文内嵌，thumbnail=缩略图字段）", Default: "body"},
+	}
+	// ContentReferencesTable holds the schema information for the "content_references" table.
+	ContentReferencesTable = &schema.Table{
+		Name:       "content_references",
+		Comment:    "内容引用关系表（引用图谱的边：文章/页面 → 媒体等目标资源）",
+		Columns:    ContentReferencesColumns,
+		PrimaryKey: []*schema.Column{ContentReferencesColumns[0]},
+		Indexes: []*schema.Index{
+			{
+				Name:    "contentreference_source_type_source_id",
+				Unique:  false,
+				Columns: []*schema.Column{ContentReferencesColumns[8], ContentReferencesColumns[9]},
+			},
+			{
+				Name:    "contentreference_target_type_target_id",
+				Unique:  false,
+				Columns: []*schema.Column{ContentReferencesColumns[10], ContentReferencesColumns[11]},
+			},
+			{
+				Name:    "contentreference_source_type_source_id_target_type_target_id_field",
+				Unique:  true,
+				Columns: []*schema.Column{ContentReferencesColumns[8], ContentReferencesColumns[9], ContentReferencesColumns[10], ContentReferencesColumns[11], ContentReferencesColumns[12]},
+			},
+		},
+	}
 	// SysDataAccessAuditLogsColumns holds the columns for the "sys_data_access_audit_logs" table.
 	SysDataAccessAuditLogsColumns = []*schema.Column{
 		{Name: "id", Type: field.TypeUint32, Increment: true, Comment: "id"},
@@ -4966,6 +5006,7 @@ var (
 		CommentLikesTable,
 		ContentModelsTable,
 		ContentModelTranslationsTable,
+		ContentReferencesTable,
 		SysDataAccessAuditLogsTable,
 		SysDictEntriesTable,
 		SysDictEntryI18nTable,
@@ -5124,6 +5165,11 @@ func init() {
 	}
 	ContentModelTranslationsTable.Annotation = &entsql.Annotation{
 		Table:     "content_model_translations",
+		Charset:   "utf8mb4",
+		Collation: "utf8mb4_bin",
+	}
+	ContentReferencesTable.Annotation = &entsql.Annotation{
+		Table:     "content_references",
 		Charset:   "utf8mb4",
 		Collation: "utf8mb4_bin",
 	}

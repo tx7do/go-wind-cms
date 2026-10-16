@@ -3,7 +3,13 @@ import type { ProColumns, ActionType } from '@ant-design/pro-components';
 import TableExportButton from '@/components/common/TableExportButton';
 import ListTable from '@/components/common/ListTable';
 import { Button, Popconfirm, Tag, App, Upload } from 'antd';
-import { EditOutlined, DeleteOutlined, UploadOutlined } from '@ant-design/icons';
+import {
+  EditOutlined,
+  DeleteOutlined,
+  UploadOutlined,
+  CopyOutlined,
+  LinkOutlined,
+} from '@ant-design/icons';
 import { useQueryClient } from '@tanstack/react-query';
 import { useTranslation } from 'react-i18next';
 import dayjs from 'dayjs';
@@ -26,6 +32,8 @@ import {
   processingStatusOptions,
 } from './constants';
 import MediaAssetDrawer from './MediaAssetDrawer';
+import MediaAssetDuplicatesModal from './MediaAssetDuplicatesModal';
+import MediaAssetReferencesModal from './MediaAssetReferencesModal';
 
 /**
  * 媒体资源列表页
@@ -41,6 +49,11 @@ const MediaAssetList = () => {
   const [drawerOpen, setDrawerOpen] = useState(false);
   const [drawerMode, setDrawerMode] = useState<'create' | 'edit'>('create');
   const [editingRow, setEditingRow] = useState<any>(null);
+  const [duplicatesOpen, setDuplicatesOpen] = useState(false);
+  const [referencesRow, setReferencesRow] = useState<{
+    id?: number;
+    filename?: string;
+  } | null>(null);
 
   const deleteMutation = useDeleteMediaAsset({
     onSuccess: () => {
@@ -73,7 +86,13 @@ const MediaAssetList = () => {
       try {
         onError?.(error, file);
       } catch {}
-      message.error(t('uploadFailed'));
+      const dupHint =
+        error instanceof Error ? error.message : String(error ?? '');
+      if (dupHint.includes('duplicate of media asset')) {
+        message.warning(`${t('uploadDuplicate')}: ${dupHint}`);
+      } else {
+        message.error(t('uploadFailed'));
+      }
     }
   };
 
@@ -183,11 +202,16 @@ const MediaAssetList = () => {
       dataIndex: 'referenceCount',
       search: false,
       width: 100,
+      render: (_, record) => (
+        <a onClick={() => setReferencesRow(record)}>
+          {Number(record.referenceCount || 0)}
+        </a>
+      ),
     },
     {
       title: t('action'),
       valueType: 'option',
-      width: 110,
+      width: 140,
       fixed: 'right',
       render: (_, record) => [
         <a
@@ -199,6 +223,13 @@ const MediaAssetList = () => {
           }}
         >
           <EditOutlined />
+        </a>,
+        <a
+          key="references"
+          title={t('references.title')}
+          onClick={() => setReferencesRow(record)}
+        >
+          <LinkOutlined />
         </a>,
         <Popconfirm
           key="delete"
@@ -260,6 +291,14 @@ const MediaAssetList = () => {
             showQuickJumper: true,
           }}
           toolBarRender={() => [
+            <Button
+              key="duplicates"
+              icon={<CopyOutlined />}
+              size="small"
+              onClick={() => setDuplicatesOpen(true)}
+            >
+              {t('duplicates.toolbar')}
+            </Button>,
             <Upload
               key="upload"
               multiple={false}
@@ -301,6 +340,22 @@ const MediaAssetList = () => {
         onSuccess={() => {
           actionRef.current?.reload();
         }}
+      />
+
+      <MediaAssetDuplicatesModal
+        open={duplicatesOpen}
+        onClose={() => setDuplicatesOpen(false)}
+        onDeleteAsset={(id) => {
+          deleteMutation.mutate({ id });
+          setDuplicatesOpen(false);
+        }}
+      />
+
+      <MediaAssetReferencesModal
+        open={!!referencesRow}
+        mediaAssetId={referencesRow?.id}
+        mediaAssetName={referencesRow?.filename}
+        onClose={() => setReferencesRow(null)}
       />
     </>
   );

@@ -2,6 +2,7 @@ package data
 
 import (
 	"context"
+	"sort"
 
 	"time"
 
@@ -11,6 +12,7 @@ import (
 	entCrud "github.com/tx7do/go-crud/entgo"
 	"github.com/tx7do/go-utils/copierutil"
 	"github.com/tx7do/go-utils/mapper"
+	"github.com/tx7do/go-utils/trans"
 	"github.com/tx7do/kratos-bootstrap/bootstrap"
 
 	"go-wind-cms/app/core/service/internal/data/ent"
@@ -164,6 +166,143 @@ func (r *MediaAssetRepo) FindByHash(ctx context.Context, fileHash string) (*medi
 		return nil, mediaV1.ErrorInternalServerError("find media asset by hash failed")
 	}
 	return r.mapper.ToDTO(row), nil
+}
+
+// ListDuplicatedGroups 同租户内同内容哈希 >1 条的重复分组。
+// 组内按创建时间升序（首个为最早上传，应保留者）；组按条数降序。
+func (r *MediaAssetRepo) ListDuplicatedGroups(ctx context.Context, limit int) ([]*mediaV1.MediaAssetDuplicateGroup, error) {
+	if limit <= 0 {
+		limit = 50
+	}
+	if limit > 200 {
+		limit = 200
+	}
+
+	tenantConds := []predicate.MediaAsset{}
+	if tid, hasTenant := maybeTenantFromViewer(ctx); hasTenant {
+		tenantConds = append(tenantConds, mediaasset.TenantIDEQ(tid))
+	}
+
+	// 1) 找出出现 >1 次的哈希
+	type hashCount struct {
+		FileHash string `json:"file_hash"`
+		Count    int    `json:"count"`
+	}
+	var counts []hashCount
+	err := r.entClient.Client().MediaAsset.Query().
+		Where(append(tenantConds,
+			mediaasset.FileHashNEQ(""),
+			mediaasset.FileHashNotNil(),
+		)...).
+		GroupBy(mediaasset.FieldFileHash).
+		Aggregate(ent.Count()).
+		Scan(ctx, &counts)
+	if err != nil {
+		r.log.Errorf("group media assets by hash failed: %s", err.Error())
+		return nil, mediaV1.ErrorInternalServerError("list duplicated media assets failed")
+	}
+
+	dupHashes := make([]string, 0, len(counts))
+	countByHash := make(map[string]int, len(counts))
+	for _, c := range counts {
+		if c.Count > 1 {
+			dupHashes = append(dupHashes, c.FileHash)
+			countByHash[c.FileHash] = c.Count
+		}
+	}
+	if len(dupHashes) == 0 {
+		return []*mediaV1.MediaAssetDuplicateGroup{}, nil
+	}
+	if len(dupHashes) > limit {
+		// 组按条数降序取前 limit 组
+		sort.Slice(dupHashes, func(i, j int) bool {
+			return countByHash[dupHashes[i]] > countByHash[dupHashes[j]]
+		})
+		dupHashes = dupHashes[:limit]
+	}
+
+	// 2) 取组内资源（创建时间升序）
+	rows, err := r.entClient.Client().MediaAsset.Query().
+		Where(append(tenantConds, mediaasset.FileHashIn(dupHashes...))...).
+		Order(ent.Asc(mediaasset.FieldCreatedAt)).
+		All(ctx)
+	if err != nil {
+		r.log.Errorf("query duplicated media assets failed: %s", err.Error())
+		return nil, mediaV1.ErrorInternalServerError("list duplicated media assets failed")
+	}
+
+	groups := make([]*mediaV1.MediaAssetDuplicateGroup, 0, len(dupHashes))
+	indexByHash := make(map[string]int, len(dupHashes))
+	for _, row := range rows {
+		if row.FileHash == nil {
+			continue
+		}
+		hash := *row.FileHash
+		idx, ok := indexByHash[hash]
+		if !ok {
+			groups = append(groups, &mediaV1.MediaAssetDuplicateGroup{
+				FileHash: trans.Ptr(hash),
+				Count:    trans.Ptr(uint32(countByHash[hash])),
+			})
+			idx = len(groups) - 1
+			indexByHash[hash] = idx
+		}
+		groups[idx].Assets = append(groups[idx].Assets, r.mapper.ToDTO(row))
+	}
+	return groups, nil
+}
+
+// FindByPathCandidates 按存储路径候选（storage_path 精确 / url 精确）批量找资源。
+// 返回 (storagePath→id) 与 (url→id) 两张映射，供引用抽取把正文 URL 解析成资产 ID。
+func (r *MediaAssetRepo) FindByPathCandidates(ctx context.Context, paths, urls []string) (map[string]uint32, map[string]uint32, error) {
+	pathByID := make(map[string]uint32, len(paths))
+	urlByID := make(map[string]uint32, len(urls))
+	if len(paths) == 0 && len(urls) == 0 {
+		return pathByID, urlByID, nil
+	}
+
+	conds := []predicate.MediaAsset{}
+	if tid, hasTenant := maybeTenantFromViewer(ctx); hasTenant {
+		conds = append(conds, mediaasset.TenantIDEQ(tid))
+	}
+	if len(paths) > 0 && len(urls) > 0 {
+		conds = append(conds, mediaasset.Or(mediaasset.StoragePathIn(paths...), mediaasset.URLIn(urls...)))
+	} else if len(paths) > 0 {
+		conds = append(conds, mediaasset.StoragePathIn(paths...))
+	} else {
+		conds = append(conds, mediaasset.URLIn(urls...))
+	}
+
+	rows, err := r.entClient.Client().MediaAsset.Query().Where(conds...).All(ctx)
+	if err != nil {
+		r.log.Errorf("find media assets by path candidates failed: %s", err.Error())
+		return nil, nil, mediaV1.ErrorInternalServerError("find media assets by path failed")
+	}
+	for _, row := range rows {
+		if row.StoragePath != nil {
+			pathByID[*row.StoragePath] = row.ID
+		}
+		if row.URL != nil {
+			urlByID[*row.URL] = row.ID
+		}
+	}
+	return pathByID, urlByID, nil
+}
+
+// UpdateReferenceCounts 按给定计数回写 reference_count（引用追踪维护）。
+func (r *MediaAssetRepo) UpdateReferenceCounts(ctx context.Context, counts map[uint32]int) error {
+	for id, n := range counts {
+		if _, err := r.entClient.Client().MediaAsset.UpdateOneID(id).
+			SetReferenceCount(uint32(n)).
+			Save(ctx); err != nil {
+			if ent.IsNotFound(err) {
+				continue
+			}
+			r.log.Errorf("update reference count for asset [%d] failed: %s", id, err.Error())
+			return err
+		}
+	}
+	return nil
 }
 
 func (r *MediaAssetRepo) Create(ctx context.Context, req *mediaV1.CreateMediaAssetRequest) (*mediaV1.MediaAsset, error) {

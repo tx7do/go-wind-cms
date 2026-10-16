@@ -200,6 +200,18 @@ func (f ContentModelTranslationFunc) Mutate(ctx context.Context, m ent.Mutation)
 	return nil, fmt.Errorf("unexpected mutation type %T. expect *ent.ContentModelTranslationMutation", m)
 }
 
+// The ContentReferenceFunc type is an adapter to allow the use of ordinary
+// function as ContentReference mutator.
+type ContentReferenceFunc func(context.Context, *ent.ContentReferenceMutation) (ent.Value, error)
+
+// Mutate calls f(ctx, m).
+func (f ContentReferenceFunc) Mutate(ctx context.Context, m ent.Mutation) (ent.Value, error) {
+	if mv, ok := m.(*ent.ContentReferenceMutation); ok {
+		return f(ctx, mv)
+	}
+	return nil, fmt.Errorf("unexpected mutation type %T. expect *ent.ContentReferenceMutation", m)
+}
+
 // The DataAccessAuditLogFunc type is an adapter to allow the use of ordinary
 // function as DataAccessAuditLog mutator.
 type DataAccessAuditLogFunc func(context.Context, *ent.DataAccessAuditLogMutation) (ent.Value, error)

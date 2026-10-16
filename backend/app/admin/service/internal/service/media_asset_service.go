@@ -42,6 +42,16 @@ func (s *MediaAssetService) FindByHash(ctx context.Context, req *mediaV1.FindMed
 	return s.mediaAssetServiceClient.FindByHash(ctx, req)
 }
 
+// ListDuplicatedMediaAssets 重复资源分组（透传 core）。
+func (s *MediaAssetService) ListDuplicatedMediaAssets(ctx context.Context, req *mediaV1.ListDuplicatedMediaAssetsRequest) (*mediaV1.ListDuplicatedMediaAssetsResponse, error) {
+	return s.mediaAssetServiceClient.ListDuplicatedMediaAssets(ctx, req)
+}
+
+// ListMediaAssetReferences 媒体被内容引用的关系（透传 core）。
+func (s *MediaAssetService) ListMediaAssetReferences(ctx context.Context, req *mediaV1.ListMediaAssetReferencesRequest) (*mediaV1.ListMediaAssetReferencesResponse, error) {
+	return s.mediaAssetServiceClient.ListMediaAssetReferences(ctx, req)
+}
+
 func (s *MediaAssetService) Create(ctx context.Context, req *mediaV1.CreateMediaAssetRequest) (*mediaV1.MediaAsset, error) {
 	return s.mediaAssetServiceClient.Create(ctx, req)
 }

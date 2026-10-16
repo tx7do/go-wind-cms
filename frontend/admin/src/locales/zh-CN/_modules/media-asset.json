@@ -69,5 +69,28 @@
     "PROCESSING_STATUS_PROCESSING": "处理中",
     "PROCESSING_STATUS_COMPLETED": "已完成",
     "PROCESSING_STATUS_FAILED": "处理失败"
+  },
+  "uploadDuplicate": "内容与既有资源重复（已保留既有资源）",
+  "duplicates": {
+    "toolbar": "重复资源",
+    "title": "重复资源（同内容哈希）",
+    "empty": "没有发现重复资源",
+    "loadFailed": "重复资源加载失败",
+    "count": "重复 {count} 份",
+    "keepFirst": "建议保留（最早上传）",
+    "deleteThis": "删除此份"
+  },
+  "references": {
+    "title": "被引用于",
+    "sourceType": "来源",
+    "post": "文章",
+    "page": "页面",
+    "sourceTitle": "标题",
+    "sourceMissing": "源内容已不存在",
+    "field": "引用位置",
+    "fieldBody": "正文内嵌",
+    "fieldThumbnail": "缩略图",
+    "fieldCover": "封面图",
+    "empty": "暂无内容引用此资源"
   }
 }

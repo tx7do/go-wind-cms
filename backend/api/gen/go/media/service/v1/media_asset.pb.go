@@ -812,6 +812,348 @@ func (x *FindMediaAssetByHashResponse) GetAsset() *MediaAsset {
 	return nil
 }
 
+// 请求 - 重复资源列表
+type ListDuplicatedMediaAssetsRequest struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	Limit         *uint32                `protobuf:"varint,1,opt,name=limit,proto3,oneof" json:"limit,omitempty"` // 返回的重复组数上限
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *ListDuplicatedMediaAssetsRequest) Reset() {
+	*x = ListDuplicatedMediaAssetsRequest{}
+	mi := &file_media_service_v1_media_asset_proto_msgTypes[9]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *ListDuplicatedMediaAssetsRequest) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*ListDuplicatedMediaAssetsRequest) ProtoMessage() {}
+
+func (x *ListDuplicatedMediaAssetsRequest) ProtoReflect() protoreflect.Message {
+	mi := &file_media_service_v1_media_asset_proto_msgTypes[9]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use ListDuplicatedMediaAssetsRequest.ProtoReflect.Descriptor instead.
+func (*ListDuplicatedMediaAssetsRequest) Descriptor() ([]byte, []int) {
+	return file_media_service_v1_media_asset_proto_rawDescGZIP(), []int{9}
+}
+
+func (x *ListDuplicatedMediaAssetsRequest) GetLimit() uint32 {
+	if x != nil && x.Limit != nil {
+		return *x.Limit
+	}
+	return 0
+}
+
+// 重复资源组：同租户内同内容哈希的资源共享一组
+type MediaAssetDuplicateGroup struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	FileHash      *string                `protobuf:"bytes,1,opt,name=file_hash,json=fileHash,proto3,oneof" json:"file_hash,omitempty"` // 内容哈希
+	Count         *uint32                `protobuf:"varint,2,opt,name=count,proto3,oneof" json:"count,omitempty"`                      // 组内条数
+	Assets        []*MediaAsset          `protobuf:"bytes,3,rep,name=assets,proto3" json:"assets,omitempty"`                           // 组内资源
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *MediaAssetDuplicateGroup) Reset() {
+	*x = MediaAssetDuplicateGroup{}
+	mi := &file_media_service_v1_media_asset_proto_msgTypes[10]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *MediaAssetDuplicateGroup) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*MediaAssetDuplicateGroup) ProtoMessage() {}
+
+func (x *MediaAssetDuplicateGroup) ProtoReflect() protoreflect.Message {
+	mi := &file_media_service_v1_media_asset_proto_msgTypes[10]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use MediaAssetDuplicateGroup.ProtoReflect.Descriptor instead.
+func (*MediaAssetDuplicateGroup) Descriptor() ([]byte, []int) {
+	return file_media_service_v1_media_asset_proto_rawDescGZIP(), []int{10}
+}
+
+func (x *MediaAssetDuplicateGroup) GetFileHash() string {
+	if x != nil && x.FileHash != nil {
+		return *x.FileHash
+	}
+	return ""
+}
+
+func (x *MediaAssetDuplicateGroup) GetCount() uint32 {
+	if x != nil && x.Count != nil {
+		return *x.Count
+	}
+	return 0
+}
+
+func (x *MediaAssetDuplicateGroup) GetAssets() []*MediaAsset {
+	if x != nil {
+		return x.Assets
+	}
+	return nil
+}
+
+// 回应 - 重复资源列表
+type ListDuplicatedMediaAssetsResponse struct {
+	state         protoimpl.MessageState      `protogen:"open.v1"`
+	Groups        []*MediaAssetDuplicateGroup `protobuf:"bytes,1,rep,name=groups,proto3" json:"groups,omitempty"` // 重复组列表
+	Total         uint64                      `protobuf:"varint,2,opt,name=total,proto3" json:"total,omitempty"`  // 重复组总数
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *ListDuplicatedMediaAssetsResponse) Reset() {
+	*x = ListDuplicatedMediaAssetsResponse{}
+	mi := &file_media_service_v1_media_asset_proto_msgTypes[11]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *ListDuplicatedMediaAssetsResponse) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*ListDuplicatedMediaAssetsResponse) ProtoMessage() {}
+
+func (x *ListDuplicatedMediaAssetsResponse) ProtoReflect() protoreflect.Message {
+	mi := &file_media_service_v1_media_asset_proto_msgTypes[11]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use ListDuplicatedMediaAssetsResponse.ProtoReflect.Descriptor instead.
+func (*ListDuplicatedMediaAssetsResponse) Descriptor() ([]byte, []int) {
+	return file_media_service_v1_media_asset_proto_rawDescGZIP(), []int{11}
+}
+
+func (x *ListDuplicatedMediaAssetsResponse) GetGroups() []*MediaAssetDuplicateGroup {
+	if x != nil {
+		return x.Groups
+	}
+	return nil
+}
+
+func (x *ListDuplicatedMediaAssetsResponse) GetTotal() uint64 {
+	if x != nil {
+		return x.Total
+	}
+	return 0
+}
+
+// 请求 - 媒体引用关系列表
+type ListMediaAssetReferencesRequest struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	MediaAssetId  uint32                 `protobuf:"varint,1,opt,name=media_asset_id,json=mediaAssetId,proto3" json:"media_asset_id,omitempty"` // 媒体资源 ID
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *ListMediaAssetReferencesRequest) Reset() {
+	*x = ListMediaAssetReferencesRequest{}
+	mi := &file_media_service_v1_media_asset_proto_msgTypes[12]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *ListMediaAssetReferencesRequest) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*ListMediaAssetReferencesRequest) ProtoMessage() {}
+
+func (x *ListMediaAssetReferencesRequest) ProtoReflect() protoreflect.Message {
+	mi := &file_media_service_v1_media_asset_proto_msgTypes[12]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use ListMediaAssetReferencesRequest.ProtoReflect.Descriptor instead.
+func (*ListMediaAssetReferencesRequest) Descriptor() ([]byte, []int) {
+	return file_media_service_v1_media_asset_proto_rawDescGZIP(), []int{12}
+}
+
+func (x *ListMediaAssetReferencesRequest) GetMediaAssetId() uint32 {
+	if x != nil {
+		return x.MediaAssetId
+	}
+	return 0
+}
+
+// 引用关系：源内容（文章/页面）在哪个字段使用了该媒体
+type MediaAssetReference struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	MediaAssetId  *uint32                `protobuf:"varint,1,opt,name=media_asset_id,json=mediaAssetId,proto3,oneof" json:"media_asset_id,omitempty"` // 媒体资源 ID
+	SourceType    *string                `protobuf:"bytes,2,opt,name=source_type,json=sourceType,proto3,oneof" json:"source_type,omitempty"`          // 源内容类型
+	SourceId      *uint32                `protobuf:"varint,3,opt,name=source_id,json=sourceId,proto3,oneof" json:"source_id,omitempty"`               // 源内容 ID
+	SourceTitle   *string                `protobuf:"bytes,4,opt,name=source_title,json=sourceTitle,proto3,oneof" json:"source_title,omitempty"`       // 源内容标题
+	Field         *string                `protobuf:"bytes,5,opt,name=field,proto3,oneof" json:"field,omitempty"`                                      // 引用位置
+	UpdatedAt     *timestamppb.Timestamp `protobuf:"bytes,6,opt,name=updated_at,json=updatedAt,proto3,oneof" json:"updated_at,omitempty"`             // 引用更新时间
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *MediaAssetReference) Reset() {
+	*x = MediaAssetReference{}
+	mi := &file_media_service_v1_media_asset_proto_msgTypes[13]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *MediaAssetReference) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*MediaAssetReference) ProtoMessage() {}
+
+func (x *MediaAssetReference) ProtoReflect() protoreflect.Message {
+	mi := &file_media_service_v1_media_asset_proto_msgTypes[13]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use MediaAssetReference.ProtoReflect.Descriptor instead.
+func (*MediaAssetReference) Descriptor() ([]byte, []int) {
+	return file_media_service_v1_media_asset_proto_rawDescGZIP(), []int{13}
+}
+
+func (x *MediaAssetReference) GetMediaAssetId() uint32 {
+	if x != nil && x.MediaAssetId != nil {
+		return *x.MediaAssetId
+	}
+	return 0
+}
+
+func (x *MediaAssetReference) GetSourceType() string {
+	if x != nil && x.SourceType != nil {
+		return *x.SourceType
+	}
+	return ""
+}
+
+func (x *MediaAssetReference) GetSourceId() uint32 {
+	if x != nil && x.SourceId != nil {
+		return *x.SourceId
+	}
+	return 0
+}
+
+func (x *MediaAssetReference) GetSourceTitle() string {
+	if x != nil && x.SourceTitle != nil {
+		return *x.SourceTitle
+	}
+	return ""
+}
+
+func (x *MediaAssetReference) GetField() string {
+	if x != nil && x.Field != nil {
+		return *x.Field
+	}
+	return ""
+}
+
+func (x *MediaAssetReference) GetUpdatedAt() *timestamppb.Timestamp {
+	if x != nil {
+		return x.UpdatedAt
+	}
+	return nil
+}
+
+// 回应 - 媒体引用关系列表
+type ListMediaAssetReferencesResponse struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	Items         []*MediaAssetReference `protobuf:"bytes,1,rep,name=items,proto3" json:"items,omitempty"`  // 引用关系列表
+	Total         uint64                 `protobuf:"varint,2,opt,name=total,proto3" json:"total,omitempty"` // 引用关系总数
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *ListMediaAssetReferencesResponse) Reset() {
+	*x = ListMediaAssetReferencesResponse{}
+	mi := &file_media_service_v1_media_asset_proto_msgTypes[14]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *ListMediaAssetReferencesResponse) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*ListMediaAssetReferencesResponse) ProtoMessage() {}
+
+func (x *ListMediaAssetReferencesResponse) ProtoReflect() protoreflect.Message {
+	mi := &file_media_service_v1_media_asset_proto_msgTypes[14]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use ListMediaAssetReferencesResponse.ProtoReflect.Descriptor instead.
+func (*ListMediaAssetReferencesResponse) Descriptor() ([]byte, []int) {
+	return file_media_service_v1_media_asset_proto_rawDescGZIP(), []int{14}
+}
+
+func (x *ListMediaAssetReferencesResponse) GetItems() []*MediaAssetReference {
+	if x != nil {
+		return x.Items
+	}
+	return nil
+}
+
+func (x *ListMediaAssetReferencesResponse) GetTotal() uint64 {
+	if x != nil {
+		return x.Total
+	}
+	return 0
+}
+
 var File_media_service_v1_media_asset_proto protoreflect.FileDescriptor
 
 const file_media_service_v1_media_asset_proto_rawDesc = "" +
@@ -932,7 +1274,41 @@ const file_media_service_v1_media_asset_proto_rawDesc = "" +
 	"_file_hash\"\x8d\x01\n" +
 	"\x1cFindMediaAssetByHashResponse\x12c\n" +
 	"\x05asset\x18\x01 \x01(\v2\x1c.media.service.v1.MediaAssetB*\xbaG'\x92\x02$命中的既有资源（无则空）H\x00R\x05asset\x88\x01\x01B\b\n" +
-	"\x06_asset2\x99\x04\n" +
+	"\x06_asset\"\x86\x01\n" +
+	" ListDuplicatedMediaAssetsRequest\x12X\n" +
+	"\x05limit\x18\x01 \x01(\rB=\xbaG:\x92\x027返回的重复组数上限（默认 50，至多 200）H\x00R\x05limit\x88\x01\x01B\b\n" +
+	"\x06_limit\"\xab\x02\n" +
+	"\x18MediaAssetDuplicateGroup\x12E\n" +
+	"\tfile_hash\x18\x01 \x01(\tB#\xbaG \x92\x02\x1dSHA-256 内容哈希（hex）H\x00R\bfileHash\x88\x01\x01\x123\n" +
+	"\x05count\x18\x02 \x01(\rB\x18\xbaG\x15\x92\x02\x12组内资源条数H\x01R\x05count\x88\x01\x01\x12{\n" +
+	"\x06assets\x18\x03 \x03(\v2\x1c.media.service.v1.MediaAssetBE\xbaGB\x92\x02?组内资源（按创建时间升序，首个为最早上传）R\x06assetsB\f\n" +
+	"\n" +
+	"_file_hashB\b\n" +
+	"\x06_count\"\xab\x01\n" +
+	"!ListDuplicatedMediaAssetsResponse\x12Y\n" +
+	"\x06groups\x18\x01 \x03(\v2*.media.service.v1.MediaAssetDuplicateGroupB\x15\xbaG\x12\x92\x02\x0f重复组列表R\x06groups\x12+\n" +
+	"\x05total\x18\x02 \x01(\x04B\x15\xbaG\x12\x92\x02\x0f重复组总数R\x05total\"^\n" +
+	"\x1fListMediaAssetReferencesRequest\x12;\n" +
+	"\x0emedia_asset_id\x18\x01 \x01(\rB\x15\xbaG\x12\x92\x02\x0f媒体资源 IDR\fmediaAssetId\"\xc7\x04\n" +
+	"\x13MediaAssetReference\x12@\n" +
+	"\x0emedia_asset_id\x18\x01 \x01(\rB\x15\xbaG\x12\x92\x02\x0f媒体资源 IDH\x00R\fmediaAssetId\x88\x01\x01\x12J\n" +
+	"\vsource_type\x18\x02 \x01(\tB$\xbaG!\x92\x02\x1e源内容类型（post/page）H\x01R\n" +
+	"sourceType\x88\x01\x01\x124\n" +
+	"\tsource_id\x18\x03 \x01(\rB\x12\xbaG\x0f\x92\x02\f源内容 IDH\x02R\bsourceId\x88\x01\x01\x12[\n" +
+	"\fsource_title\x18\x04 \x01(\tB3\xbaG0\x92\x02-源内容标题（多语言取首个非空）H\x03R\vsourceTitle\x88\x01\x01\x12Z\n" +
+	"\x05field\x18\x05 \x01(\tB?\xbaG<\x92\x029引用位置（body=正文内嵌，thumbnail=缩略图）H\x04R\x05field\x88\x01\x01\x12X\n" +
+	"\n" +
+	"updated_at\x18\x06 \x01(\v2\x1a.google.protobuf.TimestampB\x18\xbaG\x15\x92\x02\x12引用更新时间H\x05R\tupdatedAt\x88\x01\x01B\x11\n" +
+	"\x0f_media_asset_idB\x0e\n" +
+	"\f_source_typeB\f\n" +
+	"\n" +
+	"_source_idB\x0f\n" +
+	"\r_source_titleB\b\n" +
+	"\x06_fieldB\r\n" +
+	"\v_updated_at\"\xa9\x01\n" +
+	" ListMediaAssetReferencesResponse\x12U\n" +
+	"\x05items\x18\x01 \x03(\v2%.media.service.v1.MediaAssetReferenceB\x18\xbaG\x15\x92\x02\x12引用关系列表R\x05items\x12.\n" +
+	"\x05total\x18\x02 \x01(\x04B\x18\xbaG\x15\x92\x02\x12引用关系总数R\x05total2\xa8\x06\n" +
 	"\x11MediaAssetService\x12M\n" +
 	"\x04List\x12\x19.pagination.PagingRequest\x1a(.media.service.v1.ListMediaAssetResponse\"\x00\x12M\n" +
 	"\x03Get\x12&.media.service.v1.GetMediaAssetRequest\x1a\x1c.media.service.v1.MediaAsset\"\x00\x12S\n" +
@@ -940,7 +1316,9 @@ const file_media_service_v1_media_asset_proto_rawDesc = "" +
 	"\x06Update\x12).media.service.v1.UpdateMediaAssetRequest\x1a\x1c.media.service.v1.MediaAsset\"\x00\x12M\n" +
 	"\x06Delete\x12).media.service.v1.DeleteMediaAssetRequest\x1a\x16.google.protobuf.Empty\"\x00\x12m\n" +
 	"\n" +
-	"FindByHash\x12-.media.service.v1.FindMediaAssetByHashRequest\x1a..media.service.v1.FindMediaAssetByHashResponse\"\x00B\xba\x01\n" +
+	"FindByHash\x12-.media.service.v1.FindMediaAssetByHashRequest\x1a..media.service.v1.FindMediaAssetByHashResponse\"\x00\x12\x86\x01\n" +
+	"\x19ListDuplicatedMediaAssets\x122.media.service.v1.ListDuplicatedMediaAssetsRequest\x1a3.media.service.v1.ListDuplicatedMediaAssetsResponse\"\x00\x12\x83\x01\n" +
+	"\x18ListMediaAssetReferences\x121.media.service.v1.ListMediaAssetReferencesRequest\x1a2.media.service.v1.ListMediaAssetReferencesResponse\"\x00B\xba\x01\n" +
 	"\x14com.media.service.v1B\x0fMediaAssetProtoP\x01Z/go-wind-cms/api/gen/go/media/service/v1;mediapb\xa2\x02\x03MSX\xaa\x02\x10Media.Service.V1\xca\x02\x10Media\\Service\\V1\xe2\x02\x1cMedia\\Service\\V1\\GPBMetadata\xea\x02\x12Media::Service::V1b\x06proto3"
 
 var (
@@ -956,55 +1334,69 @@ func file_media_service_v1_media_asset_proto_rawDescGZIP() []byte {
 }
 
 var file_media_service_v1_media_asset_proto_enumTypes = make([]protoimpl.EnumInfo, 2)
-var file_media_service_v1_media_asset_proto_msgTypes = make([]protoimpl.MessageInfo, 10)
+var file_media_service_v1_media_asset_proto_msgTypes = make([]protoimpl.MessageInfo, 16)
 var file_media_service_v1_media_asset_proto_goTypes = []any{
-	(MediaAsset_AssetType)(0),            // 0: media.service.v1.MediaAsset.AssetType
-	(MediaAsset_ProcessingStatus)(0),     // 1: media.service.v1.MediaAsset.ProcessingStatus
-	(*MediaAsset)(nil),                   // 2: media.service.v1.MediaAsset
-	(*MediaVariant)(nil),                 // 3: media.service.v1.MediaVariant
-	(*ListMediaAssetResponse)(nil),       // 4: media.service.v1.ListMediaAssetResponse
-	(*GetMediaAssetRequest)(nil),         // 5: media.service.v1.GetMediaAssetRequest
-	(*CreateMediaAssetRequest)(nil),      // 6: media.service.v1.CreateMediaAssetRequest
-	(*UpdateMediaAssetRequest)(nil),      // 7: media.service.v1.UpdateMediaAssetRequest
-	(*DeleteMediaAssetRequest)(nil),      // 8: media.service.v1.DeleteMediaAssetRequest
-	(*FindMediaAssetByHashRequest)(nil),  // 9: media.service.v1.FindMediaAssetByHashRequest
-	(*FindMediaAssetByHashResponse)(nil), // 10: media.service.v1.FindMediaAssetByHashResponse
-	nil,                                  // 11: media.service.v1.MediaAsset.VariantFileIdsEntry
-	(*timestamppb.Timestamp)(nil),        // 12: google.protobuf.Timestamp
-	(*fieldmaskpb.FieldMask)(nil),        // 13: google.protobuf.FieldMask
-	(*v1.PagingRequest)(nil),             // 14: pagination.PagingRequest
-	(*emptypb.Empty)(nil),                // 15: google.protobuf.Empty
+	(MediaAsset_AssetType)(0),                 // 0: media.service.v1.MediaAsset.AssetType
+	(MediaAsset_ProcessingStatus)(0),          // 1: media.service.v1.MediaAsset.ProcessingStatus
+	(*MediaAsset)(nil),                        // 2: media.service.v1.MediaAsset
+	(*MediaVariant)(nil),                      // 3: media.service.v1.MediaVariant
+	(*ListMediaAssetResponse)(nil),            // 4: media.service.v1.ListMediaAssetResponse
+	(*GetMediaAssetRequest)(nil),              // 5: media.service.v1.GetMediaAssetRequest
+	(*CreateMediaAssetRequest)(nil),           // 6: media.service.v1.CreateMediaAssetRequest
+	(*UpdateMediaAssetRequest)(nil),           // 7: media.service.v1.UpdateMediaAssetRequest
+	(*DeleteMediaAssetRequest)(nil),           // 8: media.service.v1.DeleteMediaAssetRequest
+	(*FindMediaAssetByHashRequest)(nil),       // 9: media.service.v1.FindMediaAssetByHashRequest
+	(*FindMediaAssetByHashResponse)(nil),      // 10: media.service.v1.FindMediaAssetByHashResponse
+	(*ListDuplicatedMediaAssetsRequest)(nil),  // 11: media.service.v1.ListDuplicatedMediaAssetsRequest
+	(*MediaAssetDuplicateGroup)(nil),          // 12: media.service.v1.MediaAssetDuplicateGroup
+	(*ListDuplicatedMediaAssetsResponse)(nil), // 13: media.service.v1.ListDuplicatedMediaAssetsResponse
+	(*ListMediaAssetReferencesRequest)(nil),   // 14: media.service.v1.ListMediaAssetReferencesRequest
+	(*MediaAssetReference)(nil),               // 15: media.service.v1.MediaAssetReference
+	(*ListMediaAssetReferencesResponse)(nil),  // 16: media.service.v1.ListMediaAssetReferencesResponse
+	nil,                                       // 17: media.service.v1.MediaAsset.VariantFileIdsEntry
+	(*timestamppb.Timestamp)(nil),             // 18: google.protobuf.Timestamp
+	(*fieldmaskpb.FieldMask)(nil),             // 19: google.protobuf.FieldMask
+	(*v1.PagingRequest)(nil),                  // 20: pagination.PagingRequest
+	(*emptypb.Empty)(nil),                     // 21: google.protobuf.Empty
 }
 var file_media_service_v1_media_asset_proto_depIdxs = []int32{
 	0,  // 0: media.service.v1.MediaAsset.type:type_name -> media.service.v1.MediaAsset.AssetType
 	1,  // 1: media.service.v1.MediaAsset.processing_status:type_name -> media.service.v1.MediaAsset.ProcessingStatus
-	11, // 2: media.service.v1.MediaAsset.variant_file_ids:type_name -> media.service.v1.MediaAsset.VariantFileIdsEntry
-	12, // 3: media.service.v1.MediaAsset.created_at:type_name -> google.protobuf.Timestamp
-	12, // 4: media.service.v1.MediaAsset.updated_at:type_name -> google.protobuf.Timestamp
-	12, // 5: media.service.v1.MediaAsset.deleted_at:type_name -> google.protobuf.Timestamp
+	17, // 2: media.service.v1.MediaAsset.variant_file_ids:type_name -> media.service.v1.MediaAsset.VariantFileIdsEntry
+	18, // 3: media.service.v1.MediaAsset.created_at:type_name -> google.protobuf.Timestamp
+	18, // 4: media.service.v1.MediaAsset.updated_at:type_name -> google.protobuf.Timestamp
+	18, // 5: media.service.v1.MediaAsset.deleted_at:type_name -> google.protobuf.Timestamp
 	2,  // 6: media.service.v1.ListMediaAssetResponse.items:type_name -> media.service.v1.MediaAsset
-	13, // 7: media.service.v1.GetMediaAssetRequest.view_mask:type_name -> google.protobuf.FieldMask
+	19, // 7: media.service.v1.GetMediaAssetRequest.view_mask:type_name -> google.protobuf.FieldMask
 	2,  // 8: media.service.v1.CreateMediaAssetRequest.data:type_name -> media.service.v1.MediaAsset
 	2,  // 9: media.service.v1.UpdateMediaAssetRequest.data:type_name -> media.service.v1.MediaAsset
-	13, // 10: media.service.v1.UpdateMediaAssetRequest.update_mask:type_name -> google.protobuf.FieldMask
+	19, // 10: media.service.v1.UpdateMediaAssetRequest.update_mask:type_name -> google.protobuf.FieldMask
 	2,  // 11: media.service.v1.FindMediaAssetByHashResponse.asset:type_name -> media.service.v1.MediaAsset
-	14, // 12: media.service.v1.MediaAssetService.List:input_type -> pagination.PagingRequest
-	5,  // 13: media.service.v1.MediaAssetService.Get:input_type -> media.service.v1.GetMediaAssetRequest
-	6,  // 14: media.service.v1.MediaAssetService.Create:input_type -> media.service.v1.CreateMediaAssetRequest
-	7,  // 15: media.service.v1.MediaAssetService.Update:input_type -> media.service.v1.UpdateMediaAssetRequest
-	8,  // 16: media.service.v1.MediaAssetService.Delete:input_type -> media.service.v1.DeleteMediaAssetRequest
-	9,  // 17: media.service.v1.MediaAssetService.FindByHash:input_type -> media.service.v1.FindMediaAssetByHashRequest
-	4,  // 18: media.service.v1.MediaAssetService.List:output_type -> media.service.v1.ListMediaAssetResponse
-	2,  // 19: media.service.v1.MediaAssetService.Get:output_type -> media.service.v1.MediaAsset
-	2,  // 20: media.service.v1.MediaAssetService.Create:output_type -> media.service.v1.MediaAsset
-	2,  // 21: media.service.v1.MediaAssetService.Update:output_type -> media.service.v1.MediaAsset
-	15, // 22: media.service.v1.MediaAssetService.Delete:output_type -> google.protobuf.Empty
-	10, // 23: media.service.v1.MediaAssetService.FindByHash:output_type -> media.service.v1.FindMediaAssetByHashResponse
-	18, // [18:24] is the sub-list for method output_type
-	12, // [12:18] is the sub-list for method input_type
-	12, // [12:12] is the sub-list for extension type_name
-	12, // [12:12] is the sub-list for extension extendee
-	0,  // [0:12] is the sub-list for field type_name
+	2,  // 12: media.service.v1.MediaAssetDuplicateGroup.assets:type_name -> media.service.v1.MediaAsset
+	12, // 13: media.service.v1.ListDuplicatedMediaAssetsResponse.groups:type_name -> media.service.v1.MediaAssetDuplicateGroup
+	18, // 14: media.service.v1.MediaAssetReference.updated_at:type_name -> google.protobuf.Timestamp
+	15, // 15: media.service.v1.ListMediaAssetReferencesResponse.items:type_name -> media.service.v1.MediaAssetReference
+	20, // 16: media.service.v1.MediaAssetService.List:input_type -> pagination.PagingRequest
+	5,  // 17: media.service.v1.MediaAssetService.Get:input_type -> media.service.v1.GetMediaAssetRequest
+	6,  // 18: media.service.v1.MediaAssetService.Create:input_type -> media.service.v1.CreateMediaAssetRequest
+	7,  // 19: media.service.v1.MediaAssetService.Update:input_type -> media.service.v1.UpdateMediaAssetRequest
+	8,  // 20: media.service.v1.MediaAssetService.Delete:input_type -> media.service.v1.DeleteMediaAssetRequest
+	9,  // 21: media.service.v1.MediaAssetService.FindByHash:input_type -> media.service.v1.FindMediaAssetByHashRequest
+	11, // 22: media.service.v1.MediaAssetService.ListDuplicatedMediaAssets:input_type -> media.service.v1.ListDuplicatedMediaAssetsRequest
+	14, // 23: media.service.v1.MediaAssetService.ListMediaAssetReferences:input_type -> media.service.v1.ListMediaAssetReferencesRequest
+	4,  // 24: media.service.v1.MediaAssetService.List:output_type -> media.service.v1.ListMediaAssetResponse
+	2,  // 25: media.service.v1.MediaAssetService.Get:output_type -> media.service.v1.MediaAsset
+	2,  // 26: media.service.v1.MediaAssetService.Create:output_type -> media.service.v1.MediaAsset
+	2,  // 27: media.service.v1.MediaAssetService.Update:output_type -> media.service.v1.MediaAsset
+	21, // 28: media.service.v1.MediaAssetService.Delete:output_type -> google.protobuf.Empty
+	10, // 29: media.service.v1.MediaAssetService.FindByHash:output_type -> media.service.v1.FindMediaAssetByHashResponse
+	13, // 30: media.service.v1.MediaAssetService.ListDuplicatedMediaAssets:output_type -> media.service.v1.ListDuplicatedMediaAssetsResponse
+	16, // 31: media.service.v1.MediaAssetService.ListMediaAssetReferences:output_type -> media.service.v1.ListMediaAssetReferencesResponse
+	24, // [24:32] is the sub-list for method output_type
+	16, // [16:24] is the sub-list for method input_type
+	16, // [16:16] is the sub-list for extension type_name
+	16, // [16:16] is the sub-list for extension extendee
+	0,  // [0:16] is the sub-list for field type_name
 }
 
 func init() { file_media_service_v1_media_asset_proto_init() }
@@ -1020,13 +1412,16 @@ func file_media_service_v1_media_asset_proto_init() {
 	}
 	file_media_service_v1_media_asset_proto_msgTypes[7].OneofWrappers = []any{}
 	file_media_service_v1_media_asset_proto_msgTypes[8].OneofWrappers = []any{}
+	file_media_service_v1_media_asset_proto_msgTypes[9].OneofWrappers = []any{}
+	file_media_service_v1_media_asset_proto_msgTypes[10].OneofWrappers = []any{}
+	file_media_service_v1_media_asset_proto_msgTypes[13].OneofWrappers = []any{}
 	type x struct{}
 	out := protoimpl.TypeBuilder{
 		File: protoimpl.DescBuilder{
 			GoPackagePath: reflect.TypeOf(x{}).PkgPath(),
 			RawDescriptor: unsafe.Slice(unsafe.StringData(file_media_service_v1_media_asset_proto_rawDesc), len(file_media_service_v1_media_asset_proto_rawDesc)),
 			NumEnums:      2,
-			NumMessages:   10,
+			NumMessages:   16,
 			NumExtensions: 0,
 			NumServices:   1,
 		},

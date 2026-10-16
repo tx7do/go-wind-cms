@@ -27,6 +27,7 @@ import (
 	"go-wind-cms/app/core/service/internal/data/ent/commentlike"
 	"go-wind-cms/app/core/service/internal/data/ent/contentmodel"
 	"go-wind-cms/app/core/service/internal/data/ent/contentmodeltranslation"
+	"go-wind-cms/app/core/service/internal/data/ent/contentreference"
 	"go-wind-cms/app/core/service/internal/data/ent/dataaccessauditlog"
 	"go-wind-cms/app/core/service/internal/data/ent/dictentry"
 	"go-wind-cms/app/core/service/internal/data/ent/dictentryi18n"
@@ -143,6 +144,8 @@ type Client struct {
 	ContentModel *ContentModelClient
 	// ContentModelTranslation is the client for interacting with the ContentModelTranslation builders.
 	ContentModelTranslation *ContentModelTranslationClient
+	// ContentReference is the client for interacting with the ContentReference builders.
+	ContentReference *ContentReferenceClient
 	// DataAccessAuditLog is the client for interacting with the DataAccessAuditLog builders.
 	DataAccessAuditLog *DataAccessAuditLogClient
 	// DictEntry is the client for interacting with the DictEntry builders.
@@ -314,6 +317,7 @@ func (c *Client) init() {
 	c.CommentLike = NewCommentLikeClient(c.config)
 	c.ContentModel = NewContentModelClient(c.config)
 	c.ContentModelTranslation = NewContentModelTranslationClient(c.config)
+	c.ContentReference = NewContentReferenceClient(c.config)
 	c.DataAccessAuditLog = NewDataAccessAuditLogClient(c.config)
 	c.DictEntry = NewDictEntryClient(c.config)
 	c.DictEntryI18n = NewDictEntryI18nClient(c.config)
@@ -494,6 +498,7 @@ func (c *Client) Tx(ctx context.Context) (*Tx, error) {
 		CommentLike:                NewCommentLikeClient(cfg),
 		ContentModel:               NewContentModelClient(cfg),
 		ContentModelTranslation:    NewContentModelTranslationClient(cfg),
+		ContentReference:           NewContentReferenceClient(cfg),
 		DataAccessAuditLog:         NewDataAccessAuditLogClient(cfg),
 		DictEntry:                  NewDictEntryClient(cfg),
 		DictEntryI18n:              NewDictEntryI18nClient(cfg),
@@ -601,6 +606,7 @@ func (c *Client) BeginTx(ctx context.Context, opts *sql.TxOptions) (*Tx, error) 
 		CommentLike:                NewCommentLikeClient(cfg),
 		ContentModel:               NewContentModelClient(cfg),
 		ContentModelTranslation:    NewContentModelTranslationClient(cfg),
+		ContentReference:           NewContentReferenceClient(cfg),
 		DataAccessAuditLog:         NewDataAccessAuditLogClient(cfg),
 		DictEntry:                  NewDictEntryClient(cfg),
 		DictEntryI18n:              NewDictEntryI18nClient(cfg),
@@ -705,14 +711,15 @@ func (c *Client) Use(hooks ...Hook) {
 		c.AiChunk, c.AiConversation, c.AiDoc, c.AiKnowledgeBase, c.AiMessage,
 		c.AiProvider, c.AiUsageLog, c.Api, c.ApiAuditLog, c.Category,
 		c.CategoryTranslation, c.CollabDocState, c.Comment, c.CommentLike,
-		c.ContentModel, c.ContentModelTranslation, c.DataAccessAuditLog, c.DictEntry,
-		c.DictEntryI18n, c.DictType, c.EmailProvider, c.EmailTemplate, c.Experiment,
-		c.ExperimentParticipant, c.ExperimentVariant, c.FieldDefinition,
-		c.FieldDefinitionTranslation, c.File, c.FormSubmission, c.InteractionCounter,
-		c.InternalMessage, c.InternalMessageCategory, c.InternalMessageRecipient,
-		c.Language, c.LoginAuditLog, c.LoginPolicy, c.MediaAsset, c.MediaVariant,
-		c.Membership, c.MembershipOrgUnit, c.MembershipPosition, c.MembershipRole,
-		c.Menu, c.Navigation, c.NavigationItem, c.OperationAuditLog, c.OrgUnit, c.Page,
+		c.ContentModel, c.ContentModelTranslation, c.ContentReference,
+		c.DataAccessAuditLog, c.DictEntry, c.DictEntryI18n, c.DictType,
+		c.EmailProvider, c.EmailTemplate, c.Experiment, c.ExperimentParticipant,
+		c.ExperimentVariant, c.FieldDefinition, c.FieldDefinitionTranslation, c.File,
+		c.FormSubmission, c.InteractionCounter, c.InternalMessage,
+		c.InternalMessageCategory, c.InternalMessageRecipient, c.Language,
+		c.LoginAuditLog, c.LoginPolicy, c.MediaAsset, c.MediaVariant, c.Membership,
+		c.MembershipOrgUnit, c.MembershipPosition, c.MembershipRole, c.Menu,
+		c.Navigation, c.NavigationItem, c.OperationAuditLog, c.OrgUnit, c.Page,
 		c.PageTranslation, c.PageVersion, c.Permission, c.PermissionApi,
 		c.PermissionAuditLog, c.PermissionGroup, c.PermissionMenu, c.PermissionPolicy,
 		c.PolicyEvaluationLog, c.Position, c.Post, c.PostCategory, c.PostLike,
@@ -734,14 +741,15 @@ func (c *Client) Intercept(interceptors ...Interceptor) {
 		c.AiChunk, c.AiConversation, c.AiDoc, c.AiKnowledgeBase, c.AiMessage,
 		c.AiProvider, c.AiUsageLog, c.Api, c.ApiAuditLog, c.Category,
 		c.CategoryTranslation, c.CollabDocState, c.Comment, c.CommentLike,
-		c.ContentModel, c.ContentModelTranslation, c.DataAccessAuditLog, c.DictEntry,
-		c.DictEntryI18n, c.DictType, c.EmailProvider, c.EmailTemplate, c.Experiment,
-		c.ExperimentParticipant, c.ExperimentVariant, c.FieldDefinition,
-		c.FieldDefinitionTranslation, c.File, c.FormSubmission, c.InteractionCounter,
-		c.InternalMessage, c.InternalMessageCategory, c.InternalMessageRecipient,
-		c.Language, c.LoginAuditLog, c.LoginPolicy, c.MediaAsset, c.MediaVariant,
-		c.Membership, c.MembershipOrgUnit, c.MembershipPosition, c.MembershipRole,
-		c.Menu, c.Navigation, c.NavigationItem, c.OperationAuditLog, c.OrgUnit, c.Page,
+		c.ContentModel, c.ContentModelTranslation, c.ContentReference,
+		c.DataAccessAuditLog, c.DictEntry, c.DictEntryI18n, c.DictType,
+		c.EmailProvider, c.EmailTemplate, c.Experiment, c.ExperimentParticipant,
+		c.ExperimentVariant, c.FieldDefinition, c.FieldDefinitionTranslation, c.File,
+		c.FormSubmission, c.InteractionCounter, c.InternalMessage,
+		c.InternalMessageCategory, c.InternalMessageRecipient, c.Language,
+		c.LoginAuditLog, c.LoginPolicy, c.MediaAsset, c.MediaVariant, c.Membership,
+		c.MembershipOrgUnit, c.MembershipPosition, c.MembershipRole, c.Menu,
+		c.Navigation, c.NavigationItem, c.OperationAuditLog, c.OrgUnit, c.Page,
 		c.PageTranslation, c.PageVersion, c.Permission, c.PermissionApi,
 		c.PermissionAuditLog, c.PermissionGroup, c.PermissionMenu, c.PermissionPolicy,
 		c.PolicyEvaluationLog, c.Position, c.Post, c.PostCategory, c.PostLike,
@@ -791,6 +799,8 @@ func (c *Client) Mutate(ctx context.Context, m Mutation) (Value, error) {
 		return c.ContentModel.mutate(ctx, m)
 	case *ContentModelTranslationMutation:
 		return c.ContentModelTranslation.mutate(ctx, m)
+	case *ContentReferenceMutation:
+		return c.ContentReference.mutate(ctx, m)
 	case *DataAccessAuditLogMutation:
 		return c.DataAccessAuditLog.mutate(ctx, m)
 	case *DictEntryMutation:
@@ -3238,6 +3248,140 @@ func (c *ContentModelTranslationClient) mutate(ctx context.Context, m *ContentMo
 		return (&ContentModelTranslationDelete{config: c.config, hooks: c.Hooks(), mutation: m}).Exec(ctx)
 	default:
 		return nil, fmt.Errorf("ent: unknown ContentModelTranslation mutation op: %q", m.Op())
+	}
+}
+
+// ContentReferenceClient is a client for the ContentReference schema.
+type ContentReferenceClient struct {
+	config
+}
+
+// NewContentReferenceClient returns a client for the ContentReference from the given config.
+func NewContentReferenceClient(c config) *ContentReferenceClient {
+	return &ContentReferenceClient{config: c}
+}
+
+// Use adds a list of mutation hooks to the hooks stack.
+// A call to `Use(f, g, h)` equals to `contentreference.Hooks(f(g(h())))`.
+func (c *ContentReferenceClient) Use(hooks ...Hook) {
+	c.hooks.ContentReference = append(c.hooks.ContentReference, hooks...)
+}
+
+// Intercept adds a list of query interceptors to the interceptors stack.
+// A call to `Intercept(f, g, h)` equals to `contentreference.Intercept(f(g(h())))`.
+func (c *ContentReferenceClient) Intercept(interceptors ...Interceptor) {
+	c.inters.ContentReference = append(c.inters.ContentReference, interceptors...)
+}
+
+// Create returns a builder for creating a ContentReference entity.
+func (c *ContentReferenceClient) Create() *ContentReferenceCreate {
+	mutation := newContentReferenceMutation(c.config, OpCreate)
+	return &ContentReferenceCreate{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// CreateBulk returns a builder for creating a bulk of ContentReference entities.
+func (c *ContentReferenceClient) CreateBulk(builders ...*ContentReferenceCreate) *ContentReferenceCreateBulk {
+	return &ContentReferenceCreateBulk{config: c.config, builders: builders}
+}
+
+// MapCreateBulk creates a bulk creation builder from the given slice. For each item in the slice, the function creates
+// a builder and applies setFunc on it.
+func (c *ContentReferenceClient) MapCreateBulk(slice any, setFunc func(*ContentReferenceCreate, int)) *ContentReferenceCreateBulk {
+	rv := reflect.ValueOf(slice)
+	if rv.Kind() != reflect.Slice {
+		return &ContentReferenceCreateBulk{err: fmt.Errorf("calling to ContentReferenceClient.MapCreateBulk with wrong type %T, need slice", slice)}
+	}
+	builders := make([]*ContentReferenceCreate, rv.Len())
+	for i := 0; i < rv.Len(); i++ {
+		builders[i] = c.Create()
+		setFunc(builders[i], i)
+	}
+	return &ContentReferenceCreateBulk{config: c.config, builders: builders}
+}
+
+// Update returns an update builder for ContentReference.
+func (c *ContentReferenceClient) Update() *ContentReferenceUpdate {
+	mutation := newContentReferenceMutation(c.config, OpUpdate)
+	return &ContentReferenceUpdate{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// UpdateOne returns an update builder for the given entity.
+func (c *ContentReferenceClient) UpdateOne(_m *ContentReference) *ContentReferenceUpdateOne {
+	mutation := newContentReferenceMutation(c.config, OpUpdateOne, withContentReference(_m))
+	return &ContentReferenceUpdateOne{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// UpdateOneID returns an update builder for the given id.
+func (c *ContentReferenceClient) UpdateOneID(id uint32) *ContentReferenceUpdateOne {
+	mutation := newContentReferenceMutation(c.config, OpUpdateOne, withContentReferenceID(id))
+	return &ContentReferenceUpdateOne{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// Delete returns a delete builder for ContentReference.
+func (c *ContentReferenceClient) Delete() *ContentReferenceDelete {
+	mutation := newContentReferenceMutation(c.config, OpDelete)
+	return &ContentReferenceDelete{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// DeleteOne returns a builder for deleting the given entity.
+func (c *ContentReferenceClient) DeleteOne(_m *ContentReference) *ContentReferenceDeleteOne {
+	return c.DeleteOneID(_m.ID)
+}
+
+// DeleteOneID returns a builder for deleting the given entity by its id.
+func (c *ContentReferenceClient) DeleteOneID(id uint32) *ContentReferenceDeleteOne {
+	builder := c.Delete().Where(contentreference.ID(id))
+	builder.mutation.id = &id
+	builder.mutation.op = OpDeleteOne
+	return &ContentReferenceDeleteOne{builder}
+}
+
+// Query returns a query builder for ContentReference.
+func (c *ContentReferenceClient) Query() *ContentReferenceQuery {
+	return &ContentReferenceQuery{
+		config: c.config,
+		ctx:    &QueryContext{Type: TypeContentReference},
+		inters: c.Interceptors(),
+	}
+}
+
+// Get returns a ContentReference entity by its id.
+func (c *ContentReferenceClient) Get(ctx context.Context, id uint32) (*ContentReference, error) {
+	return c.Query().Where(contentreference.ID(id)).Only(ctx)
+}
+
+// GetX is like Get, but panics if an error occurs.
+func (c *ContentReferenceClient) GetX(ctx context.Context, id uint32) *ContentReference {
+	obj, err := c.Get(ctx, id)
+	if err != nil {
+		panic(err)
+	}
+	return obj
+}
+
+// Hooks returns the client hooks.
+func (c *ContentReferenceClient) Hooks() []Hook {
+	hooks := c.hooks.ContentReference
+	return append(hooks[:len(hooks):len(hooks)], contentreference.Hooks[:]...)
+}
+
+// Interceptors returns the client interceptors.
+func (c *ContentReferenceClient) Interceptors() []Interceptor {
+	return c.inters.ContentReference
+}
+
+func (c *ContentReferenceClient) mutate(ctx context.Context, m *ContentReferenceMutation) (Value, error) {
+	switch m.Op() {
+	case OpCreate:
+		return (&ContentReferenceCreate{config: c.config, hooks: c.Hooks(), mutation: m}).Save(ctx)
+	case OpUpdate:
+		return (&ContentReferenceUpdate{config: c.config, hooks: c.Hooks(), mutation: m}).Save(ctx)
+	case OpUpdateOne:
+		return (&ContentReferenceUpdateOne{config: c.config, hooks: c.Hooks(), mutation: m}).Save(ctx)
+	case OpDelete, OpDeleteOne:
+		return (&ContentReferenceDelete{config: c.config, hooks: c.Hooks(), mutation: m}).Exec(ctx)
+	default:
+		return nil, fmt.Errorf("ent: unknown ContentReference mutation op: %q", m.Op())
 	}
 }
 
@@ -13146,7 +13290,7 @@ type (
 	hooks struct {
 		AiChunk, AiConversation, AiDoc, AiKnowledgeBase, AiMessage, AiProvider,
 		AiUsageLog, Api, ApiAuditLog, Category, CategoryTranslation, CollabDocState,
-		Comment, CommentLike, ContentModel, ContentModelTranslation,
+		Comment, CommentLike, ContentModel, ContentModelTranslation, ContentReference,
 		DataAccessAuditLog, DictEntry, DictEntryI18n, DictType, EmailProvider,
 		EmailTemplate, Experiment, ExperimentParticipant, ExperimentVariant,
 		FieldDefinition, FieldDefinitionTranslation, File, FormSubmission,
@@ -13166,7 +13310,7 @@ type (
 	inters struct {
 		AiChunk, AiConversation, AiDoc, AiKnowledgeBase, AiMessage, AiProvider,
 		AiUsageLog, Api, ApiAuditLog, Category, CategoryTranslation, CollabDocState,
-		Comment, CommentLike, ContentModel, ContentModelTranslation,
+		Comment, CommentLike, ContentModel, ContentModelTranslation, ContentReference,
 		DataAccessAuditLog, DictEntry, DictEntryI18n, DictType, EmailProvider,
 		EmailTemplate, Experiment, ExperimentParticipant, ExperimentVariant,
 		FieldDefinition, FieldDefinitionTranslation, File, FormSubmission,

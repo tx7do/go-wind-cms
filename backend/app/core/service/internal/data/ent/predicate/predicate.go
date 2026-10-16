@@ -54,6 +54,9 @@ type ContentModel func(*sql.Selector)
 // ContentModelTranslation is the predicate function for contentmodeltranslation builders.
 type ContentModelTranslation func(*sql.Selector)
 
+// ContentReference is the predicate function for contentreference builders.
+type ContentReference func(*sql.Selector)
+
 // DataAccessAuditLog is the predicate function for dataaccessauditlog builders.
 type DataAccessAuditLog func(*sql.Selector)
 

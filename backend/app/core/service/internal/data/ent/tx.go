@@ -44,6 +44,8 @@ type Tx struct {
 	ContentModel *ContentModelClient
 	// ContentModelTranslation is the client for interacting with the ContentModelTranslation builders.
 	ContentModelTranslation *ContentModelTranslationClient
+	// ContentReference is the client for interacting with the ContentReference builders.
+	ContentReference *ContentReferenceClient
 	// DataAccessAuditLog is the client for interacting with the DataAccessAuditLog builders.
 	DataAccessAuditLog *DataAccessAuditLogClient
 	// DictEntry is the client for interacting with the DictEntry builders.
@@ -335,6 +337,7 @@ func (tx *Tx) init() {
 	tx.CommentLike = NewCommentLikeClient(tx.config)
 	tx.ContentModel = NewContentModelClient(tx.config)
 	tx.ContentModelTranslation = NewContentModelTranslationClient(tx.config)
+	tx.ContentReference = NewContentReferenceClient(tx.config)
 	tx.DataAccessAuditLog = NewDataAccessAuditLogClient(tx.config)
 	tx.DictEntry = NewDictEntryClient(tx.config)
 	tx.DictEntryI18n = NewDictEntryI18nClient(tx.config)

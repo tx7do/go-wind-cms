@@ -21,15 +21,16 @@ import (
 type PageService struct {
 	contentV1.UnimplementedPageServiceServer
 
-	pageRepo         *data.PageRepo
-	pageVersionRepo  *data.PageVersionRepo
-	webhookService   *WebhookService
-	notifySvc        *InternalMessageService
-	contentModelRepo *data.ContentModelRepo
-	log              *log.Helper
+	pageRepo          *data.PageRepo
+	pageVersionRepo   *data.PageVersionRepo
+	webhookService    *WebhookService
+	notifySvc         *InternalMessageService
+	contentModelRepo  *data.ContentModelRepo
+	referenceTracker  *ReferenceTrackingService
+	log               *log.Helper
 }
 
-func NewPageService(ctx *bootstrap.Context, uc *data.PageRepo, contentModelRepo *data.ContentModelRepo, pageVersionRepo *data.PageVersionRepo, webhookService *WebhookService, notifySvc *InternalMessageService) *PageService {
+func NewPageService(ctx *bootstrap.Context, uc *data.PageRepo, contentModelRepo *data.ContentModelRepo, pageVersionRepo *data.PageVersionRepo, webhookService *WebhookService, notifySvc *InternalMessageService, referenceTracker *ReferenceTrackingService) *PageService {
 	return &PageService{
 		log:              ctx.NewLoggerHelper("page/service/core-service"),
 		pageRepo:         uc,
@@ -37,6 +38,7 @@ func NewPageService(ctx *bootstrap.Context, uc *data.PageRepo, contentModelRepo 
 		webhookService:   webhookService,
 		notifySvc:        notifySvc,
 		contentModelRepo: contentModelRepo,
+		referenceTracker: referenceTracker,
 	}
 }
 
@@ -63,6 +65,8 @@ func (s *PageService) Create(ctx context.Context, req *contentV1.CreatePageReque
 	if err != nil {
 		return nil, err
 	}
+	// 引用追踪钩子：回读完整页面抽取媒体引用（best-effort）
+	s.syncPageReferences(ctx, dto.GetId())
 	// 版本快照钩子：创建即 v1（best-effort，失败不阻断保存）
 	s.snapshotPageVersion(ctx, dto.GetId())
 	// Webhook 事件外发（best-effort）
@@ -105,6 +109,8 @@ func (s *PageService) Update(ctx context.Context, req *contentV1.UpdatePageReque
 	if err != nil {
 		return nil, err
 	}
+	// 引用追踪钩子：回读完整页面抽取媒体引用（best-effort）
+	s.syncPageReferences(ctx, dto.GetId())
 	// 版本快照钩子：每次保存落一版（best-effort，失败不阻断保存）
 	s.snapshotPageVersion(ctx, dto.GetId())
 	// Webhook 事件外发：转为 PUBLISHED 记 published，其余记 updated（best-effort）
@@ -123,11 +129,30 @@ func (s *PageService) Delete(ctx context.Context, req *contentV1.DeletePageReque
 	if err != nil {
 		return nil, err
 	}
+	// 引用追踪钩子：清空该页面的引用边并重算媒体引用计数（best-effort）
+	if s.referenceTracker != nil {
+		s.referenceTracker.RemoveSource(ctx, "page", req.GetId())
+	}
 	// Webhook 事件外发（best-effort）
 	if s.webhookService != nil && req.GetId() != 0 {
 		s.webhookService.DispatchEvent(ctx, task.WebhookEventPageDeleted, req.GetId())
 	}
 	return &emptypb.Empty{}, nil
+}
+
+// syncPageReferences 回读完整页面后同步媒体引用（保存钩子，best-effort）。
+func (s *PageService) syncPageReferences(ctx context.Context, pageID uint32) {
+	if s.referenceTracker == nil {
+		return
+	}
+	page, err := s.pageRepo.Get(ctx, &contentV1.GetPageRequest{
+		QueryBy: &contentV1.GetPageRequest_Id{Id: pageID},
+	})
+	if err != nil || page == nil {
+		s.log.Errorf("reload page [%d] for reference tracking failed: %v", pageID, err)
+		return
+	}
+	s.referenceTracker.SyncPageReferences(ctx, pageID, page.GetTranslations())
 }
 
 func (s *PageService) TranslationExists(ctx context.Context, req *contentV1.PageTranslationExistsRequest) (*contentV1.PageTranslationExistsResponse, error) {

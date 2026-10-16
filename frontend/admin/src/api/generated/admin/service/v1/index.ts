@@ -7382,10 +7382,19 @@ export interface MediaAssetService {
   Update(
     request: mediaservicev1_UpdateMediaAssetRequest,
   ): Promise<mediaservicev1_MediaAsset>;
-  // 删除媒体资源库
+  // 按内容哈希查重。注意不能挂在 /media-assets/{file_hash} 形态下——
+  // 与 Get({id}) 单段路由冲突（先注册者胜，{id} 会把字面量当 ID 解析报 CODEC）。
   FindByHash(
     request: mediaservicev1_FindMediaAssetByHashRequest,
   ): Promise<mediaservicev1_FindMediaAssetByHashResponse>;
+  // 重复资源分组（同租户内同内容哈希 >1 条）。路径避开 /media-assets/{id} 单段遮蔽。
+  ListDuplicatedMediaAssets(
+    request: mediaservicev1_ListDuplicatedMediaAssetsRequest,
+  ): Promise<mediaservicev1_ListDuplicatedMediaAssetsResponse>;
+  // 媒体被内容引用的关系（引用图谱查询）
+  ListMediaAssetReferences(
+    request: mediaservicev1_ListMediaAssetReferencesRequest,
+  ): Promise<mediaservicev1_ListMediaAssetReferencesResponse>;
   Delete(
     request: mediaservicev1_DeleteMediaAssetRequest,
   ): Promise<wellKnownEmpty>;
@@ -7554,12 +7563,41 @@ export function createMediaAssetServiceClient(
       if (request.fileHash === undefined || request.fileHash === null) {
         throw new Error('missing required field request.file_hash');
       }
-      const path = `admin/v1/media-assets/by-hash/${request.fileHash}`;
+      const path = `admin/v1/media-asset-by-hash/${request.fileHash}`;
       const body = null;
       return transport.unary(path, 'GET', body, {
         service: 'MediaAssetService',
         method: 'FindByHash',
       }) as Promise<mediaservicev1_FindMediaAssetByHashResponse>;
+    },
+    ListDuplicatedMediaAssets(request) {
+      const path = `admin/v1/media-duplicates`;
+      const body = null;
+      const queryParams: string[] = [];
+      if (request.limit) {
+        queryParams.push(
+          `limit=${encodeURIComponent(request.limit.toString())}`,
+        );
+      }
+      let uri = path;
+      if (queryParams.length > 0) {
+        uri += `?${queryParams.join('&')}`;
+      }
+      return transport.unary(uri, 'GET', body, {
+        service: 'MediaAssetService',
+        method: 'ListDuplicatedMediaAssets',
+      }) as Promise<mediaservicev1_ListDuplicatedMediaAssetsResponse>;
+    },
+    ListMediaAssetReferences(request) {
+      if (request.mediaAssetId === undefined || request.mediaAssetId === null) {
+        throw new Error('missing required field request.media_asset_id');
+      }
+      const path = `admin/v1/media-assets/${request.mediaAssetId}/references`;
+      const body = null;
+      return transport.unary(path, 'GET', body, {
+        service: 'MediaAssetService',
+        method: 'ListMediaAssetReferences',
+      }) as Promise<mediaservicev1_ListMediaAssetReferencesResponse>;
     },
     Delete(request) {
       if (request.id === undefined || request.id === null) {
@@ -7656,6 +7694,45 @@ export type mediaservicev1_FindMediaAssetByHashRequest = {
 // 回应 - 按内容哈希查重
 export type mediaservicev1_FindMediaAssetByHashResponse = {
   asset?: mediaservicev1_MediaAsset;
+};
+
+// 请求 - 重复资源列表
+export type mediaservicev1_ListDuplicatedMediaAssetsRequest = {
+  limit?: number;
+};
+
+// 回应 - 重复资源列表
+export type mediaservicev1_ListDuplicatedMediaAssetsResponse = {
+  groups: mediaservicev1_MediaAssetDuplicateGroup[] | undefined;
+  total: number | undefined;
+};
+
+// 重复资源组：同租户内同内容哈希的资源共享一组
+export type mediaservicev1_MediaAssetDuplicateGroup = {
+  assets: mediaservicev1_MediaAsset[] | undefined;
+  count?: number;
+  fileHash?: string;
+};
+
+// 请求 - 媒体引用关系列表
+export type mediaservicev1_ListMediaAssetReferencesRequest = {
+  mediaAssetId: number | undefined;
+};
+
+// 回应 - 媒体引用关系列表
+export type mediaservicev1_ListMediaAssetReferencesResponse = {
+  items: mediaservicev1_MediaAssetReference[] | undefined;
+  total: number | undefined;
+};
+
+// 引用关系：源内容（文章/页面）在哪个字段使用了该媒体
+export type mediaservicev1_MediaAssetReference = {
+  field?: string;
+  mediaAssetId?: number;
+  sourceId?: number;
+  sourceTitle?: string;
+  sourceType?: string;
+  updatedAt?: wellKnownTimestamp;
 };
 
 // 请求 - 删除媒体资源库

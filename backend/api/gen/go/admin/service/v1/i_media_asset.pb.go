@@ -28,47 +28,57 @@ var File_admin_service_v1_i_media_asset_proto protoreflect.FileDescriptor
 
 const file_admin_service_v1_i_media_asset_proto_rawDesc = "" +
 	"\n" +
-	"$admin/service/v1/i_media_asset.proto\x12\x10admin.service.v1\x1a\x1cgoogle/api/annotations.proto\x1a\x1bgoogle/protobuf/empty.proto\x1a\x1epagination/v1/pagination.proto\x1a\"media/service/v1/media_asset.proto2\xf7\x05\n" +
+	"$admin/service/v1/i_media_asset.proto\x12\x10admin.service.v1\x1a\x1cgoogle/api/annotations.proto\x1a\x1bgoogle/protobuf/empty.proto\x1a\x1epagination/v1/pagination.proto\x1a\"media/service/v1/media_asset.proto2\xe1\b\n" +
 	"\x11MediaAssetService\x12k\n" +
 	"\x04List\x12\x19.pagination.PagingRequest\x1a(.media.service.v1.ListMediaAssetResponse\"\x1e\x82\xd3\xe4\x93\x02\x18\x12\x16/admin/v1/media-assets\x12p\n" +
 	"\x03Get\x12&.media.service.v1.GetMediaAssetRequest\x1a\x1c.media.service.v1.MediaAsset\"#\x82\xd3\xe4\x93\x02\x1d\x12\x1b/admin/v1/media-assets/{id}\x12t\n" +
 	"\x06Create\x12).media.service.v1.CreateMediaAssetRequest\x1a\x1c.media.service.v1.MediaAsset\"!\x82\xd3\xe4\x93\x02\x1b:\x01*\"\x16/admin/v1/media-assets\x12y\n" +
-	"\x06Update\x12).media.service.v1.UpdateMediaAssetRequest\x1a\x1c.media.service.v1.MediaAsset\"&\x82\xd3\xe4\x93\x02 :\x01*\x1a\x1b/admin/v1/media-assets/{id}\x12\x9f\x01\n" +
+	"\x06Update\x12).media.service.v1.UpdateMediaAssetRequest\x1a\x1c.media.service.v1.MediaAsset\"&\x82\xd3\xe4\x93\x02 :\x01*\x1a\x1b/admin/v1/media-assets/{id}\x12\x9e\x01\n" +
 	"\n" +
-	"FindByHash\x12-.media.service.v1.FindMediaAssetByHashRequest\x1a..media.service.v1.FindMediaAssetByHashResponse\"2\x82\xd3\xe4\x93\x02,\x12*/admin/v1/media-assets/by-hash/{file_hash}\x12p\n" +
+	"FindByHash\x12-.media.service.v1.FindMediaAssetByHashRequest\x1a..media.service.v1.FindMediaAssetByHashResponse\"1\x82\xd3\xe4\x93\x02+\x12)/admin/v1/media-asset-by-hash/{file_hash}\x12\xa8\x01\n" +
+	"\x19ListDuplicatedMediaAssets\x122.media.service.v1.ListDuplicatedMediaAssetsRequest\x1a3.media.service.v1.ListDuplicatedMediaAssetsResponse\"\"\x82\xd3\xe4\x93\x02\x1c\x12\x1a/admin/v1/media-duplicates\x12\xbd\x01\n" +
+	"\x18ListMediaAssetReferences\x121.media.service.v1.ListMediaAssetReferencesRequest\x1a2.media.service.v1.ListMediaAssetReferencesResponse\":\x82\xd3\xe4\x93\x024\x122/admin/v1/media-assets/{media_asset_id}/references\x12p\n" +
 	"\x06Delete\x12).media.service.v1.DeleteMediaAssetRequest\x1a\x16.google.protobuf.Empty\"#\x82\xd3\xe4\x93\x02\x1d*\x1b/admin/v1/media-assets/{id}B\xbb\x01\n" +
 	"\x14com.admin.service.v1B\x10IMediaAssetProtoP\x01Z/go-wind-cms/api/gen/go/admin/service/v1;adminpb\xa2\x02\x03ASX\xaa\x02\x10Admin.Service.V1\xca\x02\x10Admin\\Service\\V1\xe2\x02\x1cAdmin\\Service\\V1\\GPBMetadata\xea\x02\x12Admin::Service::V1b\x06proto3"
 
 var file_admin_service_v1_i_media_asset_proto_goTypes = []any{
-	(*v1.PagingRequest)(nil),                 // 0: pagination.PagingRequest
-	(*v11.GetMediaAssetRequest)(nil),         // 1: media.service.v1.GetMediaAssetRequest
-	(*v11.CreateMediaAssetRequest)(nil),      // 2: media.service.v1.CreateMediaAssetRequest
-	(*v11.UpdateMediaAssetRequest)(nil),      // 3: media.service.v1.UpdateMediaAssetRequest
-	(*v11.FindMediaAssetByHashRequest)(nil),  // 4: media.service.v1.FindMediaAssetByHashRequest
-	(*v11.DeleteMediaAssetRequest)(nil),      // 5: media.service.v1.DeleteMediaAssetRequest
-	(*v11.ListMediaAssetResponse)(nil),       // 6: media.service.v1.ListMediaAssetResponse
-	(*v11.MediaAsset)(nil),                   // 7: media.service.v1.MediaAsset
-	(*v11.FindMediaAssetByHashResponse)(nil), // 8: media.service.v1.FindMediaAssetByHashResponse
-	(*emptypb.Empty)(nil),                    // 9: google.protobuf.Empty
+	(*v1.PagingRequest)(nil),                      // 0: pagination.PagingRequest
+	(*v11.GetMediaAssetRequest)(nil),              // 1: media.service.v1.GetMediaAssetRequest
+	(*v11.CreateMediaAssetRequest)(nil),           // 2: media.service.v1.CreateMediaAssetRequest
+	(*v11.UpdateMediaAssetRequest)(nil),           // 3: media.service.v1.UpdateMediaAssetRequest
+	(*v11.FindMediaAssetByHashRequest)(nil),       // 4: media.service.v1.FindMediaAssetByHashRequest
+	(*v11.ListDuplicatedMediaAssetsRequest)(nil),  // 5: media.service.v1.ListDuplicatedMediaAssetsRequest
+	(*v11.ListMediaAssetReferencesRequest)(nil),   // 6: media.service.v1.ListMediaAssetReferencesRequest
+	(*v11.DeleteMediaAssetRequest)(nil),           // 7: media.service.v1.DeleteMediaAssetRequest
+	(*v11.ListMediaAssetResponse)(nil),            // 8: media.service.v1.ListMediaAssetResponse
+	(*v11.MediaAsset)(nil),                        // 9: media.service.v1.MediaAsset
+	(*v11.FindMediaAssetByHashResponse)(nil),      // 10: media.service.v1.FindMediaAssetByHashResponse
+	(*v11.ListDuplicatedMediaAssetsResponse)(nil), // 11: media.service.v1.ListDuplicatedMediaAssetsResponse
+	(*v11.ListMediaAssetReferencesResponse)(nil),  // 12: media.service.v1.ListMediaAssetReferencesResponse
+	(*emptypb.Empty)(nil),                         // 13: google.protobuf.Empty
 }
 var file_admin_service_v1_i_media_asset_proto_depIdxs = []int32{
-	0, // 0: admin.service.v1.MediaAssetService.List:input_type -> pagination.PagingRequest
-	1, // 1: admin.service.v1.MediaAssetService.Get:input_type -> media.service.v1.GetMediaAssetRequest
-	2, // 2: admin.service.v1.MediaAssetService.Create:input_type -> media.service.v1.CreateMediaAssetRequest
-	3, // 3: admin.service.v1.MediaAssetService.Update:input_type -> media.service.v1.UpdateMediaAssetRequest
-	4, // 4: admin.service.v1.MediaAssetService.FindByHash:input_type -> media.service.v1.FindMediaAssetByHashRequest
-	5, // 5: admin.service.v1.MediaAssetService.Delete:input_type -> media.service.v1.DeleteMediaAssetRequest
-	6, // 6: admin.service.v1.MediaAssetService.List:output_type -> media.service.v1.ListMediaAssetResponse
-	7, // 7: admin.service.v1.MediaAssetService.Get:output_type -> media.service.v1.MediaAsset
-	7, // 8: admin.service.v1.MediaAssetService.Create:output_type -> media.service.v1.MediaAsset
-	7, // 9: admin.service.v1.MediaAssetService.Update:output_type -> media.service.v1.MediaAsset
-	8, // 10: admin.service.v1.MediaAssetService.FindByHash:output_type -> media.service.v1.FindMediaAssetByHashResponse
-	9, // 11: admin.service.v1.MediaAssetService.Delete:output_type -> google.protobuf.Empty
-	6, // [6:12] is the sub-list for method output_type
-	0, // [0:6] is the sub-list for method input_type
-	0, // [0:0] is the sub-list for extension type_name
-	0, // [0:0] is the sub-list for extension extendee
-	0, // [0:0] is the sub-list for field type_name
+	0,  // 0: admin.service.v1.MediaAssetService.List:input_type -> pagination.PagingRequest
+	1,  // 1: admin.service.v1.MediaAssetService.Get:input_type -> media.service.v1.GetMediaAssetRequest
+	2,  // 2: admin.service.v1.MediaAssetService.Create:input_type -> media.service.v1.CreateMediaAssetRequest
+	3,  // 3: admin.service.v1.MediaAssetService.Update:input_type -> media.service.v1.UpdateMediaAssetRequest
+	4,  // 4: admin.service.v1.MediaAssetService.FindByHash:input_type -> media.service.v1.FindMediaAssetByHashRequest
+	5,  // 5: admin.service.v1.MediaAssetService.ListDuplicatedMediaAssets:input_type -> media.service.v1.ListDuplicatedMediaAssetsRequest
+	6,  // 6: admin.service.v1.MediaAssetService.ListMediaAssetReferences:input_type -> media.service.v1.ListMediaAssetReferencesRequest
+	7,  // 7: admin.service.v1.MediaAssetService.Delete:input_type -> media.service.v1.DeleteMediaAssetRequest
+	8,  // 8: admin.service.v1.MediaAssetService.List:output_type -> media.service.v1.ListMediaAssetResponse
+	9,  // 9: admin.service.v1.MediaAssetService.Get:output_type -> media.service.v1.MediaAsset
+	9,  // 10: admin.service.v1.MediaAssetService.Create:output_type -> media.service.v1.MediaAsset
+	9,  // 11: admin.service.v1.MediaAssetService.Update:output_type -> media.service.v1.MediaAsset
+	10, // 12: admin.service.v1.MediaAssetService.FindByHash:output_type -> media.service.v1.FindMediaAssetByHashResponse
+	11, // 13: admin.service.v1.MediaAssetService.ListDuplicatedMediaAssets:output_type -> media.service.v1.ListDuplicatedMediaAssetsResponse
+	12, // 14: admin.service.v1.MediaAssetService.ListMediaAssetReferences:output_type -> media.service.v1.ListMediaAssetReferencesResponse
+	13, // 15: admin.service.v1.MediaAssetService.Delete:output_type -> google.protobuf.Empty
+	8,  // [8:16] is the sub-list for method output_type
+	0,  // [0:8] is the sub-list for method input_type
+	0,  // [0:0] is the sub-list for extension type_name
+	0,  // [0:0] is the sub-list for extension extendee
+	0,  // [0:0] is the sub-list for field type_name
 }
 
 func init() { file_admin_service_v1_i_media_asset_proto_init() }

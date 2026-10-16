@@ -22,6 +22,7 @@ import (
 	"go-wind-cms/app/core/service/internal/data/ent/commentlike"
 	"go-wind-cms/app/core/service/internal/data/ent/contentmodel"
 	"go-wind-cms/app/core/service/internal/data/ent/contentmodeltranslation"
+	"go-wind-cms/app/core/service/internal/data/ent/contentreference"
 	"go-wind-cms/app/core/service/internal/data/ent/dataaccessauditlog"
 	"go-wind-cms/app/core/service/internal/data/ent/dictentry"
 	"go-wind-cms/app/core/service/internal/data/ent/dictentryi18n"
@@ -176,6 +177,7 @@ func checkColumn(t, c string) error {
 			commentlike.Table:                commentlike.ValidColumn,
 			contentmodel.Table:               contentmodel.ValidColumn,
 			contentmodeltranslation.Table:    contentmodeltranslation.ValidColumn,
+			contentreference.Table:           contentreference.ValidColumn,
 			dataaccessauditlog.Table:         dataaccessauditlog.ValidColumn,
 			dictentry.Table:                  dictentry.ValidColumn,
 			dictentryi18n.Table:              dictentryi18n.ValidColumn,

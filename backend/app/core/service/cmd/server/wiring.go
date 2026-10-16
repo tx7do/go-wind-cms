@@ -193,6 +193,7 @@ func initApp(ctx *bootstrap.Context) (*kratos.App, func(), error) {
 	// 媒体
 	mediaVariantRepo := data.NewMediaVariantRepo(ctx, entClient)
 	mediaAssetRepo := data.NewMediaAssetRepo(ctx, entClient, mediaVariantRepo)
+	contentReferenceRepo := data.NewContentReferenceRepo(ctx, entClient)
 
 	// 社交分发
 	socialAccountRepo := data.NewSocialAccountRepo(ctx, entClient)
@@ -282,10 +283,11 @@ func initApp(ctx *bootstrap.Context) (*kratos.App, func(), error) {
 	aiUsageLogService := service.NewAiUsageLogService(ctx, aiUsageLogRepo)
 	aiQueryService := service.NewAiQueryService(ctx, aiProviderRepo, aiUsageLogRepo, entClient, internalMessageRepo, internalMessageService)
 	searchService := service.NewSearchService(ctx, searchRepo, postRepo)
-	postService := service.NewPostService(ctx, postRepo, searchService, taskService, contentModelRepo, postVersionRepo, webhookService, internalMessageService)
+	referenceTrackingService := service.NewReferenceTrackingService(ctx, mediaAssetRepo, contentReferenceRepo)
+	postService := service.NewPostService(ctx, postRepo, searchService, taskService, contentModelRepo, postVersionRepo, webhookService, internalMessageService, referenceTrackingService)
 	categoryService := service.NewCategoryService(ctx, categoryRepo, contentModelRepo)
 	tagService := service.NewTagService(ctx, tagRepo)
-	pageService := service.NewPageService(ctx, pageRepo, contentModelRepo, pageVersionRepo, webhookService, internalMessageService)
+	pageService := service.NewPageService(ctx, pageRepo, contentModelRepo, pageVersionRepo, webhookService, internalMessageService, referenceTrackingService)
 	contentModelService := service.NewContentModelService(ctx, contentModelRepo)
 
 	// 站点配置
@@ -295,7 +297,7 @@ func initApp(ctx *bootstrap.Context) (*kratos.App, func(), error) {
 	navigationItemService := service.NewNavigationItemService(ctx, navigationItemRepo)
 
 	// 媒体
-	mediaAssetService := service.NewMediaAssetService(ctx, mediaAssetRepo)
+	mediaAssetService := service.NewMediaAssetService(ctx, mediaAssetRepo, contentReferenceRepo, postRepo, pageRepo)
 
 	// 社交分发
 	socialService := service.NewSocialService(ctx, socialAccountRepo, socialDistributionRepo, socialStatsHistoryRepo, mediaAssetRepo, fileRepo, minIOClient, postRepo, taskService, internalMessageService, socialInboxRepo)

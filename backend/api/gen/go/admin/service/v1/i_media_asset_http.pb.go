@@ -27,18 +27,25 @@ const OperationMediaAssetServiceDelete = "/admin.service.v1.MediaAssetService/De
 const OperationMediaAssetServiceFindByHash = "/admin.service.v1.MediaAssetService/FindByHash"
 const OperationMediaAssetServiceGet = "/admin.service.v1.MediaAssetService/Get"
 const OperationMediaAssetServiceList = "/admin.service.v1.MediaAssetService/List"
+const OperationMediaAssetServiceListDuplicatedMediaAssets = "/admin.service.v1.MediaAssetService/ListDuplicatedMediaAssets"
+const OperationMediaAssetServiceListMediaAssetReferences = "/admin.service.v1.MediaAssetService/ListMediaAssetReferences"
 const OperationMediaAssetServiceUpdate = "/admin.service.v1.MediaAssetService/Update"
 
 type MediaAssetServiceHTTPServer interface {
 	// Create 创建媒体资源库
 	Create(context.Context, *v11.CreateMediaAssetRequest) (*v11.MediaAsset, error)
 	Delete(context.Context, *v11.DeleteMediaAssetRequest) (*emptypb.Empty, error)
-	// FindByHash 删除媒体资源库
+	// FindByHash 按内容哈希查重。注意不能挂在 /media-assets/{file_hash} 形态下——
+	// 与 Get({id}) 单段路由冲突（先注册者胜，{id} 会把字面量当 ID 解析报 CODEC）。
 	FindByHash(context.Context, *v11.FindMediaAssetByHashRequest) (*v11.FindMediaAssetByHashResponse, error)
 	// Get 获取媒体资源库数据
 	Get(context.Context, *v11.GetMediaAssetRequest) (*v11.MediaAsset, error)
 	// List 获取媒体资源库列表
 	List(context.Context, *v1.PagingRequest) (*v11.ListMediaAssetResponse, error)
+	// ListDuplicatedMediaAssets 重复资源分组（同租户内同内容哈希 >1 条）。路径避开 /media-assets/{id} 单段遮蔽。
+	ListDuplicatedMediaAssets(context.Context, *v11.ListDuplicatedMediaAssetsRequest) (*v11.ListDuplicatedMediaAssetsResponse, error)
+	// ListMediaAssetReferences 媒体被内容引用的关系（引用图谱查询）
+	ListMediaAssetReferences(context.Context, *v11.ListMediaAssetReferencesRequest) (*v11.ListMediaAssetReferencesResponse, error)
 	// Update 更新媒体资源库
 	Update(context.Context, *v11.UpdateMediaAssetRequest) (*v11.MediaAsset, error)
 }
@@ -49,7 +56,9 @@ func RegisterMediaAssetServiceHTTPServer(s *http.Server, srv MediaAssetServiceHT
 	r.GET("/admin/v1/media-assets/{id}", _MediaAssetService_Get21_HTTP_Handler(srv))
 	r.POST("/admin/v1/media-assets", _MediaAssetService_Create15_HTTP_Handler(srv))
 	r.PUT("/admin/v1/media-assets/{id}", _MediaAssetService_Update16_HTTP_Handler(srv))
-	r.GET("/admin/v1/media-assets/by-hash/{file_hash}", _MediaAssetService_FindByHash0_HTTP_Handler(srv))
+	r.GET("/admin/v1/media-asset-by-hash/{file_hash}", _MediaAssetService_FindByHash0_HTTP_Handler(srv))
+	r.GET("/admin/v1/media-duplicates", _MediaAssetService_ListDuplicatedMediaAssets0_HTTP_Handler(srv))
+	r.GET("/admin/v1/media-assets/{media_asset_id}/references", _MediaAssetService_ListMediaAssetReferences0_HTTP_Handler(srv))
 	r.DELETE("/admin/v1/media-assets/{id}", _MediaAssetService_Delete18_HTTP_Handler(srv))
 }
 
@@ -163,6 +172,47 @@ func _MediaAssetService_FindByHash0_HTTP_Handler(srv MediaAssetServiceHTTPServer
 	}
 }
 
+func _MediaAssetService_ListDuplicatedMediaAssets0_HTTP_Handler(srv MediaAssetServiceHTTPServer) func(ctx http.Context) error {
+	return func(ctx http.Context) error {
+		var in v11.ListDuplicatedMediaAssetsRequest
+		if err := ctx.BindQuery(&in); err != nil {
+			return err
+		}
+		http.SetOperation(ctx, OperationMediaAssetServiceListDuplicatedMediaAssets)
+		h := ctx.Middleware(func(ctx context.Context, req interface{}) (interface{}, error) {
+			return srv.ListDuplicatedMediaAssets(ctx, req.(*v11.ListDuplicatedMediaAssetsRequest))
+		})
+		out, err := h(ctx, &in)
+		if err != nil {
+			return err
+		}
+		reply := out.(*v11.ListDuplicatedMediaAssetsResponse)
+		return ctx.Result(200, reply)
+	}
+}
+
+func _MediaAssetService_ListMediaAssetReferences0_HTTP_Handler(srv MediaAssetServiceHTTPServer) func(ctx http.Context) error {
+	return func(ctx http.Context) error {
+		var in v11.ListMediaAssetReferencesRequest
+		if err := ctx.BindQuery(&in); err != nil {
+			return err
+		}
+		if err := ctx.BindVars(&in); err != nil {
+			return err
+		}
+		http.SetOperation(ctx, OperationMediaAssetServiceListMediaAssetReferences)
+		h := ctx.Middleware(func(ctx context.Context, req interface{}) (interface{}, error) {
+			return srv.ListMediaAssetReferences(ctx, req.(*v11.ListMediaAssetReferencesRequest))
+		})
+		out, err := h(ctx, &in)
+		if err != nil {
+			return err
+		}
+		reply := out.(*v11.ListMediaAssetReferencesResponse)
+		return ctx.Result(200, reply)
+	}
+}
+
 func _MediaAssetService_Delete18_HTTP_Handler(srv MediaAssetServiceHTTPServer) func(ctx http.Context) error {
 	return func(ctx http.Context) error {
 		var in v11.DeleteMediaAssetRequest
@@ -189,12 +239,17 @@ type MediaAssetServiceHTTPClient interface {
 	// Create 创建媒体资源库
 	Create(ctx context.Context, req *v11.CreateMediaAssetRequest, opts ...http.CallOption) (rsp *v11.MediaAsset, err error)
 	Delete(ctx context.Context, req *v11.DeleteMediaAssetRequest, opts ...http.CallOption) (rsp *emptypb.Empty, err error)
-	// FindByHash 删除媒体资源库
+	// FindByHash 按内容哈希查重。注意不能挂在 /media-assets/{file_hash} 形态下——
+	// 与 Get({id}) 单段路由冲突（先注册者胜，{id} 会把字面量当 ID 解析报 CODEC）。
 	FindByHash(ctx context.Context, req *v11.FindMediaAssetByHashRequest, opts ...http.CallOption) (rsp *v11.FindMediaAssetByHashResponse, err error)
 	// Get 获取媒体资源库数据
 	Get(ctx context.Context, req *v11.GetMediaAssetRequest, opts ...http.CallOption) (rsp *v11.MediaAsset, err error)
 	// List 获取媒体资源库列表
 	List(ctx context.Context, req *v1.PagingRequest, opts ...http.CallOption) (rsp *v11.ListMediaAssetResponse, err error)
+	// ListDuplicatedMediaAssets 重复资源分组（同租户内同内容哈希 >1 条）。路径避开 /media-assets/{id} 单段遮蔽。
+	ListDuplicatedMediaAssets(ctx context.Context, req *v11.ListDuplicatedMediaAssetsRequest, opts ...http.CallOption) (rsp *v11.ListDuplicatedMediaAssetsResponse, err error)
+	// ListMediaAssetReferences 媒体被内容引用的关系（引用图谱查询）
+	ListMediaAssetReferences(ctx context.Context, req *v11.ListMediaAssetReferencesRequest, opts ...http.CallOption) (rsp *v11.ListMediaAssetReferencesResponse, err error)
 	// Update 更新媒体资源库
 	Update(ctx context.Context, req *v11.UpdateMediaAssetRequest, opts ...http.CallOption) (rsp *v11.MediaAsset, err error)
 }
@@ -234,10 +289,11 @@ func (c *MediaAssetServiceHTTPClientImpl) Delete(ctx context.Context, in *v11.De
 	return &out, nil
 }
 
-// FindByHash 删除媒体资源库
+// FindByHash 按内容哈希查重。注意不能挂在 /media-assets/{file_hash} 形态下——
+// 与 Get({id}) 单段路由冲突（先注册者胜，{id} 会把字面量当 ID 解析报 CODEC）。
 func (c *MediaAssetServiceHTTPClientImpl) FindByHash(ctx context.Context, in *v11.FindMediaAssetByHashRequest, opts ...http.CallOption) (*v11.FindMediaAssetByHashResponse, error) {
 	var out v11.FindMediaAssetByHashResponse
-	pattern := "/admin/v1/media-assets/by-hash/{file_hash}"
+	pattern := "/admin/v1/media-asset-by-hash/{file_hash}"
 	path := binding.EncodeURL(pattern, in, true)
 	opts = append(opts, http.Operation(OperationMediaAssetServiceFindByHash))
 	opts = append(opts, http.PathTemplate(pattern))
@@ -268,6 +324,34 @@ func (c *MediaAssetServiceHTTPClientImpl) List(ctx context.Context, in *v1.Pagin
 	pattern := "/admin/v1/media-assets"
 	path := binding.EncodeURL(pattern, in, true)
 	opts = append(opts, http.Operation(OperationMediaAssetServiceList))
+	opts = append(opts, http.PathTemplate(pattern))
+	err := c.cc.Invoke(ctx, "GET", path, nil, &out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return &out, nil
+}
+
+// ListDuplicatedMediaAssets 重复资源分组（同租户内同内容哈希 >1 条）。路径避开 /media-assets/{id} 单段遮蔽。
+func (c *MediaAssetServiceHTTPClientImpl) ListDuplicatedMediaAssets(ctx context.Context, in *v11.ListDuplicatedMediaAssetsRequest, opts ...http.CallOption) (*v11.ListDuplicatedMediaAssetsResponse, error) {
+	var out v11.ListDuplicatedMediaAssetsResponse
+	pattern := "/admin/v1/media-duplicates"
+	path := binding.EncodeURL(pattern, in, true)
+	opts = append(opts, http.Operation(OperationMediaAssetServiceListDuplicatedMediaAssets))
+	opts = append(opts, http.PathTemplate(pattern))
+	err := c.cc.Invoke(ctx, "GET", path, nil, &out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return &out, nil
+}
+
+// ListMediaAssetReferences 媒体被内容引用的关系（引用图谱查询）
+func (c *MediaAssetServiceHTTPClientImpl) ListMediaAssetReferences(ctx context.Context, in *v11.ListMediaAssetReferencesRequest, opts ...http.CallOption) (*v11.ListMediaAssetReferencesResponse, error) {
+	var out v11.ListMediaAssetReferencesResponse
+	pattern := "/admin/v1/media-assets/{media_asset_id}/references"
+	path := binding.EncodeURL(pattern, in, true)
+	opts = append(opts, http.Operation(OperationMediaAssetServiceListMediaAssetReferences))
 	opts = append(opts, http.PathTemplate(pattern))
 	err := c.cc.Invoke(ctx, "GET", path, nil, &out, opts...)
 	if err != nil {

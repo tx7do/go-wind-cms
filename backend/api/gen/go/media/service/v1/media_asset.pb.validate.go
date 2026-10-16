@@ -1359,3 +1359,798 @@ var _ interface {
 	Cause() error
 	ErrorName() string
 } = FindMediaAssetByHashResponseValidationError{}
+
+// Validate checks the field values on ListDuplicatedMediaAssetsRequest with
+// the rules defined in the proto definition for this message. If any rules
+// are violated, the first error encountered is returned, or nil if there are
+// no violations.
+func (m *ListDuplicatedMediaAssetsRequest) Validate() error {
+	return m.validate(false)
+}
+
+// ValidateAll checks the field values on ListDuplicatedMediaAssetsRequest with
+// the rules defined in the proto definition for this message. If any rules
+// are violated, the result is a list of violation errors wrapped in
+// ListDuplicatedMediaAssetsRequestMultiError, or nil if none found.
+func (m *ListDuplicatedMediaAssetsRequest) ValidateAll() error {
+	return m.validate(true)
+}
+
+func (m *ListDuplicatedMediaAssetsRequest) validate(all bool) error {
+	if m == nil {
+		return nil
+	}
+
+	var errors []error
+
+	if m.Limit != nil {
+		// no validation rules for Limit
+	}
+
+	if len(errors) > 0 {
+		return ListDuplicatedMediaAssetsRequestMultiError(errors)
+	}
+
+	return nil
+}
+
+// ListDuplicatedMediaAssetsRequestMultiError is an error wrapping multiple
+// validation errors returned by
+// ListDuplicatedMediaAssetsRequest.ValidateAll() if the designated
+// constraints aren't met.
+type ListDuplicatedMediaAssetsRequestMultiError []error
+
+// Error returns a concatenation of all the error messages it wraps.
+func (m ListDuplicatedMediaAssetsRequestMultiError) Error() string {
+	msgs := make([]string, 0, len(m))
+	for _, err := range m {
+		msgs = append(msgs, err.Error())
+	}
+	return strings.Join(msgs, "; ")
+}
+
+// AllErrors returns a list of validation violation errors.
+func (m ListDuplicatedMediaAssetsRequestMultiError) AllErrors() []error { return m }
+
+// ListDuplicatedMediaAssetsRequestValidationError is the validation error
+// returned by ListDuplicatedMediaAssetsRequest.Validate if the designated
+// constraints aren't met.
+type ListDuplicatedMediaAssetsRequestValidationError struct {
+	field  string
+	reason string
+	cause  error
+	key    bool
+}
+
+// Field function returns field value.
+func (e ListDuplicatedMediaAssetsRequestValidationError) Field() string { return e.field }
+
+// Reason function returns reason value.
+func (e ListDuplicatedMediaAssetsRequestValidationError) Reason() string { return e.reason }
+
+// Cause function returns cause value.
+func (e ListDuplicatedMediaAssetsRequestValidationError) Cause() error { return e.cause }
+
+// Key function returns key value.
+func (e ListDuplicatedMediaAssetsRequestValidationError) Key() bool { return e.key }
+
+// ErrorName returns error name.
+func (e ListDuplicatedMediaAssetsRequestValidationError) ErrorName() string {
+	return "ListDuplicatedMediaAssetsRequestValidationError"
+}
+
+// Error satisfies the builtin error interface
+func (e ListDuplicatedMediaAssetsRequestValidationError) Error() string {
+	cause := ""
+	if e.cause != nil {
+		cause = fmt.Sprintf(" | caused by: %v", e.cause)
+	}
+
+	key := ""
+	if e.key {
+		key = "key for "
+	}
+
+	return fmt.Sprintf(
+		"invalid %sListDuplicatedMediaAssetsRequest.%s: %s%s",
+		key,
+		e.field,
+		e.reason,
+		cause)
+}
+
+var _ error = ListDuplicatedMediaAssetsRequestValidationError{}
+
+var _ interface {
+	Field() string
+	Reason() string
+	Key() bool
+	Cause() error
+	ErrorName() string
+} = ListDuplicatedMediaAssetsRequestValidationError{}
+
+// Validate checks the field values on MediaAssetDuplicateGroup with the rules
+// defined in the proto definition for this message. If any rules are
+// violated, the first error encountered is returned, or nil if there are no violations.
+func (m *MediaAssetDuplicateGroup) Validate() error {
+	return m.validate(false)
+}
+
+// ValidateAll checks the field values on MediaAssetDuplicateGroup with the
+// rules defined in the proto definition for this message. If any rules are
+// violated, the result is a list of violation errors wrapped in
+// MediaAssetDuplicateGroupMultiError, or nil if none found.
+func (m *MediaAssetDuplicateGroup) ValidateAll() error {
+	return m.validate(true)
+}
+
+func (m *MediaAssetDuplicateGroup) validate(all bool) error {
+	if m == nil {
+		return nil
+	}
+
+	var errors []error
+
+	for idx, item := range m.GetAssets() {
+		_, _ = idx, item
+
+		if all {
+			switch v := interface{}(item).(type) {
+			case interface{ ValidateAll() error }:
+				if err := v.ValidateAll(); err != nil {
+					errors = append(errors, MediaAssetDuplicateGroupValidationError{
+						field:  fmt.Sprintf("Assets[%v]", idx),
+						reason: "embedded message failed validation",
+						cause:  err,
+					})
+				}
+			case interface{ Validate() error }:
+				if err := v.Validate(); err != nil {
+					errors = append(errors, MediaAssetDuplicateGroupValidationError{
+						field:  fmt.Sprintf("Assets[%v]", idx),
+						reason: "embedded message failed validation",
+						cause:  err,
+					})
+				}
+			}
+		} else if v, ok := interface{}(item).(interface{ Validate() error }); ok {
+			if err := v.Validate(); err != nil {
+				return MediaAssetDuplicateGroupValidationError{
+					field:  fmt.Sprintf("Assets[%v]", idx),
+					reason: "embedded message failed validation",
+					cause:  err,
+				}
+			}
+		}
+
+	}
+
+	if m.FileHash != nil {
+		// no validation rules for FileHash
+	}
+
+	if m.Count != nil {
+		// no validation rules for Count
+	}
+
+	if len(errors) > 0 {
+		return MediaAssetDuplicateGroupMultiError(errors)
+	}
+
+	return nil
+}
+
+// MediaAssetDuplicateGroupMultiError is an error wrapping multiple validation
+// errors returned by MediaAssetDuplicateGroup.ValidateAll() if the designated
+// constraints aren't met.
+type MediaAssetDuplicateGroupMultiError []error
+
+// Error returns a concatenation of all the error messages it wraps.
+func (m MediaAssetDuplicateGroupMultiError) Error() string {
+	msgs := make([]string, 0, len(m))
+	for _, err := range m {
+		msgs = append(msgs, err.Error())
+	}
+	return strings.Join(msgs, "; ")
+}
+
+// AllErrors returns a list of validation violation errors.
+func (m MediaAssetDuplicateGroupMultiError) AllErrors() []error { return m }
+
+// MediaAssetDuplicateGroupValidationError is the validation error returned by
+// MediaAssetDuplicateGroup.Validate if the designated constraints aren't met.
+type MediaAssetDuplicateGroupValidationError struct {
+	field  string
+	reason string
+	cause  error
+	key    bool
+}
+
+// Field function returns field value.
+func (e MediaAssetDuplicateGroupValidationError) Field() string { return e.field }
+
+// Reason function returns reason value.
+func (e MediaAssetDuplicateGroupValidationError) Reason() string { return e.reason }
+
+// Cause function returns cause value.
+func (e MediaAssetDuplicateGroupValidationError) Cause() error { return e.cause }
+
+// Key function returns key value.
+func (e MediaAssetDuplicateGroupValidationError) Key() bool { return e.key }
+
+// ErrorName returns error name.
+func (e MediaAssetDuplicateGroupValidationError) ErrorName() string {
+	return "MediaAssetDuplicateGroupValidationError"
+}
+
+// Error satisfies the builtin error interface
+func (e MediaAssetDuplicateGroupValidationError) Error() string {
+	cause := ""
+	if e.cause != nil {
+		cause = fmt.Sprintf(" | caused by: %v", e.cause)
+	}
+
+	key := ""
+	if e.key {
+		key = "key for "
+	}
+
+	return fmt.Sprintf(
+		"invalid %sMediaAssetDuplicateGroup.%s: %s%s",
+		key,
+		e.field,
+		e.reason,
+		cause)
+}
+
+var _ error = MediaAssetDuplicateGroupValidationError{}
+
+var _ interface {
+	Field() string
+	Reason() string
+	Key() bool
+	Cause() error
+	ErrorName() string
+} = MediaAssetDuplicateGroupValidationError{}
+
+// Validate checks the field values on ListDuplicatedMediaAssetsResponse with
+// the rules defined in the proto definition for this message. If any rules
+// are violated, the first error encountered is returned, or nil if there are
+// no violations.
+func (m *ListDuplicatedMediaAssetsResponse) Validate() error {
+	return m.validate(false)
+}
+
+// ValidateAll checks the field values on ListDuplicatedMediaAssetsResponse
+// with the rules defined in the proto definition for this message. If any
+// rules are violated, the result is a list of violation errors wrapped in
+// ListDuplicatedMediaAssetsResponseMultiError, or nil if none found.
+func (m *ListDuplicatedMediaAssetsResponse) ValidateAll() error {
+	return m.validate(true)
+}
+
+func (m *ListDuplicatedMediaAssetsResponse) validate(all bool) error {
+	if m == nil {
+		return nil
+	}
+
+	var errors []error
+
+	for idx, item := range m.GetGroups() {
+		_, _ = idx, item
+
+		if all {
+			switch v := interface{}(item).(type) {
+			case interface{ ValidateAll() error }:
+				if err := v.ValidateAll(); err != nil {
+					errors = append(errors, ListDuplicatedMediaAssetsResponseValidationError{
+						field:  fmt.Sprintf("Groups[%v]", idx),
+						reason: "embedded message failed validation",
+						cause:  err,
+					})
+				}
+			case interface{ Validate() error }:
+				if err := v.Validate(); err != nil {
+					errors = append(errors, ListDuplicatedMediaAssetsResponseValidationError{
+						field:  fmt.Sprintf("Groups[%v]", idx),
+						reason: "embedded message failed validation",
+						cause:  err,
+					})
+				}
+			}
+		} else if v, ok := interface{}(item).(interface{ Validate() error }); ok {
+			if err := v.Validate(); err != nil {
+				return ListDuplicatedMediaAssetsResponseValidationError{
+					field:  fmt.Sprintf("Groups[%v]", idx),
+					reason: "embedded message failed validation",
+					cause:  err,
+				}
+			}
+		}
+
+	}
+
+	// no validation rules for Total
+
+	if len(errors) > 0 {
+		return ListDuplicatedMediaAssetsResponseMultiError(errors)
+	}
+
+	return nil
+}
+
+// ListDuplicatedMediaAssetsResponseMultiError is an error wrapping multiple
+// validation errors returned by
+// ListDuplicatedMediaAssetsResponse.ValidateAll() if the designated
+// constraints aren't met.
+type ListDuplicatedMediaAssetsResponseMultiError []error
+
+// Error returns a concatenation of all the error messages it wraps.
+func (m ListDuplicatedMediaAssetsResponseMultiError) Error() string {
+	msgs := make([]string, 0, len(m))
+	for _, err := range m {
+		msgs = append(msgs, err.Error())
+	}
+	return strings.Join(msgs, "; ")
+}
+
+// AllErrors returns a list of validation violation errors.
+func (m ListDuplicatedMediaAssetsResponseMultiError) AllErrors() []error { return m }
+
+// ListDuplicatedMediaAssetsResponseValidationError is the validation error
+// returned by ListDuplicatedMediaAssetsResponse.Validate if the designated
+// constraints aren't met.
+type ListDuplicatedMediaAssetsResponseValidationError struct {
+	field  string
+	reason string
+	cause  error
+	key    bool
+}
+
+// Field function returns field value.
+func (e ListDuplicatedMediaAssetsResponseValidationError) Field() string { return e.field }
+
+// Reason function returns reason value.
+func (e ListDuplicatedMediaAssetsResponseValidationError) Reason() string { return e.reason }
+
+// Cause function returns cause value.
+func (e ListDuplicatedMediaAssetsResponseValidationError) Cause() error { return e.cause }
+
+// Key function returns key value.
+func (e ListDuplicatedMediaAssetsResponseValidationError) Key() bool { return e.key }
+
+// ErrorName returns error name.
+func (e ListDuplicatedMediaAssetsResponseValidationError) ErrorName() string {
+	return "ListDuplicatedMediaAssetsResponseValidationError"
+}
+
+// Error satisfies the builtin error interface
+func (e ListDuplicatedMediaAssetsResponseValidationError) Error() string {
+	cause := ""
+	if e.cause != nil {
+		cause = fmt.Sprintf(" | caused by: %v", e.cause)
+	}
+
+	key := ""
+	if e.key {
+		key = "key for "
+	}
+
+	return fmt.Sprintf(
+		"invalid %sListDuplicatedMediaAssetsResponse.%s: %s%s",
+		key,
+		e.field,
+		e.reason,
+		cause)
+}
+
+var _ error = ListDuplicatedMediaAssetsResponseValidationError{}
+
+var _ interface {
+	Field() string
+	Reason() string
+	Key() bool
+	Cause() error
+	ErrorName() string
+} = ListDuplicatedMediaAssetsResponseValidationError{}
+
+// Validate checks the field values on ListMediaAssetReferencesRequest with the
+// rules defined in the proto definition for this message. If any rules are
+// violated, the first error encountered is returned, or nil if there are no violations.
+func (m *ListMediaAssetReferencesRequest) Validate() error {
+	return m.validate(false)
+}
+
+// ValidateAll checks the field values on ListMediaAssetReferencesRequest with
+// the rules defined in the proto definition for this message. If any rules
+// are violated, the result is a list of violation errors wrapped in
+// ListMediaAssetReferencesRequestMultiError, or nil if none found.
+func (m *ListMediaAssetReferencesRequest) ValidateAll() error {
+	return m.validate(true)
+}
+
+func (m *ListMediaAssetReferencesRequest) validate(all bool) error {
+	if m == nil {
+		return nil
+	}
+
+	var errors []error
+
+	// no validation rules for MediaAssetId
+
+	if len(errors) > 0 {
+		return ListMediaAssetReferencesRequestMultiError(errors)
+	}
+
+	return nil
+}
+
+// ListMediaAssetReferencesRequestMultiError is an error wrapping multiple
+// validation errors returned by ListMediaAssetReferencesRequest.ValidateAll()
+// if the designated constraints aren't met.
+type ListMediaAssetReferencesRequestMultiError []error
+
+// Error returns a concatenation of all the error messages it wraps.
+func (m ListMediaAssetReferencesRequestMultiError) Error() string {
+	msgs := make([]string, 0, len(m))
+	for _, err := range m {
+		msgs = append(msgs, err.Error())
+	}
+	return strings.Join(msgs, "; ")
+}
+
+// AllErrors returns a list of validation violation errors.
+func (m ListMediaAssetReferencesRequestMultiError) AllErrors() []error { return m }
+
+// ListMediaAssetReferencesRequestValidationError is the validation error
+// returned by ListMediaAssetReferencesRequest.Validate if the designated
+// constraints aren't met.
+type ListMediaAssetReferencesRequestValidationError struct {
+	field  string
+	reason string
+	cause  error
+	key    bool
+}
+
+// Field function returns field value.
+func (e ListMediaAssetReferencesRequestValidationError) Field() string { return e.field }
+
+// Reason function returns reason value.
+func (e ListMediaAssetReferencesRequestValidationError) Reason() string { return e.reason }
+
+// Cause function returns cause value.
+func (e ListMediaAssetReferencesRequestValidationError) Cause() error { return e.cause }
+
+// Key function returns key value.
+func (e ListMediaAssetReferencesRequestValidationError) Key() bool { return e.key }
+
+// ErrorName returns error name.
+func (e ListMediaAssetReferencesRequestValidationError) ErrorName() string {
+	return "ListMediaAssetReferencesRequestValidationError"
+}
+
+// Error satisfies the builtin error interface
+func (e ListMediaAssetReferencesRequestValidationError) Error() string {
+	cause := ""
+	if e.cause != nil {
+		cause = fmt.Sprintf(" | caused by: %v", e.cause)
+	}
+
+	key := ""
+	if e.key {
+		key = "key for "
+	}
+
+	return fmt.Sprintf(
+		"invalid %sListMediaAssetReferencesRequest.%s: %s%s",
+		key,
+		e.field,
+		e.reason,
+		cause)
+}
+
+var _ error = ListMediaAssetReferencesRequestValidationError{}
+
+var _ interface {
+	Field() string
+	Reason() string
+	Key() bool
+	Cause() error
+	ErrorName() string
+} = ListMediaAssetReferencesRequestValidationError{}
+
+// Validate checks the field values on MediaAssetReference with the rules
+// defined in the proto definition for this message. If any rules are
+// violated, the first error encountered is returned, or nil if there are no violations.
+func (m *MediaAssetReference) Validate() error {
+	return m.validate(false)
+}
+
+// ValidateAll checks the field values on MediaAssetReference with the rules
+// defined in the proto definition for this message. If any rules are
+// violated, the result is a list of violation errors wrapped in
+// MediaAssetReferenceMultiError, or nil if none found.
+func (m *MediaAssetReference) ValidateAll() error {
+	return m.validate(true)
+}
+
+func (m *MediaAssetReference) validate(all bool) error {
+	if m == nil {
+		return nil
+	}
+
+	var errors []error
+
+	if m.MediaAssetId != nil {
+		// no validation rules for MediaAssetId
+	}
+
+	if m.SourceType != nil {
+		// no validation rules for SourceType
+	}
+
+	if m.SourceId != nil {
+		// no validation rules for SourceId
+	}
+
+	if m.SourceTitle != nil {
+		// no validation rules for SourceTitle
+	}
+
+	if m.Field != nil {
+		// no validation rules for Field
+	}
+
+	if m.UpdatedAt != nil {
+
+		if all {
+			switch v := interface{}(m.GetUpdatedAt()).(type) {
+			case interface{ ValidateAll() error }:
+				if err := v.ValidateAll(); err != nil {
+					errors = append(errors, MediaAssetReferenceValidationError{
+						field:  "UpdatedAt",
+						reason: "embedded message failed validation",
+						cause:  err,
+					})
+				}
+			case interface{ Validate() error }:
+				if err := v.Validate(); err != nil {
+					errors = append(errors, MediaAssetReferenceValidationError{
+						field:  "UpdatedAt",
+						reason: "embedded message failed validation",
+						cause:  err,
+					})
+				}
+			}
+		} else if v, ok := interface{}(m.GetUpdatedAt()).(interface{ Validate() error }); ok {
+			if err := v.Validate(); err != nil {
+				return MediaAssetReferenceValidationError{
+					field:  "UpdatedAt",
+					reason: "embedded message failed validation",
+					cause:  err,
+				}
+			}
+		}
+
+	}
+
+	if len(errors) > 0 {
+		return MediaAssetReferenceMultiError(errors)
+	}
+
+	return nil
+}
+
+// MediaAssetReferenceMultiError is an error wrapping multiple validation
+// errors returned by MediaAssetReference.ValidateAll() if the designated
+// constraints aren't met.
+type MediaAssetReferenceMultiError []error
+
+// Error returns a concatenation of all the error messages it wraps.
+func (m MediaAssetReferenceMultiError) Error() string {
+	msgs := make([]string, 0, len(m))
+	for _, err := range m {
+		msgs = append(msgs, err.Error())
+	}
+	return strings.Join(msgs, "; ")
+}
+
+// AllErrors returns a list of validation violation errors.
+func (m MediaAssetReferenceMultiError) AllErrors() []error { return m }
+
+// MediaAssetReferenceValidationError is the validation error returned by
+// MediaAssetReference.Validate if the designated constraints aren't met.
+type MediaAssetReferenceValidationError struct {
+	field  string
+	reason string
+	cause  error
+	key    bool
+}
+
+// Field function returns field value.
+func (e MediaAssetReferenceValidationError) Field() string { return e.field }
+
+// Reason function returns reason value.
+func (e MediaAssetReferenceValidationError) Reason() string { return e.reason }
+
+// Cause function returns cause value.
+func (e MediaAssetReferenceValidationError) Cause() error { return e.cause }
+
+// Key function returns key value.
+func (e MediaAssetReferenceValidationError) Key() bool { return e.key }
+
+// ErrorName returns error name.
+func (e MediaAssetReferenceValidationError) ErrorName() string {
+	return "MediaAssetReferenceValidationError"
+}
+
+// Error satisfies the builtin error interface
+func (e MediaAssetReferenceValidationError) Error() string {
+	cause := ""
+	if e.cause != nil {
+		cause = fmt.Sprintf(" | caused by: %v", e.cause)
+	}
+
+	key := ""
+	if e.key {
+		key = "key for "
+	}
+
+	return fmt.Sprintf(
+		"invalid %sMediaAssetReference.%s: %s%s",
+		key,
+		e.field,
+		e.reason,
+		cause)
+}
+
+var _ error = MediaAssetReferenceValidationError{}
+
+var _ interface {
+	Field() string
+	Reason() string
+	Key() bool
+	Cause() error
+	ErrorName() string
+} = MediaAssetReferenceValidationError{}
+
+// Validate checks the field values on ListMediaAssetReferencesResponse with
+// the rules defined in the proto definition for this message. If any rules
+// are violated, the first error encountered is returned, or nil if there are
+// no violations.
+func (m *ListMediaAssetReferencesResponse) Validate() error {
+	return m.validate(false)
+}
+
+// ValidateAll checks the field values on ListMediaAssetReferencesResponse with
+// the rules defined in the proto definition for this message. If any rules
+// are violated, the result is a list of violation errors wrapped in
+// ListMediaAssetReferencesResponseMultiError, or nil if none found.
+func (m *ListMediaAssetReferencesResponse) ValidateAll() error {
+	return m.validate(true)
+}
+
+func (m *ListMediaAssetReferencesResponse) validate(all bool) error {
+	if m == nil {
+		return nil
+	}
+
+	var errors []error
+
+	for idx, item := range m.GetItems() {
+		_, _ = idx, item
+
+		if all {
+			switch v := interface{}(item).(type) {
+			case interface{ ValidateAll() error }:
+				if err := v.ValidateAll(); err != nil {
+					errors = append(errors, ListMediaAssetReferencesResponseValidationError{
+						field:  fmt.Sprintf("Items[%v]", idx),
+						reason: "embedded message failed validation",
+						cause:  err,
+					})
+				}
+			case interface{ Validate() error }:
+				if err := v.Validate(); err != nil {
+					errors = append(errors, ListMediaAssetReferencesResponseValidationError{
+						field:  fmt.Sprintf("Items[%v]", idx),
+						reason: "embedded message failed validation",
+						cause:  err,
+					})
+				}
+			}
+		} else if v, ok := interface{}(item).(interface{ Validate() error }); ok {
+			if err := v.Validate(); err != nil {
+				return ListMediaAssetReferencesResponseValidationError{
+					field:  fmt.Sprintf("Items[%v]", idx),
+					reason: "embedded message failed validation",
+					cause:  err,
+				}
+			}
+		}
+
+	}
+
+	// no validation rules for Total
+
+	if len(errors) > 0 {
+		return ListMediaAssetReferencesResponseMultiError(errors)
+	}
+
+	return nil
+}
+
+// ListMediaAssetReferencesResponseMultiError is an error wrapping multiple
+// validation errors returned by
+// ListMediaAssetReferencesResponse.ValidateAll() if the designated
+// constraints aren't met.
+type ListMediaAssetReferencesResponseMultiError []error
+
+// Error returns a concatenation of all the error messages it wraps.
+func (m ListMediaAssetReferencesResponseMultiError) Error() string {
+	msgs := make([]string, 0, len(m))
+	for _, err := range m {
+		msgs = append(msgs, err.Error())
+	}
+	return strings.Join(msgs, "; ")
+}
+
+// AllErrors returns a list of validation violation errors.
+func (m ListMediaAssetReferencesResponseMultiError) AllErrors() []error { return m }
+
+// ListMediaAssetReferencesResponseValidationError is the validation error
+// returned by ListMediaAssetReferencesResponse.Validate if the designated
+// constraints aren't met.
+type ListMediaAssetReferencesResponseValidationError struct {
+	field  string
+	reason string
+	cause  error
+	key    bool
+}
+
+// Field function returns field value.
+func (e ListMediaAssetReferencesResponseValidationError) Field() string { return e.field }
+
+// Reason function returns reason value.
+func (e ListMediaAssetReferencesResponseValidationError) Reason() string { return e.reason }
+
+// Cause function returns cause value.
+func (e ListMediaAssetReferencesResponseValidationError) Cause() error { return e.cause }
+
+// Key function returns key value.
+func (e ListMediaAssetReferencesResponseValidationError) Key() bool { return e.key }
+
+// ErrorName returns error name.
+func (e ListMediaAssetReferencesResponseValidationError) ErrorName() string {
+	return "ListMediaAssetReferencesResponseValidationError"
+}
+
+// Error satisfies the builtin error interface
+func (e ListMediaAssetReferencesResponseValidationError) Error() string {
+	cause := ""
+	if e.cause != nil {
+		cause = fmt.Sprintf(" | caused by: %v", e.cause)
+	}
+
+	key := ""
+	if e.key {
+		key = "key for "
+	}
+
+	return fmt.Sprintf(
+		"invalid %sListMediaAssetReferencesResponse.%s: %s%s",
+		key,
+		e.field,
+		e.reason,
+		cause)
+}
+
+var _ error = ListMediaAssetReferencesResponseValidationError{}
+
+var _ interface {
+	Field() string
+	Reason() string
+	Key() bool
+	Cause() error
+	ErrorName() string
+} = ListMediaAssetReferencesResponseValidationError{}

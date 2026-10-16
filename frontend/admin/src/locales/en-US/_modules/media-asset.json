@@ -69,5 +69,28 @@
     "PROCESSING_STATUS_PROCESSING": "Processing",
     "PROCESSING_STATUS_COMPLETED": "Completed",
     "PROCESSING_STATUS_FAILED": "Failed"
+  },
+  "uploadDuplicate": "Duplicate of an existing asset (existing one kept)",
+  "duplicates": {
+    "toolbar": "Duplicates",
+    "title": "Duplicate assets (same content hash)",
+    "empty": "No duplicate assets found",
+    "loadFailed": "Failed to load duplicates",
+    "count": "{count} copies",
+    "keepFirst": "Keep (earliest upload)",
+    "deleteThis": "Delete this copy"
+  },
+  "references": {
+    "title": "Referenced by",
+    "sourceType": "Source",
+    "post": "Post",
+    "page": "Page",
+    "sourceTitle": "Title",
+    "sourceMissing": "Source no longer exists",
+    "field": "Location",
+    "fieldBody": "In content",
+    "fieldThumbnail": "Thumbnail",
+    "fieldCover": "Cover",
+    "empty": "No content references this asset"
   }
 }

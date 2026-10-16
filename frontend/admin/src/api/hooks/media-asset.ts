@@ -5,6 +5,8 @@ import {
   type UseQueryOptions,
 } from '@tanstack/react-query';
 import {
+  type mediaservicev1_ListDuplicatedMediaAssetsResponse,
+  type mediaservicev1_ListMediaAssetReferencesResponse,
   type mediaservicev1_ListMediaAssetResponse,
   type mediaservicev1_MediaAsset,
   type mediaservicev1_GetMediaAssetRequest,
@@ -35,6 +37,46 @@ export async function fetchListMediaAssets(params: PaginationQuery) {
     queryKey: ['listMediaAssets', params],
     queryFn: () => apiClient.mediaAssetService.List(params.toRawParams()),
     retry: 0,
+  });
+}
+
+/** 重复资源分组（同租户内同内容哈希 >1 条） */
+export async function fetchListDuplicatedMediaAssets(limit = 50) {
+  return queryClient.fetchQuery({
+    queryKey: ['listDuplicatedMediaAssets', limit],
+    queryFn: () =>
+      apiClient.mediaAssetService.ListDuplicatedMediaAssets({ limit }),
+    retry: 0,
+  });
+}
+
+/** 重复资源分组（弹窗用 useQuery；limit<=0 时禁用） */
+export function useListDuplicatedMediaAssets(
+  limit: number,
+  options?: UseQueryOptions<mediaservicev1_ListDuplicatedMediaAssetsResponse, Error>,
+) {
+  return useQuery({
+    queryKey: ['listDuplicatedMediaAssets', limit],
+    queryFn: () =>
+      apiClient.mediaAssetService.ListDuplicatedMediaAssets({ limit }),
+    enabled: limit > 0,
+    ...options,
+  });
+}
+
+/** 媒体被内容引用的关系（哪些文章/页面在用） */
+export function useListMediaAssetReferences(
+  mediaAssetId?: number,
+  options?: UseQueryOptions<mediaservicev1_ListMediaAssetReferencesResponse, Error>,
+) {
+  return useQuery({
+    queryKey: ['listMediaAssetReferences', mediaAssetId],
+    queryFn: () =>
+      apiClient.mediaAssetService.ListMediaAssetReferences({
+        mediaAssetId: mediaAssetId!,
+      }),
+    enabled: !!mediaAssetId,
+    ...options,
   });
 }
 

@@ -37,10 +37,11 @@ type PostService struct {
 	webhookService        *WebhookService
 	internalMessageSvc    *InternalMessageService
 	contentModelRepo      *data.ContentModelRepo
+	referenceTracker      *ReferenceTrackingService
 	log                   *log.Helper
 }
 
-func NewPostService(ctx *bootstrap.Context, uc *data.PostRepo, searchService *SearchService, taskService *TaskService, contentModelRepo *data.ContentModelRepo, postVersionRepo *data.PostVersionRepo, webhookService *WebhookService, internalMessageSvc *InternalMessageService) *PostService {
+func NewPostService(ctx *bootstrap.Context, uc *data.PostRepo, searchService *SearchService, taskService *TaskService, contentModelRepo *data.ContentModelRepo, postVersionRepo *data.PostVersionRepo, webhookService *WebhookService, internalMessageSvc *InternalMessageService, referenceTracker *ReferenceTrackingService) *PostService {
 	return &PostService{
 		log:                 ctx.NewLoggerHelper("post/service/core-service"),
 		postRepo:            uc,
@@ -50,6 +51,7 @@ func NewPostService(ctx *bootstrap.Context, uc *data.PostRepo, searchService *Se
 		webhookService:      webhookService,
 		internalMessageSvc:  internalMessageSvc,
 		contentModelRepo:    contentModelRepo,
+		referenceTracker:    referenceTracker,
 	}
 }
 
@@ -138,6 +140,9 @@ func (s *PostService) Create(ctx context.Context, req *contentV1.CreatePostReque
 	// best-effort：失败仅记日志，不回滚 DB；漏掉的文档由周期 ReindexAll 修复。
 	s.enqueuePostReindex(ctx, dto.GetId(), "index")
 
+	// 引用追踪钩子：回读完整文章（含翻译）抽取媒体引用（best-effort）
+	s.syncPostReferences(ctx, dto.GetId())
+
 	// 版本快照钩子：创建即 v1（best-effort，失败不阻断保存）
 	s.snapshotPostVersion(ctx, dto.GetId())
 
@@ -190,6 +195,9 @@ func (s *PostService) Update(ctx context.Context, req *contentV1.UpdatePostReque
 	// 双写钩子：更新后入队 ES 重索引（worker 会从 DB 取最新数据 upsert ES）。
 	s.enqueuePostReindex(ctx, dto.GetId(), "index")
 
+	// 引用追踪钩子：回读完整文章（含翻译）抽取媒体引用（best-effort）
+	s.syncPostReferences(ctx, dto.GetId())
+
 	// 版本快照钩子：每次保存落一版（best-effort，失败不阻断保存）
 	s.snapshotPostVersion(ctx, dto.GetId())
 
@@ -217,10 +225,31 @@ func (s *PostService) Delete(ctx context.Context, req *contentV1.DeletePostReque
 	// 双写钩子：删除后入队 ES 删除（worker 按 post_id 删 ES 所有语言文档）。
 	s.enqueuePostReindex(ctx, req.GetId(), "delete")
 
+	// 引用追踪钩子：清空该文章的引用边并重算媒体引用计数（best-effort）
+	if s.referenceTracker != nil {
+		s.referenceTracker.RemoveSource(ctx, "post", req.GetId())
+	}
+
 	// Webhook 事件外发（best-effort）
 	s.dispatchWebhookEvent(ctx, task.WebhookEventPostDeleted, req.GetId(), 0)
 
 	return &emptypb.Empty{}, nil
+}
+
+// syncPostReferences 回读完整文章后同步媒体引用（保存钩子，best-effort）。
+// 回读而非用请求值：部分更新（update_mask）只带变更字段，回读拿最终态。
+func (s *PostService) syncPostReferences(ctx context.Context, postID uint32) {
+	if s.referenceTracker == nil {
+		return
+	}
+	post, err := s.postRepo.Get(ctx, &contentV1.GetPostRequest{
+		QueryBy: &contentV1.GetPostRequest_Id{Id: postID},
+	})
+	if err != nil || post == nil {
+		s.log.Errorf("reload post [%d] for reference tracking failed: %v", postID, err)
+		return
+	}
+	s.referenceTracker.SyncPostReferences(ctx, postID, post.GetTranslations(), post.GetThumbnail())
 }
 
 func (s *PostService) TranslationExists(ctx context.Context, req *contentV1.PostTranslationExistsRequest) (*contentV1.PostTranslationExistsResponse, error) {

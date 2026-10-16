@@ -22,12 +22,14 @@ import (
 const _ = grpc.SupportPackageIsVersion9
 
 const (
-	MediaAssetService_List_FullMethodName       = "/admin.service.v1.MediaAssetService/List"
-	MediaAssetService_Get_FullMethodName        = "/admin.service.v1.MediaAssetService/Get"
-	MediaAssetService_Create_FullMethodName     = "/admin.service.v1.MediaAssetService/Create"
-	MediaAssetService_Update_FullMethodName     = "/admin.service.v1.MediaAssetService/Update"
-	MediaAssetService_FindByHash_FullMethodName = "/admin.service.v1.MediaAssetService/FindByHash"
-	MediaAssetService_Delete_FullMethodName     = "/admin.service.v1.MediaAssetService/Delete"
+	MediaAssetService_List_FullMethodName                      = "/admin.service.v1.MediaAssetService/List"
+	MediaAssetService_Get_FullMethodName                       = "/admin.service.v1.MediaAssetService/Get"
+	MediaAssetService_Create_FullMethodName                    = "/admin.service.v1.MediaAssetService/Create"
+	MediaAssetService_Update_FullMethodName                    = "/admin.service.v1.MediaAssetService/Update"
+	MediaAssetService_FindByHash_FullMethodName                = "/admin.service.v1.MediaAssetService/FindByHash"
+	MediaAssetService_ListDuplicatedMediaAssets_FullMethodName = "/admin.service.v1.MediaAssetService/ListDuplicatedMediaAssets"
+	MediaAssetService_ListMediaAssetReferences_FullMethodName  = "/admin.service.v1.MediaAssetService/ListMediaAssetReferences"
+	MediaAssetService_Delete_FullMethodName                    = "/admin.service.v1.MediaAssetService/Delete"
 )
 
 // MediaAssetServiceClient is the client API for MediaAssetService service.
@@ -44,8 +46,13 @@ type MediaAssetServiceClient interface {
 	Create(ctx context.Context, in *v11.CreateMediaAssetRequest, opts ...grpc.CallOption) (*v11.MediaAsset, error)
 	// 更新媒体资源库
 	Update(ctx context.Context, in *v11.UpdateMediaAssetRequest, opts ...grpc.CallOption) (*v11.MediaAsset, error)
-	// 删除媒体资源库
+	// 按内容哈希查重。注意不能挂在 /media-assets/{file_hash} 形态下——
+	// 与 Get({id}) 单段路由冲突（先注册者胜，{id} 会把字面量当 ID 解析报 CODEC）。
 	FindByHash(ctx context.Context, in *v11.FindMediaAssetByHashRequest, opts ...grpc.CallOption) (*v11.FindMediaAssetByHashResponse, error)
+	// 重复资源分组（同租户内同内容哈希 >1 条）。路径避开 /media-assets/{id} 单段遮蔽。
+	ListDuplicatedMediaAssets(ctx context.Context, in *v11.ListDuplicatedMediaAssetsRequest, opts ...grpc.CallOption) (*v11.ListDuplicatedMediaAssetsResponse, error)
+	// 媒体被内容引用的关系（引用图谱查询）
+	ListMediaAssetReferences(ctx context.Context, in *v11.ListMediaAssetReferencesRequest, opts ...grpc.CallOption) (*v11.ListMediaAssetReferencesResponse, error)
 	Delete(ctx context.Context, in *v11.DeleteMediaAssetRequest, opts ...grpc.CallOption) (*emptypb.Empty, error)
 }
 
@@ -107,6 +114,26 @@ func (c *mediaAssetServiceClient) FindByHash(ctx context.Context, in *v11.FindMe
 	return out, nil
 }
 
+func (c *mediaAssetServiceClient) ListDuplicatedMediaAssets(ctx context.Context, in *v11.ListDuplicatedMediaAssetsRequest, opts ...grpc.CallOption) (*v11.ListDuplicatedMediaAssetsResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(v11.ListDuplicatedMediaAssetsResponse)
+	err := c.cc.Invoke(ctx, MediaAssetService_ListDuplicatedMediaAssets_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *mediaAssetServiceClient) ListMediaAssetReferences(ctx context.Context, in *v11.ListMediaAssetReferencesRequest, opts ...grpc.CallOption) (*v11.ListMediaAssetReferencesResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(v11.ListMediaAssetReferencesResponse)
+	err := c.cc.Invoke(ctx, MediaAssetService_ListMediaAssetReferences_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 func (c *mediaAssetServiceClient) Delete(ctx context.Context, in *v11.DeleteMediaAssetRequest, opts ...grpc.CallOption) (*emptypb.Empty, error) {
 	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
 	out := new(emptypb.Empty)
@@ -131,8 +158,13 @@ type MediaAssetServiceServer interface {
 	Create(context.Context, *v11.CreateMediaAssetRequest) (*v11.MediaAsset, error)
 	// 更新媒体资源库
 	Update(context.Context, *v11.UpdateMediaAssetRequest) (*v11.MediaAsset, error)
-	// 删除媒体资源库
+	// 按内容哈希查重。注意不能挂在 /media-assets/{file_hash} 形态下——
+	// 与 Get({id}) 单段路由冲突（先注册者胜，{id} 会把字面量当 ID 解析报 CODEC）。
 	FindByHash(context.Context, *v11.FindMediaAssetByHashRequest) (*v11.FindMediaAssetByHashResponse, error)
+	// 重复资源分组（同租户内同内容哈希 >1 条）。路径避开 /media-assets/{id} 单段遮蔽。
+	ListDuplicatedMediaAssets(context.Context, *v11.ListDuplicatedMediaAssetsRequest) (*v11.ListDuplicatedMediaAssetsResponse, error)
+	// 媒体被内容引用的关系（引用图谱查询）
+	ListMediaAssetReferences(context.Context, *v11.ListMediaAssetReferencesRequest) (*v11.ListMediaAssetReferencesResponse, error)
 	Delete(context.Context, *v11.DeleteMediaAssetRequest) (*emptypb.Empty, error)
 	mustEmbedUnimplementedMediaAssetServiceServer()
 }
@@ -158,6 +190,12 @@ func (UnimplementedMediaAssetServiceServer) Update(context.Context, *v11.UpdateM
 }
 func (UnimplementedMediaAssetServiceServer) FindByHash(context.Context, *v11.FindMediaAssetByHashRequest) (*v11.FindMediaAssetByHashResponse, error) {
 	return nil, status.Error(codes.Unimplemented, "method FindByHash not implemented")
+}
+func (UnimplementedMediaAssetServiceServer) ListDuplicatedMediaAssets(context.Context, *v11.ListDuplicatedMediaAssetsRequest) (*v11.ListDuplicatedMediaAssetsResponse, error) {
+	return nil, status.Error(codes.Unimplemented, "method ListDuplicatedMediaAssets not implemented")
+}
+func (UnimplementedMediaAssetServiceServer) ListMediaAssetReferences(context.Context, *v11.ListMediaAssetReferencesRequest) (*v11.ListMediaAssetReferencesResponse, error) {
+	return nil, status.Error(codes.Unimplemented, "method ListMediaAssetReferences not implemented")
 }
 func (UnimplementedMediaAssetServiceServer) Delete(context.Context, *v11.DeleteMediaAssetRequest) (*emptypb.Empty, error) {
 	return nil, status.Error(codes.Unimplemented, "method Delete not implemented")
@@ -273,6 +311,42 @@ func _MediaAssetService_FindByHash_Handler(srv interface{}, ctx context.Context,
 	return interceptor(ctx, in, info, handler)
 }
 
+func _MediaAssetService_ListDuplicatedMediaAssets_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(v11.ListDuplicatedMediaAssetsRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(MediaAssetServiceServer).ListDuplicatedMediaAssets(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: MediaAssetService_ListDuplicatedMediaAssets_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(MediaAssetServiceServer).ListDuplicatedMediaAssets(ctx, req.(*v11.ListDuplicatedMediaAssetsRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _MediaAssetService_ListMediaAssetReferences_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(v11.ListMediaAssetReferencesRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(MediaAssetServiceServer).ListMediaAssetReferences(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: MediaAssetService_ListMediaAssetReferences_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(MediaAssetServiceServer).ListMediaAssetReferences(ctx, req.(*v11.ListMediaAssetReferencesRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 func _MediaAssetService_Delete_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(v11.DeleteMediaAssetRequest)
 	if err := dec(in); err != nil {
@@ -317,6 +391,14 @@ var MediaAssetService_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "FindByHash",
 			Handler:    _MediaAssetService_FindByHash_Handler,
+		},
+		{
+			MethodName: "ListDuplicatedMediaAssets",
+			Handler:    _MediaAssetService_ListDuplicatedMediaAssets_Handler,
+		},
+		{
+			MethodName: "ListMediaAssetReferences",
+			Handler:    _MediaAssetService_ListMediaAssetReferences_Handler,
 		},
 		{
 			MethodName: "Delete",

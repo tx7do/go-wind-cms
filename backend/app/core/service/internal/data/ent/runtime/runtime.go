@@ -21,6 +21,7 @@ import (
 	"go-wind-cms/app/core/service/internal/data/ent/commentlike"
 	"go-wind-cms/app/core/service/internal/data/ent/contentmodel"
 	"go-wind-cms/app/core/service/internal/data/ent/contentmodeltranslation"
+	"go-wind-cms/app/core/service/internal/data/ent/contentreference"
 	"go-wind-cms/app/core/service/internal/data/ent/dataaccessauditlog"
 	"go-wind-cms/app/core/service/internal/data/ent/dictentry"
 	"go-wind-cms/app/core/service/internal/data/ent/dictentryi18n"
@@ -516,6 +517,86 @@ func init() {
 	contentmodeltranslationDescID := contentmodeltranslationMixinFields0[0].Descriptor()
 	// contentmodeltranslation.IDValidator is a validator for the "id" field. It is called by the builders before save.
 	contentmodeltranslation.IDValidator = contentmodeltranslationDescID.Validators[0].(func(uint32) error)
+	contentreferenceMixin := schema.ContentReference{}.Mixin()
+	contentreference.Policy = privacy.NewPolicies(contentreferenceMixin[3], schema.ContentReference{})
+	contentreference.Hooks[0] = func(next ent.Mutator) ent.Mutator {
+		return ent.MutateFunc(func(ctx context.Context, m ent.Mutation) (ent.Value, error) {
+			if err := contentreference.Policy.EvalMutation(ctx, m); err != nil {
+				return nil, err
+			}
+			return next.Mutate(ctx, m)
+		})
+	}
+	contentreferenceMixinFields0 := contentreferenceMixin[0].Fields()
+	_ = contentreferenceMixinFields0
+	contentreferenceMixinFields3 := contentreferenceMixin[3].Fields()
+	_ = contentreferenceMixinFields3
+	contentreferenceFields := schema.ContentReference{}.Fields()
+	_ = contentreferenceFields
+	// contentreferenceDescTenantID is the schema descriptor for tenant_id field.
+	contentreferenceDescTenantID := contentreferenceMixinFields3[0].Descriptor()
+	// contentreference.DefaultTenantID holds the default value on creation for the tenant_id field.
+	contentreference.DefaultTenantID = contentreferenceDescTenantID.Default.(uint32)
+	// contentreferenceDescSourceType is the schema descriptor for source_type field.
+	contentreferenceDescSourceType := contentreferenceFields[0].Descriptor()
+	// contentreference.SourceTypeValidator is a validator for the "source_type" field. It is called by the builders before save.
+	contentreference.SourceTypeValidator = func() func(string) error {
+		validators := contentreferenceDescSourceType.Validators
+		fns := [...]func(string) error{
+			validators[0].(func(string) error),
+			validators[1].(func(string) error),
+		}
+		return func(source_type string) error {
+			for _, fn := range fns {
+				if err := fn(source_type); err != nil {
+					return err
+				}
+			}
+			return nil
+		}
+	}()
+	// contentreferenceDescTargetType is the schema descriptor for target_type field.
+	contentreferenceDescTargetType := contentreferenceFields[2].Descriptor()
+	// contentreference.TargetTypeValidator is a validator for the "target_type" field. It is called by the builders before save.
+	contentreference.TargetTypeValidator = func() func(string) error {
+		validators := contentreferenceDescTargetType.Validators
+		fns := [...]func(string) error{
+			validators[0].(func(string) error),
+			validators[1].(func(string) error),
+		}
+		return func(target_type string) error {
+			for _, fn := range fns {
+				if err := fn(target_type); err != nil {
+					return err
+				}
+			}
+			return nil
+		}
+	}()
+	// contentreferenceDescField is the schema descriptor for field field.
+	contentreferenceDescField := contentreferenceFields[4].Descriptor()
+	// contentreference.DefaultField holds the default value on creation for the field field.
+	contentreference.DefaultField = contentreferenceDescField.Default.(string)
+	// contentreference.FieldValidator is a validator for the "field" field. It is called by the builders before save.
+	contentreference.FieldValidator = func() func(string) error {
+		validators := contentreferenceDescField.Validators
+		fns := [...]func(string) error{
+			validators[0].(func(string) error),
+			validators[1].(func(string) error),
+		}
+		return func(field string) error {
+			for _, fn := range fns {
+				if err := fn(field); err != nil {
+					return err
+				}
+			}
+			return nil
+		}
+	}()
+	// contentreferenceDescID is the schema descriptor for id field.
+	contentreferenceDescID := contentreferenceMixinFields0[0].Descriptor()
+	// contentreference.IDValidator is a validator for the "id" field. It is called by the builders before save.
+	contentreference.IDValidator = contentreferenceDescID.Validators[0].(func(uint32) error)
 	dataaccessauditlogMixin := schema.DataAccessAuditLog{}.Mixin()
 	dataaccessauditlog.Policy = privacy.NewPolicies(dataaccessauditlogMixin[2], schema.DataAccessAuditLog{})
 	dataaccessauditlog.Hooks[0] = func(next ent.Mutator) ent.Mutator {

@@ -27,6 +27,12 @@ service MediaAssetService {
 
   // 按内容哈希查重（同租户内第一条未删除资源；无则空消息）
   rpc FindByHash (FindMediaAssetByHashRequest) returns (FindMediaAssetByHashResponse) {}
+
+  // 列出重复资源（同租户内同内容哈希 >1 条的分组）
+  rpc ListDuplicatedMediaAssets (ListDuplicatedMediaAssetsRequest) returns (ListDuplicatedMediaAssetsResponse) {}
+
+  // 列出媒体被内容引用的关系（引用图谱：哪些文章/页面在用此媒体）
+  rpc ListMediaAssetReferences (ListMediaAssetReferencesRequest) returns (ListMediaAssetReferencesResponse) {}
 }
 
 // 媒体资源库
@@ -243,4 +249,88 @@ message FindMediaAssetByHashResponse {
     json_name = "asset",
     (gnostic.openapi.v3.property) = {description: "命中的既有资源（无则空）"}
   ]; // 命中的既有资源
+}
+
+// 请求 - 重复资源列表
+message ListDuplicatedMediaAssetsRequest {
+  optional uint32 limit = 1 [
+    json_name = "limit",
+    (gnostic.openapi.v3.property) = {description: "返回的重复组数上限（默认 50，至多 200）"}
+  ]; // 返回的重复组数上限
+}
+
+// 重复资源组：同租户内同内容哈希的资源共享一组
+message MediaAssetDuplicateGroup {
+  optional string file_hash = 1 [
+    json_name = "fileHash",
+    (gnostic.openapi.v3.property) = {description: "SHA-256 内容哈希（hex）"}
+  ]; // 内容哈希
+  optional uint32 count = 2 [
+    json_name = "count",
+    (gnostic.openapi.v3.property) = {description: "组内资源条数"}
+  ]; // 组内条数
+  repeated MediaAsset assets = 3 [
+    json_name = "assets",
+    (gnostic.openapi.v3.property) = {description: "组内资源（按创建时间升序，首个为最早上传）"}
+  ]; // 组内资源
+}
+
+// 回应 - 重复资源列表
+message ListDuplicatedMediaAssetsResponse {
+  repeated MediaAssetDuplicateGroup groups = 1 [
+    json_name = "groups",
+    (gnostic.openapi.v3.property) = {description: "重复组列表"}
+  ]; // 重复组列表
+  uint64 total = 2 [
+    json_name = "total",
+    (gnostic.openapi.v3.property) = {description: "重复组总数"}
+  ]; // 重复组总数
+}
+
+// 请求 - 媒体引用关系列表
+message ListMediaAssetReferencesRequest {
+  uint32 media_asset_id = 1 [
+    json_name = "mediaAssetId",
+    (gnostic.openapi.v3.property) = {description: "媒体资源 ID"}
+  ]; // 媒体资源 ID
+}
+
+// 引用关系：源内容（文章/页面）在哪个字段使用了该媒体
+message MediaAssetReference {
+  optional uint32 media_asset_id = 1 [
+    json_name = "mediaAssetId",
+    (gnostic.openapi.v3.property) = {description: "媒体资源 ID"}
+  ]; // 媒体资源 ID
+  optional string source_type = 2 [
+    json_name = "sourceType",
+    (gnostic.openapi.v3.property) = {description: "源内容类型（post/page）"}
+  ]; // 源内容类型
+  optional uint32 source_id = 3 [
+    json_name = "sourceId",
+    (gnostic.openapi.v3.property) = {description: "源内容 ID"}
+  ]; // 源内容 ID
+  optional string source_title = 4 [
+    json_name = "sourceTitle",
+    (gnostic.openapi.v3.property) = {description: "源内容标题（多语言取首个非空）"}
+  ]; // 源内容标题
+  optional string field = 5 [
+    json_name = "field",
+    (gnostic.openapi.v3.property) = {description: "引用位置（body=正文内嵌，thumbnail=缩略图）"}
+  ]; // 引用位置
+  optional google.protobuf.Timestamp updated_at = 6 [
+    json_name = "updatedAt",
+    (gnostic.openapi.v3.property) = {description: "引用更新时间"}
+  ]; // 引用更新时间
+}
+
+// 回应 - 媒体引用关系列表
+message ListMediaAssetReferencesResponse {
+  repeated MediaAssetReference items = 1 [
+    json_name = "items",
+    (gnostic.openapi.v3.property) = {description: "引用关系列表"}
+  ]; // 引用关系列表
+  uint64 total = 2 [
+    json_name = "total",
+    (gnostic.openapi.v3.property) = {description: "引用关系总数"}
+  ]; // 引用关系总数
 }

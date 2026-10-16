@@ -26,6 +26,7 @@ import (
 	"go-wind-cms/app/core/service/internal/data/ent/commentlike"
 	"go-wind-cms/app/core/service/internal/data/ent/contentmodel"
 	"go-wind-cms/app/core/service/internal/data/ent/contentmodeltranslation"
+	"go-wind-cms/app/core/service/internal/data/ent/contentreference"
 	"go-wind-cms/app/core/service/internal/data/ent/dataaccessauditlog"
 	"go-wind-cms/app/core/service/internal/data/ent/dictentry"
 	"go-wind-cms/app/core/service/internal/data/ent/dictentryi18n"
@@ -132,6 +133,7 @@ const (
 	TypeCommentLike                = "CommentLike"
 	TypeContentModel               = "ContentModel"
 	TypeContentModelTranslation    = "ContentModelTranslation"
+	TypeContentReference           = "ContentReference"
 	TypeDataAccessAuditLog         = "DataAccessAuditLog"
 	TypeDictEntry                  = "DictEntry"
 	TypeDictEntryI18n              = "DictEntryI18n"
@@ -24266,6 +24268,1273 @@ func (m *ContentModelTranslationMutation) ClearEdge(name string) error {
 // It returns an error if the edge is not defined in the schema.
 func (m *ContentModelTranslationMutation) ResetEdge(name string) error {
 	return fmt.Errorf("unknown ContentModelTranslation edge %s", name)
+}
+
+// ContentReferenceMutation represents an operation that mutates the ContentReference nodes in the graph.
+type ContentReferenceMutation struct {
+	config
+	op            Op
+	typ           string
+	id            *uint32
+	created_at    *time.Time
+	updated_at    *time.Time
+	deleted_at    *time.Time
+	created_by    *uint32
+	addcreated_by *int32
+	updated_by    *uint32
+	addupdated_by *int32
+	deleted_by    *uint32
+	adddeleted_by *int32
+	tenant_id     *uint32
+	addtenant_id  *int32
+	source_type   *string
+	source_id     *uint32
+	addsource_id  *int32
+	target_type   *string
+	target_id     *uint32
+	addtarget_id  *int32
+	field         *string
+	clearedFields map[string]struct{}
+	done          bool
+	oldValue      func(context.Context) (*ContentReference, error)
+	predicates    []predicate.ContentReference
+}
+
+var _ ent.Mutation = (*ContentReferenceMutation)(nil)
+
+// contentreferenceOption allows management of the mutation configuration using functional options.
+type contentreferenceOption func(*ContentReferenceMutation)
+
+// newContentReferenceMutation creates new mutation for the ContentReference entity.
+func newContentReferenceMutation(c config, op Op, opts ...contentreferenceOption) *ContentReferenceMutation {
+	m := &ContentReferenceMutation{
+		config:        c,
+		op:            op,
+		typ:           TypeContentReference,
+		clearedFields: make(map[string]struct{}),
+	}
+	for _, opt := range opts {
+		opt(m)
+	}
+	return m
+}
+
+// withContentReferenceID sets the ID field of the mutation.
+func withContentReferenceID(id uint32) contentreferenceOption {
+	return func(m *ContentReferenceMutation) {
+		var (
+			err   error
+			once  sync.Once
+			value *ContentReference
+		)
+		m.oldValue = func(ctx context.Context) (*ContentReference, error) {
+			once.Do(func() {
+				if m.done {
+					err = errors.New("querying old values post mutation is not allowed")
+				} else {
+					value, err = m.Client().ContentReference.Get(ctx, id)
+				}
+			})
+			return value, err
+		}
+		m.id = &id
+	}
+}
+
+// withContentReference sets the old ContentReference of the mutation.
+func withContentReference(node *ContentReference) contentreferenceOption {
+	return func(m *ContentReferenceMutation) {
+		m.oldValue = func(context.Context) (*ContentReference, error) {
+			return node, nil
+		}
+		m.id = &node.ID
+	}
+}
+
+// Client returns a new `ent.Client` from the mutation. If the mutation was
+// executed in a transaction (ent.Tx), a transactional client is returned.
+func (m ContentReferenceMutation) Client() *Client {
+	client := &Client{config: m.config}
+	client.init()
+	return client
+}
+
+// Tx returns an `ent.Tx` for mutations that were executed in transactions;
+// it returns an error otherwise.
+func (m ContentReferenceMutation) Tx() (*Tx, error) {
+	if _, ok := m.driver.(*txDriver); !ok {
+		return nil, errors.New("ent: mutation is not running in a transaction")
+	}
+	tx := &Tx{config: m.config}
+	tx.init()
+	return tx, nil
+}
+
+// SetID sets the value of the id field. Note that this
+// operation is only accepted on creation of ContentReference entities.
+func (m *ContentReferenceMutation) SetID(id uint32) {
+	m.id = &id
+}
+
+// ID returns the ID value in the mutation. Note that the ID is only available
+// if it was provided to the builder or after it was returned from the database.
+func (m *ContentReferenceMutation) ID() (id uint32, exists bool) {
+	if m.id == nil {
+		return
+	}
+	return *m.id, true
+}
+
+// IDs queries the database and returns the entity ids that match the mutation's predicate.
+// That means, if the mutation is applied within a transaction with an isolation level such
+// as sql.LevelSerializable, the returned ids match the ids of the rows that will be updated
+// or updated by the mutation.
+func (m *ContentReferenceMutation) IDs(ctx context.Context) ([]uint32, error) {
+	switch {
+	case m.op.Is(OpUpdateOne | OpDeleteOne):
+		id, exists := m.ID()
+		if exists {
+			return []uint32{id}, nil
+		}
+		fallthrough
+	case m.op.Is(OpUpdate | OpDelete):
+		return m.Client().ContentReference.Query().Where(m.predicates...).IDs(ctx)
+	default:
+		return nil, fmt.Errorf("IDs is not allowed on %s operations", m.op)
+	}
+}
+
+// SetCreatedAt sets the "created_at" field.
+func (m *ContentReferenceMutation) SetCreatedAt(t time.Time) {
+	m.created_at = &t
+}
+
+// CreatedAt returns the value of the "created_at" field in the mutation.
+func (m *ContentReferenceMutation) CreatedAt() (r time.Time, exists bool) {
+	v := m.created_at
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldCreatedAt returns the old "created_at" field's value of the ContentReference entity.
+// If the ContentReference object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *ContentReferenceMutation) OldCreatedAt(ctx context.Context) (v *time.Time, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldCreatedAt is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldCreatedAt requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldCreatedAt: %w", err)
+	}
+	return oldValue.CreatedAt, nil
+}
+
+// ClearCreatedAt clears the value of the "created_at" field.
+func (m *ContentReferenceMutation) ClearCreatedAt() {
+	m.created_at = nil
+	m.clearedFields[contentreference.FieldCreatedAt] = struct{}{}
+}
+
+// CreatedAtCleared returns if the "created_at" field was cleared in this mutation.
+func (m *ContentReferenceMutation) CreatedAtCleared() bool {
+	_, ok := m.clearedFields[contentreference.FieldCreatedAt]
+	return ok
+}
+
+// ResetCreatedAt resets all changes to the "created_at" field.
+func (m *ContentReferenceMutation) ResetCreatedAt() {
+	m.created_at = nil
+	delete(m.clearedFields, contentreference.FieldCreatedAt)
+}
+
+// SetUpdatedAt sets the "updated_at" field.
+func (m *ContentReferenceMutation) SetUpdatedAt(t time.Time) {
+	m.updated_at = &t
+}
+
+// UpdatedAt returns the value of the "updated_at" field in the mutation.
+func (m *ContentReferenceMutation) UpdatedAt() (r time.Time, exists bool) {
+	v := m.updated_at
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldUpdatedAt returns the old "updated_at" field's value of the ContentReference entity.
+// If the ContentReference object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *ContentReferenceMutation) OldUpdatedAt(ctx context.Context) (v *time.Time, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldUpdatedAt is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldUpdatedAt requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldUpdatedAt: %w", err)
+	}
+	return oldValue.UpdatedAt, nil
+}
+
+// ClearUpdatedAt clears the value of the "updated_at" field.
+func (m *ContentReferenceMutation) ClearUpdatedAt() {
+	m.updated_at = nil
+	m.clearedFields[contentreference.FieldUpdatedAt] = struct{}{}
+}
+
+// UpdatedAtCleared returns if the "updated_at" field was cleared in this mutation.
+func (m *ContentReferenceMutation) UpdatedAtCleared() bool {
+	_, ok := m.clearedFields[contentreference.FieldUpdatedAt]
+	return ok
+}
+
+// ResetUpdatedAt resets all changes to the "updated_at" field.
+func (m *ContentReferenceMutation) ResetUpdatedAt() {
+	m.updated_at = nil
+	delete(m.clearedFields, contentreference.FieldUpdatedAt)
+}
+
+// SetDeletedAt sets the "deleted_at" field.
+func (m *ContentReferenceMutation) SetDeletedAt(t time.Time) {
+	m.deleted_at = &t
+}
+
+// DeletedAt returns the value of the "deleted_at" field in the mutation.
+func (m *ContentReferenceMutation) DeletedAt() (r time.Time, exists bool) {
+	v := m.deleted_at
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldDeletedAt returns the old "deleted_at" field's value of the ContentReference entity.
+// If the ContentReference object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *ContentReferenceMutation) OldDeletedAt(ctx context.Context) (v *time.Time, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldDeletedAt is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldDeletedAt requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldDeletedAt: %w", err)
+	}
+	return oldValue.DeletedAt, nil
+}
+
+// ClearDeletedAt clears the value of the "deleted_at" field.
+func (m *ContentReferenceMutation) ClearDeletedAt() {
+	m.deleted_at = nil
+	m.clearedFields[contentreference.FieldDeletedAt] = struct{}{}
+}
+
+// DeletedAtCleared returns if the "deleted_at" field was cleared in this mutation.
+func (m *ContentReferenceMutation) DeletedAtCleared() bool {
+	_, ok := m.clearedFields[contentreference.FieldDeletedAt]
+	return ok
+}
+
+// ResetDeletedAt resets all changes to the "deleted_at" field.
+func (m *ContentReferenceMutation) ResetDeletedAt() {
+	m.deleted_at = nil
+	delete(m.clearedFields, contentreference.FieldDeletedAt)
+}
+
+// SetCreatedBy sets the "created_by" field.
+func (m *ContentReferenceMutation) SetCreatedBy(u uint32) {
+	m.created_by = &u
+	m.addcreated_by = nil
+}
+
+// CreatedBy returns the value of the "created_by" field in the mutation.
+func (m *ContentReferenceMutation) CreatedBy() (r uint32, exists bool) {
+	v := m.created_by
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldCreatedBy returns the old "created_by" field's value of the ContentReference entity.
+// If the ContentReference object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *ContentReferenceMutation) OldCreatedBy(ctx context.Context) (v *uint32, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldCreatedBy is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldCreatedBy requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldCreatedBy: %w", err)
+	}
+	return oldValue.CreatedBy, nil
+}
+
+// AddCreatedBy adds u to the "created_by" field.
+func (m *ContentReferenceMutation) AddCreatedBy(u int32) {
+	if m.addcreated_by != nil {
+		*m.addcreated_by += u
+	} else {
+		m.addcreated_by = &u
+	}
+}
+
+// AddedCreatedBy returns the value that was added to the "created_by" field in this mutation.
+func (m *ContentReferenceMutation) AddedCreatedBy() (r int32, exists bool) {
+	v := m.addcreated_by
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// ClearCreatedBy clears the value of the "created_by" field.
+func (m *ContentReferenceMutation) ClearCreatedBy() {
+	m.created_by = nil
+	m.addcreated_by = nil
+	m.clearedFields[contentreference.FieldCreatedBy] = struct{}{}
+}
+
+// CreatedByCleared returns if the "created_by" field was cleared in this mutation.
+func (m *ContentReferenceMutation) CreatedByCleared() bool {
+	_, ok := m.clearedFields[contentreference.FieldCreatedBy]
+	return ok
+}
+
+// ResetCreatedBy resets all changes to the "created_by" field.
+func (m *ContentReferenceMutation) ResetCreatedBy() {
+	m.created_by = nil
+	m.addcreated_by = nil
+	delete(m.clearedFields, contentreference.FieldCreatedBy)
+}
+
+// SetUpdatedBy sets the "updated_by" field.
+func (m *ContentReferenceMutation) SetUpdatedBy(u uint32) {
+	m.updated_by = &u
+	m.addupdated_by = nil
+}
+
+// UpdatedBy returns the value of the "updated_by" field in the mutation.
+func (m *ContentReferenceMutation) UpdatedBy() (r uint32, exists bool) {
+	v := m.updated_by
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldUpdatedBy returns the old "updated_by" field's value of the ContentReference entity.
+// If the ContentReference object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *ContentReferenceMutation) OldUpdatedBy(ctx context.Context) (v *uint32, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldUpdatedBy is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldUpdatedBy requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldUpdatedBy: %w", err)
+	}
+	return oldValue.UpdatedBy, nil
+}
+
+// AddUpdatedBy adds u to the "updated_by" field.
+func (m *ContentReferenceMutation) AddUpdatedBy(u int32) {
+	if m.addupdated_by != nil {
+		*m.addupdated_by += u
+	} else {
+		m.addupdated_by = &u
+	}
+}
+
+// AddedUpdatedBy returns the value that was added to the "updated_by" field in this mutation.
+func (m *ContentReferenceMutation) AddedUpdatedBy() (r int32, exists bool) {
+	v := m.addupdated_by
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// ClearUpdatedBy clears the value of the "updated_by" field.
+func (m *ContentReferenceMutation) ClearUpdatedBy() {
+	m.updated_by = nil
+	m.addupdated_by = nil
+	m.clearedFields[contentreference.FieldUpdatedBy] = struct{}{}
+}
+
+// UpdatedByCleared returns if the "updated_by" field was cleared in this mutation.
+func (m *ContentReferenceMutation) UpdatedByCleared() bool {
+	_, ok := m.clearedFields[contentreference.FieldUpdatedBy]
+	return ok
+}
+
+// ResetUpdatedBy resets all changes to the "updated_by" field.
+func (m *ContentReferenceMutation) ResetUpdatedBy() {
+	m.updated_by = nil
+	m.addupdated_by = nil
+	delete(m.clearedFields, contentreference.FieldUpdatedBy)
+}
+
+// SetDeletedBy sets the "deleted_by" field.
+func (m *ContentReferenceMutation) SetDeletedBy(u uint32) {
+	m.deleted_by = &u
+	m.adddeleted_by = nil
+}
+
+// DeletedBy returns the value of the "deleted_by" field in the mutation.
+func (m *ContentReferenceMutation) DeletedBy() (r uint32, exists bool) {
+	v := m.deleted_by
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldDeletedBy returns the old "deleted_by" field's value of the ContentReference entity.
+// If the ContentReference object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *ContentReferenceMutation) OldDeletedBy(ctx context.Context) (v *uint32, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldDeletedBy is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldDeletedBy requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldDeletedBy: %w", err)
+	}
+	return oldValue.DeletedBy, nil
+}
+
+// AddDeletedBy adds u to the "deleted_by" field.
+func (m *ContentReferenceMutation) AddDeletedBy(u int32) {
+	if m.adddeleted_by != nil {
+		*m.adddeleted_by += u
+	} else {
+		m.adddeleted_by = &u
+	}
+}
+
+// AddedDeletedBy returns the value that was added to the "deleted_by" field in this mutation.
+func (m *ContentReferenceMutation) AddedDeletedBy() (r int32, exists bool) {
+	v := m.adddeleted_by
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// ClearDeletedBy clears the value of the "deleted_by" field.
+func (m *ContentReferenceMutation) ClearDeletedBy() {
+	m.deleted_by = nil
+	m.adddeleted_by = nil
+	m.clearedFields[contentreference.FieldDeletedBy] = struct{}{}
+}
+
+// DeletedByCleared returns if the "deleted_by" field was cleared in this mutation.
+func (m *ContentReferenceMutation) DeletedByCleared() bool {
+	_, ok := m.clearedFields[contentreference.FieldDeletedBy]
+	return ok
+}
+
+// ResetDeletedBy resets all changes to the "deleted_by" field.
+func (m *ContentReferenceMutation) ResetDeletedBy() {
+	m.deleted_by = nil
+	m.adddeleted_by = nil
+	delete(m.clearedFields, contentreference.FieldDeletedBy)
+}
+
+// SetTenantID sets the "tenant_id" field.
+func (m *ContentReferenceMutation) SetTenantID(u uint32) {
+	m.tenant_id = &u
+	m.addtenant_id = nil
+}
+
+// TenantID returns the value of the "tenant_id" field in the mutation.
+func (m *ContentReferenceMutation) TenantID() (r uint32, exists bool) {
+	v := m.tenant_id
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldTenantID returns the old "tenant_id" field's value of the ContentReference entity.
+// If the ContentReference object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *ContentReferenceMutation) OldTenantID(ctx context.Context) (v *uint32, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldTenantID is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldTenantID requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldTenantID: %w", err)
+	}
+	return oldValue.TenantID, nil
+}
+
+// AddTenantID adds u to the "tenant_id" field.
+func (m *ContentReferenceMutation) AddTenantID(u int32) {
+	if m.addtenant_id != nil {
+		*m.addtenant_id += u
+	} else {
+		m.addtenant_id = &u
+	}
+}
+
+// AddedTenantID returns the value that was added to the "tenant_id" field in this mutation.
+func (m *ContentReferenceMutation) AddedTenantID() (r int32, exists bool) {
+	v := m.addtenant_id
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// ClearTenantID clears the value of the "tenant_id" field.
+func (m *ContentReferenceMutation) ClearTenantID() {
+	m.tenant_id = nil
+	m.addtenant_id = nil
+	m.clearedFields[contentreference.FieldTenantID] = struct{}{}
+}
+
+// TenantIDCleared returns if the "tenant_id" field was cleared in this mutation.
+func (m *ContentReferenceMutation) TenantIDCleared() bool {
+	_, ok := m.clearedFields[contentreference.FieldTenantID]
+	return ok
+}
+
+// ResetTenantID resets all changes to the "tenant_id" field.
+func (m *ContentReferenceMutation) ResetTenantID() {
+	m.tenant_id = nil
+	m.addtenant_id = nil
+	delete(m.clearedFields, contentreference.FieldTenantID)
+}
+
+// SetSourceType sets the "source_type" field.
+func (m *ContentReferenceMutation) SetSourceType(s string) {
+	m.source_type = &s
+}
+
+// SourceType returns the value of the "source_type" field in the mutation.
+func (m *ContentReferenceMutation) SourceType() (r string, exists bool) {
+	v := m.source_type
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldSourceType returns the old "source_type" field's value of the ContentReference entity.
+// If the ContentReference object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *ContentReferenceMutation) OldSourceType(ctx context.Context) (v string, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldSourceType is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldSourceType requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldSourceType: %w", err)
+	}
+	return oldValue.SourceType, nil
+}
+
+// ResetSourceType resets all changes to the "source_type" field.
+func (m *ContentReferenceMutation) ResetSourceType() {
+	m.source_type = nil
+}
+
+// SetSourceID sets the "source_id" field.
+func (m *ContentReferenceMutation) SetSourceID(u uint32) {
+	m.source_id = &u
+	m.addsource_id = nil
+}
+
+// SourceID returns the value of the "source_id" field in the mutation.
+func (m *ContentReferenceMutation) SourceID() (r uint32, exists bool) {
+	v := m.source_id
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldSourceID returns the old "source_id" field's value of the ContentReference entity.
+// If the ContentReference object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *ContentReferenceMutation) OldSourceID(ctx context.Context) (v uint32, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldSourceID is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldSourceID requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldSourceID: %w", err)
+	}
+	return oldValue.SourceID, nil
+}
+
+// AddSourceID adds u to the "source_id" field.
+func (m *ContentReferenceMutation) AddSourceID(u int32) {
+	if m.addsource_id != nil {
+		*m.addsource_id += u
+	} else {
+		m.addsource_id = &u
+	}
+}
+
+// AddedSourceID returns the value that was added to the "source_id" field in this mutation.
+func (m *ContentReferenceMutation) AddedSourceID() (r int32, exists bool) {
+	v := m.addsource_id
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// ResetSourceID resets all changes to the "source_id" field.
+func (m *ContentReferenceMutation) ResetSourceID() {
+	m.source_id = nil
+	m.addsource_id = nil
+}
+
+// SetTargetType sets the "target_type" field.
+func (m *ContentReferenceMutation) SetTargetType(s string) {
+	m.target_type = &s
+}
+
+// TargetType returns the value of the "target_type" field in the mutation.
+func (m *ContentReferenceMutation) TargetType() (r string, exists bool) {
+	v := m.target_type
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldTargetType returns the old "target_type" field's value of the ContentReference entity.
+// If the ContentReference object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *ContentReferenceMutation) OldTargetType(ctx context.Context) (v string, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldTargetType is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldTargetType requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldTargetType: %w", err)
+	}
+	return oldValue.TargetType, nil
+}
+
+// ResetTargetType resets all changes to the "target_type" field.
+func (m *ContentReferenceMutation) ResetTargetType() {
+	m.target_type = nil
+}
+
+// SetTargetID sets the "target_id" field.
+func (m *ContentReferenceMutation) SetTargetID(u uint32) {
+	m.target_id = &u
+	m.addtarget_id = nil
+}
+
+// TargetID returns the value of the "target_id" field in the mutation.
+func (m *ContentReferenceMutation) TargetID() (r uint32, exists bool) {
+	v := m.target_id
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldTargetID returns the old "target_id" field's value of the ContentReference entity.
+// If the ContentReference object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *ContentReferenceMutation) OldTargetID(ctx context.Context) (v uint32, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldTargetID is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldTargetID requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldTargetID: %w", err)
+	}
+	return oldValue.TargetID, nil
+}
+
+// AddTargetID adds u to the "target_id" field.
+func (m *ContentReferenceMutation) AddTargetID(u int32) {
+	if m.addtarget_id != nil {
+		*m.addtarget_id += u
+	} else {
+		m.addtarget_id = &u
+	}
+}
+
+// AddedTargetID returns the value that was added to the "target_id" field in this mutation.
+func (m *ContentReferenceMutation) AddedTargetID() (r int32, exists bool) {
+	v := m.addtarget_id
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// ResetTargetID resets all changes to the "target_id" field.
+func (m *ContentReferenceMutation) ResetTargetID() {
+	m.target_id = nil
+	m.addtarget_id = nil
+}
+
+// SetFieldField sets the "field" field.
+func (m *ContentReferenceMutation) SetFieldField(s string) {
+	m.field = &s
+}
+
+// GetField returns the value of the "field" field in the mutation.
+func (m *ContentReferenceMutation) GetField() (r string, exists bool) {
+	v := m.field
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// GetOldField returns the old "field" field's value of the ContentReference entity.
+// If the ContentReference object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *ContentReferenceMutation) GetOldField(ctx context.Context) (v string, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("GetOldField is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("GetOldField requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for GetOldField: %w", err)
+	}
+	return oldValue.Field, nil
+}
+
+// ResetFieldField resets all changes to the "field" field.
+func (m *ContentReferenceMutation) ResetFieldField() {
+	m.field = nil
+}
+
+// Where appends a list predicates to the ContentReferenceMutation builder.
+func (m *ContentReferenceMutation) Where(ps ...predicate.ContentReference) {
+	m.predicates = append(m.predicates, ps...)
+}
+
+// WhereP appends storage-level predicates to the ContentReferenceMutation builder. Using this method,
+// users can use type-assertion to append predicates that do not depend on any generated package.
+func (m *ContentReferenceMutation) WhereP(ps ...func(*sql.Selector)) {
+	p := make([]predicate.ContentReference, len(ps))
+	for i := range ps {
+		p[i] = ps[i]
+	}
+	m.Where(p...)
+}
+
+// Op returns the operation name.
+func (m *ContentReferenceMutation) Op() Op {
+	return m.op
+}
+
+// SetOp allows setting the mutation operation.
+func (m *ContentReferenceMutation) SetOp(op Op) {
+	m.op = op
+}
+
+// Type returns the node type of this mutation (ContentReference).
+func (m *ContentReferenceMutation) Type() string {
+	return m.typ
+}
+
+// Fields returns all fields that were changed during this mutation. Note that in
+// order to get all numeric fields that were incremented/decremented, call
+// AddedFields().
+func (m *ContentReferenceMutation) Fields() []string {
+	fields := make([]string, 0, 12)
+	if m.created_at != nil {
+		fields = append(fields, contentreference.FieldCreatedAt)
+	}
+	if m.updated_at != nil {
+		fields = append(fields, contentreference.FieldUpdatedAt)
+	}
+	if m.deleted_at != nil {
+		fields = append(fields, contentreference.FieldDeletedAt)
+	}
+	if m.created_by != nil {
+		fields = append(fields, contentreference.FieldCreatedBy)
+	}
+	if m.updated_by != nil {
+		fields = append(fields, contentreference.FieldUpdatedBy)
+	}
+	if m.deleted_by != nil {
+		fields = append(fields, contentreference.FieldDeletedBy)
+	}
+	if m.tenant_id != nil {
+		fields = append(fields, contentreference.FieldTenantID)
+	}
+	if m.source_type != nil {
+		fields = append(fields, contentreference.FieldSourceType)
+	}
+	if m.source_id != nil {
+		fields = append(fields, contentreference.FieldSourceID)
+	}
+	if m.target_type != nil {
+		fields = append(fields, contentreference.FieldTargetType)
+	}
+	if m.target_id != nil {
+		fields = append(fields, contentreference.FieldTargetID)
+	}
+	if m.field != nil {
+		fields = append(fields, contentreference.FieldField)
+	}
+	return fields
+}
+
+// Field returns the value of a field with the given name. The second boolean
+// return value indicates that this field was not set, or was not defined in the
+// schema.
+func (m *ContentReferenceMutation) Field(name string) (ent.Value, bool) {
+	switch name {
+	case contentreference.FieldCreatedAt:
+		return m.CreatedAt()
+	case contentreference.FieldUpdatedAt:
+		return m.UpdatedAt()
+	case contentreference.FieldDeletedAt:
+		return m.DeletedAt()
+	case contentreference.FieldCreatedBy:
+		return m.CreatedBy()
+	case contentreference.FieldUpdatedBy:
+		return m.UpdatedBy()
+	case contentreference.FieldDeletedBy:
+		return m.DeletedBy()
+	case contentreference.FieldTenantID:
+		return m.TenantID()
+	case contentreference.FieldSourceType:
+		return m.SourceType()
+	case contentreference.FieldSourceID:
+		return m.SourceID()
+	case contentreference.FieldTargetType:
+		return m.TargetType()
+	case contentreference.FieldTargetID:
+		return m.TargetID()
+	case contentreference.FieldField:
+		return m.GetField()
+	}
+	return nil, false
+}
+
+// OldField returns the old value of the field from the database. An error is
+// returned if the mutation operation is not UpdateOne, or the query to the
+// database failed.
+func (m *ContentReferenceMutation) OldField(ctx context.Context, name string) (ent.Value, error) {
+	switch name {
+	case contentreference.FieldCreatedAt:
+		return m.OldCreatedAt(ctx)
+	case contentreference.FieldUpdatedAt:
+		return m.OldUpdatedAt(ctx)
+	case contentreference.FieldDeletedAt:
+		return m.OldDeletedAt(ctx)
+	case contentreference.FieldCreatedBy:
+		return m.OldCreatedBy(ctx)
+	case contentreference.FieldUpdatedBy:
+		return m.OldUpdatedBy(ctx)
+	case contentreference.FieldDeletedBy:
+		return m.OldDeletedBy(ctx)
+	case contentreference.FieldTenantID:
+		return m.OldTenantID(ctx)
+	case contentreference.FieldSourceType:
+		return m.OldSourceType(ctx)
+	case contentreference.FieldSourceID:
+		return m.OldSourceID(ctx)
+	case contentreference.FieldTargetType:
+		return m.OldTargetType(ctx)
+	case contentreference.FieldTargetID:
+		return m.OldTargetID(ctx)
+	case contentreference.FieldField:
+		return m.GetOldField(ctx)
+	}
+	return nil, fmt.Errorf("unknown ContentReference field %s", name)
+}
+
+// SetField sets the value of a field with the given name. It returns an error if
+// the field is not defined in the schema, or if the type mismatched the field
+// type.
+func (m *ContentReferenceMutation) SetField(name string, value ent.Value) error {
+	switch name {
+	case contentreference.FieldCreatedAt:
+		v, ok := value.(time.Time)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetCreatedAt(v)
+		return nil
+	case contentreference.FieldUpdatedAt:
+		v, ok := value.(time.Time)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetUpdatedAt(v)
+		return nil
+	case contentreference.FieldDeletedAt:
+		v, ok := value.(time.Time)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetDeletedAt(v)
+		return nil
+	case contentreference.FieldCreatedBy:
+		v, ok := value.(uint32)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetCreatedBy(v)
+		return nil
+	case contentreference.FieldUpdatedBy:
+		v, ok := value.(uint32)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetUpdatedBy(v)
+		return nil
+	case contentreference.FieldDeletedBy:
+		v, ok := value.(uint32)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetDeletedBy(v)
+		return nil
+	case contentreference.FieldTenantID:
+		v, ok := value.(uint32)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetTenantID(v)
+		return nil
+	case contentreference.FieldSourceType:
+		v, ok := value.(string)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetSourceType(v)
+		return nil
+	case contentreference.FieldSourceID:
+		v, ok := value.(uint32)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetSourceID(v)
+		return nil
+	case contentreference.FieldTargetType:
+		v, ok := value.(string)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetTargetType(v)
+		return nil
+	case contentreference.FieldTargetID:
+		v, ok := value.(uint32)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetTargetID(v)
+		return nil
+	case contentreference.FieldField:
+		v, ok := value.(string)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetFieldField(v)
+		return nil
+	}
+	return fmt.Errorf("unknown ContentReference field %s", name)
+}
+
+// AddedFields returns all numeric fields that were incremented/decremented during
+// this mutation.
+func (m *ContentReferenceMutation) AddedFields() []string {
+	var fields []string
+	if m.addcreated_by != nil {
+		fields = append(fields, contentreference.FieldCreatedBy)
+	}
+	if m.addupdated_by != nil {
+		fields = append(fields, contentreference.FieldUpdatedBy)
+	}
+	if m.adddeleted_by != nil {
+		fields = append(fields, contentreference.FieldDeletedBy)
+	}
+	if m.addtenant_id != nil {
+		fields = append(fields, contentreference.FieldTenantID)
+	}
+	if m.addsource_id != nil {
+		fields = append(fields, contentreference.FieldSourceID)
+	}
+	if m.addtarget_id != nil {
+		fields = append(fields, contentreference.FieldTargetID)
+	}
+	return fields
+}
+
+// AddedField returns the numeric value that was incremented/decremented on a field
+// with the given name. The second boolean return value indicates that this field
+// was not set, or was not defined in the schema.
+func (m *ContentReferenceMutation) AddedField(name string) (ent.Value, bool) {
+	switch name {
+	case contentreference.FieldCreatedBy:
+		return m.AddedCreatedBy()
+	case contentreference.FieldUpdatedBy:
+		return m.AddedUpdatedBy()
+	case contentreference.FieldDeletedBy:
+		return m.AddedDeletedBy()
+	case contentreference.FieldTenantID:
+		return m.AddedTenantID()
+	case contentreference.FieldSourceID:
+		return m.AddedSourceID()
+	case contentreference.FieldTargetID:
+		return m.AddedTargetID()
+	}
+	return nil, false
+}
+
+// AddField adds the value to the field with the given name. It returns an error if
+// the field is not defined in the schema, or if the type mismatched the field
+// type.
+func (m *ContentReferenceMutation) AddField(name string, value ent.Value) error {
+	switch name {
+	case contentreference.FieldCreatedBy:
+		v, ok := value.(int32)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.AddCreatedBy(v)
+		return nil
+	case contentreference.FieldUpdatedBy:
+		v, ok := value.(int32)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.AddUpdatedBy(v)
+		return nil
+	case contentreference.FieldDeletedBy:
+		v, ok := value.(int32)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.AddDeletedBy(v)
+		return nil
+	case contentreference.FieldTenantID:
+		v, ok := value.(int32)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.AddTenantID(v)
+		return nil
+	case contentreference.FieldSourceID:
+		v, ok := value.(int32)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.AddSourceID(v)
+		return nil
+	case contentreference.FieldTargetID:
+		v, ok := value.(int32)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.AddTargetID(v)
+		return nil
+	}
+	return fmt.Errorf("unknown ContentReference numeric field %s", name)
+}
+
+// ClearedFields returns all nullable fields that were cleared during this
+// mutation.
+func (m *ContentReferenceMutation) ClearedFields() []string {
+	var fields []string
+	if m.FieldCleared(contentreference.FieldCreatedAt) {
+		fields = append(fields, contentreference.FieldCreatedAt)
+	}
+	if m.FieldCleared(contentreference.FieldUpdatedAt) {
+		fields = append(fields, contentreference.FieldUpdatedAt)
+	}
+	if m.FieldCleared(contentreference.FieldDeletedAt) {
+		fields = append(fields, contentreference.FieldDeletedAt)
+	}
+	if m.FieldCleared(contentreference.FieldCreatedBy) {
+		fields = append(fields, contentreference.FieldCreatedBy)
+	}
+	if m.FieldCleared(contentreference.FieldUpdatedBy) {
+		fields = append(fields, contentreference.FieldUpdatedBy)
+	}
+	if m.FieldCleared(contentreference.FieldDeletedBy) {
+		fields = append(fields, contentreference.FieldDeletedBy)
+	}
+	if m.FieldCleared(contentreference.FieldTenantID) {
+		fields = append(fields, contentreference.FieldTenantID)
+	}
+	return fields
+}
+
+// FieldCleared returns a boolean indicating if a field with the given name was
+// cleared in this mutation.
+func (m *ContentReferenceMutation) FieldCleared(name string) bool {
+	_, ok := m.clearedFields[name]
+	return ok
+}
+
+// ClearField clears the value of the field with the given name. It returns an
+// error if the field is not defined in the schema.
+func (m *ContentReferenceMutation) ClearField(name string) error {
+	switch name {
+	case contentreference.FieldCreatedAt:
+		m.ClearCreatedAt()
+		return nil
+	case contentreference.FieldUpdatedAt:
+		m.ClearUpdatedAt()
+		return nil
+	case contentreference.FieldDeletedAt:
+		m.ClearDeletedAt()
+		return nil
+	case contentreference.FieldCreatedBy:
+		m.ClearCreatedBy()
+		return nil
+	case contentreference.FieldUpdatedBy:
+		m.ClearUpdatedBy()
+		return nil
+	case contentreference.FieldDeletedBy:
+		m.ClearDeletedBy()
+		return nil
+	case contentreference.FieldTenantID:
+		m.ClearTenantID()
+		return nil
+	}
+	return fmt.Errorf("unknown ContentReference nullable field %s", name)
+}
+
+// ResetField resets all changes in the mutation for the field with the given name.
+// It returns an error if the field is not defined in the schema.
+func (m *ContentReferenceMutation) ResetField(name string) error {
+	switch name {
+	case contentreference.FieldCreatedAt:
+		m.ResetCreatedAt()
+		return nil
+	case contentreference.FieldUpdatedAt:
+		m.ResetUpdatedAt()
+		return nil
+	case contentreference.FieldDeletedAt:
+		m.ResetDeletedAt()
+		return nil
+	case contentreference.FieldCreatedBy:
+		m.ResetCreatedBy()
+		return nil
+	case contentreference.FieldUpdatedBy:
+		m.ResetUpdatedBy()
+		return nil
+	case contentreference.FieldDeletedBy:
+		m.ResetDeletedBy()
+		return nil
+	case contentreference.FieldTenantID:
+		m.ResetTenantID()
+		return nil
+	case contentreference.FieldSourceType:
+		m.ResetSourceType()
+		return nil
+	case contentreference.FieldSourceID:
+		m.ResetSourceID()
+		return nil
+	case contentreference.FieldTargetType:
+		m.ResetTargetType()
+		return nil
+	case contentreference.FieldTargetID:
+		m.ResetTargetID()
+		return nil
+	case contentreference.FieldField:
+		m.ResetFieldField()
+		return nil
+	}
+	return fmt.Errorf("unknown ContentReference field %s", name)
+}
+
+// AddedEdges returns all edge names that were set/added in this mutation.
+func (m *ContentReferenceMutation) AddedEdges() []string {
+	edges := make([]string, 0, 0)
+	return edges
+}
+
+// AddedIDs returns all IDs (to other nodes) that were added for the given edge
+// name in this mutation.
+func (m *ContentReferenceMutation) AddedIDs(name string) []ent.Value {
+	return nil
+}
+
+// RemovedEdges returns all edge names that were removed in this mutation.
+func (m *ContentReferenceMutation) RemovedEdges() []string {
+	edges := make([]string, 0, 0)
+	return edges
+}
+
+// RemovedIDs returns all IDs (to other nodes) that were removed for the edge with
+// the given name in this mutation.
+func (m *ContentReferenceMutation) RemovedIDs(name string) []ent.Value {
+	return nil
+}
+
+// ClearedEdges returns all edge names that were cleared in this mutation.
+func (m *ContentReferenceMutation) ClearedEdges() []string {
+	edges := make([]string, 0, 0)
+	return edges
+}
+
+// EdgeCleared returns a boolean which indicates if the edge with the given name
+// was cleared in this mutation.
+func (m *ContentReferenceMutation) EdgeCleared(name string) bool {
+	return false
+}
+
+// ClearEdge clears the value of the edge with the given name. It returns an error
+// if that edge is not defined in the schema.
+func (m *ContentReferenceMutation) ClearEdge(name string) error {
+	return fmt.Errorf("unknown ContentReference unique edge %s", name)
+}
+
+// ResetEdge resets all changes to the edge with the given name in this mutation.
+// It returns an error if the edge is not defined in the schema.
+func (m *ContentReferenceMutation) ResetEdge(name string) error {
+	return fmt.Errorf("unknown ContentReference edge %s", name)
 }
 
 // DataAccessAuditLogMutation represents an operation that mutates the DataAccessAuditLog nodes in the graph.
