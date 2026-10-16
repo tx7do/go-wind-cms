@@ -10,8 +10,8 @@ import (
 	context "context"
 	http "github.com/go-kratos/kratos/v2/transport/http"
 	binding "github.com/go-kratos/kratos/v2/transport/http/binding"
-	v1 "github.com/tx7do/go-crud/api/gen/go/pagination/v1"
-	v11 "go-wind-cms/api/gen/go/content/service/v1"
+	v11 "github.com/tx7do/go-crud/api/gen/go/pagination/v1"
+	v1 "go-wind-cms/api/gen/go/content/service/v1"
 	emptypb "google.golang.org/protobuf/types/known/emptypb"
 )
 
@@ -26,6 +26,7 @@ const OperationPostServiceCreate = "/app.service.v1.PostService/Create"
 const OperationPostServiceDelete = "/app.service.v1.PostService/Delete"
 const OperationPostServiceGet = "/app.service.v1.PostService/Get"
 const OperationPostServiceGetBySlug = "/app.service.v1.PostService/GetBySlug"
+const OperationPostServiceGetPostContentModel = "/app.service.v1.PostService/GetPostContentModel"
 const OperationPostServiceGetTranslation = "/app.service.v1.PostService/GetTranslation"
 const OperationPostServiceList = "/app.service.v1.PostService/List"
 const OperationPostServiceSearchPosts = "/app.service.v1.PostService/SearchPosts"
@@ -33,31 +34,34 @@ const OperationPostServiceUpdate = "/app.service.v1.PostService/Update"
 
 type PostServiceHTTPServer interface {
 	// Create 创建帖子
-	Create(context.Context, *v11.CreatePostRequest) (*v11.Post, error)
+	Create(context.Context, *v1.CreatePostRequest) (*v1.Post, error)
 	// Delete 删除帖子
-	Delete(context.Context, *v11.DeletePostRequest) (*emptypb.Empty, error)
+	Delete(context.Context, *v1.DeletePostRequest) (*emptypb.Empty, error)
 	// Get 获取帖子数据
-	Get(context.Context, *v11.GetPostRequest) (*v11.Post, error)
+	Get(context.Context, *v1.GetPostRequest) (*v1.Post, error)
 	// GetBySlug 按 slug 获取帖子（公开，SEO 路由 /post/{slug} 的数据源）
-	GetBySlug(context.Context, *GetPostBySlugRequest) (*v11.Post, error)
+	GetBySlug(context.Context, *GetPostBySlugRequest) (*v1.Post, error)
+	// GetPostContentModel 按文章取其分类链绑定的内容模型（C 端渲染 custom_fields 用；免鉴权）
+	GetPostContentModel(context.Context, *v1.GetModelByPostRequest) (*v1.ContentModel, error)
 	// GetTranslation 获取翻译数据
-	GetTranslation(context.Context, *v11.GetPostRequest) (*v11.PostTranslation, error)
+	GetTranslation(context.Context, *v1.GetPostRequest) (*v1.PostTranslation, error)
 	// List 获取帖子列表
-	List(context.Context, *v1.PagingRequest) (*v11.ListPostResponse, error)
+	List(context.Context, *v11.PagingRequest) (*v1.ListPostResponse, error)
 	// SearchPosts 全文搜索帖子（前台，基于 OpenSearch）
 	//
 	// 仅返回 PUBLISHED 状态内容；tenant_id 由服务端从登录用户上下文注入，
 	// 客户端无法指定或绕过。故此端点不进鉴权白名单——必须登录后方可搜索。
-	SearchPosts(context.Context, *v11.SearchPostsRequest) (*v11.SearchPostsResponse, error)
+	SearchPosts(context.Context, *v1.SearchPostsRequest) (*v1.SearchPostsResponse, error)
 	// Update 更新帖子
-	Update(context.Context, *v11.UpdatePostRequest) (*v11.Post, error)
+	Update(context.Context, *v1.UpdatePostRequest) (*v1.Post, error)
 }
 
 func RegisterPostServiceHTTPServer(s *http.Server, srv PostServiceHTTPServer) {
 	r := s.Route("/")
+	r.GET("/app/v1/posts/{post_id}/content-model", _PostService_GetPostContentModel0_HTTP_Handler(srv))
 	r.GET("/app/v1/posts", _PostService_List4_HTTP_Handler(srv))
 	r.GET("/app/v1/posts/search", _PostService_SearchPosts0_HTTP_Handler(srv))
-	r.GET("/app/v1/posts/{id}", _PostService_Get4_HTTP_Handler(srv))
+	r.GET("/app/v1/posts/{id}", _PostService_Get5_HTTP_Handler(srv))
 	r.POST("/app/v1/posts", _PostService_Create4_HTTP_Handler(srv))
 	r.PUT("/app/v1/posts/{id}", _PostService_Update4_HTTP_Handler(srv))
 	r.DELETE("/app/v1/posts/{id}", _PostService_Delete4_HTTP_Handler(srv))
@@ -65,47 +69,69 @@ func RegisterPostServiceHTTPServer(s *http.Server, srv PostServiceHTTPServer) {
 	r.GET("/app/v1/posts/by-slug/{slug}", _PostService_GetBySlug1_HTTP_Handler(srv))
 }
 
-func _PostService_List4_HTTP_Handler(srv PostServiceHTTPServer) func(ctx http.Context) error {
+func _PostService_GetPostContentModel0_HTTP_Handler(srv PostServiceHTTPServer) func(ctx http.Context) error {
 	return func(ctx http.Context) error {
-		var in v1.PagingRequest
+		var in v1.GetModelByPostRequest
 		if err := ctx.BindQuery(&in); err != nil {
 			return err
 		}
-		http.SetOperation(ctx, OperationPostServiceList)
+		if err := ctx.BindVars(&in); err != nil {
+			return err
+		}
+		http.SetOperation(ctx, OperationPostServiceGetPostContentModel)
 		h := ctx.Middleware(func(ctx context.Context, req interface{}) (interface{}, error) {
-			return srv.List(ctx, req.(*v1.PagingRequest))
+			return srv.GetPostContentModel(ctx, req.(*v1.GetModelByPostRequest))
 		})
 		out, err := h(ctx, &in)
 		if err != nil {
 			return err
 		}
-		reply := out.(*v11.ListPostResponse)
+		reply := out.(*v1.ContentModel)
+		return ctx.Result(200, reply)
+	}
+}
+
+func _PostService_List4_HTTP_Handler(srv PostServiceHTTPServer) func(ctx http.Context) error {
+	return func(ctx http.Context) error {
+		var in v11.PagingRequest
+		if err := ctx.BindQuery(&in); err != nil {
+			return err
+		}
+		http.SetOperation(ctx, OperationPostServiceList)
+		h := ctx.Middleware(func(ctx context.Context, req interface{}) (interface{}, error) {
+			return srv.List(ctx, req.(*v11.PagingRequest))
+		})
+		out, err := h(ctx, &in)
+		if err != nil {
+			return err
+		}
+		reply := out.(*v1.ListPostResponse)
 		return ctx.Result(200, reply)
 	}
 }
 
 func _PostService_SearchPosts0_HTTP_Handler(srv PostServiceHTTPServer) func(ctx http.Context) error {
 	return func(ctx http.Context) error {
-		var in v11.SearchPostsRequest
+		var in v1.SearchPostsRequest
 		if err := ctx.BindQuery(&in); err != nil {
 			return err
 		}
 		http.SetOperation(ctx, OperationPostServiceSearchPosts)
 		h := ctx.Middleware(func(ctx context.Context, req interface{}) (interface{}, error) {
-			return srv.SearchPosts(ctx, req.(*v11.SearchPostsRequest))
+			return srv.SearchPosts(ctx, req.(*v1.SearchPostsRequest))
 		})
 		out, err := h(ctx, &in)
 		if err != nil {
 			return err
 		}
-		reply := out.(*v11.SearchPostsResponse)
+		reply := out.(*v1.SearchPostsResponse)
 		return ctx.Result(200, reply)
 	}
 }
 
-func _PostService_Get4_HTTP_Handler(srv PostServiceHTTPServer) func(ctx http.Context) error {
+func _PostService_Get5_HTTP_Handler(srv PostServiceHTTPServer) func(ctx http.Context) error {
 	return func(ctx http.Context) error {
-		var in v11.GetPostRequest
+		var in v1.GetPostRequest
 		if err := ctx.BindQuery(&in); err != nil {
 			return err
 		}
@@ -114,20 +140,20 @@ func _PostService_Get4_HTTP_Handler(srv PostServiceHTTPServer) func(ctx http.Con
 		}
 		http.SetOperation(ctx, OperationPostServiceGet)
 		h := ctx.Middleware(func(ctx context.Context, req interface{}) (interface{}, error) {
-			return srv.Get(ctx, req.(*v11.GetPostRequest))
+			return srv.Get(ctx, req.(*v1.GetPostRequest))
 		})
 		out, err := h(ctx, &in)
 		if err != nil {
 			return err
 		}
-		reply := out.(*v11.Post)
+		reply := out.(*v1.Post)
 		return ctx.Result(200, reply)
 	}
 }
 
 func _PostService_Create4_HTTP_Handler(srv PostServiceHTTPServer) func(ctx http.Context) error {
 	return func(ctx http.Context) error {
-		var in v11.CreatePostRequest
+		var in v1.CreatePostRequest
 		if err := ctx.Bind(&in); err != nil {
 			return err
 		}
@@ -136,20 +162,20 @@ func _PostService_Create4_HTTP_Handler(srv PostServiceHTTPServer) func(ctx http.
 		}
 		http.SetOperation(ctx, OperationPostServiceCreate)
 		h := ctx.Middleware(func(ctx context.Context, req interface{}) (interface{}, error) {
-			return srv.Create(ctx, req.(*v11.CreatePostRequest))
+			return srv.Create(ctx, req.(*v1.CreatePostRequest))
 		})
 		out, err := h(ctx, &in)
 		if err != nil {
 			return err
 		}
-		reply := out.(*v11.Post)
+		reply := out.(*v1.Post)
 		return ctx.Result(200, reply)
 	}
 }
 
 func _PostService_Update4_HTTP_Handler(srv PostServiceHTTPServer) func(ctx http.Context) error {
 	return func(ctx http.Context) error {
-		var in v11.UpdatePostRequest
+		var in v1.UpdatePostRequest
 		if err := ctx.Bind(&in); err != nil {
 			return err
 		}
@@ -161,20 +187,20 @@ func _PostService_Update4_HTTP_Handler(srv PostServiceHTTPServer) func(ctx http.
 		}
 		http.SetOperation(ctx, OperationPostServiceUpdate)
 		h := ctx.Middleware(func(ctx context.Context, req interface{}) (interface{}, error) {
-			return srv.Update(ctx, req.(*v11.UpdatePostRequest))
+			return srv.Update(ctx, req.(*v1.UpdatePostRequest))
 		})
 		out, err := h(ctx, &in)
 		if err != nil {
 			return err
 		}
-		reply := out.(*v11.Post)
+		reply := out.(*v1.Post)
 		return ctx.Result(200, reply)
 	}
 }
 
 func _PostService_Delete4_HTTP_Handler(srv PostServiceHTTPServer) func(ctx http.Context) error {
 	return func(ctx http.Context) error {
-		var in v11.DeletePostRequest
+		var in v1.DeletePostRequest
 		if err := ctx.BindQuery(&in); err != nil {
 			return err
 		}
@@ -183,7 +209,7 @@ func _PostService_Delete4_HTTP_Handler(srv PostServiceHTTPServer) func(ctx http.
 		}
 		http.SetOperation(ctx, OperationPostServiceDelete)
 		h := ctx.Middleware(func(ctx context.Context, req interface{}) (interface{}, error) {
-			return srv.Delete(ctx, req.(*v11.DeletePostRequest))
+			return srv.Delete(ctx, req.(*v1.DeletePostRequest))
 		})
 		out, err := h(ctx, &in)
 		if err != nil {
@@ -196,7 +222,7 @@ func _PostService_Delete4_HTTP_Handler(srv PostServiceHTTPServer) func(ctx http.
 
 func _PostService_GetTranslation2_HTTP_Handler(srv PostServiceHTTPServer) func(ctx http.Context) error {
 	return func(ctx http.Context) error {
-		var in v11.GetPostRequest
+		var in v1.GetPostRequest
 		if err := ctx.BindQuery(&in); err != nil {
 			return err
 		}
@@ -205,13 +231,13 @@ func _PostService_GetTranslation2_HTTP_Handler(srv PostServiceHTTPServer) func(c
 		}
 		http.SetOperation(ctx, OperationPostServiceGetTranslation)
 		h := ctx.Middleware(func(ctx context.Context, req interface{}) (interface{}, error) {
-			return srv.GetTranslation(ctx, req.(*v11.GetPostRequest))
+			return srv.GetTranslation(ctx, req.(*v1.GetPostRequest))
 		})
 		out, err := h(ctx, &in)
 		if err != nil {
 			return err
 		}
-		reply := out.(*v11.PostTranslation)
+		reply := out.(*v1.PostTranslation)
 		return ctx.Result(200, reply)
 	}
 }
@@ -233,31 +259,33 @@ func _PostService_GetBySlug1_HTTP_Handler(srv PostServiceHTTPServer) func(ctx ht
 		if err != nil {
 			return err
 		}
-		reply := out.(*v11.Post)
+		reply := out.(*v1.Post)
 		return ctx.Result(200, reply)
 	}
 }
 
 type PostServiceHTTPClient interface {
 	// Create 创建帖子
-	Create(ctx context.Context, req *v11.CreatePostRequest, opts ...http.CallOption) (rsp *v11.Post, err error)
+	Create(ctx context.Context, req *v1.CreatePostRequest, opts ...http.CallOption) (rsp *v1.Post, err error)
 	// Delete 删除帖子
-	Delete(ctx context.Context, req *v11.DeletePostRequest, opts ...http.CallOption) (rsp *emptypb.Empty, err error)
+	Delete(ctx context.Context, req *v1.DeletePostRequest, opts ...http.CallOption) (rsp *emptypb.Empty, err error)
 	// Get 获取帖子数据
-	Get(ctx context.Context, req *v11.GetPostRequest, opts ...http.CallOption) (rsp *v11.Post, err error)
+	Get(ctx context.Context, req *v1.GetPostRequest, opts ...http.CallOption) (rsp *v1.Post, err error)
 	// GetBySlug 按 slug 获取帖子（公开，SEO 路由 /post/{slug} 的数据源）
-	GetBySlug(ctx context.Context, req *GetPostBySlugRequest, opts ...http.CallOption) (rsp *v11.Post, err error)
+	GetBySlug(ctx context.Context, req *GetPostBySlugRequest, opts ...http.CallOption) (rsp *v1.Post, err error)
+	// GetPostContentModel 按文章取其分类链绑定的内容模型（C 端渲染 custom_fields 用；免鉴权）
+	GetPostContentModel(ctx context.Context, req *v1.GetModelByPostRequest, opts ...http.CallOption) (rsp *v1.ContentModel, err error)
 	// GetTranslation 获取翻译数据
-	GetTranslation(ctx context.Context, req *v11.GetPostRequest, opts ...http.CallOption) (rsp *v11.PostTranslation, err error)
+	GetTranslation(ctx context.Context, req *v1.GetPostRequest, opts ...http.CallOption) (rsp *v1.PostTranslation, err error)
 	// List 获取帖子列表
-	List(ctx context.Context, req *v1.PagingRequest, opts ...http.CallOption) (rsp *v11.ListPostResponse, err error)
+	List(ctx context.Context, req *v11.PagingRequest, opts ...http.CallOption) (rsp *v1.ListPostResponse, err error)
 	// SearchPosts 全文搜索帖子（前台，基于 OpenSearch）
 	//
 	// 仅返回 PUBLISHED 状态内容；tenant_id 由服务端从登录用户上下文注入，
 	// 客户端无法指定或绕过。故此端点不进鉴权白名单——必须登录后方可搜索。
-	SearchPosts(ctx context.Context, req *v11.SearchPostsRequest, opts ...http.CallOption) (rsp *v11.SearchPostsResponse, err error)
+	SearchPosts(ctx context.Context, req *v1.SearchPostsRequest, opts ...http.CallOption) (rsp *v1.SearchPostsResponse, err error)
 	// Update 更新帖子
-	Update(ctx context.Context, req *v11.UpdatePostRequest, opts ...http.CallOption) (rsp *v11.Post, err error)
+	Update(ctx context.Context, req *v1.UpdatePostRequest, opts ...http.CallOption) (rsp *v1.Post, err error)
 }
 
 type PostServiceHTTPClientImpl struct {
@@ -269,8 +297,8 @@ func NewPostServiceHTTPClient(client *http.Client) PostServiceHTTPClient {
 }
 
 // Create 创建帖子
-func (c *PostServiceHTTPClientImpl) Create(ctx context.Context, in *v11.CreatePostRequest, opts ...http.CallOption) (*v11.Post, error) {
-	var out v11.Post
+func (c *PostServiceHTTPClientImpl) Create(ctx context.Context, in *v1.CreatePostRequest, opts ...http.CallOption) (*v1.Post, error) {
+	var out v1.Post
 	pattern := "/app/v1/posts"
 	path := binding.EncodeURL(pattern, in, false)
 	opts = append(opts, http.Operation(OperationPostServiceCreate))
@@ -283,7 +311,7 @@ func (c *PostServiceHTTPClientImpl) Create(ctx context.Context, in *v11.CreatePo
 }
 
 // Delete 删除帖子
-func (c *PostServiceHTTPClientImpl) Delete(ctx context.Context, in *v11.DeletePostRequest, opts ...http.CallOption) (*emptypb.Empty, error) {
+func (c *PostServiceHTTPClientImpl) Delete(ctx context.Context, in *v1.DeletePostRequest, opts ...http.CallOption) (*emptypb.Empty, error) {
 	var out emptypb.Empty
 	pattern := "/app/v1/posts/{id}"
 	path := binding.EncodeURL(pattern, in, true)
@@ -297,8 +325,8 @@ func (c *PostServiceHTTPClientImpl) Delete(ctx context.Context, in *v11.DeletePo
 }
 
 // Get 获取帖子数据
-func (c *PostServiceHTTPClientImpl) Get(ctx context.Context, in *v11.GetPostRequest, opts ...http.CallOption) (*v11.Post, error) {
-	var out v11.Post
+func (c *PostServiceHTTPClientImpl) Get(ctx context.Context, in *v1.GetPostRequest, opts ...http.CallOption) (*v1.Post, error) {
+	var out v1.Post
 	pattern := "/app/v1/posts/{id}"
 	path := binding.EncodeURL(pattern, in, true)
 	opts = append(opts, http.Operation(OperationPostServiceGet))
@@ -311,8 +339,8 @@ func (c *PostServiceHTTPClientImpl) Get(ctx context.Context, in *v11.GetPostRequ
 }
 
 // GetBySlug 按 slug 获取帖子（公开，SEO 路由 /post/{slug} 的数据源）
-func (c *PostServiceHTTPClientImpl) GetBySlug(ctx context.Context, in *GetPostBySlugRequest, opts ...http.CallOption) (*v11.Post, error) {
-	var out v11.Post
+func (c *PostServiceHTTPClientImpl) GetBySlug(ctx context.Context, in *GetPostBySlugRequest, opts ...http.CallOption) (*v1.Post, error) {
+	var out v1.Post
 	pattern := "/app/v1/posts/by-slug/{slug}"
 	path := binding.EncodeURL(pattern, in, true)
 	opts = append(opts, http.Operation(OperationPostServiceGetBySlug))
@@ -324,9 +352,23 @@ func (c *PostServiceHTTPClientImpl) GetBySlug(ctx context.Context, in *GetPostBy
 	return &out, nil
 }
 
+// GetPostContentModel 按文章取其分类链绑定的内容模型（C 端渲染 custom_fields 用；免鉴权）
+func (c *PostServiceHTTPClientImpl) GetPostContentModel(ctx context.Context, in *v1.GetModelByPostRequest, opts ...http.CallOption) (*v1.ContentModel, error) {
+	var out v1.ContentModel
+	pattern := "/app/v1/posts/{post_id}/content-model"
+	path := binding.EncodeURL(pattern, in, true)
+	opts = append(opts, http.Operation(OperationPostServiceGetPostContentModel))
+	opts = append(opts, http.PathTemplate(pattern))
+	err := c.cc.Invoke(ctx, "GET", path, nil, &out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return &out, nil
+}
+
 // GetTranslation 获取翻译数据
-func (c *PostServiceHTTPClientImpl) GetTranslation(ctx context.Context, in *v11.GetPostRequest, opts ...http.CallOption) (*v11.PostTranslation, error) {
-	var out v11.PostTranslation
+func (c *PostServiceHTTPClientImpl) GetTranslation(ctx context.Context, in *v1.GetPostRequest, opts ...http.CallOption) (*v1.PostTranslation, error) {
+	var out v1.PostTranslation
 	pattern := "/app/v1/posts/{id}/translation"
 	path := binding.EncodeURL(pattern, in, true)
 	opts = append(opts, http.Operation(OperationPostServiceGetTranslation))
@@ -339,8 +381,8 @@ func (c *PostServiceHTTPClientImpl) GetTranslation(ctx context.Context, in *v11.
 }
 
 // List 获取帖子列表
-func (c *PostServiceHTTPClientImpl) List(ctx context.Context, in *v1.PagingRequest, opts ...http.CallOption) (*v11.ListPostResponse, error) {
-	var out v11.ListPostResponse
+func (c *PostServiceHTTPClientImpl) List(ctx context.Context, in *v11.PagingRequest, opts ...http.CallOption) (*v1.ListPostResponse, error) {
+	var out v1.ListPostResponse
 	pattern := "/app/v1/posts"
 	path := binding.EncodeURL(pattern, in, true)
 	opts = append(opts, http.Operation(OperationPostServiceList))
@@ -356,8 +398,8 @@ func (c *PostServiceHTTPClientImpl) List(ctx context.Context, in *v1.PagingReque
 //
 // 仅返回 PUBLISHED 状态内容；tenant_id 由服务端从登录用户上下文注入，
 // 客户端无法指定或绕过。故此端点不进鉴权白名单——必须登录后方可搜索。
-func (c *PostServiceHTTPClientImpl) SearchPosts(ctx context.Context, in *v11.SearchPostsRequest, opts ...http.CallOption) (*v11.SearchPostsResponse, error) {
-	var out v11.SearchPostsResponse
+func (c *PostServiceHTTPClientImpl) SearchPosts(ctx context.Context, in *v1.SearchPostsRequest, opts ...http.CallOption) (*v1.SearchPostsResponse, error) {
+	var out v1.SearchPostsResponse
 	pattern := "/app/v1/posts/search"
 	path := binding.EncodeURL(pattern, in, true)
 	opts = append(opts, http.Operation(OperationPostServiceSearchPosts))
@@ -370,8 +412,8 @@ func (c *PostServiceHTTPClientImpl) SearchPosts(ctx context.Context, in *v11.Sea
 }
 
 // Update 更新帖子
-func (c *PostServiceHTTPClientImpl) Update(ctx context.Context, in *v11.UpdatePostRequest, opts ...http.CallOption) (*v11.Post, error) {
-	var out v11.Post
+func (c *PostServiceHTTPClientImpl) Update(ctx context.Context, in *v1.UpdatePostRequest, opts ...http.CallOption) (*v1.Post, error) {
+	var out v1.Post
 	pattern := "/app/v1/posts/{id}"
 	path := binding.EncodeURL(pattern, in, false)
 	opts = append(opts, http.Operation(OperationPostServiceUpdate))

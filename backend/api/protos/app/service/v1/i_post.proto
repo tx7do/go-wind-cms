@@ -8,9 +8,21 @@ import "google/protobuf/empty.proto";
 
 import "pagination/v1/pagination.proto";
 import "content/service/v1/post.proto";
+import "content/service/v1/content_model.proto";
 
 // 帖子服务
 service PostService {
+
+  // 按文章取其分类链绑定的内容模型（C 端渲染 custom_fields 用；免鉴权）
+  rpc GetPostContentModel (content.service.v1.GetModelByPostRequest) returns (content.service.v1.ContentModel) {
+    option (google.api.http) = {
+      get: "/app/v1/posts/{post_id}/content-model"
+    };
+
+    option(gnostic.openapi.v3.operation) = {
+      security: {}
+    };
+  }
   // 获取帖子列表
   rpc List (pagination.PagingRequest) returns (content.service.v1.ListPostResponse) {
     option (google.api.http) = {

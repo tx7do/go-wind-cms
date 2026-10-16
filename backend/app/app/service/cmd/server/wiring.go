@@ -90,7 +90,10 @@ func initApp(ctx *bootstrap.Context) (*kratos.App, func(), error) {
 	userProfileService := service.NewUserProfileService(ctx, userServiceClient, tenantServiceClient, orgUnitServiceClient, positionServiceClient, roleServiceClient, userCredentialServiceClient)
 
 	// 内容
-	postService := service.NewPostService(ctx, postServiceClient, tenantResolver)
+		contentModelServiceClient := data.NewContentModelServiceClient(ctx, discovery)
+	mediaAssetServiceClient := data.NewMediaAssetServiceClient(ctx, discovery)
+	mediaAssetService := service.NewMediaAssetService(ctx, mediaAssetServiceClient)
+	postService := service.NewPostService(ctx, postServiceClient, contentModelServiceClient, tenantResolver)
 	categoryService := service.NewCategoryService(ctx, categoryServiceClient)
 	commentService := service.NewCommentService(ctx, commentServiceClient, tenantResolver, accessTokenChecker)
 	interactionService := service.NewInteractionService(ctx, interactionServiceClient, tenantResolver)
@@ -115,6 +118,7 @@ func initApp(ctx *bootstrap.Context) (*kratos.App, func(), error) {
 		authenticationService,
 		fileTransferService,
 		userProfileService,
+		mediaAssetService,
 		postService, categoryService, commentService, interactionService, tagService, pageService,
 		seoService,
 		formSubmissionService,

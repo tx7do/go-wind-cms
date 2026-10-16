@@ -8,8 +8,8 @@ package servicev1
 
 import (
 	context "context"
-	v1 "github.com/tx7do/go-crud/api/gen/go/pagination/v1"
-	v11 "go-wind-cms/api/gen/go/content/service/v1"
+	v11 "github.com/tx7do/go-crud/api/gen/go/pagination/v1"
+	v1 "go-wind-cms/api/gen/go/content/service/v1"
 	grpc "google.golang.org/grpc"
 	codes "google.golang.org/grpc/codes"
 	status "google.golang.org/grpc/status"
@@ -22,14 +22,15 @@ import (
 const _ = grpc.SupportPackageIsVersion9
 
 const (
-	PostService_List_FullMethodName           = "/app.service.v1.PostService/List"
-	PostService_SearchPosts_FullMethodName    = "/app.service.v1.PostService/SearchPosts"
-	PostService_Get_FullMethodName            = "/app.service.v1.PostService/Get"
-	PostService_Create_FullMethodName         = "/app.service.v1.PostService/Create"
-	PostService_Update_FullMethodName         = "/app.service.v1.PostService/Update"
-	PostService_Delete_FullMethodName         = "/app.service.v1.PostService/Delete"
-	PostService_GetTranslation_FullMethodName = "/app.service.v1.PostService/GetTranslation"
-	PostService_GetBySlug_FullMethodName      = "/app.service.v1.PostService/GetBySlug"
+	PostService_GetPostContentModel_FullMethodName = "/app.service.v1.PostService/GetPostContentModel"
+	PostService_List_FullMethodName                = "/app.service.v1.PostService/List"
+	PostService_SearchPosts_FullMethodName         = "/app.service.v1.PostService/SearchPosts"
+	PostService_Get_FullMethodName                 = "/app.service.v1.PostService/Get"
+	PostService_Create_FullMethodName              = "/app.service.v1.PostService/Create"
+	PostService_Update_FullMethodName              = "/app.service.v1.PostService/Update"
+	PostService_Delete_FullMethodName              = "/app.service.v1.PostService/Delete"
+	PostService_GetTranslation_FullMethodName      = "/app.service.v1.PostService/GetTranslation"
+	PostService_GetBySlug_FullMethodName           = "/app.service.v1.PostService/GetBySlug"
 )
 
 // PostServiceClient is the client API for PostService service.
@@ -38,25 +39,27 @@ const (
 //
 // 帖子服务
 type PostServiceClient interface {
+	// 按文章取其分类链绑定的内容模型（C 端渲染 custom_fields 用；免鉴权）
+	GetPostContentModel(ctx context.Context, in *v1.GetModelByPostRequest, opts ...grpc.CallOption) (*v1.ContentModel, error)
 	// 获取帖子列表
-	List(ctx context.Context, in *v1.PagingRequest, opts ...grpc.CallOption) (*v11.ListPostResponse, error)
+	List(ctx context.Context, in *v11.PagingRequest, opts ...grpc.CallOption) (*v1.ListPostResponse, error)
 	// 全文搜索帖子（前台，基于 OpenSearch）
 	//
 	// 仅返回 PUBLISHED 状态内容；tenant_id 由服务端从登录用户上下文注入，
 	// 客户端无法指定或绕过。故此端点不进鉴权白名单——必须登录后方可搜索。
-	SearchPosts(ctx context.Context, in *v11.SearchPostsRequest, opts ...grpc.CallOption) (*v11.SearchPostsResponse, error)
+	SearchPosts(ctx context.Context, in *v1.SearchPostsRequest, opts ...grpc.CallOption) (*v1.SearchPostsResponse, error)
 	// 获取帖子数据
-	Get(ctx context.Context, in *v11.GetPostRequest, opts ...grpc.CallOption) (*v11.Post, error)
+	Get(ctx context.Context, in *v1.GetPostRequest, opts ...grpc.CallOption) (*v1.Post, error)
 	// 创建帖子
-	Create(ctx context.Context, in *v11.CreatePostRequest, opts ...grpc.CallOption) (*v11.Post, error)
+	Create(ctx context.Context, in *v1.CreatePostRequest, opts ...grpc.CallOption) (*v1.Post, error)
 	// 更新帖子
-	Update(ctx context.Context, in *v11.UpdatePostRequest, opts ...grpc.CallOption) (*v11.Post, error)
+	Update(ctx context.Context, in *v1.UpdatePostRequest, opts ...grpc.CallOption) (*v1.Post, error)
 	// 删除帖子
-	Delete(ctx context.Context, in *v11.DeletePostRequest, opts ...grpc.CallOption) (*emptypb.Empty, error)
+	Delete(ctx context.Context, in *v1.DeletePostRequest, opts ...grpc.CallOption) (*emptypb.Empty, error)
 	// 获取翻译数据
-	GetTranslation(ctx context.Context, in *v11.GetPostRequest, opts ...grpc.CallOption) (*v11.PostTranslation, error)
+	GetTranslation(ctx context.Context, in *v1.GetPostRequest, opts ...grpc.CallOption) (*v1.PostTranslation, error)
 	// 按 slug 获取帖子（公开，SEO 路由 /post/{slug} 的数据源）
-	GetBySlug(ctx context.Context, in *GetPostBySlugRequest, opts ...grpc.CallOption) (*v11.Post, error)
+	GetBySlug(ctx context.Context, in *GetPostBySlugRequest, opts ...grpc.CallOption) (*v1.Post, error)
 }
 
 type postServiceClient struct {
@@ -67,9 +70,19 @@ func NewPostServiceClient(cc grpc.ClientConnInterface) PostServiceClient {
 	return &postServiceClient{cc}
 }
 
-func (c *postServiceClient) List(ctx context.Context, in *v1.PagingRequest, opts ...grpc.CallOption) (*v11.ListPostResponse, error) {
+func (c *postServiceClient) GetPostContentModel(ctx context.Context, in *v1.GetModelByPostRequest, opts ...grpc.CallOption) (*v1.ContentModel, error) {
 	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
-	out := new(v11.ListPostResponse)
+	out := new(v1.ContentModel)
+	err := c.cc.Invoke(ctx, PostService_GetPostContentModel_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *postServiceClient) List(ctx context.Context, in *v11.PagingRequest, opts ...grpc.CallOption) (*v1.ListPostResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(v1.ListPostResponse)
 	err := c.cc.Invoke(ctx, PostService_List_FullMethodName, in, out, cOpts...)
 	if err != nil {
 		return nil, err
@@ -77,9 +90,9 @@ func (c *postServiceClient) List(ctx context.Context, in *v1.PagingRequest, opts
 	return out, nil
 }
 
-func (c *postServiceClient) SearchPosts(ctx context.Context, in *v11.SearchPostsRequest, opts ...grpc.CallOption) (*v11.SearchPostsResponse, error) {
+func (c *postServiceClient) SearchPosts(ctx context.Context, in *v1.SearchPostsRequest, opts ...grpc.CallOption) (*v1.SearchPostsResponse, error) {
 	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
-	out := new(v11.SearchPostsResponse)
+	out := new(v1.SearchPostsResponse)
 	err := c.cc.Invoke(ctx, PostService_SearchPosts_FullMethodName, in, out, cOpts...)
 	if err != nil {
 		return nil, err
@@ -87,9 +100,9 @@ func (c *postServiceClient) SearchPosts(ctx context.Context, in *v11.SearchPosts
 	return out, nil
 }
 
-func (c *postServiceClient) Get(ctx context.Context, in *v11.GetPostRequest, opts ...grpc.CallOption) (*v11.Post, error) {
+func (c *postServiceClient) Get(ctx context.Context, in *v1.GetPostRequest, opts ...grpc.CallOption) (*v1.Post, error) {
 	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
-	out := new(v11.Post)
+	out := new(v1.Post)
 	err := c.cc.Invoke(ctx, PostService_Get_FullMethodName, in, out, cOpts...)
 	if err != nil {
 		return nil, err
@@ -97,9 +110,9 @@ func (c *postServiceClient) Get(ctx context.Context, in *v11.GetPostRequest, opt
 	return out, nil
 }
 
-func (c *postServiceClient) Create(ctx context.Context, in *v11.CreatePostRequest, opts ...grpc.CallOption) (*v11.Post, error) {
+func (c *postServiceClient) Create(ctx context.Context, in *v1.CreatePostRequest, opts ...grpc.CallOption) (*v1.Post, error) {
 	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
-	out := new(v11.Post)
+	out := new(v1.Post)
 	err := c.cc.Invoke(ctx, PostService_Create_FullMethodName, in, out, cOpts...)
 	if err != nil {
 		return nil, err
@@ -107,9 +120,9 @@ func (c *postServiceClient) Create(ctx context.Context, in *v11.CreatePostReques
 	return out, nil
 }
 
-func (c *postServiceClient) Update(ctx context.Context, in *v11.UpdatePostRequest, opts ...grpc.CallOption) (*v11.Post, error) {
+func (c *postServiceClient) Update(ctx context.Context, in *v1.UpdatePostRequest, opts ...grpc.CallOption) (*v1.Post, error) {
 	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
-	out := new(v11.Post)
+	out := new(v1.Post)
 	err := c.cc.Invoke(ctx, PostService_Update_FullMethodName, in, out, cOpts...)
 	if err != nil {
 		return nil, err
@@ -117,7 +130,7 @@ func (c *postServiceClient) Update(ctx context.Context, in *v11.UpdatePostReques
 	return out, nil
 }
 
-func (c *postServiceClient) Delete(ctx context.Context, in *v11.DeletePostRequest, opts ...grpc.CallOption) (*emptypb.Empty, error) {
+func (c *postServiceClient) Delete(ctx context.Context, in *v1.DeletePostRequest, opts ...grpc.CallOption) (*emptypb.Empty, error) {
 	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
 	out := new(emptypb.Empty)
 	err := c.cc.Invoke(ctx, PostService_Delete_FullMethodName, in, out, cOpts...)
@@ -127,9 +140,9 @@ func (c *postServiceClient) Delete(ctx context.Context, in *v11.DeletePostReques
 	return out, nil
 }
 
-func (c *postServiceClient) GetTranslation(ctx context.Context, in *v11.GetPostRequest, opts ...grpc.CallOption) (*v11.PostTranslation, error) {
+func (c *postServiceClient) GetTranslation(ctx context.Context, in *v1.GetPostRequest, opts ...grpc.CallOption) (*v1.PostTranslation, error) {
 	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
-	out := new(v11.PostTranslation)
+	out := new(v1.PostTranslation)
 	err := c.cc.Invoke(ctx, PostService_GetTranslation_FullMethodName, in, out, cOpts...)
 	if err != nil {
 		return nil, err
@@ -137,9 +150,9 @@ func (c *postServiceClient) GetTranslation(ctx context.Context, in *v11.GetPostR
 	return out, nil
 }
 
-func (c *postServiceClient) GetBySlug(ctx context.Context, in *GetPostBySlugRequest, opts ...grpc.CallOption) (*v11.Post, error) {
+func (c *postServiceClient) GetBySlug(ctx context.Context, in *GetPostBySlugRequest, opts ...grpc.CallOption) (*v1.Post, error) {
 	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
-	out := new(v11.Post)
+	out := new(v1.Post)
 	err := c.cc.Invoke(ctx, PostService_GetBySlug_FullMethodName, in, out, cOpts...)
 	if err != nil {
 		return nil, err
@@ -153,25 +166,27 @@ func (c *postServiceClient) GetBySlug(ctx context.Context, in *GetPostBySlugRequ
 //
 // 帖子服务
 type PostServiceServer interface {
+	// 按文章取其分类链绑定的内容模型（C 端渲染 custom_fields 用；免鉴权）
+	GetPostContentModel(context.Context, *v1.GetModelByPostRequest) (*v1.ContentModel, error)
 	// 获取帖子列表
-	List(context.Context, *v1.PagingRequest) (*v11.ListPostResponse, error)
+	List(context.Context, *v11.PagingRequest) (*v1.ListPostResponse, error)
 	// 全文搜索帖子（前台，基于 OpenSearch）
 	//
 	// 仅返回 PUBLISHED 状态内容；tenant_id 由服务端从登录用户上下文注入，
 	// 客户端无法指定或绕过。故此端点不进鉴权白名单——必须登录后方可搜索。
-	SearchPosts(context.Context, *v11.SearchPostsRequest) (*v11.SearchPostsResponse, error)
+	SearchPosts(context.Context, *v1.SearchPostsRequest) (*v1.SearchPostsResponse, error)
 	// 获取帖子数据
-	Get(context.Context, *v11.GetPostRequest) (*v11.Post, error)
+	Get(context.Context, *v1.GetPostRequest) (*v1.Post, error)
 	// 创建帖子
-	Create(context.Context, *v11.CreatePostRequest) (*v11.Post, error)
+	Create(context.Context, *v1.CreatePostRequest) (*v1.Post, error)
 	// 更新帖子
-	Update(context.Context, *v11.UpdatePostRequest) (*v11.Post, error)
+	Update(context.Context, *v1.UpdatePostRequest) (*v1.Post, error)
 	// 删除帖子
-	Delete(context.Context, *v11.DeletePostRequest) (*emptypb.Empty, error)
+	Delete(context.Context, *v1.DeletePostRequest) (*emptypb.Empty, error)
 	// 获取翻译数据
-	GetTranslation(context.Context, *v11.GetPostRequest) (*v11.PostTranslation, error)
+	GetTranslation(context.Context, *v1.GetPostRequest) (*v1.PostTranslation, error)
 	// 按 slug 获取帖子（公开，SEO 路由 /post/{slug} 的数据源）
-	GetBySlug(context.Context, *GetPostBySlugRequest) (*v11.Post, error)
+	GetBySlug(context.Context, *GetPostBySlugRequest) (*v1.Post, error)
 	mustEmbedUnimplementedPostServiceServer()
 }
 
@@ -182,28 +197,31 @@ type PostServiceServer interface {
 // pointer dereference when methods are called.
 type UnimplementedPostServiceServer struct{}
 
-func (UnimplementedPostServiceServer) List(context.Context, *v1.PagingRequest) (*v11.ListPostResponse, error) {
+func (UnimplementedPostServiceServer) GetPostContentModel(context.Context, *v1.GetModelByPostRequest) (*v1.ContentModel, error) {
+	return nil, status.Error(codes.Unimplemented, "method GetPostContentModel not implemented")
+}
+func (UnimplementedPostServiceServer) List(context.Context, *v11.PagingRequest) (*v1.ListPostResponse, error) {
 	return nil, status.Error(codes.Unimplemented, "method List not implemented")
 }
-func (UnimplementedPostServiceServer) SearchPosts(context.Context, *v11.SearchPostsRequest) (*v11.SearchPostsResponse, error) {
+func (UnimplementedPostServiceServer) SearchPosts(context.Context, *v1.SearchPostsRequest) (*v1.SearchPostsResponse, error) {
 	return nil, status.Error(codes.Unimplemented, "method SearchPosts not implemented")
 }
-func (UnimplementedPostServiceServer) Get(context.Context, *v11.GetPostRequest) (*v11.Post, error) {
+func (UnimplementedPostServiceServer) Get(context.Context, *v1.GetPostRequest) (*v1.Post, error) {
 	return nil, status.Error(codes.Unimplemented, "method Get not implemented")
 }
-func (UnimplementedPostServiceServer) Create(context.Context, *v11.CreatePostRequest) (*v11.Post, error) {
+func (UnimplementedPostServiceServer) Create(context.Context, *v1.CreatePostRequest) (*v1.Post, error) {
 	return nil, status.Error(codes.Unimplemented, "method Create not implemented")
 }
-func (UnimplementedPostServiceServer) Update(context.Context, *v11.UpdatePostRequest) (*v11.Post, error) {
+func (UnimplementedPostServiceServer) Update(context.Context, *v1.UpdatePostRequest) (*v1.Post, error) {
 	return nil, status.Error(codes.Unimplemented, "method Update not implemented")
 }
-func (UnimplementedPostServiceServer) Delete(context.Context, *v11.DeletePostRequest) (*emptypb.Empty, error) {
+func (UnimplementedPostServiceServer) Delete(context.Context, *v1.DeletePostRequest) (*emptypb.Empty, error) {
 	return nil, status.Error(codes.Unimplemented, "method Delete not implemented")
 }
-func (UnimplementedPostServiceServer) GetTranslation(context.Context, *v11.GetPostRequest) (*v11.PostTranslation, error) {
+func (UnimplementedPostServiceServer) GetTranslation(context.Context, *v1.GetPostRequest) (*v1.PostTranslation, error) {
 	return nil, status.Error(codes.Unimplemented, "method GetTranslation not implemented")
 }
-func (UnimplementedPostServiceServer) GetBySlug(context.Context, *GetPostBySlugRequest) (*v11.Post, error) {
+func (UnimplementedPostServiceServer) GetBySlug(context.Context, *GetPostBySlugRequest) (*v1.Post, error) {
 	return nil, status.Error(codes.Unimplemented, "method GetBySlug not implemented")
 }
 func (UnimplementedPostServiceServer) mustEmbedUnimplementedPostServiceServer() {}
@@ -227,8 +245,26 @@ func RegisterPostServiceServer(s grpc.ServiceRegistrar, srv PostServiceServer) {
 	s.RegisterService(&PostService_ServiceDesc, srv)
 }
 
+func _PostService_GetPostContentModel_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(v1.GetModelByPostRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(PostServiceServer).GetPostContentModel(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: PostService_GetPostContentModel_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(PostServiceServer).GetPostContentModel(ctx, req.(*v1.GetModelByPostRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 func _PostService_List_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(v1.PagingRequest)
+	in := new(v11.PagingRequest)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
@@ -240,13 +276,13 @@ func _PostService_List_Handler(srv interface{}, ctx context.Context, dec func(in
 		FullMethod: PostService_List_FullMethodName,
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(PostServiceServer).List(ctx, req.(*v1.PagingRequest))
+		return srv.(PostServiceServer).List(ctx, req.(*v11.PagingRequest))
 	}
 	return interceptor(ctx, in, info, handler)
 }
 
 func _PostService_SearchPosts_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(v11.SearchPostsRequest)
+	in := new(v1.SearchPostsRequest)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
@@ -258,13 +294,13 @@ func _PostService_SearchPosts_Handler(srv interface{}, ctx context.Context, dec 
 		FullMethod: PostService_SearchPosts_FullMethodName,
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(PostServiceServer).SearchPosts(ctx, req.(*v11.SearchPostsRequest))
+		return srv.(PostServiceServer).SearchPosts(ctx, req.(*v1.SearchPostsRequest))
 	}
 	return interceptor(ctx, in, info, handler)
 }
 
 func _PostService_Get_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(v11.GetPostRequest)
+	in := new(v1.GetPostRequest)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
@@ -276,13 +312,13 @@ func _PostService_Get_Handler(srv interface{}, ctx context.Context, dec func(int
 		FullMethod: PostService_Get_FullMethodName,
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(PostServiceServer).Get(ctx, req.(*v11.GetPostRequest))
+		return srv.(PostServiceServer).Get(ctx, req.(*v1.GetPostRequest))
 	}
 	return interceptor(ctx, in, info, handler)
 }
 
 func _PostService_Create_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(v11.CreatePostRequest)
+	in := new(v1.CreatePostRequest)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
@@ -294,13 +330,13 @@ func _PostService_Create_Handler(srv interface{}, ctx context.Context, dec func(
 		FullMethod: PostService_Create_FullMethodName,
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(PostServiceServer).Create(ctx, req.(*v11.CreatePostRequest))
+		return srv.(PostServiceServer).Create(ctx, req.(*v1.CreatePostRequest))
 	}
 	return interceptor(ctx, in, info, handler)
 }
 
 func _PostService_Update_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(v11.UpdatePostRequest)
+	in := new(v1.UpdatePostRequest)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
@@ -312,13 +348,13 @@ func _PostService_Update_Handler(srv interface{}, ctx context.Context, dec func(
 		FullMethod: PostService_Update_FullMethodName,
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(PostServiceServer).Update(ctx, req.(*v11.UpdatePostRequest))
+		return srv.(PostServiceServer).Update(ctx, req.(*v1.UpdatePostRequest))
 	}
 	return interceptor(ctx, in, info, handler)
 }
 
 func _PostService_Delete_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(v11.DeletePostRequest)
+	in := new(v1.DeletePostRequest)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
@@ -330,13 +366,13 @@ func _PostService_Delete_Handler(srv interface{}, ctx context.Context, dec func(
 		FullMethod: PostService_Delete_FullMethodName,
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(PostServiceServer).Delete(ctx, req.(*v11.DeletePostRequest))
+		return srv.(PostServiceServer).Delete(ctx, req.(*v1.DeletePostRequest))
 	}
 	return interceptor(ctx, in, info, handler)
 }
 
 func _PostService_GetTranslation_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(v11.GetPostRequest)
+	in := new(v1.GetPostRequest)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
@@ -348,7 +384,7 @@ func _PostService_GetTranslation_Handler(srv interface{}, ctx context.Context, d
 		FullMethod: PostService_GetTranslation_FullMethodName,
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(PostServiceServer).GetTranslation(ctx, req.(*v11.GetPostRequest))
+		return srv.(PostServiceServer).GetTranslation(ctx, req.(*v1.GetPostRequest))
 	}
 	return interceptor(ctx, in, info, handler)
 }
@@ -378,6 +414,10 @@ var PostService_ServiceDesc = grpc.ServiceDesc{
 	ServiceName: "app.service.v1.PostService",
 	HandlerType: (*PostServiceServer)(nil),
 	Methods: []grpc.MethodDesc{
+		{
+			MethodName: "GetPostContentModel",
+			Handler:    _PostService_GetPostContentModel_Handler,
+		},
 		{
 			MethodName: "List",
 			Handler:    _PostService_List_Handler,

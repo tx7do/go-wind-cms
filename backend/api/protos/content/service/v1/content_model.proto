@@ -35,6 +35,10 @@ service ContentModelService {
 
   // 列出模型下的字段定义（供内容编辑器拉取动态表单 schema）
   rpc ListFieldDefinitions (ListFieldDefinitionsRequest) returns (ListFieldDefinitionsResponse) {}
+
+  // 按文章取其分类链绑定的内容模型（C 端渲染 custom_fields 的公开数据源；
+  // 内部解析 文章→分类→模型，调用方无法指定或越权）
+  rpc GetModelByPost (GetModelByPostRequest) returns (ContentModel) {}
 }
 
 // 内容模型
@@ -212,6 +216,14 @@ message FieldDefinitionTranslation {
 }
 
 // 查询内容模型列表 - 回应
+// 请求 - 按文章取内容模型
+message GetModelByPostRequest {
+  uint32 post_id = 1 [
+    json_name = "postId",
+    (gnostic.openapi.v3.property) = {description: "文章 ID"}
+  ]; // 文章 ID
+}
+
 message ListContentModelResponse {
   repeated ContentModel items = 1;
   uint64 total = 2;

@@ -18,14 +18,38 @@ type ContentModelService struct {
 	contentV1.UnimplementedContentModelServiceServer
 
 	contentModelRepo *data.ContentModelRepo
+	postRepo         *data.PostRepo
 	log              *log.Helper
 }
 
-func NewContentModelService(ctx *bootstrap.Context, contentModelRepo *data.ContentModelRepo) *ContentModelService {
+func NewContentModelService(ctx *bootstrap.Context, contentModelRepo *data.ContentModelRepo, postRepo *data.PostRepo) *ContentModelService {
 	return &ContentModelService{
 		log:              ctx.NewLoggerHelper("content-model/service/core-service"),
 		contentModelRepo: contentModelRepo,
+		postRepo:         postRepo,
 	}
+}
+
+// GetModelByPost 按文章取其分类链绑定的内容模型（C 端渲染 custom_fields 用）。
+// 文章→分类→模型的解析在服务端完成，调用方无法指定模型或借道越权；
+// 文章不存在/未绑定模型返回 NotFound/空模型（由门面决定公开语义）。
+func (s *ContentModelService) GetModelByPost(ctx context.Context, req *contentV1.GetModelByPostRequest) (*contentV1.ContentModel, error) {
+	if req == nil || req.GetPostId() == 0 {
+		return nil, contentV1.ErrorBadRequest("invalid parameter")
+	}
+	post, err := s.postRepo.Get(ctx, &contentV1.GetPostRequest{
+		QueryBy: &contentV1.GetPostRequest_Id{Id: req.GetPostId()},
+	})
+	if err != nil {
+		return nil, err
+	}
+	modelID := s.contentModelRepo.ResolveModelIDByCategories(ctx, post.GetCategoryIds())
+	if modelID == 0 {
+		return &contentV1.ContentModel{}, nil
+	}
+	return s.contentModelRepo.Get(ctx, &contentV1.GetContentModelRequest{
+		QueryBy: &contentV1.GetContentModelRequest_Id{Id: modelID},
+	})
 }
 
 func (s *ContentModelService) List(ctx context.Context, req *paginationV1.PagingRequest) (*contentV1.ListContentModelResponse, error) {

@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import {XIcon} from '@/plugins/xicon'
 import {fetchPost, fetchPostPreview, getPostTitle, getPostContent, getPostThumbnail} from '@/api/composables/post'
+import CustomFieldsSection from '@/components/post/CustomFieldsSection.vue'
 import {useGetCounts, extractCount, recordView, useWatch, useUnwatch, useLike, useUnlike} from '@/api/composables/interaction'
 
 const {t} = useI18n()
@@ -276,6 +277,8 @@ onMounted(() => {
             <!-- Post Content -->
             <div ref="contentRef" class="mb-8">
               <ContentViewer :content="displayContent" type="markdown"/>
+              <!-- 自定义字段（内容建模前台读侧；无模型/无值时静默不渲染） -->
+              <CustomFieldsSection :post-id="postId" :custom-fields="post?.customFields"/>
             </div>
 
             <!-- Floating Actions -->

@@ -28,6 +28,7 @@ const (
 	ContentModelService_Update_FullMethodName               = "/content.service.v1.ContentModelService/Update"
 	ContentModelService_Delete_FullMethodName               = "/content.service.v1.ContentModelService/Delete"
 	ContentModelService_ListFieldDefinitions_FullMethodName = "/content.service.v1.ContentModelService/ListFieldDefinitions"
+	ContentModelService_GetModelByPost_FullMethodName       = "/content.service.v1.ContentModelService/GetModelByPost"
 )
 
 // ContentModelServiceClient is the client API for ContentModelService service.
@@ -51,6 +52,9 @@ type ContentModelServiceClient interface {
 	Delete(ctx context.Context, in *DeleteContentModelRequest, opts ...grpc.CallOption) (*emptypb.Empty, error)
 	// 列出模型下的字段定义（供内容编辑器拉取动态表单 schema）
 	ListFieldDefinitions(ctx context.Context, in *ListFieldDefinitionsRequest, opts ...grpc.CallOption) (*ListFieldDefinitionsResponse, error)
+	// 按文章取其分类链绑定的内容模型（C 端渲染 custom_fields 的公开数据源；
+	// 内部解析 文章→分类→模型，调用方无法指定或越权）
+	GetModelByPost(ctx context.Context, in *GetModelByPostRequest, opts ...grpc.CallOption) (*ContentModel, error)
 }
 
 type contentModelServiceClient struct {
@@ -131,6 +135,16 @@ func (c *contentModelServiceClient) ListFieldDefinitions(ctx context.Context, in
 	return out, nil
 }
 
+func (c *contentModelServiceClient) GetModelByPost(ctx context.Context, in *GetModelByPostRequest, opts ...grpc.CallOption) (*ContentModel, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(ContentModel)
+	err := c.cc.Invoke(ctx, ContentModelService_GetModelByPost_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 // ContentModelServiceServer is the server API for ContentModelService service.
 // All implementations must embed UnimplementedContentModelServiceServer
 // for forward compatibility.
@@ -152,6 +166,9 @@ type ContentModelServiceServer interface {
 	Delete(context.Context, *DeleteContentModelRequest) (*emptypb.Empty, error)
 	// 列出模型下的字段定义（供内容编辑器拉取动态表单 schema）
 	ListFieldDefinitions(context.Context, *ListFieldDefinitionsRequest) (*ListFieldDefinitionsResponse, error)
+	// 按文章取其分类链绑定的内容模型（C 端渲染 custom_fields 的公开数据源；
+	// 内部解析 文章→分类→模型，调用方无法指定或越权）
+	GetModelByPost(context.Context, *GetModelByPostRequest) (*ContentModel, error)
 	mustEmbedUnimplementedContentModelServiceServer()
 }
 
@@ -182,6 +199,9 @@ func (UnimplementedContentModelServiceServer) Delete(context.Context, *DeleteCon
 }
 func (UnimplementedContentModelServiceServer) ListFieldDefinitions(context.Context, *ListFieldDefinitionsRequest) (*ListFieldDefinitionsResponse, error) {
 	return nil, status.Error(codes.Unimplemented, "method ListFieldDefinitions not implemented")
+}
+func (UnimplementedContentModelServiceServer) GetModelByPost(context.Context, *GetModelByPostRequest) (*ContentModel, error) {
+	return nil, status.Error(codes.Unimplemented, "method GetModelByPost not implemented")
 }
 func (UnimplementedContentModelServiceServer) mustEmbedUnimplementedContentModelServiceServer() {}
 func (UnimplementedContentModelServiceServer) testEmbeddedByValue()                             {}
@@ -330,6 +350,24 @@ func _ContentModelService_ListFieldDefinitions_Handler(srv interface{}, ctx cont
 	return interceptor(ctx, in, info, handler)
 }
 
+func _ContentModelService_GetModelByPost_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(GetModelByPostRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(ContentModelServiceServer).GetModelByPost(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: ContentModelService_GetModelByPost_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(ContentModelServiceServer).GetModelByPost(ctx, req.(*GetModelByPostRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 // ContentModelService_ServiceDesc is the grpc.ServiceDesc for ContentModelService service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
@@ -364,6 +402,10 @@ var ContentModelService_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "ListFieldDefinitions",
 			Handler:    _ContentModelService_ListFieldDefinitions_Handler,
+		},
+		{
+			MethodName: "GetModelByPost",
+			Handler:    _ContentModelService_GetModelByPost_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},

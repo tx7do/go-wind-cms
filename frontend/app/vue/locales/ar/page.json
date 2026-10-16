@@ -93,7 +93,8 @@
     "shared": "Shared successfully",
     "share": "Share",
     "link_copied": "Link copied to clipboard",
-    "copy_failed": "Copy failed, please copy manually"
+    "copy_failed": "Copy failed, please copy manually",
+    "custom_fields": "حقول مخصصة"
   },
   "error": {
     "not_found": "404 - Page Not Found",

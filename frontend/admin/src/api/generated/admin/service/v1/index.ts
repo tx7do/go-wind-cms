@@ -3439,7 +3439,6 @@ export function createContentModelServiceClient(
     },
   };
 }
-// 查询内容模型列表 - 回应
 export type contentservicev1_ListContentModelResponse = {
   items: contentservicev1_ContentModel[] | undefined;
   total: number | undefined;

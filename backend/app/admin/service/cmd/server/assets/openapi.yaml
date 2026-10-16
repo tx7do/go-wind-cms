@@ -11723,7 +11723,6 @@ components:
                         $ref: '#/components/schemas/content.service.v1.ContentModel'
                 total:
                     type: string
-            description: 查询内容模型列表 - 回应
         content.service.v1.ListEmailTemplatesResponse:
             type: object
             properties:

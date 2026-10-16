@@ -12,7 +12,7 @@
 import json
 import time
 
-from common import AdminApi, admin_login
+from common import APP_BASE, AdminApi, admin_login
 
 hdr = admin_login("admin", "admin")
 api = AdminApi(hdr)
@@ -144,6 +144,80 @@ r = api(f"/admin/v1/media-assets/{ids[0]}/references", "GET")
 items = r.get("items") or []
 check("删页面后引用边清除", not any(x.get("sourceId") == page_id and x.get("sourceType") == "page"
                                  for x in items), f"items={len(items)}")
+
+# ===== 11. 内容建模前台：模型绑定分类 → 文章 customFields → 公开模型查询 =====
+model = api("/admin/v1/content-models", "POST", {"data": {
+    "name": f"E2E 模型 {TS}",
+    "code": f"e2e-model-{TS}",
+    "fields": [
+        {"name": "price", "type": "FIELD_TYPE_NUMBER", "label": "价格"},
+        {"name": "spec", "type": "FIELD_TYPE_RICHTEXT", "label": "规格"},
+        {"name": "cover", "type": "FIELD_TYPE_IMAGE", "label": "封面"},
+    ],
+}})
+model_id = model.get("id")
+check("建内容模型（3 字段）", bool(model_id), f"id={model_id}")
+
+cat = api("/admin/v1/categories", "POST", {"data": {
+    "name": f"E2E 模型分类 {TS}",
+    "slug": f"e2e-model-cat-{TS}",
+    "contentModelId": model_id,
+}})
+cat_id = cat.get("id")
+check("建绑定模型的分类", bool(cat_id), f"id={cat_id}")
+
+asset_url_0 = URL.replace(".png", "-0.png")
+cpost = api("/admin/v1/posts", "POST", {"data": {
+    "status": "DRAFT",
+    "categoryIds": [cat_id],
+    "customFields": {
+        "price": "99.5",
+        "spec": "<b>旗舰</b>规格",
+        # IMAGE 字段按校验约定存 media_asset:<id> 引用（非 URL）
+        "cover": f"media_asset:{ids[0]}",
+    },
+    "translations": [{"languageCode": "zh-CN", "title": f"E2E 建模文章 {TS}",
+                      "content": "<p>正文</p>"}],
+}})
+cpost_id = cpost.get("id")
+check("建带 customFields 的文章", bool(cpost_id),
+      f"id={cpost_id} resp={json.dumps(cpost, ensure_ascii=False)[:160]}")
+# 发布走审核链（直改 status 会被审批流拦截）
+api(f"/admin/v1/posts/{cpost_id}/review/submit", "POST", {"postId": cpost_id})
+api(f"/admin/v1/posts/{cpost_id}/review/approve", "POST", {"postId": cpost_id})
+
+# 公开面：/app/v1/posts/{id}/content-model 返回模型与字段定义
+def app_get(path):
+    import urllib.request as _u
+    req = _u.Request(APP_BASE + path)
+    try:
+        with _u.urlopen(req, timeout=15) as resp:
+            return resp.status, json.loads(resp.read().decode() or "{}")
+    except Exception as e:  # noqa: BLE001 —— 断言脚本要打印失败
+        print(f"  [app_get {path}] {e}")
+        return 0, {}
+
+st, cm = app_get(f"/app/v1/posts/{cpost_id}/content-model")
+check("公开模型查询 200", st == 200, f"status={st}")
+check("命中绑定模型", cm.get("id") == model_id, f"id={cm.get('id')} vs {model_id}")
+fnames = sorted((f.get("name") or "") for f in (cm.get("fields") or []))
+check("字段定义全量返回", fnames == ["cover", "price", "spec"], f"fields={fnames}")
+
+# 公开文章详情携带 customFields
+st2, pj = app_get(f"/app/v1/posts/{cpost_id}")
+check("公开文章详情 200", st2 == 200, f"status={st2}")
+cf = pj.get("customFields") or {}
+check("详情携带 customFields", cf.get("price") == "99.5" and cf.get("spec", "").startswith("<b>"),
+      f"keys={sorted(cf.keys())}")
+
+# 公开媒体端点：IMAGE 引用 media_asset:<id> 换 URL（渲染链）
+st3, ma = app_get(f"/app/v1/media-assets/{ids[0]}")
+check("公开媒体资产 200", st3 == 200, f"status={st3}")
+check("媒体资产带 url", bool(ma.get("url")), f"url={str(ma.get('url'))[:40]}")
+
+api(f"/admin/v1/posts/{cpost_id}", "DELETE")
+api(f"/admin/v1/categories/{cat_id}", "DELETE")
+api(f"/admin/v1/content-models/{model_id}", "DELETE")
 
 # 清理重复资产
 for i in ids:

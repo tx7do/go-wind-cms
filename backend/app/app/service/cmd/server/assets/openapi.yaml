@@ -818,6 +818,33 @@ paths:
                 "200":
                     description: OK
                     content: {}
+    /app/v1/media-assets/{id}:
+        get:
+            tags:
+                - MediaAssetService
+            description: 按 ID 取媒体资产（公开字段：url/filename/mimeType 等；租户隔离由 core 保证）
+            operationId: MediaAssetService_Get
+            parameters:
+                - name: id
+                  in: path
+                  required: true
+                  schema:
+                    type: integer
+                    format: uint32
+                - name: viewMask
+                  in: query
+                  schema:
+                    type: string
+                    format: field-mask
+            responses:
+                "200":
+                    description: OK
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/media.service.v1.MediaAsset'
+            security:
+                - {}
     /app/v1/navigations:
         get:
             tags:
@@ -1497,6 +1524,28 @@ paths:
                         application/json:
                             schema:
                                 $ref: '#/components/schemas/content.service.v1.PostTranslation'
+    /app/v1/posts/{postId}/content-model:
+        get:
+            tags:
+                - PostService
+            description: 按文章取其分类链绑定的内容模型（C 端渲染 custom_fields 用；免鉴权）
+            operationId: PostService_GetPostContentModel
+            parameters:
+                - name: postId
+                  in: path
+                  required: true
+                  schema:
+                    type: integer
+                    format: uint32
+            responses:
+                "200":
+                    description: OK
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/content.service.v1.ContentModel'
+            security:
+                - {}
     /app/v1/redirects:
         get:
             tags:
@@ -2331,6 +2380,86 @@ components:
                     description: 删除时间
                     format: date-time
             description: 类别翻译
+        content.service.v1.ContentModel:
+            type: object
+            properties:
+                id:
+                    type: integer
+                    description: 模型ID
+                    format: uint32
+                name:
+                    type: string
+                    description: 模型名称（语言无关，后端标识）
+                code:
+                    type: string
+                    description: 模型编码，租户内唯一
+                description:
+                    type: string
+                    description: 模型描述（语言无关）
+                sortOrder:
+                    type: integer
+                    description: 排序顺序
+                    format: uint32
+                fields:
+                    type: array
+                    items:
+                        $ref: '#/components/schemas/content.service.v1.FieldDefinition'
+                    description: 字段定义列表
+                translations:
+                    type: array
+                    items:
+                        $ref: '#/components/schemas/content.service.v1.ContentModelTranslation'
+                    description: 名称/描述的多语言翻译
+                tenantId:
+                    type: integer
+                    description: 租户ID
+                    format: uint32
+                createdBy:
+                    type: integer
+                    description: 创建者用户ID
+                    format: uint32
+                updatedBy:
+                    type: integer
+                    description: 更新者用户ID
+                    format: uint32
+                createdAt:
+                    type: string
+                    description: 创建时间
+                    format: date-time
+                updatedAt:
+                    type: string
+                    description: 更新时间
+                    format: date-time
+            description: 内容模型
+        content.service.v1.ContentModelTranslation:
+            type: object
+            properties:
+                id:
+                    type: integer
+                    description: ID
+                    format: uint32
+                contentModelId:
+                    type: integer
+                    description: 内容模型ID
+                    format: uint32
+                languageCode:
+                    type: string
+                    description: 语言代码
+                name:
+                    type: string
+                    description: 翻译后名称
+                description:
+                    type: string
+                    description: 翻译后描述
+                createdBy:
+                    type: integer
+                    description: 创建者用户ID
+                    format: uint32
+                createdAt:
+                    type: string
+                    description: 创建时间
+                    format: date-time
+            description: 内容模型翻译
         content.service.v1.CreateCategoryRequest:
             type: object
             properties:
@@ -2355,6 +2484,103 @@ components:
                 data:
                     $ref: '#/components/schemas/content.service.v1.Tag'
             description: 请求 - 创建标签
+        content.service.v1.FieldDefinition:
+            type: object
+            properties:
+                id:
+                    type: integer
+                    description: 字段定义ID
+                    format: uint32
+                contentModelId:
+                    type: integer
+                    description: 所属内容模型ID
+                    format: uint32
+                name:
+                    type: string
+                    description: 字段名（语言无关，作为 custom_fields 的键）
+                type:
+                    enum:
+                        - FIELD_TYPE_TEXT
+                        - FIELD_TYPE_NUMBER
+                        - FIELD_TYPE_RICHTEXT
+                        - FIELD_TYPE_IMAGE
+                        - FIELD_TYPE_FILE
+                        - FIELD_TYPE_RELATION
+                    type: string
+                    description: 字段类型
+                    format: enum
+                label:
+                    type: string
+                    description: 字段标签（默认语言）
+                description:
+                    type: string
+                    description: 字段描述（默认语言）
+                placeholder:
+                    type: string
+                    description: 输入框占位符（默认语言）
+                isRequired:
+                    type: boolean
+                    description: 是否必填
+                validationRegex:
+                    type: string
+                    description: 校验正则（仅 text 类适用）
+                options:
+                    type: object
+                    additionalProperties:
+                        type: string
+                    description: 扩展选项（select 类等，预留）
+                relationConfig:
+                    $ref: '#/components/schemas/content.service.v1.RelationConfig'
+                sortOrder:
+                    type: integer
+                    description: 排序顺序
+                    format: uint32
+                translations:
+                    type: array
+                    items:
+                        $ref: '#/components/schemas/content.service.v1.FieldDefinitionTranslation'
+                    description: label/description/placeholder 的多语言翻译
+                createdBy:
+                    type: integer
+                    description: 创建者用户ID
+                    format: uint32
+                createdAt:
+                    type: string
+                    description: 创建时间
+                    format: date-time
+            description: 字段定义
+        content.service.v1.FieldDefinitionTranslation:
+            type: object
+            properties:
+                id:
+                    type: integer
+                    description: ID
+                    format: uint32
+                fieldDefinitionId:
+                    type: integer
+                    description: 字段定义ID
+                    format: uint32
+                languageCode:
+                    type: string
+                    description: 语言代码
+                label:
+                    type: string
+                    description: 翻译后标签
+                description:
+                    type: string
+                    description: 翻译后描述
+                placeholder:
+                    type: string
+                    description: 翻译后占位符
+                createdBy:
+                    type: integer
+                    description: 创建者用户ID
+                    format: uint32
+                createdAt:
+                    type: string
+                    description: 创建时间
+                    format: date-time
+            description: 字段定义翻译
         content.service.v1.FormSubmission:
             type: object
             properties:
@@ -2848,6 +3074,20 @@ components:
                     description: 更新时间
                     format: date-time
             description: URL 重定向
+        content.service.v1.RelationConfig:
+            type: object
+            properties:
+                targetEntityType:
+                    type: string
+                    description: 目标实体类型，白名单：post/page/category/tag
+                allowCrossTenant:
+                    type: boolean
+                    description: 是否允许跨租户引用
+                filterCategoryId:
+                    type: integer
+                    description: 可选：限定目标 post 所属分类
+                    format: uint32
+            description: relation 类型字段的引用配置
         content.service.v1.SearchPostHit:
             type: object
             properties:
@@ -3653,6 +3893,123 @@ components:
                 watchCount:
                     type: integer
                     format: int32
+        media.service.v1.MediaAsset:
+            type: object
+            properties:
+                id:
+                    type: integer
+                    description: 媒体资源库ID
+                    format: uint32
+                type:
+                    enum:
+                        - ASSET_TYPE_UNSPECIFIED
+                        - ASSET_TYPE_IMAGE
+                        - ASSET_TYPE_VIDEO
+                        - ASSET_TYPE_DOCUMENT
+                        - ASSET_TYPE_AUDIO
+                        - ASSET_TYPE_ARCHIVE
+                        - ASSET_TYPE_OTHER
+                    type: string
+                    description: 媒体类型
+                    format: enum
+                filename:
+                    type: string
+                    description: 原始文件名（含扩展名，如 'cover.jpg'）
+                mimeType:
+                    type: string
+                    description: MIME 类型（如 'image/jpeg'）
+                size:
+                    type: string
+                    description: 文件大小（字节）
+                storagePath:
+                    type: string
+                    description: 存储路径（对象存储内部路径，如 'assets/2024/06/cover.jpg'）
+                url:
+                    type: string
+                    description: CDN 访问 URL（带签名/过期时间的临时 URL 或永久 URL）
+                width:
+                    type: integer
+                    description: 宽度（像素，图片/视频有效）
+                    format: uint32
+                height:
+                    type: integer
+                    description: 高度（像素，图片/视频有效）
+                    format: uint32
+                duration:
+                    type: integer
+                    description: 时长（秒，视频/音频有效）
+                    format: uint32
+                altText:
+                    type: string
+                    description: ALT 文本（SEO 优化，图片必需）
+                title:
+                    type: string
+                    description: 标题（后台管理/图库展示用）
+                caption:
+                    type: string
+                    description: 说明文字（前端展示用）
+                processingStatus:
+                    enum:
+                        - PROCESSING_STATUS_UNSPECIFIED
+                        - PROCESSING_STATUS_UPLOADING
+                        - PROCESSING_STATUS_PROCESSING
+                        - PROCESSING_STATUS_COMPLETED
+                        - PROCESSING_STATUS_FAILED
+                    type: string
+                    description: 媒体处理状态
+                    format: enum
+                processingError:
+                    type: string
+                    description: 处理失败时的错误信息
+                fileHash:
+                    type: string
+                    description: 文件哈希值（SHA256，用于去重和完整性校验）
+                referenceCount:
+                    type: integer
+                    description: 被引用次数（用于垃圾回收，0 表示未被任何内容引用）
+                    format: uint32
+                variantFileIds:
+                    type: object
+                    additionalProperties:
+                        type: integer
+                        format: uint32
+                    description: 变体文件URL（如不同尺寸的图片/不同质量的视频），key为变体名称（如 'thumbnail'、'medium'、'high'），value为对应的文件ID
+                isPrivate:
+                    type: boolean
+                    description: 是否私密资源
+                fileId:
+                    type: integer
+                    description: 存储文件ID（如果使用了文件表存储文件元数据，则关联的文件ID）
+                    format: uint32
+                folderId:
+                    type: integer
+                    description: 所属文件夹ID（0 表示根目录）
+                    format: uint32
+                createdBy:
+                    type: integer
+                    description: 创建者用户ID
+                    format: uint32
+                updatedBy:
+                    type: integer
+                    description: 更新者用户ID
+                    format: uint32
+                deletedBy:
+                    type: integer
+                    description: 删除者用户ID
+                    format: uint32
+                createdAt:
+                    type: string
+                    description: 创建时间
+                    format: date-time
+                updatedAt:
+                    type: string
+                    description: 更新时间
+                    format: date-time
+                deletedAt:
+                    type: string
+                    description: 删除时间
+                    format: date-time
+            description: 媒体资源库
         site.service.v1.CreateNavigationRequest:
             type: object
             properties:
@@ -4062,6 +4419,8 @@ tags:
          经内网可信元数据 x-md-global-tenant-id 注入（与评论/浏览上报链路同款）。
     - name: InteractionService
       description: 交互服务（点赞/收藏）
+    - name: MediaAssetService
+      description: 公开媒体资产服务（C 端渲染用最小面）
     - name: NavigationService
       description: 导航服务
     - name: PageService

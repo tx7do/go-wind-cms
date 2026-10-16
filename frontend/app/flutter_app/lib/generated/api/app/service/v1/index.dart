@@ -8684,6 +8684,757 @@ class InteractionServiceV1RecordViewResponse {
 
 }
 
+/// 公开媒体资产服务（C 端渲染用最小面）
+class MediaAssetServiceClient {
+  final ClientTransport _transport;
+
+  MediaAssetServiceClient(this._transport);
+
+  /// 按 ID 取媒体资产（公开字段：url/filename/mimeType 等；租户隔离由 core 保证）
+  Future<MediaServiceV1MediaAsset> get(MediaServiceV1GetMediaAssetRequest request, {Map<String, String>? headers}) async {
+    if (request.id == null) {
+      throw ArgumentError('missing required field request.id');
+    }
+    final path = '/app/v1/media-assets/${request.id}';
+    final queryParams = <String>[];
+    if (request.viewMask != null) {
+      queryParams.add('viewMask=${Uri.encodeComponent(request.viewMask!.toString())}');
+    }
+    var uri = path;
+    if (queryParams.isNotEmpty) {
+      uri += '?${queryParams.join("&")}';
+    }
+    final result = await _transport.unary(uri, 'GET', null, TransportMeta(
+      service: 'MediaAssetService',
+      method: 'Get',
+    ), headers: headers);
+    return MediaServiceV1MediaAsset.fromJson(result as Map<String, dynamic>);
+  }
+}
+
+/// 请求 - 媒体资源库数据
+class MediaServiceV1GetMediaAssetRequest {
+  int? id;
+  String? viewMask;
+
+  MediaServiceV1GetMediaAssetRequest({
+    this.id,
+    this.viewMask,
+  });
+
+  factory MediaServiceV1GetMediaAssetRequest.fromJson(Map<String, dynamic> json) {
+    return MediaServiceV1GetMediaAssetRequest(
+      id: json['id'] as int?,
+      viewMask: json['viewMask'] as String?,
+    );
+  }
+
+  Map<String, dynamic> toJson() {
+    final json = <String, dynamic>{};
+    if (id != null) json['id'] = id;
+    if (viewMask != null) json['viewMask'] = viewMask;
+    return json;
+  }
+
+  @override
+  String toString() {
+    return 'MediaServiceV1GetMediaAssetRequest(id: $id, viewMask: $viewMask)';
+  }
+
+  @override
+  bool operator ==(Object other) =>
+    identical(this, other) ||
+    other is MediaServiceV1GetMediaAssetRequest &&
+      runtimeType == other.runtimeType
+      && id == other.id
+      && viewMask == other.viewMask
+    ;
+
+  @override
+  int get hashCode => Object.hashAll([
+    id,
+    viewMask,
+  ]);
+
+  MediaServiceV1GetMediaAssetRequest copyWith({
+    int? id,
+    String? viewMask,
+  }) {
+    return MediaServiceV1GetMediaAssetRequest(
+      id: id ?? this.id,
+      viewMask: viewMask ?? this.viewMask,
+    );
+  }
+
+  /// 二进制 proto 编码（MQTT 等二进制传输用；字段按编号升序写出）
+  Uint8List writeToBuffer() {
+    final w = ProtoWireWriter();
+    _writeTo(w);
+    return w.toBuffer();
+  }
+
+  void _writeTo(ProtoWireWriter w) {
+    // field 1: id
+    final f1 = id;
+    if (f1 != null) {
+      w.writeUint32(1, f1!);
+    }
+    // field 100: viewMask
+    final f100 = viewMask;
+    if (f100 != null) {
+      w.writeFieldMask(100, f100!);
+    }
+  }
+
+  factory MediaServiceV1GetMediaAssetRequest.fromBuffer(List<int> bytes) {
+    return MediaServiceV1GetMediaAssetRequest._readFrom(ProtoWireReader(bytes));
+  }
+
+  static MediaServiceV1GetMediaAssetRequest _readFrom(ProtoWireReader r) {
+    final m = MediaServiceV1GetMediaAssetRequest();
+    while (r.next()) {
+      switch (r.fieldNumber) {
+        // field 1: id
+        case 1: {
+          m.id = r.readUint32();
+          break;
+        }
+        // field 100: viewMask
+        case 100: {
+          m.viewMask = r.readFieldMaskText();
+          break;
+        }
+        default: {
+          r.skip();
+        }
+      }
+    }
+    return m;
+  }
+
+}
+
+/// 媒体资源库
+class MediaServiceV1MediaAsset {
+  /// SEO 与展示
+  String? altText;
+  String? caption;
+  String? createdAt;
+  int? createdBy;
+  String? deletedAt;
+  int? deletedBy;
+  int? duration;
+  String? fileHash;
+  int? fileId;
+  String? filename;
+  int? folderId;
+  int? height;
+  int? id;
+  bool? isPrivate;
+  String? mimeType;
+  String? processingError;
+  MediaServiceV1MediaAsset$ProcessingStatus? processingStatus;
+  int? referenceCount;
+  int? size;
+  String? storagePath;
+  String? title;
+  MediaServiceV1MediaAsset$AssetType? type;
+  String? updatedAt;
+  int? updatedBy;
+  String? url;
+  Map<String, int>? variantFileIds;
+  /// 尺寸信息（图片/视频）
+  int? width;
+
+  MediaServiceV1MediaAsset({
+    this.altText,
+    this.caption,
+    this.createdAt,
+    this.createdBy,
+    this.deletedAt,
+    this.deletedBy,
+    this.duration,
+    this.fileHash,
+    this.fileId,
+    this.filename,
+    this.folderId,
+    this.height,
+    this.id,
+    this.isPrivate,
+    this.mimeType,
+    this.processingError,
+    this.processingStatus,
+    this.referenceCount,
+    this.size,
+    this.storagePath,
+    this.title,
+    this.type,
+    this.updatedAt,
+    this.updatedBy,
+    this.url,
+    this.variantFileIds,
+    this.width,
+  });
+
+  factory MediaServiceV1MediaAsset.fromJson(Map<String, dynamic> json) {
+    return MediaServiceV1MediaAsset(
+      altText: json['altText'] as String?,
+      caption: json['caption'] as String?,
+      createdAt: json['createdAt'] as String?,
+      createdBy: json['createdBy'] as int?,
+      deletedAt: json['deletedAt'] as String?,
+      deletedBy: json['deletedBy'] as int?,
+      duration: json['duration'] as int?,
+      fileHash: json['fileHash'] as String?,
+      fileId: json['fileId'] as int?,
+      filename: json['filename'] as String?,
+      folderId: json['folderId'] as int?,
+      height: json['height'] as int?,
+      id: json['id'] as int?,
+      isPrivate: json['isPrivate'] as bool?,
+      mimeType: json['mimeType'] as String?,
+      processingError: json['processingError'] as String?,
+      processingStatus: json['processingStatus'] != null ? MediaServiceV1MediaAsset$ProcessingStatus.fromString(json['processingStatus'] as String) : null,
+      referenceCount: json['referenceCount'] as int?,
+      size: json['size'] != null ? int.parse(json['size'].toString()) : null,
+      storagePath: json['storagePath'] as String?,
+      title: json['title'] as String?,
+      type: json['type'] != null ? MediaServiceV1MediaAsset$AssetType.fromString(json['type'] as String) : null,
+      updatedAt: json['updatedAt'] as String?,
+      updatedBy: json['updatedBy'] as int?,
+      url: json['url'] as String?,
+      variantFileIds: (json['variantFileIds'] as Map<String, dynamic>?)?.map((k, v) => MapEntry(k, v as int)),
+      width: json['width'] as int?,
+    );
+  }
+
+  Map<String, dynamic> toJson() {
+    final json = <String, dynamic>{};
+    if (altText != null) json['altText'] = altText;
+    if (caption != null) json['caption'] = caption;
+    if (createdAt != null) json['createdAt'] = createdAt;
+    if (createdBy != null) json['createdBy'] = createdBy;
+    if (deletedAt != null) json['deletedAt'] = deletedAt;
+    if (deletedBy != null) json['deletedBy'] = deletedBy;
+    if (duration != null) json['duration'] = duration;
+    if (fileHash != null) json['fileHash'] = fileHash;
+    if (fileId != null) json['fileId'] = fileId;
+    if (filename != null) json['filename'] = filename;
+    if (folderId != null) json['folderId'] = folderId;
+    if (height != null) json['height'] = height;
+    if (id != null) json['id'] = id;
+    if (isPrivate != null) json['isPrivate'] = isPrivate;
+    if (mimeType != null) json['mimeType'] = mimeType;
+    if (processingError != null) json['processingError'] = processingError;
+    if (processingStatus != null) json['processingStatus'] = processingStatus!.value;
+    if (referenceCount != null) json['referenceCount'] = referenceCount;
+    if (size != null) json['size'] = size.toString();
+    if (storagePath != null) json['storagePath'] = storagePath;
+    if (title != null) json['title'] = title;
+    if (type != null) json['type'] = type!.value;
+    if (updatedAt != null) json['updatedAt'] = updatedAt;
+    if (updatedBy != null) json['updatedBy'] = updatedBy;
+    if (url != null) json['url'] = url;
+    if (variantFileIds != null) json['variantFileIds'] = variantFileIds;
+    if (width != null) json['width'] = width;
+    return json;
+  }
+
+  @override
+  String toString() {
+    return 'MediaServiceV1MediaAsset(altText: $altText, caption: $caption, createdAt: $createdAt, createdBy: $createdBy, deletedAt: $deletedAt, deletedBy: $deletedBy, duration: $duration, fileHash: $fileHash, fileId: $fileId, filename: $filename, folderId: $folderId, height: $height, id: $id, isPrivate: $isPrivate, mimeType: $mimeType, processingError: $processingError, processingStatus: $processingStatus, referenceCount: $referenceCount, size: $size, storagePath: $storagePath, title: $title, type: $type, updatedAt: $updatedAt, updatedBy: $updatedBy, url: $url, variantFileIds: $variantFileIds, width: $width)';
+  }
+
+  @override
+  bool operator ==(Object other) =>
+    identical(this, other) ||
+    other is MediaServiceV1MediaAsset &&
+      runtimeType == other.runtimeType
+      && altText == other.altText
+      && caption == other.caption
+      && createdAt == other.createdAt
+      && createdBy == other.createdBy
+      && deletedAt == other.deletedAt
+      && deletedBy == other.deletedBy
+      && duration == other.duration
+      && fileHash == other.fileHash
+      && fileId == other.fileId
+      && filename == other.filename
+      && folderId == other.folderId
+      && height == other.height
+      && id == other.id
+      && isPrivate == other.isPrivate
+      && mimeType == other.mimeType
+      && processingError == other.processingError
+      && processingStatus == other.processingStatus
+      && referenceCount == other.referenceCount
+      && size == other.size
+      && storagePath == other.storagePath
+      && title == other.title
+      && type == other.type
+      && updatedAt == other.updatedAt
+      && updatedBy == other.updatedBy
+      && url == other.url
+      && variantFileIds == other.variantFileIds
+      && width == other.width
+    ;
+
+  @override
+  int get hashCode => Object.hashAll([
+    altText,
+    caption,
+    createdAt,
+    createdBy,
+    deletedAt,
+    deletedBy,
+    duration,
+    fileHash,
+    fileId,
+    filename,
+    folderId,
+    height,
+    id,
+    isPrivate,
+    mimeType,
+    processingError,
+    processingStatus,
+    referenceCount,
+    size,
+    storagePath,
+    title,
+    type,
+    updatedAt,
+    updatedBy,
+    url,
+    variantFileIds,
+    width,
+  ]);
+
+  MediaServiceV1MediaAsset copyWith({
+    String? altText,
+    String? caption,
+    String? createdAt,
+    int? createdBy,
+    String? deletedAt,
+    int? deletedBy,
+    int? duration,
+    String? fileHash,
+    int? fileId,
+    String? filename,
+    int? folderId,
+    int? height,
+    int? id,
+    bool? isPrivate,
+    String? mimeType,
+    String? processingError,
+    MediaServiceV1MediaAsset$ProcessingStatus? processingStatus,
+    int? referenceCount,
+    int? size,
+    String? storagePath,
+    String? title,
+    MediaServiceV1MediaAsset$AssetType? type,
+    String? updatedAt,
+    int? updatedBy,
+    String? url,
+    Map<String, int>? variantFileIds,
+    int? width,
+  }) {
+    return MediaServiceV1MediaAsset(
+      altText: altText ?? this.altText,
+      caption: caption ?? this.caption,
+      createdAt: createdAt ?? this.createdAt,
+      createdBy: createdBy ?? this.createdBy,
+      deletedAt: deletedAt ?? this.deletedAt,
+      deletedBy: deletedBy ?? this.deletedBy,
+      duration: duration ?? this.duration,
+      fileHash: fileHash ?? this.fileHash,
+      fileId: fileId ?? this.fileId,
+      filename: filename ?? this.filename,
+      folderId: folderId ?? this.folderId,
+      height: height ?? this.height,
+      id: id ?? this.id,
+      isPrivate: isPrivate ?? this.isPrivate,
+      mimeType: mimeType ?? this.mimeType,
+      processingError: processingError ?? this.processingError,
+      processingStatus: processingStatus ?? this.processingStatus,
+      referenceCount: referenceCount ?? this.referenceCount,
+      size: size ?? this.size,
+      storagePath: storagePath ?? this.storagePath,
+      title: title ?? this.title,
+      type: type ?? this.type,
+      updatedAt: updatedAt ?? this.updatedAt,
+      updatedBy: updatedBy ?? this.updatedBy,
+      url: url ?? this.url,
+      variantFileIds: variantFileIds ?? this.variantFileIds,
+      width: width ?? this.width,
+    );
+  }
+
+  /// 二进制 proto 编码（MQTT 等二进制传输用；字段按编号升序写出）
+  Uint8List writeToBuffer() {
+    final w = ProtoWireWriter();
+    _writeTo(w);
+    return w.toBuffer();
+  }
+
+  void _writeTo(ProtoWireWriter w) {
+    // field 1: id
+    final f1 = id;
+    if (f1 != null) {
+      w.writeUint32(1, f1!);
+    }
+    // field 2: type
+    final f2 = type;
+    if (f2 != null) {
+      w.writeEnum(2, f2!.wire); // MediaServiceV1MediaAsset$AssetType
+    }
+    // field 3: filename
+    final f3 = filename;
+    if (f3 != null) {
+      w.writeString(3, f3!);
+    }
+    // field 4: mimeType
+    final f4 = mimeType;
+    if (f4 != null) {
+      w.writeString(4, f4!);
+    }
+    // field 5: size
+    final f5 = size;
+    if (f5 != null) {
+      w.writeUint64(5, f5!);
+    }
+    // field 6: storagePath
+    final f6 = storagePath;
+    if (f6 != null) {
+      w.writeString(6, f6!);
+    }
+    // field 7: url
+    final f7 = url;
+    if (f7 != null) {
+      w.writeString(7, f7!);
+    }
+    // field 8: width
+    final f8 = width;
+    if (f8 != null) {
+      w.writeUint32(8, f8!);
+    }
+    // field 9: height
+    final f9 = height;
+    if (f9 != null) {
+      w.writeUint32(9, f9!);
+    }
+    // field 10: duration
+    final f10 = duration;
+    if (f10 != null) {
+      w.writeUint32(10, f10!);
+    }
+    // field 11: altText
+    final f11 = altText;
+    if (f11 != null) {
+      w.writeString(11, f11!);
+    }
+    // field 12: title
+    final f12 = title;
+    if (f12 != null) {
+      w.writeString(12, f12!);
+    }
+    // field 13: caption
+    final f13 = caption;
+    if (f13 != null) {
+      w.writeString(13, f13!);
+    }
+    // field 14: processingStatus
+    final f14 = processingStatus;
+    if (f14 != null) {
+      w.writeEnum(14, f14!.wire); // MediaServiceV1MediaAsset$ProcessingStatus
+    }
+    // field 15: processingError
+    final f15 = processingError;
+    if (f15 != null) {
+      w.writeString(15, f15!);
+    }
+    // field 16: fileHash
+    final f16 = fileHash;
+    if (f16 != null) {
+      w.writeString(16, f16!);
+    }
+    // field 17: referenceCount
+    final f17 = referenceCount;
+    if (f17 != null) {
+      w.writeUint32(17, f17!);
+    }
+    // field 18: variantFileIds
+    final f18 = variantFileIds;
+    if (f18 != null) {
+      f18!.forEach((k, v) {
+        final ew = ProtoWireWriter();
+        ew.writeString(1, k);
+        ew.writeUint32(2, v);
+        w.writeRaw(18, ew.toBuffer());
+      });
+    }
+    // field 20: isPrivate
+    final f20 = isPrivate;
+    if (f20 != null) {
+      w.writeBool(20, f20!);
+    }
+    // field 21: fileId
+    final f21 = fileId;
+    if (f21 != null) {
+      w.writeUint32(21, f21!);
+    }
+    // field 22: folderId
+    final f22 = folderId;
+    if (f22 != null) {
+      w.writeUint32(22, f22!);
+    }
+    // field 100: createdBy
+    final f100 = createdBy;
+    if (f100 != null) {
+      w.writeUint32(100, f100!);
+    }
+    // field 101: updatedBy
+    final f101 = updatedBy;
+    if (f101 != null) {
+      w.writeUint32(101, f101!);
+    }
+    // field 102: deletedBy
+    final f102 = deletedBy;
+    if (f102 != null) {
+      w.writeUint32(102, f102!);
+    }
+    // field 200: createdAt
+    final f200 = createdAt;
+    if (f200 != null) {
+      w.writeTimestamp(200, f200!);
+    }
+    // field 201: updatedAt
+    final f201 = updatedAt;
+    if (f201 != null) {
+      w.writeTimestamp(201, f201!);
+    }
+    // field 202: deletedAt
+    final f202 = deletedAt;
+    if (f202 != null) {
+      w.writeTimestamp(202, f202!);
+    }
+  }
+
+  factory MediaServiceV1MediaAsset.fromBuffer(List<int> bytes) {
+    return MediaServiceV1MediaAsset._readFrom(ProtoWireReader(bytes));
+  }
+
+  static MediaServiceV1MediaAsset _readFrom(ProtoWireReader r) {
+    final m = MediaServiceV1MediaAsset();
+    while (r.next()) {
+      switch (r.fieldNumber) {
+        // field 1: id
+        case 1: {
+          m.id = r.readUint32();
+          break;
+        }
+        // field 2: type
+        case 2: {
+          m.type = MediaServiceV1MediaAsset$AssetType.fromWire(r.readEnum());
+          break;
+        }
+        // field 3: filename
+        case 3: {
+          m.filename = r.readString();
+          break;
+        }
+        // field 4: mimeType
+        case 4: {
+          m.mimeType = r.readString();
+          break;
+        }
+        // field 5: size
+        case 5: {
+          m.size = r.readUint64();
+          break;
+        }
+        // field 6: storagePath
+        case 6: {
+          m.storagePath = r.readString();
+          break;
+        }
+        // field 7: url
+        case 7: {
+          m.url = r.readString();
+          break;
+        }
+        // field 8: width
+        case 8: {
+          m.width = r.readUint32();
+          break;
+        }
+        // field 9: height
+        case 9: {
+          m.height = r.readUint32();
+          break;
+        }
+        // field 10: duration
+        case 10: {
+          m.duration = r.readUint32();
+          break;
+        }
+        // field 11: altText
+        case 11: {
+          m.altText = r.readString();
+          break;
+        }
+        // field 12: title
+        case 12: {
+          m.title = r.readString();
+          break;
+        }
+        // field 13: caption
+        case 13: {
+          m.caption = r.readString();
+          break;
+        }
+        // field 14: processingStatus
+        case 14: {
+          m.processingStatus = MediaServiceV1MediaAsset$ProcessingStatus.fromWire(r.readEnum());
+          break;
+        }
+        // field 15: processingError
+        case 15: {
+          m.processingError = r.readString();
+          break;
+        }
+        // field 16: fileHash
+        case 16: {
+          m.fileHash = r.readString();
+          break;
+        }
+        // field 17: referenceCount
+        case 17: {
+          m.referenceCount = r.readUint32();
+          break;
+        }
+        // field 18: variantFileIds
+        case 18: {
+          final er = r.readNested();
+          String? k;
+          int? v;
+          while (er.next()) {
+            switch (er.fieldNumber) {
+              case 1: {
+                k = er.readString();
+                break;
+              }
+              case 2: {
+                v = er.readUint32();
+                break;
+              }
+              default: er.skip();
+            }
+          }
+          if (k != null && v != null) {
+            (m.variantFileIds ??= {})[k!] = v!;
+          }
+          break;
+        }
+        // field 20: isPrivate
+        case 20: {
+          m.isPrivate = r.readBool();
+          break;
+        }
+        // field 21: fileId
+        case 21: {
+          m.fileId = r.readUint32();
+          break;
+        }
+        // field 22: folderId
+        case 22: {
+          m.folderId = r.readUint32();
+          break;
+        }
+        // field 100: createdBy
+        case 100: {
+          m.createdBy = r.readUint32();
+          break;
+        }
+        // field 101: updatedBy
+        case 101: {
+          m.updatedBy = r.readUint32();
+          break;
+        }
+        // field 102: deletedBy
+        case 102: {
+          m.deletedBy = r.readUint32();
+          break;
+        }
+        // field 200: createdAt
+        case 200: {
+          m.createdAt = r.readTimestampIso();
+          break;
+        }
+        // field 201: updatedAt
+        case 201: {
+          m.updatedAt = r.readTimestampIso();
+          break;
+        }
+        // field 202: deletedAt
+        case 202: {
+          m.deletedAt = r.readTimestampIso();
+          break;
+        }
+        default: {
+          r.skip();
+        }
+      }
+    }
+    return m;
+  }
+
+}
+
+/// 媒体类型
+enum MediaServiceV1MediaAsset$AssetType {
+  assetTypeArchive('ASSET_TYPE_ARCHIVE', 5),
+  assetTypeAudio('ASSET_TYPE_AUDIO', 4),
+  assetTypeDocument('ASSET_TYPE_DOCUMENT', 3),
+  assetTypeImage('ASSET_TYPE_IMAGE', 1),
+  assetTypeOther('ASSET_TYPE_OTHER', 100),
+  assetTypeUnspecified('ASSET_TYPE_UNSPECIFIED', 0),
+  assetTypeVideo('ASSET_TYPE_VIDEO', 2);
+
+  final String value;
+  /// proto 枚举数值（二进制 wire 编解码用，与 JSON 的 value 字符串互补）
+  final int wire;
+  const MediaServiceV1MediaAsset$AssetType(this.value, this.wire);
+
+  static MediaServiceV1MediaAsset$AssetType fromString(String v) =>
+    values.firstWhere((e) => e.value == v, orElse: () => throw ArgumentError('Unknown MediaServiceV1MediaAsset\$AssetType value: ' + v));
+  static MediaServiceV1MediaAsset$AssetType fromWire(int v) =>
+    values.firstWhere((e) => e.wire == v, orElse: () => throw ArgumentError('Unknown MediaServiceV1MediaAsset\$AssetType wire value: ' + v.toString()));
+  @override
+  String toString() => value;
+}
+
+/// 媒体处理状态
+enum MediaServiceV1MediaAsset$ProcessingStatus {
+  processingStatusCompleted('PROCESSING_STATUS_COMPLETED', 3),
+  processingStatusFailed('PROCESSING_STATUS_FAILED', 4),
+  processingStatusProcessing('PROCESSING_STATUS_PROCESSING', 2),
+  processingStatusUnspecified('PROCESSING_STATUS_UNSPECIFIED', 0),
+  processingStatusUploading('PROCESSING_STATUS_UPLOADING', 1);
+
+  final String value;
+  /// proto 枚举数值（二进制 wire 编解码用，与 JSON 的 value 字符串互补）
+  final int wire;
+  const MediaServiceV1MediaAsset$ProcessingStatus(this.value, this.wire);
+
+  static MediaServiceV1MediaAsset$ProcessingStatus fromString(String v) =>
+    values.firstWhere((e) => e.value == v, orElse: () => throw ArgumentError('Unknown MediaServiceV1MediaAsset\$ProcessingStatus value: ' + v));
+  static MediaServiceV1MediaAsset$ProcessingStatus fromWire(int v) =>
+    values.firstWhere((e) => e.wire == v, orElse: () => throw ArgumentError('Unknown MediaServiceV1MediaAsset\$ProcessingStatus wire value: ' + v.toString()));
+  @override
+  String toString() => value;
+}
+
 /// 导航服务
 class NavigationServiceClient {
   final ClientTransport _transport;
@@ -12642,6 +13393,19 @@ class PostServiceClient {
 
   PostServiceClient(this._transport);
 
+  /// 按文章取其分类链绑定的内容模型（C 端渲染 custom_fields 用；免鉴权）
+  Future<ContentServiceV1ContentModel> getPostContentModel(ContentServiceV1GetModelByPostRequest request, {Map<String, String>? headers}) async {
+    if (request.postId == null) {
+      throw ArgumentError('missing required field request.post_id');
+    }
+    final path = '/app/v1/posts/${request.postId}/content-model';
+    final result = await _transport.unary(path, 'GET', null, TransportMeta(
+      service: 'PostService',
+      method: 'GetPostContentModel',
+    ), headers: headers);
+    return ContentServiceV1ContentModel.fromJson(result as Map<String, dynamic>);
+  }
+
   /// 获取帖子列表
   Future<ContentServiceV1ListPostResponse> list(PaginationPagingRequest request, {Map<String, String>? headers}) async {
     final path = '/app/v1/posts';
@@ -12833,6 +13597,1279 @@ class PostServiceClient {
     ), headers: headers);
     return ContentServiceV1Post.fromJson(result as Map<String, dynamic>);
   }
+}
+
+/// 查询内容模型列表 - 回应
+/// 请求 - 按文章取内容模型
+class ContentServiceV1GetModelByPostRequest {
+  int? postId;
+
+  ContentServiceV1GetModelByPostRequest({
+    this.postId,
+  });
+
+  factory ContentServiceV1GetModelByPostRequest.fromJson(Map<String, dynamic> json) {
+    return ContentServiceV1GetModelByPostRequest(
+      postId: json['postId'] as int?,
+    );
+  }
+
+  Map<String, dynamic> toJson() {
+    final json = <String, dynamic>{};
+    if (postId != null) json['postId'] = postId;
+    return json;
+  }
+
+  @override
+  String toString() {
+    return 'ContentServiceV1GetModelByPostRequest(postId: $postId)';
+  }
+
+  @override
+  bool operator ==(Object other) =>
+    identical(this, other) ||
+    other is ContentServiceV1GetModelByPostRequest &&
+      runtimeType == other.runtimeType
+      && postId == other.postId
+    ;
+
+  @override
+  int get hashCode => Object.hashAll([
+    postId,
+  ]);
+
+  ContentServiceV1GetModelByPostRequest copyWith({
+    int? postId,
+  }) {
+    return ContentServiceV1GetModelByPostRequest(
+      postId: postId ?? this.postId,
+    );
+  }
+
+  /// 二进制 proto 编码（MQTT 等二进制传输用；字段按编号升序写出）
+  Uint8List writeToBuffer() {
+    final w = ProtoWireWriter();
+    _writeTo(w);
+    return w.toBuffer();
+  }
+
+  void _writeTo(ProtoWireWriter w) {
+    // field 1: postId
+    final f1 = postId;
+    if (f1 != null) {
+      w.writeUint32(1, f1!);
+    }
+  }
+
+  factory ContentServiceV1GetModelByPostRequest.fromBuffer(List<int> bytes) {
+    return ContentServiceV1GetModelByPostRequest._readFrom(ProtoWireReader(bytes));
+  }
+
+  static ContentServiceV1GetModelByPostRequest _readFrom(ProtoWireReader r) {
+    final m = ContentServiceV1GetModelByPostRequest();
+    while (r.next()) {
+      switch (r.fieldNumber) {
+        // field 1: postId
+        case 1: {
+          m.postId = r.readUint32();
+          break;
+        }
+        default: {
+          r.skip();
+        }
+      }
+    }
+    return m;
+  }
+
+}
+
+/// 内容模型
+class ContentServiceV1ContentModel {
+  ///
+  /// Behaviors: OPTIONAL
+  String? code;
+  String? createdAt;
+  int? createdBy;
+  String? description;
+  /// 字段定义随模型整体读写（Create/Update 时整体替换，对齐 post 的 translations 惯例）
+  List<ContentServiceV1FieldDefinition>? fields;
+  int? id;
+  String? name;
+  int? sortOrder;
+  int? tenantId;
+  List<ContentServiceV1ContentModelTranslation>? translations;
+  String? updatedAt;
+  int? updatedBy;
+
+  ContentServiceV1ContentModel({
+    this.code,
+    this.createdAt,
+    this.createdBy,
+    this.description,
+    this.fields,
+    this.id,
+    this.name,
+    this.sortOrder,
+    this.tenantId,
+    this.translations,
+    this.updatedAt,
+    this.updatedBy,
+  });
+
+  factory ContentServiceV1ContentModel.fromJson(Map<String, dynamic> json) {
+    return ContentServiceV1ContentModel(
+      code: json['code'] as String?,
+      createdAt: json['createdAt'] as String?,
+      createdBy: json['createdBy'] as int?,
+      description: json['description'] as String?,
+      fields: (json['fields'] as List<dynamic>?)?.map((e) => ContentServiceV1FieldDefinition.fromJson(e as Map<String, dynamic>)).toList(),
+      id: json['id'] as int?,
+      name: json['name'] as String?,
+      sortOrder: json['sortOrder'] as int?,
+      tenantId: json['tenantId'] as int?,
+      translations: (json['translations'] as List<dynamic>?)?.map((e) => ContentServiceV1ContentModelTranslation.fromJson(e as Map<String, dynamic>)).toList(),
+      updatedAt: json['updatedAt'] as String?,
+      updatedBy: json['updatedBy'] as int?,
+    );
+  }
+
+  Map<String, dynamic> toJson() {
+    final json = <String, dynamic>{};
+    if (code != null) json['code'] = code;
+    if (createdAt != null) json['createdAt'] = createdAt;
+    if (createdBy != null) json['createdBy'] = createdBy;
+    if (description != null) json['description'] = description;
+    if (fields != null) json['fields'] = fields!.map((e) => e.toJson()).toList();
+    if (id != null) json['id'] = id;
+    if (name != null) json['name'] = name;
+    if (sortOrder != null) json['sortOrder'] = sortOrder;
+    if (tenantId != null) json['tenantId'] = tenantId;
+    if (translations != null) json['translations'] = translations!.map((e) => e.toJson()).toList();
+    if (updatedAt != null) json['updatedAt'] = updatedAt;
+    if (updatedBy != null) json['updatedBy'] = updatedBy;
+    return json;
+  }
+
+  @override
+  String toString() {
+    return 'ContentServiceV1ContentModel(code: $code, createdAt: $createdAt, createdBy: $createdBy, description: $description, fields: $fields, id: $id, name: $name, sortOrder: $sortOrder, tenantId: $tenantId, translations: $translations, updatedAt: $updatedAt, updatedBy: $updatedBy)';
+  }
+
+  @override
+  bool operator ==(Object other) =>
+    identical(this, other) ||
+    other is ContentServiceV1ContentModel &&
+      runtimeType == other.runtimeType
+      && code == other.code
+      && createdAt == other.createdAt
+      && createdBy == other.createdBy
+      && description == other.description
+      && fields == other.fields
+      && id == other.id
+      && name == other.name
+      && sortOrder == other.sortOrder
+      && tenantId == other.tenantId
+      && translations == other.translations
+      && updatedAt == other.updatedAt
+      && updatedBy == other.updatedBy
+    ;
+
+  @override
+  int get hashCode => Object.hashAll([
+    code,
+    createdAt,
+    createdBy,
+    description,
+    fields,
+    id,
+    name,
+    sortOrder,
+    tenantId,
+    translations,
+    updatedAt,
+    updatedBy,
+  ]);
+
+  ContentServiceV1ContentModel copyWith({
+    String? code,
+    String? createdAt,
+    int? createdBy,
+    String? description,
+    List<ContentServiceV1FieldDefinition>? fields,
+    int? id,
+    String? name,
+    int? sortOrder,
+    int? tenantId,
+    List<ContentServiceV1ContentModelTranslation>? translations,
+    String? updatedAt,
+    int? updatedBy,
+  }) {
+    return ContentServiceV1ContentModel(
+      code: code ?? this.code,
+      createdAt: createdAt ?? this.createdAt,
+      createdBy: createdBy ?? this.createdBy,
+      description: description ?? this.description,
+      fields: fields ?? this.fields,
+      id: id ?? this.id,
+      name: name ?? this.name,
+      sortOrder: sortOrder ?? this.sortOrder,
+      tenantId: tenantId ?? this.tenantId,
+      translations: translations ?? this.translations,
+      updatedAt: updatedAt ?? this.updatedAt,
+      updatedBy: updatedBy ?? this.updatedBy,
+    );
+  }
+
+  /// 二进制 proto 编码（MQTT 等二进制传输用；字段按编号升序写出）
+  Uint8List writeToBuffer() {
+    final w = ProtoWireWriter();
+    _writeTo(w);
+    return w.toBuffer();
+  }
+
+  void _writeTo(ProtoWireWriter w) {
+    // field 1: id
+    final f1 = id;
+    if (f1 != null) {
+      w.writeUint32(1, f1!);
+    }
+    // field 2: name
+    final f2 = name;
+    if (f2 != null) {
+      w.writeString(2, f2!);
+    }
+    // field 3: code
+    final f3 = code;
+    if (f3 != null) {
+      w.writeString(3, f3!);
+    }
+    // field 4: description
+    final f4 = description;
+    if (f4 != null) {
+      w.writeString(4, f4!);
+    }
+    // field 5: sortOrder
+    final f5 = sortOrder;
+    if (f5 != null) {
+      w.writeUint32(5, f5!);
+    }
+    // field 10: fields
+    final f10 = fields;
+    if (f10 != null) {
+      for (final e in f10!) { final cw = ProtoWireWriter(); e._writeTo(cw); w.writeRaw(10, cw.toBuffer()); }
+    }
+    // field 11: translations
+    final f11 = translations;
+    if (f11 != null) {
+      for (final e in f11!) { final cw = ProtoWireWriter(); e._writeTo(cw); w.writeRaw(11, cw.toBuffer()); }
+    }
+    // field 40: tenantId
+    final f40 = tenantId;
+    if (f40 != null) {
+      w.writeUint32(40, f40!);
+    }
+    // field 100: createdBy
+    final f100 = createdBy;
+    if (f100 != null) {
+      w.writeUint32(100, f100!);
+    }
+    // field 101: updatedBy
+    final f101 = updatedBy;
+    if (f101 != null) {
+      w.writeUint32(101, f101!);
+    }
+    // field 200: createdAt
+    final f200 = createdAt;
+    if (f200 != null) {
+      w.writeTimestamp(200, f200!);
+    }
+    // field 201: updatedAt
+    final f201 = updatedAt;
+    if (f201 != null) {
+      w.writeTimestamp(201, f201!);
+    }
+  }
+
+  factory ContentServiceV1ContentModel.fromBuffer(List<int> bytes) {
+    return ContentServiceV1ContentModel._readFrom(ProtoWireReader(bytes));
+  }
+
+  static ContentServiceV1ContentModel _readFrom(ProtoWireReader r) {
+    final m = ContentServiceV1ContentModel();
+    while (r.next()) {
+      switch (r.fieldNumber) {
+        // field 1: id
+        case 1: {
+          m.id = r.readUint32();
+          break;
+        }
+        // field 2: name
+        case 2: {
+          m.name = r.readString();
+          break;
+        }
+        // field 3: code
+        case 3: {
+          m.code = r.readString();
+          break;
+        }
+        // field 4: description
+        case 4: {
+          m.description = r.readString();
+          break;
+        }
+        // field 5: sortOrder
+        case 5: {
+          m.sortOrder = r.readUint32();
+          break;
+        }
+        // field 10: fields
+        case 10: {
+          m.fields = r.readNestedList().map(ContentServiceV1FieldDefinition._readFrom).toList();
+          break;
+        }
+        // field 11: translations
+        case 11: {
+          m.translations = r.readNestedList().map(ContentServiceV1ContentModelTranslation._readFrom).toList();
+          break;
+        }
+        // field 40: tenantId
+        case 40: {
+          m.tenantId = r.readUint32();
+          break;
+        }
+        // field 100: createdBy
+        case 100: {
+          m.createdBy = r.readUint32();
+          break;
+        }
+        // field 101: updatedBy
+        case 101: {
+          m.updatedBy = r.readUint32();
+          break;
+        }
+        // field 200: createdAt
+        case 200: {
+          m.createdAt = r.readTimestampIso();
+          break;
+        }
+        // field 201: updatedAt
+        case 201: {
+          m.updatedAt = r.readTimestampIso();
+          break;
+        }
+        default: {
+          r.skip();
+        }
+      }
+    }
+    return m;
+  }
+
+}
+
+/// 字段定义
+class ContentServiceV1FieldDefinition {
+  int? contentModelId;
+  String? createdAt;
+  int? createdBy;
+  String? description;
+  int? id;
+  bool? isRequired;
+  String? label;
+  String? name;
+  Map<String, String>? options;
+  String? placeholder;
+  ContentServiceV1RelationConfig? relationConfig;
+  int? sortOrder;
+  List<ContentServiceV1FieldDefinitionTranslation>? translations;
+  ContentServiceV1FieldDefinition$Type? type;
+  String? validationRegex;
+
+  ContentServiceV1FieldDefinition({
+    this.contentModelId,
+    this.createdAt,
+    this.createdBy,
+    this.description,
+    this.id,
+    this.isRequired,
+    this.label,
+    this.name,
+    this.options,
+    this.placeholder,
+    this.relationConfig,
+    this.sortOrder,
+    this.translations,
+    this.type,
+    this.validationRegex,
+  });
+
+  factory ContentServiceV1FieldDefinition.fromJson(Map<String, dynamic> json) {
+    return ContentServiceV1FieldDefinition(
+      contentModelId: json['contentModelId'] as int?,
+      createdAt: json['createdAt'] as String?,
+      createdBy: json['createdBy'] as int?,
+      description: json['description'] as String?,
+      id: json['id'] as int?,
+      isRequired: json['isRequired'] as bool?,
+      label: json['label'] as String?,
+      name: json['name'] as String?,
+      options: (json['options'] as Map<String, dynamic>?)?.map((k, v) => MapEntry(k, v as String)),
+      placeholder: json['placeholder'] as String?,
+      relationConfig: json['relationConfig'] != null ? ContentServiceV1RelationConfig.fromJson(json['relationConfig'] as Map<String, dynamic>) : null,
+      sortOrder: json['sortOrder'] as int?,
+      translations: (json['translations'] as List<dynamic>?)?.map((e) => ContentServiceV1FieldDefinitionTranslation.fromJson(e as Map<String, dynamic>)).toList(),
+      type: json['type'] != null ? ContentServiceV1FieldDefinition$Type.fromString(json['type'] as String) : null,
+      validationRegex: json['validationRegex'] as String?,
+    );
+  }
+
+  Map<String, dynamic> toJson() {
+    final json = <String, dynamic>{};
+    if (contentModelId != null) json['contentModelId'] = contentModelId;
+    if (createdAt != null) json['createdAt'] = createdAt;
+    if (createdBy != null) json['createdBy'] = createdBy;
+    if (description != null) json['description'] = description;
+    if (id != null) json['id'] = id;
+    if (isRequired != null) json['isRequired'] = isRequired;
+    if (label != null) json['label'] = label;
+    if (name != null) json['name'] = name;
+    if (options != null) json['options'] = options;
+    if (placeholder != null) json['placeholder'] = placeholder;
+    if (relationConfig != null) json['relationConfig'] = relationConfig!.toJson();
+    if (sortOrder != null) json['sortOrder'] = sortOrder;
+    if (translations != null) json['translations'] = translations!.map((e) => e.toJson()).toList();
+    if (type != null) json['type'] = type!.value;
+    if (validationRegex != null) json['validationRegex'] = validationRegex;
+    return json;
+  }
+
+  @override
+  String toString() {
+    return 'ContentServiceV1FieldDefinition(contentModelId: $contentModelId, createdAt: $createdAt, createdBy: $createdBy, description: $description, id: $id, isRequired: $isRequired, label: $label, name: $name, options: $options, placeholder: $placeholder, relationConfig: $relationConfig, sortOrder: $sortOrder, translations: $translations, type: $type, validationRegex: $validationRegex)';
+  }
+
+  @override
+  bool operator ==(Object other) =>
+    identical(this, other) ||
+    other is ContentServiceV1FieldDefinition &&
+      runtimeType == other.runtimeType
+      && contentModelId == other.contentModelId
+      && createdAt == other.createdAt
+      && createdBy == other.createdBy
+      && description == other.description
+      && id == other.id
+      && isRequired == other.isRequired
+      && label == other.label
+      && name == other.name
+      && options == other.options
+      && placeholder == other.placeholder
+      && relationConfig == other.relationConfig
+      && sortOrder == other.sortOrder
+      && translations == other.translations
+      && type == other.type
+      && validationRegex == other.validationRegex
+    ;
+
+  @override
+  int get hashCode => Object.hashAll([
+    contentModelId,
+    createdAt,
+    createdBy,
+    description,
+    id,
+    isRequired,
+    label,
+    name,
+    options,
+    placeholder,
+    relationConfig,
+    sortOrder,
+    translations,
+    type,
+    validationRegex,
+  ]);
+
+  ContentServiceV1FieldDefinition copyWith({
+    int? contentModelId,
+    String? createdAt,
+    int? createdBy,
+    String? description,
+    int? id,
+    bool? isRequired,
+    String? label,
+    String? name,
+    Map<String, String>? options,
+    String? placeholder,
+    ContentServiceV1RelationConfig? relationConfig,
+    int? sortOrder,
+    List<ContentServiceV1FieldDefinitionTranslation>? translations,
+    ContentServiceV1FieldDefinition$Type? type,
+    String? validationRegex,
+  }) {
+    return ContentServiceV1FieldDefinition(
+      contentModelId: contentModelId ?? this.contentModelId,
+      createdAt: createdAt ?? this.createdAt,
+      createdBy: createdBy ?? this.createdBy,
+      description: description ?? this.description,
+      id: id ?? this.id,
+      isRequired: isRequired ?? this.isRequired,
+      label: label ?? this.label,
+      name: name ?? this.name,
+      options: options ?? this.options,
+      placeholder: placeholder ?? this.placeholder,
+      relationConfig: relationConfig ?? this.relationConfig,
+      sortOrder: sortOrder ?? this.sortOrder,
+      translations: translations ?? this.translations,
+      type: type ?? this.type,
+      validationRegex: validationRegex ?? this.validationRegex,
+    );
+  }
+
+  /// 二进制 proto 编码（MQTT 等二进制传输用；字段按编号升序写出）
+  Uint8List writeToBuffer() {
+    final w = ProtoWireWriter();
+    _writeTo(w);
+    return w.toBuffer();
+  }
+
+  void _writeTo(ProtoWireWriter w) {
+    // field 1: id
+    final f1 = id;
+    if (f1 != null) {
+      w.writeUint32(1, f1!);
+    }
+    // field 2: contentModelId
+    final f2 = contentModelId;
+    if (f2 != null) {
+      w.writeUint32(2, f2!);
+    }
+    // field 3: name
+    final f3 = name;
+    if (f3 != null) {
+      w.writeString(3, f3!);
+    }
+    // field 4: type
+    final f4 = type;
+    if (f4 != null) {
+      w.writeEnum(4, f4!.wire); // ContentServiceV1FieldDefinition$Type
+    }
+    // field 5: label
+    final f5 = label;
+    if (f5 != null) {
+      w.writeString(5, f5!);
+    }
+    // field 6: description
+    final f6 = description;
+    if (f6 != null) {
+      w.writeString(6, f6!);
+    }
+    // field 7: placeholder
+    final f7 = placeholder;
+    if (f7 != null) {
+      w.writeString(7, f7!);
+    }
+    // field 8: isRequired
+    final f8 = isRequired;
+    if (f8 != null) {
+      w.writeBool(8, f8!);
+    }
+    // field 9: validationRegex
+    final f9 = validationRegex;
+    if (f9 != null) {
+      w.writeString(9, f9!);
+    }
+    // field 10: options
+    final f10 = options;
+    if (f10 != null) {
+      f10!.forEach((k, v) {
+        final ew = ProtoWireWriter();
+        ew.writeString(1, k);
+        ew.writeString(2, v);
+        w.writeRaw(10, ew.toBuffer());
+      });
+    }
+    // field 11: relationConfig
+    final f11 = relationConfig;
+    if (f11 != null) {
+      final cw = ProtoWireWriter(); f11!._writeTo(cw); w.writeRaw(11, cw.toBuffer()); // ContentServiceV1RelationConfig
+    }
+    // field 12: sortOrder
+    final f12 = sortOrder;
+    if (f12 != null) {
+      w.writeUint32(12, f12!);
+    }
+    // field 13: translations
+    final f13 = translations;
+    if (f13 != null) {
+      for (final e in f13!) { final cw = ProtoWireWriter(); e._writeTo(cw); w.writeRaw(13, cw.toBuffer()); }
+    }
+    // field 100: createdBy
+    final f100 = createdBy;
+    if (f100 != null) {
+      w.writeUint32(100, f100!);
+    }
+    // field 200: createdAt
+    final f200 = createdAt;
+    if (f200 != null) {
+      w.writeTimestamp(200, f200!);
+    }
+  }
+
+  factory ContentServiceV1FieldDefinition.fromBuffer(List<int> bytes) {
+    return ContentServiceV1FieldDefinition._readFrom(ProtoWireReader(bytes));
+  }
+
+  static ContentServiceV1FieldDefinition _readFrom(ProtoWireReader r) {
+    final m = ContentServiceV1FieldDefinition();
+    while (r.next()) {
+      switch (r.fieldNumber) {
+        // field 1: id
+        case 1: {
+          m.id = r.readUint32();
+          break;
+        }
+        // field 2: contentModelId
+        case 2: {
+          m.contentModelId = r.readUint32();
+          break;
+        }
+        // field 3: name
+        case 3: {
+          m.name = r.readString();
+          break;
+        }
+        // field 4: type
+        case 4: {
+          m.type = ContentServiceV1FieldDefinition$Type.fromWire(r.readEnum());
+          break;
+        }
+        // field 5: label
+        case 5: {
+          m.label = r.readString();
+          break;
+        }
+        // field 6: description
+        case 6: {
+          m.description = r.readString();
+          break;
+        }
+        // field 7: placeholder
+        case 7: {
+          m.placeholder = r.readString();
+          break;
+        }
+        // field 8: isRequired
+        case 8: {
+          m.isRequired = r.readBool();
+          break;
+        }
+        // field 9: validationRegex
+        case 9: {
+          m.validationRegex = r.readString();
+          break;
+        }
+        // field 10: options
+        case 10: {
+          final er = r.readNested();
+          String? k;
+          String? v;
+          while (er.next()) {
+            switch (er.fieldNumber) {
+              case 1: {
+                k = er.readString();
+                break;
+              }
+              case 2: {
+                v = er.readString();
+                break;
+              }
+              default: er.skip();
+            }
+          }
+          if (k != null && v != null) {
+            (m.options ??= {})[k!] = v!;
+          }
+          break;
+        }
+        // field 11: relationConfig
+        case 11: {
+          m.relationConfig = ContentServiceV1RelationConfig._readFrom(r.readNested());
+          break;
+        }
+        // field 12: sortOrder
+        case 12: {
+          m.sortOrder = r.readUint32();
+          break;
+        }
+        // field 13: translations
+        case 13: {
+          m.translations = r.readNestedList().map(ContentServiceV1FieldDefinitionTranslation._readFrom).toList();
+          break;
+        }
+        // field 100: createdBy
+        case 100: {
+          m.createdBy = r.readUint32();
+          break;
+        }
+        // field 200: createdAt
+        case 200: {
+          m.createdAt = r.readTimestampIso();
+          break;
+        }
+        default: {
+          r.skip();
+        }
+      }
+    }
+    return m;
+  }
+
+}
+
+/// 字段类型
+enum ContentServiceV1FieldDefinition$Type {
+  fieldTypeFile('FIELD_TYPE_FILE', 4),
+  fieldTypeImage('FIELD_TYPE_IMAGE', 3),
+  fieldTypeNumber('FIELD_TYPE_NUMBER', 1),
+  fieldTypeRelation('FIELD_TYPE_RELATION', 5),
+  fieldTypeRichtext('FIELD_TYPE_RICHTEXT', 2),
+  fieldTypeText('FIELD_TYPE_TEXT', 0);
+
+  final String value;
+  /// proto 枚举数值（二进制 wire 编解码用，与 JSON 的 value 字符串互补）
+  final int wire;
+  const ContentServiceV1FieldDefinition$Type(this.value, this.wire);
+
+  static ContentServiceV1FieldDefinition$Type fromString(String v) =>
+    values.firstWhere((e) => e.value == v, orElse: () => throw ArgumentError('Unknown ContentServiceV1FieldDefinition\$Type value: ' + v));
+  static ContentServiceV1FieldDefinition$Type fromWire(int v) =>
+    values.firstWhere((e) => e.wire == v, orElse: () => throw ArgumentError('Unknown ContentServiceV1FieldDefinition\$Type wire value: ' + v.toString()));
+  @override
+  String toString() => value;
+}
+
+/// relation 类型字段的引用配置
+class ContentServiceV1RelationConfig {
+  bool? allowCrossTenant;
+  int? filterCategoryId;
+  String? targetEntityType;
+
+  ContentServiceV1RelationConfig({
+    this.allowCrossTenant,
+    this.filterCategoryId,
+    this.targetEntityType,
+  });
+
+  factory ContentServiceV1RelationConfig.fromJson(Map<String, dynamic> json) {
+    return ContentServiceV1RelationConfig(
+      allowCrossTenant: json['allowCrossTenant'] as bool?,
+      filterCategoryId: json['filterCategoryId'] as int?,
+      targetEntityType: json['targetEntityType'] as String?,
+    );
+  }
+
+  Map<String, dynamic> toJson() {
+    final json = <String, dynamic>{};
+    if (allowCrossTenant != null) json['allowCrossTenant'] = allowCrossTenant;
+    if (filterCategoryId != null) json['filterCategoryId'] = filterCategoryId;
+    if (targetEntityType != null) json['targetEntityType'] = targetEntityType;
+    return json;
+  }
+
+  @override
+  String toString() {
+    return 'ContentServiceV1RelationConfig(allowCrossTenant: $allowCrossTenant, filterCategoryId: $filterCategoryId, targetEntityType: $targetEntityType)';
+  }
+
+  @override
+  bool operator ==(Object other) =>
+    identical(this, other) ||
+    other is ContentServiceV1RelationConfig &&
+      runtimeType == other.runtimeType
+      && allowCrossTenant == other.allowCrossTenant
+      && filterCategoryId == other.filterCategoryId
+      && targetEntityType == other.targetEntityType
+    ;
+
+  @override
+  int get hashCode => Object.hashAll([
+    allowCrossTenant,
+    filterCategoryId,
+    targetEntityType,
+  ]);
+
+  ContentServiceV1RelationConfig copyWith({
+    bool? allowCrossTenant,
+    int? filterCategoryId,
+    String? targetEntityType,
+  }) {
+    return ContentServiceV1RelationConfig(
+      allowCrossTenant: allowCrossTenant ?? this.allowCrossTenant,
+      filterCategoryId: filterCategoryId ?? this.filterCategoryId,
+      targetEntityType: targetEntityType ?? this.targetEntityType,
+    );
+  }
+
+  /// 二进制 proto 编码（MQTT 等二进制传输用；字段按编号升序写出）
+  Uint8List writeToBuffer() {
+    final w = ProtoWireWriter();
+    _writeTo(w);
+    return w.toBuffer();
+  }
+
+  void _writeTo(ProtoWireWriter w) {
+    // field 1: targetEntityType
+    final f1 = targetEntityType;
+    if (f1 != null) {
+      w.writeString(1, f1!);
+    }
+    // field 2: allowCrossTenant
+    final f2 = allowCrossTenant;
+    if (f2 != null) {
+      w.writeBool(2, f2!);
+    }
+    // field 3: filterCategoryId
+    final f3 = filterCategoryId;
+    if (f3 != null) {
+      w.writeUint32(3, f3!);
+    }
+  }
+
+  factory ContentServiceV1RelationConfig.fromBuffer(List<int> bytes) {
+    return ContentServiceV1RelationConfig._readFrom(ProtoWireReader(bytes));
+  }
+
+  static ContentServiceV1RelationConfig _readFrom(ProtoWireReader r) {
+    final m = ContentServiceV1RelationConfig();
+    while (r.next()) {
+      switch (r.fieldNumber) {
+        // field 1: targetEntityType
+        case 1: {
+          m.targetEntityType = r.readString();
+          break;
+        }
+        // field 2: allowCrossTenant
+        case 2: {
+          m.allowCrossTenant = r.readBool();
+          break;
+        }
+        // field 3: filterCategoryId
+        case 3: {
+          m.filterCategoryId = r.readUint32();
+          break;
+        }
+        default: {
+          r.skip();
+        }
+      }
+    }
+    return m;
+  }
+
+}
+
+/// 字段定义翻译
+class ContentServiceV1FieldDefinitionTranslation {
+  String? createdAt;
+  int? createdBy;
+  String? description;
+  int? fieldDefinitionId;
+  int? id;
+  String? label;
+  String? languageCode;
+  String? placeholder;
+
+  ContentServiceV1FieldDefinitionTranslation({
+    this.createdAt,
+    this.createdBy,
+    this.description,
+    this.fieldDefinitionId,
+    this.id,
+    this.label,
+    this.languageCode,
+    this.placeholder,
+  });
+
+  factory ContentServiceV1FieldDefinitionTranslation.fromJson(Map<String, dynamic> json) {
+    return ContentServiceV1FieldDefinitionTranslation(
+      createdAt: json['createdAt'] as String?,
+      createdBy: json['createdBy'] as int?,
+      description: json['description'] as String?,
+      fieldDefinitionId: json['fieldDefinitionId'] as int?,
+      id: json['id'] as int?,
+      label: json['label'] as String?,
+      languageCode: json['languageCode'] as String?,
+      placeholder: json['placeholder'] as String?,
+    );
+  }
+
+  Map<String, dynamic> toJson() {
+    final json = <String, dynamic>{};
+    if (createdAt != null) json['createdAt'] = createdAt;
+    if (createdBy != null) json['createdBy'] = createdBy;
+    if (description != null) json['description'] = description;
+    if (fieldDefinitionId != null) json['fieldDefinitionId'] = fieldDefinitionId;
+    if (id != null) json['id'] = id;
+    if (label != null) json['label'] = label;
+    if (languageCode != null) json['languageCode'] = languageCode;
+    if (placeholder != null) json['placeholder'] = placeholder;
+    return json;
+  }
+
+  @override
+  String toString() {
+    return 'ContentServiceV1FieldDefinitionTranslation(createdAt: $createdAt, createdBy: $createdBy, description: $description, fieldDefinitionId: $fieldDefinitionId, id: $id, label: $label, languageCode: $languageCode, placeholder: $placeholder)';
+  }
+
+  @override
+  bool operator ==(Object other) =>
+    identical(this, other) ||
+    other is ContentServiceV1FieldDefinitionTranslation &&
+      runtimeType == other.runtimeType
+      && createdAt == other.createdAt
+      && createdBy == other.createdBy
+      && description == other.description
+      && fieldDefinitionId == other.fieldDefinitionId
+      && id == other.id
+      && label == other.label
+      && languageCode == other.languageCode
+      && placeholder == other.placeholder
+    ;
+
+  @override
+  int get hashCode => Object.hashAll([
+    createdAt,
+    createdBy,
+    description,
+    fieldDefinitionId,
+    id,
+    label,
+    languageCode,
+    placeholder,
+  ]);
+
+  ContentServiceV1FieldDefinitionTranslation copyWith({
+    String? createdAt,
+    int? createdBy,
+    String? description,
+    int? fieldDefinitionId,
+    int? id,
+    String? label,
+    String? languageCode,
+    String? placeholder,
+  }) {
+    return ContentServiceV1FieldDefinitionTranslation(
+      createdAt: createdAt ?? this.createdAt,
+      createdBy: createdBy ?? this.createdBy,
+      description: description ?? this.description,
+      fieldDefinitionId: fieldDefinitionId ?? this.fieldDefinitionId,
+      id: id ?? this.id,
+      label: label ?? this.label,
+      languageCode: languageCode ?? this.languageCode,
+      placeholder: placeholder ?? this.placeholder,
+    );
+  }
+
+  /// 二进制 proto 编码（MQTT 等二进制传输用；字段按编号升序写出）
+  Uint8List writeToBuffer() {
+    final w = ProtoWireWriter();
+    _writeTo(w);
+    return w.toBuffer();
+  }
+
+  void _writeTo(ProtoWireWriter w) {
+    // field 1: id
+    final f1 = id;
+    if (f1 != null) {
+      w.writeUint32(1, f1!);
+    }
+    // field 2: fieldDefinitionId
+    final f2 = fieldDefinitionId;
+    if (f2 != null) {
+      w.writeUint32(2, f2!);
+    }
+    // field 3: languageCode
+    final f3 = languageCode;
+    if (f3 != null) {
+      w.writeString(3, f3!);
+    }
+    // field 4: label
+    final f4 = label;
+    if (f4 != null) {
+      w.writeString(4, f4!);
+    }
+    // field 5: description
+    final f5 = description;
+    if (f5 != null) {
+      w.writeString(5, f5!);
+    }
+    // field 6: placeholder
+    final f6 = placeholder;
+    if (f6 != null) {
+      w.writeString(6, f6!);
+    }
+    // field 100: createdBy
+    final f100 = createdBy;
+    if (f100 != null) {
+      w.writeUint32(100, f100!);
+    }
+    // field 200: createdAt
+    final f200 = createdAt;
+    if (f200 != null) {
+      w.writeTimestamp(200, f200!);
+    }
+  }
+
+  factory ContentServiceV1FieldDefinitionTranslation.fromBuffer(List<int> bytes) {
+    return ContentServiceV1FieldDefinitionTranslation._readFrom(ProtoWireReader(bytes));
+  }
+
+  static ContentServiceV1FieldDefinitionTranslation _readFrom(ProtoWireReader r) {
+    final m = ContentServiceV1FieldDefinitionTranslation();
+    while (r.next()) {
+      switch (r.fieldNumber) {
+        // field 1: id
+        case 1: {
+          m.id = r.readUint32();
+          break;
+        }
+        // field 2: fieldDefinitionId
+        case 2: {
+          m.fieldDefinitionId = r.readUint32();
+          break;
+        }
+        // field 3: languageCode
+        case 3: {
+          m.languageCode = r.readString();
+          break;
+        }
+        // field 4: label
+        case 4: {
+          m.label = r.readString();
+          break;
+        }
+        // field 5: description
+        case 5: {
+          m.description = r.readString();
+          break;
+        }
+        // field 6: placeholder
+        case 6: {
+          m.placeholder = r.readString();
+          break;
+        }
+        // field 100: createdBy
+        case 100: {
+          m.createdBy = r.readUint32();
+          break;
+        }
+        // field 200: createdAt
+        case 200: {
+          m.createdAt = r.readTimestampIso();
+          break;
+        }
+        default: {
+          r.skip();
+        }
+      }
+    }
+    return m;
+  }
+
+}
+
+/// 内容模型翻译
+class ContentServiceV1ContentModelTranslation {
+  int? contentModelId;
+  String? createdAt;
+  int? createdBy;
+  String? description;
+  int? id;
+  String? languageCode;
+  String? name;
+
+  ContentServiceV1ContentModelTranslation({
+    this.contentModelId,
+    this.createdAt,
+    this.createdBy,
+    this.description,
+    this.id,
+    this.languageCode,
+    this.name,
+  });
+
+  factory ContentServiceV1ContentModelTranslation.fromJson(Map<String, dynamic> json) {
+    return ContentServiceV1ContentModelTranslation(
+      contentModelId: json['contentModelId'] as int?,
+      createdAt: json['createdAt'] as String?,
+      createdBy: json['createdBy'] as int?,
+      description: json['description'] as String?,
+      id: json['id'] as int?,
+      languageCode: json['languageCode'] as String?,
+      name: json['name'] as String?,
+    );
+  }
+
+  Map<String, dynamic> toJson() {
+    final json = <String, dynamic>{};
+    if (contentModelId != null) json['contentModelId'] = contentModelId;
+    if (createdAt != null) json['createdAt'] = createdAt;
+    if (createdBy != null) json['createdBy'] = createdBy;
+    if (description != null) json['description'] = description;
+    if (id != null) json['id'] = id;
+    if (languageCode != null) json['languageCode'] = languageCode;
+    if (name != null) json['name'] = name;
+    return json;
+  }
+
+  @override
+  String toString() {
+    return 'ContentServiceV1ContentModelTranslation(contentModelId: $contentModelId, createdAt: $createdAt, createdBy: $createdBy, description: $description, id: $id, languageCode: $languageCode, name: $name)';
+  }
+
+  @override
+  bool operator ==(Object other) =>
+    identical(this, other) ||
+    other is ContentServiceV1ContentModelTranslation &&
+      runtimeType == other.runtimeType
+      && contentModelId == other.contentModelId
+      && createdAt == other.createdAt
+      && createdBy == other.createdBy
+      && description == other.description
+      && id == other.id
+      && languageCode == other.languageCode
+      && name == other.name
+    ;
+
+  @override
+  int get hashCode => Object.hashAll([
+    contentModelId,
+    createdAt,
+    createdBy,
+    description,
+    id,
+    languageCode,
+    name,
+  ]);
+
+  ContentServiceV1ContentModelTranslation copyWith({
+    int? contentModelId,
+    String? createdAt,
+    int? createdBy,
+    String? description,
+    int? id,
+    String? languageCode,
+    String? name,
+  }) {
+    return ContentServiceV1ContentModelTranslation(
+      contentModelId: contentModelId ?? this.contentModelId,
+      createdAt: createdAt ?? this.createdAt,
+      createdBy: createdBy ?? this.createdBy,
+      description: description ?? this.description,
+      id: id ?? this.id,
+      languageCode: languageCode ?? this.languageCode,
+      name: name ?? this.name,
+    );
+  }
+
+  /// 二进制 proto 编码（MQTT 等二进制传输用；字段按编号升序写出）
+  Uint8List writeToBuffer() {
+    final w = ProtoWireWriter();
+    _writeTo(w);
+    return w.toBuffer();
+  }
+
+  void _writeTo(ProtoWireWriter w) {
+    // field 1: id
+    final f1 = id;
+    if (f1 != null) {
+      w.writeUint32(1, f1!);
+    }
+    // field 2: contentModelId
+    final f2 = contentModelId;
+    if (f2 != null) {
+      w.writeUint32(2, f2!);
+    }
+    // field 3: languageCode
+    final f3 = languageCode;
+    if (f3 != null) {
+      w.writeString(3, f3!);
+    }
+    // field 4: name
+    final f4 = name;
+    if (f4 != null) {
+      w.writeString(4, f4!);
+    }
+    // field 5: description
+    final f5 = description;
+    if (f5 != null) {
+      w.writeString(5, f5!);
+    }
+    // field 100: createdBy
+    final f100 = createdBy;
+    if (f100 != null) {
+      w.writeUint32(100, f100!);
+    }
+    // field 200: createdAt
+    final f200 = createdAt;
+    if (f200 != null) {
+      w.writeTimestamp(200, f200!);
+    }
+  }
+
+  factory ContentServiceV1ContentModelTranslation.fromBuffer(List<int> bytes) {
+    return ContentServiceV1ContentModelTranslation._readFrom(ProtoWireReader(bytes));
+  }
+
+  static ContentServiceV1ContentModelTranslation _readFrom(ProtoWireReader r) {
+    final m = ContentServiceV1ContentModelTranslation();
+    while (r.next()) {
+      switch (r.fieldNumber) {
+        // field 1: id
+        case 1: {
+          m.id = r.readUint32();
+          break;
+        }
+        // field 2: contentModelId
+        case 2: {
+          m.contentModelId = r.readUint32();
+          break;
+        }
+        // field 3: languageCode
+        case 3: {
+          m.languageCode = r.readString();
+          break;
+        }
+        // field 4: name
+        case 4: {
+          m.name = r.readString();
+          break;
+        }
+        // field 5: description
+        case 5: {
+          m.description = r.readString();
+          break;
+        }
+        // field 100: createdBy
+        case 100: {
+          m.createdBy = r.readUint32();
+          break;
+        }
+        // field 200: createdAt
+        case 200: {
+          m.createdAt = r.readTimestampIso();
+          break;
+        }
+        default: {
+          r.skip();
+        }
+      }
+    }
+    return m;
+  }
+
 }
 
 /// 请求 - 帖子搜索
@@ -18343,6 +20380,7 @@ class ApiClient {
   FileTransferServiceClient? _fileTransferService;
   FormSubmissionServiceClient? _formSubmissionService;
   InteractionServiceClient? _interactionService;
+  MediaAssetServiceClient? _mediaAssetService;
   NavigationServiceClient? _navigationService;
   PageServiceClient? _pageService;
   PostServiceClient? _postService;
@@ -18381,6 +20419,11 @@ class ApiClient {
   InteractionServiceClient get interactionService {
     _interactionService ??= InteractionServiceClient(_transport);
     return _interactionService!;
+  }
+
+  MediaAssetServiceClient get mediaAssetService {
+    _mediaAssetService ??= MediaAssetServiceClient(_transport);
+    return _mediaAssetService!;
   }
 
   NavigationServiceClient get navigationService {
@@ -18426,6 +20469,7 @@ class ApiClient {
     _fileTransferService = null;
     _formSubmissionService = null;
     _interactionService = null;
+    _mediaAssetService = null;
     _navigationService = null;
     _pageService = null;
     _postService = null;

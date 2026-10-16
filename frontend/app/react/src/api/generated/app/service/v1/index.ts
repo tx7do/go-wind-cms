@@ -1595,6 +1595,96 @@ export type interactionservicev1_RecordViewResponse = {
   viewCount: number | undefined;
 };
 
+// 公开媒体资产服务（C 端渲染用最小面）
+export interface MediaAssetService {
+  // 按 ID 取媒体资产（公开字段：url/filename/mimeType 等；租户隔离由 core 保证）
+  Get(
+    request: mediaservicev1_GetMediaAssetRequest,
+  ): Promise<mediaservicev1_MediaAsset>;
+}
+
+export function createMediaAssetServiceClient(
+  transport: ClientTransport,
+): MediaAssetService {
+  return {
+    Get(request) {
+      if (request.id === undefined || request.id === null) {
+        throw new Error('missing required field request.id');
+      }
+      const path = `app/v1/media-assets/${request.id}`;
+      const body = null;
+      const queryParams: string[] = [];
+      if (request.viewMask) {
+        queryParams.push(
+          `viewMask=${encodeURIComponent(request.viewMask.toString())}`,
+        );
+      }
+      let uri = path;
+      if (queryParams.length > 0) {
+        uri += `?${queryParams.join('&')}`;
+      }
+      return transport.unary(uri, 'GET', body, {
+        service: 'MediaAssetService',
+        method: 'Get',
+      }) as Promise<mediaservicev1_MediaAsset>;
+    },
+  };
+}
+// 请求 - 媒体资源库数据
+export type mediaservicev1_GetMediaAssetRequest = {
+  id: number | undefined;
+  viewMask?: wellKnownFieldMask;
+};
+
+// 媒体资源库
+export type mediaservicev1_MediaAsset = {
+  // SEO 与展示
+  altText?: string;
+  caption?: string;
+  createdAt?: wellKnownTimestamp;
+  createdBy?: number;
+  deletedAt?: wellKnownTimestamp;
+  deletedBy?: number;
+  duration?: number;
+  fileHash?: string;
+  fileId?: number;
+  filename?: string;
+  folderId?: number;
+  height?: number;
+  id?: number;
+  isPrivate?: boolean;
+  mimeType?: string;
+  processingError?: string;
+  processingStatus?: mediaservicev1_MediaAsset_ProcessingStatus;
+  referenceCount?: number;
+  size?: number;
+  storagePath?: string;
+  title?: string;
+  type?: mediaservicev1_MediaAsset_AssetType;
+  updatedAt?: wellKnownTimestamp;
+  updatedBy?: number;
+  url?: string;
+  variantFileIds: { [key: string]: number } | undefined;
+  // 尺寸信息（图片/视频）
+  width?: number;
+};
+
+// 媒体类型
+export type mediaservicev1_MediaAsset_AssetType =
+  | 'ASSET_TYPE_ARCHIVE'
+  | 'ASSET_TYPE_AUDIO'
+  | 'ASSET_TYPE_DOCUMENT'
+  | 'ASSET_TYPE_IMAGE'
+  | 'ASSET_TYPE_OTHER'
+  | 'ASSET_TYPE_UNSPECIFIED'
+  | 'ASSET_TYPE_VIDEO';
+// 媒体处理状态
+export type mediaservicev1_MediaAsset_ProcessingStatus =
+  | 'PROCESSING_STATUS_COMPLETED'
+  | 'PROCESSING_STATUS_FAILED'
+  | 'PROCESSING_STATUS_PROCESSING'
+  | 'PROCESSING_STATUS_UNSPECIFIED'
+  | 'PROCESSING_STATUS_UPLOADING';
 // 导航服务
 export interface NavigationService {
   // 获取导航列表
@@ -2315,6 +2405,10 @@ export type GetPostBySlugRequest = {
 
 // 帖子服务
 export interface PostService {
+  // 按文章取其分类链绑定的内容模型（C 端渲染 custom_fields 用；免鉴权）
+  GetPostContentModel(
+    request: contentservicev1_GetModelByPostRequest,
+  ): Promise<contentservicev1_ContentModel>;
   // 获取帖子列表
   List(
     request: pagination_PagingRequest,
@@ -2355,6 +2449,17 @@ export function createPostServiceClient(
   transport: ClientTransport,
 ): PostService {
   return {
+    GetPostContentModel(request) {
+      if (request.postId === undefined || request.postId === null) {
+        throw new Error('missing required field request.post_id');
+      }
+      const path = `app/v1/posts/${request.postId}/content-model`;
+      const body = null;
+      return transport.unary(path, 'GET', body, {
+        service: 'PostService',
+        method: 'GetPostContentModel',
+      }) as Promise<contentservicev1_ContentModel>;
+    },
     List(request) {
       const path = `app/v1/posts`;
       const body = null;
@@ -2618,6 +2723,88 @@ export function createPostServiceClient(
     },
   };
 }
+// 查询内容模型列表 - 回应
+// 请求 - 按文章取内容模型
+export type contentservicev1_GetModelByPostRequest = {
+  postId: number | undefined;
+};
+
+// 内容模型
+export type contentservicev1_ContentModel = {
+  //
+  // Behaviors: OPTIONAL
+  code?: string;
+  createdAt?: wellKnownTimestamp;
+  createdBy?: number;
+  description?: string;
+  // 字段定义随模型整体读写（Create/Update 时整体替换，对齐 post 的 translations 惯例）
+  fields: contentservicev1_FieldDefinition[] | undefined;
+  id?: number;
+  name?: string;
+  sortOrder?: number;
+  tenantId?: number;
+  translations: contentservicev1_ContentModelTranslation[] | undefined;
+  updatedAt?: wellKnownTimestamp;
+  updatedBy?: number;
+};
+
+// 字段定义
+export type contentservicev1_FieldDefinition = {
+  contentModelId?: number;
+  createdAt?: wellKnownTimestamp;
+  createdBy?: number;
+  description?: string;
+  id?: number;
+  isRequired?: boolean;
+  label?: string;
+  name?: string;
+  options: { [key: string]: string } | undefined;
+  placeholder?: string;
+  relationConfig?: contentservicev1_RelationConfig;
+  sortOrder?: number;
+  translations: contentservicev1_FieldDefinitionTranslation[] | undefined;
+  type?: contentservicev1_FieldDefinition_Type;
+  validationRegex?: string;
+};
+
+// 字段类型
+export type contentservicev1_FieldDefinition_Type =
+  | 'FIELD_TYPE_FILE'
+  | 'FIELD_TYPE_IMAGE'
+  | 'FIELD_TYPE_NUMBER'
+  | 'FIELD_TYPE_RELATION'
+  | 'FIELD_TYPE_RICHTEXT'
+  | 'FIELD_TYPE_TEXT';
+// relation 类型字段的引用配置
+export type contentservicev1_RelationConfig = {
+  allowCrossTenant?: boolean;
+  filterCategoryId?: number;
+  targetEntityType?: string;
+};
+
+// 字段定义翻译
+export type contentservicev1_FieldDefinitionTranslation = {
+  createdAt?: wellKnownTimestamp;
+  createdBy?: number;
+  description?: string;
+  fieldDefinitionId?: number;
+  id?: number;
+  label?: string;
+  languageCode?: string;
+  placeholder?: string;
+};
+
+// 内容模型翻译
+export type contentservicev1_ContentModelTranslation = {
+  contentModelId?: number;
+  createdAt?: wellKnownTimestamp;
+  createdBy?: number;
+  description?: string;
+  id?: number;
+  languageCode?: string;
+  name?: string;
+};
+
 // 请求 - 帖子搜索
 // tenant_id 不在此消息中——由服务端从调用方租户上下文（viewer）注入，
 // 客户端无法指定或绕过。status 固定为 PUBLISHED（前台仅检索已发布内容）。
@@ -3491,6 +3678,7 @@ export class ApiClient {
   private _fileTransferService?: FileTransferService;
   private _formSubmissionService?: FormSubmissionService;
   private _interactionService?: InteractionService;
+  private _mediaAssetService?: MediaAssetService;
   private _navigationService?: NavigationService;
   private _pageService?: PageService;
   private _postService?: PostService;
@@ -3526,6 +3714,10 @@ export class ApiClient {
 
   get interactionService(): InteractionService {
     return this._interactionService ??= createInteractionServiceClient(this._transport);
+  }
+
+  get mediaAssetService(): MediaAssetService {
+    return this._mediaAssetService ??= createMediaAssetServiceClient(this._transport);
   }
 
   get navigationService(): NavigationService {

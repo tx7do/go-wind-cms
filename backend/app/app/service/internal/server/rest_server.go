@@ -115,6 +115,14 @@ func NewRestMiddleware(
 		appV1.OperationPostServiceGetBySlug,
 		appV1.OperationPageServiceGetBySlug,
 
+		// PostService.GetPostContentModel：C 端渲染 custom_fields 的公开数据源，
+		// 模型定义（字段名/标签/类型）非敏感；模型解析在 core 内部完成。
+		appV1.OperationPostServiceGetPostContentModel,
+
+		// MediaAssetService.Get：customFields IMAGE 引用（media_asset:<id>）换公开
+		// URL 渲染用；图片本身随文章公开，租户隔离由 core viewer 保证。
+		appV1.OperationMediaAssetServiceGet,
+
 		// SeoService（手工挂载非 proto 路由）：sitemap.xml / robots.txt，
 		// 搜索引擎抓取必须匿名可达；操作名为约定字符串非 proto 生成。
 		OperationSeoServiceSitemap,
@@ -161,6 +169,7 @@ func NewRestServer(
 	fileTransferService *service.FileTransferService,
 	userProfileService *service.UserProfileService,
 
+	mediaAssetService *service.MediaAssetService,
 	postService *service.PostService,
 	categoryService *service.CategoryService,
 	commentService *service.CommentService,
@@ -238,6 +247,7 @@ func NewRestServer(
 	appV1.RegisterSiteServiceHTTPServer(srv, siteService)
 
 	appV1.RegisterPostServiceHTTPServer(srv, postService)
+	appV1.RegisterMediaAssetServiceHTTPServer(srv, mediaAssetService)
 	appV1.RegisterCategoryServiceHTTPServer(srv, categoryService)
 	appV1.RegisterTagServiceHTTPServer(srv, tagService)
 	appV1.RegisterPageServiceHTTPServer(srv, pageService)

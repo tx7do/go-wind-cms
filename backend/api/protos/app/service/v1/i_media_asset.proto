@@ -1,0 +1,21 @@
+syntax = "proto3";
+
+package app.service.v1;
+
+import "gnostic/openapi/v3/annotations.proto";
+import "google/api/annotations.proto";
+import "media/service/v1/media_asset.proto";
+
+// 公开媒体资产服务（C 端渲染用最小面）
+service MediaAssetService {
+  // 按 ID 取媒体资产（公开字段：url/filename/mimeType 等；租户隔离由 core 保证）
+  rpc Get (media.service.v1.GetMediaAssetRequest) returns (media.service.v1.MediaAsset) {
+    option (google.api.http) = {
+      get: "/app/v1/media-assets/{id}"
+    };
+
+    option(gnostic.openapi.v3.operation) = {
+      security: {}
+    };
+  }
+}

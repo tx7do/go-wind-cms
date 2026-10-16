@@ -32,6 +32,7 @@ import {
     useUnwatch,
 } from '@/api/hooks/interaction';
 import {contentservicev1_Post} from "@/api/generated/app/service/v1";
+import CustomFieldsSection from './CustomFieldsSection';
 import XIcon from '@/plugins/xicon';
 import {useI18nRouter} from "@/i18n/helpers";
 import Image from '@/components/ui/image';
@@ -266,6 +267,9 @@ export default function PostDetailPage({ initialPost }: { initialPost?: contents
                         <div className="mb-8" ref={contentRef}>
                             <ContentViewer content={displayContent} type="markdown"/>
                         </div>
+
+                        {/* 自定义字段（内容建模前台读侧；无模型/无值时静默不渲染） */}
+                        <CustomFieldsSection postId={postId} customFields={post.customFields}/>
 
                         {/* Floating Actions */}
                         <PostFloatingActions

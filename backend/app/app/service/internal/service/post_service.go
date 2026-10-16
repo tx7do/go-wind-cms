@@ -23,17 +23,26 @@ import (
 type PostService struct {
 	appV1.PostServiceHTTPServer
 
-	postClient    contentV1.PostServiceClient
-	tenantResolve entmiddleware.TenantResolver
-	log           *log.Helper
+	postClient        contentV1.PostServiceClient
+	contentModelCLient contentV1.ContentModelServiceClient
+	tenantResolve     entmiddleware.TenantResolver
+	log               *log.Helper
 }
 
-func NewPostService(ctx *bootstrap.Context, postClient contentV1.PostServiceClient, tenantResolve entmiddleware.TenantResolver) *PostService {
+func NewPostService(ctx *bootstrap.Context, postClient contentV1.PostServiceClient, contentModelClient contentV1.ContentModelServiceClient, tenantResolve entmiddleware.TenantResolver) *PostService {
 	return &PostService{
-		log:           ctx.NewLoggerHelper("post/service/app-service"),
-		postClient:    postClient,
-		tenantResolve: tenantResolve,
+		log:                ctx.NewLoggerHelper("post/service/app-service"),
+		postClient:         postClient,
+		contentModelCLient: contentModelClient,
+		tenantResolve:      tenantResolve,
 	}
+}
+
+// GetPostContentModel 按文章取其分类链绑定的内容模型（C 端渲染 custom_fields 用）。
+// 免鉴权端点：模型定义（字段名/标签/类型）本身非敏感；文章可见性由 Get 校验，
+// 模型解析在 core 完成，调用方无法指定或越权。
+func (s *PostService) GetPostContentModel(ctx context.Context, req *contentV1.GetModelByPostRequest) (*contentV1.ContentModel, error) {
+	return s.contentModelCLient.GetModelByPost(ctx, req)
 }
 
 func (s *PostService) List(ctx context.Context, req *paginationV1.PagingRequest) (*contentV1.ListPostResponse, error) {
