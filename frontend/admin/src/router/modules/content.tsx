@@ -51,6 +51,17 @@ export const contentRoutes: AppRouteObject[] = [
         },
       },
       {
+        name: 'content-components',
+        path: 'components',
+        element: createLazyRoute(() => import('@/pages/app/content/component')),
+        meta: {
+          title: 'routes:content-components',
+          icon: 'lucide:component',
+          order: 9,
+          authority: ['sys:platform_admin', 'sys:tenant_manager'],
+        },
+      },
+      {
         name: 'content-models',
         path: 'models',
         element: createLazyRoute(() => import('@/pages/app/content/model')),

@@ -8,6 +8,7 @@ import {
   fieldTypeOptions,
   RELATION_ENTITY_TYPES,
 } from '@/api/hooks/content-model';
+import { useListComponentDefinitions } from '@/api/hooks/component-definition';
 
 interface FieldPanel {
   clientKey: string;
@@ -24,6 +25,10 @@ interface FieldPanel {
   relationAllowCrossTenant: boolean;
   relationFilterCategoryId: string;
   optionsJson: string;
+  hasComponentConfig: boolean;
+  componentCode: string;
+  componentRepeatable: boolean;
+  allowedComponentCodes: string[];
 }
 
 interface ModelFormData {
@@ -80,6 +85,10 @@ function makeEmptyField(): FieldPanel {
     relationAllowCrossTenant: false,
     relationFilterCategoryId: '',
     optionsJson: '{}',
+    hasComponentConfig: false,
+    componentCode: '',
+    componentRepeatable: false,
+    allowedComponentCodes: [],
   };
 }
 
@@ -154,6 +163,10 @@ const ContentModelDrawer: React.FC<ContentModelDrawerProps> = ({
             relationAllowCrossTenant: f.relationConfig?.allowCrossTenant ?? false,
             relationFilterCategoryId: f.relationConfig?.filterCategoryId ?? '',
             optionsJson: f.options ? JSON.stringify(f.options) : '{}',
+            hasComponentConfig: !!f.componentConfig,
+            componentCode: f.componentConfig?.componentCode ?? '',
+            componentRepeatable: f.componentConfig?.repeatable ?? false,
+            allowedComponentCodes: f.componentConfig?.allowedComponentCodes ?? [],
           };
         }),
       });
@@ -186,6 +199,16 @@ const ContentModelDrawer: React.FC<ContentModelDrawerProps> = ({
             filterCategoryId: f.relationFilterCategoryId,
           };
         }
+        if (
+          (f.type === 'FIELD_TYPE_COMPONENT' || f.type === 'FIELD_TYPE_DYNAMIC_ZONE') &&
+          f.hasComponentConfig
+        ) {
+          field.componentConfig = {
+            componentCode: f.componentCode,
+            repeatable: f.componentRepeatable,
+            allowedComponentCodes: f.allowedComponentCodes,
+          };
+        }
         return field;
       });
 
@@ -210,6 +233,9 @@ const ContentModelDrawer: React.FC<ContentModelDrawerProps> = ({
       setSaving(false);
     }
   };
+
+  const componentListQuery = useListComponentDefinitions();
+  const componentOptions = componentListQuery.data?.items;
 
   const createMutation = useCreateContentModel();
   const updateMutation = useUpdateContentModel();
@@ -410,6 +436,71 @@ const ContentModelDrawer: React.FC<ContentModelDrawerProps> = ({
                           }
                         />
                       </div>
+                    </div>
+                  )}
+
+                  {(field.type === 'FIELD_TYPE_COMPONENT' ||
+                    field.type === 'FIELD_TYPE_DYNAMIC_ZONE') && (
+                    <div
+                      style={{
+                        display: 'flex',
+                        flexDirection: 'column',
+                        gap: 8,
+                        borderTop: '1px solid var(--ant-color-border)',
+                        paddingTop: 12,
+                        marginTop: 8,
+                      }}
+                    >
+                      {field.type === 'FIELD_TYPE_COMPONENT' ? (
+                        <>
+                          <label style={{ fontSize: 14 }}>{t('componentSelect')}</label>
+                          <Select
+                            showSearch
+                            value={field.componentCode || undefined}
+                            options={(componentOptions ?? []).map((c) => ({
+                              value: c.code ?? '',
+                              label: `${c.name ?? ''} (${c.code ?? ''})`,
+                            }))}
+                            onChange={(v) =>
+                              setField(field.clientKey, {
+                                hasComponentConfig: true,
+                                componentCode: v ?? '',
+                              })
+                            }
+                          />
+                          <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginTop: 8 }}>
+                            <Switch
+                              checked={field.componentRepeatable}
+                              onChange={(v) =>
+                                setField(field.clientKey, {
+                                  hasComponentConfig: true,
+                                  componentRepeatable: v,
+                                })
+                              }
+                            />
+                            <span style={{ fontSize: 14 }}>{t('componentRepeatable')}</span>
+                          </div>
+                        </>
+                      ) : (
+                        <>
+                          <label style={{ fontSize: 14 }}>{t('allowedComponents')}</label>
+                          <Select
+                            mode="multiple"
+                            showSearch
+                            value={field.allowedComponentCodes}
+                            options={(componentOptions ?? []).map((c) => ({
+                              value: c.code ?? '',
+                              label: `${c.name ?? ''} (${c.code ?? ''})`,
+                            }))}
+                            onChange={(v) =>
+                              setField(field.clientKey, {
+                                hasComponentConfig: true,
+                                allowedComponentCodes: v ?? [],
+                              })
+                            }
+                          />
+                        </>
+                      )}
                     </div>
                   )}
                 </div>

@@ -82,5 +82,6 @@
   "email-provider": "邮件出站",
   "content-experiments": "内容实验",
   "email-template": "邮件模板",
-  "flow-rule": "自动化 Flow"
+  "flow-rule": "自动化 Flow",
+  "content-components": "组件定义"
 }

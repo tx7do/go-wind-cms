@@ -52,6 +52,11 @@
     "FIELD_TYPE_RICHTEXT": "富文本",
     "FIELD_TYPE_IMAGE": "图片",
     "FIELD_TYPE_FILE": "文件",
-    "FIELD_TYPE_RELATION": "关联"
-  }
+    "FIELD_TYPE_RELATION": "关联",
+    "FIELD_TYPE_COMPONENT": "组件",
+    "FIELD_TYPE_DYNAMIC_ZONE": "动态区"
+  },
+  "componentSelect": "选择组件",
+  "componentRepeatable": "可重复（实例数组）",
+  "allowedComponents": "允许的组件（动态区白名单）"
 }

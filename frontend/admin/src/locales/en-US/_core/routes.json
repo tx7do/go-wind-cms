@@ -82,5 +82,6 @@
   "email-provider": "Email Outbound",
   "content-experiments": "Content Experiments",
   "email-template": "Email Templates",
-  "flow-rule": "Automation Flows"
+  "flow-rule": "Automation Flows",
+  "content-components": "Components"
 }
