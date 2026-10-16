@@ -7128,6 +7128,9 @@ export interface MediaAssetService {
     request: mediaservicev1_UpdateMediaAssetRequest,
   ): Promise<mediaservicev1_MediaAsset>;
   // 删除媒体资源库
+  FindByHash(
+    request: mediaservicev1_FindMediaAssetByHashRequest,
+  ): Promise<mediaservicev1_FindMediaAssetByHashResponse>;
   Delete(
     request: mediaservicev1_DeleteMediaAssetRequest,
   ): Promise<wellKnownEmpty>;
@@ -7292,6 +7295,17 @@ export function createMediaAssetServiceClient(
         method: 'Update',
       }) as Promise<mediaservicev1_MediaAsset>;
     },
+    FindByHash(request) {
+      if (request.fileHash === undefined || request.fileHash === null) {
+        throw new Error('missing required field request.file_hash');
+      }
+      const path = `admin/v1/media-assets/by-hash/${request.fileHash}`;
+      const body = null;
+      return transport.unary(path, 'GET', body, {
+        service: 'MediaAssetService',
+        method: 'FindByHash',
+      }) as Promise<mediaservicev1_FindMediaAssetByHashResponse>;
+    },
     Delete(request) {
       if (request.id === undefined || request.id === null) {
         throw new Error('missing required field request.id');
@@ -7377,6 +7391,16 @@ export type mediaservicev1_UpdateMediaAssetRequest = {
   data: mediaservicev1_MediaAsset | undefined;
   id: number | undefined;
   updateMask: undefined | wellKnownFieldMask;
+};
+
+// 请求 - 按内容哈希查重
+export type mediaservicev1_FindMediaAssetByHashRequest = {
+  fileHash?: string;
+};
+
+// 回应 - 按内容哈希查重
+export type mediaservicev1_FindMediaAssetByHashResponse = {
+  asset?: mediaservicev1_MediaAsset;
 };
 
 // 请求 - 删除媒体资源库
