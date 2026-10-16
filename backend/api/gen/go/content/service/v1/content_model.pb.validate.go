@@ -2178,3 +2178,375 @@ var _ interface {
 	Cause() error
 	ErrorName() string
 } = ListFieldDefinitionsResponseValidationError{}
+
+// Validate checks the field values on ResolveContentReferencesRequest with the
+// rules defined in the proto definition for this message. If any rules are
+// violated, the first error encountered is returned, or nil if there are no violations.
+func (m *ResolveContentReferencesRequest) Validate() error {
+	return m.validate(false)
+}
+
+// ValidateAll checks the field values on ResolveContentReferencesRequest with
+// the rules defined in the proto definition for this message. If any rules
+// are violated, the result is a list of violation errors wrapped in
+// ResolveContentReferencesRequestMultiError, or nil if none found.
+func (m *ResolveContentReferencesRequest) ValidateAll() error {
+	return m.validate(true)
+}
+
+func (m *ResolveContentReferencesRequest) validate(all bool) error {
+	if m == nil {
+		return nil
+	}
+
+	var errors []error
+
+	if m.LanguageCode != nil {
+		// no validation rules for LanguageCode
+	}
+
+	if len(errors) > 0 {
+		return ResolveContentReferencesRequestMultiError(errors)
+	}
+
+	return nil
+}
+
+// ResolveContentReferencesRequestMultiError is an error wrapping multiple
+// validation errors returned by ResolveContentReferencesRequest.ValidateAll()
+// if the designated constraints aren't met.
+type ResolveContentReferencesRequestMultiError []error
+
+// Error returns a concatenation of all the error messages it wraps.
+func (m ResolveContentReferencesRequestMultiError) Error() string {
+	msgs := make([]string, 0, len(m))
+	for _, err := range m {
+		msgs = append(msgs, err.Error())
+	}
+	return strings.Join(msgs, "; ")
+}
+
+// AllErrors returns a list of validation violation errors.
+func (m ResolveContentReferencesRequestMultiError) AllErrors() []error { return m }
+
+// ResolveContentReferencesRequestValidationError is the validation error
+// returned by ResolveContentReferencesRequest.Validate if the designated
+// constraints aren't met.
+type ResolveContentReferencesRequestValidationError struct {
+	field  string
+	reason string
+	cause  error
+	key    bool
+}
+
+// Field function returns field value.
+func (e ResolveContentReferencesRequestValidationError) Field() string { return e.field }
+
+// Reason function returns reason value.
+func (e ResolveContentReferencesRequestValidationError) Reason() string { return e.reason }
+
+// Cause function returns cause value.
+func (e ResolveContentReferencesRequestValidationError) Cause() error { return e.cause }
+
+// Key function returns key value.
+func (e ResolveContentReferencesRequestValidationError) Key() bool { return e.key }
+
+// ErrorName returns error name.
+func (e ResolveContentReferencesRequestValidationError) ErrorName() string {
+	return "ResolveContentReferencesRequestValidationError"
+}
+
+// Error satisfies the builtin error interface
+func (e ResolveContentReferencesRequestValidationError) Error() string {
+	cause := ""
+	if e.cause != nil {
+		cause = fmt.Sprintf(" | caused by: %v", e.cause)
+	}
+
+	key := ""
+	if e.key {
+		key = "key for "
+	}
+
+	return fmt.Sprintf(
+		"invalid %sResolveContentReferencesRequest.%s: %s%s",
+		key,
+		e.field,
+		e.reason,
+		cause)
+}
+
+var _ error = ResolveContentReferencesRequestValidationError{}
+
+var _ interface {
+	Field() string
+	Reason() string
+	Key() bool
+	Cause() error
+	ErrorName() string
+} = ResolveContentReferencesRequestValidationError{}
+
+// Validate checks the field values on ContentReferenceSummary with the rules
+// defined in the proto definition for this message. If any rules are
+// violated, the first error encountered is returned, or nil if there are no violations.
+func (m *ContentReferenceSummary) Validate() error {
+	return m.validate(false)
+}
+
+// ValidateAll checks the field values on ContentReferenceSummary with the
+// rules defined in the proto definition for this message. If any rules are
+// violated, the result is a list of violation errors wrapped in
+// ContentReferenceSummaryMultiError, or nil if none found.
+func (m *ContentReferenceSummary) ValidateAll() error {
+	return m.validate(true)
+}
+
+func (m *ContentReferenceSummary) validate(all bool) error {
+	if m == nil {
+		return nil
+	}
+
+	var errors []error
+
+	if m.Ref != nil {
+		// no validation rules for Ref
+	}
+
+	if m.TargetEntityType != nil {
+		// no validation rules for TargetEntityType
+	}
+
+	if m.TargetId != nil {
+		// no validation rules for TargetId
+	}
+
+	if m.Title != nil {
+		// no validation rules for Title
+	}
+
+	if m.Slug != nil {
+		// no validation rules for Slug
+	}
+
+	if m.UrlPath != nil {
+		// no validation rules for UrlPath
+	}
+
+	if len(errors) > 0 {
+		return ContentReferenceSummaryMultiError(errors)
+	}
+
+	return nil
+}
+
+// ContentReferenceSummaryMultiError is an error wrapping multiple validation
+// errors returned by ContentReferenceSummary.ValidateAll() if the designated
+// constraints aren't met.
+type ContentReferenceSummaryMultiError []error
+
+// Error returns a concatenation of all the error messages it wraps.
+func (m ContentReferenceSummaryMultiError) Error() string {
+	msgs := make([]string, 0, len(m))
+	for _, err := range m {
+		msgs = append(msgs, err.Error())
+	}
+	return strings.Join(msgs, "; ")
+}
+
+// AllErrors returns a list of validation violation errors.
+func (m ContentReferenceSummaryMultiError) AllErrors() []error { return m }
+
+// ContentReferenceSummaryValidationError is the validation error returned by
+// ContentReferenceSummary.Validate if the designated constraints aren't met.
+type ContentReferenceSummaryValidationError struct {
+	field  string
+	reason string
+	cause  error
+	key    bool
+}
+
+// Field function returns field value.
+func (e ContentReferenceSummaryValidationError) Field() string { return e.field }
+
+// Reason function returns reason value.
+func (e ContentReferenceSummaryValidationError) Reason() string { return e.reason }
+
+// Cause function returns cause value.
+func (e ContentReferenceSummaryValidationError) Cause() error { return e.cause }
+
+// Key function returns key value.
+func (e ContentReferenceSummaryValidationError) Key() bool { return e.key }
+
+// ErrorName returns error name.
+func (e ContentReferenceSummaryValidationError) ErrorName() string {
+	return "ContentReferenceSummaryValidationError"
+}
+
+// Error satisfies the builtin error interface
+func (e ContentReferenceSummaryValidationError) Error() string {
+	cause := ""
+	if e.cause != nil {
+		cause = fmt.Sprintf(" | caused by: %v", e.cause)
+	}
+
+	key := ""
+	if e.key {
+		key = "key for "
+	}
+
+	return fmt.Sprintf(
+		"invalid %sContentReferenceSummary.%s: %s%s",
+		key,
+		e.field,
+		e.reason,
+		cause)
+}
+
+var _ error = ContentReferenceSummaryValidationError{}
+
+var _ interface {
+	Field() string
+	Reason() string
+	Key() bool
+	Cause() error
+	ErrorName() string
+} = ContentReferenceSummaryValidationError{}
+
+// Validate checks the field values on ResolveContentReferencesResponse with
+// the rules defined in the proto definition for this message. If any rules
+// are violated, the first error encountered is returned, or nil if there are
+// no violations.
+func (m *ResolveContentReferencesResponse) Validate() error {
+	return m.validate(false)
+}
+
+// ValidateAll checks the field values on ResolveContentReferencesResponse with
+// the rules defined in the proto definition for this message. If any rules
+// are violated, the result is a list of violation errors wrapped in
+// ResolveContentReferencesResponseMultiError, or nil if none found.
+func (m *ResolveContentReferencesResponse) ValidateAll() error {
+	return m.validate(true)
+}
+
+func (m *ResolveContentReferencesResponse) validate(all bool) error {
+	if m == nil {
+		return nil
+	}
+
+	var errors []error
+
+	for idx, item := range m.GetItems() {
+		_, _ = idx, item
+
+		if all {
+			switch v := interface{}(item).(type) {
+			case interface{ ValidateAll() error }:
+				if err := v.ValidateAll(); err != nil {
+					errors = append(errors, ResolveContentReferencesResponseValidationError{
+						field:  fmt.Sprintf("Items[%v]", idx),
+						reason: "embedded message failed validation",
+						cause:  err,
+					})
+				}
+			case interface{ Validate() error }:
+				if err := v.Validate(); err != nil {
+					errors = append(errors, ResolveContentReferencesResponseValidationError{
+						field:  fmt.Sprintf("Items[%v]", idx),
+						reason: "embedded message failed validation",
+						cause:  err,
+					})
+				}
+			}
+		} else if v, ok := interface{}(item).(interface{ Validate() error }); ok {
+			if err := v.Validate(); err != nil {
+				return ResolveContentReferencesResponseValidationError{
+					field:  fmt.Sprintf("Items[%v]", idx),
+					reason: "embedded message failed validation",
+					cause:  err,
+				}
+			}
+		}
+
+	}
+
+	if len(errors) > 0 {
+		return ResolveContentReferencesResponseMultiError(errors)
+	}
+
+	return nil
+}
+
+// ResolveContentReferencesResponseMultiError is an error wrapping multiple
+// validation errors returned by
+// ResolveContentReferencesResponse.ValidateAll() if the designated
+// constraints aren't met.
+type ResolveContentReferencesResponseMultiError []error
+
+// Error returns a concatenation of all the error messages it wraps.
+func (m ResolveContentReferencesResponseMultiError) Error() string {
+	msgs := make([]string, 0, len(m))
+	for _, err := range m {
+		msgs = append(msgs, err.Error())
+	}
+	return strings.Join(msgs, "; ")
+}
+
+// AllErrors returns a list of validation violation errors.
+func (m ResolveContentReferencesResponseMultiError) AllErrors() []error { return m }
+
+// ResolveContentReferencesResponseValidationError is the validation error
+// returned by ResolveContentReferencesResponse.Validate if the designated
+// constraints aren't met.
+type ResolveContentReferencesResponseValidationError struct {
+	field  string
+	reason string
+	cause  error
+	key    bool
+}
+
+// Field function returns field value.
+func (e ResolveContentReferencesResponseValidationError) Field() string { return e.field }
+
+// Reason function returns reason value.
+func (e ResolveContentReferencesResponseValidationError) Reason() string { return e.reason }
+
+// Cause function returns cause value.
+func (e ResolveContentReferencesResponseValidationError) Cause() error { return e.cause }
+
+// Key function returns key value.
+func (e ResolveContentReferencesResponseValidationError) Key() bool { return e.key }
+
+// ErrorName returns error name.
+func (e ResolveContentReferencesResponseValidationError) ErrorName() string {
+	return "ResolveContentReferencesResponseValidationError"
+}
+
+// Error satisfies the builtin error interface
+func (e ResolveContentReferencesResponseValidationError) Error() string {
+	cause := ""
+	if e.cause != nil {
+		cause = fmt.Sprintf(" | caused by: %v", e.cause)
+	}
+
+	key := ""
+	if e.key {
+		key = "key for "
+	}
+
+	return fmt.Sprintf(
+		"invalid %sResolveContentReferencesResponse.%s: %s%s",
+		key,
+		e.field,
+		e.reason,
+		cause)
+}
+
+var _ error = ResolveContentReferencesResponseValidationError{}
+
+var _ interface {
+	Field() string
+	Reason() string
+	Key() bool
+	Cause() error
+	ErrorName() string
+} = ResolveContentReferencesResponseValidationError{}

@@ -379,6 +379,36 @@ paths:
                 "200":
                     description: OK
                     content: {}
+    /app/v1/content-references/resolve:
+        get:
+            tags:
+                - PostService
+            description: |-
+                批量解析 RELATION 字段引用（"post:12"/"page:7"）为目标内容摘要
+                 （C 端渲染关联卡片用；免鉴权；仅解析 PUBLISHED 目标）
+            operationId: PostService_ResolveContentReferences
+            parameters:
+                - name: refs
+                  in: query
+                  description: 引用值列表，形如 "post:12"/"page:7"；≤20 个，去重；其余形态静默跳过
+                  schema:
+                    type: array
+                    items:
+                        type: string
+                - name: languageCode
+                  in: query
+                  description: 标题语言偏好（BCP-47，如 zh-CN）；无匹配翻译时回退首个非空标题
+                  schema:
+                    type: string
+            responses:
+                "200":
+                    description: OK
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/content.service.v1.ResolveContentReferencesResponse'
+            security:
+                - {}
     /app/v1/file/download:
         get:
             tags:
@@ -2460,6 +2490,29 @@ components:
                     description: 创建时间
                     format: date-time
             description: 内容模型翻译
+        content.service.v1.ContentReferenceSummary:
+            type: object
+            properties:
+                ref:
+                    type: string
+                    description: 原始引用值（回显）
+                targetEntityType:
+                    type: string
+                    description: 目标实体类型：post/page
+                targetId:
+                    type: integer
+                    description: 目标实体 ID
+                    format: uint32
+                title:
+                    type: string
+                    description: 目标标题（按语言偏好，回退首个非空）
+                slug:
+                    type: string
+                    description: 目标 slug（公开 SEO 路由标识）
+                urlPath:
+                    type: string
+                    description: 站内公开路径（/post/{slug}、/page/{slug}），C 端可直接拼链接
+            description: 引用目标内容摘要（RELATION 字段前台渲染用最小面）
         content.service.v1.CreateCategoryRequest:
             type: object
             properties:
@@ -3088,6 +3141,14 @@ components:
                     description: 可选：限定目标 post 所属分类
                     format: uint32
             description: relation 类型字段的引用配置
+        content.service.v1.ResolveContentReferencesResponse:
+            type: object
+            properties:
+                items:
+                    type: array
+                    items:
+                        $ref: '#/components/schemas/content.service.v1.ContentReferenceSummary'
+            description: 批量解析内容引用 - 回应（仅含解析成功的目标；失败/不可见项不出现）
         content.service.v1.SearchPostHit:
             type: object
             properties:

@@ -39,6 +39,11 @@ service ContentModelService {
   // 按文章取其分类链绑定的内容模型（C 端渲染 custom_fields 的公开数据源；
   // 内部解析 文章→分类→模型，调用方无法指定或越权）
   rpc GetModelByPost (GetModelByPostRequest) returns (ContentModel) {}
+
+  // 批量解析 RELATION 字段的引用值（"post:12"/"page:7"）为目标内容摘要。
+  // 仅 C 端公开语义：post/page 只解析 PUBLISHED（未发布/软删/非法引用静默
+  // 跳过，不报错）；租户隔离由 viewer 保证。category/tag 引用 v1 不解析。
+  rpc ResolveContentReferences (ResolveContentReferencesRequest) returns (ResolveContentReferencesResponse) {}
 }
 
 // 内容模型
@@ -298,4 +303,53 @@ message ListFieldDefinitionsRequest {
 message ListFieldDefinitionsResponse {
   repeated FieldDefinition items = 1;
   uint64 total = 2;
+}
+
+// 批量解析内容引用 - 请求
+message ResolveContentReferencesRequest {
+  // 引用值列表，形如 "post:12"/"page:7"；≤20 个，去重；其余形态静默跳过
+  repeated string refs = 1 [
+    (gnostic.openapi.v3.property) = {description: "引用值列表（entity_type:id）"}
+  ];
+
+  // 标题语言偏好（BCP-47，如 zh-CN）；无匹配翻译时回退首个非空标题
+  optional string language_code = 2 [
+    json_name = "languageCode",
+    (gnostic.openapi.v3.property) = {description: "标题语言偏好"}
+  ];
+}
+
+// 引用目标内容摘要（RELATION 字段前台渲染用最小面）
+message ContentReferenceSummary {
+  optional string ref = 1 [
+    (gnostic.openapi.v3.property) = {description: "原始引用值（回显）"}
+  ]; // 原始引用值
+
+  optional string target_entity_type = 2 [
+    json_name = "targetEntityType",
+    (gnostic.openapi.v3.property) = {description: "目标实体类型：post/page"}
+  ]; // 目标实体类型
+
+  optional uint32 target_id = 3 [
+    json_name = "targetId",
+    (gnostic.openapi.v3.property) = {description: "目标实体 ID"}
+  ]; // 目标实体 ID
+
+  optional string title = 4 [
+    (gnostic.openapi.v3.property) = {description: "目标标题（按语言偏好，回退首个非空）"}
+  ]; // 目标标题
+
+  optional string slug = 5 [
+    (gnostic.openapi.v3.property) = {description: "目标 slug（公开 SEO 路由标识）"}
+  ]; // 目标 slug
+
+  optional string url_path = 6 [
+    json_name = "urlPath",
+    (gnostic.openapi.v3.property) = {description: "站内公开路径（/post/{slug}、/page/{slug}），C 端可直接拼链接"}
+  ]; // 站内公开路径
+}
+
+// 批量解析内容引用 - 回应（仅含解析成功的目标；失败/不可见项不出现）
+message ResolveContentReferencesResponse {
+  repeated ContentReferenceSummary items = 1;
 }

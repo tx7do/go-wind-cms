@@ -7,7 +7,9 @@ import {apiClient} from '@/api/client'
  * 按文章分类链绑定的内容模型字段定义，渲染 post.customFields。
  * 值约定为字符串（admin 编辑器 Record<string,string> 口径）：
  *   - RICHTEXT 按富文本注入；IMAGE/FILE 值形似 URL 时按图片/链接渲染；
- *   - 其余（TEXT/NUMBER/RELATION 等）原样展示。
+ *   - RELATION 值为 "post:12"/"page:7" 引用时批量解析为公开摘要，
+ *     渲染成指向目标详情页的链接（草稿/软删目标解析缺失，回退原样字符串）；
+ *   - 其余（TEXT/NUMBER 等）原样展示。
  * 模型未绑定或加载失败静默不渲染（自定义字段是增强信息，不阻断正文）。
  */
 const props = defineProps<{
@@ -15,7 +17,11 @@ const props = defineProps<{
   customFields?: Record<string, string>
 }>()
 
-const {t} = useI18n()
+const {t, locale} = useI18n()
+const localePath = useLocalePath()
+
+/** RELATION 引用值形态（与 core contentRefPattern 对齐；category/tag v1 不解析） */
+const RELATION_REF_RE = /^(post|page):\d+$/
 
 const modelQuery = useQuery({
   queryKey: ['postContentModel', () => props.postId],
@@ -37,6 +43,42 @@ const rows = computed(() => {
       value: cf[f.name ?? ''],
     }))
 })
+
+const relationRefs = computed(() =>
+  Array.from(new Set(rows.value
+    .filter((r) => r.type === 'FIELD_TYPE_RELATION' && RELATION_REF_RE.test(r.value.trim()))
+    .map((r) => r.value.trim()))),
+)
+
+const resolveQuery = useQuery({
+  queryKey: ['contentReferences', () => relationRefs.value.join(','), locale],
+  queryFn: () =>
+    apiClient.postService.ResolveContentReferences({
+      refs: relationRefs.value,
+      languageCode: locale.value,
+    }),
+  enabled: computed(() => relationRefs.value.length > 0),
+  retry: 0,
+  staleTime: 5 * 60 * 1000,
+})
+
+const resolvedByRef = computed(() => {
+  const map = new Map<string, { title: string; href: string }>()
+  for (const it of resolveQuery.data.value?.items ?? []) {
+    if (!it.ref || !it.slug) continue
+    // vue 端 post 详情按 id 路由、page 详情按 slug 路由
+    const href = it.targetEntityType === 'page'
+      ? localePath(`/page/${it.slug}`)
+      : localePath(`/post/${it.targetId}`)
+    map.set(it.ref, {title: it.title || it.ref, href})
+  }
+  return map
+})
+
+const relationTarget = (value: string) => {
+  const ref = value.trim()
+  return RELATION_REF_RE.test(ref) ? resolvedByRef.value.get(ref) : undefined
+}
 
 const isUrl = (v: string) => /^https?:\/\//.test(v)
 </script>
@@ -72,6 +114,13 @@ const isUrl = (v: string) => /^https?:\/\//.test(v)
             class="break-all text-primary hover:underline"
           >
             {{ row.value }}
+          </a>
+          <a
+            v-else-if="relationTarget(row.value)"
+            :href="relationTarget(row.value)!.href"
+            class="break-all text-primary hover:underline"
+          >
+            {{ relationTarget(row.value)!.title }}
           </a>
           <span v-else class="break-all">{{ row.value }}</span>
         </dd>

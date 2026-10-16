@@ -29,6 +29,7 @@ const OperationPostServiceGetBySlug = "/app.service.v1.PostService/GetBySlug"
 const OperationPostServiceGetPostContentModel = "/app.service.v1.PostService/GetPostContentModel"
 const OperationPostServiceGetTranslation = "/app.service.v1.PostService/GetTranslation"
 const OperationPostServiceList = "/app.service.v1.PostService/List"
+const OperationPostServiceResolveContentReferences = "/app.service.v1.PostService/ResolveContentReferences"
 const OperationPostServiceSearchPosts = "/app.service.v1.PostService/SearchPosts"
 const OperationPostServiceUpdate = "/app.service.v1.PostService/Update"
 
@@ -47,6 +48,9 @@ type PostServiceHTTPServer interface {
 	GetTranslation(context.Context, *v1.GetPostRequest) (*v1.PostTranslation, error)
 	// List 获取帖子列表
 	List(context.Context, *v11.PagingRequest) (*v1.ListPostResponse, error)
+	// ResolveContentReferences 批量解析 RELATION 字段引用（"post:12"/"page:7"）为目标内容摘要
+	// （C 端渲染关联卡片用；免鉴权；仅解析 PUBLISHED 目标）
+	ResolveContentReferences(context.Context, *v1.ResolveContentReferencesRequest) (*v1.ResolveContentReferencesResponse, error)
 	// SearchPosts 全文搜索帖子（前台，基于 OpenSearch）
 	//
 	// 仅返回 PUBLISHED 状态内容；tenant_id 由服务端从登录用户上下文注入，
@@ -59,6 +63,7 @@ type PostServiceHTTPServer interface {
 func RegisterPostServiceHTTPServer(s *http.Server, srv PostServiceHTTPServer) {
 	r := s.Route("/")
 	r.GET("/app/v1/posts/{post_id}/content-model", _PostService_GetPostContentModel0_HTTP_Handler(srv))
+	r.GET("/app/v1/content-references/resolve", _PostService_ResolveContentReferences0_HTTP_Handler(srv))
 	r.GET("/app/v1/posts", _PostService_List4_HTTP_Handler(srv))
 	r.GET("/app/v1/posts/search", _PostService_SearchPosts0_HTTP_Handler(srv))
 	r.GET("/app/v1/posts/{id}", _PostService_Get5_HTTP_Handler(srv))
@@ -87,6 +92,25 @@ func _PostService_GetPostContentModel0_HTTP_Handler(srv PostServiceHTTPServer) f
 			return err
 		}
 		reply := out.(*v1.ContentModel)
+		return ctx.Result(200, reply)
+	}
+}
+
+func _PostService_ResolveContentReferences0_HTTP_Handler(srv PostServiceHTTPServer) func(ctx http.Context) error {
+	return func(ctx http.Context) error {
+		var in v1.ResolveContentReferencesRequest
+		if err := ctx.BindQuery(&in); err != nil {
+			return err
+		}
+		http.SetOperation(ctx, OperationPostServiceResolveContentReferences)
+		h := ctx.Middleware(func(ctx context.Context, req interface{}) (interface{}, error) {
+			return srv.ResolveContentReferences(ctx, req.(*v1.ResolveContentReferencesRequest))
+		})
+		out, err := h(ctx, &in)
+		if err != nil {
+			return err
+		}
+		reply := out.(*v1.ResolveContentReferencesResponse)
 		return ctx.Result(200, reply)
 	}
 }
@@ -279,6 +303,9 @@ type PostServiceHTTPClient interface {
 	GetTranslation(ctx context.Context, req *v1.GetPostRequest, opts ...http.CallOption) (rsp *v1.PostTranslation, err error)
 	// List 获取帖子列表
 	List(ctx context.Context, req *v11.PagingRequest, opts ...http.CallOption) (rsp *v1.ListPostResponse, err error)
+	// ResolveContentReferences 批量解析 RELATION 字段引用（"post:12"/"page:7"）为目标内容摘要
+	// （C 端渲染关联卡片用；免鉴权；仅解析 PUBLISHED 目标）
+	ResolveContentReferences(ctx context.Context, req *v1.ResolveContentReferencesRequest, opts ...http.CallOption) (rsp *v1.ResolveContentReferencesResponse, err error)
 	// SearchPosts 全文搜索帖子（前台，基于 OpenSearch）
 	//
 	// 仅返回 PUBLISHED 状态内容；tenant_id 由服务端从登录用户上下文注入，
@@ -386,6 +413,21 @@ func (c *PostServiceHTTPClientImpl) List(ctx context.Context, in *v11.PagingRequ
 	pattern := "/app/v1/posts"
 	path := binding.EncodeURL(pattern, in, true)
 	opts = append(opts, http.Operation(OperationPostServiceList))
+	opts = append(opts, http.PathTemplate(pattern))
+	err := c.cc.Invoke(ctx, "GET", path, nil, &out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return &out, nil
+}
+
+// ResolveContentReferences 批量解析 RELATION 字段引用（"post:12"/"page:7"）为目标内容摘要
+// （C 端渲染关联卡片用；免鉴权；仅解析 PUBLISHED 目标）
+func (c *PostServiceHTTPClientImpl) ResolveContentReferences(ctx context.Context, in *v1.ResolveContentReferencesRequest, opts ...http.CallOption) (*v1.ResolveContentReferencesResponse, error) {
+	var out v1.ResolveContentReferencesResponse
+	pattern := "/app/v1/content-references/resolve"
+	path := binding.EncodeURL(pattern, in, true)
+	opts = append(opts, http.Operation(OperationPostServiceResolveContentReferences))
 	opts = append(opts, http.PathTemplate(pattern))
 	err := c.cc.Invoke(ctx, "GET", path, nil, &out, opts...)
 	if err != nil {

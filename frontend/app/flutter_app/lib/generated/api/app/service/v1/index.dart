@@ -13406,6 +13406,30 @@ class PostServiceClient {
     return ContentServiceV1ContentModel.fromJson(result as Map<String, dynamic>);
   }
 
+  /// 批量解析 RELATION 字段引用（"post:12"/"page:7"）为目标内容摘要
+  /// （C 端渲染关联卡片用；免鉴权；仅解析 PUBLISHED 目标）
+  Future<ContentServiceV1ResolveContentReferencesResponse> resolveContentReferences(ContentServiceV1ResolveContentReferencesRequest request, {Map<String, String>? headers}) async {
+    final path = '/app/v1/content-references/resolve';
+    final queryParams = <String>[];
+    if (request.refs != null) {
+      request.refs!.forEach((x) {
+        queryParams.add('refs=${Uri.encodeComponent(x.toString())}');
+      });
+    }
+    if (request.languageCode != null) {
+      queryParams.add('languageCode=${Uri.encodeComponent(request.languageCode!.toString())}');
+    }
+    var uri = path;
+    if (queryParams.isNotEmpty) {
+      uri += '?${queryParams.join("&")}';
+    }
+    final result = await _transport.unary(uri, 'GET', null, TransportMeta(
+      service: 'PostService',
+      method: 'ResolveContentReferences',
+    ), headers: headers);
+    return ContentServiceV1ResolveContentReferencesResponse.fromJson(result as Map<String, dynamic>);
+  }
+
   /// 获取帖子列表
   Future<ContentServiceV1ListPostResponse> list(PaginationPagingRequest request, {Map<String, String>? headers}) async {
     final path = '/app/v1/posts';
@@ -14860,6 +14884,368 @@ class ContentServiceV1ContentModelTranslation {
         // field 200: createdAt
         case 200: {
           m.createdAt = r.readTimestampIso();
+          break;
+        }
+        default: {
+          r.skip();
+        }
+      }
+    }
+    return m;
+  }
+
+}
+
+/// 批量解析内容引用 - 请求
+class ContentServiceV1ResolveContentReferencesRequest {
+  /// 标题语言偏好（BCP-47，如 zh-CN）；无匹配翻译时回退首个非空标题
+  String? languageCode;
+  /// 引用值列表，形如 "post:12"/"page:7"；≤20 个，去重；其余形态静默跳过
+  List<String>? refs;
+
+  ContentServiceV1ResolveContentReferencesRequest({
+    this.languageCode,
+    this.refs,
+  });
+
+  factory ContentServiceV1ResolveContentReferencesRequest.fromJson(Map<String, dynamic> json) {
+    return ContentServiceV1ResolveContentReferencesRequest(
+      languageCode: json['languageCode'] as String?,
+      refs: (json['refs'] as List<dynamic>?)?.map((e) => e as String).toList(),
+    );
+  }
+
+  Map<String, dynamic> toJson() {
+    final json = <String, dynamic>{};
+    if (languageCode != null) json['languageCode'] = languageCode;
+    if (refs != null) json['refs'] = refs;
+    return json;
+  }
+
+  @override
+  String toString() {
+    return 'ContentServiceV1ResolveContentReferencesRequest(languageCode: $languageCode, refs: $refs)';
+  }
+
+  @override
+  bool operator ==(Object other) =>
+    identical(this, other) ||
+    other is ContentServiceV1ResolveContentReferencesRequest &&
+      runtimeType == other.runtimeType
+      && languageCode == other.languageCode
+      && refs == other.refs
+    ;
+
+  @override
+  int get hashCode => Object.hashAll([
+    languageCode,
+    refs,
+  ]);
+
+  ContentServiceV1ResolveContentReferencesRequest copyWith({
+    String? languageCode,
+    List<String>? refs,
+  }) {
+    return ContentServiceV1ResolveContentReferencesRequest(
+      languageCode: languageCode ?? this.languageCode,
+      refs: refs ?? this.refs,
+    );
+  }
+
+  /// 二进制 proto 编码（MQTT 等二进制传输用；字段按编号升序写出）
+  Uint8List writeToBuffer() {
+    final w = ProtoWireWriter();
+    _writeTo(w);
+    return w.toBuffer();
+  }
+
+  void _writeTo(ProtoWireWriter w) {
+    // field 1: refs
+    final f1 = refs;
+    if (f1 != null) {
+      w.writeStringList(1, f1!);
+    }
+    // field 2: languageCode
+    final f2 = languageCode;
+    if (f2 != null) {
+      w.writeString(2, f2!);
+    }
+  }
+
+  factory ContentServiceV1ResolveContentReferencesRequest.fromBuffer(List<int> bytes) {
+    return ContentServiceV1ResolveContentReferencesRequest._readFrom(ProtoWireReader(bytes));
+  }
+
+  static ContentServiceV1ResolveContentReferencesRequest _readFrom(ProtoWireReader r) {
+    final m = ContentServiceV1ResolveContentReferencesRequest();
+    while (r.next()) {
+      switch (r.fieldNumber) {
+        // field 1: refs
+        case 1: {
+          m.refs = r.readStringList();
+          break;
+        }
+        // field 2: languageCode
+        case 2: {
+          m.languageCode = r.readString();
+          break;
+        }
+        default: {
+          r.skip();
+        }
+      }
+    }
+    return m;
+  }
+
+}
+
+/// 批量解析内容引用 - 回应（仅含解析成功的目标；失败/不可见项不出现）
+class ContentServiceV1ResolveContentReferencesResponse {
+  List<ContentServiceV1ContentReferenceSummary>? items;
+
+  ContentServiceV1ResolveContentReferencesResponse({
+    this.items,
+  });
+
+  factory ContentServiceV1ResolveContentReferencesResponse.fromJson(Map<String, dynamic> json) {
+    return ContentServiceV1ResolveContentReferencesResponse(
+      items: (json['items'] as List<dynamic>?)?.map((e) => ContentServiceV1ContentReferenceSummary.fromJson(e as Map<String, dynamic>)).toList(),
+    );
+  }
+
+  Map<String, dynamic> toJson() {
+    final json = <String, dynamic>{};
+    if (items != null) json['items'] = items!.map((e) => e.toJson()).toList();
+    return json;
+  }
+
+  @override
+  String toString() {
+    return 'ContentServiceV1ResolveContentReferencesResponse(items: $items)';
+  }
+
+  @override
+  bool operator ==(Object other) =>
+    identical(this, other) ||
+    other is ContentServiceV1ResolveContentReferencesResponse &&
+      runtimeType == other.runtimeType
+      && items == other.items
+    ;
+
+  @override
+  int get hashCode => Object.hashAll([
+    items,
+  ]);
+
+  ContentServiceV1ResolveContentReferencesResponse copyWith({
+    List<ContentServiceV1ContentReferenceSummary>? items,
+  }) {
+    return ContentServiceV1ResolveContentReferencesResponse(
+      items: items ?? this.items,
+    );
+  }
+
+  /// 二进制 proto 编码（MQTT 等二进制传输用；字段按编号升序写出）
+  Uint8List writeToBuffer() {
+    final w = ProtoWireWriter();
+    _writeTo(w);
+    return w.toBuffer();
+  }
+
+  void _writeTo(ProtoWireWriter w) {
+    // field 1: items
+    final f1 = items;
+    if (f1 != null) {
+      for (final e in f1!) { final cw = ProtoWireWriter(); e._writeTo(cw); w.writeRaw(1, cw.toBuffer()); }
+    }
+  }
+
+  factory ContentServiceV1ResolveContentReferencesResponse.fromBuffer(List<int> bytes) {
+    return ContentServiceV1ResolveContentReferencesResponse._readFrom(ProtoWireReader(bytes));
+  }
+
+  static ContentServiceV1ResolveContentReferencesResponse _readFrom(ProtoWireReader r) {
+    final m = ContentServiceV1ResolveContentReferencesResponse();
+    while (r.next()) {
+      switch (r.fieldNumber) {
+        // field 1: items
+        case 1: {
+          m.items = r.readNestedList().map(ContentServiceV1ContentReferenceSummary._readFrom).toList();
+          break;
+        }
+        default: {
+          r.skip();
+        }
+      }
+    }
+    return m;
+  }
+
+}
+
+/// 引用目标内容摘要（RELATION 字段前台渲染用最小面）
+class ContentServiceV1ContentReferenceSummary {
+  String? ref;
+  String? slug;
+  String? targetEntityType;
+  int? targetId;
+  String? title;
+  String? urlPath;
+
+  ContentServiceV1ContentReferenceSummary({
+    this.ref,
+    this.slug,
+    this.targetEntityType,
+    this.targetId,
+    this.title,
+    this.urlPath,
+  });
+
+  factory ContentServiceV1ContentReferenceSummary.fromJson(Map<String, dynamic> json) {
+    return ContentServiceV1ContentReferenceSummary(
+      ref: json['ref'] as String?,
+      slug: json['slug'] as String?,
+      targetEntityType: json['targetEntityType'] as String?,
+      targetId: json['targetId'] as int?,
+      title: json['title'] as String?,
+      urlPath: json['urlPath'] as String?,
+    );
+  }
+
+  Map<String, dynamic> toJson() {
+    final json = <String, dynamic>{};
+    if (ref != null) json['ref'] = ref;
+    if (slug != null) json['slug'] = slug;
+    if (targetEntityType != null) json['targetEntityType'] = targetEntityType;
+    if (targetId != null) json['targetId'] = targetId;
+    if (title != null) json['title'] = title;
+    if (urlPath != null) json['urlPath'] = urlPath;
+    return json;
+  }
+
+  @override
+  String toString() {
+    return 'ContentServiceV1ContentReferenceSummary(ref: $ref, slug: $slug, targetEntityType: $targetEntityType, targetId: $targetId, title: $title, urlPath: $urlPath)';
+  }
+
+  @override
+  bool operator ==(Object other) =>
+    identical(this, other) ||
+    other is ContentServiceV1ContentReferenceSummary &&
+      runtimeType == other.runtimeType
+      && ref == other.ref
+      && slug == other.slug
+      && targetEntityType == other.targetEntityType
+      && targetId == other.targetId
+      && title == other.title
+      && urlPath == other.urlPath
+    ;
+
+  @override
+  int get hashCode => Object.hashAll([
+    ref,
+    slug,
+    targetEntityType,
+    targetId,
+    title,
+    urlPath,
+  ]);
+
+  ContentServiceV1ContentReferenceSummary copyWith({
+    String? ref,
+    String? slug,
+    String? targetEntityType,
+    int? targetId,
+    String? title,
+    String? urlPath,
+  }) {
+    return ContentServiceV1ContentReferenceSummary(
+      ref: ref ?? this.ref,
+      slug: slug ?? this.slug,
+      targetEntityType: targetEntityType ?? this.targetEntityType,
+      targetId: targetId ?? this.targetId,
+      title: title ?? this.title,
+      urlPath: urlPath ?? this.urlPath,
+    );
+  }
+
+  /// 二进制 proto 编码（MQTT 等二进制传输用；字段按编号升序写出）
+  Uint8List writeToBuffer() {
+    final w = ProtoWireWriter();
+    _writeTo(w);
+    return w.toBuffer();
+  }
+
+  void _writeTo(ProtoWireWriter w) {
+    // field 1: ref
+    final f1 = ref;
+    if (f1 != null) {
+      w.writeString(1, f1!);
+    }
+    // field 2: targetEntityType
+    final f2 = targetEntityType;
+    if (f2 != null) {
+      w.writeString(2, f2!);
+    }
+    // field 3: targetId
+    final f3 = targetId;
+    if (f3 != null) {
+      w.writeUint32(3, f3!);
+    }
+    // field 4: title
+    final f4 = title;
+    if (f4 != null) {
+      w.writeString(4, f4!);
+    }
+    // field 5: slug
+    final f5 = slug;
+    if (f5 != null) {
+      w.writeString(5, f5!);
+    }
+    // field 6: urlPath
+    final f6 = urlPath;
+    if (f6 != null) {
+      w.writeString(6, f6!);
+    }
+  }
+
+  factory ContentServiceV1ContentReferenceSummary.fromBuffer(List<int> bytes) {
+    return ContentServiceV1ContentReferenceSummary._readFrom(ProtoWireReader(bytes));
+  }
+
+  static ContentServiceV1ContentReferenceSummary _readFrom(ProtoWireReader r) {
+    final m = ContentServiceV1ContentReferenceSummary();
+    while (r.next()) {
+      switch (r.fieldNumber) {
+        // field 1: ref
+        case 1: {
+          m.ref = r.readString();
+          break;
+        }
+        // field 2: targetEntityType
+        case 2: {
+          m.targetEntityType = r.readString();
+          break;
+        }
+        // field 3: targetId
+        case 3: {
+          m.targetId = r.readUint32();
+          break;
+        }
+        // field 4: title
+        case 4: {
+          m.title = r.readString();
+          break;
+        }
+        // field 5: slug
+        case 5: {
+          m.slug = r.readString();
+          break;
+        }
+        // field 6: urlPath
+        case 6: {
+          m.urlPath = r.readString();
           break;
         }
         default: {

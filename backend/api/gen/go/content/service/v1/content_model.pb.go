@@ -1144,6 +1144,191 @@ func (x *ListFieldDefinitionsResponse) GetTotal() uint64 {
 	return 0
 }
 
+// 批量解析内容引用 - 请求
+type ResolveContentReferencesRequest struct {
+	state protoimpl.MessageState `protogen:"open.v1"`
+	// 引用值列表，形如 "post:12"/"page:7"；≤20 个，去重；其余形态静默跳过
+	Refs []string `protobuf:"bytes,1,rep,name=refs,proto3" json:"refs,omitempty"`
+	// 标题语言偏好（BCP-47，如 zh-CN）；无匹配翻译时回退首个非空标题
+	LanguageCode  *string `protobuf:"bytes,2,opt,name=language_code,json=languageCode,proto3,oneof" json:"language_code,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *ResolveContentReferencesRequest) Reset() {
+	*x = ResolveContentReferencesRequest{}
+	mi := &file_content_service_v1_content_model_proto_msgTypes[14]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *ResolveContentReferencesRequest) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*ResolveContentReferencesRequest) ProtoMessage() {}
+
+func (x *ResolveContentReferencesRequest) ProtoReflect() protoreflect.Message {
+	mi := &file_content_service_v1_content_model_proto_msgTypes[14]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use ResolveContentReferencesRequest.ProtoReflect.Descriptor instead.
+func (*ResolveContentReferencesRequest) Descriptor() ([]byte, []int) {
+	return file_content_service_v1_content_model_proto_rawDescGZIP(), []int{14}
+}
+
+func (x *ResolveContentReferencesRequest) GetRefs() []string {
+	if x != nil {
+		return x.Refs
+	}
+	return nil
+}
+
+func (x *ResolveContentReferencesRequest) GetLanguageCode() string {
+	if x != nil && x.LanguageCode != nil {
+		return *x.LanguageCode
+	}
+	return ""
+}
+
+// 引用目标内容摘要（RELATION 字段前台渲染用最小面）
+type ContentReferenceSummary struct {
+	state            protoimpl.MessageState `protogen:"open.v1"`
+	Ref              *string                `protobuf:"bytes,1,opt,name=ref,proto3,oneof" json:"ref,omitempty"`                                                     // 原始引用值
+	TargetEntityType *string                `protobuf:"bytes,2,opt,name=target_entity_type,json=targetEntityType,proto3,oneof" json:"target_entity_type,omitempty"` // 目标实体类型
+	TargetId         *uint32                `protobuf:"varint,3,opt,name=target_id,json=targetId,proto3,oneof" json:"target_id,omitempty"`                          // 目标实体 ID
+	Title            *string                `protobuf:"bytes,4,opt,name=title,proto3,oneof" json:"title,omitempty"`                                                 // 目标标题
+	Slug             *string                `protobuf:"bytes,5,opt,name=slug,proto3,oneof" json:"slug,omitempty"`                                                   // 目标 slug
+	UrlPath          *string                `protobuf:"bytes,6,opt,name=url_path,json=urlPath,proto3,oneof" json:"url_path,omitempty"`                              // 站内公开路径
+	unknownFields    protoimpl.UnknownFields
+	sizeCache        protoimpl.SizeCache
+}
+
+func (x *ContentReferenceSummary) Reset() {
+	*x = ContentReferenceSummary{}
+	mi := &file_content_service_v1_content_model_proto_msgTypes[15]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *ContentReferenceSummary) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*ContentReferenceSummary) ProtoMessage() {}
+
+func (x *ContentReferenceSummary) ProtoReflect() protoreflect.Message {
+	mi := &file_content_service_v1_content_model_proto_msgTypes[15]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use ContentReferenceSummary.ProtoReflect.Descriptor instead.
+func (*ContentReferenceSummary) Descriptor() ([]byte, []int) {
+	return file_content_service_v1_content_model_proto_rawDescGZIP(), []int{15}
+}
+
+func (x *ContentReferenceSummary) GetRef() string {
+	if x != nil && x.Ref != nil {
+		return *x.Ref
+	}
+	return ""
+}
+
+func (x *ContentReferenceSummary) GetTargetEntityType() string {
+	if x != nil && x.TargetEntityType != nil {
+		return *x.TargetEntityType
+	}
+	return ""
+}
+
+func (x *ContentReferenceSummary) GetTargetId() uint32 {
+	if x != nil && x.TargetId != nil {
+		return *x.TargetId
+	}
+	return 0
+}
+
+func (x *ContentReferenceSummary) GetTitle() string {
+	if x != nil && x.Title != nil {
+		return *x.Title
+	}
+	return ""
+}
+
+func (x *ContentReferenceSummary) GetSlug() string {
+	if x != nil && x.Slug != nil {
+		return *x.Slug
+	}
+	return ""
+}
+
+func (x *ContentReferenceSummary) GetUrlPath() string {
+	if x != nil && x.UrlPath != nil {
+		return *x.UrlPath
+	}
+	return ""
+}
+
+// 批量解析内容引用 - 回应（仅含解析成功的目标；失败/不可见项不出现）
+type ResolveContentReferencesResponse struct {
+	state         protoimpl.MessageState     `protogen:"open.v1"`
+	Items         []*ContentReferenceSummary `protobuf:"bytes,1,rep,name=items,proto3" json:"items,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *ResolveContentReferencesResponse) Reset() {
+	*x = ResolveContentReferencesResponse{}
+	mi := &file_content_service_v1_content_model_proto_msgTypes[16]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *ResolveContentReferencesResponse) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*ResolveContentReferencesResponse) ProtoMessage() {}
+
+func (x *ResolveContentReferencesResponse) ProtoReflect() protoreflect.Message {
+	mi := &file_content_service_v1_content_model_proto_msgTypes[16]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use ResolveContentReferencesResponse.ProtoReflect.Descriptor instead.
+func (*ResolveContentReferencesResponse) Descriptor() ([]byte, []int) {
+	return file_content_service_v1_content_model_proto_rawDescGZIP(), []int{16}
+}
+
+func (x *ResolveContentReferencesResponse) GetItems() []*ContentReferenceSummary {
+	if x != nil {
+		return x.Items
+	}
+	return nil
+}
+
 var File_content_service_v1_content_model_proto protoreflect.FileDescriptor
 
 const file_content_service_v1_content_model_proto_rawDesc = "" +
@@ -1302,7 +1487,27 @@ const file_content_service_v1_content_model_proto_rawDesc = "" +
 	"_view_mask\"o\n" +
 	"\x1cListFieldDefinitionsResponse\x129\n" +
 	"\x05items\x18\x01 \x03(\v2#.content.service.v1.FieldDefinitionR\x05items\x12\x14\n" +
-	"\x05total\x18\x02 \x01(\x04R\x05total2\xff\x05\n" +
+	"\x05total\x18\x02 \x01(\x04R\x05total\"\xb6\x01\n" +
+	"\x1fResolveContentReferencesRequest\x12=\n" +
+	"\x04refs\x18\x01 \x03(\tB)\xbaG&\x92\x02#引用值列表（entity_type:id）R\x04refs\x12B\n" +
+	"\rlanguage_code\x18\x02 \x01(\tB\x18\xbaG\x15\x92\x02\x12标题语言偏好H\x00R\flanguageCode\x88\x01\x01B\x10\n" +
+	"\x0e_language_code\"\xc9\x04\n" +
+	"\x17ContentReferenceSummary\x128\n" +
+	"\x03ref\x18\x01 \x01(\tB!\xbaG\x1e\x92\x02\x1b原始引用值（回显）H\x00R\x03ref\x88\x01\x01\x12W\n" +
+	"\x12target_entity_type\x18\x02 \x01(\tB$\xbaG!\x92\x02\x1e目标实体类型：post/pageH\x01R\x10targetEntityType\x88\x01\x01\x127\n" +
+	"\ttarget_id\x18\x03 \x01(\rB\x15\xbaG\x12\x92\x02\x0f目标实体 IDH\x02R\btargetId\x88\x01\x01\x12W\n" +
+	"\x05title\x18\x04 \x01(\tB<\xbaG9\x92\x026目标标题（按语言偏好，回退首个非空）H\x03R\x05title\x88\x01\x01\x12G\n" +
+	"\x04slug\x18\x05 \x01(\tB.\xbaG+\x92\x02(目标 slug（公开 SEO 路由标识）H\x04R\x04slug\x88\x01\x01\x12s\n" +
+	"\burl_path\x18\x06 \x01(\tBS\xbaGP\x92\x02M站内公开路径（/post/{slug}、/page/{slug}），C 端可直接拼链接H\x05R\aurlPath\x88\x01\x01B\x06\n" +
+	"\x04_refB\x15\n" +
+	"\x13_target_entity_typeB\f\n" +
+	"\n" +
+	"_target_idB\b\n" +
+	"\x06_titleB\a\n" +
+	"\x05_slugB\v\n" +
+	"\t_url_path\"e\n" +
+	" ResolveContentReferencesResponse\x12A\n" +
+	"\x05items\x18\x01 \x03(\v2+.content.service.v1.ContentReferenceSummaryR\x05items2\x89\a\n" +
 	"\x13ContentModelService\x12Q\n" +
 	"\x04List\x12\x19.pagination.PagingRequest\x1a,.content.service.v1.ListContentModelResponse\"\x00\x12S\n" +
 	"\x05Count\x12\x19.pagination.PagingRequest\x1a-.content.service.v1.CountContentModelResponse\"\x00\x12U\n" +
@@ -1311,7 +1516,8 @@ const file_content_service_v1_content_model_proto_rawDesc = "" +
 	"\x06Update\x12-.content.service.v1.UpdateContentModelRequest\x1a .content.service.v1.ContentModel\"\x00\x12Q\n" +
 	"\x06Delete\x12-.content.service.v1.DeleteContentModelRequest\x1a\x16.google.protobuf.Empty\"\x00\x12{\n" +
 	"\x14ListFieldDefinitions\x12/.content.service.v1.ListFieldDefinitionsRequest\x1a0.content.service.v1.ListFieldDefinitionsResponse\"\x00\x12_\n" +
-	"\x0eGetModelByPost\x12).content.service.v1.GetModelByPostRequest\x1a .content.service.v1.ContentModel\"\x00B\xca\x01\n" +
+	"\x0eGetModelByPost\x12).content.service.v1.GetModelByPostRequest\x1a .content.service.v1.ContentModel\"\x00\x12\x87\x01\n" +
+	"\x18ResolveContentReferences\x123.content.service.v1.ResolveContentReferencesRequest\x1a4.content.service.v1.ResolveContentReferencesResponse\"\x00B\xca\x01\n" +
 	"\x16com.content.service.v1B\x11ContentModelProtoP\x01Z3go-wind-cms/api/gen/go/content/service/v1;contentpb\xa2\x02\x03CSX\xaa\x02\x12Content.Service.V1\xca\x02\x12Content\\Service\\V1\xe2\x02\x1eContent\\Service\\V1\\GPBMetadata\xea\x02\x14Content::Service::V1b\x06proto3"
 
 var (
@@ -1327,69 +1533,75 @@ func file_content_service_v1_content_model_proto_rawDescGZIP() []byte {
 }
 
 var file_content_service_v1_content_model_proto_enumTypes = make([]protoimpl.EnumInfo, 1)
-var file_content_service_v1_content_model_proto_msgTypes = make([]protoimpl.MessageInfo, 15)
+var file_content_service_v1_content_model_proto_msgTypes = make([]protoimpl.MessageInfo, 18)
 var file_content_service_v1_content_model_proto_goTypes = []any{
-	(FieldDefinition_Type)(0),            // 0: content.service.v1.FieldDefinition.Type
-	(*ContentModel)(nil),                 // 1: content.service.v1.ContentModel
-	(*FieldDefinition)(nil),              // 2: content.service.v1.FieldDefinition
-	(*RelationConfig)(nil),               // 3: content.service.v1.RelationConfig
-	(*ContentModelTranslation)(nil),      // 4: content.service.v1.ContentModelTranslation
-	(*FieldDefinitionTranslation)(nil),   // 5: content.service.v1.FieldDefinitionTranslation
-	(*GetModelByPostRequest)(nil),        // 6: content.service.v1.GetModelByPostRequest
-	(*ListContentModelResponse)(nil),     // 7: content.service.v1.ListContentModelResponse
-	(*CountContentModelResponse)(nil),    // 8: content.service.v1.CountContentModelResponse
-	(*GetContentModelRequest)(nil),       // 9: content.service.v1.GetContentModelRequest
-	(*CreateContentModelRequest)(nil),    // 10: content.service.v1.CreateContentModelRequest
-	(*UpdateContentModelRequest)(nil),    // 11: content.service.v1.UpdateContentModelRequest
-	(*DeleteContentModelRequest)(nil),    // 12: content.service.v1.DeleteContentModelRequest
-	(*ListFieldDefinitionsRequest)(nil),  // 13: content.service.v1.ListFieldDefinitionsRequest
-	(*ListFieldDefinitionsResponse)(nil), // 14: content.service.v1.ListFieldDefinitionsResponse
-	nil,                                  // 15: content.service.v1.FieldDefinition.OptionsEntry
-	(*timestamppb.Timestamp)(nil),        // 16: google.protobuf.Timestamp
-	(*fieldmaskpb.FieldMask)(nil),        // 17: google.protobuf.FieldMask
-	(*v1.PagingRequest)(nil),             // 18: pagination.PagingRequest
-	(*emptypb.Empty)(nil),                // 19: google.protobuf.Empty
+	(FieldDefinition_Type)(0),                // 0: content.service.v1.FieldDefinition.Type
+	(*ContentModel)(nil),                     // 1: content.service.v1.ContentModel
+	(*FieldDefinition)(nil),                  // 2: content.service.v1.FieldDefinition
+	(*RelationConfig)(nil),                   // 3: content.service.v1.RelationConfig
+	(*ContentModelTranslation)(nil),          // 4: content.service.v1.ContentModelTranslation
+	(*FieldDefinitionTranslation)(nil),       // 5: content.service.v1.FieldDefinitionTranslation
+	(*GetModelByPostRequest)(nil),            // 6: content.service.v1.GetModelByPostRequest
+	(*ListContentModelResponse)(nil),         // 7: content.service.v1.ListContentModelResponse
+	(*CountContentModelResponse)(nil),        // 8: content.service.v1.CountContentModelResponse
+	(*GetContentModelRequest)(nil),           // 9: content.service.v1.GetContentModelRequest
+	(*CreateContentModelRequest)(nil),        // 10: content.service.v1.CreateContentModelRequest
+	(*UpdateContentModelRequest)(nil),        // 11: content.service.v1.UpdateContentModelRequest
+	(*DeleteContentModelRequest)(nil),        // 12: content.service.v1.DeleteContentModelRequest
+	(*ListFieldDefinitionsRequest)(nil),      // 13: content.service.v1.ListFieldDefinitionsRequest
+	(*ListFieldDefinitionsResponse)(nil),     // 14: content.service.v1.ListFieldDefinitionsResponse
+	(*ResolveContentReferencesRequest)(nil),  // 15: content.service.v1.ResolveContentReferencesRequest
+	(*ContentReferenceSummary)(nil),          // 16: content.service.v1.ContentReferenceSummary
+	(*ResolveContentReferencesResponse)(nil), // 17: content.service.v1.ResolveContentReferencesResponse
+	nil,                                      // 18: content.service.v1.FieldDefinition.OptionsEntry
+	(*timestamppb.Timestamp)(nil),            // 19: google.protobuf.Timestamp
+	(*fieldmaskpb.FieldMask)(nil),            // 20: google.protobuf.FieldMask
+	(*v1.PagingRequest)(nil),                 // 21: pagination.PagingRequest
+	(*emptypb.Empty)(nil),                    // 22: google.protobuf.Empty
 }
 var file_content_service_v1_content_model_proto_depIdxs = []int32{
 	2,  // 0: content.service.v1.ContentModel.fields:type_name -> content.service.v1.FieldDefinition
 	4,  // 1: content.service.v1.ContentModel.translations:type_name -> content.service.v1.ContentModelTranslation
-	16, // 2: content.service.v1.ContentModel.created_at:type_name -> google.protobuf.Timestamp
-	16, // 3: content.service.v1.ContentModel.updated_at:type_name -> google.protobuf.Timestamp
+	19, // 2: content.service.v1.ContentModel.created_at:type_name -> google.protobuf.Timestamp
+	19, // 3: content.service.v1.ContentModel.updated_at:type_name -> google.protobuf.Timestamp
 	0,  // 4: content.service.v1.FieldDefinition.type:type_name -> content.service.v1.FieldDefinition.Type
-	15, // 5: content.service.v1.FieldDefinition.options:type_name -> content.service.v1.FieldDefinition.OptionsEntry
+	18, // 5: content.service.v1.FieldDefinition.options:type_name -> content.service.v1.FieldDefinition.OptionsEntry
 	3,  // 6: content.service.v1.FieldDefinition.relation_config:type_name -> content.service.v1.RelationConfig
 	5,  // 7: content.service.v1.FieldDefinition.translations:type_name -> content.service.v1.FieldDefinitionTranslation
-	16, // 8: content.service.v1.FieldDefinition.created_at:type_name -> google.protobuf.Timestamp
-	16, // 9: content.service.v1.ContentModelTranslation.created_at:type_name -> google.protobuf.Timestamp
-	16, // 10: content.service.v1.FieldDefinitionTranslation.created_at:type_name -> google.protobuf.Timestamp
+	19, // 8: content.service.v1.FieldDefinition.created_at:type_name -> google.protobuf.Timestamp
+	19, // 9: content.service.v1.ContentModelTranslation.created_at:type_name -> google.protobuf.Timestamp
+	19, // 10: content.service.v1.FieldDefinitionTranslation.created_at:type_name -> google.protobuf.Timestamp
 	1,  // 11: content.service.v1.ListContentModelResponse.items:type_name -> content.service.v1.ContentModel
-	17, // 12: content.service.v1.GetContentModelRequest.view_mask:type_name -> google.protobuf.FieldMask
+	20, // 12: content.service.v1.GetContentModelRequest.view_mask:type_name -> google.protobuf.FieldMask
 	1,  // 13: content.service.v1.CreateContentModelRequest.data:type_name -> content.service.v1.ContentModel
 	1,  // 14: content.service.v1.UpdateContentModelRequest.data:type_name -> content.service.v1.ContentModel
-	17, // 15: content.service.v1.UpdateContentModelRequest.update_mask:type_name -> google.protobuf.FieldMask
-	17, // 16: content.service.v1.ListFieldDefinitionsRequest.view_mask:type_name -> google.protobuf.FieldMask
+	20, // 15: content.service.v1.UpdateContentModelRequest.update_mask:type_name -> google.protobuf.FieldMask
+	20, // 16: content.service.v1.ListFieldDefinitionsRequest.view_mask:type_name -> google.protobuf.FieldMask
 	2,  // 17: content.service.v1.ListFieldDefinitionsResponse.items:type_name -> content.service.v1.FieldDefinition
-	18, // 18: content.service.v1.ContentModelService.List:input_type -> pagination.PagingRequest
-	18, // 19: content.service.v1.ContentModelService.Count:input_type -> pagination.PagingRequest
-	9,  // 20: content.service.v1.ContentModelService.Get:input_type -> content.service.v1.GetContentModelRequest
-	10, // 21: content.service.v1.ContentModelService.Create:input_type -> content.service.v1.CreateContentModelRequest
-	11, // 22: content.service.v1.ContentModelService.Update:input_type -> content.service.v1.UpdateContentModelRequest
-	12, // 23: content.service.v1.ContentModelService.Delete:input_type -> content.service.v1.DeleteContentModelRequest
-	13, // 24: content.service.v1.ContentModelService.ListFieldDefinitions:input_type -> content.service.v1.ListFieldDefinitionsRequest
-	6,  // 25: content.service.v1.ContentModelService.GetModelByPost:input_type -> content.service.v1.GetModelByPostRequest
-	7,  // 26: content.service.v1.ContentModelService.List:output_type -> content.service.v1.ListContentModelResponse
-	8,  // 27: content.service.v1.ContentModelService.Count:output_type -> content.service.v1.CountContentModelResponse
-	1,  // 28: content.service.v1.ContentModelService.Get:output_type -> content.service.v1.ContentModel
-	1,  // 29: content.service.v1.ContentModelService.Create:output_type -> content.service.v1.ContentModel
-	1,  // 30: content.service.v1.ContentModelService.Update:output_type -> content.service.v1.ContentModel
-	19, // 31: content.service.v1.ContentModelService.Delete:output_type -> google.protobuf.Empty
-	14, // 32: content.service.v1.ContentModelService.ListFieldDefinitions:output_type -> content.service.v1.ListFieldDefinitionsResponse
-	1,  // 33: content.service.v1.ContentModelService.GetModelByPost:output_type -> content.service.v1.ContentModel
-	26, // [26:34] is the sub-list for method output_type
-	18, // [18:26] is the sub-list for method input_type
-	18, // [18:18] is the sub-list for extension type_name
-	18, // [18:18] is the sub-list for extension extendee
-	0,  // [0:18] is the sub-list for field type_name
+	16, // 18: content.service.v1.ResolveContentReferencesResponse.items:type_name -> content.service.v1.ContentReferenceSummary
+	21, // 19: content.service.v1.ContentModelService.List:input_type -> pagination.PagingRequest
+	21, // 20: content.service.v1.ContentModelService.Count:input_type -> pagination.PagingRequest
+	9,  // 21: content.service.v1.ContentModelService.Get:input_type -> content.service.v1.GetContentModelRequest
+	10, // 22: content.service.v1.ContentModelService.Create:input_type -> content.service.v1.CreateContentModelRequest
+	11, // 23: content.service.v1.ContentModelService.Update:input_type -> content.service.v1.UpdateContentModelRequest
+	12, // 24: content.service.v1.ContentModelService.Delete:input_type -> content.service.v1.DeleteContentModelRequest
+	13, // 25: content.service.v1.ContentModelService.ListFieldDefinitions:input_type -> content.service.v1.ListFieldDefinitionsRequest
+	6,  // 26: content.service.v1.ContentModelService.GetModelByPost:input_type -> content.service.v1.GetModelByPostRequest
+	15, // 27: content.service.v1.ContentModelService.ResolveContentReferences:input_type -> content.service.v1.ResolveContentReferencesRequest
+	7,  // 28: content.service.v1.ContentModelService.List:output_type -> content.service.v1.ListContentModelResponse
+	8,  // 29: content.service.v1.ContentModelService.Count:output_type -> content.service.v1.CountContentModelResponse
+	1,  // 30: content.service.v1.ContentModelService.Get:output_type -> content.service.v1.ContentModel
+	1,  // 31: content.service.v1.ContentModelService.Create:output_type -> content.service.v1.ContentModel
+	1,  // 32: content.service.v1.ContentModelService.Update:output_type -> content.service.v1.ContentModel
+	22, // 33: content.service.v1.ContentModelService.Delete:output_type -> google.protobuf.Empty
+	14, // 34: content.service.v1.ContentModelService.ListFieldDefinitions:output_type -> content.service.v1.ListFieldDefinitionsResponse
+	1,  // 35: content.service.v1.ContentModelService.GetModelByPost:output_type -> content.service.v1.ContentModel
+	17, // 36: content.service.v1.ContentModelService.ResolveContentReferences:output_type -> content.service.v1.ResolveContentReferencesResponse
+	28, // [28:37] is the sub-list for method output_type
+	19, // [19:28] is the sub-list for method input_type
+	19, // [19:19] is the sub-list for extension type_name
+	19, // [19:19] is the sub-list for extension extendee
+	0,  // [0:19] is the sub-list for field type_name
 }
 
 func init() { file_content_service_v1_content_model_proto_init() }
@@ -1410,13 +1622,15 @@ func file_content_service_v1_content_model_proto_init() {
 		(*DeleteContentModelRequest_Id)(nil),
 	}
 	file_content_service_v1_content_model_proto_msgTypes[12].OneofWrappers = []any{}
+	file_content_service_v1_content_model_proto_msgTypes[14].OneofWrappers = []any{}
+	file_content_service_v1_content_model_proto_msgTypes[15].OneofWrappers = []any{}
 	type x struct{}
 	out := protoimpl.TypeBuilder{
 		File: protoimpl.DescBuilder{
 			GoPackagePath: reflect.TypeOf(x{}).PkgPath(),
 			RawDescriptor: unsafe.Slice(unsafe.StringData(file_content_service_v1_content_model_proto_rawDesc), len(file_content_service_v1_content_model_proto_rawDesc)),
 			NumEnums:      1,
-			NumMessages:   15,
+			NumMessages:   18,
 			NumExtensions: 0,
 			NumServices:   1,
 		},

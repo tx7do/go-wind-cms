@@ -45,6 +45,13 @@ func (s *PostService) GetPostContentModel(ctx context.Context, req *contentV1.Ge
 	return s.contentModelCLient.GetModelByPost(ctx, req)
 }
 
+// ResolveContentReferences 批量解析 RELATION 字段引用为目标内容摘要
+// （C 端渲染关联卡片用）。免鉴权端点：仅解析 PUBLISHED 目标（core 内过滤），
+// 不可见/不存在的引用静默跳过，调用方据缺失项降级渲染。
+func (s *PostService) ResolveContentReferences(ctx context.Context, req *contentV1.ResolveContentReferencesRequest) (*contentV1.ResolveContentReferencesResponse, error) {
+	return s.contentModelCLient.ResolveContentReferences(ctx, req)
+}
+
 func (s *PostService) List(ctx context.Context, req *paginationV1.PagingRequest) (*contentV1.ListPostResponse, error) {
 	resp, err := s.postClient.List(ctx, req)
 	if err != nil {

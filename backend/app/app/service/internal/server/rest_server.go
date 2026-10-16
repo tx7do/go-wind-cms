@@ -124,6 +124,10 @@ func NewRestMiddleware(
 		// 模型定义（字段名/标签/类型）非敏感；模型解析在 core 内部完成。
 		appV1.OperationPostServiceGetPostContentModel,
 
+		// PostService.ResolveContentReferences：RELATION 字段引用 → 目标内容摘要
+		// （公开关联卡片）。core 仅解析 PUBLISHED 目标，不可见引用静默跳过。
+		appV1.OperationPostServiceResolveContentReferences,
+
 		// MediaAssetService.Get：customFields IMAGE 引用（media_asset:<id>）换公开
 		// URL 渲染用；图片本身随文章公开，租户隔离由 core viewer 保证。
 		appV1.OperationMediaAssetServiceGet,

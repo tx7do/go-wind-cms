@@ -21,14 +21,15 @@ import (
 const _ = grpc.SupportPackageIsVersion9
 
 const (
-	ContentModelService_List_FullMethodName                 = "/content.service.v1.ContentModelService/List"
-	ContentModelService_Count_FullMethodName                = "/content.service.v1.ContentModelService/Count"
-	ContentModelService_Get_FullMethodName                  = "/content.service.v1.ContentModelService/Get"
-	ContentModelService_Create_FullMethodName               = "/content.service.v1.ContentModelService/Create"
-	ContentModelService_Update_FullMethodName               = "/content.service.v1.ContentModelService/Update"
-	ContentModelService_Delete_FullMethodName               = "/content.service.v1.ContentModelService/Delete"
-	ContentModelService_ListFieldDefinitions_FullMethodName = "/content.service.v1.ContentModelService/ListFieldDefinitions"
-	ContentModelService_GetModelByPost_FullMethodName       = "/content.service.v1.ContentModelService/GetModelByPost"
+	ContentModelService_List_FullMethodName                     = "/content.service.v1.ContentModelService/List"
+	ContentModelService_Count_FullMethodName                    = "/content.service.v1.ContentModelService/Count"
+	ContentModelService_Get_FullMethodName                      = "/content.service.v1.ContentModelService/Get"
+	ContentModelService_Create_FullMethodName                   = "/content.service.v1.ContentModelService/Create"
+	ContentModelService_Update_FullMethodName                   = "/content.service.v1.ContentModelService/Update"
+	ContentModelService_Delete_FullMethodName                   = "/content.service.v1.ContentModelService/Delete"
+	ContentModelService_ListFieldDefinitions_FullMethodName     = "/content.service.v1.ContentModelService/ListFieldDefinitions"
+	ContentModelService_GetModelByPost_FullMethodName           = "/content.service.v1.ContentModelService/GetModelByPost"
+	ContentModelService_ResolveContentReferences_FullMethodName = "/content.service.v1.ContentModelService/ResolveContentReferences"
 )
 
 // ContentModelServiceClient is the client API for ContentModelService service.
@@ -55,6 +56,10 @@ type ContentModelServiceClient interface {
 	// 按文章取其分类链绑定的内容模型（C 端渲染 custom_fields 的公开数据源；
 	// 内部解析 文章→分类→模型，调用方无法指定或越权）
 	GetModelByPost(ctx context.Context, in *GetModelByPostRequest, opts ...grpc.CallOption) (*ContentModel, error)
+	// 批量解析 RELATION 字段的引用值（"post:12"/"page:7"）为目标内容摘要。
+	// 仅 C 端公开语义：post/page 只解析 PUBLISHED（未发布/软删/非法引用静默
+	// 跳过，不报错）；租户隔离由 viewer 保证。category/tag 引用 v1 不解析。
+	ResolveContentReferences(ctx context.Context, in *ResolveContentReferencesRequest, opts ...grpc.CallOption) (*ResolveContentReferencesResponse, error)
 }
 
 type contentModelServiceClient struct {
@@ -145,6 +150,16 @@ func (c *contentModelServiceClient) GetModelByPost(ctx context.Context, in *GetM
 	return out, nil
 }
 
+func (c *contentModelServiceClient) ResolveContentReferences(ctx context.Context, in *ResolveContentReferencesRequest, opts ...grpc.CallOption) (*ResolveContentReferencesResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(ResolveContentReferencesResponse)
+	err := c.cc.Invoke(ctx, ContentModelService_ResolveContentReferences_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 // ContentModelServiceServer is the server API for ContentModelService service.
 // All implementations must embed UnimplementedContentModelServiceServer
 // for forward compatibility.
@@ -169,6 +184,10 @@ type ContentModelServiceServer interface {
 	// 按文章取其分类链绑定的内容模型（C 端渲染 custom_fields 的公开数据源；
 	// 内部解析 文章→分类→模型，调用方无法指定或越权）
 	GetModelByPost(context.Context, *GetModelByPostRequest) (*ContentModel, error)
+	// 批量解析 RELATION 字段的引用值（"post:12"/"page:7"）为目标内容摘要。
+	// 仅 C 端公开语义：post/page 只解析 PUBLISHED（未发布/软删/非法引用静默
+	// 跳过，不报错）；租户隔离由 viewer 保证。category/tag 引用 v1 不解析。
+	ResolveContentReferences(context.Context, *ResolveContentReferencesRequest) (*ResolveContentReferencesResponse, error)
 	mustEmbedUnimplementedContentModelServiceServer()
 }
 
@@ -202,6 +221,9 @@ func (UnimplementedContentModelServiceServer) ListFieldDefinitions(context.Conte
 }
 func (UnimplementedContentModelServiceServer) GetModelByPost(context.Context, *GetModelByPostRequest) (*ContentModel, error) {
 	return nil, status.Error(codes.Unimplemented, "method GetModelByPost not implemented")
+}
+func (UnimplementedContentModelServiceServer) ResolveContentReferences(context.Context, *ResolveContentReferencesRequest) (*ResolveContentReferencesResponse, error) {
+	return nil, status.Error(codes.Unimplemented, "method ResolveContentReferences not implemented")
 }
 func (UnimplementedContentModelServiceServer) mustEmbedUnimplementedContentModelServiceServer() {}
 func (UnimplementedContentModelServiceServer) testEmbeddedByValue()                             {}
@@ -368,6 +390,24 @@ func _ContentModelService_GetModelByPost_Handler(srv interface{}, ctx context.Co
 	return interceptor(ctx, in, info, handler)
 }
 
+func _ContentModelService_ResolveContentReferences_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(ResolveContentReferencesRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(ContentModelServiceServer).ResolveContentReferences(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: ContentModelService_ResolveContentReferences_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(ContentModelServiceServer).ResolveContentReferences(ctx, req.(*ResolveContentReferencesRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 // ContentModelService_ServiceDesc is the grpc.ServiceDesc for ContentModelService service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
@@ -406,6 +446,10 @@ var ContentModelService_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "GetModelByPost",
 			Handler:    _ContentModelService_GetModelByPost_Handler,
+		},
+		{
+			MethodName: "ResolveContentReferences",
+			Handler:    _ContentModelService_ResolveContentReferences_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},

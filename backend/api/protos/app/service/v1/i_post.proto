@@ -23,6 +23,18 @@ service PostService {
       security: {}
     };
   }
+
+  // 批量解析 RELATION 字段引用（"post:12"/"page:7"）为目标内容摘要
+  // （C 端渲染关联卡片用；免鉴权；仅解析 PUBLISHED 目标）
+  rpc ResolveContentReferences (content.service.v1.ResolveContentReferencesRequest) returns (content.service.v1.ResolveContentReferencesResponse) {
+    option (google.api.http) = {
+      get: "/app/v1/content-references/resolve"
+    };
+
+    option(gnostic.openapi.v3.operation) = {
+      security: {}
+    };
+  }
   // 获取帖子列表
   rpc List (pagination.PagingRequest) returns (content.service.v1.ListPostResponse) {
     option (google.api.http) = {

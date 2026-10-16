@@ -2409,6 +2409,11 @@ export interface PostService {
   GetPostContentModel(
     request: contentservicev1_GetModelByPostRequest,
   ): Promise<contentservicev1_ContentModel>;
+  // 批量解析 RELATION 字段引用（"post:12"/"page:7"）为目标内容摘要
+  // （C 端渲染关联卡片用；免鉴权；仅解析 PUBLISHED 目标）
+  ResolveContentReferences(
+    request: contentservicev1_ResolveContentReferencesRequest,
+  ): Promise<contentservicev1_ResolveContentReferencesResponse>;
   // 获取帖子列表
   List(
     request: pagination_PagingRequest,
@@ -2459,6 +2464,31 @@ export function createPostServiceClient(
         service: 'PostService',
         method: 'GetPostContentModel',
       }) as Promise<contentservicev1_ContentModel>;
+    },
+    ResolveContentReferences(request) {
+      const path = `app/v1/content-references/resolve`;
+      const body = null;
+      const queryParams: string[] = [];
+      if (request.refs) {
+        request.refs.forEach((x) => {
+          queryParams.push(
+            `refs=${encodeURIComponent(x.toString())}`,
+          );
+        });
+      }
+      if (request.languageCode) {
+        queryParams.push(
+          `languageCode=${encodeURIComponent(request.languageCode.toString())}`,
+        );
+      }
+      let uri = path;
+      if (queryParams.length > 0) {
+        uri += `?${queryParams.join('&')}`;
+      }
+      return transport.unary(uri, 'GET', body, {
+        service: 'PostService',
+        method: 'ResolveContentReferences',
+      }) as Promise<contentservicev1_ResolveContentReferencesResponse>;
     },
     List(request) {
       const path = `app/v1/posts`;
@@ -2803,6 +2833,29 @@ export type contentservicev1_ContentModelTranslation = {
   id?: number;
   languageCode?: string;
   name?: string;
+};
+
+// 批量解析内容引用 - 请求
+export type contentservicev1_ResolveContentReferencesRequest = {
+  // 标题语言偏好（BCP-47，如 zh-CN）；无匹配翻译时回退首个非空标题
+  languageCode?: string;
+  // 引用值列表，形如 "post:12"/"page:7"；≤20 个，去重；其余形态静默跳过
+  refs: string[] | undefined;
+};
+
+// 批量解析内容引用 - 回应（仅含解析成功的目标；失败/不可见项不出现）
+export type contentservicev1_ResolveContentReferencesResponse = {
+  items: contentservicev1_ContentReferenceSummary[] | undefined;
+};
+
+// 引用目标内容摘要（RELATION 字段前台渲染用最小面）
+export type contentservicev1_ContentReferenceSummary = {
+  ref?: string;
+  slug?: string;
+  targetEntityType?: string;
+  targetId?: number;
+  title?: string;
+  urlPath?: string;
 };
 
 // 请求 - 帖子搜索

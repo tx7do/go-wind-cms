@@ -2,13 +2,16 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_widget_from_html/flutter_widget_from_html.dart';
 import 'package:get_it/get_it.dart' show GetIt;
+import 'package:go_router/go_router.dart';
 
 import 'package:flutter_app/generated/api/app/service/v1/index.dart'
     show
         ApiClient,
         ContentServiceV1ContentModel,
+        ContentServiceV1ContentReferenceSummary,
         ContentServiceV1FieldDefinition,
         ContentServiceV1FieldDefinition$Type,
+        ContentServiceV1ResolveContentReferencesRequest,
         MediaServiceV1GetMediaAssetRequest,
         MediaServiceV1MediaAsset;
 import 'package:flutter_app/src/core/utilities/logger.dart';
@@ -19,7 +22,9 @@ import 'package:flutter_app/src/features/cms/services/post_service.dart';
 /// 值约定为字符串（admin 编辑器 `Record<string,string>` 口径）：
 ///   - RICHTEXT → HtmlWidget（flutter_widget_from_html）；
 ///   - IMAGE/FILE → `media_asset:<id>` 引用经公开媒体端点换 URL（直链 URL 直用）；
-///   - 其余（TEXT/NUMBER/RELATION 等）原样展示。
+///   - RELATION → `post:<id>`/`page:<id>` 引用解析为公开摘要，可点击跳目标详情；
+///     草稿/软删目标解析缺失，回退原样字符串；
+///   - 其余（TEXT/NUMBER 等）原样展示。
 /// 模型未绑定或加载失败静默不渲染（自定义字段是增强信息，不阻断正文）。
 class CustomFieldsSection extends StatefulWidget {
   final int postId;
@@ -172,6 +177,28 @@ class _CustomFieldsSectionState extends State<CustomFieldsSection> {
               : Text(row.value, style: _linkStyle(theme));
         }
         return Text(row.value, style: _mutedStyle(theme));
+      case ContentServiceV1FieldDefinition$Type.fieldTypeRelation:
+        final m = RegExp(r'^(post|page):(\d+)$').firstMatch(row.value.trim());
+        if (m == null) return Text(row.value, style: _regularStyle(theme));
+        return FutureBuilder<ContentServiceV1ContentReferenceSummary?>(
+          future: _resolveReference(row.value.trim()),
+          builder: (context, snap) {
+            final target = snap.data;
+            final title = target?.title ?? '';
+            if (target == null || title.isEmpty) {
+              // 解析缺失（草稿/软删/不可见）：回退原样字符串
+              return Text(row.value, style: _mutedStyle(theme));
+            }
+            final id = target.targetId ?? 0;
+            // flutter 端 post/page 详情均按 id 路由
+            final route =
+                target.targetEntityType == 'page' ? '/page/$id' : '/post/$id';
+            return GestureDetector(
+              onTap: id > 0 ? () => context.go(route) : null,
+              child: Text(title, style: _linkStyle(theme)),
+            );
+          },
+        );
       default:
         return Text(row.value, style: _regularStyle(theme));
     }
@@ -190,6 +217,23 @@ class _CustomFieldsSectionState extends State<CustomFieldsSection> {
           );
     } catch (e) {
       _mediaLogger.w('fetch media asset $id failed: $e');
+      return null;
+    }
+  }
+
+  /// 解析 RELATION 引用（"post:12"/"page:7"）为目标内容摘要；
+  /// 不可见/不存在的引用返回 null（调用方回退原样字符串）。
+  Future<ContentServiceV1ContentReferenceSummary?> _resolveReference(
+      String ref) async {
+    try {
+      final resp = await GetIt.instance<ApiClient>().postService
+          .resolveContentReferences(
+        ContentServiceV1ResolveContentReferencesRequest(refs: [ref]),
+      );
+      final items = resp.items;
+      return (items == null || items.isEmpty) ? null : items.first;
+    } catch (e) {
+      _mediaLogger.w('resolve reference $ref failed: $e');
       return null;
     }
   }

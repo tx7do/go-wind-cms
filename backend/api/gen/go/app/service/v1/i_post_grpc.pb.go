@@ -22,15 +22,16 @@ import (
 const _ = grpc.SupportPackageIsVersion9
 
 const (
-	PostService_GetPostContentModel_FullMethodName = "/app.service.v1.PostService/GetPostContentModel"
-	PostService_List_FullMethodName                = "/app.service.v1.PostService/List"
-	PostService_SearchPosts_FullMethodName         = "/app.service.v1.PostService/SearchPosts"
-	PostService_Get_FullMethodName                 = "/app.service.v1.PostService/Get"
-	PostService_Create_FullMethodName              = "/app.service.v1.PostService/Create"
-	PostService_Update_FullMethodName              = "/app.service.v1.PostService/Update"
-	PostService_Delete_FullMethodName              = "/app.service.v1.PostService/Delete"
-	PostService_GetTranslation_FullMethodName      = "/app.service.v1.PostService/GetTranslation"
-	PostService_GetBySlug_FullMethodName           = "/app.service.v1.PostService/GetBySlug"
+	PostService_GetPostContentModel_FullMethodName      = "/app.service.v1.PostService/GetPostContentModel"
+	PostService_ResolveContentReferences_FullMethodName = "/app.service.v1.PostService/ResolveContentReferences"
+	PostService_List_FullMethodName                     = "/app.service.v1.PostService/List"
+	PostService_SearchPosts_FullMethodName              = "/app.service.v1.PostService/SearchPosts"
+	PostService_Get_FullMethodName                      = "/app.service.v1.PostService/Get"
+	PostService_Create_FullMethodName                   = "/app.service.v1.PostService/Create"
+	PostService_Update_FullMethodName                   = "/app.service.v1.PostService/Update"
+	PostService_Delete_FullMethodName                   = "/app.service.v1.PostService/Delete"
+	PostService_GetTranslation_FullMethodName           = "/app.service.v1.PostService/GetTranslation"
+	PostService_GetBySlug_FullMethodName                = "/app.service.v1.PostService/GetBySlug"
 )
 
 // PostServiceClient is the client API for PostService service.
@@ -41,6 +42,9 @@ const (
 type PostServiceClient interface {
 	// 按文章取其分类链绑定的内容模型（C 端渲染 custom_fields 用；免鉴权）
 	GetPostContentModel(ctx context.Context, in *v1.GetModelByPostRequest, opts ...grpc.CallOption) (*v1.ContentModel, error)
+	// 批量解析 RELATION 字段引用（"post:12"/"page:7"）为目标内容摘要
+	// （C 端渲染关联卡片用；免鉴权；仅解析 PUBLISHED 目标）
+	ResolveContentReferences(ctx context.Context, in *v1.ResolveContentReferencesRequest, opts ...grpc.CallOption) (*v1.ResolveContentReferencesResponse, error)
 	// 获取帖子列表
 	List(ctx context.Context, in *v11.PagingRequest, opts ...grpc.CallOption) (*v1.ListPostResponse, error)
 	// 全文搜索帖子（前台，基于 OpenSearch）
@@ -74,6 +78,16 @@ func (c *postServiceClient) GetPostContentModel(ctx context.Context, in *v1.GetM
 	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
 	out := new(v1.ContentModel)
 	err := c.cc.Invoke(ctx, PostService_GetPostContentModel_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *postServiceClient) ResolveContentReferences(ctx context.Context, in *v1.ResolveContentReferencesRequest, opts ...grpc.CallOption) (*v1.ResolveContentReferencesResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(v1.ResolveContentReferencesResponse)
+	err := c.cc.Invoke(ctx, PostService_ResolveContentReferences_FullMethodName, in, out, cOpts...)
 	if err != nil {
 		return nil, err
 	}
@@ -168,6 +182,9 @@ func (c *postServiceClient) GetBySlug(ctx context.Context, in *GetPostBySlugRequ
 type PostServiceServer interface {
 	// 按文章取其分类链绑定的内容模型（C 端渲染 custom_fields 用；免鉴权）
 	GetPostContentModel(context.Context, *v1.GetModelByPostRequest) (*v1.ContentModel, error)
+	// 批量解析 RELATION 字段引用（"post:12"/"page:7"）为目标内容摘要
+	// （C 端渲染关联卡片用；免鉴权；仅解析 PUBLISHED 目标）
+	ResolveContentReferences(context.Context, *v1.ResolveContentReferencesRequest) (*v1.ResolveContentReferencesResponse, error)
 	// 获取帖子列表
 	List(context.Context, *v11.PagingRequest) (*v1.ListPostResponse, error)
 	// 全文搜索帖子（前台，基于 OpenSearch）
@@ -199,6 +216,9 @@ type UnimplementedPostServiceServer struct{}
 
 func (UnimplementedPostServiceServer) GetPostContentModel(context.Context, *v1.GetModelByPostRequest) (*v1.ContentModel, error) {
 	return nil, status.Error(codes.Unimplemented, "method GetPostContentModel not implemented")
+}
+func (UnimplementedPostServiceServer) ResolveContentReferences(context.Context, *v1.ResolveContentReferencesRequest) (*v1.ResolveContentReferencesResponse, error) {
+	return nil, status.Error(codes.Unimplemented, "method ResolveContentReferences not implemented")
 }
 func (UnimplementedPostServiceServer) List(context.Context, *v11.PagingRequest) (*v1.ListPostResponse, error) {
 	return nil, status.Error(codes.Unimplemented, "method List not implemented")
@@ -259,6 +279,24 @@ func _PostService_GetPostContentModel_Handler(srv interface{}, ctx context.Conte
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
 		return srv.(PostServiceServer).GetPostContentModel(ctx, req.(*v1.GetModelByPostRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _PostService_ResolveContentReferences_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(v1.ResolveContentReferencesRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(PostServiceServer).ResolveContentReferences(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: PostService_ResolveContentReferences_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(PostServiceServer).ResolveContentReferences(ctx, req.(*v1.ResolveContentReferencesRequest))
 	}
 	return interceptor(ctx, in, info, handler)
 }
@@ -417,6 +455,10 @@ var PostService_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "GetPostContentModel",
 			Handler:    _PostService_GetPostContentModel_Handler,
+		},
+		{
+			MethodName: "ResolveContentReferences",
+			Handler:    _PostService_ResolveContentReferences_Handler,
 		},
 		{
 			MethodName: "List",
