@@ -123,8 +123,10 @@ func (s *AiContentService) IndexPostWorker(taskType string, payload *task.AiPost
 	}
 	route := fmt.Sprintf("/content/posts/edit/%d", payload.PostID)
 	title := text
-	if len(title) > 200 {
-		title = string([]rune(title)[:200])
+	// 按 rune 截断：len() 是字节长度，中文标题 200 字节只有 ~67 个字，
+	// 用字节守卫 + rune 切片会越界 panic（曾致 ai.post.index 任务反复失败）
+	if runes := []rune(title); len(runes) > 200 {
+		title = string(runes[:200])
 	}
 	_, err = s.entClient.DB().ExecContext(ctx,
 		`INSERT INTO sys_ai_search_index (created_at, item_type, item_id, title, route, tenant_id, embedding)
