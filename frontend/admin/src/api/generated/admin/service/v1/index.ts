@@ -4598,6 +4598,236 @@ export type notifyservicev1_TestEmailSendResponse = {
   success: boolean | undefined;
 };
 
+// 邮件模板管理服务
+export interface EmailTemplateService {
+  // 获取模板列表
+  List(
+    request: pagination_PagingRequest,
+  ): Promise<contentservicev1_ListEmailTemplatesResponse>;
+  // 获取模板
+  Get(
+    request: contentservicev1_GetEmailTemplateRequest,
+  ): Promise<contentservicev1_EmailTemplate>;
+  // 创建模板
+  Create(
+    request: contentservicev1_CreateEmailTemplateRequest,
+  ): Promise<contentservicev1_EmailTemplate>;
+  // 更新模板
+  Update(
+    request: contentservicev1_UpdateEmailTemplateRequest,
+  ): Promise<contentservicev1_EmailTemplate>;
+  // 删除模板
+  Delete(
+    request: contentservicev1_DeleteEmailTemplateRequest,
+  ): Promise<wellKnownEmpty>;
+}
+
+export function createEmailTemplateServiceClient(
+  transport: ClientTransport,
+): EmailTemplateService {
+  return {
+    List(request) {
+      const path = `admin/v1/email-templates`;
+      const body = null;
+      const queryParams: string[] = [];
+      if (request.page) {
+        queryParams.push(
+          `page=${encodeURIComponent(request.page.toString())}`,
+        );
+      }
+      if (request.pageSize) {
+        queryParams.push(
+          `pageSize=${encodeURIComponent(request.pageSize.toString())}`,
+        );
+      }
+      if (request.offset) {
+        queryParams.push(
+          `offset=${encodeURIComponent(request.offset.toString())}`,
+        );
+      }
+      if (request.limit) {
+        queryParams.push(
+          `limit=${encodeURIComponent(request.limit.toString())}`,
+        );
+      }
+      if (request.token) {
+        queryParams.push(
+          `token=${encodeURIComponent(request.token.toString())}`,
+        );
+      }
+      if (request.noPaging) {
+        queryParams.push(
+          `noPaging=${encodeURIComponent(request.noPaging.toString())}`,
+        );
+      }
+      if (request.query) {
+        queryParams.push(
+          `query=${encodeURIComponent(request.query.toString())}`,
+        );
+      }
+      if (request.filter) {
+        queryParams.push(
+          `filter=${encodeURIComponent(request.filter.toString())}`,
+        );
+      }
+      if (request.filterExpr?.type) {
+        queryParams.push(
+          `filterExpr.type=${encodeURIComponent(request.filterExpr.type.toString())}`,
+        );
+      }
+      if (request.filterExpr?.conditions?.field) {
+        queryParams.push(
+          `filterExpr.conditions.field=${encodeURIComponent(request.filterExpr.conditions.field.toString())}`,
+        );
+      }
+      if (request.filterExpr?.conditions?.op) {
+        queryParams.push(
+          `filterExpr.conditions.op=${encodeURIComponent(request.filterExpr.conditions.op.toString())}`,
+        );
+      }
+      if (request.filterExpr?.conditions?.value) {
+        queryParams.push(
+          `filterExpr.conditions.value=${encodeURIComponent(request.filterExpr.conditions.value.toString())}`,
+        );
+      }
+      if (request.filterExpr?.conditions?.jsonValue) {
+        queryParams.push(
+          `filterExpr.conditions.jsonValue=${encodeURIComponent(request.filterExpr.conditions.jsonValue.toString())}`,
+        );
+      }
+      if (request.filterExpr?.conditions?.values) {
+        request.filterExpr.conditions.values.forEach((x) => {
+          queryParams.push(
+            `filterExpr.conditions.values=${encodeURIComponent(x.toString())}`,
+          );
+        });
+      }
+      if (request.filterExpr?.conditions?.datePart) {
+        queryParams.push(
+          `filterExpr.conditions.datePart=${encodeURIComponent(request.filterExpr.conditions.datePart.toString())}`,
+        );
+      }
+      if (request.filterExpr?.conditions?.jsonPath) {
+        queryParams.push(
+          `filterExpr.conditions.jsonPath=${encodeURIComponent(request.filterExpr.conditions.jsonPath.toString())}`,
+        );
+      }
+      if (request.orderBy) {
+        queryParams.push(
+          `orderBy=${encodeURIComponent(request.orderBy.toString())}`,
+        );
+      }
+      if (request.sorting?.field) {
+        queryParams.push(
+          `sorting.field=${encodeURIComponent(request.sorting.field.toString())}`,
+        );
+      }
+      if (request.sorting?.direction) {
+        queryParams.push(
+          `sorting.direction=${encodeURIComponent(request.sorting.direction.toString())}`,
+        );
+      }
+      if (request.fieldMask) {
+        queryParams.push(
+          `fieldMask=${encodeURIComponent(request.fieldMask.toString())}`,
+        );
+      }
+      let uri = path;
+      if (queryParams.length > 0) {
+        uri += `?${queryParams.join('&')}`;
+      }
+      return transport.unary(uri, 'GET', body, {
+        service: 'EmailTemplateService',
+        method: 'List',
+      }) as Promise<contentservicev1_ListEmailTemplatesResponse>;
+    },
+    Get(request) {
+      if (request.id === undefined || request.id === null) {
+        throw new Error('missing required field request.id');
+      }
+      const path = `admin/v1/email-templates/${request.id}`;
+      const body = null;
+      return transport.unary(path, 'GET', body, {
+        service: 'EmailTemplateService',
+        method: 'Get',
+      }) as Promise<contentservicev1_EmailTemplate>;
+    },
+    Create(request) {
+      const path = `admin/v1/email-templates`;
+      const body = JSON.stringify(request);
+      return transport.unary(path, 'POST', body, {
+        service: 'EmailTemplateService',
+        method: 'Create',
+      }) as Promise<contentservicev1_EmailTemplate>;
+    },
+    Update(request) {
+      if (request.id === undefined || request.id === null) {
+        throw new Error('missing required field request.id');
+      }
+      const path = `admin/v1/email-templates/${request.id}`;
+      const body = JSON.stringify(request);
+      return transport.unary(path, 'PUT', body, {
+        service: 'EmailTemplateService',
+        method: 'Update',
+      }) as Promise<contentservicev1_EmailTemplate>;
+    },
+    Delete(request) {
+      if (request.id === undefined || request.id === null) {
+        throw new Error('missing required field request.id');
+      }
+      const path = `admin/v1/email-templates/${request.id}`;
+      const body = null;
+      return transport.unary(path, 'DELETE', body, {
+        service: 'EmailTemplateService',
+        method: 'Delete',
+      }) as Promise<wellKnownEmpty>;
+    },
+  };
+}
+// 回应 - 模板列表
+export type contentservicev1_ListEmailTemplatesResponse = {
+  items: contentservicev1_EmailTemplate[] | undefined;
+  total: number | undefined;
+};
+
+// 邮件模板
+export type contentservicev1_EmailTemplate = {
+  bodyHtml?: string;
+  code?: string;
+  createdAt?: wellKnownTimestamp;
+  createdBy?: number;
+  description?: string;
+  enabled?: boolean;
+  id?: number;
+  name?: string;
+  subject?: string;
+  updatedAt?: wellKnownTimestamp;
+  updatedBy?: number;
+};
+
+// 请求 - 模板数据
+export type contentservicev1_GetEmailTemplateRequest = {
+  id: number | undefined;
+};
+
+// 请求 - 创建模板
+export type contentservicev1_CreateEmailTemplateRequest = {
+  data: contentservicev1_EmailTemplate | undefined;
+};
+
+// 请求 - 更新模板
+export type contentservicev1_UpdateEmailTemplateRequest = {
+  allowMissing?: boolean;
+  data: contentservicev1_EmailTemplate | undefined;
+  id: number | undefined;
+  updateMask: undefined | wellKnownFieldMask;
+};
+
+// 请求 - 删除模板
+export type contentservicev1_DeleteEmailTemplateRequest = {
+  id: number | undefined;
+};
+
 // 内容实验管理服务（A/B 分流 + 受众定向）
 export interface ExperimentService {
   // 获取实验列表
@@ -5897,6 +6127,7 @@ export type internal_messageservicev1_SendMessageRequest = {
   content: string | undefined;
   conversationId?: number;
   recipientUserId?: number;
+  sendEmail?: boolean;
   sendUserId?: number;
   targetAll?: boolean;
   targetUserIds: number[] | undefined;
@@ -14764,6 +14995,7 @@ export class ApiClient {
   private _dictTypeService?: DictTypeService;
   private _editLockService?: EditLockService;
   private _emailProviderService?: EmailProviderService;
+  private _emailTemplateService?: EmailTemplateService;
   private _experimentService?: ExperimentService;
   private _fileService?: FileService;
   private _fileTransferService?: FileTransferService;
@@ -14886,6 +15118,10 @@ export class ApiClient {
 
   get emailProviderService(): EmailProviderService {
     return this._emailProviderService ??= createEmailProviderServiceClient(this._transport);
+  }
+
+  get emailTemplateService(): EmailTemplateService {
+    return this._emailTemplateService ??= createEmailTemplateServiceClient(this._transport);
   }
 
   get experimentService(): ExperimentService {
