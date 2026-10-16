@@ -9,7 +9,8 @@ import 'package:flutter_app/generated/api/app/service/v1/index.dart'
     ContentServiceV1CreatePostRequest, ContentServiceV1ListPostResponse,
     ContentServiceV1UpdatePostRequest, ContentServiceV1GetPostRequest,
     ContentServiceV1DeletePostRequest,
-    ContentServiceV1SearchPostsRequest, ContentServiceV1SearchPostsResponse;
+    ContentServiceV1SearchPostsRequest, ContentServiceV1SearchPostsResponse,
+    ContentServiceV1ContentModel, ContentServiceV1GetModelByPostRequest;
 import 'package:flutter_app/src/core/services/pagination_query.dart';
 import 'package:flutter_app/src/core/services/base_service.dart';
 import 'package:flutter_app/src/core/preference/user_preference_cache.dart';
@@ -30,6 +31,20 @@ class PostService extends BaseService {
   PostService() : super(tag: 'PostService');
 
   PostServiceClient get _api => GetIt.instance<ApiClient>().postService;
+
+  /// 获取文章分类链绑定的内容模型（内容建模前台读侧）。
+  /// 模型解析在服务端完成（文章→分类→模型）；失败/未绑定返回 null
+  ///（调用方静默不渲染，不阻断正文）。
+  Future<ContentServiceV1ContentModel?> getModelByPost({required int postId}) async {
+    try {
+      return await _api.getPostContentModel(
+        ContentServiceV1GetModelByPostRequest(postId: postId),
+      );
+    } catch (e) {
+      logger.w('get post content model failed (post=$postId): $e');
+      return null;
+    }
+  }
 
   // ─── Queries ──────────────────────────────────────────
 

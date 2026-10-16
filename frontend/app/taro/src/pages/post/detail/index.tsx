@@ -10,6 +10,7 @@ import XIcon from '@/plugins/xicon';
 import {formatDate} from '@/utils';
 import {useI18nRouter} from '@/i18n/helpers';
 import {usePreferences} from '@/core/preferences';
+import CustomFieldsSection from '@/components/post/CustomFieldsSection';
 import {contentservicev1_Post} from '@/api/generated/app/service/v1';
 import {fetchPost, getPostTitle, getPostContent, getPostThumbnail, getPostSummary} from '@/api/hooks/post';
 import {
@@ -227,6 +228,8 @@ export default function PostDetailPage() {
             {/* 文章正文 - 独立白色卡片，确保内容有左右安全边距 */}
             <View className='bg-cardBg px-[32rpx] py-[32rpx] mt-[16rpx]'>
                 <ContentViewer content={displayContent} type='markdown' />
+                {/* 自定义字段（内容建模前台读侧；无模型/无值时静默不渲染） */}
+                <CustomFieldsSection postId={postId} customFields={post.customFields} />
             </View>
 
             {/* 标签 */}

@@ -4,6 +4,7 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_app/generated/api/app/service/v1/index.dart'
     show ContentServiceV1Post;
 import 'package:flutter_app/src/core/utils/translation_helpers.dart';
+import 'package:flutter_app/src/features/cms/pages/post_detail/widgets/custom_fields_section.dart';
 import 'package:flutter_app/src/features/cms/widgets/content_viewer.dart';
 
 typedef Post = ContentServiceV1Post;
@@ -61,6 +62,13 @@ class PostContent extends StatelessWidget {
             editorType: post.editorType,
             isMobile: isMobile,
           ),
+          // 自定义字段（内容建模前台读侧；无模型/无值时静默不渲染）
+          if (post.id != null)
+            CustomFieldsSection(
+              postId: post.id!,
+              customFields: post.customFields,
+              isMobile: isMobile,
+            ),
         ],
       ),
     );
