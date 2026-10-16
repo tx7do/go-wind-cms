@@ -493,8 +493,6 @@ github.com/redis/go-redis/extra/redisotel/v9 v9.17.2 h1:wthFPRW3Y50CknMrjjJoYwXU
 github.com/redis/go-redis/extra/redisotel/v9 v9.17.2/go.mod h1:iqfQX7U2o8MWSl8W+Ah8KqbQyi/UoR/MQNgvaUyA1wc=
 github.com/redis/go-redis/v9 v9.22.0 h1:laDvpYXTJtZLloinw1fA5Kqd6HAEH2XKxOkG/PDq2F0=
 github.com/redis/go-redis/v9 v9.22.0/go.mod h1:y2g0Wj8rQvuK0ELM+oxSudcLtC09JScs98I/X9gRWY4=
-github.com/reearth/ygo v1.51.11 h1:iBOn5IR9K7mfa4ilTOFKTgp/piEIlQWWvFZboSGxQps=
-github.com/reearth/ygo v1.51.11/go.mod h1:LpzEyyGErwVVVLNB+8rZfVy/zbZbhWjdkONAobCIlYA=
 github.com/remyoudompheng/bigfft v0.0.0-20230129092748-24d4a6f8daec h1:W09IVJc94icq4NjY3clb7Lk8O1qJ8BdBEF8z0ibU0rE=
 github.com/remyoudompheng/bigfft v0.0.0-20230129092748-24d4a6f8daec/go.mod h1:qqbHyh8v60DhA7CoWK5oRCqLrMHRGoxYCSS9EjAz6Eo=
 github.com/richardlehane/mscfb v1.0.4 h1:WULscsljNPConisD5hR0+OyZjwK46Pfyr6mPu5ZawpM=
@@ -693,6 +691,8 @@ github.com/tx7do/kratos-transport/transport/mcp v1.3.4 h1:PeKFxeLz36E/OjzGWSyTrv
 github.com/tx7do/kratos-transport/transport/mcp v1.3.4/go.mod h1:XE4dl8nmxUn9s4txzov0ZmhXa0OXT7ZyeBIEjFvkcIk=
 github.com/tx7do/kratos-transport/transport/sse v1.3.8 h1:w38AlSYjfQnCvrpZbH6X13Rv0pB1c9qMk7sqkT5gHqE=
 github.com/tx7do/kratos-transport/transport/sse v1.3.8/go.mod h1:2luD0/3iS4gh9dWv3F3o/75/TbV302NN4mjkV1jLT1w=
+github.com/tx7do/ygo v1.51.11 h1:07vsFCzW7RU5ffOMzbE64JQhWauKNqENXVq8TYnR0EQ=
+github.com/tx7do/ygo v1.51.11/go.mod h1:LpzEyyGErwVVVLNB+8rZfVy/zbZbhWjdkONAobCIlYA=
 github.com/valyala/fastjson v1.6.10 h1:/yjJg8jaVQdYR3arGxPE2X5z89xrlhS0eGXdv+ADTh4=
 github.com/valyala/fastjson v1.6.10/go.mod h1:e6FubmQouUNP73jtMLmcbxS6ydWIpOfhz34TSfO3JaE=
 github.com/vearutop/statigz v1.5.0 h1:FuWwZiT82yBw4xbWdWIawiP2XFTyEPhIo8upRxiKLqk=

@@ -108,6 +108,7 @@ FengXing (GoWind HCH) is an out-of-the-box enterprise-grade Golang full-stack He
 | Review Workflow | Post submit-for-review → approve/reject with author notifications; permission gate via API role binding |
 | Content Experiments | A/B random splits and audience targeting (locale/device/login/params), full-page variant replacement, participant stats |
 | Collaborative Edit Locks | Holder banner on post/page editors (Redis soft lock with heartbeat); prevents blind concurrent overwrites |
+| Realtime Co-editing | Live conflict-free merging and shared cursors for rich text (embedded ygo engine, per-content+language rooms); saving stays explicit |
 | Content Versioning | Automatic full snapshots on save, version list, line diff vs current, one-click restore |
 | Draft Preview | One-click new-tab draft preview from the editor (short-lived signed tokens) |
 | Redirect Management | 301/302 redirect rules, nginx map export, public lookup endpoint for SSR middleware |

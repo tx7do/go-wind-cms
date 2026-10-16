@@ -27,6 +27,7 @@ require (
 	github.com/nbd-wtf/go-nostr v0.52.3
 	github.com/opensearch-project/opensearch-go/v4 v4.6.0
 	github.com/redis/go-redis/v9 v9.22.0
+	github.com/reearth/ygo v1.51.11
 	github.com/sashabaranov/go-openai v1.41.2
 	github.com/stretchr/testify v1.11.1
 	github.com/tx7do/go-crud/api v0.0.7
@@ -215,7 +216,6 @@ require (
 	github.com/rcrowley/go-metrics v0.0.0-20250401214520-65e299d6c5c9 // indirect
 	github.com/redis/go-redis/extra/rediscmd/v9 v9.17.2 // indirect
 	github.com/redis/go-redis/extra/redisotel/v9 v9.17.2 // indirect
-	github.com/reearth/ygo v1.51.11 // indirect
 	github.com/remyoudompheng/bigfft v0.0.0-20230129092748-24d4a6f8daec // indirect
 	github.com/richardlehane/mscfb v1.0.4 // indirect
 	github.com/richardlehane/msoleps v1.0.4 // indirect
@@ -313,3 +313,5 @@ require (
 	modernc.org/sqlite v1.56.0 // indirect
 	sigs.k8s.io/yaml v1.6.0 // indirect
 )
+
+replace github.com/reearth/ygo => github.com/tx7do/ygo v1.51.11

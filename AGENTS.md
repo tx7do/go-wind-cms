@@ -79,7 +79,7 @@ gow 未覆盖的任务才退回 Makefile（`backend/` 根目录执行）：`make
 - **本地 exe 部署模式**（backend/build/{core,admin,app}.exe --conf ...）有守护进程在进程死后数秒内用同路径 exe 重启：换代码必须按「kill → build → start」顺序，或构建后再 kill（守护会用旧镜像拉起并占住端口，新进程静默退出）。服务日志若重定向到 build/*.log 可直接读。
 - **`go test ./...` 偶发** `fork/exec %TEMP%\go-build...\x.test.exe: Access is denied.`（Windows 对刚链接好的测试二进制执行被拦，疑似杀软实时扫描）：属环境问题、**不是代码失败**。复验办法是绕开 Temp——`go test -c -o <工作区内路径>/x.test.exe ./pkg/x` 后直接跑该 exe；判成"测试挂了"之前先这样确认一次。
 
-- **新增环境变量（2026-10 批次）**：`SITE_BASE_URL`+`SEO_POST_PATH`/`SEO_PAGE_PATH`（app 服务，sitemap URL 生成，未配置返回空 sitemap）；`SMTP_HOST/PORT/USERNAME/PASSWORD/FROM/TLS`（邮件出站回退配置，email_providers 表可视化配置优先）；`MCP_ADDR`/`MCP_TOKEN` 已有；`GRAPHQL_ADDR`（app 服务 GraphQL 监听地址，默认 `:6702`，off/disabled 停用）；`COLLAB_ADDR`（admin 协同 ws，默认 `:6602`，off/disabled 停用）+ `COLLAB_ALLOWED_ORIGINS`（允许来源，默认 `http://localhost:15999`）+ `VITE_COLLAB_WS_URL`（前端协同 ws 地址，默认 `ws://localhost:6602`）。预览令牌签名复用 `ENCRYPTION_KEY`。
+- **新增环境变量（2026-10 批次）**：`SITE_BASE_URL`+`SEO_POST_PATH`/`SEO_PAGE_PATH`（app 服务，sitemap URL 生成，未配置返回空 sitemap）；`SMTP_HOST/PORT/USERNAME/PASSWORD/FROM/TLS`（邮件出站回退配置，email_providers 表可视化配置优先）；`MCP_ADDR`/`MCP_TOKEN` 已有；`GRAPHQL_ADDR`（app 服务 GraphQL 监听地址，默认 `:6702`，off/disabled 停用）；`COLLAB_ADDR`（admin 协同 ws，默认 `:6602`，off/disabled 停用）+ `COLLAB_ALLOWED_ORIGINS`（允许来源，默认 `http://localhost:15999`）+ `VITE_COLLAB_WS_URL`（前端协同 ws 地址，默认 `ws://localhost:6602`）。协同引擎依赖固定 fork：`replace github.com/reearth/ygo => github.com/tx7do/ygo v1.51.11`（上游更新按需同步）。协同 token 走 query 参数（与 SSE 同款先例），会进反代访问日志——生产日志留存策略注意脱敏。预览令牌签名复用 `ENCRYPTION_KEY`。
 - **凭据加密（ENCRYPTION_KEY）**：core/admin 启动读取环境变量 `ENCRYPTION_KEY`
   （两服务必须同值），社交账号凭据与 AI provider key 据此 AES-GCM 加密落库；
   未设置时降级明文入库并打告警——生产必须配置，换 key 会使既有密文不可解。
