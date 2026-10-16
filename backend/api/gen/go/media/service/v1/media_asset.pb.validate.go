@@ -1116,3 +1116,246 @@ var _ interface {
 	Cause() error
 	ErrorName() string
 } = DeleteMediaAssetRequestValidationError{}
+
+// Validate checks the field values on FindMediaAssetByHashRequest with the
+// rules defined in the proto definition for this message. If any rules are
+// violated, the first error encountered is returned, or nil if there are no violations.
+func (m *FindMediaAssetByHashRequest) Validate() error {
+	return m.validate(false)
+}
+
+// ValidateAll checks the field values on FindMediaAssetByHashRequest with the
+// rules defined in the proto definition for this message. If any rules are
+// violated, the result is a list of violation errors wrapped in
+// FindMediaAssetByHashRequestMultiError, or nil if none found.
+func (m *FindMediaAssetByHashRequest) ValidateAll() error {
+	return m.validate(true)
+}
+
+func (m *FindMediaAssetByHashRequest) validate(all bool) error {
+	if m == nil {
+		return nil
+	}
+
+	var errors []error
+
+	if m.FileHash != nil {
+		// no validation rules for FileHash
+	}
+
+	if len(errors) > 0 {
+		return FindMediaAssetByHashRequestMultiError(errors)
+	}
+
+	return nil
+}
+
+// FindMediaAssetByHashRequestMultiError is an error wrapping multiple
+// validation errors returned by FindMediaAssetByHashRequest.ValidateAll() if
+// the designated constraints aren't met.
+type FindMediaAssetByHashRequestMultiError []error
+
+// Error returns a concatenation of all the error messages it wraps.
+func (m FindMediaAssetByHashRequestMultiError) Error() string {
+	msgs := make([]string, 0, len(m))
+	for _, err := range m {
+		msgs = append(msgs, err.Error())
+	}
+	return strings.Join(msgs, "; ")
+}
+
+// AllErrors returns a list of validation violation errors.
+func (m FindMediaAssetByHashRequestMultiError) AllErrors() []error { return m }
+
+// FindMediaAssetByHashRequestValidationError is the validation error returned
+// by FindMediaAssetByHashRequest.Validate if the designated constraints
+// aren't met.
+type FindMediaAssetByHashRequestValidationError struct {
+	field  string
+	reason string
+	cause  error
+	key    bool
+}
+
+// Field function returns field value.
+func (e FindMediaAssetByHashRequestValidationError) Field() string { return e.field }
+
+// Reason function returns reason value.
+func (e FindMediaAssetByHashRequestValidationError) Reason() string { return e.reason }
+
+// Cause function returns cause value.
+func (e FindMediaAssetByHashRequestValidationError) Cause() error { return e.cause }
+
+// Key function returns key value.
+func (e FindMediaAssetByHashRequestValidationError) Key() bool { return e.key }
+
+// ErrorName returns error name.
+func (e FindMediaAssetByHashRequestValidationError) ErrorName() string {
+	return "FindMediaAssetByHashRequestValidationError"
+}
+
+// Error satisfies the builtin error interface
+func (e FindMediaAssetByHashRequestValidationError) Error() string {
+	cause := ""
+	if e.cause != nil {
+		cause = fmt.Sprintf(" | caused by: %v", e.cause)
+	}
+
+	key := ""
+	if e.key {
+		key = "key for "
+	}
+
+	return fmt.Sprintf(
+		"invalid %sFindMediaAssetByHashRequest.%s: %s%s",
+		key,
+		e.field,
+		e.reason,
+		cause)
+}
+
+var _ error = FindMediaAssetByHashRequestValidationError{}
+
+var _ interface {
+	Field() string
+	Reason() string
+	Key() bool
+	Cause() error
+	ErrorName() string
+} = FindMediaAssetByHashRequestValidationError{}
+
+// Validate checks the field values on FindMediaAssetByHashResponse with the
+// rules defined in the proto definition for this message. If any rules are
+// violated, the first error encountered is returned, or nil if there are no violations.
+func (m *FindMediaAssetByHashResponse) Validate() error {
+	return m.validate(false)
+}
+
+// ValidateAll checks the field values on FindMediaAssetByHashResponse with the
+// rules defined in the proto definition for this message. If any rules are
+// violated, the result is a list of violation errors wrapped in
+// FindMediaAssetByHashResponseMultiError, or nil if none found.
+func (m *FindMediaAssetByHashResponse) ValidateAll() error {
+	return m.validate(true)
+}
+
+func (m *FindMediaAssetByHashResponse) validate(all bool) error {
+	if m == nil {
+		return nil
+	}
+
+	var errors []error
+
+	if m.Asset != nil {
+
+		if all {
+			switch v := interface{}(m.GetAsset()).(type) {
+			case interface{ ValidateAll() error }:
+				if err := v.ValidateAll(); err != nil {
+					errors = append(errors, FindMediaAssetByHashResponseValidationError{
+						field:  "Asset",
+						reason: "embedded message failed validation",
+						cause:  err,
+					})
+				}
+			case interface{ Validate() error }:
+				if err := v.Validate(); err != nil {
+					errors = append(errors, FindMediaAssetByHashResponseValidationError{
+						field:  "Asset",
+						reason: "embedded message failed validation",
+						cause:  err,
+					})
+				}
+			}
+		} else if v, ok := interface{}(m.GetAsset()).(interface{ Validate() error }); ok {
+			if err := v.Validate(); err != nil {
+				return FindMediaAssetByHashResponseValidationError{
+					field:  "Asset",
+					reason: "embedded message failed validation",
+					cause:  err,
+				}
+			}
+		}
+
+	}
+
+	if len(errors) > 0 {
+		return FindMediaAssetByHashResponseMultiError(errors)
+	}
+
+	return nil
+}
+
+// FindMediaAssetByHashResponseMultiError is an error wrapping multiple
+// validation errors returned by FindMediaAssetByHashResponse.ValidateAll() if
+// the designated constraints aren't met.
+type FindMediaAssetByHashResponseMultiError []error
+
+// Error returns a concatenation of all the error messages it wraps.
+func (m FindMediaAssetByHashResponseMultiError) Error() string {
+	msgs := make([]string, 0, len(m))
+	for _, err := range m {
+		msgs = append(msgs, err.Error())
+	}
+	return strings.Join(msgs, "; ")
+}
+
+// AllErrors returns a list of validation violation errors.
+func (m FindMediaAssetByHashResponseMultiError) AllErrors() []error { return m }
+
+// FindMediaAssetByHashResponseValidationError is the validation error returned
+// by FindMediaAssetByHashResponse.Validate if the designated constraints
+// aren't met.
+type FindMediaAssetByHashResponseValidationError struct {
+	field  string
+	reason string
+	cause  error
+	key    bool
+}
+
+// Field function returns field value.
+func (e FindMediaAssetByHashResponseValidationError) Field() string { return e.field }
+
+// Reason function returns reason value.
+func (e FindMediaAssetByHashResponseValidationError) Reason() string { return e.reason }
+
+// Cause function returns cause value.
+func (e FindMediaAssetByHashResponseValidationError) Cause() error { return e.cause }
+
+// Key function returns key value.
+func (e FindMediaAssetByHashResponseValidationError) Key() bool { return e.key }
+
+// ErrorName returns error name.
+func (e FindMediaAssetByHashResponseValidationError) ErrorName() string {
+	return "FindMediaAssetByHashResponseValidationError"
+}
+
+// Error satisfies the builtin error interface
+func (e FindMediaAssetByHashResponseValidationError) Error() string {
+	cause := ""
+	if e.cause != nil {
+		cause = fmt.Sprintf(" | caused by: %v", e.cause)
+	}
+
+	key := ""
+	if e.key {
+		key = "key for "
+	}
+
+	return fmt.Sprintf(
+		"invalid %sFindMediaAssetByHashResponse.%s: %s%s",
+		key,
+		e.field,
+		e.reason,
+		cause)
+}
+
+var _ error = FindMediaAssetByHashResponseValidationError{}
+
+var _ interface {
+	Field() string
+	Reason() string
+	Key() bool
+	Cause() error
+	ErrorName() string
+} = FindMediaAssetByHashResponseValidationError{}

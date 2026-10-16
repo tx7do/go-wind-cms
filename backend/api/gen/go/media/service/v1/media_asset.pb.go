@@ -722,6 +722,96 @@ type DeleteMediaAssetRequest_Id struct {
 
 func (*DeleteMediaAssetRequest_Id) isDeleteMediaAssetRequest_QueryBy() {}
 
+// 请求 - 按内容哈希查重
+type FindMediaAssetByHashRequest struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	FileHash      *string                `protobuf:"bytes,1,opt,name=file_hash,json=fileHash,proto3,oneof" json:"file_hash,omitempty"` // SHA-256 内容哈希
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *FindMediaAssetByHashRequest) Reset() {
+	*x = FindMediaAssetByHashRequest{}
+	mi := &file_media_service_v1_media_asset_proto_msgTypes[7]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *FindMediaAssetByHashRequest) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*FindMediaAssetByHashRequest) ProtoMessage() {}
+
+func (x *FindMediaAssetByHashRequest) ProtoReflect() protoreflect.Message {
+	mi := &file_media_service_v1_media_asset_proto_msgTypes[7]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use FindMediaAssetByHashRequest.ProtoReflect.Descriptor instead.
+func (*FindMediaAssetByHashRequest) Descriptor() ([]byte, []int) {
+	return file_media_service_v1_media_asset_proto_rawDescGZIP(), []int{7}
+}
+
+func (x *FindMediaAssetByHashRequest) GetFileHash() string {
+	if x != nil && x.FileHash != nil {
+		return *x.FileHash
+	}
+	return ""
+}
+
+// 回应 - 按内容哈希查重
+type FindMediaAssetByHashResponse struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	Asset         *MediaAsset            `protobuf:"bytes,1,opt,name=asset,proto3,oneof" json:"asset,omitempty"` // 命中的既有资源
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *FindMediaAssetByHashResponse) Reset() {
+	*x = FindMediaAssetByHashResponse{}
+	mi := &file_media_service_v1_media_asset_proto_msgTypes[8]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *FindMediaAssetByHashResponse) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*FindMediaAssetByHashResponse) ProtoMessage() {}
+
+func (x *FindMediaAssetByHashResponse) ProtoReflect() protoreflect.Message {
+	mi := &file_media_service_v1_media_asset_proto_msgTypes[8]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use FindMediaAssetByHashResponse.ProtoReflect.Descriptor instead.
+func (*FindMediaAssetByHashResponse) Descriptor() ([]byte, []int) {
+	return file_media_service_v1_media_asset_proto_rawDescGZIP(), []int{8}
+}
+
+func (x *FindMediaAssetByHashResponse) GetAsset() *MediaAsset {
+	if x != nil {
+		return x.Asset
+	}
+	return nil
+}
+
 var File_media_service_v1_media_asset_proto protoreflect.FileDescriptor
 
 const file_media_service_v1_media_asset_proto_rawDesc = "" +
@@ -835,13 +925,22 @@ const file_media_service_v1_media_asset_proto_rawDesc = "" +
 	"\x02id\x18\x01 \x01(\rB\n" +
 	"\xbaG\a\x18\x01\x92\x02\x02IDH\x00R\x02idB\n" +
 	"\n" +
-	"\bquery_by2\xaa\x03\n" +
+	"\bquery_by\"r\n" +
+	"\x1bFindMediaAssetByHashRequest\x12E\n" +
+	"\tfile_hash\x18\x01 \x01(\tB#\xbaG \x92\x02\x1dSHA-256 内容哈希（hex）H\x00R\bfileHash\x88\x01\x01B\f\n" +
+	"\n" +
+	"_file_hash\"\x8d\x01\n" +
+	"\x1cFindMediaAssetByHashResponse\x12c\n" +
+	"\x05asset\x18\x01 \x01(\v2\x1c.media.service.v1.MediaAssetB*\xbaG'\x92\x02$命中的既有资源（无则空）H\x00R\x05asset\x88\x01\x01B\b\n" +
+	"\x06_asset2\x99\x04\n" +
 	"\x11MediaAssetService\x12M\n" +
 	"\x04List\x12\x19.pagination.PagingRequest\x1a(.media.service.v1.ListMediaAssetResponse\"\x00\x12M\n" +
 	"\x03Get\x12&.media.service.v1.GetMediaAssetRequest\x1a\x1c.media.service.v1.MediaAsset\"\x00\x12S\n" +
 	"\x06Create\x12).media.service.v1.CreateMediaAssetRequest\x1a\x1c.media.service.v1.MediaAsset\"\x00\x12S\n" +
 	"\x06Update\x12).media.service.v1.UpdateMediaAssetRequest\x1a\x1c.media.service.v1.MediaAsset\"\x00\x12M\n" +
-	"\x06Delete\x12).media.service.v1.DeleteMediaAssetRequest\x1a\x16.google.protobuf.Empty\"\x00B\xba\x01\n" +
+	"\x06Delete\x12).media.service.v1.DeleteMediaAssetRequest\x1a\x16.google.protobuf.Empty\"\x00\x12m\n" +
+	"\n" +
+	"FindByHash\x12-.media.service.v1.FindMediaAssetByHashRequest\x1a..media.service.v1.FindMediaAssetByHashResponse\"\x00B\xba\x01\n" +
 	"\x14com.media.service.v1B\x0fMediaAssetProtoP\x01Z/go-wind-cms/api/gen/go/media/service/v1;mediapb\xa2\x02\x03MSX\xaa\x02\x10Media.Service.V1\xca\x02\x10Media\\Service\\V1\xe2\x02\x1cMedia\\Service\\V1\\GPBMetadata\xea\x02\x12Media::Service::V1b\x06proto3"
 
 var (
@@ -857,50 +956,55 @@ func file_media_service_v1_media_asset_proto_rawDescGZIP() []byte {
 }
 
 var file_media_service_v1_media_asset_proto_enumTypes = make([]protoimpl.EnumInfo, 2)
-var file_media_service_v1_media_asset_proto_msgTypes = make([]protoimpl.MessageInfo, 8)
+var file_media_service_v1_media_asset_proto_msgTypes = make([]protoimpl.MessageInfo, 10)
 var file_media_service_v1_media_asset_proto_goTypes = []any{
-	(MediaAsset_AssetType)(0),        // 0: media.service.v1.MediaAsset.AssetType
-	(MediaAsset_ProcessingStatus)(0), // 1: media.service.v1.MediaAsset.ProcessingStatus
-	(*MediaAsset)(nil),               // 2: media.service.v1.MediaAsset
-	(*MediaVariant)(nil),             // 3: media.service.v1.MediaVariant
-	(*ListMediaAssetResponse)(nil),   // 4: media.service.v1.ListMediaAssetResponse
-	(*GetMediaAssetRequest)(nil),     // 5: media.service.v1.GetMediaAssetRequest
-	(*CreateMediaAssetRequest)(nil),  // 6: media.service.v1.CreateMediaAssetRequest
-	(*UpdateMediaAssetRequest)(nil),  // 7: media.service.v1.UpdateMediaAssetRequest
-	(*DeleteMediaAssetRequest)(nil),  // 8: media.service.v1.DeleteMediaAssetRequest
-	nil,                              // 9: media.service.v1.MediaAsset.VariantFileIdsEntry
-	(*timestamppb.Timestamp)(nil),    // 10: google.protobuf.Timestamp
-	(*fieldmaskpb.FieldMask)(nil),    // 11: google.protobuf.FieldMask
-	(*v1.PagingRequest)(nil),         // 12: pagination.PagingRequest
-	(*emptypb.Empty)(nil),            // 13: google.protobuf.Empty
+	(MediaAsset_AssetType)(0),            // 0: media.service.v1.MediaAsset.AssetType
+	(MediaAsset_ProcessingStatus)(0),     // 1: media.service.v1.MediaAsset.ProcessingStatus
+	(*MediaAsset)(nil),                   // 2: media.service.v1.MediaAsset
+	(*MediaVariant)(nil),                 // 3: media.service.v1.MediaVariant
+	(*ListMediaAssetResponse)(nil),       // 4: media.service.v1.ListMediaAssetResponse
+	(*GetMediaAssetRequest)(nil),         // 5: media.service.v1.GetMediaAssetRequest
+	(*CreateMediaAssetRequest)(nil),      // 6: media.service.v1.CreateMediaAssetRequest
+	(*UpdateMediaAssetRequest)(nil),      // 7: media.service.v1.UpdateMediaAssetRequest
+	(*DeleteMediaAssetRequest)(nil),      // 8: media.service.v1.DeleteMediaAssetRequest
+	(*FindMediaAssetByHashRequest)(nil),  // 9: media.service.v1.FindMediaAssetByHashRequest
+	(*FindMediaAssetByHashResponse)(nil), // 10: media.service.v1.FindMediaAssetByHashResponse
+	nil,                                  // 11: media.service.v1.MediaAsset.VariantFileIdsEntry
+	(*timestamppb.Timestamp)(nil),        // 12: google.protobuf.Timestamp
+	(*fieldmaskpb.FieldMask)(nil),        // 13: google.protobuf.FieldMask
+	(*v1.PagingRequest)(nil),             // 14: pagination.PagingRequest
+	(*emptypb.Empty)(nil),                // 15: google.protobuf.Empty
 }
 var file_media_service_v1_media_asset_proto_depIdxs = []int32{
 	0,  // 0: media.service.v1.MediaAsset.type:type_name -> media.service.v1.MediaAsset.AssetType
 	1,  // 1: media.service.v1.MediaAsset.processing_status:type_name -> media.service.v1.MediaAsset.ProcessingStatus
-	9,  // 2: media.service.v1.MediaAsset.variant_file_ids:type_name -> media.service.v1.MediaAsset.VariantFileIdsEntry
-	10, // 3: media.service.v1.MediaAsset.created_at:type_name -> google.protobuf.Timestamp
-	10, // 4: media.service.v1.MediaAsset.updated_at:type_name -> google.protobuf.Timestamp
-	10, // 5: media.service.v1.MediaAsset.deleted_at:type_name -> google.protobuf.Timestamp
+	11, // 2: media.service.v1.MediaAsset.variant_file_ids:type_name -> media.service.v1.MediaAsset.VariantFileIdsEntry
+	12, // 3: media.service.v1.MediaAsset.created_at:type_name -> google.protobuf.Timestamp
+	12, // 4: media.service.v1.MediaAsset.updated_at:type_name -> google.protobuf.Timestamp
+	12, // 5: media.service.v1.MediaAsset.deleted_at:type_name -> google.protobuf.Timestamp
 	2,  // 6: media.service.v1.ListMediaAssetResponse.items:type_name -> media.service.v1.MediaAsset
-	11, // 7: media.service.v1.GetMediaAssetRequest.view_mask:type_name -> google.protobuf.FieldMask
+	13, // 7: media.service.v1.GetMediaAssetRequest.view_mask:type_name -> google.protobuf.FieldMask
 	2,  // 8: media.service.v1.CreateMediaAssetRequest.data:type_name -> media.service.v1.MediaAsset
 	2,  // 9: media.service.v1.UpdateMediaAssetRequest.data:type_name -> media.service.v1.MediaAsset
-	11, // 10: media.service.v1.UpdateMediaAssetRequest.update_mask:type_name -> google.protobuf.FieldMask
-	12, // 11: media.service.v1.MediaAssetService.List:input_type -> pagination.PagingRequest
-	5,  // 12: media.service.v1.MediaAssetService.Get:input_type -> media.service.v1.GetMediaAssetRequest
-	6,  // 13: media.service.v1.MediaAssetService.Create:input_type -> media.service.v1.CreateMediaAssetRequest
-	7,  // 14: media.service.v1.MediaAssetService.Update:input_type -> media.service.v1.UpdateMediaAssetRequest
-	8,  // 15: media.service.v1.MediaAssetService.Delete:input_type -> media.service.v1.DeleteMediaAssetRequest
-	4,  // 16: media.service.v1.MediaAssetService.List:output_type -> media.service.v1.ListMediaAssetResponse
-	2,  // 17: media.service.v1.MediaAssetService.Get:output_type -> media.service.v1.MediaAsset
-	2,  // 18: media.service.v1.MediaAssetService.Create:output_type -> media.service.v1.MediaAsset
-	2,  // 19: media.service.v1.MediaAssetService.Update:output_type -> media.service.v1.MediaAsset
-	13, // 20: media.service.v1.MediaAssetService.Delete:output_type -> google.protobuf.Empty
-	16, // [16:21] is the sub-list for method output_type
-	11, // [11:16] is the sub-list for method input_type
-	11, // [11:11] is the sub-list for extension type_name
-	11, // [11:11] is the sub-list for extension extendee
-	0,  // [0:11] is the sub-list for field type_name
+	13, // 10: media.service.v1.UpdateMediaAssetRequest.update_mask:type_name -> google.protobuf.FieldMask
+	2,  // 11: media.service.v1.FindMediaAssetByHashResponse.asset:type_name -> media.service.v1.MediaAsset
+	14, // 12: media.service.v1.MediaAssetService.List:input_type -> pagination.PagingRequest
+	5,  // 13: media.service.v1.MediaAssetService.Get:input_type -> media.service.v1.GetMediaAssetRequest
+	6,  // 14: media.service.v1.MediaAssetService.Create:input_type -> media.service.v1.CreateMediaAssetRequest
+	7,  // 15: media.service.v1.MediaAssetService.Update:input_type -> media.service.v1.UpdateMediaAssetRequest
+	8,  // 16: media.service.v1.MediaAssetService.Delete:input_type -> media.service.v1.DeleteMediaAssetRequest
+	9,  // 17: media.service.v1.MediaAssetService.FindByHash:input_type -> media.service.v1.FindMediaAssetByHashRequest
+	4,  // 18: media.service.v1.MediaAssetService.List:output_type -> media.service.v1.ListMediaAssetResponse
+	2,  // 19: media.service.v1.MediaAssetService.Get:output_type -> media.service.v1.MediaAsset
+	2,  // 20: media.service.v1.MediaAssetService.Create:output_type -> media.service.v1.MediaAsset
+	2,  // 21: media.service.v1.MediaAssetService.Update:output_type -> media.service.v1.MediaAsset
+	15, // 22: media.service.v1.MediaAssetService.Delete:output_type -> google.protobuf.Empty
+	10, // 23: media.service.v1.MediaAssetService.FindByHash:output_type -> media.service.v1.FindMediaAssetByHashResponse
+	18, // [18:24] is the sub-list for method output_type
+	12, // [12:18] is the sub-list for method input_type
+	12, // [12:12] is the sub-list for extension type_name
+	12, // [12:12] is the sub-list for extension extendee
+	0,  // [0:12] is the sub-list for field type_name
 }
 
 func init() { file_media_service_v1_media_asset_proto_init() }
@@ -914,13 +1018,15 @@ func file_media_service_v1_media_asset_proto_init() {
 	file_media_service_v1_media_asset_proto_msgTypes[6].OneofWrappers = []any{
 		(*DeleteMediaAssetRequest_Id)(nil),
 	}
+	file_media_service_v1_media_asset_proto_msgTypes[7].OneofWrappers = []any{}
+	file_media_service_v1_media_asset_proto_msgTypes[8].OneofWrappers = []any{}
 	type x struct{}
 	out := protoimpl.TypeBuilder{
 		File: protoimpl.DescBuilder{
 			GoPackagePath: reflect.TypeOf(x{}).PkgPath(),
 			RawDescriptor: unsafe.Slice(unsafe.StringData(file_media_service_v1_media_asset_proto_rawDesc), len(file_media_service_v1_media_asset_proto_rawDesc)),
 			NumEnums:      2,
-			NumMessages:   8,
+			NumMessages:   10,
 			NumExtensions: 0,
 			NumServices:   1,
 		},

@@ -37,6 +37,11 @@ func (s *MediaAssetService) Get(ctx context.Context, req *mediaV1.GetMediaAssetR
 	return s.mediaAssetServiceClient.Get(ctx, req)
 }
 
+// FindByHash 按内容哈希查重（透传 core）。
+func (s *MediaAssetService) FindByHash(ctx context.Context, req *mediaV1.FindMediaAssetByHashRequest) (*mediaV1.FindMediaAssetByHashResponse, error) {
+	return s.mediaAssetServiceClient.FindByHash(ctx, req)
+}
+
 func (s *MediaAssetService) Create(ctx context.Context, req *mediaV1.CreateMediaAssetRequest) (*mediaV1.MediaAsset, error) {
 	return s.mediaAssetServiceClient.Create(ctx, req)
 }

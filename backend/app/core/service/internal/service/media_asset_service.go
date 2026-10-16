@@ -35,6 +35,18 @@ func (s *MediaAssetService) Get(ctx context.Context, req *mediaV1.GetMediaAssetR
 	return s.mediaAssetRepo.Get(ctx, req)
 }
 
+// FindByHash 按内容哈希查重。
+func (s *MediaAssetService) FindByHash(ctx context.Context, req *mediaV1.FindMediaAssetByHashRequest) (*mediaV1.FindMediaAssetByHashResponse, error) {
+	if req == nil || req.GetFileHash() == "" {
+		return nil, mediaV1.ErrorBadRequest("invalid parameter")
+	}
+	asset, err := s.mediaAssetRepo.FindByHash(ctx, req.GetFileHash())
+	if err != nil {
+		return nil, err
+	}
+	return &mediaV1.FindMediaAssetByHashResponse{Asset: asset}, nil
+}
+
 func (s *MediaAssetService) Create(ctx context.Context, req *mediaV1.CreateMediaAssetRequest) (*mediaV1.MediaAsset, error) {
 	return s.mediaAssetRepo.Create(ctx, req)
 }

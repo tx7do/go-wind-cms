@@ -4192,6 +4192,25 @@ paths:
                         application/json:
                             schema:
                                 $ref: '#/components/schemas/media.service.v1.MediaAsset'
+    /admin/v1/media-assets/by-hash/{fileHash}:
+        get:
+            tags:
+                - MediaAssetService
+            description: 删除媒体资源库
+            operationId: MediaAssetService_FindByHash
+            parameters:
+                - name: fileHash
+                  in: path
+                  required: true
+                  schema:
+                    type: string
+            responses:
+                "200":
+                    description: OK
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/media.service.v1.FindMediaAssetByHashResponse'
     /admin/v1/media-assets/{id}:
         get:
             tags:
@@ -4245,7 +4264,6 @@ paths:
         delete:
             tags:
                 - MediaAssetService
-            description: 删除媒体资源库
             operationId: MediaAssetService_Delete
             parameters:
                 - name: id
@@ -13865,6 +13883,12 @@ components:
                 data:
                     $ref: '#/components/schemas/media.service.v1.MediaAsset'
             description: 请求 - 创建媒体资源库
+        media.service.v1.FindMediaAssetByHashResponse:
+            type: object
+            properties:
+                asset:
+                    $ref: '#/components/schemas/media.service.v1.MediaAsset'
+            description: 回应 - 按内容哈希查重
         media.service.v1.ListMediaAssetResponse:
             type: object
             properties:

@@ -146,6 +146,26 @@ func (r *MediaAssetRepo) Get(ctx context.Context, req *mediaV1.GetMediaAssetRequ
 	return r.mapper.ToDTO(entity), nil
 }
 
+// FindByHash 按内容哈希查重：同租户内第一条未删除资源；无则返回空 asset。
+// hash 服务端计算，同租户外不可枚举，仅内部可信链路调用。
+func (r *MediaAssetRepo) FindByHash(ctx context.Context, fileHash string) (*mediaV1.MediaAsset, error) {
+	conds := []predicate.MediaAsset{}
+	if tid, hasTenant := maybeTenantFromViewer(ctx); hasTenant {
+		conds = append(conds, mediaasset.TenantIDEQ(tid))
+	}
+	conds = append(conds, mediaasset.FileHashEQ(fileHash))
+
+	row, err := r.entClient.Client().MediaAsset.Query().Where(conds...).First(ctx)
+	if err != nil {
+		if ent.IsNotFound(err) {
+			return &mediaV1.MediaAsset{}, nil
+		}
+		r.log.Errorf("find media asset by hash failed: %s", err.Error())
+		return nil, mediaV1.ErrorInternalServerError("find media asset by hash failed")
+	}
+	return r.mapper.ToDTO(row), nil
+}
+
 func (r *MediaAssetRepo) Create(ctx context.Context, req *mediaV1.CreateMediaAssetRequest) (*mediaV1.MediaAsset, error) {
 	if req == nil || req.Data == nil {
 		return nil, mediaV1.ErrorBadRequest("invalid parameter")

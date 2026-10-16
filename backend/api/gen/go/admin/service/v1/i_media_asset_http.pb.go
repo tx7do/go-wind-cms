@@ -24,6 +24,7 @@ const _ = http.SupportPackageIsVersion1
 
 const OperationMediaAssetServiceCreate = "/admin.service.v1.MediaAssetService/Create"
 const OperationMediaAssetServiceDelete = "/admin.service.v1.MediaAssetService/Delete"
+const OperationMediaAssetServiceFindByHash = "/admin.service.v1.MediaAssetService/FindByHash"
 const OperationMediaAssetServiceGet = "/admin.service.v1.MediaAssetService/Get"
 const OperationMediaAssetServiceList = "/admin.service.v1.MediaAssetService/List"
 const OperationMediaAssetServiceUpdate = "/admin.service.v1.MediaAssetService/Update"
@@ -31,8 +32,9 @@ const OperationMediaAssetServiceUpdate = "/admin.service.v1.MediaAssetService/Up
 type MediaAssetServiceHTTPServer interface {
 	// Create 创建媒体资源库
 	Create(context.Context, *v11.CreateMediaAssetRequest) (*v11.MediaAsset, error)
-	// Delete 删除媒体资源库
 	Delete(context.Context, *v11.DeleteMediaAssetRequest) (*emptypb.Empty, error)
+	// FindByHash 删除媒体资源库
+	FindByHash(context.Context, *v11.FindMediaAssetByHashRequest) (*v11.FindMediaAssetByHashResponse, error)
 	// Get 获取媒体资源库数据
 	Get(context.Context, *v11.GetMediaAssetRequest) (*v11.MediaAsset, error)
 	// List 获取媒体资源库列表
@@ -47,6 +49,7 @@ func RegisterMediaAssetServiceHTTPServer(s *http.Server, srv MediaAssetServiceHT
 	r.GET("/admin/v1/media-assets/{id}", _MediaAssetService_Get20_HTTP_Handler(srv))
 	r.POST("/admin/v1/media-assets", _MediaAssetService_Create14_HTTP_Handler(srv))
 	r.PUT("/admin/v1/media-assets/{id}", _MediaAssetService_Update15_HTTP_Handler(srv))
+	r.GET("/admin/v1/media-assets/by-hash/{file_hash}", _MediaAssetService_FindByHash0_HTTP_Handler(srv))
 	r.DELETE("/admin/v1/media-assets/{id}", _MediaAssetService_Delete17_HTTP_Handler(srv))
 }
 
@@ -138,6 +141,28 @@ func _MediaAssetService_Update15_HTTP_Handler(srv MediaAssetServiceHTTPServer) f
 	}
 }
 
+func _MediaAssetService_FindByHash0_HTTP_Handler(srv MediaAssetServiceHTTPServer) func(ctx http.Context) error {
+	return func(ctx http.Context) error {
+		var in v11.FindMediaAssetByHashRequest
+		if err := ctx.BindQuery(&in); err != nil {
+			return err
+		}
+		if err := ctx.BindVars(&in); err != nil {
+			return err
+		}
+		http.SetOperation(ctx, OperationMediaAssetServiceFindByHash)
+		h := ctx.Middleware(func(ctx context.Context, req interface{}) (interface{}, error) {
+			return srv.FindByHash(ctx, req.(*v11.FindMediaAssetByHashRequest))
+		})
+		out, err := h(ctx, &in)
+		if err != nil {
+			return err
+		}
+		reply := out.(*v11.FindMediaAssetByHashResponse)
+		return ctx.Result(200, reply)
+	}
+}
+
 func _MediaAssetService_Delete17_HTTP_Handler(srv MediaAssetServiceHTTPServer) func(ctx http.Context) error {
 	return func(ctx http.Context) error {
 		var in v11.DeleteMediaAssetRequest
@@ -163,8 +188,9 @@ func _MediaAssetService_Delete17_HTTP_Handler(srv MediaAssetServiceHTTPServer) f
 type MediaAssetServiceHTTPClient interface {
 	// Create 创建媒体资源库
 	Create(ctx context.Context, req *v11.CreateMediaAssetRequest, opts ...http.CallOption) (rsp *v11.MediaAsset, err error)
-	// Delete 删除媒体资源库
 	Delete(ctx context.Context, req *v11.DeleteMediaAssetRequest, opts ...http.CallOption) (rsp *emptypb.Empty, err error)
+	// FindByHash 删除媒体资源库
+	FindByHash(ctx context.Context, req *v11.FindMediaAssetByHashRequest, opts ...http.CallOption) (rsp *v11.FindMediaAssetByHashResponse, err error)
 	// Get 获取媒体资源库数据
 	Get(ctx context.Context, req *v11.GetMediaAssetRequest, opts ...http.CallOption) (rsp *v11.MediaAsset, err error)
 	// List 获取媒体资源库列表
@@ -195,7 +221,6 @@ func (c *MediaAssetServiceHTTPClientImpl) Create(ctx context.Context, in *v11.Cr
 	return &out, nil
 }
 
-// Delete 删除媒体资源库
 func (c *MediaAssetServiceHTTPClientImpl) Delete(ctx context.Context, in *v11.DeleteMediaAssetRequest, opts ...http.CallOption) (*emptypb.Empty, error) {
 	var out emptypb.Empty
 	pattern := "/admin/v1/media-assets/{id}"
@@ -203,6 +228,20 @@ func (c *MediaAssetServiceHTTPClientImpl) Delete(ctx context.Context, in *v11.De
 	opts = append(opts, http.Operation(OperationMediaAssetServiceDelete))
 	opts = append(opts, http.PathTemplate(pattern))
 	err := c.cc.Invoke(ctx, "DELETE", path, nil, &out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return &out, nil
+}
+
+// FindByHash 删除媒体资源库
+func (c *MediaAssetServiceHTTPClientImpl) FindByHash(ctx context.Context, in *v11.FindMediaAssetByHashRequest, opts ...http.CallOption) (*v11.FindMediaAssetByHashResponse, error) {
+	var out v11.FindMediaAssetByHashResponse
+	pattern := "/admin/v1/media-assets/by-hash/{file_hash}"
+	path := binding.EncodeURL(pattern, in, true)
+	opts = append(opts, http.Operation(OperationMediaAssetServiceFindByHash))
+	opts = append(opts, http.PathTemplate(pattern))
+	err := c.cc.Invoke(ctx, "GET", path, nil, &out, opts...)
 	if err != nil {
 		return nil, err
 	}

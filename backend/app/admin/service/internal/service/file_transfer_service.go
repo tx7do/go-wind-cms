@@ -2,6 +2,8 @@ package service
 
 import (
 	"context"
+	"crypto/sha256"
+	"encoding/hex"
 	"io"
 	"net/http"
 	"path"
@@ -410,6 +412,12 @@ func (s *FileTransferService) UploadMediaAsset(ctx context.Context, req *storage
 	req.TenantId = trans.Ptr(operator.GetTenantId())
 	req.UserId = trans.Ptr(operator.GetUserId())
 
+	// 流式计算 SHA-256（TeeReader：计算与上传同一次读取，不二次 IO），
+	// 上传前查重——同租户内已有相同 hash 的资源直接 409 携带既有 id，
+	// 前端可提示复用而非重复存储
+	hasher := sha256.New()
+	hashingReader := io.TeeReader(reader, hasher)
+
 	var bucketName = s.mimeTypeToBucketName(req.GetMimeType())
 
 	info, storagePath, downloadUrl, err := s.mc.UploadFile(
@@ -417,11 +425,13 @@ func (s *FileTransferService) UploadMediaAsset(ctx context.Context, req *storage
 		bucketName,
 		"",
 		req.GetMimeType(),
-		reader, objectSize,
+		hashingReader, objectSize,
 	)
 	if err != nil {
 		return nil, err
 	}
+	fileHash := hex.EncodeToString(hasher.Sum(nil))
+
 
 	var file *storageV1.File
 	if file, err = s.recordFile(
@@ -437,9 +447,27 @@ func (s *FileTransferService) UploadMediaAsset(ctx context.Context, req *storage
 		return nil, err
 	}
 
+	// 查重：同租户内相同 hash（且未删除）→ 409 携带既有资源 id
+	if existing, dupErr := s.mediaAssetServiceClient.FindByHash(ctx, &mediaV1.FindMediaAssetByHashRequest{
+		FileHash: &fileHash,
+	}); dupErr == nil && existing.GetAsset() != nil && existing.GetAsset().GetId() != 0 {
+		if delErr := s.mc.DeleteFile(ctx, bucketName, info.Key); delErr != nil {
+			s.log.Errorf("cleanup duplicated upload object failed: %s", delErr.Error())
+		}
+		// recordFile 已落 File 行，一并回滚避免悬空
+		if _, derr := s.fileServiceClient.Delete(ctx, &storageV1.DeleteFileRequest{
+			QueryBy: &storageV1.DeleteFileRequest_Id{Id: file.GetId()},
+		}); derr != nil {
+			s.log.Errorf("cleanup duplicated file record failed: %s", derr.Error())
+		}
+		return nil, storageV1.ErrorUploadFailed(
+			"duplicate of media asset #%d (%s)", existing.GetAsset().GetId(), existing.GetAsset().GetFilename())
+	}
+
 	if _, err = s.mediaAssetServiceClient.Create(ctx, &mediaV1.CreateMediaAssetRequest{
 		Data: &mediaV1.MediaAsset{
 			FileId:           file.Id,
+			FileHash:         &fileHash,
 			AltText:          req.AltText,
 			Title:            req.Title,
 			Caption:          req.Caption,

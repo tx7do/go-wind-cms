@@ -41,6 +41,12 @@ service MediaAssetService {
   }
 
   // 删除媒体资源库
+  rpc FindByHash (media.service.v1.FindMediaAssetByHashRequest) returns (media.service.v1.FindMediaAssetByHashResponse) {
+    option (google.api.http) = {
+      get: "/admin/v1/media-assets/by-hash/{file_hash}"
+    };
+  }
+
   rpc Delete (media.service.v1.DeleteMediaAssetRequest) returns (google.protobuf.Empty) {
       option (google.api.http) = {
         delete: "/admin/v1/media-assets/{id}"

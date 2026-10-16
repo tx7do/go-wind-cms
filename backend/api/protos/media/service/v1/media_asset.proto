@@ -24,6 +24,9 @@ service MediaAssetService {
 
   // 删除媒体资源库
   rpc Delete (DeleteMediaAssetRequest) returns (google.protobuf.Empty) {}
+
+  // 按内容哈希查重（同租户内第一条未删除资源；无则空消息）
+  rpc FindByHash (FindMediaAssetByHashRequest) returns (FindMediaAssetByHashResponse) {}
 }
 
 // 媒体资源库
@@ -224,4 +227,20 @@ message DeleteMediaAssetRequest {
       json_name = "id"
     ]; // ID
   }
+}
+
+// 请求 - 按内容哈希查重
+message FindMediaAssetByHashRequest {
+  optional string file_hash = 1 [
+    json_name = "fileHash",
+    (gnostic.openapi.v3.property) = {description: "SHA-256 内容哈希（hex）"}
+  ]; // SHA-256 内容哈希
+}
+
+// 回应 - 按内容哈希查重
+message FindMediaAssetByHashResponse {
+  optional MediaAsset asset = 1 [
+    json_name = "asset",
+    (gnostic.openapi.v3.property) = {description: "命中的既有资源（无则空）"}
+  ]; // 命中的既有资源
 }

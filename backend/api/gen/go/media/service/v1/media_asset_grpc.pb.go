@@ -21,11 +21,12 @@ import (
 const _ = grpc.SupportPackageIsVersion9
 
 const (
-	MediaAssetService_List_FullMethodName   = "/media.service.v1.MediaAssetService/List"
-	MediaAssetService_Get_FullMethodName    = "/media.service.v1.MediaAssetService/Get"
-	MediaAssetService_Create_FullMethodName = "/media.service.v1.MediaAssetService/Create"
-	MediaAssetService_Update_FullMethodName = "/media.service.v1.MediaAssetService/Update"
-	MediaAssetService_Delete_FullMethodName = "/media.service.v1.MediaAssetService/Delete"
+	MediaAssetService_List_FullMethodName       = "/media.service.v1.MediaAssetService/List"
+	MediaAssetService_Get_FullMethodName        = "/media.service.v1.MediaAssetService/Get"
+	MediaAssetService_Create_FullMethodName     = "/media.service.v1.MediaAssetService/Create"
+	MediaAssetService_Update_FullMethodName     = "/media.service.v1.MediaAssetService/Update"
+	MediaAssetService_Delete_FullMethodName     = "/media.service.v1.MediaAssetService/Delete"
+	MediaAssetService_FindByHash_FullMethodName = "/media.service.v1.MediaAssetService/FindByHash"
 )
 
 // MediaAssetServiceClient is the client API for MediaAssetService service.
@@ -44,6 +45,8 @@ type MediaAssetServiceClient interface {
 	Update(ctx context.Context, in *UpdateMediaAssetRequest, opts ...grpc.CallOption) (*MediaAsset, error)
 	// 删除媒体资源库
 	Delete(ctx context.Context, in *DeleteMediaAssetRequest, opts ...grpc.CallOption) (*emptypb.Empty, error)
+	// 按内容哈希查重（同租户内第一条未删除资源；无则空消息）
+	FindByHash(ctx context.Context, in *FindMediaAssetByHashRequest, opts ...grpc.CallOption) (*FindMediaAssetByHashResponse, error)
 }
 
 type mediaAssetServiceClient struct {
@@ -104,6 +107,16 @@ func (c *mediaAssetServiceClient) Delete(ctx context.Context, in *DeleteMediaAss
 	return out, nil
 }
 
+func (c *mediaAssetServiceClient) FindByHash(ctx context.Context, in *FindMediaAssetByHashRequest, opts ...grpc.CallOption) (*FindMediaAssetByHashResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(FindMediaAssetByHashResponse)
+	err := c.cc.Invoke(ctx, MediaAssetService_FindByHash_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 // MediaAssetServiceServer is the server API for MediaAssetService service.
 // All implementations must embed UnimplementedMediaAssetServiceServer
 // for forward compatibility.
@@ -120,6 +133,8 @@ type MediaAssetServiceServer interface {
 	Update(context.Context, *UpdateMediaAssetRequest) (*MediaAsset, error)
 	// 删除媒体资源库
 	Delete(context.Context, *DeleteMediaAssetRequest) (*emptypb.Empty, error)
+	// 按内容哈希查重（同租户内第一条未删除资源；无则空消息）
+	FindByHash(context.Context, *FindMediaAssetByHashRequest) (*FindMediaAssetByHashResponse, error)
 	mustEmbedUnimplementedMediaAssetServiceServer()
 }
 
@@ -144,6 +159,9 @@ func (UnimplementedMediaAssetServiceServer) Update(context.Context, *UpdateMedia
 }
 func (UnimplementedMediaAssetServiceServer) Delete(context.Context, *DeleteMediaAssetRequest) (*emptypb.Empty, error) {
 	return nil, status.Error(codes.Unimplemented, "method Delete not implemented")
+}
+func (UnimplementedMediaAssetServiceServer) FindByHash(context.Context, *FindMediaAssetByHashRequest) (*FindMediaAssetByHashResponse, error) {
+	return nil, status.Error(codes.Unimplemented, "method FindByHash not implemented")
 }
 func (UnimplementedMediaAssetServiceServer) mustEmbedUnimplementedMediaAssetServiceServer() {}
 func (UnimplementedMediaAssetServiceServer) testEmbeddedByValue()                           {}
@@ -256,6 +274,24 @@ func _MediaAssetService_Delete_Handler(srv interface{}, ctx context.Context, dec
 	return interceptor(ctx, in, info, handler)
 }
 
+func _MediaAssetService_FindByHash_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(FindMediaAssetByHashRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(MediaAssetServiceServer).FindByHash(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: MediaAssetService_FindByHash_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(MediaAssetServiceServer).FindByHash(ctx, req.(*FindMediaAssetByHashRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 // MediaAssetService_ServiceDesc is the grpc.ServiceDesc for MediaAssetService service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
@@ -282,6 +318,10 @@ var MediaAssetService_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "Delete",
 			Handler:    _MediaAssetService_Delete_Handler,
+		},
+		{
+			MethodName: "FindByHash",
+			Handler:    _MediaAssetService_FindByHash_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},
