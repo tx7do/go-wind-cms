@@ -8,6 +8,7 @@ import (
 	"net/http"
 	"path"
 	"strings"
+	"time"
 
 	"github.com/go-kratos/kratos/v2/log"
 	"github.com/minio/minio-go/v7"
@@ -464,7 +465,7 @@ func (s *FileTransferService) UploadMediaAsset(ctx context.Context, req *storage
 			"duplicate of media asset #%d (%s)", existing.GetAsset().GetId(), existing.GetAsset().GetFilename())
 	}
 
-	if _, err = s.mediaAssetServiceClient.Create(ctx, &mediaV1.CreateMediaAssetRequest{
+	_, aerr := s.mediaAssetServiceClient.Create(ctx, &mediaV1.CreateMediaAssetRequest{
 		Data: &mediaV1.MediaAsset{
 			FileId:           file.Id,
 			FileHash:         &fileHash,
@@ -480,7 +481,9 @@ func (s *FileTransferService) UploadMediaAsset(ctx context.Context, req *storage
 			CreatedBy:        trans.Ptr(operator.GetUserId()),
 			ProcessingStatus: trans.Ptr(mediaV1.MediaAsset_PROCESSING_STATUS_COMPLETED),
 		},
-	}); err != nil {
+	})
+	if aerr != nil {
+		err = aerr
 		// MediaAsset 创建失败，回滚已上传的对象及其 File 元数据，避免孤儿文件/悬空记录
 		if delErr := s.mc.DeleteFile(ctx, bucketName, info.Key); delErr != nil {
 			s.log.Errorf("cleanup orphaned object after mediaasset failure failed: %s", delErr.Error())
@@ -493,6 +496,15 @@ func (s *FileTransferService) UploadMediaAsset(ctx context.Context, req *storage
 			}
 		}
 		return nil, err
+	}
+	// 图片变体预生成（best-effort）：读回原图生成 thumbnail/medium/large
+	// 三变体落 MinIO + media_variants 行；非图片/失败静默跳过（原图始终可用）
+	if strings.HasPrefix(req.GetMimeType(), "image/") {
+		go func() {
+			bctx, bcancel := context.WithTimeout(context.Background(), 30*time.Second)
+			defer bcancel()
+			generateImageVariantsAsync(bctx, s.mc, bucketName, storagePath, req.GetMimeType())
+		}()
 	}
 
 	return &storageV1.UploadFileResponse{

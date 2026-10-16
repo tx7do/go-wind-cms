@@ -45,6 +45,13 @@ server:
   #   recovery: true
   #   tool_capabilities: true
 
+  # 协同编辑 ws 服务器（默认 :6602）。未配置时回退环境变量 COLLAB_ADDR /
+  # COLLAB_ALLOWED_ORIGINS；addr 写 off/disabled 显式停用。
+  # collab:
+  #   addr: ":6602"
+  #   allowed_origins:
+  #     - "http://localhost:15999"
+
   grpc:
     addr: "0.0.0.0:0"
     timeout: 10s

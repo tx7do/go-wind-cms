@@ -12,6 +12,7 @@ import (
 	_ "github.com/tx7do/kratos-bootstrap/registry/etcd"
 	_ "github.com/tx7do/kratos-bootstrap/tracer"
 
+	"go-wind-cms/app/admin/service/internal/server"
 	"go-wind-cms/pkg/serviceid"
 )
 
@@ -35,6 +36,8 @@ func runApp() error {
 			Version: version,
 		},
 	)
+	// server.collab 配置段扩展：须在 bootstrap 读配置前登记（扫描列表届时定格）
+	server.RegisterCollabConfigExt(ctx)
 	return bootstrap.RunApp(ctx, initApp)
 }
 

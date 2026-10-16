@@ -32,6 +32,9 @@ managed:
       path: authentication/service/v1
       value: go-wind-cms/api/gen/go/authentication/service/v1;authenticationpb
     - file_option: go_package
+      path: conf/v1
+      value: go-wind-cms/api/gen/go/conf/v1;confv1
+    - file_option: go_package
       path: dict/service/v1
       value: go-wind-cms/api/gen/go/dict/service/v1;dictpb
     - file_option: go_package
