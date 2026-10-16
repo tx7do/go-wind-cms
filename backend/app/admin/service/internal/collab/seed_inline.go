@@ -95,31 +95,37 @@ func collectInline(n *html.Node, marks map[string]any) []inlineItem {
 // fillInlineContainer 把 runs 灌入块级容器（paragraph 等）。
 func fillInlineContainer(elem *crdt.YXmlElement, txn *crdt.Transaction, items []inlineItem) {
 	i := 0
-	offset := 0
-	var txt *crdt.YXmlText
-	ensureText := func() *crdt.YXmlText {
-		if txt == nil {
-			txt = crdt.NewYXmlText()
-			elem.InsertText(txn, i, txt)
-			i++
+	var pending []crdt.Delta // 连续文本 run 聚合为一次 delta 应用（精确格式、无相邻继承）
+	flush := func() {
+		if len(pending) == 0 {
+			return
 		}
-		return txt
+		txt := crdt.NewYXmlText()
+		elem.InsertText(txn, i, txt)
+		i++
+		txt.ApplyDelta(txn, pending)
+		pending = nil
 	}
 	for _, it := range items {
 		if it.elem != nil {
+			flush()
 			elem.InsertElement(txn, i, it.elem)
 			for k, v := range it.elemAttrs {
 				it.elem.SetAttributeValue(txn, k, v)
 			}
-			i++
-			txt = nil
-			offset = 0
 			continue
 		}
-		t := ensureText()
-		t.Insert(txn, offset, it.run.text, it.run.marks)
-		offset += len([]rune(it.run.text))
+		marks := it.run.marks
+		if marks == nil {
+			marks = crdt.Attributes{}
+		}
+		pending = append(pending, crdt.Delta{
+			Op:         crdt.DeltaOpInsert,
+			Insert:     it.run.text,
+			Attributes: marks,
+		})
 	}
+	flush()
 }
 
 // imgAttrs 提取 image 行内元素属性。
@@ -212,4 +218,40 @@ func runsToItems(runs []inlineRun) []inlineItem {
 		items = append(items, inlineItem{run: &runs[i]})
 	}
 	return items
+}
+
+// hasRealContent 判断行内项是否含实质内容（非空白文本或行内元素）。
+func hasRealContent(items []inlineItem) bool {
+	for _, it := range items {
+		if it.elem != nil {
+			return true
+		}
+		if it.run != nil && strings.TrimSpace(it.run.text) != "" {
+			return true
+		}
+	}
+	return false
+}
+
+// fillInlineItem 把单个行内项追加到容器子节点末尾（独立事务内调用）。
+// 文本项为独立 YText（marks 走 delta 属性，显式传空 Attributes 防继承）。
+func fillInlineItem(elem *crdt.YXmlElement, txn *crdt.Transaction, index int, it inlineItem) error {
+	if it.elem != nil {
+		elem.InsertElement(txn, index, it.elem)
+		for k, v := range it.elemAttrs {
+			it.elem.SetAttributeValue(txn, k, v)
+		}
+		return nil
+	}
+	if it.run == nil || it.run.text == "" {
+		return nil
+	}
+	txt := crdt.NewYXmlText()
+	elem.InsertText(txn, index, txt)
+	marks := it.run.marks
+	if marks == nil {
+		marks = crdt.Attributes{}
+	}
+	txt.Insert(txn, 0, it.run.text, marks)
+	return nil
 }

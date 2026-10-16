@@ -73,8 +73,6 @@ const collabBundleCache = new Map<
 >();
 
 function getCollabBundle(opts: NonNullable<CollaborationOptions>) {
-  // eslint-disable-next-line no-console
-  console.log('[collab] getCollabBundle:', opts.room, 'cached =', collabBundleCache.has(opts.room));
   let bundle = collabBundleCache.get(opts.room);
   if (!bundle) {
     const ydoc = new Y.Doc();
@@ -187,8 +185,6 @@ const TiptapEditor: React.FC<TiptapEditorProps> = ({
   // 协同资源：ydoc/provider 按 room 生命周期创建；room 变化（换语言）即整体重建
   const collabRoom = collaboration?.room;
   const yjsBundle = useMemo(() => {
-    // eslint-disable-next-line no-console
-    console.log('[collab] bundle useMemo, collaboration =', Boolean(collaboration), 'room =', collabRoom);
     if (!collaboration) return null;
     return getCollabBundle(collaboration);
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -306,6 +302,9 @@ const TiptapEditor: React.FC<TiptapEditorProps> = ({
         }
       }
     };
+    yjsBundle.provider.on('status', (st: { status: string }) => console.log('[collab-diag] status:', st.status));
+    yjsBundle.provider.on('connection-close', (e: unknown) => console.warn('[collab-diag] close:', JSON.stringify(e)));
+    yjsBundle.provider.on('sync', (s2: boolean) => console.log('[collab-diag] sync:', s2, 'fragLen:', yjsBundle.ydoc.getXmlFragment('default').length));
     if (yjsBundle.provider.synced) onSync(true);
     yjsBundle.provider.on('sync', onSync);
     yjsBundle.provider.on('status', onStatus);

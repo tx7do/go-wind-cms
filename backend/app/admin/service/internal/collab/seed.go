@@ -32,13 +32,49 @@ func seedDocFromHTML(doc *crdt.Doc, htmlContent string) error {
 	// ygo 铁律：Transact 内调用 doc.GetXmlFragment 等读方法会死锁——
 	// 引用必须在事务外取好
 	frag := doc.GetXmlFragment("default")
-	return doc.TransactE(func(txn *crdt.Transaction) error {
-		idx := 0
-		for n := body.FirstChild; n != nil; n = n.NextSibling {
-			idx = insertBlockNode(frag, txn, idx, n)
+	idx := 0
+	for n := body.FirstChild; n != nil; n = n.NextSibling {
+		if n.Type != html.ElementNode && (n.Type != html.TextNode || strings.TrimSpace(n.Data) == "") {
+			continue
 		}
-		return nil
-	})
+		// 段落（可能混合行内元素与多段文本）先独立事务挂空元素，再独立事务
+		// 填子节点——同一事务内 prelim 混合子节点（YText 与 YXmlElement 混排）
+		// 的重放会乱序（text 归组到元素前）
+		if n.Type == html.ElementNode && n.Data == "p" {
+			items := collectInline(n, nil)
+			if !hasRealContent(items) {
+				continue
+			}
+			// 逐子节点独立事务前向追加：同一事务内 prelim 混合子节点
+			//（YText 与 YXmlElement 混排）重放会乱序；独立事务天然按序
+			p := crdt.NewYXmlElement("paragraph")
+			if err := doc.TransactE(func(txn *crdt.Transaction) error {
+				frag.InsertElement(txn, idx, p)
+				return nil
+			}); err != nil {
+				return err
+			}
+			i := 0
+			for _, it := range items {
+				it := it
+				if err := doc.TransactE(func(txn *crdt.Transaction) error {
+					return fillInlineItem(p, txn, i, it)
+				}); err != nil {
+					return err
+				}
+				i++
+			}
+			idx++
+			continue
+		}
+		if err := doc.TransactE(func(txn *crdt.Transaction) error {
+			idx = insertBlockNode(frag, txn, idx, n)
+			return nil
+		}); err != nil {
+			return err
+		}
+	}
+	return nil
 }
 
 func findBody(n *html.Node) *html.Node {
@@ -59,14 +95,17 @@ func insertBlockNode(frag *crdt.YXmlFragment, txn *crdt.Transaction, idx int, n 
 		if strings.TrimSpace(n.Data) == "" {
 			return idx
 		}
-		return insertParagraphWithRuns(frag, txn, idx, []inlineRun{{text: n.Data}})
+		return insertTextParagraph(frag, txn, idx, n.Data)
 	}
 	if n.Type != html.ElementNode {
 		return idx
 	}
 	switch n.Data {
 	case "p":
-		return insertParagraphWithRuns(frag, txn, idx, runsOf(collectInline(n, nil)))
+		p := crdt.NewYXmlElement("paragraph")
+		frag.InsertElement(txn, idx, p)
+		fillInlineContainer(p, txn, collectInline(n, nil))
+		return idx + 1
 	case "h1", "h2", "h3", "h4", "h5", "h6":
 		elem := crdt.NewYXmlElement("heading")
 		elem.SetAttributeValue(txn, "level", int(n.Data[1]-'0'))
@@ -92,7 +131,7 @@ func insertBlockNode(frag *crdt.YXmlFragment, txn *crdt.Transaction, idx int, n 
 		return idx + 1
 	case "table":
 		// v1 种子化不支持表格：降级为逐行段落文本
-		return insertParagraphWithRuns(frag, txn, idx, runsOf(collectInline(n, nil)))
+		return insertParagraphWithItems(frag, txn, idx, collectInline(n, nil))
 	default:
 		// div/section/span 等未知块级：递归子节点；无子块时当普通段落
 		childBlocks := false
@@ -108,7 +147,7 @@ func insertBlockNode(frag *crdt.YXmlFragment, txn *crdt.Transaction, idx int, n 
 			}
 			return idx
 		}
-		return insertParagraphWithRuns(frag, txn, idx, runsOf(collectInline(n, nil)))
+		return insertParagraphWithItems(frag, txn, idx, collectInline(n, nil))
 	}
 }
 
@@ -120,7 +159,7 @@ func insertIntoContainer(elem *crdt.YXmlElement, txn *crdt.Transaction, idx int,
 		}
 		p := crdt.NewYXmlElement("paragraph")
 		elem.InsertElement(txn, idx, p)
-		fillInlineContainer(p, txn, runsToItems([]inlineRun{{text: n.Data}}))
+		fillInlineContainer(p, txn, []inlineItem{{run: &inlineRun{text: n.Data}}})
 		return idx + 1
 	}
 	if n.Type != html.ElementNode {
@@ -149,6 +188,19 @@ func insertIntoContainer(elem *crdt.YXmlElement, txn *crdt.Transaction, idx int,
 	}
 }
 
+// collectInlineExcludingLists 收集行内内容但跳过嵌套列表子树
+//（嵌套列表由 fillListItems 单独结构化插入，其文本不得混入父级行内内容）。
+func collectInlineExcludingLists(n *html.Node) []inlineItem {
+	var items []inlineItem
+	for c := n.FirstChild; c != nil; c = c.NextSibling {
+		if c.Type == html.ElementNode && (c.Data == "ul" || c.Data == "ol") {
+			continue
+		}
+		items = append(items, collectInline(c, nil)...)
+	}
+	return items
+}
+
 func insertListInto(frag *crdt.YXmlFragment, txn *crdt.Transaction, idx int, n *html.Node, listType string) int {
 	list := crdt.NewYXmlElement(listType)
 	frag.InsertElement(txn, idx, list)
@@ -164,7 +216,10 @@ func fillListItems(list *crdt.YXmlElement, txn *crdt.Transaction, n *html.Node) 
 		}
 		li := crdt.NewYXmlElement("listItem")
 		list.InsertElement(txn, i, li)
-		fillInlineContainer(li, txn, collectInline(c, nil))
+		// listItem 的 PM 内容模型要求块级子节点：行内内容包 paragraph
+		para := crdt.NewYXmlElement("paragraph")
+		li.InsertElement(txn, 0, para)
+		fillInlineContainer(para, txn, collectInlineExcludingLists(c))
 		// 嵌套列表
 		j := 1
 		for cc := c.FirstChild; cc != nil; cc = cc.NextSibling {
@@ -215,15 +270,31 @@ func insertCodeBlock(frag *crdt.YXmlFragment, txn *crdt.Transaction, idx int, n 
 	return idx + 1
 }
 
-// insertParagraphWithRuns 插入一个以 runs 为内容的段落。
-func insertParagraphWithRuns(frag *crdt.YXmlFragment, txn *crdt.Transaction, idx int, runs []inlineRun) int {
-	return insertParagraphWithItems(frag, txn, idx, runsToItems(runs))
-}
-
 // insertParagraphWithItems 插入一个以行内项（文本/行内元素混合）为内容的段落。
+// 全部为纯空白文本且无行内元素时跳过（不产生空段落）。
 func insertParagraphWithItems(frag *crdt.YXmlFragment, txn *crdt.Transaction, idx int, items []inlineItem) int {
+	hasContent := false
+	for _, it := range items {
+		if it.elem != nil || strings.TrimSpace(it.run.text) != "" {
+			hasContent = true
+			break
+		}
+	}
+	if !hasContent {
+		return idx
+	}
 	p := crdt.NewYXmlElement("paragraph")
 	frag.InsertElement(txn, idx, p)
 	fillInlineContainer(p, txn, items)
+	return idx + 1
+}
+
+// insertTextParagraph 插入纯文本段落。
+func insertTextParagraph(frag *crdt.YXmlFragment, txn *crdt.Transaction, idx int, text string) int {
+	p := crdt.NewYXmlElement("paragraph")
+	frag.InsertElement(txn, idx, p)
+	txt := crdt.NewYXmlText()
+	p.InsertText(txn, 0, txt)
+	txt.Insert(txn, 0, text, nil)
 	return idx + 1
 }
