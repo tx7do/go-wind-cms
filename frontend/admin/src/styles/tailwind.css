@@ -9,6 +9,10 @@
 @custom-variant light (&:where([data-theme=light], [data-theme=light] *));
 
 @theme {
+  /* design-language §3：字体栈（font-sans/font-mono 工具类与 v4 默认 body 字体） */
+  --font-sans: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, 'PingFang SC', 'Hiragino Sans GB', 'Microsoft YaHei', 'Source Han Sans SC', 'Noto Sans SC', sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji', 'Noto Color Emoji';
+  --font-mono: ui-monospace, SFMono-Regular, 'SF Mono', Menlo, Consolas, 'Liberation Mono', 'Courier New', monospace;
+
   /* 项目用到的、不在 v4 默认主题里的动画 */
   --animate-fade-in: fade-in 0.3s ease-out;
   @keyframes fade-in {

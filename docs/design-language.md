@@ -104,7 +104,15 @@ Web 端（react/vue/taro-H5）统一以 CSS 变量承载，组件只允许引用
 | Body | 14–15px / 400 / 1.7 | 正文；文章正文 16–17px / 1.8 |
 | Caption | 12–13px / 400 / muted-foreground | 时间、计数、元信息 |
 
-- 字体栈：系统栈优先（`system-ui, -apple-system, 'Segoe UI', 'PingFang SC', 'Microsoft YaHei', 'Noto Sans SC', sans-serif`），不引入外部字体文件（品牌字标已转路径，不依赖字体）。
+- **正文字体栈（权威值）**：`-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, 'PingFang SC', 'Hiragino Sans GB', 'Microsoft YaHei', 'Source Han Sans SC', 'Noto Sans SC', sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji', 'Noto Color Emoji'`
+  - Latin 在前 CJK 在后：macOS/iOS 走苹方（PingFang SC）、Windows 走微软雅黑（Microsoft YaHei）、
+    Android/Linux 走思源黑体/思源黑体 Noto（Source Han Sans SC / Noto Sans SC）；
+  - emoji 三平台兜底；不引入外部字体文件（品牌字标已转路径，不依赖字体）。
+- **等宽字体栈（代码/日志/序列号）**：`ui-monospace, SFMono-Regular, 'SF Mono', Menlo, Consolas, 'Liberation Mono', 'Courier New', monospace`
+- **各端落地点**：admin（`styles/global.css` body + `styles/tailwind.css` @theme + antd token
+  `fontFamily`，两处 ConfigProvider 同值）、react/vue（`globals.css|main.css` 的 @theme
+  `--font-sans`/`--font-mono`，Tailwind v4 preflight 自动继承）、taro（`app.css` page 根）、
+  flutter（`themes/fonts.dart` AppFont.fontFamilyFallback，各平台回退链）。
 - 中文正文不使用斜体；强调用字重与主色。
 
 ---

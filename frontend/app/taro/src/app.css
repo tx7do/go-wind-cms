@@ -2,6 +2,13 @@
 @tailwind components;
 @tailwind utilities;
 
+/* ========== 全局字体（design-language §3 权威栈） ==========
+ * 小程序端由微信注入默认栈；显式声明保证 H5 与微信一致、
+ * 且 CJK 命名（苹方/雅黑/思源）在 H5 浏览器上不落到衬线兜底 */
+page {
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, 'PingFang SC', 'Hiragino Sans GB', 'Microsoft YaHei', 'Source Han Sans SC', 'Noto Sans SC', sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji', 'Noto Color Emoji';
+}
+
 /* ========== 安全区 CSS 变量（规范 §5.3） ========== */
 page {
     --safe-top: env(safe-area-inset-top, 0rpx);

@@ -64,7 +64,11 @@ class AppFont {
     return [
       systemFont,
       if (PlatformUtils.isApple) ...appleFontFamily,
-      if (PlatformUtils.isAndroid) ...xiaomiFontFamily,
+      // 小米/红米优先命中 miui、mipro 专有字体，其余 Android 退到思源黑体/Noto
+      if (PlatformUtils.isAndroid) ...[
+        ...xiaomiFontFamily,
+        ...androidFontFamily,
+      ],
       if (PlatformUtils.isWindows) ...windowsFontFamily,
       ...emojiFontFamily,
     ];

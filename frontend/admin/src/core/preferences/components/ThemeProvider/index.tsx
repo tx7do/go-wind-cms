@@ -53,7 +53,9 @@ export const ThemeProvider = ({ children }: ThemeProviderProps) => {
     if (effectiveMode === 'dark') algorithms.push(antdTheme.darkAlgorithm);
     if (appPrefs.compact) algorithms.push(antdTheme.compactAlgorithm);
 
-    const tokens: ThemeConfig['token'] = {
+        const tokens: ThemeConfig['token'] = {
+      // design-language §3：antd 组件字体与全局 body 同栈（antd 默认栈无显式 CJK 名）
+      fontFamily: "-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, 'PingFang SC', 'Hiragino Sans GB', 'Microsoft YaHei', 'Source Han Sans SC', 'Noto Sans SC', sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji', 'Noto Color Emoji'",
       colorPrimary: themePrefs.colorPrimary,
       colorSuccess: themePrefs.colorSuccess,
       colorWarning: themePrefs.colorWarning,

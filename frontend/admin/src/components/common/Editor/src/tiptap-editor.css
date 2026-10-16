@@ -8,7 +8,7 @@
   width: 100% !important;
   height: 100% !important;
   overflow: hidden !important;
-  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  font-family: var(--font-sans, inherit);
   background-color: #fff;
   border: none !important;
   border-radius: 0 !important;
@@ -325,7 +325,7 @@
 
 .tiptap-editor-wrapper .ProseMirror pre .code-block-language-selector select {
   padding: 2px 20px 2px 8px;
-  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  font-family: var(--font-sans, inherit);
   font-size: 11px;
   color: #9ca3af;
   text-transform: uppercase;

@@ -35,6 +35,8 @@ export const useThemeConfig = (): ThemeConfig => {
         if (app.compact) algorithms.push(antdTheme.compactAlgorithm);
 
         const tokens: ThemeConfig['token'] = {
+            // design-language §3：antd 组件字体与全局 body 同栈（antd 默认栈无显式 CJK 名）
+            fontFamily: "-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, 'PingFang SC', 'Hiragino Sans GB', 'Microsoft YaHei', 'Source Han Sans SC', 'Noto Sans SC', sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji', 'Noto Color Emoji'",
             colorPrimary: theme.colorPrimary,
             colorSuccess: theme.colorSuccess,
             colorWarning: theme.colorWarning,
