@@ -15,28 +15,76 @@ import {
   useUpdateFlowRule,
 } from '@/api/hooks/flow-rule';
 
-/** v1 动作编辑模型：webhook 动作（url + 可选签名密钥） */
-interface WebhookAction {
-  type: 'webhook';
+/** 动作编辑模型：webhook（url+secret）与 notification（title/content/收件人） */
+interface FlowActionForm {
+  type: 'webhook' | 'notification';
   url: string;
   secret: string;
+  title: string;
+  content: string;
+  /** 收件人用户 ID 逗号分隔输入态 */
+  targetUserIdsText: string;
 }
 
-const serializeActions = (webhooks: WebhookAction[]) =>
-  JSON.stringify(webhooks.filter((w) => w.url.trim()));
+const emptyAction = (type: FlowActionForm['type']): FlowActionForm => ({
+  type,
+  url: '',
+  secret: '',
+  title: '',
+  content: '',
+  targetUserIdsText: '',
+});
 
-const deserializeActions = (actionsJSON: string): WebhookAction[] => {
+const serializeActions = (actions: FlowActionForm[]) =>
+  JSON.stringify(
+    actions
+      .map((a) => {
+        if (a.type === 'webhook') {
+          if (!a.url.trim()) return null;
+          const out: Record<string, unknown> = {
+            type: 'webhook',
+            url: a.url.trim(),
+          };
+          if (a.secret.trim()) out.secret = a.secret.trim();
+          return out;
+        }
+        const ids = a.targetUserIdsText
+          .split(/[,，\s]+/)
+          .map((x) => Number(x))
+          .filter((x) => Number.isInteger(x) && x > 0);
+        if (!a.title.trim() || !a.content.trim() || ids.length === 0) return null;
+        return {
+          type: 'notification',
+          title: a.title.trim(),
+          content: a.content.trim(),
+          target_user_ids: ids,
+        };
+      })
+      .filter(Boolean),
+  );
+
+const deserializeActions = (actionsJSON: string): FlowActionForm[] => {
   try {
     const raw: unknown = JSON.parse(actionsJSON || '[]');
     if (!Array.isArray(raw)) return [];
     return raw
-      .filter((a): a is { type?: string; url?: string; secret?: string } =>
-        Boolean(a) && typeof a === 'object' && (a as { type?: string }).type === 'webhook')
-      .map((a) => ({
-        type: 'webhook' as const,
-        url: String(a.url ?? ''),
-        secret: String(a.secret ?? ''),
-      }));
+      .filter(
+        (a): a is Record<string, unknown> =>
+          Boolean(a) && typeof a === 'object',
+      )
+      .map((a) => {
+        const type = a.type === 'notification' ? 'notification' : 'webhook';
+        return {
+          type,
+          url: String(a.url ?? ''),
+          secret: String(a.secret ?? ''),
+          title: String(a.title ?? ''),
+          content: String(a.content ?? ''),
+          targetUserIdsText: Array.isArray(a.target_user_ids)
+            ? (a.target_user_ids as unknown[]).map(String).join(',')
+            : '',
+        };
+      });
   } catch {
     return [];
   }
@@ -58,9 +106,15 @@ const FlowRuleManagement = () => {
     name: string;
     triggerEvent: string;
     conditionStatus: string;
-    webhooks: WebhookAction[];
+    actions: FlowActionForm[];
     enabled: boolean;
-  }>({ name: '', triggerEvent: '', conditionStatus: '', webhooks: [], enabled: true });
+  }>({
+    name: '',
+    triggerEvent: '',
+    conditionStatus: '',
+    actions: [emptyAction('webhook')],
+    enabled: true,
+  });
 
   const listQuery = useListFlowRules();
   const createMutation = useCreateFlowRule();
@@ -77,7 +131,7 @@ const FlowRuleManagement = () => {
       name: '',
       triggerEvent: 'post.published',
       conditionStatus: '',
-      webhooks: [{ type: 'webhook', url: '', secret: '' }],
+      actions: [emptyAction('webhook')],
       enabled: true,
     });
     setFormOpen(true);
@@ -89,10 +143,10 @@ const FlowRuleManagement = () => {
       name: record.name ?? '',
       triggerEvent: record.triggerEvent ?? 'post.published',
       conditionStatus: record.conditionStatus ?? '',
-      webhooks:
+      actions:
         deserializeActions(record.actions ?? '').length > 0
           ? deserializeActions(record.actions ?? '')
-          : [{ type: 'webhook', url: '', secret: '' }],
+          : [emptyAction('webhook')],
       enabled: record.enabled ?? true,
     });
     setFormOpen(true);
@@ -103,16 +157,16 @@ const FlowRuleManagement = () => {
       message.warning(t('nameRequired'));
       return;
     }
-    const webhooks = form.webhooks.filter((w) => w.url.trim());
-    if (webhooks.length === 0) {
-      message.warning(t('webhookRequired'));
+    const actions = serializeActions(form.actions);
+    if (!Array.isArray(JSON.parse(actions)) || (JSON.parse(actions) as unknown[]).length === 0) {
+      message.warning(t('actionRequired'));
       return;
     }
     const payload = {
       name: form.name.trim(),
       triggerEvent: form.triggerEvent,
       conditionStatus: form.conditionStatus || undefined,
-      actions: serializeActions(webhooks),
+      actions,
       enabled: form.enabled,
     };
     try {
@@ -181,17 +235,23 @@ const FlowRuleManagement = () => {
         ),
     },
     {
-      title: t('webhooks'),
+      title: t('actions'),
       dataIndex: 'actions',
       ellipsis: true,
       render: (_: unknown, record: FlowRule) => {
-        const webhooks = deserializeActions(record.actions ?? '');
-        if (webhooks.length === 0) return '-';
+        const actions = deserializeActions(record.actions ?? '');
+        if (actions.length === 0) return '-';
         return (
           <Space wrap size={4}>
-            {webhooks.map((w, i) => (
-              <Tag key={i} style={{ maxWidth: 220, overflow: 'hidden', textOverflow: 'ellipsis' }}>
-                {w.url}
+            {actions.map((a, i) => (
+              <Tag
+                key={i}
+                color={a.type === 'webhook' ? 'blue' : 'green'}
+                style={{ maxWidth: 240, overflow: 'hidden', textOverflow: 'ellipsis' }}
+              >
+                {a.type === 'webhook'
+                  ? `${t('actionWebhook')}: ${a.url}`
+                  : `${t('actionNotification')}: ${a.title}`}
               </Tag>
             ))}
           </Space>
@@ -285,59 +345,113 @@ const FlowRuleManagement = () => {
             onChange={(v?: string) => setForm((f) => ({ ...f, conditionStatus: v ?? '' }))}
             style={{ width: '100%' }}
           />
-          {form.webhooks.map((w, i) => (
-            <Space key={i} direction="vertical" style={{ width: '100%' }} size={6}>
-              <Space.Compact style={{ width: '100%' }}>
-                <Input
-                  placeholder={t('webhookUrlPlaceholder')}
-                  value={w.url}
-                  onChange={(e) =>
-                    setForm((f) => ({
-                      ...f,
-                      webhooks: f.webhooks.map((x, j) =>
-                        j === i ? { ...x, url: e.target.value } : x,
-                      ),
-                    }))
-                  }
-                />
-                <Button
-                  icon={<DeleteOutlined />}
-                  disabled={form.webhooks.length <= 1}
-                  onClick={() =>
-                    setForm((f) => ({
-                      ...f,
-                      webhooks: f.webhooks.filter((_, j) => j !== i),
-                    }))
-                  }
-                />
-              </Space.Compact>
-              <Input.Password
-                placeholder={t('webhookSecretPlaceholder')}
-                value={w.secret}
-                onChange={(e) =>
-                  setForm((f) => ({
-                    ...f,
-                    webhooks: f.webhooks.map((x, j) =>
-                      j === i ? { ...x, secret: e.target.value } : x,
-                    ),
-                  }))
-                }
-              />
-            </Space>
-          ))}
-          <Button
-            block
-            type="dashed"
-            icon={<PlusOutlined />}
-            onClick={() =>
+          {form.actions.map((a, i) => {
+            const patch = (part: Partial<FlowActionForm>) =>
               setForm((f) => ({
                 ...f,
-                webhooks: [...f.webhooks, { type: 'webhook', url: '', secret: '' }],
-              }))
-            }
-          >
-            {t('addWebhook')}
-          </Button>
+                actions: f.actions.map((x, j) => (j === i ? { ...x, ...part } : x)),
+              }));
+            return (
+              <div
+                key={i}
+                style={{
+                  border: '1px solid var(--ant-color-border-secondary)',
+                  borderRadius: 8,
+                  padding: 12,
+                }}
+              >
+                <Space style={{ width: '100%', justifyContent: 'space-between', marginBottom: 8 }}>
+                  <Select
+                    value={a.type}
+                    options={[
+                      { value: 'webhook', label: t('actionWebhook') },
+                      { value: 'notification', label: t('actionNotification') },
+                    ]}
+                    onChange={(v: FlowActionForm['type']) =>
+                      setForm((f) => ({
+                        ...f,
+                        actions: f.actions.map((x, j) =>
+                          j === i ? { ...emptyAction(v) } : x,
+                        ),
+                      }))
+                    }
+                    style={{ width: 160 }}
+                  />
+                  <Button
+                    icon={<DeleteOutlined />}
+                    disabled={form.actions.length <= 1}
+                    onClick={() =>
+                      setForm((f) => ({
+                        ...f,
+                        actions: f.actions.filter((_, j) => j !== i),
+                      }))
+                    }
+                  />
+                </Space>
+                {a.type === 'webhook' ? (
+                  <Space direction="vertical" style={{ width: '100%' }} size={6}>
+                    <Input
+                      placeholder={t('webhookUrlPlaceholder')}
+                      value={a.url}
+                      onChange={(e) => patch({ url: e.target.value })}
+                    />
+                    <Input.Password
+                      placeholder={t('webhookSecretPlaceholder')}
+                      value={a.secret}
+                      onChange={(e) => patch({ secret: e.target.value })}
+                    />
+                  </Space>
+                ) : (
+                  <Space direction="vertical" style={{ width: '100%' }} size={6}>
+                    <Input
+                      placeholder={t('notifyTitlePlaceholder')}
+                      value={a.title}
+                      onChange={(e) => patch({ title: e.target.value })}
+                    />
+                    <Input.TextArea
+                      placeholder={t('notifyContentPlaceholder')}
+                      value={a.content}
+                      rows={3}
+                      onChange={(e) => patch({ content: e.target.value })}
+                    />
+                    <Input
+                      placeholder={t('notifyRecipientsPlaceholder')}
+                      value={a.targetUserIdsText}
+                      onChange={(e) => patch({ targetUserIdsText: e.target.value })}
+                    />
+                  </Space>
+                )}
+              </div>
+            );
+          })}
+          <Space.Compact block>
+            <Button
+              block
+              type="dashed"
+              icon={<PlusOutlined />}
+              onClick={() =>
+                setForm((f) => ({
+                  ...f,
+                  actions: [...f.actions, emptyAction('webhook')],
+                }))
+              }
+            >
+              {t('addWebhookAction')}
+            </Button>
+            <Button
+              block
+              type="dashed"
+              icon={<PlusOutlined />}
+              onClick={() =>
+                setForm((f) => ({
+                  ...f,
+                  actions: [...f.actions, emptyAction('notification')],
+                }))
+              }
+            >
+              {t('addNotificationAction')}
+            </Button>
+          </Space.Compact>
           <Space>
             <span>{t('enabled')}</span>
             <Switch

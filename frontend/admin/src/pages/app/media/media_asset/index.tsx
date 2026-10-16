@@ -349,6 +349,11 @@ const MediaAssetList = () => {
           deleteMutation.mutate({ id });
           setDuplicatesOpen(false);
         }}
+        onCleanupGroup={(deleteIds) => {
+          deleteIds.forEach((id) => deleteMutation.mutate({ id }));
+          setDuplicatesOpen(false);
+          message.success(t('duplicates.cleanupStarted', { count: deleteIds.length }));
+        }}
       />
 
       <MediaAssetReferencesModal

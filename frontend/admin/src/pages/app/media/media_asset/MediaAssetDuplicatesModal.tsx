@@ -1,4 +1,4 @@
-import { Modal, Table, Tag } from 'antd';
+import { Button, Modal, Popconfirm, Table, Tag } from 'antd';
 import type { ColumnsType } from 'antd/es/table';
 import { useTranslation } from 'react-i18next';
 import dayjs from 'dayjs';
@@ -18,7 +18,9 @@ const MediaAssetDuplicatesModal: React.FC<{
   open: boolean;
   onClose: () => void;
   onDeleteAsset?: (id: number) => void;
-}> = ({ open, onClose, onDeleteAsset }) => {
+  /** 一键清理：保留组内最早上传的一份，删除其余（ids 由调用方批量删除） */
+  onCleanupGroup?: (deleteIds: number[]) => void;
+}> = ({ open, onClose, onDeleteAsset, onCleanupGroup }) => {
   const { t } = useTranslation('media-asset');
   // limit 传 0 表示不拉取（弹窗未开时禁用查询）
   const { data, isLoading } = useListDuplicatedMediaAssets(open ? 50 : 0);
@@ -87,12 +89,36 @@ const MediaAssetDuplicatesModal: React.FC<{
                 fontSize: 12,
                 color: 'var(--ant-color-text-secondary)',
                 wordBreak: 'break-all',
+                display: 'flex',
+                alignItems: 'center',
+                gap: 8,
               }}
             >
               <Tag color="orange">
                 {t('duplicates.count', { count: Number(g.count ?? 0) })}
               </Tag>
-              {g.fileHash}
+              <span style={{ flex: 1, minWidth: 0, overflow: 'hidden', textOverflow: 'ellipsis' }}>
+                {g.fileHash}
+              </span>
+              {onCleanupGroup && (g.assets?.length ?? 0) > 1 && (
+                <Popconfirm
+                  title={t('duplicates.cleanupConfirm', {
+                    count: (g.assets?.length ?? 0) - 1,
+                  })}
+                  onConfirm={() =>
+                    onCleanupGroup(
+                      (g.assets || [])
+                        .slice(1)
+                        .map((a) => Number(a.id))
+                        .filter(Boolean),
+                    )
+                  }
+                >
+                  <Button size="small" danger>
+                    {t('duplicates.cleanup')}
+                  </Button>
+                </Popconfirm>
+              )}
             </div>
             <Table<mediaservicev1_MediaAsset>
               rowKey="id"

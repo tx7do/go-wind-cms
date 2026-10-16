@@ -78,7 +78,10 @@
     "loadFailed": "重复资源加载失败",
     "count": "重复 {count} 份",
     "keepFirst": "建议保留（最早上传）",
-    "deleteThis": "删除此份"
+    "deleteThis": "删除此份",
+    "cleanup": "保留最早，清理其余",
+    "cleanupConfirm": "将删除除最早上传外的 {count} 份重复资源，确认？",
+    "cleanupStarted": "已开始清理 {count} 份重复资源"
   },
   "references": {
     "title": "被引用于",

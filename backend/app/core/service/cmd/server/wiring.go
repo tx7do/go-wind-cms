@@ -285,7 +285,7 @@ func initApp(ctx *bootstrap.Context) (*kratos.App, func(), error) {
 	aiQueryService := service.NewAiQueryService(ctx, aiProviderRepo, aiUsageLogRepo, entClient, internalMessageRepo, internalMessageService)
 	searchService := service.NewSearchService(ctx, searchRepo, postRepo)
 	referenceTrackingService := service.NewReferenceTrackingService(ctx, mediaAssetRepo, contentReferenceRepo)
-	flowService := service.NewFlowService(ctx, flowRepo, postRepo, pageRepo, taskService)
+	flowService := service.NewFlowService(ctx, flowRepo, postRepo, pageRepo, taskService, internalMessageService)
 	postService := service.NewPostService(ctx, postRepo, searchService, taskService, contentModelRepo, postVersionRepo, webhookService, internalMessageService, referenceTrackingService, flowService)
 	categoryService := service.NewCategoryService(ctx, categoryRepo, contentModelRepo)
 	tagService := service.NewTagService(ctx, tagRepo)

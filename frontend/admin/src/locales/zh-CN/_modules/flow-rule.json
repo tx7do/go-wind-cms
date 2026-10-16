@@ -9,11 +9,8 @@
   "conditionStatus": "状态条件",
   "conditionStatusPlaceholder": "留空表示无条件（事件即触发）",
   "noCondition": "无条件",
-  "webhooks": "动作（Webhook）",
   "webhookUrlPlaceholder": "回调 URL（https:// 推荐）",
   "webhookSecretPlaceholder": "签名密钥（可选，X-Webhook-Signature: sha256=HMAC）",
-  "webhookRequired": "请至少填写一个有效的 Webhook URL",
-  "addWebhook": "添加 Webhook 动作",
   "matchCount": "命中次数",
   "enabled": "启用",
   "action": "操作",
@@ -22,5 +19,14 @@
   "delete": "删除",
   "deleteConfirm": "确认删除该规则？删除后不再触发。",
   "saveSuccess": "保存成功",
-  "deleteSuccess": "删除成功"
+  "deleteSuccess": "删除成功",
+  "actions": "动作链",
+  "actionWebhook": "Webhook",
+  "actionNotification": "站内通知",
+  "actionRequired": "请至少配置一个完整有效的动作",
+  "addWebhookAction": "添加 Webhook 动作",
+  "addNotificationAction": "添加站内通知动作",
+  "notifyTitlePlaceholder": "通知标题（支持 {event}/{entity_id}/{rule_id} 占位符）",
+  "notifyContentPlaceholder": "通知内容（支持 {event}/{entity_id}/{rule_id} 占位符）",
+  "notifyRecipientsPlaceholder": "收件人用户 ID，逗号分隔（如 1,2,3）"
 }

@@ -147,6 +147,49 @@ def main():
     time.sleep(3)
     check("条件不满足不触发", len(received) == before, f"received={len(received)}")
 
+    # ===== 6. 通知动作：规则触发 → 站内信落库 + 收件人收件箱 =====
+    title_mark = f"flow-notify-{TS}"
+    nrule = api("/admin/v1/flow-rules", "POST", {"data": {
+        "name": f"e2e-flow-notify-{TS}",
+        "triggerEvent": "post.published",
+        "conditionStatus": "",
+        "actions": json.dumps([{
+            "type": "notification",
+            "title": title_mark + " {event}",
+            "content": "post " + str(0) + " {entity_id} fired",
+            "target_user_ids": [1],
+        }]),
+        "enabled": True,
+    }})
+    nrule_id = nrule.get("id")
+    check("建通知规则", bool(nrule_id), f"id={nrule_id}")
+
+    # 校验：通知动作缺收件人被拒
+    bad_n = api("/admin/v1/flow-rules", "POST", {"data": {
+        "name": f"e2e-flow-notify-bad-{TS}",
+        "triggerEvent": "post.published",
+        "actions": json.dumps([{"type": "notification", "title": "t", "content": "c"}]),
+    }})
+    check("通知动作缺收件人被拒", bad_n.get("code") == 400,
+          f"code={bad_n.get('code')}")
+
+    npost = api("/admin/v1/posts", "POST", {"data": {
+        "status": "DRAFT",
+        "translations": [{"languageCode": "zh-CN", "title": f"flow notify e2e {TS}",
+                          "content": "<p>x</p>"}],
+    }})
+    npost_id = npost.get("id")
+    api(f"/admin/v1/posts/{npost_id}/review/submit", "POST", {"postId": npost_id})
+    api(f"/admin/v1/posts/{npost_id}/review/approve", "POST", {"postId": npost_id})
+    ok = wait_for(lambda: any(
+        title_mark in (m.get("title") or "")
+        for m in (api("/admin/v1/internal-message/messages", "GET").get("items") or [])
+    ), timeout=90)
+    check("通知动作落库（消息标题命中模板）", ok, f"mark={title_mark}")
+
+    api(f"/admin/v1/flow-rules/{nrule_id}", "DELETE")
+    api(f"/admin/v1/posts/{npost_id}", "DELETE")
+
     # ===== 清理 =====
     api(f"/admin/v1/flow-rules/{rule_id}", "DELETE")
     api(f"/admin/v1/posts/{post_id}", "DELETE")

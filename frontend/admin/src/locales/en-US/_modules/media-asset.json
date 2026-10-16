@@ -78,7 +78,10 @@
     "loadFailed": "Failed to load duplicates",
     "count": "{count} copies",
     "keepFirst": "Keep (earliest upload)",
-    "deleteThis": "Delete this copy"
+    "deleteThis": "Delete this copy",
+    "cleanup": "Keep earliest, delete rest",
+    "cleanupConfirm": "Will delete {count} duplicate copies (keeping the earliest). Continue?",
+    "cleanupStarted": "Cleaning up {count} duplicates"
   },
   "references": {
     "title": "Referenced by",

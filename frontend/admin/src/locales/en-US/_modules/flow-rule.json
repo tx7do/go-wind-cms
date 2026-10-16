@@ -9,11 +9,8 @@
   "conditionStatus": "Status condition",
   "conditionStatusPlaceholder": "Empty means no condition (event fires as-is)",
   "noCondition": "None",
-  "webhooks": "Actions (Webhook)",
   "webhookUrlPlaceholder": "Callback URL (https:// recommended)",
   "webhookSecretPlaceholder": "Signing secret (optional, X-Webhook-Signature: sha256=HMAC)",
-  "webhookRequired": "At least one valid webhook URL is required",
-  "addWebhook": "Add webhook action",
   "matchCount": "Matches",
   "enabled": "Enabled",
   "action": "Actions",
@@ -22,5 +19,14 @@
   "delete": "Delete",
   "deleteConfirm": "Delete this rule? It will no longer fire.",
   "saveSuccess": "Saved",
-  "deleteSuccess": "Deleted"
+  "deleteSuccess": "Deleted",
+  "actions": "Actions",
+  "actionWebhook": "Webhook",
+  "actionNotification": "In-app notification",
+  "actionRequired": "Configure at least one complete action",
+  "addWebhookAction": "Add webhook action",
+  "addNotificationAction": "Add notification action",
+  "notifyTitlePlaceholder": "Notification title ({event}/{entity_id}/{rule_id} placeholders)",
+  "notifyContentPlaceholder": "Notification content ({event}/{entity_id}/{rule_id} placeholders)",
+  "notifyRecipientsPlaceholder": "Recipient user IDs, comma separated (e.g. 1,2,3)"
 }

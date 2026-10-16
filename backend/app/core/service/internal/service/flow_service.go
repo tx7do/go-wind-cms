@@ -9,6 +9,7 @@ import (
 	"encoding/json"
 	"fmt"
 	"net/http"
+	"strconv"
 	"strings"
 	"time"
 
@@ -29,34 +30,41 @@ import (
 )
 
 // flowAction 流动作（actions JSON 数组元素）。
-// v1 支持 webhook：{"type":"webhook","url":"https://...","secret":"可选签名密钥"}。
+//   - webhook：{"type":"webhook","url":"https://...","secret":"可选签名密钥"}
+//   - notification：{"type":"notification","title":"...","content":"...",
+//     "target_user_ids":[..]}（title/content 支持 {event}/{entity_id}/{rule_id} 占位符）
 type flowAction struct {
-	Type   string `json:"type"`
-	URL    string `json:"url"`
-	Secret string `json:"secret"`
+	Type          string   `json:"type"`
+	URL           string   `json:"url"`
+	Secret        string   `json:"secret"`
+	Title         string   `json:"title"`
+	Content       string   `json:"content"`
+	TargetUserIDs []uint32 `json:"target_user_ids"`
 }
 
 // FlowService 自动化 Flow 规则服务。
 type FlowService struct {
 	flowV1.UnimplementedFlowRuleServiceServer
 
-	flowRepo    *data.FlowRepo
-	postRepo    *data.PostRepo
-	pageRepo    *data.PageRepo
-	taskService *TaskService
+	flowRepo           *data.FlowRepo
+	postRepo           *data.PostRepo
+	pageRepo           *data.PageRepo
+	taskService        *TaskService
+	internalMessageSvc *InternalMessageService
 
 	httpClient *http.Client
 	log        *log.Helper
 }
 
-func NewFlowService(ctx *bootstrap.Context, flowRepo *data.FlowRepo, postRepo *data.PostRepo, pageRepo *data.PageRepo, taskService *TaskService) *FlowService {
+func NewFlowService(ctx *bootstrap.Context, flowRepo *data.FlowRepo, postRepo *data.PostRepo, pageRepo *data.PageRepo, taskService *TaskService, internalMessageSvc *InternalMessageService) *FlowService {
 	return &FlowService{
-		log:         ctx.NewLoggerHelper("flow/service/core-service"),
-		flowRepo:    flowRepo,
-		postRepo:    postRepo,
-		pageRepo:    pageRepo,
-		taskService: taskService,
-		httpClient:  &http.Client{Timeout: 10 * time.Second},
+		log:                ctx.NewLoggerHelper("flow/service/core-service"),
+		flowRepo:           flowRepo,
+		postRepo:           postRepo,
+		pageRepo:           pageRepo,
+		taskService:        taskService,
+		internalMessageSvc: internalMessageSvc,
+		httpClient:         &http.Client{Timeout: 10 * time.Second},
 	}
 }
 
@@ -117,6 +125,13 @@ func (s *FlowService) validateActions(actionsJSON string) error {
 		case "webhook":
 			if a.URL == "" {
 				return errors.BadRequest("FLOW_RULE", fmt.Sprintf("actions[%d] webhook url is required", i))
+			}
+		case "notification":
+			if strings.TrimSpace(a.Title) == "" || strings.TrimSpace(a.Content) == "" {
+				return errors.BadRequest("FLOW_RULE", fmt.Sprintf("actions[%d] notification title/content are required", i))
+			}
+			if len(a.TargetUserIDs) == 0 {
+				return errors.BadRequest("FLOW_RULE", fmt.Sprintf("actions[%d] notification target_user_ids are required", i))
 			}
 		default:
 			return errors.BadRequest("FLOW_RULE", fmt.Sprintf("actions[%d] unsupported type %q", i, a.Type))
@@ -237,10 +252,28 @@ func (s *FlowService) executeActions(ctx context.Context, rule *flowV1.FlowRule,
 				s.log.Errorf("flow execute: rule [%d] action[%d] webhook failed (http=%d): %s",
 					rule.GetId(), i, httpStatus, errMsg)
 			}
+		case "notification":
+			if s.internalMessageSvc == nil {
+				s.log.Errorf("flow execute: rule [%d] action[%d] notification skipped: message service unavailable", rule.GetId(), i)
+				continue
+			}
+			title := s.expandPlaceholders(a.Title, rule, payload)
+			content := s.expandPlaceholders(a.Content, rule, payload)
+			if _, nErr := s.internalMessageSvc.SendSystemNotification(ctx, title, content, a.TargetUserIDs); nErr != nil {
+				s.log.Errorf("flow execute: rule [%d] action[%d] notification failed: %v", rule.GetId(), i, nErr)
+			}
 		default:
 			s.log.Warnf("flow execute: rule [%d] action[%d] unsupported type %q, skip", rule.GetId(), i, a.Type)
 		}
 	}
+}
+
+// expandPlaceholders 展开通知模板占位符：{event}/{entity_id}/{rule_id}。
+func (s *FlowService) expandPlaceholders(tpl string, rule *flowV1.FlowRule, payload *task.FlowExecutePayload) string {
+	out := strings.ReplaceAll(tpl, "{event}", payload.Event)
+	out = strings.ReplaceAll(out, "{entity_id}", strconv.FormatUint(uint64(payload.EntityID), 10))
+	out = strings.ReplaceAll(out, "{rule_id}", strconv.FormatUint(uint64(rule.GetId()), 10))
+	return out
 }
 
 // postWebhook 签名投递（与 webhook 领域同款 envelope：事件 + 实体 id + 规则 id，不含内容全文）。

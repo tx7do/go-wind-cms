@@ -227,6 +227,48 @@ func (s *InternalMessageService) RevokeMessage(ctx context.Context, req *interna
 	return &emptypb.Empty{}, nil
 }
 
+// SendSystemNotification 系统事件通知（Flow 规则动作等自动链路的唯一入口）：
+// 以系统身份（created_by=0）创建 PUBLISHED 消息并逐收件人落收件箱（不发邮件，
+// 自动链路不承担出站责任）。收件人跨租户不拦截——系统消息的租户边界由
+// 规则配置方（收件人列表）负责。返回消息 ID。
+func (s *InternalMessageService) SendSystemNotification(ctx context.Context, title, content string, targetUserIDs []uint32) (uint32, error) {
+	if strings.TrimSpace(title) == "" || strings.TrimSpace(content) == "" {
+		return 0, internalMessageV1.ErrorBadRequest("title and content are required")
+	}
+	targets := make([]uint32, 0, len(targetUserIDs))
+	for _, uid := range targetUserIDs {
+		if uid != 0 {
+			targets = append(targets, uid)
+		}
+	}
+	if len(targets) == 0 {
+		return 0, internalMessageV1.ErrorBadRequest("target user ids are required")
+	}
+
+	now := time.Now()
+	msg, err := s.internalMessageRepo.Create(ctx, &internalMessageV1.CreateInternalMessageRequest{
+		Data: &internalMessageV1.InternalMessage{
+			Title:     trans.Ptr(title),
+			Content:   trans.Ptr(content),
+			Status:    trans.Ptr(internalMessageV1.InternalMessage_PUBLISHED),
+			Type:      trans.Ptr(internalMessageV1.InternalMessage_NOTIFICATION),
+			CreatedBy: trans.Ptr(uint32(0)),
+			CreatedAt: timeutil.TimeToTimestamppb(&now),
+		},
+	})
+	if err != nil {
+		s.log.Errorf("system notification: create message failed: %v", err)
+		return 0, err
+	}
+	for _, uid := range targets {
+		if nErr := s.sendNotification(ctx, msg.GetId(), uid, 0, &now, title, content); nErr != nil {
+			// 单收件人失败不中断其余收件人（与群发口径一致）
+			s.log.Errorf("system notification: deliver to user [%d] failed: %v", uid, nErr)
+		}
+	}
+	return msg.GetId(), nil
+}
+
 // SendMessage 发送消息
 func (s *InternalMessageService) SendMessage(ctx context.Context, req *internalMessageV1.SendMessageRequest) (*internalMessageV1.SendMessageResponse, error) {
 	if req == nil {
