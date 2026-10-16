@@ -33,6 +33,9 @@ func TestUserFieldMask(t *testing.T) {
 		Address: trans.String("Address"),
 	}
 
+	// 本仓 proto 字段显式声明 snake_case json_name（username/realname/role_id），
+	// camelCase 路径（userName 等）在 IsValid 下恒为非法——历史写法致本测试
+	// panic 且连带杀掉整个 data 包测试进程，其余测试从不执行。
 	updateUserReq := &identityV1.UpdateUserRequest{
 		Data: &identityV1.User{
 			Username: trans.String("UserName1"),
@@ -41,7 +44,7 @@ func TestUserFieldMask(t *testing.T) {
 			Address: trans.String("Address1"),
 		},
 		UpdateMask: &field_mask.FieldMask{
-			Paths: []string{"userName", "realName", "avatar", "roleId"},
+			Paths: []string{"username", "realname", "avatar", "role_id"},
 		},
 	}
 	updateUserReq.UpdateMask.Normalize()
@@ -97,13 +100,14 @@ func TestMessageNil(t *testing.T) {
 
 	pr := u.ProtoReflect()
 	md := pr.Descriptor()
-	fd := md.Fields().ByName("userName")
+	// 字段名以本仓 proto 为准（username，非 userName）；查无字段时跳过，
+	// 对 nil FieldDescriptor 取值会 panic。
+	fd := md.Fields().ByName("username")
 	if fd == nil {
-
-	} else {
-		fmt.Println(fd, fd.Name())
+		fmt.Println("field username not found")
+		return
 	}
-
+	fmt.Println(fd, fd.Name())
 	v := pr.Get(fd)
 	fmt.Println(v)
 }
@@ -163,7 +167,7 @@ func TestCopier(t *testing.T) {
 		assert.Equal(t, protoMsg.GetNickname(), *entMsg.Nickname)
 		assert.Equal(t, protoMsg.GetRealname(), *entMsg.Realname)
 		assert.Equal(t, protoMsg.GetEmail(), *entMsg.Email)
-		assert.Equal(t, protoMsg.GetTenantId(), entMsg.TenantID)
+		assert.Equal(t, protoMsg.GetTenantId(), *entMsg.TenantID)
 		assert.Equal(t, protoMsg.GetId(), entMsg.ID)
 	}
 
