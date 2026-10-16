@@ -52,6 +52,10 @@ func (FlowRule) Fields() []ent.Field {
 			Comment("动作链 JSON 数组，元素形如 {'type':'webhook','url':'https://...','secret':'可选签名密钥'}").
 			NotEmpty().
 			Default("[]"),
+		field.String("else_actions").
+			Comment("条件不满足分支的动作链 JSON（结构与 actions 相同）；空=不执行").
+			Optional().
+			Nillable(),
 		field.Bool("enabled").
 			Comment("是否启用").
 			Default(true).

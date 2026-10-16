@@ -36,6 +36,8 @@ const (
 	FieldTriggerCron = "trigger_cron"
 	// FieldActions holds the string denoting the actions field in the database.
 	FieldActions = "actions"
+	// FieldElseActions holds the string denoting the else_actions field in the database.
+	FieldElseActions = "else_actions"
 	// FieldEnabled holds the string denoting the enabled field in the database.
 	FieldEnabled = "enabled"
 	// FieldMatchCount holds the string denoting the match_count field in the database.
@@ -59,6 +61,7 @@ var Columns = []string{
 	FieldConditionStatus,
 	FieldTriggerCron,
 	FieldActions,
+	FieldElseActions,
 	FieldEnabled,
 	FieldMatchCount,
 }
@@ -169,6 +172,11 @@ func ByTriggerCron(opts ...sql.OrderTermOption) OrderOption {
 // ByActions orders the results by the actions field.
 func ByActions(opts ...sql.OrderTermOption) OrderOption {
 	return sql.OrderByField(FieldActions, opts...).ToFunc()
+}
+
+// ByElseActions orders the results by the else_actions field.
+func ByElseActions(opts ...sql.OrderTermOption) OrderOption {
+	return sql.OrderByField(FieldElseActions, opts...).ToFunc()
 }
 
 // ByEnabled orders the results by the enabled field.

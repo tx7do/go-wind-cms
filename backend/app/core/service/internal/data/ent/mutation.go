@@ -43454,6 +43454,7 @@ type FlowRuleMutation struct {
 	condition_status *string
 	trigger_cron     *string
 	actions          *string
+	else_actions     *string
 	enabled          *bool
 	match_count      *uint32
 	addmatch_count   *int32
@@ -44200,6 +44201,55 @@ func (m *FlowRuleMutation) ResetActions() {
 	m.actions = nil
 }
 
+// SetElseActions sets the "else_actions" field.
+func (m *FlowRuleMutation) SetElseActions(s string) {
+	m.else_actions = &s
+}
+
+// ElseActions returns the value of the "else_actions" field in the mutation.
+func (m *FlowRuleMutation) ElseActions() (r string, exists bool) {
+	v := m.else_actions
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldElseActions returns the old "else_actions" field's value of the FlowRule entity.
+// If the FlowRule object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *FlowRuleMutation) OldElseActions(ctx context.Context) (v *string, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldElseActions is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldElseActions requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldElseActions: %w", err)
+	}
+	return oldValue.ElseActions, nil
+}
+
+// ClearElseActions clears the value of the "else_actions" field.
+func (m *FlowRuleMutation) ClearElseActions() {
+	m.else_actions = nil
+	m.clearedFields[flowrule.FieldElseActions] = struct{}{}
+}
+
+// ElseActionsCleared returns if the "else_actions" field was cleared in this mutation.
+func (m *FlowRuleMutation) ElseActionsCleared() bool {
+	_, ok := m.clearedFields[flowrule.FieldElseActions]
+	return ok
+}
+
+// ResetElseActions resets all changes to the "else_actions" field.
+func (m *FlowRuleMutation) ResetElseActions() {
+	m.else_actions = nil
+	delete(m.clearedFields, flowrule.FieldElseActions)
+}
+
 // SetEnabled sets the "enabled" field.
 func (m *FlowRuleMutation) SetEnabled(b bool) {
 	m.enabled = &b
@@ -44353,7 +44403,7 @@ func (m *FlowRuleMutation) Type() string {
 // order to get all numeric fields that were incremented/decremented, call
 // AddedFields().
 func (m *FlowRuleMutation) Fields() []string {
-	fields := make([]string, 0, 14)
+	fields := make([]string, 0, 15)
 	if m.created_at != nil {
 		fields = append(fields, flowrule.FieldCreatedAt)
 	}
@@ -44389,6 +44439,9 @@ func (m *FlowRuleMutation) Fields() []string {
 	}
 	if m.actions != nil {
 		fields = append(fields, flowrule.FieldActions)
+	}
+	if m.else_actions != nil {
+		fields = append(fields, flowrule.FieldElseActions)
 	}
 	if m.enabled != nil {
 		fields = append(fields, flowrule.FieldEnabled)
@@ -44428,6 +44481,8 @@ func (m *FlowRuleMutation) Field(name string) (ent.Value, bool) {
 		return m.TriggerCron()
 	case flowrule.FieldActions:
 		return m.Actions()
+	case flowrule.FieldElseActions:
+		return m.ElseActions()
 	case flowrule.FieldEnabled:
 		return m.Enabled()
 	case flowrule.FieldMatchCount:
@@ -44465,6 +44520,8 @@ func (m *FlowRuleMutation) OldField(ctx context.Context, name string) (ent.Value
 		return m.OldTriggerCron(ctx)
 	case flowrule.FieldActions:
 		return m.OldActions(ctx)
+	case flowrule.FieldElseActions:
+		return m.OldElseActions(ctx)
 	case flowrule.FieldEnabled:
 		return m.OldEnabled(ctx)
 	case flowrule.FieldMatchCount:
@@ -44561,6 +44618,13 @@ func (m *FlowRuleMutation) SetField(name string, value ent.Value) error {
 			return fmt.Errorf("unexpected type %T for field %s", value, name)
 		}
 		m.SetActions(v)
+		return nil
+	case flowrule.FieldElseActions:
+		v, ok := value.(string)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetElseActions(v)
 		return nil
 	case flowrule.FieldEnabled:
 		v, ok := value.(bool)
@@ -44696,6 +44760,9 @@ func (m *FlowRuleMutation) ClearedFields() []string {
 	if m.FieldCleared(flowrule.FieldTriggerCron) {
 		fields = append(fields, flowrule.FieldTriggerCron)
 	}
+	if m.FieldCleared(flowrule.FieldElseActions) {
+		fields = append(fields, flowrule.FieldElseActions)
+	}
 	if m.FieldCleared(flowrule.FieldEnabled) {
 		fields = append(fields, flowrule.FieldEnabled)
 	}
@@ -44742,6 +44809,9 @@ func (m *FlowRuleMutation) ClearField(name string) error {
 		return nil
 	case flowrule.FieldTriggerCron:
 		m.ClearTriggerCron()
+		return nil
+	case flowrule.FieldElseActions:
+		m.ClearElseActions()
 		return nil
 	case flowrule.FieldEnabled:
 		m.ClearEnabled()
@@ -44792,6 +44862,9 @@ func (m *FlowRuleMutation) ResetField(name string) error {
 		return nil
 	case flowrule.FieldActions:
 		m.ResetActions()
+		return nil
+	case flowrule.FieldElseActions:
+		m.ResetElseActions()
 		return nil
 	case flowrule.FieldEnabled:
 		m.ResetEnabled()

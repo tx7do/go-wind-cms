@@ -96,6 +96,9 @@ func (s *FlowService) Create(ctx context.Context, req *flowV1.CreateFlowRuleRequ
 	if err := s.validateActions(req.Data.GetActions()); err != nil {
 		return nil, err
 	}
+	if err := s.validateOptionalActions(req.Data.GetElseActions()); err != nil {
+		return nil, err
+	}
 	if err := s.validateTriggerCron(req.Data); err != nil {
 		return nil, err
 	}
@@ -107,6 +110,9 @@ func (s *FlowService) Update(ctx context.Context, req *flowV1.UpdateFlowRuleRequ
 		return nil, errors.BadRequest("FLOW_RULE", "invalid parameter")
 	}
 	if err := s.validateActions(req.Data.GetActions()); err != nil {
+		return nil, err
+	}
+	if err := s.validateOptionalActions(req.Data.GetElseActions()); err != nil {
 		return nil, err
 	}
 	if err := s.validateTriggerCron(req.Data); err != nil {
@@ -156,6 +162,15 @@ func (s *FlowService) validateActions(actionsJSON string) error {
 		}
 	}
 	return nil
+}
+
+// validateOptionalActions 可空动作链校验（else 分支用）：空串=无分支；
+// 非空则与主链同一动作 schema。
+func (s *FlowService) validateOptionalActions(actionsJSON string) error {
+	if strings.TrimSpace(actionsJSON) == "" {
+		return nil
+	}
+	return s.validateActions(actionsJSON)
 }
 
 // validateTriggerCron 定时触发表达式校验：非空时必须是合法 5 段 cron
@@ -233,14 +248,17 @@ func (s *FlowService) ExecuteWorker(taskType string, payload *task.FlowExecutePa
 			s.log.Errorf("flow execute: evaluate rule [%d] failed: %v", rule.GetId(), mErr)
 			continue
 		}
-		if !matched {
-			continue
-		}
 		// envelope 中的 rule_id 以实际命中的规则为准（入队任务 RuleID=0 表示按事件扇出）
 		rulePayload := *payload
 		rulePayload.RuleID = rule.GetId()
-		s.executeActions(ctx, rule, &rulePayload)
-		// 命中计数（观测用，best-effort）
+		if matched {
+			s.executeActions(ctx, rule, &rulePayload)
+		} else {
+			// 条件不满足：走 else 分支（未配置则无事发生）
+			s.executeChain(ctx, rule, &rulePayload, flowChainElse)
+			continue
+		}
+		// 命中计数（观测用，best-effort；else 分支不计入"命中"）
 		_ = s.flowRepo.IncrMatchCount(ctx, rule.GetId())
 	}
 	return nil
@@ -286,20 +304,49 @@ func (s *FlowService) entityStatus(ctx context.Context, event string, entityID u
 	return "", nil
 }
 
-// executeActions 逐动作执行；单动作失败记日志不中断其余动作。
+// 动作链名（延时续跑定位用）。
+const (
+	flowChainMain = "main"
+	flowChainElse = "else"
+)
+
+// executeActions 逐动作执行主链；单动作失败记日志不中断其余动作。
 func (s *FlowService) executeActions(ctx context.Context, rule *flowV1.FlowRule, payload *task.FlowExecutePayload) {
 	s.executeActionsFrom(ctx, rule, payload, 0)
 }
 
-// executeActionsFrom 从 start 下标执行动作链；遇 delay 动作时把剩余链
+// executeChain 按链名执行动作链（main=命中分支 / else=条件不满足分支）。
+func (s *FlowService) executeChain(ctx context.Context, rule *flowV1.FlowRule, payload *task.FlowExecutePayload, chain string) {
+	switch chain {
+	case flowChainElse:
+		if strings.TrimSpace(rule.GetElseActions()) == "" {
+			return
+		}
+		s.executeActionsJSON(ctx, rule, payload, rule.GetElseActions(), 0, flowChainElse)
+	default:
+		s.executeActionsFrom(ctx, rule, payload, 0)
+	}
+}
+
+// executeActionsJSON 解析并执行指定动作链 JSON（else 分支入口）。
+func (s *FlowService) executeActionsJSON(ctx context.Context, rule *flowV1.FlowRule, payload *task.FlowExecutePayload, actionsJSON string, start int, chain string) {
+	var actions []flowAction
+	if err := json.Unmarshal([]byte(actionsJSON), &actions); err != nil {
+		s.log.Errorf("flow execute: rule [%d] %s actions is not valid JSON: %v", rule.GetId(), chain, err)
+		return
+	}
+	s.runActionSlice(ctx, rule, payload, actions, start, chain)
+}
+
+// executeActionsFrom 从 start 下标执行主链；遇 delay 动作时把剩余链
 //（下标 i+1 起）交给 flow.resume 延迟任务后返回。resume 入队失败则放弃
 // 剩余动作（已执行部分不回滚——动作语义是旁路通知/外呼，无事务性）。
 func (s *FlowService) executeActionsFrom(ctx context.Context, rule *flowV1.FlowRule, payload *task.FlowExecutePayload, start int) {
-	var actions []flowAction
-	if err := json.Unmarshal([]byte(rule.GetActions()), &actions); err != nil {
-		s.log.Errorf("flow execute: rule [%d] actions is not valid JSON: %v", rule.GetId(), err)
-		return
-	}
+	s.executeActionsJSON(ctx, rule, payload, rule.GetActions(), start, flowChainMain)
+}
+
+// runActionSlice 执行动作切片（主链/else 链共用）；遇 delay 落延迟续跑任务。
+func (s *FlowService) runActionSlice(ctx context.Context, rule *flowV1.FlowRule, payload *task.FlowExecutePayload, actions []flowAction, start int, chain string) {
 	for i := start; i < len(actions); i++ {
 		a := actions[i]
 		switch a.Type {
@@ -333,13 +380,14 @@ func (s *FlowService) executeActionsFrom(ctx context.Context, rule *flowV1.FlowR
 			}
 			cont := *payload
 			cont.ActionIndex = i + 1
+			cont.Chain = chain
 			if err := s.taskService.EnqueueFlowResume(&cont, time.Duration(secs)*time.Second); err != nil {
-				s.log.Errorf("flow execute: rule [%d] action[%d] delay enqueue failed, remaining actions dropped: %v",
-					rule.GetId(), i, err)
+				s.log.Errorf("flow execute: rule [%d] %s action[%d] delay enqueue failed, remaining actions dropped: %v",
+					rule.GetId(), chain, i, err)
 				return
 			}
-			s.log.Infof("flow execute: rule [%d] action[%d] delay %ds, resume at action[%d]",
-				rule.GetId(), i, secs, i+1)
+			s.log.Infof("flow execute: rule [%d] %s action[%d] delay %ds, resume at action[%d]",
+				rule.GetId(), chain, i, secs, i+1)
 			return
 		default:
 			s.log.Warnf("flow execute: rule [%d] action[%d] unsupported type %q, skip", rule.GetId(), i, a.Type)
@@ -360,6 +408,11 @@ func (s *FlowService) resumeExecute(ctx context.Context, payload *task.FlowExecu
 	}
 	if !rule.GetEnabled() {
 		s.log.Infof("flow resume: rule [%d] disabled, drop continuation", payload.RuleID)
+		return nil
+	}
+	if payload.Chain == flowChainElse {
+		// else 链续跑：延时在条件不满足分支内
+		s.executeActionsJSON(ctx, rule, payload, rule.GetElseActions(), payload.ActionIndex, flowChainElse)
 		return nil
 	}
 	s.executeActionsFrom(ctx, rule, payload, payload.ActionIndex)

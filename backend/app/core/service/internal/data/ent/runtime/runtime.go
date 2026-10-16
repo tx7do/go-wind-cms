@@ -1078,11 +1078,11 @@ func init() {
 	// flowrule.ActionsValidator is a validator for the "actions" field. It is called by the builders before save.
 	flowrule.ActionsValidator = flowruleDescActions.Validators[0].(func(string) error)
 	// flowruleDescEnabled is the schema descriptor for enabled field.
-	flowruleDescEnabled := flowruleFields[5].Descriptor()
+	flowruleDescEnabled := flowruleFields[6].Descriptor()
 	// flowrule.DefaultEnabled holds the default value on creation for the enabled field.
 	flowrule.DefaultEnabled = flowruleDescEnabled.Default.(bool)
 	// flowruleDescMatchCount is the schema descriptor for match_count field.
-	flowruleDescMatchCount := flowruleFields[6].Descriptor()
+	flowruleDescMatchCount := flowruleFields[7].Descriptor()
 	// flowrule.DefaultMatchCount holds the default value on creation for the match_count field.
 	flowrule.DefaultMatchCount = flowruleDescMatchCount.Default.(uint32)
 	// flowruleDescID is the schema descriptor for id field.

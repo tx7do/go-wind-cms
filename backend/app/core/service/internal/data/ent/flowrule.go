@@ -42,6 +42,8 @@ type FlowRule struct {
 	TriggerCron *string `json:"trigger_cron,omitempty"`
 	// 动作链 JSON 数组，元素形如 {'type':'webhook','url':'https://...','secret':'可选签名密钥'}
 	Actions string `json:"actions,omitempty"`
+	// 条件不满足分支的动作链 JSON（结构与 actions 相同）；空=不执行
+	ElseActions *string `json:"else_actions,omitempty"`
 	// 是否启用
 	Enabled *bool `json:"enabled,omitempty"`
 	// 累计命中次数（观测用）
@@ -58,7 +60,7 @@ func (*FlowRule) scanValues(columns []string) ([]any, error) {
 			values[i] = new(sql.NullBool)
 		case flowrule.FieldID, flowrule.FieldCreatedBy, flowrule.FieldUpdatedBy, flowrule.FieldDeletedBy, flowrule.FieldTenantID, flowrule.FieldMatchCount:
 			values[i] = new(sql.NullInt64)
-		case flowrule.FieldName, flowrule.FieldTriggerEvent, flowrule.FieldConditionStatus, flowrule.FieldTriggerCron, flowrule.FieldActions:
+		case flowrule.FieldName, flowrule.FieldTriggerEvent, flowrule.FieldConditionStatus, flowrule.FieldTriggerCron, flowrule.FieldActions, flowrule.FieldElseActions:
 			values[i] = new(sql.NullString)
 		case flowrule.FieldCreatedAt, flowrule.FieldUpdatedAt, flowrule.FieldDeletedAt:
 			values[i] = new(sql.NullTime)
@@ -164,6 +166,13 @@ func (_m *FlowRule) assignValues(columns []string, values []any) error {
 			} else if value.Valid {
 				_m.Actions = value.String
 			}
+		case flowrule.FieldElseActions:
+			if value, ok := values[i].(*sql.NullString); !ok {
+				return fmt.Errorf("unexpected type %T for field else_actions", values[i])
+			} else if value.Valid {
+				_m.ElseActions = new(string)
+				*_m.ElseActions = value.String
+			}
 		case flowrule.FieldEnabled:
 			if value, ok := values[i].(*sql.NullBool); !ok {
 				return fmt.Errorf("unexpected type %T for field enabled", values[i])
@@ -267,6 +276,11 @@ func (_m *FlowRule) String() string {
 	builder.WriteString(", ")
 	builder.WriteString("actions=")
 	builder.WriteString(_m.Actions)
+	builder.WriteString(", ")
+	if v := _m.ElseActions; v != nil {
+		builder.WriteString("else_actions=")
+		builder.WriteString(*v)
+	}
 	builder.WriteString(", ")
 	if v := _m.Enabled; v != nil {
 		builder.WriteString("enabled=")

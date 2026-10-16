@@ -232,6 +232,26 @@ func (_u *FlowRuleUpdate) SetNillableActions(v *string) *FlowRuleUpdate {
 	return _u
 }
 
+// SetElseActions sets the "else_actions" field.
+func (_u *FlowRuleUpdate) SetElseActions(v string) *FlowRuleUpdate {
+	_u.mutation.SetElseActions(v)
+	return _u
+}
+
+// SetNillableElseActions sets the "else_actions" field if the given value is not nil.
+func (_u *FlowRuleUpdate) SetNillableElseActions(v *string) *FlowRuleUpdate {
+	if v != nil {
+		_u.SetElseActions(*v)
+	}
+	return _u
+}
+
+// ClearElseActions clears the value of the "else_actions" field.
+func (_u *FlowRuleUpdate) ClearElseActions() *FlowRuleUpdate {
+	_u.mutation.ClearElseActions()
+	return _u
+}
+
 // SetEnabled sets the "enabled" field.
 func (_u *FlowRuleUpdate) SetEnabled(v bool) *FlowRuleUpdate {
 	_u.mutation.SetEnabled(v)
@@ -424,6 +444,12 @@ func (_u *FlowRuleUpdate) sqlSave(ctx context.Context) (_node int, err error) {
 	}
 	if value, ok := _u.mutation.Actions(); ok {
 		_spec.SetField(flowrule.FieldActions, field.TypeString, value)
+	}
+	if value, ok := _u.mutation.ElseActions(); ok {
+		_spec.SetField(flowrule.FieldElseActions, field.TypeString, value)
+	}
+	if _u.mutation.ElseActionsCleared() {
+		_spec.ClearField(flowrule.FieldElseActions, field.TypeString)
 	}
 	if value, ok := _u.mutation.Enabled(); ok {
 		_spec.SetField(flowrule.FieldEnabled, field.TypeBool, value)
@@ -665,6 +691,26 @@ func (_u *FlowRuleUpdateOne) SetNillableActions(v *string) *FlowRuleUpdateOne {
 	return _u
 }
 
+// SetElseActions sets the "else_actions" field.
+func (_u *FlowRuleUpdateOne) SetElseActions(v string) *FlowRuleUpdateOne {
+	_u.mutation.SetElseActions(v)
+	return _u
+}
+
+// SetNillableElseActions sets the "else_actions" field if the given value is not nil.
+func (_u *FlowRuleUpdateOne) SetNillableElseActions(v *string) *FlowRuleUpdateOne {
+	if v != nil {
+		_u.SetElseActions(*v)
+	}
+	return _u
+}
+
+// ClearElseActions clears the value of the "else_actions" field.
+func (_u *FlowRuleUpdateOne) ClearElseActions() *FlowRuleUpdateOne {
+	_u.mutation.ClearElseActions()
+	return _u
+}
+
 // SetEnabled sets the "enabled" field.
 func (_u *FlowRuleUpdateOne) SetEnabled(v bool) *FlowRuleUpdateOne {
 	_u.mutation.SetEnabled(v)
@@ -887,6 +933,12 @@ func (_u *FlowRuleUpdateOne) sqlSave(ctx context.Context) (_node *FlowRule, err 
 	}
 	if value, ok := _u.mutation.Actions(); ok {
 		_spec.SetField(flowrule.FieldActions, field.TypeString, value)
+	}
+	if value, ok := _u.mutation.ElseActions(); ok {
+		_spec.SetField(flowrule.FieldElseActions, field.TypeString, value)
+	}
+	if _u.mutation.ElseActionsCleared() {
+		_spec.ClearField(flowrule.FieldElseActions, field.TypeString)
 	}
 	if value, ok := _u.mutation.Enabled(); ok {
 		_spec.SetField(flowrule.FieldEnabled, field.TypeBool, value)

@@ -37,6 +37,7 @@ type FlowRule struct {
 	TriggerCron     *string                `protobuf:"bytes,8,opt,name=trigger_cron,json=triggerCron,proto3,oneof" json:"trigger_cron,omitempty"`             // 定时触发 cron
 	Actions         *string                `protobuf:"bytes,5,opt,name=actions,proto3,oneof" json:"actions,omitempty"`                                        // 动作链 JSON
 	Enabled         *bool                  `protobuf:"varint,6,opt,name=enabled,proto3,oneof" json:"enabled,omitempty"`                                       // 是否启用
+	ElseActions     *string                `protobuf:"bytes,9,opt,name=else_actions,json=elseActions,proto3,oneof" json:"else_actions,omitempty"`             // 条件不满足分支动作链
 	MatchCount      *uint32                `protobuf:"varint,7,opt,name=match_count,json=matchCount,proto3,oneof" json:"match_count,omitempty"`               // 累计命中次数
 	CreatedAt       *timestamppb.Timestamp `protobuf:"bytes,200,opt,name=created_at,json=createdAt,proto3,oneof" json:"created_at,omitempty"`                 // 创建时间
 	UpdatedAt       *timestamppb.Timestamp `protobuf:"bytes,201,opt,name=updated_at,json=updatedAt,proto3,oneof" json:"updated_at,omitempty"`                 // 更新时间
@@ -121,6 +122,13 @@ func (x *FlowRule) GetEnabled() bool {
 		return *x.Enabled
 	}
 	return false
+}
+
+func (x *FlowRule) GetElseActions() string {
+	if x != nil && x.ElseActions != nil {
+		return *x.ElseActions
+	}
+	return ""
 }
 
 func (x *FlowRule) GetMatchCount() uint32 {
@@ -397,7 +405,8 @@ var File_flow_service_v1_flow_proto protoreflect.FileDescriptor
 
 const file_flow_service_v1_flow_proto_rawDesc = "" +
 	"\n" +
-	"\x1aflow/service/v1/flow.proto\x12\x0fflow.service.v1\x1a$gnostic/openapi/v3/annotations.proto\x1a\x1cgoogle/api/annotations.proto\x1a\x1bgoogle/protobuf/empty.proto\x1a\x1fgoogle/protobuf/timestamp.proto\x1a google/protobuf/field_mask.proto\x1a\x1epagination/v1/pagination.proto\"\x96\t\n" +
+	"\x1aflow/service/v1/flow.proto\x12\x0fflow.service.v1\x1a$gnostic/openapi/v3/annotations.proto\x1a\x1cgoogle/api/annotations.proto\x1a\x1bgoogle/protobuf/empty.proto\x1a\x1fgoogle/protobuf/timestamp.proto\x1a google/protobuf/field_mask.proto\x1a\x1epagination/v1/pagination.proto\"\xcd\n" +
+	"\n" +
 	"\bFlowRule\x12$\n" +
 	"\x02id\x18\x01 \x01(\rB\x0f\xbaG\f\x92\x02\t规则 IDH\x00R\x02id\x88\x01\x01\x12+\n" +
 	"\x04name\x18\x02 \x01(\tB\x12\xbaG\x0f\x92\x02\f规则名称H\x01R\x04name\x88\x01\x01\x12\x94\x01\n" +
@@ -405,13 +414,15 @@ const file_flow_service_v1_flow_proto_rawDesc = "" +
 	"\x10condition_status\x18\x04 \x01(\tBY\xbaGV\x92\x02S条件：实体状态等值匹配（如 POST_STATUS_PUBLISHED）；留空=无条件H\x03R\x0fconditionStatus\x88\x01\x01\x12\xf2\x01\n" +
 	"\ftrigger_cron\x18\b \x01(\tB\xc9\x01\xbaG\xc5\x01\x92\x02\xc1\x01定时触发 cron 表达式（5 段：分 时 日 月 周，如 */5 * * * *）；非空=定时规则：按周期触发（事件固定 schedule、无实体），忽略触发事件与状态条件H\x04R\vtriggerCron\x88\x01\x01\x12\x83\x01\n" +
 	"\aactions\x18\x05 \x01(\tBd\xbaGa\x92\x02^动作链 JSON 数组：[{\"type\":\"webhook\",\"url\":\"https://...\",\"secret\":\"可选签名密钥\"}]H\x05R\aactions\x88\x01\x01\x121\n" +
-	"\aenabled\x18\x06 \x01(\bB\x12\xbaG\x0f\x92\x02\f是否启用H\x06R\aenabled\x88\x01\x01\x12V\n" +
-	"\vmatch_count\x18\a \x01(\rB0\xbaG-\x92\x02*累计命中次数（观测用，只读）H\aR\n" +
+	"\aenabled\x18\x06 \x01(\bB\x12\xbaG\x0f\x92\x02\f是否启用H\x06R\aenabled\x88\x01\x01\x12\xa3\x01\n" +
+	"\felse_actions\x18\t \x01(\tB{\xbaGx\x92\x02u条件不满足分支的动作链 JSON（结构与 actions 相同）；留空=条件不满足时不执行任何动作H\aR\velseActions\x88\x01\x01\x12V\n" +
+	"\vmatch_count\x18\a \x01(\rB0\xbaG-\x92\x02*累计命中次数（观测用，只读）H\bR\n" +
 	"matchCount\x88\x01\x01\x12?\n" +
 	"\n" +
-	"created_at\x18\xc8\x01 \x01(\v2\x1a.google.protobuf.TimestampH\bR\tcreatedAt\x88\x01\x01\x12?\n" +
+	"created_at\x18\xc8\x01 \x01(\v2\x1a.google.protobuf.TimestampH\tR\tcreatedAt\x88\x01\x01\x12?\n" +
 	"\n" +
-	"updated_at\x18\xc9\x01 \x01(\v2\x1a.google.protobuf.TimestampH\tR\tupdatedAt\x88\x01\x01B\x05\n" +
+	"updated_at\x18\xc9\x01 \x01(\v2\x1a.google.protobuf.TimestampH\n" +
+	"R\tupdatedAt\x88\x01\x01B\x05\n" +
 	"\x03_idB\a\n" +
 	"\x05_nameB\x10\n" +
 	"\x0e_trigger_eventB\x13\n" +
@@ -420,7 +431,8 @@ const file_flow_service_v1_flow_proto_rawDesc = "" +
 	"\n" +
 	"\b_actionsB\n" +
 	"\n" +
-	"\b_enabledB\x0e\n" +
+	"\b_enabledB\x0f\n" +
+	"\r_else_actionsB\x0e\n" +
 	"\f_match_countB\r\n" +
 	"\v_created_atB\r\n" +
 	"\v_updated_at\"]\n" +

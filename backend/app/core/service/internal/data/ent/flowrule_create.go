@@ -174,6 +174,20 @@ func (_c *FlowRuleCreate) SetNillableActions(v *string) *FlowRuleCreate {
 	return _c
 }
 
+// SetElseActions sets the "else_actions" field.
+func (_c *FlowRuleCreate) SetElseActions(v string) *FlowRuleCreate {
+	_c.mutation.SetElseActions(v)
+	return _c
+}
+
+// SetNillableElseActions sets the "else_actions" field if the given value is not nil.
+func (_c *FlowRuleCreate) SetNillableElseActions(v *string) *FlowRuleCreate {
+	if v != nil {
+		_c.SetElseActions(*v)
+	}
+	return _c
+}
+
 // SetEnabled sets the "enabled" field.
 func (_c *FlowRuleCreate) SetEnabled(v bool) *FlowRuleCreate {
 	_c.mutation.SetEnabled(v)
@@ -385,6 +399,10 @@ func (_c *FlowRuleCreate) createSpec() (*FlowRule, *sqlgraph.CreateSpec) {
 	if value, ok := _c.mutation.Actions(); ok {
 		_spec.SetField(flowrule.FieldActions, field.TypeString, value)
 		_node.Actions = value
+	}
+	if value, ok := _c.mutation.ElseActions(); ok {
+		_spec.SetField(flowrule.FieldElseActions, field.TypeString, value)
+		_node.ElseActions = &value
 	}
 	if value, ok := _c.mutation.Enabled(); ok {
 		_spec.SetField(flowrule.FieldEnabled, field.TypeBool, value)
@@ -623,6 +641,24 @@ func (u *FlowRuleUpsert) SetActions(v string) *FlowRuleUpsert {
 // UpdateActions sets the "actions" field to the value that was provided on create.
 func (u *FlowRuleUpsert) UpdateActions() *FlowRuleUpsert {
 	u.SetExcluded(flowrule.FieldActions)
+	return u
+}
+
+// SetElseActions sets the "else_actions" field.
+func (u *FlowRuleUpsert) SetElseActions(v string) *FlowRuleUpsert {
+	u.Set(flowrule.FieldElseActions, v)
+	return u
+}
+
+// UpdateElseActions sets the "else_actions" field to the value that was provided on create.
+func (u *FlowRuleUpsert) UpdateElseActions() *FlowRuleUpsert {
+	u.SetExcluded(flowrule.FieldElseActions)
+	return u
+}
+
+// ClearElseActions clears the value of the "else_actions" field.
+func (u *FlowRuleUpsert) ClearElseActions() *FlowRuleUpsert {
+	u.SetNull(flowrule.FieldElseActions)
 	return u
 }
 
@@ -929,6 +965,27 @@ func (u *FlowRuleUpsertOne) SetActions(v string) *FlowRuleUpsertOne {
 func (u *FlowRuleUpsertOne) UpdateActions() *FlowRuleUpsertOne {
 	return u.Update(func(s *FlowRuleUpsert) {
 		s.UpdateActions()
+	})
+}
+
+// SetElseActions sets the "else_actions" field.
+func (u *FlowRuleUpsertOne) SetElseActions(v string) *FlowRuleUpsertOne {
+	return u.Update(func(s *FlowRuleUpsert) {
+		s.SetElseActions(v)
+	})
+}
+
+// UpdateElseActions sets the "else_actions" field to the value that was provided on create.
+func (u *FlowRuleUpsertOne) UpdateElseActions() *FlowRuleUpsertOne {
+	return u.Update(func(s *FlowRuleUpsert) {
+		s.UpdateElseActions()
+	})
+}
+
+// ClearElseActions clears the value of the "else_actions" field.
+func (u *FlowRuleUpsertOne) ClearElseActions() *FlowRuleUpsertOne {
+	return u.Update(func(s *FlowRuleUpsert) {
+		s.ClearElseActions()
 	})
 }
 
@@ -1408,6 +1465,27 @@ func (u *FlowRuleUpsertBulk) SetActions(v string) *FlowRuleUpsertBulk {
 func (u *FlowRuleUpsertBulk) UpdateActions() *FlowRuleUpsertBulk {
 	return u.Update(func(s *FlowRuleUpsert) {
 		s.UpdateActions()
+	})
+}
+
+// SetElseActions sets the "else_actions" field.
+func (u *FlowRuleUpsertBulk) SetElseActions(v string) *FlowRuleUpsertBulk {
+	return u.Update(func(s *FlowRuleUpsert) {
+		s.SetElseActions(v)
+	})
+}
+
+// UpdateElseActions sets the "else_actions" field to the value that was provided on create.
+func (u *FlowRuleUpsertBulk) UpdateElseActions() *FlowRuleUpsertBulk {
+	return u.Update(func(s *FlowRuleUpsert) {
+		s.UpdateElseActions()
+	})
+}
+
+// ClearElseActions clears the value of the "else_actions" field.
+func (u *FlowRuleUpsertBulk) ClearElseActions() *FlowRuleUpsertBulk {
+	return u.Update(func(s *FlowRuleUpsert) {
+		s.ClearElseActions()
 	})
 }
 

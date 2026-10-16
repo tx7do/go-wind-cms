@@ -13160,6 +13160,9 @@ components:
                 enabled:
                     type: boolean
                     description: 是否启用
+                elseActions:
+                    type: string
+                    description: 条件不满足分支的动作链 JSON（结构与 actions 相同）；留空=条件不满足时不执行任何动作
                 matchCount:
                     type: integer
                     description: 累计命中次数（观测用，只读）

@@ -5792,6 +5792,7 @@ export type flowservicev1_FlowRule = {
   actions?: string;
   conditionStatus?: string;
   createdAt?: wellKnownTimestamp;
+  elseActions?: string;
   enabled?: boolean;
   id?: number;
   matchCount?: number;

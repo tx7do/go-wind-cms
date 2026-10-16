@@ -36,5 +36,9 @@
   "cronRequired": "请输入 cron 表达式",
   "actionDelay": "延时",
   "addDelayAction": "添加延时动作",
-  "delaySecondsPlaceholder": "延时秒数（1-604800，其后动作延后执行）"
+  "delaySecondsPlaceholder": "延时秒数（1-604800，其后动作延后执行）",
+  "matchedBranchTitle": "条件满足时执行",
+  "elseBranchTitle": "条件不满足分支",
+  "elseBranchTag": "else 分支",
+  "elseActionRequired": "已开启条件不满足分支，请至少配置一个完整有效的动作"
 }

@@ -25,6 +25,8 @@ type FlowExecutePayload struct {
 	// ActionIndex 延时续跑起始动作下标（0=完整执行：含条件判定；>0=跳过条件，
 	// 从该下标继续动作链——命中判定已在触发时完成）。
 	ActionIndex int `json:"action_index,omitempty"`
+	// Chain 延时续跑所属动作链："main"（缺省）/ "else"（条件不满足分支）。
+	Chain string `json:"chain,omitempty"`
 }
 
 // FlowResumeTaskType 延时续跑任务类型。

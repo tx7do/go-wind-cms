@@ -9,6 +9,7 @@
   6. 通知动作：规则触发 → 站内信落库 + 收件人收件箱
   7. 延时动作：webhook → delay 5s → webhook，第二跳晚于第一跳 ≥5s
   8. 定时触发：triggerCron 每分钟 → envelope event=schedule/entity=0
+  9. 条件不满足分支：草稿 post.updated 不命中条件 → elseActions 执行、主链不执行
 
 前置：core/admin 已启动（taskScheduler 可用，redis 运行中）。
 用法：python test_flow_rules.py
@@ -279,6 +280,55 @@ def main():
     api(f"/admin/v1/flow-rules/{drule_id}", "DELETE")
     api(f"/admin/v1/posts/{dpost_id}", "DELETE")
     api(f"/admin/v1/flow-rules/{crule_id}", "DELETE")
+
+    # ===== 9. 条件不满足分支（else）：条件不命中 → elseActions 执行 =====
+    bad_e = api("/admin/v1/flow-rules", "POST", {"data": {
+        "name": f"e2e-flow-else-bad-{TS}",
+        "triggerEvent": "post.updated",
+        "actions": json.dumps([{"type": "webhook",
+                                "url": f"http://127.0.0.1:{RECEIVER_PORT}/flow-never"}]),
+        "elseActions": json.dumps([{"type": "unknown"}]),
+    }})
+    check("else 链坏动作被拒", bad_e.get("code") == 400, f"code={bad_e.get('code')}")
+
+    erule = api("/admin/v1/flow-rules", "POST", {"data": {
+        "name": f"e2e-flow-else-{TS}",
+        "triggerEvent": "post.updated",
+        "conditionStatus": "POST_STATUS_PUBLISHED",
+        "actions": json.dumps([{"type": "webhook",
+                                "url": f"http://127.0.0.1:{RECEIVER_PORT}/flow-never"}]),
+        "elseActions": json.dumps([{"type": "webhook",
+                                    "url": f"http://127.0.0.1:{RECEIVER_PORT}/flow-else"}]),
+        "enabled": True,
+    }})
+    erule_id = erule.get("id")
+    check("建 else 规则", bool(erule_id), f"id={erule_id}")
+
+    epost = api("/admin/v1/posts", "POST", {"data": {
+        "status": "DRAFT",
+        "translations": [{"languageCode": "zh-CN", "title": f"flow else e2e {TS}",
+                          "content": "<p>x</p>"}],
+    }})
+    epost_id = epost.get("id")
+    # 草稿态更新 → post.updated：条件（PUBLISHED）不满足 → else 链
+    api(f"/admin/v1/posts/{epost_id}", "PUT", {"data": {"title": f"flow else e2e {TS} v2"}})
+    else_idx = len(received)
+    ok = wait_for(lambda: any(r["path"] == "/flow-else" for r in received[else_idx:]),
+                  timeout=90)
+    check("条件不满足触发 else 链", ok)
+    if ok:
+        hit = next(r for r in received[else_idx:] if r["path"] == "/flow-else")
+        body = json.loads(hit["body"])
+        check("else envelope 事件正确", body.get("event") == "post.updated",
+              f"event={body.get('event')}")
+        check("else envelope 规则正确", body.get("rule_id") == erule_id,
+              f"rule={body.get('rule_id')}")
+    check("条件不满足不执行主链",
+          not any(r["path"] == "/flow-never" for r in received[else_idx:]),
+          f"hits={sum(1 for r in received[else_idx:] if r['path'] == '/flow-never')}")
+
+    api(f"/admin/v1/flow-rules/{erule_id}", "DELETE")
+    api(f"/admin/v1/posts/{epost_id}", "DELETE")
 
     # ===== 清理 =====
     api(f"/admin/v1/flow-rules/{rule_id}", "DELETE")

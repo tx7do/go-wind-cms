@@ -88,6 +88,9 @@ func (r *FlowRepo) Create(ctx context.Context, dto *flowV1.FlowRule) (*flowV1.Fl
 	if dto.TriggerCron != nil {
 		builder.SetTriggerCron(dto.GetTriggerCron())
 	}
+	if dto.ElseActions != nil {
+		builder.SetElseActions(dto.GetElseActions())
+	}
 	if dto.Enabled != nil {
 		builder.SetEnabled(dto.GetEnabled())
 	}
@@ -122,6 +125,9 @@ func (r *FlowRepo) Update(ctx context.Context, id uint32, dto *flowV1.FlowRule) 
 	}
 	if dto.TriggerCron != nil {
 		builder.SetTriggerCron(dto.GetTriggerCron())
+	}
+	if dto.ElseActions != nil {
+		builder.SetElseActions(dto.GetElseActions())
 	}
 	if dto.Actions != nil {
 		builder.SetActions(dto.GetActions())

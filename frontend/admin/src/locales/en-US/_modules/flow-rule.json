@@ -36,5 +36,9 @@
   "cronRequired": "Please enter a cron expression",
   "actionDelay": "Delay",
   "addDelayAction": "Add delay action",
-  "delaySecondsPlaceholder": "Delay seconds (1-604800, following actions run after it)"
+  "delaySecondsPlaceholder": "Delay seconds (1-604800, following actions run after it)",
+  "matchedBranchTitle": "Run when condition matches",
+  "elseBranchTitle": "Else branch (condition not matched)",
+  "elseBranchTag": "else branch",
+  "elseActionRequired": "Else branch is enabled: configure at least one complete action"
 }

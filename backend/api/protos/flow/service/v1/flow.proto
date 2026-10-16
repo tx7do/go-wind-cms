@@ -74,6 +74,13 @@ message FlowRule {
     (gnostic.openapi.v3.property) = {description: "是否启用"}
   ]; // 是否启用
 
+  optional string else_actions = 9 [
+    json_name = "elseActions",
+    (gnostic.openapi.v3.property) = {
+      description: "条件不满足分支的动作链 JSON（结构与 actions 相同）；留空=条件不满足时不执行任何动作"
+    }
+  ]; // 条件不满足分支动作链
+
   optional uint32 match_count = 7 [
     json_name = "matchCount",
     (gnostic.openapi.v3.property) = {description: "累计命中次数（观测用，只读）"}

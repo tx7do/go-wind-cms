@@ -114,6 +114,11 @@ func Actions(v string) predicate.FlowRule {
 	return predicate.FlowRule(sql.FieldEQ(FieldActions, v))
 }
 
+// ElseActions applies equality check predicate on the "else_actions" field. It's identical to ElseActionsEQ.
+func ElseActions(v string) predicate.FlowRule {
+	return predicate.FlowRule(sql.FieldEQ(FieldElseActions, v))
+}
+
 // Enabled applies equality check predicate on the "enabled" field. It's identical to EnabledEQ.
 func Enabled(v bool) predicate.FlowRule {
 	return predicate.FlowRule(sql.FieldEQ(FieldEnabled, v))
@@ -817,6 +822,81 @@ func ActionsEqualFold(v string) predicate.FlowRule {
 // ActionsContainsFold applies the ContainsFold predicate on the "actions" field.
 func ActionsContainsFold(v string) predicate.FlowRule {
 	return predicate.FlowRule(sql.FieldContainsFold(FieldActions, v))
+}
+
+// ElseActionsEQ applies the EQ predicate on the "else_actions" field.
+func ElseActionsEQ(v string) predicate.FlowRule {
+	return predicate.FlowRule(sql.FieldEQ(FieldElseActions, v))
+}
+
+// ElseActionsNEQ applies the NEQ predicate on the "else_actions" field.
+func ElseActionsNEQ(v string) predicate.FlowRule {
+	return predicate.FlowRule(sql.FieldNEQ(FieldElseActions, v))
+}
+
+// ElseActionsIn applies the In predicate on the "else_actions" field.
+func ElseActionsIn(vs ...string) predicate.FlowRule {
+	return predicate.FlowRule(sql.FieldIn(FieldElseActions, vs...))
+}
+
+// ElseActionsNotIn applies the NotIn predicate on the "else_actions" field.
+func ElseActionsNotIn(vs ...string) predicate.FlowRule {
+	return predicate.FlowRule(sql.FieldNotIn(FieldElseActions, vs...))
+}
+
+// ElseActionsGT applies the GT predicate on the "else_actions" field.
+func ElseActionsGT(v string) predicate.FlowRule {
+	return predicate.FlowRule(sql.FieldGT(FieldElseActions, v))
+}
+
+// ElseActionsGTE applies the GTE predicate on the "else_actions" field.
+func ElseActionsGTE(v string) predicate.FlowRule {
+	return predicate.FlowRule(sql.FieldGTE(FieldElseActions, v))
+}
+
+// ElseActionsLT applies the LT predicate on the "else_actions" field.
+func ElseActionsLT(v string) predicate.FlowRule {
+	return predicate.FlowRule(sql.FieldLT(FieldElseActions, v))
+}
+
+// ElseActionsLTE applies the LTE predicate on the "else_actions" field.
+func ElseActionsLTE(v string) predicate.FlowRule {
+	return predicate.FlowRule(sql.FieldLTE(FieldElseActions, v))
+}
+
+// ElseActionsContains applies the Contains predicate on the "else_actions" field.
+func ElseActionsContains(v string) predicate.FlowRule {
+	return predicate.FlowRule(sql.FieldContains(FieldElseActions, v))
+}
+
+// ElseActionsHasPrefix applies the HasPrefix predicate on the "else_actions" field.
+func ElseActionsHasPrefix(v string) predicate.FlowRule {
+	return predicate.FlowRule(sql.FieldHasPrefix(FieldElseActions, v))
+}
+
+// ElseActionsHasSuffix applies the HasSuffix predicate on the "else_actions" field.
+func ElseActionsHasSuffix(v string) predicate.FlowRule {
+	return predicate.FlowRule(sql.FieldHasSuffix(FieldElseActions, v))
+}
+
+// ElseActionsIsNil applies the IsNil predicate on the "else_actions" field.
+func ElseActionsIsNil() predicate.FlowRule {
+	return predicate.FlowRule(sql.FieldIsNull(FieldElseActions))
+}
+
+// ElseActionsNotNil applies the NotNil predicate on the "else_actions" field.
+func ElseActionsNotNil() predicate.FlowRule {
+	return predicate.FlowRule(sql.FieldNotNull(FieldElseActions))
+}
+
+// ElseActionsEqualFold applies the EqualFold predicate on the "else_actions" field.
+func ElseActionsEqualFold(v string) predicate.FlowRule {
+	return predicate.FlowRule(sql.FieldEqualFold(FieldElseActions, v))
+}
+
+// ElseActionsContainsFold applies the ContainsFold predicate on the "else_actions" field.
+func ElseActionsContainsFold(v string) predicate.FlowRule {
+	return predicate.FlowRule(sql.FieldContainsFold(FieldElseActions, v))
 }
 
 // EnabledEQ applies the EQ predicate on the "enabled" field.

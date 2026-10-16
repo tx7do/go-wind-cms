@@ -85,6 +85,10 @@ func (m *FlowRule) validate(all bool) error {
 		// no validation rules for Enabled
 	}
 
+	if m.ElseActions != nil {
+		// no validation rules for ElseActions
+	}
+
 	if m.MatchCount != nil {
 		// no validation rules for MatchCount
 	}

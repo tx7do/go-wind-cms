@@ -118,11 +118,129 @@ const deserializeActions = (actionsJSON: string): FlowActionForm[] => {
   }
 };
 
+/** 动作链编辑器：主链与条件不满足分支共用（addLabel 撑三条添加按钮文案） */
+const ActionEditor = ({
+  actions,
+  onChange,
+}: {
+  actions: FlowActionForm[];
+  onChange: (next: FlowActionForm[]) => void;
+}) => {
+  const { t } = useTranslation('flow-rule');
+  return (
+    <>
+      {actions.map((a, i) => {
+        const patch = (part: Partial<FlowActionForm>) =>
+          onChange(actions.map((x, j) => (j === i ? { ...x, ...part } : x)));
+        return (
+          <div
+            key={i}
+            style={{
+              border: '1px solid var(--ant-color-border-secondary)',
+              borderRadius: 8,
+              padding: 12,
+            }}
+          >
+            <Space
+              style={{ width: '100%', justifyContent: 'space-between', marginBottom: 8 }}
+            >
+              <Select
+                value={a.type}
+                options={[
+                  { value: 'webhook', label: t('actionWebhook') },
+                  { value: 'notification', label: t('actionNotification') },
+                  { value: 'delay', label: t('actionDelay') },
+                ]}
+                onChange={(v: FlowActionForm['type']) =>
+                  onChange(actions.map((x, j) => (j === i ? { ...emptyAction(v) } : x)))
+                }
+                style={{ width: 160 }}
+              />
+              <Button
+                icon={<DeleteOutlined />}
+                disabled={actions.length <= 1}
+                onClick={() => onChange(actions.filter((_, j) => j !== i))}
+              />
+            </Space>
+            {a.type === 'webhook' ? (
+              <Space direction="vertical" style={{ width: '100%' }} size={6}>
+                <Input
+                  placeholder={t('webhookUrlPlaceholder')}
+                  value={a.url}
+                  onChange={(e) => patch({ url: e.target.value })}
+                />
+                <Input.Password
+                  placeholder={t('webhookSecretPlaceholder')}
+                  value={a.secret}
+                  onChange={(e) => patch({ secret: e.target.value })}
+                />
+              </Space>
+            ) : a.type === 'delay' ? (
+              <Input
+                type="number"
+                min={1}
+                placeholder={t('delaySecondsPlaceholder')}
+                value={a.secondsText}
+                onChange={(e) => patch({ secondsText: e.target.value })}
+              />
+            ) : (
+              <Space direction="vertical" style={{ width: '100%' }} size={6}>
+                <Input
+                  placeholder={t('notifyTitlePlaceholder')}
+                  value={a.title}
+                  onChange={(e) => patch({ title: e.target.value })}
+                />
+                <Input.TextArea
+                  placeholder={t('notifyContentPlaceholder')}
+                  value={a.content}
+                  rows={3}
+                  onChange={(e) => patch({ content: e.target.value })}
+                />
+                <Input
+                  placeholder={t('notifyRecipientsPlaceholder')}
+                  value={a.targetUserIdsText}
+                  onChange={(e) => patch({ targetUserIdsText: e.target.value })}
+                />
+              </Space>
+            )}
+          </div>
+        );
+      })}
+      <Space.Compact block>
+        <Button
+          block
+          type="dashed"
+          icon={<PlusOutlined />}
+          onClick={() => onChange([...actions, emptyAction('webhook')])}
+        >
+          {t('addWebhookAction')}
+        </Button>
+        <Button
+          block
+          type="dashed"
+          icon={<PlusOutlined />}
+          onClick={() => onChange([...actions, emptyAction('notification')])}
+        >
+          {t('addNotificationAction')}
+        </Button>
+        <Button
+          block
+          type="dashed"
+          icon={<PlusOutlined />}
+          onClick={() => onChange([...actions, emptyAction('delay')])}
+        >
+          {t('addDelayAction')}
+        </Button>
+      </Space.Compact>
+    </>
+  );
+};
+
 /**
  * 自动化 Flow 规则管理页：内容事件/定时（cron）→ 条件（状态等值）→ 动作链。
  * 动作支持 webhook（HMAC 签名投递）、notification（站内信）与 delay
- * （延时后由后台任务接续剩余动作）；定时规则的触发事件/状态条件不生效。
- * 命中次数为观测字段。
+ * （延时后由后台任务接续剩余动作）；条件不满足分支（elseActions）可配置
+ * 另一组动作；定时规则的触发事件/状态条件不生效。命中次数为观测字段。
  */
 const FlowRuleManagement = () => {
   const { t } = useTranslation('flow-rule');
@@ -139,6 +257,9 @@ const FlowRuleManagement = () => {
     triggerCron: string;
     conditionStatus: string;
     actions: FlowActionForm[];
+    /** 条件不满足分支：开启后编辑 elseActions（提交为空串即清除） */
+    hasElse: boolean;
+    elseActions: FlowActionForm[];
     enabled: boolean;
   }>({
     name: '',
@@ -147,6 +268,8 @@ const FlowRuleManagement = () => {
     triggerCron: '',
     conditionStatus: '',
     actions: [emptyAction('webhook')],
+    hasElse: false,
+    elseActions: [emptyAction('webhook')],
     enabled: true,
   });
 
@@ -168,6 +291,8 @@ const FlowRuleManagement = () => {
       triggerCron: '',
       conditionStatus: '',
       actions: [emptyAction('webhook')],
+      hasElse: false,
+      elseActions: [emptyAction('webhook')],
       enabled: true,
     });
     setFormOpen(true);
@@ -176,6 +301,7 @@ const FlowRuleManagement = () => {
   const openEdit = (record: FlowRule) => {
     setEditing(record);
     const triggerCron = record.triggerCron ?? '';
+    const elseActions = deserializeActions(record.elseActions ?? '');
     setForm({
       name: record.name ?? '',
       triggerType: triggerCron ? 'cron' : 'event',
@@ -186,6 +312,8 @@ const FlowRuleManagement = () => {
         deserializeActions(record.actions ?? '').length > 0
           ? deserializeActions(record.actions ?? '')
           : [emptyAction('webhook')],
+      hasElse: elseActions.length > 0,
+      elseActions: elseActions.length > 0 ? elseActions : [emptyAction('webhook')],
       enabled: record.enabled ?? true,
     });
     setFormOpen(true);
@@ -208,12 +336,22 @@ const FlowRuleManagement = () => {
       message.warning(t('actionRequired'));
       return;
     }
+    let elseActions = '';
+    if (form.hasElse) {
+      elseActions = serializeActions(form.elseActions);
+      if ((JSON.parse(elseActions) as unknown[]).length === 0) {
+        message.warning(t('elseActionRequired'));
+        return;
+      }
+    }
     const payload = {
       name: form.name.trim(),
       triggerEvent: form.triggerEvent,
       triggerCron: isCron ? form.triggerCron.trim() : undefined,
       conditionStatus: form.conditionStatus || undefined,
       actions,
+      // 空串=清除 else 分支（update_mask 含 elseActions 时按空串落库）
+      elseActions: form.hasElse ? elseActions : '',
       enabled: form.enabled,
     };
     try {
@@ -222,7 +360,7 @@ const FlowRuleManagement = () => {
           id: editing.id,
           data: payload,
           updateMask:
-            'name,triggerEvent,triggerCron,conditionStatus,actions,enabled',
+            'name,triggerEvent,triggerCron,conditionStatus,actions,elseActions,enabled',
         });
       } else {
         await createMutation.mutateAsync({ data: payload });
@@ -291,7 +429,7 @@ const FlowRuleManagement = () => {
       ellipsis: true,
       render: (_: unknown, record: FlowRule) => {
         const actions = deserializeActions(record.actions ?? '');
-        if (actions.length === 0) return '-';
+        if (actions.length === 0 && !record.elseActions) return '-';
         return (
           <Space wrap size={4}>
             {actions.map((a, i) => (
@@ -313,6 +451,7 @@ const FlowRuleManagement = () => {
                     : `${t('actionNotification')}: ${a.title}`}
               </Tag>
             ))}
+            {record.elseActions ? <Tag color="red">{t('elseBranchTag')}</Tag> : null}
           </Space>
         );
       },
@@ -423,135 +562,36 @@ const FlowRuleManagement = () => {
               style={{ width: '100%' }}
             />
           )}
-          {form.actions.map((a, i) => {
-            const patch = (part: Partial<FlowActionForm>) =>
-              setForm((f) => ({
-                ...f,
-                actions: f.actions.map((x, j) => (j === i ? { ...x, ...part } : x)),
-              }));
-            return (
-              <div
-                key={i}
-                style={{
-                  border: '1px solid var(--ant-color-border-secondary)',
-                  borderRadius: 8,
-                  padding: 12,
-                }}
-              >
-                <Space style={{ width: '100%', justifyContent: 'space-between', marginBottom: 8 }}>
-                  <Select
-                    value={a.type}
-                    options={[
-                      { value: 'webhook', label: t('actionWebhook') },
-                      { value: 'notification', label: t('actionNotification') },
-                      { value: 'delay', label: t('actionDelay') },
-                    ]}
-                    onChange={(v: FlowActionForm['type']) =>
-                      setForm((f) => ({
-                        ...f,
-                        actions: f.actions.map((x, j) =>
-                          j === i ? { ...emptyAction(v) } : x,
-                        ),
-                      }))
-                    }
-                    style={{ width: 160 }}
-                  />
-                  <Button
-                    icon={<DeleteOutlined />}
-                    disabled={form.actions.length <= 1}
-                    onClick={() =>
-                      setForm((f) => ({
-                        ...f,
-                        actions: f.actions.filter((_, j) => j !== i),
-                      }))
-                    }
-                  />
-                </Space>
-                {a.type === 'webhook' ? (
-                  <Space direction="vertical" style={{ width: '100%' }} size={6}>
-                    <Input
-                      placeholder={t('webhookUrlPlaceholder')}
-                      value={a.url}
-                      onChange={(e) => patch({ url: e.target.value })}
-                    />
-                    <Input.Password
-                      placeholder={t('webhookSecretPlaceholder')}
-                      value={a.secret}
-                      onChange={(e) => patch({ secret: e.target.value })}
-                    />
-                  </Space>
-                ) : a.type === 'delay' ? (
-                  <Input
-                    type="number"
-                    min={1}
-                    placeholder={t('delaySecondsPlaceholder')}
-                    value={a.secondsText}
-                    onChange={(e) => patch({ secondsText: e.target.value })}
-                  />
-                ) : (
-                  <Space direction="vertical" style={{ width: '100%' }} size={6}>
-                    <Input
-                      placeholder={t('notifyTitlePlaceholder')}
-                      value={a.title}
-                      onChange={(e) => patch({ title: e.target.value })}
-                    />
-                    <Input.TextArea
-                      placeholder={t('notifyContentPlaceholder')}
-                      value={a.content}
-                      rows={3}
-                      onChange={(e) => patch({ content: e.target.value })}
-                    />
-                    <Input
-                      placeholder={t('notifyRecipientsPlaceholder')}
-                      value={a.targetUserIdsText}
-                      onChange={(e) => patch({ targetUserIdsText: e.target.value })}
-                    />
-                  </Space>
-                )}
-              </div>
-            );
-          })}
-          <Space.Compact block>
-            <Button
-              block
-              type="dashed"
-              icon={<PlusOutlined />}
-              onClick={() =>
-                setForm((f) => ({
-                  ...f,
-                  actions: [...f.actions, emptyAction('webhook')],
-                }))
-              }
-            >
-              {t('addWebhookAction')}
-            </Button>
-            <Button
-              block
-              type="dashed"
-              icon={<PlusOutlined />}
-              onClick={() =>
-                setForm((f) => ({
-                  ...f,
-                  actions: [...f.actions, emptyAction('notification')],
-                }))
-              }
-            >
-              {t('addNotificationAction')}
-            </Button>
-            <Button
-              block
-              type="dashed"
-              icon={<PlusOutlined />}
-              onClick={() =>
-                setForm((f) => ({
-                  ...f,
-                  actions: [...f.actions, emptyAction('delay')],
-                }))
-              }
-            >
-              {t('addDelayAction')}
-            </Button>
-          </Space.Compact>
+
+          <div>
+            <div style={{ marginBottom: 8 }}>
+              <Tag color="green">{t('matchedBranchTitle')}</Tag>
+            </div>
+            <ActionEditor
+              actions={form.actions}
+              onChange={(actions) => setForm((f) => ({ ...f, actions }))}
+            />
+          </div>
+
+          {form.triggerType === 'event' && (
+            <div>
+              <Space style={{ marginBottom: 8 }}>
+                <Switch
+                  size="small"
+                  checked={form.hasElse}
+                  onChange={(v) => setForm((f) => ({ ...f, hasElse: v }))}
+                />
+                <Tag color={form.hasElse ? 'red' : 'default'}>{t('elseBranchTitle')}</Tag>
+              </Space>
+              {form.hasElse && (
+                <ActionEditor
+                  actions={form.elseActions}
+                  onChange={(elseActions) => setForm((f) => ({ ...f, elseActions }))}
+                />
+              )}
+            </div>
+          )}
+
           <Space>
             <span>{t('enabled')}</span>
             <Switch
