@@ -17,8 +17,9 @@ const NotifyEmailTaskType = "notify.email"
 
 // NotifyEmailPayload 邮件通知投递任务 payload。
 type NotifyEmailPayload struct {
-	UserID   uint32 `json:"user_id"`   // 收件人用户 ID
-	TenantID uint32 `json:"tenant_id"` // 租户 ID（仅日志/排查）
-	Title    string `json:"title"`     // 通知标题（邮件主题）
-	Content  string `json:"content"`   // 通知内容（邮件正文，纯文本/受限 HTML）
+	UserID    uint32 `json:"user_id"`    // 收件人用户 ID
+	TenantID  uint32 `json:"tenant_id"`  // 租户 ID（仅日志/排查）
+	MessageID uint32 `json:"message_id"` // 关联的站内信消息 ID（台账 related_id 用；0=无关联）
+	Title     string `json:"title"`      // 通知标题（邮件主题）
+	Content   string `json:"content"`    // 通知内容（邮件正文，纯文本）
 }

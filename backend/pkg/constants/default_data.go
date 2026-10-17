@@ -107,7 +107,7 @@ var DefaultPermissions = []*permissionV1.Permission{
 			30, 31, 32, 33, 34, 35, 36, 37, 38, 39,
 			40, 41, 42, 43, 44, 45, 46, 47, 48, 49,
 			50, 51, 52, 53, 54, 55, 56, 57, 58, 59,
-			60, 61, 62, 63, 64, 65, 66, 67, 68, 69,
+			60, 61, 62, 63, 64, 65, 66, 67, 68,
 			70, 71, 72, 73, 74, 75, 76, 77, 78, 79,
 			80, 81, 82, 83, 84, 85, 86, 87, 88, 89,
 			90, 91, 92, 93, 94, 95, 96, 97, 98, 99,
@@ -139,7 +139,7 @@ var DefaultPermissions = []*permissionV1.Permission{
 			30, 31, 32, 33, 34, 35, 36, 37, 38, 39,
 			40, 41, 42, 43, 44, 45, 46, 47, 48, 49,
 			50, 51, 52, 53, 54, 55, 56, 57, 58, 59,
-			60, 61, 62, 63, 64, 65, 66, 67, 68, 69,
+			60, 61, 62, 63, 64, 65, 66, 67, 68,
 			70, 71, 72, 73, 74, 75, 76, 77, 78, 79,
 			80, 81, 82, 83, 84, 85, 86, 87, 88, 89,
 			90, 91, 92, 93, 94, 95, 96, 97, 98, 99,
@@ -802,21 +802,6 @@ var DefaultMenus = []*permissionV1.Menu{
 		},
 	},
 	{
-		Id:        trans.Ptr(uint32(69)),
-		ParentId:  trans.Ptr(uint32(60)),
-		Type:      permissionV1.Menu_MENU.Enum(),
-		Name:      trans.Ptr("EmailProviderManagement"),
-		Path:      trans.Ptr("email-provider"),
-		Component: trans.Ptr("app/system/email_provider/index.vue"),
-		CreatedAt: timeutil.TimeToTimestamppb(trans.Ptr(time.Now())),
-		Meta: &permissionV1.MenuMeta{
-			Title:     trans.Ptr("menu.system.emailProvider"),
-			Icon:      trans.Ptr("lucide:mail"),
-			Order:     trans.Ptr(int32(9)),
-			Authority: []string{"sys:platform_admin"},
-		},
-	},
-	{
 		Id:        trans.Ptr(uint32(70)),
 		ParentId:  trans.Ptr(uint32(60)),
 		Type:      permissionV1.Menu_MENU.Enum(),
@@ -854,5 +839,14 @@ var DefaultNotificationRules = []*notifyV1.NotificationRule{
 		IsAsync:   trans.Ptr(false),
 		IsEnabled: trans.Ptr(true),
 		Remark:    trans.Ptr("渠道配置测试邮件（渠道页「测试发送」）"),
+	},
+	{
+		// 系统通知邮件（NotifyUser 附加触达）的路由：HTML 壳由 EmailSender 统一包裹。
+		// 管理员停用此行 = 整体关闭系统通知邮件出站（worker 记 SKIPPED 不重试）。
+		EventType: notifyV1.EventType_SYSTEM_NOTIFY.Enum(),
+		Channel:   notifyV1.Channel_EMAIL.Enum(),
+		IsAsync:   trans.Ptr(false),
+		IsEnabled: trans.Ptr(true),
+		Remark:    trans.Ptr("系统通知邮件（NotifyUser 附加触达）"),
 	},
 }

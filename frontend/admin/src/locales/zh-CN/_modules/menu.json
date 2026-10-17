@@ -70,7 +70,6 @@
     "tasks": "tasks",
     "login-policies": "login-policies",
     "languages": "languages",
-    "webhook": "Webhook 订阅",
-    "emailProvider": "邮件出站"
+    "webhook": "Webhook 订阅"
   }
 }

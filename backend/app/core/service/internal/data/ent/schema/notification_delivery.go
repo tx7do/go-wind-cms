@@ -43,6 +43,7 @@ func (NotificationDelivery) Fields() []ent.Field {
 			NamedValues(
 				"InternalMessage", "INTERNAL_MESSAGE",
 				"ChannelTestEmail", "CHANNEL_TEST_EMAIL",
+				"SystemNotify", "SYSTEM_NOTIFY",
 			).
 			Optional().
 			Nillable(),

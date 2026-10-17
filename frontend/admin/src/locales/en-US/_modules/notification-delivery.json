@@ -18,6 +18,7 @@
   "lastError": "Failure reason",
   "eventTypeMap": {
     "CHANNEL_TEST_EMAIL": "Channel test email",
+    "SYSTEM_NOTIFY": "System notify email",
     "INTERNAL_MESSAGE": "In-app message"
   },
   "channelMap": {

@@ -33,8 +33,6 @@ import (
 	"go-wind-cms/app/core/service/internal/data/ent/dictentry"
 	"go-wind-cms/app/core/service/internal/data/ent/dictentryi18n"
 	"go-wind-cms/app/core/service/internal/data/ent/dicttype"
-	"go-wind-cms/app/core/service/internal/data/ent/emailprovider"
-	"go-wind-cms/app/core/service/internal/data/ent/emailtemplate"
 	"go-wind-cms/app/core/service/internal/data/ent/experiment"
 	"go-wind-cms/app/core/service/internal/data/ent/experimentparticipant"
 	"go-wind-cms/app/core/service/internal/data/ent/experimentvariant"
@@ -163,10 +161,6 @@ type Client struct {
 	DictEntryI18n *DictEntryI18nClient
 	// DictType is the client for interacting with the DictType builders.
 	DictType *DictTypeClient
-	// EmailProvider is the client for interacting with the EmailProvider builders.
-	EmailProvider *EmailProviderClient
-	// EmailTemplate is the client for interacting with the EmailTemplate builders.
-	EmailTemplate *EmailTemplateClient
 	// Experiment is the client for interacting with the Experiment builders.
 	Experiment *ExperimentClient
 	// ExperimentParticipant is the client for interacting with the ExperimentParticipant builders.
@@ -344,8 +338,6 @@ func (c *Client) init() {
 	c.DictEntry = NewDictEntryClient(c.config)
 	c.DictEntryI18n = NewDictEntryI18nClient(c.config)
 	c.DictType = NewDictTypeClient(c.config)
-	c.EmailProvider = NewEmailProviderClient(c.config)
-	c.EmailTemplate = NewEmailTemplateClient(c.config)
 	c.Experiment = NewExperimentClient(c.config)
 	c.ExperimentParticipant = NewExperimentParticipantClient(c.config)
 	c.ExperimentVariant = NewExperimentVariantClient(c.config)
@@ -532,8 +524,6 @@ func (c *Client) Tx(ctx context.Context) (*Tx, error) {
 		DictEntry:                  NewDictEntryClient(cfg),
 		DictEntryI18n:              NewDictEntryI18nClient(cfg),
 		DictType:                   NewDictTypeClient(cfg),
-		EmailProvider:              NewEmailProviderClient(cfg),
-		EmailTemplate:              NewEmailTemplateClient(cfg),
 		Experiment:                 NewExperimentClient(cfg),
 		ExperimentParticipant:      NewExperimentParticipantClient(cfg),
 		ExperimentVariant:          NewExperimentVariantClient(cfg),
@@ -647,8 +637,6 @@ func (c *Client) BeginTx(ctx context.Context, opts *sql.TxOptions) (*Tx, error) 
 		DictEntry:                  NewDictEntryClient(cfg),
 		DictEntryI18n:              NewDictEntryI18nClient(cfg),
 		DictType:                   NewDictTypeClient(cfg),
-		EmailProvider:              NewEmailProviderClient(cfg),
-		EmailTemplate:              NewEmailTemplateClient(cfg),
 		Experiment:                 NewExperimentClient(cfg),
 		ExperimentParticipant:      NewExperimentParticipantClient(cfg),
 		ExperimentVariant:          NewExperimentVariantClient(cfg),
@@ -755,24 +743,23 @@ func (c *Client) Use(hooks ...Hook) {
 		c.CategoryTranslation, c.CollabDocState, c.Comment, c.CommentLike,
 		c.ComponentDefinition, c.ContentModel, c.ContentModelTranslation,
 		c.ContentReference, c.DataAccessAuditLog, c.DictEntry, c.DictEntryI18n,
-		c.DictType, c.EmailProvider, c.EmailTemplate, c.Experiment,
-		c.ExperimentParticipant, c.ExperimentVariant, c.FieldDefinition,
-		c.FieldDefinitionTranslation, c.File, c.FlowRule, c.FormSubmission,
-		c.InteractionCounter, c.InternalMessage, c.InternalMessageCategory,
-		c.InternalMessageRecipient, c.Language, c.LoginAuditLog, c.LoginPolicy,
-		c.MediaAsset, c.MediaVariant, c.Membership, c.MembershipOrgUnit,
-		c.MembershipPosition, c.MembershipRole, c.Menu, c.Navigation, c.NavigationItem,
-		c.NotificationChannel, c.NotificationDelivery, c.NotificationPreference,
-		c.NotificationRule, c.NotificationTemplate, c.OperationAuditLog, c.OrgUnit,
-		c.Page, c.PageTranslation, c.PageVersion, c.Permission, c.PermissionApi,
-		c.PermissionAuditLog, c.PermissionGroup, c.PermissionMenu, c.PermissionPolicy,
-		c.PolicyEvaluationLog, c.Position, c.Post, c.PostCategory, c.PostLike,
-		c.PostTag, c.PostTranslation, c.PostVersion, c.PostWatch, c.Redirect, c.Role,
-		c.RoleMetadata, c.RolePermission, c.Section, c.SectionTranslation, c.Site,
-		c.SiteSetting, c.SocialAccount, c.SocialDistribution, c.SocialInboxItem,
-		c.SocialStatsHistory, c.Tag, c.TagTranslation, c.Task, c.Tenant, c.User,
-		c.UserCredential, c.UserOrgUnit, c.UserPosition, c.UserRole, c.Webhook,
-		c.WebhookDelivery,
+		c.DictType, c.Experiment, c.ExperimentParticipant, c.ExperimentVariant,
+		c.FieldDefinition, c.FieldDefinitionTranslation, c.File, c.FlowRule,
+		c.FormSubmission, c.InteractionCounter, c.InternalMessage,
+		c.InternalMessageCategory, c.InternalMessageRecipient, c.Language,
+		c.LoginAuditLog, c.LoginPolicy, c.MediaAsset, c.MediaVariant, c.Membership,
+		c.MembershipOrgUnit, c.MembershipPosition, c.MembershipRole, c.Menu,
+		c.Navigation, c.NavigationItem, c.NotificationChannel, c.NotificationDelivery,
+		c.NotificationPreference, c.NotificationRule, c.NotificationTemplate,
+		c.OperationAuditLog, c.OrgUnit, c.Page, c.PageTranslation, c.PageVersion,
+		c.Permission, c.PermissionApi, c.PermissionAuditLog, c.PermissionGroup,
+		c.PermissionMenu, c.PermissionPolicy, c.PolicyEvaluationLog, c.Position,
+		c.Post, c.PostCategory, c.PostLike, c.PostTag, c.PostTranslation,
+		c.PostVersion, c.PostWatch, c.Redirect, c.Role, c.RoleMetadata,
+		c.RolePermission, c.Section, c.SectionTranslation, c.Site, c.SiteSetting,
+		c.SocialAccount, c.SocialDistribution, c.SocialInboxItem, c.SocialStatsHistory,
+		c.Tag, c.TagTranslation, c.Task, c.Tenant, c.User, c.UserCredential,
+		c.UserOrgUnit, c.UserPosition, c.UserRole, c.Webhook, c.WebhookDelivery,
 	} {
 		n.Use(hooks...)
 	}
@@ -787,24 +774,23 @@ func (c *Client) Intercept(interceptors ...Interceptor) {
 		c.CategoryTranslation, c.CollabDocState, c.Comment, c.CommentLike,
 		c.ComponentDefinition, c.ContentModel, c.ContentModelTranslation,
 		c.ContentReference, c.DataAccessAuditLog, c.DictEntry, c.DictEntryI18n,
-		c.DictType, c.EmailProvider, c.EmailTemplate, c.Experiment,
-		c.ExperimentParticipant, c.ExperimentVariant, c.FieldDefinition,
-		c.FieldDefinitionTranslation, c.File, c.FlowRule, c.FormSubmission,
-		c.InteractionCounter, c.InternalMessage, c.InternalMessageCategory,
-		c.InternalMessageRecipient, c.Language, c.LoginAuditLog, c.LoginPolicy,
-		c.MediaAsset, c.MediaVariant, c.Membership, c.MembershipOrgUnit,
-		c.MembershipPosition, c.MembershipRole, c.Menu, c.Navigation, c.NavigationItem,
-		c.NotificationChannel, c.NotificationDelivery, c.NotificationPreference,
-		c.NotificationRule, c.NotificationTemplate, c.OperationAuditLog, c.OrgUnit,
-		c.Page, c.PageTranslation, c.PageVersion, c.Permission, c.PermissionApi,
-		c.PermissionAuditLog, c.PermissionGroup, c.PermissionMenu, c.PermissionPolicy,
-		c.PolicyEvaluationLog, c.Position, c.Post, c.PostCategory, c.PostLike,
-		c.PostTag, c.PostTranslation, c.PostVersion, c.PostWatch, c.Redirect, c.Role,
-		c.RoleMetadata, c.RolePermission, c.Section, c.SectionTranslation, c.Site,
-		c.SiteSetting, c.SocialAccount, c.SocialDistribution, c.SocialInboxItem,
-		c.SocialStatsHistory, c.Tag, c.TagTranslation, c.Task, c.Tenant, c.User,
-		c.UserCredential, c.UserOrgUnit, c.UserPosition, c.UserRole, c.Webhook,
-		c.WebhookDelivery,
+		c.DictType, c.Experiment, c.ExperimentParticipant, c.ExperimentVariant,
+		c.FieldDefinition, c.FieldDefinitionTranslation, c.File, c.FlowRule,
+		c.FormSubmission, c.InteractionCounter, c.InternalMessage,
+		c.InternalMessageCategory, c.InternalMessageRecipient, c.Language,
+		c.LoginAuditLog, c.LoginPolicy, c.MediaAsset, c.MediaVariant, c.Membership,
+		c.MembershipOrgUnit, c.MembershipPosition, c.MembershipRole, c.Menu,
+		c.Navigation, c.NavigationItem, c.NotificationChannel, c.NotificationDelivery,
+		c.NotificationPreference, c.NotificationRule, c.NotificationTemplate,
+		c.OperationAuditLog, c.OrgUnit, c.Page, c.PageTranslation, c.PageVersion,
+		c.Permission, c.PermissionApi, c.PermissionAuditLog, c.PermissionGroup,
+		c.PermissionMenu, c.PermissionPolicy, c.PolicyEvaluationLog, c.Position,
+		c.Post, c.PostCategory, c.PostLike, c.PostTag, c.PostTranslation,
+		c.PostVersion, c.PostWatch, c.Redirect, c.Role, c.RoleMetadata,
+		c.RolePermission, c.Section, c.SectionTranslation, c.Site, c.SiteSetting,
+		c.SocialAccount, c.SocialDistribution, c.SocialInboxItem, c.SocialStatsHistory,
+		c.Tag, c.TagTranslation, c.Task, c.Tenant, c.User, c.UserCredential,
+		c.UserOrgUnit, c.UserPosition, c.UserRole, c.Webhook, c.WebhookDelivery,
 	} {
 		n.Intercept(interceptors...)
 	}
@@ -857,10 +843,6 @@ func (c *Client) Mutate(ctx context.Context, m Mutation) (Value, error) {
 		return c.DictEntryI18n.mutate(ctx, m)
 	case *DictTypeMutation:
 		return c.DictType.mutate(ctx, m)
-	case *EmailProviderMutation:
-		return c.EmailProvider.mutate(ctx, m)
-	case *EmailTemplateMutation:
-		return c.EmailTemplate.mutate(ctx, m)
 	case *ExperimentMutation:
 		return c.Experiment.mutate(ctx, m)
 	case *ExperimentParticipantMutation:
@@ -4176,274 +4158,6 @@ func (c *DictTypeClient) mutate(ctx context.Context, m *DictTypeMutation) (Value
 		return (&DictTypeDelete{config: c.config, hooks: c.Hooks(), mutation: m}).Exec(ctx)
 	default:
 		return nil, fmt.Errorf("ent: unknown DictType mutation op: %q", m.Op())
-	}
-}
-
-// EmailProviderClient is a client for the EmailProvider schema.
-type EmailProviderClient struct {
-	config
-}
-
-// NewEmailProviderClient returns a client for the EmailProvider from the given config.
-func NewEmailProviderClient(c config) *EmailProviderClient {
-	return &EmailProviderClient{config: c}
-}
-
-// Use adds a list of mutation hooks to the hooks stack.
-// A call to `Use(f, g, h)` equals to `emailprovider.Hooks(f(g(h())))`.
-func (c *EmailProviderClient) Use(hooks ...Hook) {
-	c.hooks.EmailProvider = append(c.hooks.EmailProvider, hooks...)
-}
-
-// Intercept adds a list of query interceptors to the interceptors stack.
-// A call to `Intercept(f, g, h)` equals to `emailprovider.Intercept(f(g(h())))`.
-func (c *EmailProviderClient) Intercept(interceptors ...Interceptor) {
-	c.inters.EmailProvider = append(c.inters.EmailProvider, interceptors...)
-}
-
-// Create returns a builder for creating a EmailProvider entity.
-func (c *EmailProviderClient) Create() *EmailProviderCreate {
-	mutation := newEmailProviderMutation(c.config, OpCreate)
-	return &EmailProviderCreate{config: c.config, hooks: c.Hooks(), mutation: mutation}
-}
-
-// CreateBulk returns a builder for creating a bulk of EmailProvider entities.
-func (c *EmailProviderClient) CreateBulk(builders ...*EmailProviderCreate) *EmailProviderCreateBulk {
-	return &EmailProviderCreateBulk{config: c.config, builders: builders}
-}
-
-// MapCreateBulk creates a bulk creation builder from the given slice. For each item in the slice, the function creates
-// a builder and applies setFunc on it.
-func (c *EmailProviderClient) MapCreateBulk(slice any, setFunc func(*EmailProviderCreate, int)) *EmailProviderCreateBulk {
-	rv := reflect.ValueOf(slice)
-	if rv.Kind() != reflect.Slice {
-		return &EmailProviderCreateBulk{err: fmt.Errorf("calling to EmailProviderClient.MapCreateBulk with wrong type %T, need slice", slice)}
-	}
-	builders := make([]*EmailProviderCreate, rv.Len())
-	for i := 0; i < rv.Len(); i++ {
-		builders[i] = c.Create()
-		setFunc(builders[i], i)
-	}
-	return &EmailProviderCreateBulk{config: c.config, builders: builders}
-}
-
-// Update returns an update builder for EmailProvider.
-func (c *EmailProviderClient) Update() *EmailProviderUpdate {
-	mutation := newEmailProviderMutation(c.config, OpUpdate)
-	return &EmailProviderUpdate{config: c.config, hooks: c.Hooks(), mutation: mutation}
-}
-
-// UpdateOne returns an update builder for the given entity.
-func (c *EmailProviderClient) UpdateOne(_m *EmailProvider) *EmailProviderUpdateOne {
-	mutation := newEmailProviderMutation(c.config, OpUpdateOne, withEmailProvider(_m))
-	return &EmailProviderUpdateOne{config: c.config, hooks: c.Hooks(), mutation: mutation}
-}
-
-// UpdateOneID returns an update builder for the given id.
-func (c *EmailProviderClient) UpdateOneID(id uint32) *EmailProviderUpdateOne {
-	mutation := newEmailProviderMutation(c.config, OpUpdateOne, withEmailProviderID(id))
-	return &EmailProviderUpdateOne{config: c.config, hooks: c.Hooks(), mutation: mutation}
-}
-
-// Delete returns a delete builder for EmailProvider.
-func (c *EmailProviderClient) Delete() *EmailProviderDelete {
-	mutation := newEmailProviderMutation(c.config, OpDelete)
-	return &EmailProviderDelete{config: c.config, hooks: c.Hooks(), mutation: mutation}
-}
-
-// DeleteOne returns a builder for deleting the given entity.
-func (c *EmailProviderClient) DeleteOne(_m *EmailProvider) *EmailProviderDeleteOne {
-	return c.DeleteOneID(_m.ID)
-}
-
-// DeleteOneID returns a builder for deleting the given entity by its id.
-func (c *EmailProviderClient) DeleteOneID(id uint32) *EmailProviderDeleteOne {
-	builder := c.Delete().Where(emailprovider.ID(id))
-	builder.mutation.id = &id
-	builder.mutation.op = OpDeleteOne
-	return &EmailProviderDeleteOne{builder}
-}
-
-// Query returns a query builder for EmailProvider.
-func (c *EmailProviderClient) Query() *EmailProviderQuery {
-	return &EmailProviderQuery{
-		config: c.config,
-		ctx:    &QueryContext{Type: TypeEmailProvider},
-		inters: c.Interceptors(),
-	}
-}
-
-// Get returns a EmailProvider entity by its id.
-func (c *EmailProviderClient) Get(ctx context.Context, id uint32) (*EmailProvider, error) {
-	return c.Query().Where(emailprovider.ID(id)).Only(ctx)
-}
-
-// GetX is like Get, but panics if an error occurs.
-func (c *EmailProviderClient) GetX(ctx context.Context, id uint32) *EmailProvider {
-	obj, err := c.Get(ctx, id)
-	if err != nil {
-		panic(err)
-	}
-	return obj
-}
-
-// Hooks returns the client hooks.
-func (c *EmailProviderClient) Hooks() []Hook {
-	hooks := c.hooks.EmailProvider
-	return append(hooks[:len(hooks):len(hooks)], emailprovider.Hooks[:]...)
-}
-
-// Interceptors returns the client interceptors.
-func (c *EmailProviderClient) Interceptors() []Interceptor {
-	return c.inters.EmailProvider
-}
-
-func (c *EmailProviderClient) mutate(ctx context.Context, m *EmailProviderMutation) (Value, error) {
-	switch m.Op() {
-	case OpCreate:
-		return (&EmailProviderCreate{config: c.config, hooks: c.Hooks(), mutation: m}).Save(ctx)
-	case OpUpdate:
-		return (&EmailProviderUpdate{config: c.config, hooks: c.Hooks(), mutation: m}).Save(ctx)
-	case OpUpdateOne:
-		return (&EmailProviderUpdateOne{config: c.config, hooks: c.Hooks(), mutation: m}).Save(ctx)
-	case OpDelete, OpDeleteOne:
-		return (&EmailProviderDelete{config: c.config, hooks: c.Hooks(), mutation: m}).Exec(ctx)
-	default:
-		return nil, fmt.Errorf("ent: unknown EmailProvider mutation op: %q", m.Op())
-	}
-}
-
-// EmailTemplateClient is a client for the EmailTemplate schema.
-type EmailTemplateClient struct {
-	config
-}
-
-// NewEmailTemplateClient returns a client for the EmailTemplate from the given config.
-func NewEmailTemplateClient(c config) *EmailTemplateClient {
-	return &EmailTemplateClient{config: c}
-}
-
-// Use adds a list of mutation hooks to the hooks stack.
-// A call to `Use(f, g, h)` equals to `emailtemplate.Hooks(f(g(h())))`.
-func (c *EmailTemplateClient) Use(hooks ...Hook) {
-	c.hooks.EmailTemplate = append(c.hooks.EmailTemplate, hooks...)
-}
-
-// Intercept adds a list of query interceptors to the interceptors stack.
-// A call to `Intercept(f, g, h)` equals to `emailtemplate.Intercept(f(g(h())))`.
-func (c *EmailTemplateClient) Intercept(interceptors ...Interceptor) {
-	c.inters.EmailTemplate = append(c.inters.EmailTemplate, interceptors...)
-}
-
-// Create returns a builder for creating a EmailTemplate entity.
-func (c *EmailTemplateClient) Create() *EmailTemplateCreate {
-	mutation := newEmailTemplateMutation(c.config, OpCreate)
-	return &EmailTemplateCreate{config: c.config, hooks: c.Hooks(), mutation: mutation}
-}
-
-// CreateBulk returns a builder for creating a bulk of EmailTemplate entities.
-func (c *EmailTemplateClient) CreateBulk(builders ...*EmailTemplateCreate) *EmailTemplateCreateBulk {
-	return &EmailTemplateCreateBulk{config: c.config, builders: builders}
-}
-
-// MapCreateBulk creates a bulk creation builder from the given slice. For each item in the slice, the function creates
-// a builder and applies setFunc on it.
-func (c *EmailTemplateClient) MapCreateBulk(slice any, setFunc func(*EmailTemplateCreate, int)) *EmailTemplateCreateBulk {
-	rv := reflect.ValueOf(slice)
-	if rv.Kind() != reflect.Slice {
-		return &EmailTemplateCreateBulk{err: fmt.Errorf("calling to EmailTemplateClient.MapCreateBulk with wrong type %T, need slice", slice)}
-	}
-	builders := make([]*EmailTemplateCreate, rv.Len())
-	for i := 0; i < rv.Len(); i++ {
-		builders[i] = c.Create()
-		setFunc(builders[i], i)
-	}
-	return &EmailTemplateCreateBulk{config: c.config, builders: builders}
-}
-
-// Update returns an update builder for EmailTemplate.
-func (c *EmailTemplateClient) Update() *EmailTemplateUpdate {
-	mutation := newEmailTemplateMutation(c.config, OpUpdate)
-	return &EmailTemplateUpdate{config: c.config, hooks: c.Hooks(), mutation: mutation}
-}
-
-// UpdateOne returns an update builder for the given entity.
-func (c *EmailTemplateClient) UpdateOne(_m *EmailTemplate) *EmailTemplateUpdateOne {
-	mutation := newEmailTemplateMutation(c.config, OpUpdateOne, withEmailTemplate(_m))
-	return &EmailTemplateUpdateOne{config: c.config, hooks: c.Hooks(), mutation: mutation}
-}
-
-// UpdateOneID returns an update builder for the given id.
-func (c *EmailTemplateClient) UpdateOneID(id uint32) *EmailTemplateUpdateOne {
-	mutation := newEmailTemplateMutation(c.config, OpUpdateOne, withEmailTemplateID(id))
-	return &EmailTemplateUpdateOne{config: c.config, hooks: c.Hooks(), mutation: mutation}
-}
-
-// Delete returns a delete builder for EmailTemplate.
-func (c *EmailTemplateClient) Delete() *EmailTemplateDelete {
-	mutation := newEmailTemplateMutation(c.config, OpDelete)
-	return &EmailTemplateDelete{config: c.config, hooks: c.Hooks(), mutation: mutation}
-}
-
-// DeleteOne returns a builder for deleting the given entity.
-func (c *EmailTemplateClient) DeleteOne(_m *EmailTemplate) *EmailTemplateDeleteOne {
-	return c.DeleteOneID(_m.ID)
-}
-
-// DeleteOneID returns a builder for deleting the given entity by its id.
-func (c *EmailTemplateClient) DeleteOneID(id uint32) *EmailTemplateDeleteOne {
-	builder := c.Delete().Where(emailtemplate.ID(id))
-	builder.mutation.id = &id
-	builder.mutation.op = OpDeleteOne
-	return &EmailTemplateDeleteOne{builder}
-}
-
-// Query returns a query builder for EmailTemplate.
-func (c *EmailTemplateClient) Query() *EmailTemplateQuery {
-	return &EmailTemplateQuery{
-		config: c.config,
-		ctx:    &QueryContext{Type: TypeEmailTemplate},
-		inters: c.Interceptors(),
-	}
-}
-
-// Get returns a EmailTemplate entity by its id.
-func (c *EmailTemplateClient) Get(ctx context.Context, id uint32) (*EmailTemplate, error) {
-	return c.Query().Where(emailtemplate.ID(id)).Only(ctx)
-}
-
-// GetX is like Get, but panics if an error occurs.
-func (c *EmailTemplateClient) GetX(ctx context.Context, id uint32) *EmailTemplate {
-	obj, err := c.Get(ctx, id)
-	if err != nil {
-		panic(err)
-	}
-	return obj
-}
-
-// Hooks returns the client hooks.
-func (c *EmailTemplateClient) Hooks() []Hook {
-	hooks := c.hooks.EmailTemplate
-	return append(hooks[:len(hooks):len(hooks)], emailtemplate.Hooks[:]...)
-}
-
-// Interceptors returns the client interceptors.
-func (c *EmailTemplateClient) Interceptors() []Interceptor {
-	return c.inters.EmailTemplate
-}
-
-func (c *EmailTemplateClient) mutate(ctx context.Context, m *EmailTemplateMutation) (Value, error) {
-	switch m.Op() {
-	case OpCreate:
-		return (&EmailTemplateCreate{config: c.config, hooks: c.Hooks(), mutation: m}).Save(ctx)
-	case OpUpdate:
-		return (&EmailTemplateUpdate{config: c.config, hooks: c.Hooks(), mutation: m}).Save(ctx)
-	case OpUpdateOne:
-		return (&EmailTemplateUpdateOne{config: c.config, hooks: c.Hooks(), mutation: m}).Save(ctx)
-	case OpDelete, OpDeleteOne:
-		return (&EmailTemplateDelete{config: c.config, hooks: c.Hooks(), mutation: m}).Exec(ctx)
-	default:
-		return nil, fmt.Errorf("ent: unknown EmailTemplate mutation op: %q", m.Op())
 	}
 }
 
@@ -14285,43 +13999,41 @@ type (
 		AiUsageLog, Api, ApiAuditLog, Category, CategoryTranslation, CollabDocState,
 		Comment, CommentLike, ComponentDefinition, ContentModel,
 		ContentModelTranslation, ContentReference, DataAccessAuditLog, DictEntry,
-		DictEntryI18n, DictType, EmailProvider, EmailTemplate, Experiment,
-		ExperimentParticipant, ExperimentVariant, FieldDefinition,
-		FieldDefinitionTranslation, File, FlowRule, FormSubmission, InteractionCounter,
-		InternalMessage, InternalMessageCategory, InternalMessageRecipient, Language,
-		LoginAuditLog, LoginPolicy, MediaAsset, MediaVariant, Membership,
-		MembershipOrgUnit, MembershipPosition, MembershipRole, Menu, Navigation,
-		NavigationItem, NotificationChannel, NotificationDelivery,
-		NotificationPreference, NotificationRule, NotificationTemplate,
-		OperationAuditLog, OrgUnit, Page, PageTranslation, PageVersion, Permission,
-		PermissionApi, PermissionAuditLog, PermissionGroup, PermissionMenu,
-		PermissionPolicy, PolicyEvaluationLog, Position, Post, PostCategory, PostLike,
-		PostTag, PostTranslation, PostVersion, PostWatch, Redirect, Role, RoleMetadata,
-		RolePermission, Section, SectionTranslation, Site, SiteSetting, SocialAccount,
-		SocialDistribution, SocialInboxItem, SocialStatsHistory, Tag, TagTranslation,
-		Task, Tenant, User, UserCredential, UserOrgUnit, UserPosition, UserRole,
-		Webhook, WebhookDelivery []ent.Hook
+		DictEntryI18n, DictType, Experiment, ExperimentParticipant, ExperimentVariant,
+		FieldDefinition, FieldDefinitionTranslation, File, FlowRule, FormSubmission,
+		InteractionCounter, InternalMessage, InternalMessageCategory,
+		InternalMessageRecipient, Language, LoginAuditLog, LoginPolicy, MediaAsset,
+		MediaVariant, Membership, MembershipOrgUnit, MembershipPosition,
+		MembershipRole, Menu, Navigation, NavigationItem, NotificationChannel,
+		NotificationDelivery, NotificationPreference, NotificationRule,
+		NotificationTemplate, OperationAuditLog, OrgUnit, Page, PageTranslation,
+		PageVersion, Permission, PermissionApi, PermissionAuditLog, PermissionGroup,
+		PermissionMenu, PermissionPolicy, PolicyEvaluationLog, Position, Post,
+		PostCategory, PostLike, PostTag, PostTranslation, PostVersion, PostWatch,
+		Redirect, Role, RoleMetadata, RolePermission, Section, SectionTranslation,
+		Site, SiteSetting, SocialAccount, SocialDistribution, SocialInboxItem,
+		SocialStatsHistory, Tag, TagTranslation, Task, Tenant, User, UserCredential,
+		UserOrgUnit, UserPosition, UserRole, Webhook, WebhookDelivery []ent.Hook
 	}
 	inters struct {
 		AiChunk, AiConversation, AiDoc, AiKnowledgeBase, AiMessage, AiProvider,
 		AiUsageLog, Api, ApiAuditLog, Category, CategoryTranslation, CollabDocState,
 		Comment, CommentLike, ComponentDefinition, ContentModel,
 		ContentModelTranslation, ContentReference, DataAccessAuditLog, DictEntry,
-		DictEntryI18n, DictType, EmailProvider, EmailTemplate, Experiment,
-		ExperimentParticipant, ExperimentVariant, FieldDefinition,
-		FieldDefinitionTranslation, File, FlowRule, FormSubmission, InteractionCounter,
-		InternalMessage, InternalMessageCategory, InternalMessageRecipient, Language,
-		LoginAuditLog, LoginPolicy, MediaAsset, MediaVariant, Membership,
-		MembershipOrgUnit, MembershipPosition, MembershipRole, Menu, Navigation,
-		NavigationItem, NotificationChannel, NotificationDelivery,
-		NotificationPreference, NotificationRule, NotificationTemplate,
-		OperationAuditLog, OrgUnit, Page, PageTranslation, PageVersion, Permission,
-		PermissionApi, PermissionAuditLog, PermissionGroup, PermissionMenu,
-		PermissionPolicy, PolicyEvaluationLog, Position, Post, PostCategory, PostLike,
-		PostTag, PostTranslation, PostVersion, PostWatch, Redirect, Role, RoleMetadata,
-		RolePermission, Section, SectionTranslation, Site, SiteSetting, SocialAccount,
-		SocialDistribution, SocialInboxItem, SocialStatsHistory, Tag, TagTranslation,
-		Task, Tenant, User, UserCredential, UserOrgUnit, UserPosition, UserRole,
-		Webhook, WebhookDelivery []ent.Interceptor
+		DictEntryI18n, DictType, Experiment, ExperimentParticipant, ExperimentVariant,
+		FieldDefinition, FieldDefinitionTranslation, File, FlowRule, FormSubmission,
+		InteractionCounter, InternalMessage, InternalMessageCategory,
+		InternalMessageRecipient, Language, LoginAuditLog, LoginPolicy, MediaAsset,
+		MediaVariant, Membership, MembershipOrgUnit, MembershipPosition,
+		MembershipRole, Menu, Navigation, NavigationItem, NotificationChannel,
+		NotificationDelivery, NotificationPreference, NotificationRule,
+		NotificationTemplate, OperationAuditLog, OrgUnit, Page, PageTranslation,
+		PageVersion, Permission, PermissionApi, PermissionAuditLog, PermissionGroup,
+		PermissionMenu, PermissionPolicy, PolicyEvaluationLog, Position, Post,
+		PostCategory, PostLike, PostTag, PostTranslation, PostVersion, PostWatch,
+		Redirect, Role, RoleMetadata, RolePermission, Section, SectionTranslation,
+		Site, SiteSetting, SocialAccount, SocialDistribution, SocialInboxItem,
+		SocialStatsHistory, Tag, TagTranslation, Task, Tenant, User, UserCredential,
+		UserOrgUnit, UserPosition, UserRole, Webhook, WebhookDelivery []ent.Interceptor
 	}
 )

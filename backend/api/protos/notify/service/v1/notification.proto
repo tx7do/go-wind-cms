@@ -51,6 +51,11 @@ enum EventType {
 
   // 渠道配置测试邮件（渠道页"测试发送"）。
   CHANNEL_TEST_EMAIL = 2;
+
+  // 系统通知邮件：站内信系统通知（NotifyUser）的附加邮件触达，收件目标为
+  // 收件用户邮箱。种子规则 SYSTEM_NOTIFY→EMAIL 提供路由（管理员停用该行即
+  // 整体关闭此类出站邮件）；related_id 指向 internal_messages.id。
+  SYSTEM_NOTIFY = 3;
 }
 
 // 投递状态

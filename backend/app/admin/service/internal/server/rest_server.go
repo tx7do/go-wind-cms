@@ -172,8 +172,6 @@ func NewRestServer(
 	redirectService *service.RedirectService,
 	experimentService *service.ExperimentService,
 	editLockService *service.EditLockService,
-	emailTemplateService *service.EmailTemplateService,
-	emailProviderService *service.EmailProviderService,
 
 	flowRuleService *service.FlowRuleService,
 
@@ -263,8 +261,6 @@ func NewRestServer(
 	adminV1.RegisterRedirectServiceHTTPServer(srv, redirectService)
 	adminV1.RegisterExperimentServiceHTTPServer(srv, experimentService)
 	adminV1.RegisterEditLockServiceHTTPServer(srv, editLockService)
-	adminV1.RegisterEmailTemplateServiceHTTPServer(srv, emailTemplateService)
-	adminV1.RegisterEmailProviderServiceHTTPServer(srv, emailProviderService)
 	adminV1.RegisterNotificationServiceHTTPServer(srv, notificationService)
 	adminV1.RegisterNotificationChannelServiceHTTPServer(srv, notificationChannelService)
 	adminV1.RegisterNotificationRuleServiceHTTPServer(srv, notificationRuleService)

@@ -180,10 +180,6 @@ func initApp(ctx *bootstrap.Context) (*kratos.App, func(), error) {
 	redirectRepo := data.NewRedirectRepo(ctx, entClient)
 	experimentRepo := data.NewExperimentRepo(ctx, entClient)
 	collabDocStateRepo := data.NewCollabDocStateRepo(ctx, entClient)
-	emailTemplateRepo := data.NewEmailTemplateRepo(ctx, entClient)
-
-	// 邮件出站 SMTP 配置（凭据加密落库）
-	emailProviderRepo := data.NewEmailProviderRepo(ctx, entClient)
 
 	// 站点配置
 	siteRepo := data.NewSiteRepo(ctx, entClient)
@@ -241,10 +237,8 @@ func initApp(ctx *bootstrap.Context) (*kratos.App, func(), error) {
 	collabDocStateService := service.NewCollabDocStateService(ctx, collabDocStateRepo)
 
 	// 邮件模板（系统通知出站可视化模板）
-	emailTemplateService := service.NewEmailTemplateService(ctx, emailTemplateRepo)
 
 	// 邮件出站 SMTP 配置
-	emailProviderService := service.NewEmailProviderService(ctx, emailProviderRepo)
 	fileService := service.NewFileService(ctx, fileRepo, minIOClient)
 
 	// 字典与多语言
@@ -274,7 +268,7 @@ func initApp(ctx *bootstrap.Context) (*kratos.App, func(), error) {
 	dataAccessAuditLogService := service.NewDataAccessAuditLogService(ctx, dataAccessAuditLogRepo)
 
 	// 站内信
-	internalMessageService := service.NewInternalMessageService(ctx, internalMessageRepo, internalMessageCategoryRepo, internalMessageRecipientRepo, userRepo, redisClient, taskService, emailProviderRepo, emailTemplateRepo)
+	internalMessageService := service.NewInternalMessageService(ctx, internalMessageRepo, internalMessageCategoryRepo, internalMessageRecipientRepo, userRepo, redisClient, taskService)
 	internalMessageCategoryService := service.NewInternalMessageCategoryService(ctx, internalMessageCategoryRepo)
 	internalMessageRecipientService := service.NewInternalMessageRecipientService(ctx, internalMessageRepo, internalMessageRecipientRepo)
 
@@ -362,11 +356,9 @@ func initApp(ctx *bootstrap.Context) (*kratos.App, func(), error) {
 		webhookService,
 		formSubmissionService,
 		redirectService,
-		emailProviderService,
 		experimentService,
 		editLockService,
 		collabDocStateService,
-		emailTemplateService,
 		notificationService,
 		notificationChannelService,
 		notificationRuleService,

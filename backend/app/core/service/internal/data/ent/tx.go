@@ -56,10 +56,6 @@ type Tx struct {
 	DictEntryI18n *DictEntryI18nClient
 	// DictType is the client for interacting with the DictType builders.
 	DictType *DictTypeClient
-	// EmailProvider is the client for interacting with the EmailProvider builders.
-	EmailProvider *EmailProviderClient
-	// EmailTemplate is the client for interacting with the EmailTemplate builders.
-	EmailTemplate *EmailTemplateClient
 	// Experiment is the client for interacting with the Experiment builders.
 	Experiment *ExperimentClient
 	// ExperimentParticipant is the client for interacting with the ExperimentParticipant builders.
@@ -357,8 +353,6 @@ func (tx *Tx) init() {
 	tx.DictEntry = NewDictEntryClient(tx.config)
 	tx.DictEntryI18n = NewDictEntryI18nClient(tx.config)
 	tx.DictType = NewDictTypeClient(tx.config)
-	tx.EmailProvider = NewEmailProviderClient(tx.config)
-	tx.EmailTemplate = NewEmailTemplateClient(tx.config)
 	tx.Experiment = NewExperimentClient(tx.config)
 	tx.ExperimentParticipant = NewExperimentParticipantClient(tx.config)
 	tx.ExperimentVariant = NewExperimentVariantClient(tx.config)

@@ -18,6 +18,7 @@
   "lastError": "失败原因",
   "eventTypeMap": {
     "CHANNEL_TEST_EMAIL": "渠道测试邮件",
+    "SYSTEM_NOTIFY": "系统通知邮件",
     "INTERNAL_MESSAGE": "站内信"
   },
   "channelMap": {

@@ -37,12 +37,12 @@ type FormSubmissionServiceHTTPServer interface {
 
 func RegisterFormSubmissionServiceHTTPServer(s *http.Server, srv FormSubmissionServiceHTTPServer) {
 	r := s.Route("/")
-	r.GET("/admin/v1/form-submissions", _FormSubmissionService_List19_HTTP_Handler(srv))
-	r.GET("/admin/v1/form-submissions/{id}", _FormSubmissionService_Get18_HTTP_Handler(srv))
-	r.DELETE("/admin/v1/form-submissions/{id}", _FormSubmissionService_Delete16_HTTP_Handler(srv))
+	r.GET("/admin/v1/form-submissions", _FormSubmissionService_List17_HTTP_Handler(srv))
+	r.GET("/admin/v1/form-submissions/{id}", _FormSubmissionService_Get16_HTTP_Handler(srv))
+	r.DELETE("/admin/v1/form-submissions/{id}", _FormSubmissionService_Delete14_HTTP_Handler(srv))
 }
 
-func _FormSubmissionService_List19_HTTP_Handler(srv FormSubmissionServiceHTTPServer) func(ctx http.Context) error {
+func _FormSubmissionService_List17_HTTP_Handler(srv FormSubmissionServiceHTTPServer) func(ctx http.Context) error {
 	return func(ctx http.Context) error {
 		var in v1.PagingRequest
 		if err := ctx.BindQuery(&in); err != nil {
@@ -61,7 +61,7 @@ func _FormSubmissionService_List19_HTTP_Handler(srv FormSubmissionServiceHTTPSer
 	}
 }
 
-func _FormSubmissionService_Get18_HTTP_Handler(srv FormSubmissionServiceHTTPServer) func(ctx http.Context) error {
+func _FormSubmissionService_Get16_HTTP_Handler(srv FormSubmissionServiceHTTPServer) func(ctx http.Context) error {
 	return func(ctx http.Context) error {
 		var in v11.GetFormSubmissionRequest
 		if err := ctx.BindQuery(&in); err != nil {
@@ -83,7 +83,7 @@ func _FormSubmissionService_Get18_HTTP_Handler(srv FormSubmissionServiceHTTPServ
 	}
 }
 
-func _FormSubmissionService_Delete16_HTTP_Handler(srv FormSubmissionServiceHTTPServer) func(ctx http.Context) error {
+func _FormSubmissionService_Delete14_HTTP_Handler(srv FormSubmissionServiceHTTPServer) func(ctx http.Context) error {
 	return func(ctx http.Context) error {
 		var in v11.DeleteFormSubmissionRequest
 		if err := ctx.BindQuery(&in); err != nil {

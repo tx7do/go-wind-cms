@@ -46,7 +46,6 @@ require (
 	github.com/tx7do/go-utils/geoip v1.1.8
 	github.com/tx7do/go-utils/id v0.0.6
 	github.com/tx7do/go-utils/jwtutil v0.0.3
-	github.com/tx7do/go-utils/mailer v0.1.1
 	github.com/tx7do/go-utils/mapper v0.0.3
 	github.com/tx7do/go-utils/notify v0.0.6
 	github.com/tx7do/go-utils/password v0.0.2

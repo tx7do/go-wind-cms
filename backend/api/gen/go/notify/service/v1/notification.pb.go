@@ -89,6 +89,10 @@ const (
 	EventType_INTERNAL_MESSAGE EventType = 1
 	// 渠道配置测试邮件（渠道页"测试发送"）。
 	EventType_CHANNEL_TEST_EMAIL EventType = 2
+	// 系统通知邮件：站内信系统通知（NotifyUser）的附加邮件触达，收件目标为
+	// 收件用户邮箱。种子规则 SYSTEM_NOTIFY→EMAIL 提供路由（管理员停用该行即
+	// 整体关闭此类出站邮件）；related_id 指向 internal_messages.id。
+	EventType_SYSTEM_NOTIFY EventType = 3
 )
 
 // Enum value maps for EventType.
@@ -97,11 +101,13 @@ var (
 		0: "EVENT_TYPE_UNSPECIFIED",
 		1: "INTERNAL_MESSAGE",
 		2: "CHANNEL_TEST_EMAIL",
+		3: "SYSTEM_NOTIFY",
 	}
 	EventType_value = map[string]int32{
 		"EVENT_TYPE_UNSPECIFIED": 0,
 		"INTERNAL_MESSAGE":       1,
 		"CHANNEL_TEST_EMAIL":     2,
+		"SYSTEM_NOTIFY":          3,
 	}
 )
 
@@ -747,11 +753,12 @@ const file_notify_service_v1_notification_proto_rawDesc = "" +
 	"\x13CHANNEL_UNSPECIFIED\x10\x00\x12\t\n" +
 	"\x05EMAIL\x10\x01\x12\v\n" +
 	"\aWEBHOOK\x10\x02\x12\f\n" +
-	"\bINTERNAL\x10\x03*U\n" +
+	"\bINTERNAL\x10\x03*h\n" +
 	"\tEventType\x12\x1a\n" +
 	"\x16EVENT_TYPE_UNSPECIFIED\x10\x00\x12\x14\n" +
 	"\x10INTERNAL_MESSAGE\x10\x01\x12\x16\n" +
-	"\x12CHANNEL_TEST_EMAIL\x10\x02*a\n" +
+	"\x12CHANNEL_TEST_EMAIL\x10\x02\x12\x11\n" +
+	"\rSYSTEM_NOTIFY\x10\x03*a\n" +
 	"\x0eDeliveryStatus\x12\x1f\n" +
 	"\x1bDELIVERY_STATUS_UNSPECIFIED\x10\x00\x12\v\n" +
 	"\aSENDING\x10\x01\x12\b\n" +

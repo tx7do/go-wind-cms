@@ -1022,76 +1022,6 @@ var (
 			},
 		},
 	}
-	// EmailProvidersColumns holds the columns for the "email_providers" table.
-	EmailProvidersColumns = []*schema.Column{
-		{Name: "id", Type: field.TypeUint32, Increment: true, Comment: "id"},
-		{Name: "created_at", Type: field.TypeTime, Nullable: true, Comment: "创建时间"},
-		{Name: "updated_at", Type: field.TypeTime, Nullable: true, Comment: "更新时间"},
-		{Name: "deleted_at", Type: field.TypeTime, Nullable: true, Comment: "删除时间"},
-		{Name: "created_by", Type: field.TypeUint32, Nullable: true, Comment: "创建者ID"},
-		{Name: "updated_by", Type: field.TypeUint32, Nullable: true, Comment: "更新者ID"},
-		{Name: "deleted_by", Type: field.TypeUint32, Nullable: true, Comment: "删除者ID"},
-		{Name: "tenant_id", Type: field.TypeUint32, Nullable: true, Comment: "租户ID", Default: 0},
-		{Name: "name", Type: field.TypeString, Comment: "配置名称（如 主 SMTP / 备用）"},
-		{Name: "host", Type: field.TypeString, Comment: "SMTP 主机"},
-		{Name: "port", Type: field.TypeUint32, Nullable: true, Comment: "端口（587/465/25）", Default: 587},
-		{Name: "username", Type: field.TypeString, Nullable: true, Comment: "认证用户名"},
-		{Name: "password", Type: field.TypeString, Nullable: true, Comment: "认证密码（AES-GCM 加密落库，接口永不回显）"},
-		{Name: "from", Type: field.TypeString, Comment: "发件人地址（From 头）"},
-		{Name: "tls_mode", Type: field.TypeString, Nullable: true, Comment: "TLS 模式（starttls/ssl/none）", Default: "starttls"},
-		{Name: "enabled", Type: field.TypeBool, Nullable: true, Comment: "是否启用（邮件链取第一个启用项）", Default: true},
-		{Name: "description", Type: field.TypeString, Nullable: true, Comment: "用途说明"},
-	}
-	// EmailProvidersTable holds the schema information for the "email_providers" table.
-	EmailProvidersTable = &schema.Table{
-		Name:       "email_providers",
-		Comment:    "邮件出站 SMTP 配置表（凭据 AES-GCM 加密落库；未配置时邮件链回退环境变量）",
-		Columns:    EmailProvidersColumns,
-		PrimaryKey: []*schema.Column{EmailProvidersColumns[0]},
-		Indexes: []*schema.Index{
-			{
-				Name:    "emailprovider_enabled",
-				Unique:  false,
-				Columns: []*schema.Column{EmailProvidersColumns[15]},
-			},
-		},
-	}
-	// EmailTemplatesColumns holds the columns for the "email_templates" table.
-	EmailTemplatesColumns = []*schema.Column{
-		{Name: "id", Type: field.TypeUint32, Increment: true, Comment: "id"},
-		{Name: "created_at", Type: field.TypeTime, Nullable: true, Comment: "创建时间"},
-		{Name: "updated_at", Type: field.TypeTime, Nullable: true, Comment: "更新时间"},
-		{Name: "deleted_at", Type: field.TypeTime, Nullable: true, Comment: "删除时间"},
-		{Name: "created_by", Type: field.TypeUint32, Nullable: true, Comment: "创建者ID"},
-		{Name: "updated_by", Type: field.TypeUint32, Nullable: true, Comment: "更新者ID"},
-		{Name: "deleted_by", Type: field.TypeUint32, Nullable: true, Comment: "删除者ID"},
-		{Name: "tenant_id", Type: field.TypeUint32, Nullable: true, Comment: "租户ID", Default: 0},
-		{Name: "code", Type: field.TypeString, Comment: "模板代码（唯一键，如 notify/system）"},
-		{Name: "name", Type: field.TypeString, Comment: "模板名称（管理端展示）"},
-		{Name: "subject", Type: field.TypeString, Comment: "邮件主题模板（支持 {{.Title}} 占位符）"},
-		{Name: "body_html", Type: field.TypeString, Nullable: true, Size: 2147483647, Comment: "邮件正文 HTML 模板（支持 {{.Title}}/{{.Content}}/{{.SiteURL}}）"},
-		{Name: "enabled", Type: field.TypeBool, Nullable: true, Comment: "是否启用", Default: true},
-		{Name: "description", Type: field.TypeString, Nullable: true, Comment: "用途说明"},
-	}
-	// EmailTemplatesTable holds the schema information for the "email_templates" table.
-	EmailTemplatesTable = &schema.Table{
-		Name:       "email_templates",
-		Comment:    "邮件模板表（系统通知出站可视化模板）",
-		Columns:    EmailTemplatesColumns,
-		PrimaryKey: []*schema.Column{EmailTemplatesColumns[0]},
-		Indexes: []*schema.Index{
-			{
-				Name:    "emailtemplate_code",
-				Unique:  false,
-				Columns: []*schema.Column{EmailTemplatesColumns[8]},
-			},
-			{
-				Name:    "emailtemplate_enabled",
-				Unique:  false,
-				Columns: []*schema.Column{EmailTemplatesColumns[12]},
-			},
-		},
-	}
 	// ExperimentsColumns holds the columns for the "experiments" table.
 	ExperimentsColumns = []*schema.Column{
 		{Name: "id", Type: field.TypeUint32, Increment: true, Comment: "id"},
@@ -2561,7 +2491,7 @@ var (
 		{Name: "created_by", Type: field.TypeUint32, Nullable: true, Comment: "创建者ID"},
 		{Name: "updated_by", Type: field.TypeUint32, Nullable: true, Comment: "更新者ID"},
 		{Name: "deleted_by", Type: field.TypeUint32, Nullable: true, Comment: "删除者ID"},
-		{Name: "event_type", Type: field.TypeEnum, Nullable: true, Comment: "业务事件类型（成员名与 proto 的 EventType 枚举逐字同名，EnumTypeConverter 按名字配对）", Enums: []string{"INTERNAL_MESSAGE", "CHANNEL_TEST_EMAIL"}},
+		{Name: "event_type", Type: field.TypeEnum, Nullable: true, Comment: "业务事件类型（成员名与 proto 的 EventType 枚举逐字同名，EnumTypeConverter 按名字配对）", Enums: []string{"INTERNAL_MESSAGE", "CHANNEL_TEST_EMAIL", "SYSTEM_NOTIFY"}},
 		{Name: "channel", Type: field.TypeEnum, Nullable: true, Comment: "投递渠道", Enums: []string{"EMAIL", "WEBHOOK", "INTERNAL"}},
 		{Name: "channel_id", Type: field.TypeUint32, Nullable: true, Comment: "实际选中的渠道配置ID"},
 		{Name: "recipient_user_id", Type: field.TypeUint32, Nullable: true, Comment: "收件用户ID（直发模式可为空）"},
@@ -2645,7 +2575,7 @@ var (
 		{Name: "deleted_by", Type: field.TypeUint32, Nullable: true, Comment: "删除者ID"},
 		{Name: "is_enabled", Type: field.TypeBool, Nullable: true, Comment: "是否启用", Default: true},
 		{Name: "remark", Type: field.TypeString, Nullable: true, Comment: "备注"},
-		{Name: "event_type", Type: field.TypeEnum, Nullable: true, Comment: "业务事件类型（成员名与 proto 的 EventType 枚举逐字同名）", Enums: []string{"INTERNAL_MESSAGE", "CHANNEL_TEST_EMAIL"}},
+		{Name: "event_type", Type: field.TypeEnum, Nullable: true, Comment: "业务事件类型（成员名与 proto 的 EventType 枚举逐字同名）", Enums: []string{"INTERNAL_MESSAGE", "CHANNEL_TEST_EMAIL", "SYSTEM_NOTIFY"}},
 		{Name: "channel", Type: field.TypeEnum, Nullable: true, Comment: "投递渠道", Enums: []string{"EMAIL", "WEBHOOK", "INTERNAL"}},
 		{Name: "is_async", Type: field.TypeBool, Nullable: true, Comment: "是否异步派发（true = 入队 asynq，请求不等投递结论）", Default: false},
 	}
@@ -5265,8 +5195,6 @@ var (
 		SysDictEntriesTable,
 		SysDictEntryI18nTable,
 		SysDictTypesTable,
-		EmailProvidersTable,
-		EmailTemplatesTable,
 		ExperimentsTable,
 		ExperimentParticipantsTable,
 		ExperimentVariantsTable,
@@ -5457,16 +5385,6 @@ func init() {
 	}
 	SysDictTypesTable.Annotation = &entsql.Annotation{
 		Table:     "sys_dict_types",
-		Charset:   "utf8mb4",
-		Collation: "utf8mb4_bin",
-	}
-	EmailProvidersTable.Annotation = &entsql.Annotation{
-		Table:     "email_providers",
-		Charset:   "utf8mb4",
-		Collation: "utf8mb4_bin",
-	}
-	EmailTemplatesTable.Annotation = &entsql.Annotation{
-		Table:     "email_templates",
 		Charset:   "utf8mb4",
 		Collation: "utf8mb4_bin",
 	}

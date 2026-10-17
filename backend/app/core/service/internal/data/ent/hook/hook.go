@@ -272,30 +272,6 @@ func (f DictTypeFunc) Mutate(ctx context.Context, m ent.Mutation) (ent.Value, er
 	return nil, fmt.Errorf("unexpected mutation type %T. expect *ent.DictTypeMutation", m)
 }
 
-// The EmailProviderFunc type is an adapter to allow the use of ordinary
-// function as EmailProvider mutator.
-type EmailProviderFunc func(context.Context, *ent.EmailProviderMutation) (ent.Value, error)
-
-// Mutate calls f(ctx, m).
-func (f EmailProviderFunc) Mutate(ctx context.Context, m ent.Mutation) (ent.Value, error) {
-	if mv, ok := m.(*ent.EmailProviderMutation); ok {
-		return f(ctx, mv)
-	}
-	return nil, fmt.Errorf("unexpected mutation type %T. expect *ent.EmailProviderMutation", m)
-}
-
-// The EmailTemplateFunc type is an adapter to allow the use of ordinary
-// function as EmailTemplate mutator.
-type EmailTemplateFunc func(context.Context, *ent.EmailTemplateMutation) (ent.Value, error)
-
-// Mutate calls f(ctx, m).
-func (f EmailTemplateFunc) Mutate(ctx context.Context, m ent.Mutation) (ent.Value, error) {
-	if mv, ok := m.(*ent.EmailTemplateMutation); ok {
-		return f(ctx, mv)
-	}
-	return nil, fmt.Errorf("unexpected mutation type %T. expect *ent.EmailTemplateMutation", m)
-}
-
 // The ExperimentFunc type is an adapter to allow the use of ordinary
 // function as Experiment mutator.
 type ExperimentFunc func(context.Context, *ent.ExperimentMutation) (ent.Value, error)

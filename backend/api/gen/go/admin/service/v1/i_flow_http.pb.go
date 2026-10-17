@@ -43,14 +43,14 @@ type FlowRuleServiceHTTPServer interface {
 
 func RegisterFlowRuleServiceHTTPServer(s *http.Server, srv FlowRuleServiceHTTPServer) {
 	r := s.Route("/")
-	r.GET("/admin/v1/flow-rules", _FlowRuleService_List18_HTTP_Handler(srv))
-	r.GET("/admin/v1/flow-rules/{id}", _FlowRuleService_Get17_HTTP_Handler(srv))
-	r.POST("/admin/v1/flow-rules", _FlowRuleService_Create13_HTTP_Handler(srv))
-	r.PUT("/admin/v1/flow-rules/{id}", _FlowRuleService_Update14_HTTP_Handler(srv))
-	r.DELETE("/admin/v1/flow-rules/{id}", _FlowRuleService_Delete15_HTTP_Handler(srv))
+	r.GET("/admin/v1/flow-rules", _FlowRuleService_List16_HTTP_Handler(srv))
+	r.GET("/admin/v1/flow-rules/{id}", _FlowRuleService_Get15_HTTP_Handler(srv))
+	r.POST("/admin/v1/flow-rules", _FlowRuleService_Create11_HTTP_Handler(srv))
+	r.PUT("/admin/v1/flow-rules/{id}", _FlowRuleService_Update12_HTTP_Handler(srv))
+	r.DELETE("/admin/v1/flow-rules/{id}", _FlowRuleService_Delete13_HTTP_Handler(srv))
 }
 
-func _FlowRuleService_List18_HTTP_Handler(srv FlowRuleServiceHTTPServer) func(ctx http.Context) error {
+func _FlowRuleService_List16_HTTP_Handler(srv FlowRuleServiceHTTPServer) func(ctx http.Context) error {
 	return func(ctx http.Context) error {
 		var in v1.PagingRequest
 		if err := ctx.BindQuery(&in); err != nil {
@@ -69,7 +69,7 @@ func _FlowRuleService_List18_HTTP_Handler(srv FlowRuleServiceHTTPServer) func(ct
 	}
 }
 
-func _FlowRuleService_Get17_HTTP_Handler(srv FlowRuleServiceHTTPServer) func(ctx http.Context) error {
+func _FlowRuleService_Get15_HTTP_Handler(srv FlowRuleServiceHTTPServer) func(ctx http.Context) error {
 	return func(ctx http.Context) error {
 		var in v11.GetFlowRuleRequest
 		if err := ctx.BindQuery(&in); err != nil {
@@ -91,7 +91,7 @@ func _FlowRuleService_Get17_HTTP_Handler(srv FlowRuleServiceHTTPServer) func(ctx
 	}
 }
 
-func _FlowRuleService_Create13_HTTP_Handler(srv FlowRuleServiceHTTPServer) func(ctx http.Context) error {
+func _FlowRuleService_Create11_HTTP_Handler(srv FlowRuleServiceHTTPServer) func(ctx http.Context) error {
 	return func(ctx http.Context) error {
 		var in v11.CreateFlowRuleRequest
 		if err := ctx.Bind(&in); err != nil {
@@ -113,7 +113,7 @@ func _FlowRuleService_Create13_HTTP_Handler(srv FlowRuleServiceHTTPServer) func(
 	}
 }
 
-func _FlowRuleService_Update14_HTTP_Handler(srv FlowRuleServiceHTTPServer) func(ctx http.Context) error {
+func _FlowRuleService_Update12_HTTP_Handler(srv FlowRuleServiceHTTPServer) func(ctx http.Context) error {
 	return func(ctx http.Context) error {
 		var in v11.UpdateFlowRuleRequest
 		if err := ctx.Bind(&in); err != nil {
@@ -138,7 +138,7 @@ func _FlowRuleService_Update14_HTTP_Handler(srv FlowRuleServiceHTTPServer) func(
 	}
 }
 
-func _FlowRuleService_Delete15_HTTP_Handler(srv FlowRuleServiceHTTPServer) func(ctx http.Context) error {
+func _FlowRuleService_Delete13_HTTP_Handler(srv FlowRuleServiceHTTPServer) func(ctx http.Context) error {
 	return func(ctx http.Context) error {
 		var in v11.DeleteFlowRuleRequest
 		if err := ctx.BindQuery(&in); err != nil {

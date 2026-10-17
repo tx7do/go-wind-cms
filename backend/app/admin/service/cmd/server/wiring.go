@@ -150,11 +150,9 @@ func initApp(ctx *bootstrap.Context) (*kratos.App, func(), error) {
 	experimentServiceClient := data.NewExperimentServiceClient(ctx, discovery)
 	editLockServiceClient := data.NewEditLockServiceClient(ctx, discovery)
 	collabDocStateServiceClient := data.NewCollabDocStateServiceClient(ctx, discovery)
-	emailTemplateServiceClient := data.NewEmailTemplateServiceClient(ctx, discovery)
 
 	// 协同服务（COLLAB_ADDR，默认 :6602；off 时仅 service 供删除踢房 no-op）
 	collabSvc, collabServer := server.NewCollab(ctx, authenticationServiceClient, collabDocStateServiceClient, postServiceClient)
-	emailProviderServiceClient := data.NewEmailProviderServiceClient(ctx, discovery)
 
 	// 通知域（渠道花名册 / 投递台账 / 路由规则 / 模板 / 用户偏好）
 	notificationServiceClient := data.NewNotificationServiceClient(ctx, discovery)
@@ -249,8 +247,6 @@ func initApp(ctx *bootstrap.Context) (*kratos.App, func(), error) {
 	redirectService := service.NewRedirectService(ctx, redirectServiceClient)
 	experimentService := service.NewExperimentService(ctx, experimentServiceClient)
 	editLockService := service.NewEditLockService(ctx, editLockServiceClient)
-	emailTemplateService := service.NewEmailTemplateService(ctx, emailTemplateServiceClient)
-	emailProviderService := service.NewEmailProviderService(ctx, emailProviderServiceClient)
 
 	flowRuleService := service.NewFlowRuleService(ctx, flowRuleServiceClient)
 
@@ -291,8 +287,6 @@ func initApp(ctx *bootstrap.Context) (*kratos.App, func(), error) {
 		redirectService,
 		experimentService,
 		editLockService,
-		emailTemplateService,
-		emailProviderService,
 		flowRuleService,
 		notificationService,
 		notificationChannelService,

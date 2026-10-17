@@ -113,11 +113,9 @@ func NewGrpcServer(
 	webhookService *service.WebhookService,
 	formSubmissionService *service.FormSubmissionService,
 	redirectService *service.RedirectService,
-	emailProviderService *service.EmailProviderService,
 	experimentService *service.ExperimentService,
 	editLockService *service.EditLockService,
 	collabDocStateService *service.CollabDocStateService,
-	emailTemplateService *service.EmailTemplateService,
 
 	notificationService *service.NotificationService,
 	notificationChannelService *service.NotificationChannelService,
@@ -211,8 +209,6 @@ func NewGrpcServer(
 	contentV1.RegisterExperimentServiceServer(srv, experimentService)
 	contentV1.RegisterEditLockServiceServer(srv, editLockService)
 	contentV1.RegisterCollabDocStateServiceServer(srv, collabDocStateService)
-	contentV1.RegisterEmailTemplateServiceServer(srv, emailTemplateService)
-	notifyV1.RegisterEmailProviderServiceServer(srv, emailProviderService)
 	notifyV1.RegisterNotificationServiceServer(srv, notificationService)
 	notifyV1.RegisterNotificationChannelServiceServer(srv, notificationChannelService)
 	notifyV1.RegisterNotificationRuleServiceServer(srv, notificationRuleService)

@@ -35,6 +35,7 @@
   "testDispatchFailed": "Test dispatch failed",
   "eventTypeMap": {
     "CHANNEL_TEST_EMAIL": "Channel test email",
+    "SYSTEM_NOTIFY": "System notify email",
     "INTERNAL_MESSAGE": "In-app message"
   },
   "channelMap": {

@@ -566,15 +566,6 @@ func NewFormSubmissionServiceClient(ctx *bootstrap.Context, r registry.Discovery
 	return contentV1.NewFormSubmissionServiceClient(cli)
 }
 
-func NewEmailProviderServiceClient(ctx *bootstrap.Context, r registry.Discovery) notifyV1.EmailProviderServiceClient {
-	cli, err := rpc.CreateGrpcClient(ctx.Context(), r, serviceid.NewDiscoveryName(serviceid.CoreService), ctx.GetConfig())
-	if err != nil {
-		return nil
-	}
-
-	return notifyV1.NewEmailProviderServiceClient(cli)
-}
-
 func NewNotificationServiceClient(ctx *bootstrap.Context, r registry.Discovery) notifyV1.NotificationServiceClient {
 	cli, err := rpc.CreateGrpcClient(ctx.Context(), r, serviceid.NewDiscoveryName(serviceid.CoreService), ctx.GetConfig())
 	if err != nil {
@@ -654,15 +645,6 @@ func NewCollabDocStateServiceClient(ctx *bootstrap.Context, r registry.Discovery
 	}
 
 	return contentV1.NewCollabDocStateServiceClient(cli)
-}
-
-func NewEmailTemplateServiceClient(ctx *bootstrap.Context, r registry.Discovery) contentV1.EmailTemplateServiceClient {
-	cli, err := rpc.CreateGrpcClient(ctx.Context(), r, serviceid.NewDiscoveryName(serviceid.CoreService), ctx.GetConfig())
-	if err != nil {
-		return nil
-	}
-
-	return contentV1.NewEmailTemplateServiceClient(cli)
 }
 
 func NewFlowRuleServiceClient(ctx *bootstrap.Context, r registry.Discovery) flowV1.FlowRuleServiceClient {

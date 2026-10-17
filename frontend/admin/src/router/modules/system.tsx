@@ -73,27 +73,6 @@ export const systemRoutes: AppRouteObject[] = [
         },
       },
       {
-        name: 'email-template',
-        path: 'email-template', // 相对路径，最终为 /system/email-template
-        element: createLazyRoute(() => import('@/pages/app/system/email-template')),
-        meta: {
-          title: 'routes:email-template',
-          icon: 'lucide:layout-template',
-          authority: ['sys:platform_admin'],
-        },
-      },
-      {
-        name: 'email-provider',
-        path: 'email-provider', // 相对路径，最终为 /system/email-provider
-        element: createLazyRoute(() => import('@/pages/app/system/email-provider')),
-        meta: {
-          title: 'routes:email-provider',
-          icon: 'lucide:mail', // Iconify 格式
-          order: 9,
-          // permission: 'sys:platform_admin', // 平台管理员权限（开发阶段暂时注释）
-        },
-      },
-      {
         name: 'flow-rule',
         path: 'flow-rule', // 相对路径，最终为 /system/flow-rule
         element: createLazyRoute(() => import('@/pages/app/system/flow-rule')),
