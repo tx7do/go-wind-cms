@@ -284,7 +284,6 @@ func (r *WebhookRepo) ListDeliveries(ctx context.Context, webhookID uint32, limi
 func (r *WebhookRepo) PruneDeliveriesOlderThan(ctx context.Context, before time.Time, limit int) (int, error) {
 	ids, err := r.entClient.Client().WebhookDelivery.Query().
 		Where(webhookdelivery.CreatedAtLT(before)).
-		Select(webhookdelivery.FieldID).
 		IDs(ctx)
 	if err != nil {
 		r.log.Errorf("prune webhook deliveries: list ids failed: %s", err.Error())

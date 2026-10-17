@@ -94,7 +94,6 @@ func (r *SocialStatsHistoryRepo) ListByDistribution(ctx context.Context, distrib
 func (r *SocialStatsHistoryRepo) PruneOlderThan(ctx context.Context, before time.Time, limit int) (int, error) {
 	ids, err := r.entClient.Client().SocialStatsHistory.Query().
 		Where(socialstatshistory.CreatedAtLT(before)).
-		Select(socialstatshistory.FieldID).
 		IDs(ctx)
 	if err != nil {
 		r.log.Errorf("prune stats history: list ids failed: %s", err.Error())

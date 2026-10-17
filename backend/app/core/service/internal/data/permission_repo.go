@@ -493,7 +493,7 @@ func (r *PermissionRepo) Delete(ctx context.Context, req *permissionV1.DeletePer
 		if tid, hasTenant := maybeTenantFromViewer(ctx); hasTenant {
 			codeQuery.Where(permission.TenantIDEQ(tid))
 		}
-		permissionIDs, err = codeQuery.Select(permission.FieldID).IDs(ctx)
+		permissionIDs, err = codeQuery.IDs(ctx)
 		if err != nil {
 			r.log.Errorf("get permission ids by code failed: %s", err.Error())
 			return permissionV1.ErrorInternalServerError("get permission ids by code failed")
@@ -505,7 +505,7 @@ func (r *PermissionRepo) Delete(ctx context.Context, req *permissionV1.DeletePer
 		if tid, hasTenant := maybeTenantFromViewer(ctx); hasTenant {
 			groupQuery.Where(permission.TenantIDEQ(tid))
 		}
-		permissionIDs, err = groupQuery.Select(permission.FieldID).IDs(ctx)
+		permissionIDs, err = groupQuery.IDs(ctx)
 		if err != nil {
 			r.log.Errorf("get permission ids by group id failed: %s", err.Error())
 			return permissionV1.ErrorInternalServerError("get permission ids by group id failed")

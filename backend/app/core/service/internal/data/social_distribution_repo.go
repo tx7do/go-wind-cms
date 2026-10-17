@@ -386,7 +386,6 @@ func (r *SocialDistributionRepo) ListDueScheduledIDs(ctx context.Context, now ti
 				socialdistribution.PublishTimeLTE(now),
 			),
 		).
-		Select(socialdistribution.FieldID).
 		IDs(ctx)
 	if err != nil {
 		r.log.Errorf("list due scheduled distributions failed: %s", err.Error())

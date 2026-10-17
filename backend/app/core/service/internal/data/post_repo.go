@@ -414,7 +414,6 @@ func (r *PostRepo) ListDueScheduledPostIDs(ctx context.Context, now time.Time) (
 				post.PublishTimeLTE(now),
 			),
 		).
-		Select(post.FieldID).
 		IDs(ctx)
 	if err != nil {
 		r.log.Errorf("list due scheduled posts failed: %s", err.Error())
