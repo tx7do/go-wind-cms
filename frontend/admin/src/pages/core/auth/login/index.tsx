@@ -318,8 +318,10 @@ const Login: React.FC = () => {
             </Button>
           </Form.Item>
 
-          {/* 企业 SSO 入口：OIDC 配置未启用时点击会有后端错误提示，不影响密码登录 */}
-          <div className="mt-1 flex items-center gap-3">
+          {/* 企业 SSO 入口：OIDC 配置未启用时点击会有后端错误提示，不影响密码登录。
+              my-5 与表单 20px 行距同档（顶部经边距折叠维持 20px，底部补齐，
+              此前 mt-1 时分隔行下面是 0px、贴死 SSO 按钮） */}
+          <div className="my-5 flex items-center gap-3">
             <div className="h-px flex-1 bg-[color:var(--ant-color-border-secondary)]" />
             <span className="text-xs text-[color:var(--ant-color-text-quaternary)]">
               {t('ssoOrDivider')}
