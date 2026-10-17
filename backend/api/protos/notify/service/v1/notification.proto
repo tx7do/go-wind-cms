@@ -1,0 +1,235 @@
+syntax = "proto3";
+
+package notify.service.v1;
+
+import "gnostic/openapi/v3/annotations.proto";
+
+import "google/protobuf/timestamp.proto";
+
+import "pagination/v1/pagination.proto";
+
+option go_package = "go-wind-cms/api/gen/go/notify/service/v1;notifyv1";
+
+// 通知投递服务：站内/站外通知的统一出口 + 投递台账。
+//
+// 与 NotificationChannelService 的分工：渠道域是"花名册"（配了哪些 SMTP 账号/webhook 地址），
+// 本域是"投递"（某事件经某渠道发给某目标的结果）。
+//
+// 站内信（INTERNAL 渠道）注册为一条真正的渠道（internal/service/internal_message_sender.go），
+// 因此"某事件要通知某人"的调用方不必知道对方走邮箱还是走收件箱。
+//
+// SendDirect 不开 HTTP 路由：开放成端点等于给任意已登录操作员一个"向任意邮箱发信"的能力；
+// 它只由进程内的业务 service 经 Notifier 接口调用。
+service NotificationService {
+  // 直发：调用方已握有投递目标（邮箱地址/收件用户等），不经用户解析
+  rpc SendDirect (SendDirectNotificationRequest) returns (SendNotificationResponse) {}
+
+  // 查询投递台账列表
+  rpc ListDelivery (pagination.PagingRequest) returns (ListNotificationDeliveryResponse) {}
+
+  // 查询投递台账详情
+  rpc GetDelivery (GetNotificationDeliveryRequest) returns (NotificationDelivery) {}
+}
+
+// 投递渠道。成员名必须与 ent 列值逐字相同（EnumTypeConverter 按名字字符串配对）。
+enum Channel {
+  CHANNEL_UNSPECIFIED = 0; // 未指定：由 event_type 的路由规则决定
+  EMAIL = 1;               // 邮件（SMTP）
+  WEBHOOK = 2;             // Webhook（HTTP 回调）
+  INTERNAL = 3;            // 站内信（虚拟渠道，无花名册行，台账 channel_id 留空）
+}
+
+// 业务事件类型。路由（事件 → 渠道 / 是否异步）由 notification_rules 表决定，
+// 初始行由代码里那份同形常量空表播种（删行不复活是特性：管理员删一行 = 该事件不再通知）。
+enum EventType {
+  EVENT_TYPE_UNSPECIFIED = 0;
+
+  // 站内信投递：一条站内信发给一个收件人 = 一行台账，related_id 指向 internal_messages.id。
+  // 它与其他事件的区别：其他事件由业务动作触发、渠道由路由表决定；这一个本身就是
+  // "站内信内容域经缝投递了一次"，related_id 必填，否则台账行无法回答"发的是哪条消息"。
+  INTERNAL_MESSAGE = 1;
+
+  // 渠道配置测试邮件（渠道页"测试发送"）。
+  CHANNEL_TEST_EMAIL = 2;
+}
+
+// 投递状态
+enum DeliveryStatus {
+  DELIVERY_STATUS_UNSPECIFIED = 0;
+
+  SENDING = 1; // 已落台账、正在投递（进程中途崩溃会停在此态，即为排障线索）
+  SENT = 2;    // 渠道已接受
+  FAILED = 3;  // 渠道报错
+  SKIPPED = 4; // 未投递：无可用渠道等路由结果
+}
+
+// 一条通知 × 一个渠道 × 一个收件人 = 一行投递台账。
+// 不存正文快照（防敏感正文明文集邮），target 落脱敏串；排障经 related_id 跳回业务对象。
+message NotificationDelivery {
+  optional uint32 id = 1 [
+    json_name = "id",
+    (gnostic.openapi.v3.property) = { description: "台账ID" }
+  ]; // 台账ID
+
+  optional EventType event_type = 2 [
+    json_name = "eventType",
+    (gnostic.openapi.v3.property) = { description: "业务事件类型" }
+  ]; // 业务事件类型
+
+  optional Channel channel = 3 [
+    json_name = "channel",
+    (gnostic.openapi.v3.property) = { description: "投递渠道" }
+  ]; // 投递渠道
+
+  optional uint32 channel_id = 4 [
+    json_name = "channelId",
+    (gnostic.openapi.v3.property) = { description: "实际选中的渠道配置ID" }
+  ]; // 实际选中的渠道配置ID
+
+  optional uint32 recipient_user_id = 5 [
+    json_name = "recipientUserId",
+    (gnostic.openapi.v3.property) = { description: "收件用户ID（直发模式可为空）" }
+  ]; // 收件用户ID（直发模式可为空）
+
+  // 脱敏后的投递目标：邮箱留首字符+域名，其余留末 4 位；INTERNAL 原样存用户 ID 十进制串
+  optional string target = 6 [
+    json_name = "target",
+    (gnostic.openapi.v3.property) = { description: "投递目标（脱敏）" }
+  ]; // 投递目标（脱敏）
+
+  optional DeliveryStatus status = 7 [
+    json_name = "status",
+    (gnostic.openapi.v3.property) = { description: "投递状态" }
+  ]; // 投递状态
+
+  optional string last_error = 8 [
+    json_name = "lastError",
+    (gnostic.openapi.v3.property) = { description: "最近一次失败原因" }
+  ]; // 最近一次失败原因
+
+  optional google.protobuf.Timestamp sent_at = 9 [
+    json_name = "sentAt",
+    (gnostic.openapi.v3.property) = { description: "投递完成时间" }
+  ]; // 投递完成时间
+
+  // 产生本条投递的业务对象主键，含义由 event_type 决定（INTERNAL_MESSAGE → internal_messages.id）。
+  optional uint32 related_id = 10 [
+    json_name = "relatedId",
+    (gnostic.openapi.v3.property) = { description: "关联业务对象ID（按 event_type 解释）" }
+  ]; // 关联业务对象ID
+
+  // 一次派发意图的标识：调用方不传则服务端生成 UUID。唯一性按 (request_id, channel) 组合。
+  optional string request_id = 11 [
+    json_name = "requestId",
+    (gnostic.openapi.v3.property) = { description: "派发请求ID（幂等锚）" }
+  ]; // 派发请求ID
+
+  // 已尝试投递次数（含首次）。同步投递恒为 1；异步投递每次尝试先加再一次拨号，
+  // 因此 attempts>0 而 status 仍为 SENDING = 拨过号但没回写结论。
+  optional uint32 attempts = 12 [
+    json_name = "attempts",
+    (gnostic.openapi.v3.property) = { description: "实际尝试投递次数（含首次）" }
+  ]; // 实际尝试次数
+
+  optional uint32 created_by = 100 [json_name = "createdBy"];
+  optional uint32 updated_by = 101 [json_name = "updatedBy"];
+
+  optional google.protobuf.Timestamp created_at = 200 [json_name = "createdAt"];
+  optional google.protobuf.Timestamp updated_at = 201 [json_name = "updatedAt"];
+}
+
+// 查询投递台账列表 - 回应
+message ListNotificationDeliveryResponse {
+  repeated NotificationDelivery items = 1;
+  uint64 total = 2;
+}
+
+// 查询投递台账详情 - 请求
+message GetNotificationDeliveryRequest {
+  uint32 id = 1;
+}
+
+// 直发通知 - 请求
+message SendDirectNotificationRequest {
+  EventType event_type = 1 [
+    json_name = "eventType",
+    (gnostic.openapi.v3.property) = { description: "业务事件类型（决定渠道路由与台账分类）" }
+  ]; // 业务事件类型
+
+  // 投递目标：EMAIL 为收件地址，WEBHOOK 为回调 URL，INTERNAL 为收件用户的十进制 ID 字符串。
+  // 直发语义即"调用方已自行解析出目标"。
+  string target = 2 [
+    json_name = "target",
+    (gnostic.openapi.v3.property) = { description: "投递目标（收件邮箱地址等）" }
+  ]; // 投递目标
+
+  string title = 3 [
+    json_name = "title",
+    (gnostic.openapi.v3.property) = { description: "通知标题（邮件为 Subject）" }
+  ]; // 通知标题
+
+  string content = 4 [
+    json_name = "content",
+    (gnostic.openapi.v3.property) = { description: "通知正文" }
+  ]; // 通知正文
+
+  // 显式指定渠道配置：测试邮件必须打到"正在调的那一条"，不能退化成"取第一个启用的"。
+  // 留空则由渠道选择策略取第一个启用的同类型渠道。
+  optional uint32 channel_id = 5 [
+    json_name = "channelId",
+    (gnostic.openapi.v3.property) = { description: "指定渠道配置ID，留空取第一个启用的" }
+  ]; // 指定渠道配置ID
+
+  optional Channel channel = 6 [
+    json_name = "channel",
+    (gnostic.openapi.v3.property) = { description: "投递渠道，留空由事件类型路由决定" }
+  ]; // 投递渠道（留空由事件类型路由决定）
+
+  optional uint32 recipient_user_id = 7 [
+    json_name = "recipientUserId",
+    (gnostic.openapi.v3.property) = { description: "收件用户ID（仅台账归类用）" }
+  ]; // 收件用户ID（仅台账归类用）
+
+  optional uint32 operator_user_id = 8 [
+    json_name = "operatorUserId",
+    (gnostic.openapi.v3.property) = { description: "操作人用户ID（系统发起时留空）" }
+  ]; // 操作人用户ID（系统发起时留空）
+
+  // 产生本次投递的业务对象主键，原样落到台账的 related_id（含义由 event_type 决定）。
+  optional uint32 related_id = 9 [
+    json_name = "relatedId",
+    (gnostic.openapi.v3.property) = { description: "关联业务对象ID（按 event_type 解释）" }
+  ]; // 关联业务对象ID
+
+  // 幂等锚，可选：调用方留空时服务端生成一个 UUID。台账按 (request_id, channel) 唯一索引收敛。
+  optional string request_id = 10 [
+    json_name = "requestId",
+    (gnostic.openapi.v3.property) = { description: "派发请求ID（留空则服务端生成）" }
+  ]; // 派发请求ID
+
+  // 通知模板编码：给出时 title/content 由模板渲染得出，请求里的 title/content 被覆盖。
+  // 渲染发生在落台账之前——异步派发的载荷里装的就是渲染结果，重试不重新解析模板。
+  optional string template_code = 11 [
+    json_name = "templateCode",
+    (gnostic.openapi.v3.property) = { description: "通知模板编码（给出时覆盖 title/content）" }
+  ]; // 通知模板编码
+
+  // 模板变量：占位符名 → 值；模板引用了变量集里没有的占位符时整个渲染报错。
+  map<string, string> template_vars = 12 [
+    json_name = "templateVars",
+    (gnostic.openapi.v3.property) = { description: "模板变量（占位符名 → 值）" }
+  ]; // 模板变量
+}
+
+// 直发通知 - 回应。失败时本回应仍非 nil（台账 ID + 状态），与 error 同时返回。
+message SendNotificationResponse {
+  uint32 delivery_id = 1 [
+    json_name = "deliveryId",
+    (gnostic.openapi.v3.property) = { description: "台账ID" }
+  ]; // 台账ID
+
+  DeliveryStatus status = 2 [
+    json_name = "status",
+    (gnostic.openapi.v3.property) = { description: "投递结果" }
+  ]; // 投递结果
+}

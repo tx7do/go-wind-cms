@@ -156,6 +156,13 @@ func initApp(ctx *bootstrap.Context) (*kratos.App, func(), error) {
 	collabSvc, collabServer := server.NewCollab(ctx, authenticationServiceClient, collabDocStateServiceClient, postServiceClient)
 	emailProviderServiceClient := data.NewEmailProviderServiceClient(ctx, discovery)
 
+	// 通知域（渠道花名册 / 投递台账 / 路由规则 / 模板 / 用户偏好）
+	notificationServiceClient := data.NewNotificationServiceClient(ctx, discovery)
+	notificationChannelServiceClient := data.NewNotificationChannelServiceClient(ctx, discovery)
+	notificationRuleServiceClient := data.NewNotificationRuleServiceClient(ctx, discovery)
+	notificationTemplateServiceClient := data.NewNotificationTemplateServiceClient(ctx, discovery)
+	notificationPreferenceServiceClient := data.NewNotificationPreferenceServiceClient(ctx, discovery)
+
 	// ── register:client ── 新模块服务客户端在此行后注册(make register 工具锚点,勿删)
 
 	// ═══════════════════════ 三、服务层(internal/service) ═══════════════════════
@@ -246,6 +253,12 @@ func initApp(ctx *bootstrap.Context) (*kratos.App, func(), error) {
 	emailProviderService := service.NewEmailProviderService(ctx, emailProviderServiceClient)
 
 	flowRuleService := service.NewFlowRuleService(ctx, flowRuleServiceClient)
+
+	notificationService := service.NewNotificationService(ctx, notificationServiceClient)
+	notificationChannelService := service.NewNotificationChannelService(ctx, notificationChannelServiceClient)
+	notificationRuleService := service.NewNotificationRuleService(ctx, notificationRuleServiceClient)
+	notificationTemplateService := service.NewNotificationTemplateService(ctx, notificationTemplateServiceClient)
+	notificationPreferenceService := service.NewNotificationPreferenceService(ctx, notificationPreferenceServiceClient)
 	// ── register:service ── 新模块服务在此行后注册(make register 工具锚点,勿删)
 
 	// ═══════════════════════ 四、传输层(internal/server) ═══════════════════════
@@ -281,6 +294,11 @@ func initApp(ctx *bootstrap.Context) (*kratos.App, func(), error) {
 		emailTemplateService,
 		emailProviderService,
 		flowRuleService,
+		notificationService,
+		notificationChannelService,
+		notificationRuleService,
+		notificationTemplateService,
+		notificationPreferenceService,
 		// register:rest-arg ── 新模块服务实参在此行后追加(make register 工具锚点,勿删)
 	)
 

@@ -84,3 +84,9 @@ export * from './social';
 // 脚本管理
 
 // 脚本执行日志
+
+// 通知域
+export * from './notification-channel';
+export * from './notification-delivery';
+export * from './notification-rule';
+export * from './notification-template';

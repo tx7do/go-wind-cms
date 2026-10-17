@@ -10,6 +10,7 @@ import (
 	pkgcrypto "go-wind-cms/pkg/crypto"
 
 	"go-wind-cms/app/core/service/internal/data"
+	"go-wind-cms/app/core/service/internal/data/channel"
 	"go-wind-cms/app/core/service/internal/data/client"
 	"go-wind-cms/app/core/service/internal/server"
 	"go-wind-cms/app/core/service/internal/service"
@@ -202,6 +203,13 @@ func initApp(ctx *bootstrap.Context) (*kratos.App, func(), error) {
 	socialStatsHistoryRepo := data.NewSocialStatsHistoryRepo(ctx, entClient)
 	socialInboxRepo := data.NewSocialInboxRepo(ctx, entClient)
 
+	// 通知域：渠道花名册 / 投递台账 / 路由规则 / 模板 / 用户偏好（全部平台级，无租户列）
+	notificationChannelRepo := data.NewNotificationChannelRepo(ctx, entClient)
+	notificationDeliveryRepo := data.NewNotificationDeliveryRepo(ctx, entClient)
+	notificationRuleRepo := data.NewNotificationRuleRepo(ctx, entClient)
+	notificationTemplateRepo := data.NewNotificationTemplateRepo(ctx, entClient)
+	notificationPreferenceRepo := data.NewNotificationPreferenceRepo(ctx, entClient)
+
 	// ── register:repo ── 新模块仓储在此行后注册(make register 工具锚点,勿删)
 
 	// ═══════════════════════ 三、服务层(internal/service) ═══════════════════════
@@ -269,6 +277,23 @@ func initApp(ctx *bootstrap.Context) (*kratos.App, func(), error) {
 	internalMessageService := service.NewInternalMessageService(ctx, internalMessageRepo, internalMessageCategoryRepo, internalMessageRecipientRepo, userRepo, redisClient, taskService, emailProviderRepo, emailTemplateRepo)
 	internalMessageCategoryService := service.NewInternalMessageCategoryService(ctx, internalMessageCategoryRepo)
 	internalMessageRecipientService := service.NewInternalMessageRecipientService(ctx, internalMessageRepo, internalMessageRecipientRepo)
+
+	// 通知域（投递台账 + 渠道花名册 + 路由规则 + 模板 + 用户偏好）
+	// 注册表先注册自包含的渠道 sender；INTERNAL 渠道的 sender 依赖两个 service 互相就绪，
+	// 在下方"双向引用缝"处补注册（构造期互相传会成环）。
+	channelRegistry := channel.NewRegistry()
+	channelRegistry.Register(channel.NewEmailSender(notificationChannelRepo))
+	channelRegistry.Register(channel.NewWebhookSender(notificationChannelRepo))
+	notificationService := service.NewNotificationService(ctx, notificationDeliveryRepo, notificationRuleRepo, notificationTemplateRepo, channelRegistry)
+	notificationChannelService := service.NewNotificationChannelService(ctx, notificationChannelRepo, notificationService)
+	notificationRuleService := service.NewNotificationRuleService(ctx, notificationRuleRepo, notificationChannelRepo, notificationService)
+	notificationTemplateService := service.NewNotificationTemplateService(ctx, notificationTemplateRepo)
+	notificationPreferenceService := service.NewNotificationPreferenceService(ctx, notificationPreferenceRepo, internalMessageCategoryRepo)
+
+	// 双向引用缝：站内信的系统通知经投递缝（SendDirect）走渠道路由，
+	// INTERNAL 渠道的实现又反向持有站内信 service——两个 service 构造完之后再互相注册。
+	channelRegistry.Register(service.NewInternalMessageSender(internalMessageService, notificationPreferenceRepo, ctx.NewLoggerHelper("internal-message-sender/channel")))
+	internalMessageService.RegisterNotifier(notificationService)
 
 	// 内容
 	commentService := service.NewCommentService(ctx, commentRepo)
@@ -342,6 +367,11 @@ func initApp(ctx *bootstrap.Context) (*kratos.App, func(), error) {
 		editLockService,
 		collabDocStateService,
 		emailTemplateService,
+		notificationService,
+		notificationChannelService,
+		notificationRuleService,
+		notificationTemplateService,
+		notificationPreferenceService,
 		// register:grpc-arg ── 新模块服务实参在此行后追加(make register 工具锚点,勿删)
 	)
 	if err != nil {
@@ -349,7 +379,7 @@ func initApp(ctx *bootstrap.Context) (*kratos.App, func(), error) {
 		return nil, nil, err
 	}
 
-	asynqServer := server.NewAsynqServer(ctx, taskService, searchService, aiKnowledgeService, aiQueryService, aiContentService, socialService, postService, webhookService, internalMessageService, flowService)
+	asynqServer := server.NewAsynqServer(ctx, taskService, searchService, aiKnowledgeService, aiQueryService, aiContentService, socialService, postService, webhookService, internalMessageService, flowService, notificationService)
 
 	return newApp(ctx, grpcServer, asynqServer), rollback, nil
 }

@@ -2,7 +2,8 @@
   "pageTitle": "个人中心",
   "tab": {
     "basicInfo": "基本信息",
-    "security": "安全设置"
+    "security": "安全设置",
+    "notification": "通知偏好"
   },
   "avatar": "头像",
   "username": "用户名",
@@ -50,5 +51,19 @@
     "MALE": "男",
     "FEMALE": "女",
     "SECRET": "保密"
+  },
+  "notification": {
+    "quietTitle": "实时推送静音时段",
+    "quietDesc": "静音时段内不再实时推送通知（角标即时性）；收件中心照常保留全部消息，打开即可查看。",
+    "quietEnable": "启用静音时段",
+    "quietTimeRange": "静音时间范围（支持跨零点，如 22:00 → 08:00）",
+    "on": "开",
+    "off": "关",
+    "quietTimeRequired": "启用静音时段时请选择完整的时间范围",
+    "quietZeroWidth": "静音开始与结束不能相同",
+    "save": "保存偏好",
+    "saveSuccess": "通知偏好已保存",
+    "saveFailed": "保存失败",
+    "transactionalNote": "验证码等事务性邮件不经偏好层，不受本页配置影响。"
   }
 }

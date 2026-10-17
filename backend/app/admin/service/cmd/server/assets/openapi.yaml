@@ -5341,6 +5341,698 @@ paths:
                 "200":
                     description: OK
                     content: {}
+    /admin/v1/notification-channels:
+        get:
+            tags:
+                - NotificationChannelService
+            description: 查询通知渠道列表
+            operationId: NotificationChannelService_List
+            parameters:
+                - name: page
+                  in: query
+                  description: 当前页码（从1开始，默认1）
+                  schema:
+                    type: integer
+                    format: uint32
+                - name: pageSize
+                  in: query
+                  description: 每页条数（默认10，建议设置上限如100）
+                  schema:
+                    type: integer
+                    format: uint32
+                - name: offset
+                  in: query
+                  description: 跳过的记录数（从0开始，默认0）
+                  schema:
+                    type: string
+                - name: limit
+                  in: query
+                  description: 最多返回的记录数（默认10，建议设置上限如100）
+                  schema:
+                    type: integer
+                    format: uint32
+                - name: token
+                  in: query
+                  description: 上一页最后一条记录的游标（如ID/时间戳+ID，首次请求为空）
+                  schema:
+                    type: string
+                - name: noPaging
+                  in: query
+                  description: 是否不分页，如果为true，则page和pageSize参数无效。
+                  schema:
+                    type: boolean
+                - name: query
+                  in: query
+                  description: JSON字符串过滤条件，基础语法：{"field1":"val1", "field2___icontains":"val2"}，具体请参见：https://github.com/tx7do/go-crud/tree/main/pagination/filter/README.md
+                  schema:
+                    type: string
+                - name: filter
+                  in: query
+                  description: Google AIP规范字符串过滤条件
+                  schema:
+                    type: string
+                - name: filterExpr.type
+                  in: query
+                  description: 过滤表达式类型
+                  schema:
+                    enum:
+                        - EXPR_TYPE_UNSPECIFIED
+                        - AND
+                        - OR
+                    type: string
+                    format: enum
+                - name: orderBy
+                  in: query
+                  description: 排序条件
+                  schema:
+                    type: string
+                - name: fieldMask
+                  in: query
+                  description: 字段掩码，其作用为SELECT中的字段，其语法为使用逗号分隔字段名，例如：id,realName,userName。如果为空则选中所有字段，即SELECT *。
+                  schema:
+                    type: string
+                    format: field-mask
+            responses:
+                "200":
+                    description: OK
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/notify.service.v1.ListNotificationChannelResponse'
+        post:
+            tags:
+                - NotificationChannelService
+            description: 创建通知渠道
+            operationId: NotificationChannelService_Create
+            requestBody:
+                content:
+                    application/json:
+                        schema:
+                            $ref: '#/components/schemas/notify.service.v1.CreateNotificationChannelRequest'
+                required: true
+            responses:
+                "200":
+                    description: OK
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/notify.service.v1.NotificationChannel'
+    /admin/v1/notification-channels/{id}:
+        get:
+            tags:
+                - NotificationChannelService
+            description: 查询通知渠道详情
+            operationId: NotificationChannelService_Get
+            parameters:
+                - name: id
+                  in: path
+                  required: true
+                  schema:
+                    type: integer
+                    format: uint32
+            responses:
+                "200":
+                    description: OK
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/notify.service.v1.NotificationChannel'
+        put:
+            tags:
+                - NotificationChannelService
+            description: 更新通知渠道
+            operationId: NotificationChannelService_Update
+            parameters:
+                - name: id
+                  in: path
+                  required: true
+                  schema:
+                    type: integer
+                    format: uint32
+            requestBody:
+                content:
+                    application/json:
+                        schema:
+                            $ref: '#/components/schemas/notify.service.v1.UpdateNotificationChannelRequest'
+                required: true
+            responses:
+                "200":
+                    description: OK
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/notify.service.v1.NotificationChannel'
+        delete:
+            tags:
+                - NotificationChannelService
+            description: 删除通知渠道
+            operationId: NotificationChannelService_Delete
+            parameters:
+                - name: id
+                  in: path
+                  required: true
+                  schema:
+                    type: integer
+                    format: uint32
+            responses:
+                "200":
+                    description: OK
+                    content: {}
+    /admin/v1/notification-channels/{id}/send-test-email:
+        post:
+            tags:
+                - NotificationChannelService
+            description: 发送测试邮件（验证渠道配置）
+            operationId: NotificationChannelService_SendTestEmail
+            parameters:
+                - name: id
+                  in: path
+                  required: true
+                  schema:
+                    type: integer
+                    format: uint32
+            requestBody:
+                content:
+                    application/json:
+                        schema:
+                            $ref: '#/components/schemas/notify.service.v1.SendTestEmailRequest'
+                required: true
+            responses:
+                "200":
+                    description: OK
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/notify.service.v1.SendTestEmailResponse'
+    /admin/v1/notification-deliveries:
+        get:
+            tags:
+                - NotificationService
+            description: 查询投递台账列表
+            operationId: NotificationService_ListDelivery
+            parameters:
+                - name: page
+                  in: query
+                  description: 当前页码（从1开始，默认1）
+                  schema:
+                    type: integer
+                    format: uint32
+                - name: pageSize
+                  in: query
+                  description: 每页条数（默认10，建议设置上限如100）
+                  schema:
+                    type: integer
+                    format: uint32
+                - name: offset
+                  in: query
+                  description: 跳过的记录数（从0开始，默认0）
+                  schema:
+                    type: string
+                - name: limit
+                  in: query
+                  description: 最多返回的记录数（默认10，建议设置上限如100）
+                  schema:
+                    type: integer
+                    format: uint32
+                - name: token
+                  in: query
+                  description: 上一页最后一条记录的游标（如ID/时间戳+ID，首次请求为空）
+                  schema:
+                    type: string
+                - name: noPaging
+                  in: query
+                  description: 是否不分页，如果为true，则page和pageSize参数无效。
+                  schema:
+                    type: boolean
+                - name: query
+                  in: query
+                  description: JSON字符串过滤条件，基础语法：{"field1":"val1", "field2___icontains":"val2"}，具体请参见：https://github.com/tx7do/go-crud/tree/main/pagination/filter/README.md
+                  schema:
+                    type: string
+                - name: filter
+                  in: query
+                  description: Google AIP规范字符串过滤条件
+                  schema:
+                    type: string
+                - name: filterExpr.type
+                  in: query
+                  description: 过滤表达式类型
+                  schema:
+                    enum:
+                        - EXPR_TYPE_UNSPECIFIED
+                        - AND
+                        - OR
+                    type: string
+                    format: enum
+                - name: orderBy
+                  in: query
+                  description: 排序条件
+                  schema:
+                    type: string
+                - name: fieldMask
+                  in: query
+                  description: 字段掩码，其作用为SELECT中的字段，其语法为使用逗号分隔字段名，例如：id,realName,userName。如果为空则选中所有字段，即SELECT *。
+                  schema:
+                    type: string
+                    format: field-mask
+            responses:
+                "200":
+                    description: OK
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/notify.service.v1.ListNotificationDeliveryResponse'
+    /admin/v1/notification-deliveries/{id}:
+        get:
+            tags:
+                - NotificationService
+            description: 查询投递台账详情
+            operationId: NotificationService_GetDelivery
+            parameters:
+                - name: id
+                  in: path
+                  required: true
+                  schema:
+                    type: integer
+                    format: uint32
+            responses:
+                "200":
+                    description: OK
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/notify.service.v1.NotificationDelivery'
+    /admin/v1/notification-preference:
+        get:
+            tags:
+                - NotificationPreferenceService
+            description: 获取当前用户的通知偏好；从未配置过时返回默认值（未启用静音、无退订）。
+            operationId: NotificationPreferenceService_GetMyNotificationPreference
+            responses:
+                "200":
+                    description: OK
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/notify.service.v1.NotificationPreference'
+        post:
+            tags:
+                - NotificationPreferenceService
+            description: 更新当前用户的通知偏好，返回保存后的完整状态。
+            operationId: NotificationPreferenceService_UpdateMyNotificationPreference
+            requestBody:
+                content:
+                    application/json:
+                        schema:
+                            $ref: '#/components/schemas/notify.service.v1.UpdateNotificationPreferenceRequest'
+                required: true
+            responses:
+                "200":
+                    description: OK
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/notify.service.v1.NotificationPreference'
+    /admin/v1/notification-preference/categories:
+        get:
+            tags:
+                - NotificationPreferenceService
+            description: 当前用户可退订的启用分类清单（本租户内）。
+            operationId: NotificationPreferenceService_ListMyNotificationCategories
+            responses:
+                "200":
+                    description: OK
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/notify.service.v1.ListMyNotificationCategoriesResponse'
+    /admin/v1/notification-rules:
+        get:
+            tags:
+                - NotificationRuleService
+            description: 查询路由规则列表
+            operationId: NotificationRuleService_List
+            parameters:
+                - name: page
+                  in: query
+                  description: 当前页码（从1开始，默认1）
+                  schema:
+                    type: integer
+                    format: uint32
+                - name: pageSize
+                  in: query
+                  description: 每页条数（默认10，建议设置上限如100）
+                  schema:
+                    type: integer
+                    format: uint32
+                - name: offset
+                  in: query
+                  description: 跳过的记录数（从0开始，默认0）
+                  schema:
+                    type: string
+                - name: limit
+                  in: query
+                  description: 最多返回的记录数（默认10，建议设置上限如100）
+                  schema:
+                    type: integer
+                    format: uint32
+                - name: token
+                  in: query
+                  description: 上一页最后一条记录的游标（如ID/时间戳+ID，首次请求为空）
+                  schema:
+                    type: string
+                - name: noPaging
+                  in: query
+                  description: 是否不分页，如果为true，则page和pageSize参数无效。
+                  schema:
+                    type: boolean
+                - name: query
+                  in: query
+                  description: JSON字符串过滤条件，基础语法：{"field1":"val1", "field2___icontains":"val2"}，具体请参见：https://github.com/tx7do/go-crud/tree/main/pagination/filter/README.md
+                  schema:
+                    type: string
+                - name: filter
+                  in: query
+                  description: Google AIP规范字符串过滤条件
+                  schema:
+                    type: string
+                - name: filterExpr.type
+                  in: query
+                  description: 过滤表达式类型
+                  schema:
+                    enum:
+                        - EXPR_TYPE_UNSPECIFIED
+                        - AND
+                        - OR
+                    type: string
+                    format: enum
+                - name: orderBy
+                  in: query
+                  description: 排序条件
+                  schema:
+                    type: string
+                - name: fieldMask
+                  in: query
+                  description: 字段掩码，其作用为SELECT中的字段，其语法为使用逗号分隔字段名，例如：id,realName,userName。如果为空则选中所有字段，即SELECT *。
+                  schema:
+                    type: string
+                    format: field-mask
+            responses:
+                "200":
+                    description: OK
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/notify.service.v1.ListNotificationRuleResponse'
+        post:
+            tags:
+                - NotificationRuleService
+            description: 创建路由规则
+            operationId: NotificationRuleService_Create
+            requestBody:
+                content:
+                    application/json:
+                        schema:
+                            $ref: '#/components/schemas/notify.service.v1.CreateNotificationRuleRequest'
+                required: true
+            responses:
+                "200":
+                    description: OK
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/notify.service.v1.NotificationRule'
+    /admin/v1/notification-rules/{id}:
+        get:
+            tags:
+                - NotificationRuleService
+            description: 查询路由规则详情
+            operationId: NotificationRuleService_Get
+            parameters:
+                - name: id
+                  in: path
+                  required: true
+                  schema:
+                    type: integer
+                    format: uint32
+            responses:
+                "200":
+                    description: OK
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/notify.service.v1.NotificationRule'
+        put:
+            tags:
+                - NotificationRuleService
+            description: 更新路由规则
+            operationId: NotificationRuleService_Update
+            parameters:
+                - name: id
+                  in: path
+                  required: true
+                  schema:
+                    type: integer
+                    format: uint32
+            requestBody:
+                content:
+                    application/json:
+                        schema:
+                            $ref: '#/components/schemas/notify.service.v1.UpdateNotificationRuleRequest'
+                required: true
+            responses:
+                "200":
+                    description: OK
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/notify.service.v1.NotificationRule'
+        delete:
+            tags:
+                - NotificationRuleService
+            description: 删除路由规则
+            operationId: NotificationRuleService_Delete
+            parameters:
+                - name: id
+                  in: path
+                  required: true
+                  schema:
+                    type: integer
+                    format: uint32
+            responses:
+                "200":
+                    description: OK
+                    content: {}
+    /admin/v1/notification-rules/{id}/test-dispatch:
+        post:
+            tags:
+                - NotificationRuleService
+            description: 测试投递：按这条规则当场走一遍完整投递链
+            operationId: NotificationRuleService_TestDispatch
+            parameters:
+                - name: id
+                  in: path
+                  required: true
+                  schema:
+                    type: integer
+                    format: uint32
+            requestBody:
+                content:
+                    application/json:
+                        schema:
+                            $ref: '#/components/schemas/notify.service.v1.TestDispatchNotificationRequest'
+                required: true
+            responses:
+                "200":
+                    description: OK
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/notify.service.v1.TestDispatchNotificationResponse'
+    /admin/v1/notification-templates:
+        get:
+            tags:
+                - NotificationTemplateService
+            description: 模板列表（分页，contains 搜索）
+            operationId: NotificationTemplateService_List
+            parameters:
+                - name: page
+                  in: query
+                  description: 当前页码（从1开始，默认1）
+                  schema:
+                    type: integer
+                    format: uint32
+                - name: pageSize
+                  in: query
+                  description: 每页条数（默认10，建议设置上限如100）
+                  schema:
+                    type: integer
+                    format: uint32
+                - name: offset
+                  in: query
+                  description: 跳过的记录数（从0开始，默认0）
+                  schema:
+                    type: string
+                - name: limit
+                  in: query
+                  description: 最多返回的记录数（默认10，建议设置上限如100）
+                  schema:
+                    type: integer
+                    format: uint32
+                - name: token
+                  in: query
+                  description: 上一页最后一条记录的游标（如ID/时间戳+ID，首次请求为空）
+                  schema:
+                    type: string
+                - name: noPaging
+                  in: query
+                  description: 是否不分页，如果为true，则page和pageSize参数无效。
+                  schema:
+                    type: boolean
+                - name: query
+                  in: query
+                  description: JSON字符串过滤条件，基础语法：{"field1":"val1", "field2___icontains":"val2"}，具体请参见：https://github.com/tx7do/go-crud/tree/main/pagination/filter/README.md
+                  schema:
+                    type: string
+                - name: filter
+                  in: query
+                  description: Google AIP规范字符串过滤条件
+                  schema:
+                    type: string
+                - name: filterExpr.type
+                  in: query
+                  description: 过滤表达式类型
+                  schema:
+                    enum:
+                        - EXPR_TYPE_UNSPECIFIED
+                        - AND
+                        - OR
+                    type: string
+                    format: enum
+                - name: orderBy
+                  in: query
+                  description: 排序条件
+                  schema:
+                    type: string
+                - name: fieldMask
+                  in: query
+                  description: 字段掩码，其作用为SELECT中的字段，其语法为使用逗号分隔字段名，例如：id,realName,userName。如果为空则选中所有字段，即SELECT *。
+                  schema:
+                    type: string
+                    format: field-mask
+            responses:
+                "200":
+                    description: OK
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/notify.service.v1.ListNotificationTemplateResponse'
+        post:
+            tags:
+                - NotificationTemplateService
+            description: 新建模板
+            operationId: NotificationTemplateService_Create
+            requestBody:
+                content:
+                    application/json:
+                        schema:
+                            $ref: '#/components/schemas/notify.service.v1.CreateNotificationTemplateRequest'
+                required: true
+            responses:
+                "200":
+                    description: OK
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/notify.service.v1.NotificationTemplate'
+    /admin/v1/notification-templates/{id}:
+        get:
+            tags:
+                - NotificationTemplateService
+            description: 模板详情
+            operationId: NotificationTemplateService_Get
+            parameters:
+                - name: id
+                  in: path
+                  required: true
+                  schema:
+                    type: integer
+                    format: uint32
+            responses:
+                "200":
+                    description: OK
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/notify.service.v1.NotificationTemplate'
+        put:
+            tags:
+                - NotificationTemplateService
+            description: 更新模板（CRUD 请求体必须包 {data:{...}}，见仓铁律）
+            operationId: NotificationTemplateService_Update
+            parameters:
+                - name: id
+                  in: path
+                  required: true
+                  schema:
+                    type: integer
+                    format: uint32
+            requestBody:
+                content:
+                    application/json:
+                        schema:
+                            $ref: '#/components/schemas/notify.service.v1.UpdateNotificationTemplateRequest'
+                required: true
+            responses:
+                "200":
+                    description: OK
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/notify.service.v1.NotificationTemplate'
+        delete:
+            tags:
+                - NotificationTemplateService
+            description: 删除模板
+            operationId: NotificationTemplateService_Delete
+            parameters:
+                - name: id
+                  in: path
+                  required: true
+                  schema:
+                    type: integer
+                    format: uint32
+            responses:
+                "200":
+                    description: OK
+                    content: {}
+    /admin/v1/notification-templates/{id}/render:
+        post:
+            tags:
+                - NotificationTemplateService
+            description: 试渲染：按变量集渲染指定模板，返回标题与正文（管理页预览用，不产生投递）
+            operationId: NotificationTemplateService_Render
+            parameters:
+                - name: id
+                  in: path
+                  description: 被渲染的模板 ID
+                  required: true
+                  schema:
+                    type: integer
+                    format: uint32
+            requestBody:
+                content:
+                    application/json:
+                        schema:
+                            $ref: '#/components/schemas/notify.service.v1.RenderNotificationTemplateRequest'
+                required: true
+            responses:
+                "200":
+                    description: OK
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/notify.service.v1.RenderNotificationTemplateResponse'
     /admin/v1/oidc/authorize-url:
         post:
             tags:
@@ -14965,6 +15657,29 @@ components:
                 data:
                     $ref: '#/components/schemas/notify.service.v1.EmailProvider'
             description: 请求 - 创建配置
+        notify.service.v1.CreateNotificationChannelRequest:
+            type: object
+            properties:
+                data:
+                    $ref: '#/components/schemas/notify.service.v1.NotificationChannel'
+                password:
+                    type: string
+                    description: SMTP 密码/授权码
+                webhookSecret:
+                    type: string
+                    description: Webhook 签名密钥
+            description: 创建通知渠道 - 请求
+        notify.service.v1.CreateNotificationRuleRequest:
+            type: object
+            properties:
+                data:
+                    $ref: '#/components/schemas/notify.service.v1.NotificationRule'
+            description: 创建路由规则 - 请求
+        notify.service.v1.CreateNotificationTemplateRequest:
+            type: object
+            properties:
+                data:
+                    $ref: '#/components/schemas/notify.service.v1.NotificationTemplate'
         notify.service.v1.EmailProvider:
             type: object
             properties:
@@ -15027,6 +15742,410 @@ components:
                 total:
                     type: string
             description: 回应 - 配置列表
+        notify.service.v1.ListMyNotificationCategoriesResponse:
+            type: object
+            properties:
+                items:
+                    type: array
+                    items:
+                        $ref: '#/components/schemas/notify.service.v1.NotificationCategoryItem'
+            description: 当前用户可见的启用分类清单。
+        notify.service.v1.ListNotificationChannelResponse:
+            type: object
+            properties:
+                items:
+                    type: array
+                    items:
+                        $ref: '#/components/schemas/notify.service.v1.NotificationChannel'
+                total:
+                    type: string
+            description: 查询通知渠道列表 - 回应
+        notify.service.v1.ListNotificationDeliveryResponse:
+            type: object
+            properties:
+                items:
+                    type: array
+                    items:
+                        $ref: '#/components/schemas/notify.service.v1.NotificationDelivery'
+                total:
+                    type: string
+            description: 查询投递台账列表 - 回应
+        notify.service.v1.ListNotificationRuleResponse:
+            type: object
+            properties:
+                items:
+                    type: array
+                    items:
+                        $ref: '#/components/schemas/notify.service.v1.NotificationRule'
+                total:
+                    type: string
+            description: 查询路由规则列表 - 回应
+        notify.service.v1.ListNotificationTemplateResponse:
+            type: object
+            properties:
+                total:
+                    type: string
+                items:
+                    type: array
+                    items:
+                        $ref: '#/components/schemas/notify.service.v1.NotificationTemplate'
+        notify.service.v1.NotificationCategoryItem:
+            type: object
+            properties:
+                id:
+                    type: integer
+                    format: uint32
+                name:
+                    type: string
+            description: 可退订分类的精简项（只取 id + 名称，避免拖整个分类实体）。
+        notify.service.v1.NotificationChannel:
+            type: object
+            properties:
+                id:
+                    type: integer
+                    description: 渠道ID
+                    format: uint32
+                name:
+                    type: string
+                    description: 渠道名称
+                type:
+                    enum:
+                        - EMAIL
+                        - WEBHOOK
+                    type: string
+                    description: 渠道类型
+                    format: enum
+                smtpHost:
+                    type: string
+                    description: SMTP 服务器地址
+                smtpPort:
+                    type: integer
+                    description: SMTP 端口
+                    format: uint32
+                smtpUsername:
+                    type: string
+                    description: SMTP 用户名
+                hasPassword:
+                    type: boolean
+                    description: 是否已配置密码
+                smtpFrom:
+                    type: string
+                    description: 发件人地址
+                smtpTls:
+                    enum:
+                        - NONE
+                        - START_TLS
+                        - SSL
+                    type: string
+                    description: 加密方式
+                    format: enum
+                smtpFromName:
+                    type: string
+                    description: 发件人显示名（仅 EMAIL 渠道）
+                webhookUrl:
+                    type: string
+                    description: Webhook 回调地址（仅 WEBHOOK 渠道）
+                hasWebhookSecret:
+                    type: boolean
+                    description: 是否已配置 Webhook 签名密钥
+                webhookSignStyle:
+                    enum:
+                        - CUSTOM
+                        - NONE
+                        - DINGTALK
+                        - FEISHU
+                        - WECOM
+                    type: string
+                    description: Webhook 出站风格（仅 WEBHOOK 渠道）
+                    format: enum
+                webhookPayloadTemplate:
+                    type: string
+                    description: Webhook 载荷模板，留空用该风格的内置默认 JSON
+                enabled:
+                    type: boolean
+                    description: 是否启用
+                remark:
+                    type: string
+                    description: 备注
+                createdBy:
+                    type: integer
+                    format: uint32
+                updatedBy:
+                    type: integer
+                    format: uint32
+                createdAt:
+                    type: string
+                    format: date-time
+                updatedAt:
+                    type: string
+                    format: date-time
+            description: 通知渠道
+        notify.service.v1.NotificationDelivery:
+            type: object
+            properties:
+                id:
+                    type: integer
+                    description: 台账ID
+                    format: uint32
+                eventType:
+                    enum:
+                        - EVENT_TYPE_UNSPECIFIED
+                        - INTERNAL_MESSAGE
+                        - CHANNEL_TEST_EMAIL
+                    type: string
+                    description: 业务事件类型
+                    format: enum
+                channel:
+                    enum:
+                        - CHANNEL_UNSPECIFIED
+                        - EMAIL
+                        - WEBHOOK
+                        - INTERNAL
+                    type: string
+                    description: 投递渠道
+                    format: enum
+                channelId:
+                    type: integer
+                    description: 实际选中的渠道配置ID
+                    format: uint32
+                recipientUserId:
+                    type: integer
+                    description: 收件用户ID（直发模式可为空）
+                    format: uint32
+                target:
+                    type: string
+                    description: 投递目标（脱敏）
+                status:
+                    enum:
+                        - DELIVERY_STATUS_UNSPECIFIED
+                        - SENDING
+                        - SENT
+                        - FAILED
+                        - SKIPPED
+                    type: string
+                    description: 投递状态
+                    format: enum
+                lastError:
+                    type: string
+                    description: 最近一次失败原因
+                sentAt:
+                    type: string
+                    description: 投递完成时间
+                    format: date-time
+                relatedId:
+                    type: integer
+                    description: 关联业务对象ID（按 event_type 解释）
+                    format: uint32
+                requestId:
+                    type: string
+                    description: 派发请求ID（幂等锚）
+                attempts:
+                    type: integer
+                    description: 实际尝试投递次数（含首次）
+                    format: uint32
+                createdBy:
+                    type: integer
+                    format: uint32
+                updatedBy:
+                    type: integer
+                    format: uint32
+                createdAt:
+                    type: string
+                    format: date-time
+                updatedAt:
+                    type: string
+                    format: date-time
+            description: |-
+                一条通知 × 一个渠道 × 一个收件人 = 一行投递台账。
+                 不存正文快照（防敏感正文明文集邮），target 落脱敏串；排障经 related_id 跳回业务对象。
+        notify.service.v1.NotificationPreference:
+            type: object
+            properties:
+                userId:
+                    type: integer
+                    format: uint32
+                quietEnabled:
+                    type: boolean
+                    description: |-
+                        是否启用实时推送静音时段：只抑制 SSE 实时推送（角标即时性），
+                         收件行照常落库，用户打开收件箱仍能看到全部消息。
+                quietStartMinute:
+                    type: integer
+                    description: 静音开始：自当日 00:00 起的分钟数（0-1439），默认 1320（22:00）。
+                    format: int32
+                quietEndMinute:
+                    type: integer
+                    description: |-
+                        静音结束：自当日 00:00 起的分钟数（0-1439），默认 480（08:00）。
+                         跨零点窗口（start > end，如 22:00→08:00）合法；start == end 且启用视为无效配置。
+                    format: int32
+                mutedCategoryIds:
+                    type: array
+                    items:
+                        type: integer
+                        format: uint32
+                    description: 退订的站内信分类 ID 列表（预留：CMS v1 无全员广播，无执行点，仅落库）
+                updatedAt:
+                    type: string
+                    format: date-time
+            description: |-
+                用户通知偏好（每用户一行）。
+                 服务端从操作人钉定 user_id，客户端传入的 user_id 一律忽略。
+                 刻意无租户维度：偏好跟人走，全链 fail-open（读不到偏好 = 不静音不退订）。
+        notify.service.v1.NotificationRule:
+            type: object
+            properties:
+                id:
+                    type: integer
+                    description: 规则ID
+                    format: uint32
+                eventType:
+                    enum:
+                        - EVENT_TYPE_UNSPECIFIED
+                        - INTERNAL_MESSAGE
+                        - CHANNEL_TEST_EMAIL
+                    type: string
+                    description: 业务事件类型（一张表内唯一）
+                    format: enum
+                channel:
+                    enum:
+                        - CHANNEL_UNSPECIFIED
+                        - EMAIL
+                        - WEBHOOK
+                        - INTERNAL
+                    type: string
+                    description: 该事件投递走的渠道
+                    format: enum
+                isAsync:
+                    type: boolean
+                    description: 是否异步派发
+                isEnabled:
+                    type: boolean
+                    description: 是否启用
+                remark:
+                    type: string
+                    description: 备注
+                createdBy:
+                    type: integer
+                    format: uint32
+                updatedBy:
+                    type: integer
+                    format: uint32
+                createdAt:
+                    type: string
+                    format: date-time
+                updatedAt:
+                    type: string
+                    format: date-time
+            description: 一条业务事件类型 → 一行规则（event_type 唯一）
+        notify.service.v1.NotificationTemplate:
+            type: object
+            properties:
+                id:
+                    type: integer
+                    format: uint32
+                name:
+                    type: string
+                code:
+                    type: string
+                    description: 模板编码，发送方以 template_code 引用；全局唯一，仅限字母数字与下划线/连字符
+                titleTemplate:
+                    type: string
+                    description: 标题模板，支持 {{var}} 占位符；未识别占位符在渲染时报错
+                contentTemplate:
+                    type: string
+                    description: 正文模板，支持 {{var}} 占位符
+                isEnabled:
+                    type: boolean
+                remark:
+                    type: string
+                createdAt:
+                    type: string
+                    format: date-time
+                updatedAt:
+                    type: string
+                    format: date-time
+            description: 通知模板：可复用的标题/正文占位模板（{{var}}），平台全局、code 全局唯一。
+        notify.service.v1.RenderNotificationTemplateRequest:
+            type: object
+            properties:
+                id:
+                    type: integer
+                    description: 被渲染的模板 ID
+                    format: uint32
+                variables:
+                    type: object
+                    additionalProperties:
+                        type: string
+                    description: 变量集：占位符名 → 值；模板引用了变量集里没有的占位符时整个渲染报错
+            description: 按变量集试渲染（管理页预览；发送不经过这里）
+        notify.service.v1.RenderNotificationTemplateResponse:
+            type: object
+            properties:
+                title:
+                    type: string
+                content:
+                    type: string
+        notify.service.v1.SendTestEmailRequest:
+            type: object
+            properties:
+                id:
+                    type: integer
+                    description: 渠道ID
+                    format: uint32
+                recipient:
+                    type: string
+                    description: 测试收件人邮箱
+            description: 发送测试邮件 - 请求
+        notify.service.v1.SendTestEmailResponse:
+            type: object
+            properties:
+                success:
+                    type: boolean
+                error:
+                    type: string
+            description: 发送测试邮件 - 回应
+        notify.service.v1.TestDispatchNotificationRequest:
+            type: object
+            properties:
+                id:
+                    type: integer
+                    description: 规则ID
+                    format: uint32
+                target:
+                    type: string
+                    description: 投递目标（收件邮箱/回调地址）
+                title:
+                    type: string
+                    description: 通知标题，留空用测试文案
+                content:
+                    type: string
+                    description: 通知正文，留空用测试文案
+            description: |-
+                测试投递 - 请求。
+
+                 target/title/content 全可空，缺省即"这条规则本来会发什么"：
+                 target 对 EMAIL 是必填的投递目标，对 WEBHOOK 留空则取第一个启用的 WEBHOOK 渠道配置的 webhook_url；
+                 title/content 留空由服务端渲染一封测试文案。
+                 INTERNAL 规则拒绝测试（站内信投递由业务动作驱动，无"测试文案"语义）。
+        notify.service.v1.TestDispatchNotificationResponse:
+            type: object
+            properties:
+                deliveryId:
+                    type: integer
+                    description: 本次测试产生的台账ID
+                    format: uint32
+                status:
+                    enum:
+                        - DELIVERY_STATUS_UNSPECIFIED
+                        - SENDING
+                        - SENT
+                        - FAILED
+                        - SKIPPED
+                    type: string
+                    description: 投递结果
+                    format: enum
+            description: 测试投递 - 回应。台账行号一并回传：报错时拿它去投递记录页查这一条。
         notify.service.v1.TestEmailSendRequest:
             type: object
             properties:
@@ -15062,6 +16181,65 @@ components:
                     type: boolean
                     description: 不存在则新增
             description: 请求 - 更新配置
+        notify.service.v1.UpdateNotificationChannelRequest:
+            type: object
+            properties:
+                id:
+                    type: integer
+                    format: uint32
+                data:
+                    $ref: '#/components/schemas/notify.service.v1.NotificationChannel'
+                updateMask:
+                    type: string
+                    format: field-mask
+                password:
+                    type: string
+                    description: SMTP 密码/授权码，留空不修改
+                webhookSecret:
+                    type: string
+                    description: Webhook 签名密钥，留空不修改
+            description: 更新通知渠道 - 请求
+        notify.service.v1.UpdateNotificationPreferenceRequest:
+            type: object
+            properties:
+                quietEnabled:
+                    type: boolean
+                quietStartMinute:
+                    type: integer
+                    format: int32
+                quietEndMinute:
+                    type: integer
+                    format: int32
+                mutedCategoryIds:
+                    type: array
+                    items:
+                        type: integer
+                        format: uint32
+            description: 更新自己的通知偏好（字段全量提交；未登录不可用）。
+        notify.service.v1.UpdateNotificationRuleRequest:
+            type: object
+            properties:
+                id:
+                    type: integer
+                    format: uint32
+                data:
+                    $ref: '#/components/schemas/notify.service.v1.NotificationRule'
+                updateMask:
+                    type: string
+                    format: field-mask
+            description: 更新路由规则 - 请求
+        notify.service.v1.UpdateNotificationTemplateRequest:
+            type: object
+            properties:
+                id:
+                    type: integer
+                    format: uint32
+                data:
+                    $ref: '#/components/schemas/notify.service.v1.NotificationTemplate'
+                updateMask:
+                    type: string
+                    description: 字段掩码：留空更新全部字段
+                    format: field-mask
         permission.service.v1.Api:
             type: object
             properties:
@@ -17409,6 +18587,22 @@ tags:
       description: 导航项目服务
     - name: NavigationService
       description: 导航服务
+    - name: NotificationChannelService
+      description: 通知渠道管理服务（平台级配置）
+    - name: NotificationPreferenceService
+      description: 用户通知偏好服务（自助：读写的都是当前操作人自己的偏好，无管理面）。
+    - name: NotificationRuleService
+      description: 通知路由规则管理服务（平台级配置，菜单 authority 为 sys:platform_admin）。
+    - name: NotificationService
+      description: |-
+        通知投递台账管理服务（平台级只读视图）。
+
+         本域不含"发一条通知"的通用 HTTP 路由：SendDirect 只由进程内的业务 service 经 Notifier 接口调用。
+         把它开放成端点等于给任意已登录操作员一个"向任意邮箱发信"的能力。
+         两个刻意保留的手动触发口都是平台管理员专属、且只能发"测试文案"：
+         渠道配置页的 send-test-email，与路由规则页的 notification-rules/{id}/test-dispatch。
+    - name: NotificationTemplateService
+      description: 通知模板管理服务（平台管理员；租户侧由 notification_platform_guard 拒绝）
     - name: OperationAuditLogService
       description: 操作审计日志管理服务
     - name: OrgUnitService

@@ -10,6 +10,7 @@ import (
 	dictV1 "go-wind-cms/api/gen/go/dict/service/v1"
 	identityV1 "go-wind-cms/api/gen/go/identity/service/v1"
 	permissionV1 "go-wind-cms/api/gen/go/permission/service/v1"
+	notifyV1 "go-wind-cms/api/gen/go/notify/service/v1"
 )
 
 const (
@@ -829,5 +830,29 @@ var DefaultMenus = []*permissionV1.Menu{
 			Order:     trans.Ptr(int32(10)),
 			Authority: []string{"sys:platform_admin", "sys:tenant_manager"},
 		},
+	},
+}
+
+// DefaultNotificationRules 通知路由规则默认行（通知域）：事件 → 渠道。
+// 只在空表播种（NotificationRuleService 构造期守卫，与 DefaultMenus 同一模式）：
+// 管理员删掉一行是"该事件不再通知"的决定，重启不复活；
+// 新增事件类型时已部署实例不会自动多出行，需在通知规则页手工新增。
+var DefaultNotificationRules = []*notifyV1.NotificationRule{
+	{
+		EventType: notifyV1.EventType_INTERNAL_MESSAGE.Enum(),
+		Channel:   notifyV1.Channel_INTERNAL.Enum(),
+		IsAsync:   trans.Ptr(false),
+		IsEnabled: trans.Ptr(true),
+		Remark:    trans.Ptr("站内信投递（系统通知）：落收件箱 + 投递台账"),
+	},
+	{
+		// 渠道页「测试邮件」的兜底路由：SendTestEmail 显式点名渠道配置，
+		// 但路由表仍须有这行才放行（缺行/停用时显式 Channel 枚举才构成完整决定，
+		// channel_id 不算）——与上游通知域同一条种子口径。
+		EventType: notifyV1.EventType_CHANNEL_TEST_EMAIL.Enum(),
+		Channel:   notifyV1.Channel_EMAIL.Enum(),
+		IsAsync:   trans.Ptr(false),
+		IsEnabled: trans.Ptr(true),
+		Remark:    trans.Ptr("渠道配置测试邮件（渠道页「测试发送」）"),
 	},
 }

@@ -2,7 +2,8 @@
   "pageTitle": "Profile",
   "tab": {
     "basicInfo": "Basic Info",
-    "security": "Security"
+    "security": "Security",
+    "notification": "Notifications"
   },
   "avatar": "Avatar",
   "username": "Username",
@@ -50,5 +51,19 @@
     "MALE": "Male",
     "FEMALE": "Female",
     "SECRET": "Secret"
+  },
+  "notification": {
+    "quietTitle": "Realtime push quiet hours",
+    "quietDesc": "During quiet hours notifications are not pushed in realtime (badge immediacy); the inbox still keeps every message — open it anytime.",
+    "quietEnable": "Enable quiet hours",
+    "quietTimeRange": "Quiet time range (crossing midnight is supported, e.g. 22:00 → 08:00)",
+    "on": "On",
+    "off": "Off",
+    "quietTimeRequired": "Select a full time range to enable quiet hours",
+    "quietZeroWidth": "Quiet start and end must differ",
+    "save": "Save preferences",
+    "saveSuccess": "Notification preferences saved",
+    "saveFailed": "Save failed",
+    "transactionalNote": "Transactional emails such as verification codes bypass preference settings and are unaffected by this page."
   }
 }

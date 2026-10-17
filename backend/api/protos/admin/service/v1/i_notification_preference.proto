@@ -1,0 +1,33 @@
+syntax = "proto3";
+
+package admin.service.v1;
+
+import "google/api/annotations.proto";
+import "google/protobuf/empty.proto";
+
+import "notify/service/v1/notification_preference.proto";
+
+// 用户通知偏好服务（自助：读写的都是当前操作人自己的偏好，无管理面）。
+service NotificationPreferenceService {
+  // 获取当前用户的通知偏好；从未配置过时返回默认值（未启用静音、无退订）。
+  rpc GetMyNotificationPreference(google.protobuf.Empty) returns (notify.service.v1.NotificationPreference) {
+    option (google.api.http) = {
+      get: "/admin/v1/notification-preference"
+    };
+  }
+
+  // 更新当前用户的通知偏好，返回保存后的完整状态。
+  rpc UpdateMyNotificationPreference(notify.service.v1.UpdateNotificationPreferenceRequest) returns (notify.service.v1.NotificationPreference) {
+    option (google.api.http) = {
+      post: "/admin/v1/notification-preference"
+      body: "*"
+    };
+  }
+
+  // 当前用户可退订的启用分类清单（本租户内）。
+  rpc ListMyNotificationCategories(google.protobuf.Empty) returns (notify.service.v1.ListMyNotificationCategoriesResponse) {
+    option (google.api.http) = {
+      get: "/admin/v1/notification-preference/categories"
+    };
+  }
+}

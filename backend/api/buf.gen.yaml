@@ -69,6 +69,9 @@ managed:
       path: media/service/v1
       value: go-wind-cms/api/gen/go/media/service/v1;mediapb
     - file_option: go_package
+      path: notify/service/v1
+      value: go-wind-cms/api/gen/go/notify/service/v1;notifyv1
+    - file_option: go_package
       path: ai/service/v1
       value: go-wind-cms/api/gen/go/ai/service/v1;aipb
     - file_option: go_package

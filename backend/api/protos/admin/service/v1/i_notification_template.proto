@@ -1,0 +1,57 @@
+syntax = "proto3";
+
+package admin.service.v1;
+
+import "google/api/annotations.proto";
+import "google/protobuf/empty.proto";
+import "pagination/v1/pagination.proto";
+
+import "notify/service/v1/notification_template.proto";
+
+// 通知模板管理服务（平台管理员；租户侧由 notification_platform_guard 拒绝）
+service NotificationTemplateService {
+  // 模板列表（分页，contains 搜索）
+  rpc List(pagination.PagingRequest) returns (notify.service.v1.ListNotificationTemplateResponse) {
+    option (google.api.http) = {
+      get: "/admin/v1/notification-templates"
+    };
+  }
+
+  // 模板详情
+  rpc Get(notify.service.v1.GetNotificationTemplateRequest) returns (notify.service.v1.NotificationTemplate) {
+    option (google.api.http) = {
+      get: "/admin/v1/notification-templates/{id}"
+    };
+  }
+
+  // 新建模板
+  rpc Create(notify.service.v1.CreateNotificationTemplateRequest) returns (notify.service.v1.NotificationTemplate) {
+    option (google.api.http) = {
+      post: "/admin/v1/notification-templates"
+      body: "*"
+    };
+  }
+
+  // 更新模板（CRUD 请求体必须包 {data:{...}}，见仓铁律）
+  rpc Update(notify.service.v1.UpdateNotificationTemplateRequest) returns (notify.service.v1.NotificationTemplate) {
+    option (google.api.http) = {
+      put: "/admin/v1/notification-templates/{id}"
+      body: "*"
+    };
+  }
+
+  // 删除模板
+  rpc Delete(notify.service.v1.DeleteNotificationTemplateRequest) returns (google.protobuf.Empty) {
+    option (google.api.http) = {
+      delete: "/admin/v1/notification-templates/{id}"
+    };
+  }
+
+  // 试渲染：按变量集渲染指定模板，返回标题与正文（管理页预览用，不产生投递）
+  rpc Render(notify.service.v1.RenderNotificationTemplateRequest) returns (notify.service.v1.RenderNotificationTemplateResponse) {
+    option (google.api.http) = {
+      post: "/admin/v1/notification-templates/{id}/render"
+      body: "*"
+    };
+  }
+}

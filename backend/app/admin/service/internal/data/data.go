@@ -575,6 +575,51 @@ func NewEmailProviderServiceClient(ctx *bootstrap.Context, r registry.Discovery)
 	return notifyV1.NewEmailProviderServiceClient(cli)
 }
 
+func NewNotificationServiceClient(ctx *bootstrap.Context, r registry.Discovery) notifyV1.NotificationServiceClient {
+	cli, err := rpc.CreateGrpcClient(ctx.Context(), r, serviceid.NewDiscoveryName(serviceid.CoreService), ctx.GetConfig())
+	if err != nil {
+		return nil
+	}
+
+	return notifyV1.NewNotificationServiceClient(cli)
+}
+
+func NewNotificationChannelServiceClient(ctx *bootstrap.Context, r registry.Discovery) notifyV1.NotificationChannelServiceClient {
+	cli, err := rpc.CreateGrpcClient(ctx.Context(), r, serviceid.NewDiscoveryName(serviceid.CoreService), ctx.GetConfig())
+	if err != nil {
+		return nil
+	}
+
+	return notifyV1.NewNotificationChannelServiceClient(cli)
+}
+
+func NewNotificationRuleServiceClient(ctx *bootstrap.Context, r registry.Discovery) notifyV1.NotificationRuleServiceClient {
+	cli, err := rpc.CreateGrpcClient(ctx.Context(), r, serviceid.NewDiscoveryName(serviceid.CoreService), ctx.GetConfig())
+	if err != nil {
+		return nil
+	}
+
+	return notifyV1.NewNotificationRuleServiceClient(cli)
+}
+
+func NewNotificationTemplateServiceClient(ctx *bootstrap.Context, r registry.Discovery) notifyV1.NotificationTemplateServiceClient {
+	cli, err := rpc.CreateGrpcClient(ctx.Context(), r, serviceid.NewDiscoveryName(serviceid.CoreService), ctx.GetConfig())
+	if err != nil {
+		return nil
+	}
+
+	return notifyV1.NewNotificationTemplateServiceClient(cli)
+}
+
+func NewNotificationPreferenceServiceClient(ctx *bootstrap.Context, r registry.Discovery) notifyV1.NotificationPreferenceServiceClient {
+	cli, err := rpc.CreateGrpcClient(ctx.Context(), r, serviceid.NewDiscoveryName(serviceid.CoreService), ctx.GetConfig())
+	if err != nil {
+		return nil
+	}
+
+	return notifyV1.NewNotificationPreferenceServiceClient(cli)
+}
+
 func NewRedirectServiceClient(ctx *bootstrap.Context, r registry.Discovery) contentV1.RedirectServiceClient {
 	cli, err := rpc.CreateGrpcClient(ctx.Context(), r, serviceid.NewDiscoveryName(serviceid.CoreService), ctx.GetConfig())
 	if err != nil {

@@ -13,7 +13,7 @@ import (
 )
 
 // NewAsynqServer creates a new asynq server.
-func NewAsynqServer(ctx *bootstrap.Context, taskService *service.TaskService, searchService *service.SearchService, aiKnowledgeService *service.AiKnowledgeService, aiQueryService *service.AiQueryService, aiContentService *service.AiContentService, socialService *service.SocialService, postService *service.PostService, webhookService *service.WebhookService, internalMessageService *service.InternalMessageService, flowService *service.FlowService) *asynq.Server {
+func NewAsynqServer(ctx *bootstrap.Context, taskService *service.TaskService, searchService *service.SearchService, aiKnowledgeService *service.AiKnowledgeService, aiQueryService *service.AiQueryService, aiContentService *service.AiContentService, socialService *service.SocialService, postService *service.PostService, webhookService *service.WebhookService, internalMessageService *service.InternalMessageService, flowService *service.FlowService, notificationService *service.NotificationService) *asynq.Server {
 	cfg := ctx.GetConfig()
 
 	if cfg == nil || cfg.Server == nil || cfg.Server.Asynq == nil {
@@ -134,6 +134,22 @@ func NewAsynqServer(ctx *bootstrap.Context, taskService *service.TaskService, se
 		log.Error(err)
 	}
 	if _, err = srv.NewPeriodicTask("*/30 * * * *", task.SocialStatsSyncTaskType, &task.StatsSyncPayload{}); err != nil {
+		log.Error(err)
+	}
+
+	// 通知域异步派发：规则行标 is_async 的事件由该任务投递。带 ctx 版注册——
+	// asynq 的截止时间要透传进 mailer 的 DialContext 才能真掐断 SMTP 握手。
+	notificationService.RegisterTaskEnqueuer(taskService)
+	if err = asynq.RegisterSubscriberWithCtx(srv, task.NotificationDispatchTaskType, notificationService.AsyncNotificationDispatch); err != nil {
+		log.Error(err)
+	}
+
+	// 通知台账清扫（每 5 分钟）：超期停留在 SENDING 的行定案 FAILED（只定案不补投）。
+	// 系统级常驻任务，不进 sys_tasks（任务管理页不可见不可停）。
+	if err = asynq.RegisterSubscriber(srv, task.NotificationDeliverySweepTaskType, notificationService.AsyncDeliverySweep); err != nil {
+		log.Error(err)
+	}
+	if _, err = srv.NewPeriodicTask(task.NotificationDeliverySweepCronSpec, task.NotificationDeliverySweepTaskType, &task.NotificationDeliverySweepTaskData{}); err != nil {
 		log.Error(err)
 	}
 

@@ -1,0 +1,57 @@
+syntax = "proto3";
+
+package admin.service.v1;
+
+import "google/api/annotations.proto";
+import "google/protobuf/empty.proto";
+import "pagination/v1/pagination.proto";
+
+import "notify/service/v1/notification_channel.proto";
+
+// 通知渠道管理服务（平台级配置）
+service NotificationChannelService {
+  // 查询通知渠道列表
+  rpc List(pagination.PagingRequest) returns (notify.service.v1.ListNotificationChannelResponse) {
+    option (google.api.http) = {
+      get: "/admin/v1/notification-channels"
+    };
+  }
+
+  // 查询通知渠道详情
+  rpc Get(notify.service.v1.GetNotificationChannelRequest) returns (notify.service.v1.NotificationChannel) {
+    option (google.api.http) = {
+      get: "/admin/v1/notification-channels/{id}"
+    };
+  }
+
+  // 创建通知渠道
+  rpc Create(notify.service.v1.CreateNotificationChannelRequest) returns (notify.service.v1.NotificationChannel) {
+    option (google.api.http) = {
+      post: "/admin/v1/notification-channels"
+      body: "*"
+    };
+  }
+
+  // 更新通知渠道
+  rpc Update(notify.service.v1.UpdateNotificationChannelRequest) returns (notify.service.v1.NotificationChannel) {
+    option (google.api.http) = {
+      put: "/admin/v1/notification-channels/{id}"
+      body: "*"
+    };
+  }
+
+  // 删除通知渠道
+  rpc Delete(notify.service.v1.DeleteNotificationChannelRequest) returns (google.protobuf.Empty) {
+    option (google.api.http) = {
+      delete: "/admin/v1/notification-channels/{id}"
+    };
+  }
+
+  // 发送测试邮件（验证渠道配置）
+  rpc SendTestEmail(notify.service.v1.SendTestEmailRequest) returns (notify.service.v1.SendTestEmailResponse) {
+    option (google.api.http) = {
+      post: "/admin/v1/notification-channels/{id}/send-test-email"
+      body: "*"
+    };
+  }
+}

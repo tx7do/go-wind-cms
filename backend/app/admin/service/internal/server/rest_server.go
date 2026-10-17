@@ -177,6 +177,12 @@ func NewRestServer(
 
 	flowRuleService *service.FlowRuleService,
 
+	notificationService *service.NotificationService,
+	notificationChannelService *service.NotificationChannelService,
+	notificationRuleService *service.NotificationRuleService,
+	notificationTemplateService *service.NotificationTemplateService,
+	notificationPreferenceService *service.NotificationPreferenceService,
+
 	// register:param ── 新模块服务形参在此行后注册(make register 工具锚点,勿删)
 ) *http.Server {
 	cfg := ctx.GetConfig()
@@ -259,6 +265,11 @@ func NewRestServer(
 	adminV1.RegisterEditLockServiceHTTPServer(srv, editLockService)
 	adminV1.RegisterEmailTemplateServiceHTTPServer(srv, emailTemplateService)
 	adminV1.RegisterEmailProviderServiceHTTPServer(srv, emailProviderService)
+	adminV1.RegisterNotificationServiceHTTPServer(srv, notificationService)
+	adminV1.RegisterNotificationChannelServiceHTTPServer(srv, notificationChannelService)
+	adminV1.RegisterNotificationRuleServiceHTTPServer(srv, notificationRuleService)
+	adminV1.RegisterNotificationTemplateServiceHTTPServer(srv, notificationTemplateService)
+	adminV1.RegisterNotificationPreferenceServiceHTTPServer(srv, notificationPreferenceService)
 	adminV1.RegisterInteractionAdminServiceHTTPServer(srv, interactionAdminService)
 	adminV1.RegisterStatsServiceHTTPServer(srv, statsService)
 	adminV1.RegisterAiProviderServiceHTTPServer(srv, aiProviderService)

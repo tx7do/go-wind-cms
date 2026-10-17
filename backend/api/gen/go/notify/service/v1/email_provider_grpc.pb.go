@@ -4,7 +4,7 @@
 // - protoc             (unknown)
 // source: notify/service/v1/email_provider.proto
 
-package servicev1
+package notifyv1
 
 import (
 	context "context"

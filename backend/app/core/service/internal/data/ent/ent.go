@@ -54,6 +54,11 @@ import (
 	"go-wind-cms/app/core/service/internal/data/ent/menu"
 	"go-wind-cms/app/core/service/internal/data/ent/navigation"
 	"go-wind-cms/app/core/service/internal/data/ent/navigationitem"
+	"go-wind-cms/app/core/service/internal/data/ent/notificationchannel"
+	"go-wind-cms/app/core/service/internal/data/ent/notificationdelivery"
+	"go-wind-cms/app/core/service/internal/data/ent/notificationpreference"
+	"go-wind-cms/app/core/service/internal/data/ent/notificationrule"
+	"go-wind-cms/app/core/service/internal/data/ent/notificationtemplate"
 	"go-wind-cms/app/core/service/internal/data/ent/operationauditlog"
 	"go-wind-cms/app/core/service/internal/data/ent/orgunit"
 	"go-wind-cms/app/core/service/internal/data/ent/page"
@@ -211,6 +216,11 @@ func checkColumn(t, c string) error {
 			menu.Table:                       menu.ValidColumn,
 			navigation.Table:                 navigation.ValidColumn,
 			navigationitem.Table:             navigationitem.ValidColumn,
+			notificationchannel.Table:        notificationchannel.ValidColumn,
+			notificationdelivery.Table:       notificationdelivery.ValidColumn,
+			notificationpreference.Table:     notificationpreference.ValidColumn,
+			notificationrule.Table:           notificationrule.ValidColumn,
+			notificationtemplate.Table:       notificationtemplate.ValidColumn,
 			operationauditlog.Table:          operationauditlog.ValidColumn,
 			orgunit.Table:                    orgunit.ValidColumn,
 			page.Table:                       page.ValidColumn,

@@ -3,6 +3,7 @@ package service
 import (
 	"context"
 	"encoding/json"
+	"fmt"
 	"errors"
 	"time"
 
@@ -70,6 +71,15 @@ func NewTaskService(
 
 func (s *TaskService) RegisterTaskScheduler(taskScheduler TaskScheduler) {
 	s.taskScheduler = taskScheduler
+}
+
+// NewTask 通用入队口：调用方自带任务类型/载荷/选项（通知域异步派发等）。
+// 调度器未注册（asynq 未配置）时返回错误，调用方据此退回同步路径。
+func (s *TaskService) NewTask(typeName string, msg any, opts ...asynq.Option) error {
+	if s.taskScheduler == nil {
+		return fmt.Errorf("task scheduler is not registered")
+	}
+	return s.taskScheduler.NewTask(typeName, msg, opts...)
 }
 
 // getAsynqInspector 懒建只读 Inspector（与 worker 同一 Redis，来自 server.yaml 同源配置）。

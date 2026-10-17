@@ -4,7 +4,7 @@
 // 	protoc        (unknown)
 // source: notify/service/v1/email_provider.proto
 
-package servicev1
+package notifyv1
 
 import (
 	_ "github.com/google/gnostic/openapiv3"
@@ -608,8 +608,8 @@ const file_notify_service_v1_email_provider_proto_rawDesc = "" +
 	"\x06Create\x12-.notify.service.v1.CreateEmailProviderRequest\x1a .notify.service.v1.EmailProvider\"\x00\x12[\n" +
 	"\x06Update\x12-.notify.service.v1.UpdateEmailProviderRequest\x1a .notify.service.v1.EmailProvider\"\x00\x12Q\n" +
 	"\x06Delete\x12-.notify.service.v1.DeleteEmailProviderRequest\x1a\x16.google.protobuf.Empty\"\x00\x12_\n" +
-	"\bTestSend\x12'.notify.service.v1.TestEmailSendRequest\x1a(.notify.service.v1.TestEmailSendResponse\"\x00B\xc5\x01\n" +
-	"\x15com.notify.service.v1B\x12EmailProviderProtoP\x01Z2go-wind-cms/api/gen/go/notify/service/v1;servicev1\xa2\x02\x03NSX\xaa\x02\x11Notify.Service.V1\xca\x02\x11Notify\\Service\\V1\xe2\x02\x1dNotify\\Service\\V1\\GPBMetadata\xea\x02\x13Notify::Service::V1b\x06proto3"
+	"\bTestSend\x12'.notify.service.v1.TestEmailSendRequest\x1a(.notify.service.v1.TestEmailSendResponse\"\x00B\xc4\x01\n" +
+	"\x15com.notify.service.v1B\x12EmailProviderProtoP\x01Z1go-wind-cms/api/gen/go/notify/service/v1;notifyv1\xa2\x02\x03NSX\xaa\x02\x11Notify.Service.V1\xca\x02\x11Notify\\Service\\V1\xe2\x02\x1dNotify\\Service\\V1\\GPBMetadata\xea\x02\x13Notify::Service::V1b\x06proto3"
 
 var (
 	file_notify_service_v1_email_provider_proto_rawDescOnce sync.Once

@@ -11,6 +11,7 @@ import {
 import { useAuthStore } from '@/stores';
 import ContentContainer from '@/layouts/components/PageContainer/ContentContainer';
 import { getGenderOptions } from '../constants';
+import NotificationPreference from './components/NotificationPreference';
 import { getPresetColor } from '@/utils/color';
 
 /** 格式化 wellKnownTimestamp */
@@ -289,7 +290,11 @@ const UserProfile = () => {
                 </div>
               ),
             },
-
+            {
+              key: 'notification',
+              label: t('tab.notification'),
+              children: <NotificationPreference />,
+            },
           ]}
         />
       </Card>

@@ -1263,6 +1263,126 @@ func (f NavigationItemMutationRuleFunc) EvalMutation(ctx context.Context, m ent.
 	return Denyf("ent/privacy: unexpected mutation type %T, expect *ent.NavigationItemMutation", m)
 }
 
+// The NotificationChannelQueryRuleFunc type is an adapter to allow the use of ordinary
+// functions as a query rule.
+type NotificationChannelQueryRuleFunc func(context.Context, *ent.NotificationChannelQuery) error
+
+// EvalQuery return f(ctx, q).
+func (f NotificationChannelQueryRuleFunc) EvalQuery(ctx context.Context, q ent.Query) error {
+	if q, ok := q.(*ent.NotificationChannelQuery); ok {
+		return f(ctx, q)
+	}
+	return Denyf("ent/privacy: unexpected query type %T, expect *ent.NotificationChannelQuery", q)
+}
+
+// The NotificationChannelMutationRuleFunc type is an adapter to allow the use of ordinary
+// functions as a mutation rule.
+type NotificationChannelMutationRuleFunc func(context.Context, *ent.NotificationChannelMutation) error
+
+// EvalMutation calls f(ctx, m).
+func (f NotificationChannelMutationRuleFunc) EvalMutation(ctx context.Context, m ent.Mutation) error {
+	if m, ok := m.(*ent.NotificationChannelMutation); ok {
+		return f(ctx, m)
+	}
+	return Denyf("ent/privacy: unexpected mutation type %T, expect *ent.NotificationChannelMutation", m)
+}
+
+// The NotificationDeliveryQueryRuleFunc type is an adapter to allow the use of ordinary
+// functions as a query rule.
+type NotificationDeliveryQueryRuleFunc func(context.Context, *ent.NotificationDeliveryQuery) error
+
+// EvalQuery return f(ctx, q).
+func (f NotificationDeliveryQueryRuleFunc) EvalQuery(ctx context.Context, q ent.Query) error {
+	if q, ok := q.(*ent.NotificationDeliveryQuery); ok {
+		return f(ctx, q)
+	}
+	return Denyf("ent/privacy: unexpected query type %T, expect *ent.NotificationDeliveryQuery", q)
+}
+
+// The NotificationDeliveryMutationRuleFunc type is an adapter to allow the use of ordinary
+// functions as a mutation rule.
+type NotificationDeliveryMutationRuleFunc func(context.Context, *ent.NotificationDeliveryMutation) error
+
+// EvalMutation calls f(ctx, m).
+func (f NotificationDeliveryMutationRuleFunc) EvalMutation(ctx context.Context, m ent.Mutation) error {
+	if m, ok := m.(*ent.NotificationDeliveryMutation); ok {
+		return f(ctx, m)
+	}
+	return Denyf("ent/privacy: unexpected mutation type %T, expect *ent.NotificationDeliveryMutation", m)
+}
+
+// The NotificationPreferenceQueryRuleFunc type is an adapter to allow the use of ordinary
+// functions as a query rule.
+type NotificationPreferenceQueryRuleFunc func(context.Context, *ent.NotificationPreferenceQuery) error
+
+// EvalQuery return f(ctx, q).
+func (f NotificationPreferenceQueryRuleFunc) EvalQuery(ctx context.Context, q ent.Query) error {
+	if q, ok := q.(*ent.NotificationPreferenceQuery); ok {
+		return f(ctx, q)
+	}
+	return Denyf("ent/privacy: unexpected query type %T, expect *ent.NotificationPreferenceQuery", q)
+}
+
+// The NotificationPreferenceMutationRuleFunc type is an adapter to allow the use of ordinary
+// functions as a mutation rule.
+type NotificationPreferenceMutationRuleFunc func(context.Context, *ent.NotificationPreferenceMutation) error
+
+// EvalMutation calls f(ctx, m).
+func (f NotificationPreferenceMutationRuleFunc) EvalMutation(ctx context.Context, m ent.Mutation) error {
+	if m, ok := m.(*ent.NotificationPreferenceMutation); ok {
+		return f(ctx, m)
+	}
+	return Denyf("ent/privacy: unexpected mutation type %T, expect *ent.NotificationPreferenceMutation", m)
+}
+
+// The NotificationRuleQueryRuleFunc type is an adapter to allow the use of ordinary
+// functions as a query rule.
+type NotificationRuleQueryRuleFunc func(context.Context, *ent.NotificationRuleQuery) error
+
+// EvalQuery return f(ctx, q).
+func (f NotificationRuleQueryRuleFunc) EvalQuery(ctx context.Context, q ent.Query) error {
+	if q, ok := q.(*ent.NotificationRuleQuery); ok {
+		return f(ctx, q)
+	}
+	return Denyf("ent/privacy: unexpected query type %T, expect *ent.NotificationRuleQuery", q)
+}
+
+// The NotificationRuleMutationRuleFunc type is an adapter to allow the use of ordinary
+// functions as a mutation rule.
+type NotificationRuleMutationRuleFunc func(context.Context, *ent.NotificationRuleMutation) error
+
+// EvalMutation calls f(ctx, m).
+func (f NotificationRuleMutationRuleFunc) EvalMutation(ctx context.Context, m ent.Mutation) error {
+	if m, ok := m.(*ent.NotificationRuleMutation); ok {
+		return f(ctx, m)
+	}
+	return Denyf("ent/privacy: unexpected mutation type %T, expect *ent.NotificationRuleMutation", m)
+}
+
+// The NotificationTemplateQueryRuleFunc type is an adapter to allow the use of ordinary
+// functions as a query rule.
+type NotificationTemplateQueryRuleFunc func(context.Context, *ent.NotificationTemplateQuery) error
+
+// EvalQuery return f(ctx, q).
+func (f NotificationTemplateQueryRuleFunc) EvalQuery(ctx context.Context, q ent.Query) error {
+	if q, ok := q.(*ent.NotificationTemplateQuery); ok {
+		return f(ctx, q)
+	}
+	return Denyf("ent/privacy: unexpected query type %T, expect *ent.NotificationTemplateQuery", q)
+}
+
+// The NotificationTemplateMutationRuleFunc type is an adapter to allow the use of ordinary
+// functions as a mutation rule.
+type NotificationTemplateMutationRuleFunc func(context.Context, *ent.NotificationTemplateMutation) error
+
+// EvalMutation calls f(ctx, m).
+func (f NotificationTemplateMutationRuleFunc) EvalMutation(ctx context.Context, m ent.Mutation) error {
+	if m, ok := m.(*ent.NotificationTemplateMutation); ok {
+		return f(ctx, m)
+	}
+	return Denyf("ent/privacy: unexpected mutation type %T, expect *ent.NotificationTemplateMutation", m)
+}
+
 // The OperationAuditLogQueryRuleFunc type is an adapter to allow the use of ordinary
 // functions as a query rule.
 type OperationAuditLogQueryRuleFunc func(context.Context, *ent.OperationAuditLogQuery) error
@@ -2426,6 +2546,16 @@ func queryFilter(q ent.Query) (Filter, error) {
 		return q.Filter(), nil
 	case *ent.NavigationItemQuery:
 		return q.Filter(), nil
+	case *ent.NotificationChannelQuery:
+		return q.Filter(), nil
+	case *ent.NotificationDeliveryQuery:
+		return q.Filter(), nil
+	case *ent.NotificationPreferenceQuery:
+		return q.Filter(), nil
+	case *ent.NotificationRuleQuery:
+		return q.Filter(), nil
+	case *ent.NotificationTemplateQuery:
+		return q.Filter(), nil
 	case *ent.OperationAuditLogQuery:
 		return q.Filter(), nil
 	case *ent.OrgUnitQuery:
@@ -2614,6 +2744,16 @@ func mutationFilter(m ent.Mutation) (Filter, error) {
 	case *ent.NavigationMutation:
 		return m.Filter(), nil
 	case *ent.NavigationItemMutation:
+		return m.Filter(), nil
+	case *ent.NotificationChannelMutation:
+		return m.Filter(), nil
+	case *ent.NotificationDeliveryMutation:
+		return m.Filter(), nil
+	case *ent.NotificationPreferenceMutation:
+		return m.Filter(), nil
+	case *ent.NotificationRuleMutation:
+		return m.Filter(), nil
+	case *ent.NotificationTemplateMutation:
 		return m.Filter(), nil
 	case *ent.OperationAuditLogMutation:
 		return m.Filter(), nil

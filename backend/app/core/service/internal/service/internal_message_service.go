@@ -3,8 +3,10 @@ package service
 import (
 	"context"
 	"encoding/json"
+	"errors"
 	"html"
 	"os"
+	"strconv"
 	"strings"
 	"text/template"
 	"time"
@@ -26,6 +28,7 @@ import (
 
 	internalMessageV1 "go-wind-cms/api/gen/go/internal_message/service/v1"
 	identityV1 "go-wind-cms/api/gen/go/identity/service/v1"
+	notifyV1 "go-wind-cms/api/gen/go/notify/service/v1"
 
 	"github.com/redis/go-redis/v9"
 	"go-wind-cms/pkg/sseevent"
@@ -48,6 +51,11 @@ type InternalMessageService struct {
 	// redisClient 用于把系统通知事件发布到 Redis Pub/Sub（admin 服务订阅后转
 	// SSE 实时推送）；为 nil 时静默跳过（落库为准，只损失实时性）。
 	redisClient *redis.Client
+
+	// notifier 通知域投递缝（Notifier 接口，由 NotificationService 实现）。
+	// 构造期留 nil，装配期由 wiring 在两个 service 都就绪后 RegisterNotifier 注入
+	//（双向引用：NotificationService 的 INTERNAL 渠道又反向持有本服务，构造期互相传会成环）。
+	notifier Notifier
 }
 
 func NewInternalMessageService(
@@ -71,6 +79,12 @@ func NewInternalMessageService(
 		taskService:                  taskService,
 		emailProviderRepo:            emailProviderRepo,
 	}
+}
+
+// RegisterNotifier 注入通知域投递缝；注入前系统通知走不到渠道路由，SendSystemNotification 直接报错
+//（不静默降级成直写：装配遗漏应该暴露成显式失败，而不是让台账悄悄缺一列）。
+func (s *InternalMessageService) RegisterNotifier(notifier Notifier) {
+	s.notifier = notifier
 }
 
 func (s *InternalMessageService) extractRelationIDs(
@@ -228,9 +242,11 @@ func (s *InternalMessageService) RevokeMessage(ctx context.Context, req *interna
 }
 
 // SendSystemNotification 系统事件通知（Flow 规则动作等自动链路的唯一入口）：
-// 以系统身份（created_by=0）创建 PUBLISHED 消息并逐收件人落收件箱（不发邮件，
-// 自动链路不承担出站责任）。收件人跨租户不拦截——系统消息的租户边界由
-// 规则配置方（收件人列表）负责。返回消息 ID。
+// 以系统身份（created_by=0）创建 PUBLISHED 消息，收件人经通知域投递缝
+//（Notifier.SendDirect，EventType=INTERNAL_MESSAGE）逐人投递——种子规则默认路由
+// INTERNAL 渠道（落收件行 + 尽力实时推送），端态与直写一致，额外落一行投递台账。
+// 管理员在通知规则页停用该规则即整体停止此类通知（此时 SendDirect 报错，只记日志不中断）。
+// 收件人跨租户不拦截——系统消息的租户边界由规则配置方（收件人列表）负责。返回消息 ID。
 func (s *InternalMessageService) SendSystemNotification(ctx context.Context, title, content string, targetUserIDs []uint32) (uint32, error) {
 	if strings.TrimSpace(title) == "" || strings.TrimSpace(content) == "" {
 		return 0, internalMessageV1.ErrorBadRequest("title and content are required")
@@ -243,6 +259,9 @@ func (s *InternalMessageService) SendSystemNotification(ctx context.Context, tit
 	}
 	if len(targets) == 0 {
 		return 0, internalMessageV1.ErrorBadRequest("target user ids are required")
+	}
+	if s.notifier == nil {
+		return 0, errors.New("notification seam is not wired: RegisterNotifier must be called before SendSystemNotification")
 	}
 
 	now := time.Now()
@@ -261,9 +280,17 @@ func (s *InternalMessageService) SendSystemNotification(ctx context.Context, tit
 		return 0, err
 	}
 	for _, uid := range targets {
-		if nErr := s.sendNotification(ctx, msg.GetId(), uid, 0, &now, title, content); nErr != nil {
-			// 单收件人失败不中断其余收件人（与群发口径一致）
-			s.log.Errorf("system notification: deliver to user [%d] failed: %v", uid, nErr)
+		// 单收件人失败不中断其余收件人（与群发口径一致）；台账 ID 一并带进日志便于回查
+		resp, dErr := s.notifier.SendDirect(ctx, &notifyV1.SendDirectNotificationRequest{
+			EventType:       notifyV1.EventType_INTERNAL_MESSAGE,
+			Target:          strconv.FormatUint(uint64(uid), 10),
+			Title:           title,
+			Content:         content,
+			RecipientUserId: trans.Ptr(uid),
+			RelatedId:       trans.Ptr(msg.GetId()),
+		})
+		if dErr != nil {
+			s.log.Errorf("system notification: deliver to user [%d] failed (delivery=%d): %v", uid, resp.GetDeliveryId(), dErr)
 		}
 	}
 	return msg.GetId(), nil
@@ -409,17 +436,7 @@ func (s *InternalMessageService) NotifyUser(ctx context.Context, recipientUserID
 
 	// 实时推送（best-effort）：向 Redis Pub/Sub 发事件，admin 服务订阅后转 SSE
 	// 实时推送给目标用户的全部在线会话。落库为准：推送失败只损失实时性，不影响到达。
-	if s.redisClient != nil {
-		if payload, jerr := json.Marshal(sseevent.NotifyEvent{
-			UserID:  recipientUserID,
-			Title:   title,
-			Content: content,
-		}); jerr == nil {
-			if perr := s.redisClient.Publish(context.Background(), sseevent.RedisChannelNotify, payload).Err(); perr != nil {
-				s.log.Warnf("notify user: publish realtime event failed: %v", perr)
-			}
-		}
-	}
+	s.publishNotifyEvent(recipientUserID, title, content)
 
 	// 邮件出站（best-effort）：收件人配有邮箱且 SMTP 已配置时异步投递。
 	// 系统级通知（NotifyUser）保持"有邮箱即出站"口径；群发出站开关在
@@ -564,6 +581,26 @@ func buildNotifyEmailHTML(title, content string) string {
 	b.WriteString(`<hr style="border:none;border-top:1px solid #e5e6eb;margin:16px 0;"/><p style="font-size:12px;color:#86909c;">` +
 		html.EscapeString("本邮件由系统自动发送，请勿直接回复。") + `</p></div>`)
 	return b.String()
+}
+
+// publishNotifyEvent 向 Redis Pub/Sub 发一条实时通知事件（admin 服务订阅后转 SSE）。
+// best-effort：redisClient 未配置或发布失败只记日志——落库为准，只损失实时性。
+func (s *InternalMessageService) publishNotifyEvent(recipientUserID uint32, title, content string) {
+	if s.redisClient == nil {
+		return
+	}
+	payload, jerr := json.Marshal(sseevent.NotifyEvent{
+		UserID:  recipientUserID,
+		Title:   title,
+		Content: content,
+	})
+	if jerr != nil {
+		s.log.Warnf("marshal realtime notify event failed: %v", jerr)
+		return
+	}
+	if perr := s.redisClient.Publish(context.Background(), sseevent.RedisChannelNotify, payload).Err(); perr != nil {
+		s.log.Warnf("publish realtime notify event failed: %v", perr)
+	}
 }
 
 // sendNotification 向客户端发送通知消息

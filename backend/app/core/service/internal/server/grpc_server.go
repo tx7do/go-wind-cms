@@ -119,6 +119,12 @@ func NewGrpcServer(
 	collabDocStateService *service.CollabDocStateService,
 	emailTemplateService *service.EmailTemplateService,
 
+	notificationService *service.NotificationService,
+	notificationChannelService *service.NotificationChannelService,
+	notificationRuleService *service.NotificationRuleService,
+	notificationTemplateService *service.NotificationTemplateService,
+	notificationPreferenceService *service.NotificationPreferenceService,
+
 	// register:param ── 新模块服务形参在此行后注册(make register 工具锚点,勿删)
 ) (*grpc.Server, error) {
 	cfg := ctx.GetConfig()
@@ -207,6 +213,11 @@ func NewGrpcServer(
 	contentV1.RegisterCollabDocStateServiceServer(srv, collabDocStateService)
 	contentV1.RegisterEmailTemplateServiceServer(srv, emailTemplateService)
 	notifyV1.RegisterEmailProviderServiceServer(srv, emailProviderService)
+	notifyV1.RegisterNotificationServiceServer(srv, notificationService)
+	notifyV1.RegisterNotificationChannelServiceServer(srv, notificationChannelService)
+	notifyV1.RegisterNotificationRuleServiceServer(srv, notificationRuleService)
+	notifyV1.RegisterNotificationTemplateServiceServer(srv, notificationTemplateService)
+	notifyV1.RegisterNotificationPreferenceServiceServer(srv, notificationPreferenceService)
 
 	// register:route ── 新模块路由在此行后注册(make register 工具锚点,勿删)
 
