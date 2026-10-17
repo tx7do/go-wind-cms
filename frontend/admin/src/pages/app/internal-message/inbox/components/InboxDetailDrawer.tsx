@@ -54,7 +54,7 @@ export const InboxDetailDrawer = ({ open, record, onClose }: InboxDetailDrawerPr
             </div>
             {/* 消息正文是富文本编辑器产出的 HTML：DOMPurify 净化防存储型 XSS 后渲染，
                 样式上约束在内容块内避免外部样式溢出 */}
-            <div className="inbox-detail-content rounded-lg border border-white/8 bg-[color:var(--ant-color-bg-container)] p-3 text-sm leading-6 break-words">
+            <div className="inbox-detail-content rounded-lg border border-[color:var(--ant-color-border-secondary)] bg-[color:var(--ant-color-bg-container)] p-3 text-sm leading-6 break-words">
               {record.content ? (
                 <div
                   dangerouslySetInnerHTML={{ __html: DOMPurify.sanitize(String(record.content)) }}

@@ -229,7 +229,9 @@ const TaskManagement = () => {
           okText={t('common:button.ok')}
           cancelText={t('common:button.cancel')}
         >
-          <a style={{ color: '#52c41a' }}><CaretRightOutlined /></a>
+          {/* 取 §2.1 的文字档而不是 var(--ant-color-success)：浅色 success #57D188 在白底实测
+              只有 1.93:1（旧值 #52c41a 也才 2.27:1），连图标的 3:1 档都不够 */}
+          <a style={{ color: 'var(--gowind-success-text)' }}><CaretRightOutlined /></a>
         </Popconfirm>,
         <Popconfirm
           key="stop"
