@@ -72,12 +72,28 @@ FengXing (GoWind HCH) is an out-of-the-box enterprise-grade Golang full-stack He
 
 ### App Frontend
 
-| Version | Tech Stack | Use Case |
-|:---|:---|:---|
-| Vue | [Nuxt.js](https://nuxt.com/) + [shadcn-vue](https://www.shadcn-vue.com/) | Web App / SSR |
-| React | [Next.js](https://nextjs.org/) + [shadcn/ui](https://ui.shadcn.com/) | Web App / SSR |
-| Taro | [Taro](https://docs.taro.zone/en/docs/) + React + [shadcn/ui](https://ui.shadcn.com/) | WeChat Mini Program / H5 |
-| Flutter | [Flutter](https://flutter.dev/) + [BLoC](https://bloclibrary.dev/) | Cross-platform native app |
+**Two kinds of "frontends" first**: this project ships two kinds of user-facing interfaces. The **admin console** serves your operations team — opened in a desktop browser to write posts, moderate comments and configure sites. The **app frontends** below serve your readers and customers — they consume the content you publish. There is exactly one backend; once content is published, all four frontends read the same data. **Pick the one (or ones) that matches where your audience is — no need to deploy them all.**
+
+| Version | Tech Stack | Where It Runs | Typical Use |
+|:---|:---|:---|:---|
+| Vue | [Nuxt.js](https://nuxt.com/) + [shadcn-vue](https://www.shadcn-vue.com/) | Desktop / mobile **browser (web page)** | Corporate sites, content portals, blogs, news sites; SEO-friendly |
+| React | [Next.js](https://nextjs.org/) + [shadcn/ui](https://ui.shadcn.com/) | Desktop / mobile **browser (web page)** | Feature-equal to the Vue version — pick whichever stack your team prefers |
+| Taro | [Taro](https://docs.taro.zone/en/docs/) + React + [shadcn/ui](https://ui.shadcn.com/) | **WeChat Mini Program**; also compiles to mobile H5 web | WeChat-ecosystem operations: scan or search to open, no installation |
+| Flutter | [Flutter](https://flutter.dev/) + [BLoC](https://bloclibrary.dev/) | **iOS / Android native app** (installed from app stores) | A dedicated app: push notifications, offline use; one codebase builds both platforms |
+
+#### Glossary (for readers new to frontends)
+
+- **Web page**: opened in a browser by typing a URL — works on desktop and mobile, nothing to install. The React and Vue versions fall into this category, and both support **SSR** (server-side rendering: pages are assembled on the server before being sent to the browser, so search engines index them more easily — good for **SEO**).
+- **H5**: the mobile web page opened inside WeChat or a mobile browser. Still a web page at heart — no installation, opens on tap.
+- **WeChat Mini Program**: a lightweight app that runs *inside* WeChat. Users open it by scanning a QR code or searching within WeChat — nothing to download and nothing on the home screen. It is the most common reach channel in the WeChat ecosystem (official-account funnels, group sharing, offline QR codes).
+- **Native app**: a program downloaded from the App Store / Android app stores and installed on the phone's home screen. Smoothest experience, with access to device capabilities such as push notifications, camera and offline storage. Flutter's value: **one codebase produces both the iOS and the Android app**.
+
+#### Which one should I choose?
+
+- Readers reach you via a browser (official site / portal / blog) → pick **React** or **Vue**; they are feature-equal, so choose by your team's stack.
+- Your audience lives in WeChat (official account, group sharing, offline QR codes) → pick **Taro** (WeChat Mini Program).
+- You need your own app in the app stores, or push notifications / device capabilities → pick **Flutter**.
+- Combos are supported: e.g. React for the website + Taro for the Mini Program — both consume the same content and configuration, with no duplicate entry.
 
 ## Core Features
 
