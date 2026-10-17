@@ -140,7 +140,7 @@ export default function AiQueryPage() {
                         <summary className="cursor-pointer text-xs text-[color:var(--ant-color-text-secondary)]">
                           {t('generatedSql')}
                         </summary>
-                        <pre className="mt-2 overflow-x-auto rounded-lg bg-gray-900 p-3 text-xs leading-relaxed text-gray-100">
+                        <pre className="mt-2 overflow-x-auto rounded-lg bg-[color:var(--ant-color-fill-tertiary)] p-3 text-xs leading-relaxed text-[color:var(--ant-color-text)]">
                           {round.sql}
                         </pre>
                       </details>

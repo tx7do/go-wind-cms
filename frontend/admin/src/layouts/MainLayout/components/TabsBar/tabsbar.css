@@ -38,18 +38,6 @@
       display: none;
     }
   }
-  
-  /* 暗色模式适配 */
-  .ant-tabs-tab {
-    &:hover {
-      background: rgba(255, 255, 255, 0.05);
-    }
-    
-    &.ant-tabs-tab-active {
-      background: rgba(255, 255, 255, 0.08);
-      border-color: rgba(255, 255, 255, 0.1);
-    }
-  }
 }
 
 /* ========== Card 风格 ========== */
@@ -81,22 +69,12 @@
       display: none;
     }
   }
-  
-  /* 暗色模式适配 */
-  .ant-tabs-tab {
-    background: rgba(255, 255, 255, 0.04);
-    border-color: rgba(255, 255, 255, 0.06);
-    
-    &:hover {
-      background: rgba(255, 255, 255, 0.06);
-    }
-    
-    &.ant-tabs-tab-active {
-      background: rgba(255, 255, 255, 0.08);
-      border-color: rgba(255, 255, 255, 0.12);
-    }
-  }
 }
+
+/* 暗色不在这两个风格块里各写一份"适配"：那些未挂 `[data-theme='dark']` 的嵌套规则
+   权重低于同名的 `.ant-tabs-nav .ant-tabs-tab` 基础规则，实测两态都不生效
+   （card 风格未选中页签 computed 仍是 `rgba(128,128,128,.06)`，不是那里的 4% 白），
+   纯属空规则。暗色的页签配色统一在文件下方 `[data-theme='dark']` 一节里做。 */
 
 /* ========== Brisk 风格 ========== */
 /* 轻快风格，底部线条指示 */
@@ -266,7 +244,12 @@
 /* ========== 暗色模式：选中 Tab（2026-09-16 对齐 vben 温和配方，design-language.md §4） ==========
    chrome / card：中性灰底 + 正常亮文字，不用主色描边/发光/主色字（用户实测对比度刺眼）；
    注意 antd 把激活文字色挂在内层 .ant-tabs-tab-btn 上，只覆盖外层 .ant-tabs-tab 不生效；
-   brisk / plain：线型指示风格保留主色文字 + 主色指示条。 */
+   brisk / plain：线型指示风格保留主色文字 + 主色指示条。
+   2026-10-16 调整：选中底由 --ant-color-fill（14% 白，合成 #333945、对栏 1.52）收到
+   fill-secondary（9% 白，合成 #262D3A、对栏 1.28），与亮色那档 #F0F0F0（对白栏 1.14）
+   等重；原先 14% 白压 #111827 抬亮过多，暗色看着是一块实心灰。
+   减重能成立的前提是补上第二条区分通道——未选中文字降一档（见下），否则选中只靠底色撑，
+   收到 9% 后会认不出来。描边同步补上，与亮色的 1px 灰边形态对齐。 */
 [data-theme='dark'] .tabsbar-container .ant-tabs-tab.ant-tabs-tab-active {
   color: var(--ant-color-text);
 }
@@ -275,13 +258,23 @@
 }
 [data-theme='dark'] .tabsbar-chrome .ant-tabs-tab.ant-tabs-tab-active,
 [data-theme='dark'] .tabsbar-card .ant-tabs-tab.ant-tabs-tab-active {
-  background: var(--ant-color-fill) !important;
-  border-color: transparent !important;
+  background: var(--ant-color-fill-secondary) !important;
+  border-color: var(--ant-color-border-secondary) !important;
   box-shadow: none;
   color: var(--ant-color-text);
   font-weight: 400;
 }
-/* chrome/card 的选中项自带填充底（--ant-color-fill ≈ #323845），文字必须是浅色墨。
+/* 未选中：文字降到次要档（#8B949E 在 L1 上 5.77:1），hover 回主档。
+   同时命中外层与内层 .ant-tabs-tab-btn——关闭图标吃外层 color，文字吃内层。 */
+[data-theme='dark'] .tabsbar-container .ant-tabs-tab:not(.ant-tabs-tab-active),
+[data-theme='dark'] .tabsbar-container .ant-tabs-tab:not(.ant-tabs-tab-active) .ant-tabs-tab-btn {
+  color: var(--ant-color-text-secondary);
+}
+[data-theme='dark'] .tabsbar-container .ant-tabs-tab:not(.ant-tabs-tab-active):hover,
+[data-theme='dark'] .tabsbar-container .ant-tabs-tab:not(.ant-tabs-tab-active):hover .ant-tabs-tab-btn {
+  color: var(--ant-color-text);
+}
+/* chrome/card 的选中项自带填充底（--ant-color-fill-secondary ≈ #262D3A），文字必须是浅色墨。
    带 !important 是因为 styles/semantic-text.css 的「激活页签用主色文字档」那条也带 !important
    （它服务的是 brisk/plain 这类无填充底的风格），这里要靠更高的选择器权重赢下暗色这一档：
    实测 #4D97EE 在该填充底上只有 3.88:1（2026-09-28 大扫测，39 处）。 */

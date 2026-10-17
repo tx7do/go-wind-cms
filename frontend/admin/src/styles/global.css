@@ -64,7 +64,7 @@ body {
     color: #f8fafc;
 }
 
-/* 卡片悬浮反馈：边框提亮 + 轻投影（仅暗色；亮色卡片自带边框层次无需加） */
+/* 卡片悬浮反馈：边框提亮 + 轻投影（暗色档） */
 [data-theme='dark'] .ant-card {
     transition:
         border-color 0.2s ease,
@@ -76,9 +76,117 @@ body {
     box-shadow: 0 6px 20px rgba(0, 0, 0, 0.35);
 }
 
-/* 浮层（抽屉/弹窗）深投影：强化"悬浮在页面上"的层级感 */
-[data-theme='dark'] .ant-drawer-content,
-[data-theme='dark'] .ant-modal-content {
+/* 浅色卡片层级（§2.2）：静止 0 1px 2px / 悬浮 0 4px 12px。
+   原先这里的注释写着"亮色卡片自带边框层次无需加"——实测不成立：antd 的带边框卡片
+   根本不给投影（antd/es/card/style/index.js 只给 :not(-bordered) 一个 boxShadowTertiary，
+   hoverable 才在 hover 用 boxShadowCard），于是浅色卡片只有 1px 描边、描边色还是派生的
+   #F0F0F0（对白底 1.045 倍 ≈ 隐形），整页没有任何纵深。
+   描边色本身在 lightThemeTokens.colorBorderSecondary 里提到 #E4E4E7，这里只补投影。 */
+[data-theme='light'] .ant-card {
+    box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
+    transition:
+        border-color 0.2s ease,
+        box-shadow 0.2s ease;
+}
+
+[data-theme='light'] .ant-card:hover {
+    /* 取 --ant-color-border（浅色 = antd 的 #D9D9D9，比静止档 #E4E4E7 重一档）而不是再写一个
+       字面 hex：§2.2 没有"悬浮边框"档，硬写就成了色板外的孤儿值，且用户换主题色时不跟。
+       作用域在卡片元素上、位于 antd 的 cssVar 包裹层内，var 能解析（<html> 作用域才会落空）。 */
+    border-color: var(--ant-color-border);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+}
+
+/* ========== 路由入场（docs/design-language.md §2.7） ==========
+   只做起不做落：ProLayout 的 Outlet 没有退出相位可挂钩，单向 fade-in 已足够消除硬切。
+   位移取 8px（预览卡片里的 -20px 是 36px 小方块的尺度，放到整屏内容上会像滚动跳帧）。
+   填充档刻意用 backwards 而不是 both：both 会把 100% 帧的 transform 永久留在元素上，
+   非 none 的 transform 让内容包裹层长期成为 containing block，页内 position: fixed 的
+   元素会被改挂到它下面；backwards 只补动画开始前的首帧（防闪一下），结束后回到元素自身样式。
+   .page-transition 同时是内容区的 flex 链一环，动画属性不能改动它的 display。 */
+.page-transition {
+    display: flex;
+    flex-direction: column;
+    flex: 1;
+    min-height: 0;
+}
+
+.transition-fade {
+    animation: gowind-page-fade 0.24s ease-in-out backwards;
+}
+
+.transition-fade-slide {
+    animation: gowind-page-fade-slide 0.24s ease-in-out backwards;
+}
+
+.transition-fade-down {
+    animation: gowind-page-fade-down 0.24s ease-in-out backwards;
+}
+
+.transition-fade-up {
+    animation: gowind-page-fade-up 0.24s ease-in-out backwards;
+}
+
+@keyframes gowind-page-fade {
+    from {
+        opacity: 0;
+    }
+    to {
+        opacity: 1;
+    }
+}
+
+@keyframes gowind-page-fade-slide {
+    from {
+        opacity: 0;
+        transform: translateX(-8px);
+    }
+    to {
+        opacity: 1;
+        transform: translateX(0);
+    }
+}
+
+@keyframes gowind-page-fade-down {
+    from {
+        opacity: 0;
+        transform: translateY(-8px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+@keyframes gowind-page-fade-up {
+    from {
+        opacity: 0;
+        transform: translateY(8px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+/* 全局动效开关（preferences.transition.enable）与系统"减弱动态效果"都必须生效。
+   本条刻意排在四条 .transition-* 之后：同为单类选择器，靠顺序压过上面的 animation。 */
+.transition-disabled {
+    animation: none;
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .page-transition {
+        animation: none;
+    }
+}
+
+/* 浮层（抽屉/弹窗）深投影：强化"悬浮在页面上"的层级感。
+   载体类名 v6 已换（antd/es/{drawer,modal}/style 现读）：抽屉投影挂在 .ant-drawer-content-wrapper、
+   弹窗的底色+投影都在 .ant-modal-container；旧名 .ant-drawer-content / .ant-modal-content 在实测
+   DOM 里命中 0 ⇒ 这条覆写曾整条静默失效，暗色浮层吃到的是 darkAlgorithm 派生的白 α 投影（§2.3 明令避免）。 */
+[data-theme='dark'] .ant-drawer-content-wrapper,
+[data-theme='dark'] .ant-modal-container {
     box-shadow:
         0 12px 48px rgba(0, 0, 0, 0.55),
         0 2px 8px rgba(0, 0, 0, 0.4);
@@ -154,33 +262,6 @@ input:-webkit-autofill:active {
     transition: background-color 99999s ease-in-out 0s;
 }
 
-/* ===== 主题切换圆形扩散动效（View Transitions API，ele/ThemeSwitch 风格） =====
-   禁用默认交叉淡化，改由 JS（theme-transition.ts）驱动 clip-path 圆形过渡；
-   层级恒定：新画面在上、自圆心扩张覆盖旧画面（切暗时暗色立即从点击点绽开，
-   避免"旧画面收缩"方案在点击点附近久留亮色的初始全白观感）。 */
-::view-transition-old(root),
-::view-transition-new(root) {
-    animation: none;
-    mix-blend-mode: normal;
-}
-
-::view-transition-old(root) {
-    z-index: 1;
-}
-
-::view-transition-new(root) {
-    z-index: 2147483646;
-}
-
-/* 全局搜索面板头部输入（vben 同款无边框形态）：暗色下表单描边惯例
-   （[data-theme=dark] .ant-input-affix-wrapper(:focus-within) + !important，
-   (0,3,0)）会盖过 variant="borderless"，这里以 (0,4,0) + !important 压平 */
-.ant-modal .global-search-input.ant-input-affix-wrapper.ant-input-affix-wrapper {
-    background: transparent !important;
-    border: none !important;
-    box-shadow: none !important;
-}
-
 .ant-table-cell .ant-space-item a {
     display: inline-flex;
     align-items: center;
@@ -205,8 +286,35 @@ input:-webkit-autofill:active {
      列宽比例扩展，重新对齐；
    - 有滚动条：colgroup 里存在 15px 的 gutter <col>，fixed 布局中 <col>
      的 width 优先于单元格宽度，此规则不影响。 */
+/* ===== 主题切换圆形扩散动效（View Transitions API，ele/ThemeSwitch 风格） =====
+   禁用默认交叉淡化，改由 JS（theme-transition.ts）驱动 clip-path 圆形过渡；
+   层级恒定：新画面在上、自圆心扩张覆盖旧画面（切暗时暗色立即从点击点绽开，
+   避免"旧画面收缩"方案在点击点附近久留亮色的初始全白观感）。 */
+::view-transition-old(root),
+::view-transition-new(root) {
+    animation: none;
+    mix-blend-mode: normal;
+}
+
+::view-transition-old(root) {
+    z-index: 1;
+}
+
+::view-transition-new(root) {
+    z-index: 2147483646;
+}
+
 .ant-table-header th.ant-table-cell-scrollbar {
     width: 0 !important;
     min-width: 0 !important;
     padding: 0 !important;
+}
+
+/* 全局搜索面板头部输入（vben 同款无边框形态）：暗色下表单描边惯例
+   （[data-theme=dark] .ant-input-affix-wrapper(:focus-within) + !important，
+   (0,3,0)）会盖过 variant="borderless"，这里以 (0,4,0) + !important 压平 */
+.ant-modal .global-search-input.ant-input-affix-wrapper.ant-input-affix-wrapper {
+    background: transparent !important;
+    border: none !important;
+    box-shadow: none !important;
 }

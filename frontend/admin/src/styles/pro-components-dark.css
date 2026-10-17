@@ -13,10 +13,6 @@
 .ant-pro-table .ant-table {
   background-color: var(--ant-color-bg-container) !important;
 }
-/* 表体行在亮暗下保持一致的底部边框 */
-.ant-pro-table .ant-table-tbody > tr > td {
-  border-bottom: 1px solid;
-}
 /* 占位行（暂无数据）不参与行 hover：空态占位被撑满整个表体后，
    行 hover 灰会涂满整块不可交互区域；antd 原生对占位行 hover 本就是容器白底 */
 .ant-pro-table .ant-table-tbody > tr:not(.ant-table-placeholder):hover > td {
@@ -110,10 +106,21 @@
 .ant-pro-table .ant-table-placeholder {
   border-radius: 0 0 var(--ant-border-radius-lg, 8px) var(--ant-border-radius-lg, 8px) !important;
 }
-/* 分页器圆角（如果有） */
+/* 分页器与表格的间距。两条历史规则一并处理：
+   ① 原先这里是 `margin-top: 0 !important` + 一个 border-radius，注释写"分页器圆角（如果有）"。
+      圆角是空操作——上面 `.ant-pagination` 底色已被设成 transparent，没有对象可裁；
+      margin-top:0 则把分页器直接吸在表格底边上（实测表格可见底边→分页器只有 1px，那 1px 还是行底线）。
+   ② 不能"删掉覆写、恢复 antd 默认"：antd 那条默认是
+      `:where(.css-hash).ant-table-wrapper .ant-table-pagination { margin: 16px 0 }`
+      （antd/es/table/style/pagination.js:13），而本项目开 cssVar 后 `.ant-table-wrapper` 上挂的是
+      `ant-table-css-var css-var-*`、**没有 hash 类**（实测祖先链），`:where(.hash)` 前缀整条落空，
+      分页器实际吃的是 antd 基础重置 `.ant-pagination { margin: 0 }`（连 margin-bottom 都是 0px）。
+      ⇒ 这个间距必须由我们自己写。
+   取值：上 16 对齐 §2.6 的内容边距；下方 16 由卡片 body 的 padding-bottom 提供，补完即 16/16 对称
+   （原先是 1/16，读起来就是"贴在上面、下面空一截"）。不加 !important：
+   本条特异度 (0,2,0) 已高于 antd 基础重置的 (0,1,0)。 */
 .ant-pro-table .ant-pagination {
-  border-radius: 0 0 var(--ant-border-radius-lg, 8px) var(--ant-border-radius-lg, 8px);
-  margin-top: 0 !important;
+  margin: 16px 0 0;
 }
 /* 搜索+表格整体分离时各自圆角 */
 .ant-pro-table .ant-card {
@@ -223,13 +230,18 @@ html[data-theme='dark'] .ant-form .ant-input:not(.ant-input-affix-wrapper .ant-i
   color: #f8fafc !important;
 }
 
-[data-theme='dark'] .ant-select-selection-placeholder,
+/* 占位字：必须和 core/preferences/config/darkTheme.ts 的 colorTextPlaceholder 同值
+   （这里用 !important 打 antd 的运行时样式表，所以 token 改了这个块不改就会漂移）。
+   取三级灰 #6E7681 而非浅色的 gray-400：暗色下值文本 #F8FAFC 与提示语的分离度只有
+   2.43 倍（浅侧同族是 5.78 倍），提示语会和已输入内容一样抢眼。
+   选择器名 v6 已改（实测 .ant-select-selection-placeholder 命中 0、.ant-select-placeholder 命中 2）。 */
+[data-theme='dark'] .ant-select-placeholder,
 [data-theme='dark'] .ant-input::placeholder,
 [data-theme='dark'] .ant-input-affix-wrapper .ant-input::placeholder,
 [data-theme='dark'] .ant-input-affix-wrapper input::placeholder,
 [data-theme='dark'] .ant-input-number input::placeholder,
 [data-theme='dark'] textarea.ant-input::placeholder {
-  color: #9ca3af !important;
+  color: #6e7681 !important;
   opacity: 1 !important;
 }
 
@@ -244,9 +256,10 @@ html[data-theme='dark'] .ant-form .ant-input:not(.ant-input-affix-wrapper .ant-i
 }
 /* 悬停于已选中项：默认 hover 底色会把选中态的主色调蓝冲成灰，
    这里在选中色基础上提亮 14% 白，保留"当前选中"的蓝色语义。
-   色值走 --ant-select-option-selected-bg 变量，用户改主色时自动跟随。 */
+   色值走 --ant-color-primary-bg（v6 实名，暗色实测 #0e2e53，与 controlItemBgActive 同值）；
+   原先写的 --ant-select-option-selected-bg 不存在，整条 color-mix 会静默失效。 */
 [data-theme='dark'] .ant-select-dropdown .ant-select-item-option-selected.ant-select-item-option-active:not(.ant-select-item-option-disabled) {
-  background-color: color-mix(in srgb, var(--ant-select-option-selected-bg) 86%, #ffffff) !important;
+  background-color: color-mix(in srgb, var(--ant-color-primary-bg) 86%, #ffffff) !important;
 }
 
 /* hover：边框整体提亮（四边同步，防止再次出现单边丢失） */
@@ -356,17 +369,22 @@ html[data-theme='dark'] .ant-form .ant-input:not(.ant-input-affix-wrapper .ant-i
 }
 
 /* ========== 搜索表单 / 工具条 / 表格之间垂直呼吸感 ========== */
+/* 搜索卡 → 列表卡的间距 16px：与 §2.6 已有的两个 16（内容边距、表格→分页）同族。
+   原先 24px 是"对齐设计稿 mb-6"的字面搬运，但设计稿那版没有卡片描边——描边一画，
+   24px 的空档就比卡内 20px 内缩还宽，两块读起来像互不相干的段落。 */
 .ant-pro-table .ant-pro-table-search {
-  margin-bottom: 24px; /* 对齐设计稿 mb-6 */
+  margin-bottom: 16px;
 }
 .ant-pro-table .ant-pro-table-list-toolbar-container {
   margin-bottom: 16px;
   gap: 12px;
 }
 
-/* ========== 工具条顶部留白，与表头拉开距离 ========== */
+/* ========== 工具条与表头的间距 ========== */
+/* padding-top 归零：卡片描边画到宿主层后，顶部 20px 由卡片体 padding 承担（见下方卡片块），
+   工具条再叠 8px 会让上方留白比左右多出一截 */
 .ant-pro-table .ant-pro-table-list-toolbar-container {
-  padding-top: 8px;
+  padding-top: 0;
   padding-bottom: 12px;
   margin-bottom: 0;
 }
@@ -375,40 +393,71 @@ html[data-theme='dark'] .ant-form .ant-input:not(.ant-input-affix-wrapper .ant-i
 /* 暗黑页面背景走 --ant-color-bg-layout（= 画布 #0B0F19），无需再覆写 */
 
 /* 卡片边框/圆角/内边距 —— 通用（亮暗一致，高度不变）
-   圆角与留白对齐设计稿：rounded-xl(12px) + p-5(20px) + 悬浮阴影 */
+   圆角与留白对齐设计稿：rounded-xl(12px) + p-5(20px)；投影按主题分档，见下方。
+   列表侧的盒子画在宿主 .ant-pro-card 上，而不是 .ant-table 上：实测两者本来就和搜索卡
+   同起点同宽（x=528 / w=824），而 `.ant-table` 坐在带 24px 左右内缩的卡片体里。
+   描边画在表格层 = 可见盒子比搜索卡窄 48px，正是"列表 card 比搜索栏窄一截"的来源。 */
 .ant-pro-table-search {
   border: 1px solid;
   border-radius: 12px;
-  padding: 20px 20px 4px;
-  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -2px rgba(0, 0, 0, 0.1);
+  padding: 20px;
 }
-.ant-pro-table .ant-table {
+/* 搜索卡的内缩只留上面那一条：pro-components 自己给查询表单写了 `padding: 24px`
+   （选择器 `.ant-pro-query-filter.ant-pro-query-filter`，用双类提权），和我们的卡 padding
+   叠起来后，单行搜索 44px 的内容被 20+24 / 24+4 的空白包着 → 卡高 117px（62% 是空白），
+   且内容左缘落在 45px，而列表卡工具条/表格单元格在 21px——两块卡片的边缘对齐了，内容却没对齐。
+   归零后实测（暗色 /permission/menus，单行搜索）：卡高 85px、左右内缩 21px，
+   与工具条、表头单元格同一条竖线（三者都 21px）。
+   选择器必须同样写双类：pro 那条权重 0,2,0，单类只有 0,1,0。实测在页面末尾追加一条
+   `.ant-pro-query-filter{padding:33px}` 仍压不住它（computed 依旧 0px）——输在特异度，
+   与构建期/运行时的注入顺序无关。 */
+.ant-pro-query-filter.ant-pro-query-filter {
+  padding: 0;
+}
+.ant-pro-table > .ant-pro-card:not(.ant-pro-table-search) {
   border: 1px solid;
   border-radius: 12px;
   overflow: hidden;
 }
+/* 卡片体内缩：出厂 `0 24px 16px` 左右比 §2.2 的 p-5(20px) 宽 4px、下方不足。
+   ProTable 在宿主 inline 上写死 `padding-block-start: 0`（工具条原本贴着卡片顶边），
+   描边画到卡片层之后那 1px 边就要留出应有的 20px，故用 !important 收回同一档，
+   工具条自己的 padding-top 同步归零（见上方"工具条顶部留白"条）。 */
+.ant-pro-table > .ant-pro-card:not(.ant-pro-table-search) > .ant-pro-card-body {
+  padding: 20px !important;
+}
 
-/* 暗黑模式卡片：#111827 卡片面 + 1px 极细描边 + shadow-xl 悬浮感 */
+/* 描边回 token：亮 #E4E4E7 / 暗 8% 白（--ant-color-border-secondary 两态各解析到一档）。
+   原写法是两套越界值——亮侧 Tailwind gray-200 `#E5E7EB`，暗侧 5% 白；
+   5% 白正是 §2.3 点名"卡片与大底糊成一片"的那一档。 */
+.ant-pro-table-search,
+.ant-pro-table > .ant-pro-card:not(.ant-pro-table-search) {
+  border-color: var(--ant-color-border-secondary) !important;
+}
+
+/* 暗色卡片靠 L1 面 + 描边分离，不靠黑投影：原先这里写的
+   `0 20px 25px -5px rgba(0,0,0,0.45), 0 8px 10px -6px rgba(0,0,0,0.4)`（Tailwind shadow-xl）
+   压在 #0B0F19 画布上几乎不显形，是"写了不生效"的空规则，改成显式 none。 */
 [data-theme='dark'] .ant-pro-table-search,
-[data-theme='dark'] .ant-pro-table .ant-table {
-  box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.45), 0 8px 10px -6px rgba(0, 0, 0, 0.4) !important;
+[data-theme='dark'] .ant-pro-table > .ant-pro-card:not(.ant-pro-table-search) {
+  box-shadow: none;
 }
 [data-theme='dark'] .ant-pro-table-search {
   background-color: var(--ant-color-bg-container) !important;
-  border-color: rgba(255, 255, 255, 0.05) !important;
-}
-[data-theme='dark'] .ant-pro-table .ant-table {
-  background-color: var(--ant-color-bg-container) !important;
-  border-color: rgba(255, 255, 255, 0.05) !important;
 }
 
-/* 亮色模式卡片颜色 */
+/* 亮色模式卡片颜色：底色同取 token（= §2.2 surface #FFFFFF），不再写 #fff 字面量 */
 [data-theme='light'] .ant-pro-table-search {
-  background-color: #fff !important;
-  border-color: #e5e7eb !important;
+  background-color: var(--ant-color-bg-container) !important;
 }
-[data-theme='light'] .ant-pro-table .ant-table {
-  border-color: #e5e7eb !important;
+
+/* 搜索卡原先挂在通用条上的 Tailwind shadow-md
+   （`0 4px 6px -1px rgba(0,0,0,.1), 0 2px 4px -2px rgba(0,0,0,.1)`）已删，两块统一到 §2.2 卡片静止档：
+   搜索卡与列表容器是同一层级的并列容器（中间只隔 16px 空隙、没有叠放关系），
+   一档浮、一档贴地会被读成"搜索卡压在列表上面"。投影跟着描边走，现在两者都在卡片层。 */
+[data-theme='light'] .ant-pro-table-search,
+[data-theme='light'] .ant-pro-table > .ant-pro-card:not(.ant-pro-table-search) {
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
 }
 
 /* ========== 表格表头：文字加粗（通用），颜色按主题 ========== */
@@ -417,16 +466,17 @@ html[data-theme='dark'] .ant-form .ant-input:not(.ant-input-affix-wrapper .ant-i
   border-bottom: 1px solid;
 }
 
-/* 表头：比卡片面稍深一档（#1A2230），标题加粗提亮，从表体中脱颖而出 */
+/* 表头：比卡片面稍深一档（#1F2937 = §2.3 表头独立次级色），标题加粗提亮。
+   分隔线取 --ant-color-border-secondary（暗 8% 白 / 亮 #E4E4E7），两态同一条规则、不再各写一档 */
 [data-theme='dark'] .ant-pro-table .ant-table-thead > tr > th {
   background-color: #1f2937 !important;
   color: #f8fafc !important;
-  border-bottom-color: rgba(255, 255, 255, 0.08) !important;
+  border-bottom-color: var(--ant-color-border-secondary) !important;
 }
 
 [data-theme='light'] .ant-pro-table .ant-table-thead > tr > th {
   background-color: #fafafa !important;
-  border-bottom-color: #e5e7eb !important;
+  border-bottom-color: var(--ant-color-border-secondary) !important;
 }
 
 /* ========== 暗黑模式：Radio.Button 未选中态 ========== */
@@ -444,9 +494,10 @@ html[data-theme='dark'] .ant-form .ant-input:not(.ant-input-affix-wrapper .ant-i
 }
 
 /* ========== Drawer / 抽屉表单（新建/编辑弹层） ========== */
-/* 一楼 Elevation 1：抽屉容器比画布亮一档（#161B22），
-   左缘 1px 精致竖线与主页面分隔，产生悬浮立体感。
-   antd v6 的背景载体是 .ant-drawer-section */
+/* L1 表面 #111827（§2.3：抽屉属一楼，与卡片同层，不是"比画布亮一档"的另一档），
+   左缘 1px 竖线与主页面分隔。antd v6 的背景载体是 .ant-drawer-section
+   （.ant-drawer-content 在实测 DOM 里命中 0，留着只当兼容位）。
+   投影见 global.css：v6 挂在 .ant-drawer-content-wrapper 上，必须换成黑。 */
 [data-theme='dark'] .ant-drawer .ant-drawer-section,
 [data-theme='dark'] .ant-drawer .ant-drawer-content {
   background-color: #111827 !important;
@@ -454,7 +505,7 @@ html[data-theme='dark'] .ant-form .ant-input:not(.ant-input-affix-wrapper .ant-i
 }
 [data-theme='dark'] .ant-drawer .ant-drawer-header {
   background-color: transparent !important;
-  border-bottom-color: rgba(255, 255, 255, 0.06) !important;
+  /* 分隔线不再硬写：token --ant-color-split 在暗色本就是 8% 白，与底部线同档 */
 }
 [data-theme='dark'] .ant-drawer .ant-drawer-title {
   color: #f8fafc !important;
@@ -467,7 +518,9 @@ html[data-theme='dark'] .ant-form .ant-input:not(.ant-input-affix-wrapper .ant-i
   padding-bottom: 8px;
 }
 [data-theme='dark'] .ant-drawer .ant-form-item-label > label {
-  color: #c9d1d9;
+  /* §2.3 表单标签档 #DCE3ED（= token --ant-color-text-heading，darkTheme.ts 已钉）；
+     原硬写 #c9d1d9 不在色板上，且比权威档低 2.24 个对比度点 */
+  color: var(--ant-color-text-heading);
 }
 /* 底部按钮区：与抽屉同层 L1 表面（§2.3：抽屉属 #111827 表面层，ele/vben 端 footer 同口径），
    仅靠顶部发丝线分隔；早前"最暗底色隔离"的做法会在底部留下一道 L0 深色条 */

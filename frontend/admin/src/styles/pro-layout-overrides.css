@@ -1,40 +1,19 @@
-/* 自定义滚动条 —— 颜色跟随 antd 主题 token，亮/暗模式自动切换 */
-.custom-scrollbar::-webkit-scrollbar {
-    width: 6px;
-    height: 6px;
-}
-
-.custom-scrollbar::-webkit-scrollbar-track {
-    background: transparent;
-}
-
-.custom-scrollbar::-webkit-scrollbar-thumb {
-    background: var(--ant-color-fill-secondary);
-    border-radius: 3px;
-}
-
-/* 菜单项悬停效果 —— 使用 primary 背景 token，亮/暗模式自动切换 */
-.ant-pro-menu-item:hover {
-    background: var(--ant-color-primary-bg) !important;
-}
-
-/* 选中菜单项 —— 使用 primary 背景/边框 token，亮/暗模式自动切换 */
-.ant-pro-menu-item-selected {
-    background: var(--ant-color-primary-bg-hover) !important;
-    border-right: 3px solid var(--ant-color-primary) !important;
-}
+/* 侧栏菜单由自定义 MainLayout/SiderMenu 渲染（`BasicLayout` → AuthenticatedLayout），
+   ProLayout 不挂载 ⇒ 本文件原先的 .custom-scrollbar / .ant-pro-menu-item / .ant-pro-sider /
+   .ant-pro-top-nav-header 四组选择器实测命中 0，已删除。 */
 
 /* 暗黑侧栏菜单（标准 antd Menu 类名）：悬停柔和浮起、文字提亮 */
 [data-theme='dark'] .ant-menu-dark .ant-menu-item:hover,
 [data-theme='dark'] .ant-menu-dark .ant-menu-submenu-title:hover {
     background: rgba(255, 255, 255, 0.06) !important;
-    color: #f0f6fc !important;
+    color: var(--ant-color-text) !important;
 }
 
-/* 暗黑菜单：未选中项文字用次要色，选中项品牌色点缀由 antd dark token 提供 */
+/* 暗黑菜单：未选中项文字用主色 #F8FAFC 降透明，选中项回到主色本身
+   （原先写的是 GitHub 侧的 #f0f6fc / #fff / rgba(230,237,243,.72) 三档，都不在 §2.3 的文字基色上） */
 [data-theme='dark'] .ant-menu-dark .ant-menu-item,
 [data-theme='dark'] .ant-menu-dark .ant-menu-submenu-title {
-    color: rgba(230, 237, 243, 0.72);
+    color: rgba(248, 250, 252, 0.72);
 }
 
 /* 暗黑菜单：展开的子菜单区域凹陷更深一档 + 圆角分组，与父级拉开层次 */
@@ -49,22 +28,81 @@
 
 [data-theme='dark'] .ant-menu-dark .ant-menu-item-selected,
 [data-theme='dark'] .ant-menu-dark .ant-menu-submenu-selected > .ant-menu-submenu-title {
-    color: #fff;
-}
-
-/* 顶栏阴影 —— 使用 antd 阴影 token，亮/暗模式自动切换 */
-.ant-pro-top-nav-header {
-    box-shadow: var(--ant-box-shadow) !important;
-}
-
-/* 移动端适配 */
-@media (max-width: 768px) {
-    .ant-pro-sider {
-        z-index: 1000 !important;
-    }
+    color: var(--ant-color-text);
 }
 
 /* PageContainer 内容区域内边距 - 移除 ProPageContainer 默认的 padding */
 .page-container-root [class*="children-container"] {
   padding: 0 !important;
+}
+
+/* ========== 侧栏折叠：一条时钟 ========== */
+/* 症状是"生硬"，病因不是曲线本身，而是同一次折叠被拆成互不同步的多个时钟。折叠前实测：
+     容器 width      300ms cubic-bezier(0.4,0,0.2,1)   ← SiderMenu/index.tsx 的 inline
+     .ant-menu width 300ms cubic-bezier(0.2,0,0,1)     ← antd "Magic cubic"，与上一条复合成双缓动
+     菜单项 padding  100ms cubic-bezier(0.215,0.61,0.355,1)（antd/es/menu/style/vertical.js:109）
+     标签 opacity    300ms cubic-bezier(0.645,0.045,0.355,1)
+     图标 font-size  200ms
+   于是几何（padding）100ms 就跑完、面板宽度还要再走 200ms，标签更滞后——读起来像"先弹一下再慢慢追"。
+   这里把参与折叠的属性全部钉到 §2.7 允许档内的 240ms + 同一条 standard 曲线；
+   hover 反馈（background-color / border-color / color）保持 antd 的 200ms，它不属于折叠。
+   padding 不能从过渡里摘掉：折叠态的图标定位就靠这个 padding 值（实测 48px 轨道上 padding-left = 11.67px，
+   图标中心落在 23.7px，正是轨道中线）。
+   作用域收在 .app-sider 内，避免波及抽屉/弹窗里可能出现的其它 inline Menu。 */
+/* UL 自身的 width 过渡整条关掉：antd 把它写在 `.ant-menu` 根规则上
+   （antd/es/menu/style/index.js:162 "Magic cubic"），而折叠态的 UL 类名会换成
+   `ant-menu-vertical ant-menu-inline-collapsed` —— 用 .ant-menu-inline 选它就只在展开态命中，
+   折叠那一程又吃回 300ms 双缓动。面板宽度由 .app-sider 决定，这一层不需要第二条时钟。 */
+.app-sider .ant-menu-root {
+    transition: none !important;
+}
+
+.app-sider .ant-menu-item,
+.app-sider .ant-menu-submenu-title {
+    transition:
+        padding 240ms cubic-bezier(0.4, 0, 0.2, 1),
+        border-color 200ms ease,
+        background-color 200ms ease !important;
+}
+
+.app-sider .ant-menu-title-content {
+    transition:
+        opacity 240ms cubic-bezier(0.4, 0, 0.2, 1),
+        margin 240ms cubic-bezier(0.4, 0, 0.2, 1),
+        color 200ms ease !important;
+}
+
+.app-sider .ant-menu-item-icon {
+    transition:
+        font-size 240ms cubic-bezier(0.4, 0, 0.2, 1),
+        margin 240ms cubic-bezier(0.4, 0, 0.2, 1),
+        color 200ms ease !important;
+}
+
+/* 分组箭头旋转同档（原 antd 300ms，是全页唯一剩下的 300ms 旋钮） */
+.app-sider .ant-menu-submenu-arrow {
+    transition:
+        transform 240ms cubic-bezier(0.4, 0, 0.2, 1),
+        opacity 240ms cubic-bezier(0.4, 0, 0.2, 1) !important;
+}
+
+/* 全局动效开关（preferences.transition.enable）关掉折叠位移：`.transition-disabled` 只挂在内容区
+   （MainLayout 的 .page-transition 上），侧栏是它的兄弟节点，故开关状态由 SiderMenu 自己落到 wrapper。 */
+.sider-motion-off,
+.sider-motion-off .ant-menu-item,
+.sider-motion-off .ant-menu-submenu-title,
+.sider-motion-off .ant-menu-title-content,
+.sider-motion-off .ant-menu-item-icon {
+    transition: none !important;
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .app-sider,
+    .app-sider .ant-menu-root,
+    .app-sider .ant-menu-item,
+    .app-sider .ant-menu-submenu-title,
+    .app-sider .ant-menu-title-content,
+    .app-sider .ant-menu-item-icon {
+        transition: none !important;
+    }
 }

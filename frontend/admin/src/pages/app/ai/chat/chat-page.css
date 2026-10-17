@@ -15,7 +15,16 @@
   background: var(--ant-color-bg-container);
   border: 1px solid var(--ant-color-border-secondary);
   border-radius: var(--aichat-card-radius);
-  box-shadow: var(--ant-box-shadow-tertiary);
+}
+
+/* 卡片静止档（§2.2：投影表达层级，并列卡片不靠投影分离）：与搜索卡/列表卡同值。
+   这里原先写 `var(--ant-box-shadow-tertiary)`，暗色实测解析成白 α
+   （rgba(255,255,255,.008/.004/.004)），既违反 §2.3「暗色投影须黑」又几乎不显形。 */
+html[data-theme='dark'] .ai-chat-page .chat-card {
+  box-shadow: none;
+}
+html[data-theme='light'] .ai-chat-page .chat-card {
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
 }
 
 /* ── 面板头部 ─────────────────────────────────────────────────────── */

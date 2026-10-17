@@ -39,6 +39,15 @@ export const Index = ({
   const expandOnHover = sidebarConfig?.expandOnHover ?? true;
   const sidebarEnable = sidebarConfig?.enable ?? true;
   const sidebarHidden = sidebarConfig?.hidden ?? false;
+  // 折叠是一条跨元素的动效：容器 width 与 Logo 区 padding 在此，菜单项 padding / 标签 opacity /
+  // 图标 font-size 在 styles/pro-layout-overrides.css，两边共用 §2.7 允许档内的 240ms +
+  // 同一条 standard 曲线。各跑各的时钟会被读成"先弹一下再慢慢追"（即用户反馈的"生硬"）。
+  const siderCurve = preferences.transition.enable
+    ? '240ms cubic-bezier(0.4, 0, 0.2, 1)'
+    : null;
+  const siderMotion = siderCurve ? `width ${siderCurve}` : 'none';
+  const siderPaddingMotion = siderCurve ? `padding ${siderCurve}` : 'none';
+  const siderFadeMotion = siderCurve ? `opacity ${siderCurve}` : 'none';
 
   // 鼠标悬停状态（用于 expandOnHover）
   const [isHovering, setIsHovering] = useState(false);
@@ -95,6 +104,9 @@ export const Index = ({
     ? !isHovering // 自动模式：只看 hover 状态
     : sidebarCollapsed; // 手动模式：看 collapsed 状态
 
+  // 折叠到"只留图标"的判据（collapsedShowTitle=true 时折叠仍显示站名，不走这套收缩几何）
+  const titleStashed = isCollapsed && !collapsedShowTitle;
+
   // 计算侧边栏宽度
   const sidebarWidth = isCollapsed ? 48 : (sidebarConfig?.width ?? 224);
 
@@ -136,6 +148,7 @@ export const Index = ({
 
   return (
     <div
+      className={`app-sider${preferences.transition.enable ? '' : ' sider-motion-off'}`}
       style={{
         width: sidebarWidth,
         height: '100%',
@@ -143,7 +156,7 @@ export const Index = ({
         flexDirection: 'column',
         backgroundColor: 'var(--app-bg-nav, var(--ant-color-bg-container))',
         borderRight: '1px solid var(--ant-color-border)',
-        transition: 'width 0.3s cubic-bezier(0.4, 0, 0.2, 1)',
+        transition: siderMotion,
         flexShrink: 0,
         overflow: 'hidden',
         // Drawer 效果：expandOnHover=true 时，使用绝对定位悬浮在内容上方
@@ -159,12 +172,14 @@ export const Index = ({
           height: 56,
           display: 'flex',
           alignItems: 'center',
-          justifyContent: isCollapsed && !collapsedShowTitle ? 'center' : 'flex-start',
-          padding: isCollapsed && !collapsedShowTitle ? '0' : '0 16px',
+          // 折叠时把左右内距收到 8px（48 - 32 图标 = 16），图标正好落在轨道正中；
+          // 这条 padding 与侧栏 width 走同一条 240ms 曲线，否则图标会瞬移 8px
+          padding: titleStashed ? '0 8px' : '0 16px',
           gap: 8,
           cursor: 'pointer',
           flexShrink: 0,
           overflow: 'hidden',
+          transition: siderPaddingMotion,
         }}
         onClick={() => navigate('/')}
       >
@@ -175,7 +190,9 @@ export const Index = ({
             style={{ height: 32, width: 32, flexShrink: 0 }}
           />
         )}
-        {(!isCollapsed || collapsedShowTitle) && preferences.app.dynamicTitle && (
+        {preferences.app.dynamicTitle && (
+          // 标题不随折叠瞬时卸载（那会让站名在面板还有 220px 宽时一帧消失，正是"生硬"的来源之一）：
+          // 常驻，靠 flex 收缩 + 同档淡出与侧栏一起走完这条时钟
           <span
             style={{
               fontWeight: 700,
@@ -184,6 +201,9 @@ export const Index = ({
               whiteSpace: 'nowrap',
               overflow: 'hidden',
               textOverflow: 'ellipsis',
+              minWidth: 0,
+              opacity: titleStashed ? 0 : 1,
+              transition: siderFadeMotion,
             }}
           >
             {preferences.app.name}
@@ -196,7 +216,7 @@ export const Index = ({
         <div style={{ height: '100%', overflowY: 'auto', overflowX: 'hidden', padding: '4px 0' }}>
           <Menu
             mode="inline"
-            inlineCollapsed={isCollapsed && !collapsedShowTitle}
+            inlineCollapsed={titleStashed}
             selectedKeys={selectedKeys}
             openKeys={openKeys}
             onOpenChange={onOpenChange}

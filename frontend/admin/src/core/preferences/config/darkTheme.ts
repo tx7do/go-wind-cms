@@ -8,7 +8,7 @@ import type { ThemeConfig } from 'antd';
  *   L2 #161F33  二楼：输入框/下拉框（比卡片微亮，"浮起"式，避免黑洞感）
  *   L3 #1F2937  表头独立次级深色；#1C2128 下拉/弹窗浮层
  *
- * 主色 hsl(212 100% 45%)（#006BE6，见 docs/design-language.md）；文字基色 #F8FAFC；placeholder #9CA3AF
+ * 主色 hsl(212 100% 45%)（#006BE6，见 docs/design-language.md）；文字基色 #F8FAFC；placeholder #6E7681
  */
 export const DARK_PALETTE = {
   bgLayout: '#0B0F19',
@@ -18,12 +18,17 @@ export const DARK_PALETTE = {
   bgInset: '#111827',
   borderInput: 'rgba(148, 163, 184, 0.22)',
   borderInputHover: 'rgba(148, 163, 184, 0.4)',
-  borderCard: 'rgba(255, 255, 255, 0.05)',
-  borderLine: 'rgba(255, 255, 255, 0.06)',
+  // 卡片描边 = 分隔线 = §2.3 的 8% 白一档（下面 colorBorderSecondary 直接引用，不留第二份真相）。
+  // 此前这里是 5% 白，正是 §2.3 点名"卡片与大底糊成一片"的档，且与 token 实际生效值不一致。
+  borderCard: 'rgba(255, 255, 255, 0.08)',
   textPrimary: '#F8FAFC',
   textSecondary: '#8B949E',
   textTertiary: '#6E7681',
-  placeholder: '#9CA3AF',
+  // placeholder 取三级灰（2026-10-16 由 #9CA3AF 下调）：placeholder 的"显眼度"要按
+  // 它与自己控件里已输入值的**分离度**判，不是按它对底色的对比度判。浅侧
+  // #1F2937/#9CA3AF = 5.78 倍，暗侧同值只有 2.43 倍（16.96 vs 6.99），于是暗色下
+  // 提示语和真内容一样跳。降到本档后分离度 4.39 倍，且复用已有文字档、不新增 hex。
+  placeholder: '#6E7681',
   accentBlue: '#006BE6',
 } as const;
 
@@ -44,12 +49,12 @@ export const darkThemeTokens: ThemeConfig['token'] = {
   colorText: '#F8FAFC',
   colorTextSecondary: '#8B949E',
   colorTextTertiary: '#6E7681',
-  colorTextPlaceholder: '#9CA3AF',
+  colorTextPlaceholder: DARK_PALETTE.placeholder,
   // 边框：拒绝隐形。输入类控件边框用 slate 蓝灰（带蓝相，和整页蓝黑调一致，
   // 纯白 α 边框在蓝黑底上会显"脏灰"）；分隔线 8% 白保证卡片/表格
   // 与大底之间有可感知的层次（5% 时几乎隐形，整页糊成一片）
   colorBorder: 'rgba(148, 163, 184, 0.28)',
-  colorBorderSecondary: 'rgba(255, 255, 255, 0.08)',
+  colorBorderSecondary: DARK_PALETTE.borderCard,
   colorFill: 'rgba(255, 255, 255, 0.14)',
   colorFillSecondary: 'rgba(255, 255, 255, 0.09)',
   colorFillTertiary: 'rgba(255, 255, 255, 0.05)',

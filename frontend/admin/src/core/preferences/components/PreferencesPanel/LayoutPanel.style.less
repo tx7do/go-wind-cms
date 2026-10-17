@@ -15,7 +15,7 @@
     margin: 0 0 8px;  // 从12px压缩到8px
     font-size: 14px;  // 从13px增加到14px，更突出
     font-weight: 600;
-    color: var(--ant-text-color);
+    color: var(--ant-color-text);
   }
 
   /* 开关项区域 */
@@ -93,7 +93,7 @@
   .layout-item {
     width: 100%;
     padding: 8px 6px;  // 从12px 10px压缩到8px 6px
-    border: 1px solid var(--ant-border-color);
+    border: 1px solid var(--ant-color-border);
     border-radius: 4px;  // 从6px压缩到4px
     transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
     background: transparent;
@@ -534,11 +534,11 @@
       gap: 2px;  // 从3px压缩到2px
       font-size: 11px;  // 从12px压缩到11px
       font-weight: 400;
-      color: var(--ant-text-color-secondary);
+      color: var(--ant-color-text-secondary);
 
       .help-icon {
         font-size: 11px;  // 从12px压缩到11px
-        color: var(--ant-text-color-tertiary);
+        color: var(--ant-color-text-tertiary);
         cursor: help;
       }
     }
@@ -566,7 +566,7 @@
   .content-compact-item {
     width: 100%;
     padding: 8px 6px;  // 从12px 10px压缩到8px 6px
-    border: 1px solid var(--ant-border-color);
+    border: 1px solid var(--ant-color-border);
     border-radius: 4px;  // 从6px压缩到4px
     transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
     background: transparent;
@@ -678,7 +678,7 @@
     span {
       font-size: 11px;  // 从12px压缩到11px
       font-weight: 400;
-      color: var(--ant-text-color-secondary);
+      color: var(--ant-color-text-secondary);
     }
   }
 
@@ -689,7 +689,7 @@
       border: 1px solid var(--ant-color-border);
 
       .ant-segmented-item {
-        color: var(--ant-text-color-secondary);  // 未选中文字颜色
+        color: var(--ant-color-text-secondary);  // 未选中文字颜色
 
         &.ant-segmented-item-selected {
           background: var(--ant-color-primary);  // 选中背景使用主题色
@@ -697,7 +697,7 @@
         }
 
         &:hover:not(.ant-segmented-item-selected) {
-          color: var(--ant-text-color);  // hover时文字更清晰
+          color: var(--ant-color-text);  // hover时文字更清晰
           background: var(--ant-color-fill-secondary);
         }
       }
@@ -708,7 +708,7 @@
     .ant-select {
       background: var(--ant-color-fill);
       border: 1px solid var(--ant-color-border);
-      color: var(--ant-text-color);
+      color: var(--ant-color-text);
 
       &:hover {
         border-color: var(--ant-color-primary);
@@ -725,12 +725,12 @@
       &.ant-input-disabled,
       &.ant-select-disabled {
         background: var(--ant-color-fill-secondary);
-        color: var(--ant-text-color-secondary);
+        color: var(--ant-color-text-secondary);
       }
 
       .ant-select-selector {
         background: transparent !important;
-        color: var(--ant-text-color) !important;
+        color: var(--ant-color-text) !important;
       }
     }
   }

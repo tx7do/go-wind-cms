@@ -72,6 +72,21 @@ html[data-theme='dark'] {
   /* 暗色侧数字保持亮色：#22d3ee 在 L1 上 9.82:1 */
   --metric-cyan: #22d3ee;
   --metric-violet: #a78bfa;
+
+  /* AI Agent 画布节点类型色（同 --metric-* 的理由：节点图标是「文字前景」，
+     不能用色板 -7 的填充档）：暗底取 -5 提亮。 */
+  --gowind-node-start: #73d13d;
+  --gowind-node-knowledge: #9254de;
+  --gowind-node-condition: #ffa940;
+  --gowind-node-end: #8b949e;
+}
+
+/* 浅色侧节点档：亮底用色板 -7，对应暗色块的 -5 */
+html[data-theme='light'] {
+  --gowind-node-start: #389e0d;
+  --gowind-node-knowledge: #722ed1;
+  --gowind-node-condition: #d46b08;
+  --gowind-node-end: #676e7c;
 }
 
 /* ---------- Tag（filled 软底状态标签）：前景走文字档 ----------

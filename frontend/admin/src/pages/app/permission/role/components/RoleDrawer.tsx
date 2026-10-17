@@ -261,7 +261,7 @@ const RoleDrawer: React.FC<RoleDrawerProps> = ({ open, mode, data, onClose, onSu
                 {t('orgUnits')}
               </label>
               {unitTreeData.length > 0 ? (
-                <div className="rounded-lg border border-white/10 bg-white/5 p-2.5 dark:border-white/8 dark:bg-zinc-800/40">
+                <div className="rounded-lg border border-[color:var(--ant-color-border-secondary)] bg-[color:var(--ant-color-fill-quaternary)] p-2.5">
                   <Tree
                     checkable
                     checkedKeys={unitCheckedKeys}
@@ -309,7 +309,7 @@ const RoleDrawer: React.FC<RoleDrawerProps> = ({ open, mode, data, onClose, onSu
         </label>
         <Spin spinning={treeLoading}>
           {treeData.length > 0 ? (
-            <div className="rounded-lg border border-white/10 bg-white/5 p-2.5 dark:border-white/8 dark:bg-zinc-800/40">
+            <div className="rounded-lg border border-[color:var(--ant-color-border-secondary)] bg-[color:var(--ant-color-fill-quaternary)] p-2.5">
               <Tree
                 checkable
                 checkedKeys={checkedKeys}
@@ -335,7 +335,7 @@ const RoleDrawer: React.FC<RoleDrawerProps> = ({ open, mode, data, onClose, onSu
         <label className="block mb-2 text-sm font-medium text-[color:var(--ant-color-text)]">
           {t('fieldPerm.title')}
         </label>
-        <div className="rounded-lg border border-white/10 bg-white/5 p-2.5 dark:border-white/8 dark:bg-zinc-800/40">
+        <div className="rounded-lg border border-[color:var(--ant-color-border-secondary)] bg-[color:var(--ant-color-fill-quaternary)] p-2.5">
           <p className="mb-2 text-xs text-[color:var(--ant-color-text-quaternary)]">
             {t('fieldPerm.hint')}
           </p>

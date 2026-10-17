@@ -61,9 +61,11 @@ const AiInsightsCard = () => {
   return (
     <div
       className={
-        'group relative h-full overflow-hidden rounded-xl border border-white/8 ' +
+        'group relative h-full overflow-hidden rounded-xl border ' +
+        'border-[color:var(--ant-color-border-secondary)] ' +
         'bg-[color:var(--ant-color-bg-container)] p-5 transition-all duration-200 ' +
-        'hover:border-white/15 hover:shadow-[0_8px_24px_rgba(0,0,0,0.35)]'
+        'hover:border-[color:var(--ant-color-primary-border-hover)] ' +
+        'hover:shadow-[0_8px_24px_rgba(0,0,0,0.08)] dark:hover:shadow-[0_8px_24px_rgba(0,0,0,0.35)]'
       }
     >
       {/* 左上角主色微光，与 StatsCard 同一装饰语言 */}
@@ -77,7 +79,7 @@ const AiInsightsCard = () => {
       {/* 头部 */}
       <div className="relative mb-4 flex items-center justify-between">
         <div className="flex items-center gap-3">
-          <div className="flex h-9 w-9 items-center justify-center rounded-lg bg-blue-500/12 text-blue-400">
+          <div className="flex h-9 w-9 items-center justify-center rounded-lg bg-blue-500/12 text-blue-600 dark:text-blue-400">
             <RobotOutlined style={{ fontSize: 18 }} />
           </div>
           <div>
@@ -114,7 +116,7 @@ const AiInsightsCard = () => {
               return (
                 <div
                   key={i}
-                  className="flex items-stretch gap-3 rounded-lg border border-solid border-white/8 p-3"
+                  className="flex items-stretch gap-3 rounded-lg border border-solid border-[color:var(--ant-color-border-secondary)] p-3"
                 >
                   <span className={`w-1 shrink-0 rounded-full ${style.bar}`} />
                   <div className="min-w-0">
@@ -152,7 +154,7 @@ const AiInsightsCard = () => {
 
           {/* LLM 总体评估（按界面语言生成；告警为确定性事实，此处仅为措辞归纳） */}
           {summary && (
-            <div className="mt-3 border-t border-solid border-white/8 pt-3">
+            <div className="mt-3 border-t border-solid border-[color:var(--ant-color-border-secondary)] pt-3">
               <Typography.Text type="secondary" className="!text-xs">
                 {t('aiInsights.assessment')}
               </Typography.Text>

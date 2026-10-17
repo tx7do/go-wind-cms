@@ -343,8 +343,26 @@ export const MainLayout = ({ routes: dynamicRoutes }: MainLayoutProps) => {
                 background: 'transparent',
               }}
             >
-              {/* 使用 refreshTrigger 作为 key，触发页面重新渲染 */}
-              <Outlet key={refreshTrigger} />
+              {/* key 沿用 refreshTrigger：点刷新时整棵子树重建。外层 div 承担两件事——
+                  ① 保住原来的 flex 高度链（列表页表格靠 flex:1 + min-height:0 撑满，
+                     直接给 Outlet 套动画会把这条链压断）；
+                  ② 承载路由入场动效。此前这里是裸 <Outlet/>，两态实测内容区
+                     transition 为 all/0s、切页 opacity 恒 1 ⇒ 页面硬切，
+                     而 preferences.transition.{enable,name} 这个开关在路由层从未被消费
+                     （只有错误页 Fallback 读它），选动画方案时 UI 上会显示"已生效"的假象。
+                  时长与位移在 global.css 的 .page-transition。 */}
+              <div
+                key={refreshTrigger}
+                className={[
+                  'page-transition',
+                  `transition-${preferences.transition.name}`,
+                  preferences.transition.enable ? '' : 'transition-disabled',
+                ]
+                  .filter(Boolean)
+                  .join(' ')}
+              >
+                <Outlet />
+              </div>
             </PageContainer>
           </div>
 
