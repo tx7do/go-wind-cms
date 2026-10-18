@@ -109,4 +109,23 @@ export const darkThemeComponents: ThemeConfig['components'] = {
     rowSelectedHoverBg: 'rgba(0, 107, 230, 0.2)',
     headerSplitColor: 'transparent',
   },
+  Menu: {
+    // 展开的子菜单面板不铺底色（design-language.md §4「侧边栏菜单交互态」：
+    // 「父级展开链路只做文字/图标提亮，不铺底色」）。
+    // 必须在 token 层关掉、不能只删 CSS：出厂值 `darkSubMenuItemBg: '#000c17'`
+    // （es/menu/style/index.js:449）比原先那条 rgba(0,0,0,.22) 的凹陷更黑，规则一撤就露出来。
+    // 两个键都要写，因为它们喂的是**不同的 CSS 变量**（实测 cssVar 模式）：
+    //   .ant-menu-dark（侧栏在暗色下走这套，SiderMenu/index.tsx 的 theme=isDark?'dark':'light'）
+    //     → --ant-menu-dark-sub-menu-item-bg ← darkSubMenuItemBg
+    //   .ant-menu-light（暗色应用里未显式指定 theme 的 Menu）
+    //     → --ant-menu-sub-menu-item-bg      ← subMenuItemBg
+    // 只改后者时暗色侧栏纹丝不动（#000c17 依旧），这就是本条注释存在的理由。
+    darkSubMenuItemBg: 'transparent',
+    subMenuItemBg: 'transparent',
+    // 折叠后弹出的子菜单浮层是「浮层」，取 §2.3 的 #1C2128，不是 antd 出厂藏青 #001529。
+    // 根 UL 有 SiderMenu/index.tsx:229 的 inline background:'transparent' 兜着，portal 里这一层没有。
+    // 只补这一个键：实测弹层容器底读 --ant-menu-dark-popup-bg ← darkPopupBg；
+    // darkItemBg → itemBg 只喂根 UL（已被 inline 盖住），动它属无据扩面。
+    darkPopupBg: '#1C2128',
+  },
 };

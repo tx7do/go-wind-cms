@@ -35,8 +35,20 @@ type LoadPhase = 'initial' | 'ready' | 'failed';
 export function ListTable<
   RecordType extends Record<string, any>,
   Params extends Record<string, any> = Record<string, any>,
->(props: ListTableProps<RecordType, Params>) {
-  const { request, columns, actionRef, pagination, size, bordered, scroll, loading, ...restProps } = props;
+>(props: ListTableProps<RecordType, Params> & { striped?: boolean }) {
+  const {
+    request,
+    columns,
+    actionRef,
+    pagination,
+    size,
+    bordered,
+    scroll,
+    loading,
+    rowClassName,
+    striped = true,
+    ...restProps
+  } = props;
   const { t } = useI18n('common');
   const skeletonEnabled = usePreferencesStore((state) => state.preferences.transition.loading);
 
@@ -64,6 +76,20 @@ export function ListTable<
     }
     (actionRef as MutableRefObject<ActionType | undefined>).current = ownActionRef.current;
   });
+
+  // 斑马纹：默认开启，对齐 ele/vben 共享表格的 stripe 默认值（值表见 docs/design-language.md §4 表格条）。
+  // 页面自带 rowClassName 时叠加而非覆盖；占位行（暂无数据）由 CSS 侧排除。
+  const composedRowClassName = useCallback(
+    (record: RecordType, index: number, indent: number) => {
+      const pageCls =
+        typeof rowClassName === 'function'
+          ? (rowClassName(record, index, indent) ?? '')
+          : (rowClassName ?? '');
+      if (!striped || index % 2 !== 1) return pageCls;
+      return pageCls ? `${pageCls} ant-table-row-striped` : 'ant-table-row-striped';
+    },
+    [rowClassName, striped],
+  );
 
   const stopSkeleton = useCallback(() => {
     if (skeletonTimerRef.current !== null) {
@@ -185,6 +211,7 @@ export function ListTable<
       scroll={scroll}
       actionRef={ownActionRef}
       request={wrappedRequest}
+      rowClassName={composedRowClassName}
       loading={{ ...(typeof loading === 'object' ? loading : {}), delay: LOADING_DELAY }}
       tableViewRender={tableViewRender}
     />

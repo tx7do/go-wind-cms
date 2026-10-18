@@ -30,5 +30,6 @@
   "markAllReadFailed": "Failed to mark all as read",
   "detailTitle": "Message Detail",
   "unreadCount": "{{count}} unread",
-  "noMessages": "No messages"
+  "noMessages": "No messages",
+  "senderSystem": "System"
 }

@@ -11,6 +11,7 @@ import {
   LIGHT_PALETTE,
   darkThemeComponents,
   darkThemeTokens,
+  lightThemeComponents,
   lightThemeTokens,
 } from '../../config';
 import { SECONDARY_TEXT_DARK, SECONDARY_TEXT_LIGHT } from '../../config/constants';
@@ -93,8 +94,9 @@ export const ThemeProvider = ({ children }: ThemeProviderProps) => {
 
     // 输入类控件的内嵌底色、抽屉遮罩、表格行悬停等组件级精调只在暗色需要：
     // 浅色的对应档由 defaultAlgorithm 派生即可，额外覆写会形成第二套真相。
+    // 浅色那套只有一条 Menu.subMenuItemBg（见 lightTheme.ts），不是"没有组件级 token"了。
     const components: ThemeConfig['components'] =
-      effectiveMode === 'dark' ? darkThemeComponents : undefined;
+      effectiveMode === 'dark' ? darkThemeComponents : lightThemeComponents;
 
     return {
       algorithm: algorithms.length > 0 ? algorithms : antdTheme.defaultAlgorithm,

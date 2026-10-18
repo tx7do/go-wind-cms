@@ -28,9 +28,13 @@
         background: rgba(128, 128, 128, 0.08);
       }
       
+      /* §4「温和配方」浅色档：选中 = 主色 15% 底 + 主色文字（暗色走中性灰，见文件下方）。
+         原先是 rgba(128,128,128,.12) 压在白栏上 → 合成 #F0F0F0：与页面画布 #F1F3F6 只差
+         1.008:1（读起来像白栏被抠了个洞，不是标记），与 hover 的 .08 又同色相只差 α，
+         选中态实际撑不住。描边同时收掉：底色已是标记通道，灰圈压在淡蓝底上只会再叠一层脏。 */
       &.ant-tabs-tab-active {
-        background: rgba(128, 128, 128, 0.12);
-        border-color: rgba(128, 128, 128, 0.15);
+        background: color-mix(in srgb, var(--ant-color-primary) 15%, var(--ant-color-bg-container));
+        border-color: transparent;
       }
     }
     
@@ -58,10 +62,13 @@
         background: rgba(128, 128, 128, 0.1);
       }
       
+      /* 同 chrome：浅色选中档走主色 15% 底。描边退回与未选中同值（.1），字重与暗色那档
+         一样收平——§4 明令选中页签不得用字重加粗区分，暗色下方早已覆成 400，
+       浅色留 500 会让同一风格两态字重不同。 */
       &.ant-tabs-tab-active {
-        background: rgba(128, 128, 128, 0.12);
-        border-color: rgba(128, 128, 128, 0.2);
-        font-weight: 500;
+        background: color-mix(in srgb, var(--ant-color-primary) 15%, var(--ant-color-bg-container));
+        border-color: rgba(128, 128, 128, 0.1);
+        font-weight: 400;
       }
     }
     

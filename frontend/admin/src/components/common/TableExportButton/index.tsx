@@ -28,6 +28,12 @@ export interface TableExportButtonProps {
   columns: any[];
   filename?: string;
   maxRows?: number;
+  /**
+   * 强制附加的查询条件（与页面 request 闭包同源注入，如收件箱的 recipient_user_id）。
+   * 导出走本组件自己的聚合查询、不经过表格 request，页面在闭包里塞的隐式过滤
+   * 这里感知不到；不传会把隐私过滤一起丢掉，导出范围越权扩大。
+   */
+  params?: Record<string, any>;
   /** 可选：服务端全量导出锚点与查询构造（不提供则菜单不含该项） */
   serverExport?: TableExportServerExport;
 }
@@ -37,6 +43,7 @@ export default function TableExportButton({
   columns,
   filename = 'export',
   maxRows = 10_000,
+  params,
   serverExport,
 }: TableExportButtonProps) {
   const { t } = useTranslation('common');
@@ -62,7 +69,7 @@ export default function TableExportButton({
     setExporting(true);
     try {
       const count = await exportAuditLogs(
-        { fetcher, filename, columns: exportColumns, maxRows },
+        { fetcher, filename, columns: exportColumns, maxRows, params },
         format,
       );
       message.success(t('export.success', { count }));

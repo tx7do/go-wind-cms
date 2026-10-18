@@ -284,5 +284,13 @@
     "uploading": "Uploading image",
     "fileTooLarge": "File is too large and was rejected by the server. Please compress it and try again",
     "uploadFailed": "Upload failed, please try again later"
+  },
+  "dateRange": {
+    "today": "Today",
+    "yesterday": "Yesterday",
+    "thisWeek": "This Week",
+    "lastWeek": "Last Week",
+    "thisMonth": "This Month",
+    "lastMonth": "Last Month"
   }
 }

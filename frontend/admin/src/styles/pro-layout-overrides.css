@@ -16,12 +16,11 @@
     color: rgba(248, 250, 252, 0.72);
 }
 
-/* 暗黑菜单：展开的子菜单区域凹陷更深一档 + 圆角分组，与父级拉开层次 */
-[data-theme='dark'] .ant-menu-dark .ant-menu-sub.ant-menu-inline {
-    background: rgba(0, 0, 0, 0.22) !important;
-    border-radius: 8px;
-    padding: 4px 0;
-}
+/* 子菜单项的圆角：药丸形状靠它，主色实底上没有圆角会读成一条通栏色带。
+   （6px 与 §4「侧边栏菜单交互态」写的 8px 尚不一致，且浅色下实测是 12px —— 属另案，本轮不动。）
+   —— 原先它和一条给展开子菜单面板铺 rgba(0,0,0,.22) 凹陷底的规则写在一起，那条已删
+   （铺底违反"父级展开链路…不铺底色"，且三端只有 react 有；收平改在 token 层做：
+   darkTheme.ts 的 Menu.darkSubMenuItemBg / subMenuItemBg、lightTheme.ts 的 Menu.subMenuItemBg）。 */
 [data-theme='dark'] .ant-menu-dark .ant-menu-sub .ant-menu-item {
     border-radius: 6px;
 }

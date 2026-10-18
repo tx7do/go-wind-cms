@@ -53,6 +53,16 @@ export const lightThemeTokens: ThemeConfig['token'] = {
 // 因此两档统一落在 styles/global.css 的 [data-theme='light'] .ant-card 上，
 // 那里静止/悬浮都能覆盖，不留第二处真相。
 
-// 浅色没有组件级 token：Card 描边已由全局 colorBorderSecondary 覆盖（组件级默认取它），
+// 浅色组件级 token 只有一条：展开的子菜单面板不铺底色。
+// antd 出厂在这里给的是 `subMenuItemBg = colorFillAlter`（白底上 = rgba(0,0,0,.02)，实测合成 #FAFAFA，
+// 分离度 1.02 肉眼不可察），但 §4「侧边栏菜单交互态」说的是"不铺底色"而不是"铺一层看不见的底色"——
+// 留着它，暗色收平了、亮色仍有一档，两态结构对不上；且这正是本轮判定 react 违规的那条规则的同族。
+export const lightThemeComponents: ThemeConfig['components'] = {
+  Menu: {
+    subMenuItemBg: 'transparent',
+  },
+};
+
+// 其余浅色没有组件级 token：Card 描边已由全局 colorBorderSecondary 覆盖（组件级默认取它），
 // 输入类边框刻意留在 antd 的 colorBorder #D9D9D9 —— §2.2 的 #E4E4E7 比 #D9D9D9 更浅，
 // 套到输入框上会让控件描边倒退一档。

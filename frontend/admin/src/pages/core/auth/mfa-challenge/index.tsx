@@ -67,6 +67,7 @@ const MfaChallenge: React.FC = () => {
           >
             <Input
               prefix={<SafetyOutlined />}
+              aria-label={t('mfaCodeLabel')}
               placeholder={t('mfaCodePlaceholder')}
               autoComplete="one-time-code"
               inputMode="numeric"

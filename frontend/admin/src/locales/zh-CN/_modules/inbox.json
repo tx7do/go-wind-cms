@@ -30,5 +30,6 @@
   "markAllReadFailed": "全部已读操作失败",
   "detailTitle": "消息详情",
   "unreadCount": "{{count}} 条未读",
-  "noMessages": "暂无消息"
+  "noMessages": "暂无消息",
+  "senderSystem": "系统"
 }

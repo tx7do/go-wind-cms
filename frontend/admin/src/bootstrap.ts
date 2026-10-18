@@ -81,21 +81,43 @@ async function _initI18n() {
         // refresh token cookie 由浏览器自动携带，无需前端传参
         const newToken = await useAuthStore.getState().refreshToken();
         if (newToken) {
-          // 恢复用户信息（刷新页面后内存丢失）
-          try {
-            const profile = (await fetchUserProfile()) as unknown as Parameters<
-              ReturnType<typeof useAuthStore.getState>['setUserInfo']
-            >[0];
-            if (profile) {
-              useAuthStore.getState().setUserInfo(profile);
+          // 恢复用户信息（刷新页面后内存丢失）。profile 拉取失败不能记录后继续——
+          // AuthGuard 只查 token，放行半残会话（有 token 无 userInfo）会让所有依赖
+          // userInfo.id 的页面把字面量 "undefined" 当用户 ID 发出去（后端解析 500），
+          // 而补拉要等下一个刷新定时器 tick（最长约 90 分钟）。短暂重试消化后端
+          // 重启窗口期，仍失败则强制登出收敛到干净的重登录。
+          type Profile = Parameters<
+            ReturnType<typeof useAuthStore.getState>['setUserInfo']
+          >[0];
+          let profile: Profile | null = null;
+          let lastError: unknown = null;
+          for (let attempt = 1; attempt <= 3 && !profile; attempt += 1) {
+            try {
+              profile = (await fetchUserProfile()) as unknown as Profile;
+            } catch (e) {
+              lastError = e;
+              console.error(
+                `[Bootstrap] silent restore: fetch user profile failed (attempt ${attempt}/3):`,
+                e,
+              );
             }
-          } catch (e) {
-            console.error('[Bootstrap] silent restore: fetch user profile failed:', e);
+            if (!profile && attempt < 3) {
+              await new Promise((resolve) => setTimeout(resolve, 400));
+            }
           }
-          // 恢复 SSE 连接与刷新定时器
-          connectSSEServer();
-          startRefreshTimer();
-          console.log('[Bootstrap] session silently restored via refresh cookie');
+          if (profile) {
+            useAuthStore.getState().setUserInfo(profile);
+            // 恢复 SSE 连接与刷新定时器
+            connectSSEServer();
+            startRefreshTimer();
+            console.log('[Bootstrap] session silently restored via refresh cookie');
+          } else {
+            console.error(
+              '[Bootstrap] silent restore: user profile unavailable after retries, forcing logout:',
+              lastError,
+            );
+            useAuthStore.getState().forceLogout();
+          }
         }
       } catch (e) {
         // 必须带出真实错误：固定话术会把 refresh 端点 500/网络错等真因

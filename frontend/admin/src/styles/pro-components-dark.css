@@ -35,6 +35,55 @@
   background-repeat: no-repeat;
 }
 
+/* ========== 列表斑马纹（ListTable striped 默认开，值表见 docs/design-language.md §4 表格条） ========== */
+/* 亮 var(--ant-color-fill-quaternary)（token，≈#FAFAFA，与 vxe 亮档 #F8F8F9 同档）；
+   暗 rgba(255,255,255,.03) = §3 vxe 暗色斑马纹既有权威值——antd 同名 token 暗色是 .06、
+   重一倍，故暗色显式落规范值不走 token。占位行（暂无数据）不吃条纹。 */
+.ant-table-wrapper
+  .ant-table-tbody
+  > tr.ant-table-row-striped:not(.ant-table-placeholder)
+  > td.ant-table-cell {
+  background-color: var(--ant-color-fill-quaternary);
+}
+[data-theme='dark']
+  .ant-table-wrapper
+  .ant-table-tbody
+  > tr.ant-table-row-striped:not(.ant-table-placeholder)
+  > td.ant-table-cell {
+  background-color: rgba(255, 255, 255, 0.03);
+}
+/* 固定列是 sticky，半透明条纹底会透出横向滚动时压在下层的文字：与上面行 hover 透字
+   同一处理——不透明容器底色打底，条纹色走 background-image 叠加。 */
+.ant-table-wrapper
+  .ant-table-tbody
+  > tr.ant-table-row-striped:not(.ant-table-placeholder)
+  > td.ant-table-cell-fix {
+  background-color: var(--ant-color-bg-container);
+  background-image: linear-gradient(
+    var(--ant-color-fill-quaternary),
+    var(--ant-color-fill-quaternary)
+  );
+}
+[data-theme='dark']
+  .ant-table-wrapper
+  .ant-table-tbody
+  > tr.ant-table-row-striped:not(.ant-table-placeholder)
+  > td.ant-table-cell-fix {
+  background-image: linear-gradient(rgba(255, 255, 255, 0.03), rgba(255, 255, 255, 0.03));
+}
+/* 选择器特异性比固定列的 hover 规则高，会把条纹带进 hover 态——悬停时应显回 hover 底色，
+   与普通单元格（hover 直接盖掉条纹底色）口径一致。 */
+.ant-table-wrapper
+  .ant-table-tbody
+  > tr.ant-table-row-striped:not(.ant-table-placeholder):hover
+  > td.ant-table-cell-fix {
+  background-image: linear-gradient(
+    var(--ant-color-fill-secondary),
+    var(--ant-color-fill-secondary)
+  );
+  background-repeat: no-repeat;
+}
+
 /* 表格单元格超长文本省略号 */
 .ant-pro-table .ant-table-cell {
   overflow: hidden;
@@ -324,6 +373,12 @@ html[data-theme='dark'] .ant-form .ant-input:not(.ant-input-affix-wrapper .ant-i
   align-items: center;
   flex-wrap: nowrap;
 }
+/* v6 的 .ant-form-item-row 是上面水平 flex form-item 的子项，默认宽=内容宽：
+   不撑满 Col 的话，label+control 一起缩在列左侧，下方"控件撑满 Col"的
+   width:100% 全部落空（列宽参差、区间控件撑爆列宽把标签挤到上一行） */
+.ant-pro-table-search .ant-form-item-row.ant-form-item-row {
+  width: 100%;
+}
 .ant-pro-table-search .ant-form-item-label.ant-form-item-label {
   flex: 0 0 auto;
 }
@@ -332,6 +387,13 @@ html[data-theme='dark'] .ant-form .ant-input:not(.ant-input-affix-wrapper .ant-i
 }
 .ant-pro-table-search .ant-form-item-control {
   flex: 1 1 auto;
+  min-width: 0;
+}
+/* 控件内容层是 flex:1 1 auto 但 min-width:auto——不放开收缩的话，宽控件
+   （showTime 的 RangePicker 双输入 max-content 大）会顶着不换行的最小内容宽
+   溢出列宽，把整行挤成「标签在上、控件独占一行」的伪垂直结构（实测 1660
+   展开侧栏：消息标题/状态正常 inline，仅接收时间塌陷） */
+.ant-pro-table-search .ant-form-item-control-input-content {
   min-width: 0;
 }
 

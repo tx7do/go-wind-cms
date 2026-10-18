@@ -284,5 +284,13 @@
     "uploading": "图片上传中",
     "fileTooLarge": "文件过大，服务器拒绝接收，请压缩后重试",
     "uploadFailed": "上传失败，请稍后重试"
+  },
+  "dateRange": {
+    "today": "今天",
+    "yesterday": "昨天",
+    "thisWeek": "本周",
+    "lastWeek": "上周",
+    "thisMonth": "本月",
+    "lastMonth": "上月"
   }
 }

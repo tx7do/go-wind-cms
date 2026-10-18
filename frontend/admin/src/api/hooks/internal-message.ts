@@ -48,7 +48,11 @@ export async function fetchListInternalMessages(params: PaginationQuery) {
 
 export function useGetInternalMessage(
   req: internal_messageservicev1_GetInternalMessageRequest,
-  options?: UseQueryOptions<internal_messageservicev1_InternalMessage, Error>,
+  // queryKey/queryFn 由本 hook 固定构造，调用方只传行为选项（如 enabled）
+  options?: Omit<
+    UseQueryOptions<internal_messageservicev1_InternalMessage, Error>,
+    'queryKey' | 'queryFn'
+  >,
 ) {
   return useQuery({
     queryKey: ['getInternalMessage', req],
