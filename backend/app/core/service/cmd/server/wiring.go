@@ -251,7 +251,8 @@ func initApp(ctx *bootstrap.Context) (*kratos.App, func(), error) {
 	// 租户与身份
 	tenantService := service.NewTenantService(ctx, tenantRepo, userRepo, userCredentialRepo, roleRepo)
 	userService := service.NewUserService(ctx, userRepo, roleRepo, userCredentialRepo, positionRepo, orgUnitRepo, tenantRepo, membershipRepo)
-	roleService := service.NewRoleService(ctx, roleRepo, tenantRepo, userRoleRepo, userRepo)
+	roleFieldPermissionRepo := data.NewRoleFieldPermissionRepo(ctx, entClient)
+	roleService := service.NewRoleService(ctx, roleRepo, tenantRepo, userRoleRepo, userRepo, roleFieldPermissionRepo)
 	positionService := service.NewPositionService(ctx, positionRepo, orgUnitRepo)
 	orgUnitService := service.NewOrgUnitService(ctx, orgUnitRepo, userRepo)
 

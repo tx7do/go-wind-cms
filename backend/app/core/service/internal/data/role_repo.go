@@ -463,16 +463,16 @@ func (r *RoleRepo) CreateTenantRoleFromTemplate(ctx context.Context, tx *ent.Tx,
 }
 
 // Create 创建角色
-func (r *RoleRepo) Create(ctx context.Context, req *permissionV1.CreateRoleRequest) (err error) {
+func (r *RoleRepo) Create(ctx context.Context, req *permissionV1.CreateRoleRequest) (dto *permissionV1.Role, err error) {
 	if req == nil || req.Data == nil {
-		return permissionV1.ErrorBadRequest("invalid parameter")
+		return nil, permissionV1.ErrorBadRequest("invalid parameter")
 	}
 
 	var tx *ent.Tx
 	tx, err = r.entClient.Client().Tx(ctx)
 	if err != nil {
 		r.log.Errorf("start transaction failed: %s", err.Error())
-		return permissionV1.ErrorInternalServerError("start transaction failed")
+		return nil, permissionV1.ErrorInternalServerError("start transaction failed")
 	}
 	defer func() {
 		if err != nil {
@@ -487,8 +487,7 @@ func (r *RoleRepo) Create(ctx context.Context, req *permissionV1.CreateRoleReque
 		}
 	}()
 
-	_, err = r.CreateWithTx(ctx, tx, req.GetData())
-	return err
+	return r.CreateWithTx(ctx, tx, req.GetData())
 }
 
 // CreateWithTx 创建角色
@@ -578,7 +577,8 @@ func (r *RoleRepo) Update(ctx context.Context, req *permissionV1.UpdateRoleReque
 			createReq := &permissionV1.CreateRoleRequest{Data: req.Data}
 			createReq.Data.CreatedBy = createReq.Data.UpdatedBy
 			createReq.Data.UpdatedBy = nil
-			return r.Create(ctx, createReq)
+			_, cErr := r.Create(ctx, createReq)
+			return cErr
 		}
 	}
 

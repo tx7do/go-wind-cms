@@ -25,6 +25,7 @@ const (
 	RoleService_Count_FullMethodName                        = "/permission.service.v1.RoleService/Count"
 	RoleService_Get_FullMethodName                          = "/permission.service.v1.RoleService/Get"
 	RoleService_Create_FullMethodName                       = "/permission.service.v1.RoleService/Create"
+	RoleService_ListHiddenFieldsByUser_FullMethodName       = "/permission.service.v1.RoleService/ListHiddenFieldsByUser"
 	RoleService_BatchCreate_FullMethodName                  = "/permission.service.v1.RoleService/BatchCreate"
 	RoleService_Update_FullMethodName                       = "/permission.service.v1.RoleService/Update"
 	RoleService_Delete_FullMethodName                       = "/permission.service.v1.RoleService/Delete"
@@ -55,6 +56,9 @@ type RoleServiceClient interface {
 	Get(ctx context.Context, in *GetRoleRequest, opts ...grpc.CallOption) (*Role, error)
 	// 创建角色
 	Create(ctx context.Context, in *CreateRoleRequest, opts ...grpc.CallOption) (*emptypb.Empty, error)
+	// 按用户聚合隐藏字段（"资源.字段" 串数组；平台用户为空）。
+	// 登录期权限码聚合的伴随查询——admin portal GetMyPermissionCode 合并返回。
+	ListHiddenFieldsByUser(ctx context.Context, in *ListHiddenFieldsByUserRequest, opts ...grpc.CallOption) (*ListHiddenFieldsByUserResponse, error)
 	// 批量创建角色
 	BatchCreate(ctx context.Context, in *BatchCreateRolesRequest, opts ...grpc.CallOption) (*BatchCreateRolesResponse, error)
 	// 更新角色
@@ -127,6 +131,16 @@ func (c *roleServiceClient) Create(ctx context.Context, in *CreateRoleRequest, o
 	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
 	out := new(emptypb.Empty)
 	err := c.cc.Invoke(ctx, RoleService_Create_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *roleServiceClient) ListHiddenFieldsByUser(ctx context.Context, in *ListHiddenFieldsByUserRequest, opts ...grpc.CallOption) (*ListHiddenFieldsByUserResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(ListHiddenFieldsByUserResponse)
+	err := c.cc.Invoke(ctx, RoleService_ListHiddenFieldsByUser_FullMethodName, in, out, cOpts...)
 	if err != nil {
 		return nil, err
 	}
@@ -287,6 +301,9 @@ type RoleServiceServer interface {
 	Get(context.Context, *GetRoleRequest) (*Role, error)
 	// 创建角色
 	Create(context.Context, *CreateRoleRequest) (*emptypb.Empty, error)
+	// 按用户聚合隐藏字段（"资源.字段" 串数组；平台用户为空）。
+	// 登录期权限码聚合的伴随查询——admin portal GetMyPermissionCode 合并返回。
+	ListHiddenFieldsByUser(context.Context, *ListHiddenFieldsByUserRequest) (*ListHiddenFieldsByUserResponse, error)
 	// 批量创建角色
 	BatchCreate(context.Context, *BatchCreateRolesRequest) (*BatchCreateRolesResponse, error)
 	// 更新角色
@@ -336,6 +353,9 @@ func (UnimplementedRoleServiceServer) Get(context.Context, *GetRoleRequest) (*Ro
 }
 func (UnimplementedRoleServiceServer) Create(context.Context, *CreateRoleRequest) (*emptypb.Empty, error) {
 	return nil, status.Error(codes.Unimplemented, "method Create not implemented")
+}
+func (UnimplementedRoleServiceServer) ListHiddenFieldsByUser(context.Context, *ListHiddenFieldsByUserRequest) (*ListHiddenFieldsByUserResponse, error) {
+	return nil, status.Error(codes.Unimplemented, "method ListHiddenFieldsByUser not implemented")
 }
 func (UnimplementedRoleServiceServer) BatchCreate(context.Context, *BatchCreateRolesRequest) (*BatchCreateRolesResponse, error) {
 	return nil, status.Error(codes.Unimplemented, "method BatchCreate not implemented")
@@ -468,6 +488,24 @@ func _RoleService_Create_Handler(srv interface{}, ctx context.Context, dec func(
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
 		return srv.(RoleServiceServer).Create(ctx, req.(*CreateRoleRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _RoleService_ListHiddenFieldsByUser_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(ListHiddenFieldsByUserRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(RoleServiceServer).ListHiddenFieldsByUser(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: RoleService_ListHiddenFieldsByUser_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(RoleServiceServer).ListHiddenFieldsByUser(ctx, req.(*ListHiddenFieldsByUserRequest))
 	}
 	return interceptor(ctx, in, info, handler)
 }
@@ -746,6 +784,10 @@ var RoleService_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "Create",
 			Handler:    _RoleService_Create_Handler,
+		},
+		{
+			MethodName: "ListHiddenFieldsByUser",
+			Handler:    _RoleService_ListHiddenFieldsByUser_Handler,
 		},
 		{
 			MethodName: "BatchCreate",

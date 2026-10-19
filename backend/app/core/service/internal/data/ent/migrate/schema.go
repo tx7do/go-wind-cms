@@ -3981,6 +3981,38 @@ var (
 			},
 		},
 	}
+	// RoleFieldPermissionsColumns holds the columns for the "role_field_permissions" table.
+	RoleFieldPermissionsColumns = []*schema.Column{
+		{Name: "id", Type: field.TypeUint32, Increment: true, Comment: "id"},
+		{Name: "created_at", Type: field.TypeTime, Nullable: true, Comment: "创建时间"},
+		{Name: "updated_at", Type: field.TypeTime, Nullable: true, Comment: "更新时间"},
+		{Name: "deleted_at", Type: field.TypeTime, Nullable: true, Comment: "删除时间"},
+		{Name: "created_by", Type: field.TypeUint32, Nullable: true, Comment: "创建者ID"},
+		{Name: "updated_by", Type: field.TypeUint32, Nullable: true, Comment: "更新者ID"},
+		{Name: "deleted_by", Type: field.TypeUint32, Nullable: true, Comment: "删除者ID"},
+		{Name: "role_id", Type: field.TypeUint32, Comment: "角色ID"},
+		{Name: "resource", Type: field.TypeString, Comment: "资源名（proto 消息名，如 User）"},
+		{Name: "field_name", Type: field.TypeString, Comment: "隐藏的字段名（proto 字段 json_name，如 email）"},
+	}
+	// RoleFieldPermissionsTable holds the schema information for the "role_field_permissions" table.
+	RoleFieldPermissionsTable = &schema.Table{
+		Name:       "role_field_permissions",
+		Comment:    "角色字段权限表",
+		Columns:    RoleFieldPermissionsColumns,
+		PrimaryKey: []*schema.Column{RoleFieldPermissionsColumns[0]},
+		Indexes: []*schema.Index{
+			{
+				Name:    "uidx_role_field_permission",
+				Unique:  true,
+				Columns: []*schema.Column{RoleFieldPermissionsColumns[7], RoleFieldPermissionsColumns[8], RoleFieldPermissionsColumns[9]},
+			},
+			{
+				Name:    "idx_role_field_perm_role",
+				Unique:  false,
+				Columns: []*schema.Column{RoleFieldPermissionsColumns[7]},
+			},
+		},
+	}
 	// SysRoleMetadataColumns holds the columns for the "sys_role_metadata" table.
 	SysRoleMetadataColumns = []*schema.Column{
 		{Name: "id", Type: field.TypeUint32, Increment: true, Comment: "id"},
@@ -5286,6 +5318,7 @@ var (
 		PostWatchesTable,
 		RedirectsTable,
 		SysRolesTable,
+		RoleFieldPermissionsTable,
 		SysRoleMetadataTable,
 		SysRolePermissionsTable,
 		SectionsTable,
@@ -5691,6 +5724,11 @@ func init() {
 	}
 	SysRolesTable.Annotation = &entsql.Annotation{
 		Table:     "sys_roles",
+		Charset:   "utf8mb4",
+		Collation: "utf8mb4_bin",
+	}
+	RoleFieldPermissionsTable.Annotation = &entsql.Annotation{
+		Table:     "role_field_permissions",
 		Charset:   "utf8mb4",
 		Collation: "utf8mb4_bin",
 	}

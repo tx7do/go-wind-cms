@@ -1887,6 +1887,30 @@ func (f RoleMutationRuleFunc) EvalMutation(ctx context.Context, m ent.Mutation) 
 	return Denyf("ent/privacy: unexpected mutation type %T, expect *ent.RoleMutation", m)
 }
 
+// The RoleFieldPermissionQueryRuleFunc type is an adapter to allow the use of ordinary
+// functions as a query rule.
+type RoleFieldPermissionQueryRuleFunc func(context.Context, *ent.RoleFieldPermissionQuery) error
+
+// EvalQuery return f(ctx, q).
+func (f RoleFieldPermissionQueryRuleFunc) EvalQuery(ctx context.Context, q ent.Query) error {
+	if q, ok := q.(*ent.RoleFieldPermissionQuery); ok {
+		return f(ctx, q)
+	}
+	return Denyf("ent/privacy: unexpected query type %T, expect *ent.RoleFieldPermissionQuery", q)
+}
+
+// The RoleFieldPermissionMutationRuleFunc type is an adapter to allow the use of ordinary
+// functions as a mutation rule.
+type RoleFieldPermissionMutationRuleFunc func(context.Context, *ent.RoleFieldPermissionMutation) error
+
+// EvalMutation calls f(ctx, m).
+func (f RoleFieldPermissionMutationRuleFunc) EvalMutation(ctx context.Context, m ent.Mutation) error {
+	if m, ok := m.(*ent.RoleFieldPermissionMutation); ok {
+		return f(ctx, m)
+	}
+	return Denyf("ent/privacy: unexpected mutation type %T, expect *ent.RoleFieldPermissionMutation", m)
+}
+
 // The RoleMetadataQueryRuleFunc type is an adapter to allow the use of ordinary
 // functions as a query rule.
 type RoleMetadataQueryRuleFunc func(context.Context, *ent.RoleMetadataQuery) error
@@ -2574,6 +2598,8 @@ func queryFilter(q ent.Query) (Filter, error) {
 		return q.Filter(), nil
 	case *ent.RoleQuery:
 		return q.Filter(), nil
+	case *ent.RoleFieldPermissionQuery:
+		return q.Filter(), nil
 	case *ent.RoleMetadataQuery:
 		return q.Filter(), nil
 	case *ent.RolePermissionQuery:
@@ -2770,6 +2796,8 @@ func mutationFilter(m ent.Mutation) (Filter, error) {
 	case *ent.RedirectMutation:
 		return m.Filter(), nil
 	case *ent.RoleMutation:
+		return m.Filter(), nil
+	case *ent.RoleFieldPermissionMutation:
 		return m.Filter(), nil
 	case *ent.RoleMetadataMutation:
 		return m.Filter(), nil

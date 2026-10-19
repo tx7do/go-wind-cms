@@ -39,6 +39,11 @@ message ListRouteResponse {
 // 查询权限码列表 - 回应
 message ListPermissionCodeResponse {
   repeated string codes = 1;
+
+  // 字段权限隐藏字段集（"资源.字段" 串数组；平台用户为空）
+  repeated string hidden_fields = 2 [
+    json_name = "hiddenFields"
+  ]; // 字段权限隐藏字段集
 }
 
 message InitialContextResponse {

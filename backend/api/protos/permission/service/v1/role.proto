@@ -23,6 +23,10 @@ service RoleService {
 
   // 创建角色
   rpc Create (CreateRoleRequest) returns (google.protobuf.Empty) {}
+
+  // 按用户聚合隐藏字段（"资源.字段" 串数组；平台用户为空）。
+  // 登录期权限码聚合的伴随查询——admin portal GetMyPermissionCode 合并返回。
+  rpc ListHiddenFieldsByUser (ListHiddenFieldsByUserRequest) returns (ListHiddenFieldsByUserResponse) {}
   // 批量创建角色
   rpc BatchCreate (BatchCreateRolesRequest) returns (BatchCreateRolesResponse) {}
 
@@ -130,6 +134,12 @@ message Role {
     json_name = "tenantId",
     (gnostic.openapi.v3.property) = {description: "租户ID，0代表系统全局角色"}
   ];  // 租户ID，0代表系统全局角色
+  // 字段权限配置（读回显；写侧走 Create/Update 的 data.field_permissions）
+  repeated RoleFieldPermission field_permissions = 42 [
+    json_name = "fieldPermissions",
+    (gnostic.openapi.v3.property) = {description: "字段权限配置"}
+  ]; // 字段权限配置
+
   optional string tenant_name = 41 [
     json_name = "tenantName",
     (gnostic.openapi.v3.property) = {description: "租户名称"}
@@ -312,6 +322,36 @@ message GetRoleRequest {
 }
 
 // 创建角色 - 请求
+// 角色字段权限条目：角色在某资源上隐藏的字段集（黑名单语义）。
+// 资源名为 proto 消息名（如 User），字段为 proto 字段 json_name（如 email）。
+message RoleFieldPermission {
+  string resource = 1 [
+    json_name = "resource",
+    (gnostic.openapi.v3.property) = {description: "资源名（proto 消息名，如 User）"}
+  ]; // 资源名
+
+  repeated string hidden_fields = 2 [
+    json_name = "hiddenFields",
+    (gnostic.openapi.v3.property) = {description: "隐藏字段列表（proto 字段 json_name，如 email）"}
+  ]; // 隐藏字段列表
+}
+
+// 按用户聚合隐藏字段 - 请求
+message ListHiddenFieldsByUserRequest {
+  uint32 user_id = 1 [
+    json_name = "userId",
+    (gnostic.openapi.v3.property) = {description: "用户ID"}
+  ]; // 用户ID
+}
+
+// 按用户聚合隐藏字段 - 回应（"资源.字段" 串数组，平台用户为空）
+message ListHiddenFieldsByUserResponse {
+  repeated string hidden_fields = 1 [
+    json_name = "hiddenFields",
+    (gnostic.openapi.v3.property) = {description: "隐藏字段集"}
+  ]; // 隐藏字段集
+}
+
 message CreateRoleRequest {
   Role data = 1;
 }

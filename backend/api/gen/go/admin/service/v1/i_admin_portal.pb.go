@@ -71,8 +71,10 @@ func (x *ListRouteResponse) GetItems() []*v1.MenuRouteItem {
 
 // 查询权限码列表 - 回应
 type ListPermissionCodeResponse struct {
-	state         protoimpl.MessageState `protogen:"open.v1"`
-	Codes         []string               `protobuf:"bytes,1,rep,name=codes,proto3" json:"codes,omitempty"`
+	state protoimpl.MessageState `protogen:"open.v1"`
+	Codes []string               `protobuf:"bytes,1,rep,name=codes,proto3" json:"codes,omitempty"`
+	// 字段权限隐藏字段集（"资源.字段" 串数组；平台用户为空）
+	HiddenFields  []string `protobuf:"bytes,2,rep,name=hidden_fields,json=hiddenFields,proto3" json:"hidden_fields,omitempty"` // 字段权限隐藏字段集
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -110,6 +112,13 @@ func (*ListPermissionCodeResponse) Descriptor() ([]byte, []int) {
 func (x *ListPermissionCodeResponse) GetCodes() []string {
 	if x != nil {
 		return x.Codes
+	}
+	return nil
+}
+
+func (x *ListPermissionCodeResponse) GetHiddenFields() []string {
+	if x != nil {
+		return x.HiddenFields
 	}
 	return nil
 }
@@ -172,9 +181,10 @@ const file_admin_service_v1_i_admin_portal_proto_rawDesc = "" +
 	"\n" +
 	"%admin/service/v1/i_admin_portal.proto\x12\x10admin.service.v1\x1a\x1cgoogle/api/annotations.proto\x1a\x1bgoogle/protobuf/empty.proto\x1a permission/service/v1/menu.proto\"O\n" +
 	"\x11ListRouteResponse\x12:\n" +
-	"\x05items\x18\x01 \x03(\v2$.permission.service.v1.MenuRouteItemR\x05items\"2\n" +
+	"\x05items\x18\x01 \x03(\v2$.permission.service.v1.MenuRouteItemR\x05items\"W\n" +
 	"\x1aListPermissionCodeResponse\x12\x14\n" +
-	"\x05codes\x18\x01 \x03(\tR\x05codes\"v\n" +
+	"\x05codes\x18\x01 \x03(\tR\x05codes\x12#\n" +
+	"\rhidden_fields\x18\x02 \x03(\tR\fhiddenFields\"v\n" +
 	"\x16InitialContextResponse\x12:\n" +
 	"\x05menus\x18\x01 \x03(\v2$.permission.service.v1.MenuRouteItemR\x05menus\x12 \n" +
 	"\vpermissions\x18\x02 \x03(\tR\vpermissions2\xf1\x02\n" +

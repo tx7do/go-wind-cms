@@ -137,8 +137,20 @@ func (s *AdminPortalService) GetMyPermissionCode(ctx context.Context, _ *emptypb
 		return nil, adminV1.ErrorInternalServerError("list permission codes by ids failed")
 	}
 
+	// 字段权限隐藏字段集：与权限码同源聚合（平台用户在 core 侧归一为空集）。
+	// 聚合失败 fail-open——字段权限是纵深防御，不让权限码接口整体失败。
+	var hiddenFields []string
+	if hfResp, hfErr := s.roleServiceClient.ListHiddenFieldsByUser(ctx, &permissionV1.ListHiddenFieldsByUserRequest{
+		UserId: operator.GetUserId(),
+	}); hfErr != nil {
+		s.log.Errorf("list hidden fields for user [%d] failed [%s]", operator.GetUserId(), hfErr.Error())
+	} else {
+		hiddenFields = hfResp.HiddenFields
+	}
+
 	return &adminV1.ListPermissionCodeResponse{
-		Codes: permissionCodeResp.PermissionCodes,
+		Codes:        permissionCodeResp.PermissionCodes,
+		HiddenFields: hiddenFields,
 	}, nil
 }
 

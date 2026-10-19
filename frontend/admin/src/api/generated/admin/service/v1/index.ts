@@ -229,6 +229,8 @@ export type permissionservicev1_MenuMeta = {
 // 查询权限码列表 - 回应
 export type ListPermissionCodeResponse = {
   codes: string[] | undefined;
+  // 字段权限隐藏字段集（"资源.字段" 串数组；平台用户为空）
+  hiddenFields: string[] | undefined;
 };
 
 export type InitialContextResponse = {
@@ -13609,6 +13611,8 @@ export type permissionservicev1_Role = {
   deletedAt?: wellKnownTimestamp;
   deletedBy?: number;
   description?: string;
+  // 字段权限配置（读回显；写侧走 Create/Update 的 data.field_permissions）
+  fieldPermissions: permissionservicev1_RoleFieldPermission[] | undefined;
   id?: number;
   isProtected?: boolean;
   name?: string;
@@ -13631,6 +13635,14 @@ export type permissionservicev1_Role_Type =
   | 'SYSTEM'
   | 'TEMPLATE'
   | 'TENANT';
+// 创建角色 - 请求
+// 角色字段权限条目：角色在某资源上隐藏的字段集（黑名单语义）。
+// 资源名为 proto 消息名（如 User），字段为 proto 字段 json_name（如 email）。
+export type permissionservicev1_RoleFieldPermission = {
+  hiddenFields: string[] | undefined;
+  resource: string | undefined;
+};
+
 // 角色数据 - 请求
 export type permissionservicev1_GetRoleRequest = {
   code?: string;
@@ -13639,7 +13651,6 @@ export type permissionservicev1_GetRoleRequest = {
   viewMask?: wellKnownFieldMask;
 };
 
-// 创建角色 - 请求
 export type permissionservicev1_CreateRoleRequest = {
   data: permissionservicev1_Role | undefined;
 };

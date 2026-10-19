@@ -32,6 +32,8 @@ type RoleService struct {
 	tenantRepo   *data.TenantRepo
 	userRoleRepo *data.UserRoleRepo
 	userRepo     data.UserRepo
+
+	roleFieldPermissionRepo *data.RoleFieldPermissionRepo
 }
 
 func NewRoleService(
@@ -40,13 +42,15 @@ func NewRoleService(
 	tenantRepo *data.TenantRepo,
 	userRoleRepo *data.UserRoleRepo,
 	userRepo data.UserRepo,
+	roleFieldPermissionRepo *data.RoleFieldPermissionRepo,
 ) *RoleService {
 	svc := &RoleService{
-		log:          ctx.NewLoggerHelper("role/service/core-service"),
-		roleRepo:     roleRepo,
-		tenantRepo:   tenantRepo,
-		userRoleRepo: userRoleRepo,
-		userRepo:     userRepo,
+		log:                     ctx.NewLoggerHelper("role/service/core-service"),
+		roleRepo:                roleRepo,
+		tenantRepo:              tenantRepo,
+		userRoleRepo:            userRoleRepo,
+		userRepo:                userRepo,
+		roleFieldPermissionRepo: roleFieldPermissionRepo,
 	}
 
 	svc.init()
@@ -128,6 +132,19 @@ func (s *RoleService) List(ctx context.Context, req *paginationV1.PagingRequest)
 
 	_ = s.enrichRelations(ctx, resp.Items)
 
+	// 字段权限批量回显（角色抽屉从行数据回填编辑态）
+	if len(resp.Items) > 0 {
+		roleIDs := make([]uint32, 0, len(resp.Items))
+		for _, r := range resp.Items {
+			roleIDs = append(roleIDs, r.GetId())
+		}
+		if groups, fpErr := s.roleFieldPermissionRepo.ListHiddenFieldGroupsByRoleIDs(ctx, roleIDs); fpErr == nil {
+			for _, r := range resp.Items {
+				r.FieldPermissions = groups[r.GetId()]
+			}
+		}
+	}
+
 	return resp, nil
 }
 
@@ -151,6 +168,11 @@ func (s *RoleService) Get(ctx context.Context, req *permissionV1.GetRoleRequest)
 	fakeItems := []*permissionV1.Role{resp}
 	_ = s.enrichRelations(ctx, fakeItems)
 
+	// 字段权限回显（角色抽屉编辑用）
+	if fps, fpErr := s.roleFieldPermissionRepo.ListByRoleID(ctx, resp.GetId()); fpErr == nil {
+		resp.FieldPermissions = fps
+	}
+
 	return resp, nil
 }
 
@@ -159,7 +181,13 @@ func (s *RoleService) Create(ctx context.Context, req *permissionV1.CreateRoleRe
 		return nil, identityV1.ErrorBadRequest("invalid parameter")
 	}
 
-	if err := s.roleRepo.Create(ctx, req); err != nil {
+	dto, err := s.roleRepo.Create(ctx, req)
+	if err != nil {
+		return nil, err
+	}
+
+	// 字段权限随创建一并落库（黑名单语义；空集合=清空）
+	if err = s.roleFieldPermissionRepo.ReplaceForRole(ctx, dto.GetId(), req.GetData().GetFieldPermissions()); err != nil {
 		return nil, err
 	}
 
@@ -202,6 +230,11 @@ func (s *RoleService) Update(ctx context.Context, req *permissionV1.UpdateRoleRe
 		return nil, err
 	}
 
+	// 字段权限随更新整体替换（空集合=清空）
+	if err = s.roleFieldPermissionRepo.ReplaceForRole(ctx, req.GetId(), req.GetData().GetFieldPermissions()); err != nil {
+		return nil, err
+	}
+
 	return &emptypb.Empty{}, nil
 }
 
@@ -210,6 +243,11 @@ func (s *RoleService) Delete(ctx context.Context, req *permissionV1.DeleteRoleRe
 
 	if err = s.roleRepo.Delete(ctx, req); err != nil {
 		return nil, err
+	}
+
+	// 联动清理字段权限配置：残留行会在角色 ID 复用时意外生效
+	if delErr := s.roleFieldPermissionRepo.ReplaceForRole(ctx, req.GetId(), nil); delErr != nil {
+		s.log.Errorf("clean field permissions for deleted role [%d] failed: %s", req.GetId(), delErr.Error())
 	}
 
 	return &emptypb.Empty{}, nil
@@ -430,15 +468,32 @@ func (s *RoleService) validateTargetUserTenant(ctx context.Context, targetUserID
 	return nil
 }
 
+// ListHiddenFieldsByUser 按用户聚合隐藏字段（"资源.字段" 串数组；平台用户为空）。
+// admin portal GetMyPermissionCode 合并返回——前端字段显隐的数据源。
+// 聚合失败 fail-open（返回空集）优先登录可用性，写入侧已有上限与校验。
+func (s *RoleService) ListHiddenFieldsByUser(ctx context.Context, req *permissionV1.ListHiddenFieldsByUserRequest) (*permissionV1.ListHiddenFieldsByUserResponse, error) {
+	if req == nil || req.GetUserId() == 0 {
+		return nil, identityV1.ErrorBadRequest("invalid parameter")
+	}
+
+	fields, err := s.roleFieldPermissionRepo.ListHiddenFieldsByUser(ctx, s.userRepo, s.userRoleRepo, req.GetUserId())
+	if err != nil {
+		// fail-open：字段权限是纵深防御手段，聚合故障不该让权限码接口整体失败
+		s.log.Errorf("list hidden fields by user [%d] failed: %s", req.GetUserId(), err.Error())
+		fields = []string{}
+	}
+
+	return &permissionV1.ListHiddenFieldsByUserResponse{HiddenFields: fields}, nil
+}
+
 // createDefaultRoles 创建默认角色(包括超级管理员)
 func (s *RoleService) createDefaultRoles(ctx context.Context) error {
 	var err error
 
 	for _, d := range constants.DefaultRoles {
-		err = s.roleRepo.Create(ctx, &permissionV1.CreateRoleRequest{
+		if _, err = s.roleRepo.Create(ctx, &permissionV1.CreateRoleRequest{
 			Data: d,
-		})
-		if err != nil {
+		}); err != nil {
 			return err
 		}
 	}

@@ -160,6 +160,8 @@ type Tx struct {
 	Redirect *RedirectClient
 	// Role is the client for interacting with the Role builders.
 	Role *RoleClient
+	// RoleFieldPermission is the client for interacting with the RoleFieldPermission builders.
+	RoleFieldPermission *RoleFieldPermissionClient
 	// RoleMetadata is the client for interacting with the RoleMetadata builders.
 	RoleMetadata *RoleMetadataClient
 	// RolePermission is the client for interacting with the RolePermission builders.
@@ -407,6 +409,7 @@ func (tx *Tx) init() {
 	tx.PostWatch = NewPostWatchClient(tx.config)
 	tx.Redirect = NewRedirectClient(tx.config)
 	tx.Role = NewRoleClient(tx.config)
+	tx.RoleFieldPermission = NewRoleFieldPermissionClient(tx.config)
 	tx.RoleMetadata = NewRoleMetadataClient(tx.config)
 	tx.RolePermission = NewRolePermissionClient(tx.config)
 	tx.Section = NewSectionClient(tx.config)

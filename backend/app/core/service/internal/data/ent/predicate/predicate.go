@@ -228,6 +228,9 @@ type Redirect func(*sql.Selector)
 // Role is the predicate function for role builders.
 type Role func(*sql.Selector)
 
+// RoleFieldPermission is the predicate function for rolefieldpermission builders.
+type RoleFieldPermission func(*sql.Selector)
+
 // RoleMetadata is the predicate function for rolemetadata builders.
 type RoleMetadata func(*sql.Selector)
 

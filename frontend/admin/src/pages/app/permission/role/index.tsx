@@ -6,6 +6,8 @@ import { Button, Popconfirm, Tag, App } from 'antd';
 import { EditOutlined, DeleteOutlined, PlusOutlined } from '@ant-design/icons';
 import { useQueryClient } from '@tanstack/react-query';
 import { useTranslation } from 'react-i18next';
+import { useUserStore } from '@/stores/user';
+import { isFieldHidden } from '@/core/access/field-permission';
 import type { permissionservicev1_Role as Role } from '@/api/generated/admin/service/v1';
 import { PaginationQuery } from '@/core';
 import { fetchListRoles, useDeleteRole } from '@/api/hooks/role';
@@ -34,6 +36,10 @@ const RoleManagement = () => {
 
   const statusMap = getStatusMap(t);
   const dataScopeMap = getDataScopeMap(t);
+
+  // 字段级权限：按当前用户隐藏字段集裁剪 Role 资源列（"Role.字段" 串）
+  const hiddenFieldEntries = useUserStore((s) => s.hiddenFields);
+  const roleFieldHidden = (field: string) => isFieldHidden(hiddenFieldEntries, 'Role', field);
 
   // 删除操作
   const deleteMutation = useDeleteRole({
@@ -65,10 +71,12 @@ const RoleManagement = () => {
       title: t('name'),
       dataIndex: 'name',
       width: 150,
+      hideInTable: roleFieldHidden('name'),
     },
     {
       title: t('code'),
       dataIndex: 'code',
+      hideInTable: roleFieldHidden('code'),
       width: 150,
     },
     {
@@ -106,6 +114,7 @@ const RoleManagement = () => {
       title: t('description'),
       dataIndex: 'description',
       hideInSearch: true,
+      hideInTable: roleFieldHidden('description'),
       ellipsis: true,
     },
     {

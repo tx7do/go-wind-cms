@@ -10252,6 +10252,11 @@ components:
                     type: array
                     items:
                         type: string
+                hiddenFields:
+                    type: array
+                    items:
+                        type: string
+                    description: 字段权限隐藏字段集（"资源.字段" 串数组；平台用户为空）
             description: 查询权限码列表 - 回应
         admin.service.v1.ListRouteResponse:
             type: object
@@ -16575,7 +16580,6 @@ components:
             properties:
                 data:
                     $ref: '#/components/schemas/permission.service.v1.Role'
-            description: 创建角色 - 请求
         permission.service.v1.ListApiResponse:
             type: object
             properties:
@@ -17067,6 +17071,11 @@ components:
                     type: integer
                     description: 租户ID，0代表系统全局角色
                     format: uint32
+                fieldPermissions:
+                    type: array
+                    items:
+                        $ref: '#/components/schemas/permission.service.v1.RoleFieldPermission'
+                    description: 字段权限配置
                 tenantName:
                     type: string
                     description: 租户名称
@@ -17095,6 +17104,18 @@ components:
                     description: 删除时间
                     format: date-time
             description: 角色
+        permission.service.v1.RoleFieldPermission:
+            type: object
+            properties:
+                resource:
+                    type: string
+                    description: 资源名（proto 消息名，如 User）
+                hiddenFields:
+                    type: array
+                    items:
+                        type: string
+                    description: 隐藏字段列表（proto 字段 json_name，如 email）
+            description: "创建角色 - 请求\r\n 角色字段权限条目：角色在某资源上隐藏的字段集（黑名单语义）。\r\n 资源名为 proto 消息名（如 User），字段为 proto 字段 json_name（如 email）。"
         permission.service.v1.UpdateApiRequest:
             type: object
             properties:
