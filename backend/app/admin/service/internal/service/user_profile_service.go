@@ -89,6 +89,9 @@ func (s *UserProfileService) UpdateUser(ctx context.Context, req *identityV1.Upd
 			"email":    {},
 			"remark":   {},
 			"gender":   {},
+			"region":   {},
+			"address":  {},
+			"locale":   {},
 		}
 		filtered := req.UpdateMask.Paths[:0]
 		for _, p := range req.UpdateMask.Paths {

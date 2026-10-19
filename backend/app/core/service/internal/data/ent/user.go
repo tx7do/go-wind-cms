@@ -52,6 +52,8 @@ type User struct {
 	Address *string `json:"address,omitempty"`
 	// 国家地区
 	Region *string `json:"region,omitempty"`
+	// 偏好语言（事务性邮件/监控告警按收件人渲染；zh-CN/en-US，空=默认中文）
+	Locale *string `json:"locale,omitempty"`
 	// 个人说明
 	Description *string `json:"description,omitempty"`
 	// 性别
@@ -74,7 +76,7 @@ func (*User) scanValues(columns []string) ([]any, error) {
 		switch columns[i] {
 		case user.FieldID, user.FieldCreatedBy, user.FieldUpdatedBy, user.FieldDeletedBy, user.FieldTenantID:
 			values[i] = new(sql.NullInt64)
-		case user.FieldRemark, user.FieldUsername, user.FieldNickname, user.FieldRealname, user.FieldEmail, user.FieldMobile, user.FieldTelephone, user.FieldAvatar, user.FieldAddress, user.FieldRegion, user.FieldDescription, user.FieldGender, user.FieldLastLoginIP, user.FieldStatus:
+		case user.FieldRemark, user.FieldUsername, user.FieldNickname, user.FieldRealname, user.FieldEmail, user.FieldMobile, user.FieldTelephone, user.FieldAvatar, user.FieldAddress, user.FieldRegion, user.FieldLocale, user.FieldDescription, user.FieldGender, user.FieldLastLoginIP, user.FieldStatus:
 			values[i] = new(sql.NullString)
 		case user.FieldCreatedAt, user.FieldUpdatedAt, user.FieldDeletedAt, user.FieldLastLoginAt, user.FieldLockedUntil:
 			values[i] = new(sql.NullTime)
@@ -217,6 +219,13 @@ func (_m *User) assignValues(columns []string, values []any) error {
 			} else if value.Valid {
 				_m.Region = new(string)
 				*_m.Region = value.String
+			}
+		case user.FieldLocale:
+			if value, ok := values[i].(*sql.NullString); !ok {
+				return fmt.Errorf("unexpected type %T for field locale", values[i])
+			} else if value.Valid {
+				_m.Locale = new(string)
+				*_m.Locale = value.String
 			}
 		case user.FieldDescription:
 			if value, ok := values[i].(*sql.NullString); !ok {
@@ -378,6 +387,11 @@ func (_m *User) String() string {
 	builder.WriteString(", ")
 	if v := _m.Region; v != nil {
 		builder.WriteString("region=")
+		builder.WriteString(*v)
+	}
+	builder.WriteString(", ")
+	if v := _m.Locale; v != nil {
+		builder.WriteString("locale=")
 		builder.WriteString(*v)
 	}
 	builder.WriteString(", ")

@@ -65,5 +65,8 @@
     "saveSuccess": "Notification preferences saved",
     "saveFailed": "Save failed",
     "transactionalNote": "Transactional emails such as verification codes bypass preference settings and are unaffected by this page."
-  }
+  },
+  "locale": "Preferred Language",
+  "localeHint": "Transactional emails and monitor alerts render in this language",
+  "localePlaceholder": "Default (Chinese)"
 }

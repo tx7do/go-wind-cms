@@ -52,7 +52,7 @@ require (
 	github.com/tx7do/go-utils/slug v0.0.1
 	github.com/tx7do/go-utils/translator v1.1.3
 	github.com/tx7do/go-wind-plugins/ai/openai v0.0.1
-	github.com/tx7do/go-wind-toolkit/protoc-gen-go-redact v0.0.0-20260621140333-c4bf78d8d062
+	github.com/tx7do/go-wind-toolkit/protoc-gen-go-redact v0.0.0-20260930120145-e3d2a3635e9c
 	github.com/tx7do/kratos-authn v1.1.11
 	github.com/tx7do/kratos-authn/engine/jwt v1.1.11
 	github.com/tx7do/kratos-authz v1.1.8

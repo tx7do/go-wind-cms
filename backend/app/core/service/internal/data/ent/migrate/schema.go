@@ -4744,6 +4744,7 @@ var (
 		{Name: "avatar", Type: field.TypeString, Nullable: true, Comment: "头像"},
 		{Name: "address", Type: field.TypeString, Nullable: true, Comment: "地址", Default: ""},
 		{Name: "region", Type: field.TypeString, Nullable: true, Comment: "国家地区", Default: ""},
+		{Name: "locale", Type: field.TypeString, Nullable: true, Comment: "偏好语言（事务性邮件/监控告警按收件人渲染；zh-CN/en-US，空=默认中文）", Default: ""},
 		{Name: "description", Type: field.TypeString, Nullable: true, Size: 1023, Comment: "个人说明"},
 		{Name: "gender", Type: field.TypeEnum, Nullable: true, Comment: "性别", Enums: []string{"SECRET", "MALE", "FEMALE"}, Default: "SECRET"},
 		{Name: "last_login_at", Type: field.TypeTime, Nullable: true, Comment: "最后一次登录的时间"},
@@ -4776,12 +4777,12 @@ var (
 			{
 				Name:    "idx_sys_user_tenant_last_login_at",
 				Unique:  false,
-				Columns: []*schema.Column{SysUsersColumns[8], SysUsersColumns[20]},
+				Columns: []*schema.Column{SysUsersColumns[8], SysUsersColumns[21]},
 			},
 			{
 				Name:    "idx_sys_user_tenant_last_login_ip",
 				Unique:  false,
-				Columns: []*schema.Column{SysUsersColumns[8], SysUsersColumns[21]},
+				Columns: []*schema.Column{SysUsersColumns[8], SysUsersColumns[22]},
 			},
 			{
 				Name:    "idx_sys_user_tenant_created_by",

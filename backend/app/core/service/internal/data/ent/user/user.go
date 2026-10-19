@@ -48,6 +48,8 @@ const (
 	FieldAddress = "address"
 	// FieldRegion holds the string denoting the region field in the database.
 	FieldRegion = "region"
+	// FieldLocale holds the string denoting the locale field in the database.
+	FieldLocale = "locale"
 	// FieldDescription holds the string denoting the description field in the database.
 	FieldDescription = "description"
 	// FieldGender holds the string denoting the gender field in the database.
@@ -84,6 +86,7 @@ var Columns = []string{
 	FieldAvatar,
 	FieldAddress,
 	FieldRegion,
+	FieldLocale,
 	FieldDescription,
 	FieldGender,
 	FieldLastLoginAt,
@@ -128,6 +131,8 @@ var (
 	DefaultAddress string
 	// DefaultRegion holds the default value on creation for the "region" field.
 	DefaultRegion string
+	// DefaultLocale holds the default value on creation for the "locale" field.
+	DefaultLocale string
 	// DescriptionValidator is a validator for the "description" field. It is called by the builders before save.
 	DescriptionValidator func(string) error
 	// IDValidator is a validator for the "id" field. It is called by the builders before save.
@@ -282,6 +287,11 @@ func ByAddress(opts ...sql.OrderTermOption) OrderOption {
 // ByRegion orders the results by the region field.
 func ByRegion(opts ...sql.OrderTermOption) OrderOption {
 	return sql.OrderByField(FieldRegion, opts...).ToFunc()
+}
+
+// ByLocale orders the results by the locale field.
+func ByLocale(opts ...sql.OrderTermOption) OrderOption {
+	return sql.OrderByField(FieldLocale, opts...).ToFunc()
 }
 
 // ByDescription orders the results by the description field.

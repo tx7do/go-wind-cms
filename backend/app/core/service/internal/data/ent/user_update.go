@@ -330,6 +330,26 @@ func (_u *UserUpdate) ClearRegion() *UserUpdate {
 	return _u
 }
 
+// SetLocale sets the "locale" field.
+func (_u *UserUpdate) SetLocale(v string) *UserUpdate {
+	_u.mutation.SetLocale(v)
+	return _u
+}
+
+// SetNillableLocale sets the "locale" field if the given value is not nil.
+func (_u *UserUpdate) SetNillableLocale(v *string) *UserUpdate {
+	if v != nil {
+		_u.SetLocale(*v)
+	}
+	return _u
+}
+
+// ClearLocale clears the value of the "locale" field.
+func (_u *UserUpdate) ClearLocale() *UserUpdate {
+	_u.mutation.ClearLocale()
+	return _u
+}
+
 // SetDescription sets the "description" field.
 func (_u *UserUpdate) SetDescription(v string) *UserUpdate {
 	_u.mutation.SetDescription(v)
@@ -636,6 +656,12 @@ func (_u *UserUpdate) sqlSave(ctx context.Context) (_node int, err error) {
 	}
 	if _u.mutation.RegionCleared() {
 		_spec.ClearField(user.FieldRegion, field.TypeString)
+	}
+	if value, ok := _u.mutation.Locale(); ok {
+		_spec.SetField(user.FieldLocale, field.TypeString, value)
+	}
+	if _u.mutation.LocaleCleared() {
+		_spec.ClearField(user.FieldLocale, field.TypeString)
 	}
 	if value, ok := _u.mutation.Description(); ok {
 		_spec.SetField(user.FieldDescription, field.TypeString, value)
@@ -996,6 +1022,26 @@ func (_u *UserUpdateOne) ClearRegion() *UserUpdateOne {
 	return _u
 }
 
+// SetLocale sets the "locale" field.
+func (_u *UserUpdateOne) SetLocale(v string) *UserUpdateOne {
+	_u.mutation.SetLocale(v)
+	return _u
+}
+
+// SetNillableLocale sets the "locale" field if the given value is not nil.
+func (_u *UserUpdateOne) SetNillableLocale(v *string) *UserUpdateOne {
+	if v != nil {
+		_u.SetLocale(*v)
+	}
+	return _u
+}
+
+// ClearLocale clears the value of the "locale" field.
+func (_u *UserUpdateOne) ClearLocale() *UserUpdateOne {
+	_u.mutation.ClearLocale()
+	return _u
+}
+
 // SetDescription sets the "description" field.
 func (_u *UserUpdateOne) SetDescription(v string) *UserUpdateOne {
 	_u.mutation.SetDescription(v)
@@ -1332,6 +1378,12 @@ func (_u *UserUpdateOne) sqlSave(ctx context.Context) (_node *User, err error) {
 	}
 	if _u.mutation.RegionCleared() {
 		_spec.ClearField(user.FieldRegion, field.TypeString)
+	}
+	if value, ok := _u.mutation.Locale(); ok {
+		_spec.SetField(user.FieldLocale, field.TypeString, value)
+	}
+	if _u.mutation.LocaleCleared() {
+		_spec.ClearField(user.FieldLocale, field.TypeString)
 	}
 	if value, ok := _u.mutation.Description(); ok {
 		_spec.SetField(user.FieldDescription, field.TypeString, value)

@@ -2905,8 +2905,12 @@ func init() {
 	userDescRegion := userFields[8].Descriptor()
 	// user.DefaultRegion holds the default value on creation for the region field.
 	user.DefaultRegion = userDescRegion.Default.(string)
+	// userDescLocale is the schema descriptor for locale field.
+	userDescLocale := userFields[9].Descriptor()
+	// user.DefaultLocale holds the default value on creation for the locale field.
+	user.DefaultLocale = userDescLocale.Default.(string)
 	// userDescDescription is the schema descriptor for description field.
-	userDescDescription := userFields[9].Descriptor()
+	userDescDescription := userFields[10].Descriptor()
 	// user.DescriptionValidator is a validator for the "description" field. It is called by the builders before save.
 	user.DescriptionValidator = userDescDescription.Validators[0].(func(string) error)
 	// userDescID is the schema descriptor for id field.

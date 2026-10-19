@@ -636,8 +636,8 @@ github.com/tx7do/go-wind-plugins/encoding v0.0.1 h1:JAFl2LU5/6VBE8WgZvJjEaAD4BDh
 github.com/tx7do/go-wind-plugins/encoding v0.0.1/go.mod h1:kD3i5H3DaENxuz3eAYvOc6fZbTfUy7h+u5XqOzVWdIE=
 github.com/tx7do/go-wind-plugins/encoding/json v0.0.1 h1:9TBvf41xmxtvIT5oyX0wLYWfJziSMkq1uQ25mXTMby8=
 github.com/tx7do/go-wind-plugins/encoding/json v0.0.1/go.mod h1:NYVdkUteSngetTUiDIaInR6PpR5KR8C0XFG4UA8UvlQ=
-github.com/tx7do/go-wind-toolkit/protoc-gen-go-redact v0.0.0-20260621140333-c4bf78d8d062 h1:GQlTUYCRD34UtoEDc1mmNLsxbckjhbWiRpIfUGR1ORE=
-github.com/tx7do/go-wind-toolkit/protoc-gen-go-redact v0.0.0-20260621140333-c4bf78d8d062/go.mod h1:6pZHTHo8t6GjYu8fEAJr/OTSEUCVn7ai6oCvVjRC+tY=
+github.com/tx7do/go-wind-toolkit/protoc-gen-go-redact v0.0.0-20260930120145-e3d2a3635e9c h1:JDwZmDWX6/Ktq1RJnn+SNDzp/yD2Eyjw9rGiJYxupTE=
+github.com/tx7do/go-wind-toolkit/protoc-gen-go-redact v0.0.0-20260930120145-e3d2a3635e9c/go.mod h1:6pZHTHo8t6GjYu8fEAJr/OTSEUCVn7ai6oCvVjRC+tY=
 github.com/tx7do/kratos-authn v1.1.11 h1:D8MPFjhcnGLf98hMmti89MfCLTMhWne5O9b4N2TKBqc=
 github.com/tx7do/kratos-authn v1.1.11/go.mod h1:9VSLu7MgL7ZHjH9NcMYlCpjlgOHLZWS1Xfx9omVY8/w=
 github.com/tx7do/kratos-authn/engine/jwt v1.1.11 h1:/oe8UM1sceyv3OY4SwF2IQAUDN1J2BRAse17jAKf/SM=

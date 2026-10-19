@@ -19493,6 +19493,8 @@ class IdentityServiceV1User {
   String? lastLoginAt;
   String? lastLoginIp;
   int? likeCount;
+  /// 偏好语言（事务性邮件/监控告警按收件人渲染；zh-CN/en-US，空=默认中文）
+  String? locale;
   String? lockedUntil;
   String? mobile;
   String? nickname;
@@ -19537,6 +19539,7 @@ class IdentityServiceV1User {
     this.lastLoginAt,
     this.lastLoginIp,
     this.likeCount,
+    this.locale,
     this.lockedUntil,
     this.mobile,
     this.nickname,
@@ -19583,6 +19586,7 @@ class IdentityServiceV1User {
       lastLoginAt: json['lastLoginAt'] as String?,
       lastLoginIp: json['lastLoginIp'] as String?,
       likeCount: json['likeCount'] != null ? int.parse(json['likeCount'].toString()) : null,
+      locale: json['locale'] as String?,
       lockedUntil: json['lockedUntil'] as String?,
       mobile: json['mobile'] as String?,
       nickname: json['nickname'] as String?,
@@ -19630,6 +19634,7 @@ class IdentityServiceV1User {
     if (lastLoginAt != null) json['lastLoginAt'] = lastLoginAt;
     if (lastLoginIp != null) json['lastLoginIp'] = lastLoginIp;
     if (likeCount != null) json['likeCount'] = likeCount.toString();
+    if (locale != null) json['locale'] = locale;
     if (lockedUntil != null) json['lockedUntil'] = lockedUntil;
     if (mobile != null) json['mobile'] = mobile;
     if (nickname != null) json['nickname'] = nickname;
@@ -19661,7 +19666,7 @@ class IdentityServiceV1User {
 
   @override
   String toString() {
-    return 'IdentityServiceV1User(address: $address, avatar: $avatar, commentCount: $commentCount, createdAt: $createdAt, createdBy: $createdBy, deletedAt: $deletedAt, deletedBy: $deletedBy, description: $description, email: $email, followers: $followers, following: $following, gender: $gender, id: $id, lastLoginAt: $lastLoginAt, lastLoginIp: $lastLoginIp, likeCount: $likeCount, lockedUntil: $lockedUntil, mobile: $mobile, nickname: $nickname, orgUnitId: $orgUnitId, orgUnitIds: $orgUnitIds, orgUnitName: $orgUnitName, orgUnitNames: $orgUnitNames, positionId: $positionId, positionIds: $positionIds, positionName: $positionName, positionNames: $positionNames, postCount: $postCount, realname: $realname, region: $region, remark: $remark, roleId: $roleId, roleIds: $roleIds, roleNames: $roleNames, roles: $roles, status: $status, telephone: $telephone, tenantId: $tenantId, tenantName: $tenantName, updatedAt: $updatedAt, updatedBy: $updatedBy, username: $username)';
+    return 'IdentityServiceV1User(address: $address, avatar: $avatar, commentCount: $commentCount, createdAt: $createdAt, createdBy: $createdBy, deletedAt: $deletedAt, deletedBy: $deletedBy, description: $description, email: $email, followers: $followers, following: $following, gender: $gender, id: $id, lastLoginAt: $lastLoginAt, lastLoginIp: $lastLoginIp, likeCount: $likeCount, locale: $locale, lockedUntil: $lockedUntil, mobile: $mobile, nickname: $nickname, orgUnitId: $orgUnitId, orgUnitIds: $orgUnitIds, orgUnitName: $orgUnitName, orgUnitNames: $orgUnitNames, positionId: $positionId, positionIds: $positionIds, positionName: $positionName, positionNames: $positionNames, postCount: $postCount, realname: $realname, region: $region, remark: $remark, roleId: $roleId, roleIds: $roleIds, roleNames: $roleNames, roles: $roles, status: $status, telephone: $telephone, tenantId: $tenantId, tenantName: $tenantName, updatedAt: $updatedAt, updatedBy: $updatedBy, username: $username)';
   }
 
   @override
@@ -19685,6 +19690,7 @@ class IdentityServiceV1User {
       && lastLoginAt == other.lastLoginAt
       && lastLoginIp == other.lastLoginIp
       && likeCount == other.likeCount
+      && locale == other.locale
       && lockedUntil == other.lockedUntil
       && mobile == other.mobile
       && nickname == other.nickname
@@ -19731,6 +19737,7 @@ class IdentityServiceV1User {
     lastLoginAt,
     lastLoginIp,
     likeCount,
+    locale,
     lockedUntil,
     mobile,
     nickname,
@@ -19776,6 +19783,7 @@ class IdentityServiceV1User {
     String? lastLoginAt,
     String? lastLoginIp,
     int? likeCount,
+    String? locale,
     String? lockedUntil,
     String? mobile,
     String? nickname,
@@ -19820,6 +19828,7 @@ class IdentityServiceV1User {
       lastLoginAt: lastLoginAt ?? this.lastLoginAt,
       lastLoginIp: lastLoginIp ?? this.lastLoginIp,
       likeCount: likeCount ?? this.likeCount,
+      locale: locale ?? this.locale,
       lockedUntil: lockedUntil ?? this.lockedUntil,
       mobile: mobile ?? this.mobile,
       nickname: nickname ?? this.nickname,
@@ -19991,6 +20000,11 @@ class IdentityServiceV1User {
     final f31 = remark;
     if (f31 != null) {
       w.writeString(31, f31!);
+    }
+    // field 32: locale
+    final f32 = locale;
+    if (f32 != null) {
+      w.writeString(32, f32!);
     }
     // field 50: lastLoginAt
     final f50 = lastLoginAt;
@@ -20210,6 +20224,11 @@ class IdentityServiceV1User {
         // field 31: remark
         case 31: {
           m.remark = r.readString();
+          break;
+        }
+        // field 32: locale
+        case 32: {
+          m.locale = r.readString();
           break;
         }
         // field 50: lastLoginAt

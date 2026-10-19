@@ -192,6 +192,12 @@ message User {
     (gnostic.openapi.v3.property) = {description: "备注"}
   ]; // 备注
 
+  // 偏好语言（事务性邮件/监控告警按收件人渲染；zh-CN/en-US，空=默认中文）
+  optional string locale = 32 [
+    json_name = "locale",
+    (gnostic.openapi.v3.property) = {description: "偏好语言"}
+  ]; // 偏好语言
+
   optional google.protobuf.Timestamp last_login_at = 50 [
     json_name = "lastLoginAt",
     (gnostic.openapi.v3.property) = {description: "最后登录时间"}

@@ -515,6 +515,7 @@ func (r *userRepo) CreateWithTx(ctx context.Context, tx *ent.Tx, data *identityV
 		SetNillableTelephone(data.Telephone).
 		SetNillableRegion(data.Region).
 		SetNillableAddress(data.Address).
+		SetNillableLocale(data.Locale).
 		SetNillableDescription(data.Description).
 		SetNillableRemark(data.Remark).
 		SetNillableLastLoginAt(timeutil.TimestamppbToTime(data.LastLoginAt)).
@@ -697,6 +698,7 @@ func (r *userRepo) Update(ctx context.Context, req *identityV1.UpdateUserRequest
 				SetNillableTelephone(req.Data.Telephone).
 				SetNillableRegion(req.Data.Region).
 				SetNillableAddress(req.Data.Address).
+				SetNillableLocale(req.Data.Locale).
 				SetNillableDescription(req.Data.Description).
 				SetNillableRemark(req.Data.Remark).
 				SetNillableGender(r.genderConverter.ToEntity(req.Data.Gender)).

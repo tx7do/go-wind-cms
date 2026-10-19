@@ -15859,6 +15859,8 @@ export type identityservicev1_User = {
   lastLoginAt?: wellKnownTimestamp;
   lastLoginIp?: string;
   likeCount?: number;
+  // 偏好语言（事务性邮件/监控告警按收件人渲染；zh-CN/en-US，空=默认中文）
+  locale?: string;
   lockedUntil?: wellKnownTimestamp;
   mobile?: string;
   nickname?: string;

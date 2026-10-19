@@ -260,6 +260,20 @@ func (_c *UserCreate) SetNillableRegion(v *string) *UserCreate {
 	return _c
 }
 
+// SetLocale sets the "locale" field.
+func (_c *UserCreate) SetLocale(v string) *UserCreate {
+	_c.mutation.SetLocale(v)
+	return _c
+}
+
+// SetNillableLocale sets the "locale" field if the given value is not nil.
+func (_c *UserCreate) SetNillableLocale(v *string) *UserCreate {
+	if v != nil {
+		_c.SetLocale(*v)
+	}
+	return _c
+}
+
 // SetDescription sets the "description" field.
 func (_c *UserCreate) SetDescription(v string) *UserCreate {
 	_c.mutation.SetDescription(v)
@@ -406,6 +420,10 @@ func (_c *UserCreate) defaults() error {
 	if _, ok := _c.mutation.Region(); !ok {
 		v := user.DefaultRegion
 		_c.mutation.SetRegion(v)
+	}
+	if _, ok := _c.mutation.Locale(); !ok {
+		v := user.DefaultLocale
+		_c.mutation.SetLocale(v)
 	}
 	if _, ok := _c.mutation.Gender(); !ok {
 		v := user.DefaultGender
@@ -560,6 +578,10 @@ func (_c *UserCreate) createSpec() (*User, *sqlgraph.CreateSpec) {
 	if value, ok := _c.mutation.Region(); ok {
 		_spec.SetField(user.FieldRegion, field.TypeString, value)
 		_node.Region = &value
+	}
+	if value, ok := _c.mutation.Locale(); ok {
+		_spec.SetField(user.FieldLocale, field.TypeString, value)
+		_node.Locale = &value
 	}
 	if value, ok := _c.mutation.Description(); ok {
 		_spec.SetField(user.FieldDescription, field.TypeString, value)
@@ -904,6 +926,24 @@ func (u *UserUpsert) UpdateRegion() *UserUpsert {
 // ClearRegion clears the value of the "region" field.
 func (u *UserUpsert) ClearRegion() *UserUpsert {
 	u.SetNull(user.FieldRegion)
+	return u
+}
+
+// SetLocale sets the "locale" field.
+func (u *UserUpsert) SetLocale(v string) *UserUpsert {
+	u.Set(user.FieldLocale, v)
+	return u
+}
+
+// UpdateLocale sets the "locale" field to the value that was provided on create.
+func (u *UserUpsert) UpdateLocale() *UserUpsert {
+	u.SetExcluded(user.FieldLocale)
+	return u
+}
+
+// ClearLocale clears the value of the "locale" field.
+func (u *UserUpsert) ClearLocale() *UserUpsert {
+	u.SetNull(user.FieldLocale)
 	return u
 }
 
@@ -1384,6 +1424,27 @@ func (u *UserUpsertOne) UpdateRegion() *UserUpsertOne {
 func (u *UserUpsertOne) ClearRegion() *UserUpsertOne {
 	return u.Update(func(s *UserUpsert) {
 		s.ClearRegion()
+	})
+}
+
+// SetLocale sets the "locale" field.
+func (u *UserUpsertOne) SetLocale(v string) *UserUpsertOne {
+	return u.Update(func(s *UserUpsert) {
+		s.SetLocale(v)
+	})
+}
+
+// UpdateLocale sets the "locale" field to the value that was provided on create.
+func (u *UserUpsertOne) UpdateLocale() *UserUpsertOne {
+	return u.Update(func(s *UserUpsert) {
+		s.UpdateLocale()
+	})
+}
+
+// ClearLocale clears the value of the "locale" field.
+func (u *UserUpsertOne) ClearLocale() *UserUpsertOne {
+	return u.Update(func(s *UserUpsert) {
+		s.ClearLocale()
 	})
 }
 
@@ -2048,6 +2109,27 @@ func (u *UserUpsertBulk) UpdateRegion() *UserUpsertBulk {
 func (u *UserUpsertBulk) ClearRegion() *UserUpsertBulk {
 	return u.Update(func(s *UserUpsert) {
 		s.ClearRegion()
+	})
+}
+
+// SetLocale sets the "locale" field.
+func (u *UserUpsertBulk) SetLocale(v string) *UserUpsertBulk {
+	return u.Update(func(s *UserUpsert) {
+		s.SetLocale(v)
+	})
+}
+
+// UpdateLocale sets the "locale" field to the value that was provided on create.
+func (u *UserUpsertBulk) UpdateLocale() *UserUpsertBulk {
+	return u.Update(func(s *UserUpsert) {
+		s.UpdateLocale()
+	})
+}
+
+// ClearLocale clears the value of the "locale" field.
+func (u *UserUpsertBulk) ClearLocale() *UserUpsertBulk {
+	return u.Update(func(s *UserUpsert) {
+		s.ClearLocale()
 	})
 }
 

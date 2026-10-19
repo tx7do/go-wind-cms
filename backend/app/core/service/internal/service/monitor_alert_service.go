@@ -23,6 +23,7 @@ import (
 
 	"go-wind-cms/app/core/service/internal/data"
 	"go-wind-cms/app/core/service/internal/data/ent"
+	"go-wind-cms/app/core/service/internal/data/ent/user"
 	"go-wind-cms/pkg/task"
 )
 
@@ -350,7 +351,7 @@ func (s *MonitorAlertService) sendAlert(ctx context.Context, rule *monitorAlertV
 		s.log.Errorf("monitor alert [%s] dispatch skipped: notification seam is not wired", rule.GetName())
 		return false
 	}
-	title, content := alertText(rule, value, resolved, now)
+	title, content := alertText(s.alertLocale(ctx, rule), rule, value, resolved, now)
 	resp, err := s.notifier.SendDirect(ctx, &notifyV1.SendDirectNotificationRequest{
 		EventType:      notifyV1.EventType_MONITOR_ALERT,
 		Channel:        rule.Channel,
@@ -370,17 +371,100 @@ func (s *MonitorAlertService) sendAlert(ctx context.Context, rule *monitorAlertV
 	return true
 }
 
-// alertText 告警/恢复文案（固定中文；指标与比较符用枚举字面量，与闸门报错口径一致）。
-func alertText(rule *monitorAlertV1.MonitorAlertRule, value float64, resolved bool, now time.Time) (string, string) {
+// ---- 告警文案（按收件人偏好语言渲染） ----
+//
+// 语言标签归一到 "zh-CN"/"en-US" 两档；指标与比较符用枚举字面量
+//（DB_PING_FAIL/GE），与闸门报错口径一致，两语言不做翻译。
+
+type alertLocaleTag string
+
+const (
+	alertLocaleZhCN alertLocaleTag = "zh-CN"
+	alertLocaleEnUS alertLocaleTag = "en-US"
+)
+
+type alertCopy struct {
+	resolvedTitle string // %s=规则名
+	resolvedBody  string // %s=指标 %.2f=当前值 %s=比较符 %.2f=阈值 %s=时间
+	alertTitle    string // %s=规则名
+	alertBody     string // %s=指标 %.2f=当前值 %s=比较符 %.2f=阈值 %s=时间 %d=冷却分钟
+}
+
+var alertTables = map[alertLocaleTag]alertCopy{
+	alertLocaleZhCN: {
+		resolvedTitle: "[已恢复] %s",
+		resolvedBody:  "监控指标 %s 已回到阈值内（当前值 %.2f，阈值 %s %.2f），时间 %s。",
+		alertTitle:    "[告警] %s",
+		alertBody:     "监控指标 %s 当前值 %.2f，越过阈值 %s %.2f，时间 %s。持续越限时每 %d 分钟重发一次。",
+	},
+	alertLocaleEnUS: {
+		resolvedTitle: "[Resolved] %s",
+		resolvedBody:  "Metric %s is back within threshold (current value %.2f, threshold %s %.2f), at %s.",
+		alertTitle:    "[Alert] %s",
+		alertBody:     "Metric %s current value %.2f crossed the threshold %s %.2f at %s. Re-alerts every %d minutes while it keeps crossing.",
+	},
+}
+
+func alertCopyOf(locale alertLocaleTag) alertCopy {
+	if cp, ok := alertTables[locale]; ok {
+		return cp
+	}
+	return alertTables[alertLocaleZhCN]
+}
+
+func alertText(locale alertLocaleTag, rule *monitorAlertV1.MonitorAlertRule, value float64, resolved bool, now time.Time) (string, string) {
+	cp := alertCopyOf(locale)
 	ts := now.Format("2006-01-02 15:04:05")
 	if resolved {
-		return fmt.Sprintf("[已恢复] %s", rule.GetName()),
-			fmt.Sprintf("监控指标 %s 已回到阈值内（当前值 %.2f，阈值 %s %.2f），时间 %s。",
-				rule.GetMetric().String(), value, rule.GetOp().String(), rule.GetThreshold(), ts)
+		return fmt.Sprintf(cp.resolvedTitle, rule.GetName()),
+			fmt.Sprintf(cp.resolvedBody, rule.GetMetric().String(), value, rule.GetOp().String(), rule.GetThreshold(), ts)
 	}
-	return fmt.Sprintf("[告警] %s", rule.GetName()),
-		fmt.Sprintf("监控指标 %s 当前值 %.2f，越过阈值 %s %.2f，时间 %s。持续越限时每 %d 分钟重发一次。",
-			rule.GetMetric().String(), value, rule.GetOp().String(), rule.GetThreshold(), ts, rule.GetCooldownMinutes())
+	return fmt.Sprintf(cp.alertTitle, rule.GetName()),
+		fmt.Sprintf(cp.alertBody, rule.GetMetric().String(), value, rule.GetOp().String(), rule.GetThreshold(), ts, rule.GetCooldownMinutes())
+}
+
+// alertLocale 解析告警收件人的偏好语言，解析不到一律回落默认（中文）：
+//   - EMAIL：target 按用户邮箱反查（收件邮箱是注册用户时能对上偏好）；
+//   - WEBHOOK：对端没有用户身份，无偏好可循。
+//
+// 语言解析是锦上添花，任何失败都回落默认、绝不影响告警送达。
+func (s *MonitorAlertService) alertLocale(ctx context.Context, rule *monitorAlertV1.MonitorAlertRule) alertLocaleTag {
+	const fallback = alertLocaleZhCN
+	if s.entClient == nil {
+		return fallback
+	}
+	if rule.GetChannel() != notifyV1.Channel_EMAIL {
+		return fallback
+	}
+	target := strings.TrimSpace(rule.GetTarget())
+	if target == "" {
+		return fallback
+	}
+
+	u, err := s.entClient.Client().User.Query().
+		Where(user.EmailEQ(target)).
+		Only(ctx)
+	if err != nil {
+		if !ent.IsNotFound(err) {
+			// 真查询故障才记日志（带原始错误）；查无此人是预期回落，不刷屏
+			s.log.Errorf("monitor alert locale: query recipient user failed (email=%s): %s", target, err.Error())
+		}
+		return fallback
+	}
+	if u == nil || u.Locale == nil {
+		return fallback
+	}
+	switch normalizeLocaleTag(*u.Locale) {
+	case "en-us", "en":
+		return alertLocaleEnUS
+	default:
+		return alertLocaleZhCN
+	}
+}
+
+// normalizeLocaleTag 归一语言标签：下划线转横线、小写化（zh_cn → zh-cn）。
+func normalizeLocaleTag(tag string) string {
+	return strings.ReplaceAll(strings.ToLower(strings.TrimSpace(tag)), "_", "-")
 }
 
 // ==== 周期任务 ====

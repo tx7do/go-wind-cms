@@ -85,6 +85,11 @@ func (User) Fields() []ent.Field {
 			Optional().
 			Nillable(),
 
+		field.String("locale").
+			Comment("偏好语言（事务性邮件/监控告警按收件人渲染；zh-CN/en-US，空=默认中文）").
+			Default("").
+			Optional().
+			Nillable(),
 		field.String("description").
 			Comment("个人说明").
 			MaxLen(1023).

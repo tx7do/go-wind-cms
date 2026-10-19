@@ -2540,6 +2540,7 @@ var schemaGraph = func() *sqlgraph.Schema {
 			user.FieldAvatar:      {Type: field.TypeString, Column: user.FieldAvatar},
 			user.FieldAddress:     {Type: field.TypeString, Column: user.FieldAddress},
 			user.FieldRegion:      {Type: field.TypeString, Column: user.FieldRegion},
+			user.FieldLocale:      {Type: field.TypeString, Column: user.FieldLocale},
 			user.FieldDescription: {Type: field.TypeString, Column: user.FieldDescription},
 			user.FieldGender:      {Type: field.TypeEnum, Column: user.FieldGender},
 			user.FieldLastLoginAt: {Type: field.TypeTime, Column: user.FieldLastLoginAt},
@@ -13340,6 +13341,11 @@ func (f *UserFilter) WhereAddress(p entql.StringP) {
 // WhereRegion applies the entql string predicate on the region field.
 func (f *UserFilter) WhereRegion(p entql.StringP) {
 	f.Where(p.Field(user.FieldRegion))
+}
+
+// WhereLocale applies the entql string predicate on the locale field.
+func (f *UserFilter) WhereLocale(p entql.StringP) {
+	f.Where(p.Field(user.FieldLocale))
 }
 
 // WhereDescription applies the entql string predicate on the description field.

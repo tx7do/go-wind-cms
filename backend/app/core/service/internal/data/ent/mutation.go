@@ -133292,6 +133292,7 @@ type UserMutation struct {
 	avatar        *string
 	address       *string
 	region        *string
+	locale        *string
 	description   *string
 	gender        *user.Gender
 	last_login_at *time.Time
@@ -134325,6 +134326,55 @@ func (m *UserMutation) ResetRegion() {
 	delete(m.clearedFields, user.FieldRegion)
 }
 
+// SetLocale sets the "locale" field.
+func (m *UserMutation) SetLocale(s string) {
+	m.locale = &s
+}
+
+// Locale returns the value of the "locale" field in the mutation.
+func (m *UserMutation) Locale() (r string, exists bool) {
+	v := m.locale
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldLocale returns the old "locale" field's value of the User entity.
+// If the User object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *UserMutation) OldLocale(ctx context.Context) (v *string, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldLocale is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldLocale requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldLocale: %w", err)
+	}
+	return oldValue.Locale, nil
+}
+
+// ClearLocale clears the value of the "locale" field.
+func (m *UserMutation) ClearLocale() {
+	m.locale = nil
+	m.clearedFields[user.FieldLocale] = struct{}{}
+}
+
+// LocaleCleared returns if the "locale" field was cleared in this mutation.
+func (m *UserMutation) LocaleCleared() bool {
+	_, ok := m.clearedFields[user.FieldLocale]
+	return ok
+}
+
+// ResetLocale resets all changes to the "locale" field.
+func (m *UserMutation) ResetLocale() {
+	m.locale = nil
+	delete(m.clearedFields, user.FieldLocale)
+}
+
 // SetDescription sets the "description" field.
 func (m *UserMutation) SetDescription(s string) {
 	m.description = &s
@@ -134653,7 +134703,7 @@ func (m *UserMutation) Type() string {
 // order to get all numeric fields that were incremented/decremented, call
 // AddedFields().
 func (m *UserMutation) Fields() []string {
-	fields := make([]string, 0, 23)
+	fields := make([]string, 0, 24)
 	if m.created_by != nil {
 		fields = append(fields, user.FieldCreatedBy)
 	}
@@ -134704,6 +134754,9 @@ func (m *UserMutation) Fields() []string {
 	}
 	if m.region != nil {
 		fields = append(fields, user.FieldRegion)
+	}
+	if m.locale != nil {
+		fields = append(fields, user.FieldLocale)
 	}
 	if m.description != nil {
 		fields = append(fields, user.FieldDescription)
@@ -134765,6 +134818,8 @@ func (m *UserMutation) Field(name string) (ent.Value, bool) {
 		return m.Address()
 	case user.FieldRegion:
 		return m.Region()
+	case user.FieldLocale:
+		return m.Locale()
 	case user.FieldDescription:
 		return m.Description()
 	case user.FieldGender:
@@ -134820,6 +134875,8 @@ func (m *UserMutation) OldField(ctx context.Context, name string) (ent.Value, er
 		return m.OldAddress(ctx)
 	case user.FieldRegion:
 		return m.OldRegion(ctx)
+	case user.FieldLocale:
+		return m.OldLocale(ctx)
 	case user.FieldDescription:
 		return m.OldDescription(ctx)
 	case user.FieldGender:
@@ -134959,6 +135016,13 @@ func (m *UserMutation) SetField(name string, value ent.Value) error {
 			return fmt.Errorf("unexpected type %T for field %s", value, name)
 		}
 		m.SetRegion(v)
+		return nil
+	case user.FieldLocale:
+		v, ok := value.(string)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetLocale(v)
 		return nil
 	case user.FieldDescription:
 		v, ok := value.(string)
@@ -135134,6 +135198,9 @@ func (m *UserMutation) ClearedFields() []string {
 	if m.FieldCleared(user.FieldRegion) {
 		fields = append(fields, user.FieldRegion)
 	}
+	if m.FieldCleared(user.FieldLocale) {
+		fields = append(fields, user.FieldLocale)
+	}
 	if m.FieldCleared(user.FieldDescription) {
 		fields = append(fields, user.FieldDescription)
 	}
@@ -135217,6 +135284,9 @@ func (m *UserMutation) ClearField(name string) error {
 	case user.FieldRegion:
 		m.ClearRegion()
 		return nil
+	case user.FieldLocale:
+		m.ClearLocale()
+		return nil
 	case user.FieldDescription:
 		m.ClearDescription()
 		return nil
@@ -135293,6 +135363,9 @@ func (m *UserMutation) ResetField(name string) error {
 		return nil
 	case user.FieldRegion:
 		m.ResetRegion()
+		return nil
+	case user.FieldLocale:
+		m.ResetLocale()
 		return nil
 	case user.FieldDescription:
 		m.ResetDescription()

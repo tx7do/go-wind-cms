@@ -167,6 +167,8 @@ type User struct {
 	Region        *string                `protobuf:"bytes,29,opt,name=region,proto3,oneof" json:"region,omitempty"`                                       // 国家地区
 	Description   *string                `protobuf:"bytes,30,opt,name=description,proto3,oneof" json:"description,omitempty"`                             // 个人描述
 	Remark        *string                `protobuf:"bytes,31,opt,name=remark,proto3,oneof" json:"remark,omitempty"`                                       // 备注
+	// 偏好语言（事务性邮件/监控告警按收件人渲染；zh-CN/en-US，空=默认中文）
+	Locale        *string                `protobuf:"bytes,32,opt,name=locale,proto3,oneof" json:"locale,omitempty"`                                       // 偏好语言
 	LastLoginAt   *timestamppb.Timestamp `protobuf:"bytes,50,opt,name=last_login_at,json=lastLoginAt,proto3,oneof" json:"last_login_at,omitempty"`        // 最后登录时间
 	LastLoginIp   *string                `protobuf:"bytes,51,opt,name=last_login_ip,json=lastLoginIp,proto3,oneof" json:"last_login_ip,omitempty"`        // 最后登录IP
 	Status        *User_Status           `protobuf:"varint,52,opt,name=status,proto3,enum=identity.service.v1.User_Status,oneof" json:"status,omitempty"` // 状态
@@ -401,6 +403,13 @@ func (x *User) GetDescription() string {
 func (x *User) GetRemark() string {
 	if x != nil && x.Remark != nil {
 		return *x.Remark
+	}
+	return ""
+}
+
+func (x *User) GetLocale() string {
+	if x != nil && x.Locale != nil {
+		return *x.Locale
 	}
 	return ""
 }
@@ -2034,7 +2043,7 @@ var File_identity_service_v1_user_proto protoreflect.FileDescriptor
 
 const file_identity_service_v1_user_proto_rawDesc = "" +
 	"\n" +
-	"\x1eidentity/service/v1/user.proto\x12\x13identity.service.v1\x1a$gnostic/openapi/v3/annotations.proto\x1a\x1bgoogle/protobuf/empty.proto\x1a google/protobuf/field_mask.proto\x1a\x1fgoogle/protobuf/timestamp.proto\x1a\x1fgoogle/api/field_behavior.proto\x1a\x16redact/v1/redact.proto\x1a\x1epagination/v1/pagination.proto\"\x9e\x18\n" +
+	"\x1eidentity/service/v1/user.proto\x12\x13identity.service.v1\x1a$gnostic/openapi/v3/annotations.proto\x1a\x1bgoogle/protobuf/empty.proto\x1a google/protobuf/field_mask.proto\x1a\x1fgoogle/protobuf/timestamp.proto\x1a\x1fgoogle/api/field_behavior.proto\x1a\x16redact/v1/redact.proto\x1a\x1epagination/v1/pagination.proto\"\xda\x18\n" +
 	"\x04User\x12#\n" +
 	"\x02id\x18\x01 \x01(\rB\x0e\xbaG\v\x92\x02\b用户IDH\x00R\x02id\x88\x01\x01\x120\n" +
 	"\ttenant_id\x18\x02 \x01(\rB\x0e\xbaG\v\x92\x02\b租户IDH\x01R\btenantId\x88\x01\x01\x128\n" +
@@ -2069,30 +2078,31 @@ const file_identity_service_v1_user_proto_rawDesc = "" +
 	"\aaddress\x18\x1c \x01(\tB\f\xbaG\t\x92\x02\x06住址H\x10R\aaddress\x88\x01\x01\x12/\n" +
 	"\x06region\x18\x1d \x01(\tB\x12\xbaG\x0f\x92\x02\f国家地区H\x11R\x06region\x88\x01\x01\x129\n" +
 	"\vdescription\x18\x1e \x01(\tB\x12\xbaG\x0f\x92\x02\f个人描述H\x12R\vdescription\x88\x01\x01\x12)\n" +
-	"\x06remark\x18\x1f \x01(\tB\f\xbaG\t\x92\x02\x06备注H\x13R\x06remark\x88\x01\x01\x12]\n" +
-	"\rlast_login_at\x182 \x01(\v2\x1a.google.protobuf.TimestampB\x18\xbaG\x15\x92\x02\x12最后登录时间H\x14R\vlastLoginAt\x88\x01\x01\x12=\n" +
-	"\rlast_login_ip\x183 \x01(\tB\x14\xbaG\x11\x92\x02\x0e最后登录IPH\x15R\vlastLoginIp\x88\x01\x01\x12K\n" +
-	"\x06status\x184 \x01(\x0e2 .identity.service.v1.User.StatusB\f\xbaG\t\x92\x02\x06状态H\x16R\x06status\x88\x01\x01\x12\\\n" +
-	"\flocked_until\x185 \x01(\v2\x1a.google.protobuf.TimestampB\x18\xbaG\x15\x92\x02\x12锁定截止时间H\x17R\vlockedUntil\x88\x01\x01\x122\n" +
-	"\tfollowers\x18P \x01(\x04B\x0f\xbaG\f\x92\x02\t粉丝数H\x18R\tfollowers\x88\x01\x01\x122\n" +
-	"\tfollowing\x18Q \x01(\x04B\x0f\xbaG\f\x92\x02\t关注数H\x19R\tfollowing\x88\x01\x01\x123\n" +
+	"\x06remark\x18\x1f \x01(\tB\f\xbaG\t\x92\x02\x06备注H\x13R\x06remark\x88\x01\x01\x12/\n" +
+	"\x06locale\x18  \x01(\tB\x12\xbaG\x0f\x92\x02\f偏好语言H\x14R\x06locale\x88\x01\x01\x12]\n" +
+	"\rlast_login_at\x182 \x01(\v2\x1a.google.protobuf.TimestampB\x18\xbaG\x15\x92\x02\x12最后登录时间H\x15R\vlastLoginAt\x88\x01\x01\x12=\n" +
+	"\rlast_login_ip\x183 \x01(\tB\x14\xbaG\x11\x92\x02\x0e最后登录IPH\x16R\vlastLoginIp\x88\x01\x01\x12K\n" +
+	"\x06status\x184 \x01(\x0e2 .identity.service.v1.User.StatusB\f\xbaG\t\x92\x02\x06状态H\x17R\x06status\x88\x01\x01\x12\\\n" +
+	"\flocked_until\x185 \x01(\v2\x1a.google.protobuf.TimestampB\x18\xbaG\x15\x92\x02\x12锁定截止时间H\x18R\vlockedUntil\x88\x01\x01\x122\n" +
+	"\tfollowers\x18P \x01(\x04B\x0f\xbaG\f\x92\x02\t粉丝数H\x19R\tfollowers\x88\x01\x01\x122\n" +
+	"\tfollowing\x18Q \x01(\x04B\x0f\xbaG\f\x92\x02\t关注数H\x1aR\tfollowing\x88\x01\x01\x123\n" +
 	"\n" +
-	"post_count\x18Z \x01(\x04B\x0f\xbaG\f\x92\x02\t发帖数H\x1aR\tpostCount\x88\x01\x01\x129\n" +
-	"\rcomment_count\x18[ \x01(\x04B\x0f\xbaG\f\x92\x02\t评论数H\x1bR\fcommentCount\x88\x01\x01\x123\n" +
+	"post_count\x18Z \x01(\x04B\x0f\xbaG\f\x92\x02\t发帖数H\x1bR\tpostCount\x88\x01\x01\x129\n" +
+	"\rcomment_count\x18[ \x01(\x04B\x0f\xbaG\f\x92\x02\t评论数H\x1cR\fcommentCount\x88\x01\x01\x123\n" +
 	"\n" +
-	"like_count\x18\\ \x01(\x04B\x0f\xbaG\f\x92\x02\t获赞数H\x1cR\tlikeCount\x88\x01\x01\x12;\n" +
+	"like_count\x18\\ \x01(\x04B\x0f\xbaG\f\x92\x02\t获赞数H\x1dR\tlikeCount\x88\x01\x01\x12;\n" +
 	"\n" +
-	"created_by\x18d \x01(\rB\x17\xbaG\x14\x92\x02\x11创建者用户IDH\x1dR\tcreatedBy\x88\x01\x01\x12;\n" +
+	"created_by\x18d \x01(\rB\x17\xbaG\x14\x92\x02\x11创建者用户IDH\x1eR\tcreatedBy\x88\x01\x01\x12;\n" +
 	"\n" +
-	"updated_by\x18e \x01(\rB\x17\xbaG\x14\x92\x02\x11更新者用户IDH\x1eR\tupdatedBy\x88\x01\x01\x12;\n" +
+	"updated_by\x18e \x01(\rB\x17\xbaG\x14\x92\x02\x11更新者用户IDH\x1fR\tupdatedBy\x88\x01\x01\x12;\n" +
 	"\n" +
-	"deleted_by\x18f \x01(\rB\x17\xbaG\x14\x92\x02\x11删除者用户IDH\x1fR\tdeletedBy\x88\x01\x01\x12S\n" +
+	"deleted_by\x18f \x01(\rB\x17\xbaG\x14\x92\x02\x11删除者用户IDH R\tdeletedBy\x88\x01\x01\x12S\n" +
 	"\n" +
-	"created_at\x18\xc8\x01 \x01(\v2\x1a.google.protobuf.TimestampB\x12\xbaG\x0f\x92\x02\f创建时间H R\tcreatedAt\x88\x01\x01\x12S\n" +
+	"created_at\x18\xc8\x01 \x01(\v2\x1a.google.protobuf.TimestampB\x12\xbaG\x0f\x92\x02\f创建时间H!R\tcreatedAt\x88\x01\x01\x12S\n" +
 	"\n" +
-	"updated_at\x18\xc9\x01 \x01(\v2\x1a.google.protobuf.TimestampB\x12\xbaG\x0f\x92\x02\f更新时间H!R\tupdatedAt\x88\x01\x01\x12S\n" +
+	"updated_at\x18\xc9\x01 \x01(\v2\x1a.google.protobuf.TimestampB\x12\xbaG\x0f\x92\x02\f更新时间H\"R\tupdatedAt\x88\x01\x01\x12S\n" +
 	"\n" +
-	"deleted_at\x18\xca\x01 \x01(\v2\x1a.google.protobuf.TimestampB\x12\xbaG\x0f\x92\x02\f删除时间H\"R\tdeletedAt\x88\x01\x01\"*\n" +
+	"deleted_at\x18\xca\x01 \x01(\v2\x1a.google.protobuf.TimestampB\x12\xbaG\x0f\x92\x02\f删除时间H#R\tdeletedAt\x88\x01\x01\"*\n" +
 	"\x06Gender\x12\n" +
 	"\n" +
 	"\x06SECRET\x10\x00\x12\b\n" +
@@ -2132,7 +2142,8 @@ const file_identity_service_v1_user_proto_rawDesc = "" +
 	"\b_addressB\t\n" +
 	"\a_regionB\x0e\n" +
 	"\f_descriptionB\t\n" +
-	"\a_remarkB\x10\n" +
+	"\a_remarkB\t\n" +
+	"\a_localeB\x10\n" +
 	"\x0e_last_login_atB\x10\n" +
 	"\x0e_last_login_ipB\t\n" +
 	"\a_statusB\x0f\n" +

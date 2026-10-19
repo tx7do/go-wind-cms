@@ -136,6 +136,10 @@ func (m *User) validate(all bool) error {
 		// no validation rules for Remark
 	}
 
+	if m.Locale != nil {
+		// no validation rules for Locale
+	}
+
 	if m.LastLoginAt != nil {
 
 		if all {

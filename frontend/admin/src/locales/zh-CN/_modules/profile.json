@@ -65,5 +65,8 @@
     "saveSuccess": "通知偏好已保存",
     "saveFailed": "保存失败",
     "transactionalNote": "验证码等事务性邮件不经偏好层，不受本页配置影响。"
-  }
+  },
+  "locale": "偏好语言",
+  "localeHint": "事务性邮件与监控告警按此语言渲染",
+  "localePlaceholder": "默认（中文）"
 }

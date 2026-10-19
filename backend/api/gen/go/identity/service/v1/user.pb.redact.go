@@ -246,6 +246,8 @@ func (x *User) Redact() {
 
 	// Safe field: Remark
 
+	// Safe field: Locale
+
 	// Safe field: LastLoginAt
 
 	// Safe field: LastLoginIp

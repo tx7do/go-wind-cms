@@ -14726,6 +14726,9 @@ components:
                 remark:
                     type: string
                     description: 备注
+                locale:
+                    type: string
+                    description: 偏好语言
                 lastLoginAt:
                     type: string
                     description: 最后登录时间
