@@ -1,6 +1,8 @@
 package service
 
 import (
+	"bytes"
+	"compress/gzip"
 	"context"
 	"encoding/json"
 	"errors"
@@ -20,7 +22,10 @@ import (
 
 	taskV1 "go-wind-cms/api/gen/go/task/service/v1"
 
+	"go-wind-cms/pkg/oss"
 	"go-wind-cms/pkg/task"
+
+	appViewer "go-wind-cms/pkg/entgo/viewer"
 )
 
 // TaskScheduler 任务调度接口
@@ -47,6 +52,10 @@ type TaskService struct {
 	userRepo data.UserRepo
 	taskRepo *data.TaskRepo
 
+	// 备份依赖：核心表导出 + MinIO 上传（backup 任务用；可为 nil，届时任务报未配置）
+	backupRepo  *data.BackupRepo
+	minioClient *oss.MinIOClient
+
 	// asynq Redis URI（与 asynq server 同源），用于懒建只读 Inspector 查执行记录
 	asynqRedisURI  string
 	asynqInspector *asynq.Inspector
@@ -56,11 +65,15 @@ func NewTaskService(
 	ctx *bootstrap.Context,
 	taskRepo *data.TaskRepo,
 	userRepo data.UserRepo,
+	backupRepo *data.BackupRepo,
+	minioClient *oss.MinIOClient,
 ) *TaskService {
 	svc := &TaskService{
-		log:      ctx.NewLoggerHelper("task/service/core-service"),
-		taskRepo: taskRepo,
-		userRepo: userRepo,
+		log:         ctx.NewLoggerHelper("task/service/core-service"),
+		taskRepo:    taskRepo,
+		userRepo:    userRepo,
+		backupRepo:  backupRepo,
+		minioClient: minioClient,
 	}
 
 	if cfg := ctx.GetConfig(); cfg != nil && cfg.Server != nil && cfg.Server.Asynq != nil {
@@ -745,10 +758,108 @@ func (s *TaskService) startTask(t *taskV1.Task) error {
 	return nil
 }
 
-// AsyncBackup 异步备份
+// backupBucket 备份文件存放的 OSS 桶名。
+const backupBucket = "backups"
+
+// AsyncBackup 异步备份任务的实际执行逻辑。
+//
+// 导出核心身份/权限/组织配置表为 JSON，gzip 压缩后上传到 OSS 的 backups 桶
+//（对象键带 gowind-cms/ 项目前缀——dev/小部署的 MinIO 常多项目共用桶，清理只扫本前缀）。
+// 纯 Go 实现，跨数据库驱动（PostgreSQL/SQLite）。审计日志等大体量表不纳入
+//（可按需扩展 BackupRepo 的核心表导出集）。
 func (s *TaskService) AsyncBackup(taskType string, taskData *task.BackupTaskData) error {
-	s.log.Infof("AsyncBackup [%s] [%+v] [%s]", taskType, taskData, taskData.Name)
+	// taskData 可能为 nil，直接解引用 taskData.Name 会在 nil 时 panic
+	backupName := ""
+	if taskData != nil {
+		backupName = taskData.Name
+	}
+	s.log.Infof("AsyncBackup [%s] [%+v] [%s]", taskType, taskData, backupName)
+
+	// 用 SystemContext 包裹：备份需要导出全部租户的核心表，
+	// 而 TenantPrivacy 在 viewer 缺失时会返回 error 导致带 tenant_id 的表全部查询失败。
+	ctx := appViewer.NewSystemViewerContext(context.Background())
+	if backupName == "" {
+		backupName = fmt.Sprintf("backup-%s", time.Now().UTC().Format("20060102-150405"))
+	}
+
+	if s.backupRepo == nil || !s.backupRepo.IsConfigured() || s.minioClient == nil {
+		return fmt.Errorf("backup dependencies not configured (backupRepo or minio is nil)")
+	}
+
+	// 1. 导出核心表（ent 访问收敛在 data 层的 BackupRepo 内）
+	tables, err := s.backupRepo.ExportCoreTables(ctx)
+	if err != nil {
+		return fmt.Errorf("export core tables failed: %w", err)
+	}
+
+	// 2. 序列化为 JSON（_meta 记录表清单，供恢复后校验对照）
+	jsonBytes, err := json.MarshalIndent(map[string]any{
+		"_meta": map[string]any{
+			"exportedAt": time.Now().UTC().Format(time.RFC3339),
+			"name":       backupName,
+			"tables":     tableNamesOf(tables),
+		},
+		"data": tables,
+	}, "", "  ")
+	if err != nil {
+		return fmt.Errorf("marshal backup json failed: %w", err)
+	}
+
+	// 3. gzip 压缩
+	compressed, err := gzipBytes(jsonBytes)
+	if err != nil {
+		return fmt.Errorf("gzip backup failed: %w", err)
+	}
+
+	// 4. 上传到 OSS（对象键：gowind-cms/YYYY/MM/DD/<name>-<time>.json.gz）
+	objectName := fmt.Sprintf("%s%s/%s-%s.json.gz",
+		backupObjectPrefix,
+		time.Now().UTC().Format("2006/01/02"),
+		backupName,
+		time.Now().UTC().Format("150405"),
+	)
+
+	s.log.Infof("backup: uploading %s (%d bytes raw, %d bytes compressed) to bucket %q",
+		objectName, len(jsonBytes), len(compressed), backupBucket)
+
+	if _, _, _, err = s.minioClient.UploadFile(ctx, backupBucket, objectName, "application/gzip",
+		bytes.NewReader(compressed), int64(len(compressed))); err != nil {
+		s.log.Errorf("backup: upload to oss failed: %s", err.Error())
+		return fmt.Errorf("upload backup to oss failed: %w", err)
+	}
+
+	s.log.Infof("backup: completed successfully, object=%s", objectName)
+
+	// 5. 顺手清理超过保留期的旧备份（best-effort，只扫本项目前缀）：备份本体已成功，
+	// 清理失败只留日志，不影响任务结论（否则告警指向错误的故障点）。
+	if cleaner := newMinioBackupCleaner(s.minioClient); cleaner != nil {
+		s.cleanupOldBackups(ctx, cleaner)
+	}
+
 	return nil
+}
+
+// tableNamesOf 返回 map 的键列表（用于备份元信息）。
+func tableNamesOf(tables map[string]any) []string {
+	names := make([]string, 0, len(tables))
+	for k := range tables {
+		names = append(names, k)
+	}
+	return names
+}
+
+// gzipBytes 使用标准库 gzip 压缩字节切片。
+func gzipBytes(data []byte) ([]byte, error) {
+	var buf bytes.Buffer
+	gz := gzip.NewWriter(&buf)
+	if _, err := gz.Write(data); err != nil {
+		_ = gz.Close()
+		return nil, err
+	}
+	if err := gz.Close(); err != nil {
+		return nil, err
+	}
+	return buf.Bytes(), nil
 }
 
 // EnqueueSearchReindex 入队一个 OpenSearch 单条重索引任务。

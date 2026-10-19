@@ -135,6 +135,7 @@ func initApp(ctx *bootstrap.Context) (*kratos.App, func(), error) {
 
 	// 任务 / 文件
 	taskRepo := data.NewTaskRepo(ctx, entClient)
+	backupRepo := data.NewBackupRepo(ctx, entClient)
 	fileRepo := data.NewFileRepo(ctx, entClient)
 
 	// 字典与多语言
@@ -222,7 +223,7 @@ func initApp(ctx *bootstrap.Context) (*kratos.App, func(), error) {
 	userCredentialService := service.NewUserCredentialService(ctx, userCredentialRepo)
 
 	// 任务 / 文件
-	taskService := service.NewTaskService(ctx, taskRepo, userRepo)
+	taskService := service.NewTaskService(ctx, taskRepo, userRepo, backupRepo, minIOClient)
 
 	// Webhook 事件外发（订阅 CRUD + 扇出/投递 worker；依赖 taskService）
 	webhookService := service.NewWebhookService(ctx, webhookRepo, taskService)
