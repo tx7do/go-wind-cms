@@ -34,6 +34,7 @@
   "dict": "字典管理",
   "files": "文件管理",
   "tasks": "任务管理",
+  "monitor-alerts": "监控告警",
   "login-policies": "登录策略",
   "languages": "语言管理",
   "auth": "认证",

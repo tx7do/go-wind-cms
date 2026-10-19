@@ -57,6 +57,10 @@ enum EventType {
   // 渠道测试消息（扩展渠道 EXT_* 的"测试发送"）。
   CHANNEL_TEST_EXT = 8;
 
+  // 监控告警通知：告警/恢复成对发送（监控告警规则的渠道与目标显式写在规则上，
+  // 不经路由表；related_id 指向 monitor_alert_rules.id）。
+  MONITOR_ALERT = 9;
+
   // 系统通知邮件：站内信系统通知（NotifyUser）的附加邮件触达，收件目标为
   // 收件用户邮箱。种子规则 SYSTEM_NOTIFY→EMAIL 提供路由（管理员停用该行即
   // 整体关闭此类出站邮件）；related_id 指向 internal_messages.id。

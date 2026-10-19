@@ -13,7 +13,7 @@ import (
 )
 
 // NewAsynqServer creates a new asynq server.
-func NewAsynqServer(ctx *bootstrap.Context, taskService *service.TaskService, searchService *service.SearchService, aiKnowledgeService *service.AiKnowledgeService, aiQueryService *service.AiQueryService, aiContentService *service.AiContentService, socialService *service.SocialService, postService *service.PostService, webhookService *service.WebhookService, internalMessageService *service.InternalMessageService, flowService *service.FlowService, notificationService *service.NotificationService) *asynq.Server {
+func NewAsynqServer(ctx *bootstrap.Context, taskService *service.TaskService, searchService *service.SearchService, aiKnowledgeService *service.AiKnowledgeService, aiQueryService *service.AiQueryService, aiContentService *service.AiContentService, socialService *service.SocialService, postService *service.PostService, webhookService *service.WebhookService, internalMessageService *service.InternalMessageService, flowService *service.FlowService, notificationService *service.NotificationService, monitorAlertService *service.MonitorAlertService) *asynq.Server {
 	cfg := ctx.GetConfig()
 
 	if cfg == nil || cfg.Server == nil || cfg.Server.Asynq == nil {
@@ -125,6 +125,14 @@ func NewAsynqServer(ctx *bootstrap.Context, taskService *service.TaskService, se
 	if err = asynq.RegisterSubscriber(srv, task.FlowScheduleTickTaskType, flowService.ScheduleTickWorker); err != nil {
 		log.Error(err)
 	}
+	// 监控告警周期扫描：每 5 分钟评估一轮启用规则（告警/恢复/冷却重发内核见 monitor_alert_service）
+	if _, err = srv.NewPeriodicTask(task.MonitorAlertScanCronSpec, task.MonitorAlertScanTaskType, &task.MonitorAlertScanTaskData{}); err != nil {
+		return nil
+	}
+	if err = asynq.RegisterSubscriber(srv, task.MonitorAlertScanTaskType, monitorAlertService.AsyncMonitorAlertScan); err != nil {
+		return nil
+	}
+
 	if _, err = srv.NewPeriodicTask("*/1 * * * *", task.FlowScheduleTickTaskType, &task.FlowScheduleTickPayload{}); err != nil {
 		log.Error(err)
 	}

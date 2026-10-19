@@ -201,6 +201,7 @@ func initApp(ctx *bootstrap.Context) (*kratos.App, func(), error) {
 
 	// 通知域：渠道花名册 / 投递台账 / 路由规则 / 模板 / 用户偏好（全部平台级，无租户列）
 	notificationChannelRepo := data.NewNotificationChannelRepo(ctx, entClient)
+	monitorAlertRuleRepo := data.NewMonitorAlertRuleRepo(ctx, entClient)
 	notificationDeliveryRepo := data.NewNotificationDeliveryRepo(ctx, entClient)
 	notificationRuleRepo := data.NewNotificationRuleRepo(ctx, entClient)
 	notificationTemplateRepo := data.NewNotificationTemplateRepo(ctx, entClient)
@@ -285,6 +286,8 @@ func initApp(ctx *bootstrap.Context) (*kratos.App, func(), error) {
 	notificationRuleService := service.NewNotificationRuleService(ctx, notificationRuleRepo, notificationChannelRepo, notificationService)
 	notificationTemplateService := service.NewNotificationTemplateService(ctx, notificationTemplateRepo)
 	notificationPreferenceService := service.NewNotificationPreferenceService(ctx, notificationPreferenceRepo, internalMessageCategoryRepo)
+	monitorAlertService := service.NewMonitorAlertService(ctx, monitorAlertRuleRepo, entClient, redisClient)
+	monitorAlertService.RegisterNotifier(notificationService)
 
 	// 双向引用缝：站内信的系统通知经投递缝（SendDirect）走渠道路由，
 	// INTERNAL 渠道的实现又反向持有站内信 service——两个 service 构造完之后再互相注册。
@@ -335,6 +338,7 @@ func initApp(ctx *bootstrap.Context) (*kratos.App, func(), error) {
 	grpcServer, err := server.NewGrpcServer(ctx, grpcMiddlewares,
 		authenticationService, loginPolicyService, userCredentialService,
 		taskService,
+		monitorAlertService,
 		fileService,
 		dictTypeService, dictEntryService, languageService,
 		tenantService, userService, roleService, positionService, orgUnitService,
@@ -373,7 +377,7 @@ func initApp(ctx *bootstrap.Context) (*kratos.App, func(), error) {
 		return nil, nil, err
 	}
 
-	asynqServer := server.NewAsynqServer(ctx, taskService, searchService, aiKnowledgeService, aiQueryService, aiContentService, socialService, postService, webhookService, internalMessageService, flowService, notificationService)
+	asynqServer := server.NewAsynqServer(ctx, taskService, searchService, aiKnowledgeService, aiQueryService, aiContentService, socialService, postService, webhookService, internalMessageService, flowService, notificationService, monitorAlertService)
 
 	return newApp(ctx, grpcServer, asynqServer), rollback, nil
 }

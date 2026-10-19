@@ -50,6 +50,7 @@ import (
 	"go-wind-cms/app/core/service/internal/data/ent/membershipposition"
 	"go-wind-cms/app/core/service/internal/data/ent/membershiprole"
 	"go-wind-cms/app/core/service/internal/data/ent/menu"
+	"go-wind-cms/app/core/service/internal/data/ent/monitoralertrule"
 	"go-wind-cms/app/core/service/internal/data/ent/navigation"
 	"go-wind-cms/app/core/service/internal/data/ent/navigationitem"
 	"go-wind-cms/app/core/service/internal/data/ent/notificationchannel"
@@ -210,6 +211,7 @@ func checkColumn(t, c string) error {
 			membershipposition.Table:         membershipposition.ValidColumn,
 			membershiprole.Table:             membershiprole.ValidColumn,
 			menu.Table:                       menu.ValidColumn,
+			monitoralertrule.Table:           monitoralertrule.ValidColumn,
 			navigation.Table:                 navigation.ValidColumn,
 			navigationitem.Table:             navigationitem.ValidColumn,
 			notificationchannel.Table:        notificationchannel.ValidColumn,

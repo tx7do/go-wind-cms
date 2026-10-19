@@ -49,6 +49,7 @@ import (
 	"go-wind-cms/app/core/service/internal/data/ent/membershipposition"
 	"go-wind-cms/app/core/service/internal/data/ent/membershiprole"
 	"go-wind-cms/app/core/service/internal/data/ent/menu"
+	"go-wind-cms/app/core/service/internal/data/ent/monitoralertrule"
 	"go-wind-cms/app/core/service/internal/data/ent/navigation"
 	"go-wind-cms/app/core/service/internal/data/ent/navigationitem"
 	"go-wind-cms/app/core/service/internal/data/ent/notificationchannel"
@@ -1530,6 +1531,35 @@ func init() {
 	menuDescID := menuMixinFields0[0].Descriptor()
 	// menu.IDValidator is a validator for the "id" field. It is called by the builders before save.
 	menu.IDValidator = menuDescID.Validators[0].(func(uint32) error)
+	monitoralertruleMixin := schema.MonitorAlertRule{}.Mixin()
+	monitoralertruleMixinFields0 := monitoralertruleMixin[0].Fields()
+	_ = monitoralertruleMixinFields0
+	monitoralertruleFields := schema.MonitorAlertRule{}.Fields()
+	_ = monitoralertruleFields
+	// monitoralertruleDescName is the schema descriptor for name field.
+	monitoralertruleDescName := monitoralertruleFields[0].Descriptor()
+	// monitoralertrule.NameValidator is a validator for the "name" field. It is called by the builders before save.
+	monitoralertrule.NameValidator = monitoralertruleDescName.Validators[0].(func(string) error)
+	// monitoralertruleDescCooldownMinutes is the schema descriptor for cooldown_minutes field.
+	monitoralertruleDescCooldownMinutes := monitoralertruleFields[4].Descriptor()
+	// monitoralertrule.DefaultCooldownMinutes holds the default value on creation for the cooldown_minutes field.
+	monitoralertrule.DefaultCooldownMinutes = monitoralertruleDescCooldownMinutes.Default.(uint32)
+	// monitoralertruleDescTarget is the schema descriptor for target field.
+	monitoralertruleDescTarget := monitoralertruleFields[6].Descriptor()
+	// monitoralertrule.TargetValidator is a validator for the "target" field. It is called by the builders before save.
+	monitoralertrule.TargetValidator = monitoralertruleDescTarget.Validators[0].(func(string) error)
+	// monitoralertruleDescIsEnabled is the schema descriptor for is_enabled field.
+	monitoralertruleDescIsEnabled := monitoralertruleFields[7].Descriptor()
+	// monitoralertrule.DefaultIsEnabled holds the default value on creation for the is_enabled field.
+	monitoralertrule.DefaultIsEnabled = monitoralertruleDescIsEnabled.Default.(bool)
+	// monitoralertruleDescLastFiring is the schema descriptor for last_firing field.
+	monitoralertruleDescLastFiring := monitoralertruleFields[8].Descriptor()
+	// monitoralertrule.DefaultLastFiring holds the default value on creation for the last_firing field.
+	monitoralertrule.DefaultLastFiring = monitoralertruleDescLastFiring.Default.(bool)
+	// monitoralertruleDescID is the schema descriptor for id field.
+	monitoralertruleDescID := monitoralertruleMixinFields0[0].Descriptor()
+	// monitoralertrule.IDValidator is a validator for the "id" field. It is called by the builders before save.
+	monitoralertrule.IDValidator = monitoralertruleDescID.Validators[0].(func(uint32) error)
 	navigationMixin := schema.Navigation{}.Mixin()
 	navigation.Policy = privacy.NewPolicies(navigationMixin[3], schema.Navigation{})
 	navigation.Hooks[0] = func(next ent.Mutator) ent.Mutator {

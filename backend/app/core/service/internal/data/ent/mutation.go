@@ -54,6 +54,7 @@ import (
 	"go-wind-cms/app/core/service/internal/data/ent/membershipposition"
 	"go-wind-cms/app/core/service/internal/data/ent/membershiprole"
 	"go-wind-cms/app/core/service/internal/data/ent/menu"
+	"go-wind-cms/app/core/service/internal/data/ent/monitoralertrule"
 	"go-wind-cms/app/core/service/internal/data/ent/navigation"
 	"go-wind-cms/app/core/service/internal/data/ent/navigationitem"
 	"go-wind-cms/app/core/service/internal/data/ent/notificationchannel"
@@ -166,6 +167,7 @@ const (
 	TypeMembershipPosition         = "MembershipPosition"
 	TypeMembershipRole             = "MembershipRole"
 	TypeMenu                       = "Menu"
+	TypeMonitorAlertRule           = "MonitorAlertRule"
 	TypeNavigation                 = "Navigation"
 	TypeNavigationItem             = "NavigationItem"
 	TypeNotificationChannel        = "NotificationChannel"
@@ -66312,6 +66314,1750 @@ func (m *MenuMutation) ResetEdge(name string) error {
 		return nil
 	}
 	return fmt.Errorf("unknown Menu edge %s", name)
+}
+
+// MonitorAlertRuleMutation represents an operation that mutates the MonitorAlertRule nodes in the graph.
+type MonitorAlertRuleMutation struct {
+	config
+	op                  Op
+	typ                 string
+	id                  *uint32
+	created_at          *time.Time
+	updated_at          *time.Time
+	deleted_at          *time.Time
+	created_by          *uint32
+	addcreated_by       *int32
+	updated_by          *uint32
+	addupdated_by       *int32
+	deleted_by          *uint32
+	adddeleted_by       *int32
+	remark              *string
+	name                *string
+	metric              *monitoralertrule.Metric
+	_op                 *monitoralertrule.Op
+	threshold           *float64
+	addthreshold        *float64
+	cooldown_minutes    *uint32
+	addcooldown_minutes *int32
+	channel             *monitoralertrule.Channel
+	target              *string
+	is_enabled          *bool
+	last_firing         *bool
+	last_value          *float64
+	addlast_value       *float64
+	last_alerted_at     *time.Time
+	clearedFields       map[string]struct{}
+	done                bool
+	oldValue            func(context.Context) (*MonitorAlertRule, error)
+	predicates          []predicate.MonitorAlertRule
+}
+
+var _ ent.Mutation = (*MonitorAlertRuleMutation)(nil)
+
+// monitoralertruleOption allows management of the mutation configuration using functional options.
+type monitoralertruleOption func(*MonitorAlertRuleMutation)
+
+// newMonitorAlertRuleMutation creates new mutation for the MonitorAlertRule entity.
+func newMonitorAlertRuleMutation(c config, op Op, opts ...monitoralertruleOption) *MonitorAlertRuleMutation {
+	m := &MonitorAlertRuleMutation{
+		config:        c,
+		op:            op,
+		typ:           TypeMonitorAlertRule,
+		clearedFields: make(map[string]struct{}),
+	}
+	for _, opt := range opts {
+		opt(m)
+	}
+	return m
+}
+
+// withMonitorAlertRuleID sets the ID field of the mutation.
+func withMonitorAlertRuleID(id uint32) monitoralertruleOption {
+	return func(m *MonitorAlertRuleMutation) {
+		var (
+			err   error
+			once  sync.Once
+			value *MonitorAlertRule
+		)
+		m.oldValue = func(ctx context.Context) (*MonitorAlertRule, error) {
+			once.Do(func() {
+				if m.done {
+					err = errors.New("querying old values post mutation is not allowed")
+				} else {
+					value, err = m.Client().MonitorAlertRule.Get(ctx, id)
+				}
+			})
+			return value, err
+		}
+		m.id = &id
+	}
+}
+
+// withMonitorAlertRule sets the old MonitorAlertRule of the mutation.
+func withMonitorAlertRule(node *MonitorAlertRule) monitoralertruleOption {
+	return func(m *MonitorAlertRuleMutation) {
+		m.oldValue = func(context.Context) (*MonitorAlertRule, error) {
+			return node, nil
+		}
+		m.id = &node.ID
+	}
+}
+
+// Client returns a new `ent.Client` from the mutation. If the mutation was
+// executed in a transaction (ent.Tx), a transactional client is returned.
+func (m MonitorAlertRuleMutation) Client() *Client {
+	client := &Client{config: m.config}
+	client.init()
+	return client
+}
+
+// Tx returns an `ent.Tx` for mutations that were executed in transactions;
+// it returns an error otherwise.
+func (m MonitorAlertRuleMutation) Tx() (*Tx, error) {
+	if _, ok := m.driver.(*txDriver); !ok {
+		return nil, errors.New("ent: mutation is not running in a transaction")
+	}
+	tx := &Tx{config: m.config}
+	tx.init()
+	return tx, nil
+}
+
+// SetID sets the value of the id field. Note that this
+// operation is only accepted on creation of MonitorAlertRule entities.
+func (m *MonitorAlertRuleMutation) SetID(id uint32) {
+	m.id = &id
+}
+
+// ID returns the ID value in the mutation. Note that the ID is only available
+// if it was provided to the builder or after it was returned from the database.
+func (m *MonitorAlertRuleMutation) ID() (id uint32, exists bool) {
+	if m.id == nil {
+		return
+	}
+	return *m.id, true
+}
+
+// IDs queries the database and returns the entity ids that match the mutation's predicate.
+// That means, if the mutation is applied within a transaction with an isolation level such
+// as sql.LevelSerializable, the returned ids match the ids of the rows that will be updated
+// or updated by the mutation.
+func (m *MonitorAlertRuleMutation) IDs(ctx context.Context) ([]uint32, error) {
+	switch {
+	case m.op.Is(OpUpdateOne | OpDeleteOne):
+		id, exists := m.ID()
+		if exists {
+			return []uint32{id}, nil
+		}
+		fallthrough
+	case m.op.Is(OpUpdate | OpDelete):
+		return m.Client().MonitorAlertRule.Query().Where(m.predicates...).IDs(ctx)
+	default:
+		return nil, fmt.Errorf("IDs is not allowed on %s operations", m.op)
+	}
+}
+
+// SetCreatedAt sets the "created_at" field.
+func (m *MonitorAlertRuleMutation) SetCreatedAt(t time.Time) {
+	m.created_at = &t
+}
+
+// CreatedAt returns the value of the "created_at" field in the mutation.
+func (m *MonitorAlertRuleMutation) CreatedAt() (r time.Time, exists bool) {
+	v := m.created_at
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldCreatedAt returns the old "created_at" field's value of the MonitorAlertRule entity.
+// If the MonitorAlertRule object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *MonitorAlertRuleMutation) OldCreatedAt(ctx context.Context) (v *time.Time, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldCreatedAt is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldCreatedAt requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldCreatedAt: %w", err)
+	}
+	return oldValue.CreatedAt, nil
+}
+
+// ClearCreatedAt clears the value of the "created_at" field.
+func (m *MonitorAlertRuleMutation) ClearCreatedAt() {
+	m.created_at = nil
+	m.clearedFields[monitoralertrule.FieldCreatedAt] = struct{}{}
+}
+
+// CreatedAtCleared returns if the "created_at" field was cleared in this mutation.
+func (m *MonitorAlertRuleMutation) CreatedAtCleared() bool {
+	_, ok := m.clearedFields[monitoralertrule.FieldCreatedAt]
+	return ok
+}
+
+// ResetCreatedAt resets all changes to the "created_at" field.
+func (m *MonitorAlertRuleMutation) ResetCreatedAt() {
+	m.created_at = nil
+	delete(m.clearedFields, monitoralertrule.FieldCreatedAt)
+}
+
+// SetUpdatedAt sets the "updated_at" field.
+func (m *MonitorAlertRuleMutation) SetUpdatedAt(t time.Time) {
+	m.updated_at = &t
+}
+
+// UpdatedAt returns the value of the "updated_at" field in the mutation.
+func (m *MonitorAlertRuleMutation) UpdatedAt() (r time.Time, exists bool) {
+	v := m.updated_at
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldUpdatedAt returns the old "updated_at" field's value of the MonitorAlertRule entity.
+// If the MonitorAlertRule object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *MonitorAlertRuleMutation) OldUpdatedAt(ctx context.Context) (v *time.Time, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldUpdatedAt is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldUpdatedAt requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldUpdatedAt: %w", err)
+	}
+	return oldValue.UpdatedAt, nil
+}
+
+// ClearUpdatedAt clears the value of the "updated_at" field.
+func (m *MonitorAlertRuleMutation) ClearUpdatedAt() {
+	m.updated_at = nil
+	m.clearedFields[monitoralertrule.FieldUpdatedAt] = struct{}{}
+}
+
+// UpdatedAtCleared returns if the "updated_at" field was cleared in this mutation.
+func (m *MonitorAlertRuleMutation) UpdatedAtCleared() bool {
+	_, ok := m.clearedFields[monitoralertrule.FieldUpdatedAt]
+	return ok
+}
+
+// ResetUpdatedAt resets all changes to the "updated_at" field.
+func (m *MonitorAlertRuleMutation) ResetUpdatedAt() {
+	m.updated_at = nil
+	delete(m.clearedFields, monitoralertrule.FieldUpdatedAt)
+}
+
+// SetDeletedAt sets the "deleted_at" field.
+func (m *MonitorAlertRuleMutation) SetDeletedAt(t time.Time) {
+	m.deleted_at = &t
+}
+
+// DeletedAt returns the value of the "deleted_at" field in the mutation.
+func (m *MonitorAlertRuleMutation) DeletedAt() (r time.Time, exists bool) {
+	v := m.deleted_at
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldDeletedAt returns the old "deleted_at" field's value of the MonitorAlertRule entity.
+// If the MonitorAlertRule object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *MonitorAlertRuleMutation) OldDeletedAt(ctx context.Context) (v *time.Time, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldDeletedAt is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldDeletedAt requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldDeletedAt: %w", err)
+	}
+	return oldValue.DeletedAt, nil
+}
+
+// ClearDeletedAt clears the value of the "deleted_at" field.
+func (m *MonitorAlertRuleMutation) ClearDeletedAt() {
+	m.deleted_at = nil
+	m.clearedFields[monitoralertrule.FieldDeletedAt] = struct{}{}
+}
+
+// DeletedAtCleared returns if the "deleted_at" field was cleared in this mutation.
+func (m *MonitorAlertRuleMutation) DeletedAtCleared() bool {
+	_, ok := m.clearedFields[monitoralertrule.FieldDeletedAt]
+	return ok
+}
+
+// ResetDeletedAt resets all changes to the "deleted_at" field.
+func (m *MonitorAlertRuleMutation) ResetDeletedAt() {
+	m.deleted_at = nil
+	delete(m.clearedFields, monitoralertrule.FieldDeletedAt)
+}
+
+// SetCreatedBy sets the "created_by" field.
+func (m *MonitorAlertRuleMutation) SetCreatedBy(u uint32) {
+	m.created_by = &u
+	m.addcreated_by = nil
+}
+
+// CreatedBy returns the value of the "created_by" field in the mutation.
+func (m *MonitorAlertRuleMutation) CreatedBy() (r uint32, exists bool) {
+	v := m.created_by
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldCreatedBy returns the old "created_by" field's value of the MonitorAlertRule entity.
+// If the MonitorAlertRule object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *MonitorAlertRuleMutation) OldCreatedBy(ctx context.Context) (v *uint32, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldCreatedBy is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldCreatedBy requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldCreatedBy: %w", err)
+	}
+	return oldValue.CreatedBy, nil
+}
+
+// AddCreatedBy adds u to the "created_by" field.
+func (m *MonitorAlertRuleMutation) AddCreatedBy(u int32) {
+	if m.addcreated_by != nil {
+		*m.addcreated_by += u
+	} else {
+		m.addcreated_by = &u
+	}
+}
+
+// AddedCreatedBy returns the value that was added to the "created_by" field in this mutation.
+func (m *MonitorAlertRuleMutation) AddedCreatedBy() (r int32, exists bool) {
+	v := m.addcreated_by
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// ClearCreatedBy clears the value of the "created_by" field.
+func (m *MonitorAlertRuleMutation) ClearCreatedBy() {
+	m.created_by = nil
+	m.addcreated_by = nil
+	m.clearedFields[monitoralertrule.FieldCreatedBy] = struct{}{}
+}
+
+// CreatedByCleared returns if the "created_by" field was cleared in this mutation.
+func (m *MonitorAlertRuleMutation) CreatedByCleared() bool {
+	_, ok := m.clearedFields[monitoralertrule.FieldCreatedBy]
+	return ok
+}
+
+// ResetCreatedBy resets all changes to the "created_by" field.
+func (m *MonitorAlertRuleMutation) ResetCreatedBy() {
+	m.created_by = nil
+	m.addcreated_by = nil
+	delete(m.clearedFields, monitoralertrule.FieldCreatedBy)
+}
+
+// SetUpdatedBy sets the "updated_by" field.
+func (m *MonitorAlertRuleMutation) SetUpdatedBy(u uint32) {
+	m.updated_by = &u
+	m.addupdated_by = nil
+}
+
+// UpdatedBy returns the value of the "updated_by" field in the mutation.
+func (m *MonitorAlertRuleMutation) UpdatedBy() (r uint32, exists bool) {
+	v := m.updated_by
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldUpdatedBy returns the old "updated_by" field's value of the MonitorAlertRule entity.
+// If the MonitorAlertRule object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *MonitorAlertRuleMutation) OldUpdatedBy(ctx context.Context) (v *uint32, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldUpdatedBy is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldUpdatedBy requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldUpdatedBy: %w", err)
+	}
+	return oldValue.UpdatedBy, nil
+}
+
+// AddUpdatedBy adds u to the "updated_by" field.
+func (m *MonitorAlertRuleMutation) AddUpdatedBy(u int32) {
+	if m.addupdated_by != nil {
+		*m.addupdated_by += u
+	} else {
+		m.addupdated_by = &u
+	}
+}
+
+// AddedUpdatedBy returns the value that was added to the "updated_by" field in this mutation.
+func (m *MonitorAlertRuleMutation) AddedUpdatedBy() (r int32, exists bool) {
+	v := m.addupdated_by
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// ClearUpdatedBy clears the value of the "updated_by" field.
+func (m *MonitorAlertRuleMutation) ClearUpdatedBy() {
+	m.updated_by = nil
+	m.addupdated_by = nil
+	m.clearedFields[monitoralertrule.FieldUpdatedBy] = struct{}{}
+}
+
+// UpdatedByCleared returns if the "updated_by" field was cleared in this mutation.
+func (m *MonitorAlertRuleMutation) UpdatedByCleared() bool {
+	_, ok := m.clearedFields[monitoralertrule.FieldUpdatedBy]
+	return ok
+}
+
+// ResetUpdatedBy resets all changes to the "updated_by" field.
+func (m *MonitorAlertRuleMutation) ResetUpdatedBy() {
+	m.updated_by = nil
+	m.addupdated_by = nil
+	delete(m.clearedFields, monitoralertrule.FieldUpdatedBy)
+}
+
+// SetDeletedBy sets the "deleted_by" field.
+func (m *MonitorAlertRuleMutation) SetDeletedBy(u uint32) {
+	m.deleted_by = &u
+	m.adddeleted_by = nil
+}
+
+// DeletedBy returns the value of the "deleted_by" field in the mutation.
+func (m *MonitorAlertRuleMutation) DeletedBy() (r uint32, exists bool) {
+	v := m.deleted_by
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldDeletedBy returns the old "deleted_by" field's value of the MonitorAlertRule entity.
+// If the MonitorAlertRule object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *MonitorAlertRuleMutation) OldDeletedBy(ctx context.Context) (v *uint32, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldDeletedBy is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldDeletedBy requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldDeletedBy: %w", err)
+	}
+	return oldValue.DeletedBy, nil
+}
+
+// AddDeletedBy adds u to the "deleted_by" field.
+func (m *MonitorAlertRuleMutation) AddDeletedBy(u int32) {
+	if m.adddeleted_by != nil {
+		*m.adddeleted_by += u
+	} else {
+		m.adddeleted_by = &u
+	}
+}
+
+// AddedDeletedBy returns the value that was added to the "deleted_by" field in this mutation.
+func (m *MonitorAlertRuleMutation) AddedDeletedBy() (r int32, exists bool) {
+	v := m.adddeleted_by
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// ClearDeletedBy clears the value of the "deleted_by" field.
+func (m *MonitorAlertRuleMutation) ClearDeletedBy() {
+	m.deleted_by = nil
+	m.adddeleted_by = nil
+	m.clearedFields[monitoralertrule.FieldDeletedBy] = struct{}{}
+}
+
+// DeletedByCleared returns if the "deleted_by" field was cleared in this mutation.
+func (m *MonitorAlertRuleMutation) DeletedByCleared() bool {
+	_, ok := m.clearedFields[monitoralertrule.FieldDeletedBy]
+	return ok
+}
+
+// ResetDeletedBy resets all changes to the "deleted_by" field.
+func (m *MonitorAlertRuleMutation) ResetDeletedBy() {
+	m.deleted_by = nil
+	m.adddeleted_by = nil
+	delete(m.clearedFields, monitoralertrule.FieldDeletedBy)
+}
+
+// SetRemark sets the "remark" field.
+func (m *MonitorAlertRuleMutation) SetRemark(s string) {
+	m.remark = &s
+}
+
+// Remark returns the value of the "remark" field in the mutation.
+func (m *MonitorAlertRuleMutation) Remark() (r string, exists bool) {
+	v := m.remark
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldRemark returns the old "remark" field's value of the MonitorAlertRule entity.
+// If the MonitorAlertRule object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *MonitorAlertRuleMutation) OldRemark(ctx context.Context) (v *string, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldRemark is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldRemark requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldRemark: %w", err)
+	}
+	return oldValue.Remark, nil
+}
+
+// ClearRemark clears the value of the "remark" field.
+func (m *MonitorAlertRuleMutation) ClearRemark() {
+	m.remark = nil
+	m.clearedFields[monitoralertrule.FieldRemark] = struct{}{}
+}
+
+// RemarkCleared returns if the "remark" field was cleared in this mutation.
+func (m *MonitorAlertRuleMutation) RemarkCleared() bool {
+	_, ok := m.clearedFields[monitoralertrule.FieldRemark]
+	return ok
+}
+
+// ResetRemark resets all changes to the "remark" field.
+func (m *MonitorAlertRuleMutation) ResetRemark() {
+	m.remark = nil
+	delete(m.clearedFields, monitoralertrule.FieldRemark)
+}
+
+// SetName sets the "name" field.
+func (m *MonitorAlertRuleMutation) SetName(s string) {
+	m.name = &s
+}
+
+// Name returns the value of the "name" field in the mutation.
+func (m *MonitorAlertRuleMutation) Name() (r string, exists bool) {
+	v := m.name
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldName returns the old "name" field's value of the MonitorAlertRule entity.
+// If the MonitorAlertRule object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *MonitorAlertRuleMutation) OldName(ctx context.Context) (v *string, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldName is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldName requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldName: %w", err)
+	}
+	return oldValue.Name, nil
+}
+
+// ClearName clears the value of the "name" field.
+func (m *MonitorAlertRuleMutation) ClearName() {
+	m.name = nil
+	m.clearedFields[monitoralertrule.FieldName] = struct{}{}
+}
+
+// NameCleared returns if the "name" field was cleared in this mutation.
+func (m *MonitorAlertRuleMutation) NameCleared() bool {
+	_, ok := m.clearedFields[monitoralertrule.FieldName]
+	return ok
+}
+
+// ResetName resets all changes to the "name" field.
+func (m *MonitorAlertRuleMutation) ResetName() {
+	m.name = nil
+	delete(m.clearedFields, monitoralertrule.FieldName)
+}
+
+// SetMetric sets the "metric" field.
+func (m *MonitorAlertRuleMutation) SetMetric(value monitoralertrule.Metric) {
+	m.metric = &value
+}
+
+// Metric returns the value of the "metric" field in the mutation.
+func (m *MonitorAlertRuleMutation) Metric() (r monitoralertrule.Metric, exists bool) {
+	v := m.metric
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldMetric returns the old "metric" field's value of the MonitorAlertRule entity.
+// If the MonitorAlertRule object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *MonitorAlertRuleMutation) OldMetric(ctx context.Context) (v *monitoralertrule.Metric, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldMetric is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldMetric requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldMetric: %w", err)
+	}
+	return oldValue.Metric, nil
+}
+
+// ClearMetric clears the value of the "metric" field.
+func (m *MonitorAlertRuleMutation) ClearMetric() {
+	m.metric = nil
+	m.clearedFields[monitoralertrule.FieldMetric] = struct{}{}
+}
+
+// MetricCleared returns if the "metric" field was cleared in this mutation.
+func (m *MonitorAlertRuleMutation) MetricCleared() bool {
+	_, ok := m.clearedFields[monitoralertrule.FieldMetric]
+	return ok
+}
+
+// ResetMetric resets all changes to the "metric" field.
+func (m *MonitorAlertRuleMutation) ResetMetric() {
+	m.metric = nil
+	delete(m.clearedFields, monitoralertrule.FieldMetric)
+}
+
+// SetOpField sets the "op" field.
+func (m *MonitorAlertRuleMutation) SetOpField(value monitoralertrule.Op) {
+	m._op = &value
+}
+
+// GetOp returns the value of the "op" field in the mutation.
+func (m *MonitorAlertRuleMutation) GetOp() (r monitoralertrule.Op, exists bool) {
+	v := m._op
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldOp returns the old "op" field's value of the MonitorAlertRule entity.
+// If the MonitorAlertRule object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *MonitorAlertRuleMutation) OldOp(ctx context.Context) (v *monitoralertrule.Op, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldOp is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldOp requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldOp: %w", err)
+	}
+	return oldValue.Op, nil
+}
+
+// ClearOp clears the value of the "op" field.
+func (m *MonitorAlertRuleMutation) ClearOp() {
+	m._op = nil
+	m.clearedFields[monitoralertrule.FieldOp] = struct{}{}
+}
+
+// OpCleared returns if the "op" field was cleared in this mutation.
+func (m *MonitorAlertRuleMutation) OpCleared() bool {
+	_, ok := m.clearedFields[monitoralertrule.FieldOp]
+	return ok
+}
+
+// ResetOp resets all changes to the "op" field.
+func (m *MonitorAlertRuleMutation) ResetOp() {
+	m._op = nil
+	delete(m.clearedFields, monitoralertrule.FieldOp)
+}
+
+// SetThreshold sets the "threshold" field.
+func (m *MonitorAlertRuleMutation) SetThreshold(f float64) {
+	m.threshold = &f
+	m.addthreshold = nil
+}
+
+// Threshold returns the value of the "threshold" field in the mutation.
+func (m *MonitorAlertRuleMutation) Threshold() (r float64, exists bool) {
+	v := m.threshold
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldThreshold returns the old "threshold" field's value of the MonitorAlertRule entity.
+// If the MonitorAlertRule object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *MonitorAlertRuleMutation) OldThreshold(ctx context.Context) (v *float64, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldThreshold is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldThreshold requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldThreshold: %w", err)
+	}
+	return oldValue.Threshold, nil
+}
+
+// AddThreshold adds f to the "threshold" field.
+func (m *MonitorAlertRuleMutation) AddThreshold(f float64) {
+	if m.addthreshold != nil {
+		*m.addthreshold += f
+	} else {
+		m.addthreshold = &f
+	}
+}
+
+// AddedThreshold returns the value that was added to the "threshold" field in this mutation.
+func (m *MonitorAlertRuleMutation) AddedThreshold() (r float64, exists bool) {
+	v := m.addthreshold
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// ClearThreshold clears the value of the "threshold" field.
+func (m *MonitorAlertRuleMutation) ClearThreshold() {
+	m.threshold = nil
+	m.addthreshold = nil
+	m.clearedFields[monitoralertrule.FieldThreshold] = struct{}{}
+}
+
+// ThresholdCleared returns if the "threshold" field was cleared in this mutation.
+func (m *MonitorAlertRuleMutation) ThresholdCleared() bool {
+	_, ok := m.clearedFields[monitoralertrule.FieldThreshold]
+	return ok
+}
+
+// ResetThreshold resets all changes to the "threshold" field.
+func (m *MonitorAlertRuleMutation) ResetThreshold() {
+	m.threshold = nil
+	m.addthreshold = nil
+	delete(m.clearedFields, monitoralertrule.FieldThreshold)
+}
+
+// SetCooldownMinutes sets the "cooldown_minutes" field.
+func (m *MonitorAlertRuleMutation) SetCooldownMinutes(u uint32) {
+	m.cooldown_minutes = &u
+	m.addcooldown_minutes = nil
+}
+
+// CooldownMinutes returns the value of the "cooldown_minutes" field in the mutation.
+func (m *MonitorAlertRuleMutation) CooldownMinutes() (r uint32, exists bool) {
+	v := m.cooldown_minutes
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldCooldownMinutes returns the old "cooldown_minutes" field's value of the MonitorAlertRule entity.
+// If the MonitorAlertRule object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *MonitorAlertRuleMutation) OldCooldownMinutes(ctx context.Context) (v uint32, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldCooldownMinutes is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldCooldownMinutes requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldCooldownMinutes: %w", err)
+	}
+	return oldValue.CooldownMinutes, nil
+}
+
+// AddCooldownMinutes adds u to the "cooldown_minutes" field.
+func (m *MonitorAlertRuleMutation) AddCooldownMinutes(u int32) {
+	if m.addcooldown_minutes != nil {
+		*m.addcooldown_minutes += u
+	} else {
+		m.addcooldown_minutes = &u
+	}
+}
+
+// AddedCooldownMinutes returns the value that was added to the "cooldown_minutes" field in this mutation.
+func (m *MonitorAlertRuleMutation) AddedCooldownMinutes() (r int32, exists bool) {
+	v := m.addcooldown_minutes
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// ResetCooldownMinutes resets all changes to the "cooldown_minutes" field.
+func (m *MonitorAlertRuleMutation) ResetCooldownMinutes() {
+	m.cooldown_minutes = nil
+	m.addcooldown_minutes = nil
+}
+
+// SetChannel sets the "channel" field.
+func (m *MonitorAlertRuleMutation) SetChannel(value monitoralertrule.Channel) {
+	m.channel = &value
+}
+
+// Channel returns the value of the "channel" field in the mutation.
+func (m *MonitorAlertRuleMutation) Channel() (r monitoralertrule.Channel, exists bool) {
+	v := m.channel
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldChannel returns the old "channel" field's value of the MonitorAlertRule entity.
+// If the MonitorAlertRule object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *MonitorAlertRuleMutation) OldChannel(ctx context.Context) (v *monitoralertrule.Channel, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldChannel is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldChannel requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldChannel: %w", err)
+	}
+	return oldValue.Channel, nil
+}
+
+// ClearChannel clears the value of the "channel" field.
+func (m *MonitorAlertRuleMutation) ClearChannel() {
+	m.channel = nil
+	m.clearedFields[monitoralertrule.FieldChannel] = struct{}{}
+}
+
+// ChannelCleared returns if the "channel" field was cleared in this mutation.
+func (m *MonitorAlertRuleMutation) ChannelCleared() bool {
+	_, ok := m.clearedFields[monitoralertrule.FieldChannel]
+	return ok
+}
+
+// ResetChannel resets all changes to the "channel" field.
+func (m *MonitorAlertRuleMutation) ResetChannel() {
+	m.channel = nil
+	delete(m.clearedFields, monitoralertrule.FieldChannel)
+}
+
+// SetTarget sets the "target" field.
+func (m *MonitorAlertRuleMutation) SetTarget(s string) {
+	m.target = &s
+}
+
+// Target returns the value of the "target" field in the mutation.
+func (m *MonitorAlertRuleMutation) Target() (r string, exists bool) {
+	v := m.target
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldTarget returns the old "target" field's value of the MonitorAlertRule entity.
+// If the MonitorAlertRule object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *MonitorAlertRuleMutation) OldTarget(ctx context.Context) (v *string, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldTarget is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldTarget requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldTarget: %w", err)
+	}
+	return oldValue.Target, nil
+}
+
+// ClearTarget clears the value of the "target" field.
+func (m *MonitorAlertRuleMutation) ClearTarget() {
+	m.target = nil
+	m.clearedFields[monitoralertrule.FieldTarget] = struct{}{}
+}
+
+// TargetCleared returns if the "target" field was cleared in this mutation.
+func (m *MonitorAlertRuleMutation) TargetCleared() bool {
+	_, ok := m.clearedFields[monitoralertrule.FieldTarget]
+	return ok
+}
+
+// ResetTarget resets all changes to the "target" field.
+func (m *MonitorAlertRuleMutation) ResetTarget() {
+	m.target = nil
+	delete(m.clearedFields, monitoralertrule.FieldTarget)
+}
+
+// SetIsEnabled sets the "is_enabled" field.
+func (m *MonitorAlertRuleMutation) SetIsEnabled(b bool) {
+	m.is_enabled = &b
+}
+
+// IsEnabled returns the value of the "is_enabled" field in the mutation.
+func (m *MonitorAlertRuleMutation) IsEnabled() (r bool, exists bool) {
+	v := m.is_enabled
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldIsEnabled returns the old "is_enabled" field's value of the MonitorAlertRule entity.
+// If the MonitorAlertRule object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *MonitorAlertRuleMutation) OldIsEnabled(ctx context.Context) (v bool, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldIsEnabled is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldIsEnabled requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldIsEnabled: %w", err)
+	}
+	return oldValue.IsEnabled, nil
+}
+
+// ResetIsEnabled resets all changes to the "is_enabled" field.
+func (m *MonitorAlertRuleMutation) ResetIsEnabled() {
+	m.is_enabled = nil
+}
+
+// SetLastFiring sets the "last_firing" field.
+func (m *MonitorAlertRuleMutation) SetLastFiring(b bool) {
+	m.last_firing = &b
+}
+
+// LastFiring returns the value of the "last_firing" field in the mutation.
+func (m *MonitorAlertRuleMutation) LastFiring() (r bool, exists bool) {
+	v := m.last_firing
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldLastFiring returns the old "last_firing" field's value of the MonitorAlertRule entity.
+// If the MonitorAlertRule object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *MonitorAlertRuleMutation) OldLastFiring(ctx context.Context) (v bool, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldLastFiring is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldLastFiring requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldLastFiring: %w", err)
+	}
+	return oldValue.LastFiring, nil
+}
+
+// ResetLastFiring resets all changes to the "last_firing" field.
+func (m *MonitorAlertRuleMutation) ResetLastFiring() {
+	m.last_firing = nil
+}
+
+// SetLastValue sets the "last_value" field.
+func (m *MonitorAlertRuleMutation) SetLastValue(f float64) {
+	m.last_value = &f
+	m.addlast_value = nil
+}
+
+// LastValue returns the value of the "last_value" field in the mutation.
+func (m *MonitorAlertRuleMutation) LastValue() (r float64, exists bool) {
+	v := m.last_value
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldLastValue returns the old "last_value" field's value of the MonitorAlertRule entity.
+// If the MonitorAlertRule object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *MonitorAlertRuleMutation) OldLastValue(ctx context.Context) (v *float64, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldLastValue is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldLastValue requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldLastValue: %w", err)
+	}
+	return oldValue.LastValue, nil
+}
+
+// AddLastValue adds f to the "last_value" field.
+func (m *MonitorAlertRuleMutation) AddLastValue(f float64) {
+	if m.addlast_value != nil {
+		*m.addlast_value += f
+	} else {
+		m.addlast_value = &f
+	}
+}
+
+// AddedLastValue returns the value that was added to the "last_value" field in this mutation.
+func (m *MonitorAlertRuleMutation) AddedLastValue() (r float64, exists bool) {
+	v := m.addlast_value
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// ClearLastValue clears the value of the "last_value" field.
+func (m *MonitorAlertRuleMutation) ClearLastValue() {
+	m.last_value = nil
+	m.addlast_value = nil
+	m.clearedFields[monitoralertrule.FieldLastValue] = struct{}{}
+}
+
+// LastValueCleared returns if the "last_value" field was cleared in this mutation.
+func (m *MonitorAlertRuleMutation) LastValueCleared() bool {
+	_, ok := m.clearedFields[monitoralertrule.FieldLastValue]
+	return ok
+}
+
+// ResetLastValue resets all changes to the "last_value" field.
+func (m *MonitorAlertRuleMutation) ResetLastValue() {
+	m.last_value = nil
+	m.addlast_value = nil
+	delete(m.clearedFields, monitoralertrule.FieldLastValue)
+}
+
+// SetLastAlertedAt sets the "last_alerted_at" field.
+func (m *MonitorAlertRuleMutation) SetLastAlertedAt(t time.Time) {
+	m.last_alerted_at = &t
+}
+
+// LastAlertedAt returns the value of the "last_alerted_at" field in the mutation.
+func (m *MonitorAlertRuleMutation) LastAlertedAt() (r time.Time, exists bool) {
+	v := m.last_alerted_at
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldLastAlertedAt returns the old "last_alerted_at" field's value of the MonitorAlertRule entity.
+// If the MonitorAlertRule object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *MonitorAlertRuleMutation) OldLastAlertedAt(ctx context.Context) (v *time.Time, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldLastAlertedAt is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldLastAlertedAt requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldLastAlertedAt: %w", err)
+	}
+	return oldValue.LastAlertedAt, nil
+}
+
+// ClearLastAlertedAt clears the value of the "last_alerted_at" field.
+func (m *MonitorAlertRuleMutation) ClearLastAlertedAt() {
+	m.last_alerted_at = nil
+	m.clearedFields[monitoralertrule.FieldLastAlertedAt] = struct{}{}
+}
+
+// LastAlertedAtCleared returns if the "last_alerted_at" field was cleared in this mutation.
+func (m *MonitorAlertRuleMutation) LastAlertedAtCleared() bool {
+	_, ok := m.clearedFields[monitoralertrule.FieldLastAlertedAt]
+	return ok
+}
+
+// ResetLastAlertedAt resets all changes to the "last_alerted_at" field.
+func (m *MonitorAlertRuleMutation) ResetLastAlertedAt() {
+	m.last_alerted_at = nil
+	delete(m.clearedFields, monitoralertrule.FieldLastAlertedAt)
+}
+
+// Where appends a list predicates to the MonitorAlertRuleMutation builder.
+func (m *MonitorAlertRuleMutation) Where(ps ...predicate.MonitorAlertRule) {
+	m.predicates = append(m.predicates, ps...)
+}
+
+// WhereP appends storage-level predicates to the MonitorAlertRuleMutation builder. Using this method,
+// users can use type-assertion to append predicates that do not depend on any generated package.
+func (m *MonitorAlertRuleMutation) WhereP(ps ...func(*sql.Selector)) {
+	p := make([]predicate.MonitorAlertRule, len(ps))
+	for i := range ps {
+		p[i] = ps[i]
+	}
+	m.Where(p...)
+}
+
+// Op returns the operation name.
+func (m *MonitorAlertRuleMutation) Op() Op {
+	return m.op
+}
+
+// SetOp allows setting the mutation operation.
+func (m *MonitorAlertRuleMutation) SetOp(op Op) {
+	m.op = op
+}
+
+// Type returns the node type of this mutation (MonitorAlertRule).
+func (m *MonitorAlertRuleMutation) Type() string {
+	return m.typ
+}
+
+// Fields returns all fields that were changed during this mutation. Note that in
+// order to get all numeric fields that were incremented/decremented, call
+// AddedFields().
+func (m *MonitorAlertRuleMutation) Fields() []string {
+	fields := make([]string, 0, 18)
+	if m.created_at != nil {
+		fields = append(fields, monitoralertrule.FieldCreatedAt)
+	}
+	if m.updated_at != nil {
+		fields = append(fields, monitoralertrule.FieldUpdatedAt)
+	}
+	if m.deleted_at != nil {
+		fields = append(fields, monitoralertrule.FieldDeletedAt)
+	}
+	if m.created_by != nil {
+		fields = append(fields, monitoralertrule.FieldCreatedBy)
+	}
+	if m.updated_by != nil {
+		fields = append(fields, monitoralertrule.FieldUpdatedBy)
+	}
+	if m.deleted_by != nil {
+		fields = append(fields, monitoralertrule.FieldDeletedBy)
+	}
+	if m.remark != nil {
+		fields = append(fields, monitoralertrule.FieldRemark)
+	}
+	if m.name != nil {
+		fields = append(fields, monitoralertrule.FieldName)
+	}
+	if m.metric != nil {
+		fields = append(fields, monitoralertrule.FieldMetric)
+	}
+	if m._op != nil {
+		fields = append(fields, monitoralertrule.FieldOp)
+	}
+	if m.threshold != nil {
+		fields = append(fields, monitoralertrule.FieldThreshold)
+	}
+	if m.cooldown_minutes != nil {
+		fields = append(fields, monitoralertrule.FieldCooldownMinutes)
+	}
+	if m.channel != nil {
+		fields = append(fields, monitoralertrule.FieldChannel)
+	}
+	if m.target != nil {
+		fields = append(fields, monitoralertrule.FieldTarget)
+	}
+	if m.is_enabled != nil {
+		fields = append(fields, monitoralertrule.FieldIsEnabled)
+	}
+	if m.last_firing != nil {
+		fields = append(fields, monitoralertrule.FieldLastFiring)
+	}
+	if m.last_value != nil {
+		fields = append(fields, monitoralertrule.FieldLastValue)
+	}
+	if m.last_alerted_at != nil {
+		fields = append(fields, monitoralertrule.FieldLastAlertedAt)
+	}
+	return fields
+}
+
+// Field returns the value of a field with the given name. The second boolean
+// return value indicates that this field was not set, or was not defined in the
+// schema.
+func (m *MonitorAlertRuleMutation) Field(name string) (ent.Value, bool) {
+	switch name {
+	case monitoralertrule.FieldCreatedAt:
+		return m.CreatedAt()
+	case monitoralertrule.FieldUpdatedAt:
+		return m.UpdatedAt()
+	case monitoralertrule.FieldDeletedAt:
+		return m.DeletedAt()
+	case monitoralertrule.FieldCreatedBy:
+		return m.CreatedBy()
+	case monitoralertrule.FieldUpdatedBy:
+		return m.UpdatedBy()
+	case monitoralertrule.FieldDeletedBy:
+		return m.DeletedBy()
+	case monitoralertrule.FieldRemark:
+		return m.Remark()
+	case monitoralertrule.FieldName:
+		return m.Name()
+	case monitoralertrule.FieldMetric:
+		return m.Metric()
+	case monitoralertrule.FieldOp:
+		return m.GetOp()
+	case monitoralertrule.FieldThreshold:
+		return m.Threshold()
+	case monitoralertrule.FieldCooldownMinutes:
+		return m.CooldownMinutes()
+	case monitoralertrule.FieldChannel:
+		return m.Channel()
+	case monitoralertrule.FieldTarget:
+		return m.Target()
+	case monitoralertrule.FieldIsEnabled:
+		return m.IsEnabled()
+	case monitoralertrule.FieldLastFiring:
+		return m.LastFiring()
+	case monitoralertrule.FieldLastValue:
+		return m.LastValue()
+	case monitoralertrule.FieldLastAlertedAt:
+		return m.LastAlertedAt()
+	}
+	return nil, false
+}
+
+// OldField returns the old value of the field from the database. An error is
+// returned if the mutation operation is not UpdateOne, or the query to the
+// database failed.
+func (m *MonitorAlertRuleMutation) OldField(ctx context.Context, name string) (ent.Value, error) {
+	switch name {
+	case monitoralertrule.FieldCreatedAt:
+		return m.OldCreatedAt(ctx)
+	case monitoralertrule.FieldUpdatedAt:
+		return m.OldUpdatedAt(ctx)
+	case monitoralertrule.FieldDeletedAt:
+		return m.OldDeletedAt(ctx)
+	case monitoralertrule.FieldCreatedBy:
+		return m.OldCreatedBy(ctx)
+	case monitoralertrule.FieldUpdatedBy:
+		return m.OldUpdatedBy(ctx)
+	case monitoralertrule.FieldDeletedBy:
+		return m.OldDeletedBy(ctx)
+	case monitoralertrule.FieldRemark:
+		return m.OldRemark(ctx)
+	case monitoralertrule.FieldName:
+		return m.OldName(ctx)
+	case monitoralertrule.FieldMetric:
+		return m.OldMetric(ctx)
+	case monitoralertrule.FieldOp:
+		return m.OldOp(ctx)
+	case monitoralertrule.FieldThreshold:
+		return m.OldThreshold(ctx)
+	case monitoralertrule.FieldCooldownMinutes:
+		return m.OldCooldownMinutes(ctx)
+	case monitoralertrule.FieldChannel:
+		return m.OldChannel(ctx)
+	case monitoralertrule.FieldTarget:
+		return m.OldTarget(ctx)
+	case monitoralertrule.FieldIsEnabled:
+		return m.OldIsEnabled(ctx)
+	case monitoralertrule.FieldLastFiring:
+		return m.OldLastFiring(ctx)
+	case monitoralertrule.FieldLastValue:
+		return m.OldLastValue(ctx)
+	case monitoralertrule.FieldLastAlertedAt:
+		return m.OldLastAlertedAt(ctx)
+	}
+	return nil, fmt.Errorf("unknown MonitorAlertRule field %s", name)
+}
+
+// SetField sets the value of a field with the given name. It returns an error if
+// the field is not defined in the schema, or if the type mismatched the field
+// type.
+func (m *MonitorAlertRuleMutation) SetField(name string, value ent.Value) error {
+	switch name {
+	case monitoralertrule.FieldCreatedAt:
+		v, ok := value.(time.Time)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetCreatedAt(v)
+		return nil
+	case monitoralertrule.FieldUpdatedAt:
+		v, ok := value.(time.Time)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetUpdatedAt(v)
+		return nil
+	case monitoralertrule.FieldDeletedAt:
+		v, ok := value.(time.Time)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetDeletedAt(v)
+		return nil
+	case monitoralertrule.FieldCreatedBy:
+		v, ok := value.(uint32)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetCreatedBy(v)
+		return nil
+	case monitoralertrule.FieldUpdatedBy:
+		v, ok := value.(uint32)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetUpdatedBy(v)
+		return nil
+	case monitoralertrule.FieldDeletedBy:
+		v, ok := value.(uint32)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetDeletedBy(v)
+		return nil
+	case monitoralertrule.FieldRemark:
+		v, ok := value.(string)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetRemark(v)
+		return nil
+	case monitoralertrule.FieldName:
+		v, ok := value.(string)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetName(v)
+		return nil
+	case monitoralertrule.FieldMetric:
+		v, ok := value.(monitoralertrule.Metric)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetMetric(v)
+		return nil
+	case monitoralertrule.FieldOp:
+		v, ok := value.(monitoralertrule.Op)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetOpField(v)
+		return nil
+	case monitoralertrule.FieldThreshold:
+		v, ok := value.(float64)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetThreshold(v)
+		return nil
+	case monitoralertrule.FieldCooldownMinutes:
+		v, ok := value.(uint32)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetCooldownMinutes(v)
+		return nil
+	case monitoralertrule.FieldChannel:
+		v, ok := value.(monitoralertrule.Channel)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetChannel(v)
+		return nil
+	case monitoralertrule.FieldTarget:
+		v, ok := value.(string)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetTarget(v)
+		return nil
+	case monitoralertrule.FieldIsEnabled:
+		v, ok := value.(bool)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetIsEnabled(v)
+		return nil
+	case monitoralertrule.FieldLastFiring:
+		v, ok := value.(bool)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetLastFiring(v)
+		return nil
+	case monitoralertrule.FieldLastValue:
+		v, ok := value.(float64)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetLastValue(v)
+		return nil
+	case monitoralertrule.FieldLastAlertedAt:
+		v, ok := value.(time.Time)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetLastAlertedAt(v)
+		return nil
+	}
+	return fmt.Errorf("unknown MonitorAlertRule field %s", name)
+}
+
+// AddedFields returns all numeric fields that were incremented/decremented during
+// this mutation.
+func (m *MonitorAlertRuleMutation) AddedFields() []string {
+	var fields []string
+	if m.addcreated_by != nil {
+		fields = append(fields, monitoralertrule.FieldCreatedBy)
+	}
+	if m.addupdated_by != nil {
+		fields = append(fields, monitoralertrule.FieldUpdatedBy)
+	}
+	if m.adddeleted_by != nil {
+		fields = append(fields, monitoralertrule.FieldDeletedBy)
+	}
+	if m.addthreshold != nil {
+		fields = append(fields, monitoralertrule.FieldThreshold)
+	}
+	if m.addcooldown_minutes != nil {
+		fields = append(fields, monitoralertrule.FieldCooldownMinutes)
+	}
+	if m.addlast_value != nil {
+		fields = append(fields, monitoralertrule.FieldLastValue)
+	}
+	return fields
+}
+
+// AddedField returns the numeric value that was incremented/decremented on a field
+// with the given name. The second boolean return value indicates that this field
+// was not set, or was not defined in the schema.
+func (m *MonitorAlertRuleMutation) AddedField(name string) (ent.Value, bool) {
+	switch name {
+	case monitoralertrule.FieldCreatedBy:
+		return m.AddedCreatedBy()
+	case monitoralertrule.FieldUpdatedBy:
+		return m.AddedUpdatedBy()
+	case monitoralertrule.FieldDeletedBy:
+		return m.AddedDeletedBy()
+	case monitoralertrule.FieldThreshold:
+		return m.AddedThreshold()
+	case monitoralertrule.FieldCooldownMinutes:
+		return m.AddedCooldownMinutes()
+	case monitoralertrule.FieldLastValue:
+		return m.AddedLastValue()
+	}
+	return nil, false
+}
+
+// AddField adds the value to the field with the given name. It returns an error if
+// the field is not defined in the schema, or if the type mismatched the field
+// type.
+func (m *MonitorAlertRuleMutation) AddField(name string, value ent.Value) error {
+	switch name {
+	case monitoralertrule.FieldCreatedBy:
+		v, ok := value.(int32)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.AddCreatedBy(v)
+		return nil
+	case monitoralertrule.FieldUpdatedBy:
+		v, ok := value.(int32)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.AddUpdatedBy(v)
+		return nil
+	case monitoralertrule.FieldDeletedBy:
+		v, ok := value.(int32)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.AddDeletedBy(v)
+		return nil
+	case monitoralertrule.FieldThreshold:
+		v, ok := value.(float64)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.AddThreshold(v)
+		return nil
+	case monitoralertrule.FieldCooldownMinutes:
+		v, ok := value.(int32)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.AddCooldownMinutes(v)
+		return nil
+	case monitoralertrule.FieldLastValue:
+		v, ok := value.(float64)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.AddLastValue(v)
+		return nil
+	}
+	return fmt.Errorf("unknown MonitorAlertRule numeric field %s", name)
+}
+
+// ClearedFields returns all nullable fields that were cleared during this
+// mutation.
+func (m *MonitorAlertRuleMutation) ClearedFields() []string {
+	var fields []string
+	if m.FieldCleared(monitoralertrule.FieldCreatedAt) {
+		fields = append(fields, monitoralertrule.FieldCreatedAt)
+	}
+	if m.FieldCleared(monitoralertrule.FieldUpdatedAt) {
+		fields = append(fields, monitoralertrule.FieldUpdatedAt)
+	}
+	if m.FieldCleared(monitoralertrule.FieldDeletedAt) {
+		fields = append(fields, monitoralertrule.FieldDeletedAt)
+	}
+	if m.FieldCleared(monitoralertrule.FieldCreatedBy) {
+		fields = append(fields, monitoralertrule.FieldCreatedBy)
+	}
+	if m.FieldCleared(monitoralertrule.FieldUpdatedBy) {
+		fields = append(fields, monitoralertrule.FieldUpdatedBy)
+	}
+	if m.FieldCleared(monitoralertrule.FieldDeletedBy) {
+		fields = append(fields, monitoralertrule.FieldDeletedBy)
+	}
+	if m.FieldCleared(monitoralertrule.FieldRemark) {
+		fields = append(fields, monitoralertrule.FieldRemark)
+	}
+	if m.FieldCleared(monitoralertrule.FieldName) {
+		fields = append(fields, monitoralertrule.FieldName)
+	}
+	if m.FieldCleared(monitoralertrule.FieldMetric) {
+		fields = append(fields, monitoralertrule.FieldMetric)
+	}
+	if m.FieldCleared(monitoralertrule.FieldOp) {
+		fields = append(fields, monitoralertrule.FieldOp)
+	}
+	if m.FieldCleared(monitoralertrule.FieldThreshold) {
+		fields = append(fields, monitoralertrule.FieldThreshold)
+	}
+	if m.FieldCleared(monitoralertrule.FieldChannel) {
+		fields = append(fields, monitoralertrule.FieldChannel)
+	}
+	if m.FieldCleared(monitoralertrule.FieldTarget) {
+		fields = append(fields, monitoralertrule.FieldTarget)
+	}
+	if m.FieldCleared(monitoralertrule.FieldLastValue) {
+		fields = append(fields, monitoralertrule.FieldLastValue)
+	}
+	if m.FieldCleared(monitoralertrule.FieldLastAlertedAt) {
+		fields = append(fields, monitoralertrule.FieldLastAlertedAt)
+	}
+	return fields
+}
+
+// FieldCleared returns a boolean indicating if a field with the given name was
+// cleared in this mutation.
+func (m *MonitorAlertRuleMutation) FieldCleared(name string) bool {
+	_, ok := m.clearedFields[name]
+	return ok
+}
+
+// ClearField clears the value of the field with the given name. It returns an
+// error if the field is not defined in the schema.
+func (m *MonitorAlertRuleMutation) ClearField(name string) error {
+	switch name {
+	case monitoralertrule.FieldCreatedAt:
+		m.ClearCreatedAt()
+		return nil
+	case monitoralertrule.FieldUpdatedAt:
+		m.ClearUpdatedAt()
+		return nil
+	case monitoralertrule.FieldDeletedAt:
+		m.ClearDeletedAt()
+		return nil
+	case monitoralertrule.FieldCreatedBy:
+		m.ClearCreatedBy()
+		return nil
+	case monitoralertrule.FieldUpdatedBy:
+		m.ClearUpdatedBy()
+		return nil
+	case monitoralertrule.FieldDeletedBy:
+		m.ClearDeletedBy()
+		return nil
+	case monitoralertrule.FieldRemark:
+		m.ClearRemark()
+		return nil
+	case monitoralertrule.FieldName:
+		m.ClearName()
+		return nil
+	case monitoralertrule.FieldMetric:
+		m.ClearMetric()
+		return nil
+	case monitoralertrule.FieldOp:
+		m.ClearOp()
+		return nil
+	case monitoralertrule.FieldThreshold:
+		m.ClearThreshold()
+		return nil
+	case monitoralertrule.FieldChannel:
+		m.ClearChannel()
+		return nil
+	case monitoralertrule.FieldTarget:
+		m.ClearTarget()
+		return nil
+	case monitoralertrule.FieldLastValue:
+		m.ClearLastValue()
+		return nil
+	case monitoralertrule.FieldLastAlertedAt:
+		m.ClearLastAlertedAt()
+		return nil
+	}
+	return fmt.Errorf("unknown MonitorAlertRule nullable field %s", name)
+}
+
+// ResetField resets all changes in the mutation for the field with the given name.
+// It returns an error if the field is not defined in the schema.
+func (m *MonitorAlertRuleMutation) ResetField(name string) error {
+	switch name {
+	case monitoralertrule.FieldCreatedAt:
+		m.ResetCreatedAt()
+		return nil
+	case monitoralertrule.FieldUpdatedAt:
+		m.ResetUpdatedAt()
+		return nil
+	case monitoralertrule.FieldDeletedAt:
+		m.ResetDeletedAt()
+		return nil
+	case monitoralertrule.FieldCreatedBy:
+		m.ResetCreatedBy()
+		return nil
+	case monitoralertrule.FieldUpdatedBy:
+		m.ResetUpdatedBy()
+		return nil
+	case monitoralertrule.FieldDeletedBy:
+		m.ResetDeletedBy()
+		return nil
+	case monitoralertrule.FieldRemark:
+		m.ResetRemark()
+		return nil
+	case monitoralertrule.FieldName:
+		m.ResetName()
+		return nil
+	case monitoralertrule.FieldMetric:
+		m.ResetMetric()
+		return nil
+	case monitoralertrule.FieldOp:
+		m.ResetOp()
+		return nil
+	case monitoralertrule.FieldThreshold:
+		m.ResetThreshold()
+		return nil
+	case monitoralertrule.FieldCooldownMinutes:
+		m.ResetCooldownMinutes()
+		return nil
+	case monitoralertrule.FieldChannel:
+		m.ResetChannel()
+		return nil
+	case monitoralertrule.FieldTarget:
+		m.ResetTarget()
+		return nil
+	case monitoralertrule.FieldIsEnabled:
+		m.ResetIsEnabled()
+		return nil
+	case monitoralertrule.FieldLastFiring:
+		m.ResetLastFiring()
+		return nil
+	case monitoralertrule.FieldLastValue:
+		m.ResetLastValue()
+		return nil
+	case monitoralertrule.FieldLastAlertedAt:
+		m.ResetLastAlertedAt()
+		return nil
+	}
+	return fmt.Errorf("unknown MonitorAlertRule field %s", name)
+}
+
+// AddedEdges returns all edge names that were set/added in this mutation.
+func (m *MonitorAlertRuleMutation) AddedEdges() []string {
+	edges := make([]string, 0, 0)
+	return edges
+}
+
+// AddedIDs returns all IDs (to other nodes) that were added for the given edge
+// name in this mutation.
+func (m *MonitorAlertRuleMutation) AddedIDs(name string) []ent.Value {
+	return nil
+}
+
+// RemovedEdges returns all edge names that were removed in this mutation.
+func (m *MonitorAlertRuleMutation) RemovedEdges() []string {
+	edges := make([]string, 0, 0)
+	return edges
+}
+
+// RemovedIDs returns all IDs (to other nodes) that were removed for the edge with
+// the given name in this mutation.
+func (m *MonitorAlertRuleMutation) RemovedIDs(name string) []ent.Value {
+	return nil
+}
+
+// ClearedEdges returns all edge names that were cleared in this mutation.
+func (m *MonitorAlertRuleMutation) ClearedEdges() []string {
+	edges := make([]string, 0, 0)
+	return edges
+}
+
+// EdgeCleared returns a boolean which indicates if the edge with the given name
+// was cleared in this mutation.
+func (m *MonitorAlertRuleMutation) EdgeCleared(name string) bool {
+	return false
+}
+
+// ClearEdge clears the value of the edge with the given name. It returns an error
+// if that edge is not defined in the schema.
+func (m *MonitorAlertRuleMutation) ClearEdge(name string) error {
+	return fmt.Errorf("unknown MonitorAlertRule unique edge %s", name)
+}
+
+// ResetEdge resets all changes to the edge with the given name in this mutation.
+// It returns an error if the edge is not defined in the schema.
+func (m *MonitorAlertRuleMutation) ResetEdge(name string) error {
+	return fmt.Errorf("unknown MonitorAlertRule edge %s", name)
 }
 
 // NavigationMutation represents an operation that mutates the Navigation nodes in the graph.

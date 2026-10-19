@@ -8063,6 +8063,304 @@ export type permissionservicev1_DeleteMenuRequest = {
   operatorId?: number;
 };
 
+// 监控告警规则管理服务（平台级配置；只读 asynq 之外的采集在 core 进程内完成）。
+export interface MonitorAlertService {
+  // 查询告警规则列表
+  ListMonitorAlertRule(
+    request: pagination_PagingRequest,
+  ): Promise<monitor_alertservicev1_ListMonitorAlertRuleResponse>;
+  // 查询告警规则详情
+  GetMonitorAlertRule(
+    request: monitor_alertservicev1_GetMonitorAlertRuleRequest,
+  ): Promise<monitor_alertservicev1_MonitorAlertRule>;
+  // 创建告警规则
+  CreateMonitorAlertRule(
+    request: monitor_alertservicev1_CreateMonitorAlertRuleRequest,
+  ): Promise<monitor_alertservicev1_MonitorAlertRule>;
+  // 更新告警规则
+  UpdateMonitorAlertRule(
+    request: monitor_alertservicev1_UpdateMonitorAlertRuleRequest,
+  ): Promise<wellKnownEmpty>;
+  // 删除告警规则
+  DeleteMonitorAlertRule(
+    request: monitor_alertservicev1_DeleteMonitorAlertRuleRequest,
+  ): Promise<wellKnownEmpty>;
+  // 手动触发一轮评估（与周期扫描同一内核）
+  EvaluateMonitorAlerts(
+    request: monitor_alertservicev1_EvaluateMonitorAlertsRequest,
+  ): Promise<monitor_alertservicev1_EvaluateMonitorAlertsResponse>;
+}
+
+export function createMonitorAlertServiceClient(
+  transport: ClientTransport,
+): MonitorAlertService {
+  return {
+    ListMonitorAlertRule(request) {
+      const path = `admin/v1/monitor-alert-rules`;
+      const body = null;
+      const queryParams: string[] = [];
+      if (request.page) {
+        queryParams.push(
+          `page=${encodeURIComponent(request.page.toString())}`,
+        );
+      }
+      if (request.pageSize) {
+        queryParams.push(
+          `pageSize=${encodeURIComponent(request.pageSize.toString())}`,
+        );
+      }
+      if (request.offset) {
+        queryParams.push(
+          `offset=${encodeURIComponent(request.offset.toString())}`,
+        );
+      }
+      if (request.limit) {
+        queryParams.push(
+          `limit=${encodeURIComponent(request.limit.toString())}`,
+        );
+      }
+      if (request.token) {
+        queryParams.push(
+          `token=${encodeURIComponent(request.token.toString())}`,
+        );
+      }
+      if (request.noPaging) {
+        queryParams.push(
+          `noPaging=${encodeURIComponent(request.noPaging.toString())}`,
+        );
+      }
+      if (request.query) {
+        queryParams.push(
+          `query=${encodeURIComponent(request.query.toString())}`,
+        );
+      }
+      if (request.filter) {
+        queryParams.push(
+          `filter=${encodeURIComponent(request.filter.toString())}`,
+        );
+      }
+      if (request.filterExpr?.type) {
+        queryParams.push(
+          `filterExpr.type=${encodeURIComponent(request.filterExpr.type.toString())}`,
+        );
+      }
+      if (request.filterExpr?.conditions?.field) {
+        queryParams.push(
+          `filterExpr.conditions.field=${encodeURIComponent(request.filterExpr.conditions.field.toString())}`,
+        );
+      }
+      if (request.filterExpr?.conditions?.op) {
+        queryParams.push(
+          `filterExpr.conditions.op=${encodeURIComponent(request.filterExpr.conditions.op.toString())}`,
+        );
+      }
+      if (request.filterExpr?.conditions?.value) {
+        queryParams.push(
+          `filterExpr.conditions.value=${encodeURIComponent(request.filterExpr.conditions.value.toString())}`,
+        );
+      }
+      if (request.filterExpr?.conditions?.jsonValue) {
+        queryParams.push(
+          `filterExpr.conditions.jsonValue=${encodeURIComponent(request.filterExpr.conditions.jsonValue.toString())}`,
+        );
+      }
+      if (request.filterExpr?.conditions?.values) {
+        request.filterExpr.conditions.values.forEach((x) => {
+          queryParams.push(
+            `filterExpr.conditions.values=${encodeURIComponent(x.toString())}`,
+          );
+        });
+      }
+      if (request.filterExpr?.conditions?.datePart) {
+        queryParams.push(
+          `filterExpr.conditions.datePart=${encodeURIComponent(request.filterExpr.conditions.datePart.toString())}`,
+        );
+      }
+      if (request.filterExpr?.conditions?.jsonPath) {
+        queryParams.push(
+          `filterExpr.conditions.jsonPath=${encodeURIComponent(request.filterExpr.conditions.jsonPath.toString())}`,
+        );
+      }
+      if (request.orderBy) {
+        queryParams.push(
+          `orderBy=${encodeURIComponent(request.orderBy.toString())}`,
+        );
+      }
+      if (request.sorting?.field) {
+        queryParams.push(
+          `sorting.field=${encodeURIComponent(request.sorting.field.toString())}`,
+        );
+      }
+      if (request.sorting?.direction) {
+        queryParams.push(
+          `sorting.direction=${encodeURIComponent(request.sorting.direction.toString())}`,
+        );
+      }
+      if (request.fieldMask) {
+        queryParams.push(
+          `fieldMask=${encodeURIComponent(request.fieldMask.toString())}`,
+        );
+      }
+      let uri = path;
+      if (queryParams.length > 0) {
+        uri += `?${queryParams.join('&')}`;
+      }
+      return transport.unary(uri, 'GET', body, {
+        service: 'MonitorAlertService',
+        method: 'ListMonitorAlertRule',
+      }) as Promise<monitor_alertservicev1_ListMonitorAlertRuleResponse>;
+    },
+    GetMonitorAlertRule(request) {
+      if (request.id === undefined || request.id === null) {
+        throw new Error('missing required field request.id');
+      }
+      const path = `admin/v1/monitor-alert-rules/${request.id}`;
+      const body = null;
+      return transport.unary(path, 'GET', body, {
+        service: 'MonitorAlertService',
+        method: 'GetMonitorAlertRule',
+      }) as Promise<monitor_alertservicev1_MonitorAlertRule>;
+    },
+    CreateMonitorAlertRule(request) {
+      const path = `admin/v1/monitor-alert-rules`;
+      const body = JSON.stringify(request);
+      return transport.unary(path, 'POST', body, {
+        service: 'MonitorAlertService',
+        method: 'CreateMonitorAlertRule',
+      }) as Promise<monitor_alertservicev1_MonitorAlertRule>;
+    },
+    UpdateMonitorAlertRule(request) {
+      if (request.id === undefined || request.id === null) {
+        throw new Error('missing required field request.id');
+      }
+      const path = `admin/v1/monitor-alert-rules/${request.id}`;
+      const body = JSON.stringify(request);
+      return transport.unary(path, 'PUT', body, {
+        service: 'MonitorAlertService',
+        method: 'UpdateMonitorAlertRule',
+      }) as Promise<wellKnownEmpty>;
+    },
+    DeleteMonitorAlertRule(request) {
+      if (request.id === undefined || request.id === null) {
+        throw new Error('missing required field request.id');
+      }
+      const path = `admin/v1/monitor-alert-rules/${request.id}`;
+      const body = null;
+      return transport.unary(path, 'DELETE', body, {
+        service: 'MonitorAlertService',
+        method: 'DeleteMonitorAlertRule',
+      }) as Promise<wellKnownEmpty>;
+    },
+    EvaluateMonitorAlerts(request) {
+      const path = `admin/v1/monitor-alert-rules:evaluate`;
+      const body = JSON.stringify(request);
+      return transport.unary(path, 'POST', body, {
+        service: 'MonitorAlertService',
+        method: 'EvaluateMonitorAlerts',
+      }) as Promise<monitor_alertservicev1_EvaluateMonitorAlertsResponse>;
+    },
+  };
+}
+export type monitor_alertservicev1_ListMonitorAlertRuleResponse = {
+  items: monitor_alertservicev1_MonitorAlertRule[] | undefined;
+  total: number | undefined;
+};
+
+// 监控告警规则：指标阈值 → 触发通知。
+// 渠道与目标显式写在规则上（不经路由表）：告警是"点对点"的运营配置，
+// 路由表解决的是"事件该发去哪类渠道"，而这里要的是"这条告警发到这个邮箱"。
+export type monitor_alertservicev1_MonitorAlertRule = {
+  // 告警渠道（显式指定）
+  channel?: notifyservicev1_Channel;
+  // 重复告警冷却（分钟）：持续越限时按此间隔重发，默认 30
+  cooldownMinutes?: number;
+  createdAt?: wellKnownTimestamp;
+  createdBy?: number;
+  id?: number;
+  isEnabled?: boolean;
+  lastAlertedAt?: wellKnownTimestamp;
+  // —— 以下为评估器回写状态（只读） ——
+  lastFiring?: boolean;
+  lastValue?: number;
+  metric?: monitor_alertservicev1_MonitorMetric;
+  name?: string;
+  // DB_PING_FAIL 时忽略 op/threshold
+  op?: monitor_alertservicev1_AlertOp;
+  remark?: string;
+  // 投递目标：EMAIL 为收件地址，WEBHOOK 为回调 URL
+  target?: string;
+  threshold?: number;
+  updatedAt?: wellKnownTimestamp;
+  updatedBy?: number;
+};
+
+// 监控指标（评估器支持的全集；新增指标 = 枚举加值 + evaluator 补取数分支）。
+// 采集全部在 core 进程内完成：GO_* 为 core 自身 runtime，DB_*/REDIS_* 为共享基础设施。
+export type monitor_alertservicev1_MonitorMetric =
+  // 数据库当前打开连接数
+  | 'DB_OPEN_CONNECTIONS'
+  // 数据库连通性失败（布尔指标：越限即 ping 失败，op/threshold 被忽略）
+  | 'DB_PING_FAIL'
+  // Go goroutine 数量（core 进程）
+  | 'GO_GOROUTINES'
+  // Go 堆内存分配（MB，core 进程）
+  | 'GO_MEM_ALLOC_MB'
+  | 'MONITOR_METRIC_UNSPECIFIED'
+  // Redis 逻辑库 key 总数（DBSIZE）
+  | 'REDIS_DB_SIZE';
+// 比较运算
+export type monitor_alertservicev1_AlertOp =
+  | 'ALERT_OP_UNSPECIFIED'
+  // 当前值 >= 阈值
+  | 'GE'
+  // 当前值 <= 阈值
+  | 'LE';
+// 投递渠道。成员名必须与 ent 列值逐字相同（EnumTypeConverter 按名字字符串配对）。
+export type notifyservicev1_Channel =
+  | 'CHANNEL_UNSPECIFIED'
+  | 'EMAIL'
+  | 'EXT'
+  | 'INTERNAL'
+  | 'WEBHOOK';
+export type monitor_alertservicev1_GetMonitorAlertRuleRequest = {
+  id: number | undefined;
+};
+
+export type monitor_alertservicev1_CreateMonitorAlertRuleRequest = {
+  data: monitor_alertservicev1_MonitorAlertRule | undefined;
+};
+
+export type monitor_alertservicev1_UpdateMonitorAlertRuleRequest = {
+  data: monitor_alertservicev1_MonitorAlertRule | undefined;
+  id: number | undefined;
+  updateMask?: wellKnownFieldMask;
+};
+
+export type monitor_alertservicev1_DeleteMonitorAlertRuleRequest = {
+  id: number | undefined;
+};
+
+// 手动触发一轮评估（管理页「立即评估」）；返回各启用规则的求值结论
+export type monitor_alertservicev1_EvaluateMonitorAlertsRequest = {
+};
+
+export type monitor_alertservicev1_EvaluateMonitorAlertsResponse = {
+  outcomes: monitor_alertservicev1_EvaluateMonitorAlertsResponse_RuleOutcome[] | undefined;
+};
+
+export type monitor_alertservicev1_EvaluateMonitorAlertsResponse_RuleOutcome = {
+  // 本次扫描实际读到的指标值（采集失败为空）
+  currentValue?: number;
+  // 本次扫描是否越限
+  firing: boolean | undefined;
+  name: string | undefined;
+  // 本轮是否发出了通知（首次触发 / 冷却到期重发 / 恢复）
+  notified: boolean | undefined;
+  // 未发通知的原因（未越限未恢复 / 冷却中 / 采集失败）
+  reason?: string;
+  ruleId: number | undefined;
+};
+
 // 导航服务
 export interface NavigationService {
   // 获取导航列表
@@ -8780,17 +9078,13 @@ export type notifyservicev1_EventType =
   // 它与其他事件的区别：其他事件由业务动作触发、渠道由路由表决定；这一个本身就是
   // "站内信内容域经缝投递了一次"，related_id 必填，否则台账行无法回答"发的是哪条消息"。
   | 'INTERNAL_MESSAGE'
+  // 监控告警通知：告警/恢复成对发送（监控告警规则的渠道与目标显式写在规则上，
+  // 不经路由表；related_id 指向 monitor_alert_rules.id）。
+  | 'MONITOR_ALERT'
   // 系统通知邮件：站内信系统通知（NotifyUser）的附加邮件触达，收件目标为
   // 收件用户邮箱。种子规则 SYSTEM_NOTIFY→EMAIL 提供路由（管理员停用该行即
   // 整体关闭此类出站邮件）；related_id 指向 internal_messages.id。
   | 'SYSTEM_NOTIFY';
-// 投递渠道。成员名必须与 ent 列值逐字相同（EnumTypeConverter 按名字字符串配对）。
-export type notifyservicev1_Channel =
-  | 'CHANNEL_UNSPECIFIED'
-  | 'EMAIL'
-  | 'EXT'
-  | 'INTERNAL'
-  | 'WEBHOOK';
 // 投递状态
 export type notifyservicev1_DeliveryStatus =
   | 'DELIVERY_STATUS_UNSPECIFIED'
@@ -16412,6 +16706,7 @@ export class ApiClient {
   private _loginPolicyService?: LoginPolicyService;
   private _mediaAssetService?: MediaAssetService;
   private _menuService?: MenuService;
+  private _monitorAlertService?: MonitorAlertService;
   private _navigationItemService?: NavigationItemService;
   private _navigationService?: NavigationService;
   private _notificationChannelService?: NotificationChannelService;
@@ -16582,6 +16877,10 @@ export class ApiClient {
 
   get menuService(): MenuService {
     return this._menuService ??= createMenuServiceClient(this._transport);
+  }
+
+  get monitorAlertService(): MonitorAlertService {
+    return this._monitorAlertService ??= createMonitorAlertServiceClient(this._transport);
   }
 
   get navigationItemService(): NavigationItemService {

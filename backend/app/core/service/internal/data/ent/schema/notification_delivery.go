@@ -45,6 +45,7 @@ func (NotificationDelivery) Fields() []ent.Field {
 				"ChannelTestEmail", "CHANNEL_TEST_EMAIL",
 				"SystemNotify", "SYSTEM_NOTIFY",
 				"ChannelTestExt", "CHANNEL_TEST_EXT",
+				"MonitorAlert", "MONITOR_ALERT",
 			).
 			Optional().
 			Nillable(),

@@ -1167,6 +1167,30 @@ func (f MenuMutationRuleFunc) EvalMutation(ctx context.Context, m ent.Mutation) 
 	return Denyf("ent/privacy: unexpected mutation type %T, expect *ent.MenuMutation", m)
 }
 
+// The MonitorAlertRuleQueryRuleFunc type is an adapter to allow the use of ordinary
+// functions as a query rule.
+type MonitorAlertRuleQueryRuleFunc func(context.Context, *ent.MonitorAlertRuleQuery) error
+
+// EvalQuery return f(ctx, q).
+func (f MonitorAlertRuleQueryRuleFunc) EvalQuery(ctx context.Context, q ent.Query) error {
+	if q, ok := q.(*ent.MonitorAlertRuleQuery); ok {
+		return f(ctx, q)
+	}
+	return Denyf("ent/privacy: unexpected query type %T, expect *ent.MonitorAlertRuleQuery", q)
+}
+
+// The MonitorAlertRuleMutationRuleFunc type is an adapter to allow the use of ordinary
+// functions as a mutation rule.
+type MonitorAlertRuleMutationRuleFunc func(context.Context, *ent.MonitorAlertRuleMutation) error
+
+// EvalMutation calls f(ctx, m).
+func (f MonitorAlertRuleMutationRuleFunc) EvalMutation(ctx context.Context, m ent.Mutation) error {
+	if m, ok := m.(*ent.MonitorAlertRuleMutation); ok {
+		return f(ctx, m)
+	}
+	return Denyf("ent/privacy: unexpected mutation type %T, expect *ent.MonitorAlertRuleMutation", m)
+}
+
 // The NavigationQueryRuleFunc type is an adapter to allow the use of ordinary
 // functions as a query rule.
 type NavigationQueryRuleFunc func(context.Context, *ent.NavigationQuery) error
@@ -2490,6 +2514,8 @@ func queryFilter(q ent.Query) (Filter, error) {
 		return q.Filter(), nil
 	case *ent.MenuQuery:
 		return q.Filter(), nil
+	case *ent.MonitorAlertRuleQuery:
+		return q.Filter(), nil
 	case *ent.NavigationQuery:
 		return q.Filter(), nil
 	case *ent.NavigationItemQuery:
@@ -2684,6 +2710,8 @@ func mutationFilter(m ent.Mutation) (Filter, error) {
 	case *ent.MembershipRoleMutation:
 		return m.Filter(), nil
 	case *ent.MenuMutation:
+		return m.Filter(), nil
+	case *ent.MonitorAlertRuleMutation:
 		return m.Filter(), nil
 	case *ent.NavigationMutation:
 		return m.Filter(), nil

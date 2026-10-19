@@ -55,6 +55,7 @@ import (
 	"go-wind-cms/app/core/service/internal/data/ent/membershipposition"
 	"go-wind-cms/app/core/service/internal/data/ent/membershiprole"
 	"go-wind-cms/app/core/service/internal/data/ent/menu"
+	"go-wind-cms/app/core/service/internal/data/ent/monitoralertrule"
 	"go-wind-cms/app/core/service/internal/data/ent/navigation"
 	"go-wind-cms/app/core/service/internal/data/ent/navigationitem"
 	"go-wind-cms/app/core/service/internal/data/ent/notificationchannel"
@@ -205,6 +206,8 @@ type Client struct {
 	MembershipRole *MembershipRoleClient
 	// Menu is the client for interacting with the Menu builders.
 	Menu *MenuClient
+	// MonitorAlertRule is the client for interacting with the MonitorAlertRule builders.
+	MonitorAlertRule *MonitorAlertRuleClient
 	// Navigation is the client for interacting with the Navigation builders.
 	Navigation *NavigationClient
 	// NavigationItem is the client for interacting with the NavigationItem builders.
@@ -360,6 +363,7 @@ func (c *Client) init() {
 	c.MembershipPosition = NewMembershipPositionClient(c.config)
 	c.MembershipRole = NewMembershipRoleClient(c.config)
 	c.Menu = NewMenuClient(c.config)
+	c.MonitorAlertRule = NewMonitorAlertRuleClient(c.config)
 	c.Navigation = NewNavigationClient(c.config)
 	c.NavigationItem = NewNavigationItemClient(c.config)
 	c.NotificationChannel = NewNotificationChannelClient(c.config)
@@ -546,6 +550,7 @@ func (c *Client) Tx(ctx context.Context) (*Tx, error) {
 		MembershipPosition:         NewMembershipPositionClient(cfg),
 		MembershipRole:             NewMembershipRoleClient(cfg),
 		Menu:                       NewMenuClient(cfg),
+		MonitorAlertRule:           NewMonitorAlertRuleClient(cfg),
 		Navigation:                 NewNavigationClient(cfg),
 		NavigationItem:             NewNavigationItemClient(cfg),
 		NotificationChannel:        NewNotificationChannelClient(cfg),
@@ -659,6 +664,7 @@ func (c *Client) BeginTx(ctx context.Context, opts *sql.TxOptions) (*Tx, error) 
 		MembershipPosition:         NewMembershipPositionClient(cfg),
 		MembershipRole:             NewMembershipRoleClient(cfg),
 		Menu:                       NewMenuClient(cfg),
+		MonitorAlertRule:           NewMonitorAlertRuleClient(cfg),
 		Navigation:                 NewNavigationClient(cfg),
 		NavigationItem:             NewNavigationItemClient(cfg),
 		NotificationChannel:        NewNotificationChannelClient(cfg),
@@ -749,17 +755,18 @@ func (c *Client) Use(hooks ...Hook) {
 		c.InternalMessageCategory, c.InternalMessageRecipient, c.Language,
 		c.LoginAuditLog, c.LoginPolicy, c.MediaAsset, c.MediaVariant, c.Membership,
 		c.MembershipOrgUnit, c.MembershipPosition, c.MembershipRole, c.Menu,
-		c.Navigation, c.NavigationItem, c.NotificationChannel, c.NotificationDelivery,
-		c.NotificationPreference, c.NotificationRule, c.NotificationTemplate,
-		c.OperationAuditLog, c.OrgUnit, c.Page, c.PageTranslation, c.PageVersion,
-		c.Permission, c.PermissionApi, c.PermissionAuditLog, c.PermissionGroup,
-		c.PermissionMenu, c.PermissionPolicy, c.PolicyEvaluationLog, c.Position,
-		c.Post, c.PostCategory, c.PostLike, c.PostTag, c.PostTranslation,
-		c.PostVersion, c.PostWatch, c.Redirect, c.Role, c.RoleMetadata,
-		c.RolePermission, c.Section, c.SectionTranslation, c.Site, c.SiteSetting,
-		c.SocialAccount, c.SocialDistribution, c.SocialInboxItem, c.SocialStatsHistory,
-		c.Tag, c.TagTranslation, c.Task, c.Tenant, c.User, c.UserCredential,
-		c.UserOrgUnit, c.UserPosition, c.UserRole, c.Webhook, c.WebhookDelivery,
+		c.MonitorAlertRule, c.Navigation, c.NavigationItem, c.NotificationChannel,
+		c.NotificationDelivery, c.NotificationPreference, c.NotificationRule,
+		c.NotificationTemplate, c.OperationAuditLog, c.OrgUnit, c.Page,
+		c.PageTranslation, c.PageVersion, c.Permission, c.PermissionApi,
+		c.PermissionAuditLog, c.PermissionGroup, c.PermissionMenu, c.PermissionPolicy,
+		c.PolicyEvaluationLog, c.Position, c.Post, c.PostCategory, c.PostLike,
+		c.PostTag, c.PostTranslation, c.PostVersion, c.PostWatch, c.Redirect, c.Role,
+		c.RoleMetadata, c.RolePermission, c.Section, c.SectionTranslation, c.Site,
+		c.SiteSetting, c.SocialAccount, c.SocialDistribution, c.SocialInboxItem,
+		c.SocialStatsHistory, c.Tag, c.TagTranslation, c.Task, c.Tenant, c.User,
+		c.UserCredential, c.UserOrgUnit, c.UserPosition, c.UserRole, c.Webhook,
+		c.WebhookDelivery,
 	} {
 		n.Use(hooks...)
 	}
@@ -780,17 +787,18 @@ func (c *Client) Intercept(interceptors ...Interceptor) {
 		c.InternalMessageCategory, c.InternalMessageRecipient, c.Language,
 		c.LoginAuditLog, c.LoginPolicy, c.MediaAsset, c.MediaVariant, c.Membership,
 		c.MembershipOrgUnit, c.MembershipPosition, c.MembershipRole, c.Menu,
-		c.Navigation, c.NavigationItem, c.NotificationChannel, c.NotificationDelivery,
-		c.NotificationPreference, c.NotificationRule, c.NotificationTemplate,
-		c.OperationAuditLog, c.OrgUnit, c.Page, c.PageTranslation, c.PageVersion,
-		c.Permission, c.PermissionApi, c.PermissionAuditLog, c.PermissionGroup,
-		c.PermissionMenu, c.PermissionPolicy, c.PolicyEvaluationLog, c.Position,
-		c.Post, c.PostCategory, c.PostLike, c.PostTag, c.PostTranslation,
-		c.PostVersion, c.PostWatch, c.Redirect, c.Role, c.RoleMetadata,
-		c.RolePermission, c.Section, c.SectionTranslation, c.Site, c.SiteSetting,
-		c.SocialAccount, c.SocialDistribution, c.SocialInboxItem, c.SocialStatsHistory,
-		c.Tag, c.TagTranslation, c.Task, c.Tenant, c.User, c.UserCredential,
-		c.UserOrgUnit, c.UserPosition, c.UserRole, c.Webhook, c.WebhookDelivery,
+		c.MonitorAlertRule, c.Navigation, c.NavigationItem, c.NotificationChannel,
+		c.NotificationDelivery, c.NotificationPreference, c.NotificationRule,
+		c.NotificationTemplate, c.OperationAuditLog, c.OrgUnit, c.Page,
+		c.PageTranslation, c.PageVersion, c.Permission, c.PermissionApi,
+		c.PermissionAuditLog, c.PermissionGroup, c.PermissionMenu, c.PermissionPolicy,
+		c.PolicyEvaluationLog, c.Position, c.Post, c.PostCategory, c.PostLike,
+		c.PostTag, c.PostTranslation, c.PostVersion, c.PostWatch, c.Redirect, c.Role,
+		c.RoleMetadata, c.RolePermission, c.Section, c.SectionTranslation, c.Site,
+		c.SiteSetting, c.SocialAccount, c.SocialDistribution, c.SocialInboxItem,
+		c.SocialStatsHistory, c.Tag, c.TagTranslation, c.Task, c.Tenant, c.User,
+		c.UserCredential, c.UserOrgUnit, c.UserPosition, c.UserRole, c.Webhook,
+		c.WebhookDelivery,
 	} {
 		n.Intercept(interceptors...)
 	}
@@ -887,6 +895,8 @@ func (c *Client) Mutate(ctx context.Context, m Mutation) (Value, error) {
 		return c.MembershipRole.mutate(ctx, m)
 	case *MenuMutation:
 		return c.Menu.mutate(ctx, m)
+	case *MonitorAlertRuleMutation:
+		return c.MonitorAlertRule.mutate(ctx, m)
 	case *NavigationMutation:
 		return c.Navigation.mutate(ctx, m)
 	case *NavigationItemMutation:
@@ -7168,6 +7178,139 @@ func (c *MenuClient) mutate(ctx context.Context, m *MenuMutation) (Value, error)
 		return (&MenuDelete{config: c.config, hooks: c.Hooks(), mutation: m}).Exec(ctx)
 	default:
 		return nil, fmt.Errorf("ent: unknown Menu mutation op: %q", m.Op())
+	}
+}
+
+// MonitorAlertRuleClient is a client for the MonitorAlertRule schema.
+type MonitorAlertRuleClient struct {
+	config
+}
+
+// NewMonitorAlertRuleClient returns a client for the MonitorAlertRule from the given config.
+func NewMonitorAlertRuleClient(c config) *MonitorAlertRuleClient {
+	return &MonitorAlertRuleClient{config: c}
+}
+
+// Use adds a list of mutation hooks to the hooks stack.
+// A call to `Use(f, g, h)` equals to `monitoralertrule.Hooks(f(g(h())))`.
+func (c *MonitorAlertRuleClient) Use(hooks ...Hook) {
+	c.hooks.MonitorAlertRule = append(c.hooks.MonitorAlertRule, hooks...)
+}
+
+// Intercept adds a list of query interceptors to the interceptors stack.
+// A call to `Intercept(f, g, h)` equals to `monitoralertrule.Intercept(f(g(h())))`.
+func (c *MonitorAlertRuleClient) Intercept(interceptors ...Interceptor) {
+	c.inters.MonitorAlertRule = append(c.inters.MonitorAlertRule, interceptors...)
+}
+
+// Create returns a builder for creating a MonitorAlertRule entity.
+func (c *MonitorAlertRuleClient) Create() *MonitorAlertRuleCreate {
+	mutation := newMonitorAlertRuleMutation(c.config, OpCreate)
+	return &MonitorAlertRuleCreate{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// CreateBulk returns a builder for creating a bulk of MonitorAlertRule entities.
+func (c *MonitorAlertRuleClient) CreateBulk(builders ...*MonitorAlertRuleCreate) *MonitorAlertRuleCreateBulk {
+	return &MonitorAlertRuleCreateBulk{config: c.config, builders: builders}
+}
+
+// MapCreateBulk creates a bulk creation builder from the given slice. For each item in the slice, the function creates
+// a builder and applies setFunc on it.
+func (c *MonitorAlertRuleClient) MapCreateBulk(slice any, setFunc func(*MonitorAlertRuleCreate, int)) *MonitorAlertRuleCreateBulk {
+	rv := reflect.ValueOf(slice)
+	if rv.Kind() != reflect.Slice {
+		return &MonitorAlertRuleCreateBulk{err: fmt.Errorf("calling to MonitorAlertRuleClient.MapCreateBulk with wrong type %T, need slice", slice)}
+	}
+	builders := make([]*MonitorAlertRuleCreate, rv.Len())
+	for i := 0; i < rv.Len(); i++ {
+		builders[i] = c.Create()
+		setFunc(builders[i], i)
+	}
+	return &MonitorAlertRuleCreateBulk{config: c.config, builders: builders}
+}
+
+// Update returns an update builder for MonitorAlertRule.
+func (c *MonitorAlertRuleClient) Update() *MonitorAlertRuleUpdate {
+	mutation := newMonitorAlertRuleMutation(c.config, OpUpdate)
+	return &MonitorAlertRuleUpdate{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// UpdateOne returns an update builder for the given entity.
+func (c *MonitorAlertRuleClient) UpdateOne(_m *MonitorAlertRule) *MonitorAlertRuleUpdateOne {
+	mutation := newMonitorAlertRuleMutation(c.config, OpUpdateOne, withMonitorAlertRule(_m))
+	return &MonitorAlertRuleUpdateOne{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// UpdateOneID returns an update builder for the given id.
+func (c *MonitorAlertRuleClient) UpdateOneID(id uint32) *MonitorAlertRuleUpdateOne {
+	mutation := newMonitorAlertRuleMutation(c.config, OpUpdateOne, withMonitorAlertRuleID(id))
+	return &MonitorAlertRuleUpdateOne{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// Delete returns a delete builder for MonitorAlertRule.
+func (c *MonitorAlertRuleClient) Delete() *MonitorAlertRuleDelete {
+	mutation := newMonitorAlertRuleMutation(c.config, OpDelete)
+	return &MonitorAlertRuleDelete{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// DeleteOne returns a builder for deleting the given entity.
+func (c *MonitorAlertRuleClient) DeleteOne(_m *MonitorAlertRule) *MonitorAlertRuleDeleteOne {
+	return c.DeleteOneID(_m.ID)
+}
+
+// DeleteOneID returns a builder for deleting the given entity by its id.
+func (c *MonitorAlertRuleClient) DeleteOneID(id uint32) *MonitorAlertRuleDeleteOne {
+	builder := c.Delete().Where(monitoralertrule.ID(id))
+	builder.mutation.id = &id
+	builder.mutation.op = OpDeleteOne
+	return &MonitorAlertRuleDeleteOne{builder}
+}
+
+// Query returns a query builder for MonitorAlertRule.
+func (c *MonitorAlertRuleClient) Query() *MonitorAlertRuleQuery {
+	return &MonitorAlertRuleQuery{
+		config: c.config,
+		ctx:    &QueryContext{Type: TypeMonitorAlertRule},
+		inters: c.Interceptors(),
+	}
+}
+
+// Get returns a MonitorAlertRule entity by its id.
+func (c *MonitorAlertRuleClient) Get(ctx context.Context, id uint32) (*MonitorAlertRule, error) {
+	return c.Query().Where(monitoralertrule.ID(id)).Only(ctx)
+}
+
+// GetX is like Get, but panics if an error occurs.
+func (c *MonitorAlertRuleClient) GetX(ctx context.Context, id uint32) *MonitorAlertRule {
+	obj, err := c.Get(ctx, id)
+	if err != nil {
+		panic(err)
+	}
+	return obj
+}
+
+// Hooks returns the client hooks.
+func (c *MonitorAlertRuleClient) Hooks() []Hook {
+	return c.hooks.MonitorAlertRule
+}
+
+// Interceptors returns the client interceptors.
+func (c *MonitorAlertRuleClient) Interceptors() []Interceptor {
+	return c.inters.MonitorAlertRule
+}
+
+func (c *MonitorAlertRuleClient) mutate(ctx context.Context, m *MonitorAlertRuleMutation) (Value, error) {
+	switch m.Op() {
+	case OpCreate:
+		return (&MonitorAlertRuleCreate{config: c.config, hooks: c.Hooks(), mutation: m}).Save(ctx)
+	case OpUpdate:
+		return (&MonitorAlertRuleUpdate{config: c.config, hooks: c.Hooks(), mutation: m}).Save(ctx)
+	case OpUpdateOne:
+		return (&MonitorAlertRuleUpdateOne{config: c.config, hooks: c.Hooks(), mutation: m}).Save(ctx)
+	case OpDelete, OpDeleteOne:
+		return (&MonitorAlertRuleDelete{config: c.config, hooks: c.Hooks(), mutation: m}).Exec(ctx)
+	default:
+		return nil, fmt.Errorf("ent: unknown MonitorAlertRule mutation op: %q", m.Op())
 	}
 }
 
@@ -14004,16 +14147,17 @@ type (
 		InteractionCounter, InternalMessage, InternalMessageCategory,
 		InternalMessageRecipient, Language, LoginAuditLog, LoginPolicy, MediaAsset,
 		MediaVariant, Membership, MembershipOrgUnit, MembershipPosition,
-		MembershipRole, Menu, Navigation, NavigationItem, NotificationChannel,
-		NotificationDelivery, NotificationPreference, NotificationRule,
-		NotificationTemplate, OperationAuditLog, OrgUnit, Page, PageTranslation,
-		PageVersion, Permission, PermissionApi, PermissionAuditLog, PermissionGroup,
-		PermissionMenu, PermissionPolicy, PolicyEvaluationLog, Position, Post,
-		PostCategory, PostLike, PostTag, PostTranslation, PostVersion, PostWatch,
-		Redirect, Role, RoleMetadata, RolePermission, Section, SectionTranslation,
-		Site, SiteSetting, SocialAccount, SocialDistribution, SocialInboxItem,
-		SocialStatsHistory, Tag, TagTranslation, Task, Tenant, User, UserCredential,
-		UserOrgUnit, UserPosition, UserRole, Webhook, WebhookDelivery []ent.Hook
+		MembershipRole, Menu, MonitorAlertRule, Navigation, NavigationItem,
+		NotificationChannel, NotificationDelivery, NotificationPreference,
+		NotificationRule, NotificationTemplate, OperationAuditLog, OrgUnit, Page,
+		PageTranslation, PageVersion, Permission, PermissionApi, PermissionAuditLog,
+		PermissionGroup, PermissionMenu, PermissionPolicy, PolicyEvaluationLog,
+		Position, Post, PostCategory, PostLike, PostTag, PostTranslation, PostVersion,
+		PostWatch, Redirect, Role, RoleMetadata, RolePermission, Section,
+		SectionTranslation, Site, SiteSetting, SocialAccount, SocialDistribution,
+		SocialInboxItem, SocialStatsHistory, Tag, TagTranslation, Task, Tenant, User,
+		UserCredential, UserOrgUnit, UserPosition, UserRole, Webhook,
+		WebhookDelivery []ent.Hook
 	}
 	inters struct {
 		AiChunk, AiConversation, AiDoc, AiKnowledgeBase, AiMessage, AiProvider,
@@ -14025,15 +14169,16 @@ type (
 		InteractionCounter, InternalMessage, InternalMessageCategory,
 		InternalMessageRecipient, Language, LoginAuditLog, LoginPolicy, MediaAsset,
 		MediaVariant, Membership, MembershipOrgUnit, MembershipPosition,
-		MembershipRole, Menu, Navigation, NavigationItem, NotificationChannel,
-		NotificationDelivery, NotificationPreference, NotificationRule,
-		NotificationTemplate, OperationAuditLog, OrgUnit, Page, PageTranslation,
-		PageVersion, Permission, PermissionApi, PermissionAuditLog, PermissionGroup,
-		PermissionMenu, PermissionPolicy, PolicyEvaluationLog, Position, Post,
-		PostCategory, PostLike, PostTag, PostTranslation, PostVersion, PostWatch,
-		Redirect, Role, RoleMetadata, RolePermission, Section, SectionTranslation,
-		Site, SiteSetting, SocialAccount, SocialDistribution, SocialInboxItem,
-		SocialStatsHistory, Tag, TagTranslation, Task, Tenant, User, UserCredential,
-		UserOrgUnit, UserPosition, UserRole, Webhook, WebhookDelivery []ent.Interceptor
+		MembershipRole, Menu, MonitorAlertRule, Navigation, NavigationItem,
+		NotificationChannel, NotificationDelivery, NotificationPreference,
+		NotificationRule, NotificationTemplate, OperationAuditLog, OrgUnit, Page,
+		PageTranslation, PageVersion, Permission, PermissionApi, PermissionAuditLog,
+		PermissionGroup, PermissionMenu, PermissionPolicy, PolicyEvaluationLog,
+		Position, Post, PostCategory, PostLike, PostTag, PostTranslation, PostVersion,
+		PostWatch, Redirect, Role, RoleMetadata, RolePermission, Section,
+		SectionTranslation, Site, SiteSetting, SocialAccount, SocialDistribution,
+		SocialInboxItem, SocialStatsHistory, Tag, TagTranslation, Task, Tenant, User,
+		UserCredential, UserOrgUnit, UserPosition, UserRole, Webhook,
+		WebhookDelivery []ent.Interceptor
 	}
 )

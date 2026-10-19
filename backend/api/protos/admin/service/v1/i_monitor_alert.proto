@@ -1,0 +1,57 @@
+syntax = "proto3";
+
+package admin.service.v1;
+
+import "google/api/annotations.proto";
+import "google/protobuf/empty.proto";
+import "pagination/v1/pagination.proto";
+
+import "monitor_alert/service/v1/monitor_alert.proto";
+
+// 监控告警规则管理服务（平台级配置；只读 asynq 之外的采集在 core 进程内完成）。
+service MonitorAlertService {
+  // 查询告警规则列表
+  rpc ListMonitorAlertRule(pagination.PagingRequest) returns (monitor_alert.service.v1.ListMonitorAlertRuleResponse) {
+    option (google.api.http) = {
+      get: "/admin/v1/monitor-alert-rules"
+    };
+  }
+
+  // 查询告警规则详情
+  rpc GetMonitorAlertRule(monitor_alert.service.v1.GetMonitorAlertRuleRequest) returns (monitor_alert.service.v1.MonitorAlertRule) {
+    option (google.api.http) = {
+      get: "/admin/v1/monitor-alert-rules/{id}"
+    };
+  }
+
+  // 创建告警规则
+  rpc CreateMonitorAlertRule(monitor_alert.service.v1.CreateMonitorAlertRuleRequest) returns (monitor_alert.service.v1.MonitorAlertRule) {
+    option (google.api.http) = {
+      post: "/admin/v1/monitor-alert-rules"
+      body: "*"
+    };
+  }
+
+  // 更新告警规则
+  rpc UpdateMonitorAlertRule(monitor_alert.service.v1.UpdateMonitorAlertRuleRequest) returns (google.protobuf.Empty) {
+    option (google.api.http) = {
+      put: "/admin/v1/monitor-alert-rules/{id}"
+      body: "*"
+    };
+  }
+
+  // 删除告警规则
+  rpc DeleteMonitorAlertRule(monitor_alert.service.v1.DeleteMonitorAlertRuleRequest) returns (google.protobuf.Empty) {
+    option (google.api.http) = {
+      delete: "/admin/v1/monitor-alert-rules/{id}"
+    };
+  }
+
+  // 手动触发一轮评估（与周期扫描同一内核）
+  rpc EvaluateMonitorAlerts(monitor_alert.service.v1.EvaluateMonitorAlertsRequest) returns (monitor_alert.service.v1.EvaluateMonitorAlertsResponse) {
+    option (google.api.http) = {
+      post: "/admin/v1/monitor-alert-rules:evaluate"
+      body: "*"
+    };
+  }
+}

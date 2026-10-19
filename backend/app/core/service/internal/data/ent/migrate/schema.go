@@ -2324,6 +2324,42 @@ var (
 			},
 		},
 	}
+	// MonitorAlertRulesColumns holds the columns for the "monitor_alert_rules" table.
+	MonitorAlertRulesColumns = []*schema.Column{
+		{Name: "id", Type: field.TypeUint32, Increment: true, Comment: "id"},
+		{Name: "created_at", Type: field.TypeTime, Nullable: true, Comment: "创建时间"},
+		{Name: "updated_at", Type: field.TypeTime, Nullable: true, Comment: "更新时间"},
+		{Name: "deleted_at", Type: field.TypeTime, Nullable: true, Comment: "删除时间"},
+		{Name: "created_by", Type: field.TypeUint32, Nullable: true, Comment: "创建者ID"},
+		{Name: "updated_by", Type: field.TypeUint32, Nullable: true, Comment: "更新者ID"},
+		{Name: "deleted_by", Type: field.TypeUint32, Nullable: true, Comment: "删除者ID"},
+		{Name: "remark", Type: field.TypeString, Nullable: true, Comment: "备注"},
+		{Name: "name", Type: field.TypeString, Nullable: true, Comment: "规则名称"},
+		{Name: "metric", Type: field.TypeEnum, Nullable: true, Comment: "监控指标", Enums: []string{"GO_GOROUTINES", "GO_MEM_ALLOC_MB", "DB_OPEN_CONNECTIONS", "DB_PING_FAIL", "REDIS_DB_SIZE"}},
+		{Name: "op", Type: field.TypeEnum, Nullable: true, Comment: "比较运算（DB_PING_FAIL 忽略本列）", Enums: []string{"GE", "LE"}},
+		{Name: "threshold", Type: field.TypeFloat64, Nullable: true, Comment: "阈值（DB_PING_FAIL 忽略本列）"},
+		{Name: "cooldown_minutes", Type: field.TypeUint32, Comment: "重复告警冷却（分钟）：持续越限时按此间隔重发", Default: 30},
+		{Name: "channel", Type: field.TypeEnum, Nullable: true, Comment: "告警渠道（显式指定，不经路由表）", Enums: []string{"EMAIL", "WEBHOOK"}},
+		{Name: "target", Type: field.TypeString, Nullable: true, Comment: "投递目标：EMAIL 为收件地址，WEBHOOK 为回调 URL（显式指定）"},
+		{Name: "is_enabled", Type: field.TypeBool, Comment: "是否启用", Default: true},
+		{Name: "last_firing", Type: field.TypeBool, Comment: "上次扫描是否越限（用于区分「首次触发」与「恢复」）", Default: false},
+		{Name: "last_value", Type: field.TypeFloat64, Nullable: true, Comment: "上次扫描的指标值"},
+		{Name: "last_alerted_at", Type: field.TypeTime, Nullable: true, Comment: "上次告警时间（冷却判断锚）"},
+	}
+	// MonitorAlertRulesTable holds the schema information for the "monitor_alert_rules" table.
+	MonitorAlertRulesTable = &schema.Table{
+		Name:       "monitor_alert_rules",
+		Comment:    "监控告警规则表",
+		Columns:    MonitorAlertRulesColumns,
+		PrimaryKey: []*schema.Column{MonitorAlertRulesColumns[0]},
+		Indexes: []*schema.Index{
+			{
+				Name:    "idx_monitor_alert_enabled",
+				Unique:  false,
+				Columns: []*schema.Column{MonitorAlertRulesColumns[15]},
+			},
+		},
+	}
 	// NavigationsColumns holds the columns for the "navigations" table.
 	NavigationsColumns = []*schema.Column{
 		{Name: "id", Type: field.TypeUint32, Increment: true, Comment: "id"},
@@ -2492,7 +2528,7 @@ var (
 		{Name: "created_by", Type: field.TypeUint32, Nullable: true, Comment: "创建者ID"},
 		{Name: "updated_by", Type: field.TypeUint32, Nullable: true, Comment: "更新者ID"},
 		{Name: "deleted_by", Type: field.TypeUint32, Nullable: true, Comment: "删除者ID"},
-		{Name: "event_type", Type: field.TypeEnum, Nullable: true, Comment: "业务事件类型（成员名与 proto 的 EventType 枚举逐字同名，EnumTypeConverter 按名字配对）", Enums: []string{"INTERNAL_MESSAGE", "CHANNEL_TEST_EMAIL", "SYSTEM_NOTIFY", "CHANNEL_TEST_EXT"}},
+		{Name: "event_type", Type: field.TypeEnum, Nullable: true, Comment: "业务事件类型（成员名与 proto 的 EventType 枚举逐字同名，EnumTypeConverter 按名字配对）", Enums: []string{"INTERNAL_MESSAGE", "CHANNEL_TEST_EMAIL", "SYSTEM_NOTIFY", "CHANNEL_TEST_EXT", "MONITOR_ALERT"}},
 		{Name: "channel", Type: field.TypeEnum, Nullable: true, Comment: "投递渠道（EXT：扩展渠道大类，具体型别在渠道行的 type 列）", Enums: []string{"EMAIL", "WEBHOOK", "INTERNAL", "EXT"}},
 		{Name: "channel_id", Type: field.TypeUint32, Nullable: true, Comment: "实际选中的渠道配置ID"},
 		{Name: "recipient_user_id", Type: field.TypeUint32, Nullable: true, Comment: "收件用户ID（直发模式可为空）"},
@@ -5219,6 +5255,7 @@ var (
 		SysMembershipPositionsTable,
 		SysMembershipRolesTable,
 		SysMenusTable,
+		MonitorAlertRulesTable,
 		NavigationsTable,
 		NavigationItemsTable,
 		NotificationChannelsTable,
@@ -5499,6 +5536,11 @@ func init() {
 	SysMenusTable.ForeignKeys[0].RefTable = SysMenusTable
 	SysMenusTable.Annotation = &entsql.Annotation{
 		Table:     "sys_menus",
+		Charset:   "utf8mb4",
+		Collation: "utf8mb4_bin",
+	}
+	MonitorAlertRulesTable.Annotation = &entsql.Annotation{
+		Table:     "monitor_alert_rules",
 		Charset:   "utf8mb4",
 		Collation: "utf8mb4_bin",
 	}

@@ -34,6 +34,7 @@
   "dict": "Dictionary Management",
   "files": "File Management",
   "tasks": "Task Management",
+  "monitor-alerts": "Monitor Alerts",
   "login-policies": "Login Policies",
   "languages": "Language Management",
   "auth": "Authentication",

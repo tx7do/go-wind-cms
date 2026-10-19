@@ -104,6 +104,7 @@ const (
 	EventTypeChannelTestEmail EventType = "CHANNEL_TEST_EMAIL"
 	EventTypeSystemNotify     EventType = "SYSTEM_NOTIFY"
 	EventTypeChannelTestExt   EventType = "CHANNEL_TEST_EXT"
+	EventTypeMonitorAlert     EventType = "MONITOR_ALERT"
 )
 
 func (et EventType) String() string {
@@ -113,7 +114,7 @@ func (et EventType) String() string {
 // EventTypeValidator is a validator for the "event_type" field enum values. It is called by the builders before save.
 func EventTypeValidator(et EventType) error {
 	switch et {
-	case EventTypeInternalMessage, EventTypeChannelTestEmail, EventTypeSystemNotify, EventTypeChannelTestExt:
+	case EventTypeInternalMessage, EventTypeChannelTestEmail, EventTypeSystemNotify, EventTypeChannelTestExt, EventTypeMonitorAlert:
 		return nil
 	default:
 		return fmt.Errorf("notificationdelivery: invalid enum value for event_type field: %q", et)

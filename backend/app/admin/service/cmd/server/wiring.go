@@ -156,6 +156,7 @@ func initApp(ctx *bootstrap.Context) (*kratos.App, func(), error) {
 
 	// 通知域（渠道花名册 / 投递台账 / 路由规则 / 模板 / 用户偏好）
 	notificationServiceClient := data.NewNotificationServiceClient(ctx, discovery)
+	monitorAlertServiceClient := data.NewMonitorAlertServiceClient(ctx, discovery)
 	notificationChannelServiceClient := data.NewNotificationChannelServiceClient(ctx, discovery)
 	notificationRuleServiceClient := data.NewNotificationRuleServiceClient(ctx, discovery)
 	notificationTemplateServiceClient := data.NewNotificationTemplateServiceClient(ctx, discovery)
@@ -255,6 +256,7 @@ func initApp(ctx *bootstrap.Context) (*kratos.App, func(), error) {
 	notificationRuleService := service.NewNotificationRuleService(ctx, notificationRuleServiceClient)
 	notificationTemplateService := service.NewNotificationTemplateService(ctx, notificationTemplateServiceClient)
 	notificationPreferenceService := service.NewNotificationPreferenceService(ctx, notificationPreferenceServiceClient)
+	monitorAlertService := service.NewMonitorAlertService(ctx, monitorAlertServiceClient)
 	// ── register:service ── 新模块服务在此行后注册(make register 工具锚点,勿删)
 
 	// ═══════════════════════ 四、传输层(internal/server) ═══════════════════════
@@ -289,6 +291,7 @@ func initApp(ctx *bootstrap.Context) (*kratos.App, func(), error) {
 		editLockService,
 		flowRuleService,
 		notificationService,
+		monitorAlertService,
 		notificationChannelService,
 		notificationRuleService,
 		notificationTemplateService,

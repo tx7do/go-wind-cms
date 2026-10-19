@@ -1,0 +1,114 @@
+syntax = "proto3";
+
+package monitor_alert.service.v1;
+
+import "google/protobuf/empty.proto";
+import "google/protobuf/field_mask.proto";
+import "google/protobuf/timestamp.proto";
+import "notify/service/v1/notification.proto";
+import "pagination/v1/pagination.proto";
+
+// 监控告警规则服务（core 实现：规则数据、评估内核与指标采集都在 core 进程内）。
+service MonitorAlertService {
+  rpc ListMonitorAlertRule (pagination.PagingRequest) returns (ListMonitorAlertRuleResponse) {}
+  rpc GetMonitorAlertRule (GetMonitorAlertRuleRequest) returns (MonitorAlertRule) {}
+  rpc CreateMonitorAlertRule (CreateMonitorAlertRuleRequest) returns (MonitorAlertRule) {}
+  rpc UpdateMonitorAlertRule (UpdateMonitorAlertRuleRequest) returns (google.protobuf.Empty) {}
+  rpc DeleteMonitorAlertRule (DeleteMonitorAlertRuleRequest) returns (google.protobuf.Empty) {}
+  rpc EvaluateMonitorAlerts (EvaluateMonitorAlertsRequest) returns (EvaluateMonitorAlertsResponse) {}
+}
+
+// 监控指标（评估器支持的全集；新增指标 = 枚举加值 + evaluator 补取数分支）。
+// 采集全部在 core 进程内完成：GO_* 为 core 自身 runtime，DB_*/REDIS_* 为共享基础设施。
+enum MonitorMetric {
+  MONITOR_METRIC_UNSPECIFIED = 0;
+  // Go goroutine 数量（core 进程）
+  GO_GOROUTINES = 1;
+  // Go 堆内存分配（MB，core 进程）
+  GO_MEM_ALLOC_MB = 2;
+  // 数据库当前打开连接数
+  DB_OPEN_CONNECTIONS = 3;
+  // 数据库连通性失败（布尔指标：越限即 ping 失败，op/threshold 被忽略）
+  DB_PING_FAIL = 4;
+  // Redis 逻辑库 key 总数（DBSIZE）
+  REDIS_DB_SIZE = 5;
+}
+
+// 比较运算
+enum AlertOp {
+  ALERT_OP_UNSPECIFIED = 0;
+  // 当前值 >= 阈值
+  GE = 1;
+  // 当前值 <= 阈值
+  LE = 2;
+}
+
+// 监控告警规则：指标阈值 → 触发通知。
+// 渠道与目标显式写在规则上（不经路由表）：告警是"点对点"的运营配置，
+// 路由表解决的是"事件该发去哪类渠道"，而这里要的是"这条告警发到这个邮箱"。
+message MonitorAlertRule {
+  optional uint32 id = 1;
+  optional string name = 2;
+  optional monitor_alert.service.v1.MonitorMetric metric = 3;
+  // DB_PING_FAIL 时忽略 op/threshold
+  optional monitor_alert.service.v1.AlertOp op = 4;
+  optional double threshold = 5;
+  // 重复告警冷却（分钟）：持续越限时按此间隔重发，默认 30
+  optional uint32 cooldown_minutes = 6;
+  // 告警渠道（显式指定）
+  optional notify.service.v1.Channel channel = 7;
+  // 投递目标：EMAIL 为收件地址，WEBHOOK 为回调 URL
+  optional string target = 8;
+  optional bool is_enabled = 9;
+  optional string remark = 10;
+  // —— 以下为评估器回写状态（只读） ——
+  optional bool last_firing = 14;
+  optional double last_value = 15;
+  optional google.protobuf.Timestamp last_alerted_at = 16;
+  optional google.protobuf.Timestamp updated_at = 17;
+  optional uint32 created_by = 100 [json_name = "createdBy"];
+  optional uint32 updated_by = 101 [json_name = "updatedBy"];
+  optional google.protobuf.Timestamp created_at = 200 [json_name = "createdAt"];
+}
+
+message GetMonitorAlertRuleRequest {
+  uint32 id = 1;
+}
+
+message CreateMonitorAlertRuleRequest {
+  MonitorAlertRule data = 1;
+}
+
+message UpdateMonitorAlertRuleRequest {
+  uint32 id = 1;
+  MonitorAlertRule data = 2;
+  optional google.protobuf.FieldMask update_mask = 3;
+}
+
+message DeleteMonitorAlertRuleRequest {
+  uint32 id = 1;
+}
+
+message ListMonitorAlertRuleResponse {
+  uint64 total = 1;
+  repeated MonitorAlertRule items = 2;
+}
+
+// 手动触发一轮评估（管理页「立即评估」）；返回各启用规则的求值结论
+message EvaluateMonitorAlertsRequest {}
+
+message EvaluateMonitorAlertsResponse {
+  message RuleOutcome {
+    uint32 rule_id = 1;
+    string name = 2;
+    // 本次扫描是否越限
+    bool firing = 3;
+    // 本次扫描实际读到的指标值（采集失败为空）
+    optional double current_value = 4;
+    // 本轮是否发出了通知（首次触发 / 冷却到期重发 / 恢复）
+    bool notified = 5;
+    // 未发通知的原因（未越限未恢复 / 冷却中 / 采集失败）
+    optional string reason = 6;
+  }
+  repeated RuleOutcome outcomes = 1;
+}

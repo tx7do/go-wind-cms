@@ -100,6 +100,8 @@ type Tx struct {
 	MembershipRole *MembershipRoleClient
 	// Menu is the client for interacting with the Menu builders.
 	Menu *MenuClient
+	// MonitorAlertRule is the client for interacting with the MonitorAlertRule builders.
+	MonitorAlertRule *MonitorAlertRuleClient
 	// Navigation is the client for interacting with the Navigation builders.
 	Navigation *NavigationClient
 	// NavigationItem is the client for interacting with the NavigationItem builders.
@@ -375,6 +377,7 @@ func (tx *Tx) init() {
 	tx.MembershipPosition = NewMembershipPositionClient(tx.config)
 	tx.MembershipRole = NewMembershipRoleClient(tx.config)
 	tx.Menu = NewMenuClient(tx.config)
+	tx.MonitorAlertRule = NewMonitorAlertRuleClient(tx.config)
 	tx.Navigation = NewNavigationClient(tx.config)
 	tx.NavigationItem = NewNavigationItemClient(tx.config)
 	tx.NotificationChannel = NewNotificationChannelClient(tx.config)

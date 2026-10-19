@@ -40,6 +40,7 @@ import (
 	statsV1 "go-wind-cms/api/gen/go/stats/service/v1"
 	storageV1 "go-wind-cms/api/gen/go/storage/service/v1"
 	taskV1 "go-wind-cms/api/gen/go/task/service/v1"
+	monitorAlertV1 "go-wind-cms/api/gen/go/monitor_alert/service/v1"
 	flowV1 "go-wind-cms/api/gen/go/flow/service/v1"
 	webhookV1 "go-wind-cms/api/gen/go/webhook/service/v1"
 
@@ -366,6 +367,15 @@ func NewTaskServiceClient(ctx *bootstrap.Context, r registry.Discovery) taskV1.T
 	}
 
 	return taskV1.NewTaskServiceClient(cli)
+}
+
+func NewMonitorAlertServiceClient(ctx *bootstrap.Context, r registry.Discovery) monitorAlertV1.MonitorAlertServiceClient {
+	cli, err := rpc.CreateGrpcClient(ctx.Context(), r, serviceid.NewDiscoveryName(serviceid.CoreService), ctx.GetConfig())
+	if err != nil {
+		return nil
+	}
+
+	return monitorAlertV1.NewMonitorAlertServiceClient(cli)
 }
 
 func NewCommentServiceClient(ctx *bootstrap.Context, r registry.Discovery) commentV1.CommentServiceClient {

@@ -176,6 +176,7 @@ func NewRestServer(
 	flowRuleService *service.FlowRuleService,
 
 	notificationService *service.NotificationService,
+	monitorAlertService *service.MonitorAlertService,
 	notificationChannelService *service.NotificationChannelService,
 	notificationRuleService *service.NotificationRuleService,
 	notificationTemplateService *service.NotificationTemplateService,
@@ -262,6 +263,7 @@ func NewRestServer(
 	adminV1.RegisterExperimentServiceHTTPServer(srv, experimentService)
 	adminV1.RegisterEditLockServiceHTTPServer(srv, editLockService)
 	adminV1.RegisterNotificationServiceHTTPServer(srv, notificationService)
+	adminV1.RegisterMonitorAlertServiceHTTPServer(srv, monitorAlertService)
 	adminV1.RegisterNotificationChannelServiceHTTPServer(srv, notificationChannelService)
 	adminV1.RegisterNotificationRuleServiceHTTPServer(srv, notificationRuleService)
 	adminV1.RegisterNotificationTemplateServiceHTTPServer(srv, notificationTemplateService)
