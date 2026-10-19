@@ -31,6 +31,8 @@ import (
 	taskV1 "go-wind-cms/api/gen/go/task/service/v1"
 	monitorAlertV1 "go-wind-cms/api/gen/go/monitor_alert/service/v1"
 	onlineSessionV1 "go-wind-cms/api/gen/go/online_session/service/v1"
+	serverMonitorV1 "go-wind-cms/api/gen/go/server_monitor/service/v1"
+	redisCacheV1 "go-wind-cms/api/gen/go/redis_cache/service/v1"
 
 	"go-wind-cms/pkg/middleware/ent"
 )
@@ -54,6 +56,8 @@ func NewGrpcServer(
 	taskService *service.TaskService,
 	monitorAlertService *service.MonitorAlertService,
 	onlineSessionService *service.OnlineSessionService,
+	serverMonitorService *service.ServerMonitorService,
+	redisCacheMonitorService *service.RedisCacheMonitorService,
 
 	fileService *service.FileService,
 
@@ -143,6 +147,8 @@ func NewGrpcServer(
 	taskV1.RegisterTaskServiceServer(srv, taskService)
 	monitorAlertV1.RegisterMonitorAlertServiceServer(srv, monitorAlertService)
 	onlineSessionV1.RegisterOnlineSessionServiceServer(srv, onlineSessionService)
+	serverMonitorV1.RegisterServerMonitorServiceServer(srv, serverMonitorService)
+	redisCacheV1.RegisterRedisCacheMonitorServiceServer(srv, redisCacheMonitorService)
 
 	authenticationV1.RegisterLoginPolicyServiceServer(srv, loginPolicyService)
 	authenticationV1.RegisterAuthenticationServiceServer(srv, authenticationService)

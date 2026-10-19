@@ -1,0 +1,19 @@
+{
+  "pageTitle": "Redis 缓存监控",
+  "moduleName": "Redis 缓存监控",
+  "dbSize": "当前库 key 总数（DBSIZE）",
+  "noInfo": "未获取到 INFO 数据",
+  "section": "分区",
+  "expand": "展开",
+  "collapse": "收起",
+  "collapsed": "已收起，点击标题展开键值明细",
+  "noEntries": "该分区无条目",
+  "slowlog": "慢日志（SLOWLOG GET 最近 10 条）",
+  "noSlowlog": "没有慢日志记录",
+  "slowlogId": "ID",
+  "slowlogTime": "时间",
+  "slowlogDuration": "耗时（µs）",
+  "slowlogArgs": "命令",
+  "slowlogClient": "客户端",
+  "disclaimer": "本页数据来自 Redis 只读命令（INFO / DBSIZE / SLOWLOG），每 10 秒自动刷新，仅供运维参考。"
+}

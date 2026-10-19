@@ -44,7 +44,7 @@ type PositionServiceHTTPServer interface {
 func RegisterPositionServiceHTTPServer(s *http.Server, srv PositionServiceHTTPServer) {
 	r := s.Route("/")
 	r.GET("/admin/v1/positions", _PositionService_List36_HTTP_Handler(srv))
-	r.GET("/admin/v1/positions/{id}", _PositionService_Get35_HTTP_Handler(srv))
+	r.GET("/admin/v1/positions/{id}", _PositionService_Get37_HTTP_Handler(srv))
 	r.POST("/admin/v1/positions", _PositionService_Create26_HTTP_Handler(srv))
 	r.PUT("/admin/v1/positions/{id}", _PositionService_Update27_HTTP_Handler(srv))
 	r.DELETE("/admin/v1/positions/{id}", _PositionService_Delete29_HTTP_Handler(srv))
@@ -69,7 +69,7 @@ func _PositionService_List36_HTTP_Handler(srv PositionServiceHTTPServer) func(ct
 	}
 }
 
-func _PositionService_Get35_HTTP_Handler(srv PositionServiceHTTPServer) func(ctx http.Context) error {
+func _PositionService_Get37_HTTP_Handler(srv PositionServiceHTTPServer) func(ctx http.Context) error {
 	return func(ctx http.Context) error {
 		var in v11.GetPositionRequest
 		if err := ctx.BindQuery(&in); err != nil {

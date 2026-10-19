@@ -56,6 +56,12 @@ managed:
       path: online_session/service/v1
       value: go-wind-cms/api/gen/go/online_session/service/v1;onlinesessionpb
     - file_option: go_package
+      path: server_monitor/service/v1
+      value: go-wind-cms/api/gen/go/server_monitor/service/v1;servermonitorpb
+    - file_option: go_package
+      path: redis_cache/service/v1
+      value: go-wind-cms/api/gen/go/redis_cache/service/v1;rediscachepb
+    - file_option: go_package
       path: identity/service/v1
       value: go-wind-cms/api/gen/go/identity/service/v1;identitypb
     - file_option: go_package

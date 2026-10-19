@@ -47,7 +47,7 @@ type NotificationRuleServiceHTTPServer interface {
 func RegisterNotificationRuleServiceHTTPServer(s *http.Server, srv NotificationRuleServiceHTTPServer) {
 	r := s.Route("/")
 	r.GET("/admin/v1/notification-rules", _NotificationRuleService_List27_HTTP_Handler(srv))
-	r.GET("/admin/v1/notification-rules/{id}", _NotificationRuleService_Get26_HTTP_Handler(srv))
+	r.GET("/admin/v1/notification-rules/{id}", _NotificationRuleService_Get28_HTTP_Handler(srv))
 	r.POST("/admin/v1/notification-rules", _NotificationRuleService_Create20_HTTP_Handler(srv))
 	r.PUT("/admin/v1/notification-rules/{id}", _NotificationRuleService_Update21_HTTP_Handler(srv))
 	r.DELETE("/admin/v1/notification-rules/{id}", _NotificationRuleService_Delete23_HTTP_Handler(srv))
@@ -73,7 +73,7 @@ func _NotificationRuleService_List27_HTTP_Handler(srv NotificationRuleServiceHTT
 	}
 }
 
-func _NotificationRuleService_Get26_HTTP_Handler(srv NotificationRuleServiceHTTPServer) func(ctx http.Context) error {
+func _NotificationRuleService_Get28_HTTP_Handler(srv NotificationRuleServiceHTTPServer) func(ctx http.Context) error {
 	return func(ctx http.Context) error {
 		var in v11.GetNotificationRuleRequest
 		if err := ctx.BindQuery(&in); err != nil {

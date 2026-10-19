@@ -1,0 +1,43 @@
+syntax = "proto3";
+
+package redis_cache.service.v1;
+
+import "google/protobuf/timestamp.proto";
+
+// Redis缓存监控服务（只读，聚合 INFO/DBSIZE/SLOWLOG 视图）
+service RedisCacheMonitorService {
+  // 查询Redis缓存监控信息
+  rpc Get (GetRedisCacheMonitorRequest) returns (RedisCacheMonitorInfo) {}
+}
+
+// Redis缓存监控信息
+message RedisCacheMonitorInfo {
+  repeated InfoSection sections = 1;
+  uint64 db_size = 2 [json_name = "dbSize"];
+  repeated SlowLogEntry slowlog = 3;
+}
+
+// INFO 输出的单个 section
+message InfoSection {
+  string name = 1;
+  repeated InfoEntry entries = 2;
+}
+
+// INFO 输出的单个 key/value 对
+message InfoEntry {
+  string key = 1;
+  string value = 2;
+}
+
+// SLOWLOG GET 返回的单条慢日志
+message SlowLogEntry {
+  int64 id = 1;
+  google.protobuf.Timestamp created_at = 2 [json_name = "createdAt"];
+  int64 duration_usec = 3 [json_name = "durationUsec"];
+  repeated string args = 4;
+  string client_addr = 5 [json_name = "clientAddr"];
+  string client_name = 6 [json_name = "clientName"];
+}
+
+// 查询Redis缓存监控信息 - 请求（空）
+message GetRedisCacheMonitorRequest {}

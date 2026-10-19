@@ -158,6 +158,8 @@ func initApp(ctx *bootstrap.Context) (*kratos.App, func(), error) {
 	notificationServiceClient := data.NewNotificationServiceClient(ctx, discovery)
 	monitorAlertServiceClient := data.NewMonitorAlertServiceClient(ctx, discovery)
 	onlineSessionServiceClient := data.NewOnlineSessionServiceClient(ctx, discovery)
+	serverMonitorServiceClient := data.NewServerMonitorServiceClient(ctx, discovery)
+	redisCacheMonitorServiceClient := data.NewRedisCacheMonitorServiceClient(ctx, discovery)
 	notificationChannelServiceClient := data.NewNotificationChannelServiceClient(ctx, discovery)
 	notificationRuleServiceClient := data.NewNotificationRuleServiceClient(ctx, discovery)
 	notificationTemplateServiceClient := data.NewNotificationTemplateServiceClient(ctx, discovery)
@@ -259,6 +261,8 @@ func initApp(ctx *bootstrap.Context) (*kratos.App, func(), error) {
 	notificationPreferenceService := service.NewNotificationPreferenceService(ctx, notificationPreferenceServiceClient)
 	monitorAlertService := service.NewMonitorAlertService(ctx, monitorAlertServiceClient)
 	onlineSessionService := service.NewOnlineSessionService(ctx, onlineSessionServiceClient)
+	serverMonitorService := service.NewServerMonitorService(ctx, serverMonitorServiceClient)
+	redisCacheMonitorService := service.NewRedisCacheMonitorService(ctx, redisCacheMonitorServiceClient)
 	// ── register:service ── 新模块服务在此行后注册(make register 工具锚点,勿删)
 
 	// ═══════════════════════ 四、传输层(internal/server) ═══════════════════════
@@ -295,6 +299,8 @@ func initApp(ctx *bootstrap.Context) (*kratos.App, func(), error) {
 		notificationService,
 		monitorAlertService,
 		onlineSessionService,
+		serverMonitorService,
+		redisCacheMonitorService,
 		notificationChannelService,
 		notificationRuleService,
 		notificationTemplateService,

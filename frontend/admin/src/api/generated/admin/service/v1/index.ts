@@ -8429,6 +8429,125 @@ export type monitor_alertservicev1_EvaluateMonitorAlertsResponse_RuleOutcome = {
   ruleId: number | undefined;
 };
 
+// 服务监控查询服务（只读聚合视图；采集在 core 进程内完成）。
+export interface ServerMonitorService {
+  // 查询服务监控信息
+  Get(
+    request: server_monitorservicev1_GetServerMonitorRequest,
+  ): Promise<server_monitorservicev1_ServerMonitorInfo>;
+}
+
+export function createServerMonitorServiceClient(
+  transport: ClientTransport,
+): ServerMonitorService {
+  return {
+    Get(_request) {
+      const path = `admin/v1/server-monitor`;
+      const body = null;
+      return transport.unary(path, 'GET', body, {
+        service: 'ServerMonitorService',
+        method: 'Get',
+      }) as Promise<server_monitorservicev1_ServerMonitorInfo>;
+    },
+  };
+}
+// 查询服务监控信息 - 请求（空）
+export type server_monitorservicev1_GetServerMonitorRequest = {
+};
+
+// 服务监控聚合信息
+export type server_monitorservicev1_ServerMonitorInfo = {
+  collectedAt: undefined | wellKnownTimestamp;
+  database: server_monitorservicev1_DatabaseInfo | undefined;
+  go: server_monitorservicev1_GoRuntimeInfo | undefined;
+  host: server_monitorservicev1_HostInfo | undefined;
+};
+
+// Go 运行时信息
+export type server_monitorservicev1_GoRuntimeInfo = {
+  gcCycles?: number;
+  memAllocBytes?: number;
+  memSysBytes?: number;
+  numGoroutine?: number;
+  startedAt?: wellKnownTimestamp;
+  uptimeSeconds?: number;
+  version?: string;
+};
+
+// 数据库信息
+export type server_monitorservicev1_DatabaseInfo = {
+  driver?: string;
+  idleConnections?: number;
+  inUseConnections?: number;
+  maxOpenConnections?: number;
+  openConnections?: number;
+  pingError?: string;
+  pingOk?: boolean;
+};
+
+// 主机信息
+export type server_monitorservicev1_HostInfo = {
+  arch?: string;
+  hostname?: string;
+  numCpu?: number;
+  os?: string;
+};
+
+// Redis 缓存监控查询服务（只读聚合视图）。
+export interface RedisCacheMonitorService {
+  // 查询 Redis 缓存监控信息
+  Get(
+    request: redis_cacheservicev1_GetRedisCacheMonitorRequest,
+  ): Promise<redis_cacheservicev1_RedisCacheMonitorInfo>;
+}
+
+export function createRedisCacheMonitorServiceClient(
+  transport: ClientTransport,
+): RedisCacheMonitorService {
+  return {
+    Get(_request) {
+      const path = `admin/v1/redis-cache-monitor`;
+      const body = null;
+      return transport.unary(path, 'GET', body, {
+        service: 'RedisCacheMonitorService',
+        method: 'Get',
+      }) as Promise<redis_cacheservicev1_RedisCacheMonitorInfo>;
+    },
+  };
+}
+// 查询Redis缓存监控信息 - 请求（空）
+export type redis_cacheservicev1_GetRedisCacheMonitorRequest = {
+};
+
+// Redis缓存监控信息
+export type redis_cacheservicev1_RedisCacheMonitorInfo = {
+  dbSize: number | undefined;
+  sections: redis_cacheservicev1_InfoSection[] | undefined;
+  slowlog: redis_cacheservicev1_SlowLogEntry[] | undefined;
+};
+
+// INFO 输出的单个 section
+export type redis_cacheservicev1_InfoSection = {
+  entries: redis_cacheservicev1_InfoEntry[] | undefined;
+  name: string | undefined;
+};
+
+// INFO 输出的单个 key/value 对
+export type redis_cacheservicev1_InfoEntry = {
+  key: string | undefined;
+  value: string | undefined;
+};
+
+// SLOWLOG GET 返回的单条慢日志
+export type redis_cacheservicev1_SlowLogEntry = {
+  args: string[] | undefined;
+  clientAddr: string | undefined;
+  clientName: string | undefined;
+  createdAt: undefined | wellKnownTimestamp;
+  durationUsec: number | undefined;
+  id: number | undefined;
+};
+
 // 导航服务
 export interface NavigationService {
   // 获取导航列表
@@ -16952,7 +17071,9 @@ export class ApiClient {
   private _postService?: PostService;
   private _previewService?: PreviewService;
   private _redirectService?: RedirectService;
+  private _redisCacheMonitorService?: RedisCacheMonitorService;
   private _roleService?: RoleService;
+  private _serverMonitorService?: ServerMonitorService;
   private _siteService?: SiteService;
   private _siteSettingService?: SiteSettingService;
   private _socialService?: SocialService;
@@ -17186,8 +17307,16 @@ export class ApiClient {
     return this._redirectService ??= createRedirectServiceClient(this._transport);
   }
 
+  get redisCacheMonitorService(): RedisCacheMonitorService {
+    return this._redisCacheMonitorService ??= createRedisCacheMonitorServiceClient(this._transport);
+  }
+
   get roleService(): RoleService {
     return this._roleService ??= createRoleServiceClient(this._transport);
+  }
+
+  get serverMonitorService(): ServerMonitorService {
+    return this._serverMonitorService ??= createServerMonitorServiceClient(this._transport);
   }
 
   get siteService(): SiteService {

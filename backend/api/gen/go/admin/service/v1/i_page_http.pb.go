@@ -62,7 +62,7 @@ type PageServiceHTTPServer interface {
 func RegisterPageServiceHTTPServer(s *http.Server, srv PageServiceHTTPServer) {
 	r := s.Route("/")
 	r.GET("/admin/v1/pages", _PageService_List31_HTTP_Handler(srv))
-	r.GET("/admin/v1/pages/{id}", _PageService_Get30_HTTP_Handler(srv))
+	r.GET("/admin/v1/pages/{id}", _PageService_Get32_HTTP_Handler(srv))
 	r.POST("/admin/v1/pages", _PageService_Create23_HTTP_Handler(srv))
 	r.PUT("/admin/v1/pages/{id}", _PageService_Update24_HTTP_Handler(srv))
 	r.DELETE("/admin/v1/pages/{id}", _PageService_Delete26_HTTP_Handler(srv))
@@ -93,7 +93,7 @@ func _PageService_List31_HTTP_Handler(srv PageServiceHTTPServer) func(ctx http.C
 	}
 }
 
-func _PageService_Get30_HTTP_Handler(srv PageServiceHTTPServer) func(ctx http.Context) error {
+func _PageService_Get32_HTTP_Handler(srv PageServiceHTTPServer) func(ctx http.Context) error {
 	return func(ctx http.Context) error {
 		var in v11.GetPageRequest
 		if err := ctx.BindQuery(&in); err != nil {

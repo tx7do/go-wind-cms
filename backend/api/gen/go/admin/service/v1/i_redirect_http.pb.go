@@ -44,7 +44,7 @@ type RedirectServiceHTTPServer interface {
 func RegisterRedirectServiceHTTPServer(s *http.Server, srv RedirectServiceHTTPServer) {
 	r := s.Route("/")
 	r.GET("/admin/v1/redirects", _RedirectService_List38_HTTP_Handler(srv))
-	r.GET("/admin/v1/redirects/{id}", _RedirectService_Get37_HTTP_Handler(srv))
+	r.GET("/admin/v1/redirects/{id}", _RedirectService_Get39_HTTP_Handler(srv))
 	r.POST("/admin/v1/redirects", _RedirectService_Create28_HTTP_Handler(srv))
 	r.PUT("/admin/v1/redirects/{id}", _RedirectService_Update29_HTTP_Handler(srv))
 	r.DELETE("/admin/v1/redirects/{id}", _RedirectService_Delete31_HTTP_Handler(srv))
@@ -69,7 +69,7 @@ func _RedirectService_List38_HTTP_Handler(srv RedirectServiceHTTPServer) func(ct
 	}
 }
 
-func _RedirectService_Get37_HTTP_Handler(srv RedirectServiceHTTPServer) func(ctx http.Context) error {
+func _RedirectService_Get39_HTTP_Handler(srv RedirectServiceHTTPServer) func(ctx http.Context) error {
 	return func(ctx http.Context) error {
 		var in v11.GetRedirectRequest
 		if err := ctx.BindQuery(&in); err != nil {

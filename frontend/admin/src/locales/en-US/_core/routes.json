@@ -90,5 +90,7 @@
   "content-experiments": "Content Experiments",
   "email-template": "Email Templates",
   "flow-rule": "Automation Flows",
-  "content-components": "Components"
+  "content-components": "Components",
+  "server-monitor": "Server Monitor",
+  "redis-cache-monitor": "Redis Cache Monitor"
 }

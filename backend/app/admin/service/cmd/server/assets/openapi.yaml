@@ -7864,6 +7864,19 @@ paths:
                 "200":
                     description: OK
                     content: {}
+    /admin/v1/redis-cache-monitor:
+        get:
+            tags:
+                - RedisCacheMonitorService
+            description: 查询 Redis 缓存监控信息
+            operationId: RedisCacheMonitorService_Get
+            responses:
+                "200":
+                    description: OK
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/redis_cache.service.v1.RedisCacheMonitorInfo'
     /admin/v1/refresh-token:
         post:
             tags:
@@ -8085,6 +8098,19 @@ paths:
                         application/json:
                             schema:
                                 $ref: '#/components/schemas/admin.service.v1.ListRouteResponse'
+    /admin/v1/server-monitor:
+        get:
+            tags:
+                - ServerMonitorService
+            description: 查询服务监控信息
+            operationId: ServerMonitorService_Get
+            responses:
+                "200":
+                    description: OK
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/server_monitor.service.v1.ServerMonitorInfo'
     /admin/v1/site-settings:
         get:
             tags:
@@ -17154,6 +17180,145 @@ components:
                     type: boolean
                     description: 如果设置为true的时候，资源不存在则会新增(插入)，并且在这种情况下`updateMask`字段将会被忽略。
             description: 更新角色 - 请求
+        redis_cache.service.v1.InfoEntry:
+            type: object
+            properties:
+                key:
+                    type: string
+                value:
+                    type: string
+            description: INFO 输出的单个 key/value 对
+        redis_cache.service.v1.InfoSection:
+            type: object
+            properties:
+                name:
+                    type: string
+                entries:
+                    type: array
+                    items:
+                        $ref: '#/components/schemas/redis_cache.service.v1.InfoEntry'
+            description: INFO 输出的单个 section
+        redis_cache.service.v1.RedisCacheMonitorInfo:
+            type: object
+            properties:
+                sections:
+                    type: array
+                    items:
+                        $ref: '#/components/schemas/redis_cache.service.v1.InfoSection'
+                dbSize:
+                    type: string
+                slowlog:
+                    type: array
+                    items:
+                        $ref: '#/components/schemas/redis_cache.service.v1.SlowLogEntry'
+            description: Redis缓存监控信息
+        redis_cache.service.v1.SlowLogEntry:
+            type: object
+            properties:
+                id:
+                    type: string
+                createdAt:
+                    type: string
+                    format: date-time
+                durationUsec:
+                    type: string
+                args:
+                    type: array
+                    items:
+                        type: string
+                clientAddr:
+                    type: string
+                clientName:
+                    type: string
+            description: SLOWLOG GET 返回的单条慢日志
+        server_monitor.service.v1.DatabaseInfo:
+            type: object
+            properties:
+                driver:
+                    type: string
+                    description: 数据库类型
+                pingOk:
+                    type: boolean
+                    description: 连通性是否正常
+                pingError:
+                    type: string
+                    description: 连通性错误信息
+                maxOpenConnections:
+                    type: integer
+                    description: 最大打开连接数
+                    format: uint32
+                openConnections:
+                    type: integer
+                    description: 当前打开连接数
+                    format: uint32
+                inUseConnections:
+                    type: integer
+                    description: 使用中连接数
+                    format: uint32
+                idleConnections:
+                    type: integer
+                    description: 空闲连接数
+                    format: uint32
+            description: 数据库信息
+        server_monitor.service.v1.GoRuntimeInfo:
+            type: object
+            properties:
+                version:
+                    type: string
+                    description: Go 版本
+                numGoroutine:
+                    type: integer
+                    description: goroutine 数量
+                    format: uint32
+                memAllocBytes:
+                    type: string
+                    description: 堆内存分配字节数
+                memSysBytes:
+                    type: string
+                    description: 向系统申请的内存字节数
+                gcCycles:
+                    type: integer
+                    description: GC 完成次数
+                    format: uint32
+                uptimeSeconds:
+                    type: string
+                    description: 服务运行时长（秒）
+                startedAt:
+                    type: string
+                    description: 进程启动时间
+                    format: date-time
+            description: Go 运行时信息
+        server_monitor.service.v1.HostInfo:
+            type: object
+            properties:
+                os:
+                    type: string
+                    description: 操作系统
+                arch:
+                    type: string
+                    description: CPU 架构
+                numCpu:
+                    type: integer
+                    description: CPU 逻辑核数
+                    format: uint32
+                hostname:
+                    type: string
+                    description: 主机名
+            description: 主机信息
+        server_monitor.service.v1.ServerMonitorInfo:
+            type: object
+            properties:
+                go:
+                    $ref: '#/components/schemas/server_monitor.service.v1.GoRuntimeInfo'
+                database:
+                    $ref: '#/components/schemas/server_monitor.service.v1.DatabaseInfo'
+                host:
+                    $ref: '#/components/schemas/server_monitor.service.v1.HostInfo'
+                collectedAt:
+                    type: string
+                    description: 采集时间
+                    format: date-time
+            description: 服务监控聚合信息
         site.service.v1.CreateNavigationItemRequest:
             type: object
             properties:
@@ -18929,8 +19094,12 @@ tags:
          C 端公开 BFF 校验该令牌后放行非已发布内容（无状态 HMAC，无服务端存储）。
     - name: RedirectService
       description: URL 重定向管理服务
+    - name: RedisCacheMonitorService
+      description: Redis 缓存监控查询服务（只读聚合视图）。
     - name: RoleService
       description: 角色管理服务
+    - name: ServerMonitorService
+      description: 服务监控查询服务（只读聚合视图；采集在 core 进程内完成）。
     - name: SiteService
       description: 站点服务
     - name: SiteSettingService

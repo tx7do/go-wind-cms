@@ -65,7 +65,7 @@ type PostServiceHTTPServer interface {
 func RegisterPostServiceHTTPServer(s *http.Server, srv PostServiceHTTPServer) {
 	r := s.Route("/")
 	r.GET("/admin/v1/posts", _PostService_List37_HTTP_Handler(srv))
-	r.GET("/admin/v1/posts/{id}", _PostService_Get36_HTTP_Handler(srv))
+	r.GET("/admin/v1/posts/{id}", _PostService_Get38_HTTP_Handler(srv))
 	r.POST("/admin/v1/posts", _PostService_Create27_HTTP_Handler(srv))
 	r.PUT("/admin/v1/posts/{id}", _PostService_Update28_HTTP_Handler(srv))
 	r.DELETE("/admin/v1/posts/{id}", _PostService_Delete30_HTTP_Handler(srv))
@@ -97,7 +97,7 @@ func _PostService_List37_HTTP_Handler(srv PostServiceHTTPServer) func(ctx http.C
 	}
 }
 
-func _PostService_Get36_HTTP_Handler(srv PostServiceHTTPServer) func(ctx http.Context) error {
+func _PostService_Get38_HTTP_Handler(srv PostServiceHTTPServer) func(ctx http.Context) error {
 	return func(ctx http.Context) error {
 		var in v11.GetPostRequest
 		if err := ctx.BindQuery(&in); err != nil {

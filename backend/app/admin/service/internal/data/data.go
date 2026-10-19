@@ -42,6 +42,8 @@ import (
 	taskV1 "go-wind-cms/api/gen/go/task/service/v1"
 	monitorAlertV1 "go-wind-cms/api/gen/go/monitor_alert/service/v1"
 	onlineSessionV1 "go-wind-cms/api/gen/go/online_session/service/v1"
+	serverMonitorV1 "go-wind-cms/api/gen/go/server_monitor/service/v1"
+	redisCacheV1 "go-wind-cms/api/gen/go/redis_cache/service/v1"
 	flowV1 "go-wind-cms/api/gen/go/flow/service/v1"
 	webhookV1 "go-wind-cms/api/gen/go/webhook/service/v1"
 
@@ -386,6 +388,24 @@ func NewOnlineSessionServiceClient(ctx *bootstrap.Context, r registry.Discovery)
 	}
 
 	return onlineSessionV1.NewOnlineSessionServiceClient(cli)
+}
+
+func NewServerMonitorServiceClient(ctx *bootstrap.Context, r registry.Discovery) serverMonitorV1.ServerMonitorServiceClient {
+	cli, err := rpc.CreateGrpcClient(ctx.Context(), r, serviceid.NewDiscoveryName(serviceid.CoreService), ctx.GetConfig())
+	if err != nil {
+		return nil
+	}
+
+	return serverMonitorV1.NewServerMonitorServiceClient(cli)
+}
+
+func NewRedisCacheMonitorServiceClient(ctx *bootstrap.Context, r registry.Discovery) redisCacheV1.RedisCacheMonitorServiceClient {
+	cli, err := rpc.CreateGrpcClient(ctx.Context(), r, serviceid.NewDiscoveryName(serviceid.CoreService), ctx.GetConfig())
+	if err != nil {
+		return nil
+	}
+
+	return redisCacheV1.NewRedisCacheMonitorServiceClient(cli)
 }
 
 func NewCommentServiceClient(ctx *bootstrap.Context, r registry.Discovery) commentV1.CommentServiceClient {

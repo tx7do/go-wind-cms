@@ -44,7 +44,7 @@ type NavigationServiceHTTPServer interface {
 func RegisterNavigationServiceHTTPServer(s *http.Server, srv NavigationServiceHTTPServer) {
 	r := s.Route("/")
 	r.GET("/admin/v1/navigations", _NavigationService_List24_HTTP_Handler(srv))
-	r.GET("/admin/v1/navigations/{id}", _NavigationService_Get23_HTTP_Handler(srv))
+	r.GET("/admin/v1/navigations/{id}", _NavigationService_Get25_HTTP_Handler(srv))
 	r.POST("/admin/v1/navigations", _NavigationService_Create17_HTTP_Handler(srv))
 	r.PUT("/admin/v1/navigations/{id}", _NavigationService_Update18_HTTP_Handler(srv))
 	r.DELETE("/admin/v1/navigations/{id}", _NavigationService_Delete20_HTTP_Handler(srv))
@@ -69,7 +69,7 @@ func _NavigationService_List24_HTTP_Handler(srv NavigationServiceHTTPServer) fun
 	}
 }
 
-func _NavigationService_Get23_HTTP_Handler(srv NavigationServiceHTTPServer) func(ctx http.Context) error {
+func _NavigationService_Get25_HTTP_Handler(srv NavigationServiceHTTPServer) func(ctx http.Context) error {
 	return func(ctx http.Context) error {
 		var in v11.GetNavigationRequest
 		if err := ctx.BindQuery(&in); err != nil {

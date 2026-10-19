@@ -1,0 +1,139 @@
+syntax = "proto3";
+
+package server_monitor.service.v1;
+
+import "gnostic/openapi/v3/annotations.proto";
+
+import "google/protobuf/timestamp.proto";
+
+// 服务监控（只读，聚合 Go 运行时 / 数据库连接池 / 主机信息视图）。
+// 采集全部在 core 进程内完成。
+service ServerMonitorService {
+  // 查询服务监控信息
+  rpc Get (GetServerMonitorRequest) returns (ServerMonitorInfo) {}
+}
+
+// 服务监控聚合信息
+message ServerMonitorInfo {
+  GoRuntimeInfo go = 1 [
+    json_name = "go",
+    (gnostic.openapi.v3.property) = { description: "Go 运行时信息" }
+  ];
+
+  DatabaseInfo database = 2 [
+    json_name = "database",
+    (gnostic.openapi.v3.property) = { description: "数据库信息" }
+  ];
+
+  HostInfo host = 3 [
+    json_name = "host",
+    (gnostic.openapi.v3.property) = { description: "主机信息" }
+  ];
+
+  google.protobuf.Timestamp collected_at = 4 [
+    json_name = "collectedAt",
+    (gnostic.openapi.v3.property) = { description: "采集时间" }
+  ]; // 采集时间
+}
+
+// Go 运行时信息
+message GoRuntimeInfo {
+  optional string version = 1 [
+    json_name = "version",
+    (gnostic.openapi.v3.property) = { description: "Go 版本" }
+  ]; // Go 版本
+
+  optional uint32 num_goroutine = 2 [
+    json_name = "numGoroutine",
+    (gnostic.openapi.v3.property) = { description: "goroutine 数量" }
+  ]; // goroutine 数量
+
+  optional uint64 mem_alloc_bytes = 3 [
+    json_name = "memAllocBytes",
+    (gnostic.openapi.v3.property) = { description: "堆内存分配字节数" }
+  ]; // 堆内存分配
+
+  optional uint64 mem_sys_bytes = 4 [
+    json_name = "memSysBytes",
+    (gnostic.openapi.v3.property) = { description: "向系统申请的内存字节数" }
+  ]; // 系统内存占用
+
+  optional uint32 gc_cycles = 5 [
+    json_name = "gcCycles",
+    (gnostic.openapi.v3.property) = { description: "GC 完成次数" }
+  ]; // GC 次数
+
+  optional uint64 uptime_seconds = 6 [
+    json_name = "uptimeSeconds",
+    (gnostic.openapi.v3.property) = { description: "服务运行时长（秒）" }
+  ]; // 运行时长
+
+  optional google.protobuf.Timestamp started_at = 7 [
+    json_name = "startedAt",
+    (gnostic.openapi.v3.property) = { description: "进程启动时间" }
+  ]; // 启动时间
+}
+
+// 数据库信息
+message DatabaseInfo {
+  optional string driver = 1 [
+    json_name = "driver",
+    (gnostic.openapi.v3.property) = { description: "数据库类型" }
+  ]; // 数据库类型
+
+  optional bool ping_ok = 2 [
+    json_name = "pingOk",
+    (gnostic.openapi.v3.property) = { description: "连通性是否正常" }
+  ]; // 连通性
+
+  optional string ping_error = 3 [
+    json_name = "pingError",
+    (gnostic.openapi.v3.property) = { description: "连通性错误信息" }
+  ]; // 错误信息
+
+  optional uint32 max_open_connections = 4 [
+    json_name = "maxOpenConnections",
+    (gnostic.openapi.v3.property) = { description: "最大打开连接数" }
+  ]; // 最大连接数
+
+  optional uint32 open_connections = 5 [
+    json_name = "openConnections",
+    (gnostic.openapi.v3.property) = { description: "当前打开连接数" }
+  ]; // 打开连接数
+
+  optional uint32 in_use_connections = 6 [
+    json_name = "inUseConnections",
+    (gnostic.openapi.v3.property) = { description: "使用中连接数" }
+  ]; // 使用中
+
+  optional uint32 idle_connections = 7 [
+    json_name = "idleConnections",
+    (gnostic.openapi.v3.property) = { description: "空闲连接数" }
+  ]; // 空闲
+}
+
+// 主机信息
+message HostInfo {
+  optional string os = 1 [
+    json_name = "os",
+    (gnostic.openapi.v3.property) = { description: "操作系统" }
+  ]; // 操作系统
+
+  optional string arch = 2 [
+    json_name = "arch",
+    (gnostic.openapi.v3.property) = { description: "CPU 架构" }
+  ]; // CPU 架构
+
+  optional uint32 num_cpu = 3 [
+    json_name = "numCpu",
+    (gnostic.openapi.v3.property) = { description: "CPU 逻辑核数" }
+  ]; // 逻辑核数
+
+  optional string hostname = 4 [
+    json_name = "hostname",
+    (gnostic.openapi.v3.property) = { description: "主机名" }
+  ]; // 主机名
+}
+
+// 查询服务监控信息 - 请求（空）
+message GetServerMonitorRequest {}

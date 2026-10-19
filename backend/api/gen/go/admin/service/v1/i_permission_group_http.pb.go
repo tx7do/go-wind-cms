@@ -44,7 +44,7 @@ type PermissionGroupServiceHTTPServer interface {
 func RegisterPermissionGroupServiceHTTPServer(s *http.Server, srv PermissionGroupServiceHTTPServer) {
 	r := s.Route("/")
 	r.GET("/admin/v1/permission-groups", _PermissionGroupService_List34_HTTP_Handler(srv))
-	r.GET("/admin/v1/permission-groups/{id}", _PermissionGroupService_Get33_HTTP_Handler(srv))
+	r.GET("/admin/v1/permission-groups/{id}", _PermissionGroupService_Get35_HTTP_Handler(srv))
 	r.POST("/admin/v1/permission-groups", _PermissionGroupService_Create25_HTTP_Handler(srv))
 	r.PUT("/admin/v1/permission-groups/{id}", _PermissionGroupService_Update26_HTTP_Handler(srv))
 	r.DELETE("/admin/v1/permission-groups/{id}", _PermissionGroupService_Delete28_HTTP_Handler(srv))
@@ -69,7 +69,7 @@ func _PermissionGroupService_List34_HTTP_Handler(srv PermissionGroupServiceHTTPS
 	}
 }
 
-func _PermissionGroupService_Get33_HTTP_Handler(srv PermissionGroupServiceHTTPServer) func(ctx http.Context) error {
+func _PermissionGroupService_Get35_HTTP_Handler(srv PermissionGroupServiceHTTPServer) func(ctx http.Context) error {
 	return func(ctx http.Context) error {
 		var in v11.GetPermissionGroupRequest
 		if err := ctx.BindQuery(&in); err != nil {

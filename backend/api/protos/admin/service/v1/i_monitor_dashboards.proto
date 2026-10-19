@@ -1,0 +1,28 @@
+syntax = "proto3";
+
+package admin.service.v1;
+
+import "google/api/annotations.proto";
+
+import "redis_cache/service/v1/redis_cache_monitor.proto";
+import "server_monitor/service/v1/server_monitor.proto";
+
+// 服务监控查询服务（只读聚合视图；采集在 core 进程内完成）。
+service ServerMonitorService {
+  // 查询服务监控信息
+  rpc Get(server_monitor.service.v1.GetServerMonitorRequest) returns (server_monitor.service.v1.ServerMonitorInfo) {
+    option (google.api.http) = {
+      get: "/admin/v1/server-monitor"
+    };
+  }
+}
+
+// Redis 缓存监控查询服务（只读聚合视图）。
+service RedisCacheMonitorService {
+  // 查询 Redis 缓存监控信息
+  rpc Get(redis_cache.service.v1.GetRedisCacheMonitorRequest) returns (redis_cache.service.v1.RedisCacheMonitorInfo) {
+    option (google.api.http) = {
+      get: "/admin/v1/redis-cache-monitor"
+    };
+  }
+}

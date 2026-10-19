@@ -50,7 +50,7 @@ type NotificationChannelServiceHTTPServer interface {
 func RegisterNotificationChannelServiceHTTPServer(s *http.Server, srv NotificationChannelServiceHTTPServer) {
 	r := s.Route("/")
 	r.GET("/admin/v1/notification-channels", _NotificationChannelService_List26_HTTP_Handler(srv))
-	r.GET("/admin/v1/notification-channels/{id}", _NotificationChannelService_Get25_HTTP_Handler(srv))
+	r.GET("/admin/v1/notification-channels/{id}", _NotificationChannelService_Get27_HTTP_Handler(srv))
 	r.POST("/admin/v1/notification-channels", _NotificationChannelService_Create19_HTTP_Handler(srv))
 	r.PUT("/admin/v1/notification-channels/{id}", _NotificationChannelService_Update20_HTTP_Handler(srv))
 	r.DELETE("/admin/v1/notification-channels/{id}", _NotificationChannelService_Delete22_HTTP_Handler(srv))
@@ -77,7 +77,7 @@ func _NotificationChannelService_List26_HTTP_Handler(srv NotificationChannelServ
 	}
 }
 
-func _NotificationChannelService_Get25_HTTP_Handler(srv NotificationChannelServiceHTTPServer) func(ctx http.Context) error {
+func _NotificationChannelService_Get27_HTTP_Handler(srv NotificationChannelServiceHTTPServer) func(ctx http.Context) error {
 	return func(ctx http.Context) error {
 		var in v11.GetNotificationChannelRequest
 		if err := ctx.BindQuery(&in); err != nil {

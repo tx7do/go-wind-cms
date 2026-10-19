@@ -50,7 +50,7 @@ type WebhookServiceHTTPServer interface {
 func RegisterWebhookServiceHTTPServer(s *http.Server, srv WebhookServiceHTTPServer) {
 	r := s.Route("/")
 	r.GET("/admin/v1/webhooks", _WebhookService_List46_HTTP_Handler(srv))
-	r.GET("/admin/v1/webhooks/{id}", _WebhookService_Get47_HTTP_Handler(srv))
+	r.GET("/admin/v1/webhooks/{id}", _WebhookService_Get49_HTTP_Handler(srv))
 	r.POST("/admin/v1/webhooks", _WebhookService_Create36_HTTP_Handler(srv))
 	r.PUT("/admin/v1/webhooks/{id}", _WebhookService_Update37_HTTP_Handler(srv))
 	r.DELETE("/admin/v1/webhooks/{id}", _WebhookService_Delete40_HTTP_Handler(srv))
@@ -77,7 +77,7 @@ func _WebhookService_List46_HTTP_Handler(srv WebhookServiceHTTPServer) func(ctx 
 	}
 }
 
-func _WebhookService_Get47_HTTP_Handler(srv WebhookServiceHTTPServer) func(ctx http.Context) error {
+func _WebhookService_Get49_HTTP_Handler(srv WebhookServiceHTTPServer) func(ctx http.Context) error {
 	return func(ctx http.Context) error {
 		var in v11.GetWebhookRequest
 		if err := ctx.BindQuery(&in); err != nil {
