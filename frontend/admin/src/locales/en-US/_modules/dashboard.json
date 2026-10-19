@@ -70,6 +70,14 @@
       "unreadCount": "{{count}} unread",
       "viewAll": "View all",
       "empty": "No messages"
+    },
+    "mySessions": {
+      "title": "My Sessions",
+      "manage": "Manage",
+      "empty": "No active sessions",
+      "current": "Current",
+      "clientAdmin": "Admin",
+      "clientApp": "App"
     }
   }
 }

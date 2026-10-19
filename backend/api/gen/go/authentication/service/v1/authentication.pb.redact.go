@@ -286,6 +286,10 @@ func (x *LoginRequest) Redact() {
 
 	// Safe field: DeviceId
 
+	// Safe field: ClientIp
+
+	// Safe field: UserAgent
+
 	// Safe field: Jti
 
 	// Safe field: TenantCode
@@ -313,6 +317,8 @@ func (x *LoginResponse) Redact() {
 	// Safe field: RefreshExpiresIn
 
 	// Safe field: IdToken
+
+	// Safe field: Jti
 }
 
 // Ensure LogoutRequest implements the Redactor interface at compile time.

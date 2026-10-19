@@ -133,6 +133,8 @@ class AuthenticationServiceV1LoginRequest {
   String? client_id;
   String? client_secret;
   AuthenticationServiceV1ClientType? client_type;
+  /// 登录客户端 IP（BFF 从 HTTP 请求注入，写会话元数据/审计用）
+  String? clientIp;
   String? code;
   String? device_id;
   String? email;
@@ -149,12 +151,15 @@ class AuthenticationServiceV1LoginRequest {
   String? scope;
   String? tenant_code;
   int? user_id;
+  /// 登录客户端 User-Agent（BFF 注入）
+  String? userAgent;
   String? username;
 
   AuthenticationServiceV1LoginRequest({
     this.client_id,
     this.client_secret,
     this.client_type,
+    this.clientIp,
     this.code,
     this.device_id,
     this.email,
@@ -169,6 +174,7 @@ class AuthenticationServiceV1LoginRequest {
     this.scope,
     this.tenant_code,
     this.user_id,
+    this.userAgent,
     this.username,
   });
 
@@ -177,6 +183,7 @@ class AuthenticationServiceV1LoginRequest {
       client_id: json['client_id'] as String?,
       client_secret: json['client_secret'] as String?,
       client_type: json['client_type'] != null ? AuthenticationServiceV1ClientType.fromString(json['client_type'] as String) : null,
+      clientIp: json['clientIp'] as String?,
       code: json['code'] as String?,
       device_id: json['device_id'] as String?,
       email: json['email'] as String?,
@@ -191,6 +198,7 @@ class AuthenticationServiceV1LoginRequest {
       scope: json['scope'] as String?,
       tenant_code: json['tenant_code'] as String?,
       user_id: json['user_id'] as int?,
+      userAgent: json['userAgent'] as String?,
       username: json['username'] as String?,
     );
   }
@@ -200,6 +208,7 @@ class AuthenticationServiceV1LoginRequest {
     if (client_id != null) json['client_id'] = client_id;
     if (client_secret != null) json['client_secret'] = client_secret;
     if (client_type != null) json['client_type'] = client_type!.value;
+    if (clientIp != null) json['clientIp'] = clientIp;
     if (code != null) json['code'] = code;
     if (device_id != null) json['device_id'] = device_id;
     if (email != null) json['email'] = email;
@@ -214,13 +223,14 @@ class AuthenticationServiceV1LoginRequest {
     if (scope != null) json['scope'] = scope;
     if (tenant_code != null) json['tenant_code'] = tenant_code;
     if (user_id != null) json['user_id'] = user_id;
+    if (userAgent != null) json['userAgent'] = userAgent;
     if (username != null) json['username'] = username;
     return json;
   }
 
   @override
   String toString() {
-    return 'AuthenticationServiceV1LoginRequest(client_id: $client_id, client_secret: $client_secret, client_type: $client_type, code: $code, device_id: $device_id, email: $email, grant_type: $grant_type, jti: $jti, mobile: $mobile, oidc_state: $oidc_state, oidcIssuer: $oidcIssuer, password: $password, redirect_uri: $redirect_uri, refresh_token: $refresh_token, scope: $scope, tenant_code: $tenant_code, user_id: $user_id, username: $username)';
+    return 'AuthenticationServiceV1LoginRequest(client_id: $client_id, client_secret: $client_secret, client_type: $client_type, clientIp: $clientIp, code: $code, device_id: $device_id, email: $email, grant_type: $grant_type, jti: $jti, mobile: $mobile, oidc_state: $oidc_state, oidcIssuer: $oidcIssuer, password: $password, redirect_uri: $redirect_uri, refresh_token: $refresh_token, scope: $scope, tenant_code: $tenant_code, user_id: $user_id, userAgent: $userAgent, username: $username)';
   }
 
   @override
@@ -231,6 +241,7 @@ class AuthenticationServiceV1LoginRequest {
       && client_id == other.client_id
       && client_secret == other.client_secret
       && client_type == other.client_type
+      && clientIp == other.clientIp
       && code == other.code
       && device_id == other.device_id
       && email == other.email
@@ -245,6 +256,7 @@ class AuthenticationServiceV1LoginRequest {
       && scope == other.scope
       && tenant_code == other.tenant_code
       && user_id == other.user_id
+      && userAgent == other.userAgent
       && username == other.username
     ;
 
@@ -253,6 +265,7 @@ class AuthenticationServiceV1LoginRequest {
     client_id,
     client_secret,
     client_type,
+    clientIp,
     code,
     device_id,
     email,
@@ -267,6 +280,7 @@ class AuthenticationServiceV1LoginRequest {
     scope,
     tenant_code,
     user_id,
+    userAgent,
     username,
   ]);
 
@@ -274,6 +288,7 @@ class AuthenticationServiceV1LoginRequest {
     String? client_id,
     String? client_secret,
     AuthenticationServiceV1ClientType? client_type,
+    String? clientIp,
     String? code,
     String? device_id,
     String? email,
@@ -288,12 +303,14 @@ class AuthenticationServiceV1LoginRequest {
     String? scope,
     String? tenant_code,
     int? user_id,
+    String? userAgent,
     String? username,
   }) {
     return AuthenticationServiceV1LoginRequest(
       client_id: client_id ?? this.client_id,
       client_secret: client_secret ?? this.client_secret,
       client_type: client_type ?? this.client_type,
+      clientIp: clientIp ?? this.clientIp,
       code: code ?? this.code,
       device_id: device_id ?? this.device_id,
       email: email ?? this.email,
@@ -308,6 +325,7 @@ class AuthenticationServiceV1LoginRequest {
       scope: scope ?? this.scope,
       tenant_code: tenant_code ?? this.tenant_code,
       user_id: user_id ?? this.user_id,
+      userAgent: userAgent ?? this.userAgent,
       username: username ?? this.username,
     );
   }
@@ -404,6 +422,16 @@ class AuthenticationServiceV1LoginRequest {
     final f60 = jti;
     if (f60 != null) {
       w.writeString(60, f60!);
+    }
+    // field 61: clientIp
+    final f61 = clientIp;
+    if (f61 != null) {
+      w.writeString(61, f61!);
+    }
+    // field 62: userAgent
+    final f62 = userAgent;
+    if (f62 != null) {
+      w.writeString(62, f62!);
     }
     // field 70: tenant_code
     final f70 = tenant_code;
@@ -505,6 +533,16 @@ class AuthenticationServiceV1LoginRequest {
           m.jti = r.readString();
           break;
         }
+        // field 61: clientIp
+        case 61: {
+          m.clientIp = r.readString();
+          break;
+        }
+        // field 62: userAgent
+        case 62: {
+          m.userAgent = r.readString();
+          break;
+        }
         // field 70: tenant_code
         case 70: {
           m.tenant_code = r.readString();
@@ -564,6 +602,8 @@ class AuthenticationServiceV1LoginResponse {
   String? access_token;
   int? expires_in;
   String? id_token;
+  /// 本次签发的会话令牌对 ID（在线会话管理用）
+  String? jti;
   int? refresh_expires_in;
   String? refresh_token;
   String? scope;
@@ -573,6 +613,7 @@ class AuthenticationServiceV1LoginResponse {
     this.access_token,
     this.expires_in,
     this.id_token,
+    this.jti,
     this.refresh_expires_in,
     this.refresh_token,
     this.scope,
@@ -584,6 +625,7 @@ class AuthenticationServiceV1LoginResponse {
       access_token: json['access_token'] as String?,
       expires_in: json['expires_in'] != null ? int.parse(json['expires_in'].toString()) : null,
       id_token: json['id_token'] as String?,
+      jti: json['jti'] as String?,
       refresh_expires_in: json['refresh_expires_in'] != null ? int.parse(json['refresh_expires_in'].toString()) : null,
       refresh_token: json['refresh_token'] as String?,
       scope: json['scope'] as String?,
@@ -596,6 +638,7 @@ class AuthenticationServiceV1LoginResponse {
     if (access_token != null) json['access_token'] = access_token;
     if (expires_in != null) json['expires_in'] = expires_in.toString();
     if (id_token != null) json['id_token'] = id_token;
+    if (jti != null) json['jti'] = jti;
     if (refresh_expires_in != null) json['refresh_expires_in'] = refresh_expires_in.toString();
     if (refresh_token != null) json['refresh_token'] = refresh_token;
     if (scope != null) json['scope'] = scope;
@@ -605,7 +648,7 @@ class AuthenticationServiceV1LoginResponse {
 
   @override
   String toString() {
-    return 'AuthenticationServiceV1LoginResponse(access_token: $access_token, expires_in: $expires_in, id_token: $id_token, refresh_expires_in: $refresh_expires_in, refresh_token: $refresh_token, scope: $scope, token_type: $token_type)';
+    return 'AuthenticationServiceV1LoginResponse(access_token: $access_token, expires_in: $expires_in, id_token: $id_token, jti: $jti, refresh_expires_in: $refresh_expires_in, refresh_token: $refresh_token, scope: $scope, token_type: $token_type)';
   }
 
   @override
@@ -616,6 +659,7 @@ class AuthenticationServiceV1LoginResponse {
       && access_token == other.access_token
       && expires_in == other.expires_in
       && id_token == other.id_token
+      && jti == other.jti
       && refresh_expires_in == other.refresh_expires_in
       && refresh_token == other.refresh_token
       && scope == other.scope
@@ -627,6 +671,7 @@ class AuthenticationServiceV1LoginResponse {
     access_token,
     expires_in,
     id_token,
+    jti,
     refresh_expires_in,
     refresh_token,
     scope,
@@ -637,6 +682,7 @@ class AuthenticationServiceV1LoginResponse {
     String? access_token,
     int? expires_in,
     String? id_token,
+    String? jti,
     int? refresh_expires_in,
     String? refresh_token,
     String? scope,
@@ -646,6 +692,7 @@ class AuthenticationServiceV1LoginResponse {
       access_token: access_token ?? this.access_token,
       expires_in: expires_in ?? this.expires_in,
       id_token: id_token ?? this.id_token,
+      jti: jti ?? this.jti,
       refresh_expires_in: refresh_expires_in ?? this.refresh_expires_in,
       refresh_token: refresh_token ?? this.refresh_token,
       scope: scope ?? this.scope,
@@ -696,6 +743,11 @@ class AuthenticationServiceV1LoginResponse {
     if (f7 != null) {
       w.writeString(7, f7!);
     }
+    // field 60: jti
+    final f60 = jti;
+    if (f60 != null) {
+      w.writeString(60, f60!);
+    }
   }
 
   factory AuthenticationServiceV1LoginResponse.fromBuffer(List<int> bytes) {
@@ -739,6 +791,11 @@ class AuthenticationServiceV1LoginResponse {
         // field 7: id_token
         case 7: {
           m.id_token = r.readString();
+          break;
+        }
+        // field 60: jti
+        case 60: {
+          m.jti = r.readString();
           break;
         }
         default: {

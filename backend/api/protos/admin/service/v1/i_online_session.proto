@@ -1,0 +1,40 @@
+syntax = "proto3";
+
+package admin.service.v1;
+
+import "google/api/annotations.proto";
+
+import "online_session/service/v1/online_session.proto";
+
+// 在线会话管理服务（平台管理员：全量列表 + 强制下线；当前用户：本人会话）。
+service OnlineSessionService {
+  // 查询在线会话列表
+  rpc ListOnlineSession(online_session.service.v1.ListOnlineSessionRequest) returns (online_session.service.v1.ListOnlineSessionResponse) {
+    option (google.api.http) = {
+      get: "/admin/v1/online-session/sessions"
+    };
+  }
+
+  // 强制下线指定会话
+  rpc ForceLogoutSession(online_session.service.v1.ForceLogoutSessionRequest) returns (online_session.service.v1.ForceLogoutSessionResponse) {
+    option (google.api.http) = {
+      post: "/admin/v1/online-session/force-logout"
+      body: "*"
+    };
+  }
+
+  // 查询当前登录用户的在线会话
+  rpc ListMyOnlineSession(online_session.service.v1.ListMyOnlineSessionRequest) returns (online_session.service.v1.ListOnlineSessionResponse) {
+    option (google.api.http) = {
+      get: "/admin/v1/online-session/my-sessions"
+    };
+  }
+
+  // 当前用户强制下线自己的指定会话
+  rpc RevokeMyOnlineSession(online_session.service.v1.RevokeMyOnlineSessionRequest) returns (online_session.service.v1.RevokeMyOnlineSessionResponse) {
+    option (google.api.http) = {
+      post: "/admin/v1/online-session/my-sessions/revoke"
+      body: "*"
+    };
+  }
+}

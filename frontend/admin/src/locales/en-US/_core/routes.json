@@ -35,6 +35,7 @@
   "files": "File Management",
   "tasks": "Task Management",
   "monitor-alerts": "Monitor Alerts",
+  "online-sessions": "Online Sessions",
   "login-policies": "Login Policies",
   "languages": "Language Management",
   "auth": "Authentication",

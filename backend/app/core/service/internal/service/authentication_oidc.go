@@ -206,7 +206,7 @@ func (s *AuthenticationService) doGrantTypeOidcAuthorizationCode(ctx context.Con
 		return nil, err
 	}
 
-	accessTokenJWT, refreshToken, err := s.authenticator.CreateUserToken(ctx, req.GetClientType(), tokenPayload)
+	accessTokenJWT, refreshToken, _, err := s.authenticator.CreateUserToken(ctx, req.GetClientType(), tokenPayload)
 	if err != nil {
 		return nil, err
 	}

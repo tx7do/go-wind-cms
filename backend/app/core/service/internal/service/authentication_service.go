@@ -293,6 +293,8 @@ func (s *AuthenticationService) doGrantTypePassword(ctx context.Context, req *au
 		Username: user.Username,
 		ClientId: req.ClientId,
 		DeviceId: req.DeviceId,
+		Ip:       trans.Ptr(req.GetClientIp()),
+		UserAgent: trans.Ptr(req.GetUserAgent()),
 	}
 
 	// 验证权限
@@ -309,7 +311,7 @@ func (s *AuthenticationService) doGrantTypePassword(ctx context.Context, req *au
 	}
 
 	// 生成令牌
-	accessToken, refreshToken, err := s.authenticator.CreateUserToken(ctx, req.GetClientType(), tokenPayload)
+	accessToken, refreshToken, newJti, err := s.authenticator.CreateUserToken(ctx, req.GetClientType(), tokenPayload)
 	if err != nil {
 		return nil, err
 	}
@@ -318,6 +320,7 @@ func (s *AuthenticationService) doGrantTypePassword(ctx context.Context, req *au
 		TokenType:        authenticationV1.TokenType_bearer,
 		AccessToken:      accessToken,
 		RefreshToken:     trans.Ptr(refreshToken),
+		Jti:              trans.Ptr(newJti),
 		ExpiresIn:        int64(s.authenticator.GetAccessTokenExpires(req.GetClientType()).Seconds()),
 		RefreshExpiresIn: trans.Ptr(int64(s.authenticator.GetRefreshTokenExpires(req.GetClientType()).Seconds())),
 	}, nil
@@ -352,6 +355,14 @@ func (s *AuthenticationService) doGrantTypeRefreshToken(ctx context.Context, req
 		Username: user.Username,
 		ClientId: req.ClientId,
 		DeviceId: req.DeviceId,
+		Ip:       trans.Ptr(req.GetClientIp()),
+		UserAgent: trans.Ptr(req.GetUserAgent()),
+	}
+
+	// 刷新轮换继承首次登录时间：读旧会话元数据的 loginAt，轮换后回写到新元数据
+	var inheritedLoginAt int64
+	if oldMeta, mErr := s.authenticator.GetSessionMeta(ctx, req.GetClientType(), req.GetUserId(), req.GetJti()); mErr == nil && oldMeta != nil {
+		inheritedLoginAt = oldMeta.LoginAt
 	}
 
 	// 解析用户权限信息
@@ -370,9 +381,14 @@ func (s *AuthenticationService) doGrantTypeRefreshToken(ctx context.Context, req
 	}
 
 	// 生成令牌
-	accessToken, refreshToken, err := s.authenticator.CreateUserToken(ctx, req.GetClientType(), tokenPayload)
+	accessToken, refreshToken, newJti, err := s.authenticator.CreateUserToken(ctx, req.GetClientType(), tokenPayload)
 	if err != nil {
 		return nil, authenticationV1.ErrorServiceUnavailable("generate token failed")
+	}
+
+	// 刷新轮换继承首次登录时间：新元数据的 loginAt 回写为旧会话的登录时间
+	if inheritedLoginAt > 0 {
+		_ = s.authenticator.UpdateSessionLoginAt(ctx, req.GetClientType(), req.GetUserId(), newJti, inheritedLoginAt)
 	}
 
 	return &authenticationV1.LoginResponse{

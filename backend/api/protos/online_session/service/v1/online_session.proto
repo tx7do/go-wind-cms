@@ -1,0 +1,160 @@
+syntax = "proto3";
+
+package online_session.service.v1;
+
+import "gnostic/openapi/v3/annotations.proto";
+
+import "google/protobuf/timestamp.proto";
+
+import "authentication/service/v1/authentication.proto";
+
+// 在线会话管理（只读列表 + 强制下线）
+// 会话以 Redis 中的令牌对（access+refresh）为粒度：每次登录 / 刷新轮换都会产生
+// 一条会话元数据，随 refresh token 一同过期或被吊销删除。
+service OnlineSessionService {
+  // 查询在线会话列表（平台管理员）
+  rpc List (ListOnlineSessionRequest) returns (ListOnlineSessionResponse) {}
+
+  // 强制下线指定会话（吊销该会话的访问令牌与刷新令牌）
+  rpc ForceLogout (ForceLogoutSessionRequest) returns (ForceLogoutSessionResponse) {}
+
+  // 查询当前登录用户的在线会话
+  rpc ListMy (ListMyOnlineSessionRequest) returns (ListOnlineSessionResponse) {}
+
+  // 当前用户强制下线自己的指定会话
+  rpc RevokeMy (RevokeMyOnlineSessionRequest) returns (RevokeMyOnlineSessionResponse) {}
+}
+
+// 在线会话
+message OnlineSession {
+  // 会话令牌对 ID（JWT jti，唯一标识一次令牌签发）
+  optional string jti = 1 [
+    json_name = "jti",
+    (gnostic.openapi.v3.property) = { description: "会话令牌对ID" }
+  ]; // 会话令牌对ID
+
+  optional uint32 user_id = 2 [
+    json_name = "userId",
+    (gnostic.openapi.v3.property) = { description: "用户ID" }
+  ]; // 用户ID
+
+  optional string username = 3 [
+    json_name = "username",
+    (gnostic.openapi.v3.property) = { description: "用户名" }
+  ]; // 用户名
+
+  optional uint32 tenant_id = 4 [
+    json_name = "tenantId",
+    (gnostic.openapi.v3.property) = { description: "租户ID，0代表平台" }
+  ]; // 租户ID
+
+  optional authentication.service.v1.ClientType client_type = 5 [
+    json_name = "clientType",
+    (gnostic.openapi.v3.property) = { description: "客户端类型" }
+  ]; // 客户端类型
+
+  optional string ip_address = 6 [
+    json_name = "ipAddress",
+    (gnostic.openapi.v3.property) = { description: "登录IP" }
+  ]; // 登录IP
+
+  optional string user_agent = 7 [
+    json_name = "userAgent",
+    (gnostic.openapi.v3.property) = { description: "浏览器User-Agent" }
+  ]; // 浏览器User-Agent
+
+  optional google.protobuf.Timestamp login_at = 9 [
+    json_name = "loginAt",
+    (gnostic.openapi.v3.property) = { description: "登录时间（刷新轮换继承首次登录时间）" }
+  ]; // 登录时间
+
+  // 是否为当前请求所属会话（仅 ListMy 场景有意义，由 BFF 按操作者 jti 标记）
+  optional bool current = 10 [
+    json_name = "current",
+    (gnostic.openapi.v3.property) = { description: "是否为当前会话" }
+  ]; // 是否为当前会话
+}
+
+// 查询在线会话列表 - 请求
+message ListOnlineSessionRequest {
+  // 关键词过滤（模糊匹配用户名 / IP），留空返回全部
+  optional string keyword = 1 [
+    json_name = "keyword",
+    (gnostic.openapi.v3.property) = { description: "关键词，模糊匹配用户名或IP" }
+  ]; // 关键词
+
+  // 页码（从 1 开始）
+  optional uint32 page = 2 [
+    json_name = "page",
+    (gnostic.openapi.v3.property) = { description: "页码" }
+  ]; // 页码
+
+  // 每页数量
+  optional uint32 page_size = 3 [
+    json_name = "pageSize",
+    (gnostic.openapi.v3.property) = { description: "每页数量" }
+  ]; // 每页数量
+}
+
+// 查询在线会话列表 - 回应
+message ListOnlineSessionResponse {
+  repeated OnlineSession items = 1;
+  uint64 total = 2;
+}
+
+// 强制下线指定会话 - 请求
+message ForceLogoutSessionRequest {
+  optional authentication.service.v1.ClientType client_type = 1 [
+    json_name = "clientType",
+    (gnostic.openapi.v3.property) = { description: "客户端类型" }
+  ]; // 客户端类型
+
+  optional uint32 user_id = 2 [
+    json_name = "userId",
+    (gnostic.openapi.v3.property) = { description: "目标用户ID" }
+  ]; // 目标用户ID
+
+  optional string jti = 3 [
+    json_name = "jti",
+    (gnostic.openapi.v3.property) = { description: "会话令牌对ID" }
+  ]; // 会话令牌对ID
+}
+
+// 强制下线指定会话 - 回应
+message ForceLogoutSessionResponse {}
+
+// 查询当前登录用户的在线会话 - 请求。
+// 与上游不同：CMS 的用户身份不跨服务透传，admin BFF 从认证上下文取出
+// user_id 与当前 jti 显式传入（current_jti 用于标记"当前会话"）。
+message ListMyOnlineSessionRequest {
+  optional uint32 user_id = 1 [
+    json_name = "userId",
+    (gnostic.openapi.v3.property) = { description: "用户ID（BFF 注入）" }
+  ]; // 用户ID
+
+  optional string current_jti = 2 [
+    json_name = "currentJti",
+    (gnostic.openapi.v3.property) = { description: "当前会话 jti（BFF 注入，用于标记 current）" }
+  ]; // 当前会话 jti
+}
+
+// 当前用户强制下线自己的指定会话 - 请求
+message RevokeMyOnlineSessionRequest {
+  optional uint32 user_id = 1 [
+    json_name = "userId",
+    (gnostic.openapi.v3.property) = { description: "用户ID（BFF 注入）" }
+  ]; // 用户ID
+
+  optional authentication.service.v1.ClientType client_type = 2 [
+    json_name = "clientType",
+    (gnostic.openapi.v3.property) = { description: "客户端类型" }
+  ]; // 客户端类型
+
+  optional string jti = 3 [
+    json_name = "jti",
+    (gnostic.openapi.v3.property) = { description: "会话令牌对ID" }
+  ]; // 会话令牌对ID
+}
+
+// 当前用户强制下线自己的指定会话 - 回应
+message RevokeMyOnlineSessionResponse {}

@@ -185,6 +185,8 @@ export function createAuthenticationServiceClient(
 }
 // 用户登录 - 请求
 export type authenticationservicev1_LoginRequest = {
+  // 登录客户端 IP（BFF 从 HTTP 请求注入，写会话元数据/审计用）
+  clientIp?: string;
   client_id?: string;
   client_secret?: string;
   client_type?: authenticationservicev1_ClientType;
@@ -203,6 +205,8 @@ export type authenticationservicev1_LoginRequest = {
   refresh_token?: string;
   scope?: string;
   tenant_code?: string;
+  // 登录客户端 User-Agent（BFF 注入）
+  userAgent?: string;
   user_id?: number;
   username?: string;
 };
@@ -223,6 +227,8 @@ export type authenticationservicev1_LoginResponse = {
   access_token: string | undefined;
   expires_in: number | undefined;
   id_token?: string;
+  // 本次签发的会话令牌对 ID（在线会话管理用）
+  jti?: string;
   refresh_expires_in?: number;
   refresh_token?: string;
   scope?: string;

@@ -30,6 +30,7 @@ import (
 	storageV1 "go-wind-cms/api/gen/go/storage/service/v1"
 	taskV1 "go-wind-cms/api/gen/go/task/service/v1"
 	monitorAlertV1 "go-wind-cms/api/gen/go/monitor_alert/service/v1"
+	onlineSessionV1 "go-wind-cms/api/gen/go/online_session/service/v1"
 
 	"go-wind-cms/pkg/middleware/ent"
 )
@@ -52,6 +53,7 @@ func NewGrpcServer(
 
 	taskService *service.TaskService,
 	monitorAlertService *service.MonitorAlertService,
+	onlineSessionService *service.OnlineSessionService,
 
 	fileService *service.FileService,
 
@@ -140,6 +142,7 @@ func NewGrpcServer(
 
 	taskV1.RegisterTaskServiceServer(srv, taskService)
 	monitorAlertV1.RegisterMonitorAlertServiceServer(srv, monitorAlertService)
+	onlineSessionV1.RegisterOnlineSessionServiceServer(srv, onlineSessionService)
 
 	authenticationV1.RegisterLoginPolicyServiceServer(srv, loginPolicyService)
 	authenticationV1.RegisterAuthenticationServiceServer(srv, authenticationService)

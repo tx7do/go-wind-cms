@@ -288,6 +288,7 @@ func initApp(ctx *bootstrap.Context) (*kratos.App, func(), error) {
 	notificationTemplateService := service.NewNotificationTemplateService(ctx, notificationTemplateRepo)
 	notificationPreferenceService := service.NewNotificationPreferenceService(ctx, notificationPreferenceRepo, internalMessageCategoryRepo)
 	monitorAlertService := service.NewMonitorAlertService(ctx, monitorAlertRuleRepo, entClient, redisClient)
+	onlineSessionService := service.NewOnlineSessionService(ctx, authenticator)
 	monitorAlertService.RegisterNotifier(notificationService)
 
 	// 双向引用缝：站内信的系统通知经投递缝（SendDirect）走渠道路由，
@@ -341,6 +342,7 @@ func initApp(ctx *bootstrap.Context) (*kratos.App, func(), error) {
 		authenticationService, loginPolicyService, userCredentialService,
 		taskService,
 		monitorAlertService,
+		onlineSessionService,
 		fileService,
 		dictTypeService, dictEntryService, languageService,
 		tenantService, userService, roleService, positionService, orgUnitService,

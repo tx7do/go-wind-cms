@@ -53,6 +53,9 @@ managed:
       path: monitor_alert/service/v1
       value: go-wind-cms/api/gen/go/monitor_alert/service/v1;monitoralertpb
     - file_option: go_package
+      path: online_session/service/v1
+      value: go-wind-cms/api/gen/go/online_session/service/v1;onlinesessionpb
+    - file_option: go_package
       path: identity/service/v1
       value: go-wind-cms/api/gen/go/identity/service/v1;identitypb
     - file_option: go_package

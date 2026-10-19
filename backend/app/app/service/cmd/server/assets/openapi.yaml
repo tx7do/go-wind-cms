@@ -2071,6 +2071,12 @@ components:
                 device_id:
                     type: string
                     description: 设备唯一标识（可选），用于设备绑定、推送、风控等
+                clientIp:
+                    type: string
+                    description: 登录客户端 IP（BFF 从 HTTP 请求注入，写会话元数据/审计用）
+                userAgent:
+                    type: string
+                    description: 登录客户端 User-Agent（BFF 注入）
                 jti:
                     type: string
                     description: 建议客户端生成并提供 jti（JWT ID）作为唯一标识，服务端可据此防止重放攻击
@@ -2107,6 +2113,9 @@ components:
                 id_token:
                     type: string
                     description: ID 令牌，OpenID Connect 扩展中定义的 JWT 格式令牌
+                jti:
+                    type: string
+                    description: 会话令牌对ID
             description: 用户登录 - 回应
         comment.service.v1.Comment:
             type: object

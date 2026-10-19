@@ -361,6 +361,14 @@ func (m *LoginRequest) validate(all bool) error {
 		// no validation rules for DeviceId
 	}
 
+	if m.ClientIp != nil {
+		// no validation rules for ClientIp
+	}
+
+	if m.UserAgent != nil {
+		// no validation rules for UserAgent
+	}
+
 	if m.Jti != nil {
 		// no validation rules for Jti
 	}
@@ -488,6 +496,10 @@ func (m *LoginResponse) validate(all bool) error {
 
 	if m.IdToken != nil {
 		// no validation rules for IdToken
+	}
+
+	if m.Jti != nil {
+		// no validation rules for Jti
 	}
 
 	if len(errors) > 0 {

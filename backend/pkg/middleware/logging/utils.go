@@ -60,6 +60,11 @@ func extractAuthToken(htr *http.Transport) *authenticationV1.UserTokenPayload {
 }
 
 // getClientRealIP 获取客户端真实IP
+// ClientRealIP 对外导出的客户端真实 IP（登录注入会话元数据等场景复用）。
+func ClientRealIP(request *http.Request) string {
+	return getClientRealIP(request)
+}
+
 func getClientRealIP(request *http.Request) string {
 	if request == nil {
 		return ""

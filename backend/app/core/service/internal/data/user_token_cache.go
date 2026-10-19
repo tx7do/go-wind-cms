@@ -2,8 +2,10 @@ package data
 
 import (
 	"context"
+	"encoding/json"
 	"errors"
 	"fmt"
+	"strconv"
 	"strings"
 	"time"
 
@@ -26,6 +28,8 @@ const (
 	RefreshTokenKeyFormat = ProjectPrefix + "rt:%d:%d"
 	// RefreshTokenFieldKeyFormat 刷新令牌键格式（含 jti）rt:{ct}:{uid}:{jti}
 	RefreshTokenFieldKeyFormat = ProjectPrefix + "rt:%d:%d:%s"
+	// SessionMetaKeyFormat 会话元数据键格式 sm:{ct}:{uid}:{jti}
+	SessionMetaKeyFormat = ProjectPrefix + "sm:%d:%d:%s"
 
 	// BlacklistKeyFormat 访问令牌黑名单键格式 bl:{jti}
 	BlacklistKeyFormat = ProjectPrefix + "bl:%s"
@@ -158,6 +162,11 @@ func (r *UserTokenCache) RevokeTokenByJti(ctx context.Context, clientType authen
 
 	if err = r.RevokeRefreshToken(ctx, clientType, userId, jti); err != nil {
 		r.log.Errorf("remove user refresh token failed: [%v]", err)
+	}
+
+	// 联动删除会话元数据：在线会话视图随吊销即时消失
+	if metaErr := r.DeleteSessionMeta(ctx, clientType, userId, jti); metaErr != nil {
+		r.log.Errorf("remove session meta failed: [%v]", metaErr)
 	}
 
 	return err
@@ -500,4 +509,122 @@ func (r *UserTokenCache) extractJtiFromKey(key string) string {
 		return ""
 	}
 	return parts[len(parts)-1]
+}
+
+// ==============================
+// 会话元数据（在线会话功能）
+// ==============================
+
+// SessionMeta 会话元数据：令牌签发时记录的客户端信息，供在线会话列表展示。
+// 生命周期与 refresh token 对齐（TTL 同步设置），过期或吊销即从 Redis 消失，
+// 无需额外清理。
+type SessionMeta struct {
+	Username  string `json:"username,omitempty"`
+	TenantId  uint32 `json:"tenantId,omitempty"`
+	Ip        string `json:"ip,omitempty"`
+	UserAgent string `json:"ua,omitempty"`
+	DeviceId  string `json:"dev,omitempty"`
+	// LoginAt 登录时间（unix 秒）。刷新轮换继承首次登录时间，不重置。
+	LoginAt int64 `json:"loginAt"`
+}
+
+// SessionEntry 一次会话扫描得到的完整条目（键定位信息 + 元数据）。
+type SessionEntry struct {
+	ClientType authenticationV1.ClientType
+	UserId     uint32
+	Jti        string
+	Meta       *SessionMeta
+}
+
+func (r *UserTokenCache) makeSessionMetaKey(clientType authenticationV1.ClientType, userId uint32, jti string) string {
+	return fmt.Sprintf(SessionMetaKeyFormat, clientType.Number(), userId, jti)
+}
+
+// SaveSessionMeta 记录会话元数据，TTL 与 refresh token 一致。
+func (r *UserTokenCache) SaveSessionMeta(
+	ctx context.Context,
+	clientType authenticationV1.ClientType,
+	userId uint32,
+	jti string,
+	meta *SessionMeta,
+	expires time.Duration,
+) error {
+	if jti == "" || meta == nil {
+		return nil
+	}
+	raw, err := json.Marshal(meta)
+	if err != nil {
+		r.log.Errorf("marshal session meta failed for user [%d]: [%v]", userId, err)
+		return err
+	}
+	return r.set(ctx, r.makeSessionMetaKey(clientType, userId, jti), string(raw), expires)
+}
+
+// GetSessionMeta 读取单个会话元数据；会话不存在（已过期/被吊销）返回 nil。
+func (r *UserTokenCache) GetSessionMeta(
+	ctx context.Context,
+	clientType authenticationV1.ClientType,
+	userId uint32,
+	jti string,
+) (*SessionMeta, error) {
+	raw, err := r.rdb.Get(ctx, r.makeSessionMetaKey(clientType, userId, jti)).Result()
+	if err != nil {
+		return nil, nil
+	}
+	var meta SessionMeta
+	if err = json.Unmarshal([]byte(raw), &meta); err != nil {
+		return nil, nil
+	}
+	return &meta, nil
+}
+
+// DeleteSessionMeta 删除会话元数据（令牌吊销/轮换后清理）。
+func (r *UserTokenCache) DeleteSessionMeta(
+	ctx context.Context,
+	clientType authenticationV1.ClientType,
+	userId uint32,
+	jti string,
+) error {
+	if jti == "" {
+		return nil
+	}
+	return r.del(ctx, r.makeSessionMetaKey(clientType, userId, jti))
+}
+
+// ListSessionEntries 扫描全部会话元数据（在线会话列表数据源）。
+func (r *UserTokenCache) ListSessionEntries(ctx context.Context) ([]SessionEntry, error) {
+	pattern := ProjectPrefix + "sm:*:*:*"
+	keys, err := r.scanKeys(ctx, pattern)
+	if err != nil {
+		return nil, err
+	}
+
+	entries := make([]SessionEntry, 0, len(keys))
+	for _, key := range keys {
+		// 键形 gwc:sm:{ct}:{uid}:{jti}
+		parts := strings.Split(key, ":")
+		if len(parts) != 5 {
+			continue
+		}
+		clientTypeNum, uErr := strconv.ParseUint(parts[2], 10, 32)
+		userId, idErr := strconv.ParseUint(parts[3], 10, 32)
+		if uErr != nil || idErr != nil {
+			continue
+		}
+		raw, gErr := r.rdb.Get(ctx, key).Result()
+		if gErr != nil || raw == "" {
+			continue
+		}
+		var meta SessionMeta
+		if uErr = json.Unmarshal([]byte(raw), &meta); uErr != nil {
+			continue
+		}
+		entries = append(entries, SessionEntry{
+			ClientType: authenticationV1.ClientType(clientTypeNum),
+			UserId:     uint32(userId),
+			Jti:        parts[4],
+			Meta:       &meta,
+		})
+	}
+	return entries, nil
 }

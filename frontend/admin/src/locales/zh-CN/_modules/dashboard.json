@@ -70,6 +70,14 @@
       "unreadCount": "{{count}} 条未读",
       "viewAll": "查看全部",
       "empty": "暂无消息"
+    },
+    "mySessions": {
+      "title": "我的活跃会话",
+      "manage": "管理会话",
+      "empty": "暂无活跃会话",
+      "current": "当前设备",
+      "clientAdmin": "管理端",
+      "clientApp": "应用端"
     }
   }
 }

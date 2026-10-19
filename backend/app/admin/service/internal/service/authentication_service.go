@@ -10,6 +10,8 @@ import (
 	"github.com/go-kratos/kratos/v2/log"
 	khttp "github.com/go-kratos/kratos/v2/transport/http"
 	ktransport "github.com/go-kratos/kratos/v2/transport"
+
+	"go-wind-cms/pkg/middleware/logging"
 	"github.com/tx7do/go-utils/captcha"
 	"github.com/tx7do/go-utils/trans"
 	"github.com/tx7do/kratos-bootstrap/bootstrap"
@@ -253,6 +255,20 @@ func (s *AuthenticationService) Login(ctx context.Context, req *authenticationV1
 	}
 
 	req.ClientType = trans.Ptr(authenticationV1.ClientType_admin)
+
+	// 会话元数据：登录/刷新的客户端信息由 BFF 从 HTTP 请求注入
+	//（core 无法感知 HTTP 层；在线会话列表的 IP/UA 即来源于此）。
+	if tr, ok := ktransport.FromServerContext(ctx); ok {
+		if htr, hok := tr.(*khttp.Transport); hok && htr.Request() != nil {
+			httpReq := htr.Request()
+			if req.ClientIp == nil {
+				req.ClientIp = trans.Ptr(logging.ClientRealIP(httpReq))
+			}
+			if req.UserAgent == nil {
+				req.UserAgent = trans.Ptr(httpReq.UserAgent())
+			}
+		}
+	}
 
 	if req.GetGrantType() == authenticationV1.GrantType_refresh_token {
 		operator, err := auth.FromContext(ctx)

@@ -5917,6 +5917,98 @@ paths:
                                 $ref: '#/components/schemas/authentication.service.v1.GetOidcAuthorizeUrlResponse'
             security:
                 - {}
+    /admin/v1/online-session/force-logout:
+        post:
+            tags:
+                - OnlineSessionService
+            description: 强制下线指定会话
+            operationId: OnlineSessionService_ForceLogoutSession
+            requestBody:
+                content:
+                    application/json:
+                        schema:
+                            $ref: '#/components/schemas/online_session.service.v1.ForceLogoutSessionRequest'
+                required: true
+            responses:
+                "200":
+                    description: OK
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/online_session.service.v1.ForceLogoutSessionResponse'
+    /admin/v1/online-session/my-sessions:
+        get:
+            tags:
+                - OnlineSessionService
+            description: 查询当前登录用户的在线会话
+            operationId: OnlineSessionService_ListMyOnlineSession
+            parameters:
+                - name: userId
+                  in: query
+                  schema:
+                    type: integer
+                    format: uint32
+                - name: currentJti
+                  in: query
+                  schema:
+                    type: string
+            responses:
+                "200":
+                    description: OK
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/online_session.service.v1.ListOnlineSessionResponse'
+    /admin/v1/online-session/my-sessions/revoke:
+        post:
+            tags:
+                - OnlineSessionService
+            description: 当前用户强制下线自己的指定会话
+            operationId: OnlineSessionService_RevokeMyOnlineSession
+            requestBody:
+                content:
+                    application/json:
+                        schema:
+                            $ref: '#/components/schemas/online_session.service.v1.RevokeMyOnlineSessionRequest'
+                required: true
+            responses:
+                "200":
+                    description: OK
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/online_session.service.v1.RevokeMyOnlineSessionResponse'
+    /admin/v1/online-session/sessions:
+        get:
+            tags:
+                - OnlineSessionService
+            description: 查询在线会话列表
+            operationId: OnlineSessionService_ListOnlineSession
+            parameters:
+                - name: keyword
+                  in: query
+                  description: 关键词过滤（模糊匹配用户名 / IP），留空返回全部
+                  schema:
+                    type: string
+                - name: page
+                  in: query
+                  description: 页码（从 1 开始）
+                  schema:
+                    type: integer
+                    format: uint32
+                - name: pageSize
+                  in: query
+                  description: 每页数量
+                  schema:
+                    type: integer
+                    format: uint32
+            responses:
+                "200":
+                    description: OK
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/online_session.service.v1.ListOnlineSessionResponse'
     /admin/v1/operation-audit-logs:
         get:
             tags:
@@ -11758,6 +11850,12 @@ components:
                 device_id:
                     type: string
                     description: 设备唯一标识（可选），用于设备绑定、推送、风控等
+                clientIp:
+                    type: string
+                    description: 登录客户端 IP（BFF 从 HTTP 请求注入，写会话元数据/审计用）
+                userAgent:
+                    type: string
+                    description: 登录客户端 User-Agent（BFF 注入）
                 jti:
                     type: string
                     description: 建议客户端生成并提供 jti（JWT ID）作为唯一标识，服务端可据此防止重放攻击
@@ -11794,6 +11892,9 @@ components:
                 id_token:
                     type: string
                     description: ID 令牌，OpenID Connect 扩展中定义的 JWT 格式令牌
+                jti:
+                    type: string
+                    description: 会话令牌对ID
             description: 用户登录 - 回应
         authentication.service.v1.ResetPasswordByCodeRequest:
             type: object
@@ -16262,6 +16363,98 @@ components:
                     type: string
                     description: 字段掩码：留空更新全部字段
                     format: field-mask
+        online_session.service.v1.ForceLogoutSessionRequest:
+            type: object
+            properties:
+                clientType:
+                    enum:
+                        - admin
+                        - app
+                    type: string
+                    description: 客户端类型
+                    format: enum
+                userId:
+                    type: integer
+                    description: 目标用户ID
+                    format: uint32
+                jti:
+                    type: string
+                    description: 会话令牌对ID
+            description: 强制下线指定会话 - 请求
+        online_session.service.v1.ForceLogoutSessionResponse:
+            type: object
+            properties: {}
+            description: 强制下线指定会话 - 回应
+        online_session.service.v1.ListOnlineSessionResponse:
+            type: object
+            properties:
+                items:
+                    type: array
+                    items:
+                        $ref: '#/components/schemas/online_session.service.v1.OnlineSession'
+                total:
+                    type: string
+            description: 查询在线会话列表 - 回应
+        online_session.service.v1.OnlineSession:
+            type: object
+            properties:
+                jti:
+                    type: string
+                    description: 会话令牌对ID
+                userId:
+                    type: integer
+                    description: 用户ID
+                    format: uint32
+                username:
+                    type: string
+                    description: 用户名
+                tenantId:
+                    type: integer
+                    description: 租户ID，0代表平台
+                    format: uint32
+                clientType:
+                    enum:
+                        - admin
+                        - app
+                    type: string
+                    description: 客户端类型
+                    format: enum
+                ipAddress:
+                    type: string
+                    description: 登录IP
+                userAgent:
+                    type: string
+                    description: 浏览器User-Agent
+                loginAt:
+                    type: string
+                    description: 登录时间（刷新轮换继承首次登录时间）
+                    format: date-time
+                current:
+                    type: boolean
+                    description: 是否为当前会话
+            description: 在线会话
+        online_session.service.v1.RevokeMyOnlineSessionRequest:
+            type: object
+            properties:
+                userId:
+                    type: integer
+                    description: 用户ID（BFF 注入）
+                    format: uint32
+                clientType:
+                    enum:
+                        - admin
+                        - app
+                    type: string
+                    description: 客户端类型
+                    format: enum
+                jti:
+                    type: string
+                    description: 会话令牌对ID
+            description: 当前用户强制下线自己的指定会话 - 请求
+        online_session.service.v1.RevokeMyOnlineSessionResponse:
+            type: object
+            properties: {}
+            description: 当前用户强制下线自己的指定会话 - 回应
         permission.service.v1.Api:
             type: object
             properties:
@@ -18710,6 +18903,8 @@ tags:
          渠道配置页的 send-test-email，与路由规则页的 notification-rules/{id}/test-dispatch。
     - name: NotificationTemplateService
       description: 通知模板管理服务（平台管理员；租户侧由 notification_platform_guard 拒绝）
+    - name: OnlineSessionService
+      description: 在线会话管理服务（平台管理员：全量列表 + 强制下线；当前用户：本人会话）。
     - name: OperationAuditLogService
       description: 操作审计日志管理服务
     - name: OrgUnitService

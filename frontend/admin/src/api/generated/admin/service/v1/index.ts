@@ -2601,6 +2601,8 @@ export function createAuthenticationServiceClient(
 }
 // 用户登录 - 请求
 export type authenticationservicev1_LoginRequest = {
+  // 登录客户端 IP（BFF 从 HTTP 请求注入，写会话元数据/审计用）
+  clientIp?: string;
   client_id?: string;
   client_secret?: string;
   client_type?: authenticationservicev1_ClientType;
@@ -2619,6 +2621,8 @@ export type authenticationservicev1_LoginRequest = {
   refresh_token?: string;
   scope?: string;
   tenant_code?: string;
+  // 登录客户端 User-Agent（BFF 注入）
+  userAgent?: string;
   user_id?: number;
   username?: string;
 };
@@ -2639,6 +2643,8 @@ export type authenticationservicev1_LoginResponse = {
   access_token: string | undefined;
   expires_in: number | undefined;
   id_token?: string;
+  // 本次签发的会话令牌对 ID（在线会话管理用）
+  jti?: string;
   refresh_expires_in?: number;
   refresh_token?: string;
   scope?: string;
@@ -10145,6 +10151,160 @@ export type notifyservicev1_RenderNotificationTemplateResponse = {
   title: string | undefined;
 };
 
+// 在线会话管理服务（平台管理员：全量列表 + 强制下线；当前用户：本人会话）。
+export interface OnlineSessionService {
+  // 查询在线会话列表
+  ListOnlineSession(
+    request: online_sessionservicev1_ListOnlineSessionRequest,
+  ): Promise<online_sessionservicev1_ListOnlineSessionResponse>;
+  // 强制下线指定会话
+  ForceLogoutSession(
+    request: online_sessionservicev1_ForceLogoutSessionRequest,
+  ): Promise<online_sessionservicev1_ForceLogoutSessionResponse>;
+  // 查询当前登录用户的在线会话
+  ListMyOnlineSession(
+    request: online_sessionservicev1_ListMyOnlineSessionRequest,
+  ): Promise<online_sessionservicev1_ListOnlineSessionResponse>;
+  // 当前用户强制下线自己的指定会话
+  RevokeMyOnlineSession(
+    request: online_sessionservicev1_RevokeMyOnlineSessionRequest,
+  ): Promise<online_sessionservicev1_RevokeMyOnlineSessionResponse>;
+}
+
+export function createOnlineSessionServiceClient(
+  transport: ClientTransport,
+): OnlineSessionService {
+  return {
+    ListOnlineSession(request) {
+      const path = `admin/v1/online-session/sessions`;
+      const body = null;
+      const queryParams: string[] = [];
+      if (request.keyword) {
+        queryParams.push(
+          `keyword=${encodeURIComponent(request.keyword.toString())}`,
+        );
+      }
+      if (request.page) {
+        queryParams.push(
+          `page=${encodeURIComponent(request.page.toString())}`,
+        );
+      }
+      if (request.pageSize) {
+        queryParams.push(
+          `pageSize=${encodeURIComponent(request.pageSize.toString())}`,
+        );
+      }
+      let uri = path;
+      if (queryParams.length > 0) {
+        uri += `?${queryParams.join('&')}`;
+      }
+      return transport.unary(uri, 'GET', body, {
+        service: 'OnlineSessionService',
+        method: 'ListOnlineSession',
+      }) as Promise<online_sessionservicev1_ListOnlineSessionResponse>;
+    },
+    ForceLogoutSession(request) {
+      const path = `admin/v1/online-session/force-logout`;
+      const body = JSON.stringify(request);
+      return transport.unary(path, 'POST', body, {
+        service: 'OnlineSessionService',
+        method: 'ForceLogoutSession',
+      }) as Promise<online_sessionservicev1_ForceLogoutSessionResponse>;
+    },
+    ListMyOnlineSession(request) {
+      const path = `admin/v1/online-session/my-sessions`;
+      const body = null;
+      const queryParams: string[] = [];
+      if (request.userId) {
+        queryParams.push(
+          `userId=${encodeURIComponent(request.userId.toString())}`,
+        );
+      }
+      if (request.currentJti) {
+        queryParams.push(
+          `currentJti=${encodeURIComponent(request.currentJti.toString())}`,
+        );
+      }
+      let uri = path;
+      if (queryParams.length > 0) {
+        uri += `?${queryParams.join('&')}`;
+      }
+      return transport.unary(uri, 'GET', body, {
+        service: 'OnlineSessionService',
+        method: 'ListMyOnlineSession',
+      }) as Promise<online_sessionservicev1_ListOnlineSessionResponse>;
+    },
+    RevokeMyOnlineSession(request) {
+      const path = `admin/v1/online-session/my-sessions/revoke`;
+      const body = JSON.stringify(request);
+      return transport.unary(path, 'POST', body, {
+        service: 'OnlineSessionService',
+        method: 'RevokeMyOnlineSession',
+      }) as Promise<online_sessionservicev1_RevokeMyOnlineSessionResponse>;
+    },
+  };
+}
+// 查询在线会话列表 - 请求
+export type online_sessionservicev1_ListOnlineSessionRequest = {
+  // 关键词过滤（模糊匹配用户名 / IP），留空返回全部
+  keyword?: string;
+  // 页码（从 1 开始）
+  page?: number;
+  // 每页数量
+  pageSize?: number;
+};
+
+// 查询在线会话列表 - 回应
+export type online_sessionservicev1_ListOnlineSessionResponse = {
+  items: online_sessionservicev1_OnlineSession[] | undefined;
+  total: number | undefined;
+};
+
+// 在线会话
+export type online_sessionservicev1_OnlineSession = {
+  clientType?: authenticationservicev1_ClientType;
+  // 是否为当前请求所属会话（仅 ListMy 场景有意义，由 BFF 按操作者 jti 标记）
+  current?: boolean;
+  ipAddress?: string;
+  // 会话令牌对 ID（JWT jti，唯一标识一次令牌签发）
+  jti?: string;
+  loginAt?: wellKnownTimestamp;
+  tenantId?: number;
+  userAgent?: string;
+  userId?: number;
+  username?: string;
+};
+
+// 强制下线指定会话 - 请求
+export type online_sessionservicev1_ForceLogoutSessionRequest = {
+  clientType?: authenticationservicev1_ClientType;
+  jti?: string;
+  userId?: number;
+};
+
+// 强制下线指定会话 - 回应
+export type online_sessionservicev1_ForceLogoutSessionResponse = {
+};
+
+// 查询当前登录用户的在线会话 - 请求。
+// 与上游不同：CMS 的用户身份不跨服务透传，admin BFF 从认证上下文取出
+// user_id 与当前 jti 显式传入（current_jti 用于标记"当前会话"）。
+export type online_sessionservicev1_ListMyOnlineSessionRequest = {
+  currentJti?: string;
+  userId?: number;
+};
+
+// 当前用户强制下线自己的指定会话 - 请求
+export type online_sessionservicev1_RevokeMyOnlineSessionRequest = {
+  clientType?: authenticationservicev1_ClientType;
+  jti?: string;
+  userId?: number;
+};
+
+// 当前用户强制下线自己的指定会话 - 回应
+export type online_sessionservicev1_RevokeMyOnlineSessionResponse = {
+};
+
 // 操作审计日志管理服务
 export interface OperationAuditLogService {
   // 查询操作审计日志列表
@@ -16780,6 +16940,7 @@ export class ApiClient {
   private _notificationRuleService?: NotificationRuleService;
   private _notificationService?: NotificationService;
   private _notificationTemplateService?: NotificationTemplateService;
+  private _onlineSessionService?: OnlineSessionService;
   private _operationAuditLogService?: OperationAuditLogService;
   private _orgUnitService?: OrgUnitService;
   private _pageService?: PageService;
@@ -16975,6 +17136,10 @@ export class ApiClient {
 
   get notificationTemplateService(): NotificationTemplateService {
     return this._notificationTemplateService ??= createNotificationTemplateServiceClient(this._transport);
+  }
+
+  get onlineSessionService(): OnlineSessionService {
+    return this._onlineSessionService ??= createOnlineSessionServiceClient(this._transport);
   }
 
   get operationAuditLogService(): OperationAuditLogService {

@@ -334,16 +334,20 @@ type LoginRequest struct {
 	//	*LoginRequest_Username
 	//	*LoginRequest_Email
 	//	*LoginRequest_Mobile
-	Identifier    isLoginRequest_Identifier `protobuf_oneof:"identifier"`
-	Password      *string                   `protobuf:"bytes,19,opt,name=password,proto3,oneof" json:"password,omitempty"`                                                  // 用户的密码，必选项。
-	RefreshToken  *string                   `protobuf:"bytes,20,opt,name=refresh_token,proto3,oneof" json:"refresh_token,omitempty"`                                        // 更新令牌，用来获取下一次的访问令牌，必选项。
-	Code          *string                   `protobuf:"bytes,30,opt,name=code,proto3,oneof" json:"code,omitempty"`                                                          // 授权请求中收到的一次性验证/认证码。(当使用授权码模式时)
-	OidcState     *string                   `protobuf:"bytes,31,opt,name=oidc_state,proto3,oneof" json:"oidc_state,omitempty"`                                              // OIDC state
-	OidcIssuer    *string                   `protobuf:"bytes,32,opt,name=oidc_issuer,json=oidcIssuer,proto3,oneof" json:"oidc_issuer,omitempty"`                            // OIDC Issuer
-	ClientType    *ClientType               `protobuf:"varint,40,opt,name=client_type,proto3,enum=authentication.service.v1.ClientType,oneof" json:"client_type,omitempty"` // 客户端类型
-	DeviceId      *string                   `protobuf:"bytes,50,opt,name=device_id,proto3,oneof" json:"device_id,omitempty"`
-	Jti           *string                   `protobuf:"bytes,60,opt,name=jti,proto3,oneof" json:"jti,omitempty"`
-	TenantCode    *string                   `protobuf:"bytes,70,opt,name=tenant_code,proto3,oneof" json:"tenant_code,omitempty"` // 租户编号，留空表示平台登录，非空时解析对应租户
+	Identifier   isLoginRequest_Identifier `protobuf_oneof:"identifier"`
+	Password     *string                   `protobuf:"bytes,19,opt,name=password,proto3,oneof" json:"password,omitempty"`                                                  // 用户的密码，必选项。
+	RefreshToken *string                   `protobuf:"bytes,20,opt,name=refresh_token,proto3,oneof" json:"refresh_token,omitempty"`                                        // 更新令牌，用来获取下一次的访问令牌，必选项。
+	Code         *string                   `protobuf:"bytes,30,opt,name=code,proto3,oneof" json:"code,omitempty"`                                                          // 授权请求中收到的一次性验证/认证码。(当使用授权码模式时)
+	OidcState    *string                   `protobuf:"bytes,31,opt,name=oidc_state,proto3,oneof" json:"oidc_state,omitempty"`                                              // OIDC state
+	OidcIssuer   *string                   `protobuf:"bytes,32,opt,name=oidc_issuer,json=oidcIssuer,proto3,oneof" json:"oidc_issuer,omitempty"`                            // OIDC Issuer
+	ClientType   *ClientType               `protobuf:"varint,40,opt,name=client_type,proto3,enum=authentication.service.v1.ClientType,oneof" json:"client_type,omitempty"` // 客户端类型
+	DeviceId     *string                   `protobuf:"bytes,50,opt,name=device_id,proto3,oneof" json:"device_id,omitempty"`
+	// 登录客户端 IP（BFF 从 HTTP 请求注入，写会话元数据/审计用）
+	ClientIp *string `protobuf:"bytes,61,opt,name=client_ip,json=clientIp,proto3,oneof" json:"client_ip,omitempty"` // 登录客户端 IP
+	// 登录客户端 User-Agent（BFF 注入）
+	UserAgent     *string `protobuf:"bytes,62,opt,name=user_agent,json=userAgent,proto3,oneof" json:"user_agent,omitempty"` // 登录客户端 User-Agent
+	Jti           *string `protobuf:"bytes,60,opt,name=jti,proto3,oneof" json:"jti,omitempty"`
+	TenantCode    *string `protobuf:"bytes,70,opt,name=tenant_code,proto3,oneof" json:"tenant_code,omitempty"` // 租户编号，留空表示平台登录，非空时解析对应租户
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -503,6 +507,20 @@ func (x *LoginRequest) GetDeviceId() string {
 	return ""
 }
 
+func (x *LoginRequest) GetClientIp() string {
+	if x != nil && x.ClientIp != nil {
+		return *x.ClientIp
+	}
+	return ""
+}
+
+func (x *LoginRequest) GetUserAgent() string {
+	if x != nil && x.UserAgent != nil {
+		return *x.UserAgent
+	}
+	return ""
+}
+
 func (x *LoginRequest) GetJti() string {
 	if x != nil && x.Jti != nil {
 		return *x.Jti
@@ -549,8 +567,10 @@ type LoginResponse struct {
 	Scope            *string                `protobuf:"bytes,5,opt,name=scope,proto3,oneof" json:"scope,omitempty"`                                               // 以空格分隔的用户授予范围列表。如果未提供，scope则授权任何范围，默认为空列表。
 	RefreshExpiresIn *int64                 `protobuf:"varint,6,opt,name=refresh_expires_in,proto3,oneof" json:"refresh_expires_in,omitempty"`                    // 刷新令牌过期时间（秒）
 	IdToken          *string                `protobuf:"bytes,7,opt,name=id_token,proto3,oneof" json:"id_token,omitempty"`                                         // ID 令牌，OpenID Connect 扩展中定义的 JWT 格式令牌
-	unknownFields    protoimpl.UnknownFields
-	sizeCache        protoimpl.SizeCache
+	// 本次签发的会话令牌对 ID（在线会话管理用）
+	Jti           *string `protobuf:"bytes,60,opt,name=jti,proto3,oneof" json:"jti,omitempty"` // 会话令牌对ID
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
 }
 
 func (x *LoginResponse) Reset() {
@@ -628,6 +648,13 @@ func (x *LoginResponse) GetRefreshExpiresIn() int64 {
 func (x *LoginResponse) GetIdToken() string {
 	if x != nil && x.IdToken != nil {
 		return *x.IdToken
+	}
+	return ""
+}
+
+func (x *LoginResponse) GetJti() string {
+	if x != nil && x.Jti != nil {
+		return *x.Jti
 	}
 	return ""
 }
@@ -1798,7 +1825,7 @@ const file_authentication_service_v1_authentication_proto_rawDesc = "" +
 	"\r_redirect_uri\"\xc2\x01\n" +
 	"\x1bGetOidcAuthorizeUrlResponse\x12\x90\x01\n" +
 	"\rauthorize_url\x18\x01 \x01(\tBf\xbaGc\x92\x02`IdP 授权端点完整地址（含 client_id/redirect_uri/state/scope），浏览器直接跳转H\x00R\fauthorizeUrl\x88\x01\x01B\x10\n" +
-	"\x0e_authorize_url\"\xf2\x10\n" +
+	"\x0e_authorize_url\"\xd5\x11\n" +
 	"\fLoginRequest\x12\x99\x01\n" +
 	"\n" +
 	"grant_type\x18\x01 \x01(\x0e2$.authentication.service.v1.GrantTypeBS\xe0A\x02\xbaGM\x8a\x02\n" +
@@ -1823,9 +1850,12 @@ const file_authentication_service_v1_authentication_proto_rawDesc = "" +
 	"R\n" +
 	"oidcIssuer\x88\x01\x01\x12c\n" +
 	"\vclient_type\x18( \x01(\x0e2%.authentication.service.v1.ClientTypeB\x15\xbaG\x12\x92\x02\x0f客户端类型H\vR\vclient_type\x88\x01\x01\x12q\n" +
-	"\tdevice_id\x182 \x01(\tBN\xbaGK\x92\x02H设备唯一标识（可选），用于设备绑定、推送、风控等H\fR\tdevice_id\x88\x01\x01\x12\x84\x01\n" +
-	"\x03jti\x18< \x01(\tBm\xbaGj\x92\x02g建议客户端生成并提供 jti（JWT ID）作为唯一标识，服务端可据此防止重放攻击H\rR\x03jti\x88\x01\x01\x12\x99\x01\n" +
-	"\vtenant_code\x18F \x01(\tBr\xbaGo\x92\x02l租户编号，留空表示平台登录（平台超级管理员）；非空时按该编号解析对应租户H\x0eR\vtenant_code\x88\x01\x01B\f\n" +
+	"\tdevice_id\x182 \x01(\tBN\xbaGK\x92\x02H设备唯一标识（可选），用于设备绑定、推送、风控等H\fR\tdevice_id\x88\x01\x01\x12 \n" +
+	"\tclient_ip\x18= \x01(\tH\rR\bclientIp\x88\x01\x01\x12\"\n" +
+	"\n" +
+	"user_agent\x18> \x01(\tH\x0eR\tuserAgent\x88\x01\x01\x12\x84\x01\n" +
+	"\x03jti\x18< \x01(\tBm\xbaGj\x92\x02g建议客户端生成并提供 jti（JWT ID）作为唯一标识，服务端可据此防止重放攻击H\x0fR\x03jti\x88\x01\x01\x12\x99\x01\n" +
+	"\vtenant_code\x18F \x01(\tBr\xbaGo\x92\x02l租户编号，留空表示平台登录（平台超级管理员）；非空时按该编号解析对应租户H\x10R\vtenant_code\x88\x01\x01B\f\n" +
 	"\n" +
 	"identifierB\f\n" +
 	"\n" +
@@ -1842,9 +1872,12 @@ const file_authentication_service_v1_authentication_proto_rawDesc = "" +
 	"\f_oidc_issuerB\x0e\n" +
 	"\f_client_typeB\f\n" +
 	"\n" +
-	"_device_idB\x06\n" +
+	"_device_idB\f\n" +
+	"\n" +
+	"_client_ipB\r\n" +
+	"\v_user_agentB\x06\n" +
 	"\x04_jtiB\x0e\n" +
-	"\f_tenant_code\"\x8c\t\n" +
+	"\f_tenant_code\"\xc4\t\n" +
 	"\rLoginResponse\x12\xdb\x01\n" +
 	"\n" +
 	"token_type\x18\x01 \x01(\x0e2$.authentication.service.v1.TokenTypeB\x94\x01\xbaG\x90\x01\x8a\x02\b\x1a\x06Bearer\x92\x02\x81\x01令牌的类型，该值大小写不敏感，必选项，可以是bearer类型或mac类型，通常只是字符串“Bearer”。R\n" +
@@ -1856,11 +1889,13 @@ const file_authentication_service_v1_authentication_proto_rawDesc = "" +
 	"\rrefresh_token\x18\x04 \x01(\tB\x96\x02\xbaG\x92\x02\x92\x02\x8e\x02更新令牌，用来获取下一次的访问令牌，可选项。如果访问令牌将过期，则返回刷新令牌很有用，应用程序可以使用该刷新令牌来获取另一个访问令牌。但是，通过隐式授予颁发的令牌不能颁发刷新令牌。H\x00R\rrefresh_token\x88\x01\x01\x12\x92\x01\n" +
 	"\x05scope\x18\x05 \x01(\tBw\xbaGt\x92\x02q以空格分隔的用户授予范围列表。如果未提供，scope则授权任何范围，默认为空列表。H\x01R\x05scope\x88\x01\x01\x12\\\n" +
 	"\x12refresh_expires_in\x18\x06 \x01(\x03B'\xbaG$\x92\x02!刷新令牌过期时间（秒）H\x02R\x12refresh_expires_in\x88\x01\x01\x12e\n" +
-	"\bid_token\x18\a \x01(\tBD\xbaGA\x92\x02>ID 令牌，OpenID Connect 扩展中定义的 JWT 格式令牌H\x03R\bid_token\x88\x01\x01B\x10\n" +
+	"\bid_token\x18\a \x01(\tBD\xbaGA\x92\x02>ID 令牌，OpenID Connect 扩展中定义的 JWT 格式令牌H\x03R\bid_token\x88\x01\x01\x12.\n" +
+	"\x03jti\x18< \x01(\tB\x17\xbaG\x14\x92\x02\x11会话令牌对IDH\x04R\x03jti\x88\x01\x01B\x10\n" +
 	"\x0e_refresh_tokenB\b\n" +
 	"\x06_scopeB\x15\n" +
 	"\x13_refresh_expires_inB\v\n" +
-	"\t_id_token\"\x97\x01\n" +
+	"\t_id_tokenB\x06\n" +
+	"\x04_jti\"\x97\x01\n" +
 	"\rLogoutRequest\x12'\n" +
 	"\auser_id\x18\x01 \x01(\rB\x0e\xbaG\v\x92\x02\b用户IDR\x06userId\x12]\n" +
 	"\vclient_type\x18\x02 \x01(\x0e2%.authentication.service.v1.ClientTypeB\x15\xbaG\x12\x92\x02\x0f客户端类型R\n" +

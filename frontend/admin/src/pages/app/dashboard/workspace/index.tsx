@@ -10,6 +10,7 @@ import {
   List,
   Row,
   Spin,
+  Tag,
   Typography,
 } from 'antd';
 import {
@@ -26,8 +27,10 @@ import {
 import { PaginationQuery } from '@/core';
 import { useI18n } from '@/core/i18n';
 import { useUserStore } from '@/stores/user';
+import { useAuthStore } from '@/stores/auth';
 import { usePreferencesStore } from '@/core/preferences/store';
 import { fetchListUserInbox } from '@/api/hooks/internal-message';
+import { useListMyOnlineSessions } from '@/api/hooks/online-session';
 import { formatDateTime } from '@/utils/date';
 import ContentContainer from '@/layouts/components/PageContainer/ContentContainer';
 
@@ -112,6 +115,20 @@ const Workspace = () => {
     enabled: Boolean(userInfo?.id),
   });
 
+  // 我的活跃会话：当前 jti 从持久化的 access token payload 解出（与刷新绑定键同源）
+  const accessToken = useAuthStore((s) => s.accessToken);
+  const currentJti = useMemo(() => {
+    try {
+      const payload = JSON.parse(
+        atob((accessToken ?? '').split('.')[1].replace(/-/g, '+').replace(/_/g, '/')),
+      );
+      return typeof payload.jti === 'string' ? payload.jti : undefined;
+    } catch {
+      return undefined;
+    }
+  }, [accessToken]);
+  const sessionsQuery = useListMyOnlineSessions(currentJti, userInfo?.id);
+
   const unreadCount = Number(inboxUnread?.total ?? 0);
   const inboxItems = inboxRecentQuery.data?.items ?? [];
 
@@ -173,74 +190,135 @@ const Workspace = () => {
         </Row>
       </Card>
 
-      {/* 我的站内信 */}
-      <Card
-        title={t('workspace.myMessages.title')}
-        style={{ marginTop: 16 }}
-        extra={
-          <Button
-            type="link"
-            size="small"
-            icon={<RightOutlined />}
-            iconPosition="end"
-            onClick={() => navigate('/internal-message/inbox')}
+      <Row gutter={[16, 16]} style={{ marginTop: 16 }}>
+        {/* 我的站内信 */}
+        <Col xs={24} lg={12}>
+          <Card
+            title={t('workspace.myMessages.title')}
+            extra={
+              <Button
+                type="link"
+                size="small"
+                icon={<RightOutlined />}
+                iconPosition="end"
+                onClick={() => navigate('/internal-message/inbox')}
+              >
+                {t('workspace.myMessages.viewAll')}
+                {unreadCount > 0 ? ` (${unreadCount})` : ''}
+              </Button>
+            }
           >
-            {t('workspace.myMessages.viewAll')}
-            {unreadCount > 0 ? ` (${unreadCount})` : ''}
-          </Button>
-        }
-      >
-        {inboxRecentQuery.isLoading ? (
-          <div style={{ textAlign: 'center', padding: 24 }}>
-            <Spin />
-          </div>
-        ) : inboxRecentQuery.isError ? (
-          <Empty description={inboxRecentQuery.error.message} />
-        ) : (
-          <List
-            size="small"
-            dataSource={inboxItems}
-            locale={{ emptyText: t('workspace.myMessages.empty') }}
-            renderItem={(item) => {
-              const unread = item.status === 'RECEIVED';
-              return (
-                <List.Item
-                  style={{ cursor: 'pointer', padding: '8px 4px', gap: 8 }}
-                  onClick={() => navigate('/internal-message/inbox')}
-                >
-                  <span
-                    style={{
-                      width: 6,
-                      height: 6,
-                      borderRadius: '50%',
-                      flexShrink: 0,
-                      background: unread
-                        ? 'var(--ant-color-primary)'
-                        : 'transparent',
-                    }}
-                  />
-                  <span
-                    style={{
-                      flex: 1,
-                      minWidth: 0,
-                      overflow: 'hidden',
-                      textOverflow: 'ellipsis',
-                      whiteSpace: 'nowrap',
-                      fontWeight: unread ? 600 : 400,
-                      fontSize: 13,
-                    }}
-                  >
-                    {item.title || '-'}
-                  </span>
-                  <Text type="secondary" style={{ fontSize: 12, flexShrink: 0 }}>
-                    {formatDateTime(item.createdAt)}
-                  </Text>
-                </List.Item>
-              );
-            }}
-          />
-        )}
-      </Card>
+            {inboxRecentQuery.isLoading ? (
+              <div style={{ textAlign: 'center', padding: 24 }}>
+                <Spin />
+              </div>
+            ) : inboxRecentQuery.isError ? (
+              <Empty description={inboxRecentQuery.error.message} />
+            ) : (
+              <List
+                size="small"
+                dataSource={inboxItems}
+                locale={{ emptyText: t('workspace.myMessages.empty') }}
+                renderItem={(item) => {
+                  const unread = item.status === 'RECEIVED';
+                  return (
+                    <List.Item
+                      style={{ cursor: 'pointer', padding: '8px 4px', gap: 8 }}
+                      onClick={() => navigate('/internal-message/inbox')}
+                    >
+                      <span
+                        style={{
+                          width: 6,
+                          height: 6,
+                          borderRadius: '50%',
+                          flexShrink: 0,
+                          background: unread
+                            ? 'var(--ant-color-primary)'
+                            : 'transparent',
+                        }}
+                      />
+                      <span
+                        style={{
+                          flex: 1,
+                          minWidth: 0,
+                          overflow: 'hidden',
+                          textOverflow: 'ellipsis',
+                          whiteSpace: 'nowrap',
+                          fontWeight: unread ? 600 : 400,
+                          fontSize: 13,
+                        }}
+                      >
+                        {item.title || '-'}
+                      </span>
+                      <Text type="secondary" style={{ fontSize: 12, flexShrink: 0 }}>
+                        {formatDateTime(item.createdAt)}
+                      </Text>
+                    </List.Item>
+                  );
+                }}
+              />
+            )}
+          </Card>
+        </Col>
+
+        {/* 我的活跃会话 */}
+        <Col xs={24} lg={12}>
+          <Card
+            title={t('workspace.mySessions.title')}
+            extra={
+              <Button
+                type="link"
+                size="small"
+                icon={<RightOutlined />}
+                iconPosition="end"
+                onClick={() => navigate('/system/online-sessions')}
+              >
+                {t('workspace.mySessions.manage')}
+              </Button>
+            }
+          >
+            {sessionsQuery.isLoading ? (
+              <div style={{ textAlign: 'center', padding: 24 }}>
+                <Spin />
+              </div>
+            ) : sessionsQuery.isError ? (
+              <Empty description={sessionsQuery.error.message} />
+            ) : (
+              <List
+                size="small"
+                dataSource={sessionsQuery.data?.items ?? []}
+                locale={{ emptyText: t('workspace.mySessions.empty') }}
+                renderItem={(item) => (
+                  <List.Item style={{ padding: '8px 4px', gap: 8 }}>
+                    <div
+                      style={{
+                        flex: 1,
+                        minWidth: 0,
+                        display: 'flex',
+                        alignItems: 'center',
+                        gap: 8,
+                      }}
+                    >
+                      <Tag color={item.clientType === 'app' ? 'purple' : 'blue'}>
+                        {item.clientType === 'app'
+                          ? t('workspace.mySessions.clientApp')
+                          : t('workspace.mySessions.clientAdmin')}
+                      </Tag>
+                      {item.current && (
+                        <Tag color="green">{t('workspace.mySessions.current')}</Tag>
+                      )}
+                      <Text style={{ fontSize: 13 }}>{item.ipAddress || '-'}</Text>
+                    </div>
+                    <Text type="secondary" style={{ fontSize: 12, flexShrink: 0 }}>
+                      {formatDateTime(item.loginAt)}
+                    </Text>
+                  </List.Item>
+                )}
+              />
+            )}
+          </Card>
+        </Col>
+      </Row>
     </ContentContainer>
   );
 };

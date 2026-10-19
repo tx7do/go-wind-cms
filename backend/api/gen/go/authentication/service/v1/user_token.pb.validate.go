@@ -87,6 +87,14 @@ func (m *UserTokenPayload) validate(all bool) error {
 		// no validation rules for OrgUnitId
 	}
 
+	if m.Ip != nil {
+		// no validation rules for Ip
+	}
+
+	if m.UserAgent != nil {
+		// no validation rules for UserAgent
+	}
+
 	if m.IsPlatformAdmin != nil {
 		// no validation rules for IsPlatformAdmin
 	}

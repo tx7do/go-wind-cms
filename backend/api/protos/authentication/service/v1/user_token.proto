@@ -64,6 +64,16 @@ message UserTokenPayload {
     }
   ]; // 当前组织单元ID
 
+  // 登录 IP（会话元数据：在线会话列表展示用，随签发写入会话记录）
+  optional string ip = 30 [
+    json_name = "ip"
+  ]; // 登录 IP
+
+  // 登录 User-Agent（会话元数据）
+  optional string user_agent = 31 [
+    json_name = "ua"
+  ]; // 登录 User-Agent
+
   optional bool is_platform_admin = 20 [
     json_name = "ipa",
     (gnostic.openapi.v3.property) = {

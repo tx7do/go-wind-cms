@@ -1,0 +1,21 @@
+{
+  "pageTitle": "Online Sessions",
+  "moduleName": "Online Sessions",
+  "username": "Username",
+  "tenant": "Tenant",
+  "platform": "Platform",
+  "clientType": "Client",
+  "clientApp": "App",
+  "clientAdmin": "Admin",
+  "ipAddress": "Login IP",
+  "userAgent": "User-Agent",
+  "loginAt": "Login Time",
+  "keyword": "Keyword",
+  "keywordPlaceholder": "Username / IP",
+  "actions": "Actions",
+  "forceLogout": "Force Logout",
+  "forceLogoutConfirm": "Force logout this session?",
+  "forceLogoutConfirmDesc": "This session of {{user}} will be revoked immediately and the user must sign in again.",
+  "forceLogoutSuccess": "Session revoked",
+  "forceLogoutFailed": "Force logout failed"
+}

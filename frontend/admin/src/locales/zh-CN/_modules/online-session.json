@@ -1,0 +1,21 @@
+{
+  "pageTitle": "在线会话",
+  "moduleName": "在线会话",
+  "username": "用户名",
+  "tenant": "租户",
+  "platform": "平台",
+  "clientType": "客户端",
+  "clientApp": "应用端",
+  "clientAdmin": "管理端",
+  "ipAddress": "登录 IP",
+  "userAgent": "User-Agent",
+  "loginAt": "登录时间",
+  "keyword": "关键词",
+  "keywordPlaceholder": "用户名 / IP",
+  "actions": "操作",
+  "forceLogout": "强制下线",
+  "forceLogoutConfirm": "确认强制下线该会话？",
+  "forceLogoutConfirmDesc": "该用户的这个会话（{{user}}）将被立即吊销，需重新登录。",
+  "forceLogoutSuccess": "已强制下线",
+  "forceLogoutFailed": "强制下线失败"
+}

@@ -229,6 +229,16 @@ message LoginRequest {
     }
   ];
 
+  // 登录客户端 IP（BFF 从 HTTP 请求注入，写会话元数据/审计用）
+  optional string client_ip = 61 [
+    json_name = "clientIp"
+  ]; // 登录客户端 IP
+
+  // 登录客户端 User-Agent（BFF 注入）
+  optional string user_agent = 62 [
+    json_name = "userAgent"
+  ]; // 登录客户端 User-Agent
+
   optional string jti = 60 [
     json_name = "jti",
     (gnostic.openapi.v3.property) = {
@@ -295,6 +305,11 @@ message LoginResponse {
       description: "ID 令牌，OpenID Connect 扩展中定义的 JWT 格式令牌"
     }
   ]; // ID 令牌，OpenID Connect 扩展中定义的 JWT 格式令牌
+  // 本次签发的会话令牌对 ID（在线会话管理用）
+  optional string jti = 60 [
+    json_name = "jti",
+    (gnostic.openapi.v3.property) = { description: "会话令牌对ID" }
+  ]; // 会话令牌对ID
 }
 
 // 用户登出 - 请求
