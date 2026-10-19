@@ -24,6 +24,7 @@ const _ = http.SupportPackageIsVersion1
 const OperationAuthenticationServiceForgotPassword = "/admin.service.v1.AuthenticationService/ForgotPassword"
 const OperationAuthenticationServiceGenerateCaptcha = "/admin.service.v1.AuthenticationService/GenerateCaptcha"
 const OperationAuthenticationServiceGetOidcAuthorizeUrl = "/admin.service.v1.AuthenticationService/GetOidcAuthorizeUrl"
+const OperationAuthenticationServiceGetTenantBranding = "/admin.service.v1.AuthenticationService/GetTenantBranding"
 const OperationAuthenticationServiceLogin = "/admin.service.v1.AuthenticationService/Login"
 const OperationAuthenticationServiceLogout = "/admin.service.v1.AuthenticationService/Logout"
 const OperationAuthenticationServiceRefreshToken = "/admin.service.v1.AuthenticationService/RefreshToken"
@@ -38,6 +39,8 @@ type AuthenticationServiceHTTPServer interface {
 	GenerateCaptcha(context.Context, *emptypb.Empty) (*v1.GenerateCaptchaResponse, error)
 	// GetOidcAuthorizeUrl 获取 OIDC 授权跳转地址（core 生成 state 暂存 Redis，防 CSRF；免鉴权）
 	GetOidcAuthorizeUrl(context.Context, *v1.GetOidcAuthorizeUrlRequest) (*v1.GetOidcAuthorizeUrlResponse, error)
+	// GetTenantBranding 租户白标查询（免鉴权；登录页按租户编号渲染 Logo/名称）
+	GetTenantBranding(context.Context, *v1.GetTenantBrandingRequest) (*v1.GetTenantBrandingResponse, error)
 	// Login 登录
 	Login(context.Context, *v1.LoginRequest) (*v1.LoginResponse, error)
 	// Logout 登出
@@ -58,6 +61,7 @@ func RegisterAuthenticationServiceHTTPServer(s *http.Server, srv AuthenticationS
 	r.GET("/admin/v1/captcha", _AuthenticationService_GenerateCaptcha0_HTTP_Handler(srv))
 	r.POST("/admin/v1/forgot-password", _AuthenticationService_ForgotPassword0_HTTP_Handler(srv))
 	r.POST("/admin/v1/reset-password-by-code", _AuthenticationService_ResetPasswordByCode0_HTTP_Handler(srv))
+	r.POST("/admin/v1/tenant-branding", _AuthenticationService_GetTenantBranding0_HTTP_Handler(srv))
 	r.POST("/admin/v1/captcha/verify", _AuthenticationService_VerifyCaptcha0_HTTP_Handler(srv))
 }
 
@@ -212,6 +216,28 @@ func _AuthenticationService_ResetPasswordByCode0_HTTP_Handler(srv Authentication
 	}
 }
 
+func _AuthenticationService_GetTenantBranding0_HTTP_Handler(srv AuthenticationServiceHTTPServer) func(ctx http.Context) error {
+	return func(ctx http.Context) error {
+		var in v1.GetTenantBrandingRequest
+		if err := ctx.Bind(&in); err != nil {
+			return err
+		}
+		if err := ctx.BindQuery(&in); err != nil {
+			return err
+		}
+		http.SetOperation(ctx, OperationAuthenticationServiceGetTenantBranding)
+		h := ctx.Middleware(func(ctx context.Context, req interface{}) (interface{}, error) {
+			return srv.GetTenantBranding(ctx, req.(*v1.GetTenantBrandingRequest))
+		})
+		out, err := h(ctx, &in)
+		if err != nil {
+			return err
+		}
+		reply := out.(*v1.GetTenantBrandingResponse)
+		return ctx.Result(200, reply)
+	}
+}
+
 func _AuthenticationService_VerifyCaptcha0_HTTP_Handler(srv AuthenticationServiceHTTPServer) func(ctx http.Context) error {
 	return func(ctx http.Context) error {
 		var in v1.VerifyCaptchaRequest
@@ -242,6 +268,8 @@ type AuthenticationServiceHTTPClient interface {
 	GenerateCaptcha(ctx context.Context, req *emptypb.Empty, opts ...http.CallOption) (rsp *v1.GenerateCaptchaResponse, err error)
 	// GetOidcAuthorizeUrl 获取 OIDC 授权跳转地址（core 生成 state 暂存 Redis，防 CSRF；免鉴权）
 	GetOidcAuthorizeUrl(ctx context.Context, req *v1.GetOidcAuthorizeUrlRequest, opts ...http.CallOption) (rsp *v1.GetOidcAuthorizeUrlResponse, err error)
+	// GetTenantBranding 租户白标查询（免鉴权；登录页按租户编号渲染 Logo/名称）
+	GetTenantBranding(ctx context.Context, req *v1.GetTenantBrandingRequest, opts ...http.CallOption) (rsp *v1.GetTenantBrandingResponse, err error)
 	// Login 登录
 	Login(ctx context.Context, req *v1.LoginRequest, opts ...http.CallOption) (rsp *v1.LoginResponse, err error)
 	// Logout 登出
@@ -296,6 +324,20 @@ func (c *AuthenticationServiceHTTPClientImpl) GetOidcAuthorizeUrl(ctx context.Co
 	pattern := "/admin/v1/oidc/authorize-url"
 	path := binding.EncodeURL(pattern, in, false)
 	opts = append(opts, http.Operation(OperationAuthenticationServiceGetOidcAuthorizeUrl))
+	opts = append(opts, http.PathTemplate(pattern))
+	err := c.cc.Invoke(ctx, "POST", path, in, &out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return &out, nil
+}
+
+// GetTenantBranding 租户白标查询（免鉴权；登录页按租户编号渲染 Logo/名称）
+func (c *AuthenticationServiceHTTPClientImpl) GetTenantBranding(ctx context.Context, in *v1.GetTenantBrandingRequest, opts ...http.CallOption) (*v1.GetTenantBrandingResponse, error) {
+	var out v1.GetTenantBrandingResponse
+	pattern := "/admin/v1/tenant-branding"
+	path := binding.EncodeURL(pattern, in, false)
+	opts = append(opts, http.Operation(OperationAuthenticationServiceGetTenantBranding))
 	opts = append(opts, http.PathTemplate(pattern))
 	err := c.cc.Invoke(ctx, "POST", path, in, &out, opts...)
 	if err != nil {

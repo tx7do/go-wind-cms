@@ -35,6 +35,7 @@ const (
 	AuthenticationService_VerifyCaptcha_FullMethodName       = "/authentication.service.v1.AuthenticationService/VerifyCaptcha"
 	AuthenticationService_ForgotPassword_FullMethodName      = "/authentication.service.v1.AuthenticationService/ForgotPassword"
 	AuthenticationService_ResetPasswordByCode_FullMethodName = "/authentication.service.v1.AuthenticationService/ResetPasswordByCode"
+	AuthenticationService_GetTenantBranding_FullMethodName   = "/authentication.service.v1.AuthenticationService/GetTenantBranding"
 )
 
 // AuthenticationServiceClient is the client API for AuthenticationService service.
@@ -74,6 +75,9 @@ type AuthenticationServiceClient interface {
 	ForgotPassword(ctx context.Context, in *ForgotPasswordRequest, opts ...grpc.CallOption) (*emptypb.Empty, error)
 	// 凭邮箱验证码重置密码（免鉴权）：校验通过后重置密码并吊销该用户全部会话。
 	ResetPasswordByCode(ctx context.Context, in *ResetPasswordByCodeRequest, opts ...grpc.CallOption) (*emptypb.Empty, error)
+	// 租户白标查询（免鉴权；登录前按租户编号取展示信息）。
+	// 只暴露展示字段（名称/Logo），不泄露任何运营/配置数据。
+	GetTenantBranding(ctx context.Context, in *GetTenantBrandingRequest, opts ...grpc.CallOption) (*GetTenantBrandingResponse, error)
 }
 
 type authenticationServiceClient struct {
@@ -234,6 +238,16 @@ func (c *authenticationServiceClient) ResetPasswordByCode(ctx context.Context, i
 	return out, nil
 }
 
+func (c *authenticationServiceClient) GetTenantBranding(ctx context.Context, in *GetTenantBrandingRequest, opts ...grpc.CallOption) (*GetTenantBrandingResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(GetTenantBrandingResponse)
+	err := c.cc.Invoke(ctx, AuthenticationService_GetTenantBranding_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 // AuthenticationServiceServer is the server API for AuthenticationService service.
 // All implementations must embed UnimplementedAuthenticationServiceServer
 // for forward compatibility.
@@ -271,6 +285,9 @@ type AuthenticationServiceServer interface {
 	ForgotPassword(context.Context, *ForgotPasswordRequest) (*emptypb.Empty, error)
 	// 凭邮箱验证码重置密码（免鉴权）：校验通过后重置密码并吊销该用户全部会话。
 	ResetPasswordByCode(context.Context, *ResetPasswordByCodeRequest) (*emptypb.Empty, error)
+	// 租户白标查询（免鉴权；登录前按租户编号取展示信息）。
+	// 只暴露展示字段（名称/Logo），不泄露任何运营/配置数据。
+	GetTenantBranding(context.Context, *GetTenantBrandingRequest) (*GetTenantBrandingResponse, error)
 	mustEmbedUnimplementedAuthenticationServiceServer()
 }
 
@@ -325,6 +342,9 @@ func (UnimplementedAuthenticationServiceServer) ForgotPassword(context.Context, 
 }
 func (UnimplementedAuthenticationServiceServer) ResetPasswordByCode(context.Context, *ResetPasswordByCodeRequest) (*emptypb.Empty, error) {
 	return nil, status.Error(codes.Unimplemented, "method ResetPasswordByCode not implemented")
+}
+func (UnimplementedAuthenticationServiceServer) GetTenantBranding(context.Context, *GetTenantBrandingRequest) (*GetTenantBrandingResponse, error) {
+	return nil, status.Error(codes.Unimplemented, "method GetTenantBranding not implemented")
 }
 func (UnimplementedAuthenticationServiceServer) mustEmbedUnimplementedAuthenticationServiceServer() {}
 func (UnimplementedAuthenticationServiceServer) testEmbeddedByValue()                               {}
@@ -617,6 +637,24 @@ func _AuthenticationService_ResetPasswordByCode_Handler(srv interface{}, ctx con
 	return interceptor(ctx, in, info, handler)
 }
 
+func _AuthenticationService_GetTenantBranding_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(GetTenantBrandingRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(AuthenticationServiceServer).GetTenantBranding(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: AuthenticationService_GetTenantBranding_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(AuthenticationServiceServer).GetTenantBranding(ctx, req.(*GetTenantBrandingRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 // AuthenticationService_ServiceDesc is the grpc.ServiceDesc for AuthenticationService service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
@@ -683,6 +721,10 @@ var AuthenticationService_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "ResetPasswordByCode",
 			Handler:    _AuthenticationService_ResetPasswordByCode_Handler,
+		},
+		{
+			MethodName: "GetTenantBranding",
+			Handler:    _AuthenticationService_GetTenantBranding_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},

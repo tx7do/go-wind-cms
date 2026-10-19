@@ -10,6 +10,7 @@ import {
 import { useAuthStore } from '@/stores';
 import { Link, useNavigate, useSearchParams } from "react-router-dom";
 import { fetchGenerateCaptcha } from '@/api';
+import { fetchTenantBranding } from '@/api/hooks/tenant-branding';
 import { apiClient } from '@/api/client';
 
 /**
@@ -53,6 +54,24 @@ const Login: React.FC = () => {
   const [ssoLoading, setSsoLoading] = useState(false);
   // StrictMode 下 effect 双跑，OIDC 回调只允许消费一次
   const ssoHandledRef = useRef(false);
+
+  // 租户白标：租户编号失焦后拉取（blur 语义自带防抖），命中则替换站牌
+  const [tenantBranding, setTenantBranding] = useState<{ found: boolean; name: string; logoUrl: string } | null>(null);
+  const applyTenantBranding = useCallback(async (code: string) => {
+    const trimmed = (code || '').trim();
+    if (!trimmed) {
+      setTenantBranding(null);
+      return;
+    }
+    try {
+      const branding = await fetchTenantBranding(trimmed);
+      setTenantBranding(branding.found ? branding : null);
+    } catch (brandingError) {
+      // 白标是非关键路径：失败静默保持默认品牌，原始错误留控制台
+      console.warn('fetch tenant branding failed', brandingError);
+      setTenantBranding(null);
+    }
+  }, []);
 
   // 获取验证码
   const refreshCaptcha = useCallback(async () => {
@@ -223,14 +242,34 @@ const Login: React.FC = () => {
 
   return (
     <div className="w-full max-w-[420px]">
-      {/* 标题 */}
+      {/* 标题（租户白标命中时替换为租户 Logo/名称） */}
       <div className="mb-11">
-        <h2 className="text-[34px] font-extrabold tracking-[-0.5px] mb-2.5 text-[color:var(--ant-color-text)]">
-          {t('welcomeBack')}
-        </h2>
-        <p className="text-[15px] leading-relaxed text-[color:var(--gowind-secondary-text)]">
-          {t('loginDescription')}
-        </p>
+        {tenantBranding ? (
+          <>
+            {tenantBranding.logoUrl && (
+              <img
+                src={tenantBranding.logoUrl}
+                alt={tenantBranding.name}
+                className="h-12 mb-3 object-contain"
+              />
+            )}
+            <h2 className="text-[34px] font-extrabold tracking-[-0.5px] mb-2.5 text-[color:var(--ant-color-text)]">
+              {tenantBranding.name}
+            </h2>
+            <p className="text-[15px] leading-relaxed text-[color:var(--gowind-secondary-text)]">
+              {t('welcomeBack')}
+            </p>
+          </>
+        ) : (
+          <>
+            <h2 className="text-[34px] font-extrabold tracking-[-0.5px] mb-2.5 text-[color:var(--ant-color-text)]">
+              {t('welcomeBack')}
+            </h2>
+            <p className="text-[15px] leading-relaxed text-[color:var(--gowind-secondary-text)]">
+              {t('loginDescription')}
+            </p>
+          </>
+        )}
       </div>
 
       {/* 登录表单卡片 —— 实底表面色 + 24px 大圆角 + 主色柔影（对齐 vben 认证面板） */}
@@ -248,6 +287,7 @@ const Login: React.FC = () => {
               aria-label={t('tenantCodeLabel')}
               placeholder={t('tenantCodePlaceholder')}
               autoComplete="off"
+              onBlur={(e) => applyTenantBranding(e.target.value)}
             />
           </Form.Item>
 

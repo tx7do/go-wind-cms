@@ -9358,6 +9358,25 @@ paths:
                         application/json:
                             schema:
                                 $ref: '#/components/schemas/task.service.v1.ListTaskTypeNameResponse'
+    /admin/v1/tenant-branding:
+        post:
+            tags:
+                - AuthenticationService
+            description: 租户白标查询（免鉴权；登录页按租户编号渲染 Logo/名称）
+            operationId: AuthenticationService_GetTenantBranding
+            requestBody:
+                content:
+                    application/json:
+                        schema:
+                            $ref: '#/components/schemas/authentication.service.v1.GetTenantBrandingRequest'
+                required: true
+            responses:
+                "200":
+                    description: OK
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/authentication.service.v1.GetTenantBrandingResponse'
     /admin/v1/tenants:
         get:
             tags:
@@ -11575,6 +11594,26 @@ components:
                     type: string
                     description: IdP 授权端点完整地址（含 client_id/redirect_uri/state/scope），浏览器直接跳转
             description: OIDC 授权跳转地址 - 响应
+        authentication.service.v1.GetTenantBrandingRequest:
+            type: object
+            properties:
+                code:
+                    type: string
+                    description: 租户编号
+            description: 租户白标查询 - 请求（登录页 tenant_code 输入框的值）
+        authentication.service.v1.GetTenantBrandingResponse:
+            type: object
+            properties:
+                found:
+                    type: boolean
+                    description: 编号是否命中
+                name:
+                    type: string
+                    description: 租户名称
+                logoUrl:
+                    type: string
+                    description: 租户 Logo；未设置为空
+            description: 租户白标查询 - 响应
         authentication.service.v1.ListLoginPolicyResponse:
             type: object
             properties:
@@ -15967,9 +16006,7 @@ components:
                 updatedAt:
                     type: string
                     format: date-time
-            description: |-
-                一条通知 × 一个渠道 × 一个收件人 = 一行投递台账。
-                 不存正文快照（防敏感正文明文集邮），target 落脱敏串；排障经 related_id 跳回业务对象。
+            description: "一条通知 × 一个渠道 × 一个收件人 = 一行投递台账。\r\n 不存正文快照（防敏感正文明文集邮），target 落脱敏串；排障经 related_id 跳回业务对象。"
         notify.service.v1.NotificationPreference:
             type: object
             properties:

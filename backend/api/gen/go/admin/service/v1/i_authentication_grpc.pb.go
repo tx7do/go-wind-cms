@@ -28,6 +28,7 @@ const (
 	AuthenticationService_GenerateCaptcha_FullMethodName     = "/admin.service.v1.AuthenticationService/GenerateCaptcha"
 	AuthenticationService_ForgotPassword_FullMethodName      = "/admin.service.v1.AuthenticationService/ForgotPassword"
 	AuthenticationService_ResetPasswordByCode_FullMethodName = "/admin.service.v1.AuthenticationService/ResetPasswordByCode"
+	AuthenticationService_GetTenantBranding_FullMethodName   = "/admin.service.v1.AuthenticationService/GetTenantBranding"
 	AuthenticationService_VerifyCaptcha_FullMethodName       = "/admin.service.v1.AuthenticationService/VerifyCaptcha"
 )
 
@@ -52,6 +53,8 @@ type AuthenticationServiceClient interface {
 	ForgotPassword(ctx context.Context, in *v1.ForgotPasswordRequest, opts ...grpc.CallOption) (*emptypb.Empty, error)
 	// 凭邮箱验证码重置密码（免鉴权）
 	ResetPasswordByCode(ctx context.Context, in *v1.ResetPasswordByCodeRequest, opts ...grpc.CallOption) (*emptypb.Empty, error)
+	// 租户白标查询（免鉴权；登录页按租户编号渲染 Logo/名称）
+	GetTenantBranding(ctx context.Context, in *v1.GetTenantBrandingRequest, opts ...grpc.CallOption) (*v1.GetTenantBrandingResponse, error)
 	VerifyCaptcha(ctx context.Context, in *v1.VerifyCaptchaRequest, opts ...grpc.CallOption) (*v1.VerifyCaptchaResponse, error)
 }
 
@@ -133,6 +136,16 @@ func (c *authenticationServiceClient) ResetPasswordByCode(ctx context.Context, i
 	return out, nil
 }
 
+func (c *authenticationServiceClient) GetTenantBranding(ctx context.Context, in *v1.GetTenantBrandingRequest, opts ...grpc.CallOption) (*v1.GetTenantBrandingResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(v1.GetTenantBrandingResponse)
+	err := c.cc.Invoke(ctx, AuthenticationService_GetTenantBranding_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 func (c *authenticationServiceClient) VerifyCaptcha(ctx context.Context, in *v1.VerifyCaptchaRequest, opts ...grpc.CallOption) (*v1.VerifyCaptchaResponse, error) {
 	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
 	out := new(v1.VerifyCaptchaResponse)
@@ -164,6 +177,8 @@ type AuthenticationServiceServer interface {
 	ForgotPassword(context.Context, *v1.ForgotPasswordRequest) (*emptypb.Empty, error)
 	// 凭邮箱验证码重置密码（免鉴权）
 	ResetPasswordByCode(context.Context, *v1.ResetPasswordByCodeRequest) (*emptypb.Empty, error)
+	// 租户白标查询（免鉴权；登录页按租户编号渲染 Logo/名称）
+	GetTenantBranding(context.Context, *v1.GetTenantBrandingRequest) (*v1.GetTenantBrandingResponse, error)
 	VerifyCaptcha(context.Context, *v1.VerifyCaptchaRequest) (*v1.VerifyCaptchaResponse, error)
 	mustEmbedUnimplementedAuthenticationServiceServer()
 }
@@ -195,6 +210,9 @@ func (UnimplementedAuthenticationServiceServer) ForgotPassword(context.Context, 
 }
 func (UnimplementedAuthenticationServiceServer) ResetPasswordByCode(context.Context, *v1.ResetPasswordByCodeRequest) (*emptypb.Empty, error) {
 	return nil, status.Error(codes.Unimplemented, "method ResetPasswordByCode not implemented")
+}
+func (UnimplementedAuthenticationServiceServer) GetTenantBranding(context.Context, *v1.GetTenantBrandingRequest) (*v1.GetTenantBrandingResponse, error) {
+	return nil, status.Error(codes.Unimplemented, "method GetTenantBranding not implemented")
 }
 func (UnimplementedAuthenticationServiceServer) VerifyCaptcha(context.Context, *v1.VerifyCaptchaRequest) (*v1.VerifyCaptchaResponse, error) {
 	return nil, status.Error(codes.Unimplemented, "method VerifyCaptcha not implemented")
@@ -346,6 +364,24 @@ func _AuthenticationService_ResetPasswordByCode_Handler(srv interface{}, ctx con
 	return interceptor(ctx, in, info, handler)
 }
 
+func _AuthenticationService_GetTenantBranding_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(v1.GetTenantBrandingRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(AuthenticationServiceServer).GetTenantBranding(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: AuthenticationService_GetTenantBranding_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(AuthenticationServiceServer).GetTenantBranding(ctx, req.(*v1.GetTenantBrandingRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 func _AuthenticationService_VerifyCaptcha_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(v1.VerifyCaptchaRequest)
 	if err := dec(in); err != nil {
@@ -398,6 +434,10 @@ var AuthenticationService_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "ResetPasswordByCode",
 			Handler:    _AuthenticationService_ResetPasswordByCode_Handler,
+		},
+		{
+			MethodName: "GetTenantBranding",
+			Handler:    _AuthenticationService_GetTenantBranding_Handler,
 		},
 		{
 			MethodName: "VerifyCaptcha",

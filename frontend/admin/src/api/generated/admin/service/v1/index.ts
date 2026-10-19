@@ -2512,6 +2512,10 @@ export interface AuthenticationService {
   ResetPasswordByCode(
     request: authenticationservicev1_ResetPasswordByCodeRequest,
   ): Promise<wellKnownEmpty>;
+  // 租户白标查询（免鉴权；登录页按租户编号渲染 Logo/名称）
+  GetTenantBranding(
+    request: authenticationservicev1_GetTenantBrandingRequest,
+  ): Promise<authenticationservicev1_GetTenantBrandingResponse>;
   VerifyCaptcha(
     request: authenticationservicev1_VerifyCaptchaRequest,
   ): Promise<authenticationservicev1_VerifyCaptchaResponse>;
@@ -2576,6 +2580,14 @@ export function createAuthenticationServiceClient(
         service: 'AuthenticationService',
         method: 'ResetPasswordByCode',
       }) as Promise<wellKnownEmpty>;
+    },
+    GetTenantBranding(request) {
+      const path = `admin/v1/tenant-branding`;
+      const body = JSON.stringify(request);
+      return transport.unary(path, 'POST', body, {
+        service: 'AuthenticationService',
+        method: 'GetTenantBranding',
+      }) as Promise<authenticationservicev1_GetTenantBrandingResponse>;
     },
     VerifyCaptcha(request) {
       const path = `admin/v1/captcha/verify`;
@@ -2663,6 +2675,19 @@ export type authenticationservicev1_ResetPasswordByCodeRequest = {
   identifier?: string;
   // 新密码（AES 密文传输，与登录同规）
   newPassword?: string;
+};
+
+// 租户白标查询 - 请求（登录页 tenant_code 输入框的值）
+export type authenticationservicev1_GetTenantBrandingRequest = {
+  code: string | undefined;
+};
+
+// 租户白标查询 - 响应
+export type authenticationservicev1_GetTenantBrandingResponse = {
+  // 编号未命中时 false（前端保持默认品牌，不区分"不存在"与"未设置"）
+  found: boolean | undefined;
+  logoUrl: string | undefined;
+  name: string | undefined;
 };
 
 export type authenticationservicev1_VerifyCaptchaRequest = {

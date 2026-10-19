@@ -59,6 +59,9 @@ func NewRestMiddleware(
 		// 防枚举由 core 的"查无此人静默 200"承担，验证码单次有效 10 分钟。
 		adminV1.OperationAuthenticationServiceForgotPassword,
 		adminV1.OperationAuthenticationServiceResetPasswordByCode,
+		// AuthenticationService.GetTenantBranding：登录页按租户编号渲染 Logo/名称，
+		// 登录前置步骤；只暴露展示字段，未命中返回 found=false 防枚举。
+		adminV1.OperationAuthenticationServiceGetTenantBranding,
 	)
 
 	ms = append(ms, applogging.Server(

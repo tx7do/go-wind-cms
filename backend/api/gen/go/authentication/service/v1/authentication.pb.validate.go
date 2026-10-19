@@ -2225,6 +2225,218 @@ var _ interface {
 	ErrorName() string
 } = VerifyCaptchaRequestValidationError{}
 
+// Validate checks the field values on GetTenantBrandingRequest with the rules
+// defined in the proto definition for this message. If any rules are
+// violated, the first error encountered is returned, or nil if there are no violations.
+func (m *GetTenantBrandingRequest) Validate() error {
+	return m.validate(false)
+}
+
+// ValidateAll checks the field values on GetTenantBrandingRequest with the
+// rules defined in the proto definition for this message. If any rules are
+// violated, the result is a list of violation errors wrapped in
+// GetTenantBrandingRequestMultiError, or nil if none found.
+func (m *GetTenantBrandingRequest) ValidateAll() error {
+	return m.validate(true)
+}
+
+func (m *GetTenantBrandingRequest) validate(all bool) error {
+	if m == nil {
+		return nil
+	}
+
+	var errors []error
+
+	// no validation rules for Code
+
+	if len(errors) > 0 {
+		return GetTenantBrandingRequestMultiError(errors)
+	}
+
+	return nil
+}
+
+// GetTenantBrandingRequestMultiError is an error wrapping multiple validation
+// errors returned by GetTenantBrandingRequest.ValidateAll() if the designated
+// constraints aren't met.
+type GetTenantBrandingRequestMultiError []error
+
+// Error returns a concatenation of all the error messages it wraps.
+func (m GetTenantBrandingRequestMultiError) Error() string {
+	msgs := make([]string, 0, len(m))
+	for _, err := range m {
+		msgs = append(msgs, err.Error())
+	}
+	return strings.Join(msgs, "; ")
+}
+
+// AllErrors returns a list of validation violation errors.
+func (m GetTenantBrandingRequestMultiError) AllErrors() []error { return m }
+
+// GetTenantBrandingRequestValidationError is the validation error returned by
+// GetTenantBrandingRequest.Validate if the designated constraints aren't met.
+type GetTenantBrandingRequestValidationError struct {
+	field  string
+	reason string
+	cause  error
+	key    bool
+}
+
+// Field function returns field value.
+func (e GetTenantBrandingRequestValidationError) Field() string { return e.field }
+
+// Reason function returns reason value.
+func (e GetTenantBrandingRequestValidationError) Reason() string { return e.reason }
+
+// Cause function returns cause value.
+func (e GetTenantBrandingRequestValidationError) Cause() error { return e.cause }
+
+// Key function returns key value.
+func (e GetTenantBrandingRequestValidationError) Key() bool { return e.key }
+
+// ErrorName returns error name.
+func (e GetTenantBrandingRequestValidationError) ErrorName() string {
+	return "GetTenantBrandingRequestValidationError"
+}
+
+// Error satisfies the builtin error interface
+func (e GetTenantBrandingRequestValidationError) Error() string {
+	cause := ""
+	if e.cause != nil {
+		cause = fmt.Sprintf(" | caused by: %v", e.cause)
+	}
+
+	key := ""
+	if e.key {
+		key = "key for "
+	}
+
+	return fmt.Sprintf(
+		"invalid %sGetTenantBrandingRequest.%s: %s%s",
+		key,
+		e.field,
+		e.reason,
+		cause)
+}
+
+var _ error = GetTenantBrandingRequestValidationError{}
+
+var _ interface {
+	Field() string
+	Reason() string
+	Key() bool
+	Cause() error
+	ErrorName() string
+} = GetTenantBrandingRequestValidationError{}
+
+// Validate checks the field values on GetTenantBrandingResponse with the rules
+// defined in the proto definition for this message. If any rules are
+// violated, the first error encountered is returned, or nil if there are no violations.
+func (m *GetTenantBrandingResponse) Validate() error {
+	return m.validate(false)
+}
+
+// ValidateAll checks the field values on GetTenantBrandingResponse with the
+// rules defined in the proto definition for this message. If any rules are
+// violated, the result is a list of violation errors wrapped in
+// GetTenantBrandingResponseMultiError, or nil if none found.
+func (m *GetTenantBrandingResponse) ValidateAll() error {
+	return m.validate(true)
+}
+
+func (m *GetTenantBrandingResponse) validate(all bool) error {
+	if m == nil {
+		return nil
+	}
+
+	var errors []error
+
+	// no validation rules for Found
+
+	// no validation rules for Name
+
+	// no validation rules for LogoUrl
+
+	if len(errors) > 0 {
+		return GetTenantBrandingResponseMultiError(errors)
+	}
+
+	return nil
+}
+
+// GetTenantBrandingResponseMultiError is an error wrapping multiple validation
+// errors returned by GetTenantBrandingResponse.ValidateAll() if the
+// designated constraints aren't met.
+type GetTenantBrandingResponseMultiError []error
+
+// Error returns a concatenation of all the error messages it wraps.
+func (m GetTenantBrandingResponseMultiError) Error() string {
+	msgs := make([]string, 0, len(m))
+	for _, err := range m {
+		msgs = append(msgs, err.Error())
+	}
+	return strings.Join(msgs, "; ")
+}
+
+// AllErrors returns a list of validation violation errors.
+func (m GetTenantBrandingResponseMultiError) AllErrors() []error { return m }
+
+// GetTenantBrandingResponseValidationError is the validation error returned by
+// GetTenantBrandingResponse.Validate if the designated constraints aren't met.
+type GetTenantBrandingResponseValidationError struct {
+	field  string
+	reason string
+	cause  error
+	key    bool
+}
+
+// Field function returns field value.
+func (e GetTenantBrandingResponseValidationError) Field() string { return e.field }
+
+// Reason function returns reason value.
+func (e GetTenantBrandingResponseValidationError) Reason() string { return e.reason }
+
+// Cause function returns cause value.
+func (e GetTenantBrandingResponseValidationError) Cause() error { return e.cause }
+
+// Key function returns key value.
+func (e GetTenantBrandingResponseValidationError) Key() bool { return e.key }
+
+// ErrorName returns error name.
+func (e GetTenantBrandingResponseValidationError) ErrorName() string {
+	return "GetTenantBrandingResponseValidationError"
+}
+
+// Error satisfies the builtin error interface
+func (e GetTenantBrandingResponseValidationError) Error() string {
+	cause := ""
+	if e.cause != nil {
+		cause = fmt.Sprintf(" | caused by: %v", e.cause)
+	}
+
+	key := ""
+	if e.key {
+		key = "key for "
+	}
+
+	return fmt.Sprintf(
+		"invalid %sGetTenantBrandingResponse.%s: %s%s",
+		key,
+		e.field,
+		e.reason,
+		cause)
+}
+
+var _ error = GetTenantBrandingResponseValidationError{}
+
+var _ interface {
+	Field() string
+	Reason() string
+	Key() bool
+	Cause() error
+	ErrorName() string
+} = GetTenantBrandingResponseValidationError{}
+
 // Validate checks the field values on ForgotPasswordRequest with the rules
 // defined in the proto definition for this message. If any rules are
 // violated, the first error encountered is returned, or nil if there are no violations.

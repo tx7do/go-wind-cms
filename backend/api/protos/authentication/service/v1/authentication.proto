@@ -67,6 +67,10 @@ service AuthenticationService {
 
   // 凭邮箱验证码重置密码（免鉴权）：校验通过后重置密码并吊销该用户全部会话。
   rpc ResetPasswordByCode (ResetPasswordByCodeRequest) returns (google.protobuf.Empty) {}
+
+  // 租户白标查询（免鉴权；登录前按租户编号取展示信息）。
+  // 只暴露展示字段（名称/Logo），不泄露任何运营/配置数据。
+  rpc GetTenantBranding (GetTenantBrandingRequest) returns (GetTenantBrandingResponse) {}
 }
 
 // 授权类型
@@ -590,6 +594,33 @@ message VerifyCaptchaRequest {
       description: "用户输入的验证码文本"
     }
   ]; // 用户输入的验证码文本
+}
+
+// 租户白标查询 - 请求（登录页 tenant_code 输入框的值）
+message GetTenantBrandingRequest {
+  string code = 1 [
+    json_name = "code",
+    (gnostic.openapi.v3.property) = { description: "租户编号" }
+  ]; // 租户编号
+}
+
+// 租户白标查询 - 响应
+message GetTenantBrandingResponse {
+  // 编号未命中时 false（前端保持默认品牌，不区分"不存在"与"未设置"）
+  bool found = 1 [
+    json_name = "found",
+    (gnostic.openapi.v3.property) = { description: "编号是否命中" }
+  ]; // 编号是否命中
+
+  string name = 2 [
+    json_name = "name",
+    (gnostic.openapi.v3.property) = { description: "租户名称" }
+  ]; // 租户名称
+
+  string logo_url = 3 [
+    json_name = "logoUrl",
+    (gnostic.openapi.v3.property) = { description: "租户 Logo；未设置为空" }
+  ]; // 租户 Logo
 }
 
 // 忘记密码 - 请求（identifier 为已绑定的邮箱）

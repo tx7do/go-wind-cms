@@ -214,6 +214,17 @@ func (s *redactedAuthenticationServiceServer) ResetPasswordByCode(ctx context.Co
 	return res, err
 }
 
+// GetTenantBranding is the redacted wrapper for the actual AuthenticationServiceServer.GetTenantBranding method
+// Unary RPC
+func (s *redactedAuthenticationServiceServer) GetTenantBranding(ctx context.Context, in *GetTenantBrandingRequest) (*GetTenantBrandingResponse, error) {
+	res, err := s.srv.GetTenantBranding(ctx, in)
+	if !s.bypass.CheckInternal(ctx) {
+		// Apply redaction to the response
+		redact.Apply(res)
+	}
+	return res, err
+}
+
 // Ensure GetOidcAuthorizeUrlRequest implements the Redactor interface at compile time.
 var _ redact.Redactor = (*GetOidcAuthorizeUrlRequest)(nil)
 
@@ -516,6 +527,34 @@ func (x *VerifyCaptchaRequest) Redact() {
 	// Safe field: CaptchaId
 
 	// Safe field: UserInput
+}
+
+// Ensure GetTenantBrandingRequest implements the Redactor interface at compile time.
+var _ redact.Redactor = (*GetTenantBrandingRequest)(nil)
+
+// Redact method implementation for GetTenantBrandingRequest
+func (x *GetTenantBrandingRequest) Redact() {
+	if x == nil {
+		return
+	}
+
+	// Safe field: Code
+}
+
+// Ensure GetTenantBrandingResponse implements the Redactor interface at compile time.
+var _ redact.Redactor = (*GetTenantBrandingResponse)(nil)
+
+// Redact method implementation for GetTenantBrandingResponse
+func (x *GetTenantBrandingResponse) Redact() {
+	if x == nil {
+		return
+	}
+
+	// Safe field: Found
+
+	// Safe field: Name
+
+	// Safe field: LogoUrl
 }
 
 // Ensure ForgotPasswordRequest implements the Redactor interface at compile time.

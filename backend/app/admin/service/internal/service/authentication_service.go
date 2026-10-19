@@ -200,6 +200,11 @@ func (s *AuthenticationService) verifyLoginCaptcha(ctx context.Context) bool {	i
 	return ok
 }
 
+// GetTenantBranding 租户白标查询（透传 core：租户数据在 core）。
+func (s *AuthenticationService) GetTenantBranding(ctx context.Context, req *authenticationV1.GetTenantBrandingRequest) (*authenticationV1.GetTenantBrandingResponse, error) {
+	return s.authenticationServiceClient.GetTenantBranding(ctx, req)
+}
+
 // ForgotPassword 忘记密码（透传 core：凭据、验证码缓存与通知缝都在 core）。
 func (s *AuthenticationService) ForgotPassword(ctx context.Context, req *authenticationV1.ForgotPasswordRequest) (*emptypb.Empty, error) {
 	return s.authenticationServiceClient.ForgotPassword(ctx, req)

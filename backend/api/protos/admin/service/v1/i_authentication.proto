@@ -78,6 +78,14 @@ service AuthenticationService {
     };
   }
 
+  // 租户白标查询（免鉴权；登录页按租户编号渲染 Logo/名称）
+  rpc GetTenantBranding (authentication.service.v1.GetTenantBrandingRequest) returns (authentication.service.v1.GetTenantBrandingResponse) {
+    option (google.api.http) = {
+      post: "/admin/v1/tenant-branding"
+      body: "*"
+    };
+  }
+
   rpc VerifyCaptcha (authentication.service.v1.VerifyCaptchaRequest) returns (authentication.service.v1.VerifyCaptchaResponse) {
     option (google.api.http) = {
       post: "/admin/v1/captcha/verify"
