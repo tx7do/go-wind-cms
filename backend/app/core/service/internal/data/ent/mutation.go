@@ -71364,6 +71364,13 @@ type NotificationChannelMutation struct {
 	webhook_secret           *string
 	webhook_sign_style       *notificationchannel.WebhookSignStyle
 	webhook_payload_template *string
+	sms_provider             *notificationchannel.SmsProvider
+	sms_access_key_id        *string
+	sms_access_secret        *string
+	sms_sign_name            *string
+	sms_template_code        *string
+	sms_app_id               *string
+	sms_region               *string
 	settings                 *string
 	clearedFields            map[string]struct{}
 	done                     bool
@@ -72562,6 +72569,349 @@ func (m *NotificationChannelMutation) ResetWebhookPayloadTemplate() {
 	delete(m.clearedFields, notificationchannel.FieldWebhookPayloadTemplate)
 }
 
+// SetSmsProvider sets the "sms_provider" field.
+func (m *NotificationChannelMutation) SetSmsProvider(np notificationchannel.SmsProvider) {
+	m.sms_provider = &np
+}
+
+// SmsProvider returns the value of the "sms_provider" field in the mutation.
+func (m *NotificationChannelMutation) SmsProvider() (r notificationchannel.SmsProvider, exists bool) {
+	v := m.sms_provider
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldSmsProvider returns the old "sms_provider" field's value of the NotificationChannel entity.
+// If the NotificationChannel object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *NotificationChannelMutation) OldSmsProvider(ctx context.Context) (v *notificationchannel.SmsProvider, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldSmsProvider is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldSmsProvider requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldSmsProvider: %w", err)
+	}
+	return oldValue.SmsProvider, nil
+}
+
+// ClearSmsProvider clears the value of the "sms_provider" field.
+func (m *NotificationChannelMutation) ClearSmsProvider() {
+	m.sms_provider = nil
+	m.clearedFields[notificationchannel.FieldSmsProvider] = struct{}{}
+}
+
+// SmsProviderCleared returns if the "sms_provider" field was cleared in this mutation.
+func (m *NotificationChannelMutation) SmsProviderCleared() bool {
+	_, ok := m.clearedFields[notificationchannel.FieldSmsProvider]
+	return ok
+}
+
+// ResetSmsProvider resets all changes to the "sms_provider" field.
+func (m *NotificationChannelMutation) ResetSmsProvider() {
+	m.sms_provider = nil
+	delete(m.clearedFields, notificationchannel.FieldSmsProvider)
+}
+
+// SetSmsAccessKeyID sets the "sms_access_key_id" field.
+func (m *NotificationChannelMutation) SetSmsAccessKeyID(s string) {
+	m.sms_access_key_id = &s
+}
+
+// SmsAccessKeyID returns the value of the "sms_access_key_id" field in the mutation.
+func (m *NotificationChannelMutation) SmsAccessKeyID() (r string, exists bool) {
+	v := m.sms_access_key_id
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldSmsAccessKeyID returns the old "sms_access_key_id" field's value of the NotificationChannel entity.
+// If the NotificationChannel object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *NotificationChannelMutation) OldSmsAccessKeyID(ctx context.Context) (v *string, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldSmsAccessKeyID is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldSmsAccessKeyID requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldSmsAccessKeyID: %w", err)
+	}
+	return oldValue.SmsAccessKeyID, nil
+}
+
+// ClearSmsAccessKeyID clears the value of the "sms_access_key_id" field.
+func (m *NotificationChannelMutation) ClearSmsAccessKeyID() {
+	m.sms_access_key_id = nil
+	m.clearedFields[notificationchannel.FieldSmsAccessKeyID] = struct{}{}
+}
+
+// SmsAccessKeyIDCleared returns if the "sms_access_key_id" field was cleared in this mutation.
+func (m *NotificationChannelMutation) SmsAccessKeyIDCleared() bool {
+	_, ok := m.clearedFields[notificationchannel.FieldSmsAccessKeyID]
+	return ok
+}
+
+// ResetSmsAccessKeyID resets all changes to the "sms_access_key_id" field.
+func (m *NotificationChannelMutation) ResetSmsAccessKeyID() {
+	m.sms_access_key_id = nil
+	delete(m.clearedFields, notificationchannel.FieldSmsAccessKeyID)
+}
+
+// SetSmsAccessSecret sets the "sms_access_secret" field.
+func (m *NotificationChannelMutation) SetSmsAccessSecret(s string) {
+	m.sms_access_secret = &s
+}
+
+// SmsAccessSecret returns the value of the "sms_access_secret" field in the mutation.
+func (m *NotificationChannelMutation) SmsAccessSecret() (r string, exists bool) {
+	v := m.sms_access_secret
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldSmsAccessSecret returns the old "sms_access_secret" field's value of the NotificationChannel entity.
+// If the NotificationChannel object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *NotificationChannelMutation) OldSmsAccessSecret(ctx context.Context) (v *string, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldSmsAccessSecret is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldSmsAccessSecret requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldSmsAccessSecret: %w", err)
+	}
+	return oldValue.SmsAccessSecret, nil
+}
+
+// ClearSmsAccessSecret clears the value of the "sms_access_secret" field.
+func (m *NotificationChannelMutation) ClearSmsAccessSecret() {
+	m.sms_access_secret = nil
+	m.clearedFields[notificationchannel.FieldSmsAccessSecret] = struct{}{}
+}
+
+// SmsAccessSecretCleared returns if the "sms_access_secret" field was cleared in this mutation.
+func (m *NotificationChannelMutation) SmsAccessSecretCleared() bool {
+	_, ok := m.clearedFields[notificationchannel.FieldSmsAccessSecret]
+	return ok
+}
+
+// ResetSmsAccessSecret resets all changes to the "sms_access_secret" field.
+func (m *NotificationChannelMutation) ResetSmsAccessSecret() {
+	m.sms_access_secret = nil
+	delete(m.clearedFields, notificationchannel.FieldSmsAccessSecret)
+}
+
+// SetSmsSignName sets the "sms_sign_name" field.
+func (m *NotificationChannelMutation) SetSmsSignName(s string) {
+	m.sms_sign_name = &s
+}
+
+// SmsSignName returns the value of the "sms_sign_name" field in the mutation.
+func (m *NotificationChannelMutation) SmsSignName() (r string, exists bool) {
+	v := m.sms_sign_name
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldSmsSignName returns the old "sms_sign_name" field's value of the NotificationChannel entity.
+// If the NotificationChannel object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *NotificationChannelMutation) OldSmsSignName(ctx context.Context) (v *string, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldSmsSignName is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldSmsSignName requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldSmsSignName: %w", err)
+	}
+	return oldValue.SmsSignName, nil
+}
+
+// ClearSmsSignName clears the value of the "sms_sign_name" field.
+func (m *NotificationChannelMutation) ClearSmsSignName() {
+	m.sms_sign_name = nil
+	m.clearedFields[notificationchannel.FieldSmsSignName] = struct{}{}
+}
+
+// SmsSignNameCleared returns if the "sms_sign_name" field was cleared in this mutation.
+func (m *NotificationChannelMutation) SmsSignNameCleared() bool {
+	_, ok := m.clearedFields[notificationchannel.FieldSmsSignName]
+	return ok
+}
+
+// ResetSmsSignName resets all changes to the "sms_sign_name" field.
+func (m *NotificationChannelMutation) ResetSmsSignName() {
+	m.sms_sign_name = nil
+	delete(m.clearedFields, notificationchannel.FieldSmsSignName)
+}
+
+// SetSmsTemplateCode sets the "sms_template_code" field.
+func (m *NotificationChannelMutation) SetSmsTemplateCode(s string) {
+	m.sms_template_code = &s
+}
+
+// SmsTemplateCode returns the value of the "sms_template_code" field in the mutation.
+func (m *NotificationChannelMutation) SmsTemplateCode() (r string, exists bool) {
+	v := m.sms_template_code
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldSmsTemplateCode returns the old "sms_template_code" field's value of the NotificationChannel entity.
+// If the NotificationChannel object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *NotificationChannelMutation) OldSmsTemplateCode(ctx context.Context) (v *string, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldSmsTemplateCode is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldSmsTemplateCode requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldSmsTemplateCode: %w", err)
+	}
+	return oldValue.SmsTemplateCode, nil
+}
+
+// ClearSmsTemplateCode clears the value of the "sms_template_code" field.
+func (m *NotificationChannelMutation) ClearSmsTemplateCode() {
+	m.sms_template_code = nil
+	m.clearedFields[notificationchannel.FieldSmsTemplateCode] = struct{}{}
+}
+
+// SmsTemplateCodeCleared returns if the "sms_template_code" field was cleared in this mutation.
+func (m *NotificationChannelMutation) SmsTemplateCodeCleared() bool {
+	_, ok := m.clearedFields[notificationchannel.FieldSmsTemplateCode]
+	return ok
+}
+
+// ResetSmsTemplateCode resets all changes to the "sms_template_code" field.
+func (m *NotificationChannelMutation) ResetSmsTemplateCode() {
+	m.sms_template_code = nil
+	delete(m.clearedFields, notificationchannel.FieldSmsTemplateCode)
+}
+
+// SetSmsAppID sets the "sms_app_id" field.
+func (m *NotificationChannelMutation) SetSmsAppID(s string) {
+	m.sms_app_id = &s
+}
+
+// SmsAppID returns the value of the "sms_app_id" field in the mutation.
+func (m *NotificationChannelMutation) SmsAppID() (r string, exists bool) {
+	v := m.sms_app_id
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldSmsAppID returns the old "sms_app_id" field's value of the NotificationChannel entity.
+// If the NotificationChannel object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *NotificationChannelMutation) OldSmsAppID(ctx context.Context) (v *string, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldSmsAppID is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldSmsAppID requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldSmsAppID: %w", err)
+	}
+	return oldValue.SmsAppID, nil
+}
+
+// ClearSmsAppID clears the value of the "sms_app_id" field.
+func (m *NotificationChannelMutation) ClearSmsAppID() {
+	m.sms_app_id = nil
+	m.clearedFields[notificationchannel.FieldSmsAppID] = struct{}{}
+}
+
+// SmsAppIDCleared returns if the "sms_app_id" field was cleared in this mutation.
+func (m *NotificationChannelMutation) SmsAppIDCleared() bool {
+	_, ok := m.clearedFields[notificationchannel.FieldSmsAppID]
+	return ok
+}
+
+// ResetSmsAppID resets all changes to the "sms_app_id" field.
+func (m *NotificationChannelMutation) ResetSmsAppID() {
+	m.sms_app_id = nil
+	delete(m.clearedFields, notificationchannel.FieldSmsAppID)
+}
+
+// SetSmsRegion sets the "sms_region" field.
+func (m *NotificationChannelMutation) SetSmsRegion(s string) {
+	m.sms_region = &s
+}
+
+// SmsRegion returns the value of the "sms_region" field in the mutation.
+func (m *NotificationChannelMutation) SmsRegion() (r string, exists bool) {
+	v := m.sms_region
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldSmsRegion returns the old "sms_region" field's value of the NotificationChannel entity.
+// If the NotificationChannel object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *NotificationChannelMutation) OldSmsRegion(ctx context.Context) (v *string, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldSmsRegion is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldSmsRegion requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldSmsRegion: %w", err)
+	}
+	return oldValue.SmsRegion, nil
+}
+
+// ClearSmsRegion clears the value of the "sms_region" field.
+func (m *NotificationChannelMutation) ClearSmsRegion() {
+	m.sms_region = nil
+	m.clearedFields[notificationchannel.FieldSmsRegion] = struct{}{}
+}
+
+// SmsRegionCleared returns if the "sms_region" field was cleared in this mutation.
+func (m *NotificationChannelMutation) SmsRegionCleared() bool {
+	_, ok := m.clearedFields[notificationchannel.FieldSmsRegion]
+	return ok
+}
+
+// ResetSmsRegion resets all changes to the "sms_region" field.
+func (m *NotificationChannelMutation) ResetSmsRegion() {
+	m.sms_region = nil
+	delete(m.clearedFields, notificationchannel.FieldSmsRegion)
+}
+
 // SetSettings sets the "settings" field.
 func (m *NotificationChannelMutation) SetSettings(s string) {
 	m.settings = &s
@@ -72645,7 +72995,7 @@ func (m *NotificationChannelMutation) Type() string {
 // order to get all numeric fields that were incremented/decremented, call
 // AddedFields().
 func (m *NotificationChannelMutation) Fields() []string {
-	fields := make([]string, 0, 22)
+	fields := make([]string, 0, 29)
 	if m.created_at != nil {
 		fields = append(fields, notificationchannel.FieldCreatedAt)
 	}
@@ -72709,6 +73059,27 @@ func (m *NotificationChannelMutation) Fields() []string {
 	if m.webhook_payload_template != nil {
 		fields = append(fields, notificationchannel.FieldWebhookPayloadTemplate)
 	}
+	if m.sms_provider != nil {
+		fields = append(fields, notificationchannel.FieldSmsProvider)
+	}
+	if m.sms_access_key_id != nil {
+		fields = append(fields, notificationchannel.FieldSmsAccessKeyID)
+	}
+	if m.sms_access_secret != nil {
+		fields = append(fields, notificationchannel.FieldSmsAccessSecret)
+	}
+	if m.sms_sign_name != nil {
+		fields = append(fields, notificationchannel.FieldSmsSignName)
+	}
+	if m.sms_template_code != nil {
+		fields = append(fields, notificationchannel.FieldSmsTemplateCode)
+	}
+	if m.sms_app_id != nil {
+		fields = append(fields, notificationchannel.FieldSmsAppID)
+	}
+	if m.sms_region != nil {
+		fields = append(fields, notificationchannel.FieldSmsRegion)
+	}
 	if m.settings != nil {
 		fields = append(fields, notificationchannel.FieldSettings)
 	}
@@ -72762,6 +73133,20 @@ func (m *NotificationChannelMutation) Field(name string) (ent.Value, bool) {
 		return m.WebhookSignStyle()
 	case notificationchannel.FieldWebhookPayloadTemplate:
 		return m.WebhookPayloadTemplate()
+	case notificationchannel.FieldSmsProvider:
+		return m.SmsProvider()
+	case notificationchannel.FieldSmsAccessKeyID:
+		return m.SmsAccessKeyID()
+	case notificationchannel.FieldSmsAccessSecret:
+		return m.SmsAccessSecret()
+	case notificationchannel.FieldSmsSignName:
+		return m.SmsSignName()
+	case notificationchannel.FieldSmsTemplateCode:
+		return m.SmsTemplateCode()
+	case notificationchannel.FieldSmsAppID:
+		return m.SmsAppID()
+	case notificationchannel.FieldSmsRegion:
+		return m.SmsRegion()
 	case notificationchannel.FieldSettings:
 		return m.Settings()
 	}
@@ -72815,6 +73200,20 @@ func (m *NotificationChannelMutation) OldField(ctx context.Context, name string)
 		return m.OldWebhookSignStyle(ctx)
 	case notificationchannel.FieldWebhookPayloadTemplate:
 		return m.OldWebhookPayloadTemplate(ctx)
+	case notificationchannel.FieldSmsProvider:
+		return m.OldSmsProvider(ctx)
+	case notificationchannel.FieldSmsAccessKeyID:
+		return m.OldSmsAccessKeyID(ctx)
+	case notificationchannel.FieldSmsAccessSecret:
+		return m.OldSmsAccessSecret(ctx)
+	case notificationchannel.FieldSmsSignName:
+		return m.OldSmsSignName(ctx)
+	case notificationchannel.FieldSmsTemplateCode:
+		return m.OldSmsTemplateCode(ctx)
+	case notificationchannel.FieldSmsAppID:
+		return m.OldSmsAppID(ctx)
+	case notificationchannel.FieldSmsRegion:
+		return m.OldSmsRegion(ctx)
 	case notificationchannel.FieldSettings:
 		return m.OldSettings(ctx)
 	}
@@ -72973,6 +73372,55 @@ func (m *NotificationChannelMutation) SetField(name string, value ent.Value) err
 		}
 		m.SetWebhookPayloadTemplate(v)
 		return nil
+	case notificationchannel.FieldSmsProvider:
+		v, ok := value.(notificationchannel.SmsProvider)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetSmsProvider(v)
+		return nil
+	case notificationchannel.FieldSmsAccessKeyID:
+		v, ok := value.(string)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetSmsAccessKeyID(v)
+		return nil
+	case notificationchannel.FieldSmsAccessSecret:
+		v, ok := value.(string)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetSmsAccessSecret(v)
+		return nil
+	case notificationchannel.FieldSmsSignName:
+		v, ok := value.(string)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetSmsSignName(v)
+		return nil
+	case notificationchannel.FieldSmsTemplateCode:
+		v, ok := value.(string)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetSmsTemplateCode(v)
+		return nil
+	case notificationchannel.FieldSmsAppID:
+		v, ok := value.(string)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetSmsAppID(v)
+		return nil
+	case notificationchannel.FieldSmsRegion:
+		v, ok := value.(string)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetSmsRegion(v)
+		return nil
 	case notificationchannel.FieldSettings:
 		v, ok := value.(string)
 		if !ok {
@@ -73118,6 +73566,27 @@ func (m *NotificationChannelMutation) ClearedFields() []string {
 	if m.FieldCleared(notificationchannel.FieldWebhookPayloadTemplate) {
 		fields = append(fields, notificationchannel.FieldWebhookPayloadTemplate)
 	}
+	if m.FieldCleared(notificationchannel.FieldSmsProvider) {
+		fields = append(fields, notificationchannel.FieldSmsProvider)
+	}
+	if m.FieldCleared(notificationchannel.FieldSmsAccessKeyID) {
+		fields = append(fields, notificationchannel.FieldSmsAccessKeyID)
+	}
+	if m.FieldCleared(notificationchannel.FieldSmsAccessSecret) {
+		fields = append(fields, notificationchannel.FieldSmsAccessSecret)
+	}
+	if m.FieldCleared(notificationchannel.FieldSmsSignName) {
+		fields = append(fields, notificationchannel.FieldSmsSignName)
+	}
+	if m.FieldCleared(notificationchannel.FieldSmsTemplateCode) {
+		fields = append(fields, notificationchannel.FieldSmsTemplateCode)
+	}
+	if m.FieldCleared(notificationchannel.FieldSmsAppID) {
+		fields = append(fields, notificationchannel.FieldSmsAppID)
+	}
+	if m.FieldCleared(notificationchannel.FieldSmsRegion) {
+		fields = append(fields, notificationchannel.FieldSmsRegion)
+	}
 	if m.FieldCleared(notificationchannel.FieldSettings) {
 		fields = append(fields, notificationchannel.FieldSettings)
 	}
@@ -73192,6 +73661,27 @@ func (m *NotificationChannelMutation) ClearField(name string) error {
 	case notificationchannel.FieldWebhookPayloadTemplate:
 		m.ClearWebhookPayloadTemplate()
 		return nil
+	case notificationchannel.FieldSmsProvider:
+		m.ClearSmsProvider()
+		return nil
+	case notificationchannel.FieldSmsAccessKeyID:
+		m.ClearSmsAccessKeyID()
+		return nil
+	case notificationchannel.FieldSmsAccessSecret:
+		m.ClearSmsAccessSecret()
+		return nil
+	case notificationchannel.FieldSmsSignName:
+		m.ClearSmsSignName()
+		return nil
+	case notificationchannel.FieldSmsTemplateCode:
+		m.ClearSmsTemplateCode()
+		return nil
+	case notificationchannel.FieldSmsAppID:
+		m.ClearSmsAppID()
+		return nil
+	case notificationchannel.FieldSmsRegion:
+		m.ClearSmsRegion()
+		return nil
 	case notificationchannel.FieldSettings:
 		m.ClearSettings()
 		return nil
@@ -73265,6 +73755,27 @@ func (m *NotificationChannelMutation) ResetField(name string) error {
 		return nil
 	case notificationchannel.FieldWebhookPayloadTemplate:
 		m.ResetWebhookPayloadTemplate()
+		return nil
+	case notificationchannel.FieldSmsProvider:
+		m.ResetSmsProvider()
+		return nil
+	case notificationchannel.FieldSmsAccessKeyID:
+		m.ResetSmsAccessKeyID()
+		return nil
+	case notificationchannel.FieldSmsAccessSecret:
+		m.ResetSmsAccessSecret()
+		return nil
+	case notificationchannel.FieldSmsSignName:
+		m.ResetSmsSignName()
+		return nil
+	case notificationchannel.FieldSmsTemplateCode:
+		m.ResetSmsTemplateCode()
+		return nil
+	case notificationchannel.FieldSmsAppID:
+		m.ResetSmsAppID()
+		return nil
+	case notificationchannel.FieldSmsRegion:
+		m.ResetSmsRegion()
 		return nil
 	case notificationchannel.FieldSettings:
 		m.ResetSettings()

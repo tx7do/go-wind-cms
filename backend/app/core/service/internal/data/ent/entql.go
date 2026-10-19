@@ -1417,6 +1417,13 @@ var schemaGraph = func() *sqlgraph.Schema {
 			notificationchannel.FieldWebhookSecret:          {Type: field.TypeString, Column: notificationchannel.FieldWebhookSecret},
 			notificationchannel.FieldWebhookSignStyle:       {Type: field.TypeEnum, Column: notificationchannel.FieldWebhookSignStyle},
 			notificationchannel.FieldWebhookPayloadTemplate: {Type: field.TypeString, Column: notificationchannel.FieldWebhookPayloadTemplate},
+			notificationchannel.FieldSmsProvider:            {Type: field.TypeEnum, Column: notificationchannel.FieldSmsProvider},
+			notificationchannel.FieldSmsAccessKeyID:         {Type: field.TypeString, Column: notificationchannel.FieldSmsAccessKeyID},
+			notificationchannel.FieldSmsAccessSecret:        {Type: field.TypeString, Column: notificationchannel.FieldSmsAccessSecret},
+			notificationchannel.FieldSmsSignName:            {Type: field.TypeString, Column: notificationchannel.FieldSmsSignName},
+			notificationchannel.FieldSmsTemplateCode:        {Type: field.TypeString, Column: notificationchannel.FieldSmsTemplateCode},
+			notificationchannel.FieldSmsAppID:               {Type: field.TypeString, Column: notificationchannel.FieldSmsAppID},
+			notificationchannel.FieldSmsRegion:              {Type: field.TypeString, Column: notificationchannel.FieldSmsRegion},
 			notificationchannel.FieldSettings:               {Type: field.TypeString, Column: notificationchannel.FieldSettings},
 		},
 	}
@@ -8685,6 +8692,41 @@ func (f *NotificationChannelFilter) WhereWebhookSignStyle(p entql.StringP) {
 // WhereWebhookPayloadTemplate applies the entql string predicate on the webhook_payload_template field.
 func (f *NotificationChannelFilter) WhereWebhookPayloadTemplate(p entql.StringP) {
 	f.Where(p.Field(notificationchannel.FieldWebhookPayloadTemplate))
+}
+
+// WhereSmsProvider applies the entql string predicate on the sms_provider field.
+func (f *NotificationChannelFilter) WhereSmsProvider(p entql.StringP) {
+	f.Where(p.Field(notificationchannel.FieldSmsProvider))
+}
+
+// WhereSmsAccessKeyID applies the entql string predicate on the sms_access_key_id field.
+func (f *NotificationChannelFilter) WhereSmsAccessKeyID(p entql.StringP) {
+	f.Where(p.Field(notificationchannel.FieldSmsAccessKeyID))
+}
+
+// WhereSmsAccessSecret applies the entql string predicate on the sms_access_secret field.
+func (f *NotificationChannelFilter) WhereSmsAccessSecret(p entql.StringP) {
+	f.Where(p.Field(notificationchannel.FieldSmsAccessSecret))
+}
+
+// WhereSmsSignName applies the entql string predicate on the sms_sign_name field.
+func (f *NotificationChannelFilter) WhereSmsSignName(p entql.StringP) {
+	f.Where(p.Field(notificationchannel.FieldSmsSignName))
+}
+
+// WhereSmsTemplateCode applies the entql string predicate on the sms_template_code field.
+func (f *NotificationChannelFilter) WhereSmsTemplateCode(p entql.StringP) {
+	f.Where(p.Field(notificationchannel.FieldSmsTemplateCode))
+}
+
+// WhereSmsAppID applies the entql string predicate on the sms_app_id field.
+func (f *NotificationChannelFilter) WhereSmsAppID(p entql.StringP) {
+	f.Where(p.Field(notificationchannel.FieldSmsAppID))
+}
+
+// WhereSmsRegion applies the entql string predicate on the sms_region field.
+func (f *NotificationChannelFilter) WhereSmsRegion(p entql.StringP) {
+	f.Where(p.Field(notificationchannel.FieldSmsRegion))
 }
 
 // WhereSettings applies the entql string predicate on the settings field.

@@ -55,6 +55,20 @@ const (
 	FieldWebhookSignStyle = "webhook_sign_style"
 	// FieldWebhookPayloadTemplate holds the string denoting the webhook_payload_template field in the database.
 	FieldWebhookPayloadTemplate = "webhook_payload_template"
+	// FieldSmsProvider holds the string denoting the sms_provider field in the database.
+	FieldSmsProvider = "sms_provider"
+	// FieldSmsAccessKeyID holds the string denoting the sms_access_key_id field in the database.
+	FieldSmsAccessKeyID = "sms_access_key_id"
+	// FieldSmsAccessSecret holds the string denoting the sms_access_secret field in the database.
+	FieldSmsAccessSecret = "sms_access_secret"
+	// FieldSmsSignName holds the string denoting the sms_sign_name field in the database.
+	FieldSmsSignName = "sms_sign_name"
+	// FieldSmsTemplateCode holds the string denoting the sms_template_code field in the database.
+	FieldSmsTemplateCode = "sms_template_code"
+	// FieldSmsAppID holds the string denoting the sms_app_id field in the database.
+	FieldSmsAppID = "sms_app_id"
+	// FieldSmsRegion holds the string denoting the sms_region field in the database.
+	FieldSmsRegion = "sms_region"
 	// FieldSettings holds the string denoting the settings field in the database.
 	FieldSettings = "settings"
 	// Table holds the table name of the notificationchannel in the database.
@@ -85,6 +99,13 @@ var Columns = []string{
 	FieldWebhookSecret,
 	FieldWebhookSignStyle,
 	FieldWebhookPayloadTemplate,
+	FieldSmsProvider,
+	FieldSmsAccessKeyID,
+	FieldSmsAccessSecret,
+	FieldSmsSignName,
+	FieldSmsTemplateCode,
+	FieldSmsAppID,
+	FieldSmsRegion,
 	FieldSettings,
 }
 
@@ -141,6 +162,7 @@ const DefaultType = TypeEmail
 const (
 	TypeEmail         Type = "EMAIL"
 	TypeWebhook       Type = "WEBHOOK"
+	TypeSms           Type = "SMS"
 	TypeWecomApp      Type = "WECOM_APP"
 	TypeDingtalkApp   Type = "DINGTALK_APP"
 	TypeFeishuApp     Type = "FEISHU_APP"
@@ -189,7 +211,7 @@ func (_type Type) String() string {
 // TypeValidator is a validator for the "type" field enum values. It is called by the builders before save.
 func TypeValidator(_type Type) error {
 	switch _type {
-	case TypeEmail, TypeWebhook, TypeWecomApp, TypeDingtalkApp, TypeFeishuApp, TypeWechat, TypeTelegram, TypeSlack, TypeDiscord, TypeTeams, TypeGchat, TypeWebex, TypeLine, TypeMatrix, TypeMattermost, TypeRocketchat, TypeZulip, TypeBark, TypeNtfy, TypeGotify, TypeServerchan, TypeWxpusher, TypePushover, TypePushbullet, TypePushdeer, TypeJpush, TypeGetui, TypeHuaweisms, TypeYunpian, TypeTwilio, TypeVonage, TypeWhatsapp, TypeMailgun, TypeSendgrid, TypePostmark, TypeIfttt, TypeJoin, TypeHomeassistant, TypeDatadog, TypeOpsgenie, TypePagerduty:
+	case TypeEmail, TypeWebhook, TypeSms, TypeWecomApp, TypeDingtalkApp, TypeFeishuApp, TypeWechat, TypeTelegram, TypeSlack, TypeDiscord, TypeTeams, TypeGchat, TypeWebex, TypeLine, TypeMatrix, TypeMattermost, TypeRocketchat, TypeZulip, TypeBark, TypeNtfy, TypeGotify, TypeServerchan, TypeWxpusher, TypePushover, TypePushbullet, TypePushdeer, TypeJpush, TypeGetui, TypeHuaweisms, TypeYunpian, TypeTwilio, TypeVonage, TypeWhatsapp, TypeMailgun, TypeSendgrid, TypePostmark, TypeIfttt, TypeJoin, TypeHomeassistant, TypeDatadog, TypeOpsgenie, TypePagerduty:
 		return nil
 	default:
 		return fmt.Errorf("notificationchannel: invalid enum value for type field: %q", _type)
@@ -249,6 +271,29 @@ func WebhookSignStyleValidator(wss WebhookSignStyle) error {
 		return nil
 	default:
 		return fmt.Errorf("notificationchannel: invalid enum value for webhook_sign_style field: %q", wss)
+	}
+}
+
+// SmsProvider defines the type for the "sms_provider" enum field.
+type SmsProvider string
+
+// SmsProvider values.
+const (
+	SmsProviderAliyun  SmsProvider = "ALIYUN"
+	SmsProviderTencent SmsProvider = "TENCENT"
+)
+
+func (sp SmsProvider) String() string {
+	return string(sp)
+}
+
+// SmsProviderValidator is a validator for the "sms_provider" field enum values. It is called by the builders before save.
+func SmsProviderValidator(sp SmsProvider) error {
+	switch sp {
+	case SmsProviderAliyun, SmsProviderTencent:
+		return nil
+	default:
+		return fmt.Errorf("notificationchannel: invalid enum value for sms_provider field: %q", sp)
 	}
 }
 
@@ -363,6 +408,41 @@ func ByWebhookSignStyle(opts ...sql.OrderTermOption) OrderOption {
 // ByWebhookPayloadTemplate orders the results by the webhook_payload_template field.
 func ByWebhookPayloadTemplate(opts ...sql.OrderTermOption) OrderOption {
 	return sql.OrderByField(FieldWebhookPayloadTemplate, opts...).ToFunc()
+}
+
+// BySmsProvider orders the results by the sms_provider field.
+func BySmsProvider(opts ...sql.OrderTermOption) OrderOption {
+	return sql.OrderByField(FieldSmsProvider, opts...).ToFunc()
+}
+
+// BySmsAccessKeyID orders the results by the sms_access_key_id field.
+func BySmsAccessKeyID(opts ...sql.OrderTermOption) OrderOption {
+	return sql.OrderByField(FieldSmsAccessKeyID, opts...).ToFunc()
+}
+
+// BySmsAccessSecret orders the results by the sms_access_secret field.
+func BySmsAccessSecret(opts ...sql.OrderTermOption) OrderOption {
+	return sql.OrderByField(FieldSmsAccessSecret, opts...).ToFunc()
+}
+
+// BySmsSignName orders the results by the sms_sign_name field.
+func BySmsSignName(opts ...sql.OrderTermOption) OrderOption {
+	return sql.OrderByField(FieldSmsSignName, opts...).ToFunc()
+}
+
+// BySmsTemplateCode orders the results by the sms_template_code field.
+func BySmsTemplateCode(opts ...sql.OrderTermOption) OrderOption {
+	return sql.OrderByField(FieldSmsTemplateCode, opts...).ToFunc()
+}
+
+// BySmsAppID orders the results by the sms_app_id field.
+func BySmsAppID(opts ...sql.OrderTermOption) OrderOption {
+	return sql.OrderByField(FieldSmsAppID, opts...).ToFunc()
+}
+
+// BySmsRegion orders the results by the sms_region field.
+func BySmsRegion(opts ...sql.OrderTermOption) OrderOption {
+	return sql.OrderByField(FieldSmsRegion, opts...).ToFunc()
 }
 
 // BySettings orders the results by the settings field.

@@ -294,6 +294,7 @@ func (s *NotificationService) sendOnce(
 		RecipientUserID: req.GetRecipientUserId(),
 		OperatorUserID:  req.GetOperatorUserId(),
 		RelatedID:       req.GetRelatedId(),
+		Params:          req.GetParams(),
 	})
 	if sendErr == nil {
 		sentAt := time.Now()

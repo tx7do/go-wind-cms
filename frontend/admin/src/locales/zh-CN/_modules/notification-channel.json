@@ -74,5 +74,21 @@
     "required": "{{label}} 为必填项",
     "secretKeepHint": "留空保留已存值",
     "optionDefault": "默认"
-  }
+  },
+  "typeSms": "短信（阿里云/腾讯云）",
+  "smsProvider": "短信服务商",
+  "requiredSmsProvider": "请选择短信服务商",
+  "smsAliyun": "阿里云短信",
+  "smsTencent": "腾讯云短信",
+  "smsAccessKeyId": "访问密钥 ID",
+  "requiredSmsAccessKeyId": "请输入访问密钥 ID",
+  "smsAccessSecret": "访问密钥",
+  "smsSecretPlaceholder": "服务商访问密钥",
+  "requiredSmsAccessSecret": "请输入访问密钥",
+  "smsSignName": "短信签名",
+  "smsTemplateCode": "验证码模板 Code",
+  "smsTemplateCodeHint": "服务商侧审核通过的验证码模板；正文由模板渲染，系统只填验证码",
+  "smsAppId": " SmsAppId",
+  "smsAppIdHint": "腾讯云必填；阿里云留空",
+  "invalidPhone": "手机号格式不正确"
 }

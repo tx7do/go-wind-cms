@@ -35,6 +35,8 @@ type NotificationChannelRepo struct {
 	//（CUSTOM / NONE / DINGTALK / FEISHU / WECOM）。给任何一侧加前缀都不会报错，只会让
 	// 这一列在读路径上静默变成 nil——proto 侧的注释里钉着同一条约束。
 	styleConverter *mapper.EnumTypeConverter[notifyV1.SignStyle, notificationchannel.WebhookSignStyle]
+	// smsProviderConverter 同按名字配对（ALIYUN / TENCENT）
+	smsProviderConverter *mapper.EnumTypeConverter[notifyV1.NotificationChannel_SmsProvider, notificationchannel.SmsProvider]
 
 	repository *entCrud.Repository[
 		ent.NotificationChannelQuery, ent.NotificationChannelSelect,
@@ -60,6 +62,9 @@ func NewNotificationChannelRepo(ctx *bootstrap.Context, entClient *entCrud.EntCl
 		styleConverter: mapper.NewEnumTypeConverter[notifyV1.SignStyle, notificationchannel.WebhookSignStyle](
 			notifyV1.SignStyle_name, notifyV1.SignStyle_value,
 		),
+		smsProviderConverter: mapper.NewEnumTypeConverter[notifyV1.NotificationChannel_SmsProvider, notificationchannel.SmsProvider](
+			notifyV1.NotificationChannel_SmsProvider_name, notifyV1.NotificationChannel_SmsProvider_value,
+		),
 	}
 
 	repo.repository = entCrud.NewRepository[
@@ -76,6 +81,7 @@ func NewNotificationChannelRepo(ctx *bootstrap.Context, entClient *entCrud.EntCl
 	repo.mapper.AppendConverters(repo.typeConverter.NewConverterPair())
 	repo.mapper.AppendConverters(repo.tlsConverter.NewConverterPair())
 	repo.mapper.AppendConverters(repo.styleConverter.NewConverterPair())
+	repo.mapper.AppendConverters(repo.smsProviderConverter.NewConverterPair())
 
 	return repo
 }
@@ -167,6 +173,7 @@ func (r *NotificationChannelRepo) Get(ctx context.Context, id uint32) (*notifyV1
 	dto := r.mapper.ToDTO(entity)
 	dto.HasPassword = trans.Ptr(entity.SMTPPassword != nil)
 	dto.HasWebhookSecret = trans.Ptr(entity.WebhookSecret != nil)
+	dto.HasSmsAccessSecret = trans.Ptr(entity.SmsAccessSecret != nil)
 	// Enabled 回填：写路径把 enabled 布尔落为 status 枚举列（statusFromEnabled），
 	// copier 按字段名映射 Status≠Enabled，读视图不回填则恒呈停用态。
 	dto.Enabled = trans.Ptr(entity.Status != nil && *entity.Status == notificationchannel.StatusOn)
@@ -196,6 +203,13 @@ func (r *NotificationChannelRepo) Create(ctx context.Context, req *notifyV1.Crea
 		SetNillableWebhookPayloadTemplate(req.Data.WebhookPayloadTemplate).
 		// 扩展渠道配置整包（service 层已按 schema 校验并加密 sensitive 字段）
 		SetNillableSettings(req.Data.Settings).
+		// SMS 渠道七列（Type=SMS 专用）
+		SetNillableSmsProvider(r.smsProviderConverter.ToEntity(req.Data.SmsProvider)).
+		SetNillableSmsAccessKeyID(req.Data.SmsAccessKeyId).
+		SetNillableSmsSignName(req.Data.SmsSignName).
+		SetNillableSmsTemplateCode(req.Data.SmsTemplateCode).
+		SetNillableSmsAppID(req.Data.SmsAppId).
+		SetNillableSmsRegion(req.Data.SmsRegion).
 		SetStatus(statusFromEnabled(req.Data.GetEnabled())).
 		SetNillableRemark(req.Data.Remark)
 
@@ -214,6 +228,14 @@ func (r *NotificationChannelRepo) Create(ctx context.Context, req *notifyV1.Crea
 			return nil, errors.InternalServer("NOTIFICATION_CHANNEL", "encrypt webhook secret failed")
 		}
 		builder.SetWebhookSecret(secret)
+	}
+	if req.GetSmsAccessSecret() != "" {
+		encrypted, encErr := pkgcrypto.EncryptIfNeeded(req.GetSmsAccessSecret())
+		if encErr != nil {
+			r.log.Errorf("encrypt sms access secret failed: %s", encErr.Error())
+			return nil, errors.InternalServer("NOTIFICATION_CHANNEL", "encrypt sms access secret failed")
+		}
+		builder.SetSmsAccessSecret(encrypted)
 	}
 	if callerUserID, hasUser := viewerUserIDFromContext(ctx); hasUser {
 		builder.SetCreatedBy(callerUserID).SetUpdatedBy(callerUserID)
@@ -307,6 +329,14 @@ func (r *NotificationChannelRepo) Update(ctx context.Context, req *notifyV1.Upda
 			return nil, errors.InternalServer("NOTIFICATION_CHANNEL", "encrypt webhook secret failed")
 		}
 		builder.SetWebhookSecret(secret)
+	}
+	if req.GetSmsAccessSecret() != "" {
+		encrypted, encErr := pkgcrypto.EncryptIfNeeded(req.GetSmsAccessSecret())
+		if encErr != nil {
+			r.log.Errorf("encrypt sms access secret failed: %s", encErr.Error())
+			return nil, errors.InternalServer("NOTIFICATION_CHANNEL", "encrypt sms access secret failed")
+		}
+		builder.SetSmsAccessSecret(encrypted)
 	}
 	if callerUserID, hasUser := viewerUserIDFromContext(ctx); hasUser {
 		builder.SetUpdatedBy(callerUserID)
@@ -437,6 +467,87 @@ type WebhookAccount struct {
 	PayloadTemplate string
 }
 
+// SmsAccount SMS 渠道账号（Type=SMS 的解密投影）。
+type SmsAccount struct {
+	ID uint32
+	// Provider 服务商（proto SmsProvider 成员名：ALIYUN/TENCENT）
+	Provider string
+	// AccessKeyID / AccessSecret 服务商访问密钥对；Secret 为空即配置不全，sender 拦下。
+	AccessKeyID  string
+	AccessSecret string
+	// SignName 服务商侧已备案的短信签名
+	SignName string
+	// TemplateCode 验证码模板（阿里云正文含 ${code}，腾讯云正文含 {1}）
+	TemplateCode string
+	// AppID 腾讯云 SmsSdkAppId（必填）；阿里云留空
+	AppID string
+	// Region 腾讯云地域（必填，空则 sender 兜默认）；阿里云留空
+	Region string
+}
+
+// GetFirstEnabledSmsChannel 取第一个启用的 SMS 渠道（验证码事件路由未显式指定渠道时用）。
+func (r *NotificationChannelRepo) GetFirstEnabledSmsChannel(ctx context.Context) (*SmsAccount, error) {
+	entities, err := r.entClient.Client().NotificationChannel.Query().
+		Where(
+			notificationchannel.TypeEQ(notificationchannel.TypeSms),
+			notificationchannel.StatusEQ(notificationchannel.StatusOn),
+		).
+		Order(ent.Asc(notificationchannel.FieldID)).
+		Limit(1).
+		All(ctx)
+	if err != nil {
+		r.log.Errorf("query enabled sms channel failed: %s", err.Error())
+		return nil, errors.InternalServer("NOTIFICATION_CHANNEL", "query sms channel failed")
+	}
+	if len(entities) == 0 {
+		return nil, errors.NotFound("NOTIFICATION_CHANNEL", "no enabled sms channel")
+	}
+	return r.smsAccountOf(ctx, entities[0])
+}
+
+// GetDecryptedSmsAccount 取指定渠道的解密 SMS 配置；类型不符即报错，
+// 免得一条 EMAIL/WEBHOOK 行被当短信账号使（反向守卫在 SmsSender.pickAccount）。
+func (r *NotificationChannelRepo) GetDecryptedSmsAccount(ctx context.Context, id uint32) (*SmsAccount, error) {
+	entity, err := r.entClient.Client().NotificationChannel.Query().
+		Where(notificationchannel.IDEQ(id)).
+		Only(ctx)
+	if err != nil {
+		if ent.IsNotFound(err) {
+			return nil, errors.NotFound("NOTIFICATION_CHANNEL", "notification channel not found")
+		}
+		r.log.Errorf("get sms channel [%d] failed: %s", id, err.Error())
+		return nil, errors.InternalServer("NOTIFICATION_CHANNEL", "get notification channel failed")
+	}
+	if entity.Type == nil || *entity.Type != notificationchannel.TypeSms {
+		return nil, errors.BadRequest("NOTIFICATION_CHANNEL", "channel is not an SMS channel")
+	}
+	return r.smsAccountOf(ctx, entity)
+}
+
+// smsAccountOf 实体 → SmsAccount，密钥按 DecryptIfNeeded 解出明文。
+func (r *NotificationChannelRepo) smsAccountOf(ctx context.Context, entity *ent.NotificationChannel) (*SmsAccount, error) {
+	secret := ""
+	if entity.SmsAccessSecret != nil {
+		decrypted, decErr := pkgcrypto.DecryptIfNeeded(*entity.SmsAccessSecret)
+		if decErr != nil {
+			r.log.Errorf("decrypt sms access secret failed for channel [%d]: %s", entity.ID, decErr.Error())
+			return nil, errors.InternalServer("NOTIFICATION_CHANNEL", "decrypt sms access secret failed")
+		}
+		secret = decrypted
+	}
+
+	return &SmsAccount{
+		ID:           entity.ID,
+		Provider:     derefEnum(entity.SmsProvider),
+		AccessKeyID:  derefString(entity.SmsAccessKeyID),
+		AccessSecret: secret,
+		SignName:     derefString(entity.SmsSignName),
+		TemplateCode: derefString(entity.SmsTemplateCode),
+		AppID:        derefString(entity.SmsAppID),
+		Region:       derefString(entity.SmsRegion),
+	}, nil
+}
+
 // GetFirstEnabledWebhookChannel 取第一个启用的 WEBHOOK 渠道（事件路由未显式指定渠道时用）。
 func (r *NotificationChannelRepo) GetFirstEnabledWebhookChannel(ctx context.Context) (*WebhookAccount, error) {
 	entities, err := r.entClient.Client().NotificationChannel.Query().
@@ -553,6 +664,13 @@ func (r *NotificationChannelRepo) GetFirstEnabledSettingsRaw(ctx context.Context
 		return "", "", errors.BadRequest("NOTIFICATION_CHANNEL", "channel type is empty")
 	}
 	return string(*entities[0].Type), derefString(entities[0].Settings), nil
+}
+
+func derefEnum[T ~string](p *T) string {
+	if p == nil {
+		return ""
+	}
+	return string(*p)
 }
 
 func statusFromEnabled(enabled bool) notificationchannel.Status {

@@ -47,6 +47,7 @@ func (NotificationDelivery) Fields() []ent.Field {
 				"ChannelTestExt", "CHANNEL_TEST_EXT",
 				"MonitorAlert", "MONITOR_ALERT",
 				"PasswordResetCode", "PASSWORD_RESET_CODE",
+				"ChannelTestSms", "CHANNEL_TEST_SMS",
 			).
 			Optional().
 			Nillable(),
@@ -57,6 +58,7 @@ func (NotificationDelivery) Fields() []ent.Field {
 				"Email", "EMAIL",
 				"Webhook", "WEBHOOK",
 				"Internal", "INTERNAL",
+				"Sms", "SMS",
 				"Ext", "EXT",
 			).
 			Optional().

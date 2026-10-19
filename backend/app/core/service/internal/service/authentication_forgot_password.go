@@ -33,17 +33,27 @@ func (s *AuthenticationService) ForgotPassword(ctx context.Context, req *authent
 	if identifier == "" {
 		return nil, errors.BadRequest("AUTHENTICATION", "identifier is required")
 	}
-	if !strings.Contains(identifier, "@") {
-		return nil, errors.BadRequest("AUTHENTICATION", "identifier must be an email address")
+	isPhone := !strings.Contains(identifier, "@")
+	if isPhone {
+		// 手机号形态粗校验：+/数字开头、6-20 位（归一化与真实校验交给凭据查询）
+		trimmed := strings.TrimLeft(identifier, "+")
+		if strings.TrimLeft(trimmed, "0123456789") != "" {
+			return nil, errors.BadRequest("AUTHENTICATION", "identifier must be an email or phone number")
+		}
+	}
+
+	identityType := authenticationV1.UserCredential_EMAIL
+	if isPhone {
+		identityType = authenticationV1.UserCredential_PHONE
 	}
 
 	cred, credErr := s.userCredentialRepo.GetByIdentifier(ctx, &authenticationV1.GetUserCredentialByIdentifierRequest{
-		IdentityType: authenticationV1.UserCredential_EMAIL,
+		IdentityType: identityType,
 		Identifier:   identifier,
 	})
 	userId := cred.GetUserId()
 	if credErr != nil || userId == 0 {
-		s.log.Infof("forgot-password: no email credential for [%s] (silent ok)", identifier)
+		s.log.Infof("forgot-password: no %s credential for [%s] (silent ok)", identityType.String(), identifier)
 		return &emptypb.Empty{}, nil
 	}
 
@@ -65,25 +75,37 @@ func (s *AuthenticationService) ForgotPassword(ctx context.Context, req *authent
 
 	if s.notifier == nil {
 		s.log.Errorf("forgot-password: notification seam is not wired")
-		return nil, errors.InternalServer("AUTHENTICATION", "email channel is not configured")
+		return nil, errors.InternalServer("AUTHENTICATION", "notification channel is not configured")
 	}
 
-	title, content := passwordResetCodeText(locale, code)
-	resp, err := s.notifier.SendDirect(ctx, &notifyV1.SendDirectNotificationRequest{
+	sendReq := &notifyV1.SendDirectNotificationRequest{
 		EventType:       notifyV1.EventType_PASSWORD_RESET_CODE,
-		Channel:         trans.Ptr(notifyV1.Channel_EMAIL),
 		Target:          identifier,
-		Title:           title,
-		Content:         content,
 		RecipientUserId: trans.Ptr(userId),
-	})
+	}
+
+	if isPhone {
+		// 手机号路径：短信只承载验证码事件（正文出自服务商审核模板），code 走 params
+		sendReq.Channel = trans.Ptr(notifyV1.Channel_SMS)
+		sendReq.Params = map[string]string{"code": code}
+		sendReq.Title, sendReq.Content = passwordResetCodeText(locale, code)
+	} else {
+		sendReq.Channel = trans.Ptr(notifyV1.Channel_EMAIL)
+		sendReq.Title, sendReq.Content = passwordResetCodeText(locale, code)
+	}
+
+	resp, err := s.notifier.SendDirect(ctx, sendReq)
 	if err != nil {
 		s.log.Errorf("forgot-password: send code to [%s] failed (delivery %d): %s",
 			identifier, resp.GetDeliveryId(), err.Error())
-		// SKIPPED＝一条都没发出去：没配启用的邮件渠道。这与"渠道报错"是两回事，
+		// SKIPPED＝一条都没发出去：没配启用的对应渠道。这与"渠道报错"是两回事，
 		// 前者要管理员去渠道页配置，分开报才不用翻日志才知道差哪一步。
 		if resp.GetStatus() == notifyV1.DeliveryStatus_SKIPPED {
-			return nil, errors.InternalServer("AUTHENTICATION", "email channel is not configured")
+			channelKind := "email"
+			if isPhone {
+				channelKind = "sms"
+			}
+			return nil, errors.InternalServer("AUTHENTICATION", channelKind+" channel is not configured")
 		}
 		return nil, errors.InternalServer("AUTHENTICATION", "send verification message failed")
 	}
@@ -106,8 +128,13 @@ func (s *AuthenticationService) ResetPasswordByCode(ctx context.Context, req *au
 		return nil, errors.BadRequest("AUTHENTICATION", "invalid or expired verification code")
 	}
 
+	identityType := authenticationV1.UserCredential_EMAIL
+	if !strings.Contains(identifier, "@") {
+		identityType = authenticationV1.UserCredential_PHONE
+	}
+
 	cred, credErr := s.userCredentialRepo.GetByIdentifier(ctx, &authenticationV1.GetUserCredentialByIdentifierRequest{
-		IdentityType: authenticationV1.UserCredential_EMAIL,
+		IdentityType: identityType,
 		Identifier:   identifier,
 	})
 	if credErr != nil || cred.GetUserId() == 0 {

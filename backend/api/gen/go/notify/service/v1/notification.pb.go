@@ -32,7 +32,8 @@ const (
 	Channel_EMAIL               Channel = 1 // 邮件（SMTP）
 	Channel_WEBHOOK             Channel = 2 // Webhook（HTTP 回调）
 	Channel_INTERNAL            Channel = 3 // 站内信（虚拟渠道，无花名册行，台账 channel_id 留空）
-	Channel_EXT                 Channel = 4 // 扩展渠道（go-utils/notify 全量接入：telegram/wecom_app/bark/ntfy…，
+	Channel_SMS                 Channel = 4 // 短信（阿里云/腾讯云；仅承载验证码类事件，无自由文本通道）
+	Channel_EXT                 Channel = 5 // 扩展渠道（go-utils/notify 全量接入：telegram/wecom_app/bark/ntfy…，
 )
 
 // Enum value maps for Channel.
@@ -42,14 +43,16 @@ var (
 		1: "EMAIL",
 		2: "WEBHOOK",
 		3: "INTERNAL",
-		4: "EXT",
+		4: "SMS",
+		5: "EXT",
 	}
 	Channel_value = map[string]int32{
 		"CHANNEL_UNSPECIFIED": 0,
 		"EMAIL":               1,
 		"WEBHOOK":             2,
 		"INTERNAL":            3,
-		"EXT":                 4,
+		"SMS":                 4,
+		"EXT":                 5,
 	}
 )
 
@@ -94,9 +97,11 @@ const (
 	EventType_CHANNEL_TEST_EMAIL EventType = 2
 	// 渠道测试消息（扩展渠道 EXT_* 的"测试发送"）。
 	EventType_CHANNEL_TEST_EXT EventType = 8
+	// 渠道测试短信（SMS 渠道的"测试发送"，发一条真实验证码）。
+	EventType_CHANNEL_TEST_SMS EventType = 9
 	// 监控告警通知：告警/恢复成对发送（监控告警规则的渠道与目标显式写在规则上，
 	// 不经路由表；related_id 指向 monitor_alert_rules.id）。
-	EventType_MONITOR_ALERT EventType = 9
+	EventType_MONITOR_ALERT EventType = 11
 	// 密码重置验证码邮件（忘记密码流程；显式 EMAIL 渠道点对点，不经路由表）。
 	EventType_PASSWORD_RESET_CODE EventType = 10
 	// 系统通知邮件：站内信系统通知（NotifyUser）的附加邮件触达，收件目标为
@@ -112,7 +117,8 @@ var (
 		1:  "INTERNAL_MESSAGE",
 		2:  "CHANNEL_TEST_EMAIL",
 		8:  "CHANNEL_TEST_EXT",
-		9:  "MONITOR_ALERT",
+		9:  "CHANNEL_TEST_SMS",
+		11: "MONITOR_ALERT",
 		10: "PASSWORD_RESET_CODE",
 		3:  "SYSTEM_NOTIFY",
 	}
@@ -121,7 +127,8 @@ var (
 		"INTERNAL_MESSAGE":       1,
 		"CHANNEL_TEST_EMAIL":     2,
 		"CHANNEL_TEST_EXT":       8,
-		"MONITOR_ALERT":          9,
+		"CHANNEL_TEST_SMS":       9,
+		"MONITOR_ALERT":          11,
 		"PASSWORD_RESET_CODE":    10,
 		"SYSTEM_NOTIFY":          3,
 	}
@@ -503,6 +510,8 @@ type SendDirectNotificationRequest struct {
 	Channel         *Channel `protobuf:"varint,6,opt,name=channel,proto3,enum=notify.service.v1.Channel,oneof" json:"channel,omitempty"`           // 投递渠道（留空由事件类型路由决定）
 	RecipientUserId *uint32  `protobuf:"varint,7,opt,name=recipient_user_id,json=recipientUserId,proto3,oneof" json:"recipient_user_id,omitempty"` // 收件用户ID（仅台账归类用）
 	OperatorUserId  *uint32  `protobuf:"varint,8,opt,name=operator_user_id,json=operatorUserId,proto3,oneof" json:"operator_user_id,omitempty"`    // 操作人用户ID（系统发起时留空）
+	// 渠道原生参数：SMS 验证码事件必须带 params["code"]（正文出自服务商审核模板）
+	Params map[string]string `protobuf:"bytes,13,rep,name=params,proto3" json:"params,omitempty" protobuf_key:"bytes,1,opt,name=key" protobuf_val:"bytes,2,opt,name=value"` // 渠道原生参数
 	// 产生本次投递的业务对象主键，原样落到台账的 related_id（含义由 event_type 决定）。
 	RelatedId *uint32 `protobuf:"varint,9,opt,name=related_id,json=relatedId,proto3,oneof" json:"related_id,omitempty"` // 关联业务对象ID
 	// 幂等锚，可选：调用方留空时服务端生成一个 UUID。台账按 (request_id, channel) 唯一索引收敛。
@@ -600,6 +609,13 @@ func (x *SendDirectNotificationRequest) GetOperatorUserId() uint32 {
 		return *x.OperatorUserId
 	}
 	return 0
+}
+
+func (x *SendDirectNotificationRequest) GetParams() map[string]string {
+	if x != nil {
+		return x.Params
+	}
+	return nil
 }
 
 func (x *SendDirectNotificationRequest) GetRelatedId() uint32 {
@@ -740,8 +756,7 @@ const file_notify_service_v1_notification_proto_rawDesc = "" +
 	"\x05items\x18\x01 \x03(\v2'.notify.service.v1.NotificationDeliveryR\x05items\x12\x14\n" +
 	"\x05total\x18\x02 \x01(\x04R\x05total\"0\n" +
 	"\x1eGetNotificationDeliveryRequest\x12\x0e\n" +
-	"\x02id\x18\x01 \x01(\rR\x02id\"\xcf\n" +
-	"\n" +
+	"\x02id\x18\x01 \x01(\rR\x02id\"\xfa\v\n" +
 	"\x1dSendDirectNotificationRequest\x12|\n" +
 	"\n" +
 	"event_type\x18\x01 \x01(\x0e2\x1c.notify.service.v1.EventTypeB?\xbaG<\x92\x029业务事件类型（决定渠道路由与台账分类）R\teventType\x12E\n" +
@@ -752,14 +767,18 @@ const file_notify_service_v1_notification_proto_rawDesc = "" +
 	"channel_id\x18\x05 \x01(\rB8\xbaG5\x92\x022指定渠道配置ID，留空取第一个启用的H\x00R\tchannelId\x88\x01\x01\x12q\n" +
 	"\achannel\x18\x06 \x01(\x0e2\x1a.notify.service.v1.ChannelB6\xbaG3\x92\x020投递渠道，留空由事件类型路由决定H\x01R\achannel\x88\x01\x01\x12]\n" +
 	"\x11recipient_user_id\x18\a \x01(\rB,\xbaG)\x92\x02&收件用户ID（仅台账归类用）H\x02R\x0frecipientUserId\x88\x01\x01\x12a\n" +
-	"\x10operator_user_id\x18\b \x01(\rB2\xbaG/\x92\x02,操作人用户ID（系统发起时留空）H\x03R\x0eoperatorUserId\x88\x01\x01\x12Y\n" +
+	"\x10operator_user_id\x18\b \x01(\rB2\xbaG/\x92\x02,操作人用户ID（系统发起时留空）H\x03R\x0eoperatorUserId\x88\x01\x01\x12n\n" +
+	"\x06params\x18\r \x03(\v2<.notify.service.v1.SendDirectNotificationRequest.ParamsEntryB\x18\xbaG\x15\x92\x02\x12渠道原生参数R\x06params\x12Y\n" +
 	"\n" +
 	"related_id\x18\t \x01(\rB5\xbaG2\x92\x02/关联业务对象ID（按 event_type 解释）H\x04R\trelatedId\x88\x01\x01\x12V\n" +
 	"\n" +
 	"request_id\x18\n" +
 	" \x01(\tB2\xbaG/\x92\x02,派发请求ID（留空则服务端生成）H\x05R\trequestId\x88\x01\x01\x12e\n" +
 	"\rtemplate_code\x18\v \x01(\tB;\xbaG8\x92\x025通知模板编码（给出时覆盖 title/content）H\x06R\ftemplateCode\x88\x01\x01\x12\x95\x01\n" +
-	"\rtemplate_vars\x18\f \x03(\v2B.notify.service.v1.SendDirectNotificationRequest.TemplateVarsEntryB,\xbaG)\x92\x02&模板变量（占位符名 → 值）R\ftemplateVars\x1a?\n" +
+	"\rtemplate_vars\x18\f \x03(\v2B.notify.service.v1.SendDirectNotificationRequest.TemplateVarsEntryB,\xbaG)\x92\x02&模板变量（占位符名 → 值）R\ftemplateVars\x1a9\n" +
+	"\vParamsEntry\x12\x10\n" +
+	"\x03key\x18\x01 \x01(\tR\x03key\x12\x14\n" +
+	"\x05value\x18\x02 \x01(\tR\x05value:\x028\x01\x1a?\n" +
 	"\x11TemplateVarsEntry\x12\x10\n" +
 	"\x03key\x18\x01 \x01(\tR\x03key\x12\x14\n" +
 	"\x05value\x18\x02 \x01(\tR\x05value:\x028\x01B\r\n" +
@@ -774,19 +793,21 @@ const file_notify_service_v1_notification_proto_rawDesc = "" +
 	"\x18SendNotificationResponse\x12/\n" +
 	"\vdelivery_id\x18\x01 \x01(\rB\x0e\xbaG\v\x92\x02\b台账IDR\n" +
 	"deliveryId\x12M\n" +
-	"\x06status\x18\x02 \x01(\x0e2!.notify.service.v1.DeliveryStatusB\x12\xbaG\x0f\x92\x02\f投递结果R\x06status*Q\n" +
+	"\x06status\x18\x02 \x01(\x0e2!.notify.service.v1.DeliveryStatusB\x12\xbaG\x0f\x92\x02\f投递结果R\x06status*Z\n" +
 	"\aChannel\x12\x17\n" +
 	"\x13CHANNEL_UNSPECIFIED\x10\x00\x12\t\n" +
 	"\x05EMAIL\x10\x01\x12\v\n" +
 	"\aWEBHOOK\x10\x02\x12\f\n" +
 	"\bINTERNAL\x10\x03\x12\a\n" +
-	"\x03EXT\x10\x04*\xaa\x01\n" +
+	"\x03SMS\x10\x04\x12\a\n" +
+	"\x03EXT\x10\x05*\xc0\x01\n" +
 	"\tEventType\x12\x1a\n" +
 	"\x16EVENT_TYPE_UNSPECIFIED\x10\x00\x12\x14\n" +
 	"\x10INTERNAL_MESSAGE\x10\x01\x12\x16\n" +
 	"\x12CHANNEL_TEST_EMAIL\x10\x02\x12\x14\n" +
-	"\x10CHANNEL_TEST_EXT\x10\b\x12\x11\n" +
-	"\rMONITOR_ALERT\x10\t\x12\x17\n" +
+	"\x10CHANNEL_TEST_EXT\x10\b\x12\x14\n" +
+	"\x10CHANNEL_TEST_SMS\x10\t\x12\x11\n" +
+	"\rMONITOR_ALERT\x10\v\x12\x17\n" +
 	"\x13PASSWORD_RESET_CODE\x10\n" +
 	"\x12\x11\n" +
 	"\rSYSTEM_NOTIFY\x10\x03*a\n" +
@@ -817,7 +838,7 @@ func file_notify_service_v1_notification_proto_rawDescGZIP() []byte {
 }
 
 var file_notify_service_v1_notification_proto_enumTypes = make([]protoimpl.EnumInfo, 3)
-var file_notify_service_v1_notification_proto_msgTypes = make([]protoimpl.MessageInfo, 6)
+var file_notify_service_v1_notification_proto_msgTypes = make([]protoimpl.MessageInfo, 7)
 var file_notify_service_v1_notification_proto_goTypes = []any{
 	(Channel)(0),                             // 0: notify.service.v1.Channel
 	(EventType)(0),                           // 1: notify.service.v1.EventType
@@ -827,33 +848,35 @@ var file_notify_service_v1_notification_proto_goTypes = []any{
 	(*GetNotificationDeliveryRequest)(nil),   // 5: notify.service.v1.GetNotificationDeliveryRequest
 	(*SendDirectNotificationRequest)(nil),    // 6: notify.service.v1.SendDirectNotificationRequest
 	(*SendNotificationResponse)(nil),         // 7: notify.service.v1.SendNotificationResponse
-	nil,                                      // 8: notify.service.v1.SendDirectNotificationRequest.TemplateVarsEntry
-	(*timestamppb.Timestamp)(nil),            // 9: google.protobuf.Timestamp
-	(*v1.PagingRequest)(nil),                 // 10: pagination.PagingRequest
+	nil,                                      // 8: notify.service.v1.SendDirectNotificationRequest.ParamsEntry
+	nil,                                      // 9: notify.service.v1.SendDirectNotificationRequest.TemplateVarsEntry
+	(*timestamppb.Timestamp)(nil),            // 10: google.protobuf.Timestamp
+	(*v1.PagingRequest)(nil),                 // 11: pagination.PagingRequest
 }
 var file_notify_service_v1_notification_proto_depIdxs = []int32{
 	1,  // 0: notify.service.v1.NotificationDelivery.event_type:type_name -> notify.service.v1.EventType
 	0,  // 1: notify.service.v1.NotificationDelivery.channel:type_name -> notify.service.v1.Channel
 	2,  // 2: notify.service.v1.NotificationDelivery.status:type_name -> notify.service.v1.DeliveryStatus
-	9,  // 3: notify.service.v1.NotificationDelivery.sent_at:type_name -> google.protobuf.Timestamp
-	9,  // 4: notify.service.v1.NotificationDelivery.created_at:type_name -> google.protobuf.Timestamp
-	9,  // 5: notify.service.v1.NotificationDelivery.updated_at:type_name -> google.protobuf.Timestamp
+	10, // 3: notify.service.v1.NotificationDelivery.sent_at:type_name -> google.protobuf.Timestamp
+	10, // 4: notify.service.v1.NotificationDelivery.created_at:type_name -> google.protobuf.Timestamp
+	10, // 5: notify.service.v1.NotificationDelivery.updated_at:type_name -> google.protobuf.Timestamp
 	3,  // 6: notify.service.v1.ListNotificationDeliveryResponse.items:type_name -> notify.service.v1.NotificationDelivery
 	1,  // 7: notify.service.v1.SendDirectNotificationRequest.event_type:type_name -> notify.service.v1.EventType
 	0,  // 8: notify.service.v1.SendDirectNotificationRequest.channel:type_name -> notify.service.v1.Channel
-	8,  // 9: notify.service.v1.SendDirectNotificationRequest.template_vars:type_name -> notify.service.v1.SendDirectNotificationRequest.TemplateVarsEntry
-	2,  // 10: notify.service.v1.SendNotificationResponse.status:type_name -> notify.service.v1.DeliveryStatus
-	6,  // 11: notify.service.v1.NotificationService.SendDirect:input_type -> notify.service.v1.SendDirectNotificationRequest
-	10, // 12: notify.service.v1.NotificationService.ListDelivery:input_type -> pagination.PagingRequest
-	5,  // 13: notify.service.v1.NotificationService.GetDelivery:input_type -> notify.service.v1.GetNotificationDeliveryRequest
-	7,  // 14: notify.service.v1.NotificationService.SendDirect:output_type -> notify.service.v1.SendNotificationResponse
-	4,  // 15: notify.service.v1.NotificationService.ListDelivery:output_type -> notify.service.v1.ListNotificationDeliveryResponse
-	3,  // 16: notify.service.v1.NotificationService.GetDelivery:output_type -> notify.service.v1.NotificationDelivery
-	14, // [14:17] is the sub-list for method output_type
-	11, // [11:14] is the sub-list for method input_type
-	11, // [11:11] is the sub-list for extension type_name
-	11, // [11:11] is the sub-list for extension extendee
-	0,  // [0:11] is the sub-list for field type_name
+	8,  // 9: notify.service.v1.SendDirectNotificationRequest.params:type_name -> notify.service.v1.SendDirectNotificationRequest.ParamsEntry
+	9,  // 10: notify.service.v1.SendDirectNotificationRequest.template_vars:type_name -> notify.service.v1.SendDirectNotificationRequest.TemplateVarsEntry
+	2,  // 11: notify.service.v1.SendNotificationResponse.status:type_name -> notify.service.v1.DeliveryStatus
+	6,  // 12: notify.service.v1.NotificationService.SendDirect:input_type -> notify.service.v1.SendDirectNotificationRequest
+	11, // 13: notify.service.v1.NotificationService.ListDelivery:input_type -> pagination.PagingRequest
+	5,  // 14: notify.service.v1.NotificationService.GetDelivery:input_type -> notify.service.v1.GetNotificationDeliveryRequest
+	7,  // 15: notify.service.v1.NotificationService.SendDirect:output_type -> notify.service.v1.SendNotificationResponse
+	4,  // 16: notify.service.v1.NotificationService.ListDelivery:output_type -> notify.service.v1.ListNotificationDeliveryResponse
+	3,  // 17: notify.service.v1.NotificationService.GetDelivery:output_type -> notify.service.v1.NotificationDelivery
+	15, // [15:18] is the sub-list for method output_type
+	12, // [12:15] is the sub-list for method input_type
+	12, // [12:12] is the sub-list for extension type_name
+	12, // [12:12] is the sub-list for extension extendee
+	0,  // [0:12] is the sub-list for field type_name
 }
 
 func init() { file_notify_service_v1_notification_proto_init() }
@@ -869,7 +892,7 @@ func file_notify_service_v1_notification_proto_init() {
 			GoPackagePath: reflect.TypeOf(x{}).PkgPath(),
 			RawDescriptor: unsafe.Slice(unsafe.StringData(file_notify_service_v1_notification_proto_rawDesc), len(file_notify_service_v1_notification_proto_rawDesc)),
 			NumEnums:      3,
-			NumMessages:   6,
+			NumMessages:   7,
 			NumExtensions: 0,
 			NumServices:   1,
 		},

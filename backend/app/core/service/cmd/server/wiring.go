@@ -283,6 +283,8 @@ func initApp(ctx *bootstrap.Context) (*kratos.App, func(), error) {
 	channelRegistry.Register(channel.NewWebhookSender(notificationChannelRepo))
 	// 扩展渠道（EXT_* 39 种）：settings 列配置 → go-utils/notify 统一发送
 	channelRegistry.Register(channel.NewSettingsSender(notificationChannelRepo))
+	// 短信渠道（阿里云/腾讯云）：仅承载验证码类事件
+	channelRegistry.Register(channel.NewSmsSender(notificationChannelRepo))
 	notificationService := service.NewNotificationService(ctx, notificationDeliveryRepo, notificationRuleRepo, notificationTemplateRepo, channelRegistry)
 	notificationChannelService := service.NewNotificationChannelService(ctx, notificationChannelRepo, notificationService)
 	notificationRuleService := service.NewNotificationRuleService(ctx, notificationRuleRepo, notificationChannelRepo, notificationService)

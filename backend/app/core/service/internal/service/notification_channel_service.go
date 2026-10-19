@@ -195,6 +195,14 @@ func (s *NotificationChannelService) SendTestEmail(ctx context.Context, req *not
 	case notifyV1.NotificationChannel_WEBHOOK:
 		return nil, errors.BadRequest("NOTIFICATION_CHANNEL", "webhook channels are tested from the notification-rules page")
 
+	case notifyV1.NotificationChannel_SMS:
+		// 短信测试 = 发一条真验证码到目标手机号（正文出自服务商审核模板）
+		sendReq.Channel = trans.Ptr(notifyV1.Channel_SMS)
+		sendReq.EventType = notifyV1.EventType_CHANNEL_TEST_SMS
+		sendReq.Params = map[string]string{"code": generateVCode()}
+		sendReq.Title = fmt.Sprintf("短信渠道测试（渠道 #%d）", id)
+		sendReq.Content = "SMS test message"
+
 	default:
 		// 扩展渠道（EXT_* 39 种）：按 schema 语义发一条测试消息。
 		// 规则表没有 CHANNEL_TEST_EXT 行也不依赖种子——显式带 Channel=EXT，

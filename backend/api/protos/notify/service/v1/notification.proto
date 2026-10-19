@@ -37,7 +37,8 @@ enum Channel {
   EMAIL = 1;               // 邮件（SMTP）
   WEBHOOK = 2;             // Webhook（HTTP 回调）
   INTERNAL = 3;            // 站内信（虚拟渠道，无花名册行，台账 channel_id 留空）
-  EXT = 4;                 // 扩展渠道（go-utils/notify 全量接入：telegram/wecom_app/bark/ntfy…，
+  SMS = 4;                 // 短信（阿里云/腾讯云；仅承载验证码类事件，无自由文本通道）
+  EXT = 5;                 // 扩展渠道（go-utils/notify 全量接入：telegram/wecom_app/bark/ntfy…，
                            // 一类多型：具体型别在渠道行的 type 列，配置存 settings 列）
 }
 
@@ -57,9 +58,12 @@ enum EventType {
   // 渠道测试消息（扩展渠道 EXT_* 的"测试发送"）。
   CHANNEL_TEST_EXT = 8;
 
+  // 渠道测试短信（SMS 渠道的"测试发送"，发一条真实验证码）。
+  CHANNEL_TEST_SMS = 9;
+
   // 监控告警通知：告警/恢复成对发送（监控告警规则的渠道与目标显式写在规则上，
   // 不经路由表；related_id 指向 monitor_alert_rules.id）。
-  MONITOR_ALERT = 9;
+  MONITOR_ALERT = 11;
 
   // 密码重置验证码邮件（忘记密码流程；显式 EMAIL 渠道点对点，不经路由表）。
   PASSWORD_RESET_CODE = 10;
@@ -217,6 +221,12 @@ message SendDirectNotificationRequest {
     json_name = "operatorUserId",
     (gnostic.openapi.v3.property) = { description: "操作人用户ID（系统发起时留空）" }
   ]; // 操作人用户ID（系统发起时留空）
+
+  // 渠道原生参数：SMS 验证码事件必须带 params["code"]（正文出自服务商审核模板）
+  map<string, string> params = 13 [
+    json_name = "params",
+    (gnostic.openapi.v3.property) = { description: "渠道原生参数" }
+  ]; // 渠道原生参数
 
   // 产生本次投递的业务对象主键，原样落到台账的 related_id（含义由 event_type 决定）。
   optional uint32 related_id = 9 [

@@ -15754,6 +15754,7 @@ components:
                         - EMAIL
                         - WEBHOOK
                         - INTERNAL
+                        - SMS
                         - EXT
                     type: string
                     description: 告警渠道（显式指定）
@@ -15855,6 +15856,9 @@ components:
                 settings:
                     type: string
                     description: 扩展渠道配置（明文 JSON）
+                smsAccessSecret:
+                    type: string
+                    description: SMS 访问密钥
             description: 创建通知渠道 - 请求
         notify.service.v1.CreateNotificationRuleRequest:
             type: object
@@ -15945,6 +15949,7 @@ components:
                     enum:
                         - EMAIL
                         - WEBHOOK
+                        - SMS
                         - WECOM_APP
                         - DINGTALK_APP
                         - FEISHU_APP
@@ -16033,6 +16038,31 @@ components:
                 webhookPayloadTemplate:
                     type: string
                     description: Webhook 载荷模板，留空用该风格的内置默认 JSON
+                smsProvider:
+                    enum:
+                        - ALIYUN
+                        - TENCENT
+                    type: string
+                    description: 短信服务商
+                    format: enum
+                smsAccessKeyId:
+                    type: string
+                    description: 服务商访问密钥 ID
+                hasSmsAccessSecret:
+                    type: boolean
+                    description: 是否已配置访问密钥（读视图布尔标识）
+                smsSignName:
+                    type: string
+                    description: 短信签名
+                smsTemplateCode:
+                    type: string
+                    description: 验证码模板 Code
+                smsAppId:
+                    type: string
+                    description: 腾讯云 SmsAppId（阿里云不使用）
+                smsRegion:
+                    type: string
+                    description: 腾讯云地域（阿里云不使用）
                 settings:
                     type: string
                     description: 扩展渠道配置（JSON，敏感字段脱敏）
@@ -16068,6 +16098,7 @@ components:
                         - INTERNAL_MESSAGE
                         - CHANNEL_TEST_EMAIL
                         - CHANNEL_TEST_EXT
+                        - CHANNEL_TEST_SMS
                         - MONITOR_ALERT
                         - PASSWORD_RESET_CODE
                         - SYSTEM_NOTIFY
@@ -16080,6 +16111,7 @@ components:
                         - EMAIL
                         - WEBHOOK
                         - INTERNAL
+                        - SMS
                         - EXT
                     type: string
                     description: 投递渠道
@@ -16138,7 +16170,9 @@ components:
                 updatedAt:
                     type: string
                     format: date-time
-            description: "一条通知 × 一个渠道 × 一个收件人 = 一行投递台账。\r\n 不存正文快照（防敏感正文明文集邮），target 落脱敏串；排障经 related_id 跳回业务对象。"
+            description: |-
+                一条通知 × 一个渠道 × 一个收件人 = 一行投递台账。
+                 不存正文快照（防敏感正文明文集邮），target 落脱敏串；排障经 related_id 跳回业务对象。
         notify.service.v1.NotificationPreference:
             type: object
             properties:
@@ -16186,6 +16220,7 @@ components:
                         - INTERNAL_MESSAGE
                         - CHANNEL_TEST_EMAIL
                         - CHANNEL_TEST_EXT
+                        - CHANNEL_TEST_SMS
                         - MONITOR_ALERT
                         - PASSWORD_RESET_CODE
                         - SYSTEM_NOTIFY
@@ -16198,6 +16233,7 @@ components:
                         - EMAIL
                         - WEBHOOK
                         - INTERNAL
+                        - SMS
                         - EXT
                     type: string
                     description: 该事件投递走的渠道
@@ -16352,6 +16388,9 @@ components:
                 settings:
                     type: string
                     description: 扩展渠道配置（明文 JSON，留空不修改）
+                smsAccessSecret:
+                    type: string
+                    description: SMS 访问密钥，留空不修改
             description: 更新通知渠道 - 请求
         notify.service.v1.UpdateNotificationPreferenceRequest:
             type: object

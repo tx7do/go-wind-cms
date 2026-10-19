@@ -506,6 +506,34 @@ func (m *NotificationChannel) validate(all bool) error {
 		// no validation rules for WebhookPayloadTemplate
 	}
 
+	if m.SmsProvider != nil {
+		// no validation rules for SmsProvider
+	}
+
+	if m.SmsAccessKeyId != nil {
+		// no validation rules for SmsAccessKeyId
+	}
+
+	if m.HasSmsAccessSecret != nil {
+		// no validation rules for HasSmsAccessSecret
+	}
+
+	if m.SmsSignName != nil {
+		// no validation rules for SmsSignName
+	}
+
+	if m.SmsTemplateCode != nil {
+		// no validation rules for SmsTemplateCode
+	}
+
+	if m.SmsAppId != nil {
+		// no validation rules for SmsAppId
+	}
+
+	if m.SmsRegion != nil {
+		// no validation rules for SmsRegion
+	}
+
 	if m.Settings != nil {
 		// no validation rules for Settings
 	}
@@ -980,6 +1008,10 @@ func (m *CreateNotificationChannelRequest) validate(all bool) error {
 		// no validation rules for Settings
 	}
 
+	if m.SmsAccessSecret != nil {
+		// no validation rules for SmsAccessSecret
+	}
+
 	if len(errors) > 0 {
 		return CreateNotificationChannelRequestMultiError(errors)
 	}
@@ -1155,6 +1187,10 @@ func (m *UpdateNotificationChannelRequest) validate(all bool) error {
 
 	if m.Settings != nil {
 		// no validation rules for Settings
+	}
+
+	if m.SmsAccessSecret != nil {
+		// no validation rules for SmsAccessSecret
 	}
 
 	if len(errors) > 0 {

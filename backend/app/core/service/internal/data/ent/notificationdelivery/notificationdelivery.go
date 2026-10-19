@@ -106,6 +106,7 @@ const (
 	EventTypeChannelTestExt    EventType = "CHANNEL_TEST_EXT"
 	EventTypeMonitorAlert      EventType = "MONITOR_ALERT"
 	EventTypePasswordResetCode EventType = "PASSWORD_RESET_CODE"
+	EventTypeChannelTestSms    EventType = "CHANNEL_TEST_SMS"
 )
 
 func (et EventType) String() string {
@@ -115,7 +116,7 @@ func (et EventType) String() string {
 // EventTypeValidator is a validator for the "event_type" field enum values. It is called by the builders before save.
 func EventTypeValidator(et EventType) error {
 	switch et {
-	case EventTypeInternalMessage, EventTypeChannelTestEmail, EventTypeSystemNotify, EventTypeChannelTestExt, EventTypeMonitorAlert, EventTypePasswordResetCode:
+	case EventTypeInternalMessage, EventTypeChannelTestEmail, EventTypeSystemNotify, EventTypeChannelTestExt, EventTypeMonitorAlert, EventTypePasswordResetCode, EventTypeChannelTestSms:
 		return nil
 	default:
 		return fmt.Errorf("notificationdelivery: invalid enum value for event_type field: %q", et)
@@ -130,6 +131,7 @@ const (
 	ChannelEmail    Channel = "EMAIL"
 	ChannelWebhook  Channel = "WEBHOOK"
 	ChannelInternal Channel = "INTERNAL"
+	ChannelSms      Channel = "SMS"
 	ChannelExt      Channel = "EXT"
 )
 
@@ -140,7 +142,7 @@ func (c Channel) String() string {
 // ChannelValidator is a validator for the "channel" field enum values. It is called by the builders before save.
 func ChannelValidator(c Channel) error {
 	switch c {
-	case ChannelEmail, ChannelWebhook, ChannelInternal, ChannelExt:
+	case ChannelEmail, ChannelWebhook, ChannelInternal, ChannelSms, ChannelExt:
 		return nil
 	default:
 		return fmt.Errorf("notificationdelivery: invalid enum value for channel field: %q", c)

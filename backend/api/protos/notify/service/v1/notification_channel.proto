@@ -81,10 +81,17 @@ enum SignStyle {
 
 // 通知渠道
 message NotificationChannel {
+  // 短信服务商
+  enum SmsProvider {
+    ALIYUN = 0;   // 阿里云短信（Dysmsapi SendSms，RPC 签名）
+    TENCENT = 1;  // 腾讯云短信（sms SendSms，TC3-HMAC-SHA256 签名；需要 sms_app_id）
+  }
+
   // 渠道类型（成员名与 ent 列值逐字相同）
   enum Type {
     EMAIL = 0;    // 邮件（SMTP）
     WEBHOOK = 1;  // Webhook（HTTP 回调）
+    SMS = 2;      // 短信（阿里云/腾讯云；当前仅承载验证码类事件）
 
     // ---- 扩展渠道（EXT：配置整包存 settings 列，schema 见 ListChannelSchemas）----
     // 一级段位与上游 go-wind-admin 逐值一致，便于渠道配置互相搬运。
@@ -191,6 +198,42 @@ message NotificationChannel {
     (gnostic.openapi.v3.property) = { description: "Webhook 载荷模板，留空用该风格的内置默认 JSON" }
   ]; // Webhook 载荷模板
 
+  // ---- SMS 渠道五列（Type=SMS 专用；验证码正文出自服务商侧审核模板，系统无自由文本通道）----
+  optional SmsProvider sms_provider = 32 [
+    json_name = "smsProvider",
+    (gnostic.openapi.v3.property) = { description: "短信服务商" }
+  ]; // 短信服务商
+
+  optional string sms_access_key_id = 33 [
+    json_name = "smsAccessKeyId",
+    (gnostic.openapi.v3.property) = { description: "服务商访问密钥 ID" }
+  ]; // 访问密钥 ID
+
+  optional bool has_sms_access_secret = 34 [
+    json_name = "hasSmsAccessSecret",
+    (gnostic.openapi.v3.property) = { description: "是否已配置访问密钥（读视图布尔标识）" }
+  ]; // 是否已配置访问密钥
+
+  optional string sms_sign_name = 35 [
+    json_name = "smsSignName",
+    (gnostic.openapi.v3.property) = { description: "短信签名" }
+  ]; // 短信签名
+
+  optional string sms_template_code = 36 [
+    json_name = "smsTemplateCode",
+    (gnostic.openapi.v3.property) = { description: "验证码模板 Code" }
+  ]; // 验证码模板 Code
+
+  optional string sms_app_id = 37 [
+    json_name = "smsAppId",
+    (gnostic.openapi.v3.property) = { description: "腾讯云 SmsAppId（阿里云不使用）" }
+  ]; // 腾讯云 SmsAppId
+
+  optional string sms_region = 38 [
+    json_name = "smsRegion",
+    (gnostic.openapi.v3.property) = { description: "腾讯云地域（阿里云不使用）" }
+  ]; // 腾讯云地域
+
   // 扩展渠道配置整包（JSON；读回显是脱敏后的 JSON 串，sensitive 字段恒为空串——留空 = 不修改）
   optional string settings = 25 [
     json_name = "settings",
@@ -246,6 +289,12 @@ message CreateNotificationChannelRequest {
     json_name = "settings",
     (gnostic.openapi.v3.property) = { description: "扩展渠道配置（明文 JSON）" }
   ];
+
+  // SMS 访问密钥明文（服务端加密存储，不落日志）
+  optional string sms_access_secret = 5 [
+    json_name = "smsAccessSecret",
+    (gnostic.openapi.v3.property) = { description: "SMS 访问密钥" }
+  ];
 }
 
 // 更新通知渠道 - 请求
@@ -270,6 +319,12 @@ message UpdateNotificationChannelRequest {
   optional string settings = 6 [
     json_name = "settings",
     (gnostic.openapi.v3.property) = { description: "扩展渠道配置（明文 JSON，留空不修改）" }
+  ];
+
+  // SMS 访问密钥明文；留空表示不修改已存密钥
+  optional string sms_access_secret = 7 [
+    json_name = "smsAccessSecret",
+    (gnostic.openapi.v3.property) = { description: "SMS 访问密钥，留空不修改" }
   ];
 }
 

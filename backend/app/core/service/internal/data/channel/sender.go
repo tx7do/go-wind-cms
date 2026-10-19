@@ -41,6 +41,8 @@ type SendRequest struct {
 	// EventType 这次投递属于哪个业务事件。SMTP 用不上它（主题与正文已经是这个事件的），
 	// WEBHOOK 必须带上：出站 JSON 是对端唯一的判据。
 	EventType notifyV1.EventType
+	// Params 渠道原生参数：SMS 验证码事件必须带 params["code"]（正文出自服务商审核模板）。
+	Params map[string]string
 }
 
 // SendReceipt 渠道回执。

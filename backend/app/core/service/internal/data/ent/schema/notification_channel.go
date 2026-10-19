@@ -40,6 +40,7 @@ func (NotificationChannel) Fields() []ent.Field {
 			NamedValues(
 				"Email", "EMAIL",
 				"Webhook", "WEBHOOK",
+				"Sms", "SMS",
 				// ---- 扩展渠道（EXT：settings 列承载配置，proto Type 段位 100+）----
 				"WecomApp", "WECOM_APP", "DingtalkApp", "DINGTALK_APP", "FeishuApp", "FEISHU_APP", "Wechat", "WECHAT",
 				"Telegram", "TELEGRAM", "Slack", "SLACK", "Discord", "DISCORD", "Teams", "TEAMS",
@@ -120,6 +121,38 @@ func (NotificationChannel) Fields() []ent.Field {
 			Nillable(),
 		field.String("webhook_payload_template").
 			Comment("Webhook 载荷模板（{{占位符}} 渲染；留空则用该风格的内置默认 JSON）").
+			Optional().
+			Nillable(),
+		field.Enum("sms_provider").
+			Comment("短信服务商（Type=SMS 专用）").
+			NamedValues(
+				"Aliyun", "ALIYUN",
+				"Tencent", "TENCENT",
+			).
+			Optional().
+			Nillable(),
+		field.String("sms_access_key_id").
+			Comment("服务商访问密钥 ID").
+			Optional().
+			Nillable(),
+		field.String("sms_access_secret").
+			Comment("SMS 访问密钥（AES-GCM 加密落库）").
+			Optional().
+			Nillable(),
+		field.String("sms_sign_name").
+			Comment("短信签名").
+			Optional().
+			Nillable(),
+		field.String("sms_template_code").
+			Comment("验证码模板 Code（服务商侧审核）").
+			Optional().
+			Nillable(),
+		field.String("sms_app_id").
+			Comment("腾讯云 SmsAppId（阿里云不使用）").
+			Optional().
+			Nillable(),
+		field.String("sms_region").
+			Comment("腾讯云地域（阿里云不使用）").
 			Optional().
 			Nillable(),
 		field.String("settings").

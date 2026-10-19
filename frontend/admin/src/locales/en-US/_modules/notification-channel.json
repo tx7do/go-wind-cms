@@ -74,5 +74,21 @@
     "required": "{{label}} is required",
     "secretKeepHint": "Leave blank to keep the stored value",
     "optionDefault": "Default"
-  }
+  },
+  "typeSms": "SMS (Aliyun/Tencent)",
+  "smsProvider": "SMS Provider",
+  "requiredSmsProvider": "SMS provider is required",
+  "smsAliyun": "Aliyun SMS",
+  "smsTencent": "Tencent SMS",
+  "smsAccessKeyId": "Access Key ID",
+  "requiredSmsAccessKeyId": "Access Key ID is required",
+  "smsAccessSecret": "Access Secret",
+  "smsSecretPlaceholder": "Provider access secret",
+  "requiredSmsAccessSecret": "Access secret is required",
+  "smsSignName": "Sign Name",
+  "smsTemplateCode": "Code Template",
+  "smsTemplateCodeHint": "Provider-approved verification-code template; the body is rendered provider-side, we only fill the code",
+  "smsAppId": "SmsAppId",
+  "smsAppIdHint": "Required for Tencent Cloud; leave empty for Aliyun",
+  "invalidPhone": "Invalid phone number"
 }

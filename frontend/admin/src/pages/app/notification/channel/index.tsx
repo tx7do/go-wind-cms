@@ -179,9 +179,10 @@ const NotificationChannelManagement = () => {
 
   const handleSubmit = async (values: Record<string, unknown>) => {
     // 密钥与 settings 是请求级字段（不进 data）：读视图只有 hasPassword / hasWebhookSecret 布尔
-    const { password, webhookSecret, settings, ...data } = values as {
+    const { password, webhookSecret, smsAccessSecret, settings, ...data } = values as {
       password?: string;
       webhookSecret?: string;
+      smsAccessSecret?: string;
       settings?: Record<string, unknown>;
     } & Record<string, unknown>;
     // 扩展渠道：动态表单的 settings 对象序列化为 JSON 明文上送（sensitive 留空 = 保留已存值）
@@ -196,6 +197,7 @@ const NotificationChannelManagement = () => {
           data: data as unknown as NotificationChannel,
           password: password || undefined,
           webhookSecret: webhookSecret || undefined,
+          smsAccessSecret: smsAccessSecret || undefined,
         });
         message.success(t('createSuccess'));
       } else if (selected?.id) {
@@ -204,9 +206,12 @@ const NotificationChannelManagement = () => {
           data: data as unknown as NotificationChannel,
           password: password || undefined,
           webhookSecret: webhookSecret || undefined,
-          updateMask: isExtType(String(data.type))
-            ? 'name,type,settings,enabled,remark'
-            : 'name,type,smtpHost,smtpPort,smtpUsername,smtpFrom,smtpFromName,smtpTls,webhookUrl,webhookSignStyle,webhookPayloadTemplate,enabled,remark',
+          smsAccessSecret: smsAccessSecret || undefined,
+          updateMask: String(data.type) === 'SMS'
+            ? 'name,type,smsProvider,smsAccessKeyId,smsSignName,smsTemplateCode,smsAppId,enabled,remark'
+            : isExtType(String(data.type))
+              ? 'name,type,settings,enabled,remark'
+              : 'name,type,smtpHost,smtpPort,smtpUsername,smtpFrom,smtpFromName,smtpTls,webhookUrl,webhookSignStyle,webhookPayloadTemplate,enabled,remark',
         });
         message.success(t('updateSuccess'));
       }
@@ -368,7 +373,7 @@ const NotificationChannelManagement = () => {
         </Button>,
         // 测试发送对 EMAIL 与扩展渠道有意义（验证配置本身）；WEBHOOK 的端到端验证在路由规则页，
         // 那里测的是"事件 → 渠道 → 台账"整条链，渠道页只能证明配置本身。
-        (record.type === 'EMAIL' || isExtType(record.type)) && (
+        ((record.type === 'EMAIL' || record.type === 'SMS') || isExtType(record.type)) && (
           <Button key="test" type="link" size="small" icon={<SendOutlined />} onClick={() => setTestTarget(record)}>
             {t('testSend')}
           </Button>
@@ -437,7 +442,7 @@ const NotificationChannelManagement = () => {
         onFinish={handleSubmit}
         initialValues={
           drawerMode === 'create'
-            ? { type: 'EMAIL', smtpTls: 'START_TLS', smtpPort: 587, webhookSignStyle: 'CUSTOM', enabled: true }
+            ? { type: 'EMAIL', smtpTls: 'START_TLS', smtpPort: 587, webhookSignStyle: 'CUSTOM', smsProvider: 'ALIYUN', enabled: true }
             : {
                 ...selected,
                 password: undefined,
@@ -471,6 +476,41 @@ const NotificationChannelManagement = () => {
             isExtType(String(type)) ? (
               // 扩展渠道：settings 动态表单（schema 声明字段，sensitive 渲染为密码框）
               <SettingsFormFields schema={schemaByType.get(String(type))} />
+            ) : type === 'SMS' ? (
+              <>
+                <ProFormSelect
+                  name="smsProvider"
+                  label={t('smsProvider')}
+                  options={[
+                    { value: 'ALIYUN', label: t('smsAliyun') },
+                    { value: 'TENCENT', label: t('smsTencent') },
+                  ]}
+                  rules={[{ required: true, message: t('requiredSmsProvider') }]}
+                />
+                <ProFormText
+                  name="smsAccessKeyId"
+                  label={t('smsAccessKeyId')}
+                  rules={drawerMode === 'create' ? [{ required: true, message: t('requiredSmsAccessKeyId') }] : []}
+                />
+                <ProFormText.Password
+                  name="smsAccessSecret"
+                  label={t('smsAccessSecret')}
+                  placeholder={drawerMode === 'edit' ? t('secretKeepHint') : t('smsSecretPlaceholder')}
+                  rules={drawerMode === 'create' ? [{ required: true, message: t('requiredSmsAccessSecret') }] : []}
+                />
+                <ProFormText name="smsSignName" label={t('smsSignName')} placeholder="GoWind" />
+                <ProFormText
+                  name="smsTemplateCode"
+                  label={t('smsTemplateCode')}
+                  tooltip={t('smsTemplateCodeHint')}
+                />
+                <ProFormText
+                  name="smsAppId"
+                  label={t('smsAppId')}
+                  tooltip={t('smsAppIdHint')}
+                  placeholder="1400000000"
+                />
+              </>
             ) : type === 'WEBHOOK' ? (
               <>
                 <ProFormText
@@ -562,7 +602,7 @@ const NotificationChannelManagement = () => {
             //（chat_id/topic/设备 Key…），只做非空不做格式——格式错了由服务商报错进台账。
             ...(testTarget?.type === 'EMAIL' ? [{ type: 'email' as const, message: t('invalidEmail') }] : []),
           ]}
-          placeholder={testTarget?.type === 'EMAIL' ? 'you@example.com' : undefined}
+          placeholder={testTarget?.type === 'EMAIL' ? 'you@example.com' : testTarget?.type === 'SMS' ? '13800138000' : undefined}
         />
       </ModalForm>
     </ContentContainer>

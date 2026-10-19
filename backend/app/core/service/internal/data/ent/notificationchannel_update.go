@@ -445,6 +445,146 @@ func (_u *NotificationChannelUpdate) ClearWebhookPayloadTemplate() *Notification
 	return _u
 }
 
+// SetSmsProvider sets the "sms_provider" field.
+func (_u *NotificationChannelUpdate) SetSmsProvider(v notificationchannel.SmsProvider) *NotificationChannelUpdate {
+	_u.mutation.SetSmsProvider(v)
+	return _u
+}
+
+// SetNillableSmsProvider sets the "sms_provider" field if the given value is not nil.
+func (_u *NotificationChannelUpdate) SetNillableSmsProvider(v *notificationchannel.SmsProvider) *NotificationChannelUpdate {
+	if v != nil {
+		_u.SetSmsProvider(*v)
+	}
+	return _u
+}
+
+// ClearSmsProvider clears the value of the "sms_provider" field.
+func (_u *NotificationChannelUpdate) ClearSmsProvider() *NotificationChannelUpdate {
+	_u.mutation.ClearSmsProvider()
+	return _u
+}
+
+// SetSmsAccessKeyID sets the "sms_access_key_id" field.
+func (_u *NotificationChannelUpdate) SetSmsAccessKeyID(v string) *NotificationChannelUpdate {
+	_u.mutation.SetSmsAccessKeyID(v)
+	return _u
+}
+
+// SetNillableSmsAccessKeyID sets the "sms_access_key_id" field if the given value is not nil.
+func (_u *NotificationChannelUpdate) SetNillableSmsAccessKeyID(v *string) *NotificationChannelUpdate {
+	if v != nil {
+		_u.SetSmsAccessKeyID(*v)
+	}
+	return _u
+}
+
+// ClearSmsAccessKeyID clears the value of the "sms_access_key_id" field.
+func (_u *NotificationChannelUpdate) ClearSmsAccessKeyID() *NotificationChannelUpdate {
+	_u.mutation.ClearSmsAccessKeyID()
+	return _u
+}
+
+// SetSmsAccessSecret sets the "sms_access_secret" field.
+func (_u *NotificationChannelUpdate) SetSmsAccessSecret(v string) *NotificationChannelUpdate {
+	_u.mutation.SetSmsAccessSecret(v)
+	return _u
+}
+
+// SetNillableSmsAccessSecret sets the "sms_access_secret" field if the given value is not nil.
+func (_u *NotificationChannelUpdate) SetNillableSmsAccessSecret(v *string) *NotificationChannelUpdate {
+	if v != nil {
+		_u.SetSmsAccessSecret(*v)
+	}
+	return _u
+}
+
+// ClearSmsAccessSecret clears the value of the "sms_access_secret" field.
+func (_u *NotificationChannelUpdate) ClearSmsAccessSecret() *NotificationChannelUpdate {
+	_u.mutation.ClearSmsAccessSecret()
+	return _u
+}
+
+// SetSmsSignName sets the "sms_sign_name" field.
+func (_u *NotificationChannelUpdate) SetSmsSignName(v string) *NotificationChannelUpdate {
+	_u.mutation.SetSmsSignName(v)
+	return _u
+}
+
+// SetNillableSmsSignName sets the "sms_sign_name" field if the given value is not nil.
+func (_u *NotificationChannelUpdate) SetNillableSmsSignName(v *string) *NotificationChannelUpdate {
+	if v != nil {
+		_u.SetSmsSignName(*v)
+	}
+	return _u
+}
+
+// ClearSmsSignName clears the value of the "sms_sign_name" field.
+func (_u *NotificationChannelUpdate) ClearSmsSignName() *NotificationChannelUpdate {
+	_u.mutation.ClearSmsSignName()
+	return _u
+}
+
+// SetSmsTemplateCode sets the "sms_template_code" field.
+func (_u *NotificationChannelUpdate) SetSmsTemplateCode(v string) *NotificationChannelUpdate {
+	_u.mutation.SetSmsTemplateCode(v)
+	return _u
+}
+
+// SetNillableSmsTemplateCode sets the "sms_template_code" field if the given value is not nil.
+func (_u *NotificationChannelUpdate) SetNillableSmsTemplateCode(v *string) *NotificationChannelUpdate {
+	if v != nil {
+		_u.SetSmsTemplateCode(*v)
+	}
+	return _u
+}
+
+// ClearSmsTemplateCode clears the value of the "sms_template_code" field.
+func (_u *NotificationChannelUpdate) ClearSmsTemplateCode() *NotificationChannelUpdate {
+	_u.mutation.ClearSmsTemplateCode()
+	return _u
+}
+
+// SetSmsAppID sets the "sms_app_id" field.
+func (_u *NotificationChannelUpdate) SetSmsAppID(v string) *NotificationChannelUpdate {
+	_u.mutation.SetSmsAppID(v)
+	return _u
+}
+
+// SetNillableSmsAppID sets the "sms_app_id" field if the given value is not nil.
+func (_u *NotificationChannelUpdate) SetNillableSmsAppID(v *string) *NotificationChannelUpdate {
+	if v != nil {
+		_u.SetSmsAppID(*v)
+	}
+	return _u
+}
+
+// ClearSmsAppID clears the value of the "sms_app_id" field.
+func (_u *NotificationChannelUpdate) ClearSmsAppID() *NotificationChannelUpdate {
+	_u.mutation.ClearSmsAppID()
+	return _u
+}
+
+// SetSmsRegion sets the "sms_region" field.
+func (_u *NotificationChannelUpdate) SetSmsRegion(v string) *NotificationChannelUpdate {
+	_u.mutation.SetSmsRegion(v)
+	return _u
+}
+
+// SetNillableSmsRegion sets the "sms_region" field if the given value is not nil.
+func (_u *NotificationChannelUpdate) SetNillableSmsRegion(v *string) *NotificationChannelUpdate {
+	if v != nil {
+		_u.SetSmsRegion(*v)
+	}
+	return _u
+}
+
+// ClearSmsRegion clears the value of the "sms_region" field.
+func (_u *NotificationChannelUpdate) ClearSmsRegion() *NotificationChannelUpdate {
+	_u.mutation.ClearSmsRegion()
+	return _u
+}
+
 // SetSettings sets the "settings" field.
 func (_u *NotificationChannelUpdate) SetSettings(v string) *NotificationChannelUpdate {
 	_u.mutation.SetSettings(v)
@@ -522,6 +662,11 @@ func (_u *NotificationChannelUpdate) check() error {
 	if v, ok := _u.mutation.WebhookSignStyle(); ok {
 		if err := notificationchannel.WebhookSignStyleValidator(v); err != nil {
 			return &ValidationError{Name: "webhook_sign_style", err: fmt.Errorf(`ent: validator failed for field "NotificationChannel.webhook_sign_style": %w`, err)}
+		}
+	}
+	if v, ok := _u.mutation.SmsProvider(); ok {
+		if err := notificationchannel.SmsProviderValidator(v); err != nil {
+			return &ValidationError{Name: "sms_provider", err: fmt.Errorf(`ent: validator failed for field "NotificationChannel.sms_provider": %w`, err)}
 		}
 	}
 	return nil
@@ -673,6 +818,48 @@ func (_u *NotificationChannelUpdate) sqlSave(ctx context.Context) (_node int, er
 	}
 	if _u.mutation.WebhookPayloadTemplateCleared() {
 		_spec.ClearField(notificationchannel.FieldWebhookPayloadTemplate, field.TypeString)
+	}
+	if value, ok := _u.mutation.SmsProvider(); ok {
+		_spec.SetField(notificationchannel.FieldSmsProvider, field.TypeEnum, value)
+	}
+	if _u.mutation.SmsProviderCleared() {
+		_spec.ClearField(notificationchannel.FieldSmsProvider, field.TypeEnum)
+	}
+	if value, ok := _u.mutation.SmsAccessKeyID(); ok {
+		_spec.SetField(notificationchannel.FieldSmsAccessKeyID, field.TypeString, value)
+	}
+	if _u.mutation.SmsAccessKeyIDCleared() {
+		_spec.ClearField(notificationchannel.FieldSmsAccessKeyID, field.TypeString)
+	}
+	if value, ok := _u.mutation.SmsAccessSecret(); ok {
+		_spec.SetField(notificationchannel.FieldSmsAccessSecret, field.TypeString, value)
+	}
+	if _u.mutation.SmsAccessSecretCleared() {
+		_spec.ClearField(notificationchannel.FieldSmsAccessSecret, field.TypeString)
+	}
+	if value, ok := _u.mutation.SmsSignName(); ok {
+		_spec.SetField(notificationchannel.FieldSmsSignName, field.TypeString, value)
+	}
+	if _u.mutation.SmsSignNameCleared() {
+		_spec.ClearField(notificationchannel.FieldSmsSignName, field.TypeString)
+	}
+	if value, ok := _u.mutation.SmsTemplateCode(); ok {
+		_spec.SetField(notificationchannel.FieldSmsTemplateCode, field.TypeString, value)
+	}
+	if _u.mutation.SmsTemplateCodeCleared() {
+		_spec.ClearField(notificationchannel.FieldSmsTemplateCode, field.TypeString)
+	}
+	if value, ok := _u.mutation.SmsAppID(); ok {
+		_spec.SetField(notificationchannel.FieldSmsAppID, field.TypeString, value)
+	}
+	if _u.mutation.SmsAppIDCleared() {
+		_spec.ClearField(notificationchannel.FieldSmsAppID, field.TypeString)
+	}
+	if value, ok := _u.mutation.SmsRegion(); ok {
+		_spec.SetField(notificationchannel.FieldSmsRegion, field.TypeString, value)
+	}
+	if _u.mutation.SmsRegionCleared() {
+		_spec.ClearField(notificationchannel.FieldSmsRegion, field.TypeString)
 	}
 	if value, ok := _u.mutation.Settings(); ok {
 		_spec.SetField(notificationchannel.FieldSettings, field.TypeString, value)
@@ -1118,6 +1305,146 @@ func (_u *NotificationChannelUpdateOne) ClearWebhookPayloadTemplate() *Notificat
 	return _u
 }
 
+// SetSmsProvider sets the "sms_provider" field.
+func (_u *NotificationChannelUpdateOne) SetSmsProvider(v notificationchannel.SmsProvider) *NotificationChannelUpdateOne {
+	_u.mutation.SetSmsProvider(v)
+	return _u
+}
+
+// SetNillableSmsProvider sets the "sms_provider" field if the given value is not nil.
+func (_u *NotificationChannelUpdateOne) SetNillableSmsProvider(v *notificationchannel.SmsProvider) *NotificationChannelUpdateOne {
+	if v != nil {
+		_u.SetSmsProvider(*v)
+	}
+	return _u
+}
+
+// ClearSmsProvider clears the value of the "sms_provider" field.
+func (_u *NotificationChannelUpdateOne) ClearSmsProvider() *NotificationChannelUpdateOne {
+	_u.mutation.ClearSmsProvider()
+	return _u
+}
+
+// SetSmsAccessKeyID sets the "sms_access_key_id" field.
+func (_u *NotificationChannelUpdateOne) SetSmsAccessKeyID(v string) *NotificationChannelUpdateOne {
+	_u.mutation.SetSmsAccessKeyID(v)
+	return _u
+}
+
+// SetNillableSmsAccessKeyID sets the "sms_access_key_id" field if the given value is not nil.
+func (_u *NotificationChannelUpdateOne) SetNillableSmsAccessKeyID(v *string) *NotificationChannelUpdateOne {
+	if v != nil {
+		_u.SetSmsAccessKeyID(*v)
+	}
+	return _u
+}
+
+// ClearSmsAccessKeyID clears the value of the "sms_access_key_id" field.
+func (_u *NotificationChannelUpdateOne) ClearSmsAccessKeyID() *NotificationChannelUpdateOne {
+	_u.mutation.ClearSmsAccessKeyID()
+	return _u
+}
+
+// SetSmsAccessSecret sets the "sms_access_secret" field.
+func (_u *NotificationChannelUpdateOne) SetSmsAccessSecret(v string) *NotificationChannelUpdateOne {
+	_u.mutation.SetSmsAccessSecret(v)
+	return _u
+}
+
+// SetNillableSmsAccessSecret sets the "sms_access_secret" field if the given value is not nil.
+func (_u *NotificationChannelUpdateOne) SetNillableSmsAccessSecret(v *string) *NotificationChannelUpdateOne {
+	if v != nil {
+		_u.SetSmsAccessSecret(*v)
+	}
+	return _u
+}
+
+// ClearSmsAccessSecret clears the value of the "sms_access_secret" field.
+func (_u *NotificationChannelUpdateOne) ClearSmsAccessSecret() *NotificationChannelUpdateOne {
+	_u.mutation.ClearSmsAccessSecret()
+	return _u
+}
+
+// SetSmsSignName sets the "sms_sign_name" field.
+func (_u *NotificationChannelUpdateOne) SetSmsSignName(v string) *NotificationChannelUpdateOne {
+	_u.mutation.SetSmsSignName(v)
+	return _u
+}
+
+// SetNillableSmsSignName sets the "sms_sign_name" field if the given value is not nil.
+func (_u *NotificationChannelUpdateOne) SetNillableSmsSignName(v *string) *NotificationChannelUpdateOne {
+	if v != nil {
+		_u.SetSmsSignName(*v)
+	}
+	return _u
+}
+
+// ClearSmsSignName clears the value of the "sms_sign_name" field.
+func (_u *NotificationChannelUpdateOne) ClearSmsSignName() *NotificationChannelUpdateOne {
+	_u.mutation.ClearSmsSignName()
+	return _u
+}
+
+// SetSmsTemplateCode sets the "sms_template_code" field.
+func (_u *NotificationChannelUpdateOne) SetSmsTemplateCode(v string) *NotificationChannelUpdateOne {
+	_u.mutation.SetSmsTemplateCode(v)
+	return _u
+}
+
+// SetNillableSmsTemplateCode sets the "sms_template_code" field if the given value is not nil.
+func (_u *NotificationChannelUpdateOne) SetNillableSmsTemplateCode(v *string) *NotificationChannelUpdateOne {
+	if v != nil {
+		_u.SetSmsTemplateCode(*v)
+	}
+	return _u
+}
+
+// ClearSmsTemplateCode clears the value of the "sms_template_code" field.
+func (_u *NotificationChannelUpdateOne) ClearSmsTemplateCode() *NotificationChannelUpdateOne {
+	_u.mutation.ClearSmsTemplateCode()
+	return _u
+}
+
+// SetSmsAppID sets the "sms_app_id" field.
+func (_u *NotificationChannelUpdateOne) SetSmsAppID(v string) *NotificationChannelUpdateOne {
+	_u.mutation.SetSmsAppID(v)
+	return _u
+}
+
+// SetNillableSmsAppID sets the "sms_app_id" field if the given value is not nil.
+func (_u *NotificationChannelUpdateOne) SetNillableSmsAppID(v *string) *NotificationChannelUpdateOne {
+	if v != nil {
+		_u.SetSmsAppID(*v)
+	}
+	return _u
+}
+
+// ClearSmsAppID clears the value of the "sms_app_id" field.
+func (_u *NotificationChannelUpdateOne) ClearSmsAppID() *NotificationChannelUpdateOne {
+	_u.mutation.ClearSmsAppID()
+	return _u
+}
+
+// SetSmsRegion sets the "sms_region" field.
+func (_u *NotificationChannelUpdateOne) SetSmsRegion(v string) *NotificationChannelUpdateOne {
+	_u.mutation.SetSmsRegion(v)
+	return _u
+}
+
+// SetNillableSmsRegion sets the "sms_region" field if the given value is not nil.
+func (_u *NotificationChannelUpdateOne) SetNillableSmsRegion(v *string) *NotificationChannelUpdateOne {
+	if v != nil {
+		_u.SetSmsRegion(*v)
+	}
+	return _u
+}
+
+// ClearSmsRegion clears the value of the "sms_region" field.
+func (_u *NotificationChannelUpdateOne) ClearSmsRegion() *NotificationChannelUpdateOne {
+	_u.mutation.ClearSmsRegion()
+	return _u
+}
+
 // SetSettings sets the "settings" field.
 func (_u *NotificationChannelUpdateOne) SetSettings(v string) *NotificationChannelUpdateOne {
 	_u.mutation.SetSettings(v)
@@ -1208,6 +1535,11 @@ func (_u *NotificationChannelUpdateOne) check() error {
 	if v, ok := _u.mutation.WebhookSignStyle(); ok {
 		if err := notificationchannel.WebhookSignStyleValidator(v); err != nil {
 			return &ValidationError{Name: "webhook_sign_style", err: fmt.Errorf(`ent: validator failed for field "NotificationChannel.webhook_sign_style": %w`, err)}
+		}
+	}
+	if v, ok := _u.mutation.SmsProvider(); ok {
+		if err := notificationchannel.SmsProviderValidator(v); err != nil {
+			return &ValidationError{Name: "sms_provider", err: fmt.Errorf(`ent: validator failed for field "NotificationChannel.sms_provider": %w`, err)}
 		}
 	}
 	return nil
@@ -1376,6 +1708,48 @@ func (_u *NotificationChannelUpdateOne) sqlSave(ctx context.Context) (_node *Not
 	}
 	if _u.mutation.WebhookPayloadTemplateCleared() {
 		_spec.ClearField(notificationchannel.FieldWebhookPayloadTemplate, field.TypeString)
+	}
+	if value, ok := _u.mutation.SmsProvider(); ok {
+		_spec.SetField(notificationchannel.FieldSmsProvider, field.TypeEnum, value)
+	}
+	if _u.mutation.SmsProviderCleared() {
+		_spec.ClearField(notificationchannel.FieldSmsProvider, field.TypeEnum)
+	}
+	if value, ok := _u.mutation.SmsAccessKeyID(); ok {
+		_spec.SetField(notificationchannel.FieldSmsAccessKeyID, field.TypeString, value)
+	}
+	if _u.mutation.SmsAccessKeyIDCleared() {
+		_spec.ClearField(notificationchannel.FieldSmsAccessKeyID, field.TypeString)
+	}
+	if value, ok := _u.mutation.SmsAccessSecret(); ok {
+		_spec.SetField(notificationchannel.FieldSmsAccessSecret, field.TypeString, value)
+	}
+	if _u.mutation.SmsAccessSecretCleared() {
+		_spec.ClearField(notificationchannel.FieldSmsAccessSecret, field.TypeString)
+	}
+	if value, ok := _u.mutation.SmsSignName(); ok {
+		_spec.SetField(notificationchannel.FieldSmsSignName, field.TypeString, value)
+	}
+	if _u.mutation.SmsSignNameCleared() {
+		_spec.ClearField(notificationchannel.FieldSmsSignName, field.TypeString)
+	}
+	if value, ok := _u.mutation.SmsTemplateCode(); ok {
+		_spec.SetField(notificationchannel.FieldSmsTemplateCode, field.TypeString, value)
+	}
+	if _u.mutation.SmsTemplateCodeCleared() {
+		_spec.ClearField(notificationchannel.FieldSmsTemplateCode, field.TypeString)
+	}
+	if value, ok := _u.mutation.SmsAppID(); ok {
+		_spec.SetField(notificationchannel.FieldSmsAppID, field.TypeString, value)
+	}
+	if _u.mutation.SmsAppIDCleared() {
+		_spec.ClearField(notificationchannel.FieldSmsAppID, field.TypeString)
+	}
+	if value, ok := _u.mutation.SmsRegion(); ok {
+		_spec.SetField(notificationchannel.FieldSmsRegion, field.TypeString, value)
+	}
+	if _u.mutation.SmsRegionCleared() {
+		_spec.ClearField(notificationchannel.FieldSmsRegion, field.TypeString)
 	}
 	if value, ok := _u.mutation.Settings(); ok {
 		_spec.SetField(notificationchannel.FieldSettings, field.TypeString, value)

@@ -37,6 +37,7 @@ const CHANNEL_COLORS: Record<notifyservicev1_Channel, string> = {
   EMAIL: 'blue',
   WEBHOOK: 'purple',
   INTERNAL: 'cyan',
+  SMS: 'cyan',
   EXT: 'geekblue',
   CHANNEL_UNSPECIFIED: 'default',
 };

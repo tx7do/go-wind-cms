@@ -8391,6 +8391,7 @@ export type notifyservicev1_Channel =
   | 'EMAIL'
   | 'EXT'
   | 'INTERNAL'
+  | 'SMS'
   | 'WEBHOOK';
 export type monitor_alertservicev1_GetMonitorAlertRuleRequest = {
   id: number | undefined;
@@ -9262,6 +9263,8 @@ export type notifyservicev1_EventType =
   | 'CHANNEL_TEST_EMAIL'
   // 渠道测试消息（扩展渠道 EXT_* 的"测试发送"）。
   | 'CHANNEL_TEST_EXT'
+  // 渠道测试短信（SMS 渠道的"测试发送"，发一条真实验证码）。
+  | 'CHANNEL_TEST_SMS'
   | 'EVENT_TYPE_UNSPECIFIED'
   // 站内信投递：一条站内信发给一个收件人 = 一行台账，related_id 指向 internal_messages.id。
   // 它与其他事件的区别：其他事件由业务动作触发、渠道由路由表决定；这一个本身就是
@@ -9514,6 +9517,7 @@ export type notifyservicev1_NotificationChannel = {
   enabled?: boolean;
   // 密码不回传：仅创建/更新时写入；hasPassword 标识是否已配置
   hasPassword?: boolean;
+  hasSmsAccessSecret?: boolean;
   // 密钥不回传：与 password 同一条约定，仅写入时接收
   hasWebhookSecret?: boolean;
   id?: number;
@@ -9521,6 +9525,13 @@ export type notifyservicev1_NotificationChannel = {
   remark?: string;
   // 扩展渠道配置整包（JSON；读回显是脱敏后的 JSON 串，sensitive 字段恒为空串——留空 = 不修改）
   settings?: string;
+  smsAccessKeyId?: string;
+  smsAppId?: string;
+  // ---- SMS 渠道五列（Type=SMS 专用；验证码正文出自服务商侧审核模板，系统无自由文本通道）----
+  smsProvider?: notifyservicev1_NotificationChannel_SmsProvider;
+  smsRegion?: string;
+  smsSignName?: string;
+  smsTemplateCode?: string;
   smtpFrom?: string;
   smtpFromName?: string;
   smtpHost?: string;
@@ -9569,6 +9580,7 @@ export type notifyservicev1_NotificationChannel_Type =
   | 'SENDGRID'
   | 'SERVERCHAN'
   | 'SLACK'
+  | 'SMS'
   | 'TEAMS'
   | 'TELEGRAM'
   | 'TWILIO'
@@ -9599,6 +9611,10 @@ export type notifyservicev1_SignStyle =
   | 'FEISHU'
   | 'NONE'
   | 'WECOM';
+// 短信服务商
+export type notifyservicev1_NotificationChannel_SmsProvider =
+  | 'ALIYUN'
+  | 'TENCENT';
 // 查询通知渠道详情 - 请求
 export type notifyservicev1_GetNotificationChannelRequest = {
   id: number | undefined;
@@ -9611,6 +9627,8 @@ export type notifyservicev1_CreateNotificationChannelRequest = {
   password?: string;
   // 扩展渠道配置明文 JSON（服务端按 schema 校验必填并加密 sensitive 字段落库）
   settings?: string;
+  // SMS 访问密钥明文（服务端加密存储，不落日志）
+  smsAccessSecret?: string;
   // 明文签名密钥（服务端加密存储，不落日志；留空 = 不签名）
   webhookSecret?: string;
 };
@@ -9623,6 +9641,8 @@ export type notifyservicev1_UpdateNotificationChannelRequest = {
   password?: string;
   // 扩展渠道配置明文 JSON；sensitive 字段留空 = 保留已存值
   settings?: string;
+  // SMS 访问密钥明文；留空表示不修改已存密钥
+  smsAccessSecret?: string;
   updateMask: undefined | wellKnownFieldMask;
   // 明文签名密钥；留空表示不修改已存密钥
   webhookSecret?: string;
