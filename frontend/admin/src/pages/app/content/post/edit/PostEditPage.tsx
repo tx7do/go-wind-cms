@@ -32,7 +32,7 @@ import {
 import { EyeOutlined } from '@ant-design/icons';
 import AiGenerateButton from '@/components/common/AiGenerateButton';
 import VersionHistoryDrawer from '@/components/version/VersionHistoryDrawer';
-import { cendBaseUrl, useCreatePostPreviewToken } from '@/api/hooks/preview';
+import { cendBaseUrl, cendLocalePrefix, useCreatePostPreviewToken } from '@/api/hooks/preview';
 import SocialDistributionDrawer from '@/pages/app/social/distribution/SocialDistributionDrawer';
 import PostSettingsPanel from './PostSettingsPanel';
 import type { PostEditProps } from './types';
@@ -81,7 +81,7 @@ function snapshotPayload(f: PostEditProps) {
  * 多语言翻译、本地草稿（自动暂存 + 恢复询问）、右栏设置、定时发布、未保存拦截
  */
 const PostEditPage = () => {
-  const { t } = useTranslation('post');
+  const { t, i18n } = useTranslation('post');
   const navigate = useNavigate();
   const { id } = useParams();
   const [searchParams, setSearchParams] = useSearchParams();
@@ -844,7 +844,7 @@ ${content}` : content });
                 try {
                   const tk = await createPreviewToken.mutateAsync({ id: postId });
                   window.open(
-                    `${cendBaseUrl()}/post/detail?id=${postId}&preview_token=${tk.token ?? ''}`,
+                    `${cendBaseUrl()}/${cendLocalePrefix(i18n.language)}/post/detail?id=${postId}&preview_token=${tk.token ?? ''}`,
                     '_blank',
                     'noopener',
                   );

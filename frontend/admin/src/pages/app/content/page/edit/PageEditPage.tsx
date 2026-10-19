@@ -25,7 +25,7 @@ import { PaginationQuery } from '@/core';
 import { EyeOutlined } from '@ant-design/icons';
 import AiGenerateButton from '@/components/common/AiGenerateButton';
 import VersionHistoryDrawer from '@/components/version/VersionHistoryDrawer';
-import { cendBaseUrl, useCreatePagePreviewToken } from '@/api/hooks/preview';
+import { cendBaseUrl, cendLocalePrefix, useCreatePagePreviewToken } from '@/api/hooks/preview';
 import ContentContainer from '@/layouts/components/PageContainer/ContentContainer';
 import { useEditLock } from '@/api/hooks/edit-lock';
 import { useCollaboration } from '@/hooks/useCollaboration';
@@ -111,7 +111,7 @@ function getDraftKey(pageId: null | number, lang: string, isCreateMode: boolean)
  * 嵌套区块管理、发布（主编辑器内容合并进首个正文区块）
  */
 const PageEditPage = () => {
-  const { t } = useTranslation('page');
+  const { t, i18n } = useTranslation('page');
   const navigate = useNavigate();
   const { id } = useParams();
   const [searchParams, setSearchParams] = useSearchParams();
@@ -880,7 +880,7 @@ const PageEditPage = () => {
                 try {
                   const tk = await createPreviewToken.mutateAsync({ id: pageId });
                   window.open(
-                    `${cendBaseUrl()}/page/detail?id=${pageId}&preview_token=${tk.token ?? ''}`,
+                    `${cendBaseUrl()}/${cendLocalePrefix(i18n.language)}/page/detail?id=${pageId}&preview_token=${tk.token ?? ''}`,
                     '_blank',
                     'noopener',
                   );
