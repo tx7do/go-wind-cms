@@ -54,4 +54,11 @@ service NotificationChannelService {
       body: "*"
     };
   }
+
+  // 扩展渠道 schema 清单（前端 settings 动态表单的数据源）
+  rpc ListChannelSchemas(google.protobuf.Empty) returns (notify.service.v1.ListChannelSchemasResponse) {
+    option (google.api.http) = {
+      get: "/admin/v1/notification-channel-schemas"
+    };
+  }
 }

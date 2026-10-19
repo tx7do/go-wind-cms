@@ -161,6 +161,8 @@ type DeliveryOutcome struct {
 	Attempts *uint32
 	// SentAt 投递完成时间；FAILED/SKIPPED 传 nil，列保持空。
 	SentAt *time.Time
+	// ProviderID 服务商侧消息/请求 ID；nil 表示不修改。
+	ProviderID *string
 }
 
 // MarkResult 回写投递结果。
@@ -184,6 +186,9 @@ func (r *NotificationDeliveryRepo) MarkResult(ctx context.Context, id uint32, ou
 	}
 	if outcome.SentAt != nil {
 		update.SetSentAt(*outcome.SentAt)
+	}
+	if outcome.ProviderID != nil {
+		update.SetReceiptProviderID(*outcome.ProviderID)
 	}
 
 	if err := update.Exec(ctx); err != nil {

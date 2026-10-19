@@ -35,6 +35,399 @@ var (
 	_ = sort.Sort
 )
 
+// Validate checks the field values on ChannelField with the rules defined in
+// the proto definition for this message. If any rules are violated, the first
+// error encountered is returned, or nil if there are no violations.
+func (m *ChannelField) Validate() error {
+	return m.validate(false)
+}
+
+// ValidateAll checks the field values on ChannelField with the rules defined
+// in the proto definition for this message. If any rules are violated, the
+// result is a list of violation errors wrapped in ChannelFieldMultiError, or
+// nil if none found.
+func (m *ChannelField) ValidateAll() error {
+	return m.validate(true)
+}
+
+func (m *ChannelField) validate(all bool) error {
+	if m == nil {
+		return nil
+	}
+
+	var errors []error
+
+	// no validation rules for Name
+
+	// no validation rules for Label
+
+	// no validation rules for Type
+
+	// no validation rules for Required
+
+	// no validation rules for Sensitive
+
+	// no validation rules for Placeholder
+
+	// no validation rules for Hint
+
+	if len(errors) > 0 {
+		return ChannelFieldMultiError(errors)
+	}
+
+	return nil
+}
+
+// ChannelFieldMultiError is an error wrapping multiple validation errors
+// returned by ChannelField.ValidateAll() if the designated constraints aren't met.
+type ChannelFieldMultiError []error
+
+// Error returns a concatenation of all the error messages it wraps.
+func (m ChannelFieldMultiError) Error() string {
+	msgs := make([]string, 0, len(m))
+	for _, err := range m {
+		msgs = append(msgs, err.Error())
+	}
+	return strings.Join(msgs, "; ")
+}
+
+// AllErrors returns a list of validation violation errors.
+func (m ChannelFieldMultiError) AllErrors() []error { return m }
+
+// ChannelFieldValidationError is the validation error returned by
+// ChannelField.Validate if the designated constraints aren't met.
+type ChannelFieldValidationError struct {
+	field  string
+	reason string
+	cause  error
+	key    bool
+}
+
+// Field function returns field value.
+func (e ChannelFieldValidationError) Field() string { return e.field }
+
+// Reason function returns reason value.
+func (e ChannelFieldValidationError) Reason() string { return e.reason }
+
+// Cause function returns cause value.
+func (e ChannelFieldValidationError) Cause() error { return e.cause }
+
+// Key function returns key value.
+func (e ChannelFieldValidationError) Key() bool { return e.key }
+
+// ErrorName returns error name.
+func (e ChannelFieldValidationError) ErrorName() string { return "ChannelFieldValidationError" }
+
+// Error satisfies the builtin error interface
+func (e ChannelFieldValidationError) Error() string {
+	cause := ""
+	if e.cause != nil {
+		cause = fmt.Sprintf(" | caused by: %v", e.cause)
+	}
+
+	key := ""
+	if e.key {
+		key = "key for "
+	}
+
+	return fmt.Sprintf(
+		"invalid %sChannelField.%s: %s%s",
+		key,
+		e.field,
+		e.reason,
+		cause)
+}
+
+var _ error = ChannelFieldValidationError{}
+
+var _ interface {
+	Field() string
+	Reason() string
+	Key() bool
+	Cause() error
+	ErrorName() string
+} = ChannelFieldValidationError{}
+
+// Validate checks the field values on ChannelSchema with the rules defined in
+// the proto definition for this message. If any rules are violated, the first
+// error encountered is returned, or nil if there are no violations.
+func (m *ChannelSchema) Validate() error {
+	return m.validate(false)
+}
+
+// ValidateAll checks the field values on ChannelSchema with the rules defined
+// in the proto definition for this message. If any rules are violated, the
+// result is a list of violation errors wrapped in ChannelSchemaMultiError, or
+// nil if none found.
+func (m *ChannelSchema) ValidateAll() error {
+	return m.validate(true)
+}
+
+func (m *ChannelSchema) validate(all bool) error {
+	if m == nil {
+		return nil
+	}
+
+	var errors []error
+
+	// no validation rules for Type
+
+	// no validation rules for Group
+
+	// no validation rules for Label
+
+	// no validation rules for TargetLabel
+
+	// no validation rules for NeedsTarget
+
+	for idx, item := range m.GetFields() {
+		_, _ = idx, item
+
+		if all {
+			switch v := interface{}(item).(type) {
+			case interface{ ValidateAll() error }:
+				if err := v.ValidateAll(); err != nil {
+					errors = append(errors, ChannelSchemaValidationError{
+						field:  fmt.Sprintf("Fields[%v]", idx),
+						reason: "embedded message failed validation",
+						cause:  err,
+					})
+				}
+			case interface{ Validate() error }:
+				if err := v.Validate(); err != nil {
+					errors = append(errors, ChannelSchemaValidationError{
+						field:  fmt.Sprintf("Fields[%v]", idx),
+						reason: "embedded message failed validation",
+						cause:  err,
+					})
+				}
+			}
+		} else if v, ok := interface{}(item).(interface{ Validate() error }); ok {
+			if err := v.Validate(); err != nil {
+				return ChannelSchemaValidationError{
+					field:  fmt.Sprintf("Fields[%v]", idx),
+					reason: "embedded message failed validation",
+					cause:  err,
+				}
+			}
+		}
+
+	}
+
+	if len(errors) > 0 {
+		return ChannelSchemaMultiError(errors)
+	}
+
+	return nil
+}
+
+// ChannelSchemaMultiError is an error wrapping multiple validation errors
+// returned by ChannelSchema.ValidateAll() if the designated constraints
+// aren't met.
+type ChannelSchemaMultiError []error
+
+// Error returns a concatenation of all the error messages it wraps.
+func (m ChannelSchemaMultiError) Error() string {
+	msgs := make([]string, 0, len(m))
+	for _, err := range m {
+		msgs = append(msgs, err.Error())
+	}
+	return strings.Join(msgs, "; ")
+}
+
+// AllErrors returns a list of validation violation errors.
+func (m ChannelSchemaMultiError) AllErrors() []error { return m }
+
+// ChannelSchemaValidationError is the validation error returned by
+// ChannelSchema.Validate if the designated constraints aren't met.
+type ChannelSchemaValidationError struct {
+	field  string
+	reason string
+	cause  error
+	key    bool
+}
+
+// Field function returns field value.
+func (e ChannelSchemaValidationError) Field() string { return e.field }
+
+// Reason function returns reason value.
+func (e ChannelSchemaValidationError) Reason() string { return e.reason }
+
+// Cause function returns cause value.
+func (e ChannelSchemaValidationError) Cause() error { return e.cause }
+
+// Key function returns key value.
+func (e ChannelSchemaValidationError) Key() bool { return e.key }
+
+// ErrorName returns error name.
+func (e ChannelSchemaValidationError) ErrorName() string { return "ChannelSchemaValidationError" }
+
+// Error satisfies the builtin error interface
+func (e ChannelSchemaValidationError) Error() string {
+	cause := ""
+	if e.cause != nil {
+		cause = fmt.Sprintf(" | caused by: %v", e.cause)
+	}
+
+	key := ""
+	if e.key {
+		key = "key for "
+	}
+
+	return fmt.Sprintf(
+		"invalid %sChannelSchema.%s: %s%s",
+		key,
+		e.field,
+		e.reason,
+		cause)
+}
+
+var _ error = ChannelSchemaValidationError{}
+
+var _ interface {
+	Field() string
+	Reason() string
+	Key() bool
+	Cause() error
+	ErrorName() string
+} = ChannelSchemaValidationError{}
+
+// Validate checks the field values on ListChannelSchemasResponse with the
+// rules defined in the proto definition for this message. If any rules are
+// violated, the first error encountered is returned, or nil if there are no violations.
+func (m *ListChannelSchemasResponse) Validate() error {
+	return m.validate(false)
+}
+
+// ValidateAll checks the field values on ListChannelSchemasResponse with the
+// rules defined in the proto definition for this message. If any rules are
+// violated, the result is a list of violation errors wrapped in
+// ListChannelSchemasResponseMultiError, or nil if none found.
+func (m *ListChannelSchemasResponse) ValidateAll() error {
+	return m.validate(true)
+}
+
+func (m *ListChannelSchemasResponse) validate(all bool) error {
+	if m == nil {
+		return nil
+	}
+
+	var errors []error
+
+	for idx, item := range m.GetItems() {
+		_, _ = idx, item
+
+		if all {
+			switch v := interface{}(item).(type) {
+			case interface{ ValidateAll() error }:
+				if err := v.ValidateAll(); err != nil {
+					errors = append(errors, ListChannelSchemasResponseValidationError{
+						field:  fmt.Sprintf("Items[%v]", idx),
+						reason: "embedded message failed validation",
+						cause:  err,
+					})
+				}
+			case interface{ Validate() error }:
+				if err := v.Validate(); err != nil {
+					errors = append(errors, ListChannelSchemasResponseValidationError{
+						field:  fmt.Sprintf("Items[%v]", idx),
+						reason: "embedded message failed validation",
+						cause:  err,
+					})
+				}
+			}
+		} else if v, ok := interface{}(item).(interface{ Validate() error }); ok {
+			if err := v.Validate(); err != nil {
+				return ListChannelSchemasResponseValidationError{
+					field:  fmt.Sprintf("Items[%v]", idx),
+					reason: "embedded message failed validation",
+					cause:  err,
+				}
+			}
+		}
+
+	}
+
+	if len(errors) > 0 {
+		return ListChannelSchemasResponseMultiError(errors)
+	}
+
+	return nil
+}
+
+// ListChannelSchemasResponseMultiError is an error wrapping multiple
+// validation errors returned by ListChannelSchemasResponse.ValidateAll() if
+// the designated constraints aren't met.
+type ListChannelSchemasResponseMultiError []error
+
+// Error returns a concatenation of all the error messages it wraps.
+func (m ListChannelSchemasResponseMultiError) Error() string {
+	msgs := make([]string, 0, len(m))
+	for _, err := range m {
+		msgs = append(msgs, err.Error())
+	}
+	return strings.Join(msgs, "; ")
+}
+
+// AllErrors returns a list of validation violation errors.
+func (m ListChannelSchemasResponseMultiError) AllErrors() []error { return m }
+
+// ListChannelSchemasResponseValidationError is the validation error returned
+// by ListChannelSchemasResponse.Validate if the designated constraints aren't met.
+type ListChannelSchemasResponseValidationError struct {
+	field  string
+	reason string
+	cause  error
+	key    bool
+}
+
+// Field function returns field value.
+func (e ListChannelSchemasResponseValidationError) Field() string { return e.field }
+
+// Reason function returns reason value.
+func (e ListChannelSchemasResponseValidationError) Reason() string { return e.reason }
+
+// Cause function returns cause value.
+func (e ListChannelSchemasResponseValidationError) Cause() error { return e.cause }
+
+// Key function returns key value.
+func (e ListChannelSchemasResponseValidationError) Key() bool { return e.key }
+
+// ErrorName returns error name.
+func (e ListChannelSchemasResponseValidationError) ErrorName() string {
+	return "ListChannelSchemasResponseValidationError"
+}
+
+// Error satisfies the builtin error interface
+func (e ListChannelSchemasResponseValidationError) Error() string {
+	cause := ""
+	if e.cause != nil {
+		cause = fmt.Sprintf(" | caused by: %v", e.cause)
+	}
+
+	key := ""
+	if e.key {
+		key = "key for "
+	}
+
+	return fmt.Sprintf(
+		"invalid %sListChannelSchemasResponse.%s: %s%s",
+		key,
+		e.field,
+		e.reason,
+		cause)
+}
+
+var _ error = ListChannelSchemasResponseValidationError{}
+
+var _ interface {
+	Field() string
+	Reason() string
+	Key() bool
+	Cause() error
+	ErrorName() string
+} = ListChannelSchemasResponseValidationError{}
+
 // Validate checks the field values on NotificationChannel with the rules
 // defined in the proto definition for this message. If any rules are
 // violated, the first error encountered is returned, or nil if there are no violations.
@@ -111,6 +504,10 @@ func (m *NotificationChannel) validate(all bool) error {
 
 	if m.WebhookPayloadTemplate != nil {
 		// no validation rules for WebhookPayloadTemplate
+	}
+
+	if m.Settings != nil {
+		// no validation rules for Settings
 	}
 
 	if m.Enabled != nil {
@@ -579,6 +976,10 @@ func (m *CreateNotificationChannelRequest) validate(all bool) error {
 		// no validation rules for WebhookSecret
 	}
 
+	if m.Settings != nil {
+		// no validation rules for Settings
+	}
+
 	if len(errors) > 0 {
 		return CreateNotificationChannelRequestMultiError(errors)
 	}
@@ -750,6 +1151,10 @@ func (m *UpdateNotificationChannelRequest) validate(all bool) error {
 
 	if m.WebhookSecret != nil {
 		// no validation rules for WebhookSecret
+	}
+
+	if m.Settings != nil {
+		// no validation rules for Settings
 	}
 
 	if len(errors) > 0 {

@@ -308,6 +308,20 @@ func (_c *NotificationChannelCreate) SetNillableWebhookPayloadTemplate(v *string
 	return _c
 }
 
+// SetSettings sets the "settings" field.
+func (_c *NotificationChannelCreate) SetSettings(v string) *NotificationChannelCreate {
+	_c.mutation.SetSettings(v)
+	return _c
+}
+
+// SetNillableSettings sets the "settings" field if the given value is not nil.
+func (_c *NotificationChannelCreate) SetNillableSettings(v *string) *NotificationChannelCreate {
+	if v != nil {
+		_c.SetSettings(*v)
+	}
+	return _c
+}
+
 // SetID sets the "id" field.
 func (_c *NotificationChannelCreate) SetID(v uint32) *NotificationChannelCreate {
 	_c.mutation.SetID(v)
@@ -521,6 +535,10 @@ func (_c *NotificationChannelCreate) createSpec() (*NotificationChannel, *sqlgra
 	if value, ok := _c.mutation.WebhookPayloadTemplate(); ok {
 		_spec.SetField(notificationchannel.FieldWebhookPayloadTemplate, field.TypeString, value)
 		_node.WebhookPayloadTemplate = &value
+	}
+	if value, ok := _c.mutation.Settings(); ok {
+		_spec.SetField(notificationchannel.FieldSettings, field.TypeString, value)
+		_node.Settings = &value
 	}
 	return _node, _spec
 }
@@ -943,6 +961,24 @@ func (u *NotificationChannelUpsert) UpdateWebhookPayloadTemplate() *Notification
 // ClearWebhookPayloadTemplate clears the value of the "webhook_payload_template" field.
 func (u *NotificationChannelUpsert) ClearWebhookPayloadTemplate() *NotificationChannelUpsert {
 	u.SetNull(notificationchannel.FieldWebhookPayloadTemplate)
+	return u
+}
+
+// SetSettings sets the "settings" field.
+func (u *NotificationChannelUpsert) SetSettings(v string) *NotificationChannelUpsert {
+	u.Set(notificationchannel.FieldSettings, v)
+	return u
+}
+
+// UpdateSettings sets the "settings" field to the value that was provided on create.
+func (u *NotificationChannelUpsert) UpdateSettings() *NotificationChannelUpsert {
+	u.SetExcluded(notificationchannel.FieldSettings)
+	return u
+}
+
+// ClearSettings clears the value of the "settings" field.
+func (u *NotificationChannelUpsert) ClearSettings() *NotificationChannelUpsert {
+	u.SetNull(notificationchannel.FieldSettings)
 	return u
 }
 
@@ -1428,6 +1464,27 @@ func (u *NotificationChannelUpsertOne) UpdateWebhookPayloadTemplate() *Notificat
 func (u *NotificationChannelUpsertOne) ClearWebhookPayloadTemplate() *NotificationChannelUpsertOne {
 	return u.Update(func(s *NotificationChannelUpsert) {
 		s.ClearWebhookPayloadTemplate()
+	})
+}
+
+// SetSettings sets the "settings" field.
+func (u *NotificationChannelUpsertOne) SetSettings(v string) *NotificationChannelUpsertOne {
+	return u.Update(func(s *NotificationChannelUpsert) {
+		s.SetSettings(v)
+	})
+}
+
+// UpdateSettings sets the "settings" field to the value that was provided on create.
+func (u *NotificationChannelUpsertOne) UpdateSettings() *NotificationChannelUpsertOne {
+	return u.Update(func(s *NotificationChannelUpsert) {
+		s.UpdateSettings()
+	})
+}
+
+// ClearSettings clears the value of the "settings" field.
+func (u *NotificationChannelUpsertOne) ClearSettings() *NotificationChannelUpsertOne {
+	return u.Update(func(s *NotificationChannelUpsert) {
+		s.ClearSettings()
 	})
 }
 
@@ -2079,6 +2136,27 @@ func (u *NotificationChannelUpsertBulk) UpdateWebhookPayloadTemplate() *Notifica
 func (u *NotificationChannelUpsertBulk) ClearWebhookPayloadTemplate() *NotificationChannelUpsertBulk {
 	return u.Update(func(s *NotificationChannelUpsert) {
 		s.ClearWebhookPayloadTemplate()
+	})
+}
+
+// SetSettings sets the "settings" field.
+func (u *NotificationChannelUpsertBulk) SetSettings(v string) *NotificationChannelUpsertBulk {
+	return u.Update(func(s *NotificationChannelUpsert) {
+		s.SetSettings(v)
+	})
+}
+
+// UpdateSettings sets the "settings" field to the value that was provided on create.
+func (u *NotificationChannelUpsertBulk) UpdateSettings() *NotificationChannelUpsertBulk {
+	return u.Update(func(s *NotificationChannelUpsert) {
+		s.UpdateSettings()
+	})
+}
+
+// ClearSettings clears the value of the "settings" field.
+func (u *NotificationChannelUpsertBulk) ClearSettings() *NotificationChannelUpsertBulk {
+	return u.Update(func(s *NotificationChannelUpsert) {
+		s.ClearSettings()
 	})
 }
 

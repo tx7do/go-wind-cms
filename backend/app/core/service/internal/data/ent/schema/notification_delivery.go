@@ -44,16 +44,18 @@ func (NotificationDelivery) Fields() []ent.Field {
 				"InternalMessage", "INTERNAL_MESSAGE",
 				"ChannelTestEmail", "CHANNEL_TEST_EMAIL",
 				"SystemNotify", "SYSTEM_NOTIFY",
+				"ChannelTestExt", "CHANNEL_TEST_EXT",
 			).
 			Optional().
 			Nillable(),
 
 		field.Enum("channel").
-			Comment("投递渠道").
+			Comment("投递渠道（EXT：扩展渠道大类，具体型别在渠道行的 type 列）").
 			NamedValues(
 				"Email", "EMAIL",
 				"Webhook", "WEBHOOK",
 				"Internal", "INTERNAL",
+				"Ext", "EXT",
 			).
 			Optional().
 			Nillable(),
@@ -115,6 +117,10 @@ func (NotificationDelivery) Fields() []ent.Field {
 			Optional().
 			Nillable(),
 
+		field.String("receipt_provider_id").
+			Comment("服务商侧消息/请求 ID（阿里云 RequestId、IM 响应 ID 等，拿得到就带）；跨系统对账用").
+			Optional().
+			Nillable(),
 		field.Time("sent_at").
 			Comment("投递完成时间").
 			Optional().

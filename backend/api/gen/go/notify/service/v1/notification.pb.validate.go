@@ -134,6 +134,10 @@ func (m *NotificationDelivery) validate(all bool) error {
 		// no validation rules for Attempts
 	}
 
+	if m.ReceiptProviderId != nil {
+		// no validation rules for ReceiptProviderId
+	}
+
 	if m.CreatedBy != nil {
 		// no validation rules for CreatedBy
 	}

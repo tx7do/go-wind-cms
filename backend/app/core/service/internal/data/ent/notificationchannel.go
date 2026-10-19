@@ -36,7 +36,7 @@ type NotificationChannel struct {
 	Status *notificationchannel.Status `json:"status,omitempty"`
 	// 渠道名称
 	Name string `json:"name,omitempty"`
-	// 渠道类型（成员名与 proto Type 枚举逐字相同；Nillable 与全域枚举列同规：copier 枚举转换是指针↔指针对）
+	// 渠道类型（成员名与 proto Type 枚举逐字相同；Nillable 与全域枚举列同规：copier 枚举转换是指针↔指针对）。EXT_* 扩展渠道的配置整包存 settings 列
 	Type *notificationchannel.Type `json:"type,omitempty"`
 	// SMTP 服务器地址
 	SMTPHost *string `json:"smtp_host,omitempty"`
@@ -60,7 +60,9 @@ type NotificationChannel struct {
 	WebhookSignStyle *notificationchannel.WebhookSignStyle `json:"webhook_sign_style,omitempty"`
 	// Webhook 载荷模板（{{占位符}} 渲染；留空则用该风格的内置默认 JSON）
 	WebhookPayloadTemplate *string `json:"webhook_payload_template,omitempty"`
-	selectValues           sql.SelectValues
+	// 扩展渠道（EXT_* 类型）配置整包：JSON，sensitive 字段加密落库；EMAIL/WEBHOOK 不使用
+	Settings     *string `json:"settings,omitempty"`
+	selectValues sql.SelectValues
 }
 
 // scanValues returns the types for scanning values from sql.Rows.
@@ -70,7 +72,7 @@ func (*NotificationChannel) scanValues(columns []string) ([]any, error) {
 		switch columns[i] {
 		case notificationchannel.FieldID, notificationchannel.FieldCreatedBy, notificationchannel.FieldUpdatedBy, notificationchannel.FieldDeletedBy, notificationchannel.FieldSMTPPort:
 			values[i] = new(sql.NullInt64)
-		case notificationchannel.FieldRemark, notificationchannel.FieldStatus, notificationchannel.FieldName, notificationchannel.FieldType, notificationchannel.FieldSMTPHost, notificationchannel.FieldSMTPUsername, notificationchannel.FieldSMTPPassword, notificationchannel.FieldSMTPFrom, notificationchannel.FieldSMTPFromName, notificationchannel.FieldSMTPTLS, notificationchannel.FieldWebhookURL, notificationchannel.FieldWebhookSecret, notificationchannel.FieldWebhookSignStyle, notificationchannel.FieldWebhookPayloadTemplate:
+		case notificationchannel.FieldRemark, notificationchannel.FieldStatus, notificationchannel.FieldName, notificationchannel.FieldType, notificationchannel.FieldSMTPHost, notificationchannel.FieldSMTPUsername, notificationchannel.FieldSMTPPassword, notificationchannel.FieldSMTPFrom, notificationchannel.FieldSMTPFromName, notificationchannel.FieldSMTPTLS, notificationchannel.FieldWebhookURL, notificationchannel.FieldWebhookSecret, notificationchannel.FieldWebhookSignStyle, notificationchannel.FieldWebhookPayloadTemplate, notificationchannel.FieldSettings:
 			values[i] = new(sql.NullString)
 		case notificationchannel.FieldCreatedAt, notificationchannel.FieldUpdatedAt, notificationchannel.FieldDeletedAt:
 			values[i] = new(sql.NullTime)
@@ -241,6 +243,13 @@ func (_m *NotificationChannel) assignValues(columns []string, values []any) erro
 				_m.WebhookPayloadTemplate = new(string)
 				*_m.WebhookPayloadTemplate = value.String
 			}
+		case notificationchannel.FieldSettings:
+			if value, ok := values[i].(*sql.NullString); !ok {
+				return fmt.Errorf("unexpected type %T for field settings", values[i])
+			} else if value.Valid {
+				_m.Settings = new(string)
+				*_m.Settings = value.String
+			}
 		default:
 			_m.selectValues.Set(columns[i], values[i])
 		}
@@ -371,6 +380,11 @@ func (_m *NotificationChannel) String() string {
 	builder.WriteString(", ")
 	if v := _m.WebhookPayloadTemplate; v != nil {
 		builder.WriteString("webhook_payload_template=")
+		builder.WriteString(*v)
+	}
+	builder.WriteString(", ")
+	if v := _m.Settings; v != nil {
+		builder.WriteString("settings=")
 		builder.WriteString(*v)
 	}
 	builder.WriteByte(')')

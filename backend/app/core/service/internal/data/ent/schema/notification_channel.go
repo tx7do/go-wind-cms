@@ -36,10 +36,23 @@ func (NotificationChannel) Fields() []ent.Field {
 			Comment("渠道名称").
 			NotEmpty(),
 		field.Enum("type").
-			Comment("渠道类型（成员名与 proto Type 枚举逐字相同；Nillable 与全域枚举列同规：copier 枚举转换是指针↔指针对）").
+			Comment("渠道类型（成员名与 proto Type 枚举逐字相同；Nillable 与全域枚举列同规：copier 枚举转换是指针↔指针对）。EXT_* 扩展渠道的配置整包存 settings 列").
 			NamedValues(
 				"Email", "EMAIL",
 				"Webhook", "WEBHOOK",
+				// ---- 扩展渠道（EXT：settings 列承载配置，proto Type 段位 100+）----
+				"WecomApp", "WECOM_APP", "DingtalkApp", "DINGTALK_APP", "FeishuApp", "FEISHU_APP", "Wechat", "WECHAT",
+				"Telegram", "TELEGRAM", "Slack", "SLACK", "Discord", "DISCORD", "Teams", "TEAMS",
+				"Gchat", "GCHAT", "Webex", "WEBEX", "Line", "LINE", "Matrix", "MATRIX",
+				"Mattermost", "MATTERMOST", "Rocketchat", "ROCKETCHAT", "Zulip", "ZULIP",
+				"Bark", "BARK", "Ntfy", "NTFY", "Gotify", "GOTIFY", "Serverchan", "SERVERCHAN",
+				"Wxpusher", "WXPUSHER", "Pushover", "PUSHOVER", "Pushbullet", "PUSHBULLET", "Pushdeer", "PUSHDEER",
+				"Jpush", "JPUSH", "Getui", "GETUI",
+				"Huaweisms", "HUAWEISMS", "Yunpian", "YUNPIAN", "Twilio", "TWILIO", "Vonage", "VONAGE",
+				"Whatsapp", "WHATSAPP",
+				"Mailgun", "MAILGUN", "Sendgrid", "SENDGRID", "Postmark", "POSTMARK",
+				"Ifttt", "IFTTT", "Join", "JOIN", "Homeassistant", "HOMEASSISTANT",
+				"Datadog", "DATADOG", "Opsgenie", "OPSGENIE", "Pagerduty", "PAGERDUTY",
 			).
 			Default("EMAIL").
 			Optional().
@@ -107,6 +120,10 @@ func (NotificationChannel) Fields() []ent.Field {
 			Nillable(),
 		field.String("webhook_payload_template").
 			Comment("Webhook 载荷模板（{{占位符}} 渲染；留空则用该风格的内置默认 JSON）").
+			Optional().
+			Nillable(),
+		field.String("settings").
+			Comment("扩展渠道（EXT_* 类型）配置整包：JSON，sensitive 字段加密落库；EMAIL/WEBHOOK 不使用").
 			Optional().
 			Nillable(),
 	}

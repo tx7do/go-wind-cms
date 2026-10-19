@@ -5001,6 +5001,19 @@ paths:
                 "200":
                     description: OK
                     content: {}
+    /admin/v1/notification-channel-schemas:
+        get:
+            tags:
+                - NotificationChannelService
+            description: 扩展渠道 schema 清单（前端 settings 动态表单的数据源）
+            operationId: NotificationChannelService_ListChannelSchemas
+            responses:
+                "200":
+                    description: OK
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/notify.service.v1.ListChannelSchemasResponse'
     /admin/v1/notification-channels:
         get:
             tags:
@@ -15256,6 +15269,46 @@ components:
                     type: boolean
                     description: 如果设置为true的时候，资源不存在则会新增(插入)，并且在这种情况下`updateMask`字段将会被忽略。
             description: 请求 - 更新媒体资源库
+        notify.service.v1.ChannelField:
+            type: object
+            properties:
+                name:
+                    type: string
+                label:
+                    type: string
+                type:
+                    type: string
+                required:
+                    type: boolean
+                sensitive:
+                    type: boolean
+                placeholder:
+                    type: string
+                hint:
+                    type: string
+                options:
+                    type: array
+                    items:
+                        type: string
+            description: 扩展渠道 settings 字段声明
+        notify.service.v1.ChannelSchema:
+            type: object
+            properties:
+                type:
+                    type: string
+                group:
+                    type: string
+                label:
+                    type: string
+                targetLabel:
+                    type: string
+                needsTarget:
+                    type: boolean
+                fields:
+                    type: array
+                    items:
+                        $ref: '#/components/schemas/notify.service.v1.ChannelField'
+            description: 扩展渠道 schema 声明
         notify.service.v1.CreateNotificationChannelRequest:
             type: object
             properties:
@@ -15267,6 +15320,9 @@ components:
                 webhookSecret:
                     type: string
                     description: Webhook 签名密钥
+                settings:
+                    type: string
+                    description: 扩展渠道配置（明文 JSON）
             description: 创建通知渠道 - 请求
         notify.service.v1.CreateNotificationRuleRequest:
             type: object
@@ -15279,6 +15335,14 @@ components:
             properties:
                 data:
                     $ref: '#/components/schemas/notify.service.v1.NotificationTemplate'
+        notify.service.v1.ListChannelSchemasResponse:
+            type: object
+            properties:
+                items:
+                    type: array
+                    items:
+                        $ref: '#/components/schemas/notify.service.v1.ChannelSchema'
+            description: 扩展渠道 schema 清单 - 回应
         notify.service.v1.ListMyNotificationCategoriesResponse:
             type: object
             properties:
@@ -15349,6 +15413,45 @@ components:
                     enum:
                         - EMAIL
                         - WEBHOOK
+                        - WECOM_APP
+                        - DINGTALK_APP
+                        - FEISHU_APP
+                        - WECHAT
+                        - TELEGRAM
+                        - SLACK
+                        - DISCORD
+                        - TEAMS
+                        - GCHAT
+                        - WEBEX
+                        - LINE
+                        - MATRIX
+                        - MATTERMOST
+                        - ROCKETCHAT
+                        - ZULIP
+                        - BARK
+                        - NTFY
+                        - GOTIFY
+                        - SERVERCHAN
+                        - WXPUSHER
+                        - PUSHOVER
+                        - PUSHBULLET
+                        - PUSHDEER
+                        - JPUSH
+                        - GETUI
+                        - HUAWEISMS
+                        - YUNPIAN
+                        - TWILIO
+                        - VONAGE
+                        - WHATSAPP
+                        - MAILGUN
+                        - SENDGRID
+                        - POSTMARK
+                        - IFTTT
+                        - JOIN
+                        - HOMEASSISTANT
+                        - DATADOG
+                        - OPSGENIE
+                        - PAGERDUTY
                     type: string
                     description: 渠道类型
                     format: enum
@@ -15398,6 +15501,9 @@ components:
                 webhookPayloadTemplate:
                     type: string
                     description: Webhook 载荷模板，留空用该风格的内置默认 JSON
+                settings:
+                    type: string
+                    description: 扩展渠道配置（JSON，敏感字段脱敏）
                 enabled:
                     type: boolean
                     description: 是否启用
@@ -15429,6 +15535,7 @@ components:
                         - EVENT_TYPE_UNSPECIFIED
                         - INTERNAL_MESSAGE
                         - CHANNEL_TEST_EMAIL
+                        - CHANNEL_TEST_EXT
                         - SYSTEM_NOTIFY
                     type: string
                     description: 业务事件类型
@@ -15439,6 +15546,7 @@ components:
                         - EMAIL
                         - WEBHOOK
                         - INTERNAL
+                        - EXT
                     type: string
                     description: 投递渠道
                     format: enum
@@ -15481,6 +15589,9 @@ components:
                     type: integer
                     description: 实际尝试投递次数（含首次）
                     format: uint32
+                receiptProviderId:
+                    type: string
+                    description: 服务商侧消息ID
                 createdBy:
                     type: integer
                     format: uint32
@@ -15542,6 +15653,7 @@ components:
                         - EVENT_TYPE_UNSPECIFIED
                         - INTERNAL_MESSAGE
                         - CHANNEL_TEST_EMAIL
+                        - CHANNEL_TEST_EXT
                         - SYSTEM_NOTIFY
                     type: string
                     description: 业务事件类型（一张表内唯一）
@@ -15552,6 +15664,7 @@ components:
                         - EMAIL
                         - WEBHOOK
                         - INTERNAL
+                        - EXT
                     type: string
                     description: 该事件投递走的渠道
                     format: enum
@@ -15702,6 +15815,9 @@ components:
                 webhookSecret:
                     type: string
                     description: Webhook 签名密钥，留空不修改
+                settings:
+                    type: string
+                    description: 扩展渠道配置（明文 JSON，留空不修改）
             description: 更新通知渠道 - 请求
         notify.service.v1.UpdateNotificationPreferenceRequest:
             type: object

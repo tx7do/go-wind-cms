@@ -31,5 +31,7 @@
     "SENT": "Sent",
     "FAILED": "Failed",
     "SKIPPED": "Channel not configured"
-  }
+  },
+  "receiptProviderId": "Provider Msg ID",
+  "receiptProviderIdHint": "Provider-side message/request ID for cross-system reconciliation"
 }

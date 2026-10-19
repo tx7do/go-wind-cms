@@ -41,6 +41,7 @@
   "channelMap": {
     "EMAIL": "邮件",
     "WEBHOOK": "Webhook",
-    "INTERNAL": "站内信"
+    "INTERNAL": "站内信",
+    "EXT": "扩展渠道"
   }
 }

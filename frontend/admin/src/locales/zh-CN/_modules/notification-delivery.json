@@ -31,5 +31,7 @@
     "SENT": "已送达",
     "FAILED": "发送失败",
     "SKIPPED": "未配置渠道"
-  }
+  },
+  "receiptProviderId": "服务商消息ID",
+  "receiptProviderIdHint": "服务商侧消息/请求 ID（阿里云 RequestId、IM 响应 ID 等），跨系统对账用"
 }

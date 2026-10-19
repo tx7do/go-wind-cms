@@ -246,6 +246,20 @@ func (_c *NotificationDeliveryCreate) SetNillableAttempts(v *uint32) *Notificati
 	return _c
 }
 
+// SetReceiptProviderID sets the "receipt_provider_id" field.
+func (_c *NotificationDeliveryCreate) SetReceiptProviderID(v string) *NotificationDeliveryCreate {
+	_c.mutation.SetReceiptProviderID(v)
+	return _c
+}
+
+// SetNillableReceiptProviderID sets the "receipt_provider_id" field if the given value is not nil.
+func (_c *NotificationDeliveryCreate) SetNillableReceiptProviderID(v *string) *NotificationDeliveryCreate {
+	if v != nil {
+		_c.SetReceiptProviderID(*v)
+	}
+	return _c
+}
+
 // SetSentAt sets the "sent_at" field.
 func (_c *NotificationDeliveryCreate) SetSentAt(v time.Time) *NotificationDeliveryCreate {
 	_c.mutation.SetSentAt(v)
@@ -434,6 +448,10 @@ func (_c *NotificationDeliveryCreate) createSpec() (*NotificationDelivery, *sqlg
 	if value, ok := _c.mutation.Attempts(); ok {
 		_spec.SetField(notificationdelivery.FieldAttempts, field.TypeUint32, value)
 		_node.Attempts = &value
+	}
+	if value, ok := _c.mutation.ReceiptProviderID(); ok {
+		_spec.SetField(notificationdelivery.FieldReceiptProviderID, field.TypeString, value)
+		_node.ReceiptProviderID = &value
 	}
 	if value, ok := _c.mutation.SentAt(); ok {
 		_spec.SetField(notificationdelivery.FieldSentAt, field.TypeTime, value)
@@ -800,6 +818,24 @@ func (u *NotificationDeliveryUpsert) AddAttempts(v uint32) *NotificationDelivery
 // ClearAttempts clears the value of the "attempts" field.
 func (u *NotificationDeliveryUpsert) ClearAttempts() *NotificationDeliveryUpsert {
 	u.SetNull(notificationdelivery.FieldAttempts)
+	return u
+}
+
+// SetReceiptProviderID sets the "receipt_provider_id" field.
+func (u *NotificationDeliveryUpsert) SetReceiptProviderID(v string) *NotificationDeliveryUpsert {
+	u.Set(notificationdelivery.FieldReceiptProviderID, v)
+	return u
+}
+
+// UpdateReceiptProviderID sets the "receipt_provider_id" field to the value that was provided on create.
+func (u *NotificationDeliveryUpsert) UpdateReceiptProviderID() *NotificationDeliveryUpsert {
+	u.SetExcluded(notificationdelivery.FieldReceiptProviderID)
+	return u
+}
+
+// ClearReceiptProviderID clears the value of the "receipt_provider_id" field.
+func (u *NotificationDeliveryUpsert) ClearReceiptProviderID() *NotificationDeliveryUpsert {
+	u.SetNull(notificationdelivery.FieldReceiptProviderID)
 	return u
 }
 
@@ -1233,6 +1269,27 @@ func (u *NotificationDeliveryUpsertOne) UpdateAttempts() *NotificationDeliveryUp
 func (u *NotificationDeliveryUpsertOne) ClearAttempts() *NotificationDeliveryUpsertOne {
 	return u.Update(func(s *NotificationDeliveryUpsert) {
 		s.ClearAttempts()
+	})
+}
+
+// SetReceiptProviderID sets the "receipt_provider_id" field.
+func (u *NotificationDeliveryUpsertOne) SetReceiptProviderID(v string) *NotificationDeliveryUpsertOne {
+	return u.Update(func(s *NotificationDeliveryUpsert) {
+		s.SetReceiptProviderID(v)
+	})
+}
+
+// UpdateReceiptProviderID sets the "receipt_provider_id" field to the value that was provided on create.
+func (u *NotificationDeliveryUpsertOne) UpdateReceiptProviderID() *NotificationDeliveryUpsertOne {
+	return u.Update(func(s *NotificationDeliveryUpsert) {
+		s.UpdateReceiptProviderID()
+	})
+}
+
+// ClearReceiptProviderID clears the value of the "receipt_provider_id" field.
+func (u *NotificationDeliveryUpsertOne) ClearReceiptProviderID() *NotificationDeliveryUpsertOne {
+	return u.Update(func(s *NotificationDeliveryUpsert) {
+		s.ClearReceiptProviderID()
 	})
 }
 
@@ -1835,6 +1892,27 @@ func (u *NotificationDeliveryUpsertBulk) UpdateAttempts() *NotificationDeliveryU
 func (u *NotificationDeliveryUpsertBulk) ClearAttempts() *NotificationDeliveryUpsertBulk {
 	return u.Update(func(s *NotificationDeliveryUpsert) {
 		s.ClearAttempts()
+	})
+}
+
+// SetReceiptProviderID sets the "receipt_provider_id" field.
+func (u *NotificationDeliveryUpsertBulk) SetReceiptProviderID(v string) *NotificationDeliveryUpsertBulk {
+	return u.Update(func(s *NotificationDeliveryUpsert) {
+		s.SetReceiptProviderID(v)
+	})
+}
+
+// UpdateReceiptProviderID sets the "receipt_provider_id" field to the value that was provided on create.
+func (u *NotificationDeliveryUpsertBulk) UpdateReceiptProviderID() *NotificationDeliveryUpsertBulk {
+	return u.Update(func(s *NotificationDeliveryUpsert) {
+		s.UpdateReceiptProviderID()
+	})
+}
+
+// ClearReceiptProviderID clears the value of the "receipt_provider_id" field.
+func (u *NotificationDeliveryUpsertBulk) ClearReceiptProviderID() *NotificationDeliveryUpsertBulk {
+	return u.Update(func(s *NotificationDeliveryUpsert) {
+		s.ClearReceiptProviderID()
 	})
 }
 

@@ -59,5 +59,20 @@
   "requiredRecipient": "Recipient email is required",
   "invalidEmail": "Invalid email address",
   "testSendSuccess": "Test email dispatched — see the delivery records page for the result",
-  "testSendFailed": "Test send failed"
+  "testSendFailed": "Test send failed",
+  "extGroup": {
+    "IM": "Instant Messaging",
+    "PUSH": "Push",
+    "MOBILE": "Mobile",
+    "SMS": "SMS / Messaging",
+    "MAIL": "Email Service",
+    "AUTO": "Automation",
+    "OPS": "Ops Alerting"
+  },
+  "ext": {
+    "targetLabel": "Delivery target: {{label}} (fill in the target when sending)",
+    "required": "{{label}} is required",
+    "secretKeepHint": "Leave blank to keep the stored value",
+    "optionDefault": "Default"
+  }
 }

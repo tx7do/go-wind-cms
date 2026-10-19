@@ -139,6 +139,11 @@ func WebhookPayloadTemplate(v string) predicate.NotificationChannel {
 	return predicate.NotificationChannel(sql.FieldEQ(FieldWebhookPayloadTemplate, v))
 }
 
+// Settings applies equality check predicate on the "settings" field. It's identical to SettingsEQ.
+func Settings(v string) predicate.NotificationChannel {
+	return predicate.NotificationChannel(sql.FieldEQ(FieldSettings, v))
+}
+
 // CreatedAtEQ applies the EQ predicate on the "created_at" field.
 func CreatedAtEQ(v time.Time) predicate.NotificationChannel {
 	return predicate.NotificationChannel(sql.FieldEQ(FieldCreatedAt, v))
@@ -1337,6 +1342,81 @@ func WebhookPayloadTemplateEqualFold(v string) predicate.NotificationChannel {
 // WebhookPayloadTemplateContainsFold applies the ContainsFold predicate on the "webhook_payload_template" field.
 func WebhookPayloadTemplateContainsFold(v string) predicate.NotificationChannel {
 	return predicate.NotificationChannel(sql.FieldContainsFold(FieldWebhookPayloadTemplate, v))
+}
+
+// SettingsEQ applies the EQ predicate on the "settings" field.
+func SettingsEQ(v string) predicate.NotificationChannel {
+	return predicate.NotificationChannel(sql.FieldEQ(FieldSettings, v))
+}
+
+// SettingsNEQ applies the NEQ predicate on the "settings" field.
+func SettingsNEQ(v string) predicate.NotificationChannel {
+	return predicate.NotificationChannel(sql.FieldNEQ(FieldSettings, v))
+}
+
+// SettingsIn applies the In predicate on the "settings" field.
+func SettingsIn(vs ...string) predicate.NotificationChannel {
+	return predicate.NotificationChannel(sql.FieldIn(FieldSettings, vs...))
+}
+
+// SettingsNotIn applies the NotIn predicate on the "settings" field.
+func SettingsNotIn(vs ...string) predicate.NotificationChannel {
+	return predicate.NotificationChannel(sql.FieldNotIn(FieldSettings, vs...))
+}
+
+// SettingsGT applies the GT predicate on the "settings" field.
+func SettingsGT(v string) predicate.NotificationChannel {
+	return predicate.NotificationChannel(sql.FieldGT(FieldSettings, v))
+}
+
+// SettingsGTE applies the GTE predicate on the "settings" field.
+func SettingsGTE(v string) predicate.NotificationChannel {
+	return predicate.NotificationChannel(sql.FieldGTE(FieldSettings, v))
+}
+
+// SettingsLT applies the LT predicate on the "settings" field.
+func SettingsLT(v string) predicate.NotificationChannel {
+	return predicate.NotificationChannel(sql.FieldLT(FieldSettings, v))
+}
+
+// SettingsLTE applies the LTE predicate on the "settings" field.
+func SettingsLTE(v string) predicate.NotificationChannel {
+	return predicate.NotificationChannel(sql.FieldLTE(FieldSettings, v))
+}
+
+// SettingsContains applies the Contains predicate on the "settings" field.
+func SettingsContains(v string) predicate.NotificationChannel {
+	return predicate.NotificationChannel(sql.FieldContains(FieldSettings, v))
+}
+
+// SettingsHasPrefix applies the HasPrefix predicate on the "settings" field.
+func SettingsHasPrefix(v string) predicate.NotificationChannel {
+	return predicate.NotificationChannel(sql.FieldHasPrefix(FieldSettings, v))
+}
+
+// SettingsHasSuffix applies the HasSuffix predicate on the "settings" field.
+func SettingsHasSuffix(v string) predicate.NotificationChannel {
+	return predicate.NotificationChannel(sql.FieldHasSuffix(FieldSettings, v))
+}
+
+// SettingsIsNil applies the IsNil predicate on the "settings" field.
+func SettingsIsNil() predicate.NotificationChannel {
+	return predicate.NotificationChannel(sql.FieldIsNull(FieldSettings))
+}
+
+// SettingsNotNil applies the NotNil predicate on the "settings" field.
+func SettingsNotNil() predicate.NotificationChannel {
+	return predicate.NotificationChannel(sql.FieldNotNull(FieldSettings))
+}
+
+// SettingsEqualFold applies the EqualFold predicate on the "settings" field.
+func SettingsEqualFold(v string) predicate.NotificationChannel {
+	return predicate.NotificationChannel(sql.FieldEqualFold(FieldSettings, v))
+}
+
+// SettingsContainsFold applies the ContainsFold predicate on the "settings" field.
+func SettingsContainsFold(v string) predicate.NotificationChannel {
+	return predicate.NotificationChannel(sql.FieldContainsFold(FieldSettings, v))
 }
 
 // And groups predicates with the AND operator between them.

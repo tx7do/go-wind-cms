@@ -1384,6 +1384,7 @@ var schemaGraph = func() *sqlgraph.Schema {
 			notificationchannel.FieldWebhookSecret:          {Type: field.TypeString, Column: notificationchannel.FieldWebhookSecret},
 			notificationchannel.FieldWebhookSignStyle:       {Type: field.TypeEnum, Column: notificationchannel.FieldWebhookSignStyle},
 			notificationchannel.FieldWebhookPayloadTemplate: {Type: field.TypeString, Column: notificationchannel.FieldWebhookPayloadTemplate},
+			notificationchannel.FieldSettings:               {Type: field.TypeString, Column: notificationchannel.FieldSettings},
 		},
 	}
 	graph.Nodes[47] = &sqlgraph.Node{
@@ -1397,23 +1398,24 @@ var schemaGraph = func() *sqlgraph.Schema {
 		},
 		Type: "NotificationDelivery",
 		Fields: map[string]*sqlgraph.FieldSpec{
-			notificationdelivery.FieldCreatedAt:       {Type: field.TypeTime, Column: notificationdelivery.FieldCreatedAt},
-			notificationdelivery.FieldUpdatedAt:       {Type: field.TypeTime, Column: notificationdelivery.FieldUpdatedAt},
-			notificationdelivery.FieldDeletedAt:       {Type: field.TypeTime, Column: notificationdelivery.FieldDeletedAt},
-			notificationdelivery.FieldCreatedBy:       {Type: field.TypeUint32, Column: notificationdelivery.FieldCreatedBy},
-			notificationdelivery.FieldUpdatedBy:       {Type: field.TypeUint32, Column: notificationdelivery.FieldUpdatedBy},
-			notificationdelivery.FieldDeletedBy:       {Type: field.TypeUint32, Column: notificationdelivery.FieldDeletedBy},
-			notificationdelivery.FieldEventType:       {Type: field.TypeEnum, Column: notificationdelivery.FieldEventType},
-			notificationdelivery.FieldChannel:         {Type: field.TypeEnum, Column: notificationdelivery.FieldChannel},
-			notificationdelivery.FieldChannelID:       {Type: field.TypeUint32, Column: notificationdelivery.FieldChannelID},
-			notificationdelivery.FieldRecipientUserID: {Type: field.TypeUint32, Column: notificationdelivery.FieldRecipientUserID},
-			notificationdelivery.FieldRelatedID:       {Type: field.TypeUint32, Column: notificationdelivery.FieldRelatedID},
-			notificationdelivery.FieldTarget:          {Type: field.TypeString, Column: notificationdelivery.FieldTarget},
-			notificationdelivery.FieldStatus:          {Type: field.TypeEnum, Column: notificationdelivery.FieldStatus},
-			notificationdelivery.FieldLastError:       {Type: field.TypeString, Column: notificationdelivery.FieldLastError},
-			notificationdelivery.FieldRequestID:       {Type: field.TypeString, Column: notificationdelivery.FieldRequestID},
-			notificationdelivery.FieldAttempts:        {Type: field.TypeUint32, Column: notificationdelivery.FieldAttempts},
-			notificationdelivery.FieldSentAt:          {Type: field.TypeTime, Column: notificationdelivery.FieldSentAt},
+			notificationdelivery.FieldCreatedAt:         {Type: field.TypeTime, Column: notificationdelivery.FieldCreatedAt},
+			notificationdelivery.FieldUpdatedAt:         {Type: field.TypeTime, Column: notificationdelivery.FieldUpdatedAt},
+			notificationdelivery.FieldDeletedAt:         {Type: field.TypeTime, Column: notificationdelivery.FieldDeletedAt},
+			notificationdelivery.FieldCreatedBy:         {Type: field.TypeUint32, Column: notificationdelivery.FieldCreatedBy},
+			notificationdelivery.FieldUpdatedBy:         {Type: field.TypeUint32, Column: notificationdelivery.FieldUpdatedBy},
+			notificationdelivery.FieldDeletedBy:         {Type: field.TypeUint32, Column: notificationdelivery.FieldDeletedBy},
+			notificationdelivery.FieldEventType:         {Type: field.TypeEnum, Column: notificationdelivery.FieldEventType},
+			notificationdelivery.FieldChannel:           {Type: field.TypeEnum, Column: notificationdelivery.FieldChannel},
+			notificationdelivery.FieldChannelID:         {Type: field.TypeUint32, Column: notificationdelivery.FieldChannelID},
+			notificationdelivery.FieldRecipientUserID:   {Type: field.TypeUint32, Column: notificationdelivery.FieldRecipientUserID},
+			notificationdelivery.FieldRelatedID:         {Type: field.TypeUint32, Column: notificationdelivery.FieldRelatedID},
+			notificationdelivery.FieldTarget:            {Type: field.TypeString, Column: notificationdelivery.FieldTarget},
+			notificationdelivery.FieldStatus:            {Type: field.TypeEnum, Column: notificationdelivery.FieldStatus},
+			notificationdelivery.FieldLastError:         {Type: field.TypeString, Column: notificationdelivery.FieldLastError},
+			notificationdelivery.FieldRequestID:         {Type: field.TypeString, Column: notificationdelivery.FieldRequestID},
+			notificationdelivery.FieldAttempts:          {Type: field.TypeUint32, Column: notificationdelivery.FieldAttempts},
+			notificationdelivery.FieldReceiptProviderID: {Type: field.TypeString, Column: notificationdelivery.FieldReceiptProviderID},
+			notificationdelivery.FieldSentAt:            {Type: field.TypeTime, Column: notificationdelivery.FieldSentAt},
 		},
 	}
 	graph.Nodes[48] = &sqlgraph.Node{
@@ -8499,6 +8501,11 @@ func (f *NotificationChannelFilter) WhereWebhookPayloadTemplate(p entql.StringP)
 	f.Where(p.Field(notificationchannel.FieldWebhookPayloadTemplate))
 }
 
+// WhereSettings applies the entql string predicate on the settings field.
+func (f *NotificationChannelFilter) WhereSettings(p entql.StringP) {
+	f.Where(p.Field(notificationchannel.FieldSettings))
+}
+
 // addPredicate implements the predicateAdder interface.
 func (_q *NotificationDeliveryQuery) addPredicate(pred func(s *sql.Selector)) {
 	_q.predicates = append(_q.predicates, pred)
@@ -8617,6 +8624,11 @@ func (f *NotificationDeliveryFilter) WhereRequestID(p entql.StringP) {
 // WhereAttempts applies the entql uint32 predicate on the attempts field.
 func (f *NotificationDeliveryFilter) WhereAttempts(p entql.Uint32P) {
 	f.Where(p.Field(notificationdelivery.FieldAttempts))
+}
+
+// WhereReceiptProviderID applies the entql string predicate on the receipt_provider_id field.
+func (f *NotificationDeliveryFilter) WhereReceiptProviderID(p entql.StringP) {
+	f.Where(p.Field(notificationdelivery.FieldReceiptProviderID))
 }
 
 // WhereSentAt applies the entql time.Time predicate on the sent_at field.

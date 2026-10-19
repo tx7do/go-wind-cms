@@ -445,6 +445,26 @@ func (_u *NotificationChannelUpdate) ClearWebhookPayloadTemplate() *Notification
 	return _u
 }
 
+// SetSettings sets the "settings" field.
+func (_u *NotificationChannelUpdate) SetSettings(v string) *NotificationChannelUpdate {
+	_u.mutation.SetSettings(v)
+	return _u
+}
+
+// SetNillableSettings sets the "settings" field if the given value is not nil.
+func (_u *NotificationChannelUpdate) SetNillableSettings(v *string) *NotificationChannelUpdate {
+	if v != nil {
+		_u.SetSettings(*v)
+	}
+	return _u
+}
+
+// ClearSettings clears the value of the "settings" field.
+func (_u *NotificationChannelUpdate) ClearSettings() *NotificationChannelUpdate {
+	_u.mutation.ClearSettings()
+	return _u
+}
+
 // Mutation returns the NotificationChannelMutation object of the builder.
 func (_u *NotificationChannelUpdate) Mutation() *NotificationChannelMutation {
 	return _u.mutation
@@ -653,6 +673,12 @@ func (_u *NotificationChannelUpdate) sqlSave(ctx context.Context) (_node int, er
 	}
 	if _u.mutation.WebhookPayloadTemplateCleared() {
 		_spec.ClearField(notificationchannel.FieldWebhookPayloadTemplate, field.TypeString)
+	}
+	if value, ok := _u.mutation.Settings(); ok {
+		_spec.SetField(notificationchannel.FieldSettings, field.TypeString, value)
+	}
+	if _u.mutation.SettingsCleared() {
+		_spec.ClearField(notificationchannel.FieldSettings, field.TypeString)
 	}
 	_spec.AddModifiers(_u.modifiers...)
 	if _node, err = sqlgraph.UpdateNodes(ctx, _u.driver, _spec); err != nil {
@@ -1092,6 +1118,26 @@ func (_u *NotificationChannelUpdateOne) ClearWebhookPayloadTemplate() *Notificat
 	return _u
 }
 
+// SetSettings sets the "settings" field.
+func (_u *NotificationChannelUpdateOne) SetSettings(v string) *NotificationChannelUpdateOne {
+	_u.mutation.SetSettings(v)
+	return _u
+}
+
+// SetNillableSettings sets the "settings" field if the given value is not nil.
+func (_u *NotificationChannelUpdateOne) SetNillableSettings(v *string) *NotificationChannelUpdateOne {
+	if v != nil {
+		_u.SetSettings(*v)
+	}
+	return _u
+}
+
+// ClearSettings clears the value of the "settings" field.
+func (_u *NotificationChannelUpdateOne) ClearSettings() *NotificationChannelUpdateOne {
+	_u.mutation.ClearSettings()
+	return _u
+}
+
 // Mutation returns the NotificationChannelMutation object of the builder.
 func (_u *NotificationChannelUpdateOne) Mutation() *NotificationChannelMutation {
 	return _u.mutation
@@ -1330,6 +1376,12 @@ func (_u *NotificationChannelUpdateOne) sqlSave(ctx context.Context) (_node *Not
 	}
 	if _u.mutation.WebhookPayloadTemplateCleared() {
 		_spec.ClearField(notificationchannel.FieldWebhookPayloadTemplate, field.TypeString)
+	}
+	if value, ok := _u.mutation.Settings(); ok {
+		_spec.SetField(notificationchannel.FieldSettings, field.TypeString, value)
+	}
+	if _u.mutation.SettingsCleared() {
+		_spec.ClearField(notificationchannel.FieldSettings, field.TypeString)
 	}
 	_spec.AddModifiers(_u.modifiers...)
 	_node = &NotificationChannel{config: _u.config}

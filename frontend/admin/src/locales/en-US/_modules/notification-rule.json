@@ -41,6 +41,7 @@
   "channelMap": {
     "EMAIL": "Email",
     "WEBHOOK": "Webhook",
-    "INTERNAL": "In-app"
+    "INTERNAL": "In-app",
+    "EXT": "Ext. Channels"
   }
 }

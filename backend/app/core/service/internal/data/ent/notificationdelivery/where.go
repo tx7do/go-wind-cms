@@ -119,6 +119,11 @@ func Attempts(v uint32) predicate.NotificationDelivery {
 	return predicate.NotificationDelivery(sql.FieldEQ(FieldAttempts, v))
 }
 
+// ReceiptProviderID applies equality check predicate on the "receipt_provider_id" field. It's identical to ReceiptProviderIDEQ.
+func ReceiptProviderID(v string) predicate.NotificationDelivery {
+	return predicate.NotificationDelivery(sql.FieldEQ(FieldReceiptProviderID, v))
+}
+
 // SentAt applies equality check predicate on the "sent_at" field. It's identical to SentAtEQ.
 func SentAt(v time.Time) predicate.NotificationDelivery {
 	return predicate.NotificationDelivery(sql.FieldEQ(FieldSentAt, v))
@@ -937,6 +942,81 @@ func AttemptsIsNil() predicate.NotificationDelivery {
 // AttemptsNotNil applies the NotNil predicate on the "attempts" field.
 func AttemptsNotNil() predicate.NotificationDelivery {
 	return predicate.NotificationDelivery(sql.FieldNotNull(FieldAttempts))
+}
+
+// ReceiptProviderIDEQ applies the EQ predicate on the "receipt_provider_id" field.
+func ReceiptProviderIDEQ(v string) predicate.NotificationDelivery {
+	return predicate.NotificationDelivery(sql.FieldEQ(FieldReceiptProviderID, v))
+}
+
+// ReceiptProviderIDNEQ applies the NEQ predicate on the "receipt_provider_id" field.
+func ReceiptProviderIDNEQ(v string) predicate.NotificationDelivery {
+	return predicate.NotificationDelivery(sql.FieldNEQ(FieldReceiptProviderID, v))
+}
+
+// ReceiptProviderIDIn applies the In predicate on the "receipt_provider_id" field.
+func ReceiptProviderIDIn(vs ...string) predicate.NotificationDelivery {
+	return predicate.NotificationDelivery(sql.FieldIn(FieldReceiptProviderID, vs...))
+}
+
+// ReceiptProviderIDNotIn applies the NotIn predicate on the "receipt_provider_id" field.
+func ReceiptProviderIDNotIn(vs ...string) predicate.NotificationDelivery {
+	return predicate.NotificationDelivery(sql.FieldNotIn(FieldReceiptProviderID, vs...))
+}
+
+// ReceiptProviderIDGT applies the GT predicate on the "receipt_provider_id" field.
+func ReceiptProviderIDGT(v string) predicate.NotificationDelivery {
+	return predicate.NotificationDelivery(sql.FieldGT(FieldReceiptProviderID, v))
+}
+
+// ReceiptProviderIDGTE applies the GTE predicate on the "receipt_provider_id" field.
+func ReceiptProviderIDGTE(v string) predicate.NotificationDelivery {
+	return predicate.NotificationDelivery(sql.FieldGTE(FieldReceiptProviderID, v))
+}
+
+// ReceiptProviderIDLT applies the LT predicate on the "receipt_provider_id" field.
+func ReceiptProviderIDLT(v string) predicate.NotificationDelivery {
+	return predicate.NotificationDelivery(sql.FieldLT(FieldReceiptProviderID, v))
+}
+
+// ReceiptProviderIDLTE applies the LTE predicate on the "receipt_provider_id" field.
+func ReceiptProviderIDLTE(v string) predicate.NotificationDelivery {
+	return predicate.NotificationDelivery(sql.FieldLTE(FieldReceiptProviderID, v))
+}
+
+// ReceiptProviderIDContains applies the Contains predicate on the "receipt_provider_id" field.
+func ReceiptProviderIDContains(v string) predicate.NotificationDelivery {
+	return predicate.NotificationDelivery(sql.FieldContains(FieldReceiptProviderID, v))
+}
+
+// ReceiptProviderIDHasPrefix applies the HasPrefix predicate on the "receipt_provider_id" field.
+func ReceiptProviderIDHasPrefix(v string) predicate.NotificationDelivery {
+	return predicate.NotificationDelivery(sql.FieldHasPrefix(FieldReceiptProviderID, v))
+}
+
+// ReceiptProviderIDHasSuffix applies the HasSuffix predicate on the "receipt_provider_id" field.
+func ReceiptProviderIDHasSuffix(v string) predicate.NotificationDelivery {
+	return predicate.NotificationDelivery(sql.FieldHasSuffix(FieldReceiptProviderID, v))
+}
+
+// ReceiptProviderIDIsNil applies the IsNil predicate on the "receipt_provider_id" field.
+func ReceiptProviderIDIsNil() predicate.NotificationDelivery {
+	return predicate.NotificationDelivery(sql.FieldIsNull(FieldReceiptProviderID))
+}
+
+// ReceiptProviderIDNotNil applies the NotNil predicate on the "receipt_provider_id" field.
+func ReceiptProviderIDNotNil() predicate.NotificationDelivery {
+	return predicate.NotificationDelivery(sql.FieldNotNull(FieldReceiptProviderID))
+}
+
+// ReceiptProviderIDEqualFold applies the EqualFold predicate on the "receipt_provider_id" field.
+func ReceiptProviderIDEqualFold(v string) predicate.NotificationDelivery {
+	return predicate.NotificationDelivery(sql.FieldEqualFold(FieldReceiptProviderID, v))
+}
+
+// ReceiptProviderIDContainsFold applies the ContainsFold predicate on the "receipt_provider_id" field.
+func ReceiptProviderIDContainsFold(v string) predicate.NotificationDelivery {
+	return predicate.NotificationDelivery(sql.FieldContainsFold(FieldReceiptProviderID, v))
 }
 
 // SentAtEQ applies the EQ predicate on the "sent_at" field.

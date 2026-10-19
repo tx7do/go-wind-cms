@@ -31,6 +31,36 @@ service NotificationChannelService {
 
   // 向指定邮箱发送测试邮件（验证渠道配置）
   rpc SendTestEmail (SendTestEmailRequest) returns (SendTestEmailResponse) {}
+
+  // 扩展渠道 schema 清单（类型名/分组/字段声明），前端按它渲染 settings 动态表单
+  rpc ListChannelSchemas (google.protobuf.Empty) returns (ListChannelSchemasResponse) {}
+}
+
+// 扩展渠道 settings 字段声明
+message ChannelField {
+  string name = 1 [json_name = "name"];           // settings JSON 键
+  string label = 2 [json_name = "label"];         // 表单展示名
+  string type = 3 [json_name = "type"];           // text | textarea | number | password | select
+  bool required = 4 [json_name = "required"];
+  bool sensitive = 5 [json_name = "sensitive"];   // 加密落库、回显脱敏
+  string placeholder = 6 [json_name = "placeholder"];
+  string hint = 7 [json_name = "hint"];
+  repeated string options = 8 [json_name = "options"]; // select 的可选值
+}
+
+// 扩展渠道 schema 声明
+message ChannelSchema {
+  string type = 1 [json_name = "type"];           // proto Type 枚举名（与 ent 列值逐字相同）
+  string group = 2 [json_name = "group"];         // IM | PUSH | MOBILE | SMS | MAIL | AUTO | OPS
+  string label = 3 [json_name = "label"];
+  string target_label = 4 [json_name = "targetLabel"]; // 运行目标含义；空 = 该渠道无独立目标
+  bool needs_target = 5 [json_name = "needsTarget"];
+  repeated ChannelField fields = 6 [json_name = "fields"];
+}
+
+// 扩展渠道 schema 清单 - 回应
+message ListChannelSchemasResponse {
+  repeated ChannelSchema items = 1;
 }
 
 // Webhook 出站风格：一条 webhook 请求有三个地方各家长得不一样——签名怎么算、签名放哪、
@@ -55,6 +85,28 @@ message NotificationChannel {
   enum Type {
     EMAIL = 0;    // 邮件（SMTP）
     WEBHOOK = 1;  // Webhook（HTTP 回调）
+
+    // ---- 扩展渠道（EXT：配置整包存 settings 列，schema 见 ListChannelSchemas）----
+    // 一级段位与上游 go-wind-admin 逐值一致，便于渠道配置互相搬运。
+
+    WECOM_APP = 100;    DINGTALK_APP = 101;  FEISHU_APP = 102;  WECHAT = 103;
+    TELEGRAM = 104;     SLACK = 105;         DISCORD = 106;     TEAMS = 107;
+    GCHAT = 108;        WEBEX = 109;         LINE = 110;        MATRIX = 111;
+    MATTERMOST = 112;   ROCKETCHAT = 113;    ZULIP = 114;
+
+    BARK = 120;         NTFY = 121;          GOTIFY = 122;      SERVERCHAN = 123;
+    WXPUSHER = 124;     PUSHOVER = 125;      PUSHBULLET = 126;  PUSHDEER = 127;
+
+    JPUSH = 130;        GETUI = 131;
+
+    HUAWEISMS = 140;    YUNPIAN = 141;       TWILIO = 142;      VONAGE = 143;
+    WHATSAPP = 144;
+
+    MAILGUN = 150;      SENDGRID = 151;      POSTMARK = 152;
+
+    IFTTT = 160;        JOIN = 161;          HOMEASSISTANT = 162;
+
+    DATADOG = 170;      OPSGENIE = 171;      PAGERDUTY = 172;
   }
 
   // SMTP 加密方式
@@ -139,6 +191,12 @@ message NotificationChannel {
     (gnostic.openapi.v3.property) = { description: "Webhook 载荷模板，留空用该风格的内置默认 JSON" }
   ]; // Webhook 载荷模板
 
+  // 扩展渠道配置整包（JSON；读回显是脱敏后的 JSON 串，sensitive 字段恒为空串——留空 = 不修改）
+  optional string settings = 25 [
+    json_name = "settings",
+    (gnostic.openapi.v3.property) = { description: "扩展渠道配置（JSON，敏感字段脱敏）" }
+  ]; // 扩展渠道配置
+
   optional bool enabled = 30 [
     json_name = "enabled",
     (gnostic.openapi.v3.property) = { description: "是否启用" }
@@ -182,6 +240,12 @@ message CreateNotificationChannelRequest {
     json_name = "webhookSecret",
     (gnostic.openapi.v3.property) = { description: "Webhook 签名密钥" }
   ];
+
+  // 扩展渠道配置明文 JSON（服务端按 schema 校验必填并加密 sensitive 字段落库）
+  optional string settings = 4 [
+    json_name = "settings",
+    (gnostic.openapi.v3.property) = { description: "扩展渠道配置（明文 JSON）" }
+  ];
 }
 
 // 更新通知渠道 - 请求
@@ -200,6 +264,12 @@ message UpdateNotificationChannelRequest {
   optional string webhook_secret = 5 [
     json_name = "webhookSecret",
     (gnostic.openapi.v3.property) = { description: "Webhook 签名密钥，留空不修改" }
+  ];
+
+  // 扩展渠道配置明文 JSON；sensitive 字段留空 = 保留已存值
+  optional string settings = 6 [
+    json_name = "settings",
+    (gnostic.openapi.v3.property) = { description: "扩展渠道配置（明文 JSON，留空不修改）" }
   ];
 }
 

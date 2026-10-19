@@ -50,3 +50,8 @@ func (s *NotificationChannelService) Delete(ctx context.Context, req *notifyV1.D
 func (s *NotificationChannelService) SendTestEmail(ctx context.Context, req *notifyV1.SendTestEmailRequest) (*notifyV1.SendTestEmailResponse, error) {
 	return s.channelCli.SendTestEmail(ctx, req)
 }
+
+// ListChannelSchemas 扩展渠道 schema 清单（透传 core：schema 声明与 settings 构造都在 core 侧）。
+func (s *NotificationChannelService) ListChannelSchemas(ctx context.Context, req *emptypb.Empty) (*notifyV1.ListChannelSchemasResponse, error) {
+	return s.channelCli.ListChannelSchemas(ctx, req)
+}

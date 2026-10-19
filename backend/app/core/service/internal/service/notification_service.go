@@ -302,6 +302,8 @@ func (s *NotificationService) sendOnce(
 			SentAt: &sentAt,
 			// 自选渠道时 Create 阶段还没有 channel_id（策略在 Sender 内部），发完补上。
 			ChannelID: pickedChannelId(receipt),
+			// 服务商侧消息 ID（阿里云 RequestId、IM 响应 ID 等），落台账 receipt_provider_id 对账用
+			ProviderID: providerIdOf(receipt),
 		}, nil
 	}
 
@@ -492,6 +494,13 @@ func dispatchRequest(row *notifyV1.NotificationDelivery, payload *task.Notificat
 }
 
 // pickedChannelId 把回执里的渠道 ID 转成台账的可选列（0/无回执 → nil，表示不修改）。
+func providerIdOf(receipt *channel.SendReceipt) *string {
+	if receipt == nil || receipt.ProviderID == "" {
+		return nil
+	}
+	return trans.Ptr(receipt.ProviderID)
+}
+
 func pickedChannelId(receipt *channel.SendReceipt) *uint32 {
 	if receipt == nil || receipt.ChannelID == 0 {
 		return nil

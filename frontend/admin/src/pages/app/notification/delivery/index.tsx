@@ -37,6 +37,7 @@ const CHANNEL_COLORS: Record<notifyservicev1_Channel, string> = {
   EMAIL: 'blue',
   WEBHOOK: 'purple',
   INTERNAL: 'cyan',
+  EXT: 'geekblue',
   CHANNEL_UNSPECIFIED: 'default',
 };
 
@@ -163,6 +164,22 @@ const NotificationDeliveryPage = () => {
           </Tooltip>
         ) : (
           '-'
+        ),
+    },
+    {
+      title: t('receiptProviderId'),
+      dataIndex: 'receiptProviderId',
+      width: 150,
+      hideInSearch: true,
+      ellipsis: { showTitle: false },
+      tooltip: t('receiptProviderIdHint'),
+      render: (_, record) =>
+        record.receiptProviderId ? (
+          <Tooltip title={record.receiptProviderId} placement="topLeft">
+            <span>{record.receiptProviderId}</span>
+          </Tooltip>
+        ) : (
+        '-'
         ),
     },
     {

@@ -32,6 +32,7 @@ const (
 	Channel_EMAIL               Channel = 1 // 邮件（SMTP）
 	Channel_WEBHOOK             Channel = 2 // Webhook（HTTP 回调）
 	Channel_INTERNAL            Channel = 3 // 站内信（虚拟渠道，无花名册行，台账 channel_id 留空）
+	Channel_EXT                 Channel = 4 // 扩展渠道（go-utils/notify 全量接入：telegram/wecom_app/bark/ntfy…，
 )
 
 // Enum value maps for Channel.
@@ -41,12 +42,14 @@ var (
 		1: "EMAIL",
 		2: "WEBHOOK",
 		3: "INTERNAL",
+		4: "EXT",
 	}
 	Channel_value = map[string]int32{
 		"CHANNEL_UNSPECIFIED": 0,
 		"EMAIL":               1,
 		"WEBHOOK":             2,
 		"INTERNAL":            3,
+		"EXT":                 4,
 	}
 )
 
@@ -89,6 +92,8 @@ const (
 	EventType_INTERNAL_MESSAGE EventType = 1
 	// 渠道配置测试邮件（渠道页"测试发送"）。
 	EventType_CHANNEL_TEST_EMAIL EventType = 2
+	// 渠道测试消息（扩展渠道 EXT_* 的"测试发送"）。
+	EventType_CHANNEL_TEST_EXT EventType = 8
 	// 系统通知邮件：站内信系统通知（NotifyUser）的附加邮件触达，收件目标为
 	// 收件用户邮箱。种子规则 SYSTEM_NOTIFY→EMAIL 提供路由（管理员停用该行即
 	// 整体关闭此类出站邮件）；related_id 指向 internal_messages.id。
@@ -101,12 +106,14 @@ var (
 		0: "EVENT_TYPE_UNSPECIFIED",
 		1: "INTERNAL_MESSAGE",
 		2: "CHANNEL_TEST_EMAIL",
+		8: "CHANNEL_TEST_EXT",
 		3: "SYSTEM_NOTIFY",
 	}
 	EventType_value = map[string]int32{
 		"EVENT_TYPE_UNSPECIFIED": 0,
 		"INTERNAL_MESSAGE":       1,
 		"CHANNEL_TEST_EMAIL":     2,
+		"CHANNEL_TEST_EXT":       8,
 		"SYSTEM_NOTIFY":          3,
 	}
 )
@@ -214,13 +221,15 @@ type NotificationDelivery struct {
 	RequestId *string `protobuf:"bytes,11,opt,name=request_id,json=requestId,proto3,oneof" json:"request_id,omitempty"` // 派发请求ID
 	// 已尝试投递次数（含首次）。同步投递恒为 1；异步投递每次尝试先加再一次拨号，
 	// 因此 attempts>0 而 status 仍为 SENDING = 拨过号但没回写结论。
-	Attempts      *uint32                `protobuf:"varint,12,opt,name=attempts,proto3,oneof" json:"attempts,omitempty"` // 实际尝试次数
-	CreatedBy     *uint32                `protobuf:"varint,100,opt,name=created_by,json=createdBy,proto3,oneof" json:"created_by,omitempty"`
-	UpdatedBy     *uint32                `protobuf:"varint,101,opt,name=updated_by,json=updatedBy,proto3,oneof" json:"updated_by,omitempty"`
-	CreatedAt     *timestamppb.Timestamp `protobuf:"bytes,200,opt,name=created_at,json=createdAt,proto3,oneof" json:"created_at,omitempty"`
-	UpdatedAt     *timestamppb.Timestamp `protobuf:"bytes,201,opt,name=updated_at,json=updatedAt,proto3,oneof" json:"updated_at,omitempty"`
-	unknownFields protoimpl.UnknownFields
-	sizeCache     protoimpl.SizeCache
+	Attempts *uint32 `protobuf:"varint,12,opt,name=attempts,proto3,oneof" json:"attempts,omitempty"` // 实际尝试次数
+	// 服务商侧消息/请求 ID（阿里云 RequestId、IM 响应 ID 等，拿得到就带），跨系统对账有据可查
+	ReceiptProviderId *string                `protobuf:"bytes,13,opt,name=receipt_provider_id,json=receiptProviderId,proto3,oneof" json:"receipt_provider_id,omitempty"` // 服务商侧消息ID
+	CreatedBy         *uint32                `protobuf:"varint,100,opt,name=created_by,json=createdBy,proto3,oneof" json:"created_by,omitempty"`
+	UpdatedBy         *uint32                `protobuf:"varint,101,opt,name=updated_by,json=updatedBy,proto3,oneof" json:"updated_by,omitempty"`
+	CreatedAt         *timestamppb.Timestamp `protobuf:"bytes,200,opt,name=created_at,json=createdAt,proto3,oneof" json:"created_at,omitempty"`
+	UpdatedAt         *timestamppb.Timestamp `protobuf:"bytes,201,opt,name=updated_at,json=updatedAt,proto3,oneof" json:"updated_at,omitempty"`
+	unknownFields     protoimpl.UnknownFields
+	sizeCache         protoimpl.SizeCache
 }
 
 func (x *NotificationDelivery) Reset() {
@@ -335,6 +344,13 @@ func (x *NotificationDelivery) GetAttempts() uint32 {
 		return *x.Attempts
 	}
 	return 0
+}
+
+func (x *NotificationDelivery) GetReceiptProviderId() string {
+	if x != nil && x.ReceiptProviderId != nil {
+		return *x.ReceiptProviderId
+	}
+	return ""
 }
 
 func (x *NotificationDelivery) GetCreatedBy() uint32 {
@@ -662,8 +678,7 @@ var File_notify_service_v1_notification_proto protoreflect.FileDescriptor
 
 const file_notify_service_v1_notification_proto_rawDesc = "" +
 	"\n" +
-	"$notify/service/v1/notification.proto\x12\x11notify.service.v1\x1a$gnostic/openapi/v3/annotations.proto\x1a\x1fgoogle/protobuf/timestamp.proto\x1a\x1epagination/v1/pagination.proto\"\xd7\n" +
-	"\n" +
+	"$notify/service/v1/notification.proto\x12\x11notify.service.v1\x1a$gnostic/openapi/v3/annotations.proto\x1a\x1fgoogle/protobuf/timestamp.proto\x1a\x1epagination/v1/pagination.proto\"\xc0\v\n" +
 	"\x14NotificationDelivery\x12#\n" +
 	"\x02id\x18\x01 \x01(\rB\x0e\xbaG\v\x92\x02\b台账IDH\x00R\x02id\x88\x01\x01\x12Z\n" +
 	"\n" +
@@ -683,15 +698,16 @@ const file_notify_service_v1_notification_proto_rawDesc = "" +
 	"\n" +
 	"request_id\x18\v \x01(\tB#\xbaG \x92\x02\x1d派发请求ID（幂等锚）H\n" +
 	"R\trequestId\x88\x01\x01\x12N\n" +
-	"\battempts\x18\f \x01(\rB-\xbaG*\x92\x02'实际尝试投递次数（含首次）H\vR\battempts\x88\x01\x01\x12\"\n" +
+	"\battempts\x18\f \x01(\rB-\xbaG*\x92\x02'实际尝试投递次数（含首次）H\vR\battempts\x88\x01\x01\x12O\n" +
+	"\x13receipt_provider_id\x18\r \x01(\tB\x1a\xbaG\x17\x92\x02\x14服务商侧消息IDH\fR\x11receiptProviderId\x88\x01\x01\x12\"\n" +
 	"\n" +
-	"created_by\x18d \x01(\rH\fR\tcreatedBy\x88\x01\x01\x12\"\n" +
+	"created_by\x18d \x01(\rH\rR\tcreatedBy\x88\x01\x01\x12\"\n" +
 	"\n" +
-	"updated_by\x18e \x01(\rH\rR\tupdatedBy\x88\x01\x01\x12?\n" +
+	"updated_by\x18e \x01(\rH\x0eR\tupdatedBy\x88\x01\x01\x12?\n" +
 	"\n" +
-	"created_at\x18\xc8\x01 \x01(\v2\x1a.google.protobuf.TimestampH\x0eR\tcreatedAt\x88\x01\x01\x12?\n" +
+	"created_at\x18\xc8\x01 \x01(\v2\x1a.google.protobuf.TimestampH\x0fR\tcreatedAt\x88\x01\x01\x12?\n" +
 	"\n" +
-	"updated_at\x18\xc9\x01 \x01(\v2\x1a.google.protobuf.TimestampH\x0fR\tupdatedAt\x88\x01\x01B\x05\n" +
+	"updated_at\x18\xc9\x01 \x01(\v2\x1a.google.protobuf.TimestampH\x10R\tupdatedAt\x88\x01\x01B\x05\n" +
 	"\x03_idB\r\n" +
 	"\v_event_typeB\n" +
 	"\n" +
@@ -705,7 +721,8 @@ const file_notify_service_v1_notification_proto_rawDesc = "" +
 	"\b_sent_atB\r\n" +
 	"\v_related_idB\r\n" +
 	"\v_request_idB\v\n" +
-	"\t_attemptsB\r\n" +
+	"\t_attemptsB\x16\n" +
+	"\x14_receipt_provider_idB\r\n" +
 	"\v_created_byB\r\n" +
 	"\v_updated_byB\r\n" +
 	"\v_created_atB\r\n" +
@@ -748,16 +765,18 @@ const file_notify_service_v1_notification_proto_rawDesc = "" +
 	"\x18SendNotificationResponse\x12/\n" +
 	"\vdelivery_id\x18\x01 \x01(\rB\x0e\xbaG\v\x92\x02\b台账IDR\n" +
 	"deliveryId\x12M\n" +
-	"\x06status\x18\x02 \x01(\x0e2!.notify.service.v1.DeliveryStatusB\x12\xbaG\x0f\x92\x02\f投递结果R\x06status*H\n" +
+	"\x06status\x18\x02 \x01(\x0e2!.notify.service.v1.DeliveryStatusB\x12\xbaG\x0f\x92\x02\f投递结果R\x06status*Q\n" +
 	"\aChannel\x12\x17\n" +
 	"\x13CHANNEL_UNSPECIFIED\x10\x00\x12\t\n" +
 	"\x05EMAIL\x10\x01\x12\v\n" +
 	"\aWEBHOOK\x10\x02\x12\f\n" +
-	"\bINTERNAL\x10\x03*h\n" +
+	"\bINTERNAL\x10\x03\x12\a\n" +
+	"\x03EXT\x10\x04*~\n" +
 	"\tEventType\x12\x1a\n" +
 	"\x16EVENT_TYPE_UNSPECIFIED\x10\x00\x12\x14\n" +
 	"\x10INTERNAL_MESSAGE\x10\x01\x12\x16\n" +
-	"\x12CHANNEL_TEST_EMAIL\x10\x02\x12\x11\n" +
+	"\x12CHANNEL_TEST_EMAIL\x10\x02\x12\x14\n" +
+	"\x10CHANNEL_TEST_EXT\x10\b\x12\x11\n" +
 	"\rSYSTEM_NOTIFY\x10\x03*a\n" +
 	"\x0eDeliveryStatus\x12\x1f\n" +
 	"\x1bDELIVERY_STATUS_UNSPECIFIED\x10\x00\x12\v\n" +

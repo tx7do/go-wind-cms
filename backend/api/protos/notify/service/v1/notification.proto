@@ -37,6 +37,8 @@ enum Channel {
   EMAIL = 1;               // 邮件（SMTP）
   WEBHOOK = 2;             // Webhook（HTTP 回调）
   INTERNAL = 3;            // 站内信（虚拟渠道，无花名册行，台账 channel_id 留空）
+  EXT = 4;                 // 扩展渠道（go-utils/notify 全量接入：telegram/wecom_app/bark/ntfy…，
+                           // 一类多型：具体型别在渠道行的 type 列，配置存 settings 列）
 }
 
 // 业务事件类型。路由（事件 → 渠道 / 是否异步）由 notification_rules 表决定，
@@ -51,6 +53,9 @@ enum EventType {
 
   // 渠道配置测试邮件（渠道页"测试发送"）。
   CHANNEL_TEST_EMAIL = 2;
+
+  // 渠道测试消息（扩展渠道 EXT_* 的"测试发送"）。
+  CHANNEL_TEST_EXT = 8;
 
   // 系统通知邮件：站内信系统通知（NotifyUser）的附加邮件触达，收件目标为
   // 收件用户邮箱。种子规则 SYSTEM_NOTIFY→EMAIL 提供路由（管理员停用该行即
@@ -135,6 +140,12 @@ message NotificationDelivery {
     json_name = "attempts",
     (gnostic.openapi.v3.property) = { description: "实际尝试投递次数（含首次）" }
   ]; // 实际尝试次数
+
+  // 服务商侧消息/请求 ID（阿里云 RequestId、IM 响应 ID 等，拿得到就带），跨系统对账有据可查
+  optional string receipt_provider_id = 13 [
+    json_name = "receiptProviderId",
+    (gnostic.openapi.v3.property) = { description: "服务商侧消息ID" }
+  ]; // 服务商侧消息ID
 
   optional uint32 created_by = 100 [json_name = "createdBy"];
   optional uint32 updated_by = 101 [json_name = "updatedBy"];

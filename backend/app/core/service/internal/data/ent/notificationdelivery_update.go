@@ -378,6 +378,26 @@ func (_u *NotificationDeliveryUpdate) ClearAttempts() *NotificationDeliveryUpdat
 	return _u
 }
 
+// SetReceiptProviderID sets the "receipt_provider_id" field.
+func (_u *NotificationDeliveryUpdate) SetReceiptProviderID(v string) *NotificationDeliveryUpdate {
+	_u.mutation.SetReceiptProviderID(v)
+	return _u
+}
+
+// SetNillableReceiptProviderID sets the "receipt_provider_id" field if the given value is not nil.
+func (_u *NotificationDeliveryUpdate) SetNillableReceiptProviderID(v *string) *NotificationDeliveryUpdate {
+	if v != nil {
+		_u.SetReceiptProviderID(*v)
+	}
+	return _u
+}
+
+// ClearReceiptProviderID clears the value of the "receipt_provider_id" field.
+func (_u *NotificationDeliveryUpdate) ClearReceiptProviderID() *NotificationDeliveryUpdate {
+	_u.mutation.ClearReceiptProviderID()
+	return _u
+}
+
 // SetSentAt sets the "sent_at" field.
 func (_u *NotificationDeliveryUpdate) SetSentAt(v time.Time) *NotificationDeliveryUpdate {
 	_u.mutation.SetSentAt(v)
@@ -586,6 +606,12 @@ func (_u *NotificationDeliveryUpdate) sqlSave(ctx context.Context) (_node int, e
 	}
 	if _u.mutation.AttemptsCleared() {
 		_spec.ClearField(notificationdelivery.FieldAttempts, field.TypeUint32)
+	}
+	if value, ok := _u.mutation.ReceiptProviderID(); ok {
+		_spec.SetField(notificationdelivery.FieldReceiptProviderID, field.TypeString, value)
+	}
+	if _u.mutation.ReceiptProviderIDCleared() {
+		_spec.ClearField(notificationdelivery.FieldReceiptProviderID, field.TypeString)
 	}
 	if value, ok := _u.mutation.SentAt(); ok {
 		_spec.SetField(notificationdelivery.FieldSentAt, field.TypeTime, value)
@@ -964,6 +990,26 @@ func (_u *NotificationDeliveryUpdateOne) ClearAttempts() *NotificationDeliveryUp
 	return _u
 }
 
+// SetReceiptProviderID sets the "receipt_provider_id" field.
+func (_u *NotificationDeliveryUpdateOne) SetReceiptProviderID(v string) *NotificationDeliveryUpdateOne {
+	_u.mutation.SetReceiptProviderID(v)
+	return _u
+}
+
+// SetNillableReceiptProviderID sets the "receipt_provider_id" field if the given value is not nil.
+func (_u *NotificationDeliveryUpdateOne) SetNillableReceiptProviderID(v *string) *NotificationDeliveryUpdateOne {
+	if v != nil {
+		_u.SetReceiptProviderID(*v)
+	}
+	return _u
+}
+
+// ClearReceiptProviderID clears the value of the "receipt_provider_id" field.
+func (_u *NotificationDeliveryUpdateOne) ClearReceiptProviderID() *NotificationDeliveryUpdateOne {
+	_u.mutation.ClearReceiptProviderID()
+	return _u
+}
+
 // SetSentAt sets the "sent_at" field.
 func (_u *NotificationDeliveryUpdateOne) SetSentAt(v time.Time) *NotificationDeliveryUpdateOne {
 	_u.mutation.SetSentAt(v)
@@ -1202,6 +1248,12 @@ func (_u *NotificationDeliveryUpdateOne) sqlSave(ctx context.Context) (_node *No
 	}
 	if _u.mutation.AttemptsCleared() {
 		_spec.ClearField(notificationdelivery.FieldAttempts, field.TypeUint32)
+	}
+	if value, ok := _u.mutation.ReceiptProviderID(); ok {
+		_spec.SetField(notificationdelivery.FieldReceiptProviderID, field.TypeString, value)
+	}
+	if _u.mutation.ReceiptProviderIDCleared() {
+		_spec.ClearField(notificationdelivery.FieldReceiptProviderID, field.TypeString)
 	}
 	if value, ok := _u.mutation.SentAt(); ok {
 		_spec.SetField(notificationdelivery.FieldSentAt, field.TypeTime, value)

@@ -15,6 +15,7 @@ import (
 	notifyV1 "go-wind-cms/api/gen/go/notify/service/v1"
 
 	"go-wind-cms/app/core/service/internal/data"
+	"go-wind-cms/app/core/service/internal/data/channel"
 )
 
 // NotificationChannelService 通知渠道管理（平台级配置）。
@@ -46,7 +47,12 @@ func (s *NotificationChannelService) List(ctx context.Context, req *paginationV1
 		return nil, err
 	}
 
-	return s.repo.List(ctx, req)
+	resp, err := s.repo.List(ctx, req)
+	if err != nil {
+		return nil, err
+	}
+	s.sanitizeSettings(resp.GetItems()...)
+	return resp, nil
 }
 
 func (s *NotificationChannelService) Get(ctx context.Context, req *notifyV1.GetNotificationChannelRequest) (*notifyV1.NotificationChannel, error) {
@@ -58,7 +64,12 @@ func (s *NotificationChannelService) Get(ctx context.Context, req *notifyV1.GetN
 		return nil, err
 	}
 
-	return s.repo.Get(ctx, req.GetId())
+	dto, err := s.repo.Get(ctx, req.GetId())
+	if err != nil {
+		return nil, err
+	}
+	s.sanitizeSettings(dto)
+	return dto, nil
 }
 
 func (s *NotificationChannelService) Create(ctx context.Context, req *notifyV1.CreateNotificationChannelRequest) (*notifyV1.NotificationChannel, error) {
@@ -72,6 +83,20 @@ func (s *NotificationChannelService) Create(ctx context.Context, req *notifyV1.C
 
 	operatorID, _ := viewerUserIDFromContext(ctx)
 	req.Data.CreatedBy = trans.Ptr(operatorID)
+
+	// 扩展渠道：settings 明文 JSON 按 schema 校验必填并加密 sensitive 字段；
+	// 传了 settings 但类型不是 EXT → 直接判参数错（EMAIL/WEBHOOK 不吃这份配置）。
+	if req.GetSettings() != "" {
+		typeName := req.Data.GetType().String()
+		if !channel.IsSettingsType(typeName) {
+			return nil, errors.BadRequest("NOTIFICATION_CHANNEL", "settings only applies to EXT channel types")
+		}
+		storeJSON, err := channel.NormalizeSettingsForStore(typeName, req.GetSettings())
+		if err != nil {
+			return nil, errors.BadRequest("NOTIFICATION_CHANNEL", err.Error())
+		}
+		req.Data.Settings = trans.Ptr(storeJSON)
+	}
 
 	created, err := s.repo.Create(ctx, req)
 	if err != nil {
@@ -93,7 +118,29 @@ func (s *NotificationChannelService) Update(ctx context.Context, req *notifyV1.U
 	operatorID, _ := viewerUserIDFromContext(ctx)
 	req.Data.UpdatedBy = trans.Ptr(operatorID)
 
-	return s.repo.Update(ctx, req)
+	// 扩展渠道：settings 按 schema 合并——sensitive 字段新值为空 = 保留已存密文
+	if req.GetSettings() != "" {
+		typeName := req.Data.GetType().String()
+		if !channel.IsSettingsType(typeName) {
+			return nil, errors.BadRequest("NOTIFICATION_CHANNEL", "settings only applies to EXT channel types")
+		}
+		_, oldStoreJSON, _, err := s.repo.GetSettingsRaw(ctx, req.GetId())
+		if err != nil {
+			return nil, err
+		}
+		storeJSON, mergeErr := channel.MergeSettingsForStore(typeName, oldStoreJSON, req.GetSettings())
+		if mergeErr != nil {
+			return nil, errors.BadRequest("NOTIFICATION_CHANNEL", mergeErr.Error())
+		}
+		req.Data.Settings = trans.Ptr(storeJSON)
+	}
+
+	dto, err := s.repo.Update(ctx, req)
+	if err != nil {
+		return nil, err
+	}
+	s.sanitizeSettings(dto)
+	return dto, nil
 }
 
 func (s *NotificationChannelService) Delete(ctx context.Context, req *notifyV1.DeleteNotificationChannelRequest) (*emptypb.Empty, error) {
@@ -149,7 +196,20 @@ func (s *NotificationChannelService) SendTestEmail(ctx context.Context, req *not
 		return nil, errors.BadRequest("NOTIFICATION_CHANNEL", "webhook channels are tested from the notification-rules page")
 
 	default:
-		return nil, errors.BadRequest("NOTIFICATION_CHANNEL", "unsupported channel type "+dto.GetType().String())
+		// 扩展渠道（EXT_* 39 种）：按 schema 语义发一条测试消息。
+		// 规则表没有 CHANNEL_TEST_EXT 行也不依赖种子——显式带 Channel=EXT，
+		// resolveRoute 在规则缺失时直接采用显式渠道。
+		schema := channel.SettingsSchemaByType(dto.GetType().String())
+		if schema == nil {
+			return nil, errors.BadRequest("NOTIFICATION_CHANNEL", "unsupported channel type "+dto.GetType().String())
+		}
+		if schema.NeedsTarget && recipient == "" {
+			return nil, errors.BadRequest("NOTIFICATION_CHANNEL", "recipient is required: "+schema.TargetLabel)
+		}
+		sendReq.Channel = trans.Ptr(notifyV1.Channel_EXT)
+		sendReq.EventType = notifyV1.EventType_CHANNEL_TEST_EXT
+		sendReq.Title = fmt.Sprintf("通知渠道测试消息（%s / 渠道 #%d）", schema.Label, id)
+		sendReq.Content = fmt.Sprintf("这是一条测试消息（由操作员 #%d 触发）。收到本消息说明该扩展渠道的配置工作正常。", operatorID)
 	}
 
 	if _, err = s.notifier.SendDirect(ctx, sendReq); err != nil {
@@ -159,4 +219,24 @@ func (s *NotificationChannelService) SendTestEmail(ctx context.Context, req *not
 
 	s.log.Infof("test message sent via channel [%d] to [%s] by operator [%d]", id, recipient, operatorID)
 	return &notifyV1.SendTestEmailResponse{Success: true}, nil
+}
+
+// ListChannelSchemas 扩展渠道 schema 清单（前端 settings 动态表单的数据源）。
+func (s *NotificationChannelService) ListChannelSchemas(ctx context.Context, _ *emptypb.Empty) (*notifyV1.ListChannelSchemasResponse, error) {
+	if err := requireNotificationPlatformContext(ctx, "notification channels"); err != nil {
+		return nil, err
+	}
+	return &notifyV1.ListChannelSchemasResponse{Items: channel.ListSettingsSchemas()}, nil
+}
+
+// sanitizeSettings 读回显脱敏：settings 里 sensitive 字段值恒为空串（前端"留空 = 不修改"）。
+func (s *NotificationChannelService) sanitizeSettings(dtos ...*notifyV1.NotificationChannel) {
+	for _, dto := range dtos {
+		if dto == nil || dto.GetSettings() == "" {
+			continue
+		}
+		if masked := channel.SanitizeSettingsForDTO(dto.GetType().String(), dto.GetSettings()); masked != "" {
+			dto.Settings = trans.Ptr(masked)
+		}
+	}
 }

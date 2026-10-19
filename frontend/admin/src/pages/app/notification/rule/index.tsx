@@ -52,6 +52,7 @@ const CHANNEL_COLORS: Record<notifyservicev1_Channel, string> = {
   EMAIL: 'blue',
   WEBHOOK: 'purple',
   INTERNAL: 'cyan',
+  EXT: 'geekblue',
   CHANNEL_UNSPECIFIED: 'default',
 };
 
@@ -62,7 +63,7 @@ const eventTypeOptions = (t: (key: string) => string) =>
   }));
 
 const channelOptions = (t: (key: string) => string) =>
-  (['EMAIL', 'WEBHOOK', 'INTERNAL'] as const).map((value) => ({
+  (['EMAIL', 'WEBHOOK', 'INTERNAL', 'EXT'] as const).map((value) => ({
     value,
     label: t(`channelMap.${value}`),
   }));

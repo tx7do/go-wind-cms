@@ -8753,6 +8753,8 @@ export type notifyservicev1_NotificationDelivery = {
   eventType?: notifyservicev1_EventType;
   id?: number;
   lastError?: string;
+  // 服务商侧消息/请求 ID（阿里云 RequestId、IM 响应 ID 等，拿得到就带），跨系统对账有据可查
+  receiptProviderId?: string;
   recipientUserId?: number;
   // 产生本条投递的业务对象主键，含义由 event_type 决定（INTERNAL_MESSAGE → internal_messages.id）。
   relatedId?: number;
@@ -8771,6 +8773,8 @@ export type notifyservicev1_NotificationDelivery = {
 export type notifyservicev1_EventType =
   // 渠道配置测试邮件（渠道页"测试发送"）。
   | 'CHANNEL_TEST_EMAIL'
+  // 渠道测试消息（扩展渠道 EXT_* 的"测试发送"）。
+  | 'CHANNEL_TEST_EXT'
   | 'EVENT_TYPE_UNSPECIFIED'
   // 站内信投递：一条站内信发给一个收件人 = 一行台账，related_id 指向 internal_messages.id。
   // 它与其他事件的区别：其他事件由业务动作触发、渠道由路由表决定；这一个本身就是
@@ -8784,6 +8788,7 @@ export type notifyservicev1_EventType =
 export type notifyservicev1_Channel =
   | 'CHANNEL_UNSPECIFIED'
   | 'EMAIL'
+  | 'EXT'
   | 'INTERNAL'
   | 'WEBHOOK';
 // 投递状态
@@ -8824,6 +8829,10 @@ export interface NotificationChannelService {
   SendTestEmail(
     request: notifyservicev1_SendTestEmailRequest,
   ): Promise<notifyservicev1_SendTestEmailResponse>;
+  // 扩展渠道 schema 清单（前端 settings 动态表单的数据源）
+  ListChannelSchemas(
+    request: wellKnownEmpty,
+  ): Promise<notifyservicev1_ListChannelSchemasResponse>;
 }
 
 export function createNotificationChannelServiceClient(
@@ -8997,6 +9006,14 @@ export function createNotificationChannelServiceClient(
         method: 'SendTestEmail',
       }) as Promise<notifyservicev1_SendTestEmailResponse>;
     },
+    ListChannelSchemas(_request) {
+      const path = `admin/v1/notification-channel-schemas`;
+      const body = null;
+      return transport.unary(path, 'GET', body, {
+        service: 'NotificationChannelService',
+        method: 'ListChannelSchemas',
+      }) as Promise<notifyservicev1_ListChannelSchemasResponse>;
+    },
   };
 }
 // 查询通知渠道列表 - 回应
@@ -9017,6 +9034,8 @@ export type notifyservicev1_NotificationChannel = {
   id?: number;
   name?: string;
   remark?: string;
+  // 扩展渠道配置整包（JSON；读回显是脱敏后的 JSON 串，sensitive 字段恒为空串——留空 = 不修改）
+  settings?: string;
   smtpFrom?: string;
   smtpFromName?: string;
   smtpHost?: string;
@@ -9036,8 +9055,47 @@ export type notifyservicev1_NotificationChannel = {
 
 // 渠道类型（成员名与 ent 列值逐字相同）
 export type notifyservicev1_NotificationChannel_Type =
+  | 'BARK'
+  | 'DATADOG'
+  | 'DINGTALK_APP'
+  | 'DISCORD'
   | 'EMAIL'
-  | 'WEBHOOK';
+  | 'FEISHU_APP'
+  | 'GCHAT'
+  | 'GETUI'
+  | 'GOTIFY'
+  | 'HOMEASSISTANT'
+  | 'HUAWEISMS'
+  | 'IFTTT'
+  | 'JOIN'
+  | 'JPUSH'
+  | 'LINE'
+  | 'MAILGUN'
+  | 'MATRIX'
+  | 'MATTERMOST'
+  | 'NTFY'
+  | 'OPSGENIE'
+  | 'PAGERDUTY'
+  | 'POSTMARK'
+  | 'PUSHBULLET'
+  | 'PUSHDEER'
+  | 'PUSHOVER'
+  | 'ROCKETCHAT'
+  | 'SENDGRID'
+  | 'SERVERCHAN'
+  | 'SLACK'
+  | 'TEAMS'
+  | 'TELEGRAM'
+  | 'TWILIO'
+  | 'VONAGE'
+  | 'WEBEX'
+  | 'WEBHOOK'
+  | 'WECHAT'
+  | 'WECOM_APP'
+  | 'WHATSAPP'
+  | 'WXPUSHER'
+  | 'YUNPIAN'
+  | 'ZULIP';
 // SMTP 加密方式
 export type notifyservicev1_NotificationChannel_TlsMode =
   | 'NONE'
@@ -9066,6 +9124,8 @@ export type notifyservicev1_CreateNotificationChannelRequest = {
   data: notifyservicev1_NotificationChannel | undefined;
   // 明文密码（服务端加密存储，不落日志）
   password?: string;
+  // 扩展渠道配置明文 JSON（服务端按 schema 校验必填并加密 sensitive 字段落库）
+  settings?: string;
   // 明文签名密钥（服务端加密存储，不落日志；留空 = 不签名）
   webhookSecret?: string;
 };
@@ -9076,6 +9136,8 @@ export type notifyservicev1_UpdateNotificationChannelRequest = {
   id: number | undefined;
   // 明文密码；留空表示不修改已存密码
   password?: string;
+  // 扩展渠道配置明文 JSON；sensitive 字段留空 = 保留已存值
+  settings?: string;
   updateMask: undefined | wellKnownFieldMask;
   // 明文签名密钥；留空表示不修改已存密钥
   webhookSecret?: string;
@@ -9096,6 +9158,33 @@ export type notifyservicev1_SendTestEmailRequest = {
 export type notifyservicev1_SendTestEmailResponse = {
   error: string | undefined;
   success: boolean | undefined;
+};
+
+// 扩展渠道 schema 清单 - 回应
+export type notifyservicev1_ListChannelSchemasResponse = {
+  items: notifyservicev1_ChannelSchema[] | undefined;
+};
+
+// 扩展渠道 schema 声明
+export type notifyservicev1_ChannelSchema = {
+  fields: notifyservicev1_ChannelField[] | undefined;
+  group: string | undefined;
+  label: string | undefined;
+  needsTarget: boolean | undefined;
+  targetLabel: string | undefined;
+  type: string | undefined;
+};
+
+// 扩展渠道 settings 字段声明
+export type notifyservicev1_ChannelField = {
+  hint: string | undefined;
+  label: string | undefined;
+  name: string | undefined;
+  options: string[] | undefined;
+  placeholder: string | undefined;
+  required: boolean | undefined;
+  sensitive: boolean | undefined;
+  type: string | undefined;
 };
 
 // 用户通知偏好服务（自助：读写的都是当前操作人自己的偏好，无管理面）。

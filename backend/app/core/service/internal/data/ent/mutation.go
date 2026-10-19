@@ -69616,6 +69616,7 @@ type NotificationChannelMutation struct {
 	webhook_secret           *string
 	webhook_sign_style       *notificationchannel.WebhookSignStyle
 	webhook_payload_template *string
+	settings                 *string
 	clearedFields            map[string]struct{}
 	done                     bool
 	oldValue                 func(context.Context) (*NotificationChannel, error)
@@ -70813,6 +70814,55 @@ func (m *NotificationChannelMutation) ResetWebhookPayloadTemplate() {
 	delete(m.clearedFields, notificationchannel.FieldWebhookPayloadTemplate)
 }
 
+// SetSettings sets the "settings" field.
+func (m *NotificationChannelMutation) SetSettings(s string) {
+	m.settings = &s
+}
+
+// Settings returns the value of the "settings" field in the mutation.
+func (m *NotificationChannelMutation) Settings() (r string, exists bool) {
+	v := m.settings
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldSettings returns the old "settings" field's value of the NotificationChannel entity.
+// If the NotificationChannel object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *NotificationChannelMutation) OldSettings(ctx context.Context) (v *string, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldSettings is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldSettings requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldSettings: %w", err)
+	}
+	return oldValue.Settings, nil
+}
+
+// ClearSettings clears the value of the "settings" field.
+func (m *NotificationChannelMutation) ClearSettings() {
+	m.settings = nil
+	m.clearedFields[notificationchannel.FieldSettings] = struct{}{}
+}
+
+// SettingsCleared returns if the "settings" field was cleared in this mutation.
+func (m *NotificationChannelMutation) SettingsCleared() bool {
+	_, ok := m.clearedFields[notificationchannel.FieldSettings]
+	return ok
+}
+
+// ResetSettings resets all changes to the "settings" field.
+func (m *NotificationChannelMutation) ResetSettings() {
+	m.settings = nil
+	delete(m.clearedFields, notificationchannel.FieldSettings)
+}
+
 // Where appends a list predicates to the NotificationChannelMutation builder.
 func (m *NotificationChannelMutation) Where(ps ...predicate.NotificationChannel) {
 	m.predicates = append(m.predicates, ps...)
@@ -70847,7 +70897,7 @@ func (m *NotificationChannelMutation) Type() string {
 // order to get all numeric fields that were incremented/decremented, call
 // AddedFields().
 func (m *NotificationChannelMutation) Fields() []string {
-	fields := make([]string, 0, 21)
+	fields := make([]string, 0, 22)
 	if m.created_at != nil {
 		fields = append(fields, notificationchannel.FieldCreatedAt)
 	}
@@ -70911,6 +70961,9 @@ func (m *NotificationChannelMutation) Fields() []string {
 	if m.webhook_payload_template != nil {
 		fields = append(fields, notificationchannel.FieldWebhookPayloadTemplate)
 	}
+	if m.settings != nil {
+		fields = append(fields, notificationchannel.FieldSettings)
+	}
 	return fields
 }
 
@@ -70961,6 +71014,8 @@ func (m *NotificationChannelMutation) Field(name string) (ent.Value, bool) {
 		return m.WebhookSignStyle()
 	case notificationchannel.FieldWebhookPayloadTemplate:
 		return m.WebhookPayloadTemplate()
+	case notificationchannel.FieldSettings:
+		return m.Settings()
 	}
 	return nil, false
 }
@@ -71012,6 +71067,8 @@ func (m *NotificationChannelMutation) OldField(ctx context.Context, name string)
 		return m.OldWebhookSignStyle(ctx)
 	case notificationchannel.FieldWebhookPayloadTemplate:
 		return m.OldWebhookPayloadTemplate(ctx)
+	case notificationchannel.FieldSettings:
+		return m.OldSettings(ctx)
 	}
 	return nil, fmt.Errorf("unknown NotificationChannel field %s", name)
 }
@@ -71168,6 +71225,13 @@ func (m *NotificationChannelMutation) SetField(name string, value ent.Value) err
 		}
 		m.SetWebhookPayloadTemplate(v)
 		return nil
+	case notificationchannel.FieldSettings:
+		v, ok := value.(string)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetSettings(v)
+		return nil
 	}
 	return fmt.Errorf("unknown NotificationChannel field %s", name)
 }
@@ -71306,6 +71370,9 @@ func (m *NotificationChannelMutation) ClearedFields() []string {
 	if m.FieldCleared(notificationchannel.FieldWebhookPayloadTemplate) {
 		fields = append(fields, notificationchannel.FieldWebhookPayloadTemplate)
 	}
+	if m.FieldCleared(notificationchannel.FieldSettings) {
+		fields = append(fields, notificationchannel.FieldSettings)
+	}
 	return fields
 }
 
@@ -71377,6 +71444,9 @@ func (m *NotificationChannelMutation) ClearField(name string) error {
 	case notificationchannel.FieldWebhookPayloadTemplate:
 		m.ClearWebhookPayloadTemplate()
 		return nil
+	case notificationchannel.FieldSettings:
+		m.ClearSettings()
+		return nil
 	}
 	return fmt.Errorf("unknown NotificationChannel nullable field %s", name)
 }
@@ -71447,6 +71517,9 @@ func (m *NotificationChannelMutation) ResetField(name string) error {
 		return nil
 	case notificationchannel.FieldWebhookPayloadTemplate:
 		m.ResetWebhookPayloadTemplate()
+		return nil
+	case notificationchannel.FieldSettings:
+		m.ResetSettings()
 		return nil
 	}
 	return fmt.Errorf("unknown NotificationChannel field %s", name)
@@ -71529,6 +71602,7 @@ type NotificationDeliveryMutation struct {
 	request_id           *string
 	attempts             *uint32
 	addattempts          *int32
+	receipt_provider_id  *string
 	sent_at              *time.Time
 	clearedFields        map[string]struct{}
 	done                 bool
@@ -72571,6 +72645,55 @@ func (m *NotificationDeliveryMutation) ResetAttempts() {
 	delete(m.clearedFields, notificationdelivery.FieldAttempts)
 }
 
+// SetReceiptProviderID sets the "receipt_provider_id" field.
+func (m *NotificationDeliveryMutation) SetReceiptProviderID(s string) {
+	m.receipt_provider_id = &s
+}
+
+// ReceiptProviderID returns the value of the "receipt_provider_id" field in the mutation.
+func (m *NotificationDeliveryMutation) ReceiptProviderID() (r string, exists bool) {
+	v := m.receipt_provider_id
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldReceiptProviderID returns the old "receipt_provider_id" field's value of the NotificationDelivery entity.
+// If the NotificationDelivery object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *NotificationDeliveryMutation) OldReceiptProviderID(ctx context.Context) (v *string, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldReceiptProviderID is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldReceiptProviderID requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldReceiptProviderID: %w", err)
+	}
+	return oldValue.ReceiptProviderID, nil
+}
+
+// ClearReceiptProviderID clears the value of the "receipt_provider_id" field.
+func (m *NotificationDeliveryMutation) ClearReceiptProviderID() {
+	m.receipt_provider_id = nil
+	m.clearedFields[notificationdelivery.FieldReceiptProviderID] = struct{}{}
+}
+
+// ReceiptProviderIDCleared returns if the "receipt_provider_id" field was cleared in this mutation.
+func (m *NotificationDeliveryMutation) ReceiptProviderIDCleared() bool {
+	_, ok := m.clearedFields[notificationdelivery.FieldReceiptProviderID]
+	return ok
+}
+
+// ResetReceiptProviderID resets all changes to the "receipt_provider_id" field.
+func (m *NotificationDeliveryMutation) ResetReceiptProviderID() {
+	m.receipt_provider_id = nil
+	delete(m.clearedFields, notificationdelivery.FieldReceiptProviderID)
+}
+
 // SetSentAt sets the "sent_at" field.
 func (m *NotificationDeliveryMutation) SetSentAt(t time.Time) {
 	m.sent_at = &t
@@ -72654,7 +72777,7 @@ func (m *NotificationDeliveryMutation) Type() string {
 // order to get all numeric fields that were incremented/decremented, call
 // AddedFields().
 func (m *NotificationDeliveryMutation) Fields() []string {
-	fields := make([]string, 0, 17)
+	fields := make([]string, 0, 18)
 	if m.created_at != nil {
 		fields = append(fields, notificationdelivery.FieldCreatedAt)
 	}
@@ -72703,6 +72826,9 @@ func (m *NotificationDeliveryMutation) Fields() []string {
 	if m.attempts != nil {
 		fields = append(fields, notificationdelivery.FieldAttempts)
 	}
+	if m.receipt_provider_id != nil {
+		fields = append(fields, notificationdelivery.FieldReceiptProviderID)
+	}
 	if m.sent_at != nil {
 		fields = append(fields, notificationdelivery.FieldSentAt)
 	}
@@ -72746,6 +72872,8 @@ func (m *NotificationDeliveryMutation) Field(name string) (ent.Value, bool) {
 		return m.RequestID()
 	case notificationdelivery.FieldAttempts:
 		return m.Attempts()
+	case notificationdelivery.FieldReceiptProviderID:
+		return m.ReceiptProviderID()
 	case notificationdelivery.FieldSentAt:
 		return m.SentAt()
 	}
@@ -72789,6 +72917,8 @@ func (m *NotificationDeliveryMutation) OldField(ctx context.Context, name string
 		return m.OldRequestID(ctx)
 	case notificationdelivery.FieldAttempts:
 		return m.OldAttempts(ctx)
+	case notificationdelivery.FieldReceiptProviderID:
+		return m.OldReceiptProviderID(ctx)
 	case notificationdelivery.FieldSentAt:
 		return m.OldSentAt(ctx)
 	}
@@ -72911,6 +73041,13 @@ func (m *NotificationDeliveryMutation) SetField(name string, value ent.Value) er
 			return fmt.Errorf("unexpected type %T for field %s", value, name)
 		}
 		m.SetAttempts(v)
+		return nil
+	case notificationdelivery.FieldReceiptProviderID:
+		v, ok := value.(string)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetReceiptProviderID(v)
 		return nil
 	case notificationdelivery.FieldSentAt:
 		v, ok := value.(time.Time)
@@ -73084,6 +73221,9 @@ func (m *NotificationDeliveryMutation) ClearedFields() []string {
 	if m.FieldCleared(notificationdelivery.FieldAttempts) {
 		fields = append(fields, notificationdelivery.FieldAttempts)
 	}
+	if m.FieldCleared(notificationdelivery.FieldReceiptProviderID) {
+		fields = append(fields, notificationdelivery.FieldReceiptProviderID)
+	}
 	if m.FieldCleared(notificationdelivery.FieldSentAt) {
 		fields = append(fields, notificationdelivery.FieldSentAt)
 	}
@@ -73149,6 +73289,9 @@ func (m *NotificationDeliveryMutation) ClearField(name string) error {
 	case notificationdelivery.FieldAttempts:
 		m.ClearAttempts()
 		return nil
+	case notificationdelivery.FieldReceiptProviderID:
+		m.ClearReceiptProviderID()
+		return nil
 	case notificationdelivery.FieldSentAt:
 		m.ClearSentAt()
 		return nil
@@ -73207,6 +73350,9 @@ func (m *NotificationDeliveryMutation) ResetField(name string) error {
 		return nil
 	case notificationdelivery.FieldAttempts:
 		m.ResetAttempts()
+		return nil
+	case notificationdelivery.FieldReceiptProviderID:
+		m.ResetReceiptProviderID()
 		return nil
 	case notificationdelivery.FieldSentAt:
 		m.ResetSentAt()

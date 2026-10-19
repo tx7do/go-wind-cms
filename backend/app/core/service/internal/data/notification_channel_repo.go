@@ -194,6 +194,8 @@ func (r *NotificationChannelRepo) Create(ctx context.Context, req *notifyV1.Crea
 		SetNillableWebhookURL(req.Data.WebhookUrl).
 		SetNillableWebhookSignStyle(r.styleConverter.ToEntity(req.Data.WebhookSignStyle)).
 		SetNillableWebhookPayloadTemplate(req.Data.WebhookPayloadTemplate).
+		// 扩展渠道配置整包（service 层已按 schema 校验并加密 sensitive 字段）
+		SetNillableSettings(req.Data.Settings).
 		SetStatus(statusFromEnabled(req.Data.GetEnabled())).
 		SetNillableRemark(req.Data.Remark)
 
@@ -279,6 +281,10 @@ func (r *NotificationChannelRepo) Update(ctx context.Context, req *notifyV1.Upda
 	}
 	if req.Data.WebhookPayloadTemplate != nil {
 		builder.SetNillableWebhookPayloadTemplate(req.Data.WebhookPayloadTemplate)
+	}
+	// 扩展渠道配置整包（service 层已按 schema 合并：sensitive 留空 = 保留已存密文）
+	if req.Data.Settings != nil {
+		builder.SetNillableSettings(req.Data.Settings)
 	}
 	if req.Data.Enabled != nil {
 		builder.SetStatus(statusFromEnabled(req.Data.GetEnabled()))
@@ -500,6 +506,55 @@ func (r *NotificationChannelRepo) webhookAccountOf(ctx context.Context, entity *
 }
 
 // statusFromEnabled DTO enabled 布尔 → ent status 枚举
+// GetSettingsRaw 取扩展渠道的存储态配置原文（settings 为加密 JSON，schema 感知的解密在 channel 包）。
+// 返回：类型名（proto Type 枚举名）、settings 存储态 JSON、启用状态。
+func (r *NotificationChannelRepo) GetSettingsRaw(ctx context.Context, id uint32) (typeName, storeJSON string, enabled bool, err error) {
+	entity, getErr := r.entClient.Client().NotificationChannel.Query().
+		Where(notificationchannel.IDEQ(id)).
+		Only(ctx)
+	if getErr != nil {
+		if ent.IsNotFound(getErr) {
+			return "", "", false, errors.NotFound("NOTIFICATION_CHANNEL", "notification channel not found")
+		}
+		r.log.Errorf("get settings channel [%d] failed: %s", id, getErr.Error())
+		return "", "", false, errors.InternalServer("NOTIFICATION_CHANNEL", "get notification channel failed")
+	}
+	if entity.Type == nil {
+		return "", "", false, errors.BadRequest("NOTIFICATION_CHANNEL", "channel type is empty")
+	}
+	return string(*entity.Type), derefString(entity.Settings), entity.Status != nil && *entity.Status == notificationchannel.StatusOn, nil
+}
+
+// GetFirstEnabledSettingsRaw 自选策略：类型落在 types 清单内的第一个启用行。
+func (r *NotificationChannelRepo) GetFirstEnabledSettingsRaw(ctx context.Context, types []string) (typeName, storeJSON string, err error) {
+	if len(types) == 0 {
+		return "", "", errors.NotFound("NOTIFICATION_CHANNEL", "no enabled settings channel")
+	}
+	typeValues := make([]notificationchannel.Type, 0, len(types))
+	for _, t := range types {
+		typeValues = append(typeValues, notificationchannel.Type(t))
+	}
+	entities, queryErr := r.entClient.Client().NotificationChannel.Query().
+		Where(
+			notificationchannel.TypeIn(typeValues...),
+			notificationchannel.StatusEQ(notificationchannel.StatusOn),
+		).
+		Order(ent.Asc(notificationchannel.FieldID)).
+		Limit(1).
+		All(ctx)
+	if queryErr != nil {
+		r.log.Errorf("query enabled settings channel failed: %s", queryErr.Error())
+		return "", "", errors.InternalServer("NOTIFICATION_CHANNEL", "query settings channel failed")
+	}
+	if len(entities) == 0 {
+		return "", "", errors.NotFound("NOTIFICATION_CHANNEL", "no enabled settings channel")
+	}
+	if entities[0].Type == nil {
+		return "", "", errors.BadRequest("NOTIFICATION_CHANNEL", "channel type is empty")
+	}
+	return string(*entities[0].Type), derefString(entities[0].Settings), nil
+}
+
 func statusFromEnabled(enabled bool) notificationchannel.Status {
 	if enabled {
 		return notificationchannel.StatusOn

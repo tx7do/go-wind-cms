@@ -59,5 +59,20 @@
   "requiredRecipient": "请输入收件邮箱",
   "invalidEmail": "邮箱格式不正确",
   "testSendSuccess": "测试邮件已投递，结果见「通知投递记录」",
-  "testSendFailed": "测试发送失败"
+  "testSendFailed": "测试发送失败",
+  "extGroup": {
+    "IM": "即时消息",
+    "PUSH": "推送",
+    "MOBILE": "移动端",
+    "SMS": "短信 / 消息",
+    "MAIL": "邮件服务",
+    "AUTO": "自动化",
+    "OPS": "运维告警"
+  },
+  "ext": {
+    "targetLabel": "运行目标：{{label}}（投递时填在「目标」里）",
+    "required": "{{label}} 为必填项",
+    "secretKeepHint": "留空保留已存值",
+    "optionDefault": "默认"
+  }
 }

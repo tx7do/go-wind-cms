@@ -45,6 +45,8 @@ const (
 	FieldRequestID = "request_id"
 	// FieldAttempts holds the string denoting the attempts field in the database.
 	FieldAttempts = "attempts"
+	// FieldReceiptProviderID holds the string denoting the receipt_provider_id field in the database.
+	FieldReceiptProviderID = "receipt_provider_id"
 	// FieldSentAt holds the string denoting the sent_at field in the database.
 	FieldSentAt = "sent_at"
 	// Table holds the table name of the notificationdelivery in the database.
@@ -70,6 +72,7 @@ var Columns = []string{
 	FieldLastError,
 	FieldRequestID,
 	FieldAttempts,
+	FieldReceiptProviderID,
 	FieldSentAt,
 }
 
@@ -100,6 +103,7 @@ const (
 	EventTypeInternalMessage  EventType = "INTERNAL_MESSAGE"
 	EventTypeChannelTestEmail EventType = "CHANNEL_TEST_EMAIL"
 	EventTypeSystemNotify     EventType = "SYSTEM_NOTIFY"
+	EventTypeChannelTestExt   EventType = "CHANNEL_TEST_EXT"
 )
 
 func (et EventType) String() string {
@@ -109,7 +113,7 @@ func (et EventType) String() string {
 // EventTypeValidator is a validator for the "event_type" field enum values. It is called by the builders before save.
 func EventTypeValidator(et EventType) error {
 	switch et {
-	case EventTypeInternalMessage, EventTypeChannelTestEmail, EventTypeSystemNotify:
+	case EventTypeInternalMessage, EventTypeChannelTestEmail, EventTypeSystemNotify, EventTypeChannelTestExt:
 		return nil
 	default:
 		return fmt.Errorf("notificationdelivery: invalid enum value for event_type field: %q", et)
@@ -124,6 +128,7 @@ const (
 	ChannelEmail    Channel = "EMAIL"
 	ChannelWebhook  Channel = "WEBHOOK"
 	ChannelInternal Channel = "INTERNAL"
+	ChannelExt      Channel = "EXT"
 )
 
 func (c Channel) String() string {
@@ -133,7 +138,7 @@ func (c Channel) String() string {
 // ChannelValidator is a validator for the "channel" field enum values. It is called by the builders before save.
 func ChannelValidator(c Channel) error {
 	switch c {
-	case ChannelEmail, ChannelWebhook, ChannelInternal:
+	case ChannelEmail, ChannelWebhook, ChannelInternal, ChannelExt:
 		return nil
 	default:
 		return fmt.Errorf("notificationdelivery: invalid enum value for channel field: %q", c)
@@ -254,6 +259,11 @@ func ByRequestID(opts ...sql.OrderTermOption) OrderOption {
 // ByAttempts orders the results by the attempts field.
 func ByAttempts(opts ...sql.OrderTermOption) OrderOption {
 	return sql.OrderByField(FieldAttempts, opts...).ToFunc()
+}
+
+// ByReceiptProviderID orders the results by the receipt_provider_id field.
+func ByReceiptProviderID(opts ...sql.OrderTermOption) OrderOption {
+	return sql.OrderByField(FieldReceiptProviderID, opts...).ToFunc()
 }
 
 // BySentAt orders the results by the sent_at field.
