@@ -5,6 +5,7 @@ import ListTable from '@/components/common/ListTable';
 import { Button, Popconfirm, Tag, Switch, App } from 'antd';
 import {
   EditOutlined,
+  CloudServerOutlined,
   DeleteOutlined,
   PlusOutlined,
   CaretRightOutlined,
@@ -28,6 +29,7 @@ import { useProTableScrollY } from '@/hooks/useProTableScrollY';
 import ContentContainer from '@/layouts/components/PageContainer/ContentContainer';
 import { getTaskTypeMap, getTaskTypeOptions } from './constants';
 import TaskDrawer from './components/TaskDrawer';
+import SystemTasksModal from './components/SystemTasksModal';
 
 /**
  * 任务管理页面
@@ -66,6 +68,7 @@ const TaskManagement = () => {
   // 记录当前正在切换启用/禁用的任务 id，使该行的 Switch 显示 loading，
   // 而不是所有行共享 updateMutation.isPending 导致全部开关同时转圈。
   const [loadingTaskId, setLoadingTaskId] = useState<number | undefined>(undefined);
+  const [sysTasksOpen, setSysTasksOpen] = useState(false);
 
   // 控制单个任务
   const controlMutation = useControlTask({
@@ -309,6 +312,13 @@ const TaskManagement = () => {
             toolBarRender={() => [
               <TableExportButton key="export" fetcher={fetchListTasks} columns={columns} filename="tasks" />,
               <Button
+                key="sysTasks"
+                icon={<CloudServerOutlined />}
+                onClick={() => setSysTasksOpen(true)}
+              >
+                {t('sysTasksButton')}
+              </Button>,
+              <Button
                 key="create"
                 type="primary"
                 icon={<PlusOutlined />}
@@ -387,6 +397,10 @@ const TaskManagement = () => {
         onSuccess={() => {
           actionRef.current?.reload();
         }}
+      />
+      <SystemTasksModal
+        open={sysTasksOpen}
+        onClose={() => setSysTasksOpen(false)}
       />
     </>
   );

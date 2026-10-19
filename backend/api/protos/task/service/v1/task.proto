@@ -14,6 +14,8 @@ import "google/protobuf/field_mask.proto";
 
 import "pagination/v1/pagination.proto";
 
+import "task/service/v1/task_monitor.proto";
+
 // 调度任务管理服务
 service TaskService {
   // 查询调度任务列表
@@ -51,6 +53,10 @@ service TaskService {
 
   // 查询任务执行记录（近期的完成/失败/进行中实例，来自 asynq Inspector）
   rpc ListTaskExecutions (ListTaskExecutionsRequest) returns (ListTaskExecutionsResponse) {}
+
+  // 一站式巡检系统级常驻任务（只读 asynq Inspector，无副作用）：
+  // 调度条目（cron/上次/下次入队）+ 各任务类型的队列状态与失败明细
+  rpc InspectSystemTasks (InspectSystemTasksRequest) returns (InspectSystemTasksResponse) {}
 }
 
 // 任务选项

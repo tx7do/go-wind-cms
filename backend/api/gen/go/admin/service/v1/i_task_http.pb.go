@@ -26,6 +26,7 @@ const OperationTaskServiceControlTask = "/admin.service.v1.TaskService/ControlTa
 const OperationTaskServiceCreate = "/admin.service.v1.TaskService/Create"
 const OperationTaskServiceDelete = "/admin.service.v1.TaskService/Delete"
 const OperationTaskServiceGet = "/admin.service.v1.TaskService/Get"
+const OperationTaskServiceInspectSystemTasks = "/admin.service.v1.TaskService/InspectSystemTasks"
 const OperationTaskServiceList = "/admin.service.v1.TaskService/List"
 const OperationTaskServiceListTaskExecutions = "/admin.service.v1.TaskService/ListTaskExecutions"
 const OperationTaskServiceListTaskTypeName = "/admin.service.v1.TaskService/ListTaskTypeName"
@@ -43,6 +44,8 @@ type TaskServiceHTTPServer interface {
 	Delete(context.Context, *v11.DeleteTaskRequest) (*emptypb.Empty, error)
 	// Get 查询调度任务详情
 	Get(context.Context, *v11.GetTaskRequest) (*v11.Task, error)
+	// InspectSystemTasks 一站式巡检系统级常驻任务（只读 asynq Inspector，无副作用）
+	InspectSystemTasks(context.Context, *v11.InspectSystemTasksRequest) (*v11.InspectSystemTasksResponse, error)
 	// List 查询调度任务列表
 	List(context.Context, *v1.PagingRequest) (*v11.ListTaskResponse, error)
 	// ListTaskExecutions 查询任务执行记录
@@ -73,6 +76,7 @@ func RegisterTaskServiceHTTPServer(s *http.Server, srv TaskServiceHTTPServer) {
 	r.POST("/admin/v1/tasks:stop", _TaskService_StopAllTask0_HTTP_Handler(srv))
 	r.POST("/admin/v1/tasks:control", _TaskService_ControlTask0_HTTP_Handler(srv))
 	r.GET("/admin/v1/tasks:executions", _TaskService_ListTaskExecutions0_HTTP_Handler(srv))
+	r.POST("/admin/v1/tasks:inspect", _TaskService_InspectSystemTasks0_HTTP_Handler(srv))
 }
 
 func _TaskService_List43_HTTP_Handler(srv TaskServiceHTTPServer) func(ctx http.Context) error {
@@ -333,6 +337,28 @@ func _TaskService_ListTaskExecutions0_HTTP_Handler(srv TaskServiceHTTPServer) fu
 	}
 }
 
+func _TaskService_InspectSystemTasks0_HTTP_Handler(srv TaskServiceHTTPServer) func(ctx http.Context) error {
+	return func(ctx http.Context) error {
+		var in v11.InspectSystemTasksRequest
+		if err := ctx.Bind(&in); err != nil {
+			return err
+		}
+		if err := ctx.BindQuery(&in); err != nil {
+			return err
+		}
+		http.SetOperation(ctx, OperationTaskServiceInspectSystemTasks)
+		h := ctx.Middleware(func(ctx context.Context, req interface{}) (interface{}, error) {
+			return srv.InspectSystemTasks(ctx, req.(*v11.InspectSystemTasksRequest))
+		})
+		out, err := h(ctx, &in)
+		if err != nil {
+			return err
+		}
+		reply := out.(*v11.InspectSystemTasksResponse)
+		return ctx.Result(200, reply)
+	}
+}
+
 type TaskServiceHTTPClient interface {
 	// ControlTask 控制调度任务
 	ControlTask(ctx context.Context, req *v11.ControlTaskRequest, opts ...http.CallOption) (rsp *emptypb.Empty, err error)
@@ -342,6 +368,8 @@ type TaskServiceHTTPClient interface {
 	Delete(ctx context.Context, req *v11.DeleteTaskRequest, opts ...http.CallOption) (rsp *emptypb.Empty, err error)
 	// Get 查询调度任务详情
 	Get(ctx context.Context, req *v11.GetTaskRequest, opts ...http.CallOption) (rsp *v11.Task, err error)
+	// InspectSystemTasks 一站式巡检系统级常驻任务（只读 asynq Inspector，无副作用）
+	InspectSystemTasks(ctx context.Context, req *v11.InspectSystemTasksRequest, opts ...http.CallOption) (rsp *v11.InspectSystemTasksResponse, err error)
 	// List 查询调度任务列表
 	List(ctx context.Context, req *v1.PagingRequest, opts ...http.CallOption) (rsp *v11.ListTaskResponse, err error)
 	// ListTaskExecutions 查询任务执行记录
@@ -416,6 +444,20 @@ func (c *TaskServiceHTTPClientImpl) Get(ctx context.Context, in *v11.GetTaskRequ
 	opts = append(opts, http.Operation(OperationTaskServiceGet))
 	opts = append(opts, http.PathTemplate(pattern))
 	err := c.cc.Invoke(ctx, "GET", path, nil, &out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return &out, nil
+}
+
+// InspectSystemTasks 一站式巡检系统级常驻任务（只读 asynq Inspector，无副作用）
+func (c *TaskServiceHTTPClientImpl) InspectSystemTasks(ctx context.Context, in *v11.InspectSystemTasksRequest, opts ...http.CallOption) (*v11.InspectSystemTasksResponse, error) {
+	var out v11.InspectSystemTasksResponse
+	pattern := "/admin/v1/tasks:inspect"
+	path := binding.EncodeURL(pattern, in, false)
+	opts = append(opts, http.Operation(OperationTaskServiceInspectSystemTasks))
+	opts = append(opts, http.PathTemplate(pattern))
+	err := c.cc.Invoke(ctx, "POST", path, in, &out, opts...)
 	if err != nil {
 		return nil, err
 	}

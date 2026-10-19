@@ -1133,7 +1133,7 @@ var File_task_service_v1_task_proto protoreflect.FileDescriptor
 
 const file_task_service_v1_task_proto_rawDesc = "" +
 	"\n" +
-	"\x1atask/service/v1/task.proto\x12\x0ftask.service.v1\x1a$gnostic/openapi/v3/annotations.proto\x1a\x1cgoogle/api/annotations.proto\x1a\x1fgoogle/api/field_behavior.proto\x1a\x1bgoogle/protobuf/empty.proto\x1a\x1fgoogle/protobuf/timestamp.proto\x1a\x1egoogle/protobuf/duration.proto\x1a google/protobuf/field_mask.proto\x1a\x1epagination/v1/pagination.proto\"\xf7\x06\n" +
+	"\x1atask/service/v1/task.proto\x12\x0ftask.service.v1\x1a$gnostic/openapi/v3/annotations.proto\x1a\x1cgoogle/api/annotations.proto\x1a\x1fgoogle/api/field_behavior.proto\x1a\x1bgoogle/protobuf/empty.proto\x1a\x1fgoogle/protobuf/timestamp.proto\x1a\x1egoogle/protobuf/duration.proto\x1a google/protobuf/field_mask.proto\x1a\x1epagination/v1/pagination.proto\x1a\"task/service/v1/task_monitor.proto\"\xf7\x06\n" +
 	"\n" +
 	"TaskOption\x12L\n" +
 	"\tmax_retry\x18\x01 \x01(\rB*\xe0A\x01\xbaG$\x92\x02!任务最多可以重试的次数H\x00R\bmaxRetry\x88\x01\x01\x12U\n" +
@@ -1278,7 +1278,7 @@ const file_task_service_v1_task_proto_rawDesc = "" +
 	"_type_name\"h\n" +
 	"\x1aListTaskExecutionsResponse\x124\n" +
 	"\x05items\x18\x01 \x03(\v2\x1e.task.service.v1.TaskExecutionR\x05items\x12\x14\n" +
-	"\x05total\x18\x02 \x01(\x04R\x05total2\xa8\a\n" +
+	"\x05total\x18\x02 \x01(\x04R\x05total2\x99\b\n" +
 	"\vTaskService\x12F\n" +
 	"\x04List\x12\x19.pagination.PagingRequest\x1a!.task.service.v1.ListTaskResponse\"\x00\x12H\n" +
 	"\x05Count\x12\x19.pagination.PagingRequest\x1a\".task.service.v1.CountTaskResponse\"\x00\x12?\n" +
@@ -1291,7 +1291,8 @@ const file_task_service_v1_task_proto_rawDesc = "" +
 	"\fStartAllTask\x12\x16.google.protobuf.Empty\x1a\x16.google.protobuf.Empty\"\x00\x12?\n" +
 	"\vStopAllTask\x12\x16.google.protobuf.Empty\x1a\x16.google.protobuf.Empty\"\x00\x12L\n" +
 	"\vControlTask\x12#.task.service.v1.ControlTaskRequest\x1a\x16.google.protobuf.Empty\"\x00\x12o\n" +
-	"\x12ListTaskExecutions\x12*.task.service.v1.ListTaskExecutionsRequest\x1a+.task.service.v1.ListTaskExecutionsResponse\"\x00B\xad\x01\n" +
+	"\x12ListTaskExecutions\x12*.task.service.v1.ListTaskExecutionsRequest\x1a+.task.service.v1.ListTaskExecutionsResponse\"\x00\x12o\n" +
+	"\x12InspectSystemTasks\x12*.task.service.v1.InspectSystemTasksRequest\x1a+.task.service.v1.InspectSystemTasksResponse\"\x00B\xad\x01\n" +
 	"\x13com.task.service.v1B\tTaskProtoP\x01Z-go-wind-cms/api/gen/go/task/service/v1;taskpb\xa2\x02\x03TSX\xaa\x02\x0fTask.Service.V1\xca\x02\x0fTask\\Service\\V1\xe2\x02\x1bTask\\Service\\V1\\GPBMetadata\xea\x02\x11Task::Service::V1b\x06proto3"
 
 var (
@@ -1330,6 +1331,8 @@ var file_task_service_v1_task_proto_goTypes = []any{
 	(*fieldmaskpb.FieldMask)(nil),       // 18: google.protobuf.FieldMask
 	(*v1.PagingRequest)(nil),            // 19: pagination.PagingRequest
 	(*emptypb.Empty)(nil),               // 20: google.protobuf.Empty
+	(*InspectSystemTasksRequest)(nil),   // 21: task.service.v1.InspectSystemTasksRequest
+	(*InspectSystemTasksResponse)(nil),  // 22: task.service.v1.InspectSystemTasksResponse
 }
 var file_task_service_v1_task_proto_depIdxs = []int32{
 	16, // 0: task.service.v1.TaskOption.timeout:type_name -> google.protobuf.Duration
@@ -1365,20 +1368,22 @@ var file_task_service_v1_task_proto_depIdxs = []int32{
 	20, // 30: task.service.v1.TaskService.StopAllTask:input_type -> google.protobuf.Empty
 	10, // 31: task.service.v1.TaskService.ControlTask:input_type -> task.service.v1.ControlTaskRequest
 	14, // 32: task.service.v1.TaskService.ListTaskExecutions:input_type -> task.service.v1.ListTaskExecutionsRequest
-	4,  // 33: task.service.v1.TaskService.List:output_type -> task.service.v1.ListTaskResponse
-	12, // 34: task.service.v1.TaskService.Count:output_type -> task.service.v1.CountTaskResponse
-	3,  // 35: task.service.v1.TaskService.Get:output_type -> task.service.v1.Task
-	20, // 36: task.service.v1.TaskService.Create:output_type -> google.protobuf.Empty
-	20, // 37: task.service.v1.TaskService.Update:output_type -> google.protobuf.Empty
-	20, // 38: task.service.v1.TaskService.Delete:output_type -> google.protobuf.Empty
-	11, // 39: task.service.v1.TaskService.ListTaskTypeName:output_type -> task.service.v1.ListTaskTypeNameResponse
-	9,  // 40: task.service.v1.TaskService.RestartAllTask:output_type -> task.service.v1.RestartAllTaskResponse
-	20, // 41: task.service.v1.TaskService.StartAllTask:output_type -> google.protobuf.Empty
-	20, // 42: task.service.v1.TaskService.StopAllTask:output_type -> google.protobuf.Empty
-	20, // 43: task.service.v1.TaskService.ControlTask:output_type -> google.protobuf.Empty
-	15, // 44: task.service.v1.TaskService.ListTaskExecutions:output_type -> task.service.v1.ListTaskExecutionsResponse
-	33, // [33:45] is the sub-list for method output_type
-	21, // [21:33] is the sub-list for method input_type
+	21, // 33: task.service.v1.TaskService.InspectSystemTasks:input_type -> task.service.v1.InspectSystemTasksRequest
+	4,  // 34: task.service.v1.TaskService.List:output_type -> task.service.v1.ListTaskResponse
+	12, // 35: task.service.v1.TaskService.Count:output_type -> task.service.v1.CountTaskResponse
+	3,  // 36: task.service.v1.TaskService.Get:output_type -> task.service.v1.Task
+	20, // 37: task.service.v1.TaskService.Create:output_type -> google.protobuf.Empty
+	20, // 38: task.service.v1.TaskService.Update:output_type -> google.protobuf.Empty
+	20, // 39: task.service.v1.TaskService.Delete:output_type -> google.protobuf.Empty
+	11, // 40: task.service.v1.TaskService.ListTaskTypeName:output_type -> task.service.v1.ListTaskTypeNameResponse
+	9,  // 41: task.service.v1.TaskService.RestartAllTask:output_type -> task.service.v1.RestartAllTaskResponse
+	20, // 42: task.service.v1.TaskService.StartAllTask:output_type -> google.protobuf.Empty
+	20, // 43: task.service.v1.TaskService.StopAllTask:output_type -> google.protobuf.Empty
+	20, // 44: task.service.v1.TaskService.ControlTask:output_type -> google.protobuf.Empty
+	15, // 45: task.service.v1.TaskService.ListTaskExecutions:output_type -> task.service.v1.ListTaskExecutionsResponse
+	22, // 46: task.service.v1.TaskService.InspectSystemTasks:output_type -> task.service.v1.InspectSystemTasksResponse
+	34, // [34:47] is the sub-list for method output_type
+	21, // [21:34] is the sub-list for method input_type
 	21, // [21:21] is the sub-list for extension type_name
 	21, // [21:21] is the sub-list for extension extendee
 	0,  // [0:21] is the sub-list for field type_name
@@ -1389,6 +1394,7 @@ func file_task_service_v1_task_proto_init() {
 	if File_task_service_v1_task_proto != nil {
 		return
 	}
+	file_task_service_v1_task_monitor_proto_init()
 	file_task_service_v1_task_proto_msgTypes[0].OneofWrappers = []any{}
 	file_task_service_v1_task_proto_msgTypes[1].OneofWrappers = []any{}
 	file_task_service_v1_task_proto_msgTypes[3].OneofWrappers = []any{

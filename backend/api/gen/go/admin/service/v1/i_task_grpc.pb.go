@@ -33,6 +33,7 @@ const (
 	TaskService_StopAllTask_FullMethodName        = "/admin.service.v1.TaskService/StopAllTask"
 	TaskService_ControlTask_FullMethodName        = "/admin.service.v1.TaskService/ControlTask"
 	TaskService_ListTaskExecutions_FullMethodName = "/admin.service.v1.TaskService/ListTaskExecutions"
+	TaskService_InspectSystemTasks_FullMethodName = "/admin.service.v1.TaskService/InspectSystemTasks"
 )
 
 // TaskServiceClient is the client API for TaskService service.
@@ -63,6 +64,8 @@ type TaskServiceClient interface {
 	ControlTask(ctx context.Context, in *v11.ControlTaskRequest, opts ...grpc.CallOption) (*emptypb.Empty, error)
 	// 查询任务执行记录
 	ListTaskExecutions(ctx context.Context, in *v11.ListTaskExecutionsRequest, opts ...grpc.CallOption) (*v11.ListTaskExecutionsResponse, error)
+	// 一站式巡检系统级常驻任务（只读 asynq Inspector，无副作用）
+	InspectSystemTasks(ctx context.Context, in *v11.InspectSystemTasksRequest, opts ...grpc.CallOption) (*v11.InspectSystemTasksResponse, error)
 }
 
 type taskServiceClient struct {
@@ -183,6 +186,16 @@ func (c *taskServiceClient) ListTaskExecutions(ctx context.Context, in *v11.List
 	return out, nil
 }
 
+func (c *taskServiceClient) InspectSystemTasks(ctx context.Context, in *v11.InspectSystemTasksRequest, opts ...grpc.CallOption) (*v11.InspectSystemTasksResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(v11.InspectSystemTasksResponse)
+	err := c.cc.Invoke(ctx, TaskService_InspectSystemTasks_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 // TaskServiceServer is the server API for TaskService service.
 // All implementations must embed UnimplementedTaskServiceServer
 // for forward compatibility.
@@ -211,6 +224,8 @@ type TaskServiceServer interface {
 	ControlTask(context.Context, *v11.ControlTaskRequest) (*emptypb.Empty, error)
 	// 查询任务执行记录
 	ListTaskExecutions(context.Context, *v11.ListTaskExecutionsRequest) (*v11.ListTaskExecutionsResponse, error)
+	// 一站式巡检系统级常驻任务（只读 asynq Inspector，无副作用）
+	InspectSystemTasks(context.Context, *v11.InspectSystemTasksRequest) (*v11.InspectSystemTasksResponse, error)
 	mustEmbedUnimplementedTaskServiceServer()
 }
 
@@ -253,6 +268,9 @@ func (UnimplementedTaskServiceServer) ControlTask(context.Context, *v11.ControlT
 }
 func (UnimplementedTaskServiceServer) ListTaskExecutions(context.Context, *v11.ListTaskExecutionsRequest) (*v11.ListTaskExecutionsResponse, error) {
 	return nil, status.Error(codes.Unimplemented, "method ListTaskExecutions not implemented")
+}
+func (UnimplementedTaskServiceServer) InspectSystemTasks(context.Context, *v11.InspectSystemTasksRequest) (*v11.InspectSystemTasksResponse, error) {
+	return nil, status.Error(codes.Unimplemented, "method InspectSystemTasks not implemented")
 }
 func (UnimplementedTaskServiceServer) mustEmbedUnimplementedTaskServiceServer() {}
 func (UnimplementedTaskServiceServer) testEmbeddedByValue()                     {}
@@ -473,6 +491,24 @@ func _TaskService_ListTaskExecutions_Handler(srv interface{}, ctx context.Contex
 	return interceptor(ctx, in, info, handler)
 }
 
+func _TaskService_InspectSystemTasks_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(v11.InspectSystemTasksRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(TaskServiceServer).InspectSystemTasks(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: TaskService_InspectSystemTasks_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(TaskServiceServer).InspectSystemTasks(ctx, req.(*v11.InspectSystemTasksRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 // TaskService_ServiceDesc is the grpc.ServiceDesc for TaskService service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
@@ -523,6 +559,10 @@ var TaskService_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "ListTaskExecutions",
 			Handler:    _TaskService_ListTaskExecutions_Handler,
+		},
+		{
+			MethodName: "InspectSystemTasks",
+			Handler:    _TaskService_InspectSystemTasks_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},

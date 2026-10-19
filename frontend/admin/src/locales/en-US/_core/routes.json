@@ -1,5 +1,6 @@
 {
   "dashboard": "Dashboard",
+  "workspace": "Workspace",
   "tenant": "Tenant Management",
   "tenant-members": "Tenant Members",
   "permission": "Permission Management",
@@ -84,7 +85,7 @@
   "webhooks": "Webhooks",
   "content-form-submissions": "Form Submissions",
   "redirects": "Redirects",
-    "content-experiments": "Content Experiments",
+  "content-experiments": "Content Experiments",
   "email-template": "Email Templates",
   "flow-rule": "Automation Flows",
   "content-components": "Components"

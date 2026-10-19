@@ -7,6 +7,7 @@ import "google/protobuf/empty.proto";
 
 import "pagination/v1/pagination.proto";
 import "task/service/v1/task.proto";
+import "task/service/v1/task_monitor.proto";
 
 // 调度任务管理服务
 service TaskService {
@@ -93,6 +94,15 @@ service TaskService {
   rpc ListTaskExecutions (task.service.v1.ListTaskExecutionsRequest) returns (task.service.v1.ListTaskExecutionsResponse) {
     option (google.api.http) = {
       get: "/admin/v1/tasks:executions"
+    };
+  }
+
+
+  // 一站式巡检系统级常驻任务（只读 asynq Inspector，无副作用）
+  rpc InspectSystemTasks (task.service.v1.InspectSystemTasksRequest) returns (task.service.v1.InspectSystemTasksResponse) {
+    option (google.api.http) = {
+      post: "/admin/v1/tasks:inspect"
+      body: "*"
     };
   }
 }

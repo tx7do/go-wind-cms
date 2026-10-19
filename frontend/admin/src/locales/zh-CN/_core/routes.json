@@ -1,5 +1,6 @@
 {
   "dashboard": "数据看板",
+  "workspace": "工作台",
   "tenant": "租户管理",
   "tenant-members": "租户成员",
   "permission": "权限管理",
@@ -84,7 +85,7 @@
   "webhooks": "Webhook 订阅",
   "content-form-submissions": "表单提交",
   "redirects": "重定向管理",
-    "content-experiments": "内容实验",
-    "flow-rule": "自动化 Flow",
+  "content-experiments": "内容实验",
+  "flow-rule": "自动化 Flow",
   "content-components": "组件定义"
 }

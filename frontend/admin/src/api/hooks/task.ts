@@ -9,6 +9,7 @@ import {
   type taskservicev1_CreateTaskRequest,
   type taskservicev1_DeleteTaskRequest,
   type taskservicev1_GetTaskRequest,
+  type taskservicev1_InspectSystemTasksResponse,
   type taskservicev1_ListTaskResponse,
   type taskservicev1_Task,
 } from '@/api/generated/admin/service/v1';
@@ -128,6 +129,28 @@ export function useStopAllTasks(options?: UseMutationOptions<{}, Error, void>) {
 export function useRestartAllTasks(options?: UseMutationOptions<{}, Error, void>) {
   return useMutation({
     mutationFn: () => apiClient.taskService.RestartAllTask({}),
+    ...options,
+  });
+}
+
+// ==============================
+// 系统级常驻任务巡检（只读 asynq Inspector，零新表）
+// ==============================
+
+/**
+ * 一站式巡检：调度条目（cron/上次/下次入队）+ 各任务类型的队列状态与失败明细。
+ * 数据来自 asynq 本身（Redis）；Prev 为空 = 注册后从未运行。
+ */
+export function useInspectSystemTasks(
+  options?: Omit<
+    UseQueryOptions<taskservicev1_InspectSystemTasksResponse, Error>,
+    'queryKey' | 'queryFn'
+  >,
+) {
+  return useQuery({
+    queryKey: ['inspectSystemTasks'],
+    queryFn: () => apiClient.taskService.InspectSystemTasks({}),
+    staleTime: 0,
     ...options,
   });
 }

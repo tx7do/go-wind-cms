@@ -64,5 +64,27 @@
   "enableMap": {
     "true": "Active",
     "false": "Inactive"
-  }
+  },
+  "sysTasksButton": "System Tasks",
+  "sysTasksTitle": "System Resident Tasks",
+  "sysTaskType": "Task Type",
+  "sysTaskCron": "Schedule",
+  "sysTaskNext": "Next Run",
+  "sysTaskPrev": "Last Run",
+  "sysTaskNeverRun": "never run",
+  "sysTaskSchedules": "Schedules",
+  "sysTaskStates": "States",
+  "sysTaskFailures": "Recent Failures",
+  "sysTaskQueueHint": "queue {queue} (read-only asynq; periodic sweep tasks show up here)",
+  "sysTaskActive": "Active",
+  "sysTaskPending": "Pending",
+  "sysTaskRetry": "Retry",
+  "sysTaskArchived": "Archived",
+  "sysTaskState": "State",
+  "sysTaskLastError": "Last Error",
+  "sysTaskFailedAt": "Failed At",
+  "sysTaskRetried": "Tried/Max",
+  "sysTaskNoFailures": "No failures recorded.",
+  "sysTaskLoading": "Loading…",
+  "sysTaskLoadFailed": "Load failed"
 }

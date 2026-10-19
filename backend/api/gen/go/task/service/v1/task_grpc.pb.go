@@ -33,6 +33,7 @@ const (
 	TaskService_StopAllTask_FullMethodName        = "/task.service.v1.TaskService/StopAllTask"
 	TaskService_ControlTask_FullMethodName        = "/task.service.v1.TaskService/ControlTask"
 	TaskService_ListTaskExecutions_FullMethodName = "/task.service.v1.TaskService/ListTaskExecutions"
+	TaskService_InspectSystemTasks_FullMethodName = "/task.service.v1.TaskService/InspectSystemTasks"
 )
 
 // TaskServiceClient is the client API for TaskService service.
@@ -65,6 +66,9 @@ type TaskServiceClient interface {
 	ControlTask(ctx context.Context, in *ControlTaskRequest, opts ...grpc.CallOption) (*emptypb.Empty, error)
 	// 查询任务执行记录（近期的完成/失败/进行中实例，来自 asynq Inspector）
 	ListTaskExecutions(ctx context.Context, in *ListTaskExecutionsRequest, opts ...grpc.CallOption) (*ListTaskExecutionsResponse, error)
+	// 一站式巡检系统级常驻任务（只读 asynq Inspector，无副作用）：
+	// 调度条目（cron/上次/下次入队）+ 各任务类型的队列状态与失败明细
+	InspectSystemTasks(ctx context.Context, in *InspectSystemTasksRequest, opts ...grpc.CallOption) (*InspectSystemTasksResponse, error)
 }
 
 type taskServiceClient struct {
@@ -195,6 +199,16 @@ func (c *taskServiceClient) ListTaskExecutions(ctx context.Context, in *ListTask
 	return out, nil
 }
 
+func (c *taskServiceClient) InspectSystemTasks(ctx context.Context, in *InspectSystemTasksRequest, opts ...grpc.CallOption) (*InspectSystemTasksResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(InspectSystemTasksResponse)
+	err := c.cc.Invoke(ctx, TaskService_InspectSystemTasks_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 // TaskServiceServer is the server API for TaskService service.
 // All implementations must embed UnimplementedTaskServiceServer
 // for forward compatibility.
@@ -225,6 +239,9 @@ type TaskServiceServer interface {
 	ControlTask(context.Context, *ControlTaskRequest) (*emptypb.Empty, error)
 	// 查询任务执行记录（近期的完成/失败/进行中实例，来自 asynq Inspector）
 	ListTaskExecutions(context.Context, *ListTaskExecutionsRequest) (*ListTaskExecutionsResponse, error)
+	// 一站式巡检系统级常驻任务（只读 asynq Inspector，无副作用）：
+	// 调度条目（cron/上次/下次入队）+ 各任务类型的队列状态与失败明细
+	InspectSystemTasks(context.Context, *InspectSystemTasksRequest) (*InspectSystemTasksResponse, error)
 	mustEmbedUnimplementedTaskServiceServer()
 }
 
@@ -270,6 +287,9 @@ func (UnimplementedTaskServiceServer) ControlTask(context.Context, *ControlTaskR
 }
 func (UnimplementedTaskServiceServer) ListTaskExecutions(context.Context, *ListTaskExecutionsRequest) (*ListTaskExecutionsResponse, error) {
 	return nil, status.Error(codes.Unimplemented, "method ListTaskExecutions not implemented")
+}
+func (UnimplementedTaskServiceServer) InspectSystemTasks(context.Context, *InspectSystemTasksRequest) (*InspectSystemTasksResponse, error) {
+	return nil, status.Error(codes.Unimplemented, "method InspectSystemTasks not implemented")
 }
 func (UnimplementedTaskServiceServer) mustEmbedUnimplementedTaskServiceServer() {}
 func (UnimplementedTaskServiceServer) testEmbeddedByValue()                     {}
@@ -508,6 +528,24 @@ func _TaskService_ListTaskExecutions_Handler(srv interface{}, ctx context.Contex
 	return interceptor(ctx, in, info, handler)
 }
 
+func _TaskService_InspectSystemTasks_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(InspectSystemTasksRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(TaskServiceServer).InspectSystemTasks(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: TaskService_InspectSystemTasks_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(TaskServiceServer).InspectSystemTasks(ctx, req.(*InspectSystemTasksRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 // TaskService_ServiceDesc is the grpc.ServiceDesc for TaskService service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
@@ -562,6 +600,10 @@ var TaskService_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "ListTaskExecutions",
 			Handler:    _TaskService_ListTaskExecutions_Handler,
+		},
+		{
+			MethodName: "InspectSystemTasks",
+			Handler:    _TaskService_InspectSystemTasks_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},

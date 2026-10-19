@@ -13,6 +13,17 @@ export const dashboardRoutes: AppRouteObject[] = [
       hideInMenu: false,
     },
   },
+  {
+    name: 'workspace',
+    path: 'workspace', // 相对路径，最终为 /workspace
+    element: createLazyRoute(() => import('@/pages/app/dashboard/workspace')),
+    meta: {
+      title: 'routes:workspace',
+      icon: 'lucide:rocket', // Iconify 格式
+      order: 2,
+      hideInMenu: false,
+    },
+  },
 ];
 
 export default dashboardRoutes;

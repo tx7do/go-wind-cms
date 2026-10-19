@@ -3,8 +3,9 @@ package service
 import (
 	"context"
 	"encoding/json"
-	"fmt"
 	"errors"
+	"fmt"
+	"sort"
 	"time"
 
 	"github.com/go-kratos/kratos/v2/log"
@@ -47,7 +48,7 @@ type TaskService struct {
 	taskRepo *data.TaskRepo
 
 	// asynq Redis URI（与 asynq server 同源），用于懒建只读 Inspector 查执行记录
-	asynqRedisURI string
+	asynqRedisURI  string
 	asynqInspector *asynq.Inspector
 }
 
@@ -193,6 +194,185 @@ func (s *TaskService) ListTaskExecutions(ctx context.Context, req *taskV1.ListTa
 		Items: items,
 		Total: total,
 	}, nil
+}
+
+// systemTaskInspectMaxFailures 单任务类型保留的最近失败条数上限（防一张表被历史失败刷满）。
+const systemTaskInspectMaxFailures = 10
+
+// systemTaskQueue asynq 队列名：与 NewPeriodicTask/ListTaskExecutions 同口径（未配置多队列路由）。
+const systemTaskQueue = "default"
+
+// InspectSystemTasks 一站式巡检系统级常驻任务（只读 asynq Inspector，无副作用）。
+//
+// 方案 C'：零新表。调度计划与队列状态全部来自 asynq 自身——
+//   - SchedulerEntries：cron 表达式 + Next/Prev 入队时间（Prev 零值 = 从未跑过）；
+//   - 队列的 active/pending/retry/archived 计数与失败明细（LastErr/LastFailedAt）。
+//
+// asynq 给不了的：成功执行的持久历史（成功即出队消失，那在 ListTaskExecutions，
+// 深度受 retention 约束）与领域级结果（通知投递表/审计台账）。
+func (s *TaskService) InspectSystemTasks(ctx context.Context, _ *taskV1.InspectSystemTasksRequest) (*taskV1.InspectSystemTasksResponse, error) {
+	inspector, err := s.getAsynqInspector()
+	if err != nil {
+		return nil, err
+	}
+
+	resp := &taskV1.InspectSystemTasksResponse{Queue: systemTaskQueue}
+
+	entries, err := inspector.SchedulerEntries()
+	if err != nil {
+		s.log.Errorf("task monitor inspect: list scheduler entries failed: %s", err.Error())
+		return nil, taskV1.ErrorInternalServerError("list scheduler entries failed")
+	}
+	for _, e := range entries {
+		resp.Schedules = append(resp.Schedules, scheduleEntryToDTO(e))
+	}
+
+	// 只巡检调度条目覆盖到的任务类型：队列里可能躺着别的项目/别的类型的任务
+	// （队列无命名空间，共库时以此过滤），未知类型的遗留任务在失败明细里仍可见。
+	monitored := make(map[string]bool, len(entries))
+	for _, e := range entries {
+		monitored[e.Task.Type()] = true
+	}
+
+	summary, err := s.summarizeQueues(inspector, monitored)
+	if err != nil {
+		s.log.Errorf("task monitor inspect: summarize queues failed: %s", err.Error())
+		return nil, taskV1.ErrorInternalServerError("inspect queues failed")
+	}
+	resp.Summaries = summary
+
+	return resp, nil
+}
+
+// summarizeQueues 按任务类型聚合 active/pending/retry/archived 计数与最近失败。
+func (s *TaskService) summarizeQueues(inspector *asynq.Inspector, monitored map[string]bool) ([]*taskV1.SystemTaskStateSummary, error) {
+	byType := map[string]*taskV1.SystemTaskStateSummary{}
+	get := func(t string) *taskV1.SystemTaskStateSummary {
+		if summary, ok := byType[t]; ok {
+			return summary
+		}
+		summary := &taskV1.SystemTaskStateSummary{TaskType: t}
+		byType[t] = summary
+		return summary
+	}
+
+	// 队列计数总量按 TaskInfo 逐条归到类型上：把四种状态的每条任务各读一遍太重，
+	// 这里用 ListTasks 首页（前 N 条）组合——计数只做"有没有存货"的量级提示，
+	// 失败明细才是运营要看的主体。
+	listOpts := []asynq.ListOption{asynq.Page(1), asynq.PageSize(systemTaskInspectMaxFailures * 10)}
+
+	active, err := inspector.ListActiveTasks(systemTaskQueue, listOpts...)
+	if err != nil {
+		return nil, err
+	}
+	for _, ti := range active {
+		get(ti.Type).Active++
+	}
+	pending, err := inspector.ListPendingTasks(systemTaskQueue, listOpts...)
+	if err != nil {
+		return nil, err
+	}
+	for _, ti := range pending {
+		get(ti.Type).Pending++
+	}
+	retry, err := inspector.ListRetryTasks(systemTaskQueue, listOpts...)
+	if err != nil {
+		return nil, err
+	}
+	for _, ti := range retry {
+		summary := get(ti.Type)
+		summary.Retry++
+		if monitored[ti.Type] || len(monitored) == 0 {
+			summary.RecentFailures = append(summary.RecentFailures, failureToDTO(ti, "retry"))
+		}
+	}
+	archived, err := inspector.ListArchivedTasks(systemTaskQueue, listOpts...)
+	if err != nil {
+		return nil, err
+	}
+	for _, ti := range archived {
+		summary := get(ti.Type)
+		summary.Archived++
+		if monitored[ti.Type] || len(monitored) == 0 {
+			summary.RecentFailures = append(summary.RecentFailures, failureToDTO(ti, "archived"))
+		}
+	}
+
+	for _, summary := range byType {
+		sortFailures(summary.RecentFailures)
+		if len(summary.RecentFailures) > systemTaskInspectMaxFailures {
+			summary.RecentFailures = summary.RecentFailures[:systemTaskInspectMaxFailures]
+		}
+	}
+
+	// 稳定输出：按任务类型名排序
+	result := make([]*taskV1.SystemTaskStateSummary, 0, len(byType))
+	for _, summary := range byType {
+		result = append(result, summary)
+	}
+	sort.SliceStable(result, func(i, j int) bool {
+		return result[i].GetTaskType() < result[j].GetTaskType()
+	})
+	return result, nil
+}
+
+// ==== 巡检 DTO 映射/排序 helpers ====
+
+func scheduleEntryToDTO(e *asynq.SchedulerEntry) *taskV1.SystemTaskScheduleEntry {
+	entry := &taskV1.SystemTaskScheduleEntry{
+		TaskType: e.Task.Type(),
+		CronSpec: e.Spec,
+	}
+	if !e.Next.IsZero() {
+		entry.NextEnqueueAt = timestamppb.New(e.Next)
+	}
+	// Prev 零值时间（从未入队）不转：proto 里保持空，前端按"从未运行"渲染
+	if !e.Prev.IsZero() {
+		entry.PrevEnqueueAt = timestamppb.New(e.Prev)
+	}
+	return entry
+}
+
+func failureToDTO(ti *asynq.TaskInfo, state string) *taskV1.SystemTaskFailure {
+	failure := &taskV1.SystemTaskFailure{
+		TaskType:  ti.Type,
+		Queue:     ti.Queue,
+		State:     state,
+		LastError: ti.LastErr,
+		Retried:   uint32(ti.Retried),
+		MaxRetry:  uint32(ti.MaxRetry),
+	}
+	if !ti.LastFailedAt.IsZero() {
+		failure.LastFailedAt = timestamppb.New(ti.LastFailedAt)
+	}
+	if !ti.NextProcessAt.IsZero() {
+		failure.NextProcessAt = timestamppb.New(ti.NextProcessAt)
+	}
+	return failure
+}
+
+func failureTime(f *taskV1.SystemTaskFailure) *time.Time {
+	ts := f.GetLastFailedAt()
+	if ts == nil {
+		return nil
+	}
+	t := ts.AsTime()
+	return &t
+}
+
+func sortFailures(failures []*taskV1.SystemTaskFailure) {
+	// 按失败时间倒序（零值排最后）
+	sort.SliceStable(failures, func(i, j int) bool {
+		a := failureTime(failures[i])
+		b := failureTime(failures[j])
+		if a == nil {
+			return false
+		}
+		if b == nil {
+			return true
+		}
+		return a.After(*b)
+	})
 }
 
 func (s *TaskService) List(ctx context.Context, req *paginationV1.PagingRequest) (*taskV1.ListTaskResponse, error) {

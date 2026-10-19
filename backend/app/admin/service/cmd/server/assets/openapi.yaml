@@ -9062,6 +9062,25 @@ paths:
                         application/json:
                             schema:
                                 $ref: '#/components/schemas/task.service.v1.ListTaskExecutionsResponse'
+    /admin/v1/tasks:inspect:
+        post:
+            tags:
+                - TaskService
+            description: 一站式巡检系统级常驻任务（只读 asynq Inspector，无副作用）
+            operationId: TaskService_InspectSystemTasks
+            requestBody:
+                content:
+                    application/json:
+                        schema:
+                            $ref: '#/components/schemas/task.service.v1.InspectSystemTasksRequest'
+                required: true
+            responses:
+                "200":
+                    description: OK
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/task.service.v1.InspectSystemTasksResponse'
     /admin/v1/tasks:restart:
         post:
             tags:
@@ -17631,6 +17650,25 @@ components:
                 data:
                     $ref: '#/components/schemas/task.service.v1.Task'
             description: 创建调度任务 - 请求
+        task.service.v1.InspectSystemTasksRequest:
+            type: object
+            properties: {}
+            description: 手动触发巡检（系统级常驻任务可视化，只读 asynq，无副作用）
+        task.service.v1.InspectSystemTasksResponse:
+            type: object
+            properties:
+                queue:
+                    type: string
+                    description: asynq 队列名（当前配置）
+                schedules:
+                    type: array
+                    items:
+                        $ref: '#/components/schemas/task.service.v1.SystemTaskScheduleEntry'
+                summaries:
+                    type: array
+                    items:
+                        $ref: '#/components/schemas/task.service.v1.SystemTaskStateSummary'
+                    description: 只汇总系统级常驻任务涉及的任务类型；无任何记录时不出现在结果里
         task.service.v1.ListTaskExecutionsResponse:
             type: object
             properties:
@@ -17667,6 +17705,74 @@ components:
                     type: integer
                     format: int32
             description: 重启调度任务 - 回应
+        task.service.v1.SystemTaskFailure:
+            type: object
+            properties:
+                taskType:
+                    type: string
+                queue:
+                    type: string
+                state:
+                    type: string
+                    description: retry 或 archived
+                lastError:
+                    type: string
+                lastFailedAt:
+                    type: string
+                    format: date-time
+                retried:
+                    type: integer
+                    format: uint32
+                maxRetry:
+                    type: integer
+                    format: uint32
+                nextProcessAt:
+                    type: string
+                    description: 下次重试时间（archived 无）
+                    format: date-time
+            description: 失败任务明细（retry/archived 里的单条）
+        task.service.v1.SystemTaskScheduleEntry:
+            type: object
+            properties:
+                taskType:
+                    type: string
+                    description: 任务类型名（载荷里的 handler/类型，如 post.scheduled.sweep）
+                cronSpec:
+                    type: string
+                    description: cron 表达式
+                nextEnqueueAt:
+                    type: string
+                    format: date-time
+                prevEnqueueAt:
+                    type: string
+                    description: 上次入队时间；从未入队为空
+                    format: date-time
+            description: |-
+                系统级常驻任务的调度条目（asynq SchedulerEntries 的只读投影）。
+                 Prev 为零值时间表示从未入队过（调度注册后还没到第一个触发点）。
+        task.service.v1.SystemTaskStateSummary:
+            type: object
+            properties:
+                taskType:
+                    type: string
+                active:
+                    type: integer
+                    format: uint32
+                pending:
+                    type: integer
+                    format: uint32
+                retry:
+                    type: integer
+                    format: uint32
+                archived:
+                    type: integer
+                    format: uint32
+                recentFailures:
+                    type: array
+                    items:
+                        $ref: '#/components/schemas/task.service.v1.SystemTaskFailure'
+                    description: 最近失败明细（retry + archived 合并、按失败时间倒序、截断）
+            description: 单任务类型在队列里的状态摘要
         task.service.v1.Task:
             type: object
             properties:

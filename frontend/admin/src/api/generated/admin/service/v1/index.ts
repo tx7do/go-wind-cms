@@ -14650,6 +14650,10 @@ export interface TaskService {
   ListTaskExecutions(
     request: taskservicev1_ListTaskExecutionsRequest,
   ): Promise<taskservicev1_ListTaskExecutionsResponse>;
+  // 一站式巡检系统级常驻任务（只读 asynq Inspector，无副作用）
+  InspectSystemTasks(
+    request: taskservicev1_InspectSystemTasksRequest,
+  ): Promise<taskservicev1_InspectSystemTasksResponse>;
 }
 
 export function createTaskServiceClient(
@@ -14895,6 +14899,14 @@ export function createTaskServiceClient(
         method: 'ListTaskExecutions',
       }) as Promise<taskservicev1_ListTaskExecutionsResponse>;
     },
+    InspectSystemTasks(request) {
+      const path = `admin/v1/tasks:inspect`;
+      const body = JSON.stringify(request);
+      return transport.unary(path, 'POST', body, {
+        service: 'TaskService',
+        method: 'InspectSystemTasks',
+      }) as Promise<taskservicev1_InspectSystemTasksResponse>;
+    },
   };
 }
 // 查询调度任务列表 - 回应
@@ -15052,6 +15064,55 @@ export type taskservicev1_TaskExecution = {
   retried?: number;
   state?: string;
   typeName?: string;
+};
+
+// 手动触发巡检（系统级常驻任务可视化，只读 asynq，无副作用）
+export type taskservicev1_InspectSystemTasksRequest = {
+};
+
+export type taskservicev1_InspectSystemTasksResponse = {
+  // asynq 队列名（当前配置）
+  queue: string | undefined;
+  schedules: taskservicev1_SystemTaskScheduleEntry[] | undefined;
+  // 只汇总系统级常驻任务涉及的任务类型；无任何记录时不出现在结果里
+  summaries: taskservicev1_SystemTaskStateSummary[] | undefined;
+};
+
+// 系统级常驻任务的调度条目（asynq SchedulerEntries 的只读投影）。
+// Prev 为零值时间表示从未入队过（调度注册后还没到第一个触发点）。
+export type taskservicev1_SystemTaskScheduleEntry = {
+  // cron 表达式
+  cronSpec: string | undefined;
+  nextEnqueueAt: undefined | wellKnownTimestamp;
+  // 上次入队时间；从未入队为空
+  prevEnqueueAt: undefined | wellKnownTimestamp;
+  // 任务类型名（载荷里的 handler/类型，如 post.scheduled.sweep）
+  taskType: string | undefined;
+};
+
+// 单任务类型在队列里的状态摘要
+export type taskservicev1_SystemTaskStateSummary = {
+  active: number | undefined;
+  archived: number | undefined;
+  pending: number | undefined;
+  // 最近失败明细（retry + archived 合并、按失败时间倒序、截断）
+  recentFailures: taskservicev1_SystemTaskFailure[] | undefined;
+  retry: number | undefined;
+  taskType: string | undefined;
+};
+
+// 失败任务明细（retry/archived 里的单条）
+export type taskservicev1_SystemTaskFailure = {
+  lastError: string | undefined;
+  lastFailedAt: undefined | wellKnownTimestamp;
+  maxRetry: number | undefined;
+  // 下次重试时间（archived 无）
+  nextProcessAt: undefined | wellKnownTimestamp;
+  queue: string | undefined;
+  retried: number | undefined;
+  // retry 或 archived
+  state: string | undefined;
+  taskType: string | undefined;
 };
 
 // 租户管理服务

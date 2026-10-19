@@ -1,0 +1,53 @@
+syntax = "proto3";
+
+package task.service.v1;
+
+import "google/protobuf/timestamp.proto";
+
+// 系统级常驻任务的调度条目（asynq SchedulerEntries 的只读投影）。
+// Prev 为零值时间表示从未入队过（调度注册后还没到第一个触发点）。
+message SystemTaskScheduleEntry {
+  // 任务类型名（载荷里的 handler/类型，如 post.scheduled.sweep）
+  string task_type = 1;
+  // cron 表达式
+  string cron_spec = 2;
+  google.protobuf.Timestamp next_enqueue_at = 3;
+  // 上次入队时间；从未入队为空
+  google.protobuf.Timestamp prev_enqueue_at = 4;
+}
+
+// 失败任务明细（retry/archived 里的单条）
+message SystemTaskFailure {
+  string task_type = 1;
+  string queue = 2;
+  // retry 或 archived
+  string state = 3;
+  string last_error = 4;
+  google.protobuf.Timestamp last_failed_at = 5;
+  uint32 retried = 6;
+  uint32 max_retry = 7;
+  // 下次重试时间（archived 无）
+  google.protobuf.Timestamp next_process_at = 8;
+}
+
+// 单任务类型在队列里的状态摘要
+message SystemTaskStateSummary {
+  string task_type = 1;
+  uint32 active = 2;
+  uint32 pending = 3;
+  uint32 retry = 4;
+  uint32 archived = 5;
+  // 最近失败明细（retry + archived 合并、按失败时间倒序、截断）
+  repeated SystemTaskFailure recent_failures = 6;
+}
+
+// 手动触发巡检（系统级常驻任务可视化，只读 asynq，无副作用）
+message InspectSystemTasksRequest {}
+
+message InspectSystemTasksResponse {
+  // asynq 队列名（当前配置）
+  string queue = 1;
+  repeated SystemTaskScheduleEntry schedules = 2;
+  // 只汇总系统级常驻任务涉及的任务类型；无任何记录时不出现在结果里
+  repeated SystemTaskStateSummary summaries = 3;
+}

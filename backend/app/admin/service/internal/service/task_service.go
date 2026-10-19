@@ -35,6 +35,11 @@ func NewTaskService(
 	}
 }
 
+// InspectSystemTasks 一站式巡检系统级常驻任务（透传 core：asynq Redis 与调度条目都在 core 侧）。
+func (s *TaskService) InspectSystemTasks(ctx context.Context, req *taskV1.InspectSystemTasksRequest) (*taskV1.InspectSystemTasksResponse, error) {
+	return s.taskServiceClient.InspectSystemTasks(ctx, req)
+}
+
 func (s *TaskService) List(ctx context.Context, req *paginationV1.PagingRequest) (*taskV1.ListTaskResponse, error) {
 	return s.taskServiceClient.List(ctx, req)
 }
