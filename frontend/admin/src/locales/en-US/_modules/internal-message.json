@@ -49,5 +49,6 @@
   "sendScopeUsers": "Selected Users",
   "targetUsers": "Recipients",
   "targetUsersPlaceholder": "Select recipients",
-  "requiredTargetUsers": "Please select recipients"
+  "requiredTargetUsers": "Please select recipients",
+  "requiredContent": "Message content is required"
 }

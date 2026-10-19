@@ -39,6 +39,8 @@ export default function SettingsPage() {
     const [activeMenu, setActiveMenu] = useState<'account' | 'message' | 'preference'>('account');
 
     // ── 修改密码 ──
+    const accessStore = useAccessStore();
+
     const [pwdEditing, setPwdEditing] = useState(false);
     const [pwdLoading, setPwdLoading] = useState(false);
     const [pwdError, setPwdError] = useState('');
@@ -70,7 +72,7 @@ export default function SettingsPage() {
     const submitChangePassword = async () => {
         setPwdError('');
         setPwdSuccess(false);
-        const accessToken = useAccessStore.getState().accessToken;
+        const accessToken = accessStore.accessToken;
         if (!accessToken?.value) {
             setPwdError(t('account.login_required'));
             return;

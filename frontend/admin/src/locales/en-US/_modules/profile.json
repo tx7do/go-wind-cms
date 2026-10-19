@@ -68,5 +68,6 @@
   },
   "locale": "Preferred Language",
   "localeHint": "Transactional emails and monitor alerts render in this language",
-  "localePlaceholder": "Default (Chinese)"
+  "localePlaceholder": "Default (Chinese)",
+  "passwordChangedReLogin": "Password changed. Please sign in again"
 }

@@ -49,5 +49,6 @@
   "sendScopeUsers": "指定用户",
   "targetUsers": "接收用户",
   "targetUsersPlaceholder": "请选择接收用户",
-  "requiredTargetUsers": "请选择接收用户"
+  "requiredTargetUsers": "请选择接收用户",
+  "requiredContent": "请输入消息内容"
 }

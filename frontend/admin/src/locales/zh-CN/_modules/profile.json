@@ -68,5 +68,6 @@
   },
   "locale": "偏好语言",
   "localeHint": "事务性邮件与监控告警按此语言渲染",
-  "localePlaceholder": "默认（中文）"
+  "localePlaceholder": "默认（中文）",
+  "passwordChangedReLogin": "密码已修改，请重新登录"
 }
