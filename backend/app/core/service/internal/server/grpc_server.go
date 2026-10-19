@@ -10,29 +10,30 @@ import (
 
 	"go-wind-cms/app/core/service/internal/service"
 
+	accesskeyV1 "go-wind-cms/api/gen/go/access_key/service/v1"
+	aiV1 "go-wind-cms/api/gen/go/ai/service/v1"
 	auditV1 "go-wind-cms/api/gen/go/audit/service/v1"
 	authenticationV1 "go-wind-cms/api/gen/go/authentication/service/v1"
 	commentV1 "go-wind-cms/api/gen/go/comment/service/v1"
 	contentV1 "go-wind-cms/api/gen/go/content/service/v1"
 	dictV1 "go-wind-cms/api/gen/go/dict/service/v1"
+	flowV1 "go-wind-cms/api/gen/go/flow/service/v1"
 	identityV1 "go-wind-cms/api/gen/go/identity/service/v1"
 	interactionV1 "go-wind-cms/api/gen/go/interaction/service/v1"
 	internalMessageV1 "go-wind-cms/api/gen/go/internal_message/service/v1"
-	flowV1 "go-wind-cms/api/gen/go/flow/service/v1"
 	mediaV1 "go-wind-cms/api/gen/go/media/service/v1"
-	permissionV1 "go-wind-cms/api/gen/go/permission/service/v1"
-	statsV1 "go-wind-cms/api/gen/go/stats/service/v1"
-	webhookV1 "go-wind-cms/api/gen/go/webhook/service/v1"
+	monitorAlertV1 "go-wind-cms/api/gen/go/monitor_alert/service/v1"
 	notifyV1 "go-wind-cms/api/gen/go/notify/service/v1"
-	aiV1 "go-wind-cms/api/gen/go/ai/service/v1"
+	onlineSessionV1 "go-wind-cms/api/gen/go/online_session/service/v1"
+	permissionV1 "go-wind-cms/api/gen/go/permission/service/v1"
+	redisCacheV1 "go-wind-cms/api/gen/go/redis_cache/service/v1"
+	serverMonitorV1 "go-wind-cms/api/gen/go/server_monitor/service/v1"
 	siteV1 "go-wind-cms/api/gen/go/site/service/v1"
 	socialV1 "go-wind-cms/api/gen/go/social/service/v1"
+	statsV1 "go-wind-cms/api/gen/go/stats/service/v1"
 	storageV1 "go-wind-cms/api/gen/go/storage/service/v1"
 	taskV1 "go-wind-cms/api/gen/go/task/service/v1"
-	monitorAlertV1 "go-wind-cms/api/gen/go/monitor_alert/service/v1"
-	onlineSessionV1 "go-wind-cms/api/gen/go/online_session/service/v1"
-	serverMonitorV1 "go-wind-cms/api/gen/go/server_monitor/service/v1"
-	redisCacheV1 "go-wind-cms/api/gen/go/redis_cache/service/v1"
+	webhookV1 "go-wind-cms/api/gen/go/webhook/service/v1"
 
 	"go-wind-cms/pkg/middleware/ent"
 )
@@ -56,6 +57,7 @@ func NewGrpcServer(
 	taskService *service.TaskService,
 	monitorAlertService *service.MonitorAlertService,
 	onlineSessionService *service.OnlineSessionService,
+	accessKeyService *service.AccessKeyService,
 	serverMonitorService *service.ServerMonitorService,
 	redisCacheMonitorService *service.RedisCacheMonitorService,
 
@@ -147,6 +149,7 @@ func NewGrpcServer(
 	taskV1.RegisterTaskServiceServer(srv, taskService)
 	monitorAlertV1.RegisterMonitorAlertServiceServer(srv, monitorAlertService)
 	onlineSessionV1.RegisterOnlineSessionServiceServer(srv, onlineSessionService)
+	accesskeyV1.RegisterAccessKeyServiceServer(srv, accessKeyService)
 	serverMonitorV1.RegisterServerMonitorServiceServer(srv, serverMonitorService)
 	redisCacheV1.RegisterRedisCacheMonitorServiceServer(srv, redisCacheMonitorService)
 

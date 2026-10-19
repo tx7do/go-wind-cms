@@ -10,6 +10,7 @@ import (
 	contentpb "go-wind-cms/api/gen/go/content/service/v1"
 	permissionpb "go-wind-cms/api/gen/go/permission/service/v1"
 	taskpb "go-wind-cms/api/gen/go/task/service/v1"
+	"go-wind-cms/app/core/service/internal/data/ent/accesskey"
 	"go-wind-cms/app/core/service/internal/data/ent/aichunk"
 	"go-wind-cms/app/core/service/internal/data/ent/aiconversation"
 	"go-wind-cms/app/core/service/internal/data/ent/aidoc"
@@ -124,6 +125,7 @@ const (
 	OpUpdateOne = ent.OpUpdateOne
 
 	// Node types.
+	TypeAccessKey                  = "AccessKey"
 	TypeAiChunk                    = "AiChunk"
 	TypeAiConversation             = "AiConversation"
 	TypeAiDoc                      = "AiDoc"
@@ -221,6 +223,1356 @@ const (
 	TypeWebhook                    = "Webhook"
 	TypeWebhookDelivery            = "WebhookDelivery"
 )
+
+// AccessKeyMutation represents an operation that mutates the AccessKey nodes in the graph.
+type AccessKeyMutation struct {
+	config
+	op            Op
+	typ           string
+	id            *uint32
+	created_at    *time.Time
+	updated_at    *time.Time
+	deleted_at    *time.Time
+	created_by    *uint32
+	addcreated_by *int32
+	updated_by    *uint32
+	addupdated_by *int32
+	deleted_by    *uint32
+	adddeleted_by *int32
+	status        *accesskey.Status
+	tenant_id     *uint32
+	addtenant_id  *int32
+	name          *string
+	access_key    *string
+	secret_hash   *string
+	expires_at    *time.Time
+	last_used_at  *time.Time
+	clearedFields map[string]struct{}
+	done          bool
+	oldValue      func(context.Context) (*AccessKey, error)
+	predicates    []predicate.AccessKey
+}
+
+var _ ent.Mutation = (*AccessKeyMutation)(nil)
+
+// accesskeyOption allows management of the mutation configuration using functional options.
+type accesskeyOption func(*AccessKeyMutation)
+
+// newAccessKeyMutation creates new mutation for the AccessKey entity.
+func newAccessKeyMutation(c config, op Op, opts ...accesskeyOption) *AccessKeyMutation {
+	m := &AccessKeyMutation{
+		config:        c,
+		op:            op,
+		typ:           TypeAccessKey,
+		clearedFields: make(map[string]struct{}),
+	}
+	for _, opt := range opts {
+		opt(m)
+	}
+	return m
+}
+
+// withAccessKeyID sets the ID field of the mutation.
+func withAccessKeyID(id uint32) accesskeyOption {
+	return func(m *AccessKeyMutation) {
+		var (
+			err   error
+			once  sync.Once
+			value *AccessKey
+		)
+		m.oldValue = func(ctx context.Context) (*AccessKey, error) {
+			once.Do(func() {
+				if m.done {
+					err = errors.New("querying old values post mutation is not allowed")
+				} else {
+					value, err = m.Client().AccessKey.Get(ctx, id)
+				}
+			})
+			return value, err
+		}
+		m.id = &id
+	}
+}
+
+// withAccessKey sets the old AccessKey of the mutation.
+func withAccessKey(node *AccessKey) accesskeyOption {
+	return func(m *AccessKeyMutation) {
+		m.oldValue = func(context.Context) (*AccessKey, error) {
+			return node, nil
+		}
+		m.id = &node.ID
+	}
+}
+
+// Client returns a new `ent.Client` from the mutation. If the mutation was
+// executed in a transaction (ent.Tx), a transactional client is returned.
+func (m AccessKeyMutation) Client() *Client {
+	client := &Client{config: m.config}
+	client.init()
+	return client
+}
+
+// Tx returns an `ent.Tx` for mutations that were executed in transactions;
+// it returns an error otherwise.
+func (m AccessKeyMutation) Tx() (*Tx, error) {
+	if _, ok := m.driver.(*txDriver); !ok {
+		return nil, errors.New("ent: mutation is not running in a transaction")
+	}
+	tx := &Tx{config: m.config}
+	tx.init()
+	return tx, nil
+}
+
+// SetID sets the value of the id field. Note that this
+// operation is only accepted on creation of AccessKey entities.
+func (m *AccessKeyMutation) SetID(id uint32) {
+	m.id = &id
+}
+
+// ID returns the ID value in the mutation. Note that the ID is only available
+// if it was provided to the builder or after it was returned from the database.
+func (m *AccessKeyMutation) ID() (id uint32, exists bool) {
+	if m.id == nil {
+		return
+	}
+	return *m.id, true
+}
+
+// IDs queries the database and returns the entity ids that match the mutation's predicate.
+// That means, if the mutation is applied within a transaction with an isolation level such
+// as sql.LevelSerializable, the returned ids match the ids of the rows that will be updated
+// or updated by the mutation.
+func (m *AccessKeyMutation) IDs(ctx context.Context) ([]uint32, error) {
+	switch {
+	case m.op.Is(OpUpdateOne | OpDeleteOne):
+		id, exists := m.ID()
+		if exists {
+			return []uint32{id}, nil
+		}
+		fallthrough
+	case m.op.Is(OpUpdate | OpDelete):
+		return m.Client().AccessKey.Query().Where(m.predicates...).IDs(ctx)
+	default:
+		return nil, fmt.Errorf("IDs is not allowed on %s operations", m.op)
+	}
+}
+
+// SetCreatedAt sets the "created_at" field.
+func (m *AccessKeyMutation) SetCreatedAt(t time.Time) {
+	m.created_at = &t
+}
+
+// CreatedAt returns the value of the "created_at" field in the mutation.
+func (m *AccessKeyMutation) CreatedAt() (r time.Time, exists bool) {
+	v := m.created_at
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldCreatedAt returns the old "created_at" field's value of the AccessKey entity.
+// If the AccessKey object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *AccessKeyMutation) OldCreatedAt(ctx context.Context) (v *time.Time, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldCreatedAt is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldCreatedAt requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldCreatedAt: %w", err)
+	}
+	return oldValue.CreatedAt, nil
+}
+
+// ClearCreatedAt clears the value of the "created_at" field.
+func (m *AccessKeyMutation) ClearCreatedAt() {
+	m.created_at = nil
+	m.clearedFields[accesskey.FieldCreatedAt] = struct{}{}
+}
+
+// CreatedAtCleared returns if the "created_at" field was cleared in this mutation.
+func (m *AccessKeyMutation) CreatedAtCleared() bool {
+	_, ok := m.clearedFields[accesskey.FieldCreatedAt]
+	return ok
+}
+
+// ResetCreatedAt resets all changes to the "created_at" field.
+func (m *AccessKeyMutation) ResetCreatedAt() {
+	m.created_at = nil
+	delete(m.clearedFields, accesskey.FieldCreatedAt)
+}
+
+// SetUpdatedAt sets the "updated_at" field.
+func (m *AccessKeyMutation) SetUpdatedAt(t time.Time) {
+	m.updated_at = &t
+}
+
+// UpdatedAt returns the value of the "updated_at" field in the mutation.
+func (m *AccessKeyMutation) UpdatedAt() (r time.Time, exists bool) {
+	v := m.updated_at
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldUpdatedAt returns the old "updated_at" field's value of the AccessKey entity.
+// If the AccessKey object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *AccessKeyMutation) OldUpdatedAt(ctx context.Context) (v *time.Time, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldUpdatedAt is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldUpdatedAt requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldUpdatedAt: %w", err)
+	}
+	return oldValue.UpdatedAt, nil
+}
+
+// ClearUpdatedAt clears the value of the "updated_at" field.
+func (m *AccessKeyMutation) ClearUpdatedAt() {
+	m.updated_at = nil
+	m.clearedFields[accesskey.FieldUpdatedAt] = struct{}{}
+}
+
+// UpdatedAtCleared returns if the "updated_at" field was cleared in this mutation.
+func (m *AccessKeyMutation) UpdatedAtCleared() bool {
+	_, ok := m.clearedFields[accesskey.FieldUpdatedAt]
+	return ok
+}
+
+// ResetUpdatedAt resets all changes to the "updated_at" field.
+func (m *AccessKeyMutation) ResetUpdatedAt() {
+	m.updated_at = nil
+	delete(m.clearedFields, accesskey.FieldUpdatedAt)
+}
+
+// SetDeletedAt sets the "deleted_at" field.
+func (m *AccessKeyMutation) SetDeletedAt(t time.Time) {
+	m.deleted_at = &t
+}
+
+// DeletedAt returns the value of the "deleted_at" field in the mutation.
+func (m *AccessKeyMutation) DeletedAt() (r time.Time, exists bool) {
+	v := m.deleted_at
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldDeletedAt returns the old "deleted_at" field's value of the AccessKey entity.
+// If the AccessKey object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *AccessKeyMutation) OldDeletedAt(ctx context.Context) (v *time.Time, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldDeletedAt is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldDeletedAt requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldDeletedAt: %w", err)
+	}
+	return oldValue.DeletedAt, nil
+}
+
+// ClearDeletedAt clears the value of the "deleted_at" field.
+func (m *AccessKeyMutation) ClearDeletedAt() {
+	m.deleted_at = nil
+	m.clearedFields[accesskey.FieldDeletedAt] = struct{}{}
+}
+
+// DeletedAtCleared returns if the "deleted_at" field was cleared in this mutation.
+func (m *AccessKeyMutation) DeletedAtCleared() bool {
+	_, ok := m.clearedFields[accesskey.FieldDeletedAt]
+	return ok
+}
+
+// ResetDeletedAt resets all changes to the "deleted_at" field.
+func (m *AccessKeyMutation) ResetDeletedAt() {
+	m.deleted_at = nil
+	delete(m.clearedFields, accesskey.FieldDeletedAt)
+}
+
+// SetCreatedBy sets the "created_by" field.
+func (m *AccessKeyMutation) SetCreatedBy(u uint32) {
+	m.created_by = &u
+	m.addcreated_by = nil
+}
+
+// CreatedBy returns the value of the "created_by" field in the mutation.
+func (m *AccessKeyMutation) CreatedBy() (r uint32, exists bool) {
+	v := m.created_by
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldCreatedBy returns the old "created_by" field's value of the AccessKey entity.
+// If the AccessKey object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *AccessKeyMutation) OldCreatedBy(ctx context.Context) (v *uint32, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldCreatedBy is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldCreatedBy requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldCreatedBy: %w", err)
+	}
+	return oldValue.CreatedBy, nil
+}
+
+// AddCreatedBy adds u to the "created_by" field.
+func (m *AccessKeyMutation) AddCreatedBy(u int32) {
+	if m.addcreated_by != nil {
+		*m.addcreated_by += u
+	} else {
+		m.addcreated_by = &u
+	}
+}
+
+// AddedCreatedBy returns the value that was added to the "created_by" field in this mutation.
+func (m *AccessKeyMutation) AddedCreatedBy() (r int32, exists bool) {
+	v := m.addcreated_by
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// ClearCreatedBy clears the value of the "created_by" field.
+func (m *AccessKeyMutation) ClearCreatedBy() {
+	m.created_by = nil
+	m.addcreated_by = nil
+	m.clearedFields[accesskey.FieldCreatedBy] = struct{}{}
+}
+
+// CreatedByCleared returns if the "created_by" field was cleared in this mutation.
+func (m *AccessKeyMutation) CreatedByCleared() bool {
+	_, ok := m.clearedFields[accesskey.FieldCreatedBy]
+	return ok
+}
+
+// ResetCreatedBy resets all changes to the "created_by" field.
+func (m *AccessKeyMutation) ResetCreatedBy() {
+	m.created_by = nil
+	m.addcreated_by = nil
+	delete(m.clearedFields, accesskey.FieldCreatedBy)
+}
+
+// SetUpdatedBy sets the "updated_by" field.
+func (m *AccessKeyMutation) SetUpdatedBy(u uint32) {
+	m.updated_by = &u
+	m.addupdated_by = nil
+}
+
+// UpdatedBy returns the value of the "updated_by" field in the mutation.
+func (m *AccessKeyMutation) UpdatedBy() (r uint32, exists bool) {
+	v := m.updated_by
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldUpdatedBy returns the old "updated_by" field's value of the AccessKey entity.
+// If the AccessKey object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *AccessKeyMutation) OldUpdatedBy(ctx context.Context) (v *uint32, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldUpdatedBy is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldUpdatedBy requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldUpdatedBy: %w", err)
+	}
+	return oldValue.UpdatedBy, nil
+}
+
+// AddUpdatedBy adds u to the "updated_by" field.
+func (m *AccessKeyMutation) AddUpdatedBy(u int32) {
+	if m.addupdated_by != nil {
+		*m.addupdated_by += u
+	} else {
+		m.addupdated_by = &u
+	}
+}
+
+// AddedUpdatedBy returns the value that was added to the "updated_by" field in this mutation.
+func (m *AccessKeyMutation) AddedUpdatedBy() (r int32, exists bool) {
+	v := m.addupdated_by
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// ClearUpdatedBy clears the value of the "updated_by" field.
+func (m *AccessKeyMutation) ClearUpdatedBy() {
+	m.updated_by = nil
+	m.addupdated_by = nil
+	m.clearedFields[accesskey.FieldUpdatedBy] = struct{}{}
+}
+
+// UpdatedByCleared returns if the "updated_by" field was cleared in this mutation.
+func (m *AccessKeyMutation) UpdatedByCleared() bool {
+	_, ok := m.clearedFields[accesskey.FieldUpdatedBy]
+	return ok
+}
+
+// ResetUpdatedBy resets all changes to the "updated_by" field.
+func (m *AccessKeyMutation) ResetUpdatedBy() {
+	m.updated_by = nil
+	m.addupdated_by = nil
+	delete(m.clearedFields, accesskey.FieldUpdatedBy)
+}
+
+// SetDeletedBy sets the "deleted_by" field.
+func (m *AccessKeyMutation) SetDeletedBy(u uint32) {
+	m.deleted_by = &u
+	m.adddeleted_by = nil
+}
+
+// DeletedBy returns the value of the "deleted_by" field in the mutation.
+func (m *AccessKeyMutation) DeletedBy() (r uint32, exists bool) {
+	v := m.deleted_by
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldDeletedBy returns the old "deleted_by" field's value of the AccessKey entity.
+// If the AccessKey object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *AccessKeyMutation) OldDeletedBy(ctx context.Context) (v *uint32, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldDeletedBy is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldDeletedBy requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldDeletedBy: %w", err)
+	}
+	return oldValue.DeletedBy, nil
+}
+
+// AddDeletedBy adds u to the "deleted_by" field.
+func (m *AccessKeyMutation) AddDeletedBy(u int32) {
+	if m.adddeleted_by != nil {
+		*m.adddeleted_by += u
+	} else {
+		m.adddeleted_by = &u
+	}
+}
+
+// AddedDeletedBy returns the value that was added to the "deleted_by" field in this mutation.
+func (m *AccessKeyMutation) AddedDeletedBy() (r int32, exists bool) {
+	v := m.adddeleted_by
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// ClearDeletedBy clears the value of the "deleted_by" field.
+func (m *AccessKeyMutation) ClearDeletedBy() {
+	m.deleted_by = nil
+	m.adddeleted_by = nil
+	m.clearedFields[accesskey.FieldDeletedBy] = struct{}{}
+}
+
+// DeletedByCleared returns if the "deleted_by" field was cleared in this mutation.
+func (m *AccessKeyMutation) DeletedByCleared() bool {
+	_, ok := m.clearedFields[accesskey.FieldDeletedBy]
+	return ok
+}
+
+// ResetDeletedBy resets all changes to the "deleted_by" field.
+func (m *AccessKeyMutation) ResetDeletedBy() {
+	m.deleted_by = nil
+	m.adddeleted_by = nil
+	delete(m.clearedFields, accesskey.FieldDeletedBy)
+}
+
+// SetStatus sets the "status" field.
+func (m *AccessKeyMutation) SetStatus(a accesskey.Status) {
+	m.status = &a
+}
+
+// Status returns the value of the "status" field in the mutation.
+func (m *AccessKeyMutation) Status() (r accesskey.Status, exists bool) {
+	v := m.status
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldStatus returns the old "status" field's value of the AccessKey entity.
+// If the AccessKey object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *AccessKeyMutation) OldStatus(ctx context.Context) (v *accesskey.Status, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldStatus is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldStatus requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldStatus: %w", err)
+	}
+	return oldValue.Status, nil
+}
+
+// ResetStatus resets all changes to the "status" field.
+func (m *AccessKeyMutation) ResetStatus() {
+	m.status = nil
+}
+
+// SetTenantID sets the "tenant_id" field.
+func (m *AccessKeyMutation) SetTenantID(u uint32) {
+	m.tenant_id = &u
+	m.addtenant_id = nil
+}
+
+// TenantID returns the value of the "tenant_id" field in the mutation.
+func (m *AccessKeyMutation) TenantID() (r uint32, exists bool) {
+	v := m.tenant_id
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldTenantID returns the old "tenant_id" field's value of the AccessKey entity.
+// If the AccessKey object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *AccessKeyMutation) OldTenantID(ctx context.Context) (v *uint32, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldTenantID is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldTenantID requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldTenantID: %w", err)
+	}
+	return oldValue.TenantID, nil
+}
+
+// AddTenantID adds u to the "tenant_id" field.
+func (m *AccessKeyMutation) AddTenantID(u int32) {
+	if m.addtenant_id != nil {
+		*m.addtenant_id += u
+	} else {
+		m.addtenant_id = &u
+	}
+}
+
+// AddedTenantID returns the value that was added to the "tenant_id" field in this mutation.
+func (m *AccessKeyMutation) AddedTenantID() (r int32, exists bool) {
+	v := m.addtenant_id
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// ClearTenantID clears the value of the "tenant_id" field.
+func (m *AccessKeyMutation) ClearTenantID() {
+	m.tenant_id = nil
+	m.addtenant_id = nil
+	m.clearedFields[accesskey.FieldTenantID] = struct{}{}
+}
+
+// TenantIDCleared returns if the "tenant_id" field was cleared in this mutation.
+func (m *AccessKeyMutation) TenantIDCleared() bool {
+	_, ok := m.clearedFields[accesskey.FieldTenantID]
+	return ok
+}
+
+// ResetTenantID resets all changes to the "tenant_id" field.
+func (m *AccessKeyMutation) ResetTenantID() {
+	m.tenant_id = nil
+	m.addtenant_id = nil
+	delete(m.clearedFields, accesskey.FieldTenantID)
+}
+
+// SetName sets the "name" field.
+func (m *AccessKeyMutation) SetName(s string) {
+	m.name = &s
+}
+
+// Name returns the value of the "name" field in the mutation.
+func (m *AccessKeyMutation) Name() (r string, exists bool) {
+	v := m.name
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldName returns the old "name" field's value of the AccessKey entity.
+// If the AccessKey object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *AccessKeyMutation) OldName(ctx context.Context) (v *string, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldName is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldName requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldName: %w", err)
+	}
+	return oldValue.Name, nil
+}
+
+// ClearName clears the value of the "name" field.
+func (m *AccessKeyMutation) ClearName() {
+	m.name = nil
+	m.clearedFields[accesskey.FieldName] = struct{}{}
+}
+
+// NameCleared returns if the "name" field was cleared in this mutation.
+func (m *AccessKeyMutation) NameCleared() bool {
+	_, ok := m.clearedFields[accesskey.FieldName]
+	return ok
+}
+
+// ResetName resets all changes to the "name" field.
+func (m *AccessKeyMutation) ResetName() {
+	m.name = nil
+	delete(m.clearedFields, accesskey.FieldName)
+}
+
+// SetAccessKey sets the "access_key" field.
+func (m *AccessKeyMutation) SetAccessKey(s string) {
+	m.access_key = &s
+}
+
+// AccessKey returns the value of the "access_key" field in the mutation.
+func (m *AccessKeyMutation) AccessKey() (r string, exists bool) {
+	v := m.access_key
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldAccessKey returns the old "access_key" field's value of the AccessKey entity.
+// If the AccessKey object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *AccessKeyMutation) OldAccessKey(ctx context.Context) (v *string, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldAccessKey is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldAccessKey requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldAccessKey: %w", err)
+	}
+	return oldValue.AccessKey, nil
+}
+
+// ClearAccessKey clears the value of the "access_key" field.
+func (m *AccessKeyMutation) ClearAccessKey() {
+	m.access_key = nil
+	m.clearedFields[accesskey.FieldAccessKey] = struct{}{}
+}
+
+// AccessKeyCleared returns if the "access_key" field was cleared in this mutation.
+func (m *AccessKeyMutation) AccessKeyCleared() bool {
+	_, ok := m.clearedFields[accesskey.FieldAccessKey]
+	return ok
+}
+
+// ResetAccessKey resets all changes to the "access_key" field.
+func (m *AccessKeyMutation) ResetAccessKey() {
+	m.access_key = nil
+	delete(m.clearedFields, accesskey.FieldAccessKey)
+}
+
+// SetSecretHash sets the "secret_hash" field.
+func (m *AccessKeyMutation) SetSecretHash(s string) {
+	m.secret_hash = &s
+}
+
+// SecretHash returns the value of the "secret_hash" field in the mutation.
+func (m *AccessKeyMutation) SecretHash() (r string, exists bool) {
+	v := m.secret_hash
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldSecretHash returns the old "secret_hash" field's value of the AccessKey entity.
+// If the AccessKey object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *AccessKeyMutation) OldSecretHash(ctx context.Context) (v *string, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldSecretHash is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldSecretHash requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldSecretHash: %w", err)
+	}
+	return oldValue.SecretHash, nil
+}
+
+// ClearSecretHash clears the value of the "secret_hash" field.
+func (m *AccessKeyMutation) ClearSecretHash() {
+	m.secret_hash = nil
+	m.clearedFields[accesskey.FieldSecretHash] = struct{}{}
+}
+
+// SecretHashCleared returns if the "secret_hash" field was cleared in this mutation.
+func (m *AccessKeyMutation) SecretHashCleared() bool {
+	_, ok := m.clearedFields[accesskey.FieldSecretHash]
+	return ok
+}
+
+// ResetSecretHash resets all changes to the "secret_hash" field.
+func (m *AccessKeyMutation) ResetSecretHash() {
+	m.secret_hash = nil
+	delete(m.clearedFields, accesskey.FieldSecretHash)
+}
+
+// SetExpiresAt sets the "expires_at" field.
+func (m *AccessKeyMutation) SetExpiresAt(t time.Time) {
+	m.expires_at = &t
+}
+
+// ExpiresAt returns the value of the "expires_at" field in the mutation.
+func (m *AccessKeyMutation) ExpiresAt() (r time.Time, exists bool) {
+	v := m.expires_at
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldExpiresAt returns the old "expires_at" field's value of the AccessKey entity.
+// If the AccessKey object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *AccessKeyMutation) OldExpiresAt(ctx context.Context) (v *time.Time, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldExpiresAt is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldExpiresAt requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldExpiresAt: %w", err)
+	}
+	return oldValue.ExpiresAt, nil
+}
+
+// ClearExpiresAt clears the value of the "expires_at" field.
+func (m *AccessKeyMutation) ClearExpiresAt() {
+	m.expires_at = nil
+	m.clearedFields[accesskey.FieldExpiresAt] = struct{}{}
+}
+
+// ExpiresAtCleared returns if the "expires_at" field was cleared in this mutation.
+func (m *AccessKeyMutation) ExpiresAtCleared() bool {
+	_, ok := m.clearedFields[accesskey.FieldExpiresAt]
+	return ok
+}
+
+// ResetExpiresAt resets all changes to the "expires_at" field.
+func (m *AccessKeyMutation) ResetExpiresAt() {
+	m.expires_at = nil
+	delete(m.clearedFields, accesskey.FieldExpiresAt)
+}
+
+// SetLastUsedAt sets the "last_used_at" field.
+func (m *AccessKeyMutation) SetLastUsedAt(t time.Time) {
+	m.last_used_at = &t
+}
+
+// LastUsedAt returns the value of the "last_used_at" field in the mutation.
+func (m *AccessKeyMutation) LastUsedAt() (r time.Time, exists bool) {
+	v := m.last_used_at
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldLastUsedAt returns the old "last_used_at" field's value of the AccessKey entity.
+// If the AccessKey object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *AccessKeyMutation) OldLastUsedAt(ctx context.Context) (v *time.Time, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldLastUsedAt is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldLastUsedAt requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldLastUsedAt: %w", err)
+	}
+	return oldValue.LastUsedAt, nil
+}
+
+// ClearLastUsedAt clears the value of the "last_used_at" field.
+func (m *AccessKeyMutation) ClearLastUsedAt() {
+	m.last_used_at = nil
+	m.clearedFields[accesskey.FieldLastUsedAt] = struct{}{}
+}
+
+// LastUsedAtCleared returns if the "last_used_at" field was cleared in this mutation.
+func (m *AccessKeyMutation) LastUsedAtCleared() bool {
+	_, ok := m.clearedFields[accesskey.FieldLastUsedAt]
+	return ok
+}
+
+// ResetLastUsedAt resets all changes to the "last_used_at" field.
+func (m *AccessKeyMutation) ResetLastUsedAt() {
+	m.last_used_at = nil
+	delete(m.clearedFields, accesskey.FieldLastUsedAt)
+}
+
+// Where appends a list predicates to the AccessKeyMutation builder.
+func (m *AccessKeyMutation) Where(ps ...predicate.AccessKey) {
+	m.predicates = append(m.predicates, ps...)
+}
+
+// WhereP appends storage-level predicates to the AccessKeyMutation builder. Using this method,
+// users can use type-assertion to append predicates that do not depend on any generated package.
+func (m *AccessKeyMutation) WhereP(ps ...func(*sql.Selector)) {
+	p := make([]predicate.AccessKey, len(ps))
+	for i := range ps {
+		p[i] = ps[i]
+	}
+	m.Where(p...)
+}
+
+// Op returns the operation name.
+func (m *AccessKeyMutation) Op() Op {
+	return m.op
+}
+
+// SetOp allows setting the mutation operation.
+func (m *AccessKeyMutation) SetOp(op Op) {
+	m.op = op
+}
+
+// Type returns the node type of this mutation (AccessKey).
+func (m *AccessKeyMutation) Type() string {
+	return m.typ
+}
+
+// Fields returns all fields that were changed during this mutation. Note that in
+// order to get all numeric fields that were incremented/decremented, call
+// AddedFields().
+func (m *AccessKeyMutation) Fields() []string {
+	fields := make([]string, 0, 13)
+	if m.created_at != nil {
+		fields = append(fields, accesskey.FieldCreatedAt)
+	}
+	if m.updated_at != nil {
+		fields = append(fields, accesskey.FieldUpdatedAt)
+	}
+	if m.deleted_at != nil {
+		fields = append(fields, accesskey.FieldDeletedAt)
+	}
+	if m.created_by != nil {
+		fields = append(fields, accesskey.FieldCreatedBy)
+	}
+	if m.updated_by != nil {
+		fields = append(fields, accesskey.FieldUpdatedBy)
+	}
+	if m.deleted_by != nil {
+		fields = append(fields, accesskey.FieldDeletedBy)
+	}
+	if m.status != nil {
+		fields = append(fields, accesskey.FieldStatus)
+	}
+	if m.tenant_id != nil {
+		fields = append(fields, accesskey.FieldTenantID)
+	}
+	if m.name != nil {
+		fields = append(fields, accesskey.FieldName)
+	}
+	if m.access_key != nil {
+		fields = append(fields, accesskey.FieldAccessKey)
+	}
+	if m.secret_hash != nil {
+		fields = append(fields, accesskey.FieldSecretHash)
+	}
+	if m.expires_at != nil {
+		fields = append(fields, accesskey.FieldExpiresAt)
+	}
+	if m.last_used_at != nil {
+		fields = append(fields, accesskey.FieldLastUsedAt)
+	}
+	return fields
+}
+
+// Field returns the value of a field with the given name. The second boolean
+// return value indicates that this field was not set, or was not defined in the
+// schema.
+func (m *AccessKeyMutation) Field(name string) (ent.Value, bool) {
+	switch name {
+	case accesskey.FieldCreatedAt:
+		return m.CreatedAt()
+	case accesskey.FieldUpdatedAt:
+		return m.UpdatedAt()
+	case accesskey.FieldDeletedAt:
+		return m.DeletedAt()
+	case accesskey.FieldCreatedBy:
+		return m.CreatedBy()
+	case accesskey.FieldUpdatedBy:
+		return m.UpdatedBy()
+	case accesskey.FieldDeletedBy:
+		return m.DeletedBy()
+	case accesskey.FieldStatus:
+		return m.Status()
+	case accesskey.FieldTenantID:
+		return m.TenantID()
+	case accesskey.FieldName:
+		return m.Name()
+	case accesskey.FieldAccessKey:
+		return m.AccessKey()
+	case accesskey.FieldSecretHash:
+		return m.SecretHash()
+	case accesskey.FieldExpiresAt:
+		return m.ExpiresAt()
+	case accesskey.FieldLastUsedAt:
+		return m.LastUsedAt()
+	}
+	return nil, false
+}
+
+// OldField returns the old value of the field from the database. An error is
+// returned if the mutation operation is not UpdateOne, or the query to the
+// database failed.
+func (m *AccessKeyMutation) OldField(ctx context.Context, name string) (ent.Value, error) {
+	switch name {
+	case accesskey.FieldCreatedAt:
+		return m.OldCreatedAt(ctx)
+	case accesskey.FieldUpdatedAt:
+		return m.OldUpdatedAt(ctx)
+	case accesskey.FieldDeletedAt:
+		return m.OldDeletedAt(ctx)
+	case accesskey.FieldCreatedBy:
+		return m.OldCreatedBy(ctx)
+	case accesskey.FieldUpdatedBy:
+		return m.OldUpdatedBy(ctx)
+	case accesskey.FieldDeletedBy:
+		return m.OldDeletedBy(ctx)
+	case accesskey.FieldStatus:
+		return m.OldStatus(ctx)
+	case accesskey.FieldTenantID:
+		return m.OldTenantID(ctx)
+	case accesskey.FieldName:
+		return m.OldName(ctx)
+	case accesskey.FieldAccessKey:
+		return m.OldAccessKey(ctx)
+	case accesskey.FieldSecretHash:
+		return m.OldSecretHash(ctx)
+	case accesskey.FieldExpiresAt:
+		return m.OldExpiresAt(ctx)
+	case accesskey.FieldLastUsedAt:
+		return m.OldLastUsedAt(ctx)
+	}
+	return nil, fmt.Errorf("unknown AccessKey field %s", name)
+}
+
+// SetField sets the value of a field with the given name. It returns an error if
+// the field is not defined in the schema, or if the type mismatched the field
+// type.
+func (m *AccessKeyMutation) SetField(name string, value ent.Value) error {
+	switch name {
+	case accesskey.FieldCreatedAt:
+		v, ok := value.(time.Time)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetCreatedAt(v)
+		return nil
+	case accesskey.FieldUpdatedAt:
+		v, ok := value.(time.Time)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetUpdatedAt(v)
+		return nil
+	case accesskey.FieldDeletedAt:
+		v, ok := value.(time.Time)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetDeletedAt(v)
+		return nil
+	case accesskey.FieldCreatedBy:
+		v, ok := value.(uint32)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetCreatedBy(v)
+		return nil
+	case accesskey.FieldUpdatedBy:
+		v, ok := value.(uint32)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetUpdatedBy(v)
+		return nil
+	case accesskey.FieldDeletedBy:
+		v, ok := value.(uint32)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetDeletedBy(v)
+		return nil
+	case accesskey.FieldStatus:
+		v, ok := value.(accesskey.Status)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetStatus(v)
+		return nil
+	case accesskey.FieldTenantID:
+		v, ok := value.(uint32)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetTenantID(v)
+		return nil
+	case accesskey.FieldName:
+		v, ok := value.(string)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetName(v)
+		return nil
+	case accesskey.FieldAccessKey:
+		v, ok := value.(string)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetAccessKey(v)
+		return nil
+	case accesskey.FieldSecretHash:
+		v, ok := value.(string)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetSecretHash(v)
+		return nil
+	case accesskey.FieldExpiresAt:
+		v, ok := value.(time.Time)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetExpiresAt(v)
+		return nil
+	case accesskey.FieldLastUsedAt:
+		v, ok := value.(time.Time)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetLastUsedAt(v)
+		return nil
+	}
+	return fmt.Errorf("unknown AccessKey field %s", name)
+}
+
+// AddedFields returns all numeric fields that were incremented/decremented during
+// this mutation.
+func (m *AccessKeyMutation) AddedFields() []string {
+	var fields []string
+	if m.addcreated_by != nil {
+		fields = append(fields, accesskey.FieldCreatedBy)
+	}
+	if m.addupdated_by != nil {
+		fields = append(fields, accesskey.FieldUpdatedBy)
+	}
+	if m.adddeleted_by != nil {
+		fields = append(fields, accesskey.FieldDeletedBy)
+	}
+	if m.addtenant_id != nil {
+		fields = append(fields, accesskey.FieldTenantID)
+	}
+	return fields
+}
+
+// AddedField returns the numeric value that was incremented/decremented on a field
+// with the given name. The second boolean return value indicates that this field
+// was not set, or was not defined in the schema.
+func (m *AccessKeyMutation) AddedField(name string) (ent.Value, bool) {
+	switch name {
+	case accesskey.FieldCreatedBy:
+		return m.AddedCreatedBy()
+	case accesskey.FieldUpdatedBy:
+		return m.AddedUpdatedBy()
+	case accesskey.FieldDeletedBy:
+		return m.AddedDeletedBy()
+	case accesskey.FieldTenantID:
+		return m.AddedTenantID()
+	}
+	return nil, false
+}
+
+// AddField adds the value to the field with the given name. It returns an error if
+// the field is not defined in the schema, or if the type mismatched the field
+// type.
+func (m *AccessKeyMutation) AddField(name string, value ent.Value) error {
+	switch name {
+	case accesskey.FieldCreatedBy:
+		v, ok := value.(int32)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.AddCreatedBy(v)
+		return nil
+	case accesskey.FieldUpdatedBy:
+		v, ok := value.(int32)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.AddUpdatedBy(v)
+		return nil
+	case accesskey.FieldDeletedBy:
+		v, ok := value.(int32)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.AddDeletedBy(v)
+		return nil
+	case accesskey.FieldTenantID:
+		v, ok := value.(int32)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.AddTenantID(v)
+		return nil
+	}
+	return fmt.Errorf("unknown AccessKey numeric field %s", name)
+}
+
+// ClearedFields returns all nullable fields that were cleared during this
+// mutation.
+func (m *AccessKeyMutation) ClearedFields() []string {
+	var fields []string
+	if m.FieldCleared(accesskey.FieldCreatedAt) {
+		fields = append(fields, accesskey.FieldCreatedAt)
+	}
+	if m.FieldCleared(accesskey.FieldUpdatedAt) {
+		fields = append(fields, accesskey.FieldUpdatedAt)
+	}
+	if m.FieldCleared(accesskey.FieldDeletedAt) {
+		fields = append(fields, accesskey.FieldDeletedAt)
+	}
+	if m.FieldCleared(accesskey.FieldCreatedBy) {
+		fields = append(fields, accesskey.FieldCreatedBy)
+	}
+	if m.FieldCleared(accesskey.FieldUpdatedBy) {
+		fields = append(fields, accesskey.FieldUpdatedBy)
+	}
+	if m.FieldCleared(accesskey.FieldDeletedBy) {
+		fields = append(fields, accesskey.FieldDeletedBy)
+	}
+	if m.FieldCleared(accesskey.FieldTenantID) {
+		fields = append(fields, accesskey.FieldTenantID)
+	}
+	if m.FieldCleared(accesskey.FieldName) {
+		fields = append(fields, accesskey.FieldName)
+	}
+	if m.FieldCleared(accesskey.FieldAccessKey) {
+		fields = append(fields, accesskey.FieldAccessKey)
+	}
+	if m.FieldCleared(accesskey.FieldSecretHash) {
+		fields = append(fields, accesskey.FieldSecretHash)
+	}
+	if m.FieldCleared(accesskey.FieldExpiresAt) {
+		fields = append(fields, accesskey.FieldExpiresAt)
+	}
+	if m.FieldCleared(accesskey.FieldLastUsedAt) {
+		fields = append(fields, accesskey.FieldLastUsedAt)
+	}
+	return fields
+}
+
+// FieldCleared returns a boolean indicating if a field with the given name was
+// cleared in this mutation.
+func (m *AccessKeyMutation) FieldCleared(name string) bool {
+	_, ok := m.clearedFields[name]
+	return ok
+}
+
+// ClearField clears the value of the field with the given name. It returns an
+// error if the field is not defined in the schema.
+func (m *AccessKeyMutation) ClearField(name string) error {
+	switch name {
+	case accesskey.FieldCreatedAt:
+		m.ClearCreatedAt()
+		return nil
+	case accesskey.FieldUpdatedAt:
+		m.ClearUpdatedAt()
+		return nil
+	case accesskey.FieldDeletedAt:
+		m.ClearDeletedAt()
+		return nil
+	case accesskey.FieldCreatedBy:
+		m.ClearCreatedBy()
+		return nil
+	case accesskey.FieldUpdatedBy:
+		m.ClearUpdatedBy()
+		return nil
+	case accesskey.FieldDeletedBy:
+		m.ClearDeletedBy()
+		return nil
+	case accesskey.FieldTenantID:
+		m.ClearTenantID()
+		return nil
+	case accesskey.FieldName:
+		m.ClearName()
+		return nil
+	case accesskey.FieldAccessKey:
+		m.ClearAccessKey()
+		return nil
+	case accesskey.FieldSecretHash:
+		m.ClearSecretHash()
+		return nil
+	case accesskey.FieldExpiresAt:
+		m.ClearExpiresAt()
+		return nil
+	case accesskey.FieldLastUsedAt:
+		m.ClearLastUsedAt()
+		return nil
+	}
+	return fmt.Errorf("unknown AccessKey nullable field %s", name)
+}
+
+// ResetField resets all changes in the mutation for the field with the given name.
+// It returns an error if the field is not defined in the schema.
+func (m *AccessKeyMutation) ResetField(name string) error {
+	switch name {
+	case accesskey.FieldCreatedAt:
+		m.ResetCreatedAt()
+		return nil
+	case accesskey.FieldUpdatedAt:
+		m.ResetUpdatedAt()
+		return nil
+	case accesskey.FieldDeletedAt:
+		m.ResetDeletedAt()
+		return nil
+	case accesskey.FieldCreatedBy:
+		m.ResetCreatedBy()
+		return nil
+	case accesskey.FieldUpdatedBy:
+		m.ResetUpdatedBy()
+		return nil
+	case accesskey.FieldDeletedBy:
+		m.ResetDeletedBy()
+		return nil
+	case accesskey.FieldStatus:
+		m.ResetStatus()
+		return nil
+	case accesskey.FieldTenantID:
+		m.ResetTenantID()
+		return nil
+	case accesskey.FieldName:
+		m.ResetName()
+		return nil
+	case accesskey.FieldAccessKey:
+		m.ResetAccessKey()
+		return nil
+	case accesskey.FieldSecretHash:
+		m.ResetSecretHash()
+		return nil
+	case accesskey.FieldExpiresAt:
+		m.ResetExpiresAt()
+		return nil
+	case accesskey.FieldLastUsedAt:
+		m.ResetLastUsedAt()
+		return nil
+	}
+	return fmt.Errorf("unknown AccessKey field %s", name)
+}
+
+// AddedEdges returns all edge names that were set/added in this mutation.
+func (m *AccessKeyMutation) AddedEdges() []string {
+	edges := make([]string, 0, 0)
+	return edges
+}
+
+// AddedIDs returns all IDs (to other nodes) that were added for the given edge
+// name in this mutation.
+func (m *AccessKeyMutation) AddedIDs(name string) []ent.Value {
+	return nil
+}
+
+// RemovedEdges returns all edge names that were removed in this mutation.
+func (m *AccessKeyMutation) RemovedEdges() []string {
+	edges := make([]string, 0, 0)
+	return edges
+}
+
+// RemovedIDs returns all IDs (to other nodes) that were removed for the edge with
+// the given name in this mutation.
+func (m *AccessKeyMutation) RemovedIDs(name string) []ent.Value {
+	return nil
+}
+
+// ClearedEdges returns all edge names that were cleared in this mutation.
+func (m *AccessKeyMutation) ClearedEdges() []string {
+	edges := make([]string, 0, 0)
+	return edges
+}
+
+// EdgeCleared returns a boolean which indicates if the edge with the given name
+// was cleared in this mutation.
+func (m *AccessKeyMutation) EdgeCleared(name string) bool {
+	return false
+}
+
+// ClearEdge clears the value of the edge with the given name. It returns an error
+// if that edge is not defined in the schema.
+func (m *AccessKeyMutation) ClearEdge(name string) error {
+	return fmt.Errorf("unknown AccessKey unique edge %s", name)
+}
+
+// ResetEdge resets all changes to the edge with the given name in this mutation.
+// It returns an error if the edge is not defined in the schema.
+func (m *AccessKeyMutation) ResetEdge(name string) error {
+	return fmt.Errorf("unknown AccessKey edge %s", name)
+}
 
 // AiChunkMutation represents an operation that mutates the AiChunk nodes in the graph.
 type AiChunkMutation struct {

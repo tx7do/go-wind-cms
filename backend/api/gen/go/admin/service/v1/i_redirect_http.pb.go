@@ -43,14 +43,14 @@ type RedirectServiceHTTPServer interface {
 
 func RegisterRedirectServiceHTTPServer(s *http.Server, srv RedirectServiceHTTPServer) {
 	r := s.Route("/")
-	r.GET("/admin/v1/redirects", _RedirectService_List38_HTTP_Handler(srv))
-	r.GET("/admin/v1/redirects/{id}", _RedirectService_Get39_HTTP_Handler(srv))
-	r.POST("/admin/v1/redirects", _RedirectService_Create28_HTTP_Handler(srv))
-	r.PUT("/admin/v1/redirects/{id}", _RedirectService_Update29_HTTP_Handler(srv))
-	r.DELETE("/admin/v1/redirects/{id}", _RedirectService_Delete31_HTTP_Handler(srv))
+	r.GET("/admin/v1/redirects", _RedirectService_List39_HTTP_Handler(srv))
+	r.GET("/admin/v1/redirects/{id}", _RedirectService_Get40_HTTP_Handler(srv))
+	r.POST("/admin/v1/redirects", _RedirectService_Create29_HTTP_Handler(srv))
+	r.PUT("/admin/v1/redirects/{id}", _RedirectService_Update30_HTTP_Handler(srv))
+	r.DELETE("/admin/v1/redirects/{id}", _RedirectService_Delete32_HTTP_Handler(srv))
 }
 
-func _RedirectService_List38_HTTP_Handler(srv RedirectServiceHTTPServer) func(ctx http.Context) error {
+func _RedirectService_List39_HTTP_Handler(srv RedirectServiceHTTPServer) func(ctx http.Context) error {
 	return func(ctx http.Context) error {
 		var in v1.PagingRequest
 		if err := ctx.BindQuery(&in); err != nil {
@@ -69,7 +69,7 @@ func _RedirectService_List38_HTTP_Handler(srv RedirectServiceHTTPServer) func(ct
 	}
 }
 
-func _RedirectService_Get39_HTTP_Handler(srv RedirectServiceHTTPServer) func(ctx http.Context) error {
+func _RedirectService_Get40_HTTP_Handler(srv RedirectServiceHTTPServer) func(ctx http.Context) error {
 	return func(ctx http.Context) error {
 		var in v11.GetRedirectRequest
 		if err := ctx.BindQuery(&in); err != nil {
@@ -91,7 +91,7 @@ func _RedirectService_Get39_HTTP_Handler(srv RedirectServiceHTTPServer) func(ctx
 	}
 }
 
-func _RedirectService_Create28_HTTP_Handler(srv RedirectServiceHTTPServer) func(ctx http.Context) error {
+func _RedirectService_Create29_HTTP_Handler(srv RedirectServiceHTTPServer) func(ctx http.Context) error {
 	return func(ctx http.Context) error {
 		var in v11.CreateRedirectRequest
 		if err := ctx.Bind(&in); err != nil {
@@ -113,7 +113,7 @@ func _RedirectService_Create28_HTTP_Handler(srv RedirectServiceHTTPServer) func(
 	}
 }
 
-func _RedirectService_Update29_HTTP_Handler(srv RedirectServiceHTTPServer) func(ctx http.Context) error {
+func _RedirectService_Update30_HTTP_Handler(srv RedirectServiceHTTPServer) func(ctx http.Context) error {
 	return func(ctx http.Context) error {
 		var in v11.UpdateRedirectRequest
 		if err := ctx.Bind(&in); err != nil {
@@ -138,7 +138,7 @@ func _RedirectService_Update29_HTTP_Handler(srv RedirectServiceHTTPServer) func(
 	}
 }
 
-func _RedirectService_Delete31_HTTP_Handler(srv RedirectServiceHTTPServer) func(ctx http.Context) error {
+func _RedirectService_Delete32_HTTP_Handler(srv RedirectServiceHTTPServer) func(ctx http.Context) error {
 	return func(ctx http.Context) error {
 		var in v11.DeleteRedirectRequest
 		if err := ctx.BindQuery(&in); err != nil {

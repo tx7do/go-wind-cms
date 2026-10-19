@@ -61,11 +61,11 @@ type AiKnowledgeBaseServiceHTTPServer interface {
 
 func RegisterAiKnowledgeBaseServiceHTTPServer(s *http.Server, srv AiKnowledgeBaseServiceHTTPServer) {
 	r := s.Route("/")
-	r.GET("/admin/v1/ai/knowledge-bases", _AiKnowledgeBaseService_List1_HTTP_Handler(srv))
-	r.GET("/admin/v1/ai/knowledge-bases/{id}", _AiKnowledgeBaseService_Get1_HTTP_Handler(srv))
-	r.POST("/admin/v1/ai/knowledge-bases", _AiKnowledgeBaseService_Create0_HTTP_Handler(srv))
-	r.PUT("/admin/v1/ai/knowledge-bases/{id}", _AiKnowledgeBaseService_Update1_HTTP_Handler(srv))
-	r.DELETE("/admin/v1/ai/knowledge-bases/{id}", _AiKnowledgeBaseService_Delete1_HTTP_Handler(srv))
+	r.GET("/admin/v1/ai/knowledge-bases", _AiKnowledgeBaseService_List2_HTTP_Handler(srv))
+	r.GET("/admin/v1/ai/knowledge-bases/{id}", _AiKnowledgeBaseService_Get2_HTTP_Handler(srv))
+	r.POST("/admin/v1/ai/knowledge-bases", _AiKnowledgeBaseService_Create1_HTTP_Handler(srv))
+	r.PUT("/admin/v1/ai/knowledge-bases/{id}", _AiKnowledgeBaseService_Update2_HTTP_Handler(srv))
+	r.DELETE("/admin/v1/ai/knowledge-bases/{id}", _AiKnowledgeBaseService_Delete2_HTTP_Handler(srv))
 	r.POST("/admin/v1/ai/knowledge-bases/{base_id}/docs", _AiKnowledgeBaseService_UploadDoc0_HTTP_Handler(srv))
 	r.POST("/admin/v1/ai/knowledge-bases/{base_id}/docs/file", _AiKnowledgeBaseService_UploadDocFile0_HTTP_Handler(srv))
 	r.GET("/admin/v1/ai/knowledge-bases/{base_id}/docs", _AiKnowledgeBaseService_ListDocs0_HTTP_Handler(srv))
@@ -74,7 +74,7 @@ func RegisterAiKnowledgeBaseServiceHTTPServer(s *http.Server, srv AiKnowledgeBas
 	r.POST("/admin/v1/ai/knowledge-bases/reindex", _AiKnowledgeBaseService_ReindexDocs0_HTTP_Handler(srv))
 }
 
-func _AiKnowledgeBaseService_List1_HTTP_Handler(srv AiKnowledgeBaseServiceHTTPServer) func(ctx http.Context) error {
+func _AiKnowledgeBaseService_List2_HTTP_Handler(srv AiKnowledgeBaseServiceHTTPServer) func(ctx http.Context) error {
 	return func(ctx http.Context) error {
 		var in v1.PagingRequest
 		if err := ctx.BindQuery(&in); err != nil {
@@ -93,7 +93,7 @@ func _AiKnowledgeBaseService_List1_HTTP_Handler(srv AiKnowledgeBaseServiceHTTPSe
 	}
 }
 
-func _AiKnowledgeBaseService_Get1_HTTP_Handler(srv AiKnowledgeBaseServiceHTTPServer) func(ctx http.Context) error {
+func _AiKnowledgeBaseService_Get2_HTTP_Handler(srv AiKnowledgeBaseServiceHTTPServer) func(ctx http.Context) error {
 	return func(ctx http.Context) error {
 		var in v11.GetAiKnowledgeBaseRequest
 		if err := ctx.BindQuery(&in); err != nil {
@@ -115,7 +115,7 @@ func _AiKnowledgeBaseService_Get1_HTTP_Handler(srv AiKnowledgeBaseServiceHTTPSer
 	}
 }
 
-func _AiKnowledgeBaseService_Create0_HTTP_Handler(srv AiKnowledgeBaseServiceHTTPServer) func(ctx http.Context) error {
+func _AiKnowledgeBaseService_Create1_HTTP_Handler(srv AiKnowledgeBaseServiceHTTPServer) func(ctx http.Context) error {
 	return func(ctx http.Context) error {
 		var in v11.CreateAiKnowledgeBaseRequest
 		if err := ctx.Bind(&in); err != nil {
@@ -137,7 +137,7 @@ func _AiKnowledgeBaseService_Create0_HTTP_Handler(srv AiKnowledgeBaseServiceHTTP
 	}
 }
 
-func _AiKnowledgeBaseService_Update1_HTTP_Handler(srv AiKnowledgeBaseServiceHTTPServer) func(ctx http.Context) error {
+func _AiKnowledgeBaseService_Update2_HTTP_Handler(srv AiKnowledgeBaseServiceHTTPServer) func(ctx http.Context) error {
 	return func(ctx http.Context) error {
 		var in v11.UpdateAiKnowledgeBaseRequest
 		if err := ctx.Bind(&in); err != nil {
@@ -162,7 +162,7 @@ func _AiKnowledgeBaseService_Update1_HTTP_Handler(srv AiKnowledgeBaseServiceHTTP
 	}
 }
 
-func _AiKnowledgeBaseService_Delete1_HTTP_Handler(srv AiKnowledgeBaseServiceHTTPServer) func(ctx http.Context) error {
+func _AiKnowledgeBaseService_Delete2_HTTP_Handler(srv AiKnowledgeBaseServiceHTTPServer) func(ctx http.Context) error {
 	return func(ctx http.Context) error {
 		var in v11.DeleteAiKnowledgeBaseRequest
 		if err := ctx.BindQuery(&in); err != nil {

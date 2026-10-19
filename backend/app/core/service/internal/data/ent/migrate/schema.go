@@ -9,6 +9,42 @@ import (
 )
 
 var (
+	// SysAccessKeysColumns holds the columns for the "sys_access_keys" table.
+	SysAccessKeysColumns = []*schema.Column{
+		{Name: "id", Type: field.TypeUint32, Increment: true, Comment: "id"},
+		{Name: "created_at", Type: field.TypeTime, Nullable: true, Comment: "创建时间"},
+		{Name: "updated_at", Type: field.TypeTime, Nullable: true, Comment: "更新时间"},
+		{Name: "deleted_at", Type: field.TypeTime, Nullable: true, Comment: "删除时间"},
+		{Name: "created_by", Type: field.TypeUint32, Nullable: true, Comment: "创建者ID"},
+		{Name: "updated_by", Type: field.TypeUint32, Nullable: true, Comment: "更新者ID"},
+		{Name: "deleted_by", Type: field.TypeUint32, Nullable: true, Comment: "删除者ID"},
+		{Name: "status", Type: field.TypeEnum, Comment: "状态", Enums: []string{"OFF", "ON"}, Default: "ON"},
+		{Name: "tenant_id", Type: field.TypeUint32, Nullable: true, Comment: "租户ID", Default: 0},
+		{Name: "name", Type: field.TypeString, Nullable: true, Comment: "凭证名称（用途说明）"},
+		{Name: "access_key", Type: field.TypeString, Nullable: true, Comment: "访问键（AK，公开标识）"},
+		{Name: "secret_hash", Type: field.TypeString, Nullable: true, Comment: "密钥摘要（SHA-256 hex，明文不落库）"},
+		{Name: "expires_at", Type: field.TypeTime, Nullable: true, Comment: "过期时间（空表示长期有效）"},
+		{Name: "last_used_at", Type: field.TypeTime, Nullable: true, Comment: "最近一次令牌交换时间"},
+	}
+	// SysAccessKeysTable holds the schema information for the "sys_access_keys" table.
+	SysAccessKeysTable = &schema.Table{
+		Name:       "sys_access_keys",
+		Comment:    "OpenAPI访问凭证表",
+		Columns:    SysAccessKeysColumns,
+		PrimaryKey: []*schema.Column{SysAccessKeysColumns[0]},
+		Indexes: []*schema.Index{
+			{
+				Name:    "idx_sys_access_keys_access_key",
+				Unique:  true,
+				Columns: []*schema.Column{SysAccessKeysColumns[10]},
+			},
+			{
+				Name:    "idx_sys_access_keys_tenant_id",
+				Unique:  false,
+				Columns: []*schema.Column{SysAccessKeysColumns[8]},
+			},
+		},
+	}
 	// SysAiChunksColumns holds the columns for the "sys_ai_chunks" table.
 	SysAiChunksColumns = []*schema.Column{
 		{Name: "id", Type: field.TypeUint32, Increment: true, Comment: "id"},
@@ -5251,6 +5287,7 @@ var (
 	}
 	// Tables holds all the tables in the schema.
 	Tables = []*schema.Table{
+		SysAccessKeysTable,
 		SysAiChunksTable,
 		SysAiConversationsTable,
 		SysAiDocsTable,
@@ -5351,6 +5388,11 @@ var (
 )
 
 func init() {
+	SysAccessKeysTable.Annotation = &entsql.Annotation{
+		Table:     "sys_access_keys",
+		Charset:   "utf8mb4",
+		Collation: "utf8mb4_bin",
+	}
 	SysAiChunksTable.ForeignKeys[0].RefTable = SysAiDocsTable
 	SysAiChunksTable.Annotation = &entsql.Annotation{
 		Table:     "sys_ai_chunks",

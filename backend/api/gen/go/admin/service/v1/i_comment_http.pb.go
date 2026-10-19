@@ -43,14 +43,14 @@ type CommentServiceHTTPServer interface {
 
 func RegisterCommentServiceHTTPServer(s *http.Server, srv CommentServiceHTTPServer) {
 	r := s.Route("/")
-	r.GET("/admin/v1/comments", _CommentService_List8_HTTP_Handler(srv))
-	r.GET("/admin/v1/comments/{id}", _CommentService_Get6_HTTP_Handler(srv))
-	r.POST("/admin/v1/comments", _CommentService_Create4_HTTP_Handler(srv))
-	r.PUT("/admin/v1/comments/{id}", _CommentService_Update5_HTTP_Handler(srv))
-	r.DELETE("/admin/v1/comments/{id}", _CommentService_Delete6_HTTP_Handler(srv))
+	r.GET("/admin/v1/comments", _CommentService_List9_HTTP_Handler(srv))
+	r.GET("/admin/v1/comments/{id}", _CommentService_Get7_HTTP_Handler(srv))
+	r.POST("/admin/v1/comments", _CommentService_Create5_HTTP_Handler(srv))
+	r.PUT("/admin/v1/comments/{id}", _CommentService_Update6_HTTP_Handler(srv))
+	r.DELETE("/admin/v1/comments/{id}", _CommentService_Delete7_HTTP_Handler(srv))
 }
 
-func _CommentService_List8_HTTP_Handler(srv CommentServiceHTTPServer) func(ctx http.Context) error {
+func _CommentService_List9_HTTP_Handler(srv CommentServiceHTTPServer) func(ctx http.Context) error {
 	return func(ctx http.Context) error {
 		var in v1.PagingRequest
 		if err := ctx.BindQuery(&in); err != nil {
@@ -69,7 +69,7 @@ func _CommentService_List8_HTTP_Handler(srv CommentServiceHTTPServer) func(ctx h
 	}
 }
 
-func _CommentService_Get6_HTTP_Handler(srv CommentServiceHTTPServer) func(ctx http.Context) error {
+func _CommentService_Get7_HTTP_Handler(srv CommentServiceHTTPServer) func(ctx http.Context) error {
 	return func(ctx http.Context) error {
 		var in v11.GetCommentRequest
 		if err := ctx.BindQuery(&in); err != nil {
@@ -91,7 +91,7 @@ func _CommentService_Get6_HTTP_Handler(srv CommentServiceHTTPServer) func(ctx ht
 	}
 }
 
-func _CommentService_Create4_HTTP_Handler(srv CommentServiceHTTPServer) func(ctx http.Context) error {
+func _CommentService_Create5_HTTP_Handler(srv CommentServiceHTTPServer) func(ctx http.Context) error {
 	return func(ctx http.Context) error {
 		var in v11.CreateCommentRequest
 		if err := ctx.Bind(&in); err != nil {
@@ -113,7 +113,7 @@ func _CommentService_Create4_HTTP_Handler(srv CommentServiceHTTPServer) func(ctx
 	}
 }
 
-func _CommentService_Update5_HTTP_Handler(srv CommentServiceHTTPServer) func(ctx http.Context) error {
+func _CommentService_Update6_HTTP_Handler(srv CommentServiceHTTPServer) func(ctx http.Context) error {
 	return func(ctx http.Context) error {
 		var in v11.UpdateCommentRequest
 		if err := ctx.Bind(&in); err != nil {
@@ -138,7 +138,7 @@ func _CommentService_Update5_HTTP_Handler(srv CommentServiceHTTPServer) func(ctx
 	}
 }
 
-func _CommentService_Delete6_HTTP_Handler(srv CommentServiceHTTPServer) func(ctx http.Context) error {
+func _CommentService_Delete7_HTTP_Handler(srv CommentServiceHTTPServer) func(ctx http.Context) error {
 	return func(ctx http.Context) error {
 		var in v11.DeleteCommentRequest
 		if err := ctx.BindQuery(&in); err != nil {

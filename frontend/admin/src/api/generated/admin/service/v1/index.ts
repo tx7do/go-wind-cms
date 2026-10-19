@@ -125,6 +125,484 @@ export type AdminErrorReason =
   | 'USER_NOT_FOUND'
   // 506
   | 'VARIANT_ALSO_NEGOTIATES';
+// OpenAPI 访问凭证（AK/SK）管理 — BFF
+export interface AccessKeyService {
+  // 分页查询访问凭证列表
+  List(
+    request: pagination_PagingRequest,
+  ): Promise<access_keyservicev1_ListAccessKeyResponse>;
+  // 查询访问凭证详情
+  Get(
+    request: access_keyservicev1_GetAccessKeyRequest,
+  ): Promise<access_keyservicev1_AccessKey>;
+  // 创建访问凭证（响应中的 secret 仅本次明文返回，服务端只存 SHA-256 摘要）
+  Create(
+    request: access_keyservicev1_CreateAccessKeyRequest,
+  ): Promise<access_keyservicev1_CreateAccessKeyResponse>;
+  // 更新访问凭证（名称/状态/过期时间）
+  Update(
+    request: access_keyservicev1_UpdateAccessKeyRequest,
+  ): Promise<wellKnownEmpty>;
+  // 删除访问凭证
+  Delete(
+    request: access_keyservicev1_DeleteAccessKeyRequest,
+  ): Promise<wellKnownEmpty>;
+  // 重置密钥：生成新 Secret（响应明文返回一次）
+  ResetSecret(
+    request: access_keyservicev1_ResetAccessKeySecretRequest,
+  ): Promise<access_keyservicev1_CreateAccessKeyResponse>;
+  // 令牌交换（机器对机器）：AK/SK 换短期 JWT。免鉴权端点——本身即是认证。
+  IssueToken(
+    request: access_keyservicev1_IssueTokenRequest,
+  ): Promise<access_keyservicev1_IssueTokenResponse>;
+}
+
+export function createAccessKeyServiceClient(
+  transport: ClientTransport,
+): AccessKeyService {
+  return {
+    List(request) {
+      const path = `admin/v1/access-keys`;
+      const body = null;
+      const queryParams: string[] = [];
+      if (request.page) {
+        queryParams.push(
+          `page=${encodeURIComponent(request.page.toString())}`,
+        );
+      }
+      if (request.pageSize) {
+        queryParams.push(
+          `pageSize=${encodeURIComponent(request.pageSize.toString())}`,
+        );
+      }
+      if (request.offset) {
+        queryParams.push(
+          `offset=${encodeURIComponent(request.offset.toString())}`,
+        );
+      }
+      if (request.limit) {
+        queryParams.push(
+          `limit=${encodeURIComponent(request.limit.toString())}`,
+        );
+      }
+      if (request.token) {
+        queryParams.push(
+          `token=${encodeURIComponent(request.token.toString())}`,
+        );
+      }
+      if (request.noPaging) {
+        queryParams.push(
+          `noPaging=${encodeURIComponent(request.noPaging.toString())}`,
+        );
+      }
+      if (request.query) {
+        queryParams.push(
+          `query=${encodeURIComponent(request.query.toString())}`,
+        );
+      }
+      if (request.filter) {
+        queryParams.push(
+          `filter=${encodeURIComponent(request.filter.toString())}`,
+        );
+      }
+      if (request.filterExpr?.type) {
+        queryParams.push(
+          `filterExpr.type=${encodeURIComponent(request.filterExpr.type.toString())}`,
+        );
+      }
+      if (request.filterExpr?.conditions?.field) {
+        queryParams.push(
+          `filterExpr.conditions.field=${encodeURIComponent(request.filterExpr.conditions.field.toString())}`,
+        );
+      }
+      if (request.filterExpr?.conditions?.op) {
+        queryParams.push(
+          `filterExpr.conditions.op=${encodeURIComponent(request.filterExpr.conditions.op.toString())}`,
+        );
+      }
+      if (request.filterExpr?.conditions?.value) {
+        queryParams.push(
+          `filterExpr.conditions.value=${encodeURIComponent(request.filterExpr.conditions.value.toString())}`,
+        );
+      }
+      if (request.filterExpr?.conditions?.jsonValue) {
+        queryParams.push(
+          `filterExpr.conditions.jsonValue=${encodeURIComponent(request.filterExpr.conditions.jsonValue.toString())}`,
+        );
+      }
+      if (request.filterExpr?.conditions?.values) {
+        request.filterExpr.conditions.values.forEach((x) => {
+          queryParams.push(
+            `filterExpr.conditions.values=${encodeURIComponent(x.toString())}`,
+          );
+        });
+      }
+      if (request.filterExpr?.conditions?.datePart) {
+        queryParams.push(
+          `filterExpr.conditions.datePart=${encodeURIComponent(request.filterExpr.conditions.datePart.toString())}`,
+        );
+      }
+      if (request.filterExpr?.conditions?.jsonPath) {
+        queryParams.push(
+          `filterExpr.conditions.jsonPath=${encodeURIComponent(request.filterExpr.conditions.jsonPath.toString())}`,
+        );
+      }
+      if (request.orderBy) {
+        queryParams.push(
+          `orderBy=${encodeURIComponent(request.orderBy.toString())}`,
+        );
+      }
+      if (request.sorting?.field) {
+        queryParams.push(
+          `sorting.field=${encodeURIComponent(request.sorting.field.toString())}`,
+        );
+      }
+      if (request.sorting?.direction) {
+        queryParams.push(
+          `sorting.direction=${encodeURIComponent(request.sorting.direction.toString())}`,
+        );
+      }
+      if (request.fieldMask) {
+        queryParams.push(
+          `fieldMask=${encodeURIComponent(request.fieldMask.toString())}`,
+        );
+      }
+      let uri = path;
+      if (queryParams.length > 0) {
+        uri += `?${queryParams.join('&')}`;
+      }
+      return transport.unary(uri, 'GET', body, {
+        service: 'AccessKeyService',
+        method: 'List',
+      }) as Promise<access_keyservicev1_ListAccessKeyResponse>;
+    },
+    Get(request) {
+      if (request.id === undefined || request.id === null) {
+        throw new Error('missing required field request.id');
+      }
+      const path = `admin/v1/access-keys/${request.id}`;
+      const body = null;
+      const queryParams: string[] = [];
+      if (request.accessKey) {
+        queryParams.push(
+          `accessKey=${encodeURIComponent(request.accessKey.toString())}`,
+        );
+      }
+      if (request.viewMask) {
+        queryParams.push(
+          `viewMask=${encodeURIComponent(request.viewMask.toString())}`,
+        );
+      }
+      let uri = path;
+      if (queryParams.length > 0) {
+        uri += `?${queryParams.join('&')}`;
+      }
+      return transport.unary(uri, 'GET', body, {
+        service: 'AccessKeyService',
+        method: 'Get',
+      }) as Promise<access_keyservicev1_AccessKey>;
+    },
+    Create(request) {
+      const path = `admin/v1/access-keys`;
+      const body = JSON.stringify(request);
+      return transport.unary(path, 'POST', body, {
+        service: 'AccessKeyService',
+        method: 'Create',
+      }) as Promise<access_keyservicev1_CreateAccessKeyResponse>;
+    },
+    Update(request) {
+      if (request.id === undefined || request.id === null) {
+        throw new Error('missing required field request.id');
+      }
+      const path = `admin/v1/access-keys/${request.id}`;
+      const body = JSON.stringify(request);
+      return transport.unary(path, 'PUT', body, {
+        service: 'AccessKeyService',
+        method: 'Update',
+      }) as Promise<wellKnownEmpty>;
+    },
+    Delete(request) {
+      if (request.id === undefined || request.id === null) {
+        throw new Error('missing required field request.id');
+      }
+      const path = `admin/v1/access-keys/${request.id}`;
+      const body = null;
+      return transport.unary(path, 'DELETE', body, {
+        service: 'AccessKeyService',
+        method: 'Delete',
+      }) as Promise<wellKnownEmpty>;
+    },
+    ResetSecret(request) {
+      if (request.id === undefined || request.id === null) {
+        throw new Error('missing required field request.id');
+      }
+      const path = `admin/v1/access-keys/${request.id}/secret`;
+      const body = JSON.stringify(request);
+      return transport.unary(path, 'PUT', body, {
+        service: 'AccessKeyService',
+        method: 'ResetSecret',
+      }) as Promise<access_keyservicev1_CreateAccessKeyResponse>;
+    },
+    IssueToken(request) {
+      const path = `admin/v1/access-keys/token`;
+      const body = JSON.stringify(request);
+      return transport.unary(path, 'POST', body, {
+        service: 'AccessKeyService',
+        method: 'IssueToken',
+      }) as Promise<access_keyservicev1_IssueTokenResponse>;
+    },
+  };
+}
+// ------------------------------
+// 分页通用请求
+// ------------------------------
+export type pagination_PagingRequest = {
+  // 字段掩码，其作用为SELECT中的字段，其语法为使用逗号分隔字段名，例如：id,realName,userName。如果为空则选中所有字段，即SELECT *。
+  fieldMask?: wellKnownFieldMask;
+  // Google AIP规范字符串过滤条件
+  filter?: string;
+  // 复杂过滤表达式（优先使用）
+  filterExpr?: pagination_FilterExpr;
+  // 最多返回的记录数（默认10，建议设置上限如100）
+  limit?: number;
+  // 是否不分页，如果为true，则page和pageSize参数无效。
+  noPaging?: boolean;
+  // 跳过的记录数（从0开始，默认0）
+  offset?: number;
+  // 排序条件
+  orderBy?: string;
+  // 当前页码（从1开始，默认1）
+  page?: number;
+  // 每页条数（默认10，建议设置上限如100）
+  pageSize?: number;
+  // JSON字符串过滤条件，基础语法：{"field1":"val1", "field2___icontains":"val2"}，具体请参见：https://github.com/tx7do/go-crud/tree/main/pagination/filter/README.md
+  query?: string;
+  // 排序规则
+  sorting: pagination_Sorting[] | undefined;
+  // 上一页最后一条记录的游标（如ID/时间戳+ID，首次请求为空）
+  token?: string;
+};
+
+// 过滤表达式
+export type pagination_FilterExpr = {
+  // 条件列表
+  conditions: pagination_FilterCondition[] | undefined;
+  // 子表达式列表
+  groups: pagination_FilterExpr[] | undefined;
+  // 过滤表达式类型
+  type: pagination_ExprType | undefined;
+};
+
+// 过滤表达式类型
+export type pagination_ExprType =
+  | 'AND'
+  | 'EXPR_TYPE_UNSPECIFIED'
+  | 'OR';
+// 过滤条件
+export type pagination_FilterCondition = {
+  // 日期时间部分（可选，仅在字段为日期时间类型时使用）
+  datePart?: pagination_DatePart;
+  // 过滤字段名
+  field: string | undefined;
+  // 当字段为 JSON/JSONB 类型时，可指定要抽取的子路径（例如: "meta.user.name" 或 JSONPath）
+  // 服务端应把此路径用于 JSON_EXTRACT / -> 操作，再对抽取结果应用 op。
+  jsonPath?: string;
+  // 当需要使用非字符串类型的比较值（对象/数组/数字/布尔）时使用此字段，
+  // 使用 google.protobuf.Value 能表达任意 JSON 值。
+  jsonValue?: wellKnownValue;
+  // 过滤操作符
+  op: pagination_Operator | undefined;
+  // 过滤值（单值）
+  value?: string;
+  // 过滤值（多值，如IN操作符）
+  values: string[] | undefined;
+};
+
+// 操作符枚举
+export type pagination_Operator =
+  | 'ARRAY_CONTAINS'
+  // 范围与正则
+  | 'BETWEEN'
+  // 语义化的字符串操作
+  | 'CONTAINS'
+  | 'ENDS_WITH'
+  // 基本比较
+  | 'EQ'
+  | 'EXACT'
+  | 'EXISTS'
+  | 'GT'
+  | 'GTE'
+  | 'ICONTAINS'
+  | 'IENDS_WITH'
+  | 'IEXACT'
+  | 'ILIKE'
+  // 集合操作
+  | 'IN'
+  | 'IREGEXP'
+  | 'IS_NOT_NULL'
+  // 空值判断
+  | 'IS_NULL'
+  | 'ISTARTS_WITH'
+  // JSON / 数组 / 集合相关（按需在服务端映射为具体 DB 运算）
+  | 'JSON_CONTAINS'
+  // 模糊 / 大小写不敏感模糊 / 非模糊
+  | 'LIKE'
+  | 'LT'
+  | 'LTE'
+  | 'NEQ'
+  | 'NIN'
+  | 'NOT_LIKE'
+  // 未指定
+  | 'OPERATOR_UNSPECIFIED'
+  | 'REGEXP'
+  | 'SEARCH'
+  | 'STARTS_WITH';
+type wellKnownValue = unknown;
+
+// 日期时间部分枚举
+export type pagination_DatePart =
+  | 'DATE'
+  | 'DATE_PART_UNSPECIFIED'
+  | 'DAY'
+  | 'HOUR'
+  | 'ISO_WEEK_DAY'
+  | 'ISO_YEAR'
+  | 'MICROSECOND'
+  | 'MINUTE'
+  | 'MONTH'
+  | 'QUARTER'
+  | 'SECOND'
+  | 'TIME'
+  | 'WEEK'
+  | 'WEEK_DAY'
+  | 'YEAR';
+// 排序规则（分页场景通常需配合排序保证结果稳定）
+export type pagination_Sorting = {
+  // 排序方向
+  direction: pagination_Sorting_Direction | undefined;
+  // 排序字段（如"id"、"create_time"）
+  field: string | undefined;
+};
+
+// 排序方向（ASC/DESC，默认ASC）
+export type pagination_Sorting_Direction =
+  | 'ASC'
+  | 'DESC';
+// In JSON, a field mask is encoded as a single string where paths are
+// separated by a comma. Fields name in each path are converted
+// to/from lower-camel naming conventions.
+// As an example, consider the following message declarations:
+//
+//     message Profile {
+//       User user = 1;
+//       Photo photo = 2;
+//     }
+//     message User {
+//       string display_name = 1;
+//       string address = 2;
+//     }
+//
+// In proto a field mask for `Profile` may look as such:
+//
+//     mask {
+//       paths: "user.display_name"
+//       paths: "photo"
+//     }
+//
+// In JSON, the same mask is represented as below:
+//
+//     {
+//       mask: "user.displayName,photo"
+//     }
+type wellKnownFieldMask = string;
+
+// 查询访问凭证列表 - 回应
+export type access_keyservicev1_ListAccessKeyResponse = {
+  items: access_keyservicev1_AccessKey[] | undefined;
+  total: number | undefined;
+};
+
+// OpenAPI 访问凭证（AK/SK）
+export type access_keyservicev1_AccessKey = {
+  accessKey?: string;
+  createdAt?: wellKnownTimestamp;
+  createdBy?: number;
+  deletedAt?: wellKnownTimestamp;
+  deletedBy?: number;
+  expiresAt?: wellKnownTimestamp;
+  id?: number;
+  lastUsedAt?: wellKnownTimestamp;
+  name?: string;
+  status?: access_keyservicev1_AccessKey_Status;
+  tenantId?: number;
+  updatedAt?: wellKnownTimestamp;
+  updatedBy?: number;
+};
+
+// 凭证状态
+export type access_keyservicev1_AccessKey_Status =
+  | 'OFF'
+  | 'ON';
+// Encoded using RFC 3339, where generated output will always be Z-normalized
+// and uses 0, 3, 6 or 9 fractional digits.
+// Offsets other than "Z" are also accepted.
+type wellKnownTimestamp = string;
+
+// 查询访问凭证详情 - 请求
+export type access_keyservicev1_GetAccessKeyRequest = {
+  accessKey?: string;
+  id?: number;
+  viewMask?: wellKnownFieldMask;
+};
+
+// 创建访问凭证 - 请求
+export type access_keyservicev1_CreateAccessKeyRequest = {
+  data: access_keyservicev1_AccessKey | undefined;
+};
+
+// 创建访问凭证 - 回应（secret 仅本次明文返回，服务端只存 SHA-256 摘要）
+export type access_keyservicev1_CreateAccessKeyResponse = {
+  data: access_keyservicev1_AccessKey | undefined;
+  secret: string | undefined;
+};
+
+// 更新访问凭证 - 请求
+export type access_keyservicev1_UpdateAccessKeyRequest = {
+  allowMissing?: boolean;
+  data: access_keyservicev1_AccessKey | undefined;
+  id: number | undefined;
+  updateMask: undefined | wellKnownFieldMask;
+};
+
+// An empty JSON object
+type wellKnownEmpty = Record<never, never>;
+
+// 删除访问凭证 - 请求
+export type access_keyservicev1_DeleteAccessKeyRequest = {
+  id: number | undefined;
+};
+
+// 重置密钥 - 请求
+export type access_keyservicev1_ResetAccessKeySecretRequest = {
+  id: number | undefined;
+};
+
+// 令牌交换 - 请求（机器对机器：AK/SK 换取短期 JWT）
+export type access_keyservicev1_IssueTokenRequest = {
+  accessKey: string | undefined;
+  // 与上游不同：CMS 的 core 无法感知 HTTP 层，调用方 IP 由 admin BFF 从
+  // HTTP 请求解析后注入（ClientRealIP），用于交换端点的防爆破限流计数。
+  clientIp?: string;
+  secret: string | undefined;
+};
+
+// 令牌交换 - 回应
+export type access_keyservicev1_IssueTokenResponse = {
+  accessToken: string | undefined;
+  expiresIn: number | undefined;
+  tokenType: string | undefined;
+};
+
 // 查询路由列表 - 回应
 export type ListRouteResponse = {
   items: permissionservicev1_MenuRouteItem[] | undefined;
@@ -284,9 +762,6 @@ export function createAdminPortalServiceClient(
     },
   };
 }
-// An empty JSON object
-type wellKnownEmpty = Record<never, never>;
-
 // AI 对话服务（表单助手）
 // 流式语义：本 RPC 是普通 POST（body 为扁平请求体，不包 data）。
 // BFF 消费 core 的 ChatStreamFrame 流：chunk/tool 帧经 SSE 网关
@@ -347,11 +822,6 @@ export type aiservicev1_AiConversation = {
   updatedBy?: number;
   userId?: number;
 };
-
-// Encoded using RFC 3339, where generated output will always be Z-normalized
-// and uses 0, 3, 6 or 9 fractional digits.
-// Offsets other than "Z" are also accepted.
-type wellKnownTimestamp = string;
 
 // AI 对话消息
 export type aiservicev1_AiMessage = {
@@ -715,169 +1185,6 @@ export function createAiConversationServiceClient(
     },
   };
 }
-// ------------------------------
-// 分页通用请求
-// ------------------------------
-export type pagination_PagingRequest = {
-  // 字段掩码，其作用为SELECT中的字段，其语法为使用逗号分隔字段名，例如：id,realName,userName。如果为空则选中所有字段，即SELECT *。
-  fieldMask?: wellKnownFieldMask;
-  // Google AIP规范字符串过滤条件
-  filter?: string;
-  // 复杂过滤表达式（优先使用）
-  filterExpr?: pagination_FilterExpr;
-  // 最多返回的记录数（默认10，建议设置上限如100）
-  limit?: number;
-  // 是否不分页，如果为true，则page和pageSize参数无效。
-  noPaging?: boolean;
-  // 跳过的记录数（从0开始，默认0）
-  offset?: number;
-  // 排序条件
-  orderBy?: string;
-  // 当前页码（从1开始，默认1）
-  page?: number;
-  // 每页条数（默认10，建议设置上限如100）
-  pageSize?: number;
-  // JSON字符串过滤条件，基础语法：{"field1":"val1", "field2___icontains":"val2"}，具体请参见：https://github.com/tx7do/go-crud/tree/main/pagination/filter/README.md
-  query?: string;
-  // 排序规则
-  sorting: pagination_Sorting[] | undefined;
-  // 上一页最后一条记录的游标（如ID/时间戳+ID，首次请求为空）
-  token?: string;
-};
-
-// 过滤表达式
-export type pagination_FilterExpr = {
-  // 条件列表
-  conditions: pagination_FilterCondition[] | undefined;
-  // 子表达式列表
-  groups: pagination_FilterExpr[] | undefined;
-  // 过滤表达式类型
-  type: pagination_ExprType | undefined;
-};
-
-// 过滤表达式类型
-export type pagination_ExprType =
-  | 'AND'
-  | 'EXPR_TYPE_UNSPECIFIED'
-  | 'OR';
-// 过滤条件
-export type pagination_FilterCondition = {
-  // 日期时间部分（可选，仅在字段为日期时间类型时使用）
-  datePart?: pagination_DatePart;
-  // 过滤字段名
-  field: string | undefined;
-  // 当字段为 JSON/JSONB 类型时，可指定要抽取的子路径（例如: "meta.user.name" 或 JSONPath）
-  // 服务端应把此路径用于 JSON_EXTRACT / -> 操作，再对抽取结果应用 op。
-  jsonPath?: string;
-  // 当需要使用非字符串类型的比较值（对象/数组/数字/布尔）时使用此字段，
-  // 使用 google.protobuf.Value 能表达任意 JSON 值。
-  jsonValue?: wellKnownValue;
-  // 过滤操作符
-  op: pagination_Operator | undefined;
-  // 过滤值（单值）
-  value?: string;
-  // 过滤值（多值，如IN操作符）
-  values: string[] | undefined;
-};
-
-// 操作符枚举
-export type pagination_Operator =
-  | 'ARRAY_CONTAINS'
-  // 范围与正则
-  | 'BETWEEN'
-  // 语义化的字符串操作
-  | 'CONTAINS'
-  | 'ENDS_WITH'
-  // 基本比较
-  | 'EQ'
-  | 'EXACT'
-  | 'EXISTS'
-  | 'GT'
-  | 'GTE'
-  | 'ICONTAINS'
-  | 'IENDS_WITH'
-  | 'IEXACT'
-  | 'ILIKE'
-  // 集合操作
-  | 'IN'
-  | 'IREGEXP'
-  | 'IS_NOT_NULL'
-  // 空值判断
-  | 'IS_NULL'
-  | 'ISTARTS_WITH'
-  // JSON / 数组 / 集合相关（按需在服务端映射为具体 DB 运算）
-  | 'JSON_CONTAINS'
-  // 模糊 / 大小写不敏感模糊 / 非模糊
-  | 'LIKE'
-  | 'LT'
-  | 'LTE'
-  | 'NEQ'
-  | 'NIN'
-  | 'NOT_LIKE'
-  // 未指定
-  | 'OPERATOR_UNSPECIFIED'
-  | 'REGEXP'
-  | 'SEARCH'
-  | 'STARTS_WITH';
-type wellKnownValue = unknown;
-
-// 日期时间部分枚举
-export type pagination_DatePart =
-  | 'DATE'
-  | 'DATE_PART_UNSPECIFIED'
-  | 'DAY'
-  | 'HOUR'
-  | 'ISO_WEEK_DAY'
-  | 'ISO_YEAR'
-  | 'MICROSECOND'
-  | 'MINUTE'
-  | 'MONTH'
-  | 'QUARTER'
-  | 'SECOND'
-  | 'TIME'
-  | 'WEEK'
-  | 'WEEK_DAY'
-  | 'YEAR';
-// 排序规则（分页场景通常需配合排序保证结果稳定）
-export type pagination_Sorting = {
-  // 排序方向
-  direction: pagination_Sorting_Direction | undefined;
-  // 排序字段（如"id"、"create_time"）
-  field: string | undefined;
-};
-
-// 排序方向（ASC/DESC，默认ASC）
-export type pagination_Sorting_Direction =
-  | 'ASC'
-  | 'DESC';
-// In JSON, a field mask is encoded as a single string where paths are
-// separated by a comma. Fields name in each path are converted
-// to/from lower-camel naming conventions.
-// As an example, consider the following message declarations:
-//
-//     message Profile {
-//       User user = 1;
-//       Photo photo = 2;
-//     }
-//     message User {
-//       string display_name = 1;
-//       string address = 2;
-//     }
-//
-// In proto a field mask for `Profile` may look as such:
-//
-//     mask {
-//       paths: "user.display_name"
-//       paths: "photo"
-//     }
-//
-// In JSON, the same mask is represented as below:
-//
-//     {
-//       mask: "user.displayName,photo"
-//     }
-type wellKnownFieldMask = string;
-
 // 查询会话列表 - 回应
 export type aiservicev1_ListAiConversationResponse = {
   items: aiservicev1_AiConversation[] | undefined;
@@ -17048,6 +17355,7 @@ export type webhookservicev1_ListWebhookDeliveriesResponse = {
 };
 
 export class ApiClient {
+  private _accessKeyService?: AccessKeyService;
   private _adminPortalService?: AdminPortalService;
   private _aiChatService?: AiChatService;
   private _aiContentService?: AiContentService;
@@ -17120,6 +17428,10 @@ export class ApiClient {
 
   constructor(transport: ClientTransport) {
     this._transport = transport;
+  }
+
+  get accessKeyService(): AccessKeyService {
+    return this._accessKeyService ??= createAccessKeyServiceClient(this._transport);
   }
 
   get adminPortalService(): AdminPortalService {

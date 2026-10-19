@@ -62,6 +62,9 @@ func NewRestMiddleware(
 		// AuthenticationService.GetTenantBranding：登录页按租户编号渲染 Logo/名称，
 		// 登录前置步骤；只暴露展示字段，未命中返回 found=false 防枚举。
 		adminV1.OperationAuthenticationServiceGetTenantBranding,
+		// AccessKeyService.IssueToken：AK/SK 令牌交换（机器对机器），免鉴权——
+		// 它本身即是认证；调用方凭 AccessKey 头无 bearer，须在白名单内。
+		adminV1.OperationAccessKeyServiceIssueToken,
 	)
 
 	ms = append(ms, applogging.Server(
@@ -186,6 +189,7 @@ func NewRestServer(
 	notificationService *service.NotificationService,
 	monitorAlertService *service.MonitorAlertService,
 	onlineSessionService *service.OnlineSessionService,
+	accessKeyService *service.AccessKeyService,
 	serverMonitorService *service.ServerMonitorService,
 	redisCacheMonitorService *service.RedisCacheMonitorService,
 	notificationChannelService *service.NotificationChannelService,
@@ -276,6 +280,7 @@ func NewRestServer(
 	adminV1.RegisterNotificationServiceHTTPServer(srv, notificationService)
 	adminV1.RegisterMonitorAlertServiceHTTPServer(srv, monitorAlertService)
 	adminV1.RegisterOnlineSessionServiceHTTPServer(srv, onlineSessionService)
+	adminV1.RegisterAccessKeyServiceHTTPServer(srv, accessKeyService)
 	adminV1.RegisterServerMonitorServiceHTTPServer(srv, serverMonitorService)
 	adminV1.RegisterRedisCacheMonitorServiceHTTPServer(srv, redisCacheMonitorService)
 	adminV1.RegisterNotificationChannelServiceHTTPServer(srv, notificationChannelService)

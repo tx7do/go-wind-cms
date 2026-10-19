@@ -24,6 +24,7 @@ import (
 	"go-wind-cms/pkg/translator/baidu"
 
 	aiV1 "go-wind-cms/api/gen/go/ai/service/v1"
+	accesskeyV1 "go-wind-cms/api/gen/go/access_key/service/v1"
 	auditV1 "go-wind-cms/api/gen/go/audit/service/v1"
 	authenticationV1 "go-wind-cms/api/gen/go/authentication/service/v1"
 	commentV1 "go-wind-cms/api/gen/go/comment/service/v1"
@@ -388,6 +389,15 @@ func NewOnlineSessionServiceClient(ctx *bootstrap.Context, r registry.Discovery)
 	}
 
 	return onlineSessionV1.NewOnlineSessionServiceClient(cli)
+}
+
+func NewAccessKeyServiceClient(ctx *bootstrap.Context, r registry.Discovery) accesskeyV1.AccessKeyServiceClient {
+	cli, err := rpc.CreateGrpcClient(ctx.Context(), r, serviceid.NewDiscoveryName(serviceid.CoreService), ctx.GetConfig())
+	if err != nil {
+		return nil
+	}
+
+	return accesskeyV1.NewAccessKeyServiceClient(cli)
 }
 
 func NewServerMonitorServiceClient(ctx *bootstrap.Context, r registry.Discovery) serverMonitorV1.ServerMonitorServiceClient {

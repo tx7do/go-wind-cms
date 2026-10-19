@@ -43,14 +43,14 @@ type AiProviderServiceHTTPServer interface {
 
 func RegisterAiProviderServiceHTTPServer(s *http.Server, srv AiProviderServiceHTTPServer) {
 	r := s.Route("/")
-	r.GET("/admin/v1/ai/providers", _AiProviderService_List3_HTTP_Handler(srv))
-	r.GET("/admin/v1/ai/providers/{id}", _AiProviderService_Get2_HTTP_Handler(srv))
-	r.POST("/admin/v1/ai/providers", _AiProviderService_Create1_HTTP_Handler(srv))
-	r.PUT("/admin/v1/ai/providers/{id}", _AiProviderService_Update2_HTTP_Handler(srv))
-	r.DELETE("/admin/v1/ai/providers/{id}", _AiProviderService_Delete3_HTTP_Handler(srv))
+	r.GET("/admin/v1/ai/providers", _AiProviderService_List4_HTTP_Handler(srv))
+	r.GET("/admin/v1/ai/providers/{id}", _AiProviderService_Get3_HTTP_Handler(srv))
+	r.POST("/admin/v1/ai/providers", _AiProviderService_Create2_HTTP_Handler(srv))
+	r.PUT("/admin/v1/ai/providers/{id}", _AiProviderService_Update3_HTTP_Handler(srv))
+	r.DELETE("/admin/v1/ai/providers/{id}", _AiProviderService_Delete4_HTTP_Handler(srv))
 }
 
-func _AiProviderService_List3_HTTP_Handler(srv AiProviderServiceHTTPServer) func(ctx http.Context) error {
+func _AiProviderService_List4_HTTP_Handler(srv AiProviderServiceHTTPServer) func(ctx http.Context) error {
 	return func(ctx http.Context) error {
 		var in v1.PagingRequest
 		if err := ctx.BindQuery(&in); err != nil {
@@ -69,7 +69,7 @@ func _AiProviderService_List3_HTTP_Handler(srv AiProviderServiceHTTPServer) func
 	}
 }
 
-func _AiProviderService_Get2_HTTP_Handler(srv AiProviderServiceHTTPServer) func(ctx http.Context) error {
+func _AiProviderService_Get3_HTTP_Handler(srv AiProviderServiceHTTPServer) func(ctx http.Context) error {
 	return func(ctx http.Context) error {
 		var in v11.GetAiProviderRequest
 		if err := ctx.BindQuery(&in); err != nil {
@@ -91,7 +91,7 @@ func _AiProviderService_Get2_HTTP_Handler(srv AiProviderServiceHTTPServer) func(
 	}
 }
 
-func _AiProviderService_Create1_HTTP_Handler(srv AiProviderServiceHTTPServer) func(ctx http.Context) error {
+func _AiProviderService_Create2_HTTP_Handler(srv AiProviderServiceHTTPServer) func(ctx http.Context) error {
 	return func(ctx http.Context) error {
 		var in v11.CreateAiProviderRequest
 		if err := ctx.Bind(&in); err != nil {
@@ -113,7 +113,7 @@ func _AiProviderService_Create1_HTTP_Handler(srv AiProviderServiceHTTPServer) fu
 	}
 }
 
-func _AiProviderService_Update2_HTTP_Handler(srv AiProviderServiceHTTPServer) func(ctx http.Context) error {
+func _AiProviderService_Update3_HTTP_Handler(srv AiProviderServiceHTTPServer) func(ctx http.Context) error {
 	return func(ctx http.Context) error {
 		var in v11.UpdateAiProviderRequest
 		if err := ctx.Bind(&in); err != nil {
@@ -138,7 +138,7 @@ func _AiProviderService_Update2_HTTP_Handler(srv AiProviderServiceHTTPServer) fu
 	}
 }
 
-func _AiProviderService_Delete3_HTTP_Handler(srv AiProviderServiceHTTPServer) func(ctx http.Context) error {
+func _AiProviderService_Delete4_HTTP_Handler(srv AiProviderServiceHTTPServer) func(ctx http.Context) error {
 	return func(ctx http.Context) error {
 		var in v11.DeleteAiProviderRequest
 		if err := ctx.BindQuery(&in); err != nil {

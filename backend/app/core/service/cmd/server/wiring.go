@@ -210,6 +210,10 @@ func initApp(ctx *bootstrap.Context) (*kratos.App, func(), error) {
 
 	// ── register:repo ── 新模块仓储在此行后注册(make register 工具锚点,勿删)
 
+	// 访问凭证（AK/SK）：OpenAPI 机器凭证
+	accessKeyRepo := data.NewAccessKeyRepo(ctx, entClient)
+	accessKeyRateLimiter := data.NewAccessKeyRateLimiter(ctx, redisClient)
+
 	// ═══════════════════════ 三、服务层(internal/service) ═══════════════════════
 
 	// 认证与登录策略
@@ -292,6 +296,7 @@ func initApp(ctx *bootstrap.Context) (*kratos.App, func(), error) {
 	notificationPreferenceService := service.NewNotificationPreferenceService(ctx, notificationPreferenceRepo, internalMessageCategoryRepo)
 	monitorAlertService := service.NewMonitorAlertService(ctx, monitorAlertRuleRepo, entClient, redisClient)
 	onlineSessionService := service.NewOnlineSessionService(ctx, authenticator)
+	accessKeyService := service.NewAccessKeyService(ctx, accessKeyRepo, authenticator, accessKeyRateLimiter)
 	serverMonitorService := service.NewServerMonitorService(ctx, entClient)
 	redisCacheMonitorService := service.NewRedisCacheMonitorService(ctx, redisClient)
 	monitorAlertService.RegisterNotifier(notificationService)
@@ -348,6 +353,7 @@ func initApp(ctx *bootstrap.Context) (*kratos.App, func(), error) {
 		taskService,
 		monitorAlertService,
 		onlineSessionService,
+		accessKeyService,
 		serverMonitorService,
 		redisCacheMonitorService,
 		fileService,

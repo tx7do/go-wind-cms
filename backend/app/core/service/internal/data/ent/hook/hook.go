@@ -8,6 +8,18 @@ import (
 	"go-wind-cms/app/core/service/internal/data/ent"
 )
 
+// The AccessKeyFunc type is an adapter to allow the use of ordinary
+// function as AccessKey mutator.
+type AccessKeyFunc func(context.Context, *ent.AccessKeyMutation) (ent.Value, error)
+
+// Mutate calls f(ctx, m).
+func (f AccessKeyFunc) Mutate(ctx context.Context, m ent.Mutation) (ent.Value, error) {
+	if mv, ok := m.(*ent.AccessKeyMutation); ok {
+		return f(ctx, mv)
+	}
+	return nil, fmt.Errorf("unexpected mutation type %T. expect *ent.AccessKeyMutation", m)
+}
+
 // The AiChunkFunc type is an adapter to allow the use of ordinary
 // function as AiChunk mutator.
 type AiChunkFunc func(context.Context, *ent.AiChunkMutation) (ent.Value, error)

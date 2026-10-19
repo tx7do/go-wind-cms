@@ -1,0 +1,204 @@
+syntax = "proto3";
+
+package access_key.service.v1;
+
+import "gnostic/openapi/v3/annotations.proto";
+
+import "google/protobuf/empty.proto";
+import "google/protobuf/timestamp.proto";
+import "google/protobuf/field_mask.proto";
+
+import "pagination/v1/pagination.proto";
+
+// OpenAPI 访问凭证（AK/SK）服务。
+// 租户级机器凭证：管理面 CRUD + 轮换，交换面（IssueToken）免鉴权——它本身即是认证。
+service AccessKeyService {
+  // 分页查询访问凭证列表
+  rpc List (pagination.PagingRequest) returns (ListAccessKeyResponse) {}
+
+  // 查询访问凭证详情（支持按 ID 或按 AK 查）
+  rpc Get (GetAccessKeyRequest) returns (AccessKey) {}
+
+  // 创建访问凭证（secret 仅在本响应中明文返回一次，服务端只存 SHA-256 摘要）
+  rpc Create (CreateAccessKeyRequest) returns (CreateAccessKeyResponse) {}
+
+  // 更新访问凭证（名称/状态/过期时间；AK 与密钥摘要不可变）
+  rpc Update (UpdateAccessKeyRequest) returns (google.protobuf.Empty) {}
+
+  // 删除访问凭证
+  rpc Delete (DeleteAccessKeyRequest) returns (google.protobuf.Empty) {}
+
+  // 重置密钥：生成新 Secret（旧 Secret 立即失效于新令牌交换；
+  // 已签发的机器令牌在自身过期前仍然有效）
+  rpc ResetSecret (ResetAccessKeySecretRequest) returns (CreateAccessKeyResponse) {}
+
+  // 令牌交换（机器对机器）：AK/SK 换取短期机器 JWT。
+  // 免鉴权端点——本身即是认证；client_ip 由 admin BFF 从 HTTP 层注入用于防爆破限流。
+  rpc IssueToken (IssueTokenRequest) returns (IssueTokenResponse) {}
+}
+
+// OpenAPI 访问凭证（AK/SK）
+message AccessKey {
+  optional uint32 id = 1 [
+    json_name = "id",
+    (gnostic.openapi.v3.property) = {
+      description: "凭证ID"
+    }
+  ]; // 凭证ID
+
+  optional string name = 2 [
+    json_name = "name",
+    (gnostic.openapi.v3.property) = {
+      description: "凭证名称（用途说明）"
+    }
+  ]; // 凭证名称
+
+  optional string access_key = 3 [
+    json_name = "accessKey",
+    (gnostic.openapi.v3.property) = {
+      description: "访问键（AK，公开标识，调用时随令牌交换请求上送）"
+    }
+  ]; // 访问键
+
+  // 凭证状态
+  enum Status {
+    OFF = 0; // 停用
+    ON = 1;  // 启用
+  }
+
+  optional Status status = 4 [
+    json_name = "status",
+    (gnostic.openapi.v3.property) = {
+      description: "凭证状态（停用后令牌交换被拒绝）"
+    }
+  ]; // 凭证状态
+
+  optional google.protobuf.Timestamp expires_at = 5 [
+    json_name = "expiresAt",
+    (gnostic.openapi.v3.property) = {
+      description: "过期时间（留空表示长期有效）"
+    }
+  ]; // 过期时间
+
+  optional google.protobuf.Timestamp last_used_at = 6 [
+    json_name = "lastUsedAt",
+    (gnostic.openapi.v3.property) = {
+      description: "最近一次令牌交换时间"
+    }
+  ]; // 最近使用时间
+
+  optional uint32 tenant_id = 10 [
+    json_name = "tenantId",
+    (gnostic.openapi.v3.property) = {
+      description: "归属租户ID（机器令牌继承该租户的隔离）"
+    }
+  ]; // 归属租户ID
+
+  optional uint32 created_by = 100 [json_name = "createdBy", (gnostic.openapi.v3.property) = {description: "创建者用户ID"}]; // 创建者用户ID
+  optional uint32 updated_by = 101 [json_name = "updatedBy", (gnostic.openapi.v3.property) = {description: "更新者用户ID"}]; // 更新者用户ID
+  optional uint32 deleted_by = 102 [json_name = "deletedBy", (gnostic.openapi.v3.property) = {description: "删除者用户ID"}]; // 删除者用户ID
+
+  optional google.protobuf.Timestamp created_at = 200 [json_name = "createdAt", (gnostic.openapi.v3.property) = {description: "创建时间"}]; // 创建时间
+  optional google.protobuf.Timestamp updated_at = 201 [json_name = "updatedAt", (gnostic.openapi.v3.property) = {description: "更新时间"}]; // 更新时间
+  optional google.protobuf.Timestamp deleted_at = 202 [json_name = "deletedAt", (gnostic.openapi.v3.property) = {description: "删除时间"}]; // 删除时间
+}
+
+// 查询访问凭证列表 - 回应
+message ListAccessKeyResponse {
+  repeated AccessKey items = 1;
+  uint64 total = 2;
+}
+
+// 查询访问凭证详情 - 请求
+message GetAccessKeyRequest {
+  oneof query_by {
+    uint32 id = 1;
+    string access_key = 2 [json_name = "accessKey"];
+  }
+
+  optional google.protobuf.FieldMask view_mask = 100 [
+    json_name = "viewMask",
+    (gnostic.openapi.v3.property) = {
+      description: "视图字段过滤器，用于控制返回的字段"
+    }
+  ]; // 视图字段过滤器
+}
+
+// 创建访问凭证 - 请求
+message CreateAccessKeyRequest {
+  AccessKey data = 1;
+}
+
+// 创建访问凭证 - 回应（secret 仅本次明文返回，服务端只存 SHA-256 摘要）
+message CreateAccessKeyResponse {
+  AccessKey data = 1; // 凭证（不含 secret 摘要）
+  string secret = 2; // 密钥明文（仅本次返回，请妥善保存）
+}
+
+// 更新访问凭证 - 请求
+message UpdateAccessKeyRequest {
+  uint32 id = 1;
+
+  AccessKey data = 2;
+
+  google.protobuf.FieldMask update_mask = 3 [
+    (gnostic.openapi.v3.property) = {
+      description: "要更新的字段列表",
+      example: {yaml : "id,name,status"}
+    },
+    json_name = "updateMask"
+  ]; // 要更新的字段列表
+
+  optional bool allow_missing = 4 [
+    (gnostic.openapi.v3.property) = {description: "如果设置为true的时候，资源不存在则会新增(插入)，并且在这种情况下`updateMask`字段将会被忽略。"},
+    json_name = "allowMissing"
+  ]; // 如果设置为true的时候，资源不存在则会新增(插入)，并且在这种情况下`updateMask`字段将会被忽略。
+}
+
+// 删除访问凭证 - 请求
+message DeleteAccessKeyRequest {
+  uint32 id = 1;
+}
+
+// 重置密钥 - 请求
+message ResetAccessKeySecretRequest {
+  uint32 id = 1; // 凭证ID
+}
+
+// 令牌交换 - 请求（机器对机器：AK/SK 换取短期 JWT）
+message IssueTokenRequest {
+  string access_key = 1 [
+    json_name = "accessKey",
+    (gnostic.openapi.v3.property) = {description: "访问键"}
+  ]; // 访问键
+
+  string secret = 2 [
+    json_name = "secret",
+    (gnostic.openapi.v3.property) = {description: "密钥（创建凭证时一次性下发）"}
+  ]; // 密钥
+
+  // 与上游不同：CMS 的 core 无法感知 HTTP 层，调用方 IP 由 admin BFF 从
+  // HTTP 请求解析后注入（ClientRealIP），用于交换端点的防爆破限流计数。
+  optional string client_ip = 3 [
+    json_name = "clientIp",
+    (gnostic.openapi.v3.property) = {description: "调用方IP（BFF 注入，仅用于限流计数）"}
+  ]; // 调用方IP
+}
+
+// 令牌交换 - 回应
+message IssueTokenResponse {
+  string access_token = 1 [
+    json_name = "accessToken",
+    (gnostic.openapi.v3.property) = {description: "访问令牌（Bearer）"}
+  ]; // 访问令牌
+
+  uint32 expires_in = 2 [
+    json_name = "expiresIn",
+    (gnostic.openapi.v3.property) = {description: "有效期（秒）"}
+  ]; // 有效期（秒）
+
+  string token_type = 3 [
+    json_name = "tokenType",
+    (gnostic.openapi.v3.property) = {description: "令牌类型（bearer）"}
+  ]; // 令牌类型
+}

@@ -6,6 +6,9 @@ import (
 	"entgo.io/ent/dialect/sql"
 )
 
+// AccessKey is the predicate function for accesskey builders.
+type AccessKey func(*sql.Selector)
+
 // AiChunk is the predicate function for aichunk builders.
 type AiChunk func(*sql.Selector)
 

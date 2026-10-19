@@ -49,16 +49,16 @@ type WebhookServiceHTTPServer interface {
 
 func RegisterWebhookServiceHTTPServer(s *http.Server, srv WebhookServiceHTTPServer) {
 	r := s.Route("/")
-	r.GET("/admin/v1/webhooks", _WebhookService_List46_HTTP_Handler(srv))
-	r.GET("/admin/v1/webhooks/{id}", _WebhookService_Get49_HTTP_Handler(srv))
-	r.POST("/admin/v1/webhooks", _WebhookService_Create36_HTTP_Handler(srv))
-	r.PUT("/admin/v1/webhooks/{id}", _WebhookService_Update37_HTTP_Handler(srv))
-	r.DELETE("/admin/v1/webhooks/{id}", _WebhookService_Delete40_HTTP_Handler(srv))
+	r.GET("/admin/v1/webhooks", _WebhookService_List47_HTTP_Handler(srv))
+	r.GET("/admin/v1/webhooks/{id}", _WebhookService_Get50_HTTP_Handler(srv))
+	r.POST("/admin/v1/webhooks", _WebhookService_Create37_HTTP_Handler(srv))
+	r.PUT("/admin/v1/webhooks/{id}", _WebhookService_Update38_HTTP_Handler(srv))
+	r.DELETE("/admin/v1/webhooks/{id}", _WebhookService_Delete41_HTTP_Handler(srv))
 	r.POST("/admin/v1/webhooks/{id}/ping", _WebhookService_TestPing0_HTTP_Handler(srv))
 	r.GET("/admin/v1/webhooks/deliveries", _WebhookService_ListDeliveries0_HTTP_Handler(srv))
 }
 
-func _WebhookService_List46_HTTP_Handler(srv WebhookServiceHTTPServer) func(ctx http.Context) error {
+func _WebhookService_List47_HTTP_Handler(srv WebhookServiceHTTPServer) func(ctx http.Context) error {
 	return func(ctx http.Context) error {
 		var in v1.PagingRequest
 		if err := ctx.BindQuery(&in); err != nil {
@@ -77,7 +77,7 @@ func _WebhookService_List46_HTTP_Handler(srv WebhookServiceHTTPServer) func(ctx 
 	}
 }
 
-func _WebhookService_Get49_HTTP_Handler(srv WebhookServiceHTTPServer) func(ctx http.Context) error {
+func _WebhookService_Get50_HTTP_Handler(srv WebhookServiceHTTPServer) func(ctx http.Context) error {
 	return func(ctx http.Context) error {
 		var in v11.GetWebhookRequest
 		if err := ctx.BindQuery(&in); err != nil {
@@ -99,7 +99,7 @@ func _WebhookService_Get49_HTTP_Handler(srv WebhookServiceHTTPServer) func(ctx h
 	}
 }
 
-func _WebhookService_Create36_HTTP_Handler(srv WebhookServiceHTTPServer) func(ctx http.Context) error {
+func _WebhookService_Create37_HTTP_Handler(srv WebhookServiceHTTPServer) func(ctx http.Context) error {
 	return func(ctx http.Context) error {
 		var in v11.CreateWebhookRequest
 		if err := ctx.Bind(&in); err != nil {
@@ -121,7 +121,7 @@ func _WebhookService_Create36_HTTP_Handler(srv WebhookServiceHTTPServer) func(ct
 	}
 }
 
-func _WebhookService_Update37_HTTP_Handler(srv WebhookServiceHTTPServer) func(ctx http.Context) error {
+func _WebhookService_Update38_HTTP_Handler(srv WebhookServiceHTTPServer) func(ctx http.Context) error {
 	return func(ctx http.Context) error {
 		var in v11.UpdateWebhookRequest
 		if err := ctx.Bind(&in); err != nil {
@@ -146,7 +146,7 @@ func _WebhookService_Update37_HTTP_Handler(srv WebhookServiceHTTPServer) func(ct
 	}
 }
 
-func _WebhookService_Delete40_HTTP_Handler(srv WebhookServiceHTTPServer) func(ctx http.Context) error {
+func _WebhookService_Delete41_HTTP_Handler(srv WebhookServiceHTTPServer) func(ctx http.Context) error {
 	return func(ctx http.Context) error {
 		var in v11.DeleteWebhookRequest
 		if err := ctx.BindQuery(&in); err != nil {

@@ -34,11 +34,11 @@ type AiMessageServiceHTTPServer interface {
 
 func RegisterAiMessageServiceHTTPServer(s *http.Server, srv AiMessageServiceHTTPServer) {
 	r := s.Route("/")
-	r.GET("/admin/v1/ai/messages", _AiMessageService_List2_HTTP_Handler(srv))
-	r.DELETE("/admin/v1/ai/messages/{id}", _AiMessageService_Delete2_HTTP_Handler(srv))
+	r.GET("/admin/v1/ai/messages", _AiMessageService_List3_HTTP_Handler(srv))
+	r.DELETE("/admin/v1/ai/messages/{id}", _AiMessageService_Delete3_HTTP_Handler(srv))
 }
 
-func _AiMessageService_List2_HTTP_Handler(srv AiMessageServiceHTTPServer) func(ctx http.Context) error {
+func _AiMessageService_List3_HTTP_Handler(srv AiMessageServiceHTTPServer) func(ctx http.Context) error {
 	return func(ctx http.Context) error {
 		var in v1.PagingRequest
 		if err := ctx.BindQuery(&in); err != nil {
@@ -57,7 +57,7 @@ func _AiMessageService_List2_HTTP_Handler(srv AiMessageServiceHTTPServer) func(c
 	}
 }
 
-func _AiMessageService_Delete2_HTTP_Handler(srv AiMessageServiceHTTPServer) func(ctx http.Context) error {
+func _AiMessageService_Delete3_HTTP_Handler(srv AiMessageServiceHTTPServer) func(ctx http.Context) error {
 	return func(ctx http.Context) error {
 		var in v11.DeleteAiMessageRequest
 		if err := ctx.BindQuery(&in); err != nil {

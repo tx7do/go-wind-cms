@@ -111,6 +111,30 @@ func DenyMutationOperationRule(op ent.Op) MutationRule {
 	return OnMutationOperation(rule, op)
 }
 
+// The AccessKeyQueryRuleFunc type is an adapter to allow the use of ordinary
+// functions as a query rule.
+type AccessKeyQueryRuleFunc func(context.Context, *ent.AccessKeyQuery) error
+
+// EvalQuery return f(ctx, q).
+func (f AccessKeyQueryRuleFunc) EvalQuery(ctx context.Context, q ent.Query) error {
+	if q, ok := q.(*ent.AccessKeyQuery); ok {
+		return f(ctx, q)
+	}
+	return Denyf("ent/privacy: unexpected query type %T, expect *ent.AccessKeyQuery", q)
+}
+
+// The AccessKeyMutationRuleFunc type is an adapter to allow the use of ordinary
+// functions as a mutation rule.
+type AccessKeyMutationRuleFunc func(context.Context, *ent.AccessKeyMutation) error
+
+// EvalMutation calls f(ctx, m).
+func (f AccessKeyMutationRuleFunc) EvalMutation(ctx context.Context, m ent.Mutation) error {
+	if m, ok := m.(*ent.AccessKeyMutation); ok {
+		return f(ctx, m)
+	}
+	return Denyf("ent/privacy: unexpected mutation type %T, expect *ent.AccessKeyMutation", m)
+}
+
 // The AiChunkQueryRuleFunc type is an adapter to allow the use of ordinary
 // functions as a query rule.
 type AiChunkQueryRuleFunc func(context.Context, *ent.AiChunkQuery) error
@@ -2450,6 +2474,8 @@ var _ QueryMutationRule = FilterFunc(nil)
 
 func queryFilter(q ent.Query) (Filter, error) {
 	switch q := q.(type) {
+	case *ent.AccessKeyQuery:
+		return q.Filter(), nil
 	case *ent.AiChunkQuery:
 		return q.Filter(), nil
 	case *ent.AiConversationQuery:
@@ -2649,6 +2675,8 @@ func queryFilter(q ent.Query) (Filter, error) {
 
 func mutationFilter(m ent.Mutation) (Filter, error) {
 	switch m := m.(type) {
+	case *ent.AccessKeyMutation:
+		return m.Filter(), nil
 	case *ent.AiChunkMutation:
 		return m.Filter(), nil
 	case *ent.AiConversationMutation:

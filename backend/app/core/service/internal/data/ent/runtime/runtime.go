@@ -5,6 +5,7 @@ package runtime
 import (
 	"context"
 	permissionpb "go-wind-cms/api/gen/go/permission/service/v1"
+	"go-wind-cms/app/core/service/internal/data/ent/accesskey"
 	"go-wind-cms/app/core/service/internal/data/ent/aichunk"
 	"go-wind-cms/app/core/service/internal/data/ent/aiconversation"
 	"go-wind-cms/app/core/service/internal/data/ent/aidoc"
@@ -111,6 +112,32 @@ import (
 // (default values, validators, hooks and policies) and stitches it
 // to their package variables.
 func init() {
+	accesskeyMixin := schema.AccessKey{}.Mixin()
+	accesskey.Policy = privacy.NewPolicies(accesskeyMixin[4], schema.AccessKey{})
+	accesskey.Hooks[0] = func(next ent.Mutator) ent.Mutator {
+		return ent.MutateFunc(func(ctx context.Context, m ent.Mutation) (ent.Value, error) {
+			if err := accesskey.Policy.EvalMutation(ctx, m); err != nil {
+				return nil, err
+			}
+			return next.Mutate(ctx, m)
+		})
+	}
+	accesskeyMixinFields0 := accesskeyMixin[0].Fields()
+	_ = accesskeyMixinFields0
+	accesskeyMixinFields3 := accesskeyMixin[3].Fields()
+	_ = accesskeyMixinFields3
+	accesskeyMixinFields4 := accesskeyMixin[4].Fields()
+	_ = accesskeyMixinFields4
+	accesskeyFields := schema.AccessKey{}.Fields()
+	_ = accesskeyFields
+	// accesskeyDescTenantID is the schema descriptor for tenant_id field.
+	accesskeyDescTenantID := accesskeyMixinFields4[0].Descriptor()
+	// accesskey.DefaultTenantID holds the default value on creation for the tenant_id field.
+	accesskey.DefaultTenantID = accesskeyDescTenantID.Default.(uint32)
+	// accesskeyDescID is the schema descriptor for id field.
+	accesskeyDescID := accesskeyMixinFields0[0].Descriptor()
+	// accesskey.IDValidator is a validator for the "id" field. It is called by the builders before save.
+	accesskey.IDValidator = accesskeyDescID.Validators[0].(func(uint32) error)
 	aichunkMixin := schema.AiChunk{}.Mixin()
 	aichunk.Policy = privacy.NewPolicies(aichunkMixin[2], schema.AiChunk{})
 	aichunk.Hooks[0] = func(next ent.Mutator) ent.Mutator {

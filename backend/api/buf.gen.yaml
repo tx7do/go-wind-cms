@@ -26,6 +26,9 @@ managed:
       path: admin/service/v1
       value: go-wind-cms/api/gen/go/admin/service/v1;adminpb
     - file_option: go_package
+      path: access_key/service/v1
+      value: go-wind-cms/api/gen/go/access_key/service/v1;accesskeypb
+    - file_option: go_package
       path: audit/service/v1
       value: go-wind-cms/api/gen/go/audit/service/v1;auditpb
     - file_option: go_package

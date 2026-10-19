@@ -33,11 +33,11 @@ type ApiAuditLogServiceHTTPServer interface {
 
 func RegisterApiAuditLogServiceHTTPServer(s *http.Server, srv ApiAuditLogServiceHTTPServer) {
 	r := s.Route("/")
-	r.GET("/admin/v1/api-audit-logs", _ApiAuditLogService_List6_HTTP_Handler(srv))
-	r.GET("/admin/v1/api-audit-logs/{id}", _ApiAuditLogService_Get4_HTTP_Handler(srv))
+	r.GET("/admin/v1/api-audit-logs", _ApiAuditLogService_List7_HTTP_Handler(srv))
+	r.GET("/admin/v1/api-audit-logs/{id}", _ApiAuditLogService_Get5_HTTP_Handler(srv))
 }
 
-func _ApiAuditLogService_List6_HTTP_Handler(srv ApiAuditLogServiceHTTPServer) func(ctx http.Context) error {
+func _ApiAuditLogService_List7_HTTP_Handler(srv ApiAuditLogServiceHTTPServer) func(ctx http.Context) error {
 	return func(ctx http.Context) error {
 		var in v1.PagingRequest
 		if err := ctx.BindQuery(&in); err != nil {
@@ -56,7 +56,7 @@ func _ApiAuditLogService_List6_HTTP_Handler(srv ApiAuditLogServiceHTTPServer) fu
 	}
 }
 
-func _ApiAuditLogService_Get4_HTTP_Handler(srv ApiAuditLogServiceHTTPServer) func(ctx http.Context) error {
+func _ApiAuditLogService_Get5_HTTP_Handler(srv ApiAuditLogServiceHTTPServer) func(ctx http.Context) error {
 	return func(ctx http.Context) error {
 		var in v11.GetApiAuditLogRequest
 		if err := ctx.BindQuery(&in); err != nil {

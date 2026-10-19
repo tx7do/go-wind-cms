@@ -11,6 +11,7 @@ import (
 
 	"go-wind-cms/app/core/service/internal/data/ent/migrate"
 
+	"go-wind-cms/app/core/service/internal/data/ent/accesskey"
 	"go-wind-cms/app/core/service/internal/data/ent/aichunk"
 	"go-wind-cms/app/core/service/internal/data/ent/aiconversation"
 	"go-wind-cms/app/core/service/internal/data/ent/aidoc"
@@ -119,6 +120,8 @@ type Client struct {
 	config
 	// Schema is the client for creating, migrating and dropping schema.
 	Schema *migrate.Schema
+	// AccessKey is the client for interacting with the AccessKey builders.
+	AccessKey *AccessKeyClient
 	// AiChunk is the client for interacting with the AiChunk builders.
 	AiChunk *AiChunkClient
 	// AiConversation is the client for interacting with the AiConversation builders.
@@ -322,6 +325,7 @@ func NewClient(opts ...Option) *Client {
 
 func (c *Client) init() {
 	c.Schema = migrate.NewSchema(c.driver)
+	c.AccessKey = NewAccessKeyClient(c.config)
 	c.AiChunk = NewAiChunkClient(c.config)
 	c.AiConversation = NewAiConversationClient(c.config)
 	c.AiDoc = NewAiDocClient(c.config)
@@ -510,6 +514,7 @@ func (c *Client) Tx(ctx context.Context) (*Tx, error) {
 	return &Tx{
 		ctx:                        ctx,
 		config:                     cfg,
+		AccessKey:                  NewAccessKeyClient(cfg),
 		AiChunk:                    NewAiChunkClient(cfg),
 		AiConversation:             NewAiConversationClient(cfg),
 		AiDoc:                      NewAiDocClient(cfg),
@@ -625,6 +630,7 @@ func (c *Client) BeginTx(ctx context.Context, opts *sql.TxOptions) (*Tx, error) 
 	return &Tx{
 		ctx:                        ctx,
 		config:                     cfg,
+		AccessKey:                  NewAccessKeyClient(cfg),
 		AiChunk:                    NewAiChunkClient(cfg),
 		AiConversation:             NewAiConversationClient(cfg),
 		AiDoc:                      NewAiDocClient(cfg),
@@ -727,7 +733,7 @@ func (c *Client) BeginTx(ctx context.Context, opts *sql.TxOptions) (*Tx, error) 
 // Debug returns a new debug-client. It's used to get verbose logging on specific operations.
 //
 //	client.Debug().
-//		AiChunk.
+//		AccessKey.
 //		Query().
 //		Count(ctx)
 func (c *Client) Debug() *Client {
@@ -750,8 +756,8 @@ func (c *Client) Close() error {
 // In order to add hooks to a specific client, call: `client.Node.Use(...)`.
 func (c *Client) Use(hooks ...Hook) {
 	for _, n := range []interface{ Use(...Hook) }{
-		c.AiChunk, c.AiConversation, c.AiDoc, c.AiKnowledgeBase, c.AiMessage,
-		c.AiProvider, c.AiUsageLog, c.Api, c.ApiAuditLog, c.Category,
+		c.AccessKey, c.AiChunk, c.AiConversation, c.AiDoc, c.AiKnowledgeBase,
+		c.AiMessage, c.AiProvider, c.AiUsageLog, c.Api, c.ApiAuditLog, c.Category,
 		c.CategoryTranslation, c.CollabDocState, c.Comment, c.CommentLike,
 		c.ComponentDefinition, c.ContentModel, c.ContentModelTranslation,
 		c.ContentReference, c.DataAccessAuditLog, c.DictEntry, c.DictEntryI18n,
@@ -782,8 +788,8 @@ func (c *Client) Use(hooks ...Hook) {
 // In order to add interceptors to a specific client, call: `client.Node.Intercept(...)`.
 func (c *Client) Intercept(interceptors ...Interceptor) {
 	for _, n := range []interface{ Intercept(...Interceptor) }{
-		c.AiChunk, c.AiConversation, c.AiDoc, c.AiKnowledgeBase, c.AiMessage,
-		c.AiProvider, c.AiUsageLog, c.Api, c.ApiAuditLog, c.Category,
+		c.AccessKey, c.AiChunk, c.AiConversation, c.AiDoc, c.AiKnowledgeBase,
+		c.AiMessage, c.AiProvider, c.AiUsageLog, c.Api, c.ApiAuditLog, c.Category,
 		c.CategoryTranslation, c.CollabDocState, c.Comment, c.CommentLike,
 		c.ComponentDefinition, c.ContentModel, c.ContentModelTranslation,
 		c.ContentReference, c.DataAccessAuditLog, c.DictEntry, c.DictEntryI18n,
@@ -813,6 +819,8 @@ func (c *Client) Intercept(interceptors ...Interceptor) {
 // Mutate implements the ent.Mutator interface.
 func (c *Client) Mutate(ctx context.Context, m Mutation) (Value, error) {
 	switch m := m.(type) {
+	case *AccessKeyMutation:
+		return c.AccessKey.mutate(ctx, m)
 	case *AiChunkMutation:
 		return c.AiChunk.mutate(ctx, m)
 	case *AiConversationMutation:
@@ -1007,6 +1015,140 @@ func (c *Client) Mutate(ctx context.Context, m Mutation) (Value, error) {
 		return c.WebhookDelivery.mutate(ctx, m)
 	default:
 		return nil, fmt.Errorf("ent: unknown mutation type %T", m)
+	}
+}
+
+// AccessKeyClient is a client for the AccessKey schema.
+type AccessKeyClient struct {
+	config
+}
+
+// NewAccessKeyClient returns a client for the AccessKey from the given config.
+func NewAccessKeyClient(c config) *AccessKeyClient {
+	return &AccessKeyClient{config: c}
+}
+
+// Use adds a list of mutation hooks to the hooks stack.
+// A call to `Use(f, g, h)` equals to `accesskey.Hooks(f(g(h())))`.
+func (c *AccessKeyClient) Use(hooks ...Hook) {
+	c.hooks.AccessKey = append(c.hooks.AccessKey, hooks...)
+}
+
+// Intercept adds a list of query interceptors to the interceptors stack.
+// A call to `Intercept(f, g, h)` equals to `accesskey.Intercept(f(g(h())))`.
+func (c *AccessKeyClient) Intercept(interceptors ...Interceptor) {
+	c.inters.AccessKey = append(c.inters.AccessKey, interceptors...)
+}
+
+// Create returns a builder for creating a AccessKey entity.
+func (c *AccessKeyClient) Create() *AccessKeyCreate {
+	mutation := newAccessKeyMutation(c.config, OpCreate)
+	return &AccessKeyCreate{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// CreateBulk returns a builder for creating a bulk of AccessKey entities.
+func (c *AccessKeyClient) CreateBulk(builders ...*AccessKeyCreate) *AccessKeyCreateBulk {
+	return &AccessKeyCreateBulk{config: c.config, builders: builders}
+}
+
+// MapCreateBulk creates a bulk creation builder from the given slice. For each item in the slice, the function creates
+// a builder and applies setFunc on it.
+func (c *AccessKeyClient) MapCreateBulk(slice any, setFunc func(*AccessKeyCreate, int)) *AccessKeyCreateBulk {
+	rv := reflect.ValueOf(slice)
+	if rv.Kind() != reflect.Slice {
+		return &AccessKeyCreateBulk{err: fmt.Errorf("calling to AccessKeyClient.MapCreateBulk with wrong type %T, need slice", slice)}
+	}
+	builders := make([]*AccessKeyCreate, rv.Len())
+	for i := 0; i < rv.Len(); i++ {
+		builders[i] = c.Create()
+		setFunc(builders[i], i)
+	}
+	return &AccessKeyCreateBulk{config: c.config, builders: builders}
+}
+
+// Update returns an update builder for AccessKey.
+func (c *AccessKeyClient) Update() *AccessKeyUpdate {
+	mutation := newAccessKeyMutation(c.config, OpUpdate)
+	return &AccessKeyUpdate{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// UpdateOne returns an update builder for the given entity.
+func (c *AccessKeyClient) UpdateOne(_m *AccessKey) *AccessKeyUpdateOne {
+	mutation := newAccessKeyMutation(c.config, OpUpdateOne, withAccessKey(_m))
+	return &AccessKeyUpdateOne{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// UpdateOneID returns an update builder for the given id.
+func (c *AccessKeyClient) UpdateOneID(id uint32) *AccessKeyUpdateOne {
+	mutation := newAccessKeyMutation(c.config, OpUpdateOne, withAccessKeyID(id))
+	return &AccessKeyUpdateOne{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// Delete returns a delete builder for AccessKey.
+func (c *AccessKeyClient) Delete() *AccessKeyDelete {
+	mutation := newAccessKeyMutation(c.config, OpDelete)
+	return &AccessKeyDelete{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// DeleteOne returns a builder for deleting the given entity.
+func (c *AccessKeyClient) DeleteOne(_m *AccessKey) *AccessKeyDeleteOne {
+	return c.DeleteOneID(_m.ID)
+}
+
+// DeleteOneID returns a builder for deleting the given entity by its id.
+func (c *AccessKeyClient) DeleteOneID(id uint32) *AccessKeyDeleteOne {
+	builder := c.Delete().Where(accesskey.ID(id))
+	builder.mutation.id = &id
+	builder.mutation.op = OpDeleteOne
+	return &AccessKeyDeleteOne{builder}
+}
+
+// Query returns a query builder for AccessKey.
+func (c *AccessKeyClient) Query() *AccessKeyQuery {
+	return &AccessKeyQuery{
+		config: c.config,
+		ctx:    &QueryContext{Type: TypeAccessKey},
+		inters: c.Interceptors(),
+	}
+}
+
+// Get returns a AccessKey entity by its id.
+func (c *AccessKeyClient) Get(ctx context.Context, id uint32) (*AccessKey, error) {
+	return c.Query().Where(accesskey.ID(id)).Only(ctx)
+}
+
+// GetX is like Get, but panics if an error occurs.
+func (c *AccessKeyClient) GetX(ctx context.Context, id uint32) *AccessKey {
+	obj, err := c.Get(ctx, id)
+	if err != nil {
+		panic(err)
+	}
+	return obj
+}
+
+// Hooks returns the client hooks.
+func (c *AccessKeyClient) Hooks() []Hook {
+	hooks := c.hooks.AccessKey
+	return append(hooks[:len(hooks):len(hooks)], accesskey.Hooks[:]...)
+}
+
+// Interceptors returns the client interceptors.
+func (c *AccessKeyClient) Interceptors() []Interceptor {
+	return c.inters.AccessKey
+}
+
+func (c *AccessKeyClient) mutate(ctx context.Context, m *AccessKeyMutation) (Value, error) {
+	switch m.Op() {
+	case OpCreate:
+		return (&AccessKeyCreate{config: c.config, hooks: c.Hooks(), mutation: m}).Save(ctx)
+	case OpUpdate:
+		return (&AccessKeyUpdate{config: c.config, hooks: c.Hooks(), mutation: m}).Save(ctx)
+	case OpUpdateOne:
+		return (&AccessKeyUpdateOne{config: c.config, hooks: c.Hooks(), mutation: m}).Save(ctx)
+	case OpDelete, OpDeleteOne:
+		return (&AccessKeyDelete{config: c.config, hooks: c.Hooks(), mutation: m}).Exec(ctx)
+	default:
+		return nil, fmt.Errorf("ent: unknown AccessKey mutation op: %q", m.Op())
 	}
 }
 
@@ -14279,9 +14421,9 @@ func (c *WebhookDeliveryClient) mutate(ctx context.Context, m *WebhookDeliveryMu
 // hooks and interceptors per client, for fast access.
 type (
 	hooks struct {
-		AiChunk, AiConversation, AiDoc, AiKnowledgeBase, AiMessage, AiProvider,
-		AiUsageLog, Api, ApiAuditLog, Category, CategoryTranslation, CollabDocState,
-		Comment, CommentLike, ComponentDefinition, ContentModel,
+		AccessKey, AiChunk, AiConversation, AiDoc, AiKnowledgeBase, AiMessage,
+		AiProvider, AiUsageLog, Api, ApiAuditLog, Category, CategoryTranslation,
+		CollabDocState, Comment, CommentLike, ComponentDefinition, ContentModel,
 		ContentModelTranslation, ContentReference, DataAccessAuditLog, DictEntry,
 		DictEntryI18n, DictType, Experiment, ExperimentParticipant, ExperimentVariant,
 		FieldDefinition, FieldDefinitionTranslation, File, FlowRule, FormSubmission,
@@ -14301,9 +14443,9 @@ type (
 		Webhook, WebhookDelivery []ent.Hook
 	}
 	inters struct {
-		AiChunk, AiConversation, AiDoc, AiKnowledgeBase, AiMessage, AiProvider,
-		AiUsageLog, Api, ApiAuditLog, Category, CategoryTranslation, CollabDocState,
-		Comment, CommentLike, ComponentDefinition, ContentModel,
+		AccessKey, AiChunk, AiConversation, AiDoc, AiKnowledgeBase, AiMessage,
+		AiProvider, AiUsageLog, Api, ApiAuditLog, Category, CategoryTranslation,
+		CollabDocState, Comment, CommentLike, ComponentDefinition, ContentModel,
 		ContentModelTranslation, ContentReference, DataAccessAuditLog, DictEntry,
 		DictEntryI18n, DictType, Experiment, ExperimentParticipant, ExperimentVariant,
 		FieldDefinition, FieldDefinitionTranslation, File, FlowRule, FormSubmission,

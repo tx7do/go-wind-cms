@@ -158,6 +158,7 @@ func initApp(ctx *bootstrap.Context) (*kratos.App, func(), error) {
 	notificationServiceClient := data.NewNotificationServiceClient(ctx, discovery)
 	monitorAlertServiceClient := data.NewMonitorAlertServiceClient(ctx, discovery)
 	onlineSessionServiceClient := data.NewOnlineSessionServiceClient(ctx, discovery)
+	accessKeyServiceClient := data.NewAccessKeyServiceClient(ctx, discovery)
 	serverMonitorServiceClient := data.NewServerMonitorServiceClient(ctx, discovery)
 	redisCacheMonitorServiceClient := data.NewRedisCacheMonitorServiceClient(ctx, discovery)
 	notificationChannelServiceClient := data.NewNotificationChannelServiceClient(ctx, discovery)
@@ -261,6 +262,7 @@ func initApp(ctx *bootstrap.Context) (*kratos.App, func(), error) {
 	notificationPreferenceService := service.NewNotificationPreferenceService(ctx, notificationPreferenceServiceClient)
 	monitorAlertService := service.NewMonitorAlertService(ctx, monitorAlertServiceClient)
 	onlineSessionService := service.NewOnlineSessionService(ctx, onlineSessionServiceClient)
+	accessKeyService := service.NewAccessKeyService(ctx, accessKeyServiceClient)
 	serverMonitorService := service.NewServerMonitorService(ctx, serverMonitorServiceClient)
 	redisCacheMonitorService := service.NewRedisCacheMonitorService(ctx, redisCacheMonitorServiceClient)
 	// ── register:service ── 新模块服务在此行后注册(make register 工具锚点,勿删)
@@ -299,6 +301,7 @@ func initApp(ctx *bootstrap.Context) (*kratos.App, func(), error) {
 		notificationService,
 		monitorAlertService,
 		onlineSessionService,
+		accessKeyService,
 		serverMonitorService,
 		redisCacheMonitorService,
 		notificationChannelService,

@@ -12,6 +12,8 @@ import (
 // Tx is a transactional client that is created by calling Client.Tx().
 type Tx struct {
 	config
+	// AccessKey is the client for interacting with the AccessKey builders.
+	AccessKey *AccessKeyClient
 	// AiChunk is the client for interacting with the AiChunk builders.
 	AiChunk *AiChunkClient
 	// AiConversation is the client for interacting with the AiConversation builders.
@@ -335,6 +337,7 @@ func (tx *Tx) Client() *Client {
 }
 
 func (tx *Tx) init() {
+	tx.AccessKey = NewAccessKeyClient(tx.config)
 	tx.AiChunk = NewAiChunkClient(tx.config)
 	tx.AiConversation = NewAiConversationClient(tx.config)
 	tx.AiDoc = NewAiDocClient(tx.config)
@@ -440,7 +443,7 @@ func (tx *Tx) init() {
 // of them in order to commit or rollback the transaction.
 //
 // If a closed transaction is embedded in one of the generated entities, and the entity
-// applies a query, for example: AiChunk.QueryXXX(), the query will be executed
+// applies a query, for example: AccessKey.QueryXXX(), the query will be executed
 // through the driver which created this transaction.
 //
 // Note that txDriver is not goroutine safe.

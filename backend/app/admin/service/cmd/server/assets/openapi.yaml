@@ -14,6 +14,216 @@ info:
         url: https://github.com/tx7do/go-wind-cms/blob/master/LICENSE
     version: "1.0"
 paths:
+    /admin/v1/access-keys:
+        get:
+            tags:
+                - AccessKeyService
+            description: 分页查询访问凭证列表
+            operationId: AccessKeyService_List
+            parameters:
+                - name: page
+                  in: query
+                  description: 当前页码（从1开始，默认1）
+                  schema:
+                    type: integer
+                    format: uint32
+                - name: pageSize
+                  in: query
+                  description: 每页条数（默认10，建议设置上限如100）
+                  schema:
+                    type: integer
+                    format: uint32
+                - name: offset
+                  in: query
+                  description: 跳过的记录数（从0开始，默认0）
+                  schema:
+                    type: string
+                - name: limit
+                  in: query
+                  description: 最多返回的记录数（默认10，建议设置上限如100）
+                  schema:
+                    type: integer
+                    format: uint32
+                - name: token
+                  in: query
+                  description: 上一页最后一条记录的游标（如ID/时间戳+ID，首次请求为空）
+                  schema:
+                    type: string
+                - name: noPaging
+                  in: query
+                  description: 是否不分页，如果为true，则page和pageSize参数无效。
+                  schema:
+                    type: boolean
+                - name: query
+                  in: query
+                  description: JSON字符串过滤条件，基础语法：{"field1":"val1", "field2___icontains":"val2"}，具体请参见：https://github.com/tx7do/go-crud/tree/main/pagination/filter/README.md
+                  schema:
+                    type: string
+                - name: filter
+                  in: query
+                  description: Google AIP规范字符串过滤条件
+                  schema:
+                    type: string
+                - name: filterExpr.type
+                  in: query
+                  description: 过滤表达式类型
+                  schema:
+                    enum:
+                        - EXPR_TYPE_UNSPECIFIED
+                        - AND
+                        - OR
+                    type: string
+                    format: enum
+                - name: orderBy
+                  in: query
+                  description: 排序条件
+                  schema:
+                    type: string
+                - name: fieldMask
+                  in: query
+                  description: 字段掩码，其作用为SELECT中的字段，其语法为使用逗号分隔字段名，例如：id,realName,userName。如果为空则选中所有字段，即SELECT *。
+                  schema:
+                    type: string
+                    format: field-mask
+            responses:
+                "200":
+                    description: OK
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/access_key.service.v1.ListAccessKeyResponse'
+        post:
+            tags:
+                - AccessKeyService
+            description: 创建访问凭证（响应中的 secret 仅本次明文返回，服务端只存 SHA-256 摘要）
+            operationId: AccessKeyService_Create
+            requestBody:
+                content:
+                    application/json:
+                        schema:
+                            $ref: '#/components/schemas/access_key.service.v1.CreateAccessKeyRequest'
+                required: true
+            responses:
+                "200":
+                    description: OK
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/access_key.service.v1.CreateAccessKeyResponse'
+    /admin/v1/access-keys/token:
+        post:
+            tags:
+                - AccessKeyService
+            description: 令牌交换（机器对机器）：AK/SK 换短期 JWT。免鉴权端点——本身即是认证。
+            operationId: AccessKeyService_IssueToken
+            requestBody:
+                content:
+                    application/json:
+                        schema:
+                            $ref: '#/components/schemas/access_key.service.v1.IssueTokenRequest'
+                required: true
+            responses:
+                "200":
+                    description: OK
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/access_key.service.v1.IssueTokenResponse'
+            security:
+                - {}
+    /admin/v1/access-keys/{id}:
+        get:
+            tags:
+                - AccessKeyService
+            description: 查询访问凭证详情
+            operationId: AccessKeyService_Get
+            parameters:
+                - name: id
+                  in: path
+                  required: true
+                  schema:
+                    type: integer
+                    format: uint32
+                - name: accessKey
+                  in: query
+                  schema:
+                    type: string
+                - name: viewMask
+                  in: query
+                  schema:
+                    type: string
+                    format: field-mask
+            responses:
+                "200":
+                    description: OK
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/access_key.service.v1.AccessKey'
+        put:
+            tags:
+                - AccessKeyService
+            description: 更新访问凭证（名称/状态/过期时间）
+            operationId: AccessKeyService_Update
+            parameters:
+                - name: id
+                  in: path
+                  required: true
+                  schema:
+                    type: integer
+                    format: uint32
+            requestBody:
+                content:
+                    application/json:
+                        schema:
+                            $ref: '#/components/schemas/access_key.service.v1.UpdateAccessKeyRequest'
+                required: true
+            responses:
+                "200":
+                    description: OK
+                    content: {}
+        delete:
+            tags:
+                - AccessKeyService
+            description: 删除访问凭证
+            operationId: AccessKeyService_Delete
+            parameters:
+                - name: id
+                  in: path
+                  required: true
+                  schema:
+                    type: integer
+                    format: uint32
+            responses:
+                "200":
+                    description: OK
+                    content: {}
+    /admin/v1/access-keys/{id}/secret:
+        put:
+            tags:
+                - AccessKeyService
+            description: 重置密钥：生成新 Secret（响应明文返回一次）
+            operationId: AccessKeyService_ResetSecret
+            parameters:
+                - name: id
+                  in: path
+                  required: true
+                  schema:
+                    type: integer
+                    format: uint32
+            requestBody:
+                content:
+                    application/json:
+                        schema:
+                            $ref: '#/components/schemas/access_key.service.v1.ResetAccessKeySecretRequest'
+                required: true
+            responses:
+                "200":
+                    description: OK
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/access_key.service.v1.CreateAccessKeyResponse'
     /admin/v1/ai/chat/completions:
         post:
             tags:
@@ -10218,6 +10428,138 @@ components:
                     type: object
                     description: 元数据
             description: Kratos错误返回
+        access_key.service.v1.AccessKey:
+            type: object
+            properties:
+                id:
+                    type: integer
+                    description: 凭证ID
+                    format: uint32
+                name:
+                    type: string
+                    description: 凭证名称（用途说明）
+                accessKey:
+                    type: string
+                    description: 访问键（AK，公开标识，调用时随令牌交换请求上送）
+                status:
+                    enum:
+                        - OFF
+                        - ON
+                    type: string
+                    description: 凭证状态（停用后令牌交换被拒绝）
+                    format: enum
+                expiresAt:
+                    type: string
+                    description: 过期时间（留空表示长期有效）
+                    format: date-time
+                lastUsedAt:
+                    type: string
+                    description: 最近一次令牌交换时间
+                    format: date-time
+                tenantId:
+                    type: integer
+                    description: 归属租户ID（机器令牌继承该租户的隔离）
+                    format: uint32
+                createdBy:
+                    type: integer
+                    description: 创建者用户ID
+                    format: uint32
+                updatedBy:
+                    type: integer
+                    description: 更新者用户ID
+                    format: uint32
+                deletedBy:
+                    type: integer
+                    description: 删除者用户ID
+                    format: uint32
+                createdAt:
+                    type: string
+                    description: 创建时间
+                    format: date-time
+                updatedAt:
+                    type: string
+                    description: 更新时间
+                    format: date-time
+                deletedAt:
+                    type: string
+                    description: 删除时间
+                    format: date-time
+            description: OpenAPI 访问凭证（AK/SK）
+        access_key.service.v1.CreateAccessKeyRequest:
+            type: object
+            properties:
+                data:
+                    $ref: '#/components/schemas/access_key.service.v1.AccessKey'
+            description: 创建访问凭证 - 请求
+        access_key.service.v1.CreateAccessKeyResponse:
+            type: object
+            properties:
+                data:
+                    $ref: '#/components/schemas/access_key.service.v1.AccessKey'
+                secret:
+                    type: string
+            description: 创建访问凭证 - 回应（secret 仅本次明文返回，服务端只存 SHA-256 摘要）
+        access_key.service.v1.IssueTokenRequest:
+            type: object
+            properties:
+                accessKey:
+                    type: string
+                    description: 访问键
+                secret:
+                    type: string
+                    description: 密钥（创建凭证时一次性下发）
+                clientIp:
+                    type: string
+                    description: 调用方IP（BFF 注入，仅用于限流计数）
+            description: 令牌交换 - 请求（机器对机器：AK/SK 换取短期 JWT）
+        access_key.service.v1.IssueTokenResponse:
+            type: object
+            properties:
+                accessToken:
+                    type: string
+                    description: 访问令牌（Bearer）
+                expiresIn:
+                    type: integer
+                    description: 有效期（秒）
+                    format: uint32
+                tokenType:
+                    type: string
+                    description: 令牌类型（bearer）
+            description: 令牌交换 - 回应
+        access_key.service.v1.ListAccessKeyResponse:
+            type: object
+            properties:
+                items:
+                    type: array
+                    items:
+                        $ref: '#/components/schemas/access_key.service.v1.AccessKey'
+                total:
+                    type: string
+            description: 查询访问凭证列表 - 回应
+        access_key.service.v1.ResetAccessKeySecretRequest:
+            type: object
+            properties:
+                id:
+                    type: integer
+                    format: uint32
+            description: 重置密钥 - 请求
+        access_key.service.v1.UpdateAccessKeyRequest:
+            type: object
+            properties:
+                id:
+                    type: integer
+                    format: uint32
+                data:
+                    $ref: '#/components/schemas/access_key.service.v1.AccessKey'
+                updateMask:
+                    example: id,name,status
+                    type: string
+                    description: 要更新的字段列表
+                    format: field-mask
+                allowMissing:
+                    type: boolean
+                    description: 如果设置为true的时候，资源不存在则会新增(插入)，并且在这种情况下`updateMask`字段将会被忽略。
+            description: 更新访问凭证 - 请求
         admin.service.v1.CreatePagePreviewTokenRequest:
             type: object
             properties:
@@ -19027,6 +19369,8 @@ components:
 security:
     - OAuth2PasswordBearer: []
 tags:
+    - name: AccessKeyService
+      description: OpenAPI 访问凭证（AK/SK）管理 — BFF
     - name: AdminPortalService
       description: 后台前端初始化数据与配置服务
     - name: AiChatService
