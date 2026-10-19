@@ -49,7 +49,18 @@ type AuthenticationService struct {
 	// redisClient 用于 OIDC 授权码 state 的暂存（防 CSRF，一次性消费）
 	redisClient *redis.Client
 
+	vcodeCache *data.VCodeCache
+
+	// 构造期留 nil，装配期由 wiring 在通知域就绪后 RegisterNotifier 注入
+	//（忘记密码的发码邮件走这条缝）。
+	notifier Notifier
+
 	log *log.Helper
+}
+
+// RegisterNotifier 注入通知域投递缝（忘记密码发码用）。
+func (s *AuthenticationService) RegisterNotifier(notifier Notifier) {
+	s.notifier = notifier
 }
 
 func NewAuthenticationService(
@@ -61,6 +72,7 @@ func NewAuthenticationService(
 	tenantRepo *data.TenantRepo,
 	permissionRepo *data.PermissionRepo,
 	redisClient *redis.Client,
+	vcodeCache *data.VCodeCache,
 ) *AuthenticationService {
 	l := log.NewHelper(log.With(ctx.GetLogger(), "module", "authn/service/core-service"))
 	return &AuthenticationService{
@@ -72,6 +84,7 @@ func NewAuthenticationService(
 		permissionRepo:     permissionRepo,
 		authenticator:      authenticator,
 		redisClient:        redisClient,
+		vcodeCache:         vcodeCache,
 	}
 }
 

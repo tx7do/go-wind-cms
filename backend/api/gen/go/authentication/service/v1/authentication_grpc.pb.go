@@ -33,6 +33,8 @@ const (
 	AuthenticationService_WhoAmI_FullMethodName              = "/authentication.service.v1.AuthenticationService/WhoAmI"
 	AuthenticationService_GenerateCaptcha_FullMethodName     = "/authentication.service.v1.AuthenticationService/GenerateCaptcha"
 	AuthenticationService_VerifyCaptcha_FullMethodName       = "/authentication.service.v1.AuthenticationService/VerifyCaptcha"
+	AuthenticationService_ForgotPassword_FullMethodName      = "/authentication.service.v1.AuthenticationService/ForgotPassword"
+	AuthenticationService_ResetPasswordByCode_FullMethodName = "/authentication.service.v1.AuthenticationService/ResetPasswordByCode"
 )
 
 // AuthenticationServiceClient is the client API for AuthenticationService service.
@@ -67,6 +69,11 @@ type AuthenticationServiceClient interface {
 	GenerateCaptcha(ctx context.Context, in *emptypb.Empty, opts ...grpc.CallOption) (*GenerateCaptchaResponse, error)
 	// 验证验证码
 	VerifyCaptcha(ctx context.Context, in *VerifyCaptchaRequest, opts ...grpc.CallOption) (*VerifyCaptchaResponse, error)
+	// 忘记密码：向 identifier（已绑定的邮箱凭证）发送重置验证码——邮箱走 SMTP
+	// （显式点名，不经路由表）。用户不存在时同样返回成功，防止通过接口枚举有效账号。
+	ForgotPassword(ctx context.Context, in *ForgotPasswordRequest, opts ...grpc.CallOption) (*emptypb.Empty, error)
+	// 凭邮箱验证码重置密码（免鉴权）：校验通过后重置密码并吊销该用户全部会话。
+	ResetPasswordByCode(ctx context.Context, in *ResetPasswordByCodeRequest, opts ...grpc.CallOption) (*emptypb.Empty, error)
 }
 
 type authenticationServiceClient struct {
@@ -207,6 +214,26 @@ func (c *authenticationServiceClient) VerifyCaptcha(ctx context.Context, in *Ver
 	return out, nil
 }
 
+func (c *authenticationServiceClient) ForgotPassword(ctx context.Context, in *ForgotPasswordRequest, opts ...grpc.CallOption) (*emptypb.Empty, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(emptypb.Empty)
+	err := c.cc.Invoke(ctx, AuthenticationService_ForgotPassword_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *authenticationServiceClient) ResetPasswordByCode(ctx context.Context, in *ResetPasswordByCodeRequest, opts ...grpc.CallOption) (*emptypb.Empty, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(emptypb.Empty)
+	err := c.cc.Invoke(ctx, AuthenticationService_ResetPasswordByCode_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 // AuthenticationServiceServer is the server API for AuthenticationService service.
 // All implementations must embed UnimplementedAuthenticationServiceServer
 // for forward compatibility.
@@ -239,6 +266,11 @@ type AuthenticationServiceServer interface {
 	GenerateCaptcha(context.Context, *emptypb.Empty) (*GenerateCaptchaResponse, error)
 	// 验证验证码
 	VerifyCaptcha(context.Context, *VerifyCaptchaRequest) (*VerifyCaptchaResponse, error)
+	// 忘记密码：向 identifier（已绑定的邮箱凭证）发送重置验证码——邮箱走 SMTP
+	// （显式点名，不经路由表）。用户不存在时同样返回成功，防止通过接口枚举有效账号。
+	ForgotPassword(context.Context, *ForgotPasswordRequest) (*emptypb.Empty, error)
+	// 凭邮箱验证码重置密码（免鉴权）：校验通过后重置密码并吊销该用户全部会话。
+	ResetPasswordByCode(context.Context, *ResetPasswordByCodeRequest) (*emptypb.Empty, error)
 	mustEmbedUnimplementedAuthenticationServiceServer()
 }
 
@@ -287,6 +319,12 @@ func (UnimplementedAuthenticationServiceServer) GenerateCaptcha(context.Context,
 }
 func (UnimplementedAuthenticationServiceServer) VerifyCaptcha(context.Context, *VerifyCaptchaRequest) (*VerifyCaptchaResponse, error) {
 	return nil, status.Error(codes.Unimplemented, "method VerifyCaptcha not implemented")
+}
+func (UnimplementedAuthenticationServiceServer) ForgotPassword(context.Context, *ForgotPasswordRequest) (*emptypb.Empty, error) {
+	return nil, status.Error(codes.Unimplemented, "method ForgotPassword not implemented")
+}
+func (UnimplementedAuthenticationServiceServer) ResetPasswordByCode(context.Context, *ResetPasswordByCodeRequest) (*emptypb.Empty, error) {
+	return nil, status.Error(codes.Unimplemented, "method ResetPasswordByCode not implemented")
 }
 func (UnimplementedAuthenticationServiceServer) mustEmbedUnimplementedAuthenticationServiceServer() {}
 func (UnimplementedAuthenticationServiceServer) testEmbeddedByValue()                               {}
@@ -543,6 +581,42 @@ func _AuthenticationService_VerifyCaptcha_Handler(srv interface{}, ctx context.C
 	return interceptor(ctx, in, info, handler)
 }
 
+func _AuthenticationService_ForgotPassword_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(ForgotPasswordRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(AuthenticationServiceServer).ForgotPassword(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: AuthenticationService_ForgotPassword_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(AuthenticationServiceServer).ForgotPassword(ctx, req.(*ForgotPasswordRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _AuthenticationService_ResetPasswordByCode_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(ResetPasswordByCodeRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(AuthenticationServiceServer).ResetPasswordByCode(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: AuthenticationService_ResetPasswordByCode_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(AuthenticationServiceServer).ResetPasswordByCode(ctx, req.(*ResetPasswordByCodeRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 // AuthenticationService_ServiceDesc is the grpc.ServiceDesc for AuthenticationService service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
@@ -601,6 +675,14 @@ var AuthenticationService_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "VerifyCaptcha",
 			Handler:    _AuthenticationService_VerifyCaptcha_Handler,
+		},
+		{
+			MethodName: "ForgotPassword",
+			Handler:    _AuthenticationService_ForgotPassword_Handler,
+		},
+		{
+			MethodName: "ResetPasswordByCode",
+			Handler:    _AuthenticationService_ResetPasswordByCode_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},

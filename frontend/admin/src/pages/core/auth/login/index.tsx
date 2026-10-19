@@ -8,7 +8,7 @@ import {
   TeamOutlined,
 } from '@ant-design/icons';
 import { useAuthStore } from '@/stores';
-import { useNavigate, useSearchParams } from 'react-router-dom';
+import { Link, useNavigate, useSearchParams } from "react-router-dom";
 import { fetchGenerateCaptcha } from '@/api';
 import { apiClient } from '@/api/client';
 
@@ -355,15 +355,14 @@ const Login: React.FC = () => {
         <span className="text-[color:var(--ant-color-text-secondary)]">
           {t('noAccount')}{' '}
         </span>
-        {/* CMS 后端暂无找回密码 RPC，入口对齐 vben 侧改为禁用态（9e131069） */}
-        <span
-          className="cursor-not-allowed text-[color:var(--ant-color-text-quaternary)]"
+        {/* 忘记密码：邮件重置验证码两步流（/admin/v1/forgot-password 免鉴权） */}
+        <Link
+          to="/auth/forgot-password"
+          className="text-[color:var(--ant-color-text-secondary)] hover:text-[color:var(--ant-color-primary)]"
           style={{ fontSize: 13 }}
-          title={t('forgotPasswordDisabled')}
         >
           {t('forgotPassword')}
-        </span>
-        
+        </Link>
       </div>
     </div>
   );

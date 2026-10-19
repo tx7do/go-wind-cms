@@ -1202,7 +1202,6 @@ paths:
         post:
             tags:
                 - AuthenticationService
-            description: 验证验证码
             operationId: AuthenticationService_VerifyCaptcha
             requestBody:
                 content:
@@ -3274,6 +3273,24 @@ paths:
                   schema:
                     type: integer
                     format: uint32
+            responses:
+                "200":
+                    description: OK
+                    content: {}
+    /admin/v1/forgot-password:
+        post:
+            tags:
+                - AuthenticationService
+            description: |-
+                验证验证码
+                 忘记密码（免鉴权）：发重置验证码到绑定邮箱
+            operationId: AuthenticationService_ForgotPassword
+            requestBody:
+                content:
+                    application/json:
+                        schema:
+                            $ref: '#/components/schemas/authentication.service.v1.ForgotPasswordRequest'
+                required: true
             responses:
                 "200":
                     description: OK
@@ -7774,6 +7791,22 @@ paths:
                         application/json:
                             schema:
                                 $ref: '#/components/schemas/authentication.service.v1.LoginResponse'
+    /admin/v1/reset-password-by-code:
+        post:
+            tags:
+                - AuthenticationService
+            description: 凭邮箱验证码重置密码（免鉴权）
+            operationId: AuthenticationService_ResetPasswordByCode
+            requestBody:
+                content:
+                    application/json:
+                        schema:
+                            $ref: '#/components/schemas/authentication.service.v1.ResetPasswordByCodeRequest'
+                required: true
+            responses:
+                "200":
+                    description: OK
+                    content: {}
     /admin/v1/roles:
         get:
             tags:
@@ -11512,6 +11545,13 @@ components:
                 data:
                     $ref: '#/components/schemas/authentication.service.v1.LoginPolicy'
             description: 创建登录策略 - 请求
+        authentication.service.v1.ForgotPasswordRequest:
+            type: object
+            properties:
+                identifier:
+                    type: string
+                    description: 登录账号或绑定邮箱
+            description: 忘记密码 - 请求（identifier 为已绑定的邮箱）
         authentication.service.v1.GenerateCaptchaResponse:
             type: object
             properties:
@@ -11716,6 +11756,19 @@ components:
                     type: string
                     description: ID 令牌，OpenID Connect 扩展中定义的 JWT 格式令牌
             description: 用户登录 - 回应
+        authentication.service.v1.ResetPasswordByCodeRequest:
+            type: object
+            properties:
+                identifier:
+                    type: string
+                    description: 登录账号或绑定邮箱
+                code:
+                    type: string
+                    description: 邮箱验证码
+                newPassword:
+                    type: string
+                    description: 新密码
+            description: 凭验证码重置密码 - 请求
         authentication.service.v1.UpdateLoginPolicyRequest:
             type: object
             properties:
@@ -15845,6 +15898,7 @@ components:
                         - CHANNEL_TEST_EMAIL
                         - CHANNEL_TEST_EXT
                         - MONITOR_ALERT
+                        - PASSWORD_RESET_CODE
                         - SYSTEM_NOTIFY
                     type: string
                     description: 业务事件类型
@@ -15964,6 +16018,7 @@ components:
                         - CHANNEL_TEST_EMAIL
                         - CHANNEL_TEST_EXT
                         - MONITOR_ALERT
+                        - PASSWORD_RESET_CODE
                         - SYSTEM_NOTIFY
                     type: string
                     description: 业务事件类型（一张表内唯一）

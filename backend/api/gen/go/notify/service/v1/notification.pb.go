@@ -97,6 +97,8 @@ const (
 	// 监控告警通知：告警/恢复成对发送（监控告警规则的渠道与目标显式写在规则上，
 	// 不经路由表；related_id 指向 monitor_alert_rules.id）。
 	EventType_MONITOR_ALERT EventType = 9
+	// 密码重置验证码邮件（忘记密码流程；显式 EMAIL 渠道点对点，不经路由表）。
+	EventType_PASSWORD_RESET_CODE EventType = 10
 	// 系统通知邮件：站内信系统通知（NotifyUser）的附加邮件触达，收件目标为
 	// 收件用户邮箱。种子规则 SYSTEM_NOTIFY→EMAIL 提供路由（管理员停用该行即
 	// 整体关闭此类出站邮件）；related_id 指向 internal_messages.id。
@@ -106,12 +108,13 @@ const (
 // Enum value maps for EventType.
 var (
 	EventType_name = map[int32]string{
-		0: "EVENT_TYPE_UNSPECIFIED",
-		1: "INTERNAL_MESSAGE",
-		2: "CHANNEL_TEST_EMAIL",
-		8: "CHANNEL_TEST_EXT",
-		9: "MONITOR_ALERT",
-		3: "SYSTEM_NOTIFY",
+		0:  "EVENT_TYPE_UNSPECIFIED",
+		1:  "INTERNAL_MESSAGE",
+		2:  "CHANNEL_TEST_EMAIL",
+		8:  "CHANNEL_TEST_EXT",
+		9:  "MONITOR_ALERT",
+		10: "PASSWORD_RESET_CODE",
+		3:  "SYSTEM_NOTIFY",
 	}
 	EventType_value = map[string]int32{
 		"EVENT_TYPE_UNSPECIFIED": 0,
@@ -119,6 +122,7 @@ var (
 		"CHANNEL_TEST_EMAIL":     2,
 		"CHANNEL_TEST_EXT":       8,
 		"MONITOR_ALERT":          9,
+		"PASSWORD_RESET_CODE":    10,
 		"SYSTEM_NOTIFY":          3,
 	}
 )
@@ -776,13 +780,15 @@ const file_notify_service_v1_notification_proto_rawDesc = "" +
 	"\x05EMAIL\x10\x01\x12\v\n" +
 	"\aWEBHOOK\x10\x02\x12\f\n" +
 	"\bINTERNAL\x10\x03\x12\a\n" +
-	"\x03EXT\x10\x04*\x91\x01\n" +
+	"\x03EXT\x10\x04*\xaa\x01\n" +
 	"\tEventType\x12\x1a\n" +
 	"\x16EVENT_TYPE_UNSPECIFIED\x10\x00\x12\x14\n" +
 	"\x10INTERNAL_MESSAGE\x10\x01\x12\x16\n" +
 	"\x12CHANNEL_TEST_EMAIL\x10\x02\x12\x14\n" +
 	"\x10CHANNEL_TEST_EXT\x10\b\x12\x11\n" +
-	"\rMONITOR_ALERT\x10\t\x12\x11\n" +
+	"\rMONITOR_ALERT\x10\t\x12\x17\n" +
+	"\x13PASSWORD_RESET_CODE\x10\n" +
+	"\x12\x11\n" +
 	"\rSYSTEM_NOTIFY\x10\x03*a\n" +
 	"\x0eDeliveryStatus\x12\x1f\n" +
 	"\x1bDELIVERY_STATUS_UNSPECIFIED\x10\x00\x12\v\n" +

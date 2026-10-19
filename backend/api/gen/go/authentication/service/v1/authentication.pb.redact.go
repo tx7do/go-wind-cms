@@ -192,6 +192,28 @@ func (s *redactedAuthenticationServiceServer) VerifyCaptcha(ctx context.Context,
 	return res, err
 }
 
+// ForgotPassword is the redacted wrapper for the actual AuthenticationServiceServer.ForgotPassword method
+// Unary RPC
+func (s *redactedAuthenticationServiceServer) ForgotPassword(ctx context.Context, in *ForgotPasswordRequest) (*emptypb.Empty, error) {
+	res, err := s.srv.ForgotPassword(ctx, in)
+	if !s.bypass.CheckInternal(ctx) {
+		// Apply redaction to the response
+		redact.Apply(res)
+	}
+	return res, err
+}
+
+// ResetPasswordByCode is the redacted wrapper for the actual AuthenticationServiceServer.ResetPasswordByCode method
+// Unary RPC
+func (s *redactedAuthenticationServiceServer) ResetPasswordByCode(ctx context.Context, in *ResetPasswordByCodeRequest) (*emptypb.Empty, error) {
+	res, err := s.srv.ResetPasswordByCode(ctx, in)
+	if !s.bypass.CheckInternal(ctx) {
+		// Apply redaction to the response
+		redact.Apply(res)
+	}
+	return res, err
+}
+
 // Ensure GetOidcAuthorizeUrlRequest implements the Redactor interface at compile time.
 var _ redact.Redactor = (*GetOidcAuthorizeUrlRequest)(nil)
 
@@ -494,6 +516,34 @@ func (x *VerifyCaptchaRequest) Redact() {
 	// Safe field: CaptchaId
 
 	// Safe field: UserInput
+}
+
+// Ensure ForgotPasswordRequest implements the Redactor interface at compile time.
+var _ redact.Redactor = (*ForgotPasswordRequest)(nil)
+
+// Redact method implementation for ForgotPasswordRequest
+func (x *ForgotPasswordRequest) Redact() {
+	if x == nil {
+		return
+	}
+
+	// Safe field: Identifier
+}
+
+// Ensure ResetPasswordByCodeRequest implements the Redactor interface at compile time.
+var _ redact.Redactor = (*ResetPasswordByCodeRequest)(nil)
+
+// Redact method implementation for ResetPasswordByCodeRequest
+func (x *ResetPasswordByCodeRequest) Redact() {
+	if x == nil {
+		return
+	}
+
+	// Safe field: Identifier
+
+	// Safe field: Code
+
+	// Safe field: NewPassword
 }
 
 // Ensure VerifyCaptchaResponse implements the Redactor interface at compile time.

@@ -21,14 +21,19 @@ var _ = binding.EncodeURL
 
 const _ = http.SupportPackageIsVersion1
 
+const OperationAuthenticationServiceForgotPassword = "/admin.service.v1.AuthenticationService/ForgotPassword"
 const OperationAuthenticationServiceGenerateCaptcha = "/admin.service.v1.AuthenticationService/GenerateCaptcha"
 const OperationAuthenticationServiceGetOidcAuthorizeUrl = "/admin.service.v1.AuthenticationService/GetOidcAuthorizeUrl"
 const OperationAuthenticationServiceLogin = "/admin.service.v1.AuthenticationService/Login"
 const OperationAuthenticationServiceLogout = "/admin.service.v1.AuthenticationService/Logout"
 const OperationAuthenticationServiceRefreshToken = "/admin.service.v1.AuthenticationService/RefreshToken"
+const OperationAuthenticationServiceResetPasswordByCode = "/admin.service.v1.AuthenticationService/ResetPasswordByCode"
 const OperationAuthenticationServiceVerifyCaptcha = "/admin.service.v1.AuthenticationService/VerifyCaptcha"
 
 type AuthenticationServiceHTTPServer interface {
+	// ForgotPassword 验证验证码
+	// 忘记密码（免鉴权）：发重置验证码到绑定邮箱
+	ForgotPassword(context.Context, *v1.ForgotPasswordRequest) (*emptypb.Empty, error)
 	// GenerateCaptcha 生成验证码
 	GenerateCaptcha(context.Context, *emptypb.Empty) (*v1.GenerateCaptchaResponse, error)
 	// GetOidcAuthorizeUrl 获取 OIDC 授权跳转地址（core 生成 state 暂存 Redis，防 CSRF；免鉴权）
@@ -39,7 +44,8 @@ type AuthenticationServiceHTTPServer interface {
 	Logout(context.Context, *emptypb.Empty) (*emptypb.Empty, error)
 	// RefreshToken 刷新认证令牌
 	RefreshToken(context.Context, *v1.LoginRequest) (*v1.LoginResponse, error)
-	// VerifyCaptcha 验证验证码
+	// ResetPasswordByCode 凭邮箱验证码重置密码（免鉴权）
+	ResetPasswordByCode(context.Context, *v1.ResetPasswordByCodeRequest) (*emptypb.Empty, error)
 	VerifyCaptcha(context.Context, *v1.VerifyCaptchaRequest) (*v1.VerifyCaptchaResponse, error)
 }
 
@@ -50,6 +56,8 @@ func RegisterAuthenticationServiceHTTPServer(s *http.Server, srv AuthenticationS
 	r.POST("/admin/v1/logout", _AuthenticationService_Logout0_HTTP_Handler(srv))
 	r.POST("/admin/v1/refresh-token", _AuthenticationService_RefreshToken0_HTTP_Handler(srv))
 	r.GET("/admin/v1/captcha", _AuthenticationService_GenerateCaptcha0_HTTP_Handler(srv))
+	r.POST("/admin/v1/forgot-password", _AuthenticationService_ForgotPassword0_HTTP_Handler(srv))
+	r.POST("/admin/v1/reset-password-by-code", _AuthenticationService_ResetPasswordByCode0_HTTP_Handler(srv))
 	r.POST("/admin/v1/captcha/verify", _AuthenticationService_VerifyCaptcha0_HTTP_Handler(srv))
 }
 
@@ -160,6 +168,50 @@ func _AuthenticationService_GenerateCaptcha0_HTTP_Handler(srv AuthenticationServ
 	}
 }
 
+func _AuthenticationService_ForgotPassword0_HTTP_Handler(srv AuthenticationServiceHTTPServer) func(ctx http.Context) error {
+	return func(ctx http.Context) error {
+		var in v1.ForgotPasswordRequest
+		if err := ctx.Bind(&in); err != nil {
+			return err
+		}
+		if err := ctx.BindQuery(&in); err != nil {
+			return err
+		}
+		http.SetOperation(ctx, OperationAuthenticationServiceForgotPassword)
+		h := ctx.Middleware(func(ctx context.Context, req interface{}) (interface{}, error) {
+			return srv.ForgotPassword(ctx, req.(*v1.ForgotPasswordRequest))
+		})
+		out, err := h(ctx, &in)
+		if err != nil {
+			return err
+		}
+		reply := out.(*emptypb.Empty)
+		return ctx.Result(200, reply)
+	}
+}
+
+func _AuthenticationService_ResetPasswordByCode0_HTTP_Handler(srv AuthenticationServiceHTTPServer) func(ctx http.Context) error {
+	return func(ctx http.Context) error {
+		var in v1.ResetPasswordByCodeRequest
+		if err := ctx.Bind(&in); err != nil {
+			return err
+		}
+		if err := ctx.BindQuery(&in); err != nil {
+			return err
+		}
+		http.SetOperation(ctx, OperationAuthenticationServiceResetPasswordByCode)
+		h := ctx.Middleware(func(ctx context.Context, req interface{}) (interface{}, error) {
+			return srv.ResetPasswordByCode(ctx, req.(*v1.ResetPasswordByCodeRequest))
+		})
+		out, err := h(ctx, &in)
+		if err != nil {
+			return err
+		}
+		reply := out.(*emptypb.Empty)
+		return ctx.Result(200, reply)
+	}
+}
+
 func _AuthenticationService_VerifyCaptcha0_HTTP_Handler(srv AuthenticationServiceHTTPServer) func(ctx http.Context) error {
 	return func(ctx http.Context) error {
 		var in v1.VerifyCaptchaRequest
@@ -183,6 +235,9 @@ func _AuthenticationService_VerifyCaptcha0_HTTP_Handler(srv AuthenticationServic
 }
 
 type AuthenticationServiceHTTPClient interface {
+	// ForgotPassword 验证验证码
+	// 忘记密码（免鉴权）：发重置验证码到绑定邮箱
+	ForgotPassword(ctx context.Context, req *v1.ForgotPasswordRequest, opts ...http.CallOption) (rsp *emptypb.Empty, err error)
 	// GenerateCaptcha 生成验证码
 	GenerateCaptcha(ctx context.Context, req *emptypb.Empty, opts ...http.CallOption) (rsp *v1.GenerateCaptchaResponse, err error)
 	// GetOidcAuthorizeUrl 获取 OIDC 授权跳转地址（core 生成 state 暂存 Redis，防 CSRF；免鉴权）
@@ -193,7 +248,8 @@ type AuthenticationServiceHTTPClient interface {
 	Logout(ctx context.Context, req *emptypb.Empty, opts ...http.CallOption) (rsp *emptypb.Empty, err error)
 	// RefreshToken 刷新认证令牌
 	RefreshToken(ctx context.Context, req *v1.LoginRequest, opts ...http.CallOption) (rsp *v1.LoginResponse, err error)
-	// VerifyCaptcha 验证验证码
+	// ResetPasswordByCode 凭邮箱验证码重置密码（免鉴权）
+	ResetPasswordByCode(ctx context.Context, req *v1.ResetPasswordByCodeRequest, opts ...http.CallOption) (rsp *emptypb.Empty, err error)
 	VerifyCaptcha(ctx context.Context, req *v1.VerifyCaptchaRequest, opts ...http.CallOption) (rsp *v1.VerifyCaptchaResponse, err error)
 }
 
@@ -203,6 +259,21 @@ type AuthenticationServiceHTTPClientImpl struct {
 
 func NewAuthenticationServiceHTTPClient(client *http.Client) AuthenticationServiceHTTPClient {
 	return &AuthenticationServiceHTTPClientImpl{client}
+}
+
+// ForgotPassword 验证验证码
+// 忘记密码（免鉴权）：发重置验证码到绑定邮箱
+func (c *AuthenticationServiceHTTPClientImpl) ForgotPassword(ctx context.Context, in *v1.ForgotPasswordRequest, opts ...http.CallOption) (*emptypb.Empty, error) {
+	var out emptypb.Empty
+	pattern := "/admin/v1/forgot-password"
+	path := binding.EncodeURL(pattern, in, false)
+	opts = append(opts, http.Operation(OperationAuthenticationServiceForgotPassword))
+	opts = append(opts, http.PathTemplate(pattern))
+	err := c.cc.Invoke(ctx, "POST", path, in, &out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return &out, nil
 }
 
 // GenerateCaptcha 生成验证码
@@ -275,7 +346,20 @@ func (c *AuthenticationServiceHTTPClientImpl) RefreshToken(ctx context.Context, 
 	return &out, nil
 }
 
-// VerifyCaptcha 验证验证码
+// ResetPasswordByCode 凭邮箱验证码重置密码（免鉴权）
+func (c *AuthenticationServiceHTTPClientImpl) ResetPasswordByCode(ctx context.Context, in *v1.ResetPasswordByCodeRequest, opts ...http.CallOption) (*emptypb.Empty, error) {
+	var out emptypb.Empty
+	pattern := "/admin/v1/reset-password-by-code"
+	path := binding.EncodeURL(pattern, in, false)
+	opts = append(opts, http.Operation(OperationAuthenticationServiceResetPasswordByCode))
+	opts = append(opts, http.PathTemplate(pattern))
+	err := c.cc.Invoke(ctx, "POST", path, in, &out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return &out, nil
+}
+
 func (c *AuthenticationServiceHTTPClientImpl) VerifyCaptcha(ctx context.Context, in *v1.VerifyCaptchaRequest, opts ...http.CallOption) (*v1.VerifyCaptchaResponse, error) {
 	var out v1.VerifyCaptchaResponse
 	pattern := "/admin/v1/captcha/verify"

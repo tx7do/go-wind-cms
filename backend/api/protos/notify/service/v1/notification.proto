@@ -61,6 +61,9 @@ enum EventType {
   // 不经路由表；related_id 指向 monitor_alert_rules.id）。
   MONITOR_ALERT = 9;
 
+  // 密码重置验证码邮件（忘记密码流程；显式 EMAIL 渠道点对点，不经路由表）。
+  PASSWORD_RESET_CODE = 10;
+
   // 系统通知邮件：站内信系统通知（NotifyUser）的附加邮件触达，收件目标为
   // 收件用户邮箱。种子规则 SYSTEM_NOTIFY→EMAIL 提供路由（管理员停用该行即
   // 整体关闭此类出站邮件）；related_id 指向 internal_messages.id。

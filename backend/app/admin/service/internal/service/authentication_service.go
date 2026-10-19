@@ -200,6 +200,16 @@ func (s *AuthenticationService) verifyLoginCaptcha(ctx context.Context) bool {	i
 	return ok
 }
 
+// ForgotPassword 忘记密码（透传 core：凭据、验证码缓存与通知缝都在 core）。
+func (s *AuthenticationService) ForgotPassword(ctx context.Context, req *authenticationV1.ForgotPasswordRequest) (*emptypb.Empty, error) {
+	return s.authenticationServiceClient.ForgotPassword(ctx, req)
+}
+
+// ResetPasswordByCode 凭邮箱验证码重置密码（透传 core）。
+func (s *AuthenticationService) ResetPasswordByCode(ctx context.Context, req *authenticationV1.ResetPasswordByCodeRequest) (*emptypb.Empty, error) {
+	return s.authenticationServiceClient.ResetPasswordByCode(ctx, req)
+}
+
 func (s *AuthenticationService) GenerateCaptcha(ctx context.Context, _ *emptypb.Empty) (*authenticationV1.GenerateCaptchaResponse, error) {
 	captchaId, captchaImage, answer, err := s.captchaClient.Generate()
 	if err != nil {

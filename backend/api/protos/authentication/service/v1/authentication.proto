@@ -60,6 +60,13 @@ service AuthenticationService {
 
   // 验证验证码
   rpc VerifyCaptcha (VerifyCaptchaRequest) returns (VerifyCaptchaResponse) {}
+
+  // 忘记密码：向 identifier（已绑定的邮箱凭证）发送重置验证码——邮箱走 SMTP
+  //（显式点名，不经路由表）。用户不存在时同样返回成功，防止通过接口枚举有效账号。
+  rpc ForgotPassword (ForgotPasswordRequest) returns (google.protobuf.Empty) {}
+
+  // 凭邮箱验证码重置密码（免鉴权）：校验通过后重置密码并吊销该用户全部会话。
+  rpc ResetPasswordByCode (ResetPasswordByCodeRequest) returns (google.protobuf.Empty) {}
 }
 
 // 授权类型
@@ -583,6 +590,33 @@ message VerifyCaptchaRequest {
       description: "用户输入的验证码文本"
     }
   ]; // 用户输入的验证码文本
+}
+
+// 忘记密码 - 请求（identifier 为已绑定的邮箱）
+message ForgotPasswordRequest {
+  optional string identifier = 1 [
+    json_name = "identifier",
+    (gnostic.openapi.v3.property) = { description: "登录账号或绑定邮箱" }
+  ]; // 登录账号或绑定邮箱
+}
+
+// 凭验证码重置密码 - 请求
+message ResetPasswordByCodeRequest {
+  optional string identifier = 1 [
+    json_name = "identifier",
+    (gnostic.openapi.v3.property) = { description: "登录账号或绑定邮箱" }
+  ]; // 登录账号或绑定邮箱
+
+  optional string code = 2 [
+    json_name = "code",
+    (gnostic.openapi.v3.property) = { description: "邮箱验证码" }
+  ]; // 邮箱验证码
+
+  // 新密码（AES 密文传输，与登录同规）
+  optional string new_password = 3 [
+    json_name = "newPassword",
+    (gnostic.openapi.v3.property) = { description: "新密码" }
+  ]; // 新密码
 }
 
 message VerifyCaptchaResponse {

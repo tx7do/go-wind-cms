@@ -54,6 +54,11 @@ func NewRestMiddleware(
 		// AuthenticationService.RefreshToken：access token 过期后凭 refresh_token 换新，
 		// 调用时 bearer 往往已过期，若要求有效 token 刷新将永远 401。
 		adminV1.OperationAuthenticationServiceRefreshToken,
+		// AuthenticationService.ForgotPassword / ResetPasswordByCode：忘记密码两步
+		//（发重置验证码 / 凭码重置），发生在登录之前、调用方必然无 token。
+		// 防枚举由 core 的"查无此人静默 200"承担，验证码单次有效 10 分钟。
+		adminV1.OperationAuthenticationServiceForgotPassword,
+		adminV1.OperationAuthenticationServiceResetPasswordByCode,
 	)
 
 	ms = append(ms, applogging.Server(

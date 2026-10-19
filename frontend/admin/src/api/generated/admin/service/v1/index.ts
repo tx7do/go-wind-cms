@@ -2504,6 +2504,14 @@ export interface AuthenticationService {
     request: wellKnownEmpty,
   ): Promise<authenticationservicev1_GenerateCaptchaResponse>;
   // 验证验证码
+  // 忘记密码（免鉴权）：发重置验证码到绑定邮箱
+  ForgotPassword(
+    request: authenticationservicev1_ForgotPasswordRequest,
+  ): Promise<wellKnownEmpty>;
+  // 凭邮箱验证码重置密码（免鉴权）
+  ResetPasswordByCode(
+    request: authenticationservicev1_ResetPasswordByCodeRequest,
+  ): Promise<wellKnownEmpty>;
   VerifyCaptcha(
     request: authenticationservicev1_VerifyCaptchaRequest,
   ): Promise<authenticationservicev1_VerifyCaptchaResponse>;
@@ -2552,6 +2560,22 @@ export function createAuthenticationServiceClient(
         service: 'AuthenticationService',
         method: 'GenerateCaptcha',
       }) as Promise<authenticationservicev1_GenerateCaptchaResponse>;
+    },
+    ForgotPassword(request) {
+      const path = `admin/v1/forgot-password`;
+      const body = JSON.stringify(request);
+      return transport.unary(path, 'POST', body, {
+        service: 'AuthenticationService',
+        method: 'ForgotPassword',
+      }) as Promise<wellKnownEmpty>;
+    },
+    ResetPasswordByCode(request) {
+      const path = `admin/v1/reset-password-by-code`;
+      const body = JSON.stringify(request);
+      return transport.unary(path, 'POST', body, {
+        service: 'AuthenticationService',
+        method: 'ResetPasswordByCode',
+      }) as Promise<wellKnownEmpty>;
     },
     VerifyCaptcha(request) {
       const path = `admin/v1/captcha/verify`;
@@ -2626,6 +2650,19 @@ export type authenticationservicev1_GetOidcAuthorizeUrlResponse = {
 export type authenticationservicev1_GenerateCaptchaResponse = {
   captchaId: string | undefined;
   imageBase64: string | undefined;
+};
+
+// 忘记密码 - 请求（identifier 为已绑定的邮箱）
+export type authenticationservicev1_ForgotPasswordRequest = {
+  identifier?: string;
+};
+
+// 凭验证码重置密码 - 请求
+export type authenticationservicev1_ResetPasswordByCodeRequest = {
+  code?: string;
+  identifier?: string;
+  // 新密码（AES 密文传输，与登录同规）
+  newPassword?: string;
 };
 
 export type authenticationservicev1_VerifyCaptchaRequest = {
@@ -9081,6 +9118,8 @@ export type notifyservicev1_EventType =
   // 监控告警通知：告警/恢复成对发送（监控告警规则的渠道与目标显式写在规则上，
   // 不经路由表；related_id 指向 monitor_alert_rules.id）。
   | 'MONITOR_ALERT'
+  // 密码重置验证码邮件（忘记密码流程；显式 EMAIL 渠道点对点，不经路由表）。
+  | 'PASSWORD_RESET_CODE'
   // 系统通知邮件：站内信系统通知（NotifyUser）的附加邮件触达，收件目标为
   // 收件用户邮箱。种子规则 SYSTEM_NOTIFY→EMAIL 提供路由（管理员停用该行即
   // 整体关闭此类出站邮件）；related_id 指向 internal_messages.id。

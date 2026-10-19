@@ -66,6 +66,7 @@ func initApp(ctx *bootstrap.Context) (*kratos.App, func(), error) {
 	cleanups = append(cleanups, cleanupRedis)
 
 	userTokenCache := data.NewUserTokenCache(ctx, redisClient)
+	vcodeCache := data.NewVCodeCache(redisClient)
 	authenticator := data.NewAuthenticator(ctx, authenticatorOption, userTokenCache)
 
 	entClient, cleanupEnt, err := client.NewEntClient(ctx)
@@ -212,7 +213,7 @@ func initApp(ctx *bootstrap.Context) (*kratos.App, func(), error) {
 	// ═══════════════════════ 三、服务层(internal/service) ═══════════════════════
 
 	// 认证与登录策略
-	authenticationService := service.NewAuthenticationService(ctx, authenticator, userCredentialRepo, userRepo, roleRepo, tenantRepo, permissionRepo, redisClient)
+	authenticationService := service.NewAuthenticationService(ctx, authenticator, userCredentialRepo, userRepo, roleRepo, tenantRepo, permissionRepo, redisClient, vcodeCache)
 	loginPolicyService := service.NewLoginPolicyService(ctx, loginPolicyRepo)
 	userCredentialService := service.NewUserCredentialService(ctx, userCredentialRepo)
 
@@ -293,6 +294,7 @@ func initApp(ctx *bootstrap.Context) (*kratos.App, func(), error) {
 	// INTERNAL 渠道的实现又反向持有站内信 service——两个 service 构造完之后再互相注册。
 	channelRegistry.Register(service.NewInternalMessageSender(internalMessageService, notificationPreferenceRepo, ctx.NewLoggerHelper("internal-message-sender/channel")))
 	internalMessageService.RegisterNotifier(notificationService)
+	authenticationService.RegisterNotifier(notificationService)
 
 	// 内容
 	commentService := service.NewCommentService(ctx, commentRepo)

@@ -46,6 +46,7 @@ func (NotificationDelivery) Fields() []ent.Field {
 				"SystemNotify", "SYSTEM_NOTIFY",
 				"ChannelTestExt", "CHANNEL_TEST_EXT",
 				"MonitorAlert", "MONITOR_ALERT",
+				"PasswordResetCode", "PASSWORD_RESET_CODE",
 			).
 			Optional().
 			Nillable(),

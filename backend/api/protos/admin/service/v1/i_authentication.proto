@@ -62,6 +62,22 @@ service AuthenticationService {
   }
 
   // 验证验证码
+  // 忘记密码（免鉴权）：发重置验证码到绑定邮箱
+  rpc ForgotPassword (authentication.service.v1.ForgotPasswordRequest) returns (google.protobuf.Empty) {
+    option (google.api.http) = {
+      post: "/admin/v1/forgot-password"
+      body: "*"
+    };
+  }
+
+  // 凭邮箱验证码重置密码（免鉴权）
+  rpc ResetPasswordByCode (authentication.service.v1.ResetPasswordByCodeRequest) returns (google.protobuf.Empty) {
+    option (google.api.http) = {
+      post: "/admin/v1/reset-password-by-code"
+      body: "*"
+    };
+  }
+
   rpc VerifyCaptcha (authentication.service.v1.VerifyCaptchaRequest) returns (authentication.service.v1.VerifyCaptchaResponse) {
     option (google.api.http) = {
       post: "/admin/v1/captcha/verify"

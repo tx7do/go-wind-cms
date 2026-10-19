@@ -2528,7 +2528,7 @@ var (
 		{Name: "created_by", Type: field.TypeUint32, Nullable: true, Comment: "创建者ID"},
 		{Name: "updated_by", Type: field.TypeUint32, Nullable: true, Comment: "更新者ID"},
 		{Name: "deleted_by", Type: field.TypeUint32, Nullable: true, Comment: "删除者ID"},
-		{Name: "event_type", Type: field.TypeEnum, Nullable: true, Comment: "业务事件类型（成员名与 proto 的 EventType 枚举逐字同名，EnumTypeConverter 按名字配对）", Enums: []string{"INTERNAL_MESSAGE", "CHANNEL_TEST_EMAIL", "SYSTEM_NOTIFY", "CHANNEL_TEST_EXT", "MONITOR_ALERT"}},
+		{Name: "event_type", Type: field.TypeEnum, Nullable: true, Comment: "业务事件类型（成员名与 proto 的 EventType 枚举逐字同名，EnumTypeConverter 按名字配对）", Enums: []string{"INTERNAL_MESSAGE", "CHANNEL_TEST_EMAIL", "SYSTEM_NOTIFY", "CHANNEL_TEST_EXT", "MONITOR_ALERT", "PASSWORD_RESET_CODE"}},
 		{Name: "channel", Type: field.TypeEnum, Nullable: true, Comment: "投递渠道（EXT：扩展渠道大类，具体型别在渠道行的 type 列）", Enums: []string{"EMAIL", "WEBHOOK", "INTERNAL", "EXT"}},
 		{Name: "channel_id", Type: field.TypeUint32, Nullable: true, Comment: "实际选中的渠道配置ID"},
 		{Name: "recipient_user_id", Type: field.TypeUint32, Nullable: true, Comment: "收件用户ID（直发模式可为空）"},
