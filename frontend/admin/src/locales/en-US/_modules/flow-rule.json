@@ -40,5 +40,7 @@
   "matchedBranchTitle": "Run when condition matches",
   "elseBranchTitle": "Else branch (condition not matched)",
   "elseBranchTag": "else branch",
-  "elseActionRequired": "Else branch is enabled: configure at least one complete action"
+  "elseActionRequired": "Else branch is enabled: configure at least one complete action",
+  "notifyTitleEnPlaceholder": "English title variant (optional)",
+  "notifyContentEnPlaceholder": "English body variant (optional) — recipients preferring English get this in email"
 }

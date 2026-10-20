@@ -33,6 +33,9 @@ interface FlowActionForm {
   secret: string;
   title: string;
   content: string;
+  /** 英文变体（可选）：偏好语言为英文的收件人邮件按 EN 文案渲染 */
+  titleEn: string;
+  contentEn: string;
   /** 收件人用户 ID 逗号分隔输入态 */
   targetUserIdsText: string;
   /** delay 动作秒数输入态 */
@@ -45,6 +48,8 @@ const emptyAction = (type: FlowActionForm['type']): FlowActionForm => ({
   secret: '',
   title: '',
   content: '',
+  titleEn: '',
+  contentEn: '',
   targetUserIdsText: '',
   secondsText: '',
 });
@@ -72,12 +77,18 @@ const serializeActions = (actions: FlowActionForm[]) =>
           .map((x) => Number(x))
           .filter((x) => Number.isInteger(x) && x > 0);
         if (!a.title.trim() || !a.content.trim() || ids.length === 0) return null;
-        return {
+        const out: Record<string, unknown> = {
           type: 'notification',
           title: a.title.trim(),
           content: a.content.trim(),
           target_user_ids: ids,
         };
+        // 英文变体（可选）：两者齐备才携带
+        if (a.titleEn.trim() && a.contentEn.trim()) {
+          out.title_en = a.titleEn.trim();
+          out.content_en = a.contentEn.trim();
+        }
+        return out;
       })
       .filter(Boolean),
   );
@@ -104,6 +115,8 @@ const deserializeActions = (actionsJSON: string): FlowActionForm[] => {
           secret: String(a.secret ?? ''),
           title: String(a.title ?? ''),
           content: String(a.content ?? ''),
+          titleEn: String(a.title_en ?? ''),
+          contentEn: String(a.content_en ?? ''),
           targetUserIdsText: Array.isArray(a.target_user_ids)
             ? (a.target_user_ids as unknown[]).map(String).join(',')
             : '',
@@ -200,6 +213,17 @@ const ActionEditor = ({
                   placeholder={t('notifyRecipientsPlaceholder')}
                   value={a.targetUserIdsText}
                   onChange={(e) => patch({ targetUserIdsText: e.target.value })}
+                />
+                <Input
+                  placeholder={t('notifyTitleEnPlaceholder')}
+                  value={a.titleEn}
+                  onChange={(e) => patch({ titleEn: e.target.value })}
+                />
+                <Input.TextArea
+                  placeholder={t('notifyContentEnPlaceholder')}
+                  value={a.contentEn}
+                  rows={2}
+                  onChange={(e) => patch({ contentEn: e.target.value })}
                 />
               </Space>
             )}

@@ -293,6 +293,71 @@ func (s *InternalMessageService) SendSystemNotification(ctx context.Context, tit
 	return msg.GetId(), nil
 }
 
+// AltNotificationText 事务性邮件的英文变体（模板 lite）：两者齐备时，
+// 偏好语言为英文的收件人的邮件触达按 EN 文案渲染；站内信收件行仍共享主文案单行。
+type AltNotificationText struct {
+	Title   string
+	Content string
+}
+
+// SendSystemNotificationLocalized 带 EN 变体的系统事件通知。
+// 与 SendSystemNotification 同语义：一条 PUBLISHED 消息（主文案，站内信共享）、
+// 逐收件人 SendDirect；差别仅在邮件触达——收件人偏好语言为 en 且提供了变体时，
+// 该收件人的邮件按 EN 文案送出（投递台账记实际送出的文案）。
+// 变体 nil/字段不全 → 退化为 SendSystemNotification 同行为。
+func (s *InternalMessageService) SendSystemNotificationLocalized(ctx context.Context, title, content string, alt *AltNotificationText, targetUserIDs []uint32) (uint32, error) {
+	if alt == nil || alt.Title == "" || alt.Content == "" {
+		return s.SendSystemNotification(ctx, title, content, targetUserIDs)
+	}
+
+	targets := make([]uint32, 0, len(targetUserIDs))
+	for _, uid := range targetUserIDs {
+		if uid != 0 {
+			targets = append(targets, uid)
+		}
+	}
+	if len(targets) == 0 {
+		return 0, internalMessageV1.ErrorBadRequest("target user ids are required")
+	}
+
+	now := time.Now()
+	msg, err := s.internalMessageRepo.Create(ctx, &internalMessageV1.CreateInternalMessageRequest{
+		Data: &internalMessageV1.InternalMessage{
+			Title:     trans.Ptr(title),
+			Content:   trans.Ptr(content),
+			Status:    trans.Ptr(internalMessageV1.InternalMessage_PUBLISHED),
+			Type:      trans.Ptr(internalMessageV1.InternalMessage_NOTIFICATION),
+			CreatedBy: trans.Ptr(uint32(0)),
+			CreatedAt: timeutil.TimeToTimestamppb(&now),
+		},
+	})
+	if err != nil {
+		s.log.Errorf("system notification: create message failed: %v", err)
+		return 0, err
+	}
+	for _, uid := range targets {
+		sendTitle, sendContent := title, content
+		if u, uErr := s.userRepo.Get(ctx, &identityV1.GetUserRequest{
+			QueryBy: &identityV1.GetUserRequest_Id{Id: uid},
+		}); uErr == nil && u != nil && strings.HasPrefix(strings.ToLower(u.GetLocale()), "en") {
+			sendTitle, sendContent = alt.Title, alt.Content
+		}
+		// 单收件人失败不中断其余收件人（与群发口径一致）；台账 ID 一并带进日志便于回查
+		resp, dErr := s.notifier.SendDirect(ctx, &notifyV1.SendDirectNotificationRequest{
+			EventType:       notifyV1.EventType_INTERNAL_MESSAGE,
+			Target:          strconv.FormatUint(uint64(uid), 10),
+			Title:           sendTitle,
+			Content:         sendContent,
+			RecipientUserId: trans.Ptr(uid),
+			RelatedId:       trans.Ptr(msg.GetId()),
+		})
+		if dErr != nil {
+			s.log.Errorf("system notification: deliver to user [%d] failed (delivery=%d): %v", uid, resp.GetDeliveryId(), dErr)
+		}
+	}
+	return msg.GetId(), nil
+}
+
 // SendMessage 发送消息
 func (s *InternalMessageService) SendMessage(ctx context.Context, req *internalMessageV1.SendMessageRequest) (*internalMessageV1.SendMessageResponse, error) {
 	if req == nil {

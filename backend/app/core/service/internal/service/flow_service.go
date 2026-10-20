@@ -40,6 +40,10 @@ type flowAction struct {
 	Secret        string   `json:"secret"`
 	Title         string   `json:"title"`
 	Content       string   `json:"content"`
+	// 英文变体（模板 lite）：可选。两者齐备时，偏好语言为英文的收件人的
+	// 邮件触达按 EN 文案渲染（站内信仍共享主文案单行）；任一为空即忽略变体。
+	TitleEn       string   `json:"title_en,omitempty"`
+	ContentEn     string   `json:"content_en,omitempty"`
 	TargetUserIDs []uint32 `json:"target_user_ids"`
 	Seconds       int      `json:"seconds"` // delay 动作：延时秒数
 }
@@ -363,7 +367,14 @@ func (s *FlowService) runActionSlice(ctx context.Context, rule *flowV1.FlowRule,
 			}
 			title := s.expandPlaceholders(a.Title, rule, payload)
 			content := s.expandPlaceholders(a.Content, rule, payload)
-			if _, nErr := s.internalMessageSvc.SendSystemNotification(ctx, title, content, a.TargetUserIDs); nErr != nil {
+			var alt *AltNotificationText
+			if a.TitleEn != "" && a.ContentEn != "" {
+				alt = &AltNotificationText{
+					Title:   s.expandPlaceholders(a.TitleEn, rule, payload),
+					Content: s.expandPlaceholders(a.ContentEn, rule, payload),
+				}
+			}
+			if _, nErr := s.internalMessageSvc.SendSystemNotificationLocalized(ctx, title, content, alt, a.TargetUserIDs); nErr != nil {
 				s.log.Errorf("flow execute: rule [%d] action[%d] notification failed: %v", rule.GetId(), i, nErr)
 			}
 		case "delay":

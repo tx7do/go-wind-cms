@@ -40,5 +40,7 @@
   "matchedBranchTitle": "条件满足时执行",
   "elseBranchTitle": "条件不满足分支",
   "elseBranchTag": "else 分支",
-  "elseActionRequired": "已开启条件不满足分支，请至少配置一个完整有效的动作"
+  "elseActionRequired": "已开启条件不满足分支，请至少配置一个完整有效的动作",
+  "notifyTitleEnPlaceholder": "英文标题变体（可选）",
+  "notifyContentEnPlaceholder": "英文正文变体（可选）——偏好语言为英文的收件人邮件按此渲染"
 }
