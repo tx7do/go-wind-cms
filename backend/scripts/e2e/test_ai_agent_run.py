@@ -21,6 +21,8 @@ from common import AdminApi, admin_login
 
 MOCK_PORT = 6902
 MOCK_ANSWER = "mock-agent-answer"
+MOCK_EMBEDDING_DIM = 1536
+MOCK_VECTOR = [1.0] * MOCK_EMBEDDING_DIM  # 检索种子向量同维同向：余弦距离 0，topK 确定命中
 
 passed = failed = 0
 
@@ -56,6 +58,21 @@ class MockOpenAIHandler(BaseHTTPRequestHandler):
         length = int(self.headers.get("Content-Length", 0))
         self.rfile.read(length)
 
+        if self.path.endswith("/embeddings"):
+            # OpenAI embeddings 端点：知识节点检索链路（同维固定向量）
+            body = json.dumps({
+                "object": "list",
+                "data": [{"object": "embedding", "index": 0, "embedding": MOCK_VECTOR}],
+                "model": "mock-embedding",
+                "usage": {"prompt_tokens": 3, "total_tokens": 3},
+            }).encode()
+            self.send_response(200)
+            self.send_header("Content-Type", "application/json")
+            self.send_header("Content-Length", str(len(body)))
+            self.end_headers()
+            self.wfile.write(body)
+            return
+
         self.send_response(200)
         self.send_header("Content-Type", "text/event-stream; charset=utf-8")
         self.send_header("Cache-Control", "no-cache")
@@ -70,6 +87,14 @@ class MockOpenAIHandler(BaseHTTPRequestHandler):
 
     def log_message(self, *args):
         pass
+
+
+def sql(sqltext):
+    import subprocess
+    return subprocess.run(
+        ["docker", "exec", "citus-server-standalone", "psql", "-U", "postgres", "-d", "gwc", "-t", "-A", "-c", sqltext],
+        capture_output=True, text=True, timeout=30,
+    ).stdout.strip()
 
 
 def main():
@@ -163,7 +188,57 @@ def main():
     mine = [it for it in (runs.get("items") or []) if int(it.get("appId") or 0) == app_id]
     check("本应用台账累计 3 行", len(mine) == 3, str(len(mine)))
 
-    print("== 5. 清理 ==")
+    print("== 5. 知识节点链路（mock embeddings + SQL 种子切片）==")
+    # 建知识库（指向 mock provider + embedding 模型）
+    ts = int(time.time())
+    kb_name = f"e2e-kb-agent-{ts}"
+    r = api("/admin/v1/ai/knowledge-bases", "POST", {"data": {
+        "name": kb_name,
+        "description": "agent knowledge E2E",
+        "providerId": prov["id"],
+        "embeddingModel": "mock-embedding",
+    }})
+    check("建知识库", "error" not in r and "code" not in r, str(r)[:100])
+    kbl = api("/admin/v1/ai/knowledge-bases?page=1&pageSize=50")
+    kb_id = next((it.get("id") for it in kbl.get("items", []) if it.get("name") == kb_name), None)
+    check("知识库可检索", kb_id is not None, str(kb_id))
+
+    # SQL 种子 doc + 2 chunks（向量同 mock query 向量：余弦距离 0）
+    vec = "[" + ",".join(["1"] * 1536) + "]"
+    seeds = ["知识条目甲：项目代号晨曦", "知识条目乙：项目代号星辰"]
+    sql("INSERT INTO sys_ai_docs (tenant_id, name, chunk_count, status, user_id, base_id) VALUES (0, 'e2e-doc', 2, 'READY', 1, %s);" % kb_id)
+    doc_id = sql("SELECT max(id) FROM sys_ai_docs;")
+    for i, content in enumerate(seeds):
+        sql(f"INSERT INTO sys_ai_chunks (tenant_id, content, chunk_index, doc_id, embedding) VALUES (0, '{content}', {i}, {doc_id}, '{vec}');")
+    check("种子 doc + 2 chunks", True, f"doc={doc_id}")
+
+    graph_kb = json.dumps({
+        "nodes": [
+            {"id": "start", "type": "start", "data": {"inputVars": [{"name": "q", "required": True}]}},
+            {"id": "kb_1", "type": "knowledge", "data": {"baseId": kb_id, "topK": 2, "query": "{{start.q}}"}},
+            {"id": "end", "type": "end", "data": {"output": "{{kb_1.context}}|hits={{kb_1.hits}}"}},
+        ],
+        "edges": [
+            {"source": "start", "target": "kb_1"},
+            {"source": "kb_1", "target": "end"},
+        ],
+    }, ensure_ascii=False)
+    r = api("/admin/v1/ai/agents", "POST", {
+        "data": {"name": "e2e-agent-kb", "description": "知识节点链路", "enabled": True, "graph": graph_kb},
+    })
+    kb_app_id = r.get("id")
+    check("建知识节点应用", kb_app_id is not None, str(r)[:100])
+
+    r = api(f"/admin/v1/ai/agents/{kb_app_id}/run", "POST", {"input": {"q": "检索一下"}})
+    out = str(r.get("output"))
+    check("知识节点运行 SUCCEEDED", r.get("status") == "SUCCEEDED", str(r.get("status")) + " err=" + str(r.get("error"))[:120])
+    check("检索上下文进入产出（两片段 + 命中数）", "知识条目甲" in out and "知识条目乙" in out and "hits=2" in out, out[:120])
+
+    api(f"/admin/v1/ai/agents/{kb_app_id}", "DELETE")
+    sql(f"DELETE FROM sys_ai_chunks WHERE base_id={kb_id}; DELETE FROM sys_ai_docs WHERE base_id={kb_id}; DELETE FROM sys_ai_knowledge_bases WHERE id={kb_id};")
+    check("知识库链路清理", True, f"kb={kb_id}")
+
+    print("== 6. 清理 ==")
     api(f"/admin/v1/ai/agents/{app_id}", "DELETE")
     if prov:
         api(f"/admin/v1/ai/providers/{prov['id']}", "DELETE")
