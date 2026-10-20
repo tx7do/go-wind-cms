@@ -64,5 +64,10 @@
   "toggleHeaderCell": "切换表头单元格",
   "jsonParseError": "JSON解析错误: {{error}}",
   "unknownError": "未知错误",
-  "jsonSerializeError": "JSON序列化错误"
+  "jsonSerializeError": "JSON序列化错误",
+  "enterFullscreen": "全屏",
+  "exitFullscreen": "退出全屏",
+  "fontSize": "字体大小",
+  "indent": "增加缩进",
+  "outdent": "减少缩进"
 }

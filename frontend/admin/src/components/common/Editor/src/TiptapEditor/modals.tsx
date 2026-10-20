@@ -30,8 +30,8 @@ export const CodeBlockModal: React.FC<CodeBlockModalProps> = ({
       title={t('editor:insertCodeBlock', '插入代码块')}
       onOk={onOk}
       onCancel={onCancel}
-      okText={t('common.confirm', '确定')}
-      cancelText={t('common.cancel', '取消')}
+      okText={t('button.confirm', '确定')}
+      cancelText={t('button.cancel', '取消')}
       mask={{ closable: false }}
       width={600}
     >
@@ -90,8 +90,8 @@ export const VideoModal: React.FC<VideoModalProps> = ({
       title={t('editor:insertVideo', '插入视频')}
       onOk={onOk}
       onCancel={onCancel}
-      okText={t('common.confirm', '确定')}
-      cancelText={t('common.cancel', '取消')}
+      okText={t('button.confirm', '确定')}
+      cancelText={t('button.cancel', '取消')}
       mask={{ closable: false }}
       width={500}
     >
@@ -166,8 +166,8 @@ export const IframeModal: React.FC<IframeModalProps> = ({
       title={t('editor:insertIframe', '插入Iframe')}
       onOk={onOk}
       onCancel={onCancel}
-      okText={t('common.confirm', '确定')}
-      cancelText={t('common.cancel', '取消')}
+      okText={t('button.confirm', '确定')}
+      cancelText={t('button.cancel', '取消')}
       mask={{ closable: false }}
       width={500}
     >

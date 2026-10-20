@@ -18,8 +18,8 @@ export const LinkModal: React.FC<LinkModalProps> = ({ open, url, onOk, onCancel,
       title={t('editor:insert_url', '插入链接')}
       onOk={onOk}
       onCancel={onCancel}
-      okText={t('common.confirm', '确定')}
-      cancelText={t('common.cancel', '取消')}
+      okText={t('button.confirm', '确定')}
+      cancelText={t('button.cancel', '取消')}
       mask={{ closable: false }}
     >
       <Input

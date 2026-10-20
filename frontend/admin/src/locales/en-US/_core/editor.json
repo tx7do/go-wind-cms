@@ -64,5 +64,10 @@
   "toggleHeaderCell": "Toggle Header Cell",
   "jsonParseError": "JSON parse error: {{error}}",
   "unknownError": "Unknown error",
-  "jsonSerializeError": "JSON serialization error"
+  "jsonSerializeError": "JSON serialization error",
+  "enterFullscreen": "Fullscreen",
+  "exitFullscreen": "Exit Fullscreen",
+  "fontSize": "Font Size",
+  "indent": "Increase Indent",
+  "outdent": "Decrease Indent"
 }

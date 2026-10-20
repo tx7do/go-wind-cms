@@ -26,8 +26,8 @@ export const StatusBar: React.FC<StatusBarProps> = ({ words, chars, cursor, isDa
       <div className="status-mode">
         <span className={`mode-badge${isDark ? ' mode-dark' : ''}`}>
           {isDark
-            ? `🌙 ${t('preferences.theme.dark', '暗色')}`
-            : `☀️ ${t('preferences.theme.light', '亮色')}`}
+            ? `🌙 ${t('preferences:appearance.darkMode', '深色')}`
+            : `☀️ ${t('preferences:appearance.lightMode', '浅色')}`}
         </span>
       </div>
     </div>

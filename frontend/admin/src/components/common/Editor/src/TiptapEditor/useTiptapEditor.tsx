@@ -233,11 +233,11 @@ export const useTiptapEditor = ({
       redo: () => editor?.chain().focus().redo().run(),
       clearContent: () => {
         Modal.confirm({
-          title: t('common.confirm', '确认'),
+          title: t('button.confirm', '确认'),
           icon: <ExclamationCircleOutlined />,
           content: t('editor:clear_content_confirm', '确定要清空所有内容吗？'),
-          okText: t('common.confirm', '确定'),
-          cancelText: t('common.cancel', '取消'),
+          okText: t('button.confirm', '确定'),
+          cancelText: t('button.cancel', '取消'),
           onOk() {
             editor?.commands.setContent('');
           },
