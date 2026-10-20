@@ -2,7 +2,11 @@ package data
 
 import (
 	"context"
+	"encoding/json"
+
 	"encoding/base64"
+	"go-wind-cms/pkg/constants"
+	passwordpolicy "go-wind-cms/pkg/password"
 	"time"
 
 	"entgo.io/ent/dialect/sql"
@@ -37,6 +41,7 @@ type UserCredentialRepo struct {
 	credentialTypeConverter *mapper.EnumTypeConverter[authenticationV1.UserCredential_CredentialType, usercredential.CredentialType]
 
 	passwordCrypto password.Crypto
+	configRepo     *ConfigRepo
 
 	repository *entCrud.Repository[
 		ent.UserCredentialQuery, ent.UserCredentialSelect,
@@ -48,11 +53,12 @@ type UserCredentialRepo struct {
 	]
 }
 
-func NewUserCredentialRepo(ctx *bootstrap.Context, entClient *entCrud.EntClient[*ent.Client], passwordCrypto password.Crypto) *UserCredentialRepo {
+func NewUserCredentialRepo(ctx *bootstrap.Context, entClient *entCrud.EntClient[*ent.Client], passwordCrypto password.Crypto, configRepo *ConfigRepo) *UserCredentialRepo {
 	repo := &UserCredentialRepo{
 		log:                     ctx.NewLoggerHelper("user-credentials/repo/core-service"),
 		entClient:               entClient,
 		passwordCrypto:          passwordCrypto,
+		configRepo:              configRepo,
 		mapper:                  mapper.NewCopierMapper[authenticationV1.UserCredential, ent.UserCredential](),
 		statusConverter:         mapper.NewEnumTypeConverter[authenticationV1.UserCredential_Status, usercredential.Status](authenticationV1.UserCredential_Status_name, authenticationV1.UserCredential_Status_value),
 		identityTypeConverter:   mapper.NewEnumTypeConverter[authenticationV1.UserCredential_IdentityType, usercredential.IdentityType](authenticationV1.UserCredential_IdentityType_name, authenticationV1.UserCredential_IdentityType_value),
@@ -431,6 +437,7 @@ func (r *UserCredentialRepo) FindUserCredential(ctx context.Context, tenantID ui
 			usercredential.FieldCredentialType,
 			usercredential.FieldCredential,
 			usercredential.FieldStatus,
+			usercredential.FieldUpdatedAt,
 		).
 		Where(
 			usercredential.TenantIDEQ(tenantID),
@@ -458,6 +465,11 @@ func (r *UserCredentialRepo) FindUserCredential(ctx context.Context, tenantID ui
 	}
 
 	if r.verifyCredential(entity.CredentialType, plainCredential, *entity.Credential) {
+		// 等保口令有效期：超期拒绝登录，用户走重置/改密流程换新口令
+		if expired, xErr := r.checkPasswordExpired(ctx, entity); xErr == nil && expired {
+			r.log.Warnf("password expired for user [%d], login denied", *entity.UserID)
+			return 0, authenticationV1.ErrorBadRequest("password expired, please reset your password")
+		}
 		return *entity.UserID, nil
 	}
 
@@ -490,6 +502,7 @@ func (r *UserCredentialRepo) FindUserCredentialAcrossTenants(ctx context.Context
 			usercredential.FieldCredentialType,
 			usercredential.FieldCredential,
 			usercredential.FieldStatus,
+			usercredential.FieldUpdatedAt,
 		).
 		Where(
 			usercredential.IdentityTypeEQ(*r.identityTypeConverter.ToEntity(trans.Ptr(identityType))),
@@ -528,6 +541,11 @@ func (r *UserCredentialRepo) FindUserCredentialAcrossTenants(ctx context.Context
 	}
 
 	if r.verifyCredential(matched.CredentialType, plainCredential, *matched.Credential) {
+		// 等保口令有效期（同 FindUserCredential）
+		if expired, xErr := r.checkPasswordExpired(ctx, matched); xErr == nil && expired {
+			r.log.Warnf("password expired for user [%d] (cross-tenant), login denied", *matched.UserID)
+			return 0, 0, authenticationV1.ErrorBadRequest("password expired, please reset your password")
+		}
 		return *matched.UserID, *matched.TenantID, nil
 	}
 	return 0, 0, authenticationV1.ErrorInvalidPassword("incorrect password")
@@ -621,6 +639,7 @@ func (r *UserCredentialRepo) ChangeCredential(ctx context.Context, req *authenti
 		Select(
 			usercredential.FieldCredentialType,
 			usercredential.FieldCredential,
+			usercredential.FieldExtraInfo,
 		).
 		Where(tenantWhere...).
 		Only(ctx)
@@ -641,6 +660,15 @@ func (r *UserCredentialRepo) ChangeCredential(ctx context.Context, req *authenti
 		return authenticationV1.ErrorBadRequest("invalid old password")
 	}
 
+	// 等保口令复杂度：新明文口令须长度达标且四类取三
+	if err = passwordpolicy.ValidateComplexity(req.GetNewCredential(), r.passwordMinLen(ctx)); err != nil {
+		return authenticationV1.ErrorBadRequest("%s", err.Error())
+	}
+	// 等保口令历史：新口令不得与最近 N 条历史口令相同
+	if err = r.checkPasswordHistory(ctx, entity, req.GetNewCredential()); err != nil {
+		return err
+	}
+
 	// 注意：这里必须用 GetNewCredential，原代码误写成 GetOldCredential 会导致
 	// 改密码后库里哈希被重置成旧密码的哈希，新密码无法登录、旧密码永久有效。
 	var newCredential string
@@ -654,10 +682,15 @@ func (r *UserCredentialRepo) ChangeCredential(ctx context.Context, req *authenti
 		return authenticationV1.ErrorBadRequest("new credential cannot be empty")
 	}
 
+	// 等保口令历史：旧哈希追加进 extra_info（只保留最近 N 条）
+	histLimit := r.passwordHistoryLimit(ctx)
+	extraInfo := appendPasswordHistory(entity.ExtraInfo, *entity.Credential, histLimit)
+
 	builder := r.entClient.Client().UserCredential.Update()
 	builder.Where(tenantWhere...)
 	builder.
 		SetCredential(newCredential).
+		SetNillableExtraInfo(extraInfo).
 		SetUpdatedAt(time.Now())
 	if err = builder.Exec(ctx); err != nil {
 		r.log.Errorf("update one data failed: %s", err.Error())
@@ -695,6 +728,8 @@ func (r *UserCredentialRepo) ResetCredential(ctx context.Context, req *authentic
 		Query().
 		Select(
 			usercredential.FieldCredentialType,
+			usercredential.FieldCredential,
+			usercredential.FieldExtraInfo,
 		).
 		Where(tenantWhere...).
 		Only(ctx)
@@ -710,6 +745,16 @@ func (r *UserCredentialRepo) ResetCredential(ctx context.Context, req *authentic
 		return authenticationV1.ErrorNotFound("user credential not found")
 	}
 
+	// 等保口令复杂度：重置码重置同样把关（ForgotPassword 链路的 NewCredential
+	// 在 service 层已解密为明文）
+	if err = passwordpolicy.ValidateComplexity(req.GetNewCredential(), r.passwordMinLen(ctx)); err != nil {
+		return authenticationV1.ErrorBadRequest("%s", err.Error())
+	}
+	// 等保口令历史：新口令不得与最近 N 条相同
+	if err = r.checkPasswordHistory(ctx, entity, req.GetNewCredential()); err != nil {
+		return err
+	}
+
 	var newCredential string
 	newCredential, err = r.prepareCredential(entity.CredentialType, req.GetNewCredential())
 	if err != nil {
@@ -721,10 +766,15 @@ func (r *UserCredentialRepo) ResetCredential(ctx context.Context, req *authentic
 		return authenticationV1.ErrorBadRequest("new credential cannot be empty")
 	}
 
+	// 等保口令历史：旧哈希追加（重置前的口令同样进入历史，防止绕回旧口令）
+	histLimit := r.passwordHistoryLimit(ctx)
+	extraInfo := appendPasswordHistory(entity.ExtraInfo, *entity.Credential, histLimit)
+
 	builder := r.entClient.Client().UserCredential.Update()
 	builder.Where(tenantWhere...)
 	builder.
 		SetCredential(newCredential).
+		SetNillableExtraInfo(extraInfo).
 		SetUpdatedAt(time.Now())
 	if err = builder.Exec(ctx); err != nil {
 		r.log.Errorf("update one data failed: %s", err.Error())
@@ -732,4 +782,125 @@ func (r *UserCredentialRepo) ResetCredential(ctx context.Context, req *authentic
 	}
 
 	return nil
+}
+
+// ── 等保口令策略（阈值自 sys_config 平台参数，参数管理页可调；<=0 关闭对应检查）──
+//
+// 三条规则的落点：
+//   - 复杂度（minLen + 四类取三）：改密/重置入口 prepareCredential 之前；
+//   - 历史（最近 N 条 bcrypt 比对，存 extra_info.password_history）：同上，改密成功后追加；
+//   - 有效期（updated_at 起算）：登录凭证校验成功后拒绝超期登录。
+
+func (r *UserCredentialRepo) passwordMinLen(ctx context.Context) int {
+	if r.configRepo == nil {
+		return constants.DefaultPasswordMinLen
+	}
+	return r.configRepo.GetConfigInt(ctx, constants.ConfigKeyPasswordMinLen, constants.DefaultPasswordMinLen)
+}
+
+func (r *UserCredentialRepo) passwordMaxAgeDays(ctx context.Context) int {
+	if r.configRepo == nil {
+		return constants.DefaultPasswordMaxAgeDays
+	}
+	return r.configRepo.GetConfigInt(ctx, constants.ConfigKeyPasswordMaxAgeDays, constants.DefaultPasswordMaxAgeDays)
+}
+
+func (r *UserCredentialRepo) passwordHistoryLimit(ctx context.Context) int {
+	if r.configRepo == nil {
+		return constants.DefaultPasswordHistoryCount
+	}
+	return r.configRepo.GetConfigInt(ctx, constants.ConfigKeyPasswordHistoryCount, constants.DefaultPasswordHistoryCount)
+}
+
+// passwordHistoryKey 是 extra_info JSON 里历史口令哈希数组的键。
+const passwordHistoryKey = "password_history"
+
+// checkPasswordExpired 等保口令有效期：密码哈希行 updated_at 距今超过 maxAge 天
+// 即超期（登录被拒，走重置/改密流程换新口令）。updated_at 为空视为不超期。
+func (r *UserCredentialRepo) checkPasswordExpired(ctx context.Context, entity *ent.UserCredential) (bool, error) {
+	maxAge := r.passwordMaxAgeDays(ctx)
+	if maxAge <= 0 || entity == nil || entity.CredentialType == nil {
+		return false, nil
+	}
+	if *entity.CredentialType != usercredential.CredentialTypePasswordHash {
+		return false, nil
+	}
+	if entity.UpdatedAt == nil {
+		return false, nil
+	}
+	return time.Since(*entity.UpdatedAt) > time.Duration(maxAge)*24*time.Hour, nil
+}
+
+// checkPasswordHistory 等保口令策略：新明文口令不得与历史哈希列表中任一条
+// 相同（bcrypt 比对）。历史列表为空/解析失败时跳过（不阻塞主流程）。
+func (r *UserCredentialRepo) checkPasswordHistory(ctx context.Context, entity *ent.UserCredential, newPlain string) error {
+	limit := r.passwordHistoryLimit(ctx)
+	if limit <= 0 || entity == nil || entity.CredentialType == nil {
+		return nil
+	}
+	if *entity.CredentialType != usercredential.CredentialTypePasswordHash {
+		return nil
+	}
+	var extra map[string]any
+	if entity.ExtraInfo != nil && *entity.ExtraInfo != "" {
+		if err := json.Unmarshal([]byte(*entity.ExtraInfo), &extra); err != nil {
+			// extra_info 非历史格式（可能存了别的业务数据），跳过历史检查
+			return nil
+		}
+	}
+	arr, _ := extra[passwordHistoryKey].([]any)
+	for _, item := range arr {
+		hash, ok := item.(string)
+		if !ok || hash == "" {
+			continue
+		}
+		if ok, err := r.passwordCrypto.Verify(newPlain, hash); err == nil && ok {
+			return authenticationV1.ErrorBadRequest("new password must differ from recent passwords")
+		}
+	}
+	return nil
+}
+
+// appendPasswordHistory 把旧口令哈希追加进 extra_info 的历史列表，
+// 只保留最近 limit 条；extra_info 里已有的其他键原样保留。
+func appendPasswordHistory(extraInfo *string, oldHash string, limit int) *string {
+	if limit <= 0 {
+		return extraInfo
+	}
+	var extra map[string]any
+	if extraInfo != nil && *extraInfo != "" {
+		if err := json.Unmarshal([]byte(*extraInfo), &extra); err != nil || extra == nil {
+			// 解析失败：历史让位，以新结构重建
+			extra = make(map[string]any)
+		}
+	} else {
+		extra = make(map[string]any)
+	}
+
+	arr, _ := extra[passwordHistoryKey].([]any)
+	history := make([]string, 0, limit)
+	for _, item := range arr {
+		if s, ok := item.(string); ok && s != "" {
+			history = append(history, s)
+		}
+	}
+	if oldHash != "" {
+		history = append(history, oldHash)
+	}
+	if len(history) > limit {
+		history = history[len(history)-limit:]
+	}
+
+	strs := make([]any, 0, len(history))
+	for _, h := range history {
+		strs = append(strs, h)
+	}
+	extra[passwordHistoryKey] = strs
+
+	b, err := json.Marshal(extra)
+	if err != nil {
+		return extraInfo
+	}
+	s := string(b)
+	return &s
 }

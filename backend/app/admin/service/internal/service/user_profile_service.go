@@ -112,11 +112,15 @@ func (s *UserProfileService) ChangePassword(ctx context.Context, req *identityV1
 		return nil, err
 	}
 
+	// FE 以 AES 加密传输（与登录同规）：needDecrypt 必须置 true，core 端解密
+	// 后再验旧哈希/做口令策略检查。此前漏置导致 GUI 改密把 AES 密文当明文
+	// 去 bcrypt 比对——改密恒败（潜在 bug，本批修复）。
 	return s.userCredentialServiceClient.ChangeCredential(ctx, &authenticationV1.ChangeCredentialRequest{
 		IdentityType:  authenticationV1.UserCredential_USERNAME,
 		Identifier:    operator.GetUsername(),
 		OldCredential: req.GetOldPassword(),
 		NewCredential: req.GetNewPassword(),
+		NeedDecrypt:   true,
 	})
 }
 

@@ -91,7 +91,8 @@ func initApp(ctx *bootstrap.Context) (*kratos.App, func(), error) {
 	// ═══════════════════════ 二、仓储层(internal/data) ═══════════════════════
 
 	// 身份与账号
-	userCredentialRepo := data.NewUserCredentialRepo(ctx, entClient, crypto)
+	configRepo := data.NewConfigRepo(ctx, entClient, redisClient)
+	userCredentialRepo := data.NewUserCredentialRepo(ctx, entClient, crypto, configRepo)
 	loginPolicyRepo := data.NewLoginPolicyRepo(ctx, entClient)
 	userRoleRepo := data.NewUserRoleRepo(ctx, entClient)
 	userOrgUnitRepo := data.NewUserOrgUnitRepo(ctx, entClient)
@@ -218,7 +219,6 @@ func initApp(ctx *bootstrap.Context) (*kratos.App, func(), error) {
 	accessKeyRateLimiter := data.NewAccessKeyRateLimiter(ctx, redisClient)
 	tenantQuotaRepo := data.NewTenantQuotaRepo(ctx, entClient)
 	tenantQuotaService := service.NewTenantQuotaService(ctx, tenantQuotaRepo)
-	configRepo := data.NewConfigRepo(ctx, entClient, redisClient)
 	configService := service.NewConfigService(ctx, configRepo)
 	aiAgentAppRepo := data.NewAiAgentAppRepo(ctx, entClient)
 	aiAgentRunRepo := data.NewAiAgentRunRepo(ctx, entClient)
