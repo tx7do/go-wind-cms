@@ -3,7 +3,8 @@
   "tab": {
     "basicInfo": "Basic Info",
     "security": "Security",
-    "notification": "Notifications"
+    "notification": "Notifications",
+    "usage": "Usage"
   },
   "avatar": "Avatar",
   "username": "Username",

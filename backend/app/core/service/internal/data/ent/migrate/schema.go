@@ -4799,6 +4799,33 @@ var (
 			},
 		},
 	}
+	// SysTenantQuotasColumns holds the columns for the "sys_tenant_quotas" table.
+	SysTenantQuotasColumns = []*schema.Column{
+		{Name: "id", Type: field.TypeUint32, Increment: true, Comment: "id"},
+		{Name: "created_at", Type: field.TypeTime, Nullable: true, Comment: "创建时间"},
+		{Name: "updated_at", Type: field.TypeTime, Nullable: true, Comment: "更新时间"},
+		{Name: "deleted_at", Type: field.TypeTime, Nullable: true, Comment: "删除时间"},
+		{Name: "created_by", Type: field.TypeUint32, Nullable: true, Comment: "创建者ID"},
+		{Name: "updated_by", Type: field.TypeUint32, Nullable: true, Comment: "更新者ID"},
+		{Name: "deleted_by", Type: field.TypeUint32, Nullable: true, Comment: "删除者ID"},
+		{Name: "tenant_id", Type: field.TypeUint32, Comment: "租户ID"},
+		{Name: "quota_type", Type: field.TypeEnum, Comment: "配额类型", Enums: []string{"QUOTA_TYPE_UNSPECIFIED", "USER_LIMIT", "STORAGE", "API_CALL", "AI_TOKENS"}},
+		{Name: "quota_value", Type: field.TypeUint64, Comment: "配额值（USER_LIMIT=人数、STORAGE=字节、API_CALL=次数、AI_TOKENS=token 数）"},
+	}
+	// SysTenantQuotasTable holds the schema information for the "sys_tenant_quotas" table.
+	SysTenantQuotasTable = &schema.Table{
+		Name:       "sys_tenant_quotas",
+		Comment:    "租户配额表（按租户直配，配额类型唯一）",
+		Columns:    SysTenantQuotasColumns,
+		PrimaryKey: []*schema.Column{SysTenantQuotasColumns[0]},
+		Indexes: []*schema.Index{
+			{
+				Name:    "idx_sys_tenant_quotas_tenant_type",
+				Unique:  true,
+				Columns: []*schema.Column{SysTenantQuotasColumns[7], SysTenantQuotasColumns[8]},
+			},
+		},
+	}
 	// SysUsersColumns holds the columns for the "sys_users" table.
 	SysUsersColumns = []*schema.Column{
 		{Name: "id", Type: field.TypeUint32, Increment: true, Comment: "id"},
@@ -5377,6 +5404,7 @@ var (
 		TagTranslationsTable,
 		SysTasksTable,
 		SysTenantsTable,
+		SysTenantQuotasTable,
 		SysUsersTable,
 		SysUserCredentialsTable,
 		SysUserOrgUnitsTable,
@@ -5848,6 +5876,11 @@ func init() {
 	}
 	SysTenantsTable.Annotation = &entsql.Annotation{
 		Table:     "sys_tenants",
+		Charset:   "utf8mb4",
+		Collation: "utf8mb4_bin",
+	}
+	SysTenantQuotasTable.Annotation = &entsql.Annotation{
+		Table:     "sys_tenant_quotas",
 		Charset:   "utf8mb4",
 		Collation: "utf8mb4_bin",
 	}

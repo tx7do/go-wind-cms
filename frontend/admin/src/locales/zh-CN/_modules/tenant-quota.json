@@ -1,0 +1,36 @@
+{
+  "pageTitle": "租户配额管理",
+  "moduleName": "租户配额",
+  "tenantId": "租户",
+  "tenantIdPlaceholder": "请选择租户",
+  "requiredTenantId": "请选择租户",
+  "quotaType": "配额类型",
+  "quotaTypePlaceholder": "请选择配额类型",
+  "requiredQuotaType": "请选择配额类型",
+  "quotaValue": "配额上限",
+  "quotaValuePlaceholder": "请输入配额上限",
+  "requiredQuotaValue": "请输入配额上限",
+  "quotaValueHint": "USER_LIMIT=用户数、STORAGE=字节数、API_CALL=调用次数、AI_TOKENS=token 数",
+  "updatedAt": "更新时间",
+  "action": "操作",
+  "create": "新建配额",
+  "edit": "编辑配额",
+  "createSuccess": "配额创建成功",
+  "updateSuccess": "更新成功",
+  "deleteSuccess": "删除成功",
+  "fetchFailed": "获取数据失败",
+  "deleteConfirmTitle": "确认删除",
+  "deleteConfirmDesc": "删除后该租户该项配额不再受限（闸门 fail-open），确定删除吗？",
+  "quotaTypeMap": {
+    "USER_LIMIT": "用户上限",
+    "STORAGE": "存储空间",
+    "API_CALL": "API 调用量",
+    "AI_TOKENS": "AI Token 月度"
+  },
+  "usage": {
+    "hint": "当前租户的配额用量（达到上限后相关操作将被拒绝；未配置的配额不受限）。",
+    "plan": "套餐",
+    "noQuotas": "本租户尚未配置任何配额，所有资源不受限。",
+    "unlimited": "未配置"
+  }
+}

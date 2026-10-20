@@ -2271,6 +2271,30 @@ func (f TenantMutationRuleFunc) EvalMutation(ctx context.Context, m ent.Mutation
 	return Denyf("ent/privacy: unexpected mutation type %T, expect *ent.TenantMutation", m)
 }
 
+// The TenantQuotaQueryRuleFunc type is an adapter to allow the use of ordinary
+// functions as a query rule.
+type TenantQuotaQueryRuleFunc func(context.Context, *ent.TenantQuotaQuery) error
+
+// EvalQuery return f(ctx, q).
+func (f TenantQuotaQueryRuleFunc) EvalQuery(ctx context.Context, q ent.Query) error {
+	if q, ok := q.(*ent.TenantQuotaQuery); ok {
+		return f(ctx, q)
+	}
+	return Denyf("ent/privacy: unexpected query type %T, expect *ent.TenantQuotaQuery", q)
+}
+
+// The TenantQuotaMutationRuleFunc type is an adapter to allow the use of ordinary
+// functions as a mutation rule.
+type TenantQuotaMutationRuleFunc func(context.Context, *ent.TenantQuotaMutation) error
+
+// EvalMutation calls f(ctx, m).
+func (f TenantQuotaMutationRuleFunc) EvalMutation(ctx context.Context, m ent.Mutation) error {
+	if m, ok := m.(*ent.TenantQuotaMutation); ok {
+		return f(ctx, m)
+	}
+	return Denyf("ent/privacy: unexpected mutation type %T, expect *ent.TenantQuotaMutation", m)
+}
+
 // The UserQueryRuleFunc type is an adapter to allow the use of ordinary
 // functions as a query rule.
 type UserQueryRuleFunc func(context.Context, *ent.UserQuery) error
@@ -2654,6 +2678,8 @@ func queryFilter(q ent.Query) (Filter, error) {
 		return q.Filter(), nil
 	case *ent.TenantQuery:
 		return q.Filter(), nil
+	case *ent.TenantQuotaQuery:
+		return q.Filter(), nil
 	case *ent.UserQuery:
 		return q.Filter(), nil
 	case *ent.UserCredentialQuery:
@@ -2854,6 +2880,8 @@ func mutationFilter(m ent.Mutation) (Filter, error) {
 	case *ent.TaskMutation:
 		return m.Filter(), nil
 	case *ent.TenantMutation:
+		return m.Filter(), nil
+	case *ent.TenantQuotaMutation:
 		return m.Filter(), nil
 	case *ent.UserMutation:
 		return m.Filter(), nil

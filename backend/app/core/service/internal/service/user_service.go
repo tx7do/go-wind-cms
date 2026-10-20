@@ -52,6 +52,9 @@ type UserService struct {
 	tenantRepo   *data.TenantRepo
 
 	membershipRepo *data.MembershipRepo
+
+	// tenantQuota 配额闸门（USER_LIMIT：创建用户入口；nil = 不启用闸门）。
+	tenantQuota *TenantQuotaService
 }
 
 func NewUserService(
@@ -63,6 +66,7 @@ func NewUserService(
 	orgUnitRepo *data.OrgUnitRepo,
 	tenantRepo *data.TenantRepo,
 	membershipRepo *data.MembershipRepo,
+	tenantQuota *TenantQuotaService,
 ) *UserService {
 	svc := &UserService{
 		log:                ctx.NewLoggerHelper("user/service/core-service"),
@@ -73,6 +77,7 @@ func NewUserService(
 		orgUnitRepo:        orgUnitRepo,
 		tenantRepo:         tenantRepo,
 		membershipRepo:     membershipRepo,
+		tenantQuota:        tenantQuota,
 	}
 
 	svc.init()
@@ -474,6 +479,17 @@ func (s *UserService) Get(ctx context.Context, req *identityV1.GetUserRequest) (
 func (s *UserService) Create(ctx context.Context, req *identityV1.CreateUserRequest) (result *identityV1.User, err error) {
 	if req == nil || req.Data == nil {
 		return nil, identityV1.ErrorBadRequest("invalid parameter")
+	}
+
+	// USER_LIMIT 配额闸门：目标租户配了用户上限且已满即拒绝（fail-open——
+	// 闸门内部计量失败放行，nil 闸门视为未启用）。
+	if s.tenantQuota != nil && req.Data.GetTenantId() != 0 {
+		if _, err = s.tenantQuota.CheckQuota(ctx, &identityV1.CheckQuotaRequest{
+			TenantId:  req.Data.GetTenantId(),
+			QuotaType: identityV1.TenantQuota_USER_LIMIT,
+		}); err != nil {
+			return nil, err
+		}
 	}
 
 	// 用户和凭证创建必须在同一事务中，避免凭证创建失败时产生孤立用户行

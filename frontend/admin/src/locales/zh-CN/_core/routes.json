@@ -91,5 +91,6 @@
   "flow-rule": "自动化 Flow",
   "content-components": "组件定义",
   "server-monitor": "服务器监控",
-  "redis-cache-monitor": "Redis 缓存监控"
+  "redis-cache-monitor": "Redis 缓存监控",
+  "tenant-quotas": "租户配额"
 }

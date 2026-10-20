@@ -1,0 +1,256 @@
+syntax = "proto3";
+
+package identity.service.v1;
+
+import "gnostic/openapi/v3/annotations.proto";
+
+import "google/protobuf/empty.proto";
+import "google/protobuf/field_mask.proto";
+import "google/protobuf/timestamp.proto";
+
+import "pagination/v1/pagination.proto";
+
+// 租户配额服务（CMS 适配：配额按租户直配，不引入上游计费域的 plan/plan_module）。
+//
+// 与上游 PlanQuota（按 plan_id 配置、随套餐边预载）不同：CMS tenant 只有
+// subscription_plan 字符串，没有套餐表——配额行直接挂 tenant_id，由平台管理员
+// 在配额管理页维护。闸门语义照搬上游：
+//   - fail-open：租户无该类型配额条目 / 计量查询失败 → 放行；拒绝只在
+//     "配额明确存在且已用满"时发生（计费基础设施抖动不打死租户业务）；
+//   - 计量口径：USER_LIMIT=users COUNT、STORAGE=files SUM(size)、
+//     API_CALL=sys_api_audit_logs COUNT、AI_TOKENS=ai_usage_logs 本月 SUM(total_tokens)。
+service TenantQuotaService {
+  // 查询租户配额列表
+  rpc List (pagination.PagingRequest) returns (ListTenantQuotaResponse) {}
+
+  // 查询租户配额详情
+  rpc Get (GetTenantQuotaRequest) returns (TenantQuota) {}
+
+  // 创建租户配额
+  rpc Create (CreateTenantQuotaRequest) returns (google.protobuf.Empty) {}
+
+  // 更新租户配额
+  rpc Update (UpdateTenantQuotaRequest) returns (google.protobuf.Empty) {}
+
+  // 删除租户配额
+  rpc Delete (DeleteTenantQuotaRequest) returns (google.protobuf.Empty) {}
+
+  // 聚合查询指定租户的当前用量与配额上限（平台管理员视图）
+  rpc GetUsage (GetTenantUsageRequest) returns (TenantUsage) {}
+
+  // 获取当前操作者所属租户的用量与配额（租户自助视图；tenant_id 由 BFF 注入）
+  rpc GetMyTenantUsage (GetMyTenantUsageRequest) returns (TenantUsage) {}
+
+  // 租户访问闸门（每请求，admin 中间件调用）：租户状态 + API_CALL 配额。
+  // 失败即 403；内部计量失败 fail-open 放行。
+  rpc CheckTenantAccess (CheckTenantAccessRequest) returns (CheckTenantAccessResponse) {}
+
+  // 业务入口配额闸门（资源创建入口调用）：USER_LIMIT / STORAGE。
+  // STORAGE 携带本次上传字节数；超限返回 403。
+  rpc CheckQuota (CheckQuotaRequest) returns (CheckQuotaResponse) {}
+}
+
+// 租户配额
+message TenantQuota {
+  // 配额类型
+  enum QuotaType {
+    QUOTA_TYPE_UNSPECIFIED = 0; // 未指定
+
+    USER_LIMIT = 1;  // 用户上限
+    STORAGE = 2;     // 存储空间（字节）
+    API_CALL = 3;    // API 调用量（sys_api_audit_logs 活表现存行数）
+    AI_TOKENS = 4;   // AI token 月度用量
+  }
+
+  optional uint32 id = 1 [
+    json_name = "id",
+    (gnostic.openapi.v3.property) = {
+      description: "配额项ID"
+    }
+  ]; // 配额项ID
+
+  optional uint32 tenant_id = 2 [
+    json_name = "tenantId",
+    (gnostic.openapi.v3.property) = {
+      description: "租户ID"
+    }
+  ]; // 租户ID
+
+  optional QuotaType quota_type = 3 [
+    json_name = "quotaType",
+    (gnostic.openapi.v3.property) = {description: "配额类型"}
+  ]; // 配额类型
+
+  optional uint64 quota_value = 4 [
+    json_name = "quotaValue",
+    (gnostic.openapi.v3.property) = {description: "配额值（USER_LIMIT=人数、STORAGE=字节、API_CALL=次数、AI_TOKENS=token 数）"}
+  ]; // 配额值
+
+  optional uint32 created_by = 100 [json_name = "createdBy", (gnostic.openapi.v3.property) = {description: "创建者用户ID"}]; // 创建者用户ID
+  optional uint32 updated_by = 101 [json_name = "updatedBy", (gnostic.openapi.v3.property) = {description: "更新者用户ID"}]; // 更新者用户ID
+  optional uint32 deleted_by = 102 [json_name = "deletedBy", (gnostic.openapi.v3.property) = {description: "删除者用户ID"}]; // 删除者用户ID
+
+  optional google.protobuf.Timestamp created_at = 200 [json_name = "createdAt", (gnostic.openapi.v3.property) = {description: "创建时间"}]; // 创建时间
+  optional google.protobuf.Timestamp updated_at = 201 [json_name = "updatedAt", (gnostic.openapi.v3.property) = {description: "更新时间"}]; // 更新时间
+  optional google.protobuf.Timestamp deleted_at = 202 [json_name = "deletedAt", (gnostic.openapi.v3.property) = {description: "删除时间"}]; // 删除时间
+}
+
+// 配额用量对（上限 + 类型；用量在 TenantUsage 的计数字段上）
+message QuotaUsage {
+  optional TenantQuota.QuotaType quota_type = 1 [
+    json_name = "quotaType",
+    (gnostic.openapi.v3.property) = {description: "配额类型"}
+  ]; // 配额类型
+
+  optional uint64 quota_value = 2 [
+    json_name = "quotaValue",
+    (gnostic.openapi.v3.property) = {description: "配额上限"}
+  ]; // 配额上限
+}
+
+// 租户用量聚合（计量与闸门同源：同一张表、同一个查询）
+message TenantUsage {
+  optional uint32 tenant_id = 1 [
+    json_name = "tenantId",
+    (gnostic.openapi.v3.property) = {description: "租户ID"}
+  ]; // 租户ID
+
+  optional uint64 user_count = 2 [
+    json_name = "userCount",
+    (gnostic.openapi.v3.property) = {description: "当前用户数"}
+  ]; // 当前用户数
+
+  optional uint64 storage_used_bytes = 3 [
+    json_name = "storageUsedBytes",
+    (gnostic.openapi.v3.property) = {description: "存储占用字节数"}
+  ]; // 存储占用字节数
+
+  optional uint64 api_call_count = 4 [
+    json_name = "apiCallCount",
+    (gnostic.openapi.v3.property) = {description: "API 调用次数（审计活表现存行数）"}
+  ]; // API 调用次数
+
+  optional uint64 ai_tokens_month = 5 [
+    json_name = "aiTokensMonth",
+    (gnostic.openapi.v3.property) = {description: "本月 AI token 用量"}
+  ]; // 本月 AI token 用量
+
+  optional string subscription_plan = 6 [
+    json_name = "subscriptionPlan",
+    (gnostic.openapi.v3.property) = {description: "订阅套餐名（tenant.subscription_plan 字符串）"}
+  ]; // 订阅套餐名
+
+  repeated QuotaUsage quotas = 7 [
+    json_name = "quotas",
+    (gnostic.openapi.v3.property) = {description: "配额上限列表"}
+  ]; // 配额上限列表
+}
+
+// 租户配额列表 - 答复
+message ListTenantQuotaResponse {
+  repeated TenantQuota items = 1;
+  uint64 total = 2;
+}
+
+// 查询租户配额 - 请求
+message GetTenantQuotaRequest {
+  oneof query_by {
+    uint32 id = 1;
+  }
+
+  optional google.protobuf.FieldMask view_mask = 100 [
+    json_name = "viewMask",
+    (gnostic.openapi.v3.property) = {
+      description: "视图字段过滤器"
+    }
+  ]; // 视图字段过滤器
+}
+
+// 创建租户配额 - 请求
+message CreateTenantQuotaRequest {
+  TenantQuota data = 1;
+}
+
+// 更新租户配额 - 请求
+message UpdateTenantQuotaRequest {
+  uint32 id = 1;
+
+  TenantQuota data = 2;
+
+  google.protobuf.FieldMask update_mask = 3 [
+    (gnostic.openapi.v3.property) = {
+      description: "要更新的字段列表",
+      example: {yaml : "id,quota_value"}
+    },
+    json_name = "updateMask"
+  ]; // 要更新的字段列表
+
+  optional bool allow_missing = 4 [
+    (gnostic.openapi.v3.property) = {description: "资源不存在则新增（插入）。"},
+    json_name = "allowMissing"
+  ]; // 资源不存在则新增（插入）
+}
+
+// 删除租户配额 - 请求
+message DeleteTenantQuotaRequest {
+  uint32 id = 1;
+}
+
+// 查询租户用量 - 请求
+message GetTenantUsageRequest {
+  uint32 tenant_id = 1 [
+    json_name = "tenantId",
+    (gnostic.openapi.v3.property) = {description: "租户ID"}
+  ]; // 租户ID
+}
+
+// 自助用量 - 请求（tenant_id 由 BFF 从认证上下文注入，不接受客户端传值）
+message GetMyTenantUsageRequest {
+  uint32 tenant_id = 1 [
+    json_name = "tenantId",
+    (gnostic.openapi.v3.property) = {description: "租户ID（BFF 注入）"}
+  ]; // 租户ID
+}
+
+// 租户访问闸门 - 请求
+message CheckTenantAccessRequest {
+  uint32 tenant_id = 1 [
+    json_name = "tenantId",
+    (gnostic.openapi.v3.property) = {description: "租户ID"}
+  ]; // 租户ID
+
+  string method = 2 [
+    json_name = "method",
+    (gnostic.openapi.v3.property) = {description: "HTTP 方法"}
+  ]; // HTTP 方法
+
+  string path = 3 [
+    json_name = "path",
+    (gnostic.openapi.v3.property) = {description: "请求路径"}
+  ]; // 请求路径
+}
+
+// 租户访问闸门 - 答复
+message CheckTenantAccessResponse {}
+
+// 业务入口配额闸门 - 请求
+message CheckQuotaRequest {
+  uint32 tenant_id = 1 [
+    json_name = "tenantId",
+    (gnostic.openapi.v3.property) = {description: "租户ID"}
+  ]; // 租户ID
+
+  TenantQuota.QuotaType quota_type = 2 [
+    json_name = "quotaType",
+    (gnostic.openapi.v3.property) = {description: "配额类型"}
+  ]; // 配额类型
+
+  // 本次操作新增的量（STORAGE=上传字节数；USER_LIMIT 等忽略）
+  optional uint64 additional = 3 [
+    json_name = "additional",
+    (gnostic.openapi.v3.property) = {description: "本次新增用量"}
+  ]; // 本次新增用量
+}
+
+// 业务入口配额闸门 - 答复
+message CheckQuotaResponse {}

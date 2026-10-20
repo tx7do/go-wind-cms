@@ -96,6 +96,7 @@ import (
 	"go-wind-cms/app/core/service/internal/data/ent/tagtranslation"
 	"go-wind-cms/app/core/service/internal/data/ent/task"
 	"go-wind-cms/app/core/service/internal/data/ent/tenant"
+	"go-wind-cms/app/core/service/internal/data/ent/tenantquota"
 	"go-wind-cms/app/core/service/internal/data/ent/user"
 	"go-wind-cms/app/core/service/internal/data/ent/usercredential"
 	"go-wind-cms/app/core/service/internal/data/ent/userorgunit"
@@ -259,6 +260,7 @@ func checkColumn(t, c string) error {
 			tagtranslation.Table:             tagtranslation.ValidColumn,
 			task.Table:                       task.ValidColumn,
 			tenant.Table:                     tenant.ValidColumn,
+			tenantquota.Table:                tenantquota.ValidColumn,
 			user.Table:                       user.ValidColumn,
 			usercredential.Table:             usercredential.ValidColumn,
 			userorgunit.Table:                userorgunit.ValidColumn,

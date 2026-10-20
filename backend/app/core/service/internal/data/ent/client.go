@@ -101,6 +101,7 @@ import (
 	"go-wind-cms/app/core/service/internal/data/ent/tagtranslation"
 	"go-wind-cms/app/core/service/internal/data/ent/task"
 	"go-wind-cms/app/core/service/internal/data/ent/tenant"
+	"go-wind-cms/app/core/service/internal/data/ent/tenantquota"
 	"go-wind-cms/app/core/service/internal/data/ent/user"
 	"go-wind-cms/app/core/service/internal/data/ent/usercredential"
 	"go-wind-cms/app/core/service/internal/data/ent/userorgunit"
@@ -300,6 +301,8 @@ type Client struct {
 	Task *TaskClient
 	// Tenant is the client for interacting with the Tenant builders.
 	Tenant *TenantClient
+	// TenantQuota is the client for interacting with the TenantQuota builders.
+	TenantQuota *TenantQuotaClient
 	// User is the client for interacting with the User builders.
 	User *UserClient
 	// UserCredential is the client for interacting with the UserCredential builders.
@@ -415,6 +418,7 @@ func (c *Client) init() {
 	c.TagTranslation = NewTagTranslationClient(c.config)
 	c.Task = NewTaskClient(c.config)
 	c.Tenant = NewTenantClient(c.config)
+	c.TenantQuota = NewTenantQuotaClient(c.config)
 	c.User = NewUserClient(c.config)
 	c.UserCredential = NewUserCredentialClient(c.config)
 	c.UserOrgUnit = NewUserOrgUnitClient(c.config)
@@ -604,6 +608,7 @@ func (c *Client) Tx(ctx context.Context) (*Tx, error) {
 		TagTranslation:             NewTagTranslationClient(cfg),
 		Task:                       NewTaskClient(cfg),
 		Tenant:                     NewTenantClient(cfg),
+		TenantQuota:                NewTenantQuotaClient(cfg),
 		User:                       NewUserClient(cfg),
 		UserCredential:             NewUserCredentialClient(cfg),
 		UserOrgUnit:                NewUserOrgUnitClient(cfg),
@@ -720,6 +725,7 @@ func (c *Client) BeginTx(ctx context.Context, opts *sql.TxOptions) (*Tx, error) 
 		TagTranslation:             NewTagTranslationClient(cfg),
 		Task:                       NewTaskClient(cfg),
 		Tenant:                     NewTenantClient(cfg),
+		TenantQuota:                NewTenantQuotaClient(cfg),
 		User:                       NewUserClient(cfg),
 		UserCredential:             NewUserCredentialClient(cfg),
 		UserOrgUnit:                NewUserOrgUnitClient(cfg),
@@ -777,8 +783,8 @@ func (c *Client) Use(hooks ...Hook) {
 		c.RoleFieldPermission, c.RoleMetadata, c.RolePermission, c.Section,
 		c.SectionTranslation, c.Site, c.SiteSetting, c.SocialAccount,
 		c.SocialDistribution, c.SocialInboxItem, c.SocialStatsHistory, c.Tag,
-		c.TagTranslation, c.Task, c.Tenant, c.User, c.UserCredential, c.UserOrgUnit,
-		c.UserPosition, c.UserRole, c.Webhook, c.WebhookDelivery,
+		c.TagTranslation, c.Task, c.Tenant, c.TenantQuota, c.User, c.UserCredential,
+		c.UserOrgUnit, c.UserPosition, c.UserRole, c.Webhook, c.WebhookDelivery,
 	} {
 		n.Use(hooks...)
 	}
@@ -809,8 +815,8 @@ func (c *Client) Intercept(interceptors ...Interceptor) {
 		c.RoleFieldPermission, c.RoleMetadata, c.RolePermission, c.Section,
 		c.SectionTranslation, c.Site, c.SiteSetting, c.SocialAccount,
 		c.SocialDistribution, c.SocialInboxItem, c.SocialStatsHistory, c.Tag,
-		c.TagTranslation, c.Task, c.Tenant, c.User, c.UserCredential, c.UserOrgUnit,
-		c.UserPosition, c.UserRole, c.Webhook, c.WebhookDelivery,
+		c.TagTranslation, c.Task, c.Tenant, c.TenantQuota, c.User, c.UserCredential,
+		c.UserOrgUnit, c.UserPosition, c.UserRole, c.Webhook, c.WebhookDelivery,
 	} {
 		n.Intercept(interceptors...)
 	}
@@ -999,6 +1005,8 @@ func (c *Client) Mutate(ctx context.Context, m Mutation) (Value, error) {
 		return c.Task.mutate(ctx, m)
 	case *TenantMutation:
 		return c.Tenant.mutate(ctx, m)
+	case *TenantQuotaMutation:
+		return c.TenantQuota.mutate(ctx, m)
 	case *UserMutation:
 		return c.User.mutate(ctx, m)
 	case *UserCredentialMutation:
@@ -13480,6 +13488,139 @@ func (c *TenantClient) mutate(ctx context.Context, m *TenantMutation) (Value, er
 	}
 }
 
+// TenantQuotaClient is a client for the TenantQuota schema.
+type TenantQuotaClient struct {
+	config
+}
+
+// NewTenantQuotaClient returns a client for the TenantQuota from the given config.
+func NewTenantQuotaClient(c config) *TenantQuotaClient {
+	return &TenantQuotaClient{config: c}
+}
+
+// Use adds a list of mutation hooks to the hooks stack.
+// A call to `Use(f, g, h)` equals to `tenantquota.Hooks(f(g(h())))`.
+func (c *TenantQuotaClient) Use(hooks ...Hook) {
+	c.hooks.TenantQuota = append(c.hooks.TenantQuota, hooks...)
+}
+
+// Intercept adds a list of query interceptors to the interceptors stack.
+// A call to `Intercept(f, g, h)` equals to `tenantquota.Intercept(f(g(h())))`.
+func (c *TenantQuotaClient) Intercept(interceptors ...Interceptor) {
+	c.inters.TenantQuota = append(c.inters.TenantQuota, interceptors...)
+}
+
+// Create returns a builder for creating a TenantQuota entity.
+func (c *TenantQuotaClient) Create() *TenantQuotaCreate {
+	mutation := newTenantQuotaMutation(c.config, OpCreate)
+	return &TenantQuotaCreate{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// CreateBulk returns a builder for creating a bulk of TenantQuota entities.
+func (c *TenantQuotaClient) CreateBulk(builders ...*TenantQuotaCreate) *TenantQuotaCreateBulk {
+	return &TenantQuotaCreateBulk{config: c.config, builders: builders}
+}
+
+// MapCreateBulk creates a bulk creation builder from the given slice. For each item in the slice, the function creates
+// a builder and applies setFunc on it.
+func (c *TenantQuotaClient) MapCreateBulk(slice any, setFunc func(*TenantQuotaCreate, int)) *TenantQuotaCreateBulk {
+	rv := reflect.ValueOf(slice)
+	if rv.Kind() != reflect.Slice {
+		return &TenantQuotaCreateBulk{err: fmt.Errorf("calling to TenantQuotaClient.MapCreateBulk with wrong type %T, need slice", slice)}
+	}
+	builders := make([]*TenantQuotaCreate, rv.Len())
+	for i := 0; i < rv.Len(); i++ {
+		builders[i] = c.Create()
+		setFunc(builders[i], i)
+	}
+	return &TenantQuotaCreateBulk{config: c.config, builders: builders}
+}
+
+// Update returns an update builder for TenantQuota.
+func (c *TenantQuotaClient) Update() *TenantQuotaUpdate {
+	mutation := newTenantQuotaMutation(c.config, OpUpdate)
+	return &TenantQuotaUpdate{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// UpdateOne returns an update builder for the given entity.
+func (c *TenantQuotaClient) UpdateOne(_m *TenantQuota) *TenantQuotaUpdateOne {
+	mutation := newTenantQuotaMutation(c.config, OpUpdateOne, withTenantQuota(_m))
+	return &TenantQuotaUpdateOne{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// UpdateOneID returns an update builder for the given id.
+func (c *TenantQuotaClient) UpdateOneID(id uint32) *TenantQuotaUpdateOne {
+	mutation := newTenantQuotaMutation(c.config, OpUpdateOne, withTenantQuotaID(id))
+	return &TenantQuotaUpdateOne{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// Delete returns a delete builder for TenantQuota.
+func (c *TenantQuotaClient) Delete() *TenantQuotaDelete {
+	mutation := newTenantQuotaMutation(c.config, OpDelete)
+	return &TenantQuotaDelete{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// DeleteOne returns a builder for deleting the given entity.
+func (c *TenantQuotaClient) DeleteOne(_m *TenantQuota) *TenantQuotaDeleteOne {
+	return c.DeleteOneID(_m.ID)
+}
+
+// DeleteOneID returns a builder for deleting the given entity by its id.
+func (c *TenantQuotaClient) DeleteOneID(id uint32) *TenantQuotaDeleteOne {
+	builder := c.Delete().Where(tenantquota.ID(id))
+	builder.mutation.id = &id
+	builder.mutation.op = OpDeleteOne
+	return &TenantQuotaDeleteOne{builder}
+}
+
+// Query returns a query builder for TenantQuota.
+func (c *TenantQuotaClient) Query() *TenantQuotaQuery {
+	return &TenantQuotaQuery{
+		config: c.config,
+		ctx:    &QueryContext{Type: TypeTenantQuota},
+		inters: c.Interceptors(),
+	}
+}
+
+// Get returns a TenantQuota entity by its id.
+func (c *TenantQuotaClient) Get(ctx context.Context, id uint32) (*TenantQuota, error) {
+	return c.Query().Where(tenantquota.ID(id)).Only(ctx)
+}
+
+// GetX is like Get, but panics if an error occurs.
+func (c *TenantQuotaClient) GetX(ctx context.Context, id uint32) *TenantQuota {
+	obj, err := c.Get(ctx, id)
+	if err != nil {
+		panic(err)
+	}
+	return obj
+}
+
+// Hooks returns the client hooks.
+func (c *TenantQuotaClient) Hooks() []Hook {
+	return c.hooks.TenantQuota
+}
+
+// Interceptors returns the client interceptors.
+func (c *TenantQuotaClient) Interceptors() []Interceptor {
+	return c.inters.TenantQuota
+}
+
+func (c *TenantQuotaClient) mutate(ctx context.Context, m *TenantQuotaMutation) (Value, error) {
+	switch m.Op() {
+	case OpCreate:
+		return (&TenantQuotaCreate{config: c.config, hooks: c.Hooks(), mutation: m}).Save(ctx)
+	case OpUpdate:
+		return (&TenantQuotaUpdate{config: c.config, hooks: c.Hooks(), mutation: m}).Save(ctx)
+	case OpUpdateOne:
+		return (&TenantQuotaUpdateOne{config: c.config, hooks: c.Hooks(), mutation: m}).Save(ctx)
+	case OpDelete, OpDeleteOne:
+		return (&TenantQuotaDelete{config: c.config, hooks: c.Hooks(), mutation: m}).Exec(ctx)
+	default:
+		return nil, fmt.Errorf("ent: unknown TenantQuota mutation op: %q", m.Op())
+	}
+}
+
 // UserClient is a client for the User schema.
 type UserClient struct {
 	config
@@ -14439,8 +14580,8 @@ type (
 		PostWatch, Redirect, Role, RoleFieldPermission, RoleMetadata, RolePermission,
 		Section, SectionTranslation, Site, SiteSetting, SocialAccount,
 		SocialDistribution, SocialInboxItem, SocialStatsHistory, Tag, TagTranslation,
-		Task, Tenant, User, UserCredential, UserOrgUnit, UserPosition, UserRole,
-		Webhook, WebhookDelivery []ent.Hook
+		Task, Tenant, TenantQuota, User, UserCredential, UserOrgUnit, UserPosition,
+		UserRole, Webhook, WebhookDelivery []ent.Hook
 	}
 	inters struct {
 		AccessKey, AiChunk, AiConversation, AiDoc, AiKnowledgeBase, AiMessage,
@@ -14461,7 +14602,7 @@ type (
 		PostWatch, Redirect, Role, RoleFieldPermission, RoleMetadata, RolePermission,
 		Section, SectionTranslation, Site, SiteSetting, SocialAccount,
 		SocialDistribution, SocialInboxItem, SocialStatsHistory, Tag, TagTranslation,
-		Task, Tenant, User, UserCredential, UserOrgUnit, UserPosition, UserRole,
-		Webhook, WebhookDelivery []ent.Interceptor
+		Task, Tenant, TenantQuota, User, UserCredential, UserOrgUnit, UserPosition,
+		UserRole, Webhook, WebhookDelivery []ent.Interceptor
 	}
 )

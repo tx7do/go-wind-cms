@@ -16594,6 +16594,318 @@ export type identityservicev1_TenantExistsResponse = {
   exist: boolean | undefined;
 };
 
+// 租户配额管理 — BFF（平台管理员）
+export interface TenantQuotaService {
+  // 查询租户配额列表
+  List(
+    request: pagination_PagingRequest,
+  ): Promise<identityservicev1_ListTenantQuotaResponse>;
+  // 查询租户配额详情
+  Get(
+    request: identityservicev1_GetTenantQuotaRequest,
+  ): Promise<identityservicev1_TenantQuota>;
+  // 创建租户配额
+  Create(
+    request: identityservicev1_CreateTenantQuotaRequest,
+  ): Promise<wellKnownEmpty>;
+  // 更新租户配额
+  Update(
+    request: identityservicev1_UpdateTenantQuotaRequest,
+  ): Promise<wellKnownEmpty>;
+  // 删除租户配额
+  Delete(
+    request: identityservicev1_DeleteTenantQuotaRequest,
+  ): Promise<wellKnownEmpty>;
+  // 聚合查询指定租户的当前用量与配额上限（平台管理员视图）
+  GetUsage(
+    request: identityservicev1_GetTenantUsageRequest,
+  ): Promise<identityservicev1_TenantUsage>;
+  // 获取当前租户的用量与配额（租户自助；tenant_id 从认证上下文取，不接受客户端传值）。
+  // 配额硬限制 403 时，租户管理员可在此看到原因。
+  GetMyTenantUsage(
+    request: identityservicev1_GetMyTenantUsageRequest,
+  ): Promise<identityservicev1_TenantUsage>;
+}
+
+export function createTenantQuotaServiceClient(
+  transport: ClientTransport,
+): TenantQuotaService {
+  return {
+    List(request) {
+      const path = `admin/v1/tenant-quotas`;
+      const body = null;
+      const queryParams: string[] = [];
+      if (request.page) {
+        queryParams.push(
+          `page=${encodeURIComponent(request.page.toString())}`,
+        );
+      }
+      if (request.pageSize) {
+        queryParams.push(
+          `pageSize=${encodeURIComponent(request.pageSize.toString())}`,
+        );
+      }
+      if (request.offset) {
+        queryParams.push(
+          `offset=${encodeURIComponent(request.offset.toString())}`,
+        );
+      }
+      if (request.limit) {
+        queryParams.push(
+          `limit=${encodeURIComponent(request.limit.toString())}`,
+        );
+      }
+      if (request.token) {
+        queryParams.push(
+          `token=${encodeURIComponent(request.token.toString())}`,
+        );
+      }
+      if (request.noPaging) {
+        queryParams.push(
+          `noPaging=${encodeURIComponent(request.noPaging.toString())}`,
+        );
+      }
+      if (request.query) {
+        queryParams.push(
+          `query=${encodeURIComponent(request.query.toString())}`,
+        );
+      }
+      if (request.filter) {
+        queryParams.push(
+          `filter=${encodeURIComponent(request.filter.toString())}`,
+        );
+      }
+      if (request.filterExpr?.type) {
+        queryParams.push(
+          `filterExpr.type=${encodeURIComponent(request.filterExpr.type.toString())}`,
+        );
+      }
+      if (request.filterExpr?.conditions?.field) {
+        queryParams.push(
+          `filterExpr.conditions.field=${encodeURIComponent(request.filterExpr.conditions.field.toString())}`,
+        );
+      }
+      if (request.filterExpr?.conditions?.op) {
+        queryParams.push(
+          `filterExpr.conditions.op=${encodeURIComponent(request.filterExpr.conditions.op.toString())}`,
+        );
+      }
+      if (request.filterExpr?.conditions?.value) {
+        queryParams.push(
+          `filterExpr.conditions.value=${encodeURIComponent(request.filterExpr.conditions.value.toString())}`,
+        );
+      }
+      if (request.filterExpr?.conditions?.jsonValue) {
+        queryParams.push(
+          `filterExpr.conditions.jsonValue=${encodeURIComponent(request.filterExpr.conditions.jsonValue.toString())}`,
+        );
+      }
+      if (request.filterExpr?.conditions?.values) {
+        request.filterExpr.conditions.values.forEach((x) => {
+          queryParams.push(
+            `filterExpr.conditions.values=${encodeURIComponent(x.toString())}`,
+          );
+        });
+      }
+      if (request.filterExpr?.conditions?.datePart) {
+        queryParams.push(
+          `filterExpr.conditions.datePart=${encodeURIComponent(request.filterExpr.conditions.datePart.toString())}`,
+        );
+      }
+      if (request.filterExpr?.conditions?.jsonPath) {
+        queryParams.push(
+          `filterExpr.conditions.jsonPath=${encodeURIComponent(request.filterExpr.conditions.jsonPath.toString())}`,
+        );
+      }
+      if (request.orderBy) {
+        queryParams.push(
+          `orderBy=${encodeURIComponent(request.orderBy.toString())}`,
+        );
+      }
+      if (request.sorting?.field) {
+        queryParams.push(
+          `sorting.field=${encodeURIComponent(request.sorting.field.toString())}`,
+        );
+      }
+      if (request.sorting?.direction) {
+        queryParams.push(
+          `sorting.direction=${encodeURIComponent(request.sorting.direction.toString())}`,
+        );
+      }
+      if (request.fieldMask) {
+        queryParams.push(
+          `fieldMask=${encodeURIComponent(request.fieldMask.toString())}`,
+        );
+      }
+      let uri = path;
+      if (queryParams.length > 0) {
+        uri += `?${queryParams.join('&')}`;
+      }
+      return transport.unary(uri, 'GET', body, {
+        service: 'TenantQuotaService',
+        method: 'List',
+      }) as Promise<identityservicev1_ListTenantQuotaResponse>;
+    },
+    Get(request) {
+      if (request.id === undefined || request.id === null) {
+        throw new Error('missing required field request.id');
+      }
+      const path = `admin/v1/tenant-quotas/${request.id}`;
+      const body = null;
+      const queryParams: string[] = [];
+      if (request.viewMask) {
+        queryParams.push(
+          `viewMask=${encodeURIComponent(request.viewMask.toString())}`,
+        );
+      }
+      let uri = path;
+      if (queryParams.length > 0) {
+        uri += `?${queryParams.join('&')}`;
+      }
+      return transport.unary(uri, 'GET', body, {
+        service: 'TenantQuotaService',
+        method: 'Get',
+      }) as Promise<identityservicev1_TenantQuota>;
+    },
+    Create(request) {
+      const path = `admin/v1/tenant-quotas`;
+      const body = JSON.stringify(request);
+      return transport.unary(path, 'POST', body, {
+        service: 'TenantQuotaService',
+        method: 'Create',
+      }) as Promise<wellKnownEmpty>;
+    },
+    Update(request) {
+      if (request.id === undefined || request.id === null) {
+        throw new Error('missing required field request.id');
+      }
+      const path = `admin/v1/tenant-quotas/${request.id}`;
+      const body = JSON.stringify(request);
+      return transport.unary(path, 'PUT', body, {
+        service: 'TenantQuotaService',
+        method: 'Update',
+      }) as Promise<wellKnownEmpty>;
+    },
+    Delete(request) {
+      if (request.id === undefined || request.id === null) {
+        throw new Error('missing required field request.id');
+      }
+      const path = `admin/v1/tenant-quotas/${request.id}`;
+      const body = null;
+      return transport.unary(path, 'DELETE', body, {
+        service: 'TenantQuotaService',
+        method: 'Delete',
+      }) as Promise<wellKnownEmpty>;
+    },
+    GetUsage(request) {
+      if (request.tenantId === undefined || request.tenantId === null) {
+        throw new Error('missing required field request.tenant_id');
+      }
+      const path = `admin/v1/tenants/${request.tenantId}/usage`;
+      const body = null;
+      return transport.unary(path, 'GET', body, {
+        service: 'TenantQuotaService',
+        method: 'GetUsage',
+      }) as Promise<identityservicev1_TenantUsage>;
+    },
+    GetMyTenantUsage(request) {
+      const path = `admin/v1/my-tenant-usage`;
+      const body = null;
+      const queryParams: string[] = [];
+      if (request.tenantId) {
+        queryParams.push(
+          `tenantId=${encodeURIComponent(request.tenantId.toString())}`,
+        );
+      }
+      let uri = path;
+      if (queryParams.length > 0) {
+        uri += `?${queryParams.join('&')}`;
+      }
+      return transport.unary(uri, 'GET', body, {
+        service: 'TenantQuotaService',
+        method: 'GetMyTenantUsage',
+      }) as Promise<identityservicev1_TenantUsage>;
+    },
+  };
+}
+// 租户配额列表 - 答复
+export type identityservicev1_ListTenantQuotaResponse = {
+  items: identityservicev1_TenantQuota[] | undefined;
+  total: number | undefined;
+};
+
+// 租户配额
+export type identityservicev1_TenantQuota = {
+  createdAt?: wellKnownTimestamp;
+  createdBy?: number;
+  deletedAt?: wellKnownTimestamp;
+  deletedBy?: number;
+  id?: number;
+  quotaType?: identityservicev1_TenantQuota_QuotaType;
+  quotaValue?: number;
+  tenantId?: number;
+  updatedAt?: wellKnownTimestamp;
+  updatedBy?: number;
+};
+
+// 配额类型
+export type identityservicev1_TenantQuota_QuotaType =
+  | 'AI_TOKENS'
+  | 'API_CALL'
+  | 'QUOTA_TYPE_UNSPECIFIED'
+  | 'STORAGE'
+  | 'USER_LIMIT';
+// 查询租户配额 - 请求
+export type identityservicev1_GetTenantQuotaRequest = {
+  id?: number;
+  viewMask?: wellKnownFieldMask;
+};
+
+// 创建租户配额 - 请求
+export type identityservicev1_CreateTenantQuotaRequest = {
+  data: identityservicev1_TenantQuota | undefined;
+};
+
+// 更新租户配额 - 请求
+export type identityservicev1_UpdateTenantQuotaRequest = {
+  allowMissing?: boolean;
+  data: identityservicev1_TenantQuota | undefined;
+  id: number | undefined;
+  updateMask: undefined | wellKnownFieldMask;
+};
+
+// 删除租户配额 - 请求
+export type identityservicev1_DeleteTenantQuotaRequest = {
+  id: number | undefined;
+};
+
+// 查询租户用量 - 请求
+export type identityservicev1_GetTenantUsageRequest = {
+  tenantId: number | undefined;
+};
+
+// 租户用量聚合（计量与闸门同源：同一张表、同一个查询）
+export type identityservicev1_TenantUsage = {
+  aiTokensMonth?: number;
+  apiCallCount?: number;
+  quotas: identityservicev1_QuotaUsage[] | undefined;
+  storageUsedBytes?: number;
+  subscriptionPlan?: string;
+  tenantId?: number;
+  userCount?: number;
+};
+
+// 配额用量对（上限 + 类型；用量在 TenantUsage 的计数字段上）
+export type identityservicev1_QuotaUsage = {
+  quotaType?: identityservicev1_TenantQuota_QuotaType;
+  quotaValue?: number;
+};
+
+// 自助用量 - 请求（tenant_id 由 BFF 从认证上下文注入，不接受客户端传值）
+export type identityservicev1_GetMyTenantUsageRequest = {
+  tenantId: number | undefined;
+};
+
 // 翻译服务
 export interface TranslatorService {
   // 翻译文本
@@ -17419,6 +17731,7 @@ export class ApiClient {
   private _statsService?: StatsService;
   private _tagService?: TagService;
   private _taskService?: TaskService;
+  private _tenantQuotaService?: TenantQuotaService;
   private _tenantService?: TenantService;
   private _translatorService?: TranslatorService;
   private readonly _transport: ClientTransport;
@@ -17684,6 +17997,10 @@ export class ApiClient {
 
   get taskService(): TaskService {
     return this._taskService ??= createTaskServiceClient(this._transport);
+  }
+
+  get tenantQuotaService(): TenantQuotaService {
+    return this._tenantQuotaService ??= createTenantQuotaServiceClient(this._transport);
   }
 
   get tenantService(): TenantService {

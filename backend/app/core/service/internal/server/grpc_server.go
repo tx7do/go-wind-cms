@@ -58,6 +58,7 @@ func NewGrpcServer(
 	monitorAlertService *service.MonitorAlertService,
 	onlineSessionService *service.OnlineSessionService,
 	accessKeyService *service.AccessKeyService,
+	tenantQuotaService *service.TenantQuotaService,
 	serverMonitorService *service.ServerMonitorService,
 	redisCacheMonitorService *service.RedisCacheMonitorService,
 
@@ -150,6 +151,7 @@ func NewGrpcServer(
 	monitorAlertV1.RegisterMonitorAlertServiceServer(srv, monitorAlertService)
 	onlineSessionV1.RegisterOnlineSessionServiceServer(srv, onlineSessionService)
 	accesskeyV1.RegisterAccessKeyServiceServer(srv, accessKeyService)
+	identityV1.RegisterTenantQuotaServiceServer(srv, tenantQuotaService)
 	serverMonitorV1.RegisterServerMonitorServiceServer(srv, serverMonitorService)
 	redisCacheV1.RegisterRedisCacheMonitorServiceServer(srv, redisCacheMonitorService)
 

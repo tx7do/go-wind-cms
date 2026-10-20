@@ -1,0 +1,55 @@
+syntax = "proto3";
+
+package admin.service.v1;
+
+import "google/api/annotations.proto";
+import "gnostic/openapi/v3/annotations.proto";
+import "google/protobuf/empty.proto";
+
+import "pagination/v1/pagination.proto";
+import "identity/service/v1/tenant_quota.proto";
+
+// 租户配额管理 — BFF（平台管理员）
+service TenantQuotaService {
+  // 查询租户配额列表
+  rpc List (pagination.PagingRequest) returns (identity.service.v1.ListTenantQuotaResponse) {
+    option (google.api.http) = { get: "/admin/v1/tenant-quotas" };
+  }
+
+  // 查询租户配额详情
+  rpc Get (identity.service.v1.GetTenantQuotaRequest) returns (identity.service.v1.TenantQuota) {
+    option (google.api.http) = { get: "/admin/v1/tenant-quotas/{id}" };
+  }
+
+  // 创建租户配额
+  rpc Create (identity.service.v1.CreateTenantQuotaRequest) returns (google.protobuf.Empty) {
+    option (google.api.http) = {
+      post: "/admin/v1/tenant-quotas"
+      body: "*"
+    };
+  }
+
+  // 更新租户配额
+  rpc Update (identity.service.v1.UpdateTenantQuotaRequest) returns (google.protobuf.Empty) {
+    option (google.api.http) = {
+      put: "/admin/v1/tenant-quotas/{id}"
+      body: "*"
+    };
+  }
+
+  // 删除租户配额
+  rpc Delete (identity.service.v1.DeleteTenantQuotaRequest) returns (google.protobuf.Empty) {
+    option (google.api.http) = { delete: "/admin/v1/tenant-quotas/{id}" };
+  }
+
+  // 聚合查询指定租户的当前用量与配额上限（平台管理员视图）
+  rpc GetUsage (identity.service.v1.GetTenantUsageRequest) returns (identity.service.v1.TenantUsage) {
+    option (google.api.http) = { get: "/admin/v1/tenants/{tenant_id}/usage" };
+  }
+
+  // 获取当前租户的用量与配额（租户自助；tenant_id 从认证上下文取，不接受客户端传值）。
+  // 配额硬限制 403 时，租户管理员可在此看到原因。
+  rpc GetMyTenantUsage (identity.service.v1.GetMyTenantUsageRequest) returns (identity.service.v1.TenantUsage) {
+    option (google.api.http) = { get: "/admin/v1/my-tenant-usage" };
+  }
+}

@@ -18,6 +18,7 @@ import (
 	"github.com/tx7do/kratos-bootstrap/bootstrap"
 
 	adminV1 "go-wind-cms/api/gen/go/admin/service/v1"
+	identityV1 "go-wind-cms/api/gen/go/identity/service/v1"
 	mediaV1 "go-wind-cms/api/gen/go/media/service/v1"
 	storageV1 "go-wind-cms/api/gen/go/storage/service/v1"
 
@@ -35,6 +36,9 @@ type FileTransferService struct {
 
 	fileServiceClient       storageV1.FileServiceClient
 	mediaAssetServiceClient mediaV1.MediaAssetServiceClient
+
+	// tenantQuotaClient 存储配额闸门（STORAGE：上传入口；nil = 不启用闸门）。
+	tenantQuotaClient identityV1.TenantQuotaServiceClient
 }
 
 func NewFileTransferService(
@@ -42,12 +46,14 @@ func NewFileTransferService(
 	mc *oss.MinIOClient,
 	fileServiceClient storageV1.FileServiceClient,
 	mediaAssetServiceClient mediaV1.MediaAssetServiceClient,
+	tenantQuotaClient identityV1.TenantQuotaServiceClient,
 ) *FileTransferService {
 	return &FileTransferService{
 		log:                     ctx.NewLoggerHelper("file-transfer/service/admin-service"),
 		mc:                      mc,
 		fileServiceClient:       fileServiceClient,
 		mediaAssetServiceClient: mediaAssetServiceClient,
+		tenantQuotaClient:       tenantQuotaClient,
 	}
 }
 
@@ -151,6 +157,18 @@ func (s *FileTransferService) directUploadFile(ctx context.Context, req *storage
 		return nil, err
 	}
 
+	// STORAGE 配额闸门：当前占用 + 本次上传 > 上限即拒绝（fail-open 在 core 侧；
+	// 闸门 nil = 未启用，直接跳过）。
+	if s.tenantQuotaClient != nil && operator.GetTenantId() != 0 {
+		if _, err = s.tenantQuotaClient.CheckQuota(ctx, &identityV1.CheckQuotaRequest{
+			TenantId:   operator.GetTenantId(),
+			QuotaType:  identityV1.TenantQuota_STORAGE,
+			Additional: trans.Ptr(uint64(objectSize)),
+		}); err != nil {
+			return nil, err
+		}
+	}
+
 	if req.StorageObject.BucketName == nil {
 		req.StorageObject.BucketName = trans.Ptr(oss.ContentTypeToBucketName(req.GetMime()))
 	}
@@ -216,6 +234,14 @@ func (s *FileTransferService) UploadFile(ctx context.Context, req *storageV1.Upl
 		return s.presignedUploadFile(ctx, req)
 
 	default:
+		// multipart 流式路径：handler 不经 proto oneof 传内容（避免整文件
+		// 载入内存），reader 经 context 注入、oneof 恒空——只要上下文带了
+		// reader 即按直传处理（存量 bug：自 bbc95e47 流式重构起，本路由的
+		// multipart 上传恒落 default 报 unknown upload source；媒体库走
+		// asset/upload 才未暴露）。
+		if reader, size := oss.UploadReaderFromContext(ctx); reader != nil && size > 0 {
+			return s.directUploadFile(ctx, req)
+		}
 		return nil, storageV1.ErrorUploadFailed("unknown upload source")
 	}
 }

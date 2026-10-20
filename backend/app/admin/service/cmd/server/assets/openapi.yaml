@@ -5069,6 +5069,27 @@ paths:
                         application/json:
                             schema:
                                 $ref: '#/components/schemas/monitor_alert.service.v1.EvaluateMonitorAlertsResponse'
+    /admin/v1/my-tenant-usage:
+        get:
+            tags:
+                - TenantQuotaService
+            description: |-
+                获取当前租户的用量与配额（租户自助；tenant_id 从认证上下文取，不接受客户端传值）。
+                 配额硬限制 403 时，租户管理员可在此看到原因。
+            operationId: TenantQuotaService_GetMyTenantUsage
+            parameters:
+                - name: tenantId
+                  in: query
+                  schema:
+                    type: integer
+                    format: uint32
+            responses:
+                "200":
+                    description: OK
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/identity.service.v1.TenantUsage'
     /admin/v1/navigation-items:
         get:
             tags:
@@ -9705,6 +9726,162 @@ paths:
                         application/json:
                             schema:
                                 $ref: '#/components/schemas/authentication.service.v1.GetTenantBrandingResponse'
+    /admin/v1/tenant-quotas:
+        get:
+            tags:
+                - TenantQuotaService
+            description: 查询租户配额列表
+            operationId: TenantQuotaService_List
+            parameters:
+                - name: page
+                  in: query
+                  description: 当前页码（从1开始，默认1）
+                  schema:
+                    type: integer
+                    format: uint32
+                - name: pageSize
+                  in: query
+                  description: 每页条数（默认10，建议设置上限如100）
+                  schema:
+                    type: integer
+                    format: uint32
+                - name: offset
+                  in: query
+                  description: 跳过的记录数（从0开始，默认0）
+                  schema:
+                    type: string
+                - name: limit
+                  in: query
+                  description: 最多返回的记录数（默认10，建议设置上限如100）
+                  schema:
+                    type: integer
+                    format: uint32
+                - name: token
+                  in: query
+                  description: 上一页最后一条记录的游标（如ID/时间戳+ID，首次请求为空）
+                  schema:
+                    type: string
+                - name: noPaging
+                  in: query
+                  description: 是否不分页，如果为true，则page和pageSize参数无效。
+                  schema:
+                    type: boolean
+                - name: query
+                  in: query
+                  description: JSON字符串过滤条件，基础语法：{"field1":"val1", "field2___icontains":"val2"}，具体请参见：https://github.com/tx7do/go-crud/tree/main/pagination/filter/README.md
+                  schema:
+                    type: string
+                - name: filter
+                  in: query
+                  description: Google AIP规范字符串过滤条件
+                  schema:
+                    type: string
+                - name: filterExpr.type
+                  in: query
+                  description: 过滤表达式类型
+                  schema:
+                    enum:
+                        - EXPR_TYPE_UNSPECIFIED
+                        - AND
+                        - OR
+                    type: string
+                    format: enum
+                - name: orderBy
+                  in: query
+                  description: 排序条件
+                  schema:
+                    type: string
+                - name: fieldMask
+                  in: query
+                  description: 字段掩码，其作用为SELECT中的字段，其语法为使用逗号分隔字段名，例如：id,realName,userName。如果为空则选中所有字段，即SELECT *。
+                  schema:
+                    type: string
+                    format: field-mask
+            responses:
+                "200":
+                    description: OK
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/identity.service.v1.ListTenantQuotaResponse'
+        post:
+            tags:
+                - TenantQuotaService
+            description: 创建租户配额
+            operationId: TenantQuotaService_Create
+            requestBody:
+                content:
+                    application/json:
+                        schema:
+                            $ref: '#/components/schemas/identity.service.v1.CreateTenantQuotaRequest'
+                required: true
+            responses:
+                "200":
+                    description: OK
+                    content: {}
+    /admin/v1/tenant-quotas/{id}:
+        get:
+            tags:
+                - TenantQuotaService
+            description: 查询租户配额详情
+            operationId: TenantQuotaService_Get
+            parameters:
+                - name: id
+                  in: path
+                  required: true
+                  schema:
+                    type: integer
+                    format: uint32
+                - name: viewMask
+                  in: query
+                  schema:
+                    type: string
+                    format: field-mask
+            responses:
+                "200":
+                    description: OK
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/identity.service.v1.TenantQuota'
+        put:
+            tags:
+                - TenantQuotaService
+            description: 更新租户配额
+            operationId: TenantQuotaService_Update
+            parameters:
+                - name: id
+                  in: path
+                  required: true
+                  schema:
+                    type: integer
+                    format: uint32
+            requestBody:
+                content:
+                    application/json:
+                        schema:
+                            $ref: '#/components/schemas/identity.service.v1.UpdateTenantQuotaRequest'
+                required: true
+            responses:
+                "200":
+                    description: OK
+                    content: {}
+        delete:
+            tags:
+                - TenantQuotaService
+            description: 删除租户配额
+            operationId: TenantQuotaService_Delete
+            parameters:
+                - name: id
+                  in: path
+                  required: true
+                  schema:
+                    type: integer
+                    format: uint32
+            responses:
+                "200":
+                    description: OK
+                    content: {}
     /admin/v1/tenants:
         get:
             tags:
@@ -9873,6 +10050,26 @@ paths:
                 "200":
                     description: OK
                     content: {}
+    /admin/v1/tenants/{tenantId}/usage:
+        get:
+            tags:
+                - TenantQuotaService
+            description: 聚合查询指定租户的当前用量与配额上限（平台管理员视图）
+            operationId: TenantQuotaService_GetUsage
+            parameters:
+                - name: tenantId
+                  in: path
+                  required: true
+                  schema:
+                    type: integer
+                    format: uint32
+            responses:
+                "200":
+                    description: OK
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/identity.service.v1.TenantUsage'
     /admin/v1/tenants:exists:
         get:
             tags:
@@ -14614,6 +14811,12 @@ components:
                 data:
                     $ref: '#/components/schemas/identity.service.v1.Position'
             description: 创建职位 - 请求
+        identity.service.v1.CreateTenantQuotaRequest:
+            type: object
+            properties:
+                data:
+                    $ref: '#/components/schemas/identity.service.v1.TenantQuota'
+            description: 创建租户配额 - 请求
         identity.service.v1.CreateTenantRequest:
             type: object
             properties:
@@ -14687,6 +14890,16 @@ components:
                 total:
                     type: string
             description: 获取职位列表 - 答复
+        identity.service.v1.ListTenantQuotaResponse:
+            type: object
+            properties:
+                items:
+                    type: array
+                    items:
+                        $ref: '#/components/schemas/identity.service.v1.TenantQuota'
+                total:
+                    type: string
+            description: 租户配额列表 - 答复
         identity.service.v1.ListTenantResponse:
             type: object
             properties:
@@ -14996,6 +15209,23 @@ components:
                     description: 删除时间
                     format: date-time
             description: 职位
+        identity.service.v1.QuotaUsage:
+            type: object
+            properties:
+                quotaType:
+                    enum:
+                        - QUOTA_TYPE_UNSPECIFIED
+                        - USER_LIMIT
+                        - STORAGE
+                        - API_CALL
+                        - AI_TOKENS
+                    type: string
+                    description: 配额类型
+                    format: enum
+                quotaValue:
+                    type: string
+                    description: 配额上限
+            description: 配额用量对（上限 + 类型；用量在 TenantUsage 的计数字段上）
         identity.service.v1.Tenant:
             type: object
             properties:
@@ -15107,6 +15337,83 @@ components:
                 exist:
                     type: boolean
             description: 租户是否存在 - 答复
+        identity.service.v1.TenantQuota:
+            type: object
+            properties:
+                id:
+                    type: integer
+                    description: 配额项ID
+                    format: uint32
+                tenantId:
+                    type: integer
+                    description: 租户ID
+                    format: uint32
+                quotaType:
+                    enum:
+                        - QUOTA_TYPE_UNSPECIFIED
+                        - USER_LIMIT
+                        - STORAGE
+                        - API_CALL
+                        - AI_TOKENS
+                    type: string
+                    description: 配额类型
+                    format: enum
+                quotaValue:
+                    type: string
+                    description: 配额值（USER_LIMIT=人数、STORAGE=字节、API_CALL=次数、AI_TOKENS=token 数）
+                createdBy:
+                    type: integer
+                    description: 创建者用户ID
+                    format: uint32
+                updatedBy:
+                    type: integer
+                    description: 更新者用户ID
+                    format: uint32
+                deletedBy:
+                    type: integer
+                    description: 删除者用户ID
+                    format: uint32
+                createdAt:
+                    type: string
+                    description: 创建时间
+                    format: date-time
+                updatedAt:
+                    type: string
+                    description: 更新时间
+                    format: date-time
+                deletedAt:
+                    type: string
+                    description: 删除时间
+                    format: date-time
+            description: 租户配额
+        identity.service.v1.TenantUsage:
+            type: object
+            properties:
+                tenantId:
+                    type: integer
+                    description: 租户ID
+                    format: uint32
+                userCount:
+                    type: string
+                    description: 当前用户数
+                storageUsedBytes:
+                    type: string
+                    description: 存储占用字节数
+                apiCallCount:
+                    type: string
+                    description: API 调用次数（审计活表现存行数）
+                aiTokensMonth:
+                    type: string
+                    description: 本月 AI token 用量
+                subscriptionPlan:
+                    type: string
+                    description: 订阅套餐名（tenant.subscription_plan 字符串）
+                quotas:
+                    type: array
+                    items:
+                        $ref: '#/components/schemas/identity.service.v1.QuotaUsage'
+                    description: 配额上限列表
+            description: 租户用量聚合（计量与闸门同源：同一张表、同一个查询）
         identity.service.v1.UpdateOrgUnitRequest:
             type: object
             properties:
@@ -15141,6 +15448,23 @@ components:
                     type: boolean
                     description: 如果设置为true的时候，资源不存在则会新增(插入)，并且在这种情况下`updateMask`字段将会被忽略。
             description: 更新职位 - 请求
+        identity.service.v1.UpdateTenantQuotaRequest:
+            type: object
+            properties:
+                id:
+                    type: integer
+                    format: uint32
+                data:
+                    $ref: '#/components/schemas/identity.service.v1.TenantQuota'
+                updateMask:
+                    example: id,quota_value
+                    type: string
+                    description: 要更新的字段列表
+                    format: field-mask
+                allowMissing:
+                    type: boolean
+                    description: 资源不存在则新增（插入）。
+            description: 更新租户配额 - 请求
         identity.service.v1.UpdateTenantRequest:
             type: object
             properties:
@@ -19516,6 +19840,8 @@ tags:
       description: 标签服务
     - name: TaskService
       description: 调度任务管理服务
+    - name: TenantQuotaService
+      description: 租户配额管理 — BFF（平台管理员）
     - name: TenantService
       description: 租户管理服务
     - name: TranslatorService

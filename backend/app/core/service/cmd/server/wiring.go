@@ -214,6 +214,8 @@ func initApp(ctx *bootstrap.Context) (*kratos.App, func(), error) {
 	// 访问凭证（AK/SK）：OpenAPI 机器凭证
 	accessKeyRepo := data.NewAccessKeyRepo(ctx, entClient)
 	accessKeyRateLimiter := data.NewAccessKeyRateLimiter(ctx, redisClient)
+	tenantQuotaRepo := data.NewTenantQuotaRepo(ctx, entClient)
+	tenantQuotaService := service.NewTenantQuotaService(ctx, tenantQuotaRepo)
 
 	// ═══════════════════════ 三、服务层(internal/service) ═══════════════════════
 
@@ -255,7 +257,7 @@ func initApp(ctx *bootstrap.Context) (*kratos.App, func(), error) {
 
 	// 租户与身份
 	tenantService := service.NewTenantService(ctx, tenantRepo, userRepo, userCredentialRepo, roleRepo)
-	userService := service.NewUserService(ctx, userRepo, roleRepo, userCredentialRepo, positionRepo, orgUnitRepo, tenantRepo, membershipRepo)
+	userService := service.NewUserService(ctx, userRepo, roleRepo, userCredentialRepo, positionRepo, orgUnitRepo, tenantRepo, membershipRepo, tenantQuotaService)
 	roleFieldPermissionRepo := data.NewRoleFieldPermissionRepo(ctx, entClient)
 	roleService := service.NewRoleService(ctx, roleRepo, tenantRepo, userRoleRepo, userRepo, roleFieldPermissionRepo)
 	positionService := service.NewPositionService(ctx, positionRepo, orgUnitRepo)
@@ -308,6 +310,9 @@ func initApp(ctx *bootstrap.Context) (*kratos.App, func(), error) {
 	internalMessageService.RegisterNotifier(notificationService)
 	authenticationService.RegisterNotifier(notificationService)
 
+	// 站内信投递缝：配额水位告警经系统通知落租户管理员收件箱
+	tenantQuotaService.RegisterInternalMessages(internalMessageService)
+
 	// 内容
 	commentService := service.NewCommentService(ctx, commentRepo)
 	interactionService := service.NewInteractionService(ctx, interactionRepo, postRepo)
@@ -355,6 +360,7 @@ func initApp(ctx *bootstrap.Context) (*kratos.App, func(), error) {
 		monitorAlertService,
 		onlineSessionService,
 		accessKeyService,
+		tenantQuotaService,
 		serverMonitorService,
 		redisCacheMonitorService,
 		fileService,
@@ -395,7 +401,7 @@ func initApp(ctx *bootstrap.Context) (*kratos.App, func(), error) {
 		return nil, nil, err
 	}
 
-	asynqServer := server.NewAsynqServer(ctx, taskService, searchService, aiKnowledgeService, aiQueryService, aiContentService, socialService, postService, webhookService, internalMessageService, flowService, notificationService, monitorAlertService)
+	asynqServer := server.NewAsynqServer(ctx, taskService, searchService, aiKnowledgeService, aiQueryService, aiContentService, socialService, postService, webhookService, internalMessageService, flowService, notificationService, monitorAlertService, tenantQuotaService)
 
 	return newApp(ctx, grpcServer, asynqServer), rollback, nil
 }

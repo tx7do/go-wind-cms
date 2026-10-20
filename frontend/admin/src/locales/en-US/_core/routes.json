@@ -92,5 +92,6 @@
   "flow-rule": "Automation Flows",
   "content-components": "Components",
   "server-monitor": "Server Monitor",
-  "redis-cache-monitor": "Redis Cache Monitor"
+  "redis-cache-monitor": "Redis Cache Monitor",
+  "tenant-quotas": "Tenant Quotas"
 }

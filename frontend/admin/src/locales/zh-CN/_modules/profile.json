@@ -3,7 +3,8 @@
   "tab": {
     "basicInfo": "基本信息",
     "security": "安全设置",
-    "notification": "通知偏好"
+    "notification": "通知偏好",
+    "usage": "套餐用量"
   },
   "avatar": "头像",
   "username": "用户名",

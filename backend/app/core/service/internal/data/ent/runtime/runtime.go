@@ -96,6 +96,7 @@ import (
 	"go-wind-cms/app/core/service/internal/data/ent/tagtranslation"
 	"go-wind-cms/app/core/service/internal/data/ent/task"
 	"go-wind-cms/app/core/service/internal/data/ent/tenant"
+	"go-wind-cms/app/core/service/internal/data/ent/tenantquota"
 	"go-wind-cms/app/core/service/internal/data/ent/user"
 	"go-wind-cms/app/core/service/internal/data/ent/usercredential"
 	"go-wind-cms/app/core/service/internal/data/ent/userorgunit"
@@ -2906,6 +2907,19 @@ func init() {
 	tenantDescID := tenantMixinFields0[0].Descriptor()
 	// tenant.IDValidator is a validator for the "id" field. It is called by the builders before save.
 	tenant.IDValidator = tenantDescID.Validators[0].(func(uint32) error)
+	tenantquotaMixin := schema.TenantQuota{}.Mixin()
+	tenantquotaMixinFields0 := tenantquotaMixin[0].Fields()
+	_ = tenantquotaMixinFields0
+	tenantquotaFields := schema.TenantQuota{}.Fields()
+	_ = tenantquotaFields
+	// tenantquotaDescTenantID is the schema descriptor for tenant_id field.
+	tenantquotaDescTenantID := tenantquotaFields[0].Descriptor()
+	// tenantquota.TenantIDValidator is a validator for the "tenant_id" field. It is called by the builders before save.
+	tenantquota.TenantIDValidator = tenantquotaDescTenantID.Validators[0].(func(uint32) error)
+	// tenantquotaDescID is the schema descriptor for id field.
+	tenantquotaDescID := tenantquotaMixinFields0[0].Descriptor()
+	// tenantquota.IDValidator is a validator for the "id" field. It is called by the builders before save.
+	tenantquota.IDValidator = tenantquotaDescID.Validators[0].(func(uint32) error)
 	userMixin := schema.User{}.Mixin()
 	user.Policy = privacy.NewPolicies(userMixin[4], schema.User{})
 	user.Hooks[0] = func(next ent.Mutator) ent.Mutator {

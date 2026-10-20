@@ -27,6 +27,7 @@ import (
 	"go-wind-cms/pkg/middleware/auth"
 	applogging "go-wind-cms/pkg/middleware/logging"
 	entmiddleware "go-wind-cms/pkg/middleware/ent"
+	"go-wind-cms/pkg/middleware/tenantgate"
 )
 
 // NewRestMiddleware 创建中间件
@@ -34,6 +35,7 @@ func NewRestMiddleware(
 	ctx *bootstrap.Context,
 	accessTokenChecker auth.AccessTokenChecker,
 	authorizer authzEngine.Engine,
+	tenantQuotaChecker identityV1.TenantQuotaServiceClient,
 	apiAuditLogServiceClient auditV1.ApiAuditLogServiceClient,
 	loginAuditLogServiceClient auditV1.LoginAuditLogServiceClient,
 	operationAuditLogServiceClient auditV1.OperationAuditLogServiceClient,
@@ -90,6 +92,8 @@ func NewRestMiddleware(
 	// 鉴权必须在 ent.Server() 之前执行：auth.Server 对非白名单请求注入
 	// OperatorMetadata，随后 ent.Server() 才能据此构建带租户作用域的 UserViewer。
 	// 若顺序颠倒，ent.Server() 总以 md==nil 兜底为 SystemViewer，导致租户隔离失效。
+	// tenantgate 最后：依赖 auth 注入的操作者租户，做租户状态与 API_CALL 配额闸门
+	//（fail-open；判定在 core，审计中间件在最外层已被拒绝的请求同样落行同口径）。
 	ms = append(ms, selector.Server(
 		auth.Server(
 			auth.WithAccessTokenChecker(accessTokenChecker),
@@ -97,6 +101,7 @@ func NewRestMiddleware(
 			auth.WithInjectEnt(true),
 		),
 		authz.Server(authorizer),
+		tenantgate.Server(tenantQuotaChecker),
 	).Match(rpc.NewRestWhiteListMatcher()).Build())
 
 	// ent.Server() 必须在 auth.Server 之后：此时非白名单请求已注入 OperatorMetadata，
@@ -190,6 +195,7 @@ func NewRestServer(
 	monitorAlertService *service.MonitorAlertService,
 	onlineSessionService *service.OnlineSessionService,
 	accessKeyService *service.AccessKeyService,
+	tenantQuotaService *service.TenantQuotaService,
 	serverMonitorService *service.ServerMonitorService,
 	redisCacheMonitorService *service.RedisCacheMonitorService,
 	notificationChannelService *service.NotificationChannelService,
@@ -281,6 +287,7 @@ func NewRestServer(
 	adminV1.RegisterMonitorAlertServiceHTTPServer(srv, monitorAlertService)
 	adminV1.RegisterOnlineSessionServiceHTTPServer(srv, onlineSessionService)
 	adminV1.RegisterAccessKeyServiceHTTPServer(srv, accessKeyService)
+	adminV1.RegisterTenantQuotaServiceHTTPServer(srv, tenantQuotaService)
 	adminV1.RegisterServerMonitorServiceHTTPServer(srv, serverMonitorService)
 	adminV1.RegisterRedisCacheMonitorServiceHTTPServer(srv, redisCacheMonitorService)
 	adminV1.RegisterNotificationChannelServiceHTTPServer(srv, notificationChannelService)

@@ -13,7 +13,7 @@ import (
 )
 
 // NewAsynqServer creates a new asynq server.
-func NewAsynqServer(ctx *bootstrap.Context, taskService *service.TaskService, searchService *service.SearchService, aiKnowledgeService *service.AiKnowledgeService, aiQueryService *service.AiQueryService, aiContentService *service.AiContentService, socialService *service.SocialService, postService *service.PostService, webhookService *service.WebhookService, internalMessageService *service.InternalMessageService, flowService *service.FlowService, notificationService *service.NotificationService, monitorAlertService *service.MonitorAlertService) *asynq.Server {
+func NewAsynqServer(ctx *bootstrap.Context, taskService *service.TaskService, searchService *service.SearchService, aiKnowledgeService *service.AiKnowledgeService, aiQueryService *service.AiQueryService, aiContentService *service.AiContentService, socialService *service.SocialService, postService *service.PostService, webhookService *service.WebhookService, internalMessageService *service.InternalMessageService, flowService *service.FlowService, notificationService *service.NotificationService, monitorAlertService *service.MonitorAlertService, tenantQuotaService *service.TenantQuotaService) *asynq.Server {
 	cfg := ctx.GetConfig()
 
 	if cfg == nil || cfg.Server == nil || cfg.Server.Asynq == nil {
@@ -158,6 +158,15 @@ func NewAsynqServer(ctx *bootstrap.Context, taskService *service.TaskService, se
 		log.Error(err)
 	}
 	if _, err = srv.NewPeriodicTask(task.NotificationDeliverySweepCronSpec, task.NotificationDeliverySweepTaskType, &task.NotificationDeliverySweepTaskData{}); err != nil {
+		log.Error(err)
+	}
+
+	// 租户配额水位扫描（每日 09:00）：只读扫描 + 提前告警（站内信投给租户管理员），
+	// 与闸门硬执行互补。系统级常驻任务，不进 sys_tasks。
+	if err = asynq.RegisterSubscriber(srv, task.TenantQuotaWatermarkTaskType, tenantQuotaService.AsyncTenantQuotaWatermarkScan); err != nil {
+		log.Error(err)
+	}
+	if _, err = srv.NewPeriodicTask(task.TenantQuotaWatermarkCronSpec, task.TenantQuotaWatermarkTaskType, &task.TenantQuotaWatermarkTaskData{}); err != nil {
 		log.Error(err)
 	}
 

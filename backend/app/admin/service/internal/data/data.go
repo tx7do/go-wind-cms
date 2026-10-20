@@ -400,6 +400,15 @@ func NewAccessKeyServiceClient(ctx *bootstrap.Context, r registry.Discovery) acc
 	return accesskeyV1.NewAccessKeyServiceClient(cli)
 }
 
+func NewTenantQuotaServiceClient(ctx *bootstrap.Context, r registry.Discovery) identityV1.TenantQuotaServiceClient {
+	cli, err := rpc.CreateGrpcClient(ctx.Context(), r, serviceid.NewDiscoveryName(serviceid.CoreService), ctx.GetConfig())
+	if err != nil {
+		return nil
+	}
+
+	return identityV1.NewTenantQuotaServiceClient(cli)
+}
+
 func NewServerMonitorServiceClient(ctx *bootstrap.Context, r registry.Discovery) serverMonitorV1.ServerMonitorServiceClient {
 	cli, err := rpc.CreateGrpcClient(ctx.Context(), r, serviceid.NewDiscoveryName(serviceid.CoreService), ctx.GetConfig())
 	if err != nil {

@@ -159,6 +159,7 @@ func initApp(ctx *bootstrap.Context) (*kratos.App, func(), error) {
 	monitorAlertServiceClient := data.NewMonitorAlertServiceClient(ctx, discovery)
 	onlineSessionServiceClient := data.NewOnlineSessionServiceClient(ctx, discovery)
 	accessKeyServiceClient := data.NewAccessKeyServiceClient(ctx, discovery)
+	tenantQuotaServiceClient := data.NewTenantQuotaServiceClient(ctx, discovery)
 	serverMonitorServiceClient := data.NewServerMonitorServiceClient(ctx, discovery)
 	redisCacheMonitorServiceClient := data.NewRedisCacheMonitorServiceClient(ctx, discovery)
 	notificationChannelServiceClient := data.NewNotificationChannelServiceClient(ctx, discovery)
@@ -193,7 +194,7 @@ func initApp(ctx *bootstrap.Context) (*kratos.App, func(), error) {
 	// 任务 / 文件 / 翻译
 	taskService := service.NewTaskService(ctx, taskServiceClient)
 	fileService := service.NewFileService(ctx, fileServiceClient)
-	fileTransferService := service.NewFileTransferService(ctx, minIOClient, fileServiceClient, mediaAssetServiceClient)
+	fileTransferService := service.NewFileTransferService(ctx, minIOClient, fileServiceClient, mediaAssetServiceClient, tenantQuotaServiceClient)
 	translatorService := service.NewTranslatorService(ctx, translator)
 
 	// 字典与多语言
@@ -263,13 +264,14 @@ func initApp(ctx *bootstrap.Context) (*kratos.App, func(), error) {
 	monitorAlertService := service.NewMonitorAlertService(ctx, monitorAlertServiceClient)
 	onlineSessionService := service.NewOnlineSessionService(ctx, onlineSessionServiceClient)
 	accessKeyService := service.NewAccessKeyService(ctx, accessKeyServiceClient)
+	tenantQuotaService := service.NewTenantQuotaService(ctx, tenantQuotaServiceClient)
 	serverMonitorService := service.NewServerMonitorService(ctx, serverMonitorServiceClient)
 	redisCacheMonitorService := service.NewRedisCacheMonitorService(ctx, redisCacheMonitorServiceClient)
 	// ── register:service ── 新模块服务在此行后注册(make register 工具锚点,勿删)
 
 	// ═══════════════════════ 四、传输层(internal/server) ═══════════════════════
 
-	restMiddlewares := server.NewRestMiddleware(ctx, accessTokenChecker, engine, apiAuditLogServiceClient, loginAuditLogServiceClient, operationAuditLogServiceClient)
+	restMiddlewares := server.NewRestMiddleware(ctx, accessTokenChecker, engine, tenantQuotaServiceClient, apiAuditLogServiceClient, loginAuditLogServiceClient, operationAuditLogServiceClient)
 
 	httpServer := server.NewRestServer(ctx, restMiddlewares,
 		userService, userProfileService, roleService, tenantService, orgUnitService, positionService,
@@ -302,6 +304,7 @@ func initApp(ctx *bootstrap.Context) (*kratos.App, func(), error) {
 		monitorAlertService,
 		onlineSessionService,
 		accessKeyService,
+		tenantQuotaService,
 		serverMonitorService,
 		redisCacheMonitorService,
 		notificationChannelService,

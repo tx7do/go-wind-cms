@@ -1,0 +1,36 @@
+{
+  "pageTitle": "Tenant Quota Management",
+  "moduleName": "Tenant Quota",
+  "tenantId": "Tenant",
+  "tenantIdPlaceholder": "Select a tenant",
+  "requiredTenantId": "Tenant is required",
+  "quotaType": "Quota Type",
+  "quotaTypePlaceholder": "Select a quota type",
+  "requiredQuotaType": "Quota type is required",
+  "quotaValue": "Quota Limit",
+  "quotaValuePlaceholder": "Enter the quota limit",
+  "requiredQuotaValue": "Quota limit is required",
+  "quotaValueHint": "USER_LIMIT=user count, STORAGE=bytes, API_CALL=call count, AI_TOKENS=token count",
+  "updatedAt": "Updated At",
+  "action": "Actions",
+  "create": "New Quota",
+  "edit": "Edit Quota",
+  "createSuccess": "Quota created",
+  "updateSuccess": "Updated successfully",
+  "deleteSuccess": "Deleted successfully",
+  "fetchFailed": "Failed to load data",
+  "deleteConfirmTitle": "Confirm Delete",
+  "deleteConfirmDesc": "After deletion this quota no longer limits the tenant (fail-open). Delete it?",
+  "quotaTypeMap": {
+    "USER_LIMIT": "User Limit",
+    "STORAGE": "Storage",
+    "API_CALL": "API Calls",
+    "AI_TOKENS": "AI Tokens (monthly)"
+  },
+  "usage": {
+    "hint": "Current tenant quota usage (operations are rejected once a limit is reached; unconfigured quotas are not limited).",
+    "plan": "Plan",
+    "noQuotas": "No quotas configured for this tenant; all resources are unlimited.",
+    "unlimited": "Unlimited"
+  }
+}

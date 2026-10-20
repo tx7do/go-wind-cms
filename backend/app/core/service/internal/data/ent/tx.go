@@ -192,6 +192,8 @@ type Tx struct {
 	Task *TaskClient
 	// Tenant is the client for interacting with the Tenant builders.
 	Tenant *TenantClient
+	// TenantQuota is the client for interacting with the TenantQuota builders.
+	TenantQuota *TenantQuotaClient
 	// User is the client for interacting with the User builders.
 	User *UserClient
 	// UserCredential is the client for interacting with the UserCredential builders.
@@ -427,6 +429,7 @@ func (tx *Tx) init() {
 	tx.TagTranslation = NewTagTranslationClient(tx.config)
 	tx.Task = NewTaskClient(tx.config)
 	tx.Tenant = NewTenantClient(tx.config)
+	tx.TenantQuota = NewTenantQuotaClient(tx.config)
 	tx.User = NewUserClient(tx.config)
 	tx.UserCredential = NewUserCredentialClient(tx.config)
 	tx.UserOrgUnit = NewUserOrgUnitClient(tx.config)

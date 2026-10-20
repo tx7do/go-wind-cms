@@ -12,7 +12,7 @@ import {
   type identityservicev1_ListTenantResponse,
   type identityservicev1_Tenant,
 } from '@/api/generated/admin/service/v1';
-import { makeUpdateMask, type PaginationQuery } from '@/core/transport/rest';
+import { makeUpdateMask, PaginationQuery } from '@/core/transport/rest';
 import { apiClient } from '@/api/client';
 import { queryClient } from '@/core';
 
@@ -106,3 +106,21 @@ export function useCreateTenantWithAdminUser(
 }
 
 
+
+/** 租户下拉选项（配额管理等表单用；全量拉取，租户量有限） */
+export function useFetchTenantOptions() {
+  return useQuery({
+    queryKey: ['tenantOptions'],
+    queryFn: async (): Promise<{ label: string; value: number }[]> => {
+      const res = await apiClient.tenantService.List(
+        new PaginationQuery({ paging: { page: 1, pageSize: 500 } }).toRawParams(),
+      );
+      return (res.items || []).map((it) => ({
+        label: `${it.name ?? '-'} (#${it.id})`,
+        value: Number(it.id ?? 0),
+      }));
+    },
+    staleTime: 5 * 60 * 1000,
+    retry: 0,
+  });
+}

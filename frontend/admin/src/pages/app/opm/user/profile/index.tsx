@@ -12,6 +12,7 @@ import { useAuthStore } from '@/stores';
 import ContentContainer from '@/layouts/components/PageContainer/ContentContainer';
 import { getGenderOptions } from '../constants';
 import NotificationPreference from './components/NotificationPreference';
+import QuotaUsage from './components/QuotaUsage';
 import { getPresetColor } from '@/utils/color';
 
 /** 格式化 wellKnownTimestamp */
@@ -306,6 +307,11 @@ const UserProfile = () => {
               key: 'notification',
               label: t('tab.notification'),
               children: <NotificationPreference />,
+            },
+            {
+              key: 'usage',
+              label: t('tab.usage'),
+              children: <QuotaUsage />,
             },
           ]}
         />
