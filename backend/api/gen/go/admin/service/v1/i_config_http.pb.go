@@ -43,14 +43,14 @@ type ConfigServiceHTTPServer interface {
 
 func RegisterConfigServiceHTTPServer(s *http.Server, srv ConfigServiceHTTPServer) {
 	r := s.Route("/")
-	r.GET("/admin/v1/configs", _ConfigService_List11_HTTP_Handler(srv))
-	r.GET("/admin/v1/configs/{id}", _ConfigService_Get9_HTTP_Handler(srv))
-	r.POST("/admin/v1/configs", _ConfigService_Create7_HTTP_Handler(srv))
-	r.PUT("/admin/v1/configs/{id}", _ConfigService_Update8_HTTP_Handler(srv))
-	r.DELETE("/admin/v1/configs/{id}", _ConfigService_Delete9_HTTP_Handler(srv))
+	r.GET("/admin/v1/configs", _ConfigService_List12_HTTP_Handler(srv))
+	r.GET("/admin/v1/configs/{id}", _ConfigService_Get10_HTTP_Handler(srv))
+	r.POST("/admin/v1/configs", _ConfigService_Create8_HTTP_Handler(srv))
+	r.PUT("/admin/v1/configs/{id}", _ConfigService_Update9_HTTP_Handler(srv))
+	r.DELETE("/admin/v1/configs/{id}", _ConfigService_Delete10_HTTP_Handler(srv))
 }
 
-func _ConfigService_List11_HTTP_Handler(srv ConfigServiceHTTPServer) func(ctx http.Context) error {
+func _ConfigService_List12_HTTP_Handler(srv ConfigServiceHTTPServer) func(ctx http.Context) error {
 	return func(ctx http.Context) error {
 		var in v1.PagingRequest
 		if err := ctx.BindQuery(&in); err != nil {
@@ -69,7 +69,7 @@ func _ConfigService_List11_HTTP_Handler(srv ConfigServiceHTTPServer) func(ctx ht
 	}
 }
 
-func _ConfigService_Get9_HTTP_Handler(srv ConfigServiceHTTPServer) func(ctx http.Context) error {
+func _ConfigService_Get10_HTTP_Handler(srv ConfigServiceHTTPServer) func(ctx http.Context) error {
 	return func(ctx http.Context) error {
 		var in v11.GetConfigRequest
 		if err := ctx.BindQuery(&in); err != nil {
@@ -91,7 +91,7 @@ func _ConfigService_Get9_HTTP_Handler(srv ConfigServiceHTTPServer) func(ctx http
 	}
 }
 
-func _ConfigService_Create7_HTTP_Handler(srv ConfigServiceHTTPServer) func(ctx http.Context) error {
+func _ConfigService_Create8_HTTP_Handler(srv ConfigServiceHTTPServer) func(ctx http.Context) error {
 	return func(ctx http.Context) error {
 		var in v11.CreateConfigRequest
 		if err := ctx.Bind(&in); err != nil {
@@ -113,7 +113,7 @@ func _ConfigService_Create7_HTTP_Handler(srv ConfigServiceHTTPServer) func(ctx h
 	}
 }
 
-func _ConfigService_Update8_HTTP_Handler(srv ConfigServiceHTTPServer) func(ctx http.Context) error {
+func _ConfigService_Update9_HTTP_Handler(srv ConfigServiceHTTPServer) func(ctx http.Context) error {
 	return func(ctx http.Context) error {
 		var in v11.UpdateConfigRequest
 		if err := ctx.Bind(&in); err != nil {
@@ -138,7 +138,7 @@ func _ConfigService_Update8_HTTP_Handler(srv ConfigServiceHTTPServer) func(ctx h
 	}
 }
 
-func _ConfigService_Delete9_HTTP_Handler(srv ConfigServiceHTTPServer) func(ctx http.Context) error {
+func _ConfigService_Delete10_HTTP_Handler(srv ConfigServiceHTTPServer) func(ctx http.Context) error {
 	return func(ctx http.Context) error {
 		var in v11.DeleteConfigRequest
 		if err := ctx.BindQuery(&in); err != nil {

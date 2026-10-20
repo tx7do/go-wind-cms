@@ -6,6 +6,8 @@ import (
 	"context"
 	permissionpb "go-wind-cms/api/gen/go/permission/service/v1"
 	"go-wind-cms/app/core/service/internal/data/ent/accesskey"
+	"go-wind-cms/app/core/service/internal/data/ent/aiagentapp"
+	"go-wind-cms/app/core/service/internal/data/ent/aiagentrun"
 	"go-wind-cms/app/core/service/internal/data/ent/aichunk"
 	"go-wind-cms/app/core/service/internal/data/ent/aiconversation"
 	"go-wind-cms/app/core/service/internal/data/ent/aidoc"
@@ -140,6 +142,78 @@ func init() {
 	accesskeyDescID := accesskeyMixinFields0[0].Descriptor()
 	// accesskey.IDValidator is a validator for the "id" field. It is called by the builders before save.
 	accesskey.IDValidator = accesskeyDescID.Validators[0].(func(uint32) error)
+	aiagentappMixin := schema.AiAgentApp{}.Mixin()
+	aiagentapp.Policy = privacy.NewPolicies(aiagentappMixin[3], schema.AiAgentApp{})
+	aiagentapp.Hooks[0] = func(next ent.Mutator) ent.Mutator {
+		return ent.MutateFunc(func(ctx context.Context, m ent.Mutation) (ent.Value, error) {
+			if err := aiagentapp.Policy.EvalMutation(ctx, m); err != nil {
+				return nil, err
+			}
+			return next.Mutate(ctx, m)
+		})
+	}
+	aiagentappMixinFields0 := aiagentappMixin[0].Fields()
+	_ = aiagentappMixinFields0
+	aiagentappMixinFields3 := aiagentappMixin[3].Fields()
+	_ = aiagentappMixinFields3
+	aiagentappFields := schema.AiAgentApp{}.Fields()
+	_ = aiagentappFields
+	// aiagentappDescTenantID is the schema descriptor for tenant_id field.
+	aiagentappDescTenantID := aiagentappMixinFields3[0].Descriptor()
+	// aiagentapp.DefaultTenantID holds the default value on creation for the tenant_id field.
+	aiagentapp.DefaultTenantID = aiagentappDescTenantID.Default.(uint32)
+	// aiagentappDescName is the schema descriptor for name field.
+	aiagentappDescName := aiagentappFields[0].Descriptor()
+	// aiagentapp.NameValidator is a validator for the "name" field. It is called by the builders before save.
+	aiagentapp.NameValidator = aiagentappDescName.Validators[0].(func(string) error)
+	// aiagentappDescEnabled is the schema descriptor for enabled field.
+	aiagentappDescEnabled := aiagentappFields[3].Descriptor()
+	// aiagentapp.DefaultEnabled holds the default value on creation for the enabled field.
+	aiagentapp.DefaultEnabled = aiagentappDescEnabled.Default.(bool)
+	// aiagentappDescID is the schema descriptor for id field.
+	aiagentappDescID := aiagentappMixinFields0[0].Descriptor()
+	// aiagentapp.IDValidator is a validator for the "id" field. It is called by the builders before save.
+	aiagentapp.IDValidator = aiagentappDescID.Validators[0].(func(uint32) error)
+	aiagentrunMixin := schema.AiAgentRun{}.Mixin()
+	aiagentrun.Policy = privacy.NewPolicies(aiagentrunMixin[3], schema.AiAgentRun{})
+	aiagentrun.Hooks[0] = func(next ent.Mutator) ent.Mutator {
+		return ent.MutateFunc(func(ctx context.Context, m ent.Mutation) (ent.Value, error) {
+			if err := aiagentrun.Policy.EvalMutation(ctx, m); err != nil {
+				return nil, err
+			}
+			return next.Mutate(ctx, m)
+		})
+	}
+	aiagentrunMixinFields0 := aiagentrunMixin[0].Fields()
+	_ = aiagentrunMixinFields0
+	aiagentrunMixinFields3 := aiagentrunMixin[3].Fields()
+	_ = aiagentrunMixinFields3
+	aiagentrunFields := schema.AiAgentRun{}.Fields()
+	_ = aiagentrunFields
+	// aiagentrunDescTenantID is the schema descriptor for tenant_id field.
+	aiagentrunDescTenantID := aiagentrunMixinFields3[0].Descriptor()
+	// aiagentrun.DefaultTenantID holds the default value on creation for the tenant_id field.
+	aiagentrun.DefaultTenantID = aiagentrunDescTenantID.Default.(uint32)
+	// aiagentrunDescPromptTokens is the schema descriptor for prompt_tokens field.
+	aiagentrunDescPromptTokens := aiagentrunFields[6].Descriptor()
+	// aiagentrun.DefaultPromptTokens holds the default value on creation for the prompt_tokens field.
+	aiagentrun.DefaultPromptTokens = aiagentrunDescPromptTokens.Default.(uint32)
+	// aiagentrunDescCompletionTokens is the schema descriptor for completion_tokens field.
+	aiagentrunDescCompletionTokens := aiagentrunFields[7].Descriptor()
+	// aiagentrun.DefaultCompletionTokens holds the default value on creation for the completion_tokens field.
+	aiagentrun.DefaultCompletionTokens = aiagentrunDescCompletionTokens.Default.(uint32)
+	// aiagentrunDescTotalTokens is the schema descriptor for total_tokens field.
+	aiagentrunDescTotalTokens := aiagentrunFields[8].Descriptor()
+	// aiagentrun.DefaultTotalTokens holds the default value on creation for the total_tokens field.
+	aiagentrun.DefaultTotalTokens = aiagentrunDescTotalTokens.Default.(uint32)
+	// aiagentrunDescDurationMs is the schema descriptor for duration_ms field.
+	aiagentrunDescDurationMs := aiagentrunFields[9].Descriptor()
+	// aiagentrun.DefaultDurationMs holds the default value on creation for the duration_ms field.
+	aiagentrun.DefaultDurationMs = aiagentrunDescDurationMs.Default.(uint32)
+	// aiagentrunDescID is the schema descriptor for id field.
+	aiagentrunDescID := aiagentrunMixinFields0[0].Descriptor()
+	// aiagentrun.IDValidator is a validator for the "id" field. It is called by the builders before save.
+	aiagentrun.IDValidator = aiagentrunDescID.Validators[0].(func(uint32) error)
 	aichunkMixin := schema.AiChunk{}.Mixin()
 	aichunk.Policy = privacy.NewPolicies(aichunkMixin[2], schema.AiChunk{})
 	aichunk.Hooks[0] = func(next ent.Mutator) ent.Mutator {

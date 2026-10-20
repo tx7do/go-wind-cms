@@ -34,11 +34,11 @@ type AiUsageLogServiceHTTPServer interface {
 
 func RegisterAiUsageLogServiceHTTPServer(s *http.Server, srv AiUsageLogServiceHTTPServer) {
 	r := s.Route("/")
-	r.GET("/admin/v1/ai/usage-logs", _AiUsageLogService_List5_HTTP_Handler(srv))
+	r.GET("/admin/v1/ai/usage-logs", _AiUsageLogService_List6_HTTP_Handler(srv))
 	r.GET("/admin/v1/ai/usage-summary", _AiUsageLogService_GetUsageSummary0_HTTP_Handler(srv))
 }
 
-func _AiUsageLogService_List5_HTTP_Handler(srv AiUsageLogServiceHTTPServer) func(ctx http.Context) error {
+func _AiUsageLogService_List6_HTTP_Handler(srv AiUsageLogServiceHTTPServer) func(ctx http.Context) error {
 	return func(ctx http.Context) error {
 		var in v1.PagingRequest
 		if err := ctx.BindQuery(&in); err != nil {

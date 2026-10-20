@@ -70,6 +70,17 @@ export const aiRoutes: AppRouteObject[] = [
           authority: ['sys:platform_admin'],
         },
       },
+      {
+        name: 'ai-agents',
+        path: 'agents', // 相对路径，最终为 /ai/agents
+        element: createLazyRoute(() => import('@/pages/app/ai/agent')),
+        meta: {
+          title: 'routes:ai-agents',
+          icon: 'lucide:workflow',
+          order: 6,
+          // 权限：平台管理员与租户管理员（编排应用按租户隔离）
+        },
+      },
     ],
   },
 ];

@@ -93,5 +93,6 @@
   "content-components": "Components",
   "server-monitor": "Server Monitor",
   "redis-cache-monitor": "Redis Cache Monitor",
-  "tenant-quotas": "Tenant Quotas"
+  "tenant-quotas": "Tenant Quotas",
+  "ai-agents": "AI Agents"
 }

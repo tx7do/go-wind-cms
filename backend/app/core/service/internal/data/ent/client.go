@@ -12,6 +12,8 @@ import (
 	"go-wind-cms/app/core/service/internal/data/ent/migrate"
 
 	"go-wind-cms/app/core/service/internal/data/ent/accesskey"
+	"go-wind-cms/app/core/service/internal/data/ent/aiagentapp"
+	"go-wind-cms/app/core/service/internal/data/ent/aiagentrun"
 	"go-wind-cms/app/core/service/internal/data/ent/aichunk"
 	"go-wind-cms/app/core/service/internal/data/ent/aiconversation"
 	"go-wind-cms/app/core/service/internal/data/ent/aidoc"
@@ -124,6 +126,10 @@ type Client struct {
 	Schema *migrate.Schema
 	// AccessKey is the client for interacting with the AccessKey builders.
 	AccessKey *AccessKeyClient
+	// AiAgentApp is the client for interacting with the AiAgentApp builders.
+	AiAgentApp *AiAgentAppClient
+	// AiAgentRun is the client for interacting with the AiAgentRun builders.
+	AiAgentRun *AiAgentRunClient
 	// AiChunk is the client for interacting with the AiChunk builders.
 	AiChunk *AiChunkClient
 	// AiConversation is the client for interacting with the AiConversation builders.
@@ -332,6 +338,8 @@ func NewClient(opts ...Option) *Client {
 func (c *Client) init() {
 	c.Schema = migrate.NewSchema(c.driver)
 	c.AccessKey = NewAccessKeyClient(c.config)
+	c.AiAgentApp = NewAiAgentAppClient(c.config)
+	c.AiAgentRun = NewAiAgentRunClient(c.config)
 	c.AiChunk = NewAiChunkClient(c.config)
 	c.AiConversation = NewAiConversationClient(c.config)
 	c.AiDoc = NewAiDocClient(c.config)
@@ -523,6 +531,8 @@ func (c *Client) Tx(ctx context.Context) (*Tx, error) {
 		ctx:                        ctx,
 		config:                     cfg,
 		AccessKey:                  NewAccessKeyClient(cfg),
+		AiAgentApp:                 NewAiAgentAppClient(cfg),
+		AiAgentRun:                 NewAiAgentRunClient(cfg),
 		AiChunk:                    NewAiChunkClient(cfg),
 		AiConversation:             NewAiConversationClient(cfg),
 		AiDoc:                      NewAiDocClient(cfg),
@@ -641,6 +651,8 @@ func (c *Client) BeginTx(ctx context.Context, opts *sql.TxOptions) (*Tx, error) 
 		ctx:                        ctx,
 		config:                     cfg,
 		AccessKey:                  NewAccessKeyClient(cfg),
+		AiAgentApp:                 NewAiAgentAppClient(cfg),
+		AiAgentRun:                 NewAiAgentRunClient(cfg),
 		AiChunk:                    NewAiChunkClient(cfg),
 		AiConversation:             NewAiConversationClient(cfg),
 		AiDoc:                      NewAiDocClient(cfg),
@@ -768,30 +780,30 @@ func (c *Client) Close() error {
 // In order to add hooks to a specific client, call: `client.Node.Use(...)`.
 func (c *Client) Use(hooks ...Hook) {
 	for _, n := range []interface{ Use(...Hook) }{
-		c.AccessKey, c.AiChunk, c.AiConversation, c.AiDoc, c.AiKnowledgeBase,
-		c.AiMessage, c.AiProvider, c.AiUsageLog, c.Api, c.ApiAuditLog, c.Category,
-		c.CategoryTranslation, c.CollabDocState, c.Comment, c.CommentLike,
-		c.ComponentDefinition, c.ContentModel, c.ContentModelTranslation,
-		c.ContentReference, c.DataAccessAuditLog, c.DictEntry, c.DictEntryI18n,
-		c.DictType, c.Experiment, c.ExperimentParticipant, c.ExperimentVariant,
-		c.FieldDefinition, c.FieldDefinitionTranslation, c.File, c.FlowRule,
-		c.FormSubmission, c.InteractionCounter, c.InternalMessage,
-		c.InternalMessageCategory, c.InternalMessageRecipient, c.Language,
-		c.LoginAuditLog, c.LoginPolicy, c.MediaAsset, c.MediaVariant, c.Membership,
-		c.MembershipOrgUnit, c.MembershipPosition, c.MembershipRole, c.Menu,
-		c.MonitorAlertRule, c.Navigation, c.NavigationItem, c.NotificationChannel,
-		c.NotificationDelivery, c.NotificationPreference, c.NotificationRule,
-		c.NotificationTemplate, c.OperationAuditLog, c.OrgUnit, c.Page,
-		c.PageTranslation, c.PageVersion, c.Permission, c.PermissionApi,
-		c.PermissionAuditLog, c.PermissionGroup, c.PermissionMenu, c.PermissionPolicy,
-		c.PolicyEvaluationLog, c.Position, c.Post, c.PostCategory, c.PostLike,
-		c.PostTag, c.PostTranslation, c.PostVersion, c.PostWatch, c.Redirect, c.Role,
-		c.RoleFieldPermission, c.RoleMetadata, c.RolePermission, c.Section,
-		c.SectionTranslation, c.Site, c.SiteSetting, c.SocialAccount,
-		c.SocialDistribution, c.SocialInboxItem, c.SocialStatsHistory, c.SysConfig,
-		c.Tag, c.TagTranslation, c.Task, c.Tenant, c.TenantQuota, c.User,
-		c.UserCredential, c.UserOrgUnit, c.UserPosition, c.UserRole, c.Webhook,
-		c.WebhookDelivery,
+		c.AccessKey, c.AiAgentApp, c.AiAgentRun, c.AiChunk, c.AiConversation, c.AiDoc,
+		c.AiKnowledgeBase, c.AiMessage, c.AiProvider, c.AiUsageLog, c.Api,
+		c.ApiAuditLog, c.Category, c.CategoryTranslation, c.CollabDocState, c.Comment,
+		c.CommentLike, c.ComponentDefinition, c.ContentModel,
+		c.ContentModelTranslation, c.ContentReference, c.DataAccessAuditLog,
+		c.DictEntry, c.DictEntryI18n, c.DictType, c.Experiment,
+		c.ExperimentParticipant, c.ExperimentVariant, c.FieldDefinition,
+		c.FieldDefinitionTranslation, c.File, c.FlowRule, c.FormSubmission,
+		c.InteractionCounter, c.InternalMessage, c.InternalMessageCategory,
+		c.InternalMessageRecipient, c.Language, c.LoginAuditLog, c.LoginPolicy,
+		c.MediaAsset, c.MediaVariant, c.Membership, c.MembershipOrgUnit,
+		c.MembershipPosition, c.MembershipRole, c.Menu, c.MonitorAlertRule,
+		c.Navigation, c.NavigationItem, c.NotificationChannel, c.NotificationDelivery,
+		c.NotificationPreference, c.NotificationRule, c.NotificationTemplate,
+		c.OperationAuditLog, c.OrgUnit, c.Page, c.PageTranslation, c.PageVersion,
+		c.Permission, c.PermissionApi, c.PermissionAuditLog, c.PermissionGroup,
+		c.PermissionMenu, c.PermissionPolicy, c.PolicyEvaluationLog, c.Position,
+		c.Post, c.PostCategory, c.PostLike, c.PostTag, c.PostTranslation,
+		c.PostVersion, c.PostWatch, c.Redirect, c.Role, c.RoleFieldPermission,
+		c.RoleMetadata, c.RolePermission, c.Section, c.SectionTranslation, c.Site,
+		c.SiteSetting, c.SocialAccount, c.SocialDistribution, c.SocialInboxItem,
+		c.SocialStatsHistory, c.SysConfig, c.Tag, c.TagTranslation, c.Task, c.Tenant,
+		c.TenantQuota, c.User, c.UserCredential, c.UserOrgUnit, c.UserPosition,
+		c.UserRole, c.Webhook, c.WebhookDelivery,
 	} {
 		n.Use(hooks...)
 	}
@@ -801,30 +813,30 @@ func (c *Client) Use(hooks ...Hook) {
 // In order to add interceptors to a specific client, call: `client.Node.Intercept(...)`.
 func (c *Client) Intercept(interceptors ...Interceptor) {
 	for _, n := range []interface{ Intercept(...Interceptor) }{
-		c.AccessKey, c.AiChunk, c.AiConversation, c.AiDoc, c.AiKnowledgeBase,
-		c.AiMessage, c.AiProvider, c.AiUsageLog, c.Api, c.ApiAuditLog, c.Category,
-		c.CategoryTranslation, c.CollabDocState, c.Comment, c.CommentLike,
-		c.ComponentDefinition, c.ContentModel, c.ContentModelTranslation,
-		c.ContentReference, c.DataAccessAuditLog, c.DictEntry, c.DictEntryI18n,
-		c.DictType, c.Experiment, c.ExperimentParticipant, c.ExperimentVariant,
-		c.FieldDefinition, c.FieldDefinitionTranslation, c.File, c.FlowRule,
-		c.FormSubmission, c.InteractionCounter, c.InternalMessage,
-		c.InternalMessageCategory, c.InternalMessageRecipient, c.Language,
-		c.LoginAuditLog, c.LoginPolicy, c.MediaAsset, c.MediaVariant, c.Membership,
-		c.MembershipOrgUnit, c.MembershipPosition, c.MembershipRole, c.Menu,
-		c.MonitorAlertRule, c.Navigation, c.NavigationItem, c.NotificationChannel,
-		c.NotificationDelivery, c.NotificationPreference, c.NotificationRule,
-		c.NotificationTemplate, c.OperationAuditLog, c.OrgUnit, c.Page,
-		c.PageTranslation, c.PageVersion, c.Permission, c.PermissionApi,
-		c.PermissionAuditLog, c.PermissionGroup, c.PermissionMenu, c.PermissionPolicy,
-		c.PolicyEvaluationLog, c.Position, c.Post, c.PostCategory, c.PostLike,
-		c.PostTag, c.PostTranslation, c.PostVersion, c.PostWatch, c.Redirect, c.Role,
-		c.RoleFieldPermission, c.RoleMetadata, c.RolePermission, c.Section,
-		c.SectionTranslation, c.Site, c.SiteSetting, c.SocialAccount,
-		c.SocialDistribution, c.SocialInboxItem, c.SocialStatsHistory, c.SysConfig,
-		c.Tag, c.TagTranslation, c.Task, c.Tenant, c.TenantQuota, c.User,
-		c.UserCredential, c.UserOrgUnit, c.UserPosition, c.UserRole, c.Webhook,
-		c.WebhookDelivery,
+		c.AccessKey, c.AiAgentApp, c.AiAgentRun, c.AiChunk, c.AiConversation, c.AiDoc,
+		c.AiKnowledgeBase, c.AiMessage, c.AiProvider, c.AiUsageLog, c.Api,
+		c.ApiAuditLog, c.Category, c.CategoryTranslation, c.CollabDocState, c.Comment,
+		c.CommentLike, c.ComponentDefinition, c.ContentModel,
+		c.ContentModelTranslation, c.ContentReference, c.DataAccessAuditLog,
+		c.DictEntry, c.DictEntryI18n, c.DictType, c.Experiment,
+		c.ExperimentParticipant, c.ExperimentVariant, c.FieldDefinition,
+		c.FieldDefinitionTranslation, c.File, c.FlowRule, c.FormSubmission,
+		c.InteractionCounter, c.InternalMessage, c.InternalMessageCategory,
+		c.InternalMessageRecipient, c.Language, c.LoginAuditLog, c.LoginPolicy,
+		c.MediaAsset, c.MediaVariant, c.Membership, c.MembershipOrgUnit,
+		c.MembershipPosition, c.MembershipRole, c.Menu, c.MonitorAlertRule,
+		c.Navigation, c.NavigationItem, c.NotificationChannel, c.NotificationDelivery,
+		c.NotificationPreference, c.NotificationRule, c.NotificationTemplate,
+		c.OperationAuditLog, c.OrgUnit, c.Page, c.PageTranslation, c.PageVersion,
+		c.Permission, c.PermissionApi, c.PermissionAuditLog, c.PermissionGroup,
+		c.PermissionMenu, c.PermissionPolicy, c.PolicyEvaluationLog, c.Position,
+		c.Post, c.PostCategory, c.PostLike, c.PostTag, c.PostTranslation,
+		c.PostVersion, c.PostWatch, c.Redirect, c.Role, c.RoleFieldPermission,
+		c.RoleMetadata, c.RolePermission, c.Section, c.SectionTranslation, c.Site,
+		c.SiteSetting, c.SocialAccount, c.SocialDistribution, c.SocialInboxItem,
+		c.SocialStatsHistory, c.SysConfig, c.Tag, c.TagTranslation, c.Task, c.Tenant,
+		c.TenantQuota, c.User, c.UserCredential, c.UserOrgUnit, c.UserPosition,
+		c.UserRole, c.Webhook, c.WebhookDelivery,
 	} {
 		n.Intercept(interceptors...)
 	}
@@ -835,6 +847,10 @@ func (c *Client) Mutate(ctx context.Context, m Mutation) (Value, error) {
 	switch m := m.(type) {
 	case *AccessKeyMutation:
 		return c.AccessKey.mutate(ctx, m)
+	case *AiAgentAppMutation:
+		return c.AiAgentApp.mutate(ctx, m)
+	case *AiAgentRunMutation:
+		return c.AiAgentRun.mutate(ctx, m)
 	case *AiChunkMutation:
 		return c.AiChunk.mutate(ctx, m)
 	case *AiConversationMutation:
@@ -1167,6 +1183,274 @@ func (c *AccessKeyClient) mutate(ctx context.Context, m *AccessKeyMutation) (Val
 		return (&AccessKeyDelete{config: c.config, hooks: c.Hooks(), mutation: m}).Exec(ctx)
 	default:
 		return nil, fmt.Errorf("ent: unknown AccessKey mutation op: %q", m.Op())
+	}
+}
+
+// AiAgentAppClient is a client for the AiAgentApp schema.
+type AiAgentAppClient struct {
+	config
+}
+
+// NewAiAgentAppClient returns a client for the AiAgentApp from the given config.
+func NewAiAgentAppClient(c config) *AiAgentAppClient {
+	return &AiAgentAppClient{config: c}
+}
+
+// Use adds a list of mutation hooks to the hooks stack.
+// A call to `Use(f, g, h)` equals to `aiagentapp.Hooks(f(g(h())))`.
+func (c *AiAgentAppClient) Use(hooks ...Hook) {
+	c.hooks.AiAgentApp = append(c.hooks.AiAgentApp, hooks...)
+}
+
+// Intercept adds a list of query interceptors to the interceptors stack.
+// A call to `Intercept(f, g, h)` equals to `aiagentapp.Intercept(f(g(h())))`.
+func (c *AiAgentAppClient) Intercept(interceptors ...Interceptor) {
+	c.inters.AiAgentApp = append(c.inters.AiAgentApp, interceptors...)
+}
+
+// Create returns a builder for creating a AiAgentApp entity.
+func (c *AiAgentAppClient) Create() *AiAgentAppCreate {
+	mutation := newAiAgentAppMutation(c.config, OpCreate)
+	return &AiAgentAppCreate{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// CreateBulk returns a builder for creating a bulk of AiAgentApp entities.
+func (c *AiAgentAppClient) CreateBulk(builders ...*AiAgentAppCreate) *AiAgentAppCreateBulk {
+	return &AiAgentAppCreateBulk{config: c.config, builders: builders}
+}
+
+// MapCreateBulk creates a bulk creation builder from the given slice. For each item in the slice, the function creates
+// a builder and applies setFunc on it.
+func (c *AiAgentAppClient) MapCreateBulk(slice any, setFunc func(*AiAgentAppCreate, int)) *AiAgentAppCreateBulk {
+	rv := reflect.ValueOf(slice)
+	if rv.Kind() != reflect.Slice {
+		return &AiAgentAppCreateBulk{err: fmt.Errorf("calling to AiAgentAppClient.MapCreateBulk with wrong type %T, need slice", slice)}
+	}
+	builders := make([]*AiAgentAppCreate, rv.Len())
+	for i := 0; i < rv.Len(); i++ {
+		builders[i] = c.Create()
+		setFunc(builders[i], i)
+	}
+	return &AiAgentAppCreateBulk{config: c.config, builders: builders}
+}
+
+// Update returns an update builder for AiAgentApp.
+func (c *AiAgentAppClient) Update() *AiAgentAppUpdate {
+	mutation := newAiAgentAppMutation(c.config, OpUpdate)
+	return &AiAgentAppUpdate{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// UpdateOne returns an update builder for the given entity.
+func (c *AiAgentAppClient) UpdateOne(_m *AiAgentApp) *AiAgentAppUpdateOne {
+	mutation := newAiAgentAppMutation(c.config, OpUpdateOne, withAiAgentApp(_m))
+	return &AiAgentAppUpdateOne{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// UpdateOneID returns an update builder for the given id.
+func (c *AiAgentAppClient) UpdateOneID(id uint32) *AiAgentAppUpdateOne {
+	mutation := newAiAgentAppMutation(c.config, OpUpdateOne, withAiAgentAppID(id))
+	return &AiAgentAppUpdateOne{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// Delete returns a delete builder for AiAgentApp.
+func (c *AiAgentAppClient) Delete() *AiAgentAppDelete {
+	mutation := newAiAgentAppMutation(c.config, OpDelete)
+	return &AiAgentAppDelete{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// DeleteOne returns a builder for deleting the given entity.
+func (c *AiAgentAppClient) DeleteOne(_m *AiAgentApp) *AiAgentAppDeleteOne {
+	return c.DeleteOneID(_m.ID)
+}
+
+// DeleteOneID returns a builder for deleting the given entity by its id.
+func (c *AiAgentAppClient) DeleteOneID(id uint32) *AiAgentAppDeleteOne {
+	builder := c.Delete().Where(aiagentapp.ID(id))
+	builder.mutation.id = &id
+	builder.mutation.op = OpDeleteOne
+	return &AiAgentAppDeleteOne{builder}
+}
+
+// Query returns a query builder for AiAgentApp.
+func (c *AiAgentAppClient) Query() *AiAgentAppQuery {
+	return &AiAgentAppQuery{
+		config: c.config,
+		ctx:    &QueryContext{Type: TypeAiAgentApp},
+		inters: c.Interceptors(),
+	}
+}
+
+// Get returns a AiAgentApp entity by its id.
+func (c *AiAgentAppClient) Get(ctx context.Context, id uint32) (*AiAgentApp, error) {
+	return c.Query().Where(aiagentapp.ID(id)).Only(ctx)
+}
+
+// GetX is like Get, but panics if an error occurs.
+func (c *AiAgentAppClient) GetX(ctx context.Context, id uint32) *AiAgentApp {
+	obj, err := c.Get(ctx, id)
+	if err != nil {
+		panic(err)
+	}
+	return obj
+}
+
+// Hooks returns the client hooks.
+func (c *AiAgentAppClient) Hooks() []Hook {
+	hooks := c.hooks.AiAgentApp
+	return append(hooks[:len(hooks):len(hooks)], aiagentapp.Hooks[:]...)
+}
+
+// Interceptors returns the client interceptors.
+func (c *AiAgentAppClient) Interceptors() []Interceptor {
+	return c.inters.AiAgentApp
+}
+
+func (c *AiAgentAppClient) mutate(ctx context.Context, m *AiAgentAppMutation) (Value, error) {
+	switch m.Op() {
+	case OpCreate:
+		return (&AiAgentAppCreate{config: c.config, hooks: c.Hooks(), mutation: m}).Save(ctx)
+	case OpUpdate:
+		return (&AiAgentAppUpdate{config: c.config, hooks: c.Hooks(), mutation: m}).Save(ctx)
+	case OpUpdateOne:
+		return (&AiAgentAppUpdateOne{config: c.config, hooks: c.Hooks(), mutation: m}).Save(ctx)
+	case OpDelete, OpDeleteOne:
+		return (&AiAgentAppDelete{config: c.config, hooks: c.Hooks(), mutation: m}).Exec(ctx)
+	default:
+		return nil, fmt.Errorf("ent: unknown AiAgentApp mutation op: %q", m.Op())
+	}
+}
+
+// AiAgentRunClient is a client for the AiAgentRun schema.
+type AiAgentRunClient struct {
+	config
+}
+
+// NewAiAgentRunClient returns a client for the AiAgentRun from the given config.
+func NewAiAgentRunClient(c config) *AiAgentRunClient {
+	return &AiAgentRunClient{config: c}
+}
+
+// Use adds a list of mutation hooks to the hooks stack.
+// A call to `Use(f, g, h)` equals to `aiagentrun.Hooks(f(g(h())))`.
+func (c *AiAgentRunClient) Use(hooks ...Hook) {
+	c.hooks.AiAgentRun = append(c.hooks.AiAgentRun, hooks...)
+}
+
+// Intercept adds a list of query interceptors to the interceptors stack.
+// A call to `Intercept(f, g, h)` equals to `aiagentrun.Intercept(f(g(h())))`.
+func (c *AiAgentRunClient) Intercept(interceptors ...Interceptor) {
+	c.inters.AiAgentRun = append(c.inters.AiAgentRun, interceptors...)
+}
+
+// Create returns a builder for creating a AiAgentRun entity.
+func (c *AiAgentRunClient) Create() *AiAgentRunCreate {
+	mutation := newAiAgentRunMutation(c.config, OpCreate)
+	return &AiAgentRunCreate{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// CreateBulk returns a builder for creating a bulk of AiAgentRun entities.
+func (c *AiAgentRunClient) CreateBulk(builders ...*AiAgentRunCreate) *AiAgentRunCreateBulk {
+	return &AiAgentRunCreateBulk{config: c.config, builders: builders}
+}
+
+// MapCreateBulk creates a bulk creation builder from the given slice. For each item in the slice, the function creates
+// a builder and applies setFunc on it.
+func (c *AiAgentRunClient) MapCreateBulk(slice any, setFunc func(*AiAgentRunCreate, int)) *AiAgentRunCreateBulk {
+	rv := reflect.ValueOf(slice)
+	if rv.Kind() != reflect.Slice {
+		return &AiAgentRunCreateBulk{err: fmt.Errorf("calling to AiAgentRunClient.MapCreateBulk with wrong type %T, need slice", slice)}
+	}
+	builders := make([]*AiAgentRunCreate, rv.Len())
+	for i := 0; i < rv.Len(); i++ {
+		builders[i] = c.Create()
+		setFunc(builders[i], i)
+	}
+	return &AiAgentRunCreateBulk{config: c.config, builders: builders}
+}
+
+// Update returns an update builder for AiAgentRun.
+func (c *AiAgentRunClient) Update() *AiAgentRunUpdate {
+	mutation := newAiAgentRunMutation(c.config, OpUpdate)
+	return &AiAgentRunUpdate{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// UpdateOne returns an update builder for the given entity.
+func (c *AiAgentRunClient) UpdateOne(_m *AiAgentRun) *AiAgentRunUpdateOne {
+	mutation := newAiAgentRunMutation(c.config, OpUpdateOne, withAiAgentRun(_m))
+	return &AiAgentRunUpdateOne{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// UpdateOneID returns an update builder for the given id.
+func (c *AiAgentRunClient) UpdateOneID(id uint32) *AiAgentRunUpdateOne {
+	mutation := newAiAgentRunMutation(c.config, OpUpdateOne, withAiAgentRunID(id))
+	return &AiAgentRunUpdateOne{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// Delete returns a delete builder for AiAgentRun.
+func (c *AiAgentRunClient) Delete() *AiAgentRunDelete {
+	mutation := newAiAgentRunMutation(c.config, OpDelete)
+	return &AiAgentRunDelete{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// DeleteOne returns a builder for deleting the given entity.
+func (c *AiAgentRunClient) DeleteOne(_m *AiAgentRun) *AiAgentRunDeleteOne {
+	return c.DeleteOneID(_m.ID)
+}
+
+// DeleteOneID returns a builder for deleting the given entity by its id.
+func (c *AiAgentRunClient) DeleteOneID(id uint32) *AiAgentRunDeleteOne {
+	builder := c.Delete().Where(aiagentrun.ID(id))
+	builder.mutation.id = &id
+	builder.mutation.op = OpDeleteOne
+	return &AiAgentRunDeleteOne{builder}
+}
+
+// Query returns a query builder for AiAgentRun.
+func (c *AiAgentRunClient) Query() *AiAgentRunQuery {
+	return &AiAgentRunQuery{
+		config: c.config,
+		ctx:    &QueryContext{Type: TypeAiAgentRun},
+		inters: c.Interceptors(),
+	}
+}
+
+// Get returns a AiAgentRun entity by its id.
+func (c *AiAgentRunClient) Get(ctx context.Context, id uint32) (*AiAgentRun, error) {
+	return c.Query().Where(aiagentrun.ID(id)).Only(ctx)
+}
+
+// GetX is like Get, but panics if an error occurs.
+func (c *AiAgentRunClient) GetX(ctx context.Context, id uint32) *AiAgentRun {
+	obj, err := c.Get(ctx, id)
+	if err != nil {
+		panic(err)
+	}
+	return obj
+}
+
+// Hooks returns the client hooks.
+func (c *AiAgentRunClient) Hooks() []Hook {
+	hooks := c.hooks.AiAgentRun
+	return append(hooks[:len(hooks):len(hooks)], aiagentrun.Hooks[:]...)
+}
+
+// Interceptors returns the client interceptors.
+func (c *AiAgentRunClient) Interceptors() []Interceptor {
+	return c.inters.AiAgentRun
+}
+
+func (c *AiAgentRunClient) mutate(ctx context.Context, m *AiAgentRunMutation) (Value, error) {
+	switch m.Op() {
+	case OpCreate:
+		return (&AiAgentRunCreate{config: c.config, hooks: c.Hooks(), mutation: m}).Save(ctx)
+	case OpUpdate:
+		return (&AiAgentRunUpdate{config: c.config, hooks: c.Hooks(), mutation: m}).Save(ctx)
+	case OpUpdateOne:
+		return (&AiAgentRunUpdateOne{config: c.config, hooks: c.Hooks(), mutation: m}).Save(ctx)
+	case OpDelete, OpDeleteOne:
+		return (&AiAgentRunDelete{config: c.config, hooks: c.Hooks(), mutation: m}).Exec(ctx)
+	default:
+		return nil, fmt.Errorf("ent: unknown AiAgentRun mutation op: %q", m.Op())
 	}
 }
 
@@ -14705,13 +14989,13 @@ func (c *WebhookDeliveryClient) mutate(ctx context.Context, m *WebhookDeliveryMu
 // hooks and interceptors per client, for fast access.
 type (
 	hooks struct {
-		AccessKey, AiChunk, AiConversation, AiDoc, AiKnowledgeBase, AiMessage,
-		AiProvider, AiUsageLog, Api, ApiAuditLog, Category, CategoryTranslation,
-		CollabDocState, Comment, CommentLike, ComponentDefinition, ContentModel,
-		ContentModelTranslation, ContentReference, DataAccessAuditLog, DictEntry,
-		DictEntryI18n, DictType, Experiment, ExperimentParticipant, ExperimentVariant,
-		FieldDefinition, FieldDefinitionTranslation, File, FlowRule, FormSubmission,
-		InteractionCounter, InternalMessage, InternalMessageCategory,
+		AccessKey, AiAgentApp, AiAgentRun, AiChunk, AiConversation, AiDoc,
+		AiKnowledgeBase, AiMessage, AiProvider, AiUsageLog, Api, ApiAuditLog, Category,
+		CategoryTranslation, CollabDocState, Comment, CommentLike, ComponentDefinition,
+		ContentModel, ContentModelTranslation, ContentReference, DataAccessAuditLog,
+		DictEntry, DictEntryI18n, DictType, Experiment, ExperimentParticipant,
+		ExperimentVariant, FieldDefinition, FieldDefinitionTranslation, File, FlowRule,
+		FormSubmission, InteractionCounter, InternalMessage, InternalMessageCategory,
 		InternalMessageRecipient, Language, LoginAuditLog, LoginPolicy, MediaAsset,
 		MediaVariant, Membership, MembershipOrgUnit, MembershipPosition,
 		MembershipRole, Menu, MonitorAlertRule, Navigation, NavigationItem,
@@ -14727,13 +15011,13 @@ type (
 		UserPosition, UserRole, Webhook, WebhookDelivery []ent.Hook
 	}
 	inters struct {
-		AccessKey, AiChunk, AiConversation, AiDoc, AiKnowledgeBase, AiMessage,
-		AiProvider, AiUsageLog, Api, ApiAuditLog, Category, CategoryTranslation,
-		CollabDocState, Comment, CommentLike, ComponentDefinition, ContentModel,
-		ContentModelTranslation, ContentReference, DataAccessAuditLog, DictEntry,
-		DictEntryI18n, DictType, Experiment, ExperimentParticipant, ExperimentVariant,
-		FieldDefinition, FieldDefinitionTranslation, File, FlowRule, FormSubmission,
-		InteractionCounter, InternalMessage, InternalMessageCategory,
+		AccessKey, AiAgentApp, AiAgentRun, AiChunk, AiConversation, AiDoc,
+		AiKnowledgeBase, AiMessage, AiProvider, AiUsageLog, Api, ApiAuditLog, Category,
+		CategoryTranslation, CollabDocState, Comment, CommentLike, ComponentDefinition,
+		ContentModel, ContentModelTranslation, ContentReference, DataAccessAuditLog,
+		DictEntry, DictEntryI18n, DictType, Experiment, ExperimentParticipant,
+		ExperimentVariant, FieldDefinition, FieldDefinitionTranslation, File, FlowRule,
+		FormSubmission, InteractionCounter, InternalMessage, InternalMessageCategory,
 		InternalMessageRecipient, Language, LoginAuditLog, LoginPolicy, MediaAsset,
 		MediaVariant, Membership, MembershipOrgUnit, MembershipPosition,
 		MembershipRole, Menu, MonitorAlertRule, Navigation, NavigationItem,

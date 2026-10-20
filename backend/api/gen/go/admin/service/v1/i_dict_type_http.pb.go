@@ -43,15 +43,15 @@ type DictTypeServiceHTTPServer interface {
 
 func RegisterDictTypeServiceHTTPServer(s *http.Server, srv DictTypeServiceHTTPServer) {
 	r := s.Route("/")
-	r.GET("/admin/v1/dict/types", _DictTypeService_List15_HTTP_Handler(srv))
-	r.GET("/admin/v1/dict/types/code/{code}", _DictTypeService_Get13_HTTP_Handler(srv))
-	r.GET("/admin/v1/dict/types/{id}", _DictTypeService_Get14_HTTP_Handler(srv))
-	r.POST("/admin/v1/dict/types", _DictTypeService_Create10_HTTP_Handler(srv))
-	r.PUT("/admin/v1/dict/types/{id}", _DictTypeService_Update11_HTTP_Handler(srv))
-	r.DELETE("/admin/v1/dict/types", _DictTypeService_Delete12_HTTP_Handler(srv))
+	r.GET("/admin/v1/dict/types", _DictTypeService_List16_HTTP_Handler(srv))
+	r.GET("/admin/v1/dict/types/code/{code}", _DictTypeService_Get14_HTTP_Handler(srv))
+	r.GET("/admin/v1/dict/types/{id}", _DictTypeService_Get15_HTTP_Handler(srv))
+	r.POST("/admin/v1/dict/types", _DictTypeService_Create11_HTTP_Handler(srv))
+	r.PUT("/admin/v1/dict/types/{id}", _DictTypeService_Update12_HTTP_Handler(srv))
+	r.DELETE("/admin/v1/dict/types", _DictTypeService_Delete13_HTTP_Handler(srv))
 }
 
-func _DictTypeService_List15_HTTP_Handler(srv DictTypeServiceHTTPServer) func(ctx http.Context) error {
+func _DictTypeService_List16_HTTP_Handler(srv DictTypeServiceHTTPServer) func(ctx http.Context) error {
 	return func(ctx http.Context) error {
 		var in v1.PagingRequest
 		if err := ctx.BindQuery(&in); err != nil {
@@ -66,28 +66,6 @@ func _DictTypeService_List15_HTTP_Handler(srv DictTypeServiceHTTPServer) func(ct
 			return err
 		}
 		reply := out.(*v11.ListDictTypeResponse)
-		return ctx.Result(200, reply)
-	}
-}
-
-func _DictTypeService_Get13_HTTP_Handler(srv DictTypeServiceHTTPServer) func(ctx http.Context) error {
-	return func(ctx http.Context) error {
-		var in v11.GetDictTypeRequest
-		if err := ctx.BindQuery(&in); err != nil {
-			return err
-		}
-		if err := ctx.BindVars(&in); err != nil {
-			return err
-		}
-		http.SetOperation(ctx, OperationDictTypeServiceGet)
-		h := ctx.Middleware(func(ctx context.Context, req interface{}) (interface{}, error) {
-			return srv.Get(ctx, req.(*v11.GetDictTypeRequest))
-		})
-		out, err := h(ctx, &in)
-		if err != nil {
-			return err
-		}
-		reply := out.(*v11.DictType)
 		return ctx.Result(200, reply)
 	}
 }
@@ -114,7 +92,29 @@ func _DictTypeService_Get14_HTTP_Handler(srv DictTypeServiceHTTPServer) func(ctx
 	}
 }
 
-func _DictTypeService_Create10_HTTP_Handler(srv DictTypeServiceHTTPServer) func(ctx http.Context) error {
+func _DictTypeService_Get15_HTTP_Handler(srv DictTypeServiceHTTPServer) func(ctx http.Context) error {
+	return func(ctx http.Context) error {
+		var in v11.GetDictTypeRequest
+		if err := ctx.BindQuery(&in); err != nil {
+			return err
+		}
+		if err := ctx.BindVars(&in); err != nil {
+			return err
+		}
+		http.SetOperation(ctx, OperationDictTypeServiceGet)
+		h := ctx.Middleware(func(ctx context.Context, req interface{}) (interface{}, error) {
+			return srv.Get(ctx, req.(*v11.GetDictTypeRequest))
+		})
+		out, err := h(ctx, &in)
+		if err != nil {
+			return err
+		}
+		reply := out.(*v11.DictType)
+		return ctx.Result(200, reply)
+	}
+}
+
+func _DictTypeService_Create11_HTTP_Handler(srv DictTypeServiceHTTPServer) func(ctx http.Context) error {
 	return func(ctx http.Context) error {
 		var in v11.CreateDictTypeRequest
 		if err := ctx.Bind(&in); err != nil {
@@ -136,7 +136,7 @@ func _DictTypeService_Create10_HTTP_Handler(srv DictTypeServiceHTTPServer) func(
 	}
 }
 
-func _DictTypeService_Update11_HTTP_Handler(srv DictTypeServiceHTTPServer) func(ctx http.Context) error {
+func _DictTypeService_Update12_HTTP_Handler(srv DictTypeServiceHTTPServer) func(ctx http.Context) error {
 	return func(ctx http.Context) error {
 		var in v11.UpdateDictTypeRequest
 		if err := ctx.Bind(&in); err != nil {
@@ -161,7 +161,7 @@ func _DictTypeService_Update11_HTTP_Handler(srv DictTypeServiceHTTPServer) func(
 	}
 }
 
-func _DictTypeService_Delete12_HTTP_Handler(srv DictTypeServiceHTTPServer) func(ctx http.Context) error {
+func _DictTypeService_Delete13_HTTP_Handler(srv DictTypeServiceHTTPServer) func(ctx http.Context) error {
 	return func(ctx http.Context) error {
 		var in v11.DeleteDictTypeRequest
 		if err := ctx.BindQuery(&in); err != nil {

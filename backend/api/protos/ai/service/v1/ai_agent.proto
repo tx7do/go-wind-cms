@@ -1,0 +1,178 @@
+syntax = "proto3";
+
+package ai.service.v1;
+
+import "gnostic/openapi/v3/annotations.proto";
+
+import "google/protobuf/empty.proto";
+import "google/protobuf/timestamp.proto";
+import "google/protobuf/field_mask.proto";
+
+import "pagination/v1/pagination.proto";
+
+// AI Agent 编排服务（可视化画布定义的图应用；v1 节点集 start/knowledge/llm/condition/end，
+// 图 DSL 与执行语义见 docs/ai_agent_orchestration.md）
+service AiAgentService {
+  // 查询 Agent 应用列表
+  rpc List (pagination.PagingRequest) returns (ListAiAgentAppsResponse) {}
+
+  // 查询 Agent 应用详情
+  rpc Get (GetAiAgentAppRequest) returns (AiAgentApp) {}
+
+  // 创建 Agent 应用
+  rpc Create (CreateAiAgentAppRequest) returns (AiAgentApp) {}
+
+  // 更新 Agent 应用
+  rpc Update (UpdateAiAgentAppRequest) returns (google.protobuf.Empty) {}
+
+  // 删除 Agent 应用
+  rpc Delete (DeleteAiAgentAppRequest) returns (google.protobuf.Empty) {}
+
+  // 试运行：同步执行图并返回运行记录（含逐节点 trace）。
+  // 图解析/校验失败返回 400 且不建运行行（配置错误，"没尝试过"）；
+  // 节点执行失败建 FAILED 运行行并保留已产生的 trace 与用量。
+  rpc Run (RunAiAgentAppRequest) returns (AiAgentRun) {}
+
+  // 查询某应用的运行台账（按 appId eq 过滤）
+  rpc ListRuns (pagination.PagingRequest) returns (ListAiAgentRunsResponse) {}
+
+  // 查询运行详情（含 trace JSON）
+  rpc GetRun (GetAiAgentRunRequest) returns (AiAgentRun) {}
+}
+
+// Agent 编排应用
+message AiAgentApp {
+  optional uint32 id = 1 [
+    json_name = "id",
+    (gnostic.openapi.v3.property) = { description: "应用ID" }
+  ]; // 应用ID
+
+  optional string name = 2 [
+    json_name = "name",
+    (gnostic.openapi.v3.property) = { description: "应用名称（租户内唯一）" }
+  ]; // 应用名称
+
+  optional string description = 3 [
+    json_name = "description",
+    (gnostic.openapi.v3.property) = { description: "应用描述" }
+  ]; // 应用描述
+
+  // 图 DSL（JSON：nodes/edges；节点五种、模板与条件表达式语义见设计文档 §2）
+  optional string graph = 4 [
+    json_name = "graph",
+    (gnostic.openapi.v3.property) = { description: "图 DSL（JSON 文本）" }
+  ]; // 图 DSL
+
+  optional bool enabled = 5 [
+    json_name = "enabled",
+    (gnostic.openapi.v3.property) = { description: "是否启用（停用的应用拒绝运行）" }
+  ]; // 是否启用
+
+  // 创建/更新入参带出（与 AiConversation 同口径）：租户隔离 mixin 无创建钩子，租户必须显式写
+  optional uint32 tenant_id = 6 [json_name = "tenantId"];
+
+  optional uint32 created_by = 100 [json_name = "createdBy"];
+  optional uint32 updated_by = 101 [json_name = "updatedBy"];
+
+  optional google.protobuf.Timestamp created_at = 200 [json_name = "createdAt"];
+  optional google.protobuf.Timestamp updated_at = 201 [json_name = "updatedAt"];
+}
+
+// SSE `ai_agent_run` 事件 data 形状（protojson，camelCase 键）。
+//
+// 仅在服务层用于构造事件载荷，不挂 HTTP 路由。
+// 一次试运行产生多帧：每节点 node_start + node_end 各一帧，收尾 done 或 error 一帧。
+// 尽力而为丢帧可容忍：Run 同步响应携带完整 trace 与终态，以响应为准。
+message AgentRunEvent {
+  uint32 run_id = 1 [json_name = "runId"];   // 运行 ID
+  uint32 app_id = 2 [json_name = "appId"];   // 应用 ID
+  uint32 seq = 3;                            // 帧序号（运行内单调递增，从 0 开始）
+  string phase = 4;                          // node_start | node_end | error | done
+  string node_id = 5 [json_name = "nodeId"]; // 节点 ID（phase=done 时为空）
+  string summary = 6;                        // 节点摘要（node_end）或错误文本（error）
+  string status = 7;                         // ok | error（node_end 帧）；done/error 帧为空
+}
+
+// Agent 运行记录
+message AiAgentRun {
+  // 运行状态
+  enum Status {
+    STATUS_UNSPECIFIED = 0;
+    RUNNING = 1;   // 执行中（同步 RPC 下只是短暂态）
+    SUCCEEDED = 2; // 到达 end 节点
+    FAILED = 3;    // 节点执行/引擎错误（trace 保留部分执行）
+  }
+
+  optional uint32 id = 1 [json_name = "id"]; // 运行ID
+  optional uint32 app_id = 2 [json_name = "appId"]; // 应用ID
+
+  optional Status status = 3 [json_name = "status"]; // 运行状态
+
+  // 运行入参（JSON 对象：start 节点 inputVars 的 name → 值）
+  optional string input = 4 [json_name = "input"]; // 入参 JSON
+  optional string output = 5 [json_name = "output"]; // 产出（到达的 end 渲染值）
+  optional string error = 6 [json_name = "error"]; // 失败原因
+
+  // 逐节点执行轨迹（JSON 数组：{nodeId,type,status,ms,summary,usage}）
+  optional string trace = 7 [json_name = "trace"]; // 轨迹 JSON
+
+  optional uint32 prompt_tokens = 8 [json_name = "promptTokens"]; // 输入 token 合计
+  optional uint32 completion_tokens = 9 [json_name = "completionTokens"]; // 输出 token 合计
+  optional uint32 total_tokens = 10 [json_name = "totalTokens"]; // 总 token 合计
+  optional uint32 duration_ms = 11 [json_name = "durationMs"]; // 总耗时（毫秒）
+
+  optional google.protobuf.Timestamp created_at = 20 [json_name = "createdAt"];
+}
+
+// 查询列表 - 回应
+message ListAiAgentAppsResponse {
+  repeated AiAgentApp items = 1;
+  uint64 total = 2;
+}
+
+// 查询详情 - 请求
+message GetAiAgentAppRequest {
+  uint32 id = 1;
+}
+
+// 创建 - 请求
+message CreateAiAgentAppRequest {
+  AiAgentApp data = 1;
+}
+
+// 更新 - 请求
+message UpdateAiAgentAppRequest {
+  uint32 id = 1;
+  AiAgentApp data = 2;
+  google.protobuf.FieldMask update_mask = 3 [json_name = "updateMask"];
+}
+
+// 删除 - 请求
+message DeleteAiAgentAppRequest {
+  uint32 id = 1;
+}
+
+// 试运行 - 请求
+message RunAiAgentAppRequest {
+  uint32 id = 1 [
+    json_name = "id",
+    (gnostic.openapi.v3.property) = { description: "应用ID" }
+  ]; // 应用ID
+
+  // 运行入参：start 节点声明的输入变量名 → 值（JSON 对象字符串）
+  map<string, string> input = 2 [
+    json_name = "input",
+    (gnostic.openapi.v3.property) = { description: "运行入参（start 节点声明的变量）" }
+  ]; // 运行入参
+}
+
+// 运行台账列表 - 回应
+message ListAiAgentRunsResponse {
+  repeated AiAgentRun items = 1;
+  uint64 total = 2;
+}
+
+// 运行详情 - 请求
+message GetAiAgentRunRequest {
+  uint32 id = 1;
+}

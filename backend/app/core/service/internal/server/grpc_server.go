@@ -61,6 +61,7 @@ func NewGrpcServer(
 	accessKeyService *service.AccessKeyService,
 	tenantQuotaService *service.TenantQuotaService,
 	configService *service.ConfigService,
+	aiAgentService *service.AiAgentService,
 	serverMonitorService *service.ServerMonitorService,
 	redisCacheMonitorService *service.RedisCacheMonitorService,
 
@@ -155,6 +156,7 @@ func NewGrpcServer(
 	accesskeyV1.RegisterAccessKeyServiceServer(srv, accessKeyService)
 	identityV1.RegisterTenantQuotaServiceServer(srv, tenantQuotaService)
 	configV1.RegisterConfigServiceServer(srv, configService)
+	aiV1.RegisterAiAgentServiceServer(srv, aiAgentService)
 	serverMonitorV1.RegisterServerMonitorServiceServer(srv, serverMonitorService)
 	redisCacheV1.RegisterRedisCacheMonitorServiceServer(srv, redisCacheMonitorService)
 

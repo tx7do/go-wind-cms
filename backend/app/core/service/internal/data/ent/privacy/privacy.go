@@ -135,6 +135,54 @@ func (f AccessKeyMutationRuleFunc) EvalMutation(ctx context.Context, m ent.Mutat
 	return Denyf("ent/privacy: unexpected mutation type %T, expect *ent.AccessKeyMutation", m)
 }
 
+// The AiAgentAppQueryRuleFunc type is an adapter to allow the use of ordinary
+// functions as a query rule.
+type AiAgentAppQueryRuleFunc func(context.Context, *ent.AiAgentAppQuery) error
+
+// EvalQuery return f(ctx, q).
+func (f AiAgentAppQueryRuleFunc) EvalQuery(ctx context.Context, q ent.Query) error {
+	if q, ok := q.(*ent.AiAgentAppQuery); ok {
+		return f(ctx, q)
+	}
+	return Denyf("ent/privacy: unexpected query type %T, expect *ent.AiAgentAppQuery", q)
+}
+
+// The AiAgentAppMutationRuleFunc type is an adapter to allow the use of ordinary
+// functions as a mutation rule.
+type AiAgentAppMutationRuleFunc func(context.Context, *ent.AiAgentAppMutation) error
+
+// EvalMutation calls f(ctx, m).
+func (f AiAgentAppMutationRuleFunc) EvalMutation(ctx context.Context, m ent.Mutation) error {
+	if m, ok := m.(*ent.AiAgentAppMutation); ok {
+		return f(ctx, m)
+	}
+	return Denyf("ent/privacy: unexpected mutation type %T, expect *ent.AiAgentAppMutation", m)
+}
+
+// The AiAgentRunQueryRuleFunc type is an adapter to allow the use of ordinary
+// functions as a query rule.
+type AiAgentRunQueryRuleFunc func(context.Context, *ent.AiAgentRunQuery) error
+
+// EvalQuery return f(ctx, q).
+func (f AiAgentRunQueryRuleFunc) EvalQuery(ctx context.Context, q ent.Query) error {
+	if q, ok := q.(*ent.AiAgentRunQuery); ok {
+		return f(ctx, q)
+	}
+	return Denyf("ent/privacy: unexpected query type %T, expect *ent.AiAgentRunQuery", q)
+}
+
+// The AiAgentRunMutationRuleFunc type is an adapter to allow the use of ordinary
+// functions as a mutation rule.
+type AiAgentRunMutationRuleFunc func(context.Context, *ent.AiAgentRunMutation) error
+
+// EvalMutation calls f(ctx, m).
+func (f AiAgentRunMutationRuleFunc) EvalMutation(ctx context.Context, m ent.Mutation) error {
+	if m, ok := m.(*ent.AiAgentRunMutation); ok {
+		return f(ctx, m)
+	}
+	return Denyf("ent/privacy: unexpected mutation type %T, expect *ent.AiAgentRunMutation", m)
+}
+
 // The AiChunkQueryRuleFunc type is an adapter to allow the use of ordinary
 // functions as a query rule.
 type AiChunkQueryRuleFunc func(context.Context, *ent.AiChunkQuery) error
@@ -2524,6 +2572,10 @@ func queryFilter(q ent.Query) (Filter, error) {
 	switch q := q.(type) {
 	case *ent.AccessKeyQuery:
 		return q.Filter(), nil
+	case *ent.AiAgentAppQuery:
+		return q.Filter(), nil
+	case *ent.AiAgentRunQuery:
+		return q.Filter(), nil
 	case *ent.AiChunkQuery:
 		return q.Filter(), nil
 	case *ent.AiConversationQuery:
@@ -2728,6 +2780,10 @@ func queryFilter(q ent.Query) (Filter, error) {
 func mutationFilter(m ent.Mutation) (Filter, error) {
 	switch m := m.(type) {
 	case *ent.AccessKeyMutation:
+		return m.Filter(), nil
+	case *ent.AiAgentAppMutation:
+		return m.Filter(), nil
+	case *ent.AiAgentRunMutation:
 		return m.Filter(), nil
 	case *ent.AiChunkMutation:
 		return m.Filter(), nil

@@ -46,16 +46,16 @@ type ContentModelServiceHTTPServer interface {
 
 func RegisterContentModelServiceHTTPServer(s *http.Server, srv ContentModelServiceHTTPServer) {
 	r := s.Route("/")
-	r.GET("/admin/v1/content-models", _ContentModelService_List12_HTTP_Handler(srv))
-	r.GET("/admin/v1/content-models/code/{code}", _ContentModelService_Get10_HTTP_Handler(srv))
-	r.GET("/admin/v1/content-models/{id}", _ContentModelService_Get11_HTTP_Handler(srv))
-	r.POST("/admin/v1/content-models", _ContentModelService_Create8_HTTP_Handler(srv))
-	r.PUT("/admin/v1/content-models/{id}", _ContentModelService_Update9_HTTP_Handler(srv))
-	r.DELETE("/admin/v1/content-models/{id}", _ContentModelService_Delete10_HTTP_Handler(srv))
+	r.GET("/admin/v1/content-models", _ContentModelService_List13_HTTP_Handler(srv))
+	r.GET("/admin/v1/content-models/code/{code}", _ContentModelService_Get11_HTTP_Handler(srv))
+	r.GET("/admin/v1/content-models/{id}", _ContentModelService_Get12_HTTP_Handler(srv))
+	r.POST("/admin/v1/content-models", _ContentModelService_Create9_HTTP_Handler(srv))
+	r.PUT("/admin/v1/content-models/{id}", _ContentModelService_Update10_HTTP_Handler(srv))
+	r.DELETE("/admin/v1/content-models/{id}", _ContentModelService_Delete11_HTTP_Handler(srv))
 	r.GET("/admin/v1/content-models/{content_model_id}/field-definitions", _ContentModelService_ListFieldDefinitions1_HTTP_Handler(srv))
 }
 
-func _ContentModelService_List12_HTTP_Handler(srv ContentModelServiceHTTPServer) func(ctx http.Context) error {
+func _ContentModelService_List13_HTTP_Handler(srv ContentModelServiceHTTPServer) func(ctx http.Context) error {
 	return func(ctx http.Context) error {
 		var in v1.PagingRequest
 		if err := ctx.BindQuery(&in); err != nil {
@@ -70,28 +70,6 @@ func _ContentModelService_List12_HTTP_Handler(srv ContentModelServiceHTTPServer)
 			return err
 		}
 		reply := out.(*v11.ListContentModelResponse)
-		return ctx.Result(200, reply)
-	}
-}
-
-func _ContentModelService_Get10_HTTP_Handler(srv ContentModelServiceHTTPServer) func(ctx http.Context) error {
-	return func(ctx http.Context) error {
-		var in v11.GetContentModelRequest
-		if err := ctx.BindQuery(&in); err != nil {
-			return err
-		}
-		if err := ctx.BindVars(&in); err != nil {
-			return err
-		}
-		http.SetOperation(ctx, OperationContentModelServiceGet)
-		h := ctx.Middleware(func(ctx context.Context, req interface{}) (interface{}, error) {
-			return srv.Get(ctx, req.(*v11.GetContentModelRequest))
-		})
-		out, err := h(ctx, &in)
-		if err != nil {
-			return err
-		}
-		reply := out.(*v11.ContentModel)
 		return ctx.Result(200, reply)
 	}
 }
@@ -118,7 +96,29 @@ func _ContentModelService_Get11_HTTP_Handler(srv ContentModelServiceHTTPServer) 
 	}
 }
 
-func _ContentModelService_Create8_HTTP_Handler(srv ContentModelServiceHTTPServer) func(ctx http.Context) error {
+func _ContentModelService_Get12_HTTP_Handler(srv ContentModelServiceHTTPServer) func(ctx http.Context) error {
+	return func(ctx http.Context) error {
+		var in v11.GetContentModelRequest
+		if err := ctx.BindQuery(&in); err != nil {
+			return err
+		}
+		if err := ctx.BindVars(&in); err != nil {
+			return err
+		}
+		http.SetOperation(ctx, OperationContentModelServiceGet)
+		h := ctx.Middleware(func(ctx context.Context, req interface{}) (interface{}, error) {
+			return srv.Get(ctx, req.(*v11.GetContentModelRequest))
+		})
+		out, err := h(ctx, &in)
+		if err != nil {
+			return err
+		}
+		reply := out.(*v11.ContentModel)
+		return ctx.Result(200, reply)
+	}
+}
+
+func _ContentModelService_Create9_HTTP_Handler(srv ContentModelServiceHTTPServer) func(ctx http.Context) error {
 	return func(ctx http.Context) error {
 		var in v11.CreateContentModelRequest
 		if err := ctx.Bind(&in); err != nil {
@@ -140,7 +140,7 @@ func _ContentModelService_Create8_HTTP_Handler(srv ContentModelServiceHTTPServer
 	}
 }
 
-func _ContentModelService_Update9_HTTP_Handler(srv ContentModelServiceHTTPServer) func(ctx http.Context) error {
+func _ContentModelService_Update10_HTTP_Handler(srv ContentModelServiceHTTPServer) func(ctx http.Context) error {
 	return func(ctx http.Context) error {
 		var in v11.UpdateContentModelRequest
 		if err := ctx.Bind(&in); err != nil {
@@ -165,7 +165,7 @@ func _ContentModelService_Update9_HTTP_Handler(srv ContentModelServiceHTTPServer
 	}
 }
 
-func _ContentModelService_Delete10_HTTP_Handler(srv ContentModelServiceHTTPServer) func(ctx http.Context) error {
+func _ContentModelService_Delete11_HTTP_Handler(srv ContentModelServiceHTTPServer) func(ctx http.Context) error {
 	return func(ctx http.Context) error {
 		var in v11.DeleteContentModelRequest
 		if err := ctx.BindQuery(&in); err != nil {

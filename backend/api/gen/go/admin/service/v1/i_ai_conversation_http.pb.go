@@ -40,13 +40,13 @@ type AiConversationServiceHTTPServer interface {
 
 func RegisterAiConversationServiceHTTPServer(s *http.Server, srv AiConversationServiceHTTPServer) {
 	r := s.Route("/")
-	r.GET("/admin/v1/ai/conversations", _AiConversationService_List1_HTTP_Handler(srv))
-	r.GET("/admin/v1/ai/conversations/{id}", _AiConversationService_Get1_HTTP_Handler(srv))
-	r.PUT("/admin/v1/ai/conversations/{id}", _AiConversationService_Update1_HTTP_Handler(srv))
-	r.DELETE("/admin/v1/ai/conversations/{id}", _AiConversationService_Delete1_HTTP_Handler(srv))
+	r.GET("/admin/v1/ai/conversations", _AiConversationService_List2_HTTP_Handler(srv))
+	r.GET("/admin/v1/ai/conversations/{id}", _AiConversationService_Get2_HTTP_Handler(srv))
+	r.PUT("/admin/v1/ai/conversations/{id}", _AiConversationService_Update2_HTTP_Handler(srv))
+	r.DELETE("/admin/v1/ai/conversations/{id}", _AiConversationService_Delete2_HTTP_Handler(srv))
 }
 
-func _AiConversationService_List1_HTTP_Handler(srv AiConversationServiceHTTPServer) func(ctx http.Context) error {
+func _AiConversationService_List2_HTTP_Handler(srv AiConversationServiceHTTPServer) func(ctx http.Context) error {
 	return func(ctx http.Context) error {
 		var in v1.PagingRequest
 		if err := ctx.BindQuery(&in); err != nil {
@@ -65,7 +65,7 @@ func _AiConversationService_List1_HTTP_Handler(srv AiConversationServiceHTTPServ
 	}
 }
 
-func _AiConversationService_Get1_HTTP_Handler(srv AiConversationServiceHTTPServer) func(ctx http.Context) error {
+func _AiConversationService_Get2_HTTP_Handler(srv AiConversationServiceHTTPServer) func(ctx http.Context) error {
 	return func(ctx http.Context) error {
 		var in v11.GetAiConversationRequest
 		if err := ctx.BindQuery(&in); err != nil {
@@ -87,7 +87,7 @@ func _AiConversationService_Get1_HTTP_Handler(srv AiConversationServiceHTTPServe
 	}
 }
 
-func _AiConversationService_Update1_HTTP_Handler(srv AiConversationServiceHTTPServer) func(ctx http.Context) error {
+func _AiConversationService_Update2_HTTP_Handler(srv AiConversationServiceHTTPServer) func(ctx http.Context) error {
 	return func(ctx http.Context) error {
 		var in v11.UpdateAiConversationRequest
 		if err := ctx.Bind(&in); err != nil {
@@ -112,7 +112,7 @@ func _AiConversationService_Update1_HTTP_Handler(srv AiConversationServiceHTTPSe
 	}
 }
 
-func _AiConversationService_Delete1_HTTP_Handler(srv AiConversationServiceHTTPServer) func(ctx http.Context) error {
+func _AiConversationService_Delete2_HTTP_Handler(srv AiConversationServiceHTTPServer) func(ctx http.Context) error {
 	return func(ctx http.Context) error {
 		var in v11.DeleteAiConversationRequest
 		if err := ctx.BindQuery(&in); err != nil {

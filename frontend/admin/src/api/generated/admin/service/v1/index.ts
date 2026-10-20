@@ -762,6 +762,427 @@ export function createAdminPortalServiceClient(
     },
   };
 }
+// AI Agent 编排管理服务（可视化画布）
+export interface AiAgentService {
+  // 分页查询 Agent 应用列表
+  List(
+    request: pagination_PagingRequest,
+  ): Promise<aiservicev1_ListAiAgentAppsResponse>;
+  // 查询 Agent 应用详情
+  Get(
+    request: aiservicev1_GetAiAgentAppRequest,
+  ): Promise<aiservicev1_AiAgentApp>;
+  // 创建 Agent 应用
+  Create(
+    request: aiservicev1_CreateAiAgentAppRequest,
+  ): Promise<aiservicev1_AiAgentApp>;
+  // 更新 Agent 应用
+  Update(
+    request: aiservicev1_UpdateAiAgentAppRequest,
+  ): Promise<wellKnownEmpty>;
+  // 删除 Agent 应用
+  Delete(
+    request: aiservicev1_DeleteAiAgentAppRequest,
+  ): Promise<wellKnownEmpty>;
+  // 试运行（同步执行图，返回含 trace 的运行记录）
+  Run(
+    request: aiservicev1_RunAiAgentAppRequest,
+  ): Promise<aiservicev1_AiAgentRun>;
+  // 查询运行台账（appId eq 过滤走 PagingRequest；独立集合路径，避免与 /{id} 参数路由抢配）
+  ListRuns(
+    request: pagination_PagingRequest,
+  ): Promise<aiservicev1_ListAiAgentRunsResponse>;
+  // 查询运行详情（含 trace JSON）
+  GetRun(
+    request: aiservicev1_GetAiAgentRunRequest,
+  ): Promise<aiservicev1_AiAgentRun>;
+}
+
+export function createAiAgentServiceClient(
+  transport: ClientTransport,
+): AiAgentService {
+  return {
+    List(request) {
+      const path = `admin/v1/ai/agents`;
+      const body = null;
+      const queryParams: string[] = [];
+      if (request.page) {
+        queryParams.push(
+          `page=${encodeURIComponent(request.page.toString())}`,
+        );
+      }
+      if (request.pageSize) {
+        queryParams.push(
+          `pageSize=${encodeURIComponent(request.pageSize.toString())}`,
+        );
+      }
+      if (request.offset) {
+        queryParams.push(
+          `offset=${encodeURIComponent(request.offset.toString())}`,
+        );
+      }
+      if (request.limit) {
+        queryParams.push(
+          `limit=${encodeURIComponent(request.limit.toString())}`,
+        );
+      }
+      if (request.token) {
+        queryParams.push(
+          `token=${encodeURIComponent(request.token.toString())}`,
+        );
+      }
+      if (request.noPaging) {
+        queryParams.push(
+          `noPaging=${encodeURIComponent(request.noPaging.toString())}`,
+        );
+      }
+      if (request.query) {
+        queryParams.push(
+          `query=${encodeURIComponent(request.query.toString())}`,
+        );
+      }
+      if (request.filter) {
+        queryParams.push(
+          `filter=${encodeURIComponent(request.filter.toString())}`,
+        );
+      }
+      if (request.filterExpr?.type) {
+        queryParams.push(
+          `filterExpr.type=${encodeURIComponent(request.filterExpr.type.toString())}`,
+        );
+      }
+      if (request.filterExpr?.conditions?.field) {
+        queryParams.push(
+          `filterExpr.conditions.field=${encodeURIComponent(request.filterExpr.conditions.field.toString())}`,
+        );
+      }
+      if (request.filterExpr?.conditions?.op) {
+        queryParams.push(
+          `filterExpr.conditions.op=${encodeURIComponent(request.filterExpr.conditions.op.toString())}`,
+        );
+      }
+      if (request.filterExpr?.conditions?.value) {
+        queryParams.push(
+          `filterExpr.conditions.value=${encodeURIComponent(request.filterExpr.conditions.value.toString())}`,
+        );
+      }
+      if (request.filterExpr?.conditions?.jsonValue) {
+        queryParams.push(
+          `filterExpr.conditions.jsonValue=${encodeURIComponent(request.filterExpr.conditions.jsonValue.toString())}`,
+        );
+      }
+      if (request.filterExpr?.conditions?.values) {
+        request.filterExpr.conditions.values.forEach((x) => {
+          queryParams.push(
+            `filterExpr.conditions.values=${encodeURIComponent(x.toString())}`,
+          );
+        });
+      }
+      if (request.filterExpr?.conditions?.datePart) {
+        queryParams.push(
+          `filterExpr.conditions.datePart=${encodeURIComponent(request.filterExpr.conditions.datePart.toString())}`,
+        );
+      }
+      if (request.filterExpr?.conditions?.jsonPath) {
+        queryParams.push(
+          `filterExpr.conditions.jsonPath=${encodeURIComponent(request.filterExpr.conditions.jsonPath.toString())}`,
+        );
+      }
+      if (request.orderBy) {
+        queryParams.push(
+          `orderBy=${encodeURIComponent(request.orderBy.toString())}`,
+        );
+      }
+      if (request.sorting?.field) {
+        queryParams.push(
+          `sorting.field=${encodeURIComponent(request.sorting.field.toString())}`,
+        );
+      }
+      if (request.sorting?.direction) {
+        queryParams.push(
+          `sorting.direction=${encodeURIComponent(request.sorting.direction.toString())}`,
+        );
+      }
+      if (request.fieldMask) {
+        queryParams.push(
+          `fieldMask=${encodeURIComponent(request.fieldMask.toString())}`,
+        );
+      }
+      let uri = path;
+      if (queryParams.length > 0) {
+        uri += `?${queryParams.join('&')}`;
+      }
+      return transport.unary(uri, 'GET', body, {
+        service: 'AiAgentService',
+        method: 'List',
+      }) as Promise<aiservicev1_ListAiAgentAppsResponse>;
+    },
+    Get(request) {
+      if (request.id === undefined || request.id === null) {
+        throw new Error('missing required field request.id');
+      }
+      const path = `admin/v1/ai/agents/${request.id}`;
+      const body = null;
+      return transport.unary(path, 'GET', body, {
+        service: 'AiAgentService',
+        method: 'Get',
+      }) as Promise<aiservicev1_AiAgentApp>;
+    },
+    Create(request) {
+      const path = `admin/v1/ai/agents`;
+      const body = JSON.stringify(request);
+      return transport.unary(path, 'POST', body, {
+        service: 'AiAgentService',
+        method: 'Create',
+      }) as Promise<aiservicev1_AiAgentApp>;
+    },
+    Update(request) {
+      if (request.id === undefined || request.id === null) {
+        throw new Error('missing required field request.id');
+      }
+      const path = `admin/v1/ai/agents/${request.id}`;
+      const body = JSON.stringify(request);
+      return transport.unary(path, 'PUT', body, {
+        service: 'AiAgentService',
+        method: 'Update',
+      }) as Promise<wellKnownEmpty>;
+    },
+    Delete(request) {
+      if (request.id === undefined || request.id === null) {
+        throw new Error('missing required field request.id');
+      }
+      const path = `admin/v1/ai/agents/${request.id}`;
+      const body = null;
+      return transport.unary(path, 'DELETE', body, {
+        service: 'AiAgentService',
+        method: 'Delete',
+      }) as Promise<wellKnownEmpty>;
+    },
+    Run(request) {
+      if (request.id === undefined || request.id === null) {
+        throw new Error('missing required field request.id');
+      }
+      const path = `admin/v1/ai/agents/${request.id}/run`;
+      const body = JSON.stringify(request);
+      return transport.unary(path, 'POST', body, {
+        service: 'AiAgentService',
+        method: 'Run',
+      }) as Promise<aiservicev1_AiAgentRun>;
+    },
+    ListRuns(request) {
+      const path = `admin/v1/ai/agent-runs`;
+      const body = null;
+      const queryParams: string[] = [];
+      if (request.page) {
+        queryParams.push(
+          `page=${encodeURIComponent(request.page.toString())}`,
+        );
+      }
+      if (request.pageSize) {
+        queryParams.push(
+          `pageSize=${encodeURIComponent(request.pageSize.toString())}`,
+        );
+      }
+      if (request.offset) {
+        queryParams.push(
+          `offset=${encodeURIComponent(request.offset.toString())}`,
+        );
+      }
+      if (request.limit) {
+        queryParams.push(
+          `limit=${encodeURIComponent(request.limit.toString())}`,
+        );
+      }
+      if (request.token) {
+        queryParams.push(
+          `token=${encodeURIComponent(request.token.toString())}`,
+        );
+      }
+      if (request.noPaging) {
+        queryParams.push(
+          `noPaging=${encodeURIComponent(request.noPaging.toString())}`,
+        );
+      }
+      if (request.query) {
+        queryParams.push(
+          `query=${encodeURIComponent(request.query.toString())}`,
+        );
+      }
+      if (request.filter) {
+        queryParams.push(
+          `filter=${encodeURIComponent(request.filter.toString())}`,
+        );
+      }
+      if (request.filterExpr?.type) {
+        queryParams.push(
+          `filterExpr.type=${encodeURIComponent(request.filterExpr.type.toString())}`,
+        );
+      }
+      if (request.filterExpr?.conditions?.field) {
+        queryParams.push(
+          `filterExpr.conditions.field=${encodeURIComponent(request.filterExpr.conditions.field.toString())}`,
+        );
+      }
+      if (request.filterExpr?.conditions?.op) {
+        queryParams.push(
+          `filterExpr.conditions.op=${encodeURIComponent(request.filterExpr.conditions.op.toString())}`,
+        );
+      }
+      if (request.filterExpr?.conditions?.value) {
+        queryParams.push(
+          `filterExpr.conditions.value=${encodeURIComponent(request.filterExpr.conditions.value.toString())}`,
+        );
+      }
+      if (request.filterExpr?.conditions?.jsonValue) {
+        queryParams.push(
+          `filterExpr.conditions.jsonValue=${encodeURIComponent(request.filterExpr.conditions.jsonValue.toString())}`,
+        );
+      }
+      if (request.filterExpr?.conditions?.values) {
+        request.filterExpr.conditions.values.forEach((x) => {
+          queryParams.push(
+            `filterExpr.conditions.values=${encodeURIComponent(x.toString())}`,
+          );
+        });
+      }
+      if (request.filterExpr?.conditions?.datePart) {
+        queryParams.push(
+          `filterExpr.conditions.datePart=${encodeURIComponent(request.filterExpr.conditions.datePart.toString())}`,
+        );
+      }
+      if (request.filterExpr?.conditions?.jsonPath) {
+        queryParams.push(
+          `filterExpr.conditions.jsonPath=${encodeURIComponent(request.filterExpr.conditions.jsonPath.toString())}`,
+        );
+      }
+      if (request.orderBy) {
+        queryParams.push(
+          `orderBy=${encodeURIComponent(request.orderBy.toString())}`,
+        );
+      }
+      if (request.sorting?.field) {
+        queryParams.push(
+          `sorting.field=${encodeURIComponent(request.sorting.field.toString())}`,
+        );
+      }
+      if (request.sorting?.direction) {
+        queryParams.push(
+          `sorting.direction=${encodeURIComponent(request.sorting.direction.toString())}`,
+        );
+      }
+      if (request.fieldMask) {
+        queryParams.push(
+          `fieldMask=${encodeURIComponent(request.fieldMask.toString())}`,
+        );
+      }
+      let uri = path;
+      if (queryParams.length > 0) {
+        uri += `?${queryParams.join('&')}`;
+      }
+      return transport.unary(uri, 'GET', body, {
+        service: 'AiAgentService',
+        method: 'ListRuns',
+      }) as Promise<aiservicev1_ListAiAgentRunsResponse>;
+    },
+    GetRun(request) {
+      if (request.id === undefined || request.id === null) {
+        throw new Error('missing required field request.id');
+      }
+      const path = `admin/v1/ai/agent-runs/${request.id}`;
+      const body = null;
+      return transport.unary(path, 'GET', body, {
+        service: 'AiAgentService',
+        method: 'GetRun',
+      }) as Promise<aiservicev1_AiAgentRun>;
+    },
+  };
+}
+// 查询列表 - 回应
+export type aiservicev1_ListAiAgentAppsResponse = {
+  items: aiservicev1_AiAgentApp[] | undefined;
+  total: number | undefined;
+};
+
+// Agent 编排应用
+export type aiservicev1_AiAgentApp = {
+  createdAt?: wellKnownTimestamp;
+  createdBy?: number;
+  description?: string;
+  enabled?: boolean;
+  // 图 DSL（JSON：nodes/edges；节点五种、模板与条件表达式语义见设计文档 §2）
+  graph?: string;
+  id?: number;
+  name?: string;
+  // 创建/更新入参带出（与 AiConversation 同口径）：租户隔离 mixin 无创建钩子，租户必须显式写
+  tenantId?: number;
+  updatedAt?: wellKnownTimestamp;
+  updatedBy?: number;
+};
+
+// 查询详情 - 请求
+export type aiservicev1_GetAiAgentAppRequest = {
+  id: number | undefined;
+};
+
+// 创建 - 请求
+export type aiservicev1_CreateAiAgentAppRequest = {
+  data: aiservicev1_AiAgentApp | undefined;
+};
+
+// 更新 - 请求
+export type aiservicev1_UpdateAiAgentAppRequest = {
+  data: aiservicev1_AiAgentApp | undefined;
+  id: number | undefined;
+  updateMask: undefined | wellKnownFieldMask;
+};
+
+// 删除 - 请求
+export type aiservicev1_DeleteAiAgentAppRequest = {
+  id: number | undefined;
+};
+
+// 试运行 - 请求
+export type aiservicev1_RunAiAgentAppRequest = {
+  id: number | undefined;
+  // 运行入参：start 节点声明的输入变量名 → 值（JSON 对象字符串）
+  input: { [key: string]: string } | undefined;
+};
+
+// Agent 运行记录
+export type aiservicev1_AiAgentRun = {
+  appId?: number;
+  completionTokens?: number;
+  createdAt?: wellKnownTimestamp;
+  durationMs?: number;
+  error?: string;
+  id?: number;
+  // 运行入参（JSON 对象：start 节点 inputVars 的 name → 值）
+  input?: string;
+  output?: string;
+  promptTokens?: number;
+  status?: aiservicev1_AiAgentRun_Status;
+  totalTokens?: number;
+  // 逐节点执行轨迹（JSON 数组：{nodeId,type,status,ms,summary,usage}）
+  trace?: string;
+};
+
+// 运行状态
+export type aiservicev1_AiAgentRun_Status =
+  | 'FAILED'
+  | 'RUNNING'
+  | 'STATUS_UNSPECIFIED'
+  | 'SUCCEEDED';
+// 运行台账列表 - 回应
+export type aiservicev1_ListAiAgentRunsResponse = {
+  items: aiservicev1_AiAgentRun[] | undefined;
+  total: number | undefined;
+};
+
+// 运行详情 - 请求
+export type aiservicev1_GetAiAgentRunRequest = {
+  id: number | undefined;
+};
+
 // AI 对话服务（表单助手）
 // 流式语义：本 RPC 是普通 POST（body 为扁平请求体，不包 data）。
 // BFF 消费 core 的 ChatStreamFrame 流：chunk/tool 帧经 SSE 网关
@@ -17917,6 +18338,7 @@ export type webhookservicev1_ListWebhookDeliveriesResponse = {
 export class ApiClient {
   private _accessKeyService?: AccessKeyService;
   private _adminPortalService?: AdminPortalService;
+  private _aiAgentService?: AiAgentService;
   private _aiChatService?: AiChatService;
   private _aiContentService?: AiContentService;
   private _aiConversationService?: AiConversationService;
@@ -17998,6 +18420,10 @@ export class ApiClient {
 
   get adminPortalService(): AdminPortalService {
     return this._adminPortalService ??= createAdminPortalServiceClient(this._transport);
+  }
+
+  get aiAgentService(): AiAgentService {
+    return this._aiAgentService ??= createAiAgentServiceClient(this._transport);
   }
 
   get aiChatService(): AiChatService {

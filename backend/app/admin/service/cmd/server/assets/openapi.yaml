@@ -224,6 +224,284 @@ paths:
                         application/json:
                             schema:
                                 $ref: '#/components/schemas/access_key.service.v1.CreateAccessKeyResponse'
+    /admin/v1/ai/agent-runs:
+        get:
+            tags:
+                - AiAgentService
+            description: 查询运行台账（appId eq 过滤走 PagingRequest；独立集合路径，避免与 /{id} 参数路由抢配）
+            operationId: AiAgentService_ListRuns
+            parameters:
+                - name: page
+                  in: query
+                  description: 当前页码（从1开始，默认1）
+                  schema:
+                    type: integer
+                    format: uint32
+                - name: pageSize
+                  in: query
+                  description: 每页条数（默认10，建议设置上限如100）
+                  schema:
+                    type: integer
+                    format: uint32
+                - name: offset
+                  in: query
+                  description: 跳过的记录数（从0开始，默认0）
+                  schema:
+                    type: string
+                - name: limit
+                  in: query
+                  description: 最多返回的记录数（默认10，建议设置上限如100）
+                  schema:
+                    type: integer
+                    format: uint32
+                - name: token
+                  in: query
+                  description: 上一页最后一条记录的游标（如ID/时间戳+ID，首次请求为空）
+                  schema:
+                    type: string
+                - name: noPaging
+                  in: query
+                  description: 是否不分页，如果为true，则page和pageSize参数无效。
+                  schema:
+                    type: boolean
+                - name: query
+                  in: query
+                  description: JSON字符串过滤条件，基础语法：{"field1":"val1", "field2___icontains":"val2"}，具体请参见：https://github.com/tx7do/go-crud/tree/main/pagination/filter/README.md
+                  schema:
+                    type: string
+                - name: filter
+                  in: query
+                  description: Google AIP规范字符串过滤条件
+                  schema:
+                    type: string
+                - name: filterExpr.type
+                  in: query
+                  description: 过滤表达式类型
+                  schema:
+                    enum:
+                        - EXPR_TYPE_UNSPECIFIED
+                        - AND
+                        - OR
+                    type: string
+                    format: enum
+                - name: orderBy
+                  in: query
+                  description: 排序条件
+                  schema:
+                    type: string
+                - name: fieldMask
+                  in: query
+                  description: 字段掩码，其作用为SELECT中的字段，其语法为使用逗号分隔字段名，例如：id,realName,userName。如果为空则选中所有字段，即SELECT *。
+                  schema:
+                    type: string
+                    format: field-mask
+            responses:
+                "200":
+                    description: OK
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/ai.service.v1.ListAiAgentRunsResponse'
+    /admin/v1/ai/agent-runs/{id}:
+        get:
+            tags:
+                - AiAgentService
+            description: 查询运行详情（含 trace JSON）
+            operationId: AiAgentService_GetRun
+            parameters:
+                - name: id
+                  in: path
+                  required: true
+                  schema:
+                    type: integer
+                    format: uint32
+            responses:
+                "200":
+                    description: OK
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/ai.service.v1.AiAgentRun'
+    /admin/v1/ai/agents:
+        get:
+            tags:
+                - AiAgentService
+            description: 分页查询 Agent 应用列表
+            operationId: AiAgentService_List
+            parameters:
+                - name: page
+                  in: query
+                  description: 当前页码（从1开始，默认1）
+                  schema:
+                    type: integer
+                    format: uint32
+                - name: pageSize
+                  in: query
+                  description: 每页条数（默认10，建议设置上限如100）
+                  schema:
+                    type: integer
+                    format: uint32
+                - name: offset
+                  in: query
+                  description: 跳过的记录数（从0开始，默认0）
+                  schema:
+                    type: string
+                - name: limit
+                  in: query
+                  description: 最多返回的记录数（默认10，建议设置上限如100）
+                  schema:
+                    type: integer
+                    format: uint32
+                - name: token
+                  in: query
+                  description: 上一页最后一条记录的游标（如ID/时间戳+ID，首次请求为空）
+                  schema:
+                    type: string
+                - name: noPaging
+                  in: query
+                  description: 是否不分页，如果为true，则page和pageSize参数无效。
+                  schema:
+                    type: boolean
+                - name: query
+                  in: query
+                  description: JSON字符串过滤条件，基础语法：{"field1":"val1", "field2___icontains":"val2"}，具体请参见：https://github.com/tx7do/go-crud/tree/main/pagination/filter/README.md
+                  schema:
+                    type: string
+                - name: filter
+                  in: query
+                  description: Google AIP规范字符串过滤条件
+                  schema:
+                    type: string
+                - name: filterExpr.type
+                  in: query
+                  description: 过滤表达式类型
+                  schema:
+                    enum:
+                        - EXPR_TYPE_UNSPECIFIED
+                        - AND
+                        - OR
+                    type: string
+                    format: enum
+                - name: orderBy
+                  in: query
+                  description: 排序条件
+                  schema:
+                    type: string
+                - name: fieldMask
+                  in: query
+                  description: 字段掩码，其作用为SELECT中的字段，其语法为使用逗号分隔字段名，例如：id,realName,userName。如果为空则选中所有字段，即SELECT *。
+                  schema:
+                    type: string
+                    format: field-mask
+            responses:
+                "200":
+                    description: OK
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/ai.service.v1.ListAiAgentAppsResponse'
+        post:
+            tags:
+                - AiAgentService
+            description: 创建 Agent 应用
+            operationId: AiAgentService_Create
+            requestBody:
+                content:
+                    application/json:
+                        schema:
+                            $ref: '#/components/schemas/ai.service.v1.CreateAiAgentAppRequest'
+                required: true
+            responses:
+                "200":
+                    description: OK
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/ai.service.v1.AiAgentApp'
+    /admin/v1/ai/agents/{id}:
+        get:
+            tags:
+                - AiAgentService
+            description: 查询 Agent 应用详情
+            operationId: AiAgentService_Get
+            parameters:
+                - name: id
+                  in: path
+                  required: true
+                  schema:
+                    type: integer
+                    format: uint32
+            responses:
+                "200":
+                    description: OK
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/ai.service.v1.AiAgentApp'
+        put:
+            tags:
+                - AiAgentService
+            description: 更新 Agent 应用
+            operationId: AiAgentService_Update
+            parameters:
+                - name: id
+                  in: path
+                  required: true
+                  schema:
+                    type: integer
+                    format: uint32
+            requestBody:
+                content:
+                    application/json:
+                        schema:
+                            $ref: '#/components/schemas/ai.service.v1.UpdateAiAgentAppRequest'
+                required: true
+            responses:
+                "200":
+                    description: OK
+                    content: {}
+        delete:
+            tags:
+                - AiAgentService
+            description: 删除 Agent 应用
+            operationId: AiAgentService_Delete
+            parameters:
+                - name: id
+                  in: path
+                  required: true
+                  schema:
+                    type: integer
+                    format: uint32
+            responses:
+                "200":
+                    description: OK
+                    content: {}
+    /admin/v1/ai/agents/{id}/run:
+        post:
+            tags:
+                - AiAgentService
+            description: 试运行（同步执行图，返回含 trace 的运行记录）
+            operationId: AiAgentService_Run
+            parameters:
+                - name: id
+                  in: path
+                  required: true
+                  schema:
+                    type: integer
+                    format: uint32
+            requestBody:
+                content:
+                    application/json:
+                        schema:
+                            $ref: '#/components/schemas/ai.service.v1.RunAiAgentAppRequest'
+                required: true
+            responses:
+                "200":
+                    description: OK
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/ai.service.v1.AiAgentRun'
     /admin/v1/ai/chat/completions:
         post:
             tags:
@@ -10972,6 +11250,85 @@ components:
                     description: 过期时间
                     format: date-time
             description: 预览令牌
+        ai.service.v1.AiAgentApp:
+            type: object
+            properties:
+                id:
+                    type: integer
+                    description: 应用ID
+                    format: uint32
+                name:
+                    type: string
+                    description: 应用名称（租户内唯一）
+                description:
+                    type: string
+                    description: 应用描述
+                graph:
+                    type: string
+                    description: 图 DSL（JSON 文本）
+                enabled:
+                    type: boolean
+                    description: 是否启用（停用的应用拒绝运行）
+                tenantId:
+                    type: integer
+                    description: 创建/更新入参带出（与 AiConversation 同口径）：租户隔离 mixin 无创建钩子，租户必须显式写
+                    format: uint32
+                createdBy:
+                    type: integer
+                    format: uint32
+                updatedBy:
+                    type: integer
+                    format: uint32
+                createdAt:
+                    type: string
+                    format: date-time
+                updatedAt:
+                    type: string
+                    format: date-time
+            description: Agent 编排应用
+        ai.service.v1.AiAgentRun:
+            type: object
+            properties:
+                id:
+                    type: integer
+                    format: uint32
+                appId:
+                    type: integer
+                    format: uint32
+                status:
+                    enum:
+                        - STATUS_UNSPECIFIED
+                        - RUNNING
+                        - SUCCEEDED
+                        - FAILED
+                    type: string
+                    format: enum
+                input:
+                    type: string
+                    description: 运行入参（JSON 对象：start 节点 inputVars 的 name → 值）
+                output:
+                    type: string
+                error:
+                    type: string
+                trace:
+                    type: string
+                    description: 逐节点执行轨迹（JSON 数组：{nodeId,type,status,ms,summary,usage}）
+                promptTokens:
+                    type: integer
+                    format: uint32
+                completionTokens:
+                    type: integer
+                    format: uint32
+                totalTokens:
+                    type: integer
+                    format: uint32
+                durationMs:
+                    type: integer
+                    format: uint32
+                createdAt:
+                    type: string
+                    format: date-time
+            description: Agent 运行记录
         ai.service.v1.AiConversation:
             type: object
             properties:
@@ -11439,6 +11796,12 @@ components:
                         - $ref: '#/components/schemas/ai.service.v1.AiMessage'
                     description: 模型回复消息（含 token 用量与模型名）
             description: 发起对话 - 回应
+        ai.service.v1.CreateAiAgentAppRequest:
+            type: object
+            properties:
+                data:
+                    $ref: '#/components/schemas/ai.service.v1.AiAgentApp'
+            description: 创建 - 请求
         ai.service.v1.CreateAiKnowledgeBaseRequest:
             type: object
             properties:
@@ -11505,6 +11868,26 @@ components:
                     type: number
                     format: double
             description: 检索命中片段
+        ai.service.v1.ListAiAgentAppsResponse:
+            type: object
+            properties:
+                items:
+                    type: array
+                    items:
+                        $ref: '#/components/schemas/ai.service.v1.AiAgentApp'
+                total:
+                    type: string
+            description: 查询列表 - 回应
+        ai.service.v1.ListAiAgentRunsResponse:
+            type: object
+            properties:
+                items:
+                    type: array
+                    items:
+                        $ref: '#/components/schemas/ai.service.v1.AiAgentRun'
+                total:
+                    type: string
+            description: 运行台账列表 - 回应
         ai.service.v1.ListAiConversationResponse:
             type: object
             properties:
@@ -11580,6 +11963,19 @@ components:
                     description: 知识库ID；0 表示全部知识库
                     format: uint32
             description: 重索引 - 请求
+        ai.service.v1.RunAiAgentAppRequest:
+            type: object
+            properties:
+                id:
+                    type: integer
+                    description: 应用ID
+                    format: uint32
+                input:
+                    type: object
+                    additionalProperties:
+                        type: string
+                    description: 运行入参（start 节点声明的变量）
+            description: 试运行 - 请求
         ai.service.v1.SafetyInsightsRequest:
             type: object
             properties:
@@ -11649,6 +12045,18 @@ components:
                     items:
                         $ref: '#/components/schemas/ai.service.v1.SemanticSearchItem'
             description: 语义搜索 - 回应
+        ai.service.v1.UpdateAiAgentAppRequest:
+            type: object
+            properties:
+                id:
+                    type: integer
+                    format: uint32
+                data:
+                    $ref: '#/components/schemas/ai.service.v1.AiAgentApp'
+                updateMask:
+                    type: string
+                    format: field-mask
+            description: 更新 - 请求
         ai.service.v1.UpdateAiConversationRequest:
             type: object
             properties:
@@ -19939,6 +20347,8 @@ tags:
       description: OpenAPI 访问凭证（AK/SK）管理 — BFF
     - name: AdminPortalService
       description: 后台前端初始化数据与配置服务
+    - name: AiAgentService
+      description: AI Agent 编排管理服务（可视化画布）
     - name: AiChatService
       description: |-
         AI 对话服务（表单助手）

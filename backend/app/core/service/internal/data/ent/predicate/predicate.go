@@ -9,6 +9,12 @@ import (
 // AccessKey is the predicate function for accesskey builders.
 type AccessKey func(*sql.Selector)
 
+// AiAgentApp is the predicate function for aiagentapp builders.
+type AiAgentApp func(*sql.Selector)
+
+// AiAgentRun is the predicate function for aiagentrun builders.
+type AiAgentRun func(*sql.Selector)
+
 // AiChunk is the predicate function for aichunk builders.
 type AiChunk func(*sql.Selector)
 

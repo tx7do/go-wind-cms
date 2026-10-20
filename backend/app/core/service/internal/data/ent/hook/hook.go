@@ -20,6 +20,30 @@ func (f AccessKeyFunc) Mutate(ctx context.Context, m ent.Mutation) (ent.Value, e
 	return nil, fmt.Errorf("unexpected mutation type %T. expect *ent.AccessKeyMutation", m)
 }
 
+// The AiAgentAppFunc type is an adapter to allow the use of ordinary
+// function as AiAgentApp mutator.
+type AiAgentAppFunc func(context.Context, *ent.AiAgentAppMutation) (ent.Value, error)
+
+// Mutate calls f(ctx, m).
+func (f AiAgentAppFunc) Mutate(ctx context.Context, m ent.Mutation) (ent.Value, error) {
+	if mv, ok := m.(*ent.AiAgentAppMutation); ok {
+		return f(ctx, mv)
+	}
+	return nil, fmt.Errorf("unexpected mutation type %T. expect *ent.AiAgentAppMutation", m)
+}
+
+// The AiAgentRunFunc type is an adapter to allow the use of ordinary
+// function as AiAgentRun mutator.
+type AiAgentRunFunc func(context.Context, *ent.AiAgentRunMutation) (ent.Value, error)
+
+// Mutate calls f(ctx, m).
+func (f AiAgentRunFunc) Mutate(ctx context.Context, m ent.Mutation) (ent.Value, error) {
+	if mv, ok := m.(*ent.AiAgentRunMutation); ok {
+		return f(ctx, mv)
+	}
+	return nil, fmt.Errorf("unexpected mutation type %T. expect *ent.AiAgentRunMutation", m)
+}
+
 // The AiChunkFunc type is an adapter to allow the use of ordinary
 // function as AiChunk mutator.
 type AiChunkFunc func(context.Context, *ent.AiChunkMutation) (ent.Value, error)

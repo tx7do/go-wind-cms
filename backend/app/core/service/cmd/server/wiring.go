@@ -220,6 +220,9 @@ func initApp(ctx *bootstrap.Context) (*kratos.App, func(), error) {
 	tenantQuotaService := service.NewTenantQuotaService(ctx, tenantQuotaRepo)
 	configRepo := data.NewConfigRepo(ctx, entClient, redisClient)
 	configService := service.NewConfigService(ctx, configRepo)
+	aiAgentAppRepo := data.NewAiAgentAppRepo(ctx, entClient)
+	aiAgentRunRepo := data.NewAiAgentRunRepo(ctx, entClient)
+	aiAgentService := service.NewAiAgentService(ctx, aiAgentAppRepo, aiAgentRunRepo)
 
 	// ═══════════════════════ 三、服务层(internal/service) ═══════════════════════
 
@@ -367,6 +370,7 @@ func initApp(ctx *bootstrap.Context) (*kratos.App, func(), error) {
 		accessKeyService,
 		tenantQuotaService,
 		configService,
+		aiAgentService,
 		serverMonitorService,
 		redisCacheMonitorService,
 		fileService,

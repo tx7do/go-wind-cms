@@ -419,6 +419,15 @@ func NewConfigServiceClient(ctx *bootstrap.Context, r registry.Discovery) config
 	return configV1.NewConfigServiceClient(cli)
 }
 
+func NewAiAgentServiceClient(ctx *bootstrap.Context, r registry.Discovery) aiV1.AiAgentServiceClient {
+	cli, err := rpc.CreateGrpcClient(ctx.Context(), r, serviceid.NewDiscoveryName(serviceid.CoreService), ctx.GetConfig())
+	if err != nil {
+		return nil
+	}
+
+	return aiV1.NewAiAgentServiceClient(cli)
+}
+
 func NewServerMonitorServiceClient(ctx *bootstrap.Context, r registry.Discovery) serverMonitorV1.ServerMonitorServiceClient {
 	cli, err := rpc.CreateGrpcClient(ctx.Context(), r, serviceid.NewDiscoveryName(serviceid.CoreService), ctx.GetConfig())
 	if err != nil {

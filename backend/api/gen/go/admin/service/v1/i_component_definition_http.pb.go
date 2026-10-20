@@ -49,16 +49,16 @@ type ComponentDefinitionServiceHTTPServer interface {
 
 func RegisterComponentDefinitionServiceHTTPServer(s *http.Server, srv ComponentDefinitionServiceHTTPServer) {
 	r := s.Route("/")
-	r.GET("/admin/v1/content-components", _ComponentDefinitionService_List10_HTTP_Handler(srv))
-	r.GET("/admin/v1/content-components/{id}", _ComponentDefinitionService_Get8_HTTP_Handler(srv))
-	r.POST("/admin/v1/content-components", _ComponentDefinitionService_Create6_HTTP_Handler(srv))
-	r.PUT("/admin/v1/content-components/{id}", _ComponentDefinitionService_Update7_HTTP_Handler(srv))
-	r.DELETE("/admin/v1/content-components/{id}", _ComponentDefinitionService_Delete8_HTTP_Handler(srv))
+	r.GET("/admin/v1/content-components", _ComponentDefinitionService_List11_HTTP_Handler(srv))
+	r.GET("/admin/v1/content-components/{id}", _ComponentDefinitionService_Get9_HTTP_Handler(srv))
+	r.POST("/admin/v1/content-components", _ComponentDefinitionService_Create7_HTTP_Handler(srv))
+	r.PUT("/admin/v1/content-components/{id}", _ComponentDefinitionService_Update8_HTTP_Handler(srv))
+	r.DELETE("/admin/v1/content-components/{id}", _ComponentDefinitionService_Delete9_HTTP_Handler(srv))
 	r.GET("/admin/v1/content-components/{component_id}/field-definitions", _ComponentDefinitionService_ListFieldDefinitions0_HTTP_Handler(srv))
 	r.PUT("/admin/v1/content-components/{component_id}/field-definitions", _ComponentDefinitionService_SaveFieldDefinitions0_HTTP_Handler(srv))
 }
 
-func _ComponentDefinitionService_List10_HTTP_Handler(srv ComponentDefinitionServiceHTTPServer) func(ctx http.Context) error {
+func _ComponentDefinitionService_List11_HTTP_Handler(srv ComponentDefinitionServiceHTTPServer) func(ctx http.Context) error {
 	return func(ctx http.Context) error {
 		var in v1.PagingRequest
 		if err := ctx.BindQuery(&in); err != nil {
@@ -77,7 +77,7 @@ func _ComponentDefinitionService_List10_HTTP_Handler(srv ComponentDefinitionServ
 	}
 }
 
-func _ComponentDefinitionService_Get8_HTTP_Handler(srv ComponentDefinitionServiceHTTPServer) func(ctx http.Context) error {
+func _ComponentDefinitionService_Get9_HTTP_Handler(srv ComponentDefinitionServiceHTTPServer) func(ctx http.Context) error {
 	return func(ctx http.Context) error {
 		var in v11.GetComponentDefinitionRequest
 		if err := ctx.BindQuery(&in); err != nil {
@@ -99,7 +99,7 @@ func _ComponentDefinitionService_Get8_HTTP_Handler(srv ComponentDefinitionServic
 	}
 }
 
-func _ComponentDefinitionService_Create6_HTTP_Handler(srv ComponentDefinitionServiceHTTPServer) func(ctx http.Context) error {
+func _ComponentDefinitionService_Create7_HTTP_Handler(srv ComponentDefinitionServiceHTTPServer) func(ctx http.Context) error {
 	return func(ctx http.Context) error {
 		var in v11.CreateComponentDefinitionRequest
 		if err := ctx.Bind(&in); err != nil {
@@ -121,7 +121,7 @@ func _ComponentDefinitionService_Create6_HTTP_Handler(srv ComponentDefinitionSer
 	}
 }
 
-func _ComponentDefinitionService_Update7_HTTP_Handler(srv ComponentDefinitionServiceHTTPServer) func(ctx http.Context) error {
+func _ComponentDefinitionService_Update8_HTTP_Handler(srv ComponentDefinitionServiceHTTPServer) func(ctx http.Context) error {
 	return func(ctx http.Context) error {
 		var in v11.UpdateComponentDefinitionRequest
 		if err := ctx.Bind(&in); err != nil {
@@ -146,7 +146,7 @@ func _ComponentDefinitionService_Update7_HTTP_Handler(srv ComponentDefinitionSer
 	}
 }
 
-func _ComponentDefinitionService_Delete8_HTTP_Handler(srv ComponentDefinitionServiceHTTPServer) func(ctx http.Context) error {
+func _ComponentDefinitionService_Delete9_HTTP_Handler(srv ComponentDefinitionServiceHTTPServer) func(ctx http.Context) error {
 	return func(ctx http.Context) error {
 		var in v11.DeleteComponentDefinitionRequest
 		if err := ctx.BindQuery(&in); err != nil {

@@ -1,0 +1,71 @@
+syntax = "proto3";
+
+package admin.service.v1;
+
+import "google/api/annotations.proto";
+import "google/protobuf/empty.proto";
+
+import "pagination/v1/pagination.proto";
+import "ai/service/v1/ai_agent.proto";
+
+// AI Agent 编排管理服务（可视化画布）
+service AiAgentService {
+  // 分页查询 Agent 应用列表
+  rpc List (pagination.PagingRequest) returns (ai.service.v1.ListAiAgentAppsResponse) {
+    option (google.api.http) = {
+      get: "/admin/v1/ai/agents"
+    };
+  }
+
+  // 查询 Agent 应用详情
+  rpc Get (ai.service.v1.GetAiAgentAppRequest) returns (ai.service.v1.AiAgentApp) {
+    option (google.api.http) = {
+      get: "/admin/v1/ai/agents/{id}"
+    };
+  }
+
+  // 创建 Agent 应用
+  rpc Create (ai.service.v1.CreateAiAgentAppRequest) returns (ai.service.v1.AiAgentApp) {
+    option (google.api.http) = {
+      post: "/admin/v1/ai/agents"
+      body: "*"
+    };
+  }
+
+  // 更新 Agent 应用
+  rpc Update (ai.service.v1.UpdateAiAgentAppRequest) returns (google.protobuf.Empty) {
+    option (google.api.http) = {
+      put: "/admin/v1/ai/agents/{id}"
+      body: "*"
+    };
+  }
+
+  // 删除 Agent 应用
+  rpc Delete (ai.service.v1.DeleteAiAgentAppRequest) returns (google.protobuf.Empty) {
+    option (google.api.http) = {
+      delete: "/admin/v1/ai/agents/{id}"
+    };
+  }
+
+  // 试运行（同步执行图，返回含 trace 的运行记录）
+  rpc Run (ai.service.v1.RunAiAgentAppRequest) returns (ai.service.v1.AiAgentRun) {
+    option (google.api.http) = {
+      post: "/admin/v1/ai/agents/{id}/run"
+      body: "*"
+    };
+  }
+
+  // 查询运行台账（appId eq 过滤走 PagingRequest；独立集合路径，避免与 /{id} 参数路由抢配）
+  rpc ListRuns (pagination.PagingRequest) returns (ai.service.v1.ListAiAgentRunsResponse) {
+    option (google.api.http) = {
+      get: "/admin/v1/ai/agent-runs"
+    };
+  }
+
+  // 查询运行详情（含 trace JSON）
+  rpc GetRun (ai.service.v1.GetAiAgentRunRequest) returns (ai.service.v1.AiAgentRun) {
+    option (google.api.http) = {
+      get: "/admin/v1/ai/agent-runs/{id}"
+    };
+  }
+}

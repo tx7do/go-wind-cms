@@ -45,6 +45,70 @@ var (
 			},
 		},
 	}
+	// SysAiAgentAppsColumns holds the columns for the "sys_ai_agent_apps" table.
+	SysAiAgentAppsColumns = []*schema.Column{
+		{Name: "id", Type: field.TypeUint32, Increment: true, Comment: "id"},
+		{Name: "created_at", Type: field.TypeTime, Nullable: true, Comment: "创建时间"},
+		{Name: "updated_at", Type: field.TypeTime, Nullable: true, Comment: "更新时间"},
+		{Name: "deleted_at", Type: field.TypeTime, Nullable: true, Comment: "删除时间"},
+		{Name: "created_by", Type: field.TypeUint32, Nullable: true, Comment: "创建者ID"},
+		{Name: "updated_by", Type: field.TypeUint32, Nullable: true, Comment: "更新者ID"},
+		{Name: "deleted_by", Type: field.TypeUint32, Nullable: true, Comment: "删除者ID"},
+		{Name: "tenant_id", Type: field.TypeUint32, Nullable: true, Comment: "租户ID", Default: 0},
+		{Name: "name", Type: field.TypeString, Comment: "应用名称（租户内唯一）"},
+		{Name: "description", Type: field.TypeString, Nullable: true, Comment: "应用描述"},
+		{Name: "graph", Type: field.TypeString, Nullable: true, Size: 2147483647, Comment: "图 DSL（JSON：nodes/edges，五种节点）"},
+		{Name: "enabled", Type: field.TypeBool, Comment: "是否启用（停用的应用拒绝运行）", Default: true},
+	}
+	// SysAiAgentAppsTable holds the schema information for the "sys_ai_agent_apps" table.
+	SysAiAgentAppsTable = &schema.Table{
+		Name:       "sys_ai_agent_apps",
+		Comment:    "AI Agent 编排应用",
+		Columns:    SysAiAgentAppsColumns,
+		PrimaryKey: []*schema.Column{SysAiAgentAppsColumns[0]},
+		Indexes: []*schema.Index{
+			{
+				Name:    "uidx_sys_ai_agent_apps_tenant_name",
+				Unique:  true,
+				Columns: []*schema.Column{SysAiAgentAppsColumns[7], SysAiAgentAppsColumns[8]},
+			},
+		},
+	}
+	// SysAiAgentRunsColumns holds the columns for the "sys_ai_agent_runs" table.
+	SysAiAgentRunsColumns = []*schema.Column{
+		{Name: "id", Type: field.TypeUint32, Increment: true, Comment: "id"},
+		{Name: "created_at", Type: field.TypeTime, Nullable: true, Comment: "创建时间"},
+		{Name: "updated_at", Type: field.TypeTime, Nullable: true, Comment: "更新时间"},
+		{Name: "deleted_at", Type: field.TypeTime, Nullable: true, Comment: "删除时间"},
+		{Name: "created_by", Type: field.TypeUint32, Nullable: true, Comment: "创建者ID"},
+		{Name: "updated_by", Type: field.TypeUint32, Nullable: true, Comment: "更新者ID"},
+		{Name: "deleted_by", Type: field.TypeUint32, Nullable: true, Comment: "删除者ID"},
+		{Name: "tenant_id", Type: field.TypeUint32, Nullable: true, Comment: "租户ID", Default: 0},
+		{Name: "app_id", Type: field.TypeUint32, Nullable: true, Comment: "应用ID"},
+		{Name: "status", Type: field.TypeEnum, Comment: "运行状态", Enums: []string{"RUNNING", "SUCCEEDED", "FAILED"}, Default: "RUNNING"},
+		{Name: "input", Type: field.TypeString, Nullable: true, Size: 2147483647, Comment: "运行入参 JSON（start 节点声明的变量）"},
+		{Name: "output", Type: field.TypeString, Nullable: true, Size: 2147483647, Comment: "产出（到达的 end 节点渲染值）"},
+		{Name: "error", Type: field.TypeString, Nullable: true, Size: 2147483647, Comment: "失败原因"},
+		{Name: "trace", Type: field.TypeString, Size: 2147483647, Comment: "逐节点执行轨迹 JSON"},
+		{Name: "prompt_tokens", Type: field.TypeUint32, Comment: "输入 token 合计", Default: 0},
+		{Name: "completion_tokens", Type: field.TypeUint32, Comment: "输出 token 合计", Default: 0},
+		{Name: "total_tokens", Type: field.TypeUint32, Comment: "总 token 合计", Default: 0},
+		{Name: "duration_ms", Type: field.TypeUint32, Comment: "总耗时（毫秒）", Default: 0},
+	}
+	// SysAiAgentRunsTable holds the schema information for the "sys_ai_agent_runs" table.
+	SysAiAgentRunsTable = &schema.Table{
+		Name:       "sys_ai_agent_runs",
+		Comment:    "AI Agent 运行记录",
+		Columns:    SysAiAgentRunsColumns,
+		PrimaryKey: []*schema.Column{SysAiAgentRunsColumns[0]},
+		Indexes: []*schema.Index{
+			{
+				Name:    "idx_sys_ai_agent_runs_tenant_app",
+				Unique:  false,
+				Columns: []*schema.Column{SysAiAgentRunsColumns[7], SysAiAgentRunsColumns[8]},
+			},
+		},
+	}
 	// SysAiChunksColumns holds the columns for the "sys_ai_chunks" table.
 	SysAiChunksColumns = []*schema.Column{
 		{Name: "id", Type: field.TypeUint32, Increment: true, Comment: "id"},
@@ -5344,6 +5408,8 @@ var (
 	// Tables holds all the tables in the schema.
 	Tables = []*schema.Table{
 		SysAccessKeysTable,
+		SysAiAgentAppsTable,
+		SysAiAgentRunsTable,
 		SysAiChunksTable,
 		SysAiConversationsTable,
 		SysAiDocsTable,
@@ -5448,6 +5514,16 @@ var (
 func init() {
 	SysAccessKeysTable.Annotation = &entsql.Annotation{
 		Table:     "sys_access_keys",
+		Charset:   "utf8mb4",
+		Collation: "utf8mb4_bin",
+	}
+	SysAiAgentAppsTable.Annotation = &entsql.Annotation{
+		Table:     "sys_ai_agent_apps",
+		Charset:   "utf8mb4",
+		Collation: "utf8mb4_bin",
+	}
+	SysAiAgentRunsTable.Annotation = &entsql.Annotation{
+		Table:     "sys_ai_agent_runs",
 		Charset:   "utf8mb4",
 		Collation: "utf8mb4_bin",
 	}

@@ -43,14 +43,14 @@ type DictEntryServiceHTTPServer interface {
 
 func RegisterDictEntryServiceHTTPServer(s *http.Server, srv DictEntryServiceHTTPServer) {
 	r := s.Route("/")
-	r.GET("/admin/v1/dict/entries", _DictEntryService_List14_HTTP_Handler(srv))
-	r.POST("/admin/v1/dict/entries", _DictEntryService_Create9_HTTP_Handler(srv))
-	r.PUT("/admin/v1/dict/entries/{id}", _DictEntryService_Update10_HTTP_Handler(srv))
-	r.DELETE("/admin/v1/dict/entries", _DictEntryService_Delete11_HTTP_Handler(srv))
+	r.GET("/admin/v1/dict/entries", _DictEntryService_List15_HTTP_Handler(srv))
+	r.POST("/admin/v1/dict/entries", _DictEntryService_Create10_HTTP_Handler(srv))
+	r.PUT("/admin/v1/dict/entries/{id}", _DictEntryService_Update11_HTTP_Handler(srv))
+	r.DELETE("/admin/v1/dict/entries", _DictEntryService_Delete12_HTTP_Handler(srv))
 	r.GET("/admin/v1/dict/entries/by-type-code", _DictEntryService_ListByTypeCode0_HTTP_Handler(srv))
 }
 
-func _DictEntryService_List14_HTTP_Handler(srv DictEntryServiceHTTPServer) func(ctx http.Context) error {
+func _DictEntryService_List15_HTTP_Handler(srv DictEntryServiceHTTPServer) func(ctx http.Context) error {
 	return func(ctx http.Context) error {
 		var in v1.PagingRequest
 		if err := ctx.BindQuery(&in); err != nil {
@@ -69,7 +69,7 @@ func _DictEntryService_List14_HTTP_Handler(srv DictEntryServiceHTTPServer) func(
 	}
 }
 
-func _DictEntryService_Create9_HTTP_Handler(srv DictEntryServiceHTTPServer) func(ctx http.Context) error {
+func _DictEntryService_Create10_HTTP_Handler(srv DictEntryServiceHTTPServer) func(ctx http.Context) error {
 	return func(ctx http.Context) error {
 		var in v11.CreateDictEntryRequest
 		if err := ctx.Bind(&in); err != nil {
@@ -91,7 +91,7 @@ func _DictEntryService_Create9_HTTP_Handler(srv DictEntryServiceHTTPServer) func
 	}
 }
 
-func _DictEntryService_Update10_HTTP_Handler(srv DictEntryServiceHTTPServer) func(ctx http.Context) error {
+func _DictEntryService_Update11_HTTP_Handler(srv DictEntryServiceHTTPServer) func(ctx http.Context) error {
 	return func(ctx http.Context) error {
 		var in v11.UpdateDictEntryRequest
 		if err := ctx.Bind(&in); err != nil {
@@ -116,7 +116,7 @@ func _DictEntryService_Update10_HTTP_Handler(srv DictEntryServiceHTTPServer) fun
 	}
 }
 
-func _DictEntryService_Delete11_HTTP_Handler(srv DictEntryServiceHTTPServer) func(ctx http.Context) error {
+func _DictEntryService_Delete12_HTTP_Handler(srv DictEntryServiceHTTPServer) func(ctx http.Context) error {
 	return func(ctx http.Context) error {
 		var in v11.DeleteDictEntryRequest
 		if err := ctx.BindQuery(&in); err != nil {
