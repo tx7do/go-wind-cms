@@ -59,6 +59,9 @@ type aiToolLoop struct {
 	onDelta    func(delta string)                   // 最终答案的文本增量回调（SSE 推送）
 	onToolCall func(name, arguments, result string) // 每次工具执行完成后的可见化回调（SSE 推送）
 	maxRounds  int
+	// temperature 采样温度；nil = 不携带（走模型默认）。chat 链路不设，
+	// agent LLM 节点按节点配置携带。
+	temperature *float32
 }
 
 // run 执行循环，返回最终答案全文与跨轮累计用量。
@@ -78,6 +81,9 @@ func (r *aiToolLoop) run(ctx context.Context, messages []openai.ChatCompletionMe
 		// 最后一轮不带 tools：强制模型给文本答案，不允许无限工具循环。
 		if !lastRound {
 			req.Tools = r.tools
+		}
+		if r.temperature != nil {
+			req.Temperature = *r.temperature
 		}
 
 		stream, err := r.client.CreateChatCompletionStream(ctx, req)

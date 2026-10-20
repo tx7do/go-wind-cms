@@ -327,7 +327,8 @@ func initApp(ctx *bootstrap.Context) (*kratos.App, func(), error) {
 		return nil, nil, err
 	}
 
-	sseServer := server.NewSseServer(ctx, internalMessageService, aiChatService)
+	aiAgentService.StartAgentRunSubscriber(redisClient, authenticationServiceClient)
+	sseServer := server.NewSseServer(ctx, internalMessageService, aiChatService, aiAgentService)
 
 	// 协同编辑 ws（COLLAB_ADDR，默认 :6602；off 停用）。
 	// off 时 NewCollab 返回 nil CollabServer——nil 不能进 servers：

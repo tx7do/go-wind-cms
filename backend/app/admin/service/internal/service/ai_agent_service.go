@@ -4,6 +4,7 @@ import (
 	"context"
 
 	"github.com/go-kratos/kratos/v2/log"
+	sse "github.com/tx7do/kratos-transport/transport/sse"
 	"github.com/tx7do/kratos-bootstrap/bootstrap"
 	"google.golang.org/protobuf/types/known/emptypb"
 
@@ -15,11 +16,25 @@ import (
 
 // AiAgentService AI Agent 编排管理（BFF 薄代理：应用 CRUD 与运行台账都在 core；
 // 试运行 Run 由 core 的图执行引擎切片接入）。
+// AiAgentRunPublisher SSE 发布者接口（sse_server 装配期注入；nil = 无流式观感）。
+type AiAgentRunPublisher interface {
+	Publish(ctx context.Context, streamId sse.StreamID, event *sse.Event)
+}
+
 type AiAgentService struct {
 	adminV1.AiAgentServiceHTTPServer
 
 	aiAgentServiceClient aiV1.AiAgentServiceClient
 	log                  *log.Helper
+
+	agentRunPublisher AiAgentRunPublisher
+}
+
+// RegisterAiAgentRunPublisher SSE 启动时注入真身（与 chat/站内信同模式）。
+func (s *AiAgentService) RegisterAiAgentRunPublisher(p AiAgentRunPublisher) {
+	if p != nil {
+		s.agentRunPublisher = p
+	}
 }
 
 func NewAiAgentService(ctx *bootstrap.Context, aiAgentServiceClient aiV1.AiAgentServiceClient) *AiAgentService {

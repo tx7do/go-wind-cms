@@ -222,7 +222,7 @@ func initApp(ctx *bootstrap.Context) (*kratos.App, func(), error) {
 	configService := service.NewConfigService(ctx, configRepo)
 	aiAgentAppRepo := data.NewAiAgentAppRepo(ctx, entClient)
 	aiAgentRunRepo := data.NewAiAgentRunRepo(ctx, entClient)
-	aiAgentService := service.NewAiAgentService(ctx, aiAgentAppRepo, aiAgentRunRepo)
+	aiAgentService := service.NewAiAgentService(ctx, aiAgentAppRepo, aiAgentRunRepo, aiProviderRepo, aiKnowledgeRepo, aiUsageLogRepo, redisClient)
 
 	// ═══════════════════════ 三、服务层(internal/service) ═══════════════════════
 
