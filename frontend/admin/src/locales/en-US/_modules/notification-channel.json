@@ -84,6 +84,7 @@
   "requiredSmsAccessKeyId": "Access Key ID is required",
   "smsAccessSecret": "Access Secret",
   "smsSecretPlaceholder": "Provider access secret",
+  "secretKeepHint": "Leave blank to keep the stored secret",
   "requiredSmsAccessSecret": "Access secret is required",
   "smsSignName": "Sign Name",
   "smsTemplateCode": "Code Template",

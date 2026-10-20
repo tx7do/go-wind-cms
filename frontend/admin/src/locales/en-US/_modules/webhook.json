@@ -2,6 +2,7 @@
   "title": "Webhooks",
   "create": "Create Webhook",
   "edit": "Edit Webhook",
+  "delete": "Delete",
   "url": "Callback URL",
   "urlPlaceholder": "https://example.com/hooks/content",
   "secret": "Signing secret",

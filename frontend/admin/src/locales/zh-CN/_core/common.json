@@ -2,6 +2,7 @@
   "button": {
     "back": "返回",
     "ok": "确定",
+    "confirm": "确定",
     "cancel": "取消",
     "edit": "编辑",
     "delete": "删除",
@@ -277,6 +278,9 @@
     "title": "导出",
     "csv": "CSV (逗号分隔)",
     "xlsx": "Excel 工作簿",
+    "serverXlsx": "Excel 工作簿（服务端导出）",
+    "serverSuccess": "服务端导出已开始",
+    "serverFailed": "服务端导出失败",
     "success": "已导出 {count} 行",
     "failed": "导出失败"
   },

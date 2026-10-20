@@ -1,6 +1,7 @@
 {
   "create": "New Template",
   "edit": "Edit Template",
+  "delete": "Delete",
   "name": "Name",
   "code": "Code",
   "codeHint": "Referenced by senders via templateCode; letters, digits, underscore and hyphen only. Immutable after creation (changing it would dangle all references).",

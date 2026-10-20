@@ -2,6 +2,7 @@
   "button": {
     "back": "Back",
     "ok": "OK",
+    "confirm": "OK",
     "cancel": "Cancel",
     "edit": "Edit",
     "delete": "Delete",
@@ -277,6 +278,9 @@
     "title": "Export",
     "csv": "CSV (Comma Separated)",
     "xlsx": "Excel Workbook",
+    "serverXlsx": "Excel Workbook (server-side)",
+    "serverSuccess": "Server-side export started",
+    "serverFailed": "Server-side export failed",
     "success": "Exported {count} rows",
     "failed": "Export failed"
   },

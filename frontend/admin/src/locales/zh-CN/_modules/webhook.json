@@ -2,6 +2,7 @@
   "title": "Webhook 订阅",
   "create": "新建订阅",
   "edit": "编辑订阅",
+  "delete": "删除",
   "url": "回调地址",
   "urlPlaceholder": "https://example.com/hooks/content",
   "secret": "签名密钥",

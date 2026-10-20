@@ -84,6 +84,7 @@
   "requiredSmsAccessKeyId": "请输入访问密钥 ID",
   "smsAccessSecret": "访问密钥",
   "smsSecretPlaceholder": "服务商访问密钥",
+  "secretKeepHint": "留空 = 不修改已存密钥",
   "requiredSmsAccessSecret": "请输入访问密钥",
   "smsSignName": "短信签名",
   "smsTemplateCode": "验证码模板 Code",
