@@ -105,10 +105,11 @@ SELECT setval('sys_tasks_id_seq', (SELECT MAX(id) FROM sys_tasks));
 -- ----------------------------
 -- 插入 sys_login_policies 登录策略
 -- ----------------------------
+-- 演示策略行已撤：登录策略执行链上线后， demo 的"封禁 127.0.0.1"行会把
+-- 本机管理员当场锁死（黑名单命中即拒绝）。需要演示时在管理页手工添加。
 INSERT INTO public.sys_login_policies(id, target_id, type, method, value, reason, created_at)
 VALUES
-    (1, 1, 'BLACKLIST', 'IP', '127.0.0.1', '无理由', now()),
-    (2, 1, 'WHITELIST', 'MAC', '00:1B:44:11:3A:B7 ', '无理由', now())
+    (1, 1, 'BLACKLIST', 'IP', '203.0.113.77', '演示：封禁测试网段地址（TEST-NET-3，不会命中真实登录）', now())
 ;
 SELECT setval('sys_login_policies_id_seq', (SELECT MAX(id) FROM sys_login_policies));
 

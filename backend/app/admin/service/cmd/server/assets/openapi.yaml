@@ -1760,6 +1760,162 @@ paths:
                 "200":
                     description: OK
                     content: {}
+    /admin/v1/configs:
+        get:
+            tags:
+                - ConfigService
+            description: 查询系统参数列表
+            operationId: ConfigService_List
+            parameters:
+                - name: page
+                  in: query
+                  description: 当前页码（从1开始，默认1）
+                  schema:
+                    type: integer
+                    format: uint32
+                - name: pageSize
+                  in: query
+                  description: 每页条数（默认10，建议设置上限如100）
+                  schema:
+                    type: integer
+                    format: uint32
+                - name: offset
+                  in: query
+                  description: 跳过的记录数（从0开始，默认0）
+                  schema:
+                    type: string
+                - name: limit
+                  in: query
+                  description: 最多返回的记录数（默认10，建议设置上限如100）
+                  schema:
+                    type: integer
+                    format: uint32
+                - name: token
+                  in: query
+                  description: 上一页最后一条记录的游标（如ID/时间戳+ID，首次请求为空）
+                  schema:
+                    type: string
+                - name: noPaging
+                  in: query
+                  description: 是否不分页，如果为true，则page和pageSize参数无效。
+                  schema:
+                    type: boolean
+                - name: query
+                  in: query
+                  description: JSON字符串过滤条件，基础语法：{"field1":"val1", "field2___icontains":"val2"}，具体请参见：https://github.com/tx7do/go-crud/tree/main/pagination/filter/README.md
+                  schema:
+                    type: string
+                - name: filter
+                  in: query
+                  description: Google AIP规范字符串过滤条件
+                  schema:
+                    type: string
+                - name: filterExpr.type
+                  in: query
+                  description: 过滤表达式类型
+                  schema:
+                    enum:
+                        - EXPR_TYPE_UNSPECIFIED
+                        - AND
+                        - OR
+                    type: string
+                    format: enum
+                - name: orderBy
+                  in: query
+                  description: 排序条件
+                  schema:
+                    type: string
+                - name: fieldMask
+                  in: query
+                  description: 字段掩码，其作用为SELECT中的字段，其语法为使用逗号分隔字段名，例如：id,realName,userName。如果为空则选中所有字段，即SELECT *。
+                  schema:
+                    type: string
+                    format: field-mask
+            responses:
+                "200":
+                    description: OK
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/config.service.v1.ListConfigResponse'
+        post:
+            tags:
+                - ConfigService
+            description: 创建系统参数
+            operationId: ConfigService_Create
+            requestBody:
+                content:
+                    application/json:
+                        schema:
+                            $ref: '#/components/schemas/config.service.v1.CreateConfigRequest'
+                required: true
+            responses:
+                "200":
+                    description: OK
+                    content: {}
+    /admin/v1/configs/{id}:
+        get:
+            tags:
+                - ConfigService
+            description: 查询系统参数详情
+            operationId: ConfigService_Get
+            parameters:
+                - name: id
+                  in: path
+                  required: true
+                  schema:
+                    type: integer
+                    format: uint32
+                - name: viewMask
+                  in: query
+                  schema:
+                    type: string
+                    format: field-mask
+            responses:
+                "200":
+                    description: OK
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/config.service.v1.Config'
+        put:
+            tags:
+                - ConfigService
+            description: 更新系统参数
+            operationId: ConfigService_Update
+            parameters:
+                - name: id
+                  in: path
+                  required: true
+                  schema:
+                    type: integer
+                    format: uint32
+            requestBody:
+                content:
+                    application/json:
+                        schema:
+                            $ref: '#/components/schemas/config.service.v1.UpdateConfigRequest'
+                required: true
+            responses:
+                "200":
+                    description: OK
+                    content: {}
+        delete:
+            tags:
+                - ConfigService
+            description: 删除系统参数
+            operationId: ConfigService_Delete
+            parameters:
+                - name: id
+                  in: path
+                  required: true
+                  schema:
+                    type: integer
+                    format: uint32
+            responses:
+                "200":
+                    description: OK
+                    content: {}
     /admin/v1/content-components:
         get:
             tags:
@@ -12656,6 +12812,92 @@ components:
                     type: boolean
                     description: 如果设置为true的时候，资源不存在则会新增(插入)，并且在这种情况下`updateMask`字段将会被忽略。
             description: 请求 - 更新评论
+        config.service.v1.Config:
+            type: object
+            properties:
+                id:
+                    type: integer
+                    description: 参数ID
+                    format: uint32
+                name:
+                    type: string
+                    description: 参数名称（展示用）
+                key:
+                    type: string
+                    description: 参数键名，全局唯一，服务侧按键读取
+                value:
+                    type: string
+                    description: 参数键值
+                valueType:
+                    enum:
+                        - CONFIG_VALUE_TYPE_INVALID
+                        - STRING
+                        - BOOL
+                        - INT
+                    type: string
+                    description: 参数值类型（STRING/BOOL/INT），读取器按类型解析，类型不符回退默认值
+                    format: enum
+                isBuiltIn:
+                    type: boolean
+                    description: 是否系统内置参数，内置参数禁止删除
+                createdBy:
+                    type: integer
+                    description: 创建者ID
+                    format: uint32
+                updatedBy:
+                    type: integer
+                    description: 更新者ID
+                    format: uint32
+                deletedBy:
+                    type: integer
+                    description: 删除者用户ID
+                    format: uint32
+                createdAt:
+                    type: string
+                    description: 创建时间
+                    format: date-time
+                updatedAt:
+                    type: string
+                    description: 更新时间
+                    format: date-time
+                deletedAt:
+                    type: string
+                    description: 删除时间
+                    format: date-time
+            description: 系统参数（动态 KV 运行时配置；区别于字典管理的业务枚举，本表只承载平台全局系统开关）
+        config.service.v1.CreateConfigRequest:
+            type: object
+            properties:
+                data:
+                    $ref: '#/components/schemas/config.service.v1.Config'
+            description: 创建系统参数 - 请求
+        config.service.v1.ListConfigResponse:
+            type: object
+            properties:
+                items:
+                    type: array
+                    items:
+                        $ref: '#/components/schemas/config.service.v1.Config'
+                total:
+                    type: string
+            description: 查询系统参数列表 - 回应
+        config.service.v1.UpdateConfigRequest:
+            type: object
+            properties:
+                id:
+                    type: integer
+                    format: uint32
+                data:
+                    $ref: '#/components/schemas/config.service.v1.Config'
+                updateMask:
+                    example: id,realname,username
+                    type: string
+                    description: 要更新的字段列表
+                    format: field-mask
+                allowMissing:
+                    type: boolean
+                    description: 如果设置为true的时候，资源不存在则会新增(插入)，并且在这种情况下`updateMask`字段将会被忽略。
+            description: 更新系统参数 - 请求
         content.service.v1.AcquireEditLockRequest:
             type: object
             properties:
@@ -19734,6 +19976,8 @@ tags:
       description: 评论服务
     - name: ComponentDefinitionService
       description: 组件定义服务（内容建模 Components 的管理面）
+    - name: ConfigService
+      description: 系统参数管理服务
     - name: ContentModelService
       description: 内容模型管理服务
     - name: DataAccessAuditLogService

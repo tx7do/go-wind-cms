@@ -25,6 +25,7 @@ import (
 
 	aiV1 "go-wind-cms/api/gen/go/ai/service/v1"
 	accesskeyV1 "go-wind-cms/api/gen/go/access_key/service/v1"
+	configV1 "go-wind-cms/api/gen/go/config/service/v1"
 	auditV1 "go-wind-cms/api/gen/go/audit/service/v1"
 	authenticationV1 "go-wind-cms/api/gen/go/authentication/service/v1"
 	commentV1 "go-wind-cms/api/gen/go/comment/service/v1"
@@ -407,6 +408,15 @@ func NewTenantQuotaServiceClient(ctx *bootstrap.Context, r registry.Discovery) i
 	}
 
 	return identityV1.NewTenantQuotaServiceClient(cli)
+}
+
+func NewConfigServiceClient(ctx *bootstrap.Context, r registry.Discovery) configV1.ConfigServiceClient {
+	cli, err := rpc.CreateGrpcClient(ctx.Context(), r, serviceid.NewDiscoveryName(serviceid.CoreService), ctx.GetConfig())
+	if err != nil {
+		return nil
+	}
+
+	return configV1.NewConfigServiceClient(cli)
 }
 
 func NewServerMonitorServiceClient(ctx *bootstrap.Context, r registry.Discovery) serverMonitorV1.ServerMonitorServiceClient {

@@ -97,6 +97,7 @@ import (
 	"go-wind-cms/app/core/service/internal/data/ent/socialdistribution"
 	"go-wind-cms/app/core/service/internal/data/ent/socialinboxitem"
 	"go-wind-cms/app/core/service/internal/data/ent/socialstatshistory"
+	"go-wind-cms/app/core/service/internal/data/ent/sysconfig"
 	"go-wind-cms/app/core/service/internal/data/ent/tag"
 	"go-wind-cms/app/core/service/internal/data/ent/tagtranslation"
 	"go-wind-cms/app/core/service/internal/data/ent/task"
@@ -293,6 +294,8 @@ type Client struct {
 	SocialInboxItem *SocialInboxItemClient
 	// SocialStatsHistory is the client for interacting with the SocialStatsHistory builders.
 	SocialStatsHistory *SocialStatsHistoryClient
+	// SysConfig is the client for interacting with the SysConfig builders.
+	SysConfig *SysConfigClient
 	// Tag is the client for interacting with the Tag builders.
 	Tag *TagClient
 	// TagTranslation is the client for interacting with the TagTranslation builders.
@@ -414,6 +417,7 @@ func (c *Client) init() {
 	c.SocialDistribution = NewSocialDistributionClient(c.config)
 	c.SocialInboxItem = NewSocialInboxItemClient(c.config)
 	c.SocialStatsHistory = NewSocialStatsHistoryClient(c.config)
+	c.SysConfig = NewSysConfigClient(c.config)
 	c.Tag = NewTagClient(c.config)
 	c.TagTranslation = NewTagTranslationClient(c.config)
 	c.Task = NewTaskClient(c.config)
@@ -604,6 +608,7 @@ func (c *Client) Tx(ctx context.Context) (*Tx, error) {
 		SocialDistribution:         NewSocialDistributionClient(cfg),
 		SocialInboxItem:            NewSocialInboxItemClient(cfg),
 		SocialStatsHistory:         NewSocialStatsHistoryClient(cfg),
+		SysConfig:                  NewSysConfigClient(cfg),
 		Tag:                        NewTagClient(cfg),
 		TagTranslation:             NewTagTranslationClient(cfg),
 		Task:                       NewTaskClient(cfg),
@@ -721,6 +726,7 @@ func (c *Client) BeginTx(ctx context.Context, opts *sql.TxOptions) (*Tx, error) 
 		SocialDistribution:         NewSocialDistributionClient(cfg),
 		SocialInboxItem:            NewSocialInboxItemClient(cfg),
 		SocialStatsHistory:         NewSocialStatsHistoryClient(cfg),
+		SysConfig:                  NewSysConfigClient(cfg),
 		Tag:                        NewTagClient(cfg),
 		TagTranslation:             NewTagTranslationClient(cfg),
 		Task:                       NewTaskClient(cfg),
@@ -782,9 +788,10 @@ func (c *Client) Use(hooks ...Hook) {
 		c.PostTag, c.PostTranslation, c.PostVersion, c.PostWatch, c.Redirect, c.Role,
 		c.RoleFieldPermission, c.RoleMetadata, c.RolePermission, c.Section,
 		c.SectionTranslation, c.Site, c.SiteSetting, c.SocialAccount,
-		c.SocialDistribution, c.SocialInboxItem, c.SocialStatsHistory, c.Tag,
-		c.TagTranslation, c.Task, c.Tenant, c.TenantQuota, c.User, c.UserCredential,
-		c.UserOrgUnit, c.UserPosition, c.UserRole, c.Webhook, c.WebhookDelivery,
+		c.SocialDistribution, c.SocialInboxItem, c.SocialStatsHistory, c.SysConfig,
+		c.Tag, c.TagTranslation, c.Task, c.Tenant, c.TenantQuota, c.User,
+		c.UserCredential, c.UserOrgUnit, c.UserPosition, c.UserRole, c.Webhook,
+		c.WebhookDelivery,
 	} {
 		n.Use(hooks...)
 	}
@@ -814,9 +821,10 @@ func (c *Client) Intercept(interceptors ...Interceptor) {
 		c.PostTag, c.PostTranslation, c.PostVersion, c.PostWatch, c.Redirect, c.Role,
 		c.RoleFieldPermission, c.RoleMetadata, c.RolePermission, c.Section,
 		c.SectionTranslation, c.Site, c.SiteSetting, c.SocialAccount,
-		c.SocialDistribution, c.SocialInboxItem, c.SocialStatsHistory, c.Tag,
-		c.TagTranslation, c.Task, c.Tenant, c.TenantQuota, c.User, c.UserCredential,
-		c.UserOrgUnit, c.UserPosition, c.UserRole, c.Webhook, c.WebhookDelivery,
+		c.SocialDistribution, c.SocialInboxItem, c.SocialStatsHistory, c.SysConfig,
+		c.Tag, c.TagTranslation, c.Task, c.Tenant, c.TenantQuota, c.User,
+		c.UserCredential, c.UserOrgUnit, c.UserPosition, c.UserRole, c.Webhook,
+		c.WebhookDelivery,
 	} {
 		n.Intercept(interceptors...)
 	}
@@ -997,6 +1005,8 @@ func (c *Client) Mutate(ctx context.Context, m Mutation) (Value, error) {
 		return c.SocialInboxItem.mutate(ctx, m)
 	case *SocialStatsHistoryMutation:
 		return c.SocialStatsHistory.mutate(ctx, m)
+	case *SysConfigMutation:
+		return c.SysConfig.mutate(ctx, m)
 	case *TagMutation:
 		return c.Tag.mutate(ctx, m)
 	case *TagTranslationMutation:
@@ -12953,6 +12963,139 @@ func (c *SocialStatsHistoryClient) mutate(ctx context.Context, m *SocialStatsHis
 	}
 }
 
+// SysConfigClient is a client for the SysConfig schema.
+type SysConfigClient struct {
+	config
+}
+
+// NewSysConfigClient returns a client for the SysConfig from the given config.
+func NewSysConfigClient(c config) *SysConfigClient {
+	return &SysConfigClient{config: c}
+}
+
+// Use adds a list of mutation hooks to the hooks stack.
+// A call to `Use(f, g, h)` equals to `sysconfig.Hooks(f(g(h())))`.
+func (c *SysConfigClient) Use(hooks ...Hook) {
+	c.hooks.SysConfig = append(c.hooks.SysConfig, hooks...)
+}
+
+// Intercept adds a list of query interceptors to the interceptors stack.
+// A call to `Intercept(f, g, h)` equals to `sysconfig.Intercept(f(g(h())))`.
+func (c *SysConfigClient) Intercept(interceptors ...Interceptor) {
+	c.inters.SysConfig = append(c.inters.SysConfig, interceptors...)
+}
+
+// Create returns a builder for creating a SysConfig entity.
+func (c *SysConfigClient) Create() *SysConfigCreate {
+	mutation := newSysConfigMutation(c.config, OpCreate)
+	return &SysConfigCreate{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// CreateBulk returns a builder for creating a bulk of SysConfig entities.
+func (c *SysConfigClient) CreateBulk(builders ...*SysConfigCreate) *SysConfigCreateBulk {
+	return &SysConfigCreateBulk{config: c.config, builders: builders}
+}
+
+// MapCreateBulk creates a bulk creation builder from the given slice. For each item in the slice, the function creates
+// a builder and applies setFunc on it.
+func (c *SysConfigClient) MapCreateBulk(slice any, setFunc func(*SysConfigCreate, int)) *SysConfigCreateBulk {
+	rv := reflect.ValueOf(slice)
+	if rv.Kind() != reflect.Slice {
+		return &SysConfigCreateBulk{err: fmt.Errorf("calling to SysConfigClient.MapCreateBulk with wrong type %T, need slice", slice)}
+	}
+	builders := make([]*SysConfigCreate, rv.Len())
+	for i := 0; i < rv.Len(); i++ {
+		builders[i] = c.Create()
+		setFunc(builders[i], i)
+	}
+	return &SysConfigCreateBulk{config: c.config, builders: builders}
+}
+
+// Update returns an update builder for SysConfig.
+func (c *SysConfigClient) Update() *SysConfigUpdate {
+	mutation := newSysConfigMutation(c.config, OpUpdate)
+	return &SysConfigUpdate{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// UpdateOne returns an update builder for the given entity.
+func (c *SysConfigClient) UpdateOne(_m *SysConfig) *SysConfigUpdateOne {
+	mutation := newSysConfigMutation(c.config, OpUpdateOne, withSysConfig(_m))
+	return &SysConfigUpdateOne{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// UpdateOneID returns an update builder for the given id.
+func (c *SysConfigClient) UpdateOneID(id uint32) *SysConfigUpdateOne {
+	mutation := newSysConfigMutation(c.config, OpUpdateOne, withSysConfigID(id))
+	return &SysConfigUpdateOne{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// Delete returns a delete builder for SysConfig.
+func (c *SysConfigClient) Delete() *SysConfigDelete {
+	mutation := newSysConfigMutation(c.config, OpDelete)
+	return &SysConfigDelete{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// DeleteOne returns a builder for deleting the given entity.
+func (c *SysConfigClient) DeleteOne(_m *SysConfig) *SysConfigDeleteOne {
+	return c.DeleteOneID(_m.ID)
+}
+
+// DeleteOneID returns a builder for deleting the given entity by its id.
+func (c *SysConfigClient) DeleteOneID(id uint32) *SysConfigDeleteOne {
+	builder := c.Delete().Where(sysconfig.ID(id))
+	builder.mutation.id = &id
+	builder.mutation.op = OpDeleteOne
+	return &SysConfigDeleteOne{builder}
+}
+
+// Query returns a query builder for SysConfig.
+func (c *SysConfigClient) Query() *SysConfigQuery {
+	return &SysConfigQuery{
+		config: c.config,
+		ctx:    &QueryContext{Type: TypeSysConfig},
+		inters: c.Interceptors(),
+	}
+}
+
+// Get returns a SysConfig entity by its id.
+func (c *SysConfigClient) Get(ctx context.Context, id uint32) (*SysConfig, error) {
+	return c.Query().Where(sysconfig.ID(id)).Only(ctx)
+}
+
+// GetX is like Get, but panics if an error occurs.
+func (c *SysConfigClient) GetX(ctx context.Context, id uint32) *SysConfig {
+	obj, err := c.Get(ctx, id)
+	if err != nil {
+		panic(err)
+	}
+	return obj
+}
+
+// Hooks returns the client hooks.
+func (c *SysConfigClient) Hooks() []Hook {
+	return c.hooks.SysConfig
+}
+
+// Interceptors returns the client interceptors.
+func (c *SysConfigClient) Interceptors() []Interceptor {
+	return c.inters.SysConfig
+}
+
+func (c *SysConfigClient) mutate(ctx context.Context, m *SysConfigMutation) (Value, error) {
+	switch m.Op() {
+	case OpCreate:
+		return (&SysConfigCreate{config: c.config, hooks: c.Hooks(), mutation: m}).Save(ctx)
+	case OpUpdate:
+		return (&SysConfigUpdate{config: c.config, hooks: c.Hooks(), mutation: m}).Save(ctx)
+	case OpUpdateOne:
+		return (&SysConfigUpdateOne{config: c.config, hooks: c.Hooks(), mutation: m}).Save(ctx)
+	case OpDelete, OpDeleteOne:
+		return (&SysConfigDelete{config: c.config, hooks: c.Hooks(), mutation: m}).Exec(ctx)
+	default:
+		return nil, fmt.Errorf("ent: unknown SysConfig mutation op: %q", m.Op())
+	}
+}
+
 // TagClient is a client for the Tag schema.
 type TagClient struct {
 	config
@@ -14579,9 +14722,9 @@ type (
 		Position, Post, PostCategory, PostLike, PostTag, PostTranslation, PostVersion,
 		PostWatch, Redirect, Role, RoleFieldPermission, RoleMetadata, RolePermission,
 		Section, SectionTranslation, Site, SiteSetting, SocialAccount,
-		SocialDistribution, SocialInboxItem, SocialStatsHistory, Tag, TagTranslation,
-		Task, Tenant, TenantQuota, User, UserCredential, UserOrgUnit, UserPosition,
-		UserRole, Webhook, WebhookDelivery []ent.Hook
+		SocialDistribution, SocialInboxItem, SocialStatsHistory, SysConfig, Tag,
+		TagTranslation, Task, Tenant, TenantQuota, User, UserCredential, UserOrgUnit,
+		UserPosition, UserRole, Webhook, WebhookDelivery []ent.Hook
 	}
 	inters struct {
 		AccessKey, AiChunk, AiConversation, AiDoc, AiKnowledgeBase, AiMessage,
@@ -14601,8 +14744,8 @@ type (
 		Position, Post, PostCategory, PostLike, PostTag, PostTranslation, PostVersion,
 		PostWatch, Redirect, Role, RoleFieldPermission, RoleMetadata, RolePermission,
 		Section, SectionTranslation, Site, SiteSetting, SocialAccount,
-		SocialDistribution, SocialInboxItem, SocialStatsHistory, Tag, TagTranslation,
-		Task, Tenant, TenantQuota, User, UserCredential, UserOrgUnit, UserPosition,
-		UserRole, Webhook, WebhookDelivery []ent.Interceptor
+		SocialDistribution, SocialInboxItem, SocialStatsHistory, SysConfig, Tag,
+		TagTranslation, Task, Tenant, TenantQuota, User, UserCredential, UserOrgUnit,
+		UserPosition, UserRole, Webhook, WebhookDelivery []ent.Interceptor
 	}
 )

@@ -184,6 +184,8 @@ type Tx struct {
 	SocialInboxItem *SocialInboxItemClient
 	// SocialStatsHistory is the client for interacting with the SocialStatsHistory builders.
 	SocialStatsHistory *SocialStatsHistoryClient
+	// SysConfig is the client for interacting with the SysConfig builders.
+	SysConfig *SysConfigClient
 	// Tag is the client for interacting with the Tag builders.
 	Tag *TagClient
 	// TagTranslation is the client for interacting with the TagTranslation builders.
@@ -425,6 +427,7 @@ func (tx *Tx) init() {
 	tx.SocialDistribution = NewSocialDistributionClient(tx.config)
 	tx.SocialInboxItem = NewSocialInboxItemClient(tx.config)
 	tx.SocialStatsHistory = NewSocialStatsHistoryClient(tx.config)
+	tx.SysConfig = NewSysConfigClient(tx.config)
 	tx.Tag = NewTagClient(tx.config)
 	tx.TagTranslation = NewTagTranslationClient(tx.config)
 	tx.Task = NewTaskClient(tx.config)

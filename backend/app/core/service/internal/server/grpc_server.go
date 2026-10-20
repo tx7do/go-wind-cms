@@ -11,6 +11,7 @@ import (
 	"go-wind-cms/app/core/service/internal/service"
 
 	accesskeyV1 "go-wind-cms/api/gen/go/access_key/service/v1"
+	configV1 "go-wind-cms/api/gen/go/config/service/v1"
 	aiV1 "go-wind-cms/api/gen/go/ai/service/v1"
 	auditV1 "go-wind-cms/api/gen/go/audit/service/v1"
 	authenticationV1 "go-wind-cms/api/gen/go/authentication/service/v1"
@@ -59,6 +60,7 @@ func NewGrpcServer(
 	onlineSessionService *service.OnlineSessionService,
 	accessKeyService *service.AccessKeyService,
 	tenantQuotaService *service.TenantQuotaService,
+	configService *service.ConfigService,
 	serverMonitorService *service.ServerMonitorService,
 	redisCacheMonitorService *service.RedisCacheMonitorService,
 
@@ -152,6 +154,7 @@ func NewGrpcServer(
 	onlineSessionV1.RegisterOnlineSessionServiceServer(srv, onlineSessionService)
 	accesskeyV1.RegisterAccessKeyServiceServer(srv, accessKeyService)
 	identityV1.RegisterTenantQuotaServiceServer(srv, tenantQuotaService)
+	configV1.RegisterConfigServiceServer(srv, configService)
 	serverMonitorV1.RegisterServerMonitorServiceServer(srv, serverMonitorService)
 	redisCacheV1.RegisterRedisCacheMonitorServiceServer(srv, redisCacheMonitorService)
 

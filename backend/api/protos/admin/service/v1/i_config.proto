@@ -1,0 +1,50 @@
+syntax = "proto3";
+
+package admin.service.v1;
+
+import "google/api/annotations.proto";
+import "google/protobuf/empty.proto";
+
+import "pagination/v1/pagination.proto";
+import "config/service/v1/config.proto";
+
+
+// 系统参数管理服务
+service ConfigService {
+  // 查询系统参数列表
+  rpc List (pagination.PagingRequest) returns (config.service.v1.ListConfigResponse) {
+    option (google.api.http) = {
+      get: "/admin/v1/configs"
+    };
+  }
+
+  // 查询系统参数详情
+  rpc Get (config.service.v1.GetConfigRequest) returns (config.service.v1.Config) {
+    option (google.api.http) = {
+      get: "/admin/v1/configs/{id}"
+    };
+  }
+
+  // 创建系统参数
+  rpc Create (config.service.v1.CreateConfigRequest) returns (google.protobuf.Empty) {
+    option (google.api.http) = {
+      post: "/admin/v1/configs"
+      body: "*"
+    };
+  }
+
+  // 更新系统参数
+  rpc Update (config.service.v1.UpdateConfigRequest) returns (google.protobuf.Empty) {
+    option (google.api.http) = {
+      put: "/admin/v1/configs/{id}"
+      body: "*"
+    };
+  }
+
+  // 删除系统参数
+  rpc Delete (config.service.v1.DeleteConfigRequest) returns (google.protobuf.Empty) {
+    option (google.api.http) = {
+      delete: "/admin/v1/configs/{id}"
+    };
+  }
+}

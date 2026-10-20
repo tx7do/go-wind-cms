@@ -1,0 +1,147 @@
+syntax = "proto3";
+
+package config.service.v1;
+
+import "gnostic/openapi/v3/annotations.proto";
+
+import "google/protobuf/empty.proto";
+import "google/protobuf/timestamp.proto";
+import "google/protobuf/field_mask.proto";
+
+import "pagination/v1/pagination.proto";
+
+
+// 系统参数服务
+service ConfigService {
+  // 分页查询系统参数列表
+  rpc List (pagination.PagingRequest) returns (ListConfigResponse) {}
+
+  // 统计系统参数数量
+  rpc Count (pagination.PagingRequest) returns (CountConfigResponse) {}
+
+  // 查询系统参数详情
+  rpc Get (GetConfigRequest) returns (Config) {}
+
+  // 创建系统参数
+  rpc Create (CreateConfigRequest) returns (google.protobuf.Empty) {}
+
+  // 更新系统参数
+  rpc Update (UpdateConfigRequest) returns (google.protobuf.Empty) {}
+
+  // 删除系统参数
+  rpc Delete (DeleteConfigRequest) returns (google.protobuf.Empty) {}
+}
+
+// 系统参数（动态 KV 运行时配置；区别于字典管理的业务枚举，本表只承载平台全局系统开关）
+message Config {
+  // 参数值类型
+  enum ConfigValueType {
+    CONFIG_VALUE_TYPE_INVALID = 0; // 无效
+
+    STRING = 1; // 字符串
+    BOOL = 2; // 布尔
+    INT = 3; // 整数
+  }
+
+  optional uint32 id = 1 [
+    json_name = "id",
+    (gnostic.openapi.v3.property) = {
+      description: "参数ID"
+     }
+  ]; // 参数ID
+
+  optional string name = 2 [
+    json_name = "name",
+    (gnostic.openapi.v3.property) = {description: "参数名称（展示用）"}
+  ]; // 参数名称
+
+  optional string key = 3 [
+    json_name = "key",
+    (gnostic.openapi.v3.property) = {description: "参数键名，全局唯一，服务侧按键读取"}
+  ]; // 参数键名
+
+  optional string value = 4 [
+    json_name = "value",
+    (gnostic.openapi.v3.property) = {description: "参数键值"}
+  ]; // 参数键值
+
+  optional ConfigValueType value_type = 5 [
+    json_name = "valueType",
+    (gnostic.openapi.v3.property) = {description: "参数值类型（STRING/BOOL/INT），读取器按类型解析，类型不符回退默认值"}
+  ]; // 参数值类型
+
+  optional bool is_built_in = 6 [
+    json_name = "isBuiltIn",
+    (gnostic.openapi.v3.property) = {description: "是否系统内置参数，内置参数禁止删除"}
+  ]; // 是否系统内置参数
+
+  optional uint32 created_by = 100 [json_name = "createdBy", (gnostic.openapi.v3.property) = {description: "创建者ID"}]; // 创建者ID
+  optional uint32 updated_by = 101 [json_name = "updatedBy", (gnostic.openapi.v3.property) = {description: "更新者ID"}]; // 更新者ID
+  optional uint32 deleted_by = 102 [json_name = "deletedBy", (gnostic.openapi.v3.property) = {description: "删除者用户ID"}]; // 删除者用户ID
+
+  optional google.protobuf.Timestamp created_at = 200 [json_name = "createdAt", (gnostic.openapi.v3.property) = {description: "创建时间"}];// 创建时间
+  optional google.protobuf.Timestamp updated_at = 201 [json_name = "updatedAt", (gnostic.openapi.v3.property) = {description: "更新时间"}];// 更新时间
+  optional google.protobuf.Timestamp deleted_at = 202 [json_name = "deletedAt", (gnostic.openapi.v3.property) = {description: "删除时间"}];// 删除时间
+}
+
+// 查询系统参数列表 - 回应
+message ListConfigResponse {
+  repeated Config items = 1;
+  uint64 total = 2;
+}
+
+// 查询系统参数 - 请求
+message GetConfigRequest {
+  oneof query_by {
+    uint32 id = 1 [
+      (gnostic.openapi.v3.property) = {description: "ID", read_only: true},
+      json_name = "id"
+    ]; // ID
+  }
+
+  optional google.protobuf.FieldMask view_mask = 100 [
+    json_name = "viewMask",
+    (gnostic.openapi.v3.property) = {
+      description: "视图字段过滤器，用于控制返回的字段"
+    }
+  ]; // 视图字段过滤器，用于控制返回的字段
+}
+
+// 创建系统参数 - 请求
+message CreateConfigRequest {
+  Config data = 1;
+}
+
+// 更新系统参数 - 请求
+message UpdateConfigRequest {
+  uint32 id = 1;
+
+  Config data = 2;
+
+  google.protobuf.FieldMask update_mask = 3 [
+    (gnostic.openapi.v3.property) = {
+      description: "要更新的字段列表",
+      example: {yaml : "id,realname,username"}
+    },
+    json_name = "updateMask"
+  ]; // 要更新的字段列表
+
+  optional bool allow_missing = 4 [
+    (gnostic.openapi.v3.property) = {description: "如果设置为true的时候，资源不存在则会新增(插入)，并且在这种情况下`updateMask`字段将会被忽略。"},
+    json_name = "allowMissing"
+  ]; // 如果设置为true的时候，资源不存在则会新增(插入)，并且在这种情况下`updateMask`字段将会被忽略。
+}
+
+// 删除系统参数 - 请求
+message DeleteConfigRequest {
+  oneof query_by {
+    uint32 id = 1 [
+      (gnostic.openapi.v3.property) = {description: "ID", read_only: true},
+      json_name = "id"
+    ]; // ID
+  }
+}
+
+message CountConfigResponse {
+  uint64 count = 1;
+}

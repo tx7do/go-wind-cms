@@ -264,6 +264,9 @@ type SocialInboxItem func(*sql.Selector)
 // SocialStatsHistory is the predicate function for socialstatshistory builders.
 type SocialStatsHistory func(*sql.Selector)
 
+// SysConfig is the predicate function for sysconfig builders.
+type SysConfig func(*sql.Selector)
+
 // Tag is the predicate function for tag builders.
 type Tag func(*sql.Selector)
 

@@ -196,6 +196,7 @@ func NewRestServer(
 	onlineSessionService *service.OnlineSessionService,
 	accessKeyService *service.AccessKeyService,
 	tenantQuotaService *service.TenantQuotaService,
+	configService *service.ConfigService,
 	serverMonitorService *service.ServerMonitorService,
 	redisCacheMonitorService *service.RedisCacheMonitorService,
 	notificationChannelService *service.NotificationChannelService,
@@ -288,6 +289,7 @@ func NewRestServer(
 	adminV1.RegisterOnlineSessionServiceHTTPServer(srv, onlineSessionService)
 	adminV1.RegisterAccessKeyServiceHTTPServer(srv, accessKeyService)
 	adminV1.RegisterTenantQuotaServiceHTTPServer(srv, tenantQuotaService)
+	adminV1.RegisterConfigServiceHTTPServer(srv, configService)
 	adminV1.RegisterServerMonitorServiceHTTPServer(srv, serverMonitorService)
 	adminV1.RegisterRedisCacheMonitorServiceHTTPServer(srv, redisCacheMonitorService)
 	adminV1.RegisterNotificationChannelServiceHTTPServer(srv, notificationChannelService)

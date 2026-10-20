@@ -3936,6 +3936,254 @@ export type contentservicev1_SaveComponentFieldDefinitionsRequest = {
   fields: contentservicev1_FieldDefinition[] | undefined;
 };
 
+// 系统参数管理服务
+export interface ConfigService {
+  // 查询系统参数列表
+  List(
+    request: pagination_PagingRequest,
+  ): Promise<configservicev1_ListConfigResponse>;
+  // 查询系统参数详情
+  Get(
+    request: configservicev1_GetConfigRequest,
+  ): Promise<configservicev1_Config>;
+  // 创建系统参数
+  Create(
+    request: configservicev1_CreateConfigRequest,
+  ): Promise<wellKnownEmpty>;
+  // 更新系统参数
+  Update(
+    request: configservicev1_UpdateConfigRequest,
+  ): Promise<wellKnownEmpty>;
+  // 删除系统参数
+  Delete(
+    request: configservicev1_DeleteConfigRequest,
+  ): Promise<wellKnownEmpty>;
+}
+
+export function createConfigServiceClient(
+  transport: ClientTransport,
+): ConfigService {
+  return {
+    List(request) {
+      const path = `admin/v1/configs`;
+      const body = null;
+      const queryParams: string[] = [];
+      if (request.page) {
+        queryParams.push(
+          `page=${encodeURIComponent(request.page.toString())}`,
+        );
+      }
+      if (request.pageSize) {
+        queryParams.push(
+          `pageSize=${encodeURIComponent(request.pageSize.toString())}`,
+        );
+      }
+      if (request.offset) {
+        queryParams.push(
+          `offset=${encodeURIComponent(request.offset.toString())}`,
+        );
+      }
+      if (request.limit) {
+        queryParams.push(
+          `limit=${encodeURIComponent(request.limit.toString())}`,
+        );
+      }
+      if (request.token) {
+        queryParams.push(
+          `token=${encodeURIComponent(request.token.toString())}`,
+        );
+      }
+      if (request.noPaging) {
+        queryParams.push(
+          `noPaging=${encodeURIComponent(request.noPaging.toString())}`,
+        );
+      }
+      if (request.query) {
+        queryParams.push(
+          `query=${encodeURIComponent(request.query.toString())}`,
+        );
+      }
+      if (request.filter) {
+        queryParams.push(
+          `filter=${encodeURIComponent(request.filter.toString())}`,
+        );
+      }
+      if (request.filterExpr?.type) {
+        queryParams.push(
+          `filterExpr.type=${encodeURIComponent(request.filterExpr.type.toString())}`,
+        );
+      }
+      if (request.filterExpr?.conditions?.field) {
+        queryParams.push(
+          `filterExpr.conditions.field=${encodeURIComponent(request.filterExpr.conditions.field.toString())}`,
+        );
+      }
+      if (request.filterExpr?.conditions?.op) {
+        queryParams.push(
+          `filterExpr.conditions.op=${encodeURIComponent(request.filterExpr.conditions.op.toString())}`,
+        );
+      }
+      if (request.filterExpr?.conditions?.value) {
+        queryParams.push(
+          `filterExpr.conditions.value=${encodeURIComponent(request.filterExpr.conditions.value.toString())}`,
+        );
+      }
+      if (request.filterExpr?.conditions?.jsonValue) {
+        queryParams.push(
+          `filterExpr.conditions.jsonValue=${encodeURIComponent(request.filterExpr.conditions.jsonValue.toString())}`,
+        );
+      }
+      if (request.filterExpr?.conditions?.values) {
+        request.filterExpr.conditions.values.forEach((x) => {
+          queryParams.push(
+            `filterExpr.conditions.values=${encodeURIComponent(x.toString())}`,
+          );
+        });
+      }
+      if (request.filterExpr?.conditions?.datePart) {
+        queryParams.push(
+          `filterExpr.conditions.datePart=${encodeURIComponent(request.filterExpr.conditions.datePart.toString())}`,
+        );
+      }
+      if (request.filterExpr?.conditions?.jsonPath) {
+        queryParams.push(
+          `filterExpr.conditions.jsonPath=${encodeURIComponent(request.filterExpr.conditions.jsonPath.toString())}`,
+        );
+      }
+      if (request.orderBy) {
+        queryParams.push(
+          `orderBy=${encodeURIComponent(request.orderBy.toString())}`,
+        );
+      }
+      if (request.sorting?.field) {
+        queryParams.push(
+          `sorting.field=${encodeURIComponent(request.sorting.field.toString())}`,
+        );
+      }
+      if (request.sorting?.direction) {
+        queryParams.push(
+          `sorting.direction=${encodeURIComponent(request.sorting.direction.toString())}`,
+        );
+      }
+      if (request.fieldMask) {
+        queryParams.push(
+          `fieldMask=${encodeURIComponent(request.fieldMask.toString())}`,
+        );
+      }
+      let uri = path;
+      if (queryParams.length > 0) {
+        uri += `?${queryParams.join('&')}`;
+      }
+      return transport.unary(uri, 'GET', body, {
+        service: 'ConfigService',
+        method: 'List',
+      }) as Promise<configservicev1_ListConfigResponse>;
+    },
+    Get(request) {
+      if (request.id === undefined || request.id === null) {
+        throw new Error('missing required field request.id');
+      }
+      const path = `admin/v1/configs/${request.id}`;
+      const body = null;
+      const queryParams: string[] = [];
+      if (request.viewMask) {
+        queryParams.push(
+          `viewMask=${encodeURIComponent(request.viewMask.toString())}`,
+        );
+      }
+      let uri = path;
+      if (queryParams.length > 0) {
+        uri += `?${queryParams.join('&')}`;
+      }
+      return transport.unary(uri, 'GET', body, {
+        service: 'ConfigService',
+        method: 'Get',
+      }) as Promise<configservicev1_Config>;
+    },
+    Create(request) {
+      const path = `admin/v1/configs`;
+      const body = JSON.stringify(request);
+      return transport.unary(path, 'POST', body, {
+        service: 'ConfigService',
+        method: 'Create',
+      }) as Promise<wellKnownEmpty>;
+    },
+    Update(request) {
+      if (request.id === undefined || request.id === null) {
+        throw new Error('missing required field request.id');
+      }
+      const path = `admin/v1/configs/${request.id}`;
+      const body = JSON.stringify(request);
+      return transport.unary(path, 'PUT', body, {
+        service: 'ConfigService',
+        method: 'Update',
+      }) as Promise<wellKnownEmpty>;
+    },
+    Delete(request) {
+      if (request.id === undefined || request.id === null) {
+        throw new Error('missing required field request.id');
+      }
+      const path = `admin/v1/configs/${request.id}`;
+      const body = null;
+      return transport.unary(path, 'DELETE', body, {
+        service: 'ConfigService',
+        method: 'Delete',
+      }) as Promise<wellKnownEmpty>;
+    },
+  };
+}
+// 查询系统参数列表 - 回应
+export type configservicev1_ListConfigResponse = {
+  items: configservicev1_Config[] | undefined;
+  total: number | undefined;
+};
+
+// 系统参数（动态 KV 运行时配置；区别于字典管理的业务枚举，本表只承载平台全局系统开关）
+export type configservicev1_Config = {
+  createdAt?: wellKnownTimestamp;
+  createdBy?: number;
+  deletedAt?: wellKnownTimestamp;
+  deletedBy?: number;
+  id?: number;
+  isBuiltIn?: boolean;
+  key?: string;
+  name?: string;
+  updatedAt?: wellKnownTimestamp;
+  updatedBy?: number;
+  value?: string;
+  valueType?: configservicev1_Config_ConfigValueType;
+};
+
+// 参数值类型
+export type configservicev1_Config_ConfigValueType =
+  | 'BOOL'
+  | 'CONFIG_VALUE_TYPE_INVALID'
+  | 'INT'
+  | 'STRING';
+// 查询系统参数 - 请求
+export type configservicev1_GetConfigRequest = {
+  id?: number;
+  viewMask?: wellKnownFieldMask;
+};
+
+// 创建系统参数 - 请求
+export type configservicev1_CreateConfigRequest = {
+  data: configservicev1_Config | undefined;
+};
+
+// 更新系统参数 - 请求
+export type configservicev1_UpdateConfigRequest = {
+  allowMissing?: boolean;
+  data: configservicev1_Config | undefined;
+  id: number | undefined;
+  updateMask: undefined | wellKnownFieldMask;
+};
+
+// 删除系统参数 - 请求
+export type configservicev1_DeleteConfigRequest = {
+  id?: number;
+};
+
 // 内容模型管理服务
 export interface ContentModelService {
   // 查询内容模型列表
@@ -17683,6 +17931,7 @@ export class ApiClient {
   private _categoryService?: CategoryService;
   private _commentService?: CommentService;
   private _componentDefinitionService?: ComponentDefinitionService;
+  private _configService?: ConfigService;
   private _contentModelService?: ContentModelService;
   private _dataAccessAuditLogService?: DataAccessAuditLogService;
   private _dictEntryService?: DictEntryService;
@@ -17805,6 +18054,10 @@ export class ApiClient {
 
   get componentDefinitionService(): ComponentDefinitionService {
     return this._componentDefinitionService ??= createComponentDefinitionServiceClient(this._transport);
+  }
+
+  get configService(): ConfigService {
+    return this._configService ??= createConfigServiceClient(this._transport);
   }
 
   get contentModelService(): ContentModelService {

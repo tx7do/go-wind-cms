@@ -9,6 +9,7 @@ import (
 	"github.com/redis/go-redis/v9"
 	"github.com/tx7do/go-crud/viewer"
 	"github.com/tx7do/go-utils/timeutil"
+	"github.com/tx7do/go-utils/geoip/geolite"
 	"github.com/tx7do/go-utils/trans"
 	"github.com/tx7do/kratos-bootstrap/bootstrap"
 	"google.golang.org/protobuf/types/known/emptypb"
@@ -50,6 +51,8 @@ type AuthenticationService struct {
 	redisClient *redis.Client
 
 	vcodeCache *data.VCodeCache
+	geoClient         *geolite.Client
+	loginPolicyRepo   *data.LoginPolicyRepo
 
 	// 构造期留 nil，装配期由 wiring 在通知域就绪后 RegisterNotifier 注入
 	//（忘记密码的发码邮件走这条缝）。
@@ -73,6 +76,8 @@ func NewAuthenticationService(
 	permissionRepo *data.PermissionRepo,
 	redisClient *redis.Client,
 	vcodeCache *data.VCodeCache,
+	loginPolicyRepo *data.LoginPolicyRepo,
+	geoClient *geolite.Client,
 ) *AuthenticationService {
 	l := log.NewHelper(log.With(ctx.GetLogger(), "module", "authn/service/core-service"))
 	return &AuthenticationService{
@@ -85,6 +90,8 @@ func NewAuthenticationService(
 		authenticator:      authenticator,
 		redisClient:        redisClient,
 		vcodeCache:         vcodeCache,
+		geoClient:          geoClient,
+		loginPolicyRepo:    loginPolicyRepo,
 	}
 }
 
@@ -113,6 +120,32 @@ func (s *AuthenticationService) Login(ctx context.Context, req *authenticationV1
 	default:
 		return nil, authenticationV1.ErrorInvalidGrantType("invalid grant type")
 	}
+}
+
+// checkLoginPolicies 拉取租户登录策略并按当前上下文匹配（两段式：
+// 密码校验前 userId=0 只查全局条目；凭证校验通过后带 userId 查全局+定向）。
+// 策略读取失败 fail-open（与上游一致：登录基础设施抖动不打死登录）。
+func (s *AuthenticationService) checkLoginPolicies(ctx context.Context, tenantID, userId uint32, clientIP, deviceId string) (bool, string) {
+	policies, err := s.loginPolicyRepo.ListForLogin(ctx, tenantID)
+	if err != nil {
+		s.log.Errorf("list login policies failed for tenant [%d]: %s", tenantID, err.Error())
+		return false, ""
+	}
+	return data.MatchLoginPolicy(policies, userId, clientIP, deviceId, s.resolveRegionFromIP(clientIP), time.Now())
+}
+
+// resolveRegionFromIP 把客户端 IP 解析为归属地串（取省，空=解析失败）。
+// REGION 策略值与此串精确相等（大小写不敏感）即命中。
+// geolite 客户端内嵌库，失败不阻断登录（REGION 维度按未判定处理）。
+func (s *AuthenticationService) resolveRegionFromIP(clientIP string) string {
+	if clientIP == "" || s.geoClient == nil {
+		return ""
+	}
+	res, err := s.geoClient.Query(clientIP)
+	if err != nil {
+		return ""
+	}
+	return res.Province
 }
 
 // containsPermission 检查权限代码列表中是否包含指定权限代码
@@ -237,6 +270,12 @@ func (s *AuthenticationService) doGrantTypePassword(ctx context.Context, req *au
 		tenantID = tenant.GetId()
 	}
 
+	// ===== 登录策略第一段：密码校验前，按租户全局条目判定（IP/TIME/REGION 等）=====
+	if blocked, reason := s.checkLoginPolicies(ctx, tenantID, 0, req.GetClientIp(), req.GetDeviceId()); blocked {
+		s.log.Warnf("login blocked by policy (global) for tenant [%d]: %s", tenantID, reason)
+		return nil, authenticationV1.ErrorForbidden("login blocked: %s", reason)
+	}
+
 	// ===== 凭证校验：在解析出的 tenant 范围内查单条凭证并校验密码 =====
 	// 支持用户名/邮箱两种身份:登录表单的"邮箱"tab 传 email 不传 username,
 	// 此时按 EMAIL 凭证查找(同一用户可同时持有用户名与邮箱两类凭证)。
@@ -285,6 +324,12 @@ func (s *AuthenticationService) doGrantTypePassword(ctx context.Context, req *au
 		s.log.Errorf("tenant mismatch for user [%d]: credential tenant [%d] vs user tenant [%d]",
 			matchedUserID, tenantID, user.GetTenantId())
 		return nil, authenticationV1.ErrorBadRequest("invalid tenant")
+	}
+
+	// ===== 登录策略第二段：凭证校验通过后，带 userId 查全局+定向条目 =====
+	if blocked, reason := s.checkLoginPolicies(ctx, tenantID, user.GetId(), req.GetClientIp(), req.GetDeviceId()); blocked {
+		s.log.Warnf("login blocked by policy for user [%d]: %s", user.GetId(), reason)
+		return nil, authenticationV1.ErrorForbidden("login blocked: %s", reason)
 	}
 
 	tokenPayload := &authenticationV1.UserTokenPayload{

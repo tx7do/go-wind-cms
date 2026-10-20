@@ -38,6 +38,9 @@ managed:
       path: conf/v1
       value: go-wind-cms/api/gen/go/conf/v1;confv1
     - file_option: go_package
+      path: config/service/v1
+      value: go-wind-cms/api/gen/go/config/service/v1;configpb
+    - file_option: go_package
       path: dict/service/v1
       value: go-wind-cms/api/gen/go/dict/service/v1;dictpb
     - file_option: go_package

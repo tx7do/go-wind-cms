@@ -138,6 +138,17 @@ export const systemRoutes: AppRouteObject[] = [
         },
       },
       {
+        name: 'configs',
+        path: 'configs', // 相对路径，最终为 /system/configs
+        element: createLazyRoute(() => import('@/pages/app/system/config')),
+        meta: {
+          title: 'routes:configs',
+          icon: 'lucide:settings-2', // Iconify 格式
+          order: 13,
+          // permission: 'sys:platform_admin', // 平台管理员权限（开发阶段暂时注释）
+        },
+      },
+      {
         name: 'tenant-quotas',
         path: 'tenant-quotas', // 相对路径，最终为 /system/tenant-quotas
         element: createLazyRoute(() => import('@/pages/app/system/tenant-quota')),

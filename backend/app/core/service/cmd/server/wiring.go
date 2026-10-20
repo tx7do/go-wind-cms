@@ -9,6 +9,8 @@ import (
 
 	pkgcrypto "go-wind-cms/pkg/crypto"
 
+	"github.com/tx7do/go-utils/geoip/geolite"
+
 	"go-wind-cms/app/core/service/internal/data"
 	"go-wind-cms/app/core/service/internal/data/channel"
 	"go-wind-cms/app/core/service/internal/data/client"
@@ -216,11 +218,14 @@ func initApp(ctx *bootstrap.Context) (*kratos.App, func(), error) {
 	accessKeyRateLimiter := data.NewAccessKeyRateLimiter(ctx, redisClient)
 	tenantQuotaRepo := data.NewTenantQuotaRepo(ctx, entClient)
 	tenantQuotaService := service.NewTenantQuotaService(ctx, tenantQuotaRepo)
+	configRepo := data.NewConfigRepo(ctx, entClient, redisClient)
+	configService := service.NewConfigService(ctx, configRepo)
 
 	// ═══════════════════════ 三、服务层(internal/service) ═══════════════════════
 
 	// 认证与登录策略
-	authenticationService := service.NewAuthenticationService(ctx, authenticator, userCredentialRepo, userRepo, roleRepo, tenantRepo, permissionRepo, redisClient, vcodeCache)
+	geoClient, _ := geolite.NewClient()
+	authenticationService := service.NewAuthenticationService(ctx, authenticator, userCredentialRepo, userRepo, roleRepo, tenantRepo, permissionRepo, redisClient, vcodeCache, loginPolicyRepo, geoClient)
 	loginPolicyService := service.NewLoginPolicyService(ctx, loginPolicyRepo)
 	userCredentialService := service.NewUserCredentialService(ctx, userCredentialRepo)
 
@@ -361,6 +366,7 @@ func initApp(ctx *bootstrap.Context) (*kratos.App, func(), error) {
 		onlineSessionService,
 		accessKeyService,
 		tenantQuotaService,
+		configService,
 		serverMonitorService,
 		redisCacheMonitorService,
 		fileService,

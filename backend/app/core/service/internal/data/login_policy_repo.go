@@ -2,6 +2,7 @@ package data
 
 import (
 	"context"
+	"fmt"
 	"time"
 
 	"entgo.io/ent/dialect/sql"
@@ -233,4 +234,91 @@ func (r *LoginPolicyRepo) Delete(ctx context.Context, req *authenticationV1.Dele
 	}
 
 	return nil
+}
+
+
+// EffectivePolicy 登录闸门用的策略条目（ent 实体的精简视图，避免服务层依赖生成代码）。
+type EffectivePolicy struct {
+	TargetID uint32
+	Value    string
+	Type     string
+	Method   string
+	Reason   string
+}
+
+// ListForLogin 拉取租户内全部登录策略，供登录闸门在内存中按
+// MatchLoginPolicy 匹配（策略条目量小，不分页全量）。
+// 登录流程的 ctx 带 privacy.Allow（Noop viewer），无租户过滤；
+// 租户范围由本查询的 TenantIDEQ 显式圈定。
+func (r *LoginPolicyRepo) ListForLogin(ctx context.Context, tenantID uint32) ([]EffectivePolicy, error) {
+	entities, err := r.entClient.Client().LoginPolicy.Query().
+		Where(loginpolicy.TenantIDEQ(tenantID)).
+		All(ctx)
+	if err != nil {
+		r.log.Errorf("list login policies for login failed: %s", err.Error())
+		return nil, fmt.Errorf("list login policies failed")
+	}
+	policies := make([]EffectivePolicy, 0, len(entities))
+	for _, e := range entities {
+		policies = append(policies, EffectivePolicy{
+			TargetID: derefLoginPolicyUint32(e.TargetID),
+			Value:    derefLoginPolicyStr(e.Value),
+			Type:     loginPolicyEnumName(derefLoginPolicyEnum(e.Type)),
+			Method:   loginPolicyMethodEnumName(derefLoginPolicyMethod(e.Method)),
+			Reason:   derefLoginPolicyStr(e.Reason),
+		})
+	}
+	return policies, nil
+}
+
+func derefLoginPolicyUint32(p *uint32) uint32 {
+	if p == nil {
+		return 0
+	}
+	return *p
+}
+
+func derefLoginPolicyStr(p *string) string {
+	if p == nil {
+		return ""
+	}
+	return *p
+}
+
+func derefLoginPolicyEnum(p *loginpolicy.Type) loginpolicy.Type {
+	if p == nil {
+		return loginpolicy.TypeBlacklist
+	}
+	return *p
+}
+
+func derefLoginPolicyMethod(p *loginpolicy.Method) loginpolicy.Method {
+	if p == nil {
+		return loginpolicy.MethodIp
+	}
+	return *p
+}
+
+// loginPolicyEnumName / loginPolicyMethodEnumName：ent 枚举（命名值）→
+// 存储字符串名（与策略匹配器的 "BLACKLIST"/"WHITELIST"/"IP"... 口径一致）。
+func loginPolicyEnumName(v loginpolicy.Type) string {
+	if v == loginpolicy.TypeWhitelist {
+		return "WHITELIST"
+	}
+	return "BLACKLIST"
+}
+
+func loginPolicyMethodEnumName(v loginpolicy.Method) string {
+	switch v {
+	case loginpolicy.MethodMac:
+		return "MAC"
+	case loginpolicy.MethodRegion:
+		return "REGION"
+	case loginpolicy.MethodTime:
+		return "TIME"
+	case loginpolicy.MethodDevice:
+		return "DEVICE"
+	default:
+		return "IP"
+	}
 }

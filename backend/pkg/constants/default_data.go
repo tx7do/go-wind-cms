@@ -1,6 +1,7 @@
 package constants
 
 import (
+	"strconv"
 	"time"
 
 	"github.com/tx7do/go-utils/timeutil"
@@ -11,6 +12,7 @@ import (
 	identityV1 "go-wind-cms/api/gen/go/identity/service/v1"
 	permissionV1 "go-wind-cms/api/gen/go/permission/service/v1"
 	notifyV1 "go-wind-cms/api/gen/go/notify/service/v1"
+	configV1 "go-wind-cms/api/gen/go/config/service/v1"
 )
 
 const (
@@ -848,5 +850,33 @@ var DefaultNotificationRules = []*notifyV1.NotificationRule{
 		IsAsync:   trans.Ptr(false),
 		IsEnabled: trans.Ptr(true),
 		Remark:    trans.Ptr("系统通知邮件（NotifyUser 附加触达）"),
+	},
+}
+
+// DefaultConfigs 系统初始化内置平台参数（等保口令策略阈值）。
+// 经 ConfigRepo.SeedDefaults 按键缺一补一播种（启动期，is_built_in=true，
+// 禁删；管理员改过的值不回置）。口令策略消费方为上游等保批能力，CMS 当前
+// 未移植——键先落位，消费方移植时经 ConfigRepo 读取器即插即用。
+var DefaultConfigs = []*configV1.Config{
+	{
+		Key:       trans.Ptr(ConfigKeyPasswordMinLen),
+		Name:      trans.Ptr("Password minimum length"),
+		Value:     trans.Ptr(strconv.Itoa(DefaultPasswordMinLen)),
+		ValueType: configV1.Config_INT.Enum(),
+		IsBuiltIn: trans.Ptr(true),
+	},
+	{
+		Key:       trans.Ptr(ConfigKeyPasswordMaxAgeDays),
+		Name:      trans.Ptr("Password maximum age in days (0 disables expiry)"),
+		Value:     trans.Ptr(strconv.Itoa(DefaultPasswordMaxAgeDays)),
+		ValueType: configV1.Config_INT.Enum(),
+		IsBuiltIn: trans.Ptr(true),
+	},
+	{
+		Key:       trans.Ptr(ConfigKeyPasswordHistoryCount),
+		Name:      trans.Ptr("Password history retention count (0 disables history check)"),
+		Value:     trans.Ptr(strconv.Itoa(DefaultPasswordHistoryCount)),
+		ValueType: configV1.Config_INT.Enum(),
+		IsBuiltIn: trans.Ptr(true),
 	},
 }
