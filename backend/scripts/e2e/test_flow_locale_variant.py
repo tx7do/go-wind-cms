@@ -31,18 +31,22 @@ def main():
     hdr = admin_login("admin", "admin")
     api = AdminApi(hdr)
 
-    print("== 1. admin locale 置 en-US ==")
-    r = api("/admin/v1/me", "PUT", {"id": 1, "data": {"locale": "en-US"}, "updateMask": "locale"})
-    check("locale 更新受理", "error" not in r and "code" not in r, str(r)[:100])
+    print("== 1. admin locale/email 置 en-US ==")
+    r = api("/admin/v1/me", "PUT", {"id": 1, "data": {"locale": "en-US", "email": "e2e-admin@e2e.test"}, "updateMask": "locale,email"})
+    check("locale/email 更新受理", "error" not in r and "code" not in r, str(r)[:100])
     me = api("/admin/v1/me")
     check("locale 已生效", me.get("locale") == "en-US", str(me.get("locale")))
+    check("email 已生效", me.get("email") == "e2e-admin@e2e.test", str(me.get("email")))
 
     print("== 2. 建 Flow cron 规则（每分钟，带 EN 变体）==")
+    ts = int(time.time())
+    main_title = f"主文案告警 {ts}"
+    en_title = f"System Alert EN {ts}"
     actions = [{
         "type": "notification",
-        "title": "主文案告警",
+        "title": main_title,
         "content": "主文案正文",
-        "title_en": "System Alert EN",
+        "title_en": en_title,
         "content_en": "System alert body EN",
         "target_user_ids": [1],
     }]
@@ -67,17 +71,29 @@ def main():
         time.sleep(5)
         out = subprocess.run(
             ["docker", "exec", "citus-server-standalone", "psql", "-U", "postgres", "-d", "gwc", "-t", "-A", "-c",
-             "SELECT count(*) FROM internal_message_recipients WHERE title = 'System Alert EN';"],
+             f"SELECT count(*) FROM internal_message_recipients WHERE title = '{en_title}';"],
             capture_output=True, text=True, timeout=30,
         ).stdout.strip()
         if out.isdigit() and int(out) > 0:
             delivered = True
             break
     check("收件行按 locale 选 EN 文案", delivered, "internal_message_recipients.title")
+    mid = subprocess.run(
+        ["docker", "exec", "citus-server-standalone", "psql", "-U", "postgres", "-d", "gwc", "-t", "-A", "-c",
+         f"SELECT COALESCE(MAX(message_id), 0) FROM internal_message_recipients WHERE title = '{en_title}';"],
+        capture_output=True, text=True, timeout=30,
+    ).stdout.strip()
+    delivered_msg_id = int(mid or 0)
+
+    # 邮箱解析：INTERNAL 投递台账 target 应记录收件人邮箱（不再是无意义的 uid 串）
+    dl = api("/admin/v1/notification-deliveries?page=1&pageSize=20&orderBy=%5B%22-id%22%5D")
+    dv = next((it for it in dl.get("items", []) if it.get("eventType") == "INTERNAL_MESSAGE"
+               and int(it.get("relatedId") or 0) == delivered_msg_id), None)
+    check("投递台账 target 为邮箱", dv is not None and "@e2e.test" in str(dv.get("target")), str(dv.get("target")) if dv else "no delivery")
 
     print("== 4. 站内信消息行仍为主文案 ==")
     msgs = api("/admin/v1/internal-message/messages?page=1&pageSize=10&orderBy=%5B%22-id%22%5D")
-    m = next((it for it in msgs.get("items", []) if it.get("title") == "主文案告警"), None)
+    m = next((it for it in msgs.get("items", []) if it.get("title") == main_title), None)
     check("消息行主文案（共享单行）", m is not None)
 
     print("== 5. 清理 ==")

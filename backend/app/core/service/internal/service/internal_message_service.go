@@ -280,7 +280,7 @@ func (s *InternalMessageService) SendSystemNotification(ctx context.Context, tit
 		// 单收件人失败不中断其余收件人（与群发口径一致）；台账 ID 一并带进日志便于回查
 		resp, dErr := s.notifier.SendDirect(ctx, &notifyV1.SendDirectNotificationRequest{
 			EventType:       notifyV1.EventType_INTERNAL_MESSAGE,
-			Target:          strconv.FormatUint(uint64(uid), 10),
+			Target:          s.notificationTargetFor(ctx, uid),
 			Title:           title,
 			Content:         content,
 			RecipientUserId: trans.Ptr(uid),
@@ -291,6 +291,26 @@ func (s *InternalMessageService) SendSystemNotification(ctx context.Context, tit
 		}
 	}
 	return msg.GetId(), nil
+}
+
+// notificationTargetFor 返回收件人的 SendDirect Target：
+// INTERNAL_MESSAGE 事件的 EMAIL 路由需要邮箱地址，而本链路持有的是收件人
+// uid——这里解析 sys_users.email；未配置邮箱回落 uid 字符串（既有行为，
+// EMAIL 渠道投递以 FAILED 呈现而非误发）。INTERNAL 渠道不消费 Target，
+// 只用 RecipientUserId 落收件行，Target 形态变化对其无影响。
+func (s *InternalMessageService) notificationTargetFor(ctx context.Context, uid uint32) string {
+	u, uErr := s.userRepo.Get(ctx, &identityV1.GetUserRequest{
+		QueryBy: &identityV1.GetUserRequest_Id{Id: uid},
+	})
+	if uErr != nil {
+		s.log.Warnf("DBG targetFor: read user [%d] failed: %v", uid, uErr)
+		return strconv.FormatUint(uint64(uid), 10)
+	}
+	s.log.Infof("DBG targetFor: user [%d] email=%q locale=%q", uid, u.GetEmail(), u.GetLocale())
+	if strings.TrimSpace(u.GetEmail()) != "" {
+		return u.GetEmail()
+	}
+	return strconv.FormatUint(uint64(uid), 10)
 }
 
 // AltNotificationText 事务性邮件的英文变体（模板 lite）：两者齐备时，
@@ -337,15 +357,21 @@ func (s *InternalMessageService) SendSystemNotificationLocalized(ctx context.Con
 	}
 	for _, uid := range targets {
 		sendTitle, sendContent := title, content
+		target := strconv.FormatUint(uint64(uid), 10)
 		if u, uErr := s.userRepo.Get(ctx, &identityV1.GetUserRequest{
 			QueryBy: &identityV1.GetUserRequest_Id{Id: uid},
-		}); uErr == nil && u != nil && strings.HasPrefix(strings.ToLower(u.GetLocale()), "en") {
-			sendTitle, sendContent = alt.Title, alt.Content
+		}); uErr == nil && u != nil {
+			if strings.HasPrefix(strings.ToLower(u.GetLocale()), "en") {
+				sendTitle, sendContent = alt.Title, alt.Content
+			}
+			if strings.TrimSpace(u.GetEmail()) != "" {
+				target = u.GetEmail()
+			}
 		}
 		// 单收件人失败不中断其余收件人（与群发口径一致）；台账 ID 一并带进日志便于回查
 		resp, dErr := s.notifier.SendDirect(ctx, &notifyV1.SendDirectNotificationRequest{
 			EventType:       notifyV1.EventType_INTERNAL_MESSAGE,
-			Target:          strconv.FormatUint(uint64(uid), 10),
+			Target:          target,
 			Title:           sendTitle,
 			Content:         sendContent,
 			RecipientUserId: trans.Ptr(uid),
