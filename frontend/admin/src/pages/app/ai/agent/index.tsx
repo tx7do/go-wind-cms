@@ -8,7 +8,7 @@ import {
   ProFormSwitch,
 } from '@ant-design/pro-components';
 import { Button, Popconfirm, Tag, App } from 'antd';
-import { EditOutlined, DeleteOutlined, PlusOutlined, HistoryOutlined } from '@ant-design/icons';
+import { EditOutlined, DeleteOutlined, PlusOutlined, ApartmentOutlined, HistoryOutlined } from '@ant-design/icons';
 import { useQueryClient } from '@tanstack/react-query';
 import { useTranslation } from 'react-i18next';
 import type { aiservicev1_AiAgentApp as AiAgentApp } from '@/api/generated/admin/service/v1';
@@ -23,6 +23,7 @@ import {
 import { useProTableScrollY } from '@/hooks/useProTableScrollY';
 import ContentContainer from '@/layouts/components/PageContainer/ContentContainer';
 import AgentRunsDrawer from './agent-runs-drawer';
+import AgentCanvas from './agent-canvas';
 
 // 从未知错误对象取本地化 message（request-client 拦截器已把 reason 译文写进 message）
 const errMessage = (error: unknown, fallback: string): string => {
@@ -31,20 +32,6 @@ const errMessage = (error: unknown, fallback: string): string => {
     if (typeof m === 'string' && m) return m;
   }
   return fallback;
-};
-
-/** 图 DSL 文本粗校验：非空时必须是合法 JSON 对象（结构强校验在保存时由后端执行引擎切片承担） */
-const validateGraphJson = (_rule: unknown, value: string | undefined): Promise<void> => {
-  if (!value || !value.trim()) return Promise.resolve();
-  try {
-    const parsed = JSON.parse(value);
-    if (typeof parsed !== 'object' || parsed === null || Array.isArray(parsed)) {
-      return Promise.reject(new Error('graph must be a JSON object'));
-    }
-    return Promise.resolve();
-  } catch {
-    return Promise.reject(new Error('invalid JSON'));
-  }
 };
 
 /**
@@ -63,6 +50,7 @@ const AiAgentAppManagement = () => {
   const [formOpen, setFormOpen] = useState(false);
   const [editing, setEditing] = useState<AiAgentApp | undefined>();
   const [runsApp, setRunsApp] = useState<AiAgentApp | undefined>();
+  const [canvasApp, setCanvasApp] = useState<AiAgentApp | undefined>();
 
   const refresh = () => {
     actionRef.current?.reload();
@@ -95,7 +83,7 @@ const AiAgentAppManagement = () => {
         await updateMutation.mutateAsync({
           id: editing.id,
           data: { id: editing.id, ...values } as AiAgentApp,
-          updateMask: 'name,description,enabled,graph',
+          updateMask: 'name,description,enabled',
         });
         message.success(t('updateSuccess'));
       }
@@ -137,9 +125,18 @@ const AiAgentAppManagement = () => {
     {
       title: t('actions'),
       valueType: 'option',
-      width: 220,
+      width: 360,
       fixed: 'right',
       render: (_, record) => [
+        <Button
+          key="canvas"
+          type="link"
+          size="small"
+          icon={<ApartmentOutlined />}
+          onClick={() => setCanvasApp(record)}
+        >
+          {t('openCanvas')}
+        </Button>,
         <Button
           key="edit"
           type="link"
@@ -229,15 +226,9 @@ const AiAgentAppManagement = () => {
         />
         <ProFormTextArea name="description" label={t('description')} fieldProps={{ rows: 2 }} />
         <ProFormSwitch name="enabled" label={t('enabled')} />
-        <ProFormTextArea
-          name="graph"
-          label="Graph DSL (JSON)"
-          fieldProps={{ rows: 10, style: { fontFamily: 'monospace', fontSize: 12 } }}
-          extra={t('graphJsonHint')}
-          rules={[{ validator: validateGraphJson }]}
-        />
       </DrawerForm>
 
+      <AgentCanvas open={!!canvasApp} app={canvasApp} onClose={() => { setCanvasApp(undefined); refresh(); }} />
       <AgentRunsDrawer open={!!runsApp} app={runsApp} onClose={() => setRunsApp(undefined)} />
     </ContentContainer>
   );

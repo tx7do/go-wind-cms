@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import {
   Drawer,
   Tag,
@@ -10,7 +10,7 @@ import type {
   aiservicev1_AiAgentApp as AiAgentApp,
 } from '@/api/generated/admin/service/v1';
 import { useListAiAgentRuns } from '@/api/hooks/ai-agent';
-import { PaginationQuery } from '@/core';
+import { PaginationQuery, globalSSEClient, SSE_EVENT } from '@/core';
 
 /**
  * Agent 应用运行台账抽屉：该应用的历次试运行记录
@@ -141,4 +141,36 @@ export default function AgentRunsDrawer({
       )}
     </Drawer>
   );
+}
+
+/**
+ * 订阅本用户流上的 ai_agent_run 帧（试运行实时观感）。
+ * 帧形：AgentRunEvent protojson（runId/appId/seq/phase/nodeId/summary/status）。
+ * 丢帧可容忍：Run 同步响应携带完整 trace，以响应为准。
+ */
+export function useAgentRunStream(
+  appId: number | undefined,
+  onFrame: (frame: {
+    runId: number;
+    appId: number;
+    seq: number;
+    phase: string;
+    nodeId?: string;
+    summary?: string;
+    status?: string;
+  }) => void,
+  enabled = true,
+) {
+  useEffect(() => {
+    if (!enabled || !appId) return;
+    const handler = (data: unknown) => {
+      const frame = data as { appId?: number };
+      if (!frame || typeof frame !== 'object' || frame.appId !== appId) return;
+      onFrame(frame as Parameters<typeof onFrame>[0]);
+    };
+    globalSSEClient.on(SSE_EVENT.AgentRun, handler);
+    return () => {
+      globalSSEClient.off(SSE_EVENT.AgentRun, handler);
+    };
+  }, [appId, enabled, onFrame]);
 }

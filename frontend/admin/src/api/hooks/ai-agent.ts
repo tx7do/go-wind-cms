@@ -7,6 +7,7 @@ import {
   type aiservicev1_GetAiAgentRunRequest,
   type aiservicev1_ListAiAgentAppsResponse,
   type aiservicev1_ListAiAgentRunsResponse,
+  type aiservicev1_RunAiAgentAppRequest,
   type aiservicev1_UpdateAiAgentAppRequest,
 } from '@/api/generated/admin/service/v1';
 import { PaginationQuery, queryClient } from '@/core';
@@ -72,6 +73,16 @@ export function useDeleteAiAgentApp(
   return useMutation({
     mutationFn: (req) => apiClient.aiAgentService.Delete(req),
     onSuccess: () => queryClientRef.invalidateQueries({ queryKey: [LIST_KEY] }),
+    ...options,
+  });
+}
+
+/** 试运行（切片②已接通：core 图执行引擎 + SSE 轨迹） */
+export function useRunAiAgentApp(
+  options?: UseMutationOptions<aiservicev1_AiAgentRun, Error, aiservicev1_RunAiAgentAppRequest>,
+) {
+  return useMutation({
+    mutationFn: (req) => apiClient.aiAgentService.Run(req),
     ...options,
   });
 }
