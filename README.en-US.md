@@ -106,6 +106,9 @@ FengXing (GoWind HCH) is an out-of-the-box enterprise-grade Golang full-stack He
 | Role Management | Role & role group management with fine-grained menu, API & data permissions |
 | Permission Management | Permission groups, menu nodes & permission points with button-level control |
 | Menu Management | Visual menu config with directory/page/button levels, dynamic rendering by permission |
+| OpenAPI Credentials | Tenant-level AK/SK machine credentials, token exchange issuing short-lived JWTs, IP+AK brute-force rate limiting |
+| Tenant Quotas | User/storage/API call/AI token quotas per tenant, hard gates + watermark alerts, self-service usage panel |
+| Login Policy | Four-dimension blacklist/whitelist (IP/time/device/region), global + targeted two-stage enforcement; expired-password login denial |
 | Department Management | Multi-level department tree management with user binding |
 
 ### Content & Site
@@ -147,6 +150,11 @@ FengXing (GoWind HCH) is an out-of-the-box enterprise-grade Golang full-stack He
 | Webhook Events | Content events (publish/update/delete) delivered asynchronously with HMAC signatures; delivery log & test ping |
 | Email Outbound | System notifications via async SMTP; visual SMTP configuration (credentials encrypted) + test send |
 | API Sync | OpenAPI reconciliation sync for the API table (safe on non-empty tables, stable IDs protect role bindings) |
+| Backup & Restore | One-click async backup of 24 core identity/permission/org tables (MinIO bucket + project prefix isolation), empty-database restore preserving IDs, bucket lifecycle cleanup |
+| System Params | Platform-global dynamic KV config, visual params page, in-process cache + Redis multi-instance invalidation broadcast; built-in password policy thresholds |
+| Online Sessions | Full online session list & force logout, filter by username/IP |
+| Server Monitor | Go runtime / DB connection pool / host info read-only dashboard (10s auto-refresh) |
+| Redis Cache Monitor | INFO section tree, DBSIZE & slow-log read-only panel |
 
 ### Social Distribution
 
@@ -169,6 +177,7 @@ FengXing (GoWind HCH) is an out-of-the-box enterprise-grade Golang full-stack He
 | Safety Insights | Dashboard rule-based 24h audit anomaly scan with LLM summary (platform admins) |
 | AI Content Generation | One-click generation for post title/summary/body, page titles, category/tag descriptions, comment replies, role descriptions |
 | Usage Stats | Full call metering (chat/generation/embedding), monthly summary & server-side export |
+| AI Agent Orchestration | Visual canvas orchestration of five node types (start/knowledge/LLM/condition/end), synchronous trial runs with per-node trace + SSE live trajectory, run ledger & usage metering |
 
 ## Project Structure
 
