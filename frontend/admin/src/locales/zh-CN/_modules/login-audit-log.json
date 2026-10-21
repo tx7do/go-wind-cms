@@ -46,7 +46,7 @@
   "sectionOther": "其他信息",
   "action": "操作",
   "detail": "详情",
-  "export": "导出",
+  "export": "导出全部",
   "exportCsv": "CSV (逗号分隔)",
   "exportXlsx": "Excel 工作簿"
 }

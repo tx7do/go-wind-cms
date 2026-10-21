@@ -1,8 +1,9 @@
 import { useRef, useState, useEffect } from 'react';
 import type { ProColumns, ActionType } from '@ant-design/pro-components';
 import TableExportButton from '@/components/common/TableExportButton';
+import TableActions from '@/components/common/TableActions';
 import ListTable from '@/components/common/ListTable';
-import { Button, Popconfirm, Tag, App, Empty } from 'antd';
+import { Button, Tag, App, Empty } from 'antd';
 import { EditOutlined, DeleteOutlined, PlusOutlined } from '@ant-design/icons';
 import { useQueryClient } from '@tanstack/react-query';
 import { useTranslation } from 'react-i18next';
@@ -14,6 +15,8 @@ import { fetchListDictEntries, useDeleteDictEntry } from '@/api/hooks/dict';
 import { enableBoolOptions, getEnableColor, getEnableLabel, getEntryLabel } from './constants';
 import DictEntryDrawer from './DictEntryDrawer';
 import { usePreferencesStore } from '@/core/preferences/store';
+import { searchOptionRender } from '@/components/common/searchSubmitter';
+import { ColumnSlidersIcon } from '@/components/common/columnSettingIcon';
 
 interface DictEntryListProps {
   typeId: number | null;
@@ -99,29 +102,35 @@ const DictEntryList: React.FC<DictEntryListProps> = ({ typeId }) => {
     {
       title: t('action'),
       valueType: 'option',
-      width: 90,
-      render: (_, record) => [
-        <a
-          key="edit"
-          onClick={() => {
-            setEditingEntry(record);
-            setDrawerMode('edit');
-            setDrawerOpen(true);
-          }}
-        >
-          <EditOutlined />
-        </a>,
-        <Popconfirm
-          key="delete"
-          title={t('deleteConfirmTitle')}
-          description={t('deleteConfirmDesc', { moduleName: t('moduleName') })}
-          onConfirm={() => record.id && deleteMutation.mutate({ ids: [record.id] })}
-          okText={t('common:button.ok')}
-          cancelText={t('common:button.cancel')}
-        >
-          <a style={{ color: 'var(--ant-color-error)' }}><DeleteOutlined /></a>
-        </Popconfirm>,
-      ],
+      width: 150,
+      render: (_, record) => (
+        <TableActions
+          record={record}
+          actions={[
+            {
+              key: 'edit',
+              label: t('common:button.edit'),
+              icon: <EditOutlined />,
+              onClick: () => {
+                setEditingEntry(record);
+                setDrawerMode('edit');
+                setDrawerOpen(true);
+              },
+            },
+            {
+              key: 'delete',
+              label: t('common:button.delete'),
+              icon: <DeleteOutlined />,
+              danger: true,
+              confirm: {
+                title: t('deleteConfirmTitle'),
+                description: t('deleteConfirmDesc', { moduleName: t('moduleName') }),
+              },
+              onClick: () => record.id && deleteMutation.mutate({ ids: [record.id] }),
+            },
+          ]}
+        />
+      ),
     },
   ];
 
@@ -160,7 +169,7 @@ const DictEntryList: React.FC<DictEntryListProps> = ({ typeId }) => {
             
 }}
             rowKey="id"
-            search={{
+            search={{ optionRender: searchOptionRender,
               labelWidth: 'auto',
               defaultCollapsed: false,
             }}
@@ -173,22 +182,22 @@ const DictEntryList: React.FC<DictEntryListProps> = ({ typeId }) => {
               <TableExportButton key="export" fetcher={fetchListDictEntries} columns={columns} filename="dict-entries" />,
               <Button
                 key="create"
-                type="primary"
+                color="primary"
+                variant="outlined"
                 icon={<PlusOutlined />}
-                size="small"
                 onClick={() => {
                   setEditingEntry(null);
                   setDrawerMode('create');
                   setDrawerOpen(true);
                 }}
               >
-                {t('create')}
+                {t('common:button.add')}
               </Button>,
             ]}
             options={{
               density: true,
               fullScreen: true,
-              setting: true,
+              setting: { settingIcon: <ColumnSlidersIcon /> },
               reload: true,
             }}
             size="small"

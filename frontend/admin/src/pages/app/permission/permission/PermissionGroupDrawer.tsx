@@ -11,6 +11,7 @@ import { useQueryClient } from '@tanstack/react-query';
 import { useTranslation } from 'react-i18next';
 
 import { PaginationQuery } from '@/core';
+import { useDrawerCloseGuard } from '@/components/common/use-drawer-close-guard';
 import {
   useCreatePermissionGroup,
   useUpdatePermissionGroup,
@@ -38,6 +39,9 @@ const PermissionGroupDrawer: React.FC<PermissionGroupDrawerProps> = ({
 }) => {
   const { t } = useTranslation('permission-group');
   const formRef = useRef<ProFormInstance>(null);
+
+  // 关闭守卫：遮罩/ESC/X/取消统一，脏数据先确认（docs/form_drawer_close_guard.md）
+  const { guardClose, handleValuesChange } = useDrawerCloseGuard(open, onClose);
   const queryClient = useQueryClient();
   const { message } = App.useApp();
 
@@ -118,12 +122,7 @@ const PermissionGroupDrawer: React.FC<PermissionGroupDrawerProps> = ({
       formRef={formRef}
       title={mode === 'create' ? t('create') : t('edit')}
       open={open}
-      onOpenChange={(visible) => {
-        if (!visible) {
-          formRef.current?.resetFields();
-          onClose();
-        }
-      }}
+      onValuesChange={handleValuesChange}
       initialValues={{
         sortOrder: 1,
         status: 'ON',
@@ -137,9 +136,12 @@ const PermissionGroupDrawer: React.FC<PermissionGroupDrawerProps> = ({
         submitButtonProps: {
           loading: confirmLoading || createMutation.isPending || updateMutation.isPending,
         },
-        resetButtonProps: { onClick: onClose },
+        resetButtonProps: { onClick: guardClose },
       }}
-      drawerProps={{ destroyOnHidden: true, onClose, placement: 'left', size: 600 }}
+      drawerProps={{ destroyOnHidden: true, onClose: guardClose, placement: 'left', size: 600 }}
+      layout="horizontal"
+      labelCol={{ flex: '0 0 120px' }}
+      wrapperCol={{ flex: 'auto' }}
     >
       <ProFormText
         name="name"

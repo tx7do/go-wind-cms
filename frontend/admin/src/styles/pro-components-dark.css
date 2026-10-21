@@ -92,6 +92,50 @@
   background-image: none;
 }
 
+/* ========== 表格竖向分割线策略（用户定案口径，对齐 ele/vben） ==========
+   表头列间：只有短竖线（下方自绘规则）；表项之间：没有任何竖线。
+   antd 的滚动阴影条全是竖线/渐变形态，与本口径冲突，整族关闭：
+   - 固定单元格的 ::after inset 渐变（rc-table fixed.js，需 scroll.x 才亮）；
+   - 容器的 ::before/::after 补偿条（无固定列但可横向滚时出现）。 */
+.ant-table-wrapper .ant-table-cell-fix-start-shadow::after,
+.ant-table-wrapper .ant-table-cell-fix-end-shadow::after,
+.ant-table-wrapper .ant-table-container::before,
+.ant-table-wrapper .ant-table-container::after {
+  display: none !important;
+}
+/* bordered 模式的亚像素列边框（--ant-line-width 0.67px table-border-color）一并去掉：
+   表头竖线只留自绘短竖线，表体不留任何竖线来源；表格外框由列表卡
+   （.ant-pro-card 描边）承担，与 ele 的卡片框同构。 */
+.ant-pro-table .ant-table-bordered .ant-table-tbody > tr > td,
+.ant-pro-table .ant-table-bordered .ant-table-thead > tr > th {
+  border-inline-end: none !important;
+}
+
+/* ========== 表头列间短竖线（ele ProTable 自绘款移植） ==========
+   ele：.vxe-header--column .vxe-cell::after —— right:0 / top:25% / 1px / 高 50%，末列不画；
+   色取 --el-border-color（亮 #dcdfe6 / 暗 #3a3f4a）。react 同权重 token 是 --ant-color-border
+   （亮 #d9d9d9 未覆写 / 暗 rgba(148,163,184,.28)，两态都落在同一档）。
+   position 只补给非固定 th：固定 th 已是 sticky 自带定位上下文，整体改 position 会以更高
+   特异度压过 antd 的 sticky（cssinjs 走 :where 零特异度），冻结直接失效。 */
+.ant-pro-table .ant-table-thead > tr > th:not(.ant-table-cell-fix) {
+  position: relative;
+}
+/* 冻结列表头不画短竖线：它的 ::after 是 antd 的滚动阴影条（30px 渐变带），
+   两者几何互斥；ele 同款——固定 wrapper 里的末列也没有自绘竖线 */
+.ant-pro-table .ant-table-thead > tr > th:not(:last-child):not(.ant-table-cell-scrollbar):not(.ant-table-cell-fix)::after {
+  content: '';
+  position: absolute;
+  top: 25%;
+  right: 0;
+  width: 1px;
+  height: 50%;
+  background-color: var(--ant-color-border);
+}
+/* 滚动条补位 th 与表头同底色，它前面那根竖线会悬在空白里——真实末列（补位 th 的前一个）跳过 */
+.ant-pro-table .ant-table-thead > tr > th:has(+ .ant-table-cell-scrollbar)::after {
+  content: none;
+}
+
 /* 表格单元格超长文本省略号 */
 .ant-pro-table .ant-table-cell {
   overflow: hidden;
@@ -139,29 +183,38 @@
 .ant-pro-table .ant-pro-table-list-toolbar-container {
   border-radius: var(--ant-border-radius-lg, 8px) var(--ant-border-radius-lg, 8px) 0 0;
 }
-/* 表格容器底部圆角（与顶部对称） */
+/* ========== 表格面四角直角（用户裁决 2026-10-21：以 ele 实际渲染为基准） ==========
+   ele 的 vxe 外框线/表头底色是方角——其 :deep(.vxe-table) 的 6px 圆角不被
+   内层 overflow:hidden 落地，实际渲染就是直角，三端以它为准。原先这里的
+   LG 底角圆角套件（容器/内容区/body/末行单元格/空状态行）整批退役，
+   bordered 表格外框线随之走直线直角。搜索表单与外层宿主卡（.ant-pro-card、
+   .ant-card）保持圆角不动——ele 的搜索卡/列表卡同样圆角，方角的只是表格面。
+   antd 原生发给 .ant-table 的顶部圆角由 global.css 的 .ant-table.ant-table
+   规则取直。!important 必须留：antd cssinjs 运行时注入在打包 CSS 之后，
+   同特异性平局时后注入者赢。 */
 .ant-pro-table .ant-table-container {
-  border-radius: 0 0 var(--ant-border-radius-lg, 8px) var(--ant-border-radius-lg, 8px) !important;
+  border-radius: 0 !important;
   overflow: hidden !important;
+  /* 右/底边线补齐（用户裁决 2026-10-21）：antd v6 的 bordered 容器只发
+     上/左两条边，右/底开放，空表体下半段读起来是无框敞口——三端对齐
+     ele（vxe border:true 全框）/vben（容器左/右/底三边收口）的闭合盒
+     形态。颜色走 antd 容器上/左边同源 token（实测 =
+     --ant-color-border-secondary #E4E4E7），亮暗自适配；!important 理由
+     同上：cssinjs 运行时注入顺序在打包 CSS 之后。 */
+  border-right: 1px solid var(--ant-color-border-secondary, #e4e4e7) !important;
+  border-bottom: 1px solid var(--ant-color-border-secondary, #e4e4e7) !important;
 }
-/* 表格内容区域底部圆角 */
+/* 表格内容区域直角 */
 .ant-pro-table .ant-table-container .ant-table-content {
-  border-radius: 0 0 var(--ant-border-radius-lg, 8px) var(--ant-border-radius-lg, 8px) !important;
+  border-radius: 0 !important;
 }
-/* 表格 body 底部圆角 */
+/* 表格 body 直角 */
 .ant-pro-table .ant-table-body {
-  border-radius: 0 0 var(--ant-border-radius-lg, 8px) var(--ant-border-radius-lg, 8px) !important;
+  border-radius: 0 !important;
 }
-/* bordered 模式下最后一行左右端圆角 */
-.ant-pro-table .ant-table-tbody > tr:last-child > td:first-child {
-  border-bottom-left-radius: var(--ant-border-radius-lg, 8px) !important;
-}
-.ant-pro-table .ant-table-tbody > tr:last-child > td:last-child {
-  border-bottom-right-radius: var(--ant-border-radius-lg, 8px) !important;
-}
-/* 无数据状态表格圆角 */
+/* 无数据状态表格直角 */
 .ant-pro-table .ant-table-placeholder {
-  border-radius: 0 0 var(--ant-border-radius-lg, 8px) var(--ant-border-radius-lg, 8px) !important;
+  border-radius: 0 !important;
 }
 /* 分页器与表格的间距。两条历史规则一并处理：
    ① 原先这里是 `margin-top: 0 !important` + 一个 border-radius，注释写"分页器圆角（如果有）"。
@@ -637,16 +690,20 @@ html[data-theme='dark'] .ant-form .ant-input:not(.ant-input-affix-wrapper .ant-i
   border-color: var(--ant-color-primary) !important;
 }
 
-/* ========== 暗黑模式：默认/取消按钮（#1C2128 浮层色底） ========== */
-[data-theme='dark'] .ant-btn-default,
-[data-theme='dark'] .ant-btn:not(.ant-btn-primary):not(.ant-btn-danger):not(.ant-btn-link):not(.ant-btn-text) {
+/* ========== 暗黑模式：默认/取消按钮（#1C2128 浮层色底） ==========
+   排除链同时覆盖旧 type API 类名（ant-btn-primary/danger/link/text）与
+   v6 color/variant API 类名——后者是 color="primary|orange|..." variant="outlined"
+   新增钮的载体，漏排除会被本规则连边框带文字盖成中性灰（暗色下与导出钮无法
+   区分）。用 [class*='ant-btn-color-'] 一网打尽全部预设色，新增色板不再回头改这里。 */
+[data-theme='dark'] .ant-btn-default:not([class*='ant-btn-color-']),
+[data-theme='dark'] .ant-btn:not(.ant-btn-primary):not(.ant-btn-danger):not(.ant-btn-link):not(.ant-btn-text):not([class*='ant-btn-color-']) {
   background-color: #1c2128 !important;
   border-color: rgba(255, 255, 255, 0.1) !important;
   color: #f8fafc !important;
 }
 
-[data-theme='dark'] .ant-btn-default:hover,
-[data-theme='dark'] .ant-btn:not(.ant-btn-primary):not(.ant-btn-danger):not(.ant-btn-link):not(.ant-btn-text):hover {
+[data-theme='dark'] .ant-btn-default:not([class*='ant-btn-color-']):hover,
+[data-theme='dark'] .ant-btn:not(.ant-btn-primary):not(.ant-btn-danger):not(.ant-btn-link):not(.ant-btn-text):not([class*='ant-btn-color-']):hover {
   background-color: #262c36 !important;
   border-color: rgba(255, 255, 255, 0.22) !important;
   color: #f0f6fc !important;

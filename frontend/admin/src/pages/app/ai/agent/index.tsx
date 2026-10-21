@@ -1,13 +1,15 @@
 import { useRef, useState } from 'react';
 import type { ProColumns, ActionType } from '@ant-design/pro-components';
 import ListTable from '@/components/common/ListTable';
+import TableExportButton from '@/components/common/TableExportButton';
+import TableActions from '@/components/common/TableActions';
 import {
   DrawerForm,
   ProFormText,
   ProFormTextArea,
   ProFormSwitch,
 } from '@ant-design/pro-components';
-import { Button, Popconfirm, Tag, App } from 'antd';
+import { Button, Tag, App } from 'antd';
 import { EditOutlined, DeleteOutlined, PlusOutlined, ApartmentOutlined, HistoryOutlined } from '@ant-design/icons';
 import { useQueryClient } from '@tanstack/react-query';
 import { useTranslation } from 'react-i18next';
@@ -24,6 +26,8 @@ import { useProTableScrollY } from '@/hooks/useProTableScrollY';
 import ContentContainer from '@/layouts/components/PageContainer/ContentContainer';
 import AgentRunsDrawer from './agent-runs-drawer';
 import AgentCanvas from './agent-canvas';
+import { ColumnSlidersIcon } from '@/components/common/columnSettingIcon';
+import { useDrawerCloseGuard } from '@/components/common/use-drawer-close-guard';
 
 // 从未知错误对象取本地化 message（request-client 拦截器已把 reason 译文写进 message）
 const errMessage = (error: unknown, fallback: string): string => {
@@ -48,6 +52,8 @@ const AiAgentAppManagement = () => {
   const tableScrollY = useProTableScrollY(containerRef);
 
   const [formOpen, setFormOpen] = useState(false);
+  // 关闭守卫：遮罩/ESC/X/取消统一，脏数据先确认（docs/form_drawer_close_guard.md）
+  const { guardClose, handleValuesChange } = useDrawerCloseGuard(formOpen, () => setFormOpen(false));
   const [editing, setEditing] = useState<AiAgentApp | undefined>();
   const [runsApp, setRunsApp] = useState<AiAgentApp | undefined>();
   const [canvasApp, setCanvasApp] = useState<AiAgentApp | undefined>();
@@ -125,45 +131,45 @@ const AiAgentAppManagement = () => {
     {
       title: t('actions'),
       valueType: 'option',
-      width: 360,
+      // 画布/编辑/运行台账/更多四个按钮实测约 341px（en 335），窄了必截断
+      width: 350,
       fixed: 'right',
-      render: (_, record) => [
-        <Button
-          key="canvas"
-          type="link"
-          size="small"
-          icon={<ApartmentOutlined />}
-          onClick={() => setCanvasApp(record)}
-        >
-          {t('openCanvas')}
-        </Button>,
-        <Button
-          key="edit"
-          type="link"
-          size="small"
-          icon={<EditOutlined />}
-          onClick={() => {
-            setEditing(record);
-            setFormOpen(true);
-          }}
-        >
-          {t('edit')}
-        </Button>,
-        <Button
-          key="runs"
-          type="link"
-          size="small"
-          icon={<HistoryOutlined />}
-          onClick={() => setRunsApp(record)}
-        >
-          {t('openRuns')}
-        </Button>,
-        <Popconfirm key="delete" title={t('deleteConfirm')} onConfirm={() => handleDelete(record)}>
-          <Button danger type="link" size="small" icon={<DeleteOutlined />}>
-            {t('delete')}
-          </Button>
-        </Popconfirm>,
-      ],
+      render: (_, record) => (
+        <TableActions
+          record={record}
+          actions={[
+            {
+              key: 'canvas',
+              label: t('openCanvas'),
+              icon: <ApartmentOutlined />,
+              onClick: () => setCanvasApp(record),
+            },
+            {
+              key: 'edit',
+              label: t('edit'),
+              icon: <EditOutlined />,
+              onClick: () => {
+                setEditing(record);
+                setFormOpen(true);
+              },
+            },
+            {
+              key: 'runs',
+              label: t('openRuns'),
+              icon: <HistoryOutlined />,
+              onClick: () => setRunsApp(record),
+            },
+            {
+              key: 'delete',
+              label: t('delete'),
+              icon: <DeleteOutlined />,
+              danger: true,
+              confirm: { title: t('deleteConfirm') },
+              onClick: () => handleDelete(record),
+            },
+          ]}
+        />
+      ),
     },
   ];
 
@@ -186,18 +192,20 @@ const AiAgentAppManagement = () => {
           rowKey="id"
           search={false}
           pagination={{ defaultPageSize: TABLE.DEFAULT_PAGE_SIZE, showSizeChanger: true }}
-          options={{ density: true, fullScreen: true, setting: true, reload: true }}
+          options={{ density: true, fullScreen: true, setting: { settingIcon: <ColumnSlidersIcon /> }, reload: true }}
           toolBarRender={() => [
+            <TableExportButton key="export" fetcher={fetchListAiAgentApps} columns={columns} filename="ai-agent-apps" />,
             <Button
               key="create"
-              type="primary"
+              color="primary"
+              variant="outlined"
               icon={<PlusOutlined />}
               onClick={() => {
                 setEditing(undefined);
                 setFormOpen(true);
               }}
             >
-              {t('create')}
+              {t('common:button.add')}
             </Button>,
           ]}
           size="middle"
@@ -207,24 +215,30 @@ const AiAgentAppManagement = () => {
       </div>
 
       <DrawerForm
-        title={editing ? t('edit') : t('create')}
-        width={560}
+        title={editing ? t('common:modal.update', { moduleName: t('moduleName') }) : t('common:modal.create', { moduleName: t('moduleName') })}
         open={formOpen}
-        onOpenChange={setFormOpen}
-        drawerProps={{ destroyOnHidden: true }}
+        onOpenChange={(v) => {
+          // 关闭一律走 drawerProps.onClose 守卫；这里只放行打开
+          if (v) setFormOpen(true);
+        }}
+        onValuesChange={handleValuesChange}
+        drawerProps={{ destroyOnHidden: true, size: 600, onClose: guardClose }}
         onFinish={handleSubmit}
-        initialValues={
-          editing
-            ? { ...editing, graph: editing.graph ?? '' }
-            : { enabled: true, graph: '' }
-        }
+        initialValues={editing ?? { enabled: true }}
+        layout="horizontal"
+        labelCol={{ flex: '0 0 120px' }}
+        wrapperCol={{ flex: 'auto' }}
       >
         <ProFormText
           name="name"
           label={t('name')}
           rules={[{ required: true, message: t('requiredName') }]}
         />
-        <ProFormTextArea name="description" label={t('description')} fieldProps={{ rows: 2 }} />
+        <ProFormTextArea
+          name="description"
+          label={t('description')}
+          fieldProps={{ rows: 2 }}
+        />
         <ProFormSwitch name="enabled" label={t('enabled')} />
       </DrawerForm>
 

@@ -5,6 +5,7 @@ import { App } from 'antd';
 import { useQueryClient } from '@tanstack/react-query';
 import { useTranslation } from 'react-i18next';
 import type { permissionservicev1_Api as Api } from '@/api/generated/admin/service/v1';
+import { useDrawerCloseGuard } from '@/components/common/use-drawer-close-guard';
 import { useCreateApi, useUpdateApi } from '@/api/hooks/api';
 
 import { METHOD_LIST } from '@/config/constants';
@@ -23,6 +24,9 @@ interface ApiDrawerProps {
 const ApiDrawer: React.FC<ApiDrawerProps> = ({ open, mode, data, onClose, onSuccess }) => {
   const { t } = useTranslation('api');
   const formRef = useRef<ProFormInstance>(null);
+
+  // 关闭守卫：遮罩/ESC/X/取消统一，脏数据先确认（docs/form_drawer_close_guard.md）
+  const { guardClose, handleValuesChange } = useDrawerCloseGuard(open, onClose);
   const queryClient = useQueryClient();
   const { message } = App.useApp();
 
@@ -73,6 +77,7 @@ const ApiDrawer: React.FC<ApiDrawerProps> = ({ open, mode, data, onClose, onSucc
     <DrawerForm<Api>
       formRef={formRef}
       open={open}
+      onValuesChange={handleValuesChange}
       title={mode === 'create' ? t('create') : t('edit')}
       initialValues={mode === 'edit' ? data : undefined}
       onFinish={handleSubmit}
@@ -85,14 +90,17 @@ const ApiDrawer: React.FC<ApiDrawerProps> = ({ open, mode, data, onClose, onSucc
           loading: confirmLoading || createMutation.isPending || updateMutation.isPending,
         },
         resetButtonProps: {
-          onClick: onClose,
+          onClick: guardClose,
         },
       }}
       drawerProps={{
         destroyOnHidden: true,
-        onClose,
+        onClose: guardClose,
         size: 600,
       }}
+      layout="horizontal"
+      labelCol={{ flex: '0 0 120px' }}
+      wrapperCol={{ flex: 'auto' }}
     >
       <ProFormText
         name="description"

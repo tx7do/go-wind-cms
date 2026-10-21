@@ -1,8 +1,9 @@
 import { useRef, useState } from 'react';
 import type { ProColumns, ActionType } from '@ant-design/pro-components';
 import TableExportButton from '@/components/common/TableExportButton';
+import TableActions from '@/components/common/TableActions';
 import ListTable from '@/components/common/ListTable';
-import { Button, Popconfirm, Tag, App } from 'antd';
+import { Button, Tag, App } from 'antd';
 import {
   EditOutlined,
   DeleteOutlined,
@@ -19,6 +20,8 @@ import { useProTableScrollY } from '@/hooks/useProTableScrollY';
 import ContentContainer from '@/layouts/components/PageContainer/ContentContainer';
 import { getStatusMap, getStatusOptions, getOrgTypeMap, getOrgTypeOptions } from './constants';
 import OrgDrawer from './components/OrgDrawer';
+import { searchOptionRender } from '@/components/common/searchSubmitter';
+import { ColumnSlidersIcon } from '@/components/common/columnSettingIcon';
 
 /**
  * 组织架构管理页面
@@ -166,29 +169,35 @@ const OrgUnitManagement = () => {
     {
       title: t('action'),
       valueType: 'option',
-      width: 90,
-      render: (_, record) => [
-        <a
-          key="edit"
-          onClick={() => {
-            setDrawerMode('edit');
-            setSelectedOrg(record);
-            setDrawerOpen(true);
-          }}
-        >
-          <EditOutlined />
-        </a>,
-        <Popconfirm
-          key="delete"
-          title={t('deleteConfirmTitle')}
-          description={t('deleteConfirmDesc', { moduleName: t('moduleName') })}
-          onConfirm={() => record.id && deleteMutation.mutate({ id: record.id })}
-          okText={t('common:button.ok')}
-          cancelText={t('common:button.cancel')}
-        >
-          <a style={{ color: 'var(--ant-color-error)' }}><DeleteOutlined /></a>
-        </Popconfirm>,
-      ],
+      width: 150,
+      render: (_, record) => (
+        <TableActions
+          record={record}
+          actions={[
+            {
+              key: 'edit',
+              label: t('common:button.edit'),
+              icon: <EditOutlined />,
+              onClick: () => {
+                setDrawerMode('edit');
+                setSelectedOrg(record);
+                setDrawerOpen(true);
+              },
+            },
+            {
+              key: 'delete',
+              label: t('common:button.delete'),
+              icon: <DeleteOutlined />,
+              danger: true,
+              confirm: {
+                title: t('deleteConfirmTitle'),
+                description: t('deleteConfirmDesc', { moduleName: t('moduleName') }),
+              },
+              onClick: () => record.id && deleteMutation.mutate({ id: record.id }),
+            },
+          ]}
+        />
+      ),
     },
   ];
 
@@ -222,25 +231,13 @@ const OrgUnitManagement = () => {
             
 }}
             rowKey="id"
-            search={{
+            search={{ optionRender: searchOptionRender,
               labelWidth: 'auto',
               defaultCollapsed: false,
             }}
             pagination={false}
             toolBarRender={() => [
               <TableExportButton key="export" fetcher={fetchListOrgUnits} columns={columns} filename="org-units" />,
-              <Button
-                key="create"
-                type="primary"
-                icon={<PlusOutlined />}
-                onClick={() => {
-                  setDrawerMode('create');
-                  setSelectedOrg(undefined);
-                  setDrawerOpen(true);
-                }}
-              >
-                {t('create')}
-              </Button>,
               <Button
                 key="expandAll"
                 icon={<NodeExpandOutlined />}
@@ -251,11 +248,24 @@ const OrgUnitManagement = () => {
               <Button key="collapseAll" icon={<NodeCollapseOutlined />} onClick={handleCollapseAll}>
                 {t('collapseAll')}
               </Button>,
+              <Button
+                key="create"
+                color="primary"
+                variant="outlined"
+                icon={<PlusOutlined />}
+                onClick={() => {
+                  setDrawerMode('create');
+                  setSelectedOrg(undefined);
+                  setDrawerOpen(true);
+                }}
+              >
+                {t('common:button.add')}
+              </Button>,
             ]}
             options={{
               density: true,
               fullScreen: true,
-              setting: true,
+              setting: { settingIcon: <ColumnSlidersIcon /> },
               reload: true,
             }}
             size="middle"

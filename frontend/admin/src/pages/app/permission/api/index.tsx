@@ -1,6 +1,7 @@
 import { useRef, useState } from 'react';
 import type { ProColumns, ActionType } from '@ant-design/pro-components';
 import TableExportButton from '@/components/common/TableExportButton';
+import TableActions from '@/components/common/TableActions';
 import ListTable from '@/components/common/ListTable';
 import { Button, Popconfirm, Tag, App } from 'antd';
 import { EditOutlined, DeleteOutlined, PlusOutlined, SyncOutlined } from '@ant-design/icons';
@@ -14,6 +15,8 @@ import { useProTableScrollY } from '@/hooks/useProTableScrollY';
 import ContentContainer from '@/layouts/components/PageContainer/ContentContainer';
 import { getMethodColor } from './constants';
 import ApiDrawer from './components/ApiDrawer';
+import { searchOptionRender } from '@/components/common/searchSubmitter';
+import { ColumnSlidersIcon } from '@/components/common/columnSettingIcon';
 
 /**
  * API管理页面
@@ -119,29 +122,35 @@ const ApiManagement = () => {
     {
       title: t('action'),
       valueType: 'option',
-      width: 100,
-      render: (_, record) => [
-        <a
-          key="edit"
-          onClick={() => {
-            setDrawerMode('edit');
-            setSelectedApi(record);
-            setDrawerOpen(true);
-          }}
-        >
-          <EditOutlined />
-        </a>,
-        <Popconfirm
-          key="delete"
-          title={t('deleteConfirmTitle')}
-          description={t('deleteConfirmDesc', { path: record.path })}
-          onConfirm={() => record.id && deleteMutation.mutate({ id: record.id })}
-          okText={t('common:button.ok')}
-          cancelText={t('common:button.cancel')}
-        >
-          <a style={{ color: 'var(--ant-color-error)' }}><DeleteOutlined /></a>
-        </Popconfirm>,
-      ],
+      width: 150,
+      render: (_, record) => (
+        <TableActions
+          record={record}
+          actions={[
+            {
+              key: 'edit',
+              label: t('common:button.edit'),
+              icon: <EditOutlined />,
+              onClick: () => {
+                setDrawerMode('edit');
+                setSelectedApi(record);
+                setDrawerOpen(true);
+              },
+            },
+            {
+              key: 'delete',
+              label: t('common:button.delete'),
+              icon: <DeleteOutlined />,
+              danger: true,
+              confirm: {
+                title: t('deleteConfirmTitle'),
+                description: t('deleteConfirmDesc', { path: record.path }),
+              },
+              onClick: () => record.id && deleteMutation.mutate({ id: record.id }),
+            },
+          ]}
+        />
+      ),
     },
   ];
 
@@ -182,7 +191,7 @@ const ApiManagement = () => {
             
 }}
             rowKey="id"
-            search={{
+            search={{ optionRender: searchOptionRender,
               labelWidth: 'auto',
               defaultCollapsed: false,
             }}
@@ -193,18 +202,6 @@ const ApiManagement = () => {
             }}
             toolBarRender={() => [
               <TableExportButton key="export" fetcher={fetchListApis} columns={columns} filename="apis" />,
-              <Button
-                key="create"
-                type="primary"
-                icon={<PlusOutlined />}
-                onClick={() => {
-                  setDrawerMode('create');
-                  setSelectedApi(undefined);
-                  setDrawerOpen(true);
-                }}
-              >
-                {t('create')}
-              </Button>,
               <Popconfirm
                 key="sync"
                 title={t('syncConfirmTitle')}
@@ -213,15 +210,28 @@ const ApiManagement = () => {
                 okText={t('common:button.ok')}
                 cancelText={t('common:button.cancel')}
               >
-                <Button type="primary" danger icon={<SyncOutlined />}>
+                <Button color="orange" variant="outlined" icon={<SyncOutlined />}>
                   {t('sync')}
                 </Button>
               </Popconfirm>,
+              <Button
+                key="create"
+                color="primary"
+                variant="outlined"
+                icon={<PlusOutlined />}
+                onClick={() => {
+                  setDrawerMode('create');
+                  setSelectedApi(undefined);
+                  setDrawerOpen(true);
+                }}
+              >
+                {t('common:button.add')}
+              </Button>,
             ]}
             options={{
               density: true,
               fullScreen: true,
-              setting: true,
+              setting: { settingIcon: <ColumnSlidersIcon /> },
               reload: true,
             }}
             size="middle"

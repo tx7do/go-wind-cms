@@ -15,5 +15,5 @@
   },
   "viewChart": "Chart",
   "viewTable": "Table",
-  "rowCount": "{count} rows"
+  "rowCount": "{{count}} rows"
 }

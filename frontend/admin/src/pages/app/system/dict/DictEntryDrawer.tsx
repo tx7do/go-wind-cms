@@ -12,6 +12,7 @@ import { useTranslation } from 'react-i18next';
 
 import { PaginationQuery } from '@/core';
 import { useCreateDictEntry, useUpdateDictEntry } from '@/api/hooks/dict';
+import { useDrawerCloseGuard } from '@/components/common/use-drawer-close-guard';
 import { fetchListDictTypes } from '@/api/hooks/dict';
 import { fetchListLanguages } from '@/api/hooks/language';
 import { enableBoolRadioOptions } from './constants';
@@ -47,6 +48,9 @@ const DictEntryDrawer: React.FC<DictEntryDrawerProps> = ({
 }) => {
   const { t } = useTranslation('dict-entry');
   const formRef = useRef<ProFormInstance>(null);
+
+  // 关闭守卫：遮罩/ESC/X/取消统一，脏数据先确认（docs/form_drawer_close_guard.md）
+  const { guardClose, handleValuesChange } = useDrawerCloseGuard(open, onClose);
   const queryClient = useQueryClient();
   const { message } = App.useApp();
 
@@ -321,13 +325,7 @@ const DictEntryDrawer: React.FC<DictEntryDrawerProps> = ({
       formRef={formRef}
       title={mode === 'create' ? t('create') : t('edit')}
       open={open}
-      onOpenChange={(visible) => {
-        if (!visible) {
-          formRef.current?.resetFields();
-          setEditingKey('');
-          onClose();
-        }
-      }}
+      onValuesChange={handleValuesChange}
       initialValues={{
         typeId,
         sortOrder: 1,
@@ -342,9 +340,12 @@ const DictEntryDrawer: React.FC<DictEntryDrawerProps> = ({
         submitButtonProps: {
           loading: confirmLoading || createMutation.isPending || updateMutation.isPending,
         },
-        resetButtonProps: { onClick: onClose },
+        resetButtonProps: { onClick: guardClose },
       }}
-      drawerProps={{ destroyOnHidden: true, onClose, size: 800 }}
+      drawerProps={{ destroyOnHidden: true, onClose: guardClose, size: 800 }}
+      layout="horizontal"
+      labelCol={{ flex: '0 0 120px' }}
+      wrapperCol={{ flex: 'auto' }}
     >
       {/* 所属类型 - Select */}
       <Form.Item

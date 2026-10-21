@@ -13,6 +13,7 @@ import type { aiservicev1_AiKnowledgeBase as AiKnowledgeBase } from '@/api/gener
 import { PaginationQuery } from '@/core';
 import { useCreateAiKnowledgeBase, useUpdateAiKnowledgeBase } from '@/api/hooks/ai-knowledge';
 import { fetchListAiProviders } from '@/api/hooks/ai-provider';
+import { useDrawerCloseGuard } from '@/components/common/use-drawer-close-guard';
 
 interface KnowledgeDrawerProps {
   open: boolean;
@@ -28,6 +29,9 @@ export default function KnowledgeDrawer({ open, mode, data, onClose, onSuccess }
   const queryClient = useQueryClient();
   const formRef = useRef<ProFormInstance>(null);
   const [providerOptions, setProviderOptions] = useState<{ label: string; value: number }[]>([]);
+
+  // 关闭守卫：遮罩/ESC/X/取消统一，脏数据先确认（docs/form_drawer_close_guard.md）
+  const { guardClose, handleValuesChange } = useDrawerCloseGuard(open, onClose);
 
   const createMutation = useCreateAiKnowledgeBase();
   const updateMutation = useUpdateAiKnowledgeBase();
@@ -70,6 +74,7 @@ export default function KnowledgeDrawer({ open, mode, data, onClose, onSuccess }
       }
       queryClient.invalidateQueries({ queryKey: ['listAiKnowledgeBases'] });
       onSuccess();
+      onClose();
       return true;
     } catch (error) {
       console.error('save ai knowledge base failed:', error);
@@ -81,16 +86,15 @@ export default function KnowledgeDrawer({ open, mode, data, onClose, onSuccess }
   return (
     <DrawerForm
       formRef={formRef}
-      title={mode === 'create' ? t('create') : t('edit')}
+      title={mode === 'create' ? t('common:modal.create', { moduleName: t('moduleName') }) : t('common:modal.update', { moduleName: t('moduleName') })}
       open={open}
-      onOpenChange={(visible) => {
-        if (!visible) {
-          formRef.current?.resetFields();
-          onClose();
-        }
-      }}
+      onValuesChange={handleValuesChange}
       onFinish={handleSubmit}
-      submitter={{ submitButtonProps: { loading: createMutation.isPending || updateMutation.isPending } }}
+      submitter={{ submitButtonProps: { loading: createMutation.isPending || updateMutation.isPending }, resetButtonProps: { onClick: guardClose } }}
+      drawerProps={{ destroyOnHidden: true, onClose: guardClose, size: 600 }}
+      layout="horizontal"
+      labelCol={{ flex: '0 0 120px' }}
+      wrapperCol={{ flex: 'auto' }}
     >
       <ProFormText
         name="name"
@@ -98,7 +102,11 @@ export default function KnowledgeDrawer({ open, mode, data, onClose, onSuccess }
         rules={[{ required: true, message: t('requiredName') }]}
         placeholder={t('namePlaceholder')}
       />
-      <ProFormTextArea name="description" label={t('description')} fieldProps={{ rows: 2 }} />
+      <ProFormTextArea
+        name="description"
+        label={t('description')}
+        fieldProps={{ rows: 2 }}
+      />
       <ProFormSelect
         name="providerId"
         label={t('provider')}

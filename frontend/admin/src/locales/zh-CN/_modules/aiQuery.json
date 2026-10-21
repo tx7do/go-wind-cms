@@ -15,5 +15,5 @@
   },
   "viewChart": "图表",
   "viewTable": "表格",
-  "rowCount": "{count} 行"
+  "rowCount": "{{count}} 行"
 }

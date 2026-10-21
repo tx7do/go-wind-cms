@@ -1,8 +1,9 @@
 import { useRef, useState } from 'react';
 import type { ProColumns, ActionType } from '@ant-design/pro-components';
 import TableExportButton from '@/components/common/TableExportButton';
+import TableActions from '@/components/common/TableActions';
 import ListTable from '@/components/common/ListTable';
-import { Button, Popconfirm, Tag, App } from 'antd';
+import { Button, Tag, App } from 'antd';
 import { EditOutlined, DeleteOutlined, PlusOutlined } from '@ant-design/icons';
 import { useQueryClient } from '@tanstack/react-query';
 import { useTranslation } from 'react-i18next';
@@ -14,6 +15,8 @@ import { useProTableScrollY } from '@/hooks/useProTableScrollY';
 import ContentContainer from '@/layouts/components/PageContainer/ContentContainer';
 import { getPolicyTypeMap, getPolicyMethodMap, getPolicyMethodOptions } from './constants';
 import LoginPolicyDrawer from './components/LoginPolicyDrawer';
+import { searchOptionRender } from '@/components/common/searchSubmitter';
+import { ColumnSlidersIcon } from '@/components/common/columnSettingIcon';
 
 /**
  * 登录策略管理页面
@@ -124,29 +127,35 @@ const LoginPolicyManagement = () => {
     {
       title: t('action'),
       valueType: 'option',
-      width: 100,
-      render: (_, record) => [
-        <a
-          key="edit"
-          onClick={() => {
-            setDrawerMode('edit');
-            setSelectedPolicy(record);
-            setDrawerOpen(true);
-          }}
-        >
-          <EditOutlined />
-        </a>,
-        <Popconfirm
-          key="delete"
-          title={t('deleteConfirmTitle')}
-          description={t('deleteConfirmDesc', { moduleName: t('moduleName') })}
-          onConfirm={() => record.id && deleteMutation.mutate({ id: record.id })}
-          okText={t('common:button.ok')}
-          cancelText={t('common:button.cancel')}
-        >
-          <a style={{ color: 'var(--ant-color-error)' }}><DeleteOutlined /></a>
-        </Popconfirm>,
-      ],
+      width: 150,
+      render: (_, record) => (
+        <TableActions
+          record={record}
+          actions={[
+            {
+              key: 'edit',
+              label: t('common:button.edit'),
+              icon: <EditOutlined />,
+              onClick: () => {
+                setDrawerMode('edit');
+                setSelectedPolicy(record);
+                setDrawerOpen(true);
+              },
+            },
+            {
+              key: 'delete',
+              label: t('common:button.delete'),
+              icon: <DeleteOutlined />,
+              danger: true,
+              confirm: {
+                title: t('deleteConfirmTitle'),
+                description: t('deleteConfirmDesc', { moduleName: t('moduleName') }),
+              },
+              onClick: () => record.id && deleteMutation.mutate({ id: record.id }),
+            },
+          ]}
+        />
+      ),
     },
   ];
 
@@ -186,7 +195,7 @@ const LoginPolicyManagement = () => {
             
 }}
             rowKey="id"
-            search={{
+            search={{ optionRender: searchOptionRender,
               labelWidth: 'auto',
               defaultCollapsed: false,
             }}
@@ -199,7 +208,8 @@ const LoginPolicyManagement = () => {
               <TableExportButton key="export" fetcher={fetchListLoginPolicies} columns={columns} filename="login-policies" />,
               <Button
                 key="create"
-                type="primary"
+                color="primary"
+                variant="outlined"
                 icon={<PlusOutlined />}
                 onClick={() => {
                   setDrawerMode('create');
@@ -207,13 +217,13 @@ const LoginPolicyManagement = () => {
                   setDrawerOpen(true);
                 }}
               >
-                {t('create')}
+                {t('common:button.add')}
               </Button>,
             ]}
             options={{
               density: true,
               fullScreen: true,
-              setting: true,
+              setting: { settingIcon: <ColumnSlidersIcon /> },
               reload: true,
             }}
             size="middle"

@@ -1,8 +1,9 @@
 import { useRef, useState, useEffect } from 'react';
 import type { ProColumns, ActionType } from '@ant-design/pro-components';
 import TableExportButton from '@/components/common/TableExportButton';
+import TableActions from '@/components/common/TableActions';
 import ListTable from '@/components/common/ListTable';
-import { Button, Popconfirm, Tag, App } from 'antd';
+import { Button, Tag, App } from 'antd';
 import { EditOutlined, DeleteOutlined, PlusOutlined, InfoCircleOutlined } from '@ant-design/icons';
 import { useQueryClient } from '@tanstack/react-query';
 import { useTranslation } from 'react-i18next';
@@ -16,6 +17,8 @@ import { useUserStore } from '@/stores/user';
 import { parseResourceHiddenFields } from '@/core/access';
 import { getUserStatusMap, getUserStatusOptions } from '../constants';
 import UserDrawer from './UserDrawer';
+import { searchOptionRender } from '@/components/common/searchSubmitter';
+import { ColumnSlidersIcon } from '@/components/common/columnSettingIcon';
 
 interface UserListProps {
   tenantId: number | undefined;
@@ -181,38 +184,41 @@ const UserList: React.FC<UserListProps> = ({ tenantId, orgUnitId }) => {
     {
       title: t('action'),
       valueType: 'option',
-      width: 100,
-      render: (_, record) => [
-        <a
-          key="detail"
-          title={t('detail')}
-          onClick={() => navigate(`/opm/users/detail/${record.id}`)}
-        >
-          <InfoCircleOutlined />
-        </a>,
-        <a
-          key="edit"
-          onClick={() => {
-            setEditingUser(record);
-            setDrawerMode('edit');
-            setDrawerOpen(true);
-          }}
-        >
-          <EditOutlined />
-        </a>,
-        <Popconfirm
-          key="delete"
-          title={t('deleteConfirmTitle')}
-          description={t('deleteConfirmDesc', { moduleName: t('moduleName') })}
-          onConfirm={() => record.id && deleteMutation.mutate(record.id)}
-          okText={t('common:button.ok')}
-          cancelText={t('common:button.cancel')}
-        >
-          <a style={{ color: 'var(--ant-color-error)' }}>
-            <DeleteOutlined />
-          </a>
-        </Popconfirm>,
-      ],
+      width: 230,
+      render: (_, record) => (
+        <TableActions
+          record={record}
+          actions={[
+            {
+              key: 'detail',
+              label: t('detail'),
+              icon: <InfoCircleOutlined />,
+              onClick: () => navigate(`/opm/users/detail/${record.id}`),
+            },
+            {
+              key: 'edit',
+              label: t('common:button.edit'),
+              icon: <EditOutlined />,
+              onClick: () => {
+                setEditingUser(record);
+                setDrawerMode('edit');
+                setDrawerOpen(true);
+              },
+            },
+            {
+              key: 'delete',
+              label: t('common:button.delete'),
+              icon: <DeleteOutlined />,
+              danger: true,
+              confirm: {
+                title: t('deleteConfirmTitle'),
+                description: t('deleteConfirmDesc', { moduleName: t('moduleName') }),
+              },
+              onClick: () => record.id && deleteMutation.mutate(record.id),
+            },
+          ]}
+        />
+      ),
     },
   ] satisfies ProColumns<any>[]).filter((col) => {
     const key = typeof col.dataIndex === 'string' ? col.dataIndex : undefined;
@@ -265,7 +271,7 @@ const UserList: React.FC<UserListProps> = ({ tenantId, orgUnitId }) => {
           
 }}
           rowKey="id"
-          search={{
+          search={{ optionRender: searchOptionRender,
             labelWidth: 'auto',
             defaultCollapsed: true,
           }}
@@ -278,22 +284,22 @@ const UserList: React.FC<UserListProps> = ({ tenantId, orgUnitId }) => {
             <TableExportButton key="export" fetcher={fetchListUsers} columns={columns} filename="users" />,
             <Button
               key="create"
-              type="primary"
+              color="primary"
+              variant="outlined"
               icon={<PlusOutlined />}
-              size="small"
               onClick={() => {
                 setEditingUser(null);
                 setDrawerMode('create');
                 setDrawerOpen(true);
               }}
             >
-              {t('create')}
+              {t('common:button.add')}
             </Button>,
           ]}
           options={{
             density: true,
             fullScreen: true,
-            setting: true,
+            setting: { settingIcon: <ColumnSlidersIcon /> },
             reload: true,
           }}
           size="small"

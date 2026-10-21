@@ -15,6 +15,7 @@ import type { identityservicev1_Position as Position } from '@/api/generated/adm
 import { PaginationQuery } from '@/core';
 import { useCreatePosition, useUpdatePosition } from '@/api/hooks/position';
 import { fetchListOrgUnits } from '@/api/hooks/org-unit';
+import { useDrawerCloseGuard } from '@/components/common/use-drawer-close-guard';
 import { getStatusOptions, getPositionTypeOptions, buildOrgTreeData } from '../constants';
 
 interface PositionDrawerProps {
@@ -37,6 +38,9 @@ const PositionDrawer: React.FC<PositionDrawerProps> = ({
 }) => {
   const { t } = useTranslation('position');
   const formRef = useRef<ProFormInstance>(null);
+
+  // 关闭守卫：遮罩/ESC/X/取消统一，脏数据先确认（docs/form_drawer_close_guard.md）
+  const { guardClose, handleValuesChange } = useDrawerCloseGuard(open, onClose);
   const queryClient = useQueryClient();
   const { message } = App.useApp();
 
@@ -117,12 +121,7 @@ const PositionDrawer: React.FC<PositionDrawerProps> = ({
       formRef={formRef}
       title={mode === 'create' ? t('create') : t('edit')}
       open={open}
-      onOpenChange={(visible) => {
-        if (!visible) {
-          formRef.current?.resetFields();
-          onClose();
-        }
-      }}
+      onValuesChange={handleValuesChange}
       initialValues={{
         type: 'REGULAR',
         headcount: 1,
@@ -138,9 +137,12 @@ const PositionDrawer: React.FC<PositionDrawerProps> = ({
         submitButtonProps: {
           loading: confirmLoading || createMutation.isPending || updateMutation.isPending,
         },
-        resetButtonProps: { onClick: onClose },
+        resetButtonProps: { onClick: guardClose },
       }}
-      drawerProps={{ destroyOnHidden: true, onClose, size: 600 }}
+      drawerProps={{ destroyOnHidden: true, onClose: guardClose, size: 600 }}
+      layout="horizontal"
+      labelCol={{ flex: '0 0 120px' }}
+      wrapperCol={{ flex: 'auto' }}
     >
       <ProFormText
         name="name"

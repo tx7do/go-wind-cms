@@ -69,6 +69,65 @@
   },
   "locale": "偏好语言",
   "localeHint": "事务性邮件与监控告警按此语言渲染",
-  "localePlaceholder": "默认（中文）",
-  "passwordChangedReLogin": "密码已修改，请重新登录"
+  "localePlaceholder": "跟随浏览器语言",
+  "passwordChangedReLogin": "密码已修改，请重新登录",
+  "field": {
+    "nickname": "昵称",
+    "realname": "姓名",
+    "email": "邮箱",
+    "mobile": "手机号",
+    "telephone": "座机号",
+    "gender": "性别",
+    "region": "国家地区",
+    "address": "住址",
+    "description": "个人描述",
+    "locale": "偏好语言",
+    "avatar": "头像"
+  },
+  "info": {
+    "username": "用户名",
+    "roleNames": "角色",
+    "orgUnitNames": "所属组织",
+    "positionNames": "所属岗位",
+    "tenantName": "所属租户",
+    "lastLoginAt": "最后登录时间",
+    "lastLoginIp": "最后登录IP",
+    "createdAt": "创建时间"
+  },
+  "button": {
+    "uploadAvatar": "上传头像",
+    "deleteAvatar": "删除头像"
+  },
+  "avatarUploadSuccess": "头像上传成功",
+  "avatarUploadFailed": "头像上传失败",
+  "avatarNotImage": "只能上传图片文件",
+  "avatarTooLarge": "图片大小不能超过 5MB",
+  "avatarDeleted": "头像已删除",
+  "avatarDeleteFailed": "头像删除失败",
+  "secureSetting": {
+    "password": "登录密码",
+    "passwordDesc": "建议定期修改密码，可搭配两步验证提升账户安全性",
+    "modify": "修改"
+  },
+  "accountBind": {
+    "email": "邮箱账号",
+    "phone": "手机号",
+    "bound": "已绑定：{{value}}",
+    "unbound": "未绑定，可在基本设置中填写",
+    "modify": "修改",
+    "bindNow": "立即绑定",
+    "rebind": "换绑",
+    "bindEmailTitle": "绑定邮箱",
+    "newEmail": "新邮箱",
+    "newEmailPlaceholder": "请输入新邮箱地址",
+    "vcode": "验证码",
+    "vcodePlaceholder": "请输入邮箱验证码",
+    "sendVcode": "发送验证码",
+    "codeSent": "已发送，请查收",
+    "vcodeSendFailed": "验证码发送失败",
+    "newEmailRequired": "请输入新邮箱地址",
+    "vcodeRequired": "请输入验证码",
+    "bindSuccess": "邮箱绑定成功",
+    "bindFailed": "绑定失败"
+  }
 }

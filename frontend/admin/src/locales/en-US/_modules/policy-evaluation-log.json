@@ -21,7 +21,7 @@
   "effectDetails": "Effect Details",
   "scopeSql": "Scope SQL",
   "createdAt": "Logged At",
-  "export": "Export",
+  "export": "Export All",
   "exportCsv": "CSV (Comma Separated)",
   "exportXlsx": "Excel Workbook"
 }

@@ -4,7 +4,6 @@ import { Avatar, Dropdown, Badge, Tooltip, Button, Breadcrumb, Input, Popover, M
 import type { MenuProps } from 'antd';
 import {
   UserOutlined,
-  SettingOutlined,
   LogoutOutlined,
   MenuUnfoldOutlined,
   MenuFoldOutlined,
@@ -12,9 +11,6 @@ import {
   SearchOutlined,
   SunOutlined,
   MoonOutlined,
-  GlobalOutlined,
-  FullscreenOutlined,
-  FullscreenExitOutlined,
   BellOutlined,
   CheckOutlined,
   CloseOutlined,
@@ -27,6 +23,8 @@ import { useTranslation } from 'react-i18next';
 
 import { getIconFromName } from '@/layouts/MainLayout/utils/iconResolver';
 
+import { SettingBoltIcon } from '@/components/common/settingBoltIcon';
+
 import { useI18n } from '@/core/i18n';
 import { usePreferencesStore } from '@/core/preferences/store';
 import type { SupportedLanguagesType } from '@/core/preferences/types/layout';
@@ -37,6 +35,65 @@ import { PaginationQuery, queryClient } from '@/core';
 import { globalSSEClient } from '@/core/transport/sse';
 
 dayjs.extend(relativeTime);
+
+/**
+ * 全屏按钮的四角括号图标（vben 同款 lucide Maximize/Minimize 内联复刻）。
+ * antd 图标集里没有这个括号造型（FullscreenOutlined 是四角向外箭头）；
+ * stroke 系图形必须显式 fill="none"，否则继承 antd 的 fill: currentColor 会糊成色块。
+ */
+const MaximizeBracketsIcon = () => (
+  <svg
+    viewBox="0 0 24 24"
+    width="1em"
+    height="1em"
+    fill="none"
+    stroke="currentColor"
+    strokeWidth={2}
+    strokeLinecap="round"
+    strokeLinejoin="round"
+    aria-hidden="true"
+  >
+    <path d="M8 3H5a2 2 0 0 0-2 2v3" />
+    <path d="M21 8V5a2 2 0 0 0-2-2h-3" />
+    <path d="M3 16v3a2 2 0 0 0 2 2h3" />
+    <path d="M16 21h3a2 2 0 0 0 2-2v-3" />
+  </svg>
+);
+
+const MinimizeBracketsIcon = () => (
+  <svg
+    viewBox="0 0 24 24"
+    width="1em"
+    height="1em"
+    fill="none"
+    stroke="currentColor"
+    strokeWidth={2}
+    strokeLinecap="round"
+    strokeLinejoin="round"
+    aria-hidden="true"
+  >
+    <path d="M8 3v3a2 2 0 0 1-2 2H3" />
+    <path d="M21 8h-3a2 2 0 0 1-2-2V3" />
+    <path d="M3 16v3a2 2 0 0 0 2 2h3" />
+    <path d="M16 21h3a2 2 0 0 0 2-2v-3" />
+  </svg>
+);
+
+/**
+ * 语言切换的「文A」图标（Remix translate-2 填充复刻；ele 顶栏 SvgIcon "language" 同款）。
+ * antd TranslationOutlined 自带方框外沿，tabler language 是描边文A，均与 ele 的实心文A不符。
+ */
+const LanguageTranslateIcon = () => (
+  <svg
+    viewBox="0 0 24 24"
+    width="1em"
+    height="1em"
+    fill="currentColor"
+    aria-hidden="true"
+  >
+    <path d="m18.5 10 4.4 11h-2.155l-1.201-3h-4.09l-1.199 3h-2.154L16.5 10h2zM10 2v2h6v2h-1.968a18.221 18.221 0 0 1-3.62 6.301 14.865 14.865 0 0 0 2.335 1.707l-.75 1.878A17.016 17.016 0 0 1 9 13.725a16.677 16.677 0 0 1-6.201 3.548l-.536-1.929a14.7 14.7 0 0 0 5.327-3.042A18.078 18.078 0 0 1 4.767 8h2.24A16.031 16.031 0 0 0 9 10.877a16.165 16.165 0 0 0 2.91-4.876L2 6V4h6V2h2zm7.5 10.885L16.253 16h2.492L17.5 12.885z" />
+  </svg>
+);
 
 /** 键位提示条的小 kbd 徽标（与触发条上的 Ctrl K 同族样式） */
 const searchHintKbdStyle: React.CSSProperties = {
@@ -302,7 +359,7 @@ export const HeaderContent = ({
     },
     {
       key: 'settings',
-      icon: <SettingOutlined />,
+      icon: <SettingBoltIcon />,
       label: t('header.settings'),
       onClick: onOpenSettings,
     },
@@ -347,8 +404,9 @@ export const HeaderContent = ({
     refetchInterval: 300_000,
     refetchIntervalInBackground: false,
   });
-  // 未读数用列表响应的服务端 total（独立 COUNT），不能用当前页条数——后者封顶在 pageSize
-  const unreadCount = inboxUnread?.total ?? 0;
+  // 未读数用列表响应的服务端 total（独立 COUNT），不能用当前页条数——后者封顶在 pageSize。
+  // proto int64 经 protojson 运行时是字符串（TS 类型却标 number），须显式转数字。
+  const unreadCount = Number(inboxUnread?.total ?? 0);
 
   // 弹层列表：最近 5 条（已读+未读混合），未读带圆点加粗
   const { data: inboxRecent, isLoading: recentLoading } = useQuery({
@@ -1035,7 +1093,7 @@ export const HeaderContent = ({
         <Tooltip title={t('header.settings')}>
           <Button
             type="text"
-            icon={<SettingOutlined />}
+            icon={<SettingBoltIcon />}
             onClick={onOpenSettings}
             size="small"
             style={btnStyle}
@@ -1059,7 +1117,7 @@ export const HeaderContent = ({
         {widgetConfig.languageToggle && (
           <Dropdown menu={{ items: languageMenuItems }} trigger={['click']} placement="bottomRight">
             <Tooltip title={t('header.switchLanguage')}>
-              <Button type="text" icon={<GlobalOutlined />} size="small" style={btnStyle} />
+              <Button type="text" icon={<LanguageTranslateIcon />} size="small" style={btnStyle} />
             </Tooltip>
           </Dropdown>
         )}
@@ -1069,7 +1127,7 @@ export const HeaderContent = ({
           <Tooltip title={isFullscreen ? t('header.exitFullscreen') : t('header.fullscreen')}>
             <Button
               type="text"
-              icon={isFullscreen ? <FullscreenExitOutlined /> : <FullscreenOutlined />}
+              icon={isFullscreen ? <MinimizeBracketsIcon /> : <MaximizeBracketsIcon />}
               onClick={onToggleFullscreen}
               size="small"
               style={btnStyle}
@@ -1087,7 +1145,13 @@ export const HeaderContent = ({
           >
             <Badge count={unreadCount} size="small" offset={[0, 4]}>
               <Tooltip title={t('header.notification')}>
-                <Button type="text" icon={<BellOutlined />} size="small" style={btnStyle} />
+                <Button
+                  type="text"
+                  icon={<BellOutlined />}
+                  size="small"
+                  style={btnStyle}
+                  className="header-bell-btn"
+                />
               </Tooltip>
             </Badge>
           </Popover>

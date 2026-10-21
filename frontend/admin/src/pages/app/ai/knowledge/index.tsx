@@ -1,12 +1,14 @@
 import { useRef, useState } from 'react';
 import type { ProColumns, ActionType } from '@ant-design/pro-components';
 import ListTable from '@/components/common/ListTable';
+import TableExportButton from '@/components/common/TableExportButton';
+import TableActions from '@/components/common/TableActions';
 import { Button, Popconfirm, Tag, App } from 'antd';
 import {
   DeleteOutlined,
-   EditOutlined,
-   FileTextOutlined,
-   PlusOutlined,
+  EditOutlined,
+  FileTextOutlined,
+  PlusOutlined,
   SyncOutlined,
 } from '@ant-design/icons';
 import { useQueryClient } from '@tanstack/react-query';
@@ -55,45 +57,42 @@ export default function AiKnowledgePage() {
     {
       title: t('action'),
       valueType: 'option',
-      width: 220,
+      width: 230,
       fixed: 'right',
-      render: (_, record) => [
-        <Button
-          key="docs"
-          type="link"
-          size="small"
-          icon={<FileTextOutlined />}
-          onClick={() => {
-            setDocsTarget(record);
-            setDocsOpen(true);
-          }}
-        >
-          {t('docs')}
-        </Button>,
-        <Button
-          key="edit"
-          type="link"
-          size="small"
-          icon={<EditOutlined />}
-          onClick={() => {
-            setSelected(record);
-            setDrawerMode('edit');
-            setDrawerOpen(true);
-          }}
-        >
-          {t('edit')}
-        </Button>,
-        <Popconfirm
-          key="delete"
-          title={t('deleteConfirmTitle')}
-          description={t('deleteConfirmDesc')}
-          onConfirm={() => deleteMutation.mutate({ id: record.id! })}
-        >
-          <Button type="link" size="small" danger icon={<DeleteOutlined />}>
-            {t('deleteConfirmTitle')}
-          </Button>
-        </Popconfirm>,
-      ],
+      render: (_, record) => (
+        <TableActions
+          record={record}
+          actions={[
+            {
+              key: 'docs',
+              label: t('docs'),
+              icon: <FileTextOutlined />,
+              onClick: () => {
+                setDocsTarget(record);
+                setDocsOpen(true);
+              },
+            },
+            {
+              key: 'edit',
+              label: t('common:button.edit'),
+              icon: <EditOutlined />,
+              onClick: () => {
+                setSelected(record);
+                setDrawerMode('edit');
+                setDrawerOpen(true);
+              },
+            },
+            {
+              key: 'delete',
+              label: t('common:button.delete'),
+              icon: <DeleteOutlined />,
+              danger: true,
+              confirm: { title: t('deleteConfirmTitle'), description: t('deleteConfirmDesc') },
+              onClick: () => deleteMutation.mutate({ id: record.id! }),
+            },
+          ]}
+        />
+      ),
     },
   ];
 
@@ -121,6 +120,7 @@ export default function AiKnowledgePage() {
             return { data: res.items || [], total: res.total || 0, success: true };
           }}
           toolBarRender={() => [
+            <TableExportButton key="export" fetcher={fetchListAiKnowledgeBases} columns={columns} filename="ai-knowledge-bases" />,
             <Popconfirm
               key="reindex"
               title={t('reindexConfirmTitle')}
@@ -135,7 +135,8 @@ export default function AiKnowledgePage() {
             </Popconfirm>,
             <Button
               key="create"
-              type="primary"
+              color="primary"
+              variant="outlined"
               icon={<PlusOutlined />}
               onClick={() => {
                 setSelected(undefined);
@@ -143,7 +144,7 @@ export default function AiKnowledgePage() {
                 setDrawerOpen(true);
               }}
             >
-              {t('create')}
+              {t('common:button.add')}
             </Button>,
           ]}
           columns={columns}

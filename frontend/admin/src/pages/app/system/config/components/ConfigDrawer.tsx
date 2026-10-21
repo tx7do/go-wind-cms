@@ -10,6 +10,7 @@ import { App } from 'antd';
 import { useQueryClient } from '@tanstack/react-query';
 import { useTranslation } from 'react-i18next';
 import type { configservicev1_Config as Config } from '@/api/generated/admin/service/v1';
+import { useDrawerCloseGuard } from '@/components/common/use-drawer-close-guard';
 import { useCreateConfig, useUpdateConfig } from '@/api/hooks/config';
 import { getValueTypeOptions } from '../constants';
 
@@ -33,6 +34,9 @@ const ConfigDrawer: React.FC<ConfigDrawerProps> = ({
 }) => {
   const { t } = useTranslation('config');
   const formRef = useRef<ProFormInstance>(null);
+
+  // 关闭守卫：遮罩/ESC/X/取消统一，脏数据先确认（docs/form_drawer_close_guard.md）
+  const { guardClose, handleValuesChange } = useDrawerCloseGuard(open, onClose);
   const queryClient = useQueryClient();
   const { message } = App.useApp();
 
@@ -92,12 +96,7 @@ const ConfigDrawer: React.FC<ConfigDrawerProps> = ({
       formRef={formRef}
       title={mode === 'create' ? t('create') : t('edit')}
       open={open}
-      onOpenChange={(visible) => {
-        if (!visible) {
-          formRef.current?.resetFields();
-          onClose();
-        }
-      }}
+      onValuesChange={handleValuesChange}
       initialValues={
         mode === 'edit'
           ? { ...data }
@@ -116,14 +115,17 @@ const ConfigDrawer: React.FC<ConfigDrawerProps> = ({
           loading: confirmLoading || createMutation.isPending || updateMutation.isPending,
         },
         resetButtonProps: {
-          onClick: onClose,
+          onClick: guardClose,
         },
       }}
       drawerProps={{
         destroyOnHidden: true,
-        onClose,
+        onClose: guardClose,
         size: 480,
       }}
+      layout="horizontal"
+      labelCol={{ flex: '0 0 120px' }}
+      wrapperCol={{ flex: 'auto' }}
     >
       <ProFormText
         name="name"

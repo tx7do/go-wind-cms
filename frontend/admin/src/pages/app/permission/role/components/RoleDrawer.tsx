@@ -20,6 +20,7 @@ import { fetchListPermissions } from '@/api/hooks/permission';
 import { fetchListOrgUnits } from '@/api/hooks/org-unit';
 import { PaginationQuery } from '@/core';
 import { getStatusOptions, getDataScopeOptions, buildPermissionTree, extractLeafIds, buildOrgUnitTree, getUserFieldPermissionOptions } from '../constants';
+import { useDrawerCloseGuard } from '@/components/common/use-drawer-close-guard';
 
 interface RoleDrawerProps {
   open: boolean;
@@ -35,6 +36,9 @@ interface RoleDrawerProps {
 const RoleDrawer: React.FC<RoleDrawerProps> = ({ open, mode, data, onClose, onSuccess }) => {
   const { t } = useTranslation('role');
   const formRef = useRef<ProFormInstance>(null);
+
+  // 关闭守卫：遮罩/ESC/X/取消统一，脏数据先确认（docs/form_drawer_close_guard.md）
+  const { guardClose, handleValuesChange } = useDrawerCloseGuard(open, onClose);
   const queryClient = useQueryClient();
   const { message } = App.useApp();
 
@@ -194,6 +198,7 @@ const RoleDrawer: React.FC<RoleDrawerProps> = ({ open, mode, data, onClose, onSu
           onClose();
         }
       }}
+      onValuesChange={handleValuesChange}
       initialValues={{
         sortOrder: 1,
         status: 'ON',
@@ -208,9 +213,12 @@ const RoleDrawer: React.FC<RoleDrawerProps> = ({ open, mode, data, onClose, onSu
         submitButtonProps: {
           loading: confirmLoading || createMutation.isPending || updateMutation.isPending,
         },
-        resetButtonProps: { onClick: onClose },
+        resetButtonProps: { onClick: guardClose },
       }}
-      drawerProps={{ destroyOnHidden: true, onClose, size: 600 }}
+      drawerProps={{ destroyOnHidden: true, onClose: guardClose, size: 600 }}
+      layout="horizontal"
+      labelCol={{ flex: '0 0 120px' }}
+      wrapperCol={{ flex: 'auto' }}
     >
       <ProFormText
         name="name"

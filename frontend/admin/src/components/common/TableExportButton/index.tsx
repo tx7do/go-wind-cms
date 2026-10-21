@@ -1,6 +1,6 @@
 import { useMemo, useState } from 'react';
 import { App, Button, Dropdown } from 'antd';
-import { DownloadOutlined } from '@ant-design/icons';
+import type { MenuProps } from 'antd';
 import { useTranslation } from 'react-i18next';
 import type { PaginationQuery } from '@/core';
 import { exportAuditLogs, type AuditExportFormat } from '@/utils/csv';
@@ -92,11 +92,13 @@ export default function TableExportButton({
     }
   };
 
-  const items: { key: string; label: string; danger?: boolean }[] = [
+  const items: MenuProps['items'] = [
     { key: 'csv', label: t('export.csv') },
     { key: 'xlsx', label: t('export.xlsx') },
   ];
   if (serverExport) {
+    // 分隔线把服务端全量与客户端聚合两项隔开（口径同审计六页/vben 端）
+    items.push({ type: 'divider' });
     items.push({ key: 'server-xlsx', label: t('export.serverXlsx') });
   }
 
@@ -113,7 +115,7 @@ export default function TableExportButton({
         },
       }}
     >
-      <Button icon={<DownloadOutlined />} loading={exporting}>
+      <Button loading={exporting}>
         {t('export.title')}
       </Button>
     </Dropdown>

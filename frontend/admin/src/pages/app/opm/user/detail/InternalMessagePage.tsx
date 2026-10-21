@@ -13,6 +13,8 @@ import {
   getRecipientStatusMap,
   getRecipientStatusOptions,
 } from '@/pages/app/internal-message/inbox/constants';
+import { searchOptionRender } from '@/components/common/searchSubmitter';
+import { ColumnSlidersIcon } from '@/components/common/columnSettingIcon';
 
 interface InternalMessagePageProps {
   userId: number | undefined;
@@ -160,7 +162,7 @@ const InternalMessagePage: React.FC<InternalMessagePageProps> = ({ userId }) => 
         
 }}
         rowKey="id"
-        search={{
+        search={{ optionRender: searchOptionRender,
           labelWidth: 'auto',
           defaultCollapsed: false,
         }}
@@ -172,7 +174,7 @@ const InternalMessagePage: React.FC<InternalMessagePageProps> = ({ userId }) => 
         options={{
           density: true,
           fullScreen: true,
-          setting: true,
+          setting: { settingIcon: <ColumnSlidersIcon /> },
           reload: true,
         }}
         size="middle"

@@ -46,7 +46,7 @@
   "sectionOther": "Other Information",
   "action": "Action",
   "detail": "Detail",
-  "export": "Export",
+  "export": "Export All",
   "exportCsv": "CSV (Comma Separated)",
   "exportXlsx": "Excel Workbook"
 }

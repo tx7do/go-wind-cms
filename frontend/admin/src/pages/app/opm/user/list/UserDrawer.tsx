@@ -12,6 +12,7 @@ import { fetchListOrgUnits } from '@/api/hooks/org-unit';
 import { fetchListPositions } from '@/api/hooks/position';
 import { useUserStore } from '@/stores/user';
 import { parseResourceHiddenFields } from '@/core/access';
+import { useDrawerCloseGuard } from '@/components/common/use-drawer-close-guard';
 import { getUserStatusOptions, getGenderOptions } from '../constants';
 import { buildOrgTreeSelectData } from './tree-utils';
 
@@ -41,6 +42,9 @@ const UserDrawer: React.FC<UserDrawerProps> = ({
   const { message } = App.useApp();
 
   const [confirmLoading, setConfirmLoading] = useState(false);
+
+  // 关闭守卫：遮罩/ESC/X/取消四路径统一，脏数据先确认（docs/form_drawer_close_guard.md）
+  const { guardClose, handleValuesChange } = useDrawerCloseGuard(open, onClose);
 
   // 字段权限：被隐藏的 User 字段不渲染、不提交（后端响应/写入两侧还会再兜底裁剪）
   const userHiddenFields = parseResourceHiddenFields(
@@ -182,12 +186,7 @@ const UserDrawer: React.FC<UserDrawerProps> = ({
       formRef={formRef}
       title={mode === 'create' ? t('create') : t('edit')}
       open={open}
-      onOpenChange={(visible) => {
-        if (!visible) {
-          formRef.current?.resetFields();
-          onClose();
-        }
-      }}
+      onValuesChange={handleValuesChange}
       initialValues={{
         gender: 'SECRET',
         status: 'NORMAL',
@@ -201,9 +200,12 @@ const UserDrawer: React.FC<UserDrawerProps> = ({
         submitButtonProps: {
           loading: confirmLoading || createMutation.isPending || updateMutation.isPending,
         },
-        resetButtonProps: { onClick: onClose },
+        resetButtonProps: { onClick: guardClose },
       }}
-      drawerProps={{ destroyOnHidden: true, onClose, size: 600 }}
+      drawerProps={{ destroyOnHidden: true, onClose: guardClose, size: 600 }}
+      layout="horizontal"
+      labelCol={{ flex: '0 0 120px' }}
+      wrapperCol={{ flex: 'auto' }}
     >
       <ProFormText
         name="username"
@@ -241,7 +243,10 @@ const UserDrawer: React.FC<UserDrawerProps> = ({
       </Form.Item>
 
       {/* 组织 - TreeSelect 多选 */}
-      <Form.Item name="orgUnitIds" label={t('orgUnitIds')}>
+      <Form.Item
+        name="orgUnitIds"
+        label={t('orgUnitIds')}
+      >
         <TreeSelect
           treeData={orgUnitTreeData}
           placeholder={t('orgUnitIdsPlaceholder')}
@@ -254,7 +259,10 @@ const UserDrawer: React.FC<UserDrawerProps> = ({
       </Form.Item>
 
       {/* 职位 - Select 多选 */}
-      <Form.Item name="positionIds" label={t('positionIds')}>
+      <Form.Item
+        name="positionIds"
+        label={t('positionIds')}
+      >
         <Select
           mode="multiple"
           options={positionOptions}

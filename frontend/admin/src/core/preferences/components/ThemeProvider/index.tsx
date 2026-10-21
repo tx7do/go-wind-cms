@@ -4,6 +4,8 @@ import { ConfigProvider, Watermark, theme as antdTheme, type ThemeConfig } from 
 import zhCN from 'antd/locale/zh_CN';
 import enUS from 'antd/locale/en_US';
 // import jaJP from 'antd/locale/ja_JP';
+import { ProConfigProvider, enUSIntl, zhCNIntl } from '@ant-design/pro-components';
+import i18n from 'i18next';
 
 import { usePreferencesStore } from '../../store';
 import {
@@ -168,6 +170,19 @@ export const ThemeProvider = ({ children }: ThemeProviderProps) => {
   // 6. 国际化配置
   const locale = localeMap[appPrefs.locale] ?? zhCN;
 
+  // 6.1 ProComponents 搜索表单按钮文案统一为「搜索」（内置 zh_CN 是「查询」），
+  //     其余文案透传对应内置语言包
+  const proIntl = useMemo(() => {
+    const base = appPrefs.locale === 'en-US' ? enUSIntl : zhCNIntl;
+    return {
+      locale: base.locale,
+      getMessage: (id: string, defaultMessage: string) =>
+        id === 'tableForm.search'
+          ? i18n.t('button.search', { ns: 'common' })
+          : base.getMessage(id, defaultMessage),
+    };
+  }, [appPrefs.locale]);
+
   // 7. 水印内容
   const watermarkText = appPrefs.watermark ? `${appPrefs.name} ${appPrefs.version}` : '';
 
@@ -184,20 +199,22 @@ export const ThemeProvider = ({ children }: ThemeProviderProps) => {
       locale={locale}
       wave={{ disabled: true }} // 关闭点击波纹，提升 Admin 操作手感
     >
-      {watermarkText ? (
-        <Watermark
-          content={watermarkText}
-          font={{ fontSize: 14, color: watermarkColor }}
-          gap={[120, 120]}
-          offset={[60, 60]}
-          rotate={-22}
-          zIndex={1}
-        >
-          {children}
-        </Watermark>
-      ) : (
-        children
-      )}
+      <ProConfigProvider intl={proIntl}>
+        {watermarkText ? (
+          <Watermark
+            content={watermarkText}
+            font={{ fontSize: 14, color: watermarkColor }}
+            gap={[120, 120]}
+            offset={[60, 60]}
+            rotate={-22}
+            zIndex={1}
+          >
+            {children}
+          </Watermark>
+        ) : (
+          children
+        )}
+      </ProConfigProvider>
     </ConfigProvider>
   );
 };

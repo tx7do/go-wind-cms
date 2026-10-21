@@ -14,12 +14,23 @@ export function useProTableScrollY(
   containerRef: RefObject<HTMLElement | null>,
 ): string {
   useEffect(() => {
-    const container = containerRef.current;
-    if (!container) return;
-
     let rafId = 0;
+    // 容器可能晚于本 hook 挂载（如 Drawer 首帧不渲染 children）：
+    // 先观察 body 等容器出现，resize() 内再把观察迁移到真实容器。
+    let observedContainer: HTMLElement | null = null;
 
     const resize = () => {
+      const container = containerRef.current;
+      if (!container) return;
+
+      if (observedContainer !== container) {
+        observedContainer = container;
+        resizeObserver.disconnect();
+        resizeObserver.observe(container);
+        mutationObserver.disconnect();
+        mutationObserver.observe(container, { childList: true, subtree: true });
+      }
+
       cancelAnimationFrame(rafId);
       rafId = requestAnimationFrame(() => {
         const tableBody = container.querySelector('.ant-table-body') as HTMLElement | null;
@@ -83,11 +94,16 @@ export function useProTableScrollY(
 
     // 监听容器尺寸变化
     const resizeObserver = new ResizeObserver(resize);
-    resizeObserver.observe(container);
-
     // 监听 DOM 变化（antd 重新渲染）
     const mutationObserver = new MutationObserver(resize);
-    mutationObserver.observe(container, { childList: true, subtree: true });
+    if (containerRef.current) {
+      observedContainer = containerRef.current;
+      resizeObserver.observe(containerRef.current);
+      mutationObserver.observe(containerRef.current, { childList: true, subtree: true });
+    } else {
+      // 容器尚未挂载（Drawer 首帧不渲染 children）：观察 body，等 resize() 迁移
+      mutationObserver.observe(document.body, { childList: true, subtree: true });
+    }
 
     return () => {
       cancelAnimationFrame(rafId);

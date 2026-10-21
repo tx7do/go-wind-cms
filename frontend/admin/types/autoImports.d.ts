@@ -30,6 +30,7 @@ declare global {
   const BaseUpload: typeof import('../src/components/Upload/BaseUpload').default
   const CodeBlockModal: typeof import('../src/components/common/Editor/src/TiptapEditor/modals').CodeBlockModal
   const CodeEditor: typeof import('../src/components/common/Editor/src/CodeEditor').default
+  const ColumnSlidersIcon: typeof import('../src/components/common/columnSettingIcon').ColumnSlidersIcon
   const CopyBtn: typeof import('../src/components/Copy/CopyBtn').default
   const CopyInput: typeof import('../src/components/Copy/CopyInput').default
   const Count: typeof import('../src/components/Count/index').default
@@ -59,6 +60,7 @@ declare global {
   const Loading: typeof import('../src/components/common/Loading/index').default
   const LoadingComponent: typeof import('../src/components/common/Form/components/LoadingComponent').default
   const MAX_TAG_COUNT: typeof import('../src/components/common/Selects/index').MAX_TAG_COUNT
+  const MIN_COLUMN_WIDTH: typeof import('../src/components/common/ListTable/ResizableHeaderCell').MIN_COLUMN_WIDTH
   const MarkdownEditor: typeof import('../src/components/common/Editor/src/MarkdownEditor').default
   const NavLink: typeof import('react-router-dom').NavLink
   const Navigate: typeof import('react-router-dom').Navigate
@@ -66,6 +68,7 @@ declare global {
   const PartnerSelect: typeof import('../src/components/common/Business/Selects/PartnerSelect').default
   const PasswordStrength: typeof import('../src/components/PasswordStrength/index').default
   const PlainTextEditor: typeof import('../src/components/common/Editor/src/PlainTextEditor').default
+  const ResizableHeaderCell: typeof import('../src/components/common/ListTable/ResizableHeaderCell').default
   const ResizableTitle: typeof import('../src/components/Table/components/ResizableTitle').default
   const Route: typeof import('react-router-dom').Route
   const Routes: typeof import('react-router-dom').Routes
@@ -73,11 +76,13 @@ declare global {
   const SearchFooter: typeof import('../src/components/common/GlobalSearch/components/SearchFooter').default
   const SearchModal: typeof import('../src/components/common/GlobalSearch/components/SearchModal').default
   const SearchResult: typeof import('../src/components/common/GlobalSearch/components/SearchResult').default
+  const SettingBoltIcon: typeof import('../src/components/common/settingBoltIcon').SettingBoltIcon
   const SloganIcon: typeof import('../src/components/bussiness/AuthLayout/icons/SloganIcon').default
   const StatusBar: typeof import('../src/components/common/Editor/src/TiptapEditor/index').StatusBar
   const StrengthBar: typeof import('../src/components/PasswordStrength/components/StrengthBar').default
   const SubmitBottom: typeof import('../src/components/Bottom/SubmitBottom').default
   const Suspense: typeof import('react').Suspense
+  const TableActions: typeof import('../src/components/common/TableActions/index').default
   const TableExportButton: typeof import('../src/components/common/TableExportButton/index').default
   const TableFilter: typeof import('../src/components/Table/components/TableFilter').default
   const TableSkeleton: typeof import('../src/components/common/ListTable/TableSkeleton').default
@@ -128,6 +133,7 @@ declare global {
   const reconnectSSEServer: typeof import('../src/hooks/useTokenRefresh').reconnectSSEServer
   const reducer: typeof import('../src/components/Table/utils/reducer').reducer
   const resetDictCache: typeof import('../src/hooks/useDictCache').resetDictCache
+  const searchOptionRender: typeof import('../src/components/common/searchSubmitter').searchOptionRender
   const startRefreshTimer: typeof import('../src/hooks/useTokenRefresh').startRefreshTimer
   const startTransition: typeof import('react').startTransition
   const stopRefreshTimer: typeof import('../src/hooks/useTokenRefresh').stopRefreshTimer
@@ -146,6 +152,7 @@ declare global {
   const useContext: typeof import('react').useContext
   const useDebugValue: typeof import('react').useDebugValue
   const useDeferredValue: typeof import('react').useDeferredValue
+  const useDrawerCloseGuard: typeof import('../src/components/common/use-drawer-close-guard').useDrawerCloseGuard
   const useEcharts: typeof import('../src/hooks/useEcharts').useEcharts
   const useEffect: typeof import('react').useEffect
   const useEffectEvent: typeof import('react').useEffectEvent
@@ -194,6 +201,6 @@ declare global {
 // for type re-export
 declare global {
   // @ts-ignore
-  export type { FC, ECOption, AuthLayoutProps, EditorProps, CodeEditorProps, JsonEditorProps, MarkdownEditorProps, PlainTextEditorProps, CollaborationOptions, TiptapEditorProps, CodeBlockModalProps, VideoModalProps, IframeModalProps, ImportModalProps, TableSkeletonProps, ThemeLoadingProps, TableExportServerExport, TableExportButtonProps, VersionHistoryDrawerProps, DiffLineType, DiffLine, TokenPayload, AuthState, UserState, TabItem } from './autoImports.d'
+  export type { ResizableCellProps, TableActionConfirm, TableAction, FC, ECOption, AuthLayoutProps, EditorProps, CodeEditorProps, JsonEditorProps, MarkdownEditorProps, PlainTextEditorProps, CollaborationOptions, TiptapEditorProps, CodeBlockModalProps, VideoModalProps, IframeModalProps, ImportModalProps, TableSkeletonProps, ThemeLoadingProps, TableExportServerExport, TableExportButtonProps, VersionHistoryDrawerProps, DiffLineType, DiffLine, TokenPayload, AuthState, UserState, TabItem } from './autoImports.d'
   import('./autoImports.d')
 }

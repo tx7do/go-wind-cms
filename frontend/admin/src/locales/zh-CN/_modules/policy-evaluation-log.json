@@ -21,7 +21,7 @@
   "effectDetails": "生效详情",
   "scopeSql": "范围SQL",
   "createdAt": "日志时间",
-  "export": "导出",
+  "export": "导出全部",
   "exportCsv": "CSV (逗号分隔)",
   "exportXlsx": "Excel 工作簿"
 }

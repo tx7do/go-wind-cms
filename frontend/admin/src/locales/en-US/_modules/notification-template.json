@@ -37,6 +37,8 @@
   "requiredTitleTemplate": "Title template is required",
   "requiredContentTemplate": "Content template is required",
   "maxChars": "At most {{max}} characters",
-  "txCodeHintTitle": "Template reference contract",
-  "txCodeHint": "Senders reference a template by templateCode: passing templateCode plus variables to SendDirect renders the title/content from this template, overriding the request's raw text (rendering happens before the ledger row is written — the async payload carries the rendered result). A misspelled placeholder fails at render time; use Preview to catch it early."
+  "txCodeHintTitle": "Transactional email codes",
+  "txCodeHint": "Templates with these codes override system emails when enabled (missing/disabled/render-fail auto-fall back to built-in copy — sending is never blocked): pwd_reset_code (password reset), contact_bind_code (email binding), channel_test_email (channel test), rule_test_notification (routing rule test).",
+  "delete": "Delete",
+  "moduleName": "Template"
 }

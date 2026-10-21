@@ -1,5 +1,7 @@
 {
   "button": {
+    "add": "新增",
+    "search": "搜索",
     "back": "返回",
     "ok": "确定",
     "confirm": "确定",
@@ -8,7 +10,8 @@
     "delete": "删除",
     "submit": "确定",
     "reset": "取消",
-    "retry": "重试"
+    "retry": "重试",
+    "more": "更多"
   },
   "home": "首页",
   "header": {
@@ -90,6 +93,9 @@
     "failed": "加载失败",
     "initializing": "初始化中",
     "loadingRouter": "正在加载路由配置..."
+  },
+  "table": {
+    "columnResizeHint": "拖动调整列宽，双击恢复自适应"
   },
   "unknownPage": "未知页面",
   "pageContainer": {
@@ -275,14 +281,14 @@
     "readFileFailed": "读取文件失败"
   },
   "export": {
-    "title": "导出",
+    "title": "导出全部",
     "csv": "CSV (逗号分隔)",
     "xlsx": "Excel 工作簿",
-    "serverXlsx": "Excel 工作簿（服务端导出）",
-    "serverSuccess": "服务端导出已开始",
-    "serverFailed": "服务端导出失败",
-    "success": "已导出 {count} 行",
-    "failed": "导出失败"
+    "success": "已导出 {{count}} 行",
+    "failed": "导出失败",
+    "serverXlsx": "服务端全量 (XLSX)",
+    "serverSuccess": "导出文件已生成",
+    "serverFailed": "服务端导出失败"
   },
   "uploadFeedback": {
     "uploading": "图片上传中",
@@ -296,5 +302,14 @@
     "lastWeek": "上周",
     "thisMonth": "本月",
     "lastMonth": "上月"
+  },
+  "modal": {
+    "create": "创建{{moduleName}}",
+    "update": "更新{{moduleName}}",
+    "view": "查看{{moduleName}}"
+  },
+  "drawer": {
+    "unsavedMessage": "表单内容已修改，是否放弃本次编辑？",
+    "discardButton": "确定放弃"
   }
 }

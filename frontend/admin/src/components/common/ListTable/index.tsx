@@ -1,13 +1,15 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
-import type { MutableRefObject } from 'react';
+import type { HTMLAttributes, Key, MutableRefObject } from 'react';
 import { ProTable } from '@ant-design/pro-components';
-import type { ActionType, ProTableProps } from '@ant-design/pro-components';
+import type { ActionType, ProColumns, ProTableProps } from '@ant-design/pro-components';
 import { Alert, Button, Empty } from 'antd';
 import { ReloadOutlined } from '@ant-design/icons';
 import { usePreferencesStore } from '@/core/preferences';
 import { useI18n } from '@/core/i18n';
 import { getDefaultErrorMsg } from '@/core/transport/rest/utils';
 import { TABLE } from '@/config/constants';
+import { MIN_COLUMN_WIDTH, ResizableHeaderCell } from './ResizableHeaderCell';
+import type { ResizableCellProps } from './ResizableHeaderCell';
 import { TableSkeleton } from './TableSkeleton';
 
 /**
@@ -18,6 +20,26 @@ const LOADING_DELAY = 250;
 
 /** pagination=false 的页面没有 pageSize 可依据，骨架行数取一个接近满屏的常量 */
 const FALLBACK_SKELETON_ROWS = 10;
+
+/** 页面列允许的扩展字段：resizable=false 可对单列关掉拖拽把手 */
+type ListTableColumn<RecordType> = ProColumns<RecordType> & { resizable?: boolean };
+
+/** 与 antd getColumnKey 同规则的稳定列标识（key → dataIndex → 序号），列宽状态按它挂靠 */
+const getColumnKey = (column: { key?: Key; dataIndex?: unknown }, fallbackIndex: number): string => {
+  if (column.key !== undefined && column.key !== null) return String(column.key);
+  const { dataIndex } = column;
+  if (typeof dataIndex === 'string' || typeof dataIndex === 'number') return String(dataIndex);
+  if (Array.isArray(dataIndex) && dataIndex.length > 0) return dataIndex.join('-');
+  return `col-${fallbackIndex}`;
+};
+
+/** 列宽状态：widths 挂全部叶子列的锁定宽度，flexKey 是不锁宽、吸收增减的弹性列（null = 全列定宽） */
+interface ResizeState {
+  widths: Record<string, number>;
+  flexKey: string | null;
+  /** 锁定瞬间的滚动容器宽度，拖动中用它判定弹性列是否被压穿 */
+  containerWidth: number;
+}
 
 type ListTableProps<
   RecordType extends Record<string, any>,
@@ -46,6 +68,8 @@ export function ListTable<
     scroll,
     loading,
     rowClassName,
+    components,
+    tableLayout,
     striped = true,
     ...restProps
   } = props;
@@ -56,10 +80,143 @@ export function ListTable<
   /** 请求抛错时的原始文案；页面自己 catch 后返回 success:false 的情况拿不到原因，退化为通用文案 */
   const [errorReason, setErrorReason] = useState<string | null>(null);
   const [showSkeleton, setShowSkeleton] = useState(false);
+  /** 列宽拖拽：null = 用户从未拖过（保持自适应布局），一旦有值即切换 fixed 布局 + 显式列宽 */
+  const [resizeState, setResizeState] = useState<ResizeState | null>(null);
+  const [resizingKey, setResizingKey] = useState<string | null>(null);
 
   const loadedOnceRef = useRef(false);
   const skeletonTimerRef = useRef<number | null>(null);
   const ownActionRef = useRef<ActionType | undefined>(undefined);
+
+  /** 可拖拽的叶子列（组表头的组列没有把手，只有叶子列参与锁定） */
+  const leafColumns = useMemo(() => {
+    const source = (columns ?? []) as ListTableColumn<RecordType>[];
+    const leaves: { column: ListTableColumn<RecordType>; key: string }[] = [];
+    const collect = (cols: ListTableColumn<RecordType>[]) => {
+      cols.forEach((column, index) => {
+        if (Array.isArray(column.children) && column.children.length > 0) {
+          collect(column.children as ListTableColumn<RecordType>[]);
+          return;
+        }
+        leaves.push({ column, key: getColumnKey(column, index) });
+      });
+    };
+    collect(source);
+    return leaves;
+  }, [columns]);
+
+  const handleResizeStart = useCallback(
+    ({
+      key,
+      width,
+      allWidths,
+      containerWidth,
+    }: {
+      key: string;
+      width: number;
+      allWidths: Record<string, number>;
+      containerWidth: number;
+    }) => {
+      setResizingKey(key);
+      setResizeState((prev) => {
+        const next = Math.max(MIN_COLUMN_WIDTH, width);
+        if (prev) {
+          return {
+            widths: { ...prev.widths, [key]: next },
+            // 拖的就是弹性列：它从此有了确定宽度，弹性位退役（全列定宽后表格按总和伸缩）
+            flexKey: prev.flexKey === key ? null : prev.flexKey,
+            containerWidth: prev.containerWidth,
+          };
+        }
+        // 首拖锁定：整行列宽锁成当前渲染值，锁定瞬间（自适应布局 → fixed 布局）渲染结果
+        // 与锁前一模一样，零跳变。仅当列宽总和不超出容器时留一根非冻结列做弹性列吸收
+        // 增减；本就溢出的页面（页面自带列宽且无 scroll.x）全部锁宽——留给弹性列的
+        // 剩余空间是负数，会把它压瘪成 0 宽（用户页实测）。
+        const widths: Record<string, number> = { ...allWidths, [key]: next };
+        const measuredSum = Object.values(allWidths).reduce((sum, w) => sum + w, 0);
+        let flexKey: string | null = null;
+        if (measuredSum <= containerWidth + 1) {
+          for (let i = leafColumns.length - 1; i >= 0; i -= 1) {
+            const leaf = leafColumns[i];
+            if (!leaf.column.fixed && leaf.key !== key) {
+              flexKey = leaf.key;
+              break;
+            }
+          }
+        }
+        if (flexKey) delete widths[flexKey];
+        return { widths, flexKey, containerWidth };
+      });
+    },
+    [leafColumns],
+  );
+
+  const handleResize = useCallback((key: string, width: number) => {
+    setResizeState((prev) => {
+      if (!prev) return prev;
+      const widths = { ...prev.widths, [key]: Math.max(MIN_COLUMN_WIDTH, Math.round(width)) };
+      if (!prev.flexKey) return { ...prev, widths };
+      const { flexKey, containerWidth } = prev;
+      const othersSum = Object.entries(widths)
+        .filter(([k]) => k !== flexKey)
+        .reduce((sum, [, w]) => sum + w, 0);
+      const flexWidth = containerWidth - othersSum;
+      // 拖到弹性列被压穿：把它冻结在当前值（不低于最小宽），此后全列定宽、继续拖宽走横向滚动
+      if (flexWidth >= MIN_COLUMN_WIDTH) return { ...prev, widths };
+      return {
+        widths: { ...widths, [flexKey]: Math.max(MIN_COLUMN_WIDTH, Math.floor(flexWidth)) },
+        flexKey: null,
+        containerWidth,
+      };
+    });
+  }, []);
+
+  const handleResizeEnd = useCallback(() => setResizingKey(null), []);
+
+  const handleResizeReset = useCallback(() => {
+    setResizeState(null);
+    setResizingKey(null);
+  }, []);
+
+  // 注入拖拽参数与锁定宽度：组列与 resizable=false 的列不带把手；
+  // 弹性列显式去宽（width: undefined），由 fixed 布局分它剩余空间
+  const resizableColumns = useMemo(() => {
+    const source = (columns ?? []) as ListTableColumn<RecordType>[];
+    return source.map((column, index) => {
+      const isGroup = Array.isArray(column.children) && column.children.length > 0;
+      if (isGroup || column.resizable === false) return column;
+      const key = getColumnKey(column, index);
+      const width =
+        resizeState && !column.hideInTable
+          ? key === resizeState.flexKey
+            ? undefined
+            : (resizeState.widths[key] ?? column.width)
+          : column.width;
+      const handleProps: ResizableCellProps = {
+        'data-resize-key': key,
+        onResizeStart: handleResizeStart,
+        onResize: handleResize,
+        onResizeEnd: handleResizeEnd,
+        onResizeReset: handleResizeReset,
+        resizing: resizingKey === key,
+        resizeTitle: t('table.columnResizeHint'),
+      };
+      return {
+        ...column,
+        width,
+        onHeaderCell: () => handleProps as unknown as HTMLAttributes<HTMLTableCellElement>,
+      };
+    });
+  }, [
+    columns,
+    resizeState,
+    resizingKey,
+    handleResizeStart,
+    handleResize,
+    handleResizeEnd,
+    handleResizeReset,
+    t,
+  ]);
 
   // 页面传进来的 request 是内联箭头函数（每次渲染都是新引用）。走 ref 取值，给 ProTable 的
   // request 才能保持恒定引用，否则包装层自己会变成重新取数的原因。
@@ -143,10 +300,36 @@ export function ListTable<
     return configured && configured > 0 ? configured : TABLE.DEFAULT_PAGE_SIZE;
   }, [pagination]);
 
+  // antd（rc-table）以 scroll.x 是否存在作为表格可横向滚动（horizonScroll）的开关：
+  // 冻结列的分割线 shadow 类、scrollLeft 监听全被它门控，而 sticky 冻结本身是纯 CSS——
+  // 缺 x 时列照样冻、能横向滚，分割线却永远不画（脚本页操作列实测）。
+  // 列里带 fixed 时补 '100%'：表格仍自适应撑满容器（不会像固定像素那样撑出空白列，
+  // 即 4bae15a3 批量去掉 scroll.x 的原因），真溢出时 antd 的滚动与分割线链路照常工作。
+  // 列宽锁定后同理：拖宽的总和一旦超过容器就靠它出横向滚动条，未超出时表格依旧铺满。
+  const hasFixedColumn = !!columns?.some((column) => !!column.fixed);
+  const resizeLocked = resizeState !== null;
+  const mergedScroll = useMemo(() => {
+    const pageX = typeof scroll === 'object' ? scroll?.x : undefined;
+    if (pageX || (!hasFixedColumn && !resizeLocked)) return scroll;
+    return { ...(typeof scroll === 'object' ? scroll : {}), x: '100%' };
+  }, [scroll, hasFixedColumn, resizeLocked]);
+
+  // 锁定后列宽是显式像素值，必须切 fixed 布局才生效；未锁定时不动 tableLayout，
+  // 页面自带 tableLayout 的（如有）优先
+  const mergedTableLayout = tableLayout ?? (resizeLocked ? 'fixed' : undefined);
+
+  const mergedComponents = useMemo(
+    () => ({
+      ...components,
+      header: { ...components?.header, cell: ResizableHeaderCell },
+    }),
+    [components],
+  );
+
   // 骨架继承页面的两向 scroll：scroll.x 保证列宽与真实表格逐列对齐，scroll.y 保证两态都有
   // 同一层限高 .ant-table-body —— 分页器的落点由它决定，骨架缺这层就会在数据到位时整段跳动。
-  const scrollX = typeof scroll === 'object' ? scroll?.x : undefined;
-  const scrollY = typeof scroll === 'object' ? scroll?.y : undefined;
+  const scrollX = typeof mergedScroll === 'object' ? mergedScroll?.x : undefined;
+  const scrollY = typeof mergedScroll === 'object' ? mergedScroll?.y : undefined;
 
   const tableViewRender = useCallback<NonNullable<ListTableProps<RecordType, Params>['tableViewRender']>>(
     (_tableProps, defaultDom) => {
@@ -164,7 +347,7 @@ export function ListTable<
       if (showSkeleton) {
         return (
           <TableSkeleton<RecordType>
-            columns={columns}
+            columns={resizableColumns}
             rows={skeletonRows}
             size={size}
             bordered={bordered}
@@ -195,20 +378,23 @@ export function ListTable<
       }
       return defaultDom;
     },
-    [phase, showSkeleton, errorReason, retry, columns, skeletonRows, size, bordered, scrollX, scrollY, pagination, t],
+    [phase, showSkeleton, errorReason, retry, resizableColumns, skeletonRows, size, bordered, scrollX, scrollY, pagination, t],
   );
 
   return (
     <ProTable<RecordType, Params>
       {...restProps}
-      columns={columns}
-      // 这四个 prop 上面为了喂骨架/算骨架行数而被解构出来，解构即从 restProps 里摘走，
-      // 不在此显式转交就会被 ProTable 静默丢掉（scroll.y 丢 → 无粘性表头与限高 body，
-      // scroll.x 丢 → 列被压到容器宽度，pagination 丢 → 页面关不掉分页器）。
+      columns={resizableColumns}
+      // 这六个 prop 上面为了喂骨架/算骨架行数/接管列宽拖拽而被解构出来，解构即从 restProps
+      // 里摘走，不在此显式转交就会被 ProTable 静默丢掉（scroll.y 丢 → 无粘性表头与限高 body，
+      // scroll.x 丢 → 列被压到容器宽度，pagination 丢 → 页面关不掉分页器，
+      // components/tableLayout 丢 → 拖拽把手与 fixed 布局失效）。
       pagination={pagination}
       size={size}
       bordered={bordered}
-      scroll={scroll}
+      scroll={mergedScroll}
+      components={mergedComponents}
+      tableLayout={mergedTableLayout}
       actionRef={ownActionRef}
       request={wrappedRequest}
       rowClassName={composedRowClassName}

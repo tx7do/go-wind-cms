@@ -9,6 +9,8 @@ import { PaginationQuery } from '@/core';
 import { TABLE, METHOD_LIST } from '@/config/constants';
 import { fetchListApiAuditLogs } from '@/api/hooks/api-audit-log';
 import { useProTableScrollY } from '@/hooks/useProTableScrollY';
+import { searchOptionRender } from '@/components/common/searchSubmitter';
+import { ColumnSlidersIcon } from '@/components/common/columnSettingIcon';
 
 interface ApiLogPageProps {
   userId: number | undefined;
@@ -246,7 +248,7 @@ const ApiLogPage: React.FC<ApiLogPageProps> = ({ userId }) => {
         
 }}
         rowKey="id"
-        search={{
+        search={{ optionRender: searchOptionRender,
           labelWidth: 'auto',
           defaultCollapsed: false,
         }}
@@ -258,7 +260,7 @@ const ApiLogPage: React.FC<ApiLogPageProps> = ({ userId }) => {
         options={{
           density: true,
           fullScreen: true,
-          setting: true,
+          setting: { settingIcon: <ColumnSlidersIcon /> },
           reload: true,
         }}
         size="middle"

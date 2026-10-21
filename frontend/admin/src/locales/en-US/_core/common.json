@@ -1,5 +1,7 @@
 {
   "button": {
+    "add": "Add",
+    "search": "Search",
     "back": "Back",
     "ok": "OK",
     "confirm": "OK",
@@ -8,7 +10,8 @@
     "delete": "Delete",
     "submit": "Submit",
     "reset": "Reset",
-    "retry": "Retry"
+    "retry": "Retry",
+    "more": "More"
   },
   "header": {
     "profile": "Profile",
@@ -90,6 +93,9 @@
     "failed": "Failed to load",
     "initializing": "Initializing",
     "loadingRouter": "Loading route configuration..."
+  },
+  "table": {
+    "columnResizeHint": "Drag to resize column, double-click to auto-fit"
   },
   "unknownPage": "Unknown Page",
   "pageContainer": {
@@ -275,14 +281,14 @@
     "readFileFailed": "Failed to read file"
   },
   "export": {
-    "title": "Export",
+    "title": "Export All",
     "csv": "CSV (Comma Separated)",
     "xlsx": "Excel Workbook",
-    "serverXlsx": "Excel Workbook (server-side)",
-    "serverSuccess": "Server-side export started",
-    "serverFailed": "Server-side export failed",
-    "success": "Exported {count} rows",
-    "failed": "Export failed"
+    "success": "Exported {{count}} rows",
+    "failed": "Export failed",
+    "serverXlsx": "Server-side full (XLSX)",
+    "serverSuccess": "Export file generated",
+    "serverFailed": "Server-side export failed"
   },
   "uploadFeedback": {
     "uploading": "Uploading image",
@@ -296,5 +302,14 @@
     "lastWeek": "Last Week",
     "thisMonth": "This Month",
     "lastMonth": "Last Month"
+  },
+  "modal": {
+    "create": "Create {{moduleName}}",
+    "update": "Update {{moduleName}}",
+    "view": "View {{moduleName}}"
+  },
+  "drawer": {
+    "unsavedMessage": "The form has been modified. Do you want to discard this edit?",
+    "discardButton": "Discard"
   }
 }

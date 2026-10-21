@@ -1,8 +1,9 @@
 import { useRef, useState } from 'react';
 import type { ProColumns, ActionType } from '@ant-design/pro-components';
 import TableExportButton from '@/components/common/TableExportButton';
+import TableActions from '@/components/common/TableActions';
 import ListTable from '@/components/common/ListTable';
-import { Button, Popconfirm, Tag, App } from 'antd';
+import { Button, Tag, App } from 'antd';
 import { EditOutlined, DeleteOutlined, PlusOutlined } from '@ant-design/icons';
 import { useQueryClient } from '@tanstack/react-query';
 import { useTranslation } from 'react-i18next';
@@ -13,6 +14,7 @@ import { useProTableScrollY } from '@/hooks/useProTableScrollY';
 import { fetchListDictTypes, useDeleteDictType } from '@/api/hooks/dict';
 import { enableBoolOptions, getEnableColor, getEnableLabel } from './constants';
 import DictTypeDrawer from './DictTypeDrawer';
+import { searchOptionRender } from '@/components/common/searchSubmitter';
 
 interface DictTypeListProps {
   currentTypeId: number | null;
@@ -72,36 +74,35 @@ const DictTypeList: React.FC<DictTypeListProps> = ({ currentTypeId, onTypeSelect
     {
       title: t('action'),
       valueType: 'option',
-      width: 90,
-      render: (_, record) => [
-        <a
-          key="edit"
-          onClick={(e) => {
-            e.stopPropagation();
-            setEditingType(record);
-            setDrawerMode('edit');
-            setDrawerOpen(true);
-          }}
-        >
-          <EditOutlined />
-        </a>,
-        <Popconfirm
-          key="delete"
-          title={t('deleteConfirmTitle')}
-          description={t('deleteConfirmDesc', { moduleName: t('moduleName') })}
-          onConfirm={(e) => {
-            e?.stopPropagation();
-            record.id && deleteMutation.mutate({ ids: [record.id] });
-          }}
-          onCancel={(e) => e?.stopPropagation()}
-          okText={t('common:button.ok')}
-          cancelText={t('common:button.cancel')}
-        >
-          <a style={{ color: 'var(--ant-color-error)' }} onClick={(e) => e.stopPropagation()}>
-            <DeleteOutlined />
-          </a>
-        </Popconfirm>,
-      ],
+      width: 150,
+      render: (_, record) => (
+        <TableActions
+          record={record}
+          actions={[
+            {
+              key: 'edit',
+              label: t('common:button.edit'),
+              icon: <EditOutlined />,
+              onClick: () => {
+                setEditingType(record);
+                setDrawerMode('edit');
+                setDrawerOpen(true);
+              },
+            },
+            {
+              key: 'delete',
+              label: t('common:button.delete'),
+              icon: <DeleteOutlined />,
+              danger: true,
+              confirm: {
+                title: t('deleteConfirmTitle'),
+                description: t('deleteConfirmDesc', { moduleName: t('moduleName') }),
+              },
+              onClick: () => record.id && deleteMutation.mutate({ ids: [record.id] }),
+            },
+          ]}
+        />
+      ),
     },
   ];
 
@@ -135,7 +136,7 @@ const DictTypeList: React.FC<DictTypeListProps> = ({ currentTypeId, onTypeSelect
           
 }}
           rowKey="id"
-          search={{
+          search={{ optionRender: searchOptionRender,
             labelWidth: 'auto',
             defaultCollapsed: false,
             span: 12,
@@ -149,16 +150,16 @@ const DictTypeList: React.FC<DictTypeListProps> = ({ currentTypeId, onTypeSelect
             <TableExportButton key="export" fetcher={fetchListDictTypes} columns={columns} filename="dict-types" />,
             <Button
               key="create"
-              type="primary"
+              color="primary"
+              variant="outlined"
               icon={<PlusOutlined />}
-              size="small"
               onClick={() => {
                 setEditingType(null);
                 setDrawerMode('create');
                 setDrawerOpen(true);
               }}
             >
-              {t('create')}
+              {t('common:button.add')}
             </Button>,
           ]}
           options={{

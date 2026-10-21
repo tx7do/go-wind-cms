@@ -60,5 +60,8 @@
   "channelMap": {
     "EMAIL": "Email",
     "WEBHOOK": "Webhook"
-  }
+  },
+  "delete": "Delete",
+  "evaluateFailed2": "Evaluate failed",
+  "moduleName": "Rule"
 }

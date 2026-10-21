@@ -113,9 +113,13 @@ class RequestClient {
     this.useTokenInterceptor(callbacks);
     this.useRequestIdInterceptor();
     this.useLocaleInterceptor(callbacks);
-    // auth 拦截器必须在 responseData 之前，否则 401 错误会丢失 AxiosError 结构
-    this.useAuthInterceptor(callbacks);
+    // responseData 必须在 auth 之前（vben/ele 同序）。401 走 rejected 链，
+    // auth 拿到的仍是完整 AxiosError；反过来 auth 在前时，刷新成功后的重试
+    // 结果（已解包的响应体）会再流经 responseData.fulfilled 被二次解包：
+    // status 为 undefined 落入 throw 分支，最终 `errAny.response.data` 把
+    // 字面量 undefined 当错误抛给页面，UI 在恢复成功时必现失败态。
     this.useResponseDataInterceptor();
+    this.useAuthInterceptor(callbacks);
     this.useErrorMessageInterceptor(callbacks);
   }
 

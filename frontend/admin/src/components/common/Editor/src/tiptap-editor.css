@@ -6,7 +6,8 @@
   display: flex !important;
   flex-direction: column !important;
   width: 100% !important;
-  height: 100% !important;
+  /* 高度由调用方经 height prop 内联注入（默认 100%）；此处不得再写 height，
+     否则 !important 会把内联值打死，表单场景下 100% 解析不出即塌成一行 */
   overflow: hidden !important;
   font-family: var(--font-sans, inherit);
   background-color: #fff;
@@ -232,6 +233,7 @@
   flex: 1 !important;
   width: 100% !important;
   height: 100% !important;
+  min-height: 260px;
   padding: 16px;
   font-size: 14px;
   line-height: 1.6;

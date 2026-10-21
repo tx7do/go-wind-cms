@@ -19,6 +19,7 @@ import { PaginationQuery } from '@/core';
 import { useCreatePermission, useUpdatePermission } from '@/api/hooks/permission';
 import { fetchListPermissionGroups } from '@/api/hooks/permission-group';
 import { fetchListMenus } from '@/api/hooks/menu';
+import { useDrawerCloseGuard } from '@/components/common/use-drawer-close-guard';
 import { fetchListApis } from '@/api/hooks/api';
 import {
   getStatusOptions,
@@ -51,6 +52,9 @@ const PermissionDrawer: React.FC<PermissionDrawerProps> = ({
 }) => {
   const { t } = useTranslation('permission');
   const formRef = useRef<ProFormInstance>(null);
+
+  // 关闭守卫：遮罩/ESC/X/取消统一，脏数据先确认（docs/form_drawer_close_guard.md）
+  const { guardClose, handleValuesChange } = useDrawerCloseGuard(open, onClose);
   const queryClient = useQueryClient();
   const { message } = App.useApp();
 
@@ -106,6 +110,15 @@ const PermissionDrawer: React.FC<PermissionDrawerProps> = ({
         })
         .catch(() => setApiTreeData([]))
         .finally(() => setApiTreeLoading(false));
+    }
+  }, [open]);
+
+  // 打开时清空上次会话遗留的勾选态（原在 onOpenChange 关闭分支里清理，守卫改道后挪到打开时；
+  // 必须声明在填充 effect 之前，否则编辑回填会被清掉）
+  useEffect(() => {
+    if (open) {
+      setMenuCheckedKeys([]);
+      setApiCheckedKeys([]);
     }
   }, [open]);
 
@@ -263,14 +276,7 @@ const PermissionDrawer: React.FC<PermissionDrawerProps> = ({
       formRef={formRef}
       title={mode === 'create' ? t('create') : t('edit')}
       open={open}
-      onOpenChange={(visible) => {
-        if (!visible) {
-          formRef.current?.resetFields();
-          setMenuCheckedKeys([]);
-          setApiCheckedKeys([]);
-          onClose();
-        }
-      }}
+      onValuesChange={handleValuesChange}
       initialValues={{
         status: 'ON',
         groupId,
@@ -284,9 +290,12 @@ const PermissionDrawer: React.FC<PermissionDrawerProps> = ({
         submitButtonProps: {
           loading: confirmLoading || createMutation.isPending || updateMutation.isPending,
         },
-        resetButtonProps: { onClick: onClose },
+        resetButtonProps: { onClick: guardClose },
       }}
-      drawerProps={{ destroyOnHidden: true, onClose, size: 700 }}
+      drawerProps={{ destroyOnHidden: true, onClose: guardClose, size: 700 }}
+      layout="horizontal"
+      labelCol={{ flex: '0 0 120px' }}
+      wrapperCol={{ flex: 'auto' }}
     >
       <ProFormText
         name="name"

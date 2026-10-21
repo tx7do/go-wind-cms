@@ -37,6 +37,8 @@
   "requiredTitleTemplate": "请输入标题模板",
   "requiredContentTemplate": "请输入正文模板",
   "maxChars": "不能超过 {{max}} 个字符",
-  "txCodeHintTitle": "模板引用约定",
-  "txCodeHint": "发送方以 template_code 引用模板：调用 SendDirect 时给出 templateCode 与变量集，标题/正文由本模板渲染后覆盖请求原文（渲染发生在落台账之前，异步载荷装的就是渲染结果）。占位符拼错会在渲染时报错，用「预览」即可提前发现。"
+  "txCodeHintTitle": "事务性邮件覆写约定",
+  "txCodeHint": "以下 code 为事务性邮件的覆写锚：模板存在且启用时，对应系统邮件改用本模板渲染（缺失/停用/渲染失败自动回落内置文案，绝不阻断发送）——pwd_reset_code（找回密码验证码）、contact_bind_code（邮箱换绑验证码）、channel_test_email（渠道测试邮件）、rule_test_notification（路由规则测试通知）。",
+  "delete": "删除",
+  "moduleName": "模板"
 }

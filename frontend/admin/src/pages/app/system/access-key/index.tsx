@@ -1,7 +1,9 @@
 import { useRef, useState } from 'react';
 import type { ProColumns, ActionType } from '@ant-design/pro-components';
 import ListTable from '@/components/common/ListTable';
-import { Button, Modal, Popconfirm, Tag, Typography, App } from 'antd';
+import TableExportButton from '@/components/common/TableExportButton';
+import TableActions from '@/components/common/TableActions';
+import { Button, Modal, Tag, Typography, App } from 'antd';
 import {
   EditOutlined,
   DeleteOutlined,
@@ -20,6 +22,7 @@ import {
 import { useProTableScrollY } from '@/hooks/useProTableScrollY';
 import ContentContainer from '@/layouts/components/PageContainer/ContentContainer';
 import AccessKeyDrawer from './components/AccessKeyDrawer';
+import { searchOptionRender } from '@/components/common/searchSubmitter';
 
 // 从未知错误对象取本地化 message（request-client 拦截器已把 reason 译文写进 message）
 const errMessage = (error: unknown, fallback: string): string => {
@@ -112,57 +115,54 @@ export default function AccessKeyPage() {
     {
       title: t('action'),
       valueType: 'option',
-      width: 90,
+      width: 250,
       fixed: 'right',
-      render: (_, record) => [
-        <a
-          key="edit"
-          onClick={() => {
-            setDrawerMode('edit');
-            setSelected(record);
-            setDrawerOpen(true);
-          }}
-        >
-          <EditOutlined />
-        </a>,
-        <a
-          key="reset"
-          title={t('resetSecret')}
-          onClick={() => {
-            if (!record.id) return;
-            resetMutation.mutate(
-              { id: record.id },
-              {
-                onSuccess: (resp) => {
-                  message.success(t('resetSuccess'));
-                  setResetSecretFor(record);
-                  setResetSecretValue(resp.secret ?? null);
-                },
-                onError: (error: Error) => {
-                  console.error('reset access key secret failed', error);
-                  message.error(errMessage(error, t('resetFailed')));
-                },
+      render: (_, record) => (
+        <TableActions
+          record={record}
+          actions={[
+            {
+              key: 'edit',
+              label: t('common:button.edit'),
+              icon: <EditOutlined />,
+              onClick: () => {
+                setDrawerMode('edit');
+                setSelected(record);
+                setDrawerOpen(true);
               },
-            );
-          }}
-        >
-          <ReloadOutlined />
-        </a>,
-        <Popconfirm
-          key="delete"
-          title={t('deleteConfirmTitle')}
-          description={t('deleteConfirmDesc', { moduleName: t('moduleName') })}
-          onConfirm={() =>
-            record.id && deleteMutation.mutate({ id: record.id })
-          }
-          okText={t('common:button.ok')}
-          cancelText={t('common:button.cancel')}
-        >
-          <a style={{ color: 'var(--ant-color-error)' }}>
-            <DeleteOutlined />
-          </a>
-        </Popconfirm>,
-      ],
+            },
+            {
+              key: 'reset',
+              label: t('resetSecret'),
+              icon: <ReloadOutlined />,
+              onClick: () => {
+                resetMutation.mutate(
+                  { id: record.id! },
+                  {
+                    onSuccess: (resp) => {
+                      message.success(t('resetSuccess'));
+                      setResetSecretFor(record);
+                      setResetSecretValue(resp.secret ?? null);
+                    },
+                    onError: (error: Error) => message.error(error.message || t('resetFailed')),
+                  },
+                );
+              },
+            },
+            {
+              key: 'delete',
+              label: t('common:button.delete'),
+              icon: <DeleteOutlined />,
+              danger: true,
+              confirm: {
+                title: t('deleteConfirmTitle'),
+                description: t('deleteConfirmDesc', { moduleName: t('moduleName') }),
+              },
+              onClick: () => record.id && deleteMutation.mutate({ id: record.id }),
+            },
+          ]}
+        />
+      ),
     },
   ];
 
@@ -173,7 +173,7 @@ export default function AccessKeyPage() {
           actionRef={actionRef}
           columns={columns}
           rowKey="id"
-          search={{ labelWidth: 'auto', defaultCollapsed: false }}
+          search={{ optionRender: searchOptionRender, labelWidth: 'auto', defaultCollapsed: false }}
           scroll={{ y: tableScrollY }}
           pagination={{
             defaultPageSize: 20,
@@ -196,9 +196,11 @@ export default function AccessKeyPage() {
             };
           }}
           toolBarRender={() => [
+            <TableExportButton key="export" fetcher={fetchListAccessKeys} columns={columns} filename="access-keys" />,
             <Button
               key="create"
-              type="primary"
+              color="primary"
+              variant="outlined"
               icon={<PlusOutlined />}
               onClick={() => {
                 setDrawerMode('create');
@@ -206,7 +208,7 @@ export default function AccessKeyPage() {
                 setDrawerOpen(true);
               }}
             >
-              {t('create')}
+              {t('common:button.add')}
             </Button>,
           ]}
           size="middle"

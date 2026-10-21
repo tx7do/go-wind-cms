@@ -16,6 +16,7 @@ import { useTranslation } from 'react-i18next';
 import type { taskservicev1_Task as Task } from '@/api/generated/admin/service/v1';
 import { useCreateTask, useUpdateTask, fetchListTaskTypeNames } from '@/api/hooks/task';
 import { toProtoTimestamp } from '@/utils/datetime';
+import { useDrawerCloseGuard } from '@/components/common/use-drawer-close-guard';
 import { getTaskTypeOptions } from '../constants';
 
 interface TaskDrawerProps {
@@ -32,6 +33,9 @@ interface TaskDrawerProps {
 const TaskDrawer: React.FC<TaskDrawerProps> = ({ open, mode, data, onClose, onSuccess }) => {
   const { t } = useTranslation('task');
   const formRef = useRef<ProFormInstance>(null);
+
+  // 关闭守卫：遮罩/ESC/X/取消统一，脏数据先确认（docs/form_drawer_close_guard.md）
+  const { guardClose, handleValuesChange } = useDrawerCloseGuard(open, onClose);
   const queryClient = useQueryClient();
   const { message } = App.useApp();
 
@@ -131,12 +135,7 @@ const TaskDrawer: React.FC<TaskDrawerProps> = ({ open, mode, data, onClose, onSu
       formRef={formRef}
       title={mode === 'create' ? t('create') : t('edit')}
       open={open}
-      onOpenChange={(visible) => {
-        if (!visible) {
-          formRef.current?.resetFields();
-          onClose();
-        }
-      }}
+      onValuesChange={handleValuesChange}
       initialValues={{
         type: 'PERIODIC',
         enable: true,
@@ -151,9 +150,12 @@ const TaskDrawer: React.FC<TaskDrawerProps> = ({ open, mode, data, onClose, onSu
         submitButtonProps: {
           loading: confirmLoading || createMutation.isPending || updateMutation.isPending,
         },
-        resetButtonProps: { onClick: onClose },
+        resetButtonProps: { onClick: guardClose },
       }}
-      drawerProps={{ destroyOnHidden: true, onClose, size: 600 }}
+      drawerProps={{ destroyOnHidden: true, onClose: guardClose, size: 600 }}
+      layout="horizontal"
+      labelCol={{ flex: '0 0 120px' }}
+      wrapperCol={{ flex: 'auto' }}
     >
       <ProFormSelect
         name="type"

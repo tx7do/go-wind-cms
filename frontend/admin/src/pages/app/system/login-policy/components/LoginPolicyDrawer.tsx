@@ -11,6 +11,7 @@ import { App } from 'antd';
 import { useQueryClient } from '@tanstack/react-query';
 import { useTranslation } from 'react-i18next';
 import type { authenticationservicev1_LoginPolicy as LoginPolicy } from '@/api/generated/admin/service/v1';
+import { useDrawerCloseGuard } from '@/components/common/use-drawer-close-guard';
 import { useCreateLoginPolicy, useUpdateLoginPolicy } from '@/api/hooks/login-policy';
 import { getPolicyTypeOptions, getPolicyMethodOptions } from '../constants';
 
@@ -34,6 +35,9 @@ const LoginPolicyDrawer: React.FC<LoginPolicyDrawerProps> = ({
 }) => {
   const { t } = useTranslation('login-policy');
   const formRef = useRef<ProFormInstance>(null);
+
+  // 关闭守卫：遮罩/ESC/X/取消统一，脏数据先确认（docs/form_drawer_close_guard.md）
+  const { guardClose, handleValuesChange } = useDrawerCloseGuard(open, onClose);
   const queryClient = useQueryClient();
   const { message } = App.useApp();
 
@@ -90,12 +94,7 @@ const LoginPolicyDrawer: React.FC<LoginPolicyDrawerProps> = ({
       formRef={formRef}
       title={mode === 'create' ? t('create') : t('edit')}
       open={open}
-      onOpenChange={(visible) => {
-        if (!visible) {
-          formRef.current?.resetFields();
-          onClose();
-        }
-      }}
+      onValuesChange={handleValuesChange}
       initialValues={mode === 'edit' ? { ...data } : undefined}
       onFinish={handleSubmit}
       submitter={{
@@ -107,14 +106,17 @@ const LoginPolicyDrawer: React.FC<LoginPolicyDrawerProps> = ({
           loading: confirmLoading || createMutation.isPending || updateMutation.isPending,
         },
         resetButtonProps: {
-          onClick: onClose,
+          onClick: guardClose,
         },
       }}
       drawerProps={{
         destroyOnHidden: true,
-        onClose,
+        onClose: guardClose,
         size: 520,
       }}
+      layout="horizontal"
+      labelCol={{ flex: '0 0 120px' }}
+      wrapperCol={{ flex: 'auto' }}
     >
       {/* proto 中 target_id 是 uint32（目标用户ID）；IP/MAC/地区类策略应留空，限制内容填"策略值" */}
       <ProFormDigit

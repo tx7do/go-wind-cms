@@ -1,7 +1,9 @@
 import { useRef, useState } from 'react';
 import type { ProColumns, ActionType } from '@ant-design/pro-components';
 import ListTable from '@/components/common/ListTable';
-import { Button, Popconfirm, Tag, Tooltip, App } from 'antd';
+import TableExportButton from '@/components/common/TableExportButton';
+import TableActions from '@/components/common/TableActions';
+import { Button, Tag, Tooltip, App } from 'antd';
 import { EditOutlined, DeleteOutlined, PlusOutlined, CloudOutlined, LaptopOutlined } from '@ant-design/icons';
 import { useQueryClient } from '@tanstack/react-query';
 import { useTranslation } from 'react-i18next';
@@ -12,6 +14,7 @@ import { useProTableScrollY } from '@/hooks/useProTableScrollY';
 import ContentContainer from '@/layouts/components/PageContainer/ContentContainer';
 import { TABLE } from '@/config/constants';
 import AiProviderDrawer from './components/AiProviderDrawer';
+import { searchOptionRender } from '@/components/common/searchSubmitter';
 
 export default function AiProviderPage() {
   const { t } = useTranslation('aiProvider');
@@ -91,33 +94,36 @@ export default function AiProviderPage() {
     {
       title: t('action'),
       valueType: 'option',
-      width: 120,
+      width: 150,
       fixed: 'right',
-      render: (_, record) => [
-        <Button
-          key="edit"
-          type="link"
-          size="small"
-          icon={<EditOutlined />}
-          onClick={() => {
-            setSelected(record);
-            setDrawerMode('edit');
-            setDrawerOpen(true);
-          }}
-        >
-          {t('edit')}
-        </Button>,
-        <Popconfirm
-          key="delete"
-          title={t('deleteConfirmTitle')}
-          description={t('deleteConfirmDesc', { moduleName: t('moduleName') })}
-          onConfirm={() => deleteMutation.mutate({ id: record.id! })}
-        >
-          <Button type="link" size="small" danger icon={<DeleteOutlined />}>
-            {t('deleteConfirmTitle')}
-          </Button>
-        </Popconfirm>,
-      ],
+      render: (_, record) => (
+        <TableActions
+          record={record}
+          actions={[
+            {
+              key: 'edit',
+              label: t('common:button.edit'),
+              icon: <EditOutlined />,
+              onClick: () => {
+                setSelected(record);
+                setDrawerMode('edit');
+                setDrawerOpen(true);
+              },
+            },
+            {
+              key: 'delete',
+              label: t('common:button.delete'),
+              icon: <DeleteOutlined />,
+              danger: true,
+              confirm: {
+                title: t('deleteConfirmTitle'),
+                description: t('deleteConfirmDesc', { moduleName: t('moduleName') }),
+              },
+              onClick: () => deleteMutation.mutate({ id: record.id! }),
+            },
+          ]}
+        />
+      ),
     },
   ];
 
@@ -127,7 +133,7 @@ export default function AiProviderPage() {
       <ListTable<AiProvider>
         actionRef={actionRef}
         rowKey="id"
-        search={{ labelWidth: 'auto', defaultCollapsed: false }}
+        search={{ optionRender: searchOptionRender, labelWidth: 'auto', defaultCollapsed: false }}
         scroll={{ y: tableScrollY, x: 1000 }}
         request={async (params) => {
           const { current, pageSize, ...rest } = params;
@@ -139,10 +145,12 @@ export default function AiProviderPage() {
           return { data: res.items || [], total: res.total || 0, success: true };
         }}
         toolBarRender={() => [
+          <TableExportButton key="export" fetcher={fetchListAiProviders} columns={columns} filename="ai-providers" />,
           <Tooltip key="create-tip" title={t('isDefaultTooltip')}>
             <Button
               key="create"
-              type="primary"
+              color="primary"
+              variant="outlined"
               icon={<PlusOutlined />}
               onClick={() => {
                 setSelected(undefined);
@@ -150,7 +158,7 @@ export default function AiProviderPage() {
                 setDrawerOpen(true);
               }}
             >
-              {t('create')}
+              {t('common:button.add')}
             </Button>
           </Tooltip>,
         ]}

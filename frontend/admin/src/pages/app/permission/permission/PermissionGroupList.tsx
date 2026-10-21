@@ -1,8 +1,9 @@
 import { useRef, useState } from 'react';
 import type { ProColumns, ActionType } from '@ant-design/pro-components';
 import TableExportButton from '@/components/common/TableExportButton';
+import TableActions from '@/components/common/TableActions';
 import ListTable from '@/components/common/ListTable';
-import { Button, Popconfirm, Tag, App } from 'antd';
+import { Button, Tag, App } from 'antd';
 import {
   EditOutlined,
   DeleteOutlined,
@@ -18,6 +19,7 @@ import { useProTableScrollY } from '@/hooks/useProTableScrollY';
 import { fetchListPermissionGroups, useDeletePermissionGroup } from '@/api/hooks/permission-group';
 import { getStatusMap, getStatusOptions } from './constants';
 import PermissionGroupDrawer from './PermissionGroupDrawer';
+import { searchOptionRender } from '@/components/common/searchSubmitter';
 
 interface PermissionGroupListProps {
   currentGroupId: number | null;
@@ -117,36 +119,35 @@ const PermissionGroupList: React.FC<PermissionGroupListProps> = ({
     {
       title: t('action'),
       valueType: 'option',
-      width: 90,
-      render: (_, record) => [
-        <a
-          key="edit"
-          onClick={(e) => {
-            e.stopPropagation();
-            setEditingGroup(record);
-            setDrawerMode('edit');
-            setDrawerOpen(true);
-          }}
-        >
-          <EditOutlined />
-        </a>,
-        <Popconfirm
-          key="delete"
-          title={t('deleteConfirmTitle')}
-          description={t('deleteConfirmDesc', { moduleName: t('moduleName') })}
-          onConfirm={(e) => {
-            e?.stopPropagation();
-            record.id && deleteMutation.mutate({ id: record.id });
-          }}
-          onCancel={(e) => e?.stopPropagation()}
-          okText={t('common:button.ok')}
-          cancelText={t('common:button.cancel')}
-        >
-          <a style={{ color: 'var(--ant-color-error)' }} onClick={(e) => e.stopPropagation()}>
-            <DeleteOutlined />
-          </a>
-        </Popconfirm>,
-      ],
+      width: 150,
+      render: (_, record) => (
+        <TableActions
+          record={record}
+          actions={[
+            {
+              key: 'edit',
+              label: t('common:button.edit'),
+              icon: <EditOutlined />,
+              onClick: () => {
+                setEditingGroup(record);
+                setDrawerMode('edit');
+                setDrawerOpen(true);
+              },
+            },
+            {
+              key: 'delete',
+              label: t('common:button.delete'),
+              icon: <DeleteOutlined />,
+              danger: true,
+              confirm: {
+                title: t('deleteConfirmTitle'),
+                description: t('deleteConfirmDesc', { moduleName: t('moduleName') }),
+              },
+              onClick: () => record.id && deleteMutation.mutate({ id: record.id }),
+            },
+          ]}
+        />
+      ),
     },
   ];
 
@@ -191,7 +192,7 @@ const PermissionGroupList: React.FC<PermissionGroupListProps> = ({
           
 }}
           rowKey="id"
-          search={{
+          search={{ optionRender: searchOptionRender,
             labelWidth: 'auto',
             defaultCollapsed: false,
             span: 12,
@@ -199,19 +200,6 @@ const PermissionGroupList: React.FC<PermissionGroupListProps> = ({
           pagination={false}
           toolBarRender={() => [
             <TableExportButton key="export" fetcher={fetchListPermissionGroups} columns={columns} filename="permission-groups" />,
-            <Button
-              key="create"
-              type="primary"
-              icon={<PlusOutlined />}
-              size="small"
-              onClick={() => {
-                setEditingGroup(null);
-                setDrawerMode('create');
-                setDrawerOpen(true);
-              }}
-            >
-              {t('create')}
-            </Button>,
             <Button
               key="expandAll"
               icon={<NodeExpandOutlined />}
@@ -227,6 +215,19 @@ const PermissionGroupList: React.FC<PermissionGroupListProps> = ({
               onClick={handleCollapseAll}
             >
               {t('collapseAll')}
+            </Button>,
+            <Button
+              key="create"
+              color="primary"
+              variant="outlined"
+              icon={<PlusOutlined />}
+              onClick={() => {
+                setEditingGroup(null);
+                setDrawerMode('create');
+                setDrawerOpen(true);
+              }}
+            >
+              {t('common:button.add')}
             </Button>,
           ]}
           options={{

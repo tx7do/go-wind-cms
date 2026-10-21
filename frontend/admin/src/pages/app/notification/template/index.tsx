@@ -1,6 +1,7 @@
 import { useRef, useState } from 'react';
 import type { ActionType, ProColumns } from '@ant-design/pro-components';
 import ListTable from '@/components/common/ListTable';
+import TableActions from '@/components/common/TableActions';
 import {
   ModalForm,
   DrawerForm,
@@ -8,7 +9,7 @@ import {
   ProFormTextArea,
   ProFormSwitch,
 } from '@ant-design/pro-components';
-import { App, Button, Descriptions, Popconfirm, Tag, Alert } from 'antd';
+import { App, Button, Descriptions, Tag, Alert } from 'antd';
 import {
   DeleteOutlined,
   EditOutlined,
@@ -29,7 +30,10 @@ import {
   useUpdateNotificationTemplate,
 } from '@/api/hooks/notification-template';
 import { useProTableScrollY } from '@/hooks/useProTableScrollY';
+import { useDrawerCloseGuard } from '@/components/common/use-drawer-close-guard';
 import ContentContainer from '@/layouts/components/PageContainer/ContentContainer';
+import { searchOptionRender } from '@/components/common/searchSubmitter';
+import { ColumnSlidersIcon } from '@/components/common/columnSettingIcon';
 
 // 从未知错误对象取本地化 message（request-client 拦截器已把 reason 译文写进 message）
 const errMessage = (error: unknown, fallback: string): string => {
@@ -58,6 +62,8 @@ const NotificationTemplatePage = () => {
   const tableScrollY = useProTableScrollY(containerRef);
 
   const [formOpen, setFormOpen] = useState(false);
+  // 关闭守卫：遮罩/ESC/X/取消统一，脏数据先确认（docs/form_drawer_close_guard.md）
+  const { guardClose, handleValuesChange } = useDrawerCloseGuard(formOpen, () => setFormOpen(false));
   const [formMode, setFormMode] = useState<'create' | 'edit'>('create');
   const [selected, setSelected] = useState<NotificationTemplate | undefined>();
   const [renderTarget, setRenderTarget] = useState<NotificationTemplate | undefined>();
@@ -181,40 +187,43 @@ const NotificationTemplatePage = () => {
     {
       title: t('actions'),
       valueType: 'option',
-      width: 240,
+      // 编辑模板+预览+删除 三个图标+文字按钮实测需 256px，240 会被截断
+      width: 260,
       fixed: 'right',
-      render: (_, record) => [
-        <Button
-          key="edit"
-          type="link"
-          size="small"
-          icon={<EditOutlined />}
-          onClick={() => {
-            setFormMode('edit');
-            setSelected(record);
-            setFormOpen(true);
-          }}
-        >
-          {t('edit')}
-        </Button>,
-        <Button
-          key="render"
-          type="link"
-          size="small"
-          icon={<EyeOutlined />}
-          onClick={() => {
-            setRenderTarget(record);
-            setRenderResult(undefined);
-          }}
-        >
-          {t('render')}
-        </Button>,
-        <Popconfirm key="delete" title={t('deleteConfirm')} onConfirm={() => handleDelete(record)}>
-          <Button danger type="link" size="small" icon={<DeleteOutlined />}>
-            {t('delete')}
-          </Button>
-        </Popconfirm>,
-      ],
+      render: (_, record) => (
+        <TableActions
+          record={record}
+          actions={[
+            {
+              key: 'edit',
+              label: t('edit'),
+              icon: <EditOutlined />,
+              onClick: () => {
+                setFormMode('edit');
+                setSelected(record);
+                setFormOpen(true);
+              },
+            },
+            {
+              key: 'render',
+              label: t('render'),
+              icon: <EyeOutlined />,
+              onClick: () => {
+                setRenderTarget(record);
+                setRenderResult(undefined);
+              },
+            },
+            {
+              key: 'delete',
+              label: t('delete'),
+              icon: <DeleteOutlined />,
+              danger: true,
+              confirm: { title: t('deleteConfirm') },
+              onClick: () => handleDelete(record),
+            },
+          ]}
+        />
+      ),
     },
   ];
 
@@ -235,16 +244,17 @@ const NotificationTemplatePage = () => {
             return { data: response.items || [], total: Number(response.total) || 0, success: true };
           }}
           rowKey="id"
-          search={{ labelWidth: 'auto', defaultCollapsed: false }}
+          search={{ optionRender: searchOptionRender, labelWidth: 'auto', defaultCollapsed: false }}
           pagination={{
             defaultPageSize: TABLE.DEFAULT_PAGE_SIZE,
             showSizeChanger: true,
           }}
-          options={{ density: true, fullScreen: true, setting: true, reload: true }}
+          options={{ density: true, fullScreen: true, setting: { settingIcon: <ColumnSlidersIcon /> }, reload: true }}
           toolBarRender={() => [
             <Button
               key="create"
-              type="primary"
+              color="primary"
+              variant="outlined"
               icon={<PlusOutlined />}
               onClick={() => {
                 setFormMode('create');
@@ -252,7 +262,7 @@ const NotificationTemplatePage = () => {
                 setFormOpen(true);
               }}
             >
-              {t('create')}
+              {t('common:button.add')}
             </Button>,
           ]}
           size="middle"
@@ -262,14 +272,24 @@ const NotificationTemplatePage = () => {
       </div>
 
       <DrawerForm
-        title={formMode === 'create' ? t('create') : t('edit')}
-        width={620}
+        title={formMode === 'create' ? t('common:modal.create', { moduleName: t('moduleName') }) : t('common:modal.update', { moduleName: t('moduleName') })}
         open={formOpen}
-        onOpenChange={setFormOpen}
-        drawerProps={{ destroyOnHidden: true, mask: { closable: false } }}
+        onOpenChange={(v) => {
+          // 关闭一律走 drawerProps.onClose 守卫；这里只放行打开
+          if (v) setFormOpen(true);
+        }}
+        onValuesChange={handleValuesChange}
+        drawerProps={{ destroyOnHidden: true, size: 600, onClose: guardClose }}
         submitTimeout={3000}
         onFinish={handleSubmit}
-        initialValues={formMode === 'create' ? { isEnabled: true } : { ...selected }}
+        initialValues={
+          formMode === 'create'
+            ? { isEnabled: true }
+            : { ...selected }
+        }
+        layout="horizontal"
+        labelCol={{ flex: '0 0 120px' }}
+        wrapperCol={{ flex: 'auto' }}
       >
         <Alert
           type="info"
@@ -316,7 +336,11 @@ const NotificationTemplatePage = () => {
           fieldProps={{ rows: 6, showCount: true }}
         />
         <ProFormSwitch name="isEnabled" label={t('isEnabled')} />
-        <ProFormTextArea name="remark" label={t('remark')} fieldProps={{ rows: 2 }} />
+        <ProFormTextArea
+          name="remark"
+          label={t('remark')}
+          fieldProps={{ rows: 2 }}
+        />
       </DrawerForm>
 
       <ModalForm<{ varsJson?: string }>

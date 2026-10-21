@@ -11,6 +11,7 @@ import { App } from 'antd';
 import { useQueryClient } from '@tanstack/react-query';
 import { useTranslation } from 'react-i18next';
 import type { internal_messageservicev1_InternalMessageCategory as Category } from '@/api/generated/admin/service/v1';
+import { useDrawerCloseGuard } from '@/components/common/use-drawer-close-guard';
 import { useCreateMessageCategory, useUpdateMessageCategory } from '@/api/hooks/internal-message';
 
 interface CategoryDrawerProps {
@@ -27,6 +28,9 @@ interface CategoryDrawerProps {
 const CategoryDrawer: React.FC<CategoryDrawerProps> = ({ open, mode, data, onClose, onSuccess }) => {
   const { t } = useTranslation('message-category');
   const formRef = useRef<ProFormInstance>(null);
+
+  // 关闭守卫：遮罩/ESC/X/取消统一，脏数据先确认（docs/form_drawer_close_guard.md）
+  const { guardClose, handleValuesChange } = useDrawerCloseGuard(open, onClose);
   const queryClient = useQueryClient();
   const { message } = App.useApp();
 
@@ -92,12 +96,7 @@ const CategoryDrawer: React.FC<CategoryDrawerProps> = ({ open, mode, data, onClo
       formRef={formRef}
       title={mode === 'create' ? t('create') : t('edit')}
       open={open}
-      onOpenChange={(visible) => {
-        if (!visible) {
-          formRef.current?.resetFields();
-          onClose();
-        }
-      }}
+      onValuesChange={handleValuesChange}
       initialValues={{
         sortOrder: 1,
         isEnabled: true,
@@ -111,9 +110,12 @@ const CategoryDrawer: React.FC<CategoryDrawerProps> = ({ open, mode, data, onClo
         submitButtonProps: {
           loading: confirmLoading || createMutation.isPending || updateMutation.isPending,
         },
-        resetButtonProps: { onClick: onClose },
+        resetButtonProps: { onClick: guardClose },
       }}
-      drawerProps={{ destroyOnHidden: true, onClose, size: 500 }}
+      drawerProps={{ destroyOnHidden: true, onClose: guardClose, size: 600 }}
+      layout="horizontal"
+      labelCol={{ flex: '0 0 120px' }}
+      wrapperCol={{ flex: 'auto' }}
     >
       <ProFormText
         name="name"

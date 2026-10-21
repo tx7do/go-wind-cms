@@ -28,7 +28,7 @@
   "ipAddressPlaceholder": "Enter IP address",
   "geoLocation": "Geo Location",
   "createdAt": "Created At",
-  "export": "Export",
+  "export": "Export All",
   "exportCsv": "CSV (Comma Separated)",
   "exportXlsx": "Excel Workbook"
 }

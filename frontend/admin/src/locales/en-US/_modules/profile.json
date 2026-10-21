@@ -70,5 +70,26 @@
   "locale": "Preferred Language",
   "localeHint": "Transactional emails and monitor alerts render in this language",
   "localePlaceholder": "Default (Chinese)",
-  "passwordChangedReLogin": "Password changed. Please sign in again"
+  "passwordChangedReLogin": "Password changed. Please sign in again",
+  "accountBind": {
+    "email": "Email Account",
+    "phone": "Phone Number",
+    "bound": "Bound: {{value}}",
+    "unbound": "Not bound; fill it in Basic Settings",
+    "modify": "Modify",
+    "bindNow": "Bind Now",
+    "rebind": "Rebind",
+    "bindEmailTitle": "Bind Email",
+    "newEmail": "New Email",
+    "newEmailPlaceholder": "Enter new email address",
+    "vcode": "Code",
+    "vcodePlaceholder": "Enter the email code",
+    "sendVcode": "Send Code",
+    "codeSent": "Sent, please check inbox",
+    "vcodeSendFailed": "Failed to send code",
+    "newEmailRequired": "New email is required",
+    "vcodeRequired": "Code is required",
+    "bindSuccess": "Email bound successfully",
+    "bindFailed": "Failed to bind"
+  }
 }

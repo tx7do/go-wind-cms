@@ -2,8 +2,9 @@ import { useRef, useState } from 'react';
 import type { ProColumns, ActionType } from '@ant-design/pro-components';
 import dayjs, { type Dayjs } from 'dayjs';
 import TableExportButton from '@/components/common/TableExportButton';
+import TableActions from '@/components/common/TableActions';
 import ListTable from '@/components/common/ListTable';
-import { Button, Popconfirm, Tag, App } from 'antd';
+import { Button, Tag, App } from 'antd';
 import { DeleteOutlined, CheckOutlined } from '@ant-design/icons';
 import { useQueryClient } from '@tanstack/react-query';
 import { useTranslation } from 'react-i18next';
@@ -19,6 +20,8 @@ import { useProTableScrollY } from '@/hooks/useProTableScrollY';
 import ContentContainer from '@/layouts/components/PageContainer/ContentContainer';
 import { InboxDetailDrawer } from './components/InboxDetailDrawer';
 import { getRecipientStatusMap, getRecipientStatusOptions } from './constants';
+import { searchOptionRender } from '@/components/common/searchSubmitter';
+import { ColumnSlidersIcon } from '@/components/common/columnSettingIcon';
 
 /**
  * 收件箱页面
@@ -198,43 +201,46 @@ const InboxList = () => {
     {
       title: t('action'),
       valueType: 'option',
-      width: 90,
-      render: (_, record) => [
-        record.status !== 'READ' && (
-          <a
-            key="read"
-            onClick={() => {
-              if (record.id) {
-                markReadMutation.mutate({
-                  userId: record.recipientUserId,
-                  recipientIds: [record.id],
-                });
-              }
-            }}
-          >
-            <CheckOutlined />
-          </a>
-        ),
-        <Popconfirm
-          key="delete"
-          title={t('deleteConfirmTitle')}
-          description={t('deleteConfirmDesc', { moduleName: t('moduleName') })}
-          onConfirm={() => {
-            if (record.id) {
-              deleteMutation.mutate({
-                userId: record.recipientUserId,
-                recipientIds: [record.id],
-              });
-            }
-          }}
-          okText={t('common:button.ok')}
-          cancelText={t('common:button.cancel')}
-        >
-          <a style={{ color: 'var(--ant-color-error)' }}>
-            <DeleteOutlined />
-          </a>
-        </Popconfirm>,
-      ],
+      width: 180,
+      render: (_, record) => (
+        <TableActions
+          record={record}
+          actions={[
+            {
+              key: 'read',
+              label: t('markRead'),
+              icon: <CheckOutlined />,
+              hidden: record.status === 'READ',
+              onClick: () => {
+                if (record.id) {
+                  markReadMutation.mutate({
+                    userId: record.recipientUserId,
+                    recipientIds: [record.id],
+                  });
+                }
+              },
+            },
+            {
+              key: 'delete',
+              label: t('common:button.delete'),
+              icon: <DeleteOutlined />,
+              danger: true,
+              confirm: {
+                title: t('deleteConfirmTitle'),
+                description: t('deleteConfirmDesc', { moduleName: t('moduleName') }),
+              },
+              onClick: () => {
+                if (record.id) {
+                  deleteMutation.mutate({
+                    userId: record.recipientUserId,
+                    recipientIds: [record.id],
+                  });
+                }
+              },
+            },
+          ]}
+        />
+      ),
     },
   ];
 
@@ -276,7 +282,7 @@ const InboxList = () => {
             };
           }}
           rowKey="id"
-          search={{
+          search={{ optionRender: searchOptionRender,
             labelWidth: 'auto',
             defaultCollapsed: false,
             // 全局 span 8，各字段再乘自己的 colSize（标题 1 / 状态 0.625 / 接收时间
@@ -288,7 +294,7 @@ const InboxList = () => {
           options={{
             density: true,
             fullScreen: true,
-            setting: true,
+            setting: { settingIcon: <ColumnSlidersIcon /> },
             reload: true,
           }}
           toolBarRender={() => [

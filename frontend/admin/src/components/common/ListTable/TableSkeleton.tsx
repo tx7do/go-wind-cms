@@ -43,17 +43,23 @@ export function TableSkeleton<RecordType extends Record<string, any>>({
     () =>
       columns
         .filter((column) => !column.hideInTable)
-        .map((column, columnIndex) => ({
-          ...(column as unknown as TableColumnsType<RecordType>[number]),
-          key: String(column.key ?? column.dataIndex ?? columnIndex),
-          render: (_dom: unknown, _record: unknown, rowIndex: number) => (
-            <Skeleton.Button
-              active
-              size="small"
-              style={{ width: BAR_WIDTHS[(rowIndex + columnIndex) % BAR_WIDTHS.length] }}
-            />
-          ),
-        })),
+        .map((column, columnIndex) => {
+          // 剥掉 ListTable 注入的列宽拖拽参数：骨架是裸 Table，onHeaderCell 返回的自定义
+          // props 会被直接铺到原生 <th> 上，触发 React 未知 DOM 属性告警
+          const { onHeaderCell: _onHeaderCell, resizable: _resizable, ...restColumn } =
+            column as typeof column & Record<string, unknown>;
+          return {
+            ...restColumn,
+            key: String(column.key ?? column.dataIndex ?? columnIndex),
+            render: (_dom: unknown, _record: unknown, rowIndex: number) => (
+              <Skeleton.Button
+                active
+                size="small"
+                style={{ width: BAR_WIDTHS[(rowIndex + columnIndex) % BAR_WIDTHS.length] }}
+              />
+            ),
+          } as TableColumnsType<RecordType>[number];
+        }),
     [columns],
   );
 

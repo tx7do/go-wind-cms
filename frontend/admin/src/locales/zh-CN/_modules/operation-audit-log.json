@@ -26,7 +26,7 @@
   "success.false": "失败",
   "geoLocation": "地理位置",
   "createdAt": "创建时间",
-  "export": "导出",
+  "export": "导出全部",
   "exportCsv": "CSV (逗号分隔)",
   "exportXlsx": "Excel 工作簿"
 }
