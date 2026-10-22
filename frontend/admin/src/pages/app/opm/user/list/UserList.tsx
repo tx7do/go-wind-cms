@@ -184,7 +184,9 @@ const UserList: React.FC<UserListProps> = ({ tenantId, orgUnitId }) => {
     {
       title: t('action'),
       valueType: 'option',
-      width: 230,
+      // 实测三钮内容 223px（用户详情 93 + 编辑 65 + 删除 65）+ 单元格内边距 16px ≈ 239，
+      // 230 放不下会把「删除」截成省略号；取上游「3 钮 220-250」定式上限
+      width: 250,
       render: (_, record) => (
         <TableActions
           record={record}

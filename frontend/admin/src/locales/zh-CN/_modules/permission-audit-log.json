@@ -30,5 +30,21 @@
   "createdAt": "创建时间",
   "export": "导出全部",
   "exportCsv": "CSV (逗号分隔)",
-  "exportXlsx": "Excel 工作簿"
+  "exportXlsx": "Excel 工作簿",
+  "exportServerXlsx": "服务端全量 (XLSX)",
+  "exportServerSuccess": "已开始下载",
+  "exportServerFailed": "服务端导出失败",
+  "detail": "详情",
+  "rowActions": "操作",
+  "sectionBasic": "基本信息",
+  "sectionChange": "变更信息",
+  "sectionOther": "其他信息",
+  "targetId": "目标ID",
+  "operatorId": "操作人ID",
+  "oldValue": "原值",
+  "newValue": "新值",
+  "tenantId": "租户ID",
+  "requestId": "请求ID",
+  "logHash": "日志哈希",
+  "signature": "签名"
 }

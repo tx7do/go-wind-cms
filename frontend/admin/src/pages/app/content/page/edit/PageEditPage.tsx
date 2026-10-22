@@ -622,7 +622,6 @@ const PageEditPage = () => {
           />
           {needTranslate && (
             <Button
-              type="primary"
               icon={<TranslationOutlined />}
               loading={translateMutation.isPending}
               onClick={handleTranslate}
@@ -712,7 +711,7 @@ const PageEditPage = () => {
               <span style={{ fontSize: 12, color: 'var(--ant-color-text-secondary)' }}>
                 {t('section.moduleName')}
               </span>
-              <Button size="small" type="primary" onClick={addSection}>
+              <Button size="small" onClick={addSection}>
                 {t('section.create')}
               </Button>
             </div>
@@ -867,7 +866,7 @@ const PageEditPage = () => {
         <div style={{ display: 'flex', justifyContent: 'flex-end', padding: '8px 16px' }}>
           <Space>
             <Button onClick={saveDraft}>{t('saveDraft')}</Button>
-            <Button type="primary" danger loading={saving} onClick={handlePublish}>
+            <Button type="primary" loading={saving} onClick={handlePublish}>
               {t('publish')}
             </Button>
             <Button

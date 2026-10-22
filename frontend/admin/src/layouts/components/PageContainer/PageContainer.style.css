@@ -27,3 +27,16 @@
 .page-container-content > .ant-pro-table {
   height: 100%;
 }
+
+/* ListTable 高度自动撑满的测量容器（页面未传 scroll.y 时由 ListTable 自行包裹）：
+   与 .page-container-content 同一 flex 契约。页面手写 .page-container-content
+   样板的方式已被取代（eslint 会对页面引入 useProTableScrollY 警告）。 */
+.listtable-fill {
+  flex: 1;
+  min-height: 0;
+  overflow: hidden;
+}
+
+.listtable-fill > .ant-pro-table {
+  height: 100%;
+}

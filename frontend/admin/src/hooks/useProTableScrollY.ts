@@ -8,12 +8,22 @@ import { useEffect, type RefObject } from 'react';
  *   2. JS 测量容器高度、分页器位置，直接操作 .ant-table-body.style.maxHeight
  *   3. 不依赖 CSS flex 穿透 antd 内部 DOM（因为 antd 内部层级不可控）
  *
+ * 注意：列表页通常不需要直接使用本 hook——ListTable 已内置同样的撑满逻辑
+ * （页面不传 scroll.y 时自动接管）。手写样板会被 eslint 警告。
+ *
  * @param containerRef - .page-container-content 容器 div 的 ref
+ * @param options.enabled - 是否启用（默认 true）。ListTable 内部用它做按需接管。
+ * @param options.requireFlexParent - 要求容器父级必须是 flex column（默认 false，
+ *   即维持历史行为）。ListTable 的自动撑满开它：外层不是 ContentContainer 这类
+ *   flex 列容器（如 Drawer 内嵌表）时不接管，避免把自然高度的表压瘪。
  */
 export function useProTableScrollY(
   containerRef: RefObject<HTMLElement | null>,
+  options?: { enabled?: boolean; requireFlexParent?: boolean },
 ): string {
+  const { enabled = true, requireFlexParent = false } = options ?? {};
   useEffect(() => {
+    if (!enabled) return;
     let rafId = 0;
     // 容器可能晚于本 hook 挂载（如 Drawer 首帧不渲染 children）：
     // 先观察 body 等容器出现，resize() 内再把观察迁移到真实容器。
@@ -22,6 +32,15 @@ export function useProTableScrollY(
     const resize = () => {
       const container = containerRef.current;
       if (!container) return;
+
+      if (requireFlexParent) {
+        // 外层不是可撑高的 flex 列容器（无确定高度的普通块级父级）时，
+        // 按 containerHeight-natural 的差值改写 body 会把表越压越瘪，直接不接管。
+        const parentStyle = container.parentElement ? getComputedStyle(container.parentElement) : null;
+        if (!parentStyle || !parentStyle.display.includes('flex') || parentStyle.flexDirection !== 'column') {
+          return;
+        }
+      }
 
       if (observedContainer !== container) {
         observedContainer = container;
@@ -111,7 +130,7 @@ export function useProTableScrollY(
       resizeObserver.disconnect();
       mutationObserver.disconnect();
     };
-  }, [containerRef]);
+  }, [containerRef, enabled, requireFlexParent]);
 
   // 返回初始像素值，仅用于触发 antd 创建 .ant-table-body
   return '100px';

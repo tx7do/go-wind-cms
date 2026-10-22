@@ -45,6 +45,8 @@ export interface TableAction {
   /** 行内按钮的 Tooltip 提示（仅行内；溢出进「更多」菜单后不渲染 Tooltip） */
   tooltip?: ReactNode;
   hidden?: boolean;
+  /** 行内按钮 loading（如 webhook ping 这类逐行请求；本地扩展，上游组件无此描述符） */
+  loading?: boolean;
 }
 
 interface TableActionsProps {
@@ -82,6 +84,7 @@ export default function TableActions({ record, actions, maxInline = 3 }: TableAc
       size="small"
       danger={item.danger}
       icon={item.icon}
+      loading={item.loading}
       style={item.success ? { color: 'var(--gowind-success-text)' } : undefined}
       onClick={onClick}
     >

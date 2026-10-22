@@ -1,9 +1,10 @@
 import { useRef, useState } from 'react';
 import type { ActionType } from '@ant-design/pro-components';
-import { App, Button, Drawer, Popconfirm, Space } from 'antd';
+import { App, Button, Drawer, Space } from 'antd';
 import { DeleteOutlined, DownloadOutlined, EyeOutlined } from '@ant-design/icons';
 import { useTranslation } from 'react-i18next';
 import ListTable from '@/components/common/ListTable';
+import TableActions from '@/components/common/TableActions';
 import ContentContainer from '@/layouts/components/PageContainer/ContentContainer';
 import { PaginationQuery } from '@/core';
 import type { contentservicev1_FormSubmission as FormSubmission } from '@/api/generated/admin/service/v1';
@@ -97,16 +98,25 @@ const FormSubmissionManagement = () => {
       title: t('action'),
       width: 150,
       render: (_: unknown, record: FormSubmission) => (
-        <Space>
-          <Button type="link" size="small" icon={<EyeOutlined />} onClick={() => setDetail(record)}>
-            {t('detail')}
-          </Button>
-          <Popconfirm title={t('deleteConfirm')} onConfirm={() => handleDelete(record)}>
-            <Button type="link" size="small" danger icon={<DeleteOutlined />}>
-              {t('delete')}
-            </Button>
-          </Popconfirm>
-        </Space>
+        <TableActions
+          record={record}
+          actions={[
+            {
+              key: 'detail',
+              label: t('detail'),
+              icon: <EyeOutlined />,
+              onClick: () => setDetail(record),
+            },
+            {
+              key: 'delete',
+              label: t('common:button.delete'),
+              icon: <DeleteOutlined />,
+              danger: true,
+              confirm: { title: t('deleteConfirm') },
+              onClick: () => handleDelete(record),
+            },
+          ]}
+        />
       ),
     },
   ];

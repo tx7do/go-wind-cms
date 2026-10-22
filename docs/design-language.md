@@ -163,6 +163,7 @@ Web 端（react/vue/taro-H5）统一以 CSS 变量承载，组件只允许引用
 - **标签/徽章**：`primary/10` 底 + `primary` 文字 + 全圆；热门标签可加 `Warning`/火焰色但仅限一个强调位。
 - **表单**：输入框 `border-input rounded-lg`，focus 时 `ring-2 ring-ring ring-offset-1`；错误态 `destructive`。
 - **空态/加载**：骨架屏用 `muted`；空态配线性插画（风纹母题）+ muted-foreground 文案。
+- **列表操作列（2026-10-22 定稿，admin 基线全量落地；上游 go-wind-admin §4 同源）**：行内按钮一律「图标 + 文本」的 link 弱化形态（`Button type="link" size="small" icon={<XOutlined />}`），禁止纯图标（要靠 Tooltip 猜语义、暗色下高亮图标凌乱）也禁止纯文本（缺视觉锚点）；危险钮走 `danger` prop、success 语义走 `--gowind-success-text` 文字档（对比度口径见 `semantic-text.css`），不走内联颜色 style。**按钮数 ≤3 全部行内；>3 行内只留前 3 个，其余收进「更多」下拉**——操作列是组件单点 `components/common/TableActions`，页面只写描述符数组（`key/label/icon/onClick/danger/success/confirm{title,description,okLoading}/tooltip/hidden/loading`），行级条件用 `hidden` 在计溢出前剔除（权限/状态隐藏后不足 3 个就不出「更多」）。**下拉里放不下 Popconfirm**：溢出的确认类操作自动降级 `App.useApp().modal.confirm`（danger 项确认键同款 danger）；行内 ≤3 时确认方式不变（Popconfirm 原样保留）。**列宽随形、宁大勿小**（换行即失败）：2 钮 ≈150、3 钮 ≈200-220、溢出后（3 钮 + 更多）≈260，文案每多 2 个中文字符 +28。样板：`system/language`（≤3）/ `system/task`（溢出）。
 
 ---
 

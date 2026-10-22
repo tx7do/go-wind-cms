@@ -26,7 +26,7 @@ const quotaMeta: Record<
  * 租户用量面板（个人中心自助视图）：四类配额的水位条。
  * 无任何配额行时显示"未配置配额"提示（闸门 fail-open 的可见性面）。
  */
-const QuotaUsage = () => {
+const TenantUsagePanel = () => {
   const { t } = useTranslation('tenant-quota');
   const { data: usage, isLoading } = useMyTenantUsage();
 
@@ -78,4 +78,4 @@ const QuotaUsage = () => {
   );
 };
 
-export default QuotaUsage;
+export default TenantUsagePanel;

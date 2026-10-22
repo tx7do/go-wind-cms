@@ -3,8 +3,16 @@ import type { ProColumns, ActionType } from '@ant-design/pro-components';
 import TableExportButton from '@/components/common/TableExportButton';
 import PagesTransferButtons from './PagesTransferButtons';
 import ListTable from '@/components/common/ListTable';
-import { Button, Input, Popconfirm, Tag, App } from 'antd';
-import { EditOutlined, DeleteOutlined, PlusOutlined } from '@ant-design/icons';
+import TableActions from '@/components/common/TableActions';
+import { Button, Input, Tag, App } from 'antd';
+import {
+  CheckOutlined,
+  CloseOutlined,
+  DeleteOutlined,
+  EditOutlined,
+  PlusOutlined,
+  SendOutlined,
+} from '@ant-design/icons';
 import { useQueryClient } from '@tanstack/react-query';
 import {
   useApprovePageReview,
@@ -153,105 +161,101 @@ const PageList = () => {
     {
       title: t('action'),
       valueType: 'option',
-      width: 190,
+      width: 290,
       fixed: 'right',
-      render: (_, record) => [
-        <a
-          key="edit"
-          onClick={() =>
-            navigate(`/content/pages/edit/${record.id}?lang=${i18n.language}`)
-          }
-        >
-          <EditOutlined />
-        </a>,
-        // 发布审批动作：草稿可提交审核；审核中可通过/驳回（状态机校验在 core 双保险）
-        record.status === 'PAGE_STATUS_DRAFT' && !record.inProgress && (
-          <a
-            key="submit-review"
-            title={t('review.submitTitle')}
-            onClick={async () => {
-              try {
-                await submitReviewMutation.mutateAsync({ pageId: record.id as number });
-                message.success(t('review.submitted'));
-                actionRef.current?.reload();
-              } catch (error) {
-                console.error('Submit page review failed:', error);
-              }
-            }}
-          >
-            {t('review.submit')}
-          </a>
-        ),
-        record.inProgress && (
-          <a
-            key="approve-review"
-            style={{ color: 'var(--ant-color-success)' }}
-            title={t('review.approveTitle')}
-            onClick={async () => {
-              try {
-                await approveReviewMutation.mutateAsync({ pageId: record.id as number });
-                message.success(t('review.approved'));
-                actionRef.current?.reload();
-              } catch (error) {
-                console.error('Approve page review failed:', error);
-              }
-            }}
-          >
-            {t('review.approve')}
-          </a>
-        ),
-        record.inProgress && (
-          <a
-            key="reject-review"
-            style={{ color: 'var(--ant-color-warning)' }}
-            title={t('review.rejectTitle')}
-            onClick={() => {
-              let reason = '';
-              modal.confirm({
-                title: t('review.rejectTitle'),
-                content: (
-                  <Input.TextArea
-                    placeholder={t('review.reasonPlaceholder')}
-                    onChange={(e) => {
-                      reason = e.target.value;
-                    }}
-                  />
-                ),
-                okText: t('common:button.ok'),
-                cancelText: t('common:button.cancel'),
-                onOk: async () => {
-                  try {
-                    await rejectReviewMutation.mutateAsync({
-                      pageId: record.id as number,
-                      reason,
-                    });
-                    message.success(t('review.rejected'));
-                    actionRef.current?.reload();
-                  } catch (error) {
-                    console.error('Reject page review failed:', error);
-                  }
-                },
-              });
-            }}
-          >
-            {t('review.reject')}
-          </a>
-        ),
-        <Popconfirm
-          key="delete"
-          title={t('deleteConfirmTitle')}
-          description={t('deleteConfirmDesc', { moduleName: t('moduleName') })}
-          onConfirm={() => {
-            record.id && deleteMutation.mutate({ id: record.id });
-          }}
-          okText={t('common:button.ok')}
-          cancelText={t('common:button.cancel')}
-        >
-          <a style={{ color: 'var(--ant-color-error)' }}>
-            <DeleteOutlined />
-          </a>
-        </Popconfirm>,
-      ],
+      render: (_, record) => (
+        <TableActions
+          record={record}
+          actions={[
+            {
+              key: 'edit',
+              label: t('common:button.edit'),
+              icon: <EditOutlined />,
+              onClick: () => navigate(`/content/pages/edit/${record.id}?lang=${i18n.language}`),
+            },
+            // 发布审批动作：草稿可提交审核；审核中可通过/驳回（状态机校验在 core 双保险）
+            {
+              key: 'submit-review',
+              label: t('review.submit'),
+              icon: <SendOutlined />,
+              tooltip: t('review.submitTitle'),
+              hidden: !(record.status === 'PAGE_STATUS_DRAFT' && !record.inProgress),
+              onClick: async () => {
+                try {
+                  await submitReviewMutation.mutateAsync({ pageId: record.id as number });
+                  message.success(t('review.submitted'));
+                  actionRef.current?.reload();
+                } catch (error) {
+                  console.error('Submit page review failed:', error);
+                }
+              },
+            },
+            {
+              key: 'approve-review',
+              label: t('review.approve'),
+              icon: <CheckOutlined />,
+              success: true,
+              tooltip: t('review.approveTitle'),
+              hidden: !record.inProgress,
+              onClick: async () => {
+                try {
+                  await approveReviewMutation.mutateAsync({ pageId: record.id as number });
+                  message.success(t('review.approved'));
+                  actionRef.current?.reload();
+                } catch (error) {
+                  console.error('Approve page review failed:', error);
+                }
+              },
+            },
+            {
+              key: 'reject-review',
+              label: t('review.reject'),
+              icon: <CloseOutlined />,
+              tooltip: t('review.rejectTitle'),
+              hidden: !record.inProgress,
+              onClick: () => {
+                let reason = '';
+                modal.confirm({
+                  title: t('review.rejectTitle'),
+                  content: (
+                    <Input.TextArea
+                      placeholder={t('review.reasonPlaceholder')}
+                      onChange={(e) => {
+                        reason = e.target.value;
+                      }}
+                    />
+                  ),
+                  okText: t('common:button.ok'),
+                  cancelText: t('common:button.cancel'),
+                  onOk: async () => {
+                    try {
+                      await rejectReviewMutation.mutateAsync({
+                        pageId: record.id as number,
+                        reason,
+                      });
+                      message.success(t('review.rejected'));
+                      actionRef.current?.reload();
+                    } catch (error) {
+                      console.error('Reject page review failed:', error);
+                    }
+                  },
+                });
+              },
+            },
+            {
+              key: 'delete',
+              label: t('common:button.delete'),
+              icon: <DeleteOutlined />,
+              danger: true,
+              confirm: {
+                title: t('deleteConfirmTitle'),
+                description: t('deleteConfirmDesc', { moduleName: t('moduleName') }),
+              },
+              onClick: () => record.id && deleteMutation.mutate({ id: record.id }),
+            },
+          ]}
+        />
+      ),
     },
   ];
 

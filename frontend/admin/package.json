@@ -10,6 +10,7 @@
     "build:check": "tsc && vite build --mode production",
     "typecheck": "tsc -p tsconfig.app.json --noEmit",
     "lint": "eslint .",
+    "test:list-height": "node scripts/check-list-heights.mjs",
     "preview": "vite preview"
   },
   "dependencies": {
@@ -103,6 +104,7 @@
     "less": "^4.6.4",
     "lint-staged": "^17.0.5",
     "mockjs": "^1.1.0",
+    "playwright-core": "^1.64.1",
     "prettier": "^3.8.3",
     "rc-picker": "^4.11.3",
     "rollup-plugin-external-globals": "^0.13.0",

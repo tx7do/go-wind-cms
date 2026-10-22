@@ -1,6 +1,6 @@
 import { useRef, useState } from 'react';
 import type { ActionType } from '@ant-design/pro-components';
-import { App, Button, Input, Modal, Popconfirm, Select, Space, Switch } from 'antd';
+import { App, Button, Input, Modal, Select, Space, Switch } from 'antd';
 import {
   DeleteOutlined,
   DownloadOutlined,
@@ -9,6 +9,7 @@ import {
   PlusOutlined,
 } from '@ant-design/icons';
 import { useTranslation } from 'react-i18next';
+import TableActions from '@/components/common/TableActions';
 import { PaginationQuery } from '@/core';
 import ListTable from '@/components/common/ListTable';
 import ContentContainer from '@/layouts/components/PageContainer/ContentContainer';
@@ -163,18 +164,27 @@ const RedirectManagement = () => {
     { title: t('description'), dataIndex: 'description', ellipsis: true },
     {
       title: t('action'),
-      width: 140,
+      width: 150,
       render: (_: unknown, record: Redirect) => (
-        <Space>
-          <Button type="link" size="small" icon={<EditOutlined />} onClick={() => openEdit(record)}>
-            {t('edit')}
-          </Button>
-          <Popconfirm title={t('deleteConfirm')} onConfirm={() => handleDelete(record)}>
-            <Button type="link" size="small" danger icon={<DeleteOutlined />}>
-              {t('delete')}
-            </Button>
-          </Popconfirm>
-        </Space>
+        <TableActions
+          record={record}
+          actions={[
+            {
+              key: 'edit',
+              label: t('common:button.edit'),
+              icon: <EditOutlined />,
+              onClick: () => openEdit(record),
+            },
+            {
+              key: 'delete',
+              label: t('common:button.delete'),
+              icon: <DeleteOutlined />,
+              danger: true,
+              confirm: { title: t('deleteConfirm') },
+              onClick: () => handleDelete(record),
+            },
+          ]}
+        />
       ),
     },
   ];

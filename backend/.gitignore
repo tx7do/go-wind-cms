@@ -36,3 +36,5 @@ bin/
 
 # Go workspace file
 go.work
+# e2e 脚本本地登录态缓存（存活令牌，勿入库）
+.tok.json

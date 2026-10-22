@@ -23,5 +23,15 @@
   "createdAt": "日志时间",
   "export": "导出全部",
   "exportCsv": "CSV (逗号分隔)",
-  "exportXlsx": "Excel 工作簿"
+  "exportXlsx": "Excel 工作簿",
+  "exportServerXlsx": "服务端全量 (XLSX)",
+  "exportServerSuccess": "已开始下载",
+  "exportServerFailed": "服务端导出失败",
+  "detail": "详情",
+  "action": "操作",
+  "sectionBasic": "基本信息",
+  "sectionEval": "评估详情",
+  "sectionOther": "其他信息",
+  "logHash": "日志哈希",
+  "signature": "签名"
 }

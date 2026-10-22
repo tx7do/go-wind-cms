@@ -1,5 +1,5 @@
 import { useCallback, useState } from 'react';
-import { Button, DatePicker, Spin, Switch, Typography, App } from 'antd';
+import { Button, Checkbox, DatePicker, Spin, Switch, Typography, App } from 'antd';
 import { useTranslation } from 'react-i18next';
 import { useQuery } from '@tanstack/react-query';
 import { apiClient } from '@/api/client';
@@ -8,11 +8,12 @@ import dayjs, { type Dayjs } from 'dayjs';
 const { Text, Title } = Typography;
 
 /**
- * 个人中心「通知偏好」：实时推送静音时段。
+ * 个人中心「通知偏好」：实时推送静音时段 + 站内信分类退订（仅全员广播）。
  *
  * 后端语义（通知域）：
  *  - 静音时段只抑制 SSE 实时推送（角标即时性），收件行照常落库，
  *    用户打开收件中心仍能看到全部消息；
+ *  - 分类退订只约束全员广播，点对点定向发送不受影响。
  *  - 全链 fail-open：偏好读不到 = 不静音。
  * 验证码等事务性出站邮件不经偏好层，不受本页任何配置影响。
  */
@@ -38,6 +39,10 @@ const NotificationPreference = () => {
     queryKey: ['myNotificationPreference'],
     queryFn: () => apiClient.notificationPreferenceService.GetMyNotificationPreference({}),
   });
+  const categoriesQuery = useQuery({
+    queryKey: ['myNotifiableCategories'],
+    queryFn: () => apiClient.notificationPreferenceService.ListMyNotificationCategories({}),
+  });
 
   if (prefQuery.isPending) {
     return <Spin style={{ display: 'block', margin: '48px auto' }} />;
@@ -54,6 +59,11 @@ const NotificationPreference = () => {
         minutesToDayjs(pref?.quietStartMinute ?? 1320),
         minutesToDayjs(pref?.quietEndMinute ?? 480),
       ]}
+      initialMutedCategoryIds={pref?.mutedCategoryIds ?? []}
+      categoryOptions={(categoriesQuery.data?.items ?? []).map((c) => ({
+        label: c.name ?? '',
+        value: c.id ?? 0,
+      }))}
       onSaved={() => prefQuery.refetch()}
     />
   );
@@ -62,15 +72,24 @@ const NotificationPreference = () => {
 type QuietHoursFormProps = {
   initialEnabled: boolean;
   initialRange: [Dayjs | undefined, Dayjs | undefined];
+  initialMutedCategoryIds: number[];
+  categoryOptions: { label: string; value: number }[];
   onSaved: () => void;
 };
 
-const QuietHoursForm = ({ initialEnabled, initialRange, onSaved }: QuietHoursFormProps) => {
+const QuietHoursForm = ({
+  initialEnabled,
+  initialRange,
+  initialMutedCategoryIds,
+  categoryOptions,
+  onSaved,
+}: QuietHoursFormProps) => {
   const { t } = useTranslation('profile');
   const { message } = App.useApp();
   const [saving, setSaving] = useState(false);
   const [quietEnabled, setQuietEnabled] = useState<boolean>(initialEnabled);
   const [quietRange, setQuietRange] = useState<[Dayjs | undefined, Dayjs | undefined]>(initialRange);
+  const [mutedCategoryIds, setMutedCategoryIds] = useState<number[]>(initialMutedCategoryIds);
 
   const handleSave = useCallback(async () => {
     const startMinute = dayjsToMinutes(quietRange[0]);
@@ -90,7 +109,7 @@ const QuietHoursForm = ({ initialEnabled, initialRange, onSaved }: QuietHoursFor
         quietEnabled,
         quietStartMinute: startMinute,
         quietEndMinute: endMinute,
-        mutedCategoryIds: [],
+        mutedCategoryIds,
       });
       message.success(t('notification.saveSuccess'));
       // 以服务端返回为准刷新（重挂表单），而不是本地假设
@@ -103,7 +122,7 @@ const QuietHoursForm = ({ initialEnabled, initialRange, onSaved }: QuietHoursFor
     } finally {
       setSaving(false);
     }
-  }, [quietEnabled, quietRange, message, t, onSaved]);
+  }, [quietEnabled, quietRange, mutedCategoryIds, message, t, onSaved]);
 
   return (
     <div style={{ maxWidth: 560 }}>
@@ -137,6 +156,23 @@ const QuietHoursForm = ({ initialEnabled, initialRange, onSaved }: QuietHoursFor
           />
         </div>
       )}
+
+      <Title level={5} style={{ marginBottom: 4, marginTop: 24 }}>
+        {t('notification.muteTitle')}
+      </Title>
+      <Text type="secondary">{t('notification.muteDesc')}</Text>
+      <div style={{ marginTop: 12, marginBottom: 16 }}>
+        {categoryOptions.length > 0 ? (
+          <Checkbox.Group
+            options={categoryOptions}
+            value={mutedCategoryIds}
+            onChange={(values) => setMutedCategoryIds(values as number[])}
+            style={{ display: 'flex', flexWrap: 'wrap', gap: '8px 16px' }}
+          />
+        ) : (
+          <Text type="secondary">{t('notification.noCategories')}</Text>
+        )}
+      </div>
 
       <Button type="primary" onClick={handleSave} loading={saving}>
         {t('notification.save')}

@@ -1,8 +1,15 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import type { ProColumns, ActionType } from '@ant-design/pro-components';
 import ListTable from '@/components/common/ListTable';
-import { Calendar, Card, Col, Popconfirm, Row, Segmented, Statistic, Tag, App, Tooltip } from 'antd';
-import { EditOutlined, DeleteOutlined, SendOutlined, SyncOutlined } from '@ant-design/icons';
+import TableActions from '@/components/common/TableActions';
+import { Calendar, Card, Col, Row, Segmented, Statistic, Tag, App, Tooltip } from 'antd';
+import {
+  DeleteOutlined,
+  EditOutlined,
+  LineChartOutlined,
+  SendOutlined,
+  SyncOutlined,
+} from '@ant-design/icons';
 import { useQueryClient } from '@tanstack/react-query';
 import { useTranslation } from 'react-i18next';
 import dayjs from 'dayjs';
@@ -301,62 +308,62 @@ const SocialDistributionList = () => {
     {
       title: t('action'),
       valueType: 'option',
-      width: 190,
+      width: 250,
       fixed: 'right',
       render: (_, record) => {
-        const actions: any[] = [];
         const publishable = ['STATUS_DRAFT', 'STATUS_SCHEDULED', 'STATUS_FAILED'].includes(
           record.status,
         );
-        if (publishable) {
-          actions.push(
-            <a
-              key="publish"
-              onClick={() => record.id && publishMutation.mutate({ id: record.id })}
-            >
-              <SendOutlined /> {t('publishNow')}
-            </a>,
-            <a
-              key="edit"
-              onClick={() => {
-                setEditingRow(record);
-                setDrawerOpen(true);
-              }}
-            >
-              <EditOutlined />
-            </a>,
-          );
-        }
-        if (record.status === 'STATUS_PUBLISHED' && record.externalId) {
-          actions.push(
-            <a
-              key="stats"
-              onClick={() => record.id && refreshStatsMutation.mutate({ id: record.id })}
-            >
-              <SyncOutlined /> {t('refreshStats')}
-            </a>,
-            <a key="trend" onClick={() => setTrendRow(record)}>
-              {t('trend')}
-            </a>,
-          );
-        }
-        actions.push(
-          <Popconfirm
-            key="delete"
-            title={t('deleteConfirmTitle')}
-            description={t('deleteDistributionConfirmDesc')}
-            onConfirm={() => {
-              if (record.id) deleteMutation.mutate({ id: record.id });
-            }}
-            okText={t('common:button.ok')}
-            cancelText={t('common:button.cancel')}
-          >
-            <a style={{ color: 'var(--ant-color-error)' }}>
-              <DeleteOutlined />
-            </a>
-          </Popconfirm>,
+        return (
+          <TableActions
+            record={record}
+            actions={[
+              {
+                key: 'publish',
+                label: t('publishNow'),
+                icon: <SendOutlined />,
+                success: true,
+                hidden: !publishable,
+                onClick: () => record.id && publishMutation.mutate({ id: record.id }),
+              },
+              {
+                key: 'edit',
+                label: t('common:button.edit'),
+                icon: <EditOutlined />,
+                hidden: !publishable,
+                onClick: () => {
+                  setEditingRow(record);
+                  setDrawerOpen(true);
+                },
+              },
+              {
+                key: 'stats',
+                label: t('refreshStats'),
+                icon: <SyncOutlined />,
+                hidden: !(record.status === 'STATUS_PUBLISHED' && record.externalId),
+                onClick: () => record.id && refreshStatsMutation.mutate({ id: record.id }),
+              },
+              {
+                key: 'trend',
+                label: t('trend'),
+                icon: <LineChartOutlined />,
+                hidden: !(record.status === 'STATUS_PUBLISHED' && record.externalId),
+                onClick: () => setTrendRow(record),
+              },
+              {
+                key: 'delete',
+                label: t('common:button.delete'),
+                icon: <DeleteOutlined />,
+                danger: true,
+                confirm: {
+                  title: t('deleteConfirmTitle'),
+                  description: t('deleteDistributionConfirmDesc'),
+                },
+                onClick: () => record.id && deleteMutation.mutate({ id: record.id }),
+              },
+            ]}
+          />
         );
-        return actions;
       },
     },
   ];

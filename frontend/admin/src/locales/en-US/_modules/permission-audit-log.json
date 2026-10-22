@@ -30,5 +30,21 @@
   "createdAt": "Created At",
   "export": "Export All",
   "exportCsv": "CSV (Comma Separated)",
-  "exportXlsx": "Excel Workbook"
+  "exportXlsx": "Excel Workbook",
+  "exportServerXlsx": "Server-side full (XLSX)",
+  "exportServerSuccess": "Download started",
+  "exportServerFailed": "Server-side export failed",
+  "detail": "Detail",
+  "rowActions": "Actions",
+  "sectionBasic": "Basic Information",
+  "sectionChange": "Change Details",
+  "sectionOther": "Other Information",
+  "targetId": "Target ID",
+  "operatorId": "Operator ID",
+  "oldValue": "Old Value",
+  "newValue": "New Value",
+  "tenantId": "Tenant ID",
+  "requestId": "Request ID",
+  "logHash": "Log Hash",
+  "signature": "Signature"
 }

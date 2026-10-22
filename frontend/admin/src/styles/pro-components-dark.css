@@ -195,14 +195,15 @@
 .ant-pro-table .ant-table-container {
   border-radius: 0 !important;
   overflow: hidden !important;
-  /* 右/底边线补齐（用户裁决 2026-10-21）：antd v6 的 bordered 容器只发
-     上/左两条边，右/底开放，空表体下半段读起来是无框敞口——三端对齐
-     ele（vxe border:true 全框）/vben（容器左/右/底三边收口）的闭合盒
-     形态。颜色走 antd 容器上/左边同源 token（实测 =
-     --ant-color-border-secondary #E4E4E7），亮暗自适配；!important 理由
-     同上：cssinjs 运行时注入顺序在打包 CSS 之后。 */
-  border-right: 1px solid var(--ant-color-border-secondary, #e4e4e7) !important;
-  border-bottom: 1px solid var(--ant-color-border-secondary, #e4e4e7) !important;
+  /* 四边闭合（用户裁决 2026-10-21，2026-10-22 补全为四边）：antd v6 只给
+     bordered 表格的容器发上/左两条边，右/底开放——上一轮因此只补了右/底，
+     但上/左的前提是页面传 bordered，未传的列表页（组件定义/内容实验等
+     十余页）只剩右/底两条线，盒子左侧敞开。这里四边一并画死，不再依赖
+     页面传参；颜色走 antd bordered 容器上/左边同源 token（实测 =
+     --ant-color-border-secondary #E4E4E7），bordered 页与 antd 自绘上/左
+     同色同宽、渲染无差，亮暗自适配；!important 理由同上：cssinjs 运行时
+     注入顺序在打包 CSS 之后。 */
+  border: 1px solid var(--ant-color-border-secondary, #e4e4e7) !important;
 }
 /* 表格内容区域直角 */
 .ant-pro-table .ant-table-container .ant-table-content {

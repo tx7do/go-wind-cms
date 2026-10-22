@@ -73,6 +73,7 @@ gow 未覆盖的任务才退回 Makefile（`backend/` 根目录执行）：`make
 - **refresh-token 勿手动调**：刷新接口会轮换令牌对，手动调用会使内存中的旧 access token 立即失效，表现为"假 401"，别误判成鉴权 bug。
 - **admin 前端坑**：go-crud List 的 `total` 是字符串（uint64 JSON），展示/比较前须 `Number()`；antd Tabs 走 `items` prop 之外的旧写法会静默渲染空壳。
 - **ListTable 必传 `request`**：不传时内部 wrappedRequest 拿到 undefined 结果即判定失败态，页面恒定渲染「加载失败/重试」且无任何日志。新列表页一律用 redirects 页模式（`loadItems` + `request` prop + 受控 dataSource，增删改后 `actionRef.reload()` 重跑）。
+- **列表页高度不要再手接**：ListTable 已内置高度自动撑满——页面不传 `scroll.y` 即自动接管（外层用 `ContentContainer`，非 flex 列父级自动退回自然高度），分页器钉底；页面传了 `scroll.y` 则完全尊重。新列表页一律 `<ContentContainer><ListTable/></ContentContainer>` 两层完事，手写 `useProTableScrollY` 样板会被 eslint 警告（存量未迁移页 warn 过渡中）。
 - **新 List 接口禁传空 `sorting=[]`**：生成客户端会序列化成空 `sorting=` 参数，kratos 解析 `pagination.Sorting` 报 400（CODEC）。排序走 `orderBy`（JSON 字符串参数）。
 - **AI 内容生成助手**已落地（`api/protos/ai/`）；本地调试可配任意 OpenAI 兼容 mock 替代真实模型，生产在管理页配真实 provider。
 - **Node 版本**：admin dev（vite 8 / rolldown）要求 Node ≥ 20.19，否则报 `styleText` 不存在——系统默认 20.10 太老，须前置 nvm 的 20.20 再 `npm run dev`。

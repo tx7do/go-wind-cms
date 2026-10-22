@@ -1,8 +1,9 @@
 import { useEffect, useState } from 'react';
-import { Button, Empty, Input, Modal, Popconfirm, Table, Tag, Typography, Upload, App } from 'antd';
+import { Button, Empty, Input, Modal, Table, Tag, Typography, Upload, App } from 'antd';
 import type { ColumnsType } from 'antd/es/table';
 import { DeleteOutlined, FileAddOutlined, UploadOutlined } from '@ant-design/icons';
 import { useTranslation } from 'react-i18next';
+import TableActions from '@/components/common/TableActions';
 import { useQueryClient } from '@tanstack/react-query';
 import type { aiservicev1_AiDoc as AiDoc, aiservicev1_AiKnowledgeBase as AiKnowledgeBase } from '@/api/generated/admin/service/v1';
 import { fetchListAiDocs, useDeleteAiDoc, useUploadAiDoc, useUploadDocFile } from '@/api/hooks/ai-knowledge';
@@ -124,11 +125,21 @@ export default function DocsDrawer({ open, data, onClose }: DocsDrawerProps) {
     { title: t('docChunks'), dataIndex: 'chunkCount', width: 80 },
     {
       title: t('action'),
-      width: 80,
+      width: 150,
       render: (_, record) => (
-        <Popconfirm title={t('deleteDocConfirm')} onConfirm={() => handleDelete(record)}>
-          <Button type="link" size="small" danger icon={<DeleteOutlined />} />
-        </Popconfirm>
+        <TableActions
+          record={record}
+          actions={[
+            {
+              key: 'delete',
+              label: t('common:button.delete'),
+              icon: <DeleteOutlined />,
+              danger: true,
+              confirm: { title: t('deleteDocConfirm') },
+              onClick: () => handleDelete(record),
+            },
+          ]}
+        />
       ),
     },
   ];

@@ -123,6 +123,7 @@ declare global {
   const getTableHeight: typeof import('../src/components/Table/utils/helper').getTableHeight
   const handleRowHeight: typeof import('../src/components/Table/utils/helper').handleRowHeight
   const handleValuePropName: typeof import('../src/components/common/Form/utils/helper').handleValuePropName
+  const headCheck: typeof import('../src/components/common/ListTable/__head_check__').default
   const initCompProps: typeof import('../src/components/common/Form/utils/helper').initCompProps
   const initMonacoWorkers: typeof import('../src/components/common/Editor/src/monaco-loader').initMonacoWorkers
   const isDarkMode: typeof import('../src/components/common/Editor/src/utils').isDarkMode
@@ -167,6 +168,7 @@ declare global {
   const useLayoutEffect: typeof import('react').useLayoutEffect
   const useLinkClickHandler: typeof import('react-router-dom').useLinkClickHandler
   const useLocation: typeof import('react-router-dom').useLocation
+  const useLockStore: typeof import('../src/stores/lock').useLockStore
   const useLogout: typeof import('../src/hooks/useLogout').useLogout
   const useMemo: typeof import('react').useMemo
   const useNavigate: typeof import('react-router-dom').useNavigate

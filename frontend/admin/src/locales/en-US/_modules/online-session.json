@@ -17,5 +17,13 @@
   "forceLogoutConfirm": "Force logout this session?",
   "forceLogoutConfirmDesc": "This session of {{user}} will be revoked immediately and the user must sign in again.",
   "forceLogoutSuccess": "Session revoked",
-  "forceLogoutFailed": "Force logout failed"
+  "forceLogoutFailed": "Force logout failed",
+  "status": "Status",
+  "currentSession": "Current",
+  "revoke": "Sign Out",
+  "revokeConfirm": "Sign out this session?",
+  "revokeSuccess": "Session signed out",
+  "revokeFailed": "Failed to sign out",
+  "mySessionsHint": "All sessions you are currently signed in with. Sign out any unfamiliar device or location below; the current session cannot be signed out here.",
+  "noSessions": "No active sessions"
 }

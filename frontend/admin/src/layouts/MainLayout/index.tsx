@@ -8,6 +8,7 @@ import HeaderContent from './components/HeaderContent';
 import SiderMenu from './components/SiderMenu';
 import TabsBar from './components/TabsBar';
 import AppFooter from './components/Footer';
+import { LockScreen } from './components/LockScreen';
 import { PageContainer } from '@/layouts/components/PageContainer';
 
 // Hooks
@@ -16,7 +17,7 @@ import { useMenuData } from './hooks/useMenuData';
 import { useLayoutState } from './hooks/useLayoutState';
 
 // Stores & Preferences
-import { useUserStore, useAuthStore, usePageRefreshStore } from '@/stores';
+import { useUserStore, useAuthStore, usePageRefreshStore, useLockStore } from '@/stores';
 import { useAccess } from '@/core/access';
 import { usePreferencesStore } from '@/core/preferences/store';
 import { useThemeConfig } from '@/core/preferences/hooks/useThemeConfig';
@@ -48,6 +49,7 @@ export const MainLayout = ({ routes: dynamicRoutes }: MainLayoutProps) => {
   // Stores
   const { userInfo } = useUserStore();
   const { logout } = useAuthStore();
+  const unlockScreen = useLockStore((state) => state.unlockScreen);
 
   // Preferences
   const preferences = usePreferencesStore((state) => state.preferences);
@@ -373,6 +375,17 @@ export const MainLayout = ({ routes: dynamicRoutes }: MainLayoutProps) => {
 
       {/* 设置面板 */}
       <PreferencesPanel open={settingsOpen} onClose={() => setSettingsOpen(false)} />
+
+      {/* 锁屏遮罩：组件内按 preferences.widget.lockScreen 与锁屏状态自行门控 */}
+      <LockScreen
+        avatar={userInfo?.avatar || preferences.app.defaultAvatar}
+        onToLogin={() => {
+          // 必须先撤遮罩：logout 只清 auth-storage / user-storage，不碰 lock-storage，
+          // 否则重新登录后遮罩仍在。
+          unlockScreen();
+          void logout();
+        }}
+      />
     </ConfigProvider>
   );
 };

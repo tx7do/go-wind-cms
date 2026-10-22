@@ -38,7 +38,11 @@
     "searchSelect": "Select",
     "searchSwitch": "Switch",
     "searchClose": "Close",
-    "semanticTitle": "Semantic Search"
+    "semanticTitle": "Semantic Search",
+    "inbox": "Inbox",
+    "lockScreen": "Lock Screen",
+    "logoutConfirmTitle": "Confirm Sign Out",
+    "logoutConfirmMessage": "You will be returned to the sign-in page. Unsaved changes may be lost."
   },
   "refresh": "Refresh",
   "home": "Home",
@@ -311,5 +315,14 @@
   "drawer": {
     "unsavedMessage": "The form has been modified. Do you want to discard this edit?",
     "discardButton": "Discard"
+  },
+  "lockScreen": {
+    "title": "Lock Screen",
+    "placeholder": "Enter lock screen password",
+    "lock": "Lock",
+    "unlock": "Click to unlock",
+    "entry": "Unlock",
+    "errorTip": "Incorrect password, please try again",
+    "backToLogin": "Back to Login"
   }
 }

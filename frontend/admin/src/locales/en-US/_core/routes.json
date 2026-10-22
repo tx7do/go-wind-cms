@@ -1,6 +1,5 @@
 {
   "dashboard": "Dashboard",
-  "workspace": "Workspace",
   "tenant": "Tenant Management",
   "tenant-members": "Tenant Members",
   "permission": "Permission Management",
@@ -93,5 +92,7 @@
   "server-monitor": "Server Monitor",
   "redis-cache-monitor": "Redis Cache Monitor",
   "tenant-quotas": "Tenant Quotas",
-  "ai-agents": "AI Agents"
+  "ai-agents": "AI Agents",
+  "dashboard-analytics": "Analytics",
+  "dashboard-workspace": "Workbench"
 }

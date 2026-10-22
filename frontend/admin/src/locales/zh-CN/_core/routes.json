@@ -1,6 +1,5 @@
 {
   "dashboard": "数据看板",
-  "workspace": "工作台",
   "tenant": "租户管理",
   "tenant-members": "租户成员",
   "permission": "权限管理",
@@ -93,5 +92,7 @@
   "server-monitor": "服务器监控",
   "redis-cache-monitor": "Redis 缓存监控",
   "tenant-quotas": "租户配额",
-  "ai-agents": "Agent 编排"
+  "ai-agents": "Agent 编排",
+  "dashboard-analytics": "分析页",
+  "dashboard-workspace": "工作台"
 }

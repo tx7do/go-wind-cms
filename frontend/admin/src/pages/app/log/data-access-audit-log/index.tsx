@@ -1,7 +1,9 @@
-import { useRef } from 'react';
+import { useRef, useState } from 'react';
 import type { ProColumns, ActionType } from '@ant-design/pro-components';
 import dayjs, { type Dayjs } from 'dayjs';
 import ListTable from '@/components/common/ListTable';
+import TableActions from '@/components/common/TableActions';
+import { InfoCircleOutlined } from '@ant-design/icons';
 import { Button, Dropdown, Tag, App } from 'antd';
 import { useTranslation } from 'react-i18next';
 import type { auditservicev1_DataAccessAuditLog as DataAccessAuditLog } from '@/api/generated/admin/service/v1';
@@ -20,6 +22,7 @@ import {
   successToColor,
   successToName,
 } from './constants';
+import DataAccessAuditLogDetailDrawer from './DetailDrawer';
 import { searchOptionRender } from '@/components/common/searchSubmitter';
 import { ColumnSlidersIcon } from '@/components/common/columnSettingIcon';
 
@@ -32,6 +35,7 @@ const DataAccessAuditLogPage = () => {
   // 最近一次列表查询参数：导出 CSV 时沿用当前搜索/排序条件
   const latestParamsRef = useRef<Record<string, any>>({});
   const { message } = App.useApp();
+  const [detailRecord, setDetailRecord] = useState<DataAccessAuditLog | null>(null);
 
   const containerRef = useRef<HTMLDivElement>(null);
   const tableScrollY = useProTableScrollY(containerRef);
@@ -181,6 +185,24 @@ const DataAccessAuditLogPage = () => {
       dataIndex: 'ipAddress',
       width: 140,
     },
+    {
+      title: t('action'),
+      valueType: 'option',
+      width: 110,
+      render: (_, record) => (
+        <TableActions
+          record={record}
+          actions={[
+            {
+              key: 'detail',
+              label: t('detail'),
+              icon: <InfoCircleOutlined />,
+              onClick: () => setDetailRecord(record),
+            },
+          ]}
+        />
+      ),
+    },
   ];
 
   // 按当前搜索条件导出 CSV（客户端分页聚合，上限 1 万行；全量归档走后端 JSONL 任务）
@@ -228,86 +250,94 @@ const DataAccessAuditLogPage = () => {
   };
 
   return (
-    <ContentContainer heightMode="fixed" padding="16px" bottomMargin={0}>
-      <div ref={containerRef} className="page-container-content">
-        <ListTable<DataAccessAuditLog>
-          actionRef={actionRef}
-          columns={columns}
-          request={async (params, sorter) => {
-            latestParamsRef.current = params;
-            const query = new PaginationQuery({
-              paging: {
-                page: params.current || 1,
-                pageSize: params.pageSize || 20,
-              },
-              formValues: Object.fromEntries(
-                Object.entries(params).filter(([key]) => !['current', 'pageSize'].includes(key)),
-              ),
-              orderBy:
-                sorter && Object.keys(sorter).length > 0
-                  ? Object.entries(sorter).map(([key, value]) =>
-                      value === 'ascend' ? key : `-${key}`,
-                    )
-                  : undefined,
-            });
-
-            const response = await fetchListDataAccessAuditLogs(query);
-
-            return {
-              data: response.items || [],
-              total: response.total || 0,
-              success: true,
-            };
-          }}
-          rowKey="id"
-          search={{ optionRender: searchOptionRender,
-            labelWidth: 'auto',
-            defaultCollapsed: false,
-          }}
-          pagination={{
-            defaultPageSize: TABLE.DEFAULT_PAGE_SIZE,
-            showSizeChanger: true,
-            showQuickJumper: true,
-          }}
-          toolBarRender={() => [
-            <Dropdown
-              key="export"
-              menu={{
-                items: [
-                  { key: 'csv', label: t('exportCsv') },
-                  { key: 'xlsx', label: t('exportXlsx') },
-                  { type: 'divider' },
-                  { key: 'server-xlsx', label: t('exportServerXlsx') },
-                ],
-                onClick: ({ key }) => {
-                  if (key === 'server-xlsx') {
-                    handleServerExport();
-                    return;
-                  }
-                  handleExport(key as AuditExportFormat);
+    <>
+      <ContentContainer heightMode="fixed" padding="16px" bottomMargin={0}>
+        <div ref={containerRef} className="page-container-content">
+          <ListTable<DataAccessAuditLog>
+            actionRef={actionRef}
+            columns={columns}
+            request={async (params, sorter) => {
+              latestParamsRef.current = params;
+              const query = new PaginationQuery({
+                paging: {
+                  page: params.current || 1,
+                  pageSize: params.pageSize || 20,
                 },
-              }}
-            >
-              <Button>{t('export')}</Button>
-            </Dropdown>,
-          ]}
+                formValues: Object.fromEntries(
+                  Object.entries(params).filter(([key]) => !['current', 'pageSize'].includes(key)),
+                ),
+                orderBy:
+                  sorter && Object.keys(sorter).length > 0
+                    ? Object.entries(sorter).map(([key, value]) =>
+                        value === 'ascend' ? key : `-${key}`,
+                      )
+                    : undefined,
+              });
 
-          options={{
-            density: true,
-            fullScreen: true,
-            setting: { settingIcon: <ColumnSlidersIcon /> },
-            reload: true,
-          }}
-          size="middle"
-          bordered
-          cardBordered={false}
-          scroll={{
-            y: tableScrollY,
-            x: 1400,
-          }}
-        />
-      </div>
-    </ContentContainer>
+              const response = await fetchListDataAccessAuditLogs(query);
+
+              return {
+                data: response.items || [],
+                total: response.total || 0,
+                success: true,
+              };
+            }}
+            rowKey="id"
+            search={{ optionRender: searchOptionRender,
+              labelWidth: 'auto',
+              defaultCollapsed: false,
+            }}
+            pagination={{
+              defaultPageSize: TABLE.DEFAULT_PAGE_SIZE,
+              showSizeChanger: true,
+              showQuickJumper: true,
+            }}
+            toolBarRender={() => [
+              <Dropdown
+                key="export"
+                menu={{
+                  items: [
+                    { key: 'csv', label: t('exportCsv') },
+                    { key: 'xlsx', label: t('exportXlsx') },
+                    { type: 'divider' },
+                    { key: 'server-xlsx', label: t('exportServerXlsx') },
+                  ],
+                  onClick: ({ key }) => {
+                    if (key === 'server-xlsx') {
+                      handleServerExport();
+                      return;
+                    }
+                    handleExport(key as AuditExportFormat);
+                  },
+                }}
+              >
+                <Button>{t('export')}</Button>
+              </Dropdown>,
+            ]}
+
+            options={{
+              density: true,
+              fullScreen: true,
+              setting: { settingIcon: <ColumnSlidersIcon /> },
+              reload: true,
+            }}
+            size="middle"
+            bordered
+            cardBordered={false}
+            scroll={{
+              y: tableScrollY,
+              x: 1400,
+            }}
+          />
+        </div>
+      </ContentContainer>
+
+      <DataAccessAuditLogDetailDrawer
+        open={detailRecord !== null}
+        data={detailRecord}
+        onClose={() => setDetailRecord(null)}
+      />
+    </>
   );
 };
 

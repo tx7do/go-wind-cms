@@ -23,5 +23,15 @@
   "createdAt": "Logged At",
   "export": "Export All",
   "exportCsv": "CSV (Comma Separated)",
-  "exportXlsx": "Excel Workbook"
+  "exportXlsx": "Excel Workbook",
+  "exportServerXlsx": "Server-side full (XLSX)",
+  "exportServerSuccess": "Download started",
+  "exportServerFailed": "Server-side export failed",
+  "detail": "Detail",
+  "action": "Actions",
+  "sectionBasic": "Basic Information",
+  "sectionEval": "Evaluation Details",
+  "sectionOther": "Other Information",
+  "logHash": "Log Hash",
+  "signature": "Signature"
 }

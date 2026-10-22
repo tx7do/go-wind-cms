@@ -18,7 +18,7 @@ import { fetchListPosts } from '@/api/hooks/post';
 import { PaginationQuery } from '@/core';
 import { fetchListMediaAssets } from '@/api/hooks/media-asset';
 import { fetchListSocialAccounts, useCreateSocialDistribution, useUpdateSocialDistribution } from '@/api/hooks/social';
-import { MAX_POST_CHARS, supportedPlatformOptions } from './constants';
+import { MAX_POST_CHARS, getPlatformLabel, supportedPlatformOptions } from './constants';
 
 /** 支持配图的平台 */
 const MEDIA_PLATFORMS = new Set([
@@ -86,26 +86,32 @@ const SocialDistributionDrawer: React.FC<SocialDistributionDrawerProps> = ({
     }
   }, [open, data]);
 
-  // 平台账号下拉（启用中的账号）
+  // 账号下拉（已录入的社交账号，按平台分组；平台随账号带出，无需先选平台）
   const accountOptions = useMemo(() => {
-    return async (keywords?: string) => {
+    return async () => {
       const query = new PaginationQuery({
         paging: { page: 1, pageSize: 100 },
-        formValues: {
-          ...(platform ? { platform } : {}),
-          ...(keywords ? { name: keywords } : {}),
-        },
         orderBy: ['-created_at'],
       });
       const resp = await fetchListSocialAccounts(query);
-      return (resp.items || [])
-        .filter((item: any) => item.isEnabled !== false)
-        .map((item: any) => ({
-          label: `${item.name}（${item.handle || item.platform}）`,
-          value: item.id,
-        }));
+      // 编辑回显时保留停用账号（仅作展示，select 本身已禁用）；新建只列启用中的
+      const items = (resp.items || []).filter(
+        (item: any) => isEdit || item.isEnabled !== false,
+      );
+      const groups = new Map<string, { label: string; value: number; platform: string }[]>();
+      items.forEach((item: any) => {
+        const label = `${item.name}（${item.handle || getPlatformLabel(t, item.platform)}）`;
+        const list = groups.get(item.platform) || [];
+        list.push({ label, value: item.id, platform: item.platform });
+        groups.set(item.platform, list);
+      });
+      return Array.from(groups.entries()).map(([plt, opts]) => ({
+        label: getPlatformLabel(t, plt),
+        title: getPlatformLabel(t, plt),
+        options: opts,
+      }));
     };
-  }, [platform]);
+  }, [isEdit, t]);
 
   // 配图下拉（媒体库中的图片资产）
   const mediaOptions = useMemo(() => {
@@ -262,30 +268,43 @@ const SocialDistributionDrawer: React.FC<SocialDistributionDrawerProps> = ({
       drawerProps={{ destroyOnHidden: true, onClose, size: 600 }}
     >
       <ProFormSelect
-        name="platform"
-        label={t('platform')}
-        placeholder={t('platformPlaceholder')}
-        rules={[{ required: true, message: t('requiredPlatform') }]}
-        options={supportedPlatformOptions(t)}
+        name="accountId"
+        label={t('socialAccount')}
+        placeholder={t('socialAccountPlaceholder')}
+        rules={[{ required: true, message: t('requiredSocialAccount') }]}
+        extra={t('helpSocialAccount')}
+        request={() => accountOptions()}
         disabled={isEdit}
         fieldProps={{
-          allowClear: false,
-          onChange: (value: string) => {
-            setPlatform(value);
-            formRef.current?.setFieldValue('accountId', undefined);
+          showSearch: true,
+          optionFilterProp: 'label',
+          onChange: (
+            _: unknown,
+            option?: { platform?: string } | { platform?: string }[],
+          ) => {
+            const picked = Array.isArray(option) ? option[0] : option;
+            const plt = picked?.platform;
+            if (!plt || plt === platform) return;
+            setPlatform(plt);
+            formRef.current?.setFieldValue('platform', plt);
+            // 平台切换后清掉对新平台不生效的条件字段
+            if (!MEDIA_PLATFORMS.has(plt)) {
+              formRef.current?.setFieldValue('mediaIds', undefined);
+            }
+            if (plt !== 'PLATFORM_DEVTO') {
+              formRef.current?.setFieldValue('title', undefined);
+            }
           },
         }}
       />
 
       <ProFormSelect
-        name="accountId"
-        label={t('socialAccount')}
-        placeholder={platform ? t('socialAccountPlaceholder') : t('socialAccountNeedPlatform')}
-        rules={[{ required: true, message: t('requiredSocialAccount') }]}
-        request={() => accountOptions()}
-        params={[platform]}
-        disabled={isEdit}
-        fieldProps={{ showSearch: true, optionFilterProp: 'label' }}
+        name="platform"
+        label={t('platform')}
+        placeholder={t('platformDerivedPlaceholder')}
+        extra={t('helpPlatformDerived')}
+        options={supportedPlatformOptions(t)}
+        disabled
       />
 
       <ProFormSelect

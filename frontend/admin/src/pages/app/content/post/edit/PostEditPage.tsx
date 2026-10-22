@@ -667,7 +667,6 @@ const PostEditPage = () => {
             }))}
           />
           <Button
-            type="primary"
             icon={<TranslationOutlined />}
             loading={translateMutation.isPending}
             onClick={handleTranslate}
@@ -823,7 +822,7 @@ ${content}` : content });
             <Button onClick={handleSaveDraft} loading={saving}>
               {t('saveDraft')}
             </Button>
-            <Button type="primary" danger onClick={handlePublish} loading={saving}>
+            <Button type="primary" onClick={handlePublish} loading={saving}>
               {t('publish')}
             </Button>
             <Button

@@ -1,6 +1,6 @@
 import { useRef, useState } from 'react';
 import type { ActionType } from '@ant-design/pro-components';
-import { App, Button, Input, Modal, Popconfirm, Select, Space, Switch, Tag } from 'antd';
+import { App, Button, Input, Modal, Select, Space, Switch, Tag } from 'antd';
 import {
   DeleteOutlined,
   EditOutlined,
@@ -10,6 +10,7 @@ import {
 } from '@ant-design/icons';
 import { useTranslation } from 'react-i18next';
 import ListTable from '@/components/common/ListTable';
+import TableActions from '@/components/common/TableActions';
 import ContentContainer from '@/layouts/components/PageContainer/ContentContainer';
 import type { webhookservicev1_Webhook as Webhook } from '@/api/generated/admin/service/v1';
 import {
@@ -183,30 +184,40 @@ const WebhookManagement = () => {
     { title: t('description'), dataIndex: 'description', ellipsis: true },
     {
       title: t('action'),
-      width: 240,
+      width: 300,
       render: (_: unknown, record: Webhook) => (
-        <Space>
-          <Button
-            type="link"
-            size="small"
-            icon={<SendOutlined />}
-            loading={pingLoadingId === record.id}
-            onClick={() => handlePing(record)}
-          >
-            {t('test')}
-          </Button>
-          <Button type="link" size="small" icon={<HistoryOutlined />} onClick={() => setDeliveriesTarget(record)}>
-            {t('deliveries')}
-          </Button>
-          <Button type="link" size="small" icon={<EditOutlined />} onClick={() => openEdit(record)}>
-            {t('edit')}
-          </Button>
-          <Popconfirm title={t('deleteConfirm')} onConfirm={() => handleDelete(record)}>
-            <Button type="link" size="small" danger icon={<DeleteOutlined />}>
-              {t('delete')}
-            </Button>
-          </Popconfirm>
-        </Space>
+        <TableActions
+          record={record}
+          actions={[
+            {
+              key: 'test',
+              label: t('test'),
+              icon: <SendOutlined />,
+              loading: pingLoadingId === record.id,
+              onClick: () => handlePing(record),
+            },
+            {
+              key: 'deliveries',
+              label: t('deliveries'),
+              icon: <HistoryOutlined />,
+              onClick: () => setDeliveriesTarget(record),
+            },
+            {
+              key: 'edit',
+              label: t('common:button.edit'),
+              icon: <EditOutlined />,
+              onClick: () => openEdit(record),
+            },
+            {
+              key: 'delete',
+              label: t('common:button.delete'),
+              icon: <DeleteOutlined />,
+              danger: true,
+              confirm: { title: t('deleteConfirm') },
+              onClick: () => handleDelete(record),
+            },
+          ]}
+        />
       ),
     },
   ];

@@ -5,7 +5,6 @@ import {
   Button,
   Input,
   Modal,
-  Popconfirm,
   Radio,
   Select,
   Space,
@@ -15,6 +14,7 @@ import {
 import { DeleteOutlined, EditOutlined, PlusOutlined } from '@ant-design/icons';
 import { useTranslation } from 'react-i18next';
 import ListTable from '@/components/common/ListTable';
+import TableActions from '@/components/common/TableActions';
 import ContentContainer from '@/layouts/components/PageContainer/ContentContainer';
 import type { flowservicev1_FlowRule as FlowRule } from '@/api/generated/admin/service/v1';
 import {
@@ -501,16 +501,25 @@ const FlowRuleManagement = () => {
       title: t('action'),
       width: 150,
       render: (_: unknown, record: FlowRule) => (
-        <Space>
-          <Button type="link" size="small" icon={<EditOutlined />} onClick={() => openEdit(record)}>
-            {t('edit')}
-          </Button>
-          <Popconfirm title={t('deleteConfirm')} onConfirm={() => handleDelete(record)}>
-            <Button type="link" size="small" danger icon={<DeleteOutlined />}>
-              {t('delete')}
-            </Button>
-          </Popconfirm>
-        </Space>
+        <TableActions
+          record={record}
+          actions={[
+            {
+              key: 'edit',
+              label: t('common:button.edit'),
+              icon: <EditOutlined />,
+              onClick: () => openEdit(record),
+            },
+            {
+              key: 'delete',
+              label: t('common:button.delete'),
+              icon: <DeleteOutlined />,
+              danger: true,
+              confirm: { title: t('deleteConfirm') },
+              onClick: () => handleDelete(record),
+            },
+          ]}
+        />
       ),
     },
   ];

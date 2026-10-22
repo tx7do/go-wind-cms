@@ -2,7 +2,8 @@ import { useRef, useState } from 'react';
 import type { ProColumns, ActionType } from '@ant-design/pro-components';
 import TableExportButton from '@/components/common/TableExportButton';
 import ListTable from '@/components/common/ListTable';
-import { Button, Image, Popconfirm, Tag, App } from 'antd';
+import TableActions from '@/components/common/TableActions';
+import { Button, Image, Tag, App } from 'antd';
 import { EditOutlined, DeleteOutlined, PlusOutlined } from '@ant-design/icons';
 import { Icon } from '@iconify/react';
 import { useQueryClient } from '@tanstack/react-query';
@@ -143,32 +144,32 @@ const CategoryList = () => {
     {
       title: t('action'),
       valueType: 'option',
-      width: 100,
+      width: 150,
       fixed: 'right',
-      render: (_, record) => [
-        <a
-          key="edit"
-          onClick={() =>
-            navigate(`/content/categories/edit/${record.id}?lang=${i18n.language}`)
-          }
-        >
-          <EditOutlined />
-        </a>,
-        <Popconfirm
-          key="delete"
-          title={t('deleteConfirmTitle')}
-          description={t('deleteConfirmDesc', { moduleName: t('moduleName') })}
-          onConfirm={() => {
-            record.id && deleteMutation.mutate({ id: record.id });
-          }}
-          okText={t('common:button.ok')}
-          cancelText={t('common:button.cancel')}
-        >
-          <a style={{ color: 'var(--ant-color-error)' }}>
-            <DeleteOutlined />
-          </a>
-        </Popconfirm>,
-      ],
+      render: (_, record) => (
+        <TableActions
+          record={record}
+          actions={[
+            {
+              key: 'edit',
+              label: t('common:button.edit'),
+              icon: <EditOutlined />,
+              onClick: () => navigate(`/content/categories/edit/${record.id}?lang=${i18n.language}`),
+            },
+            {
+              key: 'delete',
+              label: t('common:button.delete'),
+              icon: <DeleteOutlined />,
+              danger: true,
+              confirm: {
+                title: t('deleteConfirmTitle'),
+                description: t('deleteConfirmDesc', { moduleName: t('moduleName') }),
+              },
+              onClick: () => record.id && deleteMutation.mutate({ id: record.id }),
+            },
+          ]}
+        />
+      ),
     },
   ];
 
