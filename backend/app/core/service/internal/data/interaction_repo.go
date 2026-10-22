@@ -8,6 +8,7 @@ import (
 
 	paginationV1 "github.com/tx7do/go-crud/api/gen/go/pagination/v1"
 	entCrud "github.com/tx7do/go-crud/entgo"
+	"github.com/tx7do/go-crud/viewer"
 
 	"go-wind-cms/app/core/service/internal/data/ent"
 	"go-wind-cms/app/core/service/internal/data/ent/commentlike"
@@ -43,6 +44,39 @@ func NewInteractionRepo(ctx *bootstrap.Context, entClient *entCrud.EntClient[*en
 	}
 }
 
+// requireTenantViewer 统一校验 C 端互动接口的 viewer 边界并解析互动归属租户：
+//   - viewer 缺失或 uid=0（未认证）→ 401 UNAUTHORIZED；
+//   - viewer 已认证（uid>0）→ 互动归属 viewer 自身的租户域，返回该 tenant_id。
+//     平台账号（tenant_id=0，平台域）返回 0：平台门户内容（posts.tenant_id
+//     默认 0）与本域一致，账本/计数/状态查询全程同域自洽；租户用户则归属
+//     自己的租户，跨域数据由各表的 TenantPrivacy 天然隔离。
+//
+// 历史教训：平台上下文（tid=0）曾被当成「无身份」一律 401，而 BFF 的统一认证
+// 链把 401 当令牌失效处理（刷新成功后重试仍 401 → 判定彻底失效），导致 admin
+// 进入收藏页即被强制登出。已认证用户的租户边界不足属权限语义，绝不能映射 401。
+func (r *InteractionRepo) requireTenantViewer(ctx context.Context, viewerUserID uint32) (uint32, error) {
+	if viewerUserID == 0 {
+		return 0, interactionV1.ErrorUnauthorized("viewer identity required")
+	}
+	if tid, hasTenant := maybeTenantFromViewer(ctx); hasTenant {
+		return tid, nil
+	}
+	// 平台上下文：租户域 0（平台内容域）
+	return 0, nil
+}
+
+// countableTenantFromViewer 计数读侧（GetCounts）的租户解析：
+// 任何非系统 viewer 都按其租户域读计数——匿名访问者读域名解析出的租户、
+// 租户用户读本租户、平台账号读平台内容域（tenant_id=0）。
+// 仅系统后台任务（无业务租户归属）返回空。
+func countableTenantFromViewer(ctx context.Context) (uint32, bool) {
+	vc, exist := viewer.FromContext(ctx)
+	if !exist || vc == nil || vc.IsSystemContext() {
+		return 0, false
+	}
+	return uint32(vc.TenantID()), true
+}
+
 // txn 在事务内执行 fn，沿用 post_repo 的 defer rollback/commit 惯例。
 func (r *InteractionRepo) txn(ctx context.Context, fn func(tx *ent.Tx) error) (err error) {
 	var tx *ent.Tx
@@ -69,9 +103,9 @@ func (r *InteractionRepo) txn(ctx context.Context, fn func(tx *ent.Tx) error) (e
 // Like 点赞 post 或 comment。幂等：已点赞则 no-op。
 // 返回操作后的点赞状态与最新计数。
 func (r *InteractionRepo) Like(ctx context.Context, viewerUserID uint32, targetType interactionV1.TargetType, targetID uint32) (bool, int32, error) {
-	tid, hasTenant := maybeTenantFromViewer(ctx)
-	if !hasTenant || viewerUserID == 0 {
-		return false, 0, interactionV1.ErrorUnauthorized("viewer identity required")
+	tid, err := r.requireTenantViewer(ctx, viewerUserID)
+	if err != nil {
+		return false, 0, err
 	}
 
 	switch targetType {
@@ -89,9 +123,9 @@ func (r *InteractionRepo) Like(ctx context.Context, viewerUserID uint32, targetT
 
 // Unlike 取消点赞。幂等：未点赞则 no-op。
 func (r *InteractionRepo) Unlike(ctx context.Context, viewerUserID uint32, targetType interactionV1.TargetType, targetID uint32) (bool, int32, error) {
-	tid, hasTenant := maybeTenantFromViewer(ctx)
-	if !hasTenant || viewerUserID == 0 {
-		return false, 0, interactionV1.ErrorUnauthorized("viewer identity required")
+	tid, err := r.requireTenantViewer(ctx, viewerUserID)
+	if err != nil {
+		return false, 0, err
 	}
 
 	switch targetType {
@@ -477,11 +511,11 @@ func (r *InteractionRepo) RecordView(ctx context.Context, tid, targetID uint32, 
 // GetCounts 批量查询 interaction_counter 表中指定 (target_type, target_ids, metrics) 的计数。
 // 返回 target_id → metric → count 的嵌套 map。未记录的 (target, metric) 不出现在响应中。
 func (r *InteractionRepo) GetCounts(ctx context.Context, targetType interactionV1.TargetType, targetIDs []uint32, metrics []interactionV1.CounterMetric) (map[uint32]*interactionV1.CountMap, error) {
-	tid, hasTenant := maybeTenantFromViewer(ctx)
+	tid, hasTenant := countableTenantFromViewer(ctx)
 	if !hasTenant {
-		// 未登录（SystemViewer，tenant_id==0）或无 viewer context：返回空结果
-		// 而非 401。计数查询按 tenant 隔离，无 tenant 时无数据可返回，不抛错
-		// 以免打断公开页渲染。登录用户由 hasTenant==true 分支按 tenant 过滤。
+		// 仅系统后台任务（无业务租户归属）返回空结果而非 401，以免打断
+		// 公开页渲染。匿名访问者（域名解析租户）、租户用户与平台账号
+		// 各自按租户域过滤，平台账号现在也能读到平台内容域的计数。
 		return map[uint32]*interactionV1.CountMap{}, nil
 	}
 	if len(targetIDs) == 0 || len(metrics) == 0 {
@@ -538,9 +572,9 @@ func (r *InteractionRepo) GetCounts(ctx context.Context, targetType interactionV
 // 在单个 tx 内写 post_watch ledger + 在 interaction_counter 表中 upsert 计数（WATCH 指标 +1）。
 // 返回操作后的收藏状态与最新收藏计数。
 func (r *InteractionRepo) Watch(ctx context.Context, viewerUserID uint32, postID uint32) (bool, int32, error) {
-	tid, hasTenant := maybeTenantFromViewer(ctx)
-	if !hasTenant || viewerUserID == 0 {
-		return false, 0, interactionV1.ErrorUnauthorized("viewer identity required")
+	tid, err := r.requireTenantViewer(ctx, viewerUserID)
+	if err != nil {
+		return false, 0, err
 	}
 
 	exists, err := r.ledgerExists(ctx, tid, viewerUserID, postID, interactionV1.TargetType_TARGET_TYPE_POST, interactionV1.CounterMetric_COUNTER_METRIC_WATCH)
@@ -580,9 +614,9 @@ func (r *InteractionRepo) Watch(ctx context.Context, viewerUserID uint32, postID
 // Unwatch 取消收藏 post。幂等。
 // 在单个 tx 内删 post_watch ledger + 在 interaction_counter 表中递减计数。
 func (r *InteractionRepo) Unwatch(ctx context.Context, viewerUserID uint32, postID uint32) (bool, int32, error) {
-	tid, hasTenant := maybeTenantFromViewer(ctx)
-	if !hasTenant || viewerUserID == 0 {
-		return false, 0, interactionV1.ErrorUnauthorized("viewer identity required")
+	tid, err := r.requireTenantViewer(ctx, viewerUserID)
+	if err != nil {
+		return false, 0, err
 	}
 
 	exists, err := r.ledgerExists(ctx, tid, viewerUserID, postID, interactionV1.TargetType_TARGET_TYPE_POST, interactionV1.CounterMetric_COUNTER_METRIC_WATCH)
@@ -627,9 +661,9 @@ func (r *InteractionRepo) Unwatch(ctx context.Context, viewerUserID uint32, post
 // GetInteractionStatus 批量查询当前 viewer 对指定目标的 {liked, watched} 状态。
 // comment 目标的 watched 永远为 false（收藏仅对 post）。
 func (r *InteractionRepo) GetInteractionStatus(ctx context.Context, viewerUserID uint32, targetType interactionV1.TargetType, targetIDs []uint32) (map[uint32]*interactionV1.InteractionStatus, error) {
-	tid, hasTenant := maybeTenantFromViewer(ctx)
-	if !hasTenant || viewerUserID == 0 {
-		return nil, interactionV1.ErrorUnauthorized("viewer identity required")
+	tid, err := r.requireTenantViewer(ctx, viewerUserID)
+	if err != nil {
+		return nil, err
 	}
 
 	result := make(map[uint32]*interactionV1.InteractionStatus, len(targetIDs))
@@ -711,9 +745,9 @@ func (r *InteractionRepo) GetInteractionStatus(ctx context.Context, viewerUserID
 // 查 post_watch 拿到分页后的 post_ids，再逐个调 PostRepo.Get 复用其完整的
 // 附带查询（translations/tags/categories/view_mask）逻辑。
 func (r *InteractionRepo) ListWatchedPosts(ctx context.Context, viewerUserID uint32, postRepo *PostRepo, req *paginationV1.PagingRequest) (*contentV1.ListPostResponse, error) {
-	tid, hasTenant := maybeTenantFromViewer(ctx)
-	if !hasTenant || viewerUserID == 0 {
-		return nil, interactionV1.ErrorUnauthorized("viewer identity required")
+	tid, err := r.requireTenantViewer(ctx, viewerUserID)
+	if err != nil {
+		return nil, err
 	}
 
 	// 注：post_watch 的 (tenant_id, user_id, post_id) unique 索引兼作查询索引，
