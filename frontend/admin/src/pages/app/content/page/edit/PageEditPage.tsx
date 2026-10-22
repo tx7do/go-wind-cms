@@ -13,6 +13,7 @@ import {
   CheckOutlined,
   CloseOutlined,
   DownOutlined,
+  FileTextOutlined,
   HistoryOutlined,
   TranslationOutlined,
   UpOutlined,
@@ -38,6 +39,7 @@ import CustomFieldsEditor from '@/components/content/CustomFieldsEditor';
 import { fetchListLanguages } from '@/api/hooks/language';
 import { uploadFile } from '@/api/hooks/file-transfer';
 import { useTranslate } from '@/api/hooks/tag';
+import { openDraftPreviewWindow } from '@/utils/draft-preview';
 import {
   editorTypeOptions,
   pageStatusOptions,
@@ -115,7 +117,7 @@ const PageEditPage = () => {
   const navigate = useNavigate();
   const { id } = useParams();
   const [searchParams, setSearchParams] = useSearchParams();
-  const { message, notification } = App.useApp();
+  const { message, notification, modal } = App.useApp();
 
   const initLang = searchParams.get('lang') || 'zh-CN';
   const isCreateMode = !id;
@@ -175,6 +177,27 @@ const PageEditPage = () => {
 
   const clearDraft = (currentLang: string) => {
     localStorage.removeItem(getDraftKey(pageId, currentLang, isCreateMode));
+  };
+
+  /** 丢弃本地草稿：清掉暂存并恢复为服务端当前内容（新建模式回空表单） */
+  const handleDiscardDraft = () => {
+    modal.confirm({
+      title: t('discardDraftConfirmTitle'),
+      content: t('discardDraftConfirmMessage'),
+      okText: t('discardDraft'),
+      okButtonProps: { danger: true },
+      cancelText: t('common:button.cancel'),
+      onOk: () => {
+        clearDraft(lang);
+        if (isCreateMode) {
+          setFormData(emptyForm(lang));
+        } else {
+          fetchPage(lang).catch((error) => {
+            console.error('Refetch page after draft discard failed:', error);
+          });
+        }
+      },
+    });
   };
 
   // 内容模型变化时拉取字段定义，驱动动态字段表单
@@ -866,8 +889,27 @@ const PageEditPage = () => {
         <div style={{ display: 'flex', justifyContent: 'flex-end', padding: '8px 16px' }}>
           <Space>
             <Button onClick={saveDraft}>{t('saveDraft')}</Button>
+            <Button danger onClick={handleDiscardDraft} title={t('discardDraftTip')}>
+              {t('discardDraft')}
+            </Button>
             <Button type="primary" loading={saving} onClick={handlePublish}>
               {t('publish')}
+            </Button>
+            <Button
+              icon={<FileTextOutlined />}
+              disabled={!formData.content?.trim()}
+              title={t('draftPreviewTip')}
+              onClick={() =>
+                openDraftPreviewWindow({
+                  title: formData.title,
+                  content: formData.content ?? '',
+                  editorType: formData.editorType,
+                  bannerText: t('draftPreviewBanner'),
+                  docTitle: formData.title || t('draftPreviewUntitled'),
+                })
+              }
+            >
+              {t('previewDraft')}
             </Button>
             <Button
               icon={<EyeOutlined />}

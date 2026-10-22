@@ -4,6 +4,7 @@ import {
   ArrowLeftOutlined,
   CheckOutlined,
   CloseOutlined,
+  FileTextOutlined,
   HistoryOutlined,
   MenuFoldOutlined,
   SettingOutlined,
@@ -12,6 +13,7 @@ import {
 } from '@ant-design/icons';
 import { useNavigate, useParams, useSearchParams, useBlocker } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
+import dayjs from 'dayjs';
 
 import { apiClient } from '@/api/client';
 import { PaginationQuery } from '@/core';
@@ -25,6 +27,7 @@ import { uploadMediaAsset } from '@/api/hooks/media-asset';
 import { useTranslate } from '@/api/hooks/tag';
 import { POST_SAVE_MASK_KEYS, useCreatePost, useUpdatePost } from '@/api/hooks/post';
 import { compressImageFile } from '@/utils/image';
+import { openDraftPreviewWindow } from '@/utils/draft-preview';
 import {
   getPostStatusColor,
   getPostStatusLabel,
@@ -78,7 +81,7 @@ function snapshotPayload(f: PostEditProps) {
 
 /**
  * 文章编辑页（独立编辑页范式）：
- * 多语言翻译、本地草稿（自动暂存 + 恢复询问）、右栏设置、定时发布、未保存拦截
+ * 多语言翻译、本地草稿（自动暂存 + 恢复/丢弃询问 + 本地预览）、右栏设置、定时发布、未保存拦截
  */
 const PostEditPage = () => {
   const { t, i18n } = useTranslation('post');
@@ -141,15 +144,17 @@ const PostEditPage = () => {
     [],
   );
 
-  const loadDraft = useCallback(
-    (currentLang: string): PostEditProps | null => {
+  /** 本地草稿：表单内容 + 暂存时间（旧格式草稿无 _savedAt，缺省不显示时间） */
+  const readDraft = useCallback(
+    (currentLang: string): { form: PostEditProps; savedAt?: number } | null => {
       const raw = localStorage.getItem(getDraftKey(postId, currentLang, isCreateMode));
       if (!raw) return null;
       try {
-        const draft = JSON.parse(raw) as PostEditProps;
+        const parsed = JSON.parse(raw) as PostEditProps & { _savedAt?: number };
+        const { _savedAt, ...draft } = parsed;
         // 早期草稿可能没有 seo 字段，补齐为对象避免绑定空引用
         if (!draft.seo) draft.seo = {};
-        return draft;
+        return { form: draft as PostEditProps, savedAt: _savedAt };
       } catch {
         return null;
       }
@@ -161,7 +166,7 @@ const PostEditPage = () => {
     (f: PostEditProps) => {
       localStorage.setItem(
         getDraftKey(postId, f.lang, isCreateMode),
-        JSON.stringify(f),
+        JSON.stringify({ ...f, _savedAt: Date.now() }),
       );
     },
     [postId, isCreateMode],
@@ -305,26 +310,53 @@ const PostEditPage = () => {
     [isCreateMode, postId],
   );
 
-  /** 存在未发布的本地草稿时询问用户是否恢复（不再静默覆盖服务端数据） */
+  /** 存在未发布的本地草稿时询问用户恢复/丢弃/稍后处理（不再静默覆盖服务端数据） */
   const maybePromptPendingDraft = useCallback(() => {
     if (draftPromptShownRef.current) return;
-    const pending = !!loadDraft(initLang);
+    const pending = readDraft(initLang);
     if (!pending) return;
     draftPromptShownRef.current = true;
-    modal.confirm({
+    const dialog = modal.confirm({
       title: t('draftFound'),
-      content: t('draftFoundMessage'),
-      okText: t('draftRestore'),
-      cancelText: t('common:button.cancel'),
-      onOk: () => {
-        const draft = loadDraft(initLang);
-        if (draft) {
-          setFormData(draft);
-        }
-      },
+      content: (
+        <>
+          <p style={{ marginBottom: pending.savedAt ? 4 : 0 }}>{t('draftFoundMessage')}</p>
+          {pending.savedAt && (
+            <p style={{ color: 'var(--ant-color-text-tertiary)', marginBottom: 0 }}>
+              {t('draftSavedAt', { time: dayjs(pending.savedAt).format('YYYY-MM-DD HH:mm') })}
+            </p>
+          )}
+        </>
+      ),
+      footer: (
+        <Space style={{ display: 'flex', justifyContent: 'flex-end' }}>
+          <Button onClick={() => dialog.destroy()}>{t('common:button.cancel')}</Button>
+          <Button
+            danger
+            onClick={() => {
+              clearDraft(initLang);
+              dialog.destroy();
+            }}
+          >
+            {t('draftDiscard')}
+          </Button>
+          <Button
+            type="primary"
+            onClick={() => {
+              const draft = readDraft(initLang);
+              if (draft) {
+                setFormData(draft.form);
+              }
+              dialog.destroy();
+            }}
+          >
+            {t('draftRestore')}
+          </Button>
+        </Space>
+      ),
     });
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [initLang, loadDraft]);
+  }, [initLang, readDraft, clearDraft]);
 
   useEffect(() => {
     (async () => {
@@ -832,6 +864,22 @@ ${content}` : content });
               onClick={() => setSocialDistOpen(true)}
             >
               {t('distributeToSocial')}
+            </Button>
+            <Button
+              icon={<FileTextOutlined />}
+              disabled={!formData.content?.trim()}
+              title={t('draftPreviewTip')}
+              onClick={() =>
+                openDraftPreviewWindow({
+                  title: formData.title,
+                  content: formData.content ?? '',
+                  editorType: formData.editorType,
+                  bannerText: t('draftPreviewBanner'),
+                  docTitle: formData.title || t('draftPreviewUntitled'),
+                })
+              }
+            >
+              {t('previewDraft')}
             </Button>
             <Button
               icon={<EyeOutlined />}
