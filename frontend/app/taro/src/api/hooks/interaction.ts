@@ -104,6 +104,17 @@ export async function listWatchedPosts(page?: number, pageSize?: number) {
   });
 }
 
+/**
+ * 上报浏览（PV +1，匿名可报）。返回累加后的浏览量。
+ * 供详情页挂载时调用；调用方需自行去重（ref 守卫），避免重复计数。
+ */
+export async function recordView(
+  targetType: interactionservicev1_TargetType,
+  targetId: number,
+) {
+  return apiClient.interactionService.RecordView({targetType, targetId});
+}
+
 // ==============================
 // 交互状态查询 Hook
 // ==============================

@@ -1,108 +1,112 @@
-import {useState, useEffect} from 'react';
-import {useTranslation} from 'react-i18next';
 import {View, Text} from '@tarojs/components';
-
-import {AppEmpty} from '@/components/ui';
-import {Skeleton} from '@/components/ui/skeleton';
+import {useState} from 'react';
+import {useDidShow} from '@tarojs/taro';
+import {useTranslation} from 'react-i18next';
 import XIcon from '@/plugins/xicon';
-import {usePageTitle} from '@/hooks/usePageTitle';
-
-import CategoryTree from '@/components/category/CategoryTree';
-
-import {fetchListCategories} from '@/api/hooks/category';
 import {useI18nRouter} from '@/i18n/helpers';
+import {usePageTitle} from '@/hooks/usePageTitle';
+import {fetchListCategories, getCategoryName, getCategoryDescription} from '@/api/hooks/category';
+import {AppEmpty} from '@/components/ui';
+import type {contentservicev1_Category} from '@/api/generated/app/service/v1';
 
-import {contentservicev1_Category} from '@/api/generated/app/service/v1';
+const CATEGORY_ICONS = ['carbon:document-multiple-01', 'carbon:carbon', 'carbon:globe', 'carbon:cloud-foundry-2', 'carbon:development', 'carbon:data-base', 'carbon:security', 'carbon:analytics'];
+const CATEGORY_TINTS = [
+    'rgba(46, 150, 255, 0.14)',
+    'rgba(34, 211, 238, 0.14)',
+    'rgba(139, 92, 246, 0.14)',
+    'rgba(255, 159, 75, 0.16)',
+];
+const CATEGORY_ICON_COLORS = ['#2e96ff', '#22c3d8', '#8b5cf6', '#ff9f4b'];
 
+/** 分类总览：树形分类卡片网格（含文章计数与子分类数） */
 export default function CategoryListPage() {
-  const {t} = useTranslation();
-  usePageTitle('page.title.categories');
-  const router = useI18nRouter();
+    const {t} = useTranslation();
+    const router = useI18nRouter();
+    usePageTitle('page.title.categories');
 
-  const [loading, setLoading] = useState(false);
-  const [categories, setCategories] = useState<contentservicev1_Category[]>([]);
+    const [categories, setCategories] = useState<contentservicev1_Category[]>([]);
+    const [loading, setLoading] = useState(true);
 
-  async function loadCategories() {
-    setLoading(true);
-    try {
-      const res = await fetchListCategories({
-        paging: undefined,
-        formValues: {status: 'CATEGORY_STATUS_ACTIVE'},
-        fieldMask: 'id,status,sort_order,icon,code,thumbnail,post_count,direct_post_count,parent_id,created_at,children,translations.id,translations.category_id,translations.name,translations.language_code,translations.description,translations.cover_image',
-        orderBy: ['-sortOrder']
-      });
-      setCategories(res.items || []);
-    } catch (error) {
-      console.error('Load categories failed:', error);
-    } finally {
-      setLoading(false);
-    }
-  }
+    useDidShow(() => {
+        fetchListCategories({paging: {page: 1, pageSize: 50}})
+            .then((res) => setCategories(res.items || []))
+            .catch((error) => {
+                console.error('Load categories failed:', error);
+                setCategories([]);
+            })
+            .finally(() => setLoading(false));
+    });
 
-  useEffect(() => {
-    loadCategories();
-  }, []);
-
-  const handleCategoryClick = (id: number) => {
-    router.push(`/category/detail?id=${id}`);
-  };
-
-  // 统计分类总数和文章总数
-  const totalPosts = categories.reduce((sum, cat) => sum + (cat.postCount || 0), 0);
-
-  return (
-    <View className='min-h-screen w-full bg-pageBg pb-[240rpx]'>
-      {/* 页面标题 - px-[24rpx] 与 Header 对齐 */}
-      <View className='bg-cardBg px-[24rpx] pt-[40rpx] pb-[24rpx] border-b-[1rpx] border-splitLine'>
-        <Text className='text-title font-bold text-textMain'>{t('page.categories.categories_list')}</Text>
-        <Text className='text-desc text-textSec block mt-[8rpx]'>{t('page.categories.explore_all')}</Text>
-        <View className='flex items-center gap-[16rpx] mt-[16rpx]'>
-          <View className='flex items-center gap-[6rpx]'>
-            <XIcon name='carbon:folder' size={14} className='text-textSec' />
-            <Text className='text-tips text-textSec'>{categories.length} {t('page.categories.categories_count')}</Text>
-          </View>
-          <View className='w-[1rpx] h-[20rpx] bg-splitLine' />
-          <View className='flex items-center gap-[6rpx]'>
-            <XIcon name='carbon:document' size={14} className='text-textSec' />
-            <Text className='text-tips text-textSec'>{totalPosts} {t('page.posts.articles')}</Text>
-          </View>
-        </View>
-      </View>
-
-      {/* 分类列表 */}
-      <View className='px-[24rpx] pt-[24rpx]'>
-        {loading ? (
-          <View className='flex flex-col gap-[24rpx]'>
-            {Array.from({length: 4}).map((_, i) => (
-              <View key={i} className='rounded-[16rpx] bg-cardBg overflow-hidden'>
-                <View className='flex items-center gap-[24rpx] p-[24rpx]'>
-                  <Skeleton className='w-[180rpx] h-[120rpx] rounded-[12rpx]' />
-                  <View className='flex-1 flex flex-col gap-[16rpx]'>
-                    <Skeleton className='h-[32rpx] w-[60%] rounded' />
-                    <Skeleton className='h-[24rpx] w-full rounded' />
-                    <Skeleton className='h-[24rpx] w-[40%] rounded' />
-                  </View>
+    return (
+        <View className='au-page w-full bg-pageBg pb-[48rpx]'>
+            <View className='px-[24rpx] pt-[36rpx]'>
+                <View className='au-anim mb-[28rpx]'>
+                    <Text className='au-hero-title text-textMain block'>{t('page.categories.categories_list')}</Text>
+                    <Text className='text-desc text-textThird block mt-[10rpx]'>
+                        {t('page.categories.explore_all')}
+                        {categories.length > 0 ? ` · ${categories.length}` : ''}
+                    </Text>
                 </View>
-              </View>
-            ))}
-          </View>
-        ) : (
-          <>
-            {categories.length > 0 ? (
-              <CategoryTree
-                categories={categories}
-                onCategoryClick={handleCategoryClick}
-              />
-            ) : (
-              <AppEmpty
-                description={t('page.categories.no_categories')}
-                inContainer
-                image={<View style={{fontSize: '48px'}}><XIcon name='carbon:folder-blank' size={48} /></View>}
-              />
-            )}
-          </>
-        )}
-      </View>
-    </View>
-  );
+
+                {loading ? (
+                    <View className='grid grid-cols-2 gap-[22rpx]'>
+                        {[0, 1, 2, 3].map((i) => (
+                            <View key={i} className='au-card p-[26rpx]'>
+                                <View className='au-skeleton w-[64rpx] h-[64rpx] rounded-[18rpx] mb-[16rpx]' />
+                                <View className='au-skeleton w-[70%] h-[30rpx] rounded-[8rpx] mb-[12rpx]' />
+                                <View className='au-skeleton w-[45%] h-[22rpx] rounded-[8rpx]' />
+                            </View>
+                        ))}
+                    </View>
+                ) : categories.length === 0 ? (
+                    <View className='au-card'>
+                        <AppEmpty description={t('page.categories.no_categories')} />
+                    </View>
+                ) : (
+                    <View className='grid grid-cols-2 gap-[22rpx]'>
+                        {categories.map((category, idx) => {
+                            const childCount = category.children?.length ?? 0;
+                            return (
+                                <View
+                                  key={category.id}
+                                  className='au-card au-card--glow p-[26rpx] relative overflow-hidden flex flex-col'
+                                  hoverClass='tap-active'
+                                  onClick={() => category.id && router.push(`/category/detail?id=${category.id}`)}
+                                >
+                                    <View
+                                      className='w-[68rpx] h-[68rpx] rounded-[20rpx] flex items-center justify-center mb-[16rpx]'
+                                      style={{background: CATEGORY_TINTS[idx % CATEGORY_TINTS.length]}}
+                                    >
+                                        <XIcon
+                                          name={category.icon || CATEGORY_ICONS[idx % CATEGORY_ICONS.length]}
+                                          size={32}
+                                          style={{color: CATEGORY_ICON_COLORS[idx % CATEGORY_ICON_COLORS.length]}}
+                                        />
+                                    </View>
+                                    <Text className='text-body font-bold text-textMain block' numberOfLines={1}>
+                                        {getCategoryName(category) || t('page.categories.category_untitled')}
+                                    </Text>
+                                    {getCategoryDescription(category) && (
+                                        <Text className='text-tips text-textThird block mt-[6rpx]' numberOfLines={2}>
+                                            {getCategoryDescription(category)}
+                                        </Text>
+                                    )}
+                                    <View className='flex items-center gap-[14rpx] mt-auto pt-[18rpx]'>
+                                        <Text className='text-tips text-primary font-medium'>
+                                            {(category.postCount ?? 0)} {t('page.categories.articles_count')}
+                                        </Text>
+                                        {childCount > 0 && (
+                                            <Text className='text-tips text-textThird'>
+                                                {childCount} {t('page.categories.sub_categories')}
+                                            </Text>
+                                        )}
+                                    </View>
+                                </View>
+                            );
+                        })}
+                    </View>
+                )}
+            </View>
+        </View>
+    );
 }

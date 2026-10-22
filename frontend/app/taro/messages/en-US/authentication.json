@@ -33,7 +33,9 @@
     "terms_and": "and",
     "terms_of_service": "Terms of Service",
     "privacy_policy": "Privacy Policy",
-    "back_home": "Back to Home"
+    "back_home": "Back to Home",
+    "submitting": "Signing in…",
+    "forgot_password_tip": "Contact an administrator to reset your password"
   },
   "register": {
     "title": "Welcome to Register",
@@ -70,7 +72,8 @@
     "resend_after": "to resend",
     "resend_after_countdown": "Retry in {count}s",
     "next_step": "Next Step",
-    "back_home": "Back to Home"
+    "back_home": "Back to Home",
+    "password_mismatch": "Passwords do not match"
   },
   "forgotPassword": {
     "title": "Forgot Password",

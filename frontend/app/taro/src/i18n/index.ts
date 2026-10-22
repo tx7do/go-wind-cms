@@ -1,4 +1,5 @@
 import i18n from 'i18next';
+import Taro from '@tarojs/taro';
 import {initReactI18next} from 'react-i18next';
 import {allMessages, defaultLocale, DEFAULT_LANGUAGE, locales, validateLocale, getFlattenedMessages} from './config';
 
@@ -27,21 +28,52 @@ i18n
     keySeparator: '.',
   });
 
-// 从 zustand persist 存储中读取持久化的 locale
+/**
+ * 从持久化的偏好（core/preferences 的 zustand persist，键 app-preferences）里
+ * 读取上次使用的语言。两端存储介质不同：
+ * - H5：localStorage
+ * - 小程序：Taro.getStorageSync（preferences store 经 storage-adapter 写入）
+ * 两侧都是同一份 JSON 结构 {state:{preferences:{app:{locale}}}}。
+ */
 function getPersistedLocale(): string {
-  if (typeof window === 'undefined') return defaultLocale;
-  try {
-    const raw = localStorage.getItem('app-preferences');
-    if (raw) {
+  const readParsed = (raw: string | undefined): string | null => {
+    if (!raw) return null;
+    try {
       const parsed = JSON.parse(raw);
       const locale = parsed?.state?.preferences?.app?.locale;
       if (locale && (locale === 'zh-CN' || locale === 'en-US')) return locale;
+    } catch {
+      // 存储内容损坏时按无持久化处理，走语言推断
     }
-  } catch {}
-  // fallback: 从 navigator.language 推断
-  const nav = navigator.language || '';
-  if (nav.startsWith('zh')) return 'zh-CN';
-  if (nav.startsWith('en')) return 'en-US';
+    return null;
+  };
+
+  // 小程序：同步存储直读；H5 上 Taro 也代理了 storage，但直读 localStorage 更快
+  if (typeof window === 'undefined') {
+    try {
+      const fromTaro = readParsed(Taro.getStorageSync('app-preferences') || undefined);
+      if (fromTaro) return fromTaro;
+    } catch {
+      // 存储不可用时继续走推断
+    }
+  } else {
+    try {
+      const fromLocal = readParsed(window.localStorage.getItem('app-preferences') || undefined);
+      if (fromLocal) return fromLocal;
+    } catch {
+      // localStorage 不可用（隐私模式等）时继续走推断
+    }
+  }
+
+  // fallback: 从系统语言推断
+  let navLanguage = '';
+  try {
+    navLanguage = (typeof window !== 'undefined' ? window.navigator?.language : Taro.getSystemInfoSync().language) || '';
+  } catch {
+    navLanguage = '';
+  }
+  if (navLanguage.startsWith('zh')) return 'zh-CN';
+  if (navLanguage.startsWith('en')) return 'en-US';
   return defaultLocale;
 }
 

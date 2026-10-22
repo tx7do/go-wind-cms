@@ -22,7 +22,9 @@
     "wechat_account": "WeChat Account",
     "custom_domain": "Custom Domain",
     "domain_desc": "Your personal homepage address, unique across the site and can be changed once",
-    "edit": "Edit"
+    "edit": "Edit",
+    "old_password": "Current password",
+    "new_password": "New password"
   },
   "message": {
     "title": "Messages & Email",
@@ -77,4 +79,3 @@
     "q7_link": "Delete Account"
   }
 }
-

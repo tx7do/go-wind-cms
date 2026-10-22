@@ -70,3 +70,17 @@ export function scrollToBottom() {
 export function scrollTo(element: HTMLElement) {
     element.scrollIntoView({behavior: 'smooth'})
 }
+
+/**
+ * 联系方式脱敏：手机号留前 3 后 4，邮箱留首字符与域名
+ */
+export function maskContact(raw?: string | null): string {
+    const value = (raw ?? '').trim();
+    if (!value) return '';
+    if (value.includes('@')) {
+        const [name, domain] = value.split('@');
+        return `${name.slice(0, 1)}${'*'.repeat(Math.max(name.length - 1, 2))}@${domain}`;
+    }
+    if (value.length <= 7) return value;
+    return `${value.slice(0, 3)}****${value.slice(-4)}`;
+}

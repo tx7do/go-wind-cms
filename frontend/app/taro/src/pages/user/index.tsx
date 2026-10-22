@@ -1,197 +1,187 @@
-import {useState, useEffect, useMemo} from 'react';
-import {useTranslation} from 'react-i18next';
 import {View, Text, Image} from '@tarojs/components';
+import {useState} from 'react';
+import {useDidShow} from '@tarojs/taro';
+import {useTranslation} from 'react-i18next';
 import XIcon from '@/plugins/xicon';
-import {identityservicev1_User, contentservicev1_Post, contentservicev1_ListPostResponse} from '@/api/generated/app/service/v1';
-import {fetchUserProfile} from '@/api/hooks/user-profile';
-import {listWatchedPosts, useGetCounts, extractCount} from '@/api/hooks/interaction';
-import {PostCard} from '@/components/post';
 import {useI18nRouter} from '@/i18n/helpers';
 import {usePageTitle} from '@/hooks/usePageTitle';
+import {useAuth} from '@/api/hooks/auth';
+import {fetchUserProfile} from '@/api/hooks/user-profile';
+import {useAccessStore, useIsLogin} from '@/store/core/access/store';
+import type {identityservicev1_User} from '@/api/generated/app/service/v1';
 
+/**
+ * 个人中心（tabBar「我的」）
+ * 布局：渐变横幅（头像/昵称/签名）→ 资料卡 → 通用菜单（设置/改密/关于/法务）→ 退出登录。
+ * 统计卡不再展示假数据：只展示真实可得的账号信息（用户名/角色/语言）。
+ */
 export default function UserProfilePage() {
     const {t} = useTranslation();
     usePageTitle('page.title.user');
     const router = useI18nRouter();
-    const [loading, setLoading] = useState(false);
+    const {logout} = useAuth();
+    const isLogin = useIsLogin();
+    const accessToken = useAccessStore((s) => s.accessToken);
     const [user, setUser] = useState<identityservicev1_User | null>(null);
-    const [collections, setCollections] = useState<contentservicev1_Post[]>([]);
-    const [collectionsLoading, setCollectionsLoading] = useState(false);
-    const [activeTab, setActiveTab] = useState<'posts' | 'activities' | 'collections'>('posts');
+    const [loading, setLoading] = useState(false);
 
-    // 收集当前页 collection 的 ID，用于批量查询点赞计数。
-    // 计数由 interaction_counter 表提供（post.likes 列已移除）。
-    const collectionIds = useMemo(() => collections.map(p => p.id).filter((id): id is number => typeof id === 'number'), [collections]);
-    const collectionsCountsResp = useGetCounts('TARGET_TYPE_POST', collectionIds, ['COUNTER_METRIC_LIKE']);
-
-    const stats = useMemo(() => ({
-        followers: user?.followers ?? 0,
-        following: user?.following ?? 0,
-        posts: user?.postCount ?? 0,
-        likes: user?.likeCount ?? 0,
-    }), [user]);
-
-    useEffect(() => {
-        (async () => {
-            setLoading(true);
-            try {
-                const result = await fetchUserProfile() as identityservicev1_User;
-                setUser(result || null);
-            } catch (error) {
+    useDidShow(() => {
+        if (!isLogin) {
+            setUser(null);
+            return;
+        }
+        setLoading(true);
+        fetchUserProfile()
+            .then((result) => setUser((result as identityservicev1_User) || null))
+            .catch((error) => {
                 console.error('Load user profile failed:', error);
-            } finally {
-                setLoading(false);
-            }
-        })();
-    }, []);
+                setUser(null);
+            })
+            .finally(() => setLoading(false));
+    });
 
-    async function loadCollections() {
-        // 收藏列表：由 InteractionService.ListWatchedPosts 返回当前 viewer 收藏的 post。
-        // viewer 身份由后端鉴权上下文确定，需登录态；未登录时后端返回 401，列表为空。
-        setCollectionsLoading(true);
-        try {
-            const result = await listWatchedPosts(1, 10) as unknown as contentservicev1_ListPostResponse;
-            setCollections(result?.items || []);
-        } catch (error) {
-            console.error('Load collections failed:', error);
-            setCollections([]);
-        } finally {
-            setCollectionsLoading(false);
-        }
-    }
-
-    useEffect(() => {
-        if (activeTab === 'collections' && collections.length === 0) {
-            loadCollections();
-        }
-        // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [activeTab]);
-
-    if (loading) {
+    // —— 未登录：登录引导 ——
+    if (!isLogin) {
         return (
-            <View className='w-full bg-pageBg min-h-screen flex items-center justify-center'>
-                <Text className='text-body text-textThird'>{t('page.user.loading') || 'Loading...'}</Text>
-            </View>
-        );
-    }
-
-    if (!user) {
-        return (
-            <View className='w-full bg-pageBg min-h-screen flex flex-col items-center justify-center gap-[32rpx] px-[48rpx]'>
-                <XIcon name='carbon:user-avatar' size={64} className='text-textWeak' />
-                <Text className='text-body text-textThird'>{t('page.user.please_login')}</Text>
-                <View
-                    className='px-[64rpx] h-[88rpx] rounded-[16rpx] bg-primary flex items-center justify-center'
-                    hoverClass='tap-active'
-                    onClick={() => router.push('/login')}
-                >
-                    <Text className='text-body text-white font-bold'>{t('authentication.login.login')}</Text>
+            <View className='au-page w-full bg-pageBg min-h-screen flex flex-col items-center justify-center px-[48rpx]'>
+                <View className='au-card au-card--glow w-full flex flex-col items-center gap-[28rpx] py-[72rpx] px-[40rpx]'>
+                    <View className='w-[112rpx] h-[112rpx] rounded-full bg-primary-tint flex items-center justify-center'>
+                        <XIcon name='carbon:user-avatar' size={52} className='text-primary' />
+                    </View>
+                    <Text className='text-body text-textThird'>{t('page.user.please_login')}</Text>
+                    <View
+                      className='btn-hero px-[72rpx] h-[88rpx] rounded-full flex items-center justify-center'
+                      hoverClass='tap-active'
+                      onClick={() => router.push('/login')}
+                    >
+                        <Text className='text-body text-white font-bold'>{t('authentication.login.login')}</Text>
+                    </View>
                 </View>
             </View>
         );
     }
 
-    const tabs = [
-        {key: 'posts' as const, label: t('page.user.tab_posts')},
-        {key: 'activities' as const, label: t('page.user.tab_activities')},
-        {key: 'collections' as const, label: t('page.user.tab_collections')},
+    const menuItems = [
+        {icon: 'carbon:settings', label: t('page.title.settings'), path: '/settings'},
+        {icon: 'carbon:password', label: t('settings.account.password'), path: '/settings/password'},
+        {icon: 'carbon:star', label: t('page.title.favorites'), path: '/favorites'},
+        {icon: 'carbon:information', label: t('page.title.about'), path: '/about'},
+        {icon: 'carbon:email', label: t('page.title.contact'), path: '/contact'},
+        {icon: 'carbon:document', label: t('page.title.terms'), path: '/terms'},
+        {icon: 'carbon:shield-alert', label: t('page.title.privacy'), path: '/privacy'},
     ];
 
     return (
-        <View className='w-full bg-pageBg'>
-            {/* 用户信息头部 */}
-            <View className='bg-cardBg px-[24rpx] py-[32rpx]'>
-                <View className='flex items-center gap-[24rpx] mb-[24rpx]'>
-                    <View className='w-[96rpx] h-[96rpx] rounded-full bg-primary/10 flex items-center justify-center'>
+        <View className='au-page w-full bg-pageBg min-h-screen pb-[48rpx]'>
+            {/* 资料头部：渐变横幅 + 悬浮头像 */}
+            <View
+              className='relative overflow-hidden px-[32rpx] pt-[44rpx] pb-[72rpx]'
+              style={{background: 'linear-gradient(128deg, #57a3ff 0%, #1677ff 52%, #0b55d4 100%)'}}
+            >
+                <View
+                  className='absolute rounded-full'
+                  style={{
+                      width: '360rpx',
+                      height: '360rpx',
+                      right: '-110rpx',
+                      top: '-150rpx',
+                      background: 'radial-gradient(circle, rgba(255,255,255,0.26), transparent 68%)',
+                  }}
+                />
+                <View className='relative flex items-center gap-[28rpx]'>
+                    <View className='w-[120rpx] h-[120rpx] rounded-full bg-white/18 border-[length:2rpx] border-white/35 flex items-center justify-center overflow-hidden shadow-[0_12rpx_32rpx_rgba(3,20,60,0.35)]'>
                         {user?.avatar ? (
                             <Image src={user.avatar} className='w-full h-full rounded-full' mode='aspectFill' />
                         ) : (
-                            <Text className='text-title font-bold text-primary'>
+                            <Text className='text-title font-bold text-white'>
                                 {user?.nickname?.charAt(0) || user?.username?.charAt(0) || 'U'}
                             </Text>
                         )}
                     </View>
-                    <View className='flex-1'>
-                        <Text className='text-card-title font-bold text-textMain block'>{user?.nickname || user?.username}</Text>
-                        {user?.description && (
-                            <Text className='text-desc text-textSec block mt-[8rpx]'>{user.description}</Text>
+                    <View className='flex-1 min-w-0'>
+                        <Text className='text-card-title font-bold text-white block' numberOfLines={1}>
+                            {user?.nickname || user?.username || t('page.user.not_login')}
+                        </Text>
+                        {user?.username && (
+                            <Text className='text-tips text-white/80 block mt-[6rpx]'>@{user.username}</Text>
                         )}
                     </View>
                     <View
-                      className='px-[24rpx] h-[56rpx] rounded flex items-center border-[1rpx] border-primary'
+                      className='px-[22rpx] h-[56rpx] rounded-full flex items-center border-[length:1rpx] border-white/40 bg-white/12'
                       hoverClass='tap-active'
-                      onClick={() => router.push('/settings')}
+                      onClick={() => router.push('/settings/profile')}
                     >
-                        <Text className='text-tips text-primary'>{t('page.user.edit_profile')}</Text>
+                        <Text className='text-tips text-white'>{t('page.user.edit_profile')}</Text>
+                    </View>
+                </View>
+            </View>
+
+            <View className='px-[24rpx] -mt-[44rpx]'>
+                {/* 账号信息卡（只展示真实字段） */}
+                <View className='au-card au-card--glow p-[32rpx] au-anim'>
+                    <View className='flex justify-around'>
+                        <View className='items-center flex flex-col gap-[8rpx] min-w-0'>
+                            <Text className='text-desc font-bold text-textMain' numberOfLines={1}>
+                                {user?.nickname || user?.username || '-'}
+                            </Text>
+                            <Text className='text-tips text-textThird'>{t('page.user.nickname')}</Text>
+                        </View>
+                        <View className='w-[1rpx] bg-splitLine' />
+                        <View className='items-center flex flex-col gap-[8rpx] min-w-0'>
+                            <Text className='text-desc font-bold text-textMain' numberOfLines={1}>
+                                {user?.email || user?.mobile || '-'}
+                            </Text>
+                            <Text className='text-tips text-textThird'>{t('page.user.contact_info')}</Text>
+                        </View>
+                        <View className='w-[1rpx] bg-splitLine' />
+                        <View className='items-center flex flex-col gap-[8rpx] min-w-0'>
+                            <Text className='text-desc font-bold text-textMain' numberOfLines={1}>
+                                {user?.roles?.length ? user.roles.length : 0}
+                            </Text>
+                            <Text className='text-tips text-textThird'>{t('page.user.roles')}</Text>
+                        </View>
                     </View>
                 </View>
 
-                {/* 统计数据 */}
-                <View className='grid grid-cols-4 gap-[16rpx]'>
-                    {[
-                        {value: stats.following, label: t('page.user.following')},
-                        {value: stats.followers, label: t('page.user.followers')},
-                        {value: stats.posts, label: t('page.user.posts')},
-                        {value: stats.likes, label: t('page.user.likes_received')},
-                    ].map((stat) => (
-                        <View key={stat.label} className='text-center'>
-                            <Text className='text-card-title font-bold text-textMain block'>{stat.value}</Text>
-                            <Text className='text-tips text-textThird block'>{stat.label}</Text>
+                {/* 通用菜单 */}
+                <View className='au-card overflow-hidden mt-[24rpx] au-anim au-anim-1'>
+                    {menuItems.map((item, index) => (
+                        <View
+                          key={item.path}
+                          className={`flex items-center justify-between px-[28rpx] h-[104rpx] ${index < menuItems.length - 1 ? 'border-b-[length:1rpx] border-splitLine' : ''}`}
+                          hoverClass='tap-active'
+                          onClick={() => router.push(item.path)}
+                        >
+                            <View className='flex items-center gap-[20rpx]'>
+                                <View className='w-[60rpx] h-[60rpx] rounded-[16rpx] bg-primary-tint flex items-center justify-center'>
+                                    <XIcon name={item.icon} size={26} className='text-primary' />
+                                </View>
+                                <Text className='text-body text-textMain'>{item.label}</Text>
+                            </View>
+                            <XIcon name='carbon:chevron-right' size={16} className='text-textWeak' />
                         </View>
                     ))}
                 </View>
-            </View>
 
-            {/* Tab 切换 */}
-            <View className='flex bg-cardBg border-b-[1rpx] border-splitLine mt-[16rpx]'>
-                {tabs.map((tab) => (
-                    <View
-                      key={tab.key}
-                      className={`flex-1 text-center py-[24rpx] min-h-touch ${activeTab === tab.key ? 'border-b-[4rpx] border-primary' : ''}`}
-                      onClick={() => setActiveTab(tab.key)}
-                    >
-                        <Text className={activeTab === tab.key ? 'text-body text-primary font-bold' : 'text-body text-textSec'}>
-                            {tab.label}
-                        </Text>
-                    </View>
-                ))}
-            </View>
+                {/* 退出登录 */}
+                <View
+                  className='au-card mt-[24rpx] h-[96rpx] flex items-center justify-center au-anim au-anim-2'
+                  hoverClass='tap-active'
+                  onClick={() => logout()}
+                >
+                    <Text className='text-body text-danger'>{t('menu.logout')}</Text>
+                </View>
 
-            {/* Tab 内容 */}
-            <View className='px-[24rpx] py-[24rpx]'>
-                {activeTab === 'posts' && (
-                    <View className='text-center py-[64rpx]'>
-                        <XIcon name='carbon:document' size={48} className='text-textWeak' />
-                        <Text className='text-body text-textThird block mt-[16rpx]'>{t('page.user.no_posts')}</Text>
+                {loading && (
+                    <View className='py-[24rpx] text-center'>
+                        <Text className='text-tips text-textThird'>{t('page.user.loading')}</Text>
                     </View>
                 )}
-                {activeTab === 'activities' && (
-                    <View className='text-center py-[64rpx]'>
-                        <XIcon name='carbon:target' size={48} className='text-textWeak' />
-                        <Text className='text-body text-textThird block mt-[16rpx]'>{t('page.user.no_activities')}</Text>
-                    </View>
-                )}
-                {activeTab === 'collections' && (
-                    <View className='flex flex-col gap-[24rpx]'>
-                        {collectionsLoading ? (
-                            <View className='text-center py-[64rpx]'>
-                                <Text className='text-body text-textThird'>{t('page.user.loading') || 'Loading...'}</Text>
-                            </View>
-                        ) : collections.length > 0 ? (
-                            collections.map((post, index) => (
-                                <PostCard
-                                  key={`${post.id}-${index}`}
-                                  post={post}
-                                  from='user-collections'
-                                  likeCount={extractCount(collectionsCountsResp.data, post.id as number, 'COUNTER_METRIC_LIKE')}
-                                />
-                            ))
-                        ) : (
-                            <View className='text-center py-[64rpx]'>
-                                <XIcon name='carbon:bookmark' size={48} className='text-textWeak' />
-                                <Text className='text-body text-textThird block mt-[16rpx]'>{t('page.user.no_collections')}</Text>
-                            </View>
-                        )}
+
+                {/* 令牌存在但资料为空：静默加载失败的兜底提示（不弹窗打断） */}
+                {!loading && !user && accessToken?.value && (
+                    <View className='py-[16rpx] text-center'>
+                        <Text className='text-tips text-textWeak'>{t('page.user.load_failed')}</Text>
                     </View>
                 )}
             </View>

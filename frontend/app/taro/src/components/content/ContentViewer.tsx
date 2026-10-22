@@ -1,5 +1,5 @@
 import React, {useMemo} from 'react';
-import {View} from '@tarojs/components';
+import {View, RichText} from '@tarojs/components';
 import {marked} from 'marked';
 import DOMPurify from 'dompurify';
 import type {ContentViewerProps} from './types';
@@ -91,6 +91,45 @@ function sanitizeHtml(html: string): string {
     }) as unknown as string;
 }
 
+/**
+ * 给结构标签补语义 class（md-*）。
+ * 小程序端内容经 <RichText nodes={html}> 渲染，样式隔离：外部 `.content-viewer p`
+ * 这类「祖先 + 标签」选择器进不了 rich-text 内部，内容会退化成裸文本流；
+ * 而 rich-text 节点自身的 class 可以命中页面全局样式表（微信官方支持），
+ * 所以统一给块级/行内元素挂 class，app.css 用同一批类名提供两端一致的排版。
+ */
+const CONTENT_CLASS_MAP: [RegExp, string][] = [
+    [/<p>/g, '<p class="md-p">'],
+    [/<h1>/g, '<h1 class="md-h1">'],
+    [/<h2>/g, '<h2 class="md-h2">'],
+    [/<h3>/g, '<h3 class="md-h3">'],
+    [/<h4>/g, '<h4 class="md-h4">'],
+    [/<h5>/g, '<h5 class="md-h5">'],
+    [/<h6>/g, '<h6 class="md-h6">'],
+    [/<ul>/g, '<ul class="md-ul">'],
+    [/<ol>/g, '<ol class="md-ol">'],
+    [/<li>/g, '<li class="md-li">'],
+    [/<blockquote>/g, '<blockquote class="md-blockquote">'],
+    [/<table>/g, '<table class="md-table">'],
+    [/<thead>/g, '<thead class="md-thead">'],
+    [/<tbody>/g, '<tbody class="md-tbody">'],
+    [/<tr>/g, '<tr class="md-tr">'],
+    [/<th>/g, '<th class="md-th">'],
+    [/<td>/g, '<td class="md-td">'],
+    [/<strong>/g, '<strong class="md-strong">'],
+    [/<em>/g, '<em class="md-em">'],
+    [/<del>/g, '<del class="md-del">'],
+    [/<s>/g, '<s class="md-del">'],
+];
+
+function withContentClasses(html: string): string {
+    let out = html;
+    for (const [pattern, replacement] of CONTENT_CLASS_MAP) {
+        out = out.replace(pattern, replacement);
+    }
+    return out;
+}
+
 const ContentViewer: React.FC<ContentViewerProps> = ({
     content = '',
     type = 'markdown',
@@ -104,14 +143,14 @@ const ContentViewer: React.FC<ContentViewerProps> = ({
             switch (type) {
                 case 'markdown':
                     html = marked.parse(content) as string;
-                    return sanitizeHtml(html);
+                    return withContentClasses(sanitizeHtml(html));
                 case 'html':
                     // html 类型同样必须经过 sanitize —— 原文不可信（来自 admin 富文本）
-                    return sanitizeHtml(content);
+                    return withContentClasses(sanitizeHtml(content));
                 case 'text':
                     return `<pre class="plain-text-block">${escapeHtml(content)}</pre>`;
                 default:
-                    return sanitizeHtml(content);
+                    return withContentClasses(sanitizeHtml(content));
             }
         } catch (error) {
             console.error('Error rendering content:', error);
@@ -119,11 +158,21 @@ const ContentViewer: React.FC<ContentViewerProps> = ({
         }
     }, [content, type]);
 
+    // 渲染载体分端：H5 走 innerHTML（样式与交互最全）；
+    // 小程序不支持 dangerouslySetInnerHTML（Taro 模板白名单没有它），
+    // 必须走 RichText。注意 dompurify 在无 DOM 环境是 isSupported=false 的直通实现，
+    // weapp 侧的最终防线是 RichText 自身的节点/属性白名单（script、on* 事件不渲染）。
+    if (process.env.TARO_ENV === 'h5') {
+        return (
+            <View className={`content-viewer ${className}`}>
+                <View dangerouslySetInnerHTML={{__html: renderedContent}} />
+            </View>
+        );
+    }
+
     return (
-        <View
-          className={`content-viewer ${className}`}
-        >
-            <View dangerouslySetInnerHTML={{__html: renderedContent}} />
+        <View className={`content-viewer ${className}`}>
+            <RichText nodes={renderedContent} />
         </View>
     );
 };

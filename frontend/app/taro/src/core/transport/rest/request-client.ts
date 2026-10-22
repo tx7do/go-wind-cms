@@ -11,8 +11,16 @@ import {
   authenticateResponseInterceptor,
   errorMessageResponseInterceptor,
 } from './preset-interceptors';
+import { taroRequestAdapter } from './taro-adapter';
 import { defaultIdGenerator, getDefaultErrorMsg } from './utils';
 import type { RequestClientCallbacks, RequestClientOptions, RequestContentType } from './types';
+
+/** 小程序运行时没有 XHR / Node http，axios 默认适配器派不出请求，切到 Taro.request 适配器 */
+function pickAdapter() {
+  if (typeof XMLHttpRequest !== 'undefined') return undefined;
+  if (typeof process !== 'undefined' && process.versions?.node) return undefined;
+  return taroRequestAdapter;
+}
 
 class RequestClient {
   private readonly instance: AxiosInstance;
@@ -61,6 +69,7 @@ class RequestClient {
         'Content-Type': 'application/json;charset=utf-8' as RequestContentType,
       },
       timeout: 10_000,
+      adapter: pickAdapter(),
     };
     const { ...axiosConfig } = options;
     const requestConfig = merge(axiosConfig, defaultConfig);

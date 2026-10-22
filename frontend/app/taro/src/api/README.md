@@ -101,7 +101,7 @@ src/api/
 import {
     type ClientTransport,
     createApiClient,
-} from '@/api/generated/app/service/v1';
+} from '@/api/generated/front/service/v1';
 import {requestApi} from '@/core/transport/rest';
 
 const transport: ClientTransport = {
@@ -168,7 +168,7 @@ import {
   type contentservicev1_Tag,
   type contentservicev1_TagTranslation,
   type contentservicev1_ListTagResponse,
-} from '@/api/generated/app/service/v1';
+} from '@/api/generated/front/service/v1';
 import { apiClient } from '@/api/client';
 import { queryClient } from '@/core';
 import { currentLocaleLanguageCode } from '@/i18n';
@@ -308,7 +308,7 @@ import {
 } from '@tanstack/react-query';
 import {
   type identityservicev1_User,
-} from '@/api/generated/app/service/v1';
+} from '@/api/generated/front/service/v1';
 import { apiClient } from '@/api/client';
 import { queryClient } from '@/core';
 
@@ -395,7 +395,7 @@ export function useAuth() {
 
 ### Generated 层（自动生成代码）
 
-**位置**: `src/api/generated/app/service/v1/`
+**位置**: `src/api/generated/front/service/v1/`
 
 **说明**:
 
@@ -434,7 +434,7 @@ export function createCategoryServiceClient(transport: ClientTransport): Categor
 ```tsx
 import {useState, useEffect} from 'react';
 import {fetchListPosts} from '@/api/hooks/post';
-import type {contentservicev1_Post, contentservicev1_ListPostResponse} from '@/api/generated/app/service/v1';
+import type {contentservicev1_Post, contentservicev1_ListPostResponse} from '@/api/generated/front/service/v1';
 
 function PostListPage() {
     const [posts, setPosts] = useState<contentservicev1_Post[]>([]);
@@ -587,7 +587,7 @@ export function getPostTitle(post) { ... }
 
 ```typescript
 // ✅ 正确：使用生成的类型
-import type { contentservicev1_Tag } from '@/api/generated/app/service/v1';
+import type { contentservicev1_Tag } from '@/api/generated/front/service/v1';
 
 // ✅ 正确：列表 Hook 的参数类型
 export function useListTags(
@@ -786,7 +786,7 @@ const changeLocale = (targetLocale: string) => {
 2. **创建 Hooks 文件** (`src/api/hooks/bookmark.ts`)
    ```typescript
    import { useMutation, type UseMutationOptions } from '@tanstack/react-query';
-   import { type bookmarkservicev1_Bookmark } from '@/api/generated/app/service/v1';
+   import { type bookmarkservicev1_Bookmark } from '@/api/generated/front/service/v1';
    import { apiClient } from '@/api/client';
    import { queryClient } from '@/core';
    import { currentLocaleLanguageCode } from '@/i18n';

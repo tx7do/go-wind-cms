@@ -1,0 +1,527 @@
+/* ============================================================
+   登录页 · 深空蓝极光品牌风格（浅 / 暗双档）
+   极光 + 玻璃拟态是两态共用的视觉语言，只有色档不同：
+   全部色值收在 .login-page 的 --lg-* 局部变量里（浅档为基准值），
+   暗档整组覆盖见文件末尾的 .dark .login-page —— 改主题只需动那一块，
+   下面每条规则只消费变量，不再各写各的色。
+   结构尺寸（rpx）与动效与主题无关，保持原样。
+   类名统一 login- 语义前缀，避免与 Tailwind 工具类冲突。
+   ============================================================ */
+
+/* ---------- 页面底色 ---------- */
+.login-page,
+.login-content {
+    /* 本项目关闭了 Tailwind preflight，Taro 自定义元素默认 content-box：
+       min-height:100vh + 上下 padding 会把整页撑出视口（footer 被裁掉） */
+    box-sizing: border-box;
+}
+.login-page {
+    /* ===== 浅档色板（暗档覆盖见 .dark .login-page） ===== */
+    --lg-canvas-a: #eef3fa;
+    --lg-canvas-b: #f4f7f9;
+    --lg-canvas-c: #e8eef7;
+    --lg-aurora-a: rgba(0, 107, 230, 0.12);
+    --lg-aurora-b: rgba(0, 107, 230, 0.09);
+    --lg-grid-line: rgba(15, 23, 42, 0.05);
+    --lg-orb-1: rgba(64, 150, 255, 0.22);
+    --lg-orb-2: rgba(34, 211, 238, 0.13);
+    --lg-orb-3: rgba(139, 92, 246, 0.11);
+
+    --lg-badge-bg: var(--color-primary-tint);
+    --lg-badge-border: rgba(0, 107, 230, 0.18);
+    --lg-badge-text: var(--color-primary-strong);
+    /* 三枚特性胶囊按语义分色：错题本暖橙 / AI 家教主蓝 / 复习计划青。
+       文字统一 --lg-chip-text，只有底、框、图标随色相走，避免一行三色三种字重 */
+    --lg-chip-bg: rgba(255, 255, 255, 0.75);
+    --lg-chip-border: rgba(0, 107, 230, 0.14);
+    --lg-chip-text: var(--color-text-sec);
+    --lg-chip-amber-bg: rgba(255, 159, 75, 0.16);
+    --lg-chip-amber-border: rgba(255, 159, 75, 0.34);
+    --lg-chip-amber-icon: #c26a00;
+    --lg-chip-blue-bg: rgba(46, 150, 255, 0.15);
+    --lg-chip-blue-border: rgba(0, 107, 230, 0.24);
+    --lg-chip-blue-icon: #006be6;
+    --lg-chip-cyan-bg: rgba(34, 211, 238, 0.18);
+    --lg-chip-cyan-border: rgba(14, 116, 214, 0.24);
+    --lg-chip-cyan-icon: #0e7490;
+    --lg-accent-icon: var(--color-primary);
+
+    --lg-title-grad: linear-gradient(100deg, #0f172a 12%, #006be6 55%, #005ac2 92%);
+    --lg-subtitle: var(--color-text-sec);
+
+    --lg-card-bg: linear-gradient(165deg, rgba(255, 255, 255, 0.88) 0%, rgba(255, 255, 255, 0.7) 100%);
+    --lg-card-border: rgba(15, 23, 42, 0.06);
+    --lg-card-shadow: 0 24rpx 64rpx rgba(2, 8, 26, 0.1);
+    --lg-card-hi: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.95), transparent);
+
+    --lg-label: var(--color-text-sec);
+    --lg-field-bg: rgba(255, 255, 255, 0.92);
+    --lg-field-border: var(--color-split-line);
+    --lg-field-text: var(--color-text-main);
+    /* 占位符必须比图标更淡一档：两者同用 --color-text-third(#64748b) 时，
+       「用户名」这种与标签同字的占位文本会被读成已输入内容。
+       刻意不用 --color-text-weak(#cbd5e1)，那在纯白底上只有约 1.6:1，看不见 */
+    --lg-placeholder: #94a3b8;
+    --lg-field-icon: var(--color-text-third);
+    --lg-eye: var(--color-text-third);
+    --lg-field-focus-bg: #ffffff;
+    --lg-field-focus-border: rgba(0, 107, 230, 0.55);
+    --lg-field-focus-shadow: 0 0 0 6rpx rgba(46, 150, 255, 0.14), 0 8rpx 28rpx rgba(10, 108, 255, 0.12);
+
+    --lg-check-text: var(--color-text-sec);
+    --lg-check-on: var(--color-primary);
+    --lg-check-off: var(--color-text-third);
+    --lg-link: var(--color-primary);
+    --lg-back: var(--color-text-sec);
+    --lg-foot-text: var(--color-text-third);
+    --lg-foot-link: var(--color-primary-strong);
+
+    --lg-btn-shadow: 0 14rpx 36rpx rgba(12, 110, 255, 0.28), inset 0 1rpx 0 rgba(255, 255, 255, 0.28);
+
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    min-height: 100vh;
+    overflow: hidden;
+    background:
+        radial-gradient(1200rpx 800rpx at 85% -10%, var(--lg-aurora-a), transparent 60%),
+        radial-gradient(900rpx 700rpx at -10% 30%, var(--lg-aurora-b), transparent 55%),
+        linear-gradient(180deg, var(--lg-canvas-a) 0%, var(--lg-canvas-b) 45%, var(--lg-canvas-c) 100%);
+    color: var(--color-text-main);
+}
+
+.login-content {
+    position: relative;
+    z-index: 1;
+    flex: 1 1 auto;
+    display: flex;
+    flex-direction: column;
+    padding: 40rpx 48rpx 18rpx;
+}
+
+/* H5：.taro_page 已经是「视口 − 顶栏 − tabbar」的确定高度（见 app.css 高度链），
+   再按 100vh 铺就把页脚顶到 tabbar 底下，看着像页面没占满屏。
+   小程序端没有 .taro_page，本条失配，仍走上面的 100vh。
+   .login-content 用 flex:1 跟随父级，不再自带 vh —— 父级高度是 min-height，
+   子级写 min-height:100% 在这种父级上解析不出来 */
+body .taro_page .login-page {
+    min-height: 100%;
+}
+
+/* 网格底纹（顶部清晰，向下淡出） */
+.login-grid {
+    position: absolute;
+    inset: 0;
+    background-image:
+        linear-gradient(var(--lg-grid-line) 1px, transparent 1px),
+        linear-gradient(90deg, var(--lg-grid-line) 1px, transparent 1px);
+    background-size: 64rpx 64rpx;
+    -webkit-mask-image: radial-gradient(900rpx 640rpx at 50% 0%, #000 30%, transparent 78%);
+    mask-image: radial-gradient(900rpx 640rpx at 50% 0%, #000 30%, transparent 78%);
+}
+
+/* ---------- 极光光斑 ---------- */
+.login-orb {
+    position: absolute;
+    border-radius: 9999px;
+    filter: blur(72px);
+    will-change: transform;
+}
+.login-orb--1 {
+    width: 520rpx;
+    height: 520rpx;
+    top: -140rpx;
+    right: -120rpx;
+    background: radial-gradient(circle at 35% 35%, var(--lg-orb-1), transparent 65%);
+    animation: lg-drift-1 16s ease-in-out infinite alternate;
+}
+.login-orb--2 {
+    width: 440rpx;
+    height: 440rpx;
+    top: 320rpx;
+    left: -180rpx;
+    background: radial-gradient(circle at 60% 40%, var(--lg-orb-2), transparent 62%);
+    animation: lg-drift-2 20s ease-in-out infinite alternate;
+}
+.login-orb--3 {
+    width: 380rpx;
+    height: 380rpx;
+    bottom: -120rpx;
+    right: -80rpx;
+    background: radial-gradient(circle at 40% 40%, var(--lg-orb-3), transparent 62%);
+    animation: lg-drift-3 18s ease-in-out infinite alternate;
+}
+@keyframes lg-drift-1 {
+    from { transform: translate(0, 0) scale(1); }
+    to { transform: translate(-60rpx, 80rpx) scale(1.12); }
+}
+@keyframes lg-drift-2 {
+    from { transform: translate(0, 0) scale(1); }
+    to { transform: translate(70rpx, -60rpx) scale(1.08); }
+}
+@keyframes lg-drift-3 {
+    from { transform: translate(0, 0) scale(1); }
+    to { transform: translate(-50rpx, -70rpx) scale(1.15); }
+}
+
+/* ---------- 入场动画（错峰上浮） ---------- */
+.login-anim {
+    opacity: 0;
+    transform: translateY(28rpx);
+    animation: lg-fade-up 0.8s cubic-bezier(0.22, 1, 0.36, 1) forwards;
+}
+.login-anim-1 { animation-delay: 0.05s; }
+.login-anim-2 { animation-delay: 0.14s; }
+.login-anim-3 { animation-delay: 0.23s; }
+.login-anim-4 { animation-delay: 0.32s; }
+.login-anim-5 { animation-delay: 0.41s; }
+.login-anim-6 { animation-delay: 0.52s; }
+@keyframes lg-fade-up {
+    to { opacity: 1; transform: translateY(0); }
+}
+
+/* ---------- 品牌徽章 / 特性胶囊 ---------- */
+.login-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 10rpx;
+    height: 52rpx;
+    padding: 0 24rpx;
+    border-radius: 999rpx;
+    background: var(--lg-badge-bg);
+    border: 1rpx solid var(--lg-badge-border);
+    color: var(--lg-badge-text);
+    font-size: 22rpx;
+    letter-spacing: 2rpx;
+}
+.login-chip {
+    display: inline-flex;
+    align-items: center;
+    gap: 6rpx;
+    height: 42rpx;
+    padding: 0 14rpx;
+    border-radius: 999rpx;
+    background: var(--lg-chip-bg);
+    border: 1rpx solid var(--lg-chip-border);
+    color: var(--lg-chip-text);
+    font-size: 20rpx;
+    white-space: nowrap;
+}
+.login-chip svg, .login-badge svg {
+    color: var(--lg-accent-icon);
+}
+/* 分色只负责改写变量，底色/边框/图标的消费点仍是上面两条规则；
+   这样暗档只需在文件末尾改一组色相三元组，不必再动这里 */
+.login-chip--amber {
+    --lg-chip-bg: var(--lg-chip-amber-bg);
+    --lg-chip-border: var(--lg-chip-amber-border);
+    --lg-accent-icon: var(--lg-chip-amber-icon);
+}
+.login-chip--blue {
+    --lg-chip-bg: var(--lg-chip-blue-bg);
+    --lg-chip-border: var(--lg-chip-blue-border);
+    --lg-accent-icon: var(--lg-chip-blue-icon);
+}
+.login-chip--cyan {
+    --lg-chip-bg: var(--lg-chip-cyan-bg);
+    --lg-chip-border: var(--lg-chip-cyan-border);
+    --lg-accent-icon: var(--lg-chip-cyan-icon);
+}
+
+/* ---------- Logo（悬浮 + 呼吸光环） ---------- */
+.login-logo-wrap {
+    position: relative;
+    width: 132rpx;
+    height: 132rpx;
+    margin-top: 10rpx;
+    margin-bottom: 16rpx;
+}
+.login-logo-ring {
+    position: absolute;
+    inset: -16rpx;
+    border-radius: 46rpx;
+    border: 2rpx solid rgba(96, 165, 250, 0.35);
+    animation: lg-pulse 3.2s ease-out infinite;
+}
+.login-logo {
+    width: 100%;
+    height: 100%;
+    border-radius: 32rpx;
+    overflow: hidden;
+    box-shadow: 0 24rpx 64rpx rgba(10, 108, 255, 0.5);
+    animation: lg-float 6s ease-in-out infinite;
+}
+@keyframes lg-pulse {
+    0% { transform: scale(0.92); opacity: 0.9; }
+    70% { transform: scale(1.14); opacity: 0; }
+    100% { transform: scale(1.14); opacity: 0; }
+}
+@keyframes lg-float {
+    0%, 100% { transform: translateY(0); }
+    50% { transform: translateY(-14rpx); }
+}
+
+/* ---------- 渐变标题 ---------- */
+.login-title {
+    font-size: 54rpx;
+    font-weight: 800;
+    letter-spacing: 4rpx;
+    line-height: 1.3;
+    background: var(--lg-title-grad);
+    -webkit-background-clip: text;
+    background-clip: text;
+    -webkit-text-fill-color: transparent;
+    color: transparent;
+}
+.login-subtitle {
+    margin-top: 4rpx;
+    font-size: 25rpx;
+    letter-spacing: 6rpx;
+    color: var(--lg-subtitle);
+}
+
+/* ---------- 玻璃表单卡 ---------- */
+.login-card {
+    position: relative;
+    border-radius: 34rpx;
+    padding: 26rpx 32rpx;
+    background: var(--lg-card-bg);
+    border: 1rpx solid var(--lg-card-border);
+    box-shadow: var(--lg-card-shadow);
+    backdrop-filter: blur(28px);
+    -webkit-backdrop-filter: blur(28px);
+}
+/* 卡片顶部高光线 */
+.login-card::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 32rpx;
+    right: 32rpx;
+    height: 1rpx;
+    background: var(--lg-card-hi);
+}
+
+/* ---------- 输入框 ---------- */
+.login-field-label {
+    display: block;
+    margin-bottom: 10rpx;
+    font-size: 24rpx;
+    letter-spacing: 1rpx;
+    color: var(--lg-label);
+}
+.login-input {
+    display: flex;
+    align-items: center;
+    gap: 16rpx;
+    height: 84rpx;
+    padding: 0 22rpx;
+    border-radius: 20rpx;
+    background: var(--lg-field-bg);
+    border: 1rpx solid var(--lg-field-border);
+    transition: border-color 0.25s, box-shadow 0.25s, background 0.25s;
+}
+.login-input:focus-within {
+    border-color: var(--lg-field-focus-border);
+    background: var(--lg-field-focus-bg);
+    box-shadow: var(--lg-field-focus-shadow);
+}
+/* Taro Input 的自定义元素占满行高，但内部原生 input 默认顶格——
+   让 core 成为 flex 容器并垂直居中内部 input */
+.login-input taro-input-core {
+    flex: 1;
+    height: 100%;
+    min-width: 0;
+    display: flex;
+    align-items: center;
+}
+.login-input input {
+    width: 100%;
+    color: var(--lg-field-text);
+    font-size: 30rpx;
+    background: transparent;
+}
+.login-input input::placeholder {
+    color: var(--lg-placeholder);
+}
+.login-placeholder {
+    color: var(--lg-placeholder);
+}
+/* 小程序端命中不到上面的 .login-input input（裸标签被改写成 .h5-input 死类），
+   字段颜色/字号只能挂在 <Input className> 上；缺这行时登录框是黑字压深蓝底，读不出来 */
+.login-field {
+    flex: 1;
+    width: 100%;
+    min-width: 0;
+    height: 100%;
+    color: var(--lg-field-text);
+    font-size: 30rpx;
+    background: transparent;
+}
+.login-field-icon {
+    color: var(--lg-field-icon);
+}
+.login-eye {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 64rpx;
+    height: 64rpx;
+    color: var(--lg-eye);
+}
+.login-eye svg {
+    color: inherit;
+}
+
+/* ---------- 记住我 / 忘记密码 ---------- */
+.login-check-label {
+    color: var(--lg-check-text);
+    font-size: 26rpx;
+}
+.login-check-on {
+    color: var(--lg-check-on);
+}
+.login-check-off {
+    color: var(--lg-check-off);
+}
+.login-row-link {
+    color: var(--lg-link);
+    font-size: 26rpx;
+}
+
+/* ---------- 主按钮（渐变 + 流光扫过） ---------- */
+.login-submit {
+    position: relative;
+    overflow: hidden;
+    width: 100%;
+    height: 88rpx;
+    border-radius: 22rpx;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: linear-gradient(135deg, #57a3ff 0%, #1677ff 48%, #0a5ce6 100%);
+    color: #ffffff;
+    font-size: 34rpx;
+    font-weight: 700;
+    letter-spacing: 12rpx;
+    text-indent: 12rpx;
+    box-shadow: var(--lg-btn-shadow);
+    transition: transform 0.15s ease, filter 0.2s ease, opacity 0.2s ease;
+}
+.login-submit:active {
+    transform: translateY(2rpx) scale(0.995);
+    filter: brightness(1.06);
+}
+.login-submit--disabled {
+    opacity: 0.6;
+}
+/* 斜向流光，周期性扫过 */
+.login-submit::after {
+    content: '';
+    position: absolute;
+    top: -40%;
+    bottom: -40%;
+    width: 56rpx;
+    left: -120rpx;
+    background: linear-gradient(105deg, transparent, rgba(255, 255, 255, 0.42), transparent);
+    transform: skewX(-18deg);
+    animation: lg-shine 3.4s ease-in-out infinite;
+}
+@keyframes lg-shine {
+    0%, 55% { left: -120rpx; }
+    85%, 100% { left: 120%; }
+}
+
+/* ---------- 底部 ---------- */
+.login-back {
+    color: var(--lg-back);
+    font-size: 26rpx;
+}
+.login-footer-text {
+    color: var(--lg-foot-text);
+    font-size: 22rpx;
+}
+.login-footer-link {
+    color: var(--lg-foot-link);
+    font-size: 22rpx;
+}
+
+/* ============================================================
+   暗档：深空蓝极光（与浅色同一组 --lg-* 钩子，只换色不换结构）
+   选择器 .dark .login-page 两端通吃：H5 的 .dark 在 <html> 上
+   （ThemeClientProvider），小程序的 .dark 挂在主题根 View 上。
+   ============================================================ */
+.dark .login-page {
+    --lg-canvas-a: #0a1022;
+    --lg-canvas-b: #0b1526;
+    --lg-canvas-c: #0a1220;
+    --lg-aurora-a: rgba(28, 84, 255, 0.22);
+    --lg-aurora-b: rgba(14, 116, 214, 0.16);
+    --lg-grid-line: rgba(148, 184, 255, 0.07);
+    --lg-orb-1: rgba(64, 150, 255, 0.55);
+    --lg-orb-2: rgba(34, 211, 238, 0.34);
+    --lg-orb-3: rgba(139, 92, 246, 0.3);
+
+    --lg-badge-bg: rgba(120, 180, 255, 0.1);
+    --lg-badge-border: rgba(140, 190, 255, 0.22);
+    --lg-badge-text: #bcd7ff;
+    --lg-chip-bg: rgba(120, 180, 255, 0.08);
+    --lg-chip-border: rgba(140, 190, 255, 0.18);
+    --lg-chip-text: rgba(228, 240, 255, 0.85);
+    --lg-chip-amber-bg: rgba(255, 159, 75, 0.13);
+    --lg-chip-amber-border: rgba(255, 175, 100, 0.3);
+    --lg-chip-amber-icon: #ffb64d;
+    --lg-chip-blue-bg: rgba(88, 166, 255, 0.13);
+    --lg-chip-blue-border: rgba(120, 180, 255, 0.3);
+    --lg-chip-blue-icon: #7db8ff;
+    --lg-chip-cyan-bg: rgba(34, 211, 238, 0.13);
+    --lg-chip-cyan-border: rgba(94, 222, 246, 0.28);
+    --lg-chip-cyan-icon: #4fd8ea;
+    --lg-accent-icon: #7db8ff;
+
+    --lg-title-grad: linear-gradient(100deg, #ffffff 15%, #a8cbff 55%, #58a6ff 90%);
+    --lg-subtitle: rgba(214, 230, 255, 0.68);
+
+    --lg-card-bg: linear-gradient(165deg, rgba(255, 255, 255, 0.11) 0%, rgba(255, 255, 255, 0.045) 100%);
+    --lg-card-border: rgba(160, 195, 255, 0.16);
+    --lg-card-shadow: 0 32rpx 90rpx rgba(3, 10, 30, 0.55);
+    --lg-card-hi: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.45), transparent);
+
+    --lg-label: rgba(214, 230, 255, 0.62);
+    --lg-field-bg: rgba(7, 14, 32, 0.55);
+    --lg-field-border: rgba(148, 184, 255, 0.14);
+    --lg-field-text: #f2f7ff;
+    --lg-placeholder: rgba(190, 210, 240, 0.32);
+    --lg-field-icon: rgba(190, 214, 248, 0.5);
+    --lg-eye: rgba(190, 214, 248, 0.66);
+    --lg-field-focus-bg: rgba(9, 18, 40, 0.72);
+    --lg-field-focus-border: rgba(84, 158, 255, 0.75);
+    --lg-field-focus-shadow: 0 0 0 6rpx rgba(46, 150, 255, 0.16), 0 8rpx 28rpx rgba(10, 108, 255, 0.18);
+
+    --lg-check-text: rgba(214, 230, 255, 0.75);
+    --lg-check-on: #58a6ff;
+    --lg-check-off: rgba(190, 214, 248, 0.4);
+    --lg-link: #6fb1ff;
+    --lg-back: rgba(214, 230, 255, 0.68);
+    --lg-foot-text: rgba(200, 218, 245, 0.42);
+    --lg-foot-link: rgba(160, 200, 255, 0.8);
+
+    --lg-btn-shadow: 0 18rpx 44rpx rgba(12, 110, 255, 0.42), inset 0 1rpx 0 rgba(255, 255, 255, 0.28);
+
+    color: #ffffff;
+}
+
+/* ---------- 弱动效偏好 ---------- */
+@media (prefers-reduced-motion: reduce) {
+    .login-orb,
+    .login-logo,
+    .login-logo-ring,
+    .login-submit::after {
+        animation: none !important;
+    }
+    .login-anim {
+        animation: none !important;
+        opacity: 1;
+        transform: none;
+    }
+}

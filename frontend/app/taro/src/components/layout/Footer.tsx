@@ -15,7 +15,7 @@ export default function Footer() {
     ];
 
     return (
-        <View className='w-full bg-cardBg border-t-[1rpx] border-splitLine'>
+        <View className='w-full bg-cardBg border-t-[length:1rpx] border-splitLine'>
             <View className='px-[24rpx] py-[32rpx]'>
                 {/* 链接行 */}
                 <View className='flex flex-wrap justify-center gap-[16rpx] mb-[24rpx]'>

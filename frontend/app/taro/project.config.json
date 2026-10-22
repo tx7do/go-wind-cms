@@ -1,10 +1,10 @@
 {
   "miniprogramRoot": "./dist",
   "projectname": "taro",
-  "description": "",
+  "description": "GoWind Content Hub 移动端（H5 / 微信小程序）",
   "appid": "touristappid",
   "setting": {
-    "urlCheck": true,
+    "urlCheck": false,
     "es6": false,
     "enhance": false,
     "compileHotReLoad": false,

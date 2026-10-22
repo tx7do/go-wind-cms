@@ -1,26 +1,64 @@
 export default defineAppConfig({
   pages: [
-    'pages/index',
-    'pages/category/index',
-    'pages/category/detail/index',
+    'pages/index/index',
     'pages/post/index',
     'pages/post/detail/index',
-    'pages/search/index',
+    'pages/category/index',
+    'pages/category/detail/index',
     'pages/tag/index',
     'pages/tag/detail/index',
+    'pages/search/index',
+    'pages/favorites/index',
+    'pages/page/detail/index',
+    'pages/user/index',
+    'pages/login/index',
+    'pages/settings/index',
+    'pages/settings/profile/index',
+    'pages/settings/password/index',
     'pages/about/index',
     'pages/contact/index',
     'pages/disclaimer/index',
     'pages/privacy/index',
-    'pages/settings/index',
     'pages/terms/index',
-    'pages/user/index',
-    'pages/login/index'
   ],
+  tabBar: {
+    color: '#7a7e83',
+    selectedColor: '#006be6',
+    backgroundColor: '#ffffff',
+    borderStyle: 'black',
+    list: [
+      {
+        pagePath: 'pages/index/index',
+        text: '首页',
+        iconPath: './assets/tabbar/home.png',
+        selectedIconPath: './assets/tabbar/home-active.png',
+      },
+      {
+        pagePath: 'pages/post/index',
+        text: '文章',
+        iconPath: './assets/tabbar/post.png',
+        selectedIconPath: './assets/tabbar/post-active.png',
+      },
+      {
+        pagePath: 'pages/favorites/index',
+        text: '收藏',
+        iconPath: './assets/tabbar/favorites.png',
+        selectedIconPath: './assets/tabbar/favorites-active.png',
+      },
+      {
+        pagePath: 'pages/user/index',
+        text: '我的',
+        iconPath: './assets/tabbar/user.png',
+        selectedIconPath: './assets/tabbar/user-active.png',
+      },
+    ],
+  },
   window: {
     backgroundTextStyle: 'light',
-    navigationBarBackgroundColor: '#fff',
-    navigationBarTitleText: 'GoWind CMS',
-    navigationBarTextStyle: 'black'
-  }
+    // 静态值取亮色基线；暗色由 ThemeClientProvider 调 setNavigationBarColor/setTabBarStyle 在运行时跟上
+    navigationBarBackgroundColor: '#f4f7f9',
+    navigationBarTitleText: 'GoWind Content Hub',
+    navigationBarTextStyle: 'black',
+    backgroundColor: '#f4f7f9',
+  },
 })

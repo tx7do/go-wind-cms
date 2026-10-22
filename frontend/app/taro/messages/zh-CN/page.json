@@ -13,7 +13,8 @@
     "privacy": "隐私政策",
     "terms": "服务条款",
     "settings": "设置",
-    "user": "个人中心"
+    "user": "个人中心",
+    "favorites": "收藏"
   },
   "home": {
     "untitled": "未命名",
@@ -286,5 +287,8 @@
     "likes": "点赞",
     "comments": "评论",
     "view_post": "查看文章"
+  },
+  "contact": {
+    "description": "如有合作或使用问题，欢迎通过以下渠道与我们联系。"
   }
 }

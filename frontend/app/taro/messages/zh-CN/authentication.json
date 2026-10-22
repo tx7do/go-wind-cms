@@ -33,7 +33,9 @@
     "terms_and": "和",
     "terms_of_service": "服务条款",
     "privacy_policy": "隐私政策",
-    "back_home": "返回首页"
+    "back_home": "返回首页",
+    "submitting": "登录中…",
+    "forgot_password_tip": "请联系管理员重置密码"
   },
   "register": {
     "title": "欢迎注册账号",
@@ -70,7 +72,8 @@
     "resend_after": "后重新发送",
     "resend_after_countdown": "{count}秒后重试",
     "next_step": "下一步",
-    "back_home": "返回首页"
+    "back_home": "返回首页",
+    "password_mismatch": "两次输入的密码不一致"
   },
   "forgotPassword": {
     "title": "忘记密码",

@@ -22,7 +22,9 @@
     "wechat_account": "微信账号",
     "custom_domain": "个性域名",
     "domain_desc": "个人主页的地址，全站唯一可更改一次",
-    "edit": "编辑"
+    "edit": "编辑",
+    "old_password": "当前密码",
+    "new_password": "新密码"
   },
   "message": {
     "title": "消息与邮件",
@@ -77,4 +79,3 @@
     "q7_link": "账号注销"
   }
 }
-

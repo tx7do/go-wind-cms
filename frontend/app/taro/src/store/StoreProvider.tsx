@@ -46,10 +46,11 @@ export default function StoreProvider({children}: { children: ReactNode }) {
     const loadingStore = useMemo(() => createLoadingStore(), []);
     const preferencesStore = useMemo(() => createPreferencesStore(), []);
 
-    // 初始化 RequestClient（仅客户端执行一次）
+    // 初始化 RequestClient（执行一次）。
+    // 不做 window 探测：小程序没有 window，但 Taro.request 适配器（见 taro-adapter.ts）
+    // 已让 axios 在两端都能发请求，跳过初始化会让 weapp 全部请求挂在
+    // "RequestClient not initialized" 上。
     useMemo(() => {
-        if (typeof window === 'undefined') return;
-
         RequestClient.init(env.apiBaseUrl, {
             getToken: () => {
                 const token = accessStore.getState().accessToken;

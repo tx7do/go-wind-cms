@@ -3,6 +3,7 @@ import path from 'path'
 import {UnifiedViteWeappTailwindcssPlugin} from 'weapp-tailwindcss/vite'
 
 import devConfig from './dev'
+import { h5SpaFallback } from './h5-spa-fallback'
 import prodConfig from './prod'
 
 // https://taro-docs.jd.com/docs/next/config#defineconfig-辅助函数
@@ -39,7 +40,12 @@ export default defineConfig<'vite'>(async (merge, {}) => {
       options: {}
     },
     framework: 'react',
-    compiler: 'vite',
+    // 注意：Taro 4.1.11 中 config/index.ts 顶层的 modifyViteConfig 不会被调用
+    //（CLI 用只派发插件 hook 的同名实现覆盖了它），自定义 Vite 插件必须走这里。
+    compiler: {
+      type: 'vite',
+      vitePlugins: process.env.TARO_ENV === 'h5' ? [h5SpaFallback()] : [],
+    },
     // weapp-tailwindcss：仅小程序端启用（规范 §8.3 插件环境隔离）
     modifyViteConfig(config) {
       config.plugins = config.plugins || [];
@@ -77,37 +83,37 @@ export default defineConfig<'vite'>(async (merge, {}) => {
     h5: {
       publicPath: '/',
       staticDirectory: 'static',
-      // H5 dev server 端口，取自 .env.development 的 VITE_PORT
+      // H5 dev server 端口，取自 .env.development 的 TARO_APP_VITE_PORT
+      //（Taro 只自动加载 TARO_APP_ 前缀的环境变量，VITE_ 前缀读不到）
       devServer: {
-        port: Number(process.env.VITE_PORT) || 10086,
+        port: Number(process.env.TARO_APP_VITE_PORT) || 15021,
       },
       router: {
         mode: 'browser',
         customRoutes: {
-          'pages/index/index': '/',
+          // 注意：首页（entry page）不可映射到 '/'——Taro 4.1.11 H5 首载 '/'
+          // 时会在入口重定向中丢失页面挂载（整屏空白）。首页浏览器路径保持
+          // 默认 /pages/index/index，'/' 由路由器重定向到入口页。
+          'pages/post/index': '/posts',
+          'pages/post/detail/index': '/posts/detail',
+          'pages/category/index': '/categories',
+          'pages/category/detail/index': '/categories/detail',
+          'pages/tag/index': '/tags',
+          'pages/tag/detail/index': '/tags/detail',
+          'pages/search/index': '/search',
+          'pages/favorites/index': '/favorites',
+          'pages/page/detail/index': '/page/detail',
           'pages/about/index': '/about',
           'pages/contact/index': '/contact',
           'pages/disclaimer/index': '/disclaimer',
           'pages/privacy/index': '/privacy',
           'pages/terms/index': '/terms',
           'pages/settings/index': '/settings',
+          'pages/settings/profile/index': '/settings/profile',
+          'pages/settings/password/index': '/settings/password',
           'pages/user/index': '/user',
-          'pages/register/index': '/register',
-          'pages/login/index': '/login',
-          'pages/post/index': '/post',
-          'pages/post/detail/index': '/post/detail',
-          'pages/tag/index': '/tag',
-          'pages/tag/detail/index': '/tag/detail',
-          'pages/category/index': '/category',
-          'pages/category/detail/index': '/category/detail',
-          'pages/search/index': '/search',
-          'pages/404/index': '/404'
+          'pages/login/index': '/login'
         }
-      },
-      miniCssExtractPluginOption: {
-        ignoreOrder: true,
-        filename: 'css/[name].[hash].css',
-        chunkFilename: 'css/[name].[chunkhash].css'
       },
       postcss: {
         autoprefixer: {

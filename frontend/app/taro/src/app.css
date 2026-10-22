@@ -2,14 +2,69 @@
 @tailwind components;
 @tailwind utilities;
 
+/* ========== 盒模型（全局 border-box） ==========
+ * tailwind.config.js 关掉了 preflight，而 Tailwind 的 w-full / w-[104rpx] / p-*
+ * 全套尺寸类都是按 border-box 写的；box-sizing 又不是继承属性，只在 :root 上声明
+ * 等于没声明——实测除少数手补过的选择器外全是 content-box，
+ * 于是 practice 空态页 .au-page 的 w-full + px-[48rpx] 直接撑成 507.6px，
+ * 比 450 的内容列宽出 57.6px，每一页都横向溢出。放在 @tailwind 之后，
+ * 与库内同为 (0,0,0) 时靠源码顺序取胜。
+ * 两条而不是一个 *：小程序构建会整条丢弃 * 通配选择器（实测 dist/app-origin.wxss 里
+ * 0 命中），所以小程序端必须按原生标签名点名；H5 端组件是 taro-*-core，两份各自另一端失配即失效。
+ * 遗留一处补不到：weapp-tailwindcss 把 input / textarea 这两个「H5 同名标签」改写成了
+ * .h5-input / .h5-textarea 影子类（wxss 里能看到它们），小程序 DOM 上没有这两个 class，
+ * 于是 Input / Textarea 在小程序端仍是 content-box——用到 w-full + p-* 时必须自带 box-border。
+ * border-width / border-style 是 preflight 的另一半：关掉之后 Tailwind 的 border-[…] /
+ * border-<color> 系列只剩 color 与 style 的默认 none，实测全局 46 处 1rpx 细线一条都没画出来；
+ * 补上「宽度 0 + 实线」这两条初始值，border-[length:1rpx] + border-splitLine 才会真的显形 */
+*,
+*::before,
+*::after {
+    box-sizing: border-box;
+    border-width: 0;
+    border-style: solid;
+}
+
+page,
+view,
+text,
+image,
+input,
+textarea,
+scroll-view,
+rich-text,
+taro-view-core,
+taro-text-core,
+taro-image-core,
+taro-input-core,
+taro-textarea-core,
+taro-scroll-view-core,
+taro-rich-text-core {
+    box-sizing: border-box;
+    border-width: 0;
+    border-style: solid;
+}
+
 /* ========== 全局字体（design-language §3 权威栈） ==========
- * 小程序端由微信注入默认栈；显式声明保证 H5 与微信一致、
- * 且 CJK 命名（苹方/雅黑/思源）在 H5 浏览器上不落到衬线兜底 */
+ * H5 没有 <page> 元素（Taro 编译成 <div class="taro_page">），所以 token 与字体
+ * 必须同时挂在 :root 上，否则整套色板/字体栈在 H5 全部落空——实测 H5 会退回
+ * Taro 默认的 -apple-system-font，且 html/body 无背景，暗色下顶栏区域露出浏览器白底。
+ * WXSS 不识别 :root 但会保留规则，page 仍生效，两端共用一个选择器列表。 */
+:root,
 page {
-    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, 'PingFang SC', 'Hiragino Sans GB', 'Microsoft YaHei', 'Source Han Sans SC', 'Noto Sans SC', sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji', 'Noto Color Emoji';
+    --font-stack: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, 'PingFang SC', 'Hiragino Sans GB', 'Microsoft YaHei', 'Source Han Sans SC', 'Noto Sans SC', sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji', 'Noto Color Emoji';
+    font-family: var(--font-stack);
+}
+
+/* Taro 的 H5 基础样式自带 body{font-family:-apple-system-font,"Helvetica Neue"}，
+   与继承相比它更近，design-language §3 的苹方/雅黑栈永远轮不到。
+   html body 把特异性提到 (0,0,2)，不赌样式表注入顺序 */
+html body {
+    font-family: var(--font-stack);
 }
 
 /* ========== 安全区 CSS 变量（规范 §5.3） ========== */
+:root,
 page {
     --safe-top: env(safe-area-inset-top, 0rpx);
     --safe-bottom: env(safe-area-inset-bottom, 0rpx);
@@ -17,6 +72,7 @@ page {
 
 /* ========== 亮色主题色板（CSS 变量） ==========
  * 与 docs/design-language.md 同源：品牌蓝主色 + slate 中性阶 */
+:root,
 page {
     /* 品牌主色（docs/brand 权威值 #006BE6） */
     --color-primary: #006be6;
@@ -34,14 +90,29 @@ page {
     --color-split-line: #e2e8f0;
     /* 底部操作栏背景 */
     --color-bar-bg: rgba(255, 255, 255, 0.92);
+    /* 宽屏内容列：与 rem 上限（24PX）互锁，750rpx 恰好铺满。
+       必须大写 PX：小写 px 会被 pxtransform 转成 rem，而 rem 用在 :root 上是自指的 */
+    --au-col: 450PX;
 
     background-color: var(--color-page-bg);
     color: var(--color-text-main);
-    box-sizing: border-box;
+}
+
+/* 小程序端页面根元素的基准字号（规范 §2）。
+   刻意不写到 :root 上：H5 的 html font-size 是 rem 基准，由下方 clamp 掌管 */
+page {
     font-size: 32rpx;
 }
 
-/* ========== 暗色主题色板（H5: .dark on <html>; 小程序: 由 ThemeClientProvider style 覆盖） ========== */
+/* H5 的画布底色：html/body 不涂色时，顶栏偏移区与宽屏列两侧会露出浏览器白底 */
+html,
+body {
+    background-color: var(--color-page-bg);
+    color: var(--color-text-main);
+}
+
+/* ========== 暗色主题色板（H5: ThemeClientProvider 给 <html> 加 .dark；小程序由内联变量覆盖） ========== */
+html.dark,
 .dark page,
 page.dark {
     --color-primary: #2e96ff;
@@ -63,6 +134,95 @@ page.dark {
 /* ========== 点击反馈工具类（规范 §6.1） ========== */
 .tap-active {
     opacity: 0.8;
+}
+
+/* ========== H5 组件基底显示 ==========
+   Vite 端只注册自定义元素，不注入 collection/components 下各组件的 style/index.css，
+   而全局 taro-components.css 里没有这些规则 —— 没写显示类 utility 的裸 <taro-view-core>
+   就退回 HTML 未知元素的 display:inline。本应用的包裹层（主题根、页面容器、.au-page
+   以及各页负责左右留白的 px-[24rpx] View）正是这种裸 View，块级格式上下文一丢，
+   内边距与宽度整体旁路，内容顶到列边缘。
+   取值抄 Taro 源码同名规则；小程序 WXSS 无这些标签，本块天然 inert。
+   刻意略去源码里的 width/height 初值（320px/240px/300px）：小写 px 会被 pxtransform
+   换算成 rem，而组件尺寸在本项目一律由工具类指定，留初值只会引入错尺寸 */
+taro-view-core,
+taro-input-core,
+taro-textarea-core {
+    display: block;
+}
+
+taro-image-core {
+    display: inline-block;
+    position: relative;
+    overflow: hidden;
+    font-size: 0;
+}
+
+taro-scroll-view-core {
+    display: block;
+    width: 100%;
+    -webkit-overflow-scrolling: touch;
+}
+
+/* ============================================================
+   H5 视口与页面骨架（适配）
+   ============================================================ */
+
+/* Taro 注入 <html> 内联的 rem 基准是 clamp(20, 40*min(vw,vh)/750, 40)，上限 40px
+   等于把 750 设计稿按 1:1 渲染 —— 视口一旦到 750px 以上，正文就是 32px 的平板字号，
+   且列宽不受限。这里把上限压到 24PX（750rpx 恰好 = --au-col），375/430 手机档不变。
+   两个非显然写法：必须 !important（那是内联 style）；必须大写 PX，
+   小写 px 会被 pxtransform 换算成 rem，而 rem 在 html 上自指，浏览器按 16px 初值解算 → 整树塌缩 */
+html {
+    font-size: clamp(20PX, calc(min(100vw, 100vh) / 18.75), 24PX) !important;
+}
+
+/* 宽屏收成居中的手机列，列外由 html/body 底色铺满。
+   translateZ(0) 不是性能提示，是给整棵子树造一个包含块：顶栏、各页的
+   fixed 底部操作条（practice / attempt / wrong-book-detail）、进度条都是
+   position:fixed，默认相对视口 —— 不这么做它们会横跨整屏而不是贴着这一列 */
+.taro-tabbar__container {
+    max-width: var(--au-col);
+    margin-left: auto;
+    margin-right: auto;
+    transform: translateZ(0);
+}
+
+/* 顶栏的左右/宽度交给包含块，这里只补它自己管不着的状态栏留白 */
+.app-header {
+    padding-top: var(--safe-top);
+    background: transparent;
+}
+
+/* Layout 的 ThemeClientProvider + app-page-container 两层 View 插在 #app.taro_router
+   与 .taro_page 之间，Taro 的 .taro_router > .taro_page 和
+   .taro-tabbar__container > .taro-tabbar__panel > .taro_page.taro_tabbar_page
+   两条结构选择器因此全部失配：.taro_page 退化成 max-height:100vh，被顶栏偏移顶下去
+   之后仍按整屏高，超出面板的部分被 overflow:hidden 永久裁掉（724x772 实测裁 143px）。
+   这里显式重建「面板 → 主题根 → 页面容器 → .taro_page」的确定高度链。 */
+.app-theme-root,
+.app-page-container {
+    height: 100%;
+    /* 小程序的 <page> 拿不到暗色 class，仍会按亮色 token 上底色；
+       主题根自己涂一层，暗色下就不会从 page 透出浅色 */
+    background-color: var(--color-page-bg);
+}
+.app-page-container.has-app-header {
+    padding-top: calc(96rpx + var(--safe-top));
+}
+
+/* 页面自身即滚动容器（body 是 overflow:hidden），去掉常驻滚动条槽 ——
+   它曾让内容宽 709 而 header/tabbar 宽 724，右侧露出一条错缝。
+   用 body .taro_page 提一级特异性：Taro 自带 .taro_page{max-height:100vh;overflow:hidden scroll}
+   与本规则同为 (0,1,0)，胜负取决于样式表注入顺序，实测会输 */
+body .taro_page {
+    height: 100%;
+    max-height: none;
+    overflow-y: auto;
+    scrollbar-width: none;
+}
+body .taro_page::-webkit-scrollbar {
+    display: none;
 }
 
 /* ========== 全局过渡动画 ========== */
@@ -87,7 +247,10 @@ page.dark {
 }
 
 /* ========== Taro Input/Textarea 强制背景透明 ========== */
-/* Taro 编译后 Input 和 Textarea 有默认白色背景，必须通过全局 CSS 覆盖 */
+/* Taro 编译后 Input 和 Textarea 有默认白色背景，必须通过全局 CSS 覆盖。
+ * 这组只在 H5 命中：小程序端 taro-*-core 不存在，裸标签 input / textarea 又被
+ * weapp-tailwindcss 改写成 .h5-input / .h5-textarea 死类，
+ * 所以字段样式必须由 <Input className> 自己带下来，见下面 .au-input-field */
 input,
 textarea,
 .taro-input,
@@ -96,12 +259,57 @@ textarea,
     color: var(--color-text-main) !important;
 }
 
+/* H5 原生 textarea 的右下拉伸角又丑又破布局：多行输入尺寸一律由容器管。
+   Taro 组件自带样式给了 .taro-textarea resize:both，这里压过它 */
+textarea,
+.taro-textarea {
+    resize: none !important;
+}
+
+/* ---------- 多行输入框（au-textarea） ----------
+ * Taro H5 的 Textarea 是双层结构：className 落在外层 taro-textarea-core，
+ * 真正承载文字的内层原生 textarea（.taro-textarea）必须用后代选择器一起钉住，
+ * 否则外壳 min-height 变了、内层还是默认两行高，内容从框顶溢出（错位假象）。
+ * weapp 端 className 直接落在原生组件上，直接规则生效。高度配合 autoHeight
+ * 随内容增长，容器（.au-textarea-box）负责圆角/底色/内边距。 */
+.au-textarea,
+.au-textarea .taro-textarea {
+    display: block;
+    width: 100%;
+    min-height: 140rpx;
+    height: auto;
+    padding: 0;
+    font-size: 28rpx;
+    line-height: 1.6;
+    color: var(--color-text-main);
+    background-color: transparent;
+    border: none;
+}
+.au-textarea-box {
+    transition: border-color 0.25s, box-shadow 0.25s;
+}
+.au-textarea-box:focus-within {
+    border-color: rgba(46, 150, 255, 0.65);
+    box-shadow: 0 0 0 6rpx rgba(46, 150, 255, 0.14);
+}
+
 /* Placeholder 颜色 - 暗黑模式适配 */
 input::placeholder,
 textarea::placeholder,
 .taro-input::placeholder,
 .taro-textarea::placeholder {
     color: var(--color-text-third);
+}
+
+/* ---------- 输入字段（两端通吃的唯一出口） ---------- */
+.au-input-field {
+    flex: 1;
+    width: 100%;
+    min-width: 0;
+    height: 100%;
+    font-size: 28rpx;
+    color: var(--color-text-main);
+    background-color: transparent;
 }
 
 /* ========== ContentViewer Markdown 样式 ========== */
@@ -298,3 +506,470 @@ textarea::placeholder,
 .content-viewer del,
 .content-viewer s { text-decoration: line-through; color: var(--color-text-third); }
 
+/* ========== ContentViewer 的 md-* 类镜像（小程序 RichText 用） ==========
+ * 小程序内容走 <RichText> 渲染，样式隔离：`.content-viewer p` 这类祖先+标签
+ * 选择器进不了 rich-text 内部；但节点自身的 class 能命中全局样式表（微信支持）。
+ * ContentViewer 给每个结构标签挂了 md-* class，这里给出与上方元素选择器同值的镜像。
+ * H5 端同一份 HTML 带着同样的 class 走 innerHTML，两组选择器同值叠加，无冲突。 */
+.content-viewer .md-p {
+    font-size: 30rpx;
+    line-height: 1.8;
+    color: var(--color-text-main);
+    margin-bottom: 20rpx;
+}
+.content-viewer .md-h1 { font-size: 40rpx; margin-top: 48rpx; margin-bottom: 20rpx; font-weight: 700; line-height: 1.35; color: var(--color-text-main); }
+.content-viewer .md-h2 { font-size: 34rpx; margin-top: 48rpx; margin-bottom: 20rpx; padding-bottom: 12rpx; border-bottom: 2rpx solid var(--color-split-line); font-weight: 700; line-height: 1.35; color: var(--color-text-main); }
+.content-viewer .md-h3 { font-size: 32rpx; margin-top: 40rpx; margin-bottom: 20rpx; font-weight: 700; line-height: 1.35; color: var(--color-text-main); }
+.content-viewer .md-h4 { font-size: 30rpx; margin-top: 32rpx; margin-bottom: 20rpx; font-weight: 700; line-height: 1.35; color: var(--color-text-main); }
+.content-viewer .md-h5 { font-size: 30rpx; margin-top: 28rpx; margin-bottom: 20rpx; font-weight: 700; line-height: 1.35; color: var(--color-text-main); }
+.content-viewer .md-h6 { font-size: 28rpx; margin-top: 24rpx; margin-bottom: 20rpx; font-weight: 700; line-height: 1.35; color: var(--color-text-sec); }
+.content-viewer .md-ul,
+.content-viewer .md-ol { margin: 16rpx 0; padding-inline-start: 40rpx; }
+.content-viewer .md-ul { list-style-type: disc; }
+.content-viewer .md-ol { list-style-type: decimal; }
+.content-viewer .md-li { font-size: 30rpx; line-height: 1.8; color: var(--color-text-main); margin-bottom: 8rpx; }
+.content-viewer .md-blockquote {
+    margin: 24rpx 0;
+    padding: 16rpx 24rpx;
+    border-inline-start: 6rpx solid var(--color-primary);
+    background-color: var(--color-page-bg);
+    color: var(--color-text-sec);
+}
+.content-viewer .md-table { width: 100%; border-collapse: collapse; margin: 24rpx 0; font-size: 28rpx; }
+.content-viewer .md-th,
+.content-viewer .md-td { border: 2rpx solid var(--color-split-line); padding: 12rpx 16rpx; text-align: start; }
+.content-viewer .md-th { font-weight: 600; background-color: var(--color-page-bg); color: var(--color-text-main); }
+.content-viewer .md-td { color: var(--color-text-main); }
+.content-viewer .md-strong { font-weight: 700; color: var(--color-text-main); }
+.content-viewer .md-em { font-style: italic; }
+.content-viewer .md-del { text-decoration: line-through; color: var(--color-text-third); }
+/* rich-text 里 code/pre 无 class 的兜底（marked 行内码已有 .inline-code） */
+.content-viewer pre { font-family: 'Menlo', 'Monaco', 'Consolas', monospace; }
+.content-viewer code { font-family: 'Menlo', 'Monaco', 'Consolas', monospace; }
+
+
+/* ========== 全屏认证页（登录等） ==========
+ * 页面挂载期间给 body 加 fullscreen-auth：
+ * 隐藏应用顶栏并取消内容区为顶栏预留的 padding，实现沉浸式布局。
+ * H5 的 tabbar（.taro-tabbar__tabbar，高 var(--taro-tabbar-height)）也要一起摘掉：
+ * 它是 .taro-tabbar__container 的 flex 兄弟，留着就占掉底部一条，
+ * 与小程序端「非 tab 页不渲染 tabBar」的表现不一致。
+ * 小程序端 body 会被改写成 .h5-body 影子类，这几条在那边天然失配，不影响 wxss。 */
+body.fullscreen-auth .app-header,
+body.fullscreen-auth .taro-tabbar__tabbar {
+    display: none;
+}
+body.fullscreen-auth .app-page-container {
+    padding-top: 0;
+}
+
+/* ============================================================
+   高级感设计系统（Aurora Design Language）
+   所有页面共享的视觉词汇：极光底、玻璃卡、渐变字、流光按钮、
+   错峰入场动画。深色主题为「深空蓝」基准，浅色为轻玻璃。
+   ============================================================ */
+
+/* ---------- 页面基底：顶部极光渐晕 ---------- */
+.au-page {
+    position: relative;
+    /* 用 100% 而不是 100vh：.taro_page 已经是「视口 − 顶栏 − tabbar」的确定高度，
+       100vh 会让每页凭空多出一屏的滚动量。本规则在 utilities 之后，
+       同时把各页残留的 min-h-screen 一并收编 */
+    min-height: 100%;
+    overflow-x: hidden;
+}
+.au-page::before {
+    content: '';
+    position: absolute;
+    top: -180rpx;
+    left: 50%;
+    width: 820rpx;
+    height: 520rpx;
+    transform: translateX(-50%);
+    background: radial-gradient(closest-side, rgba(46, 150, 255, 0.16), transparent);
+    pointer-events: none;
+}
+.dark .au-page::before {
+    background: radial-gradient(closest-side, rgba(46, 150, 255, 0.22), transparent);
+}
+
+/* ---------- 卡片体系 ---------- */
+.au-card {
+    position: relative;
+    border-radius: 28rpx;
+    background: var(--color-card-bg);
+    border: 1rpx solid var(--color-split-line);
+    box-shadow: 0 8rpx 32rpx rgba(2, 8, 26, 0.06);
+}
+.dark .au-card {
+    border-color: rgba(148, 184, 255, 0.10);
+    box-shadow: 0 12rpx 40rpx rgba(0, 0, 0, 0.35);
+}
+/* 卡片顶部高光（暗色下更明显） */
+.au-card--glow::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 28rpx;
+    right: 28rpx;
+    height: 1rpx;
+    background: linear-gradient(90deg, transparent, rgba(160, 200, 255, 0.5), transparent);
+}
+
+/* ---------- 底部操作条（开始练习 / 交卷 / 下一题…） ----------
+ * 四个页面原本各写一遍 fixed bottom-0 + 同一串 padding，H5 的 tabbar 偏移只能四处同改；
+ * 收敛成一个语义类，偏移在这唯一一处生效。 */
+.au-bottom-bar {
+    position: fixed;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    z-index: 90;
+    padding: 20rpx 24rpx 40rpx;
+    border-top: 1rpx solid var(--color-split-line);
+}
+/* H5：.taro-tabbar__container 带 transform，fixed 的包含块变成整列而非面板，
+   bottom:0 的条会被压在 58px tabBar 底下（小程序的原生 tabBar 不占 webview，所以默认就是 0）。
+   只在 tabBar 真的挂着时抬升 —— 非 tab 页 Taro 给它加 .taro-tabbar__tabbar-hide；
+   选择器以 body 开头，小程序端编译成 .h5-body 影子类后天然失配，不会把条顶空一截。 */
+body:has(.taro-tabbar__tabbar:not(.taro-tabbar__tabbar-hide)) .au-bottom-bar {
+    bottom: var(--au-tabbar-inset, 0px);
+}
+
+/* 玻璃面板（Header/悬浮条/弹层用） */
+.au-glass {
+    background: rgba(255, 255, 255, 0.72);
+    backdrop-filter: blur(24px);
+    -webkit-backdrop-filter: blur(24px);
+}
+.dark .au-glass {
+    background: rgba(10, 18, 34, 0.66);
+}
+
+/* ---------- 底部选项弹层（主题 / 语言…） ----------
+ * 圆角与安全区留白写在这里而不是 Tailwind 任意值：calc + env 在小程序端不可靠，
+ * 且 .au-bottom-bar 已经确立「安全区只在 CSS 一处生效」的约定。 */
+.au-sheet-mask {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(2, 8, 26, 0.55);
+    animation: au-fade-in 0.2s ease-out;
+}
+.au-sheet {
+    position: absolute;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: var(--color-card-bg);
+    border-top: 1rpx solid var(--color-split-line);
+    border-radius: 36rpx 36rpx 0 0;
+    padding-bottom: calc(24rpx + var(--safe-bottom));
+    box-shadow: 0 -8rpx 40rpx rgba(2, 8, 26, 0.18);
+    animation: au-sheet-up 0.26s cubic-bezier(0.22, 1, 0.36, 1);
+}
+.dark .au-sheet {
+    box-shadow: 0 -12rpx 48rpx rgba(0, 0, 0, 0.55);
+}
+@keyframes au-sheet-up {
+    from { transform: translateY(100%); }
+    to { transform: translateY(0); }
+}
+@keyframes au-fade-in {
+    from { opacity: 0; }
+    to { opacity: 1; }
+}
+
+/* ---------- 渐变文字（数字/标题强调） ---------- */
+.au-grad-text {
+    background: linear-gradient(100deg, var(--color-primary-strong, #70b3ff) 0%, var(--color-primary) 100%);
+    -webkit-background-clip: text;
+    background-clip: text;
+    -webkit-text-fill-color: transparent;
+    color: transparent;
+}
+.dark .au-grad-text {
+    background: linear-gradient(100deg, #ffffff 0%, #a8cbff 45%, #58a6ff 100%);
+    -webkit-background-clip: text;
+    background-clip: text;
+    -webkit-text-fill-color: transparent;
+}
+
+/* ---------- 区块标题：竖向品牌色饰条（规范 §3 H2 = 20px） ---------- */
+.au-section-title {
+    display: flex;
+    align-items: center;
+    gap: 16rpx;
+    font-size: 40rpx;
+    font-weight: 700;
+    color: var(--color-text-main);
+}
+.au-section-title::before {
+    content: '';
+    width: 8rpx;
+    height: 34rpx;
+    border-radius: 4rpx;
+    background: linear-gradient(180deg, var(--color-primary-strong, #70b3ff), var(--color-primary));
+    box-shadow: 0 0 12rpx rgba(46, 150, 255, 0.45);
+}
+
+/* ---------- 首页 hero 标题（规范 §3 Display = 30–36px / 800 / -0.02em） ----------
+   原先它和卡片标题共用 text-card-title（36rpx=18px），实测首页三层字号是
+   18 / 17 / 16px，肉眼分不出层级；Display 归位后才有 hero→区块→卡片 的落差 */
+.au-hero-title {
+    font-size: 60rpx;
+    font-weight: 800;
+    line-height: 1.15;
+    letter-spacing: -0.02em;
+}
+
+/* ---------- 胶囊 ---------- */
+.au-chip {
+    display: inline-flex;
+    align-items: center;
+    gap: 8rpx;
+    height: 52rpx;
+    padding: 0 20rpx;
+    border-radius: 999rpx;
+    background: var(--color-primary-tint);
+    color: var(--color-primary);
+    font-size: 22rpx;
+}
+
+/* ---------- 主按钮：渐变 + 投影 + 流光 ---------- */
+.btn-hero {
+    position: relative;
+    overflow: hidden;
+    background: linear-gradient(135deg, #57a3ff 0%, #1677ff 48%, #0a5ce6 100%);
+    color: #ffffff;
+    box-shadow: 0 14rpx 36rpx rgba(12, 110, 255, 0.38), inset 0 1rpx 0 rgba(255, 255, 255, 0.25);
+    transition: transform 0.15s ease, filter 0.2s ease;
+}
+.btn-hero:active {
+    transform: translateY(2rpx) scale(0.995);
+    filter: brightness(1.06);
+}
+.btn-hero::after {
+    content: '';
+    position: absolute;
+    top: -40%;
+    bottom: -40%;
+    width: 48rpx;
+    left: -110rpx;
+    background: linear-gradient(105deg, transparent, rgba(255, 255, 255, 0.38), transparent);
+    transform: skewX(-18deg);
+    animation: au-shine 3.6s ease-in-out infinite;
+}
+@keyframes au-shine {
+    0%, 55% { left: -110rpx; }
+    85%, 100% { left: 120%; }
+}
+
+/* 次级按钮：玻璃描边 */
+.btn-glass {
+    background: rgba(127, 168, 233, 0.10);
+    border: 1rpx solid rgba(148, 184, 255, 0.28);
+    color: var(--color-primary-strong, #2e96ff);
+    transition: transform 0.15s ease, background 0.2s ease;
+}
+.btn-glass:active {
+    transform: scale(0.98);
+    background: rgba(127, 168, 233, 0.18);
+}
+.dark .btn-glass {
+    background: rgba(120, 180, 255, 0.08);
+}
+
+/* ---------- 按钮禁用态（Button 组件 disabled 走这里） ----------
+ * 不用 opacity-50：整条透明度会把白字一起打到五成，实心主色按钮上字和底糊成
+ * 同一片（练习页「确定」就是这个观感）。改成换底色换字色，「不可点」由中性灰表达，
+ * 文字仍然可读。!important 是必要的：与 Tailwind 的 bg-primary/text-white 同特异度，
+ * 而 app.css 与工具类样式的先后由打包顺序决定，不能赌。 */
+.au-btn-disabled {
+    background: var(--color-split-line) !important;
+    border-color: transparent !important;
+    box-shadow: none !important;
+    color: var(--color-text-third) !important;
+}
+
+/* 按钮内 loading 转环：用纯 View 画——不占图标子集的一个字形，
+   尺寸走 em 跟着按钮字号分档，颜色 currentColor，
+   于是 hero 上是白环、glass 上是主色环，不必为四种组合各配一份。 */
+.au-btn-spin {
+    box-sizing: border-box;
+    width: 0.85em;
+    height: 0.85em;
+    border: 0.13em solid currentColor;
+    border-top-color: transparent;
+    border-radius: 999rpx;
+    opacity: 0.8;
+    animation: au-btn-spin 0.7s linear infinite;
+}
+@keyframes au-btn-spin {
+    to { transform: rotate(360deg); }
+}
+
+/* ---------- 输入框：聚焦发光 ---------- */
+.au-input {
+    display: flex;
+    align-items: center;
+    gap: 16rpx;
+    height: 92rpx;
+    padding: 0 24rpx;
+    border-radius: 20rpx;
+    background: var(--color-page-bg);
+    border: 1rpx solid var(--color-split-line);
+    transition: border-color 0.25s, box-shadow 0.25s;
+}
+.au-input:focus-within {
+    border-color: rgba(46, 150, 255, 0.65);
+    box-shadow: 0 0 0 6rpx rgba(46, 150, 255, 0.14);
+}
+.au-input taro-input-core {
+    flex: 1;
+    height: 100%;
+    min-width: 0;
+    display: flex;
+    align-items: center;
+}
+.au-input input {
+    width: 100%;
+    font-size: 28rpx;
+}
+
+/* ---------- 错峰入场动画 ---------- */
+.au-anim {
+    opacity: 0;
+    transform: translateY(24rpx);
+    animation: au-fade-up 0.7s cubic-bezier(0.22, 1, 0.36, 1) forwards;
+}
+.au-anim-1 { animation-delay: 0.04s; }
+.au-anim-2 { animation-delay: 0.10s; }
+.au-anim-3 { animation-delay: 0.16s; }
+.au-anim-4 { animation-delay: 0.22s; }
+.au-anim-5 { animation-delay: 0.28s; }
+.au-anim-6 { animation-delay: 0.34s; }
+@keyframes au-fade-up {
+    to { opacity: 1; transform: translateY(0); }
+}
+
+/* ---------- 骨架屏流光 ---------- */
+.au-skeleton {
+    position: relative;
+    overflow: hidden;
+    background: var(--color-split-line);
+}
+.au-skeleton::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(100deg, transparent 30%, rgba(255, 255, 255, 0.35) 50%, transparent 70%);
+    transform: translateX(-100%);
+    animation: au-skeleton-wave 1.6s ease-in-out infinite;
+}
+.dark .au-skeleton::after {
+    background: linear-gradient(100deg, transparent 30%, rgba(148, 184, 255, 0.14) 50%, transparent 70%);
+}
+@keyframes au-skeleton-wave {
+    to { transform: translateX(100%); }
+}
+
+/* ---------- 呼吸圆点（在线/进行中状态） ---------- */
+.au-dot {
+    width: 14rpx;
+    height: 14rpx;
+    border-radius: 999rpx;
+    background: var(--color-primary);
+    box-shadow: 0 0 0 0 rgba(46, 150, 255, 0.5);
+    animation: au-dot-pulse 2s ease-out infinite;
+}
+@keyframes au-dot-pulse {
+    0% { box-shadow: 0 0 0 0 rgba(46, 150, 255, 0.5); }
+    70% { box-shadow: 0 0 0 12rpx rgba(46, 150, 255, 0); }
+    100% { box-shadow: 0 0 0 0 rgba(46, 150, 255, 0); }
+}
+
+/* ---------- 顶栏品牌字（几何与底色见「H5 视口与页面骨架」） ---------- */
+.header-brand {
+    letter-spacing: 2rpx;
+    color: var(--color-text-main);
+}
+
+/* ---------- 底部 tabbar：58px 玻璃底座，内容精确适配不裁切 ---------- */
+/* 用大写 PX 写绝对像素（Taro pxtransform 只转换小写 px）；覆盖官方变量，
+   页面区 max-height（calc 引用该变量）随之联动 */
+:root {
+    --taro-tabbar-height: 58PX !important;
+    /* 底部 fixed 操作条要让开的那一条高度。这里另立一个变量而不直接引用
+       --taro-tabbar-height：实测 H5 构建会把声明里的 var(--taro-tabbar-height)
+       改写成不存在的 var(--50PX)（bottom 随之失效成 auto，条沉到屏底之下）。
+       自定义属性的「值」不被 pxtransform 触碰，所以在这层取值是安全的。 */
+    --au-tabbar-inset: 58PX;
+}
+.taro-tabbar__tabbar {
+    display: block;
+}
+/* 必须点名两个类：官方 .taro-tabbar__tabbar-hide{display:none} 与上面同为 (0,1,0)，
+   谁赢取决于两个 style 标签的先后，而 Vite 注入的 app.css 在 dev/HMR 下排在
+   Taro 运行时注入的组件样式之后。于是非 tab 页（selectedIndex=-1，hide 已挂上）
+   tabBar 照样常显，还把 .au-bottom-bar 压在它底下。抬到 (0,2,0) 后与顺序无关。 */
+.taro-tabbar__tabbar.taro-tabbar__tabbar-hide {
+    display: none;
+}
+.taro-tabbar__tabbar .weui-tabbar {
+    background: rgba(255, 255, 255, 0.94) !important;
+    backdrop-filter: blur(24px);
+    -webkit-backdrop-filter: blur(24px);
+    border-top: none !important;
+    box-shadow: 0 -8rpx 28rpx rgba(2, 8, 26, 0.07);
+}
+html.dark .taro-tabbar__tabbar .weui-tabbar {
+    background: rgba(9, 16, 31, 0.94) !important;
+    box-shadow: 0 -8rpx 32rpx rgba(0, 0, 0, 0.4);
+}
+.taro-tabbar__tabbar .taro-tabbar__border-black {
+    border-color: transparent !important;
+}
+.taro-tabbar__tabbar .weui-tabbar__item {
+    padding-top: 7PX !important;
+    padding-bottom: 7PX !important;
+}
+.taro-tabbar__tabbar .weui-tabbar__icon {
+    width: 26PX !important;
+    height: 26PX !important;
+}
+.taro-tabbar__tabbar .weui-tabbar__label {
+    font-size: 11PX !important;
+    line-height: 1.2 !important;
+    margin-top: 3PX !important;
+}
+.taro-tabbar__tabbar .weui-bar__item_on .weui-tabbar__label {
+    font-weight: 700;
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .btn-hero::after,
+    .au-anim,
+    .au-dot {
+        animation: none !important;
+    }
+    .au-anim {
+        opacity: 1;
+        transform: none;
+    }
+}
+
+/* ========== 横滑容器隐藏滚动条（H5） ==========
+ * 分类 chips / 推荐阅读等 ScrollView 横向滑动区，H5 下系统滚动条
+ * 压在内容上很碍眼；小程序端 showScrollbar={false} 已各自处理。
+ * Vite 版 Taro H5 不注入组件内部样式，滚动容器就是 taro-scroll-view-core
+ * 自身（overflow:scroll，无 class、无影子根），必须点名标签。 */
+taro-scroll-view-core {
+    scrollbar-width: none;
+    -ms-overflow-style: none;
+}
+taro-scroll-view-core::-webkit-scrollbar {
+    display: none;
+}

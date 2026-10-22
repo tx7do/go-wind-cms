@@ -13,7 +13,8 @@
     "privacy": "Privacy Policy",
     "terms": "Terms of Service",
     "settings": "Settings",
-    "user": "Profile"
+    "user": "Profile",
+    "favorites": "Favorites"
   },
   "home": {
     "untitled": "Untitled",
@@ -286,5 +287,8 @@
     "likes": "Likes",
     "comments": "Comments",
     "view_post": "View Post"
+  },
+  "contact": {
+    "description": "For partnership or product questions, reach us through the channels below."
   }
 }

@@ -1,134 +1,161 @@
-import {useState, useEffect} from 'react';
-import Taro from '@tarojs/taro';
 import {View, Text, Input} from '@tarojs/components';
+import {useRef, useState} from 'react';
+import {useDidShow} from '@tarojs/taro';
 import {useTranslation} from 'react-i18next';
+import XIcon from '@/plugins/xicon';
 import {useI18nRouter} from '@/i18n/helpers';
-import {fetchSearchPosts} from '@/api/hooks/post';
-import {Skeleton} from '@/components/ui/skeleton';
 import {usePageTitle} from '@/hooks/usePageTitle';
+import {fetchSearchPosts, fetchPost, getPostSummary, getPostThumbnail} from '@/api/hooks/post';
+import PostCard from '@/components/post/PostCard';
+import {AppEmpty} from '@/components/ui';
+import type {contentservicev1_Post, contentservicev1_SearchPostHit} from '@/api/generated/app/service/v1';
 
-interface SearchHit {
-    postId?: number;
-    language?: string;
-    title?: string;
-}
-interface SearchResponse {
-    items?: SearchHit[];
-    total?: number;
-}
-
+/**
+ * 搜索页：输入即时搜索（防抖 400ms）→ 命中标题列表 → 点击进入详情。
+ * SearchPosts 仅返回最小字段集（postId/title），点卡片时用 fetchPost 补全卡片信息。
+ */
 export default function SearchPage() {
     const {t} = useTranslation();
     const router = useI18nRouter();
     usePageTitle('page.title.posts');
 
-    // 从入口页可能带入初始关键词（如首页搜索入口）
-    const initialQuery = (() => {
-        try {
-            const instance = Taro.getCurrentInstance();
-            return (instance?.router?.params?.q as string)?.trim() ?? '';
-        } catch {
-            return '';
-        }
-    })();
-
-    const [keyword, setKeyword] = useState(initialQuery);
-    const [loading, setLoading] = useState(false);
-    const [hits, setHits] = useState<SearchHit[]>([]);
+    const [keyword, setKeyword] = useState('');
+    const [hits, setHits] = useState<contentservicev1_SearchPostHit[]>([]);
     const [total, setTotal] = useState(0);
-    const [hasSearched, setHasSearched] = useState(false);
+    const [details, setDetails] = useState<Record<number, contentservicev1_Post>>({});
+    const [loading, setLoading] = useState(false);
+    const [searched, setSearched] = useState(false);
 
-    async function runSearch(q: string) {
-        const query = q.trim();
-        if (!query) {
+    const timerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+
+    const runSearch = async (query: string) => {
+        const q = query.trim();
+        if (!q) {
             setHits([]);
             setTotal(0);
-            setHasSearched(false);
+            setSearched(false);
             return;
         }
         setLoading(true);
-        setHasSearched(true);
         try {
-            const res = (await fetchSearchPosts({query, pageSize: 20})) as unknown as SearchResponse;
-            setHits(res?.items ?? []);
-            setTotal(res?.total ?? 0);
-        } catch (err) {
-            console.error('Search failed:', err);
+            const res = await fetchSearchPosts({query: q, page: 0, pageSize: 20});
+            const items = res.items || [];
+            setHits(items);
+            setTotal(Number(res.total ?? items.length));
+            setSearched(true);
+
+            // 拉取命中文章的封面/摘要，卡片信息完整（失败不阻塞列表）
+            const need = items.filter((it) => it.postId && !details[it.postId]).slice(0, 20);
+            await Promise.all(
+                need.map((it) =>
+                    fetchPost(it.postId as number)
+                        .then((post) => {
+                            if (post?.id) {
+                                setDetails((prev) => ({...prev, [post.id as number]: post}));
+                            }
+                        })
+                        .catch((error) => console.error('Load search hit detail failed:', error)),
+                ),
+            );
+        } catch (error) {
+            console.error('Search posts failed:', error);
             setHits([]);
             setTotal(0);
+            setSearched(true);
         } finally {
             setLoading(false);
         }
-    }
+    };
 
-    // 入口带关键词时自动搜索
-    useEffect(() => {
-        if (initialQuery) runSearch(initialQuery);
-        // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [initialQuery]);
+    useDidShow(() => {
+        // 详情页返回时保留关键字与结果；首次进入聚焦输入
+    });
 
-    const openPost = (postId?: number) => {
-        if (!postId) return;
-        router.push(`/post/${postId}`);
+    const onInput = (value: string) => {
+        setKeyword(value);
+        if (timerRef.current) clearTimeout(timerRef.current);
+        timerRef.current = setTimeout(() => runSearch(value), 400);
     };
 
     return (
-        <View className='min-h-screen w-full bg-pageBg pb-[160rpx]'>
-            {/* 搜索栏 */}
-            <View className='flex items-center gap-[16rpx] bg-cardBg px-[24rpx] py-[20rpx] border-b-[1rpx] border-splitLine'>
-                <Input
-                    className='flex-1 h-[64rpx] px-[24rpx] text-[28rpx] text-textMain rounded-[12rpx] bg-pageBg'
-                    value={keyword}
-                    placeholder={t('page.posts.search_placeholder')}
-                    onInput={(e) => setKeyword(e.detail.value)}
-                    onConfirm={() => runSearch(keyword)}
-                    confirmType='search'
-                />
-                <Text
-                    className='text-[28rpx] text-primary shrink-0 px-[8rpx]'
-                    onClick={() => runSearch(keyword)}
-                >
-                    {t('page.posts.search')}
-                </Text>
-            </View>
+        <View className='au-page w-full bg-pageBg pb-[48rpx]'>
+            <View className='px-[24rpx] pt-[28rpx]'>
+                {/* 搜索框 */}
+                <View className='au-anim au-input mb-[24rpx]'>
+                    <XIcon name='carbon:search' size={26} className='text-primary shrink-0' />
+                    <Input
+                      className='au-input-field'
+                      value={keyword}
+                      focus
+                      confirmType='search'
+                      placeholder={t('page.posts.search_placeholder')}
+                      placeholderClass='text-textWeak'
+                      onInput={(e) => onInput(e.detail.value)}
+                      onConfirm={() => runSearch(keyword)}
+                    />
+                    {keyword && (
+                        <View
+                          className='w-[52rpx] h-[52rpx] flex items-center justify-center rounded-full bg-splitLine shrink-0'
+                          hoverClass='tap-active'
+                          onClick={() => {
+                            setKeyword('');
+                            setHits([]);
+                            setTotal(0);
+                            setSearched(false);
+                          }}
+                        >
+                            <XIcon name='carbon:close' size={20} className='text-textSec' />
+                        </View>
+                    )}
+                </View>
 
-            {/* 内容区 */}
-            <View className='px-[24rpx] pt-[24rpx]'>
+                {/* 结果统计 */}
+                {searched && !loading && (
+                    <Text className='text-tips text-textThird block mb-[20rpx]'>
+                        {t('page.posts.search_results_count', {count: total})}
+                    </Text>
+                )}
+
                 {loading ? (
-                    <View className='flex flex-col gap-[16rpx]'>
-                        {[...Array(5)].map((_, i) => (
-                            <Skeleton key={i} className='h-[120rpx] w-full rounded-[12rpx]'/>
-                        ))}
-                    </View>
-                ) : !hasSearched ? (
-                    <View className='flex flex-col items-center py-[120rpx]'>
-                        <Text className='text-[28rpx] text-textThird'>
-                            {t('page.posts.search_placeholder')}
-                        </Text>
-                    </View>
-                ) : hits.length === 0 ? (
-                    <View className='flex flex-col items-center py-[120rpx]'>
-                        <Text className='text-[28rpx] text-textThird'>
-                            {t('page.posts.no_search_results', {query: initialQuery || keyword})}
-                        </Text>
-                    </View>
-                ) : (
-                    <View className='flex flex-col gap-[16rpx]'>
-                        <Text className='text-[24rpx] text-textSec'>
-                            {t('page.posts.search_results_count', {count: total})}
-                        </Text>
-                        {hits.map((hit, idx) => (
-                            <View
-                                key={hit.postId ?? idx}
-                                className='flex items-center gap-[16rpx] bg-cardBg rounded-[12rpx] px-[24rpx] py-[28rpx]'
-                                onClick={() => openPost(hit.postId)}
-                            >
-                                <Text className='text-[30rpx] font-medium text-textMain flex-1 line-clamp-2'>
-                                    {hit.title}
-                                </Text>
-                                <Text className='text-[24rpx] text-textThird shrink-0'>›</Text>
+                    <View className='flex flex-col gap-[22rpx]'>
+                        {[0, 1, 2].map((i) => (
+                            <View key={i} className='au-card p-[22rpx] flex gap-[22rpx]'>
+                                <View className='flex-1 flex flex-col gap-[14rpx]'>
+                                    <View className='au-skeleton w-[90%] h-[32rpx] rounded-[8rpx]' />
+                                    <View className='au-skeleton w-[50%] h-[24rpx] rounded-[8rpx] mt-auto' />
+                                </View>
+                                <View className='au-skeleton w-[200rpx] h-[150rpx] rounded-[18rpx]' />
                             </View>
                         ))}
+                    </View>
+                ) : hits.length === 0 ? (
+                    searched ? (
+                        <View className='au-card'>
+                            <AppEmpty
+                              description={t('page.posts.no_search_results', {query: keyword.trim()})}
+                            />
+                        </View>
+                    ) : (
+                        <View className='au-card'>
+                            <AppEmpty description={t('page.posts.search')} />
+                        </View>
+                    )
+                ) : (
+                    <View className='flex flex-col gap-[22rpx]'>
+                        {hits.map((hit) => {
+                            const detail = hit.postId ? details[hit.postId] : undefined;
+                            return (
+                                <PostCard
+                                  key={hit.postId}
+                                  title={hit.title || t('page.home.untitled')}
+                                  summary={detail ? getPostSummary(detail) : undefined}
+                                  thumbnail={detail ? getPostThumbnail(detail) : undefined}
+                                  author={detail?.authorName}
+                                  publishTime={detail?.publishTime}
+                                  onClick={() => hit.postId && router.push(`/post/detail?id=${hit.postId}`)}
+                                />
+                              );
+                        })}
                     </View>
                 )}
             </View>

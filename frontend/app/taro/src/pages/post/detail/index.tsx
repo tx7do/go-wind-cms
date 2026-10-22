@@ -1,368 +1,475 @@
-import {useEffect, useState, useMemo} from 'react';
+import {View, Text, Image, Input, Textarea} from '@tarojs/components';
+import {useMemo, useRef, useState} from 'react';
+import Taro, {useDidShow} from '@tarojs/taro';
 import {useTranslation} from 'react-i18next';
-import {View, Text, Image} from '@tarojs/components';
-import Taro from '@tarojs/taro';
-import CommentSection from '@/components/comment/CommentSection';
-import ContentViewer from '@/components/content/ContentViewer';
-import PostList from '@/components/post/PostList';
-import BackToTop from '@/components/layout/BackToTop';
 import XIcon from '@/plugins/xicon';
-import {formatDate} from '@/utils';
 import {useI18nRouter} from '@/i18n/helpers';
-import {usePreferences} from '@/core/preferences';
-import CustomFieldsSection from '@/components/post/CustomFieldsSection';
-import {contentservicev1_Post} from '@/api/generated/app/service/v1';
-import {fetchPost, getPostTitle, getPostContent, getPostThumbnail, getPostSummary} from '@/api/hooks/post';
+import {usePageTitle} from '@/hooks/usePageTitle';
+import {fetchPost, fetchListPosts, getPostTitle, getPostSummary, getPostContent, getPostThumbnail} from '@/api/hooks/post';
 import {
-    useInteractionStatus,
-    useGetCounts,
-    extractCount,
-    useLike,
-    useUnlike,
-    useWatch,
-    useUnwatch,
+  getInteractionStatus,
+  getCounts,
+  likePost,
+  unlikePost,
+  watchPost,
+  unwatchPost,
+  recordView,
+  extractCount,
 } from '@/api/hooks/interaction';
-import {Skeleton} from '@/components/ui/skeleton';
+import {fetchListComments, fetchCreateComment} from '@/api/hooks/comment';
+import {useIsLogin} from '@/store/core/access/store';
+import ContentViewer from '@/components/content/ContentViewer';
+import PostCard from '@/components/post/PostCard';
+import {AppEmpty, Button} from '@/components/ui';
+import type {
+  contentservicev1_Post,
+  contentservicev1_EditorType,
+  commentservicev1_Comment,
+  interactionservicev1_TargetType,
+  interactionservicev1_CounterMetric,
+} from '@/api/generated/app/service/v1';
 
+const RELATED_FIELD_MASK = 'id,status,authorName,publishTime,thumbnail,availableLanguages,translations.id,translations.postId,translations.languageCode,translations.title,translations.summary';
+
+/**
+ * 文章详情（阅读器）
+ * 结构：封面 → 标题/摘要 → 作者/时间/浏览 → 正文（按 editorType 分流）→ 标签 →
+ *       相关阅读 → 评论区 → 底部操作条（点赞 / 收藏 / 分享）
+ */
 export default function PostDetailPage() {
-    const {t} = useTranslation();
-    const router = useI18nRouter();
-    const {isDark} = usePreferences();
-    const [post, setPost] = useState<contentservicev1_Post | null>(null);
-    const [loading, setLoading] = useState(true);
-    // likeCount/watchCount：点赞/收藏计数缓存。初始读 GetCounts，写操作后用 RPC 返回的最新值更新。
-    const [likeCount, setLikeCount] = useState<number | undefined>(undefined);
-    const [watchCount, setWatchCount] = useState<number | undefined>(undefined);
+  const {t} = useTranslation();
+  const router = useI18nRouter();
+  const isLogin = useIsLogin();
 
-    const postId = useMemo(() => {
-        let id: string | null = null;
-        if (typeof Taro.getCurrentInstance === 'function') {
-            const instance = Taro.getCurrentInstance();
-            const routeId = instance?.router?.params?.id;
-            id = typeof routeId === 'string' ? routeId : null;
-        } else {
-            const pages = Taro.getCurrentPages();
-            const currentPage = pages[pages.length - 1];
-            const pageId = (currentPage as any).options?.id;
-            id = typeof pageId === 'string' ? pageId : null;
-        }
-        return id ? parseInt(id) : null;
-    }, []);
+  const postId = useMemo(() => {
+    const raw = Taro.getCurrentInstance()?.router?.params?.id;
+    const id = Number(raw);
+    return Number.isInteger(id) && id > 0 ? id : 0;
+  }, []);
 
-    // 点赞/收藏状态：由 interaction 子系统提供。
-    // useInteractionStatus 取当前 viewer 对此 post 的 {liked, watched} 初始态；
-    // useGetCounts 取此 post 的点赞与收藏计数（来自 interaction_counter 表，post 表的 likes 列已移除）；
-    // useLike/useUnlike/useWatch/useUnwatch 做写操作，后端在同事务内更新 ledger 与计数表。
-    const interactionStatus = useInteractionStatus(
-        'TARGET_TYPE_POST',
-        postId ? [postId] : [],
-    );
-    const countsResp = useGetCounts(
-        'TARGET_TYPE_POST',
-        postId ? [postId] : [],
-        ['COUNTER_METRIC_LIKE', 'COUNTER_METRIC_WATCH'],
-    );
-    const likeMutation = useLike();
-    const unlikeMutation = useUnlike();
-    const watchMutation = useWatch();
-    const unwatchMutation = useUnwatch();
+  const [post, setPost] = useState<contentservicev1_Post | null>(null);
+  const [loading, setLoading] = useState(true);
+  const [viewCount, setViewCount] = useState<number | null>(null);
+  const [liked, setLiked] = useState(false);
+  const [likeCount, setLikeCount] = useState(0);
+  const [watched, setWatched] = useState(false);
+  const [related, setRelated] = useState<contentservicev1_Post[]>([]);
+  const [comments, setComments] = useState<commentservicev1_Comment[]>([]);
+  const [commentTotal, setCommentTotal] = useState(0);
+  const [commentText, setCommentText] = useState('');
+  const [guestName, setGuestName] = useState('');
+  const [guestEmail, setGuestEmail] = useState('');
+  const [submittingComment, setSubmittingComment] = useState(false);
 
-    const isLiked = postId ? (interactionStatus.data?.statuses?.[postId]?.liked ?? false) : false;
-    const isBookmarked = postId ? (interactionStatus.data?.statuses?.[postId]?.watched ?? false) : false;
+  const loadComments = async () => {
+    if (!postId) return;
+    try {
+      const res = await fetchListComments({
+        paging: {page: 1, pageSize: 20},
+        formValues: {objectId: postId, contentType: 'CONTENT_TYPE_POST', status: 'STATUS_APPROVED'},
+        orderBy: ['-createdAt'],
+      });
+      setComments(res.items || []);
+      setCommentTotal(Number(res.total ?? res.items?.length ?? 0));
+    } catch (error) {
+      console.error('Load comments failed:', error);
+    }
+  };
 
-    const displayTitle = useMemo(() => post ? getPostTitle(post) : '', [post]);
+  // PV 上报去重：StrictMode/重复 useDidShow 不重复计数
+  const viewReportedRef = useRef<number | null>(null);
 
-    // 文章加载完成后，用文章标题作为导航栏标题
-    useEffect(() => {
-        if (displayTitle) {
-            Taro.setNavigationBarTitle({title: displayTitle});
-        }
-    }, [displayTitle]);
+  const loadAll = async () => {
+    if (!postId) {
+      setLoading(false);
+      return;
+    }
+    setLoading(true);
+    try {
+      const loaded = await fetchPost(postId);
+      setPost(loaded);
 
-    const displayContent = useMemo(() => post ? getPostContent(post) : '', [post]);
-    const displayThumbnail = useMemo(() => post ? getPostThumbnail(post) : '', [post]);
-    const displaySummary = useMemo(() => post ? getPostSummary(post) : '', [post]);
+      // 浏览量上报（匿名可报），返回累加后的浏览量直接展示
+      if (viewReportedRef.current !== postId) {
+        viewReportedRef.current = postId;
+        recordView('TARGET_TYPE_POST', postId)
+          .then((resp) => setViewCount(resp.viewCount ?? null))
+          .catch((error) => console.error('Record view failed:', error));
+      }
 
-    const relatedPostsQuery = useMemo(() => {
-        if (!post?.categoryIds) return null;
-        return {status: 'POST_STATUS_PUBLISHED', id__not: postId, category_ids__in: post.categoryIds};
-    }, [post?.categoryIds, postId]);
+      // 相关阅读：同分类（首个分类）下其余文章
+      const categoryId = loaded.categoryIds?.[0];
+      if (categoryId) {
+        fetchListPosts({
+          paging: {page: 1, pageSize: 6},
+          formValues: {status: 'POST_STATUS_PUBLISHED', category_ids__in: [categoryId]},
+          fieldMask: RELATED_FIELD_MASK,
+          orderBy: ['-publishTime'],
+        })
+          .then((res) => setRelated((res.items || []).filter((p) => p.id !== postId).slice(0, 4)))
+          .catch((error) => console.error('Load related posts failed:', error));
+      }
 
-    useEffect(() => {
-        async function loadPost() {
-            if (!postId) return;
-            setLoading(true);
-            try {
-                const fetchedPost = await fetchPost(postId);
-                if (fetchedPost) {
-                    setPost(fetchedPost);
-                }
-            } catch (error) {
-                console.error('Load post failed:', error);
-            } finally {
-                setLoading(false);
-            }
-        }
-        loadPost();
-    }, [postId]);
+      // 评论区：已通过审核的顶层评论，按时间倒序
+      loadComments();
 
-    // 从 GetCounts 响应同步点赞/收藏计数到缓存。
-    // 计数由 interaction_counter 表提供（post 表的散落计数列已移除）。
-    useEffect(() => {
-        if (countsResp.data && postId) {
-            setLikeCount(extractCount(countsResp.data, postId, 'COUNTER_METRIC_LIKE'));
-            setWatchCount(extractCount(countsResp.data, postId, 'COUNTER_METRIC_WATCH'));
-        }
-    }, [countsResp.data, postId]);
+      // 计数（浏览/点赞/收藏）任何人都可读
+      const metrics: interactionservicev1_CounterMetric[] = ['COUNTER_METRIC_LIKE', 'COUNTER_METRIC_VIEW', 'COUNTER_METRIC_WATCH'];
+      getCounts('TARGET_TYPE_POST' as interactionservicev1_TargetType, [postId], metrics)
+        .then((resp) => {
+          setLikeCount(extractCount(resp, postId, 'COUNTER_METRIC_LIKE'));
+          const views = extractCount(resp, postId, 'COUNTER_METRIC_VIEW');
+          setViewCount((prev) => prev ?? (views || null));
+        })
+        .catch((error) => console.error('Load counts failed:', error));
 
-    // 分享功能
-    function handleShare() {
-        Taro.setClipboardData({
-            data: window?.location?.href || '',
-        }).then(() => {
-            Taro.showToast({title: t('page.post_detail.link_copied'), icon: 'success'});
-        }).catch(() => {
-            Taro.showToast({title: t('page.post_detail.copy_failed'), icon: 'none'});
+      // 点赞/收藏态要求 viewer 身份，游客跳过（401 会触发全局重认证跳登录，不能让游客踩到）
+      if (isLogin) {
+        getInteractionStatus('TARGET_TYPE_POST' as interactionservicev1_TargetType, [postId])
+          .then((resp) => {
+            const status = resp.statuses?.[String(postId)];
+            setLiked(!!status?.liked);
+            setWatched(!!status?.watched);
+          })
+          .catch((error) => console.error('Load interaction status failed:', error));
+      }
+    } catch (error) {
+      console.error('Load post failed:', error);
+      setPost(null);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  useDidShow(() => {
+    loadAll();
+  });
+
+  usePageTitle(post ? (getPostTitle(post) || t('page.title.post_detail')) : t('page.title.post_detail'));
+
+  const requireLogin = (action: () => void) => {
+    if (!isLogin) {
+      Taro.showToast({title: t('page.user.please_login'), icon: 'none'});
+      router.push('/login');
+      return;
+    }
+    action();
+  };
+
+  const toggleLike = () =>
+    requireLogin(() => {
+      if (!postId) return;
+      const next = !liked;
+      setLiked(next);
+      setLikeCount((c) => Math.max(0, c + (next ? 1 : -1)));
+      (next ? likePost : unlikePost)('TARGET_TYPE_POST' as interactionservicev1_TargetType, postId)
+        .catch((error) => {
+          console.error('Toggle like failed:', error);
+          setLiked(!next);
+          setLikeCount((c) => Math.max(0, c + (next ? -1 : 1)));
         });
+    });
+
+  const toggleWatch = () =>
+    requireLogin(() => {
+      if (!postId) return;
+      const next = !watched;
+      setWatched(next);
+      (next ? watchPost : unwatchPost)(postId)
+        .catch((error) => {
+          console.error('Toggle watch failed:', error);
+          setWatched(!next);
+        });
+    });
+
+  const shareLink = () => {
+    const url = typeof window !== 'undefined'
+      ? `${window.location.origin}/posts/detail?id=${postId}`
+      : `/posts/detail?id=${postId}`;
+    Taro.setClipboardData({data: url})
+      .then(() => Taro.showToast({title: t('page.post_detail.link_copied'), icon: 'none'}))
+      .catch((error) => {
+        console.error('Copy link failed:', error);
+        Taro.showToast({title: t('ui.fallback.http.networkError'), icon: 'none'});
+      });
+  };
+
+  const submitComment = async () => {
+    const content = commentText.trim();
+    if (!content || !postId || submittingComment) return;
+
+    // 游客留言需留昵称与合法邮箱（对齐 react 端 CommentSection 校验）
+    if (!isLogin) {
+      const name = guestName.trim();
+      const email = guestEmail.trim();
+      if (!name) {
+        Taro.showToast({title: t('comment.enter_nickname'), icon: 'none'});
+        return;
+      }
+      if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
+        Taro.showToast({title: t('comment.enter_email'), icon: 'none'});
+        return;
+      }
     }
 
-    // ===== 加载态 =====
-    if (loading) {
-        return (
-            <View className='min-h-screen w-full bg-pageBg'>
-                {/* 头部骨架 */}
-                <View className='bg-cardBg'>
-                    <View className='h-[360rpx] bg-splitLine/30' />
-                    <View className='px-[32rpx] py-[32rpx]'>
-                        <Skeleton className='h-[44rpx] w-[80%] rounded-[8rpx] mb-[16rpx]' />
-                        <Skeleton className='h-[32rpx] w-[60%] rounded-[8rpx] mb-[24rpx]' />
-                        <View className='flex gap-[24rpx]'>
-                            <Skeleton className='h-[24rpx] w-[120rpx] rounded-[8rpx]' />
-                            <Skeleton className='h-[24rpx] w-[160rpx] rounded-[8rpx]' />
-                            <Skeleton className='h-[24rpx] w-[100rpx] rounded-[8rpx]' />
-                        </View>
-                    </View>
-                </View>
-                {/* 内容骨架 */}
-                <View className='bg-cardBg mt-[16rpx] px-[32rpx] py-[32rpx]'>
-                    <Skeleton className='h-[32rpx] w-full rounded-[8rpx] mb-[16rpx]' />
-                    <Skeleton className='h-[32rpx] w-[90%] rounded-[8rpx] mb-[16rpx]' />
-                    <Skeleton className='h-[32rpx] w-[75%] rounded-[8rpx] mb-[32rpx]' />
-                    <Skeleton className='h-[32rpx] w-full rounded-[8rpx] mb-[16rpx]' />
-                    <Skeleton className='h-[32rpx] w-[60%] rounded-[8rpx]' />
-                </View>
-            </View>
-        );
+    setSubmittingComment(true);
+    try {
+      await fetchCreateComment({
+        objectId: postId,
+        contentType: 'CONTENT_TYPE_POST',
+        content,
+        status: 'STATUS_PENDING',
+        ...(!isLogin
+          ? {authorName: guestName.trim(), authorEmail: guestEmail.trim(), authorType: 'AUTHOR_TYPE_GUEST'}
+          : {}),
+      } as Partial<commentservicev1_Comment>);
+      setCommentText('');
+      Taro.showToast({title: t('comment.comment_submitted'), icon: 'success'});
+      await loadComments();
+    } catch (error) {
+      console.error('Submit comment failed:', error);
+      Taro.showToast({title: t('comment.submit_comment_failed'), icon: 'none'});
+    } finally {
+      setSubmittingComment(false);
     }
+  };
 
-    // ===== 空态 =====
-    if (!post) {
-        return (
-            <View className='min-h-screen w-full bg-pageBg flex flex-col items-center justify-center'>
-                <View className='w-[120rpx] h-[120rpx] rounded-full bg-pageBg flex items-center justify-center mb-[24rpx]'>
-                    <XIcon name='carbon:document-unknown' size={48} className='text-textWeak' />
-                </View>
-                <Text className='text-body text-textSec mb-[8rpx]'>{t('page.post_detail.post_not_found')}</Text>
-                <View
-                  className='flex items-center gap-[8rpx] px-[32rpx] py-[16rpx] rounded-full bg-primary/10 mt-[24rpx]'
-                  onClick={() => router.reLaunch('/')}
-                  hoverClass='tap-active'
-                >
-                    <XIcon name='carbon:home' size={16} className='text-primary' />
-                    <Text className='text-desc text-primary'>{t('page.error.go_home')}</Text>
-                </View>
-            </View>
-        );
-    }
-
-    // ===== 正常渲染 =====
+  if (loading) {
     return (
-        <View className='min-h-screen w-full bg-pageBg pb-[400rpx]'>
-            {/* 封面图 */}
-            {displayThumbnail && (
-                <View className='w-full h-[400rpx] overflow-hidden'>
-                    <Image src={displayThumbnail} mode='aspectFill' className='w-full h-full' />
-                </View>
-            )}
-
-            {/* 文章头部 - 独立白色卡片 */}
-            <View className={`bg-cardBg px-[32rpx] pt-[32rpx] pb-[28rpx] ${displayThumbnail ? '' : 'pt-[40rpx]'}`}>
-                {/* 标题 - 全页最大字号 */}
-                <Text className='text-title font-bold text-textMain block mb-[16rpx] leading-[1.35]'>
-                    {displayTitle}
-                </Text>
-
-                {/* 摘要 */}
-                {displaySummary && (
-                    <Text className='text-desc text-textSec block mb-[24rpx] leading-[1.6]'>
-                        {displaySummary}
-                    </Text>
-                )}
-
-                {/* 作者信息行 */}
-                <View className='flex items-center gap-[16rpx] mb-[20rpx]'>
-                    <View className='w-[52rpx] h-[52rpx] rounded-full bg-primary/10 flex items-center justify-center flex-shrink-0'>
-                        <Text className='text-desc font-bold text-primary'>
-                            {post.authorName?.charAt(0) || 'A'}
-                        </Text>
-                    </View>
-                    <View className='flex-1 min-w-0'>
-                        <Text className='text-desc font-medium text-textMain block'>{post.authorName}</Text>
-                        <Text className='text-tips text-textSec'>{formatDate(post.createdAt)}</Text>
-                    </View>
-                </View>
-
-                {/* 统计标签 */}
-                <View className='flex items-center gap-[16rpx] flex-wrap'>
-                    <View className='flex items-center gap-[4rpx] px-[14rpx] py-[4rpx] rounded-full bg-pageBg'>
-                        <XIcon name='carbon:thumbs-up' size={12} className='text-textThird' />
-                        <Text className='text-tips text-textSec'>{likeCount ?? 0} {t('page.post_detail.likes')}</Text>
-                    </View>
-                    <View className='flex items-center gap-[4rpx] px-[14rpx] py-[4rpx] rounded-full bg-pageBg'>
-                        <XIcon name='carbon:bookmark' size={12} className='text-textThird' />
-                        <Text className='text-tips text-textSec'>{watchCount ?? 0} {t('page.post_detail.bookmark')}</Text>
-                    </View>
-                </View>
-            </View>
-
-            {/* 文章正文 - 独立白色卡片，确保内容有左右安全边距 */}
-            <View className='bg-cardBg px-[32rpx] py-[32rpx] mt-[16rpx]'>
-                <ContentViewer content={displayContent} type='markdown' />
-                {/* 自定义字段（内容建模前台读侧；无模型/无值时静默不渲染） */}
-                <CustomFieldsSection postId={postId} customFields={post.customFields} />
-            </View>
-
-            {/* 标签 */}
-            {post.tagIds && post.tagIds.length > 0 && (
-                <View className='bg-cardBg px-[32rpx] py-[20rpx] mt-[16rpx]'>
-                    <View className='flex items-center gap-[8rpx] flex-wrap'>
-                        <XIcon name='carbon:tag' size={14} className='text-textThird' />
-                        {post.tagIds.map((tagId) => (
-                            <View
-                              key={tagId}
-                              className='px-[16rpx] py-[6rpx] rounded-full bg-pageBg'
-                              onClick={() => router.push(`/tag/detail?id=${tagId}`)}
-                              hoverClass='tap-active'
-                            >
-                                <Text className='text-tips text-textSec'>#{tagId}</Text>
-                            </View>
-                        ))}
-                    </View>
-                </View>
-            )}
-
-            {/* 评论区 */}
-            <View className='mt-[32rpx] mb-[32rpx]'>
-                <CommentSection objectId={postId} contentType='CONTENT_TYPE_POST' onUpdateComments={() => {}} />
-            </View>
-
-            {/* 相关文章 */}
-            {relatedPostsQuery && (
-                <View className='mt-[32rpx]'>
-                    {/* 区块标题 */}
-                    <View className='flex items-center gap-[8rpx] bg-pageBg px-[32rpx] py-[14rpx]'>
-                        <XIcon name='carbon:document' size={16} className='text-primary' />
-                        <Text className='text-desc font-bold text-textMain'>
-                            {t('page.post_detail.related_posts')}
-                        </Text>
-                    </View>
-                    <View className='px-[32rpx] py-[16rpx]'>
-                        <PostList
-                          queryParams={relatedPostsQuery}
-                          fieldMask='id,status,sort_order,is_featured,author_name,available_languages,created_at,translations.id,translations.post_id,translations.language_code,translations.title,translations.summary,thumbnail'
-                          orderBy={['-sortOrder']}
-                          page={1}
-                          pageSize={4}
-                          compact
-                          showSkeleton={false}
-                          showPagination={false}
-                        />
-                    </View>
-                </View>
-            )}
-
-            {/* 返回按钮 */}
-            <View className='mt-[32rpx] px-[32rpx] pb-[48rpx]'>
-                <View
-                  className='flex items-center justify-center gap-[8rpx] py-[20rpx] rounded-[12rpx] bg-cardBg border-[1rpx] border-splitLine'
-                  onClick={() => router.back()}
-                  hoverClass='tap-active'
-                >
-                    <XIcon name='carbon:arrow-left' size={16} className='text-textSec' />
-                    <Text className='text-desc text-textSec'>{t('page.post_detail.back')}</Text>
-                </View>
-            </View>
-
-            {/* 浮动底部操作栏 - 毛玻璃遮罩 */}
-            <View
-              className='fixed bottom-0 left-0 right-0 z-50 flex items-center justify-around'
-              style={{
-                backgroundColor: isDark ? 'rgba(35, 35, 38, 0.88)' : 'rgba(255, 255, 255, 0.88)',
-                backdropFilter: 'blur(16px)',
-                WebkitBackdropFilter: 'blur(16px)',
-                borderTop: isDark ? '1rpx solid rgba(255, 255, 255, 0.08)' : '1rpx solid rgba(0, 0, 0, 0.06)',
-                paddingTop: '16rpx',
-                paddingBottom: 'calc(32rpx + env(safe-area-inset-bottom))',
-                paddingInline: '16rpx',
-              }}
-            >
-                <View
-                  className='flex items-center gap-[6rpx] px-[32rpx] py-[12rpx] rounded-full'
-                  onClick={async () => {
-                    if (!postId) return;
-                    try {
-                        if (isLiked) {
-                            const r = await unlikeMutation.mutateAsync({targetType: 'TARGET_TYPE_POST', targetId: postId});
-                            if (r?.likeCount !== undefined) setLikeCount(r.likeCount);
-                        } else {
-                            const r = await likeMutation.mutateAsync({targetType: 'TARGET_TYPE_POST', targetId: postId});
-                            if (r?.likeCount !== undefined) setLikeCount(r.likeCount);
-                        }
-                    } catch (e) { console.error('toggle like failed:', e); }
-                  }}
-                  hoverClass='tap-active'
-                >
-                    <XIcon name={isLiked ? 'carbon:thumbs-up-filled' : 'carbon:thumbs-up'} size={20}
-                      className={isLiked ? 'text-primary' : 'text-textSec'}
-                    />
-                    <Text className={isLiked ? 'text-tips text-primary' : 'text-tips text-textSec'}>
-                        {t('page.post_detail.likes')}
-                    </Text>
-                </View>
-                <View
-                  className='flex items-center gap-[6rpx] px-[32rpx] py-[12rpx] rounded-full'
-                  onClick={async () => {
-                    if (!postId) return;
-                    try {
-                        if (isBookmarked) {
-                            const r = await unwatchMutation.mutateAsync({postId});
-                            if (r?.watchCount !== undefined) setWatchCount(r.watchCount);
-                        } else {
-                            const r = await watchMutation.mutateAsync({postId});
-                            if (r?.watchCount !== undefined) setWatchCount(r.watchCount);
-                        }
-                    } catch (e) { console.error('toggle bookmark failed:', e); }
-                  }}
-                  hoverClass='tap-active'
-                >
-                    <XIcon name={isBookmarked ? 'carbon:bookmark-filled' : 'carbon:bookmark'} size={20}
-                      className={isBookmarked ? 'text-primary' : 'text-textSec'}
-                    />
-                    <Text className={isBookmarked ? 'text-tips text-primary' : 'text-tips text-textSec'}>
-                        {t('page.post_detail.bookmark')}
-                    </Text>
-                </View>
-                <View
-                  className='flex items-center gap-[6rpx] px-[32rpx] py-[12rpx] rounded-full'
-                  onClick={handleShare}
-                  hoverClass='tap-active'
-                >
-                    <XIcon name='carbon:share' size={20} className='text-textSec' />
-                    <Text className='text-tips text-textSec'>{t('page.post_detail.share')}</Text>
-                </View>
-            </View>
-
-            <BackToTop scrollThreshold={500} />
+      <View className='au-page w-full bg-pageBg pb-[200rpx]'>
+        <View className='px-[24rpx] pt-[28rpx]'>
+          <View className='au-card p-[32rpx] flex flex-col gap-[20rpx]'>
+            <View className='au-skeleton w-[70%] h-[44rpx] rounded-[10rpx]' />
+            <View className='au-skeleton w-[40%] h-[26rpx] rounded-[8rpx]' />
+            <View className='au-skeleton w-full h-[300rpx] rounded-[16rpx] mt-[10rpx]' />
+            <View className='au-skeleton w-full h-[26rpx] rounded-[8rpx]' />
+            <View className='au-skeleton w-[92%] h-[26rpx] rounded-[8rpx]' />
+            <View className='au-skeleton w-[96%] h-[26rpx] rounded-[8rpx]' />
+          </View>
         </View>
+      </View>
     );
+  }
+
+  if (!post) {
+    return (
+      <View className='au-page w-full bg-pageBg'>
+        <View className='au-card mx-[24rpx] mt-[28rpx]'>
+          <AppEmpty variant='error' description={t('page.post_detail.post_not_found')} />
+          <View className='pb-[40rpx] flex justify-center'>
+            <Button variant='hero' size='sm' className='rounded-full px-[48rpx]' onClick={() => router.back()}>
+              {t('page.post_detail.back')}
+            </Button>
+          </View>
+        </View>
+      </View>
+    );
+  }
+
+  const title = getPostTitle(post) || t('page.post_detail.untitled');
+  const summary = getPostSummary(post);
+  const content = getPostContent(post);
+  const cover = post.thumbnail || '';
+  // 编辑器类型 → ContentViewer：富文本(html) / 其余按 markdown；纯文本单独分流
+  const editorType = (post.editorType || 'EDITOR_TYPE_MARKDOWN') as contentservicev1_EditorType;
+  const contentType = editorType === 'EDITOR_TYPE_RICH_TEXT'
+    ? 'html'
+    : editorType === 'EDITOR_TYPE_PLAIN_TEXT' ? 'text' : 'markdown';
+
+  return (
+    <View className='au-page w-full bg-pageBg pb-[200rpx]'>
+      <View className='px-[24rpx] pt-[28rpx]'>
+        {/* 封面 */}
+        {cover && (
+          <View className='au-anim rounded-[28rpx] overflow-hidden mb-[28rpx] shadow-[0_16rpx_48rpx_rgba(2,8,26,0.12)]'>
+            <Image src={cover} mode='widthFix' className='w-full' lazyLoad />
+          </View>
+        )}
+
+        {/* 标题与元信息 */}
+        <View className='au-anim au-anim-1 mb-[28rpx]'>
+          <Text className='text-title font-bold text-textMain leading-[1.35] block'>{title}</Text>
+          {summary && (
+            <Text className='text-desc text-textSec leading-[1.7] block mt-[16rpx]'>{summary}</Text>
+          )}
+          <View className='flex items-center gap-[26rpx] mt-[20rpx]'>
+            {post.authorName && (
+              <View className='flex items-center gap-[8rpx]'>
+                <View className='w-[44rpx] h-[44rpx] rounded-full bg-primary-tint flex items-center justify-center'>
+                  <Text className='text-tips font-bold text-primary'>
+                    {post.authorName.charAt(0).toUpperCase()}
+                  </Text>
+                </View>
+                <Text className='text-tips text-textSec'>{post.authorName}</Text>
+              </View>
+            )}
+            {post.publishTime && (
+              <View className='flex items-center gap-[6rpx]'>
+                <XIcon name='carbon:calendar' size={18} className='text-textWeak' />
+                <Text className='text-tips text-textThird'>{String(post.publishTime).slice(0, 10)}</Text>
+              </View>
+            )}
+            {viewCount !== null && (
+              <View className='flex items-center gap-[6rpx]'>
+                <XIcon name='carbon:view' size={18} className='text-textWeak' />
+                <Text className='text-tips text-textThird'>{viewCount}</Text>
+              </View>
+            )}
+          </View>
+        </View>
+
+        {/* 正文 */}
+        <View className='au-card au-card--glow p-[32rpx] au-anim au-anim-2 mb-[28rpx]'>
+          {content ? (
+            <ContentViewer content={content} type={contentType} />
+          ) : (
+            <AppEmpty description={t('common.noData')} />
+          )}
+        </View>
+
+        {/* 相关阅读 */}
+        {related.length > 0 && (
+          <View className='au-anim au-anim-3 mb-[28rpx]'>
+            <Text className='au-section-title block mb-[22rpx]'>{t('page.post_detail.related_posts')}</Text>
+            <View className='flex flex-col gap-[22rpx]'>
+              {related.map((rel) => (
+                <PostCard
+                  key={rel.id}
+                  title={getPostTitle(rel) || t('page.home.untitled')}
+                  thumbnail={getPostThumbnail(rel)}
+                  publishTime={rel.publishTime}
+                  onClick={() => rel.id && router.push(`/post/detail?id=${rel.id}`)}
+                />
+              ))}
+            </View>
+          </View>
+        )}
+
+        {/* 评论区 */}
+        <View className='au-anim au-anim-4'>
+          <Text className='au-section-title block mb-[22rpx]'>
+            {t('comment.comments')} ({commentTotal})
+          </Text>
+
+          {/* 评论输入（游客留言需昵称+邮箱，进入待审核；登录用户直接提交） */}
+          <View className='au-card p-[28rpx] mb-[22rpx]'>
+            {!isLogin && (
+              <View className='flex gap-[16rpx] mb-[16rpx]'>
+                <View className='au-input flex-1 h-[76rpx]'>
+                  <Input
+                    className='au-input-field'
+                    value={guestName}
+                    placeholder={t('comment.nickname')}
+                    placeholderClass='text-textWeak'
+                    onInput={(e) => setGuestName(e.detail.value)}
+                  />
+                </View>
+                <View className='au-input flex-1 h-[76rpx]'>
+                  <Input
+                    className='au-input-field'
+                    value={guestEmail}
+                    placeholder={t('comment.email')}
+                    placeholderClass='text-textWeak'
+                    onInput={(e) => setGuestEmail(e.detail.value)}
+                  />
+                </View>
+              </View>
+            )}
+            <Textarea
+              className='au-input-field min-h-[120rpx] w-full'
+              value={commentText}
+              placeholder={t('comment.comment_content')}
+              placeholderClass='text-textWeak'
+              maxlength={500}
+              onInput={(e) => setCommentText(e.detail.value)}
+            />
+            <View className='flex justify-end mt-[16rpx]'>
+              <Button
+                variant='hero'
+                size='sm'
+                className='rounded-full px-[44rpx]'
+                loading={submittingComment}
+                disabled={!commentText.trim()}
+                onClick={submitComment}
+              >
+                {t('comment.submit_comment')}
+              </Button>
+            </View>
+          </View>
+
+          {comments.length === 0 ? (
+            <View className='au-card'>
+              <AppEmpty description={t('comment.no_comments')} />
+            </View>
+          ) : (
+            <View className='au-card overflow-hidden'>
+              {comments.map((comment, index) => (
+                <View
+                  key={comment.id ?? index}
+                  className={`p-[28rpx] ${index < comments.length - 1 ? 'border-b-[length:1rpx] border-splitLine' : ''}`}
+                >
+                  <View className='flex items-center gap-[14rpx] mb-[12rpx]'>
+                    <View className='w-[52rpx] h-[52rpx] rounded-full bg-primary-tint flex items-center justify-center'>
+                      <Text className='text-tips font-bold text-primary'>
+                        {(comment.authorName || 'A').charAt(0).toUpperCase()}
+                      </Text>
+                    </View>
+                    <Text className='text-desc font-medium text-textMain'>
+                      {comment.authorName || t('comment.author')}
+                    </Text>
+                    {comment.createdAt && (
+                      <Text className='text-tips text-textWeak ml-auto'>
+                        {String(comment.createdAt).slice(0, 10)}
+                      </Text>
+                    )}
+                  </View>
+                  <Text className='text-desc text-textMain leading-[1.7]'>{comment.content}</Text>
+                </View>
+              ))}
+            </View>
+          )}
+        </View>
+      </View>
+
+      {/* 底部操作条：点赞 / 收藏 / 分享 */}
+      <View className='au-bottom-bar au-glass flex items-center gap-[20rpx]'>
+        <View
+          className='flex-1 h-[88rpx] rounded-full flex items-center justify-center gap-[10rpx] border-[length:1rpx] border-splitLine bg-cardBg'
+          hoverClass='tap-active'
+          onClick={toggleLike}
+        >
+          <XIcon
+            name={liked ? 'carbon:favorite-filled' : 'carbon:favorite'}
+            size={30}
+            className={liked ? 'text-[#ff4d4f]' : 'text-textSec'}
+          />
+          <Text className={`text-desc ${liked ? 'text-[#ff4d4f] font-bold' : 'text-textSec'}`}>
+            {likeCount > 0 ? likeCount : t('comment.like')}
+          </Text>
+        </View>
+        <View
+          className='flex-1 h-[88rpx] rounded-full flex items-center justify-center gap-[10rpx] border-[length:1rpx] border-splitLine bg-cardBg'
+          hoverClass='tap-active'
+          onClick={toggleWatch}
+        >
+          <XIcon
+            name={watched ? 'carbon:star-filled' : 'carbon:star'}
+            size={30}
+            className={watched ? 'text-primary' : 'text-textSec'}
+          />
+          <Text className={`text-desc ${watched ? 'text-primary font-bold' : 'text-textSec'}`}>
+            {watched ? t('page.post_detail.bookmarked') : t('page.post_detail.bookmark')}
+          </Text>
+        </View>
+        <View
+          className='flex-1 h-[88rpx] rounded-full flex items-center justify-center gap-[10rpx] btn-hero'
+          hoverClass='tap-active'
+          onClick={shareLink}
+        >
+          <XIcon name='carbon:share' size={28} className='text-white' />
+          <Text className='text-desc text-white font-bold'>{t('page.post_detail.share')}</Text>
+        </View>
+      </View>
+    </View>
+  );
 }

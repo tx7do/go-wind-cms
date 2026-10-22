@@ -6,7 +6,7 @@
 
 基于 **Taro** 的多端统一 CMS 内容展示前端，一套代码同时编译为 H5、微信/支付宝/抖音小程序。
 
-**核心技术栈**：Taro 4.1 + React 18 + TypeScript + Vite + Tailwind CSS 3 + weapp-tailwindcss（小程序 rem→rpx）+ Zustand + TanStack React Query + i18next/react-i18next + Axios + highlight.js/marked/KaTeX/Mermaid
+**核心技术栈**：Taro 4.1 + React 18 + TypeScript + Vite + Tailwind CSS 3 + weapp-tailwindcss（小程序 rem→rpx）+ Zustand + TanStack React Query + i18next/react-i18next + Axios + marked/DOMPurify
 
 **包管理器**：pnpm
 
@@ -15,25 +15,36 @@
 ### 多端编译模式
 
 ```bash
-pnpm dev:h5       # H5 开发 → http://localhost:10086
+pnpm dev:h5       # H5 开发 → http://localhost:15021（TARO_APP_VITE_PORT）
 pnpm dev:weapp    # 微信小程序开发
+pnpm typecheck    # tsc --noEmit
+pnpm lint         # eslint src
 pnpm build:h5     # → dist/ (SPA)
 pnpm build:weapp  # → dist/ (小程序包)
 ```
 
-**Taro 配置要点**（`config/index.ts`）：
+**Taro 配置要点**（`config/index.ts`，与 go-wind-edu 同源）：
 
 ```typescript
 export default defineConfig<'vite'>(async (merge, {}) => ({
   framework: 'react',
-  compiler: 'vite',
+  // 自定义 Vite 插件必须挂在 compiler 对象上（h5 的 SPA history fallback）
+  compiler: {
+    type: 'vite',
+    vitePlugins: process.env.TARO_ENV === 'h5' ? [h5SpaFallback()] : [],
+  },
   designWidth: 750,       // 设计稿 750px，rpx 基准
   h5: {
+    devServer: {
+      // Taro 只自动加载 TARO_APP_ 前缀环境变量，VITE_ 前缀读不到
+      port: Number(process.env.TARO_APP_VITE_PORT) || 15021,
+    },
     router: {
       mode: 'browser',
-      customRoutes: {     // H5 美化路由
-        'pages/index/index': '/',
-        'pages/post/detail/index': '/post/detail',
+      customRoutes: {     // H5 美化路由（入口页不可映射到 '/'——Taro 4.1.11 首载 '/' 丢页面挂载，整屏空白）
+        'pages/post/index': '/posts',
+        'pages/post/detail/index': '/posts/detail',
+        // ...
       }
     }
   },
@@ -46,23 +57,41 @@ export default defineConfig<'vite'>(async (merge, {}) => ({
 }));
 ```
 
+**weapp 网络适配**：小程序没有 XHR，axios 默认适配器派不出请求。`core/transport/rest/taro-adapter.ts`
+用 Taro.request 实现了 axios 适配器，在「无 XHR 运行时」由 `RequestClient` 自动启用（H5 仍走 axios 自带 XHR）。
+`StoreProvider` 初始化 RequestClient **不做 window 探测**（小程序没有 window，跳过初始化会让 weapp 全部请求挂掉）。
+
+**图标系统**：图标一律走构建期裁剪的图标字体（`node scripts/gen-icons.mjs`，build 脚本自动先跑），
+源码里写 `carbon:<name>`；名字写错生成阶段直接 fail。tabBar PNG 图标由 `node scripts/gen-tab-icons.mjs`
+用 SDF 生成（改 tab 图标改那个脚本再重跑）。
+
 ### 多端路由（页面栈模型）
 
-Taro 使用**页面栈**路由模型（非文件路由），页面注册在 `app.config.ts`：
+Taro 使用**页面栈**路由模型（非文件路由），页面注册在 `app.config.ts`，并带 4 个原生 tabBar
+（首页 / 文章 / 收藏 / 我的；小程序跳 tab 页必须 switchTab，`useI18nRouter` 已处理）：
 
 ```
 src/pages/
-├── index/index.tsx              # 首页（pages 第一项 = 启动页）
+├── index/index.tsx              # 首页（搜索入口 + hero + 分类网格 + 推荐横滑 + 最新文章 + 标签）
 ├── post/
-│   ├── index/index.tsx          # 文章列表
-│   └── detail/index.tsx         # 文章详情（?id=xxx）
-├── category/ tag/ about/ login/ settings/ user/
+│   ├── index.tsx                # 文章列表（tab，分类筛选 chips + 加载更多）
+│   └── detail/index.tsx         # 文章详情（?id=xxx；点赞/收藏/分享/评论/PV 上报/相关阅读）
+├── category/                    # 分类总览 + 分类详情（?id=xxx）
+├── tag/                         # 标签总览 + 标签详情（?id=xxx）
+├── search/index.tsx             # 搜索（OpenSearch，防抖即时搜）
+├── favorites/index.tsx          # 我的收藏（tab，未登录出登录引导卡）
+├── page/detail/index.tsx        # CMS 页面渲染（?slug= 或 ?id=，SectionRenderer 14 类区块）
+├── user/index.tsx               # 我的（tab，渐变横幅 + 真实资料 + 菜单）
+├── login/index.tsx              # 登录（深空蓝极光全屏页，AES 加密密码）
+├── settings/                    # 设置（主题/语言 OptionSheet + 资料编辑）+ 改密子页
+└── about/ contact/ terms/ privacy/ disclaimer/   # 静态页（i18n 文案）
 ```
 
 ```typescript
 // app.config.ts
 export default defineAppConfig({
-  pages: ['pages/index', 'pages/category/index', 'pages/post/detail/index', /* ... */],
+  pages: ['pages/index/index', 'pages/post/index', /* ... */],
+  tabBar: { list: [/* 首页/文章/收藏/我的 */] },
 });
 ```
 
@@ -158,9 +187,10 @@ src/
 pnpm install
 pnpm dev:h5        # H5 开发
 pnpm dev:weapp     # 微信小程序
+pnpm typecheck     # tsc --noEmit（门禁）
+pnpm lint          # eslint（门禁）
 pnpm build:h5      # H5 生产 → dist/
 pnpm build:weapp   # 小程序生产 → dist/
-pnpm lint
 ```
 
 ```env
@@ -180,7 +210,7 @@ TARO_ENABLE_MOCK=false
 - [ ] Step 2: 创建页面（src/pages/product/index.tsx，用 View/Text 跨端组件）
 - [ ] Step 3: 注册页面路由（app.config.ts 的 pages 数组）
 - [ ] Step 4: H5 美化路由（config/index.ts 的 h5.router.customRoutes）
-- [ ] Step 5: 添加导航入口（components/layout/MobileNav.tsx）
+- [ ] Step 5: 添加导航入口（tab 页进 app.config.ts 的 tabBar.list；其余页从首页/我的菜单挂入口）
 ```
 
 ## 新增语言

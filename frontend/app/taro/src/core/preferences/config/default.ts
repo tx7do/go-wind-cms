@@ -1,10 +1,10 @@
-import type {Preferences} from '../types';
 import defaultAvatar from '@/assets/images/default-avatar.webp';
+import type {Preferences} from '../types';
 
 const defaultPreferences: Preferences = {
     app: {
-        name: 'GoWind CMS',
-        title: 'GoWind Content Hub',
+        name: '风行教育',
+        title: '风行教育',
         defaultAvatar,
         locale: 'zh-CN',
         isMobile: false,

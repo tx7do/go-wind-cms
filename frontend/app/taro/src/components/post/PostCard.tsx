@@ -1,162 +1,89 @@
-import {View, Text} from '@tarojs/components';
-import React from 'react';
+import {View, Text, Image} from '@tarojs/components';
+import XIcon from '@/plugins/xicon';
+import {cn} from '@/lib/utils';
+import {formatDate} from '@/utils/date';
 
-import {XIcon} from '@/plugins/xicon';
-import {
-    getPostTitle,
-    getPostSummary,
-    getPostThumbnail,
-} from '@/api/hooks/post';
-import {useI18nRouter} from '@/i18n/helpers/useI18nRouter';
-
-import type {contentservicev1_Post} from '@/api/generated/app/service/v1';
-
-import Image from '@/components/ui/image';
-import {formatDate} from '@/utils';
-import Taro from '@tarojs/taro';
-
-interface PostCardProps {
-    post: contentservicev1_Post;
-    from?: string;
-    categoryId?: number;
-    likeCount?: number;
-    /** 紧凑模式：横向卡片（缩略图左+文字右） */
-    compact?: boolean;
+export interface PostCardProps {
+    title: string;
+    summary?: string;
+    thumbnail?: string;
+    author?: string;
+    publishTime?: string;
+    views?: number;
+    className?: string;
+    onClick?: () => void;
 }
 
-const PostCard: React.FC<PostCardProps> = ({
-    post,
-    from = 'post-list',
-    categoryId,
-    likeCount,
-    compact = false,
-}) => {
-    const router = useI18nRouter();
-
-    const handleViewPost = () => {
-        const query: string[] = [`from=${from}`];
-        if (categoryId) query.push(`categoryId=${categoryId}`);
-        router.push(`/post/detail?id=${post.id}&${query.join('&')}`);
-        Taro.pageScrollTo({scrollTop: 0, duration: 300});
-    };
-
-    const thumbnail = getPostThumbnail(post);
-    const title = getPostTitle(post);
-    const summary = getPostSummary(post);
-
-    // ---- 紧凑横排卡片 ----
-    if (compact) {
-        return (
-            <View
-              className='flex flex-row rounded bg-cardBg overflow-hidden min-h-touch'
-              onClick={handleViewPost}
-              hoverClass='tap-active'
-            >
-                {/* 缩略图 / 品牌蓝风纹占位 - 固定 16:9 比例（docs/design-language.md §7） */}
-                <View className='w-[240rpx] h-[136rpx] flex-shrink-0 overflow-hidden' style={{backgroundColor: 'var(--color-primary-tint)'}}>
-                    {thumbnail ? (
-                        <Image src={thumbnail} mode='aspectFill' className='w-full h-full' />
-                    ) : (
-                        <View className='w-full h-full flex items-center justify-center'>
-                            <XIcon name='carbon:document' size={40} className='text-primary' />
-                        </View>
-                    )}
-                </View>
-                <View className='flex-1 flex flex-col justify-between p-[20rpx] min-w-0'>
-                    <Text
-                      className='text-desc font-bold text-textMain leading-[1.4]'
-                      style={{
-                            overflow: 'hidden',
-                            textOverflow: 'ellipsis',
-                            display: '-webkit-box',
-                            WebkitLineClamp: 2,
-                            WebkitBoxOrient: 'vertical',
-                        }}
-                    >
-                        {title}
-                    </Text>
-                    <View className='flex items-center gap-[20rpx] text-tips text-textSec'>
-                        <View className='flex items-center gap-[6rpx]'>
-                            <XIcon name='carbon:calendar' size={14} className='text-textSec' />
-                            <Text className='text-tips text-textSec'>{formatDate(post.createdAt)}</Text>
-                        </View>
-                    </View>
-                </View>
-            </View>
-        );
-    }
-
-    // ---- 默认竖排卡片（封面+标题+摘要） ----
+/**
+ * 文章卡片（信息流通用）：左侧标题/摘要/元信息，右侧封面。
+ * 无封面时右侧退化为品牌色渐变占位块，保持栅格节奏不塌。
+ */
+export default function PostCard({
+    title,
+    summary,
+    thumbnail,
+    author,
+    publishTime,
+    views,
+    className,
+    onClick,
+}: PostCardProps) {
     return (
         <View
-          className='flex flex-col rounded-[16rpx] bg-cardBg overflow-hidden min-h-touch'
-          onClick={handleViewPost}
+          className={cn('au-card au-card--glow overflow-hidden p-[22rpx] flex gap-[22rpx]', className)}
           hoverClass='tap-active'
+          onClick={onClick}
         >
-            {/* 封面图 / 渐变背景 + 图标占位 */}
-            <View className='w-full h-[280rpx] overflow-hidden flex items-center justify-center' style={{
-                background: thumbnail ? 'none' : 'linear-gradient(135deg, rgba(0,107,230,0.06) 0%, rgba(112,179,255,0.10) 100%)',
-            }}
-            >
-                {thumbnail ? (
-                    <Image src={thumbnail} mode='aspectFill' className='w-full h-full' />
-                ) : (
-                    <XIcon name='carbon:document' size={64} className='text-primary' style={{opacity: 0.6}} />
-                )}
-            </View>
-
-            {/* 内容区 */}
-            <View className='flex flex-col gap-[12rpx] p-[24rpx]'>
-                {/* 标题 */}
-                {title && title !== 'title' && (
-                    <Text
-                      className='text-body font-bold text-textMain leading-[1.5]'
-                      style={{
-                            overflow: 'hidden',
-                            textOverflow: 'ellipsis',
-                            display: '-webkit-box',
-                            WebkitLineClamp: 2,
-                            WebkitBoxOrient: 'vertical',
-                        }}
-                    >
-                        {title}
-                    </Text>
-                )}
-
-                {/* 摘要 */}
-                {summary && summary !== 'content' && (
-                    <Text
-                      className='text-desc text-textSec leading-[1.6]'
-                      style={{
-                            overflow: 'hidden',
-                            textOverflow: 'ellipsis',
-                            display: '-webkit-box',
-                            WebkitLineClamp: 2,
-                            WebkitBoxOrient: 'vertical',
-                        }}
-                    >
+            {/* 文字主体 */}
+            <View className='flex-1 min-w-0 flex flex-col'>
+                <Text className='text-body font-bold text-textMain leading-[1.4]' numberOfLines={2}>
+                    {title}
+                </Text>
+                {summary && (
+                    <Text className='text-tips text-textThird leading-[1.6] mt-[10rpx]' numberOfLines={2}>
                         {summary}
                     </Text>
                 )}
-
-                {/* 元数据 */}
-                <View className='flex items-center gap-[24rpx] pt-[12rpx] border-t-[1rpx] border-splitLine text-tips text-textSec'>
-                    <View className='flex items-center gap-[6rpx]'>
-                        <XIcon name='carbon:user' size={12} className='text-textSec' />
-                        <Text className='text-tips text-textSec'>{post.authorName || '—'}</Text>
-                    </View>
-                    <View className='flex items-center gap-[6rpx]'>
-                        <XIcon name='carbon:calendar' size={12} className='text-textSec' />
-                        <Text className='text-tips text-textSec'>{formatDate(post.createdAt)}</Text>
-                    </View>
-                    <View className='flex items-center gap-[6rpx]'>
-                        <XIcon name='carbon:thumbs-up' size={12} className='text-textSec' />
-                        <Text className='text-tips text-textSec'>{likeCount || 0}</Text>
-                    </View>
+                <View className='flex items-center gap-[18rpx] mt-auto pt-[16rpx]'>
+                    {author && (
+                        <View className='flex items-center gap-[6rpx] min-w-0'>
+                            <XIcon name='carbon:user' size={18} className='text-textWeak shrink-0' />
+                            <Text className='text-tips text-textThird' numberOfLines={1}>{author}</Text>
+                        </View>
+                    )}
+                    {publishTime && (
+                        <View className='flex items-center gap-[6rpx] shrink-0'>
+                            <XIcon name='carbon:calendar' size={18} className='text-textWeak' />
+                            <Text className='text-tips text-textThird'>{formatDate(publishTime)}</Text>
+                        </View>
+                    )}
+                    {typeof views === 'number' && views >= 0 && (
+                        <View className='flex items-center gap-[6rpx] shrink-0'>
+                            <XIcon name='carbon:view' size={18} className='text-textWeak' />
+                            <Text className='text-tips text-textThird'>{views}</Text>
+                        </View>
+                    )}
                 </View>
+            </View>
+
+            {/* 封面 / 渐变占位 */}
+            <View className='w-[200rpx] h-[150rpx] rounded-[18rpx] overflow-hidden shrink-0'>
+                {thumbnail ? (
+                    <Image
+                      src={thumbnail}
+                      mode='aspectFill'
+                      className='w-full h-full'
+                      lazyLoad
+                    />
+                ) : (
+                    <View
+                      className='w-full h-full flex items-center justify-center'
+                      style={{background: 'linear-gradient(128deg, #57a3ff 0%, #1677ff 52%, #0b55d4 100%)'}}
+                    >
+                        <XIcon name='carbon:document-blank' size={44} className='text-white/70' />
+                    </View>
+                )}
             </View>
         </View>
     );
-};
-
-export default PostCard;
+}

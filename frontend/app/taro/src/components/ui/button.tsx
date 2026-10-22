@@ -16,8 +16,10 @@ const buttonVariants = cva(
         variants: {
             variant: {
                 default: 'bg-primary text-white',
+                hero: 'btn-hero',
+                glass: 'btn-glass',
                 destructive: 'bg-danger text-white',
-                outline: 'border-[2rpx] border-splitLine bg-cardBg text-textMain',
+                outline: 'border-[length:2rpx] border-splitLine bg-cardBg text-textMain',
                 secondary: 'bg-pageBg text-textSec',
                 ghost: 'bg-transparent text-textSec',
                 link: 'bg-transparent text-primary underline',
@@ -41,25 +43,30 @@ export interface ButtonProps extends VariantProps<typeof buttonVariants> {
     children?: React.ReactNode;
     onClick?: (e: any) => void;
     disabled?: boolean;
+    /** 提交中：保留本 variant 的底色并加转环，与 disabled 的「中性灰不可点」区分开 */
+    loading?: boolean;
     type?: 'button' | 'submit' | 'reset';
-    variant?: 'default' | 'destructive' | 'outline' | 'secondary' | 'ghost' | 'link';
+    variant?: 'default' | 'hero' | 'glass' | 'destructive' | 'outline' | 'secondary' | 'ghost' | 'link';
     size?: 'default' | 'sm' | 'lg' | 'icon';
     hoverClass?: string;
 }
 
 const Button = React.forwardRef<any, ButtonProps>(
-    ({className, variant, size, children, disabled, hoverClass, ...props}, ref) => {
+    ({className, variant, size, children, disabled, loading, hoverClass, ...props}, ref) => {
+        const inert = disabled || loading;
         return (
             <View
               className={cn(
                     buttonVariants({variant, size, className}),
-                    disabled && 'opacity-50',
+                    loading && 'gap-[12rpx]',
+                    disabled && !loading && 'au-btn-disabled',
                 )}
               ref={ref}
-              hoverClass={disabled ? '' : (hoverClass ?? 'tap-active')}
-              onClick={disabled ? undefined : props.onClick}
+              hoverClass={inert ? '' : (hoverClass ?? 'tap-active')}
+              onClick={inert ? undefined : props.onClick}
               {...props}
             >
+                {loading && <View className='au-btn-spin' />}
                 {typeof children === 'string' ? (
                     <Text className='text-inherit'>{children}</Text>
                 ) : (

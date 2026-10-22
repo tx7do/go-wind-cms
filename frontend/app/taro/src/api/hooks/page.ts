@@ -175,3 +175,45 @@ export function useDeletePage(options?: UseMutationOptions<Record<string, never>
     ...options,
   });
 }
+
+// ==============================
+// 按 slug 获取页面（SEO 别名路由；仅返回已发布页面）
+// ==============================
+export async function getPageBySlug(slug: string) {
+  const locale = currentLocaleLanguageCode();
+  return apiClient.pageService.GetBySlug({slug, locale});
+}
+
+// ==============================================
+// 按 slug 获取页面 【给 Store / 外部调用】不带 Hook 的方法
+// ==============================================
+export async function fetchPageBySlug(slug: string) {
+  return queryClient.fetchQuery({
+    queryKey: ['getPageBySlug', slug, currentLocaleLanguageCode()],
+    queryFn: () => getPageBySlug(slug),
+    retry: 0,
+  });
+}
+
+// ==============================
+// 辅助函数（纯工具，不依赖 Store）
+// ==============================
+
+/**
+ * 获取页面的翻译（匹配当前语言 → 回退第一条）
+ */
+export function getPageTranslation(page: contentservicev1_Page) {
+  if (!page?.translations || page.translations.length === 0) return null;
+  const locale = currentLocaleLanguageCode();
+  return (
+    page.translations.find((tr) => tr.languageCode === locale) ||
+    page.translations[0]
+  );
+}
+
+/**
+ * 获取页面标题
+ */
+export function getPageTitle(page: contentservicev1_Page): string {
+  return getPageTranslation(page)?.title || '';
+}

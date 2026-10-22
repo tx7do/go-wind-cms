@@ -20,7 +20,7 @@ export const AppEmpty: React.FC<AppEmptyProps> = ({
     style,
 }) => {
     const defaultIcon = image || (
-        <XIcon name='carbon:inbox' size={48} className='text-textWeak' />
+        <XIcon name='carbon:box' size={48} className='text-textWeak' />
     );
 
     return (

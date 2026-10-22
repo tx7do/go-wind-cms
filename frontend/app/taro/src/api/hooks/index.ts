@@ -61,5 +61,5 @@ export {
   useCreateTag,
   useUpdateTag,
   useDeleteTag,
-  getTranslation as getTagTranslation,
+  getTagTranslation,
 } from './tag';

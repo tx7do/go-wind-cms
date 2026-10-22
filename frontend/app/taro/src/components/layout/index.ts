@@ -3,8 +3,6 @@ export {default as Layout} from './Layout';
 export {default as Header} from './Header';
 export {default as Footer} from './Footer';
 export {default as BackToTop} from './BackToTop';
-export {default as MobileNav} from './MobileNav';
 export {default as NavigationProgress} from './NavigationProgress';
 export {default as ThemeClientProvider} from './ThemeClientProvider';
 export {default as LegalPage} from './LegalPage';
-export type {BackToTopProps} from './BackToTop';

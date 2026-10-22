@@ -1,7 +1,8 @@
 import {create, type StoreApi, useStore} from 'zustand';
-import {persist} from 'zustand/middleware';
+import {persist, createJSONStorage} from 'zustand/middleware';
 import {createContext, useContext, type Context} from 'react';
 
+import {getLocalStorage} from '@/core/storage/storage-adapter';
 import {defaultPreferences} from '../config/default';
 import type {DeepPartial, Preferences} from '../types';
 import {mergeDeep} from "../utils/merge";
@@ -40,6 +41,8 @@ export function createPreferencesStore(): StoreApi<PreferencesState> {
             }),
             {
                 name: 'app-preferences',
+                // 默认 storage 直取 window.localStorage，小程序端没有 window → 主题/语言重启即丢
+                storage: createJSONStorage(() => getLocalStorage()),
                 partialize: (state) => ({preferences: state.preferences}),
             }
         )

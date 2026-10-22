@@ -40,7 +40,7 @@ export const env = {
     /**
      * 应用描述
      */
-    appDescription: typeof APP_TITLE !== 'undefined' ? APP_TITLE : 'A modern Content Hub built with Taro',
+    appDescription: typeof APP_TITLE !== 'undefined' ? APP_TITLE : 'Headless Content Hub, everywhere',
 
     /**
      * 默认语言
@@ -78,7 +78,6 @@ export const env = {
  */
 export function validateEnv(): void {
     if (env.isProd && !env.apiBaseUrl) {
-        throw new Error('生产环境必须配置 VITE_API_BASE_URL');
+        throw new Error('生产环境必须配置 TARO_APP_API_BASE_URL');
     }
 }
-
