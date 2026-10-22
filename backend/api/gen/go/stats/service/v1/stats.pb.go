@@ -58,17 +58,24 @@ func (*GetDashboardOverviewRequest) Descriptor() ([]byte, []int) {
 }
 
 type GetDashboardOverviewResponse struct {
-	state               protoimpl.MessageState `protogen:"open.v1"`
-	UserCount           int64                  `protobuf:"varint,1,opt,name=user_count,json=userCount,proto3" json:"user_count,omitempty"`                                   // 用户总量
-	PostCount           int64                  `protobuf:"varint,2,opt,name=post_count,json=postCount,proto3" json:"post_count,omitempty"`                                   // 帖子总量
-	CommentCount        int64                  `protobuf:"varint,3,opt,name=comment_count,json=commentCount,proto3" json:"comment_count,omitempty"`                          // 评论总量
-	InteractionCount    int64                  `protobuf:"varint,4,opt,name=interaction_count,json=interactionCount,proto3" json:"interaction_count,omitempty"`              // 互动累计总量（点赞 + 收藏计数之和）
-	NewUserCountWeek    int64                  `protobuf:"varint,5,opt,name=new_user_count_week,json=newUserCountWeek,proto3" json:"new_user_count_week,omitempty"`          // 近 7 天新增用户
-	NewPostCountWeek    int64                  `protobuf:"varint,6,opt,name=new_post_count_week,json=newPostCountWeek,proto3" json:"new_post_count_week,omitempty"`          // 近 7 天新增帖子
-	NewCommentCountWeek int64                  `protobuf:"varint,7,opt,name=new_comment_count_week,json=newCommentCountWeek,proto3" json:"new_comment_count_week,omitempty"` // 近 7 天新增评论
-	NewLikeCountWeek    int64                  `protobuf:"varint,8,opt,name=new_like_count_week,json=newLikeCountWeek,proto3" json:"new_like_count_week,omitempty"`          // 近 7 天新增点赞（post_like ledger 计数）
-	unknownFields       protoimpl.UnknownFields
-	sizeCache           protoimpl.SizeCache
+	state                    protoimpl.MessageState `protogen:"open.v1"`
+	UserCount                int64                  `protobuf:"varint,1,opt,name=user_count,json=userCount,proto3" json:"user_count,omitempty"`                                                     // 用户总量
+	PostCount                int64                  `protobuf:"varint,2,opt,name=post_count,json=postCount,proto3" json:"post_count,omitempty"`                                                     // 帖子总量
+	CommentCount             int64                  `protobuf:"varint,3,opt,name=comment_count,json=commentCount,proto3" json:"comment_count,omitempty"`                                            // 评论总量
+	InteractionCount         int64                  `protobuf:"varint,4,opt,name=interaction_count,json=interactionCount,proto3" json:"interaction_count,omitempty"`                                // 互动累计总量（点赞 + 收藏计数之和）
+	NewUserCountWeek         int64                  `protobuf:"varint,5,opt,name=new_user_count_week,json=newUserCountWeek,proto3" json:"new_user_count_week,omitempty"`                            // 近 7 天新增用户
+	NewPostCountWeek         int64                  `protobuf:"varint,6,opt,name=new_post_count_week,json=newPostCountWeek,proto3" json:"new_post_count_week,omitempty"`                            // 近 7 天新增帖子
+	NewCommentCountWeek      int64                  `protobuf:"varint,7,opt,name=new_comment_count_week,json=newCommentCountWeek,proto3" json:"new_comment_count_week,omitempty"`                   // 近 7 天新增评论
+	NewLikeCountWeek         int64                  `protobuf:"varint,8,opt,name=new_like_count_week,json=newLikeCountWeek,proto3" json:"new_like_count_week,omitempty"`                            // 近 7 天新增点赞（post_like ledger 计数）
+	MediaAssetCount          int64                  `protobuf:"varint,9,opt,name=media_asset_count,json=mediaAssetCount,proto3" json:"media_asset_count,omitempty"`                                 // 媒体资产总量
+	MediaStorageBytes        int64                  `protobuf:"varint,10,opt,name=media_storage_bytes,json=mediaStorageBytes,proto3" json:"media_storage_bytes,omitempty"`                          // 媒体存储占用（字节，SUM(size)）
+	NewMediaCountWeek        int64                  `protobuf:"varint,11,opt,name=new_media_count_week,json=newMediaCountWeek,proto3" json:"new_media_count_week,omitempty"`                        // 近 7 天新增媒体数
+	NewMediaStorageBytesWeek int64                  `protobuf:"varint,12,opt,name=new_media_storage_bytes_week,json=newMediaStorageBytesWeek,proto3" json:"new_media_storage_bytes_week,omitempty"` // 近 7 天新增媒体存储（字节）
+	PendingCommentCount      int64                  `protobuf:"varint,13,opt,name=pending_comment_count,json=pendingCommentCount,proto3" json:"pending_comment_count,omitempty"`                    // 待审评论数
+	DraftPostCount           int64                  `protobuf:"varint,14,opt,name=draft_post_count,json=draftPostCount,proto3" json:"draft_post_count,omitempty"`                                   // 草稿帖子数
+	ScheduledPostCount       int64                  `protobuf:"varint,15,opt,name=scheduled_post_count,json=scheduledPostCount,proto3" json:"scheduled_post_count,omitempty"`                       // 定时发布帖子数
+	unknownFields            protoimpl.UnknownFields
+	sizeCache                protoimpl.SizeCache
 }
 
 func (x *GetDashboardOverviewResponse) Reset() {
@@ -157,6 +164,100 @@ func (x *GetDashboardOverviewResponse) GetNewLikeCountWeek() int64 {
 	return 0
 }
 
+func (x *GetDashboardOverviewResponse) GetMediaAssetCount() int64 {
+	if x != nil {
+		return x.MediaAssetCount
+	}
+	return 0
+}
+
+func (x *GetDashboardOverviewResponse) GetMediaStorageBytes() int64 {
+	if x != nil {
+		return x.MediaStorageBytes
+	}
+	return 0
+}
+
+func (x *GetDashboardOverviewResponse) GetNewMediaCountWeek() int64 {
+	if x != nil {
+		return x.NewMediaCountWeek
+	}
+	return 0
+}
+
+func (x *GetDashboardOverviewResponse) GetNewMediaStorageBytesWeek() int64 {
+	if x != nil {
+		return x.NewMediaStorageBytesWeek
+	}
+	return 0
+}
+
+func (x *GetDashboardOverviewResponse) GetPendingCommentCount() int64 {
+	if x != nil {
+		return x.PendingCommentCount
+	}
+	return 0
+}
+
+func (x *GetDashboardOverviewResponse) GetDraftPostCount() int64 {
+	if x != nil {
+		return x.DraftPostCount
+	}
+	return 0
+}
+
+func (x *GetDashboardOverviewResponse) GetScheduledPostCount() int64 {
+	if x != nil {
+		return x.ScheduledPostCount
+	}
+	return 0
+}
+
+// 天数参数。服务端 clamp：缺省/非正数取 30，上限 90。
+type TrendRequest struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	Days          int32                  `protobuf:"varint,1,opt,name=days,proto3" json:"days,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *TrendRequest) Reset() {
+	*x = TrendRequest{}
+	mi := &file_stats_service_v1_stats_proto_msgTypes[2]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *TrendRequest) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*TrendRequest) ProtoMessage() {}
+
+func (x *TrendRequest) ProtoReflect() protoreflect.Message {
+	mi := &file_stats_service_v1_stats_proto_msgTypes[2]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use TrendRequest.ProtoReflect.Descriptor instead.
+func (*TrendRequest) Descriptor() ([]byte, []int) {
+	return file_stats_service_v1_stats_proto_rawDescGZIP(), []int{2}
+}
+
+func (x *TrendRequest) GetDays() int32 {
+	if x != nil {
+		return x.Days
+	}
+	return 0
+}
+
 // 天数参数。服务端 clamp：缺省/非正数取 30，上限 90。
 type GetContentTrendRequest struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
@@ -167,7 +268,7 @@ type GetContentTrendRequest struct {
 
 func (x *GetContentTrendRequest) Reset() {
 	*x = GetContentTrendRequest{}
-	mi := &file_stats_service_v1_stats_proto_msgTypes[2]
+	mi := &file_stats_service_v1_stats_proto_msgTypes[3]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -179,7 +280,7 @@ func (x *GetContentTrendRequest) String() string {
 func (*GetContentTrendRequest) ProtoMessage() {}
 
 func (x *GetContentTrendRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_stats_service_v1_stats_proto_msgTypes[2]
+	mi := &file_stats_service_v1_stats_proto_msgTypes[3]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -192,7 +293,7 @@ func (x *GetContentTrendRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use GetContentTrendRequest.ProtoReflect.Descriptor instead.
 func (*GetContentTrendRequest) Descriptor() ([]byte, []int) {
-	return file_stats_service_v1_stats_proto_rawDescGZIP(), []int{2}
+	return file_stats_service_v1_stats_proto_rawDescGZIP(), []int{3}
 }
 
 func (x *GetContentTrendRequest) GetDays() int32 {
@@ -213,7 +314,7 @@ type DailyCount struct {
 
 func (x *DailyCount) Reset() {
 	*x = DailyCount{}
-	mi := &file_stats_service_v1_stats_proto_msgTypes[3]
+	mi := &file_stats_service_v1_stats_proto_msgTypes[4]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -225,7 +326,7 @@ func (x *DailyCount) String() string {
 func (*DailyCount) ProtoMessage() {}
 
 func (x *DailyCount) ProtoReflect() protoreflect.Message {
-	mi := &file_stats_service_v1_stats_proto_msgTypes[3]
+	mi := &file_stats_service_v1_stats_proto_msgTypes[4]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -238,7 +339,7 @@ func (x *DailyCount) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use DailyCount.ProtoReflect.Descriptor instead.
 func (*DailyCount) Descriptor() ([]byte, []int) {
-	return file_stats_service_v1_stats_proto_rawDescGZIP(), []int{3}
+	return file_stats_service_v1_stats_proto_rawDescGZIP(), []int{4}
 }
 
 func (x *DailyCount) GetDate() string {
@@ -266,7 +367,7 @@ type GetContentTrendResponse struct {
 
 func (x *GetContentTrendResponse) Reset() {
 	*x = GetContentTrendResponse{}
-	mi := &file_stats_service_v1_stats_proto_msgTypes[4]
+	mi := &file_stats_service_v1_stats_proto_msgTypes[5]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -278,7 +379,7 @@ func (x *GetContentTrendResponse) String() string {
 func (*GetContentTrendResponse) ProtoMessage() {}
 
 func (x *GetContentTrendResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_stats_service_v1_stats_proto_msgTypes[4]
+	mi := &file_stats_service_v1_stats_proto_msgTypes[5]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -291,7 +392,7 @@ func (x *GetContentTrendResponse) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use GetContentTrendResponse.ProtoReflect.Descriptor instead.
 func (*GetContentTrendResponse) Descriptor() ([]byte, []int) {
-	return file_stats_service_v1_stats_proto_rawDescGZIP(), []int{4}
+	return file_stats_service_v1_stats_proto_rawDescGZIP(), []int{5}
 }
 
 func (x *GetContentTrendResponse) GetUsers() []*DailyCount {
@@ -325,7 +426,7 @@ type GetInteractionStatsRequest struct {
 
 func (x *GetInteractionStatsRequest) Reset() {
 	*x = GetInteractionStatsRequest{}
-	mi := &file_stats_service_v1_stats_proto_msgTypes[5]
+	mi := &file_stats_service_v1_stats_proto_msgTypes[6]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -337,7 +438,7 @@ func (x *GetInteractionStatsRequest) String() string {
 func (*GetInteractionStatsRequest) ProtoMessage() {}
 
 func (x *GetInteractionStatsRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_stats_service_v1_stats_proto_msgTypes[5]
+	mi := &file_stats_service_v1_stats_proto_msgTypes[6]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -350,7 +451,7 @@ func (x *GetInteractionStatsRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use GetInteractionStatsRequest.ProtoReflect.Descriptor instead.
 func (*GetInteractionStatsRequest) Descriptor() ([]byte, []int) {
-	return file_stats_service_v1_stats_proto_rawDescGZIP(), []int{5}
+	return file_stats_service_v1_stats_proto_rawDescGZIP(), []int{6}
 }
 
 func (x *GetInteractionStatsRequest) GetTopN() int32 {
@@ -372,7 +473,7 @@ type InteractionTopItem struct {
 
 func (x *InteractionTopItem) Reset() {
 	*x = InteractionTopItem{}
-	mi := &file_stats_service_v1_stats_proto_msgTypes[6]
+	mi := &file_stats_service_v1_stats_proto_msgTypes[7]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -384,7 +485,7 @@ func (x *InteractionTopItem) String() string {
 func (*InteractionTopItem) ProtoMessage() {}
 
 func (x *InteractionTopItem) ProtoReflect() protoreflect.Message {
-	mi := &file_stats_service_v1_stats_proto_msgTypes[6]
+	mi := &file_stats_service_v1_stats_proto_msgTypes[7]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -397,7 +498,7 @@ func (x *InteractionTopItem) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use InteractionTopItem.ProtoReflect.Descriptor instead.
 func (*InteractionTopItem) Descriptor() ([]byte, []int) {
-	return file_stats_service_v1_stats_proto_rawDescGZIP(), []int{6}
+	return file_stats_service_v1_stats_proto_rawDescGZIP(), []int{7}
 }
 
 func (x *InteractionTopItem) GetTargetId() uint32 {
@@ -434,7 +535,7 @@ type GetInteractionStatsResponse struct {
 
 func (x *GetInteractionStatsResponse) Reset() {
 	*x = GetInteractionStatsResponse{}
-	mi := &file_stats_service_v1_stats_proto_msgTypes[7]
+	mi := &file_stats_service_v1_stats_proto_msgTypes[8]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -446,7 +547,7 @@ func (x *GetInteractionStatsResponse) String() string {
 func (*GetInteractionStatsResponse) ProtoMessage() {}
 
 func (x *GetInteractionStatsResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_stats_service_v1_stats_proto_msgTypes[7]
+	mi := &file_stats_service_v1_stats_proto_msgTypes[8]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -459,7 +560,7 @@ func (x *GetInteractionStatsResponse) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use GetInteractionStatsResponse.ProtoReflect.Descriptor instead.
 func (*GetInteractionStatsResponse) Descriptor() ([]byte, []int) {
-	return file_stats_service_v1_stats_proto_rawDescGZIP(), []int{7}
+	return file_stats_service_v1_stats_proto_rawDescGZIP(), []int{8}
 }
 
 func (x *GetInteractionStatsResponse) GetTopLikedPosts() []*InteractionTopItem {
@@ -507,7 +608,7 @@ type GetLoginActivityRequest struct {
 
 func (x *GetLoginActivityRequest) Reset() {
 	*x = GetLoginActivityRequest{}
-	mi := &file_stats_service_v1_stats_proto_msgTypes[8]
+	mi := &file_stats_service_v1_stats_proto_msgTypes[9]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -519,7 +620,7 @@ func (x *GetLoginActivityRequest) String() string {
 func (*GetLoginActivityRequest) ProtoMessage() {}
 
 func (x *GetLoginActivityRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_stats_service_v1_stats_proto_msgTypes[8]
+	mi := &file_stats_service_v1_stats_proto_msgTypes[9]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -532,7 +633,7 @@ func (x *GetLoginActivityRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use GetLoginActivityRequest.ProtoReflect.Descriptor instead.
 func (*GetLoginActivityRequest) Descriptor() ([]byte, []int) {
-	return file_stats_service_v1_stats_proto_rawDescGZIP(), []int{8}
+	return file_stats_service_v1_stats_proto_rawDescGZIP(), []int{9}
 }
 
 func (x *GetLoginActivityRequest) GetDays() int32 {
@@ -544,15 +645,16 @@ func (x *GetLoginActivityRequest) GetDays() int32 {
 
 type GetLoginActivityResponse struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
-	Success       []*DailyCount          `protobuf:"bytes,1,rep,name=success,proto3" json:"success,omitempty"` // 每日登录成功次数
-	Failed        []*DailyCount          `protobuf:"bytes,2,rep,name=failed,proto3" json:"failed,omitempty"`   // 每日登录失败次数
+	Success       []*DailyCount          `protobuf:"bytes,1,rep,name=success,proto3" json:"success,omitempty"`                            // 每日登录成功次数
+	Failed        []*DailyCount          `protobuf:"bytes,2,rep,name=failed,proto3" json:"failed,omitempty"`                              // 每日登录失败次数
+	ActiveUsers   []*DailyCount          `protobuf:"bytes,3,rep,name=active_users,json=activeUsers,proto3" json:"active_users,omitempty"` // 每日活跃用户数（当日成功登录的去重用户）
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
 
 func (x *GetLoginActivityResponse) Reset() {
 	*x = GetLoginActivityResponse{}
-	mi := &file_stats_service_v1_stats_proto_msgTypes[9]
+	mi := &file_stats_service_v1_stats_proto_msgTypes[10]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -564,7 +666,7 @@ func (x *GetLoginActivityResponse) String() string {
 func (*GetLoginActivityResponse) ProtoMessage() {}
 
 func (x *GetLoginActivityResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_stats_service_v1_stats_proto_msgTypes[9]
+	mi := &file_stats_service_v1_stats_proto_msgTypes[10]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -577,7 +679,7 @@ func (x *GetLoginActivityResponse) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use GetLoginActivityResponse.ProtoReflect.Descriptor instead.
 func (*GetLoginActivityResponse) Descriptor() ([]byte, []int) {
-	return file_stats_service_v1_stats_proto_rawDescGZIP(), []int{9}
+	return file_stats_service_v1_stats_proto_rawDescGZIP(), []int{10}
 }
 
 func (x *GetLoginActivityResponse) GetSuccess() []*DailyCount {
@@ -594,12 +696,408 @@ func (x *GetLoginActivityResponse) GetFailed() []*DailyCount {
 	return nil
 }
 
+func (x *GetLoginActivityResponse) GetActiveUsers() []*DailyCount {
+	if x != nil {
+		return x.ActiveUsers
+	}
+	return nil
+}
+
+type GetAiUsageTrendResponse struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	Calls         []*DailyCount          `protobuf:"bytes,1,rep,name=calls,proto3" json:"calls,omitempty"`   // 每日模型调用次数
+	Tokens        []*DailyCount          `protobuf:"bytes,2,rep,name=tokens,proto3" json:"tokens,omitempty"` // 每日 token 消耗总量
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *GetAiUsageTrendResponse) Reset() {
+	*x = GetAiUsageTrendResponse{}
+	mi := &file_stats_service_v1_stats_proto_msgTypes[11]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *GetAiUsageTrendResponse) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*GetAiUsageTrendResponse) ProtoMessage() {}
+
+func (x *GetAiUsageTrendResponse) ProtoReflect() protoreflect.Message {
+	mi := &file_stats_service_v1_stats_proto_msgTypes[11]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use GetAiUsageTrendResponse.ProtoReflect.Descriptor instead.
+func (*GetAiUsageTrendResponse) Descriptor() ([]byte, []int) {
+	return file_stats_service_v1_stats_proto_rawDescGZIP(), []int{11}
+}
+
+func (x *GetAiUsageTrendResponse) GetCalls() []*DailyCount {
+	if x != nil {
+		return x.Calls
+	}
+	return nil
+}
+
+func (x *GetAiUsageTrendResponse) GetTokens() []*DailyCount {
+	if x != nil {
+		return x.Tokens
+	}
+	return nil
+}
+
+type GetApiCallTrendResponse struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	Calls         []*DailyCount          `protobuf:"bytes,1,rep,name=calls,proto3" json:"calls,omitempty"` // 每日 API 请求次数
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *GetApiCallTrendResponse) Reset() {
+	*x = GetApiCallTrendResponse{}
+	mi := &file_stats_service_v1_stats_proto_msgTypes[12]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *GetApiCallTrendResponse) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*GetApiCallTrendResponse) ProtoMessage() {}
+
+func (x *GetApiCallTrendResponse) ProtoReflect() protoreflect.Message {
+	mi := &file_stats_service_v1_stats_proto_msgTypes[12]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use GetApiCallTrendResponse.ProtoReflect.Descriptor instead.
+func (*GetApiCallTrendResponse) Descriptor() ([]byte, []int) {
+	return file_stats_service_v1_stats_proto_rawDescGZIP(), []int{12}
+}
+
+func (x *GetApiCallTrendResponse) GetCalls() []*DailyCount {
+	if x != nil {
+		return x.Calls
+	}
+	return nil
+}
+
+type GetPostStatusDistributionRequest struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *GetPostStatusDistributionRequest) Reset() {
+	*x = GetPostStatusDistributionRequest{}
+	mi := &file_stats_service_v1_stats_proto_msgTypes[13]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *GetPostStatusDistributionRequest) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*GetPostStatusDistributionRequest) ProtoMessage() {}
+
+func (x *GetPostStatusDistributionRequest) ProtoReflect() protoreflect.Message {
+	mi := &file_stats_service_v1_stats_proto_msgTypes[13]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use GetPostStatusDistributionRequest.ProtoReflect.Descriptor instead.
+func (*GetPostStatusDistributionRequest) Descriptor() ([]byte, []int) {
+	return file_stats_service_v1_stats_proto_rawDescGZIP(), []int{13}
+}
+
+type StatusCount struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	Status        string                 `protobuf:"bytes,1,opt,name=status,proto3" json:"status,omitempty"` // 状态原始值（如 POST_STATUS_DRAFT）
+	Count         int64                  `protobuf:"varint,2,opt,name=count,proto3" json:"count,omitempty"`  // 该状态帖子数
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *StatusCount) Reset() {
+	*x = StatusCount{}
+	mi := &file_stats_service_v1_stats_proto_msgTypes[14]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *StatusCount) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*StatusCount) ProtoMessage() {}
+
+func (x *StatusCount) ProtoReflect() protoreflect.Message {
+	mi := &file_stats_service_v1_stats_proto_msgTypes[14]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use StatusCount.ProtoReflect.Descriptor instead.
+func (*StatusCount) Descriptor() ([]byte, []int) {
+	return file_stats_service_v1_stats_proto_rawDescGZIP(), []int{14}
+}
+
+func (x *StatusCount) GetStatus() string {
+	if x != nil {
+		return x.Status
+	}
+	return ""
+}
+
+func (x *StatusCount) GetCount() int64 {
+	if x != nil {
+		return x.Count
+	}
+	return 0
+}
+
+type GetPostStatusDistributionResponse struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	Items         []*StatusCount         `protobuf:"bytes,1,rep,name=items,proto3" json:"items,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *GetPostStatusDistributionResponse) Reset() {
+	*x = GetPostStatusDistributionResponse{}
+	mi := &file_stats_service_v1_stats_proto_msgTypes[15]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *GetPostStatusDistributionResponse) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*GetPostStatusDistributionResponse) ProtoMessage() {}
+
+func (x *GetPostStatusDistributionResponse) ProtoReflect() protoreflect.Message {
+	mi := &file_stats_service_v1_stats_proto_msgTypes[15]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use GetPostStatusDistributionResponse.ProtoReflect.Descriptor instead.
+func (*GetPostStatusDistributionResponse) Descriptor() ([]byte, []int) {
+	return file_stats_service_v1_stats_proto_rawDescGZIP(), []int{15}
+}
+
+func (x *GetPostStatusDistributionResponse) GetItems() []*StatusCount {
+	if x != nil {
+		return x.Items
+	}
+	return nil
+}
+
+type GetCommentStatusDistributionRequest struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *GetCommentStatusDistributionRequest) Reset() {
+	*x = GetCommentStatusDistributionRequest{}
+	mi := &file_stats_service_v1_stats_proto_msgTypes[16]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *GetCommentStatusDistributionRequest) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*GetCommentStatusDistributionRequest) ProtoMessage() {}
+
+func (x *GetCommentStatusDistributionRequest) ProtoReflect() protoreflect.Message {
+	mi := &file_stats_service_v1_stats_proto_msgTypes[16]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use GetCommentStatusDistributionRequest.ProtoReflect.Descriptor instead.
+func (*GetCommentStatusDistributionRequest) Descriptor() ([]byte, []int) {
+	return file_stats_service_v1_stats_proto_rawDescGZIP(), []int{16}
+}
+
+type GetCommentStatusDistributionResponse struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	Items         []*StatusCount         `protobuf:"bytes,1,rep,name=items,proto3" json:"items,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *GetCommentStatusDistributionResponse) Reset() {
+	*x = GetCommentStatusDistributionResponse{}
+	mi := &file_stats_service_v1_stats_proto_msgTypes[17]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *GetCommentStatusDistributionResponse) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*GetCommentStatusDistributionResponse) ProtoMessage() {}
+
+func (x *GetCommentStatusDistributionResponse) ProtoReflect() protoreflect.Message {
+	mi := &file_stats_service_v1_stats_proto_msgTypes[17]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use GetCommentStatusDistributionResponse.ProtoReflect.Descriptor instead.
+func (*GetCommentStatusDistributionResponse) Descriptor() ([]byte, []int) {
+	return file_stats_service_v1_stats_proto_rawDescGZIP(), []int{17}
+}
+
+func (x *GetCommentStatusDistributionResponse) GetItems() []*StatusCount {
+	if x != nil {
+		return x.Items
+	}
+	return nil
+}
+
+type GetMediaAssetTypeDistributionRequest struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *GetMediaAssetTypeDistributionRequest) Reset() {
+	*x = GetMediaAssetTypeDistributionRequest{}
+	mi := &file_stats_service_v1_stats_proto_msgTypes[18]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *GetMediaAssetTypeDistributionRequest) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*GetMediaAssetTypeDistributionRequest) ProtoMessage() {}
+
+func (x *GetMediaAssetTypeDistributionRequest) ProtoReflect() protoreflect.Message {
+	mi := &file_stats_service_v1_stats_proto_msgTypes[18]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use GetMediaAssetTypeDistributionRequest.ProtoReflect.Descriptor instead.
+func (*GetMediaAssetTypeDistributionRequest) Descriptor() ([]byte, []int) {
+	return file_stats_service_v1_stats_proto_rawDescGZIP(), []int{18}
+}
+
+type GetMediaAssetTypeDistributionResponse struct {
+	state protoimpl.MessageState `protogen:"open.v1"`
+	// 复用 StatusCount：status 字段此处承载媒体类型枚举值（如 ASSET_TYPE_IMAGE）。
+	Items         []*StatusCount `protobuf:"bytes,1,rep,name=items,proto3" json:"items,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *GetMediaAssetTypeDistributionResponse) Reset() {
+	*x = GetMediaAssetTypeDistributionResponse{}
+	mi := &file_stats_service_v1_stats_proto_msgTypes[19]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *GetMediaAssetTypeDistributionResponse) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*GetMediaAssetTypeDistributionResponse) ProtoMessage() {}
+
+func (x *GetMediaAssetTypeDistributionResponse) ProtoReflect() protoreflect.Message {
+	mi := &file_stats_service_v1_stats_proto_msgTypes[19]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use GetMediaAssetTypeDistributionResponse.ProtoReflect.Descriptor instead.
+func (*GetMediaAssetTypeDistributionResponse) Descriptor() ([]byte, []int) {
+	return file_stats_service_v1_stats_proto_rawDescGZIP(), []int{19}
+}
+
+func (x *GetMediaAssetTypeDistributionResponse) GetItems() []*StatusCount {
+	if x != nil {
+		return x.Items
+	}
+	return nil
+}
+
 var File_stats_service_v1_stats_proto protoreflect.FileDescriptor
 
 const file_stats_service_v1_stats_proto_rawDesc = "" +
 	"\n" +
 	"\x1cstats/service/v1/stats.proto\x12\x10stats.service.v1\"\x1d\n" +
-	"\x1bGetDashboardOverviewRequest\"\xf0\x02\n" +
+	"\x1bGetDashboardOverviewRequest\"\xcd\x05\n" +
 	"\x1cGetDashboardOverviewResponse\x12\x1d\n" +
 	"\n" +
 	"user_count\x18\x01 \x01(\x03R\tuserCount\x12\x1d\n" +
@@ -610,7 +1108,17 @@ const file_stats_service_v1_stats_proto_rawDesc = "" +
 	"\x13new_user_count_week\x18\x05 \x01(\x03R\x10newUserCountWeek\x12-\n" +
 	"\x13new_post_count_week\x18\x06 \x01(\x03R\x10newPostCountWeek\x123\n" +
 	"\x16new_comment_count_week\x18\a \x01(\x03R\x13newCommentCountWeek\x12-\n" +
-	"\x13new_like_count_week\x18\b \x01(\x03R\x10newLikeCountWeek\",\n" +
+	"\x13new_like_count_week\x18\b \x01(\x03R\x10newLikeCountWeek\x12*\n" +
+	"\x11media_asset_count\x18\t \x01(\x03R\x0fmediaAssetCount\x12.\n" +
+	"\x13media_storage_bytes\x18\n" +
+	" \x01(\x03R\x11mediaStorageBytes\x12/\n" +
+	"\x14new_media_count_week\x18\v \x01(\x03R\x11newMediaCountWeek\x12>\n" +
+	"\x1cnew_media_storage_bytes_week\x18\f \x01(\x03R\x18newMediaStorageBytesWeek\x122\n" +
+	"\x15pending_comment_count\x18\r \x01(\x03R\x13pendingCommentCount\x12(\n" +
+	"\x10draft_post_count\x18\x0e \x01(\x03R\x0edraftPostCount\x120\n" +
+	"\x14scheduled_post_count\x18\x0f \x01(\x03R\x12scheduledPostCount\"\"\n" +
+	"\fTrendRequest\x12\x12\n" +
+	"\x04days\x18\x01 \x01(\x05R\x04days\",\n" +
 	"\x16GetContentTrendRequest\x12\x12\n" +
 	"\x04days\x18\x01 \x01(\x05R\x04days\"6\n" +
 	"\n" +
@@ -637,15 +1145,38 @@ const file_stats_service_v1_stats_proto_rawDesc = "" +
 	"\vtotal_views\x18\x05 \x01(\x03R\n" +
 	"totalViews\"-\n" +
 	"\x17GetLoginActivityRequest\x12\x12\n" +
-	"\x04days\x18\x01 \x01(\x05R\x04days\"\x88\x01\n" +
+	"\x04days\x18\x01 \x01(\x05R\x04days\"\xc9\x01\n" +
 	"\x18GetLoginActivityResponse\x126\n" +
 	"\asuccess\x18\x01 \x03(\v2\x1c.stats.service.v1.DailyCountR\asuccess\x124\n" +
-	"\x06failed\x18\x02 \x03(\v2\x1c.stats.service.v1.DailyCountR\x06failed2\xd4\x03\n" +
+	"\x06failed\x18\x02 \x03(\v2\x1c.stats.service.v1.DailyCountR\x06failed\x12?\n" +
+	"\factive_users\x18\x03 \x03(\v2\x1c.stats.service.v1.DailyCountR\vactiveUsers\"\x83\x01\n" +
+	"\x17GetAiUsageTrendResponse\x122\n" +
+	"\x05calls\x18\x01 \x03(\v2\x1c.stats.service.v1.DailyCountR\x05calls\x124\n" +
+	"\x06tokens\x18\x02 \x03(\v2\x1c.stats.service.v1.DailyCountR\x06tokens\"M\n" +
+	"\x17GetApiCallTrendResponse\x122\n" +
+	"\x05calls\x18\x01 \x03(\v2\x1c.stats.service.v1.DailyCountR\x05calls\"\"\n" +
+	" GetPostStatusDistributionRequest\";\n" +
+	"\vStatusCount\x12\x16\n" +
+	"\x06status\x18\x01 \x01(\tR\x06status\x12\x14\n" +
+	"\x05count\x18\x02 \x01(\x03R\x05count\"X\n" +
+	"!GetPostStatusDistributionResponse\x123\n" +
+	"\x05items\x18\x01 \x03(\v2\x1d.stats.service.v1.StatusCountR\x05items\"%\n" +
+	"#GetCommentStatusDistributionRequest\"[\n" +
+	"$GetCommentStatusDistributionResponse\x123\n" +
+	"\x05items\x18\x01 \x03(\v2\x1d.stats.service.v1.StatusCountR\x05items\"&\n" +
+	"$GetMediaAssetTypeDistributionRequest\"\\\n" +
+	"%GetMediaAssetTypeDistributionResponse\x123\n" +
+	"\x05items\x18\x01 \x03(\v2\x1d.stats.service.v1.StatusCountR\x05items2\xc4\b\n" +
 	"\fStatsService\x12w\n" +
 	"\x14GetDashboardOverview\x12-.stats.service.v1.GetDashboardOverviewRequest\x1a..stats.service.v1.GetDashboardOverviewResponse\"\x00\x12h\n" +
 	"\x0fGetContentTrend\x12(.stats.service.v1.GetContentTrendRequest\x1a).stats.service.v1.GetContentTrendResponse\"\x00\x12t\n" +
 	"\x13GetInteractionStats\x12,.stats.service.v1.GetInteractionStatsRequest\x1a-.stats.service.v1.GetInteractionStatsResponse\"\x00\x12k\n" +
-	"\x10GetLoginActivity\x12).stats.service.v1.GetLoginActivityRequest\x1a*.stats.service.v1.GetLoginActivityResponse\"\x00B\xb7\x01\n" +
+	"\x10GetLoginActivity\x12).stats.service.v1.GetLoginActivityRequest\x1a*.stats.service.v1.GetLoginActivityResponse\"\x00\x12^\n" +
+	"\x0fGetAiUsageTrend\x12\x1e.stats.service.v1.TrendRequest\x1a).stats.service.v1.GetAiUsageTrendResponse\"\x00\x12^\n" +
+	"\x0fGetApiCallTrend\x12\x1e.stats.service.v1.TrendRequest\x1a).stats.service.v1.GetApiCallTrendResponse\"\x00\x12\x86\x01\n" +
+	"\x19GetPostStatusDistribution\x122.stats.service.v1.GetPostStatusDistributionRequest\x1a3.stats.service.v1.GetPostStatusDistributionResponse\"\x00\x12\x8f\x01\n" +
+	"\x1cGetCommentStatusDistribution\x125.stats.service.v1.GetCommentStatusDistributionRequest\x1a6.stats.service.v1.GetCommentStatusDistributionResponse\"\x00\x12\x92\x01\n" +
+	"\x1dGetMediaAssetTypeDistribution\x126.stats.service.v1.GetMediaAssetTypeDistributionRequest\x1a7.stats.service.v1.GetMediaAssetTypeDistributionResponse\"\x00B\xb7\x01\n" +
 	"\x14com.stats.service.v1B\n" +
 	"StatsProtoP\x01Z1go-wind-cms/api/gen/go/stats/service/v1;servicev1\xa2\x02\x03SSX\xaa\x02\x10Stats.Service.V1\xca\x02\x10Stats\\Service\\V1\xe2\x02\x1cStats\\Service\\V1\\GPBMetadata\xea\x02\x12Stats::Service::V1b\x06proto3"
 
@@ -661,40 +1192,67 @@ func file_stats_service_v1_stats_proto_rawDescGZIP() []byte {
 	return file_stats_service_v1_stats_proto_rawDescData
 }
 
-var file_stats_service_v1_stats_proto_msgTypes = make([]protoimpl.MessageInfo, 10)
+var file_stats_service_v1_stats_proto_msgTypes = make([]protoimpl.MessageInfo, 20)
 var file_stats_service_v1_stats_proto_goTypes = []any{
-	(*GetDashboardOverviewRequest)(nil),  // 0: stats.service.v1.GetDashboardOverviewRequest
-	(*GetDashboardOverviewResponse)(nil), // 1: stats.service.v1.GetDashboardOverviewResponse
-	(*GetContentTrendRequest)(nil),       // 2: stats.service.v1.GetContentTrendRequest
-	(*DailyCount)(nil),                   // 3: stats.service.v1.DailyCount
-	(*GetContentTrendResponse)(nil),      // 4: stats.service.v1.GetContentTrendResponse
-	(*GetInteractionStatsRequest)(nil),   // 5: stats.service.v1.GetInteractionStatsRequest
-	(*InteractionTopItem)(nil),           // 6: stats.service.v1.InteractionTopItem
-	(*GetInteractionStatsResponse)(nil),  // 7: stats.service.v1.GetInteractionStatsResponse
-	(*GetLoginActivityRequest)(nil),      // 8: stats.service.v1.GetLoginActivityRequest
-	(*GetLoginActivityResponse)(nil),     // 9: stats.service.v1.GetLoginActivityResponse
+	(*GetDashboardOverviewRequest)(nil),           // 0: stats.service.v1.GetDashboardOverviewRequest
+	(*GetDashboardOverviewResponse)(nil),          // 1: stats.service.v1.GetDashboardOverviewResponse
+	(*TrendRequest)(nil),                          // 2: stats.service.v1.TrendRequest
+	(*GetContentTrendRequest)(nil),                // 3: stats.service.v1.GetContentTrendRequest
+	(*DailyCount)(nil),                            // 4: stats.service.v1.DailyCount
+	(*GetContentTrendResponse)(nil),               // 5: stats.service.v1.GetContentTrendResponse
+	(*GetInteractionStatsRequest)(nil),            // 6: stats.service.v1.GetInteractionStatsRequest
+	(*InteractionTopItem)(nil),                    // 7: stats.service.v1.InteractionTopItem
+	(*GetInteractionStatsResponse)(nil),           // 8: stats.service.v1.GetInteractionStatsResponse
+	(*GetLoginActivityRequest)(nil),               // 9: stats.service.v1.GetLoginActivityRequest
+	(*GetLoginActivityResponse)(nil),              // 10: stats.service.v1.GetLoginActivityResponse
+	(*GetAiUsageTrendResponse)(nil),               // 11: stats.service.v1.GetAiUsageTrendResponse
+	(*GetApiCallTrendResponse)(nil),               // 12: stats.service.v1.GetApiCallTrendResponse
+	(*GetPostStatusDistributionRequest)(nil),      // 13: stats.service.v1.GetPostStatusDistributionRequest
+	(*StatusCount)(nil),                           // 14: stats.service.v1.StatusCount
+	(*GetPostStatusDistributionResponse)(nil),     // 15: stats.service.v1.GetPostStatusDistributionResponse
+	(*GetCommentStatusDistributionRequest)(nil),   // 16: stats.service.v1.GetCommentStatusDistributionRequest
+	(*GetCommentStatusDistributionResponse)(nil),  // 17: stats.service.v1.GetCommentStatusDistributionResponse
+	(*GetMediaAssetTypeDistributionRequest)(nil),  // 18: stats.service.v1.GetMediaAssetTypeDistributionRequest
+	(*GetMediaAssetTypeDistributionResponse)(nil), // 19: stats.service.v1.GetMediaAssetTypeDistributionResponse
 }
 var file_stats_service_v1_stats_proto_depIdxs = []int32{
-	3,  // 0: stats.service.v1.GetContentTrendResponse.users:type_name -> stats.service.v1.DailyCount
-	3,  // 1: stats.service.v1.GetContentTrendResponse.posts:type_name -> stats.service.v1.DailyCount
-	3,  // 2: stats.service.v1.GetContentTrendResponse.comments:type_name -> stats.service.v1.DailyCount
-	6,  // 3: stats.service.v1.GetInteractionStatsResponse.top_liked_posts:type_name -> stats.service.v1.InteractionTopItem
-	6,  // 4: stats.service.v1.GetInteractionStatsResponse.top_viewed_posts:type_name -> stats.service.v1.InteractionTopItem
-	3,  // 5: stats.service.v1.GetLoginActivityResponse.success:type_name -> stats.service.v1.DailyCount
-	3,  // 6: stats.service.v1.GetLoginActivityResponse.failed:type_name -> stats.service.v1.DailyCount
-	0,  // 7: stats.service.v1.StatsService.GetDashboardOverview:input_type -> stats.service.v1.GetDashboardOverviewRequest
-	2,  // 8: stats.service.v1.StatsService.GetContentTrend:input_type -> stats.service.v1.GetContentTrendRequest
-	5,  // 9: stats.service.v1.StatsService.GetInteractionStats:input_type -> stats.service.v1.GetInteractionStatsRequest
-	8,  // 10: stats.service.v1.StatsService.GetLoginActivity:input_type -> stats.service.v1.GetLoginActivityRequest
-	1,  // 11: stats.service.v1.StatsService.GetDashboardOverview:output_type -> stats.service.v1.GetDashboardOverviewResponse
-	4,  // 12: stats.service.v1.StatsService.GetContentTrend:output_type -> stats.service.v1.GetContentTrendResponse
-	7,  // 13: stats.service.v1.StatsService.GetInteractionStats:output_type -> stats.service.v1.GetInteractionStatsResponse
-	9,  // 14: stats.service.v1.StatsService.GetLoginActivity:output_type -> stats.service.v1.GetLoginActivityResponse
-	11, // [11:15] is the sub-list for method output_type
-	7,  // [7:11] is the sub-list for method input_type
-	7,  // [7:7] is the sub-list for extension type_name
-	7,  // [7:7] is the sub-list for extension extendee
-	0,  // [0:7] is the sub-list for field type_name
+	4,  // 0: stats.service.v1.GetContentTrendResponse.users:type_name -> stats.service.v1.DailyCount
+	4,  // 1: stats.service.v1.GetContentTrendResponse.posts:type_name -> stats.service.v1.DailyCount
+	4,  // 2: stats.service.v1.GetContentTrendResponse.comments:type_name -> stats.service.v1.DailyCount
+	7,  // 3: stats.service.v1.GetInteractionStatsResponse.top_liked_posts:type_name -> stats.service.v1.InteractionTopItem
+	7,  // 4: stats.service.v1.GetInteractionStatsResponse.top_viewed_posts:type_name -> stats.service.v1.InteractionTopItem
+	4,  // 5: stats.service.v1.GetLoginActivityResponse.success:type_name -> stats.service.v1.DailyCount
+	4,  // 6: stats.service.v1.GetLoginActivityResponse.failed:type_name -> stats.service.v1.DailyCount
+	4,  // 7: stats.service.v1.GetLoginActivityResponse.active_users:type_name -> stats.service.v1.DailyCount
+	4,  // 8: stats.service.v1.GetAiUsageTrendResponse.calls:type_name -> stats.service.v1.DailyCount
+	4,  // 9: stats.service.v1.GetAiUsageTrendResponse.tokens:type_name -> stats.service.v1.DailyCount
+	4,  // 10: stats.service.v1.GetApiCallTrendResponse.calls:type_name -> stats.service.v1.DailyCount
+	14, // 11: stats.service.v1.GetPostStatusDistributionResponse.items:type_name -> stats.service.v1.StatusCount
+	14, // 12: stats.service.v1.GetCommentStatusDistributionResponse.items:type_name -> stats.service.v1.StatusCount
+	14, // 13: stats.service.v1.GetMediaAssetTypeDistributionResponse.items:type_name -> stats.service.v1.StatusCount
+	0,  // 14: stats.service.v1.StatsService.GetDashboardOverview:input_type -> stats.service.v1.GetDashboardOverviewRequest
+	3,  // 15: stats.service.v1.StatsService.GetContentTrend:input_type -> stats.service.v1.GetContentTrendRequest
+	6,  // 16: stats.service.v1.StatsService.GetInteractionStats:input_type -> stats.service.v1.GetInteractionStatsRequest
+	9,  // 17: stats.service.v1.StatsService.GetLoginActivity:input_type -> stats.service.v1.GetLoginActivityRequest
+	2,  // 18: stats.service.v1.StatsService.GetAiUsageTrend:input_type -> stats.service.v1.TrendRequest
+	2,  // 19: stats.service.v1.StatsService.GetApiCallTrend:input_type -> stats.service.v1.TrendRequest
+	13, // 20: stats.service.v1.StatsService.GetPostStatusDistribution:input_type -> stats.service.v1.GetPostStatusDistributionRequest
+	16, // 21: stats.service.v1.StatsService.GetCommentStatusDistribution:input_type -> stats.service.v1.GetCommentStatusDistributionRequest
+	18, // 22: stats.service.v1.StatsService.GetMediaAssetTypeDistribution:input_type -> stats.service.v1.GetMediaAssetTypeDistributionRequest
+	1,  // 23: stats.service.v1.StatsService.GetDashboardOverview:output_type -> stats.service.v1.GetDashboardOverviewResponse
+	5,  // 24: stats.service.v1.StatsService.GetContentTrend:output_type -> stats.service.v1.GetContentTrendResponse
+	8,  // 25: stats.service.v1.StatsService.GetInteractionStats:output_type -> stats.service.v1.GetInteractionStatsResponse
+	10, // 26: stats.service.v1.StatsService.GetLoginActivity:output_type -> stats.service.v1.GetLoginActivityResponse
+	11, // 27: stats.service.v1.StatsService.GetAiUsageTrend:output_type -> stats.service.v1.GetAiUsageTrendResponse
+	12, // 28: stats.service.v1.StatsService.GetApiCallTrend:output_type -> stats.service.v1.GetApiCallTrendResponse
+	15, // 29: stats.service.v1.StatsService.GetPostStatusDistribution:output_type -> stats.service.v1.GetPostStatusDistributionResponse
+	17, // 30: stats.service.v1.StatsService.GetCommentStatusDistribution:output_type -> stats.service.v1.GetCommentStatusDistributionResponse
+	19, // 31: stats.service.v1.StatsService.GetMediaAssetTypeDistribution:output_type -> stats.service.v1.GetMediaAssetTypeDistributionResponse
+	23, // [23:32] is the sub-list for method output_type
+	14, // [14:23] is the sub-list for method input_type
+	14, // [14:14] is the sub-list for extension type_name
+	14, // [14:14] is the sub-list for extension extendee
+	0,  // [0:14] is the sub-list for field type_name
 }
 
 func init() { file_stats_service_v1_stats_proto_init() }
@@ -708,7 +1266,7 @@ func file_stats_service_v1_stats_proto_init() {
 			GoPackagePath: reflect.TypeOf(x{}).PkgPath(),
 			RawDescriptor: unsafe.Slice(unsafe.StringData(file_stats_service_v1_stats_proto_rawDesc), len(file_stats_service_v1_stats_proto_rawDesc)),
 			NumEnums:      0,
-			NumMessages:   10,
+			NumMessages:   20,
 			NumExtensions: 0,
 			NumServices:   1,
 		},

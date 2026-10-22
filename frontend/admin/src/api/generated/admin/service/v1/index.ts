@@ -15922,6 +15922,26 @@ export interface StatsService {
   GetLoginActivity(
     request: statsservicev1_GetLoginActivityRequest,
   ): Promise<statsservicev1_GetLoginActivityResponse>;
+  // AI 用量趋势（近 N 天调用次数与 token 消耗按天聚合）
+  GetAiUsageTrend(
+    request: statsservicev1_TrendRequest,
+  ): Promise<statsservicev1_GetAiUsageTrendResponse>;
+  // API 调用量趋势（近 N 天网关请求按天聚合）
+  GetApiCallTrend(
+    request: statsservicev1_TrendRequest,
+  ): Promise<statsservicev1_GetApiCallTrendResponse>;
+  // 帖子状态分布（排除回收站）
+  GetPostStatusDistribution(
+    request: statsservicev1_GetPostStatusDistributionRequest,
+  ): Promise<statsservicev1_GetPostStatusDistributionResponse>;
+  // 评论状态分布（NULL 状态按已通过计）
+  GetCommentStatusDistribution(
+    request: statsservicev1_GetCommentStatusDistributionRequest,
+  ): Promise<statsservicev1_GetCommentStatusDistributionResponse>;
+  // 媒体类型分布（NULL 类型按其他计）
+  GetMediaAssetTypeDistribution(
+    request: statsservicev1_GetMediaAssetTypeDistributionRequest,
+  ): Promise<statsservicev1_GetMediaAssetTypeDistributionResponse>;
 }
 
 export function createStatsServiceClient(
@@ -15990,6 +16010,66 @@ export function createStatsServiceClient(
         method: 'GetLoginActivity',
       }) as Promise<statsservicev1_GetLoginActivityResponse>;
     },
+    GetAiUsageTrend(request) {
+      const path = `admin/v1/stats/ai-usage-trend`;
+      const body = null;
+      const queryParams: string[] = [];
+      if (request.days) {
+        queryParams.push(
+          `days=${encodeURIComponent(request.days.toString())}`,
+        );
+      }
+      let uri = path;
+      if (queryParams.length > 0) {
+        uri += `?${queryParams.join('&')}`;
+      }
+      return transport.unary(uri, 'GET', body, {
+        service: 'StatsService',
+        method: 'GetAiUsageTrend',
+      }) as Promise<statsservicev1_GetAiUsageTrendResponse>;
+    },
+    GetApiCallTrend(request) {
+      const path = `admin/v1/stats/api-call-trend`;
+      const body = null;
+      const queryParams: string[] = [];
+      if (request.days) {
+        queryParams.push(
+          `days=${encodeURIComponent(request.days.toString())}`,
+        );
+      }
+      let uri = path;
+      if (queryParams.length > 0) {
+        uri += `?${queryParams.join('&')}`;
+      }
+      return transport.unary(uri, 'GET', body, {
+        service: 'StatsService',
+        method: 'GetApiCallTrend',
+      }) as Promise<statsservicev1_GetApiCallTrendResponse>;
+    },
+    GetPostStatusDistribution(_request) {
+      const path = `admin/v1/stats/post-status-distribution`;
+      const body = null;
+      return transport.unary(path, 'GET', body, {
+        service: 'StatsService',
+        method: 'GetPostStatusDistribution',
+      }) as Promise<statsservicev1_GetPostStatusDistributionResponse>;
+    },
+    GetCommentStatusDistribution(_request) {
+      const path = `admin/v1/stats/comment-status-distribution`;
+      const body = null;
+      return transport.unary(path, 'GET', body, {
+        service: 'StatsService',
+        method: 'GetCommentStatusDistribution',
+      }) as Promise<statsservicev1_GetCommentStatusDistributionResponse>;
+    },
+    GetMediaAssetTypeDistribution(_request) {
+      const path = `admin/v1/stats/media-type-distribution`;
+      const body = null;
+      return transport.unary(path, 'GET', body, {
+        service: 'StatsService',
+        method: 'GetMediaAssetTypeDistribution',
+      }) as Promise<statsservicev1_GetMediaAssetTypeDistributionResponse>;
+    },
   };
 }
 export type statsservicev1_GetDashboardOverviewRequest = {
@@ -15997,12 +16077,19 @@ export type statsservicev1_GetDashboardOverviewRequest = {
 
 export type statsservicev1_GetDashboardOverviewResponse = {
   commentCount: number | undefined;
+  draftPostCount: number | undefined;
   interactionCount: number | undefined;
+  mediaAssetCount: number | undefined;
+  mediaStorageBytes: number | undefined;
   newCommentCountWeek: number | undefined;
   newLikeCountWeek: number | undefined;
+  newMediaCountWeek: number | undefined;
+  newMediaStorageBytesWeek: number | undefined;
   newPostCountWeek: number | undefined;
   newUserCountWeek: number | undefined;
+  pendingCommentCount: number | undefined;
   postCount: number | undefined;
+  scheduledPostCount: number | undefined;
   userCount: number | undefined;
 };
 
@@ -16049,8 +16136,50 @@ export type statsservicev1_GetLoginActivityRequest = {
 };
 
 export type statsservicev1_GetLoginActivityResponse = {
+  activeUsers: statsservicev1_DailyCount[] | undefined;
   failed: statsservicev1_DailyCount[] | undefined;
   success: statsservicev1_DailyCount[] | undefined;
+};
+
+// 天数参数。服务端 clamp：缺省/非正数取 30，上限 90。
+export type statsservicev1_TrendRequest = {
+  days: number | undefined;
+};
+
+export type statsservicev1_GetAiUsageTrendResponse = {
+  calls: statsservicev1_DailyCount[] | undefined;
+  tokens: statsservicev1_DailyCount[] | undefined;
+};
+
+export type statsservicev1_GetApiCallTrendResponse = {
+  calls: statsservicev1_DailyCount[] | undefined;
+};
+
+export type statsservicev1_GetPostStatusDistributionRequest = {
+};
+
+export type statsservicev1_GetPostStatusDistributionResponse = {
+  items: statsservicev1_StatusCount[] | undefined;
+};
+
+export type statsservicev1_StatusCount = {
+  count: number | undefined;
+  status: string | undefined;
+};
+
+export type statsservicev1_GetCommentStatusDistributionRequest = {
+};
+
+export type statsservicev1_GetCommentStatusDistributionResponse = {
+  items: statsservicev1_StatusCount[] | undefined;
+};
+
+export type statsservicev1_GetMediaAssetTypeDistributionRequest = {
+};
+
+export type statsservicev1_GetMediaAssetTypeDistributionResponse = {
+  // 复用 StatusCount：status 字段此处承载媒体类型枚举值（如 ASSET_TYPE_IMAGE）。
+  items: statsservicev1_StatusCount[] | undefined;
 };
 
 // 标签服务

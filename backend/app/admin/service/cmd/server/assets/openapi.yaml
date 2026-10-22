@@ -9591,6 +9591,57 @@ paths:
                         application/json:
                             schema:
                                 $ref: '#/components/schemas/social.service.v1.SocialDistributionSummary'
+    /admin/v1/stats/ai-usage-trend:
+        get:
+            tags:
+                - StatsService
+            description: AI 用量趋势（近 N 天调用次数与 token 消耗按天聚合）
+            operationId: StatsService_GetAiUsageTrend
+            parameters:
+                - name: days
+                  in: query
+                  schema:
+                    type: integer
+                    format: int32
+            responses:
+                "200":
+                    description: OK
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/stats.service.v1.GetAiUsageTrendResponse'
+    /admin/v1/stats/api-call-trend:
+        get:
+            tags:
+                - StatsService
+            description: API 调用量趋势（近 N 天网关请求按天聚合）
+            operationId: StatsService_GetApiCallTrend
+            parameters:
+                - name: days
+                  in: query
+                  schema:
+                    type: integer
+                    format: int32
+            responses:
+                "200":
+                    description: OK
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/stats.service.v1.GetApiCallTrendResponse'
+    /admin/v1/stats/comment-status-distribution:
+        get:
+            tags:
+                - StatsService
+            description: 评论状态分布（NULL 状态按已通过计）
+            operationId: StatsService_GetCommentStatusDistribution
+            responses:
+                "200":
+                    description: OK
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/stats.service.v1.GetCommentStatusDistributionResponse'
     /admin/v1/stats/content-trend:
         get:
             tags:
@@ -9648,6 +9699,19 @@ paths:
                         application/json:
                             schema:
                                 $ref: '#/components/schemas/stats.service.v1.GetLoginActivityResponse'
+    /admin/v1/stats/media-type-distribution:
+        get:
+            tags:
+                - StatsService
+            description: 媒体类型分布（NULL 类型按其他计）
+            operationId: StatsService_GetMediaAssetTypeDistribution
+            responses:
+                "200":
+                    description: OK
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/stats.service.v1.GetMediaAssetTypeDistributionResponse'
     /admin/v1/stats/overview:
         get:
             tags:
@@ -9661,6 +9725,19 @@ paths:
                         application/json:
                             schema:
                                 $ref: '#/components/schemas/stats.service.v1.GetDashboardOverviewResponse'
+    /admin/v1/stats/post-status-distribution:
+        get:
+            tags:
+                - StatsService
+            description: 帖子状态分布（排除回收站）
+            operationId: StatsService_GetPostStatusDistribution
+            responses:
+                "200":
+                    description: OK
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/stats.service.v1.GetPostStatusDistributionResponse'
     /admin/v1/tags:
         get:
             tags:
@@ -19556,6 +19633,31 @@ components:
                 value:
                     type: string
             description: 单日计数点。date 为 YYYY-MM-DD（数据库本地时区）。
+        stats.service.v1.GetAiUsageTrendResponse:
+            type: object
+            properties:
+                calls:
+                    type: array
+                    items:
+                        $ref: '#/components/schemas/stats.service.v1.DailyCount'
+                tokens:
+                    type: array
+                    items:
+                        $ref: '#/components/schemas/stats.service.v1.DailyCount'
+        stats.service.v1.GetApiCallTrendResponse:
+            type: object
+            properties:
+                calls:
+                    type: array
+                    items:
+                        $ref: '#/components/schemas/stats.service.v1.DailyCount'
+        stats.service.v1.GetCommentStatusDistributionResponse:
+            type: object
+            properties:
+                items:
+                    type: array
+                    items:
+                        $ref: '#/components/schemas/stats.service.v1.StatusCount'
         stats.service.v1.GetContentTrendResponse:
             type: object
             properties:
@@ -19590,6 +19692,20 @@ components:
                     type: string
                 newLikeCountWeek:
                     type: string
+                mediaAssetCount:
+                    type: string
+                mediaStorageBytes:
+                    type: string
+                newMediaCountWeek:
+                    type: string
+                newMediaStorageBytesWeek:
+                    type: string
+                pendingCommentCount:
+                    type: string
+                draftPostCount:
+                    type: string
+                scheduledPostCount:
+                    type: string
         stats.service.v1.GetInteractionStatsResponse:
             type: object
             properties:
@@ -19618,6 +19734,25 @@ components:
                     type: array
                     items:
                         $ref: '#/components/schemas/stats.service.v1.DailyCount'
+                activeUsers:
+                    type: array
+                    items:
+                        $ref: '#/components/schemas/stats.service.v1.DailyCount'
+        stats.service.v1.GetMediaAssetTypeDistributionResponse:
+            type: object
+            properties:
+                items:
+                    type: array
+                    items:
+                        $ref: '#/components/schemas/stats.service.v1.StatusCount'
+                    description: 复用 StatusCount：status 字段此处承载媒体类型枚举值（如 ASSET_TYPE_IMAGE）。
+        stats.service.v1.GetPostStatusDistributionResponse:
+            type: object
+            properties:
+                items:
+                    type: array
+                    items:
+                        $ref: '#/components/schemas/stats.service.v1.StatusCount'
         stats.service.v1.InteractionTopItem:
             type: object
             properties:
@@ -19629,6 +19764,13 @@ components:
                 likeCount:
                     type: string
             description: 点赞 TOP 榜条目。已删除的帖子不出现在榜单中。
+        stats.service.v1.StatusCount:
+            type: object
+            properties:
+                status:
+                    type: string
+                count:
+                    type: string
         storage.service.v1.CreateFileRequest:
             type: object
             properties:

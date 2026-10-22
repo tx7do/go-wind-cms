@@ -20,12 +20,23 @@ var _ = binding.EncodeURL
 
 const _ = http.SupportPackageIsVersion1
 
+const OperationStatsServiceGetAiUsageTrend = "/admin.service.v1.StatsService/GetAiUsageTrend"
+const OperationStatsServiceGetApiCallTrend = "/admin.service.v1.StatsService/GetApiCallTrend"
+const OperationStatsServiceGetCommentStatusDistribution = "/admin.service.v1.StatsService/GetCommentStatusDistribution"
 const OperationStatsServiceGetContentTrend = "/admin.service.v1.StatsService/GetContentTrend"
 const OperationStatsServiceGetDashboardOverview = "/admin.service.v1.StatsService/GetDashboardOverview"
 const OperationStatsServiceGetInteractionStats = "/admin.service.v1.StatsService/GetInteractionStats"
 const OperationStatsServiceGetLoginActivity = "/admin.service.v1.StatsService/GetLoginActivity"
+const OperationStatsServiceGetMediaAssetTypeDistribution = "/admin.service.v1.StatsService/GetMediaAssetTypeDistribution"
+const OperationStatsServiceGetPostStatusDistribution = "/admin.service.v1.StatsService/GetPostStatusDistribution"
 
 type StatsServiceHTTPServer interface {
+	// GetAiUsageTrend AI 用量趋势（近 N 天调用次数与 token 消耗按天聚合）
+	GetAiUsageTrend(context.Context, *v1.TrendRequest) (*v1.GetAiUsageTrendResponse, error)
+	// GetApiCallTrend API 调用量趋势（近 N 天网关请求按天聚合）
+	GetApiCallTrend(context.Context, *v1.TrendRequest) (*v1.GetApiCallTrendResponse, error)
+	// GetCommentStatusDistribution 评论状态分布（NULL 状态按已通过计）
+	GetCommentStatusDistribution(context.Context, *v1.GetCommentStatusDistributionRequest) (*v1.GetCommentStatusDistributionResponse, error)
 	// GetContentTrend 内容增长趋势（近 N 天按天聚合）
 	GetContentTrend(context.Context, *v1.GetContentTrendRequest) (*v1.GetContentTrendResponse, error)
 	// GetDashboardOverview 分析页概览卡片数据
@@ -34,6 +45,10 @@ type StatsServiceHTTPServer interface {
 	GetInteractionStats(context.Context, *v1.GetInteractionStatsRequest) (*v1.GetInteractionStatsResponse, error)
 	// GetLoginActivity 登录活跃趋势（近 N 天成功/失败按天聚合）
 	GetLoginActivity(context.Context, *v1.GetLoginActivityRequest) (*v1.GetLoginActivityResponse, error)
+	// GetMediaAssetTypeDistribution 媒体类型分布（NULL 类型按其他计）
+	GetMediaAssetTypeDistribution(context.Context, *v1.GetMediaAssetTypeDistributionRequest) (*v1.GetMediaAssetTypeDistributionResponse, error)
+	// GetPostStatusDistribution 帖子状态分布（排除回收站）
+	GetPostStatusDistribution(context.Context, *v1.GetPostStatusDistributionRequest) (*v1.GetPostStatusDistributionResponse, error)
 }
 
 func RegisterStatsServiceHTTPServer(s *http.Server, srv StatsServiceHTTPServer) {
@@ -42,6 +57,11 @@ func RegisterStatsServiceHTTPServer(s *http.Server, srv StatsServiceHTTPServer) 
 	r.GET("/admin/v1/stats/content-trend", _StatsService_GetContentTrend0_HTTP_Handler(srv))
 	r.GET("/admin/v1/stats/interactions", _StatsService_GetInteractionStats0_HTTP_Handler(srv))
 	r.GET("/admin/v1/stats/login-activity", _StatsService_GetLoginActivity0_HTTP_Handler(srv))
+	r.GET("/admin/v1/stats/ai-usage-trend", _StatsService_GetAiUsageTrend0_HTTP_Handler(srv))
+	r.GET("/admin/v1/stats/api-call-trend", _StatsService_GetApiCallTrend0_HTTP_Handler(srv))
+	r.GET("/admin/v1/stats/post-status-distribution", _StatsService_GetPostStatusDistribution0_HTTP_Handler(srv))
+	r.GET("/admin/v1/stats/comment-status-distribution", _StatsService_GetCommentStatusDistribution0_HTTP_Handler(srv))
+	r.GET("/admin/v1/stats/media-type-distribution", _StatsService_GetMediaAssetTypeDistribution0_HTTP_Handler(srv))
 }
 
 func _StatsService_GetDashboardOverview0_HTTP_Handler(srv StatsServiceHTTPServer) func(ctx http.Context) error {
@@ -120,7 +140,108 @@ func _StatsService_GetLoginActivity0_HTTP_Handler(srv StatsServiceHTTPServer) fu
 	}
 }
 
+func _StatsService_GetAiUsageTrend0_HTTP_Handler(srv StatsServiceHTTPServer) func(ctx http.Context) error {
+	return func(ctx http.Context) error {
+		var in v1.TrendRequest
+		if err := ctx.BindQuery(&in); err != nil {
+			return err
+		}
+		http.SetOperation(ctx, OperationStatsServiceGetAiUsageTrend)
+		h := ctx.Middleware(func(ctx context.Context, req interface{}) (interface{}, error) {
+			return srv.GetAiUsageTrend(ctx, req.(*v1.TrendRequest))
+		})
+		out, err := h(ctx, &in)
+		if err != nil {
+			return err
+		}
+		reply := out.(*v1.GetAiUsageTrendResponse)
+		return ctx.Result(200, reply)
+	}
+}
+
+func _StatsService_GetApiCallTrend0_HTTP_Handler(srv StatsServiceHTTPServer) func(ctx http.Context) error {
+	return func(ctx http.Context) error {
+		var in v1.TrendRequest
+		if err := ctx.BindQuery(&in); err != nil {
+			return err
+		}
+		http.SetOperation(ctx, OperationStatsServiceGetApiCallTrend)
+		h := ctx.Middleware(func(ctx context.Context, req interface{}) (interface{}, error) {
+			return srv.GetApiCallTrend(ctx, req.(*v1.TrendRequest))
+		})
+		out, err := h(ctx, &in)
+		if err != nil {
+			return err
+		}
+		reply := out.(*v1.GetApiCallTrendResponse)
+		return ctx.Result(200, reply)
+	}
+}
+
+func _StatsService_GetPostStatusDistribution0_HTTP_Handler(srv StatsServiceHTTPServer) func(ctx http.Context) error {
+	return func(ctx http.Context) error {
+		var in v1.GetPostStatusDistributionRequest
+		if err := ctx.BindQuery(&in); err != nil {
+			return err
+		}
+		http.SetOperation(ctx, OperationStatsServiceGetPostStatusDistribution)
+		h := ctx.Middleware(func(ctx context.Context, req interface{}) (interface{}, error) {
+			return srv.GetPostStatusDistribution(ctx, req.(*v1.GetPostStatusDistributionRequest))
+		})
+		out, err := h(ctx, &in)
+		if err != nil {
+			return err
+		}
+		reply := out.(*v1.GetPostStatusDistributionResponse)
+		return ctx.Result(200, reply)
+	}
+}
+
+func _StatsService_GetCommentStatusDistribution0_HTTP_Handler(srv StatsServiceHTTPServer) func(ctx http.Context) error {
+	return func(ctx http.Context) error {
+		var in v1.GetCommentStatusDistributionRequest
+		if err := ctx.BindQuery(&in); err != nil {
+			return err
+		}
+		http.SetOperation(ctx, OperationStatsServiceGetCommentStatusDistribution)
+		h := ctx.Middleware(func(ctx context.Context, req interface{}) (interface{}, error) {
+			return srv.GetCommentStatusDistribution(ctx, req.(*v1.GetCommentStatusDistributionRequest))
+		})
+		out, err := h(ctx, &in)
+		if err != nil {
+			return err
+		}
+		reply := out.(*v1.GetCommentStatusDistributionResponse)
+		return ctx.Result(200, reply)
+	}
+}
+
+func _StatsService_GetMediaAssetTypeDistribution0_HTTP_Handler(srv StatsServiceHTTPServer) func(ctx http.Context) error {
+	return func(ctx http.Context) error {
+		var in v1.GetMediaAssetTypeDistributionRequest
+		if err := ctx.BindQuery(&in); err != nil {
+			return err
+		}
+		http.SetOperation(ctx, OperationStatsServiceGetMediaAssetTypeDistribution)
+		h := ctx.Middleware(func(ctx context.Context, req interface{}) (interface{}, error) {
+			return srv.GetMediaAssetTypeDistribution(ctx, req.(*v1.GetMediaAssetTypeDistributionRequest))
+		})
+		out, err := h(ctx, &in)
+		if err != nil {
+			return err
+		}
+		reply := out.(*v1.GetMediaAssetTypeDistributionResponse)
+		return ctx.Result(200, reply)
+	}
+}
+
 type StatsServiceHTTPClient interface {
+	// GetAiUsageTrend AI 用量趋势（近 N 天调用次数与 token 消耗按天聚合）
+	GetAiUsageTrend(ctx context.Context, req *v1.TrendRequest, opts ...http.CallOption) (rsp *v1.GetAiUsageTrendResponse, err error)
+	// GetApiCallTrend API 调用量趋势（近 N 天网关请求按天聚合）
+	GetApiCallTrend(ctx context.Context, req *v1.TrendRequest, opts ...http.CallOption) (rsp *v1.GetApiCallTrendResponse, err error)
+	// GetCommentStatusDistribution 评论状态分布（NULL 状态按已通过计）
+	GetCommentStatusDistribution(ctx context.Context, req *v1.GetCommentStatusDistributionRequest, opts ...http.CallOption) (rsp *v1.GetCommentStatusDistributionResponse, err error)
 	// GetContentTrend 内容增长趋势（近 N 天按天聚合）
 	GetContentTrend(ctx context.Context, req *v1.GetContentTrendRequest, opts ...http.CallOption) (rsp *v1.GetContentTrendResponse, err error)
 	// GetDashboardOverview 分析页概览卡片数据
@@ -129,6 +250,10 @@ type StatsServiceHTTPClient interface {
 	GetInteractionStats(ctx context.Context, req *v1.GetInteractionStatsRequest, opts ...http.CallOption) (rsp *v1.GetInteractionStatsResponse, err error)
 	// GetLoginActivity 登录活跃趋势（近 N 天成功/失败按天聚合）
 	GetLoginActivity(ctx context.Context, req *v1.GetLoginActivityRequest, opts ...http.CallOption) (rsp *v1.GetLoginActivityResponse, err error)
+	// GetMediaAssetTypeDistribution 媒体类型分布（NULL 类型按其他计）
+	GetMediaAssetTypeDistribution(ctx context.Context, req *v1.GetMediaAssetTypeDistributionRequest, opts ...http.CallOption) (rsp *v1.GetMediaAssetTypeDistributionResponse, err error)
+	// GetPostStatusDistribution 帖子状态分布（排除回收站）
+	GetPostStatusDistribution(ctx context.Context, req *v1.GetPostStatusDistributionRequest, opts ...http.CallOption) (rsp *v1.GetPostStatusDistributionResponse, err error)
 }
 
 type StatsServiceHTTPClientImpl struct {
@@ -137,6 +262,48 @@ type StatsServiceHTTPClientImpl struct {
 
 func NewStatsServiceHTTPClient(client *http.Client) StatsServiceHTTPClient {
 	return &StatsServiceHTTPClientImpl{client}
+}
+
+// GetAiUsageTrend AI 用量趋势（近 N 天调用次数与 token 消耗按天聚合）
+func (c *StatsServiceHTTPClientImpl) GetAiUsageTrend(ctx context.Context, in *v1.TrendRequest, opts ...http.CallOption) (*v1.GetAiUsageTrendResponse, error) {
+	var out v1.GetAiUsageTrendResponse
+	pattern := "/admin/v1/stats/ai-usage-trend"
+	path := binding.EncodeURL(pattern, in, true)
+	opts = append(opts, http.Operation(OperationStatsServiceGetAiUsageTrend))
+	opts = append(opts, http.PathTemplate(pattern))
+	err := c.cc.Invoke(ctx, "GET", path, nil, &out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return &out, nil
+}
+
+// GetApiCallTrend API 调用量趋势（近 N 天网关请求按天聚合）
+func (c *StatsServiceHTTPClientImpl) GetApiCallTrend(ctx context.Context, in *v1.TrendRequest, opts ...http.CallOption) (*v1.GetApiCallTrendResponse, error) {
+	var out v1.GetApiCallTrendResponse
+	pattern := "/admin/v1/stats/api-call-trend"
+	path := binding.EncodeURL(pattern, in, true)
+	opts = append(opts, http.Operation(OperationStatsServiceGetApiCallTrend))
+	opts = append(opts, http.PathTemplate(pattern))
+	err := c.cc.Invoke(ctx, "GET", path, nil, &out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return &out, nil
+}
+
+// GetCommentStatusDistribution 评论状态分布（NULL 状态按已通过计）
+func (c *StatsServiceHTTPClientImpl) GetCommentStatusDistribution(ctx context.Context, in *v1.GetCommentStatusDistributionRequest, opts ...http.CallOption) (*v1.GetCommentStatusDistributionResponse, error) {
+	var out v1.GetCommentStatusDistributionResponse
+	pattern := "/admin/v1/stats/comment-status-distribution"
+	path := binding.EncodeURL(pattern, in, true)
+	opts = append(opts, http.Operation(OperationStatsServiceGetCommentStatusDistribution))
+	opts = append(opts, http.PathTemplate(pattern))
+	err := c.cc.Invoke(ctx, "GET", path, nil, &out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return &out, nil
 }
 
 // GetContentTrend 内容增长趋势（近 N 天按天聚合）
@@ -187,6 +354,34 @@ func (c *StatsServiceHTTPClientImpl) GetLoginActivity(ctx context.Context, in *v
 	pattern := "/admin/v1/stats/login-activity"
 	path := binding.EncodeURL(pattern, in, true)
 	opts = append(opts, http.Operation(OperationStatsServiceGetLoginActivity))
+	opts = append(opts, http.PathTemplate(pattern))
+	err := c.cc.Invoke(ctx, "GET", path, nil, &out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return &out, nil
+}
+
+// GetMediaAssetTypeDistribution 媒体类型分布（NULL 类型按其他计）
+func (c *StatsServiceHTTPClientImpl) GetMediaAssetTypeDistribution(ctx context.Context, in *v1.GetMediaAssetTypeDistributionRequest, opts ...http.CallOption) (*v1.GetMediaAssetTypeDistributionResponse, error) {
+	var out v1.GetMediaAssetTypeDistributionResponse
+	pattern := "/admin/v1/stats/media-type-distribution"
+	path := binding.EncodeURL(pattern, in, true)
+	opts = append(opts, http.Operation(OperationStatsServiceGetMediaAssetTypeDistribution))
+	opts = append(opts, http.PathTemplate(pattern))
+	err := c.cc.Invoke(ctx, "GET", path, nil, &out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return &out, nil
+}
+
+// GetPostStatusDistribution 帖子状态分布（排除回收站）
+func (c *StatsServiceHTTPClientImpl) GetPostStatusDistribution(ctx context.Context, in *v1.GetPostStatusDistributionRequest, opts ...http.CallOption) (*v1.GetPostStatusDistributionResponse, error) {
+	var out v1.GetPostStatusDistributionResponse
+	pattern := "/admin/v1/stats/post-status-distribution"
+	path := binding.EncodeURL(pattern, in, true)
+	opts = append(opts, http.Operation(OperationStatsServiceGetPostStatusDistribution))
 	opts = append(opts, http.PathTemplate(pattern))
 	err := c.cc.Invoke(ctx, "GET", path, nil, &out, opts...)
 	if err != nil {

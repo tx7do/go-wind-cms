@@ -37,4 +37,39 @@ service StatsService {
       get: "/admin/v1/stats/login-activity"
     };
   }
+
+  // AI 用量趋势（近 N 天调用次数与 token 消耗按天聚合）
+  rpc GetAiUsageTrend (stats.service.v1.TrendRequest) returns (stats.service.v1.GetAiUsageTrendResponse) {
+    option (google.api.http) = {
+      get: "/admin/v1/stats/ai-usage-trend"
+    };
+  }
+
+  // API 调用量趋势（近 N 天网关请求按天聚合）
+  rpc GetApiCallTrend (stats.service.v1.TrendRequest) returns (stats.service.v1.GetApiCallTrendResponse) {
+    option (google.api.http) = {
+      get: "/admin/v1/stats/api-call-trend"
+    };
+  }
+
+  // 帖子状态分布（排除回收站）
+  rpc GetPostStatusDistribution (stats.service.v1.GetPostStatusDistributionRequest) returns (stats.service.v1.GetPostStatusDistributionResponse) {
+    option (google.api.http) = {
+      get: "/admin/v1/stats/post-status-distribution"
+    };
+  }
+
+  // 评论状态分布（NULL 状态按已通过计）
+  rpc GetCommentStatusDistribution (stats.service.v1.GetCommentStatusDistributionRequest) returns (stats.service.v1.GetCommentStatusDistributionResponse) {
+    option (google.api.http) = {
+      get: "/admin/v1/stats/comment-status-distribution"
+    };
+  }
+
+  // 媒体类型分布（NULL 类型按其他计）
+  rpc GetMediaAssetTypeDistribution (stats.service.v1.GetMediaAssetTypeDistributionRequest) returns (stats.service.v1.GetMediaAssetTypeDistributionResponse) {
+    option (google.api.http) = {
+      get: "/admin/v1/stats/media-type-distribution"
+    };
+  }
 }

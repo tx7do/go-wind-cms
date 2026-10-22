@@ -26,38 +26,62 @@ var File_admin_service_v1_i_stats_proto protoreflect.FileDescriptor
 
 const file_admin_service_v1_i_stats_proto_rawDesc = "" +
 	"\n" +
-	"\x1eadmin/service/v1/i_stats.proto\x12\x10admin.service.v1\x1a\x1cgoogle/api/annotations.proto\x1a\x1cstats/service/v1/stats.proto2\xe7\x04\n" +
+	"\x1eadmin/service/v1/i_stats.proto\x12\x10admin.service.v1\x1a\x1cgoogle/api/annotations.proto\x1a\x1cstats/service/v1/stats.proto2\xb7\v\n" +
 	"\fStatsService\x12\x97\x01\n" +
 	"\x14GetDashboardOverview\x12-.stats.service.v1.GetDashboardOverviewRequest\x1a..stats.service.v1.GetDashboardOverviewResponse\" \x82\xd3\xe4\x93\x02\x1a\x12\x18/admin/v1/stats/overview\x12\x8d\x01\n" +
 	"\x0fGetContentTrend\x12(.stats.service.v1.GetContentTrendRequest\x1a).stats.service.v1.GetContentTrendResponse\"%\x82\xd3\xe4\x93\x02\x1f\x12\x1d/admin/v1/stats/content-trend\x12\x98\x01\n" +
 	"\x13GetInteractionStats\x12,.stats.service.v1.GetInteractionStatsRequest\x1a-.stats.service.v1.GetInteractionStatsResponse\"$\x82\xd3\xe4\x93\x02\x1e\x12\x1c/admin/v1/stats/interactions\x12\x91\x01\n" +
-	"\x10GetLoginActivity\x12).stats.service.v1.GetLoginActivityRequest\x1a*.stats.service.v1.GetLoginActivityResponse\"&\x82\xd3\xe4\x93\x02 \x12\x1e/admin/v1/stats/login-activityB\xb6\x01\n" +
+	"\x10GetLoginActivity\x12).stats.service.v1.GetLoginActivityRequest\x1a*.stats.service.v1.GetLoginActivityResponse\"&\x82\xd3\xe4\x93\x02 \x12\x1e/admin/v1/stats/login-activity\x12\x84\x01\n" +
+	"\x0fGetAiUsageTrend\x12\x1e.stats.service.v1.TrendRequest\x1a).stats.service.v1.GetAiUsageTrendResponse\"&\x82\xd3\xe4\x93\x02 \x12\x1e/admin/v1/stats/ai-usage-trend\x12\x84\x01\n" +
+	"\x0fGetApiCallTrend\x12\x1e.stats.service.v1.TrendRequest\x1a).stats.service.v1.GetApiCallTrendResponse\"&\x82\xd3\xe4\x93\x02 \x12\x1e/admin/v1/stats/api-call-trend\x12\xb6\x01\n" +
+	"\x19GetPostStatusDistribution\x122.stats.service.v1.GetPostStatusDistributionRequest\x1a3.stats.service.v1.GetPostStatusDistributionResponse\"0\x82\xd3\xe4\x93\x02*\x12(/admin/v1/stats/post-status-distribution\x12\xc2\x01\n" +
+	"\x1cGetCommentStatusDistribution\x125.stats.service.v1.GetCommentStatusDistributionRequest\x1a6.stats.service.v1.GetCommentStatusDistributionResponse\"3\x82\xd3\xe4\x93\x02-\x12+/admin/v1/stats/comment-status-distribution\x12\xc1\x01\n" +
+	"\x1dGetMediaAssetTypeDistribution\x126.stats.service.v1.GetMediaAssetTypeDistributionRequest\x1a7.stats.service.v1.GetMediaAssetTypeDistributionResponse\"/\x82\xd3\xe4\x93\x02)\x12'/admin/v1/stats/media-type-distributionB\xb6\x01\n" +
 	"\x14com.admin.service.v1B\vIStatsProtoP\x01Z/go-wind-cms/api/gen/go/admin/service/v1;adminpb\xa2\x02\x03ASX\xaa\x02\x10Admin.Service.V1\xca\x02\x10Admin\\Service\\V1\xe2\x02\x1cAdmin\\Service\\V1\\GPBMetadata\xea\x02\x12Admin::Service::V1b\x06proto3"
 
 var file_admin_service_v1_i_stats_proto_goTypes = []any{
-	(*v1.GetDashboardOverviewRequest)(nil),  // 0: stats.service.v1.GetDashboardOverviewRequest
-	(*v1.GetContentTrendRequest)(nil),       // 1: stats.service.v1.GetContentTrendRequest
-	(*v1.GetInteractionStatsRequest)(nil),   // 2: stats.service.v1.GetInteractionStatsRequest
-	(*v1.GetLoginActivityRequest)(nil),      // 3: stats.service.v1.GetLoginActivityRequest
-	(*v1.GetDashboardOverviewResponse)(nil), // 4: stats.service.v1.GetDashboardOverviewResponse
-	(*v1.GetContentTrendResponse)(nil),      // 5: stats.service.v1.GetContentTrendResponse
-	(*v1.GetInteractionStatsResponse)(nil),  // 6: stats.service.v1.GetInteractionStatsResponse
-	(*v1.GetLoginActivityResponse)(nil),     // 7: stats.service.v1.GetLoginActivityResponse
+	(*v1.GetDashboardOverviewRequest)(nil),           // 0: stats.service.v1.GetDashboardOverviewRequest
+	(*v1.GetContentTrendRequest)(nil),                // 1: stats.service.v1.GetContentTrendRequest
+	(*v1.GetInteractionStatsRequest)(nil),            // 2: stats.service.v1.GetInteractionStatsRequest
+	(*v1.GetLoginActivityRequest)(nil),               // 3: stats.service.v1.GetLoginActivityRequest
+	(*v1.TrendRequest)(nil),                          // 4: stats.service.v1.TrendRequest
+	(*v1.GetPostStatusDistributionRequest)(nil),      // 5: stats.service.v1.GetPostStatusDistributionRequest
+	(*v1.GetCommentStatusDistributionRequest)(nil),   // 6: stats.service.v1.GetCommentStatusDistributionRequest
+	(*v1.GetMediaAssetTypeDistributionRequest)(nil),  // 7: stats.service.v1.GetMediaAssetTypeDistributionRequest
+	(*v1.GetDashboardOverviewResponse)(nil),          // 8: stats.service.v1.GetDashboardOverviewResponse
+	(*v1.GetContentTrendResponse)(nil),               // 9: stats.service.v1.GetContentTrendResponse
+	(*v1.GetInteractionStatsResponse)(nil),           // 10: stats.service.v1.GetInteractionStatsResponse
+	(*v1.GetLoginActivityResponse)(nil),              // 11: stats.service.v1.GetLoginActivityResponse
+	(*v1.GetAiUsageTrendResponse)(nil),               // 12: stats.service.v1.GetAiUsageTrendResponse
+	(*v1.GetApiCallTrendResponse)(nil),               // 13: stats.service.v1.GetApiCallTrendResponse
+	(*v1.GetPostStatusDistributionResponse)(nil),     // 14: stats.service.v1.GetPostStatusDistributionResponse
+	(*v1.GetCommentStatusDistributionResponse)(nil),  // 15: stats.service.v1.GetCommentStatusDistributionResponse
+	(*v1.GetMediaAssetTypeDistributionResponse)(nil), // 16: stats.service.v1.GetMediaAssetTypeDistributionResponse
 }
 var file_admin_service_v1_i_stats_proto_depIdxs = []int32{
-	0, // 0: admin.service.v1.StatsService.GetDashboardOverview:input_type -> stats.service.v1.GetDashboardOverviewRequest
-	1, // 1: admin.service.v1.StatsService.GetContentTrend:input_type -> stats.service.v1.GetContentTrendRequest
-	2, // 2: admin.service.v1.StatsService.GetInteractionStats:input_type -> stats.service.v1.GetInteractionStatsRequest
-	3, // 3: admin.service.v1.StatsService.GetLoginActivity:input_type -> stats.service.v1.GetLoginActivityRequest
-	4, // 4: admin.service.v1.StatsService.GetDashboardOverview:output_type -> stats.service.v1.GetDashboardOverviewResponse
-	5, // 5: admin.service.v1.StatsService.GetContentTrend:output_type -> stats.service.v1.GetContentTrendResponse
-	6, // 6: admin.service.v1.StatsService.GetInteractionStats:output_type -> stats.service.v1.GetInteractionStatsResponse
-	7, // 7: admin.service.v1.StatsService.GetLoginActivity:output_type -> stats.service.v1.GetLoginActivityResponse
-	4, // [4:8] is the sub-list for method output_type
-	0, // [0:4] is the sub-list for method input_type
-	0, // [0:0] is the sub-list for extension type_name
-	0, // [0:0] is the sub-list for extension extendee
-	0, // [0:0] is the sub-list for field type_name
+	0,  // 0: admin.service.v1.StatsService.GetDashboardOverview:input_type -> stats.service.v1.GetDashboardOverviewRequest
+	1,  // 1: admin.service.v1.StatsService.GetContentTrend:input_type -> stats.service.v1.GetContentTrendRequest
+	2,  // 2: admin.service.v1.StatsService.GetInteractionStats:input_type -> stats.service.v1.GetInteractionStatsRequest
+	3,  // 3: admin.service.v1.StatsService.GetLoginActivity:input_type -> stats.service.v1.GetLoginActivityRequest
+	4,  // 4: admin.service.v1.StatsService.GetAiUsageTrend:input_type -> stats.service.v1.TrendRequest
+	4,  // 5: admin.service.v1.StatsService.GetApiCallTrend:input_type -> stats.service.v1.TrendRequest
+	5,  // 6: admin.service.v1.StatsService.GetPostStatusDistribution:input_type -> stats.service.v1.GetPostStatusDistributionRequest
+	6,  // 7: admin.service.v1.StatsService.GetCommentStatusDistribution:input_type -> stats.service.v1.GetCommentStatusDistributionRequest
+	7,  // 8: admin.service.v1.StatsService.GetMediaAssetTypeDistribution:input_type -> stats.service.v1.GetMediaAssetTypeDistributionRequest
+	8,  // 9: admin.service.v1.StatsService.GetDashboardOverview:output_type -> stats.service.v1.GetDashboardOverviewResponse
+	9,  // 10: admin.service.v1.StatsService.GetContentTrend:output_type -> stats.service.v1.GetContentTrendResponse
+	10, // 11: admin.service.v1.StatsService.GetInteractionStats:output_type -> stats.service.v1.GetInteractionStatsResponse
+	11, // 12: admin.service.v1.StatsService.GetLoginActivity:output_type -> stats.service.v1.GetLoginActivityResponse
+	12, // 13: admin.service.v1.StatsService.GetAiUsageTrend:output_type -> stats.service.v1.GetAiUsageTrendResponse
+	13, // 14: admin.service.v1.StatsService.GetApiCallTrend:output_type -> stats.service.v1.GetApiCallTrendResponse
+	14, // 15: admin.service.v1.StatsService.GetPostStatusDistribution:output_type -> stats.service.v1.GetPostStatusDistributionResponse
+	15, // 16: admin.service.v1.StatsService.GetCommentStatusDistribution:output_type -> stats.service.v1.GetCommentStatusDistributionResponse
+	16, // 17: admin.service.v1.StatsService.GetMediaAssetTypeDistribution:output_type -> stats.service.v1.GetMediaAssetTypeDistributionResponse
+	9,  // [9:18] is the sub-list for method output_type
+	0,  // [0:9] is the sub-list for method input_type
+	0,  // [0:0] is the sub-list for extension type_name
+	0,  // [0:0] is the sub-list for extension extendee
+	0,  // [0:0] is the sub-list for field type_name
 }
 
 func init() { file_admin_service_v1_i_stats_proto_init() }

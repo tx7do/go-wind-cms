@@ -45,3 +45,23 @@ func (s *StatsService) GetInteractionStats(ctx context.Context, req *statsV1.Get
 func (s *StatsService) GetLoginActivity(ctx context.Context, req *statsV1.GetLoginActivityRequest) (*statsV1.GetLoginActivityResponse, error) {
 	return s.statsServiceClient.GetLoginActivity(ctx, req)
 }
+
+func (s *StatsService) GetAiUsageTrend(ctx context.Context, req *statsV1.TrendRequest) (*statsV1.GetAiUsageTrendResponse, error) {
+	return s.statsServiceClient.GetAiUsageTrend(ctx, req)
+}
+
+func (s *StatsService) GetApiCallTrend(ctx context.Context, req *statsV1.TrendRequest) (*statsV1.GetApiCallTrendResponse, error) {
+	return s.statsServiceClient.GetApiCallTrend(ctx, req)
+}
+
+func (s *StatsService) GetPostStatusDistribution(ctx context.Context, req *statsV1.GetPostStatusDistributionRequest) (*statsV1.GetPostStatusDistributionResponse, error) {
+	return s.statsServiceClient.GetPostStatusDistribution(ctx, req)
+}
+
+func (s *StatsService) GetCommentStatusDistribution(ctx context.Context, req *statsV1.GetCommentStatusDistributionRequest) (*statsV1.GetCommentStatusDistributionResponse, error) {
+	return s.statsServiceClient.GetCommentStatusDistribution(ctx, req)
+}
+
+func (s *StatsService) GetMediaAssetTypeDistribution(ctx context.Context, req *statsV1.GetMediaAssetTypeDistributionRequest) (*statsV1.GetMediaAssetTypeDistributionResponse, error) {
+	return s.statsServiceClient.GetMediaAssetTypeDistribution(ctx, req)
+}

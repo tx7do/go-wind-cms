@@ -17,6 +17,7 @@ import (
 	"go-wind-cms/app/core/service/internal/data/ent/comment"
 	"go-wind-cms/app/core/service/internal/data/ent/enttest"
 	"go-wind-cms/app/core/service/internal/data/ent/loginauditlog"
+	"go-wind-cms/app/core/service/internal/data/ent/mediaasset"
 	"go-wind-cms/app/core/service/internal/data/ent/post"
 )
 
@@ -95,6 +96,15 @@ func createTestCounter(t *testing.T, db *ent.Client, tid, targetID uint32, metri
 	require.NoError(t, err, "create test counter failed")
 }
 
+func createTestMediaAsset(t *testing.T, db *ent.Client, tid uint32, size int64) {
+	t.Helper()
+	_, err := db.MediaAsset.Create().
+		SetTenantID(tid).
+		SetSize(uint64(size)).
+		Save(viewerCtx(tid, 1))
+	require.NoError(t, err, "create test media asset failed")
+}
+
 // TestStatsRepo_GetOverview 验证总量计数、口径排除(TRASHED/SPAM)与近 7 天增量。
 func TestStatsRepo_GetOverview(t *testing.T) {
 	repo, db, cleanup := newTestStatsRepo(t)
@@ -117,6 +127,13 @@ func TestStatsRepo_GetOverview(t *testing.T) {
 	createTestComment(t, db, 1, false)
 	// SPAM 评论不计入
 	createTestComment(t, db, 1, true)
+	// 待审评论计入待办数
+	_, err = db.Comment.Create().
+		SetTenantID(1).
+		SetContent("pending comment").
+		SetStatus(comment.StatusStatusPending).
+		Save(ctx)
+	require.NoError(t, err)
 
 	pid := createTestPost(t, db, 1)
 	_, err = db.PostLike.Create().
@@ -129,20 +146,42 @@ func TestStatsRepo_GetOverview(t *testing.T) {
 	createTestCounter(t, db, 1, pid, interactionV1.CounterMetric_COUNTER_METRIC_LIKE, 5)
 	createTestCounter(t, db, 1, pid, interactionV1.CounterMetric_COUNTER_METRIC_WATCH, 3)
 
+	// 媒体库：2 个资产共 300 字节；草稿/定时各 1 篇计入待办数
+	createTestMediaAsset(t, db, 1, 100)
+	createTestMediaAsset(t, db, 1, 200)
+	_, err = db.Post.Create().
+		SetTenantID(1).
+		SetStatus(post.StatusPostStatusDraft).
+		Save(ctx)
+	require.NoError(t, err)
+	_, err = db.Post.Create().
+		SetTenantID(1).
+		SetStatus(post.StatusPostStatusScheduled).
+		Save(ctx)
+	require.NoError(t, err)
+
 	// 其他租户数据不应出现
 	createTestUser(t, db, 2, "other-tenant-user")
+	createTestMediaAsset(t, db, 2, 999)
 
 	counts, err := repo.GetOverview(ctx)
 	require.NoError(t, err)
 
 	assert.Equal(t, int64(2), counts.UserCount, "用户总量应为 2(不含其他租户)")
 	assert.Equal(t, int64(2), counts.NewUserCountWeek, "近 7 天新增用户应为 2")
-	assert.Equal(t, int64(3), counts.PostCount, "帖子总量应为 3(排除回收站 1 篇)")
-	assert.Equal(t, int64(3), counts.NewPostCountWeek, "近 7 天新增帖子应为 3")
-	assert.Equal(t, int64(1), counts.CommentCount, "评论总量应为 1(排除 SPAM)")
-	assert.Equal(t, int64(1), counts.NewCommentCount, "近 7 天新增评论应为 1")
+	assert.Equal(t, int64(5), counts.PostCount, "帖子总量应为 5(排除回收站 1 篇)")
+	assert.Equal(t, int64(5), counts.NewPostCountWeek, "近 7 天新增帖子应为 5")
+	assert.Equal(t, int64(2), counts.CommentCount, "评论总量应为 2(排除 SPAM)")
+	assert.Equal(t, int64(2), counts.NewCommentCount, "近 7 天新增评论应为 2")
 	assert.Equal(t, int64(8), counts.InteractionCount, "互动总量应为 5+3")
 	assert.Equal(t, int64(1), counts.NewLikeCountWeek, "近 7 天新增点赞应为 1")
+	assert.Equal(t, int64(2), counts.MediaAssetCount, "媒体资产应为 2(不含其他租户)")
+	assert.Equal(t, int64(300), counts.MediaStorageBytes, "媒体存储应为 100+200 字节")
+	assert.Equal(t, int64(2), counts.NewMediaCountWeek, "近 7 天新增媒体应为 2")
+	assert.Equal(t, int64(300), counts.NewMediaStorageWeek, "近 7 天新增媒体存储应为 300 字节")
+	assert.Equal(t, int64(1), counts.PendingCommentCount, "待审评论应为 1")
+	assert.Equal(t, int64(1), counts.DraftPostCount, "草稿帖子应为 1")
+	assert.Equal(t, int64(1), counts.ScheduledPostCount, "定时发布帖子应为 1")
 }
 
 // TestStatsRepo_GetDailyTrend 验证按天序列长度、日期连续与当日计数。
@@ -234,7 +273,7 @@ func TestStatsRepo_GetTopLikedPosts(t *testing.T) {
 	assert.Equal(t, pid1, top[0].TargetID)
 }
 
-// TestStatsRepo_GetLoginActivity 验证登录成功/失败按天聚合,以及非 LOGIN 动作与 PARTIAL 状态不计入。
+// TestStatsRepo_GetLoginActivity 验证登录成功/失败/活跃用户按天聚合,以及非 LOGIN 动作与 PARTIAL 状态不计入。
 func TestStatsRepo_GetLoginActivity(t *testing.T) {
 	repo, db, cleanup := newTestStatsRepo(t)
 	defer cleanup()
@@ -246,14 +285,174 @@ func TestStatsRepo_GetLoginActivity(t *testing.T) {
 	// LOGOUT 与 PARTIAL 不应计入
 	createTestLoginLog(t, db, 1, loginauditlog.ActionTypeLogout, loginauditlog.StatusSuccess, now)
 	createTestLoginLog(t, db, 1, loginauditlog.ActionTypeLogin, loginauditlog.StatusPartial, now)
+	// user_id=7 成功登录两次(另一次独立创建),活跃用户去重后应为 1
+	for i := 0; i < 2; i++ {
+		_, err := db.LoginAuditLog.Create().
+			SetTenantID(1).
+			SetUserID(7).
+			SetActionType(loginauditlog.ActionTypeLogin).
+			SetStatus(loginauditlog.StatusSuccess).
+			SetCreatedAt(now).
+			Save(viewerCtx(1, 1))
+		require.NoError(t, err)
+	}
 
-	success, failed, err := repo.GetLoginActivity(viewerCtx(1, 1), 7)
+	success, failed, activeUsers, err := repo.GetLoginActivity(viewerCtx(1, 1), 7)
 	require.NoError(t, err)
 
 	assert.Len(t, success, 7)
 	assert.Len(t, failed, 7)
-	assert.Equal(t, int64(2), success[6].Value, "今日登录成功应为 2")
+	assert.Len(t, activeUsers, 7)
+	assert.Equal(t, int64(4), success[6].Value, "今日登录成功应为 4")
 	assert.Equal(t, int64(1), failed[6].Value, "今日登录失败应为 1")
+	assert.Equal(t, int64(1), activeUsers[6].Value, "今日活跃用户去重后应为 1(user_id=0 的行不计)")
+}
+
+// TestStatsRepo_GetAiUsageTrend 验证调用次数/token 按天聚合与租户隔离。
+func TestStatsRepo_GetAiUsageTrend(t *testing.T) {
+	repo, db, cleanup := newTestStatsRepo(t)
+	defer cleanup()
+
+	ctx := viewerCtx(1, 1)
+	for i := 0; i < 2; i++ {
+		_, err := db.AiUsageLog.Create().
+			SetTenantID(1).
+			SetTotalTokens(100).
+			Save(ctx)
+		require.NoError(t, err)
+	}
+	// 其他租户不计入
+	_, err := db.AiUsageLog.Create().
+		SetTenantID(2).
+		SetTotalTokens(999).
+		Save(viewerCtx(2, 1))
+	require.NoError(t, err)
+
+	calls, tokens, err := repo.GetAiUsageTrend(ctx, 7)
+	require.NoError(t, err)
+
+	assert.Len(t, calls, 7)
+	assert.Len(t, tokens, 7)
+	assert.Equal(t, int64(2), calls[6].Value, "今日 AI 调用应为 2")
+	assert.Equal(t, int64(200), tokens[6].Value, "今日 token 消耗应为 200")
+}
+
+// TestStatsRepo_GetApiCallTrend 验证 API 请求按天聚合与租户隔离。
+func TestStatsRepo_GetApiCallTrend(t *testing.T) {
+	repo, db, cleanup := newTestStatsRepo(t)
+	defer cleanup()
+
+	ctx := viewerCtx(1, 1)
+	for i := 0; i < 3; i++ {
+		_, err := db.ApiAuditLog.Create().
+			SetTenantID(1).
+			Save(ctx)
+		require.NoError(t, err)
+	}
+	_, err := db.ApiAuditLog.Create().
+		SetTenantID(2).
+		Save(viewerCtx(2, 1))
+	require.NoError(t, err)
+
+	calls, err := repo.GetApiCallTrend(ctx, 7)
+	require.NoError(t, err)
+
+	assert.Len(t, calls, 7)
+	assert.Equal(t, int64(3), calls[6].Value, "今日 API 请求应为 3(不含其他租户)")
+}
+
+// TestStatsRepo_GetPostStatusDistribution 验证状态分组与回收站排除。
+func TestStatsRepo_GetPostStatusDistribution(t *testing.T) {
+	repo, db, cleanup := newTestStatsRepo(t)
+	defer cleanup()
+
+	ctx := viewerCtx(1, 1)
+	createTestPost(t, db, 1) // PUBLISHED
+	_, err := db.Post.Create().SetTenantID(1).SetStatus(post.StatusPostStatusDraft).Save(ctx)
+	require.NoError(t, err)
+	_, err = db.Post.Create().SetTenantID(1).SetStatus(post.StatusPostStatusDraft).Save(ctx)
+	require.NoError(t, err)
+	_, err = db.Post.Create().SetTenantID(1).SetStatus(post.StatusPostStatusTrashed).Save(ctx)
+	require.NoError(t, err)
+
+	rows, err := repo.GetPostStatusDistribution(ctx)
+	require.NoError(t, err)
+
+	byStatus := make(map[string]int64, len(rows))
+	for _, row := range rows {
+		byStatus[row.Status] = row.Count
+	}
+	assert.Equal(t, int64(2), byStatus[string(post.StatusPostStatusDraft)], "草稿应为 2")
+	assert.Equal(t, int64(1), byStatus[string(post.StatusPostStatusPublished)], "已发布应为 1")
+	_, hasTrashed := byStatus[string(post.StatusPostStatusTrashed)]
+	assert.False(t, hasTrashed, "回收站状态不应出现在分布里")
+}
+
+// TestStatsRepo_GetCommentStatusDistribution 验证状态分组与 NULL→已通过归并。
+func TestStatsRepo_GetCommentStatusDistribution(t *testing.T) {
+	repo, db, cleanup := newTestStatsRepo(t)
+	defer cleanup()
+
+	ctx := viewerCtx(1, 1)
+	createTestComment(t, db, 1, false) // NULL 状态 → 归并为已通过
+	_, err := db.Comment.Create().
+		SetTenantID(1).
+		SetContent("approved").
+		SetStatus(comment.StatusStatusApproved).
+		Save(ctx)
+	require.NoError(t, err)
+	_, err = db.Comment.Create().
+		SetTenantID(1).
+		SetContent("pending").
+		SetStatus(comment.StatusStatusPending).
+		Save(ctx)
+	require.NoError(t, err)
+	createTestComment(t, db, 1, true) // SPAM 保留在分布里
+
+	rows, err := repo.GetCommentStatusDistribution(ctx)
+	require.NoError(t, err)
+
+	byStatus := make(map[string]int64, len(rows))
+	for _, row := range rows {
+		byStatus[row.Status] = row.Count
+	}
+	assert.Equal(t, int64(2), byStatus[string(comment.StatusStatusApproved)], "已通过应为 2(NULL 归并)")
+	assert.Equal(t, int64(1), byStatus[string(comment.StatusStatusPending)], "待审应为 1")
+	assert.Equal(t, int64(1), byStatus[string(comment.StatusStatusSpam)], "垃圾应为 1(分布保留)")
+}
+
+// TestStatsRepo_GetMediaAssetTypeDistribution 验证类型分组与 NULL→其他归并。
+func TestStatsRepo_GetMediaAssetTypeDistribution(t *testing.T) {
+	repo, db, cleanup := newTestStatsRepo(t)
+	defer cleanup()
+
+	ctx := viewerCtx(1, 1)
+	_, err := db.MediaAsset.Create().
+		SetTenantID(1).
+		SetType(mediaasset.TypeAssetTypeImage).
+		SetSize(100).
+		Save(ctx)
+	require.NoError(t, err)
+	_, err = db.MediaAsset.Create().
+		SetTenantID(1).
+		SetType(mediaasset.TypeAssetTypeImage).
+		SetSize(200).
+		Save(ctx)
+	require.NoError(t, err)
+	// NULL 类型 → 归并为其他
+	createTestMediaAsset(t, db, 1, 50)
+	createTestMediaAsset(t, db, 2, 999)
+
+	rows, err := repo.GetMediaAssetTypeDistribution(ctx)
+	require.NoError(t, err)
+
+	byType := make(map[string]int64, len(rows))
+	for _, row := range rows {
+		byType[row.Status] = row.Count
+	}
+	assert.Equal(t, int64(2), byType[string(mediaasset.TypeAssetTypeImage)], "图片应为 2")
+	assert.Equal(t, int64(1), byType[string(mediaasset.TypeAssetTypeOther)], "其他应为 1(NULL 归并)")
+	assert.Len(t, rows, 2, "租户 2 的数据不应出现")
 }
 
 // TestStatsRepo_TenantIsolation 验证租户 2 的 viewer 看不到租户 1 的数据。

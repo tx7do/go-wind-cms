@@ -22,6 +22,21 @@ service StatsService {
 
   // 登录活跃趋势：近 N 天按天聚合的登录成功/失败次数（来自登录审计日志）。
   rpc GetLoginActivity (GetLoginActivityRequest) returns (GetLoginActivityResponse) {}
+
+  // AI 用量趋势：近 N 天按天聚合的模型调用次数与 token 消耗。
+  rpc GetAiUsageTrend (TrendRequest) returns (GetAiUsageTrendResponse) {}
+
+  // API 调用量趋势：近 N 天按天聚合的网关请求次数（来自 API 审计日志）。
+  rpc GetApiCallTrend (TrendRequest) returns (GetApiCallTrendResponse) {}
+
+  // 帖子状态分布：按状态分组的帖子数（排除回收站）。
+  rpc GetPostStatusDistribution (GetPostStatusDistributionRequest) returns (GetPostStatusDistributionResponse) {}
+
+  // 评论状态分布：按状态分组的评论条数（NULL 状态按已通过计，与前台展示口径一致）。
+  rpc GetCommentStatusDistribution (GetCommentStatusDistributionRequest) returns (GetCommentStatusDistributionResponse) {}
+
+  // 媒体类型分布：按类型分组的媒体资产数（NULL 类型按其他计）。
+  rpc GetMediaAssetTypeDistribution (GetMediaAssetTypeDistributionRequest) returns (GetMediaAssetTypeDistributionResponse) {}
 }
 
 message GetDashboardOverviewRequest {}
@@ -35,6 +50,18 @@ message GetDashboardOverviewResponse {
   int64 new_post_count_week = 6;       // 近 7 天新增帖子
   int64 new_comment_count_week = 7;    // 近 7 天新增评论
   int64 new_like_count_week = 8; // 近 7 天新增点赞（post_like ledger 计数）
+  int64 media_asset_count = 9;         // 媒体资产总量
+  int64 media_storage_bytes = 10;      // 媒体存储占用（字节，SUM(size)）
+  int64 new_media_count_week = 11;     // 近 7 天新增媒体数
+  int64 new_media_storage_bytes_week = 12; // 近 7 天新增媒体存储（字节）
+  int64 pending_comment_count = 13;    // 待审评论数
+  int64 draft_post_count = 14;         // 草稿帖子数
+  int64 scheduled_post_count = 15;     // 定时发布帖子数
+}
+
+// 天数参数。服务端 clamp：缺省/非正数取 30，上限 90。
+message TrendRequest {
+  int32 days = 1;
 }
 
 // 天数参数。服务端 clamp：缺省/非正数取 30，上限 90。
@@ -82,4 +109,38 @@ message GetLoginActivityRequest {
 message GetLoginActivityResponse {
   repeated DailyCount success = 1; // 每日登录成功次数
   repeated DailyCount failed = 2;  // 每日登录失败次数
+  repeated DailyCount active_users = 3; // 每日活跃用户数（当日成功登录的去重用户）
+}
+
+message GetAiUsageTrendResponse {
+  repeated DailyCount calls = 1; // 每日模型调用次数
+  repeated DailyCount tokens = 2; // 每日 token 消耗总量
+}
+
+message GetApiCallTrendResponse {
+  repeated DailyCount calls = 1; // 每日 API 请求次数
+}
+
+message GetPostStatusDistributionRequest {}
+
+message StatusCount {
+  string status = 1; // 状态原始值（如 POST_STATUS_DRAFT）
+  int64 count = 2;   // 该状态帖子数
+}
+
+message GetPostStatusDistributionResponse {
+  repeated StatusCount items = 1;
+}
+
+message GetCommentStatusDistributionRequest {}
+
+message GetCommentStatusDistributionResponse {
+  repeated StatusCount items = 1;
+}
+
+message GetMediaAssetTypeDistributionRequest {}
+
+message GetMediaAssetTypeDistributionResponse {
+  // 复用 StatusCount：status 字段此处承载媒体类型枚举值（如 ASSET_TYPE_IMAGE）。
+  repeated StatusCount items = 1;
 }

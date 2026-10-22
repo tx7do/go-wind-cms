@@ -45,14 +45,21 @@ func (s *StatsService) GetDashboardOverview(ctx context.Context, _ *statsV1.GetD
 		return nil, err
 	}
 	return &statsV1.GetDashboardOverviewResponse{
-		UserCount:           counts.UserCount,
-		PostCount:           counts.PostCount,
-		CommentCount:        counts.CommentCount,
-		InteractionCount:    counts.InteractionCount,
-		NewUserCountWeek:    counts.NewUserCountWeek,
-		NewPostCountWeek:    counts.NewPostCountWeek,
-		NewCommentCountWeek: counts.NewCommentCount,
-		NewLikeCountWeek:    counts.NewLikeCountWeek,
+		UserCount:                counts.UserCount,
+		PostCount:                counts.PostCount,
+		CommentCount:             counts.CommentCount,
+		InteractionCount:         counts.InteractionCount,
+		NewUserCountWeek:         counts.NewUserCountWeek,
+		NewPostCountWeek:         counts.NewPostCountWeek,
+		NewCommentCountWeek:      counts.NewCommentCount,
+		NewLikeCountWeek:         counts.NewLikeCountWeek,
+		MediaAssetCount:          counts.MediaAssetCount,
+		MediaStorageBytes:        counts.MediaStorageBytes,
+		NewMediaCountWeek:        counts.NewMediaCountWeek,
+		NewMediaStorageBytesWeek: counts.NewMediaStorageWeek,
+		PendingCommentCount:      counts.PendingCommentCount,
+		DraftPostCount:           counts.DraftPostCount,
+		ScheduledPostCount:       counts.ScheduledPostCount,
 	}, nil
 }
 
@@ -113,18 +120,85 @@ func (s *StatsService) GetInteractionStats(ctx context.Context, req *statsV1.Get
 	}, nil
 }
 
-// GetLoginActivity 登录活跃趋势：近 N 天按天聚合的登录成功/失败次数。
+// GetLoginActivity 登录活跃趋势：近 N 天每日登录成功/失败次数 + 活跃用户数。
 func (s *StatsService) GetLoginActivity(ctx context.Context, req *statsV1.GetLoginActivityRequest) (*statsV1.GetLoginActivityResponse, error) {
 	days := clampDays(req.GetDays())
 
-	success, failed, err := s.statsRepo.GetLoginActivity(ctx, days)
+	success, failed, activeUsers, err := s.statsRepo.GetLoginActivity(ctx, days)
 	if err != nil {
 		return nil, err
 	}
 	return &statsV1.GetLoginActivityResponse{
-		Success: toDailyCounts(success),
-		Failed:  toDailyCounts(failed),
+		Success:     toDailyCounts(success),
+		Failed:      toDailyCounts(failed),
+		ActiveUsers: toDailyCounts(activeUsers),
 	}, nil
+}
+
+// GetAiUsageTrend AI 用量趋势：近 N 天每日模型调用次数与 token 消耗。
+func (s *StatsService) GetAiUsageTrend(ctx context.Context, req *statsV1.TrendRequest) (*statsV1.GetAiUsageTrendResponse, error) {
+	days := clampDays(req.GetDays())
+
+	calls, tokens, err := s.statsRepo.GetAiUsageTrend(ctx, days)
+	if err != nil {
+		return nil, err
+	}
+	return &statsV1.GetAiUsageTrendResponse{
+		Calls:  toDailyCounts(calls),
+		Tokens: toDailyCounts(tokens),
+	}, nil
+}
+
+// GetApiCallTrend API 调用量趋势：近 N 天每日网关请求次数。
+func (s *StatsService) GetApiCallTrend(ctx context.Context, req *statsV1.TrendRequest) (*statsV1.GetApiCallTrendResponse, error) {
+	days := clampDays(req.GetDays())
+
+	calls, err := s.statsRepo.GetApiCallTrend(ctx, days)
+	if err != nil {
+		return nil, err
+	}
+	return &statsV1.GetApiCallTrendResponse{
+		Calls: toDailyCounts(calls),
+	}, nil
+}
+
+// GetPostStatusDistribution 帖子状态分布（排除回收站）。
+func (s *StatsService) GetPostStatusDistribution(ctx context.Context, _ *statsV1.GetPostStatusDistributionRequest) (*statsV1.GetPostStatusDistributionResponse, error) {
+	rows, err := s.statsRepo.GetPostStatusDistribution(ctx)
+	if err != nil {
+		return nil, err
+	}
+	items := make([]*statsV1.StatusCount, 0, len(rows))
+	for _, row := range rows {
+		items = append(items, &statsV1.StatusCount{Status: row.Status, Count: row.Count})
+	}
+	return &statsV1.GetPostStatusDistributionResponse{Items: items}, nil
+}
+
+// GetCommentStatusDistribution 评论状态分布（NULL 状态按已通过计）。
+func (s *StatsService) GetCommentStatusDistribution(ctx context.Context, _ *statsV1.GetCommentStatusDistributionRequest) (*statsV1.GetCommentStatusDistributionResponse, error) {
+	rows, err := s.statsRepo.GetCommentStatusDistribution(ctx)
+	if err != nil {
+		return nil, err
+	}
+	items := make([]*statsV1.StatusCount, 0, len(rows))
+	for _, row := range rows {
+		items = append(items, &statsV1.StatusCount{Status: row.Status, Count: row.Count})
+	}
+	return &statsV1.GetCommentStatusDistributionResponse{Items: items}, nil
+}
+
+// GetMediaAssetTypeDistribution 媒体类型分布（NULL 类型按其他计）。
+func (s *StatsService) GetMediaAssetTypeDistribution(ctx context.Context, _ *statsV1.GetMediaAssetTypeDistributionRequest) (*statsV1.GetMediaAssetTypeDistributionResponse, error) {
+	rows, err := s.statsRepo.GetMediaAssetTypeDistribution(ctx)
+	if err != nil {
+		return nil, err
+	}
+	items := make([]*statsV1.StatusCount, 0, len(rows))
+	for _, row := range rows {
+		items = append(items, &statsV1.StatusCount{Status: row.Status, Count: row.Count})
+	}
+	return &statsV1.GetMediaAssetTypeDistributionResponse{Items: items}, nil
 }
 
 // clampDays 趋势天数：缺省/非正数取 30，上限 90。

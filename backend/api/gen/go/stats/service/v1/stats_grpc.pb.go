@@ -19,10 +19,15 @@ import (
 const _ = grpc.SupportPackageIsVersion9
 
 const (
-	StatsService_GetDashboardOverview_FullMethodName = "/stats.service.v1.StatsService/GetDashboardOverview"
-	StatsService_GetContentTrend_FullMethodName      = "/stats.service.v1.StatsService/GetContentTrend"
-	StatsService_GetInteractionStats_FullMethodName  = "/stats.service.v1.StatsService/GetInteractionStats"
-	StatsService_GetLoginActivity_FullMethodName     = "/stats.service.v1.StatsService/GetLoginActivity"
+	StatsService_GetDashboardOverview_FullMethodName          = "/stats.service.v1.StatsService/GetDashboardOverview"
+	StatsService_GetContentTrend_FullMethodName               = "/stats.service.v1.StatsService/GetContentTrend"
+	StatsService_GetInteractionStats_FullMethodName           = "/stats.service.v1.StatsService/GetInteractionStats"
+	StatsService_GetLoginActivity_FullMethodName              = "/stats.service.v1.StatsService/GetLoginActivity"
+	StatsService_GetAiUsageTrend_FullMethodName               = "/stats.service.v1.StatsService/GetAiUsageTrend"
+	StatsService_GetApiCallTrend_FullMethodName               = "/stats.service.v1.StatsService/GetApiCallTrend"
+	StatsService_GetPostStatusDistribution_FullMethodName     = "/stats.service.v1.StatsService/GetPostStatusDistribution"
+	StatsService_GetCommentStatusDistribution_FullMethodName  = "/stats.service.v1.StatsService/GetCommentStatusDistribution"
+	StatsService_GetMediaAssetTypeDistribution_FullMethodName = "/stats.service.v1.StatsService/GetMediaAssetTypeDistribution"
 )
 
 // StatsServiceClient is the client API for StatsService service.
@@ -46,6 +51,16 @@ type StatsServiceClient interface {
 	GetInteractionStats(ctx context.Context, in *GetInteractionStatsRequest, opts ...grpc.CallOption) (*GetInteractionStatsResponse, error)
 	// 登录活跃趋势：近 N 天按天聚合的登录成功/失败次数（来自登录审计日志）。
 	GetLoginActivity(ctx context.Context, in *GetLoginActivityRequest, opts ...grpc.CallOption) (*GetLoginActivityResponse, error)
+	// AI 用量趋势：近 N 天按天聚合的模型调用次数与 token 消耗。
+	GetAiUsageTrend(ctx context.Context, in *TrendRequest, opts ...grpc.CallOption) (*GetAiUsageTrendResponse, error)
+	// API 调用量趋势：近 N 天按天聚合的网关请求次数（来自 API 审计日志）。
+	GetApiCallTrend(ctx context.Context, in *TrendRequest, opts ...grpc.CallOption) (*GetApiCallTrendResponse, error)
+	// 帖子状态分布：按状态分组的帖子数（排除回收站）。
+	GetPostStatusDistribution(ctx context.Context, in *GetPostStatusDistributionRequest, opts ...grpc.CallOption) (*GetPostStatusDistributionResponse, error)
+	// 评论状态分布：按状态分组的评论条数（NULL 状态按已通过计，与前台展示口径一致）。
+	GetCommentStatusDistribution(ctx context.Context, in *GetCommentStatusDistributionRequest, opts ...grpc.CallOption) (*GetCommentStatusDistributionResponse, error)
+	// 媒体类型分布：按类型分组的媒体资产数（NULL 类型按其他计）。
+	GetMediaAssetTypeDistribution(ctx context.Context, in *GetMediaAssetTypeDistributionRequest, opts ...grpc.CallOption) (*GetMediaAssetTypeDistributionResponse, error)
 }
 
 type statsServiceClient struct {
@@ -96,6 +111,56 @@ func (c *statsServiceClient) GetLoginActivity(ctx context.Context, in *GetLoginA
 	return out, nil
 }
 
+func (c *statsServiceClient) GetAiUsageTrend(ctx context.Context, in *TrendRequest, opts ...grpc.CallOption) (*GetAiUsageTrendResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(GetAiUsageTrendResponse)
+	err := c.cc.Invoke(ctx, StatsService_GetAiUsageTrend_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *statsServiceClient) GetApiCallTrend(ctx context.Context, in *TrendRequest, opts ...grpc.CallOption) (*GetApiCallTrendResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(GetApiCallTrendResponse)
+	err := c.cc.Invoke(ctx, StatsService_GetApiCallTrend_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *statsServiceClient) GetPostStatusDistribution(ctx context.Context, in *GetPostStatusDistributionRequest, opts ...grpc.CallOption) (*GetPostStatusDistributionResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(GetPostStatusDistributionResponse)
+	err := c.cc.Invoke(ctx, StatsService_GetPostStatusDistribution_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *statsServiceClient) GetCommentStatusDistribution(ctx context.Context, in *GetCommentStatusDistributionRequest, opts ...grpc.CallOption) (*GetCommentStatusDistributionResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(GetCommentStatusDistributionResponse)
+	err := c.cc.Invoke(ctx, StatsService_GetCommentStatusDistribution_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *statsServiceClient) GetMediaAssetTypeDistribution(ctx context.Context, in *GetMediaAssetTypeDistributionRequest, opts ...grpc.CallOption) (*GetMediaAssetTypeDistributionResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(GetMediaAssetTypeDistributionResponse)
+	err := c.cc.Invoke(ctx, StatsService_GetMediaAssetTypeDistribution_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 // StatsServiceServer is the server API for StatsService service.
 // All implementations must embed UnimplementedStatsServiceServer
 // for forward compatibility.
@@ -117,6 +182,16 @@ type StatsServiceServer interface {
 	GetInteractionStats(context.Context, *GetInteractionStatsRequest) (*GetInteractionStatsResponse, error)
 	// 登录活跃趋势：近 N 天按天聚合的登录成功/失败次数（来自登录审计日志）。
 	GetLoginActivity(context.Context, *GetLoginActivityRequest) (*GetLoginActivityResponse, error)
+	// AI 用量趋势：近 N 天按天聚合的模型调用次数与 token 消耗。
+	GetAiUsageTrend(context.Context, *TrendRequest) (*GetAiUsageTrendResponse, error)
+	// API 调用量趋势：近 N 天按天聚合的网关请求次数（来自 API 审计日志）。
+	GetApiCallTrend(context.Context, *TrendRequest) (*GetApiCallTrendResponse, error)
+	// 帖子状态分布：按状态分组的帖子数（排除回收站）。
+	GetPostStatusDistribution(context.Context, *GetPostStatusDistributionRequest) (*GetPostStatusDistributionResponse, error)
+	// 评论状态分布：按状态分组的评论条数（NULL 状态按已通过计，与前台展示口径一致）。
+	GetCommentStatusDistribution(context.Context, *GetCommentStatusDistributionRequest) (*GetCommentStatusDistributionResponse, error)
+	// 媒体类型分布：按类型分组的媒体资产数（NULL 类型按其他计）。
+	GetMediaAssetTypeDistribution(context.Context, *GetMediaAssetTypeDistributionRequest) (*GetMediaAssetTypeDistributionResponse, error)
 	mustEmbedUnimplementedStatsServiceServer()
 }
 
@@ -138,6 +213,21 @@ func (UnimplementedStatsServiceServer) GetInteractionStats(context.Context, *Get
 }
 func (UnimplementedStatsServiceServer) GetLoginActivity(context.Context, *GetLoginActivityRequest) (*GetLoginActivityResponse, error) {
 	return nil, status.Error(codes.Unimplemented, "method GetLoginActivity not implemented")
+}
+func (UnimplementedStatsServiceServer) GetAiUsageTrend(context.Context, *TrendRequest) (*GetAiUsageTrendResponse, error) {
+	return nil, status.Error(codes.Unimplemented, "method GetAiUsageTrend not implemented")
+}
+func (UnimplementedStatsServiceServer) GetApiCallTrend(context.Context, *TrendRequest) (*GetApiCallTrendResponse, error) {
+	return nil, status.Error(codes.Unimplemented, "method GetApiCallTrend not implemented")
+}
+func (UnimplementedStatsServiceServer) GetPostStatusDistribution(context.Context, *GetPostStatusDistributionRequest) (*GetPostStatusDistributionResponse, error) {
+	return nil, status.Error(codes.Unimplemented, "method GetPostStatusDistribution not implemented")
+}
+func (UnimplementedStatsServiceServer) GetCommentStatusDistribution(context.Context, *GetCommentStatusDistributionRequest) (*GetCommentStatusDistributionResponse, error) {
+	return nil, status.Error(codes.Unimplemented, "method GetCommentStatusDistribution not implemented")
+}
+func (UnimplementedStatsServiceServer) GetMediaAssetTypeDistribution(context.Context, *GetMediaAssetTypeDistributionRequest) (*GetMediaAssetTypeDistributionResponse, error) {
+	return nil, status.Error(codes.Unimplemented, "method GetMediaAssetTypeDistribution not implemented")
 }
 func (UnimplementedStatsServiceServer) mustEmbedUnimplementedStatsServiceServer() {}
 func (UnimplementedStatsServiceServer) testEmbeddedByValue()                      {}
@@ -232,6 +322,96 @@ func _StatsService_GetLoginActivity_Handler(srv interface{}, ctx context.Context
 	return interceptor(ctx, in, info, handler)
 }
 
+func _StatsService_GetAiUsageTrend_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(TrendRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(StatsServiceServer).GetAiUsageTrend(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: StatsService_GetAiUsageTrend_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(StatsServiceServer).GetAiUsageTrend(ctx, req.(*TrendRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _StatsService_GetApiCallTrend_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(TrendRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(StatsServiceServer).GetApiCallTrend(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: StatsService_GetApiCallTrend_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(StatsServiceServer).GetApiCallTrend(ctx, req.(*TrendRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _StatsService_GetPostStatusDistribution_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(GetPostStatusDistributionRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(StatsServiceServer).GetPostStatusDistribution(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: StatsService_GetPostStatusDistribution_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(StatsServiceServer).GetPostStatusDistribution(ctx, req.(*GetPostStatusDistributionRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _StatsService_GetCommentStatusDistribution_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(GetCommentStatusDistributionRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(StatsServiceServer).GetCommentStatusDistribution(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: StatsService_GetCommentStatusDistribution_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(StatsServiceServer).GetCommentStatusDistribution(ctx, req.(*GetCommentStatusDistributionRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _StatsService_GetMediaAssetTypeDistribution_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(GetMediaAssetTypeDistributionRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(StatsServiceServer).GetMediaAssetTypeDistribution(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: StatsService_GetMediaAssetTypeDistribution_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(StatsServiceServer).GetMediaAssetTypeDistribution(ctx, req.(*GetMediaAssetTypeDistributionRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 // StatsService_ServiceDesc is the grpc.ServiceDesc for StatsService service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
@@ -254,6 +434,26 @@ var StatsService_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "GetLoginActivity",
 			Handler:    _StatsService_GetLoginActivity_Handler,
+		},
+		{
+			MethodName: "GetAiUsageTrend",
+			Handler:    _StatsService_GetAiUsageTrend_Handler,
+		},
+		{
+			MethodName: "GetApiCallTrend",
+			Handler:    _StatsService_GetApiCallTrend_Handler,
+		},
+		{
+			MethodName: "GetPostStatusDistribution",
+			Handler:    _StatsService_GetPostStatusDistribution_Handler,
+		},
+		{
+			MethodName: "GetCommentStatusDistribution",
+			Handler:    _StatsService_GetCommentStatusDistribution_Handler,
+		},
+		{
+			MethodName: "GetMediaAssetTypeDistribution",
+			Handler:    _StatsService_GetMediaAssetTypeDistribution_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},
