@@ -144,12 +144,19 @@ func (r *FlowRepo) Update(ctx context.Context, id uint32, dto *flowV1.FlowRule) 
 }
 
 func (r *FlowRepo) Delete(ctx context.Context, id uint32) error {
-	if err := r.entClient.Client().FlowRule.DeleteOneID(id).Exec(ctx); err != nil {
-		if ent.IsNotFound(err) {
-			return errors.NotFound("FLOW_RULE", "flow rule not found")
-		}
+	// 租户作用域：DeleteOneID 是 ent 变更路径，TenantPrivacy 不覆盖，必须显式加租户
+	// 过滤（与 Update 的作用域预读同语义），否则仅按 id 删除，跨租户可删他人规则。
+	conds := []predicate.FlowRule{flowrule.IDEQ(id)}
+	if tid, hasTenant := maybeTenantFromViewer(ctx); hasTenant {
+		conds = append(conds, flowrule.TenantIDEQ(tid))
+	}
+	count, err := r.entClient.Client().FlowRule.Delete().Where(conds...).Exec(ctx)
+	if err != nil {
 		r.log.Errorf("delete flow rule failed: %s", err.Error())
 		return errors.InternalServer("FLOW_RULE", "delete flow rule failed")
+	}
+	if count == 0 {
+		return errors.NotFound("FLOW_RULE", "flow rule not found")
 	}
 	return nil
 }

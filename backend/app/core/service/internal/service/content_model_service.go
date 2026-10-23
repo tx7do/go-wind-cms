@@ -95,10 +95,23 @@ func (s *ContentModelService) Create(ctx context.Context, req *contentV1.CreateC
 }
 
 func (s *ContentModelService) Update(ctx context.Context, req *contentV1.UpdateContentModelRequest) (*contentV1.ContentModel, error) {
+	// 归属校验：Update 是 ent 变更路径，TenantPrivacy 不覆盖，先做租户作用域读
+	// （Get 走 ent 查询，租户视图下自动注入 tenant_id 过滤），跨租户一律 NotFound。
+	if _, err := s.contentModelRepo.Get(ctx, &contentV1.GetContentModelRequest{
+		QueryBy: &contentV1.GetContentModelRequest_Id{Id: req.GetId()},
+	}); err != nil {
+		return nil, err
+	}
 	return s.contentModelRepo.Update(ctx, req)
 }
 
 func (s *ContentModelService) Delete(ctx context.Context, req *contentV1.DeleteContentModelRequest) (*emptypb.Empty, error) {
+	// 归属校验：同 Update——Delete 是 ent 变更路径，必须先做租户作用域读。
+	if _, err := s.contentModelRepo.Get(ctx, &contentV1.GetContentModelRequest{
+		QueryBy: &contentV1.GetContentModelRequest_Id{Id: req.GetId()},
+	}); err != nil {
+		return nil, err
+	}
 	if err := s.contentModelRepo.Delete(ctx, req); err != nil {
 		return nil, err
 	}

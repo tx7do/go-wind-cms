@@ -23,8 +23,9 @@ import (
 )
 
 // AccessKeyRepo OpenAPI 访问凭证（AK/SK）仓储。
-// 租户隔离由 ent TenantPrivacy 编译策略保证；令牌交换（免鉴权流程）
-// 的查询经 SystemViewer 旁路租户 scope（见 *BySystem 方法）。
+// 读路径租户隔离由 ent TenantPrivacy 查询策略注入；变更路径（Update/Delete）
+// TenantPrivacy 不覆盖，必须显式加租户谓词（见 Update/Delete）；
+// 令牌交换（免鉴权流程）的查询经 SystemViewer 旁路租户 scope（见 *BySystem 方法）。
 type AccessKeyRepo struct {
 	entClient *entCrud.EntClient[*ent.Client]
 	log       *log.Helper
@@ -152,6 +153,12 @@ func (r *AccessKeyRepo) Update(ctx context.Context, req *accesskeyV1.UpdateAcces
 
 	builder := r.entClient.Client().AccessKey.Update().Where(accesskey.IDEQ(req.GetId()))
 
+	// 租户作用域：Update 是 ent 变更路径，TenantPrivacy 不覆盖，必须显式加租户过滤，
+	// 否则 WHERE 仅含 id，跨租户可改他人 AccessKey（与其余 *_repo 的 Update 写法对齐）。
+	if tid, hasTenant := maybeTenantFromViewer(ctx); hasTenant {
+		builder.Where(accesskey.TenantIDEQ(tid))
+	}
+
 	applyField := func(path string) bool {
 		switch path {
 		case "name":
@@ -200,10 +207,15 @@ func (r *AccessKeyRepo) Delete(ctx context.Context, req *accesskeyV1.DeleteAcces
 		return errors.BadRequest("ACCESS_KEY", "invalid parameter")
 	}
 
-	_, err := r.entClient.Client().AccessKey.Delete().
-		Where(accesskey.IDEQ(req.GetId())).
-		Exec(ctx)
-	if err != nil {
+	// 租户作用域：Delete 是 ent 变更路径，TenantPrivacy 不覆盖，必须显式加租户过滤，
+	// 否则仅按 id 删除，跨租户可删他人 AccessKey。
+	builder := r.entClient.Client().AccessKey.Delete().
+		Where(accesskey.IDEQ(req.GetId()))
+	if tid, hasTenant := maybeTenantFromViewer(ctx); hasTenant {
+		builder.Where(accesskey.TenantIDEQ(tid))
+	}
+
+	if _, err := builder.Exec(ctx); err != nil {
 		r.log.Errorf("delete access key failed (id=%d): %s", req.GetId(), err.Error())
 		return errors.InternalServer("ACCESS_KEY", "delete access key failed")
 	}

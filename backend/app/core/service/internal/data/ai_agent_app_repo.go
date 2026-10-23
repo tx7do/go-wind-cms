@@ -166,6 +166,12 @@ func (r *AiAgentAppRepo) Update(ctx context.Context, id uint32, data *aiV1.AiAge
 	builder := r.entClient.Client().AiAgentApp.Update().
 		Where(aiagentapp.IDEQ(id))
 
+	// 租户作用域：Update 是 ent 变更路径，TenantPrivacy 不覆盖，必须显式加租户过滤，
+	// 否则 WHERE 仅含 id，跨租户可改他人 Agent 应用（与其余 *_repo 的 Update 写法对齐）。
+	if tid, hasTenant := maybeTenantFromViewer(ctx); hasTenant {
+		builder.Where(aiagentapp.TenantIDEQ(tid))
+	}
+
 	apply := func() *ent.AiAgentAppUpdate {
 		return builder.
 			SetNillableDescription(data.Description).
@@ -213,9 +219,20 @@ func (r *AiAgentAppRepo) Delete(ctx context.Context, id uint32) error {
 	if id == 0 {
 		return errors.BadRequest("AI_AGENT", "id is required")
 	}
-	if err := r.entClient.Client().AiAgentApp.DeleteOneID(id).Exec(ctx); err != nil {
+	// 租户作用域：Delete 是 ent 变更路径，TenantPrivacy 不覆盖，必须显式加租户过滤，
+	// 否则仅按 id 删除，跨租户可删他人 Agent 应用。
+	builder := r.entClient.Client().AiAgentApp.Delete().
+		Where(aiagentapp.IDEQ(id))
+	if tid, hasTenant := maybeTenantFromViewer(ctx); hasTenant {
+		builder.Where(aiagentapp.TenantIDEQ(tid))
+	}
+	count, err := builder.Exec(ctx)
+	if err != nil {
 		r.log.Errorf("delete ai agent app [%d] failed: %s", id, err.Error())
 		return errors.InternalServer("AI_AGENT", "delete ai agent app failed")
+	}
+	if count == 0 {
+		return errors.NotFound("AI_AGENT", "ai agent app not found")
 	}
 	return nil
 }

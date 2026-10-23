@@ -153,6 +153,12 @@ func (r *AiKnowledgeRepo) Update(ctx context.Context, req *aiV1.UpdateAiKnowledg
 
 	builder := r.entClient.Client().AiKnowledgeBase.Update()
 
+	// 租户作用域：Update 是 ent 变更路径，TenantPrivacy 不覆盖，必须显式加租户过滤，
+	// 否则 WHERE 仅含 id，跨租户可改他人知识库（与其余 *_repo 的 Update 写法对齐）。
+	if tid, hasTenant := maybeTenantFromViewer(ctx); hasTenant {
+		builder.Where(aiknowledgebase.TenantIDEQ(tid))
+	}
+
 	if err := r.repository.UpdateX(ctx, builder, req.Data, req.GetUpdateMask(),
 		func(dto *aiV1.AiKnowledgeBase) {
 			builder.
@@ -175,11 +181,20 @@ func (r *AiKnowledgeRepo) Update(ctx context.Context, req *aiV1.UpdateAiKnowledg
 
 // Delete 删除知识库；docs 边 Cascade 级联删文档行，文档的 chunks 由 doc 侧 Cascade 删除。
 func (r *AiKnowledgeRepo) Delete(ctx context.Context, id uint32) error {
-	if _, err := r.entClient.Client().AiKnowledgeBase.Delete().
-		Where(aiknowledgebase.IDEQ(id)).
-		Exec(ctx); err != nil {
+	// 租户作用域：Delete 是 ent 变更路径，TenantPrivacy 不覆盖，必须显式加租户过滤，
+	// 否则仅按 id 删除，跨租户可删他人知识库。
+	builder := r.entClient.Client().AiKnowledgeBase.Delete().
+		Where(aiknowledgebase.IDEQ(id))
+	if tid, hasTenant := maybeTenantFromViewer(ctx); hasTenant {
+		builder.Where(aiknowledgebase.TenantIDEQ(tid))
+	}
+	count, err := builder.Exec(ctx)
+	if err != nil {
 		r.log.Errorf("delete ai knowledge base failed: %s", err.Error())
 		return aiV1.ErrorInternalServerError("delete ai knowledge base failed")
+	}
+	if count == 0 {
+		return aiV1.ErrorNotFound("ai knowledge base not found")
 	}
 	return nil
 }
@@ -264,11 +279,20 @@ func (r *AiKnowledgeRepo) GetDocByID(ctx context.Context, id uint32) (*ent.AiDoc
 }
 
 func (r *AiKnowledgeRepo) DeleteDoc(ctx context.Context, id uint32) error {
-	if _, err := r.entClient.Client().AiDoc.Delete().
-		Where(aidoc.IDEQ(id)).
-		Exec(ctx); err != nil {
+	// 租户作用域：同 Delete——doc 删除是 ent 变更路径，必须显式加租户过滤
+	// （路由中的 base_id 不参与定位，归属约束只能落在 doc 自身租户上）。
+	builder := r.entClient.Client().AiDoc.Delete().
+		Where(aidoc.IDEQ(id))
+	if tid, hasTenant := maybeTenantFromViewer(ctx); hasTenant {
+		builder.Where(aidoc.TenantIDEQ(tid))
+	}
+	count, err := builder.Exec(ctx)
+	if err != nil {
 		r.log.Errorf("delete ai doc failed: %s", err.Error())
 		return aiV1.ErrorInternalServerError("delete ai doc failed")
+	}
+	if count == 0 {
+		return aiV1.ErrorNotFound("ai doc not found")
 	}
 	return nil
 }

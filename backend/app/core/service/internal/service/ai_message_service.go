@@ -39,6 +39,16 @@ func (s *AiMessageService) Count(ctx context.Context, req *paginationV1.PagingRe
 }
 
 func (s *AiMessageService) Delete(ctx context.Context, req *aiV1.DeleteAiMessageRequest) (*emptypb.Empty, error) {
+	// 归属校验：非本人消息按 NotFound 拒绝（与 AiConversationService 同口径）。
+	// Delete 是 ent 变更路径，TenantPrivacy 不覆盖，必须先读后写。
+	userId, _ := viewerUserIDFromContext(ctx)
+	existing, err := s.repo.GetEntityByID(ctx, req.GetId())
+	if err != nil {
+		return nil, err
+	}
+	if existing.UserID == nil || *existing.UserID != userId {
+		return nil, aiV1.ErrorNotFound("ai message not found")
+	}
 	if err := s.repo.Delete(ctx, req); err != nil {
 		return nil, err
 	}

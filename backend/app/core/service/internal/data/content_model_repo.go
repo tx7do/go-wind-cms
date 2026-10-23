@@ -261,6 +261,24 @@ func (r *ContentModelRepo) Update(ctx context.Context, req *contentV1.UpdateCont
 		}
 	}()
 
+	// 租户作用域：UpdateOneID 是 ent 变更路径，TenantPrivacy 不覆盖也无法加 Where，
+	// 先按 id+租户做作用域存在性检查（查询路径再叠一层显式租户谓词，双保险），
+	// 跨租户/不存在一律 NotFound。
+	scopedConds := []predicate.ContentModel{contentmodel.IDEQ(req.GetId())}
+	if tid, hasTenant := maybeTenantFromViewer(ctx); hasTenant {
+		scopedConds = append(scopedConds, contentmodel.TenantIDEQ(tid))
+	}
+	scopedExist, sErr := tx.ContentModel.Query().
+		Where(scopedConds...).
+		Exist(ctx)
+	if sErr != nil {
+		r.log.Errorf("query content model exist failed: %s", sErr.Error())
+		return nil, contentV1.ErrorInternalServerError("query content model exist failed")
+	}
+	if !scopedExist {
+		return nil, contentV1.ErrorNotFound("content model not found")
+	}
+
 	updateBuilder := tx.ContentModel.UpdateOneID(req.GetId()).
 		SetNillableName(req.Data.Name).
 		SetNillableDescription(req.Data.Description).
@@ -317,6 +335,24 @@ func (r *ContentModelRepo) Delete(ctx context.Context, req *contentV1.DeleteCont
 	}()
 
 	modelID := req.GetId()
+
+	// 租户作用域：级联删除全部走 ent 变更路径（翻译/字段定义/模型），TenantPrivacy
+	// 不覆盖。先按 id+租户做作用域存在性检查（显式租户谓词 + 查询路径 privacy 注入
+	// 双保险），跨租户/不存在一律 NotFound，级联只可能命中本租户的模型。
+	scopedConds := []predicate.ContentModel{contentmodel.IDEQ(modelID)}
+	if tid, hasTenant := maybeTenantFromViewer(ctx); hasTenant {
+		scopedConds = append(scopedConds, contentmodel.TenantIDEQ(tid))
+	}
+	scopedExist, sErr := tx.ContentModel.Query().
+		Where(scopedConds...).
+		Exist(ctx)
+	if sErr != nil {
+		r.log.Errorf("query content model exist failed: %s", sErr.Error())
+		return contentV1.ErrorInternalServerError("query content model exist failed")
+	}
+	if !scopedExist {
+		return contentV1.ErrorNotFound("content model not found")
+	}
 
 	// 级联清理：字段翻译 → 字段定义 → 模型翻译 → 模型
 	fieldIDs, qErr := tx.FieldDefinition.Query().
@@ -938,17 +974,18 @@ func (r *ContentModelRepo) CreateComponentDefinition(ctx context.Context, dto *c
 
 // UpdateComponentDefinition 更新组件定义（code 创建后不可改——模型字段按 code 引用）。
 func (r *ContentModelRepo) UpdateComponentDefinition(ctx context.Context, id uint32, dto *contentV1.ComponentDefinition) (*contentV1.ComponentDefinition, error) {
-	if dto.Code != nil && strings.TrimSpace(dto.GetCode()) != "" {
-		existing, err := r.entClient.Client().ComponentDefinition.Get(ctx, id)
-		if err != nil {
-			if ent.IsNotFound(err) {
-				return nil, contentV1.ErrorNotFound("component definition not found")
-			}
-			return nil, contentV1.ErrorInternalServerError("update component definition failed")
+	// 归属校验：UpdateOneID 是 ent 变更路径，TenantPrivacy 不覆盖，无条件先做
+	// 作用域读（Get 走 ent 查询，租户视图下自动注入 tenant_id 过滤），
+	// 跨租户/不存在一律 NotFound——不能只在改 code 的分支才读。
+	existing, err := r.entClient.Client().ComponentDefinition.Get(ctx, id)
+	if err != nil {
+		if ent.IsNotFound(err) {
+			return nil, contentV1.ErrorNotFound("component definition not found")
 		}
-		if existing.Code != strings.TrimSpace(dto.GetCode()) {
-			return nil, contentV1.ErrorBadRequest("component code is immutable")
-		}
+		return nil, contentV1.ErrorInternalServerError("update component definition failed")
+	}
+	if dto.Code != nil && strings.TrimSpace(dto.GetCode()) != "" && existing.Code != strings.TrimSpace(dto.GetCode()) {
+		return nil, contentV1.ErrorBadRequest("component code is immutable")
 	}
 	builder := r.entClient.Client().ComponentDefinition.UpdateOneID(id)
 	if dto.Name != nil {

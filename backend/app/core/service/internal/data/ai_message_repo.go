@@ -175,6 +175,12 @@ func (r *AiMessageRepo) Delete(ctx context.Context, req *aiV1.DeleteAiMessageReq
 		predicates = append(predicates, aimessage.IDEQ(req.GetId()))
 	}
 
+	// 租户作用域：Delete 是 ent 变更路径，TenantPrivacy 不覆盖，必须显式加租户过滤，
+	// 否则仅按 id 删除，跨租户可删他人会话消息。
+	if tid, hasTenant := maybeTenantFromViewer(ctx); hasTenant {
+		predicates = append(predicates, aimessage.TenantIDEQ(tid))
+	}
+
 	if _, err := r.repository.Delete(ctx, builder, predicates...); err != nil {
 		r.log.Errorf("delete ai message failed: %s", err.Error())
 		return err
