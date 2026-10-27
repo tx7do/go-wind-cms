@@ -71,7 +71,7 @@ type AuthenticationServiceClient interface {
 	// 验证验证码
 	VerifyCaptcha(ctx context.Context, in *VerifyCaptchaRequest, opts ...grpc.CallOption) (*VerifyCaptchaResponse, error)
 	// 忘记密码：向 identifier（已绑定的邮箱凭证）发送重置验证码——邮箱走 SMTP
-	// （显式点名，不经路由表）。用户不存在时同样返回成功，防止通过接口枚举有效账号。
+	//（显式点名，不经路由表）。用户不存在时同样返回成功，防止通过接口枚举有效账号。
 	ForgotPassword(ctx context.Context, in *ForgotPasswordRequest, opts ...grpc.CallOption) (*emptypb.Empty, error)
 	// 凭邮箱验证码重置密码（免鉴权）：校验通过后重置密码并吊销该用户全部会话。
 	ResetPasswordByCode(ctx context.Context, in *ResetPasswordByCodeRequest, opts ...grpc.CallOption) (*emptypb.Empty, error)
@@ -281,7 +281,7 @@ type AuthenticationServiceServer interface {
 	// 验证验证码
 	VerifyCaptcha(context.Context, *VerifyCaptchaRequest) (*VerifyCaptchaResponse, error)
 	// 忘记密码：向 identifier（已绑定的邮箱凭证）发送重置验证码——邮箱走 SMTP
-	// （显式点名，不经路由表）。用户不存在时同样返回成功，防止通过接口枚举有效账号。
+	//（显式点名，不经路由表）。用户不存在时同样返回成功，防止通过接口枚举有效账号。
 	ForgotPassword(context.Context, *ForgotPasswordRequest) (*emptypb.Empty, error)
 	// 凭邮箱验证码重置密码（免鉴权）：校验通过后重置密码并吊销该用户全部会话。
 	ResetPasswordByCode(context.Context, *ResetPasswordByCodeRequest) (*emptypb.Empty, error)

@@ -146,6 +146,20 @@ func (_c *FlowRuleCreate) SetNillableConditionStatus(v *string) *FlowRuleCreate 
 	return _c
 }
 
+// SetConditions sets the "conditions" field.
+func (_c *FlowRuleCreate) SetConditions(v string) *FlowRuleCreate {
+	_c.mutation.SetConditions(v)
+	return _c
+}
+
+// SetNillableConditions sets the "conditions" field if the given value is not nil.
+func (_c *FlowRuleCreate) SetNillableConditions(v *string) *FlowRuleCreate {
+	if v != nil {
+		_c.SetConditions(*v)
+	}
+	return _c
+}
+
 // SetTriggerCron sets the "trigger_cron" field.
 func (_c *FlowRuleCreate) SetTriggerCron(v string) *FlowRuleCreate {
 	_c.mutation.SetTriggerCron(v)
@@ -392,6 +406,10 @@ func (_c *FlowRuleCreate) createSpec() (*FlowRule, *sqlgraph.CreateSpec) {
 		_spec.SetField(flowrule.FieldConditionStatus, field.TypeString, value)
 		_node.ConditionStatus = &value
 	}
+	if value, ok := _c.mutation.Conditions(); ok {
+		_spec.SetField(flowrule.FieldConditions, field.TypeString, value)
+		_node.Conditions = &value
+	}
 	if value, ok := _c.mutation.TriggerCron(); ok {
 		_spec.SetField(flowrule.FieldTriggerCron, field.TypeString, value)
 		_node.TriggerCron = &value
@@ -611,6 +629,24 @@ func (u *FlowRuleUpsert) UpdateConditionStatus() *FlowRuleUpsert {
 // ClearConditionStatus clears the value of the "condition_status" field.
 func (u *FlowRuleUpsert) ClearConditionStatus() *FlowRuleUpsert {
 	u.SetNull(flowrule.FieldConditionStatus)
+	return u
+}
+
+// SetConditions sets the "conditions" field.
+func (u *FlowRuleUpsert) SetConditions(v string) *FlowRuleUpsert {
+	u.Set(flowrule.FieldConditions, v)
+	return u
+}
+
+// UpdateConditions sets the "conditions" field to the value that was provided on create.
+func (u *FlowRuleUpsert) UpdateConditions() *FlowRuleUpsert {
+	u.SetExcluded(flowrule.FieldConditions)
+	return u
+}
+
+// ClearConditions clears the value of the "conditions" field.
+func (u *FlowRuleUpsert) ClearConditions() *FlowRuleUpsert {
+	u.SetNull(flowrule.FieldConditions)
 	return u
 }
 
@@ -930,6 +966,27 @@ func (u *FlowRuleUpsertOne) UpdateConditionStatus() *FlowRuleUpsertOne {
 func (u *FlowRuleUpsertOne) ClearConditionStatus() *FlowRuleUpsertOne {
 	return u.Update(func(s *FlowRuleUpsert) {
 		s.ClearConditionStatus()
+	})
+}
+
+// SetConditions sets the "conditions" field.
+func (u *FlowRuleUpsertOne) SetConditions(v string) *FlowRuleUpsertOne {
+	return u.Update(func(s *FlowRuleUpsert) {
+		s.SetConditions(v)
+	})
+}
+
+// UpdateConditions sets the "conditions" field to the value that was provided on create.
+func (u *FlowRuleUpsertOne) UpdateConditions() *FlowRuleUpsertOne {
+	return u.Update(func(s *FlowRuleUpsert) {
+		s.UpdateConditions()
+	})
+}
+
+// ClearConditions clears the value of the "conditions" field.
+func (u *FlowRuleUpsertOne) ClearConditions() *FlowRuleUpsertOne {
+	return u.Update(func(s *FlowRuleUpsert) {
+		s.ClearConditions()
 	})
 }
 
@@ -1430,6 +1487,27 @@ func (u *FlowRuleUpsertBulk) UpdateConditionStatus() *FlowRuleUpsertBulk {
 func (u *FlowRuleUpsertBulk) ClearConditionStatus() *FlowRuleUpsertBulk {
 	return u.Update(func(s *FlowRuleUpsert) {
 		s.ClearConditionStatus()
+	})
+}
+
+// SetConditions sets the "conditions" field.
+func (u *FlowRuleUpsertBulk) SetConditions(v string) *FlowRuleUpsertBulk {
+	return u.Update(func(s *FlowRuleUpsert) {
+		s.SetConditions(v)
+	})
+}
+
+// UpdateConditions sets the "conditions" field to the value that was provided on create.
+func (u *FlowRuleUpsertBulk) UpdateConditions() *FlowRuleUpsertBulk {
+	return u.Update(func(s *FlowRuleUpsert) {
+		s.UpdateConditions()
+	})
+}
+
+// ClearConditions clears the value of the "conditions" field.
+func (u *FlowRuleUpsertBulk) ClearConditions() *FlowRuleUpsertBulk {
+	return u.Update(func(s *FlowRuleUpsert) {
+		s.ClearConditions()
 	})
 }
 

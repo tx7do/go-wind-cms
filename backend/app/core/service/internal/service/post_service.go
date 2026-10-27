@@ -151,9 +151,9 @@ func (s *PostService) Create(ctx context.Context, req *contentV1.CreatePostReque
 	// Webhook 事件外发（best-effort）
 	s.dispatchWebhookEvent(ctx, task.WebhookEventPostCreated, dto.GetId(), dto.GetStatus())
 
-	// Flow 规则触发（best-effort）
+	// Flow 规则触发（best-effort；带触发时刻快照供字段级条件）
 	if s.flowSvc != nil {
-		s.flowSvc.DispatchFlow(ctx, task.WebhookEventPostCreated, dto.GetId())
+		s.flowSvc.DispatchFlow(ctx, task.WebhookEventPostCreated, dto.GetId(), PostEventSnapshot(dto, ""))
 	}
 
 	// 定时发布钩子：SCHEDULED 落库后入队到点转正任务（失败显式报错）。
@@ -215,12 +215,12 @@ func (s *PostService) Update(ctx context.Context, req *contentV1.UpdatePostReque
 		s.dispatchWebhookEvent(ctx, task.WebhookEventPostUpdated, dto.GetId(), dto.GetStatus())
 	}
 
-	// Flow 规则触发：发布转移记 published，其余记 updated（best-effort）
+	// Flow 规则触发：发布转移记 published，其余记 updated（best-effort；快照带 prev_status）
 	if s.flowSvc != nil {
 		if dto.GetStatus() == contentV1.Post_POST_STATUS_PUBLISHED && prevStatus != contentV1.Post_POST_STATUS_PUBLISHED {
-			s.flowSvc.DispatchFlow(ctx, task.WebhookEventPostPublished, dto.GetId())
+			s.flowSvc.DispatchFlow(ctx, task.WebhookEventPostPublished, dto.GetId(), PostEventSnapshot(dto, prevStatus.String()))
 		} else {
-			s.flowSvc.DispatchFlow(ctx, task.WebhookEventPostUpdated, dto.GetId())
+			s.flowSvc.DispatchFlow(ctx, task.WebhookEventPostUpdated, dto.GetId(), PostEventSnapshot(dto, prevStatus.String()))
 		}
 	}
 
@@ -233,6 +233,15 @@ func (s *PostService) Update(ctx context.Context, req *contentV1.UpdatePostReque
 }
 
 func (s *PostService) Delete(ctx context.Context, req *contentV1.DeletePostRequest) (*emptypb.Empty, error) {
+	// Flow 快照在删除前取好（删除后实体不可回查；best-effort）
+	var flowSnapshot map[string]string
+	if s.flowSvc != nil {
+		if existing, gErr := s.postRepo.Get(ctx, &contentV1.GetPostRequest{
+			QueryBy: &contentV1.GetPostRequest_Id{Id: req.GetId()},
+		}); gErr == nil {
+			flowSnapshot = PostEventSnapshot(existing, "")
+		}
+	}
 	err := s.postRepo.Delete(ctx, req)
 	if err != nil {
 		return nil, err
@@ -249,9 +258,9 @@ func (s *PostService) Delete(ctx context.Context, req *contentV1.DeletePostReque
 	// Webhook 事件外发（best-effort）
 	s.dispatchWebhookEvent(ctx, task.WebhookEventPostDeleted, req.GetId(), 0)
 
-	// Flow 规则触发（best-effort）
+	// Flow 规则触发（best-effort；删除后实体不可回查，快照在删除前取好）
 	if s.flowSvc != nil {
-		s.flowSvc.DispatchFlow(ctx, task.WebhookEventPostDeleted, req.GetId())
+		s.flowSvc.DispatchFlow(ctx, task.WebhookEventPostDeleted, req.GetId(), flowSnapshot)
 	}
 
 	return &emptypb.Empty{}, nil
@@ -467,7 +476,7 @@ func (s *PostService) PublishScheduledPostWorker(taskType string, payload *task.
 	// 发布事件外发：webhook 订阅与 Flow 规则同手工发布口径（此前定时转正漏发，顺带修复）
 	s.dispatchWebhookEvent(ctx, task.WebhookEventPostPublished, payload.PostID, updated.GetStatus())
 	if s.flowSvc != nil {
-		s.flowSvc.DispatchFlow(ctx, task.WebhookEventPostPublished, payload.PostID)
+		s.flowSvc.DispatchFlow(ctx, task.WebhookEventPostPublished, payload.PostID, PostEventSnapshot(updated, "POST_STATUS_SCHEDULED"))
 	}
 
 	s.log.Infof("post publish worker: post %d published (publishTime=%s)",
@@ -672,9 +681,9 @@ func (s *PostService) ApproveReview(ctx context.Context, req *contentV1.ReviewPo
 	s.enqueuePostReindex(ctx, req.GetPostId(), "index")
 	s.dispatchWebhookEvent(ctx, task.WebhookEventPostPublished, req.GetPostId(), updated.GetStatus())
 
-	// Flow 规则触发（best-effort）
+	// Flow 规则触发（best-effort；快照 prev_status 取审核前状态）
 	if s.flowSvc != nil {
-		s.flowSvc.DispatchFlow(ctx, task.WebhookEventPostPublished, req.GetPostId())
+		s.flowSvc.DispatchFlow(ctx, task.WebhookEventPostPublished, req.GetPostId(), PostEventSnapshot(updated, post.GetStatus().String()))
 	}
 
 	s.notifyReviewResult(ctx, post, true, "")

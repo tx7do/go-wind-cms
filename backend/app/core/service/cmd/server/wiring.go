@@ -266,7 +266,9 @@ func initApp(ctx *bootstrap.Context) (*kratos.App, func(), error) {
 
 	// 租户与身份
 	tenantService := service.NewTenantService(ctx, tenantRepo, userRepo, userCredentialRepo, roleRepo)
-	userService := service.NewUserService(ctx, userRepo, roleRepo, userCredentialRepo, positionRepo, orgUnitRepo, tenantRepo, membershipRepo, tenantQuotaService)
+	internalMessageService := service.NewInternalMessageService(ctx, internalMessageRepo, internalMessageCategoryRepo, internalMessageRecipientRepo, userRepo, redisClient, taskService)
+	flowService := service.NewFlowService(ctx, flowRepo, postRepo, pageRepo, taskService, internalMessageService)
+	userService := service.NewUserService(ctx, userRepo, roleRepo, userCredentialRepo, positionRepo, orgUnitRepo, tenantRepo, membershipRepo, tenantQuotaService, flowService)
 	roleFieldPermissionRepo := data.NewRoleFieldPermissionRepo(ctx, entClient)
 	roleService := service.NewRoleService(ctx, roleRepo, tenantRepo, userRoleRepo, userRepo, roleFieldPermissionRepo)
 	positionService := service.NewPositionService(ctx, positionRepo, orgUnitRepo)
@@ -287,7 +289,6 @@ func initApp(ctx *bootstrap.Context) (*kratos.App, func(), error) {
 	dataAccessAuditLogService := service.NewDataAccessAuditLogService(ctx, dataAccessAuditLogRepo)
 
 	// 站内信
-	internalMessageService := service.NewInternalMessageService(ctx, internalMessageRepo, internalMessageCategoryRepo, internalMessageRecipientRepo, userRepo, redisClient, taskService)
 	internalMessageCategoryService := service.NewInternalMessageCategoryService(ctx, internalMessageCategoryRepo)
 	internalMessageRecipientService := service.NewInternalMessageRecipientService(ctx, internalMessageRepo, internalMessageRecipientRepo)
 
@@ -323,7 +324,7 @@ func initApp(ctx *bootstrap.Context) (*kratos.App, func(), error) {
 	tenantQuotaService.RegisterInternalMessages(internalMessageService)
 
 	// 内容
-	commentService := service.NewCommentService(ctx, commentRepo)
+	commentService := service.NewCommentService(ctx, commentRepo, flowService)
 	interactionService := service.NewInteractionService(ctx, interactionRepo, postRepo)
 	interactionAdminService := service.NewInteractionAdminService(ctx, interactionRepo, operationAuditLogRepo)
 	statsService := service.NewStatsService(ctx, statsRepo)
@@ -337,7 +338,6 @@ func initApp(ctx *bootstrap.Context) (*kratos.App, func(), error) {
 	aiQueryService := service.NewAiQueryService(ctx, aiProviderRepo, aiUsageLogRepo, entClient, internalMessageRepo, internalMessageService)
 	searchService := service.NewSearchService(ctx, searchRepo, postRepo)
 	referenceTrackingService := service.NewReferenceTrackingService(ctx, mediaAssetRepo, contentReferenceRepo)
-	flowService := service.NewFlowService(ctx, flowRepo, postRepo, pageRepo, taskService, internalMessageService)
 	postService := service.NewPostService(ctx, postRepo, searchService, taskService, contentModelRepo, postVersionRepo, webhookService, internalMessageService, referenceTrackingService, flowService)
 	categoryService := service.NewCategoryService(ctx, categoryRepo, contentModelRepo)
 	tagService := service.NewTagService(ctx, tagRepo)
@@ -351,7 +351,7 @@ func initApp(ctx *bootstrap.Context) (*kratos.App, func(), error) {
 	navigationItemService := service.NewNavigationItemService(ctx, navigationItemRepo)
 
 	// 媒体
-	mediaAssetService := service.NewMediaAssetService(ctx, mediaAssetRepo, contentReferenceRepo, postRepo, pageRepo)
+	mediaAssetService := service.NewMediaAssetService(ctx, mediaAssetRepo, contentReferenceRepo, postRepo, pageRepo, flowService)
 
 	// 社交分发
 	socialService := service.NewSocialService(ctx, socialAccountRepo, socialDistributionRepo, socialStatsHistoryRepo, mediaAssetRepo, fileRepo, minIOClient, postRepo, taskService, internalMessageService, socialInboxRepo)

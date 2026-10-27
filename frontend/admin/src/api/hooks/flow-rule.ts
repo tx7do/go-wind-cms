@@ -15,7 +15,7 @@ import { apiClient } from '@/api/client';
 // 自动化 Flow 规则管理
 // ==============================
 
-/** 内容事件族（与 webhook 事件一致） */
+/** 内容事件族（post/page 与 webhook 一致；comment/media/user 为 Flow v2 扩展族，负载带字段快照） */
 export const FLOW_EVENT_OPTIONS = [
   'post.created',
   'post.updated',
@@ -25,6 +25,9 @@ export const FLOW_EVENT_OPTIONS = [
   'page.updated',
   'page.published',
   'page.deleted',
+  'comment.created',
+  'media.created',
+  'user.created',
 ].map((v) => ({ value: v, label: v }));
 
 /** 实体状态条件候选 */

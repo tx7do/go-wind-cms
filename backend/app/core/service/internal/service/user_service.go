@@ -18,6 +18,7 @@ import (
 	authenticationV1 "go-wind-cms/api/gen/go/authentication/service/v1"
 	identityV1 "go-wind-cms/api/gen/go/identity/service/v1"
 	permissionV1 "go-wind-cms/api/gen/go/permission/service/v1"
+	"go-wind-cms/pkg/task"
 
 	"go-wind-cms/pkg/constants"
 	appViewer "go-wind-cms/pkg/entgo/viewer"
@@ -52,6 +53,7 @@ type UserService struct {
 	tenantRepo   *data.TenantRepo
 
 	membershipRepo *data.MembershipRepo
+	flowSvc        *FlowService
 
 	// tenantQuota 配额闸门（USER_LIMIT：创建用户入口；nil = 不启用闸门）。
 	tenantQuota *TenantQuotaService
@@ -67,6 +69,7 @@ func NewUserService(
 	tenantRepo *data.TenantRepo,
 	membershipRepo *data.MembershipRepo,
 	tenantQuota *TenantQuotaService,
+	flowSvc *FlowService,
 ) *UserService {
 	svc := &UserService{
 		log:                ctx.NewLoggerHelper("user/service/core-service"),
@@ -78,6 +81,7 @@ func NewUserService(
 		tenantRepo:         tenantRepo,
 		membershipRepo:     membershipRepo,
 		tenantQuota:        tenantQuota,
+		flowSvc:            flowSvc,
 	}
 
 	svc.init()
@@ -526,6 +530,16 @@ func (s *UserService) Create(ctx context.Context, req *identityV1.CreateUserRequ
 		}); err != nil {
 			return nil, err
 		}
+	}
+
+	// Flow 规则触发（best-effort；用户创建事件）
+	if s.flowSvc != nil && user.GetId() != 0 {
+		s.flowSvc.DispatchFlow(ctx, task.WebhookEventUserCreated, user.GetId(), UserEventSnapshot(user))
+	}
+
+	// Flow 规则触发（best-effort；用户创建事件）
+	if s.flowSvc != nil && user.GetId() != 0 {
+		s.flowSvc.DispatchFlow(ctx, task.WebhookEventUserCreated, user.GetId(), UserEventSnapshot(user))
 	}
 
 	return user, nil

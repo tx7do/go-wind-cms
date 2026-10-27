@@ -5779,6 +5779,7 @@ export type flowservicev1_ListFlowRuleResponse = {
 export type flowservicev1_FlowRule = {
   actions?: string;
   conditionStatus?: string;
+  conditions?: string;
   createdAt?: wellKnownTimestamp;
   elseActions?: string;
   enabled?: boolean;

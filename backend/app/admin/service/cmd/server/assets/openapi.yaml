@@ -15798,7 +15798,10 @@ components:
                     description: 触发事件（post.created/post.updated/post.published/post.deleted/page.* 同 webhook 事件族）
                 conditionStatus:
                     type: string
-                    description: 条件：实体状态等值匹配（如 POST_STATUS_PUBLISHED）；留空=无条件
+                    description: 条件：实体状态等值匹配（如 POST_STATUS_PUBLISHED）；留空=无条件；与 conditions 同时存在时两者都须命中
+                conditions:
+                    type: string
+                    description: 结构化条件 JSON 数组 [{field,op,value}]，全部命中(AND)才触发；field 取事件快照字段名，op ∈ eq/ne/contains/in；留空=无条件
                 triggerCron:
                     type: string
                     description: 定时触发 cron 表达式（5 段：分 时 日 月 周，如 */5 * * * *）；非空=定时规则：按周期触发（事件固定 schedule、无实体），忽略触发事件与状态条件

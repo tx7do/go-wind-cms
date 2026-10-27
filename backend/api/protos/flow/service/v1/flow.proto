@@ -51,9 +51,16 @@ message FlowRule {
   optional string condition_status = 4 [
     json_name = "conditionStatus",
     (gnostic.openapi.v3.property) = {
-      description: "条件：实体状态等值匹配（如 POST_STATUS_PUBLISHED）；留空=无条件"
+      description: "条件：实体状态等值匹配（如 POST_STATUS_PUBLISHED）；留空=无条件；与 conditions 同时存在时两者都须命中"
     }
   ]; // 状态条件
+
+  optional string conditions = 10 [
+    json_name = "conditions",
+    (gnostic.openapi.v3.property) = {
+      description: "结构化条件 JSON 数组 [{field,op,value}]，全部命中(AND)才触发；field 取事件快照字段名，op ∈ eq/ne/contains/in；留空=无条件"
+    }
+  ]; // 字段条件组
 
   optional string trigger_cron = 8 [
     json_name = "triggerCron",

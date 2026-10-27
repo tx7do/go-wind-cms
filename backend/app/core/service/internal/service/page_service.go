@@ -75,9 +75,9 @@ func (s *PageService) Create(ctx context.Context, req *contentV1.CreatePageReque
 	if s.webhookService != nil && dto.GetId() != 0 {
 		s.webhookService.DispatchEvent(ctx, task.WebhookEventPageCreated, dto.GetId())
 	}
-	// Flow 规则触发（best-effort）
+	// Flow 规则触发（best-effort；带触发时刻快照供字段级条件）
 	if s.flowSvc != nil && dto.GetId() != 0 {
-		s.flowSvc.DispatchFlow(ctx, task.WebhookEventPageCreated, dto.GetId())
+		s.flowSvc.DispatchFlow(ctx, task.WebhookEventPageCreated, dto.GetId(), PageEventSnapshot(dto, ""))
 	}
 	return dto, nil
 }
@@ -127,12 +127,12 @@ func (s *PageService) Update(ctx context.Context, req *contentV1.UpdatePageReque
 			s.webhookService.DispatchEvent(ctx, task.WebhookEventPageUpdated, dto.GetId())
 		}
 	}
-	// Flow 规则触发：同 webhook 的 published/updated 判定（best-effort）
+	// Flow 规则触发：同 webhook 的 published/updated 判定（best-effort；快照带 prev_status）
 	if s.flowSvc != nil && dto.GetId() != 0 {
 		if dto.GetStatus() == contentV1.Page_PAGE_STATUS_PUBLISHED && prevStatus != contentV1.Page_PAGE_STATUS_PUBLISHED {
-			s.flowSvc.DispatchFlow(ctx, task.WebhookEventPagePublished, dto.GetId())
+			s.flowSvc.DispatchFlow(ctx, task.WebhookEventPagePublished, dto.GetId(), PageEventSnapshot(dto, prevStatus.String()))
 		} else {
-			s.flowSvc.DispatchFlow(ctx, task.WebhookEventPageUpdated, dto.GetId())
+			s.flowSvc.DispatchFlow(ctx, task.WebhookEventPageUpdated, dto.GetId(), PageEventSnapshot(dto, prevStatus.String()))
 		}
 	}
 	return dto, nil
@@ -151,9 +151,15 @@ func (s *PageService) Delete(ctx context.Context, req *contentV1.DeletePageReque
 	if s.webhookService != nil && req.GetId() != 0 {
 		s.webhookService.DispatchEvent(ctx, task.WebhookEventPageDeleted, req.GetId())
 	}
-	// Flow 规则触发（best-effort）
+	// Flow 规则触发（best-effort；快照在删除前取好，删除后实体不可回查）
 	if s.flowSvc != nil && req.GetId() != 0 {
-		s.flowSvc.DispatchFlow(ctx, task.WebhookEventPageDeleted, req.GetId())
+		var flowSnapshot map[string]string
+		if existing, gErr := s.pageRepo.Get(ctx, &contentV1.GetPageRequest{
+			QueryBy: &contentV1.GetPageRequest_Id{Id: req.GetId()},
+		}); gErr == nil {
+			flowSnapshot = PageEventSnapshot(existing, "")
+		}
+		s.flowSvc.DispatchFlow(ctx, task.WebhookEventPageDeleted, req.GetId(), flowSnapshot)
 	}
 	return &emptypb.Empty{}, nil
 }
@@ -357,9 +363,9 @@ func (s *PageService) ApproveReview(ctx context.Context, req *contentV1.ReviewPa
 	if s.webhookService != nil {
 		s.webhookService.DispatchEvent(ctx, task.WebhookEventPagePublished, req.GetPageId())
 	}
-	// Flow 规则触发（best-effort）
+	// Flow 规则触发（best-effort；快照 prev_status 取审核前状态）
 	if s.flowSvc != nil {
-		s.flowSvc.DispatchFlow(ctx, task.WebhookEventPagePublished, req.GetPageId())
+		s.flowSvc.DispatchFlow(ctx, task.WebhookEventPagePublished, req.GetPageId(), PageEventSnapshot(updated, page.GetStatus().String()))
 	}
 
 	s.notifyPageReviewResult(ctx, page, true, "")

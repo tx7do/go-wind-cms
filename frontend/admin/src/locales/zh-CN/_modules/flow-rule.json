@@ -42,5 +42,19 @@
   "elseBranchTag": "else 分支",
   "elseActionRequired": "已开启条件不满足分支，请至少配置一个完整有效的动作",
   "notifyTitleEnPlaceholder": "英文标题变体（可选）",
-  "notifyContentEnPlaceholder": "英文正文变体（可选）——偏好语言为英文的收件人邮件按此渲染"
+  "notifyContentEnPlaceholder": "英文正文变体（可选）——偏好语言为英文的收件人邮件按此渲染",
+  "actionHttp": "HTTP 请求",
+  "addHttpAction": "添加 HTTP 请求动作",
+  "httpUrlPlaceholder": "请求 URL",
+  "httpHeadersPlaceholder": "自定义请求头（每行 Key: Value，≤8 个）",
+  "httpBodyPlaceholder": "body 模板（POST 生效，支持 {status}/{title}/{slug} 等快照占位符；留空发默认 envelope）",
+  "conditionsTitle": "字段条件",
+  "conditionsHint": "快照字段级 AND 匹配：status/prev_status/title/slug/author_id/category_id/cf.<自定义字段键>；评论事件另有 content/object_id/authorType，媒体事件另有 mime_type/file_name，用户事件另有 username/email",
+  "conditionFieldPlaceholder": "字段名，如 status",
+  "conditionValuePlaceholder": "值（in 用 | 分隔）",
+  "conditionOpEq": "等于",
+  "conditionOpNe": "不等于",
+  "conditionOpContains": "包含",
+  "conditionOpIn": "属于",
+  "addCondition": "添加条件"
 }

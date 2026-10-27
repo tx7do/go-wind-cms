@@ -11,19 +11,22 @@ import (
 	"go-wind-cms/app/core/service/internal/data"
 
 	commentV1 "go-wind-cms/api/gen/go/comment/service/v1"
+	"go-wind-cms/pkg/task"
 )
 
 type CommentService struct {
 	commentV1.UnimplementedCommentServiceServer
 
 	commentRepo *data.CommentRepo
+	flowSvc     *FlowService
 	log         *log.Helper
 }
 
-func NewCommentService(ctx *bootstrap.Context, uc *data.CommentRepo) *CommentService {
+func NewCommentService(ctx *bootstrap.Context, uc *data.CommentRepo, flowSvc *FlowService) *CommentService {
 	return &CommentService{
 		log:         ctx.NewLoggerHelper("comment/service/core-service"),
 		commentRepo: uc,
+		flowSvc:     flowSvc,
 	}
 }
 
@@ -47,7 +50,15 @@ func (s *CommentService) Get(ctx context.Context, req *commentV1.GetCommentReque
 }
 
 func (s *CommentService) Create(ctx context.Context, req *commentV1.CreateCommentRequest) (*commentV1.Comment, error) {
-	return s.commentRepo.Create(ctx, req)
+	dto, err := s.commentRepo.Create(ctx, req)
+	if err != nil {
+		return nil, err
+	}
+	// Flow 规则触发（best-effort；评论创建事件，快照带状态/内容摘要）
+	if s.flowSvc != nil && dto.GetId() != 0 {
+		s.flowSvc.DispatchFlow(ctx, task.WebhookEventCommentCreated, dto.GetId(), CommentEventSnapshot(dto))
+	}
+	return dto, nil
 }
 
 func (s *CommentService) Update(ctx context.Context, req *commentV1.UpdateCommentRequest) (*commentV1.Comment, error) {

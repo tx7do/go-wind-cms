@@ -14,6 +14,7 @@ import (
 	mediaV1 "go-wind-cms/api/gen/go/media/service/v1"
 
 	"go-wind-cms/app/core/service/internal/data"
+	"go-wind-cms/pkg/task"
 )
 
 type MediaAssetService struct {
@@ -23,16 +24,18 @@ type MediaAssetService struct {
 	referenceRepo  *data.ContentReferenceRepo
 	postRepo       *data.PostRepo
 	pageRepo       *data.PageRepo
+	flowSvc        *FlowService
 	log            *log.Helper
 }
 
-func NewMediaAssetService(ctx *bootstrap.Context, uc *data.MediaAssetRepo, referenceRepo *data.ContentReferenceRepo, postRepo *data.PostRepo, pageRepo *data.PageRepo) *MediaAssetService {
+func NewMediaAssetService(ctx *bootstrap.Context, uc *data.MediaAssetRepo, referenceRepo *data.ContentReferenceRepo, postRepo *data.PostRepo, pageRepo *data.PageRepo, flowSvc *FlowService) *MediaAssetService {
 	return &MediaAssetService{
 		log:            ctx.NewLoggerHelper("media-asset/service/core-service"),
 		mediaAssetRepo: uc,
 		referenceRepo:  referenceRepo,
 		postRepo:       postRepo,
 		pageRepo:       pageRepo,
+		flowSvc:        flowSvc,
 	}
 }
 
@@ -133,7 +136,15 @@ func (s *MediaAssetService) FindByHash(ctx context.Context, req *mediaV1.FindMed
 }
 
 func (s *MediaAssetService) Create(ctx context.Context, req *mediaV1.CreateMediaAssetRequest) (*mediaV1.MediaAsset, error) {
-	return s.mediaAssetRepo.Create(ctx, req)
+	dto, err := s.mediaAssetRepo.Create(ctx, req)
+	if err != nil {
+		return nil, err
+	}
+	// Flow 规则触发（best-effort；媒体入库事件）
+	if s.flowSvc != nil && dto.GetId() != 0 {
+		s.flowSvc.DispatchFlow(ctx, task.WebhookEventMediaCreated, dto.GetId(), MediaEventSnapshot(dto))
+	}
+	return dto, nil
 }
 
 func (s *MediaAssetService) Update(ctx context.Context, req *mediaV1.UpdateMediaAssetRequest) (*mediaV1.MediaAsset, error) {

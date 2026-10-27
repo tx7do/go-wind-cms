@@ -10,6 +10,9 @@
   7. 延时动作：webhook → delay 5s → webhook，第二跳晚于第一跳 ≥5s
   8. 定时触发：triggerCron 每分钟 → envelope event=schedule/entity=0
   9. 条件不满足分支：草稿 post.updated 不命中条件 → elseActions 执行、主链不执行
+ 10. 结构化字段条件（快照 title contains）：命中触发带 envelope.snapshot / 不命中不触发 / 坏 op 拒绝
+ 11. http 动作：自定义方法/头/body 模板，{title} 占位符按快照展开
+ 12. comment.created 事件族：评论快照 content 条件命中触发
 
 前置：core/admin 已启动（taskScheduler 可用，redis 运行中）。
 用法：python test_flow_rules.py
@@ -49,6 +52,7 @@ class ReceiverHandler(BaseHTTPRequestHandler):
             "body": body,
             "signature": self.headers.get("X-Webhook-Signature", ""),
             "event": self.headers.get("X-Flow-Event", ""),
+            "headers": {k: v for k, v in self.headers.items()},
             "ts": time.time(),
         })
         self.send_response(200)
@@ -80,6 +84,13 @@ def main():
     hdr = admin_login("admin", "admin")
     api = AdminApi(hdr)
     TS = int(time.time())
+
+    # ===== 0. 清扫历史残留的 e2e 规则（早前失败的运行可能留下启用中的
+    # post.published 规则，会在本轮每次发布时触发干扰断言）=====
+    listed = api("/admin/v1/flow-rules?page=1&pageSize=100", "GET")
+    for stale in listed.get("items", []):
+        if str(stale.get("name", "")).startswith("e2e-flow"):
+            api(f"/admin/v1/flow-rules/{stale.get('id')}", "DELETE")
 
     # ===== 1. 建规则 =====
     rule = api("/admin/v1/flow-rules", "POST", {"data": {
@@ -127,8 +138,10 @@ def main():
     ok = wait_for(lambda: len(received) > before)
     check("发布触发 webhook", ok, f"received={len(received)}")
     if ok and len(received) > before:
-        hit = received[-1]
-        body = json.loads(hit["body"])
+        # 按 rule_id 精确取本轮规则的投递（清扫后仍可能有并发残留干扰 last）
+        hit = next((r for r in reversed(received)
+                    if json.loads(r["body"]).get("rule_id") == rule_id), None)
+        body = json.loads(hit["body"]) if hit else {}
         check("envelope 事件正确", body.get("event") == "post.published", f"{body.get('event')}")
         check("envelope 实体正确", body.get("entity_id") == post_id,
               f"{body.get('entity_id')} vs {post_id}")
@@ -330,8 +343,121 @@ def main():
     api(f"/admin/v1/flow-rules/{erule_id}", "DELETE")
     api(f"/admin/v1/posts/{epost_id}", "DELETE")
 
+    # ===== 10. 结构化字段条件（快照 title contains）+ envelope 快照断言 =====
+    MARK = f"CONDHIT{TS}"
+    cond_rule = api("/admin/v1/flow-rules", "POST", {"data": {
+        "name": f"e2e-flow-cond-{TS}",
+        "triggerEvent": "post.updated",
+        "conditions": json.dumps([{"field": "title", "op": "contains", "value": MARK}]),
+        "actions": json.dumps([{"type": "webhook", "url": f"http://127.0.0.1:{RECEIVER_PORT}/flow-cond"}]),
+        "enabled": True,
+    }})
+    cond_rule_id = cond_rule.get("id")
+    check("建字段条件规则", bool(cond_rule_id), f"id={cond_rule_id}")
+
+    # 坏 op 校验拒绝
+    badcond = api("/admin/v1/flow-rules", "POST", {"data": {
+        "name": f"e2e-flow-cond-bad-{TS}",
+        "triggerEvent": "post.updated",
+        "conditions": json.dumps([{"field": "title", "op": "regex", "value": "x"}]),
+        "actions": json.dumps([{"type": "webhook", "url": f"http://127.0.0.1:{RECEIVER_PORT}/flow-x"}]),
+    }})
+    check("坏 op 被拒", "_raw" in badcond or badcond.get("code") == 400,
+          f"resp={json.dumps(badcond, ensure_ascii=False)[:80]}")
+
+    cpost = api("/admin/v1/posts", "POST", {"data": {
+        "status": "DRAFT",
+        "translations": [{"languageCode": "zh-CN", "title": f"cond {MARK} post",
+                          "content": "<p>c</p>"}],
+    }})
+    cpost_id = cpost.get("id")
+    before = len(received)
+    # 标题存翻译表：更新须走 translations（顶层 title 不落库）
+    api(f"/admin/v1/posts/{cpost_id}", "PUT", {"data": {"translations": [
+        {"languageCode": "zh-CN", "title": f"cond {MARK} edited"}]}})
+    ok = wait_for(lambda: any(r["path"] == "/flow-cond" for r in received[before:]), timeout=30)
+    check("字段条件命中触发", ok, f"received={len(received)}")
+    if ok:
+        hit = next(r for r in reversed(received) if r["path"] == "/flow-cond")
+        body = json.loads(hit["body"])
+        snap = body.get("snapshot") or {}
+        check("envelope 携带快照", MARK in (snap.get("title") or ""),
+              f"snapshot.title={snap.get('title')}")
+
+    # 不命中分支：标题不含 MARK 的更新 → 不触发
+    before = len(received)
+    api(f"/admin/v1/posts/{cpost_id}", "PUT", {"data": {"translations": [
+        {"languageCode": "zh-CN", "title": "no mark here"}]}})
+    time.sleep(3)
+    check("字段条件不命中不触发", not any(r["path"] == "/flow-cond" for r in received[before:]),
+          f"received={len(received)}")
+
+    # ===== 11. http 动作（自定义方法/头/body 模板 + {field} 占位符） =====
+    http_rule = api("/admin/v1/flow-rules", "POST", {"data": {
+        "name": f"e2e-flow-http-{TS}",
+        "triggerEvent": "post.published",
+        "actions": json.dumps([{
+            "type": "http",
+            "method": "POST",
+            "url": f"http://127.0.0.1:{RECEIVER_PORT}/flow-http",
+            "headers": {"X-Custom-Tag": "e2e"},
+            "body": '{"kind":"http-action","title":"{title}"}',
+        }]),
+        "enabled": True,
+    }})
+    check("建 http 动作规则", bool(http_rule.get("id")), f"id={http_rule.get('id')}")
+
+    hpost = api("/admin/v1/posts", "POST", {"data": {
+        "status": "DRAFT",
+        "translations": [{"languageCode": "zh-CN", "title": f"http act {TS}",
+                          "content": "<p>h</p>"}],
+    }})
+    hpost_id = hpost.get("id")
+    api(f"/admin/v1/posts/{hpost_id}/review/submit", "POST", {"postId": hpost_id})
+    api(f"/admin/v1/posts/{hpost_id}/review/approve", "POST", {"postId": hpost_id})
+    ok = wait_for(lambda: any(r["path"] == "/flow-http" for r in received), timeout=30)
+    check("http 动作触发", ok, f"received={len(received)}")
+    if ok:
+        hit = next(r for r in reversed(received) if r["path"] == "/flow-http")
+        body = json.loads(hit["body"])
+        check("body 模板占位符展开", body.get("title") == f"http act {TS}",
+              f"body={json.dumps(body, ensure_ascii=False)[:80]}")
+        check("自定义头透传", (hit.get("headers") or {}).get("X-Custom-Tag") == "e2e",
+              f"headers={list((hit.get('headers') or {}).keys())[:6]}")
+
+    # ===== 12. comment.created 事件族（快照 content 条件） =====
+    cmt_rule = api("/admin/v1/flow-rules", "POST", {"data": {
+        "name": f"e2e-flow-cmt-{TS}",
+        "triggerEvent": "comment.created",
+        "conditions": json.dumps([{"field": "content", "op": "contains", "value": "FLOWCMT"}]),
+        "actions": json.dumps([{"type": "webhook", "url": f"http://127.0.0.1:{RECEIVER_PORT}/flow-comment"}]),
+        "enabled": True,
+    }})
+    check("建评论事件规则", bool(cmt_rule.get("id")), f"id={cmt_rule.get('id')}")
+
+    before = len(received)
+    cmt = api("/admin/v1/comments", "POST", {"data": {
+        "objectId": cpost_id,
+        "contentType": "CONTENT_TYPE_POST",
+        "content": f"hello FLOWCMT{TS}",
+        "status": "STATUS_APPROVED",
+    }})
+    check("建评论", bool(cmt.get("id")), f"resp={json.dumps(cmt, ensure_ascii=False)[:80]}")
+    ok = wait_for(lambda: any(r["path"] == "/flow-comment" for r in received[before:]), timeout=30)
+    check("评论事件触发", ok, f"received={len(received)}")
+    if ok:
+        hit = next(r for r in reversed(received) if r["path"] == "/flow-comment")
+        body = json.loads(hit["body"])
+        snap = body.get("snapshot") or {}
+        check("评论快照带 content", f"FLOWCMT{TS}" in (snap.get("content") or ""),
+              f"snapshot={json.dumps(snap, ensure_ascii=False)[:100]}")
+
     # ===== 清理 =====
-    api(f"/admin/v1/flow-rules/{rule_id}", "DELETE")
+    api(f"/admin/v1/flow-rules/{cond_rule_id}", "DELETE")
+    api(f"/admin/v1/flow-rules/{http_rule.get('id')}", "DELETE")
+    api(f"/admin/v1/flow-rules/{cmt_rule.get('id')}", "DELETE")
+    api(f"/admin/v1/posts/{cpost_id}", "DELETE")
+    api(f"/admin/v1/posts/{hpost_id}", "DELETE")
     api(f"/admin/v1/posts/{post_id}", "DELETE")
     receiver.shutdown()
     print(f"\n通过 {passed} / 失败 {failed}")

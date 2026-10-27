@@ -10,6 +10,7 @@ import {
   Space,
   Switch,
   Tag,
+  Typography,
 } from 'antd';
 import { DeleteOutlined, EditOutlined, PlusOutlined } from '@ant-design/icons';
 import { useTranslation } from 'react-i18next';
@@ -26,9 +27,9 @@ import {
   useUpdateFlowRule,
 } from '@/api/hooks/flow-rule';
 
-/** 动作编辑模型：webhook（url+secret）/ notification（title/content/收件人）/ delay（seconds） */
+/** 动作编辑模型：webhook（url+secret）/ http（method+headers+body 模板）/ notification（title/content/收件人）/ delay（seconds） */
 interface FlowActionForm {
-  type: 'webhook' | 'notification' | 'delay';
+  type: 'webhook' | 'http' | 'notification' | 'delay';
   url: string;
   secret: string;
   title: string;
@@ -40,6 +41,10 @@ interface FlowActionForm {
   targetUserIdsText: string;
   /** delay 动作秒数输入态 */
   secondsText: string;
+  /** http 动作：方法（POST/GET）与自定义头（每行一个 Key: Value）与 body 模板（支持 {field} 快照占位符） */
+  method: 'POST' | 'GET';
+  headersText: string;
+  body: string;
 }
 
 const emptyAction = (type: FlowActionForm['type']): FlowActionForm => ({
@@ -52,7 +57,43 @@ const emptyAction = (type: FlowActionForm['type']): FlowActionForm => ({
   contentEn: '',
   targetUserIdsText: '',
   secondsText: '',
+  method: 'POST',
+  headersText: '',
+  body: '',
 });
+
+/** 结构化条件编辑模型：[{field,op,value}]，全部命中(AND)才触发 */
+interface FlowConditionForm {
+  field: string;
+  op: string;
+  value: string;
+}
+
+const serializeConditions = (conditions: FlowConditionForm[]) =>
+  JSON.stringify(
+    conditions
+      .filter((c) => c.field.trim())
+      .map((c) => ({ field: c.field.trim(), op: c.op, value: c.value })),
+  );
+
+const deserializeConditions = (conditionsJSON: string): FlowConditionForm[] => {
+  try {
+    const raw: unknown = JSON.parse(conditionsJSON || '[]');
+    if (!Array.isArray(raw)) return [];
+    return raw
+      .filter(
+        (c): c is Record<string, unknown> =>
+          Boolean(c) && typeof c === 'object',
+      )
+      .map((c) => ({
+        field: String(c.field ?? ''),
+        op: String(c.op ?? 'eq'),
+        value: String(c.value ?? ''),
+      }));
+  } catch {
+    return [];
+  }
+};
 
 const serializeActions = (actions: FlowActionForm[]) =>
   JSON.stringify(
@@ -64,6 +105,26 @@ const serializeActions = (actions: FlowActionForm[]) =>
             type: 'webhook',
             url: a.url.trim(),
           };
+          if (a.secret.trim()) out.secret = a.secret.trim();
+          return out;
+        }
+        if (a.type === 'http') {
+          if (!a.url.trim()) return null;
+          const headers: Record<string, string> = {};
+          for (const line of a.headersText.split('\n')) {
+            const idx = line.indexOf(':');
+            if (idx <= 0) continue;
+            const k = line.slice(0, idx).trim();
+            const v = line.slice(idx + 1).trim();
+            if (k && v) headers[k] = v;
+          }
+          const out: Record<string, unknown> = {
+            type: 'http',
+            url: a.url.trim(),
+            method: a.method,
+          };
+          if (Object.keys(headers).length > 0) out.headers = headers;
+          if (a.body.trim()) out.body = a.body;
           if (a.secret.trim()) out.secret = a.secret.trim();
           return out;
         }
@@ -108,7 +169,10 @@ const deserializeActions = (actionsJSON: string): FlowActionForm[] => {
             ? 'notification'
             : a.type === 'delay'
               ? 'delay'
-              : 'webhook';
+              : a.type === 'http'
+                ? 'http'
+                : 'webhook';
+        const headers = a.headers as Record<string, unknown> | undefined;
         return {
           type,
           url: String(a.url ?? ''),
@@ -124,6 +188,13 @@ const deserializeActions = (actionsJSON: string): FlowActionForm[] => {
             a.type === 'delay' && Number.isFinite(Number(a.seconds))
               ? String(a.seconds)
               : '',
+          method: a.method === 'GET' ? 'GET' : 'POST',
+          headersText: headers
+            ? Object.entries(headers)
+                .map(([k, v]) => `${k}: ${String(v)}`)
+                .join('\n')
+            : '',
+          body: String(a.body ?? ''),
         };
       });
   } catch {
@@ -161,6 +232,7 @@ const ActionEditor = ({
                 value={a.type}
                 options={[
                   { value: 'webhook', label: t('actionWebhook') },
+                  { value: 'http', label: t('actionHttp') },
                   { value: 'notification', label: t('actionNotification') },
                   { value: 'delay', label: t('actionDelay') },
                 ]}
@@ -186,6 +258,42 @@ const ActionEditor = ({
                   placeholder={t('webhookSecretPlaceholder')}
                   value={a.secret}
                   onChange={(e) => patch({ secret: e.target.value })}
+                />
+              </Space>
+            ) : a.type === 'http' ? (
+              <Space direction="vertical" style={{ width: '100%' }} size={6}>
+                <Space.Compact block>
+                  <Select
+                    value={a.method}
+                    options={[
+                      { value: 'POST', label: 'POST' },
+                      { value: 'GET', label: 'GET' },
+                    ]}
+                    onChange={(v: 'POST' | 'GET') => patch({ method: v })}
+                    style={{ width: 100 }}
+                  />
+                  <Input
+                    placeholder={t('httpUrlPlaceholder')}
+                    value={a.url}
+                    onChange={(e) => patch({ url: e.target.value })}
+                  />
+                </Space.Compact>
+                <Input.Password
+                  placeholder={t('webhookSecretPlaceholder')}
+                  value={a.secret}
+                  onChange={(e) => patch({ secret: e.target.value })}
+                />
+                <Input.TextArea
+                  placeholder={t('httpHeadersPlaceholder')}
+                  value={a.headersText}
+                  rows={2}
+                  onChange={(e) => patch({ headersText: e.target.value })}
+                />
+                <Input.TextArea
+                  placeholder={t('httpBodyPlaceholder')}
+                  value={a.body}
+                  rows={3}
+                  onChange={(e) => patch({ body: e.target.value })}
                 />
               </Space>
             ) : a.type === 'delay' ? (
@@ -251,6 +359,14 @@ const ActionEditor = ({
           block
           type="dashed"
           icon={<PlusOutlined />}
+          onClick={() => onChange([...actions, emptyAction('http')])}
+        >
+          {t('addHttpAction')}
+        </Button>
+        <Button
+          block
+          type="dashed"
+          icon={<PlusOutlined />}
           onClick={() => onChange([...actions, emptyAction('delay')])}
         >
           {t('addDelayAction')}
@@ -261,10 +377,11 @@ const ActionEditor = ({
 };
 
 /**
- * 自动化 Flow 规则管理页：内容事件/定时（cron）→ 条件（状态等值）→ 动作链。
- * 动作支持 webhook（HMAC 签名投递）、notification（站内信）与 delay
- * （延时后由后台任务接续剩余动作）；条件不满足分支（elseActions）可配置
- * 另一组动作；定时规则的触发事件/状态条件不生效。命中次数为观测字段。
+ * 自动化 Flow 规则管理页：内容事件/定时（cron）→ 条件（状态等值 + 结构化
+ * 字段条件组，AND 语义）→ 动作链。动作支持 webhook（HMAC 签名投递）、http
+ * （自定义方法/头/body 模板，{field} 快照占位符）、notification（站内信）
+ * 与 delay（延时后由后台任务接续剩余动作）；条件不满足分支（elseActions）
+ * 可配置另一组动作；定时规则的触发事件/条件不生效。命中次数为观测字段。
  */
 const FlowRuleManagement = () => {
   const { t } = useTranslation('flow-rule');
@@ -280,6 +397,8 @@ const FlowRuleManagement = () => {
     triggerEvent: string;
     triggerCron: string;
     conditionStatus: string;
+    /** 结构化字段条件组（快照字段级 AND 匹配；空=无条件） */
+    conditions: FlowConditionForm[];
     actions: FlowActionForm[];
     /** 条件不满足分支：开启后编辑 elseActions（提交为空串即清除） */
     hasElse: boolean;
@@ -291,6 +410,7 @@ const FlowRuleManagement = () => {
     triggerEvent: '',
     triggerCron: '',
     conditionStatus: '',
+    conditions: [],
     actions: [emptyAction('webhook')],
     hasElse: false,
     elseActions: [emptyAction('webhook')],
@@ -314,6 +434,7 @@ const FlowRuleManagement = () => {
       triggerEvent: 'post.published',
       triggerCron: '',
       conditionStatus: '',
+      conditions: [],
       actions: [emptyAction('webhook')],
       hasElse: false,
       elseActions: [emptyAction('webhook')],
@@ -332,6 +453,7 @@ const FlowRuleManagement = () => {
       triggerEvent: record.triggerEvent ?? 'post.published',
       triggerCron,
       conditionStatus: record.conditionStatus ?? '',
+      conditions: deserializeConditions(record.conditions ?? ''),
       actions:
         deserializeActions(record.actions ?? '').length > 0
           ? deserializeActions(record.actions ?? '')
@@ -373,6 +495,7 @@ const FlowRuleManagement = () => {
       triggerEvent: form.triggerEvent,
       triggerCron: isCron ? form.triggerCron.trim() : undefined,
       conditionStatus: form.conditionStatus || undefined,
+      conditions: serializeConditions(form.conditions),
       actions,
       // 空串=清除 else 分支（update_mask 含 elseActions 时按空串落库）
       elseActions: form.hasElse ? elseActions : '',
@@ -384,7 +507,7 @@ const FlowRuleManagement = () => {
           id: editing.id,
           data: payload,
           updateMask:
-            'name,triggerEvent,triggerCron,conditionStatus,actions,elseActions,enabled',
+            'name,triggerEvent,triggerCron,conditionStatus,conditions,actions,elseActions,enabled',
         });
       } else {
         await createMutation.mutateAsync({ data: payload });
@@ -439,13 +562,30 @@ const FlowRuleManagement = () => {
     {
       title: t('conditionStatus'),
       dataIndex: 'conditionStatus',
-      width: 200,
-      render: (_: unknown, record: FlowRule) =>
-        record.conditionStatus ? (
-          <Tag color="orange">{record.conditionStatus}</Tag>
-        ) : (
-          <Tag>{t('noCondition')}</Tag>
-        ),
+      width: 220,
+      render: (_: unknown, record: FlowRule) => {
+        const statusTag = record.conditionStatus ? (
+          <Tag key="status" color="orange">
+            {record.conditionStatus}
+          </Tag>
+        ) : null;
+        const condTags = deserializeConditions(record.conditions ?? '').map(
+          (c, i) => (
+            <Tag key={`c${i}`} color="gold">
+              {`${c.field} ${c.op} ${c.value}`}
+            </Tag>
+          ),
+        );
+        if (!statusTag && condTags.length === 0) {
+          return <Tag>{t('noCondition')}</Tag>;
+        }
+        return (
+          <Space wrap size={4}>
+            {statusTag}
+            {condTags}
+          </Space>
+        );
+      },
     },
     {
       title: t('actions'),
@@ -462,17 +602,21 @@ const FlowRuleManagement = () => {
                 color={
                   a.type === 'webhook'
                     ? 'blue'
-                    : a.type === 'delay'
-                      ? 'purple'
-                      : 'green'
+                    : a.type === 'http'
+                      ? 'geekblue'
+                      : a.type === 'delay'
+                        ? 'purple'
+                        : 'green'
                 }
                 style={{ maxWidth: 240, overflow: 'hidden', textOverflow: 'ellipsis' }}
               >
                 {a.type === 'webhook'
                   ? `${t('actionWebhook')}: ${a.url}`
-                  : a.type === 'delay'
-                    ? `${t('actionDelay')}: ${a.secondsText}s`
-                    : `${t('actionNotification')}: ${a.title}`}
+                  : a.type === 'http'
+                    ? `${t('actionHttp')}: ${a.url}`
+                    : a.type === 'delay'
+                      ? `${t('actionDelay')}: ${a.secondsText}s`
+                      : `${t('actionNotification')}: ${a.title}`}
               </Tag>
             ))}
             {record.elseActions ? <Tag color="red">{t('elseBranchTag')}</Tag> : null}
@@ -594,6 +738,88 @@ const FlowRuleManagement = () => {
               onChange={(v?: string) => setForm((f) => ({ ...f, conditionStatus: v ?? '' }))}
               style={{ width: '100%' }}
             />
+          )}
+
+          {form.triggerType === 'event' && (
+            <div>
+              <div style={{ marginBottom: 8 }}>
+                <Tag color="orange">{t('conditionsTitle')}</Tag>
+                <Typography.Text type="secondary" style={{ fontSize: 12 }}>
+                  {t('conditionsHint')}
+                </Typography.Text>
+              </div>
+              {form.conditions.map((c, i) => (
+                <Space.Compact key={i} block style={{ marginBottom: 6 }}>
+                  <Input
+                    placeholder={t('conditionFieldPlaceholder')}
+                    value={c.field}
+                    style={{ width: '38%' }}
+                    onChange={(e) =>
+                      setForm((f) => ({
+                        ...f,
+                        conditions: f.conditions.map((x, j) =>
+                          j === i ? { ...x, field: e.target.value } : x,
+                        ),
+                      }))
+                    }
+                  />
+                  <Select
+                    value={c.op}
+                    options={[
+                      { value: 'eq', label: t('conditionOpEq') },
+                      { value: 'ne', label: t('conditionOpNe') },
+                      { value: 'contains', label: t('conditionOpContains') },
+                      { value: 'in', label: t('conditionOpIn') },
+                    ]}
+                    onChange={(v: string) =>
+                      setForm((f) => ({
+                        ...f,
+                        conditions: f.conditions.map((x, j) =>
+                          j === i ? { ...x, op: v } : x,
+                        ),
+                      }))
+                    }
+                    style={{ width: '27%' }}
+                  />
+                  <Input
+                    placeholder={t('conditionValuePlaceholder')}
+                    value={c.value}
+                    style={{ width: '27%' }}
+                    onChange={(e) =>
+                      setForm((f) => ({
+                        ...f,
+                        conditions: f.conditions.map((x, j) =>
+                          j === i ? { ...x, value: e.target.value } : x,
+                        ),
+                      }))
+                    }
+                  />
+                  <Button
+                    icon={<DeleteOutlined />}
+                    style={{ width: '8%' }}
+                    onClick={() =>
+                      setForm((f) => ({
+                        ...f,
+                        conditions: f.conditions.filter((_, j) => j !== i),
+                      }))
+                    }
+                  />
+                </Space.Compact>
+              ))}
+              <Button
+                block
+                type="dashed"
+                icon={<PlusOutlined />}
+                onClick={() =>
+                  setForm((f) => ({
+                    ...f,
+                    conditions: [...f.conditions, { field: '', op: 'eq', value: '' }],
+                  }))
+                }
+              >
+                {t('addCondition')}
+              </Button>
+            </div>
           )}
 
           <div>

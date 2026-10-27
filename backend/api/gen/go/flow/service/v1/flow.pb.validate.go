@@ -73,6 +73,10 @@ func (m *FlowRule) validate(all bool) error {
 		// no validation rules for ConditionStatus
 	}
 
+	if m.Conditions != nil {
+		// no validation rules for Conditions
+	}
+
 	if m.TriggerCron != nil {
 		// no validation rules for TriggerCron
 	}

@@ -27,6 +27,11 @@ type FlowExecutePayload struct {
 	ActionIndex int `json:"action_index,omitempty"`
 	// Chain 延时续跑所属动作链："main"（缺省）/ "else"（条件不满足分支）。
 	Chain string `json:"chain,omitempty"`
+	// Snapshot 触发时刻的实体字段快照（值统一字符串；status/prev_status/title/
+	// slug/author_id/category_id/comment 系 content 等）。条件判定优先吃快照，
+	// 兼修删除事件回查 404 与"worker 回查到执行时而非触发时状态"两类时序问题；
+	// 旧任务无快照时回退 DB 回查（仅 status 可回退）。
+	Snapshot map[string]string `json:"snapshot,omitempty"`
 }
 
 // FlowResumeTaskType 延时续跑任务类型。

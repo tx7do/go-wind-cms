@@ -1149,21 +1149,21 @@ func init() {
 	// flowrule.ConditionStatusValidator is a validator for the "condition_status" field. It is called by the builders before save.
 	flowrule.ConditionStatusValidator = flowruleDescConditionStatus.Validators[0].(func(string) error)
 	// flowruleDescTriggerCron is the schema descriptor for trigger_cron field.
-	flowruleDescTriggerCron := flowruleFields[3].Descriptor()
+	flowruleDescTriggerCron := flowruleFields[4].Descriptor()
 	// flowrule.TriggerCronValidator is a validator for the "trigger_cron" field. It is called by the builders before save.
 	flowrule.TriggerCronValidator = flowruleDescTriggerCron.Validators[0].(func(string) error)
 	// flowruleDescActions is the schema descriptor for actions field.
-	flowruleDescActions := flowruleFields[4].Descriptor()
+	flowruleDescActions := flowruleFields[5].Descriptor()
 	// flowrule.DefaultActions holds the default value on creation for the actions field.
 	flowrule.DefaultActions = flowruleDescActions.Default.(string)
 	// flowrule.ActionsValidator is a validator for the "actions" field. It is called by the builders before save.
 	flowrule.ActionsValidator = flowruleDescActions.Validators[0].(func(string) error)
 	// flowruleDescEnabled is the schema descriptor for enabled field.
-	flowruleDescEnabled := flowruleFields[6].Descriptor()
+	flowruleDescEnabled := flowruleFields[7].Descriptor()
 	// flowrule.DefaultEnabled holds the default value on creation for the enabled field.
 	flowrule.DefaultEnabled = flowruleDescEnabled.Default.(bool)
 	// flowruleDescMatchCount is the schema descriptor for match_count field.
-	flowruleDescMatchCount := flowruleFields[7].Descriptor()
+	flowruleDescMatchCount := flowruleFields[8].Descriptor()
 	// flowrule.DefaultMatchCount holds the default value on creation for the match_count field.
 	flowrule.DefaultMatchCount = flowruleDescMatchCount.Default.(uint32)
 	// flowruleDescID is the schema descriptor for id field.

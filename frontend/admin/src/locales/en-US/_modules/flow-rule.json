@@ -42,5 +42,19 @@
   "elseBranchTag": "else branch",
   "elseActionRequired": "Else branch is enabled: configure at least one complete action",
   "notifyTitleEnPlaceholder": "English title variant (optional)",
-  "notifyContentEnPlaceholder": "English body variant (optional) — recipients preferring English get this in email"
+  "notifyContentEnPlaceholder": "English body variant (optional) — recipients preferring English get this in email",
+  "actionHttp": "HTTP Request",
+  "addHttpAction": "Add HTTP request action",
+  "httpUrlPlaceholder": "Request URL",
+  "httpHeadersPlaceholder": "Custom headers (one per line, Key: Value, max 8)",
+  "httpBodyPlaceholder": "Body template (POST only; {status}/{title}/{slug} snapshot placeholders supported; default envelope when empty)",
+  "conditionsTitle": "Field conditions",
+  "conditionsHint": "Snapshot field AND matching: status/prev_status/title/slug/author_id/category_id/cf.<custom field key>; comment events add content/object_id/authorType, media events add mime_type/file_name, user events add username/email",
+  "conditionFieldPlaceholder": "Field name, e.g. status",
+  "conditionValuePlaceholder": "Value (use | for in)",
+  "conditionOpEq": "equals",
+  "conditionOpNe": "not equals",
+  "conditionOpContains": "contains",
+  "conditionOpIn": "in",
+  "addCondition": "Add condition"
 }

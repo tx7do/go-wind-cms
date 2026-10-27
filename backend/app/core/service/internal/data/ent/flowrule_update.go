@@ -198,6 +198,26 @@ func (_u *FlowRuleUpdate) ClearConditionStatus() *FlowRuleUpdate {
 	return _u
 }
 
+// SetConditions sets the "conditions" field.
+func (_u *FlowRuleUpdate) SetConditions(v string) *FlowRuleUpdate {
+	_u.mutation.SetConditions(v)
+	return _u
+}
+
+// SetNillableConditions sets the "conditions" field if the given value is not nil.
+func (_u *FlowRuleUpdate) SetNillableConditions(v *string) *FlowRuleUpdate {
+	if v != nil {
+		_u.SetConditions(*v)
+	}
+	return _u
+}
+
+// ClearConditions clears the value of the "conditions" field.
+func (_u *FlowRuleUpdate) ClearConditions() *FlowRuleUpdate {
+	_u.mutation.ClearConditions()
+	return _u
+}
+
 // SetTriggerCron sets the "trigger_cron" field.
 func (_u *FlowRuleUpdate) SetTriggerCron(v string) *FlowRuleUpdate {
 	_u.mutation.SetTriggerCron(v)
@@ -436,6 +456,12 @@ func (_u *FlowRuleUpdate) sqlSave(ctx context.Context) (_node int, err error) {
 	if _u.mutation.ConditionStatusCleared() {
 		_spec.ClearField(flowrule.FieldConditionStatus, field.TypeString)
 	}
+	if value, ok := _u.mutation.Conditions(); ok {
+		_spec.SetField(flowrule.FieldConditions, field.TypeString, value)
+	}
+	if _u.mutation.ConditionsCleared() {
+		_spec.ClearField(flowrule.FieldConditions, field.TypeString)
+	}
 	if value, ok := _u.mutation.TriggerCron(); ok {
 		_spec.SetField(flowrule.FieldTriggerCron, field.TypeString, value)
 	}
@@ -654,6 +680,26 @@ func (_u *FlowRuleUpdateOne) SetNillableConditionStatus(v *string) *FlowRuleUpda
 // ClearConditionStatus clears the value of the "condition_status" field.
 func (_u *FlowRuleUpdateOne) ClearConditionStatus() *FlowRuleUpdateOne {
 	_u.mutation.ClearConditionStatus()
+	return _u
+}
+
+// SetConditions sets the "conditions" field.
+func (_u *FlowRuleUpdateOne) SetConditions(v string) *FlowRuleUpdateOne {
+	_u.mutation.SetConditions(v)
+	return _u
+}
+
+// SetNillableConditions sets the "conditions" field if the given value is not nil.
+func (_u *FlowRuleUpdateOne) SetNillableConditions(v *string) *FlowRuleUpdateOne {
+	if v != nil {
+		_u.SetConditions(*v)
+	}
+	return _u
+}
+
+// ClearConditions clears the value of the "conditions" field.
+func (_u *FlowRuleUpdateOne) ClearConditions() *FlowRuleUpdateOne {
+	_u.mutation.ClearConditions()
 	return _u
 }
 
@@ -924,6 +970,12 @@ func (_u *FlowRuleUpdateOne) sqlSave(ctx context.Context) (_node *FlowRule, err 
 	}
 	if _u.mutation.ConditionStatusCleared() {
 		_spec.ClearField(flowrule.FieldConditionStatus, field.TypeString)
+	}
+	if value, ok := _u.mutation.Conditions(); ok {
+		_spec.SetField(flowrule.FieldConditions, field.TypeString, value)
+	}
+	if _u.mutation.ConditionsCleared() {
+		_spec.ClearField(flowrule.FieldConditions, field.TypeString)
 	}
 	if value, ok := _u.mutation.TriggerCron(); ok {
 		_spec.SetField(flowrule.FieldTriggerCron, field.TypeString, value)

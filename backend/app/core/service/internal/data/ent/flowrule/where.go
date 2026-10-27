@@ -104,6 +104,11 @@ func ConditionStatus(v string) predicate.FlowRule {
 	return predicate.FlowRule(sql.FieldEQ(FieldConditionStatus, v))
 }
 
+// Conditions applies equality check predicate on the "conditions" field. It's identical to ConditionsEQ.
+func Conditions(v string) predicate.FlowRule {
+	return predicate.FlowRule(sql.FieldEQ(FieldConditions, v))
+}
+
 // TriggerCron applies equality check predicate on the "trigger_cron" field. It's identical to TriggerCronEQ.
 func TriggerCron(v string) predicate.FlowRule {
 	return predicate.FlowRule(sql.FieldEQ(FieldTriggerCron, v))
@@ -682,6 +687,81 @@ func ConditionStatusEqualFold(v string) predicate.FlowRule {
 // ConditionStatusContainsFold applies the ContainsFold predicate on the "condition_status" field.
 func ConditionStatusContainsFold(v string) predicate.FlowRule {
 	return predicate.FlowRule(sql.FieldContainsFold(FieldConditionStatus, v))
+}
+
+// ConditionsEQ applies the EQ predicate on the "conditions" field.
+func ConditionsEQ(v string) predicate.FlowRule {
+	return predicate.FlowRule(sql.FieldEQ(FieldConditions, v))
+}
+
+// ConditionsNEQ applies the NEQ predicate on the "conditions" field.
+func ConditionsNEQ(v string) predicate.FlowRule {
+	return predicate.FlowRule(sql.FieldNEQ(FieldConditions, v))
+}
+
+// ConditionsIn applies the In predicate on the "conditions" field.
+func ConditionsIn(vs ...string) predicate.FlowRule {
+	return predicate.FlowRule(sql.FieldIn(FieldConditions, vs...))
+}
+
+// ConditionsNotIn applies the NotIn predicate on the "conditions" field.
+func ConditionsNotIn(vs ...string) predicate.FlowRule {
+	return predicate.FlowRule(sql.FieldNotIn(FieldConditions, vs...))
+}
+
+// ConditionsGT applies the GT predicate on the "conditions" field.
+func ConditionsGT(v string) predicate.FlowRule {
+	return predicate.FlowRule(sql.FieldGT(FieldConditions, v))
+}
+
+// ConditionsGTE applies the GTE predicate on the "conditions" field.
+func ConditionsGTE(v string) predicate.FlowRule {
+	return predicate.FlowRule(sql.FieldGTE(FieldConditions, v))
+}
+
+// ConditionsLT applies the LT predicate on the "conditions" field.
+func ConditionsLT(v string) predicate.FlowRule {
+	return predicate.FlowRule(sql.FieldLT(FieldConditions, v))
+}
+
+// ConditionsLTE applies the LTE predicate on the "conditions" field.
+func ConditionsLTE(v string) predicate.FlowRule {
+	return predicate.FlowRule(sql.FieldLTE(FieldConditions, v))
+}
+
+// ConditionsContains applies the Contains predicate on the "conditions" field.
+func ConditionsContains(v string) predicate.FlowRule {
+	return predicate.FlowRule(sql.FieldContains(FieldConditions, v))
+}
+
+// ConditionsHasPrefix applies the HasPrefix predicate on the "conditions" field.
+func ConditionsHasPrefix(v string) predicate.FlowRule {
+	return predicate.FlowRule(sql.FieldHasPrefix(FieldConditions, v))
+}
+
+// ConditionsHasSuffix applies the HasSuffix predicate on the "conditions" field.
+func ConditionsHasSuffix(v string) predicate.FlowRule {
+	return predicate.FlowRule(sql.FieldHasSuffix(FieldConditions, v))
+}
+
+// ConditionsIsNil applies the IsNil predicate on the "conditions" field.
+func ConditionsIsNil() predicate.FlowRule {
+	return predicate.FlowRule(sql.FieldIsNull(FieldConditions))
+}
+
+// ConditionsNotNil applies the NotNil predicate on the "conditions" field.
+func ConditionsNotNil() predicate.FlowRule {
+	return predicate.FlowRule(sql.FieldNotNull(FieldConditions))
+}
+
+// ConditionsEqualFold applies the EqualFold predicate on the "conditions" field.
+func ConditionsEqualFold(v string) predicate.FlowRule {
+	return predicate.FlowRule(sql.FieldEqualFold(FieldConditions, v))
+}
+
+// ConditionsContainsFold applies the ContainsFold predicate on the "conditions" field.
+func ConditionsContainsFold(v string) predicate.FlowRule {
+	return predicate.FlowRule(sql.FieldContainsFold(FieldConditions, v))
 }
 
 // TriggerCronEQ applies the EQ predicate on the "trigger_cron" field.

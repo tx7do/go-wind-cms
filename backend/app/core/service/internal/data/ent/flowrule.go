@@ -36,8 +36,10 @@ type FlowRule struct {
 	Name string `json:"name,omitempty"`
 	// 触发事件（post.published/post.updated/page.published 等内容事件族）
 	TriggerEvent string `json:"trigger_event,omitempty"`
-	// 条件：实体状态等值匹配（如 POST_STATUS_PUBLISHED）；空=无条件
+	// 条件：实体状态等值匹配（如 POST_STATUS_PUBLISHED）；空=无条件；与 conditions 同时存在时两者都须命中
 	ConditionStatus *string `json:"condition_status,omitempty"`
+	// 结构化条件 JSON 数组 [{field,op,value}]，全部命中(AND)才触发；field 取快照字段名(status/prev_status/title/slug/author_id/category_id 或 cf.<自定义字段键>)，op ∈ eq/ne/contains/in（in 值为 | 分隔）；空=无条件
+	Conditions *string `json:"conditions,omitempty"`
 	// 定时触发 cron 表达式（5 段：分 时 日 月 周；非空=定时规则，忽略事件触发与状态条件）
 	TriggerCron *string `json:"trigger_cron,omitempty"`
 	// 动作链 JSON 数组，元素形如 {'type':'webhook','url':'https://...','secret':'可选签名密钥'}
@@ -60,7 +62,7 @@ func (*FlowRule) scanValues(columns []string) ([]any, error) {
 			values[i] = new(sql.NullBool)
 		case flowrule.FieldID, flowrule.FieldCreatedBy, flowrule.FieldUpdatedBy, flowrule.FieldDeletedBy, flowrule.FieldTenantID, flowrule.FieldMatchCount:
 			values[i] = new(sql.NullInt64)
-		case flowrule.FieldName, flowrule.FieldTriggerEvent, flowrule.FieldConditionStatus, flowrule.FieldTriggerCron, flowrule.FieldActions, flowrule.FieldElseActions:
+		case flowrule.FieldName, flowrule.FieldTriggerEvent, flowrule.FieldConditionStatus, flowrule.FieldConditions, flowrule.FieldTriggerCron, flowrule.FieldActions, flowrule.FieldElseActions:
 			values[i] = new(sql.NullString)
 		case flowrule.FieldCreatedAt, flowrule.FieldUpdatedAt, flowrule.FieldDeletedAt:
 			values[i] = new(sql.NullTime)
@@ -152,6 +154,13 @@ func (_m *FlowRule) assignValues(columns []string, values []any) error {
 			} else if value.Valid {
 				_m.ConditionStatus = new(string)
 				*_m.ConditionStatus = value.String
+			}
+		case flowrule.FieldConditions:
+			if value, ok := values[i].(*sql.NullString); !ok {
+				return fmt.Errorf("unexpected type %T for field conditions", values[i])
+			} else if value.Valid {
+				_m.Conditions = new(string)
+				*_m.Conditions = value.String
 			}
 		case flowrule.FieldTriggerCron:
 			if value, ok := values[i].(*sql.NullString); !ok {
@@ -266,6 +275,11 @@ func (_m *FlowRule) String() string {
 	builder.WriteString(", ")
 	if v := _m.ConditionStatus; v != nil {
 		builder.WriteString("condition_status=")
+		builder.WriteString(*v)
+	}
+	builder.WriteString(", ")
+	if v := _m.Conditions; v != nil {
+		builder.WriteString("conditions=")
 		builder.WriteString(*v)
 	}
 	builder.WriteString(", ")

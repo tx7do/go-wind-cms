@@ -32,6 +32,8 @@ const (
 	FieldTriggerEvent = "trigger_event"
 	// FieldConditionStatus holds the string denoting the condition_status field in the database.
 	FieldConditionStatus = "condition_status"
+	// FieldConditions holds the string denoting the conditions field in the database.
+	FieldConditions = "conditions"
 	// FieldTriggerCron holds the string denoting the trigger_cron field in the database.
 	FieldTriggerCron = "trigger_cron"
 	// FieldActions holds the string denoting the actions field in the database.
@@ -59,6 +61,7 @@ var Columns = []string{
 	FieldName,
 	FieldTriggerEvent,
 	FieldConditionStatus,
+	FieldConditions,
 	FieldTriggerCron,
 	FieldActions,
 	FieldElseActions,
@@ -162,6 +165,11 @@ func ByTriggerEvent(opts ...sql.OrderTermOption) OrderOption {
 // ByConditionStatus orders the results by the condition_status field.
 func ByConditionStatus(opts ...sql.OrderTermOption) OrderOption {
 	return sql.OrderByField(FieldConditionStatus, opts...).ToFunc()
+}
+
+// ByConditions orders the results by the conditions field.
+func ByConditions(opts ...sql.OrderTermOption) OrderOption {
+	return sql.OrderByField(FieldConditions, opts...).ToFunc()
 }
 
 // ByTriggerCron orders the results by the trigger_cron field.

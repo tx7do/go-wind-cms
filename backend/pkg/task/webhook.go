@@ -30,6 +30,12 @@ const (
 	WebhookEventPageUpdated   = "page.updated"
 	WebhookEventPagePublished = "page.published"
 	WebhookEventPageDeleted   = "page.deleted"
+
+	// v2 扩展事件族（仅 Flow 触发；webhook 订阅暂不放开）：
+	// 负载带字段快照（status/title 等），条件判定优先吃快照。
+	WebhookEventCommentCreated = "comment.created"
+	WebhookEventMediaCreated   = "media.created"
+	WebhookEventUserCreated    = "user.created"
 )
 
 // WebhookFanoutPayload 事件扇出任务 payload。

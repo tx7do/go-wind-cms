@@ -39,10 +39,14 @@ func (FlowRule) Fields() []ent.Field {
 			NotEmpty().
 			MaxLen(64),
 		field.String("condition_status").
-			Comment("条件：实体状态等值匹配（如 POST_STATUS_PUBLISHED）；空=无条件").
+			Comment("条件：实体状态等值匹配（如 POST_STATUS_PUBLISHED）；空=无条件；与 conditions 同时存在时两者都须命中").
 			Optional().
 			Nillable().
 			MaxLen(64),
+		field.String("conditions").
+			Comment("结构化条件 JSON 数组 [{field,op,value}]，全部命中(AND)才触发；field 取快照字段名(status/prev_status/title/slug/author_id/category_id 或 cf.<自定义字段键>)，op ∈ eq/ne/contains/in（in 值为 | 分隔）；空=无条件").
+			Optional().
+			Nillable(),
 		field.String("trigger_cron").
 			Comment("定时触发 cron 表达式（5 段：分 时 日 月 周；非空=定时规则，忽略事件触发与状态条件）").
 			Optional().
