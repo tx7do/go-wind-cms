@@ -10,17 +10,22 @@ import (
 	"github.com/go-kratos/kratos/v2/log"
 	"github.com/mark3labs/mcp-go/mcp"
 	"github.com/mark3labs/mcp-go/server"
-	"google.golang.org/protobuf/types/known/emptypb"
-	"google.golang.org/protobuf/types/known/timestamppb"
 	paginationV1 "github.com/tx7do/go-crud/api/gen/go/pagination/v1"
 	"github.com/tx7do/go-utils/trans"
+	authenticationV1 "go-wind-cms/api/gen/go/authentication/service/v1"
+
+	"go-wind-cms/pkg/middleware/auth"
+
 	conf "github.com/tx7do/kratos-bootstrap/api/gen/go/conf/v1"
 	"github.com/tx7do/kratos-bootstrap/bootstrap"
 	bootstrapMcp "github.com/tx7do/kratos-bootstrap/transport/mcp"
 	mcptransport "github.com/tx7do/kratos-transport/transport/mcp"
+	"google.golang.org/protobuf/types/known/emptypb"
+	"google.golang.org/protobuf/types/known/timestamppb"
 
 	contentV1 "go-wind-cms/api/gen/go/content/service/v1"
 	socialV1 "go-wind-cms/api/gen/go/social/service/v1"
+	appViewer "go-wind-cms/pkg/entgo/viewer"
 
 	"go-wind-cms/app/admin/service/internal/service"
 )
@@ -40,7 +45,7 @@ import (
 // 代理之后。
 //   - server.mcp.address / MCP_ADDR  监听地址（如 ":6602"）
 //   - MCP_TOKEN                      鉴权 Token（必填；缺失拒绝启动）。
-//                                    凭据只走环境变量，不入配置文件
+//     凭据只走环境变量，不入配置文件
 //
 // 工具集：
 //   - list_recent_posts           最近文章（标题/状态/ID）
@@ -51,6 +56,7 @@ func NewMcpServer(
 	ctx *bootstrap.Context,
 	postService *service.PostService,
 	socialService *service.SocialService,
+	commentService *service.CommentService,
 ) *mcptransport.Server {
 	// 解析监听地址：yaml server.mcp.address 优先，env MCP_ADDR 兜底
 	var mcpCfg *conf.Server_MCP
@@ -97,9 +103,9 @@ func NewMcpServer(
 		return nil
 	}
 
-	registerMcpTools(srv, token, postService, socialService)
+	registerMcpTools(srv, token, postService, socialService, commentService)
 
-	log.Infof("MCP server configured at %s (tools: list_recent_posts/get_social_summary/list_social_distributions/publish_distribution)", addr)
+	log.Infof("MCP server configured at %s (tools: list_recent_posts/get_post/create_draft_post/list_comments/get_social_summary/list_social_distributions/publish_distribution)", addr)
 	return srv
 }
 
@@ -114,25 +120,37 @@ func authorizeMcp(ctx context.Context, token string) error {
 	return fmt.Errorf("unauthorized: missing or invalid bearer token")
 }
 
+// mcpAuthz 鉴权通过后注入机器操作者身份：BFF 层服务用 auth.FromContext 取
+// 操作人（写入审计字段/租户归属），MCP 调用没有用户会话，统一以系统账号
+// （userId=0、平台租户）落库——与系统通知 created_by=0 同口径。
+func mcpAuthz(ctx context.Context, token string) (context.Context, error) {
+	if err := authorizeMcp(ctx, token); err != nil {
+		return nil, err
+	}
+	return auth.NewContext(ctx, &authenticationV1.UserTokenPayload{
+		UserId:   0,
+		TenantId: trans.Ptr(uint32(0)),
+		Username: trans.Ptr("mcp"),
+	}), nil
+}
+
 // registerMcpTools 注册全部 MCP 工具。
 func registerMcpTools(
 	srv *mcptransport.Server,
 	token string,
 	postService *service.PostService,
 	socialService *service.SocialService,
+	commentService *service.CommentService,
 ) {
-	authz := func(ctx context.Context) error {
-		return authorizeMcp(ctx, token)
-	}
-
 	// ── list_recent_posts ──
 	listPostsTool := mcp.NewTool("list_recent_posts",
 		mcp.WithDescription("列出 CMS 最近的文章（标题/状态/发布时间/ID）"),
 		mcp.WithNumber("limit", mcp.Description("返回条数，缺省 10，至多 50")),
 	)
 	_ = srv.RegisterHandler(listPostsTool, func(ctx context.Context, request mcp.CallToolRequest) (*mcp.CallToolResult, error) {
-		if err := authz(ctx); err != nil {
-			return mcp.NewToolResultError(err.Error()), nil
+		ctx, aerr := mcpAuthz(ctx, token)
+		if aerr != nil {
+			return mcp.NewToolResultError(aerr.Error()), nil
 		}
 
 		resp, err := postService.List(ctx, &paginationV1.PagingRequest{
@@ -157,8 +175,9 @@ func registerMcpTools(
 		mcp.WithDescription("获取社交分发 KPI 汇总：已发布总数、累计赞/评/转、近 7 天发布数"),
 	)
 	_ = srv.RegisterHandler(summaryTool, func(ctx context.Context, request mcp.CallToolRequest) (*mcp.CallToolResult, error) {
-		if err := authz(ctx); err != nil {
-			return mcp.NewToolResultError(err.Error()), nil
+		ctx, aerr := mcpAuthz(ctx, token)
+		if aerr != nil {
+			return mcp.NewToolResultError(aerr.Error()), nil
 		}
 
 		resp, err := socialService.GetSocialDistributionSummary(ctx, &emptypb.Empty{})
@@ -181,8 +200,9 @@ func registerMcpTools(
 		mcp.WithNumber("limit", mcp.Description("返回条数，缺省 10，至多 50")),
 	)
 	_ = srv.RegisterHandler(listDistTool, func(ctx context.Context, request mcp.CallToolRequest) (*mcp.CallToolResult, error) {
-		if err := authz(ctx); err != nil {
-			return mcp.NewToolResultError(err.Error()), nil
+		ctx, aerr := mcpAuthz(ctx, token)
+		if aerr != nil {
+			return mcp.NewToolResultError(aerr.Error()), nil
 		}
 
 		req := &paginationV1.PagingRequest{
@@ -224,8 +244,9 @@ func registerMcpTools(
 		mcp.WithNumber("id", mcp.Required(), mcp.Description("分发记录 ID")),
 	)
 	_ = srv.RegisterHandler(publishTool, func(ctx context.Context, request mcp.CallToolRequest) (*mcp.CallToolResult, error) {
-		if err := authz(ctx); err != nil {
-			return mcp.NewToolResultError(err.Error()), nil
+		ctx, aerr := mcpAuthz(ctx, token)
+		if aerr != nil {
+			return mcp.NewToolResultError(aerr.Error()), nil
 		}
 
 		idF, err := request.RequireFloat("id")
@@ -243,6 +264,121 @@ func registerMcpTools(
 			text += " 链接：" + resp.GetExternalUri()
 		}
 		return mcp.NewToolResultText(text), nil
+	})
+
+	// ── get_post ──
+	getPostTool := mcp.NewTool("get_post",
+		mcp.WithDescription("按 ID 读文章：标题/状态/发布时间/正文（Markdown 或 HTML）"),
+		mcp.WithNumber("id", mcp.Required(), mcp.Description("文章 ID")),
+	)
+	_ = srv.RegisterHandler(getPostTool, func(ctx context.Context, request mcp.CallToolRequest) (*mcp.CallToolResult, error) {
+		ctx, aerr := mcpAuthz(ctx, token)
+		if aerr != nil {
+			return mcp.NewToolResultError(aerr.Error()), nil
+		}
+		idF, err := request.RequireFloat("id")
+		if err != nil {
+			return mcp.NewToolResultError(err.Error()), nil
+		}
+		post, gerr := postService.Get(ctx, &contentV1.GetPostRequest{
+			QueryBy: &contentV1.GetPostRequest_Id{Id: uint32(idF)},
+		})
+		if gerr != nil {
+			return mcp.NewToolResultError("get post failed: " + gerr.Error()), nil
+		}
+		title, content := "", ""
+		for _, tr := range post.GetTranslations() {
+			if title == "" && tr.GetTitle() != "" {
+				title = tr.GetTitle()
+			}
+			if content == "" && tr.GetContent() != "" {
+				content = tr.GetContent()
+			}
+		}
+		var b strings.Builder
+		fmt.Fprintf(&b, "#%d [%s] %s\n", post.GetId(), post.GetStatus(), title)
+		if pt := formatDateMcp(post.GetPublishTime()); pt != "-" {
+			b.WriteString("发布时间：" + pt + "\n")
+		}
+		b.WriteString("\n" + truncateRunesMcp(content, 4000))
+		return mcp.NewToolResultText(b.String()), nil
+	})
+
+	// ── create_draft_post ──
+	createDraftTool := mcp.NewTool("create_draft_post",
+		mcp.WithDescription("创建一篇草稿文章（写操作；AI 起稿入口，落平台租户，状态 DRAFT，可在管理后台继续编辑/发布）"),
+		mcp.WithString("title", mcp.Required(), mcp.Description("标题")),
+		mcp.WithString("content", mcp.Required(), mcp.Description("正文（Markdown 或 HTML）")),
+		mcp.WithString("summary", mcp.Description("摘要（可选）")),
+	)
+	_ = srv.RegisterHandler(createDraftTool, func(ctx context.Context, request mcp.CallToolRequest) (*mcp.CallToolResult, error) {
+		ctx, aerr := mcpAuthz(ctx, token)
+		if aerr != nil {
+			return mcp.NewToolResultError(aerr.Error()), nil
+		}
+		title, _ := request.RequireString("title")
+		content, _ := request.RequireString("content")
+		if strings.TrimSpace(title) == "" || strings.TrimSpace(content) == "" {
+			return mcp.NewToolResultError("title and content are required"), nil
+		}
+		summary := request.GetString("summary", "")
+		// MCP 调用无操作者会话：SystemViewer 落平台租户（tid=0）的 DRAFT
+		sysCtx := appViewer.NewSystemViewerContext(ctx)
+		post, cerr := postService.Create(sysCtx, &contentV1.CreatePostRequest{
+			Data: &contentV1.Post{
+				Status: contentV1.Post_POST_STATUS_DRAFT.Enum(),
+				Translations: []*contentV1.PostTranslation{{
+					LanguageCode: trans.Ptr("zh-CN"),
+					Title:        trans.Ptr(title),
+					Content:      trans.Ptr(content),
+					Summary:      trans.Ptr(summary),
+				}},
+			},
+		})
+		if cerr != nil {
+			return mcp.NewToolResultError("create draft failed: " + cerr.Error()), nil
+		}
+		return mcp.NewToolResultText(fmt.Sprintf("草稿已创建：#%d《%s》（管理后台可继续编辑与发布）", post.GetId(), title)), nil
+	})
+
+	// ── list_comments ──
+	listCommentsTool := mcp.NewTool("list_comments",
+		mcp.WithDescription("列出最近评论（作者/内容摘要/状态/所属对象）"),
+		mcp.WithString("status",
+			mcp.Description("按状态筛选（STATUS_PENDING/STATUS_APPROVED/STATUS_REJECTED），留空不过滤"),
+			mcp.Enum("STATUS_PENDING", "STATUS_APPROVED", "STATUS_REJECTED"),
+		),
+		mcp.WithNumber("limit", mcp.Description("返回条数，缺省 10，至多 50")),
+	)
+	_ = srv.RegisterHandler(listCommentsTool, func(ctx context.Context, request mcp.CallToolRequest) (*mcp.CallToolResult, error) {
+		ctx, aerr := mcpAuthz(ctx, token)
+		if aerr != nil {
+			return mcp.NewToolResultError(aerr.Error()), nil
+		}
+		req := &paginationV1.PagingRequest{
+			Page:     trans.Ptr(uint32(1)),
+			PageSize: trans.Ptr(uint32(clampLimit(request, 10))),
+		}
+		if status := request.GetString("status", ""); status != "" {
+			req.FilteringType = &paginationV1.PagingRequest_Query{
+				Query: fmt.Sprintf(`{"status":%q}`, status),
+			}
+		}
+		resp, lerr := commentService.List(ctx, req)
+		if lerr != nil {
+			return mcp.NewToolResultError("list comments failed: " + lerr.Error()), nil
+		}
+		var b strings.Builder
+		fmt.Fprintf(&b, "共 %d 条评论，显示最近 %d 条：\n", resp.GetTotal(), len(resp.GetItems()))
+		for _, c := range resp.GetItems() {
+			author := c.GetAuthorName()
+			if author == "" {
+				author = fmt.Sprintf("user#%d", c.GetAuthorId())
+			}
+			fmt.Fprintf(&b, "- [%s] %s（对象 #%d）：%s\n",
+				c.GetStatus(), author, c.GetObjectId(), truncateRunesMcp(c.GetContent(), 60))
+		}
+		return mcp.NewToolResultText(b.String()), nil
 	})
 }
 

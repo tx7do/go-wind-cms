@@ -343,7 +343,7 @@ func initApp(ctx *bootstrap.Context) (*kratos.App, func(), error) {
 		servers = append(servers, collabServer)
 	}
 	// MCP 服务器（可选）：server.mcp 配置段或 MCP_ADDR 设置时把 CMS 查询/发布能力暴露给 AI 代理
-	if mcpServer := server.NewMcpServer(ctx, postService, socialService); mcpServer != nil {
+	if mcpServer := server.NewMcpServer(ctx, postService, socialService, commentService); mcpServer != nil {
 		servers = append(servers, mcpServer)
 	}
 
