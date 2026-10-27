@@ -28,7 +28,14 @@ const agentMaxSteps = 50
 // agentNodeTypes 合法节点类型集。
 var agentNodeTypes = map[string]bool{
 	"start": true, "knowledge": true, "llm": true, "condition": true, "end": true,
+	"http": true, "loop": true,
 }
+
+// agentLoopMaxItems loop 节点单次运行的条目上限（防模板展开成超大批量）。
+const agentLoopMaxItems = 100
+
+// agentHTTPMaxResponseBytes http 节点响应体读取上限（1MB，超出截断）。
+const agentHTTPMaxResponseBytes = 1 << 20
 
 // agentGraphNode 图节点。data 保持无类型 map：五种节点各自的键在执行处按需取，
 // 画布演进加键不必改这份结构（校验只关心 type 与 id）。
@@ -125,6 +132,22 @@ func validateAgentGraph(g *agentGraph) error {
 		}
 		if _, dup := byID[n.ID]; dup {
 			return fmt.Errorf("duplicate node id %q", n.ID)
+		}
+		switch n.Type {
+		case "http":
+			if agentDataString(n.Data, "url") == "" {
+				return fmt.Errorf("http node %q requires url", n.ID)
+			}
+			if m := strings.ToUpper(agentDataString(n.Data, "method")); m != "" && m != "GET" && m != "POST" {
+				return fmt.Errorf("http node %q method must be GET or POST", n.ID)
+			}
+		case "loop":
+			if agentDataString(n.Data, "items") == "" {
+				return fmt.Errorf("loop node %q requires items", n.ID)
+			}
+			if agentDataString(n.Data, "itemTemplate") == "" {
+				return fmt.Errorf("loop node %q requires itemTemplate", n.ID)
+			}
 		}
 		byID[n.ID] = n
 		switch n.Type {
@@ -224,7 +247,13 @@ func byIDStart(g *agentGraph) *agentGraphNode {
 // renderAgentTemplate 单趟替换 {{node.var}}（与 webhook 载荷模板同一套防递归思路：
 // 单趟扫描让每个值只被消费一次）。未知占位符报错——拼错的名字悄悄变空串，
 // 用户只会看到"模型没收到资料"，排障方向整个是反的。
-func renderAgentTemplate(tpl string, vars map[string]map[string]string) (string, error) {
+// extras 为无点裸名占位符（如 loop 节点条目模板的 {{item}}/{{index}}）提供取值；
+// 有点形态（{{node.var}}）不受影响。nil = 不允许裸名（维持原有报错语义）。
+func renderAgentTemplate(tpl string, vars map[string]map[string]string, extras ...map[string]string) (string, error) {
+	var extra map[string]string
+	if len(extras) > 0 {
+		extra = extras[0]
+	}
 	var out strings.Builder
 	rest := tpl
 	for len(rest) > 0 {
@@ -241,6 +270,14 @@ func renderAgentTemplate(tpl string, vars map[string]map[string]string) (string,
 		name := strings.TrimSpace(rest[open+2 : open+2+closing])
 		dot := strings.Index(name, ".")
 		if dot <= 0 || dot == len(name)-1 {
+			if dot < 0 && extra != nil {
+				if value, ok := extra[name]; ok {
+					out.WriteString(rest[:open])
+					out.WriteString(value)
+					rest = rest[open+2+closing+2:]
+					continue
+				}
+			}
 			return "", fmt.Errorf("template uses invalid placeholder {{%s}} (expected {{node.var}})", name)
 		}
 		nodeID, varName := name[:dot], name[dot+1:]
@@ -285,6 +322,8 @@ type agentEngineDeps struct {
 	// onStep 节点执行阶段回调（node_start / node_end），SSE 流式观感用；nil = 不推。
 	// 推帧失败（订阅端慢）不影响执行——回调实现方自己保证尽力而为语义。
 	onStep func(phase, nodeID, summary, status string)
+	// doHTTP 执行 http 节点外呼（service 装配真实现：10s 超时/响应 1MB 截断；测试注入桩）。
+	doHTTP func(ctx context.Context, node *agentGraphNode, method, url string, headers map[string]string, body string) (status int, respBody string, err error)
 }
 
 // executeAgentGraph 从 start 走图到 end，返回产出、轨迹与累计用量。
@@ -377,6 +416,80 @@ func executeAgentGraph(
 			vars[node.ID] = map[string]string{"output": answer}
 			summary = truncateRunes(answer, 120)
 
+		case "http":
+			method := strings.ToUpper(agentDataString(node.Data, "method"))
+			if method == "" {
+				method = "POST"
+			}
+			if method != "GET" && method != "POST" {
+				return "", trace, usage, agentStepError(node, fmt.Errorf("http method must be GET or POST, got %q", method))
+			}
+			url, rerr := renderAgentTemplate(agentDataString(node.Data, "url"), vars)
+			if rerr != nil {
+				return "", trace, usage, agentStepError(node, rerr)
+			}
+			headers := map[string]string{}
+			if rawHeaders, ok := node.Data["headers"].(map[string]any); ok {
+				for k, v := range rawHeaders {
+					hv, _ := v.(string)
+					if k != "" && hv != "" {
+						headers[k] = hv
+					}
+				}
+			}
+			if len(headers) > 8 {
+				return "", trace, usage, agentStepError(node, fmt.Errorf("too many headers (max 8)"))
+			}
+			body := ""
+			if method == "POST" {
+				body, rerr = renderAgentTemplate(agentDataString(node.Data, "body"), vars)
+				if rerr != nil {
+					return "", trace, usage, agentStepError(node, rerr)
+				}
+			}
+			if deps.doHTTP == nil {
+				return "", trace, usage, agentStepError(node, fmt.Errorf("http executor unavailable"))
+			}
+			status, respBody, herr := deps.doHTTP(ctx, node, method, url, headers, body)
+			if herr != nil {
+				return "", trace, usage, agentStepError(node, herr)
+			}
+			vars[node.ID] = map[string]string{"status": strconv.Itoa(status), "body": respBody}
+			summary = fmt.Sprintf("status=%d, %d bytes", status, len(respBody))
+
+		case "loop":
+			itemsTpl, rerr := renderAgentTemplate(agentDataString(node.Data, "items"), vars)
+			if rerr != nil {
+				return "", trace, usage, agentStepError(node, rerr)
+			}
+			items := parseAgentLoopItems(itemsTpl)
+			if len(items) == 0 {
+				return "", trace, usage, agentStepError(node, fmt.Errorf("loop node %q resolved to no items", node.ID))
+			}
+			if len(items) > agentLoopMaxItems {
+				items = items[:agentLoopMaxItems]
+			}
+			itemTpl := agentDataString(node.Data, "itemTemplate")
+			if strings.TrimSpace(itemTpl) == "" {
+				return "", trace, usage, agentStepError(node, fmt.Errorf("loop node %q has empty itemTemplate", node.ID))
+			}
+			var sb strings.Builder
+			for idx, item := range items {
+				rendered, ierr := renderAgentTemplate(itemTpl, vars, map[string]string{
+					"item":  item,
+					"index": strconv.Itoa(idx),
+				})
+				if ierr != nil {
+					return "", trace, usage, agentStepError(node, fmt.Errorf("item[%d]: %w", idx, ierr))
+				}
+				if idx > 0 {
+					sb.WriteString("\n")
+				}
+				sb.WriteString(rendered)
+			}
+			vars[node.ID] = map[string]string{"output": sb.String(), "count": strconv.Itoa(len(items))}
+			summary = fmt.Sprintf("%d items", len(items))
+
 		case "condition":
 			approved, cerr := evalAgentCondition(agentDataString(node.Data, "expression"), vars)
 			if cerr != nil {
@@ -444,6 +557,32 @@ func executeAgentGraph(
 		}
 	}
 	return "", trace, usage, fmt.Errorf("execution exceeded %d steps", agentMaxSteps)
+}
+
+// parseAgentLoopItems loop 条目解析：JSON 字符串数组优先，回退竖线分隔（两端去空白）。
+func parseAgentLoopItems(raw string) []string {
+	trimmed := strings.TrimSpace(raw)
+	if trimmed == "" {
+		return nil
+	}
+	var arr []string
+	if err := json.Unmarshal([]byte(trimmed), &arr); err == nil {
+		out := make([]string, 0, len(arr))
+		for _, v := range arr {
+			if strings.TrimSpace(v) != "" {
+				out = append(out, v)
+			}
+		}
+		return out
+	}
+	parts := strings.Split(trimmed, "|")
+	out := make([]string, 0, len(parts))
+	for _, p := range parts {
+		if t := strings.TrimSpace(p); t != "" {
+			out = append(out, t)
+		}
+	}
+	return out
 }
 
 func agentStepError(node *agentGraphNode, err error) error {

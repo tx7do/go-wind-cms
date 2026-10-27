@@ -2,7 +2,9 @@ package service
 
 import (
 	"context"
+	"encoding/json"
 	"fmt"
+	"strconv"
 	"strings"
 	"testing"
 )
@@ -146,7 +148,7 @@ func TestRenderAgentTemplate(t *testing.T) {
 }
 
 // TestRenderAgentTemplateNotRecursive 值里的 "{{...}}" 不得被当模板再渲染一轮
-//（单趟扫描的直接后果，钉住防有人改回逐变量 ReplaceAll）。
+// （单趟扫描的直接后果，钉住防有人改回逐变量 ReplaceAll）。
 func TestRenderAgentTemplateNotRecursive(t *testing.T) {
 	vars := map[string]map[string]string{
 		"a": {"v": "{{b.v}}"},
@@ -288,6 +290,145 @@ func TestExecuteAgentGraphCondition(t *testing.T) {
 }
 
 // TestExecuteAgentGraphMissingRequired start 声明的必填入参缺失必须在入口报错。
+func TestExecuteAgentGraphHTTPNode(t *testing.T) {
+	g := agentTestGraph(t, `{
+	  "nodes": [
+	    {"id": "start_1", "type": "start", "position": {"x":0,"y":0},
+	     "data": {"inputVars": [{"name": "kw", "required": true}]}},
+	    {"id": "http_1", "type": "http", "position": {"x":0,"y":0},
+	     "data": {"method": "GET", "url": "http://example.test/search?q={{start_1.kw}}",
+	              "headers": {"X-Token": "t1"}}},
+	    {"id": "end_1", "type": "end", "position": {"x":0,"y":0},
+	     "data": {"output": "[{{http_1.status}}] {{http_1.body}}"}}
+	  ],
+	  "edges": [
+	    {"id": "e1", "source": "start_1", "target": "http_1"},
+	    {"id": "e2", "source": "http_1", "target": "end_1"}
+	  ]
+	}`)
+	var gotURL, gotMethod string
+	var gotHeaders map[string]string
+	deps := &agentEngineDeps{
+		doHTTP: func(ctx context.Context, node *agentGraphNode, method, url string, headers map[string]string, body string) (int, string, error) {
+			gotURL, gotMethod, gotHeaders = url, method, headers
+			return 200, `{"ok":true}`, nil
+		},
+	}
+	output, trace, _, err := executeAgentGraph(context.Background(), g, map[string]string{"kw": "mfa"}, deps)
+	if err != nil {
+		t.Fatalf("execute: %v", err)
+	}
+	if gotMethod != "GET" || gotURL != "http://example.test/search?q=mfa" {
+		t.Fatalf("http call got %s %s", gotMethod, gotURL)
+	}
+	if gotHeaders["X-Token"] != "t1" {
+		t.Fatalf("headers not passed: %v", gotHeaders)
+	}
+	if output != "[200] {\"ok\":true}" {
+		t.Fatalf("output = %q", output)
+	}
+	if len(trace) != 3 {
+		t.Fatalf("trace steps = %d", len(trace))
+	}
+}
+
+func TestExecuteAgentGraphLoopNode(t *testing.T) {
+	g := agentTestGraph(t, `{
+	  "nodes": [
+	    {"id": "start_1", "type": "start", "position": {"x":0,"y":0}, "data": {}},
+	    {"id": "loop_1", "type": "loop", "position": {"x":0,"y":0},
+	     "data": {"items": "{{start_1.list}}", "itemTemplate": "{{index}}.{{item}}"}},
+	    {"id": "end_1", "type": "end", "position": {"x":0,"y":0},
+	     "data": {"output": "{{loop_1.output}} ({{loop_1.count}})"}}
+	  ],
+	  "edges": [
+	    {"id": "e1", "source": "start_1", "target": "loop_1"},
+	    {"id": "e2", "source": "loop_1", "target": "end_1"}
+	  ]
+	}`)
+	// JSON 数组形态
+	deps := &agentEngineDeps{}
+	output, _, _, err := executeAgentGraph(context.Background(), g,
+		map[string]string{"list": `["a","b","c"]`}, deps)
+	if err != nil {
+		t.Fatalf("json items: %v", err)
+	}
+	if output != "0.a\n1.b\n2.c (3)" {
+		t.Fatalf("json items output = %q", output)
+	}
+	// 竖线分隔形态 + 组合节点变量
+	output, _, _, err = executeAgentGraph(context.Background(), g,
+		map[string]string{"list": "x | y"}, deps)
+	if err != nil {
+		t.Fatalf("pipe items: %v", err)
+	}
+	if output != "0.x\n1.y (2)" {
+		t.Fatalf("pipe items output = %q", output)
+	}
+}
+
+func TestLoopItemsClampAndValidation(t *testing.T) {
+	if got := parseAgentLoopItems(`["a","","b"]`); len(got) != 2 {
+		t.Fatalf("empty entries should drop: %v", got)
+	}
+	// 条目超上限被钳到 agentLoopMaxItems
+	g := agentTestGraph(t, `{
+	  "nodes": [
+	    {"id": "s", "type": "start", "position": {"x":0,"y":0}, "data": {}},
+	    {"id": "l", "type": "loop", "position": {"x":0,"y":0},
+	     "data": {"items": "{{s.list}}", "itemTemplate": "i"}},
+	    {"id": "e", "type": "end", "position": {"x":0,"y":0}, "data": {"output": "{{l.count}}"}}
+	  ],
+	  "edges": [
+	    {"id": "e1", "source": "s", "target": "l"},
+	    {"id": "e2", "source": "l", "target": "e"}
+	  ]
+	}`)
+	big := make([]string, agentLoopMaxItems+10)
+	for i := range big {
+		big[i] = "x"
+	}
+	raw, _ := json.Marshal(big)
+	output, _, _, err := executeAgentGraph(context.Background(), g,
+		map[string]string{"list": string(raw)}, &agentEngineDeps{})
+	if err != nil {
+		t.Fatalf("clamp run: %v", err)
+	}
+	if output != strconv.Itoa(agentLoopMaxItems) {
+		t.Fatalf("clamped count = %q", output)
+	}
+	// 校验：loop 缺 itemTemplate 被拒
+	bad := agentTestGraph(t, `{
+	  "nodes": [
+	    {"id": "s", "type": "start", "position": {"x":0,"y":0}, "data": {}},
+	    {"id": "l", "type": "loop", "position": {"x":0,"y":0}, "data": {"items": "a"}},
+	    {"id": "e", "type": "end", "position": {"x":0,"y":0}, "data": {}}
+	  ],
+	  "edges": [
+	    {"id": "e1", "source": "s", "target": "l"},
+	    {"id": "e2", "source": "l", "target": "e"}
+	  ]
+	}`)
+	if err := validateAgentGraph(bad); err == nil || !strings.Contains(err.Error(), "itemTemplate") {
+		t.Fatalf("want itemTemplate error, got %v", err)
+	}
+	// 校验：http 坏 method 被拒
+	badHTTP := agentTestGraph(t, `{
+	  "nodes": [
+	    {"id": "s", "type": "start", "position": {"x":0,"y":0}, "data": {}},
+	    {"id": "h", "type": "http", "position": {"x":0,"y":0}, "data": {"url": "http://x", "method": "PUT"}},
+	    {"id": "e", "type": "end", "position": {"x":0,"y":0}, "data": {}}
+	  ],
+	  "edges": [
+	    {"id": "e1", "source": "s", "target": "h"},
+	    {"id": "e2", "source": "h", "target": "e"}
+	  ]
+	}`)
+	if err := validateAgentGraph(badHTTP); err == nil || !strings.Contains(err.Error(), "GET or POST") {
+		t.Fatalf("want method error, got %v", err)
+	}
+}
+
 func TestExecuteAgentGraphMissingRequired(t *testing.T) {
 	g := agentTestGraph(t, agentLinearGraphJSON)
 	deps := &agentEngineDeps{

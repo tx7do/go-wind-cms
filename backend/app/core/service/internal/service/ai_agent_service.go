@@ -4,6 +4,8 @@ import (
 	"context"
 	"encoding/json"
 	"fmt"
+	"io"
+	"net/http"
 	"strings"
 	"time"
 
@@ -41,6 +43,7 @@ type AiAgentService struct {
 	knowledgeRepo *data.AiKnowledgeRepo
 	usageLogRepo  *data.AiUsageLogRepo
 	rdb           *redis.Client
+	httpClient    *http.Client
 }
 
 func NewAiAgentService(
@@ -60,6 +63,7 @@ func NewAiAgentService(
 		knowledgeRepo: knowledgeRepo,
 		usageLogRepo:  usageLogRepo,
 		rdb:           rdb,
+		httpClient:    &http.Client{Timeout: 10 * time.Second},
 	}
 }
 
@@ -220,6 +224,7 @@ func (s *AiAgentService) Run(ctx context.Context, req *aiV1.RunAiAgentAppRequest
 		searchKnowledge: s.searchKnowledgeForAgent(operatorID, tenantID),
 		runLLM:          s.runLLMForAgent(operatorID, tenantID),
 		onStep:          publishFrame,
+		doHTTP:          s.doHTTPForAgent(),
 	})
 	durationMs := uint32(time.Since(start).Milliseconds())
 
@@ -291,7 +296,7 @@ func (s *AiAgentService) searchKnowledgeForAgent(userID, tenantID uint32) func(c
 
 // runLLMForAgent LLM 节点的真实现：provider 解析（节点点名，留空取默认启用）→
 // 客户端构造（密文解密就地）→ aiToolLoop 多轮工具调用 → 逐节点落用量流水
-//（conversation_id=0 的非对话调用，与 chat 共用 AI_TOKENS 配额口径）。
+// （conversation_id=0 的非对话调用，与 chat 共用 AI_TOKENS 配额口径）。
 func (s *AiAgentService) runLLMForAgent(userID, tenantID uint32) func(ctx context.Context, node *agentGraphNode, system, user string) (string, agentUsage, error) {
 	return func(ctx context.Context, node *agentGraphNode, system, user string) (string, agentUsage, error) {
 		var provider *ent.AiProvider
@@ -372,6 +377,40 @@ func (s *AiAgentService) runLLMForAgent(userID, tenantID uint32) func(ctx contex
 			Completion: uint32(usage.CompletionTokens),
 			Total:      uint32(usage.TotalTokens),
 		}, nil
+	}
+}
+
+// doHTTPForAgent http 节点真实现：POST/GET + 自定义头 + 响应 1MB 截断；
+// 非 2xx 不视为节点失败（status/body 交给下游条件/模板自行判定）。
+func (s *AiAgentService) doHTTPForAgent() func(ctx context.Context, node *agentGraphNode, method, url string, headers map[string]string, body string) (int, string, error) {
+	return func(ctx context.Context, node *agentGraphNode, method, url string, headers map[string]string, body string) (int, string, error) {
+		var reader io.Reader
+		if method == "POST" && body != "" {
+			reader = strings.NewReader(body)
+		}
+		req, err := http.NewRequestWithContext(ctx, method, url, reader)
+		if err != nil {
+			return 0, "", fmt.Errorf("invalid url: %w", err)
+		}
+		if method == "POST" && body != "" {
+			req.Header.Set("Content-Type", "application/json")
+		}
+		for k, v := range headers {
+			if strings.EqualFold(k, "user-agent") || strings.EqualFold(k, "host") || strings.EqualFold(k, "content-length") {
+				continue
+			}
+			req.Header.Set(k, v)
+		}
+		resp, err := s.httpClient.Do(req)
+		if err != nil {
+			return 0, "", err
+		}
+		defer resp.Body.Close()
+		raw, err := io.ReadAll(io.LimitReader(resp.Body, agentHTTPMaxResponseBytes))
+		if err != nil {
+			return resp.StatusCode, "", err
+		}
+		return resp.StatusCode, string(raw), nil
 	}
 }
 

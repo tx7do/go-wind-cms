@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useMemo, useState } from 'react';
+import { createContext, useCallback, useContext, useEffect, useMemo, useRef, useState } from 'react';
 // ReactFlow 样式必须引入：handle/controls/minimap 全靠它——漏引时 handle 塌成 0 高，
 // 连线的命中判定永远失败（e2e 实证：真实鼠标在 handle 中心 down/move/up 仍连不出边）
 import '@xyflow/react/dist/style.css';
@@ -17,7 +17,7 @@ import {
   useNodesState,
 } from '@xyflow/react';
 import { Drawer, Button, Space, Form, Input, InputNumber, Select, Switch, App, Tag, Timeline, Descriptions, Popconfirm } from 'antd';
-import { SaveOutlined, PlayCircleOutlined, PlusOutlined } from '@ant-design/icons';
+import { SaveOutlined, PlayCircleOutlined, PlusOutlined, ThunderboltOutlined } from '@ant-design/icons';
 import { useTranslation } from 'react-i18next';
 import type { aiservicev1_AiAgentApp as AiAgentApp } from '@/api/generated/admin/service/v1';
 import { useListAiKnowledgeBases } from '@/api/hooks/ai-knowledge';
@@ -35,9 +35,9 @@ import { PaginationQuery } from '@/core';
  * - 试运行面板就地展示 output + trace 时间线 + token 用量；运行台账浏览归 M2。
  */
 
-type AgentNodeType = 'start' | 'knowledge' | 'llm' | 'condition' | 'end';
+type AgentNodeType = 'start' | 'knowledge' | 'llm' | 'condition' | 'http' | 'loop' | 'end';
 
-const NODE_TYPE_ORDER: AgentNodeType[] = ['start', 'knowledge', 'llm', 'condition', 'end'];
+const NODE_TYPE_ORDER: AgentNodeType[] = ['start', 'knowledge', 'llm', 'condition', 'http', 'loop', 'end'];
 
 // 节点色走 styles/semantic-text.css 的主题档：原先写死的 #52c41a/#1677ff/#8c8c8c
 // 是"填充档"，当图标文字用在暗色节点底上只有 2~3:1，且 #1677ff 是已退役的旧主色。
@@ -46,6 +46,8 @@ const NODE_META: Record<AgentNodeType, { color: string; icon: string }> = {
   knowledge: { color: 'var(--gowind-node-knowledge)', icon: '📚' },
   llm: { color: 'var(--gowind-primary-text)', icon: '✦' },
   condition: { color: 'var(--gowind-node-condition)', icon: '⑃' },
+  http: { color: 'var(--gowind-node-http)', icon: ' ⇄' },
+  loop: { color: 'var(--gowind-node-loop)', icon: '↻' },
   end: { color: 'var(--gowind-node-end)', icon: '■' },
 };
 
@@ -56,18 +58,24 @@ type CanvasNodeData = {
   config: Record<string, any>;
 };
 
+/** 轨迹回放当前高亮的节点 id（空串=无）。经 Context 下发避免逐节点回写 data。 */
+const ReplayContext = createContext<string>('');
+
 function AgentFlowNode({ data, selected }: NodeProps) {
   const d = data as CanvasNodeData;
   const meta = NODE_META[d.nodeType] ?? NODE_META.llm;
+  const replayActive = useContext(ReplayContext) === d.label;
   return (
     <div
       style={{
         minWidth: 150,
         padding: '8px 12px',
         borderRadius: 8,
-        border: `2px solid ${selected ? meta.color : 'transparent'}`,
+        border: `2px solid ${replayActive || selected ? meta.color : 'transparent'}`,
         background: 'var(--ant-color-bg-container, #fff)',
-        boxShadow: '0 1px 4px rgba(0,0,0,.12)',
+        boxShadow: replayActive
+          ? `0 0 0 4px ${meta.color}33, 0 1px 4px rgba(0,0,0,.12)`
+          : '0 1px 4px rgba(0,0,0,.12)',
       }}
     >
       <Handle type="target" position={Position.Top} />
@@ -94,6 +102,10 @@ function configSummary(nodeType: AgentNodeType, config: Record<string, any> | un
       return config.model || (config.providerId ? `provider#${config.providerId}` : '');
     case 'condition':
       return config.expression || '';
+    case 'http':
+      return [config.method || 'POST', config.url].filter(Boolean).join(' ');
+    case 'loop':
+      return config.items ? String(config.items).slice(0, 40) : '';
     case 'end':
       return config.output ? String(config.output).slice(0, 40) : '';
     default:
@@ -164,6 +176,52 @@ export default function AgentCanvas({ open, app, onClose }: AgentCanvasProps) {
   const [selectedId, setSelectedId] = useState<string | undefined>();
   const [saving, setSaving] = useState(false);
   const [testOpen, setTestOpen] = useState(false);
+  // 轨迹回放：最近一次试运行的节点序列与当前高亮步（700ms/步，走完定格 2s）。
+  // 高亮经 ReplayContext 下发；状态重置只在关闭回调与动画自身收尾里做，
+  // 不放 effect（同步 setState 会触发 react-hooks 的 cascading-render 规则）。
+  const replayTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const [replayNodeId, setReplayNodeId] = useState('');
+  const [replaySteps, setReplaySteps] = useState<string[]>([]);
+
+  const stopReplay = useCallback(() => {
+    if (replayTimerRef.current) {
+      clearTimeout(replayTimerRef.current);
+      replayTimerRef.current = null;
+    }
+  }, []);
+
+  const startReplay = useCallback(
+    (steps: string[]) => {
+      stopReplay();
+      const ids = steps.filter(Boolean);
+      setReplaySteps(ids);
+      if (ids.length === 0) return;
+      let i = 0;
+      setReplayNodeId(ids[0]);
+      const tick = () => {
+        i += 1;
+        if (i >= ids.length) {
+          // 定格末步 2s 后熄灭
+          replayTimerRef.current = setTimeout(() => setReplayNodeId(''), 2000);
+          return;
+        }
+        setReplayNodeId(ids[i]);
+        replayTimerRef.current = setTimeout(tick, 700);
+      };
+      replayTimerRef.current = setTimeout(tick, 700);
+    },
+    [stopReplay],
+  );
+
+  // 仅清定时器的卸载收尾（无 setState）
+  useEffect(() => stopReplay, [stopReplay]);
+
+  const handleCanvasClose = useCallback(() => {
+    stopReplay();
+    setReplayNodeId('');
+    setReplaySteps([]);
+    onClose();
+  }, [stopReplay, onClose]);
 
   useEffect(() => {
     if (open && app) {
@@ -290,7 +348,7 @@ export default function AgentCanvas({ open, app, onClose }: AgentCanvasProps) {
     <Drawer
       title={`${t('canvas.title')} · ${app?.name ?? ''}`}
       open={open}
-      onClose={onClose}
+      onClose={handleCanvasClose}
       width="100%"
       // 全屏画布不需要遮罩：mask 会以同级 z-index 压住工具条（真实点击被拦，e2e 实证）
       mask={false}
@@ -310,25 +368,36 @@ export default function AgentCanvas({ open, app, onClose }: AgentCanvasProps) {
           <Button size="small" icon={<PlayCircleOutlined />} onClick={() => setTestOpen(true)}>
             {t('canvas.testRun')}
           </Button>
+          {replaySteps.length > 0 && (
+            <Button
+              size="small"
+              icon={<ThunderboltOutlined />}
+              onClick={() => startReplay(replaySteps)}
+            >
+              {t('canvas.replay')}
+            </Button>
+          )}
         </Space>
       </div>
 
       <div style={{ flex: 1, minHeight: 0 }}>
-        <ReactFlow
-          nodes={nodes}
-          edges={edges}
-          onNodesChange={onNodesChange}
-          onEdgesChange={onEdgesChange}
-          onConnect={onConnect}
-          nodeTypes={nodeTypes}
-          onNodeClick={(_, node) => setSelectedId(node.id)}
-          onPaneClick={() => setSelectedId(undefined)}
-          fitView
-        >
-          <Background />
-          <Controls />
-          <MiniMap pannable />
-        </ReactFlow>
+        <ReplayContext.Provider value={replayNodeId}>
+          <ReactFlow
+            nodes={nodes}
+            edges={edges}
+            onNodesChange={onNodesChange}
+            onEdgesChange={onEdgesChange}
+            onConnect={onConnect}
+            nodeTypes={nodeTypes}
+            onNodeClick={(_, node) => setSelectedId(node.id)}
+            onPaneClick={() => setSelectedId(undefined)}
+            fitView
+          >
+            <Background />
+            <Controls />
+            <MiniMap pannable />
+          </ReactFlow>
+        </ReplayContext.Provider>
       </div>
 
       {/* 节点配置抽屉 */}
@@ -353,6 +422,7 @@ export default function AgentCanvas({ open, app, onClose }: AgentCanvasProps) {
         inputVars={inputVars}
         onClose={() => setTestOpen(false)}
         runMutation={runMutation}
+        onTraceParsed={startReplay}
       />
     </Drawer>
   );
@@ -368,6 +438,10 @@ function defaultConfig(nodeType: AgentNodeType): Record<string, any> {
       return { temperature: 0.3 };
     case 'condition':
       return { expression: '' };
+    case 'http':
+      return { method: 'POST', url: '', headers: {}, body: '' };
+    case 'loop':
+      return { items: '', itemTemplate: '' };
     case 'end':
       return { output: '' };
     default:
@@ -399,8 +473,21 @@ function NodeConfigDrawer({
   const config = node ? (node.data as CanvasNodeData).config : {};
 
   const handleValuesChange = () => {
-    // 表单任意改动即时回写画布节点（保存时才落库）
+    // 表单任意改动即时回写画布节点（保存时才落库）。
+    // http 节点的自定义头以「每行 Key: Value」文本编辑，落库前归一化为对象。
     const values = form.getFieldsValue();
+    if (nodeType === 'http' && typeof values.headersText === 'string') {
+      const headers: Record<string, string> = {};
+      for (const line of String(values.headersText).split('\n')) {
+        const idx = line.indexOf(':');
+        if (idx <= 0) continue;
+        const k = line.slice(0, idx).trim();
+        const v = line.slice(idx + 1).trim();
+        if (k && v) headers[k] = v;
+      }
+      values.headers = headers;
+      delete values.headersText;
+    }
     onConfigChange(values);
   };
 
@@ -473,6 +560,49 @@ function NodeConfigDrawer({
           </>
         )}
 
+        {nodeType === 'http' && (
+          <>
+            <Form.Item name="url" label={t('canvas.httpUrl')} rules={[{ required: true, message: t('canvas.httpUrlRequired') }]}>
+              <Input placeholder="https://api.example.com/hook" />
+            </Form.Item>
+            <Form.Item name="method" label={t('canvas.httpMethod')} initialValue="POST">
+              <Select
+                options={[
+                  { value: 'POST', label: 'POST' },
+                  { value: 'GET', label: 'GET' },
+                ]}
+              />
+            </Form.Item>
+            <Form.Item name="headersText" label={t('canvas.httpHeaders')} initialValue={Object.entries(config.headers ?? {}).map(([k, v]) => `${k}: ${v}`).join('\n')}>
+              <Input.TextArea rows={2} placeholder={'X-Token: abc\nX-Env: dev'} />
+            </Form.Item>
+            <Form.Item name="body" label={t('canvas.httpBody')} tooltip={t('canvas.templateHint')}>
+              <Input.TextArea rows={3} placeholder='{"q": "{{start_1.question}}"}' />
+            </Form.Item>
+          </>
+        )}
+
+        {nodeType === 'loop' && (
+          <>
+            <Form.Item
+              name="items"
+              label={t('canvas.loopItems')}
+              tooltip={t('canvas.loopItemsHint')}
+              rules={[{ required: true, message: t('canvas.loopItemsRequired') }]}
+            >
+              <Input.TextArea rows={2} placeholder={'{{start_1.list}} 或 ["a","b"] 或 a | b'} />
+            </Form.Item>
+            <Form.Item
+              name="itemTemplate"
+              label={t('canvas.loopItemTemplate')}
+              tooltip={t('canvas.loopItemTemplateHint')}
+              rules={[{ required: true, message: t('canvas.loopItemTemplateRequired') }]}
+            >
+              <Input.TextArea rows={2} placeholder={'{{index}}.{{item}} → {{llm_1.output}}'} />
+            </Form.Item>
+          </>
+        )}
+
         {nodeType === 'llm' && (
           <>
             <Form.Item name="providerId" label={t('canvas.provider')} tooltip={t('canvas.providerHint')}>
@@ -537,12 +667,15 @@ function TestRunDrawer({
   inputVars,
   onClose,
   runMutation,
+  onTraceParsed,
 }: {
   open: boolean;
   appId: number | undefined;
   inputVars: any[];
   onClose: () => void;
   runMutation: ReturnType<typeof useRunAiAgentApp>;
+  /** 全量 trace 解析完成（同步响应到达）：把节点序列交给画布做轨迹回放 */
+  onTraceParsed?: (nodeIds: string[]) => void;
 }) {
   const { t } = useTranslation('ai-agent');
   const [form] = Form.useForm();
@@ -582,6 +715,18 @@ function TestRunDrawer({
     try {
       const run = await runMutation.mutateAsync({ id: appId, input: values });
       setResult(run as RunResult);
+      // 全量 trace 到手即触发画布回放（SSE 阶段不触发——帧序不全且会被覆盖）
+      if (run?.trace && onTraceParsed) {
+        try {
+          const steps: unknown = JSON.parse(run.trace);
+          const ids = (Array.isArray(steps) ? steps : [])
+            .map((step) => String((step as { nodeId?: unknown }).nodeId || ''))
+            .filter(Boolean);
+          if (ids.length > 0) onTraceParsed(ids);
+        } catch {
+          // trace 非法 JSON 不阻断结果展示（面板照常渲染）
+        }
+      }
     } catch (error: any) {
       // 图校验/配额类错误原文直接给到面板
       setResult({ status: 'FAILED', error: error?.message || String(error) });

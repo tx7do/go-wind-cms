@@ -79,6 +79,8 @@ html[data-theme='dark'] {
   --gowind-node-knowledge: #9254de;
   --gowind-node-condition: #ffa940;
   --gowind-node-end: #8b949e;
+  --gowind-node-http: #40a9ff;
+  --gowind-node-loop: #f759ab;
 }
 
 /* 浅色侧节点档：亮底用色板 -7，对应暗色块的 -5 */
@@ -87,6 +89,8 @@ html[data-theme='light'] {
   --gowind-node-knowledge: #722ed1;
   --gowind-node-condition: #d46b08;
   --gowind-node-end: #676e7c;
+  --gowind-node-http: #096dd9;
+  --gowind-node-loop: #c41d7f;
 }
 
 /* ---------- Tag（filled 软底状态标签）：前景走文字档 ----------

@@ -60,7 +60,21 @@
     "varLabel": "Label",
     "addVar": "Add Input Variable",
     "remove": "Remove",
-    "configAutoSaved": "Edits apply to the canvas immediately; click \"Save Canvas\" to persist"
+    "configAutoSaved": "Edits apply to the canvas immediately; click \"Save Canvas\" to persist",
+    "http": "HTTP Request",
+    "loop": "Loop",
+    "httpUrl": "Request URL",
+    "httpUrlRequired": "Request URL is required",
+    "httpMethod": "Method",
+    "httpHeaders": "Custom headers",
+    "httpBody": "Body template",
+    "loopItems": "Items source",
+    "loopItemsHint": "Resolved to a list: JSON string array, pipe-separated, or {{node.var}} reference",
+    "loopItemsRequired": "Items source is required",
+    "loopItemTemplate": "Item template",
+    "loopItemTemplateHint": "Rendered per item; {{item}}/{{index}} and {{node.var}} available; outputs joined by newline as loop node output",
+    "loopItemTemplateRequired": "Item template is required",
+    "replay": "Replay trace"
   },
   "test": {
     "title": "Test Run",

@@ -60,7 +60,21 @@
     "varLabel": "显示名",
     "addVar": "添加输入变量",
     "remove": "删除",
-    "configAutoSaved": "配置修改即时写入画布，点「保存画布」才落库"
+    "configAutoSaved": "配置修改即时写入画布，点「保存画布」才落库",
+    "http": "HTTP 请求",
+    "loop": "循环节点",
+    "httpUrl": "请求 URL",
+    "httpUrlRequired": "请输入请求 URL",
+    "httpMethod": "方法",
+    "httpHeaders": "自定义请求头",
+    "httpBody": "Body 模板",
+    "loopItems": "条目来源",
+    "loopItemsHint": "渲染后解析为条目列表：JSON 字符串数组、竖线分隔或 {{节点.变量}} 引用",
+    "loopItemsRequired": "条目来源不能为空",
+    "loopItemTemplate": "条目模板",
+    "loopItemTemplateHint": "每条渲染一次；可用 {{item}}/{{index}} 与 {{节点.变量}}；输出按行拼接为 loop 节点 output",
+    "loopItemTemplateRequired": "条目模板不能为空",
+    "replay": "重放轨迹"
   },
   "test": {
     "title": "试运行",
