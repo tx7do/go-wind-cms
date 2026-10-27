@@ -1,0 +1,26 @@
+syntax = "proto3";
+
+package admin.service.v1;
+
+import "gnostic/openapi/v3/annotations.proto";
+import "google/api/annotations.proto";
+
+import "task/service/v1/backup.proto";
+
+// 备份档案服务（BFF 面：代理 core BackupArchiveService，只读）。
+// 备份历史列表 + 下载；恢复保持一次性程序（防误触），无任何写入口。
+service BackupService {
+  // 备份历史列表
+  rpc ListBackups (task.service.v1.ListBackupsRequest) returns (task.service.v1.ListBackupsResponse) {
+    option (google.api.http) = {
+      get: "/admin/v1/backups"
+    };
+  }
+
+  // 下载备份档案（bytes 内联，前端解 base64 存盘）
+  rpc DownloadBackup (task.service.v1.DownloadBackupRequest) returns (task.service.v1.DownloadBackupResponse) {
+    option (google.api.http) = {
+      get: "/admin/v1/backups/download"
+    };
+  }
+}

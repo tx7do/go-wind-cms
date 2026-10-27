@@ -1671,6 +1671,38 @@ paths:
                 "200":
                     description: OK
                     content: {}
+    /admin/v1/backups:
+        get:
+            tags:
+                - BackupService
+            description: 备份历史列表
+            operationId: BackupService_ListBackups
+            responses:
+                "200":
+                    description: OK
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/task.service.v1.ListBackupsResponse'
+    /admin/v1/backups/download:
+        get:
+            tags:
+                - BackupService
+            description: 下载备份档案（bytes 内联，前端解 base64 存盘）
+            operationId: BackupService_DownloadBackup
+            parameters:
+                - name: objectKey
+                  in: query
+                  description: 对象键（须在本项目前缀下，防路径穿越）
+                  schema:
+                    type: string
+            responses:
+                "200":
+                    description: OK
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/task.service.v1.DownloadBackupResponse'
     /admin/v1/captcha:
         get:
             tags:
@@ -20379,6 +20411,23 @@ components:
                 caption:
                     type: string
                     description: 说明文字（前端展示用）
+        task.service.v1.BackupArchive:
+            type: object
+            properties:
+                objectKey:
+                    type: string
+                    description: 对象键（下载时回传）
+                displayName:
+                    type: string
+                    description: 展示名（去前缀去日期目录）
+                sizeBytes:
+                    type: string
+                    description: 压缩后字节数
+                lastModified:
+                    type: string
+                    description: 上传时间
+                    format: date-time
+            description: 备份档案条目
         task.service.v1.ControlTaskRequest:
             type: object
             properties:
@@ -20400,6 +20449,17 @@ components:
                 data:
                     $ref: '#/components/schemas/task.service.v1.Task'
             description: 创建调度任务 - 请求
+        task.service.v1.DownloadBackupResponse:
+            type: object
+            properties:
+                contentType:
+                    type: string
+                    description: 对象 MIME（application/gzip）
+                file:
+                    type: string
+                    description: 文件字节（gzip JSON）
+                    format: bytes
+            description: 下载备份 - 回应
         task.service.v1.InspectSystemTasksRequest:
             type: object
             properties: {}
@@ -20419,6 +20479,14 @@ components:
                     items:
                         $ref: '#/components/schemas/task.service.v1.SystemTaskStateSummary'
                     description: 只汇总系统级常驻任务涉及的任务类型；无任何记录时不出现在结果里
+        task.service.v1.ListBackupsResponse:
+            type: object
+            properties:
+                items:
+                    type: array
+                    items:
+                        $ref: '#/components/schemas/task.service.v1.BackupArchive'
+            description: 列出备份 - 回应
         task.service.v1.ListTaskExecutionsResponse:
             type: object
             properties:
@@ -20878,6 +20946,10 @@ tags:
       description: API资源管理服务
     - name: AuthenticationService
       description: 用户后台登录认证服务
+    - name: BackupService
+      description: |-
+        备份档案服务（BFF 面：代理 core BackupArchiveService，只读）。
+         备份历史列表 + 下载；恢复保持一次性程序（防误触），无任何写入口。
     - name: CategoryService
       description: 类别服务
     - name: CommentService

@@ -235,6 +235,7 @@ func initApp(ctx *bootstrap.Context) (*kratos.App, func(), error) {
 
 	// 任务 / 文件
 	taskService := service.NewTaskService(ctx, taskRepo, userRepo, backupRepo, minIOClient)
+	backupArchiveService := service.NewBackupArchiveService(ctx, minIOClient)
 
 	// Webhook 事件外发（订阅 CRUD + 扇出/投递 worker；依赖 taskService）
 	webhookService := service.NewWebhookService(ctx, webhookRepo, taskService)
@@ -364,7 +365,7 @@ func initApp(ctx *bootstrap.Context) (*kratos.App, func(), error) {
 	grpcMiddlewares := server.NewGrpcMiddleware(ctx)
 
 	grpcServer, err := server.NewGrpcServer(ctx, grpcMiddlewares,
-		authenticationService, mfaService, loginPolicyService, userCredentialService,
+		authenticationService, mfaService, backupArchiveService, loginPolicyService, userCredentialService,
 		taskService,
 		monitorAlertService,
 		onlineSessionService,

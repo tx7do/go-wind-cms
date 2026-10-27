@@ -94,5 +94,6 @@
   "tenant-quotas": "Tenant Quotas",
   "ai-agents": "AI Agents",
   "dashboard-analytics": "Analytics",
-  "dashboard-workspace": "Workbench"
+  "dashboard-workspace": "Workbench",
+  "backup": "Backup Archives"
 }

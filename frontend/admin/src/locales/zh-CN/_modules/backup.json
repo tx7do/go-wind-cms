@@ -1,0 +1,11 @@
+{
+  "title": "备份档案",
+  "displayName": "文件名",
+  "size": "大小",
+  "lastModified": "上传时间",
+  "contentType": "格式",
+  "action": "操作",
+  "download": "下载",
+  "downloadFailed": "下载失败",
+  "reload": "刷新"
+}

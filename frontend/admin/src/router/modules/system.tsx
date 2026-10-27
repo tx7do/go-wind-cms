@@ -106,6 +106,16 @@ export const systemRoutes: AppRouteObject[] = [
         },
       },
       {
+        name: 'backup',
+        path: 'backup', // 相对路径，最终为 /system/backup
+        element: createLazyRoute(() => import('@/pages/app/system/backup')),
+        meta: {
+          title: 'routes:backup',
+          icon: 'lucide:database-backup',
+          authority: ['sys:platform_admin'],
+        },
+      },
+      {
         name: 'flow-rule',
         path: 'flow-rule', // 相对路径，最终为 /system/flow-rule
         element: createLazyRoute(() => import('@/pages/app/system/flow-rule')),

@@ -1,0 +1,11 @@
+{
+  "title": "Backup Archives",
+  "displayName": "File",
+  "size": "Size",
+  "lastModified": "Uploaded",
+  "contentType": "Format",
+  "action": "Action",
+  "download": "Download",
+  "downloadFailed": "Download failed",
+  "reload": "Reload"
+}

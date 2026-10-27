@@ -1,0 +1,69 @@
+syntax = "proto3";
+
+package task.service.v1;
+
+import "gnostic/openapi/v3/annotations.proto";
+
+import "google/protobuf/timestamp.proto";
+
+// 备份档案服务（只读视图）：备份本体由 backup asynq 任务写入 OSS 的
+// backups 桶（对象键 gowind-cms/ 前缀），本服务只提供历史列表与下载——
+// 恢复无 RPC 入口（有意防误触，走一次性程序 + 演练文档）。
+service BackupArchiveService {
+  // 列出备份档案（本项目前缀下的全部对象，按时间倒序）
+  rpc ListBackups (ListBackupsRequest) returns (ListBackupsResponse) {}
+
+  // 下载备份档案（bytes 内联；presigned 全层禁用，走后端鉴权流）
+  rpc DownloadBackup (DownloadBackupRequest) returns (DownloadBackupResponse) {}
+}
+
+// 列出备份 - 请求
+message ListBackupsRequest {}
+
+// 备份档案条目
+message BackupArchive {
+  // 对象键（gowind-cms/YYYY/MM/DD/<name>-<hhmmss>.json.gz）
+  string object_key = 1 [
+    json_name = "objectKey",
+    (gnostic.openapi.v3.property) = { description: "对象键（下载时回传）" }
+  ];
+
+  // 展示名（去前缀去日期目录）
+  string display_name = 2 [
+    json_name = "displayName"
+  ];
+
+  // 压缩后字节数
+  uint64 size_bytes = 3 [
+    json_name = "sizeBytes"
+  ];
+
+  // 上传时间
+  optional google.protobuf.Timestamp last_modified = 4 [
+    json_name = "lastModified"
+  ];
+}
+
+// 列出备份 - 回应
+message ListBackupsResponse {
+  repeated BackupArchive items = 1;
+}
+
+// 下载备份 - 请求
+message DownloadBackupRequest {
+  // 对象键（须在本项目前缀下，防路径穿越）
+  string object_key = 1 [
+    json_name = "objectKey"
+  ];
+}
+
+// 下载备份 - 回应
+message DownloadBackupResponse {
+  // 对象 MIME（application/gzip）
+  string content_type = 1 [
+    json_name = "contentType"
+  ];
+
+  // 文件字节（gzip JSON）
+  bytes file = 2;
+}

@@ -2994,6 +2994,86 @@ export type authenticationservicev1_VerifyCaptchaResponse = {
   valid: boolean | undefined;
 };
 
+// 备份档案服务（BFF 面：代理 core BackupArchiveService，只读）。
+// 备份历史列表 + 下载；恢复保持一次性程序（防误触），无任何写入口。
+export interface BackupService {
+  // 备份历史列表
+  ListBackups(
+    request: taskservicev1_ListBackupsRequest,
+  ): Promise<taskservicev1_ListBackupsResponse>;
+  // 下载备份档案（bytes 内联，前端解 base64 存盘）
+  DownloadBackup(
+    request: taskservicev1_DownloadBackupRequest,
+  ): Promise<taskservicev1_DownloadBackupResponse>;
+}
+
+export function createBackupServiceClient(
+  transport: ClientTransport,
+): BackupService {
+  return {
+    ListBackups(_request) {
+      const path = `/admin/v1/backups`;
+      const body = null;
+      return transport.unary(path, 'GET', body, {
+        service: 'BackupService',
+        method: 'ListBackups',
+      }) as Promise<taskservicev1_ListBackupsResponse>;
+    },
+    DownloadBackup(request) {
+      const path = `/admin/v1/backups/download`;
+      const body = null;
+      const queryParams: string[] = [];
+      if (request.objectKey) {
+        queryParams.push(
+          `objectKey=${encodeURIComponent(request.objectKey.toString())}`,
+        );
+      }
+      let uri = path;
+      if (queryParams.length > 0) {
+        uri += `?${queryParams.join('&')}`;
+      }
+      return transport.unary(uri, 'GET', body, {
+        service: 'BackupService',
+        method: 'DownloadBackup',
+      }) as Promise<taskservicev1_DownloadBackupResponse>;
+    },
+  };
+}
+// 列出备份 - 请求
+export type taskservicev1_ListBackupsRequest = {
+};
+
+// 列出备份 - 回应
+export type taskservicev1_ListBackupsResponse = {
+  items: taskservicev1_BackupArchive[] | undefined;
+};
+
+// 备份档案条目
+export type taskservicev1_BackupArchive = {
+  // 展示名（去前缀去日期目录）
+  displayName: string | undefined;
+  // 上传时间
+  lastModified?: wellKnownTimestamp;
+  // 对象键（gowind-cms/YYYY/MM/DD/<name>-<hhmmss>.json.gz）
+  objectKey: string | undefined;
+  // 压缩后字节数
+  sizeBytes: number | undefined;
+};
+
+// 下载备份 - 请求
+export type taskservicev1_DownloadBackupRequest = {
+  // 对象键（须在本项目前缀下，防路径穿越）
+  objectKey: string | undefined;
+};
+
+// 下载备份 - 回应
+export type taskservicev1_DownloadBackupResponse = {
+  // 对象 MIME（application/gzip）
+  contentType: string | undefined;
+  // 文件字节（gzip JSON）
+  file: string | undefined;
+};
+
 // 类别服务
 export interface CategoryService {
   // 获取类别列表
@@ -16301,6 +16381,7 @@ export class ApiClient {
   private _apiAuditLogService?: ApiAuditLogService;
   private _apiService?: ApiService;
   private _authenticationService?: AuthenticationService;
+  private _backupService?: BackupService;
   private _categoryService?: CategoryService;
   private _commentService?: CommentService;
   private _componentDefinitionService?: ComponentDefinitionService;
@@ -16420,6 +16501,10 @@ export class ApiClient {
 
   get authenticationService(): AuthenticationService {
     return this._authenticationService ??= createAuthenticationServiceClient(this._transport);
+  }
+
+  get backupService(): BackupService {
+    return this._backupService ??= createBackupServiceClient(this._transport);
   }
 
   get categoryService(): CategoryService {

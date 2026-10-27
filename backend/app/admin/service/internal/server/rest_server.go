@@ -123,6 +123,7 @@ func NewRestServer(
 	userService *service.UserService,
 	userProfileService *service.UserProfileService,
 	mfaService *service.MFAService,
+	backupService *service.BackupService,
 	roleService *service.RoleService,
 	tenantService *service.TenantService,
 	orgUnitService *service.OrgUnitService,
@@ -227,6 +228,7 @@ func NewRestServer(
 
 	adminV1.RegisterUserProfileServiceHTTPServer(srv, userProfileService)
 	adminV1.RegisterMFAServiceHTTPServer(srv, mfaService)
+	adminV1.RegisterBackupServiceHTTPServer(srv, backupService)
 	adminV1.RegisterUserServiceHTTPServer(srv, userService)
 	adminV1.RegisterRoleServiceHTTPServer(srv, roleService)
 	adminV1.RegisterTenantServiceHTTPServer(srv, tenantService)
