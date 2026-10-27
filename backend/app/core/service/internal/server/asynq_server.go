@@ -134,6 +134,17 @@ func NewAsynqServer(ctx *bootstrap.Context, taskService *service.TaskService, se
 	if err = asynq.RegisterSubscriber(srv, task.ContentHealthSweepTaskType, contentHealthService.AsyncContentHealthSweep); err != nil {
 		log.Error(err)
 	}
+
+	// 搜索全量重索引自愈（每日 04:44）：修复崩溃窗口内增量双写漏掉的漂移。
+	// 注释宣称的"周期 1 小时自愈"此前从未接线（2026-10-27 补），频率改每日低峰。
+	if _, err = srv.NewPeriodicTask(task.SearchReindexAllCronSpec, task.SearchReindexAllTaskType, &task.SearchReindexAllTaskData{}); err != nil {
+		log.Error(err)
+	}
+	if err = asynq.RegisterSubscriber(srv, task.SearchReindexAllTaskType, func(taskType string, _ *task.SearchReindexAllTaskData) error {
+		return searchService.ReindexAll()
+	}); err != nil {
+		log.Error(err)
+	}
 	// 监控告警周期扫描：每 5 分钟评估一轮启用规则（告警/恢复/冷却重发内核见 monitor_alert_service）
 	if _, err = srv.NewPeriodicTask(task.MonitorAlertScanCronSpec, task.MonitorAlertScanTaskType, &task.MonitorAlertScanTaskData{}); err != nil {
 		return nil
