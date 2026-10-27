@@ -13621,6 +13621,30 @@ class PostServiceClient {
     return ContentServiceV1SearchPostsResponse.fromJson(result as Map<String, dynamic>);
   }
 
+  /// 搜索建议词（标题前缀联想；免鉴权）
+  Future<ContentServiceV1SearchPostsSuggestResponse> searchPostsSuggest(ContentServiceV1SearchPostsSuggestRequest request, {Map<String, String>? headers}) async {
+    final path = '/app/v1/posts/search/suggest';
+    final queryParams = <String>[];
+    if (request.query != null) {
+      queryParams.add('query=${Uri.encodeComponent(request.query!.toString())}');
+    }
+    if (request.language != null) {
+      queryParams.add('language=${Uri.encodeComponent(request.language!.toString())}');
+    }
+    if (request.pageSize != null) {
+      queryParams.add('pageSize=${Uri.encodeComponent(request.pageSize!.toString())}');
+    }
+    var uri = path;
+    if (queryParams.isNotEmpty) {
+      uri += '?${queryParams.join("&")}';
+    }
+    final result = await _transport.unary(uri, 'GET', null, TransportMeta(
+      service: 'PostService',
+      method: 'SearchPostsSuggest',
+    ), headers: headers);
+    return ContentServiceV1SearchPostsSuggestResponse.fromJson(result as Map<String, dynamic>);
+  }
+
   /// 获取帖子数据
   Future<ContentServiceV1Post> get(ContentServiceV1GetPostRequest request, {Map<String, String>? headers}) async {
     if (request.id == null) {
@@ -16094,38 +16118,48 @@ class ContentServiceV1SearchPostsResponse {
 
 /// 搜索命中条目（最小字段集）
 class ContentServiceV1SearchPostHit {
+  /// 高亮片段（含 <mark></mark> 标记，来自 ES highlight；命中字段顺序排列）
+  List<String>? highlightFragments;
   /// 语言代码
   String? language;
   /// 帖子 ID（用于后续 GetPost 详情查询）
   int? postId;
+  /// 摘要（来自翻译，搜索结果卡片展示用）
+  String? summary;
   /// 标题（来自翻译，用于搜索结果展示）
   String? title;
 
   ContentServiceV1SearchPostHit({
+    this.highlightFragments,
     this.language,
     this.postId,
+    this.summary,
     this.title,
   });
 
   factory ContentServiceV1SearchPostHit.fromJson(Map<String, dynamic> json) {
     return ContentServiceV1SearchPostHit(
+      highlightFragments: (json['highlightFragments'] as List<dynamic>?)?.map((e) => e as String).toList(),
       language: json['language'] as String?,
       postId: json['postId'] as int?,
+      summary: json['summary'] as String?,
       title: json['title'] as String?,
     );
   }
 
   Map<String, dynamic> toJson() {
     final json = <String, dynamic>{};
+    if (highlightFragments != null) json['highlightFragments'] = highlightFragments;
     if (language != null) json['language'] = language;
     if (postId != null) json['postId'] = postId;
+    if (summary != null) json['summary'] = summary;
     if (title != null) json['title'] = title;
     return json;
   }
 
   @override
   String toString() {
-    return 'ContentServiceV1SearchPostHit(language: $language, postId: $postId, title: $title)';
+    return 'ContentServiceV1SearchPostHit(highlightFragments: $highlightFragments, language: $language, postId: $postId, summary: $summary, title: $title)';
   }
 
   @override
@@ -16133,26 +16167,34 @@ class ContentServiceV1SearchPostHit {
     identical(this, other) ||
     other is ContentServiceV1SearchPostHit &&
       runtimeType == other.runtimeType
+      && highlightFragments == other.highlightFragments
       && language == other.language
       && postId == other.postId
+      && summary == other.summary
       && title == other.title
     ;
 
   @override
   int get hashCode => Object.hashAll([
+    highlightFragments,
     language,
     postId,
+    summary,
     title,
   ]);
 
   ContentServiceV1SearchPostHit copyWith({
+    List<String>? highlightFragments,
     String? language,
     int? postId,
+    String? summary,
     String? title,
   }) {
     return ContentServiceV1SearchPostHit(
+      highlightFragments: highlightFragments ?? this.highlightFragments,
       language: language ?? this.language,
       postId: postId ?? this.postId,
+      summary: summary ?? this.summary,
       title: title ?? this.title,
     );
   }
@@ -16180,6 +16222,16 @@ class ContentServiceV1SearchPostHit {
     if (f3 != null) {
       w.writeString(3, f3!);
     }
+    // field 4: summary
+    final f4 = summary;
+    if (f4 != null) {
+      w.writeString(4, f4!);
+    }
+    // field 5: highlightFragments
+    final f5 = highlightFragments;
+    if (f5 != null) {
+      w.writeStringList(5, f5!);
+    }
   }
 
   factory ContentServiceV1SearchPostHit.fromBuffer(List<int> bytes) {
@@ -16203,6 +16255,224 @@ class ContentServiceV1SearchPostHit {
         // field 3: title
         case 3: {
           m.title = r.readString();
+          break;
+        }
+        // field 4: summary
+        case 4: {
+          m.summary = r.readString();
+          break;
+        }
+        // field 5: highlightFragments
+        case 5: {
+          m.highlightFragments = r.readStringList();
+          break;
+        }
+        default: {
+          r.skip();
+        }
+      }
+    }
+    return m;
+  }
+
+}
+
+/// 搜索建议词 - 请求
+class ContentServiceV1SearchPostsSuggestRequest {
+  /// 语言代码（缺省 zh-CN）
+  String? language;
+  /// 返回条数（缺省 8，至多 20）
+  int? pageSize;
+  /// 前缀关键词（至少 1 字符）
+  String? query;
+
+  ContentServiceV1SearchPostsSuggestRequest({
+    this.language,
+    this.pageSize,
+    this.query,
+  });
+
+  factory ContentServiceV1SearchPostsSuggestRequest.fromJson(Map<String, dynamic> json) {
+    return ContentServiceV1SearchPostsSuggestRequest(
+      language: json['language'] as String?,
+      pageSize: json['pageSize'] as int?,
+      query: json['query'] as String?,
+    );
+  }
+
+  Map<String, dynamic> toJson() {
+    final json = <String, dynamic>{};
+    if (language != null) json['language'] = language;
+    if (pageSize != null) json['pageSize'] = pageSize;
+    if (query != null) json['query'] = query;
+    return json;
+  }
+
+  @override
+  String toString() {
+    return 'ContentServiceV1SearchPostsSuggestRequest(language: $language, pageSize: $pageSize, query: $query)';
+  }
+
+  @override
+  bool operator ==(Object other) =>
+    identical(this, other) ||
+    other is ContentServiceV1SearchPostsSuggestRequest &&
+      runtimeType == other.runtimeType
+      && language == other.language
+      && pageSize == other.pageSize
+      && query == other.query
+    ;
+
+  @override
+  int get hashCode => Object.hashAll([
+    language,
+    pageSize,
+    query,
+  ]);
+
+  ContentServiceV1SearchPostsSuggestRequest copyWith({
+    String? language,
+    int? pageSize,
+    String? query,
+  }) {
+    return ContentServiceV1SearchPostsSuggestRequest(
+      language: language ?? this.language,
+      pageSize: pageSize ?? this.pageSize,
+      query: query ?? this.query,
+    );
+  }
+
+  /// 二进制 proto 编码（MQTT 等二进制传输用；字段按编号升序写出）
+  Uint8List writeToBuffer() {
+    final w = ProtoWireWriter();
+    _writeTo(w);
+    return w.toBuffer();
+  }
+
+  void _writeTo(ProtoWireWriter w) {
+    // field 1: query
+    final f1 = query;
+    if (f1 != null) {
+      w.writeString(1, f1!);
+    }
+    // field 2: language
+    final f2 = language;
+    if (f2 != null) {
+      w.writeString(2, f2!);
+    }
+    // field 3: pageSize
+    final f3 = pageSize;
+    if (f3 != null) {
+      w.writeUint32(3, f3!);
+    }
+  }
+
+  factory ContentServiceV1SearchPostsSuggestRequest.fromBuffer(List<int> bytes) {
+    return ContentServiceV1SearchPostsSuggestRequest._readFrom(ProtoWireReader(bytes));
+  }
+
+  static ContentServiceV1SearchPostsSuggestRequest _readFrom(ProtoWireReader r) {
+    final m = ContentServiceV1SearchPostsSuggestRequest();
+    while (r.next()) {
+      switch (r.fieldNumber) {
+        // field 1: query
+        case 1: {
+          m.query = r.readString();
+          break;
+        }
+        // field 2: language
+        case 2: {
+          m.language = r.readString();
+          break;
+        }
+        // field 3: pageSize
+        case 3: {
+          m.pageSize = r.readUint32();
+          break;
+        }
+        default: {
+          r.skip();
+        }
+      }
+    }
+    return m;
+  }
+
+}
+
+/// 搜索建议词 - 回应
+class ContentServiceV1SearchPostsSuggestResponse {
+  /// 建议标题列表（去重）
+  List<String>? titles;
+
+  ContentServiceV1SearchPostsSuggestResponse({
+    this.titles,
+  });
+
+  factory ContentServiceV1SearchPostsSuggestResponse.fromJson(Map<String, dynamic> json) {
+    return ContentServiceV1SearchPostsSuggestResponse(
+      titles: (json['titles'] as List<dynamic>?)?.map((e) => e as String).toList(),
+    );
+  }
+
+  Map<String, dynamic> toJson() {
+    final json = <String, dynamic>{};
+    if (titles != null) json['titles'] = titles;
+    return json;
+  }
+
+  @override
+  String toString() {
+    return 'ContentServiceV1SearchPostsSuggestResponse(titles: $titles)';
+  }
+
+  @override
+  bool operator ==(Object other) =>
+    identical(this, other) ||
+    other is ContentServiceV1SearchPostsSuggestResponse &&
+      runtimeType == other.runtimeType
+      && titles == other.titles
+    ;
+
+  @override
+  int get hashCode => Object.hashAll([
+    titles,
+  ]);
+
+  ContentServiceV1SearchPostsSuggestResponse copyWith({
+    List<String>? titles,
+  }) {
+    return ContentServiceV1SearchPostsSuggestResponse(
+      titles: titles ?? this.titles,
+    );
+  }
+
+  /// 二进制 proto 编码（MQTT 等二进制传输用；字段按编号升序写出）
+  Uint8List writeToBuffer() {
+    final w = ProtoWireWriter();
+    _writeTo(w);
+    return w.toBuffer();
+  }
+
+  void _writeTo(ProtoWireWriter w) {
+    // field 1: titles
+    final f1 = titles;
+    if (f1 != null) {
+      w.writeStringList(1, f1!);
+    }
+  }
+
+  factory ContentServiceV1SearchPostsSuggestResponse.fromBuffer(List<int> bytes) {
+    return ContentServiceV1SearchPostsSuggestResponse._readFrom(ProtoWireReader(bytes));
+  }
+
+  static ContentServiceV1SearchPostsSuggestResponse _readFrom(ProtoWireReader r) {
+    final m = ContentServiceV1SearchPostsSuggestResponse();
+    while (r.next()) {
+      switch (r.fieldNumber) {
+        // field 1: titles
+        case 1: {
+          m.titles = r.readStringList();
           break;
         }
         default: {

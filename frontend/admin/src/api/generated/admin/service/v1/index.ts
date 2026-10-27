@@ -12703,6 +12703,74 @@ export type contentservicev1_DeleteRedirectRequest = {
   id: number | undefined;
 };
 
+// 发布审批留痕（BFF 面：代理 core ReviewLogService）
+export interface ReviewLogService {
+  // 按实体查询审批记录
+  List(
+    request: contentservicev1_ListReviewLogsRequest,
+  ): Promise<contentservicev1_ListReviewLogsResponse>;
+}
+
+export function createReviewLogServiceClient(
+  transport: ClientTransport,
+): ReviewLogService {
+  return {
+    List(request) {
+      const path = `/admin/v1/review-logs`;
+      const body = null;
+      const queryParams: string[] = [];
+      if (request.entityType) {
+        queryParams.push(
+          `entityType=${encodeURIComponent(request.entityType.toString())}`,
+        );
+      }
+      if (request.entityId) {
+        queryParams.push(
+          `entityId=${encodeURIComponent(request.entityId.toString())}`,
+        );
+      }
+      let uri = path;
+      if (queryParams.length > 0) {
+        uri += `?${queryParams.join('&')}`;
+      }
+      return transport.unary(uri, 'GET', body, {
+        service: 'ReviewLogService',
+        method: 'List',
+      }) as Promise<contentservicev1_ListReviewLogsResponse>;
+    },
+  };
+}
+// 查询审批记录 - 请求
+export type contentservicev1_ListReviewLogsRequest = {
+  // 实体 ID
+  entityId: number | undefined;
+  // 实体类型（post/page）
+  entityType: string | undefined;
+};
+
+// 查询审批记录 - 回应
+export type contentservicev1_ListReviewLogsResponse = {
+  items: contentservicev1_ReviewLog[] | undefined;
+};
+
+// 审批留痕条目
+export type contentservicev1_ReviewLog = {
+  // 动作
+  action: string | undefined;
+  createdAt?: wellKnownTimestamp;
+  // 实体 ID
+  entityId: number | undefined;
+  // 实体类型（post/page）
+  entityType: string | undefined;
+  id?: number;
+  // 审批级别（submit=0；第 N 次 approve=N）
+  level: number | undefined;
+  // 意见（驳回理由/批准备注）
+  note?: string;
+  // 操作人 ID
+  operatorId?: number;
+};
+
 // 角色管理服务
 export interface RoleService {
   // 查询角色列表
@@ -16645,6 +16713,7 @@ export class ApiClient {
   private _previewService?: PreviewService;
   private _redirectService?: RedirectService;
   private _redisCacheMonitorService?: RedisCacheMonitorService;
+  private _reviewLogService?: ReviewLogService;
   private _roleService?: RoleService;
   private _searchSynonymService?: SearchSynonymService;
   private _serverMonitorService?: ServerMonitorService;
@@ -16904,6 +16973,10 @@ export class ApiClient {
 
   get redisCacheMonitorService(): RedisCacheMonitorService {
     return this._redisCacheMonitorService ??= createRedisCacheMonitorServiceClient(this._transport);
+  }
+
+  get reviewLogService(): ReviewLogService {
+    return this._reviewLogService ??= createReviewLogServiceClient(this._transport);
   }
 
   get roleService(): RoleService {
