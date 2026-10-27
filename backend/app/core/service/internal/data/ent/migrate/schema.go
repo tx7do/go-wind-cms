@@ -4037,6 +4037,35 @@ var (
 			},
 		},
 	}
+	// SysReviewLogsColumns holds the columns for the "sys_review_logs" table.
+	SysReviewLogsColumns = []*schema.Column{
+		{Name: "id", Type: field.TypeUint32, Increment: true},
+		{Name: "created_at", Type: field.TypeTime, Nullable: true},
+		{Name: "updated_at", Type: field.TypeTime, Nullable: true},
+		{Name: "deleted_at", Type: field.TypeTime, Nullable: true},
+		{Name: "tenant_id", Type: field.TypeUint32, Nullable: true, Default: 0},
+		{Name: "created_by", Type: field.TypeUint32, Nullable: true},
+		{Name: "updated_by", Type: field.TypeUint32, Nullable: true},
+		{Name: "deleted_by", Type: field.TypeUint32, Nullable: true},
+		{Name: "entity_type", Type: field.TypeString, Size: 16},
+		{Name: "entity_id", Type: field.TypeUint32},
+		{Name: "action", Type: field.TypeEnum, Enums: []string{"SUBMIT", "APPROVE", "REJECT"}, Default: "SUBMIT"},
+		{Name: "level", Type: field.TypeUint32},
+		{Name: "note", Type: field.TypeString, Nullable: true, Size: 512},
+	}
+	// SysReviewLogsTable holds the schema information for the "sys_review_logs" table.
+	SysReviewLogsTable = &schema.Table{
+		Name:       "sys_review_logs",
+		Columns:    SysReviewLogsColumns,
+		PrimaryKey: []*schema.Column{SysReviewLogsColumns[0]},
+		Indexes: []*schema.Index{
+			{
+				Name:    "reviewlog_entity_type_entity_id",
+				Unique:  false,
+				Columns: []*schema.Column{SysReviewLogsColumns[8], SysReviewLogsColumns[9]},
+			},
+		},
+	}
 	// SysRolesColumns holds the columns for the "sys_roles" table.
 	SysRolesColumns = []*schema.Column{
 		{Name: "id", Type: field.TypeUint32, Increment: true, Comment: "id"},
@@ -5535,6 +5564,7 @@ var (
 		PostWatchesTable,
 		SysQuotaPlansTable,
 		RedirectsTable,
+		SysReviewLogsTable,
 		SysRolesTable,
 		RoleFieldPermissionsTable,
 		SysRoleMetadataTable,
@@ -5960,6 +5990,9 @@ func init() {
 		Table:     "redirects",
 		Charset:   "utf8mb4",
 		Collation: "utf8mb4_bin",
+	}
+	SysReviewLogsTable.Annotation = &entsql.Annotation{
+		Table: "sys_review_logs",
 	}
 	SysRolesTable.Annotation = &entsql.Annotation{
 		Table:     "sys_roles",

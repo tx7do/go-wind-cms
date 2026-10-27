@@ -1,0 +1,18 @@
+syntax = "proto3";
+
+package admin.service.v1;
+
+import "gnostic/openapi/v3/annotations.proto";
+import "google/api/annotations.proto";
+
+import "content/service/v1/review_log.proto";
+
+// 发布审批留痕（BFF 面：代理 core ReviewLogService）
+service ReviewLogService {
+  // 按实体查询审批记录
+  rpc List (content.service.v1.ListReviewLogsRequest) returns (content.service.v1.ListReviewLogsResponse) {
+    option (google.api.http) = {
+      get: "/admin/v1/review-logs"
+    };
+  }
+}

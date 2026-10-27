@@ -8806,6 +8806,31 @@ paths:
                 "200":
                     description: OK
                     content: {}
+    /admin/v1/review-logs:
+        get:
+            tags:
+                - ReviewLogService
+            description: 按实体查询审批记录
+            operationId: ReviewLogService_List
+            parameters:
+                - name: entityType
+                  in: query
+                  description: 实体类型（post/page）
+                  schema:
+                    type: string
+                - name: entityId
+                  in: query
+                  description: 实体 ID
+                  schema:
+                    type: integer
+                    format: uint32
+            responses:
+                "200":
+                    description: OK
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/content.service.v1.ListReviewLogsResponse'
     /admin/v1/roles:
         get:
             tags:
@@ -14689,6 +14714,14 @@ components:
                 total:
                     type: string
             description: 回应 - 重定向列表
+        content.service.v1.ListReviewLogsResponse:
+            type: object
+            properties:
+                items:
+                    type: array
+                    items:
+                        $ref: '#/components/schemas/content.service.v1.ReviewLog'
+            description: 查询审批记录 - 回应
         content.service.v1.ListSearchSynonymsResponse:
             type: object
             properties:
@@ -15258,6 +15291,37 @@ components:
                     description: 要恢复到的版本记录ID
                     format: uint32
             description: 请求 - 恢复帖子版本
+        content.service.v1.ReviewLog:
+            type: object
+            properties:
+                id:
+                    type: integer
+                    format: uint32
+                entityType:
+                    type: string
+                    description: 实体类型（post/page）
+                entityId:
+                    type: integer
+                    description: 实体 ID
+                    format: uint32
+                action:
+                    type: string
+                    description: 动作
+                level:
+                    type: integer
+                    description: 审批级别（submit=0；第 N 次 approve=N）
+                    format: uint32
+                note:
+                    type: string
+                    description: 意见（驳回理由/批准备注）
+                operatorId:
+                    type: integer
+                    description: 操作人 ID
+                    format: uint32
+                createdAt:
+                    type: string
+                    format: date-time
+            description: 审批留痕条目
         content.service.v1.ReviewPageRequest:
             type: object
             properties:
@@ -21350,6 +21414,8 @@ tags:
       description: URL 重定向管理服务
     - name: RedisCacheMonitorService
       description: Redis 缓存监控查询服务（只读聚合视图）。
+    - name: ReviewLogService
+      description: 发布审批留痕（BFF 面：代理 core ReviewLogService）
     - name: RoleService
       description: 角色管理服务
     - name: SearchSynonymService

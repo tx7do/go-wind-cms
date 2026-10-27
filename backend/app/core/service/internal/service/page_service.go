@@ -8,8 +8,8 @@ import (
 	"github.com/tx7do/go-utils/trans"
 	"github.com/tx7do/kratos-bootstrap/bootstrap"
 	"google.golang.org/protobuf/encoding/protojson"
-	"google.golang.org/protobuf/types/known/fieldmaskpb"
 	"google.golang.org/protobuf/types/known/emptypb"
+	"google.golang.org/protobuf/types/known/fieldmaskpb"
 
 	"go-wind-cms/app/core/service/internal/data"
 
@@ -21,17 +21,20 @@ import (
 type PageService struct {
 	contentV1.UnimplementedPageServiceServer
 
-	pageRepo          *data.PageRepo
-	pageVersionRepo   *data.PageVersionRepo
-	webhookService    *WebhookService
-	notifySvc         *InternalMessageService
-	contentModelRepo  *data.ContentModelRepo
-	referenceTracker  *ReferenceTrackingService
-	flowSvc           *FlowService
-	log               *log.Helper
+	pageRepo         *data.PageRepo
+	pageVersionRepo  *data.PageVersionRepo
+	webhookService   *WebhookService
+	notifySvc        *InternalMessageService
+	contentModelRepo *data.ContentModelRepo
+	referenceTracker *ReferenceTrackingService
+	flowSvc          *FlowService
+	reviewLogRepo    *data.ReviewLogRepo
+	reviewPolicy     *ReviewPolicy
+	log              *log.Helper
 }
 
-func NewPageService(ctx *bootstrap.Context, uc *data.PageRepo, contentModelRepo *data.ContentModelRepo, pageVersionRepo *data.PageVersionRepo, webhookService *WebhookService, notifySvc *InternalMessageService, referenceTracker *ReferenceTrackingService, flowSvc *FlowService) *PageService {
+func NewPageService(ctx *bootstrap.Context, uc *data.PageRepo, contentModelRepo *data.ContentModelRepo, pageVersionRepo *data.PageVersionRepo, webhookService *WebhookService, notifySvc *InternalMessageService, referenceTracker *ReferenceTrackingService, flowSvc *FlowService,
+	reviewLogRepo *data.ReviewLogRepo, reviewPolicy *ReviewPolicy) *PageService {
 	return &PageService{
 		log:              ctx.NewLoggerHelper("page/service/core-service"),
 		pageRepo:         uc,
@@ -41,6 +44,8 @@ func NewPageService(ctx *bootstrap.Context, uc *data.PageRepo, contentModelRepo 
 		contentModelRepo: contentModelRepo,
 		referenceTracker: referenceTracker,
 		flowSvc:          flowSvc,
+		reviewLogRepo:    reviewLogRepo,
+		reviewPolicy:     reviewPolicy,
 	}
 }
 
@@ -108,6 +113,12 @@ func (s *PageService) Update(ctx context.Context, req *contentV1.UpdatePageReque
 			QueryBy: &contentV1.GetPageRequest_Id{Id: req.GetId()},
 		}); gErr == nil && existing != nil {
 			prevStatus = existing.GetStatus()
+			// 审批闸门：审核中的页面不允许经 Update 直改状态（与 post 同款）
+			if req.Data != nil && req.Data.Status != nil &&
+				existing.GetInProgress() && req.Data.GetStatus() != prevStatus {
+				return nil, contentV1.ErrorBadRequest(
+					"page is under review: status changes must go through the review flow (approve/reject)")
+			}
 		}
 	}
 
@@ -331,6 +342,12 @@ func (s *PageService) SubmitReview(ctx context.Context, req *contentV1.SubmitPag
 	if err != nil {
 		return nil, err
 	}
+	// 审批留痕：开启新批次（level=0）
+	if s.reviewLogRepo != nil {
+		if operatorID, tenantID, ok := operatorTenantUserID(ctx); ok {
+			_ = s.reviewLogRepo.Create(ctx, "page", req.GetPageId(), "SUBMIT", 0, "", operatorID, tenantID)
+		}
+	}
 	return updated, nil
 }
 
@@ -347,9 +364,40 @@ func (s *PageService) ApproveReview(ctx context.Context, req *contentV1.ReviewPa
 		return nil, contentV1.ErrorBadRequest("page is not under review")
 	}
 
+	// ===== 多级审批推进（与 post 同款语义）=====
+	operatorID, tenantID, _ := operatorTenantUserID(ctx)
+	totalLevels := s.reviewPolicy.Levels(ctx, tenantID)
+	currentLevel, err := s.reviewLogRepo.CurrentLevel(ctx, "page", req.GetPageId())
+	if err != nil {
+		return nil, err
+	}
+	nextLevel := currentLevel + 1
+	if err = s.reviewPolicy.CheckApprover(ctx, tenantID, operatorID, int(nextLevel)); err != nil {
+		return nil, err
+	}
+
+	finalApproval := int(nextLevel) >= totalLevels
+	if !finalApproval {
+		updated, uerr := s.pageRepo.Update(ctx, &contentV1.UpdatePageRequest{
+			Id: req.GetPageId(),
+			Data: &contentV1.Page{
+				InProgress: trans.Ptr(true),
+			},
+			UpdateMask: &fieldmaskpb.FieldMask{Paths: []string{"inProgress"}},
+		})
+		if uerr != nil {
+			return nil, uerr
+		}
+		if s.reviewLogRepo != nil {
+			_ = s.reviewLogRepo.Create(ctx, "page", req.GetPageId(), "APPROVE", nextLevel, "", operatorID, tenantID)
+		}
+		s.notifyPageReviewResult(ctx, page, true, "")
+		return updated, nil
+	}
+
 	updated, err := s.pageRepo.Update(ctx, &contentV1.UpdatePageRequest{
-		Id:         req.GetPageId(),
-		Data:       &contentV1.Page{
+		Id: req.GetPageId(),
+		Data: &contentV1.Page{
 			Status:     trans.Ptr(contentV1.Page_PAGE_STATUS_PUBLISHED),
 			InProgress: trans.Ptr(false),
 		},
@@ -357,6 +405,9 @@ func (s *PageService) ApproveReview(ctx context.Context, req *contentV1.ReviewPa
 	})
 	if err != nil {
 		return nil, err
+	}
+	if s.reviewLogRepo != nil {
+		_ = s.reviewLogRepo.Create(ctx, "page", req.GetPageId(), "APPROVE", nextLevel, "", operatorID, tenantID)
 	}
 
 	// 发布链路钩子：Webhook published 事件（页面无 ES 索引，无重索引链）
@@ -394,6 +445,11 @@ func (s *PageService) RejectReview(ctx context.Context, req *contentV1.RejectPag
 	})
 	if err != nil {
 		return nil, err
+	}
+	if s.reviewLogRepo != nil {
+		if operatorID, tenantID, ok := operatorTenantUserID(ctx); ok {
+			_ = s.reviewLogRepo.Create(ctx, "page", req.GetPageId(), "REJECT", 0, req.GetReason(), operatorID, tenantID)
+		}
 	}
 
 	s.notifyPageReviewResult(ctx, page, false, req.GetReason())

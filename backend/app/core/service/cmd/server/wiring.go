@@ -1,6 +1,7 @@
 package main
 
 import (
+	"context"
 	"os"
 
 	"github.com/go-kratos/kratos/v2"
@@ -8,6 +9,7 @@ import (
 	"github.com/tx7do/kratos-bootstrap/bootstrap"
 
 	pkgcrypto "go-wind-cms/pkg/crypto"
+	appViewer "go-wind-cms/pkg/entgo/viewer"
 
 	"github.com/tx7do/go-utils/geoip/geolite"
 
@@ -342,13 +344,26 @@ func initApp(ctx *bootstrap.Context) (*kratos.App, func(), error) {
 	aiUsageLogService := service.NewAiUsageLogService(ctx, aiUsageLogRepo, aiProviderRepo)
 	aiQueryService := service.NewAiQueryService(ctx, aiProviderRepo, aiUsageLogRepo, entClient, internalMessageRepo, internalMessageService)
 	searchSynonymRepo := data.NewSearchSynonymRepo(ctx, entClient)
+	reviewLogRepo := data.NewReviewLogRepo(ctx, entClient)
+	reviewLogService := service.NewReviewLogService(ctx, reviewLogRepo)
+	reviewPolicy := service.NewReviewPolicy(ctx, configRepo, func(ctx context.Context, userID uint32) []string {
+		roleIDs, err := userRepo.ListRoleIDsByUserID(appViewer.NewSystemViewerContext(ctx), userID)
+		if err != nil || len(roleIDs) == 0 {
+			return nil
+		}
+		codes, cerr := roleRepo.ListRoleCodesByIds(ctx, roleIDs)
+		if cerr != nil {
+			return nil
+		}
+		return codes
+	})
 	searchService := service.NewSearchService(ctx, searchRepo, postRepo, searchSynonymRepo)
 	searchSynonymService := service.NewSearchSynonymService(ctx, searchSynonymRepo)
 	referenceTrackingService := service.NewReferenceTrackingService(ctx, mediaAssetRepo, contentReferenceRepo)
-	postService := service.NewPostService(ctx, postRepo, searchService, taskService, contentModelRepo, postVersionRepo, webhookService, internalMessageService, referenceTrackingService, flowService)
+	postService := service.NewPostService(ctx, postRepo, searchService, taskService, contentModelRepo, postVersionRepo, webhookService, internalMessageService, referenceTrackingService, flowService, reviewLogRepo, reviewPolicy)
 	categoryService := service.NewCategoryService(ctx, categoryRepo, contentModelRepo)
 	tagService := service.NewTagService(ctx, tagRepo)
-	pageService := service.NewPageService(ctx, pageRepo, contentModelRepo, pageVersionRepo, webhookService, internalMessageService, referenceTrackingService, flowService)
+	pageService := service.NewPageService(ctx, pageRepo, contentModelRepo, pageVersionRepo, webhookService, internalMessageService, referenceTrackingService, flowService, reviewLogRepo, reviewPolicy)
 	contentModelService := service.NewContentModelService(ctx, contentModelRepo, postRepo, pageRepo)
 
 	// 站点配置
@@ -370,7 +385,7 @@ func initApp(ctx *bootstrap.Context) (*kratos.App, func(), error) {
 	grpcMiddlewares := server.NewGrpcMiddleware(ctx)
 
 	grpcServer, err := server.NewGrpcServer(ctx, grpcMiddlewares,
-		authenticationService, mfaService, backupArchiveService, searchSynonymService, loginPolicyService, userCredentialService,
+		authenticationService, mfaService, backupArchiveService, searchSynonymService, reviewLogService, loginPolicyService, userCredentialService,
 		taskService,
 		monitorAlertService,
 		onlineSessionService,

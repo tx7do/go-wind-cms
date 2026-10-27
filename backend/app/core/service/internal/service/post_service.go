@@ -40,10 +40,13 @@ type PostService struct {
 	contentModelRepo   *data.ContentModelRepo
 	referenceTracker   *ReferenceTrackingService
 	flowSvc            *FlowService
+	reviewLogRepo      *data.ReviewLogRepo
+	reviewPolicy       *ReviewPolicy
 	log                *log.Helper
 }
 
-func NewPostService(ctx *bootstrap.Context, uc *data.PostRepo, searchService *SearchService, taskService *TaskService, contentModelRepo *data.ContentModelRepo, postVersionRepo *data.PostVersionRepo, webhookService *WebhookService, internalMessageSvc *InternalMessageService, referenceTracker *ReferenceTrackingService, flowSvc *FlowService) *PostService {
+func NewPostService(ctx *bootstrap.Context, uc *data.PostRepo, searchService *SearchService, taskService *TaskService, contentModelRepo *data.ContentModelRepo, postVersionRepo *data.PostVersionRepo, webhookService *WebhookService, internalMessageSvc *InternalMessageService, referenceTracker *ReferenceTrackingService, flowSvc *FlowService,
+	reviewLogRepo *data.ReviewLogRepo, reviewPolicy *ReviewPolicy) *PostService {
 	return &PostService{
 		log:                ctx.NewLoggerHelper("post/service/core-service"),
 		postRepo:           uc,
@@ -55,6 +58,8 @@ func NewPostService(ctx *bootstrap.Context, uc *data.PostRepo, searchService *Se
 		contentModelRepo:   contentModelRepo,
 		referenceTracker:   referenceTracker,
 		flowSvc:            flowSvc,
+		reviewLogRepo:      reviewLogRepo,
+		reviewPolicy:       reviewPolicy,
 	}
 }
 
@@ -215,6 +220,12 @@ func (s *PostService) Update(ctx context.Context, req *contentV1.UpdatePostReque
 			QueryBy: &contentV1.GetPostRequest_Id{Id: req.GetId()},
 		}); gErr == nil && existing != nil {
 			prevStatus = existing.GetStatus()
+			// 审批闸门：审核中的文章不允许经 Update 直改状态（绕过审批的口子）。
+			// 改状态须先驳回（回 DRAFT）或走审批通过；in_progress 之外的纯编辑不受限。
+			if existing.GetInProgress() && req.Data.GetStatus() != prevStatus {
+				return nil, contentV1.ErrorBadRequest(
+					"post is under review: status changes must go through the review flow (approve/reject)")
+			}
 		}
 	}
 
@@ -664,6 +675,12 @@ func (s *PostService) SubmitReview(ctx context.Context, req *contentV1.SubmitPos
 	if err != nil {
 		return nil, err
 	}
+	// 审批留痕：开启新批次（level=0）
+	if s.reviewLogRepo != nil {
+		if operatorID, tenantID, ok := operatorTenantUserID(ctx); ok {
+			_ = s.reviewLogRepo.Create(ctx, "post", req.GetPostId(), "SUBMIT", 0, "", operatorID, tenantID)
+		}
+	}
 	return updated, nil
 }
 
@@ -679,6 +696,38 @@ func (s *PostService) ApproveReview(ctx context.Context, req *contentV1.ReviewPo
 	}
 	if !post.GetInProgress() {
 		return nil, contentV1.ErrorBadRequest("post is not under review")
+	}
+
+	// ===== 多级审批推进：当前级别 +1；达到配置级数才置 PUBLISHED =====
+	operatorID, tenantID, _ := operatorTenantUserID(ctx)
+	totalLevels := s.reviewPolicy.Levels(ctx, tenantID)
+	currentLevel, err := s.reviewLogRepo.CurrentLevel(ctx, "post", req.GetPostId())
+	if err != nil {
+		return nil, err
+	}
+	nextLevel := currentLevel + 1
+	if err = s.reviewPolicy.CheckApprover(ctx, tenantID, operatorID, int(nextLevel)); err != nil {
+		return nil, err
+	}
+
+	finalApproval := int(nextLevel) >= totalLevels
+	if !finalApproval {
+		// 中间级：保持审核中，落留痕并通知作者当前进度
+		updated, uerr := s.postRepo.Update(ctx, &contentV1.UpdatePostRequest{
+			Id: req.GetPostId(),
+			Data: &contentV1.Post{
+				InProgress: trans.Ptr(true),
+			},
+			UpdateMask: &fieldmaskpb.FieldMask{Paths: []string{"in_progress"}},
+		})
+		if uerr != nil {
+			return nil, uerr
+		}
+		if s.reviewLogRepo != nil {
+			_ = s.reviewLogRepo.Create(ctx, "post", req.GetPostId(), "APPROVE", nextLevel, "", operatorID, tenantID)
+		}
+		s.notifyReviewResult(ctx, post, true, "")
+		return updated, nil
 	}
 
 	data := &contentV1.Post{
@@ -698,6 +747,9 @@ func (s *PostService) ApproveReview(ctx context.Context, req *contentV1.ReviewPo
 	})
 	if err != nil {
 		return nil, err
+	}
+	if s.reviewLogRepo != nil {
+		_ = s.reviewLogRepo.Create(ctx, "post", req.GetPostId(), "APPROVE", nextLevel, "", operatorID, tenantID)
 	}
 
 	// 发布链路钩子：索引可见性变化 + Webhook published 事件（repo.Update 不带这些，这里补齐）
@@ -735,6 +787,11 @@ func (s *PostService) RejectReview(ctx context.Context, req *contentV1.RejectPos
 	})
 	if err != nil {
 		return nil, err
+	}
+	if s.reviewLogRepo != nil {
+		if operatorID, tenantID, ok := operatorTenantUserID(ctx); ok {
+			_ = s.reviewLogRepo.Create(ctx, "post", req.GetPostId(), "REJECT", 0, req.GetReason(), operatorID, tenantID)
+		}
 	}
 
 	s.notifyReviewResult(ctx, post, false, req.GetReason())

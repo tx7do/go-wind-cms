@@ -856,6 +856,12 @@ var DefaultNotificationRules = []*notifyV1.NotificationRule{
 // ConfigKeyCommentAIModeration 评论 AI 反垃圾开关键。
 const ConfigKeyCommentAIModeration = "comment.ai_moderation.enabled"
 
+// 发布审批多级配置键（消费方 core review 链）。
+const (
+	ConfigKeyReviewLevels     = "review.post.levels"     // 审批级数（默认 1）
+	ConfigKeyReviewLevelRoles = "review.post.levelRoles" // 各级审批角色 code（逗号分隔）
+)
+
 // DefaultConfigs 系统初始化内置平台参数（等保口令策略阈值）。
 // 经 ConfigRepo.SeedDefaults 按键缺一补一播种（启动期，is_built_in=true，
 // 禁删；管理员改过的值不回置）。口令策略消费方为上游等保批能力，CMS 当前
@@ -889,6 +895,24 @@ var DefaultConfigs = []*configV1.Config{
 		Name:      trans.Ptr("Comment AI anti-spam moderation enabled"),
 		Value:     trans.Ptr("false"),
 		ValueType: configV1.Config_BOOL.Enum(),
+		IsBuiltIn: trans.Ptr(true),
+	},
+	{
+		// 发布审批级数（消费方 core Post/PageService review 链；默认 1=
+		// 一次通过即发布，与历史行为一致；>1 启用多级逐级审批）。
+		Key:       trans.Ptr(ConfigKeyReviewLevels),
+		Name:      trans.Ptr("Publish review levels (1 = single approval)"),
+		Value:     trans.Ptr("1"),
+		ValueType: configV1.Config_INT.Enum(),
+		IsBuiltIn: trans.Ptr(true),
+	},
+	{
+		// 各级审批角色 code（逗号分隔，按级对应；留空=不按角色校验，
+		// 仅受 approve 端点的接口 RBAC 约束）。
+		Key:       trans.Ptr(ConfigKeyReviewLevelRoles),
+		Name:      trans.Ptr("Review level role codes (comma separated, per level; empty = no role check)"),
+		Value:     trans.Ptr(""),
+		ValueType: configV1.Config_STRING.Enum(),
 		IsBuiltIn: trans.Ptr(true),
 	},
 }

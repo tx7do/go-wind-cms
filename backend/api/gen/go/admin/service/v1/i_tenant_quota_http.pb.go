@@ -62,7 +62,7 @@ type TenantQuotaServiceHTTPServer interface {
 
 func RegisterTenantQuotaServiceHTTPServer(s *http.Server, srv TenantQuotaServiceHTTPServer) {
 	r := s.Route("/")
-	r.GET("/admin/v1/tenant-quotas", _TenantQuotaService_List49_HTTP_Handler(srv))
+	r.GET("/admin/v1/tenant-quotas", _TenantQuotaService_List50_HTTP_Handler(srv))
 	r.GET("/admin/v1/tenant-quotas/{id}", _TenantQuotaService_Get50_HTTP_Handler(srv))
 	r.POST("/admin/v1/tenant-quotas", _TenantQuotaService_Create39_HTTP_Handler(srv))
 	r.PUT("/admin/v1/tenant-quotas/{id}", _TenantQuotaService_Update39_HTTP_Handler(srv))
@@ -75,7 +75,7 @@ func RegisterTenantQuotaServiceHTTPServer(s *http.Server, srv TenantQuotaService
 	r.POST("/admin/v1/quota-plans/{plan_id}/apply", _TenantQuotaService_ApplyQuotaPlan0_HTTP_Handler(srv))
 }
 
-func _TenantQuotaService_List49_HTTP_Handler(srv TenantQuotaServiceHTTPServer) func(ctx http.Context) error {
+func _TenantQuotaService_List50_HTTP_Handler(srv TenantQuotaServiceHTTPServer) func(ctx http.Context) error {
 	return func(ctx http.Context) error {
 		var in v1.PagingRequest
 		if err := ctx.BindQuery(&in); err != nil {

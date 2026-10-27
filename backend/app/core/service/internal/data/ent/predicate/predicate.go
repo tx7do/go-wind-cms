@@ -237,6 +237,9 @@ type QuotaPlan func(*sql.Selector)
 // Redirect is the predicate function for redirect builders.
 type Redirect func(*sql.Selector)
 
+// ReviewLog is the predicate function for reviewlog builders.
+type ReviewLog func(*sql.Selector)
+
 // Role is the predicate function for role builders.
 type Role func(*sql.Selector)
 

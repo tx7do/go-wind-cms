@@ -43,14 +43,14 @@ type TagServiceHTTPServer interface {
 
 func RegisterTagServiceHTTPServer(s *http.Server, srv TagServiceHTTPServer) {
 	r := s.Route("/")
-	r.GET("/admin/v1/tags", _TagService_List46_HTTP_Handler(srv))
+	r.GET("/admin/v1/tags", _TagService_List47_HTTP_Handler(srv))
 	r.GET("/admin/v1/tags/{id}", _TagService_Get46_HTTP_Handler(srv))
 	r.POST("/admin/v1/tags", _TagService_Create36_HTTP_Handler(srv))
 	r.PUT("/admin/v1/tags/{id}", _TagService_Update36_HTTP_Handler(srv))
 	r.DELETE("/admin/v1/tags/{id}", _TagService_Delete39_HTTP_Handler(srv))
 }
 
-func _TagService_List46_HTTP_Handler(srv TagServiceHTTPServer) func(ctx http.Context) error {
+func _TagService_List47_HTTP_Handler(srv TagServiceHTTPServer) func(ctx http.Context) error {
 	return func(ctx http.Context) error {
 		var in v1.PagingRequest
 		if err := ctx.BindQuery(&in); err != nil {

@@ -55,6 +55,7 @@ func NewGrpcServer(
 	mfaService *service.MFAService,
 	backupArchiveService *service.BackupArchiveService,
 	searchSynonymService *service.SearchSynonymService,
+	reviewLogService *service.ReviewLogService,
 	loginPolicyService *service.LoginPolicyService,
 	userCredentialService *service.UserCredentialService,
 
@@ -168,6 +169,7 @@ func NewGrpcServer(
 	authenticationV1.RegisterMFAServiceServer(srv, mfaService)
 	taskV1.RegisterBackupArchiveServiceServer(srv, backupArchiveService)
 	contentV1.RegisterSearchSynonymServiceServer(srv, searchSynonymService)
+	contentV1.RegisterReviewLogServiceServer(srv, reviewLogService)
 	authenticationV1.RegisterUserCredentialServiceServer(srv, userCredentialService)
 
 	dictV1.RegisterDictTypeServiceServer(srv, dictTypeService)

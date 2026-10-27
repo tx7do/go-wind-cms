@@ -125,6 +125,7 @@ func NewRestServer(
 	mfaService *service.MFAService,
 	backupService *service.BackupService,
 	searchSynonymService *service.SearchSynonymService,
+	reviewLogService *service.ReviewLogService,
 	roleService *service.RoleService,
 	tenantService *service.TenantService,
 	orgUnitService *service.OrgUnitService,
@@ -231,6 +232,7 @@ func NewRestServer(
 	adminV1.RegisterMFAServiceHTTPServer(srv, mfaService)
 	adminV1.RegisterBackupServiceHTTPServer(srv, backupService)
 	adminV1.RegisterSearchSynonymServiceHTTPServer(srv, searchSynonymService)
+	adminV1.RegisterReviewLogServiceHTTPServer(srv, reviewLogService)
 	adminV1.RegisterUserServiceHTTPServer(srv, userService)
 	adminV1.RegisterRoleServiceHTTPServer(srv, roleService)
 	adminV1.RegisterTenantServiceHTTPServer(srv, tenantService)

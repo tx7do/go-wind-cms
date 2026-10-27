@@ -36,12 +36,12 @@ type SearchSynonymServiceHTTPServer interface {
 
 func RegisterSearchSynonymServiceHTTPServer(s *http.Server, srv SearchSynonymServiceHTTPServer) {
 	r := s.Route("/")
-	r.GET("/admin/v1/search-synonyms", _SearchSynonymService_List43_HTTP_Handler(srv))
+	r.GET("/admin/v1/search-synonyms", _SearchSynonymService_List44_HTTP_Handler(srv))
 	r.POST("/admin/v1/search-synonyms", _SearchSynonymService_Create33_HTTP_Handler(srv))
 	r.DELETE("/admin/v1/search-synonyms/{id}", _SearchSynonymService_Delete36_HTTP_Handler(srv))
 }
 
-func _SearchSynonymService_List43_HTTP_Handler(srv SearchSynonymServiceHTTPServer) func(ctx http.Context) error {
+func _SearchSynonymService_List44_HTTP_Handler(srv SearchSynonymServiceHTTPServer) func(ctx http.Context) error {
 	return func(ctx http.Context) error {
 		var in emptypb.Empty
 		if err := ctx.BindQuery(&in); err != nil {

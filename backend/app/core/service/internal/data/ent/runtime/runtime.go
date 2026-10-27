@@ -82,6 +82,7 @@ import (
 	"go-wind-cms/app/core/service/internal/data/ent/postwatch"
 	"go-wind-cms/app/core/service/internal/data/ent/quotaplan"
 	"go-wind-cms/app/core/service/internal/data/ent/redirect"
+	"go-wind-cms/app/core/service/internal/data/ent/reviewlog"
 	"go-wind-cms/app/core/service/internal/data/ent/role"
 	"go-wind-cms/app/core/service/internal/data/ent/rolefieldpermission"
 	"go-wind-cms/app/core/service/internal/data/ent/rolemetadata"
@@ -2577,6 +2578,52 @@ func init() {
 	redirectDescID := redirectMixinFields0[0].Descriptor()
 	// redirect.IDValidator is a validator for the "id" field. It is called by the builders before save.
 	redirect.IDValidator = redirectDescID.Validators[0].(func(uint32) error)
+	reviewlogMixin := schema.ReviewLog{}.Mixin()
+	reviewlog.Policy = privacy.NewPolicies(reviewlogMixin[2], schema.ReviewLog{})
+	reviewlog.Hooks[0] = func(next ent.Mutator) ent.Mutator {
+		return ent.MutateFunc(func(ctx context.Context, m ent.Mutation) (ent.Value, error) {
+			if err := reviewlog.Policy.EvalMutation(ctx, m); err != nil {
+				return nil, err
+			}
+			return next.Mutate(ctx, m)
+		})
+	}
+	reviewlogMixinFields1 := reviewlogMixin[1].Fields()
+	_ = reviewlogMixinFields1
+	reviewlogMixinFields2 := reviewlogMixin[2].Fields()
+	_ = reviewlogMixinFields2
+	reviewlogFields := schema.ReviewLog{}.Fields()
+	_ = reviewlogFields
+	// reviewlogDescTenantID is the schema descriptor for tenant_id field.
+	reviewlogDescTenantID := reviewlogMixinFields2[0].Descriptor()
+	// reviewlog.DefaultTenantID holds the default value on creation for the tenant_id field.
+	reviewlog.DefaultTenantID = reviewlogDescTenantID.Default.(uint32)
+	// reviewlogDescEntityType is the schema descriptor for entity_type field.
+	reviewlogDescEntityType := reviewlogFields[0].Descriptor()
+	// reviewlog.EntityTypeValidator is a validator for the "entity_type" field. It is called by the builders before save.
+	reviewlog.EntityTypeValidator = func() func(string) error {
+		validators := reviewlogDescEntityType.Validators
+		fns := [...]func(string) error{
+			validators[0].(func(string) error),
+			validators[1].(func(string) error),
+		}
+		return func(entity_type string) error {
+			for _, fn := range fns {
+				if err := fn(entity_type); err != nil {
+					return err
+				}
+			}
+			return nil
+		}
+	}()
+	// reviewlogDescNote is the schema descriptor for note field.
+	reviewlogDescNote := reviewlogFields[4].Descriptor()
+	// reviewlog.NoteValidator is a validator for the "note" field. It is called by the builders before save.
+	reviewlog.NoteValidator = reviewlogDescNote.Validators[0].(func(string) error)
+	// reviewlogDescID is the schema descriptor for id field.
+	reviewlogDescID := reviewlogMixinFields1[0].Descriptor()
+	// reviewlog.IDValidator is a validator for the "id" field. It is called by the builders before save.
+	reviewlog.IDValidator = reviewlogDescID.Validators[0].(func(uint32) error)
 	roleMixin := schema.Role{}.Mixin()
 	role.Policy = privacy.NewPolicies(roleMixin[6], schema.Role{})
 	role.Hooks[0] = func(next ent.Mutator) ent.Mutator {

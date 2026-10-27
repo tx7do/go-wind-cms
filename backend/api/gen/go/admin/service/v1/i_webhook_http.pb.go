@@ -49,7 +49,7 @@ type WebhookServiceHTTPServer interface {
 
 func RegisterWebhookServiceHTTPServer(s *http.Server, srv WebhookServiceHTTPServer) {
 	r := s.Route("/")
-	r.GET("/admin/v1/webhooks", _WebhookService_List51_HTTP_Handler(srv))
+	r.GET("/admin/v1/webhooks", _WebhookService_List52_HTTP_Handler(srv))
 	r.GET("/admin/v1/webhooks/{id}", _WebhookService_Get53_HTTP_Handler(srv))
 	r.POST("/admin/v1/webhooks", _WebhookService_Create41_HTTP_Handler(srv))
 	r.PUT("/admin/v1/webhooks/{id}", _WebhookService_Update41_HTTP_Handler(srv))
@@ -58,7 +58,7 @@ func RegisterWebhookServiceHTTPServer(s *http.Server, srv WebhookServiceHTTPServ
 	r.GET("/admin/v1/webhooks/deliveries", _WebhookService_ListDeliveries0_HTTP_Handler(srv))
 }
 
-func _WebhookService_List51_HTTP_Handler(srv WebhookServiceHTTPServer) func(ctx http.Context) error {
+func _WebhookService_List52_HTTP_Handler(srv WebhookServiceHTTPServer) func(ctx http.Context) error {
 	return func(ctx http.Context) error {
 		var in v1.PagingRequest
 		if err := ctx.BindQuery(&in); err != nil {

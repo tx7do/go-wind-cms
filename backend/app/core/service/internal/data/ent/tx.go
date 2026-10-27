@@ -166,6 +166,8 @@ type Tx struct {
 	QuotaPlan *QuotaPlanClient
 	// Redirect is the client for interacting with the Redirect builders.
 	Redirect *RedirectClient
+	// ReviewLog is the client for interacting with the ReviewLog builders.
+	ReviewLog *ReviewLogClient
 	// Role is the client for interacting with the Role builders.
 	Role *RoleClient
 	// RoleFieldPermission is the client for interacting with the RoleFieldPermission builders.
@@ -426,6 +428,7 @@ func (tx *Tx) init() {
 	tx.PostWatch = NewPostWatchClient(tx.config)
 	tx.QuotaPlan = NewQuotaPlanClient(tx.config)
 	tx.Redirect = NewRedirectClient(tx.config)
+	tx.ReviewLog = NewReviewLogClient(tx.config)
 	tx.Role = NewRoleClient(tx.config)
 	tx.RoleFieldPermission = NewRoleFieldPermissionClient(tx.config)
 	tx.RoleMetadata = NewRoleMetadataClient(tx.config)

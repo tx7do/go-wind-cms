@@ -149,6 +149,15 @@ func NewAuthenticationServiceClient(ctx *bootstrap.Context, r registry.Discovery
 	return authenticationV1.NewAuthenticationServiceClient(cli)
 }
 
+func NewReviewLogServiceClient(ctx *bootstrap.Context, r registry.Discovery) contentV1.ReviewLogServiceClient {
+	cli, err := rpc.CreateGrpcClient(ctx.Context(), r, serviceid.NewDiscoveryName(serviceid.CoreService), ctx.GetConfig())
+	if err != nil {
+		return nil
+	}
+
+	return contentV1.NewReviewLogServiceClient(cli)
+}
+
 func NewSearchSynonymServiceClient(ctx *bootstrap.Context, r registry.Discovery) contentV1.SearchSynonymServiceClient {
 	cli, err := rpc.CreateGrpcClient(ctx.Context(), r, serviceid.NewDiscoveryName(serviceid.CoreService), ctx.GetConfig())
 	if err != nil {

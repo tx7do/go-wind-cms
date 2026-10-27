@@ -88,6 +88,7 @@ import (
 	"go-wind-cms/app/core/service/internal/data/ent/postwatch"
 	"go-wind-cms/app/core/service/internal/data/ent/quotaplan"
 	"go-wind-cms/app/core/service/internal/data/ent/redirect"
+	"go-wind-cms/app/core/service/internal/data/ent/reviewlog"
 	"go-wind-cms/app/core/service/internal/data/ent/role"
 	"go-wind-cms/app/core/service/internal/data/ent/rolefieldpermission"
 	"go-wind-cms/app/core/service/internal/data/ent/rolemetadata"
@@ -280,6 +281,8 @@ type Client struct {
 	QuotaPlan *QuotaPlanClient
 	// Redirect is the client for interacting with the Redirect builders.
 	Redirect *RedirectClient
+	// ReviewLog is the client for interacting with the ReviewLog builders.
+	ReviewLog *ReviewLogClient
 	// Role is the client for interacting with the Role builders.
 	Role *RoleClient
 	// RoleFieldPermission is the client for interacting with the RoleFieldPermission builders.
@@ -420,6 +423,7 @@ func (c *Client) init() {
 	c.PostWatch = NewPostWatchClient(c.config)
 	c.QuotaPlan = NewQuotaPlanClient(c.config)
 	c.Redirect = NewRedirectClient(c.config)
+	c.ReviewLog = NewReviewLogClient(c.config)
 	c.Role = NewRoleClient(c.config)
 	c.RoleFieldPermission = NewRoleFieldPermissionClient(c.config)
 	c.RoleMetadata = NewRoleMetadataClient(c.config)
@@ -615,6 +619,7 @@ func (c *Client) Tx(ctx context.Context) (*Tx, error) {
 		PostWatch:                  NewPostWatchClient(cfg),
 		QuotaPlan:                  NewQuotaPlanClient(cfg),
 		Redirect:                   NewRedirectClient(cfg),
+		ReviewLog:                  NewReviewLogClient(cfg),
 		Role:                       NewRoleClient(cfg),
 		RoleFieldPermission:        NewRoleFieldPermissionClient(cfg),
 		RoleMetadata:               NewRoleMetadataClient(cfg),
@@ -737,6 +742,7 @@ func (c *Client) BeginTx(ctx context.Context, opts *sql.TxOptions) (*Tx, error) 
 		PostWatch:                  NewPostWatchClient(cfg),
 		QuotaPlan:                  NewQuotaPlanClient(cfg),
 		Redirect:                   NewRedirectClient(cfg),
+		ReviewLog:                  NewReviewLogClient(cfg),
 		Role:                       NewRoleClient(cfg),
 		RoleFieldPermission:        NewRoleFieldPermissionClient(cfg),
 		RoleMetadata:               NewRoleMetadataClient(cfg),
@@ -810,7 +816,7 @@ func (c *Client) Use(hooks ...Hook) {
 		c.Permission, c.PermissionApi, c.PermissionAuditLog, c.PermissionGroup,
 		c.PermissionMenu, c.PermissionPolicy, c.PolicyEvaluationLog, c.Position,
 		c.Post, c.PostCategory, c.PostLike, c.PostTag, c.PostTranslation,
-		c.PostVersion, c.PostWatch, c.QuotaPlan, c.Redirect, c.Role,
+		c.PostVersion, c.PostWatch, c.QuotaPlan, c.Redirect, c.ReviewLog, c.Role,
 		c.RoleFieldPermission, c.RoleMetadata, c.RolePermission, c.SearchSynonym,
 		c.Section, c.SectionTranslation, c.Site, c.SiteSetting, c.SocialAccount,
 		c.SocialDistribution, c.SocialInboxItem, c.SocialStatsHistory, c.SysConfig,
@@ -844,7 +850,7 @@ func (c *Client) Intercept(interceptors ...Interceptor) {
 		c.Permission, c.PermissionApi, c.PermissionAuditLog, c.PermissionGroup,
 		c.PermissionMenu, c.PermissionPolicy, c.PolicyEvaluationLog, c.Position,
 		c.Post, c.PostCategory, c.PostLike, c.PostTag, c.PostTranslation,
-		c.PostVersion, c.PostWatch, c.QuotaPlan, c.Redirect, c.Role,
+		c.PostVersion, c.PostWatch, c.QuotaPlan, c.Redirect, c.ReviewLog, c.Role,
 		c.RoleFieldPermission, c.RoleMetadata, c.RolePermission, c.SearchSynonym,
 		c.Section, c.SectionTranslation, c.Site, c.SiteSetting, c.SocialAccount,
 		c.SocialDistribution, c.SocialInboxItem, c.SocialStatsHistory, c.SysConfig,
@@ -1013,6 +1019,8 @@ func (c *Client) Mutate(ctx context.Context, m Mutation) (Value, error) {
 		return c.QuotaPlan.mutate(ctx, m)
 	case *RedirectMutation:
 		return c.Redirect.mutate(ctx, m)
+	case *ReviewLogMutation:
+		return c.ReviewLog.mutate(ctx, m)
 	case *RoleMutation:
 		return c.Role.mutate(ctx, m)
 	case *RoleFieldPermissionMutation:
@@ -11793,6 +11801,140 @@ func (c *RedirectClient) mutate(ctx context.Context, m *RedirectMutation) (Value
 	}
 }
 
+// ReviewLogClient is a client for the ReviewLog schema.
+type ReviewLogClient struct {
+	config
+}
+
+// NewReviewLogClient returns a client for the ReviewLog from the given config.
+func NewReviewLogClient(c config) *ReviewLogClient {
+	return &ReviewLogClient{config: c}
+}
+
+// Use adds a list of mutation hooks to the hooks stack.
+// A call to `Use(f, g, h)` equals to `reviewlog.Hooks(f(g(h())))`.
+func (c *ReviewLogClient) Use(hooks ...Hook) {
+	c.hooks.ReviewLog = append(c.hooks.ReviewLog, hooks...)
+}
+
+// Intercept adds a list of query interceptors to the interceptors stack.
+// A call to `Intercept(f, g, h)` equals to `reviewlog.Intercept(f(g(h())))`.
+func (c *ReviewLogClient) Intercept(interceptors ...Interceptor) {
+	c.inters.ReviewLog = append(c.inters.ReviewLog, interceptors...)
+}
+
+// Create returns a builder for creating a ReviewLog entity.
+func (c *ReviewLogClient) Create() *ReviewLogCreate {
+	mutation := newReviewLogMutation(c.config, OpCreate)
+	return &ReviewLogCreate{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// CreateBulk returns a builder for creating a bulk of ReviewLog entities.
+func (c *ReviewLogClient) CreateBulk(builders ...*ReviewLogCreate) *ReviewLogCreateBulk {
+	return &ReviewLogCreateBulk{config: c.config, builders: builders}
+}
+
+// MapCreateBulk creates a bulk creation builder from the given slice. For each item in the slice, the function creates
+// a builder and applies setFunc on it.
+func (c *ReviewLogClient) MapCreateBulk(slice any, setFunc func(*ReviewLogCreate, int)) *ReviewLogCreateBulk {
+	rv := reflect.ValueOf(slice)
+	if rv.Kind() != reflect.Slice {
+		return &ReviewLogCreateBulk{err: fmt.Errorf("calling to ReviewLogClient.MapCreateBulk with wrong type %T, need slice", slice)}
+	}
+	builders := make([]*ReviewLogCreate, rv.Len())
+	for i := 0; i < rv.Len(); i++ {
+		builders[i] = c.Create()
+		setFunc(builders[i], i)
+	}
+	return &ReviewLogCreateBulk{config: c.config, builders: builders}
+}
+
+// Update returns an update builder for ReviewLog.
+func (c *ReviewLogClient) Update() *ReviewLogUpdate {
+	mutation := newReviewLogMutation(c.config, OpUpdate)
+	return &ReviewLogUpdate{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// UpdateOne returns an update builder for the given entity.
+func (c *ReviewLogClient) UpdateOne(_m *ReviewLog) *ReviewLogUpdateOne {
+	mutation := newReviewLogMutation(c.config, OpUpdateOne, withReviewLog(_m))
+	return &ReviewLogUpdateOne{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// UpdateOneID returns an update builder for the given id.
+func (c *ReviewLogClient) UpdateOneID(id uint32) *ReviewLogUpdateOne {
+	mutation := newReviewLogMutation(c.config, OpUpdateOne, withReviewLogID(id))
+	return &ReviewLogUpdateOne{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// Delete returns a delete builder for ReviewLog.
+func (c *ReviewLogClient) Delete() *ReviewLogDelete {
+	mutation := newReviewLogMutation(c.config, OpDelete)
+	return &ReviewLogDelete{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// DeleteOne returns a builder for deleting the given entity.
+func (c *ReviewLogClient) DeleteOne(_m *ReviewLog) *ReviewLogDeleteOne {
+	return c.DeleteOneID(_m.ID)
+}
+
+// DeleteOneID returns a builder for deleting the given entity by its id.
+func (c *ReviewLogClient) DeleteOneID(id uint32) *ReviewLogDeleteOne {
+	builder := c.Delete().Where(reviewlog.ID(id))
+	builder.mutation.id = &id
+	builder.mutation.op = OpDeleteOne
+	return &ReviewLogDeleteOne{builder}
+}
+
+// Query returns a query builder for ReviewLog.
+func (c *ReviewLogClient) Query() *ReviewLogQuery {
+	return &ReviewLogQuery{
+		config: c.config,
+		ctx:    &QueryContext{Type: TypeReviewLog},
+		inters: c.Interceptors(),
+	}
+}
+
+// Get returns a ReviewLog entity by its id.
+func (c *ReviewLogClient) Get(ctx context.Context, id uint32) (*ReviewLog, error) {
+	return c.Query().Where(reviewlog.ID(id)).Only(ctx)
+}
+
+// GetX is like Get, but panics if an error occurs.
+func (c *ReviewLogClient) GetX(ctx context.Context, id uint32) *ReviewLog {
+	obj, err := c.Get(ctx, id)
+	if err != nil {
+		panic(err)
+	}
+	return obj
+}
+
+// Hooks returns the client hooks.
+func (c *ReviewLogClient) Hooks() []Hook {
+	hooks := c.hooks.ReviewLog
+	return append(hooks[:len(hooks):len(hooks)], reviewlog.Hooks[:]...)
+}
+
+// Interceptors returns the client interceptors.
+func (c *ReviewLogClient) Interceptors() []Interceptor {
+	return c.inters.ReviewLog
+}
+
+func (c *ReviewLogClient) mutate(ctx context.Context, m *ReviewLogMutation) (Value, error) {
+	switch m.Op() {
+	case OpCreate:
+		return (&ReviewLogCreate{config: c.config, hooks: c.Hooks(), mutation: m}).Save(ctx)
+	case OpUpdate:
+		return (&ReviewLogUpdate{config: c.config, hooks: c.Hooks(), mutation: m}).Save(ctx)
+	case OpUpdateOne:
+		return (&ReviewLogUpdateOne{config: c.config, hooks: c.Hooks(), mutation: m}).Save(ctx)
+	case OpDelete, OpDeleteOne:
+		return (&ReviewLogDelete{config: c.config, hooks: c.Hooks(), mutation: m}).Exec(ctx)
+	default:
+		return nil, fmt.Errorf("ent: unknown ReviewLog mutation op: %q", m.Op())
+	}
+}
+
 // RoleClient is a client for the Role schema.
 type RoleClient struct {
 	config
@@ -15290,11 +15432,11 @@ type (
 		PageTranslation, PageVersion, Permission, PermissionApi, PermissionAuditLog,
 		PermissionGroup, PermissionMenu, PermissionPolicy, PolicyEvaluationLog,
 		Position, Post, PostCategory, PostLike, PostTag, PostTranslation, PostVersion,
-		PostWatch, QuotaPlan, Redirect, Role, RoleFieldPermission, RoleMetadata,
-		RolePermission, SearchSynonym, Section, SectionTranslation, Site, SiteSetting,
-		SocialAccount, SocialDistribution, SocialInboxItem, SocialStatsHistory,
-		SysConfig, Tag, TagTranslation, Task, Tenant, TenantQuota, User,
-		UserCredential, UserOrgUnit, UserPosition, UserRole, Webhook,
+		PostWatch, QuotaPlan, Redirect, ReviewLog, Role, RoleFieldPermission,
+		RoleMetadata, RolePermission, SearchSynonym, Section, SectionTranslation, Site,
+		SiteSetting, SocialAccount, SocialDistribution, SocialInboxItem,
+		SocialStatsHistory, SysConfig, Tag, TagTranslation, Task, Tenant, TenantQuota,
+		User, UserCredential, UserOrgUnit, UserPosition, UserRole, Webhook,
 		WebhookDelivery []ent.Hook
 	}
 	inters struct {
@@ -15313,11 +15455,11 @@ type (
 		PageTranslation, PageVersion, Permission, PermissionApi, PermissionAuditLog,
 		PermissionGroup, PermissionMenu, PermissionPolicy, PolicyEvaluationLog,
 		Position, Post, PostCategory, PostLike, PostTag, PostTranslation, PostVersion,
-		PostWatch, QuotaPlan, Redirect, Role, RoleFieldPermission, RoleMetadata,
-		RolePermission, SearchSynonym, Section, SectionTranslation, Site, SiteSetting,
-		SocialAccount, SocialDistribution, SocialInboxItem, SocialStatsHistory,
-		SysConfig, Tag, TagTranslation, Task, Tenant, TenantQuota, User,
-		UserCredential, UserOrgUnit, UserPosition, UserRole, Webhook,
+		PostWatch, QuotaPlan, Redirect, ReviewLog, Role, RoleFieldPermission,
+		RoleMetadata, RolePermission, SearchSynonym, Section, SectionTranslation, Site,
+		SiteSetting, SocialAccount, SocialDistribution, SocialInboxItem,
+		SocialStatsHistory, SysConfig, Tag, TagTranslation, Task, Tenant, TenantQuota,
+		User, UserCredential, UserOrgUnit, UserPosition, UserRole, Webhook,
 		WebhookDelivery []ent.Interceptor
 	}
 )

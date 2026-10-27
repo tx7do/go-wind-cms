@@ -88,6 +88,7 @@ import (
 	"go-wind-cms/app/core/service/internal/data/ent/predicate"
 	"go-wind-cms/app/core/service/internal/data/ent/quotaplan"
 	"go-wind-cms/app/core/service/internal/data/ent/redirect"
+	"go-wind-cms/app/core/service/internal/data/ent/reviewlog"
 	"go-wind-cms/app/core/service/internal/data/ent/role"
 	"go-wind-cms/app/core/service/internal/data/ent/rolefieldpermission"
 	"go-wind-cms/app/core/service/internal/data/ent/rolemetadata"
@@ -208,6 +209,7 @@ const (
 	TypePostWatch                  = "PostWatch"
 	TypeQuotaPlan                  = "QuotaPlan"
 	TypeRedirect                   = "Redirect"
+	TypeReviewLog                  = "ReviewLog"
 	TypeRole                       = "Role"
 	TypeRoleFieldPermission        = "RoleFieldPermission"
 	TypeRoleMetadata               = "RoleMetadata"
@@ -115637,6 +115639,1292 @@ func (m *RedirectMutation) ClearEdge(name string) error {
 // It returns an error if the edge is not defined in the schema.
 func (m *RedirectMutation) ResetEdge(name string) error {
 	return fmt.Errorf("unknown Redirect edge %s", name)
+}
+
+// ReviewLogMutation represents an operation that mutates the ReviewLog nodes in the graph.
+type ReviewLogMutation struct {
+	config
+	op            Op
+	typ           string
+	id            *uint32
+	created_at    *time.Time
+	updated_at    *time.Time
+	deleted_at    *time.Time
+	tenant_id     *uint32
+	addtenant_id  *int32
+	created_by    *uint32
+	addcreated_by *int32
+	updated_by    *uint32
+	addupdated_by *int32
+	deleted_by    *uint32
+	adddeleted_by *int32
+	entity_type   *string
+	entity_id     *uint32
+	addentity_id  *int32
+	action        *reviewlog.Action
+	level         *uint32
+	addlevel      *int32
+	note          *string
+	clearedFields map[string]struct{}
+	done          bool
+	oldValue      func(context.Context) (*ReviewLog, error)
+	predicates    []predicate.ReviewLog
+}
+
+var _ ent.Mutation = (*ReviewLogMutation)(nil)
+
+// reviewlogOption allows management of the mutation configuration using functional options.
+type reviewlogOption func(*ReviewLogMutation)
+
+// newReviewLogMutation creates new mutation for the ReviewLog entity.
+func newReviewLogMutation(c config, op Op, opts ...reviewlogOption) *ReviewLogMutation {
+	m := &ReviewLogMutation{
+		config:        c,
+		op:            op,
+		typ:           TypeReviewLog,
+		clearedFields: make(map[string]struct{}),
+	}
+	for _, opt := range opts {
+		opt(m)
+	}
+	return m
+}
+
+// withReviewLogID sets the ID field of the mutation.
+func withReviewLogID(id uint32) reviewlogOption {
+	return func(m *ReviewLogMutation) {
+		var (
+			err   error
+			once  sync.Once
+			value *ReviewLog
+		)
+		m.oldValue = func(ctx context.Context) (*ReviewLog, error) {
+			once.Do(func() {
+				if m.done {
+					err = errors.New("querying old values post mutation is not allowed")
+				} else {
+					value, err = m.Client().ReviewLog.Get(ctx, id)
+				}
+			})
+			return value, err
+		}
+		m.id = &id
+	}
+}
+
+// withReviewLog sets the old ReviewLog of the mutation.
+func withReviewLog(node *ReviewLog) reviewlogOption {
+	return func(m *ReviewLogMutation) {
+		m.oldValue = func(context.Context) (*ReviewLog, error) {
+			return node, nil
+		}
+		m.id = &node.ID
+	}
+}
+
+// Client returns a new `ent.Client` from the mutation. If the mutation was
+// executed in a transaction (ent.Tx), a transactional client is returned.
+func (m ReviewLogMutation) Client() *Client {
+	client := &Client{config: m.config}
+	client.init()
+	return client
+}
+
+// Tx returns an `ent.Tx` for mutations that were executed in transactions;
+// it returns an error otherwise.
+func (m ReviewLogMutation) Tx() (*Tx, error) {
+	if _, ok := m.driver.(*txDriver); !ok {
+		return nil, errors.New("ent: mutation is not running in a transaction")
+	}
+	tx := &Tx{config: m.config}
+	tx.init()
+	return tx, nil
+}
+
+// SetID sets the value of the id field. Note that this
+// operation is only accepted on creation of ReviewLog entities.
+func (m *ReviewLogMutation) SetID(id uint32) {
+	m.id = &id
+}
+
+// ID returns the ID value in the mutation. Note that the ID is only available
+// if it was provided to the builder or after it was returned from the database.
+func (m *ReviewLogMutation) ID() (id uint32, exists bool) {
+	if m.id == nil {
+		return
+	}
+	return *m.id, true
+}
+
+// IDs queries the database and returns the entity ids that match the mutation's predicate.
+// That means, if the mutation is applied within a transaction with an isolation level such
+// as sql.LevelSerializable, the returned ids match the ids of the rows that will be updated
+// or updated by the mutation.
+func (m *ReviewLogMutation) IDs(ctx context.Context) ([]uint32, error) {
+	switch {
+	case m.op.Is(OpUpdateOne | OpDeleteOne):
+		id, exists := m.ID()
+		if exists {
+			return []uint32{id}, nil
+		}
+		fallthrough
+	case m.op.Is(OpUpdate | OpDelete):
+		return m.Client().ReviewLog.Query().Where(m.predicates...).IDs(ctx)
+	default:
+		return nil, fmt.Errorf("IDs is not allowed on %s operations", m.op)
+	}
+}
+
+// SetCreatedAt sets the "created_at" field.
+func (m *ReviewLogMutation) SetCreatedAt(t time.Time) {
+	m.created_at = &t
+}
+
+// CreatedAt returns the value of the "created_at" field in the mutation.
+func (m *ReviewLogMutation) CreatedAt() (r time.Time, exists bool) {
+	v := m.created_at
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldCreatedAt returns the old "created_at" field's value of the ReviewLog entity.
+// If the ReviewLog object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *ReviewLogMutation) OldCreatedAt(ctx context.Context) (v *time.Time, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldCreatedAt is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldCreatedAt requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldCreatedAt: %w", err)
+	}
+	return oldValue.CreatedAt, nil
+}
+
+// ClearCreatedAt clears the value of the "created_at" field.
+func (m *ReviewLogMutation) ClearCreatedAt() {
+	m.created_at = nil
+	m.clearedFields[reviewlog.FieldCreatedAt] = struct{}{}
+}
+
+// CreatedAtCleared returns if the "created_at" field was cleared in this mutation.
+func (m *ReviewLogMutation) CreatedAtCleared() bool {
+	_, ok := m.clearedFields[reviewlog.FieldCreatedAt]
+	return ok
+}
+
+// ResetCreatedAt resets all changes to the "created_at" field.
+func (m *ReviewLogMutation) ResetCreatedAt() {
+	m.created_at = nil
+	delete(m.clearedFields, reviewlog.FieldCreatedAt)
+}
+
+// SetUpdatedAt sets the "updated_at" field.
+func (m *ReviewLogMutation) SetUpdatedAt(t time.Time) {
+	m.updated_at = &t
+}
+
+// UpdatedAt returns the value of the "updated_at" field in the mutation.
+func (m *ReviewLogMutation) UpdatedAt() (r time.Time, exists bool) {
+	v := m.updated_at
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldUpdatedAt returns the old "updated_at" field's value of the ReviewLog entity.
+// If the ReviewLog object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *ReviewLogMutation) OldUpdatedAt(ctx context.Context) (v *time.Time, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldUpdatedAt is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldUpdatedAt requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldUpdatedAt: %w", err)
+	}
+	return oldValue.UpdatedAt, nil
+}
+
+// ClearUpdatedAt clears the value of the "updated_at" field.
+func (m *ReviewLogMutation) ClearUpdatedAt() {
+	m.updated_at = nil
+	m.clearedFields[reviewlog.FieldUpdatedAt] = struct{}{}
+}
+
+// UpdatedAtCleared returns if the "updated_at" field was cleared in this mutation.
+func (m *ReviewLogMutation) UpdatedAtCleared() bool {
+	_, ok := m.clearedFields[reviewlog.FieldUpdatedAt]
+	return ok
+}
+
+// ResetUpdatedAt resets all changes to the "updated_at" field.
+func (m *ReviewLogMutation) ResetUpdatedAt() {
+	m.updated_at = nil
+	delete(m.clearedFields, reviewlog.FieldUpdatedAt)
+}
+
+// SetDeletedAt sets the "deleted_at" field.
+func (m *ReviewLogMutation) SetDeletedAt(t time.Time) {
+	m.deleted_at = &t
+}
+
+// DeletedAt returns the value of the "deleted_at" field in the mutation.
+func (m *ReviewLogMutation) DeletedAt() (r time.Time, exists bool) {
+	v := m.deleted_at
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldDeletedAt returns the old "deleted_at" field's value of the ReviewLog entity.
+// If the ReviewLog object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *ReviewLogMutation) OldDeletedAt(ctx context.Context) (v *time.Time, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldDeletedAt is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldDeletedAt requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldDeletedAt: %w", err)
+	}
+	return oldValue.DeletedAt, nil
+}
+
+// ClearDeletedAt clears the value of the "deleted_at" field.
+func (m *ReviewLogMutation) ClearDeletedAt() {
+	m.deleted_at = nil
+	m.clearedFields[reviewlog.FieldDeletedAt] = struct{}{}
+}
+
+// DeletedAtCleared returns if the "deleted_at" field was cleared in this mutation.
+func (m *ReviewLogMutation) DeletedAtCleared() bool {
+	_, ok := m.clearedFields[reviewlog.FieldDeletedAt]
+	return ok
+}
+
+// ResetDeletedAt resets all changes to the "deleted_at" field.
+func (m *ReviewLogMutation) ResetDeletedAt() {
+	m.deleted_at = nil
+	delete(m.clearedFields, reviewlog.FieldDeletedAt)
+}
+
+// SetTenantID sets the "tenant_id" field.
+func (m *ReviewLogMutation) SetTenantID(u uint32) {
+	m.tenant_id = &u
+	m.addtenant_id = nil
+}
+
+// TenantID returns the value of the "tenant_id" field in the mutation.
+func (m *ReviewLogMutation) TenantID() (r uint32, exists bool) {
+	v := m.tenant_id
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldTenantID returns the old "tenant_id" field's value of the ReviewLog entity.
+// If the ReviewLog object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *ReviewLogMutation) OldTenantID(ctx context.Context) (v *uint32, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldTenantID is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldTenantID requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldTenantID: %w", err)
+	}
+	return oldValue.TenantID, nil
+}
+
+// AddTenantID adds u to the "tenant_id" field.
+func (m *ReviewLogMutation) AddTenantID(u int32) {
+	if m.addtenant_id != nil {
+		*m.addtenant_id += u
+	} else {
+		m.addtenant_id = &u
+	}
+}
+
+// AddedTenantID returns the value that was added to the "tenant_id" field in this mutation.
+func (m *ReviewLogMutation) AddedTenantID() (r int32, exists bool) {
+	v := m.addtenant_id
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// ClearTenantID clears the value of the "tenant_id" field.
+func (m *ReviewLogMutation) ClearTenantID() {
+	m.tenant_id = nil
+	m.addtenant_id = nil
+	m.clearedFields[reviewlog.FieldTenantID] = struct{}{}
+}
+
+// TenantIDCleared returns if the "tenant_id" field was cleared in this mutation.
+func (m *ReviewLogMutation) TenantIDCleared() bool {
+	_, ok := m.clearedFields[reviewlog.FieldTenantID]
+	return ok
+}
+
+// ResetTenantID resets all changes to the "tenant_id" field.
+func (m *ReviewLogMutation) ResetTenantID() {
+	m.tenant_id = nil
+	m.addtenant_id = nil
+	delete(m.clearedFields, reviewlog.FieldTenantID)
+}
+
+// SetCreatedBy sets the "created_by" field.
+func (m *ReviewLogMutation) SetCreatedBy(u uint32) {
+	m.created_by = &u
+	m.addcreated_by = nil
+}
+
+// CreatedBy returns the value of the "created_by" field in the mutation.
+func (m *ReviewLogMutation) CreatedBy() (r uint32, exists bool) {
+	v := m.created_by
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldCreatedBy returns the old "created_by" field's value of the ReviewLog entity.
+// If the ReviewLog object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *ReviewLogMutation) OldCreatedBy(ctx context.Context) (v *uint32, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldCreatedBy is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldCreatedBy requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldCreatedBy: %w", err)
+	}
+	return oldValue.CreatedBy, nil
+}
+
+// AddCreatedBy adds u to the "created_by" field.
+func (m *ReviewLogMutation) AddCreatedBy(u int32) {
+	if m.addcreated_by != nil {
+		*m.addcreated_by += u
+	} else {
+		m.addcreated_by = &u
+	}
+}
+
+// AddedCreatedBy returns the value that was added to the "created_by" field in this mutation.
+func (m *ReviewLogMutation) AddedCreatedBy() (r int32, exists bool) {
+	v := m.addcreated_by
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// ClearCreatedBy clears the value of the "created_by" field.
+func (m *ReviewLogMutation) ClearCreatedBy() {
+	m.created_by = nil
+	m.addcreated_by = nil
+	m.clearedFields[reviewlog.FieldCreatedBy] = struct{}{}
+}
+
+// CreatedByCleared returns if the "created_by" field was cleared in this mutation.
+func (m *ReviewLogMutation) CreatedByCleared() bool {
+	_, ok := m.clearedFields[reviewlog.FieldCreatedBy]
+	return ok
+}
+
+// ResetCreatedBy resets all changes to the "created_by" field.
+func (m *ReviewLogMutation) ResetCreatedBy() {
+	m.created_by = nil
+	m.addcreated_by = nil
+	delete(m.clearedFields, reviewlog.FieldCreatedBy)
+}
+
+// SetUpdatedBy sets the "updated_by" field.
+func (m *ReviewLogMutation) SetUpdatedBy(u uint32) {
+	m.updated_by = &u
+	m.addupdated_by = nil
+}
+
+// UpdatedBy returns the value of the "updated_by" field in the mutation.
+func (m *ReviewLogMutation) UpdatedBy() (r uint32, exists bool) {
+	v := m.updated_by
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldUpdatedBy returns the old "updated_by" field's value of the ReviewLog entity.
+// If the ReviewLog object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *ReviewLogMutation) OldUpdatedBy(ctx context.Context) (v *uint32, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldUpdatedBy is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldUpdatedBy requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldUpdatedBy: %w", err)
+	}
+	return oldValue.UpdatedBy, nil
+}
+
+// AddUpdatedBy adds u to the "updated_by" field.
+func (m *ReviewLogMutation) AddUpdatedBy(u int32) {
+	if m.addupdated_by != nil {
+		*m.addupdated_by += u
+	} else {
+		m.addupdated_by = &u
+	}
+}
+
+// AddedUpdatedBy returns the value that was added to the "updated_by" field in this mutation.
+func (m *ReviewLogMutation) AddedUpdatedBy() (r int32, exists bool) {
+	v := m.addupdated_by
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// ClearUpdatedBy clears the value of the "updated_by" field.
+func (m *ReviewLogMutation) ClearUpdatedBy() {
+	m.updated_by = nil
+	m.addupdated_by = nil
+	m.clearedFields[reviewlog.FieldUpdatedBy] = struct{}{}
+}
+
+// UpdatedByCleared returns if the "updated_by" field was cleared in this mutation.
+func (m *ReviewLogMutation) UpdatedByCleared() bool {
+	_, ok := m.clearedFields[reviewlog.FieldUpdatedBy]
+	return ok
+}
+
+// ResetUpdatedBy resets all changes to the "updated_by" field.
+func (m *ReviewLogMutation) ResetUpdatedBy() {
+	m.updated_by = nil
+	m.addupdated_by = nil
+	delete(m.clearedFields, reviewlog.FieldUpdatedBy)
+}
+
+// SetDeletedBy sets the "deleted_by" field.
+func (m *ReviewLogMutation) SetDeletedBy(u uint32) {
+	m.deleted_by = &u
+	m.adddeleted_by = nil
+}
+
+// DeletedBy returns the value of the "deleted_by" field in the mutation.
+func (m *ReviewLogMutation) DeletedBy() (r uint32, exists bool) {
+	v := m.deleted_by
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldDeletedBy returns the old "deleted_by" field's value of the ReviewLog entity.
+// If the ReviewLog object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *ReviewLogMutation) OldDeletedBy(ctx context.Context) (v *uint32, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldDeletedBy is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldDeletedBy requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldDeletedBy: %w", err)
+	}
+	return oldValue.DeletedBy, nil
+}
+
+// AddDeletedBy adds u to the "deleted_by" field.
+func (m *ReviewLogMutation) AddDeletedBy(u int32) {
+	if m.adddeleted_by != nil {
+		*m.adddeleted_by += u
+	} else {
+		m.adddeleted_by = &u
+	}
+}
+
+// AddedDeletedBy returns the value that was added to the "deleted_by" field in this mutation.
+func (m *ReviewLogMutation) AddedDeletedBy() (r int32, exists bool) {
+	v := m.adddeleted_by
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// ClearDeletedBy clears the value of the "deleted_by" field.
+func (m *ReviewLogMutation) ClearDeletedBy() {
+	m.deleted_by = nil
+	m.adddeleted_by = nil
+	m.clearedFields[reviewlog.FieldDeletedBy] = struct{}{}
+}
+
+// DeletedByCleared returns if the "deleted_by" field was cleared in this mutation.
+func (m *ReviewLogMutation) DeletedByCleared() bool {
+	_, ok := m.clearedFields[reviewlog.FieldDeletedBy]
+	return ok
+}
+
+// ResetDeletedBy resets all changes to the "deleted_by" field.
+func (m *ReviewLogMutation) ResetDeletedBy() {
+	m.deleted_by = nil
+	m.adddeleted_by = nil
+	delete(m.clearedFields, reviewlog.FieldDeletedBy)
+}
+
+// SetEntityType sets the "entity_type" field.
+func (m *ReviewLogMutation) SetEntityType(s string) {
+	m.entity_type = &s
+}
+
+// EntityType returns the value of the "entity_type" field in the mutation.
+func (m *ReviewLogMutation) EntityType() (r string, exists bool) {
+	v := m.entity_type
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldEntityType returns the old "entity_type" field's value of the ReviewLog entity.
+// If the ReviewLog object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *ReviewLogMutation) OldEntityType(ctx context.Context) (v string, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldEntityType is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldEntityType requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldEntityType: %w", err)
+	}
+	return oldValue.EntityType, nil
+}
+
+// ResetEntityType resets all changes to the "entity_type" field.
+func (m *ReviewLogMutation) ResetEntityType() {
+	m.entity_type = nil
+}
+
+// SetEntityID sets the "entity_id" field.
+func (m *ReviewLogMutation) SetEntityID(u uint32) {
+	m.entity_id = &u
+	m.addentity_id = nil
+}
+
+// EntityID returns the value of the "entity_id" field in the mutation.
+func (m *ReviewLogMutation) EntityID() (r uint32, exists bool) {
+	v := m.entity_id
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldEntityID returns the old "entity_id" field's value of the ReviewLog entity.
+// If the ReviewLog object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *ReviewLogMutation) OldEntityID(ctx context.Context) (v uint32, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldEntityID is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldEntityID requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldEntityID: %w", err)
+	}
+	return oldValue.EntityID, nil
+}
+
+// AddEntityID adds u to the "entity_id" field.
+func (m *ReviewLogMutation) AddEntityID(u int32) {
+	if m.addentity_id != nil {
+		*m.addentity_id += u
+	} else {
+		m.addentity_id = &u
+	}
+}
+
+// AddedEntityID returns the value that was added to the "entity_id" field in this mutation.
+func (m *ReviewLogMutation) AddedEntityID() (r int32, exists bool) {
+	v := m.addentity_id
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// ResetEntityID resets all changes to the "entity_id" field.
+func (m *ReviewLogMutation) ResetEntityID() {
+	m.entity_id = nil
+	m.addentity_id = nil
+}
+
+// SetAction sets the "action" field.
+func (m *ReviewLogMutation) SetAction(r reviewlog.Action) {
+	m.action = &r
+}
+
+// Action returns the value of the "action" field in the mutation.
+func (m *ReviewLogMutation) Action() (r reviewlog.Action, exists bool) {
+	v := m.action
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldAction returns the old "action" field's value of the ReviewLog entity.
+// If the ReviewLog object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *ReviewLogMutation) OldAction(ctx context.Context) (v reviewlog.Action, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldAction is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldAction requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldAction: %w", err)
+	}
+	return oldValue.Action, nil
+}
+
+// ResetAction resets all changes to the "action" field.
+func (m *ReviewLogMutation) ResetAction() {
+	m.action = nil
+}
+
+// SetLevel sets the "level" field.
+func (m *ReviewLogMutation) SetLevel(u uint32) {
+	m.level = &u
+	m.addlevel = nil
+}
+
+// Level returns the value of the "level" field in the mutation.
+func (m *ReviewLogMutation) Level() (r uint32, exists bool) {
+	v := m.level
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldLevel returns the old "level" field's value of the ReviewLog entity.
+// If the ReviewLog object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *ReviewLogMutation) OldLevel(ctx context.Context) (v uint32, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldLevel is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldLevel requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldLevel: %w", err)
+	}
+	return oldValue.Level, nil
+}
+
+// AddLevel adds u to the "level" field.
+func (m *ReviewLogMutation) AddLevel(u int32) {
+	if m.addlevel != nil {
+		*m.addlevel += u
+	} else {
+		m.addlevel = &u
+	}
+}
+
+// AddedLevel returns the value that was added to the "level" field in this mutation.
+func (m *ReviewLogMutation) AddedLevel() (r int32, exists bool) {
+	v := m.addlevel
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// ResetLevel resets all changes to the "level" field.
+func (m *ReviewLogMutation) ResetLevel() {
+	m.level = nil
+	m.addlevel = nil
+}
+
+// SetNote sets the "note" field.
+func (m *ReviewLogMutation) SetNote(s string) {
+	m.note = &s
+}
+
+// Note returns the value of the "note" field in the mutation.
+func (m *ReviewLogMutation) Note() (r string, exists bool) {
+	v := m.note
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldNote returns the old "note" field's value of the ReviewLog entity.
+// If the ReviewLog object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *ReviewLogMutation) OldNote(ctx context.Context) (v *string, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldNote is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldNote requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldNote: %w", err)
+	}
+	return oldValue.Note, nil
+}
+
+// ClearNote clears the value of the "note" field.
+func (m *ReviewLogMutation) ClearNote() {
+	m.note = nil
+	m.clearedFields[reviewlog.FieldNote] = struct{}{}
+}
+
+// NoteCleared returns if the "note" field was cleared in this mutation.
+func (m *ReviewLogMutation) NoteCleared() bool {
+	_, ok := m.clearedFields[reviewlog.FieldNote]
+	return ok
+}
+
+// ResetNote resets all changes to the "note" field.
+func (m *ReviewLogMutation) ResetNote() {
+	m.note = nil
+	delete(m.clearedFields, reviewlog.FieldNote)
+}
+
+// Where appends a list predicates to the ReviewLogMutation builder.
+func (m *ReviewLogMutation) Where(ps ...predicate.ReviewLog) {
+	m.predicates = append(m.predicates, ps...)
+}
+
+// WhereP appends storage-level predicates to the ReviewLogMutation builder. Using this method,
+// users can use type-assertion to append predicates that do not depend on any generated package.
+func (m *ReviewLogMutation) WhereP(ps ...func(*sql.Selector)) {
+	p := make([]predicate.ReviewLog, len(ps))
+	for i := range ps {
+		p[i] = ps[i]
+	}
+	m.Where(p...)
+}
+
+// Op returns the operation name.
+func (m *ReviewLogMutation) Op() Op {
+	return m.op
+}
+
+// SetOp allows setting the mutation operation.
+func (m *ReviewLogMutation) SetOp(op Op) {
+	m.op = op
+}
+
+// Type returns the node type of this mutation (ReviewLog).
+func (m *ReviewLogMutation) Type() string {
+	return m.typ
+}
+
+// Fields returns all fields that were changed during this mutation. Note that in
+// order to get all numeric fields that were incremented/decremented, call
+// AddedFields().
+func (m *ReviewLogMutation) Fields() []string {
+	fields := make([]string, 0, 12)
+	if m.created_at != nil {
+		fields = append(fields, reviewlog.FieldCreatedAt)
+	}
+	if m.updated_at != nil {
+		fields = append(fields, reviewlog.FieldUpdatedAt)
+	}
+	if m.deleted_at != nil {
+		fields = append(fields, reviewlog.FieldDeletedAt)
+	}
+	if m.tenant_id != nil {
+		fields = append(fields, reviewlog.FieldTenantID)
+	}
+	if m.created_by != nil {
+		fields = append(fields, reviewlog.FieldCreatedBy)
+	}
+	if m.updated_by != nil {
+		fields = append(fields, reviewlog.FieldUpdatedBy)
+	}
+	if m.deleted_by != nil {
+		fields = append(fields, reviewlog.FieldDeletedBy)
+	}
+	if m.entity_type != nil {
+		fields = append(fields, reviewlog.FieldEntityType)
+	}
+	if m.entity_id != nil {
+		fields = append(fields, reviewlog.FieldEntityID)
+	}
+	if m.action != nil {
+		fields = append(fields, reviewlog.FieldAction)
+	}
+	if m.level != nil {
+		fields = append(fields, reviewlog.FieldLevel)
+	}
+	if m.note != nil {
+		fields = append(fields, reviewlog.FieldNote)
+	}
+	return fields
+}
+
+// Field returns the value of a field with the given name. The second boolean
+// return value indicates that this field was not set, or was not defined in the
+// schema.
+func (m *ReviewLogMutation) Field(name string) (ent.Value, bool) {
+	switch name {
+	case reviewlog.FieldCreatedAt:
+		return m.CreatedAt()
+	case reviewlog.FieldUpdatedAt:
+		return m.UpdatedAt()
+	case reviewlog.FieldDeletedAt:
+		return m.DeletedAt()
+	case reviewlog.FieldTenantID:
+		return m.TenantID()
+	case reviewlog.FieldCreatedBy:
+		return m.CreatedBy()
+	case reviewlog.FieldUpdatedBy:
+		return m.UpdatedBy()
+	case reviewlog.FieldDeletedBy:
+		return m.DeletedBy()
+	case reviewlog.FieldEntityType:
+		return m.EntityType()
+	case reviewlog.FieldEntityID:
+		return m.EntityID()
+	case reviewlog.FieldAction:
+		return m.Action()
+	case reviewlog.FieldLevel:
+		return m.Level()
+	case reviewlog.FieldNote:
+		return m.Note()
+	}
+	return nil, false
+}
+
+// OldField returns the old value of the field from the database. An error is
+// returned if the mutation operation is not UpdateOne, or the query to the
+// database failed.
+func (m *ReviewLogMutation) OldField(ctx context.Context, name string) (ent.Value, error) {
+	switch name {
+	case reviewlog.FieldCreatedAt:
+		return m.OldCreatedAt(ctx)
+	case reviewlog.FieldUpdatedAt:
+		return m.OldUpdatedAt(ctx)
+	case reviewlog.FieldDeletedAt:
+		return m.OldDeletedAt(ctx)
+	case reviewlog.FieldTenantID:
+		return m.OldTenantID(ctx)
+	case reviewlog.FieldCreatedBy:
+		return m.OldCreatedBy(ctx)
+	case reviewlog.FieldUpdatedBy:
+		return m.OldUpdatedBy(ctx)
+	case reviewlog.FieldDeletedBy:
+		return m.OldDeletedBy(ctx)
+	case reviewlog.FieldEntityType:
+		return m.OldEntityType(ctx)
+	case reviewlog.FieldEntityID:
+		return m.OldEntityID(ctx)
+	case reviewlog.FieldAction:
+		return m.OldAction(ctx)
+	case reviewlog.FieldLevel:
+		return m.OldLevel(ctx)
+	case reviewlog.FieldNote:
+		return m.OldNote(ctx)
+	}
+	return nil, fmt.Errorf("unknown ReviewLog field %s", name)
+}
+
+// SetField sets the value of a field with the given name. It returns an error if
+// the field is not defined in the schema, or if the type mismatched the field
+// type.
+func (m *ReviewLogMutation) SetField(name string, value ent.Value) error {
+	switch name {
+	case reviewlog.FieldCreatedAt:
+		v, ok := value.(time.Time)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetCreatedAt(v)
+		return nil
+	case reviewlog.FieldUpdatedAt:
+		v, ok := value.(time.Time)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetUpdatedAt(v)
+		return nil
+	case reviewlog.FieldDeletedAt:
+		v, ok := value.(time.Time)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetDeletedAt(v)
+		return nil
+	case reviewlog.FieldTenantID:
+		v, ok := value.(uint32)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetTenantID(v)
+		return nil
+	case reviewlog.FieldCreatedBy:
+		v, ok := value.(uint32)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetCreatedBy(v)
+		return nil
+	case reviewlog.FieldUpdatedBy:
+		v, ok := value.(uint32)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetUpdatedBy(v)
+		return nil
+	case reviewlog.FieldDeletedBy:
+		v, ok := value.(uint32)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetDeletedBy(v)
+		return nil
+	case reviewlog.FieldEntityType:
+		v, ok := value.(string)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetEntityType(v)
+		return nil
+	case reviewlog.FieldEntityID:
+		v, ok := value.(uint32)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetEntityID(v)
+		return nil
+	case reviewlog.FieldAction:
+		v, ok := value.(reviewlog.Action)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetAction(v)
+		return nil
+	case reviewlog.FieldLevel:
+		v, ok := value.(uint32)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetLevel(v)
+		return nil
+	case reviewlog.FieldNote:
+		v, ok := value.(string)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetNote(v)
+		return nil
+	}
+	return fmt.Errorf("unknown ReviewLog field %s", name)
+}
+
+// AddedFields returns all numeric fields that were incremented/decremented during
+// this mutation.
+func (m *ReviewLogMutation) AddedFields() []string {
+	var fields []string
+	if m.addtenant_id != nil {
+		fields = append(fields, reviewlog.FieldTenantID)
+	}
+	if m.addcreated_by != nil {
+		fields = append(fields, reviewlog.FieldCreatedBy)
+	}
+	if m.addupdated_by != nil {
+		fields = append(fields, reviewlog.FieldUpdatedBy)
+	}
+	if m.adddeleted_by != nil {
+		fields = append(fields, reviewlog.FieldDeletedBy)
+	}
+	if m.addentity_id != nil {
+		fields = append(fields, reviewlog.FieldEntityID)
+	}
+	if m.addlevel != nil {
+		fields = append(fields, reviewlog.FieldLevel)
+	}
+	return fields
+}
+
+// AddedField returns the numeric value that was incremented/decremented on a field
+// with the given name. The second boolean return value indicates that this field
+// was not set, or was not defined in the schema.
+func (m *ReviewLogMutation) AddedField(name string) (ent.Value, bool) {
+	switch name {
+	case reviewlog.FieldTenantID:
+		return m.AddedTenantID()
+	case reviewlog.FieldCreatedBy:
+		return m.AddedCreatedBy()
+	case reviewlog.FieldUpdatedBy:
+		return m.AddedUpdatedBy()
+	case reviewlog.FieldDeletedBy:
+		return m.AddedDeletedBy()
+	case reviewlog.FieldEntityID:
+		return m.AddedEntityID()
+	case reviewlog.FieldLevel:
+		return m.AddedLevel()
+	}
+	return nil, false
+}
+
+// AddField adds the value to the field with the given name. It returns an error if
+// the field is not defined in the schema, or if the type mismatched the field
+// type.
+func (m *ReviewLogMutation) AddField(name string, value ent.Value) error {
+	switch name {
+	case reviewlog.FieldTenantID:
+		v, ok := value.(int32)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.AddTenantID(v)
+		return nil
+	case reviewlog.FieldCreatedBy:
+		v, ok := value.(int32)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.AddCreatedBy(v)
+		return nil
+	case reviewlog.FieldUpdatedBy:
+		v, ok := value.(int32)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.AddUpdatedBy(v)
+		return nil
+	case reviewlog.FieldDeletedBy:
+		v, ok := value.(int32)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.AddDeletedBy(v)
+		return nil
+	case reviewlog.FieldEntityID:
+		v, ok := value.(int32)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.AddEntityID(v)
+		return nil
+	case reviewlog.FieldLevel:
+		v, ok := value.(int32)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.AddLevel(v)
+		return nil
+	}
+	return fmt.Errorf("unknown ReviewLog numeric field %s", name)
+}
+
+// ClearedFields returns all nullable fields that were cleared during this
+// mutation.
+func (m *ReviewLogMutation) ClearedFields() []string {
+	var fields []string
+	if m.FieldCleared(reviewlog.FieldCreatedAt) {
+		fields = append(fields, reviewlog.FieldCreatedAt)
+	}
+	if m.FieldCleared(reviewlog.FieldUpdatedAt) {
+		fields = append(fields, reviewlog.FieldUpdatedAt)
+	}
+	if m.FieldCleared(reviewlog.FieldDeletedAt) {
+		fields = append(fields, reviewlog.FieldDeletedAt)
+	}
+	if m.FieldCleared(reviewlog.FieldTenantID) {
+		fields = append(fields, reviewlog.FieldTenantID)
+	}
+	if m.FieldCleared(reviewlog.FieldCreatedBy) {
+		fields = append(fields, reviewlog.FieldCreatedBy)
+	}
+	if m.FieldCleared(reviewlog.FieldUpdatedBy) {
+		fields = append(fields, reviewlog.FieldUpdatedBy)
+	}
+	if m.FieldCleared(reviewlog.FieldDeletedBy) {
+		fields = append(fields, reviewlog.FieldDeletedBy)
+	}
+	if m.FieldCleared(reviewlog.FieldNote) {
+		fields = append(fields, reviewlog.FieldNote)
+	}
+	return fields
+}
+
+// FieldCleared returns a boolean indicating if a field with the given name was
+// cleared in this mutation.
+func (m *ReviewLogMutation) FieldCleared(name string) bool {
+	_, ok := m.clearedFields[name]
+	return ok
+}
+
+// ClearField clears the value of the field with the given name. It returns an
+// error if the field is not defined in the schema.
+func (m *ReviewLogMutation) ClearField(name string) error {
+	switch name {
+	case reviewlog.FieldCreatedAt:
+		m.ClearCreatedAt()
+		return nil
+	case reviewlog.FieldUpdatedAt:
+		m.ClearUpdatedAt()
+		return nil
+	case reviewlog.FieldDeletedAt:
+		m.ClearDeletedAt()
+		return nil
+	case reviewlog.FieldTenantID:
+		m.ClearTenantID()
+		return nil
+	case reviewlog.FieldCreatedBy:
+		m.ClearCreatedBy()
+		return nil
+	case reviewlog.FieldUpdatedBy:
+		m.ClearUpdatedBy()
+		return nil
+	case reviewlog.FieldDeletedBy:
+		m.ClearDeletedBy()
+		return nil
+	case reviewlog.FieldNote:
+		m.ClearNote()
+		return nil
+	}
+	return fmt.Errorf("unknown ReviewLog nullable field %s", name)
+}
+
+// ResetField resets all changes in the mutation for the field with the given name.
+// It returns an error if the field is not defined in the schema.
+func (m *ReviewLogMutation) ResetField(name string) error {
+	switch name {
+	case reviewlog.FieldCreatedAt:
+		m.ResetCreatedAt()
+		return nil
+	case reviewlog.FieldUpdatedAt:
+		m.ResetUpdatedAt()
+		return nil
+	case reviewlog.FieldDeletedAt:
+		m.ResetDeletedAt()
+		return nil
+	case reviewlog.FieldTenantID:
+		m.ResetTenantID()
+		return nil
+	case reviewlog.FieldCreatedBy:
+		m.ResetCreatedBy()
+		return nil
+	case reviewlog.FieldUpdatedBy:
+		m.ResetUpdatedBy()
+		return nil
+	case reviewlog.FieldDeletedBy:
+		m.ResetDeletedBy()
+		return nil
+	case reviewlog.FieldEntityType:
+		m.ResetEntityType()
+		return nil
+	case reviewlog.FieldEntityID:
+		m.ResetEntityID()
+		return nil
+	case reviewlog.FieldAction:
+		m.ResetAction()
+		return nil
+	case reviewlog.FieldLevel:
+		m.ResetLevel()
+		return nil
+	case reviewlog.FieldNote:
+		m.ResetNote()
+		return nil
+	}
+	return fmt.Errorf("unknown ReviewLog field %s", name)
+}
+
+// AddedEdges returns all edge names that were set/added in this mutation.
+func (m *ReviewLogMutation) AddedEdges() []string {
+	edges := make([]string, 0, 0)
+	return edges
+}
+
+// AddedIDs returns all IDs (to other nodes) that were added for the given edge
+// name in this mutation.
+func (m *ReviewLogMutation) AddedIDs(name string) []ent.Value {
+	return nil
+}
+
+// RemovedEdges returns all edge names that were removed in this mutation.
+func (m *ReviewLogMutation) RemovedEdges() []string {
+	edges := make([]string, 0, 0)
+	return edges
+}
+
+// RemovedIDs returns all IDs (to other nodes) that were removed for the edge with
+// the given name in this mutation.
+func (m *ReviewLogMutation) RemovedIDs(name string) []ent.Value {
+	return nil
+}
+
+// ClearedEdges returns all edge names that were cleared in this mutation.
+func (m *ReviewLogMutation) ClearedEdges() []string {
+	edges := make([]string, 0, 0)
+	return edges
+}
+
+// EdgeCleared returns a boolean which indicates if the edge with the given name
+// was cleared in this mutation.
+func (m *ReviewLogMutation) EdgeCleared(name string) bool {
+	return false
+}
+
+// ClearEdge clears the value of the edge with the given name. It returns an error
+// if that edge is not defined in the schema.
+func (m *ReviewLogMutation) ClearEdge(name string) error {
+	return fmt.Errorf("unknown ReviewLog unique edge %s", name)
+}
+
+// ResetEdge resets all changes to the edge with the given name in this mutation.
+// It returns an error if the edge is not defined in the schema.
+func (m *ReviewLogMutation) ResetEdge(name string) error {
+	return fmt.Errorf("unknown ReviewLog edge %s", name)
 }
 
 // RoleMutation represents an operation that mutates the Role nodes in the graph.

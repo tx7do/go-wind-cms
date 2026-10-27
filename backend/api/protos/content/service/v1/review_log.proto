@@ -1,0 +1,69 @@
+syntax = "proto3";
+
+package content.service.v1;
+
+import "gnostic/openapi/v3/annotations.proto";
+
+import "google/protobuf/empty.proto";
+import "google/protobuf/timestamp.proto";
+
+import "pagination/v1/pagination.proto";
+
+// 发布审批留痕服务：submit/approve/reject 全程记录（多级审批的推进依据与历史追溯）。
+service ReviewLogService {
+  // 按实体查询审批记录（时间正序）
+  rpc List (ListReviewLogsRequest) returns (ListReviewLogsResponse) {}
+
+  // 统计计数
+  rpc Count (CountReviewLogsRequest) returns (CountReviewLogsResponse) {}
+}
+
+// 审批留痕条目
+message ReviewLog {
+  optional uint32 id = 1 [json_name = "id"];
+
+  // 实体类型（post/page）
+  string entity_type = 2 [json_name = "entityType"];
+
+  // 实体 ID
+  uint32 entity_id = 3 [json_name = "entityId"];
+
+  // 动作
+  string action = 4 [json_name = "action"]; // SUBMIT / APPROVE / REJECT
+
+  // 审批级别（submit=0；第 N 次 approve=N）
+  uint32 level = 5 [json_name = "level"];
+
+  // 意见（驳回理由/批准备注）
+  optional string note = 6 [json_name = "note"];
+
+  // 操作人 ID
+  optional uint32 operator_id = 7 [json_name = "operatorId"];
+
+  optional google.protobuf.Timestamp created_at = 20 [json_name = "createdAt"];
+}
+
+// 查询审批记录 - 请求
+message ListReviewLogsRequest {
+  // 实体类型（post/page）
+  string entity_type = 1 [json_name = "entityType"];
+
+  // 实体 ID
+  uint32 entity_id = 2 [json_name = "entityId"];
+}
+
+// 查询审批记录 - 回应
+message ListReviewLogsResponse {
+  repeated ReviewLog items = 1;
+}
+
+// 统计计数 - 请求
+message CountReviewLogsRequest {
+  string entity_type = 1 [json_name = "entityType"];
+  uint32 entity_id = 2 [json_name = "entityId"];
+}
+
+// 统计计数 - 回应
+message CountReviewLogsResponse {
+  uint64 count = 1;
+}

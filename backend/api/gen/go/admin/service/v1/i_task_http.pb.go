@@ -64,7 +64,7 @@ type TaskServiceHTTPServer interface {
 
 func RegisterTaskServiceHTTPServer(s *http.Server, srv TaskServiceHTTPServer) {
 	r := s.Route("/")
-	r.GET("/admin/v1/tasks", _TaskService_List47_HTTP_Handler(srv))
+	r.GET("/admin/v1/tasks", _TaskService_List48_HTTP_Handler(srv))
 	r.GET("/admin/v1/tasks/type-name/{type_name}", _TaskService_Get47_HTTP_Handler(srv))
 	r.GET("/admin/v1/tasks/{id}", _TaskService_Get48_HTTP_Handler(srv))
 	r.POST("/admin/v1/tasks", _TaskService_Create37_HTTP_Handler(srv))
@@ -79,7 +79,7 @@ func RegisterTaskServiceHTTPServer(s *http.Server, srv TaskServiceHTTPServer) {
 	r.POST("/admin/v1/tasks:inspect", _TaskService_InspectSystemTasks0_HTTP_Handler(srv))
 }
 
-func _TaskService_List47_HTTP_Handler(srv TaskServiceHTTPServer) func(ctx http.Context) error {
+func _TaskService_List48_HTTP_Handler(srv TaskServiceHTTPServer) func(ctx http.Context) error {
 	return func(ctx http.Context) error {
 		var in v1.PagingRequest
 		if err := ctx.BindQuery(&in); err != nil {
