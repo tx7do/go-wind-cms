@@ -20,6 +20,15 @@ export const contentRoutes: AppRouteObject[] = [
     },
     children: [
       {
+        name: 'calendar',
+        path: 'calendar', // 相对路径，最终为 /content/calendar
+        element: createLazyRoute(() => import('@/pages/app/content/calendar')),
+        meta: {
+          title: 'routes:calendar',
+          icon: 'lucide:calendar-days',
+        },
+      },
+      {
         name: 'content-categories',
         path: 'categories',
         element: createLazyRoute(() => import('@/pages/app/content/category')),
