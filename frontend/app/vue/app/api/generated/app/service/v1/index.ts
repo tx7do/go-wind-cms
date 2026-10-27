@@ -2210,6 +2210,10 @@ export interface PostService {
   SearchPosts(
     request: contentservicev1_SearchPostsRequest,
   ): Promise<contentservicev1_SearchPostsResponse>;
+  // 搜索建议词（标题前缀联想；免鉴权）
+  SearchPostsSuggest(
+    request: contentservicev1_SearchPostsSuggestRequest,
+  ): Promise<contentservicev1_SearchPostsSuggestResponse>;
   // 获取帖子数据
   Get(
     request: contentservicev1_GetPostRequest,
@@ -2376,6 +2380,34 @@ export function createPostServiceClient(
         service: 'PostService',
         method: 'SearchPosts',
       }) as Promise<contentservicev1_SearchPostsResponse>;
+    },
+    SearchPostsSuggest(request) {
+      const path = `/app/v1/posts/search/suggest`;
+      const body = null;
+      const queryParams: string[] = [];
+      if (request.query) {
+        queryParams.push(
+          `query=${encodeURIComponent(request.query.toString())}`,
+        );
+      }
+      if (request.language) {
+        queryParams.push(
+          `language=${encodeURIComponent(request.language.toString())}`,
+        );
+      }
+      if (request.pageSize) {
+        queryParams.push(
+          `pageSize=${encodeURIComponent(request.pageSize.toString())}`,
+        );
+      }
+      let uri = path;
+      if (queryParams.length > 0) {
+        uri += `?${queryParams.join('&')}`;
+      }
+      return transport.unary(uri, 'GET', body, {
+        service: 'PostService',
+        method: 'SearchPostsSuggest',
+      }) as Promise<contentservicev1_SearchPostsSuggestResponse>;
     },
     Get(request) {
       if (request.id === undefined || request.id === null) {
@@ -2656,12 +2688,32 @@ export type contentservicev1_SearchPostsResponse = {
 
 // 搜索命中条目（最小字段集）
 export type contentservicev1_SearchPostHit = {
+  // 高亮片段（含 <mark></mark> 标记，来自 ES highlight；命中字段顺序排列）
+  highlightFragments: string[] | undefined;
   // 语言代码
   language: string | undefined;
   // 帖子 ID（用于后续 GetPost 详情查询）
   postId: number | undefined;
+  // 摘要（来自翻译，搜索结果卡片展示用）
+  summary: string | undefined;
   // 标题（来自翻译，用于搜索结果展示）
   title: string | undefined;
+};
+
+// 搜索建议词 - 请求
+export type contentservicev1_SearchPostsSuggestRequest = {
+  // 语言代码（缺省 zh-CN）
+  language: string | undefined;
+  // 返回条数（缺省 8，至多 20）
+  pageSize: number | undefined;
+  // 前缀关键词（至少 1 字符）
+  query: string | undefined;
+};
+
+// 搜索建议词 - 回应
+export type contentservicev1_SearchPostsSuggestResponse = {
+  // 建议标题列表（去重）
+  titles: string[] | undefined;
 };
 
 // 请求 - 帖子数据

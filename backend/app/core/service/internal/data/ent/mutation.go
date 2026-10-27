@@ -93,6 +93,7 @@ import (
 	"go-wind-cms/app/core/service/internal/data/ent/rolemetadata"
 	"go-wind-cms/app/core/service/internal/data/ent/rolepermission"
 	"go-wind-cms/app/core/service/internal/data/ent/schema"
+	"go-wind-cms/app/core/service/internal/data/ent/searchsynonym"
 	"go-wind-cms/app/core/service/internal/data/ent/section"
 	"go-wind-cms/app/core/service/internal/data/ent/sectiontranslation"
 	"go-wind-cms/app/core/service/internal/data/ent/site"
@@ -211,6 +212,7 @@ const (
 	TypeRoleFieldPermission        = "RoleFieldPermission"
 	TypeRoleMetadata               = "RoleMetadata"
 	TypeRolePermission             = "RolePermission"
+	TypeSearchSynonym              = "SearchSynonym"
 	TypeSection                    = "Section"
 	TypeSectionTranslation         = "SectionTranslation"
 	TypeSite                       = "Site"
@@ -121010,6 +121012,797 @@ func (m *RolePermissionMutation) ClearEdge(name string) error {
 // It returns an error if the edge is not defined in the schema.
 func (m *RolePermissionMutation) ResetEdge(name string) error {
 	return fmt.Errorf("unknown RolePermission edge %s", name)
+}
+
+// SearchSynonymMutation represents an operation that mutates the SearchSynonym nodes in the graph.
+type SearchSynonymMutation struct {
+	config
+	op            Op
+	typ           string
+	id            *uint32
+	created_at    *time.Time
+	updated_at    *time.Time
+	deleted_at    *time.Time
+	tenant_id     *uint32
+	addtenant_id  *int32
+	term          *string
+	synonyms      *string
+	enabled       *bool
+	clearedFields map[string]struct{}
+	done          bool
+	oldValue      func(context.Context) (*SearchSynonym, error)
+	predicates    []predicate.SearchSynonym
+}
+
+var _ ent.Mutation = (*SearchSynonymMutation)(nil)
+
+// searchsynonymOption allows management of the mutation configuration using functional options.
+type searchsynonymOption func(*SearchSynonymMutation)
+
+// newSearchSynonymMutation creates new mutation for the SearchSynonym entity.
+func newSearchSynonymMutation(c config, op Op, opts ...searchsynonymOption) *SearchSynonymMutation {
+	m := &SearchSynonymMutation{
+		config:        c,
+		op:            op,
+		typ:           TypeSearchSynonym,
+		clearedFields: make(map[string]struct{}),
+	}
+	for _, opt := range opts {
+		opt(m)
+	}
+	return m
+}
+
+// withSearchSynonymID sets the ID field of the mutation.
+func withSearchSynonymID(id uint32) searchsynonymOption {
+	return func(m *SearchSynonymMutation) {
+		var (
+			err   error
+			once  sync.Once
+			value *SearchSynonym
+		)
+		m.oldValue = func(ctx context.Context) (*SearchSynonym, error) {
+			once.Do(func() {
+				if m.done {
+					err = errors.New("querying old values post mutation is not allowed")
+				} else {
+					value, err = m.Client().SearchSynonym.Get(ctx, id)
+				}
+			})
+			return value, err
+		}
+		m.id = &id
+	}
+}
+
+// withSearchSynonym sets the old SearchSynonym of the mutation.
+func withSearchSynonym(node *SearchSynonym) searchsynonymOption {
+	return func(m *SearchSynonymMutation) {
+		m.oldValue = func(context.Context) (*SearchSynonym, error) {
+			return node, nil
+		}
+		m.id = &node.ID
+	}
+}
+
+// Client returns a new `ent.Client` from the mutation. If the mutation was
+// executed in a transaction (ent.Tx), a transactional client is returned.
+func (m SearchSynonymMutation) Client() *Client {
+	client := &Client{config: m.config}
+	client.init()
+	return client
+}
+
+// Tx returns an `ent.Tx` for mutations that were executed in transactions;
+// it returns an error otherwise.
+func (m SearchSynonymMutation) Tx() (*Tx, error) {
+	if _, ok := m.driver.(*txDriver); !ok {
+		return nil, errors.New("ent: mutation is not running in a transaction")
+	}
+	tx := &Tx{config: m.config}
+	tx.init()
+	return tx, nil
+}
+
+// SetID sets the value of the id field. Note that this
+// operation is only accepted on creation of SearchSynonym entities.
+func (m *SearchSynonymMutation) SetID(id uint32) {
+	m.id = &id
+}
+
+// ID returns the ID value in the mutation. Note that the ID is only available
+// if it was provided to the builder or after it was returned from the database.
+func (m *SearchSynonymMutation) ID() (id uint32, exists bool) {
+	if m.id == nil {
+		return
+	}
+	return *m.id, true
+}
+
+// IDs queries the database and returns the entity ids that match the mutation's predicate.
+// That means, if the mutation is applied within a transaction with an isolation level such
+// as sql.LevelSerializable, the returned ids match the ids of the rows that will be updated
+// or updated by the mutation.
+func (m *SearchSynonymMutation) IDs(ctx context.Context) ([]uint32, error) {
+	switch {
+	case m.op.Is(OpUpdateOne | OpDeleteOne):
+		id, exists := m.ID()
+		if exists {
+			return []uint32{id}, nil
+		}
+		fallthrough
+	case m.op.Is(OpUpdate | OpDelete):
+		return m.Client().SearchSynonym.Query().Where(m.predicates...).IDs(ctx)
+	default:
+		return nil, fmt.Errorf("IDs is not allowed on %s operations", m.op)
+	}
+}
+
+// SetCreatedAt sets the "created_at" field.
+func (m *SearchSynonymMutation) SetCreatedAt(t time.Time) {
+	m.created_at = &t
+}
+
+// CreatedAt returns the value of the "created_at" field in the mutation.
+func (m *SearchSynonymMutation) CreatedAt() (r time.Time, exists bool) {
+	v := m.created_at
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldCreatedAt returns the old "created_at" field's value of the SearchSynonym entity.
+// If the SearchSynonym object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *SearchSynonymMutation) OldCreatedAt(ctx context.Context) (v *time.Time, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldCreatedAt is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldCreatedAt requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldCreatedAt: %w", err)
+	}
+	return oldValue.CreatedAt, nil
+}
+
+// ClearCreatedAt clears the value of the "created_at" field.
+func (m *SearchSynonymMutation) ClearCreatedAt() {
+	m.created_at = nil
+	m.clearedFields[searchsynonym.FieldCreatedAt] = struct{}{}
+}
+
+// CreatedAtCleared returns if the "created_at" field was cleared in this mutation.
+func (m *SearchSynonymMutation) CreatedAtCleared() bool {
+	_, ok := m.clearedFields[searchsynonym.FieldCreatedAt]
+	return ok
+}
+
+// ResetCreatedAt resets all changes to the "created_at" field.
+func (m *SearchSynonymMutation) ResetCreatedAt() {
+	m.created_at = nil
+	delete(m.clearedFields, searchsynonym.FieldCreatedAt)
+}
+
+// SetUpdatedAt sets the "updated_at" field.
+func (m *SearchSynonymMutation) SetUpdatedAt(t time.Time) {
+	m.updated_at = &t
+}
+
+// UpdatedAt returns the value of the "updated_at" field in the mutation.
+func (m *SearchSynonymMutation) UpdatedAt() (r time.Time, exists bool) {
+	v := m.updated_at
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldUpdatedAt returns the old "updated_at" field's value of the SearchSynonym entity.
+// If the SearchSynonym object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *SearchSynonymMutation) OldUpdatedAt(ctx context.Context) (v *time.Time, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldUpdatedAt is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldUpdatedAt requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldUpdatedAt: %w", err)
+	}
+	return oldValue.UpdatedAt, nil
+}
+
+// ClearUpdatedAt clears the value of the "updated_at" field.
+func (m *SearchSynonymMutation) ClearUpdatedAt() {
+	m.updated_at = nil
+	m.clearedFields[searchsynonym.FieldUpdatedAt] = struct{}{}
+}
+
+// UpdatedAtCleared returns if the "updated_at" field was cleared in this mutation.
+func (m *SearchSynonymMutation) UpdatedAtCleared() bool {
+	_, ok := m.clearedFields[searchsynonym.FieldUpdatedAt]
+	return ok
+}
+
+// ResetUpdatedAt resets all changes to the "updated_at" field.
+func (m *SearchSynonymMutation) ResetUpdatedAt() {
+	m.updated_at = nil
+	delete(m.clearedFields, searchsynonym.FieldUpdatedAt)
+}
+
+// SetDeletedAt sets the "deleted_at" field.
+func (m *SearchSynonymMutation) SetDeletedAt(t time.Time) {
+	m.deleted_at = &t
+}
+
+// DeletedAt returns the value of the "deleted_at" field in the mutation.
+func (m *SearchSynonymMutation) DeletedAt() (r time.Time, exists bool) {
+	v := m.deleted_at
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldDeletedAt returns the old "deleted_at" field's value of the SearchSynonym entity.
+// If the SearchSynonym object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *SearchSynonymMutation) OldDeletedAt(ctx context.Context) (v *time.Time, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldDeletedAt is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldDeletedAt requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldDeletedAt: %w", err)
+	}
+	return oldValue.DeletedAt, nil
+}
+
+// ClearDeletedAt clears the value of the "deleted_at" field.
+func (m *SearchSynonymMutation) ClearDeletedAt() {
+	m.deleted_at = nil
+	m.clearedFields[searchsynonym.FieldDeletedAt] = struct{}{}
+}
+
+// DeletedAtCleared returns if the "deleted_at" field was cleared in this mutation.
+func (m *SearchSynonymMutation) DeletedAtCleared() bool {
+	_, ok := m.clearedFields[searchsynonym.FieldDeletedAt]
+	return ok
+}
+
+// ResetDeletedAt resets all changes to the "deleted_at" field.
+func (m *SearchSynonymMutation) ResetDeletedAt() {
+	m.deleted_at = nil
+	delete(m.clearedFields, searchsynonym.FieldDeletedAt)
+}
+
+// SetTenantID sets the "tenant_id" field.
+func (m *SearchSynonymMutation) SetTenantID(u uint32) {
+	m.tenant_id = &u
+	m.addtenant_id = nil
+}
+
+// TenantID returns the value of the "tenant_id" field in the mutation.
+func (m *SearchSynonymMutation) TenantID() (r uint32, exists bool) {
+	v := m.tenant_id
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldTenantID returns the old "tenant_id" field's value of the SearchSynonym entity.
+// If the SearchSynonym object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *SearchSynonymMutation) OldTenantID(ctx context.Context) (v *uint32, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldTenantID is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldTenantID requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldTenantID: %w", err)
+	}
+	return oldValue.TenantID, nil
+}
+
+// AddTenantID adds u to the "tenant_id" field.
+func (m *SearchSynonymMutation) AddTenantID(u int32) {
+	if m.addtenant_id != nil {
+		*m.addtenant_id += u
+	} else {
+		m.addtenant_id = &u
+	}
+}
+
+// AddedTenantID returns the value that was added to the "tenant_id" field in this mutation.
+func (m *SearchSynonymMutation) AddedTenantID() (r int32, exists bool) {
+	v := m.addtenant_id
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// ClearTenantID clears the value of the "tenant_id" field.
+func (m *SearchSynonymMutation) ClearTenantID() {
+	m.tenant_id = nil
+	m.addtenant_id = nil
+	m.clearedFields[searchsynonym.FieldTenantID] = struct{}{}
+}
+
+// TenantIDCleared returns if the "tenant_id" field was cleared in this mutation.
+func (m *SearchSynonymMutation) TenantIDCleared() bool {
+	_, ok := m.clearedFields[searchsynonym.FieldTenantID]
+	return ok
+}
+
+// ResetTenantID resets all changes to the "tenant_id" field.
+func (m *SearchSynonymMutation) ResetTenantID() {
+	m.tenant_id = nil
+	m.addtenant_id = nil
+	delete(m.clearedFields, searchsynonym.FieldTenantID)
+}
+
+// SetTerm sets the "term" field.
+func (m *SearchSynonymMutation) SetTerm(s string) {
+	m.term = &s
+}
+
+// Term returns the value of the "term" field in the mutation.
+func (m *SearchSynonymMutation) Term() (r string, exists bool) {
+	v := m.term
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldTerm returns the old "term" field's value of the SearchSynonym entity.
+// If the SearchSynonym object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *SearchSynonymMutation) OldTerm(ctx context.Context) (v string, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldTerm is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldTerm requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldTerm: %w", err)
+	}
+	return oldValue.Term, nil
+}
+
+// ResetTerm resets all changes to the "term" field.
+func (m *SearchSynonymMutation) ResetTerm() {
+	m.term = nil
+}
+
+// SetSynonyms sets the "synonyms" field.
+func (m *SearchSynonymMutation) SetSynonyms(s string) {
+	m.synonyms = &s
+}
+
+// Synonyms returns the value of the "synonyms" field in the mutation.
+func (m *SearchSynonymMutation) Synonyms() (r string, exists bool) {
+	v := m.synonyms
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldSynonyms returns the old "synonyms" field's value of the SearchSynonym entity.
+// If the SearchSynonym object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *SearchSynonymMutation) OldSynonyms(ctx context.Context) (v string, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldSynonyms is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldSynonyms requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldSynonyms: %w", err)
+	}
+	return oldValue.Synonyms, nil
+}
+
+// ResetSynonyms resets all changes to the "synonyms" field.
+func (m *SearchSynonymMutation) ResetSynonyms() {
+	m.synonyms = nil
+}
+
+// SetEnabled sets the "enabled" field.
+func (m *SearchSynonymMutation) SetEnabled(b bool) {
+	m.enabled = &b
+}
+
+// Enabled returns the value of the "enabled" field in the mutation.
+func (m *SearchSynonymMutation) Enabled() (r bool, exists bool) {
+	v := m.enabled
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldEnabled returns the old "enabled" field's value of the SearchSynonym entity.
+// If the SearchSynonym object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *SearchSynonymMutation) OldEnabled(ctx context.Context) (v *bool, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldEnabled is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldEnabled requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldEnabled: %w", err)
+	}
+	return oldValue.Enabled, nil
+}
+
+// ClearEnabled clears the value of the "enabled" field.
+func (m *SearchSynonymMutation) ClearEnabled() {
+	m.enabled = nil
+	m.clearedFields[searchsynonym.FieldEnabled] = struct{}{}
+}
+
+// EnabledCleared returns if the "enabled" field was cleared in this mutation.
+func (m *SearchSynonymMutation) EnabledCleared() bool {
+	_, ok := m.clearedFields[searchsynonym.FieldEnabled]
+	return ok
+}
+
+// ResetEnabled resets all changes to the "enabled" field.
+func (m *SearchSynonymMutation) ResetEnabled() {
+	m.enabled = nil
+	delete(m.clearedFields, searchsynonym.FieldEnabled)
+}
+
+// Where appends a list predicates to the SearchSynonymMutation builder.
+func (m *SearchSynonymMutation) Where(ps ...predicate.SearchSynonym) {
+	m.predicates = append(m.predicates, ps...)
+}
+
+// WhereP appends storage-level predicates to the SearchSynonymMutation builder. Using this method,
+// users can use type-assertion to append predicates that do not depend on any generated package.
+func (m *SearchSynonymMutation) WhereP(ps ...func(*sql.Selector)) {
+	p := make([]predicate.SearchSynonym, len(ps))
+	for i := range ps {
+		p[i] = ps[i]
+	}
+	m.Where(p...)
+}
+
+// Op returns the operation name.
+func (m *SearchSynonymMutation) Op() Op {
+	return m.op
+}
+
+// SetOp allows setting the mutation operation.
+func (m *SearchSynonymMutation) SetOp(op Op) {
+	m.op = op
+}
+
+// Type returns the node type of this mutation (SearchSynonym).
+func (m *SearchSynonymMutation) Type() string {
+	return m.typ
+}
+
+// Fields returns all fields that were changed during this mutation. Note that in
+// order to get all numeric fields that were incremented/decremented, call
+// AddedFields().
+func (m *SearchSynonymMutation) Fields() []string {
+	fields := make([]string, 0, 7)
+	if m.created_at != nil {
+		fields = append(fields, searchsynonym.FieldCreatedAt)
+	}
+	if m.updated_at != nil {
+		fields = append(fields, searchsynonym.FieldUpdatedAt)
+	}
+	if m.deleted_at != nil {
+		fields = append(fields, searchsynonym.FieldDeletedAt)
+	}
+	if m.tenant_id != nil {
+		fields = append(fields, searchsynonym.FieldTenantID)
+	}
+	if m.term != nil {
+		fields = append(fields, searchsynonym.FieldTerm)
+	}
+	if m.synonyms != nil {
+		fields = append(fields, searchsynonym.FieldSynonyms)
+	}
+	if m.enabled != nil {
+		fields = append(fields, searchsynonym.FieldEnabled)
+	}
+	return fields
+}
+
+// Field returns the value of a field with the given name. The second boolean
+// return value indicates that this field was not set, or was not defined in the
+// schema.
+func (m *SearchSynonymMutation) Field(name string) (ent.Value, bool) {
+	switch name {
+	case searchsynonym.FieldCreatedAt:
+		return m.CreatedAt()
+	case searchsynonym.FieldUpdatedAt:
+		return m.UpdatedAt()
+	case searchsynonym.FieldDeletedAt:
+		return m.DeletedAt()
+	case searchsynonym.FieldTenantID:
+		return m.TenantID()
+	case searchsynonym.FieldTerm:
+		return m.Term()
+	case searchsynonym.FieldSynonyms:
+		return m.Synonyms()
+	case searchsynonym.FieldEnabled:
+		return m.Enabled()
+	}
+	return nil, false
+}
+
+// OldField returns the old value of the field from the database. An error is
+// returned if the mutation operation is not UpdateOne, or the query to the
+// database failed.
+func (m *SearchSynonymMutation) OldField(ctx context.Context, name string) (ent.Value, error) {
+	switch name {
+	case searchsynonym.FieldCreatedAt:
+		return m.OldCreatedAt(ctx)
+	case searchsynonym.FieldUpdatedAt:
+		return m.OldUpdatedAt(ctx)
+	case searchsynonym.FieldDeletedAt:
+		return m.OldDeletedAt(ctx)
+	case searchsynonym.FieldTenantID:
+		return m.OldTenantID(ctx)
+	case searchsynonym.FieldTerm:
+		return m.OldTerm(ctx)
+	case searchsynonym.FieldSynonyms:
+		return m.OldSynonyms(ctx)
+	case searchsynonym.FieldEnabled:
+		return m.OldEnabled(ctx)
+	}
+	return nil, fmt.Errorf("unknown SearchSynonym field %s", name)
+}
+
+// SetField sets the value of a field with the given name. It returns an error if
+// the field is not defined in the schema, or if the type mismatched the field
+// type.
+func (m *SearchSynonymMutation) SetField(name string, value ent.Value) error {
+	switch name {
+	case searchsynonym.FieldCreatedAt:
+		v, ok := value.(time.Time)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetCreatedAt(v)
+		return nil
+	case searchsynonym.FieldUpdatedAt:
+		v, ok := value.(time.Time)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetUpdatedAt(v)
+		return nil
+	case searchsynonym.FieldDeletedAt:
+		v, ok := value.(time.Time)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetDeletedAt(v)
+		return nil
+	case searchsynonym.FieldTenantID:
+		v, ok := value.(uint32)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetTenantID(v)
+		return nil
+	case searchsynonym.FieldTerm:
+		v, ok := value.(string)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetTerm(v)
+		return nil
+	case searchsynonym.FieldSynonyms:
+		v, ok := value.(string)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetSynonyms(v)
+		return nil
+	case searchsynonym.FieldEnabled:
+		v, ok := value.(bool)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetEnabled(v)
+		return nil
+	}
+	return fmt.Errorf("unknown SearchSynonym field %s", name)
+}
+
+// AddedFields returns all numeric fields that were incremented/decremented during
+// this mutation.
+func (m *SearchSynonymMutation) AddedFields() []string {
+	var fields []string
+	if m.addtenant_id != nil {
+		fields = append(fields, searchsynonym.FieldTenantID)
+	}
+	return fields
+}
+
+// AddedField returns the numeric value that was incremented/decremented on a field
+// with the given name. The second boolean return value indicates that this field
+// was not set, or was not defined in the schema.
+func (m *SearchSynonymMutation) AddedField(name string) (ent.Value, bool) {
+	switch name {
+	case searchsynonym.FieldTenantID:
+		return m.AddedTenantID()
+	}
+	return nil, false
+}
+
+// AddField adds the value to the field with the given name. It returns an error if
+// the field is not defined in the schema, or if the type mismatched the field
+// type.
+func (m *SearchSynonymMutation) AddField(name string, value ent.Value) error {
+	switch name {
+	case searchsynonym.FieldTenantID:
+		v, ok := value.(int32)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.AddTenantID(v)
+		return nil
+	}
+	return fmt.Errorf("unknown SearchSynonym numeric field %s", name)
+}
+
+// ClearedFields returns all nullable fields that were cleared during this
+// mutation.
+func (m *SearchSynonymMutation) ClearedFields() []string {
+	var fields []string
+	if m.FieldCleared(searchsynonym.FieldCreatedAt) {
+		fields = append(fields, searchsynonym.FieldCreatedAt)
+	}
+	if m.FieldCleared(searchsynonym.FieldUpdatedAt) {
+		fields = append(fields, searchsynonym.FieldUpdatedAt)
+	}
+	if m.FieldCleared(searchsynonym.FieldDeletedAt) {
+		fields = append(fields, searchsynonym.FieldDeletedAt)
+	}
+	if m.FieldCleared(searchsynonym.FieldTenantID) {
+		fields = append(fields, searchsynonym.FieldTenantID)
+	}
+	if m.FieldCleared(searchsynonym.FieldEnabled) {
+		fields = append(fields, searchsynonym.FieldEnabled)
+	}
+	return fields
+}
+
+// FieldCleared returns a boolean indicating if a field with the given name was
+// cleared in this mutation.
+func (m *SearchSynonymMutation) FieldCleared(name string) bool {
+	_, ok := m.clearedFields[name]
+	return ok
+}
+
+// ClearField clears the value of the field with the given name. It returns an
+// error if the field is not defined in the schema.
+func (m *SearchSynonymMutation) ClearField(name string) error {
+	switch name {
+	case searchsynonym.FieldCreatedAt:
+		m.ClearCreatedAt()
+		return nil
+	case searchsynonym.FieldUpdatedAt:
+		m.ClearUpdatedAt()
+		return nil
+	case searchsynonym.FieldDeletedAt:
+		m.ClearDeletedAt()
+		return nil
+	case searchsynonym.FieldTenantID:
+		m.ClearTenantID()
+		return nil
+	case searchsynonym.FieldEnabled:
+		m.ClearEnabled()
+		return nil
+	}
+	return fmt.Errorf("unknown SearchSynonym nullable field %s", name)
+}
+
+// ResetField resets all changes in the mutation for the field with the given name.
+// It returns an error if the field is not defined in the schema.
+func (m *SearchSynonymMutation) ResetField(name string) error {
+	switch name {
+	case searchsynonym.FieldCreatedAt:
+		m.ResetCreatedAt()
+		return nil
+	case searchsynonym.FieldUpdatedAt:
+		m.ResetUpdatedAt()
+		return nil
+	case searchsynonym.FieldDeletedAt:
+		m.ResetDeletedAt()
+		return nil
+	case searchsynonym.FieldTenantID:
+		m.ResetTenantID()
+		return nil
+	case searchsynonym.FieldTerm:
+		m.ResetTerm()
+		return nil
+	case searchsynonym.FieldSynonyms:
+		m.ResetSynonyms()
+		return nil
+	case searchsynonym.FieldEnabled:
+		m.ResetEnabled()
+		return nil
+	}
+	return fmt.Errorf("unknown SearchSynonym field %s", name)
+}
+
+// AddedEdges returns all edge names that were set/added in this mutation.
+func (m *SearchSynonymMutation) AddedEdges() []string {
+	edges := make([]string, 0, 0)
+	return edges
+}
+
+// AddedIDs returns all IDs (to other nodes) that were added for the given edge
+// name in this mutation.
+func (m *SearchSynonymMutation) AddedIDs(name string) []ent.Value {
+	return nil
+}
+
+// RemovedEdges returns all edge names that were removed in this mutation.
+func (m *SearchSynonymMutation) RemovedEdges() []string {
+	edges := make([]string, 0, 0)
+	return edges
+}
+
+// RemovedIDs returns all IDs (to other nodes) that were removed for the edge with
+// the given name in this mutation.
+func (m *SearchSynonymMutation) RemovedIDs(name string) []ent.Value {
+	return nil
+}
+
+// ClearedEdges returns all edge names that were cleared in this mutation.
+func (m *SearchSynonymMutation) ClearedEdges() []string {
+	edges := make([]string, 0, 0)
+	return edges
+}
+
+// EdgeCleared returns a boolean which indicates if the edge with the given name
+// was cleared in this mutation.
+func (m *SearchSynonymMutation) EdgeCleared(name string) bool {
+	return false
+}
+
+// ClearEdge clears the value of the edge with the given name. It returns an error
+// if that edge is not defined in the schema.
+func (m *SearchSynonymMutation) ClearEdge(name string) error {
+	return fmt.Errorf("unknown SearchSynonym unique edge %s", name)
+}
+
+// ResetEdge resets all changes to the edge with the given name in this mutation.
+// It returns an error if the edge is not defined in the schema.
+func (m *SearchSynonymMutation) ResetEdge(name string) error {
+	return fmt.Errorf("unknown SearchSynonym edge %s", name)
 }
 
 // SectionMutation represents an operation that mutates the Section nodes in the graph.

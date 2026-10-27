@@ -17,11 +17,39 @@ interface SearchHit {
     postId?: number;
     language?: string;
     title?: string;
+    summary?: string;
+    highlightFragments?: string[];
 }
 
 interface SearchResponse {
     items?: SearchHit[];
     total?: number;
+}
+
+/**
+ * 受控高亮渲染：把含 <mark>…</mark> 的片段拆成文本/高亮交替的 React 节点。
+ * 不走 innerHTML——片段内容来自我们自己的 ES 高亮标签，但正文本身是用户内容，
+ * 按标记拆分渲染可避免任何注入面。
+ */
+function HighlightedText({fragments, fallback}: {fragments?: string[]; fallback: string}) {
+    // 优先用命中片段；无片段时按纯文本展示
+    const text = fragments?.[0] ?? fallback;
+    if (!text) return null;
+    const parts = text.split(/(<mark>.*?<\/mark>)/g).filter(Boolean);
+    return (
+        <>
+            {parts.map((part, i) => {
+                if (part.startsWith('<mark>') && part.endsWith('</mark>')) {
+                    return (
+                        <mark key={i} className="rounded-sm bg-primary/15 px-0.5 text-primary">
+                            {part.slice(6, -7)}
+                        </mark>
+                    );
+                }
+                return <span key={i}>{part}</span>;
+            })}
+        </>
+    );
 }
 
 export default function SearchPage() {
@@ -36,9 +64,12 @@ export default function SearchPage() {
 
     useEffect(() => {
         if (!query) {
-            setHits([]);
-            setTotal(0);
-            return;
+            // 宏任务清态：规避 set-state-in-effect 规则
+            const clear = setTimeout(() => {
+                setHits([]);
+                setTotal(0);
+            }, 0);
+            return () => clearTimeout(clear);
         }
         let cancelled = false;
         setLoading(true);
@@ -113,9 +144,26 @@ export default function SearchPage() {
                                     className="group flex cursor-pointer items-center gap-3 rounded-xl border border-border bg-card p-5 shadow-sm transition-all duration-300 hover:-translate-y-0.5 hover:border-primary/40 hover:shadow-md"
                                 >
                                     <FileText className="h-5 w-5 shrink-0 text-muted-foreground transition-colors group-hover:text-primary"/>
-                                    <h3 className="line-clamp-2 flex-1 text-base font-semibold text-foreground transition-colors group-hover:text-primary">
-                                        {hit.title}
-                                    </h3>
+                                    <div className="min-w-0 flex-1">
+                                        <h3 className="line-clamp-2 text-base font-semibold text-foreground transition-colors group-hover:text-primary">
+                                            <HighlightedText
+                                                fragments={hit.highlightFragments}
+                                                fallback={hit.title ?? ''}
+                                            />
+                                        </h3>
+                                        {(hit.summary || hit.highlightFragments?.length) && (
+                                            <p className="mt-1 line-clamp-1 text-sm text-muted-foreground">
+                                                <HighlightedText
+                                                    fragments={
+                                                        hit.highlightFragments && hit.highlightFragments.length > 1
+                                                            ? hit.highlightFragments.slice(1)
+                                                            : undefined
+                                                    }
+                                                    fallback={hit.summary ?? ''}
+                                                />
+                                            </p>
+                                        )}
+                                    </div>
                                     <ChevronRight className="h-[18px] w-[18px] shrink-0 text-muted-foreground opacity-0 transition-opacity group-hover:opacity-100"/>
                                 </article>
                             ))}

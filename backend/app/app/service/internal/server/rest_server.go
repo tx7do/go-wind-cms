@@ -26,8 +26,8 @@ import (
 	mediaV1 "go-wind-cms/api/gen/go/media/service/v1"
 
 	"go-wind-cms/pkg/middleware/auth"
-	applogging "go-wind-cms/pkg/middleware/logging"
 	entmiddleware "go-wind-cms/pkg/middleware/ent"
+	applogging "go-wind-cms/pkg/middleware/logging"
 )
 
 // OperationAuthenticationServiceRegister 手工挂载的 C 端注册路由操作名。
@@ -58,9 +58,9 @@ func NewRestMiddleware(
 	rpc.AddWhiteList(
 		appV1.OperationAuthenticationServiceLogin,
 
-	// AuthenticationService.GetOidcAuthorizeUrl：OIDC 登录的前置步骤（登录页
-	// 尚无 token），与 Login 同列免鉴权；state 防 CSRF 由 core 生成校验。
-	appV1.OperationAuthenticationServiceGetOidcAuthorizeUrl,
+		// AuthenticationService.GetOidcAuthorizeUrl：OIDC 登录的前置步骤（登录页
+		// 尚无 token），与 Login 同列免鉴权；state 防 CSRF 由 core 生成校验。
+		appV1.OperationAuthenticationServiceGetOidcAuthorizeUrl,
 
 		appV1.OperationNavigationServiceList,
 
@@ -98,6 +98,8 @@ func NewRestMiddleware(
 		// 登录为 UserViewer）提取，按 tenant 隔离，仅返回 PUBLISHED。调用方无法
 		// 指定或绕过 tenant。
 		appV1.OperationPostServiceSearchPosts,
+		// PostService.SearchPostsSuggest：搜索框联想（公开搜索的配套能力，匿名可见性一致）
+		appV1.OperationPostServiceSearchPostsSuggest,
 
 		// InteractionService.GetCounts：公开计数（如点赞数）随文章列表展示，
 		// 仅按 tenant 隔离、不依赖 viewer 身份。Like/Unlike/Watch 等写操作

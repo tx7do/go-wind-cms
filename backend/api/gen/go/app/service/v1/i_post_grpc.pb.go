@@ -26,6 +26,7 @@ const (
 	PostService_ResolveContentReferences_FullMethodName = "/app.service.v1.PostService/ResolveContentReferences"
 	PostService_List_FullMethodName                     = "/app.service.v1.PostService/List"
 	PostService_SearchPosts_FullMethodName              = "/app.service.v1.PostService/SearchPosts"
+	PostService_SearchPostsSuggest_FullMethodName       = "/app.service.v1.PostService/SearchPostsSuggest"
 	PostService_Get_FullMethodName                      = "/app.service.v1.PostService/Get"
 	PostService_Create_FullMethodName                   = "/app.service.v1.PostService/Create"
 	PostService_Update_FullMethodName                   = "/app.service.v1.PostService/Update"
@@ -52,6 +53,8 @@ type PostServiceClient interface {
 	// 仅返回 PUBLISHED 状态内容；tenant_id 由服务端从登录用户上下文注入，
 	// 客户端无法指定或绕过。故此端点不进鉴权白名单——必须登录后方可搜索。
 	SearchPosts(ctx context.Context, in *v1.SearchPostsRequest, opts ...grpc.CallOption) (*v1.SearchPostsResponse, error)
+	// 搜索建议词（标题前缀联想；免鉴权）
+	SearchPostsSuggest(ctx context.Context, in *v1.SearchPostsSuggestRequest, opts ...grpc.CallOption) (*v1.SearchPostsSuggestResponse, error)
 	// 获取帖子数据
 	Get(ctx context.Context, in *v1.GetPostRequest, opts ...grpc.CallOption) (*v1.Post, error)
 	// 创建帖子
@@ -108,6 +111,16 @@ func (c *postServiceClient) SearchPosts(ctx context.Context, in *v1.SearchPostsR
 	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
 	out := new(v1.SearchPostsResponse)
 	err := c.cc.Invoke(ctx, PostService_SearchPosts_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *postServiceClient) SearchPostsSuggest(ctx context.Context, in *v1.SearchPostsSuggestRequest, opts ...grpc.CallOption) (*v1.SearchPostsSuggestResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(v1.SearchPostsSuggestResponse)
+	err := c.cc.Invoke(ctx, PostService_SearchPostsSuggest_FullMethodName, in, out, cOpts...)
 	if err != nil {
 		return nil, err
 	}
@@ -192,6 +205,8 @@ type PostServiceServer interface {
 	// 仅返回 PUBLISHED 状态内容；tenant_id 由服务端从登录用户上下文注入，
 	// 客户端无法指定或绕过。故此端点不进鉴权白名单——必须登录后方可搜索。
 	SearchPosts(context.Context, *v1.SearchPostsRequest) (*v1.SearchPostsResponse, error)
+	// 搜索建议词（标题前缀联想；免鉴权）
+	SearchPostsSuggest(context.Context, *v1.SearchPostsSuggestRequest) (*v1.SearchPostsSuggestResponse, error)
 	// 获取帖子数据
 	Get(context.Context, *v1.GetPostRequest) (*v1.Post, error)
 	// 创建帖子
@@ -225,6 +240,9 @@ func (UnimplementedPostServiceServer) List(context.Context, *v11.PagingRequest) 
 }
 func (UnimplementedPostServiceServer) SearchPosts(context.Context, *v1.SearchPostsRequest) (*v1.SearchPostsResponse, error) {
 	return nil, status.Error(codes.Unimplemented, "method SearchPosts not implemented")
+}
+func (UnimplementedPostServiceServer) SearchPostsSuggest(context.Context, *v1.SearchPostsSuggestRequest) (*v1.SearchPostsSuggestResponse, error) {
+	return nil, status.Error(codes.Unimplemented, "method SearchPostsSuggest not implemented")
 }
 func (UnimplementedPostServiceServer) Get(context.Context, *v1.GetPostRequest) (*v1.Post, error) {
 	return nil, status.Error(codes.Unimplemented, "method Get not implemented")
@@ -333,6 +351,24 @@ func _PostService_SearchPosts_Handler(srv interface{}, ctx context.Context, dec 
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
 		return srv.(PostServiceServer).SearchPosts(ctx, req.(*v1.SearchPostsRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _PostService_SearchPostsSuggest_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(v1.SearchPostsSuggestRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(PostServiceServer).SearchPostsSuggest(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: PostService_SearchPostsSuggest_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(PostServiceServer).SearchPostsSuggest(ctx, req.(*v1.SearchPostsSuggestRequest))
 	}
 	return interceptor(ctx, in, info, handler)
 }
@@ -467,6 +503,10 @@ var PostService_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "SearchPosts",
 			Handler:    _PostService_SearchPosts_Handler,
+		},
+		{
+			MethodName: "SearchPostsSuggest",
+			Handler:    _PostService_SearchPostsSuggest_Handler,
 		},
 		{
 			MethodName: "Get",

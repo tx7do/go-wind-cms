@@ -106,6 +106,15 @@ export const systemRoutes: AppRouteObject[] = [
         },
       },
       {
+        name: 'search-synonym',
+        path: 'search-synonym', // 相对路径，最终为 /system/search-synonym
+        element: createLazyRoute(() => import('@/pages/app/system/search-synonym')),
+        meta: {
+          title: 'routes:searchSynonym',
+          icon: 'lucide:square-stack-horizontal',
+        },
+      },
+      {
         name: 'backup',
         path: 'backup', // 相对路径，最终为 /system/backup
         element: createLazyRoute(() => import('@/pages/app/system/backup')),

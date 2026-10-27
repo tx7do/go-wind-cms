@@ -980,6 +980,18 @@ func (f RolePermissionFunc) Mutate(ctx context.Context, m ent.Mutation) (ent.Val
 	return nil, fmt.Errorf("unexpected mutation type %T. expect *ent.RolePermissionMutation", m)
 }
 
+// The SearchSynonymFunc type is an adapter to allow the use of ordinary
+// function as SearchSynonym mutator.
+type SearchSynonymFunc func(context.Context, *ent.SearchSynonymMutation) (ent.Value, error)
+
+// Mutate calls f(ctx, m).
+func (f SearchSynonymFunc) Mutate(ctx context.Context, m ent.Mutation) (ent.Value, error) {
+	if mv, ok := m.(*ent.SearchSynonymMutation); ok {
+		return f(ctx, mv)
+	}
+	return nil, fmt.Errorf("unexpected mutation type %T. expect *ent.SearchSynonymMutation", m)
+}
+
 // The SectionFunc type is an adapter to allow the use of ordinary
 // function as Section mutator.
 type SectionFunc func(context.Context, *ent.SectionMutation) (ent.Value, error)

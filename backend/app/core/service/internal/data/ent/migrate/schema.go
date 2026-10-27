@@ -4269,6 +4269,30 @@ var (
 			},
 		},
 	}
+	// SysSearchSynonymsColumns holds the columns for the "sys_search_synonyms" table.
+	SysSearchSynonymsColumns = []*schema.Column{
+		{Name: "id", Type: field.TypeUint32, Increment: true},
+		{Name: "created_at", Type: field.TypeTime, Nullable: true},
+		{Name: "updated_at", Type: field.TypeTime, Nullable: true},
+		{Name: "deleted_at", Type: field.TypeTime, Nullable: true},
+		{Name: "tenant_id", Type: field.TypeUint32, Nullable: true, Default: 0},
+		{Name: "term", Type: field.TypeString, Size: 64},
+		{Name: "synonyms", Type: field.TypeString, Default: "[]"},
+		{Name: "enabled", Type: field.TypeBool, Nullable: true, Default: true},
+	}
+	// SysSearchSynonymsTable holds the schema information for the "sys_search_synonyms" table.
+	SysSearchSynonymsTable = &schema.Table{
+		Name:       "sys_search_synonyms",
+		Columns:    SysSearchSynonymsColumns,
+		PrimaryKey: []*schema.Column{SysSearchSynonymsColumns[0]},
+		Indexes: []*schema.Index{
+			{
+				Name:    "searchsynonym_term",
+				Unique:  true,
+				Columns: []*schema.Column{SysSearchSynonymsColumns[5]},
+			},
+		},
+	}
 	// SectionsColumns holds the columns for the "sections" table.
 	SectionsColumns = []*schema.Column{
 		{Name: "id", Type: field.TypeUint32, Increment: true, Comment: "id"},
@@ -5513,6 +5537,7 @@ var (
 		RoleFieldPermissionsTable,
 		SysRoleMetadataTable,
 		SysRolePermissionsTable,
+		SysSearchSynonymsTable,
 		SectionsTable,
 		SectionTranslationsTable,
 		SitesTable,
@@ -5953,6 +5978,9 @@ func init() {
 		Table:     "sys_role_permissions",
 		Charset:   "utf8mb4",
 		Collation: "utf8mb4_bin",
+	}
+	SysSearchSynonymsTable.Annotation = &entsql.Annotation{
+		Table: "sys_search_synonyms",
 	}
 	SectionsTable.Annotation = &entsql.Annotation{
 		Table:     "sections",

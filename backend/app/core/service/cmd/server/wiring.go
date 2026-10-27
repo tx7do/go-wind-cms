@@ -341,7 +341,9 @@ func initApp(ctx *bootstrap.Context) (*kratos.App, func(), error) {
 	aiKnowledgeService := service.NewAiKnowledgeService(ctx, aiKnowledgeRepo, aiProviderRepo, aiUsageLogRepo, taskService)
 	aiUsageLogService := service.NewAiUsageLogService(ctx, aiUsageLogRepo, aiProviderRepo)
 	aiQueryService := service.NewAiQueryService(ctx, aiProviderRepo, aiUsageLogRepo, entClient, internalMessageRepo, internalMessageService)
-	searchService := service.NewSearchService(ctx, searchRepo, postRepo)
+	searchSynonymRepo := data.NewSearchSynonymRepo(ctx, entClient)
+	searchService := service.NewSearchService(ctx, searchRepo, postRepo, searchSynonymRepo)
+	searchSynonymService := service.NewSearchSynonymService(ctx, searchSynonymRepo)
 	referenceTrackingService := service.NewReferenceTrackingService(ctx, mediaAssetRepo, contentReferenceRepo)
 	postService := service.NewPostService(ctx, postRepo, searchService, taskService, contentModelRepo, postVersionRepo, webhookService, internalMessageService, referenceTrackingService, flowService)
 	categoryService := service.NewCategoryService(ctx, categoryRepo, contentModelRepo)
@@ -368,7 +370,7 @@ func initApp(ctx *bootstrap.Context) (*kratos.App, func(), error) {
 	grpcMiddlewares := server.NewGrpcMiddleware(ctx)
 
 	grpcServer, err := server.NewGrpcServer(ctx, grpcMiddlewares,
-		authenticationService, mfaService, backupArchiveService, loginPolicyService, userCredentialService,
+		authenticationService, mfaService, backupArchiveService, searchSynonymService, loginPolicyService, userCredentialService,
 		taskService,
 		monitorAlertService,
 		onlineSessionService,

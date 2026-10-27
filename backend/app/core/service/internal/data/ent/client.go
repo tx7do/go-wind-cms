@@ -92,6 +92,7 @@ import (
 	"go-wind-cms/app/core/service/internal/data/ent/rolefieldpermission"
 	"go-wind-cms/app/core/service/internal/data/ent/rolemetadata"
 	"go-wind-cms/app/core/service/internal/data/ent/rolepermission"
+	"go-wind-cms/app/core/service/internal/data/ent/searchsynonym"
 	"go-wind-cms/app/core/service/internal/data/ent/section"
 	"go-wind-cms/app/core/service/internal/data/ent/sectiontranslation"
 	"go-wind-cms/app/core/service/internal/data/ent/site"
@@ -287,6 +288,8 @@ type Client struct {
 	RoleMetadata *RoleMetadataClient
 	// RolePermission is the client for interacting with the RolePermission builders.
 	RolePermission *RolePermissionClient
+	// SearchSynonym is the client for interacting with the SearchSynonym builders.
+	SearchSynonym *SearchSynonymClient
 	// Section is the client for interacting with the Section builders.
 	Section *SectionClient
 	// SectionTranslation is the client for interacting with the SectionTranslation builders.
@@ -421,6 +424,7 @@ func (c *Client) init() {
 	c.RoleFieldPermission = NewRoleFieldPermissionClient(c.config)
 	c.RoleMetadata = NewRoleMetadataClient(c.config)
 	c.RolePermission = NewRolePermissionClient(c.config)
+	c.SearchSynonym = NewSearchSynonymClient(c.config)
 	c.Section = NewSectionClient(c.config)
 	c.SectionTranslation = NewSectionTranslationClient(c.config)
 	c.Site = NewSiteClient(c.config)
@@ -615,6 +619,7 @@ func (c *Client) Tx(ctx context.Context) (*Tx, error) {
 		RoleFieldPermission:        NewRoleFieldPermissionClient(cfg),
 		RoleMetadata:               NewRoleMetadataClient(cfg),
 		RolePermission:             NewRolePermissionClient(cfg),
+		SearchSynonym:              NewSearchSynonymClient(cfg),
 		Section:                    NewSectionClient(cfg),
 		SectionTranslation:         NewSectionTranslationClient(cfg),
 		Site:                       NewSiteClient(cfg),
@@ -736,6 +741,7 @@ func (c *Client) BeginTx(ctx context.Context, opts *sql.TxOptions) (*Tx, error) 
 		RoleFieldPermission:        NewRoleFieldPermissionClient(cfg),
 		RoleMetadata:               NewRoleMetadataClient(cfg),
 		RolePermission:             NewRolePermissionClient(cfg),
+		SearchSynonym:              NewSearchSynonymClient(cfg),
 		Section:                    NewSectionClient(cfg),
 		SectionTranslation:         NewSectionTranslationClient(cfg),
 		Site:                       NewSiteClient(cfg),
@@ -805,8 +811,8 @@ func (c *Client) Use(hooks ...Hook) {
 		c.PermissionMenu, c.PermissionPolicy, c.PolicyEvaluationLog, c.Position,
 		c.Post, c.PostCategory, c.PostLike, c.PostTag, c.PostTranslation,
 		c.PostVersion, c.PostWatch, c.QuotaPlan, c.Redirect, c.Role,
-		c.RoleFieldPermission, c.RoleMetadata, c.RolePermission, c.Section,
-		c.SectionTranslation, c.Site, c.SiteSetting, c.SocialAccount,
+		c.RoleFieldPermission, c.RoleMetadata, c.RolePermission, c.SearchSynonym,
+		c.Section, c.SectionTranslation, c.Site, c.SiteSetting, c.SocialAccount,
 		c.SocialDistribution, c.SocialInboxItem, c.SocialStatsHistory, c.SysConfig,
 		c.Tag, c.TagTranslation, c.Task, c.Tenant, c.TenantQuota, c.User,
 		c.UserCredential, c.UserOrgUnit, c.UserPosition, c.UserRole, c.Webhook,
@@ -839,8 +845,8 @@ func (c *Client) Intercept(interceptors ...Interceptor) {
 		c.PermissionMenu, c.PermissionPolicy, c.PolicyEvaluationLog, c.Position,
 		c.Post, c.PostCategory, c.PostLike, c.PostTag, c.PostTranslation,
 		c.PostVersion, c.PostWatch, c.QuotaPlan, c.Redirect, c.Role,
-		c.RoleFieldPermission, c.RoleMetadata, c.RolePermission, c.Section,
-		c.SectionTranslation, c.Site, c.SiteSetting, c.SocialAccount,
+		c.RoleFieldPermission, c.RoleMetadata, c.RolePermission, c.SearchSynonym,
+		c.Section, c.SectionTranslation, c.Site, c.SiteSetting, c.SocialAccount,
 		c.SocialDistribution, c.SocialInboxItem, c.SocialStatsHistory, c.SysConfig,
 		c.Tag, c.TagTranslation, c.Task, c.Tenant, c.TenantQuota, c.User,
 		c.UserCredential, c.UserOrgUnit, c.UserPosition, c.UserRole, c.Webhook,
@@ -1015,6 +1021,8 @@ func (c *Client) Mutate(ctx context.Context, m Mutation) (Value, error) {
 		return c.RoleMetadata.mutate(ctx, m)
 	case *RolePermissionMutation:
 		return c.RolePermission.mutate(ctx, m)
+	case *SearchSynonymMutation:
+		return c.SearchSynonym.mutate(ctx, m)
 	case *SectionMutation:
 		return c.Section.mutate(ctx, m)
 	case *SectionTranslationMutation:
@@ -12320,6 +12328,140 @@ func (c *RolePermissionClient) mutate(ctx context.Context, m *RolePermissionMuta
 	}
 }
 
+// SearchSynonymClient is a client for the SearchSynonym schema.
+type SearchSynonymClient struct {
+	config
+}
+
+// NewSearchSynonymClient returns a client for the SearchSynonym from the given config.
+func NewSearchSynonymClient(c config) *SearchSynonymClient {
+	return &SearchSynonymClient{config: c}
+}
+
+// Use adds a list of mutation hooks to the hooks stack.
+// A call to `Use(f, g, h)` equals to `searchsynonym.Hooks(f(g(h())))`.
+func (c *SearchSynonymClient) Use(hooks ...Hook) {
+	c.hooks.SearchSynonym = append(c.hooks.SearchSynonym, hooks...)
+}
+
+// Intercept adds a list of query interceptors to the interceptors stack.
+// A call to `Intercept(f, g, h)` equals to `searchsynonym.Intercept(f(g(h())))`.
+func (c *SearchSynonymClient) Intercept(interceptors ...Interceptor) {
+	c.inters.SearchSynonym = append(c.inters.SearchSynonym, interceptors...)
+}
+
+// Create returns a builder for creating a SearchSynonym entity.
+func (c *SearchSynonymClient) Create() *SearchSynonymCreate {
+	mutation := newSearchSynonymMutation(c.config, OpCreate)
+	return &SearchSynonymCreate{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// CreateBulk returns a builder for creating a bulk of SearchSynonym entities.
+func (c *SearchSynonymClient) CreateBulk(builders ...*SearchSynonymCreate) *SearchSynonymCreateBulk {
+	return &SearchSynonymCreateBulk{config: c.config, builders: builders}
+}
+
+// MapCreateBulk creates a bulk creation builder from the given slice. For each item in the slice, the function creates
+// a builder and applies setFunc on it.
+func (c *SearchSynonymClient) MapCreateBulk(slice any, setFunc func(*SearchSynonymCreate, int)) *SearchSynonymCreateBulk {
+	rv := reflect.ValueOf(slice)
+	if rv.Kind() != reflect.Slice {
+		return &SearchSynonymCreateBulk{err: fmt.Errorf("calling to SearchSynonymClient.MapCreateBulk with wrong type %T, need slice", slice)}
+	}
+	builders := make([]*SearchSynonymCreate, rv.Len())
+	for i := 0; i < rv.Len(); i++ {
+		builders[i] = c.Create()
+		setFunc(builders[i], i)
+	}
+	return &SearchSynonymCreateBulk{config: c.config, builders: builders}
+}
+
+// Update returns an update builder for SearchSynonym.
+func (c *SearchSynonymClient) Update() *SearchSynonymUpdate {
+	mutation := newSearchSynonymMutation(c.config, OpUpdate)
+	return &SearchSynonymUpdate{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// UpdateOne returns an update builder for the given entity.
+func (c *SearchSynonymClient) UpdateOne(_m *SearchSynonym) *SearchSynonymUpdateOne {
+	mutation := newSearchSynonymMutation(c.config, OpUpdateOne, withSearchSynonym(_m))
+	return &SearchSynonymUpdateOne{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// UpdateOneID returns an update builder for the given id.
+func (c *SearchSynonymClient) UpdateOneID(id uint32) *SearchSynonymUpdateOne {
+	mutation := newSearchSynonymMutation(c.config, OpUpdateOne, withSearchSynonymID(id))
+	return &SearchSynonymUpdateOne{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// Delete returns a delete builder for SearchSynonym.
+func (c *SearchSynonymClient) Delete() *SearchSynonymDelete {
+	mutation := newSearchSynonymMutation(c.config, OpDelete)
+	return &SearchSynonymDelete{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// DeleteOne returns a builder for deleting the given entity.
+func (c *SearchSynonymClient) DeleteOne(_m *SearchSynonym) *SearchSynonymDeleteOne {
+	return c.DeleteOneID(_m.ID)
+}
+
+// DeleteOneID returns a builder for deleting the given entity by its id.
+func (c *SearchSynonymClient) DeleteOneID(id uint32) *SearchSynonymDeleteOne {
+	builder := c.Delete().Where(searchsynonym.ID(id))
+	builder.mutation.id = &id
+	builder.mutation.op = OpDeleteOne
+	return &SearchSynonymDeleteOne{builder}
+}
+
+// Query returns a query builder for SearchSynonym.
+func (c *SearchSynonymClient) Query() *SearchSynonymQuery {
+	return &SearchSynonymQuery{
+		config: c.config,
+		ctx:    &QueryContext{Type: TypeSearchSynonym},
+		inters: c.Interceptors(),
+	}
+}
+
+// Get returns a SearchSynonym entity by its id.
+func (c *SearchSynonymClient) Get(ctx context.Context, id uint32) (*SearchSynonym, error) {
+	return c.Query().Where(searchsynonym.ID(id)).Only(ctx)
+}
+
+// GetX is like Get, but panics if an error occurs.
+func (c *SearchSynonymClient) GetX(ctx context.Context, id uint32) *SearchSynonym {
+	obj, err := c.Get(ctx, id)
+	if err != nil {
+		panic(err)
+	}
+	return obj
+}
+
+// Hooks returns the client hooks.
+func (c *SearchSynonymClient) Hooks() []Hook {
+	hooks := c.hooks.SearchSynonym
+	return append(hooks[:len(hooks):len(hooks)], searchsynonym.Hooks[:]...)
+}
+
+// Interceptors returns the client interceptors.
+func (c *SearchSynonymClient) Interceptors() []Interceptor {
+	return c.inters.SearchSynonym
+}
+
+func (c *SearchSynonymClient) mutate(ctx context.Context, m *SearchSynonymMutation) (Value, error) {
+	switch m.Op() {
+	case OpCreate:
+		return (&SearchSynonymCreate{config: c.config, hooks: c.Hooks(), mutation: m}).Save(ctx)
+	case OpUpdate:
+		return (&SearchSynonymUpdate{config: c.config, hooks: c.Hooks(), mutation: m}).Save(ctx)
+	case OpUpdateOne:
+		return (&SearchSynonymUpdateOne{config: c.config, hooks: c.Hooks(), mutation: m}).Save(ctx)
+	case OpDelete, OpDeleteOne:
+		return (&SearchSynonymDelete{config: c.config, hooks: c.Hooks(), mutation: m}).Exec(ctx)
+	default:
+		return nil, fmt.Errorf("ent: unknown SearchSynonym mutation op: %q", m.Op())
+	}
+}
+
 // SectionClient is a client for the Section schema.
 type SectionClient struct {
 	config
@@ -15149,10 +15291,11 @@ type (
 		PermissionGroup, PermissionMenu, PermissionPolicy, PolicyEvaluationLog,
 		Position, Post, PostCategory, PostLike, PostTag, PostTranslation, PostVersion,
 		PostWatch, QuotaPlan, Redirect, Role, RoleFieldPermission, RoleMetadata,
-		RolePermission, Section, SectionTranslation, Site, SiteSetting, SocialAccount,
-		SocialDistribution, SocialInboxItem, SocialStatsHistory, SysConfig, Tag,
-		TagTranslation, Task, Tenant, TenantQuota, User, UserCredential, UserOrgUnit,
-		UserPosition, UserRole, Webhook, WebhookDelivery []ent.Hook
+		RolePermission, SearchSynonym, Section, SectionTranslation, Site, SiteSetting,
+		SocialAccount, SocialDistribution, SocialInboxItem, SocialStatsHistory,
+		SysConfig, Tag, TagTranslation, Task, Tenant, TenantQuota, User,
+		UserCredential, UserOrgUnit, UserPosition, UserRole, Webhook,
+		WebhookDelivery []ent.Hook
 	}
 	inters struct {
 		AccessKey, AiAgentApp, AiAgentRun, AiChunk, AiConversation, AiDoc,
@@ -15171,9 +15314,10 @@ type (
 		PermissionGroup, PermissionMenu, PermissionPolicy, PolicyEvaluationLog,
 		Position, Post, PostCategory, PostLike, PostTag, PostTranslation, PostVersion,
 		PostWatch, QuotaPlan, Redirect, Role, RoleFieldPermission, RoleMetadata,
-		RolePermission, Section, SectionTranslation, Site, SiteSetting, SocialAccount,
-		SocialDistribution, SocialInboxItem, SocialStatsHistory, SysConfig, Tag,
-		TagTranslation, Task, Tenant, TenantQuota, User, UserCredential, UserOrgUnit,
-		UserPosition, UserRole, Webhook, WebhookDelivery []ent.Interceptor
+		RolePermission, SearchSynonym, Section, SectionTranslation, Site, SiteSetting,
+		SocialAccount, SocialDistribution, SocialInboxItem, SocialStatsHistory,
+		SysConfig, Tag, TagTranslation, Task, Tenant, TenantQuota, User,
+		UserCredential, UserOrgUnit, UserPosition, UserRole, Webhook,
+		WebhookDelivery []ent.Interceptor
 	}
 )

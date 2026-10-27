@@ -249,6 +249,9 @@ type RoleMetadata func(*sql.Selector)
 // RolePermission is the predicate function for rolepermission builders.
 type RolePermission func(*sql.Selector)
 
+// SearchSynonym is the predicate function for searchsynonym builders.
+type SearchSynonym func(*sql.Selector)
+
 // Section is the predicate function for section builders.
 type Section func(*sql.Selector)
 

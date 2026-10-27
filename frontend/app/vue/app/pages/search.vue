@@ -16,8 +16,44 @@ const { data, pending, error } = await useAsyncData(
   { watch: [query] },
 )
 
-const hits = computed(() => data.value?.items ?? [])
+interface SearchHit {
+  postId?: number
+  language?: string
+  title?: string
+  summary?: string
+  highlightFragments?: string[]
+}
+
+const hits = computed(() => (data.value?.items ?? []) as SearchHit[])
 const total = computed(() => data.value?.total ?? 0)
+
+/**
+ * 受控高亮渲染：把含 <mark>…</mark> 的片段拆成 文本/高亮 交替段。
+ * 不走 v-html——片段含用户正文，按标记拆分渲染避免任何注入面。
+ */
+const MARK_SPLIT_RE = /(<mark>.*?<\/mark>)/g
+
+function splitHighlight(text: string): { text: string, marked: boolean }[] {
+  return text
+    .split(MARK_SPLIT_RE)
+    .filter(Boolean)
+    .map(part => ({
+      text: part.startsWith('<mark>') && part.endsWith('</mark>') ? part.slice(6, -7) : part,
+      marked: part.startsWith('<mark>') && part.endsWith('</mark>'),
+    }))
+}
+
+function hitTitle(hit: SearchHit) {
+  return hit.highlightFragments?.[0] ?? hit.title ?? ''
+}
+
+function hitExcerpt(hit: SearchHit) {
+  // 标题占第一个片段时，摘要取后续片段或原 summary
+  if (hit.highlightFragments && hit.highlightFragments.length > 1) {
+    return hit.highlightFragments.slice(1).join(' … ')
+  }
+  return hit.summary ?? ''
+}
 
 function openPost(postId?: number) {
   if (!postId) return
@@ -70,9 +106,20 @@ function openPost(postId?: number) {
             @click="openPost(hit.postId)"
           >
             <XIcon icon="carbon:document" :size="20" class="shrink-0 text-muted-foreground transition-colors group-hover:text-primary" />
-            <h3 class="line-clamp-2 flex-1 text-base font-semibold text-foreground transition-colors group-hover:text-primary">
-              {{ hit.title }}
-            </h3>
+            <div class="min-w-0 flex-1">
+              <h3 class="line-clamp-2 text-base font-semibold text-foreground transition-colors group-hover:text-primary">
+                <template v-for="(part, i) in splitHighlight(hitTitle(hit))" :key="i">
+                  <mark v-if="part.marked" class="rounded-sm bg-primary/15 px-0.5 text-primary">{{ part.text }}</mark>
+                  <span v-else>{{ part.text }}</span>
+                </template>
+              </h3>
+              <p v-if="hitExcerpt(hit)" class="mt-1 line-clamp-1 text-sm text-muted-foreground">
+                <template v-for="(part, i) in splitHighlight(hitExcerpt(hit))" :key="i">
+                  <mark v-if="part.marked" class="rounded-sm bg-primary/15 px-0.5 text-primary">{{ part.text }}</mark>
+                  <span v-else>{{ part.text }}</span>
+                </template>
+              </p>
+            </div>
             <XIcon icon="lucide:chevron-right" :size="18" class="shrink-0 text-muted-foreground opacity-0 transition-opacity group-hover:opacity-100" />
           </article>
         </div>

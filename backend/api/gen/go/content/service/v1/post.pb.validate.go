@@ -2423,6 +2423,8 @@ func (m *SearchPostHit) validate(all bool) error {
 
 	// no validation rules for Title
 
+	// no validation rules for Summary
+
 	if len(errors) > 0 {
 		return SearchPostHitMultiError(errors)
 	}
@@ -3422,3 +3424,694 @@ var _ interface {
 	Cause() error
 	ErrorName() string
 } = RejectPostReviewRequestValidationError{}
+
+// Validate checks the field values on SearchPostsSuggestRequest with the rules
+// defined in the proto definition for this message. If any rules are
+// violated, the first error encountered is returned, or nil if there are no violations.
+func (m *SearchPostsSuggestRequest) Validate() error {
+	return m.validate(false)
+}
+
+// ValidateAll checks the field values on SearchPostsSuggestRequest with the
+// rules defined in the proto definition for this message. If any rules are
+// violated, the result is a list of violation errors wrapped in
+// SearchPostsSuggestRequestMultiError, or nil if none found.
+func (m *SearchPostsSuggestRequest) ValidateAll() error {
+	return m.validate(true)
+}
+
+func (m *SearchPostsSuggestRequest) validate(all bool) error {
+	if m == nil {
+		return nil
+	}
+
+	var errors []error
+
+	// no validation rules for Query
+
+	// no validation rules for Language
+
+	// no validation rules for PageSize
+
+	if len(errors) > 0 {
+		return SearchPostsSuggestRequestMultiError(errors)
+	}
+
+	return nil
+}
+
+// SearchPostsSuggestRequestMultiError is an error wrapping multiple validation
+// errors returned by SearchPostsSuggestRequest.ValidateAll() if the
+// designated constraints aren't met.
+type SearchPostsSuggestRequestMultiError []error
+
+// Error returns a concatenation of all the error messages it wraps.
+func (m SearchPostsSuggestRequestMultiError) Error() string {
+	msgs := make([]string, 0, len(m))
+	for _, err := range m {
+		msgs = append(msgs, err.Error())
+	}
+	return strings.Join(msgs, "; ")
+}
+
+// AllErrors returns a list of validation violation errors.
+func (m SearchPostsSuggestRequestMultiError) AllErrors() []error { return m }
+
+// SearchPostsSuggestRequestValidationError is the validation error returned by
+// SearchPostsSuggestRequest.Validate if the designated constraints aren't met.
+type SearchPostsSuggestRequestValidationError struct {
+	field  string
+	reason string
+	cause  error
+	key    bool
+}
+
+// Field function returns field value.
+func (e SearchPostsSuggestRequestValidationError) Field() string { return e.field }
+
+// Reason function returns reason value.
+func (e SearchPostsSuggestRequestValidationError) Reason() string { return e.reason }
+
+// Cause function returns cause value.
+func (e SearchPostsSuggestRequestValidationError) Cause() error { return e.cause }
+
+// Key function returns key value.
+func (e SearchPostsSuggestRequestValidationError) Key() bool { return e.key }
+
+// ErrorName returns error name.
+func (e SearchPostsSuggestRequestValidationError) ErrorName() string {
+	return "SearchPostsSuggestRequestValidationError"
+}
+
+// Error satisfies the builtin error interface
+func (e SearchPostsSuggestRequestValidationError) Error() string {
+	cause := ""
+	if e.cause != nil {
+		cause = fmt.Sprintf(" | caused by: %v", e.cause)
+	}
+
+	key := ""
+	if e.key {
+		key = "key for "
+	}
+
+	return fmt.Sprintf(
+		"invalid %sSearchPostsSuggestRequest.%s: %s%s",
+		key,
+		e.field,
+		e.reason,
+		cause)
+}
+
+var _ error = SearchPostsSuggestRequestValidationError{}
+
+var _ interface {
+	Field() string
+	Reason() string
+	Key() bool
+	Cause() error
+	ErrorName() string
+} = SearchPostsSuggestRequestValidationError{}
+
+// Validate checks the field values on SearchPostsSuggestResponse with the
+// rules defined in the proto definition for this message. If any rules are
+// violated, the first error encountered is returned, or nil if there are no violations.
+func (m *SearchPostsSuggestResponse) Validate() error {
+	return m.validate(false)
+}
+
+// ValidateAll checks the field values on SearchPostsSuggestResponse with the
+// rules defined in the proto definition for this message. If any rules are
+// violated, the result is a list of violation errors wrapped in
+// SearchPostsSuggestResponseMultiError, or nil if none found.
+func (m *SearchPostsSuggestResponse) ValidateAll() error {
+	return m.validate(true)
+}
+
+func (m *SearchPostsSuggestResponse) validate(all bool) error {
+	if m == nil {
+		return nil
+	}
+
+	var errors []error
+
+	if len(errors) > 0 {
+		return SearchPostsSuggestResponseMultiError(errors)
+	}
+
+	return nil
+}
+
+// SearchPostsSuggestResponseMultiError is an error wrapping multiple
+// validation errors returned by SearchPostsSuggestResponse.ValidateAll() if
+// the designated constraints aren't met.
+type SearchPostsSuggestResponseMultiError []error
+
+// Error returns a concatenation of all the error messages it wraps.
+func (m SearchPostsSuggestResponseMultiError) Error() string {
+	msgs := make([]string, 0, len(m))
+	for _, err := range m {
+		msgs = append(msgs, err.Error())
+	}
+	return strings.Join(msgs, "; ")
+}
+
+// AllErrors returns a list of validation violation errors.
+func (m SearchPostsSuggestResponseMultiError) AllErrors() []error { return m }
+
+// SearchPostsSuggestResponseValidationError is the validation error returned
+// by SearchPostsSuggestResponse.Validate if the designated constraints aren't met.
+type SearchPostsSuggestResponseValidationError struct {
+	field  string
+	reason string
+	cause  error
+	key    bool
+}
+
+// Field function returns field value.
+func (e SearchPostsSuggestResponseValidationError) Field() string { return e.field }
+
+// Reason function returns reason value.
+func (e SearchPostsSuggestResponseValidationError) Reason() string { return e.reason }
+
+// Cause function returns cause value.
+func (e SearchPostsSuggestResponseValidationError) Cause() error { return e.cause }
+
+// Key function returns key value.
+func (e SearchPostsSuggestResponseValidationError) Key() bool { return e.key }
+
+// ErrorName returns error name.
+func (e SearchPostsSuggestResponseValidationError) ErrorName() string {
+	return "SearchPostsSuggestResponseValidationError"
+}
+
+// Error satisfies the builtin error interface
+func (e SearchPostsSuggestResponseValidationError) Error() string {
+	cause := ""
+	if e.cause != nil {
+		cause = fmt.Sprintf(" | caused by: %v", e.cause)
+	}
+
+	key := ""
+	if e.key {
+		key = "key for "
+	}
+
+	return fmt.Sprintf(
+		"invalid %sSearchPostsSuggestResponse.%s: %s%s",
+		key,
+		e.field,
+		e.reason,
+		cause)
+}
+
+var _ error = SearchPostsSuggestResponseValidationError{}
+
+var _ interface {
+	Field() string
+	Reason() string
+	Key() bool
+	Cause() error
+	ErrorName() string
+} = SearchPostsSuggestResponseValidationError{}
+
+// Validate checks the field values on SearchSynonym with the rules defined in
+// the proto definition for this message. If any rules are violated, the first
+// error encountered is returned, or nil if there are no violations.
+func (m *SearchSynonym) Validate() error {
+	return m.validate(false)
+}
+
+// ValidateAll checks the field values on SearchSynonym with the rules defined
+// in the proto definition for this message. If any rules are violated, the
+// result is a list of violation errors wrapped in SearchSynonymMultiError, or
+// nil if none found.
+func (m *SearchSynonym) ValidateAll() error {
+	return m.validate(true)
+}
+
+func (m *SearchSynonym) validate(all bool) error {
+	if m == nil {
+		return nil
+	}
+
+	var errors []error
+
+	// no validation rules for Term
+
+	if m.Id != nil {
+		// no validation rules for Id
+	}
+
+	if m.Enabled != nil {
+		// no validation rules for Enabled
+	}
+
+	if len(errors) > 0 {
+		return SearchSynonymMultiError(errors)
+	}
+
+	return nil
+}
+
+// SearchSynonymMultiError is an error wrapping multiple validation errors
+// returned by SearchSynonym.ValidateAll() if the designated constraints
+// aren't met.
+type SearchSynonymMultiError []error
+
+// Error returns a concatenation of all the error messages it wraps.
+func (m SearchSynonymMultiError) Error() string {
+	msgs := make([]string, 0, len(m))
+	for _, err := range m {
+		msgs = append(msgs, err.Error())
+	}
+	return strings.Join(msgs, "; ")
+}
+
+// AllErrors returns a list of validation violation errors.
+func (m SearchSynonymMultiError) AllErrors() []error { return m }
+
+// SearchSynonymValidationError is the validation error returned by
+// SearchSynonym.Validate if the designated constraints aren't met.
+type SearchSynonymValidationError struct {
+	field  string
+	reason string
+	cause  error
+	key    bool
+}
+
+// Field function returns field value.
+func (e SearchSynonymValidationError) Field() string { return e.field }
+
+// Reason function returns reason value.
+func (e SearchSynonymValidationError) Reason() string { return e.reason }
+
+// Cause function returns cause value.
+func (e SearchSynonymValidationError) Cause() error { return e.cause }
+
+// Key function returns key value.
+func (e SearchSynonymValidationError) Key() bool { return e.key }
+
+// ErrorName returns error name.
+func (e SearchSynonymValidationError) ErrorName() string { return "SearchSynonymValidationError" }
+
+// Error satisfies the builtin error interface
+func (e SearchSynonymValidationError) Error() string {
+	cause := ""
+	if e.cause != nil {
+		cause = fmt.Sprintf(" | caused by: %v", e.cause)
+	}
+
+	key := ""
+	if e.key {
+		key = "key for "
+	}
+
+	return fmt.Sprintf(
+		"invalid %sSearchSynonym.%s: %s%s",
+		key,
+		e.field,
+		e.reason,
+		cause)
+}
+
+var _ error = SearchSynonymValidationError{}
+
+var _ interface {
+	Field() string
+	Reason() string
+	Key() bool
+	Cause() error
+	ErrorName() string
+} = SearchSynonymValidationError{}
+
+// Validate checks the field values on ListSearchSynonymsResponse with the
+// rules defined in the proto definition for this message. If any rules are
+// violated, the first error encountered is returned, or nil if there are no violations.
+func (m *ListSearchSynonymsResponse) Validate() error {
+	return m.validate(false)
+}
+
+// ValidateAll checks the field values on ListSearchSynonymsResponse with the
+// rules defined in the proto definition for this message. If any rules are
+// violated, the result is a list of violation errors wrapped in
+// ListSearchSynonymsResponseMultiError, or nil if none found.
+func (m *ListSearchSynonymsResponse) ValidateAll() error {
+	return m.validate(true)
+}
+
+func (m *ListSearchSynonymsResponse) validate(all bool) error {
+	if m == nil {
+		return nil
+	}
+
+	var errors []error
+
+	for idx, item := range m.GetItems() {
+		_, _ = idx, item
+
+		if all {
+			switch v := interface{}(item).(type) {
+			case interface{ ValidateAll() error }:
+				if err := v.ValidateAll(); err != nil {
+					errors = append(errors, ListSearchSynonymsResponseValidationError{
+						field:  fmt.Sprintf("Items[%v]", idx),
+						reason: "embedded message failed validation",
+						cause:  err,
+					})
+				}
+			case interface{ Validate() error }:
+				if err := v.Validate(); err != nil {
+					errors = append(errors, ListSearchSynonymsResponseValidationError{
+						field:  fmt.Sprintf("Items[%v]", idx),
+						reason: "embedded message failed validation",
+						cause:  err,
+					})
+				}
+			}
+		} else if v, ok := interface{}(item).(interface{ Validate() error }); ok {
+			if err := v.Validate(); err != nil {
+				return ListSearchSynonymsResponseValidationError{
+					field:  fmt.Sprintf("Items[%v]", idx),
+					reason: "embedded message failed validation",
+					cause:  err,
+				}
+			}
+		}
+
+	}
+
+	if len(errors) > 0 {
+		return ListSearchSynonymsResponseMultiError(errors)
+	}
+
+	return nil
+}
+
+// ListSearchSynonymsResponseMultiError is an error wrapping multiple
+// validation errors returned by ListSearchSynonymsResponse.ValidateAll() if
+// the designated constraints aren't met.
+type ListSearchSynonymsResponseMultiError []error
+
+// Error returns a concatenation of all the error messages it wraps.
+func (m ListSearchSynonymsResponseMultiError) Error() string {
+	msgs := make([]string, 0, len(m))
+	for _, err := range m {
+		msgs = append(msgs, err.Error())
+	}
+	return strings.Join(msgs, "; ")
+}
+
+// AllErrors returns a list of validation violation errors.
+func (m ListSearchSynonymsResponseMultiError) AllErrors() []error { return m }
+
+// ListSearchSynonymsResponseValidationError is the validation error returned
+// by ListSearchSynonymsResponse.Validate if the designated constraints aren't met.
+type ListSearchSynonymsResponseValidationError struct {
+	field  string
+	reason string
+	cause  error
+	key    bool
+}
+
+// Field function returns field value.
+func (e ListSearchSynonymsResponseValidationError) Field() string { return e.field }
+
+// Reason function returns reason value.
+func (e ListSearchSynonymsResponseValidationError) Reason() string { return e.reason }
+
+// Cause function returns cause value.
+func (e ListSearchSynonymsResponseValidationError) Cause() error { return e.cause }
+
+// Key function returns key value.
+func (e ListSearchSynonymsResponseValidationError) Key() bool { return e.key }
+
+// ErrorName returns error name.
+func (e ListSearchSynonymsResponseValidationError) ErrorName() string {
+	return "ListSearchSynonymsResponseValidationError"
+}
+
+// Error satisfies the builtin error interface
+func (e ListSearchSynonymsResponseValidationError) Error() string {
+	cause := ""
+	if e.cause != nil {
+		cause = fmt.Sprintf(" | caused by: %v", e.cause)
+	}
+
+	key := ""
+	if e.key {
+		key = "key for "
+	}
+
+	return fmt.Sprintf(
+		"invalid %sListSearchSynonymsResponse.%s: %s%s",
+		key,
+		e.field,
+		e.reason,
+		cause)
+}
+
+var _ error = ListSearchSynonymsResponseValidationError{}
+
+var _ interface {
+	Field() string
+	Reason() string
+	Key() bool
+	Cause() error
+	ErrorName() string
+} = ListSearchSynonymsResponseValidationError{}
+
+// Validate checks the field values on CreateSearchSynonymRequest with the
+// rules defined in the proto definition for this message. If any rules are
+// violated, the first error encountered is returned, or nil if there are no violations.
+func (m *CreateSearchSynonymRequest) Validate() error {
+	return m.validate(false)
+}
+
+// ValidateAll checks the field values on CreateSearchSynonymRequest with the
+// rules defined in the proto definition for this message. If any rules are
+// violated, the result is a list of violation errors wrapped in
+// CreateSearchSynonymRequestMultiError, or nil if none found.
+func (m *CreateSearchSynonymRequest) ValidateAll() error {
+	return m.validate(true)
+}
+
+func (m *CreateSearchSynonymRequest) validate(all bool) error {
+	if m == nil {
+		return nil
+	}
+
+	var errors []error
+
+	if all {
+		switch v := interface{}(m.GetData()).(type) {
+		case interface{ ValidateAll() error }:
+			if err := v.ValidateAll(); err != nil {
+				errors = append(errors, CreateSearchSynonymRequestValidationError{
+					field:  "Data",
+					reason: "embedded message failed validation",
+					cause:  err,
+				})
+			}
+		case interface{ Validate() error }:
+			if err := v.Validate(); err != nil {
+				errors = append(errors, CreateSearchSynonymRequestValidationError{
+					field:  "Data",
+					reason: "embedded message failed validation",
+					cause:  err,
+				})
+			}
+		}
+	} else if v, ok := interface{}(m.GetData()).(interface{ Validate() error }); ok {
+		if err := v.Validate(); err != nil {
+			return CreateSearchSynonymRequestValidationError{
+				field:  "Data",
+				reason: "embedded message failed validation",
+				cause:  err,
+			}
+		}
+	}
+
+	if len(errors) > 0 {
+		return CreateSearchSynonymRequestMultiError(errors)
+	}
+
+	return nil
+}
+
+// CreateSearchSynonymRequestMultiError is an error wrapping multiple
+// validation errors returned by CreateSearchSynonymRequest.ValidateAll() if
+// the designated constraints aren't met.
+type CreateSearchSynonymRequestMultiError []error
+
+// Error returns a concatenation of all the error messages it wraps.
+func (m CreateSearchSynonymRequestMultiError) Error() string {
+	msgs := make([]string, 0, len(m))
+	for _, err := range m {
+		msgs = append(msgs, err.Error())
+	}
+	return strings.Join(msgs, "; ")
+}
+
+// AllErrors returns a list of validation violation errors.
+func (m CreateSearchSynonymRequestMultiError) AllErrors() []error { return m }
+
+// CreateSearchSynonymRequestValidationError is the validation error returned
+// by CreateSearchSynonymRequest.Validate if the designated constraints aren't met.
+type CreateSearchSynonymRequestValidationError struct {
+	field  string
+	reason string
+	cause  error
+	key    bool
+}
+
+// Field function returns field value.
+func (e CreateSearchSynonymRequestValidationError) Field() string { return e.field }
+
+// Reason function returns reason value.
+func (e CreateSearchSynonymRequestValidationError) Reason() string { return e.reason }
+
+// Cause function returns cause value.
+func (e CreateSearchSynonymRequestValidationError) Cause() error { return e.cause }
+
+// Key function returns key value.
+func (e CreateSearchSynonymRequestValidationError) Key() bool { return e.key }
+
+// ErrorName returns error name.
+func (e CreateSearchSynonymRequestValidationError) ErrorName() string {
+	return "CreateSearchSynonymRequestValidationError"
+}
+
+// Error satisfies the builtin error interface
+func (e CreateSearchSynonymRequestValidationError) Error() string {
+	cause := ""
+	if e.cause != nil {
+		cause = fmt.Sprintf(" | caused by: %v", e.cause)
+	}
+
+	key := ""
+	if e.key {
+		key = "key for "
+	}
+
+	return fmt.Sprintf(
+		"invalid %sCreateSearchSynonymRequest.%s: %s%s",
+		key,
+		e.field,
+		e.reason,
+		cause)
+}
+
+var _ error = CreateSearchSynonymRequestValidationError{}
+
+var _ interface {
+	Field() string
+	Reason() string
+	Key() bool
+	Cause() error
+	ErrorName() string
+} = CreateSearchSynonymRequestValidationError{}
+
+// Validate checks the field values on DeleteSearchSynonymRequest with the
+// rules defined in the proto definition for this message. If any rules are
+// violated, the first error encountered is returned, or nil if there are no violations.
+func (m *DeleteSearchSynonymRequest) Validate() error {
+	return m.validate(false)
+}
+
+// ValidateAll checks the field values on DeleteSearchSynonymRequest with the
+// rules defined in the proto definition for this message. If any rules are
+// violated, the result is a list of violation errors wrapped in
+// DeleteSearchSynonymRequestMultiError, or nil if none found.
+func (m *DeleteSearchSynonymRequest) ValidateAll() error {
+	return m.validate(true)
+}
+
+func (m *DeleteSearchSynonymRequest) validate(all bool) error {
+	if m == nil {
+		return nil
+	}
+
+	var errors []error
+
+	// no validation rules for Id
+
+	if len(errors) > 0 {
+		return DeleteSearchSynonymRequestMultiError(errors)
+	}
+
+	return nil
+}
+
+// DeleteSearchSynonymRequestMultiError is an error wrapping multiple
+// validation errors returned by DeleteSearchSynonymRequest.ValidateAll() if
+// the designated constraints aren't met.
+type DeleteSearchSynonymRequestMultiError []error
+
+// Error returns a concatenation of all the error messages it wraps.
+func (m DeleteSearchSynonymRequestMultiError) Error() string {
+	msgs := make([]string, 0, len(m))
+	for _, err := range m {
+		msgs = append(msgs, err.Error())
+	}
+	return strings.Join(msgs, "; ")
+}
+
+// AllErrors returns a list of validation violation errors.
+func (m DeleteSearchSynonymRequestMultiError) AllErrors() []error { return m }
+
+// DeleteSearchSynonymRequestValidationError is the validation error returned
+// by DeleteSearchSynonymRequest.Validate if the designated constraints aren't met.
+type DeleteSearchSynonymRequestValidationError struct {
+	field  string
+	reason string
+	cause  error
+	key    bool
+}
+
+// Field function returns field value.
+func (e DeleteSearchSynonymRequestValidationError) Field() string { return e.field }
+
+// Reason function returns reason value.
+func (e DeleteSearchSynonymRequestValidationError) Reason() string { return e.reason }
+
+// Cause function returns cause value.
+func (e DeleteSearchSynonymRequestValidationError) Cause() error { return e.cause }
+
+// Key function returns key value.
+func (e DeleteSearchSynonymRequestValidationError) Key() bool { return e.key }
+
+// ErrorName returns error name.
+func (e DeleteSearchSynonymRequestValidationError) ErrorName() string {
+	return "DeleteSearchSynonymRequestValidationError"
+}
+
+// Error satisfies the builtin error interface
+func (e DeleteSearchSynonymRequestValidationError) Error() string {
+	cause := ""
+	if e.cause != nil {
+		cause = fmt.Sprintf(" | caused by: %v", e.cause)
+	}
+
+	key := ""
+	if e.key {
+		key = "key for "
+	}
+
+	return fmt.Sprintf(
+		"invalid %sDeleteSearchSynonymRequest.%s: %s%s",
+		key,
+		e.field,
+		e.reason,
+		cause)
+}
+
+var _ error = DeleteSearchSynonymRequestValidationError{}
+
+var _ interface {
+	Field() string
+	Reason() string
+	Key() bool
+	Cause() error
+	ErrorName() string
+} = DeleteSearchSynonymRequestValidationError{}

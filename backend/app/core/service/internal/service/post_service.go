@@ -3,13 +3,14 @@ package service
 import (
 	"context"
 	"strconv"
+	"strings"
 	"time"
 
 	"github.com/go-kratos/kratos/v2/log"
 	paginationV1 "github.com/tx7do/go-crud/api/gen/go/pagination/v1"
+	"github.com/tx7do/go-crud/viewer"
 	"github.com/tx7do/go-utils/trans"
 	"github.com/tx7do/kratos-bootstrap/bootstrap"
-	"github.com/tx7do/go-crud/viewer"
 	"google.golang.org/protobuf/encoding/protojson"
 	"google.golang.org/protobuf/types/known/emptypb"
 	"google.golang.org/protobuf/types/known/fieldmaskpb"
@@ -30,30 +31,30 @@ const postPublishRescheduleTolerance = 2 * time.Minute
 type PostService struct {
 	contentV1.UnimplementedPostServiceServer
 
-	postRepo              *data.PostRepo
-	postVersionRepo       *data.PostVersionRepo
-	searchService         *SearchService
-	taskService           *TaskService
-	webhookService        *WebhookService
-	internalMessageSvc    *InternalMessageService
-	contentModelRepo      *data.ContentModelRepo
-	referenceTracker      *ReferenceTrackingService
-	flowSvc               *FlowService
-	log                   *log.Helper
+	postRepo           *data.PostRepo
+	postVersionRepo    *data.PostVersionRepo
+	searchService      *SearchService
+	taskService        *TaskService
+	webhookService     *WebhookService
+	internalMessageSvc *InternalMessageService
+	contentModelRepo   *data.ContentModelRepo
+	referenceTracker   *ReferenceTrackingService
+	flowSvc            *FlowService
+	log                *log.Helper
 }
 
 func NewPostService(ctx *bootstrap.Context, uc *data.PostRepo, searchService *SearchService, taskService *TaskService, contentModelRepo *data.ContentModelRepo, postVersionRepo *data.PostVersionRepo, webhookService *WebhookService, internalMessageSvc *InternalMessageService, referenceTracker *ReferenceTrackingService, flowSvc *FlowService) *PostService {
 	return &PostService{
-		log:                 ctx.NewLoggerHelper("post/service/core-service"),
-		postRepo:            uc,
-		postVersionRepo:     postVersionRepo,
-		searchService:       searchService,
-		taskService:         taskService,
-		webhookService:      webhookService,
-		internalMessageSvc:  internalMessageSvc,
-		contentModelRepo:    contentModelRepo,
-		referenceTracker:    referenceTracker,
-		flowSvc:             flowSvc,
+		log:                ctx.NewLoggerHelper("post/service/core-service"),
+		postRepo:           uc,
+		postVersionRepo:    postVersionRepo,
+		searchService:      searchService,
+		taskService:        taskService,
+		webhookService:     webhookService,
+		internalMessageSvc: internalMessageSvc,
+		contentModelRepo:   contentModelRepo,
+		referenceTracker:   referenceTracker,
+		flowSvc:            flowSvc,
 	}
 }
 
@@ -102,12 +103,35 @@ func (s *PostService) SearchPosts(ctx context.Context, req *contentV1.SearchPost
 			continue
 		}
 		resp.Items = append(resp.Items, &contentV1.SearchPostHit{
-			PostId:   uint32(pid),
-			Language: hit.Language,
-			Title:    hit.Title,
+			PostId:             uint32(pid),
+			Language:           hit.Language,
+			Title:              hit.Title,
+			Summary:            hit.Summary,
+			HighlightFragments: hit.HighlightFragments,
 		})
 	}
 	return resp, nil
+}
+
+// SearchPostsSuggest 搜索建议词（标题前缀联想，免鉴权公开链路）。
+func (s *PostService) SearchPostsSuggest(ctx context.Context, req *contentV1.SearchPostsSuggestRequest) (*contentV1.SearchPostsSuggestResponse, error) {
+	if req == nil {
+		return nil, contentV1.ErrorBadRequest("invalid parameter")
+	}
+	query := strings.TrimSpace(req.GetQuery())
+	if query == "" {
+		return &contentV1.SearchPostsSuggestResponse{}, nil
+	}
+	language := req.GetLanguage()
+	if language == "" {
+		language = "zh-CN"
+	}
+	titles, err := s.searchService.SearchPostsSuggest(ctx, query, language, int(req.GetPageSize()))
+	if err != nil {
+		s.log.Errorf("search posts suggest failed: %v", err)
+		return nil, contentV1.ErrorInternalServerError("search suggest failed")
+	}
+	return &contentV1.SearchPostsSuggestResponse{Titles: titles}, nil
 }
 
 func (s *PostService) Get(ctx context.Context, req *contentV1.GetPostRequest) (*contentV1.Post, error) {
@@ -600,7 +624,6 @@ func (s *PostService) dispatchWebhookEvent(ctx context.Context, event string, po
 	s.webhookService.DispatchEvent(ctx, event, postID)
 }
 
-
 // ─── 发布审批工作流：DRAFT →（提交审核）审核中 →（通过）PUBLISHED /（驳回）DRAFT ───
 //
 // 权限卡点在 admin 门面侧的接口 RBAC：接口管理为 review/approve/reject 三个
@@ -634,8 +657,8 @@ func (s *PostService) SubmitReview(ctx context.Context, req *contentV1.SubmitPos
 	}
 
 	updated, err := s.postRepo.Update(ctx, &contentV1.UpdatePostRequest{
-		Id:   req.GetPostId(),
-		Data: &contentV1.Post{InProgress: trans.Ptr(true)},
+		Id:         req.GetPostId(),
+		Data:       &contentV1.Post{InProgress: trans.Ptr(true)},
 		UpdateMask: &fieldmaskpb.FieldMask{Paths: []string{"in_progress"}},
 	})
 	if err != nil {

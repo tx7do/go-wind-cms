@@ -1,0 +1,23 @@
+syntax = "proto3";
+
+package content.service.v1;
+
+import "gnostic/openapi/v3/annotations.proto";
+
+import "google/protobuf/empty.proto";
+
+import "content/service/v1/post.proto";
+
+// 搜索同义词服务（core 实现；admin 面代理）：
+// 词库存 sys_search_synonyms（租户级），检索时查询侧按触发词扩展（OR 组），
+// 免索引重建、更新即时生效。
+service SearchSynonymService {
+  // 列出同义词（本租户全量，量小不分页）
+  rpc List (google.protobuf.Empty) returns (ListSearchSynonymsResponse) {}
+
+  // 创建同义词（term 租户内唯一）
+  rpc Create (CreateSearchSynonymRequest) returns (SearchSynonym) {}
+
+  // 删除同义词
+  rpc Delete (DeleteSearchSynonymRequest) returns (google.protobuf.Empty) {}
+}

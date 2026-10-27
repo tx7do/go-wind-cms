@@ -96,5 +96,6 @@
   "dashboard-analytics": "Analytics",
   "dashboard-workspace": "Workbench",
   "backup": "Backup Archives",
-  "calendar": "Content Calendar"
+  "calendar": "Content Calendar",
+  "searchSynonym": "Search Synonyms"
 }

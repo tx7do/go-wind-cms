@@ -6,8 +6,8 @@ import (
 	"time"
 
 	"github.com/go-kratos/kratos/v2/log"
-	khttp "github.com/go-kratos/kratos/v2/transport/http"
 	kratosMetadata "github.com/go-kratos/kratos/v2/metadata"
+	khttp "github.com/go-kratos/kratos/v2/transport/http"
 	paginationV1 "github.com/tx7do/go-crud/api/gen/go/pagination/v1"
 	"github.com/tx7do/kratos-bootstrap/bootstrap"
 	"google.golang.org/protobuf/types/known/emptypb"
@@ -23,10 +23,10 @@ import (
 type PostService struct {
 	appV1.PostServiceHTTPServer
 
-	postClient        contentV1.PostServiceClient
+	postClient         contentV1.PostServiceClient
 	contentModelCLient contentV1.ContentModelServiceClient
-	tenantResolve     entmiddleware.TenantResolver
-	log               *log.Helper
+	tenantResolve      entmiddleware.TenantResolver
+	log                *log.Helper
 }
 
 func NewPostService(ctx *bootstrap.Context, postClient contentV1.PostServiceClient, contentModelClient contentV1.ContentModelServiceClient, tenantResolve entmiddleware.TenantResolver) *PostService {
@@ -159,4 +159,18 @@ func (s *PostService) SearchPosts(ctx context.Context, req *contentV1.SearchPost
 		}
 	}
 	return s.postClient.SearchPosts(ctx, req)
+}
+
+// SearchPostsSuggest 搜索建议词（透传 core；标题前缀联想）。
+// 租户注入与 SearchPosts 同款：core 端建议词对租户强制过滤，匿名 gRPC 链路
+// 靠 BFF 按 Host 解析后注入 metadata 恢复租户上下文。
+func (s *PostService) SearchPostsSuggest(ctx context.Context, req *contentV1.SearchPostsSuggestRequest) (*contentV1.SearchPostsSuggestResponse, error) {
+	if s.tenantResolve != nil {
+		if hr, ok := khttp.RequestFromServerContext(ctx); ok && hr != nil && hr.Host != "" {
+			if tid, err := s.tenantResolve.ResolveTenantIDByDomain(ctx, hr.Host); err == nil && tid > 0 {
+				ctx = kratosMetadata.AppendToClientContext(ctx, "x-md-global-tenant-id", strconv.FormatUint(uint64(tid), 10))
+			}
+		}
+	}
+	return s.postClient.SearchPostsSuggest(ctx, req)
 }

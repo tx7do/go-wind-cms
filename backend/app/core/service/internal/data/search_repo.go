@@ -7,6 +7,7 @@ import (
 	"errors"
 	"io"
 	"strconv"
+	"strings"
 
 	"github.com/go-kratos/kratos/v2/log"
 	"github.com/tx7do/kratos-bootstrap/bootstrap"
@@ -63,7 +64,10 @@ type PostSearchHit struct {
 	PostID   string
 	Language string
 	Title    string
-	Score    float64
+	Summary  string
+	// HighlightFragments 高亮片段（含 <mark></mark> 标记，来自 ES highlight）
+	HighlightFragments []string
+	Score              float64
 }
 
 // PostSearchResult 是搜索返回。
@@ -259,7 +263,7 @@ func (r *SearchRepo) SearchPosts(
 
 	tidStr := strconv.FormatUint(uint64(tenantID), 10)
 
-	// 构建 DSL：filter（访问控制，不参与评分）+ must（相关性评分）
+	// 构建 DSL：filter（访问控制，不参与评分）+ must（相关性评分）+ highlight
 	dsl := map[string]any{
 		"from": from,
 		"size": pageSize,
@@ -280,6 +284,16 @@ func (r *SearchRepo) SearchPosts(
 				},
 			},
 		},
+		"highlight": map[string]any{
+			// 标记用 <mark>（前端受控渲染，不做富 HTML 注入）
+			"pre_tags":  []string{"<mark>"},
+			"post_tags": []string{"</mark>"},
+			"fields": map[string]any{
+				"title":   map[string]any{"number_of_fragments": 0},
+				"summary": map[string]any{"number_of_fragments": 1},
+				"content": map[string]any{"number_of_fragments": 2, "fragment_size": 160},
+			},
+		},
 	}
 
 	bodyBytes, err := json.Marshal(dsl)
@@ -295,7 +309,7 @@ func (r *SearchRepo) SearchPosts(
 		Body:    bytes.NewReader(bodyBytes),
 		Params: opensearchapiV4.SearchParams{
 			// 仅回传最小字段集，content/tenant_id/status 不返回
-			Source: []string{"post_id", "language", "title"},
+			Source: []string{"post_id", "language", "title", "summary"},
 		},
 	}
 	var searchResult opensearchapiV4.SearchResp
@@ -321,23 +335,263 @@ func (r *SearchRepo) SearchPosts(
 	result.Hits = make([]PostSearchHit, 0, len(hits))
 
 	for _, hit := range hits {
-		// hit.Source 是 json.RawMessage，仅含 post_id/language/title（因 WithSource 过滤）
+		// hit.Source 是 json.RawMessage，仅含 post_id/language/title/summary（因 WithSource 过滤）
 		var src struct {
 			PostID   string `json:"post_id"`
 			Language string `json:"language"`
 			Title    string `json:"title"`
+			Summary  string `json:"summary"`
 		}
 		if err := json.Unmarshal(hit.Source, &src); err != nil {
 			r.log.Warnf("unmarshal search hit source failed: %v", err)
 			continue
 		}
 		result.Hits = append(result.Hits, PostSearchHit{
-			PostID:   src.PostID,
-			Language: src.Language,
-			Title:    src.Title,
-			Score:    float64(hit.Score),
+			PostID:             src.PostID,
+			Language:           src.Language,
+			Title:              src.Title,
+			Summary:            src.Summary,
+			HighlightFragments: collectHighlightFragments(hit.Highlight),
+			Score:              float64(hit.Score),
 		})
 	}
 
 	return result, nil
+}
+
+// SearchPostsExpanded 同义词扩展检索：原始查询 + 扩展词各成一个 multi_match
+// 放进 bool.should（minimum_should_match=1——命中任一即可），评分仍按相关性。
+func (r *SearchRepo) SearchPostsExpanded(
+	ctx context.Context,
+	query string,
+	expanded []string,
+	tenantID uint32,
+	language string,
+	status string,
+	page int,
+	pageSize int,
+) (*PostSearchResult, error) {
+	if len(expanded) == 0 {
+		return r.SearchPosts(ctx, query, tenantID, language, status, page, pageSize)
+	}
+
+	// 与 SearchPosts 同款过滤骨架，仅 must 换成 should 组
+	result := &PostSearchResult{}
+	if r.esClient == nil {
+		return result, errors.New("elasticsearch client is nil")
+	}
+	if tenantID == 0 || language == "" || status == "" || query == "" {
+		return result, nil
+	}
+	if pageSize <= 0 {
+		pageSize = 20
+	}
+	if pageSize > maxSearchPageSize {
+		pageSize = maxSearchPageSize
+	}
+	if page < 0 {
+		page = 0
+	}
+	from := page * pageSize
+	if from > maxSearchResultFrom {
+		from = maxSearchResultFrom
+	}
+	tidStr := strconv.FormatUint(uint64(tenantID), 10)
+
+	fields := []string{"title", "summary", "content"}
+	should := make([]any, 0, len(expanded)+1)
+	should = append(should, map[string]any{
+		"multi_match": map[string]any{"query": query, "fields": fields},
+	})
+	for _, term := range expanded {
+		term = strings.TrimSpace(term)
+		if term == "" {
+			continue
+		}
+		should = append(should, map[string]any{
+			"multi_match": map[string]any{"query": term, "fields": fields},
+		})
+	}
+
+	dsl := map[string]any{
+		"from": from,
+		"size": pageSize,
+		"query": map[string]any{
+			"bool": map[string]any{
+				"filter": []any{
+					map[string]any{"term": map[string]any{"tenant_id": tidStr}},
+					map[string]any{"term": map[string]any{"language": language}},
+					map[string]any{"term": map[string]any{"status": status}},
+				},
+				"should":               should,
+				"minimum_should_match": 1,
+			},
+		},
+		"highlight": map[string]any{
+			"pre_tags":  []string{"<mark>"},
+			"post_tags": []string{"</mark>"},
+			"fields": map[string]any{
+				"title":   map[string]any{"number_of_fragments": 0},
+				"summary": map[string]any{"number_of_fragments": 1},
+				"content": map[string]any{"number_of_fragments": 2, "fragment_size": 160},
+			},
+		},
+	}
+	bodyBytes, err := json.Marshal(dsl)
+	if err != nil {
+		return result, err
+	}
+	searchReq := &opensearchapiV4.SearchReq{
+		Indices: []string{searchIndexName},
+		Body:    bytes.NewReader(bodyBytes),
+		Params: opensearchapiV4.SearchParams{
+			Source: []string{"post_id", "language", "title", "summary"},
+		},
+	}
+	var searchResult opensearchapiV4.SearchResp
+	resp, err := r.esClient.Client.Do(ctx, searchReq, &searchResult)
+	if err != nil {
+		r.log.Errorf("expanded search failed: %v", err)
+		return result, err
+	}
+	defer func() {
+		if closeErr := resp.Body.Close(); closeErr != nil {
+			r.log.Warnf("close expanded search response body failed: %v", closeErr)
+		}
+	}()
+	if resp.IsError() {
+		errBody, _ := io.ReadAll(resp.Body)
+		r.log.Errorf("expanded search error [%d]: %s", resp.StatusCode, string(errBody))
+		return result, errors.New("search request failed")
+	}
+
+	result.Total = searchResult.Hits.Total.Value
+	result.Hits = make([]PostSearchHit, 0, len(searchResult.Hits.Hits))
+	for _, hit := range searchResult.Hits.Hits {
+		var src struct {
+			PostID   string `json:"post_id"`
+			Language string `json:"language"`
+			Title    string `json:"title"`
+			Summary  string `json:"summary"`
+		}
+		if err := json.Unmarshal(hit.Source, &src); err != nil {
+			continue
+		}
+		result.Hits = append(result.Hits, PostSearchHit{
+			PostID:             src.PostID,
+			Language:           src.Language,
+			Title:              src.Title,
+			Summary:            src.Summary,
+			HighlightFragments: collectHighlightFragments(hit.Highlight),
+			Score:              float64(hit.Score),
+		})
+	}
+	return result, nil
+}
+
+// collectHighlightFragments 把 ES highlight 响应（字段名 → 片段数组）摊平成
+// 有序片段列表（title → summary → content 顺序）。
+func collectHighlightFragments(highlight map[string][]string) []string {
+	if len(highlight) == 0 {
+		return nil
+	}
+	var out []string
+	for _, field := range []string{"title", "summary", "content"} {
+		for _, f := range highlight[field] {
+			if f != "" {
+				out = append(out, f)
+			}
+		}
+	}
+	return out
+}
+
+// SuggestPostTitles 标题前缀联想（match_phrase_prefix；取前 N 条标题去重）。
+// 仅返回标题列表——建议词场景不需要任何其他字段。
+func (r *SearchRepo) SuggestPostTitles(
+	ctx context.Context,
+	prefix string,
+	tenantID uint32,
+	language string,
+	limit int,
+) ([]string, error) {
+	if r.esClient == nil {
+		return nil, errors.New("elasticsearch client is nil")
+	}
+	if tenantID == 0 || language == "" || strings.TrimSpace(prefix) == "" {
+		return nil, nil
+	}
+	if limit <= 0 {
+		limit = 8
+	}
+	if limit > 20 {
+		limit = 20
+	}
+	tidStr := strconv.FormatUint(uint64(tenantID), 10)
+
+	dsl := map[string]any{
+		"size": limit * 2, // 去重余量
+		"query": map[string]any{
+			"bool": map[string]any{
+				"filter": []any{
+					map[string]any{"term": map[string]any{"tenant_id": tidStr}},
+					map[string]any{"term": map[string]any{"language": language}},
+					map[string]any{"term": map[string]any{"status": "POST_STATUS_PUBLISHED"}},
+				},
+				"must": []any{
+					map[string]any{
+						"match_phrase_prefix": map[string]any{
+							"title": map[string]any{"query": prefix},
+						},
+					},
+				},
+			},
+		},
+		"_source": []string{"title"},
+	}
+	bodyBytes, err := json.Marshal(dsl)
+	if err != nil {
+		return nil, err
+	}
+	searchReq := &opensearchapiV4.SearchReq{
+		Indices: []string{searchIndexName},
+		Body:    bytes.NewReader(bodyBytes),
+	}
+	var searchResult opensearchapiV4.SearchResp
+	resp, err := r.esClient.Client.Do(ctx, searchReq, &searchResult)
+	if err != nil {
+		r.log.Errorf("suggest failed: %v", err)
+		return nil, err
+	}
+	defer func() {
+		if closeErr := resp.Body.Close(); closeErr != nil {
+			r.log.Warnf("close suggest response body failed: %v", closeErr)
+		}
+	}()
+	if resp.IsError() {
+		errBody, _ := io.ReadAll(resp.Body)
+		r.log.Errorf("suggest error [%d]: %s", resp.StatusCode, string(errBody))
+		return nil, errors.New("suggest request failed")
+	}
+
+	seen := map[string]bool{}
+	out := make([]string, 0, limit)
+	for _, hit := range searchResult.Hits.Hits {
+		var src struct {
+			Title string `json:"title"`
+		}
+		if err := json.Unmarshal(hit.Source, &src); err != nil {
+			continue
+		}
+		title := strings.TrimSpace(src.Title)
+		if title == "" || seen[title] {
+			continue
+		}
+		seen[title] = true
+		out = append(out, title)
+		if len(out) >= limit {
+			break
+		}
+	}
+	return out, nil
 }

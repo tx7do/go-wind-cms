@@ -74,7 +74,7 @@ func run() error {
 		data.NewPostCategoryRepo(ctx, entClient),
 		data.NewPostTagRepo(ctx, entClient),
 	)
-	searchService := service.NewSearchService(ctx, searchRepo, postRepo)
+	searchService := service.NewSearchService(ctx, searchRepo, postRepo, nil)
 
 	// 全量帖子 ID（含草稿/归档：ReindexPost 对非 PUBLISHED 会清理 ES 残留文档）。
 	// ent privacy 要求请求带 ViewerContext，此处与 reindex 处理器一致注入 SystemViewer。

@@ -1447,6 +1447,38 @@ paths:
                         application/json:
                             schema:
                                 $ref: '#/components/schemas/content.service.v1.SearchPostsResponse'
+    /app/v1/posts/search/suggest:
+        get:
+            tags:
+                - PostService
+            description: 搜索建议词（标题前缀联想；免鉴权）
+            operationId: PostService_SearchPostsSuggest
+            parameters:
+                - name: query
+                  in: query
+                  description: 前缀关键词（至少 1 字符）
+                  schema:
+                    type: string
+                - name: language
+                  in: query
+                  description: 语言代码（缺省 zh-CN）
+                  schema:
+                    type: string
+                - name: pageSize
+                  in: query
+                  description: 返回条数（缺省 8，至多 20）
+                  schema:
+                    type: integer
+                    format: uint32
+            responses:
+                "200":
+                    description: OK
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/content.service.v1.SearchPostsSuggestResponse'
+            security:
+                - {}
     /app/v1/posts/{id}:
         get:
             tags:
@@ -3246,6 +3278,14 @@ components:
                 title:
                     type: string
                     description: 标题（来自翻译，用于搜索结果展示）
+                summary:
+                    type: string
+                    description: 摘要（来自翻译，搜索结果卡片展示用）
+                highlightFragments:
+                    type: array
+                    items:
+                        type: string
+                    description: 高亮片段（含 <mark></mark> 标记，来自 ES highlight；命中字段顺序排列）
             description: 搜索命中条目（最小字段集）
         content.service.v1.SearchPostsResponse:
             type: object
@@ -3262,6 +3302,15 @@ components:
 
                  仅返回最小字段集：post_id / language / title。
                  不含 content / tenant_id / status——这些字段不向前台暴露。
+        content.service.v1.SearchPostsSuggestResponse:
+            type: object
+            properties:
+                titles:
+                    type: array
+                    items:
+                        type: string
+                    description: 建议标题列表（去重）
+            description: 搜索建议词 - 回应
         content.service.v1.Section:
             type: object
             properties:

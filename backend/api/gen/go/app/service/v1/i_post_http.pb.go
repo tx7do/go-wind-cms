@@ -31,6 +31,7 @@ const OperationPostServiceGetTranslation = "/app.service.v1.PostService/GetTrans
 const OperationPostServiceList = "/app.service.v1.PostService/List"
 const OperationPostServiceResolveContentReferences = "/app.service.v1.PostService/ResolveContentReferences"
 const OperationPostServiceSearchPosts = "/app.service.v1.PostService/SearchPosts"
+const OperationPostServiceSearchPostsSuggest = "/app.service.v1.PostService/SearchPostsSuggest"
 const OperationPostServiceUpdate = "/app.service.v1.PostService/Update"
 
 type PostServiceHTTPServer interface {
@@ -56,6 +57,8 @@ type PostServiceHTTPServer interface {
 	// 仅返回 PUBLISHED 状态内容；tenant_id 由服务端从登录用户上下文注入，
 	// 客户端无法指定或绕过。故此端点不进鉴权白名单——必须登录后方可搜索。
 	SearchPosts(context.Context, *v1.SearchPostsRequest) (*v1.SearchPostsResponse, error)
+	// SearchPostsSuggest 搜索建议词（标题前缀联想；免鉴权）
+	SearchPostsSuggest(context.Context, *v1.SearchPostsSuggestRequest) (*v1.SearchPostsSuggestResponse, error)
 	// Update 更新帖子
 	Update(context.Context, *v1.UpdatePostRequest) (*v1.Post, error)
 }
@@ -66,6 +69,7 @@ func RegisterPostServiceHTTPServer(s *http.Server, srv PostServiceHTTPServer) {
 	r.GET("/app/v1/content-references/resolve", _PostService_ResolveContentReferences0_HTTP_Handler(srv))
 	r.GET("/app/v1/posts", _PostService_List4_HTTP_Handler(srv))
 	r.GET("/app/v1/posts/search", _PostService_SearchPosts0_HTTP_Handler(srv))
+	r.GET("/app/v1/posts/search/suggest", _PostService_SearchPostsSuggest0_HTTP_Handler(srv))
 	r.GET("/app/v1/posts/{id}", _PostService_Get5_HTTP_Handler(srv))
 	r.POST("/app/v1/posts", _PostService_Create4_HTTP_Handler(srv))
 	r.PUT("/app/v1/posts/{id}", _PostService_Update4_HTTP_Handler(srv))
@@ -149,6 +153,25 @@ func _PostService_SearchPosts0_HTTP_Handler(srv PostServiceHTTPServer) func(ctx 
 			return err
 		}
 		reply := out.(*v1.SearchPostsResponse)
+		return ctx.Result(200, reply)
+	}
+}
+
+func _PostService_SearchPostsSuggest0_HTTP_Handler(srv PostServiceHTTPServer) func(ctx http.Context) error {
+	return func(ctx http.Context) error {
+		var in v1.SearchPostsSuggestRequest
+		if err := ctx.BindQuery(&in); err != nil {
+			return err
+		}
+		http.SetOperation(ctx, OperationPostServiceSearchPostsSuggest)
+		h := ctx.Middleware(func(ctx context.Context, req interface{}) (interface{}, error) {
+			return srv.SearchPostsSuggest(ctx, req.(*v1.SearchPostsSuggestRequest))
+		})
+		out, err := h(ctx, &in)
+		if err != nil {
+			return err
+		}
+		reply := out.(*v1.SearchPostsSuggestResponse)
 		return ctx.Result(200, reply)
 	}
 }
@@ -311,6 +334,8 @@ type PostServiceHTTPClient interface {
 	// 仅返回 PUBLISHED 状态内容；tenant_id 由服务端从登录用户上下文注入，
 	// 客户端无法指定或绕过。故此端点不进鉴权白名单——必须登录后方可搜索。
 	SearchPosts(ctx context.Context, req *v1.SearchPostsRequest, opts ...http.CallOption) (rsp *v1.SearchPostsResponse, err error)
+	// SearchPostsSuggest 搜索建议词（标题前缀联想；免鉴权）
+	SearchPostsSuggest(ctx context.Context, req *v1.SearchPostsSuggestRequest, opts ...http.CallOption) (rsp *v1.SearchPostsSuggestResponse, err error)
 	// Update 更新帖子
 	Update(ctx context.Context, req *v1.UpdatePostRequest, opts ...http.CallOption) (rsp *v1.Post, err error)
 }
@@ -445,6 +470,20 @@ func (c *PostServiceHTTPClientImpl) SearchPosts(ctx context.Context, in *v1.Sear
 	pattern := "/app/v1/posts/search"
 	path := binding.EncodeURL(pattern, in, true)
 	opts = append(opts, http.Operation(OperationPostServiceSearchPosts))
+	opts = append(opts, http.PathTemplate(pattern))
+	err := c.cc.Invoke(ctx, "GET", path, nil, &out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return &out, nil
+}
+
+// SearchPostsSuggest 搜索建议词（标题前缀联想；免鉴权）
+func (c *PostServiceHTTPClientImpl) SearchPostsSuggest(ctx context.Context, in *v1.SearchPostsSuggestRequest, opts ...http.CallOption) (*v1.SearchPostsSuggestResponse, error) {
+	var out v1.SearchPostsSuggestResponse
+	pattern := "/app/v1/posts/search/suggest"
+	path := binding.EncodeURL(pattern, in, true)
+	opts = append(opts, http.Operation(OperationPostServiceSearchPostsSuggest))
 	opts = append(opts, http.PathTemplate(pattern))
 	err := c.cc.Invoke(ctx, "GET", path, nil, &out, opts...)
 	if err != nil {

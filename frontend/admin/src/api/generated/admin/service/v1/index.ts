@@ -12922,6 +12922,80 @@ export type permissionservicev1_DeleteRoleRequest = {
   tenantId?: number;
 };
 
+// 搜索同义词管理（BFF 面：代理 core SearchSynonymService）
+export interface SearchSynonymService {
+  // 同义词列表
+  List(
+    request: wellKnownEmpty,
+  ): Promise<contentservicev1_ListSearchSynonymsResponse>;
+  // 创建同义词
+  Create(
+    request: contentservicev1_CreateSearchSynonymRequest,
+  ): Promise<contentservicev1_SearchSynonym>;
+  // 删除同义词
+  Delete(
+    request: contentservicev1_DeleteSearchSynonymRequest,
+  ): Promise<wellKnownEmpty>;
+}
+
+export function createSearchSynonymServiceClient(
+  transport: ClientTransport,
+): SearchSynonymService {
+  return {
+    List(_request) {
+      const path = `/admin/v1/search-synonyms`;
+      const body = null;
+      return transport.unary(path, 'GET', body, {
+        service: 'SearchSynonymService',
+        method: 'List',
+      }) as Promise<contentservicev1_ListSearchSynonymsResponse>;
+    },
+    Create(request) {
+      const path = `/admin/v1/search-synonyms`;
+      const body = JSON.stringify(request);
+      return transport.unary(path, 'POST', body, {
+        service: 'SearchSynonymService',
+        method: 'Create',
+      }) as Promise<contentservicev1_SearchSynonym>;
+    },
+    Delete(request) {
+      if (request.id === undefined || request.id === null) {
+        throw new Error('missing required field request.id');
+      }
+      const path = `/admin/v1/search-synonyms/${request.id}`;
+      const body = null;
+      return transport.unary(path, 'DELETE', body, {
+        service: 'SearchSynonymService',
+        method: 'Delete',
+      }) as Promise<wellKnownEmpty>;
+    },
+  };
+}
+// 列出同义词 - 回应
+export type contentservicev1_ListSearchSynonymsResponse = {
+  items: contentservicev1_SearchSynonym[] | undefined;
+};
+
+// 搜索同义词条目
+export type contentservicev1_SearchSynonym = {
+  enabled?: boolean;
+  id?: number;
+  // 扩展词列表（与触发词一起以 OR 参与检索）
+  synonyms: string[] | undefined;
+  // 触发词（搜索词命中即扩展）
+  term: string | undefined;
+};
+
+// 创建同义词 - 请求
+export type contentservicev1_CreateSearchSynonymRequest = {
+  data: contentservicev1_SearchSynonym | undefined;
+};
+
+// 删除同义词 - 请求
+export type contentservicev1_DeleteSearchSynonymRequest = {
+  id: number | undefined;
+};
+
 // 站点服务
 export interface SiteService {
   // 获取站点列表
@@ -16542,6 +16616,7 @@ export class ApiClient {
   private _redirectService?: RedirectService;
   private _redisCacheMonitorService?: RedisCacheMonitorService;
   private _roleService?: RoleService;
+  private _searchSynonymService?: SearchSynonymService;
   private _serverMonitorService?: ServerMonitorService;
   private _siteService?: SiteService;
   private _siteSettingService?: SiteSettingService;
@@ -16803,6 +16878,10 @@ export class ApiClient {
 
   get roleService(): RoleService {
     return this._roleService ??= createRoleServiceClient(this._transport);
+  }
+
+  get searchSynonymService(): SearchSynonymService {
+    return this._searchSynonymService ??= createSearchSynonymServiceClient(this._transport);
   }
 
   get serverMonitorService(): ServerMonitorService {

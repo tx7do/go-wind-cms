@@ -1,0 +1,35 @@
+syntax = "proto3";
+
+package admin.service.v1;
+
+import "gnostic/openapi/v3/annotations.proto";
+import "google/api/annotations.proto";
+import "google/protobuf/empty.proto";
+
+import "content/service/v1/post.proto";
+import "content/service/v1/search_synonym.proto";
+
+// 搜索同义词管理（BFF 面：代理 core SearchSynonymService）
+service SearchSynonymService {
+  // 同义词列表
+  rpc List (google.protobuf.Empty) returns (content.service.v1.ListSearchSynonymsResponse) {
+    option (google.api.http) = {
+      get: "/admin/v1/search-synonyms"
+    };
+  }
+
+  // 创建同义词
+  rpc Create (content.service.v1.CreateSearchSynonymRequest) returns (content.service.v1.SearchSynonym) {
+    option (google.api.http) = {
+      post: "/admin/v1/search-synonyms"
+      body: "*"
+    };
+  }
+
+  // 删除同义词
+  rpc Delete (content.service.v1.DeleteSearchSynonymRequest) returns (google.protobuf.Empty) {
+    option (google.api.http) = {
+      delete: "/admin/v1/search-synonyms/{id}"
+    };
+  }
+}

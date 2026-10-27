@@ -1,0 +1,16 @@
+{
+  "title": "Search Synonyms",
+  "term": "Term",
+  "synonyms": "Synonyms",
+  "action": "Action",
+  "termPlaceholder": "Trigger term, e.g. phone",
+  "synonymsPlaceholder": "Synonyms, comma separated, e.g. mobile, smartphone",
+  "termRequired": "Term is required",
+  "synonymsRequired": "At least one synonym is required",
+  "add": "Add",
+  "created": "Added",
+  "deleted": "Deleted",
+  "saveFailed": "Save failed",
+  "deleteFailed": "Delete failed",
+  "hint": "When a search query hits the term, synonyms join the search with OR. Takes effect immediately, no reindexing."
+}

@@ -35,18 +35,22 @@ type SearchService struct {
 	log        *log.Helper
 	searchRepo *data.SearchRepo
 	postRepo   *data.PostRepo
+
+	synonymRepo *data.SearchSynonymRepo
 }
 
 func NewSearchService(
 	ctx *bootstrap.Context,
 	searchRepo *data.SearchRepo,
 	postRepo *data.PostRepo,
-) *SearchService {
+	synonymRepo *data.SearchSynonymRepo,) *SearchService {
 	return &SearchService{
 		log:        ctx.NewLoggerHelper("search/service/core-service"),
 		searchRepo: searchRepo,
 		postRepo:   postRepo,
-	}
+	
+		synonymRepo: synonymRepo,
+}
 }
 
 // Search 前台全文搜索。
@@ -76,7 +80,27 @@ func (s *SearchService) Search(
 		return &data.PostSearchResult{}, nil
 	}
 
+	// 同义词查询侧扩展（租户词库；扩展词以 OR 组参与检索，原始查询不丢）。
+	// 词库加载失败/无命中都不影响主查询——扩展是纯增益。
+	if s.synonymRepo != nil {
+		if expanded := s.synonymRepo.ExpandQuery(ctx, tenantID, query); len(expanded) > 0 {
+			return s.searchRepo.SearchPostsExpanded(ctx, query, expanded, tenantID, language, status, page, pageSize)
+		}
+	}
 	return s.searchRepo.SearchPosts(ctx, query, tenantID, language, status, page, pageSize)
+}
+
+// SearchPostsSuggest 标题前缀联想（租户解析同 Search；免鉴权公开链路）。
+func (s *SearchService) SearchPostsSuggest(ctx context.Context, prefix string, language string, limit int) ([]string, error) {
+	tenantID, hasTenant := maybeTenantFromViewerForSearch(ctx)
+	if !hasTenant {
+		tenantID = tenantIDFromGlobalMetadata(ctx)
+		hasTenant = tenantID > 0
+	}
+	if !hasTenant {
+		return []string{}, nil
+	}
+	return s.searchRepo.SuggestPostTitles(ctx, prefix, tenantID, language, limit)
 }
 
 // tenantIDFromGlobalMetadata 读取 BFF 注入的租户元数据（kratos metadata 中间件

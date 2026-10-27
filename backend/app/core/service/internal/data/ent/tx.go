@@ -174,6 +174,8 @@ type Tx struct {
 	RoleMetadata *RoleMetadataClient
 	// RolePermission is the client for interacting with the RolePermission builders.
 	RolePermission *RolePermissionClient
+	// SearchSynonym is the client for interacting with the SearchSynonym builders.
+	SearchSynonym *SearchSynonymClient
 	// Section is the client for interacting with the Section builders.
 	Section *SectionClient
 	// SectionTranslation is the client for interacting with the SectionTranslation builders.
@@ -428,6 +430,7 @@ func (tx *Tx) init() {
 	tx.RoleFieldPermission = NewRoleFieldPermissionClient(tx.config)
 	tx.RoleMetadata = NewRoleMetadataClient(tx.config)
 	tx.RolePermission = NewRolePermissionClient(tx.config)
+	tx.SearchSynonym = NewSearchSynonymClient(tx.config)
 	tx.Section = NewSectionClient(tx.config)
 	tx.SectionTranslation = NewSectionTranslationClient(tx.config)
 	tx.Site = NewSiteClient(tx.config)

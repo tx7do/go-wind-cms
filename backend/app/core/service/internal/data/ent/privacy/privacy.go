@@ -2055,6 +2055,30 @@ func (f RolePermissionMutationRuleFunc) EvalMutation(ctx context.Context, m ent.
 	return Denyf("ent/privacy: unexpected mutation type %T, expect *ent.RolePermissionMutation", m)
 }
 
+// The SearchSynonymQueryRuleFunc type is an adapter to allow the use of ordinary
+// functions as a query rule.
+type SearchSynonymQueryRuleFunc func(context.Context, *ent.SearchSynonymQuery) error
+
+// EvalQuery return f(ctx, q).
+func (f SearchSynonymQueryRuleFunc) EvalQuery(ctx context.Context, q ent.Query) error {
+	if q, ok := q.(*ent.SearchSynonymQuery); ok {
+		return f(ctx, q)
+	}
+	return Denyf("ent/privacy: unexpected query type %T, expect *ent.SearchSynonymQuery", q)
+}
+
+// The SearchSynonymMutationRuleFunc type is an adapter to allow the use of ordinary
+// functions as a mutation rule.
+type SearchSynonymMutationRuleFunc func(context.Context, *ent.SearchSynonymMutation) error
+
+// EvalMutation calls f(ctx, m).
+func (f SearchSynonymMutationRuleFunc) EvalMutation(ctx context.Context, m ent.Mutation) error {
+	if m, ok := m.(*ent.SearchSynonymMutation); ok {
+		return f(ctx, m)
+	}
+	return Denyf("ent/privacy: unexpected mutation type %T, expect *ent.SearchSynonymMutation", m)
+}
+
 // The SectionQueryRuleFunc type is an adapter to allow the use of ordinary
 // functions as a query rule.
 type SectionQueryRuleFunc func(context.Context, *ent.SectionQuery) error
@@ -2756,6 +2780,8 @@ func queryFilter(q ent.Query) (Filter, error) {
 		return q.Filter(), nil
 	case *ent.RolePermissionQuery:
 		return q.Filter(), nil
+	case *ent.SearchSynonymQuery:
+		return q.Filter(), nil
 	case *ent.SectionQuery:
 		return q.Filter(), nil
 	case *ent.SectionTranslationQuery:
@@ -2966,6 +2992,8 @@ func mutationFilter(m ent.Mutation) (Filter, error) {
 	case *ent.RoleMetadataMutation:
 		return m.Filter(), nil
 	case *ent.RolePermissionMutation:
+		return m.Filter(), nil
+	case *ent.SearchSynonymMutation:
 		return m.Filter(), nil
 	case *ent.SectionMutation:
 		return m.Filter(), nil

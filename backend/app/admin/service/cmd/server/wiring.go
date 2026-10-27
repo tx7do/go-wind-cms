@@ -87,6 +87,7 @@ func initApp(ctx *bootstrap.Context) (*kratos.App, func(), error) {
 	userCredentialServiceClient := data.NewUserCredentialServiceClient(ctx, discovery)
 	mfaServiceClient := data.NewMFAServiceClient(ctx, discovery)
 	backupArchiveServiceClient := data.NewBackupArchiveServiceClient(ctx, discovery)
+	searchSynonymClient := data.NewSearchSynonymServiceClient(ctx, discovery)
 	loginPolicyServiceClient := data.NewLoginPolicyServiceClient(ctx, discovery)
 
 	// RBAC
@@ -184,6 +185,7 @@ func initApp(ctx *bootstrap.Context) (*kratos.App, func(), error) {
 	userProfileService := service.NewUserProfileService(ctx, userServiceClient, tenantServiceClient, orgUnitServiceClient, positionServiceClient, roleServiceClient, userCredentialServiceClient)
 	mfaService := service.NewMFAService(ctx, mfaServiceClient)
 	backupService := service.NewBackupService(ctx, backupArchiveServiceClient)
+	searchSynonymService := service.NewSearchSynonymService(ctx, searchSynonymClient)
 	roleService := service.NewRoleService(ctx, roleServiceClient, tenantServiceClient)
 	tenantService := service.NewTenantService(ctx, userServiceClient, userCredentialServiceClient, tenantServiceClient, roleServiceClient)
 	orgUnitService := service.NewOrgUnitService(ctx, orgUnitServiceClient, userServiceClient)
@@ -282,7 +284,7 @@ func initApp(ctx *bootstrap.Context) (*kratos.App, func(), error) {
 	restMiddlewares := server.NewRestMiddleware(ctx, accessTokenChecker, engine, tenantQuotaServiceClient, apiAuditLogServiceClient, loginAuditLogServiceClient, operationAuditLogServiceClient)
 
 	httpServer := server.NewRestServer(ctx, restMiddlewares,
-		userService, userProfileService, mfaService, backupService, roleService, tenantService, orgUnitService, positionService,
+		userService, userProfileService, mfaService, backupService, searchSynonymService, roleService, tenantService, orgUnitService, positionService,
 		menuService, apiService, permissionGroupService, permissionService,
 		adminPortalService, previewService, taskService,
 		authenticationService, loginPolicyService,

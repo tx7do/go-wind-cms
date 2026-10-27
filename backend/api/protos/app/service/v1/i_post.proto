@@ -52,6 +52,17 @@ service PostService {
     };
   }
 
+  // 搜索建议词（标题前缀联想；免鉴权）
+  rpc SearchPostsSuggest (content.service.v1.SearchPostsSuggestRequest) returns (content.service.v1.SearchPostsSuggestResponse) {
+    option (google.api.http) = {
+      get: "/app/v1/posts/search/suggest"
+    };
+
+    option(gnostic.openapi.v3.operation) = {
+      security: {}
+    };
+  }
+
   // 获取帖子数据
   rpc Get (content.service.v1.GetPostRequest) returns (content.service.v1.Post) {
     option (google.api.http) = {

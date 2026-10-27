@@ -87,6 +87,7 @@ import (
 	"go-wind-cms/app/core/service/internal/data/ent/rolemetadata"
 	"go-wind-cms/app/core/service/internal/data/ent/rolepermission"
 	"go-wind-cms/app/core/service/internal/data/ent/schema"
+	"go-wind-cms/app/core/service/internal/data/ent/searchsynonym"
 	"go-wind-cms/app/core/service/internal/data/ent/section"
 	"go-wind-cms/app/core/service/internal/data/ent/sectiontranslation"
 	"go-wind-cms/app/core/service/internal/data/ent/site"
@@ -2703,6 +2704,58 @@ func init() {
 	rolepermissionDescID := rolepermissionMixinFields0[0].Descriptor()
 	// rolepermission.IDValidator is a validator for the "id" field. It is called by the builders before save.
 	rolepermission.IDValidator = rolepermissionDescID.Validators[0].(func(uint32) error)
+	searchsynonymMixin := schema.SearchSynonym{}.Mixin()
+	searchsynonym.Policy = privacy.NewPolicies(searchsynonymMixin[2], schema.SearchSynonym{})
+	searchsynonym.Hooks[0] = func(next ent.Mutator) ent.Mutator {
+		return ent.MutateFunc(func(ctx context.Context, m ent.Mutation) (ent.Value, error) {
+			if err := searchsynonym.Policy.EvalMutation(ctx, m); err != nil {
+				return nil, err
+			}
+			return next.Mutate(ctx, m)
+		})
+	}
+	searchsynonymMixinFields1 := searchsynonymMixin[1].Fields()
+	_ = searchsynonymMixinFields1
+	searchsynonymMixinFields2 := searchsynonymMixin[2].Fields()
+	_ = searchsynonymMixinFields2
+	searchsynonymFields := schema.SearchSynonym{}.Fields()
+	_ = searchsynonymFields
+	// searchsynonymDescTenantID is the schema descriptor for tenant_id field.
+	searchsynonymDescTenantID := searchsynonymMixinFields2[0].Descriptor()
+	// searchsynonym.DefaultTenantID holds the default value on creation for the tenant_id field.
+	searchsynonym.DefaultTenantID = searchsynonymDescTenantID.Default.(uint32)
+	// searchsynonymDescTerm is the schema descriptor for term field.
+	searchsynonymDescTerm := searchsynonymFields[0].Descriptor()
+	// searchsynonym.TermValidator is a validator for the "term" field. It is called by the builders before save.
+	searchsynonym.TermValidator = func() func(string) error {
+		validators := searchsynonymDescTerm.Validators
+		fns := [...]func(string) error{
+			validators[0].(func(string) error),
+			validators[1].(func(string) error),
+		}
+		return func(term string) error {
+			for _, fn := range fns {
+				if err := fn(term); err != nil {
+					return err
+				}
+			}
+			return nil
+		}
+	}()
+	// searchsynonymDescSynonyms is the schema descriptor for synonyms field.
+	searchsynonymDescSynonyms := searchsynonymFields[1].Descriptor()
+	// searchsynonym.DefaultSynonyms holds the default value on creation for the synonyms field.
+	searchsynonym.DefaultSynonyms = searchsynonymDescSynonyms.Default.(string)
+	// searchsynonym.SynonymsValidator is a validator for the "synonyms" field. It is called by the builders before save.
+	searchsynonym.SynonymsValidator = searchsynonymDescSynonyms.Validators[0].(func(string) error)
+	// searchsynonymDescEnabled is the schema descriptor for enabled field.
+	searchsynonymDescEnabled := searchsynonymFields[2].Descriptor()
+	// searchsynonym.DefaultEnabled holds the default value on creation for the enabled field.
+	searchsynonym.DefaultEnabled = searchsynonymDescEnabled.Default.(bool)
+	// searchsynonymDescID is the schema descriptor for id field.
+	searchsynonymDescID := searchsynonymMixinFields1[0].Descriptor()
+	// searchsynonym.IDValidator is a validator for the "id" field. It is called by the builders before save.
+	searchsynonym.IDValidator = searchsynonymDescID.Validators[0].(func(uint32) error)
 	sectionMixin := schema.Section{}.Mixin()
 	section.Policy = privacy.NewPolicies(sectionMixin[4], schema.Section{})
 	section.Hooks[0] = func(next ent.Mutator) ent.Mutator {

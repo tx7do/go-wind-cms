@@ -1,0 +1,16 @@
+{
+  "title": "搜索同义词",
+  "term": "触发词",
+  "synonyms": "扩展词",
+  "action": "操作",
+  "termPlaceholder": "触发词，如：手机",
+  "synonymsPlaceholder": "扩展词，逗号分隔，如：移动电话, smartphone",
+  "termRequired": "请输入触发词",
+  "synonymsRequired": "请输入至少一个扩展词",
+  "add": "添加",
+  "created": "已添加",
+  "deleted": "已删除",
+  "saveFailed": "保存失败",
+  "deleteFailed": "删除失败",
+  "hint": "搜索词命中触发词时，扩展词以「或」参与检索（同义词保存后即时生效，无需重建索引）。"
+}

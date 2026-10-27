@@ -12,6 +12,8 @@ import "content/service/v1/types.proto";
 
 // 帖子服务
 service PostService {
+  // 搜索建议词（标题前缀联想；app 面免鉴权暴露）
+  rpc SearchPostsSuggest (SearchPostsSuggestRequest) returns (SearchPostsSuggestResponse) {}
   // 获取帖子列表
   rpc List (pagination.PagingRequest) returns (ListPostResponse) {}
 
@@ -444,6 +446,12 @@ message SearchPostHit {
 
   // 标题（来自翻译，用于搜索结果展示）
   string title = 3 [json_name = "title"];
+
+  // 摘要（来自翻译，搜索结果卡片展示用）
+  string summary = 4 [json_name = "summary"];
+
+  // 高亮片段（含 <mark></mark> 标记，来自 ES highlight；命中字段顺序排列）
+  repeated string highlight_fragments = 5 [json_name = "highlightFragments"];
 }
 
 // 帖子版本（内容快照）
@@ -537,4 +545,50 @@ message RejectPostReviewRequest {
   string reason = 2 [
     (gnostic.openapi.v3.property) = {description: "驳回理由（通知作者）"}
   ];
+}
+
+// 搜索建议词 - 请求
+message SearchPostsSuggestRequest {
+  // 前缀关键词（至少 1 字符）
+  string query = 1 [json_name = "query"];
+
+  // 语言代码（缺省 zh-CN）
+  string language = 2 [json_name = "language"];
+
+  // 返回条数（缺省 8，至多 20）
+  uint32 page_size = 3 [json_name = "pageSize"];
+}
+
+// 搜索建议词 - 回应
+message SearchPostsSuggestResponse {
+  // 建议标题列表（去重）
+  repeated string titles = 1;
+}
+
+// 搜索同义词条目
+message SearchSynonym {
+  optional uint32 id = 1 [json_name = "id"];
+
+  // 触发词（搜索词命中即扩展）
+  string term = 2 [json_name = "term"];
+
+  // 扩展词列表（与触发词一起以 OR 参与检索）
+  repeated string synonyms = 3 [json_name = "synonyms"];
+
+  optional bool enabled = 4 [json_name = "enabled"];
+}
+
+// 列出同义词 - 回应
+message ListSearchSynonymsResponse {
+  repeated SearchSynonym items = 1;
+}
+
+// 创建同义词 - 请求
+message CreateSearchSynonymRequest {
+  SearchSynonym data = 1;
+}
+
+// 删除同义词 - 请求
+message DeleteSearchSynonymRequest {
+  uint32 id = 1;
 }

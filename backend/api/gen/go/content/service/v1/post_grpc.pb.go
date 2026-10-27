@@ -21,23 +21,24 @@ import (
 const _ = grpc.SupportPackageIsVersion9
 
 const (
-	PostService_List_FullMethodName              = "/content.service.v1.PostService/List"
-	PostService_Get_FullMethodName               = "/content.service.v1.PostService/Get"
-	PostService_Create_FullMethodName            = "/content.service.v1.PostService/Create"
-	PostService_Update_FullMethodName            = "/content.service.v1.PostService/Update"
-	PostService_Delete_FullMethodName            = "/content.service.v1.PostService/Delete"
-	PostService_SearchPosts_FullMethodName       = "/content.service.v1.PostService/SearchPosts"
-	PostService_TranslationExists_FullMethodName = "/content.service.v1.PostService/TranslationExists"
-	PostService_GetTranslation_FullMethodName    = "/content.service.v1.PostService/GetTranslation"
-	PostService_CreateTranslation_FullMethodName = "/content.service.v1.PostService/CreateTranslation"
-	PostService_UpdateTranslation_FullMethodName = "/content.service.v1.PostService/UpdateTranslation"
-	PostService_DeleteTranslation_FullMethodName = "/content.service.v1.PostService/DeleteTranslation"
-	PostService_ListVersions_FullMethodName      = "/content.service.v1.PostService/ListVersions"
-	PostService_GetVersion_FullMethodName        = "/content.service.v1.PostService/GetVersion"
-	PostService_RestoreVersion_FullMethodName    = "/content.service.v1.PostService/RestoreVersion"
-	PostService_SubmitReview_FullMethodName      = "/content.service.v1.PostService/SubmitReview"
-	PostService_ApproveReview_FullMethodName     = "/content.service.v1.PostService/ApproveReview"
-	PostService_RejectReview_FullMethodName      = "/content.service.v1.PostService/RejectReview"
+	PostService_SearchPostsSuggest_FullMethodName = "/content.service.v1.PostService/SearchPostsSuggest"
+	PostService_List_FullMethodName               = "/content.service.v1.PostService/List"
+	PostService_Get_FullMethodName                = "/content.service.v1.PostService/Get"
+	PostService_Create_FullMethodName             = "/content.service.v1.PostService/Create"
+	PostService_Update_FullMethodName             = "/content.service.v1.PostService/Update"
+	PostService_Delete_FullMethodName             = "/content.service.v1.PostService/Delete"
+	PostService_SearchPosts_FullMethodName        = "/content.service.v1.PostService/SearchPosts"
+	PostService_TranslationExists_FullMethodName  = "/content.service.v1.PostService/TranslationExists"
+	PostService_GetTranslation_FullMethodName     = "/content.service.v1.PostService/GetTranslation"
+	PostService_CreateTranslation_FullMethodName  = "/content.service.v1.PostService/CreateTranslation"
+	PostService_UpdateTranslation_FullMethodName  = "/content.service.v1.PostService/UpdateTranslation"
+	PostService_DeleteTranslation_FullMethodName  = "/content.service.v1.PostService/DeleteTranslation"
+	PostService_ListVersions_FullMethodName       = "/content.service.v1.PostService/ListVersions"
+	PostService_GetVersion_FullMethodName         = "/content.service.v1.PostService/GetVersion"
+	PostService_RestoreVersion_FullMethodName     = "/content.service.v1.PostService/RestoreVersion"
+	PostService_SubmitReview_FullMethodName       = "/content.service.v1.PostService/SubmitReview"
+	PostService_ApproveReview_FullMethodName      = "/content.service.v1.PostService/ApproveReview"
+	PostService_RejectReview_FullMethodName       = "/content.service.v1.PostService/RejectReview"
 )
 
 // PostServiceClient is the client API for PostService service.
@@ -46,6 +47,8 @@ const (
 //
 // 帖子服务
 type PostServiceClient interface {
+	// 搜索建议词（标题前缀联想；app 面免鉴权暴露）
+	SearchPostsSuggest(ctx context.Context, in *SearchPostsSuggestRequest, opts ...grpc.CallOption) (*SearchPostsSuggestResponse, error)
 	// 获取帖子列表
 	List(ctx context.Context, in *v1.PagingRequest, opts ...grpc.CallOption) (*ListPostResponse, error)
 	// 获取帖子数据
@@ -92,6 +95,16 @@ type postServiceClient struct {
 
 func NewPostServiceClient(cc grpc.ClientConnInterface) PostServiceClient {
 	return &postServiceClient{cc}
+}
+
+func (c *postServiceClient) SearchPostsSuggest(ctx context.Context, in *SearchPostsSuggestRequest, opts ...grpc.CallOption) (*SearchPostsSuggestResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(SearchPostsSuggestResponse)
+	err := c.cc.Invoke(ctx, PostService_SearchPostsSuggest_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
 }
 
 func (c *postServiceClient) List(ctx context.Context, in *v1.PagingRequest, opts ...grpc.CallOption) (*ListPostResponse, error) {
@@ -270,6 +283,8 @@ func (c *postServiceClient) RejectReview(ctx context.Context, in *RejectPostRevi
 //
 // 帖子服务
 type PostServiceServer interface {
+	// 搜索建议词（标题前缀联想；app 面免鉴权暴露）
+	SearchPostsSuggest(context.Context, *SearchPostsSuggestRequest) (*SearchPostsSuggestResponse, error)
 	// 获取帖子列表
 	List(context.Context, *v1.PagingRequest) (*ListPostResponse, error)
 	// 获取帖子数据
@@ -318,6 +333,9 @@ type PostServiceServer interface {
 // pointer dereference when methods are called.
 type UnimplementedPostServiceServer struct{}
 
+func (UnimplementedPostServiceServer) SearchPostsSuggest(context.Context, *SearchPostsSuggestRequest) (*SearchPostsSuggestResponse, error) {
+	return nil, status.Error(codes.Unimplemented, "method SearchPostsSuggest not implemented")
+}
 func (UnimplementedPostServiceServer) List(context.Context, *v1.PagingRequest) (*ListPostResponse, error) {
 	return nil, status.Error(codes.Unimplemented, "method List not implemented")
 }
@@ -388,6 +406,24 @@ func RegisterPostServiceServer(s grpc.ServiceRegistrar, srv PostServiceServer) {
 		t.testEmbeddedByValue()
 	}
 	s.RegisterService(&PostService_ServiceDesc, srv)
+}
+
+func _PostService_SearchPostsSuggest_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(SearchPostsSuggestRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(PostServiceServer).SearchPostsSuggest(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: PostService_SearchPostsSuggest_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(PostServiceServer).SearchPostsSuggest(ctx, req.(*SearchPostsSuggestRequest))
+	}
+	return interceptor(ctx, in, info, handler)
 }
 
 func _PostService_List_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
@@ -703,6 +739,10 @@ var PostService_ServiceDesc = grpc.ServiceDesc{
 	ServiceName: "content.service.v1.PostService",
 	HandlerType: (*PostServiceServer)(nil),
 	Methods: []grpc.MethodDesc{
+		{
+			MethodName: "SearchPostsSuggest",
+			Handler:    _PostService_SearchPostsSuggest_Handler,
+		},
 		{
 			MethodName: "List",
 			Handler:    _PostService_List_Handler,
