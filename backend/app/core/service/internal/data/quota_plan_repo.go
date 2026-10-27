@@ -108,7 +108,7 @@ func (r *QuotaPlanRepo) Get(ctx context.Context, id uint32) (*identityV1.QuotaPl
 	e, err := r.entClient.Client().QuotaPlan.Get(ctx, id)
 	if err != nil {
 		if ent.IsNotFound(err) {
-			return nil, identityV1.ErrorNotFound("QUOTA_PLAN", "quota plan not found")
+			return nil, identityV1.ErrorNotFound("quota plan not found")
 		}
 		r.log.Errorf("get quota plan failed: %s", err.Error())
 		return nil, identityV1.ErrorInternalServerError("get quota plan failed")
@@ -120,7 +120,7 @@ func (r *QuotaPlanRepo) Get(ctx context.Context, id uint32) (*identityV1.QuotaPl
 func (r *QuotaPlanRepo) Create(ctx context.Context, dto *identityV1.QuotaPlan, operatorID uint32) (uint32, error) {
 	itemsJSON, err := QuotaPlanItemsToJSON(dto.GetItems())
 	if err != nil {
-		return 0, identityV1.ErrorBadRequest("QUOTA_PLAN", "invalid quota plan items")
+		return 0, identityV1.ErrorBadRequest("invalid quota plan items")
 	}
 	now := time.Now()
 	builder := r.entClient.Client().QuotaPlan.Create().
@@ -143,7 +143,7 @@ func (r *QuotaPlanRepo) Delete(ctx context.Context, id uint32) error {
 	err := r.entClient.Client().QuotaPlan.DeleteOneID(id).Exec(ctx)
 	if err != nil {
 		if ent.IsNotFound(err) {
-			return identityV1.ErrorNotFound("QUOTA_PLAN", "quota plan not found")
+			return identityV1.ErrorNotFound("quota plan not found")
 		}
 		r.log.Errorf("delete quota plan failed: %s", err.Error())
 		return identityV1.ErrorInternalServerError("delete quota plan failed")

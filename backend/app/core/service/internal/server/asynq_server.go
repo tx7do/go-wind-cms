@@ -13,7 +13,8 @@ import (
 )
 
 // NewAsynqServer creates a new asynq server.
-func NewAsynqServer(ctx *bootstrap.Context, taskService *service.TaskService, searchService *service.SearchService, aiKnowledgeService *service.AiKnowledgeService, aiQueryService *service.AiQueryService, aiContentService *service.AiContentService, socialService *service.SocialService, postService *service.PostService, webhookService *service.WebhookService, internalMessageService *service.InternalMessageService, flowService *service.FlowService, notificationService *service.NotificationService, monitorAlertService *service.MonitorAlertService, tenantQuotaService *service.TenantQuotaService) *asynq.Server {
+func NewAsynqServer(ctx *bootstrap.Context, taskService *service.TaskService, searchService *service.SearchService, aiKnowledgeService *service.AiKnowledgeService, aiQueryService *service.AiQueryService, aiContentService *service.AiContentService, socialService *service.SocialService, postService *service.PostService, webhookService *service.WebhookService, internalMessageService *service.InternalMessageService, flowService *service.FlowService, notificationService *service.NotificationService, monitorAlertService *service.MonitorAlertService, tenantQuotaService *service.TenantQuotaService,
+	contentHealthService *service.ContentHealthService) *asynq.Server {
 	cfg := ctx.GetConfig()
 
 	if cfg == nil || cfg.Server == nil || cfg.Server.Asynq == nil {
@@ -123,6 +124,14 @@ func NewAsynqServer(ctx *bootstrap.Context, taskService *service.TaskService, se
 	// Flow 定时规则调度 tick（每分钟）：解析启用规则的 cron，命中当前分钟的
 	// 按其租户入队 flow.execute（Event=schedule、EntityID=0、不走扇出）。
 	if err = asynq.RegisterSubscriber(srv, task.FlowScheduleTickTaskType, flowService.ScheduleTickWorker); err != nil {
+		log.Error(err)
+	}
+
+	// 内容健康度巡检（每日 03:17）：发布文缺摘要 + 正文外链死链探测，按作者聚合发站内信。
+	if _, err = srv.NewPeriodicTask(task.ContentHealthSweepCronSpec, task.ContentHealthSweepTaskType, &task.ContentHealthSweepTaskData{}); err != nil {
+		log.Error(err)
+	}
+	if err = asynq.RegisterSubscriber(srv, task.ContentHealthSweepTaskType, contentHealthService.AsyncContentHealthSweep); err != nil {
 		log.Error(err)
 	}
 	// 监控告警周期扫描：每 5 分钟评估一轮启用规则（告警/恢复/冷却重发内核见 monitor_alert_service）

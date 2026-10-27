@@ -219,6 +219,7 @@ func initApp(ctx *bootstrap.Context) (*kratos.App, func(), error) {
 	accessKeyRateLimiter := data.NewAccessKeyRateLimiter(ctx, redisClient)
 	tenantQuotaRepo := data.NewTenantQuotaRepo(ctx, entClient)
 	quotaPlanRepo := data.NewQuotaPlanRepo(ctx, entClient)
+	contentHealthService := service.NewContentHealthService(ctx, postRepo)
 	tenantQuotaService := service.NewTenantQuotaService(ctx, tenantQuotaRepo, quotaPlanRepo)
 	configService := service.NewConfigService(ctx, configRepo)
 	aiAgentAppRepo := data.NewAiAgentAppRepo(ctx, entClient)
@@ -324,6 +325,7 @@ func initApp(ctx *bootstrap.Context) (*kratos.App, func(), error) {
 
 	// 站内信投递缝：配额水位告警经系统通知落租户管理员收件箱
 	tenantQuotaService.RegisterInternalMessages(internalMessageService)
+	contentHealthService.RegisterInternalMessages(internalMessageService)
 
 	// 内容
 	commentAIDeps := &service.CommentAIModerationDeps{ProviderRepo: aiProviderRepo, UsageLogRepo: aiUsageLogRepo}
@@ -358,7 +360,6 @@ func initApp(ctx *bootstrap.Context) (*kratos.App, func(), error) {
 
 	// 社交分发
 	socialService := service.NewSocialService(ctx, socialAccountRepo, socialDistributionRepo, socialStatsHistoryRepo, mediaAssetRepo, fileRepo, minIOClient, postRepo, taskService, internalMessageService, socialInboxRepo)
-
 
 	// ── register:service ── 新模块服务在此行后注册(make register 工具锚点,勿删)
 
@@ -415,7 +416,7 @@ func initApp(ctx *bootstrap.Context) (*kratos.App, func(), error) {
 		return nil, nil, err
 	}
 
-	asynqServer := server.NewAsynqServer(ctx, taskService, searchService, aiKnowledgeService, aiQueryService, aiContentService, socialService, postService, webhookService, internalMessageService, flowService, notificationService, monitorAlertService, tenantQuotaService)
+	asynqServer := server.NewAsynqServer(ctx, taskService, searchService, aiKnowledgeService, aiQueryService, aiContentService, socialService, postService, webhookService, internalMessageService, flowService, notificationService, monitorAlertService, tenantQuotaService, contentHealthService)
 
 	return newApp(ctx, grpcServer, asynqServer), rollback, nil
 }
