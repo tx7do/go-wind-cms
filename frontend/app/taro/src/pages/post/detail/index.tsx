@@ -19,6 +19,7 @@ import {
 import {fetchListComments, fetchCreateComment} from '@/api/hooks/comment';
 import {useIsLogin} from '@/store/core/access/store';
 import ContentViewer from '@/components/content/ContentViewer';
+import CustomFieldsSection from '@/components/post/CustomFieldsSection';
 import PostCard from '@/components/post/PostCard';
 import {AppEmpty, Button} from '@/components/ui';
 import type {
@@ -326,6 +327,9 @@ export default function PostDetailPage() {
             <AppEmpty description={t('common.noData')} />
           )}
         </View>
+
+        {/* 自定义字段（内容建模前台读侧） */}
+        <CustomFieldsSection postId={postId} customFields={post.customFields} />
 
         {/* 相关阅读 */}
         {related.length > 0 && (

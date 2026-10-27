@@ -55,10 +55,6 @@ function parseInstances(value: string, expectArray: boolean): InstanceData[] | n
   }
 }
 
-function isImageUrl(v: string) {
-  return /^https?:\/\//.test(v)
-}
-
 const modelQuery = useQuery({
   queryKey: ['postContentModel', () => props.postId],
   queryFn: () => apiClient.postService.GetPostContentModel({postId: props.postId!}),
@@ -140,7 +136,7 @@ function instanceRows(schemaFields: FieldDef[], inst: InstanceData): PairRow[] {
     const key = f.name ?? ''
     const raw = inst[key]
     if (raw == null || typeof raw !== 'string' || raw === '') continue
-    const isImg = f.type === 'FIELD_TYPE_IMAGE' && isImageUrl(raw)
+    const isImg = f.type === 'FIELD_TYPE_IMAGE' && isMediaImageValue(raw)
     out.push({label: f.label || key, text: raw, image: isImg})
   }
   return out
@@ -186,9 +182,9 @@ const fieldByName = (name: string): FieldDef | undefined =>
             class="max-w-none text-sm [&_a]:text-primary [&_img]:max-w-full"
             v-html="row.value"
           />
-          <img
-            v-else-if="row.type === 'FIELD_TYPE_IMAGE' && isUrl(row.value)"
-            :src="row.value"
+          <MediaRefImage
+            v-else-if="row.type === 'FIELD_TYPE_IMAGE' && isMediaImageValue(row.value)"
+            :value="row.value"
             :alt="row.label"
             class="max-h-64 rounded-lg object-cover"
           />
@@ -224,9 +220,9 @@ const fieldByName = (name: string): FieldDef | undefined =>
               <span v-if="card.pairs.length === 0" class="text-xs text-muted-foreground">—</span>
               <div v-for="(p, j) in card.pairs" :key="j" class="flex flex-col py-0.5">
                 <span class="text-xs text-muted-foreground">{{ p.label }}</span>
-                <img
+                <MediaRefImage
                   v-if="p.image"
-                  :src="p.text"
+                  :value="p.text"
                   :alt="p.label"
                   class="max-h-48 rounded-md object-cover"
                 />

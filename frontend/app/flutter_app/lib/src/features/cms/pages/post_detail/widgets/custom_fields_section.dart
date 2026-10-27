@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'dart:convert';
 
 import 'package:flutter/material.dart';
@@ -20,6 +21,7 @@ import 'package:flutter_app/generated/api/app/service/v1/index.dart'
         MediaServiceV1MediaAsset;
 import 'package:flutter_app/src/core/utilities/logger.dart';
 import 'package:flutter_app/src/features/cms/services/post_service.dart';
+import 'package:flutter_app/src/features/cms/utils/media_urls.dart';
 
 /// 自定义字段渲染（内容建模前台读侧，flutter 端）：
 /// 按文章分类链绑定的内容模型字段定义，渲染 post.customFields。
@@ -145,24 +147,18 @@ class _CustomFieldsSectionState extends State<CustomFieldsSection> {
       case ContentServiceV1FieldDefinition$Type.fieldTypeFile:
         final ref = _parseMediaRef(row.value);
         if (ref != null) {
+          // IMAGE 引用：优先走即时图片变换端点（415/404 回退元数据 url）
+          if (row.type == ContentServiceV1FieldDefinition$Type.fieldTypeImage) {
+            return _TransformAssetImage(
+              assetId: ref,
+              fallbackText: row.value,
+              isMobile: widget.isMobile,
+            );
+          }
           return FutureBuilder<MediaServiceV1MediaAsset?>(
             future: _fetchMediaAsset(ref),
             builder: (context, snap) {
               final url = snap.data?.url ?? '';
-              if (row.type ==
-                      ContentServiceV1FieldDefinition$Type.fieldTypeImage &&
-                  url.isNotEmpty) {
-                return ClipRRect(
-                  borderRadius: BorderRadius.circular(widget.isMobile ? 12.r : 12),
-                  child: Image.network(
-                    url,
-                    width: double.infinity,
-                    fit: BoxFit.cover,
-                    errorBuilder: (_, _, _) =>
-                        Text('#${row.value}', style: _mutedStyle(theme)),
-                  ),
-                );
-              }
               if (url.isNotEmpty) {
                 return Text(url, style: _linkStyle(theme));
               }
@@ -270,7 +266,11 @@ class _CustomFieldsSectionState extends State<CustomFieldsSection> {
         final raw2 = inst[f.name ?? ''];
         if (raw2 == null || raw2 !is String || raw2.isEmpty) continue;
         final isImg = f.type == ContentServiceV1FieldDefinition$Type.fieldTypeImage &&
-            raw2.startsWith('http');
+            isMediaImageValue(raw2);
+        final refId =
+            f.type == ContentServiceV1FieldDefinition$Type.fieldTypeImage
+                ? parseMediaRef(raw2)
+                : null;
         children.add(Padding(
           padding: EdgeInsets.only(top: widget.isMobile ? 4.h : 4),
           child: Column(
@@ -281,7 +281,13 @@ class _CustomFieldsSectionState extends State<CustomFieldsSection> {
                     fontSize: widget.isMobile ? 11.sp : 11,
                     color: theme.colorScheme.onSurface.withAlpha(130),
                   )),
-              if (isImg)
+              if (isImg && refId != null)
+                _TransformAssetImage(
+                  assetId: refId,
+                  fallbackText: raw2,
+                  isMobile: widget.isMobile,
+                )
+              else if (isImg)
                 ClipRRect(
                   borderRadius:
                       BorderRadius.circular(widget.isMobile ? 8.r : 8),
@@ -379,4 +385,85 @@ class _Row {
     required this.type,
     required this.value,
   });
+}
+
+/// 变换图片：`media_asset:<id>` 引用优先经即时图片变换端点渲染（只缩小不放大），
+/// gif/svg（415）或资产缺失（404）回退元数据 url，再败回原样文本
+/// （媒体资产是增强信息，不阻断字段渲染）。
+class _TransformAssetImage extends StatefulWidget {
+  final int assetId;
+  final String fallbackText;
+  final bool isMobile;
+
+  const _TransformAssetImage({
+    required this.assetId,
+    required this.fallbackText,
+    required this.isMobile,
+  });
+
+  @override
+  State<_TransformAssetImage> createState() => _TransformAssetImageState();
+}
+
+class _TransformAssetImageState extends State<_TransformAssetImage> {
+  final _logger = Logger('TransformAssetImage');
+  String? _fallbackUrl;
+  bool _failed = false;
+
+  @override
+  Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+    if (_failed) {
+      return Text(
+        widget.fallbackText,
+        style: TextStyle(
+          fontSize: widget.isMobile ? 13.sp : 13,
+          color: theme.colorScheme.onSurface,
+        ),
+      );
+    }
+    return ClipRRect(
+      borderRadius: BorderRadius.circular(widget.isMobile ? 12.r : 12),
+      child: Image.network(
+        _fallbackUrl ?? mediaTransformUrl(widget.assetId),
+        width: double.infinity,
+        fit: BoxFit.cover,
+        errorBuilder: (_, _, _) {
+          if (_fallbackUrl == null) {
+            // 变换端点不可用：回退元数据 url。取元数据失败仅告警——
+            // best-effort 兜底链的中间环，终态落回原样文本。
+            GetIt.instance<ApiClient>()
+                .mediaAssetService
+                .get(MediaServiceV1GetMediaAssetRequest(id: widget.assetId))
+                .then((asset) {
+              if (!mounted) return;
+              setState(() {
+                final url = asset.url;
+                if (url != null && url.isNotEmpty) {
+                  _fallbackUrl = url;
+                } else {
+                  _failed = true;
+                }
+              });
+            }).catchError((Object e) {
+              _logger.w('fetch media asset ${widget.assetId} failed: $e');
+              if (mounted) setState(() => _failed = true);
+            });
+          } else {
+            // errorBuilder 处于构建期，终态延迟到微任务里提交
+            scheduleMicrotask(() {
+              if (mounted) setState(() => _failed = true);
+            });
+          }
+          return Text(
+            widget.fallbackText,
+            style: TextStyle(
+              fontSize: widget.isMobile ? 13.sp : 13,
+              color: theme.colorScheme.onSurface.withAlpha(120),
+            ),
+          );
+        },
+      ),
+    );
+  }
 }

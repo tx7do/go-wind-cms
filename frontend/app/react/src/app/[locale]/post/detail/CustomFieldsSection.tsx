@@ -3,6 +3,7 @@
 import {useQuery} from '@tanstack/react-query';
 import {useLocale, useTranslations} from 'next-intl';
 import {apiClient} from '@/api/client';
+import MediaRefImage, {isMediaImageValue} from '@/components/content/MediaRefImage';
 import type {
   contentservicev1_ContentModelComponent,
   contentservicev1_ContentReferenceSummary,
@@ -46,10 +47,6 @@ function parseInstances(value: string, expectArray: boolean): InstanceData[] | n
   }
 }
 
-function isImageUrl(v: string) {
-  return /^https?:\/\/.+\.(png|jpe?g|gif|webp|avif)(\?.*)?$/i.test(v) || /^https?:\/\//.test(v);
-}
-
 function buildComponentMap(components?: contentservicev1_ContentModelComponent[]): ComponentSchemaMap {
   const map: ComponentSchemaMap = {};
   for (const c of components ?? []) {
@@ -58,7 +55,7 @@ function buildComponentMap(components?: contentservicev1_ContentModelComponent[]
   return map;
 }
 
-/** 组件实例 → 标签/文本/图片对（图片仅 http(s) 直链渲染，引用串原样文本） */
+/** 组件实例 → 标签/文本/图片对（IMAGE 支持 http 直链与 media_asset:<id> 引用） */
 function instanceRows(schema: contentservicev1_ContentModelComponent | undefined, inst: InstanceData) {
   const fields = schema?.fields ?? [];
   const rows: {label: string; text: string; image: boolean}[] = [];
@@ -67,7 +64,7 @@ function instanceRows(schema: contentservicev1_ContentModelComponent | undefined
     const raw = inst[key];
     if (raw == null || typeof raw !== 'string' || raw === '') continue;
     const type = f.type ?? 'FIELD_TYPE_TEXT';
-    const isImg = type === 'FIELD_TYPE_IMAGE' && isImageUrl(raw);
+    const isImg = type === 'FIELD_TYPE_IMAGE' && isMediaImageValue(raw);
     rows.push({label: f.label || key, text: raw, image: isImg});
   }
   return rows;
@@ -168,8 +165,7 @@ export default function CustomFieldsSection({
                                     <div key={j} className="flex flex-col py-0.5">
                                         <span className="text-xs text-muted-foreground">{p.label}</span>
                                         {p.image ? (
-                                            // eslint-disable-next-line @next/next/no-img-element
-                                            <img src={p.text} alt={p.label}
+                                            <MediaRefImage value={p.text} alt={p.label}
                                                 className="max-h-48 rounded-md object-cover"/>
                                         ) : (
                                             <span className="break-all text-sm">{p.text}</span>
@@ -200,8 +196,9 @@ export default function CustomFieldsSection({
                             {row.type === 'FIELD_TYPE_RICHTEXT' ? (
                                 <div className="prose-sm max-w-none [&_a]:text-primary [&_img]:max-w-full"
                                     dangerouslySetInnerHTML={{__html: row.value}}/>
-                            ) : row.type === 'FIELD_TYPE_IMAGE' && isUrl(row.value) ? (
-                                <img src={row.value} alt={row.label} className="max-h-64 rounded-lg object-cover"/>
+                            ) : row.type === 'FIELD_TYPE_IMAGE' && isMediaImageValue(row.value) ? (
+                                <MediaRefImage value={row.value} alt={row.label}
+                                    className="max-h-64 rounded-lg object-cover"/>
                             ) : row.type === 'FIELD_TYPE_FILE' && isUrl(row.value) ? (
                                 <a href={row.value} target="_blank" rel="noopener noreferrer"
                                     className="break-all text-primary hover:underline">

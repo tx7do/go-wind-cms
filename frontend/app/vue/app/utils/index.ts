@@ -5,3 +5,4 @@ export * from './progress';
 export * from './crypto';
 export * from './date';
 export * from './locale';
+export * from './media';
