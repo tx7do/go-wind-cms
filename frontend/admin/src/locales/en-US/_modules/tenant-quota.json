@@ -32,5 +32,19 @@
     "plan": "Plan",
     "noQuotas": "No quotas configured for this tenant; all resources are unlimited.",
     "unlimited": "Unlimited"
-  }
+  },
+  "plans": "Quota Plans",
+  "planName": "Plan name",
+  "planNameRequired": "Plan name is required",
+  "planDescription": "Description (optional)",
+  "planSave": "Save plan",
+  "planCreated": "Quota plan created",
+  "planDeleted": "Quota plan deleted",
+  "planItemRequired": "At least one quota limit greater than 0 is required",
+  "apply": "Apply to tenant",
+  "applyHint": "Upserts the tenant's quotas item by item; types not in the plan are left untouched.",
+  "tenantRequired": "Target tenant is required",
+  "selectTenant": "Select tenant",
+  "planApplied": "Applied {{count}} quota items",
+  "noPlans": "No quota plans yet"
 }

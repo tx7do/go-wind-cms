@@ -52,4 +52,36 @@ service TenantQuotaService {
   rpc GetMyTenantUsage (identity.service.v1.GetMyTenantUsageRequest) returns (identity.service.v1.TenantUsage) {
     option (google.api.http) = { get: "/admin/v1/my-tenant-usage" };
   }
+
+  // ── 配额套餐模板 ──
+
+  // 列出套餐模板
+  rpc ListQuotaPlans (identity.service.v1.ListQuotaPlansRequest) returns (identity.service.v1.ListQuotaPlansResponse) {
+    option (google.api.http) = {
+      get: "/admin/v1/quota-plans"
+    };
+  }
+
+  // 创建套餐模板
+  rpc CreateQuotaPlan (identity.service.v1.CreateQuotaPlanRequest) returns (identity.service.v1.QuotaPlan) {
+    option (google.api.http) = {
+      post: "/admin/v1/quota-plans"
+      body: "*"
+    };
+  }
+
+  // 删除套餐模板
+  rpc DeleteQuotaPlan (identity.service.v1.DeleteQuotaPlanRequest) returns (google.protobuf.Empty) {
+    option (google.api.http) = {
+      delete: "/admin/v1/quota-plans/{id}"
+    };
+  }
+
+  // 套用到租户（按模板逐项 upsert 该租户配额）
+  rpc ApplyQuotaPlan (identity.service.v1.ApplyQuotaPlanRequest) returns (identity.service.v1.ApplyQuotaPlanResponse) {
+    option (google.api.http) = {
+      post: "/admin/v1/quota-plans/{plan_id}/apply"
+      body: "*"
+    };
+  }
 }

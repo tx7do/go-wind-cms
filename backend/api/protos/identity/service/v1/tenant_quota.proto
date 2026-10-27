@@ -35,6 +35,20 @@ service TenantQuotaService {
   // 删除租户配额
   rpc Delete (DeleteTenantQuotaRequest) returns (google.protobuf.Empty) {}
 
+  // ── 配额套餐模板（平台级命名模板，一键套用到租户）──
+
+  // 列出套餐模板
+  rpc ListQuotaPlans (ListQuotaPlansRequest) returns (ListQuotaPlansResponse) {}
+
+  // 创建套餐模板
+  rpc CreateQuotaPlan (CreateQuotaPlanRequest) returns (QuotaPlan) {}
+
+  // 删除套餐模板（不影响已套用的租户配额——那是已落库的快照）
+  rpc DeleteQuotaPlan (DeleteQuotaPlanRequest) returns (google.protobuf.Empty) {}
+
+  // 套用到租户：按模板逐项 upsert 该租户的配额（模板未含的类型不动）
+  rpc ApplyQuotaPlan (ApplyQuotaPlanRequest) returns (ApplyQuotaPlanResponse) {}
+
   // 聚合查询指定租户的当前用量与配额上限（平台管理员视图）
   rpc GetUsage (GetTenantUsageRequest) returns (TenantUsage) {}
 
@@ -254,3 +268,88 @@ message CheckQuotaRequest {
 
 // 业务入口配额闸门 - 答复
 message CheckQuotaResponse {}
+
+// ── 配额套餐模板 ──
+
+// 套餐模板条目
+message QuotaPlanItem {
+  TenantQuota.QuotaType quota_type = 1 [
+    json_name = "quotaType",
+    (gnostic.openapi.v3.property) = {
+      description: "配额类型（复用 TenantQuota 的枚举）"
+    }
+  ]; // 配额类型
+
+  int64 limit = 2 [
+    json_name = "limit",
+    (gnostic.openapi.v3.property) = {
+      description: "配额上限（语义随类型：用户数/字节/次数/tokens）"
+    }
+  ]; // 上限
+}
+
+// 套餐模板
+message QuotaPlan {
+  optional uint32 id = 1 [
+    json_name = "id"
+  ]; // 模板ID
+
+  string name = 2 [
+    json_name = "name",
+    (gnostic.openapi.v3.property) = {
+      description: "模板名（租户内唯一）"
+    }
+  ]; // 模板名
+
+  optional string description = 3 [
+    json_name = "description"
+  ]; // 描述
+
+  repeated QuotaPlanItem items = 4 [
+    json_name = "items"
+  ]; // 配额项
+
+  optional google.protobuf.Timestamp created_at = 200 [
+    json_name = "createdAt"
+  ]; // 创建时间
+
+  optional google.protobuf.Timestamp updated_at = 201 [
+    json_name = "updatedAt"
+  ]; // 更新时间
+}
+
+// 列出套餐 - 请求
+message ListQuotaPlansRequest {}
+
+// 列出套餐 - 回应
+message ListQuotaPlansResponse {
+  repeated QuotaPlan items = 1;
+}
+
+// 创建套餐 - 请求
+message CreateQuotaPlanRequest {
+  QuotaPlan data = 1;
+}
+
+// 删除套餐 - 请求
+message DeleteQuotaPlanRequest {
+  uint32 id = 1;
+}
+
+// 套用套餐 - 请求
+message ApplyQuotaPlanRequest {
+  uint32 plan_id = 1 [
+    json_name = "planId"
+  ]; // 模板ID
+
+  uint32 tenant_id = 2 [
+    json_name = "tenantId"
+  ]; // 目标租户
+}
+
+// 套用套餐 - 回应
+message ApplyQuotaPlanResponse {
+  uint32 applied = 1 [
+    json_name = "applied"
+  ]; // 实际写入的配额项数
+}

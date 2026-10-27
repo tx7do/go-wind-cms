@@ -110,6 +110,39 @@ export default function AiUsagePage() {
           </div>
         </div>
 
+        {/* 按 Provider × 模型 细分（当月） */}
+        <div className="mb-4 rounded-xl border border-solid border-gray-200 bg-white p-4 dark:border-gray-700 dark:bg-gray-900">
+          <div className="mb-2 text-sm font-medium">{t('breakdownTitle')}</div>
+          {(summaryData?.breakdown?.length ?? 0) > 0 ? (
+            <table className="w-full text-sm">
+              <thead>
+                <tr className="text-left text-xs text-[color:var(--ant-color-text-secondary)]">
+                  <th className="py-1 pr-4">{t('breakdownProvider')}</th>
+                  <th className="py-1 pr-4">{t('breakdownModel')}</th>
+                  <th className="py-1 pr-4 text-right">{t('breakdownPrompt')}</th>
+                  <th className="py-1 pr-4 text-right">{t('breakdownCompletion')}</th>
+                  <th className="py-1 pr-4 text-right">{t('breakdownTotal')}</th>
+                  <th className="py-1 text-right">{t('breakdownCalls')}</th>
+                </tr>
+              </thead>
+              <tbody>
+                {(summaryData?.breakdown ?? []).map((row, i) => (
+                  <tr key={i} className="border-t border-solid border-gray-100 dark:border-gray-800">
+                    <td className="py-1 pr-4">{row.providerName || `#${row.providerId}`}</td>
+                    <td className="py-1 pr-4">{row.modelName || '-'}</td>
+                    <td className="py-1 pr-4 text-right tabular-nums">{(row.promptTokens ?? 0).toLocaleString()}</td>
+                    <td className="py-1 pr-4 text-right tabular-nums">{(row.completionTokens ?? 0).toLocaleString()}</td>
+                    <td className="py-1 pr-4 text-right tabular-nums font-medium">{(row.totalTokens ?? 0).toLocaleString()}</td>
+                    <td className="py-1 text-right tabular-nums">{(row.calls ?? 0).toLocaleString()}</td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          ) : (
+            <div className="text-sm text-[color:var(--ant-color-text-tertiary)]">{t('breakdownEmpty')}</div>
+          )}
+        </div>
+
         {/* 流水列表 */}
         <ListTable<UsageRow>
           actionRef={actionRef}

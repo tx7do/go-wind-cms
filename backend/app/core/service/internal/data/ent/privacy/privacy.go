@@ -1911,6 +1911,30 @@ func (f PostWatchMutationRuleFunc) EvalMutation(ctx context.Context, m ent.Mutat
 	return Denyf("ent/privacy: unexpected mutation type %T, expect *ent.PostWatchMutation", m)
 }
 
+// The QuotaPlanQueryRuleFunc type is an adapter to allow the use of ordinary
+// functions as a query rule.
+type QuotaPlanQueryRuleFunc func(context.Context, *ent.QuotaPlanQuery) error
+
+// EvalQuery return f(ctx, q).
+func (f QuotaPlanQueryRuleFunc) EvalQuery(ctx context.Context, q ent.Query) error {
+	if q, ok := q.(*ent.QuotaPlanQuery); ok {
+		return f(ctx, q)
+	}
+	return Denyf("ent/privacy: unexpected query type %T, expect *ent.QuotaPlanQuery", q)
+}
+
+// The QuotaPlanMutationRuleFunc type is an adapter to allow the use of ordinary
+// functions as a mutation rule.
+type QuotaPlanMutationRuleFunc func(context.Context, *ent.QuotaPlanMutation) error
+
+// EvalMutation calls f(ctx, m).
+func (f QuotaPlanMutationRuleFunc) EvalMutation(ctx context.Context, m ent.Mutation) error {
+	if m, ok := m.(*ent.QuotaPlanMutation); ok {
+		return f(ctx, m)
+	}
+	return Denyf("ent/privacy: unexpected mutation type %T, expect *ent.QuotaPlanMutation", m)
+}
+
 // The RedirectQueryRuleFunc type is an adapter to allow the use of ordinary
 // functions as a query rule.
 type RedirectQueryRuleFunc func(context.Context, *ent.RedirectQuery) error
@@ -2720,6 +2744,8 @@ func queryFilter(q ent.Query) (Filter, error) {
 		return q.Filter(), nil
 	case *ent.PostWatchQuery:
 		return q.Filter(), nil
+	case *ent.QuotaPlanQuery:
+		return q.Filter(), nil
 	case *ent.RedirectQuery:
 		return q.Filter(), nil
 	case *ent.RoleQuery:
@@ -2928,6 +2954,8 @@ func mutationFilter(m ent.Mutation) (Filter, error) {
 	case *ent.PostVersionMutation:
 		return m.Filter(), nil
 	case *ent.PostWatchMutation:
+		return m.Filter(), nil
+	case *ent.QuotaPlanMutation:
 		return m.Filter(), nil
 	case *ent.RedirectMutation:
 		return m.Filter(), nil

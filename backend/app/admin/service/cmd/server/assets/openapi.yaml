@@ -8500,6 +8500,80 @@ paths:
                         application/json:
                             schema:
                                 $ref: '#/components/schemas/admin.service.v1.PreviewToken'
+    /admin/v1/quota-plans:
+        get:
+            tags:
+                - TenantQuotaService
+            description: 列出套餐模板
+            operationId: TenantQuotaService_ListQuotaPlans
+            responses:
+                "200":
+                    description: OK
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/identity.service.v1.ListQuotaPlansResponse'
+        post:
+            tags:
+                - TenantQuotaService
+            description: 创建套餐模板
+            operationId: TenantQuotaService_CreateQuotaPlan
+            requestBody:
+                content:
+                    application/json:
+                        schema:
+                            $ref: '#/components/schemas/identity.service.v1.CreateQuotaPlanRequest'
+                required: true
+            responses:
+                "200":
+                    description: OK
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/identity.service.v1.QuotaPlan'
+    /admin/v1/quota-plans/{id}:
+        delete:
+            tags:
+                - TenantQuotaService
+            description: 删除套餐模板
+            operationId: TenantQuotaService_DeleteQuotaPlan
+            parameters:
+                - name: id
+                  in: path
+                  required: true
+                  schema:
+                    type: integer
+                    format: uint32
+            responses:
+                "200":
+                    description: OK
+                    content: {}
+    /admin/v1/quota-plans/{planId}/apply:
+        post:
+            tags:
+                - TenantQuotaService
+            description: 套用到租户（按模板逐项 upsert 该租户配额）
+            operationId: TenantQuotaService_ApplyQuotaPlan
+            parameters:
+                - name: planId
+                  in: path
+                  required: true
+                  schema:
+                    type: integer
+                    format: uint32
+            requestBody:
+                content:
+                    application/json:
+                        schema:
+                            $ref: '#/components/schemas/identity.service.v1.ApplyQuotaPlanRequest'
+                required: true
+            responses:
+                "200":
+                    description: OK
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/identity.service.v1.ApplyQuotaPlanResponse'
     /admin/v1/redirects:
         get:
             tags:
@@ -12363,6 +12437,29 @@ components:
                     type: integer
                     format: uint32
             description: 上传文档 - 回应
+        ai.service.v1.UsageBreakdown:
+            type: object
+            properties:
+                providerId:
+                    type: integer
+                    format: uint32
+                providerName:
+                    type: string
+                modelName:
+                    type: string
+                promptTokens:
+                    type: integer
+                    format: uint32
+                completionTokens:
+                    type: integer
+                    format: uint32
+                totalTokens:
+                    type: integer
+                    format: uint32
+                calls:
+                    type: integer
+                    format: uint32
+            description: 用量细分行（provider × 模型 维度聚合）
         ai.service.v1.UsageSummaryResponse:
             type: object
             properties:
@@ -12376,6 +12473,10 @@ components:
                     type: boolean
                 quotaLimit:
                     type: string
+                breakdown:
+                    type: array
+                    items:
+                        $ref: '#/components/schemas/ai.service.v1.UsageBreakdown'
             description: 当月用量汇总 - 回应
         audit.service.v1.ApiAuditLog:
             type: object
@@ -15879,6 +15980,23 @@ components:
                     type: string
                     format: field-mask
             description: 请求 - 更新规则
+        identity.service.v1.ApplyQuotaPlanRequest:
+            type: object
+            properties:
+                planId:
+                    type: integer
+                    format: uint32
+                tenantId:
+                    type: integer
+                    format: uint32
+            description: 套用套餐 - 请求
+        identity.service.v1.ApplyQuotaPlanResponse:
+            type: object
+            properties:
+                applied:
+                    type: integer
+                    format: uint32
+            description: 套用套餐 - 回应
         identity.service.v1.BindContactRequest:
             type: object
             properties:
@@ -15926,6 +16044,12 @@ components:
                 data:
                     $ref: '#/components/schemas/identity.service.v1.Position'
             description: 创建职位 - 请求
+        identity.service.v1.CreateQuotaPlanRequest:
+            type: object
+            properties:
+                data:
+                    $ref: '#/components/schemas/identity.service.v1.QuotaPlan'
+            description: 创建套餐 - 请求
         identity.service.v1.CreateTenantQuotaRequest:
             type: object
             properties:
@@ -16005,6 +16129,14 @@ components:
                 total:
                     type: string
             description: 获取职位列表 - 答复
+        identity.service.v1.ListQuotaPlansResponse:
+            type: object
+            properties:
+                items:
+                    type: array
+                    items:
+                        $ref: '#/components/schemas/identity.service.v1.QuotaPlan'
+            description: 列出套餐 - 回应
         identity.service.v1.ListTenantQuotaResponse:
             type: object
             properties:
@@ -16324,6 +16456,45 @@ components:
                     description: 删除时间
                     format: date-time
             description: 职位
+        identity.service.v1.QuotaPlan:
+            type: object
+            properties:
+                id:
+                    type: integer
+                    format: uint32
+                name:
+                    type: string
+                    description: 模板名（租户内唯一）
+                description:
+                    type: string
+                items:
+                    type: array
+                    items:
+                        $ref: '#/components/schemas/identity.service.v1.QuotaPlanItem'
+                createdAt:
+                    type: string
+                    format: date-time
+                updatedAt:
+                    type: string
+                    format: date-time
+            description: 套餐模板
+        identity.service.v1.QuotaPlanItem:
+            type: object
+            properties:
+                quotaType:
+                    enum:
+                        - QUOTA_TYPE_UNSPECIFIED
+                        - USER_LIMIT
+                        - STORAGE
+                        - API_CALL
+                        - AI_TOKENS
+                    type: string
+                    description: 配额类型（复用 TenantQuota 的枚举）
+                    format: enum
+                limit:
+                    type: string
+                    description: 配额上限（语义随类型：用户数/字节/次数/tokens）
+            description: 套餐模板条目
         identity.service.v1.QuotaUsage:
             type: object
             properties:

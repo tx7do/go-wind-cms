@@ -3976,6 +3976,30 @@ var (
 			},
 		},
 	}
+	// SysQuotaPlansColumns holds the columns for the "sys_quota_plans" table.
+	SysQuotaPlansColumns = []*schema.Column{
+		{Name: "id", Type: field.TypeUint32, Increment: true},
+		{Name: "created_at", Type: field.TypeTime, Nullable: true},
+		{Name: "updated_at", Type: field.TypeTime, Nullable: true},
+		{Name: "deleted_at", Type: field.TypeTime, Nullable: true},
+		{Name: "tenant_id", Type: field.TypeUint32, Nullable: true, Default: 0},
+		{Name: "name", Type: field.TypeString, Size: 64},
+		{Name: "description", Type: field.TypeString, Nullable: true, Size: 255},
+		{Name: "items", Type: field.TypeString, Default: "[]"},
+	}
+	// SysQuotaPlansTable holds the schema information for the "sys_quota_plans" table.
+	SysQuotaPlansTable = &schema.Table{
+		Name:       "sys_quota_plans",
+		Columns:    SysQuotaPlansColumns,
+		PrimaryKey: []*schema.Column{SysQuotaPlansColumns[0]},
+		Indexes: []*schema.Index{
+			{
+				Name:    "quotaplan_name",
+				Unique:  true,
+				Columns: []*schema.Column{SysQuotaPlansColumns[5]},
+			},
+		},
+	}
 	// RedirectsColumns holds the columns for the "redirects" table.
 	RedirectsColumns = []*schema.Column{
 		{Name: "id", Type: field.TypeUint32, Increment: true, Comment: "id"},
@@ -5483,6 +5507,7 @@ var (
 		PostTranslationsTable,
 		PostVersionsTable,
 		PostWatchesTable,
+		SysQuotaPlansTable,
 		RedirectsTable,
 		SysRolesTable,
 		RoleFieldPermissionsTable,
@@ -5900,6 +5925,9 @@ func init() {
 		Table:     "post_watches",
 		Charset:   "utf8mb4",
 		Collation: "utf8mb4_bin",
+	}
+	SysQuotaPlansTable.Annotation = &entsql.Annotation{
+		Table: "sys_quota_plans",
 	}
 	RedirectsTable.Annotation = &entsql.Annotation{
 		Table:     "redirects",

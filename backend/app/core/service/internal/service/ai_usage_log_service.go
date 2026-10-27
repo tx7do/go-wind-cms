@@ -10,6 +10,7 @@ import (
 	"google.golang.org/protobuf/types/known/emptypb"
 
 	paginationV1 "github.com/tx7do/go-crud/api/gen/go/pagination/v1"
+	"github.com/tx7do/go-utils/trans"
 
 	aiV1 "go-wind-cms/api/gen/go/ai/service/v1"
 	"go-wind-cms/app/core/service/internal/data"
@@ -22,12 +23,15 @@ type AiUsageLogService struct {
 	aiV1.UnimplementedAiUsageLogServiceServer
 	log  *log.Helper
 	repo *data.AiUsageLogRepo
+
+	providerRepo *data.AiProviderRepo
 }
 
-func NewAiUsageLogService(ctx *bootstrap.Context, repo *data.AiUsageLogRepo) *AiUsageLogService {
+func NewAiUsageLogService(ctx *bootstrap.Context, repo *data.AiUsageLogRepo, providerRepo *data.AiProviderRepo) *AiUsageLogService {
 	return &AiUsageLogService{
-		log:  ctx.NewLoggerHelper("ai_usage_log/service/core-service"),
-		repo: repo,
+		log:          ctx.NewLoggerHelper("ai_usage_log/service/core-service"),
+		repo:         repo,
+		providerRepo: providerRepo,
 	}
 }
 
@@ -50,11 +54,29 @@ func (s *AiUsageLogService) GetUsageSummary(ctx context.Context, _ *emptypb.Empt
 		return nil, err
 	}
 
-	return &aiV1.UsageSummaryResponse{
+	resp := &aiV1.UsageSummaryResponse{
 		MonthTokens: uint32(tokens),
 		MonthCalls:  uint32(calls),
 		// 本仓无套餐配额：quota_configured 恒 false（前端据此不渲染配额进度条）
-	}, nil
+	}
+
+	// 按 provider×模型 细分（best-effort：聚合失败不打断汇总主体）
+	if rows, bErr := s.repo.MonthBreakdown(ctx, tenantId, monthStart); bErr == nil {
+		names := map[uint32]string{}
+		if s.providerRepo != nil {
+			// provider 量少（个位数），pagination 拉一页足够
+			if plist, pErr := s.providerRepo.List(ctx, &paginationV1.PagingRequest{NoPaging: trans.Ptr(true)}); pErr == nil {
+				for _, pv := range plist.GetItems() {
+					names[pv.GetId()] = pv.GetName()
+				}
+			}
+		}
+		for _, row := range rows {
+			row.ProviderName = names[row.GetProviderId()]
+			resp.Breakdown = append(resp.GetBreakdown(), row)
+		}
+	}
+	return resp, nil
 }
 
 // operatorTenant 取调用者租户（viewer 上下文；平台用户 tenantId=0 见全量）。

@@ -80,6 +80,7 @@ import (
 	"go-wind-cms/app/core/service/internal/data/ent/posttranslation"
 	"go-wind-cms/app/core/service/internal/data/ent/postversion"
 	"go-wind-cms/app/core/service/internal/data/ent/postwatch"
+	"go-wind-cms/app/core/service/internal/data/ent/quotaplan"
 	"go-wind-cms/app/core/service/internal/data/ent/redirect"
 	"go-wind-cms/app/core/service/internal/data/ent/role"
 	"go-wind-cms/app/core/service/internal/data/ent/rolefieldpermission"
@@ -2479,6 +2480,58 @@ func init() {
 	postwatchDescID := postwatchMixinFields0[0].Descriptor()
 	// postwatch.IDValidator is a validator for the "id" field. It is called by the builders before save.
 	postwatch.IDValidator = postwatchDescID.Validators[0].(func(uint32) error)
+	quotaplanMixin := schema.QuotaPlan{}.Mixin()
+	quotaplan.Policy = privacy.NewPolicies(quotaplanMixin[2], schema.QuotaPlan{})
+	quotaplan.Hooks[0] = func(next ent.Mutator) ent.Mutator {
+		return ent.MutateFunc(func(ctx context.Context, m ent.Mutation) (ent.Value, error) {
+			if err := quotaplan.Policy.EvalMutation(ctx, m); err != nil {
+				return nil, err
+			}
+			return next.Mutate(ctx, m)
+		})
+	}
+	quotaplanMixinFields1 := quotaplanMixin[1].Fields()
+	_ = quotaplanMixinFields1
+	quotaplanMixinFields2 := quotaplanMixin[2].Fields()
+	_ = quotaplanMixinFields2
+	quotaplanFields := schema.QuotaPlan{}.Fields()
+	_ = quotaplanFields
+	// quotaplanDescTenantID is the schema descriptor for tenant_id field.
+	quotaplanDescTenantID := quotaplanMixinFields2[0].Descriptor()
+	// quotaplan.DefaultTenantID holds the default value on creation for the tenant_id field.
+	quotaplan.DefaultTenantID = quotaplanDescTenantID.Default.(uint32)
+	// quotaplanDescName is the schema descriptor for name field.
+	quotaplanDescName := quotaplanFields[0].Descriptor()
+	// quotaplan.NameValidator is a validator for the "name" field. It is called by the builders before save.
+	quotaplan.NameValidator = func() func(string) error {
+		validators := quotaplanDescName.Validators
+		fns := [...]func(string) error{
+			validators[0].(func(string) error),
+			validators[1].(func(string) error),
+		}
+		return func(name string) error {
+			for _, fn := range fns {
+				if err := fn(name); err != nil {
+					return err
+				}
+			}
+			return nil
+		}
+	}()
+	// quotaplanDescDescription is the schema descriptor for description field.
+	quotaplanDescDescription := quotaplanFields[1].Descriptor()
+	// quotaplan.DescriptionValidator is a validator for the "description" field. It is called by the builders before save.
+	quotaplan.DescriptionValidator = quotaplanDescDescription.Validators[0].(func(string) error)
+	// quotaplanDescItems is the schema descriptor for items field.
+	quotaplanDescItems := quotaplanFields[2].Descriptor()
+	// quotaplan.DefaultItems holds the default value on creation for the items field.
+	quotaplan.DefaultItems = quotaplanDescItems.Default.(string)
+	// quotaplan.ItemsValidator is a validator for the "items" field. It is called by the builders before save.
+	quotaplan.ItemsValidator = quotaplanDescItems.Validators[0].(func(string) error)
+	// quotaplanDescID is the schema descriptor for id field.
+	quotaplanDescID := quotaplanMixinFields1[0].Descriptor()
+	// quotaplan.IDValidator is a validator for the "id" field. It is called by the builders before save.
+	quotaplan.IDValidator = quotaplanDescID.Validators[0].(func(uint32) error)
 	redirectMixin := schema.Redirect{}.Mixin()
 	redirect.Policy = privacy.NewPolicies(redirectMixin[3], schema.Redirect{})
 	redirect.Hooks[0] = func(next ent.Mutator) ent.Mutator {

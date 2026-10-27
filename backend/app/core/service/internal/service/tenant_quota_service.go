@@ -42,6 +42,8 @@ type TenantQuotaService struct {
 	// internalMessages 站内信投递缝（水位告警出口）：双向引用，构造后注册
 	//（与通知域 Notifier 缝同型；未注入时水位任务只扫描不投递并留告警日志）。
 	internalMessages internalMessageSender
+	quotaPlanRepo *data.QuotaPlanRepo
+
 }
 
 // internalMessageSender 水位告警投递所需的最小站内信面（便于测试桩替）。
@@ -54,10 +56,11 @@ func (s *TenantQuotaService) RegisterInternalMessages(sender internalMessageSend
 	s.internalMessages = sender
 }
 
-func NewTenantQuotaService(ctx *bootstrap.Context, repo *data.TenantQuotaRepo) *TenantQuotaService {
+func NewTenantQuotaService(ctx *bootstrap.Context, repo *data.TenantQuotaRepo, quotaPlanRepo *data.QuotaPlanRepo) *TenantQuotaService {
 	return &TenantQuotaService{
-		log:  ctx.NewLoggerHelper("tenant-quota/service/core-service"),
-		repo: repo,
+		log:           ctx.NewLoggerHelper("tenant-quota/service/core-service"),
+		repo:          repo,
+		quotaPlanRepo: quotaPlanRepo,
 	}
 }
 

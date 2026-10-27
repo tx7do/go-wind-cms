@@ -22,19 +22,29 @@ var _ = binding.EncodeURL
 
 const _ = http.SupportPackageIsVersion1
 
+const OperationTenantQuotaServiceApplyQuotaPlan = "/admin.service.v1.TenantQuotaService/ApplyQuotaPlan"
 const OperationTenantQuotaServiceCreate = "/admin.service.v1.TenantQuotaService/Create"
+const OperationTenantQuotaServiceCreateQuotaPlan = "/admin.service.v1.TenantQuotaService/CreateQuotaPlan"
 const OperationTenantQuotaServiceDelete = "/admin.service.v1.TenantQuotaService/Delete"
+const OperationTenantQuotaServiceDeleteQuotaPlan = "/admin.service.v1.TenantQuotaService/DeleteQuotaPlan"
 const OperationTenantQuotaServiceGet = "/admin.service.v1.TenantQuotaService/Get"
 const OperationTenantQuotaServiceGetMyTenantUsage = "/admin.service.v1.TenantQuotaService/GetMyTenantUsage"
 const OperationTenantQuotaServiceGetUsage = "/admin.service.v1.TenantQuotaService/GetUsage"
 const OperationTenantQuotaServiceList = "/admin.service.v1.TenantQuotaService/List"
+const OperationTenantQuotaServiceListQuotaPlans = "/admin.service.v1.TenantQuotaService/ListQuotaPlans"
 const OperationTenantQuotaServiceUpdate = "/admin.service.v1.TenantQuotaService/Update"
 
 type TenantQuotaServiceHTTPServer interface {
+	// ApplyQuotaPlan 套用到租户（按模板逐项 upsert 该租户配额）
+	ApplyQuotaPlan(context.Context, *v11.ApplyQuotaPlanRequest) (*v11.ApplyQuotaPlanResponse, error)
 	// Create 创建租户配额
 	Create(context.Context, *v11.CreateTenantQuotaRequest) (*emptypb.Empty, error)
+	// CreateQuotaPlan 创建套餐模板
+	CreateQuotaPlan(context.Context, *v11.CreateQuotaPlanRequest) (*v11.QuotaPlan, error)
 	// Delete 删除租户配额
 	Delete(context.Context, *v11.DeleteTenantQuotaRequest) (*emptypb.Empty, error)
+	// DeleteQuotaPlan 删除套餐模板
+	DeleteQuotaPlan(context.Context, *v11.DeleteQuotaPlanRequest) (*emptypb.Empty, error)
 	// Get 查询租户配额详情
 	Get(context.Context, *v11.GetTenantQuotaRequest) (*v11.TenantQuota, error)
 	// GetMyTenantUsage 获取当前租户的用量与配额（租户自助；tenant_id 从认证上下文取，不接受客户端传值）。
@@ -44,6 +54,8 @@ type TenantQuotaServiceHTTPServer interface {
 	GetUsage(context.Context, *v11.GetTenantUsageRequest) (*v11.TenantUsage, error)
 	// List 查询租户配额列表
 	List(context.Context, *v1.PagingRequest) (*v11.ListTenantQuotaResponse, error)
+	// ListQuotaPlans 列出套餐模板
+	ListQuotaPlans(context.Context, *v11.ListQuotaPlansRequest) (*v11.ListQuotaPlansResponse, error)
 	// Update 更新租户配额
 	Update(context.Context, *v11.UpdateTenantQuotaRequest) (*emptypb.Empty, error)
 }
@@ -57,6 +69,10 @@ func RegisterTenantQuotaServiceHTTPServer(s *http.Server, srv TenantQuotaService
 	r.DELETE("/admin/v1/tenant-quotas/{id}", _TenantQuotaService_Delete41_HTTP_Handler(srv))
 	r.GET("/admin/v1/tenants/{tenant_id}/usage", _TenantQuotaService_GetUsage0_HTTP_Handler(srv))
 	r.GET("/admin/v1/my-tenant-usage", _TenantQuotaService_GetMyTenantUsage0_HTTP_Handler(srv))
+	r.GET("/admin/v1/quota-plans", _TenantQuotaService_ListQuotaPlans0_HTTP_Handler(srv))
+	r.POST("/admin/v1/quota-plans", _TenantQuotaService_CreateQuotaPlan0_HTTP_Handler(srv))
+	r.DELETE("/admin/v1/quota-plans/{id}", _TenantQuotaService_DeleteQuotaPlan0_HTTP_Handler(srv))
+	r.POST("/admin/v1/quota-plans/{plan_id}/apply", _TenantQuotaService_ApplyQuotaPlan0_HTTP_Handler(srv))
 }
 
 func _TenantQuotaService_List48_HTTP_Handler(srv TenantQuotaServiceHTTPServer) func(ctx http.Context) error {
@@ -210,11 +226,105 @@ func _TenantQuotaService_GetMyTenantUsage0_HTTP_Handler(srv TenantQuotaServiceHT
 	}
 }
 
+func _TenantQuotaService_ListQuotaPlans0_HTTP_Handler(srv TenantQuotaServiceHTTPServer) func(ctx http.Context) error {
+	return func(ctx http.Context) error {
+		var in v11.ListQuotaPlansRequest
+		if err := ctx.BindQuery(&in); err != nil {
+			return err
+		}
+		http.SetOperation(ctx, OperationTenantQuotaServiceListQuotaPlans)
+		h := ctx.Middleware(func(ctx context.Context, req interface{}) (interface{}, error) {
+			return srv.ListQuotaPlans(ctx, req.(*v11.ListQuotaPlansRequest))
+		})
+		out, err := h(ctx, &in)
+		if err != nil {
+			return err
+		}
+		reply := out.(*v11.ListQuotaPlansResponse)
+		return ctx.Result(200, reply)
+	}
+}
+
+func _TenantQuotaService_CreateQuotaPlan0_HTTP_Handler(srv TenantQuotaServiceHTTPServer) func(ctx http.Context) error {
+	return func(ctx http.Context) error {
+		var in v11.CreateQuotaPlanRequest
+		if err := ctx.Bind(&in); err != nil {
+			return err
+		}
+		if err := ctx.BindQuery(&in); err != nil {
+			return err
+		}
+		http.SetOperation(ctx, OperationTenantQuotaServiceCreateQuotaPlan)
+		h := ctx.Middleware(func(ctx context.Context, req interface{}) (interface{}, error) {
+			return srv.CreateQuotaPlan(ctx, req.(*v11.CreateQuotaPlanRequest))
+		})
+		out, err := h(ctx, &in)
+		if err != nil {
+			return err
+		}
+		reply := out.(*v11.QuotaPlan)
+		return ctx.Result(200, reply)
+	}
+}
+
+func _TenantQuotaService_DeleteQuotaPlan0_HTTP_Handler(srv TenantQuotaServiceHTTPServer) func(ctx http.Context) error {
+	return func(ctx http.Context) error {
+		var in v11.DeleteQuotaPlanRequest
+		if err := ctx.BindQuery(&in); err != nil {
+			return err
+		}
+		if err := ctx.BindVars(&in); err != nil {
+			return err
+		}
+		http.SetOperation(ctx, OperationTenantQuotaServiceDeleteQuotaPlan)
+		h := ctx.Middleware(func(ctx context.Context, req interface{}) (interface{}, error) {
+			return srv.DeleteQuotaPlan(ctx, req.(*v11.DeleteQuotaPlanRequest))
+		})
+		out, err := h(ctx, &in)
+		if err != nil {
+			return err
+		}
+		reply := out.(*emptypb.Empty)
+		return ctx.Result(200, reply)
+	}
+}
+
+func _TenantQuotaService_ApplyQuotaPlan0_HTTP_Handler(srv TenantQuotaServiceHTTPServer) func(ctx http.Context) error {
+	return func(ctx http.Context) error {
+		var in v11.ApplyQuotaPlanRequest
+		if err := ctx.Bind(&in); err != nil {
+			return err
+		}
+		if err := ctx.BindQuery(&in); err != nil {
+			return err
+		}
+		if err := ctx.BindVars(&in); err != nil {
+			return err
+		}
+		http.SetOperation(ctx, OperationTenantQuotaServiceApplyQuotaPlan)
+		h := ctx.Middleware(func(ctx context.Context, req interface{}) (interface{}, error) {
+			return srv.ApplyQuotaPlan(ctx, req.(*v11.ApplyQuotaPlanRequest))
+		})
+		out, err := h(ctx, &in)
+		if err != nil {
+			return err
+		}
+		reply := out.(*v11.ApplyQuotaPlanResponse)
+		return ctx.Result(200, reply)
+	}
+}
+
 type TenantQuotaServiceHTTPClient interface {
+	// ApplyQuotaPlan 套用到租户（按模板逐项 upsert 该租户配额）
+	ApplyQuotaPlan(ctx context.Context, req *v11.ApplyQuotaPlanRequest, opts ...http.CallOption) (rsp *v11.ApplyQuotaPlanResponse, err error)
 	// Create 创建租户配额
 	Create(ctx context.Context, req *v11.CreateTenantQuotaRequest, opts ...http.CallOption) (rsp *emptypb.Empty, err error)
+	// CreateQuotaPlan 创建套餐模板
+	CreateQuotaPlan(ctx context.Context, req *v11.CreateQuotaPlanRequest, opts ...http.CallOption) (rsp *v11.QuotaPlan, err error)
 	// Delete 删除租户配额
 	Delete(ctx context.Context, req *v11.DeleteTenantQuotaRequest, opts ...http.CallOption) (rsp *emptypb.Empty, err error)
+	// DeleteQuotaPlan 删除套餐模板
+	DeleteQuotaPlan(ctx context.Context, req *v11.DeleteQuotaPlanRequest, opts ...http.CallOption) (rsp *emptypb.Empty, err error)
 	// Get 查询租户配额详情
 	Get(ctx context.Context, req *v11.GetTenantQuotaRequest, opts ...http.CallOption) (rsp *v11.TenantQuota, err error)
 	// GetMyTenantUsage 获取当前租户的用量与配额（租户自助；tenant_id 从认证上下文取，不接受客户端传值）。
@@ -224,6 +334,8 @@ type TenantQuotaServiceHTTPClient interface {
 	GetUsage(ctx context.Context, req *v11.GetTenantUsageRequest, opts ...http.CallOption) (rsp *v11.TenantUsage, err error)
 	// List 查询租户配额列表
 	List(ctx context.Context, req *v1.PagingRequest, opts ...http.CallOption) (rsp *v11.ListTenantQuotaResponse, err error)
+	// ListQuotaPlans 列出套餐模板
+	ListQuotaPlans(ctx context.Context, req *v11.ListQuotaPlansRequest, opts ...http.CallOption) (rsp *v11.ListQuotaPlansResponse, err error)
 	// Update 更新租户配额
 	Update(ctx context.Context, req *v11.UpdateTenantQuotaRequest, opts ...http.CallOption) (rsp *emptypb.Empty, err error)
 }
@@ -234,6 +346,20 @@ type TenantQuotaServiceHTTPClientImpl struct {
 
 func NewTenantQuotaServiceHTTPClient(client *http.Client) TenantQuotaServiceHTTPClient {
 	return &TenantQuotaServiceHTTPClientImpl{client}
+}
+
+// ApplyQuotaPlan 套用到租户（按模板逐项 upsert 该租户配额）
+func (c *TenantQuotaServiceHTTPClientImpl) ApplyQuotaPlan(ctx context.Context, in *v11.ApplyQuotaPlanRequest, opts ...http.CallOption) (*v11.ApplyQuotaPlanResponse, error) {
+	var out v11.ApplyQuotaPlanResponse
+	pattern := "/admin/v1/quota-plans/{plan_id}/apply"
+	path := binding.EncodeURL(pattern, in, false)
+	opts = append(opts, http.Operation(OperationTenantQuotaServiceApplyQuotaPlan))
+	opts = append(opts, http.PathTemplate(pattern))
+	err := c.cc.Invoke(ctx, "POST", path, in, &out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return &out, nil
 }
 
 // Create 创建租户配额
@@ -250,12 +376,40 @@ func (c *TenantQuotaServiceHTTPClientImpl) Create(ctx context.Context, in *v11.C
 	return &out, nil
 }
 
+// CreateQuotaPlan 创建套餐模板
+func (c *TenantQuotaServiceHTTPClientImpl) CreateQuotaPlan(ctx context.Context, in *v11.CreateQuotaPlanRequest, opts ...http.CallOption) (*v11.QuotaPlan, error) {
+	var out v11.QuotaPlan
+	pattern := "/admin/v1/quota-plans"
+	path := binding.EncodeURL(pattern, in, false)
+	opts = append(opts, http.Operation(OperationTenantQuotaServiceCreateQuotaPlan))
+	opts = append(opts, http.PathTemplate(pattern))
+	err := c.cc.Invoke(ctx, "POST", path, in, &out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return &out, nil
+}
+
 // Delete 删除租户配额
 func (c *TenantQuotaServiceHTTPClientImpl) Delete(ctx context.Context, in *v11.DeleteTenantQuotaRequest, opts ...http.CallOption) (*emptypb.Empty, error) {
 	var out emptypb.Empty
 	pattern := "/admin/v1/tenant-quotas/{id}"
 	path := binding.EncodeURL(pattern, in, true)
 	opts = append(opts, http.Operation(OperationTenantQuotaServiceDelete))
+	opts = append(opts, http.PathTemplate(pattern))
+	err := c.cc.Invoke(ctx, "DELETE", path, nil, &out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return &out, nil
+}
+
+// DeleteQuotaPlan 删除套餐模板
+func (c *TenantQuotaServiceHTTPClientImpl) DeleteQuotaPlan(ctx context.Context, in *v11.DeleteQuotaPlanRequest, opts ...http.CallOption) (*emptypb.Empty, error) {
+	var out emptypb.Empty
+	pattern := "/admin/v1/quota-plans/{id}"
+	path := binding.EncodeURL(pattern, in, true)
+	opts = append(opts, http.Operation(OperationTenantQuotaServiceDeleteQuotaPlan))
 	opts = append(opts, http.PathTemplate(pattern))
 	err := c.cc.Invoke(ctx, "DELETE", path, nil, &out, opts...)
 	if err != nil {
@@ -313,6 +467,20 @@ func (c *TenantQuotaServiceHTTPClientImpl) List(ctx context.Context, in *v1.Pagi
 	pattern := "/admin/v1/tenant-quotas"
 	path := binding.EncodeURL(pattern, in, true)
 	opts = append(opts, http.Operation(OperationTenantQuotaServiceList))
+	opts = append(opts, http.PathTemplate(pattern))
+	err := c.cc.Invoke(ctx, "GET", path, nil, &out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return &out, nil
+}
+
+// ListQuotaPlans 列出套餐模板
+func (c *TenantQuotaServiceHTTPClientImpl) ListQuotaPlans(ctx context.Context, in *v11.ListQuotaPlansRequest, opts ...http.CallOption) (*v11.ListQuotaPlansResponse, error) {
+	var out v11.ListQuotaPlansResponse
+	pattern := "/admin/v1/quota-plans"
+	path := binding.EncodeURL(pattern, in, true)
+	opts = append(opts, http.Operation(OperationTenantQuotaServiceListQuotaPlans))
 	opts = append(opts, http.PathTemplate(pattern))
 	err := c.cc.Invoke(ctx, "GET", path, nil, &out, opts...)
 	if err != nil {

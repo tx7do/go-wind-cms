@@ -74,3 +74,21 @@ func (s *TenantQuotaService) GetMyTenantUsage(ctx context.Context, req *identity
 	req.TenantId = operator.GetTenantId()
 	return s.tenantQuotaClient.GetMyTenantUsage(ctx, req)
 }
+
+// ── 配额套餐模板（透传 core）──
+
+func (s *TenantQuotaService) ListQuotaPlans(ctx context.Context, req *identityV1.ListQuotaPlansRequest) (*identityV1.ListQuotaPlansResponse, error) {
+	return s.tenantQuotaClient.ListQuotaPlans(ctx, req)
+}
+
+func (s *TenantQuotaService) CreateQuotaPlan(ctx context.Context, req *identityV1.CreateQuotaPlanRequest) (*identityV1.QuotaPlan, error) {
+	return s.tenantQuotaClient.CreateQuotaPlan(ctx, req)
+}
+
+func (s *TenantQuotaService) DeleteQuotaPlan(ctx context.Context, req *identityV1.DeleteQuotaPlanRequest) (*emptypb.Empty, error) {
+	return s.tenantQuotaClient.DeleteQuotaPlan(ctx, req)
+}
+
+func (s *TenantQuotaService) ApplyQuotaPlan(ctx context.Context, req *identityV1.ApplyQuotaPlanRequest) (*identityV1.ApplyQuotaPlanResponse, error) {
+	return s.tenantQuotaClient.ApplyQuotaPlan(ctx, req)
+}

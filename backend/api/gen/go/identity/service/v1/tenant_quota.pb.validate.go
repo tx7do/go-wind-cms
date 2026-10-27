@@ -1845,3 +1845,999 @@ var _ interface {
 	Cause() error
 	ErrorName() string
 } = CheckQuotaResponseValidationError{}
+
+// Validate checks the field values on QuotaPlanItem with the rules defined in
+// the proto definition for this message. If any rules are violated, the first
+// error encountered is returned, or nil if there are no violations.
+func (m *QuotaPlanItem) Validate() error {
+	return m.validate(false)
+}
+
+// ValidateAll checks the field values on QuotaPlanItem with the rules defined
+// in the proto definition for this message. If any rules are violated, the
+// result is a list of violation errors wrapped in QuotaPlanItemMultiError, or
+// nil if none found.
+func (m *QuotaPlanItem) ValidateAll() error {
+	return m.validate(true)
+}
+
+func (m *QuotaPlanItem) validate(all bool) error {
+	if m == nil {
+		return nil
+	}
+
+	var errors []error
+
+	// no validation rules for QuotaType
+
+	// no validation rules for Limit
+
+	if len(errors) > 0 {
+		return QuotaPlanItemMultiError(errors)
+	}
+
+	return nil
+}
+
+// QuotaPlanItemMultiError is an error wrapping multiple validation errors
+// returned by QuotaPlanItem.ValidateAll() if the designated constraints
+// aren't met.
+type QuotaPlanItemMultiError []error
+
+// Error returns a concatenation of all the error messages it wraps.
+func (m QuotaPlanItemMultiError) Error() string {
+	msgs := make([]string, 0, len(m))
+	for _, err := range m {
+		msgs = append(msgs, err.Error())
+	}
+	return strings.Join(msgs, "; ")
+}
+
+// AllErrors returns a list of validation violation errors.
+func (m QuotaPlanItemMultiError) AllErrors() []error { return m }
+
+// QuotaPlanItemValidationError is the validation error returned by
+// QuotaPlanItem.Validate if the designated constraints aren't met.
+type QuotaPlanItemValidationError struct {
+	field  string
+	reason string
+	cause  error
+	key    bool
+}
+
+// Field function returns field value.
+func (e QuotaPlanItemValidationError) Field() string { return e.field }
+
+// Reason function returns reason value.
+func (e QuotaPlanItemValidationError) Reason() string { return e.reason }
+
+// Cause function returns cause value.
+func (e QuotaPlanItemValidationError) Cause() error { return e.cause }
+
+// Key function returns key value.
+func (e QuotaPlanItemValidationError) Key() bool { return e.key }
+
+// ErrorName returns error name.
+func (e QuotaPlanItemValidationError) ErrorName() string { return "QuotaPlanItemValidationError" }
+
+// Error satisfies the builtin error interface
+func (e QuotaPlanItemValidationError) Error() string {
+	cause := ""
+	if e.cause != nil {
+		cause = fmt.Sprintf(" | caused by: %v", e.cause)
+	}
+
+	key := ""
+	if e.key {
+		key = "key for "
+	}
+
+	return fmt.Sprintf(
+		"invalid %sQuotaPlanItem.%s: %s%s",
+		key,
+		e.field,
+		e.reason,
+		cause)
+}
+
+var _ error = QuotaPlanItemValidationError{}
+
+var _ interface {
+	Field() string
+	Reason() string
+	Key() bool
+	Cause() error
+	ErrorName() string
+} = QuotaPlanItemValidationError{}
+
+// Validate checks the field values on QuotaPlan with the rules defined in the
+// proto definition for this message. If any rules are violated, the first
+// error encountered is returned, or nil if there are no violations.
+func (m *QuotaPlan) Validate() error {
+	return m.validate(false)
+}
+
+// ValidateAll checks the field values on QuotaPlan with the rules defined in
+// the proto definition for this message. If any rules are violated, the
+// result is a list of violation errors wrapped in QuotaPlanMultiError, or nil
+// if none found.
+func (m *QuotaPlan) ValidateAll() error {
+	return m.validate(true)
+}
+
+func (m *QuotaPlan) validate(all bool) error {
+	if m == nil {
+		return nil
+	}
+
+	var errors []error
+
+	// no validation rules for Name
+
+	for idx, item := range m.GetItems() {
+		_, _ = idx, item
+
+		if all {
+			switch v := interface{}(item).(type) {
+			case interface{ ValidateAll() error }:
+				if err := v.ValidateAll(); err != nil {
+					errors = append(errors, QuotaPlanValidationError{
+						field:  fmt.Sprintf("Items[%v]", idx),
+						reason: "embedded message failed validation",
+						cause:  err,
+					})
+				}
+			case interface{ Validate() error }:
+				if err := v.Validate(); err != nil {
+					errors = append(errors, QuotaPlanValidationError{
+						field:  fmt.Sprintf("Items[%v]", idx),
+						reason: "embedded message failed validation",
+						cause:  err,
+					})
+				}
+			}
+		} else if v, ok := interface{}(item).(interface{ Validate() error }); ok {
+			if err := v.Validate(); err != nil {
+				return QuotaPlanValidationError{
+					field:  fmt.Sprintf("Items[%v]", idx),
+					reason: "embedded message failed validation",
+					cause:  err,
+				}
+			}
+		}
+
+	}
+
+	if m.Id != nil {
+		// no validation rules for Id
+	}
+
+	if m.Description != nil {
+		// no validation rules for Description
+	}
+
+	if m.CreatedAt != nil {
+
+		if all {
+			switch v := interface{}(m.GetCreatedAt()).(type) {
+			case interface{ ValidateAll() error }:
+				if err := v.ValidateAll(); err != nil {
+					errors = append(errors, QuotaPlanValidationError{
+						field:  "CreatedAt",
+						reason: "embedded message failed validation",
+						cause:  err,
+					})
+				}
+			case interface{ Validate() error }:
+				if err := v.Validate(); err != nil {
+					errors = append(errors, QuotaPlanValidationError{
+						field:  "CreatedAt",
+						reason: "embedded message failed validation",
+						cause:  err,
+					})
+				}
+			}
+		} else if v, ok := interface{}(m.GetCreatedAt()).(interface{ Validate() error }); ok {
+			if err := v.Validate(); err != nil {
+				return QuotaPlanValidationError{
+					field:  "CreatedAt",
+					reason: "embedded message failed validation",
+					cause:  err,
+				}
+			}
+		}
+
+	}
+
+	if m.UpdatedAt != nil {
+
+		if all {
+			switch v := interface{}(m.GetUpdatedAt()).(type) {
+			case interface{ ValidateAll() error }:
+				if err := v.ValidateAll(); err != nil {
+					errors = append(errors, QuotaPlanValidationError{
+						field:  "UpdatedAt",
+						reason: "embedded message failed validation",
+						cause:  err,
+					})
+				}
+			case interface{ Validate() error }:
+				if err := v.Validate(); err != nil {
+					errors = append(errors, QuotaPlanValidationError{
+						field:  "UpdatedAt",
+						reason: "embedded message failed validation",
+						cause:  err,
+					})
+				}
+			}
+		} else if v, ok := interface{}(m.GetUpdatedAt()).(interface{ Validate() error }); ok {
+			if err := v.Validate(); err != nil {
+				return QuotaPlanValidationError{
+					field:  "UpdatedAt",
+					reason: "embedded message failed validation",
+					cause:  err,
+				}
+			}
+		}
+
+	}
+
+	if len(errors) > 0 {
+		return QuotaPlanMultiError(errors)
+	}
+
+	return nil
+}
+
+// QuotaPlanMultiError is an error wrapping multiple validation errors returned
+// by QuotaPlan.ValidateAll() if the designated constraints aren't met.
+type QuotaPlanMultiError []error
+
+// Error returns a concatenation of all the error messages it wraps.
+func (m QuotaPlanMultiError) Error() string {
+	msgs := make([]string, 0, len(m))
+	for _, err := range m {
+		msgs = append(msgs, err.Error())
+	}
+	return strings.Join(msgs, "; ")
+}
+
+// AllErrors returns a list of validation violation errors.
+func (m QuotaPlanMultiError) AllErrors() []error { return m }
+
+// QuotaPlanValidationError is the validation error returned by
+// QuotaPlan.Validate if the designated constraints aren't met.
+type QuotaPlanValidationError struct {
+	field  string
+	reason string
+	cause  error
+	key    bool
+}
+
+// Field function returns field value.
+func (e QuotaPlanValidationError) Field() string { return e.field }
+
+// Reason function returns reason value.
+func (e QuotaPlanValidationError) Reason() string { return e.reason }
+
+// Cause function returns cause value.
+func (e QuotaPlanValidationError) Cause() error { return e.cause }
+
+// Key function returns key value.
+func (e QuotaPlanValidationError) Key() bool { return e.key }
+
+// ErrorName returns error name.
+func (e QuotaPlanValidationError) ErrorName() string { return "QuotaPlanValidationError" }
+
+// Error satisfies the builtin error interface
+func (e QuotaPlanValidationError) Error() string {
+	cause := ""
+	if e.cause != nil {
+		cause = fmt.Sprintf(" | caused by: %v", e.cause)
+	}
+
+	key := ""
+	if e.key {
+		key = "key for "
+	}
+
+	return fmt.Sprintf(
+		"invalid %sQuotaPlan.%s: %s%s",
+		key,
+		e.field,
+		e.reason,
+		cause)
+}
+
+var _ error = QuotaPlanValidationError{}
+
+var _ interface {
+	Field() string
+	Reason() string
+	Key() bool
+	Cause() error
+	ErrorName() string
+} = QuotaPlanValidationError{}
+
+// Validate checks the field values on ListQuotaPlansRequest with the rules
+// defined in the proto definition for this message. If any rules are
+// violated, the first error encountered is returned, or nil if there are no violations.
+func (m *ListQuotaPlansRequest) Validate() error {
+	return m.validate(false)
+}
+
+// ValidateAll checks the field values on ListQuotaPlansRequest with the rules
+// defined in the proto definition for this message. If any rules are
+// violated, the result is a list of violation errors wrapped in
+// ListQuotaPlansRequestMultiError, or nil if none found.
+func (m *ListQuotaPlansRequest) ValidateAll() error {
+	return m.validate(true)
+}
+
+func (m *ListQuotaPlansRequest) validate(all bool) error {
+	if m == nil {
+		return nil
+	}
+
+	var errors []error
+
+	if len(errors) > 0 {
+		return ListQuotaPlansRequestMultiError(errors)
+	}
+
+	return nil
+}
+
+// ListQuotaPlansRequestMultiError is an error wrapping multiple validation
+// errors returned by ListQuotaPlansRequest.ValidateAll() if the designated
+// constraints aren't met.
+type ListQuotaPlansRequestMultiError []error
+
+// Error returns a concatenation of all the error messages it wraps.
+func (m ListQuotaPlansRequestMultiError) Error() string {
+	msgs := make([]string, 0, len(m))
+	for _, err := range m {
+		msgs = append(msgs, err.Error())
+	}
+	return strings.Join(msgs, "; ")
+}
+
+// AllErrors returns a list of validation violation errors.
+func (m ListQuotaPlansRequestMultiError) AllErrors() []error { return m }
+
+// ListQuotaPlansRequestValidationError is the validation error returned by
+// ListQuotaPlansRequest.Validate if the designated constraints aren't met.
+type ListQuotaPlansRequestValidationError struct {
+	field  string
+	reason string
+	cause  error
+	key    bool
+}
+
+// Field function returns field value.
+func (e ListQuotaPlansRequestValidationError) Field() string { return e.field }
+
+// Reason function returns reason value.
+func (e ListQuotaPlansRequestValidationError) Reason() string { return e.reason }
+
+// Cause function returns cause value.
+func (e ListQuotaPlansRequestValidationError) Cause() error { return e.cause }
+
+// Key function returns key value.
+func (e ListQuotaPlansRequestValidationError) Key() bool { return e.key }
+
+// ErrorName returns error name.
+func (e ListQuotaPlansRequestValidationError) ErrorName() string {
+	return "ListQuotaPlansRequestValidationError"
+}
+
+// Error satisfies the builtin error interface
+func (e ListQuotaPlansRequestValidationError) Error() string {
+	cause := ""
+	if e.cause != nil {
+		cause = fmt.Sprintf(" | caused by: %v", e.cause)
+	}
+
+	key := ""
+	if e.key {
+		key = "key for "
+	}
+
+	return fmt.Sprintf(
+		"invalid %sListQuotaPlansRequest.%s: %s%s",
+		key,
+		e.field,
+		e.reason,
+		cause)
+}
+
+var _ error = ListQuotaPlansRequestValidationError{}
+
+var _ interface {
+	Field() string
+	Reason() string
+	Key() bool
+	Cause() error
+	ErrorName() string
+} = ListQuotaPlansRequestValidationError{}
+
+// Validate checks the field values on ListQuotaPlansResponse with the rules
+// defined in the proto definition for this message. If any rules are
+// violated, the first error encountered is returned, or nil if there are no violations.
+func (m *ListQuotaPlansResponse) Validate() error {
+	return m.validate(false)
+}
+
+// ValidateAll checks the field values on ListQuotaPlansResponse with the rules
+// defined in the proto definition for this message. If any rules are
+// violated, the result is a list of violation errors wrapped in
+// ListQuotaPlansResponseMultiError, or nil if none found.
+func (m *ListQuotaPlansResponse) ValidateAll() error {
+	return m.validate(true)
+}
+
+func (m *ListQuotaPlansResponse) validate(all bool) error {
+	if m == nil {
+		return nil
+	}
+
+	var errors []error
+
+	for idx, item := range m.GetItems() {
+		_, _ = idx, item
+
+		if all {
+			switch v := interface{}(item).(type) {
+			case interface{ ValidateAll() error }:
+				if err := v.ValidateAll(); err != nil {
+					errors = append(errors, ListQuotaPlansResponseValidationError{
+						field:  fmt.Sprintf("Items[%v]", idx),
+						reason: "embedded message failed validation",
+						cause:  err,
+					})
+				}
+			case interface{ Validate() error }:
+				if err := v.Validate(); err != nil {
+					errors = append(errors, ListQuotaPlansResponseValidationError{
+						field:  fmt.Sprintf("Items[%v]", idx),
+						reason: "embedded message failed validation",
+						cause:  err,
+					})
+				}
+			}
+		} else if v, ok := interface{}(item).(interface{ Validate() error }); ok {
+			if err := v.Validate(); err != nil {
+				return ListQuotaPlansResponseValidationError{
+					field:  fmt.Sprintf("Items[%v]", idx),
+					reason: "embedded message failed validation",
+					cause:  err,
+				}
+			}
+		}
+
+	}
+
+	if len(errors) > 0 {
+		return ListQuotaPlansResponseMultiError(errors)
+	}
+
+	return nil
+}
+
+// ListQuotaPlansResponseMultiError is an error wrapping multiple validation
+// errors returned by ListQuotaPlansResponse.ValidateAll() if the designated
+// constraints aren't met.
+type ListQuotaPlansResponseMultiError []error
+
+// Error returns a concatenation of all the error messages it wraps.
+func (m ListQuotaPlansResponseMultiError) Error() string {
+	msgs := make([]string, 0, len(m))
+	for _, err := range m {
+		msgs = append(msgs, err.Error())
+	}
+	return strings.Join(msgs, "; ")
+}
+
+// AllErrors returns a list of validation violation errors.
+func (m ListQuotaPlansResponseMultiError) AllErrors() []error { return m }
+
+// ListQuotaPlansResponseValidationError is the validation error returned by
+// ListQuotaPlansResponse.Validate if the designated constraints aren't met.
+type ListQuotaPlansResponseValidationError struct {
+	field  string
+	reason string
+	cause  error
+	key    bool
+}
+
+// Field function returns field value.
+func (e ListQuotaPlansResponseValidationError) Field() string { return e.field }
+
+// Reason function returns reason value.
+func (e ListQuotaPlansResponseValidationError) Reason() string { return e.reason }
+
+// Cause function returns cause value.
+func (e ListQuotaPlansResponseValidationError) Cause() error { return e.cause }
+
+// Key function returns key value.
+func (e ListQuotaPlansResponseValidationError) Key() bool { return e.key }
+
+// ErrorName returns error name.
+func (e ListQuotaPlansResponseValidationError) ErrorName() string {
+	return "ListQuotaPlansResponseValidationError"
+}
+
+// Error satisfies the builtin error interface
+func (e ListQuotaPlansResponseValidationError) Error() string {
+	cause := ""
+	if e.cause != nil {
+		cause = fmt.Sprintf(" | caused by: %v", e.cause)
+	}
+
+	key := ""
+	if e.key {
+		key = "key for "
+	}
+
+	return fmt.Sprintf(
+		"invalid %sListQuotaPlansResponse.%s: %s%s",
+		key,
+		e.field,
+		e.reason,
+		cause)
+}
+
+var _ error = ListQuotaPlansResponseValidationError{}
+
+var _ interface {
+	Field() string
+	Reason() string
+	Key() bool
+	Cause() error
+	ErrorName() string
+} = ListQuotaPlansResponseValidationError{}
+
+// Validate checks the field values on CreateQuotaPlanRequest with the rules
+// defined in the proto definition for this message. If any rules are
+// violated, the first error encountered is returned, or nil if there are no violations.
+func (m *CreateQuotaPlanRequest) Validate() error {
+	return m.validate(false)
+}
+
+// ValidateAll checks the field values on CreateQuotaPlanRequest with the rules
+// defined in the proto definition for this message. If any rules are
+// violated, the result is a list of violation errors wrapped in
+// CreateQuotaPlanRequestMultiError, or nil if none found.
+func (m *CreateQuotaPlanRequest) ValidateAll() error {
+	return m.validate(true)
+}
+
+func (m *CreateQuotaPlanRequest) validate(all bool) error {
+	if m == nil {
+		return nil
+	}
+
+	var errors []error
+
+	if all {
+		switch v := interface{}(m.GetData()).(type) {
+		case interface{ ValidateAll() error }:
+			if err := v.ValidateAll(); err != nil {
+				errors = append(errors, CreateQuotaPlanRequestValidationError{
+					field:  "Data",
+					reason: "embedded message failed validation",
+					cause:  err,
+				})
+			}
+		case interface{ Validate() error }:
+			if err := v.Validate(); err != nil {
+				errors = append(errors, CreateQuotaPlanRequestValidationError{
+					field:  "Data",
+					reason: "embedded message failed validation",
+					cause:  err,
+				})
+			}
+		}
+	} else if v, ok := interface{}(m.GetData()).(interface{ Validate() error }); ok {
+		if err := v.Validate(); err != nil {
+			return CreateQuotaPlanRequestValidationError{
+				field:  "Data",
+				reason: "embedded message failed validation",
+				cause:  err,
+			}
+		}
+	}
+
+	if len(errors) > 0 {
+		return CreateQuotaPlanRequestMultiError(errors)
+	}
+
+	return nil
+}
+
+// CreateQuotaPlanRequestMultiError is an error wrapping multiple validation
+// errors returned by CreateQuotaPlanRequest.ValidateAll() if the designated
+// constraints aren't met.
+type CreateQuotaPlanRequestMultiError []error
+
+// Error returns a concatenation of all the error messages it wraps.
+func (m CreateQuotaPlanRequestMultiError) Error() string {
+	msgs := make([]string, 0, len(m))
+	for _, err := range m {
+		msgs = append(msgs, err.Error())
+	}
+	return strings.Join(msgs, "; ")
+}
+
+// AllErrors returns a list of validation violation errors.
+func (m CreateQuotaPlanRequestMultiError) AllErrors() []error { return m }
+
+// CreateQuotaPlanRequestValidationError is the validation error returned by
+// CreateQuotaPlanRequest.Validate if the designated constraints aren't met.
+type CreateQuotaPlanRequestValidationError struct {
+	field  string
+	reason string
+	cause  error
+	key    bool
+}
+
+// Field function returns field value.
+func (e CreateQuotaPlanRequestValidationError) Field() string { return e.field }
+
+// Reason function returns reason value.
+func (e CreateQuotaPlanRequestValidationError) Reason() string { return e.reason }
+
+// Cause function returns cause value.
+func (e CreateQuotaPlanRequestValidationError) Cause() error { return e.cause }
+
+// Key function returns key value.
+func (e CreateQuotaPlanRequestValidationError) Key() bool { return e.key }
+
+// ErrorName returns error name.
+func (e CreateQuotaPlanRequestValidationError) ErrorName() string {
+	return "CreateQuotaPlanRequestValidationError"
+}
+
+// Error satisfies the builtin error interface
+func (e CreateQuotaPlanRequestValidationError) Error() string {
+	cause := ""
+	if e.cause != nil {
+		cause = fmt.Sprintf(" | caused by: %v", e.cause)
+	}
+
+	key := ""
+	if e.key {
+		key = "key for "
+	}
+
+	return fmt.Sprintf(
+		"invalid %sCreateQuotaPlanRequest.%s: %s%s",
+		key,
+		e.field,
+		e.reason,
+		cause)
+}
+
+var _ error = CreateQuotaPlanRequestValidationError{}
+
+var _ interface {
+	Field() string
+	Reason() string
+	Key() bool
+	Cause() error
+	ErrorName() string
+} = CreateQuotaPlanRequestValidationError{}
+
+// Validate checks the field values on DeleteQuotaPlanRequest with the rules
+// defined in the proto definition for this message. If any rules are
+// violated, the first error encountered is returned, or nil if there are no violations.
+func (m *DeleteQuotaPlanRequest) Validate() error {
+	return m.validate(false)
+}
+
+// ValidateAll checks the field values on DeleteQuotaPlanRequest with the rules
+// defined in the proto definition for this message. If any rules are
+// violated, the result is a list of violation errors wrapped in
+// DeleteQuotaPlanRequestMultiError, or nil if none found.
+func (m *DeleteQuotaPlanRequest) ValidateAll() error {
+	return m.validate(true)
+}
+
+func (m *DeleteQuotaPlanRequest) validate(all bool) error {
+	if m == nil {
+		return nil
+	}
+
+	var errors []error
+
+	// no validation rules for Id
+
+	if len(errors) > 0 {
+		return DeleteQuotaPlanRequestMultiError(errors)
+	}
+
+	return nil
+}
+
+// DeleteQuotaPlanRequestMultiError is an error wrapping multiple validation
+// errors returned by DeleteQuotaPlanRequest.ValidateAll() if the designated
+// constraints aren't met.
+type DeleteQuotaPlanRequestMultiError []error
+
+// Error returns a concatenation of all the error messages it wraps.
+func (m DeleteQuotaPlanRequestMultiError) Error() string {
+	msgs := make([]string, 0, len(m))
+	for _, err := range m {
+		msgs = append(msgs, err.Error())
+	}
+	return strings.Join(msgs, "; ")
+}
+
+// AllErrors returns a list of validation violation errors.
+func (m DeleteQuotaPlanRequestMultiError) AllErrors() []error { return m }
+
+// DeleteQuotaPlanRequestValidationError is the validation error returned by
+// DeleteQuotaPlanRequest.Validate if the designated constraints aren't met.
+type DeleteQuotaPlanRequestValidationError struct {
+	field  string
+	reason string
+	cause  error
+	key    bool
+}
+
+// Field function returns field value.
+func (e DeleteQuotaPlanRequestValidationError) Field() string { return e.field }
+
+// Reason function returns reason value.
+func (e DeleteQuotaPlanRequestValidationError) Reason() string { return e.reason }
+
+// Cause function returns cause value.
+func (e DeleteQuotaPlanRequestValidationError) Cause() error { return e.cause }
+
+// Key function returns key value.
+func (e DeleteQuotaPlanRequestValidationError) Key() bool { return e.key }
+
+// ErrorName returns error name.
+func (e DeleteQuotaPlanRequestValidationError) ErrorName() string {
+	return "DeleteQuotaPlanRequestValidationError"
+}
+
+// Error satisfies the builtin error interface
+func (e DeleteQuotaPlanRequestValidationError) Error() string {
+	cause := ""
+	if e.cause != nil {
+		cause = fmt.Sprintf(" | caused by: %v", e.cause)
+	}
+
+	key := ""
+	if e.key {
+		key = "key for "
+	}
+
+	return fmt.Sprintf(
+		"invalid %sDeleteQuotaPlanRequest.%s: %s%s",
+		key,
+		e.field,
+		e.reason,
+		cause)
+}
+
+var _ error = DeleteQuotaPlanRequestValidationError{}
+
+var _ interface {
+	Field() string
+	Reason() string
+	Key() bool
+	Cause() error
+	ErrorName() string
+} = DeleteQuotaPlanRequestValidationError{}
+
+// Validate checks the field values on ApplyQuotaPlanRequest with the rules
+// defined in the proto definition for this message. If any rules are
+// violated, the first error encountered is returned, or nil if there are no violations.
+func (m *ApplyQuotaPlanRequest) Validate() error {
+	return m.validate(false)
+}
+
+// ValidateAll checks the field values on ApplyQuotaPlanRequest with the rules
+// defined in the proto definition for this message. If any rules are
+// violated, the result is a list of violation errors wrapped in
+// ApplyQuotaPlanRequestMultiError, or nil if none found.
+func (m *ApplyQuotaPlanRequest) ValidateAll() error {
+	return m.validate(true)
+}
+
+func (m *ApplyQuotaPlanRequest) validate(all bool) error {
+	if m == nil {
+		return nil
+	}
+
+	var errors []error
+
+	// no validation rules for PlanId
+
+	// no validation rules for TenantId
+
+	if len(errors) > 0 {
+		return ApplyQuotaPlanRequestMultiError(errors)
+	}
+
+	return nil
+}
+
+// ApplyQuotaPlanRequestMultiError is an error wrapping multiple validation
+// errors returned by ApplyQuotaPlanRequest.ValidateAll() if the designated
+// constraints aren't met.
+type ApplyQuotaPlanRequestMultiError []error
+
+// Error returns a concatenation of all the error messages it wraps.
+func (m ApplyQuotaPlanRequestMultiError) Error() string {
+	msgs := make([]string, 0, len(m))
+	for _, err := range m {
+		msgs = append(msgs, err.Error())
+	}
+	return strings.Join(msgs, "; ")
+}
+
+// AllErrors returns a list of validation violation errors.
+func (m ApplyQuotaPlanRequestMultiError) AllErrors() []error { return m }
+
+// ApplyQuotaPlanRequestValidationError is the validation error returned by
+// ApplyQuotaPlanRequest.Validate if the designated constraints aren't met.
+type ApplyQuotaPlanRequestValidationError struct {
+	field  string
+	reason string
+	cause  error
+	key    bool
+}
+
+// Field function returns field value.
+func (e ApplyQuotaPlanRequestValidationError) Field() string { return e.field }
+
+// Reason function returns reason value.
+func (e ApplyQuotaPlanRequestValidationError) Reason() string { return e.reason }
+
+// Cause function returns cause value.
+func (e ApplyQuotaPlanRequestValidationError) Cause() error { return e.cause }
+
+// Key function returns key value.
+func (e ApplyQuotaPlanRequestValidationError) Key() bool { return e.key }
+
+// ErrorName returns error name.
+func (e ApplyQuotaPlanRequestValidationError) ErrorName() string {
+	return "ApplyQuotaPlanRequestValidationError"
+}
+
+// Error satisfies the builtin error interface
+func (e ApplyQuotaPlanRequestValidationError) Error() string {
+	cause := ""
+	if e.cause != nil {
+		cause = fmt.Sprintf(" | caused by: %v", e.cause)
+	}
+
+	key := ""
+	if e.key {
+		key = "key for "
+	}
+
+	return fmt.Sprintf(
+		"invalid %sApplyQuotaPlanRequest.%s: %s%s",
+		key,
+		e.field,
+		e.reason,
+		cause)
+}
+
+var _ error = ApplyQuotaPlanRequestValidationError{}
+
+var _ interface {
+	Field() string
+	Reason() string
+	Key() bool
+	Cause() error
+	ErrorName() string
+} = ApplyQuotaPlanRequestValidationError{}
+
+// Validate checks the field values on ApplyQuotaPlanResponse with the rules
+// defined in the proto definition for this message. If any rules are
+// violated, the first error encountered is returned, or nil if there are no violations.
+func (m *ApplyQuotaPlanResponse) Validate() error {
+	return m.validate(false)
+}
+
+// ValidateAll checks the field values on ApplyQuotaPlanResponse with the rules
+// defined in the proto definition for this message. If any rules are
+// violated, the result is a list of violation errors wrapped in
+// ApplyQuotaPlanResponseMultiError, or nil if none found.
+func (m *ApplyQuotaPlanResponse) ValidateAll() error {
+	return m.validate(true)
+}
+
+func (m *ApplyQuotaPlanResponse) validate(all bool) error {
+	if m == nil {
+		return nil
+	}
+
+	var errors []error
+
+	// no validation rules for Applied
+
+	if len(errors) > 0 {
+		return ApplyQuotaPlanResponseMultiError(errors)
+	}
+
+	return nil
+}
+
+// ApplyQuotaPlanResponseMultiError is an error wrapping multiple validation
+// errors returned by ApplyQuotaPlanResponse.ValidateAll() if the designated
+// constraints aren't met.
+type ApplyQuotaPlanResponseMultiError []error
+
+// Error returns a concatenation of all the error messages it wraps.
+func (m ApplyQuotaPlanResponseMultiError) Error() string {
+	msgs := make([]string, 0, len(m))
+	for _, err := range m {
+		msgs = append(msgs, err.Error())
+	}
+	return strings.Join(msgs, "; ")
+}
+
+// AllErrors returns a list of validation violation errors.
+func (m ApplyQuotaPlanResponseMultiError) AllErrors() []error { return m }
+
+// ApplyQuotaPlanResponseValidationError is the validation error returned by
+// ApplyQuotaPlanResponse.Validate if the designated constraints aren't met.
+type ApplyQuotaPlanResponseValidationError struct {
+	field  string
+	reason string
+	cause  error
+	key    bool
+}
+
+// Field function returns field value.
+func (e ApplyQuotaPlanResponseValidationError) Field() string { return e.field }
+
+// Reason function returns reason value.
+func (e ApplyQuotaPlanResponseValidationError) Reason() string { return e.reason }
+
+// Cause function returns cause value.
+func (e ApplyQuotaPlanResponseValidationError) Cause() error { return e.cause }
+
+// Key function returns key value.
+func (e ApplyQuotaPlanResponseValidationError) Key() bool { return e.key }
+
+// ErrorName returns error name.
+func (e ApplyQuotaPlanResponseValidationError) ErrorName() string {
+	return "ApplyQuotaPlanResponseValidationError"
+}
+
+// Error satisfies the builtin error interface
+func (e ApplyQuotaPlanResponseValidationError) Error() string {
+	cause := ""
+	if e.cause != nil {
+		cause = fmt.Sprintf(" | caused by: %v", e.cause)
+	}
+
+	key := ""
+	if e.key {
+		key = "key for "
+	}
+
+	return fmt.Sprintf(
+		"invalid %sApplyQuotaPlanResponse.%s: %s%s",
+		key,
+		e.field,
+		e.reason,
+		cause)
+}
+
+var _ error = ApplyQuotaPlanResponseValidationError{}
+
+var _ interface {
+	Field() string
+	Reason() string
+	Key() bool
+	Cause() error
+	ErrorName() string
+} = ApplyQuotaPlanResponseValidationError{}

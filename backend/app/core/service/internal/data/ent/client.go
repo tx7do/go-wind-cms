@@ -86,6 +86,7 @@ import (
 	"go-wind-cms/app/core/service/internal/data/ent/posttranslation"
 	"go-wind-cms/app/core/service/internal/data/ent/postversion"
 	"go-wind-cms/app/core/service/internal/data/ent/postwatch"
+	"go-wind-cms/app/core/service/internal/data/ent/quotaplan"
 	"go-wind-cms/app/core/service/internal/data/ent/redirect"
 	"go-wind-cms/app/core/service/internal/data/ent/role"
 	"go-wind-cms/app/core/service/internal/data/ent/rolefieldpermission"
@@ -274,6 +275,8 @@ type Client struct {
 	PostVersion *PostVersionClient
 	// PostWatch is the client for interacting with the PostWatch builders.
 	PostWatch *PostWatchClient
+	// QuotaPlan is the client for interacting with the QuotaPlan builders.
+	QuotaPlan *QuotaPlanClient
 	// Redirect is the client for interacting with the Redirect builders.
 	Redirect *RedirectClient
 	// Role is the client for interacting with the Role builders.
@@ -412,6 +415,7 @@ func (c *Client) init() {
 	c.PostTranslation = NewPostTranslationClient(c.config)
 	c.PostVersion = NewPostVersionClient(c.config)
 	c.PostWatch = NewPostWatchClient(c.config)
+	c.QuotaPlan = NewQuotaPlanClient(c.config)
 	c.Redirect = NewRedirectClient(c.config)
 	c.Role = NewRoleClient(c.config)
 	c.RoleFieldPermission = NewRoleFieldPermissionClient(c.config)
@@ -605,6 +609,7 @@ func (c *Client) Tx(ctx context.Context) (*Tx, error) {
 		PostTranslation:            NewPostTranslationClient(cfg),
 		PostVersion:                NewPostVersionClient(cfg),
 		PostWatch:                  NewPostWatchClient(cfg),
+		QuotaPlan:                  NewQuotaPlanClient(cfg),
 		Redirect:                   NewRedirectClient(cfg),
 		Role:                       NewRoleClient(cfg),
 		RoleFieldPermission:        NewRoleFieldPermissionClient(cfg),
@@ -725,6 +730,7 @@ func (c *Client) BeginTx(ctx context.Context, opts *sql.TxOptions) (*Tx, error) 
 		PostTranslation:            NewPostTranslationClient(cfg),
 		PostVersion:                NewPostVersionClient(cfg),
 		PostWatch:                  NewPostWatchClient(cfg),
+		QuotaPlan:                  NewQuotaPlanClient(cfg),
 		Redirect:                   NewRedirectClient(cfg),
 		Role:                       NewRoleClient(cfg),
 		RoleFieldPermission:        NewRoleFieldPermissionClient(cfg),
@@ -798,12 +804,13 @@ func (c *Client) Use(hooks ...Hook) {
 		c.Permission, c.PermissionApi, c.PermissionAuditLog, c.PermissionGroup,
 		c.PermissionMenu, c.PermissionPolicy, c.PolicyEvaluationLog, c.Position,
 		c.Post, c.PostCategory, c.PostLike, c.PostTag, c.PostTranslation,
-		c.PostVersion, c.PostWatch, c.Redirect, c.Role, c.RoleFieldPermission,
-		c.RoleMetadata, c.RolePermission, c.Section, c.SectionTranslation, c.Site,
-		c.SiteSetting, c.SocialAccount, c.SocialDistribution, c.SocialInboxItem,
-		c.SocialStatsHistory, c.SysConfig, c.Tag, c.TagTranslation, c.Task, c.Tenant,
-		c.TenantQuota, c.User, c.UserCredential, c.UserOrgUnit, c.UserPosition,
-		c.UserRole, c.Webhook, c.WebhookDelivery,
+		c.PostVersion, c.PostWatch, c.QuotaPlan, c.Redirect, c.Role,
+		c.RoleFieldPermission, c.RoleMetadata, c.RolePermission, c.Section,
+		c.SectionTranslation, c.Site, c.SiteSetting, c.SocialAccount,
+		c.SocialDistribution, c.SocialInboxItem, c.SocialStatsHistory, c.SysConfig,
+		c.Tag, c.TagTranslation, c.Task, c.Tenant, c.TenantQuota, c.User,
+		c.UserCredential, c.UserOrgUnit, c.UserPosition, c.UserRole, c.Webhook,
+		c.WebhookDelivery,
 	} {
 		n.Use(hooks...)
 	}
@@ -831,12 +838,13 @@ func (c *Client) Intercept(interceptors ...Interceptor) {
 		c.Permission, c.PermissionApi, c.PermissionAuditLog, c.PermissionGroup,
 		c.PermissionMenu, c.PermissionPolicy, c.PolicyEvaluationLog, c.Position,
 		c.Post, c.PostCategory, c.PostLike, c.PostTag, c.PostTranslation,
-		c.PostVersion, c.PostWatch, c.Redirect, c.Role, c.RoleFieldPermission,
-		c.RoleMetadata, c.RolePermission, c.Section, c.SectionTranslation, c.Site,
-		c.SiteSetting, c.SocialAccount, c.SocialDistribution, c.SocialInboxItem,
-		c.SocialStatsHistory, c.SysConfig, c.Tag, c.TagTranslation, c.Task, c.Tenant,
-		c.TenantQuota, c.User, c.UserCredential, c.UserOrgUnit, c.UserPosition,
-		c.UserRole, c.Webhook, c.WebhookDelivery,
+		c.PostVersion, c.PostWatch, c.QuotaPlan, c.Redirect, c.Role,
+		c.RoleFieldPermission, c.RoleMetadata, c.RolePermission, c.Section,
+		c.SectionTranslation, c.Site, c.SiteSetting, c.SocialAccount,
+		c.SocialDistribution, c.SocialInboxItem, c.SocialStatsHistory, c.SysConfig,
+		c.Tag, c.TagTranslation, c.Task, c.Tenant, c.TenantQuota, c.User,
+		c.UserCredential, c.UserOrgUnit, c.UserPosition, c.UserRole, c.Webhook,
+		c.WebhookDelivery,
 	} {
 		n.Intercept(interceptors...)
 	}
@@ -995,6 +1003,8 @@ func (c *Client) Mutate(ctx context.Context, m Mutation) (Value, error) {
 		return c.PostVersion.mutate(ctx, m)
 	case *PostWatchMutation:
 		return c.PostWatch.mutate(ctx, m)
+	case *QuotaPlanMutation:
+		return c.QuotaPlan.mutate(ctx, m)
 	case *RedirectMutation:
 		return c.Redirect.mutate(ctx, m)
 	case *RoleMutation:
@@ -11507,6 +11517,140 @@ func (c *PostWatchClient) mutate(ctx context.Context, m *PostWatchMutation) (Val
 	}
 }
 
+// QuotaPlanClient is a client for the QuotaPlan schema.
+type QuotaPlanClient struct {
+	config
+}
+
+// NewQuotaPlanClient returns a client for the QuotaPlan from the given config.
+func NewQuotaPlanClient(c config) *QuotaPlanClient {
+	return &QuotaPlanClient{config: c}
+}
+
+// Use adds a list of mutation hooks to the hooks stack.
+// A call to `Use(f, g, h)` equals to `quotaplan.Hooks(f(g(h())))`.
+func (c *QuotaPlanClient) Use(hooks ...Hook) {
+	c.hooks.QuotaPlan = append(c.hooks.QuotaPlan, hooks...)
+}
+
+// Intercept adds a list of query interceptors to the interceptors stack.
+// A call to `Intercept(f, g, h)` equals to `quotaplan.Intercept(f(g(h())))`.
+func (c *QuotaPlanClient) Intercept(interceptors ...Interceptor) {
+	c.inters.QuotaPlan = append(c.inters.QuotaPlan, interceptors...)
+}
+
+// Create returns a builder for creating a QuotaPlan entity.
+func (c *QuotaPlanClient) Create() *QuotaPlanCreate {
+	mutation := newQuotaPlanMutation(c.config, OpCreate)
+	return &QuotaPlanCreate{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// CreateBulk returns a builder for creating a bulk of QuotaPlan entities.
+func (c *QuotaPlanClient) CreateBulk(builders ...*QuotaPlanCreate) *QuotaPlanCreateBulk {
+	return &QuotaPlanCreateBulk{config: c.config, builders: builders}
+}
+
+// MapCreateBulk creates a bulk creation builder from the given slice. For each item in the slice, the function creates
+// a builder and applies setFunc on it.
+func (c *QuotaPlanClient) MapCreateBulk(slice any, setFunc func(*QuotaPlanCreate, int)) *QuotaPlanCreateBulk {
+	rv := reflect.ValueOf(slice)
+	if rv.Kind() != reflect.Slice {
+		return &QuotaPlanCreateBulk{err: fmt.Errorf("calling to QuotaPlanClient.MapCreateBulk with wrong type %T, need slice", slice)}
+	}
+	builders := make([]*QuotaPlanCreate, rv.Len())
+	for i := 0; i < rv.Len(); i++ {
+		builders[i] = c.Create()
+		setFunc(builders[i], i)
+	}
+	return &QuotaPlanCreateBulk{config: c.config, builders: builders}
+}
+
+// Update returns an update builder for QuotaPlan.
+func (c *QuotaPlanClient) Update() *QuotaPlanUpdate {
+	mutation := newQuotaPlanMutation(c.config, OpUpdate)
+	return &QuotaPlanUpdate{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// UpdateOne returns an update builder for the given entity.
+func (c *QuotaPlanClient) UpdateOne(_m *QuotaPlan) *QuotaPlanUpdateOne {
+	mutation := newQuotaPlanMutation(c.config, OpUpdateOne, withQuotaPlan(_m))
+	return &QuotaPlanUpdateOne{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// UpdateOneID returns an update builder for the given id.
+func (c *QuotaPlanClient) UpdateOneID(id uint32) *QuotaPlanUpdateOne {
+	mutation := newQuotaPlanMutation(c.config, OpUpdateOne, withQuotaPlanID(id))
+	return &QuotaPlanUpdateOne{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// Delete returns a delete builder for QuotaPlan.
+func (c *QuotaPlanClient) Delete() *QuotaPlanDelete {
+	mutation := newQuotaPlanMutation(c.config, OpDelete)
+	return &QuotaPlanDelete{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// DeleteOne returns a builder for deleting the given entity.
+func (c *QuotaPlanClient) DeleteOne(_m *QuotaPlan) *QuotaPlanDeleteOne {
+	return c.DeleteOneID(_m.ID)
+}
+
+// DeleteOneID returns a builder for deleting the given entity by its id.
+func (c *QuotaPlanClient) DeleteOneID(id uint32) *QuotaPlanDeleteOne {
+	builder := c.Delete().Where(quotaplan.ID(id))
+	builder.mutation.id = &id
+	builder.mutation.op = OpDeleteOne
+	return &QuotaPlanDeleteOne{builder}
+}
+
+// Query returns a query builder for QuotaPlan.
+func (c *QuotaPlanClient) Query() *QuotaPlanQuery {
+	return &QuotaPlanQuery{
+		config: c.config,
+		ctx:    &QueryContext{Type: TypeQuotaPlan},
+		inters: c.Interceptors(),
+	}
+}
+
+// Get returns a QuotaPlan entity by its id.
+func (c *QuotaPlanClient) Get(ctx context.Context, id uint32) (*QuotaPlan, error) {
+	return c.Query().Where(quotaplan.ID(id)).Only(ctx)
+}
+
+// GetX is like Get, but panics if an error occurs.
+func (c *QuotaPlanClient) GetX(ctx context.Context, id uint32) *QuotaPlan {
+	obj, err := c.Get(ctx, id)
+	if err != nil {
+		panic(err)
+	}
+	return obj
+}
+
+// Hooks returns the client hooks.
+func (c *QuotaPlanClient) Hooks() []Hook {
+	hooks := c.hooks.QuotaPlan
+	return append(hooks[:len(hooks):len(hooks)], quotaplan.Hooks[:]...)
+}
+
+// Interceptors returns the client interceptors.
+func (c *QuotaPlanClient) Interceptors() []Interceptor {
+	return c.inters.QuotaPlan
+}
+
+func (c *QuotaPlanClient) mutate(ctx context.Context, m *QuotaPlanMutation) (Value, error) {
+	switch m.Op() {
+	case OpCreate:
+		return (&QuotaPlanCreate{config: c.config, hooks: c.Hooks(), mutation: m}).Save(ctx)
+	case OpUpdate:
+		return (&QuotaPlanUpdate{config: c.config, hooks: c.Hooks(), mutation: m}).Save(ctx)
+	case OpUpdateOne:
+		return (&QuotaPlanUpdateOne{config: c.config, hooks: c.Hooks(), mutation: m}).Save(ctx)
+	case OpDelete, OpDeleteOne:
+		return (&QuotaPlanDelete{config: c.config, hooks: c.Hooks(), mutation: m}).Exec(ctx)
+	default:
+		return nil, fmt.Errorf("ent: unknown QuotaPlan mutation op: %q", m.Op())
+	}
+}
+
 // RedirectClient is a client for the Redirect schema.
 type RedirectClient struct {
 	config
@@ -15004,8 +15148,8 @@ type (
 		PageTranslation, PageVersion, Permission, PermissionApi, PermissionAuditLog,
 		PermissionGroup, PermissionMenu, PermissionPolicy, PolicyEvaluationLog,
 		Position, Post, PostCategory, PostLike, PostTag, PostTranslation, PostVersion,
-		PostWatch, Redirect, Role, RoleFieldPermission, RoleMetadata, RolePermission,
-		Section, SectionTranslation, Site, SiteSetting, SocialAccount,
+		PostWatch, QuotaPlan, Redirect, Role, RoleFieldPermission, RoleMetadata,
+		RolePermission, Section, SectionTranslation, Site, SiteSetting, SocialAccount,
 		SocialDistribution, SocialInboxItem, SocialStatsHistory, SysConfig, Tag,
 		TagTranslation, Task, Tenant, TenantQuota, User, UserCredential, UserOrgUnit,
 		UserPosition, UserRole, Webhook, WebhookDelivery []ent.Hook
@@ -15026,8 +15170,8 @@ type (
 		PageTranslation, PageVersion, Permission, PermissionApi, PermissionAuditLog,
 		PermissionGroup, PermissionMenu, PermissionPolicy, PolicyEvaluationLog,
 		Position, Post, PostCategory, PostLike, PostTag, PostTranslation, PostVersion,
-		PostWatch, Redirect, Role, RoleFieldPermission, RoleMetadata, RolePermission,
-		Section, SectionTranslation, Site, SiteSetting, SocialAccount,
+		PostWatch, QuotaPlan, Redirect, Role, RoleFieldPermission, RoleMetadata,
+		RolePermission, Section, SectionTranslation, Site, SiteSetting, SocialAccount,
 		SocialDistribution, SocialInboxItem, SocialStatsHistory, SysConfig, Tag,
 		TagTranslation, Task, Tenant, TenantQuota, User, UserCredential, UserOrgUnit,
 		UserPosition, UserRole, Webhook, WebhookDelivery []ent.Interceptor

@@ -162,6 +162,8 @@ type Tx struct {
 	PostVersion *PostVersionClient
 	// PostWatch is the client for interacting with the PostWatch builders.
 	PostWatch *PostWatchClient
+	// QuotaPlan is the client for interacting with the QuotaPlan builders.
+	QuotaPlan *QuotaPlanClient
 	// Redirect is the client for interacting with the Redirect builders.
 	Redirect *RedirectClient
 	// Role is the client for interacting with the Role builders.
@@ -420,6 +422,7 @@ func (tx *Tx) init() {
 	tx.PostTranslation = NewPostTranslationClient(tx.config)
 	tx.PostVersion = NewPostVersionClient(tx.config)
 	tx.PostWatch = NewPostWatchClient(tx.config)
+	tx.QuotaPlan = NewQuotaPlanClient(tx.config)
 	tx.Redirect = NewRedirectClient(tx.config)
 	tx.Role = NewRoleClient(tx.config)
 	tx.RoleFieldPermission = NewRoleFieldPermissionClient(tx.config)

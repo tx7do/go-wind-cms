@@ -32,5 +32,19 @@
     "plan": "套餐",
     "noQuotas": "本租户尚未配置任何配额，所有资源不受限。",
     "unlimited": "未配置"
-  }
+  },
+  "plans": "配额套餐模板",
+  "planName": "模板名称",
+  "planNameRequired": "请输入模板名称",
+  "planDescription": "描述（可选）",
+  "planSave": "保存模板",
+  "planCreated": "套餐模板已创建",
+  "planDeleted": "套餐模板已删除",
+  "planItemRequired": "至少填写一项配额上限（大于 0）",
+  "apply": "套用到租户",
+  "applyHint": "按模板逐项 upsert 该租户的配额；模板未包含的配额类型保持不变。",
+  "tenantRequired": "请选择目标租户",
+  "selectTenant": "选择租户",
+  "planApplied": "已套用 {{count}} 项配额",
+  "noPlans": "暂无套餐模板"
 }

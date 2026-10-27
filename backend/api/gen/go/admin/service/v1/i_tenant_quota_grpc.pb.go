@@ -29,6 +29,10 @@ const (
 	TenantQuotaService_Delete_FullMethodName           = "/admin.service.v1.TenantQuotaService/Delete"
 	TenantQuotaService_GetUsage_FullMethodName         = "/admin.service.v1.TenantQuotaService/GetUsage"
 	TenantQuotaService_GetMyTenantUsage_FullMethodName = "/admin.service.v1.TenantQuotaService/GetMyTenantUsage"
+	TenantQuotaService_ListQuotaPlans_FullMethodName   = "/admin.service.v1.TenantQuotaService/ListQuotaPlans"
+	TenantQuotaService_CreateQuotaPlan_FullMethodName  = "/admin.service.v1.TenantQuotaService/CreateQuotaPlan"
+	TenantQuotaService_DeleteQuotaPlan_FullMethodName  = "/admin.service.v1.TenantQuotaService/DeleteQuotaPlan"
+	TenantQuotaService_ApplyQuotaPlan_FullMethodName   = "/admin.service.v1.TenantQuotaService/ApplyQuotaPlan"
 )
 
 // TenantQuotaServiceClient is the client API for TenantQuotaService service.
@@ -52,6 +56,14 @@ type TenantQuotaServiceClient interface {
 	// 获取当前租户的用量与配额（租户自助；tenant_id 从认证上下文取，不接受客户端传值）。
 	// 配额硬限制 403 时，租户管理员可在此看到原因。
 	GetMyTenantUsage(ctx context.Context, in *v11.GetMyTenantUsageRequest, opts ...grpc.CallOption) (*v11.TenantUsage, error)
+	// 列出套餐模板
+	ListQuotaPlans(ctx context.Context, in *v11.ListQuotaPlansRequest, opts ...grpc.CallOption) (*v11.ListQuotaPlansResponse, error)
+	// 创建套餐模板
+	CreateQuotaPlan(ctx context.Context, in *v11.CreateQuotaPlanRequest, opts ...grpc.CallOption) (*v11.QuotaPlan, error)
+	// 删除套餐模板
+	DeleteQuotaPlan(ctx context.Context, in *v11.DeleteQuotaPlanRequest, opts ...grpc.CallOption) (*emptypb.Empty, error)
+	// 套用到租户（按模板逐项 upsert 该租户配额）
+	ApplyQuotaPlan(ctx context.Context, in *v11.ApplyQuotaPlanRequest, opts ...grpc.CallOption) (*v11.ApplyQuotaPlanResponse, error)
 }
 
 type tenantQuotaServiceClient struct {
@@ -132,6 +144,46 @@ func (c *tenantQuotaServiceClient) GetMyTenantUsage(ctx context.Context, in *v11
 	return out, nil
 }
 
+func (c *tenantQuotaServiceClient) ListQuotaPlans(ctx context.Context, in *v11.ListQuotaPlansRequest, opts ...grpc.CallOption) (*v11.ListQuotaPlansResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(v11.ListQuotaPlansResponse)
+	err := c.cc.Invoke(ctx, TenantQuotaService_ListQuotaPlans_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *tenantQuotaServiceClient) CreateQuotaPlan(ctx context.Context, in *v11.CreateQuotaPlanRequest, opts ...grpc.CallOption) (*v11.QuotaPlan, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(v11.QuotaPlan)
+	err := c.cc.Invoke(ctx, TenantQuotaService_CreateQuotaPlan_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *tenantQuotaServiceClient) DeleteQuotaPlan(ctx context.Context, in *v11.DeleteQuotaPlanRequest, opts ...grpc.CallOption) (*emptypb.Empty, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(emptypb.Empty)
+	err := c.cc.Invoke(ctx, TenantQuotaService_DeleteQuotaPlan_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *tenantQuotaServiceClient) ApplyQuotaPlan(ctx context.Context, in *v11.ApplyQuotaPlanRequest, opts ...grpc.CallOption) (*v11.ApplyQuotaPlanResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(v11.ApplyQuotaPlanResponse)
+	err := c.cc.Invoke(ctx, TenantQuotaService_ApplyQuotaPlan_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 // TenantQuotaServiceServer is the server API for TenantQuotaService service.
 // All implementations must embed UnimplementedTenantQuotaServiceServer
 // for forward compatibility.
@@ -153,6 +205,14 @@ type TenantQuotaServiceServer interface {
 	// 获取当前租户的用量与配额（租户自助；tenant_id 从认证上下文取，不接受客户端传值）。
 	// 配额硬限制 403 时，租户管理员可在此看到原因。
 	GetMyTenantUsage(context.Context, *v11.GetMyTenantUsageRequest) (*v11.TenantUsage, error)
+	// 列出套餐模板
+	ListQuotaPlans(context.Context, *v11.ListQuotaPlansRequest) (*v11.ListQuotaPlansResponse, error)
+	// 创建套餐模板
+	CreateQuotaPlan(context.Context, *v11.CreateQuotaPlanRequest) (*v11.QuotaPlan, error)
+	// 删除套餐模板
+	DeleteQuotaPlan(context.Context, *v11.DeleteQuotaPlanRequest) (*emptypb.Empty, error)
+	// 套用到租户（按模板逐项 upsert 该租户配额）
+	ApplyQuotaPlan(context.Context, *v11.ApplyQuotaPlanRequest) (*v11.ApplyQuotaPlanResponse, error)
 	mustEmbedUnimplementedTenantQuotaServiceServer()
 }
 
@@ -183,6 +243,18 @@ func (UnimplementedTenantQuotaServiceServer) GetUsage(context.Context, *v11.GetT
 }
 func (UnimplementedTenantQuotaServiceServer) GetMyTenantUsage(context.Context, *v11.GetMyTenantUsageRequest) (*v11.TenantUsage, error) {
 	return nil, status.Error(codes.Unimplemented, "method GetMyTenantUsage not implemented")
+}
+func (UnimplementedTenantQuotaServiceServer) ListQuotaPlans(context.Context, *v11.ListQuotaPlansRequest) (*v11.ListQuotaPlansResponse, error) {
+	return nil, status.Error(codes.Unimplemented, "method ListQuotaPlans not implemented")
+}
+func (UnimplementedTenantQuotaServiceServer) CreateQuotaPlan(context.Context, *v11.CreateQuotaPlanRequest) (*v11.QuotaPlan, error) {
+	return nil, status.Error(codes.Unimplemented, "method CreateQuotaPlan not implemented")
+}
+func (UnimplementedTenantQuotaServiceServer) DeleteQuotaPlan(context.Context, *v11.DeleteQuotaPlanRequest) (*emptypb.Empty, error) {
+	return nil, status.Error(codes.Unimplemented, "method DeleteQuotaPlan not implemented")
+}
+func (UnimplementedTenantQuotaServiceServer) ApplyQuotaPlan(context.Context, *v11.ApplyQuotaPlanRequest) (*v11.ApplyQuotaPlanResponse, error) {
+	return nil, status.Error(codes.Unimplemented, "method ApplyQuotaPlan not implemented")
 }
 func (UnimplementedTenantQuotaServiceServer) mustEmbedUnimplementedTenantQuotaServiceServer() {}
 func (UnimplementedTenantQuotaServiceServer) testEmbeddedByValue()                            {}
@@ -331,6 +403,78 @@ func _TenantQuotaService_GetMyTenantUsage_Handler(srv interface{}, ctx context.C
 	return interceptor(ctx, in, info, handler)
 }
 
+func _TenantQuotaService_ListQuotaPlans_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(v11.ListQuotaPlansRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(TenantQuotaServiceServer).ListQuotaPlans(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: TenantQuotaService_ListQuotaPlans_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(TenantQuotaServiceServer).ListQuotaPlans(ctx, req.(*v11.ListQuotaPlansRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _TenantQuotaService_CreateQuotaPlan_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(v11.CreateQuotaPlanRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(TenantQuotaServiceServer).CreateQuotaPlan(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: TenantQuotaService_CreateQuotaPlan_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(TenantQuotaServiceServer).CreateQuotaPlan(ctx, req.(*v11.CreateQuotaPlanRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _TenantQuotaService_DeleteQuotaPlan_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(v11.DeleteQuotaPlanRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(TenantQuotaServiceServer).DeleteQuotaPlan(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: TenantQuotaService_DeleteQuotaPlan_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(TenantQuotaServiceServer).DeleteQuotaPlan(ctx, req.(*v11.DeleteQuotaPlanRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _TenantQuotaService_ApplyQuotaPlan_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(v11.ApplyQuotaPlanRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(TenantQuotaServiceServer).ApplyQuotaPlan(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: TenantQuotaService_ApplyQuotaPlan_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(TenantQuotaServiceServer).ApplyQuotaPlan(ctx, req.(*v11.ApplyQuotaPlanRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 // TenantQuotaService_ServiceDesc is the grpc.ServiceDesc for TenantQuotaService service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
@@ -365,6 +509,22 @@ var TenantQuotaService_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "GetMyTenantUsage",
 			Handler:    _TenantQuotaService_GetMyTenantUsage_Handler,
+		},
+		{
+			MethodName: "ListQuotaPlans",
+			Handler:    _TenantQuotaService_ListQuotaPlans_Handler,
+		},
+		{
+			MethodName: "CreateQuotaPlan",
+			Handler:    _TenantQuotaService_CreateQuotaPlan_Handler,
+		},
+		{
+			MethodName: "DeleteQuotaPlan",
+			Handler:    _TenantQuotaService_DeleteQuotaPlan_Handler,
+		},
+		{
+			MethodName: "ApplyQuotaPlan",
+			Handler:    _TenantQuotaService_ApplyQuotaPlan_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},

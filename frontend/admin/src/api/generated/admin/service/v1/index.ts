@@ -2326,10 +2326,22 @@ export type aiservicev1_AiUsageLog = {
 
 // 当月用量汇总 - 回应
 export type aiservicev1_UsageSummaryResponse = {
+  breakdown: aiservicev1_UsageBreakdown[] | undefined;
   monthCalls: number | undefined;
   monthTokens: number | undefined;
   quotaConfigured: boolean | undefined;
   quotaLimit: number | undefined;
+};
+
+// 用量细分行（provider × 模型 维度聚合）
+export type aiservicev1_UsageBreakdown = {
+  calls: number | undefined;
+  completionTokens: number | undefined;
+  modelName: string | undefined;
+  promptTokens: number | undefined;
+  providerId: number | undefined;
+  providerName: string | undefined;
+  totalTokens: number | undefined;
 };
 
 // API资源管理服务
@@ -15392,6 +15404,22 @@ export interface TenantQuotaService {
   GetMyTenantUsage(
     request: identityservicev1_GetMyTenantUsageRequest,
   ): Promise<identityservicev1_TenantUsage>;
+  // 列出套餐模板
+  ListQuotaPlans(
+    request: identityservicev1_ListQuotaPlansRequest,
+  ): Promise<identityservicev1_ListQuotaPlansResponse>;
+  // 创建套餐模板
+  CreateQuotaPlan(
+    request: identityservicev1_CreateQuotaPlanRequest,
+  ): Promise<identityservicev1_QuotaPlan>;
+  // 删除套餐模板
+  DeleteQuotaPlan(
+    request: identityservicev1_DeleteQuotaPlanRequest,
+  ): Promise<wellKnownEmpty>;
+  // 套用到租户（按模板逐项 upsert 该租户配额）
+  ApplyQuotaPlan(
+    request: identityservicev1_ApplyQuotaPlanRequest,
+  ): Promise<identityservicev1_ApplyQuotaPlanResponse>;
 }
 
 export function createTenantQuotaServiceClient(
@@ -15548,6 +15576,46 @@ export function createTenantQuotaServiceClient(
         method: 'GetMyTenantUsage',
       }) as Promise<identityservicev1_TenantUsage>;
     },
+    ListQuotaPlans(_request) {
+      const path = `/admin/v1/quota-plans`;
+      const body = null;
+      return transport.unary(path, 'GET', body, {
+        service: 'TenantQuotaService',
+        method: 'ListQuotaPlans',
+      }) as Promise<identityservicev1_ListQuotaPlansResponse>;
+    },
+    CreateQuotaPlan(request) {
+      const path = `/admin/v1/quota-plans`;
+      const body = JSON.stringify(request);
+      return transport.unary(path, 'POST', body, {
+        service: 'TenantQuotaService',
+        method: 'CreateQuotaPlan',
+      }) as Promise<identityservicev1_QuotaPlan>;
+    },
+    DeleteQuotaPlan(request) {
+      if (request.id === undefined || request.id === null) {
+        throw new Error('missing required field request.id');
+      }
+      const path = `/admin/v1/quota-plans/${request.id}`;
+      const body = null;
+      return transport.unary(path, 'DELETE', body, {
+        service: 'TenantQuotaService',
+        method: 'DeleteQuotaPlan',
+      }) as Promise<wellKnownEmpty>;
+    },
+    ApplyQuotaPlan(request) {
+      if (request.planId === undefined || request.planId === null) {
+        throw new Error('missing required field request.plan_id');
+      }
+      const path = `/admin/v1/quota-plans/${request.planId}/apply`;
+      const bodyMap = { ...request } as Record<string, unknown>;
+      delete bodyMap["planId"];
+      const body = JSON.stringify(bodyMap);
+      return transport.unary(path, 'POST', body, {
+        service: 'TenantQuotaService',
+        method: 'ApplyQuotaPlan',
+      }) as Promise<identityservicev1_ApplyQuotaPlanResponse>;
+    },
   };
 }
 // 租户配额列表 - 答复
@@ -15626,6 +15694,52 @@ export type identityservicev1_QuotaUsage = {
 // 自助用量 - 请求（tenant_id 由 BFF 从认证上下文注入，不接受客户端传值）
 export type identityservicev1_GetMyTenantUsageRequest = {
   tenantId: number | undefined;
+};
+
+// 列出套餐 - 请求
+export type identityservicev1_ListQuotaPlansRequest = {
+};
+
+// 列出套餐 - 回应
+export type identityservicev1_ListQuotaPlansResponse = {
+  items: identityservicev1_QuotaPlan[] | undefined;
+};
+
+// 套餐模板
+export type identityservicev1_QuotaPlan = {
+  createdAt?: wellKnownTimestamp;
+  description?: string;
+  id?: number;
+  items: identityservicev1_QuotaPlanItem[] | undefined;
+  name: string | undefined;
+  updatedAt?: wellKnownTimestamp;
+};
+
+// 套餐模板条目
+export type identityservicev1_QuotaPlanItem = {
+  limit: number | undefined;
+  quotaType: identityservicev1_TenantQuota_QuotaType | undefined;
+};
+
+// 创建套餐 - 请求
+export type identityservicev1_CreateQuotaPlanRequest = {
+  data: identityservicev1_QuotaPlan | undefined;
+};
+
+// 删除套餐 - 请求
+export type identityservicev1_DeleteQuotaPlanRequest = {
+  id: number | undefined;
+};
+
+// 套用套餐 - 请求
+export type identityservicev1_ApplyQuotaPlanRequest = {
+  planId: number | undefined;
+  tenantId: number | undefined;
+};
+
+// 套用套餐 - 回应
+export type identityservicev1_ApplyQuotaPlanResponse = {
+  applied: number | undefined;
 };
 
 // 翻译服务

@@ -919,6 +919,414 @@ func (*CheckQuotaResponse) Descriptor() ([]byte, []int) {
 	return file_identity_service_v1_tenant_quota_proto_rawDescGZIP(), []int{13}
 }
 
+// 套餐模板条目
+type QuotaPlanItem struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	QuotaType     TenantQuota_QuotaType  `protobuf:"varint,1,opt,name=quota_type,json=quotaType,proto3,enum=identity.service.v1.TenantQuota_QuotaType" json:"quota_type,omitempty"` // 配额类型
+	Limit         int64                  `protobuf:"varint,2,opt,name=limit,proto3" json:"limit,omitempty"`                                                                         // 上限
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *QuotaPlanItem) Reset() {
+	*x = QuotaPlanItem{}
+	mi := &file_identity_service_v1_tenant_quota_proto_msgTypes[14]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *QuotaPlanItem) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*QuotaPlanItem) ProtoMessage() {}
+
+func (x *QuotaPlanItem) ProtoReflect() protoreflect.Message {
+	mi := &file_identity_service_v1_tenant_quota_proto_msgTypes[14]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use QuotaPlanItem.ProtoReflect.Descriptor instead.
+func (*QuotaPlanItem) Descriptor() ([]byte, []int) {
+	return file_identity_service_v1_tenant_quota_proto_rawDescGZIP(), []int{14}
+}
+
+func (x *QuotaPlanItem) GetQuotaType() TenantQuota_QuotaType {
+	if x != nil {
+		return x.QuotaType
+	}
+	return TenantQuota_QUOTA_TYPE_UNSPECIFIED
+}
+
+func (x *QuotaPlanItem) GetLimit() int64 {
+	if x != nil {
+		return x.Limit
+	}
+	return 0
+}
+
+// 套餐模板
+type QuotaPlan struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	Id            *uint32                `protobuf:"varint,1,opt,name=id,proto3,oneof" json:"id,omitempty"`                                 // 模板ID
+	Name          string                 `protobuf:"bytes,2,opt,name=name,proto3" json:"name,omitempty"`                                    // 模板名
+	Description   *string                `protobuf:"bytes,3,opt,name=description,proto3,oneof" json:"description,omitempty"`                // 描述
+	Items         []*QuotaPlanItem       `protobuf:"bytes,4,rep,name=items,proto3" json:"items,omitempty"`                                  // 配额项
+	CreatedAt     *timestamppb.Timestamp `protobuf:"bytes,200,opt,name=created_at,json=createdAt,proto3,oneof" json:"created_at,omitempty"` // 创建时间
+	UpdatedAt     *timestamppb.Timestamp `protobuf:"bytes,201,opt,name=updated_at,json=updatedAt,proto3,oneof" json:"updated_at,omitempty"` // 更新时间
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *QuotaPlan) Reset() {
+	*x = QuotaPlan{}
+	mi := &file_identity_service_v1_tenant_quota_proto_msgTypes[15]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *QuotaPlan) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*QuotaPlan) ProtoMessage() {}
+
+func (x *QuotaPlan) ProtoReflect() protoreflect.Message {
+	mi := &file_identity_service_v1_tenant_quota_proto_msgTypes[15]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use QuotaPlan.ProtoReflect.Descriptor instead.
+func (*QuotaPlan) Descriptor() ([]byte, []int) {
+	return file_identity_service_v1_tenant_quota_proto_rawDescGZIP(), []int{15}
+}
+
+func (x *QuotaPlan) GetId() uint32 {
+	if x != nil && x.Id != nil {
+		return *x.Id
+	}
+	return 0
+}
+
+func (x *QuotaPlan) GetName() string {
+	if x != nil {
+		return x.Name
+	}
+	return ""
+}
+
+func (x *QuotaPlan) GetDescription() string {
+	if x != nil && x.Description != nil {
+		return *x.Description
+	}
+	return ""
+}
+
+func (x *QuotaPlan) GetItems() []*QuotaPlanItem {
+	if x != nil {
+		return x.Items
+	}
+	return nil
+}
+
+func (x *QuotaPlan) GetCreatedAt() *timestamppb.Timestamp {
+	if x != nil {
+		return x.CreatedAt
+	}
+	return nil
+}
+
+func (x *QuotaPlan) GetUpdatedAt() *timestamppb.Timestamp {
+	if x != nil {
+		return x.UpdatedAt
+	}
+	return nil
+}
+
+// 列出套餐 - 请求
+type ListQuotaPlansRequest struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *ListQuotaPlansRequest) Reset() {
+	*x = ListQuotaPlansRequest{}
+	mi := &file_identity_service_v1_tenant_quota_proto_msgTypes[16]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *ListQuotaPlansRequest) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*ListQuotaPlansRequest) ProtoMessage() {}
+
+func (x *ListQuotaPlansRequest) ProtoReflect() protoreflect.Message {
+	mi := &file_identity_service_v1_tenant_quota_proto_msgTypes[16]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use ListQuotaPlansRequest.ProtoReflect.Descriptor instead.
+func (*ListQuotaPlansRequest) Descriptor() ([]byte, []int) {
+	return file_identity_service_v1_tenant_quota_proto_rawDescGZIP(), []int{16}
+}
+
+// 列出套餐 - 回应
+type ListQuotaPlansResponse struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	Items         []*QuotaPlan           `protobuf:"bytes,1,rep,name=items,proto3" json:"items,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *ListQuotaPlansResponse) Reset() {
+	*x = ListQuotaPlansResponse{}
+	mi := &file_identity_service_v1_tenant_quota_proto_msgTypes[17]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *ListQuotaPlansResponse) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*ListQuotaPlansResponse) ProtoMessage() {}
+
+func (x *ListQuotaPlansResponse) ProtoReflect() protoreflect.Message {
+	mi := &file_identity_service_v1_tenant_quota_proto_msgTypes[17]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use ListQuotaPlansResponse.ProtoReflect.Descriptor instead.
+func (*ListQuotaPlansResponse) Descriptor() ([]byte, []int) {
+	return file_identity_service_v1_tenant_quota_proto_rawDescGZIP(), []int{17}
+}
+
+func (x *ListQuotaPlansResponse) GetItems() []*QuotaPlan {
+	if x != nil {
+		return x.Items
+	}
+	return nil
+}
+
+// 创建套餐 - 请求
+type CreateQuotaPlanRequest struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	Data          *QuotaPlan             `protobuf:"bytes,1,opt,name=data,proto3" json:"data,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *CreateQuotaPlanRequest) Reset() {
+	*x = CreateQuotaPlanRequest{}
+	mi := &file_identity_service_v1_tenant_quota_proto_msgTypes[18]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *CreateQuotaPlanRequest) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*CreateQuotaPlanRequest) ProtoMessage() {}
+
+func (x *CreateQuotaPlanRequest) ProtoReflect() protoreflect.Message {
+	mi := &file_identity_service_v1_tenant_quota_proto_msgTypes[18]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use CreateQuotaPlanRequest.ProtoReflect.Descriptor instead.
+func (*CreateQuotaPlanRequest) Descriptor() ([]byte, []int) {
+	return file_identity_service_v1_tenant_quota_proto_rawDescGZIP(), []int{18}
+}
+
+func (x *CreateQuotaPlanRequest) GetData() *QuotaPlan {
+	if x != nil {
+		return x.Data
+	}
+	return nil
+}
+
+// 删除套餐 - 请求
+type DeleteQuotaPlanRequest struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	Id            uint32                 `protobuf:"varint,1,opt,name=id,proto3" json:"id,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *DeleteQuotaPlanRequest) Reset() {
+	*x = DeleteQuotaPlanRequest{}
+	mi := &file_identity_service_v1_tenant_quota_proto_msgTypes[19]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *DeleteQuotaPlanRequest) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*DeleteQuotaPlanRequest) ProtoMessage() {}
+
+func (x *DeleteQuotaPlanRequest) ProtoReflect() protoreflect.Message {
+	mi := &file_identity_service_v1_tenant_quota_proto_msgTypes[19]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use DeleteQuotaPlanRequest.ProtoReflect.Descriptor instead.
+func (*DeleteQuotaPlanRequest) Descriptor() ([]byte, []int) {
+	return file_identity_service_v1_tenant_quota_proto_rawDescGZIP(), []int{19}
+}
+
+func (x *DeleteQuotaPlanRequest) GetId() uint32 {
+	if x != nil {
+		return x.Id
+	}
+	return 0
+}
+
+// 套用套餐 - 请求
+type ApplyQuotaPlanRequest struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	PlanId        uint32                 `protobuf:"varint,1,opt,name=plan_id,json=planId,proto3" json:"plan_id,omitempty"`       // 模板ID
+	TenantId      uint32                 `protobuf:"varint,2,opt,name=tenant_id,json=tenantId,proto3" json:"tenant_id,omitempty"` // 目标租户
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *ApplyQuotaPlanRequest) Reset() {
+	*x = ApplyQuotaPlanRequest{}
+	mi := &file_identity_service_v1_tenant_quota_proto_msgTypes[20]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *ApplyQuotaPlanRequest) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*ApplyQuotaPlanRequest) ProtoMessage() {}
+
+func (x *ApplyQuotaPlanRequest) ProtoReflect() protoreflect.Message {
+	mi := &file_identity_service_v1_tenant_quota_proto_msgTypes[20]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use ApplyQuotaPlanRequest.ProtoReflect.Descriptor instead.
+func (*ApplyQuotaPlanRequest) Descriptor() ([]byte, []int) {
+	return file_identity_service_v1_tenant_quota_proto_rawDescGZIP(), []int{20}
+}
+
+func (x *ApplyQuotaPlanRequest) GetPlanId() uint32 {
+	if x != nil {
+		return x.PlanId
+	}
+	return 0
+}
+
+func (x *ApplyQuotaPlanRequest) GetTenantId() uint32 {
+	if x != nil {
+		return x.TenantId
+	}
+	return 0
+}
+
+// 套用套餐 - 回应
+type ApplyQuotaPlanResponse struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	Applied       uint32                 `protobuf:"varint,1,opt,name=applied,proto3" json:"applied,omitempty"` // 实际写入的配额项数
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *ApplyQuotaPlanResponse) Reset() {
+	*x = ApplyQuotaPlanResponse{}
+	mi := &file_identity_service_v1_tenant_quota_proto_msgTypes[21]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *ApplyQuotaPlanResponse) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*ApplyQuotaPlanResponse) ProtoMessage() {}
+
+func (x *ApplyQuotaPlanResponse) ProtoReflect() protoreflect.Message {
+	mi := &file_identity_service_v1_tenant_quota_proto_msgTypes[21]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use ApplyQuotaPlanResponse.ProtoReflect.Descriptor instead.
+func (*ApplyQuotaPlanResponse) Descriptor() ([]byte, []int) {
+	return file_identity_service_v1_tenant_quota_proto_rawDescGZIP(), []int{21}
+}
+
+func (x *ApplyQuotaPlanResponse) GetApplied() uint32 {
+	if x != nil {
+		return x.Applied
+	}
+	return 0
+}
+
 var File_identity_service_v1_tenant_quota_proto protoreflect.FileDescriptor
 
 const file_identity_service_v1_tenant_quota_proto_rawDesc = "" +
@@ -1023,13 +1431,46 @@ const file_identity_service_v1_tenant_quota_proto_rawDesc = "" +
 	"additional\x18\x03 \x01(\x04B\x18\xbaG\x15\x92\x02\x12本次新增用量H\x00R\n" +
 	"additional\x88\x01\x01B\r\n" +
 	"\v_additional\"\x14\n" +
-	"\x12CheckQuotaResponse2\xd0\x06\n" +
+	"\x12CheckQuotaResponse\"\xf0\x01\n" +
+	"\rQuotaPlanItem\x12\x7f\n" +
+	"\n" +
+	"quota_type\x18\x01 \x01(\x0e2*.identity.service.v1.TenantQuota.QuotaTypeB4\xbaG1\x92\x02.配额类型（复用 TenantQuota 的枚举）R\tquotaType\x12^\n" +
+	"\x05limit\x18\x02 \x01(\x03BH\xbaGE\x92\x02B配额上限（语义随类型：用户数/字节/次数/tokens）R\x05limit\"\xf2\x02\n" +
+	"\tQuotaPlan\x12\x13\n" +
+	"\x02id\x18\x01 \x01(\rH\x00R\x02id\x88\x01\x01\x128\n" +
+	"\x04name\x18\x02 \x01(\tB$\xbaG!\x92\x02\x1e模板名（租户内唯一）R\x04name\x12%\n" +
+	"\vdescription\x18\x03 \x01(\tH\x01R\vdescription\x88\x01\x01\x128\n" +
+	"\x05items\x18\x04 \x03(\v2\".identity.service.v1.QuotaPlanItemR\x05items\x12?\n" +
+	"\n" +
+	"created_at\x18\xc8\x01 \x01(\v2\x1a.google.protobuf.TimestampH\x02R\tcreatedAt\x88\x01\x01\x12?\n" +
+	"\n" +
+	"updated_at\x18\xc9\x01 \x01(\v2\x1a.google.protobuf.TimestampH\x03R\tupdatedAt\x88\x01\x01B\x05\n" +
+	"\x03_idB\x0e\n" +
+	"\f_descriptionB\r\n" +
+	"\v_created_atB\r\n" +
+	"\v_updated_at\"\x17\n" +
+	"\x15ListQuotaPlansRequest\"N\n" +
+	"\x16ListQuotaPlansResponse\x124\n" +
+	"\x05items\x18\x01 \x03(\v2\x1e.identity.service.v1.QuotaPlanR\x05items\"L\n" +
+	"\x16CreateQuotaPlanRequest\x122\n" +
+	"\x04data\x18\x01 \x01(\v2\x1e.identity.service.v1.QuotaPlanR\x04data\"(\n" +
+	"\x16DeleteQuotaPlanRequest\x12\x0e\n" +
+	"\x02id\x18\x01 \x01(\rR\x02id\"M\n" +
+	"\x15ApplyQuotaPlanRequest\x12\x17\n" +
+	"\aplan_id\x18\x01 \x01(\rR\x06planId\x12\x1b\n" +
+	"\ttenant_id\x18\x02 \x01(\rR\btenantId\"2\n" +
+	"\x16ApplyQuotaPlanResponse\x12\x18\n" +
+	"\aapplied\x18\x01 \x01(\rR\aapplied2\xe6\t\n" +
 	"\x12TenantQuotaService\x12Q\n" +
 	"\x04List\x12\x19.pagination.PagingRequest\x1a,.identity.service.v1.ListTenantQuotaResponse\"\x00\x12U\n" +
 	"\x03Get\x12*.identity.service.v1.GetTenantQuotaRequest\x1a .identity.service.v1.TenantQuota\"\x00\x12Q\n" +
 	"\x06Create\x12-.identity.service.v1.CreateTenantQuotaRequest\x1a\x16.google.protobuf.Empty\"\x00\x12Q\n" +
 	"\x06Update\x12-.identity.service.v1.UpdateTenantQuotaRequest\x1a\x16.google.protobuf.Empty\"\x00\x12Q\n" +
-	"\x06Delete\x12-.identity.service.v1.DeleteTenantQuotaRequest\x1a\x16.google.protobuf.Empty\"\x00\x12Z\n" +
+	"\x06Delete\x12-.identity.service.v1.DeleteTenantQuotaRequest\x1a\x16.google.protobuf.Empty\"\x00\x12k\n" +
+	"\x0eListQuotaPlans\x12*.identity.service.v1.ListQuotaPlansRequest\x1a+.identity.service.v1.ListQuotaPlansResponse\"\x00\x12`\n" +
+	"\x0fCreateQuotaPlan\x12+.identity.service.v1.CreateQuotaPlanRequest\x1a\x1e.identity.service.v1.QuotaPlan\"\x00\x12X\n" +
+	"\x0fDeleteQuotaPlan\x12+.identity.service.v1.DeleteQuotaPlanRequest\x1a\x16.google.protobuf.Empty\"\x00\x12k\n" +
+	"\x0eApplyQuotaPlan\x12*.identity.service.v1.ApplyQuotaPlanRequest\x1a+.identity.service.v1.ApplyQuotaPlanResponse\"\x00\x12Z\n" +
 	"\bGetUsage\x12*.identity.service.v1.GetTenantUsageRequest\x1a .identity.service.v1.TenantUsage\"\x00\x12d\n" +
 	"\x10GetMyTenantUsage\x12,.identity.service.v1.GetMyTenantUsageRequest\x1a .identity.service.v1.TenantUsage\"\x00\x12t\n" +
 	"\x11CheckTenantAccess\x12-.identity.service.v1.CheckTenantAccessRequest\x1a..identity.service.v1.CheckTenantAccessResponse\"\x00\x12_\n" +
@@ -1050,7 +1491,7 @@ func file_identity_service_v1_tenant_quota_proto_rawDescGZIP() []byte {
 }
 
 var file_identity_service_v1_tenant_quota_proto_enumTypes = make([]protoimpl.EnumInfo, 1)
-var file_identity_service_v1_tenant_quota_proto_msgTypes = make([]protoimpl.MessageInfo, 14)
+var file_identity_service_v1_tenant_quota_proto_msgTypes = make([]protoimpl.MessageInfo, 22)
 var file_identity_service_v1_tenant_quota_proto_goTypes = []any{
 	(TenantQuota_QuotaType)(0),        // 0: identity.service.v1.TenantQuota.QuotaType
 	(*TenantQuota)(nil),               // 1: identity.service.v1.TenantQuota
@@ -1067,47 +1508,69 @@ var file_identity_service_v1_tenant_quota_proto_goTypes = []any{
 	(*CheckTenantAccessResponse)(nil), // 12: identity.service.v1.CheckTenantAccessResponse
 	(*CheckQuotaRequest)(nil),         // 13: identity.service.v1.CheckQuotaRequest
 	(*CheckQuotaResponse)(nil),        // 14: identity.service.v1.CheckQuotaResponse
-	(*timestamppb.Timestamp)(nil),     // 15: google.protobuf.Timestamp
-	(*fieldmaskpb.FieldMask)(nil),     // 16: google.protobuf.FieldMask
-	(*v1.PagingRequest)(nil),          // 17: pagination.PagingRequest
-	(*emptypb.Empty)(nil),             // 18: google.protobuf.Empty
+	(*QuotaPlanItem)(nil),             // 15: identity.service.v1.QuotaPlanItem
+	(*QuotaPlan)(nil),                 // 16: identity.service.v1.QuotaPlan
+	(*ListQuotaPlansRequest)(nil),     // 17: identity.service.v1.ListQuotaPlansRequest
+	(*ListQuotaPlansResponse)(nil),    // 18: identity.service.v1.ListQuotaPlansResponse
+	(*CreateQuotaPlanRequest)(nil),    // 19: identity.service.v1.CreateQuotaPlanRequest
+	(*DeleteQuotaPlanRequest)(nil),    // 20: identity.service.v1.DeleteQuotaPlanRequest
+	(*ApplyQuotaPlanRequest)(nil),     // 21: identity.service.v1.ApplyQuotaPlanRequest
+	(*ApplyQuotaPlanResponse)(nil),    // 22: identity.service.v1.ApplyQuotaPlanResponse
+	(*timestamppb.Timestamp)(nil),     // 23: google.protobuf.Timestamp
+	(*fieldmaskpb.FieldMask)(nil),     // 24: google.protobuf.FieldMask
+	(*v1.PagingRequest)(nil),          // 25: pagination.PagingRequest
+	(*emptypb.Empty)(nil),             // 26: google.protobuf.Empty
 }
 var file_identity_service_v1_tenant_quota_proto_depIdxs = []int32{
 	0,  // 0: identity.service.v1.TenantQuota.quota_type:type_name -> identity.service.v1.TenantQuota.QuotaType
-	15, // 1: identity.service.v1.TenantQuota.created_at:type_name -> google.protobuf.Timestamp
-	15, // 2: identity.service.v1.TenantQuota.updated_at:type_name -> google.protobuf.Timestamp
-	15, // 3: identity.service.v1.TenantQuota.deleted_at:type_name -> google.protobuf.Timestamp
+	23, // 1: identity.service.v1.TenantQuota.created_at:type_name -> google.protobuf.Timestamp
+	23, // 2: identity.service.v1.TenantQuota.updated_at:type_name -> google.protobuf.Timestamp
+	23, // 3: identity.service.v1.TenantQuota.deleted_at:type_name -> google.protobuf.Timestamp
 	0,  // 4: identity.service.v1.QuotaUsage.quota_type:type_name -> identity.service.v1.TenantQuota.QuotaType
 	2,  // 5: identity.service.v1.TenantUsage.quotas:type_name -> identity.service.v1.QuotaUsage
 	1,  // 6: identity.service.v1.ListTenantQuotaResponse.items:type_name -> identity.service.v1.TenantQuota
-	16, // 7: identity.service.v1.GetTenantQuotaRequest.view_mask:type_name -> google.protobuf.FieldMask
+	24, // 7: identity.service.v1.GetTenantQuotaRequest.view_mask:type_name -> google.protobuf.FieldMask
 	1,  // 8: identity.service.v1.CreateTenantQuotaRequest.data:type_name -> identity.service.v1.TenantQuota
 	1,  // 9: identity.service.v1.UpdateTenantQuotaRequest.data:type_name -> identity.service.v1.TenantQuota
-	16, // 10: identity.service.v1.UpdateTenantQuotaRequest.update_mask:type_name -> google.protobuf.FieldMask
+	24, // 10: identity.service.v1.UpdateTenantQuotaRequest.update_mask:type_name -> google.protobuf.FieldMask
 	0,  // 11: identity.service.v1.CheckQuotaRequest.quota_type:type_name -> identity.service.v1.TenantQuota.QuotaType
-	17, // 12: identity.service.v1.TenantQuotaService.List:input_type -> pagination.PagingRequest
-	5,  // 13: identity.service.v1.TenantQuotaService.Get:input_type -> identity.service.v1.GetTenantQuotaRequest
-	6,  // 14: identity.service.v1.TenantQuotaService.Create:input_type -> identity.service.v1.CreateTenantQuotaRequest
-	7,  // 15: identity.service.v1.TenantQuotaService.Update:input_type -> identity.service.v1.UpdateTenantQuotaRequest
-	8,  // 16: identity.service.v1.TenantQuotaService.Delete:input_type -> identity.service.v1.DeleteTenantQuotaRequest
-	9,  // 17: identity.service.v1.TenantQuotaService.GetUsage:input_type -> identity.service.v1.GetTenantUsageRequest
-	10, // 18: identity.service.v1.TenantQuotaService.GetMyTenantUsage:input_type -> identity.service.v1.GetMyTenantUsageRequest
-	11, // 19: identity.service.v1.TenantQuotaService.CheckTenantAccess:input_type -> identity.service.v1.CheckTenantAccessRequest
-	13, // 20: identity.service.v1.TenantQuotaService.CheckQuota:input_type -> identity.service.v1.CheckQuotaRequest
-	4,  // 21: identity.service.v1.TenantQuotaService.List:output_type -> identity.service.v1.ListTenantQuotaResponse
-	1,  // 22: identity.service.v1.TenantQuotaService.Get:output_type -> identity.service.v1.TenantQuota
-	18, // 23: identity.service.v1.TenantQuotaService.Create:output_type -> google.protobuf.Empty
-	18, // 24: identity.service.v1.TenantQuotaService.Update:output_type -> google.protobuf.Empty
-	18, // 25: identity.service.v1.TenantQuotaService.Delete:output_type -> google.protobuf.Empty
-	3,  // 26: identity.service.v1.TenantQuotaService.GetUsage:output_type -> identity.service.v1.TenantUsage
-	3,  // 27: identity.service.v1.TenantQuotaService.GetMyTenantUsage:output_type -> identity.service.v1.TenantUsage
-	12, // 28: identity.service.v1.TenantQuotaService.CheckTenantAccess:output_type -> identity.service.v1.CheckTenantAccessResponse
-	14, // 29: identity.service.v1.TenantQuotaService.CheckQuota:output_type -> identity.service.v1.CheckQuotaResponse
-	21, // [21:30] is the sub-list for method output_type
-	12, // [12:21] is the sub-list for method input_type
-	12, // [12:12] is the sub-list for extension type_name
-	12, // [12:12] is the sub-list for extension extendee
-	0,  // [0:12] is the sub-list for field type_name
+	0,  // 12: identity.service.v1.QuotaPlanItem.quota_type:type_name -> identity.service.v1.TenantQuota.QuotaType
+	15, // 13: identity.service.v1.QuotaPlan.items:type_name -> identity.service.v1.QuotaPlanItem
+	23, // 14: identity.service.v1.QuotaPlan.created_at:type_name -> google.protobuf.Timestamp
+	23, // 15: identity.service.v1.QuotaPlan.updated_at:type_name -> google.protobuf.Timestamp
+	16, // 16: identity.service.v1.ListQuotaPlansResponse.items:type_name -> identity.service.v1.QuotaPlan
+	16, // 17: identity.service.v1.CreateQuotaPlanRequest.data:type_name -> identity.service.v1.QuotaPlan
+	25, // 18: identity.service.v1.TenantQuotaService.List:input_type -> pagination.PagingRequest
+	5,  // 19: identity.service.v1.TenantQuotaService.Get:input_type -> identity.service.v1.GetTenantQuotaRequest
+	6,  // 20: identity.service.v1.TenantQuotaService.Create:input_type -> identity.service.v1.CreateTenantQuotaRequest
+	7,  // 21: identity.service.v1.TenantQuotaService.Update:input_type -> identity.service.v1.UpdateTenantQuotaRequest
+	8,  // 22: identity.service.v1.TenantQuotaService.Delete:input_type -> identity.service.v1.DeleteTenantQuotaRequest
+	17, // 23: identity.service.v1.TenantQuotaService.ListQuotaPlans:input_type -> identity.service.v1.ListQuotaPlansRequest
+	19, // 24: identity.service.v1.TenantQuotaService.CreateQuotaPlan:input_type -> identity.service.v1.CreateQuotaPlanRequest
+	20, // 25: identity.service.v1.TenantQuotaService.DeleteQuotaPlan:input_type -> identity.service.v1.DeleteQuotaPlanRequest
+	21, // 26: identity.service.v1.TenantQuotaService.ApplyQuotaPlan:input_type -> identity.service.v1.ApplyQuotaPlanRequest
+	9,  // 27: identity.service.v1.TenantQuotaService.GetUsage:input_type -> identity.service.v1.GetTenantUsageRequest
+	10, // 28: identity.service.v1.TenantQuotaService.GetMyTenantUsage:input_type -> identity.service.v1.GetMyTenantUsageRequest
+	11, // 29: identity.service.v1.TenantQuotaService.CheckTenantAccess:input_type -> identity.service.v1.CheckTenantAccessRequest
+	13, // 30: identity.service.v1.TenantQuotaService.CheckQuota:input_type -> identity.service.v1.CheckQuotaRequest
+	4,  // 31: identity.service.v1.TenantQuotaService.List:output_type -> identity.service.v1.ListTenantQuotaResponse
+	1,  // 32: identity.service.v1.TenantQuotaService.Get:output_type -> identity.service.v1.TenantQuota
+	26, // 33: identity.service.v1.TenantQuotaService.Create:output_type -> google.protobuf.Empty
+	26, // 34: identity.service.v1.TenantQuotaService.Update:output_type -> google.protobuf.Empty
+	26, // 35: identity.service.v1.TenantQuotaService.Delete:output_type -> google.protobuf.Empty
+	18, // 36: identity.service.v1.TenantQuotaService.ListQuotaPlans:output_type -> identity.service.v1.ListQuotaPlansResponse
+	16, // 37: identity.service.v1.TenantQuotaService.CreateQuotaPlan:output_type -> identity.service.v1.QuotaPlan
+	26, // 38: identity.service.v1.TenantQuotaService.DeleteQuotaPlan:output_type -> google.protobuf.Empty
+	22, // 39: identity.service.v1.TenantQuotaService.ApplyQuotaPlan:output_type -> identity.service.v1.ApplyQuotaPlanResponse
+	3,  // 40: identity.service.v1.TenantQuotaService.GetUsage:output_type -> identity.service.v1.TenantUsage
+	3,  // 41: identity.service.v1.TenantQuotaService.GetMyTenantUsage:output_type -> identity.service.v1.TenantUsage
+	12, // 42: identity.service.v1.TenantQuotaService.CheckTenantAccess:output_type -> identity.service.v1.CheckTenantAccessResponse
+	14, // 43: identity.service.v1.TenantQuotaService.CheckQuota:output_type -> identity.service.v1.CheckQuotaResponse
+	31, // [31:44] is the sub-list for method output_type
+	18, // [18:31] is the sub-list for method input_type
+	18, // [18:18] is the sub-list for extension type_name
+	18, // [18:18] is the sub-list for extension extendee
+	0,  // [0:18] is the sub-list for field type_name
 }
 
 func init() { file_identity_service_v1_tenant_quota_proto_init() }
@@ -1123,13 +1586,14 @@ func file_identity_service_v1_tenant_quota_proto_init() {
 	}
 	file_identity_service_v1_tenant_quota_proto_msgTypes[6].OneofWrappers = []any{}
 	file_identity_service_v1_tenant_quota_proto_msgTypes[12].OneofWrappers = []any{}
+	file_identity_service_v1_tenant_quota_proto_msgTypes[15].OneofWrappers = []any{}
 	type x struct{}
 	out := protoimpl.TypeBuilder{
 		File: protoimpl.DescBuilder{
 			GoPackagePath: reflect.TypeOf(x{}).PkgPath(),
 			RawDescriptor: unsafe.Slice(unsafe.StringData(file_identity_service_v1_tenant_quota_proto_rawDesc), len(file_identity_service_v1_tenant_quota_proto_rawDesc)),
 			NumEnums:      1,
-			NumMessages:   14,
+			NumMessages:   22,
 			NumExtensions: 0,
 			NumServices:   1,
 		},

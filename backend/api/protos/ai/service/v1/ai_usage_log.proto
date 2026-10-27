@@ -94,4 +94,16 @@ message UsageSummaryResponse {
   uint32 month_calls = 2 [json_name = "monthCalls"];   // 本月调用次数
   bool quota_configured = 3 [json_name = "quotaConfigured"]; // 套餐是否配置了 AI_TOKENS 配额（平台用户恒 false=不限量）
   uint64 quota_limit = 4 [json_name = "quotaLimit"];         // 配额上限（未配置为 0）
+  repeated UsageBreakdown breakdown = 5 [json_name = "breakdown"]; // 按 provider×模型 细分（当月）
+}
+
+// 用量细分行（provider × 模型 维度聚合）
+message UsageBreakdown {
+  uint32 provider_id = 1 [json_name = "providerId"];     // provider ID
+  string provider_name = 2 [json_name = "providerName"]; // provider 名
+  string model_name = 3 [json_name = "modelName"];       // 模型名
+  uint32 prompt_tokens = 4 [json_name = "promptTokens"];
+  uint32 completion_tokens = 5 [json_name = "completionTokens"];
+  uint32 total_tokens = 6 [json_name = "totalTokens"];
+  uint32 calls = 7 [json_name = "calls"];                // 调用次数
 }

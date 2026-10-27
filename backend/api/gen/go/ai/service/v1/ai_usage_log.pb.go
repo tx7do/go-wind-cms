@@ -254,6 +254,7 @@ type UsageSummaryResponse struct {
 	MonthCalls      uint32                 `protobuf:"varint,2,opt,name=month_calls,json=monthCalls,proto3" json:"month_calls,omitempty"`                // 本月调用次数
 	QuotaConfigured bool                   `protobuf:"varint,3,opt,name=quota_configured,json=quotaConfigured,proto3" json:"quota_configured,omitempty"` // 套餐是否配置了 AI_TOKENS 配额（平台用户恒 false=不限量）
 	QuotaLimit      uint64                 `protobuf:"varint,4,opt,name=quota_limit,json=quotaLimit,proto3" json:"quota_limit,omitempty"`                // 配额上限（未配置为 0）
+	Breakdown       []*UsageBreakdown      `protobuf:"bytes,5,rep,name=breakdown,proto3" json:"breakdown,omitempty"`                                     // 按 provider×模型 细分（当月）
 	unknownFields   protoimpl.UnknownFields
 	sizeCache       protoimpl.SizeCache
 }
@@ -316,6 +317,106 @@ func (x *UsageSummaryResponse) GetQuotaLimit() uint64 {
 	return 0
 }
 
+func (x *UsageSummaryResponse) GetBreakdown() []*UsageBreakdown {
+	if x != nil {
+		return x.Breakdown
+	}
+	return nil
+}
+
+// 用量细分行（provider × 模型 维度聚合）
+type UsageBreakdown struct {
+	state            protoimpl.MessageState `protogen:"open.v1"`
+	ProviderId       uint32                 `protobuf:"varint,1,opt,name=provider_id,json=providerId,proto3" json:"provider_id,omitempty"`      // provider ID
+	ProviderName     string                 `protobuf:"bytes,2,opt,name=provider_name,json=providerName,proto3" json:"provider_name,omitempty"` // provider 名
+	ModelName        string                 `protobuf:"bytes,3,opt,name=model_name,json=modelName,proto3" json:"model_name,omitempty"`          // 模型名
+	PromptTokens     uint32                 `protobuf:"varint,4,opt,name=prompt_tokens,json=promptTokens,proto3" json:"prompt_tokens,omitempty"`
+	CompletionTokens uint32                 `protobuf:"varint,5,opt,name=completion_tokens,json=completionTokens,proto3" json:"completion_tokens,omitempty"`
+	TotalTokens      uint32                 `protobuf:"varint,6,opt,name=total_tokens,json=totalTokens,proto3" json:"total_tokens,omitempty"`
+	Calls            uint32                 `protobuf:"varint,7,opt,name=calls,proto3" json:"calls,omitempty"` // 调用次数
+	unknownFields    protoimpl.UnknownFields
+	sizeCache        protoimpl.SizeCache
+}
+
+func (x *UsageBreakdown) Reset() {
+	*x = UsageBreakdown{}
+	mi := &file_ai_service_v1_ai_usage_log_proto_msgTypes[4]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *UsageBreakdown) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*UsageBreakdown) ProtoMessage() {}
+
+func (x *UsageBreakdown) ProtoReflect() protoreflect.Message {
+	mi := &file_ai_service_v1_ai_usage_log_proto_msgTypes[4]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use UsageBreakdown.ProtoReflect.Descriptor instead.
+func (*UsageBreakdown) Descriptor() ([]byte, []int) {
+	return file_ai_service_v1_ai_usage_log_proto_rawDescGZIP(), []int{4}
+}
+
+func (x *UsageBreakdown) GetProviderId() uint32 {
+	if x != nil {
+		return x.ProviderId
+	}
+	return 0
+}
+
+func (x *UsageBreakdown) GetProviderName() string {
+	if x != nil {
+		return x.ProviderName
+	}
+	return ""
+}
+
+func (x *UsageBreakdown) GetModelName() string {
+	if x != nil {
+		return x.ModelName
+	}
+	return ""
+}
+
+func (x *UsageBreakdown) GetPromptTokens() uint32 {
+	if x != nil {
+		return x.PromptTokens
+	}
+	return 0
+}
+
+func (x *UsageBreakdown) GetCompletionTokens() uint32 {
+	if x != nil {
+		return x.CompletionTokens
+	}
+	return 0
+}
+
+func (x *UsageBreakdown) GetTotalTokens() uint32 {
+	if x != nil {
+		return x.TotalTokens
+	}
+	return 0
+}
+
+func (x *UsageBreakdown) GetCalls() uint32 {
+	if x != nil {
+		return x.Calls
+	}
+	return 0
+}
+
 var File_ai_service_v1_ai_usage_log_proto protoreflect.FileDescriptor
 
 const file_ai_service_v1_ai_usage_log_proto_rawDesc = "" +
@@ -357,14 +458,25 @@ const file_ai_service_v1_ai_usage_log_proto_rawDesc = "" +
 	"\x05items\x18\x01 \x03(\v2\x19.ai.service.v1.AiUsageLogR\x05items\x12\x14\n" +
 	"\x05total\x18\x02 \x01(\x04R\x05total\"/\n" +
 	"\x17CountAiUsageLogResponse\x12\x14\n" +
-	"\x05count\x18\x01 \x01(\x04R\x05count\"\xa6\x01\n" +
+	"\x05count\x18\x01 \x01(\x04R\x05count\"\xe3\x01\n" +
 	"\x14UsageSummaryResponse\x12!\n" +
 	"\fmonth_tokens\x18\x01 \x01(\rR\vmonthTokens\x12\x1f\n" +
 	"\vmonth_calls\x18\x02 \x01(\rR\n" +
 	"monthCalls\x12)\n" +
 	"\x10quota_configured\x18\x03 \x01(\bR\x0fquotaConfigured\x12\x1f\n" +
 	"\vquota_limit\x18\x04 \x01(\x04R\n" +
-	"quotaLimit2\xff\x01\n" +
+	"quotaLimit\x12;\n" +
+	"\tbreakdown\x18\x05 \x03(\v2\x1d.ai.service.v1.UsageBreakdownR\tbreakdown\"\x80\x02\n" +
+	"\x0eUsageBreakdown\x12\x1f\n" +
+	"\vprovider_id\x18\x01 \x01(\rR\n" +
+	"providerId\x12#\n" +
+	"\rprovider_name\x18\x02 \x01(\tR\fproviderName\x12\x1d\n" +
+	"\n" +
+	"model_name\x18\x03 \x01(\tR\tmodelName\x12#\n" +
+	"\rprompt_tokens\x18\x04 \x01(\rR\fpromptTokens\x12+\n" +
+	"\x11completion_tokens\x18\x05 \x01(\rR\x10completionTokens\x12!\n" +
+	"\ftotal_tokens\x18\x06 \x01(\rR\vtotalTokens\x12\x14\n" +
+	"\x05calls\x18\a \x01(\rR\x05calls2\xff\x01\n" +
 	"\x11AiUsageLogService\x12J\n" +
 	"\x04List\x12\x19.pagination.PagingRequest\x1a%.ai.service.v1.ListAiUsageLogResponse\"\x00\x12L\n" +
 	"\x05Count\x12\x19.pagination.PagingRequest\x1a&.ai.service.v1.CountAiUsageLogResponse\"\x00\x12P\n" +
@@ -383,30 +495,32 @@ func file_ai_service_v1_ai_usage_log_proto_rawDescGZIP() []byte {
 	return file_ai_service_v1_ai_usage_log_proto_rawDescData
 }
 
-var file_ai_service_v1_ai_usage_log_proto_msgTypes = make([]protoimpl.MessageInfo, 4)
+var file_ai_service_v1_ai_usage_log_proto_msgTypes = make([]protoimpl.MessageInfo, 5)
 var file_ai_service_v1_ai_usage_log_proto_goTypes = []any{
 	(*AiUsageLog)(nil),              // 0: ai.service.v1.AiUsageLog
 	(*ListAiUsageLogResponse)(nil),  // 1: ai.service.v1.ListAiUsageLogResponse
 	(*CountAiUsageLogResponse)(nil), // 2: ai.service.v1.CountAiUsageLogResponse
 	(*UsageSummaryResponse)(nil),    // 3: ai.service.v1.UsageSummaryResponse
-	(*timestamppb.Timestamp)(nil),   // 4: google.protobuf.Timestamp
-	(*v1.PagingRequest)(nil),        // 5: pagination.PagingRequest
-	(*emptypb.Empty)(nil),           // 6: google.protobuf.Empty
+	(*UsageBreakdown)(nil),          // 4: ai.service.v1.UsageBreakdown
+	(*timestamppb.Timestamp)(nil),   // 5: google.protobuf.Timestamp
+	(*v1.PagingRequest)(nil),        // 6: pagination.PagingRequest
+	(*emptypb.Empty)(nil),           // 7: google.protobuf.Empty
 }
 var file_ai_service_v1_ai_usage_log_proto_depIdxs = []int32{
-	4, // 0: ai.service.v1.AiUsageLog.created_at:type_name -> google.protobuf.Timestamp
+	5, // 0: ai.service.v1.AiUsageLog.created_at:type_name -> google.protobuf.Timestamp
 	0, // 1: ai.service.v1.ListAiUsageLogResponse.items:type_name -> ai.service.v1.AiUsageLog
-	5, // 2: ai.service.v1.AiUsageLogService.List:input_type -> pagination.PagingRequest
-	5, // 3: ai.service.v1.AiUsageLogService.Count:input_type -> pagination.PagingRequest
-	6, // 4: ai.service.v1.AiUsageLogService.GetUsageSummary:input_type -> google.protobuf.Empty
-	1, // 5: ai.service.v1.AiUsageLogService.List:output_type -> ai.service.v1.ListAiUsageLogResponse
-	2, // 6: ai.service.v1.AiUsageLogService.Count:output_type -> ai.service.v1.CountAiUsageLogResponse
-	3, // 7: ai.service.v1.AiUsageLogService.GetUsageSummary:output_type -> ai.service.v1.UsageSummaryResponse
-	5, // [5:8] is the sub-list for method output_type
-	2, // [2:5] is the sub-list for method input_type
-	2, // [2:2] is the sub-list for extension type_name
-	2, // [2:2] is the sub-list for extension extendee
-	0, // [0:2] is the sub-list for field type_name
+	4, // 2: ai.service.v1.UsageSummaryResponse.breakdown:type_name -> ai.service.v1.UsageBreakdown
+	6, // 3: ai.service.v1.AiUsageLogService.List:input_type -> pagination.PagingRequest
+	6, // 4: ai.service.v1.AiUsageLogService.Count:input_type -> pagination.PagingRequest
+	7, // 5: ai.service.v1.AiUsageLogService.GetUsageSummary:input_type -> google.protobuf.Empty
+	1, // 6: ai.service.v1.AiUsageLogService.List:output_type -> ai.service.v1.ListAiUsageLogResponse
+	2, // 7: ai.service.v1.AiUsageLogService.Count:output_type -> ai.service.v1.CountAiUsageLogResponse
+	3, // 8: ai.service.v1.AiUsageLogService.GetUsageSummary:output_type -> ai.service.v1.UsageSummaryResponse
+	6, // [6:9] is the sub-list for method output_type
+	3, // [3:6] is the sub-list for method input_type
+	3, // [3:3] is the sub-list for extension type_name
+	3, // [3:3] is the sub-list for extension extendee
+	0, // [0:3] is the sub-list for field type_name
 }
 
 func init() { file_ai_service_v1_ai_usage_log_proto_init() }
@@ -421,7 +535,7 @@ func file_ai_service_v1_ai_usage_log_proto_init() {
 			GoPackagePath: reflect.TypeOf(x{}).PkgPath(),
 			RawDescriptor: unsafe.Slice(unsafe.StringData(file_ai_service_v1_ai_usage_log_proto_rawDesc), len(file_ai_service_v1_ai_usage_log_proto_rawDesc)),
 			NumEnums:      0,
-			NumMessages:   4,
+			NumMessages:   5,
 			NumExtensions: 0,
 			NumServices:   1,
 		},

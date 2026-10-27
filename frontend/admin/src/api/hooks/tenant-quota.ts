@@ -6,6 +6,9 @@ import type {
   identityservicev1_TenantQuota as TenantQuota,
   identityservicev1_TenantUsage as TenantUsage,
   identityservicev1_DeleteTenantQuotaRequest,
+  identityservicev1_QuotaPlan,
+  identityservicev1_ApplyQuotaPlanResponse,
+  identityservicev1_TenantQuota_QuotaType,
 } from '@/api/generated/admin/service/v1';
 
 /** 非组件上下文取列表（ProTable request） */
@@ -71,3 +74,64 @@ export function useDeleteTenantQuota(
 }
 
 export type { TenantQuota, TenantUsage };
+
+// ── 配额套餐模板 ──
+
+export function useListQuotaPlans() {
+  return useQuery({
+    queryKey: ['quotaPlans'],
+    queryFn: () => apiClient.tenantQuotaService.ListQuotaPlans({}),
+    staleTime: 30_000,
+  });
+}
+
+export function useCreateQuotaPlan(
+  options?: UseMutationOptions<
+    identityservicev1_QuotaPlan,
+    Error,
+    {
+      data: {
+        name: string;
+        description?: string;
+        items: { quotaType: identityservicev1_TenantQuota_QuotaType; limit: number }[];
+      };
+    }
+  >,
+) {
+  return useMutation({
+    mutationFn: (req) => apiClient.tenantQuotaService.CreateQuotaPlan(req),
+    ...options,
+  });
+}
+
+// 删除套餐：返回值是生成层的 wellKnownEmpty（本地类型未导出），用 Awaited 推断
+export function useDeleteQuotaPlan(
+  options?: UseMutationOptions<
+    Awaited<ReturnType<typeof apiClient.tenantQuotaService.DeleteQuotaPlan>>,
+    Error,
+    { id: number }
+  >,
+) {
+  return useMutation({
+    mutationFn: (req) =>
+      apiClient.tenantQuotaService.DeleteQuotaPlan({ id: req.id }),
+    ...options,
+  });
+}
+
+export function useApplyQuotaPlan(
+  options?: UseMutationOptions<
+    identityservicev1_ApplyQuotaPlanResponse,
+    Error,
+    { planId: number; tenantId: number }
+  >,
+) {
+  return useMutation({
+    mutationFn: (req) =>
+      apiClient.tenantQuotaService.ApplyQuotaPlan({
+        planId: req.planId,
+        tenantId: req.tenantId,
+      }),
+    ...options,
+  });
+}

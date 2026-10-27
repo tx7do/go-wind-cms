@@ -29,7 +29,7 @@ var File_admin_service_v1_i_tenant_quota_proto protoreflect.FileDescriptor
 
 const file_admin_service_v1_i_tenant_quota_proto_rawDesc = "" +
 	"\n" +
-	"%admin/service/v1/i_tenant_quota.proto\x12\x10admin.service.v1\x1a\x1cgoogle/api/annotations.proto\x1a$gnostic/openapi/v3/annotations.proto\x1a\x1bgoogle/protobuf/empty.proto\x1a\x1epagination/v1/pagination.proto\x1a&identity/service/v1/tenant_quota.proto2\xf7\x06\n" +
+	"%admin/service/v1/i_tenant_quota.proto\x12\x10admin.service.v1\x1a\x1cgoogle/api/annotations.proto\x1a$gnostic/openapi/v3/annotations.proto\x1a\x1bgoogle/protobuf/empty.proto\x1a\x1epagination/v1/pagination.proto\x1a&identity/service/v1/tenant_quota.proto2\x9f\v\n" +
 	"\x12TenantQuotaService\x12p\n" +
 	"\x04List\x12\x19.pagination.PagingRequest\x1a,.identity.service.v1.ListTenantQuotaResponse\"\x1f\x82\xd3\xe4\x93\x02\x19\x12\x17/admin/v1/tenant-quotas\x12y\n" +
 	"\x03Get\x12*.identity.service.v1.GetTenantQuotaRequest\x1a .identity.service.v1.TenantQuota\"$\x82\xd3\xe4\x93\x02\x1e\x12\x1c/admin/v1/tenant-quotas/{id}\x12s\n" +
@@ -37,7 +37,11 @@ const file_admin_service_v1_i_tenant_quota_proto_rawDesc = "" +
 	"\x06Update\x12-.identity.service.v1.UpdateTenantQuotaRequest\x1a\x16.google.protobuf.Empty\"'\x82\xd3\xe4\x93\x02!:\x01*\x1a\x1c/admin/v1/tenant-quotas/{id}\x12u\n" +
 	"\x06Delete\x12-.identity.service.v1.DeleteTenantQuotaRequest\x1a\x16.google.protobuf.Empty\"$\x82\xd3\xe4\x93\x02\x1e*\x1c/admin/v1/tenant-quotas/{id}\x12\x85\x01\n" +
 	"\bGetUsage\x12*.identity.service.v1.GetTenantUsageRequest\x1a .identity.service.v1.TenantUsage\"+\x82\xd3\xe4\x93\x02%\x12#/admin/v1/tenants/{tenant_id}/usage\x12\x85\x01\n" +
-	"\x10GetMyTenantUsage\x12,.identity.service.v1.GetMyTenantUsageRequest\x1a .identity.service.v1.TenantUsage\"!\x82\xd3\xe4\x93\x02\x1b\x12\x19/admin/v1/my-tenant-usageB\xbc\x01\n" +
+	"\x10GetMyTenantUsage\x12,.identity.service.v1.GetMyTenantUsageRequest\x1a .identity.service.v1.TenantUsage\"!\x82\xd3\xe4\x93\x02\x1b\x12\x19/admin/v1/my-tenant-usage\x12\x88\x01\n" +
+	"\x0eListQuotaPlans\x12*.identity.service.v1.ListQuotaPlansRequest\x1a+.identity.service.v1.ListQuotaPlansResponse\"\x1d\x82\xd3\xe4\x93\x02\x17\x12\x15/admin/v1/quota-plans\x12\x80\x01\n" +
+	"\x0fCreateQuotaPlan\x12+.identity.service.v1.CreateQuotaPlanRequest\x1a\x1e.identity.service.v1.QuotaPlan\" \x82\xd3\xe4\x93\x02\x1a:\x01*\"\x15/admin/v1/quota-plans\x12z\n" +
+	"\x0fDeleteQuotaPlan\x12+.identity.service.v1.DeleteQuotaPlanRequest\x1a\x16.google.protobuf.Empty\"\"\x82\xd3\xe4\x93\x02\x1c*\x1a/admin/v1/quota-plans/{id}\x12\x9b\x01\n" +
+	"\x0eApplyQuotaPlan\x12*.identity.service.v1.ApplyQuotaPlanRequest\x1a+.identity.service.v1.ApplyQuotaPlanResponse\"0\x82\xd3\xe4\x93\x02*:\x01*\"%/admin/v1/quota-plans/{plan_id}/applyB\xbc\x01\n" +
 	"\x14com.admin.service.v1B\x11ITenantQuotaProtoP\x01Z/go-wind-cms/api/gen/go/admin/service/v1;adminpb\xa2\x02\x03ASX\xaa\x02\x10Admin.Service.V1\xca\x02\x10Admin\\Service\\V1\xe2\x02\x1cAdmin\\Service\\V1\\GPBMetadata\xea\x02\x12Admin::Service::V1b\x06proto3"
 
 var file_admin_service_v1_i_tenant_quota_proto_goTypes = []any{
@@ -48,10 +52,17 @@ var file_admin_service_v1_i_tenant_quota_proto_goTypes = []any{
 	(*v11.DeleteTenantQuotaRequest)(nil), // 4: identity.service.v1.DeleteTenantQuotaRequest
 	(*v11.GetTenantUsageRequest)(nil),    // 5: identity.service.v1.GetTenantUsageRequest
 	(*v11.GetMyTenantUsageRequest)(nil),  // 6: identity.service.v1.GetMyTenantUsageRequest
-	(*v11.ListTenantQuotaResponse)(nil),  // 7: identity.service.v1.ListTenantQuotaResponse
-	(*v11.TenantQuota)(nil),              // 8: identity.service.v1.TenantQuota
-	(*emptypb.Empty)(nil),                // 9: google.protobuf.Empty
-	(*v11.TenantUsage)(nil),              // 10: identity.service.v1.TenantUsage
+	(*v11.ListQuotaPlansRequest)(nil),    // 7: identity.service.v1.ListQuotaPlansRequest
+	(*v11.CreateQuotaPlanRequest)(nil),   // 8: identity.service.v1.CreateQuotaPlanRequest
+	(*v11.DeleteQuotaPlanRequest)(nil),   // 9: identity.service.v1.DeleteQuotaPlanRequest
+	(*v11.ApplyQuotaPlanRequest)(nil),    // 10: identity.service.v1.ApplyQuotaPlanRequest
+	(*v11.ListTenantQuotaResponse)(nil),  // 11: identity.service.v1.ListTenantQuotaResponse
+	(*v11.TenantQuota)(nil),              // 12: identity.service.v1.TenantQuota
+	(*emptypb.Empty)(nil),                // 13: google.protobuf.Empty
+	(*v11.TenantUsage)(nil),              // 14: identity.service.v1.TenantUsage
+	(*v11.ListQuotaPlansResponse)(nil),   // 15: identity.service.v1.ListQuotaPlansResponse
+	(*v11.QuotaPlan)(nil),                // 16: identity.service.v1.QuotaPlan
+	(*v11.ApplyQuotaPlanResponse)(nil),   // 17: identity.service.v1.ApplyQuotaPlanResponse
 }
 var file_admin_service_v1_i_tenant_quota_proto_depIdxs = []int32{
 	0,  // 0: admin.service.v1.TenantQuotaService.List:input_type -> pagination.PagingRequest
@@ -61,15 +72,23 @@ var file_admin_service_v1_i_tenant_quota_proto_depIdxs = []int32{
 	4,  // 4: admin.service.v1.TenantQuotaService.Delete:input_type -> identity.service.v1.DeleteTenantQuotaRequest
 	5,  // 5: admin.service.v1.TenantQuotaService.GetUsage:input_type -> identity.service.v1.GetTenantUsageRequest
 	6,  // 6: admin.service.v1.TenantQuotaService.GetMyTenantUsage:input_type -> identity.service.v1.GetMyTenantUsageRequest
-	7,  // 7: admin.service.v1.TenantQuotaService.List:output_type -> identity.service.v1.ListTenantQuotaResponse
-	8,  // 8: admin.service.v1.TenantQuotaService.Get:output_type -> identity.service.v1.TenantQuota
-	9,  // 9: admin.service.v1.TenantQuotaService.Create:output_type -> google.protobuf.Empty
-	9,  // 10: admin.service.v1.TenantQuotaService.Update:output_type -> google.protobuf.Empty
-	9,  // 11: admin.service.v1.TenantQuotaService.Delete:output_type -> google.protobuf.Empty
-	10, // 12: admin.service.v1.TenantQuotaService.GetUsage:output_type -> identity.service.v1.TenantUsage
-	10, // 13: admin.service.v1.TenantQuotaService.GetMyTenantUsage:output_type -> identity.service.v1.TenantUsage
-	7,  // [7:14] is the sub-list for method output_type
-	0,  // [0:7] is the sub-list for method input_type
+	7,  // 7: admin.service.v1.TenantQuotaService.ListQuotaPlans:input_type -> identity.service.v1.ListQuotaPlansRequest
+	8,  // 8: admin.service.v1.TenantQuotaService.CreateQuotaPlan:input_type -> identity.service.v1.CreateQuotaPlanRequest
+	9,  // 9: admin.service.v1.TenantQuotaService.DeleteQuotaPlan:input_type -> identity.service.v1.DeleteQuotaPlanRequest
+	10, // 10: admin.service.v1.TenantQuotaService.ApplyQuotaPlan:input_type -> identity.service.v1.ApplyQuotaPlanRequest
+	11, // 11: admin.service.v1.TenantQuotaService.List:output_type -> identity.service.v1.ListTenantQuotaResponse
+	12, // 12: admin.service.v1.TenantQuotaService.Get:output_type -> identity.service.v1.TenantQuota
+	13, // 13: admin.service.v1.TenantQuotaService.Create:output_type -> google.protobuf.Empty
+	13, // 14: admin.service.v1.TenantQuotaService.Update:output_type -> google.protobuf.Empty
+	13, // 15: admin.service.v1.TenantQuotaService.Delete:output_type -> google.protobuf.Empty
+	14, // 16: admin.service.v1.TenantQuotaService.GetUsage:output_type -> identity.service.v1.TenantUsage
+	14, // 17: admin.service.v1.TenantQuotaService.GetMyTenantUsage:output_type -> identity.service.v1.TenantUsage
+	15, // 18: admin.service.v1.TenantQuotaService.ListQuotaPlans:output_type -> identity.service.v1.ListQuotaPlansResponse
+	16, // 19: admin.service.v1.TenantQuotaService.CreateQuotaPlan:output_type -> identity.service.v1.QuotaPlan
+	13, // 20: admin.service.v1.TenantQuotaService.DeleteQuotaPlan:output_type -> google.protobuf.Empty
+	17, // 21: admin.service.v1.TenantQuotaService.ApplyQuotaPlan:output_type -> identity.service.v1.ApplyQuotaPlanResponse
+	11, // [11:22] is the sub-list for method output_type
+	0,  // [0:11] is the sub-list for method input_type
 	0,  // [0:0] is the sub-list for extension type_name
 	0,  // [0:0] is the sub-list for extension extendee
 	0,  // [0:0] is the sub-list for field type_name

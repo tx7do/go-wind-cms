@@ -9,5 +9,13 @@
     "monthTokens": "Tokens this month",
     "monthCalls": "Calls this month",
     "quota": "Quota usage"
-  }
+  },
+  "breakdownTitle": "This month by provider × model",
+  "breakdownProvider": "Provider",
+  "breakdownModel": "Model",
+  "breakdownPrompt": "Prompt tokens",
+  "breakdownCompletion": "Completion tokens",
+  "breakdownTotal": "Total tokens",
+  "breakdownCalls": "Calls",
+  "breakdownEmpty": "No usage records this month"
 }

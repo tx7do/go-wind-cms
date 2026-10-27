@@ -231,6 +231,9 @@ type PostVersion func(*sql.Selector)
 // PostWatch is the predicate function for postwatch builders.
 type PostWatch func(*sql.Selector)
 
+// QuotaPlan is the predicate function for quotaplan builders.
+type QuotaPlan func(*sql.Selector)
+
 // Redirect is the predicate function for redirect builders.
 type Redirect func(*sql.Selector)
 

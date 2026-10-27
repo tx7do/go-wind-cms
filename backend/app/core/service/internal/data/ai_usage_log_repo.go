@@ -186,6 +186,49 @@ func (r *AiUsageLogRepo) MonthStats(ctx context.Context, tenantId uint32, monthS
 	return 0, 0, nil
 }
 
+// MonthBreakdown 当月用量按 provider×模型 聚合（tokens 三项 + 调用次数）。
+// 返回行含 ProviderID 供服务层解析 provider 名。
+func (r *AiUsageLogRepo) MonthBreakdown(ctx context.Context, tenantId uint32, monthStart time.Time) ([]*aiV1.UsageBreakdown, error) {
+	var rows []struct {
+		ProviderID  uint32 `sql:"provider_id"`
+		ModelName   string `sql:"model_name"`
+		PromptTotal uint64 `sql:"prompt_total"`
+		CompTotal   uint64 `sql:"comp_total"`
+		Total       uint64 `sql:"total"`
+		Cnt         uint64 `sql:"cnt"`
+	}
+	q := r.entClient.Client().AiUsageLog.Query().Where(aiusagelog.CreatedAtGTE(monthStart))
+	if tenantId > 0 {
+		q = q.Where(aiusagelog.TenantIDEQ(tenantId))
+	}
+	err := q.GroupBy(
+		aiusagelog.FieldProviderID,
+		aiusagelog.FieldModelName,
+	).Aggregate(
+		ent.As(ent.Sum(aiusagelog.FieldPromptTokens), "prompt_total"),
+		ent.As(ent.Sum(aiusagelog.FieldCompletionTokens), "comp_total"),
+		ent.As(ent.Sum(aiusagelog.FieldTotalTokens), "total"),
+		ent.As(ent.Count(), "cnt"),
+	).Scan(ctx, &rows)
+	if err != nil {
+		r.log.Errorf("month breakdown failed: %s", err.Error())
+		return nil, aiV1.ErrorInternalServerError("month breakdown failed")
+	}
+	out := make([]*aiV1.UsageBreakdown, 0, len(rows))
+	for _, row := range rows {
+		out = append(out, &aiV1.UsageBreakdown{
+			ProviderId:       row.ProviderID,
+			ProviderName:     "", // 服务层解析
+			ModelName:        row.ModelName,
+			PromptTokens:     uint32(row.PromptTotal),
+			CompletionTokens: uint32(row.CompTotal),
+			TotalTokens:      uint32(row.Total),
+			Calls:            uint32(row.Cnt),
+		})
+	}
+	return out, nil
+}
+
 func nillableUint32(v uint32) *uint32 {
 	if v == 0 {
 		return nil

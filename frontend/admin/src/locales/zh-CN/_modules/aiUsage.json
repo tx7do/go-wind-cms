@@ -9,5 +9,13 @@
     "monthTokens": "本月已用 tokens",
     "monthCalls": "本月调用次数",
     "quota": "配额用量"
-  }
+  },
+  "breakdownTitle": "当月按 Provider × 模型 细分",
+  "breakdownProvider": "Provider",
+  "breakdownModel": "模型",
+  "breakdownPrompt": "输入 tokens",
+  "breakdownCompletion": "输出 tokens",
+  "breakdownTotal": "总 tokens",
+  "breakdownCalls": "调用次数",
+  "breakdownEmpty": "当月暂无用量记录"
 }
