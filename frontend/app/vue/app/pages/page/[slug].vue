@@ -55,11 +55,19 @@ watch(
 useHead(() => {
   const tr = page.value ? getPageTranslation(page.value) : null
   const seo = tr?.seo
+  const title = tr?.title || t('page.post_detail.untitled')
+  const description = seo?.metaDescription || ''
+  const meta: Array<{ name: string; content: string }> = []
+  if (description) meta.push({ name: 'description', content: description })
+  if (seo?.metaKeywords) meta.push({ name: 'keywords', content: seo.metaKeywords })
+  if (seo?.ogTitle) meta.push({ property: 'og:title', content: seo.ogTitle })
+  if (seo?.ogDescription) meta.push({ property: 'og:description', content: seo.ogDescription })
+  const link: Array<{ rel: string; href: string }> = []
+  if (seo?.canonicalUrl) link.push({ rel: 'canonical', href: seo.canonicalUrl })
   return {
-    title: () => tr?.title || t('page.post_detail.untitled'),
-    meta: seo?.metaDescription
-      ? [{ name: 'description', content: seo.metaDescription }]
-      : [],
+    title: () => seo?.seoTitle || title,
+    meta,
+    link,
   }
 })
 </script>

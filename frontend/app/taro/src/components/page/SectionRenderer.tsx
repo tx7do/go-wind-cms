@@ -401,8 +401,9 @@ export default function SectionRenderer({sections, className}: SectionRendererPr
             {sorted.map((section) => {
                 const Renderer =
                     (section.type && SECTION_RENDERERS[section.type]) || CustomSection;
+                const customClass = section.config?.className;
                 return (
-                    <View key={section.id ?? section.name ?? section.sortOrder}>
+                    <View key={section.id ?? section.name ?? section.sortOrder} className={customClass}>
                         <Renderer section={section} />
                     </View>
                 );

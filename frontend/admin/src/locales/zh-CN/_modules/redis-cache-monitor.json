@@ -15,5 +15,6 @@
   "slowlogDuration": "耗时（µs）",
   "slowlogArgs": "命令",
   "slowlogClient": "客户端",
-  "disclaimer": "本页数据来自 Redis 只读命令（INFO / DBSIZE / SLOWLOG），每 10 秒自动刷新，仅供运维参考。"
+  "disclaimer": "本页数据来自 Redis 只读命令（INFO / DBSIZE / SLOWLOG），每 10 秒自动刷新，仅供运维参考。",
+  "slowlogClientName": "客户端名"
 }

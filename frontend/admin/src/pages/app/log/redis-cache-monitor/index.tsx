@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import { Card, Descriptions, Spin, Tag, Typography, Empty, Table } from 'antd';
+import type { TableColumnsType } from 'antd';
 import { useTranslation } from 'react-i18next';
 import type {
   redis_cacheservicev1_RedisCacheMonitorInfo,
@@ -37,12 +38,13 @@ const RedisCacheMonitor = () => {
   const dbSize = infoTyped?.dbSize ?? 0;
   const slowlog = infoTyped?.slowlog ?? [];
 
-  const slowLogColumns = [
+  const slowLogColumns: TableColumnsType<redis_cacheservicev1_SlowLogEntry> = [
     { title: t('slowlogId'), dataIndex: 'id', width: 80 },
     { title: t('slowlogTime'), dataIndex: 'createdAt', width: 170, render: (v?: string) => (v ? formatDateTime(v) : '-') },
     { title: t('slowlogDuration'), dataIndex: 'durationUsec', width: 120, render: (v?: number) => (v !== undefined ? `${v} µs` : '-') },
     { title: t('slowlogArgs'), dataIndex: 'args', ellipsis: true, render: (_: unknown, r: redis_cacheservicev1_SlowLogEntry) => (r.args ?? []).join(' ') },
     { title: t('slowlogClient'), dataIndex: 'clientAddr', width: 150, render: (v?: string) => v || '-' },
+    { title: t('slowlogClientName'), dataIndex: 'clientName', width: 130, render: (v?: string) => v || '-' },
   ];
 
   return (
@@ -129,7 +131,7 @@ const RedisCacheMonitor = () => {
             size="small"
             bordered
             columns={slowLogColumns}
-            dataSource={slowlog}
+            dataSource={slowlog} scroll={{ x: "max-content" }}
             pagination={false}
           />
         )}

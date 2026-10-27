@@ -166,6 +166,7 @@ const ApiAuditLog = () => {
         METHOD_LIST.map((item) => [item.value, { text: item.label, status: 'Default' }]),
       ),
       render: (_, record) => {
+        // antd Tag 预设色（colorMap 值是预设名而非 CSS color——上游 1d6f1913 同款修复）
         const colorMap: Record<string, string> = {
           GET: 'success',
           POST: 'processing',
@@ -176,11 +177,7 @@ const ApiAuditLog = () => {
           OPTIONS: 'default',
         };
 
-  return (
-          <span style={{ color: colorMap[record.httpMethod || ''] || '#666' }}>
-            {record.httpMethod}
-          </span>
-        );
+        return <Tag color={colorMap[record.httpMethod || ''] || 'default'}>{record.httpMethod}</Tag>;
       },
     },
     {

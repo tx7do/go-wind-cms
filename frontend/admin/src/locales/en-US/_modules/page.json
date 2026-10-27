@@ -128,5 +128,13 @@
     "rejected": "Rejected",
     "reasonPlaceholder": "Reason (notifies the author, optional)"
   },
-  "editLockHeld": "{{name}} is editing this content ({{since}}). Concurrent saves may overwrite each other"
+  "editLockHeld": "{{name}} is editing this content ({{since}}). Concurrent saves may overwrite each other",
+  "seoGroup": "SEO Settings",
+  "seoTitle": "SEO Title",
+  "seoMetaKeywords": "SEO Keywords",
+  "seoMetaDescription": "SEO Description",
+  "seoOgTitle": "OG Title",
+  "seoOgDescription": "OG Description",
+  "seoOgImage": "OG Image",
+  "seoCanonicalUrl": "Canonical URL"
 }

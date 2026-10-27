@@ -20,6 +20,10 @@ const (
 
 	// SearchReindexAllTaskType 周期全量重索引任务类型（自愈路径）。
 	SearchReindexAllTaskType = "search.reindex.all"
+
+	// SearchReindexAllCronSpec 每日 04:44 全量重索引（错开 backup 03:00 与
+	// 内容健康巡检 03:17；增量双写覆盖正常路径，此任务只兜崩溃窗口漂移）。
+	SearchReindexAllCronSpec = "44 4 * * *"
 )
 
 // SearchReindexPayload 单条重索引任务的 payload。
@@ -69,3 +73,6 @@ type AiPostIndexPayload struct {
 	TenantID uint32 `json:"tenant_id"`
 	Op       string `json:"op"` // index / delete
 }
+
+// SearchReindexAllTaskData 全量重索引任务 payload（无参数；边界在服务内）。
+type SearchReindexAllTaskData struct{}

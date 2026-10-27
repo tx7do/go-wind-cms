@@ -59,15 +59,24 @@ export async function generateMetadata({ params, searchParams }: Props): Promise
         })
         .join(' ');
     const description = toMetaDescription(`${title} ${sectionText}`.trim());
+    // SEO 字段优先（admin 编辑侧 seoTitle/metaDescription/og* /canonical；翻译表 seo JSON）
+    const seo = tr?.seo;
+    const finalTitle = seo?.seoTitle || title;
+    const finalDescription = seo?.metaDescription || description;
+    const ogImage = seo?.ogImage || page.thumbnail || undefined;
 
     return {
-        title,
-        description,
-        alternates: { canonical: sp.slug ? `/page/detail?slug=${sp.slug}&lang=${locale}` : `/page/detail?id=${page.id}&lang=${locale}` },
+        title: finalTitle,
+        description: finalDescription,
+        keywords: seo?.metaKeywords || undefined,
+        alternates: {
+            canonical: seo?.canonicalUrl
+                || (sp.slug ? `/page/detail?slug=${sp.slug}&lang=${locale}` : `/page/detail?id=${page.id}&lang=${locale}`),
+        },
         openGraph: {
-            title,
-            description,
-            images: page.thumbnail ? [page.thumbnail] : undefined,
+            title: seo?.ogTitle || finalTitle,
+            description: seo?.ogDescription || finalDescription,
+            images: ogImage ? [ogImage] : undefined,
             type: 'website',
         },
     };

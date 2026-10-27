@@ -4,10 +4,13 @@ import {
   App,
   Button,
   Col,
+  Collapse,
+  Form,
   Input,
   Row,
   Select,
-  Space, Tooltip } from 'antd';
+  Space,
+  Tooltip } from 'antd';
 import {
   ArrowLeftOutlined,
   CheckOutlined,
@@ -82,6 +85,16 @@ interface PageEditProps {
   customFields?: Record<string, string>;
   /** 页面嵌套区块列表。作为页面子部件随页面整体读写（对齐后端 Page.Sections 整体替换语义） */
   sections?: SectionFormItem[];
+  /** SEO 字段（翻译表 seo JSON；7 字段同 post 侧） */
+  seo?: {
+    seoTitle?: string;
+    metaKeywords?: string;
+    metaDescription?: string;
+    ogTitle?: string;
+    ogDescription?: string;
+    ogImage?: string;
+    canonicalUrl?: string;
+  };
 }
 
 interface LanguageOption {
@@ -148,6 +161,14 @@ const PageEditPage = () => {
   const updateForm = useCallback((patch: Partial<PageEditProps>) => {
     setFormData((prev) => ({ ...prev, ...patch }));
   }, []);
+
+  // SEO 7 字段局部更新（同 post 侧 patchSeo 语义：从空对象起步）
+  const patchSeo = (part: Partial<NonNullable<PageEditProps['seo']>>) => {
+    setFormData((prev) => ({
+      ...prev,
+      seo: { ...(prev.seo ?? {}), ...part },
+    }));
+  };
 
   const loadDraft = useCallback(
     (currentLang: string): PageEditProps | null => {
@@ -284,6 +305,7 @@ const PageEditPage = () => {
           id: item.id,
           title: langItem?.title || '',
           slug: langItem?.slug || '',
+          seo: langItem?.seo as PageEditProps['seo'] | undefined,
           content: bodyContent,
           lang: currentLang,
           editorType: item.editorType || EditorType.MARKDOWN,
@@ -565,6 +587,10 @@ const PageEditPage = () => {
             title: formData.title,
             slug: formData.slug,
             languageCode: lang,
+            // SEO：有任一字段才携带（后端仅在 data.Seo != nil 时落库，不传不覆盖）
+            ...(formData.seo && Object.values(formData.seo).some((v) => v)
+              ? { seo: formData.seo }
+              : {}),
           },
         ],
       };
@@ -727,6 +753,73 @@ const PageEditPage = () => {
               </Row>
             </div>
           )}
+
+          {/* SEO 设置（翻译表 seo JSON；C 端详情页 head 输出消费） */}
+          <div style={{ padding: '8px 16px', borderBottom: '1px solid var(--ant-color-split)' }}>
+            <Collapse
+              size="small"
+              items={[
+                {
+                  key: 'seo',
+                  label: t('seoGroup'),
+                  children: (
+                    <Form layout="vertical">
+                      <Form.Item label={t('seoTitle')}>
+                        <Input
+                          value={formData.seo?.seoTitle}
+                          allowClear
+                          onChange={(e) => patchSeo({ seoTitle: e.target.value })}
+                        />
+                      </Form.Item>
+                      <Form.Item label={t('seoMetaKeywords')}>
+                        <Input
+                          value={formData.seo?.metaKeywords}
+                          allowClear
+                          onChange={(e) => patchSeo({ metaKeywords: e.target.value })}
+                        />
+                      </Form.Item>
+                      <Form.Item label={t('seoMetaDescription')}>
+                        <Input.TextArea
+                          rows={3}
+                          value={formData.seo?.metaDescription}
+                          onChange={(e) => patchSeo({ metaDescription: e.target.value })}
+                        />
+                      </Form.Item>
+                      <Form.Item label={t('seoOgTitle')}>
+                        <Input
+                          value={formData.seo?.ogTitle}
+                          allowClear
+                          onChange={(e) => patchSeo({ ogTitle: e.target.value })}
+                        />
+                      </Form.Item>
+                      <Form.Item label={t('seoOgDescription')}>
+                        <Input.TextArea
+                          rows={2}
+                          value={formData.seo?.ogDescription}
+                          onChange={(e) => patchSeo({ ogDescription: e.target.value })}
+                        />
+                      </Form.Item>
+                      <Form.Item label={t('seoOgImage')}>
+                        <Input
+                          value={formData.seo?.ogImage}
+                          allowClear
+                          placeholder="https://"
+                          onChange={(e) => patchSeo({ ogImage: e.target.value })}
+                        />
+                      </Form.Item>
+                      <Form.Item label={t('seoCanonicalUrl')}>
+                        <Input
+                          value={formData.seo?.canonicalUrl}
+                          allowClear
+                          onChange={(e) => patchSeo({ canonicalUrl: e.target.value })}
+                        />
+                      </Form.Item>
+                    </Form>
+                  ),
+                },
+              ]}
+            />
+          </div>
 
           {/* 嵌套区块管理 */}
           <div style={{ padding: '8px 16px', borderBottom: '1px solid var(--ant-color-split)' }}>

@@ -1,6 +1,8 @@
 <script setup lang="ts">
 import {XIcon} from '@/plugins/xicon'
-import {fetchPost, fetchPostPreview, getPostTitle, getPostContent, getPostThumbnail} from '@/api/composables/post'
+import {fetchPost, fetchPostPreview, getPostTitle, getPostContent, getPostThumbnail,
+  getPostTranslation,
+} from '@/api/composables/post'
 import CustomFieldsSection from '@/components/post/CustomFieldsSection.vue'
 import {useGetCounts, extractCount, recordView, useWatch, useUnwatch, useLike, useUnlike} from '@/api/composables/interaction'
 
@@ -62,9 +64,20 @@ const displayTitle = computed(() => post.value ? getPostTitle(post.value) : '')
 const displayContent = computed(() => post.value ? getPostContent(post.value) : '')
 const displayThumbnail = computed(() => post.value ? getPostThumbnail(post.value) : '')
 
-// 动态标题
-useHead({
-  title: () => displayTitle.value || t('page.post_detail.untitled'),
+// 动态标题 + SEO 字段（admin 编辑侧 seoTitle/metaDescription/keywords/og*）
+useHead(() => {
+  const tr = post.value ? getPostTranslation(post.value) : null
+  const seo = tr?.seo
+  const title = displayTitle.value || t('page.post_detail.untitled')
+  const meta: Array<{ name: string; content: string }> = []
+  if (seo?.metaDescription) meta.push({ name: 'description', content: seo.metaDescription })
+  if (seo?.metaKeywords) meta.push({ name: 'keywords', content: seo.metaKeywords })
+  if (seo?.ogTitle) meta.push({ property: 'og:title', content: seo.ogTitle })
+  if (seo?.ogDescription) meta.push({ property: 'og:description', content: seo.ogDescription })
+  return {
+    title: () => seo?.seoTitle || title,
+    meta,
+  }
 })
 
 const relatedPostsQuery = computed(() => {

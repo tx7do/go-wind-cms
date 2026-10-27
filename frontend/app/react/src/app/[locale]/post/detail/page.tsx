@@ -55,17 +55,24 @@ export async function generateMetadata({ params, searchParams }: Props): Promise
     if (!post) return { title: 'GoWind Content Hub' };
 
     const tr = pickTranslation(post.translations, locale);
-    const title = tr?.title || 'GoWind Content Hub';
-    const description = toMetaDescription(tr?.summary || tr?.content || '');
-    const ogImage = post.thumbnail || undefined;
+    // SEO 字段优先（admin 编辑侧 seoTitle/metaDescription/og* /canonical；翻译表 seo JSON）
+    const seo = tr?.seo;
+    const title = seo?.seoTitle || tr?.title || 'GoWind Content Hub';
+    const description = seo?.metaDescription || toMetaDescription(tr?.summary || tr?.content || '');
+    const ogImage = seo?.ogImage || post.thumbnail || undefined;
+    const keywords = seo?.metaKeywords || undefined;
 
     return {
         title,
         description,
-        alternates: { canonical: sp.slug ? `/post/detail?slug=${sp.slug}&lang=${locale}` : `/post/detail?id=${post.id}&lang=${locale}` },
+        keywords,
+        alternates: {
+            canonical: seo?.canonicalUrl
+                || (sp.slug ? `/post/detail?slug=${sp.slug}&lang=${locale}` : `/post/detail?id=${post.id}&lang=${locale}`),
+        },
         openGraph: {
-            title,
-            description,
+            title: seo?.ogTitle || title,
+            description: seo?.ogDescription || description,
             images: ogImage ? [ogImage] : undefined,
             type: 'article',
         },

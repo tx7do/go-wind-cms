@@ -123,7 +123,14 @@ class SectionRenderer extends StatelessWidget {
       children: [
         for (var i = 0; i < sorted.length; i++) ...[
           if (i > 0) SizedBox(height: gap),
-          _buildSection(context, sorted[i]),
+          // config.className 事实上的区块 css_class（react/vue 同款语义）：
+          // flutter 无 DOM class，仅以外部 key 标记保留语义位
+          KeyedSubtree(
+            key: (sorted[i].config?['className'] ?? '').isNotEmpty
+                ? ValueKey('css-${sorted[i].config?['className']}')
+                : null,
+            child: _buildSection(context, sorted[i]),
+          ),
         ],
       ],
     );

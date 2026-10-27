@@ -15,5 +15,6 @@
   "slowlogDuration": "Duration (µs)",
   "slowlogArgs": "Command",
   "slowlogClient": "Client",
-  "disclaimer": "Data comes from read-only Redis commands (INFO / DBSIZE / SLOWLOG) and refreshes every 10 seconds. For operational reference only."
+  "disclaimer": "Data comes from read-only Redis commands (INFO / DBSIZE / SLOWLOG) and refreshes every 10 seconds. For operational reference only.",
+  "slowlogClientName": "Client name"
 }

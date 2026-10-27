@@ -128,5 +128,13 @@
     "rejected": "已驳回",
     "reasonPlaceholder": "驳回理由（将通知作者，可留空）"
   },
-  "editLockHeld": "{{name}} 正在编辑此内容（{{since}}），同时保存可能互相覆盖"
+  "editLockHeld": "{{name}} 正在编辑此内容（{{since}}），同时保存可能互相覆盖",
+  "seoGroup": "SEO 设置",
+  "seoTitle": "SEO 标题",
+  "seoMetaKeywords": "SEO 关键词",
+  "seoMetaDescription": "SEO 描述",
+  "seoOgTitle": "OG 标题",
+  "seoOgDescription": "OG 描述",
+  "seoOgImage": "OG 图片",
+  "seoCanonicalUrl": "规范 URL"
 }
