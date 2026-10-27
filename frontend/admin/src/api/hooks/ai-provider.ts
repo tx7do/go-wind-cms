@@ -44,20 +44,22 @@ export function useGetAiProvider(
 
 // 4. useCreateAiProvider
 export function useCreateAiProvider(
-  options?: UseMutationOptions<{}, Error, aiservicev1_CreateAiProviderRequest>,
+  options?: UseMutationOptions<unknown, Error, aiservicev1_CreateAiProviderRequest>,
 ) {
   return useMutation({ mutationFn: (data) => apiClient.aiProviderService.Create(data), ...options });
 }
 
 // 5. useUpdateAiProvider — 固定签名 { id, values }，内部自动构建 updateMask
 export function useUpdateAiProvider(
-  options?: UseMutationOptions<{}, Error, { id: number; values: Record<string, any> }>,
+  options?: UseMutationOptions<unknown, Error, { id: number; values: Record<string, unknown> }>,
 ) {
   return useMutation({
-    mutationFn: ({ id, values }: { id: number; values: Record<string, any> }) =>
+    mutationFn: ({ id, values }: { id: number; values: Record<string, unknown> }) =>
       apiClient.aiProviderService.Update({
         id,
-        data: { ...values } as any,
+        // 表单 Partial → proto 消息边界：字段集为真子集，运行时安全
+          // eslint-disable-next-line @typescript-eslint/no-explicit-any -- 表单/proto 边界
+          data: { ...values } as any,
         updateMask: makeUpdateMask(Object.keys(values ?? {})),
       }),
     ...options,
@@ -66,7 +68,7 @@ export function useUpdateAiProvider(
 
 // 6. useDeleteAiProvider
 export function useDeleteAiProvider(
-  options?: UseMutationOptions<{}, Error, aiservicev1_DeleteAiProviderRequest>,
+  options?: UseMutationOptions<unknown, Error, aiservicev1_DeleteAiProviderRequest>,
 ) {
   return useMutation({ mutationFn: (req) => apiClient.aiProviderService.Delete(req), ...options });
 }

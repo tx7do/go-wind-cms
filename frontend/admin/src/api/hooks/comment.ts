@@ -62,7 +62,7 @@ export function useUpdateComment(
   options?: UseMutationOptions<
     commentservicev1_Comment,
     Error,
-    { id: number; values: Record<string, any>; maskKeys?: string[] }
+    { id: number; values: Record<string, unknown>; maskKeys?: string[] }
   >,
 ) {
   return useMutation({
@@ -77,7 +77,7 @@ export function useUpdateComment(
 }
 
 export function useDeleteComment(
-  options?: UseMutationOptions<{}, Error, commentservicev1_DeleteCommentRequest>,
+  options?: UseMutationOptions<unknown, Error, commentservicev1_DeleteCommentRequest>,
 ) {
   return useMutation({
     mutationFn: (data) => apiClient.commentService.Delete(data),

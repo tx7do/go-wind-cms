@@ -49,7 +49,7 @@ export function useGetApi(
 }
 
 export function useCreateApi(
-  options?: UseMutationOptions<{}, Error, permissionservicev1_CreateApiRequest>,
+  options?: UseMutationOptions<unknown, Error, permissionservicev1_CreateApiRequest>,
 ) {
   return useMutation({
     mutationFn: (data) => apiClient.apiService.Create(data),
@@ -58,10 +58,10 @@ export function useCreateApi(
 }
 
 export function useUpdateApi(
-  options?: UseMutationOptions<{}, Error, { id: number; values: Record<string, any> }>,
+  options?: UseMutationOptions<unknown, Error, { id: number; values: Record<string, unknown> }>,
 ) {
   return useMutation({
-    mutationFn: ({ id, values }: { id: number; values: Record<string, any> }) =>
+    mutationFn: ({ id, values }: { id: number; values: Record<string, unknown> }) =>
       apiClient.apiService.Update({
         id,
         data: {
@@ -74,7 +74,7 @@ export function useUpdateApi(
 }
 
 export function useDeleteApi(
-  options?: UseMutationOptions<{}, Error, permissionservicev1_DeleteApiRequest>,
+  options?: UseMutationOptions<unknown, Error, permissionservicev1_DeleteApiRequest>,
 ) {
   return useMutation({
     mutationFn: (data) => apiClient.apiService.Delete(data),
@@ -82,7 +82,7 @@ export function useDeleteApi(
   });
 }
 
-export function useSyncApisApi(options?: UseMutationOptions<{}, Error>) {
+export function useSyncApisApi(options?: UseMutationOptions<unknown, Error>) {
   return useMutation({
     mutationFn: () => apiClient.apiService.SyncApis({}),
     ...options,

@@ -26,7 +26,8 @@ export function useMyTenantUsage(
 ) {
   return useQuery({
     queryKey: ['myTenantUsage'],
-    queryFn: () => apiClient.tenantQuotaService.GetMyTenantUsage({ tenantId: 0 } as any),
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any -- proto 可选字段 {tenantId:0} 非完整消息
+        queryFn: () => apiClient.tenantQuotaService.GetMyTenantUsage({ tenantId: 0 } as any),
     retry: 0,
     ...options,
   });
@@ -34,11 +35,12 @@ export function useMyTenantUsage(
 
 /** 创建配额 */
 export function useCreateTenantQuota(
-  options?: UseMutationOptions<void, Error, { values: Record<string, any> }>,
+  options?: UseMutationOptions<void, Error, { values: Record<string, unknown> }>,
 ) {
   return useMutation({
-    mutationFn: async ({ values }: { values: Record<string, any> }) => {
+    mutationFn: async ({ values }: { values: Record<string, unknown> }) => {
       await apiClient.tenantQuotaService.Create({
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any -- 表单/proto 边界
         data: values as any,
       });
     },
@@ -48,12 +50,13 @@ export function useCreateTenantQuota(
 
 /** 更新配额（配额值） */
 export function useUpdateTenantQuota(
-  options?: UseMutationOptions<void, Error, { id: number; values: Record<string, any> }>,
+  options?: UseMutationOptions<void, Error, { id: number; values: Record<string, unknown> }>,
 ) {
   return useMutation({
-    mutationFn: async ({ id, values }: { id: number; values: Record<string, any> }) => {
+    mutationFn: async ({ id, values }: { id: number; values: Record<string, unknown> }) => {
       await apiClient.tenantQuotaService.Update({
         id,
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any -- 表单/proto 边界
         data: values as any,
         updateMask: makeUpdateMask(Object.keys(values ?? {})),
       });

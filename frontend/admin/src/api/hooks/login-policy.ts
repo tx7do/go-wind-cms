@@ -61,10 +61,10 @@ export function useCreateLoginPolicy(
 }
 
 export function useUpdateLoginPolicy(
-  options?: UseMutationOptions<{}, Error, { id: number; values: Record<string, any> }>,
+  options?: UseMutationOptions<unknown, Error, { id: number; values: Record<string, unknown> }>,
 ) {
   return useMutation({
-    mutationFn: ({ id, values }: { id: number; values: Record<string, any> }) =>
+    mutationFn: ({ id, values }: { id: number; values: Record<string, unknown> }) =>
       apiClient.loginPolicyService.Update({
         id,
         data: { ...values },
@@ -75,7 +75,7 @@ export function useUpdateLoginPolicy(
 }
 
 export function useDeleteLoginPolicy(
-  options?: UseMutationOptions<{}, Error, authenticationservicev1_DeleteLoginPolicyRequest>,
+  options?: UseMutationOptions<unknown, Error, authenticationservicev1_DeleteLoginPolicyRequest>,
 ) {
   return useMutation({
     mutationFn: (req) => apiClient.loginPolicyService.Delete(req),

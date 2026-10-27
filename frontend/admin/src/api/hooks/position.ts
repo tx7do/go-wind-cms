@@ -49,7 +49,7 @@ export function useGetPosition(
 }
 
 export function useCreatePosition(
-  options?: UseMutationOptions<{}, Error, identityservicev1_CreatePositionRequest>,
+  options?: UseMutationOptions<unknown, Error, identityservicev1_CreatePositionRequest>,
 ) {
   return useMutation({
     mutationFn: (data) => apiClient.positionService.Create(data),
@@ -58,10 +58,10 @@ export function useCreatePosition(
 }
 
 export function useUpdatePosition(
-  options?: UseMutationOptions<{}, Error, { id: number; values: Record<string, any> }>,
+  options?: UseMutationOptions<unknown, Error, { id: number; values: Record<string, unknown> }>,
 ) {
   return useMutation({
-    mutationFn: ({ id, values }: { id: number; values: Record<string, any> }) =>
+    mutationFn: ({ id, values }: { id: number; values: Record<string, unknown> }) =>
       apiClient.positionService.Update({
         id,
         data: { ...values },
@@ -72,7 +72,7 @@ export function useUpdatePosition(
 }
 
 export function useDeletePosition(
-  options?: UseMutationOptions<{}, Error, identityservicev1_DeletePositionRequest>,
+  options?: UseMutationOptions<unknown, Error, identityservicev1_DeletePositionRequest>,
 ) {
   return useMutation({
     mutationFn: (req) => apiClient.positionService.Delete(req),

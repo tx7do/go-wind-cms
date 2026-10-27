@@ -55,7 +55,7 @@ export const verifyMfaMutation = queryClient.getMutationCache().build(queryClien
 // ------------------------------
 // 登出（Mutation）
 // ------------------------------
-export function useLogout(options?: UseMutationOptions<{}, Error, {}>) {
+export function useLogout(options?: UseMutationOptions<unknown, Error, unknown>) {
   return useMutation({
     mutationFn: () => apiClient.authenticationService.Logout({}),
     ...options,

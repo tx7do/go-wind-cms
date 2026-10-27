@@ -34,7 +34,7 @@ export async function fetchListContentModels(params: PaginationQuery) {
     queryKey: ['listContentModels', params],
     queryFn: () => apiClient.contentModelService.List(params.toRawParams()),
     retry: 0,
-  }) as Promise<{ items: contentservicev1_ContentModel[]; total?: any }>;
+  }) as Promise<{ items: contentservicev1_ContentModel[]; total?: number }>;
 }
 
 export async function fetchListFieldDefinitions(
@@ -48,7 +48,7 @@ export async function fetchListFieldDefinitions(
 }
 
 export function useCreateContentModel(
-  options?: UseMutationOptions<contentservicev1_ContentModel, Error, Record<string, any>>,
+  options?: UseMutationOptions<contentservicev1_ContentModel, Error, Record<string, unknown>>,
 ) {
   return useMutation({
     mutationFn: (values) =>
@@ -67,7 +67,7 @@ export function useUpdateContentModel(
   options?: UseMutationOptions<
     contentservicev1_ContentModel,
     Error,
-    { id: number; values: Record<string, any> }
+    { id: number; values: Record<string, unknown> }
   >,
 ) {
   return useMutation({
@@ -86,7 +86,7 @@ export function useUpdateContentModel(
 }
 
 export function useDeleteContentModel(
-  options?: UseMutationOptions<{}, Error, { id: number }>,
+  options?: UseMutationOptions<unknown, Error, { id: number }>,
 ) {
   return useMutation({
     mutationFn: (data) => apiClient.contentModelService.Delete(data),
@@ -107,7 +107,7 @@ const FIELD_TYPE_VALUES = [
   'FIELD_TYPE_RELATION',
 ] as const;
 
-export function fieldTypeOptions(t: (key: string, options?: Record<string, any>) => string) {
+export function fieldTypeOptions(t: (key: string, options?: Record<string, unknown>) => string) {
   return FIELD_TYPE_VALUES.map((value) => ({
     label: t(`fieldTypeMap.${value}`),
     value,

@@ -62,7 +62,7 @@ export function useUpdateSiteSetting(
   options?: UseMutationOptions<
     siteservicev1_SiteSetting,
     Error,
-    { id: number; values: Record<string, any>; maskKeys?: string[] }
+    { id: number; values: Record<string, unknown>; maskKeys?: string[] }
   >,
 ) {
   return useMutation({
@@ -72,7 +72,7 @@ export function useUpdateSiteSetting(
       maskKeys,
     }: {
       id: number;
-      values: Record<string, any>;
+      values: Record<string, unknown>;
       maskKeys?: string[];
     }) =>
       apiClient.siteSettingService.Update({
@@ -85,7 +85,7 @@ export function useUpdateSiteSetting(
 }
 
 export function useDeleteSiteSetting(
-  options?: UseMutationOptions<{}, Error, siteservicev1_DeleteSiteSettingRequest>,
+  options?: UseMutationOptions<unknown, Error, siteservicev1_DeleteSiteSettingRequest>,
 ) {
   return useMutation({
     mutationFn: (data) => apiClient.siteSettingService.Delete(data),

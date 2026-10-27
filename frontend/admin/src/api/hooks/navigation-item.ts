@@ -62,11 +62,11 @@ export function useUpdateNavigationItem(
   options?: UseMutationOptions<
     siteservicev1_NavigationItem,
     Error,
-    { id: number; values: Record<string, any> }
+    { id: number; values: Record<string, unknown> }
   >,
 ) {
   return useMutation({
-    mutationFn: ({ id, values }: { id: number; values: Record<string, any> }) =>
+    mutationFn: ({ id, values }: { id: number; values: Record<string, unknown> }) =>
       apiClient.navigationItemService.Update({
         id,
         data: { ...values } as unknown as siteservicev1_NavigationItem,
@@ -77,7 +77,7 @@ export function useUpdateNavigationItem(
 }
 
 export function useDeleteNavigationItem(
-  options?: UseMutationOptions<{}, Error, siteservicev1_DeleteNavigationItemRequest>,
+  options?: UseMutationOptions<unknown, Error, siteservicev1_DeleteNavigationItemRequest>,
 ) {
   return useMutation({
     mutationFn: (data) => apiClient.navigationItemService.Delete(data),

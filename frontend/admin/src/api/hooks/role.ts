@@ -49,7 +49,7 @@ export function useGetRole(
 }
 
 export function useCreateRole(
-  options?: UseMutationOptions<{}, Error, permissionservicev1_CreateRoleRequest>,
+  options?: UseMutationOptions<unknown, Error, permissionservicev1_CreateRoleRequest>,
 ) {
   return useMutation({
     mutationFn: (data) => apiClient.roleService.Create(data),
@@ -58,13 +58,15 @@ export function useCreateRole(
 }
 
 export function useUpdateRole(
-  options?: UseMutationOptions<{}, Error, { id: number; values: Record<string, any> }>,
+  options?: UseMutationOptions<unknown, Error, { id: number; values: Record<string, unknown> }>,
 ) {
   return useMutation({
-    mutationFn: ({ id, values }: { id: number; values: Record<string, any> }) =>
+    mutationFn: ({ id, values }: { id: number; values: Record<string, unknown> }) =>
       apiClient.roleService.Update({
         id,
-        data: { ...values } as any,
+        // 表单 Partial → proto 消息边界：字段集为真子集，运行时安全
+          // eslint-disable-next-line @typescript-eslint/no-explicit-any -- 表单/proto 边界
+          data: { ...values } as any,
         updateMask: makeUpdateMask(Object.keys(values ?? {})),
       }),
     ...options,
@@ -72,7 +74,7 @@ export function useUpdateRole(
 }
 
 export function useDeleteRole(
-  options?: UseMutationOptions<{}, Error, permissionservicev1_DeleteRoleRequest>,
+  options?: UseMutationOptions<unknown, Error, permissionservicev1_DeleteRoleRequest>,
 ) {
   return useMutation({
     mutationFn: (req) => apiClient.roleService.Delete(req),

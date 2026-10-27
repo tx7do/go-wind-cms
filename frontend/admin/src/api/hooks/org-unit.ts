@@ -49,7 +49,7 @@ export function useGetOrgUnit(
 }
 
 export function useCreateOrgUnit(
-  options?: UseMutationOptions<{}, Error, identityservicev1_CreateOrgUnitRequest>,
+  options?: UseMutationOptions<unknown, Error, identityservicev1_CreateOrgUnitRequest>,
 ) {
   return useMutation({
     mutationFn: (data) => apiClient.orgUnitService.Create(data),
@@ -58,13 +58,15 @@ export function useCreateOrgUnit(
 }
 
 export function useUpdateOrgUnit(
-  options?: UseMutationOptions<{}, Error, { id: number; values: Record<string, any> }>,
+  options?: UseMutationOptions<unknown, Error, { id: number; values: Record<string, unknown> }>,
 ) {
   return useMutation({
-    mutationFn: ({ id, values }: { id: number; values: Record<string, any> }) =>
+    mutationFn: ({ id, values }: { id: number; values: Record<string, unknown> }) =>
       apiClient.orgUnitService.Update({
         id,
-        data: { ...values } as any,
+        // 表单 Partial → proto 消息边界：字段集为真子集，运行时安全
+          // eslint-disable-next-line @typescript-eslint/no-explicit-any -- 表单/proto 边界
+          data: { ...values } as any,
         updateMask: makeUpdateMask(Object.keys(values ?? {})),
       }),
     ...options,
@@ -72,7 +74,7 @@ export function useUpdateOrgUnit(
 }
 
 export function useDeleteOrgUnit(
-  options?: UseMutationOptions<{}, Error, identityservicev1_DeleteOrgUnitRequest>,
+  options?: UseMutationOptions<unknown, Error, identityservicev1_DeleteOrgUnitRequest>,
 ) {
   return useMutation({
     mutationFn: (req) => apiClient.orgUnitService.Delete(req),

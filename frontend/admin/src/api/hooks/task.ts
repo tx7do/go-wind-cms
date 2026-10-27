@@ -51,7 +51,7 @@ export function useGetTask(
 }
 
 export function useCreateTask(
-  options?: UseMutationOptions<{}, Error, taskservicev1_CreateTaskRequest>,
+  options?: UseMutationOptions<unknown, Error, taskservicev1_CreateTaskRequest>,
 ) {
   return useMutation({
     mutationFn: (data) => apiClient.taskService.Create(data),
@@ -60,10 +60,10 @@ export function useCreateTask(
 }
 
 export function useUpdateTask(
-  options?: UseMutationOptions<{}, Error, { id: number; values: Record<string, any> }>,
+  options?: UseMutationOptions<unknown, Error, { id: number; values: Record<string, unknown> }>,
 ) {
   return useMutation({
-    mutationFn: ({ id, values }: { id: number; values: Record<string, any> }) =>
+    mutationFn: ({ id, values }: { id: number; values: Record<string, unknown> }) =>
       apiClient.taskService.Update({
         id,
         data: { ...values },
@@ -74,7 +74,7 @@ export function useUpdateTask(
 }
 
 export function useDeleteTask(
-  options?: UseMutationOptions<{}, Error, taskservicev1_DeleteTaskRequest>,
+  options?: UseMutationOptions<unknown, Error, taskservicev1_DeleteTaskRequest>,
 ) {
   return useMutation({
     mutationFn: (req) => apiClient.taskService.Delete(req),
@@ -97,7 +97,7 @@ export async function fetchListTaskTypeNames() {
 
 /** 控制单个任务 */
 export function useControlTask(
-  options?: UseMutationOptions<{}, Error, { typeName: string; controlType: string }>,
+  options?: UseMutationOptions<unknown, Error, { typeName: string; controlType: string }>,
 ) {
   return useMutation({
     mutationFn: ({ typeName, controlType }) =>
@@ -110,7 +110,7 @@ export function useControlTask(
 }
 
 /** 启动所有任务 */
-export function useStartAllTasks(options?: UseMutationOptions<{}, Error, void>) {
+export function useStartAllTasks(options?: UseMutationOptions<unknown, Error, void>) {
   return useMutation({
     mutationFn: () => apiClient.taskService.StartAllTask({}),
     ...options,
@@ -118,7 +118,7 @@ export function useStartAllTasks(options?: UseMutationOptions<{}, Error, void>) 
 }
 
 /** 停止所有任务 */
-export function useStopAllTasks(options?: UseMutationOptions<{}, Error, void>) {
+export function useStopAllTasks(options?: UseMutationOptions<unknown, Error, void>) {
   return useMutation({
     mutationFn: () => apiClient.taskService.StopAllTask({}),
     ...options,
@@ -126,7 +126,7 @@ export function useStopAllTasks(options?: UseMutationOptions<{}, Error, void>) {
 }
 
 /** 重启所有任务 */
-export function useRestartAllTasks(options?: UseMutationOptions<{}, Error, void>) {
+export function useRestartAllTasks(options?: UseMutationOptions<unknown, Error, void>) {
   return useMutation({
     mutationFn: () => apiClient.taskService.RestartAllTask({}),
     ...options,

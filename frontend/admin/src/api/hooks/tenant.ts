@@ -56,7 +56,7 @@ export function useGetTenant(
 // 创建租户
 // ==============================
 export function useCreateTenant(
-  options?: UseMutationOptions<{}, Error, identityservicev1_CreateTenantRequest>,
+  options?: UseMutationOptions<unknown, Error, identityservicev1_CreateTenantRequest>,
 ) {
   return useMutation({
     mutationFn: (data) => apiClient.tenantService.Create(data),
@@ -68,10 +68,10 @@ export function useCreateTenant(
 // 更新租户
 // ==============================
 export function useUpdateTenant(
-  options?: UseMutationOptions<{}, Error, { id: number; values: Record<string, any> }>,
+  options?: UseMutationOptions<unknown, Error, { id: number; values: Record<string, unknown> }>,
 ) {
   return useMutation({
-    mutationFn: ({ id, values }: { id: number; values: Record<string, any> }) =>
+    mutationFn: ({ id, values }: { id: number; values: Record<string, unknown> }) =>
       apiClient.tenantService.Update({
         id,
         data: {
@@ -87,7 +87,7 @@ export function useUpdateTenant(
 // 删除租户
 // ==============================
 export function useDeleteTenant(
-  options?: UseMutationOptions<{}, Error, identityservicev1_DeleteTenantRequest>,
+  options?: UseMutationOptions<unknown, Error, identityservicev1_DeleteTenantRequest>,
 ) {
   return useMutation({
     mutationFn: (req) => apiClient.tenantService.Delete(req),
@@ -95,17 +95,14 @@ export function useDeleteTenant(
   });
 }
 
-
 export function useCreateTenantWithAdminUser(
-  options?: UseMutationOptions<{}, Error, identityservicev1_CreateTenantWithAdminUserRequest>,
+  options?: UseMutationOptions<unknown, Error, identityservicev1_CreateTenantWithAdminUserRequest>,
 ) {
   return useMutation({
     mutationFn: (req) => apiClient.tenantService.CreateTenantWithAdminUser(req),
     ...options,
   });
 }
-
-
 
 /** 租户下拉选项（配额管理等表单用；全量拉取，租户量有限） */
 export function useFetchTenantOptions() {

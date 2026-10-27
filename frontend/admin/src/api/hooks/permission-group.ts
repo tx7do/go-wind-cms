@@ -49,7 +49,7 @@ export function useGetPermissionGroup(
 }
 
 export function useCreatePermissionGroup(
-  options?: UseMutationOptions<{}, Error, permissionservicev1_CreatePermissionGroupRequest>,
+  options?: UseMutationOptions<unknown, Error, permissionservicev1_CreatePermissionGroupRequest>,
 ) {
   return useMutation({
     mutationFn: (data) => apiClient.permissionGroupService.Create(data),
@@ -58,12 +58,13 @@ export function useCreatePermissionGroup(
 }
 
 export function useUpdatePermissionGroup(
-  options?: UseMutationOptions<{}, Error, { id: number; values: Record<string, any> }>,
+  options?: UseMutationOptions<unknown, Error, { id: number; values: Record<string, unknown> }>,
 ) {
   return useMutation({
-    mutationFn: ({ id, values }: { id: number; values: Record<string, any> }) =>
+    mutationFn: ({ id, values }: { id: number; values: Record<string, unknown> }) =>
       apiClient.permissionGroupService.Update({
         id,
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any -- 表单 Partial → proto 消息边界
         data: { ...values, children: [] } as any,
         updateMask: makeUpdateMask(Object.keys(values ?? {})),
       }),
@@ -72,7 +73,7 @@ export function useUpdatePermissionGroup(
 }
 
 export function useDeletePermissionGroup(
-  options?: UseMutationOptions<{}, Error, permissionservicev1_DeletePermissionGroupRequest>,
+  options?: UseMutationOptions<unknown, Error, permissionservicev1_DeletePermissionGroupRequest>,
 ) {
   return useMutation({
     mutationFn: (req) => apiClient.permissionGroupService.Delete(req),

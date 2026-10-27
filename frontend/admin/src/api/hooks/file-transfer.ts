@@ -23,7 +23,8 @@ async function downloadFile(
       preferPresignedUrl,
     });
 
-    const url = (resp as any).downloadUrl || '';
+    // 生成类型未导出 downloadUrl 联合分支字段：结构化收窄替代 as any
+    const url = (resp as { downloadUrl?: string }).downloadUrl || '';
     if (!url) return;
 
     console.log('Downloading file transfer...', url);
@@ -43,9 +44,12 @@ async function downloadFile(
     preferPresignedUrl,
   });
 
-  const contentType = (resp as any).contentType || 'application/octet-stream';
+  // 同上：结构化收窄（base64 file / url 二选一分支）
+  type DownloadPayload = { contentType?: string; file?: string; data?: string; payload?: string };
+  const dl = resp as unknown as DownloadPayload;
+  const contentType = dl.contentType || 'application/octet-stream';
   const payload: ArrayBuffer | Blob | string | Uint8Array | undefined =
-    (resp as any).file ?? (resp as any).data ?? (resp as any).payload ?? resp;
+    dl.file ?? dl.data ?? dl.payload;
 
   function normalizeBase64(s: string): string {
     let str = s.replaceAll(/\s+/g, '');
@@ -54,7 +58,7 @@ async function downloadFile(
     return str;
   }
 
-  function toBlob(data: any, type = contentType): Blob {
+  function toBlob(data: unknown, type = contentType): Blob {
     if (!data) return new Blob([], { type });
     if (data instanceof Blob) return data;
     if (data instanceof ArrayBuffer) return new Blob([data], { type });
@@ -62,7 +66,8 @@ async function downloadFile(
 
     if (typeof data === 'string') {
       // 支持 data URI 或纯 base64（处理 URL-safe base64）
-      const maybeBase64 = data.includes('base64,') ? data.split('base64,')[1] : data;
+      const str = data as string;
+    const maybeBase64 = str.includes('base64,') ? str.split('base64,')[1] : str;
       const base64 = normalizeBase64(maybeBase64 ?? '');
 
       let binary: string;
@@ -82,8 +87,8 @@ async function downloadFile(
       return new Blob([arr], { type });
     }
 
-    // fallback
-    return new Blob([data], { type });
+    // fallback：残余形态按 JSON 文本收编
+    return new Blob([JSON.stringify(data)], { type });
   }
 
   const blob = toBlob(payload, contentType);
@@ -105,19 +110,21 @@ async function downloadFile(
  * @param method 上传方法，支持 'post' 和 'put'
  * @param onUploadProgress 上传进度回调函数
  */
+// eslint-disable-next-line max-params -- 上传 API 固有参数面（bucket/目录/文件/方法/进度）
 export async function uploadFile(
   bucketName: string,
   fileDirectory: string,
   fileData: File,
   method: 'post' | 'put' = 'post',
-  onUploadProgress?: (progressEvent: any) => void,
+  uploadOptions: { onUploadProgress?: (progressEvent: { loaded?: number; total?: number }) => void } = {},
 ) {
+  const { onUploadProgress } = uploadOptions;
   const storageObject = JSON.stringify({
     bucketName,
     fileDirectory,
   });
 
-  return await RequestClient.getInstance().upload(
+  return RequestClient.getInstance().upload(
     'admin/v1/file/upload',
     {
       file: fileData,
@@ -165,13 +172,13 @@ export function useUploadFile(
       fileDirectory: string;
       file: File;
       method?: 'post' | 'put';
-      onUploadProgress?: (progress: any) => void;
+      uploadOptions?: { onUploadProgress?: (progress: { loaded?: number; total?: number }) => void };
     }
   >,
 ) {
   return useMutation({
-    mutationFn: async ({ bucketName, fileDirectory, file, method = 'post', onUploadProgress }) => {
-      await uploadFile(bucketName, fileDirectory, file, method, onUploadProgress);
+    mutationFn: async ({ bucketName, fileDirectory, file, method = 'post', uploadOptions }) => {
+      await uploadFile(bucketName, fileDirectory, file, method, uploadOptions);
     },
     ...options,
   });

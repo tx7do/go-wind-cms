@@ -41,13 +41,15 @@ export async function fetchUserProfile() {
 }
 
 export function useUpdateUserProfile(
-  options?: UseMutationOptions<{}, Error, { id: number; values: Record<string, any> }>,
+  options?: UseMutationOptions<unknown, Error, { id: number; values: Record<string, unknown> }>,
 ) {
   return useMutation({
-    mutationFn: ({ id, values }: { id: number; values: Record<string, any> }) =>
+    mutationFn: ({ id, values }: { id: number; values: Record<string, unknown> }) =>
       apiClient.userProfileService.UpdateUser({
         id,
-        data: { ...values } as any,
+        // 表单 Partial → proto 消息边界：字段集为真子集，运行时安全
+          // eslint-disable-next-line @typescript-eslint/no-explicit-any -- 表单/proto 边界
+          data: { ...values } as any,
         updateMask: makeUpdateMask(Object.keys(values ?? {})),
       }),
     ...options,
@@ -55,7 +57,7 @@ export function useUpdateUserProfile(
 }
 
 export function useChangePassword(
-  options?: UseMutationOptions<{}, Error, identityservicev1_ChangePasswordRequest>,
+  options?: UseMutationOptions<unknown, Error, identityservicev1_ChangePasswordRequest>,
 ) {
   return useMutation({
     // 后端 NeedDecrypt 要求 AES 密文传输（与登录同规），明文会被当密文解密导致校验必败
@@ -69,7 +71,7 @@ export function useChangePassword(
 }
 
 export function useBindContact(
-  options?: UseMutationOptions<{}, Error, identityservicev1_BindContactRequest>,
+  options?: UseMutationOptions<unknown, Error, identityservicev1_BindContactRequest>,
 ) {
   return useMutation({
     mutationFn: (data) => apiClient.userProfileService.BindContact(data),
@@ -78,7 +80,7 @@ export function useBindContact(
 }
 
 export function useVerifyContact(
-  options?: UseMutationOptions<{}, Error, identityservicev1_VerifyContactRequest>,
+  options?: UseMutationOptions<unknown, Error, identityservicev1_VerifyContactRequest>,
 ) {
   return useMutation({
     mutationFn: (data) => apiClient.userProfileService.VerifyContact(data),

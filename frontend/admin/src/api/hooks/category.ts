@@ -49,7 +49,7 @@ export function useGetCategory(
 }
 
 export function useCreateCategory(
-  options?: UseMutationOptions<contentservicev1_Category, Error, { data: Record<string, any> }>,
+  options?: UseMutationOptions<contentservicev1_Category, Error, { data: Record<string, unknown> }>,
 ) {
   return useMutation({
     mutationFn: (data) =>
@@ -62,7 +62,7 @@ export function useUpdateCategory(
   options?: UseMutationOptions<
     contentservicev1_Category,
     Error,
-    { id: number; data: Record<string, any>; excludeMaskKeys?: string[] }
+    { id: number; data: Record<string, unknown>; excludeMaskKeys?: string[] }
   >,
 ) {
   return useMutation({
@@ -79,7 +79,7 @@ export function useUpdateCategory(
 }
 
 export function useDeleteCategory(
-  options?: UseMutationOptions<{}, Error, contentservicev1_DeleteCategoryRequest>,
+  options?: UseMutationOptions<unknown, Error, contentservicev1_DeleteCategoryRequest>,
 ) {
   return useMutation({
     mutationFn: (data) => apiClient.categoryService.Delete(data),
@@ -103,13 +103,19 @@ export async function fetchFlattenedCategoryOptions(
   );
 
   const result: { label: string; value: number }[] = [];
-  const walk = (items: any[] | undefined, prefix: string) => {
+  interface CategoryTreeNode {
+    id?: number;
+    name?: string;
+    translations?: { languageCode?: string; name?: string }[];
+    children?: CategoryTreeNode[];
+  }
+  const walk = (items: CategoryTreeNode[] | undefined, prefix: string) => {
     items?.forEach((item) => {
       const translation =
-        item.translations?.find((tr: any) => tr.languageCode === lang) ||
+        item.translations?.find((tr) => tr.languageCode === lang) ||
         item.translations?.[0];
       if (translation?.name) {
-        result.push({ label: `${prefix}${translation.name}`, value: item.id });
+        result.push({ label: `${prefix}${translation.name}`, value: item.id ?? 0 });
         if (item.children?.length) {
           walk(item.children, `${prefix}${translation.name} / `);
         }

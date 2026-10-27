@@ -8,6 +8,8 @@
 import { type ClientTransport, createApiClient } from "@/api/generated/admin/service/v1";
 import { consumeCaptchaHeaders, requestApi } from "@/core/transport/rest";
 
+// ClientTransport 接口契约固定参数位（含保留位 _meta），实现按需取用。
+/* eslint-disable @typescript-eslint/no-unused-vars, max-params -- 接口契约 */
 const transport: ClientTransport = {
   unary(path, method, body, _meta) {
     // 消费登录前由 auth store 设置的验证码 Header（一次性，取后即清）
@@ -22,5 +24,6 @@ const transport: ClientTransport = {
     throw new Error(`duplexStream not supported via ApiClient: ${path}`);
   },
 };
+/* eslint-enable @typescript-eslint/no-unused-vars, max-params */
 
 export const apiClient = createApiClient(transport);

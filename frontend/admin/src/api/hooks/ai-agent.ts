@@ -56,7 +56,7 @@ export function useCreateAiAgentApp(
 }
 
 export function useUpdateAiAgentApp(
-  options?: UseMutationOptions<{}, Error, aiservicev1_UpdateAiAgentAppRequest>,
+  options?: UseMutationOptions<unknown, Error, aiservicev1_UpdateAiAgentAppRequest>,
 ) {
   const queryClientRef = useQueryClient();
   return useMutation({
@@ -67,7 +67,7 @@ export function useUpdateAiAgentApp(
 }
 
 export function useDeleteAiAgentApp(
-  options?: UseMutationOptions<{}, Error, aiservicev1_DeleteAiAgentAppRequest>,
+  options?: UseMutationOptions<unknown, Error, aiservicev1_DeleteAiAgentAppRequest>,
 ) {
   const queryClientRef = useQueryClient();
   return useMutation({

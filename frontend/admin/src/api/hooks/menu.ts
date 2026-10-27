@@ -49,7 +49,7 @@ export function useGetMenu(
 }
 
 export function useCreateMenu(
-  options?: UseMutationOptions<{}, Error, permissionservicev1_CreateMenuRequest>,
+  options?: UseMutationOptions<unknown, Error, permissionservicev1_CreateMenuRequest>,
 ) {
   return useMutation({
     mutationFn: (data) => apiClient.menuService.Create(data),
@@ -58,13 +58,15 @@ export function useCreateMenu(
 }
 
 export function useUpdateMenu(
-  options?: UseMutationOptions<{}, Error, { id: number; values: Record<string, any> }>,
+  options?: UseMutationOptions<unknown, Error, { id: number; values: Record<string, unknown> }>,
 ) {
   return useMutation({
-    mutationFn: ({ id, values }: { id: number; values: Record<string, any> }) =>
+    mutationFn: ({ id, values }: { id: number; values: Record<string, unknown> }) =>
       apiClient.menuService.Update({
         id,
-        data: { ...values } as any,
+        // 表单 Partial → proto 消息边界：字段集为真子集，运行时安全
+          // eslint-disable-next-line @typescript-eslint/no-explicit-any -- 表单/proto 边界
+          data: { ...values } as any,
         updateMask: makeUpdateMask(Object.keys(values ?? {})),
       }),
     ...options,
@@ -72,7 +74,7 @@ export function useUpdateMenu(
 }
 
 export function useDeleteMenu(
-  options?: UseMutationOptions<{}, Error, permissionservicev1_DeleteMenuRequest>,
+  options?: UseMutationOptions<unknown, Error, permissionservicev1_DeleteMenuRequest>,
 ) {
   return useMutation({
     mutationFn: (data) => apiClient.menuService.Delete(data),

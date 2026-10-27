@@ -73,7 +73,7 @@ export function useListMediaAssetReferences(
     queryKey: ['listMediaAssetReferences', mediaAssetId],
     queryFn: () =>
       apiClient.mediaAssetService.ListMediaAssetReferences({
-        mediaAssetId: mediaAssetId!,
+        mediaAssetId: mediaAssetId ?? 0,
       }),
     enabled: !!mediaAssetId,
     ...options,
@@ -104,7 +104,7 @@ export function useUpdateMediaAsset(
   options?: UseMutationOptions<
     mediaservicev1_MediaAsset,
     Error,
-    { id: number; values: Record<string, any>; maskKeys?: string[] }
+    { id: number; values: Record<string, unknown>; maskKeys?: string[] }
   >,
 ) {
   return useMutation({
@@ -119,7 +119,7 @@ export function useUpdateMediaAsset(
 }
 
 export function useDeleteMediaAsset(
-  options?: UseMutationOptions<{}, Error, mediaservicev1_DeleteMediaAssetRequest>,
+  options?: UseMutationOptions<unknown, Error, mediaservicev1_DeleteMediaAssetRequest>,
 ) {
   return useMutation({
     mutationFn: (data) => apiClient.mediaAssetService.Delete(data),
@@ -142,9 +142,9 @@ export async function uploadMediaAsset(
     title?: string;
   },
   fileData: File,
-  onUploadProgress?: (progressEvent: any) => void,
+  onUploadProgress?: (progressEvent: { loaded?: number; total?: number }) => void,
 ) {
-  return await RequestClient.getInstance().upload(
+  return RequestClient.getInstance().upload(
     'admin/v1/file/asset/upload',
     {
       file: fileData,

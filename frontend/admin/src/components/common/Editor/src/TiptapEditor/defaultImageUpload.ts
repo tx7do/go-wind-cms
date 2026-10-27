@@ -14,10 +14,12 @@ export async function defaultImageUpload(
     '',
     file,
     'post',
-    (progressEvent: { loaded?: number; total?: number }) => {
-      if (!onProgress) return;
-      const total = progressEvent?.total ?? 0;
-      onProgress(total > 0 ? Math.floor(((progressEvent.loaded ?? 0) / total) * 100) : -1);
+    {
+      onUploadProgress: (progressEvent: { loaded?: number; total?: number }) => {
+        if (!onProgress) return;
+        const total = progressEvent?.total ?? 0;
+        onProgress(total > 0 ? Math.floor(((progressEvent.loaded ?? 0) / total) * 100) : -1);
+      },
     },
   )) as any;
   return resp?.publicUrl || '';

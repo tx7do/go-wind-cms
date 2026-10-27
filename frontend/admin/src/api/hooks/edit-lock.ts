@@ -31,9 +31,9 @@ export function useEditLock(targetType: 'post' | 'page', targetId?: number | nul
   });
 
   const targetRef = useRef<{ targetType: string; targetId: number } | undefined>(undefined);
-  targetRef.current = targetId ? { targetType, targetId } : undefined;
 
   useEffect(() => {
+    targetRef.current = targetId ? { targetType, targetId } : undefined;
     if (!targetRef.current) return undefined;
     let disposed = false;
 

@@ -14,6 +14,7 @@ export function useGenerateContent() {
   return useMutation({
     mutationFn: (req: GenerateContentParams) =>
       apiClient.aiContentService.GenerateContent({
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any -- 表单 Partial → proto 消息边界
         scene: req.scene as any,
         topic: req.topic,
         context: req.context,

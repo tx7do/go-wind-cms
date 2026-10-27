@@ -87,7 +87,7 @@ export async function fetchUser(params: identityservicev1_GetUserRequest) {
 // 创建用户
 // ==============================
 export function useCreateUser(
-  options?: UseMutationOptions<{}, Error, { data: identityservicev1_User; password?: string }>,
+  options?: UseMutationOptions<unknown, Error, { data: identityservicev1_User; password?: string }>,
 ) {
   return useMutation({
     mutationFn: ({ data, password }) => apiClient.userService.Create({ data, password }),
@@ -98,7 +98,7 @@ export function useCreateUser(
 // ==============================
 // 删除用户
 // ==============================
-export function useDeleteUser(options?: UseMutationOptions<{}, Error, number>) {
+export function useDeleteUser(options?: UseMutationOptions<unknown, Error, number>) {
   return useMutation({
     mutationFn: (id) => apiClient.userService.Delete({ id }),
     ...options,
@@ -109,15 +109,16 @@ export function useDeleteUser(options?: UseMutationOptions<{}, Error, number>) {
 // 更新用户
 // ==============================
 export function useUpdateUser(
-  options?: UseMutationOptions<{}, Error, { id: number; values: Record<string, any> }>,
+  options?: UseMutationOptions<unknown, Error, { id: number; values: Record<string, unknown> }>,
 ) {
   return useMutation({
     // proto UpdateUserRequest.password 是顶层字段且要求 AES 密文：
     // 留在 data/updateMask 里后端读不到，会静默跳过重置密码（200 但密码未变）
-    mutationFn: ({ id, values }: { id: number; values: Record<string, any> }) => {
+    mutationFn: ({ id, values }: { id: number; values: Record<string, unknown> }) => {
       const { password, ...data } = values ?? {};
       return apiClient.userService.Update({
         id,
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any -- 表单 Partial → proto 消息边界
         data: data as any,
         password: password ? encryptPassword(String(password)) : undefined,
         updateMask: makeUpdateMask(Object.keys(data)),
@@ -147,7 +148,7 @@ export function useUserExists(
 // 修改用户密码（管理员）
 // ==============================
 export function useEditUserPassword(
-  options?: UseMutationOptions<{}, Error, identityservicev1_EditUserPasswordRequest>,
+  options?: UseMutationOptions<unknown, Error, identityservicev1_EditUserPasswordRequest>,
 ) {
   return useMutation({
     // 后端 NeedDecrypt 要求 AES 密文传输（与登录同规），明文会被当密文解密导致校验必败

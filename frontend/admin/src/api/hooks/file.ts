@@ -50,7 +50,7 @@ export function useGetFile(
 }
 
 export function useCreateFile(
-  options?: UseMutationOptions<{}, Error, storageservicev1_CreateFileRequest>,
+  options?: UseMutationOptions<unknown, Error, storageservicev1_CreateFileRequest>,
 ) {
   return useMutation({
     mutationFn: (data) => apiClient.fileService.Create(data),
@@ -59,10 +59,10 @@ export function useCreateFile(
 }
 
 export function useUpdateFile(
-  options?: UseMutationOptions<{}, Error, { id: number; values: Record<string, any> }>,
+  options?: UseMutationOptions<unknown, Error, { id: number; values: Record<string, unknown> }>,
 ) {
   return useMutation({
-    mutationFn: ({ id, values }: { id: number; values: Record<string, any> }) =>
+    mutationFn: ({ id, values }: { id: number; values: Record<string, unknown> }) =>
       apiClient.fileService.Update({
         id,
         data: { ...values },
@@ -73,7 +73,7 @@ export function useUpdateFile(
 }
 
 export function useDeleteFile(
-  options?: UseMutationOptions<{}, Error, storageservicev1_DeleteFileRequest>,
+  options?: UseMutationOptions<unknown, Error, storageservicev1_DeleteFileRequest>,
 ) {
   return useMutation({
     mutationFn: (data) => apiClient.fileService.Delete(data),

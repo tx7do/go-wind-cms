@@ -62,11 +62,11 @@ export function useUpdateSite(
   options?: UseMutationOptions<
     siteservicev1_Site,
     Error,
-    { id: number; values: Record<string, any> }
+    { id: number; values: Record<string, unknown> }
   >,
 ) {
   return useMutation({
-    mutationFn: ({ id, values }: { id: number; values: Record<string, any> }) =>
+    mutationFn: ({ id, values }: { id: number; values: Record<string, unknown> }) =>
       apiClient.siteService.Update({
         id,
         data: { ...values } as unknown as siteservicev1_Site,
@@ -77,7 +77,7 @@ export function useUpdateSite(
 }
 
 export function useDeleteSite(
-  options?: UseMutationOptions<{}, Error, siteservicev1_DeleteSiteRequest>,
+  options?: UseMutationOptions<unknown, Error, siteservicev1_DeleteSiteRequest>,
 ) {
   return useMutation({
     mutationFn: (data) => apiClient.siteService.Delete(data),

@@ -36,13 +36,15 @@ export async function fetchListAiConversations(params: PaginationQuery) {
 
 // useUpdateAiConversation — 改标题
 export function useUpdateAiConversation(
-  options?: UseMutationOptions<{}, Error, { id: number; values: Record<string, any> }>,
+  options?: UseMutationOptions<unknown, Error, { id: number; values: Record<string, unknown> }>,
 ) {
   return useMutation({
-    mutationFn: ({ id, values }: { id: number; values: Record<string, any> }) =>
+    mutationFn: ({ id, values }: { id: number; values: Record<string, unknown> }) =>
       apiClient.aiConversationService.Update({
         id,
-        data: { ...values } as any,
+        // 表单 Partial → proto 消息边界：字段集为真子集，运行时安全
+          // eslint-disable-next-line @typescript-eslint/no-explicit-any -- 表单/proto 边界
+          data: { ...values } as any,
         updateMask: makeUpdateMask(Object.keys(values ?? {})),
       } as aiservicev1_UpdateAiConversationRequest),
     ...options,
@@ -51,7 +53,7 @@ export function useUpdateAiConversation(
 
 // useDeleteAiConversation — 后端级联删除会话内全部消息
 export function useDeleteAiConversation(
-  options?: UseMutationOptions<{}, Error, { id: number }>,
+  options?: UseMutationOptions<unknown, Error, { id: number }>,
 ) {
   return useMutation({
     mutationFn: ({ id }: { id: number }) => apiClient.aiConversationService.Delete({ id }),

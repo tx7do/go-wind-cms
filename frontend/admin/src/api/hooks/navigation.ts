@@ -37,7 +37,6 @@ export async function fetchListNavigations(params: PaginationQuery) {
   });
 }
 
-
 export function useCreateNavigation(
   options?: UseMutationOptions<siteservicev1_Navigation, Error, siteservicev1_CreateNavigationRequest>,
 ) {
@@ -51,11 +50,11 @@ export function useUpdateNavigation(
   options?: UseMutationOptions<
     siteservicev1_Navigation,
     Error,
-    { id: number; values: Record<string, any> }
+    { id: number; values: Record<string, unknown> }
   >,
 ) {
   return useMutation({
-    mutationFn: ({ id, values }: { id: number; values: Record<string, any> }) =>
+    mutationFn: ({ id, values }: { id: number; values: Record<string, unknown> }) =>
       apiClient.navigationService.Update({
         id,
         data: { ...values } as unknown as siteservicev1_Navigation,
@@ -66,7 +65,7 @@ export function useUpdateNavigation(
 }
 
 export function useDeleteNavigation(
-  options?: UseMutationOptions<{}, Error, siteservicev1_DeleteNavigationRequest>,
+  options?: UseMutationOptions<unknown, Error, siteservicev1_DeleteNavigationRequest>,
 ) {
   return useMutation({
     mutationFn: (data) => apiClient.navigationService.Delete(data),

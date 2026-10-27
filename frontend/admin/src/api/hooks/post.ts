@@ -49,7 +49,7 @@ export function useGetPost(
 }
 
 export function useCreatePost(
-  options?: UseMutationOptions<contentservicev1_Post, Error, Record<string, any>>,
+  options?: UseMutationOptions<contentservicev1_Post, Error, Record<string, unknown>>,
 ) {
   return useMutation({
     mutationFn: (values) =>
@@ -80,7 +80,7 @@ export function useUpdatePost(
   options?: UseMutationOptions<
     contentservicev1_Post,
     Error,
-    { id: number; data: Record<string, any>; maskKeys?: readonly string[] }
+    { id: number; data: Record<string, unknown>; maskKeys?: readonly string[] }
   >,
 ) {
   return useMutation({
@@ -95,7 +95,7 @@ export function useUpdatePost(
 }
 
 export function useDeletePost(
-  options?: UseMutationOptions<{}, Error, contentservicev1_DeletePostRequest>,
+  options?: UseMutationOptions<unknown, Error, contentservicev1_DeletePostRequest>,
 ) {
   return useMutation({
     mutationFn: (data) => apiClient.postService.Delete(data),

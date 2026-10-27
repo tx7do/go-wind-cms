@@ -50,7 +50,7 @@ export function useGetLanguage(
 }
 
 export function useCreateLanguage(
-  options?: UseMutationOptions<{}, Error, dictservicev1_CreateLanguageRequest>,
+  options?: UseMutationOptions<unknown, Error, dictservicev1_CreateLanguageRequest>,
 ) {
   return useMutation({
     mutationFn: (data) => apiClient.languageService.Create(data),
@@ -59,10 +59,10 @@ export function useCreateLanguage(
 }
 
 export function useUpdateLanguage(
-  options?: UseMutationOptions<{}, Error, { id: number; values: Record<string, any> }>,
+  options?: UseMutationOptions<unknown, Error, { id: number; values: Record<string, unknown> }>,
 ) {
   return useMutation({
-    mutationFn: ({ id, values }: { id: number; values: Record<string, any> }) =>
+    mutationFn: ({ id, values }: { id: number; values: Record<string, unknown> }) =>
       apiClient.languageService.Update({
         id,
         data: { ...values },
@@ -73,7 +73,7 @@ export function useUpdateLanguage(
 }
 
 export function useDeleteLanguage(
-  options?: UseMutationOptions<{}, Error, dictservicev1_DeleteLanguageRequest>,
+  options?: UseMutationOptions<unknown, Error, dictservicev1_DeleteLanguageRequest>,
 ) {
   return useMutation({
     mutationFn: (data) => apiClient.languageService.Delete(data),
@@ -82,7 +82,7 @@ export function useDeleteLanguage(
 }
 
 export function useBatchCreateLanguages(
-  options?: UseMutationOptions<{}, Error, dictservicev1_BatchCreateLanguagesRequest>,
+  options?: UseMutationOptions<unknown, Error, dictservicev1_BatchCreateLanguagesRequest>,
 ) {
   return useMutation({
     mutationFn: (data) => apiClient.languageService.BatchCreate(data),

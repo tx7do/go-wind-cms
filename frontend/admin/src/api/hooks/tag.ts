@@ -63,7 +63,7 @@ export function useUpdateTag(
   options?: UseMutationOptions<
     contentservicev1_Tag,
     Error,
-    { id: number; data: Record<string, any>; excludeMaskKeys?: string[] }
+    { id: number; data: Record<string, unknown>; excludeMaskKeys?: string[] }
   >,
 ) {
   return useMutation({
@@ -80,7 +80,7 @@ export function useUpdateTag(
 }
 
 export function useDeleteTag(
-  options?: UseMutationOptions<{}, Error, contentservicev1_DeleteTagRequest>,
+  options?: UseMutationOptions<unknown, Error, contentservicev1_DeleteTagRequest>,
 ) {
   return useMutation({
     mutationFn: (data) => apiClient.tagService.Delete(data),

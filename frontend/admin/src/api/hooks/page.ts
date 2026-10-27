@@ -52,7 +52,7 @@ export function useGetPage(
 }
 
 export function useCreatePage(
-  options?: UseMutationOptions<contentservicev1_Page, Error, Record<string, any>>,
+  options?: UseMutationOptions<contentservicev1_Page, Error, Record<string, unknown>>,
 ) {
   return useMutation({
     mutationFn: (values) =>
@@ -65,7 +65,7 @@ export function useUpdatePage(
   options?: UseMutationOptions<
     contentservicev1_Page,
     Error,
-    { id: number; data: Record<string, any>; excludeMaskKeys?: string[] }
+    { id: number; data: Record<string, unknown>; excludeMaskKeys?: string[] }
   >,
 ) {
   return useMutation({
@@ -109,7 +109,7 @@ export function useRejectPageReview(
 }
 
 export function useDeletePage(
-  options?: UseMutationOptions<{}, Error, contentservicev1_DeletePageRequest>,
+  options?: UseMutationOptions<unknown, Error, contentservicev1_DeletePageRequest>,
 ) {
   return useMutation({
     mutationFn: (data) => apiClient.pageService.Delete(data),

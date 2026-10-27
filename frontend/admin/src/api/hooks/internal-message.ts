@@ -62,10 +62,10 @@ export function useGetInternalMessage(
 }
 
 export function useUpdateInternalMessage(
-  options?: UseMutationOptions<{}, Error, { id: number; values: Record<string, any> }>,
+  options?: UseMutationOptions<unknown, Error, { id: number; values: Record<string, unknown> }>,
 ) {
   return useMutation({
-    mutationFn: ({ id, values }: { id: number; values: Record<string, any> }) =>
+    mutationFn: ({ id, values }: { id: number; values: Record<string, unknown> }) =>
       apiClient.internalMessageService.UpdateMessage({
         id,
         data: { ...values } as unknown as internal_messageservicev1_InternalMessageCategory,
@@ -76,7 +76,7 @@ export function useUpdateInternalMessage(
 }
 
 export function useDeleteInternalMessage(
-  options?: UseMutationOptions<{}, Error, internal_messageservicev1_DeleteInternalMessageRequest>,
+  options?: UseMutationOptions<unknown, Error, internal_messageservicev1_DeleteInternalMessageRequest>,
 ) {
   return useMutation({
     mutationFn: (data) => apiClient.internalMessageService.DeleteMessage(data),
@@ -98,7 +98,7 @@ export function useSendMessage(
 }
 
 export function useRevokeMessage(
-  options?: UseMutationOptions<{}, Error, internal_messageservicev1_RevokeMessageRequest>,
+  options?: UseMutationOptions<unknown, Error, internal_messageservicev1_RevokeMessageRequest>,
 ) {
   return useMutation({
     mutationFn: (data) => apiClient.internalMessageService.RevokeMessage(data),
@@ -141,7 +141,7 @@ export function useGetMessageCategory(
 
 export function useCreateMessageCategory(
   options?: UseMutationOptions<
-    {},
+    unknown,
     Error,
     internal_messageservicev1_CreateInternalMessageCategoryRequest
   >,
@@ -154,13 +154,13 @@ export function useCreateMessageCategory(
 
 export function useUpdateMessageCategory(
   options?: UseMutationOptions<
-    {},
+    unknown,
     Error,
-    { id: number; values: Record<string, any> }
+    { id: number; values: Record<string, unknown> }
   >,
 ) {
   return useMutation({
-    mutationFn: ({ id, values }: { id: number; values: Record<string, any> }) =>
+    mutationFn: ({ id, values }: { id: number; values: Record<string, unknown> }) =>
       apiClient.internalMessageCategoryService.Update({
         id,
         data: { ...values } as unknown as internal_messageservicev1_InternalMessageCategory,
@@ -172,7 +172,7 @@ export function useUpdateMessageCategory(
 
 export function useDeleteMessageCategory(
   options?: UseMutationOptions<
-    {},
+    unknown,
     Error,
     internal_messageservicev1_DeleteInternalMessageCategoryRequest
   >,
@@ -207,7 +207,7 @@ export async function fetchListUserInbox(params: PaginationQuery) {
 
 export function useDeleteNotificationFromInbox(
   options?: UseMutationOptions<
-    {},
+    unknown,
     Error,
     internal_messageservicev1_DeleteNotificationFromInboxRequest
   >,
@@ -219,7 +219,7 @@ export function useDeleteNotificationFromInbox(
 }
 
 export function useMarkNotificationAsRead(
-  options?: UseMutationOptions<{}, Error, internal_messageservicev1_MarkNotificationAsReadRequest>,
+  options?: UseMutationOptions<unknown, Error, internal_messageservicev1_MarkNotificationAsReadRequest>,
 ) {
   return useMutation({
     mutationFn: (data) => apiClient.internalMessageRecipientService.MarkNotificationAsRead(data),

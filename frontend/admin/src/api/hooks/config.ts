@@ -49,7 +49,7 @@ export function useGetConfig(
 }
 
 export function useCreateConfig(
-  options?: UseMutationOptions<{}, Error, configservicev1_CreateConfigRequest>,
+  options?: UseMutationOptions<unknown, Error, configservicev1_CreateConfigRequest>,
 ) {
   return useMutation({
     mutationFn: (data) => apiClient.configService.Create(data),
@@ -58,13 +58,15 @@ export function useCreateConfig(
 }
 
 export function useUpdateConfig(
-  options?: UseMutationOptions<{}, Error, { id: number; values: Record<string, any> }>,
+  options?: UseMutationOptions<unknown, Error, { id: number; values: Record<string, unknown> }>,
 ) {
   return useMutation({
-    mutationFn: ({ id, values }: { id: number; values: Record<string, any> }) =>
+    mutationFn: ({ id, values }: { id: number; values: Record<string, unknown> }) =>
       apiClient.configService.Update({
         id,
-        data: { ...values } as any,
+        // 表单 Partial → proto 消息边界：字段集为真子集，运行时安全
+          // eslint-disable-next-line @typescript-eslint/no-explicit-any -- 表单/proto 边界
+          data: { ...values } as any,
         updateMask: makeUpdateMask(Object.keys(values ?? {})),
       }),
     ...options,
@@ -72,7 +74,7 @@ export function useUpdateConfig(
 }
 
 export function useDeleteConfig(
-  options?: UseMutationOptions<{}, Error, configservicev1_DeleteConfigRequest>,
+  options?: UseMutationOptions<unknown, Error, configservicev1_DeleteConfigRequest>,
 ) {
   return useMutation({
     mutationFn: (req) => apiClient.configService.Delete(req),

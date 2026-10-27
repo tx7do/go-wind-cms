@@ -434,12 +434,14 @@ const PageEditPage = () => {
         '',
         file,
         'post',
-        (progressEvent: { loaded?: number; total?: number }) => {
-          if (!onProgress) return;
-          const total = progressEvent?.total ?? 0;
-          onProgress(total > 0 ? Math.floor(((progressEvent.loaded ?? 0) / total) * 100) : -1);
+        {
+          onUploadProgress: (progressEvent: { loaded?: number; total?: number }) => {
+            if (!onProgress) return;
+            const total = progressEvent?.total ?? 0;
+            onProgress(total > 0 ? Math.floor(((progressEvent.loaded ?? 0) / total) * 100) : -1);
+          },
         },
-      )) as any;
+      )) as { publicUrl?: string };
       return resp?.publicUrl || '';
     } catch (error) {
       console.error('Image upload failed:', error);
