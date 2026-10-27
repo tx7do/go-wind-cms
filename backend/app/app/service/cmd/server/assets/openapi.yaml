@@ -2083,6 +2083,12 @@ components:
                 tenant_code:
                     type: string
                     description: 租户编号，留空表示平台登录（平台超级管理员）；非空时按该编号解析对应租户
+                mfa_operation_id:
+                    type: string
+                    description: MFA 挑战凭据（一次性、短时效；密码验证通过但用户启用两步验证时由服务端签发）
+                totp_code:
+                    type: string
+                    description: TOTP 动态验证码（6 位数字）
             description: 用户登录 - 请求
         authentication.service.v1.LoginResponse:
             type: object
@@ -2116,6 +2122,9 @@ components:
                 jti:
                     type: string
                     description: 会话令牌对ID
+                mfa_operation_id:
+                    type: string
+                    description: MFA 挑战凭据；非空表示须凭它与 totp_code 走挑战验证换令牌
             description: 用户登录 - 回应
         comment.service.v1.Comment:
             type: object

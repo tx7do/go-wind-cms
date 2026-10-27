@@ -252,6 +252,22 @@ message LoginRequest {
       description: "租户编号，留空表示平台登录（平台超级管理员）；非空时按该编号解析对应租户"
     }
   ]; // 租户编号，留空表示平台登录，非空时解析对应租户
+
+  // MFA 挑战凭据（两步验证第二步随 totp_code 一并回传；Login 返回 mfa_operation_id 时签发）
+  optional string mfa_operation_id = 80 [
+    json_name = "mfa_operation_id",
+    (gnostic.openapi.v3.property) = {
+      description: "MFA 挑战凭据（一次性、短时效；密码验证通过但用户启用两步验证时由服务端签发）"
+    }
+  ]; // MFA 挑战凭据
+
+  // TOTP 动态验证码（6 位数字）
+  optional string totp_code = 81 [
+    json_name = "totp_code",
+    (gnostic.openapi.v3.property) = {
+      description: "TOTP 动态验证码（6 位数字）"
+    }
+  ]; // TOTP 动态验证码
 }
 
 // 用户登录 - 回应
@@ -310,6 +326,14 @@ message LoginResponse {
     json_name = "jti",
     (gnostic.openapi.v3.property) = { description: "会话令牌对ID" }
   ]; // 会话令牌对ID
+
+  // MFA 挑战凭据：非空表示密码验证已通过、须完成两步验证（此时不含任何令牌字段）
+  optional string mfa_operation_id = 80 [
+    json_name = "mfa_operation_id",
+    (gnostic.openapi.v3.property) = {
+      description: "MFA 挑战凭据；非空表示须凭它与 totp_code 走挑战验证换令牌"
+    }
+  ]; // MFA 挑战凭据
 }
 
 // 用户登出 - 请求

@@ -139,6 +139,52 @@ func (MFAEnforcement) EnumDescriptor() ([]byte, []int) {
 	return file_authentication_service_v1_mfa_proto_rawDescGZIP(), []int{1}
 }
 
+// 管理员救援重置 - 请求
+type ResetUserMFARequest struct {
+	state protoimpl.MessageState `protogen:"open.v1"`
+	// 目标用户 ID
+	UserId        uint32 `protobuf:"varint,1,opt,name=user_id,json=userId,proto3" json:"user_id,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *ResetUserMFARequest) Reset() {
+	*x = ResetUserMFARequest{}
+	mi := &file_authentication_service_v1_mfa_proto_msgTypes[0]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *ResetUserMFARequest) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*ResetUserMFARequest) ProtoMessage() {}
+
+func (x *ResetUserMFARequest) ProtoReflect() protoreflect.Message {
+	mi := &file_authentication_service_v1_mfa_proto_msgTypes[0]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use ResetUserMFARequest.ProtoReflect.Descriptor instead.
+func (*ResetUserMFARequest) Descriptor() ([]byte, []int) {
+	return file_authentication_service_v1_mfa_proto_rawDescGZIP(), []int{0}
+}
+
+func (x *ResetUserMFARequest) GetUserId() uint32 {
+	if x != nil {
+		return x.UserId
+	}
+	return 0
+}
+
 type GetMFAStatusRequest struct {
 	state protoimpl.MessageState `protogen:"open.v1"`
 	// 可选：若服务端通过上下文识别用户，可不传 user_id
@@ -149,7 +195,7 @@ type GetMFAStatusRequest struct {
 
 func (x *GetMFAStatusRequest) Reset() {
 	*x = GetMFAStatusRequest{}
-	mi := &file_authentication_service_v1_mfa_proto_msgTypes[0]
+	mi := &file_authentication_service_v1_mfa_proto_msgTypes[1]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -161,7 +207,7 @@ func (x *GetMFAStatusRequest) String() string {
 func (*GetMFAStatusRequest) ProtoMessage() {}
 
 func (x *GetMFAStatusRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_authentication_service_v1_mfa_proto_msgTypes[0]
+	mi := &file_authentication_service_v1_mfa_proto_msgTypes[1]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -174,7 +220,7 @@ func (x *GetMFAStatusRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use GetMFAStatusRequest.ProtoReflect.Descriptor instead.
 func (*GetMFAStatusRequest) Descriptor() ([]byte, []int) {
-	return file_authentication_service_v1_mfa_proto_rawDescGZIP(), []int{0}
+	return file_authentication_service_v1_mfa_proto_rawDescGZIP(), []int{1}
 }
 
 func (x *GetMFAStatusRequest) GetUserId() string {
@@ -195,7 +241,7 @@ type GetMFAStatusResponse struct {
 
 func (x *GetMFAStatusResponse) Reset() {
 	*x = GetMFAStatusResponse{}
-	mi := &file_authentication_service_v1_mfa_proto_msgTypes[1]
+	mi := &file_authentication_service_v1_mfa_proto_msgTypes[2]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -207,7 +253,7 @@ func (x *GetMFAStatusResponse) String() string {
 func (*GetMFAStatusResponse) ProtoMessage() {}
 
 func (x *GetMFAStatusResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_authentication_service_v1_mfa_proto_msgTypes[1]
+	mi := &file_authentication_service_v1_mfa_proto_msgTypes[2]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -220,7 +266,7 @@ func (x *GetMFAStatusResponse) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use GetMFAStatusResponse.ProtoReflect.Descriptor instead.
 func (*GetMFAStatusResponse) Descriptor() ([]byte, []int) {
-	return file_authentication_service_v1_mfa_proto_rawDescGZIP(), []int{1}
+	return file_authentication_service_v1_mfa_proto_rawDescGZIP(), []int{2}
 }
 
 func (x *GetMFAStatusResponse) GetEnabled() bool {
@@ -258,7 +304,7 @@ type EnrolledMethod struct {
 
 func (x *EnrolledMethod) Reset() {
 	*x = EnrolledMethod{}
-	mi := &file_authentication_service_v1_mfa_proto_msgTypes[2]
+	mi := &file_authentication_service_v1_mfa_proto_msgTypes[3]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -270,7 +316,7 @@ func (x *EnrolledMethod) String() string {
 func (*EnrolledMethod) ProtoMessage() {}
 
 func (x *EnrolledMethod) ProtoReflect() protoreflect.Message {
-	mi := &file_authentication_service_v1_mfa_proto_msgTypes[2]
+	mi := &file_authentication_service_v1_mfa_proto_msgTypes[3]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -283,7 +329,7 @@ func (x *EnrolledMethod) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use EnrolledMethod.ProtoReflect.Descriptor instead.
 func (*EnrolledMethod) Descriptor() ([]byte, []int) {
-	return file_authentication_service_v1_mfa_proto_rawDescGZIP(), []int{2}
+	return file_authentication_service_v1_mfa_proto_rawDescGZIP(), []int{3}
 }
 
 func (x *EnrolledMethod) GetId() string {
@@ -338,7 +384,7 @@ type ListEnrolledMethodsRequest struct {
 
 func (x *ListEnrolledMethodsRequest) Reset() {
 	*x = ListEnrolledMethodsRequest{}
-	mi := &file_authentication_service_v1_mfa_proto_msgTypes[3]
+	mi := &file_authentication_service_v1_mfa_proto_msgTypes[4]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -350,7 +396,7 @@ func (x *ListEnrolledMethodsRequest) String() string {
 func (*ListEnrolledMethodsRequest) ProtoMessage() {}
 
 func (x *ListEnrolledMethodsRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_authentication_service_v1_mfa_proto_msgTypes[3]
+	mi := &file_authentication_service_v1_mfa_proto_msgTypes[4]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -363,7 +409,7 @@ func (x *ListEnrolledMethodsRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use ListEnrolledMethodsRequest.ProtoReflect.Descriptor instead.
 func (*ListEnrolledMethodsRequest) Descriptor() ([]byte, []int) {
-	return file_authentication_service_v1_mfa_proto_rawDescGZIP(), []int{3}
+	return file_authentication_service_v1_mfa_proto_rawDescGZIP(), []int{4}
 }
 
 func (x *ListEnrolledMethodsRequest) GetUserId() string {
@@ -382,7 +428,7 @@ type ListEnrolledMethodsResponse struct {
 
 func (x *ListEnrolledMethodsResponse) Reset() {
 	*x = ListEnrolledMethodsResponse{}
-	mi := &file_authentication_service_v1_mfa_proto_msgTypes[4]
+	mi := &file_authentication_service_v1_mfa_proto_msgTypes[5]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -394,7 +440,7 @@ func (x *ListEnrolledMethodsResponse) String() string {
 func (*ListEnrolledMethodsResponse) ProtoMessage() {}
 
 func (x *ListEnrolledMethodsResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_authentication_service_v1_mfa_proto_msgTypes[4]
+	mi := &file_authentication_service_v1_mfa_proto_msgTypes[5]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -407,7 +453,7 @@ func (x *ListEnrolledMethodsResponse) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use ListEnrolledMethodsResponse.ProtoReflect.Descriptor instead.
 func (*ListEnrolledMethodsResponse) Descriptor() ([]byte, []int) {
-	return file_authentication_service_v1_mfa_proto_rawDescGZIP(), []int{4}
+	return file_authentication_service_v1_mfa_proto_rawDescGZIP(), []int{5}
 }
 
 func (x *ListEnrolledMethodsResponse) GetItems() []*EnrolledMethod {
@@ -422,15 +468,19 @@ type StartEnrollMethodRequest struct {
 	state  protoimpl.MessageState `protogen:"open.v1"`
 	Method MFAMethod              `protobuf:"varint,1,opt,name=method,proto3,enum=authentication.service.v1.MFAMethod" json:"method,omitempty"`
 	// 根据 method 可能需要额外参数（例如 SMS 需要 phone）
-	Phone         *string `protobuf:"bytes,2,opt,name=phone,proto3,oneof" json:"phone,omitempty"`
-	Email         *string `protobuf:"bytes,3,opt,name=email,proto3,oneof" json:"email,omitempty"`
+	Phone *string `protobuf:"bytes,2,opt,name=phone,proto3,oneof" json:"phone,omitempty"`
+	Email *string `protobuf:"bytes,3,opt,name=email,proto3,oneof" json:"email,omitempty"`
+	// 操作者用户 ID（BFF 从会话注入；上下文不可靠时显式传递）
+	UserId *uint32 `protobuf:"varint,30,opt,name=user_id,json=userId,proto3,oneof" json:"user_id,omitempty"`
+	// 绑定展示用账号标识（otpauth URI 的 account 段，如用户名/邮箱）
+	Account       *string `protobuf:"bytes,31,opt,name=account,proto3,oneof" json:"account,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
 
 func (x *StartEnrollMethodRequest) Reset() {
 	*x = StartEnrollMethodRequest{}
-	mi := &file_authentication_service_v1_mfa_proto_msgTypes[5]
+	mi := &file_authentication_service_v1_mfa_proto_msgTypes[6]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -442,7 +492,7 @@ func (x *StartEnrollMethodRequest) String() string {
 func (*StartEnrollMethodRequest) ProtoMessage() {}
 
 func (x *StartEnrollMethodRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_authentication_service_v1_mfa_proto_msgTypes[5]
+	mi := &file_authentication_service_v1_mfa_proto_msgTypes[6]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -455,7 +505,7 @@ func (x *StartEnrollMethodRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use StartEnrollMethodRequest.ProtoReflect.Descriptor instead.
 func (*StartEnrollMethodRequest) Descriptor() ([]byte, []int) {
-	return file_authentication_service_v1_mfa_proto_rawDescGZIP(), []int{5}
+	return file_authentication_service_v1_mfa_proto_rawDescGZIP(), []int{6}
 }
 
 func (x *StartEnrollMethodRequest) GetMethod() MFAMethod {
@@ -479,6 +529,20 @@ func (x *StartEnrollMethodRequest) GetEmail() string {
 	return ""
 }
 
+func (x *StartEnrollMethodRequest) GetUserId() uint32 {
+	if x != nil && x.UserId != nil {
+		return *x.UserId
+	}
+	return 0
+}
+
+func (x *StartEnrollMethodRequest) GetAccount() string {
+	if x != nil && x.Account != nil {
+		return *x.Account
+	}
+	return ""
+}
+
 type StartEnrollMethodResponse struct {
 	state protoimpl.MessageState `protogen:"open.v1"`
 	// 不同方法的启动结果
@@ -498,7 +562,7 @@ type StartEnrollMethodResponse struct {
 
 func (x *StartEnrollMethodResponse) Reset() {
 	*x = StartEnrollMethodResponse{}
-	mi := &file_authentication_service_v1_mfa_proto_msgTypes[6]
+	mi := &file_authentication_service_v1_mfa_proto_msgTypes[7]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -510,7 +574,7 @@ func (x *StartEnrollMethodResponse) String() string {
 func (*StartEnrollMethodResponse) ProtoMessage() {}
 
 func (x *StartEnrollMethodResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_authentication_service_v1_mfa_proto_msgTypes[6]
+	mi := &file_authentication_service_v1_mfa_proto_msgTypes[7]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -523,7 +587,7 @@ func (x *StartEnrollMethodResponse) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use StartEnrollMethodResponse.ProtoReflect.Descriptor instead.
 func (*StartEnrollMethodResponse) Descriptor() ([]byte, []int) {
-	return file_authentication_service_v1_mfa_proto_rawDescGZIP(), []int{6}
+	return file_authentication_service_v1_mfa_proto_rawDescGZIP(), []int{7}
 }
 
 func (x *StartEnrollMethodResponse) GetResult() isStartEnrollMethodResponse_Result {
@@ -608,7 +672,7 @@ type TOTPResult struct {
 
 func (x *TOTPResult) Reset() {
 	*x = TOTPResult{}
-	mi := &file_authentication_service_v1_mfa_proto_msgTypes[7]
+	mi := &file_authentication_service_v1_mfa_proto_msgTypes[8]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -620,7 +684,7 @@ func (x *TOTPResult) String() string {
 func (*TOTPResult) ProtoMessage() {}
 
 func (x *TOTPResult) ProtoReflect() protoreflect.Message {
-	mi := &file_authentication_service_v1_mfa_proto_msgTypes[7]
+	mi := &file_authentication_service_v1_mfa_proto_msgTypes[8]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -633,7 +697,7 @@ func (x *TOTPResult) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use TOTPResult.ProtoReflect.Descriptor instead.
 func (*TOTPResult) Descriptor() ([]byte, []int) {
-	return file_authentication_service_v1_mfa_proto_rawDescGZIP(), []int{7}
+	return file_authentication_service_v1_mfa_proto_rawDescGZIP(), []int{8}
 }
 
 func (x *TOTPResult) GetSecret() string {
@@ -668,7 +732,7 @@ type SMSResult struct {
 
 func (x *SMSResult) Reset() {
 	*x = SMSResult{}
-	mi := &file_authentication_service_v1_mfa_proto_msgTypes[8]
+	mi := &file_authentication_service_v1_mfa_proto_msgTypes[9]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -680,7 +744,7 @@ func (x *SMSResult) String() string {
 func (*SMSResult) ProtoMessage() {}
 
 func (x *SMSResult) ProtoReflect() protoreflect.Message {
-	mi := &file_authentication_service_v1_mfa_proto_msgTypes[8]
+	mi := &file_authentication_service_v1_mfa_proto_msgTypes[9]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -693,7 +757,7 @@ func (x *SMSResult) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use SMSResult.ProtoReflect.Descriptor instead.
 func (*SMSResult) Descriptor() ([]byte, []int) {
-	return file_authentication_service_v1_mfa_proto_rawDescGZIP(), []int{8}
+	return file_authentication_service_v1_mfa_proto_rawDescGZIP(), []int{9}
 }
 
 func (x *SMSResult) GetVerificationId() string {
@@ -728,7 +792,7 @@ type WebAuthnResult struct {
 
 func (x *WebAuthnResult) Reset() {
 	*x = WebAuthnResult{}
-	mi := &file_authentication_service_v1_mfa_proto_msgTypes[9]
+	mi := &file_authentication_service_v1_mfa_proto_msgTypes[10]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -740,7 +804,7 @@ func (x *WebAuthnResult) String() string {
 func (*WebAuthnResult) ProtoMessage() {}
 
 func (x *WebAuthnResult) ProtoReflect() protoreflect.Message {
-	mi := &file_authentication_service_v1_mfa_proto_msgTypes[9]
+	mi := &file_authentication_service_v1_mfa_proto_msgTypes[10]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -753,7 +817,7 @@ func (x *WebAuthnResult) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use WebAuthnResult.ProtoReflect.Descriptor instead.
 func (*WebAuthnResult) Descriptor() ([]byte, []int) {
-	return file_authentication_service_v1_mfa_proto_rawDescGZIP(), []int{9}
+	return file_authentication_service_v1_mfa_proto_rawDescGZIP(), []int{10}
 }
 
 func (x *WebAuthnResult) GetChallenge() string {
@@ -797,7 +861,7 @@ type ConfirmEnrollMethodRequest struct {
 
 func (x *ConfirmEnrollMethodRequest) Reset() {
 	*x = ConfirmEnrollMethodRequest{}
-	mi := &file_authentication_service_v1_mfa_proto_msgTypes[10]
+	mi := &file_authentication_service_v1_mfa_proto_msgTypes[11]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -809,7 +873,7 @@ func (x *ConfirmEnrollMethodRequest) String() string {
 func (*ConfirmEnrollMethodRequest) ProtoMessage() {}
 
 func (x *ConfirmEnrollMethodRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_authentication_service_v1_mfa_proto_msgTypes[10]
+	mi := &file_authentication_service_v1_mfa_proto_msgTypes[11]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -822,7 +886,7 @@ func (x *ConfirmEnrollMethodRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use ConfirmEnrollMethodRequest.ProtoReflect.Descriptor instead.
 func (*ConfirmEnrollMethodRequest) Descriptor() ([]byte, []int) {
-	return file_authentication_service_v1_mfa_proto_rawDescGZIP(), []int{10}
+	return file_authentication_service_v1_mfa_proto_rawDescGZIP(), []int{11}
 }
 
 func (x *ConfirmEnrollMethodRequest) GetMethod() MFAMethod {
@@ -927,7 +991,7 @@ type ConfirmEnrollMethodResponse struct {
 
 func (x *ConfirmEnrollMethodResponse) Reset() {
 	*x = ConfirmEnrollMethodResponse{}
-	mi := &file_authentication_service_v1_mfa_proto_msgTypes[11]
+	mi := &file_authentication_service_v1_mfa_proto_msgTypes[12]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -939,7 +1003,7 @@ func (x *ConfirmEnrollMethodResponse) String() string {
 func (*ConfirmEnrollMethodResponse) ProtoMessage() {}
 
 func (x *ConfirmEnrollMethodResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_authentication_service_v1_mfa_proto_msgTypes[11]
+	mi := &file_authentication_service_v1_mfa_proto_msgTypes[12]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -952,7 +1016,7 @@ func (x *ConfirmEnrollMethodResponse) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use ConfirmEnrollMethodResponse.ProtoReflect.Descriptor instead.
 func (*ConfirmEnrollMethodResponse) Descriptor() ([]byte, []int) {
-	return file_authentication_service_v1_mfa_proto_rawDescGZIP(), []int{11}
+	return file_authentication_service_v1_mfa_proto_rawDescGZIP(), []int{12}
 }
 
 func (x *ConfirmEnrollMethodResponse) GetSuccess() bool {
@@ -983,15 +1047,17 @@ type DisableMFARequest struct {
 	//	*DisableMFARequest_TotpCode
 	//	*DisableMFARequest_Sms
 	//	*DisableMFARequest_Webauthn
-	Verifier      isDisableMFARequest_Verifier `protobuf_oneof:"verifier"`
-	Reason        *string                      `protobuf:"bytes,20,opt,name=reason,proto3,oneof" json:"reason,omitempty"`
+	Verifier isDisableMFARequest_Verifier `protobuf_oneof:"verifier"`
+	Reason   *string                      `protobuf:"bytes,20,opt,name=reason,proto3,oneof" json:"reason,omitempty"`
+	// 操作者用户 ID（BFF 从会话注入）
+	UserId        *uint32 `protobuf:"varint,30,opt,name=user_id,json=userId,proto3,oneof" json:"user_id,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
 
 func (x *DisableMFARequest) Reset() {
 	*x = DisableMFARequest{}
-	mi := &file_authentication_service_v1_mfa_proto_msgTypes[12]
+	mi := &file_authentication_service_v1_mfa_proto_msgTypes[13]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -1003,7 +1069,7 @@ func (x *DisableMFARequest) String() string {
 func (*DisableMFARequest) ProtoMessage() {}
 
 func (x *DisableMFARequest) ProtoReflect() protoreflect.Message {
-	mi := &file_authentication_service_v1_mfa_proto_msgTypes[12]
+	mi := &file_authentication_service_v1_mfa_proto_msgTypes[13]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -1016,7 +1082,7 @@ func (x *DisableMFARequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use DisableMFARequest.ProtoReflect.Descriptor instead.
 func (*DisableMFARequest) Descriptor() ([]byte, []int) {
-	return file_authentication_service_v1_mfa_proto_rawDescGZIP(), []int{12}
+	return file_authentication_service_v1_mfa_proto_rawDescGZIP(), []int{13}
 }
 
 func (x *DisableMFARequest) GetCredentialId() string {
@@ -1083,6 +1149,13 @@ func (x *DisableMFARequest) GetReason() string {
 	return ""
 }
 
+func (x *DisableMFARequest) GetUserId() uint32 {
+	if x != nil && x.UserId != nil {
+		return *x.UserId
+	}
+	return 0
+}
+
 type isDisableMFARequest_Verifier interface {
 	isDisableMFARequest_Verifier()
 }
@@ -1123,7 +1196,7 @@ type StartMFAChallengeRequest struct {
 
 func (x *StartMFAChallengeRequest) Reset() {
 	*x = StartMFAChallengeRequest{}
-	mi := &file_authentication_service_v1_mfa_proto_msgTypes[13]
+	mi := &file_authentication_service_v1_mfa_proto_msgTypes[14]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -1135,7 +1208,7 @@ func (x *StartMFAChallengeRequest) String() string {
 func (*StartMFAChallengeRequest) ProtoMessage() {}
 
 func (x *StartMFAChallengeRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_authentication_service_v1_mfa_proto_msgTypes[13]
+	mi := &file_authentication_service_v1_mfa_proto_msgTypes[14]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -1148,7 +1221,7 @@ func (x *StartMFAChallengeRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use StartMFAChallengeRequest.ProtoReflect.Descriptor instead.
 func (*StartMFAChallengeRequest) Descriptor() ([]byte, []int) {
-	return file_authentication_service_v1_mfa_proto_rawDescGZIP(), []int{13}
+	return file_authentication_service_v1_mfa_proto_rawDescGZIP(), []int{14}
 }
 
 func (x *StartMFAChallengeRequest) GetUserId() string {
@@ -1187,7 +1260,7 @@ type StartMFAChallengeResponse struct {
 
 func (x *StartMFAChallengeResponse) Reset() {
 	*x = StartMFAChallengeResponse{}
-	mi := &file_authentication_service_v1_mfa_proto_msgTypes[14]
+	mi := &file_authentication_service_v1_mfa_proto_msgTypes[15]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -1199,7 +1272,7 @@ func (x *StartMFAChallengeResponse) String() string {
 func (*StartMFAChallengeResponse) ProtoMessage() {}
 
 func (x *StartMFAChallengeResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_authentication_service_v1_mfa_proto_msgTypes[14]
+	mi := &file_authentication_service_v1_mfa_proto_msgTypes[15]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -1212,7 +1285,7 @@ func (x *StartMFAChallengeResponse) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use StartMFAChallengeResponse.ProtoReflect.Descriptor instead.
 func (*StartMFAChallengeResponse) Descriptor() ([]byte, []int) {
-	return file_authentication_service_v1_mfa_proto_rawDescGZIP(), []int{14}
+	return file_authentication_service_v1_mfa_proto_rawDescGZIP(), []int{15}
 }
 
 func (x *StartMFAChallengeResponse) GetChallenge() isStartMFAChallengeResponse_Challenge {
@@ -1286,7 +1359,7 @@ type VerifyMFAChallengeRequest struct {
 
 func (x *VerifyMFAChallengeRequest) Reset() {
 	*x = VerifyMFAChallengeRequest{}
-	mi := &file_authentication_service_v1_mfa_proto_msgTypes[15]
+	mi := &file_authentication_service_v1_mfa_proto_msgTypes[16]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -1298,7 +1371,7 @@ func (x *VerifyMFAChallengeRequest) String() string {
 func (*VerifyMFAChallengeRequest) ProtoMessage() {}
 
 func (x *VerifyMFAChallengeRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_authentication_service_v1_mfa_proto_msgTypes[15]
+	mi := &file_authentication_service_v1_mfa_proto_msgTypes[16]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -1311,7 +1384,7 @@ func (x *VerifyMFAChallengeRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use VerifyMFAChallengeRequest.ProtoReflect.Descriptor instead.
 func (*VerifyMFAChallengeRequest) Descriptor() ([]byte, []int) {
-	return file_authentication_service_v1_mfa_proto_rawDescGZIP(), []int{15}
+	return file_authentication_service_v1_mfa_proto_rawDescGZIP(), []int{16}
 }
 
 func (x *VerifyMFAChallengeRequest) GetOperationId() string {
@@ -1396,14 +1469,21 @@ type VerifyMFAChallengeResponse struct {
 	state   protoimpl.MessageState `protogen:"open.v1"`
 	Success bool                   `protobuf:"varint,1,opt,name=success,proto3" json:"success,omitempty"`
 	// 可选：一次性登录令牌或 session id（实现可选）
-	SessionToken  *string `protobuf:"bytes,2,opt,name=session_token,json=sessionToken,proto3,oneof" json:"session_token,omitempty"`
-	unknownFields protoimpl.UnknownFields
-	sizeCache     protoimpl.SizeCache
+	SessionToken *string `protobuf:"bytes,2,opt,name=session_token,json=sessionToken,proto3,oneof" json:"session_token,omitempty"`
+	// ===== 挑战通过直接签发的正式令牌对（与 Login 响应同构）=====
+	TokenType        *string `protobuf:"bytes,10,opt,name=token_type,json=tokenType,proto3,oneof" json:"token_type,omitempty"`
+	AccessToken      *string `protobuf:"bytes,11,opt,name=access_token,json=accessToken,proto3,oneof" json:"access_token,omitempty"`
+	ExpiresIn        *int64  `protobuf:"varint,12,opt,name=expires_in,json=expiresIn,proto3,oneof" json:"expires_in,omitempty"`
+	RefreshToken     *string `protobuf:"bytes,13,opt,name=refresh_token,json=refreshToken,proto3,oneof" json:"refresh_token,omitempty"`
+	RefreshExpiresIn *int64  `protobuf:"varint,14,opt,name=refresh_expires_in,json=refreshExpiresIn,proto3,oneof" json:"refresh_expires_in,omitempty"`
+	Jti              *string `protobuf:"bytes,15,opt,name=jti,proto3,oneof" json:"jti,omitempty"`
+	unknownFields    protoimpl.UnknownFields
+	sizeCache        protoimpl.SizeCache
 }
 
 func (x *VerifyMFAChallengeResponse) Reset() {
 	*x = VerifyMFAChallengeResponse{}
-	mi := &file_authentication_service_v1_mfa_proto_msgTypes[16]
+	mi := &file_authentication_service_v1_mfa_proto_msgTypes[17]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -1415,7 +1495,7 @@ func (x *VerifyMFAChallengeResponse) String() string {
 func (*VerifyMFAChallengeResponse) ProtoMessage() {}
 
 func (x *VerifyMFAChallengeResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_authentication_service_v1_mfa_proto_msgTypes[16]
+	mi := &file_authentication_service_v1_mfa_proto_msgTypes[17]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -1428,7 +1508,7 @@ func (x *VerifyMFAChallengeResponse) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use VerifyMFAChallengeResponse.ProtoReflect.Descriptor instead.
 func (*VerifyMFAChallengeResponse) Descriptor() ([]byte, []int) {
-	return file_authentication_service_v1_mfa_proto_rawDescGZIP(), []int{16}
+	return file_authentication_service_v1_mfa_proto_rawDescGZIP(), []int{17}
 }
 
 func (x *VerifyMFAChallengeResponse) GetSuccess() bool {
@@ -1445,6 +1525,48 @@ func (x *VerifyMFAChallengeResponse) GetSessionToken() string {
 	return ""
 }
 
+func (x *VerifyMFAChallengeResponse) GetTokenType() string {
+	if x != nil && x.TokenType != nil {
+		return *x.TokenType
+	}
+	return ""
+}
+
+func (x *VerifyMFAChallengeResponse) GetAccessToken() string {
+	if x != nil && x.AccessToken != nil {
+		return *x.AccessToken
+	}
+	return ""
+}
+
+func (x *VerifyMFAChallengeResponse) GetExpiresIn() int64 {
+	if x != nil && x.ExpiresIn != nil {
+		return *x.ExpiresIn
+	}
+	return 0
+}
+
+func (x *VerifyMFAChallengeResponse) GetRefreshToken() string {
+	if x != nil && x.RefreshToken != nil {
+		return *x.RefreshToken
+	}
+	return ""
+}
+
+func (x *VerifyMFAChallengeResponse) GetRefreshExpiresIn() int64 {
+	if x != nil && x.RefreshExpiresIn != nil {
+		return *x.RefreshExpiresIn
+	}
+	return 0
+}
+
+func (x *VerifyMFAChallengeResponse) GetJti() string {
+	if x != nil && x.Jti != nil {
+		return *x.Jti
+	}
+	return ""
+}
+
 // 备份码管理
 type GenerateBackupCodesRequest struct {
 	state protoimpl.MessageState `protogen:"open.v1"`
@@ -1456,7 +1578,7 @@ type GenerateBackupCodesRequest struct {
 
 func (x *GenerateBackupCodesRequest) Reset() {
 	*x = GenerateBackupCodesRequest{}
-	mi := &file_authentication_service_v1_mfa_proto_msgTypes[17]
+	mi := &file_authentication_service_v1_mfa_proto_msgTypes[18]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -1468,7 +1590,7 @@ func (x *GenerateBackupCodesRequest) String() string {
 func (*GenerateBackupCodesRequest) ProtoMessage() {}
 
 func (x *GenerateBackupCodesRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_authentication_service_v1_mfa_proto_msgTypes[17]
+	mi := &file_authentication_service_v1_mfa_proto_msgTypes[18]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -1481,7 +1603,7 @@ func (x *GenerateBackupCodesRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use GenerateBackupCodesRequest.ProtoReflect.Descriptor instead.
 func (*GenerateBackupCodesRequest) Descriptor() ([]byte, []int) {
-	return file_authentication_service_v1_mfa_proto_rawDescGZIP(), []int{17}
+	return file_authentication_service_v1_mfa_proto_rawDescGZIP(), []int{18}
 }
 
 func (x *GenerateBackupCodesRequest) GetCount() int32 {
@@ -1502,7 +1624,7 @@ type GenerateBackupCodesResponse struct {
 
 func (x *GenerateBackupCodesResponse) Reset() {
 	*x = GenerateBackupCodesResponse{}
-	mi := &file_authentication_service_v1_mfa_proto_msgTypes[18]
+	mi := &file_authentication_service_v1_mfa_proto_msgTypes[19]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -1514,7 +1636,7 @@ func (x *GenerateBackupCodesResponse) String() string {
 func (*GenerateBackupCodesResponse) ProtoMessage() {}
 
 func (x *GenerateBackupCodesResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_authentication_service_v1_mfa_proto_msgTypes[18]
+	mi := &file_authentication_service_v1_mfa_proto_msgTypes[19]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -1527,7 +1649,7 @@ func (x *GenerateBackupCodesResponse) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use GenerateBackupCodesResponse.ProtoReflect.Descriptor instead.
 func (*GenerateBackupCodesResponse) Descriptor() ([]byte, []int) {
-	return file_authentication_service_v1_mfa_proto_rawDescGZIP(), []int{18}
+	return file_authentication_service_v1_mfa_proto_rawDescGZIP(), []int{19}
 }
 
 func (x *GenerateBackupCodesResponse) GetCodes() []string {
@@ -1552,7 +1674,7 @@ type ListBackupCodesRequest struct {
 
 func (x *ListBackupCodesRequest) Reset() {
 	*x = ListBackupCodesRequest{}
-	mi := &file_authentication_service_v1_mfa_proto_msgTypes[19]
+	mi := &file_authentication_service_v1_mfa_proto_msgTypes[20]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -1564,7 +1686,7 @@ func (x *ListBackupCodesRequest) String() string {
 func (*ListBackupCodesRequest) ProtoMessage() {}
 
 func (x *ListBackupCodesRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_authentication_service_v1_mfa_proto_msgTypes[19]
+	mi := &file_authentication_service_v1_mfa_proto_msgTypes[20]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -1577,7 +1699,7 @@ func (x *ListBackupCodesRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use ListBackupCodesRequest.ProtoReflect.Descriptor instead.
 func (*ListBackupCodesRequest) Descriptor() ([]byte, []int) {
-	return file_authentication_service_v1_mfa_proto_rawDescGZIP(), []int{19}
+	return file_authentication_service_v1_mfa_proto_rawDescGZIP(), []int{20}
 }
 
 type ListBackupCodesResponse struct {
@@ -1591,7 +1713,7 @@ type ListBackupCodesResponse struct {
 
 func (x *ListBackupCodesResponse) Reset() {
 	*x = ListBackupCodesResponse{}
-	mi := &file_authentication_service_v1_mfa_proto_msgTypes[20]
+	mi := &file_authentication_service_v1_mfa_proto_msgTypes[21]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -1603,7 +1725,7 @@ func (x *ListBackupCodesResponse) String() string {
 func (*ListBackupCodesResponse) ProtoMessage() {}
 
 func (x *ListBackupCodesResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_authentication_service_v1_mfa_proto_msgTypes[20]
+	mi := &file_authentication_service_v1_mfa_proto_msgTypes[21]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -1616,7 +1738,7 @@ func (x *ListBackupCodesResponse) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use ListBackupCodesResponse.ProtoReflect.Descriptor instead.
 func (*ListBackupCodesResponse) Descriptor() ([]byte, []int) {
-	return file_authentication_service_v1_mfa_proto_rawDescGZIP(), []int{20}
+	return file_authentication_service_v1_mfa_proto_rawDescGZIP(), []int{21}
 }
 
 func (x *ListBackupCodesResponse) GetRemaining() int32 {
@@ -1643,7 +1765,7 @@ type RevokeMFADeviceRequest struct {
 
 func (x *RevokeMFADeviceRequest) Reset() {
 	*x = RevokeMFADeviceRequest{}
-	mi := &file_authentication_service_v1_mfa_proto_msgTypes[21]
+	mi := &file_authentication_service_v1_mfa_proto_msgTypes[22]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -1655,7 +1777,7 @@ func (x *RevokeMFADeviceRequest) String() string {
 func (*RevokeMFADeviceRequest) ProtoMessage() {}
 
 func (x *RevokeMFADeviceRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_authentication_service_v1_mfa_proto_msgTypes[21]
+	mi := &file_authentication_service_v1_mfa_proto_msgTypes[22]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -1668,7 +1790,7 @@ func (x *RevokeMFADeviceRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use RevokeMFADeviceRequest.ProtoReflect.Descriptor instead.
 func (*RevokeMFADeviceRequest) Descriptor() ([]byte, []int) {
-	return file_authentication_service_v1_mfa_proto_rawDescGZIP(), []int{21}
+	return file_authentication_service_v1_mfa_proto_rawDescGZIP(), []int{22}
 }
 
 func (x *RevokeMFADeviceRequest) GetCredentialId() string {
@@ -1688,7 +1810,7 @@ type SMSVerification struct {
 
 func (x *SMSVerification) Reset() {
 	*x = SMSVerification{}
-	mi := &file_authentication_service_v1_mfa_proto_msgTypes[22]
+	mi := &file_authentication_service_v1_mfa_proto_msgTypes[23]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -1700,7 +1822,7 @@ func (x *SMSVerification) String() string {
 func (*SMSVerification) ProtoMessage() {}
 
 func (x *SMSVerification) ProtoReflect() protoreflect.Message {
-	mi := &file_authentication_service_v1_mfa_proto_msgTypes[22]
+	mi := &file_authentication_service_v1_mfa_proto_msgTypes[23]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -1713,7 +1835,7 @@ func (x *SMSVerification) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use SMSVerification.ProtoReflect.Descriptor instead.
 func (*SMSVerification) Descriptor() ([]byte, []int) {
-	return file_authentication_service_v1_mfa_proto_rawDescGZIP(), []int{22}
+	return file_authentication_service_v1_mfa_proto_rawDescGZIP(), []int{23}
 }
 
 func (x *SMSVerification) GetVerificationId() string {
@@ -1743,7 +1865,7 @@ type WebAuthnAssertion struct {
 
 func (x *WebAuthnAssertion) Reset() {
 	*x = WebAuthnAssertion{}
-	mi := &file_authentication_service_v1_mfa_proto_msgTypes[23]
+	mi := &file_authentication_service_v1_mfa_proto_msgTypes[24]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -1755,7 +1877,7 @@ func (x *WebAuthnAssertion) String() string {
 func (*WebAuthnAssertion) ProtoMessage() {}
 
 func (x *WebAuthnAssertion) ProtoReflect() protoreflect.Message {
-	mi := &file_authentication_service_v1_mfa_proto_msgTypes[23]
+	mi := &file_authentication_service_v1_mfa_proto_msgTypes[24]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -1768,7 +1890,7 @@ func (x *WebAuthnAssertion) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use WebAuthnAssertion.ProtoReflect.Descriptor instead.
 func (*WebAuthnAssertion) Descriptor() ([]byte, []int) {
-	return file_authentication_service_v1_mfa_proto_rawDescGZIP(), []int{23}
+	return file_authentication_service_v1_mfa_proto_rawDescGZIP(), []int{24}
 }
 
 func (x *WebAuthnAssertion) GetId() string {
@@ -1810,7 +1932,9 @@ var File_authentication_service_v1_mfa_proto protoreflect.FileDescriptor
 
 const file_authentication_service_v1_mfa_proto_rawDesc = "" +
 	"\n" +
-	"#authentication/service/v1/mfa.proto\x12\x19authentication.service.v1\x1a$gnostic/openapi/v3/annotations.proto\x1a\x1bgoogle/protobuf/empty.proto\x1a\x1fgoogle/protobuf/timestamp.proto\x1a\x1cgoogle/api/annotations.proto\x1a\x1fgoogle/api/field_behavior.proto\"?\n" +
+	"#authentication/service/v1/mfa.proto\x12\x19authentication.service.v1\x1a$gnostic/openapi/v3/annotations.proto\x1a\x1bgoogle/protobuf/empty.proto\x1a\x1fgoogle/protobuf/timestamp.proto\x1a\x1cgoogle/api/annotations.proto\x1a\x1fgoogle/api/field_behavior.proto\"E\n" +
+	"\x13ResetUserMFARequest\x12.\n" +
+	"\auser_id\x18\x01 \x01(\rB\x15\xbaG\x12\x92\x02\x0f目标用户 IDR\x06userId\"?\n" +
 	"\x13GetMFAStatusRequest\x12\x1c\n" +
 	"\auser_id\x18\x01 \x01(\tH\x00R\x06userId\x88\x01\x01B\n" +
 	"\n" +
@@ -1835,13 +1959,19 @@ const file_authentication_service_v1_mfa_proto_rawDesc = "" +
 	"\n" +
 	"\b_user_id\"^\n" +
 	"\x1bListEnrolledMethodsResponse\x12?\n" +
-	"\x05items\x18\x01 \x03(\v2).authentication.service.v1.EnrolledMethodR\x05items\"\xa2\x01\n" +
+	"\x05items\x18\x01 \x03(\v2).authentication.service.v1.EnrolledMethodR\x05items\"\xb4\x02\n" +
 	"\x18StartEnrollMethodRequest\x12<\n" +
 	"\x06method\x18\x01 \x01(\x0e2$.authentication.service.v1.MFAMethodR\x06method\x12\x19\n" +
 	"\x05phone\x18\x02 \x01(\tH\x00R\x05phone\x88\x01\x01\x12\x19\n" +
-	"\x05email\x18\x03 \x01(\tH\x01R\x05email\x88\x01\x01B\b\n" +
+	"\x05email\x18\x03 \x01(\tH\x01R\x05email\x88\x01\x01\x126\n" +
+	"\auser_id\x18\x1e \x01(\rB\x18\xbaG\x15\x92\x02\x12操作者用户 IDH\x02R\x06userId\x88\x01\x01\x12@\n" +
+	"\aaccount\x18\x1f \x01(\tB!\xbaG\x1e\x92\x02\x1b绑定展示用账号标识H\x03R\aaccount\x88\x01\x01B\b\n" +
 	"\x06_phoneB\b\n" +
-	"\x06_email\"\xd7\x02\n" +
+	"\x06_emailB\n" +
+	"\n" +
+	"\b_user_idB\n" +
+	"\n" +
+	"\b_account\"\xd7\x02\n" +
 	"\x19StartEnrollMethodResponse\x12;\n" +
 	"\x04totp\x18\x01 \x01(\v2%.authentication.service.v1.TOTPResultH\x00R\x04totp\x128\n" +
 	"\x03sms\x18\x02 \x01(\v2$.authentication.service.v1.SMSResultH\x00R\x03sms\x12G\n" +
@@ -1882,7 +2012,7 @@ const file_authentication_service_v1_mfa_proto_rawDesc = "" +
 	"\b_display\"\\\n" +
 	"\x1bConfirmEnrollMethodResponse\x12\x18\n" +
 	"\asuccess\x18\x01 \x01(\bR\asuccess\x12#\n" +
-	"\rcredential_id\x18\x02 \x01(\tR\fcredentialId\"\x9a\x03\n" +
+	"\rcredential_id\x18\x02 \x01(\tR\fcredentialId\"\xde\x03\n" +
 	"\x11DisableMFARequest\x12(\n" +
 	"\rcredential_id\x18\x01 \x01(\tH\x01R\fcredentialId\x88\x01\x01\x12A\n" +
 	"\x06method\x18\x02 \x01(\x0e2$.authentication.service.v1.MFAMethodH\x02R\x06method\x88\x01\x01\x12\x1c\n" +
@@ -1891,12 +2021,15 @@ const file_authentication_service_v1_mfa_proto_rawDesc = "" +
 	"\ttotp_code\x18\v \x01(\tH\x00R\btotpCode\x12>\n" +
 	"\x03sms\x18\f \x01(\v2*.authentication.service.v1.SMSVerificationH\x00R\x03sms\x12J\n" +
 	"\bwebauthn\x18\r \x01(\v2,.authentication.service.v1.WebAuthnAssertionH\x00R\bwebauthn\x12\x1b\n" +
-	"\x06reason\x18\x14 \x01(\tH\x03R\x06reason\x88\x01\x01B\n" +
+	"\x06reason\x18\x14 \x01(\tH\x03R\x06reason\x88\x01\x01\x126\n" +
+	"\auser_id\x18\x1e \x01(\rB\x18\xbaG\x15\x92\x02\x12操作者用户 IDH\x04R\x06userId\x88\x01\x01B\n" +
 	"\n" +
 	"\bverifierB\x10\n" +
 	"\x0e_credential_idB\t\n" +
 	"\a_methodB\t\n" +
-	"\a_reason\"\xbe\x01\n" +
+	"\a_reasonB\n" +
+	"\n" +
+	"\b_user_id\"\xbe\x01\n" +
 	"\x18StartMFAChallengeRequest\x12\x1c\n" +
 	"\auser_id\x18\x01 \x01(\tH\x00R\x06userId\x88\x01\x01\x12<\n" +
 	"\x06method\x18\x02 \x01(\x0e2$.authentication.service.v1.MFAMethodR\x06method\x12(\n" +
@@ -1922,11 +2055,26 @@ const file_authentication_service_v1_mfa_proto_rawDesc = "" +
 	"\vbackup_code\x18\r \x01(\tH\x00R\n" +
 	"backupCodeB\n" +
 	"\n" +
-	"\bresponse\"r\n" +
+	"\bresponse\"\xb6\x03\n" +
 	"\x1aVerifyMFAChallengeResponse\x12\x18\n" +
 	"\asuccess\x18\x01 \x01(\bR\asuccess\x12(\n" +
-	"\rsession_token\x18\x02 \x01(\tH\x00R\fsessionToken\x88\x01\x01B\x10\n" +
-	"\x0e_session_token\"^\n" +
+	"\rsession_token\x18\x02 \x01(\tH\x00R\fsessionToken\x88\x01\x01\x12\"\n" +
+	"\n" +
+	"token_type\x18\n" +
+	" \x01(\tH\x01R\ttokenType\x88\x01\x01\x12&\n" +
+	"\faccess_token\x18\v \x01(\tH\x02R\vaccessToken\x88\x01\x01\x12\"\n" +
+	"\n" +
+	"expires_in\x18\f \x01(\x03H\x03R\texpiresIn\x88\x01\x01\x12(\n" +
+	"\rrefresh_token\x18\r \x01(\tH\x04R\frefreshToken\x88\x01\x01\x121\n" +
+	"\x12refresh_expires_in\x18\x0e \x01(\x03H\x05R\x10refreshExpiresIn\x88\x01\x01\x12\x15\n" +
+	"\x03jti\x18\x0f \x01(\tH\x06R\x03jti\x88\x01\x01B\x10\n" +
+	"\x0e_session_tokenB\r\n" +
+	"\v_token_typeB\x0f\n" +
+	"\r_access_tokenB\r\n" +
+	"\v_expires_inB\x10\n" +
+	"\x0e_refresh_tokenB\x15\n" +
+	"\x13_refresh_expires_inB\x06\n" +
+	"\x04_jti\"^\n" +
 	"\x1aGenerateBackupCodesRequest\x126\n" +
 	"\x05count\x18\x01 \x01(\x05B\x1b\xbaG\x18\x92\x02\x15生成备份码数量H\x00R\x05count\x88\x01\x01B\b\n" +
 	"\x06_count\"\x88\x01\n" +
@@ -1964,7 +2112,8 @@ const file_authentication_service_v1_mfa_proto_rawDesc = "" +
 	"\x0eMFAEnforcement\x12\x14\n" +
 	"\x10MFA_NOT_REQUIRED\x10\x00\x12\x10\n" +
 	"\fMFA_OPTIONAL\x10\x01\x12\x10\n" +
-	"\fMFA_REQUIRED\x10\x022\xd8\t\n" +
+	"\fMFA_REQUIRED\x10\x022\xb2\n" +
+	"\n" +
 	"\n" +
 	"MFAService\x12q\n" +
 	"\fGetMFAStatus\x12..authentication.service.v1.GetMFAStatusRequest\x1a/.authentication.service.v1.GetMFAStatusResponse\"\x00\x12\x86\x01\n" +
@@ -1977,7 +2126,8 @@ const file_authentication_service_v1_mfa_proto_rawDesc = "" +
 	"\x12VerifyMFAChallenge\x124.authentication.service.v1.VerifyMFAChallengeRequest\x1a5.authentication.service.v1.VerifyMFAChallengeResponse\"\x00\x12\x86\x01\n" +
 	"\x13GenerateBackupCodes\x125.authentication.service.v1.GenerateBackupCodesRequest\x1a6.authentication.service.v1.GenerateBackupCodesResponse\"\x00\x12z\n" +
 	"\x0fListBackupCodes\x121.authentication.service.v1.ListBackupCodesRequest\x1a2.authentication.service.v1.ListBackupCodesResponse\"\x00\x12^\n" +
-	"\x0fRevokeMFADevice\x121.authentication.service.v1.RevokeMFADeviceRequest\x1a\x16.google.protobuf.Empty\"\x00B\xf2\x01\n" +
+	"\x0fRevokeMFADevice\x121.authentication.service.v1.RevokeMFADeviceRequest\x1a\x16.google.protobuf.Empty\"\x00\x12X\n" +
+	"\fResetUserMFA\x12..authentication.service.v1.ResetUserMFARequest\x1a\x16.google.protobuf.Empty\"\x00B\xf2\x01\n" +
 	"\x1dcom.authentication.service.v1B\bMfaProtoP\x01ZAgo-wind-cms/api/gen/go/authentication/service/v1;authenticationpb\xa2\x02\x03ASX\xaa\x02\x19Authentication.Service.V1\xca\x02\x19Authentication\\Service\\V1\xe2\x02%Authentication\\Service\\V1\\GPBMetadata\xea\x02\x1bAuthentication::Service::V1b\x06proto3"
 
 var (
@@ -1993,85 +2143,88 @@ func file_authentication_service_v1_mfa_proto_rawDescGZIP() []byte {
 }
 
 var file_authentication_service_v1_mfa_proto_enumTypes = make([]protoimpl.EnumInfo, 2)
-var file_authentication_service_v1_mfa_proto_msgTypes = make([]protoimpl.MessageInfo, 24)
+var file_authentication_service_v1_mfa_proto_msgTypes = make([]protoimpl.MessageInfo, 25)
 var file_authentication_service_v1_mfa_proto_goTypes = []any{
 	(MFAMethod)(0),                      // 0: authentication.service.v1.MFAMethod
 	(MFAEnforcement)(0),                 // 1: authentication.service.v1.MFAEnforcement
-	(*GetMFAStatusRequest)(nil),         // 2: authentication.service.v1.GetMFAStatusRequest
-	(*GetMFAStatusResponse)(nil),        // 3: authentication.service.v1.GetMFAStatusResponse
-	(*EnrolledMethod)(nil),              // 4: authentication.service.v1.EnrolledMethod
-	(*ListEnrolledMethodsRequest)(nil),  // 5: authentication.service.v1.ListEnrolledMethodsRequest
-	(*ListEnrolledMethodsResponse)(nil), // 6: authentication.service.v1.ListEnrolledMethodsResponse
-	(*StartEnrollMethodRequest)(nil),    // 7: authentication.service.v1.StartEnrollMethodRequest
-	(*StartEnrollMethodResponse)(nil),   // 8: authentication.service.v1.StartEnrollMethodResponse
-	(*TOTPResult)(nil),                  // 9: authentication.service.v1.TOTPResult
-	(*SMSResult)(nil),                   // 10: authentication.service.v1.SMSResult
-	(*WebAuthnResult)(nil),              // 11: authentication.service.v1.WebAuthnResult
-	(*ConfirmEnrollMethodRequest)(nil),  // 12: authentication.service.v1.ConfirmEnrollMethodRequest
-	(*ConfirmEnrollMethodResponse)(nil), // 13: authentication.service.v1.ConfirmEnrollMethodResponse
-	(*DisableMFARequest)(nil),           // 14: authentication.service.v1.DisableMFARequest
-	(*StartMFAChallengeRequest)(nil),    // 15: authentication.service.v1.StartMFAChallengeRequest
-	(*StartMFAChallengeResponse)(nil),   // 16: authentication.service.v1.StartMFAChallengeResponse
-	(*VerifyMFAChallengeRequest)(nil),   // 17: authentication.service.v1.VerifyMFAChallengeRequest
-	(*VerifyMFAChallengeResponse)(nil),  // 18: authentication.service.v1.VerifyMFAChallengeResponse
-	(*GenerateBackupCodesRequest)(nil),  // 19: authentication.service.v1.GenerateBackupCodesRequest
-	(*GenerateBackupCodesResponse)(nil), // 20: authentication.service.v1.GenerateBackupCodesResponse
-	(*ListBackupCodesRequest)(nil),      // 21: authentication.service.v1.ListBackupCodesRequest
-	(*ListBackupCodesResponse)(nil),     // 22: authentication.service.v1.ListBackupCodesResponse
-	(*RevokeMFADeviceRequest)(nil),      // 23: authentication.service.v1.RevokeMFADeviceRequest
-	(*SMSVerification)(nil),             // 24: authentication.service.v1.SMSVerification
-	(*WebAuthnAssertion)(nil),           // 25: authentication.service.v1.WebAuthnAssertion
-	(*timestamppb.Timestamp)(nil),       // 26: google.protobuf.Timestamp
-	(*emptypb.Empty)(nil),               // 27: google.protobuf.Empty
+	(*ResetUserMFARequest)(nil),         // 2: authentication.service.v1.ResetUserMFARequest
+	(*GetMFAStatusRequest)(nil),         // 3: authentication.service.v1.GetMFAStatusRequest
+	(*GetMFAStatusResponse)(nil),        // 4: authentication.service.v1.GetMFAStatusResponse
+	(*EnrolledMethod)(nil),              // 5: authentication.service.v1.EnrolledMethod
+	(*ListEnrolledMethodsRequest)(nil),  // 6: authentication.service.v1.ListEnrolledMethodsRequest
+	(*ListEnrolledMethodsResponse)(nil), // 7: authentication.service.v1.ListEnrolledMethodsResponse
+	(*StartEnrollMethodRequest)(nil),    // 8: authentication.service.v1.StartEnrollMethodRequest
+	(*StartEnrollMethodResponse)(nil),   // 9: authentication.service.v1.StartEnrollMethodResponse
+	(*TOTPResult)(nil),                  // 10: authentication.service.v1.TOTPResult
+	(*SMSResult)(nil),                   // 11: authentication.service.v1.SMSResult
+	(*WebAuthnResult)(nil),              // 12: authentication.service.v1.WebAuthnResult
+	(*ConfirmEnrollMethodRequest)(nil),  // 13: authentication.service.v1.ConfirmEnrollMethodRequest
+	(*ConfirmEnrollMethodResponse)(nil), // 14: authentication.service.v1.ConfirmEnrollMethodResponse
+	(*DisableMFARequest)(nil),           // 15: authentication.service.v1.DisableMFARequest
+	(*StartMFAChallengeRequest)(nil),    // 16: authentication.service.v1.StartMFAChallengeRequest
+	(*StartMFAChallengeResponse)(nil),   // 17: authentication.service.v1.StartMFAChallengeResponse
+	(*VerifyMFAChallengeRequest)(nil),   // 18: authentication.service.v1.VerifyMFAChallengeRequest
+	(*VerifyMFAChallengeResponse)(nil),  // 19: authentication.service.v1.VerifyMFAChallengeResponse
+	(*GenerateBackupCodesRequest)(nil),  // 20: authentication.service.v1.GenerateBackupCodesRequest
+	(*GenerateBackupCodesResponse)(nil), // 21: authentication.service.v1.GenerateBackupCodesResponse
+	(*ListBackupCodesRequest)(nil),      // 22: authentication.service.v1.ListBackupCodesRequest
+	(*ListBackupCodesResponse)(nil),     // 23: authentication.service.v1.ListBackupCodesResponse
+	(*RevokeMFADeviceRequest)(nil),      // 24: authentication.service.v1.RevokeMFADeviceRequest
+	(*SMSVerification)(nil),             // 25: authentication.service.v1.SMSVerification
+	(*WebAuthnAssertion)(nil),           // 26: authentication.service.v1.WebAuthnAssertion
+	(*timestamppb.Timestamp)(nil),       // 27: google.protobuf.Timestamp
+	(*emptypb.Empty)(nil),               // 28: google.protobuf.Empty
 }
 var file_authentication_service_v1_mfa_proto_depIdxs = []int32{
-	4,  // 0: authentication.service.v1.GetMFAStatusResponse.enrolled:type_name -> authentication.service.v1.EnrolledMethod
+	5,  // 0: authentication.service.v1.GetMFAStatusResponse.enrolled:type_name -> authentication.service.v1.EnrolledMethod
 	1,  // 1: authentication.service.v1.GetMFAStatusResponse.enforcement:type_name -> authentication.service.v1.MFAEnforcement
 	0,  // 2: authentication.service.v1.EnrolledMethod.method:type_name -> authentication.service.v1.MFAMethod
-	26, // 3: authentication.service.v1.EnrolledMethod.created_at:type_name -> google.protobuf.Timestamp
-	26, // 4: authentication.service.v1.EnrolledMethod.last_used_at:type_name -> google.protobuf.Timestamp
-	4,  // 5: authentication.service.v1.ListEnrolledMethodsResponse.items:type_name -> authentication.service.v1.EnrolledMethod
+	27, // 3: authentication.service.v1.EnrolledMethod.created_at:type_name -> google.protobuf.Timestamp
+	27, // 4: authentication.service.v1.EnrolledMethod.last_used_at:type_name -> google.protobuf.Timestamp
+	5,  // 5: authentication.service.v1.ListEnrolledMethodsResponse.items:type_name -> authentication.service.v1.EnrolledMethod
 	0,  // 6: authentication.service.v1.StartEnrollMethodRequest.method:type_name -> authentication.service.v1.MFAMethod
-	9,  // 7: authentication.service.v1.StartEnrollMethodResponse.totp:type_name -> authentication.service.v1.TOTPResult
-	10, // 8: authentication.service.v1.StartEnrollMethodResponse.sms:type_name -> authentication.service.v1.SMSResult
-	11, // 9: authentication.service.v1.StartEnrollMethodResponse.webauthn:type_name -> authentication.service.v1.WebAuthnResult
-	26, // 10: authentication.service.v1.StartEnrollMethodResponse.expires_at:type_name -> google.protobuf.Timestamp
+	10, // 7: authentication.service.v1.StartEnrollMethodResponse.totp:type_name -> authentication.service.v1.TOTPResult
+	11, // 8: authentication.service.v1.StartEnrollMethodResponse.sms:type_name -> authentication.service.v1.SMSResult
+	12, // 9: authentication.service.v1.StartEnrollMethodResponse.webauthn:type_name -> authentication.service.v1.WebAuthnResult
+	27, // 10: authentication.service.v1.StartEnrollMethodResponse.expires_at:type_name -> google.protobuf.Timestamp
 	0,  // 11: authentication.service.v1.ConfirmEnrollMethodRequest.method:type_name -> authentication.service.v1.MFAMethod
-	24, // 12: authentication.service.v1.ConfirmEnrollMethodRequest.sms:type_name -> authentication.service.v1.SMSVerification
-	25, // 13: authentication.service.v1.ConfirmEnrollMethodRequest.webauthn:type_name -> authentication.service.v1.WebAuthnAssertion
+	25, // 12: authentication.service.v1.ConfirmEnrollMethodRequest.sms:type_name -> authentication.service.v1.SMSVerification
+	26, // 13: authentication.service.v1.ConfirmEnrollMethodRequest.webauthn:type_name -> authentication.service.v1.WebAuthnAssertion
 	0,  // 14: authentication.service.v1.DisableMFARequest.method:type_name -> authentication.service.v1.MFAMethod
-	24, // 15: authentication.service.v1.DisableMFARequest.sms:type_name -> authentication.service.v1.SMSVerification
-	25, // 16: authentication.service.v1.DisableMFARequest.webauthn:type_name -> authentication.service.v1.WebAuthnAssertion
+	25, // 15: authentication.service.v1.DisableMFARequest.sms:type_name -> authentication.service.v1.SMSVerification
+	26, // 16: authentication.service.v1.DisableMFARequest.webauthn:type_name -> authentication.service.v1.WebAuthnAssertion
 	0,  // 17: authentication.service.v1.StartMFAChallengeRequest.method:type_name -> authentication.service.v1.MFAMethod
-	10, // 18: authentication.service.v1.StartMFAChallengeResponse.sms:type_name -> authentication.service.v1.SMSResult
-	11, // 19: authentication.service.v1.StartMFAChallengeResponse.webauthn:type_name -> authentication.service.v1.WebAuthnResult
-	26, // 20: authentication.service.v1.StartMFAChallengeResponse.expires_at:type_name -> google.protobuf.Timestamp
-	24, // 21: authentication.service.v1.VerifyMFAChallengeRequest.sms:type_name -> authentication.service.v1.SMSVerification
-	25, // 22: authentication.service.v1.VerifyMFAChallengeRequest.webauthn:type_name -> authentication.service.v1.WebAuthnAssertion
-	26, // 23: authentication.service.v1.GenerateBackupCodesResponse.generated_at:type_name -> google.protobuf.Timestamp
-	26, // 24: authentication.service.v1.ListBackupCodesResponse.generated_at:type_name -> google.protobuf.Timestamp
-	2,  // 25: authentication.service.v1.MFAService.GetMFAStatus:input_type -> authentication.service.v1.GetMFAStatusRequest
-	5,  // 26: authentication.service.v1.MFAService.ListEnrolledMethods:input_type -> authentication.service.v1.ListEnrolledMethodsRequest
-	7,  // 27: authentication.service.v1.MFAService.StartEnrollMethod:input_type -> authentication.service.v1.StartEnrollMethodRequest
-	12, // 28: authentication.service.v1.MFAService.ConfirmEnrollMethod:input_type -> authentication.service.v1.ConfirmEnrollMethodRequest
-	14, // 29: authentication.service.v1.MFAService.DisableMFA:input_type -> authentication.service.v1.DisableMFARequest
-	15, // 30: authentication.service.v1.MFAService.StartMFAChallenge:input_type -> authentication.service.v1.StartMFAChallengeRequest
-	17, // 31: authentication.service.v1.MFAService.VerifyMFAChallenge:input_type -> authentication.service.v1.VerifyMFAChallengeRequest
-	19, // 32: authentication.service.v1.MFAService.GenerateBackupCodes:input_type -> authentication.service.v1.GenerateBackupCodesRequest
-	21, // 33: authentication.service.v1.MFAService.ListBackupCodes:input_type -> authentication.service.v1.ListBackupCodesRequest
-	23, // 34: authentication.service.v1.MFAService.RevokeMFADevice:input_type -> authentication.service.v1.RevokeMFADeviceRequest
-	3,  // 35: authentication.service.v1.MFAService.GetMFAStatus:output_type -> authentication.service.v1.GetMFAStatusResponse
-	6,  // 36: authentication.service.v1.MFAService.ListEnrolledMethods:output_type -> authentication.service.v1.ListEnrolledMethodsResponse
-	8,  // 37: authentication.service.v1.MFAService.StartEnrollMethod:output_type -> authentication.service.v1.StartEnrollMethodResponse
-	13, // 38: authentication.service.v1.MFAService.ConfirmEnrollMethod:output_type -> authentication.service.v1.ConfirmEnrollMethodResponse
-	27, // 39: authentication.service.v1.MFAService.DisableMFA:output_type -> google.protobuf.Empty
-	16, // 40: authentication.service.v1.MFAService.StartMFAChallenge:output_type -> authentication.service.v1.StartMFAChallengeResponse
-	18, // 41: authentication.service.v1.MFAService.VerifyMFAChallenge:output_type -> authentication.service.v1.VerifyMFAChallengeResponse
-	20, // 42: authentication.service.v1.MFAService.GenerateBackupCodes:output_type -> authentication.service.v1.GenerateBackupCodesResponse
-	22, // 43: authentication.service.v1.MFAService.ListBackupCodes:output_type -> authentication.service.v1.ListBackupCodesResponse
-	27, // 44: authentication.service.v1.MFAService.RevokeMFADevice:output_type -> google.protobuf.Empty
-	35, // [35:45] is the sub-list for method output_type
-	25, // [25:35] is the sub-list for method input_type
+	11, // 18: authentication.service.v1.StartMFAChallengeResponse.sms:type_name -> authentication.service.v1.SMSResult
+	12, // 19: authentication.service.v1.StartMFAChallengeResponse.webauthn:type_name -> authentication.service.v1.WebAuthnResult
+	27, // 20: authentication.service.v1.StartMFAChallengeResponse.expires_at:type_name -> google.protobuf.Timestamp
+	25, // 21: authentication.service.v1.VerifyMFAChallengeRequest.sms:type_name -> authentication.service.v1.SMSVerification
+	26, // 22: authentication.service.v1.VerifyMFAChallengeRequest.webauthn:type_name -> authentication.service.v1.WebAuthnAssertion
+	27, // 23: authentication.service.v1.GenerateBackupCodesResponse.generated_at:type_name -> google.protobuf.Timestamp
+	27, // 24: authentication.service.v1.ListBackupCodesResponse.generated_at:type_name -> google.protobuf.Timestamp
+	3,  // 25: authentication.service.v1.MFAService.GetMFAStatus:input_type -> authentication.service.v1.GetMFAStatusRequest
+	6,  // 26: authentication.service.v1.MFAService.ListEnrolledMethods:input_type -> authentication.service.v1.ListEnrolledMethodsRequest
+	8,  // 27: authentication.service.v1.MFAService.StartEnrollMethod:input_type -> authentication.service.v1.StartEnrollMethodRequest
+	13, // 28: authentication.service.v1.MFAService.ConfirmEnrollMethod:input_type -> authentication.service.v1.ConfirmEnrollMethodRequest
+	15, // 29: authentication.service.v1.MFAService.DisableMFA:input_type -> authentication.service.v1.DisableMFARequest
+	16, // 30: authentication.service.v1.MFAService.StartMFAChallenge:input_type -> authentication.service.v1.StartMFAChallengeRequest
+	18, // 31: authentication.service.v1.MFAService.VerifyMFAChallenge:input_type -> authentication.service.v1.VerifyMFAChallengeRequest
+	20, // 32: authentication.service.v1.MFAService.GenerateBackupCodes:input_type -> authentication.service.v1.GenerateBackupCodesRequest
+	22, // 33: authentication.service.v1.MFAService.ListBackupCodes:input_type -> authentication.service.v1.ListBackupCodesRequest
+	24, // 34: authentication.service.v1.MFAService.RevokeMFADevice:input_type -> authentication.service.v1.RevokeMFADeviceRequest
+	2,  // 35: authentication.service.v1.MFAService.ResetUserMFA:input_type -> authentication.service.v1.ResetUserMFARequest
+	4,  // 36: authentication.service.v1.MFAService.GetMFAStatus:output_type -> authentication.service.v1.GetMFAStatusResponse
+	7,  // 37: authentication.service.v1.MFAService.ListEnrolledMethods:output_type -> authentication.service.v1.ListEnrolledMethodsResponse
+	9,  // 38: authentication.service.v1.MFAService.StartEnrollMethod:output_type -> authentication.service.v1.StartEnrollMethodResponse
+	14, // 39: authentication.service.v1.MFAService.ConfirmEnrollMethod:output_type -> authentication.service.v1.ConfirmEnrollMethodResponse
+	28, // 40: authentication.service.v1.MFAService.DisableMFA:output_type -> google.protobuf.Empty
+	17, // 41: authentication.service.v1.MFAService.StartMFAChallenge:output_type -> authentication.service.v1.StartMFAChallengeResponse
+	19, // 42: authentication.service.v1.MFAService.VerifyMFAChallenge:output_type -> authentication.service.v1.VerifyMFAChallengeResponse
+	21, // 43: authentication.service.v1.MFAService.GenerateBackupCodes:output_type -> authentication.service.v1.GenerateBackupCodesResponse
+	23, // 44: authentication.service.v1.MFAService.ListBackupCodes:output_type -> authentication.service.v1.ListBackupCodesResponse
+	28, // 45: authentication.service.v1.MFAService.RevokeMFADevice:output_type -> google.protobuf.Empty
+	28, // 46: authentication.service.v1.MFAService.ResetUserMFA:output_type -> google.protobuf.Empty
+	36, // [36:47] is the sub-list for method output_type
+	25, // [25:36] is the sub-list for method input_type
 	25, // [25:25] is the sub-list for extension type_name
 	25, // [25:25] is the sub-list for extension extendee
 	0,  // [0:25] is the sub-list for field type_name
@@ -2082,50 +2235,50 @@ func file_authentication_service_v1_mfa_proto_init() {
 	if File_authentication_service_v1_mfa_proto != nil {
 		return
 	}
-	file_authentication_service_v1_mfa_proto_msgTypes[0].OneofWrappers = []any{}
-	file_authentication_service_v1_mfa_proto_msgTypes[2].OneofWrappers = []any{}
+	file_authentication_service_v1_mfa_proto_msgTypes[1].OneofWrappers = []any{}
 	file_authentication_service_v1_mfa_proto_msgTypes[3].OneofWrappers = []any{}
-	file_authentication_service_v1_mfa_proto_msgTypes[5].OneofWrappers = []any{}
-	file_authentication_service_v1_mfa_proto_msgTypes[6].OneofWrappers = []any{
+	file_authentication_service_v1_mfa_proto_msgTypes[4].OneofWrappers = []any{}
+	file_authentication_service_v1_mfa_proto_msgTypes[6].OneofWrappers = []any{}
+	file_authentication_service_v1_mfa_proto_msgTypes[7].OneofWrappers = []any{
 		(*StartEnrollMethodResponse_Totp)(nil),
 		(*StartEnrollMethodResponse_Sms)(nil),
 		(*StartEnrollMethodResponse_Webauthn)(nil),
 	}
-	file_authentication_service_v1_mfa_proto_msgTypes[10].OneofWrappers = []any{
+	file_authentication_service_v1_mfa_proto_msgTypes[11].OneofWrappers = []any{
 		(*ConfirmEnrollMethodRequest_TotpCode)(nil),
 		(*ConfirmEnrollMethodRequest_Sms)(nil),
 		(*ConfirmEnrollMethodRequest_Webauthn)(nil),
 		(*ConfirmEnrollMethodRequest_BackupCode)(nil),
 	}
-	file_authentication_service_v1_mfa_proto_msgTypes[12].OneofWrappers = []any{
+	file_authentication_service_v1_mfa_proto_msgTypes[13].OneofWrappers = []any{
 		(*DisableMFARequest_Password)(nil),
 		(*DisableMFARequest_TotpCode)(nil),
 		(*DisableMFARequest_Sms)(nil),
 		(*DisableMFARequest_Webauthn)(nil),
 	}
-	file_authentication_service_v1_mfa_proto_msgTypes[13].OneofWrappers = []any{}
-	file_authentication_service_v1_mfa_proto_msgTypes[14].OneofWrappers = []any{
+	file_authentication_service_v1_mfa_proto_msgTypes[14].OneofWrappers = []any{}
+	file_authentication_service_v1_mfa_proto_msgTypes[15].OneofWrappers = []any{
 		(*StartMFAChallengeResponse_Sms)(nil),
 		(*StartMFAChallengeResponse_Webauthn)(nil),
 	}
-	file_authentication_service_v1_mfa_proto_msgTypes[15].OneofWrappers = []any{
+	file_authentication_service_v1_mfa_proto_msgTypes[16].OneofWrappers = []any{
 		(*VerifyMFAChallengeRequest_TotpCode)(nil),
 		(*VerifyMFAChallengeRequest_Sms)(nil),
 		(*VerifyMFAChallengeRequest_Webauthn)(nil),
 		(*VerifyMFAChallengeRequest_BackupCode)(nil),
 	}
-	file_authentication_service_v1_mfa_proto_msgTypes[16].OneofWrappers = []any{}
 	file_authentication_service_v1_mfa_proto_msgTypes[17].OneofWrappers = []any{}
 	file_authentication_service_v1_mfa_proto_msgTypes[18].OneofWrappers = []any{}
-	file_authentication_service_v1_mfa_proto_msgTypes[20].OneofWrappers = []any{}
-	file_authentication_service_v1_mfa_proto_msgTypes[23].OneofWrappers = []any{}
+	file_authentication_service_v1_mfa_proto_msgTypes[19].OneofWrappers = []any{}
+	file_authentication_service_v1_mfa_proto_msgTypes[21].OneofWrappers = []any{}
+	file_authentication_service_v1_mfa_proto_msgTypes[24].OneofWrappers = []any{}
 	type x struct{}
 	out := protoimpl.TypeBuilder{
 		File: protoimpl.DescBuilder{
 			GoPackagePath: reflect.TypeOf(x{}).PkgPath(),
 			RawDescriptor: unsafe.Slice(unsafe.StringData(file_authentication_service_v1_mfa_proto_rawDesc), len(file_authentication_service_v1_mfa_proto_rawDesc)),
 			NumEnums:      2,
-			NumMessages:   24,
+			NumMessages:   25,
 			NumExtensions: 0,
 			NumServices:   1,
 		},

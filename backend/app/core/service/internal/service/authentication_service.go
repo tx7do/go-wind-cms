@@ -8,8 +8,8 @@ import (
 	"github.com/go-kratos/kratos/v2/log"
 	"github.com/redis/go-redis/v9"
 	"github.com/tx7do/go-crud/viewer"
-	"github.com/tx7do/go-utils/timeutil"
 	"github.com/tx7do/go-utils/geoip/geolite"
+	"github.com/tx7do/go-utils/timeutil"
 	"github.com/tx7do/go-utils/trans"
 	"github.com/tx7do/kratos-bootstrap/bootstrap"
 	"google.golang.org/protobuf/types/known/emptypb"
@@ -50,9 +50,9 @@ type AuthenticationService struct {
 	// redisClient 用于 OIDC 授权码 state 的暂存（防 CSRF，一次性消费）
 	redisClient *redis.Client
 
-	vcodeCache *data.VCodeCache
-	geoClient         *geolite.Client
-	loginPolicyRepo   *data.LoginPolicyRepo
+	vcodeCache      *data.VCodeCache
+	geoClient       *geolite.Client
+	loginPolicyRepo *data.LoginPolicyRepo
 
 	// 构造期留 nil，装配期由 wiring 在通知域就绪后 RegisterNotifier 注入
 	//（忘记密码的发码邮件走这条缝）。
@@ -332,19 +332,27 @@ func (s *AuthenticationService) doGrantTypePassword(ctx context.Context, req *au
 		return nil, authenticationV1.ErrorForbidden("login blocked: %s", reason)
 	}
 
+	// 授权并富化令牌载荷（Roles 等 claim 写入 payload；无权限者在挑战签发前即被拒）
 	tokenPayload := &authenticationV1.UserTokenPayload{
-		UserId:   user.GetId(),
-		TenantId: user.TenantId,
-		Username: user.Username,
-		ClientId: req.ClientId,
-		DeviceId: req.DeviceId,
-		Ip:       trans.Ptr(req.GetClientIp()),
+		UserId:    user.GetId(),
+		TenantId:  user.TenantId,
+		Username:  user.Username,
+		ClientId:  req.ClientId,
+		DeviceId:  req.DeviceId,
+		Ip:        trans.Ptr(req.GetClientIp()),
 		UserAgent: trans.Ptr(req.GetUserAgent()),
 	}
-
-	// 验证权限
 	if err = s.resolveUserAuthority(ctx, user, req.GetClientType(), tokenPayload); err != nil {
 		return nil, err
+	}
+
+	// ===== 两步验证闸门：用户启用 TOTP 因子时改为签发/校验 MFA 挑战（不签令牌）=====
+	mfaResp, err := s.enforceMFAOnLogin(ctx, req, user)
+	if err != nil {
+		return nil, err
+	}
+	if mfaResp != nil {
+		return mfaResp, nil
 	}
 
 	roleCodes, err := s.roleRepo.ListRoleCodesByIds(ctx, user.GetRoleIds())
@@ -395,12 +403,12 @@ func (s *AuthenticationService) doGrantTypeRefreshToken(ctx context.Context, req
 	}
 
 	tokenPayload := &authenticationV1.UserTokenPayload{
-		UserId:   user.GetId(),
-		TenantId: user.TenantId,
-		Username: user.Username,
-		ClientId: req.ClientId,
-		DeviceId: req.DeviceId,
-		Ip:       trans.Ptr(req.GetClientIp()),
+		UserId:    user.GetId(),
+		TenantId:  user.TenantId,
+		Username:  user.Username,
+		ClientId:  req.ClientId,
+		DeviceId:  req.DeviceId,
+		Ip:        trans.Ptr(req.GetClientIp()),
 		UserAgent: trans.Ptr(req.GetUserAgent()),
 	}
 

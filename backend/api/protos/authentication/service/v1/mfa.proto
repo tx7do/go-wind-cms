@@ -39,6 +39,15 @@ service MFAService {
 
   // 撤销指定凭证（按 id）
   rpc RevokeMFADevice(RevokeMFADeviceRequest) returns (google.protobuf.Empty) {}
+
+  // 管理员救援重置：清空目标用户全部 TOTP 因子（用户丢失验证器后由平台管理员操作）
+  rpc ResetUserMFA(ResetUserMFARequest) returns (google.protobuf.Empty) {}
+}
+
+// 管理员救援重置 - 请求
+message ResetUserMFARequest {
+  // 目标用户 ID
+  uint32 user_id = 1 [(gnostic.openapi.v3.property) = { description: "目标用户 ID" }];
 }
 
 // 多因素认证方法
@@ -96,6 +105,10 @@ message StartEnrollMethodRequest {
   // 根据 method 可能需要额外参数（例如 SMS 需要 phone）
   optional string phone = 2;
   optional string email = 3;
+  // 操作者用户 ID（BFF 从会话注入；上下文不可靠时显式传递）
+  optional uint32 user_id = 30 [(gnostic.openapi.v3.property) = { description: "操作者用户 ID" }];
+  // 绑定展示用账号标识（otpauth URI 的 account 段，如用户名/邮箱）
+  optional string account = 31 [(gnostic.openapi.v3.property) = { description: "绑定展示用账号标识" }];
 }
 message StartEnrollMethodResponse {
   // 不同方法的启动结果
@@ -159,6 +172,8 @@ message DisableMFARequest {
     WebAuthnAssertion webauthn = 13;
   }
   optional string reason = 20;
+  // 操作者用户 ID（BFF 从会话注入）
+  optional uint32 user_id = 30 [(gnostic.openapi.v3.property) = { description: "操作者用户 ID" }];
 }
 
 // Start authentication challenge
@@ -190,6 +205,14 @@ message VerifyMFAChallengeResponse {
   bool success = 1;
   // 可选：一次性登录令牌或 session id（实现可选）
   optional string session_token = 2;
+
+  // ===== 挑战通过直接签发的正式令牌对（与 Login 响应同构）=====
+  optional string token_type = 10;
+  optional string access_token = 11;
+  optional int64 expires_in = 12;
+  optional string refresh_token = 13;
+  optional int64 refresh_expires_in = 14;
+  optional string jti = 15;
 }
 
 // 备份码管理

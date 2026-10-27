@@ -7,7 +7,10 @@ import (
 	"encoding/base64"
 	"go-wind-cms/pkg/constants"
 	passwordpolicy "go-wind-cms/pkg/password"
+	"strconv"
 	"time"
+
+	pkgcrypto "go-wind-cms/pkg/crypto"
 
 	"entgo.io/ent/dialect/sql"
 	"github.com/go-kratos/kratos/v2/log"
@@ -407,6 +410,120 @@ const dummyPasswordHash = "$2a$10$1sbpKmhQDpXLHnDnEQ1nLe3oOnYyP2bUJyqHcX2T0Fq1qf
 
 // performDummyVerify 执行一次假的密码校验，用于抹平计时差异。
 // 返回值始终为 false，且从不抛错。
+// ===== TOTP 两步验证（MFA）因子存取 =====
+// 约定：TOTP secret 以 identity_type=USERID + identifier=用户ID + credential_type=TOTP
+// 落 sys_user_credentials，secret 经全局加密器（ENCRYPTION_KEY）落库加密；一个用户
+// 至多一条启用的 TOTP 因子（重复绑定覆盖旧因子）。
+
+// totpCredentialPredicates TOTP 因子的公共查询谓词。
+func totpCredentialPredicates(userID uint32) []predicate.UserCredential {
+	return []predicate.UserCredential{
+		usercredential.UserIDEQ(userID),
+		usercredential.CredentialTypeEQ(usercredential.CredentialTypeTOTP),
+		usercredential.StatusEQ(usercredential.StatusEnabled),
+	}
+}
+
+// GetTOTPCredential 取用户启用的 TOTP secret（解密后返回）；未绑定返回 NotFound。
+func (r *UserCredentialRepo) GetTOTPCredential(ctx context.Context, userID uint32) (string, error) {
+	entity, err := r.entClient.Client().UserCredential.Query().
+		Select(
+			usercredential.FieldUserID,
+			usercredential.FieldCredential,
+		).
+		Where(totpCredentialPredicates(userID)...).
+		First(ctx)
+	if err != nil {
+		if ent.IsNotFound(err) {
+			return "", authenticationV1.ErrorNotFound("totp factor not found")
+		}
+		r.log.Errorf("query totp credential failed: %s", err.Error())
+		return "", authenticationV1.ErrorServiceUnavailable("db error")
+	}
+	if entity.Credential == nil {
+		return "", authenticationV1.ErrorNotFound("totp factor not found")
+	}
+	secret, err := pkgcrypto.DecryptIfNeeded(*entity.Credential)
+	if err != nil {
+		r.log.Errorf("decrypt totp secret failed: %s", err.Error())
+		return "", authenticationV1.ErrorInternalServerError("decrypt totp secret failed")
+	}
+	return secret, nil
+}
+
+// HasTOTPCredential 用户是否已启用 TOTP 因子（登录链热路径，仅探活不取值）。
+func (r *UserCredentialRepo) HasTOTPCredential(ctx context.Context, userID uint32) (bool, error) {
+	exists, err := r.entClient.Client().UserCredential.Query().
+		Where(totpCredentialPredicates(userID)...).
+		Exist(ctx)
+	if err != nil {
+		r.log.Errorf("probe totp credential failed: %s", err.Error())
+		return false, authenticationV1.ErrorServiceUnavailable("db error")
+	}
+	return exists, nil
+}
+
+// SaveTOTPCredential 写入（或覆盖）用户的 TOTP 因子，secret 需已加密。
+func (r *UserCredentialRepo) SaveTOTPCredential(ctx context.Context, userID, tenantID uint32, encryptedSecret string) error {
+	client := r.entClient.Client()
+	existing, err := client.UserCredential.Query().
+		Select(usercredential.FieldID).
+		Where(
+			usercredential.UserIDEQ(userID),
+			usercredential.CredentialTypeEQ(usercredential.CredentialTypeTOTP),
+		).
+		First(ctx)
+	if err != nil && !ent.IsNotFound(err) {
+		r.log.Errorf("probe existing totp credential failed: %s", err.Error())
+		return authenticationV1.ErrorServiceUnavailable("db error")
+	}
+	identityType := r.identityTypeConverter.ToEntity(trans.Ptr(authenticationV1.UserCredential_USERID))
+	status := usercredential.StatusEnabled
+	now := time.Now()
+	if existing != nil {
+		if _, uErr := client.UserCredential.UpdateOneID(existing.ID).
+			SetCredential(encryptedSecret).
+			SetStatus(status).
+			SetNillableUpdatedAt(&now).
+			Save(ctx); uErr != nil {
+			r.log.Errorf("update totp credential failed: %s", uErr.Error())
+			return authenticationV1.ErrorInternalServerError("save totp factor failed")
+		}
+		return nil
+	}
+	identifier := strconv.FormatUint(uint64(userID), 10)
+	if _, cErr := client.UserCredential.Create().
+		SetUserID(userID).
+		SetTenantID(tenantID).
+		SetNillableIdentityType(identityType).
+		SetIdentifier(identifier).
+		SetCredentialType(usercredential.CredentialTypeTOTP).
+		SetCredential(encryptedSecret).
+		SetStatus(status).
+		SetNillableCreatedAt(&now).
+		SetNillableUpdatedAt(&now).
+		Save(ctx); cErr != nil {
+		r.log.Errorf("create totp credential failed: %s", cErr.Error())
+		return authenticationV1.ErrorInternalServerError("save totp factor failed")
+	}
+	return nil
+}
+
+// DeleteTOTPCredentials 清空用户全部 TOTP 因子（管理员救援重置）。
+func (r *UserCredentialRepo) DeleteTOTPCredentials(ctx context.Context, userID uint32) (int, error) {
+	affected, err := r.entClient.Client().UserCredential.Delete().
+		Where(
+			usercredential.UserIDEQ(userID),
+			usercredential.CredentialTypeEQ(usercredential.CredentialTypeTOTP),
+		).
+		Exec(ctx)
+	if err != nil {
+		r.log.Errorf("delete totp credentials failed: %s", err.Error())
+		return 0, authenticationV1.ErrorInternalServerError("delete totp factors failed")
+	}
+	return affected, nil
+}
+
 func (r *UserCredentialRepo) performDummyVerify(plainCredential string) {
 	_, _ = r.passwordCrypto.Verify(plainCredential, dummyPasswordHash)
 }

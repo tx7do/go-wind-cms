@@ -142,6 +142,8 @@ class AuthenticationServiceV1LoginRequest {
   /// Behaviors: REQUIRED
   AuthenticationServiceV1GrantType? grant_type;
   String? jti;
+  /// MFA 挑战凭据（两步验证第二步随 totp_code 一并回传；Login 返回 mfa_operation_id 时签发）
+  String? mfa_operation_id;
   String? mobile;
   String? oidc_state;
   String? oidcIssuer;
@@ -150,6 +152,8 @@ class AuthenticationServiceV1LoginRequest {
   String? refresh_token;
   String? scope;
   String? tenant_code;
+  /// TOTP 动态验证码（6 位数字）
+  String? totp_code;
   int? user_id;
   /// 登录客户端 User-Agent（BFF 注入）
   String? userAgent;
@@ -165,6 +169,7 @@ class AuthenticationServiceV1LoginRequest {
     this.email,
     this.grant_type,
     this.jti,
+    this.mfa_operation_id,
     this.mobile,
     this.oidc_state,
     this.oidcIssuer,
@@ -173,6 +178,7 @@ class AuthenticationServiceV1LoginRequest {
     this.refresh_token,
     this.scope,
     this.tenant_code,
+    this.totp_code,
     this.user_id,
     this.userAgent,
     this.username,
@@ -189,6 +195,7 @@ class AuthenticationServiceV1LoginRequest {
       email: json['email'] as String?,
       grant_type: json['grant_type'] != null ? AuthenticationServiceV1GrantType.fromString(json['grant_type'] as String) : null,
       jti: json['jti'] as String?,
+      mfa_operation_id: json['mfa_operation_id'] as String?,
       mobile: json['mobile'] as String?,
       oidc_state: json['oidc_state'] as String?,
       oidcIssuer: json['oidcIssuer'] as String?,
@@ -197,6 +204,7 @@ class AuthenticationServiceV1LoginRequest {
       refresh_token: json['refresh_token'] as String?,
       scope: json['scope'] as String?,
       tenant_code: json['tenant_code'] as String?,
+      totp_code: json['totp_code'] as String?,
       user_id: json['user_id'] as int?,
       userAgent: json['userAgent'] as String?,
       username: json['username'] as String?,
@@ -214,6 +222,7 @@ class AuthenticationServiceV1LoginRequest {
     if (email != null) json['email'] = email;
     if (grant_type != null) json['grant_type'] = grant_type!.value;
     if (jti != null) json['jti'] = jti;
+    if (mfa_operation_id != null) json['mfa_operation_id'] = mfa_operation_id;
     if (mobile != null) json['mobile'] = mobile;
     if (oidc_state != null) json['oidc_state'] = oidc_state;
     if (oidcIssuer != null) json['oidcIssuer'] = oidcIssuer;
@@ -222,6 +231,7 @@ class AuthenticationServiceV1LoginRequest {
     if (refresh_token != null) json['refresh_token'] = refresh_token;
     if (scope != null) json['scope'] = scope;
     if (tenant_code != null) json['tenant_code'] = tenant_code;
+    if (totp_code != null) json['totp_code'] = totp_code;
     if (user_id != null) json['user_id'] = user_id;
     if (userAgent != null) json['userAgent'] = userAgent;
     if (username != null) json['username'] = username;
@@ -230,7 +240,7 @@ class AuthenticationServiceV1LoginRequest {
 
   @override
   String toString() {
-    return 'AuthenticationServiceV1LoginRequest(client_id: $client_id, client_secret: $client_secret, client_type: $client_type, clientIp: $clientIp, code: $code, device_id: $device_id, email: $email, grant_type: $grant_type, jti: $jti, mobile: $mobile, oidc_state: $oidc_state, oidcIssuer: $oidcIssuer, password: $password, redirect_uri: $redirect_uri, refresh_token: $refresh_token, scope: $scope, tenant_code: $tenant_code, user_id: $user_id, userAgent: $userAgent, username: $username)';
+    return 'AuthenticationServiceV1LoginRequest(client_id: $client_id, client_secret: $client_secret, client_type: $client_type, clientIp: $clientIp, code: $code, device_id: $device_id, email: $email, grant_type: $grant_type, jti: $jti, mfa_operation_id: $mfa_operation_id, mobile: $mobile, oidc_state: $oidc_state, oidcIssuer: $oidcIssuer, password: $password, redirect_uri: $redirect_uri, refresh_token: $refresh_token, scope: $scope, tenant_code: $tenant_code, totp_code: $totp_code, user_id: $user_id, userAgent: $userAgent, username: $username)';
   }
 
   @override
@@ -247,6 +257,7 @@ class AuthenticationServiceV1LoginRequest {
       && email == other.email
       && grant_type == other.grant_type
       && jti == other.jti
+      && mfa_operation_id == other.mfa_operation_id
       && mobile == other.mobile
       && oidc_state == other.oidc_state
       && oidcIssuer == other.oidcIssuer
@@ -255,6 +266,7 @@ class AuthenticationServiceV1LoginRequest {
       && refresh_token == other.refresh_token
       && scope == other.scope
       && tenant_code == other.tenant_code
+      && totp_code == other.totp_code
       && user_id == other.user_id
       && userAgent == other.userAgent
       && username == other.username
@@ -271,6 +283,7 @@ class AuthenticationServiceV1LoginRequest {
     email,
     grant_type,
     jti,
+    mfa_operation_id,
     mobile,
     oidc_state,
     oidcIssuer,
@@ -279,6 +292,7 @@ class AuthenticationServiceV1LoginRequest {
     refresh_token,
     scope,
     tenant_code,
+    totp_code,
     user_id,
     userAgent,
     username,
@@ -294,6 +308,7 @@ class AuthenticationServiceV1LoginRequest {
     String? email,
     AuthenticationServiceV1GrantType? grant_type,
     String? jti,
+    String? mfa_operation_id,
     String? mobile,
     String? oidc_state,
     String? oidcIssuer,
@@ -302,6 +317,7 @@ class AuthenticationServiceV1LoginRequest {
     String? refresh_token,
     String? scope,
     String? tenant_code,
+    String? totp_code,
     int? user_id,
     String? userAgent,
     String? username,
@@ -316,6 +332,7 @@ class AuthenticationServiceV1LoginRequest {
       email: email ?? this.email,
       grant_type: grant_type ?? this.grant_type,
       jti: jti ?? this.jti,
+      mfa_operation_id: mfa_operation_id ?? this.mfa_operation_id,
       mobile: mobile ?? this.mobile,
       oidc_state: oidc_state ?? this.oidc_state,
       oidcIssuer: oidcIssuer ?? this.oidcIssuer,
@@ -324,6 +341,7 @@ class AuthenticationServiceV1LoginRequest {
       refresh_token: refresh_token ?? this.refresh_token,
       scope: scope ?? this.scope,
       tenant_code: tenant_code ?? this.tenant_code,
+      totp_code: totp_code ?? this.totp_code,
       user_id: user_id ?? this.user_id,
       userAgent: userAgent ?? this.userAgent,
       username: username ?? this.username,
@@ -438,6 +456,16 @@ class AuthenticationServiceV1LoginRequest {
     if (f70 != null) {
       w.writeString(70, f70!);
     }
+    // field 80: mfa_operation_id
+    final f80 = mfa_operation_id;
+    if (f80 != null) {
+      w.writeString(80, f80!);
+    }
+    // field 81: totp_code
+    final f81 = totp_code;
+    if (f81 != null) {
+      w.writeString(81, f81!);
+    }
   }
 
   factory AuthenticationServiceV1LoginRequest.fromBuffer(List<int> bytes) {
@@ -548,6 +576,16 @@ class AuthenticationServiceV1LoginRequest {
           m.tenant_code = r.readString();
           break;
         }
+        // field 80: mfa_operation_id
+        case 80: {
+          m.mfa_operation_id = r.readString();
+          break;
+        }
+        // field 81: totp_code
+        case 81: {
+          m.totp_code = r.readString();
+          break;
+        }
         default: {
           r.skip();
         }
@@ -604,6 +642,8 @@ class AuthenticationServiceV1LoginResponse {
   String? id_token;
   /// 本次签发的会话令牌对 ID（在线会话管理用）
   String? jti;
+  /// MFA 挑战凭据：非空表示密码验证已通过、须完成两步验证（此时不含任何令牌字段）
+  String? mfa_operation_id;
   int? refresh_expires_in;
   String? refresh_token;
   String? scope;
@@ -614,6 +654,7 @@ class AuthenticationServiceV1LoginResponse {
     this.expires_in,
     this.id_token,
     this.jti,
+    this.mfa_operation_id,
     this.refresh_expires_in,
     this.refresh_token,
     this.scope,
@@ -626,6 +667,7 @@ class AuthenticationServiceV1LoginResponse {
       expires_in: json['expires_in'] != null ? int.parse(json['expires_in'].toString()) : null,
       id_token: json['id_token'] as String?,
       jti: json['jti'] as String?,
+      mfa_operation_id: json['mfa_operation_id'] as String?,
       refresh_expires_in: json['refresh_expires_in'] != null ? int.parse(json['refresh_expires_in'].toString()) : null,
       refresh_token: json['refresh_token'] as String?,
       scope: json['scope'] as String?,
@@ -639,6 +681,7 @@ class AuthenticationServiceV1LoginResponse {
     if (expires_in != null) json['expires_in'] = expires_in.toString();
     if (id_token != null) json['id_token'] = id_token;
     if (jti != null) json['jti'] = jti;
+    if (mfa_operation_id != null) json['mfa_operation_id'] = mfa_operation_id;
     if (refresh_expires_in != null) json['refresh_expires_in'] = refresh_expires_in.toString();
     if (refresh_token != null) json['refresh_token'] = refresh_token;
     if (scope != null) json['scope'] = scope;
@@ -648,7 +691,7 @@ class AuthenticationServiceV1LoginResponse {
 
   @override
   String toString() {
-    return 'AuthenticationServiceV1LoginResponse(access_token: $access_token, expires_in: $expires_in, id_token: $id_token, jti: $jti, refresh_expires_in: $refresh_expires_in, refresh_token: $refresh_token, scope: $scope, token_type: $token_type)';
+    return 'AuthenticationServiceV1LoginResponse(access_token: $access_token, expires_in: $expires_in, id_token: $id_token, jti: $jti, mfa_operation_id: $mfa_operation_id, refresh_expires_in: $refresh_expires_in, refresh_token: $refresh_token, scope: $scope, token_type: $token_type)';
   }
 
   @override
@@ -660,6 +703,7 @@ class AuthenticationServiceV1LoginResponse {
       && expires_in == other.expires_in
       && id_token == other.id_token
       && jti == other.jti
+      && mfa_operation_id == other.mfa_operation_id
       && refresh_expires_in == other.refresh_expires_in
       && refresh_token == other.refresh_token
       && scope == other.scope
@@ -672,6 +716,7 @@ class AuthenticationServiceV1LoginResponse {
     expires_in,
     id_token,
     jti,
+    mfa_operation_id,
     refresh_expires_in,
     refresh_token,
     scope,
@@ -683,6 +728,7 @@ class AuthenticationServiceV1LoginResponse {
     int? expires_in,
     String? id_token,
     String? jti,
+    String? mfa_operation_id,
     int? refresh_expires_in,
     String? refresh_token,
     String? scope,
@@ -693,6 +739,7 @@ class AuthenticationServiceV1LoginResponse {
       expires_in: expires_in ?? this.expires_in,
       id_token: id_token ?? this.id_token,
       jti: jti ?? this.jti,
+      mfa_operation_id: mfa_operation_id ?? this.mfa_operation_id,
       refresh_expires_in: refresh_expires_in ?? this.refresh_expires_in,
       refresh_token: refresh_token ?? this.refresh_token,
       scope: scope ?? this.scope,
@@ -748,6 +795,11 @@ class AuthenticationServiceV1LoginResponse {
     if (f60 != null) {
       w.writeString(60, f60!);
     }
+    // field 80: mfa_operation_id
+    final f80 = mfa_operation_id;
+    if (f80 != null) {
+      w.writeString(80, f80!);
+    }
   }
 
   factory AuthenticationServiceV1LoginResponse.fromBuffer(List<int> bytes) {
@@ -796,6 +848,11 @@ class AuthenticationServiceV1LoginResponse {
         // field 60: jti
         case 60: {
           m.jti = r.readString();
+          break;
+        }
+        // field 80: mfa_operation_id
+        case 80: {
+          m.mfa_operation_id = r.readString();
           break;
         }
         default: {

@@ -345,9 +345,13 @@ type LoginRequest struct {
 	// 登录客户端 IP（BFF 从 HTTP 请求注入，写会话元数据/审计用）
 	ClientIp *string `protobuf:"bytes,61,opt,name=client_ip,json=clientIp,proto3,oneof" json:"client_ip,omitempty"` // 登录客户端 IP
 	// 登录客户端 User-Agent（BFF 注入）
-	UserAgent     *string `protobuf:"bytes,62,opt,name=user_agent,json=userAgent,proto3,oneof" json:"user_agent,omitempty"` // 登录客户端 User-Agent
-	Jti           *string `protobuf:"bytes,60,opt,name=jti,proto3,oneof" json:"jti,omitempty"`
-	TenantCode    *string `protobuf:"bytes,70,opt,name=tenant_code,proto3,oneof" json:"tenant_code,omitempty"` // 租户编号，留空表示平台登录，非空时解析对应租户
+	UserAgent  *string `protobuf:"bytes,62,opt,name=user_agent,json=userAgent,proto3,oneof" json:"user_agent,omitempty"` // 登录客户端 User-Agent
+	Jti        *string `protobuf:"bytes,60,opt,name=jti,proto3,oneof" json:"jti,omitempty"`
+	TenantCode *string `protobuf:"bytes,70,opt,name=tenant_code,proto3,oneof" json:"tenant_code,omitempty"` // 租户编号，留空表示平台登录，非空时解析对应租户
+	// MFA 挑战凭据（两步验证第二步随 totp_code 一并回传；Login 返回 mfa_operation_id 时签发）
+	MfaOperationId *string `protobuf:"bytes,80,opt,name=mfa_operation_id,proto3,oneof" json:"mfa_operation_id,omitempty"` // MFA 挑战凭据
+	// TOTP 动态验证码（6 位数字）
+	TotpCode      *string `protobuf:"bytes,81,opt,name=totp_code,proto3,oneof" json:"totp_code,omitempty"` // TOTP 动态验证码
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -535,6 +539,20 @@ func (x *LoginRequest) GetTenantCode() string {
 	return ""
 }
 
+func (x *LoginRequest) GetMfaOperationId() string {
+	if x != nil && x.MfaOperationId != nil {
+		return *x.MfaOperationId
+	}
+	return ""
+}
+
+func (x *LoginRequest) GetTotpCode() string {
+	if x != nil && x.TotpCode != nil {
+		return *x.TotpCode
+	}
+	return ""
+}
+
 type isLoginRequest_Identifier interface {
 	isLoginRequest_Identifier()
 }
@@ -568,9 +586,11 @@ type LoginResponse struct {
 	RefreshExpiresIn *int64                 `protobuf:"varint,6,opt,name=refresh_expires_in,proto3,oneof" json:"refresh_expires_in,omitempty"`                    // 刷新令牌过期时间（秒）
 	IdToken          *string                `protobuf:"bytes,7,opt,name=id_token,proto3,oneof" json:"id_token,omitempty"`                                         // ID 令牌，OpenID Connect 扩展中定义的 JWT 格式令牌
 	// 本次签发的会话令牌对 ID（在线会话管理用）
-	Jti           *string `protobuf:"bytes,60,opt,name=jti,proto3,oneof" json:"jti,omitempty"` // 会话令牌对ID
-	unknownFields protoimpl.UnknownFields
-	sizeCache     protoimpl.SizeCache
+	Jti *string `protobuf:"bytes,60,opt,name=jti,proto3,oneof" json:"jti,omitempty"` // 会话令牌对ID
+	// MFA 挑战凭据：非空表示密码验证已通过、须完成两步验证（此时不含任何令牌字段）
+	MfaOperationId *string `protobuf:"bytes,80,opt,name=mfa_operation_id,proto3,oneof" json:"mfa_operation_id,omitempty"` // MFA 挑战凭据
+	unknownFields  protoimpl.UnknownFields
+	sizeCache      protoimpl.SizeCache
 }
 
 func (x *LoginResponse) Reset() {
@@ -655,6 +675,13 @@ func (x *LoginResponse) GetIdToken() string {
 func (x *LoginResponse) GetJti() string {
 	if x != nil && x.Jti != nil {
 		return *x.Jti
+	}
+	return ""
+}
+
+func (x *LoginResponse) GetMfaOperationId() string {
+	if x != nil && x.MfaOperationId != nil {
+		return *x.MfaOperationId
 	}
 	return ""
 }
@@ -1825,7 +1852,7 @@ const file_authentication_service_v1_authentication_proto_rawDesc = "" +
 	"\r_redirect_uri\"\xc2\x01\n" +
 	"\x1bGetOidcAuthorizeUrlResponse\x12\x90\x01\n" +
 	"\rauthorize_url\x18\x01 \x01(\tBf\xbaGc\x92\x02`IdP 授权端点完整地址（含 client_id/redirect_uri/state/scope），浏览器直接跳转H\x00R\fauthorizeUrl\x88\x01\x01B\x10\n" +
-	"\x0e_authorize_url\"\xd5\x11\n" +
+	"\x0e_authorize_url\"\xf2\x13\n" +
 	"\fLoginRequest\x12\x99\x01\n" +
 	"\n" +
 	"grant_type\x18\x01 \x01(\x0e2$.authentication.service.v1.GrantTypeBS\xe0A\x02\xbaGM\x8a\x02\n" +
@@ -1855,7 +1882,9 @@ const file_authentication_service_v1_authentication_proto_rawDesc = "" +
 	"\n" +
 	"user_agent\x18> \x01(\tH\x0eR\tuserAgent\x88\x01\x01\x12\x84\x01\n" +
 	"\x03jti\x18< \x01(\tBm\xbaGj\x92\x02g建议客户端生成并提供 jti（JWT ID）作为唯一标识，服务端可据此防止重放攻击H\x0fR\x03jti\x88\x01\x01\x12\x99\x01\n" +
-	"\vtenant_code\x18F \x01(\tBr\xbaGo\x92\x02l租户编号，留空表示平台登录（平台超级管理员）；非空时按该编号解析对应租户H\x10R\vtenant_code\x88\x01\x01B\f\n" +
+	"\vtenant_code\x18F \x01(\tBr\xbaGo\x92\x02l租户编号，留空表示平台登录（平台超级管理员）；非空时按该编号解析对应租户H\x10R\vtenant_code\x88\x01\x01\x12\xa7\x01\n" +
+	"\x10mfa_operation_id\x18P \x01(\tBv\xbaGs\x92\x02pMFA 挑战凭据（一次性、短时效；密码验证通过但用户启用两步验证时由服务端签发）H\x11R\x10mfa_operation_id\x88\x01\x01\x12N\n" +
+	"\ttotp_code\x18Q \x01(\tB+\xbaG(\x92\x02%TOTP 动态验证码（6 位数字）H\x12R\ttotp_code\x88\x01\x01B\f\n" +
 	"\n" +
 	"identifierB\f\n" +
 	"\n" +
@@ -1877,7 +1906,11 @@ const file_authentication_service_v1_authentication_proto_rawDesc = "" +
 	"_client_ipB\r\n" +
 	"\v_user_agentB\x06\n" +
 	"\x04_jtiB\x0e\n" +
-	"\f_tenant_code\"\xc4\t\n" +
+	"\f_tenant_codeB\x13\n" +
+	"\x11_mfa_operation_idB\f\n" +
+	"\n" +
+	"_totp_code\"\xe1\n" +
+	"\n" +
 	"\rLoginResponse\x12\xdb\x01\n" +
 	"\n" +
 	"token_type\x18\x01 \x01(\x0e2$.authentication.service.v1.TokenTypeB\x94\x01\xbaG\x90\x01\x8a\x02\b\x1a\x06Bearer\x92\x02\x81\x01令牌的类型，该值大小写不敏感，必选项，可以是bearer类型或mac类型，通常只是字符串“Bearer”。R\n" +
@@ -1890,12 +1923,14 @@ const file_authentication_service_v1_authentication_proto_rawDesc = "" +
 	"\x05scope\x18\x05 \x01(\tBw\xbaGt\x92\x02q以空格分隔的用户授予范围列表。如果未提供，scope则授权任何范围，默认为空列表。H\x01R\x05scope\x88\x01\x01\x12\\\n" +
 	"\x12refresh_expires_in\x18\x06 \x01(\x03B'\xbaG$\x92\x02!刷新令牌过期时间（秒）H\x02R\x12refresh_expires_in\x88\x01\x01\x12e\n" +
 	"\bid_token\x18\a \x01(\tBD\xbaGA\x92\x02>ID 令牌，OpenID Connect 扩展中定义的 JWT 格式令牌H\x03R\bid_token\x88\x01\x01\x12.\n" +
-	"\x03jti\x18< \x01(\tB\x17\xbaG\x14\x92\x02\x11会话令牌对IDH\x04R\x03jti\x88\x01\x01B\x10\n" +
+	"\x03jti\x18< \x01(\tB\x17\xbaG\x14\x92\x02\x11会话令牌对IDH\x04R\x03jti\x88\x01\x01\x12\x85\x01\n" +
+	"\x10mfa_operation_id\x18P \x01(\tBT\xbaGQ\x92\x02NMFA 挑战凭据；非空表示须凭它与 totp_code 走挑战验证换令牌H\x05R\x10mfa_operation_id\x88\x01\x01B\x10\n" +
 	"\x0e_refresh_tokenB\b\n" +
 	"\x06_scopeB\x15\n" +
 	"\x13_refresh_expires_inB\v\n" +
 	"\t_id_tokenB\x06\n" +
-	"\x04_jti\"\x97\x01\n" +
+	"\x04_jtiB\x13\n" +
+	"\x11_mfa_operation_id\"\x97\x01\n" +
 	"\rLogoutRequest\x12'\n" +
 	"\auser_id\x18\x01 \x01(\rB\x0e\xbaG\v\x92\x02\b用户IDR\x06userId\x12]\n" +
 	"\vclient_type\x18\x02 \x01(\x0e2%.authentication.service.v1.ClientTypeB\x15\xbaG\x12\x92\x02\x0f客户端类型R\n" +

@@ -150,7 +150,7 @@ export function createAuthenticationServiceClient(
 ): AuthenticationService {
   return {
     Login(request) {
-      const path = `app/v1/login`;
+      const path = `/app/v1/login`;
       const body = JSON.stringify(request);
       return transport.unary(path, 'POST', body, {
         service: 'AuthenticationService',
@@ -158,7 +158,7 @@ export function createAuthenticationServiceClient(
       }) as Promise<authenticationservicev1_LoginResponse>;
     },
     Logout(request) {
-      const path = `app/v1/logout`;
+      const path = `/app/v1/logout`;
       const body = JSON.stringify(request);
       return transport.unary(path, 'POST', body, {
         service: 'AuthenticationService',
@@ -166,7 +166,7 @@ export function createAuthenticationServiceClient(
       }) as Promise<wellKnownEmpty>;
     },
     RefreshToken(request) {
-      const path = `app/v1/refresh-token`;
+      const path = `/app/v1/refresh-token`;
       const body = JSON.stringify(request);
       return transport.unary(path, 'POST', body, {
         service: 'AuthenticationService',
@@ -174,7 +174,7 @@ export function createAuthenticationServiceClient(
       }) as Promise<authenticationservicev1_LoginResponse>;
     },
     GetOidcAuthorizeUrl(request) {
-      const path = `app/v1/oidc/authorize-url`;
+      const path = `/app/v1/oidc/authorize-url`;
       const body = JSON.stringify(request);
       return transport.unary(path, 'POST', body, {
         service: 'AuthenticationService',
@@ -197,6 +197,8 @@ export type authenticationservicev1_LoginRequest = {
   // Behaviors: REQUIRED
   grant_type: authenticationservicev1_GrantType | undefined;
   jti?: string;
+  // MFA 挑战凭据（两步验证第二步随 totp_code 一并回传；Login 返回 mfa_operation_id 时签发）
+  mfa_operation_id?: string;
   mobile?: string;
   oidcIssuer?: string;
   oidc_state?: string;
@@ -205,6 +207,8 @@ export type authenticationservicev1_LoginRequest = {
   refresh_token?: string;
   scope?: string;
   tenant_code?: string;
+  // TOTP 动态验证码（6 位数字）
+  totp_code?: string;
   // 登录客户端 User-Agent（BFF 注入）
   userAgent?: string;
   user_id?: number;
@@ -229,6 +233,8 @@ export type authenticationservicev1_LoginResponse = {
   id_token?: string;
   // 本次签发的会话令牌对 ID（在线会话管理用）
   jti?: string;
+  // MFA 挑战凭据：非空表示密码验证已通过、须完成两步验证（此时不含任何令牌字段）
+  mfa_operation_id?: string;
   refresh_expires_in?: number;
   refresh_token?: string;
   scope?: string;
@@ -285,7 +291,7 @@ export function createCategoryServiceClient(
 ): CategoryService {
   return {
     List(request) {
-      const path = `app/v1/categories`;
+      const path = `/app/v1/categories`;
       const body = null;
       const queryParams: string[] = [];
       if (request.page) {
@@ -333,56 +339,9 @@ export function createCategoryServiceClient(
           `filterExpr.type=${encodeURIComponent(request.filterExpr.type.toString())}`,
         );
       }
-      if (request.filterExpr?.conditions?.field) {
-        queryParams.push(
-          `filterExpr.conditions.field=${encodeURIComponent(request.filterExpr.conditions.field.toString())}`,
-        );
-      }
-      if (request.filterExpr?.conditions?.op) {
-        queryParams.push(
-          `filterExpr.conditions.op=${encodeURIComponent(request.filterExpr.conditions.op.toString())}`,
-        );
-      }
-      if (request.filterExpr?.conditions?.value) {
-        queryParams.push(
-          `filterExpr.conditions.value=${encodeURIComponent(request.filterExpr.conditions.value.toString())}`,
-        );
-      }
-      if (request.filterExpr?.conditions?.jsonValue) {
-        queryParams.push(
-          `filterExpr.conditions.jsonValue=${encodeURIComponent(request.filterExpr.conditions.jsonValue.toString())}`,
-        );
-      }
-      if (request.filterExpr?.conditions?.values) {
-        request.filterExpr.conditions.values.forEach((x) => {
-          queryParams.push(
-            `filterExpr.conditions.values=${encodeURIComponent(x.toString())}`,
-          );
-        });
-      }
-      if (request.filterExpr?.conditions?.datePart) {
-        queryParams.push(
-          `filterExpr.conditions.datePart=${encodeURIComponent(request.filterExpr.conditions.datePart.toString())}`,
-        );
-      }
-      if (request.filterExpr?.conditions?.jsonPath) {
-        queryParams.push(
-          `filterExpr.conditions.jsonPath=${encodeURIComponent(request.filterExpr.conditions.jsonPath.toString())}`,
-        );
-      }
       if (request.orderBy) {
         queryParams.push(
           `orderBy=${encodeURIComponent(request.orderBy.toString())}`,
-        );
-      }
-      if (request.sorting?.field) {
-        queryParams.push(
-          `sorting.field=${encodeURIComponent(request.sorting.field.toString())}`,
-        );
-      }
-      if (request.sorting?.direction) {
-        queryParams.push(
-          `sorting.direction=${encodeURIComponent(request.sorting.direction.toString())}`,
         );
       }
       if (request.fieldMask) {
@@ -403,7 +362,7 @@ export function createCategoryServiceClient(
       if (request.id === undefined || request.id === null) {
         throw new Error('missing required field request.id');
       }
-      const path = `app/v1/categories/${request.id}`;
+      const path = `/app/v1/categories/${request.id}`;
       const body = null;
       const queryParams: string[] = [];
       if (request.code) {
@@ -431,7 +390,7 @@ export function createCategoryServiceClient(
       }) as Promise<contentservicev1_Category>;
     },
     Create(request) {
-      const path = `app/v1/categories`;
+      const path = `/app/v1/categories`;
       const body = JSON.stringify(request);
       return transport.unary(path, 'POST', body, {
         service: 'CategoryService',
@@ -442,8 +401,10 @@ export function createCategoryServiceClient(
       if (request.id === undefined || request.id === null) {
         throw new Error('missing required field request.id');
       }
-      const path = `app/v1/categories/${request.id}`;
-      const body = JSON.stringify(request);
+      const path = `/app/v1/categories/${request.id}`;
+      const bodyMap = { ...request } as Record<string, unknown>;
+      delete bodyMap["id"];
+      const body = JSON.stringify(bodyMap);
       return transport.unary(path, 'PUT', body, {
         service: 'CategoryService',
         method: 'Update',
@@ -453,7 +414,7 @@ export function createCategoryServiceClient(
       if (request.id === undefined || request.id === null) {
         throw new Error('missing required field request.id');
       }
-      const path = `app/v1/categories/${request.id}`;
+      const path = `/app/v1/categories/${request.id}`;
       const body = null;
       return transport.unary(path, 'DELETE', body, {
         service: 'CategoryService',
@@ -464,7 +425,7 @@ export function createCategoryServiceClient(
       if (request.id === undefined || request.id === null) {
         throw new Error('missing required field request.id');
       }
-      const path = `app/v1/categories/${request.id}/translation`;
+      const path = `/app/v1/categories/${request.id}/translation`;
       const body = null;
       const queryParams: string[] = [];
       if (request.code) {
@@ -785,7 +746,7 @@ export function createCommentServiceClient(
 ): CommentService {
   return {
     List(request) {
-      const path = `app/v1/comments`;
+      const path = `/app/v1/comments`;
       const body = null;
       const queryParams: string[] = [];
       if (request.page) {
@@ -833,56 +794,9 @@ export function createCommentServiceClient(
           `filterExpr.type=${encodeURIComponent(request.filterExpr.type.toString())}`,
         );
       }
-      if (request.filterExpr?.conditions?.field) {
-        queryParams.push(
-          `filterExpr.conditions.field=${encodeURIComponent(request.filterExpr.conditions.field.toString())}`,
-        );
-      }
-      if (request.filterExpr?.conditions?.op) {
-        queryParams.push(
-          `filterExpr.conditions.op=${encodeURIComponent(request.filterExpr.conditions.op.toString())}`,
-        );
-      }
-      if (request.filterExpr?.conditions?.value) {
-        queryParams.push(
-          `filterExpr.conditions.value=${encodeURIComponent(request.filterExpr.conditions.value.toString())}`,
-        );
-      }
-      if (request.filterExpr?.conditions?.jsonValue) {
-        queryParams.push(
-          `filterExpr.conditions.jsonValue=${encodeURIComponent(request.filterExpr.conditions.jsonValue.toString())}`,
-        );
-      }
-      if (request.filterExpr?.conditions?.values) {
-        request.filterExpr.conditions.values.forEach((x) => {
-          queryParams.push(
-            `filterExpr.conditions.values=${encodeURIComponent(x.toString())}`,
-          );
-        });
-      }
-      if (request.filterExpr?.conditions?.datePart) {
-        queryParams.push(
-          `filterExpr.conditions.datePart=${encodeURIComponent(request.filterExpr.conditions.datePart.toString())}`,
-        );
-      }
-      if (request.filterExpr?.conditions?.jsonPath) {
-        queryParams.push(
-          `filterExpr.conditions.jsonPath=${encodeURIComponent(request.filterExpr.conditions.jsonPath.toString())}`,
-        );
-      }
       if (request.orderBy) {
         queryParams.push(
           `orderBy=${encodeURIComponent(request.orderBy.toString())}`,
-        );
-      }
-      if (request.sorting?.field) {
-        queryParams.push(
-          `sorting.field=${encodeURIComponent(request.sorting.field.toString())}`,
-        );
-      }
-      if (request.sorting?.direction) {
-        queryParams.push(
-          `sorting.direction=${encodeURIComponent(request.sorting.direction.toString())}`,
         );
       }
       if (request.fieldMask) {
@@ -903,7 +817,7 @@ export function createCommentServiceClient(
       if (request.id === undefined || request.id === null) {
         throw new Error('missing required field request.id');
       }
-      const path = `app/v1/comments/${request.id}`;
+      const path = `/app/v1/comments/${request.id}`;
       const body = null;
       const queryParams: string[] = [];
       if (request.viewMask) {
@@ -921,7 +835,7 @@ export function createCommentServiceClient(
       }) as Promise<commentservicev1_Comment>;
     },
     Create(request) {
-      const path = `app/v1/comments`;
+      const path = `/app/v1/comments`;
       const body = JSON.stringify(request);
       return transport.unary(path, 'POST', body, {
         service: 'CommentService',
@@ -932,8 +846,10 @@ export function createCommentServiceClient(
       if (request.id === undefined || request.id === null) {
         throw new Error('missing required field request.id');
       }
-      const path = `app/v1/comments/${request.id}`;
-      const body = JSON.stringify(request);
+      const path = `/app/v1/comments/${request.id}`;
+      const bodyMap = { ...request } as Record<string, unknown>;
+      delete bodyMap["id"];
+      const body = JSON.stringify(bodyMap);
       return transport.unary(path, 'PUT', body, {
         service: 'CommentService',
         method: 'Update',
@@ -943,7 +859,7 @@ export function createCommentServiceClient(
       if (request.id === undefined || request.id === null) {
         throw new Error('missing required field request.id');
       }
-      const path = `app/v1/comments/${request.id}`;
+      const path = `/app/v1/comments/${request.id}`;
       const body = null;
       return transport.unary(path, 'DELETE', body, {
         service: 'CommentService',
@@ -1052,7 +968,7 @@ export function createFileTransferServiceClient(
 ): FileTransferService {
   return {
     DownloadFile(request) {
-      const path = `app/v1/file/download`;
+      const path = `/app/v1/file/download`;
       const body = null;
       const queryParams: string[] = [];
       if (request.fileId) {
@@ -1120,7 +1036,7 @@ export function createFileTransferServiceClient(
       }) as Promise<storageservicev1_DownloadFileResponse>;
     },
     PutUploadFile(request) {
-      const path = `app/v1/file/upload`;
+      const path = `/app/v1/file/upload`;
       const body = JSON.stringify(request);
       return transport.unary(path, 'PUT', body, {
         service: 'FileTransferService',
@@ -1128,7 +1044,7 @@ export function createFileTransferServiceClient(
       }) as Promise<storageservicev1_UploadFileResponse>;
     },
     PostUploadFile(request) {
-      const path = `app/v1/file/upload`;
+      const path = `/app/v1/file/upload`;
       const body = JSON.stringify(request);
       return transport.unary(path, 'POST', body, {
         service: 'FileTransferService',
@@ -1208,7 +1124,7 @@ export function createFormSubmissionServiceClient(
 ): FormSubmissionService {
   return {
     Submit(request) {
-      const path = `app/v1/form-submissions`;
+      const path = `/app/v1/form-submissions`;
       const body = JSON.stringify(request);
       return transport.unary(path, 'POST', body, {
         service: 'FormSubmissionService',
@@ -1275,7 +1191,7 @@ export function createInteractionServiceClient(
 ): InteractionService {
   return {
     Like(request) {
-      const path = `app/v1/interactions/like`;
+      const path = `/app/v1/interactions/like`;
       const body = JSON.stringify(request);
       return transport.unary(path, 'POST', body, {
         service: 'InteractionService',
@@ -1283,7 +1199,7 @@ export function createInteractionServiceClient(
       }) as Promise<interactionservicev1_LikeResponse>;
     },
     Unlike(request) {
-      const path = `app/v1/interactions/unlike`;
+      const path = `/app/v1/interactions/unlike`;
       const body = JSON.stringify(request);
       return transport.unary(path, 'POST', body, {
         service: 'InteractionService',
@@ -1291,7 +1207,7 @@ export function createInteractionServiceClient(
       }) as Promise<interactionservicev1_LikeResponse>;
     },
     Watch(request) {
-      const path = `app/v1/interactions/watch`;
+      const path = `/app/v1/interactions/watch`;
       const body = JSON.stringify(request);
       return transport.unary(path, 'POST', body, {
         service: 'InteractionService',
@@ -1299,7 +1215,7 @@ export function createInteractionServiceClient(
       }) as Promise<interactionservicev1_WatchResponse>;
     },
     Unwatch(request) {
-      const path = `app/v1/interactions/unwatch`;
+      const path = `/app/v1/interactions/unwatch`;
       const body = JSON.stringify(request);
       return transport.unary(path, 'POST', body, {
         service: 'InteractionService',
@@ -1307,7 +1223,7 @@ export function createInteractionServiceClient(
       }) as Promise<interactionservicev1_WatchResponse>;
     },
     GetInteractionStatus(request) {
-      const path = `app/v1/interactions/status`;
+      const path = `/app/v1/interactions/status`;
       const body = JSON.stringify(request);
       return transport.unary(path, 'POST', body, {
         service: 'InteractionService',
@@ -1315,7 +1231,7 @@ export function createInteractionServiceClient(
       }) as Promise<interactionservicev1_GetInteractionStatusResponse>;
     },
     ListWatchedPosts(request) {
-      const path = `app/v1/interactions/watched-posts`;
+      const path = `/app/v1/interactions/watched-posts`;
       const body = null;
       const queryParams: string[] = [];
       if (request.page) {
@@ -1363,56 +1279,9 @@ export function createInteractionServiceClient(
           `filterExpr.type=${encodeURIComponent(request.filterExpr.type.toString())}`,
         );
       }
-      if (request.filterExpr?.conditions?.field) {
-        queryParams.push(
-          `filterExpr.conditions.field=${encodeURIComponent(request.filterExpr.conditions.field.toString())}`,
-        );
-      }
-      if (request.filterExpr?.conditions?.op) {
-        queryParams.push(
-          `filterExpr.conditions.op=${encodeURIComponent(request.filterExpr.conditions.op.toString())}`,
-        );
-      }
-      if (request.filterExpr?.conditions?.value) {
-        queryParams.push(
-          `filterExpr.conditions.value=${encodeURIComponent(request.filterExpr.conditions.value.toString())}`,
-        );
-      }
-      if (request.filterExpr?.conditions?.jsonValue) {
-        queryParams.push(
-          `filterExpr.conditions.jsonValue=${encodeURIComponent(request.filterExpr.conditions.jsonValue.toString())}`,
-        );
-      }
-      if (request.filterExpr?.conditions?.values) {
-        request.filterExpr.conditions.values.forEach((x) => {
-          queryParams.push(
-            `filterExpr.conditions.values=${encodeURIComponent(x.toString())}`,
-          );
-        });
-      }
-      if (request.filterExpr?.conditions?.datePart) {
-        queryParams.push(
-          `filterExpr.conditions.datePart=${encodeURIComponent(request.filterExpr.conditions.datePart.toString())}`,
-        );
-      }
-      if (request.filterExpr?.conditions?.jsonPath) {
-        queryParams.push(
-          `filterExpr.conditions.jsonPath=${encodeURIComponent(request.filterExpr.conditions.jsonPath.toString())}`,
-        );
-      }
       if (request.orderBy) {
         queryParams.push(
           `orderBy=${encodeURIComponent(request.orderBy.toString())}`,
-        );
-      }
-      if (request.sorting?.field) {
-        queryParams.push(
-          `sorting.field=${encodeURIComponent(request.sorting.field.toString())}`,
-        );
-      }
-      if (request.sorting?.direction) {
-        queryParams.push(
-          `sorting.direction=${encodeURIComponent(request.sorting.direction.toString())}`,
         );
       }
       if (request.fieldMask) {
@@ -1430,7 +1299,7 @@ export function createInteractionServiceClient(
       }) as Promise<contentservicev1_ListPostResponse>;
     },
     GetCounts(request) {
-      const path = `app/v1/interactions/counts:list`;
+      const path = `/app/v1/interactions/counts:list`;
       const body = JSON.stringify(request);
       return transport.unary(path, 'POST', body, {
         service: 'InteractionService',
@@ -1438,7 +1307,7 @@ export function createInteractionServiceClient(
       }) as Promise<interactionservicev1_GetCountsResponse>;
     },
     RecordView(request) {
-      const path = `app/v1/interactions/views`;
+      const path = `/app/v1/interactions/views`;
       const body = JSON.stringify(request);
       return transport.unary(path, 'POST', body, {
         service: 'InteractionService',
@@ -1617,7 +1486,7 @@ export function createMediaAssetServiceClient(
       if (request.id === undefined || request.id === null) {
         throw new Error('missing required field request.id');
       }
-      const path = `app/v1/media-assets/${request.id}`;
+      const path = `/app/v1/media-assets/${request.id}`;
       const body = null;
       const queryParams: string[] = [];
       if (request.viewMask) {
@@ -1720,7 +1589,7 @@ export function createNavigationServiceClient(
 ): NavigationService {
   return {
     List(request) {
-      const path = `app/v1/navigations`;
+      const path = `/app/v1/navigations`;
       const body = null;
       const queryParams: string[] = [];
       if (request.page) {
@@ -1768,56 +1637,9 @@ export function createNavigationServiceClient(
           `filterExpr.type=${encodeURIComponent(request.filterExpr.type.toString())}`,
         );
       }
-      if (request.filterExpr?.conditions?.field) {
-        queryParams.push(
-          `filterExpr.conditions.field=${encodeURIComponent(request.filterExpr.conditions.field.toString())}`,
-        );
-      }
-      if (request.filterExpr?.conditions?.op) {
-        queryParams.push(
-          `filterExpr.conditions.op=${encodeURIComponent(request.filterExpr.conditions.op.toString())}`,
-        );
-      }
-      if (request.filterExpr?.conditions?.value) {
-        queryParams.push(
-          `filterExpr.conditions.value=${encodeURIComponent(request.filterExpr.conditions.value.toString())}`,
-        );
-      }
-      if (request.filterExpr?.conditions?.jsonValue) {
-        queryParams.push(
-          `filterExpr.conditions.jsonValue=${encodeURIComponent(request.filterExpr.conditions.jsonValue.toString())}`,
-        );
-      }
-      if (request.filterExpr?.conditions?.values) {
-        request.filterExpr.conditions.values.forEach((x) => {
-          queryParams.push(
-            `filterExpr.conditions.values=${encodeURIComponent(x.toString())}`,
-          );
-        });
-      }
-      if (request.filterExpr?.conditions?.datePart) {
-        queryParams.push(
-          `filterExpr.conditions.datePart=${encodeURIComponent(request.filterExpr.conditions.datePart.toString())}`,
-        );
-      }
-      if (request.filterExpr?.conditions?.jsonPath) {
-        queryParams.push(
-          `filterExpr.conditions.jsonPath=${encodeURIComponent(request.filterExpr.conditions.jsonPath.toString())}`,
-        );
-      }
       if (request.orderBy) {
         queryParams.push(
           `orderBy=${encodeURIComponent(request.orderBy.toString())}`,
-        );
-      }
-      if (request.sorting?.field) {
-        queryParams.push(
-          `sorting.field=${encodeURIComponent(request.sorting.field.toString())}`,
-        );
-      }
-      if (request.sorting?.direction) {
-        queryParams.push(
-          `sorting.direction=${encodeURIComponent(request.sorting.direction.toString())}`,
         );
       }
       if (request.fieldMask) {
@@ -1838,7 +1660,7 @@ export function createNavigationServiceClient(
       if (request.id === undefined || request.id === null) {
         throw new Error('missing required field request.id');
       }
-      const path = `app/v1/navigations/${request.id}`;
+      const path = `/app/v1/navigations/${request.id}`;
       const body = null;
       const queryParams: string[] = [];
       if (request.name) {
@@ -1861,7 +1683,7 @@ export function createNavigationServiceClient(
       }) as Promise<siteservicev1_Navigation>;
     },
     Create(request) {
-      const path = `app/v1/navigations`;
+      const path = `/app/v1/navigations`;
       const body = JSON.stringify(request);
       return transport.unary(path, 'POST', body, {
         service: 'NavigationService',
@@ -1872,8 +1694,10 @@ export function createNavigationServiceClient(
       if (request.id === undefined || request.id === null) {
         throw new Error('missing required field request.id');
       }
-      const path = `app/v1/navigations/${request.id}`;
-      const body = JSON.stringify(request);
+      const path = `/app/v1/navigations/${request.id}`;
+      const bodyMap = { ...request } as Record<string, unknown>;
+      delete bodyMap["id"];
+      const body = JSON.stringify(bodyMap);
       return transport.unary(path, 'PUT', body, {
         service: 'NavigationService',
         method: 'Update',
@@ -1883,7 +1707,7 @@ export function createNavigationServiceClient(
       if (request.id === undefined || request.id === null) {
         throw new Error('missing required field request.id');
       }
-      const path = `app/v1/navigations/${request.id}`;
+      const path = `/app/v1/navigations/${request.id}`;
       const body = null;
       return transport.unary(path, 'DELETE', body, {
         service: 'NavigationService',
@@ -2025,7 +1849,7 @@ export function createPageServiceClient(
 ): PageService {
   return {
     List(request) {
-      const path = `app/v1/pages`;
+      const path = `/app/v1/pages`;
       const body = null;
       const queryParams: string[] = [];
       if (request.page) {
@@ -2073,56 +1897,9 @@ export function createPageServiceClient(
           `filterExpr.type=${encodeURIComponent(request.filterExpr.type.toString())}`,
         );
       }
-      if (request.filterExpr?.conditions?.field) {
-        queryParams.push(
-          `filterExpr.conditions.field=${encodeURIComponent(request.filterExpr.conditions.field.toString())}`,
-        );
-      }
-      if (request.filterExpr?.conditions?.op) {
-        queryParams.push(
-          `filterExpr.conditions.op=${encodeURIComponent(request.filterExpr.conditions.op.toString())}`,
-        );
-      }
-      if (request.filterExpr?.conditions?.value) {
-        queryParams.push(
-          `filterExpr.conditions.value=${encodeURIComponent(request.filterExpr.conditions.value.toString())}`,
-        );
-      }
-      if (request.filterExpr?.conditions?.jsonValue) {
-        queryParams.push(
-          `filterExpr.conditions.jsonValue=${encodeURIComponent(request.filterExpr.conditions.jsonValue.toString())}`,
-        );
-      }
-      if (request.filterExpr?.conditions?.values) {
-        request.filterExpr.conditions.values.forEach((x) => {
-          queryParams.push(
-            `filterExpr.conditions.values=${encodeURIComponent(x.toString())}`,
-          );
-        });
-      }
-      if (request.filterExpr?.conditions?.datePart) {
-        queryParams.push(
-          `filterExpr.conditions.datePart=${encodeURIComponent(request.filterExpr.conditions.datePart.toString())}`,
-        );
-      }
-      if (request.filterExpr?.conditions?.jsonPath) {
-        queryParams.push(
-          `filterExpr.conditions.jsonPath=${encodeURIComponent(request.filterExpr.conditions.jsonPath.toString())}`,
-        );
-      }
       if (request.orderBy) {
         queryParams.push(
           `orderBy=${encodeURIComponent(request.orderBy.toString())}`,
-        );
-      }
-      if (request.sorting?.field) {
-        queryParams.push(
-          `sorting.field=${encodeURIComponent(request.sorting.field.toString())}`,
-        );
-      }
-      if (request.sorting?.direction) {
-        queryParams.push(
-          `sorting.direction=${encodeURIComponent(request.sorting.direction.toString())}`,
         );
       }
       if (request.fieldMask) {
@@ -2143,7 +1920,7 @@ export function createPageServiceClient(
       if (request.id === undefined || request.id === null) {
         throw new Error('missing required field request.id');
       }
-      const path = `app/v1/pages/${request.id}`;
+      const path = `/app/v1/pages/${request.id}`;
       const body = null;
       const queryParams: string[] = [];
       if (request.slug) {
@@ -2171,7 +1948,7 @@ export function createPageServiceClient(
       }) as Promise<contentservicev1_Page>;
     },
     Create(request) {
-      const path = `app/v1/pages`;
+      const path = `/app/v1/pages`;
       const body = JSON.stringify(request);
       return transport.unary(path, 'POST', body, {
         service: 'PageService',
@@ -2182,8 +1959,10 @@ export function createPageServiceClient(
       if (request.id === undefined || request.id === null) {
         throw new Error('missing required field request.id');
       }
-      const path = `app/v1/pages/${request.id}`;
-      const body = JSON.stringify(request);
+      const path = `/app/v1/pages/${request.id}`;
+      const bodyMap = { ...request } as Record<string, unknown>;
+      delete bodyMap["id"];
+      const body = JSON.stringify(bodyMap);
       return transport.unary(path, 'PUT', body, {
         service: 'PageService',
         method: 'Update',
@@ -2193,7 +1972,7 @@ export function createPageServiceClient(
       if (request.id === undefined || request.id === null) {
         throw new Error('missing required field request.id');
       }
-      const path = `app/v1/pages/${request.id}`;
+      const path = `/app/v1/pages/${request.id}`;
       const body = null;
       return transport.unary(path, 'DELETE', body, {
         service: 'PageService',
@@ -2204,7 +1983,7 @@ export function createPageServiceClient(
       if (request.id === undefined || request.id === null) {
         throw new Error('missing required field request.id');
       }
-      const path = `app/v1/pages/${request.id}/translation`;
+      const path = `/app/v1/pages/${request.id}/translation`;
       const body = null;
       const queryParams: string[] = [];
       if (request.slug) {
@@ -2235,7 +2014,7 @@ export function createPageServiceClient(
       if (request.slug === undefined || request.slug === null) {
         throw new Error('missing required field request.slug');
       }
-      const path = `app/v1/pages/by-slug/${request.slug}`;
+      const path = `/app/v1/pages/by-slug/${request.slug}`;
       const body = null;
       const queryParams: string[] = [];
       if (request.locale) {
@@ -2425,6 +2204,7 @@ export interface PostService {
     request: pagination_PagingRequest,
   ): Promise<contentservicev1_ListPostResponse>;
   // 全文搜索帖子（前台，基于 OpenSearch）
+  //
   // 仅返回 PUBLISHED 状态内容；tenant_id 由服务端从登录用户上下文注入，
   // 客户端无法指定或绕过。故此端点不进鉴权白名单——必须登录后方可搜索。
   SearchPosts(
@@ -2464,7 +2244,7 @@ export function createPostServiceClient(
       if (request.postId === undefined || request.postId === null) {
         throw new Error('missing required field request.post_id');
       }
-      const path = `app/v1/posts/${request.postId}/content-model`;
+      const path = `/app/v1/posts/${request.postId}/content-model`;
       const body = null;
       return transport.unary(path, 'GET', body, {
         service: 'PostService',
@@ -2472,7 +2252,7 @@ export function createPostServiceClient(
       }) as Promise<contentservicev1_ContentModel>;
     },
     ResolveContentReferences(request) {
-      const path = `app/v1/content-references/resolve`;
+      const path = `/app/v1/content-references/resolve`;
       const body = null;
       const queryParams: string[] = [];
       if (request.refs) {
@@ -2497,7 +2277,7 @@ export function createPostServiceClient(
       }) as Promise<contentservicev1_ResolveContentReferencesResponse>;
     },
     List(request) {
-      const path = `app/v1/posts`;
+      const path = `/app/v1/posts`;
       const body = null;
       const queryParams: string[] = [];
       if (request.page) {
@@ -2545,56 +2325,9 @@ export function createPostServiceClient(
           `filterExpr.type=${encodeURIComponent(request.filterExpr.type.toString())}`,
         );
       }
-      if (request.filterExpr?.conditions?.field) {
-        queryParams.push(
-          `filterExpr.conditions.field=${encodeURIComponent(request.filterExpr.conditions.field.toString())}`,
-        );
-      }
-      if (request.filterExpr?.conditions?.op) {
-        queryParams.push(
-          `filterExpr.conditions.op=${encodeURIComponent(request.filterExpr.conditions.op.toString())}`,
-        );
-      }
-      if (request.filterExpr?.conditions?.value) {
-        queryParams.push(
-          `filterExpr.conditions.value=${encodeURIComponent(request.filterExpr.conditions.value.toString())}`,
-        );
-      }
-      if (request.filterExpr?.conditions?.jsonValue) {
-        queryParams.push(
-          `filterExpr.conditions.jsonValue=${encodeURIComponent(request.filterExpr.conditions.jsonValue.toString())}`,
-        );
-      }
-      if (request.filterExpr?.conditions?.values) {
-        request.filterExpr.conditions.values.forEach((x) => {
-          queryParams.push(
-            `filterExpr.conditions.values=${encodeURIComponent(x.toString())}`,
-          );
-        });
-      }
-      if (request.filterExpr?.conditions?.datePart) {
-        queryParams.push(
-          `filterExpr.conditions.datePart=${encodeURIComponent(request.filterExpr.conditions.datePart.toString())}`,
-        );
-      }
-      if (request.filterExpr?.conditions?.jsonPath) {
-        queryParams.push(
-          `filterExpr.conditions.jsonPath=${encodeURIComponent(request.filterExpr.conditions.jsonPath.toString())}`,
-        );
-      }
       if (request.orderBy) {
         queryParams.push(
           `orderBy=${encodeURIComponent(request.orderBy.toString())}`,
-        );
-      }
-      if (request.sorting?.field) {
-        queryParams.push(
-          `sorting.field=${encodeURIComponent(request.sorting.field.toString())}`,
-        );
-      }
-      if (request.sorting?.direction) {
-        queryParams.push(
-          `sorting.direction=${encodeURIComponent(request.sorting.direction.toString())}`,
         );
       }
       if (request.fieldMask) {
@@ -2612,7 +2345,7 @@ export function createPostServiceClient(
       }) as Promise<contentservicev1_ListPostResponse>;
     },
     SearchPosts(request) {
-      const path = `app/v1/posts/search`;
+      const path = `/app/v1/posts/search`;
       const body = null;
       const queryParams: string[] = [];
       if (request.query) {
@@ -2648,7 +2381,7 @@ export function createPostServiceClient(
       if (request.id === undefined || request.id === null) {
         throw new Error('missing required field request.id');
       }
-      const path = `app/v1/posts/${request.id}`;
+      const path = `/app/v1/posts/${request.id}`;
       const body = null;
       const queryParams: string[] = [];
       if (request.code) {
@@ -2676,7 +2409,7 @@ export function createPostServiceClient(
       }) as Promise<contentservicev1_Post>;
     },
     Create(request) {
-      const path = `app/v1/posts`;
+      const path = `/app/v1/posts`;
       const body = JSON.stringify(request);
       return transport.unary(path, 'POST', body, {
         service: 'PostService',
@@ -2687,8 +2420,10 @@ export function createPostServiceClient(
       if (request.id === undefined || request.id === null) {
         throw new Error('missing required field request.id');
       }
-      const path = `app/v1/posts/${request.id}`;
-      const body = JSON.stringify(request);
+      const path = `/app/v1/posts/${request.id}`;
+      const bodyMap = { ...request } as Record<string, unknown>;
+      delete bodyMap["id"];
+      const body = JSON.stringify(bodyMap);
       return transport.unary(path, 'PUT', body, {
         service: 'PostService',
         method: 'Update',
@@ -2698,7 +2433,7 @@ export function createPostServiceClient(
       if (request.id === undefined || request.id === null) {
         throw new Error('missing required field request.id');
       }
-      const path = `app/v1/posts/${request.id}`;
+      const path = `/app/v1/posts/${request.id}`;
       const body = null;
       return transport.unary(path, 'DELETE', body, {
         service: 'PostService',
@@ -2709,7 +2444,7 @@ export function createPostServiceClient(
       if (request.id === undefined || request.id === null) {
         throw new Error('missing required field request.id');
       }
-      const path = `app/v1/posts/${request.id}/translation`;
+      const path = `/app/v1/posts/${request.id}/translation`;
       const body = null;
       const queryParams: string[] = [];
       if (request.code) {
@@ -2740,7 +2475,7 @@ export function createPostServiceClient(
       if (request.slug === undefined || request.slug === null) {
         throw new Error('missing required field request.slug');
       }
-      const path = `app/v1/posts/by-slug/${request.slug}`;
+      const path = `/app/v1/posts/by-slug/${request.slug}`;
       const body = null;
       const queryParams: string[] = [];
       if (request.locale) {
@@ -2896,6 +2631,7 @@ export type contentservicev1_ContentReferenceSummary = {
 };
 
 // 请求 - 帖子搜索
+//
 // tenant_id 不在此消息中——由服务端从调用方租户上下文（viewer）注入，
 // 客户端无法指定或绕过。status 固定为 PUBLISHED（前台仅检索已发布内容）。
 export type contentservicev1_SearchPostsRequest = {
@@ -2910,6 +2646,7 @@ export type contentservicev1_SearchPostsRequest = {
 };
 
 // 回应 - 帖子搜索
+//
 // 仅返回最小字段集：post_id / language / title。
 // 不含 content / tenant_id / status——这些字段不向前台暴露。
 export type contentservicev1_SearchPostsResponse = {
@@ -2968,7 +2705,7 @@ export function createRedirectServiceClient(
 ): RedirectService {
   return {
     ListEnabled(_request) {
-      const path = `app/v1/redirects`;
+      const path = `/app/v1/redirects`;
       const body = null;
       return transport.unary(path, 'GET', body, {
         service: 'RedirectService',
@@ -3002,6 +2739,7 @@ export type contentservicev1_Redirect = {
 };
 
 // 站点服务（公开端点）
+//
 // 仅 GetSiteByDomain 对外可用：按请求 Host 解析的域名返回当前站点的渲染必需配置。
 // List/Create/Update/Delete 在 app（公开站点）服务上禁用，写操作应经由 admin 服务。
 export interface SiteService {
@@ -3032,7 +2770,7 @@ export function createSiteServiceClient(
 ): SiteService {
   return {
     List(request) {
-      const path = `app/v1/sites`;
+      const path = `/app/v1/sites`;
       const body = null;
       const queryParams: string[] = [];
       if (request.page) {
@@ -3080,56 +2818,9 @@ export function createSiteServiceClient(
           `filterExpr.type=${encodeURIComponent(request.filterExpr.type.toString())}`,
         );
       }
-      if (request.filterExpr?.conditions?.field) {
-        queryParams.push(
-          `filterExpr.conditions.field=${encodeURIComponent(request.filterExpr.conditions.field.toString())}`,
-        );
-      }
-      if (request.filterExpr?.conditions?.op) {
-        queryParams.push(
-          `filterExpr.conditions.op=${encodeURIComponent(request.filterExpr.conditions.op.toString())}`,
-        );
-      }
-      if (request.filterExpr?.conditions?.value) {
-        queryParams.push(
-          `filterExpr.conditions.value=${encodeURIComponent(request.filterExpr.conditions.value.toString())}`,
-        );
-      }
-      if (request.filterExpr?.conditions?.jsonValue) {
-        queryParams.push(
-          `filterExpr.conditions.jsonValue=${encodeURIComponent(request.filterExpr.conditions.jsonValue.toString())}`,
-        );
-      }
-      if (request.filterExpr?.conditions?.values) {
-        request.filterExpr.conditions.values.forEach((x) => {
-          queryParams.push(
-            `filterExpr.conditions.values=${encodeURIComponent(x.toString())}`,
-          );
-        });
-      }
-      if (request.filterExpr?.conditions?.datePart) {
-        queryParams.push(
-          `filterExpr.conditions.datePart=${encodeURIComponent(request.filterExpr.conditions.datePart.toString())}`,
-        );
-      }
-      if (request.filterExpr?.conditions?.jsonPath) {
-        queryParams.push(
-          `filterExpr.conditions.jsonPath=${encodeURIComponent(request.filterExpr.conditions.jsonPath.toString())}`,
-        );
-      }
       if (request.orderBy) {
         queryParams.push(
           `orderBy=${encodeURIComponent(request.orderBy.toString())}`,
-        );
-      }
-      if (request.sorting?.field) {
-        queryParams.push(
-          `sorting.field=${encodeURIComponent(request.sorting.field.toString())}`,
-        );
-      }
-      if (request.sorting?.direction) {
-        queryParams.push(
-          `sorting.direction=${encodeURIComponent(request.sorting.direction.toString())}`,
         );
       }
       if (request.fieldMask) {
@@ -3147,7 +2838,7 @@ export function createSiteServiceClient(
       }) as Promise<siteservicev1_ListSiteResponse>;
     },
     GetSiteByDomain(request) {
-      const path = `app/v1/site`;
+      const path = `/app/v1/site`;
       const body = null;
       const queryParams: string[] = [];
       if (request.domain) {
@@ -3170,7 +2861,7 @@ export function createSiteServiceClient(
       }) as Promise<siteservicev1_Site>;
     },
     Create(request) {
-      const path = `app/v1/sites`;
+      const path = `/app/v1/sites`;
       const body = JSON.stringify(request);
       return transport.unary(path, 'POST', body, {
         service: 'SiteService',
@@ -3181,8 +2872,10 @@ export function createSiteServiceClient(
       if (request.id === undefined || request.id === null) {
         throw new Error('missing required field request.id');
       }
-      const path = `app/v1/sites/${request.id}`;
-      const body = JSON.stringify(request);
+      const path = `/app/v1/sites/${request.id}`;
+      const bodyMap = { ...request } as Record<string, unknown>;
+      delete bodyMap["id"];
+      const body = JSON.stringify(bodyMap);
       return transport.unary(path, 'PUT', body, {
         service: 'SiteService',
         method: 'Update',
@@ -3192,7 +2885,7 @@ export function createSiteServiceClient(
       if (request.id === undefined || request.id === null) {
         throw new Error('missing required field request.id');
       }
-      const path = `app/v1/sites/${request.id}`;
+      const path = `/app/v1/sites/${request.id}`;
       const body = null;
       return transport.unary(path, 'DELETE', body, {
         service: 'SiteService',
@@ -3291,7 +2984,7 @@ export function createTagServiceClient(
 ): TagService {
   return {
     List(request) {
-      const path = `app/v1/tags`;
+      const path = `/app/v1/tags`;
       const body = null;
       const queryParams: string[] = [];
       if (request.page) {
@@ -3339,56 +3032,9 @@ export function createTagServiceClient(
           `filterExpr.type=${encodeURIComponent(request.filterExpr.type.toString())}`,
         );
       }
-      if (request.filterExpr?.conditions?.field) {
-        queryParams.push(
-          `filterExpr.conditions.field=${encodeURIComponent(request.filterExpr.conditions.field.toString())}`,
-        );
-      }
-      if (request.filterExpr?.conditions?.op) {
-        queryParams.push(
-          `filterExpr.conditions.op=${encodeURIComponent(request.filterExpr.conditions.op.toString())}`,
-        );
-      }
-      if (request.filterExpr?.conditions?.value) {
-        queryParams.push(
-          `filterExpr.conditions.value=${encodeURIComponent(request.filterExpr.conditions.value.toString())}`,
-        );
-      }
-      if (request.filterExpr?.conditions?.jsonValue) {
-        queryParams.push(
-          `filterExpr.conditions.jsonValue=${encodeURIComponent(request.filterExpr.conditions.jsonValue.toString())}`,
-        );
-      }
-      if (request.filterExpr?.conditions?.values) {
-        request.filterExpr.conditions.values.forEach((x) => {
-          queryParams.push(
-            `filterExpr.conditions.values=${encodeURIComponent(x.toString())}`,
-          );
-        });
-      }
-      if (request.filterExpr?.conditions?.datePart) {
-        queryParams.push(
-          `filterExpr.conditions.datePart=${encodeURIComponent(request.filterExpr.conditions.datePart.toString())}`,
-        );
-      }
-      if (request.filterExpr?.conditions?.jsonPath) {
-        queryParams.push(
-          `filterExpr.conditions.jsonPath=${encodeURIComponent(request.filterExpr.conditions.jsonPath.toString())}`,
-        );
-      }
       if (request.orderBy) {
         queryParams.push(
           `orderBy=${encodeURIComponent(request.orderBy.toString())}`,
-        );
-      }
-      if (request.sorting?.field) {
-        queryParams.push(
-          `sorting.field=${encodeURIComponent(request.sorting.field.toString())}`,
-        );
-      }
-      if (request.sorting?.direction) {
-        queryParams.push(
-          `sorting.direction=${encodeURIComponent(request.sorting.direction.toString())}`,
         );
       }
       if (request.fieldMask) {
@@ -3409,7 +3055,7 @@ export function createTagServiceClient(
       if (request.id === undefined || request.id === null) {
         throw new Error('missing required field request.id');
       }
-      const path = `app/v1/tags/${request.id}`;
+      const path = `/app/v1/tags/${request.id}`;
       const body = null;
       const queryParams: string[] = [];
       if (request.code) {
@@ -3437,7 +3083,7 @@ export function createTagServiceClient(
       }) as Promise<contentservicev1_Tag>;
     },
     Create(request) {
-      const path = `app/v1/tags`;
+      const path = `/app/v1/tags`;
       const body = JSON.stringify(request);
       return transport.unary(path, 'POST', body, {
         service: 'TagService',
@@ -3448,8 +3094,10 @@ export function createTagServiceClient(
       if (request.id === undefined || request.id === null) {
         throw new Error('missing required field request.id');
       }
-      const path = `app/v1/tags/${request.id}`;
-      const body = JSON.stringify(request);
+      const path = `/app/v1/tags/${request.id}`;
+      const bodyMap = { ...request } as Record<string, unknown>;
+      delete bodyMap["id"];
+      const body = JSON.stringify(bodyMap);
       return transport.unary(path, 'PUT', body, {
         service: 'TagService',
         method: 'Update',
@@ -3459,7 +3107,7 @@ export function createTagServiceClient(
       if (request.id === undefined || request.id === null) {
         throw new Error('missing required field request.id');
       }
-      const path = `app/v1/tags/${request.id}`;
+      const path = `/app/v1/tags/${request.id}`;
       const body = null;
       return transport.unary(path, 'DELETE', body, {
         service: 'TagService',
@@ -3470,7 +3118,7 @@ export function createTagServiceClient(
       if (request.id === undefined || request.id === null) {
         throw new Error('missing required field request.id');
       }
-      const path = `app/v1/tags/${request.id}/translation`;
+      const path = `/app/v1/tags/${request.id}/translation`;
       const body = null;
       const queryParams: string[] = [];
       if (request.code) {
@@ -3606,7 +3254,7 @@ export function createUserProfileServiceClient(
 ): UserProfileService {
   return {
     GetUser(_request) {
-      const path = `app/v1/me`;
+      const path = `/app/v1/me`;
       const body = null;
       return transport.unary(path, 'GET', body, {
         service: 'UserProfileService',
@@ -3614,7 +3262,7 @@ export function createUserProfileServiceClient(
       }) as Promise<identityservicev1_User>;
     },
     UpdateUser(request) {
-      const path = `app/v1/me`;
+      const path = `/app/v1/me`;
       const body = JSON.stringify(request);
       return transport.unary(path, 'PUT', body, {
         service: 'UserProfileService',
@@ -3622,7 +3270,7 @@ export function createUserProfileServiceClient(
       }) as Promise<wellKnownEmpty>;
     },
     ChangePassword(request) {
-      const path = `app/v1/me/password`;
+      const path = `/app/v1/me/password`;
       const body = JSON.stringify(request);
       return transport.unary(path, 'POST', body, {
         service: 'UserProfileService',
@@ -3630,7 +3278,7 @@ export function createUserProfileServiceClient(
       }) as Promise<wellKnownEmpty>;
     },
     BindContact(request) {
-      const path = `app/v1/me/contact`;
+      const path = `/app/v1/me/contact`;
       const body = JSON.stringify(request);
       return transport.unary(path, 'POST', body, {
         service: 'UserProfileService',
@@ -3638,7 +3286,7 @@ export function createUserProfileServiceClient(
       }) as Promise<wellKnownEmpty>;
     },
     VerifyContact(request) {
-      const path = `app/v1/me/contact/verify`;
+      const path = `/app/v1/me/contact/verify`;
       const body = JSON.stringify(request);
       return transport.unary(path, 'POST', body, {
         service: 'UserProfileService',

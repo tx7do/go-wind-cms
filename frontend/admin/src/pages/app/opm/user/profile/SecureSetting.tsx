@@ -1,5 +1,6 @@
 import { List, Button } from 'antd';
 import { useTranslation } from 'react-i18next';
+import MfaManagement from './MfaManagement';
 
 interface SecureSettingProps {
   onSwitchTab: (key: string) => void;
@@ -30,7 +31,8 @@ const SecureSetting = ({ onSwitchTab }: SecureSettingProps) => {
           </List.Item>
         )}
       />
-      {/* 上游此处还有 MfaManagement 区块；CMS 生成层无 MFA RPC，暂缺 */}
+      {/* 两步验证（TOTP）绑定/解绑管理 */}
+      <MfaManagement />
     </>
   );
 };

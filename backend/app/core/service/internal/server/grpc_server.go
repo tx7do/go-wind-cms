@@ -52,6 +52,7 @@ func NewGrpcServer(
 	middlewares []middleware.Middleware,
 
 	authenticationService *service.AuthenticationService,
+	mfaService *service.MFAService,
 	loginPolicyService *service.LoginPolicyService,
 	userCredentialService *service.UserCredentialService,
 
@@ -162,6 +163,7 @@ func NewGrpcServer(
 
 	authenticationV1.RegisterLoginPolicyServiceServer(srv, loginPolicyService)
 	authenticationV1.RegisterAuthenticationServiceServer(srv, authenticationService)
+	authenticationV1.RegisterMFAServiceServer(srv, mfaService)
 	authenticationV1.RegisterUserCredentialServiceServer(srv, userCredentialService)
 
 	dictV1.RegisterDictTypeServiceServer(srv, dictTypeService)

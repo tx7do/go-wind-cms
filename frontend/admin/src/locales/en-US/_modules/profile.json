@@ -74,7 +74,27 @@
   "secureSetting": {
     "password": "Login Password",
     "passwordDesc": "Change your password regularly and consider two-factor authentication for better security",
-    "modify": "Modify"
+    "modify": "Modify",
+    "mfa": {
+      "title": "Two-Factor Authentication",
+      "enabledDesc": "Two-factor authentication via authenticator app is enabled; a dynamic code is required at login",
+      "disabledDesc": "Require a 6-digit authenticator code at login to greatly improve account security",
+      "enable": "Enable",
+      "disable": "Disable",
+      "bindTitle": "Bind Two-Factor Authentication",
+      "scanHint": "Scan with an authenticator app (Google Authenticator etc.) or enter the key manually",
+      "codePlaceholder": "Enter 6-digit code",
+      "codeFormatError": "The code must be 6 digits",
+      "codeInvalid": "Invalid or expired code",
+      "confirm": "Confirm",
+      "confirmDisable": "Confirm Disable",
+      "unbindTitle": "Disable Two-Factor Authentication",
+      "unbindHint": "After disabling, login no longer requires a dynamic code. Enter the current authenticator code to confirm",
+      "enabled": "Two-factor authentication enabled",
+      "disabled": "Two-factor authentication disabled",
+      "startFailed": "Failed to start enrollment, please retry",
+      "loading": "Generating QR code…"
+    }
   },
   "accountBind": {
     "email": "Email Account",

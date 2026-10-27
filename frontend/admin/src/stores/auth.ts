@@ -170,11 +170,8 @@ export const useAuthStore = create<AuthState>()(
           });
 
           // ===== MFA 闸门：后端在密码校验通过、需二次验证时返回 mfa_operation_id，=====
-          // ===== access_token 为空。此时不写任何 token，跳转 MFA 挑战页。
-          // mfa_operation_id 不在 CMS 生成的 LoginResponse 类型上（基座契约差异），
-          // 后端若启用 MFA 会运行时携带；类型层用 any 桥接。
-          const mfaOperationId = (response as { mfa_operation_id?: string })
-            .mfa_operation_id;
+          // ===== 且不含任何令牌字段。此时不写任何 token，跳转 MFA 挑战页。
+          const mfaOperationId = response.mfa_operation_id;
           if (mfaOperationId) {
             set({ mfaOperationId });
             // 跳 MFA 挑战页（路由守卫亦会据此强制跳转）

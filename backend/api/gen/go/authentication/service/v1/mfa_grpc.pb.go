@@ -30,6 +30,7 @@ const (
 	MFAService_GenerateBackupCodes_FullMethodName = "/authentication.service.v1.MFAService/GenerateBackupCodes"
 	MFAService_ListBackupCodes_FullMethodName     = "/authentication.service.v1.MFAService/ListBackupCodes"
 	MFAService_RevokeMFADevice_FullMethodName     = "/authentication.service.v1.MFAService/RevokeMFADevice"
+	MFAService_ResetUserMFA_FullMethodName        = "/authentication.service.v1.MFAService/ResetUserMFA"
 )
 
 // MFAServiceClient is the client API for MFAService service.
@@ -58,6 +59,8 @@ type MFAServiceClient interface {
 	ListBackupCodes(ctx context.Context, in *ListBackupCodesRequest, opts ...grpc.CallOption) (*ListBackupCodesResponse, error)
 	// 撤销指定凭证（按 id）
 	RevokeMFADevice(ctx context.Context, in *RevokeMFADeviceRequest, opts ...grpc.CallOption) (*emptypb.Empty, error)
+	// 管理员救援重置：清空目标用户全部 TOTP 因子（用户丢失验证器后由平台管理员操作）
+	ResetUserMFA(ctx context.Context, in *ResetUserMFARequest, opts ...grpc.CallOption) (*emptypb.Empty, error)
 }
 
 type mFAServiceClient struct {
@@ -168,6 +171,16 @@ func (c *mFAServiceClient) RevokeMFADevice(ctx context.Context, in *RevokeMFADev
 	return out, nil
 }
 
+func (c *mFAServiceClient) ResetUserMFA(ctx context.Context, in *ResetUserMFARequest, opts ...grpc.CallOption) (*emptypb.Empty, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(emptypb.Empty)
+	err := c.cc.Invoke(ctx, MFAService_ResetUserMFA_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 // MFAServiceServer is the server API for MFAService service.
 // All implementations must embed UnimplementedMFAServiceServer
 // for forward compatibility.
@@ -194,6 +207,8 @@ type MFAServiceServer interface {
 	ListBackupCodes(context.Context, *ListBackupCodesRequest) (*ListBackupCodesResponse, error)
 	// 撤销指定凭证（按 id）
 	RevokeMFADevice(context.Context, *RevokeMFADeviceRequest) (*emptypb.Empty, error)
+	// 管理员救援重置：清空目标用户全部 TOTP 因子（用户丢失验证器后由平台管理员操作）
+	ResetUserMFA(context.Context, *ResetUserMFARequest) (*emptypb.Empty, error)
 	mustEmbedUnimplementedMFAServiceServer()
 }
 
@@ -233,6 +248,9 @@ func (UnimplementedMFAServiceServer) ListBackupCodes(context.Context, *ListBacku
 }
 func (UnimplementedMFAServiceServer) RevokeMFADevice(context.Context, *RevokeMFADeviceRequest) (*emptypb.Empty, error) {
 	return nil, status.Error(codes.Unimplemented, "method RevokeMFADevice not implemented")
+}
+func (UnimplementedMFAServiceServer) ResetUserMFA(context.Context, *ResetUserMFARequest) (*emptypb.Empty, error) {
+	return nil, status.Error(codes.Unimplemented, "method ResetUserMFA not implemented")
 }
 func (UnimplementedMFAServiceServer) mustEmbedUnimplementedMFAServiceServer() {}
 func (UnimplementedMFAServiceServer) testEmbeddedByValue()                    {}
@@ -435,6 +453,24 @@ func _MFAService_RevokeMFADevice_Handler(srv interface{}, ctx context.Context, d
 	return interceptor(ctx, in, info, handler)
 }
 
+func _MFAService_ResetUserMFA_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(ResetUserMFARequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(MFAServiceServer).ResetUserMFA(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: MFAService_ResetUserMFA_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(MFAServiceServer).ResetUserMFA(ctx, req.(*ResetUserMFARequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 // MFAService_ServiceDesc is the grpc.ServiceDesc for MFAService service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
@@ -481,6 +517,10 @@ var MFAService_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "RevokeMFADevice",
 			Handler:    _MFAService_RevokeMFADevice_Handler,
+		},
+		{
+			MethodName: "ResetUserMFA",
+			Handler:    _MFAService_ResetUserMFA_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},

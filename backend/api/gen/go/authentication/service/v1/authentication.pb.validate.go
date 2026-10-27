@@ -377,6 +377,14 @@ func (m *LoginRequest) validate(all bool) error {
 		// no validation rules for TenantCode
 	}
 
+	if m.MfaOperationId != nil {
+		// no validation rules for MfaOperationId
+	}
+
+	if m.TotpCode != nil {
+		// no validation rules for TotpCode
+	}
+
 	if len(errors) > 0 {
 		return LoginRequestMultiError(errors)
 	}
@@ -500,6 +508,10 @@ func (m *LoginResponse) validate(all bool) error {
 
 	if m.Jti != nil {
 		// no validation rules for Jti
+	}
+
+	if m.MfaOperationId != nil {
+		// no validation rules for MfaOperationId
 	}
 
 	if len(errors) > 0 {

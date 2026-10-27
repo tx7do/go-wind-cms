@@ -293,6 +293,10 @@ func (x *LoginRequest) Redact() {
 	// Safe field: Jti
 
 	// Safe field: TenantCode
+
+	// Safe field: MfaOperationId
+
+	// Safe field: TotpCode
 }
 
 // Ensure LoginResponse implements the Redactor interface at compile time.
@@ -319,6 +323,8 @@ func (x *LoginResponse) Redact() {
 	// Safe field: IdToken
 
 	// Safe field: Jti
+
+	// Safe field: MfaOperationId
 }
 
 // Ensure LogoutRequest implements the Redactor interface at compile time.

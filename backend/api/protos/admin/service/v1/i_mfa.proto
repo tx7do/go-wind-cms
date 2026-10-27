@@ -1,0 +1,66 @@
+syntax = "proto3";
+
+package admin.service.v1;
+
+import "gnostic/openapi/v3/annotations.proto";
+import "google/api/annotations.proto";
+import "google/protobuf/empty.proto";
+
+import "authentication/service/v1/authentication.proto";
+import "authentication/service/v1/mfa.proto";
+
+// 多因素认证（MFA）服务（BFF 面：代理 core MFAService）
+// 个人中心绑定/解绑 + 登录两步验证挑战换令牌 + 平台管理员救援重置。
+service MFAService {
+  // 查询当前用户 MFA 总览
+  rpc GetMFAStatus (authentication.service.v1.GetMFAStatusRequest) returns (authentication.service.v1.GetMFAStatusResponse) {
+    option (google.api.http) = {
+      get: "/admin/v1/me/mfa"
+    };
+  }
+
+  // 开始绑定 MFA 方法（TOTP：返回 secret 与 otpauth 绑定 URI）
+  rpc StartEnrollMethod (authentication.service.v1.StartEnrollMethodRequest) returns (authentication.service.v1.StartEnrollMethodResponse) {
+    option (google.api.http) = {
+      post: "/admin/v1/me/mfa/enroll/start"
+      body: "*"
+    };
+  }
+
+  // 确认绑定（提交验证器当前动态码）
+  rpc ConfirmEnrollMethod (authentication.service.v1.ConfirmEnrollMethodRequest) returns (authentication.service.v1.ConfirmEnrollMethodResponse) {
+    option (google.api.http) = {
+      post: "/admin/v1/me/mfa/enroll/confirm"
+      body: "*"
+    };
+  }
+
+  // 解除绑定（提交当前动态码）
+  rpc DisableMFA (authentication.service.v1.DisableMFARequest) returns (google.protobuf.Empty) {
+    option (google.api.http) = {
+      post: "/admin/v1/me/mfa/disable"
+      body: "*"
+    };
+  }
+
+  // 两步验证挑战校验（免鉴权：Login 返回 mfa_operation_id 后的半登录态调用；
+  // 通过后返回与 Login 同构的正式令牌对）
+  rpc VerifyMFAChallenge (authentication.service.v1.VerifyMFAChallengeRequest) returns (authentication.service.v1.LoginResponse) {
+    option (google.api.http) = {
+      post: "/admin/v1/mfa/challenge/verify"
+      body: "*"
+    };
+
+    option(gnostic.openapi.v3.operation) = {
+      security: {}
+    };
+  }
+
+  // 平台管理员救援重置：清空目标用户全部 TOTP 因子
+  rpc ResetUserMFA (authentication.service.v1.ResetUserMFARequest) returns (google.protobuf.Empty) {
+    option (google.api.http) = {
+      post: "/admin/v1/users/{user_id}/mfa/reset"
+      body: "*"
+    };
+  }
+}

@@ -74,7 +74,27 @@
   "secureSetting": {
     "password": "登录密码",
     "passwordDesc": "建议定期修改密码，可搭配两步验证提升账户安全性",
-    "modify": "修改"
+    "modify": "修改",
+    "mfa": {
+      "title": "两步验证",
+      "enabledDesc": "已通过验证器 App 开启两步验证，登录时需输入动态码",
+      "disabledDesc": "开启后登录需输入验证器 6 位动态码，大幅提升账户安全性",
+      "enable": "开启",
+      "disable": "关闭",
+      "bindTitle": "绑定两步验证",
+      "scanHint": "使用验证器 App（Google Authenticator 等）扫码，或手动录入密钥",
+      "codePlaceholder": "输入 6 位动态码",
+      "codeFormatError": "动态码须为 6 位数字",
+      "codeInvalid": "动态码不正确或已过期",
+      "confirm": "确认绑定",
+      "confirmDisable": "确认关闭",
+      "unbindTitle": "关闭两步验证",
+      "unbindHint": "关闭后登录将不再需要动态码，输入当前验证器动态码以确认操作",
+      "enabled": "两步验证已开启",
+      "disabled": "两步验证已关闭",
+      "startFailed": "发起绑定失败，请稍后重试",
+      "loading": "正在生成绑定二维码…"
+    }
   },
   "accountBind": {
     "email": "邮箱账号",

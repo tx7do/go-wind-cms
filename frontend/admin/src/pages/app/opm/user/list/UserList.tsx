@@ -4,7 +4,7 @@ import TableExportButton from '@/components/common/TableExportButton';
 import TableActions from '@/components/common/TableActions';
 import ListTable from '@/components/common/ListTable';
 import { Button, Tag, App } from 'antd';
-import { EditOutlined, DeleteOutlined, PlusOutlined, InfoCircleOutlined } from '@ant-design/icons';
+import { EditOutlined, DeleteOutlined, PlusOutlined, InfoCircleOutlined, LockOutlined } from '@ant-design/icons';
 import { useQueryClient } from '@tanstack/react-query';
 import { useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router-dom';
@@ -12,6 +12,8 @@ import { useNavigate } from 'react-router-dom';
 import { PaginationQuery } from '@/core';
 import { TABLE } from '@/config/constants';
 import { useProTableScrollY } from '@/hooks/useProTableScrollY';
+import { useMutation } from '@tanstack/react-query';
+import { apiClient } from '@/api/client';
 import { fetchListUsers, useDeleteUser } from '@/api/hooks/user';
 import { useUserStore } from '@/stores/user';
 import { parseResourceHiddenFields } from '@/core/access';
@@ -64,9 +66,21 @@ const UserList: React.FC<UserListProps> = ({ tenantId, orgUnitId }) => {
     },
   });
 
+  // 管理端救援重置：清空目标用户 TOTP 因子（认证器丢失解锁用）
+  // 仅平台侧操作者（tenantId=0）显示救援重置；非平台用户由后端权限兜底
+  const operatorTenantId = useUserStore((s) => s.tenantId);
+  const isPlatformOperator = operatorTenantId === 0;
+  const resetMfaMutation = useMutation({
+    mutationFn: (userId: number) => apiClient.mFAService.ResetUserMFA({ userId }),
+    onSuccess: () => {
+      message.success(t('resetMfaSuccess'));
+    },
+    onError: (error: Error) => {
+      message.error(error.message || t('resetMfaFailed'));
+    },
+  });
+
   // 列配置
-  // 管理端救援重置：清空目标用户 TOTP 因子（认证器丢失解锁用，仅平台管理员生效）
-  // 仅平台侧操作者（tenantId=0）显示救援重置；非平台用户由后端 403 兜底
 
   const columns: ProColumns<any>[] = ([
     {
@@ -207,6 +221,20 @@ const UserList: React.FC<UserListProps> = ({ tenantId, orgUnitId }) => {
                 setDrawerOpen(true);
               },
             },
+            ...(isPlatformOperator
+              ? [
+                  {
+                    key: 'resetMfa',
+                    label: t('resetMfa'),
+                    icon: <LockOutlined />,
+                    confirm: {
+                      title: t('resetMfaConfirmTitle'),
+                      description: t('resetMfaConfirmDesc'),
+                    },
+                    onClick: () => record.id && resetMfaMutation.mutate(record.id),
+                  },
+                ]
+              : []),
             {
               key: 'delete',
               label: t('common:button.delete'),

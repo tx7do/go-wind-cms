@@ -4932,6 +4932,79 @@ paths:
                 "200":
                     description: OK
                     content: {}
+    /admin/v1/me/mfa:
+        get:
+            tags:
+                - MFAService
+            description: 查询当前用户 MFA 总览
+            operationId: MFAService_GetMFAStatus
+            parameters:
+                - name: userId
+                  in: query
+                  description: 可选：若服务端通过上下文识别用户，可不传 user_id
+                  schema:
+                    type: string
+            responses:
+                "200":
+                    description: OK
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/authentication.service.v1.GetMFAStatusResponse'
+    /admin/v1/me/mfa/disable:
+        post:
+            tags:
+                - MFAService
+            description: 解除绑定（提交当前动态码）
+            operationId: MFAService_DisableMFA
+            requestBody:
+                content:
+                    application/json:
+                        schema:
+                            $ref: '#/components/schemas/authentication.service.v1.DisableMFARequest'
+                required: true
+            responses:
+                "200":
+                    description: OK
+                    content: {}
+    /admin/v1/me/mfa/enroll/confirm:
+        post:
+            tags:
+                - MFAService
+            description: 确认绑定（提交验证器当前动态码）
+            operationId: MFAService_ConfirmEnrollMethod
+            requestBody:
+                content:
+                    application/json:
+                        schema:
+                            $ref: '#/components/schemas/authentication.service.v1.ConfirmEnrollMethodRequest'
+                required: true
+            responses:
+                "200":
+                    description: OK
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/authentication.service.v1.ConfirmEnrollMethodResponse'
+    /admin/v1/me/mfa/enroll/start:
+        post:
+            tags:
+                - MFAService
+            description: 开始绑定 MFA 方法（TOTP：返回 secret 与 otpauth 绑定 URI）
+            operationId: MFAService_StartEnrollMethod
+            requestBody:
+                content:
+                    application/json:
+                        schema:
+                            $ref: '#/components/schemas/authentication.service.v1.StartEnrollMethodRequest'
+                required: true
+            responses:
+                "200":
+                    description: OK
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/authentication.service.v1.StartEnrollMethodResponse'
     /admin/v1/me/password:
         post:
             tags:
@@ -5330,6 +5403,29 @@ paths:
                 "200":
                     description: OK
                     content: {}
+    /admin/v1/mfa/challenge/verify:
+        post:
+            tags:
+                - MFAService
+            description: |-
+                两步验证挑战校验（免鉴权：Login 返回 mfa_operation_id 后的半登录态调用；
+                 通过后返回与 Login 同构的正式令牌对）
+            operationId: MFAService_VerifyMFAChallenge
+            requestBody:
+                content:
+                    application/json:
+                        schema:
+                            $ref: '#/components/schemas/authentication.service.v1.VerifyMFAChallengeRequest'
+                required: true
+            responses:
+                "200":
+                    description: OK
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/authentication.service.v1.LoginResponse'
+            security:
+                - {}
     /admin/v1/monitor-alert-rules:
         get:
             tags:
@@ -10864,6 +10960,30 @@ paths:
                 "200":
                     description: OK
                     content: {}
+    /admin/v1/users/{userId}/mfa/reset:
+        post:
+            tags:
+                - MFAService
+            description: 平台管理员救援重置：清空目标用户全部 TOTP 因子
+            operationId: MFAService_ResetUserMFA
+            parameters:
+                - name: userId
+                  in: path
+                  description: 目标用户 ID
+                  required: true
+                  schema:
+                    type: integer
+                    format: uint32
+            requestBody:
+                content:
+                    application/json:
+                        schema:
+                            $ref: '#/components/schemas/authentication.service.v1.ResetUserMFARequest'
+                required: true
+            responses:
+                "200":
+                    description: OK
+                    content: {}
     /admin/v1/users/{userId}/password:
         post:
             tags:
@@ -12861,12 +12981,108 @@ components:
                     description: 日志创建时间
                     format: date-time
             description: 权限变更审计日志
+        authentication.service.v1.ConfirmEnrollMethodRequest:
+            type: object
+            properties:
+                method:
+                    enum:
+                        - MFA_METHOD_UNSPECIFIED
+                        - TOTP
+                        - SMS
+                        - EMAIL
+                        - U2F
+                        - WEBAUTHN
+                        - BACKUP_CODE
+                        - OTHER
+                    type: string
+                    format: enum
+                operationId:
+                    type: string
+                totpCode:
+                    type: string
+                sms:
+                    $ref: '#/components/schemas/authentication.service.v1.SMSVerification'
+                webauthn:
+                    $ref: '#/components/schemas/authentication.service.v1.WebAuthnAssertion'
+                backupCode:
+                    type: string
+                display:
+                    type: string
+                    description: 可选：设备/显示名
+            description: Confirm enroll
+        authentication.service.v1.ConfirmEnrollMethodResponse:
+            type: object
+            properties:
+                success:
+                    type: boolean
+                credentialId:
+                    type: string
         authentication.service.v1.CreateLoginPolicyRequest:
             type: object
             properties:
                 data:
                     $ref: '#/components/schemas/authentication.service.v1.LoginPolicy'
             description: 创建登录策略 - 请求
+        authentication.service.v1.DisableMFARequest:
+            type: object
+            properties:
+                credentialId:
+                    type: string
+                    description: 指定凭证 id 或仅按方法禁用全部
+                method:
+                    enum:
+                        - MFA_METHOD_UNSPECIFIED
+                        - TOTP
+                        - SMS
+                        - EMAIL
+                        - U2F
+                        - WEBAUTHN
+                        - BACKUP_CODE
+                        - OTHER
+                    type: string
+                    format: enum
+                password:
+                    type: string
+                totpCode:
+                    type: string
+                sms:
+                    $ref: '#/components/schemas/authentication.service.v1.SMSVerification'
+                webauthn:
+                    $ref: '#/components/schemas/authentication.service.v1.WebAuthnAssertion'
+                reason:
+                    type: string
+                userId:
+                    type: integer
+                    description: 操作者用户 ID
+                    format: uint32
+            description: Disable / remove
+        authentication.service.v1.EnrolledMethod:
+            type: object
+            properties:
+                id:
+                    type: string
+                method:
+                    enum:
+                        - MFA_METHOD_UNSPECIFIED
+                        - TOTP
+                        - SMS
+                        - EMAIL
+                        - U2F
+                        - WEBAUTHN
+                        - BACKUP_CODE
+                        - OTHER
+                    type: string
+                    format: enum
+                display:
+                    type: string
+                enabled:
+                    type: boolean
+                createdAt:
+                    type: string
+                    format: date-time
+                lastUsedAt:
+                    type: string
+                    format: date-time
         authentication.service.v1.ForgotPasswordRequest:
             type: object
             properties:
@@ -12883,6 +13099,22 @@ components:
                 imageBase64:
                     type: string
                     description: 验证码图片的Base64编码字符串，客户端可以解码并显示给用户
+        authentication.service.v1.GetMFAStatusResponse:
+            type: object
+            properties:
+                enabled:
+                    type: boolean
+                enrolled:
+                    type: array
+                    items:
+                        $ref: '#/components/schemas/authentication.service.v1.EnrolledMethod'
+                enforcement:
+                    enum:
+                        - MFA_NOT_REQUIRED
+                        - MFA_OPTIONAL
+                        - MFA_REQUIRED
+                    type: string
+                    format: enum
         authentication.service.v1.GetOidcAuthorizeUrlRequest:
             type: object
             properties:
@@ -13073,6 +13305,12 @@ components:
                 tenant_code:
                     type: string
                     description: 租户编号，留空表示平台登录（平台超级管理员）；非空时按该编号解析对应租户
+                mfa_operation_id:
+                    type: string
+                    description: MFA 挑战凭据（一次性、短时效；密码验证通过但用户启用两步验证时由服务端签发）
+                totp_code:
+                    type: string
+                    description: TOTP 动态验证码（6 位数字）
             description: 用户登录 - 请求
         authentication.service.v1.LoginResponse:
             type: object
@@ -13106,6 +13344,9 @@ components:
                 jti:
                     type: string
                     description: 会话令牌对ID
+                mfa_operation_id:
+                    type: string
+                    description: MFA 挑战凭据；非空表示须凭它与 totp_code 走挑战验证换令牌
             description: 用户登录 - 回应
         authentication.service.v1.ResetPasswordByCodeRequest:
             type: object
@@ -13120,6 +13361,83 @@ components:
                     type: string
                     description: 新密码
             description: 凭验证码重置密码 - 请求
+        authentication.service.v1.ResetUserMFARequest:
+            type: object
+            properties:
+                userId:
+                    type: integer
+                    description: 目标用户 ID
+                    format: uint32
+            description: 管理员救援重置 - 请求
+        authentication.service.v1.SMSResult:
+            type: object
+            properties:
+                verificationId:
+                    type: string
+                smsSent:
+                    type: boolean
+                maskedPhone:
+                    type: string
+        authentication.service.v1.SMSVerification:
+            type: object
+            properties:
+                verificationId:
+                    type: string
+                code:
+                    type: string
+        authentication.service.v1.StartEnrollMethodRequest:
+            type: object
+            properties:
+                method:
+                    enum:
+                        - MFA_METHOD_UNSPECIFIED
+                        - TOTP
+                        - SMS
+                        - EMAIL
+                        - U2F
+                        - WEBAUTHN
+                        - BACKUP_CODE
+                        - OTHER
+                    type: string
+                    format: enum
+                phone:
+                    type: string
+                    description: 根据 method 可能需要额外参数（例如 SMS 需要 phone）
+                email:
+                    type: string
+                userId:
+                    type: integer
+                    description: 操作者用户 ID
+                    format: uint32
+                account:
+                    type: string
+                    description: 绑定展示用账号标识
+            description: Start enroll
+        authentication.service.v1.StartEnrollMethodResponse:
+            type: object
+            properties:
+                totp:
+                    $ref: '#/components/schemas/authentication.service.v1.TOTPResult'
+                sms:
+                    $ref: '#/components/schemas/authentication.service.v1.SMSResult'
+                webauthn:
+                    $ref: '#/components/schemas/authentication.service.v1.WebAuthnResult'
+                expiresAt:
+                    type: string
+                    format: date-time
+                operationId:
+                    type: string
+                    description: 临时操作 id，用于 ConfirmEnrollMethod / 后续验证
+        authentication.service.v1.TOTPResult:
+            type: object
+            properties:
+                secret:
+                    type: string
+                    description: base32 secret：仅在注册时返回一次，服务端应只存哈希/引用
+                otpAuthUrl:
+                    type: string
+                qrCodeDataUri:
+                    type: string
         authentication.service.v1.UpdateLoginPolicyRequest:
             type: object
             properties:
@@ -13152,6 +13470,41 @@ components:
                 valid:
                     type: boolean
                     description: 验证码验证结果，true表示验证成功，false表示验证失败
+        authentication.service.v1.VerifyMFAChallengeRequest:
+            type: object
+            properties:
+                operationId:
+                    type: string
+                totpCode:
+                    type: string
+                sms:
+                    $ref: '#/components/schemas/authentication.service.v1.SMSVerification'
+                webauthn:
+                    $ref: '#/components/schemas/authentication.service.v1.WebAuthnAssertion'
+                backupCode:
+                    type: string
+        authentication.service.v1.WebAuthnAssertion:
+            type: object
+            properties:
+                id:
+                    type: string
+                clientDataJson:
+                    type: string
+                authenticatorData:
+                    type: string
+                signature:
+                    type: string
+                userHandle:
+                    type: string
+        authentication.service.v1.WebAuthnResult:
+            type: object
+            properties:
+                challenge:
+                    type: string
+                optionsJson:
+                    type: string
+                rpId:
+                    type: string
         comment.service.v1.Comment:
             type: object
             properties:
@@ -20566,6 +20919,10 @@ tags:
       description: 登录审计日志管理服务
     - name: LoginPolicyService
       description: 登录策略管理服务
+    - name: MFAService
+      description: |-
+        多因素认证（MFA）服务（BFF 面：代理 core MFAService）
+         个人中心绑定/解绑 + 登录两步验证挑战换令牌 + 平台管理员救援重置。
     - name: MediaAssetService
       description: 媒体资源库服务
     - name: MenuService

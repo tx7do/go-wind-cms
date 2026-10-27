@@ -67,6 +67,9 @@ func NewRestMiddleware(
 		// AccessKeyService.IssueToken：AK/SK 令牌交换（机器对机器），免鉴权——
 		// 它本身即是认证；调用方凭 AccessKey 头无 bearer，须在白名单内。
 		adminV1.OperationAccessKeyServiceIssueToken,
+		// MFAService.VerifyMFAChallenge：两步验证挑战校验（半登录态换正式令牌），
+		// 调用方仅持一次性挑战凭据、无 bearer；凭据本身 5 分钟一次性消费即防护。
+		adminV1.OperationMFAServiceVerifyMFAChallenge,
 	)
 
 	ms = append(ms, applogging.Server(
@@ -119,6 +122,7 @@ func NewRestServer(
 
 	userService *service.UserService,
 	userProfileService *service.UserProfileService,
+	mfaService *service.MFAService,
 	roleService *service.RoleService,
 	tenantService *service.TenantService,
 	orgUnitService *service.OrgUnitService,
@@ -222,6 +226,7 @@ func NewRestServer(
 	adminV1.RegisterLoginPolicyServiceHTTPServer(srv, loginPolicyService)
 
 	adminV1.RegisterUserProfileServiceHTTPServer(srv, userProfileService)
+	adminV1.RegisterMFAServiceHTTPServer(srv, mfaService)
 	adminV1.RegisterUserServiceHTTPServer(srv, userService)
 	adminV1.RegisterRoleServiceHTTPServer(srv, roleService)
 	adminV1.RegisterTenantServiceHTTPServer(srv, tenantService)

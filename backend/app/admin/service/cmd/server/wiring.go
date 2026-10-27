@@ -85,6 +85,7 @@ func initApp(ctx *bootstrap.Context) (*kratos.App, func(), error) {
 	orgUnitServiceClient := data.NewOrgUnitServiceClient(ctx, discovery)
 	positionServiceClient := data.NewPositionServiceClient(ctx, discovery)
 	userCredentialServiceClient := data.NewUserCredentialServiceClient(ctx, discovery)
+	mfaServiceClient := data.NewMFAServiceClient(ctx, discovery)
 	loginPolicyServiceClient := data.NewLoginPolicyServiceClient(ctx, discovery)
 
 	// RBAC
@@ -180,6 +181,7 @@ func initApp(ctx *bootstrap.Context) (*kratos.App, func(), error) {
 	// 身份与组织
 	userService := service.NewUserService(ctx, userServiceClient, tenantServiceClient, orgUnitServiceClient, positionServiceClient, roleServiceClient, userCredentialServiceClient)
 	userProfileService := service.NewUserProfileService(ctx, userServiceClient, tenantServiceClient, orgUnitServiceClient, positionServiceClient, roleServiceClient, userCredentialServiceClient)
+	mfaService := service.NewMFAService(ctx, mfaServiceClient)
 	roleService := service.NewRoleService(ctx, roleServiceClient, tenantServiceClient)
 	tenantService := service.NewTenantService(ctx, userServiceClient, userCredentialServiceClient, tenantServiceClient, roleServiceClient)
 	orgUnitService := service.NewOrgUnitService(ctx, orgUnitServiceClient, userServiceClient)
@@ -278,7 +280,7 @@ func initApp(ctx *bootstrap.Context) (*kratos.App, func(), error) {
 	restMiddlewares := server.NewRestMiddleware(ctx, accessTokenChecker, engine, tenantQuotaServiceClient, apiAuditLogServiceClient, loginAuditLogServiceClient, operationAuditLogServiceClient)
 
 	httpServer := server.NewRestServer(ctx, restMiddlewares,
-		userService, userProfileService, roleService, tenantService, orgUnitService, positionService,
+		userService, userProfileService, mfaService, roleService, tenantService, orgUnitService, positionService,
 		menuService, apiService, permissionGroupService, permissionService,
 		adminPortalService, previewService, taskService,
 		authenticationService, loginPolicyService,

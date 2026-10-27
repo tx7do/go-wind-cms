@@ -206,6 +206,15 @@ func (s *AuthenticationService) doGrantTypeOidcAuthorizationCode(ctx context.Con
 		return nil, err
 	}
 
+	// ===== 两步验证闸门：SSO 登录同样受 TOTP 因子约束（挑战/内联校验同密码路径）=====
+	mfaResp, err := s.enforceMFAOnLogin(ctx, req, user)
+	if err != nil {
+		return nil, err
+	}
+	if mfaResp != nil {
+		return mfaResp, nil
+	}
+
 	accessTokenJWT, refreshToken, _, err := s.authenticator.CreateUserToken(ctx, req.GetClientType(), tokenPayload)
 	if err != nil {
 		return nil, err

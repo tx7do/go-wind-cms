@@ -229,6 +229,7 @@ func initApp(ctx *bootstrap.Context) (*kratos.App, func(), error) {
 	// 认证与登录策略
 	geoClient, _ := geolite.NewClient()
 	authenticationService := service.NewAuthenticationService(ctx, authenticator, userCredentialRepo, userRepo, roleRepo, tenantRepo, permissionRepo, redisClient, vcodeCache, loginPolicyRepo, geoClient)
+	mfaService := service.NewMFAService(ctx, authenticationService)
 	loginPolicyService := service.NewLoginPolicyService(ctx, loginPolicyRepo)
 	userCredentialService := service.NewUserCredentialService(ctx, userCredentialRepo)
 
@@ -363,7 +364,7 @@ func initApp(ctx *bootstrap.Context) (*kratos.App, func(), error) {
 	grpcMiddlewares := server.NewGrpcMiddleware(ctx)
 
 	grpcServer, err := server.NewGrpcServer(ctx, grpcMiddlewares,
-		authenticationService, loginPolicyService, userCredentialService,
+		authenticationService, mfaService, loginPolicyService, userCredentialService,
 		taskService,
 		monitorAlertService,
 		onlineSessionService,
