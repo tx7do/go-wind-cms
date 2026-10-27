@@ -325,7 +325,8 @@ func initApp(ctx *bootstrap.Context) (*kratos.App, func(), error) {
 	tenantQuotaService.RegisterInternalMessages(internalMessageService)
 
 	// 内容
-	commentService := service.NewCommentService(ctx, commentRepo, flowService)
+	commentAIDeps := &service.CommentAIModerationDeps{ProviderRepo: aiProviderRepo, UsageLogRepo: aiUsageLogRepo}
+	commentService := service.NewCommentService(ctx, commentRepo, flowService, configRepo, commentAIDeps)
 	interactionService := service.NewInteractionService(ctx, interactionRepo, postRepo)
 	interactionAdminService := service.NewInteractionAdminService(ctx, interactionRepo, operationAuditLogRepo)
 	statsService := service.NewStatsService(ctx, statsRepo)

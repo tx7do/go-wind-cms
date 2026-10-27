@@ -853,6 +853,9 @@ var DefaultNotificationRules = []*notifyV1.NotificationRule{
 	},
 }
 
+// ConfigKeyCommentAIModeration 评论 AI 反垃圾开关键。
+const ConfigKeyCommentAIModeration = "comment.ai_moderation.enabled"
+
 // DefaultConfigs 系统初始化内置平台参数（等保口令策略阈值）。
 // 经 ConfigRepo.SeedDefaults 按键缺一补一播种（启动期，is_built_in=true，
 // 禁删；管理员改过的值不回置）。口令策略消费方为上游等保批能力，CMS 当前
@@ -877,6 +880,15 @@ var DefaultConfigs = []*configV1.Config{
 		Name:      trans.Ptr("Password history retention count (0 disables history check)"),
 		Value:     trans.Ptr(strconv.Itoa(DefaultPasswordHistoryCount)),
 		ValueType: configV1.Config_INT.Enum(),
+		IsBuiltIn: trans.Ptr(true),
+	},
+	{
+		// 评论 AI 反垃圾开关（消费方 core CommentService.Create；默认关，
+		// AI 不可用 fail-open）。
+		Key:       trans.Ptr(ConfigKeyCommentAIModeration),
+		Name:      trans.Ptr("Comment AI anti-spam moderation enabled"),
+		Value:     trans.Ptr("false"),
+		ValueType: configV1.Config_BOOL.Enum(),
 		IsBuiltIn: trans.Ptr(true),
 	},
 }

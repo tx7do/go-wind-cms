@@ -19,14 +19,24 @@ type CommentService struct {
 
 	commentRepo *data.CommentRepo
 	flowSvc     *FlowService
+	configRepo  *data.ConfigRepo
+	aiDeps      *CommentAIModerationDeps
 	log         *log.Helper
 }
 
-func NewCommentService(ctx *bootstrap.Context, uc *data.CommentRepo, flowSvc *FlowService) *CommentService {
+func NewCommentService(
+	ctx *bootstrap.Context,
+	uc *data.CommentRepo,
+	flowSvc *FlowService,
+	configRepo *data.ConfigRepo,
+	aiDeps *CommentAIModerationDeps,
+) *CommentService {
 	return &CommentService{
 		log:         ctx.NewLoggerHelper("comment/service/core-service"),
 		commentRepo: uc,
 		flowSvc:     flowSvc,
+		configRepo:  configRepo,
+		aiDeps:      aiDeps,
 	}
 }
 
@@ -50,6 +60,11 @@ func (s *CommentService) Get(ctx context.Context, req *commentV1.GetCommentReque
 }
 
 func (s *CommentService) Create(ctx context.Context, req *commentV1.CreateCommentRequest) (*commentV1.Comment, error) {
+	// AI 反垃圾闸门（系统参数开关，默认关）：判为垃圾即拒绝创建。
+	// AI 链路任何错误都 fail-open（放行）——可用性优先，垃圾漏网可由人工审核兜底。
+	if err := s.moderateCommentAI(ctx, req.GetData().GetContent()); err != nil {
+		return nil, err
+	}
 	dto, err := s.commentRepo.Create(ctx, req)
 	if err != nil {
 		return nil, err
