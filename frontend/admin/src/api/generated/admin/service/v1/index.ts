@@ -742,6 +742,10 @@ export interface AiAgentService {
     request: aiservicev1_DeleteAiAgentAppRequest,
   ): Promise<wellKnownEmpty>;
   // 试运行（同步执行图，返回含 trace 的运行记录）
+  // 审批裁决运行（WAITING_APPROVAL → 继续/驳回）
+  ApproveRun(
+    request: aiservicev1_ApproveAgentRunRequest,
+  ): Promise<aiservicev1_AiAgentRun>;
   Run(
     request: aiservicev1_RunAiAgentAppRequest,
   ): Promise<aiservicev1_AiAgentRun>;
@@ -869,6 +873,19 @@ export function createAiAgentServiceClient(
         service: 'AiAgentService',
         method: 'Delete',
       }) as Promise<wellKnownEmpty>;
+    },
+    ApproveRun(request) {
+      if (request.runId === undefined || request.runId === null) {
+        throw new Error('missing required field request.run_id');
+      }
+      const path = `/admin/v1/ai/agent-runs/${request.runId}/approve`;
+      const bodyMap = { ...request } as Record<string, unknown>;
+      delete bodyMap["runId"];
+      const body = JSON.stringify(bodyMap);
+      return transport.unary(path, 'POST', body, {
+        service: 'AiAgentService',
+        method: 'ApproveRun',
+      }) as Promise<aiservicev1_AiAgentRun>;
     },
     Run(request) {
       if (request.id === undefined || request.id === null) {
@@ -1008,11 +1025,12 @@ export type aiservicev1_DeleteAiAgentAppRequest = {
   id: number | undefined;
 };
 
-// 试运行 - 请求
-export type aiservicev1_RunAiAgentAppRequest = {
-  id: number | undefined;
-  // 运行入参：start 节点声明的输入变量名 → 值（JSON 对象字符串）
-  input: { [key: string]: string } | undefined;
+// 审批裁决运行 - 请求
+export type aiservicev1_ApproveAgentRunRequest = {
+  approved: boolean | undefined;
+  // 审批意见（驳回时写入运行 error；批准时注入挂起节点 note 变量）
+  note: string | undefined;
+  runId: number | undefined;
 };
 
 // Agent 运行记录
@@ -1026,7 +1044,11 @@ export type aiservicev1_AiAgentRun = {
   // 运行入参（JSON 对象：start 节点 inputVars 的 name → 值）
   input?: string;
   output?: string;
+  // 等待审批的节点 ID（status=WAITING_APPROVAL 时有值）
+  pendingNodeId?: string;
   promptTokens?: number;
+  // 挂起恢复快照 JSON：{vars, nextNodeId}（ApproveRun 批准后据此继续执行）
+  resumeState?: string;
   status?: aiservicev1_AiAgentRun_Status;
   totalTokens?: number;
   // 逐节点执行轨迹（JSON 数组：{nodeId,type,status,ms,summary,usage}）
@@ -1038,7 +1060,15 @@ export type aiservicev1_AiAgentRun_Status =
   | 'FAILED'
   | 'RUNNING'
   | 'STATUS_UNSPECIFIED'
-  | 'SUCCEEDED';
+  | 'SUCCEEDED'
+  | 'WAITING_APPROVAL';
+// 试运行 - 请求
+export type aiservicev1_RunAiAgentAppRequest = {
+  id: number | undefined;
+  // 运行入参：start 节点声明的输入变量名 → 值（JSON 对象字符串）
+  input: { [key: string]: string } | undefined;
+};
+
 // 运行台账列表 - 回应
 export type aiservicev1_ListAiAgentRunsResponse = {
   items: aiservicev1_AiAgentRun[] | undefined;

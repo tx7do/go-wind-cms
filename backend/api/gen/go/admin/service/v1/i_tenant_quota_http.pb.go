@@ -62,11 +62,11 @@ type TenantQuotaServiceHTTPServer interface {
 
 func RegisterTenantQuotaServiceHTTPServer(s *http.Server, srv TenantQuotaServiceHTTPServer) {
 	r := s.Route("/")
-	r.GET("/admin/v1/tenant-quotas", _TenantQuotaService_List48_HTTP_Handler(srv))
+	r.GET("/admin/v1/tenant-quotas", _TenantQuotaService_List49_HTTP_Handler(srv))
 	r.GET("/admin/v1/tenant-quotas/{id}", _TenantQuotaService_Get50_HTTP_Handler(srv))
-	r.POST("/admin/v1/tenant-quotas", _TenantQuotaService_Create38_HTTP_Handler(srv))
+	r.POST("/admin/v1/tenant-quotas", _TenantQuotaService_Create39_HTTP_Handler(srv))
 	r.PUT("/admin/v1/tenant-quotas/{id}", _TenantQuotaService_Update39_HTTP_Handler(srv))
-	r.DELETE("/admin/v1/tenant-quotas/{id}", _TenantQuotaService_Delete41_HTTP_Handler(srv))
+	r.DELETE("/admin/v1/tenant-quotas/{id}", _TenantQuotaService_Delete42_HTTP_Handler(srv))
 	r.GET("/admin/v1/tenants/{tenant_id}/usage", _TenantQuotaService_GetUsage0_HTTP_Handler(srv))
 	r.GET("/admin/v1/my-tenant-usage", _TenantQuotaService_GetMyTenantUsage0_HTTP_Handler(srv))
 	r.GET("/admin/v1/quota-plans", _TenantQuotaService_ListQuotaPlans0_HTTP_Handler(srv))
@@ -75,7 +75,7 @@ func RegisterTenantQuotaServiceHTTPServer(s *http.Server, srv TenantQuotaService
 	r.POST("/admin/v1/quota-plans/{plan_id}/apply", _TenantQuotaService_ApplyQuotaPlan0_HTTP_Handler(srv))
 }
 
-func _TenantQuotaService_List48_HTTP_Handler(srv TenantQuotaServiceHTTPServer) func(ctx http.Context) error {
+func _TenantQuotaService_List49_HTTP_Handler(srv TenantQuotaServiceHTTPServer) func(ctx http.Context) error {
 	return func(ctx http.Context) error {
 		var in v1.PagingRequest
 		if err := ctx.BindQuery(&in); err != nil {
@@ -116,7 +116,7 @@ func _TenantQuotaService_Get50_HTTP_Handler(srv TenantQuotaServiceHTTPServer) fu
 	}
 }
 
-func _TenantQuotaService_Create38_HTTP_Handler(srv TenantQuotaServiceHTTPServer) func(ctx http.Context) error {
+func _TenantQuotaService_Create39_HTTP_Handler(srv TenantQuotaServiceHTTPServer) func(ctx http.Context) error {
 	return func(ctx http.Context) error {
 		var in v11.CreateTenantQuotaRequest
 		if err := ctx.Bind(&in); err != nil {
@@ -163,7 +163,7 @@ func _TenantQuotaService_Update39_HTTP_Handler(srv TenantQuotaServiceHTTPServer)
 	}
 }
 
-func _TenantQuotaService_Delete41_HTTP_Handler(srv TenantQuotaServiceHTTPServer) func(ctx http.Context) error {
+func _TenantQuotaService_Delete42_HTTP_Handler(srv TenantQuotaServiceHTTPServer) func(ctx http.Context) error {
 	return func(ctx http.Context) error {
 		var in v11.DeleteTenantQuotaRequest
 		if err := ctx.BindQuery(&in); err != nil {

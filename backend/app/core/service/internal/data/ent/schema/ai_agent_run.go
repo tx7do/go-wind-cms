@@ -33,8 +33,18 @@ func (AiAgentRun) Fields() []ent.Field {
 				"Running", "RUNNING",
 				"Succeeded", "SUCCEEDED",
 				"Failed", "FAILED",
+				"WaitingApproval", "WAITING_APPROVAL",
 			).
 			Default("RUNNING"),
+		field.String("pending_node_id").
+			Comment("等待审批的节点 ID（status=WAITING_APPROVAL 时有值）").
+			Optional().
+			Nillable().
+			MaxLen(64),
+		field.Text("resume_state").
+			Comment("挂起恢复快照 JSON：{vars, nextNodeId}（审批通过后据此继续执行）").
+			Optional().
+			Nillable(),
 		field.Text("input").
 			Comment("运行入参 JSON（start 节点声明的变量）").
 			Optional().

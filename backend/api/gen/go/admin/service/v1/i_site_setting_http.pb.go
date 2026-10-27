@@ -43,14 +43,14 @@ type SiteSettingServiceHTTPServer interface {
 
 func RegisterSiteSettingServiceHTTPServer(s *http.Server, srv SiteSettingServiceHTTPServer) {
 	r := s.Route("/")
-	r.GET("/admin/v1/site-settings", _SiteSettingService_List44_HTTP_Handler(srv))
+	r.GET("/admin/v1/site-settings", _SiteSettingService_List45_HTTP_Handler(srv))
 	r.GET("/admin/v1/site-settings/{id}", _SiteSettingService_Get45_HTTP_Handler(srv))
-	r.POST("/admin/v1/site-settings", _SiteSettingService_Create34_HTTP_Handler(srv))
+	r.POST("/admin/v1/site-settings", _SiteSettingService_Create35_HTTP_Handler(srv))
 	r.PUT("/admin/v1/site-settings/{id}", _SiteSettingService_Update35_HTTP_Handler(srv))
-	r.DELETE("/admin/v1/site-settings/{id}", _SiteSettingService_Delete37_HTTP_Handler(srv))
+	r.DELETE("/admin/v1/site-settings/{id}", _SiteSettingService_Delete38_HTTP_Handler(srv))
 }
 
-func _SiteSettingService_List44_HTTP_Handler(srv SiteSettingServiceHTTPServer) func(ctx http.Context) error {
+func _SiteSettingService_List45_HTTP_Handler(srv SiteSettingServiceHTTPServer) func(ctx http.Context) error {
 	return func(ctx http.Context) error {
 		var in v1.PagingRequest
 		if err := ctx.BindQuery(&in); err != nil {
@@ -91,7 +91,7 @@ func _SiteSettingService_Get45_HTTP_Handler(srv SiteSettingServiceHTTPServer) fu
 	}
 }
 
-func _SiteSettingService_Create34_HTTP_Handler(srv SiteSettingServiceHTTPServer) func(ctx http.Context) error {
+func _SiteSettingService_Create35_HTTP_Handler(srv SiteSettingServiceHTTPServer) func(ctx http.Context) error {
 	return func(ctx http.Context) error {
 		var in v11.CreateSiteSettingRequest
 		if err := ctx.Bind(&in); err != nil {
@@ -138,7 +138,7 @@ func _SiteSettingService_Update35_HTTP_Handler(srv SiteSettingServiceHTTPServer)
 	}
 }
 
-func _SiteSettingService_Delete37_HTTP_Handler(srv SiteSettingServiceHTTPServer) func(ctx http.Context) error {
+func _SiteSettingService_Delete38_HTTP_Handler(srv SiteSettingServiceHTTPServer) func(ctx http.Context) error {
 	return func(ctx http.Context) error {
 		var in v11.DeleteSiteSettingRequest
 		if err := ctx.BindQuery(&in); err != nil {

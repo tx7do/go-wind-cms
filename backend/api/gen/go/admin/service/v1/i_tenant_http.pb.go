@@ -49,16 +49,16 @@ type TenantServiceHTTPServer interface {
 
 func RegisterTenantServiceHTTPServer(s *http.Server, srv TenantServiceHTTPServer) {
 	r := s.Route("/")
-	r.GET("/admin/v1/tenants", _TenantService_List47_HTTP_Handler(srv))
+	r.GET("/admin/v1/tenants", _TenantService_List48_HTTP_Handler(srv))
 	r.GET("/admin/v1/tenants/{id}", _TenantService_Get49_HTTP_Handler(srv))
-	r.POST("/admin/v1/tenants", _TenantService_Create37_HTTP_Handler(srv))
+	r.POST("/admin/v1/tenants", _TenantService_Create38_HTTP_Handler(srv))
 	r.PUT("/admin/v1/tenants/{id}", _TenantService_Update38_HTTP_Handler(srv))
-	r.DELETE("/admin/v1/tenants/{id}", _TenantService_Delete40_HTTP_Handler(srv))
+	r.DELETE("/admin/v1/tenants/{id}", _TenantService_Delete41_HTTP_Handler(srv))
 	r.POST("/admin/v1/tenants:with-admin", _TenantService_CreateTenantWithAdminUser0_HTTP_Handler(srv))
 	r.GET("/admin/v1/tenants:exists", _TenantService_TenantExists0_HTTP_Handler(srv))
 }
 
-func _TenantService_List47_HTTP_Handler(srv TenantServiceHTTPServer) func(ctx http.Context) error {
+func _TenantService_List48_HTTP_Handler(srv TenantServiceHTTPServer) func(ctx http.Context) error {
 	return func(ctx http.Context) error {
 		var in v1.PagingRequest
 		if err := ctx.BindQuery(&in); err != nil {
@@ -99,7 +99,7 @@ func _TenantService_Get49_HTTP_Handler(srv TenantServiceHTTPServer) func(ctx htt
 	}
 }
 
-func _TenantService_Create37_HTTP_Handler(srv TenantServiceHTTPServer) func(ctx http.Context) error {
+func _TenantService_Create38_HTTP_Handler(srv TenantServiceHTTPServer) func(ctx http.Context) error {
 	return func(ctx http.Context) error {
 		var in v11.CreateTenantRequest
 		if err := ctx.Bind(&in); err != nil {
@@ -146,7 +146,7 @@ func _TenantService_Update38_HTTP_Handler(srv TenantServiceHTTPServer) func(ctx 
 	}
 }
 
-func _TenantService_Delete40_HTTP_Handler(srv TenantServiceHTTPServer) func(ctx http.Context) error {
+func _TenantService_Delete41_HTTP_Handler(srv TenantServiceHTTPServer) func(ctx http.Context) error {
 	return func(ctx http.Context) error {
 		var in v11.DeleteTenantRequest
 		if err := ctx.BindQuery(&in); err != nil {

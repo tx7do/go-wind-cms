@@ -22,14 +22,15 @@ import (
 const _ = grpc.SupportPackageIsVersion9
 
 const (
-	AiAgentService_List_FullMethodName     = "/admin.service.v1.AiAgentService/List"
-	AiAgentService_Get_FullMethodName      = "/admin.service.v1.AiAgentService/Get"
-	AiAgentService_Create_FullMethodName   = "/admin.service.v1.AiAgentService/Create"
-	AiAgentService_Update_FullMethodName   = "/admin.service.v1.AiAgentService/Update"
-	AiAgentService_Delete_FullMethodName   = "/admin.service.v1.AiAgentService/Delete"
-	AiAgentService_Run_FullMethodName      = "/admin.service.v1.AiAgentService/Run"
-	AiAgentService_ListRuns_FullMethodName = "/admin.service.v1.AiAgentService/ListRuns"
-	AiAgentService_GetRun_FullMethodName   = "/admin.service.v1.AiAgentService/GetRun"
+	AiAgentService_List_FullMethodName       = "/admin.service.v1.AiAgentService/List"
+	AiAgentService_Get_FullMethodName        = "/admin.service.v1.AiAgentService/Get"
+	AiAgentService_Create_FullMethodName     = "/admin.service.v1.AiAgentService/Create"
+	AiAgentService_Update_FullMethodName     = "/admin.service.v1.AiAgentService/Update"
+	AiAgentService_Delete_FullMethodName     = "/admin.service.v1.AiAgentService/Delete"
+	AiAgentService_ApproveRun_FullMethodName = "/admin.service.v1.AiAgentService/ApproveRun"
+	AiAgentService_Run_FullMethodName        = "/admin.service.v1.AiAgentService/Run"
+	AiAgentService_ListRuns_FullMethodName   = "/admin.service.v1.AiAgentService/ListRuns"
+	AiAgentService_GetRun_FullMethodName     = "/admin.service.v1.AiAgentService/GetRun"
 )
 
 // AiAgentServiceClient is the client API for AiAgentService service.
@@ -49,6 +50,8 @@ type AiAgentServiceClient interface {
 	// 删除 Agent 应用
 	Delete(ctx context.Context, in *v11.DeleteAiAgentAppRequest, opts ...grpc.CallOption) (*emptypb.Empty, error)
 	// 试运行（同步执行图，返回含 trace 的运行记录）
+	// 审批裁决运行（WAITING_APPROVAL → 继续/驳回）
+	ApproveRun(ctx context.Context, in *v11.ApproveAgentRunRequest, opts ...grpc.CallOption) (*v11.AiAgentRun, error)
 	Run(ctx context.Context, in *v11.RunAiAgentAppRequest, opts ...grpc.CallOption) (*v11.AiAgentRun, error)
 	// 查询运行台账（appId eq 过滤走 PagingRequest；独立集合路径，避免与 /{id} 参数路由抢配）
 	ListRuns(ctx context.Context, in *v1.PagingRequest, opts ...grpc.CallOption) (*v11.ListAiAgentRunsResponse, error)
@@ -114,6 +117,16 @@ func (c *aiAgentServiceClient) Delete(ctx context.Context, in *v11.DeleteAiAgent
 	return out, nil
 }
 
+func (c *aiAgentServiceClient) ApproveRun(ctx context.Context, in *v11.ApproveAgentRunRequest, opts ...grpc.CallOption) (*v11.AiAgentRun, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(v11.AiAgentRun)
+	err := c.cc.Invoke(ctx, AiAgentService_ApproveRun_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 func (c *aiAgentServiceClient) Run(ctx context.Context, in *v11.RunAiAgentAppRequest, opts ...grpc.CallOption) (*v11.AiAgentRun, error) {
 	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
 	out := new(v11.AiAgentRun)
@@ -161,6 +174,8 @@ type AiAgentServiceServer interface {
 	// 删除 Agent 应用
 	Delete(context.Context, *v11.DeleteAiAgentAppRequest) (*emptypb.Empty, error)
 	// 试运行（同步执行图，返回含 trace 的运行记录）
+	// 审批裁决运行（WAITING_APPROVAL → 继续/驳回）
+	ApproveRun(context.Context, *v11.ApproveAgentRunRequest) (*v11.AiAgentRun, error)
 	Run(context.Context, *v11.RunAiAgentAppRequest) (*v11.AiAgentRun, error)
 	// 查询运行台账（appId eq 过滤走 PagingRequest；独立集合路径，避免与 /{id} 参数路由抢配）
 	ListRuns(context.Context, *v1.PagingRequest) (*v11.ListAiAgentRunsResponse, error)
@@ -190,6 +205,9 @@ func (UnimplementedAiAgentServiceServer) Update(context.Context, *v11.UpdateAiAg
 }
 func (UnimplementedAiAgentServiceServer) Delete(context.Context, *v11.DeleteAiAgentAppRequest) (*emptypb.Empty, error) {
 	return nil, status.Error(codes.Unimplemented, "method Delete not implemented")
+}
+func (UnimplementedAiAgentServiceServer) ApproveRun(context.Context, *v11.ApproveAgentRunRequest) (*v11.AiAgentRun, error) {
+	return nil, status.Error(codes.Unimplemented, "method ApproveRun not implemented")
 }
 func (UnimplementedAiAgentServiceServer) Run(context.Context, *v11.RunAiAgentAppRequest) (*v11.AiAgentRun, error) {
 	return nil, status.Error(codes.Unimplemented, "method Run not implemented")
@@ -311,6 +329,24 @@ func _AiAgentService_Delete_Handler(srv interface{}, ctx context.Context, dec fu
 	return interceptor(ctx, in, info, handler)
 }
 
+func _AiAgentService_ApproveRun_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(v11.ApproveAgentRunRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(AiAgentServiceServer).ApproveRun(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: AiAgentService_ApproveRun_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(AiAgentServiceServer).ApproveRun(ctx, req.(*v11.ApproveAgentRunRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 func _AiAgentService_Run_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(v11.RunAiAgentAppRequest)
 	if err := dec(in); err != nil {
@@ -391,6 +427,10 @@ var AiAgentService_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "Delete",
 			Handler:    _AiAgentService_Delete_Handler,
+		},
+		{
+			MethodName: "ApproveRun",
+			Handler:    _AiAgentService_ApproveRun_Handler,
 		},
 		{
 			MethodName: "Run",

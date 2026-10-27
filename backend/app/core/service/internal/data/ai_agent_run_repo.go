@@ -178,3 +178,34 @@ func (r *AiAgentRunRepo) SettleResult(
 	}
 	return nil
 }
+
+// SetPending 落 WAITING_APPROVAL 挂起态（挂起节点 + 恢复快照 + 已耗 tokens/trace）。
+func (r *AiAgentRunRepo) SetPending(
+	ctx context.Context,
+	id uint32,
+	pendingNodeID string,
+	resumeStateJSON string,
+	traceJSON string,
+	usage AgentRunTokens,
+	durationMs uint32,
+) error {
+	if err := r.entClient.Client().AiAgentRun.UpdateOneID(id).
+		SetStatus(aiagentrun.StatusWaitingApproval).
+		SetPendingNodeID(pendingNodeID).
+		SetResumeState(resumeStateJSON).
+		SetTrace(traceJSON).
+		SetPromptTokens(usage.Prompt).
+		SetCompletionTokens(usage.Completion).
+		SetTotalTokens(usage.Total).
+		SetDurationMs(durationMs).
+		Exec(ctx); err != nil {
+		r.log.Errorf("set pending ai agent run [%d] failed: %s", id, err.Error())
+		return errors.InternalServer("AI_AGENT", "set pending ai agent run failed")
+	}
+	return nil
+}
+
+// GetPendingNodeID 读挂起节点 ID（非 WAITING_APPROVAL 行为空）。
+func (r *AiAgentRunRepo) GetStatusEntity(ctx context.Context, id uint32) (*ent.AiAgentRun, error) {
+	return r.entClient.Client().AiAgentRun.Get(ctx, id)
+}

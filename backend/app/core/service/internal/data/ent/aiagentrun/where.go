@@ -94,6 +94,16 @@ func AppID(v uint32) predicate.AiAgentRun {
 	return predicate.AiAgentRun(sql.FieldEQ(FieldAppID, v))
 }
 
+// PendingNodeID applies equality check predicate on the "pending_node_id" field. It's identical to PendingNodeIDEQ.
+func PendingNodeID(v string) predicate.AiAgentRun {
+	return predicate.AiAgentRun(sql.FieldEQ(FieldPendingNodeID, v))
+}
+
+// ResumeState applies equality check predicate on the "resume_state" field. It's identical to ResumeStateEQ.
+func ResumeState(v string) predicate.AiAgentRun {
+	return predicate.AiAgentRun(sql.FieldEQ(FieldResumeState, v))
+}
+
 // Input applies equality check predicate on the "input" field. It's identical to InputEQ.
 func Input(v string) predicate.AiAgentRun {
 	return predicate.AiAgentRun(sql.FieldEQ(FieldInput, v))
@@ -552,6 +562,156 @@ func StatusIn(vs ...Status) predicate.AiAgentRun {
 // StatusNotIn applies the NotIn predicate on the "status" field.
 func StatusNotIn(vs ...Status) predicate.AiAgentRun {
 	return predicate.AiAgentRun(sql.FieldNotIn(FieldStatus, vs...))
+}
+
+// PendingNodeIDEQ applies the EQ predicate on the "pending_node_id" field.
+func PendingNodeIDEQ(v string) predicate.AiAgentRun {
+	return predicate.AiAgentRun(sql.FieldEQ(FieldPendingNodeID, v))
+}
+
+// PendingNodeIDNEQ applies the NEQ predicate on the "pending_node_id" field.
+func PendingNodeIDNEQ(v string) predicate.AiAgentRun {
+	return predicate.AiAgentRun(sql.FieldNEQ(FieldPendingNodeID, v))
+}
+
+// PendingNodeIDIn applies the In predicate on the "pending_node_id" field.
+func PendingNodeIDIn(vs ...string) predicate.AiAgentRun {
+	return predicate.AiAgentRun(sql.FieldIn(FieldPendingNodeID, vs...))
+}
+
+// PendingNodeIDNotIn applies the NotIn predicate on the "pending_node_id" field.
+func PendingNodeIDNotIn(vs ...string) predicate.AiAgentRun {
+	return predicate.AiAgentRun(sql.FieldNotIn(FieldPendingNodeID, vs...))
+}
+
+// PendingNodeIDGT applies the GT predicate on the "pending_node_id" field.
+func PendingNodeIDGT(v string) predicate.AiAgentRun {
+	return predicate.AiAgentRun(sql.FieldGT(FieldPendingNodeID, v))
+}
+
+// PendingNodeIDGTE applies the GTE predicate on the "pending_node_id" field.
+func PendingNodeIDGTE(v string) predicate.AiAgentRun {
+	return predicate.AiAgentRun(sql.FieldGTE(FieldPendingNodeID, v))
+}
+
+// PendingNodeIDLT applies the LT predicate on the "pending_node_id" field.
+func PendingNodeIDLT(v string) predicate.AiAgentRun {
+	return predicate.AiAgentRun(sql.FieldLT(FieldPendingNodeID, v))
+}
+
+// PendingNodeIDLTE applies the LTE predicate on the "pending_node_id" field.
+func PendingNodeIDLTE(v string) predicate.AiAgentRun {
+	return predicate.AiAgentRun(sql.FieldLTE(FieldPendingNodeID, v))
+}
+
+// PendingNodeIDContains applies the Contains predicate on the "pending_node_id" field.
+func PendingNodeIDContains(v string) predicate.AiAgentRun {
+	return predicate.AiAgentRun(sql.FieldContains(FieldPendingNodeID, v))
+}
+
+// PendingNodeIDHasPrefix applies the HasPrefix predicate on the "pending_node_id" field.
+func PendingNodeIDHasPrefix(v string) predicate.AiAgentRun {
+	return predicate.AiAgentRun(sql.FieldHasPrefix(FieldPendingNodeID, v))
+}
+
+// PendingNodeIDHasSuffix applies the HasSuffix predicate on the "pending_node_id" field.
+func PendingNodeIDHasSuffix(v string) predicate.AiAgentRun {
+	return predicate.AiAgentRun(sql.FieldHasSuffix(FieldPendingNodeID, v))
+}
+
+// PendingNodeIDIsNil applies the IsNil predicate on the "pending_node_id" field.
+func PendingNodeIDIsNil() predicate.AiAgentRun {
+	return predicate.AiAgentRun(sql.FieldIsNull(FieldPendingNodeID))
+}
+
+// PendingNodeIDNotNil applies the NotNil predicate on the "pending_node_id" field.
+func PendingNodeIDNotNil() predicate.AiAgentRun {
+	return predicate.AiAgentRun(sql.FieldNotNull(FieldPendingNodeID))
+}
+
+// PendingNodeIDEqualFold applies the EqualFold predicate on the "pending_node_id" field.
+func PendingNodeIDEqualFold(v string) predicate.AiAgentRun {
+	return predicate.AiAgentRun(sql.FieldEqualFold(FieldPendingNodeID, v))
+}
+
+// PendingNodeIDContainsFold applies the ContainsFold predicate on the "pending_node_id" field.
+func PendingNodeIDContainsFold(v string) predicate.AiAgentRun {
+	return predicate.AiAgentRun(sql.FieldContainsFold(FieldPendingNodeID, v))
+}
+
+// ResumeStateEQ applies the EQ predicate on the "resume_state" field.
+func ResumeStateEQ(v string) predicate.AiAgentRun {
+	return predicate.AiAgentRun(sql.FieldEQ(FieldResumeState, v))
+}
+
+// ResumeStateNEQ applies the NEQ predicate on the "resume_state" field.
+func ResumeStateNEQ(v string) predicate.AiAgentRun {
+	return predicate.AiAgentRun(sql.FieldNEQ(FieldResumeState, v))
+}
+
+// ResumeStateIn applies the In predicate on the "resume_state" field.
+func ResumeStateIn(vs ...string) predicate.AiAgentRun {
+	return predicate.AiAgentRun(sql.FieldIn(FieldResumeState, vs...))
+}
+
+// ResumeStateNotIn applies the NotIn predicate on the "resume_state" field.
+func ResumeStateNotIn(vs ...string) predicate.AiAgentRun {
+	return predicate.AiAgentRun(sql.FieldNotIn(FieldResumeState, vs...))
+}
+
+// ResumeStateGT applies the GT predicate on the "resume_state" field.
+func ResumeStateGT(v string) predicate.AiAgentRun {
+	return predicate.AiAgentRun(sql.FieldGT(FieldResumeState, v))
+}
+
+// ResumeStateGTE applies the GTE predicate on the "resume_state" field.
+func ResumeStateGTE(v string) predicate.AiAgentRun {
+	return predicate.AiAgentRun(sql.FieldGTE(FieldResumeState, v))
+}
+
+// ResumeStateLT applies the LT predicate on the "resume_state" field.
+func ResumeStateLT(v string) predicate.AiAgentRun {
+	return predicate.AiAgentRun(sql.FieldLT(FieldResumeState, v))
+}
+
+// ResumeStateLTE applies the LTE predicate on the "resume_state" field.
+func ResumeStateLTE(v string) predicate.AiAgentRun {
+	return predicate.AiAgentRun(sql.FieldLTE(FieldResumeState, v))
+}
+
+// ResumeStateContains applies the Contains predicate on the "resume_state" field.
+func ResumeStateContains(v string) predicate.AiAgentRun {
+	return predicate.AiAgentRun(sql.FieldContains(FieldResumeState, v))
+}
+
+// ResumeStateHasPrefix applies the HasPrefix predicate on the "resume_state" field.
+func ResumeStateHasPrefix(v string) predicate.AiAgentRun {
+	return predicate.AiAgentRun(sql.FieldHasPrefix(FieldResumeState, v))
+}
+
+// ResumeStateHasSuffix applies the HasSuffix predicate on the "resume_state" field.
+func ResumeStateHasSuffix(v string) predicate.AiAgentRun {
+	return predicate.AiAgentRun(sql.FieldHasSuffix(FieldResumeState, v))
+}
+
+// ResumeStateIsNil applies the IsNil predicate on the "resume_state" field.
+func ResumeStateIsNil() predicate.AiAgentRun {
+	return predicate.AiAgentRun(sql.FieldIsNull(FieldResumeState))
+}
+
+// ResumeStateNotNil applies the NotNil predicate on the "resume_state" field.
+func ResumeStateNotNil() predicate.AiAgentRun {
+	return predicate.AiAgentRun(sql.FieldNotNull(FieldResumeState))
+}
+
+// ResumeStateEqualFold applies the EqualFold predicate on the "resume_state" field.
+func ResumeStateEqualFold(v string) predicate.AiAgentRun {
+	return predicate.AiAgentRun(sql.FieldEqualFold(FieldResumeState, v))
+}
+
+// ResumeStateContainsFold applies the ContainsFold predicate on the "resume_state" field.
+func ResumeStateContainsFold(v string) predicate.AiAgentRun {
+	return predicate.AiAgentRun(sql.FieldContainsFold(FieldResumeState, v))
 }
 
 // InputEQ applies the EQ predicate on the "input" field.

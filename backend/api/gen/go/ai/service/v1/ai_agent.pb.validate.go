@@ -412,6 +412,14 @@ func (m *AiAgentRun) validate(all bool) error {
 		// no validation rules for DurationMs
 	}
 
+	if m.PendingNodeId != nil {
+		// no validation rules for PendingNodeId
+	}
+
+	if m.ResumeState != nil {
+		// no validation rules for ResumeState
+	}
+
 	if m.CreatedAt != nil {
 
 		if all {
@@ -1160,6 +1168,114 @@ var _ interface {
 	Cause() error
 	ErrorName() string
 } = DeleteAiAgentAppRequestValidationError{}
+
+// Validate checks the field values on ApproveAgentRunRequest with the rules
+// defined in the proto definition for this message. If any rules are
+// violated, the first error encountered is returned, or nil if there are no violations.
+func (m *ApproveAgentRunRequest) Validate() error {
+	return m.validate(false)
+}
+
+// ValidateAll checks the field values on ApproveAgentRunRequest with the rules
+// defined in the proto definition for this message. If any rules are
+// violated, the result is a list of violation errors wrapped in
+// ApproveAgentRunRequestMultiError, or nil if none found.
+func (m *ApproveAgentRunRequest) ValidateAll() error {
+	return m.validate(true)
+}
+
+func (m *ApproveAgentRunRequest) validate(all bool) error {
+	if m == nil {
+		return nil
+	}
+
+	var errors []error
+
+	// no validation rules for RunId
+
+	// no validation rules for Approved
+
+	// no validation rules for Note
+
+	if len(errors) > 0 {
+		return ApproveAgentRunRequestMultiError(errors)
+	}
+
+	return nil
+}
+
+// ApproveAgentRunRequestMultiError is an error wrapping multiple validation
+// errors returned by ApproveAgentRunRequest.ValidateAll() if the designated
+// constraints aren't met.
+type ApproveAgentRunRequestMultiError []error
+
+// Error returns a concatenation of all the error messages it wraps.
+func (m ApproveAgentRunRequestMultiError) Error() string {
+	msgs := make([]string, 0, len(m))
+	for _, err := range m {
+		msgs = append(msgs, err.Error())
+	}
+	return strings.Join(msgs, "; ")
+}
+
+// AllErrors returns a list of validation violation errors.
+func (m ApproveAgentRunRequestMultiError) AllErrors() []error { return m }
+
+// ApproveAgentRunRequestValidationError is the validation error returned by
+// ApproveAgentRunRequest.Validate if the designated constraints aren't met.
+type ApproveAgentRunRequestValidationError struct {
+	field  string
+	reason string
+	cause  error
+	key    bool
+}
+
+// Field function returns field value.
+func (e ApproveAgentRunRequestValidationError) Field() string { return e.field }
+
+// Reason function returns reason value.
+func (e ApproveAgentRunRequestValidationError) Reason() string { return e.reason }
+
+// Cause function returns cause value.
+func (e ApproveAgentRunRequestValidationError) Cause() error { return e.cause }
+
+// Key function returns key value.
+func (e ApproveAgentRunRequestValidationError) Key() bool { return e.key }
+
+// ErrorName returns error name.
+func (e ApproveAgentRunRequestValidationError) ErrorName() string {
+	return "ApproveAgentRunRequestValidationError"
+}
+
+// Error satisfies the builtin error interface
+func (e ApproveAgentRunRequestValidationError) Error() string {
+	cause := ""
+	if e.cause != nil {
+		cause = fmt.Sprintf(" | caused by: %v", e.cause)
+	}
+
+	key := ""
+	if e.key {
+		key = "key for "
+	}
+
+	return fmt.Sprintf(
+		"invalid %sApproveAgentRunRequest.%s: %s%s",
+		key,
+		e.field,
+		e.reason,
+		cause)
+}
+
+var _ error = ApproveAgentRunRequestValidationError{}
+
+var _ interface {
+	Field() string
+	Reason() string
+	Key() bool
+	Cause() error
+	ErrorName() string
+} = ApproveAgentRunRequestValidationError{}
 
 // Validate checks the field values on RunAiAgentAppRequest with the rules
 // defined in the proto definition for this message. If any rules are

@@ -148,6 +148,34 @@ func (_c *AiAgentRunCreate) SetNillableStatus(v *aiagentrun.Status) *AiAgentRunC
 	return _c
 }
 
+// SetPendingNodeID sets the "pending_node_id" field.
+func (_c *AiAgentRunCreate) SetPendingNodeID(v string) *AiAgentRunCreate {
+	_c.mutation.SetPendingNodeID(v)
+	return _c
+}
+
+// SetNillablePendingNodeID sets the "pending_node_id" field if the given value is not nil.
+func (_c *AiAgentRunCreate) SetNillablePendingNodeID(v *string) *AiAgentRunCreate {
+	if v != nil {
+		_c.SetPendingNodeID(*v)
+	}
+	return _c
+}
+
+// SetResumeState sets the "resume_state" field.
+func (_c *AiAgentRunCreate) SetResumeState(v string) *AiAgentRunCreate {
+	_c.mutation.SetResumeState(v)
+	return _c
+}
+
+// SetNillableResumeState sets the "resume_state" field if the given value is not nil.
+func (_c *AiAgentRunCreate) SetNillableResumeState(v *string) *AiAgentRunCreate {
+	if v != nil {
+		_c.SetResumeState(*v)
+	}
+	return _c
+}
+
 // SetInput sets the "input" field.
 func (_c *AiAgentRunCreate) SetInput(v string) *AiAgentRunCreate {
 	_c.mutation.SetInput(v)
@@ -332,6 +360,11 @@ func (_c *AiAgentRunCreate) check() error {
 			return &ValidationError{Name: "status", err: fmt.Errorf(`ent: validator failed for field "AiAgentRun.status": %w`, err)}
 		}
 	}
+	if v, ok := _c.mutation.PendingNodeID(); ok {
+		if err := aiagentrun.PendingNodeIDValidator(v); err != nil {
+			return &ValidationError{Name: "pending_node_id", err: fmt.Errorf(`ent: validator failed for field "AiAgentRun.pending_node_id": %w`, err)}
+		}
+	}
 	if _, ok := _c.mutation.Trace(); !ok {
 		return &ValidationError{Name: "trace", err: errors.New(`ent: missing required field "AiAgentRun.trace"`)}
 	}
@@ -420,6 +453,14 @@ func (_c *AiAgentRunCreate) createSpec() (*AiAgentRun, *sqlgraph.CreateSpec) {
 	if value, ok := _c.mutation.Status(); ok {
 		_spec.SetField(aiagentrun.FieldStatus, field.TypeEnum, value)
 		_node.Status = value
+	}
+	if value, ok := _c.mutation.PendingNodeID(); ok {
+		_spec.SetField(aiagentrun.FieldPendingNodeID, field.TypeString, value)
+		_node.PendingNodeID = &value
+	}
+	if value, ok := _c.mutation.ResumeState(); ok {
+		_spec.SetField(aiagentrun.FieldResumeState, field.TypeString, value)
+		_node.ResumeState = &value
 	}
 	if value, ok := _c.mutation.Input(); ok {
 		_spec.SetField(aiagentrun.FieldInput, field.TypeString, value)
@@ -646,6 +687,42 @@ func (u *AiAgentRunUpsert) SetStatus(v aiagentrun.Status) *AiAgentRunUpsert {
 // UpdateStatus sets the "status" field to the value that was provided on create.
 func (u *AiAgentRunUpsert) UpdateStatus() *AiAgentRunUpsert {
 	u.SetExcluded(aiagentrun.FieldStatus)
+	return u
+}
+
+// SetPendingNodeID sets the "pending_node_id" field.
+func (u *AiAgentRunUpsert) SetPendingNodeID(v string) *AiAgentRunUpsert {
+	u.Set(aiagentrun.FieldPendingNodeID, v)
+	return u
+}
+
+// UpdatePendingNodeID sets the "pending_node_id" field to the value that was provided on create.
+func (u *AiAgentRunUpsert) UpdatePendingNodeID() *AiAgentRunUpsert {
+	u.SetExcluded(aiagentrun.FieldPendingNodeID)
+	return u
+}
+
+// ClearPendingNodeID clears the value of the "pending_node_id" field.
+func (u *AiAgentRunUpsert) ClearPendingNodeID() *AiAgentRunUpsert {
+	u.SetNull(aiagentrun.FieldPendingNodeID)
+	return u
+}
+
+// SetResumeState sets the "resume_state" field.
+func (u *AiAgentRunUpsert) SetResumeState(v string) *AiAgentRunUpsert {
+	u.Set(aiagentrun.FieldResumeState, v)
+	return u
+}
+
+// UpdateResumeState sets the "resume_state" field to the value that was provided on create.
+func (u *AiAgentRunUpsert) UpdateResumeState() *AiAgentRunUpsert {
+	u.SetExcluded(aiagentrun.FieldResumeState)
+	return u
+}
+
+// ClearResumeState clears the value of the "resume_state" field.
+func (u *AiAgentRunUpsert) ClearResumeState() *AiAgentRunUpsert {
+	u.SetNull(aiagentrun.FieldResumeState)
 	return u
 }
 
@@ -1006,6 +1083,48 @@ func (u *AiAgentRunUpsertOne) SetStatus(v aiagentrun.Status) *AiAgentRunUpsertOn
 func (u *AiAgentRunUpsertOne) UpdateStatus() *AiAgentRunUpsertOne {
 	return u.Update(func(s *AiAgentRunUpsert) {
 		s.UpdateStatus()
+	})
+}
+
+// SetPendingNodeID sets the "pending_node_id" field.
+func (u *AiAgentRunUpsertOne) SetPendingNodeID(v string) *AiAgentRunUpsertOne {
+	return u.Update(func(s *AiAgentRunUpsert) {
+		s.SetPendingNodeID(v)
+	})
+}
+
+// UpdatePendingNodeID sets the "pending_node_id" field to the value that was provided on create.
+func (u *AiAgentRunUpsertOne) UpdatePendingNodeID() *AiAgentRunUpsertOne {
+	return u.Update(func(s *AiAgentRunUpsert) {
+		s.UpdatePendingNodeID()
+	})
+}
+
+// ClearPendingNodeID clears the value of the "pending_node_id" field.
+func (u *AiAgentRunUpsertOne) ClearPendingNodeID() *AiAgentRunUpsertOne {
+	return u.Update(func(s *AiAgentRunUpsert) {
+		s.ClearPendingNodeID()
+	})
+}
+
+// SetResumeState sets the "resume_state" field.
+func (u *AiAgentRunUpsertOne) SetResumeState(v string) *AiAgentRunUpsertOne {
+	return u.Update(func(s *AiAgentRunUpsert) {
+		s.SetResumeState(v)
+	})
+}
+
+// UpdateResumeState sets the "resume_state" field to the value that was provided on create.
+func (u *AiAgentRunUpsertOne) UpdateResumeState() *AiAgentRunUpsertOne {
+	return u.Update(func(s *AiAgentRunUpsert) {
+		s.UpdateResumeState()
+	})
+}
+
+// ClearResumeState clears the value of the "resume_state" field.
+func (u *AiAgentRunUpsertOne) ClearResumeState() *AiAgentRunUpsertOne {
+	return u.Update(func(s *AiAgentRunUpsert) {
+		s.ClearResumeState()
 	})
 }
 
@@ -1555,6 +1674,48 @@ func (u *AiAgentRunUpsertBulk) SetStatus(v aiagentrun.Status) *AiAgentRunUpsertB
 func (u *AiAgentRunUpsertBulk) UpdateStatus() *AiAgentRunUpsertBulk {
 	return u.Update(func(s *AiAgentRunUpsert) {
 		s.UpdateStatus()
+	})
+}
+
+// SetPendingNodeID sets the "pending_node_id" field.
+func (u *AiAgentRunUpsertBulk) SetPendingNodeID(v string) *AiAgentRunUpsertBulk {
+	return u.Update(func(s *AiAgentRunUpsert) {
+		s.SetPendingNodeID(v)
+	})
+}
+
+// UpdatePendingNodeID sets the "pending_node_id" field to the value that was provided on create.
+func (u *AiAgentRunUpsertBulk) UpdatePendingNodeID() *AiAgentRunUpsertBulk {
+	return u.Update(func(s *AiAgentRunUpsert) {
+		s.UpdatePendingNodeID()
+	})
+}
+
+// ClearPendingNodeID clears the value of the "pending_node_id" field.
+func (u *AiAgentRunUpsertBulk) ClearPendingNodeID() *AiAgentRunUpsertBulk {
+	return u.Update(func(s *AiAgentRunUpsert) {
+		s.ClearPendingNodeID()
+	})
+}
+
+// SetResumeState sets the "resume_state" field.
+func (u *AiAgentRunUpsertBulk) SetResumeState(v string) *AiAgentRunUpsertBulk {
+	return u.Update(func(s *AiAgentRunUpsert) {
+		s.SetResumeState(v)
+	})
+}
+
+// UpdateResumeState sets the "resume_state" field to the value that was provided on create.
+func (u *AiAgentRunUpsertBulk) UpdateResumeState() *AiAgentRunUpsertBulk {
+	return u.Update(func(s *AiAgentRunUpsert) {
+		s.UpdateResumeState()
+	})
+}
+
+// ClearResumeState clears the value of the "resume_state" field.
+func (u *AiAgentRunUpsertBulk) ClearResumeState() *AiAgentRunUpsertBulk {
+	return u.Update(func(s *AiAgentRunUpsert) {
+		s.ClearResumeState()
 	})
 }
 

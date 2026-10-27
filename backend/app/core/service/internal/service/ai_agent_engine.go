@@ -28,7 +28,21 @@ const agentMaxSteps = 50
 // agentNodeTypes 合法节点类型集。
 var agentNodeTypes = map[string]bool{
 	"start": true, "knowledge": true, "llm": true, "condition": true, "end": true,
-	"http": true, "loop": true,
+	"http": true, "loop": true, "approval": true,
+}
+
+// agentApprovalSignal approval 节点的挂起信号：执行到此节点即暂停，
+// vars 快照随信号带出，人工审批后凭快照从下游恢复。
+type agentApprovalSignal struct {
+	NodeID string
+	// varsJSON 执行到挂起时刻的完整变量命名空间快照
+	varsJSON []byte
+	trace    []agentTraceStep
+	usage    agentUsage
+}
+
+func (e *agentApprovalSignal) Error() string {
+	return "approval required at node " + e.NodeID
 }
 
 // agentLoopMaxItems loop 节点单次运行的条目上限（防模板展开成超大批量）。
@@ -148,6 +162,8 @@ func validateAgentGraph(g *agentGraph) error {
 			if agentDataString(n.Data, "itemTemplate") == "" {
 				return fmt.Errorf("loop node %q requires itemTemplate", n.ID)
 			}
+		case "approval":
+			// 说明文案可选（展示用），无必填配置
 		}
 		byID[n.ID] = n
 		switch n.Type {
@@ -490,6 +506,20 @@ func executeAgentGraph(
 			vars[node.ID] = map[string]string{"output": sb.String(), "count": strconv.Itoa(len(items))}
 			summary = fmt.Sprintf("%d items", len(items))
 
+		case "approval":
+			// 人工审批闸门：序列化当前 vars 快照，以挂起信号上抛。
+			// 审批结论经 Resume 注入 vars[nodeID].approved/note，下游可用
+			// {{nodeID.approved}} 参与条件判断。
+			varsJSON, serr := json.Marshal(map[string]any{"vars": vars})
+			if serr != nil {
+				return "", trace, usage, agentStepError(node, serr)
+			}
+			sig := &agentApprovalSignal{NodeID: node.ID, varsJSON: varsJSON, trace: trace, usage: usage}
+			if deps.onStep != nil {
+				deps.onStep("approval_required", node.ID, "", "")
+			}
+			return "", trace, usage, sig
+
 		case "condition":
 			approved, cerr := evalAgentCondition(agentDataString(node.Data, "expression"), vars)
 			if cerr != nil {
@@ -583,6 +613,234 @@ func parseAgentLoopItems(raw string) []string {
 		}
 	}
 	return out
+}
+
+// ResumeAgentGraphFrom 人工审批通过后从挂起节点下游继续执行。
+// vars 为挂起时快照（已反序列化），审批结论已注入 vars[nodeID]。
+// approval 节点本身不重复执行，直接走其唯一出边。
+func ResumeAgentGraphFrom(
+	ctx context.Context,
+	g *agentGraph,
+	vars map[string]map[string]string,
+	resumeNodeID string,
+	input map[string]string,
+	deps *agentEngineDeps,
+) (output string, trace []agentTraceStep, usage agentUsage, err error) {
+	byID := make(map[string]*agentGraphNode, len(g.Nodes))
+	out := make(map[string][]*agentGraphEdge)
+	for i := range g.Nodes {
+		byID[g.Nodes[i].ID] = &g.Nodes[i]
+	}
+	for i := range g.Edges {
+		out[g.Edges[i].Source] = append(out[g.Edges[i].Source], &g.Edges[i])
+	}
+
+	current := byID[resumeNodeID]
+	if current == nil || current.Type != "approval" {
+		return "", nil, usage, fmt.Errorf("resume node %q is not an approval node", resumeNodeID)
+	}
+	// 取 approval 的唯一出边
+	var next *agentGraphEdge
+	for _, e := range out[resumeNodeID] {
+		next = e
+		break
+	}
+	if next == nil {
+		return "", nil, usage, fmt.Errorf("approval node %q has no outgoing edge", resumeNodeID)
+	}
+	target := byID[next.Target]
+	if target == nil {
+		return "", nil, usage, fmt.Errorf("edge target %q vanished", next.Target)
+	}
+	current = target
+
+	// 从下游节点继续：独立轻量主循环（语义与 executeAgentGraph 相同，起点不同）
+	for step := 0; step < agentMaxSteps; step++ {
+		stepStart := time.Now()
+		node := current
+		stepUsage := agentUsage{}
+		summary := ""
+		branchTaken := ""
+
+		if deps.onStep != nil {
+			deps.onStep("node_start", node.ID, "", "")
+		}
+
+		switch node.Type {
+		case "knowledge":
+			query, rerr := renderAgentTemplate(agentDataString(node.Data, "query"), vars)
+			if rerr != nil {
+				return "", trace, usage, agentStepError(node, rerr)
+			}
+			contextText, hits, kerr := deps.searchKnowledge(ctx, node, query)
+			if kerr != nil {
+				return "", trace, usage, agentStepError(node, kerr)
+			}
+			vars[node.ID] = map[string]string{"context": contextText, "hits": strconv.Itoa(hits)}
+			summary = fmt.Sprintf("hits=%d, %d chars", hits, len(contextText))
+
+		case "llm":
+			system, rerr := renderAgentTemplate(agentDataString(node.Data, "systemPrompt"), vars)
+			if rerr != nil {
+				return "", trace, usage, agentStepError(node, rerr)
+			}
+			user, rerr := renderAgentTemplate(agentDataString(node.Data, "userPrompt"), vars)
+			if rerr != nil {
+				return "", trace, usage, agentStepError(node, rerr)
+			}
+			if strings.TrimSpace(user) == "" {
+				return "", trace, usage, agentStepError(node, fmt.Errorf("llm node %q has empty userPrompt after rendering", node.ID))
+			}
+			answer, llmUsage, lerr := deps.runLLM(ctx, node, system, user)
+			if lerr != nil {
+				return "", trace, usage, agentStepError(node, lerr)
+			}
+			stepUsage = llmUsage
+			usage.add(llmUsage)
+			vars[node.ID] = map[string]string{"output": answer}
+			summary = truncateRunes(answer, 120)
+
+		case "http":
+			method := strings.ToUpper(agentDataString(node.Data, "method"))
+			if method == "" {
+				method = "POST"
+			}
+			url, rerr := renderAgentTemplate(agentDataString(node.Data, "url"), vars)
+			if rerr != nil {
+				return "", trace, usage, agentStepError(node, rerr)
+			}
+			headers := map[string]string{}
+			if rawHeaders, ok := node.Data["headers"].(map[string]any); ok {
+				for k, v := range rawHeaders {
+					hv, _ := v.(string)
+					if k != "" && hv != "" {
+						headers[k] = hv
+					}
+				}
+			}
+			if len(headers) > 8 {
+				return "", trace, usage, agentStepError(node, fmt.Errorf("too many headers (max 8)"))
+			}
+			body := ""
+			if method == "POST" {
+				body, rerr = renderAgentTemplate(agentDataString(node.Data, "body"), vars)
+				if rerr != nil {
+					return "", trace, usage, agentStepError(node, rerr)
+				}
+			}
+			if deps.doHTTP == nil {
+				return "", trace, usage, agentStepError(node, fmt.Errorf("http executor unavailable"))
+			}
+			status, respBody, herr := deps.doHTTP(ctx, node, method, url, headers, body)
+			if herr != nil {
+				return "", trace, usage, agentStepError(node, herr)
+			}
+			vars[node.ID] = map[string]string{"status": strconv.Itoa(status), "body": respBody}
+			summary = fmt.Sprintf("status=%d, %d bytes", status, len(respBody))
+
+		case "loop":
+			itemsTpl, rerr := renderAgentTemplate(agentDataString(node.Data, "items"), vars)
+			if rerr != nil {
+				return "", trace, usage, agentStepError(node, rerr)
+			}
+			items := parseAgentLoopItems(itemsTpl)
+			if len(items) == 0 {
+				return "", trace, usage, agentStepError(node, fmt.Errorf("loop node %q resolved to no items", node.ID))
+			}
+			if len(items) > agentLoopMaxItems {
+				items = items[:agentLoopMaxItems]
+			}
+			itemTpl := agentDataString(node.Data, "itemTemplate")
+			var sb strings.Builder
+			for idx, item := range items {
+				rendered, ierr := renderAgentTemplate(itemTpl, vars, map[string]string{
+					"item": item, "index": strconv.Itoa(idx),
+				})
+				if ierr != nil {
+					return "", trace, usage, agentStepError(node, fmt.Errorf("item[%d]: %w", idx, ierr))
+				}
+				if idx > 0 {
+					sb.WriteString("\n")
+				}
+				sb.WriteString(rendered)
+			}
+			vars[node.ID] = map[string]string{"output": sb.String(), "count": strconv.Itoa(len(items))}
+			summary = fmt.Sprintf("%d items", len(items))
+
+		case "approval":
+			// 恢复路径上再遇 approval（多审批节点）：再次挂起
+			varsJSON, serr := json.Marshal(map[string]any{"vars": vars})
+			if serr != nil {
+				return "", trace, usage, agentStepError(node, serr)
+			}
+			return "", trace, usage, &agentApprovalSignal{NodeID: node.ID, varsJSON: varsJSON, trace: trace, usage: usage}
+
+		case "condition":
+			approved, cerr := evalAgentCondition(agentDataString(node.Data, "expression"), vars)
+			if cerr != nil {
+				return "", trace, usage, agentStepError(node, cerr)
+			}
+			if approved {
+				branchTaken = "true"
+			} else {
+				branchTaken = "false"
+			}
+			summary = fmt.Sprintf("branch=%t", approved)
+
+		case "end":
+			outText, rerr := renderAgentTemplate(agentDataString(node.Data, "output"), vars)
+			if rerr != nil {
+				return "", trace, usage, agentStepError(node, rerr)
+			}
+			trace = append(trace, agentTraceStep{
+				NodeID: node.ID, Type: node.Type, Status: "ok",
+				Ms: time.Since(stepStart).Milliseconds(), Summary: "done",
+			})
+			if deps.onStep != nil {
+				deps.onStep("node_end", node.ID, "done", "ok")
+			}
+			return outText, trace, usage, nil
+
+		default:
+			return "", trace, usage, fmt.Errorf("node %q has unknown type %q", node.ID, node.Type)
+		}
+
+		trace = append(trace, agentTraceStep{
+			NodeID: node.ID, Type: node.Type, Status: "ok",
+			Ms: time.Since(stepStart).Milliseconds(), Summary: summary,
+			Usage: func() *agentUsage {
+				u := stepUsage
+				if u.Total == 0 {
+					return nil
+				}
+				return &u
+			}(),
+		})
+		if deps.onStep != nil {
+			deps.onStep("node_end", node.ID, summary, "ok")
+		}
+
+		var nextEdge *agentGraphEdge
+		for _, e := range out[node.ID] {
+			if node.Type == "condition" {
+				if e.Branch == branchTaken {
+					nextEdge = e
+					break
+				}
+			} else {
+				nextEdge = e
+				break
+			}
+		}
+		if nextEdge == nil {
+			return "", trace, usage, fmt.Errorf("node %q has no outgoing edge to continue", node.ID)
+		}
+		current = byID[nextEdge.Target]
+		if current == nil {
+			return "", trace, usage, fmt.Errorf("edge target %q vanished", nextEdge.Target)
+		}
+	}
+	return "", trace, usage, fmt.Errorf("execution exceeded %d steps", agentMaxSteps)
 }
 
 func agentStepError(node *agentGraphNode, err error) error {

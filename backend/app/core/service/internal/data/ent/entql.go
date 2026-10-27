@@ -187,6 +187,8 @@ var schemaGraph = func() *sqlgraph.Schema {
 			aiagentrun.FieldTenantID:         {Type: field.TypeUint32, Column: aiagentrun.FieldTenantID},
 			aiagentrun.FieldAppID:            {Type: field.TypeUint32, Column: aiagentrun.FieldAppID},
 			aiagentrun.FieldStatus:           {Type: field.TypeEnum, Column: aiagentrun.FieldStatus},
+			aiagentrun.FieldPendingNodeID:    {Type: field.TypeString, Column: aiagentrun.FieldPendingNodeID},
+			aiagentrun.FieldResumeState:      {Type: field.TypeString, Column: aiagentrun.FieldResumeState},
 			aiagentrun.FieldInput:            {Type: field.TypeString, Column: aiagentrun.FieldInput},
 			aiagentrun.FieldOutput:           {Type: field.TypeString, Column: aiagentrun.FieldOutput},
 			aiagentrun.FieldError:            {Type: field.TypeString, Column: aiagentrun.FieldError},
@@ -3526,6 +3528,16 @@ func (f *AiAgentRunFilter) WhereAppID(p entql.Uint32P) {
 // WhereStatus applies the entql string predicate on the status field.
 func (f *AiAgentRunFilter) WhereStatus(p entql.StringP) {
 	f.Where(p.Field(aiagentrun.FieldStatus))
+}
+
+// WherePendingNodeID applies the entql string predicate on the pending_node_id field.
+func (f *AiAgentRunFilter) WherePendingNodeID(p entql.StringP) {
+	f.Where(p.Field(aiagentrun.FieldPendingNodeID))
+}
+
+// WhereResumeState applies the entql string predicate on the resume_state field.
+func (f *AiAgentRunFilter) WhereResumeState(p entql.StringP) {
+	f.Where(p.Field(aiagentrun.FieldResumeState))
 }
 
 // WhereInput applies the entql string predicate on the input field.

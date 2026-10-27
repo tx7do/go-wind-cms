@@ -228,6 +228,21 @@ func (s *AiAgentService) Run(ctx context.Context, req *aiV1.RunAiAgentAppRequest
 	})
 	durationMs := uint32(time.Since(start).Milliseconds())
 
+	// approval 节点：运行挂起为 WAITING_APPROVAL（凭 ApproveRun 恢复继续）
+	var pendingSig *agentApprovalSignal
+	if errors.As(execErr, &pendingSig) {
+		traceJSON, _ := json.Marshal(pendingSig.trace)
+		if perr := s.runRepo.SetPending(ctx, runID, pendingSig.NodeID,
+			string(pendingSig.varsJSON), string(traceJSON),
+			data.AgentRunTokens{Prompt: pendingSig.usage.Prompt, Completion: pendingSig.usage.Completion, Total: pendingSig.usage.Total},
+			durationMs); perr != nil {
+			return nil, perr
+		}
+		publishFrame("approval_required", pendingSig.NodeID, "等待人工审批", "")
+		s.log.Infof("ai agent run [%d] app [%d] waiting approval at node [%s]", runID, app.ID, pendingSig.NodeID)
+		return s.runRepo.Get(ctx, runID)
+	}
+
 	traceJSON, _ := json.Marshal(trace)
 
 	status := aiagentrun.StatusSucceeded
@@ -251,6 +266,164 @@ func (s *AiAgentService) Run(ctx context.Context, req *aiV1.RunAiAgentAppRequest
 		runID, app.ID, status.String(), durationMs, usage.Total, operatorID)
 
 	return s.runRepo.Get(ctx, runID)
+}
+
+// ApproveRun 审批裁决 WAITING_APPROVAL 的运行：approved 从挂起节点下游继续
+// 执行（同步）；rejected 置 FAILED（审批驳回）。审批结论注入挂起节点的
+// approved/note 变量，下游模板与条件可引用。
+func (s *AiAgentService) ApproveRun(ctx context.Context, req *aiV1.ApproveAgentRunRequest) (*aiV1.AiAgentRun, error) {
+	if req == nil || req.GetRunId() == 0 {
+		return nil, errors.BadRequest("AI_AGENT", "run id is required")
+	}
+
+	entity, err := s.runRepo.GetStatusEntity(ctx, req.GetRunId())
+	if err != nil {
+		return nil, err
+	}
+	if entity.Status != aiagentrun.StatusWaitingApproval {
+		return nil, errors.BadRequest("AI_AGENT", "run is not waiting for approval")
+	}
+	app, err := s.appRepo.GetEntityByID(ctx, derefAgentUint32(entity.AppID))
+	if err != nil {
+		return nil, err
+	}
+	g, err := parseAgentGraph(derefAgentStr(app.Graph))
+	if err != nil {
+		return nil, errors.BadRequest("AI_AGENT", err.Error())
+	}
+
+	var operatorID, tenantID uint32
+	if vc, exist := viewer.FromContext(ctx); exist && vc != nil {
+		operatorID = uint32(vc.UserID())
+		tenantID = uint32(vc.TenantID())
+	}
+
+	// 驳回：置 FAILED（审批意见进 error），保留 trace
+	if !req.GetApproved() {
+		note := strings.TrimSpace(req.GetNote())
+		errMsg := "审批驳回"
+		if note != "" {
+			errMsg += "：" + note
+		}
+		traceJSON := entity.Trace
+		if err := s.runRepo.SettleResult(ctx, req.GetRunId(), aiagentrun.StatusFailed, "", errMsg, traceJSON,
+			data.AgentRunTokens{}, 0); err != nil {
+			return nil, err
+		}
+		s.publishAgentFrame(ctx, operatorID, &aiV1.AgentRunEvent{
+			RunId: req.GetRunId(), AppId: derefAgentUint32(entity.AppID), Seq: 0,
+			Phase: "done", Summary: errMsg, Status: "rejected",
+		})
+		return s.runRepo.Get(ctx, req.GetRunId())
+	}
+
+	// 批准：恢复快照 → 注入审批结论 → 从挂起节点下游继续
+	if entity.ResumeState == nil || *entity.ResumeState == "" {
+		return nil, errors.BadRequest("AI_AGENT", "run has no resume state")
+	}
+	var snap struct {
+		Vars       map[string]map[string]string `json:"vars"`
+		NextNodeID string                       `json:"nextNodeId"`
+	}
+	if err := json.Unmarshal([]byte(*entity.ResumeState), &snap); err != nil {
+		return nil, errors.BadRequest("AI_AGENT", "resume state is corrupt")
+	}
+	if snap.Vars == nil {
+		snap.Vars = map[string]map[string]string{}
+	}
+	pendingNode := snap.NextNodeID
+	if pendingNode == "" {
+		pendingNode = derefAgentStr(entity.PendingNodeID)
+	}
+	// 审批结论注入挂起节点命名空间（{{nodeID.approved}}/{{nodeID.note}}）
+	nodeVars := snap.Vars[pendingNode]
+	if nodeVars == nil {
+		nodeVars = map[string]string{}
+	}
+	nodeVars["approved"] = "true"
+	nodeVars["note"] = req.GetNote()
+	snap.Vars[pendingNode] = nodeVars
+
+	start := time.Now()
+	seq := uint32(0)
+	publishFrame := func(phase, nodeID, summary, status string) {
+		s.publishAgentFrame(ctx, operatorID, &aiV1.AgentRunEvent{
+			RunId: req.GetRunId(), AppId: derefAgentUint32(entity.AppID), Seq: seq,
+			Phase: phase, NodeId: nodeID, Summary: summary, Status: status,
+		})
+		seq++
+	}
+
+	output, trace, usage, execErr := ResumeAgentGraphFrom(ctx, g, snap.Vars, pendingNode,
+		nil, // input 已在挂起前融入 vars，恢复路径不需要
+		&agentEngineDeps{
+			searchKnowledge: s.searchKnowledgeForAgent(operatorID, tenantID),
+			runLLM:          s.runLLMForAgent(operatorID, tenantID),
+			onStep:          publishFrame,
+			doHTTP:          s.doHTTPForAgent(),
+		})
+	durationMs := uint32(time.Since(start).Milliseconds())
+
+	// 恢复路径上再遇 approval（多审批节点）：再次挂起
+	var pendingSig *agentApprovalSignal
+	if errors.As(execErr, &pendingSig) {
+		// trace 追加挂起前的历史
+		var prevTrace []agentTraceStep
+		_ = json.Unmarshal([]byte(entity.Trace), &prevTrace)
+		merged := append(prevTrace, pendingSig.trace...)
+		traceJSON, _ := json.Marshal(merged)
+		if perr := s.runRepo.SetPending(ctx, req.GetRunId(), pendingSig.NodeID,
+			string(pendingSig.varsJSON), string(traceJSON),
+			data.AgentRunTokens{Prompt: pendingSig.usage.Prompt, Completion: pendingSig.usage.Completion, Total: pendingSig.usage.Total},
+			entity.DurationMs+durationMs); perr != nil {
+			return nil, perr
+		}
+		publishFrame("approval_required", pendingSig.NodeID, "等待人工审批", "")
+		return s.runRepo.Get(ctx, req.GetRunId())
+	}
+
+	// 与 Run 同款结算（tokens 累加、trace 追加、时长累加）
+	var prevTrace []agentTraceStep
+	_ = json.Unmarshal([]byte(entity.Trace), &prevTrace)
+	mergedTrace := append(prevTrace, trace...)
+	mergedJSON, _ := json.Marshal(mergedTrace)
+
+	status := aiagentrun.StatusSucceeded
+	errMsg := ""
+	if execErr != nil {
+		status = aiagentrun.StatusFailed
+		errMsg = execErr.Error()
+		publishFrame("error", "", errMsg, "")
+		s.log.Errorf("ai agent run [%d] resume failed: %s", req.GetRunId(), errMsg)
+	} else {
+		publishFrame("done", "", output, "")
+	}
+
+	if err := s.runRepo.SettleResult(ctx, req.GetRunId(), status, output, errMsg, string(mergedJSON),
+		data.AgentRunTokens{
+			Prompt:     usage.Prompt + entity.PromptTokens,
+			Completion: usage.Completion + entity.CompletionTokens,
+			Total:      usage.Total + entity.TotalTokens,
+		},
+		entity.DurationMs+durationMs); err != nil {
+		return nil, err
+	}
+	s.log.Infof("ai agent run [%d] approved and %s (+%dms)", req.GetRunId(), status.String(), durationMs)
+	return s.runRepo.Get(ctx, req.GetRunId())
+}
+
+func derefAgentUint(p *uint32) uint32 {
+	if p == nil {
+		return 0
+	}
+	return *p
+}
+
+func derefAgentUint32(p *uint32) uint32 {
+	if p == nil {
+		return 0
+	}
+	return *p
 }
 
 // publishAgentFrame 把一帧轨迹事件发往 Redis（admin 订阅后按发起用户转 SSE）。

@@ -35,9 +35,9 @@ import { PaginationQuery } from '@/core';
  * - 试运行面板就地展示 output + trace 时间线 + token 用量；运行台账浏览归 M2。
  */
 
-type AgentNodeType = 'start' | 'knowledge' | 'llm' | 'condition' | 'http' | 'loop' | 'end';
+type AgentNodeType = 'start' | 'knowledge' | 'llm' | 'condition' | 'http' | 'loop' | 'approval' | 'end';
 
-const NODE_TYPE_ORDER: AgentNodeType[] = ['start', 'knowledge', 'llm', 'condition', 'http', 'loop', 'end'];
+const NODE_TYPE_ORDER: AgentNodeType[] = ['start', 'knowledge', 'llm', 'condition', 'http', 'loop', 'approval', 'end'];
 
 // 节点色走 styles/semantic-text.css 的主题档：原先写死的 #52c41a/#1677ff/#8c8c8c
 // 是"填充档"，当图标文字用在暗色节点底上只有 2~3:1，且 #1677ff 是已退役的旧主色。
@@ -48,6 +48,7 @@ const NODE_META: Record<AgentNodeType, { color: string; icon: string }> = {
   condition: { color: 'var(--gowind-node-condition)', icon: '⑃' },
   http: { color: 'var(--gowind-node-http)', icon: ' ⇄' },
   loop: { color: 'var(--gowind-node-loop)', icon: '↻' },
+  approval: { color: 'var(--gowind-node-approval)', icon: '✓' },
   end: { color: 'var(--gowind-node-end)', icon: '■' },
 };
 
@@ -106,6 +107,8 @@ function configSummary(nodeType: AgentNodeType, config: Record<string, any> | un
       return [config.method || 'POST', config.url].filter(Boolean).join(' ');
     case 'loop':
       return config.items ? String(config.items).slice(0, 40) : '';
+    case 'approval':
+      return config.label || String(config.description || '').slice(0, 30);
     case 'end':
       return config.output ? String(config.output).slice(0, 40) : '';
     default:
@@ -442,6 +445,8 @@ function defaultConfig(nodeType: AgentNodeType): Record<string, any> {
       return { method: 'POST', url: '', headers: {}, body: '' };
     case 'loop':
       return { items: '', itemTemplate: '' };
+    case 'approval':
+      return { label: '', description: '' };
     case 'end':
       return { output: '' };
     default:
@@ -600,6 +605,20 @@ function NodeConfigDrawer({
             >
               <Input.TextArea rows={2} placeholder={'{{index}}.{{item}} → {{llm_1.output}}'} />
             </Form.Item>
+          </>
+        )}
+
+        {nodeType === 'approval' && (
+          <>
+            <Form.Item name="label" label={t('canvas.approvalLabel')}>
+              <Input placeholder={t('canvas.approvalLabelPlaceholder')} />
+            </Form.Item>
+            <Form.Item name="description" label={t('canvas.approvalDesc')}>
+              <Input.TextArea rows={2} placeholder={t('canvas.approvalDescPlaceholder')} />
+            </Form.Item>
+            <div style={{ color: 'var(--ant-color-text-tertiary, #aaa)', fontSize: 12 }}>
+              {t('canvas.approvalHint')}
+            </div>
           </>
         )}
 

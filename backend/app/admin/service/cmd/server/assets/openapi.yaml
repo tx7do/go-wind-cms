@@ -322,6 +322,34 @@ paths:
                         application/json:
                             schema:
                                 $ref: '#/components/schemas/ai.service.v1.AiAgentRun'
+    /admin/v1/ai/agent-runs/{runId}/approve:
+        post:
+            tags:
+                - AiAgentService
+            description: |-
+                试运行（同步执行图，返回含 trace 的运行记录）
+                 审批裁决运行（WAITING_APPROVAL → 继续/驳回）
+            operationId: AiAgentService_ApproveRun
+            parameters:
+                - name: runId
+                  in: path
+                  required: true
+                  schema:
+                    type: integer
+                    format: uint32
+            requestBody:
+                content:
+                    application/json:
+                        schema:
+                            $ref: '#/components/schemas/ai.service.v1.ApproveAgentRunRequest'
+                required: true
+            responses:
+                "200":
+                    description: OK
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/ai.service.v1.AiAgentRun'
     /admin/v1/ai/agents:
         get:
             tags:
@@ -480,7 +508,6 @@ paths:
         post:
             tags:
                 - AiAgentService
-            description: 试运行（同步执行图，返回含 trace 的运行记录）
             operationId: AiAgentService_Run
             parameters:
                 - name: id
@@ -11652,6 +11679,7 @@ components:
                         - RUNNING
                         - SUCCEEDED
                         - FAILED
+                        - WAITING_APPROVAL
                     type: string
                     format: enum
                 input:
@@ -11676,6 +11704,12 @@ components:
                 durationMs:
                     type: integer
                     format: uint32
+                pendingNodeId:
+                    type: string
+                    description: 等待审批的节点 ID（status=WAITING_APPROVAL 时有值）
+                resumeState:
+                    type: string
+                    description: 挂起恢复快照 JSON：{vars, nextNodeId}（ApproveRun 批准后据此继续执行）
                 createdAt:
                     type: string
                     format: date-time
@@ -12060,6 +12094,20 @@ components:
                     description: 调用时间
                     format: date-time
             description: AI 调用用量流水（每次成功的模型调用一行；配额按 total_tokens 聚合）
+        ai.service.v1.ApproveAgentRunRequest:
+            type: object
+            properties:
+                runId:
+                    type: integer
+                    description: WAITING_APPROVAL 状态的运行 ID
+                    format: uint32
+                approved:
+                    type: boolean
+                    description: true=批准（从挂起节点继续执行）；false=驳回（运行置 FAILED）
+                note:
+                    type: string
+                    description: 审批意见（驳回时写入运行 error；批准时注入挂起节点 note 变量）
+            description: 审批裁决运行 - 请求
         ai.service.v1.AskAiQueryRequest:
             type: object
             properties:

@@ -33,6 +33,10 @@ service AiAgentService {
   // 节点执行失败建 FAILED 运行行并保留已产生的 trace 与用量。
   rpc Run (RunAiAgentAppRequest) returns (AiAgentRun) {}
 
+  // 审批裁决 WAITING_APPROVAL 状态的运行：approved=true 从挂起节点下游继续
+  // 执行（同步，与 Run 同款语义）；false 运行置 FAILED（审批驳回）。
+  rpc ApproveRun (ApproveAgentRunRequest) returns (AiAgentRun) {}
+
   // 查询某应用的运行台账（按 appId eq 过滤）
   rpc ListRuns (pagination.PagingRequest) returns (ListAiAgentRunsResponse) {}
 
@@ -101,6 +105,7 @@ message AiAgentRun {
     RUNNING = 1;   // 执行中（同步 RPC 下只是短暂态）
     SUCCEEDED = 2; // 到达 end 节点
     FAILED = 3;    // 节点执行/引擎错误（trace 保留部分执行）
+    WAITING_APPROVAL = 4; // 等待人工审批（approval 节点挂起，凭 ApproveRun 恢复）
   }
 
   optional uint32 id = 1 [json_name = "id"]; // 运行ID
@@ -120,6 +125,16 @@ message AiAgentRun {
   optional uint32 completion_tokens = 9 [json_name = "completionTokens"]; // 输出 token 合计
   optional uint32 total_tokens = 10 [json_name = "totalTokens"]; // 总 token 合计
   optional uint32 duration_ms = 11 [json_name = "durationMs"]; // 总耗时（毫秒）
+
+  // 等待审批的节点 ID（status=WAITING_APPROVAL 时有值）
+  optional string pending_node_id = 12 [
+    json_name = "pendingNodeId"
+  ]; // 挂起节点ID
+
+  // 挂起恢复快照 JSON：{vars, nextNodeId}（ApproveRun 批准后据此继续执行）
+  optional string resume_state = 13 [
+    json_name = "resumeState"
+  ]; // 恢复快照
 
   optional google.protobuf.Timestamp created_at = 20 [json_name = "createdAt"];
 }
@@ -150,6 +165,28 @@ message UpdateAiAgentAppRequest {
 // 删除 - 请求
 message DeleteAiAgentAppRequest {
   uint32 id = 1;
+}
+
+// 审批裁决运行 - 请求
+message ApproveAgentRunRequest {
+  uint32 run_id = 1 [
+    json_name = "runId",
+    (gnostic.openapi.v3.property) = {
+      description: "WAITING_APPROVAL 状态的运行 ID"
+    }
+  ]; // 运行ID
+
+  bool approved = 2 [
+    json_name = "approved",
+    (gnostic.openapi.v3.property) = {
+      description: "true=批准（从挂起节点继续执行）；false=驳回（运行置 FAILED）"
+    }
+  ]; // 是否批准
+
+  // 审批意见（驳回时写入运行 error；批准时注入挂起节点 note 变量）
+  string note = 3 [
+    json_name = "note"
+  ]; // 审批意见
 }
 
 // 试运行 - 请求

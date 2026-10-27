@@ -196,20 +196,24 @@ func init() {
 	aiagentrunDescTenantID := aiagentrunMixinFields3[0].Descriptor()
 	// aiagentrun.DefaultTenantID holds the default value on creation for the tenant_id field.
 	aiagentrun.DefaultTenantID = aiagentrunDescTenantID.Default.(uint32)
+	// aiagentrunDescPendingNodeID is the schema descriptor for pending_node_id field.
+	aiagentrunDescPendingNodeID := aiagentrunFields[2].Descriptor()
+	// aiagentrun.PendingNodeIDValidator is a validator for the "pending_node_id" field. It is called by the builders before save.
+	aiagentrun.PendingNodeIDValidator = aiagentrunDescPendingNodeID.Validators[0].(func(string) error)
 	// aiagentrunDescPromptTokens is the schema descriptor for prompt_tokens field.
-	aiagentrunDescPromptTokens := aiagentrunFields[6].Descriptor()
+	aiagentrunDescPromptTokens := aiagentrunFields[8].Descriptor()
 	// aiagentrun.DefaultPromptTokens holds the default value on creation for the prompt_tokens field.
 	aiagentrun.DefaultPromptTokens = aiagentrunDescPromptTokens.Default.(uint32)
 	// aiagentrunDescCompletionTokens is the schema descriptor for completion_tokens field.
-	aiagentrunDescCompletionTokens := aiagentrunFields[7].Descriptor()
+	aiagentrunDescCompletionTokens := aiagentrunFields[9].Descriptor()
 	// aiagentrun.DefaultCompletionTokens holds the default value on creation for the completion_tokens field.
 	aiagentrun.DefaultCompletionTokens = aiagentrunDescCompletionTokens.Default.(uint32)
 	// aiagentrunDescTotalTokens is the schema descriptor for total_tokens field.
-	aiagentrunDescTotalTokens := aiagentrunFields[8].Descriptor()
+	aiagentrunDescTotalTokens := aiagentrunFields[10].Descriptor()
 	// aiagentrun.DefaultTotalTokens holds the default value on creation for the total_tokens field.
 	aiagentrun.DefaultTotalTokens = aiagentrunDescTotalTokens.Default.(uint32)
 	// aiagentrunDescDurationMs is the schema descriptor for duration_ms field.
-	aiagentrunDescDurationMs := aiagentrunFields[9].Descriptor()
+	aiagentrunDescDurationMs := aiagentrunFields[11].Descriptor()
 	// aiagentrun.DefaultDurationMs holds the default value on creation for the duration_ms field.
 	aiagentrun.DefaultDurationMs = aiagentrunDescDurationMs.Default.(uint32)
 	// aiagentrunDescID is the schema descriptor for id field.

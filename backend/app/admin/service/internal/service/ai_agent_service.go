@@ -4,8 +4,8 @@ import (
 	"context"
 
 	"github.com/go-kratos/kratos/v2/log"
-	sse "github.com/tx7do/kratos-transport/transport/sse"
 	"github.com/tx7do/kratos-bootstrap/bootstrap"
+	sse "github.com/tx7do/kratos-transport/transport/sse"
 	"google.golang.org/protobuf/types/known/emptypb"
 
 	paginationV1 "github.com/tx7do/go-crud/api/gen/go/pagination/v1"
@@ -66,6 +66,11 @@ func (s *AiAgentService) Delete(ctx context.Context, req *aiV1.DeleteAiAgentAppR
 
 // Run 试运行（透传 core）。执行引擎切片未接入前，core 侧为 gRPC
 // Unimplemented——透传让它以规范的 501 呈现，而不是本层嵌入接口的空指针 502。
+// ApproveRun 审批裁决运行（透传 core）。
+func (s *AiAgentService) ApproveRun(ctx context.Context, req *aiV1.ApproveAgentRunRequest) (*aiV1.AiAgentRun, error) {
+	return s.aiAgentServiceClient.ApproveRun(ctx, req)
+}
+
 func (s *AiAgentService) Run(ctx context.Context, req *aiV1.RunAiAgentAppRequest) (*aiV1.AiAgentRun, error) {
 	return s.aiAgentServiceClient.Run(ctx, req)
 }

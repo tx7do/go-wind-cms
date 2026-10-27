@@ -74,7 +74,13 @@
     "loopItemTemplate": "Item template",
     "loopItemTemplateHint": "Rendered per item; {{item}}/{{index}} and {{node.var}} available; outputs joined by newline as loop node output",
     "loopItemTemplateRequired": "Item template is required",
-    "replay": "Replay trace"
+    "replay": "Replay trace",
+    "approval": "Human Approval",
+    "approvalLabel": "Approval item",
+    "approvalLabelPlaceholder": "e.g. Pre-publish review",
+    "approvalDesc": "Description",
+    "approvalDescPlaceholder": "Tell the approver what this stage does",
+    "approvalHint": "The run pauses here for human approval; after approval it continues downstream (verdict injected as {{nodeId.approved}}/{{nodeId.note}}, pair with a condition node for rejection branches)."
   },
   "test": {
     "title": "Test Run",
@@ -95,7 +101,12 @@
     "running": "Running",
     "tokens": "tokens: {{total}}",
     "loadMore": "Load more",
-    "total": "{{total}} total"
+    "total": "{{total}} total",
+    "waitingApproval": "Waiting approval",
+    "approve": "Approve",
+    "reject": "Reject",
+    "approved": "Approved",
+    "approveFailed": "Approval failed"
   },
   "openRuns": "Runs",
   "graphJsonHint": "Graph DSL (JSON text: nodes/edges). The visual canvas arrives in a later slice; structural validation runs on the backend."

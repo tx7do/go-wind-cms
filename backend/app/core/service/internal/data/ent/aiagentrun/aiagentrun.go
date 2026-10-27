@@ -32,6 +32,10 @@ const (
 	FieldAppID = "app_id"
 	// FieldStatus holds the string denoting the status field in the database.
 	FieldStatus = "status"
+	// FieldPendingNodeID holds the string denoting the pending_node_id field in the database.
+	FieldPendingNodeID = "pending_node_id"
+	// FieldResumeState holds the string denoting the resume_state field in the database.
+	FieldResumeState = "resume_state"
 	// FieldInput holds the string denoting the input field in the database.
 	FieldInput = "input"
 	// FieldOutput holds the string denoting the output field in the database.
@@ -64,6 +68,8 @@ var Columns = []string{
 	FieldTenantID,
 	FieldAppID,
 	FieldStatus,
+	FieldPendingNodeID,
+	FieldResumeState,
 	FieldInput,
 	FieldOutput,
 	FieldError,
@@ -94,6 +100,8 @@ var (
 	Policy ent.Policy
 	// DefaultTenantID holds the default value on creation for the "tenant_id" field.
 	DefaultTenantID uint32
+	// PendingNodeIDValidator is a validator for the "pending_node_id" field. It is called by the builders before save.
+	PendingNodeIDValidator func(string) error
 	// DefaultPromptTokens holds the default value on creation for the "prompt_tokens" field.
 	DefaultPromptTokens uint32
 	// DefaultCompletionTokens holds the default value on creation for the "completion_tokens" field.
@@ -114,9 +122,10 @@ const DefaultStatus = StatusRunning
 
 // Status values.
 const (
-	StatusRunning   Status = "RUNNING"
-	StatusSucceeded Status = "SUCCEEDED"
-	StatusFailed    Status = "FAILED"
+	StatusRunning         Status = "RUNNING"
+	StatusSucceeded       Status = "SUCCEEDED"
+	StatusFailed          Status = "FAILED"
+	StatusWaitingApproval Status = "WAITING_APPROVAL"
 )
 
 func (s Status) String() string {
@@ -126,7 +135,7 @@ func (s Status) String() string {
 // StatusValidator is a validator for the "status" field enum values. It is called by the builders before save.
 func StatusValidator(s Status) error {
 	switch s {
-	case StatusRunning, StatusSucceeded, StatusFailed:
+	case StatusRunning, StatusSucceeded, StatusFailed, StatusWaitingApproval:
 		return nil
 	default:
 		return fmt.Errorf("aiagentrun: invalid enum value for status field: %q", s)
@@ -184,6 +193,16 @@ func ByAppID(opts ...sql.OrderTermOption) OrderOption {
 // ByStatus orders the results by the status field.
 func ByStatus(opts ...sql.OrderTermOption) OrderOption {
 	return sql.OrderByField(FieldStatus, opts...).ToFunc()
+}
+
+// ByPendingNodeID orders the results by the pending_node_id field.
+func ByPendingNodeID(opts ...sql.OrderTermOption) OrderOption {
+	return sql.OrderByField(FieldPendingNodeID, opts...).ToFunc()
+}
+
+// ByResumeState orders the results by the resume_state field.
+func ByResumeState(opts ...sql.OrderTermOption) OrderOption {
+	return sql.OrderByField(FieldResumeState, opts...).ToFunc()
 }
 
 // ByInput orders the results by the input field.

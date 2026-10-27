@@ -34,6 +34,7 @@ const (
 	AiAgentRun_RUNNING            AiAgentRun_Status = 1 // 执行中（同步 RPC 下只是短暂态）
 	AiAgentRun_SUCCEEDED          AiAgentRun_Status = 2 // 到达 end 节点
 	AiAgentRun_FAILED             AiAgentRun_Status = 3 // 节点执行/引擎错误（trace 保留部分执行）
+	AiAgentRun_WAITING_APPROVAL   AiAgentRun_Status = 4 // 等待人工审批（approval 节点挂起，凭 ApproveRun 恢复）
 )
 
 // Enum value maps for AiAgentRun_Status.
@@ -43,12 +44,14 @@ var (
 		1: "RUNNING",
 		2: "SUCCEEDED",
 		3: "FAILED",
+		4: "WAITING_APPROVAL",
 	}
 	AiAgentRun_Status_value = map[string]int32{
 		"STATUS_UNSPECIFIED": 0,
 		"RUNNING":            1,
 		"SUCCEEDED":          2,
 		"FAILED":             3,
+		"WAITING_APPROVAL":   4,
 	}
 )
 
@@ -306,14 +309,18 @@ type AiAgentRun struct {
 	Output *string `protobuf:"bytes,5,opt,name=output,proto3,oneof" json:"output,omitempty"` // 产出（到达的 end 渲染值）
 	Error  *string `protobuf:"bytes,6,opt,name=error,proto3,oneof" json:"error,omitempty"`   // 失败原因
 	// 逐节点执行轨迹（JSON 数组：{nodeId,type,status,ms,summary,usage}）
-	Trace            *string                `protobuf:"bytes,7,opt,name=trace,proto3,oneof" json:"trace,omitempty"`                                                // 轨迹 JSON
-	PromptTokens     *uint32                `protobuf:"varint,8,opt,name=prompt_tokens,json=promptTokens,proto3,oneof" json:"prompt_tokens,omitempty"`             // 输入 token 合计
-	CompletionTokens *uint32                `protobuf:"varint,9,opt,name=completion_tokens,json=completionTokens,proto3,oneof" json:"completion_tokens,omitempty"` // 输出 token 合计
-	TotalTokens      *uint32                `protobuf:"varint,10,opt,name=total_tokens,json=totalTokens,proto3,oneof" json:"total_tokens,omitempty"`               // 总 token 合计
-	DurationMs       *uint32                `protobuf:"varint,11,opt,name=duration_ms,json=durationMs,proto3,oneof" json:"duration_ms,omitempty"`                  // 总耗时（毫秒）
-	CreatedAt        *timestamppb.Timestamp `protobuf:"bytes,20,opt,name=created_at,json=createdAt,proto3,oneof" json:"created_at,omitempty"`
-	unknownFields    protoimpl.UnknownFields
-	sizeCache        protoimpl.SizeCache
+	Trace            *string `protobuf:"bytes,7,opt,name=trace,proto3,oneof" json:"trace,omitempty"`                                                // 轨迹 JSON
+	PromptTokens     *uint32 `protobuf:"varint,8,opt,name=prompt_tokens,json=promptTokens,proto3,oneof" json:"prompt_tokens,omitempty"`             // 输入 token 合计
+	CompletionTokens *uint32 `protobuf:"varint,9,opt,name=completion_tokens,json=completionTokens,proto3,oneof" json:"completion_tokens,omitempty"` // 输出 token 合计
+	TotalTokens      *uint32 `protobuf:"varint,10,opt,name=total_tokens,json=totalTokens,proto3,oneof" json:"total_tokens,omitempty"`               // 总 token 合计
+	DurationMs       *uint32 `protobuf:"varint,11,opt,name=duration_ms,json=durationMs,proto3,oneof" json:"duration_ms,omitempty"`                  // 总耗时（毫秒）
+	// 等待审批的节点 ID（status=WAITING_APPROVAL 时有值）
+	PendingNodeId *string `protobuf:"bytes,12,opt,name=pending_node_id,json=pendingNodeId,proto3,oneof" json:"pending_node_id,omitempty"` // 挂起节点ID
+	// 挂起恢复快照 JSON：{vars, nextNodeId}（ApproveRun 批准后据此继续执行）
+	ResumeState   *string                `protobuf:"bytes,13,opt,name=resume_state,json=resumeState,proto3,oneof" json:"resume_state,omitempty"` // 恢复快照
+	CreatedAt     *timestamppb.Timestamp `protobuf:"bytes,20,opt,name=created_at,json=createdAt,proto3,oneof" json:"created_at,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
 }
 
 func (x *AiAgentRun) Reset() {
@@ -421,6 +428,20 @@ func (x *AiAgentRun) GetDurationMs() uint32 {
 		return *x.DurationMs
 	}
 	return 0
+}
+
+func (x *AiAgentRun) GetPendingNodeId() string {
+	if x != nil && x.PendingNodeId != nil {
+		return *x.PendingNodeId
+	}
+	return ""
+}
+
+func (x *AiAgentRun) GetResumeState() string {
+	if x != nil && x.ResumeState != nil {
+		return *x.ResumeState
+	}
+	return ""
 }
 
 func (x *AiAgentRun) GetCreatedAt() *timestamppb.Timestamp {
@@ -679,6 +700,68 @@ func (x *DeleteAiAgentAppRequest) GetId() uint32 {
 	return 0
 }
 
+// 审批裁决运行 - 请求
+type ApproveAgentRunRequest struct {
+	state    protoimpl.MessageState `protogen:"open.v1"`
+	RunId    uint32                 `protobuf:"varint,1,opt,name=run_id,json=runId,proto3" json:"run_id,omitempty"` // 运行ID
+	Approved bool                   `protobuf:"varint,2,opt,name=approved,proto3" json:"approved,omitempty"`        // 是否批准
+	// 审批意见（驳回时写入运行 error；批准时注入挂起节点 note 变量）
+	Note          string `protobuf:"bytes,3,opt,name=note,proto3" json:"note,omitempty"` // 审批意见
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *ApproveAgentRunRequest) Reset() {
+	*x = ApproveAgentRunRequest{}
+	mi := &file_ai_service_v1_ai_agent_proto_msgTypes[8]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *ApproveAgentRunRequest) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*ApproveAgentRunRequest) ProtoMessage() {}
+
+func (x *ApproveAgentRunRequest) ProtoReflect() protoreflect.Message {
+	mi := &file_ai_service_v1_ai_agent_proto_msgTypes[8]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use ApproveAgentRunRequest.ProtoReflect.Descriptor instead.
+func (*ApproveAgentRunRequest) Descriptor() ([]byte, []int) {
+	return file_ai_service_v1_ai_agent_proto_rawDescGZIP(), []int{8}
+}
+
+func (x *ApproveAgentRunRequest) GetRunId() uint32 {
+	if x != nil {
+		return x.RunId
+	}
+	return 0
+}
+
+func (x *ApproveAgentRunRequest) GetApproved() bool {
+	if x != nil {
+		return x.Approved
+	}
+	return false
+}
+
+func (x *ApproveAgentRunRequest) GetNote() string {
+	if x != nil {
+		return x.Note
+	}
+	return ""
+}
+
 // 试运行 - 请求
 type RunAiAgentAppRequest struct {
 	state protoimpl.MessageState `protogen:"open.v1"`
@@ -691,7 +774,7 @@ type RunAiAgentAppRequest struct {
 
 func (x *RunAiAgentAppRequest) Reset() {
 	*x = RunAiAgentAppRequest{}
-	mi := &file_ai_service_v1_ai_agent_proto_msgTypes[8]
+	mi := &file_ai_service_v1_ai_agent_proto_msgTypes[9]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -703,7 +786,7 @@ func (x *RunAiAgentAppRequest) String() string {
 func (*RunAiAgentAppRequest) ProtoMessage() {}
 
 func (x *RunAiAgentAppRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_ai_service_v1_ai_agent_proto_msgTypes[8]
+	mi := &file_ai_service_v1_ai_agent_proto_msgTypes[9]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -716,7 +799,7 @@ func (x *RunAiAgentAppRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use RunAiAgentAppRequest.ProtoReflect.Descriptor instead.
 func (*RunAiAgentAppRequest) Descriptor() ([]byte, []int) {
-	return file_ai_service_v1_ai_agent_proto_rawDescGZIP(), []int{8}
+	return file_ai_service_v1_ai_agent_proto_rawDescGZIP(), []int{9}
 }
 
 func (x *RunAiAgentAppRequest) GetId() uint32 {
@@ -744,7 +827,7 @@ type ListAiAgentRunsResponse struct {
 
 func (x *ListAiAgentRunsResponse) Reset() {
 	*x = ListAiAgentRunsResponse{}
-	mi := &file_ai_service_v1_ai_agent_proto_msgTypes[9]
+	mi := &file_ai_service_v1_ai_agent_proto_msgTypes[10]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -756,7 +839,7 @@ func (x *ListAiAgentRunsResponse) String() string {
 func (*ListAiAgentRunsResponse) ProtoMessage() {}
 
 func (x *ListAiAgentRunsResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_ai_service_v1_ai_agent_proto_msgTypes[9]
+	mi := &file_ai_service_v1_ai_agent_proto_msgTypes[10]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -769,7 +852,7 @@ func (x *ListAiAgentRunsResponse) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use ListAiAgentRunsResponse.ProtoReflect.Descriptor instead.
 func (*ListAiAgentRunsResponse) Descriptor() ([]byte, []int) {
-	return file_ai_service_v1_ai_agent_proto_rawDescGZIP(), []int{9}
+	return file_ai_service_v1_ai_agent_proto_rawDescGZIP(), []int{10}
 }
 
 func (x *ListAiAgentRunsResponse) GetItems() []*AiAgentRun {
@@ -796,7 +879,7 @@ type GetAiAgentRunRequest struct {
 
 func (x *GetAiAgentRunRequest) Reset() {
 	*x = GetAiAgentRunRequest{}
-	mi := &file_ai_service_v1_ai_agent_proto_msgTypes[10]
+	mi := &file_ai_service_v1_ai_agent_proto_msgTypes[11]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -808,7 +891,7 @@ func (x *GetAiAgentRunRequest) String() string {
 func (*GetAiAgentRunRequest) ProtoMessage() {}
 
 func (x *GetAiAgentRunRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_ai_service_v1_ai_agent_proto_msgTypes[10]
+	mi := &file_ai_service_v1_ai_agent_proto_msgTypes[11]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -821,7 +904,7 @@ func (x *GetAiAgentRunRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use GetAiAgentRunRequest.ProtoReflect.Descriptor instead.
 func (*GetAiAgentRunRequest) Descriptor() ([]byte, []int) {
-	return file_ai_service_v1_ai_agent_proto_rawDescGZIP(), []int{10}
+	return file_ai_service_v1_ai_agent_proto_rawDescGZIP(), []int{11}
 }
 
 func (x *GetAiAgentRunRequest) GetId() uint32 {
@@ -871,7 +954,7 @@ const file_ai_service_v1_ai_agent_proto_rawDesc = "" +
 	"\x05phase\x18\x04 \x01(\tR\x05phase\x12\x17\n" +
 	"\anode_id\x18\x05 \x01(\tR\x06nodeId\x12\x18\n" +
 	"\asummary\x18\x06 \x01(\tR\asummary\x12\x16\n" +
-	"\x06status\x18\a \x01(\tR\x06status\"\xbc\x05\n" +
+	"\x06status\x18\a \x01(\tR\x06status\"\xcc\x06\n" +
 	"\n" +
 	"AiAgentRun\x12\x13\n" +
 	"\x02id\x18\x01 \x01(\rH\x00R\x02id\x88\x01\x01\x12\x1a\n" +
@@ -887,15 +970,18 @@ const file_ai_service_v1_ai_agent_proto_rawDesc = "" +
 	" \x01(\rH\tR\vtotalTokens\x88\x01\x01\x12$\n" +
 	"\vduration_ms\x18\v \x01(\rH\n" +
 	"R\n" +
-	"durationMs\x88\x01\x01\x12>\n" +
+	"durationMs\x88\x01\x01\x12+\n" +
+	"\x0fpending_node_id\x18\f \x01(\tH\vR\rpendingNodeId\x88\x01\x01\x12&\n" +
+	"\fresume_state\x18\r \x01(\tH\fR\vresumeState\x88\x01\x01\x12>\n" +
 	"\n" +
-	"created_at\x18\x14 \x01(\v2\x1a.google.protobuf.TimestampH\vR\tcreatedAt\x88\x01\x01\"H\n" +
+	"created_at\x18\x14 \x01(\v2\x1a.google.protobuf.TimestampH\rR\tcreatedAt\x88\x01\x01\"^\n" +
 	"\x06Status\x12\x16\n" +
 	"\x12STATUS_UNSPECIFIED\x10\x00\x12\v\n" +
 	"\aRUNNING\x10\x01\x12\r\n" +
 	"\tSUCCEEDED\x10\x02\x12\n" +
 	"\n" +
-	"\x06FAILED\x10\x03B\x05\n" +
+	"\x06FAILED\x10\x03\x12\x14\n" +
+	"\x10WAITING_APPROVAL\x10\x04B\x05\n" +
 	"\x03_idB\t\n" +
 	"\a_app_idB\t\n" +
 	"\a_statusB\b\n" +
@@ -906,7 +992,9 @@ const file_ai_service_v1_ai_agent_proto_rawDesc = "" +
 	"\x0e_prompt_tokensB\x14\n" +
 	"\x12_completion_tokensB\x0f\n" +
 	"\r_total_tokensB\x0e\n" +
-	"\f_duration_msB\r\n" +
+	"\f_duration_msB\x12\n" +
+	"\x10_pending_node_idB\x0f\n" +
+	"\r_resume_stateB\r\n" +
 	"\v_created_at\"`\n" +
 	"\x17ListAiAgentAppsResponse\x12/\n" +
 	"\x05items\x18\x01 \x03(\v2\x19.ai.service.v1.AiAgentAppR\x05items\x12\x14\n" +
@@ -921,7 +1009,11 @@ const file_ai_service_v1_ai_agent_proto_rawDesc = "" +
 	"\vupdate_mask\x18\x03 \x01(\v2\x1a.google.protobuf.FieldMaskR\n" +
 	"updateMask\")\n" +
 	"\x17DeleteAiAgentAppRequest\x12\x0e\n" +
-	"\x02id\x18\x01 \x01(\rR\x02id\"\xeb\x01\n" +
+	"\x02id\x18\x01 \x01(\rR\x02id\"\xe3\x01\n" +
+	"\x16ApproveAgentRunRequest\x12@\n" +
+	"\x06run_id\x18\x01 \x01(\rB)\xbaG&\x92\x02#WAITING_APPROVAL 状态的运行 IDR\x05runId\x12s\n" +
+	"\bapproved\x18\x02 \x01(\bBW\xbaGT\x92\x02Qtrue=批准（从挂起节点继续执行）；false=驳回（运行置 FAILED）R\bapproved\x12\x12\n" +
+	"\x04note\x18\x03 \x01(\tR\x04note\"\xeb\x01\n" +
 	"\x14RunAiAgentAppRequest\x12\x1e\n" +
 	"\x02id\x18\x01 \x01(\rB\x0e\xbaG\v\x92\x02\b应用IDR\x02id\x12y\n" +
 	"\x05input\x18\x02 \x03(\v2..ai.service.v1.RunAiAgentAppRequest.InputEntryB3\xbaG0\x92\x02-运行入参（start 节点声明的变量）R\x05input\x1a8\n" +
@@ -933,14 +1025,16 @@ const file_ai_service_v1_ai_agent_proto_rawDesc = "" +
 	"\x05items\x18\x01 \x03(\v2\x19.ai.service.v1.AiAgentRunR\x05items\x12\x14\n" +
 	"\x05total\x18\x02 \x01(\x04R\x05total\"&\n" +
 	"\x14GetAiAgentRunRequest\x12\x0e\n" +
-	"\x02id\x18\x01 \x01(\rR\x02id2\xf3\x04\n" +
+	"\x02id\x18\x01 \x01(\rR\x02id2\xc5\x05\n" +
 	"\x0eAiAgentService\x12K\n" +
 	"\x04List\x12\x19.pagination.PagingRequest\x1a&.ai.service.v1.ListAiAgentAppsResponse\"\x00\x12G\n" +
 	"\x03Get\x12#.ai.service.v1.GetAiAgentAppRequest\x1a\x19.ai.service.v1.AiAgentApp\"\x00\x12M\n" +
 	"\x06Create\x12&.ai.service.v1.CreateAiAgentAppRequest\x1a\x19.ai.service.v1.AiAgentApp\"\x00\x12J\n" +
 	"\x06Update\x12&.ai.service.v1.UpdateAiAgentAppRequest\x1a\x16.google.protobuf.Empty\"\x00\x12J\n" +
 	"\x06Delete\x12&.ai.service.v1.DeleteAiAgentAppRequest\x1a\x16.google.protobuf.Empty\"\x00\x12G\n" +
-	"\x03Run\x12#.ai.service.v1.RunAiAgentAppRequest\x1a\x19.ai.service.v1.AiAgentRun\"\x00\x12O\n" +
+	"\x03Run\x12#.ai.service.v1.RunAiAgentAppRequest\x1a\x19.ai.service.v1.AiAgentRun\"\x00\x12P\n" +
+	"\n" +
+	"ApproveRun\x12%.ai.service.v1.ApproveAgentRunRequest\x1a\x19.ai.service.v1.AiAgentRun\"\x00\x12O\n" +
 	"\bListRuns\x12\x19.pagination.PagingRequest\x1a&.ai.service.v1.ListAiAgentRunsResponse\"\x00\x12J\n" +
 	"\x06GetRun\x12#.ai.service.v1.GetAiAgentRunRequest\x1a\x19.ai.service.v1.AiAgentRun\"\x00B\xa2\x01\n" +
 	"\x11com.ai.service.v1B\fAiAgentProtoP\x01Z)go-wind-cms/api/gen/go/ai/service/v1;aipb\xa2\x02\x03ASX\xaa\x02\rAi.Service.V1\xca\x02\rAi\\Service\\V1\xe2\x02\x19Ai\\Service\\V1\\GPBMetadata\xea\x02\x0fAi::Service::V1b\x06proto3"
@@ -958,7 +1052,7 @@ func file_ai_service_v1_ai_agent_proto_rawDescGZIP() []byte {
 }
 
 var file_ai_service_v1_ai_agent_proto_enumTypes = make([]protoimpl.EnumInfo, 1)
-var file_ai_service_v1_ai_agent_proto_msgTypes = make([]protoimpl.MessageInfo, 12)
+var file_ai_service_v1_ai_agent_proto_msgTypes = make([]protoimpl.MessageInfo, 13)
 var file_ai_service_v1_ai_agent_proto_goTypes = []any{
 	(AiAgentRun_Status)(0),          // 0: ai.service.v1.AiAgentRun.Status
 	(*AiAgentApp)(nil),              // 1: ai.service.v1.AiAgentApp
@@ -969,44 +1063,47 @@ var file_ai_service_v1_ai_agent_proto_goTypes = []any{
 	(*CreateAiAgentAppRequest)(nil), // 6: ai.service.v1.CreateAiAgentAppRequest
 	(*UpdateAiAgentAppRequest)(nil), // 7: ai.service.v1.UpdateAiAgentAppRequest
 	(*DeleteAiAgentAppRequest)(nil), // 8: ai.service.v1.DeleteAiAgentAppRequest
-	(*RunAiAgentAppRequest)(nil),    // 9: ai.service.v1.RunAiAgentAppRequest
-	(*ListAiAgentRunsResponse)(nil), // 10: ai.service.v1.ListAiAgentRunsResponse
-	(*GetAiAgentRunRequest)(nil),    // 11: ai.service.v1.GetAiAgentRunRequest
-	nil,                             // 12: ai.service.v1.RunAiAgentAppRequest.InputEntry
-	(*timestamppb.Timestamp)(nil),   // 13: google.protobuf.Timestamp
-	(*fieldmaskpb.FieldMask)(nil),   // 14: google.protobuf.FieldMask
-	(*v1.PagingRequest)(nil),        // 15: pagination.PagingRequest
-	(*emptypb.Empty)(nil),           // 16: google.protobuf.Empty
+	(*ApproveAgentRunRequest)(nil),  // 9: ai.service.v1.ApproveAgentRunRequest
+	(*RunAiAgentAppRequest)(nil),    // 10: ai.service.v1.RunAiAgentAppRequest
+	(*ListAiAgentRunsResponse)(nil), // 11: ai.service.v1.ListAiAgentRunsResponse
+	(*GetAiAgentRunRequest)(nil),    // 12: ai.service.v1.GetAiAgentRunRequest
+	nil,                             // 13: ai.service.v1.RunAiAgentAppRequest.InputEntry
+	(*timestamppb.Timestamp)(nil),   // 14: google.protobuf.Timestamp
+	(*fieldmaskpb.FieldMask)(nil),   // 15: google.protobuf.FieldMask
+	(*v1.PagingRequest)(nil),        // 16: pagination.PagingRequest
+	(*emptypb.Empty)(nil),           // 17: google.protobuf.Empty
 }
 var file_ai_service_v1_ai_agent_proto_depIdxs = []int32{
-	13, // 0: ai.service.v1.AiAgentApp.created_at:type_name -> google.protobuf.Timestamp
-	13, // 1: ai.service.v1.AiAgentApp.updated_at:type_name -> google.protobuf.Timestamp
+	14, // 0: ai.service.v1.AiAgentApp.created_at:type_name -> google.protobuf.Timestamp
+	14, // 1: ai.service.v1.AiAgentApp.updated_at:type_name -> google.protobuf.Timestamp
 	0,  // 2: ai.service.v1.AiAgentRun.status:type_name -> ai.service.v1.AiAgentRun.Status
-	13, // 3: ai.service.v1.AiAgentRun.created_at:type_name -> google.protobuf.Timestamp
+	14, // 3: ai.service.v1.AiAgentRun.created_at:type_name -> google.protobuf.Timestamp
 	1,  // 4: ai.service.v1.ListAiAgentAppsResponse.items:type_name -> ai.service.v1.AiAgentApp
 	1,  // 5: ai.service.v1.CreateAiAgentAppRequest.data:type_name -> ai.service.v1.AiAgentApp
 	1,  // 6: ai.service.v1.UpdateAiAgentAppRequest.data:type_name -> ai.service.v1.AiAgentApp
-	14, // 7: ai.service.v1.UpdateAiAgentAppRequest.update_mask:type_name -> google.protobuf.FieldMask
-	12, // 8: ai.service.v1.RunAiAgentAppRequest.input:type_name -> ai.service.v1.RunAiAgentAppRequest.InputEntry
+	15, // 7: ai.service.v1.UpdateAiAgentAppRequest.update_mask:type_name -> google.protobuf.FieldMask
+	13, // 8: ai.service.v1.RunAiAgentAppRequest.input:type_name -> ai.service.v1.RunAiAgentAppRequest.InputEntry
 	3,  // 9: ai.service.v1.ListAiAgentRunsResponse.items:type_name -> ai.service.v1.AiAgentRun
-	15, // 10: ai.service.v1.AiAgentService.List:input_type -> pagination.PagingRequest
+	16, // 10: ai.service.v1.AiAgentService.List:input_type -> pagination.PagingRequest
 	5,  // 11: ai.service.v1.AiAgentService.Get:input_type -> ai.service.v1.GetAiAgentAppRequest
 	6,  // 12: ai.service.v1.AiAgentService.Create:input_type -> ai.service.v1.CreateAiAgentAppRequest
 	7,  // 13: ai.service.v1.AiAgentService.Update:input_type -> ai.service.v1.UpdateAiAgentAppRequest
 	8,  // 14: ai.service.v1.AiAgentService.Delete:input_type -> ai.service.v1.DeleteAiAgentAppRequest
-	9,  // 15: ai.service.v1.AiAgentService.Run:input_type -> ai.service.v1.RunAiAgentAppRequest
-	15, // 16: ai.service.v1.AiAgentService.ListRuns:input_type -> pagination.PagingRequest
-	11, // 17: ai.service.v1.AiAgentService.GetRun:input_type -> ai.service.v1.GetAiAgentRunRequest
-	4,  // 18: ai.service.v1.AiAgentService.List:output_type -> ai.service.v1.ListAiAgentAppsResponse
-	1,  // 19: ai.service.v1.AiAgentService.Get:output_type -> ai.service.v1.AiAgentApp
-	1,  // 20: ai.service.v1.AiAgentService.Create:output_type -> ai.service.v1.AiAgentApp
-	16, // 21: ai.service.v1.AiAgentService.Update:output_type -> google.protobuf.Empty
-	16, // 22: ai.service.v1.AiAgentService.Delete:output_type -> google.protobuf.Empty
-	3,  // 23: ai.service.v1.AiAgentService.Run:output_type -> ai.service.v1.AiAgentRun
-	10, // 24: ai.service.v1.AiAgentService.ListRuns:output_type -> ai.service.v1.ListAiAgentRunsResponse
-	3,  // 25: ai.service.v1.AiAgentService.GetRun:output_type -> ai.service.v1.AiAgentRun
-	18, // [18:26] is the sub-list for method output_type
-	10, // [10:18] is the sub-list for method input_type
+	10, // 15: ai.service.v1.AiAgentService.Run:input_type -> ai.service.v1.RunAiAgentAppRequest
+	9,  // 16: ai.service.v1.AiAgentService.ApproveRun:input_type -> ai.service.v1.ApproveAgentRunRequest
+	16, // 17: ai.service.v1.AiAgentService.ListRuns:input_type -> pagination.PagingRequest
+	12, // 18: ai.service.v1.AiAgentService.GetRun:input_type -> ai.service.v1.GetAiAgentRunRequest
+	4,  // 19: ai.service.v1.AiAgentService.List:output_type -> ai.service.v1.ListAiAgentAppsResponse
+	1,  // 20: ai.service.v1.AiAgentService.Get:output_type -> ai.service.v1.AiAgentApp
+	1,  // 21: ai.service.v1.AiAgentService.Create:output_type -> ai.service.v1.AiAgentApp
+	17, // 22: ai.service.v1.AiAgentService.Update:output_type -> google.protobuf.Empty
+	17, // 23: ai.service.v1.AiAgentService.Delete:output_type -> google.protobuf.Empty
+	3,  // 24: ai.service.v1.AiAgentService.Run:output_type -> ai.service.v1.AiAgentRun
+	3,  // 25: ai.service.v1.AiAgentService.ApproveRun:output_type -> ai.service.v1.AiAgentRun
+	11, // 26: ai.service.v1.AiAgentService.ListRuns:output_type -> ai.service.v1.ListAiAgentRunsResponse
+	3,  // 27: ai.service.v1.AiAgentService.GetRun:output_type -> ai.service.v1.AiAgentRun
+	19, // [19:28] is the sub-list for method output_type
+	10, // [10:19] is the sub-list for method input_type
 	10, // [10:10] is the sub-list for extension type_name
 	10, // [10:10] is the sub-list for extension extendee
 	0,  // [0:10] is the sub-list for field type_name
@@ -1025,7 +1122,7 @@ func file_ai_service_v1_ai_agent_proto_init() {
 			GoPackagePath: reflect.TypeOf(x{}).PkgPath(),
 			RawDescriptor: unsafe.Slice(unsafe.StringData(file_ai_service_v1_ai_agent_proto_rawDesc), len(file_ai_service_v1_ai_agent_proto_rawDesc)),
 			NumEnums:      1,
-			NumMessages:   12,
+			NumMessages:   13,
 			NumExtensions: 0,
 			NumServices:   1,
 		},

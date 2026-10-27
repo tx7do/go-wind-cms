@@ -191,6 +191,46 @@ func (_u *AiAgentRunUpdate) SetNillableStatus(v *aiagentrun.Status) *AiAgentRunU
 	return _u
 }
 
+// SetPendingNodeID sets the "pending_node_id" field.
+func (_u *AiAgentRunUpdate) SetPendingNodeID(v string) *AiAgentRunUpdate {
+	_u.mutation.SetPendingNodeID(v)
+	return _u
+}
+
+// SetNillablePendingNodeID sets the "pending_node_id" field if the given value is not nil.
+func (_u *AiAgentRunUpdate) SetNillablePendingNodeID(v *string) *AiAgentRunUpdate {
+	if v != nil {
+		_u.SetPendingNodeID(*v)
+	}
+	return _u
+}
+
+// ClearPendingNodeID clears the value of the "pending_node_id" field.
+func (_u *AiAgentRunUpdate) ClearPendingNodeID() *AiAgentRunUpdate {
+	_u.mutation.ClearPendingNodeID()
+	return _u
+}
+
+// SetResumeState sets the "resume_state" field.
+func (_u *AiAgentRunUpdate) SetResumeState(v string) *AiAgentRunUpdate {
+	_u.mutation.SetResumeState(v)
+	return _u
+}
+
+// SetNillableResumeState sets the "resume_state" field if the given value is not nil.
+func (_u *AiAgentRunUpdate) SetNillableResumeState(v *string) *AiAgentRunUpdate {
+	if v != nil {
+		_u.SetResumeState(*v)
+	}
+	return _u
+}
+
+// ClearResumeState clears the value of the "resume_state" field.
+func (_u *AiAgentRunUpdate) ClearResumeState() *AiAgentRunUpdate {
+	_u.mutation.ClearResumeState()
+	return _u
+}
+
 // SetInput sets the "input" field.
 func (_u *AiAgentRunUpdate) SetInput(v string) *AiAgentRunUpdate {
 	_u.mutation.SetInput(v)
@@ -388,6 +428,11 @@ func (_u *AiAgentRunUpdate) check() error {
 			return &ValidationError{Name: "status", err: fmt.Errorf(`ent: validator failed for field "AiAgentRun.status": %w`, err)}
 		}
 	}
+	if v, ok := _u.mutation.PendingNodeID(); ok {
+		if err := aiagentrun.PendingNodeIDValidator(v); err != nil {
+			return &ValidationError{Name: "pending_node_id", err: fmt.Errorf(`ent: validator failed for field "AiAgentRun.pending_node_id": %w`, err)}
+		}
+	}
 	return nil
 }
 
@@ -465,6 +510,18 @@ func (_u *AiAgentRunUpdate) sqlSave(ctx context.Context) (_node int, err error) 
 	}
 	if value, ok := _u.mutation.Status(); ok {
 		_spec.SetField(aiagentrun.FieldStatus, field.TypeEnum, value)
+	}
+	if value, ok := _u.mutation.PendingNodeID(); ok {
+		_spec.SetField(aiagentrun.FieldPendingNodeID, field.TypeString, value)
+	}
+	if _u.mutation.PendingNodeIDCleared() {
+		_spec.ClearField(aiagentrun.FieldPendingNodeID, field.TypeString)
+	}
+	if value, ok := _u.mutation.ResumeState(); ok {
+		_spec.SetField(aiagentrun.FieldResumeState, field.TypeString, value)
+	}
+	if _u.mutation.ResumeStateCleared() {
+		_spec.ClearField(aiagentrun.FieldResumeState, field.TypeString)
 	}
 	if value, ok := _u.mutation.Input(); ok {
 		_spec.SetField(aiagentrun.FieldInput, field.TypeString, value)
@@ -695,6 +752,46 @@ func (_u *AiAgentRunUpdateOne) SetNillableStatus(v *aiagentrun.Status) *AiAgentR
 	return _u
 }
 
+// SetPendingNodeID sets the "pending_node_id" field.
+func (_u *AiAgentRunUpdateOne) SetPendingNodeID(v string) *AiAgentRunUpdateOne {
+	_u.mutation.SetPendingNodeID(v)
+	return _u
+}
+
+// SetNillablePendingNodeID sets the "pending_node_id" field if the given value is not nil.
+func (_u *AiAgentRunUpdateOne) SetNillablePendingNodeID(v *string) *AiAgentRunUpdateOne {
+	if v != nil {
+		_u.SetPendingNodeID(*v)
+	}
+	return _u
+}
+
+// ClearPendingNodeID clears the value of the "pending_node_id" field.
+func (_u *AiAgentRunUpdateOne) ClearPendingNodeID() *AiAgentRunUpdateOne {
+	_u.mutation.ClearPendingNodeID()
+	return _u
+}
+
+// SetResumeState sets the "resume_state" field.
+func (_u *AiAgentRunUpdateOne) SetResumeState(v string) *AiAgentRunUpdateOne {
+	_u.mutation.SetResumeState(v)
+	return _u
+}
+
+// SetNillableResumeState sets the "resume_state" field if the given value is not nil.
+func (_u *AiAgentRunUpdateOne) SetNillableResumeState(v *string) *AiAgentRunUpdateOne {
+	if v != nil {
+		_u.SetResumeState(*v)
+	}
+	return _u
+}
+
+// ClearResumeState clears the value of the "resume_state" field.
+func (_u *AiAgentRunUpdateOne) ClearResumeState() *AiAgentRunUpdateOne {
+	_u.mutation.ClearResumeState()
+	return _u
+}
+
 // SetInput sets the "input" field.
 func (_u *AiAgentRunUpdateOne) SetInput(v string) *AiAgentRunUpdateOne {
 	_u.mutation.SetInput(v)
@@ -905,6 +1002,11 @@ func (_u *AiAgentRunUpdateOne) check() error {
 			return &ValidationError{Name: "status", err: fmt.Errorf(`ent: validator failed for field "AiAgentRun.status": %w`, err)}
 		}
 	}
+	if v, ok := _u.mutation.PendingNodeID(); ok {
+		if err := aiagentrun.PendingNodeIDValidator(v); err != nil {
+			return &ValidationError{Name: "pending_node_id", err: fmt.Errorf(`ent: validator failed for field "AiAgentRun.pending_node_id": %w`, err)}
+		}
+	}
 	return nil
 }
 
@@ -999,6 +1101,18 @@ func (_u *AiAgentRunUpdateOne) sqlSave(ctx context.Context) (_node *AiAgentRun, 
 	}
 	if value, ok := _u.mutation.Status(); ok {
 		_spec.SetField(aiagentrun.FieldStatus, field.TypeEnum, value)
+	}
+	if value, ok := _u.mutation.PendingNodeID(); ok {
+		_spec.SetField(aiagentrun.FieldPendingNodeID, field.TypeString, value)
+	}
+	if _u.mutation.PendingNodeIDCleared() {
+		_spec.ClearField(aiagentrun.FieldPendingNodeID, field.TypeString)
+	}
+	if value, ok := _u.mutation.ResumeState(); ok {
+		_spec.SetField(aiagentrun.FieldResumeState, field.TypeString, value)
+	}
+	if _u.mutation.ResumeStateCleared() {
+		_spec.ClearField(aiagentrun.FieldResumeState, field.TypeString)
 	}
 	if value, ok := _u.mutation.Input(); ok {
 		_spec.SetField(aiagentrun.FieldInput, field.TypeString, value)

@@ -117,3 +117,22 @@ export function useGetAiAgentRun(
 }
 
 export type { AiAgentApp };
+
+// 审批裁决 WAITING_APPROVAL 的运行（批准继续执行 / 驳回置 FAILED）
+export function useApproveAgentRun(
+  options?: UseMutationOptions<
+    aiservicev1_AiAgentRun,
+    Error,
+    { runId: number; approved: boolean; note: string }
+  >,
+) {
+  return useMutation({
+    mutationFn: (req) =>
+      apiClient.aiAgentService.ApproveRun({
+        runId: req.runId,
+        approved: req.approved,
+        note: req.note,
+      }),
+    ...options,
+  });
+}

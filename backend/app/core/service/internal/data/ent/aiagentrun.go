@@ -36,6 +36,10 @@ type AiAgentRun struct {
 	AppID *uint32 `json:"app_id,omitempty"`
 	// 运行状态
 	Status aiagentrun.Status `json:"status,omitempty"`
+	// 等待审批的节点 ID（status=WAITING_APPROVAL 时有值）
+	PendingNodeID *string `json:"pending_node_id,omitempty"`
+	// 挂起恢复快照 JSON：{vars, nextNodeId}（审批通过后据此继续执行）
+	ResumeState *string `json:"resume_state,omitempty"`
 	// 运行入参 JSON（start 节点声明的变量）
 	Input *string `json:"input,omitempty"`
 	// 产出（到达的 end 节点渲染值）
@@ -62,7 +66,7 @@ func (*AiAgentRun) scanValues(columns []string) ([]any, error) {
 		switch columns[i] {
 		case aiagentrun.FieldID, aiagentrun.FieldCreatedBy, aiagentrun.FieldUpdatedBy, aiagentrun.FieldDeletedBy, aiagentrun.FieldTenantID, aiagentrun.FieldAppID, aiagentrun.FieldPromptTokens, aiagentrun.FieldCompletionTokens, aiagentrun.FieldTotalTokens, aiagentrun.FieldDurationMs:
 			values[i] = new(sql.NullInt64)
-		case aiagentrun.FieldStatus, aiagentrun.FieldInput, aiagentrun.FieldOutput, aiagentrun.FieldError, aiagentrun.FieldTrace:
+		case aiagentrun.FieldStatus, aiagentrun.FieldPendingNodeID, aiagentrun.FieldResumeState, aiagentrun.FieldInput, aiagentrun.FieldOutput, aiagentrun.FieldError, aiagentrun.FieldTrace:
 			values[i] = new(sql.NullString)
 		case aiagentrun.FieldCreatedAt, aiagentrun.FieldUpdatedAt, aiagentrun.FieldDeletedAt:
 			values[i] = new(sql.NullTime)
@@ -148,6 +152,20 @@ func (_m *AiAgentRun) assignValues(columns []string, values []any) error {
 				return fmt.Errorf("unexpected type %T for field status", values[i])
 			} else if value.Valid {
 				_m.Status = aiagentrun.Status(value.String)
+			}
+		case aiagentrun.FieldPendingNodeID:
+			if value, ok := values[i].(*sql.NullString); !ok {
+				return fmt.Errorf("unexpected type %T for field pending_node_id", values[i])
+			} else if value.Valid {
+				_m.PendingNodeID = new(string)
+				*_m.PendingNodeID = value.String
+			}
+		case aiagentrun.FieldResumeState:
+			if value, ok := values[i].(*sql.NullString); !ok {
+				return fmt.Errorf("unexpected type %T for field resume_state", values[i])
+			} else if value.Valid {
+				_m.ResumeState = new(string)
+				*_m.ResumeState = value.String
 			}
 		case aiagentrun.FieldInput:
 			if value, ok := values[i].(*sql.NullString); !ok {
@@ -278,6 +296,16 @@ func (_m *AiAgentRun) String() string {
 	builder.WriteString(", ")
 	builder.WriteString("status=")
 	builder.WriteString(fmt.Sprintf("%v", _m.Status))
+	builder.WriteString(", ")
+	if v := _m.PendingNodeID; v != nil {
+		builder.WriteString("pending_node_id=")
+		builder.WriteString(*v)
+	}
+	builder.WriteString(", ")
+	if v := _m.ResumeState; v != nil {
+		builder.WriteString("resume_state=")
+		builder.WriteString(*v)
+	}
 	builder.WriteString(", ")
 	if v := _m.Input; v != nil {
 		builder.WriteString("input=")

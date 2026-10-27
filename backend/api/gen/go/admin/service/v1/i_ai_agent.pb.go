@@ -28,13 +28,15 @@ var File_admin_service_v1_i_ai_agent_proto protoreflect.FileDescriptor
 
 const file_admin_service_v1_i_ai_agent_proto_rawDesc = "" +
 	"\n" +
-	"!admin/service/v1/i_ai_agent.proto\x12\x10admin.service.v1\x1a\x1cgoogle/api/annotations.proto\x1a\x1bgoogle/protobuf/empty.proto\x1a\x1epagination/v1/pagination.proto\x1a\x1cai/service/v1/ai_agent.proto2\xf9\x06\n" +
+	"!admin/service/v1/i_ai_agent.proto\x12\x10admin.service.v1\x1a\x1cgoogle/api/annotations.proto\x1a\x1bgoogle/protobuf/empty.proto\x1a\x1epagination/v1/pagination.proto\x1a\x1cai/service/v1/ai_agent.proto2\xff\a\n" +
 	"\x0eAiAgentService\x12f\n" +
 	"\x04List\x12\x19.pagination.PagingRequest\x1a&.ai.service.v1.ListAiAgentAppsResponse\"\x1b\x82\xd3\xe4\x93\x02\x15\x12\x13/admin/v1/ai/agents\x12g\n" +
 	"\x03Get\x12#.ai.service.v1.GetAiAgentAppRequest\x1a\x19.ai.service.v1.AiAgentApp\" \x82\xd3\xe4\x93\x02\x1a\x12\x18/admin/v1/ai/agents/{id}\x12k\n" +
 	"\x06Create\x12&.ai.service.v1.CreateAiAgentAppRequest\x1a\x19.ai.service.v1.AiAgentApp\"\x1e\x82\xd3\xe4\x93\x02\x18:\x01*\"\x13/admin/v1/ai/agents\x12m\n" +
 	"\x06Update\x12&.ai.service.v1.UpdateAiAgentAppRequest\x1a\x16.google.protobuf.Empty\"#\x82\xd3\xe4\x93\x02\x1d:\x01*\x1a\x18/admin/v1/ai/agents/{id}\x12j\n" +
-	"\x06Delete\x12&.ai.service.v1.DeleteAiAgentAppRequest\x1a\x16.google.protobuf.Empty\" \x82\xd3\xe4\x93\x02\x1a*\x18/admin/v1/ai/agents/{id}\x12n\n" +
+	"\x06Delete\x12&.ai.service.v1.DeleteAiAgentAppRequest\x1a\x16.google.protobuf.Empty\" \x82\xd3\xe4\x93\x02\x1a*\x18/admin/v1/ai/agents/{id}\x12\x83\x01\n" +
+	"\n" +
+	"ApproveRun\x12%.ai.service.v1.ApproveAgentRunRequest\x1a\x19.ai.service.v1.AiAgentRun\"3\x82\xd3\xe4\x93\x02-:\x01*\"(/admin/v1/ai/agent-runs/{run_id}/approve\x12n\n" +
 	"\x03Run\x12#.ai.service.v1.RunAiAgentAppRequest\x1a\x19.ai.service.v1.AiAgentRun\"'\x82\xd3\xe4\x93\x02!:\x01*\"\x1c/admin/v1/ai/agents/{id}/run\x12n\n" +
 	"\bListRuns\x12\x19.pagination.PagingRequest\x1a&.ai.service.v1.ListAiAgentRunsResponse\"\x1f\x82\xd3\xe4\x93\x02\x19\x12\x17/admin/v1/ai/agent-runs\x12n\n" +
 	"\x06GetRun\x12#.ai.service.v1.GetAiAgentRunRequest\x1a\x19.ai.service.v1.AiAgentRun\"$\x82\xd3\xe4\x93\x02\x1e\x12\x1c/admin/v1/ai/agent-runs/{id}B\xb8\x01\n" +
@@ -46,13 +48,14 @@ var file_admin_service_v1_i_ai_agent_proto_goTypes = []any{
 	(*v11.CreateAiAgentAppRequest)(nil), // 2: ai.service.v1.CreateAiAgentAppRequest
 	(*v11.UpdateAiAgentAppRequest)(nil), // 3: ai.service.v1.UpdateAiAgentAppRequest
 	(*v11.DeleteAiAgentAppRequest)(nil), // 4: ai.service.v1.DeleteAiAgentAppRequest
-	(*v11.RunAiAgentAppRequest)(nil),    // 5: ai.service.v1.RunAiAgentAppRequest
-	(*v11.GetAiAgentRunRequest)(nil),    // 6: ai.service.v1.GetAiAgentRunRequest
-	(*v11.ListAiAgentAppsResponse)(nil), // 7: ai.service.v1.ListAiAgentAppsResponse
-	(*v11.AiAgentApp)(nil),              // 8: ai.service.v1.AiAgentApp
-	(*emptypb.Empty)(nil),               // 9: google.protobuf.Empty
-	(*v11.AiAgentRun)(nil),              // 10: ai.service.v1.AiAgentRun
-	(*v11.ListAiAgentRunsResponse)(nil), // 11: ai.service.v1.ListAiAgentRunsResponse
+	(*v11.ApproveAgentRunRequest)(nil),  // 5: ai.service.v1.ApproveAgentRunRequest
+	(*v11.RunAiAgentAppRequest)(nil),    // 6: ai.service.v1.RunAiAgentAppRequest
+	(*v11.GetAiAgentRunRequest)(nil),    // 7: ai.service.v1.GetAiAgentRunRequest
+	(*v11.ListAiAgentAppsResponse)(nil), // 8: ai.service.v1.ListAiAgentAppsResponse
+	(*v11.AiAgentApp)(nil),              // 9: ai.service.v1.AiAgentApp
+	(*emptypb.Empty)(nil),               // 10: google.protobuf.Empty
+	(*v11.AiAgentRun)(nil),              // 11: ai.service.v1.AiAgentRun
+	(*v11.ListAiAgentRunsResponse)(nil), // 12: ai.service.v1.ListAiAgentRunsResponse
 }
 var file_admin_service_v1_i_ai_agent_proto_depIdxs = []int32{
 	0,  // 0: admin.service.v1.AiAgentService.List:input_type -> pagination.PagingRequest
@@ -60,19 +63,21 @@ var file_admin_service_v1_i_ai_agent_proto_depIdxs = []int32{
 	2,  // 2: admin.service.v1.AiAgentService.Create:input_type -> ai.service.v1.CreateAiAgentAppRequest
 	3,  // 3: admin.service.v1.AiAgentService.Update:input_type -> ai.service.v1.UpdateAiAgentAppRequest
 	4,  // 4: admin.service.v1.AiAgentService.Delete:input_type -> ai.service.v1.DeleteAiAgentAppRequest
-	5,  // 5: admin.service.v1.AiAgentService.Run:input_type -> ai.service.v1.RunAiAgentAppRequest
-	0,  // 6: admin.service.v1.AiAgentService.ListRuns:input_type -> pagination.PagingRequest
-	6,  // 7: admin.service.v1.AiAgentService.GetRun:input_type -> ai.service.v1.GetAiAgentRunRequest
-	7,  // 8: admin.service.v1.AiAgentService.List:output_type -> ai.service.v1.ListAiAgentAppsResponse
-	8,  // 9: admin.service.v1.AiAgentService.Get:output_type -> ai.service.v1.AiAgentApp
-	8,  // 10: admin.service.v1.AiAgentService.Create:output_type -> ai.service.v1.AiAgentApp
-	9,  // 11: admin.service.v1.AiAgentService.Update:output_type -> google.protobuf.Empty
-	9,  // 12: admin.service.v1.AiAgentService.Delete:output_type -> google.protobuf.Empty
-	10, // 13: admin.service.v1.AiAgentService.Run:output_type -> ai.service.v1.AiAgentRun
-	11, // 14: admin.service.v1.AiAgentService.ListRuns:output_type -> ai.service.v1.ListAiAgentRunsResponse
-	10, // 15: admin.service.v1.AiAgentService.GetRun:output_type -> ai.service.v1.AiAgentRun
-	8,  // [8:16] is the sub-list for method output_type
-	0,  // [0:8] is the sub-list for method input_type
+	5,  // 5: admin.service.v1.AiAgentService.ApproveRun:input_type -> ai.service.v1.ApproveAgentRunRequest
+	6,  // 6: admin.service.v1.AiAgentService.Run:input_type -> ai.service.v1.RunAiAgentAppRequest
+	0,  // 7: admin.service.v1.AiAgentService.ListRuns:input_type -> pagination.PagingRequest
+	7,  // 8: admin.service.v1.AiAgentService.GetRun:input_type -> ai.service.v1.GetAiAgentRunRequest
+	8,  // 9: admin.service.v1.AiAgentService.List:output_type -> ai.service.v1.ListAiAgentAppsResponse
+	9,  // 10: admin.service.v1.AiAgentService.Get:output_type -> ai.service.v1.AiAgentApp
+	9,  // 11: admin.service.v1.AiAgentService.Create:output_type -> ai.service.v1.AiAgentApp
+	10, // 12: admin.service.v1.AiAgentService.Update:output_type -> google.protobuf.Empty
+	10, // 13: admin.service.v1.AiAgentService.Delete:output_type -> google.protobuf.Empty
+	11, // 14: admin.service.v1.AiAgentService.ApproveRun:output_type -> ai.service.v1.AiAgentRun
+	11, // 15: admin.service.v1.AiAgentService.Run:output_type -> ai.service.v1.AiAgentRun
+	12, // 16: admin.service.v1.AiAgentService.ListRuns:output_type -> ai.service.v1.ListAiAgentRunsResponse
+	11, // 17: admin.service.v1.AiAgentService.GetRun:output_type -> ai.service.v1.AiAgentRun
+	9,  // [9:18] is the sub-list for method output_type
+	0,  // [0:9] is the sub-list for method input_type
 	0,  // [0:0] is the sub-list for extension type_name
 	0,  // [0:0] is the sub-list for extension extendee
 	0,  // [0:0] is the sub-list for field type_name

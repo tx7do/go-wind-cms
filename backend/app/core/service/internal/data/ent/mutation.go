@@ -2791,6 +2791,8 @@ type AiAgentRunMutation struct {
 	app_id               *uint32
 	addapp_id            *int32
 	status               *aiagentrun.Status
+	pending_node_id      *string
+	resume_state         *string
 	input                *string
 	output               *string
 	error                *string
@@ -3446,6 +3448,104 @@ func (m *AiAgentRunMutation) ResetStatus() {
 	m.status = nil
 }
 
+// SetPendingNodeID sets the "pending_node_id" field.
+func (m *AiAgentRunMutation) SetPendingNodeID(s string) {
+	m.pending_node_id = &s
+}
+
+// PendingNodeID returns the value of the "pending_node_id" field in the mutation.
+func (m *AiAgentRunMutation) PendingNodeID() (r string, exists bool) {
+	v := m.pending_node_id
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldPendingNodeID returns the old "pending_node_id" field's value of the AiAgentRun entity.
+// If the AiAgentRun object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *AiAgentRunMutation) OldPendingNodeID(ctx context.Context) (v *string, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldPendingNodeID is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldPendingNodeID requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldPendingNodeID: %w", err)
+	}
+	return oldValue.PendingNodeID, nil
+}
+
+// ClearPendingNodeID clears the value of the "pending_node_id" field.
+func (m *AiAgentRunMutation) ClearPendingNodeID() {
+	m.pending_node_id = nil
+	m.clearedFields[aiagentrun.FieldPendingNodeID] = struct{}{}
+}
+
+// PendingNodeIDCleared returns if the "pending_node_id" field was cleared in this mutation.
+func (m *AiAgentRunMutation) PendingNodeIDCleared() bool {
+	_, ok := m.clearedFields[aiagentrun.FieldPendingNodeID]
+	return ok
+}
+
+// ResetPendingNodeID resets all changes to the "pending_node_id" field.
+func (m *AiAgentRunMutation) ResetPendingNodeID() {
+	m.pending_node_id = nil
+	delete(m.clearedFields, aiagentrun.FieldPendingNodeID)
+}
+
+// SetResumeState sets the "resume_state" field.
+func (m *AiAgentRunMutation) SetResumeState(s string) {
+	m.resume_state = &s
+}
+
+// ResumeState returns the value of the "resume_state" field in the mutation.
+func (m *AiAgentRunMutation) ResumeState() (r string, exists bool) {
+	v := m.resume_state
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldResumeState returns the old "resume_state" field's value of the AiAgentRun entity.
+// If the AiAgentRun object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *AiAgentRunMutation) OldResumeState(ctx context.Context) (v *string, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldResumeState is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldResumeState requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldResumeState: %w", err)
+	}
+	return oldValue.ResumeState, nil
+}
+
+// ClearResumeState clears the value of the "resume_state" field.
+func (m *AiAgentRunMutation) ClearResumeState() {
+	m.resume_state = nil
+	m.clearedFields[aiagentrun.FieldResumeState] = struct{}{}
+}
+
+// ResumeStateCleared returns if the "resume_state" field was cleared in this mutation.
+func (m *AiAgentRunMutation) ResumeStateCleared() bool {
+	_, ok := m.clearedFields[aiagentrun.FieldResumeState]
+	return ok
+}
+
+// ResetResumeState resets all changes to the "resume_state" field.
+func (m *AiAgentRunMutation) ResetResumeState() {
+	m.resume_state = nil
+	delete(m.clearedFields, aiagentrun.FieldResumeState)
+}
+
 // SetInput sets the "input" field.
 func (m *AiAgentRunMutation) SetInput(s string) {
 	m.input = &s
@@ -3887,7 +3987,7 @@ func (m *AiAgentRunMutation) Type() string {
 // order to get all numeric fields that were incremented/decremented, call
 // AddedFields().
 func (m *AiAgentRunMutation) Fields() []string {
-	fields := make([]string, 0, 17)
+	fields := make([]string, 0, 19)
 	if m.created_at != nil {
 		fields = append(fields, aiagentrun.FieldCreatedAt)
 	}
@@ -3914,6 +4014,12 @@ func (m *AiAgentRunMutation) Fields() []string {
 	}
 	if m.status != nil {
 		fields = append(fields, aiagentrun.FieldStatus)
+	}
+	if m.pending_node_id != nil {
+		fields = append(fields, aiagentrun.FieldPendingNodeID)
+	}
+	if m.resume_state != nil {
+		fields = append(fields, aiagentrun.FieldResumeState)
 	}
 	if m.input != nil {
 		fields = append(fields, aiagentrun.FieldInput)
@@ -3965,6 +4071,10 @@ func (m *AiAgentRunMutation) Field(name string) (ent.Value, bool) {
 		return m.AppID()
 	case aiagentrun.FieldStatus:
 		return m.Status()
+	case aiagentrun.FieldPendingNodeID:
+		return m.PendingNodeID()
+	case aiagentrun.FieldResumeState:
+		return m.ResumeState()
 	case aiagentrun.FieldInput:
 		return m.Input()
 	case aiagentrun.FieldOutput:
@@ -4008,6 +4118,10 @@ func (m *AiAgentRunMutation) OldField(ctx context.Context, name string) (ent.Val
 		return m.OldAppID(ctx)
 	case aiagentrun.FieldStatus:
 		return m.OldStatus(ctx)
+	case aiagentrun.FieldPendingNodeID:
+		return m.OldPendingNodeID(ctx)
+	case aiagentrun.FieldResumeState:
+		return m.OldResumeState(ctx)
 	case aiagentrun.FieldInput:
 		return m.OldInput(ctx)
 	case aiagentrun.FieldOutput:
@@ -4095,6 +4209,20 @@ func (m *AiAgentRunMutation) SetField(name string, value ent.Value) error {
 			return fmt.Errorf("unexpected type %T for field %s", value, name)
 		}
 		m.SetStatus(v)
+		return nil
+	case aiagentrun.FieldPendingNodeID:
+		v, ok := value.(string)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetPendingNodeID(v)
+		return nil
+	case aiagentrun.FieldResumeState:
+		v, ok := value.(string)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetResumeState(v)
 		return nil
 	case aiagentrun.FieldInput:
 		v, ok := value.(string)
@@ -4317,6 +4445,12 @@ func (m *AiAgentRunMutation) ClearedFields() []string {
 	if m.FieldCleared(aiagentrun.FieldAppID) {
 		fields = append(fields, aiagentrun.FieldAppID)
 	}
+	if m.FieldCleared(aiagentrun.FieldPendingNodeID) {
+		fields = append(fields, aiagentrun.FieldPendingNodeID)
+	}
+	if m.FieldCleared(aiagentrun.FieldResumeState) {
+		fields = append(fields, aiagentrun.FieldResumeState)
+	}
 	if m.FieldCleared(aiagentrun.FieldInput) {
 		fields = append(fields, aiagentrun.FieldInput)
 	}
@@ -4364,6 +4498,12 @@ func (m *AiAgentRunMutation) ClearField(name string) error {
 	case aiagentrun.FieldAppID:
 		m.ClearAppID()
 		return nil
+	case aiagentrun.FieldPendingNodeID:
+		m.ClearPendingNodeID()
+		return nil
+	case aiagentrun.FieldResumeState:
+		m.ClearResumeState()
+		return nil
 	case aiagentrun.FieldInput:
 		m.ClearInput()
 		return nil
@@ -4407,6 +4547,12 @@ func (m *AiAgentRunMutation) ResetField(name string) error {
 		return nil
 	case aiagentrun.FieldStatus:
 		m.ResetStatus()
+		return nil
+	case aiagentrun.FieldPendingNodeID:
+		m.ResetPendingNodeID()
+		return nil
+	case aiagentrun.FieldResumeState:
+		m.ResetResumeState()
 		return nil
 	case aiagentrun.FieldInput:
 		m.ResetInput()

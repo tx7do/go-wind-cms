@@ -74,7 +74,13 @@
     "loopItemTemplate": "条目模板",
     "loopItemTemplateHint": "每条渲染一次；可用 {{item}}/{{index}} 与 {{节点.变量}}；输出按行拼接为 loop 节点 output",
     "loopItemTemplateRequired": "条目模板不能为空",
-    "replay": "重放轨迹"
+    "replay": "重放轨迹",
+    "approval": "人工审批",
+    "approvalLabel": "审批项名称",
+    "approvalLabelPlaceholder": "如：发布前审批",
+    "approvalDesc": "审批说明",
+    "approvalDescPlaceholder": "告知审批人这段流程做什么",
+    "approvalHint": "运行到该节点即挂起等待人工审批；批准后从下游继续（审批结论注入 {{节点id.approved}}/{{节点id.note}}，可配合条件节点做驳回分支）。"
   },
   "test": {
     "title": "试运行",
@@ -95,7 +101,12 @@
     "running": "运行中",
     "tokens": "tokens: {{total}}",
     "loadMore": "加载更多",
-    "total": "共 {{total}} 条"
+    "total": "共 {{total}} 条",
+    "waitingApproval": "等待审批",
+    "approve": "批准",
+    "reject": "驳回",
+    "approved": "已审批",
+    "approveFailed": "审批失败"
   },
   "openRuns": "运行台账",
   "graphJsonHint": "图 DSL（JSON 文本：nodes/edges）。可视化画布在后续切片提供；结构强校验在运行/保存时由后端执行。"

@@ -48,6 +48,14 @@ service AiAgentService {
   }
 
   // 试运行（同步执行图，返回含 trace 的运行记录）
+  // 审批裁决运行（WAITING_APPROVAL → 继续/驳回）
+  rpc ApproveRun (ai.service.v1.ApproveAgentRunRequest) returns (ai.service.v1.AiAgentRun) {
+    option (google.api.http) = {
+      post: "/admin/v1/ai/agent-runs/{run_id}/approve"
+      body: "*"
+    };
+  }
+
   rpc Run (ai.service.v1.RunAiAgentAppRequest) returns (ai.service.v1.AiAgentRun) {
     option (google.api.http) = {
       post: "/admin/v1/ai/agents/{id}/run"

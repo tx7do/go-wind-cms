@@ -1,5 +1,7 @@
 import { useEffect, useState } from 'react';
 import {
+  App,
+  Button,
   Drawer,
   Tag,
   Timeline,
@@ -9,7 +11,7 @@ import { useTranslation } from 'react-i18next';
 import type {
   aiservicev1_AiAgentApp as AiAgentApp,
 } from '@/api/generated/admin/service/v1';
-import { useListAiAgentRuns } from '@/api/hooks/ai-agent';
+import { useApproveAgentRun, useListAiAgentRuns } from '@/api/hooks/ai-agent';
 import { PaginationQuery, globalSSEClient, SSE_EVENT } from '@/core';
 
 /**
@@ -27,8 +29,21 @@ export default function AgentRunsDrawer({
   onClose: () => void;
 }) {
   const { t } = useTranslation('ai-agent');
+  const { message } = App.useApp();
   const [page, setPage] = useState(1);
   const pageSize = 10;
+  const [approvingId, setApprovingId] = useState<number | undefined>();
+  const [rejectingId, setRejectingId] = useState<number | undefined>();
+  const approveMutation = useApproveAgentRun({
+    onSuccess: () => {
+      message.success(t('runs.approved'));
+      runsQuery.refetch();
+    },
+    onError: (error: Error) => {
+      console.error('approve agent run failed:', error);
+      message.error(error?.message || t('runs.approveFailed'));
+    },
+  });
 
   const runsQuery = useListAiAgentRuns(open ? app?.id : undefined, new PaginationQuery({ paging: { page, pageSize } }));
 
@@ -38,6 +53,7 @@ export default function AgentRunsDrawer({
   const statusTag = (status?: string) => {
     if (status === 'SUCCEEDED') return <Tag color="success">{t('runs.succeeded')}</Tag>;
     if (status === 'FAILED') return <Tag color="error">{t('runs.failed')}</Tag>;
+    if (status === 'WAITING_APPROVAL') return <Tag color="warning">{t('runs.waitingApproval')}</Tag>;
     return <Tag color="processing">{t('runs.running')}</Tag>;
   };
 
@@ -110,6 +126,48 @@ export default function AgentRunsDrawer({
                   {run.error}
                 </div>
               </Tooltip>
+            )}
+            {run.status === 'WAITING_APPROVAL' && (
+              <div style={{ marginTop: 8, display: 'flex', gap: 8 }}>
+                <Button
+                  size="small"
+                  type="primary"
+                  loading={approvingId === run.id}
+                  onClick={async () => {
+                    setApprovingId(run.id);
+                    try {
+                      await approveMutation.mutateAsync({
+                        runId: Number(run.id),
+                        approved: true,
+                        note: '',
+                      });
+                    } finally {
+                      setApprovingId(undefined);
+                    }
+                  }}
+                >
+                  {t('runs.approve')}
+                </Button>
+                <Button
+                  size="small"
+                  danger
+                  loading={rejectingId === run.id}
+                  onClick={async () => {
+                    setRejectingId(run.id);
+                    try {
+                      await approveMutation.mutateAsync({
+                        runId: Number(run.id),
+                        approved: false,
+                        note: '',
+                      });
+                    } finally {
+                      setRejectingId(undefined);
+                    }
+                  }}
+                >
+                  {t('runs.reject')}
+                </Button>
+              </div>
             )}
             {trace.length > 0 && (
               <Timeline

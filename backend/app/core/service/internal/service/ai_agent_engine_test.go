@@ -429,6 +429,102 @@ func TestLoopItemsClampAndValidation(t *testing.T) {
 	}
 }
 
+func TestApprovalNodePendingAndResume(t *testing.T) {
+	g := agentTestGraph(t, `{
+	  "nodes": [
+	    {"id": "start_1", "type": "start", "position": {"x":0,"y":0},
+	     "data": {"inputVars": [{"name": "topic", "required": true}]}},
+	    {"id": "appr_1", "type": "approval", "position": {"x":0,"y":0}, "data": {"label": "发布前审批"}},
+	    {"id": "end_1", "type": "end", "position": {"x":0,"y":0},
+	     "data": {"output": "{{start_1.topic}} approved={{appr_1.approved}} note={{appr_1.note}}"}}
+	  ],
+	  "edges": [
+	    {"id": "e1", "source": "start_1", "target": "appr_1"},
+	    {"id": "e2", "source": "appr_1", "target": "end_1"}
+	  ]
+	}`)
+	deps := &agentEngineDeps{}
+
+	// 首跑：在 approval 节点挂起
+	_, _, _, err := executeAgentGraph(context.Background(), g,
+		map[string]string{"topic": "Q3 计划"}, deps)
+	sig, ok := err.(*agentApprovalSignal)
+	if !ok {
+		t.Fatalf("want approval signal, got %v", err)
+	}
+	if sig.NodeID != "appr_1" {
+		t.Fatalf("pending node = %q", sig.NodeID)
+	}
+	if len(sig.trace) == 0 {
+		t.Fatalf("pending signal should carry trace")
+	}
+
+	// 校验器接受 approval 图
+	if err := validateAgentGraph(g); err != nil {
+		t.Fatalf("approval graph should validate: %v", err)
+	}
+
+	// 恢复：反序列化 vars，注入审批结论，从下游继续
+	var snap struct {
+		Vars map[string]map[string]string `json:"vars"`
+	}
+	if err := json.Unmarshal(sig.varsJSON, &snap); err != nil {
+		t.Fatalf("unmarshal vars: %v", err)
+	}
+	vars := snap.Vars
+	vars["appr_1"] = map[string]string{"approved": "true", "note": "LGTM"}
+	output, resumeTrace, _, rerr := ResumeAgentGraphFrom(context.Background(), g, vars, "appr_1",
+		map[string]string{"topic": "Q3 计划"}, deps)
+	if rerr != nil {
+		t.Fatalf("resume: %v", rerr)
+	}
+	if output != "Q3 计划 approved=true note=LGTM" {
+		t.Fatalf("resumed output = %q", output)
+	}
+	if len(resumeTrace) == 0 {
+		t.Fatalf("resume should append trace")
+	}
+}
+
+func TestApprovalGraphRejectedFlow(t *testing.T) {
+	// approval → condition(approved) 双分支：驳回走 false 支
+	g := agentTestGraph(t, `{
+	  "nodes": [
+	    {"id": "start_1", "type": "start", "position": {"x":0,"y":0}, "data": {}},
+	    {"id": "appr_1", "type": "approval", "position": {"x":0,"y":0}, "data": {}},
+	    {"id": "cond_1", "type": "condition", "position": {"x":0,"y":0},
+	     "data": {"expression": "appr_1.approved == \"true\""}},
+	    {"id": "end_ok", "type": "end", "position": {"x":0,"y":0}, "data": {"output": "published"}},
+	    {"id": "end_no", "type": "end", "position": {"x":0,"y":0}, "data": {"output": "rejected: {{appr_1.note}}"}}
+	  ],
+	  "edges": [
+	    {"id": "e1", "source": "start_1", "target": "appr_1"},
+	    {"id": "e2", "source": "appr_1", "target": "cond_1"},
+	    {"id": "e3", "source": "cond_1", "target": "end_ok", "branch": "true"},
+	    {"id": "e4", "source": "cond_1", "target": "end_no", "branch": "false"}
+	  ]
+	}`)
+	deps := &agentEngineDeps{}
+	_, _, _, err := executeAgentGraph(context.Background(), g, map[string]string{}, deps)
+	sig, ok := err.(*agentApprovalSignal)
+	if !ok {
+		t.Fatalf("want approval signal, got %v", err)
+	}
+	var snap struct {
+		Vars map[string]map[string]string `json:"vars"`
+	}
+	_ = json.Unmarshal(sig.varsJSON, &snap)
+	vars := snap.Vars
+	vars["appr_1"] = map[string]string{"approved": "false", "note": "质量不达标"}
+	output, _, _, rerr := ResumeAgentGraphFrom(context.Background(), g, vars, "appr_1", map[string]string{}, deps)
+	if rerr != nil {
+		t.Fatalf("resume: %v", rerr)
+	}
+	if output != "rejected: 质量不达标" {
+		t.Fatalf("rejected output = %q", output)
+	}
+}
+
 func TestExecuteAgentGraphMissingRequired(t *testing.T) {
 	g := agentTestGraph(t, agentLinearGraphJSON)
 	deps := &agentEngineDeps{
