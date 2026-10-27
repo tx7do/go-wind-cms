@@ -74,7 +74,9 @@ func Server(opts ...Option) middleware.Middleware {
 					operation = t.Operation()
 					endpoint = t.Endpoint()
 				}
-				log.Errorf("ent middleware: failed to get metadata from context: %v; req_type=%s; transport=%s; operation=%s; endpoint=%s",
+				// 匿名请求（登录/公开读等）本就走 md==nil 分支，属正常路径——
+				// 只留 Debug 痕迹，不打 ERROR 假 401 噪声。
+				log.Debugf("ent middleware: no operator metadata (anonymous): %v; req_type=%s; transport=%s; operation=%s; endpoint=%s",
 					err, reqType, kind, operation, endpoint)
 			}
 
