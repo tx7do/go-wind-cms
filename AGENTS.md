@@ -4,7 +4,7 @@
 
 ## 仓库布局
 
-GoWind Content Hub（HCH，无头内容中枢）：一个 Go 后端 + 一个管理后台前端 + 四套 C 端前端的 Headless CMS。
+GoWind Content Hub（无头内容中枢）：一个 Go 后端 + 一个管理后台前端 + 四套 C 端前端的 Headless CMS。
 
 ```
 backend/                        Go 1.26 + Kratos + Ent（DI 手写装配 wiring.go，已弃用 Wire）

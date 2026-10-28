@@ -17,7 +17,7 @@
 
 ---
 
-风行（GoWind HCH）是一款开箱即用的企业级 Golang 全栈 Headless 内容平台（HCH = Headless Content Hub，无头内容中枢），为企业提供灵活、可扩展的全域内容管理与分发解决方案。
+GoWind Content Hub（中文名「风行」，无头内容中枢）是一款开箱即用的企业级 Golang 全栈 Headless 内容平台，为企业提供灵活、可扩展的全域内容管理与分发解决方案。
 
 **核心亮点：**
 

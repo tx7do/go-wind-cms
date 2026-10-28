@@ -1,10 +1,10 @@
 # GoWind Content Hub Backend
 
-GoWind（风行内容中台）— 企业级无头内容中枢（Headless Content Hub），基于 Go + Vue3 + TypeScript 构建，采用 API
+GoWind Content Hub（无头内容中枢）— 企业级 Headless CMS，基于 Go + React + TypeScript 构建，采用 API
 优先、前后端分离架构，提供多语言原生支持、多端内容分发、精细化权限管控，为出海企业、多终端项目提供高可用、可扩展的解决方案。
 
 - 后端基于 [golang](https://go.dev/) + [微服务框架 go-kratos](https://go-kratos.dev/)
-- 前端基于 [Vue.js 3](https://vuejs.org/) + [TypeScript](https://www.typescriptlang.org/)
+- 管理后台前端基于 [React](https://react.dev/) + [TypeScript](https://www.typescriptlang.org/)
 
 ## 技术栈
 
@@ -16,8 +16,8 @@ GoWind（风行内容中台）— 企业级无头内容中枢（Headless Content
 - [MinIO](https://min.io/) -- 对象存储服务器
 - [Redis](https://redis.io/) -- 非关系型数据库
 - [PostgreSQL](https://www.postgresql.org/) / [MySQL](https://www.mysql.com/) -- 关系型数据库
-- [Ent](https://entgo.io/) / [GORM](https://gorm.io/index.html) -- Golang ORM框架
-- [ElasticSearch](https://www.elastic.co/cn/elasticsearch) -- 搜索引擎
+- [Ent](https://entgo.io/) -- Golang 实体框架
+- [OpenSearch](https://opensearch.org/) -- 搜索引擎
 
 ## API文档
 

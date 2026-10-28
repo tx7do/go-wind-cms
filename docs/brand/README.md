@@ -2,6 +2,7 @@
 
 品牌主名 **GoWind**，中文名 **风行**。图形主题为「风」：速度、流动、汇聚。
 Admin 是产品线之一（另有 CMS / UBA / IM / Quant 量化等），因此采用**主品牌标识 + 产品名文字后缀**的架构：图形标与字标属于 GoWind 风行，产品不单独造标。
+本仓（go-wind-cms）即 CMS 产品线，对外产品名 **GoWind Content Hub**（README 标题与 Admin 后台界面标题同名）；"GoWind CMS" 保留为产品线内部命名（MCP server 名、系统邮件标题、TOTP issuer 等运行时面）。
 
 > **✅ 2026-09-10 已选定方案 B「旋涡 Vortex」并落地三端**（见文末落地记录）。可视化对比仍见 [preview.html](./preview.html)。
 

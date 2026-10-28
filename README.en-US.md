@@ -17,7 +17,7 @@
 
 ---
 
-FengXing (GoWind HCH) is an out-of-the-box enterprise-grade Golang full-stack Headless Content Platform (HCH = Headless Content Hub), providing enterprises with flexible and scalable full-domain content management and distribution solutions.
+GoWind Content Hub is an out-of-the-box, enterprise-grade Golang full-stack headless content platform, providing enterprises with flexible and scalable full-domain content management and distribution solutions.
 
 **Key Highlights:**
 
