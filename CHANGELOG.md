@@ -101,6 +101,18 @@
   错误，权限表未更新而无感知；改为错误传播到管理页（同步本身自 1.2.0 起已
   是对账式 upsert，非空表安全）。
 
+### 变更
+
+- **对象存储 MinIO → SeaweedFS**：MinIO 社区版已于 2026-04 停止维护并归档仓库，compose 依赖切换为
+  SeaweedFS（`chrislusf/seaweedfs:4.51`，S3 兼容网关单进程）。容器服务名/主机名沿用 `minio`、
+  S3 API 端口仍为 9000——三服务 `configs/oss.yaml` 与 hosts 映射零改动，Go 代码零改动。
+  配套调整：凭证从镜像环境变量改为 compose 挂载的 `backend/scripts/docker/seaweedfs/s3.json`
+  （与 oss.yaml 凭证一致；全量部署原 `MINIO_ROOT_PASSWORD` 参数化不再生效，改密须同步 s3.json +
+  oss.yaml）；Web UI 9001 → 9333；bucket 由应用侧 `EnsureBucketExists` 自动创建。备份对象键的
+  `gowind-cms/` 项目前缀约定不变（多项目共用桶语义保持）；e2e 脚本的 `minio-server` + 容器内
+  `mc` 依赖改为 SeaweedFS 容器 `weed shell`（fs.tree/fs.cat/fs.rm）。存量数据用任意 S3 客户端
+  按桶镜像迁移（如 `mc mirror`）。
+
 ## [1.2.0] - 2026-10-15
 
 社交分发功能完整交付：图片分发、看板、收件箱、KPI 汇总、实时通知、

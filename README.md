@@ -54,7 +54,7 @@ GoWind Content Hub（中文名「风行」，无头内容中枢）是一款开�
 | ORM    | [Ent](https://entgo.io/)                                                             | Go 实体框架     |
 | 数据库    | [PostgreSQL](https://www.postgresql.org/) / [MySQL](https://www.mysql.com/)          | 关系型数据库      |
 | 缓存     | [Redis](https://redis.io/)                                                           | 内存数据库       |
-| 对象存储   | [MinIO](https://min.io/)                                                             | 兼容 S3 的对象存储 |
+| 对象存储   | [SeaweedFS](https://github.com/seaweedfs/seaweedfs)                                  | 兼容 S3 的对象存储（MinIO 停维护后的替代） |
 | 搜索引擎   | [OpenSearch](https://opensearch.org/)                                                | 全文检索        |
 | 服务注册   | [Etcd](https://etcd.io/) / [Consul](https://www.consul.io/)                          | 服务发现与配置     |
 | 链路追踪   | [Jaeger](https://www.jaegertracing.io/) + [OpenTelemetry](https://opentelemetry.io/) | 分布式可观测      |
@@ -151,7 +151,7 @@ GoWind Content Hub（中文名「风行」，无头内容中枢）是一款开�
 | Webhook 事件外发 | 内容事件（发布/更新/删除）HMAC 签名异步投递，投递记录可查 |
 | 邮件出站  | 系统通知异步 SMTP 投递，SMTP 可视化配置（凭据加密落库）+ 测试发送 |
 | 接口同步  | OpenAPI 对账式同步接口表（非空表安全，ID 稳定保护角色绑定）   |
-| 备份恢复  | 核心身份/权限/组织 24 表一键异步备份（MinIO 桶 + 项目前缀隔离），空库整体恢复保留原 ID，桶生命周期按保留期清理 |
+| 备份恢复  | 核心身份/权限/组织 24 表一键异步备份（对象存储桶 + 项目前缀隔离），空库整体恢复保留原 ID，桶生命周期按保留期清理 |
 | 系统参数  | 平台全局动态 KV 配置，参数管理页可视化调整，进程内缓存 + Redis 多实例失效广播；内置等保口令策略阈值 |
 | 在线会话  | 全量在线会话列表与强制下线，支持用户名/IP 过滤        |
 | 服务器监控 | Go 运行时/数据库连接池/主机信息只读仪表盘（10s 自动刷新）   |

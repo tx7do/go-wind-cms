@@ -54,7 +54,7 @@ GoWind Content Hub is an out-of-the-box, enterprise-grade Golang full-stack head
 | ORM | [Ent](https://entgo.io/) | Go entity framework |
 | Database | [PostgreSQL](https://www.postgresql.org/) / [MySQL](https://www.mysql.com/) | Relational database |
 | Cache | [Redis](https://redis.io/) | In-memory data store |
-| Object Storage | [MinIO](https://min.io/) | S3-compatible object storage |
+| Object Storage | [SeaweedFS](https://github.com/seaweedfs/seaweedfs) | S3-compatible object storage (replacement for the unmaintained MinIO) |
 | Search Engine | [OpenSearch](https://opensearch.org/) | Full-text search |
 | Service Registry | [Etcd](https://etcd.io/) / [Consul](https://www.consul.io/) | Service discovery & configuration |
 | Tracing | [Jaeger](https://www.jaegertracing.io/) + [OpenTelemetry](https://opentelemetry.io/) | Distributed observability |
@@ -150,7 +150,7 @@ GoWind Content Hub is an out-of-the-box, enterprise-grade Golang full-stack head
 | Webhook Events | Content events (publish/update/delete) delivered asynchronously with HMAC signatures; delivery log & test ping |
 | Email Outbound | System notifications via async SMTP; visual SMTP configuration (credentials encrypted) + test send |
 | API Sync | OpenAPI reconciliation sync for the API table (safe on non-empty tables, stable IDs protect role bindings) |
-| Backup & Restore | One-click async backup of 24 core identity/permission/org tables (MinIO bucket + project prefix isolation), empty-database restore preserving IDs, bucket lifecycle cleanup |
+| Backup & Restore | One-click async backup of 24 core identity/permission/org tables (object-storage bucket + project prefix isolation), empty-database restore preserving IDs, bucket lifecycle cleanup |
 | System Params | Platform-global dynamic KV config, visual params page, in-process cache + Redis multi-instance invalidation broadcast; built-in password policy thresholds |
 | Online Sessions | Full online session list & force logout, filter by username/IP |
 | Server Monitor | Go runtime / DB connection pool / host info read-only dashboard (10s auto-refresh) |

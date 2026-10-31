@@ -14,7 +14,7 @@ This directory contains the Lua API modules that expose Go functionality to Lua 
 | **Util** | `kratos_util` | Utility functions (sleep, time, date) | No (always available) |
 | **Cache** | `kratos_cache` | Redis cache operations | Yes - `SetRedis()` |
 | **EventBus** | `kratos_eventbus` | Event publishing/subscribing | Yes - `SetEventBus()` |
-| **OSS** | `kratos_oss` | Object storage (MinIO) operations | Yes - `SetOSS()` |
+| **OSS** | `kratos_oss` | Object storage (S3-compatible, SeaweedFS) operations | Yes - `SetOSS()` |
 
 ## Usage
 

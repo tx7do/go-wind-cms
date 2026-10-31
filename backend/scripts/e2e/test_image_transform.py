@@ -1,14 +1,15 @@
 """即时图片变换 E2E：GET /app/v1/media-assets/{id}/content?w=&h=&q=&fit=。
 
 链路：
-  1. admin 端真实上传 800×600 PNG（multipart，字节落 MinIO）
+  1. admin 端真实上传 800×600 PNG（multipart，字节落对象存储）
   2. content 无参数 → 原图直出（字节一致 + immutable 缓存头 + ETag/304）
   3. ?w=400 → JPEG 400×300（等比）；再次请求字节一致；?w=200&h=200&fit=cover → 精确 200×200
   4. ?w=9999 钳位后不放大 → 原图直出（PNG 原样）；非法参数 400
   5. GIF 上传 → content 415（不支持变换的 MIME）
-  6. 派生对象落 MinIO（mc ls 验证）；软删资产 → content 404
+  6. 派生对象落对象存储（weed shell fs.tree 验证）；软删资产 → content 404
 
-前置：core/admin(:6600)/app(:6700) 已启动且清代理；MinIO 容器名 minio-server。
+前置：core/admin(:6600)/app(:6700) 已启动且清代理；SeaweedFS 容器名 seaweedfs
+（S3 :9000；weed shell 访问，本机常驻容器名，compose 部署时按实际容器名调整）。
 用法：python test_image_transform.py
 """
 import io
@@ -190,17 +191,14 @@ check("超限钳位后不放大 → 原图直出",
 st, _, _ = app_request(f"/app/v1/media-assets/{asset_id}/content?w=abc")
 check("非法参数 400", st == 400, f"status={st}")
 
-# ===== 4. 派生对象落 MinIO =====
-mc_add = subprocess.run(
-    ["docker", "exec", "minio-server", "mc", "alias", "set", "local",
-     "http://127.0.0.1:9000", "root", "*Abcd123456"],
-    capture_output=True, text=True, timeout=20)
-ls = subprocess.run(
-    ["docker", "exec", "minio-server", "mc", "ls", "--recursive", "local/images"],
+# ===== 4. 派生对象落对象存储 =====
+tree = subprocess.run(
+    ["docker", "exec", "-i", "seaweedfs", "weed", "shell", "-filer=localhost:8888"],
+    input="fs.tree /buckets/images/\n",
     capture_output=True, text=True, timeout=30)
-check("派生对象落 MinIO",
-      ls.returncode == 0 and "w400h0q80-contain" in ls.stdout,
-      f"hit={'w400h0q80-contain' in ls.stdout} rc={ls.returncode} {ls.stderr[:80]!r}")
+check("派生对象落对象存储",
+      tree.returncode == 0 and "w400h0q80-contain" in tree.stdout,
+      f"hit={'w400h0q80-contain' in tree.stdout} rc={tree.returncode} {tree.stderr[:80]!r}")
 
 # ===== 5. GIF → 415 =====
 up = upload_asset(f"e2e-transform-{TS}.gif", make_gif(TS), "image/gif", hdr)

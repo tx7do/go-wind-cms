@@ -18,9 +18,9 @@
 
 ## 2. 备份对象
 
-- 桶：`backups`（MinIO，`UploadFile` 会自动建桶）
+- 桶：`backups`（对象存储 SeaweedFS，`UploadFile` 会自动建桶）
 - 对象键：`gowind-cms/YYYY/MM/DD/<name>-<time>.json.gz` —— **带项目前缀**。
-  dev/小部署的 MinIO 常多项目共用一个桶，清理只扫本前缀，不碰他项目对象。
+  dev/小部署的对象存储常多项目共用一个桶，清理只扫本前缀，不碰他项目对象。
 - 触发：`sys_tasks` 表的 `type_name='backup'` 任务（demo 库自带每小时一行）；
   也可在任务管理页调整 cron 或手动控制（ControlTask）。
 - 保留期：环境变量 `BACKUP_RETENTION_DAYS`（默认 30 天；**≤0 显式关闭清理**）。
@@ -33,7 +33,8 @@
 
 ### 3.1 前置
 
-- 取到一份备份产物：MinIO `backups` 桶对象（`mc cp local/backups/gowind-cms/...`）；
+- 取到一份备份产物：对象存储 `backups` 桶对象（`docker exec -i seaweedfs weed shell` 后
+  `fs.cat /buckets/backups/gowind-cms/... > backup.json.gz`，或任意 S3 客户端）；
 - 一个**空的目标数据库**（ent schema 迁移完成后、未播种的库）。
 
 ### 3.2 步骤（一次性 Go 程序，参照 `backup_restore_test.go` 的往返测试）

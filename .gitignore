@@ -13,6 +13,10 @@
 # Test binary, built with `go test -c`
 *.test
 
+# Python（backend/scripts/e2e 用）
+__pycache__/
+*.pyc
+
 # Output of the go coverage tool, specifically when used with LiteIDE
 *.out
 

@@ -1,6 +1,6 @@
 """备份档案只读管理面 E2E：列表 / 下载 gzip 魔数 / 路径穿越拒绝。
 
-前置（同 e2e_common.py）：admin(:6600)/core 已启动；MinIO 运行中。
+前置（同 e2e_common.py）：admin(:6600)/core 已启动；SeaweedFS（对象存储）运行中。
 演示库自带每小时 backup 任务——历史对象通常已存在；无对象时列表断言仍成立。
 
 断言（6 条）：

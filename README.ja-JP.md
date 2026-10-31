@@ -54,7 +54,7 @@ GoWind Content Hub（風行）は、すぐに使える企業向けの Golang フ
 | ORM | [Ent](https://entgo.io/) | Go エンティティフレームワーク |
 | データベース | [PostgreSQL](https://www.postgresql.org/) / [MySQL](https://www.mysql.com/) | リレーショナルデータベース |
 | キャッシュ | [Redis](https://redis.io/) | インメモリデータストア |
-| オブジェクトストレージ | [MinIO](https://min.io/) | S3 互換オブジェクトストレージ |
+| オブジェクトストレージ | [SeaweedFS](https://github.com/seaweedfs/seaweedfs) | S3 互換オブジェクトストレージ（保守終了した MinIO の代替） |
 | 検索エンジン | [OpenSearch](https://opensearch.org/) | 全文検索 |
 | サービスレジストリ | [Etcd](https://etcd.io/) / [Consul](https://www.consul.io/) | サービスディスカバリ & 設定管理 |
 | トレーシング | [Jaeger](https://www.jaegertracing.io/) + [OpenTelemetry](https://opentelemetry.io/) | 分散オブザーバビリティ |
@@ -150,7 +150,7 @@ GoWind Content Hub（風行）は、すぐに使える企業向けの Golang フ
 | Webhook 配信 | コンテンツイベント（公開/更新/削除）を HMAC 署名付きで非同期配信、配信履歴とテスト送信対応 |
 | メール送信 | システム通知を非同期 SMTP で配信、SMTP 可視化設定（認証情報暗号化）+ テスト送信 |
 | API 同期 | OpenAPI 整合同期（空でないテーブルでも安全、ID 安定でロールバインディングを保護） |
-| バックアップ・リストア | 中核 ID/権限/組織 24 テーブルのワンクリック非同期バックアップ（MinIO バケット + プロジェクト接頭辞分離）、空 DB 一括リストアで ID 保持、バケットライフサイクルクリーンアップ |
+| バックアップ・リストア | 中核 ID/権限/組織 24 テーブルのワンクリック非同期バックアップ（オブジェクトストレージバケット + プロジェクト接頭辞分離）、空 DB 一括リストアで ID 保持、バケットライフサイクルクリーンアップ |
 | システムパラメータ | プラットフォーム全体の動的 KV 設定、パラメータ管理ページで視覚的に調整、プロセス内キャッシュ + Redis マルチインスタンス無効化ブロードキャスト；内蔵パスワードポリシーしきい値 |
 | オンラインセッション | 全オンラインセッション一覧と強制ログアウト、ユーザー名/IP フィルタ対応 |
 | サーバーモニター | Go ランタイム/DB 接続プール/ホスト情報の読み取り専用ダッシュボード（10 秒自動更新） |

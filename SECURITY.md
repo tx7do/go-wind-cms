@@ -42,7 +42,7 @@ GoWind Content Hub 处于活跃开发中，仅对 `main` 分支最新版本提�
 - 多租户隔离：跨租户数据访问、越权读写
 - 脚手架自带业务接口（管理后台 :6600 与 C 端 app :6700）的注入、越权、信息泄露
 - Headless 内容 API 的越权访问与未授权写操作
-- 文件上传 / 下载链路（MinIO / 本地存储）
+- 文件上传 / 下载链路（SeaweedFS 对象存储 / 本地存储）
 - 前端 XSS、CSRF、敏感信息泄露
 
 ### ⚠️ 不在范围
@@ -59,7 +59,7 @@ GoWind Content Hub 处于活跃开发中，仅对 `main` 分支最新版本提�
 生产部署时请特别注意：
 
 - **改掉默认账号密码**：全新环境自动播种管理员 `admin / admin`、普通用户默认口令 `12345678`（`backend/pkg/constants/default_data.go`），上线前必须修改或禁用
-- **配置密钥**：JWT 签名密钥（配置项 `jwt_signing_key`，开发默认值 `dev_only_change_me_in_prod`）、数据库口令、Redis、MinIO 凭据一律走环境变量 / 配置文件，不要硬编码
+- **配置密钥**：JWT 签名密钥（配置项 `jwt_signing_key`，开发默认值 `dev_only_change_me_in_prod`）、数据库口令、Redis、对象存储凭据一律走环境变量 / 配置文件，不要硬编码
 - **关闭调试**：生产环境关掉 `enable_swagger` 与不必要的 verbose 日志
 - **收紧 CORS**：`app/admin/service/configs/server.yaml` 的 `cors.origins` 默认只为本机开发端口，部署时改为真实域名白名单
 - **租户隔离测试**：上线前请构造跨租户访问场景验证隔离有效性

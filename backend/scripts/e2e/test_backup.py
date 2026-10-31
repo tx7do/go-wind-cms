@@ -1,4 +1,4 @@
-"""备份恢复工具链 E2E：真实触发 backup 任务 → MinIO 对象产物校验 → 恢复前置语义抽检。
+"""备份恢复工具链 E2E：真实触发 backup 任务 → 对象存储产物校验 → 恢复前置语义抽检。
 
 链路：
   1. 把 demo 库的 backup 任务 cron 临时改为每分钟，ControlTask(Restart) 重新调度
@@ -9,7 +9,8 @@
 恢复侧（RestoreCoreTables）由 sqlite 单测钉住（往返/非空中止/未知表忽略）；
 E2E 不做活库恢复（工具语义即禁止）。
 
-前置：core/admin 已启动（含本批二进制），MinIO 运行中且容器内 mc 可用（alias local）。
+前置：core/admin 已启动（含本批二进制）；SeaweedFS 运行中（容器名 seaweedfs，
+S3 :9000，经 weed shell 访问；本机常驻容器名，compose 部署时按实际容器名调整）。
 用法：python test_backup.py
 """
 import gzip
@@ -19,7 +20,8 @@ import time
 
 from common import AdminApi, admin_login
 
-MC = ["docker", "exec", "minio-server", "mc"]
+WEED = ["docker", "exec", "-i", "seaweedfs", "weed", "shell", "-filer=localhost:8888"]
+BUCKET_DIR = "/buckets/backups/"
 PREFIX = "gowind-cms/"
 
 passed = failed = 0
@@ -35,24 +37,54 @@ def check(name, cond, extra=""):
         print(f"  ❌ {name} {extra}")
 
 
-def mc(*args):
-    r = subprocess.run(MC + list(args), capture_output=True, text=True, timeout=60)
-    return r.stdout + r.stderr
+def weed(script, timeout=60):
+    """在 SeaweedFS 容器里跑 weed shell 脚本（文本输出）。"""
+    r = subprocess.run(WEED, input=script, capture_output=True, text=True, timeout=timeout)
+    return r.returncode, r.stdout, r.stderr
+
+
+def weed_bytes(script, timeout=60):
+    """同 weed()，但字节安全（fs.cat 下载二进制对象用）。"""
+    r = subprocess.run(WEED, input=script.encode(), capture_output=True, timeout=timeout)
+    return r.returncode, r.stdout, r.stderr
+
+
+def tree_keys(filer_dir):
+    """fs.tree 输出 → 该目录下的全部相对键（含目录项；解析 ├──/└── 树形缩进）。
+
+    深度 = 4 字符缩进单元数（"    " 或 "│   "）+ 有无树形连接符，按名字栈重建路径。
+    """
+    _, out, _ = weed(f"fs.tree {filer_dir}\n")
+    keys = []
+    stack = []
+    for line in out.splitlines():
+        if not line.strip():
+            continue
+        idx, depth = 0, 0
+        while line[idx:].startswith(("    ", "│   ")):
+            idx += 4
+            depth += 1
+        rest = line[idx:]
+        has_glyph = False
+        for glyph in ("├──", "└──"):
+            if rest.startswith(glyph):
+                rest = rest[len(glyph):]
+                has_glyph = True
+                break
+        name = rest.strip()
+        if not name:
+            continue
+        if has_glyph:
+            depth += 1
+        del stack[depth:]
+        stack.append(name)
+        keys.append("/".join(stack))
+    return keys
 
 
 def list_backup_objects():
-    out = mc("ls", "--recursive", "local/backups/", "--json")
-    keys = []
-    for line in out.splitlines():
-        line = line.strip()
-        if not line:
-            continue
-        try:
-            d = json.loads(line)
-        except json.JSONDecodeError:
-            continue
-        keys.append(d.get("key", ""))
-    return [k for k in keys if k.startswith(PREFIX)]
+    return [k for k in tree_keys(BUCKET_DIR)
+            if k.startswith(PREFIX) and k.endswith(".json.gz")]
 
 
 def main():
@@ -93,12 +125,12 @@ def main():
 
     print("== 3. 对象产物校验 ==")
     if new_key:
-        out = mc("cp", f"local/backups/{new_key}", "/tmp/backup-e2e.json.gz")
-        check("对象可下载", "->" in out or "copied" in out.lower() or out.strip() == "", out.strip()[:80])
-        blob = subprocess.run(
-            MC + ["cat", "local/backups/" + new_key],
-            capture_output=True, timeout=60,
-        ).stdout
+        rc, blob, err = weed_bytes(f"fs.cat {BUCKET_DIR}{new_key}\n")
+        check("对象可下载", rc == 0 and len(blob) > 0, f"rc={rc} {len(blob)}B {err[:60]!r}")
+        # weed shell 输出可能带前导噪音，对齐到 gzip 魔数再解（1f 8b）
+        magic = blob.find(b"\x1f\x8b")
+        if magic > 0:
+            blob = blob[magic:]
         check("对象非空", len(blob) > 100, f"{len(blob)} bytes gz")
         try:
             raw = gzip.decompress(blob).decode("utf-8")
@@ -132,7 +164,7 @@ def main():
     check("cron 已还原为每小时", True)
 
     if new_key:
-        mc("rm", f"local/backups/{new_key}")
+        weed(f"fs.rm {BUCKET_DIR}{new_key}\n")
         after = list_backup_objects()
         check("测试对象已清理", new_key not in after)
 

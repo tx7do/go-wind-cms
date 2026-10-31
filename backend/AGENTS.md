@@ -14,7 +14,7 @@
 - **数据库**: PostgreSQL（主）/ MySQL，驱动 pgx/v5
 - **缓存/队列**: Redis（go-redis/v9）、Asynq 异步任务
 - **鉴权**: kratos-authn（JWT HS256）+ kratos-authz（Casbin / OPA）
-- **存储**: MinIO（S3 兼容）
+- **存储**: SeaweedFS（S3 兼容；MinIO 社区版停维护后的替代）
 - **搜索**: ElasticSearch / OpenSearch
 - **服务发现**: etcd
 - **可观测性**: OpenTelemetry + Jaeger
@@ -30,7 +30,7 @@ HTTP/REST 请求
   └─ admin-service  (网关 BFF，REST:6600 / SSE:6601 / gRPC)
        └─ gRPC → core-service  (核心业务 + 数据落点)
                  ├─ ent ORM → PostgreSQL
-                 ├─ Redis / MinIO / ElasticSearch
+                 ├─ Redis / SeaweedFS / ElasticSearch
                  └─ DTM / Asynq
 
 app-service (前台 BFF，REST:6700) ──gRPC──→ core-service
