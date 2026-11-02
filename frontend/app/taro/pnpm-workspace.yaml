@@ -7,5 +7,5 @@ allowBuilds:
   core-js-pure: false
   esbuild: false
   micromark: false
-  unrs-resolver: set this to true or false
+  unrs-resolver: false
   weapp-tailwindcss: false

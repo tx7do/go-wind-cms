@@ -10,6 +10,9 @@ import type { MetadataRoute } from 'next';
 
 const SITE_BASE_URL = (process.env.SITE_BASE_URL ?? 'http://localhost:15001').replace(/\/$/, '');
 
+// output: 'export' 要求 route handler 显式声明 force-static（构建期生成静态文件）
+export const dynamic = 'force-static';
+
 export default function robots(): MetadataRoute.Robots {
   return {
     rules: { userAgent: '*', allow: '/' },

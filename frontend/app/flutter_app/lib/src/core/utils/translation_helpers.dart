@@ -61,9 +61,9 @@ String getCategoryDescription(Category? category) {
   return getCategoryTranslation(category)?.description ?? '';
 }
 
-/// 获取分类缩略图
+/// 获取分类缩略图（缩略图在主表上，全语言共用，不走翻译表）
 String getCategoryThumbnail(Category? category, {String fallback = ''}) {
-  return getCategoryTranslation(category)?.thumbnail ?? fallback;
+  return category?.thumbnail ?? fallback;
 }
 
 // ==============================
@@ -99,9 +99,9 @@ String getPostContent(Post? post, {String fallback = ''}) {
   return getPostTranslation(post)?.content ?? fallback;
 }
 
-/// 获取文章缩略图
+/// 获取文章缩略图（缩略图在主表上，全语言共用，不走翻译表）
 String? getPostThumbnail(Post? post) {
-  return getPostTranslation(post)?.thumbnail;
+  return post?.thumbnail;
 }
 
 // ==============================

@@ -40,7 +40,9 @@ export function useAppConfig(): ApplicationConfig {
  */
 export function validateEnv(): void {
     const config = useRuntimeConfig()
+    // apiBaseUrl 允许为空 = 同源相对路径（部署层 nginx 转发 /app/v1/...），
+    // 不再强制要求独立 API 域名，故仅提示不抛错。
     if (import.meta.env.PROD && !config.public.apiBaseUrl) {
-        throw new Error('生产环境必须配置 NUXT_PUBLIC_API_BASE_URL')
+        console.warn('[use-app-config] NUXT_PUBLIC_API_BASE_URL 为空：浏览器走同源相对路径（需部署层 nginx 转发 /app/v1/...）')
     }
 }

@@ -93,8 +93,12 @@ export default defineNuxtConfig({
         },
     },
     runtimeConfig: {
+        // 服务端专用（不进客户端 bundle）：SSR 取数不能走同源相对路径
+        // （node 端 axios 无 host 上下文），优先用内部地址直连 app 服务，
+        // 与浏览器侧同源相对路径（public.apiBaseUrl 空 + nginx 转发）互补。
+        apiInternalUrl: process.env.NUXT_API_INTERNAL_URL || 'http://localhost:6700',
         public: {
-            apiBaseUrl: process.env.NUXT_PUBLIC_API_BASE_URL || 'http://localhost:8000',
+            apiBaseUrl: process.env.NUXT_PUBLIC_API_BASE_URL || '',
             enableMock: process.env.NUXT_PUBLIC_ENABLE_MOCK === 'true',
             appTitle: process.env.NUXT_PUBLIC_APP_TITLE || 'GoWind Content Hub',
             appDescription: process.env.NUXT_PUBLIC_APP_DESCRIPTION || 'A modern Content Hub built with Nuxt',

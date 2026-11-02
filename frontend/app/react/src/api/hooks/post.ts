@@ -51,6 +51,20 @@ export async function getPost(id: number) {
 }
 
 /**
+ * 按 slug（别名 code）获取单篇已发布文章 【公开帖子渲染用】
+ * 纯数字别名直接按 id 走详情；否则走 by-slug 专用端点
+ * （Get({id:0, slug}) 会让 id+slug 双绑定冲突 oneof，后端 400，与 getPageBySlug 同口径）。
+ */
+export async function getPostBySlug(slug: string) {
+  const locale = currentLocaleLanguageCode();
+  const numericId = Number(slug);
+  if (Number.isInteger(numericId) && numericId > 0) {
+    return apiClient.postService.Get({id: numericId, locale});
+  }
+  return apiClient.postService.GetBySlug({slug, locale});
+}
+
+/**
  * 创建文章
  */
 export async function createPost(values: Partial<contentservicev1_Post>) {
@@ -156,6 +170,15 @@ export async function fetchPost(id: number) {
   return queryClient.fetchQuery({
     queryKey: ['getPost', id],
     queryFn: () => getPost(id),
+    retry: 0,
+  });
+}
+
+/** 按 slug 获取单个文章 【公开帖子渲染用】（queryKey 带 slug 隔离缓存） */
+export async function fetchPostBySlug(slug: string) {
+  return queryClient.fetchQuery({
+    queryKey: ['getPostBySlug', slug, currentLocaleLanguageCode()],
+    queryFn: () => getPostBySlug(slug),
     retry: 0,
   });
 }

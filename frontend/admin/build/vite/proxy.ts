@@ -21,6 +21,9 @@ export function createProxy(list: ProxyList = []) {
         res[`^${prefix}`] = {
             target,
             changeOrigin: true,
+            // ws:true 使 /collab（协同 yjs ws）也能经 dev server 代理升级；
+            // 普通 HTTP 前缀不受影响（仅遇 Upgrade 请求才走 ws 通道）。
+            ws: true,
         };
     }
 

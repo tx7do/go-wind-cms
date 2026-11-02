@@ -847,8 +847,14 @@ class ProtoWireReader {
 
   List<String> readBytesListText() {
     final out = <String>[];
-    while (next()) {
+    final field = fieldNumber;
+    while (true) {
       out.add(readBytesText());
+      final pos = _pos;
+      if (!next() || fieldNumber != field || wireType != 2) {
+        _pos = pos;
+        break;
+      }
     }
     return out;
   }

@@ -16,6 +16,7 @@ import SectionContainer from '@/components/layout/SectionContainer';
 
 import {
     fetchPost,
+    fetchPostBySlug,
     fetchPostPreview,
     getPostTitle,
     getPostContent,
@@ -55,12 +56,19 @@ export default function PostDetailPage({ initialPost }: { initialPost?: contents
 
     const contentRef = useRef<HTMLDivElement>(null);
 
-    const postId = useMemo(() => {
+    // 路由身份仅取自 searchParams：?id= 直接用；?slug= 时由拉取到的 post 回填
+    // （静态导出后详情页无服务端取数，slug → id 的解析发生在客户端拉取完成时）。
+    const routePostId = useMemo(() => {
         const id = searchParams.get('id');
         return id ? parseInt(id) : null;
     }, [searchParams]);
     // 草稿预览：admin「预览」按钮带短时效令牌跳转，后端校验后放行非已发布内容
     const previewToken = useMemo(() => searchParams.get('preview_token') || '', [searchParams]);
+    // SEO 别名路由：?slug={code}（纯数字别名在 getPostBySlug 内按 id 处理）
+    const slug = useMemo(() => searchParams.get('slug') || '', [searchParams]);
+    // 互动计数/状态/浏览上报都挂在这个 id 上：slug 路由在 post 到手后由 null 变为真实 id，
+    // 相关查询随之以真实 id 重跑。
+    const postId = routePostId ?? post?.id ?? null;
 
     // 点赞/收藏状态：由 interaction 子系统提供。
     // useInteractionStatus 取当前 viewer 对此 post 的 {liked, watched} 初始态；
@@ -98,19 +106,25 @@ export default function PostDetailPage({ initialPost }: { initialPost?: contents
         };
     }, [post?.categoryIds, postId]);
 
-    // Load post data
+    // Load post data（静态导出：详情页无服务端取数，slug/id 均在客户端拉取）
     useEffect(() => {
         async function loadPost() {
-            if (!postId) return;
+            if (!routePostId && !slug) return;
             setLocalLoading(true);
             setPostLoading(true);
             try {
-                const fetchedPost = (await (previewToken
-                    ? fetchPostPreview(postId, previewToken)
-                    : fetchPost(postId))) as contentservicev1_Post;
-                setPost(fetchedPost);
-                if (fetchedPost) {
-                    document.title = `${getPostTitle(fetchedPost)} - GoWind Content Hub`;
+                let fetched: contentservicev1_Post | null = null;
+                if (previewToken && routePostId) {
+                    // 预览链接始终带 id（admin 签发），preview_token 优先
+                    fetched = (await fetchPostPreview(routePostId, previewToken)) as contentservicev1_Post;
+                } else if (slug) {
+                    fetched = (await fetchPostBySlug(slug)) as contentservicev1_Post;
+                } else if (routePostId) {
+                    fetched = (await fetchPost(routePostId)) as contentservicev1_Post;
+                }
+                if (fetched) {
+                    setPost(fetched);
+                    document.title = `${getPostTitle(fetched)} - GoWind Content Hub`;
                 }
             } catch (error) {
                 console.error('Load post failed:', error);
@@ -121,7 +135,7 @@ export default function PostDetailPage({ initialPost }: { initialPost?: contents
         }
         if (skipClientFetch) return;
         loadPost();
-    }, [postId, previewToken, skipClientFetch]);
+    }, [routePostId, slug, previewToken, skipClientFetch]);
 
     const [viewCount, setViewCount] = useState<number | undefined>(undefined);
 

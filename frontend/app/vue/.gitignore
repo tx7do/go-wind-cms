@@ -6,6 +6,9 @@
 .cache
 dist
 
+# 构建末步 package-zip.mjs 的交付包
+output.zip
+
 # Node dependencies
 node_modules
 

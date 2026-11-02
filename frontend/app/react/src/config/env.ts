@@ -13,9 +13,11 @@
 
 export const env = {
     /**
-     * API 基础地址
+     * API 基础地址：缺省同源相对路径（浏览器请求 /app/v1/... 由部署层 nginx
+     * 转发到 app 服务，不经独立 API 域名）。开发态由 .env.development 指向
+     * http://localhost:6700 直连。静态导出后全站客户端取数，无服务端直连路径。
      */
-    apiBaseUrl: process.env.NEXT_PUBLIC_API_BASE_URL || 'http://localhost:8000',
+    apiBaseUrl: process.env.NEXT_PUBLIC_API_BASE_URL || '',
 
     /**
      * 是否启用 Mock 数据

@@ -4,7 +4,7 @@
   "private": true,
   "scripts": {
     "dev": "node scripts/dev.mjs",
-    "build": "next build",
+    "build": "next build && node scripts/package-zip.mjs --out dist.zip --rm dist/dev dist",
     "start": "next start",
     "lint": "eslint"
   },

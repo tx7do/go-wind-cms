@@ -1,6 +1,6 @@
 'use client';
 
-import {useState, useEffect} from 'react';
+import {useState, useEffect, Suspense} from 'react';
 import {useSearchParams} from 'next/navigation';
 import {useTranslations} from 'next-intl';
 import {Skeleton} from '@/components/ui/skeleton';
@@ -53,6 +53,16 @@ function HighlightedText({fragments, fallback}: {fragments?: string[]; fallback:
 }
 
 export default function SearchPage() {
+    // useSearchParams 在静态导出 prerender 时必须有 Suspense 边界
+    // （missing-suspense-with-csr-bailout），内容组件整体下包一层。
+    return (
+        <Suspense fallback={null}>
+            <SearchPageContent />
+        </Suspense>
+    );
+}
+
+function SearchPageContent() {
     const t = useTranslations('page');
     const router = useI18nRouter();
     const searchParams = useSearchParams();

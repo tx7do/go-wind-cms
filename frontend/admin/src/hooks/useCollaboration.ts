@@ -9,6 +9,18 @@ const CURSOR_PALETTE = [
 ];
 
 /**
+ * 把同源相对 ws 路径（如 VITE_COLLAB_WS_URL=/collab）按当前页面来源
+ * 绝对化为 ws://（http 页）或 wss://（https 页）。y-websocket 的
+ * WebsocketProvider 不接受相对 URL；绝对 ws(s):// 形态则原样返回，
+ * 兼容既有按域名配置的部署。SSR/无 window 场景原样返回（admin 为纯 SPA）。
+ */
+function absolutizeWsUrl(url: string): string {
+  if (/^wss?:\/\//i.test(url) || typeof window === 'undefined') return url;
+  const proto = window.location.protocol === 'https:' ? 'wss:' : 'ws:';
+  return `${proto}//${window.location.host}${url.startsWith('/') ? url : `/${url}`}`;
+}
+
+/**
  * 实时协同选项（富文本编辑器）：
  * 房间 = {targetType}:{id}:{locale}；token 走 ws query 参数（浏览器 WS 不能带头）。
  * 未登录/无 id（创建模式）返回 null = 关闭协同。
@@ -34,7 +46,7 @@ export function useCollaboration(
     const id = userId ?? 0;
     const result = {
       room: `${targetType}:${targetId}:${locale || 'zh-CN'}`,
-      wsUrl: import.meta.env.VITE_COLLAB_WS_URL ?? 'ws://localhost:6602',
+      wsUrl: absolutizeWsUrl(import.meta.env.VITE_COLLAB_WS_URL || '/collab'),
       token,
       userName: userName || `用户${id}`,
       userColor: CURSOR_PALETTE[id % CURSOR_PALETTE.length],

@@ -3,7 +3,7 @@
   "type": "module",
   "private": true,
   "scripts": {
-    "build": "nuxt build --dotenv .env.production",
+    "build": "nuxt generate --dotenv .env.production && node scripts/package-zip.mjs --out output.zip .output/public",
     "dev": "node scripts/dev.mjs",
     "generate": "nuxt generate --dotenv .env.production",
     "preview": "nuxt preview --dotenv .env.production",

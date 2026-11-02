@@ -1,6 +1,6 @@
 'use client';
 
-import {useState} from 'react';
+import {Suspense, useState} from 'react';
 import {useTranslations} from 'next-intl';
 import {useI18nRouter} from "@/i18n/helpers";
 
@@ -36,7 +36,13 @@ export default function LoginPage() {
             {activeTab === 'account' && <AccountLoginPage/>}
             {activeTab === 'email' && <EmailLoginPage/>}
             {activeTab === 'phone' && <PhoneLoginPage/>}
-            {activeTab === 'other' && <OtherLoginPage/>}
+            {activeTab === 'other' && (
+                // OtherLoginPage 读 useSearchParams（OAuth 回调 code/state）：
+                // Suspense 边界满足静态导出 prerender 要求
+                <Suspense fallback={null}>
+                    <OtherLoginPage/>
+                </Suspense>
+            )}
         </AuthLayout>
     );
 }

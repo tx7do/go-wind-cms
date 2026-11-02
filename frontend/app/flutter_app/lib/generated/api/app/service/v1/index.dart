@@ -359,112 +359,112 @@ class AuthenticationServiceV1LoginRequest {
     // field 1: grant_type
     final f1 = grant_type;
     if (f1 != null) {
-      w.writeEnum(1, f1!.wire); // AuthenticationServiceV1GrantType
+      w.writeEnum(1, f1.wire); // AuthenticationServiceV1GrantType
     }
     // field 2: client_id
     final f2 = client_id;
     if (f2 != null) {
-      w.writeString(2, f2!);
+      w.writeString(2, f2);
     }
     // field 3: client_secret
     final f3 = client_secret;
     if (f3 != null) {
-      w.writeString(3, f3!);
+      w.writeString(3, f3);
     }
     // field 4: scope
     final f4 = scope;
     if (f4 != null) {
-      w.writeString(4, f4!);
+      w.writeString(4, f4);
     }
     // field 5: redirect_uri
     final f5 = redirect_uri;
     if (f5 != null) {
-      w.writeString(5, f5!);
+      w.writeString(5, f5);
     }
     // field 6: user_id
     final f6 = user_id;
     if (f6 != null) {
-      w.writeUint32(6, f6!);
+      w.writeUint32(6, f6);
     }
     // field 10: username
     final f10 = username;
     if (f10 != null) {
-      w.writeString(10, f10!);
+      w.writeString(10, f10);
     }
     // field 11: email
     final f11 = email;
     if (f11 != null) {
-      w.writeString(11, f11!);
+      w.writeString(11, f11);
     }
     // field 12: mobile
     final f12 = mobile;
     if (f12 != null) {
-      w.writeString(12, f12!);
+      w.writeString(12, f12);
     }
     // field 19: password
     final f19 = password;
     if (f19 != null) {
-      w.writeString(19, f19!);
+      w.writeString(19, f19);
     }
     // field 20: refresh_token
     final f20 = refresh_token;
     if (f20 != null) {
-      w.writeString(20, f20!);
+      w.writeString(20, f20);
     }
     // field 30: code
     final f30 = code;
     if (f30 != null) {
-      w.writeString(30, f30!);
+      w.writeString(30, f30);
     }
     // field 31: oidc_state
     final f31 = oidc_state;
     if (f31 != null) {
-      w.writeString(31, f31!);
+      w.writeString(31, f31);
     }
     // field 32: oidcIssuer
     final f32 = oidcIssuer;
     if (f32 != null) {
-      w.writeString(32, f32!);
+      w.writeString(32, f32);
     }
     // field 40: client_type
     final f40 = client_type;
     if (f40 != null) {
-      w.writeEnum(40, f40!.wire); // AuthenticationServiceV1ClientType
+      w.writeEnum(40, f40.wire); // AuthenticationServiceV1ClientType
     }
     // field 50: device_id
     final f50 = device_id;
     if (f50 != null) {
-      w.writeString(50, f50!);
+      w.writeString(50, f50);
     }
     // field 60: jti
     final f60 = jti;
     if (f60 != null) {
-      w.writeString(60, f60!);
+      w.writeString(60, f60);
     }
     // field 61: clientIp
     final f61 = clientIp;
     if (f61 != null) {
-      w.writeString(61, f61!);
+      w.writeString(61, f61);
     }
     // field 62: userAgent
     final f62 = userAgent;
     if (f62 != null) {
-      w.writeString(62, f62!);
+      w.writeString(62, f62);
     }
     // field 70: tenant_code
     final f70 = tenant_code;
     if (f70 != null) {
-      w.writeString(70, f70!);
+      w.writeString(70, f70);
     }
     // field 80: mfa_operation_id
     final f80 = mfa_operation_id;
     if (f80 != null) {
-      w.writeString(80, f80!);
+      w.writeString(80, f80);
     }
     // field 81: totp_code
     final f81 = totp_code;
     if (f81 != null) {
-      w.writeString(81, f81!);
+      w.writeString(81, f81);
     }
   }
 
@@ -758,47 +758,47 @@ class AuthenticationServiceV1LoginResponse {
     // field 1: token_type
     final f1 = token_type;
     if (f1 != null) {
-      w.writeEnum(1, f1!.wire); // AuthenticationServiceV1TokenType
+      w.writeEnum(1, f1.wire); // AuthenticationServiceV1TokenType
     }
     // field 2: access_token
     final f2 = access_token;
     if (f2 != null) {
-      w.writeString(2, f2!);
+      w.writeString(2, f2);
     }
     // field 3: expires_in
     final f3 = expires_in;
     if (f3 != null) {
-      w.writeInt64(3, f3!);
+      w.writeInt64(3, f3);
     }
     // field 4: refresh_token
     final f4 = refresh_token;
     if (f4 != null) {
-      w.writeString(4, f4!);
+      w.writeString(4, f4);
     }
     // field 5: scope
     final f5 = scope;
     if (f5 != null) {
-      w.writeString(5, f5!);
+      w.writeString(5, f5);
     }
     // field 6: refresh_expires_in
     final f6 = refresh_expires_in;
     if (f6 != null) {
-      w.writeInt64(6, f6!);
+      w.writeInt64(6, f6);
     }
     // field 7: id_token
     final f7 = id_token;
     if (f7 != null) {
-      w.writeString(7, f7!);
+      w.writeString(7, f7);
     }
     // field 60: jti
     final f60 = jti;
     if (f60 != null) {
-      w.writeString(60, f60!);
+      w.writeString(60, f60);
     }
     // field 80: mfa_operation_id
     final f80 = mfa_operation_id;
     if (f80 != null) {
-      w.writeString(80, f80!);
+      w.writeString(80, f80);
     }
   }
 
@@ -944,7 +944,7 @@ class AuthenticationServiceV1GetOidcAuthorizeUrlRequest {
     // field 1: redirect_uri
     final f1 = redirect_uri;
     if (f1 != null) {
-      w.writeString(1, f1!);
+      w.writeString(1, f1);
     }
   }
 
@@ -1028,7 +1028,7 @@ class AuthenticationServiceV1GetOidcAuthorizeUrlResponse {
     // field 1: authorizeUrl
     final f1 = authorizeUrl;
     if (f1 != null) {
-      w.writeString(1, f1!);
+      w.writeString(1, f1);
     }
   }
 
@@ -1363,62 +1363,62 @@ class PaginationPagingRequest {
     // field 1: page
     final f1 = page;
     if (f1 != null) {
-      w.writeUint32(1, f1!);
+      w.writeUint32(1, f1);
     }
     // field 2: pageSize
     final f2 = pageSize;
     if (f2 != null) {
-      w.writeUint32(2, f2!);
+      w.writeUint32(2, f2);
     }
     // field 3: offset
     final f3 = offset;
     if (f3 != null) {
-      w.writeUint64(3, f3!);
+      w.writeUint64(3, f3);
     }
     // field 4: limit
     final f4 = limit;
     if (f4 != null) {
-      w.writeUint32(4, f4!);
+      w.writeUint32(4, f4);
     }
     // field 5: token
     final f5 = token;
     if (f5 != null) {
-      w.writeString(5, f5!);
+      w.writeString(5, f5);
     }
     // field 6: noPaging
     final f6 = noPaging;
     if (f6 != null) {
-      w.writeBool(6, f6!);
+      w.writeBool(6, f6);
     }
     // field 10: query
     final f10 = query;
     if (f10 != null) {
-      w.writeString(10, f10!);
+      w.writeString(10, f10);
     }
     // field 11: filter
     final f11 = filter;
     if (f11 != null) {
-      w.writeString(11, f11!);
+      w.writeString(11, f11);
     }
     // field 12: filterExpr
     final f12 = filterExpr;
     if (f12 != null) {
-      final cw = ProtoWireWriter(); f12!._writeTo(cw); w.writeRaw(12, cw.toBuffer()); // PaginationFilterExpr
+      final cw = ProtoWireWriter(); f12._writeTo(cw); w.writeRaw(12, cw.toBuffer()); // PaginationFilterExpr
     }
     // field 20: orderBy
     final f20 = orderBy;
     if (f20 != null) {
-      w.writeString(20, f20!);
+      w.writeString(20, f20);
     }
     // field 21: sorting
     final f21 = sorting;
     if (f21 != null) {
-      for (final e in f21!) { final cw = ProtoWireWriter(); e._writeTo(cw); w.writeRaw(21, cw.toBuffer()); }
+      for (final e in f21) { final cw = ProtoWireWriter(); e._writeTo(cw); w.writeRaw(21, cw.toBuffer()); }
     }
     // field 30: fieldMask
     final f30 = fieldMask;
     if (f30 != null) {
-      w.writeFieldMask(30, f30!);
+      w.writeFieldMask(30, f30);
     }
   }
 
@@ -1576,17 +1576,17 @@ class PaginationFilterExpr {
     // field 1: type
     final f1 = type;
     if (f1 != null) {
-      w.writeEnum(1, f1!.wire); // PaginationExprType
+      w.writeEnum(1, f1.wire); // PaginationExprType
     }
     // field 2: conditions
     final f2 = conditions;
     if (f2 != null) {
-      for (final e in f2!) { final cw = ProtoWireWriter(); e._writeTo(cw); w.writeRaw(2, cw.toBuffer()); }
+      for (final e in f2) { final cw = ProtoWireWriter(); e._writeTo(cw); w.writeRaw(2, cw.toBuffer()); }
     }
     // field 3: groups
     final f3 = groups;
     if (f3 != null) {
-      for (final e in f3!) { final cw = ProtoWireWriter(); e._writeTo(cw); w.writeRaw(3, cw.toBuffer()); }
+      for (final e in f3) { final cw = ProtoWireWriter(); e._writeTo(cw); w.writeRaw(3, cw.toBuffer()); }
     }
   }
 
@@ -1756,32 +1756,32 @@ class PaginationFilterCondition {
     // field 1: field
     final f1 = field;
     if (f1 != null) {
-      w.writeString(1, f1!);
+      w.writeString(1, f1);
     }
     // field 2: op
     final f2 = op;
     if (f2 != null) {
-      w.writeEnum(2, f2!.wire); // PaginationOperator
+      w.writeEnum(2, f2.wire); // PaginationOperator
     }
     // field 3: value
     final f3 = value;
     if (f3 != null) {
-      w.writeString(3, f3!);
+      w.writeString(3, f3);
     }
     // field 4: values
     final f4 = values;
     if (f4 != null) {
-      w.writeStringList(4, f4!);
+      w.writeStringList(4, f4);
     }
     // field 5: datePart
     final f5 = datePart;
     if (f5 != null) {
-      w.writeEnum(5, f5!.wire); // PaginationDatePart
+      w.writeEnum(5, f5.wire); // PaginationDatePart
     }
     // field 6: jsonPath
     final f6 = jsonPath;
     if (f6 != null) {
-      w.writeString(6, f6!);
+      w.writeString(6, f6);
     }
     // field 7: jsonValue
     final f7 = jsonValue;
@@ -1830,8 +1830,7 @@ class PaginationFilterCondition {
         }
         // field 7: jsonValue
         case 7: {
-          m.jsonValue = (throw UnsupportedError('dart-http wire: google.protobuf.Value not supported'));
-          break;
+          throw UnsupportedError('dart-http wire: google.protobuf.Value not supported');
         }
         default: {
           r.skip();
@@ -1990,12 +1989,12 @@ class PaginationSorting {
     // field 1: field
     final f1 = field;
     if (f1 != null) {
-      w.writeString(1, f1!);
+      w.writeString(1, f1);
     }
     // field 2: direction
     final f2 = direction;
     if (f2 != null) {
-      w.writeEnum(2, f2!.wire); // PaginationSorting$Direction
+      w.writeEnum(2, f2.wire); // PaginationSorting$Direction
     }
   }
 
@@ -2114,12 +2113,12 @@ class ContentServiceV1ListCategoryResponse {
     // field 1: items
     final f1 = items;
     if (f1 != null) {
-      for (final e in f1!) { final cw = ProtoWireWriter(); e._writeTo(cw); w.writeRaw(1, cw.toBuffer()); }
+      for (final e in f1) { final cw = ProtoWireWriter(); e._writeTo(cw); w.writeRaw(1, cw.toBuffer()); }
     }
     // field 2: total
     final f2 = total;
     if (f2 != null) {
-      w.writeUint64(2, f2!);
+      w.writeUint64(2, f2);
     }
   }
 
@@ -2384,62 +2383,62 @@ class ContentServiceV1Category {
     // field 1: id
     final f1 = id;
     if (f1 != null) {
-      w.writeUint32(1, f1!);
+      w.writeUint32(1, f1);
     }
     // field 2: status
     final f2 = status;
     if (f2 != null) {
-      w.writeEnum(2, f2!.wire); // ContentServiceV1Category$CategoryStatus
+      w.writeEnum(2, f2.wire); // ContentServiceV1Category$CategoryStatus
     }
     // field 3: sortOrder
     final f3 = sortOrder;
     if (f3 != null) {
-      w.writeUint32(3, f3!);
+      w.writeUint32(3, f3);
     }
     // field 4: isNav
     final f4 = isNav;
     if (f4 != null) {
-      w.writeBool(4, f4!);
+      w.writeBool(4, f4);
     }
     // field 5: icon
     final f5 = icon;
     if (f5 != null) {
-      w.writeString(5, f5!);
+      w.writeString(5, f5);
     }
     // field 6: code
     final f6 = code;
     if (f6 != null) {
-      w.writeString(6, f6!);
+      w.writeString(6, f6);
     }
     // field 7: thumbnail
     final f7 = thumbnail;
     if (f7 != null) {
-      w.writeString(7, f7!);
+      w.writeString(7, f7);
     }
     // field 10: postCount
     final f10 = postCount;
     if (f10 != null) {
-      w.writeUint32(10, f10!);
+      w.writeUint32(10, f10);
     }
     // field 11: directPostCount
     final f11 = directPostCount;
     if (f11 != null) {
-      w.writeUint32(11, f11!);
+      w.writeUint32(11, f11);
     }
     // field 20: translations
     final f20 = translations;
     if (f20 != null) {
-      for (final e in f20!) { final cw = ProtoWireWriter(); e._writeTo(cw); w.writeRaw(20, cw.toBuffer()); }
+      for (final e in f20) { final cw = ProtoWireWriter(); e._writeTo(cw); w.writeRaw(20, cw.toBuffer()); }
     }
     // field 21: availableLanguages
     final f21 = availableLanguages;
     if (f21 != null) {
-      w.writeStringList(21, f21!);
+      w.writeStringList(21, f21);
     }
     // field 30: customFields
     final f30 = customFields;
     if (f30 != null) {
-      f30!.forEach((k, v) {
+      f30.forEach((k, v) {
         final ew = ProtoWireWriter();
         ew.writeString(1, k);
         ew.writeString(2, v);
@@ -2449,57 +2448,57 @@ class ContentServiceV1Category {
     // field 31: contentModelId
     final f31 = contentModelId;
     if (f31 != null) {
-      w.writeUint32(31, f31!);
+      w.writeUint32(31, f31);
     }
     // field 60: parentId
     final f60 = parentId;
     if (f60 != null) {
-      w.writeUint32(60, f60!);
+      w.writeUint32(60, f60);
     }
     // field 61: children
     final f61 = children;
     if (f61 != null) {
-      for (final e in f61!) { final cw = ProtoWireWriter(); e._writeTo(cw); w.writeRaw(61, cw.toBuffer()); }
+      for (final e in f61) { final cw = ProtoWireWriter(); e._writeTo(cw); w.writeRaw(61, cw.toBuffer()); }
     }
     // field 62: depth
     final f62 = depth;
     if (f62 != null) {
-      w.writeInt32(62, f62!);
+      w.writeInt32(62, f62);
     }
     // field 63: path
     final f63 = path;
     if (f63 != null) {
-      w.writeString(63, f63!);
+      w.writeString(63, f63);
     }
     // field 100: createdBy
     final f100 = createdBy;
     if (f100 != null) {
-      w.writeUint32(100, f100!);
+      w.writeUint32(100, f100);
     }
     // field 101: updatedBy
     final f101 = updatedBy;
     if (f101 != null) {
-      w.writeUint32(101, f101!);
+      w.writeUint32(101, f101);
     }
     // field 102: deletedBy
     final f102 = deletedBy;
     if (f102 != null) {
-      w.writeUint32(102, f102!);
+      w.writeUint32(102, f102);
     }
     // field 200: createdAt
     final f200 = createdAt;
     if (f200 != null) {
-      w.writeTimestamp(200, f200!);
+      w.writeTimestamp(200, f200);
     }
     // field 201: updatedAt
     final f201 = updatedAt;
     if (f201 != null) {
-      w.writeTimestamp(201, f201!);
+      w.writeTimestamp(201, f201);
     }
     // field 202: deletedAt
     final f202 = deletedAt;
     if (f202 != null) {
-      w.writeTimestamp(202, f202!);
+      w.writeTimestamp(202, f202);
     }
   }
 
@@ -2585,7 +2584,7 @@ class ContentServiceV1Category {
             }
           }
           if (k != null && v != null) {
-            (m.customFields ??= {})[k!] = v!;
+            (m.customFields ??= {})[k] = v;
           }
           break;
         }
@@ -2843,77 +2842,77 @@ class ContentServiceV1CategoryTranslation {
     // field 1: id
     final f1 = id;
     if (f1 != null) {
-      w.writeUint32(1, f1!);
+      w.writeUint32(1, f1);
     }
     // field 2: categoryId
     final f2 = categoryId;
     if (f2 != null) {
-      w.writeUint32(2, f2!);
+      w.writeUint32(2, f2);
     }
     // field 3: languageCode
     final f3 = languageCode;
     if (f3 != null) {
-      w.writeString(3, f3!);
+      w.writeString(3, f3);
     }
     // field 10: name
     final f10 = name;
     if (f10 != null) {
-      w.writeString(10, f10!);
+      w.writeString(10, f10);
     }
     // field 11: slug
     final f11 = slug;
     if (f11 != null) {
-      w.writeString(11, f11!);
+      w.writeString(11, f11);
     }
     // field 12: description
     final f12 = description;
     if (f12 != null) {
-      w.writeString(12, f12!);
+      w.writeString(12, f12);
     }
     // field 14: coverImage
     final f14 = coverImage;
     if (f14 != null) {
-      w.writeString(14, f14!);
+      w.writeString(14, f14);
     }
     // field 20: fullPath
     final f20 = fullPath;
     if (f20 != null) {
-      w.writeString(20, f20!);
+      w.writeString(20, f20);
     }
     // field 30: seo
     final f30 = seo;
     if (f30 != null) {
-      final cw = ProtoWireWriter(); f30!._writeTo(cw); w.writeRaw(30, cw.toBuffer()); // ContentServiceV1SeoMeta
+      final cw = ProtoWireWriter(); f30._writeTo(cw); w.writeRaw(30, cw.toBuffer()); // ContentServiceV1SeoMeta
     }
     // field 100: createdBy
     final f100 = createdBy;
     if (f100 != null) {
-      w.writeUint32(100, f100!);
+      w.writeUint32(100, f100);
     }
     // field 101: updatedBy
     final f101 = updatedBy;
     if (f101 != null) {
-      w.writeUint32(101, f101!);
+      w.writeUint32(101, f101);
     }
     // field 102: deletedBy
     final f102 = deletedBy;
     if (f102 != null) {
-      w.writeUint32(102, f102!);
+      w.writeUint32(102, f102);
     }
     // field 200: createdAt
     final f200 = createdAt;
     if (f200 != null) {
-      w.writeTimestamp(200, f200!);
+      w.writeTimestamp(200, f200);
     }
     // field 201: updatedAt
     final f201 = updatedAt;
     if (f201 != null) {
-      w.writeTimestamp(201, f201!);
+      w.writeTimestamp(201, f201);
     }
     // field 202: deletedAt
     final f202 = deletedAt;
     if (f202 != null) {
-      w.writeTimestamp(202, f202!);
+      w.writeTimestamp(202, f202);
     }
   }
 
@@ -3115,37 +3114,37 @@ class ContentServiceV1SeoMeta {
     // field 1: seoTitle
     final f1 = seoTitle;
     if (f1 != null) {
-      w.writeString(1, f1!);
+      w.writeString(1, f1);
     }
     // field 2: metaKeywords
     final f2 = metaKeywords;
     if (f2 != null) {
-      w.writeString(2, f2!);
+      w.writeString(2, f2);
     }
     // field 3: metaDescription
     final f3 = metaDescription;
     if (f3 != null) {
-      w.writeString(3, f3!);
+      w.writeString(3, f3);
     }
     // field 4: ogTitle
     final f4 = ogTitle;
     if (f4 != null) {
-      w.writeString(4, f4!);
+      w.writeString(4, f4);
     }
     // field 5: ogDescription
     final f5 = ogDescription;
     if (f5 != null) {
-      w.writeString(5, f5!);
+      w.writeString(5, f5);
     }
     // field 6: ogImage
     final f6 = ogImage;
     if (f6 != null) {
-      w.writeString(6, f6!);
+      w.writeString(6, f6);
     }
     // field 33: canonicalUrl
     final f33 = canonicalUrl;
     if (f33 != null) {
-      w.writeString(33, f33!);
+      w.writeString(33, f33);
     }
   }
 
@@ -3287,22 +3286,22 @@ class ContentServiceV1GetCategoryRequest {
     // field 1: id
     final f1 = id;
     if (f1 != null) {
-      w.writeUint32(1, f1!);
+      w.writeUint32(1, f1);
     }
     // field 2: code
     final f2 = code;
     if (f2 != null) {
-      w.writeString(2, f2!);
+      w.writeString(2, f2);
     }
     // field 10: locale
     final f10 = locale;
     if (f10 != null) {
-      w.writeString(10, f10!);
+      w.writeString(10, f10);
     }
     // field 100: viewMask
     final f100 = viewMask;
     if (f100 != null) {
-      w.writeFieldMask(100, f100!);
+      w.writeFieldMask(100, f100);
     }
   }
 
@@ -3401,7 +3400,7 @@ class ContentServiceV1CreateCategoryRequest {
     // field 1: data
     final f1 = data;
     if (f1 != null) {
-      final cw = ProtoWireWriter(); f1!._writeTo(cw); w.writeRaw(1, cw.toBuffer()); // ContentServiceV1Category
+      final cw = ProtoWireWriter(); f1._writeTo(cw); w.writeRaw(1, cw.toBuffer()); // ContentServiceV1Category
     }
   }
 
@@ -3509,22 +3508,22 @@ class ContentServiceV1UpdateCategoryRequest {
     // field 1: id
     final f1 = id;
     if (f1 != null) {
-      w.writeUint32(1, f1!);
+      w.writeUint32(1, f1);
     }
     // field 2: data
     final f2 = data;
     if (f2 != null) {
-      final cw = ProtoWireWriter(); f2!._writeTo(cw); w.writeRaw(2, cw.toBuffer()); // ContentServiceV1Category
+      final cw = ProtoWireWriter(); f2._writeTo(cw); w.writeRaw(2, cw.toBuffer()); // ContentServiceV1Category
     }
     // field 3: updateMask
     final f3 = updateMask;
     if (f3 != null) {
-      w.writeFieldMask(3, f3!);
+      w.writeFieldMask(3, f3);
     }
     // field 4: allowMissing
     final f4 = allowMissing;
     if (f4 != null) {
-      w.writeBool(4, f4!);
+      w.writeBool(4, f4);
     }
   }
 
@@ -3623,7 +3622,7 @@ class ContentServiceV1DeleteCategoryRequest {
     // field 1: id
     final f1 = id;
     if (f1 != null) {
-      w.writeUint32(1, f1!);
+      w.writeUint32(1, f1);
     }
   }
 
@@ -3831,12 +3830,12 @@ class CommentServiceV1ListCommentResponse {
     // field 1: items
     final f1 = items;
     if (f1 != null) {
-      for (final e in f1!) { final cw = ProtoWireWriter(); e._writeTo(cw); w.writeRaw(1, cw.toBuffer()); }
+      for (final e in f1) { final cw = ProtoWireWriter(); e._writeTo(cw); w.writeRaw(1, cw.toBuffer()); }
     }
     // field 2: total
     final f2 = total;
     if (f2 != null) {
-      w.writeUint64(2, f2!);
+      w.writeUint64(2, f2);
     }
   }
 
@@ -4117,127 +4116,127 @@ class CommentServiceV1Comment {
     // field 1: id
     final f1 = id;
     if (f1 != null) {
-      w.writeUint32(1, f1!);
+      w.writeUint32(1, f1);
     }
     // field 2: contentType
     final f2 = contentType;
     if (f2 != null) {
-      w.writeEnum(2, f2!.wire); // CommentServiceV1Comment$ContentType
+      w.writeEnum(2, f2.wire); // CommentServiceV1Comment$ContentType
     }
     // field 3: objectId
     final f3 = objectId;
     if (f3 != null) {
-      w.writeUint32(3, f3!);
+      w.writeUint32(3, f3);
     }
     // field 4: content
     final f4 = content;
     if (f4 != null) {
-      w.writeString(4, f4!);
+      w.writeString(4, f4);
     }
     // field 10: authorId
     final f10 = authorId;
     if (f10 != null) {
-      w.writeUint32(10, f10!);
+      w.writeUint32(10, f10);
     }
     // field 11: authorName
     final f11 = authorName;
     if (f11 != null) {
-      w.writeString(11, f11!);
+      w.writeString(11, f11);
     }
     // field 12: authorEmail
     final f12 = authorEmail;
     if (f12 != null) {
-      w.writeString(12, f12!);
+      w.writeString(12, f12);
     }
     // field 13: authorUrl
     final f13 = authorUrl;
     if (f13 != null) {
-      w.writeString(13, f13!);
+      w.writeString(13, f13);
     }
     // field 14: authorType
     final f14 = authorType;
     if (f14 != null) {
-      w.writeEnum(14, f14!.wire); // CommentServiceV1Comment$AuthorType
+      w.writeEnum(14, f14.wire); // CommentServiceV1Comment$AuthorType
     }
     // field 20: status
     final f20 = status;
     if (f20 != null) {
-      w.writeEnum(20, f20!.wire); // CommentServiceV1Comment$Status
+      w.writeEnum(20, f20.wire); // CommentServiceV1Comment$Status
     }
     // field 24: ipAddress
     final f24 = ipAddress;
     if (f24 != null) {
-      w.writeString(24, f24!);
+      w.writeString(24, f24);
     }
     // field 25: location
     final f25 = location;
     if (f25 != null) {
-      w.writeString(25, f25!);
+      w.writeString(25, f25);
     }
     // field 26: userAgent
     final f26 = userAgent;
     if (f26 != null) {
-      w.writeString(26, f26!);
+      w.writeString(26, f26);
     }
     // field 27: detectedLanguage
     final f27 = detectedLanguage;
     if (f27 != null) {
-      w.writeString(27, f27!);
+      w.writeString(27, f27);
     }
     // field 30: isSpam
     final f30 = isSpam;
     if (f30 != null) {
-      w.writeBool(30, f30!);
+      w.writeBool(30, f30);
     }
     // field 31: isSticky
     final f31 = isSticky;
     if (f31 != null) {
-      w.writeBool(31, f31!);
+      w.writeBool(31, f31);
     }
     // field 50: parentId
     final f50 = parentId;
     if (f50 != null) {
-      w.writeUint32(50, f50!);
+      w.writeUint32(50, f50);
     }
     // field 51: children
     final f51 = children;
     if (f51 != null) {
-      for (final e in f51!) { final cw = ProtoWireWriter(); e._writeTo(cw); w.writeRaw(51, cw.toBuffer()); }
+      for (final e in f51) { final cw = ProtoWireWriter(); e._writeTo(cw); w.writeRaw(51, cw.toBuffer()); }
     }
     // field 52: replyToId
     final f52 = replyToId;
     if (f52 != null) {
-      w.writeUint32(52, f52!);
+      w.writeUint32(52, f52);
     }
     // field 100: createdBy
     final f100 = createdBy;
     if (f100 != null) {
-      w.writeUint32(100, f100!);
+      w.writeUint32(100, f100);
     }
     // field 101: updatedBy
     final f101 = updatedBy;
     if (f101 != null) {
-      w.writeUint32(101, f101!);
+      w.writeUint32(101, f101);
     }
     // field 102: deletedBy
     final f102 = deletedBy;
     if (f102 != null) {
-      w.writeUint32(102, f102!);
+      w.writeUint32(102, f102);
     }
     // field 200: createdAt
     final f200 = createdAt;
     if (f200 != null) {
-      w.writeTimestamp(200, f200!);
+      w.writeTimestamp(200, f200);
     }
     // field 201: updatedAt
     final f201 = updatedAt;
     if (f201 != null) {
-      w.writeTimestamp(201, f201!);
+      w.writeTimestamp(201, f201);
     }
     // field 202: deletedAt
     final f202 = deletedAt;
     if (f202 != null) {
-      w.writeTimestamp(202, f202!);
+      w.writeTimestamp(202, f202);
     }
   }
 
@@ -4511,12 +4510,12 @@ class CommentServiceV1GetCommentRequest {
     // field 1: id
     final f1 = id;
     if (f1 != null) {
-      w.writeUint32(1, f1!);
+      w.writeUint32(1, f1);
     }
     // field 100: viewMask
     final f100 = viewMask;
     if (f100 != null) {
-      w.writeFieldMask(100, f100!);
+      w.writeFieldMask(100, f100);
     }
   }
 
@@ -4605,7 +4604,7 @@ class CommentServiceV1CreateCommentRequest {
     // field 1: data
     final f1 = data;
     if (f1 != null) {
-      final cw = ProtoWireWriter(); f1!._writeTo(cw); w.writeRaw(1, cw.toBuffer()); // CommentServiceV1Comment
+      final cw = ProtoWireWriter(); f1._writeTo(cw); w.writeRaw(1, cw.toBuffer()); // CommentServiceV1Comment
     }
   }
 
@@ -4713,22 +4712,22 @@ class CommentServiceV1UpdateCommentRequest {
     // field 1: id
     final f1 = id;
     if (f1 != null) {
-      w.writeUint32(1, f1!);
+      w.writeUint32(1, f1);
     }
     // field 2: data
     final f2 = data;
     if (f2 != null) {
-      final cw = ProtoWireWriter(); f2!._writeTo(cw); w.writeRaw(2, cw.toBuffer()); // CommentServiceV1Comment
+      final cw = ProtoWireWriter(); f2._writeTo(cw); w.writeRaw(2, cw.toBuffer()); // CommentServiceV1Comment
     }
     // field 3: updateMask
     final f3 = updateMask;
     if (f3 != null) {
-      w.writeFieldMask(3, f3!);
+      w.writeFieldMask(3, f3);
     }
     // field 4: allowMissing
     final f4 = allowMissing;
     if (f4 != null) {
-      w.writeBool(4, f4!);
+      w.writeBool(4, f4);
     }
   }
 
@@ -4827,7 +4826,7 @@ class CommentServiceV1DeleteCommentRequest {
     // field 1: id
     final f1 = id;
     if (f1 != null) {
-      w.writeUint32(1, f1!);
+      w.writeUint32(1, f1);
     }
   }
 
@@ -5053,47 +5052,47 @@ class StorageServiceV1DownloadFileRequest {
     // field 1: fileId
     final f1 = fileId;
     if (f1 != null) {
-      w.writeUint32(1, f1!);
+      w.writeUint32(1, f1);
     }
     // field 2: storageObject
     final f2 = storageObject;
     if (f2 != null) {
-      final cw = ProtoWireWriter(); f2!._writeTo(cw); w.writeRaw(2, cw.toBuffer()); // StorageServiceV1StorageObject
+      final cw = ProtoWireWriter(); f2._writeTo(cw); w.writeRaw(2, cw.toBuffer()); // StorageServiceV1StorageObject
     }
     // field 3: downloadUrl
     final f3 = downloadUrl;
     if (f3 != null) {
-      w.writeString(3, f3!);
+      w.writeString(3, f3);
     }
     // field 4: rangeStart
     final f4 = rangeStart;
     if (f4 != null) {
-      w.writeInt64(4, f4!);
+      w.writeInt64(4, f4);
     }
     // field 5: rangeEnd
     final f5 = rangeEnd;
     if (f5 != null) {
-      w.writeInt64(5, f5!);
+      w.writeInt64(5, f5);
     }
     // field 6: preferPresignedUrl
     final f6 = preferPresignedUrl;
     if (f6 != null) {
-      w.writeBool(6, f6!);
+      w.writeBool(6, f6);
     }
     // field 7: presignExpireSeconds
     final f7 = presignExpireSeconds;
     if (f7 != null) {
-      w.writeInt32(7, f7!);
+      w.writeInt32(7, f7);
     }
     // field 8: disposition
     final f8 = disposition;
     if (f8 != null) {
-      w.writeString(8, f8!);
+      w.writeString(8, f8);
     }
     // field 9: acceptMime
     final f9 = acceptMime;
     if (f9 != null) {
-      w.writeString(9, f9!);
+      w.writeString(9, f9);
     }
   }
 
@@ -5233,17 +5232,17 @@ class StorageServiceV1StorageObject {
     // field 1: bucketName
     final f1 = bucketName;
     if (f1 != null) {
-      w.writeString(1, f1!);
+      w.writeString(1, f1);
     }
     // field 2: fileDirectory
     final f2 = fileDirectory;
     if (f2 != null) {
-      w.writeString(2, f2!);
+      w.writeString(2, f2);
     }
     // field 3: objectName
     final f3 = objectName;
     if (f3 != null) {
-      w.writeString(3, f3!);
+      w.writeString(3, f3);
     }
   }
 
@@ -5391,41 +5390,44 @@ class StorageServiceV1DownloadFileResponse {
 
   void _writeTo(ProtoWireWriter w) {
     // field 1: file
-    throw UnsupportedError('dart-http wire: field storage.service.v1.DownloadFileResponse.file');
+    final f1 = file;
+    if (f1 != null) {
+      throw UnsupportedError('dart-http wire: field storage.service.v1.DownloadFileResponse.file');
+    }
     // field 2: downloadUrl
     final f2 = downloadUrl;
     if (f2 != null) {
-      w.writeString(2, f2!);
+      w.writeString(2, f2);
     }
     // field 3: sourceFileName
     final f3 = sourceFileName;
     if (f3 != null) {
-      w.writeString(3, f3!);
+      w.writeString(3, f3);
     }
     // field 4: mime
     final f4 = mime;
     if (f4 != null) {
-      w.writeString(4, f4!);
+      w.writeString(4, f4);
     }
     // field 5: size
     final f5 = size;
     if (f5 != null) {
-      w.writeInt64(5, f5!);
+      w.writeInt64(5, f5);
     }
     // field 6: checksum
     final f6 = checksum;
     if (f6 != null) {
-      w.writeString(6, f6!);
+      w.writeString(6, f6);
     }
     // field 7: storagePath
     final f7 = storagePath;
     if (f7 != null) {
-      w.writeString(7, f7!);
+      w.writeString(7, f7);
     }
     // field 8: updatedAt
     final f8 = updatedAt;
     if (f8 != null) {
-      w.writeTimestamp(8, f8!);
+      w.writeTimestamp(8, f8);
     }
   }
 
@@ -5599,39 +5601,42 @@ class StorageServiceV1UploadFileRequest {
     // field 1: storageObject
     final f1 = storageObject;
     if (f1 != null) {
-      final cw = ProtoWireWriter(); f1!._writeTo(cw); w.writeRaw(1, cw.toBuffer()); // StorageServiceV1StorageObject
+      final cw = ProtoWireWriter(); f1._writeTo(cw); w.writeRaw(1, cw.toBuffer()); // StorageServiceV1StorageObject
     }
     // field 2: file
-    throw UnsupportedError('dart-http wire: field storage.service.v1.UploadFileRequest.file');
+    final f2 = file;
+    if (f2 != null) {
+      throw UnsupportedError('dart-http wire: field storage.service.v1.UploadFileRequest.file');
+    }
     // field 3: presign
     final f3 = presign;
     if (f3 != null) {
-      final cw = ProtoWireWriter(); f3!._writeTo(cw); w.writeRaw(3, cw.toBuffer()); // StorageServiceV1PresignOption
+      final cw = ProtoWireWriter(); f3._writeTo(cw); w.writeRaw(3, cw.toBuffer()); // StorageServiceV1PresignOption
     }
     // field 4: sourceFileName
     final f4 = sourceFileName;
     if (f4 != null) {
-      w.writeString(4, f4!);
+      w.writeString(4, f4);
     }
     // field 5: mime
     final f5 = mime;
     if (f5 != null) {
-      w.writeString(5, f5!);
+      w.writeString(5, f5);
     }
     // field 6: size
     final f6 = size;
     if (f6 != null) {
-      w.writeInt64(6, f6!);
+      w.writeInt64(6, f6);
     }
     // field 10: tenantId
     final f10 = tenantId;
     if (f10 != null) {
-      w.writeUint32(10, f10!);
+      w.writeUint32(10, f10);
     }
     // field 11: userId
     final f11 = userId;
     if (f11 != null) {
-      w.writeUint32(11, f11!);
+      w.writeUint32(11, f11);
     }
   }
 
@@ -5766,17 +5771,17 @@ class StorageServiceV1PresignOption {
     // field 1: method
     final f1 = method;
     if (f1 != null) {
-      w.writeString(1, f1!);
+      w.writeString(1, f1);
     }
     // field 2: expireSeconds
     final f2 = expireSeconds;
     if (f2 != null) {
-      w.writeInt32(2, f2!);
+      w.writeInt32(2, f2);
     }
     // field 3: contentType
     final f3 = contentType;
     if (f3 != null) {
-      w.writeString(3, f3!);
+      w.writeString(3, f3);
     }
   }
 
@@ -5877,12 +5882,12 @@ class StorageServiceV1UploadFileResponse {
     // field 1: objectName
     final f1 = objectName;
     if (f1 != null) {
-      w.writeString(1, f1!);
+      w.writeString(1, f1);
     }
     // field 2: presignedUrl
     final f2 = presignedUrl;
     if (f2 != null) {
-      w.writeString(2, f2!);
+      w.writeString(2, f2);
     }
   }
 
@@ -6007,17 +6012,17 @@ class ContentServiceV1SubmitFormSubmissionRequest {
     // field 1: pageId
     final f1 = pageId;
     if (f1 != null) {
-      w.writeUint32(1, f1!);
+      w.writeUint32(1, f1);
     }
     // field 2: sectionId
     final f2 = sectionId;
     if (f2 != null) {
-      w.writeUint32(2, f2!);
+      w.writeUint32(2, f2);
     }
     // field 3: data
     final f3 = data;
     if (f3 != null) {
-      f3!.forEach((k, v) {
+      f3.forEach((k, v) {
         final ew = ProtoWireWriter();
         ew.writeString(1, k);
         ew.writeString(2, v);
@@ -6063,7 +6068,7 @@ class ContentServiceV1SubmitFormSubmissionRequest {
             }
           }
           if (k != null && v != null) {
-            (m.data ??= {})[k!] = v!;
+            (m.data ??= {})[k] = v;
           }
           break;
         }
@@ -6174,22 +6179,22 @@ class ContentServiceV1FormSubmission {
     // field 1: id
     final f1 = id;
     if (f1 != null) {
-      w.writeUint32(1, f1!);
+      w.writeUint32(1, f1);
     }
     // field 2: pageId
     final f2 = pageId;
     if (f2 != null) {
-      w.writeUint32(2, f2!);
+      w.writeUint32(2, f2);
     }
     // field 3: sectionId
     final f3 = sectionId;
     if (f3 != null) {
-      w.writeUint32(3, f3!);
+      w.writeUint32(3, f3);
     }
     // field 4: data
     final f4 = data;
     if (f4 != null) {
-      f4!.forEach((k, v) {
+      f4.forEach((k, v) {
         final ew = ProtoWireWriter();
         ew.writeString(1, k);
         ew.writeString(2, v);
@@ -6199,12 +6204,12 @@ class ContentServiceV1FormSubmission {
     // field 5: userId
     final f5 = userId;
     if (f5 != null) {
-      w.writeUint32(5, f5!);
+      w.writeUint32(5, f5);
     }
     // field 200: createdAt
     final f200 = createdAt;
     if (f200 != null) {
-      w.writeTimestamp(200, f200!);
+      w.writeTimestamp(200, f200);
     }
   }
 
@@ -6250,7 +6255,7 @@ class ContentServiceV1FormSubmission {
             }
           }
           if (k != null && v != null) {
-            (m.data ??= {})[k!] = v!;
+            (m.data ??= {})[k] = v;
           }
           break;
         }
@@ -6470,12 +6475,12 @@ class InteractionServiceV1LikeRequest {
     // field 1: targetType
     final f1 = targetType;
     if (f1 != null) {
-      w.writeEnum(1, f1!.wire); // InteractionServiceV1TargetType
+      w.writeEnum(1, f1.wire); // InteractionServiceV1TargetType
     }
     // field 2: targetId
     final f2 = targetId;
     if (f2 != null) {
-      w.writeUint32(2, f2!);
+      w.writeUint32(2, f2);
     }
   }
 
@@ -6591,12 +6596,12 @@ class InteractionServiceV1LikeResponse {
     // field 1: liked
     final f1 = liked;
     if (f1 != null) {
-      w.writeBool(1, f1!);
+      w.writeBool(1, f1);
     }
     // field 2: likeCount
     final f2 = likeCount;
     if (f2 != null) {
-      w.writeInt32(2, f2!);
+      w.writeInt32(2, f2);
     }
   }
 
@@ -6684,7 +6689,7 @@ class InteractionServiceV1WatchRequest {
     // field 1: postId
     final f1 = postId;
     if (f1 != null) {
-      w.writeUint32(1, f1!);
+      w.writeUint32(1, f1);
     }
   }
 
@@ -6775,12 +6780,12 @@ class InteractionServiceV1WatchResponse {
     // field 1: watched
     final f1 = watched;
     if (f1 != null) {
-      w.writeBool(1, f1!);
+      w.writeBool(1, f1);
     }
     // field 2: watchCount
     final f2 = watchCount;
     if (f2 != null) {
-      w.writeInt32(2, f2!);
+      w.writeInt32(2, f2);
     }
   }
 
@@ -6876,12 +6881,12 @@ class InteractionServiceV1GetInteractionStatusRequest {
     // field 1: targetType
     final f1 = targetType;
     if (f1 != null) {
-      w.writeEnum(1, f1!.wire); // InteractionServiceV1TargetType
+      w.writeEnum(1, f1.wire); // InteractionServiceV1TargetType
     }
     // field 2: targetIds
     final f2 = targetIds;
     if (f2 != null) {
-      w.writePackedVarintList(2, f2!);
+      w.writePackedVarintList(2, f2);
     }
   }
 
@@ -6969,9 +6974,9 @@ class InteractionServiceV1GetInteractionStatusResponse {
     // field 1: statuses
     final f1 = statuses;
     if (f1 != null) {
-      f1!.forEach((k, v) {
+      f1.forEach((k, v) {
         final ew = ProtoWireWriter();
-        ew.writeUint32(1, k);
+        ew.writeUint32(1, int.parse(k));
         final vw = ProtoWireWriter(); v._writeTo(vw); ew.writeRaw(2, vw.toBuffer());
         w.writeRaw(1, ew.toBuffer());
       });
@@ -6989,12 +6994,12 @@ class InteractionServiceV1GetInteractionStatusResponse {
         // field 1: statuses
         case 1: {
           final er = r.readNested();
-          int? k;
+          String? k;
           InteractionServiceV1InteractionStatus? v;
           while (er.next()) {
             switch (er.fieldNumber) {
               case 1: {
-                k = er.readUint32();
+                k = er.readUint32().toString();
                 break;
               }
               case 2: {
@@ -7005,7 +7010,7 @@ class InteractionServiceV1GetInteractionStatusResponse {
             }
           }
           if (k != null && v != null) {
-            (m.statuses ??= {})[k!] = v!;
+            (m.statuses ??= {})[k] = v;
           }
           break;
         }
@@ -7083,12 +7088,12 @@ class InteractionServiceV1InteractionStatus {
     // field 1: liked
     final f1 = liked;
     if (f1 != null) {
-      w.writeBool(1, f1!);
+      w.writeBool(1, f1);
     }
     // field 2: watched
     final f2 = watched;
     if (f2 != null) {
-      w.writeBool(2, f2!);
+      w.writeBool(2, f2);
     }
   }
 
@@ -7185,12 +7190,12 @@ class ContentServiceV1ListPostResponse {
     // field 1: items
     final f1 = items;
     if (f1 != null) {
-      for (final e in f1!) { final cw = ProtoWireWriter(); e._writeTo(cw); w.writeRaw(1, cw.toBuffer()); }
+      for (final e in f1) { final cw = ProtoWireWriter(); e._writeTo(cw); w.writeRaw(1, cw.toBuffer()); }
     }
     // field 2: total
     final f2 = total;
     if (f2 != null) {
-      w.writeUint64(2, f2!);
+      w.writeUint64(2, f2);
     }
   }
 
@@ -7471,67 +7476,67 @@ class ContentServiceV1Post {
     // field 1: id
     final f1 = id;
     if (f1 != null) {
-      w.writeUint32(1, f1!);
+      w.writeUint32(1, f1);
     }
     // field 2: status
     final f2 = status;
     if (f2 != null) {
-      w.writeEnum(2, f2!.wire); // ContentServiceV1Post$PostStatus
+      w.writeEnum(2, f2.wire); // ContentServiceV1Post$PostStatus
     }
     // field 3: editorType
     final f3 = editorType;
     if (f3 != null) {
-      w.writeEnum(3, f3!.wire); // ContentServiceV1EditorType
+      w.writeEnum(3, f3.wire); // ContentServiceV1EditorType
     }
     // field 4: code
     final f4 = code;
     if (f4 != null) {
-      w.writeString(4, f4!);
+      w.writeString(4, f4);
     }
     // field 5: disallowComment
     final f5 = disallowComment;
     if (f5 != null) {
-      w.writeBool(5, f5!);
+      w.writeBool(5, f5);
     }
     // field 6: inProgress
     final f6 = inProgress;
     if (f6 != null) {
-      w.writeBool(6, f6!);
+      w.writeBool(6, f6);
     }
     // field 7: autoSummary
     final f7 = autoSummary;
     if (f7 != null) {
-      w.writeBool(7, f7!);
+      w.writeBool(7, f7);
     }
     // field 8: isFeatured
     final f8 = isFeatured;
     if (f8 != null) {
-      w.writeBool(8, f8!);
+      w.writeBool(8, f8);
     }
     // field 9: sortOrder
     final f9 = sortOrder;
     if (f9 != null) {
-      w.writeUint32(9, f9!);
+      w.writeUint32(9, f9);
     }
     // field 13: thumbnail
     final f13 = thumbnail;
     if (f13 != null) {
-      w.writeString(13, f13!);
+      w.writeString(13, f13);
     }
     // field 20: authorId
     final f20 = authorId;
     if (f20 != null) {
-      w.writeUint32(20, f20!);
+      w.writeUint32(20, f20);
     }
     // field 21: authorName
     final f21 = authorName;
     if (f21 != null) {
-      w.writeString(21, f21!);
+      w.writeString(21, f21);
     }
     // field 30: customFields
     final f30 = customFields;
     if (f30 != null) {
-      f30!.forEach((k, v) {
+      f30.forEach((k, v) {
         final ew = ProtoWireWriter();
         ew.writeString(1, k);
         ew.writeString(2, v);
@@ -7541,62 +7546,62 @@ class ContentServiceV1Post {
     // field 40: translations
     final f40 = translations;
     if (f40 != null) {
-      for (final e in f40!) { final cw = ProtoWireWriter(); e._writeTo(cw); w.writeRaw(40, cw.toBuffer()); }
+      for (final e in f40) { final cw = ProtoWireWriter(); e._writeTo(cw); w.writeRaw(40, cw.toBuffer()); }
     }
     // field 41: availableLanguages
     final f41 = availableLanguages;
     if (f41 != null) {
-      w.writeStringList(41, f41!);
+      w.writeStringList(41, f41);
     }
     // field 50: categoryIds
     final f50 = categoryIds;
     if (f50 != null) {
-      w.writePackedVarintList(50, f50!);
+      w.writePackedVarintList(50, f50);
     }
     // field 51: tagIds
     final f51 = tagIds;
     if (f51 != null) {
-      w.writePackedVarintList(51, f51!);
+      w.writePackedVarintList(51, f51);
     }
     // field 60: passwordHash
     final f60 = passwordHash;
     if (f60 != null) {
-      w.writeString(60, f60!);
+      w.writeString(60, f60);
     }
     // field 100: createdBy
     final f100 = createdBy;
     if (f100 != null) {
-      w.writeUint32(100, f100!);
+      w.writeUint32(100, f100);
     }
     // field 101: updatedBy
     final f101 = updatedBy;
     if (f101 != null) {
-      w.writeUint32(101, f101!);
+      w.writeUint32(101, f101);
     }
     // field 102: deletedBy
     final f102 = deletedBy;
     if (f102 != null) {
-      w.writeUint32(102, f102!);
+      w.writeUint32(102, f102);
     }
     // field 200: createdAt
     final f200 = createdAt;
     if (f200 != null) {
-      w.writeTimestamp(200, f200!);
+      w.writeTimestamp(200, f200);
     }
     // field 201: updatedAt
     final f201 = updatedAt;
     if (f201 != null) {
-      w.writeTimestamp(201, f201!);
+      w.writeTimestamp(201, f201);
     }
     // field 202: deletedAt
     final f202 = deletedAt;
     if (f202 != null) {
-      w.writeTimestamp(202, f202!);
+      w.writeTimestamp(202, f202);
     }
     // field 203: publishTime
     final f203 = publishTime;
     if (f203 != null) {
-      w.writeTimestamp(203, f203!);
+      w.writeTimestamp(203, f203);
     }
   }
 
@@ -7687,7 +7692,7 @@ class ContentServiceV1Post {
             }
           }
           if (k != null && v != null) {
-            (m.customFields ??= {})[k!] = v!;
+            (m.customFields ??= {})[k] = v;
           }
           break;
         }
@@ -7990,87 +7995,87 @@ class ContentServiceV1PostTranslation {
     // field 1: id
     final f1 = id;
     if (f1 != null) {
-      w.writeUint32(1, f1!);
+      w.writeUint32(1, f1);
     }
     // field 2: postId
     final f2 = postId;
     if (f2 != null) {
-      w.writeUint32(2, f2!);
+      w.writeUint32(2, f2);
     }
     // field 3: languageCode
     final f3 = languageCode;
     if (f3 != null) {
-      w.writeString(3, f3!);
+      w.writeString(3, f3);
     }
     // field 10: title
     final f10 = title;
     if (f10 != null) {
-      w.writeString(10, f10!);
+      w.writeString(10, f10);
     }
     // field 11: slug
     final f11 = slug;
     if (f11 != null) {
-      w.writeString(11, f11!);
+      w.writeString(11, f11);
     }
     // field 12: summary
     final f12 = summary;
     if (f12 != null) {
-      w.writeString(12, f12!);
+      w.writeString(12, f12);
     }
     // field 13: content
     final f13 = content;
     if (f13 != null) {
-      w.writeString(13, f13!);
+      w.writeString(13, f13);
     }
     // field 14: originalContent
     final f14 = originalContent;
     if (f14 != null) {
-      w.writeString(14, f14!);
+      w.writeString(14, f14);
     }
     // field 17: fullPath
     final f17 = fullPath;
     if (f17 != null) {
-      w.writeString(17, f17!);
+      w.writeString(17, f17);
     }
     // field 18: wordCount
     final f18 = wordCount;
     if (f18 != null) {
-      w.writeUint32(18, f18!);
+      w.writeUint32(18, f18);
     }
     // field 20: seo
     final f20 = seo;
     if (f20 != null) {
-      final cw = ProtoWireWriter(); f20!._writeTo(cw); w.writeRaw(20, cw.toBuffer()); // ContentServiceV1SeoMeta
+      final cw = ProtoWireWriter(); f20._writeTo(cw); w.writeRaw(20, cw.toBuffer()); // ContentServiceV1SeoMeta
     }
     // field 100: createdBy
     final f100 = createdBy;
     if (f100 != null) {
-      w.writeUint32(100, f100!);
+      w.writeUint32(100, f100);
     }
     // field 101: updatedBy
     final f101 = updatedBy;
     if (f101 != null) {
-      w.writeUint32(101, f101!);
+      w.writeUint32(101, f101);
     }
     // field 102: deletedBy
     final f102 = deletedBy;
     if (f102 != null) {
-      w.writeUint32(102, f102!);
+      w.writeUint32(102, f102);
     }
     // field 200: createdAt
     final f200 = createdAt;
     if (f200 != null) {
-      w.writeTimestamp(200, f200!);
+      w.writeTimestamp(200, f200);
     }
     // field 201: updatedAt
     final f201 = updatedAt;
     if (f201 != null) {
-      w.writeTimestamp(201, f201!);
+      w.writeTimestamp(201, f201);
     }
     // field 202: deletedAt
     final f202 = deletedAt;
     if (f202 != null) {
-      w.writeTimestamp(202, f202!);
+      w.writeTimestamp(202, f202);
     }
   }
 
@@ -8249,17 +8254,17 @@ class InteractionServiceV1GetCountsRequest {
     // field 1: targetType
     final f1 = targetType;
     if (f1 != null) {
-      w.writeEnum(1, f1!.wire); // InteractionServiceV1TargetType
+      w.writeEnum(1, f1.wire); // InteractionServiceV1TargetType
     }
     // field 2: targetIds
     final f2 = targetIds;
     if (f2 != null) {
-      w.writePackedVarintList(2, f2!);
+      w.writePackedVarintList(2, f2);
     }
     // field 3: metrics
     final f3 = metrics;
     if (f3 != null) {
-      w.writePackedVarintList(3, f3!.map((e) => e.wire).toList()); // InteractionServiceV1CounterMetric
+      w.writePackedVarintList(3, f3.map((e) => e.wire).toList()); // InteractionServiceV1CounterMetric
     }
   }
 
@@ -8375,9 +8380,9 @@ class InteractionServiceV1GetCountsResponse {
     // field 1: counts
     final f1 = counts;
     if (f1 != null) {
-      f1!.forEach((k, v) {
+      f1.forEach((k, v) {
         final ew = ProtoWireWriter();
-        ew.writeUint32(1, k);
+        ew.writeUint32(1, int.parse(k));
         final vw = ProtoWireWriter(); v._writeTo(vw); ew.writeRaw(2, vw.toBuffer());
         w.writeRaw(1, ew.toBuffer());
       });
@@ -8395,12 +8400,12 @@ class InteractionServiceV1GetCountsResponse {
         // field 1: counts
         case 1: {
           final er = r.readNested();
-          int? k;
+          String? k;
           InteractionServiceV1CountMap? v;
           while (er.next()) {
             switch (er.fieldNumber) {
               case 1: {
-                k = er.readUint32();
+                k = er.readUint32().toString();
                 break;
               }
               case 2: {
@@ -8411,7 +8416,7 @@ class InteractionServiceV1GetCountsResponse {
             }
           }
           if (k != null && v != null) {
-            (m.counts ??= {})[k!] = v!;
+            (m.counts ??= {})[k] = v;
           }
           break;
         }
@@ -8482,7 +8487,7 @@ class InteractionServiceV1CountMap {
     // field 1: counts
     final f1 = counts;
     if (f1 != null) {
-      for (final e in f1!) { final cw = ProtoWireWriter(); e._writeTo(cw); w.writeRaw(1, cw.toBuffer()); }
+      for (final e in f1) { final cw = ProtoWireWriter(); e._writeTo(cw); w.writeRaw(1, cw.toBuffer()); }
     }
   }
 
@@ -8575,12 +8580,12 @@ class InteractionServiceV1MetricCount {
     // field 1: metric
     final f1 = metric;
     if (f1 != null) {
-      w.writeEnum(1, f1!.wire); // InteractionServiceV1CounterMetric
+      w.writeEnum(1, f1.wire); // InteractionServiceV1CounterMetric
     }
     // field 2: count
     final f2 = count;
     if (f2 != null) {
-      w.writeInt64(2, f2!);
+      w.writeInt64(2, f2);
     }
   }
 
@@ -8677,12 +8682,12 @@ class InteractionServiceV1RecordViewRequest {
     // field 1: targetType
     final f1 = targetType;
     if (f1 != null) {
-      w.writeEnum(1, f1!.wire); // InteractionServiceV1TargetType
+      w.writeEnum(1, f1.wire); // InteractionServiceV1TargetType
     }
     // field 2: targetId
     final f2 = targetId;
     if (f2 != null) {
-      w.writeUint32(2, f2!);
+      w.writeUint32(2, f2);
     }
   }
 
@@ -8771,7 +8776,7 @@ class InteractionServiceV1RecordViewResponse {
     // field 1: viewCount
     final f1 = viewCount;
     if (f1 != null) {
-      w.writeInt64(1, f1!);
+      w.writeInt64(1, f1);
     }
   }
 
@@ -8891,12 +8896,12 @@ class MediaServiceV1GetMediaAssetRequest {
     // field 1: id
     final f1 = id;
     if (f1 != null) {
-      w.writeUint32(1, f1!);
+      w.writeUint32(1, f1);
     }
     // field 100: viewMask
     final f100 = viewMask;
     if (f100 != null) {
-      w.writeFieldMask(100, f100!);
+      w.writeFieldMask(100, f100);
     }
   }
 
@@ -9195,92 +9200,92 @@ class MediaServiceV1MediaAsset {
     // field 1: id
     final f1 = id;
     if (f1 != null) {
-      w.writeUint32(1, f1!);
+      w.writeUint32(1, f1);
     }
     // field 2: type
     final f2 = type;
     if (f2 != null) {
-      w.writeEnum(2, f2!.wire); // MediaServiceV1MediaAsset$AssetType
+      w.writeEnum(2, f2.wire); // MediaServiceV1MediaAsset$AssetType
     }
     // field 3: filename
     final f3 = filename;
     if (f3 != null) {
-      w.writeString(3, f3!);
+      w.writeString(3, f3);
     }
     // field 4: mimeType
     final f4 = mimeType;
     if (f4 != null) {
-      w.writeString(4, f4!);
+      w.writeString(4, f4);
     }
     // field 5: size
     final f5 = size;
     if (f5 != null) {
-      w.writeUint64(5, f5!);
+      w.writeUint64(5, f5);
     }
     // field 6: storagePath
     final f6 = storagePath;
     if (f6 != null) {
-      w.writeString(6, f6!);
+      w.writeString(6, f6);
     }
     // field 7: url
     final f7 = url;
     if (f7 != null) {
-      w.writeString(7, f7!);
+      w.writeString(7, f7);
     }
     // field 8: width
     final f8 = width;
     if (f8 != null) {
-      w.writeUint32(8, f8!);
+      w.writeUint32(8, f8);
     }
     // field 9: height
     final f9 = height;
     if (f9 != null) {
-      w.writeUint32(9, f9!);
+      w.writeUint32(9, f9);
     }
     // field 10: duration
     final f10 = duration;
     if (f10 != null) {
-      w.writeUint32(10, f10!);
+      w.writeUint32(10, f10);
     }
     // field 11: altText
     final f11 = altText;
     if (f11 != null) {
-      w.writeString(11, f11!);
+      w.writeString(11, f11);
     }
     // field 12: title
     final f12 = title;
     if (f12 != null) {
-      w.writeString(12, f12!);
+      w.writeString(12, f12);
     }
     // field 13: caption
     final f13 = caption;
     if (f13 != null) {
-      w.writeString(13, f13!);
+      w.writeString(13, f13);
     }
     // field 14: processingStatus
     final f14 = processingStatus;
     if (f14 != null) {
-      w.writeEnum(14, f14!.wire); // MediaServiceV1MediaAsset$ProcessingStatus
+      w.writeEnum(14, f14.wire); // MediaServiceV1MediaAsset$ProcessingStatus
     }
     // field 15: processingError
     final f15 = processingError;
     if (f15 != null) {
-      w.writeString(15, f15!);
+      w.writeString(15, f15);
     }
     // field 16: fileHash
     final f16 = fileHash;
     if (f16 != null) {
-      w.writeString(16, f16!);
+      w.writeString(16, f16);
     }
     // field 17: referenceCount
     final f17 = referenceCount;
     if (f17 != null) {
-      w.writeUint32(17, f17!);
+      w.writeUint32(17, f17);
     }
     // field 18: variantFileIds
     final f18 = variantFileIds;
     if (f18 != null) {
-      f18!.forEach((k, v) {
+      f18.forEach((k, v) {
         final ew = ProtoWireWriter();
         ew.writeString(1, k);
         ew.writeUint32(2, v);
@@ -9290,47 +9295,47 @@ class MediaServiceV1MediaAsset {
     // field 20: isPrivate
     final f20 = isPrivate;
     if (f20 != null) {
-      w.writeBool(20, f20!);
+      w.writeBool(20, f20);
     }
     // field 21: fileId
     final f21 = fileId;
     if (f21 != null) {
-      w.writeUint32(21, f21!);
+      w.writeUint32(21, f21);
     }
     // field 22: folderId
     final f22 = folderId;
     if (f22 != null) {
-      w.writeUint32(22, f22!);
+      w.writeUint32(22, f22);
     }
     // field 100: createdBy
     final f100 = createdBy;
     if (f100 != null) {
-      w.writeUint32(100, f100!);
+      w.writeUint32(100, f100);
     }
     // field 101: updatedBy
     final f101 = updatedBy;
     if (f101 != null) {
-      w.writeUint32(101, f101!);
+      w.writeUint32(101, f101);
     }
     // field 102: deletedBy
     final f102 = deletedBy;
     if (f102 != null) {
-      w.writeUint32(102, f102!);
+      w.writeUint32(102, f102);
     }
     // field 200: createdAt
     final f200 = createdAt;
     if (f200 != null) {
-      w.writeTimestamp(200, f200!);
+      w.writeTimestamp(200, f200);
     }
     // field 201: updatedAt
     final f201 = updatedAt;
     if (f201 != null) {
-      w.writeTimestamp(201, f201!);
+      w.writeTimestamp(201, f201);
     }
     // field 202: deletedAt
     final f202 = deletedAt;
     if (f202 != null) {
-      w.writeTimestamp(202, f202!);
+      w.writeTimestamp(202, f202);
     }
   }
 
@@ -9446,7 +9451,7 @@ class MediaServiceV1MediaAsset {
             }
           }
           if (k != null && v != null) {
-            (m.variantFileIds ??= {})[k!] = v!;
+            (m.variantFileIds ??= {})[k] = v;
           }
           break;
         }
@@ -9733,12 +9738,12 @@ class SiteServiceV1ListNavigationResponse {
     // field 1: items
     final f1 = items;
     if (f1 != null) {
-      for (final e in f1!) { final cw = ProtoWireWriter(); e._writeTo(cw); w.writeRaw(1, cw.toBuffer()); }
+      for (final e in f1) { final cw = ProtoWireWriter(); e._writeTo(cw); w.writeRaw(1, cw.toBuffer()); }
     }
     // field 2: total
     final f2 = total;
     if (f2 != null) {
-      w.writeUint64(2, f2!);
+      w.writeUint64(2, f2);
     }
   }
 
@@ -9915,62 +9920,62 @@ class SiteServiceV1Navigation {
     // field 1: id
     final f1 = id;
     if (f1 != null) {
-      w.writeUint32(1, f1!);
+      w.writeUint32(1, f1);
     }
     // field 2: name
     final f2 = name;
     if (f2 != null) {
-      w.writeString(2, f2!);
+      w.writeString(2, f2);
     }
     // field 3: location
     final f3 = location;
     if (f3 != null) {
-      w.writeEnum(3, f3!.wire); // SiteServiceV1Navigation$Location
+      w.writeEnum(3, f3.wire); // SiteServiceV1Navigation$Location
     }
     // field 4: locale
     final f4 = locale;
     if (f4 != null) {
-      w.writeString(4, f4!);
+      w.writeString(4, f4);
     }
     // field 5: isActive
     final f5 = isActive;
     if (f5 != null) {
-      w.writeBool(5, f5!);
+      w.writeBool(5, f5);
     }
     // field 10: items
     final f10 = items;
     if (f10 != null) {
-      for (final e in f10!) { final cw = ProtoWireWriter(); e._writeTo(cw); w.writeRaw(10, cw.toBuffer()); }
+      for (final e in f10) { final cw = ProtoWireWriter(); e._writeTo(cw); w.writeRaw(10, cw.toBuffer()); }
     }
     // field 100: createdBy
     final f100 = createdBy;
     if (f100 != null) {
-      w.writeUint32(100, f100!);
+      w.writeUint32(100, f100);
     }
     // field 101: updatedBy
     final f101 = updatedBy;
     if (f101 != null) {
-      w.writeUint32(101, f101!);
+      w.writeUint32(101, f101);
     }
     // field 102: deletedBy
     final f102 = deletedBy;
     if (f102 != null) {
-      w.writeUint32(102, f102!);
+      w.writeUint32(102, f102);
     }
     // field 200: createdAt
     final f200 = createdAt;
     if (f200 != null) {
-      w.writeTimestamp(200, f200!);
+      w.writeTimestamp(200, f200);
     }
     // field 201: updatedAt
     final f201 = updatedAt;
     if (f201 != null) {
-      w.writeTimestamp(201, f201!);
+      w.writeTimestamp(201, f201);
     }
     // field 202: deletedAt
     final f202 = deletedAt;
     if (f202 != null) {
-      w.writeTimestamp(202, f202!);
+      w.writeTimestamp(202, f202);
     }
   }
 
@@ -10284,102 +10289,102 @@ class SiteServiceV1NavigationItem {
     // field 1: id
     final f1 = id;
     if (f1 != null) {
-      w.writeUint32(1, f1!);
+      w.writeUint32(1, f1);
     }
     // field 2: navigationId
     final f2 = navigationId;
     if (f2 != null) {
-      w.writeUint32(2, f2!);
+      w.writeUint32(2, f2);
     }
     // field 3: title
     final f3 = title;
     if (f3 != null) {
-      w.writeString(3, f3!);
+      w.writeString(3, f3);
     }
     // field 4: description
     final f4 = description;
     if (f4 != null) {
-      w.writeString(4, f4!);
+      w.writeString(4, f4);
     }
     // field 5: icon
     final f5 = icon;
     if (f5 != null) {
-      w.writeString(5, f5!);
+      w.writeString(5, f5);
     }
     // field 6: url
     final f6 = url;
     if (f6 != null) {
-      w.writeString(6, f6!);
+      w.writeString(6, f6);
     }
     // field 7: linkType
     final f7 = linkType;
     if (f7 != null) {
-      w.writeEnum(7, f7!.wire); // SiteServiceV1NavigationItem$LinkType
+      w.writeEnum(7, f7.wire); // SiteServiceV1NavigationItem$LinkType
     }
     // field 8: objectId
     final f8 = objectId;
     if (f8 != null) {
-      w.writeUint32(8, f8!);
+      w.writeUint32(8, f8);
     }
     // field 9: sortOrder
     final f9 = sortOrder;
     if (f9 != null) {
-      w.writeUint32(9, f9!);
+      w.writeUint32(9, f9);
     }
     // field 10: isOpenNewTab
     final f10 = isOpenNewTab;
     if (f10 != null) {
-      w.writeBool(10, f10!);
+      w.writeBool(10, f10);
     }
     // field 11: isInvalid
     final f11 = isInvalid;
     if (f11 != null) {
-      w.writeBool(11, f11!);
+      w.writeBool(11, f11);
     }
     // field 12: requiredPermission
     final f12 = requiredPermission;
     if (f12 != null) {
-      w.writeString(12, f12!);
+      w.writeString(12, f12);
     }
     // field 50: parentId
     final f50 = parentId;
     if (f50 != null) {
-      w.writeUint32(50, f50!);
+      w.writeUint32(50, f50);
     }
     // field 51: children
     final f51 = children;
     if (f51 != null) {
-      for (final e in f51!) { final cw = ProtoWireWriter(); e._writeTo(cw); w.writeRaw(51, cw.toBuffer()); }
+      for (final e in f51) { final cw = ProtoWireWriter(); e._writeTo(cw); w.writeRaw(51, cw.toBuffer()); }
     }
     // field 100: createdBy
     final f100 = createdBy;
     if (f100 != null) {
-      w.writeUint32(100, f100!);
+      w.writeUint32(100, f100);
     }
     // field 101: updatedBy
     final f101 = updatedBy;
     if (f101 != null) {
-      w.writeUint32(101, f101!);
+      w.writeUint32(101, f101);
     }
     // field 102: deletedBy
     final f102 = deletedBy;
     if (f102 != null) {
-      w.writeUint32(102, f102!);
+      w.writeUint32(102, f102);
     }
     // field 200: createdAt
     final f200 = createdAt;
     if (f200 != null) {
-      w.writeTimestamp(200, f200!);
+      w.writeTimestamp(200, f200);
     }
     // field 201: updatedAt
     final f201 = updatedAt;
     if (f201 != null) {
-      w.writeTimestamp(201, f201!);
+      w.writeTimestamp(201, f201);
     }
     // field 202: deletedAt
     final f202 = deletedAt;
     if (f202 != null) {
-      w.writeTimestamp(202, f202!);
+      w.writeTimestamp(202, f202);
     }
   }
 
@@ -10596,17 +10601,17 @@ class SiteServiceV1GetNavigationRequest {
     // field 1: id
     final f1 = id;
     if (f1 != null) {
-      w.writeUint32(1, f1!);
+      w.writeUint32(1, f1);
     }
     // field 2: name
     final f2 = name;
     if (f2 != null) {
-      w.writeString(2, f2!);
+      w.writeString(2, f2);
     }
     // field 100: viewMask
     final f100 = viewMask;
     if (f100 != null) {
-      w.writeFieldMask(100, f100!);
+      w.writeFieldMask(100, f100);
     }
   }
 
@@ -10700,7 +10705,7 @@ class SiteServiceV1CreateNavigationRequest {
     // field 1: data
     final f1 = data;
     if (f1 != null) {
-      final cw = ProtoWireWriter(); f1!._writeTo(cw); w.writeRaw(1, cw.toBuffer()); // SiteServiceV1Navigation
+      final cw = ProtoWireWriter(); f1._writeTo(cw); w.writeRaw(1, cw.toBuffer()); // SiteServiceV1Navigation
     }
   }
 
@@ -10808,22 +10813,22 @@ class SiteServiceV1UpdateNavigationRequest {
     // field 1: id
     final f1 = id;
     if (f1 != null) {
-      w.writeUint32(1, f1!);
+      w.writeUint32(1, f1);
     }
     // field 2: data
     final f2 = data;
     if (f2 != null) {
-      final cw = ProtoWireWriter(); f2!._writeTo(cw); w.writeRaw(2, cw.toBuffer()); // SiteServiceV1Navigation
+      final cw = ProtoWireWriter(); f2._writeTo(cw); w.writeRaw(2, cw.toBuffer()); // SiteServiceV1Navigation
     }
     // field 3: updateMask
     final f3 = updateMask;
     if (f3 != null) {
-      w.writeFieldMask(3, f3!);
+      w.writeFieldMask(3, f3);
     }
     // field 4: allowMissing
     final f4 = allowMissing;
     if (f4 != null) {
-      w.writeBool(4, f4!);
+      w.writeBool(4, f4);
     }
   }
 
@@ -10922,7 +10927,7 @@ class SiteServiceV1DeleteNavigationRequest {
     // field 1: id
     final f1 = id;
     if (f1 != null) {
-      w.writeUint32(1, f1!);
+      w.writeUint32(1, f1);
     }
   }
 
@@ -11014,12 +11019,12 @@ class GetPageBySlugRequest {
     // field 1: slug
     final f1 = slug;
     if (f1 != null) {
-      w.writeString(1, f1!);
+      w.writeString(1, f1);
     }
     // field 2: locale
     final f2 = locale;
     if (f2 != null) {
-      w.writeString(2, f2!);
+      w.writeString(2, f2);
     }
   }
 
@@ -11286,12 +11291,12 @@ class ContentServiceV1ListPageResponse {
     // field 1: items
     final f1 = items;
     if (f1 != null) {
-      for (final e in f1!) { final cw = ProtoWireWriter(); e._writeTo(cw); w.writeRaw(1, cw.toBuffer()); }
+      for (final e in f1) { final cw = ProtoWireWriter(); e._writeTo(cw); w.writeRaw(1, cw.toBuffer()); }
     }
     // field 2: total
     final f2 = total;
     if (f2 != null) {
-      w.writeUint64(2, f2!);
+      w.writeUint64(2, f2);
     }
   }
 
@@ -11613,82 +11618,82 @@ class ContentServiceV1Page {
     // field 1: id
     final f1 = id;
     if (f1 != null) {
-      w.writeUint32(1, f1!);
+      w.writeUint32(1, f1);
     }
     // field 2: status
     final f2 = status;
     if (f2 != null) {
-      w.writeEnum(2, f2!.wire); // ContentServiceV1Page$PageStatus
+      w.writeEnum(2, f2.wire); // ContentServiceV1Page$PageStatus
     }
     // field 3: type
     final f3 = type;
     if (f3 != null) {
-      w.writeEnum(3, f3!.wire); // ContentServiceV1Page$PageType
+      w.writeEnum(3, f3.wire); // ContentServiceV1Page$PageType
     }
     // field 4: editorType
     final f4 = editorType;
     if (f4 != null) {
-      w.writeEnum(4, f4!.wire); // ContentServiceV1EditorType
+      w.writeEnum(4, f4.wire); // ContentServiceV1EditorType
     }
     // field 5: slug
     final f5 = slug;
     if (f5 != null) {
-      w.writeString(5, f5!);
+      w.writeString(5, f5);
     }
     // field 6: authorId
     final f6 = authorId;
     if (f6 != null) {
-      w.writeUint32(6, f6!);
+      w.writeUint32(6, f6);
     }
     // field 7: authorName
     final f7 = authorName;
     if (f7 != null) {
-      w.writeString(7, f7!);
+      w.writeString(7, f7);
     }
     // field 8: disallowComment
     final f8 = disallowComment;
     if (f8 != null) {
-      w.writeBool(8, f8!);
+      w.writeBool(8, f8);
     }
     // field 9: redirectUrl
     final f9 = redirectUrl;
     if (f9 != null) {
-      w.writeString(9, f9!);
+      w.writeString(9, f9);
     }
     // field 10: showInNavigation
     final f10 = showInNavigation;
     if (f10 != null) {
-      w.writeBool(10, f10!);
+      w.writeBool(10, f10);
     }
     // field 11: sortOrder
     final f11 = sortOrder;
     if (f11 != null) {
-      w.writeUint32(11, f11!);
+      w.writeUint32(11, f11);
     }
     // field 12: template
     final f12 = template;
     if (f12 != null) {
-      w.writeString(12, f12!);
+      w.writeString(12, f12);
     }
     // field 13: isCustomTemplate
     final f13 = isCustomTemplate;
     if (f13 != null) {
-      w.writeBool(13, f13!);
+      w.writeBool(13, f13);
     }
     // field 14: thumbnail
     final f14 = thumbnail;
     if (f14 != null) {
-      w.writeString(14, f14!);
+      w.writeString(14, f14);
     }
     // field 15: inProgress
     final f15 = inProgress;
     if (f15 != null) {
-      w.writeBool(15, f15!);
+      w.writeBool(15, f15);
     }
     // field 21: customFields
     final f21 = customFields;
     if (f21 != null) {
-      f21!.forEach((k, v) {
+      f21.forEach((k, v) {
         final ew = ProtoWireWriter();
         ew.writeString(1, k);
         ew.writeString(2, v);
@@ -11698,72 +11703,72 @@ class ContentServiceV1Page {
     // field 22: contentModelId
     final f22 = contentModelId;
     if (f22 != null) {
-      w.writeUint32(22, f22!);
+      w.writeUint32(22, f22);
     }
     // field 30: translations
     final f30 = translations;
     if (f30 != null) {
-      for (final e in f30!) { final cw = ProtoWireWriter(); e._writeTo(cw); w.writeRaw(30, cw.toBuffer()); }
+      for (final e in f30) { final cw = ProtoWireWriter(); e._writeTo(cw); w.writeRaw(30, cw.toBuffer()); }
     }
     // field 31: availableLanguages
     final f31 = availableLanguages;
     if (f31 != null) {
-      w.writeStringList(31, f31!);
+      w.writeStringList(31, f31);
     }
     // field 40: sections
     final f40 = sections;
     if (f40 != null) {
-      for (final e in f40!) { final cw = ProtoWireWriter(); e._writeTo(cw); w.writeRaw(40, cw.toBuffer()); }
+      for (final e in f40) { final cw = ProtoWireWriter(); e._writeTo(cw); w.writeRaw(40, cw.toBuffer()); }
     }
     // field 50: parentId
     final f50 = parentId;
     if (f50 != null) {
-      w.writeUint32(50, f50!);
+      w.writeUint32(50, f50);
     }
     // field 52: depth
     final f52 = depth;
     if (f52 != null) {
-      w.writeInt32(52, f52!);
+      w.writeInt32(52, f52);
     }
     // field 53: path
     final f53 = path;
     if (f53 != null) {
-      w.writeString(53, f53!);
+      w.writeString(53, f53);
     }
     // field 61: children
     final f61 = children;
     if (f61 != null) {
-      for (final e in f61!) { final cw = ProtoWireWriter(); e._writeTo(cw); w.writeRaw(61, cw.toBuffer()); }
+      for (final e in f61) { final cw = ProtoWireWriter(); e._writeTo(cw); w.writeRaw(61, cw.toBuffer()); }
     }
     // field 100: createdBy
     final f100 = createdBy;
     if (f100 != null) {
-      w.writeUint32(100, f100!);
+      w.writeUint32(100, f100);
     }
     // field 101: updatedBy
     final f101 = updatedBy;
     if (f101 != null) {
-      w.writeUint32(101, f101!);
+      w.writeUint32(101, f101);
     }
     // field 102: deletedBy
     final f102 = deletedBy;
     if (f102 != null) {
-      w.writeUint32(102, f102!);
+      w.writeUint32(102, f102);
     }
     // field 200: createdAt
     final f200 = createdAt;
     if (f200 != null) {
-      w.writeTimestamp(200, f200!);
+      w.writeTimestamp(200, f200);
     }
     // field 201: updatedAt
     final f201 = updatedAt;
     if (f201 != null) {
-      w.writeTimestamp(201, f201!);
+      w.writeTimestamp(201, f201);
     }
     // field 202: deletedAt
     final f202 = deletedAt;
     if (f202 != null) {
-      w.writeTimestamp(202, f202!);
+      w.writeTimestamp(202, f202);
     }
   }
 
@@ -11869,7 +11874,7 @@ class ContentServiceV1Page {
             }
           }
           if (k != null && v != null) {
-            (m.customFields ??= {})[k!] = v!;
+            (m.customFields ??= {})[k] = v;
           }
           break;
         }
@@ -12156,72 +12161,72 @@ class ContentServiceV1PageTranslation {
     // field 1: id
     final f1 = id;
     if (f1 != null) {
-      w.writeUint32(1, f1!);
+      w.writeUint32(1, f1);
     }
     // field 2: pageId
     final f2 = pageId;
     if (f2 != null) {
-      w.writeUint32(2, f2!);
+      w.writeUint32(2, f2);
     }
     // field 3: languageCode
     final f3 = languageCode;
     if (f3 != null) {
-      w.writeString(3, f3!);
+      w.writeString(3, f3);
     }
     // field 10: title
     final f10 = title;
     if (f10 != null) {
-      w.writeString(10, f10!);
+      w.writeString(10, f10);
     }
     // field 11: slug
     final f11 = slug;
     if (f11 != null) {
-      w.writeString(11, f11!);
+      w.writeString(11, f11);
     }
     // field 14: coverImage
     final f14 = coverImage;
     if (f14 != null) {
-      w.writeString(14, f14!);
+      w.writeString(14, f14);
     }
     // field 20: fullPath
     final f20 = fullPath;
     if (f20 != null) {
-      w.writeString(20, f20!);
+      w.writeString(20, f20);
     }
     // field 30: seo
     final f30 = seo;
     if (f30 != null) {
-      final cw = ProtoWireWriter(); f30!._writeTo(cw); w.writeRaw(30, cw.toBuffer()); // ContentServiceV1SeoMeta
+      final cw = ProtoWireWriter(); f30._writeTo(cw); w.writeRaw(30, cw.toBuffer()); // ContentServiceV1SeoMeta
     }
     // field 100: createdBy
     final f100 = createdBy;
     if (f100 != null) {
-      w.writeUint32(100, f100!);
+      w.writeUint32(100, f100);
     }
     // field 101: updatedBy
     final f101 = updatedBy;
     if (f101 != null) {
-      w.writeUint32(101, f101!);
+      w.writeUint32(101, f101);
     }
     // field 102: deletedBy
     final f102 = deletedBy;
     if (f102 != null) {
-      w.writeUint32(102, f102!);
+      w.writeUint32(102, f102);
     }
     // field 200: createdAt
     final f200 = createdAt;
     if (f200 != null) {
-      w.writeTimestamp(200, f200!);
+      w.writeTimestamp(200, f200);
     }
     // field 201: updatedAt
     final f201 = updatedAt;
     if (f201 != null) {
-      w.writeTimestamp(201, f201!);
+      w.writeTimestamp(201, f201);
     }
     // field 202: deletedAt
     final f202 = deletedAt;
     if (f202 != null) {
-      w.writeTimestamp(202, f202!);
+      w.writeTimestamp(202, f202);
     }
   }
 
@@ -12475,32 +12480,32 @@ class ContentServiceV1Section {
     // field 1: id
     final f1 = id;
     if (f1 != null) {
-      w.writeUint32(1, f1!);
+      w.writeUint32(1, f1);
     }
     // field 2: pageId
     final f2 = pageId;
     if (f2 != null) {
-      w.writeUint32(2, f2!);
+      w.writeUint32(2, f2);
     }
     // field 3: type
     final f3 = type;
     if (f3 != null) {
-      w.writeEnum(3, f3!.wire); // ContentServiceV1SectionType
+      w.writeEnum(3, f3.wire); // ContentServiceV1SectionType
     }
     // field 4: name
     final f4 = name;
     if (f4 != null) {
-      w.writeString(4, f4!);
+      w.writeString(4, f4);
     }
     // field 5: sortOrder
     final f5 = sortOrder;
     if (f5 != null) {
-      w.writeUint32(5, f5!);
+      w.writeUint32(5, f5);
     }
     // field 10: config
     final f10 = config;
     if (f10 != null) {
-      f10!.forEach((k, v) {
+      f10.forEach((k, v) {
         final ew = ProtoWireWriter();
         ew.writeString(1, k);
         ew.writeString(2, v);
@@ -12510,42 +12515,42 @@ class ContentServiceV1Section {
     // field 20: translations
     final f20 = translations;
     if (f20 != null) {
-      for (final e in f20!) { final cw = ProtoWireWriter(); e._writeTo(cw); w.writeRaw(20, cw.toBuffer()); }
+      for (final e in f20) { final cw = ProtoWireWriter(); e._writeTo(cw); w.writeRaw(20, cw.toBuffer()); }
     }
     // field 21: availableLanguages
     final f21 = availableLanguages;
     if (f21 != null) {
-      w.writeStringList(21, f21!);
+      w.writeStringList(21, f21);
     }
     // field 100: createdBy
     final f100 = createdBy;
     if (f100 != null) {
-      w.writeUint32(100, f100!);
+      w.writeUint32(100, f100);
     }
     // field 101: updatedBy
     final f101 = updatedBy;
     if (f101 != null) {
-      w.writeUint32(101, f101!);
+      w.writeUint32(101, f101);
     }
     // field 102: deletedBy
     final f102 = deletedBy;
     if (f102 != null) {
-      w.writeUint32(102, f102!);
+      w.writeUint32(102, f102);
     }
     // field 200: createdAt
     final f200 = createdAt;
     if (f200 != null) {
-      w.writeTimestamp(200, f200!);
+      w.writeTimestamp(200, f200);
     }
     // field 201: updatedAt
     final f201 = updatedAt;
     if (f201 != null) {
-      w.writeTimestamp(201, f201!);
+      w.writeTimestamp(201, f201);
     }
     // field 202: deletedAt
     final f202 = deletedAt;
     if (f202 != null) {
-      w.writeTimestamp(202, f202!);
+      w.writeTimestamp(202, f202);
     }
   }
 
@@ -12601,7 +12606,7 @@ class ContentServiceV1Section {
             }
           }
           if (k != null && v != null) {
-            (m.config ??= {})[k!] = v!;
+            (m.config ??= {})[k] = v;
           }
           break;
         }
@@ -12815,22 +12820,22 @@ class ContentServiceV1SectionTranslation {
     // field 1: id
     final f1 = id;
     if (f1 != null) {
-      w.writeUint32(1, f1!);
+      w.writeUint32(1, f1);
     }
     // field 2: sectionId
     final f2 = sectionId;
     if (f2 != null) {
-      w.writeUint32(2, f2!);
+      w.writeUint32(2, f2);
     }
     // field 3: languageCode
     final f3 = languageCode;
     if (f3 != null) {
-      w.writeString(3, f3!);
+      w.writeString(3, f3);
     }
     // field 10: content
     final f10 = content;
     if (f10 != null) {
-      f10!.forEach((k, v) {
+      f10.forEach((k, v) {
         final ew = ProtoWireWriter();
         ew.writeString(1, k);
         ew.writeString(2, v);
@@ -12840,32 +12845,32 @@ class ContentServiceV1SectionTranslation {
     // field 100: createdBy
     final f100 = createdBy;
     if (f100 != null) {
-      w.writeUint32(100, f100!);
+      w.writeUint32(100, f100);
     }
     // field 101: updatedBy
     final f101 = updatedBy;
     if (f101 != null) {
-      w.writeUint32(101, f101!);
+      w.writeUint32(101, f101);
     }
     // field 102: deletedBy
     final f102 = deletedBy;
     if (f102 != null) {
-      w.writeUint32(102, f102!);
+      w.writeUint32(102, f102);
     }
     // field 200: createdAt
     final f200 = createdAt;
     if (f200 != null) {
-      w.writeTimestamp(200, f200!);
+      w.writeTimestamp(200, f200);
     }
     // field 201: updatedAt
     final f201 = updatedAt;
     if (f201 != null) {
-      w.writeTimestamp(201, f201!);
+      w.writeTimestamp(201, f201);
     }
     // field 202: deletedAt
     final f202 = deletedAt;
     if (f202 != null) {
-      w.writeTimestamp(202, f202!);
+      w.writeTimestamp(202, f202);
     }
   }
 
@@ -12911,7 +12916,7 @@ class ContentServiceV1SectionTranslation {
             }
           }
           if (k != null && v != null) {
-            (m.content ??= {})[k!] = v!;
+            (m.content ??= {})[k] = v;
           }
           break;
         }
@@ -13036,22 +13041,22 @@ class ContentServiceV1GetPageRequest {
     // field 1: id
     final f1 = id;
     if (f1 != null) {
-      w.writeUint32(1, f1!);
+      w.writeUint32(1, f1);
     }
     // field 2: slug
     final f2 = slug;
     if (f2 != null) {
-      w.writeString(2, f2!);
+      w.writeString(2, f2);
     }
     // field 10: locale
     final f10 = locale;
     if (f10 != null) {
-      w.writeString(10, f10!);
+      w.writeString(10, f10);
     }
     // field 100: viewMask
     final f100 = viewMask;
     if (f100 != null) {
-      w.writeFieldMask(100, f100!);
+      w.writeFieldMask(100, f100);
     }
   }
 
@@ -13150,7 +13155,7 @@ class ContentServiceV1CreatePageRequest {
     // field 1: data
     final f1 = data;
     if (f1 != null) {
-      final cw = ProtoWireWriter(); f1!._writeTo(cw); w.writeRaw(1, cw.toBuffer()); // ContentServiceV1Page
+      final cw = ProtoWireWriter(); f1._writeTo(cw); w.writeRaw(1, cw.toBuffer()); // ContentServiceV1Page
     }
   }
 
@@ -13258,22 +13263,22 @@ class ContentServiceV1UpdatePageRequest {
     // field 1: id
     final f1 = id;
     if (f1 != null) {
-      w.writeUint32(1, f1!);
+      w.writeUint32(1, f1);
     }
     // field 2: data
     final f2 = data;
     if (f2 != null) {
-      final cw = ProtoWireWriter(); f2!._writeTo(cw); w.writeRaw(2, cw.toBuffer()); // ContentServiceV1Page
+      final cw = ProtoWireWriter(); f2._writeTo(cw); w.writeRaw(2, cw.toBuffer()); // ContentServiceV1Page
     }
     // field 3: updateMask
     final f3 = updateMask;
     if (f3 != null) {
-      w.writeFieldMask(3, f3!);
+      w.writeFieldMask(3, f3);
     }
     // field 4: allowMissing
     final f4 = allowMissing;
     if (f4 != null) {
-      w.writeBool(4, f4!);
+      w.writeBool(4, f4);
     }
   }
 
@@ -13372,7 +13377,7 @@ class ContentServiceV1DeletePageRequest {
     // field 1: id
     final f1 = id;
     if (f1 != null) {
-      w.writeUint32(1, f1!);
+      w.writeUint32(1, f1);
     }
   }
 
@@ -13464,12 +13469,12 @@ class GetPostBySlugRequest {
     // field 1: slug
     final f1 = slug;
     if (f1 != null) {
-      w.writeString(1, f1!);
+      w.writeString(1, f1);
     }
     // field 2: locale
     final f2 = locale;
     if (f2 != null) {
-      w.writeString(2, f2!);
+      w.writeString(2, f2);
     }
   }
 
@@ -13593,6 +13598,7 @@ class PostServiceClient {
   }
 
   /// 全文搜索帖子（前台，基于 OpenSearch）
+  ///
   /// 仅返回 PUBLISHED 状态内容；tenant_id 由服务端从登录用户上下文注入，
   /// 客户端无法指定或绕过。故此端点不进鉴权白名单——必须登录后方可搜索。
   Future<ContentServiceV1SearchPostsResponse> searchPosts(ContentServiceV1SearchPostsRequest request, {Map<String, String>? headers}) async {
@@ -13819,7 +13825,7 @@ class ContentServiceV1GetModelByPostRequest {
     // field 1: postId
     final f1 = postId;
     if (f1 != null) {
-      w.writeUint32(1, f1!);
+      w.writeUint32(1, f1);
     }
   }
 
@@ -14004,67 +14010,67 @@ class ContentServiceV1ContentModel {
     // field 1: id
     final f1 = id;
     if (f1 != null) {
-      w.writeUint32(1, f1!);
+      w.writeUint32(1, f1);
     }
     // field 2: name
     final f2 = name;
     if (f2 != null) {
-      w.writeString(2, f2!);
+      w.writeString(2, f2);
     }
     // field 3: code
     final f3 = code;
     if (f3 != null) {
-      w.writeString(3, f3!);
+      w.writeString(3, f3);
     }
     // field 4: description
     final f4 = description;
     if (f4 != null) {
-      w.writeString(4, f4!);
+      w.writeString(4, f4);
     }
     // field 5: sortOrder
     final f5 = sortOrder;
     if (f5 != null) {
-      w.writeUint32(5, f5!);
+      w.writeUint32(5, f5);
     }
     // field 10: fields
     final f10 = fields;
     if (f10 != null) {
-      for (final e in f10!) { final cw = ProtoWireWriter(); e._writeTo(cw); w.writeRaw(10, cw.toBuffer()); }
+      for (final e in f10) { final cw = ProtoWireWriter(); e._writeTo(cw); w.writeRaw(10, cw.toBuffer()); }
     }
     // field 11: translations
     final f11 = translations;
     if (f11 != null) {
-      for (final e in f11!) { final cw = ProtoWireWriter(); e._writeTo(cw); w.writeRaw(11, cw.toBuffer()); }
+      for (final e in f11) { final cw = ProtoWireWriter(); e._writeTo(cw); w.writeRaw(11, cw.toBuffer()); }
     }
     // field 16: components
     final f16 = components;
     if (f16 != null) {
-      for (final e in f16!) { final cw = ProtoWireWriter(); e._writeTo(cw); w.writeRaw(16, cw.toBuffer()); }
+      for (final e in f16) { final cw = ProtoWireWriter(); e._writeTo(cw); w.writeRaw(16, cw.toBuffer()); }
     }
     // field 40: tenantId
     final f40 = tenantId;
     if (f40 != null) {
-      w.writeUint32(40, f40!);
+      w.writeUint32(40, f40);
     }
     // field 100: createdBy
     final f100 = createdBy;
     if (f100 != null) {
-      w.writeUint32(100, f100!);
+      w.writeUint32(100, f100);
     }
     // field 101: updatedBy
     final f101 = updatedBy;
     if (f101 != null) {
-      w.writeUint32(101, f101!);
+      w.writeUint32(101, f101);
     }
     // field 200: createdAt
     final f200 = createdAt;
     if (f200 != null) {
-      w.writeTimestamp(200, f200!);
+      w.writeTimestamp(200, f200);
     }
     // field 201: updatedAt
     final f201 = updatedAt;
     if (f201 != null) {
-      w.writeTimestamp(201, f201!);
+      w.writeTimestamp(201, f201);
     }
   }
 
@@ -14336,52 +14342,52 @@ class ContentServiceV1FieldDefinition {
     // field 1: id
     final f1 = id;
     if (f1 != null) {
-      w.writeUint32(1, f1!);
+      w.writeUint32(1, f1);
     }
     // field 2: contentModelId
     final f2 = contentModelId;
     if (f2 != null) {
-      w.writeUint32(2, f2!);
+      w.writeUint32(2, f2);
     }
     // field 3: name
     final f3 = name;
     if (f3 != null) {
-      w.writeString(3, f3!);
+      w.writeString(3, f3);
     }
     // field 4: type
     final f4 = type;
     if (f4 != null) {
-      w.writeEnum(4, f4!.wire); // ContentServiceV1FieldDefinition$Type
+      w.writeEnum(4, f4.wire); // ContentServiceV1FieldDefinition$Type
     }
     // field 5: label
     final f5 = label;
     if (f5 != null) {
-      w.writeString(5, f5!);
+      w.writeString(5, f5);
     }
     // field 6: description
     final f6 = description;
     if (f6 != null) {
-      w.writeString(6, f6!);
+      w.writeString(6, f6);
     }
     // field 7: placeholder
     final f7 = placeholder;
     if (f7 != null) {
-      w.writeString(7, f7!);
+      w.writeString(7, f7);
     }
     // field 8: isRequired
     final f8 = isRequired;
     if (f8 != null) {
-      w.writeBool(8, f8!);
+      w.writeBool(8, f8);
     }
     // field 9: validationRegex
     final f9 = validationRegex;
     if (f9 != null) {
-      w.writeString(9, f9!);
+      w.writeString(9, f9);
     }
     // field 10: options
     final f10 = options;
     if (f10 != null) {
-      f10!.forEach((k, v) {
+      f10.forEach((k, v) {
         final ew = ProtoWireWriter();
         ew.writeString(1, k);
         ew.writeString(2, v);
@@ -14391,37 +14397,37 @@ class ContentServiceV1FieldDefinition {
     // field 11: relationConfig
     final f11 = relationConfig;
     if (f11 != null) {
-      final cw = ProtoWireWriter(); f11!._writeTo(cw); w.writeRaw(11, cw.toBuffer()); // ContentServiceV1RelationConfig
+      final cw = ProtoWireWriter(); f11._writeTo(cw); w.writeRaw(11, cw.toBuffer()); // ContentServiceV1RelationConfig
     }
     // field 12: sortOrder
     final f12 = sortOrder;
     if (f12 != null) {
-      w.writeUint32(12, f12!);
+      w.writeUint32(12, f12);
     }
     // field 13: translations
     final f13 = translations;
     if (f13 != null) {
-      for (final e in f13!) { final cw = ProtoWireWriter(); e._writeTo(cw); w.writeRaw(13, cw.toBuffer()); }
+      for (final e in f13) { final cw = ProtoWireWriter(); e._writeTo(cw); w.writeRaw(13, cw.toBuffer()); }
     }
     // field 14: componentId
     final f14 = componentId;
     if (f14 != null) {
-      w.writeUint32(14, f14!);
+      w.writeUint32(14, f14);
     }
     // field 15: componentConfig
     final f15 = componentConfig;
     if (f15 != null) {
-      final cw = ProtoWireWriter(); f15!._writeTo(cw); w.writeRaw(15, cw.toBuffer()); // ContentServiceV1ComponentConfig
+      final cw = ProtoWireWriter(); f15._writeTo(cw); w.writeRaw(15, cw.toBuffer()); // ContentServiceV1ComponentConfig
     }
     // field 100: createdBy
     final f100 = createdBy;
     if (f100 != null) {
-      w.writeUint32(100, f100!);
+      w.writeUint32(100, f100);
     }
     // field 200: createdAt
     final f200 = createdAt;
     if (f200 != null) {
-      w.writeTimestamp(200, f200!);
+      w.writeTimestamp(200, f200);
     }
   }
 
@@ -14497,7 +14503,7 @@ class ContentServiceV1FieldDefinition {
             }
           }
           if (k != null && v != null) {
-            (m.options ??= {})[k!] = v!;
+            (m.options ??= {})[k] = v;
           }
           break;
         }
@@ -14643,17 +14649,17 @@ class ContentServiceV1RelationConfig {
     // field 1: targetEntityType
     final f1 = targetEntityType;
     if (f1 != null) {
-      w.writeString(1, f1!);
+      w.writeString(1, f1);
     }
     // field 2: allowCrossTenant
     final f2 = allowCrossTenant;
     if (f2 != null) {
-      w.writeBool(2, f2!);
+      w.writeBool(2, f2);
     }
     // field 3: filterCategoryId
     final f3 = filterCategoryId;
     if (f3 != null) {
-      w.writeUint32(3, f3!);
+      w.writeUint32(3, f3);
     }
   }
 
@@ -14763,17 +14769,17 @@ class ContentServiceV1ComponentConfig {
     // field 1: componentCode
     final f1 = componentCode;
     if (f1 != null) {
-      w.writeString(1, f1!);
+      w.writeString(1, f1);
     }
     // field 2: repeatable
     final f2 = repeatable;
     if (f2 != null) {
-      w.writeBool(2, f2!);
+      w.writeBool(2, f2);
     }
     // field 3: allowedComponentCodes
     final f3 = allowedComponentCodes;
     if (f3 != null) {
-      w.writeStringList(3, f3!);
+      w.writeStringList(3, f3);
     }
   }
 
@@ -14923,42 +14929,42 @@ class ContentServiceV1FieldDefinitionTranslation {
     // field 1: id
     final f1 = id;
     if (f1 != null) {
-      w.writeUint32(1, f1!);
+      w.writeUint32(1, f1);
     }
     // field 2: fieldDefinitionId
     final f2 = fieldDefinitionId;
     if (f2 != null) {
-      w.writeUint32(2, f2!);
+      w.writeUint32(2, f2);
     }
     // field 3: languageCode
     final f3 = languageCode;
     if (f3 != null) {
-      w.writeString(3, f3!);
+      w.writeString(3, f3);
     }
     // field 4: label
     final f4 = label;
     if (f4 != null) {
-      w.writeString(4, f4!);
+      w.writeString(4, f4);
     }
     // field 5: description
     final f5 = description;
     if (f5 != null) {
-      w.writeString(5, f5!);
+      w.writeString(5, f5);
     }
     // field 6: placeholder
     final f6 = placeholder;
     if (f6 != null) {
-      w.writeString(6, f6!);
+      w.writeString(6, f6);
     }
     // field 100: createdBy
     final f100 = createdBy;
     if (f100 != null) {
-      w.writeUint32(100, f100!);
+      w.writeUint32(100, f100);
     }
     // field 200: createdAt
     final f200 = createdAt;
     if (f200 != null) {
-      w.writeTimestamp(200, f200!);
+      w.writeTimestamp(200, f200);
     }
   }
 
@@ -15085,12 +15091,12 @@ class ContentServiceV1ContentModelComponent {
     // field 1: definition
     final f1 = definition;
     if (f1 != null) {
-      final cw = ProtoWireWriter(); f1!._writeTo(cw); w.writeRaw(1, cw.toBuffer()); // ContentServiceV1ComponentDefinition
+      final cw = ProtoWireWriter(); f1._writeTo(cw); w.writeRaw(1, cw.toBuffer()); // ContentServiceV1ComponentDefinition
     }
     // field 2: fields
     final f2 = fields;
     if (f2 != null) {
-      for (final e in f2!) { final cw = ProtoWireWriter(); e._writeTo(cw); w.writeRaw(2, cw.toBuffer()); }
+      for (final e in f2) { final cw = ProtoWireWriter(); e._writeTo(cw); w.writeRaw(2, cw.toBuffer()); }
     }
   }
 
@@ -15227,37 +15233,37 @@ class ContentServiceV1ComponentDefinition {
     // field 1: id
     final f1 = id;
     if (f1 != null) {
-      w.writeUint32(1, f1!);
+      w.writeUint32(1, f1);
     }
     // field 2: code
     final f2 = code;
     if (f2 != null) {
-      w.writeString(2, f2!);
+      w.writeString(2, f2);
     }
     // field 3: name
     final f3 = name;
     if (f3 != null) {
-      w.writeString(3, f3!);
+      w.writeString(3, f3);
     }
     // field 4: description
     final f4 = description;
     if (f4 != null) {
-      w.writeString(4, f4!);
+      w.writeString(4, f4);
     }
     // field 5: fieldCount
     final f5 = fieldCount;
     if (f5 != null) {
-      w.writeUint32(5, f5!);
+      w.writeUint32(5, f5);
     }
     // field 200: createdAt
     final f200 = createdAt;
     if (f200 != null) {
-      w.writeTimestamp(200, f200!);
+      w.writeTimestamp(200, f200);
     }
     // field 201: updatedAt
     final f201 = updatedAt;
     if (f201 != null) {
-      w.writeTimestamp(201, f201!);
+      w.writeTimestamp(201, f201);
     }
   }
 
@@ -15419,37 +15425,37 @@ class ContentServiceV1ContentModelTranslation {
     // field 1: id
     final f1 = id;
     if (f1 != null) {
-      w.writeUint32(1, f1!);
+      w.writeUint32(1, f1);
     }
     // field 2: contentModelId
     final f2 = contentModelId;
     if (f2 != null) {
-      w.writeUint32(2, f2!);
+      w.writeUint32(2, f2);
     }
     // field 3: languageCode
     final f3 = languageCode;
     if (f3 != null) {
-      w.writeString(3, f3!);
+      w.writeString(3, f3);
     }
     // field 4: name
     final f4 = name;
     if (f4 != null) {
-      w.writeString(4, f4!);
+      w.writeString(4, f4);
     }
     // field 5: description
     final f5 = description;
     if (f5 != null) {
-      w.writeString(5, f5!);
+      w.writeString(5, f5);
     }
     // field 100: createdBy
     final f100 = createdBy;
     if (f100 != null) {
-      w.writeUint32(100, f100!);
+      w.writeUint32(100, f100);
     }
     // field 200: createdAt
     final f200 = createdAt;
     if (f200 != null) {
-      w.writeTimestamp(200, f200!);
+      w.writeTimestamp(200, f200);
     }
   }
 
@@ -15573,12 +15579,12 @@ class ContentServiceV1ResolveContentReferencesRequest {
     // field 1: refs
     final f1 = refs;
     if (f1 != null) {
-      w.writeStringList(1, f1!);
+      w.writeStringList(1, f1);
     }
     // field 2: languageCode
     final f2 = languageCode;
     if (f2 != null) {
-      w.writeString(2, f2!);
+      w.writeString(2, f2);
     }
   }
 
@@ -15667,7 +15673,7 @@ class ContentServiceV1ResolveContentReferencesResponse {
     // field 1: items
     final f1 = items;
     if (f1 != null) {
-      for (final e in f1!) { final cw = ProtoWireWriter(); e._writeTo(cw); w.writeRaw(1, cw.toBuffer()); }
+      for (final e in f1) { final cw = ProtoWireWriter(); e._writeTo(cw); w.writeRaw(1, cw.toBuffer()); }
     }
   }
 
@@ -15791,32 +15797,32 @@ class ContentServiceV1ContentReferenceSummary {
     // field 1: ref
     final f1 = ref;
     if (f1 != null) {
-      w.writeString(1, f1!);
+      w.writeString(1, f1);
     }
     // field 2: targetEntityType
     final f2 = targetEntityType;
     if (f2 != null) {
-      w.writeString(2, f2!);
+      w.writeString(2, f2);
     }
     // field 3: targetId
     final f3 = targetId;
     if (f3 != null) {
-      w.writeUint32(3, f3!);
+      w.writeUint32(3, f3);
     }
     // field 4: title
     final f4 = title;
     if (f4 != null) {
-      w.writeString(4, f4!);
+      w.writeString(4, f4);
     }
     // field 5: slug
     final f5 = slug;
     if (f5 != null) {
-      w.writeString(5, f5!);
+      w.writeString(5, f5);
     }
     // field 6: urlPath
     final f6 = urlPath;
     if (f6 != null) {
-      w.writeString(6, f6!);
+      w.writeString(6, f6);
     }
   }
 
@@ -15869,6 +15875,7 @@ class ContentServiceV1ContentReferenceSummary {
 }
 
 /// 请求 - 帖子搜索
+///
 /// tenant_id 不在此消息中——由服务端从调用方租户上下文（viewer）注入，
 /// 客户端无法指定或绕过。status 固定为 PUBLISHED（前台仅检索已发布内容）。
 class ContentServiceV1SearchPostsRequest {
@@ -15955,22 +15962,22 @@ class ContentServiceV1SearchPostsRequest {
     // field 1: query
     final f1 = query;
     if (f1 != null) {
-      w.writeString(1, f1!);
+      w.writeString(1, f1);
     }
     // field 2: language
     final f2 = language;
     if (f2 != null) {
-      w.writeString(2, f2!);
+      w.writeString(2, f2);
     }
     // field 3: page
     final f3 = page;
     if (f3 != null) {
-      w.writeInt32(3, f3!);
+      w.writeInt32(3, f3);
     }
     // field 4: pageSize
     final f4 = pageSize;
     if (f4 != null) {
-      w.writeInt32(4, f4!);
+      w.writeInt32(4, f4);
     }
   }
 
@@ -16013,6 +16020,7 @@ class ContentServiceV1SearchPostsRequest {
 }
 
 /// 回应 - 帖子搜索
+///
 /// 仅返回最小字段集：post_id / language / title。
 /// 不含 content / tenant_id / status——这些字段不向前台暴露。
 class ContentServiceV1SearchPostsResponse {
@@ -16079,12 +16087,12 @@ class ContentServiceV1SearchPostsResponse {
     // field 1: items
     final f1 = items;
     if (f1 != null) {
-      for (final e in f1!) { final cw = ProtoWireWriter(); e._writeTo(cw); w.writeRaw(1, cw.toBuffer()); }
+      for (final e in f1) { final cw = ProtoWireWriter(); e._writeTo(cw); w.writeRaw(1, cw.toBuffer()); }
     }
     // field 2: total
     final f2 = total;
     if (f2 != null) {
-      w.writeInt32(2, f2!);
+      w.writeInt32(2, f2);
     }
   }
 
@@ -16210,27 +16218,27 @@ class ContentServiceV1SearchPostHit {
     // field 1: postId
     final f1 = postId;
     if (f1 != null) {
-      w.writeUint32(1, f1!);
+      w.writeUint32(1, f1);
     }
     // field 2: language
     final f2 = language;
     if (f2 != null) {
-      w.writeString(2, f2!);
+      w.writeString(2, f2);
     }
     // field 3: title
     final f3 = title;
     if (f3 != null) {
-      w.writeString(3, f3!);
+      w.writeString(3, f3);
     }
     // field 4: summary
     final f4 = summary;
     if (f4 != null) {
-      w.writeString(4, f4!);
+      w.writeString(4, f4);
     }
     // field 5: highlightFragments
     final f5 = highlightFragments;
     if (f5 != null) {
-      w.writeStringList(5, f5!);
+      w.writeStringList(5, f5);
     }
   }
 
@@ -16353,17 +16361,17 @@ class ContentServiceV1SearchPostsSuggestRequest {
     // field 1: query
     final f1 = query;
     if (f1 != null) {
-      w.writeString(1, f1!);
+      w.writeString(1, f1);
     }
     // field 2: language
     final f2 = language;
     if (f2 != null) {
-      w.writeString(2, f2!);
+      w.writeString(2, f2);
     }
     // field 3: pageSize
     final f3 = pageSize;
     if (f3 != null) {
-      w.writeUint32(3, f3!);
+      w.writeUint32(3, f3);
     }
   }
 
@@ -16458,7 +16466,7 @@ class ContentServiceV1SearchPostsSuggestResponse {
     // field 1: titles
     final f1 = titles;
     if (f1 != null) {
-      w.writeStringList(1, f1!);
+      w.writeStringList(1, f1);
     }
   }
 
@@ -16566,22 +16574,22 @@ class ContentServiceV1GetPostRequest {
     // field 1: id
     final f1 = id;
     if (f1 != null) {
-      w.writeUint32(1, f1!);
+      w.writeUint32(1, f1);
     }
     // field 2: code
     final f2 = code;
     if (f2 != null) {
-      w.writeString(2, f2!);
+      w.writeString(2, f2);
     }
     // field 10: locale
     final f10 = locale;
     if (f10 != null) {
-      w.writeString(10, f10!);
+      w.writeString(10, f10);
     }
     // field 100: viewMask
     final f100 = viewMask;
     if (f100 != null) {
-      w.writeFieldMask(100, f100!);
+      w.writeFieldMask(100, f100);
     }
   }
 
@@ -16680,7 +16688,7 @@ class ContentServiceV1CreatePostRequest {
     // field 1: data
     final f1 = data;
     if (f1 != null) {
-      final cw = ProtoWireWriter(); f1!._writeTo(cw); w.writeRaw(1, cw.toBuffer()); // ContentServiceV1Post
+      final cw = ProtoWireWriter(); f1._writeTo(cw); w.writeRaw(1, cw.toBuffer()); // ContentServiceV1Post
     }
   }
 
@@ -16788,22 +16796,22 @@ class ContentServiceV1UpdatePostRequest {
     // field 1: id
     final f1 = id;
     if (f1 != null) {
-      w.writeUint32(1, f1!);
+      w.writeUint32(1, f1);
     }
     // field 2: data
     final f2 = data;
     if (f2 != null) {
-      final cw = ProtoWireWriter(); f2!._writeTo(cw); w.writeRaw(2, cw.toBuffer()); // ContentServiceV1Post
+      final cw = ProtoWireWriter(); f2._writeTo(cw); w.writeRaw(2, cw.toBuffer()); // ContentServiceV1Post
     }
     // field 3: updateMask
     final f3 = updateMask;
     if (f3 != null) {
-      w.writeFieldMask(3, f3!);
+      w.writeFieldMask(3, f3);
     }
     // field 4: allowMissing
     final f4 = allowMissing;
     if (f4 != null) {
-      w.writeBool(4, f4!);
+      w.writeBool(4, f4);
     }
   }
 
@@ -16902,7 +16910,7 @@ class ContentServiceV1DeletePostRequest {
     // field 1: id
     final f1 = id;
     if (f1 != null) {
-      w.writeUint32(1, f1!);
+      w.writeUint32(1, f1);
     }
   }
 
@@ -17072,12 +17080,12 @@ class ContentServiceV1ListRedirectsResponse {
     // field 1: items
     final f1 = items;
     if (f1 != null) {
-      for (final e in f1!) { final cw = ProtoWireWriter(); e._writeTo(cw); w.writeRaw(1, cw.toBuffer()); }
+      for (final e in f1) { final cw = ProtoWireWriter(); e._writeTo(cw); w.writeRaw(1, cw.toBuffer()); }
     }
     // field 2: total
     final f2 = total;
     if (f2 != null) {
-      w.writeUint64(2, f2!);
+      w.writeUint64(2, f2);
     }
   }
 
@@ -17238,52 +17246,52 @@ class ContentServiceV1Redirect {
     // field 1: id
     final f1 = id;
     if (f1 != null) {
-      w.writeUint32(1, f1!);
+      w.writeUint32(1, f1);
     }
     // field 2: fromPath
     final f2 = fromPath;
     if (f2 != null) {
-      w.writeString(2, f2!);
+      w.writeString(2, f2);
     }
     // field 3: toUrl
     final f3 = toUrl;
     if (f3 != null) {
-      w.writeString(3, f3!);
+      w.writeString(3, f3);
     }
     // field 4: statusCode
     final f4 = statusCode;
     if (f4 != null) {
-      w.writeUint32(4, f4!);
+      w.writeUint32(4, f4);
     }
     // field 5: enabled
     final f5 = enabled;
     if (f5 != null) {
-      w.writeBool(5, f5!);
+      w.writeBool(5, f5);
     }
     // field 6: description
     final f6 = description;
     if (f6 != null) {
-      w.writeString(6, f6!);
+      w.writeString(6, f6);
     }
     // field 100: createdBy
     final f100 = createdBy;
     if (f100 != null) {
-      w.writeUint32(100, f100!);
+      w.writeUint32(100, f100);
     }
     // field 101: updatedBy
     final f101 = updatedBy;
     if (f101 != null) {
-      w.writeUint32(101, f101!);
+      w.writeUint32(101, f101);
     }
     // field 200: createdAt
     final f200 = createdAt;
     if (f200 != null) {
-      w.writeTimestamp(200, f200!);
+      w.writeTimestamp(200, f200);
     }
     // field 201: updatedAt
     final f201 = updatedAt;
     if (f201 != null) {
-      w.writeTimestamp(201, f201!);
+      w.writeTimestamp(201, f201);
     }
   }
 
@@ -17356,6 +17364,7 @@ class ContentServiceV1Redirect {
 }
 
 /// 站点服务（公开端点）
+///
 /// 仅 GetSiteByDomain 对外可用：按请求 Host 解析的域名返回当前站点的渲染必需配置。
 /// List/Create/Update/Delete 在 app（公开站点）服务上禁用，写操作应经由 admin 服务。
 class SiteServiceClient {
@@ -17538,12 +17547,12 @@ class SiteServiceV1ListSiteResponse {
     // field 1: items
     final f1 = items;
     if (f1 != null) {
-      for (final e in f1!) { final cw = ProtoWireWriter(); e._writeTo(cw); w.writeRaw(1, cw.toBuffer()); }
+      for (final e in f1) { final cw = ProtoWireWriter(); e._writeTo(cw); w.writeRaw(1, cw.toBuffer()); }
     }
     // field 2: total
     final f2 = total;
     if (f2 != null) {
-      w.writeUint64(2, f2!);
+      w.writeUint64(2, f2);
     }
   }
 
@@ -17760,87 +17769,87 @@ class SiteServiceV1Site {
     // field 1: id
     final f1 = id;
     if (f1 != null) {
-      w.writeUint32(1, f1!);
+      w.writeUint32(1, f1);
     }
     // field 2: tenantId
     final f2 = tenantId;
     if (f2 != null) {
-      w.writeUint32(2, f2!);
+      w.writeUint32(2, f2);
     }
     // field 3: name
     final f3 = name;
     if (f3 != null) {
-      w.writeString(3, f3!);
+      w.writeString(3, f3);
     }
     // field 4: slug
     final f4 = slug;
     if (f4 != null) {
-      w.writeString(4, f4!);
+      w.writeString(4, f4);
     }
     // field 5: domain
     final f5 = domain;
     if (f5 != null) {
-      w.writeString(5, f5!);
+      w.writeString(5, f5);
     }
     // field 6: alternateDomains
     final f6 = alternateDomains;
     if (f6 != null) {
-      w.writeStringList(6, f6!);
+      w.writeStringList(6, f6);
     }
     // field 7: isDefault
     final f7 = isDefault;
     if (f7 != null) {
-      w.writeBool(7, f7!);
+      w.writeBool(7, f7);
     }
     // field 8: status
     final f8 = status;
     if (f8 != null) {
-      w.writeEnum(8, f8!.wire); // SiteServiceV1Site$Status
+      w.writeEnum(8, f8.wire); // SiteServiceV1Site$Status
     }
     // field 9: defaultLocale
     final f9 = defaultLocale;
     if (f9 != null) {
-      w.writeString(9, f9!);
+      w.writeString(9, f9);
     }
     // field 10: template
     final f10 = template;
     if (f10 != null) {
-      w.writeString(10, f10!);
+      w.writeString(10, f10);
     }
     // field 11: theme
     final f11 = theme;
     if (f11 != null) {
-      w.writeString(11, f11!);
+      w.writeString(11, f11);
     }
     // field 100: createdBy
     final f100 = createdBy;
     if (f100 != null) {
-      w.writeUint32(100, f100!);
+      w.writeUint32(100, f100);
     }
     // field 101: updatedBy
     final f101 = updatedBy;
     if (f101 != null) {
-      w.writeUint32(101, f101!);
+      w.writeUint32(101, f101);
     }
     // field 102: deletedBy
     final f102 = deletedBy;
     if (f102 != null) {
-      w.writeUint32(102, f102!);
+      w.writeUint32(102, f102);
     }
     // field 200: createdAt
     final f200 = createdAt;
     if (f200 != null) {
-      w.writeTimestamp(200, f200!);
+      w.writeTimestamp(200, f200);
     }
     // field 201: updatedAt
     final f201 = updatedAt;
     if (f201 != null) {
-      w.writeTimestamp(201, f201!);
+      w.writeTimestamp(201, f201);
     }
     // field 202: deletedAt
     final f202 = deletedAt;
     if (f202 != null) {
-      w.writeTimestamp(202, f202!);
+      w.writeTimestamp(202, f202);
     }
   }
 
@@ -18032,12 +18041,12 @@ class SiteServiceV1GetSiteByDomainRequest {
     // field 1: domain
     final f1 = domain;
     if (f1 != null) {
-      w.writeString(1, f1!);
+      w.writeString(1, f1);
     }
     // field 100: viewMask
     final f100 = viewMask;
     if (f100 != null) {
-      w.writeFieldMask(100, f100!);
+      w.writeFieldMask(100, f100);
     }
   }
 
@@ -18126,7 +18135,7 @@ class SiteServiceV1CreateSiteRequest {
     // field 1: data
     final f1 = data;
     if (f1 != null) {
-      final cw = ProtoWireWriter(); f1!._writeTo(cw); w.writeRaw(1, cw.toBuffer()); // SiteServiceV1Site
+      final cw = ProtoWireWriter(); f1._writeTo(cw); w.writeRaw(1, cw.toBuffer()); // SiteServiceV1Site
     }
   }
 
@@ -18234,22 +18243,22 @@ class SiteServiceV1UpdateSiteRequest {
     // field 1: id
     final f1 = id;
     if (f1 != null) {
-      w.writeUint32(1, f1!);
+      w.writeUint32(1, f1);
     }
     // field 2: data
     final f2 = data;
     if (f2 != null) {
-      final cw = ProtoWireWriter(); f2!._writeTo(cw); w.writeRaw(2, cw.toBuffer()); // SiteServiceV1Site
+      final cw = ProtoWireWriter(); f2._writeTo(cw); w.writeRaw(2, cw.toBuffer()); // SiteServiceV1Site
     }
     // field 3: updateMask
     final f3 = updateMask;
     if (f3 != null) {
-      w.writeFieldMask(3, f3!);
+      w.writeFieldMask(3, f3);
     }
     // field 4: allowMissing
     final f4 = allowMissing;
     if (f4 != null) {
-      w.writeBool(4, f4!);
+      w.writeBool(4, f4);
     }
   }
 
@@ -18348,7 +18357,7 @@ class SiteServiceV1DeleteSiteRequest {
     // field 1: id
     final f1 = id;
     if (f1 != null) {
-      w.writeUint32(1, f1!);
+      w.writeUint32(1, f1);
     }
   }
 
@@ -18589,12 +18598,12 @@ class ContentServiceV1ListTagResponse {
     // field 1: items
     final f1 = items;
     if (f1 != null) {
-      for (final e in f1!) { final cw = ProtoWireWriter(); e._writeTo(cw); w.writeRaw(1, cw.toBuffer()); }
+      for (final e in f1) { final cw = ProtoWireWriter(); e._writeTo(cw); w.writeRaw(1, cw.toBuffer()); }
     }
     // field 2: total
     final f2 = total;
     if (f2 != null) {
-      w.writeUint64(2, f2!);
+      w.writeUint64(2, f2);
     }
   }
 
@@ -18811,87 +18820,87 @@ class ContentServiceV1Tag {
     // field 1: id
     final f1 = id;
     if (f1 != null) {
-      w.writeUint32(1, f1!);
+      w.writeUint32(1, f1);
     }
     // field 2: status
     final f2 = status;
     if (f2 != null) {
-      w.writeEnum(2, f2!.wire); // ContentServiceV1Tag$TagStatus
+      w.writeEnum(2, f2.wire); // ContentServiceV1Tag$TagStatus
     }
     // field 3: color
     final f3 = color;
     if (f3 != null) {
-      w.writeString(3, f3!);
+      w.writeString(3, f3);
     }
     // field 4: icon
     final f4 = icon;
     if (f4 != null) {
-      w.writeString(4, f4!);
+      w.writeString(4, f4);
     }
     // field 5: group
     final f5 = group;
     if (f5 != null) {
-      w.writeString(5, f5!);
+      w.writeString(5, f5);
     }
     // field 6: sortOrder
     final f6 = sortOrder;
     if (f6 != null) {
-      w.writeUint32(6, f6!);
+      w.writeUint32(6, f6);
     }
     // field 7: isFeatured
     final f7 = isFeatured;
     if (f7 != null) {
-      w.writeBool(7, f7!);
+      w.writeBool(7, f7);
     }
     // field 8: code
     final f8 = code;
     if (f8 != null) {
-      w.writeString(8, f8!);
+      w.writeString(8, f8);
     }
     // field 10: postCount
     final f10 = postCount;
     if (f10 != null) {
-      w.writeUint32(10, f10!);
+      w.writeUint32(10, f10);
     }
     // field 20: translations
     final f20 = translations;
     if (f20 != null) {
-      for (final e in f20!) { final cw = ProtoWireWriter(); e._writeTo(cw); w.writeRaw(20, cw.toBuffer()); }
+      for (final e in f20) { final cw = ProtoWireWriter(); e._writeTo(cw); w.writeRaw(20, cw.toBuffer()); }
     }
     // field 21: availableLanguages
     final f21 = availableLanguages;
     if (f21 != null) {
-      w.writeStringList(21, f21!);
+      w.writeStringList(21, f21);
     }
     // field 100: createdBy
     final f100 = createdBy;
     if (f100 != null) {
-      w.writeUint32(100, f100!);
+      w.writeUint32(100, f100);
     }
     // field 101: updatedBy
     final f101 = updatedBy;
     if (f101 != null) {
-      w.writeUint32(101, f101!);
+      w.writeUint32(101, f101);
     }
     // field 102: deletedBy
     final f102 = deletedBy;
     if (f102 != null) {
-      w.writeUint32(102, f102!);
+      w.writeUint32(102, f102);
     }
     // field 200: createdAt
     final f200 = createdAt;
     if (f200 != null) {
-      w.writeTimestamp(200, f200!);
+      w.writeTimestamp(200, f200);
     }
     // field 201: updatedAt
     final f201 = updatedAt;
     if (f201 != null) {
-      w.writeTimestamp(201, f201!);
+      w.writeTimestamp(201, f201);
     }
     // field 202: deletedAt
     final f202 = deletedAt;
     if (f202 != null) {
-      w.writeTimestamp(202, f202!);
+      w.writeTimestamp(202, f202);
     }
   }
 
@@ -19187,77 +19196,77 @@ class ContentServiceV1TagTranslation {
     // field 1: id
     final f1 = id;
     if (f1 != null) {
-      w.writeUint32(1, f1!);
+      w.writeUint32(1, f1);
     }
     // field 2: tagId
     final f2 = tagId;
     if (f2 != null) {
-      w.writeUint32(2, f2!);
+      w.writeUint32(2, f2);
     }
     // field 3: languageCode
     final f3 = languageCode;
     if (f3 != null) {
-      w.writeString(3, f3!);
+      w.writeString(3, f3);
     }
     // field 10: name
     final f10 = name;
     if (f10 != null) {
-      w.writeString(10, f10!);
+      w.writeString(10, f10);
     }
     // field 11: slug
     final f11 = slug;
     if (f11 != null) {
-      w.writeString(11, f11!);
+      w.writeString(11, f11);
     }
     // field 12: description
     final f12 = description;
     if (f12 != null) {
-      w.writeString(12, f12!);
+      w.writeString(12, f12);
     }
     // field 13: coverImage
     final f13 = coverImage;
     if (f13 != null) {
-      w.writeString(13, f13!);
+      w.writeString(13, f13);
     }
     // field 20: fullPath
     final f20 = fullPath;
     if (f20 != null) {
-      w.writeString(20, f20!);
+      w.writeString(20, f20);
     }
     // field 30: seo
     final f30 = seo;
     if (f30 != null) {
-      final cw = ProtoWireWriter(); f30!._writeTo(cw); w.writeRaw(30, cw.toBuffer()); // ContentServiceV1SeoMeta
+      final cw = ProtoWireWriter(); f30._writeTo(cw); w.writeRaw(30, cw.toBuffer()); // ContentServiceV1SeoMeta
     }
     // field 100: createdBy
     final f100 = createdBy;
     if (f100 != null) {
-      w.writeUint32(100, f100!);
+      w.writeUint32(100, f100);
     }
     // field 101: updatedBy
     final f101 = updatedBy;
     if (f101 != null) {
-      w.writeUint32(101, f101!);
+      w.writeUint32(101, f101);
     }
     // field 102: deletedBy
     final f102 = deletedBy;
     if (f102 != null) {
-      w.writeUint32(102, f102!);
+      w.writeUint32(102, f102);
     }
     // field 200: createdAt
     final f200 = createdAt;
     if (f200 != null) {
-      w.writeTimestamp(200, f200!);
+      w.writeTimestamp(200, f200);
     }
     // field 201: updatedAt
     final f201 = updatedAt;
     if (f201 != null) {
-      w.writeTimestamp(201, f201!);
+      w.writeTimestamp(201, f201);
     }
     // field 202: deletedAt
     final f202 = deletedAt;
     if (f202 != null) {
-      w.writeTimestamp(202, f202!);
+      w.writeTimestamp(202, f202);
     }
   }
 
@@ -19435,22 +19444,22 @@ class ContentServiceV1GetTagRequest {
     // field 1: id
     final f1 = id;
     if (f1 != null) {
-      w.writeUint32(1, f1!);
+      w.writeUint32(1, f1);
     }
     // field 2: code
     final f2 = code;
     if (f2 != null) {
-      w.writeString(2, f2!);
+      w.writeString(2, f2);
     }
     // field 10: locale
     final f10 = locale;
     if (f10 != null) {
-      w.writeString(10, f10!);
+      w.writeString(10, f10);
     }
     // field 100: viewMask
     final f100 = viewMask;
     if (f100 != null) {
-      w.writeFieldMask(100, f100!);
+      w.writeFieldMask(100, f100);
     }
   }
 
@@ -19549,7 +19558,7 @@ class ContentServiceV1CreateTagRequest {
     // field 1: data
     final f1 = data;
     if (f1 != null) {
-      final cw = ProtoWireWriter(); f1!._writeTo(cw); w.writeRaw(1, cw.toBuffer()); // ContentServiceV1Tag
+      final cw = ProtoWireWriter(); f1._writeTo(cw); w.writeRaw(1, cw.toBuffer()); // ContentServiceV1Tag
     }
   }
 
@@ -19657,22 +19666,22 @@ class ContentServiceV1UpdateTagRequest {
     // field 1: id
     final f1 = id;
     if (f1 != null) {
-      w.writeUint32(1, f1!);
+      w.writeUint32(1, f1);
     }
     // field 2: data
     final f2 = data;
     if (f2 != null) {
-      final cw = ProtoWireWriter(); f2!._writeTo(cw); w.writeRaw(2, cw.toBuffer()); // ContentServiceV1Tag
+      final cw = ProtoWireWriter(); f2._writeTo(cw); w.writeRaw(2, cw.toBuffer()); // ContentServiceV1Tag
     }
     // field 3: updateMask
     final f3 = updateMask;
     if (f3 != null) {
-      w.writeFieldMask(3, f3!);
+      w.writeFieldMask(3, f3);
     }
     // field 4: allowMissing
     final f4 = allowMissing;
     if (f4 != null) {
-      w.writeBool(4, f4!);
+      w.writeBool(4, f4);
     }
   }
 
@@ -19771,7 +19780,7 @@ class ContentServiceV1DeleteTagRequest {
     // field 1: id
     final f1 = id;
     if (f1 != null) {
-      w.writeUint32(1, f1!);
+      w.writeUint32(1, f1);
     }
   }
 
@@ -20253,217 +20262,217 @@ class IdentityServiceV1User {
     // field 1: id
     final f1 = id;
     if (f1 != null) {
-      w.writeUint32(1, f1!);
+      w.writeUint32(1, f1);
     }
     // field 2: tenantId
     final f2 = tenantId;
     if (f2 != null) {
-      w.writeUint32(2, f2!);
+      w.writeUint32(2, f2);
     }
     // field 3: tenantName
     final f3 = tenantName;
     if (f3 != null) {
-      w.writeString(3, f3!);
+      w.writeString(3, f3);
     }
     // field 4: orgUnitId
     final f4 = orgUnitId;
     if (f4 != null) {
-      w.writeUint32(4, f4!);
+      w.writeUint32(4, f4);
     }
     // field 5: orgUnitIds
     final f5 = orgUnitIds;
     if (f5 != null) {
-      w.writePackedVarintList(5, f5!);
+      w.writePackedVarintList(5, f5);
     }
     // field 6: orgUnitName
     final f6 = orgUnitName;
     if (f6 != null) {
-      w.writeString(6, f6!);
+      w.writeString(6, f6);
     }
     // field 7: orgUnitNames
     final f7 = orgUnitNames;
     if (f7 != null) {
-      w.writeStringList(7, f7!);
+      w.writeStringList(7, f7);
     }
     // field 8: positionId
     final f8 = positionId;
     if (f8 != null) {
-      w.writeUint32(8, f8!);
+      w.writeUint32(8, f8);
     }
     // field 9: positionIds
     final f9 = positionIds;
     if (f9 != null) {
-      w.writePackedVarintList(9, f9!);
+      w.writePackedVarintList(9, f9);
     }
     // field 10: positionName
     final f10 = positionName;
     if (f10 != null) {
-      w.writeString(10, f10!);
+      w.writeString(10, f10);
     }
     // field 11: positionNames
     final f11 = positionNames;
     if (f11 != null) {
-      w.writeStringList(11, f11!);
+      w.writeStringList(11, f11);
     }
     // field 12: roleId
     final f12 = roleId;
     if (f12 != null) {
-      w.writeUint32(12, f12!);
+      w.writeUint32(12, f12);
     }
     // field 13: roleIds
     final f13 = roleIds;
     if (f13 != null) {
-      w.writePackedVarintList(13, f13!);
+      w.writePackedVarintList(13, f13);
     }
     // field 14: roles
     final f14 = roles;
     if (f14 != null) {
-      w.writeStringList(14, f14!);
+      w.writeStringList(14, f14);
     }
     // field 15: roleNames
     final f15 = roleNames;
     if (f15 != null) {
-      w.writeStringList(15, f15!);
+      w.writeStringList(15, f15);
     }
     // field 20: username
     final f20 = username;
     if (f20 != null) {
-      w.writeString(20, f20!);
+      w.writeString(20, f20);
     }
     // field 21: nickname
     final f21 = nickname;
     if (f21 != null) {
-      w.writeString(21, f21!);
+      w.writeString(21, f21);
     }
     // field 22: realname
     final f22 = realname;
     if (f22 != null) {
-      w.writeString(22, f22!);
+      w.writeString(22, f22);
     }
     // field 23: avatar
     final f23 = avatar;
     if (f23 != null) {
-      w.writeString(23, f23!);
+      w.writeString(23, f23);
     }
     // field 24: email
     final f24 = email;
     if (f24 != null) {
-      w.writeString(24, f24!);
+      w.writeString(24, f24);
     }
     // field 25: mobile
     final f25 = mobile;
     if (f25 != null) {
-      w.writeString(25, f25!);
+      w.writeString(25, f25);
     }
     // field 26: telephone
     final f26 = telephone;
     if (f26 != null) {
-      w.writeString(26, f26!);
+      w.writeString(26, f26);
     }
     // field 27: gender
     final f27 = gender;
     if (f27 != null) {
-      w.writeEnum(27, f27!.wire); // IdentityServiceV1User$Gender
+      w.writeEnum(27, f27.wire); // IdentityServiceV1User$Gender
     }
     // field 28: address
     final f28 = address;
     if (f28 != null) {
-      w.writeString(28, f28!);
+      w.writeString(28, f28);
     }
     // field 29: region
     final f29 = region;
     if (f29 != null) {
-      w.writeString(29, f29!);
+      w.writeString(29, f29);
     }
     // field 30: description
     final f30 = description;
     if (f30 != null) {
-      w.writeString(30, f30!);
+      w.writeString(30, f30);
     }
     // field 31: remark
     final f31 = remark;
     if (f31 != null) {
-      w.writeString(31, f31!);
+      w.writeString(31, f31);
     }
     // field 32: locale
     final f32 = locale;
     if (f32 != null) {
-      w.writeString(32, f32!);
+      w.writeString(32, f32);
     }
     // field 50: lastLoginAt
     final f50 = lastLoginAt;
     if (f50 != null) {
-      w.writeTimestamp(50, f50!);
+      w.writeTimestamp(50, f50);
     }
     // field 51: lastLoginIp
     final f51 = lastLoginIp;
     if (f51 != null) {
-      w.writeString(51, f51!);
+      w.writeString(51, f51);
     }
     // field 52: status
     final f52 = status;
     if (f52 != null) {
-      w.writeEnum(52, f52!.wire); // IdentityServiceV1User$Status
+      w.writeEnum(52, f52.wire); // IdentityServiceV1User$Status
     }
     // field 53: lockedUntil
     final f53 = lockedUntil;
     if (f53 != null) {
-      w.writeTimestamp(53, f53!);
+      w.writeTimestamp(53, f53);
     }
     // field 80: followers
     final f80 = followers;
     if (f80 != null) {
-      w.writeUint64(80, f80!);
+      w.writeUint64(80, f80);
     }
     // field 81: following
     final f81 = following;
     if (f81 != null) {
-      w.writeUint64(81, f81!);
+      w.writeUint64(81, f81);
     }
     // field 90: postCount
     final f90 = postCount;
     if (f90 != null) {
-      w.writeUint64(90, f90!);
+      w.writeUint64(90, f90);
     }
     // field 91: commentCount
     final f91 = commentCount;
     if (f91 != null) {
-      w.writeUint64(91, f91!);
+      w.writeUint64(91, f91);
     }
     // field 92: likeCount
     final f92 = likeCount;
     if (f92 != null) {
-      w.writeUint64(92, f92!);
+      w.writeUint64(92, f92);
     }
     // field 100: createdBy
     final f100 = createdBy;
     if (f100 != null) {
-      w.writeUint32(100, f100!);
+      w.writeUint32(100, f100);
     }
     // field 101: updatedBy
     final f101 = updatedBy;
     if (f101 != null) {
-      w.writeUint32(101, f101!);
+      w.writeUint32(101, f101);
     }
     // field 102: deletedBy
     final f102 = deletedBy;
     if (f102 != null) {
-      w.writeUint32(102, f102!);
+      w.writeUint32(102, f102);
     }
     // field 200: createdAt
     final f200 = createdAt;
     if (f200 != null) {
-      w.writeTimestamp(200, f200!);
+      w.writeTimestamp(200, f200);
     }
     // field 201: updatedAt
     final f201 = updatedAt;
     if (f201 != null) {
-      w.writeTimestamp(201, f201!);
+      w.writeTimestamp(201, f201);
     }
     // field 202: deletedAt
     final f202 = deletedAt;
     if (f202 != null) {
-      w.writeTimestamp(202, f202!);
+      w.writeTimestamp(202, f202);
     }
   }
 
@@ -20832,27 +20841,27 @@ class IdentityServiceV1UpdateUserRequest {
     // field 1: id
     final f1 = id;
     if (f1 != null) {
-      w.writeUint32(1, f1!);
+      w.writeUint32(1, f1);
     }
     // field 2: data
     final f2 = data;
     if (f2 != null) {
-      final cw = ProtoWireWriter(); f2!._writeTo(cw); w.writeRaw(2, cw.toBuffer()); // IdentityServiceV1User
+      final cw = ProtoWireWriter(); f2._writeTo(cw); w.writeRaw(2, cw.toBuffer()); // IdentityServiceV1User
     }
     // field 3: password
     final f3 = password;
     if (f3 != null) {
-      w.writeString(3, f3!);
+      w.writeString(3, f3);
     }
     // field 4: updateMask
     final f4 = updateMask;
     if (f4 != null) {
-      w.writeFieldMask(4, f4!);
+      w.writeFieldMask(4, f4);
     }
     // field 5: allowMissing
     final f5 = allowMissing;
     if (f5 != null) {
-      w.writeBool(5, f5!);
+      w.writeBool(5, f5);
     }
   }
 
@@ -20964,12 +20973,12 @@ class IdentityServiceV1ChangePasswordRequest {
     // field 1: oldPassword
     final f1 = oldPassword;
     if (f1 != null) {
-      w.writeString(1, f1!);
+      w.writeString(1, f1);
     }
     // field 2: newPassword
     final f2 = newPassword;
     if (f2 != null) {
-      w.writeString(2, f2!);
+      w.writeString(2, f2);
     }
   }
 
@@ -21065,12 +21074,12 @@ class IdentityServiceV1BindContactRequest {
     // field 1: phone
     final f1 = phone;
     if (f1 != null) {
-      final cw = ProtoWireWriter(); f1!._writeTo(cw); w.writeRaw(1, cw.toBuffer()); // IdentityServiceV1BindPhoneRequest
+      final cw = ProtoWireWriter(); f1._writeTo(cw); w.writeRaw(1, cw.toBuffer()); // IdentityServiceV1BindPhoneRequest
     }
     // field 2: email
     final f2 = email;
     if (f2 != null) {
-      final cw = ProtoWireWriter(); f2!._writeTo(cw); w.writeRaw(2, cw.toBuffer()); // IdentityServiceV1BindEmailRequest
+      final cw = ProtoWireWriter(); f2._writeTo(cw); w.writeRaw(2, cw.toBuffer()); // IdentityServiceV1BindEmailRequest
     }
   }
 
@@ -21166,12 +21175,12 @@ class IdentityServiceV1BindPhoneRequest {
     // field 1: phone
     final f1 = phone;
     if (f1 != null) {
-      w.writeString(1, f1!);
+      w.writeString(1, f1);
     }
     // field 2: code
     final f2 = code;
     if (f2 != null) {
-      w.writeString(2, f2!);
+      w.writeString(2, f2);
     }
   }
 
@@ -21267,12 +21276,12 @@ class IdentityServiceV1BindEmailRequest {
     // field 1: email
     final f1 = email;
     if (f1 != null) {
-      w.writeString(1, f1!);
+      w.writeString(1, f1);
     }
     // field 2: verificationCode
     final f2 = verificationCode;
     if (f2 != null) {
-      w.writeString(2, f2!);
+      w.writeString(2, f2);
     }
   }
 
@@ -21377,17 +21386,17 @@ class IdentityServiceV1VerifyContactRequest {
     // field 1: phone
     final f1 = phone;
     if (f1 != null) {
-      final cw = ProtoWireWriter(); f1!._writeTo(cw); w.writeRaw(1, cw.toBuffer()); // IdentityServiceV1PhoneVerification
+      final cw = ProtoWireWriter(); f1._writeTo(cw); w.writeRaw(1, cw.toBuffer()); // IdentityServiceV1PhoneVerification
     }
     // field 2: email
     final f2 = email;
     if (f2 != null) {
-      final cw = ProtoWireWriter(); f2!._writeTo(cw); w.writeRaw(2, cw.toBuffer()); // IdentityServiceV1EmailVerification
+      final cw = ProtoWireWriter(); f2._writeTo(cw); w.writeRaw(2, cw.toBuffer()); // IdentityServiceV1EmailVerification
     }
     // field 3: verificationId
     final f3 = verificationId;
     if (f3 != null) {
-      w.writeString(3, f3!);
+      w.writeString(3, f3);
     }
   }
 
@@ -21491,12 +21500,12 @@ class IdentityServiceV1PhoneVerification {
     // field 1: phone
     final f1 = phone;
     if (f1 != null) {
-      w.writeString(1, f1!);
+      w.writeString(1, f1);
     }
     // field 2: code
     final f2 = code;
     if (f2 != null) {
-      w.writeString(2, f2!);
+      w.writeString(2, f2);
     }
   }
 
@@ -21595,12 +21604,12 @@ class IdentityServiceV1EmailVerification {
     // field 1: email
     final f1 = email;
     if (f1 != null) {
-      w.writeString(1, f1!);
+      w.writeString(1, f1);
     }
     // field 2: code
     final f2 = code;
     if (f2 != null) {
-      w.writeString(2, f2!);
+      w.writeString(2, f2);
     }
   }
 

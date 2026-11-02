@@ -21,6 +21,7 @@ server:
       origins:
         - "http://localhost:15999"
         - "http://127.0.0.1:15999"
+        - "https://admin.cms.gowind.cloud"
     middleware:
       auth:
         method: "HS256"

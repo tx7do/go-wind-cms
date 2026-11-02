@@ -17,8 +17,16 @@ export default defineNuxtPlugin(async (nuxtApp) => {
     const accessStore = useAccessStore()
     const userStore = useUserStore()
 
+    // baseURL 按运行端取值：浏览器用同源相对路径（public.apiBaseUrl，
+    // 请求 /app/v1/... 由部署层 nginx 转发）；SSR 服务端不能走相对路径
+    // （node 端 axios 无 host 上下文），改用服务端专用内部地址直连 app 服务。
+    const runtimeConfig = useRuntimeConfig()
+    const apiBaseURL = import.meta.server
+        ? ((runtimeConfig.apiInternalUrl as string) || config.apiURL)
+        : config.apiURL
+
     // Initialize RequestClient
-    RequestClient.init(config.apiURL, {
+    RequestClient.init(apiBaseURL, {
         getToken: () => {
             const token = accessStore.accessToken
             return token?.value ?? null
