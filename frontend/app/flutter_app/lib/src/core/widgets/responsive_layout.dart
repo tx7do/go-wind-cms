@@ -1,13 +1,12 @@
 import 'package:flutter/material.dart';
 
 import 'package:flutter_app/src/core/constants/breakpoints.dart';
+import 'package:flutter_app/src/core/layout/width_class.dart';
 
-/// 响应式布局组件
+/// 响应式布局组件（旧 API，保留给尚未迁移的页面）。
 ///
-/// 根据当前屏幕宽度自动决定渲染哪套 UI：
-/// - < 600dp  → mobileBody（手机单栏）
-/// - 600~1024dp → tabletBody 或降级为 webBody（平板双栏）
-/// - \> 1024dp → webBody（Web/桌面宽屏）
+/// 新页面请用 [AdaptiveContent]：单一组件树按档换布局，而不是两套 UI
+/// 在断点处互换（互换会重建 State，拖窗口就丢滚动位置）。
 class ResponsiveLayout extends StatelessWidget {
   final Widget mobileBody;
   final Widget? tabletBody;
@@ -24,22 +23,17 @@ class ResponsiveLayout extends StatelessWidget {
   Widget build(BuildContext context) {
     return LayoutBuilder(
       builder: (context, constraints) {
-        final width = constraints.maxWidth;
-        if (Breakpoints.isMobile(width)) {
-          return mobileBody;
-        } else if (Breakpoints.isTablet(width)) {
-          return tabletBody ?? webBody;
-        } else {
-          return webBody;
-        }
+        return switch (WidthClassOf.fromWidth(constraints.maxWidth)) {
+          WidthClass.compact => mobileBody,
+          WidthClass.medium => tabletBody ?? webBody,
+          WidthClass.expanded || WidthClass.wide => webBody,
+        };
       },
     );
   }
 }
 
-/// Web 端居中内容容器
-///
-/// 限制最大宽度并居中，符合现代网页审美（类似 Medium、掘金）
+/// Web 端居中内容容器（旧 API，请优先用 [AdaptiveContent]）
 class WebContentCenter extends StatelessWidget {
   final Widget child;
   final double maxWidth;

@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 import 'package:flutter_app/generated/l10n.dart';
+import 'package:flutter_app/src/core/themes/tokens.dart';
 import 'package:flutter_app/generated/api/app/service/v1/index.dart'
     show CommentServiceV1Comment;
 import 'package:flutter_app/src/core/constants/breakpoints.dart';
@@ -83,16 +83,16 @@ class _CommentInputBarState extends State<CommentInputBar> {
 
     return Container(
       padding: EdgeInsets.fromLTRB(
-        widget.isMobile ? 16.w : 16,
+        widget.isMobile ? 16 : 16,
         10,
-        widget.isMobile ? 16.w : 16,
+        widget.isMobile ? 16 : 16,
         10,
       ),
       decoration: BoxDecoration(
         color: theme.colorScheme.surface,
         border: Border(
           top: BorderSide(
-            color: theme.colorScheme.onSurface.withAlpha((0.06 * 255).round()),
+            color: theme.palette.hairline,
           ),
         ),
       ),
@@ -152,8 +152,7 @@ class _CommentInputBarState extends State<CommentInputBar> {
                       child: Container(
                         padding: const EdgeInsets.symmetric(horizontal: 14),
                         decoration: BoxDecoration(
-                          color: theme.colorScheme.surfaceContainerHighest
-                              .withAlpha((0.5 * 255).round()),
+                          color: theme.palette.surfaceLow,
                           borderRadius: BorderRadius.circular(20),
                         ),
                         child: TextField(
@@ -161,14 +160,14 @@ class _CommentInputBarState extends State<CommentInputBar> {
                           focusNode: _focusNode,
                           enabled: !_isSending,
                           style: TextStyle(
-                            fontSize: widget.isMobile ? 14.sp : 14,
+                            fontSize: widget.isMobile ? 14 : 14,
                             color: theme.colorScheme.onSurface,
                           ),
                           decoration: InputDecoration(
                             border: InputBorder.none,
                             hintText: S.of(context).writeComment,
                             hintStyle: TextStyle(
-                              fontSize: widget.isMobile ? 14.sp : 14,
+                              fontSize: widget.isMobile ? 14 : 14,
                               color: theme.colorScheme.onSurface.withAlpha(100),
                             ),
                             isDense: true,

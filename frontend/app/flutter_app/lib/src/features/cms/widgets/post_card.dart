@@ -1,21 +1,22 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:go_router/go_router.dart';
 
 import 'package:flutter_app/generated/api/app/service/v1/index.dart'
     show ContentServiceV1Post, ContentServiceV1Category, ContentServiceV1Tag;
 import 'package:flutter_app/generated/l10n.dart';
-import 'package:flutter_app/src/core/utils/responsive_utils.dart';
+import 'package:flutter_app/src/core/themes/tokens.dart';
 import 'package:flutter_app/src/core/utils/translation_helpers.dart';
 
 typedef Post = ContentServiceV1Post;
 typedef Category = ContentServiceV1Category;
 typedef Tag = ContentServiceV1Tag;
 
-/// 文章卡片组件
+/// 文章卡片
 ///
-/// 支持响应式布局和 Web 端 Hover 效果。
+/// 一套观感吃所有宽度：卡片本身不感知断点，列数交给 AdaptiveGrid。
+/// 视觉纪律（doc §1/§5）：描边分层不投影、主色只出现在分类签与悬停描边、
+/// 计数与时间用等宽数字。
 ///
 /// likeCount 由父列表组件批量查询 InteractionService.GetCounts 后注入
 /// （post.likes 列已移除，计数来自 interaction_counter 表）。
@@ -51,7 +52,11 @@ class _PostCardState extends State<PostCard> {
     final catId = widget.post.categoryIds!.first;
     try {
       return widget.categories.firstWhere((c) => c.id == catId);
-    } catch (_) {
+    } catch (e) {
+      assert(() {
+        debugPrint('[PostCard] category lookup failed: $e');
+        return true;
+      }());
       return null;
     }
   }
@@ -69,99 +74,58 @@ class _PostCardState extends State<PostCard> {
     return t != null ? DateTime.tryParse(t) : null;
   }
 
-  bool get _isMobile => ResponsiveUtils.isMobile(context);
-
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
+    final p = theme.palette;
+    final radius = theme.radius;
+    final space = theme.space;
+    final hovered = _isHovered;
 
     return MouseRegion(
       cursor: SystemMouseCursors.click,
       onEnter: (_) => setState(() => _isHovered = true),
       onExit: (_) => setState(() => _isHovered = false),
       child: AnimatedContainer(
-        duration: const Duration(milliseconds: 200),
-        curve: Curves.easeOut,
-        transform: _isHovered && !_isMobile
-            ? (Matrix4.translationValues(0.0, -2.0, 0.0))
+        duration: theme.motion.fast,
+        curve: theme.motion.curve,
+        transform: hovered
+            ? Matrix4.translationValues(0, -theme.motion.lift, 0)
             : Matrix4.identity(),
         decoration: BoxDecoration(
-          borderRadius: BorderRadius.circular(_isMobile ? 14.r : 14),
-          boxShadow: [
-            // 基础轻阴影：让卡片始终有精致的「盒子感」
-            BoxShadow(
-              color: Colors.black.withAlpha((0.03 * 255).round()),
-              blurRadius: 10,
-              offset: const Offset(0, 4),
-            ),
-            // Hover 态：阴影加深 + 上浮
-            if (_isHovered && !_isMobile)
-              BoxShadow(
-                color: Colors.black.withAlpha((0.08 * 255).round()),
-                blurRadius: 16,
-                offset: const Offset(0, 6),
-              ),
-          ],
+          borderRadius: radius.mdAll,
+          boxShadow: hovered ? theme.shadow.hover : theme.shadow.card,
         ),
         child: Card(
           elevation: 0,
+          margin: EdgeInsets.zero,
+          color: p.surface,
           shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(_isMobile ? 14.r : 14),
+            borderRadius: radius.mdAll,
             side: BorderSide(
-              color: _isHovered && !_isMobile
-                  ? theme.colorScheme.primary.withAlpha((0.3 * 255).round())
-                  : theme.colorScheme.onSurface.withAlpha((0.06 * 255).round()),
-              width: 1,
+              color: hovered ? p.primaryBorder : p.border,
+              width: theme.borderWidth.thin,
             ),
           ),
-          color: _isHovered && !_isMobile
-              ? theme.colorScheme.surfaceContainerLow
-              : theme.colorScheme.surface,
-          margin: EdgeInsets.zero,
           child: InkWell(
             onTap: () {
               if (widget.post.id != null) {
                 context.go('/post/${widget.post.id}');
               }
             },
-            borderRadius: BorderRadius.circular(_isMobile ? 14.r : 14),
+            borderRadius: radius.mdAll,
             child: Padding(
-              padding: EdgeInsets.all(_isMobile ? 16.w : 16),
+              padding: EdgeInsets.all(space.cardPadding - space.xs),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  // 封面图（如果有）
-                  if (_coverImage != null) ...[
-                    ClipRRect(
-                      borderRadius: BorderRadius.circular(
-                        _isMobile ? 10.r : 10,
-                      ),
-                      child: CachedNetworkImage(
-                        imageUrl: _coverImage!,
-                        height: _isMobile ? 140.h : 140,
-                        width: double.infinity,
-                        fit: BoxFit.cover,
-                        placeholder: (context, url) => Container(
-                          height: _isMobile ? 140.h : 140,
-                          color: Colors.grey.shade100,
-                        ),
-                        errorWidget: (context, url, error) => Container(
-                          height: _isMobile ? 140.h : 140,
-                          color: Colors.grey.shade100,
-                          child: Icon(
-                            Icons.image_outlined,
-                            color: Colors.grey.shade300,
-                            size: _isMobile ? 32.sp : 32,
-                          ),
-                        ),
-                      ),
-                    ),
-                    SizedBox(height: _isMobile ? 12.h : 12),
-                  ],
+                  // 无封面也渲染占位块：网格里所有卡视觉对齐
+                  _Cover(imageUrl: _coverImage),
+                  SizedBox(height: space.md),
                   _buildHeader(context, theme),
-                  SizedBox(height: _isMobile ? 10.h : 10),
+                  SizedBox(height: space.sm + 2),
                   _buildContent(context, theme),
-                  SizedBox(height: _isMobile ? 12.h : 12),
+                  SizedBox(height: space.md),
                   _buildFooter(context, theme),
                 ],
               ),
@@ -173,69 +137,59 @@ class _PostCardState extends State<PostCard> {
   }
 
   Widget _buildHeader(BuildContext context, ThemeData theme) {
+    final p = theme.palette;
     final category = _getCategory();
+    final author = widget.post.authorName ?? '';
 
     return Row(
       children: [
         CircleAvatar(
-          radius: _isMobile ? 16.r : 16,
-          backgroundColor: theme.colorScheme.primaryContainer,
+          radius: 11,
+          backgroundColor: p.primarySoft,
           child: Text(
-            (widget.post.authorName ?? '').isNotEmpty
-                ? (widget.post.authorName ?? '')[0]
-                : '?',
-            style: TextStyle(
-              fontSize: _isMobile ? 13.sp : 13,
+            author.isNotEmpty ? author.characters.first : '?',
+            style: theme.textTheme.labelSmall?.copyWith(
+              fontSize: 11,
               fontWeight: FontWeight.w600,
-              color: theme.colorScheme.onSurface,
+              color: p.primaryOnSoft,
             ),
           ),
         ),
-        SizedBox(width: _isMobile ? 10.w : 10),
+        const SizedBox(width: 6),
         Expanded(
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Text(
-                widget.post.authorName ?? '',
-                style: TextStyle(
-                  fontSize: _isMobile ? 13.sp : 13,
-                  fontWeight: FontWeight.w500,
-                  color: theme.colorScheme.onSurface,
-                ),
+                author,
+                maxLines: 1,
+                overflow: TextOverflow.ellipsis,
+                style: theme.textTheme.labelMedium,
               ),
-              SizedBox(height: _isMobile ? 2.h : 2),
               Text(
                 _publishedAt != null ? _formatDate(_publishedAt!) : '',
-                style: TextStyle(
-                  fontSize: _isMobile ? 11.sp : 11,
-                  color: theme.colorScheme.onSurface.withAlpha(120),
-                ),
+                style: theme.textTheme.labelSmall,
               ),
             ],
           ),
         ),
-        if (category != null)
+        if (category != null) ...[
+          const SizedBox(width: 8),
           Container(
-            padding: EdgeInsets.symmetric(
-              horizontal: _isMobile ? 10.w : 10,
-              vertical: _isMobile ? 4.h : 4,
-            ),
+            padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 2),
             decoration: BoxDecoration(
-              color: theme.colorScheme.primaryContainer.withAlpha(
-                (0.5 * 255).round(),
-              ),
-              borderRadius: BorderRadius.circular(_isMobile ? 8.r : 8),
+              color: p.primarySoft,
+              borderRadius: theme.radius.xsAll,
             ),
             child: Text(
               getCategoryName(category),
-              style: TextStyle(
-                fontSize: _isMobile ? 11.sp : 11,
-                fontWeight: FontWeight.w500,
-                color: theme.colorScheme.onSurface.withAlpha(180),
+              style: theme.textTheme.labelSmall?.copyWith(
+                color: p.primaryOnSoft,
+                fontWeight: FontWeight.w600,
               ),
             ),
           ),
+        ],
       ],
     );
   }
@@ -249,23 +203,14 @@ class _PostCardState extends State<PostCard> {
           _title,
           maxLines: 2,
           overflow: TextOverflow.ellipsis,
-          style: TextStyle(
-            fontSize: _isMobile ? 16.sp : 16,
-            fontWeight: FontWeight.bold,
-            color: theme.colorScheme.onSurface,
-            height: 1.3,
-          ),
+          style: theme.textTheme.titleMedium?.copyWith(height: 1.4),
         ),
-        SizedBox(height: _isMobile ? 6.h : 6),
+        const SizedBox(height: 6),
         Text(
           _summary,
           maxLines: 2,
           overflow: TextOverflow.ellipsis,
-          style: TextStyle(
-            fontSize: _isMobile ? 13.sp : 13,
-            color: Colors.grey.shade600,
-            height: 1.4,
-          ),
+          style: theme.textTheme.bodySmall?.copyWith(height: 1.6),
         ),
       ],
     );
@@ -273,7 +218,6 @@ class _PostCardState extends State<PostCard> {
 
   Widget _buildFooter(BuildContext context, ThemeData theme) {
     final tags = _getTags();
-
     final tagText = tags.take(3).map((tag) => '#${getTagName(tag)}').join('  ');
 
     return Row(
@@ -281,41 +225,24 @@ class _PostCardState extends State<PostCard> {
         Expanded(
           child: Text(
             tagText,
-            style: TextStyle(
-              fontSize: _isMobile ? 12.sp : 12,
-              color: theme.colorScheme.primary,
-              fontWeight: FontWeight.w400,
-            ),
+            style: theme.textTheme.labelSmall,
             maxLines: 1,
             overflow: TextOverflow.ellipsis,
           ),
         ),
-        _buildStat(
-          Icons.favorite_outline,
-          '${widget.likeCount}',
-          theme,
-        ),
+        _buildStat(Icons.favorite_outline, '${widget.likeCount}', theme),
       ],
     );
   }
 
   Widget _buildStat(IconData icon, String value, ThemeData theme) {
+    final style = theme.textTheme.labelSmall;
     return Row(
       mainAxisSize: MainAxisSize.min,
       children: [
-        Icon(
-          icon,
-          size: _isMobile ? 16.sp : 16,
-          color: theme.colorScheme.onSurface.withAlpha(120),
-        ),
-        SizedBox(width: _isMobile ? 3.w : 3),
-        Text(
-          value,
-          style: TextStyle(
-            fontSize: _isMobile ? 12.sp : 12,
-            color: theme.colorScheme.onSurface.withAlpha(120),
-          ),
-        ),
+        Icon(icon, size: 14, color: style?.color),
+        const SizedBox(width: 3),
+        Text(value, style: style),
       ],
     );
   }
@@ -329,5 +256,47 @@ class _PostCardState extends State<PostCard> {
     if (diff.inDays < 7) return loc.daysAgo(diff.inDays);
     if (diff.inDays < 30) return loc.weeksAgo((diff.inDays / 7).floor());
     return loc.monthDay(date.month, date.day);
+  }
+}
+
+/// 卡片题图：16:9 稳定宽高比（网格里所有卡对齐）。
+/// 无图/加载失败显示占位：主色淡底 + 线性图标，不用灰块
+class _Cover extends StatelessWidget {
+  const _Cover({this.imageUrl});
+
+  final String? imageUrl;
+
+  @override
+  Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+    final p = theme.palette;
+
+    Widget fallback({IconData? icon}) => AspectRatio(
+          aspectRatio: 16 / 9,
+          child: Container(
+            color: p.primaryTint,
+            alignment: Alignment.center,
+            child: Icon(
+              icon ?? Icons.article_outlined,
+              size: 28,
+              color: p.inkTertiary,
+            ),
+          ),
+        );
+
+    final url = imageUrl;
+    if (url == null || url.isEmpty) return fallback();
+
+    return ClipRRect(
+      borderRadius: theme.radius.mediaTop(theme.radius.md - 1),
+      child: CachedNetworkImage(
+        imageUrl: url,
+        width: double.infinity,
+        fit: BoxFit.cover,
+        placeholder: (context, url) => fallback(),
+        errorWidget: (context, url, error) =>
+            fallback(icon: Icons.broken_image_outlined),
+      ),
+    );
   }
 }

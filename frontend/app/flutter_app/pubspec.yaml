@@ -114,7 +114,6 @@ dependencies:
   cached_network_image: ^3.4.1
   shimmer: ^3.0.0
 
-  flutter_screenutil: ^5.9.3
   flutter_easyloading: ^3.0.5
   jiffy: ^6.4.5
   flutter_native_splash: ^2.4.6
@@ -199,17 +198,14 @@ flutter:
   # see https://flutter.dev/to/font-from-package
 
   fonts:
-    - family: Noto Color Emoji
-      fonts:
-        - asset: assets/fonts/NotoColorEmoji-Regular.ttf
+    # Noto Sans SC 用官方变量字体（wght 100-900 单文件，17.8MB 替代三档 static 31.6MB）。
+    # 不写 weight 行：Flutter 的 FontWeight 会自动映射到 VF 的 wght 轴（见
+    # docs.flutter.dev/release/breaking-changes/font-weight-variation）。
+    # NotoColorEmoji-Regular.ttf（24MB）已移除：原生端系统 emoji 字体齐全
+    # （fonts.dart emojiFontFamily 兜底链未动），仅 web 端 emoji 会渲染为 tofu。
     - family: Noto Sans SC
       fonts:
-        - asset: assets/fonts/NotoSansSC-Regular.ttf
-          weight: 400
-        - asset: assets/fonts/NotoSansSC-Medium.ttf
-          weight: 500
-        - asset: assets/fonts/NotoSansSC-Bold.ttf
-          weight: 700
+        - asset: assets/fonts/NotoSansSC-VF.ttf
     - family: Roboto
       fonts:
         - asset: assets/fonts/Roboto-Regular.ttf

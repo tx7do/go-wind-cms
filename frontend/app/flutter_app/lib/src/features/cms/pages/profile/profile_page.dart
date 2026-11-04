@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:go_router/go_router.dart';
 import 'package:flutter_app/src/features/auth/services/authentication_service.dart';
 
 import 'package:flutter_app/generated/l10n.dart';
+import 'package:flutter_app/src/core/themes/tokens.dart';
 import 'package:flutter_app/src/core/utils/responsive_utils.dart';
 import 'package:flutter_app/src/core/repositories/user_auth_cache.dart';
 
@@ -29,7 +29,7 @@ class ProfilePage extends StatelessWidget {
             title: Text(
               S.of(context).me,
               style: TextStyle(
-                fontSize: 22.sp,
+                fontSize: 22,
                 fontWeight: FontWeight.bold,
                 color: themeData.colorScheme.onSurface,
               ),
@@ -38,36 +38,36 @@ class ProfilePage extends StatelessWidget {
 
         SliverToBoxAdapter(
           child: Padding(
-            padding: EdgeInsets.all(isMobile ? 16.w : 16),
+            padding: EdgeInsets.all(isMobile ? 16 : 16),
             child: _UserProfileCard(isMobile: isMobile),
           ),
         ),
         SliverToBoxAdapter(
           child: Padding(
-            padding: EdgeInsets.symmetric(horizontal: isMobile ? 16.w : 16),
+            padding: EdgeInsets.symmetric(horizontal: isMobile ? 16 : 16),
             child: _MenuSection(isMobile: isMobile),
           ),
         ),
         SliverToBoxAdapter(
           child: Padding(
-            padding: EdgeInsets.fromLTRB(isMobile ? 16.w : 16, 20, isMobile ? 16.w : 16, 8),
+            padding: EdgeInsets.fromLTRB(isMobile ? 16 : 16, 20, isMobile ? 16 : 16, 8),
             child: Text(
               S.of(context).readingStats,
-              style: TextStyle(fontSize: isMobile ? 16.sp : 16, fontWeight: FontWeight.w600, color: themeData.colorScheme.onSurface),
+              style: TextStyle(fontSize: isMobile ? 16 : 16, fontWeight: FontWeight.w600, color: themeData.colorScheme.onSurface),
             ),
           ),
         ),
         SliverToBoxAdapter(
           child: Padding(
-            padding: EdgeInsets.symmetric(horizontal: isMobile ? 16.w : 16),
+            padding: EdgeInsets.symmetric(horizontal: isMobile ? 16 : 16),
             child: _StatsSection(isMobile: isMobile),
           ),
         ),
-        SliverToBoxAdapter(child: SizedBox(height: isMobile ? 24.h : 24)),
+        SliverToBoxAdapter(child: SizedBox(height: isMobile ? 24 : 24)),
       ],
     );
 
-    // Web 端由 WebShellLayout 提供 Scaffold，不再嵌套 Scaffold
+    // 宽屏由壳层 AdaptiveShell 提供 Scaffold，不再嵌套 Scaffold
     if (!isMobile) return body;
 
     return Scaffold(
@@ -99,23 +99,23 @@ class _UserProfileCardState extends State<_UserProfileCard> {
         return Card(
           elevation: 0,
           shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(isMobile ? 16.r : 16),
+            borderRadius: BorderRadius.circular(isMobile ? 16 : 16),
           ),
           color: themeData.colorScheme.surface,
           child: Padding(
-            padding: EdgeInsets.all(isMobile ? 20.w : 20),
+            padding: EdgeInsets.all(isMobile ? 20 : 20),
             child: Row(
               children: [
                 CircleAvatar(
-                  radius: isMobile ? 32.r : 32,
+                  radius: isMobile ? 32 : 32,
                   backgroundColor: themeData.colorScheme.primaryContainer,
                   child: Icon(
                     Icons.person,
-                    size: isMobile ? 32.sp : 32,
+                    size: isMobile ? 32 : 32,
                     color: themeData.colorScheme.onSurface,
                   ),
                 ),
-                SizedBox(width: isMobile ? 16.w : 16),
+                SizedBox(width: isMobile ? 16 : 16),
                 Expanded(
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
@@ -123,16 +123,16 @@ class _UserProfileCardState extends State<_UserProfileCard> {
                       Text(
                         hasLogin ? loc.appName : loc.guestUser,
                         style: TextStyle(
-                          fontSize: isMobile ? 18.sp : 18,
+                          fontSize: isMobile ? 18 : 18,
                           fontWeight: FontWeight.bold,
                           color: themeData.colorScheme.onSurface,
                         ),
                       ),
-                      SizedBox(height: isMobile ? 4.h : 4),
+                      SizedBox(height: isMobile ? 4 : 4),
                       Text(
                         hasLogin ? loc.welcomeBack : loc.loginForMore,
                         style: TextStyle(
-                          fontSize: isMobile ? 13.sp : 13,
+                          fontSize: isMobile ? 13 : 13,
                           color: themeData.colorScheme.onSurface.withAlpha(140),
                         ),
                       ),
@@ -143,19 +143,19 @@ class _UserProfileCardState extends State<_UserProfileCard> {
                   OutlinedButton(
                     onPressed: () => _handleLogout(context),
                     style: OutlinedButton.styleFrom(
-                      foregroundColor: Colors.red,
+                      foregroundColor: themeData.palette.dangerText,
                       padding: EdgeInsets.symmetric(
-                        horizontal: isMobile ? 20.w : 20,
-                        vertical: isMobile ? 8.h : 8,
+                        horizontal: isMobile ? 20 : 20,
+                        vertical: isMobile ? 8 : 8,
                       ),
                       shape: RoundedRectangleBorder(
                         borderRadius:
-                            BorderRadius.circular(isMobile ? 20.r : 20),
+                            BorderRadius.circular(isMobile ? 20 : 20),
                       ),
                     ),
                     child: Text(
                       loc.logout,
-                      style: TextStyle(fontSize: isMobile ? 14.sp : 14),
+                      style: TextStyle(fontSize: isMobile ? 14 : 14),
                     ),
                   )
                 else
@@ -163,17 +163,17 @@ class _UserProfileCardState extends State<_UserProfileCard> {
                     onPressed: () => context.go('/login'),
                     style: OutlinedButton.styleFrom(
                       padding: EdgeInsets.symmetric(
-                        horizontal: isMobile ? 20.w : 20,
-                        vertical: isMobile ? 8.h : 8,
+                        horizontal: isMobile ? 20 : 20,
+                        vertical: isMobile ? 8 : 8,
                       ),
                       shape: RoundedRectangleBorder(
                         borderRadius:
-                            BorderRadius.circular(isMobile ? 20.r : 20),
+                            BorderRadius.circular(isMobile ? 20 : 20),
                       ),
                     ),
                     child: Text(
                       loc.login,
-                      style: TextStyle(fontSize: isMobile ? 14.sp : 14),
+                      style: TextStyle(fontSize: isMobile ? 14 : 14),
                     ),
                   ),
               ],
@@ -207,7 +207,7 @@ class _UserProfileCardState extends State<_UserProfileCard> {
                 ).showSnackBar(SnackBar(content: Text(loc.loginButton)));
               }
             },
-            child: Text(loc.confirm, style: const TextStyle(color: Colors.red)),
+            child: Text(loc.confirm, style: TextStyle(color: Theme.of(context).palette.dangerText)),
           ),
         ],
       ),
@@ -255,7 +255,7 @@ class _MenuSection extends StatelessWidget {
     return Card(
       elevation: 0,
       shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(isMobile ? 16.r : 16),
+        borderRadius: BorderRadius.circular(isMobile ? 16 : 16),
       ),
       color: themeData.colorScheme.surface,
       child: Column(
@@ -263,31 +263,31 @@ class _MenuSection extends StatelessWidget {
           return ListTile(
             leading: Icon(
               item.icon,
-              size: isMobile ? 22.sp : 22,
+              size: isMobile ? 22 : 22,
               color: themeData.colorScheme.onSurface.withAlpha(180),
             ),
             title: Text(
               item.title,
               style: TextStyle(
-                fontSize: isMobile ? 15.sp : 15,
+                fontSize: isMobile ? 15 : 15,
                 color: themeData.colorScheme.onSurface,
               ),
             ),
             subtitle: Text(
               item.subtitle,
               style: TextStyle(
-                fontSize: isMobile ? 12.sp : 12,
+                fontSize: isMobile ? 12 : 12,
                 color: themeData.colorScheme.onSurface.withAlpha(100),
               ),
             ),
             trailing: Icon(
               Icons.chevron_right,
-              size: isMobile ? 20.sp : 20,
+              size: isMobile ? 20 : 20,
               color: themeData.colorScheme.onSurface.withAlpha(80),
             ),
             contentPadding: EdgeInsets.symmetric(
-              horizontal: isMobile ? 16.w : 16,
-              vertical: isMobile ? 4.h : 4,
+              horizontal: isMobile ? 16 : 16,
+              vertical: isMobile ? 4 : 4,
             ),
             onTap: () {
               if (item.icon == Icons.settings_outlined) {
@@ -339,11 +339,11 @@ class _StatsSection extends StatelessWidget {
     return Card(
       elevation: 0,
       shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(isMobile ? 16.r : 16),
+        borderRadius: BorderRadius.circular(isMobile ? 16 : 16),
       ),
       color: themeData.colorScheme.surface,
       child: Padding(
-        padding: EdgeInsets.symmetric(vertical: isMobile ? 16.h : 16),
+        padding: EdgeInsets.symmetric(vertical: isMobile ? 16 : 16),
         child: Row(
           mainAxisAlignment: MainAxisAlignment.spaceAround,
           children: stats.map((stat) {
@@ -352,16 +352,16 @@ class _StatsSection extends StatelessWidget {
                 Text(
                   stat.value,
                   style: TextStyle(
-                    fontSize: isMobile ? 20.sp : 20,
+                    fontSize: isMobile ? 20 : 20,
                     fontWeight: FontWeight.bold,
                     color: themeData.colorScheme.onSurface,
                   ),
                 ),
-                SizedBox(height: isMobile ? 4.h : 4),
+                SizedBox(height: isMobile ? 4 : 4),
                 Text(
                   stat.label,
                   style: TextStyle(
-                    fontSize: isMobile ? 12.sp : 12,
+                    fontSize: isMobile ? 12 : 12,
                     color: themeData.colorScheme.onSurface.withAlpha(120),
                   ),
                 ),

@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:go_router/go_router.dart';
 
 import 'package:flutter_app/generated/l10n.dart';
@@ -15,6 +14,8 @@ import 'package:flutter_app/src/features/cms/services/category_service.dart';
 import 'package:flutter_app/src/features/cms/services/post_service.dart';
 import 'package:flutter_app/src/features/cms/services/tag_service.dart';
 import 'package:flutter_app/src/features/cms/services/interaction_service.dart';
+import 'package:flutter_app/src/core/themes/tokens.dart';
+import 'package:flutter_app/src/features/cms/pages/home/widgets/section_header.dart';
 
 typedef Post = ContentServiceV1Post;
 typedef Category = ContentServiceV1Category;
@@ -22,7 +23,7 @@ typedef Tag = ContentServiceV1Tag;
 
 /// 首页内容视图（分类 Tab + 文章列表 + 轮播图）
 ///
-/// 嵌入在 HomeMobileView 的第一个 tab 中。
+/// 首页正文视图（窄屏模式的内容主体，宽屏用 HomeWebView）。
 class HomeContentView extends StatefulWidget {
   const HomeContentView({super.key});
 
@@ -141,61 +142,49 @@ class _HomeContentViewState extends State<HomeContentView>
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
 
+    // 壳层（AdaptiveShell）在 tab 根位置提供 Scaffold，这里只管内容
     if (_categories.isEmpty || _tabController == null) {
-      return Scaffold(
-        backgroundColor: theme.scaffoldBackgroundColor,
-        body: const Center(child: CircularProgressIndicator()),
-      );
+      return const Center(child: CircularProgressIndicator());
     }
 
-    return Scaffold(
-      backgroundColor: theme.scaffoldBackgroundColor,
-      body: NestedScrollView(
-        headerSliverBuilder: (context, innerBoxIsScrolled) {
-          return [
-            SliverAppBar(
-              floating: true,
-              snap: true,
-              pinned: false,
-              elevation: 0,
-              backgroundColor: theme.colorScheme.surface,
-              surfaceTintColor: Colors.transparent,
-              title: Text(
-                S.of(context).appName,
-                style: TextStyle(
-                  fontSize: 22.sp,
-                  fontWeight: FontWeight.bold,
-                  color: theme.colorScheme.onSurface,
-                ),
+    final space = theme.space;
+    final p = theme.palette;
+
+    return NestedScrollView(
+      headerSliverBuilder: (context, innerBoxIsScrolled) {
+        return [
+          SliverAppBar(
+            floating: true,
+            snap: true,
+            pinned: false,
+            title: Text(S.of(context).appName),
+            actions: [
+              IconButton(
+                icon: const Icon(Icons.search),
+                onPressed: () => context.go('/search'),
+                tooltip: S.of(context).search,
               ),
-              actions: [
-                IconButton(
-                  icon: Icon(Icons.search, size: 24.sp),
-                  onPressed: () => context.go('/search'),
-                  tooltip: S.of(context).search,
-                ),
-                SizedBox(width: 8.w),
-              ],
-              bottom: PreferredSize(
-                preferredSize: Size.fromHeight(46.h),
-                child: Container(
-                  color: theme.colorScheme.surface,
-                  child: CategoryTabs(
-                    categories: _categories,
-                    tabController: _tabController!,
-                  ),
+              SizedBox(width: space.sm),
+            ],
+            bottom: PreferredSize(
+              preferredSize: const Size.fromHeight(46),
+              child: ColoredBox(
+                color: p.surface,
+                child: CategoryTabs(
+                  categories: _categories,
+                  tabController: _tabController!,
                 ),
               ),
             ),
-          ];
-        },
-        body: TabBarView(
-          controller: _tabController,
-          children: List.generate(_categories.length, (index) {
-            final posts = index == 0 ? _posts : _filteredPosts;
-            return _buildTabContent(context, posts, index == 0);
-          }),
-        ),
+          ),
+        ];
+      },
+      body: TabBarView(
+        controller: _tabController,
+        children: List.generate(_categories.length, (index) {
+          final posts = index == 0 ? _posts : _filteredPosts;
+          return _buildTabContent(context, posts, index == 0);
+        }),
       ),
     );
   }
@@ -205,6 +194,7 @@ class _HomeContentViewState extends State<HomeContentView>
     List<Post> posts,
     bool isRecommend,
   ) {
+    final space = Theme.of(context).space;
     return CustomScrollView(
       slivers: [
         if (isRecommend) ...[
@@ -219,49 +209,27 @@ class _HomeContentViewState extends State<HomeContentView>
 
         SliverToBoxAdapter(
           child: Padding(
-            padding: EdgeInsets.fromLTRB(20.w, 16.h, 20.w, 8.h),
-            child: Row(
-              children: [
-                Container(
-                  width: 4.w,
-                  height: 18.h,
-                  decoration: BoxDecoration(
-                    color: Theme.of(context).colorScheme.primary,
-                    borderRadius: BorderRadius.circular(2.r),
-                  ),
-                ),
-                SizedBox(width: 8.w),
-                Text(
-                  isRecommend
-                      ? S.of(context).latestPosts
-                      : S.of(context).relatedArticles,
-                  style: TextStyle(
-                    fontSize: 16.sp,
-                    fontWeight: FontWeight.w600,
-                    color: Theme.of(context).colorScheme.onSurface,
-                  ),
-                ),
-                const Spacer(),
-                Text(
-                  S.of(context).postsCount(posts.length),
-                  style: TextStyle(
-                    fontSize: 13.sp,
-                    color: Theme.of(
-                      context,
-                    ).colorScheme.onSurface.withAlpha(128),
-                  ),
-                ),
-              ],
+            padding: EdgeInsets.fromLTRB(
+              space.cardPadding,
+              space.lg,
+              space.cardPadding,
+              space.sm,
+            ),
+            child: SectionHeader(
+              title: isRecommend
+                  ? S.of(context).latestPosts
+                  : S.of(context).relatedArticles,
+              count: posts.length,
             ),
           ),
         ),
 
         SliverPadding(
-          padding: EdgeInsets.symmetric(horizontal: 16.w),
+          padding: EdgeInsets.symmetric(horizontal: space.lg),
           sliver: SliverList(
             delegate: SliverChildBuilderDelegate(
               (context, index) => Padding(
-                padding: EdgeInsets.only(bottom: 12.h),
+                padding: EdgeInsets.only(bottom: space.listRowGap),
                 child: PostCard(
                   post: posts[index],
                   likeCount: _likeCounts[posts[index].id] ?? 0,
@@ -274,7 +242,7 @@ class _HomeContentViewState extends State<HomeContentView>
           ),
         ),
 
-        SliverToBoxAdapter(child: SizedBox(height: 24.h)),
+        SliverToBoxAdapter(child: SizedBox(height: space.xxl)),
       ],
     );
   }

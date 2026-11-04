@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 import 'package:flutter_app/generated/api/app/service/v1/index.dart'
     show ContentServiceV1Tag;
@@ -41,11 +40,11 @@ class PostTags extends StatelessWidget {
 
     final content = Padding(
       padding: asSliver
-          ? EdgeInsets.fromLTRB(isMobile ? 20.w : 0, 8, isMobile ? 20.w : 0, 0)
+          ? EdgeInsets.fromLTRB(isMobile ? 20 : 0, 8, isMobile ? 20 : 0, 0)
           : const EdgeInsets.fromLTRB(0, 8, 0, 0),
       child: Wrap(
-        spacing: isMobile ? 8.w : 8,
-        runSpacing: isMobile ? 6.h : 6,
+        spacing: isMobile ? 8 : 8,
+        runSpacing: isMobile ? 6 : 6,
         children: tags
             .map((tag) => TagChip(tag: tag, isMobile: isMobile, compact: true))
             .toList(),

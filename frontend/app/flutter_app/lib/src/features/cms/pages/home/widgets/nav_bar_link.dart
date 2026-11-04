@@ -2,9 +2,12 @@ import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:url_launcher/url_launcher.dart';
 
-/// 导航栏链接
+import 'package:flutter_app/src/core/themes/tokens.dart';
+
+/// 顶栏导航链接
 ///
-/// 用于 Web 端顶部导航栏的链接项，支持内部路由跳转和外部链接。
+/// 支持内部路由跳转和外部链接；选中态是「主色字 + 主色下划线」，
+/// 不做背景填充——顶栏的选中语言与底栏保持一致。
 class NavBarLink extends StatefulWidget {
   final String label;
   final String? route;
@@ -34,23 +37,24 @@ class _NavBarLinkState extends State<NavBarLink> {
 
     if (widget.isExternal) {
       final uri = Uri.tryParse(route);
-      if (uri != null) launchUrl(uri);
+      if (uri == null) return;
+      launchUrl(
+        uri,
+        mode: LaunchMode.platformDefault,
+        webOnlyWindowName: widget.isOpenNewTab ? '_blank' : null,
+      );
       return;
     }
-
-    try {
-      context.go(route);
-    } catch (_) {
-      context.go('/');
-    }
+    // 未匹配路由交给 errorBuilder（NotFoundPage），不吞错
+    context.go(route);
   }
 
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
-    final color = widget.isActive
-        ? theme.colorScheme.primary
-        : theme.colorScheme.onSurface;
+    final p = theme.palette;
+    final active = widget.isActive;
+    final color = active || _isHovered ? p.primary : p.ink;
 
     return GestureDetector(
       onTap: _handleTap,
@@ -59,26 +63,23 @@ class _NavBarLinkState extends State<NavBarLink> {
         onEnter: (_) => setState(() => _isHovered = true),
         onExit: (_) => setState(() => _isHovered = false),
         child: Container(
-          padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+          padding: EdgeInsets.symmetric(
+            horizontal: theme.space.md,
+            vertical: theme.space.sm,
+          ),
           decoration: BoxDecoration(
-            border: widget.isActive
+            border: active
                 ? Border(
                     bottom: BorderSide(
-                      color: theme.colorScheme.primary,
-                      width: 2,
+                      color: p.primary,
+                      width: theme.borderWidth.emphasis,
                     ),
                   )
                 : null,
           ),
           child: Text(
             widget.label,
-            style: TextStyle(
-              fontSize: 14,
-              fontWeight: widget.isActive ? FontWeight.w600 : FontWeight.w400,
-              color: _isHovered && !widget.isActive
-                  ? theme.colorScheme.primary
-                  : color,
-            ),
+            style: theme.textTheme.labelLarge?.copyWith(color: color),
           ),
         ),
       ),

@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:go_router/go_router.dart';
 
 import 'package:flutter_app/generated/l10n.dart';
+import 'package:flutter_app/src/core/themes/tokens.dart';
 import 'package:flutter_app/generated/api/app/service/v1/index.dart'
     show CommentServiceV1Comment, InteractionServiceV1TargetType,
         InteractionServiceV1CounterMetric;
@@ -95,7 +95,7 @@ class _MyCommentsPageState extends State<MyCommentsPage> {
                     Text(
                       loc.noCommentsYet,
                       style: TextStyle(
-                        fontSize: isMobile ? 15.sp : 15,
+                        fontSize: isMobile ? 15 : 15,
                         color: theme.colorScheme.onSurface.withAlpha(120),
                       ),
                     ),
@@ -106,10 +106,10 @@ class _MyCommentsPageState extends State<MyCommentsPage> {
                 ? RefreshIndicator(
                     onRefresh: _loadData,
                     child: ListView.separated(
-                      padding: EdgeInsets.all(16.w),
+                      padding: EdgeInsets.all(16),
                       itemCount: _comments.length,
                       separatorBuilder: (_, __) => Divider(
-                        height: 24.h,
+                        height: 24,
                         color: theme.colorScheme.onSurface.withAlpha(30),
                       ),
                       itemBuilder: (context, index) {
@@ -169,7 +169,7 @@ class _MyCommentsPageState extends State<MyCommentsPage> {
                     ],
                   );
 
-    // Web 端由 WebShellLayout 提供 Scaffold
+    // 宽屏由壳层 AdaptiveShell 提供 Scaffold
     if (!isMobile) return body;
 
     return Scaffold(
@@ -182,7 +182,7 @@ class _MyCommentsPageState extends State<MyCommentsPage> {
         title: Text(
           loc.myComments,
           style: TextStyle(
-            fontSize: 18.sp,
+            fontSize: 18,
             fontWeight: FontWeight.bold,
           ),
         ),
@@ -221,16 +221,16 @@ class _CommentCard extends StatelessWidget {
           Row(
             children: [
               CircleAvatar(
-                radius: isMobile ? 16.r : 16,
+                radius: isMobile ? 16 : 16,
                 backgroundColor: theme.colorScheme.primaryContainer,
                 child: Text(
                   (comment.authorName ?? '').isNotEmpty
                       ? comment.authorName![0]
                       : '?',
-                  style: TextStyle(fontSize: isMobile ? 12.sp : 12),
+                  style: TextStyle(fontSize: isMobile ? 12 : 12),
                 ),
               ),
-              SizedBox(width: isMobile ? 10.w : 10),
+              SizedBox(width: isMobile ? 10 : 10),
               Expanded(
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
@@ -238,7 +238,7 @@ class _CommentCard extends StatelessWidget {
                     Text(
                       comment.authorName ?? '',
                       style: TextStyle(
-                        fontSize: isMobile ? 13.sp : 13,
+                        fontSize: isMobile ? 13 : 13,
                         fontWeight: FontWeight.w500,
                         color: theme.colorScheme.onSurface,
                       ),
@@ -247,7 +247,7 @@ class _CommentCard extends StatelessWidget {
                       Text(
                         _formatDate(context, DateTime.parse(comment.createdAt!)),
                         style: TextStyle(
-                          fontSize: isMobile ? 11.sp : 11,
+                          fontSize: isMobile ? 11 : 11,
                           color: theme.colorScheme.onSurface.withAlpha(100),
                         ),
                       ),
@@ -257,26 +257,25 @@ class _CommentCard extends StatelessWidget {
               // 跳转图标
               Icon(
                 Icons.open_in_new,
-                size: isMobile ? 16.sp : 16,
+                size: isMobile ? 16 : 16,
                 color: theme.colorScheme.onSurface.withAlpha(60),
               ),
             ],
           ),
-          SizedBox(height: isMobile ? 10.h : 10),
+          SizedBox(height: isMobile ? 10 : 10),
 
           // 评论内容
           Container(
             width: double.infinity,
-            padding: EdgeInsets.all(isMobile ? 12.w : 12),
+            padding: EdgeInsets.all(isMobile ? 12 : 12),
             decoration: BoxDecoration(
-              color: theme.colorScheme.surfaceContainerHighest
-                  .withAlpha((0.3 * 255).round()),
-              borderRadius: BorderRadius.circular(isMobile ? 12.r : 12),
+              color: theme.palette.surfaceLow,
+              borderRadius: BorderRadius.circular(isMobile ? 12 : 12),
             ),
             child: Text(
               comment.content ?? '',
               style: TextStyle(
-                fontSize: isMobile ? 14.sp : 14,
+                fontSize: isMobile ? 14 : 14,
                 color: theme.colorScheme.onSurface.withAlpha(200),
                 height: 1.6,
               ),
@@ -285,7 +284,7 @@ class _CommentCard extends StatelessWidget {
 
           // 底部：互动信息（点赞计数由 interaction_counter 表提供，comment.like_count 列已移除）
           Padding(
-            padding: EdgeInsets.only(top: isMobile ? 8.h : 8),
+            padding: EdgeInsets.only(top: isMobile ? 8 : 8),
             child: Row(
               children: [
                 Icon(
@@ -293,11 +292,11 @@ class _CommentCard extends StatelessWidget {
                   size: 14,
                   color: theme.colorScheme.onSurface.withAlpha(100),
                 ),
-                SizedBox(width: isMobile ? 3.w : 3),
+                SizedBox(width: isMobile ? 3 : 3),
                 Text(
                   '${likeCount}',
                   style: TextStyle(
-                    fontSize: isMobile ? 11.sp : 11,
+                    fontSize: isMobile ? 11 : 11,
                     color: theme.colorScheme.onSurface.withAlpha(100),
                   ),
                 ),

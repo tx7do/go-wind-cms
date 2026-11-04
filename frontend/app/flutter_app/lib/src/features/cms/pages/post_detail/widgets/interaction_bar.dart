@@ -1,10 +1,12 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:get_it/get_it.dart' show GetIt;
 
 import 'package:flutter_app/generated/l10n.dart';
+import 'package:flutter_app/src/core/repositories/user_auth_cache.dart';
 import 'package:flutter_app/generated/api/app/service/v1/index.dart'
     show ContentServiceV1Post;
 import 'package:flutter_app/src/features/cms/services/interaction_service.dart';
+import 'package:flutter_app/src/core/themes/tokens.dart';
 import 'package:flutter_app/generated/api/app/service/v1/index.dart'
     show InteractionServiceV1TargetType, InteractionServiceV1LikeResponse,
         InteractionServiceV1WatchResponse, InteractionServiceV1CounterMetric,
@@ -13,22 +15,27 @@ import 'package:flutter_app/generated/api/app/service/v1/index.dart'
 
 typedef Post = ContentServiceV1Post;
 
-/// 文章底部交互条
+/// 文章交互条（点赞 / 收藏）
 ///
-/// likes 与 bookmark 为可交互按钮，状态由 InteractionService（点赞/收藏计数内聚子系统）提供：
+/// 横排（正文底部，移动端与平板）与纵排（桌面右栏悬浮位）两种形态共用同一份
+/// 交互态。likes 与 bookmark 为可交互按钮，状态由 InteractionService 提供：
 ///   - 进入时调 getInteractionStatus 取初始 {liked, watched} 态
-///   - 点赞计数：由 interaction_counter 表提供（post.likes 列已移除），进入时调
-///     getCounts 取初始计数；点击 likes 按钮后由 LikeResponse.likeCount 乐观更新
-///   - 收藏计数：由 interaction_counter 表提供（metric=COUNTER_METRIC_WATCH），进入时调
-///     getCounts 取初始计数；点击 bookmark 按钮后由 WatchResponse.watchCount 乐观更新
-///   - 点击 bookmark 按钮：按当前态调 watch/unwatch
-/// viewer 身份由后端鉴权上下文确定，前端无需传 user_id。未登录时后端返回 401，
-/// 按钮保持未激活态。
+///   - 计数来自 interaction_counter 表（post.likes 列已移除），getCounts 批量取
+///   - 点击后由响应体乐观更新；未登录时后端返回 401，按钮保持未激活态
+/// viewer 身份由后端鉴权上下文确定，前端无需传 user_id。
 class InteractionBar extends StatefulWidget {
   final Post post;
   final bool isMobile;
 
-  const InteractionBar({super.key, required this.post, required this.isMobile});
+  /// 桌面右栏纵排形态
+  final bool vertical;
+
+  const InteractionBar({
+    super.key,
+    required this.post,
+    required this.isMobile,
+    this.vertical = false,
+  });
 
   @override
   State<InteractionBar> createState() => _InteractionBarState();
@@ -50,6 +57,9 @@ class _InteractionBarState extends State<InteractionBar> {
   Future<void> _loadStatus() async {
     final pid = widget.post.id;
     if (pid == null) return;
+    // 匿名访客必然 401（status 需 viewer 身份），直接保持未激活态，
+    // 不发这条注定失败的请求（计数走匿名可访问的 counts:list，不受影响）
+    if (!GetIt.instance<UserAuthCache>().loginStateNotifier.value) return;
     // 并行取交互状态（{liked, watched}）与点赞/收藏计数（来自 interaction_counter 表，
     // post 表的散落计数列已移除）。
     final results = await Future.wait([
@@ -124,46 +134,60 @@ class _InteractionBarState extends State<InteractionBar> {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
+    final p = theme.palette;
+    final compact = widget.vertical;
 
     return Padding(
       padding: EdgeInsets.symmetric(
-        horizontal: widget.isMobile ? 20.w : 0,
-        vertical: 12,
+        horizontal: widget.isMobile && !compact ? 20 : 0,
+        vertical: compact ? 0 : 12,
       ),
       child: Container(
+        width: compact ? 64 : null,
         padding: EdgeInsets.symmetric(
-          vertical: widget.isMobile ? 12.h : 12,
-          horizontal: widget.isMobile ? 16.w : 16,
+          vertical: compact ? theme.space.sm : theme.space.md,
+          horizontal: compact ? theme.space.xxs : theme.space.lg,
         ),
         decoration: BoxDecoration(
-          color: theme.colorScheme.surface,
-          borderRadius: BorderRadius.circular(widget.isMobile ? 14.r : 14),
-          border: Border.all(
-            color: theme.colorScheme.onSurface.withAlpha((0.06 * 255).round()),
-          ),
+          color: p.surface,
+          borderRadius: theme.radius.mdAll,
+          border: Border.all(color: p.border, width: theme.borderWidth.thin),
         ),
-        child: Row(
-          mainAxisAlignment: MainAxisAlignment.spaceAround,
-          children: [
-            InteractionItem(
-              icon: _liked ? Icons.favorite : Icons.favorite_outline,
-              value: '$_likeCount',
-              label: S.of(context).likes,
-              isPressed: _liked,
-              onTap: _toggleLike,
-            ),
-            InteractionItem(
-              icon: _watched ? Icons.bookmark : Icons.bookmark_border,
-              value: '$_watchCount',
-              label: S.of(context).myBookmarks,
-              isPressed: _watched,
-              onTap: _toggleWatch,
-            ),
-          ],
-        ),
+        child: compact
+            ? Column(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  _likeItem(),
+                  SizedBox(
+                    width: 32,
+                    child: Divider(height: theme.space.md, color: p.hairline),
+                  ),
+                  _watchItem(),
+                ],
+              )
+            : Row(
+                mainAxisAlignment: MainAxisAlignment.spaceAround,
+                children: [_likeItem(), _watchItem()],
+              ),
       ),
     );
   }
+
+  Widget _likeItem() => InteractionItem(
+        icon: _liked ? Icons.favorite : Icons.favorite_outline,
+        value: '$_likeCount',
+        label: widget.vertical ? '' : S.of(context).likes,
+        isPressed: _liked,
+        onTap: _toggleLike,
+      );
+
+  Widget _watchItem() => InteractionItem(
+        icon: _watched ? Icons.bookmark : Icons.bookmark_border,
+        value: '$_watchCount',
+        label: widget.vertical ? '' : S.of(context).myBookmarks,
+        isPressed: _watched,
+        onTap: _toggleWatch,
+      );
 }
 
 class InteractionItem extends StatefulWidget {
@@ -171,7 +195,7 @@ class InteractionItem extends StatefulWidget {
   final String value;
   final String label;
 
-  /// 是否为可交互按钮态（点赞/收藏）。false 表示纯展示 item（visits/comments/share）。
+  /// 是否为可交互按钮态（点赞/收藏）。false 表示纯展示 item。
   final bool isPressed;
 
   /// 点击回调，仅 isPressed=true 时有意义。
@@ -196,12 +220,9 @@ class _InteractionItemState extends State<InteractionItem> {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
+    final p = theme.palette;
 
-    final color = widget.isPressed
-        ? theme.colorScheme.primary
-        : (_isHovered
-            ? theme.colorScheme.primary
-            : theme.colorScheme.onSurface.withAlpha(160));
+    final color = widget.isPressed || _isHovered ? p.primary : p.inkSecondary;
 
     return MouseRegion(
       cursor: SystemMouseCursors.click,
@@ -209,34 +230,23 @@ class _InteractionItemState extends State<InteractionItem> {
       onExit: (_) => setState(() => _isHovered = false),
       child: InkWell(
         onTap: widget.onTap == null ? null : () => widget.onTap!(),
-        borderRadius: BorderRadius.circular(8),
+        borderRadius: theme.radius.smAll,
         child: Padding(
           padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
           child: Column(
             children: [
-              Icon(
-                widget.icon,
-                size: 20,
-                color: color,
-              ),
+              Icon(widget.icon, size: 20, color: color),
               const SizedBox(height: 4),
               Text(
                 widget.value,
-                style: TextStyle(
-                  fontSize: 13,
-                  fontWeight: FontWeight.w500,
-                  color: theme.colorScheme.onSurface,
+                style: theme.textTheme.labelMedium?.copyWith(
+                  fontWeight: FontWeight.w600,
+                  color: widget.isPressed ? p.primary : p.ink,
                 ),
               ),
               if (widget.label.isNotEmpty) ...[
                 const SizedBox(height: 2),
-                Text(
-                  widget.label,
-                  style: TextStyle(
-                    fontSize: 10,
-                    color: theme.colorScheme.onSurface.withAlpha(100),
-                  ),
-                ),
+                Text(widget.label, style: theme.textTheme.labelSmall),
               ],
             ],
           ),

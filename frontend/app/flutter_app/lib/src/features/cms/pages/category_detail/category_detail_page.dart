@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 import 'package:flutter_app/generated/l10n.dart';
 import 'package:flutter_app/generated/api/app/service/v1/index.dart'
@@ -19,7 +18,7 @@ typedef Post = ContentServiceV1Post;
 
 /// 分类详情页：分类信息 + 该分类下的文章列表。
 ///
-/// 文章按 category_id 服务端过滤（PostListPage 同款参数）；
+/// 文章按 category_ids 数组形态服务端过滤（PostListPage 同款参数）；
 /// 分类本身从 list 结果里取（list 响应必带 translations，
 /// 而 get 未暴露 fieldMask，可能不回传翻译）。
 class CategoryDetailPage extends StatefulWidget {
@@ -52,7 +51,10 @@ class _CategoryDetailPageState extends State<CategoryDetailPage> {
 
   Future<void> _loadData() async {
     final results = await Future.wait([
-      _postService.list(PaginationQuery(formValues: {'category_id': widget.categoryId})),
+      // 后端契约是 category_ids 数组形态（单数会被当成 posts 列而 500）
+      _postService.list(PaginationQuery(formValues: {
+        'category_ids': [widget.categoryId],
+      })),
       _categoryService.list(),
     ]);
 
@@ -112,25 +114,25 @@ class _CategoryDetailPageState extends State<CategoryDetailPage> {
       title: Row(
         mainAxisSize: MainAxisSize.min,
         children: [
-          Icon(Icons.category_outlined, size: isMobile ? 18.sp : 18, color: theme.colorScheme.primary),
-          SizedBox(width: isMobile ? 4.w : 4),
+          Icon(Icons.category_outlined, size: isMobile ? 18 : 18, color: theme.colorScheme.primary),
+          SizedBox(width: isMobile ? 4 : 4),
           Flexible(
             child: Text(
               categoryName,
               overflow: TextOverflow.ellipsis,
-              style: TextStyle(fontSize: isMobile ? 18.sp : 18, fontWeight: FontWeight.bold),
+              style: TextStyle(fontSize: isMobile ? 18 : 18, fontWeight: FontWeight.bold),
             ),
           ),
         ],
       ),
       centerTitle: true,
       bottom: PreferredSize(
-        preferredSize: Size.fromHeight(isMobile ? 32.h : 32),
+        preferredSize: Size.fromHeight(isMobile ? 32 : 32),
         child: Padding(
-          padding: EdgeInsets.only(bottom: isMobile ? 12.h : 12),
+          padding: EdgeInsets.only(bottom: isMobile ? 12 : 12),
           child: Text(
             S.of(context).postsCountFull(category.postCount ?? 0),
-            style: TextStyle(fontSize: isMobile ? 13.sp : 13, color: theme.colorScheme.onSurface.withAlpha(120)),
+            style: TextStyle(fontSize: isMobile ? 13 : 13, color: theme.colorScheme.onSurface.withAlpha(120)),
           ),
         ),
       ),
@@ -149,7 +151,7 @@ class _CategoryDetailPageState extends State<CategoryDetailPage> {
           )
         : _buildBody(context, isMobile);
 
-    // Web 端由 WebShellLayout 提供 Scaffold
+    // 宽屏由壳层 AdaptiveShell 提供 Scaffold
     if (!isMobile) return body;
 
     return Scaffold(
@@ -187,10 +189,10 @@ class _CategoryDetailPageState extends State<CategoryDetailPage> {
     }
 
     return ListView.builder(
-      padding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 8.h),
+      padding: EdgeInsets.symmetric(horizontal: 16, vertical: 8),
       itemCount: _posts.length,
       itemBuilder: (context, index) => Padding(
-        padding: EdgeInsets.only(bottom: 12.h),
+        padding: EdgeInsets.only(bottom: 12),
         child: PostCard(
             post: _posts[index],
             likeCount: _likeCounts[_posts[index].id] ?? 0),

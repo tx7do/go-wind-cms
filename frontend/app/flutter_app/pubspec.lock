@@ -587,14 +587,6 @@ packages:
       url: "https://pub.flutter-io.cn"
     source: hosted
     version: "2.0.35"
-  flutter_screenutil:
-    dependency: "direct main"
-    description:
-      name: flutter_screenutil
-      sha256: "8239210dd68bee6b0577aa4a090890342d04a136ce1c81f98ee513fc0ce891de"
-      url: "https://pub.flutter-io.cn"
-    source: hosted
-    version: "5.9.3"
   flutter_spinkit:
     dependency: transitive
     description:

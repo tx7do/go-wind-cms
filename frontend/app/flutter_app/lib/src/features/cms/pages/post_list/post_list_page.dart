@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 import 'package:flutter_app/generated/l10n.dart';
 import 'package:flutter_app/generated/api/app/service/v1/index.dart'
@@ -65,11 +64,13 @@ class _PostListPageState extends State<PostListPage> {
 
   Future<void> _loadData() async {
     final filterValues = <String, dynamic>{};
+    // 后端契约是复数数组形态（category_ids/tag_ids），单数会被当成
+    // posts 表上的普通列去构造过滤条件而 500
     if (_selectedCategoryId != null) {
-      filterValues['category_id'] = _selectedCategoryId;
+      filterValues['category_ids'] = [_selectedCategoryId];
     }
     if (widget.tagId != null) {
-      filterValues['tag_id'] = widget.tagId;
+      filterValues['tag_ids'] = [widget.tagId];
     }
 
     final results = await Future.wait([
@@ -149,15 +150,15 @@ class _PostListPageState extends State<PostListPage> {
         children: [
           Icon(
             Icons.article_outlined,
-            size: isMobile ? 20.sp : 20,
+            size: isMobile ? 20 : 20,
             color: theme.colorScheme.primary,
           ),
-          SizedBox(width: isMobile ? 6.w : 6),
+          SizedBox(width: isMobile ? 6 : 6),
           Flexible(
             child: Text(
               _pageTitle,
               style: TextStyle(
-                fontSize: isMobile ? 18.sp : 18,
+                fontSize: isMobile ? 18 : 18,
                 fontWeight: FontWeight.bold,
               ),
               overflow: TextOverflow.ellipsis,
@@ -167,13 +168,13 @@ class _PostListPageState extends State<PostListPage> {
       ),
       centerTitle: true,
       bottom: PreferredSize(
-        preferredSize: Size.fromHeight(isMobile ? 28.h : 28),
+        preferredSize: Size.fromHeight(isMobile ? 28 : 28),
         child: Padding(
-          padding: EdgeInsets.only(bottom: isMobile ? 10.h : 10),
+          padding: EdgeInsets.only(bottom: isMobile ? 10 : 10),
           child: Text(
             loc.postsCountFull(_posts.length),
             style: TextStyle(
-              fontSize: isMobile ? 13.sp : 13,
+              fontSize: isMobile ? 13 : 13,
               color: theme.colorScheme.onSurface.withAlpha(120),
             ),
           ),
@@ -204,7 +205,7 @@ class _PostListPageState extends State<PostListPage> {
           )
         : _buildBody(isMobile);
 
-    // Web 端由 WebShellLayout 提供 Scaffold，不再嵌套 Scaffold
+    // 宽屏由壳层 AdaptiveShell 提供 Scaffold，不再嵌套 Scaffold
     if (!isMobile) return body;
 
     return Scaffold(
@@ -279,10 +280,10 @@ class _PostListPageState extends State<PostListPage> {
     }
 
     return ListView.builder(
-      padding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 8.h),
+      padding: EdgeInsets.symmetric(horizontal: 16, vertical: 8),
       itemCount: _posts.length,
       itemBuilder: (context, index) => Padding(
-        padding: EdgeInsets.only(bottom: 12.h),
+        padding: EdgeInsets.only(bottom: 12),
         child: PostCard(
           post: _posts[index],
           likeCount: _likeCounts[_posts[index].id] ?? 0,

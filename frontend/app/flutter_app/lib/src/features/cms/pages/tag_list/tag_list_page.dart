@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 import 'package:flutter_app/generated/l10n.dart';
 import 'package:flutter_app/generated/api/app/service/v1/index.dart'
@@ -66,9 +65,9 @@ class _TagListPageState extends State<TagListPage> {
       title: Row(
         mainAxisSize: MainAxisSize.min,
         children: [
-          Icon(Icons.label_outlined, size: isMobile ? 20.sp : 20, color: theme.colorScheme.primary),
-          SizedBox(width: isMobile ? 6.w : 6),
-          Text(loc.hotTags, style: TextStyle(fontSize: isMobile ? 18.sp : 18, fontWeight: FontWeight.bold)),
+          Icon(Icons.label_outlined, size: isMobile ? 20 : 20, color: theme.colorScheme.primary),
+          SizedBox(width: isMobile ? 6 : 6),
+          Text(loc.hotTags, style: TextStyle(fontSize: isMobile ? 18 : 18, fontWeight: FontWeight.bold)),
         ],
       ),
       centerTitle: true,
@@ -80,7 +79,7 @@ class _TagListPageState extends State<TagListPage> {
           )
         : _buildBody(isMobile);
 
-    // Web 端由 WebShellLayout 提供 Scaffold
+    // 宽屏由壳层 AdaptiveShell 提供 Scaffold
     if (!isMobile) return body;
 
     return Scaffold(
@@ -112,10 +111,10 @@ class _TagListPageState extends State<TagListPage> {
     }
 
     return Padding(
-      padding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 16.h),
+      padding: EdgeInsets.symmetric(horizontal: 16, vertical: 16),
       child: Wrap(
-        spacing: 8.w,
-        runSpacing: 8.h,
+        spacing: 8,
+        runSpacing: 8,
         children: _tags.map((tag) {
           return TagChip(tag: tag, isMobile: true, showPostCount: true);
         }).toList(),

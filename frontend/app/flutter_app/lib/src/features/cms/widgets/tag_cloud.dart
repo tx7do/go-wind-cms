@@ -1,15 +1,16 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_screenutil/flutter_screenutil.dart';
 
-import 'package:flutter_app/generated/l10n.dart';
 import 'package:flutter_app/generated/api/app/service/v1/index.dart'
     show ContentServiceV1Tag;
-import 'package:flutter_app/src/core/utils/responsive_utils.dart';
+import 'package:flutter_app/generated/l10n.dart';
+import 'package:flutter_app/src/core/layout/width_class.dart';
+import 'package:flutter_app/src/core/themes/tokens.dart';
+import 'package:flutter_app/src/features/cms/pages/home/widgets/section_header.dart';
 import 'package:flutter_app/src/features/cms/widgets/tag_chip.dart';
 
-/// 热门标签云组件
+/// 热门标签云
 ///
-/// 右侧侧边栏极简版：统一柔和色调，限制数量，Wrap 错落排列
+/// 区块语言（SectionHeader）+ Wrap 排列，限制数量防侧栏失控。
 class TagCloud extends StatelessWidget {
   final List<ContentServiceV1Tag> tags;
 
@@ -21,42 +22,25 @@ class TagCloud extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
-    final isMobile = ResponsiveUtils.isMobile(context);
+    final compact = context.widthClass.isCompact;
     final displayTags = tags.take(maxTags).toList();
 
     return Padding(
-      padding: isMobile
-          ? EdgeInsets.fromLTRB(16.w, 8.h, 16.w, 4.h)
-          : const EdgeInsets.fromLTRB(0, 0, 0, 0),
+      padding: compact
+          ? EdgeInsets.fromLTRB(16, theme.space.sm, 16, theme.space.xs)
+          : EdgeInsets.zero,
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Padding(
-            padding: EdgeInsets.only(bottom: isMobile ? 10.h : 14),
-            child: Row(
-              children: [
-                Icon(
-                  Icons.local_fire_department,
-                  size: isMobile ? 18.sp : 18,
-                  color: Colors.orange,
-                ),
-                SizedBox(width: isMobile ? 6.w : 6),
-                Text(
-                  S.of(context).hotTags,
-                  style: TextStyle(
-                    fontSize: isMobile ? 14.sp : 14,
-                    fontWeight: FontWeight.w600,
-                    color: theme.colorScheme.onSurface,
-                  ),
-                ),
-              ],
-            ),
+            padding: EdgeInsets.only(bottom: theme.space.md + 2),
+            child: SectionHeader(title: S.of(context).hotTags),
           ),
           Wrap(
-            spacing: isMobile ? 8.w : 8,
-            runSpacing: isMobile ? 8.h : 10,
+            spacing: theme.space.sm,
+            runSpacing: theme.space.sm + 2,
             children: displayTags
-                .map((tag) => TagChip(tag: tag, isMobile: isMobile))
+                .map((tag) => TagChip(tag: tag))
                 .toList(),
           ),
         ],

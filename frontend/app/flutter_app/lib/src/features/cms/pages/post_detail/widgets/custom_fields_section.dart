@@ -2,7 +2,6 @@ import 'dart:async';
 import 'dart:convert';
 
 import 'package:flutter/material.dart';
-import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_widget_from_html/flutter_widget_from_html.dart';
 import 'package:get_it/get_it.dart' show GetIt;
 import 'package:go_router/go_router.dart';
@@ -84,11 +83,11 @@ class _CustomFieldsSectionState extends State<CustomFieldsSection> {
 
         final theme = Theme.of(context);
         return Container(
-          margin: EdgeInsets.only(bottom: widget.isMobile ? 24.h : 24),
-          padding: EdgeInsets.all(widget.isMobile ? 14.w : 14),
+          margin: EdgeInsets.only(bottom: widget.isMobile ? 24 : 24),
+          padding: EdgeInsets.all(widget.isMobile ? 14 : 14),
           decoration: BoxDecoration(
             color: theme.colorScheme.surfaceContainerHighest.withAlpha(80),
-            borderRadius: BorderRadius.circular(widget.isMobile ? 12.r : 12),
+            borderRadius: BorderRadius.circular(widget.isMobile ? 12 : 12),
             border: Border.all(color: theme.colorScheme.outlineVariant),
           ),
           child: Column(
@@ -97,24 +96,24 @@ class _CustomFieldsSectionState extends State<CustomFieldsSection> {
               Text(
                 model?.name ?? '',
                 style: TextStyle(
-                  fontSize: widget.isMobile ? 15.sp : 15,
+                  fontSize: widget.isMobile ? 15 : 15,
                   fontWeight: FontWeight.w600,
                   color: theme.colorScheme.onSurface,
                 ),
               ),
-              SizedBox(height: widget.isMobile ? 10.h : 10),
+              SizedBox(height: widget.isMobile ? 10 : 10),
               for (final row in rows)
                 Padding(
-                  padding: EdgeInsets.only(bottom: widget.isMobile ? 10.h : 10),
+                  padding: EdgeInsets.only(bottom: widget.isMobile ? 10 : 10),
                   child: Row(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       SizedBox(
-                        width: widget.isMobile ? 96.w : 120,
+                        width: widget.isMobile ? 96 : 120,
                         child: Text(
                           row.label,
                           style: TextStyle(
-                            fontSize: widget.isMobile ? 12.sp : 12,
+                            fontSize: widget.isMobile ? 12 : 12,
                             color: theme.colorScheme.onSurface.withAlpha(150),
                           ),
                         ),
@@ -138,7 +137,7 @@ class _CustomFieldsSectionState extends State<CustomFieldsSection> {
         return HtmlWidget(
           row.value,
           textStyle: TextStyle(
-            fontSize: widget.isMobile ? 13.sp : 13,
+            fontSize: widget.isMobile ? 13 : 13,
             color: theme.colorScheme.onSurface,
             height: 1.6,
           ),
@@ -256,7 +255,7 @@ class _CustomFieldsSectionState extends State<CustomFieldsSection> {
         Text(
           schema?.definition?.name ?? code,
           style: TextStyle(
-            fontSize: widget.isMobile ? 12.sp : 12,
+            fontSize: widget.isMobile ? 12 : 12,
             fontWeight: FontWeight.w600,
             color: theme.colorScheme.onSurface.withAlpha(180),
           ),
@@ -272,13 +271,13 @@ class _CustomFieldsSectionState extends State<CustomFieldsSection> {
                 ? parseMediaRef(raw2)
                 : null;
         children.add(Padding(
-          padding: EdgeInsets.only(top: widget.isMobile ? 4.h : 4),
+          padding: EdgeInsets.only(top: widget.isMobile ? 4 : 4),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Text(f.label ?? f.name ?? '',
                   style: TextStyle(
-                    fontSize: widget.isMobile ? 11.sp : 11,
+                    fontSize: widget.isMobile ? 11 : 11,
                     color: theme.colorScheme.onSurface.withAlpha(130),
                   )),
               if (isImg && refId != null)
@@ -290,14 +289,14 @@ class _CustomFieldsSectionState extends State<CustomFieldsSection> {
               else if (isImg)
                 ClipRRect(
                   borderRadius:
-                      BorderRadius.circular(widget.isMobile ? 8.r : 8),
+                      BorderRadius.circular(widget.isMobile ? 8 : 8),
                   child: Image.network(raw2,
                       width: double.infinity, fit: BoxFit.cover),
                 )
               else
                 Text(raw2,
                     style: TextStyle(
-                      fontSize: widget.isMobile ? 13.sp : 13,
+                      fontSize: widget.isMobile ? 13 : 13,
                       color: theme.colorScheme.onSurface,
                     )),
             ],
@@ -305,11 +304,11 @@ class _CustomFieldsSectionState extends State<CustomFieldsSection> {
         ));
       }
       cards.add(Container(
-        margin: EdgeInsets.only(bottom: widget.isMobile ? 6.h : 6),
-        padding: EdgeInsets.all(widget.isMobile ? 8.w : 8),
+        margin: EdgeInsets.only(bottom: widget.isMobile ? 6 : 6),
+        padding: EdgeInsets.all(widget.isMobile ? 8 : 8),
         decoration: BoxDecoration(
           border: Border.all(color: theme.colorScheme.outlineVariant),
-          borderRadius: BorderRadius.circular(widget.isMobile ? 8.r : 8),
+          borderRadius: BorderRadius.circular(widget.isMobile ? 8 : 8),
         ),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
@@ -364,12 +363,12 @@ class _CustomFieldsSectionState extends State<CustomFieldsSection> {
   }
 
   TextStyle _mutedStyle(ThemeData theme) => TextStyle(
-      fontSize: widget.isMobile ? 12.sp : 12,
+      fontSize: widget.isMobile ? 12 : 12,
       color: theme.colorScheme.onSurface.withAlpha(120));
   TextStyle _linkStyle(ThemeData theme) => TextStyle(
-      fontSize: widget.isMobile ? 12.sp : 12, color: theme.colorScheme.primary);
+      fontSize: widget.isMobile ? 12 : 12, color: theme.colorScheme.primary);
   TextStyle _regularStyle(ThemeData theme) => TextStyle(
-      fontSize: widget.isMobile ? 13.sp : 13,
+      fontSize: widget.isMobile ? 13 : 13,
       color: theme.colorScheme.onSurface);
 }
 
@@ -417,13 +416,13 @@ class _TransformAssetImageState extends State<_TransformAssetImage> {
       return Text(
         widget.fallbackText,
         style: TextStyle(
-          fontSize: widget.isMobile ? 13.sp : 13,
+          fontSize: widget.isMobile ? 13 : 13,
           color: theme.colorScheme.onSurface,
         ),
       );
     }
     return ClipRRect(
-      borderRadius: BorderRadius.circular(widget.isMobile ? 12.r : 12),
+      borderRadius: BorderRadius.circular(widget.isMobile ? 12 : 12),
       child: Image.network(
         _fallbackUrl ?? mediaTransformUrl(widget.assetId),
         width: double.infinity,
@@ -458,7 +457,7 @@ class _TransformAssetImageState extends State<_TransformAssetImage> {
           return Text(
             widget.fallbackText,
             style: TextStyle(
-              fontSize: widget.isMobile ? 13.sp : 13,
+              fontSize: widget.isMobile ? 13 : 13,
               color: theme.colorScheme.onSurface.withAlpha(120),
             ),
           );

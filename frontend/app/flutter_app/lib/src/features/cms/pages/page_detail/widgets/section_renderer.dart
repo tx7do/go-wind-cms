@@ -1,7 +1,6 @@
 import 'dart:convert';
 
 import 'package:flutter/material.dart';
-import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 import 'package:flutter_app/generated/api/app/service/v1/index.dart'
@@ -117,7 +116,7 @@ class SectionRenderer extends StatelessWidget {
     final sorted = _sorted;
     if (sorted.isEmpty) return const SizedBox.shrink();
 
-    final gap = isMobile ? 16.h : 24.0;
+    final gap = isMobile ? 16.0 : 24.0;
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -178,7 +177,7 @@ class SectionRenderer extends StatelessWidget {
       final src = sectionValue(section);
       if (src.isEmpty) return const SizedBox.shrink();
       return ClipRRect(
-        borderRadius: BorderRadius.circular(isMobile ? 12.r : 12),
+        borderRadius: BorderRadius.circular(isMobile ? 12 : 12),
         child: Image.network(
           src,
           fit: BoxFit.cover,
@@ -203,10 +202,10 @@ class SectionRenderer extends StatelessWidget {
         child: ListView.separated(
           scrollDirection: Axis.horizontal,
           itemCount: images.length,
-          separatorBuilder: (_, _) => SizedBox(width: isMobile ? 12.w : 12),
+          separatorBuilder: (_, _) => SizedBox(width: isMobile ? 12 : 12),
           itemBuilder: (context, index) {
             return ClipRRect(
-              borderRadius: BorderRadius.circular(isMobile ? 12.r : 12),
+              borderRadius: BorderRadius.circular(isMobile ? 12 : 12),
               child: Image.network(
                 images[index].src,
                 fit: BoxFit.cover,
@@ -283,10 +282,10 @@ class SectionRenderer extends StatelessWidget {
     if (type == ContentServiceV1SectionType.sectionTypeCode) {
       return Container(
         width: double.infinity,
-        padding: EdgeInsets.all(isMobile ? 14.w : 14),
+        padding: EdgeInsets.all(isMobile ? 14 : 14),
         decoration: BoxDecoration(
           color: theme.colorScheme.surfaceContainerHighest,
-          borderRadius: BorderRadius.circular(isMobile ? 12.r : 12),
+          borderRadius: BorderRadius.circular(isMobile ? 12 : 12),
         ),
         child: SingleChildScrollView(
           scrollDirection: Axis.horizontal,
@@ -294,7 +293,7 @@ class SectionRenderer extends StatelessWidget {
             sectionValue(section),
             style: TextStyle(
               fontFamily: 'monospace',
-              fontSize: isMobile ? 12.sp : 13,
+              fontSize: isMobile ? 12 : 13,
               height: 1.5,
             ),
           ),
@@ -329,7 +328,7 @@ class _VideoLaunchTile extends StatelessWidget {
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
     return ClipRRect(
-      borderRadius: BorderRadius.circular(isMobile ? 12.r : 12),
+      borderRadius: BorderRadius.circular(isMobile ? 12 : 12),
       child: AspectRatio(
         aspectRatio: 16 / 9,
         child: Material(
@@ -350,14 +349,14 @@ class _VideoLaunchTile extends StatelessWidget {
                 mainAxisSize: MainAxisSize.min,
                 children: [
                   Icon(Icons.play_circle_outline,
-                      size: isMobile ? 48.r : 48, color: theme.colorScheme.primary),
-                  SizedBox(height: isMobile ? 8.h : 8),
+                      size: isMobile ? 48 : 48, color: theme.colorScheme.primary),
+                  SizedBox(height: isMobile ? 8 : 8),
                   Text(
                     url,
                     maxLines: 1,
                     overflow: TextOverflow.ellipsis,
                     style: TextStyle(
-                      fontSize: isMobile ? 12.sp : 12,
+                      fontSize: isMobile ? 12 : 12,
                       color: theme.colorScheme.onSurface.withAlpha(150),
                     ),
                   ),
@@ -471,16 +470,16 @@ class _FormSectionState extends State<_FormSection> {
     if (_done) {
       return Container(
         width: double.infinity,
-        padding: EdgeInsets.all(widget.isMobile ? 14.w : 16),
+        padding: EdgeInsets.all(widget.isMobile ? 14 : 16),
         decoration: BoxDecoration(
           color: theme.colorScheme.surfaceContainerHighest.withAlpha(80),
-          borderRadius: BorderRadius.circular(widget.isMobile ? 12.r : 12),
+          borderRadius: BorderRadius.circular(widget.isMobile ? 12 : 12),
         ),
         child: Text(
           tr?.content?['successText'] ?? title,
           textAlign: TextAlign.center,
           style: TextStyle(
-            fontSize: widget.isMobile ? 13.sp : 13,
+            fontSize: widget.isMobile ? 13 : 13,
             color: theme.colorScheme.onSurface.withAlpha(160),
           ),
         ),
@@ -499,27 +498,27 @@ class _FormSectionState extends State<_FormSection> {
         children: [
           if (title.isNotEmpty)
             Padding(
-              padding: EdgeInsets.only(bottom: widget.isMobile ? 12.h : 12),
+              padding: EdgeInsets.only(bottom: widget.isMobile ? 12 : 12),
               child: Text(
                 title,
                 style: theme.textTheme.titleMedium?.copyWith(
-                  fontSize: widget.isMobile ? 16.sp : 18,
+                  fontSize: widget.isMobile ? 16 : 18,
                   fontWeight: FontWeight.bold,
                 ),
               ),
             ),
           for (final f in fields)
             Padding(
-              padding: EdgeInsets.only(bottom: widget.isMobile ? 12.h : 12),
+              padding: EdgeInsets.only(bottom: widget.isMobile ? 12 : 12),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Padding(
-                    padding: EdgeInsets.only(bottom: widget.isMobile ? 4.h : 4),
+                    padding: EdgeInsets.only(bottom: widget.isMobile ? 4 : 4),
                     child: Text(
                       fieldLabel(f.name) + (f.required ? ' *' : ''),
                       style: TextStyle(
-                        fontSize: widget.isMobile ? 13.sp : 13,
+                        fontSize: widget.isMobile ? 13 : 13,
                         fontWeight: FontWeight.w500,
                       ),
                     ),
@@ -537,12 +536,12 @@ class _FormSectionState extends State<_FormSection> {
                         ? (v) =>
                             (v == null || v.isEmpty) ? fieldLabel(f.name) : null
                         : null,
-                    style: TextStyle(fontSize: widget.isMobile ? 13.sp : 13),
+                    style: TextStyle(fontSize: widget.isMobile ? 13 : 13),
                     decoration: InputDecoration(
                       isDense: true,
                       border: OutlineInputBorder(
                         borderRadius:
-                            BorderRadius.circular(widget.isMobile ? 10.r : 10),
+                            BorderRadius.circular(widget.isMobile ? 10 : 10),
                       ),
                     ),
                   ),
@@ -551,11 +550,11 @@ class _FormSectionState extends State<_FormSection> {
             ),
           if (_error != null)
             Padding(
-              padding: EdgeInsets.only(bottom: widget.isMobile ? 8.h : 8),
+              padding: EdgeInsets.only(bottom: widget.isMobile ? 8 : 8),
               child: Text(
                 tr?.content?['errorText'] ?? _error!,
                 style: TextStyle(
-                  fontSize: widget.isMobile ? 12.sp : 12,
+                  fontSize: widget.isMobile ? 12 : 12,
                   color: theme.colorScheme.error,
                 ),
               ),

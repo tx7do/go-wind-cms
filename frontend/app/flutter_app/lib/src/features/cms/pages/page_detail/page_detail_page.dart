@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 import 'package:flutter_app/generated/api/app/service/v1/index.dart'
     show ContentServiceV1Page;
@@ -144,35 +143,35 @@ class _PageDetailPageState extends State<PageDetailPage> {
               maxWidth: isMobile ? double.infinity : 900,
             ),
             child: Padding(
-              padding: EdgeInsets.symmetric(horizontal: isMobile ? 20.w : 24),
+              padding: EdgeInsets.symmetric(horizontal: isMobile ? 20 : 24),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   if (cover != null && cover.isNotEmpty) ...[
                     ClipRRect(
-                      borderRadius: BorderRadius.circular(isMobile ? 12.r : 12),
+                      borderRadius: BorderRadius.circular(isMobile ? 12 : 12),
                       child: Image.network(
                         cover,
                         fit: BoxFit.cover,
                         width: double.infinity,
-                        height: isMobile ? 200.h : 300,
+                        height: isMobile ? 200 : 300,
                         errorBuilder: (_, _, _) => const SizedBox.shrink(),
                       ),
                     ),
-                    SizedBox(height: isMobile ? 16.h : 24),
+                    SizedBox(height: isMobile ? 16 : 24),
                   ],
                   if (title.isNotEmpty) ...[
                     Text(
                       title,
                       style: theme.textTheme.headlineSmall?.copyWith(
-                        fontSize: isMobile ? 22.sp : 28,
+                        fontSize: isMobile ? 22 : 28,
                         fontWeight: FontWeight.bold,
                       ),
                     ),
-                    SizedBox(height: isMobile ? 16.h : 24),
+                    SizedBox(height: isMobile ? 16 : 24),
                   ],
                   SectionRenderer(sections: page.sections, isMobile: isMobile),
-                  SizedBox(height: isMobile ? 24.h : 32),
+                  SizedBox(height: isMobile ? 24 : 32),
                 ],
               ),
             ),

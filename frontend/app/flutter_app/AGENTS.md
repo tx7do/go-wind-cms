@@ -1,5 +1,8 @@
 # AGENTS.md — Flutter 全平台前端开发指南
 
+> **2026-11-04 UI 重写注记**：本文以下关于「三级断点 600/1024」「flutter_screenutil」「ColorScheme.fromSeed + 8 预设主题色」「WebShellLayout + AppBottomNavBar」的描述已过时。现行权威：主题内核 `lib/src/core/themes/`（UiPalette 双态 + tokens + AppThemeExtension，品牌蓝固定不可配）；断点四档 `lib/src/core/layout/width_class.dart`（compact<600/medium<900/expanded<1200/wide）+ `adaptive_content.dart`；导航壳层 `lib/src/core/widgets/adaptive_shell.dart` + `StatefulShellRoute.indexedStack`（`app_router.dart`）；ScreenUtil 已移除，禁止再引入 `.w/.h/.sp`。详见仓库根 AGENTS.md「Flutter C 端 UI 重写（2026-11-04）」条目；本文其余章节待随下次整理更新。
+
+
 > 本文件是 `frontend/app/flutter_app` 子项目的 AI 编码规范单一事实源，适用于所有支持 AGENTS.md 的 AI 编码工具。Claude Code 通过同级 `CLAUDE.md` 中的 `@AGENTS.md` 引用加载。
 
 ## 项目概览

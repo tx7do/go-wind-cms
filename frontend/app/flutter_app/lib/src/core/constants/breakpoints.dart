@@ -1,39 +1,42 @@
-import 'dart:ui' show Size;
 
-/// 设备断点常量
+import 'package:flutter_app/src/core/layout/width_class.dart';
+
+/// 设备断点常量（旧 API，逐步由 [WidthClass] 取代）。
 ///
-/// 设备类型     | 屏幕宽度范围         | 布局策略
-/// ----------- | ------------------- | ---------------------------
-/// 手机 Mobile | < 600 dp            | 纵向单栏瀑布流
-/// 平板 Tablet | 600 dp ~ 1024 dp    | 双栏布局
-/// 网页 Web    | > 1024 dp           | 三栏/最大宽度居中
+/// 分档口径的唯一事实源在 width_class.dart，这里只做兼容转发：
+///
+/// | 设备 | 宽度 | 档 | 布局 |
+/// |---|---|---|---|
+/// | 手机 | < 600dp | compact | 单栏 + 底部标签栏 |
+/// | 小平板/折叠屏 | 600–900dp | medium | 双栏卡片，无侧边栏 |
+/// | 桌面窄窗 | 900–1200dp | expanded | 主列 + 侧边栏 |
+/// | 桌面宽窗 | ≥ 1200dp | wide | 主列 + 加宽侧边栏 |
 class Breakpoints {
   Breakpoints._();
 
-  /// ScreenUtil 设计稿基准尺寸（iPhone 6/7/8）
-  static const Size designSize = Size(375, 812);
-
-  /// 手机端最大宽度
+  /// 手机端最大宽度（= compact/medium 边界）
   static const double mobile = 600;
 
-  /// 平板端最大宽度
+  /// 平板端最大宽度（历史口径，现由 expanded/wide 细分）
   static const double tablet = 1024;
 
-  /// Web 端内容最大宽度（收窄至 1140，大屏幕两侧留白更明显，视觉更高级）
-  static const double webContentMaxWidth = 1140;
+  /// 宽屏内容最大宽度（= WidthClass.wide.contentMaxWidth）
+  static const double webContentMaxWidth = 1280;
 
-  /// Web 端侧边栏宽度
-  static const double webSidebarWidth = 260;
+  /// 侧边栏宽度（= WidthClass.expanded.sidebarWidth）
+  static const double webSidebarWidth = 280;
 
-  /// Web 端内容区间距
+  /// 内容区水平留白（= WidthClass.expanded.gutter）
   static const double webContentPadding = 32;
 
-  /// 判断当前是否为手机端
-  static bool isMobile(double width) => width < mobile;
+  static bool isMobile(double width) =>
+      WidthClassOf.fromWidth(width).isCompact;
 
-  /// 判断当前是否为平板端
-  static bool isTablet(double width) => width >= mobile && width < tablet;
+  static bool isTablet(double width) {
+    final wc = WidthClassOf.fromWidth(width);
+    return wc == WidthClass.medium;
+  }
 
-  /// 判断当前是否为 Web/桌面端
-  static bool isWeb(double width) => width >= tablet;
+  static bool isWeb(double width) =>
+      !WidthClassOf.fromWidth(width).isCompact;
 }

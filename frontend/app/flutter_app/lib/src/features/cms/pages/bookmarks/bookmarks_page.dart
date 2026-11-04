@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 import 'package:flutter_app/generated/l10n.dart';
 import 'package:flutter_app/generated/api/app/service/v1/index.dart'
@@ -102,7 +101,7 @@ class _BookmarksPageState extends State<BookmarksPage> {
             title: Text(
               S.of(context).myBookmarks,
               style: TextStyle(
-                fontSize: 22.sp,
+                fontSize: 22,
                 fontWeight: FontWeight.bold,
                 color: theme.colorScheme.onSurface,
               ),
@@ -192,23 +191,23 @@ class _BookmarksPageState extends State<BookmarksPage> {
       SliverToBoxAdapter(
         child: Padding(
           padding: EdgeInsets.fromLTRB(
-            isMobile ? 16.w : 24,
+            isMobile ? 16 : 24,
             8,
-            isMobile ? 16.w : 24,
+            isMobile ? 16 : 24,
             12,
           ),
           child: Row(
             children: [
               Icon(
                 Icons.bookmark,
-                size: isMobile ? 18.sp : 18,
+                size: isMobile ? 18 : 18,
                 color: theme.colorScheme.primary,
               ),
-              SizedBox(width: isMobile ? 6.w : 6),
+              SizedBox(width: isMobile ? 6 : 6),
               Text(
                 S.of(context).bookmarkedCount(bookmarked.length),
                 style: TextStyle(
-                  fontSize: isMobile ? 13.sp : 13,
+                  fontSize: isMobile ? 13 : 13,
                   color: theme.colorScheme.onSurface.withAlpha(160),
                 ),
               ),
@@ -217,11 +216,11 @@ class _BookmarksPageState extends State<BookmarksPage> {
         ),
       ),
       SliverPadding(
-        padding: EdgeInsets.symmetric(horizontal: isMobile ? 16.w : 24),
+        padding: EdgeInsets.symmetric(horizontal: isMobile ? 16 : 24),
         sliver: SliverList(
           delegate: SliverChildBuilderDelegate(
             (context, index) => Padding(
-              padding: EdgeInsets.only(bottom: isMobile ? 12.h : 12),
+              padding: EdgeInsets.only(bottom: isMobile ? 12 : 12),
               child: PostCard(
                   post: bookmarked[index],
                   likeCount:

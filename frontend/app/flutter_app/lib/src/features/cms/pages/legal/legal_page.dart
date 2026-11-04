@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_app/generated/l10n.dart';
+import 'package:flutter_app/src/core/themes/tokens.dart';
 import 'package:flutter_app/src/core/widgets/app_back_button.dart';
 import 'package:flutter_app/src/core/widgets/responsive_layout.dart';
 
@@ -45,7 +46,7 @@ class LegalPage extends StatelessWidget {
       ),
     );
 
-    // Web 端由 WebShellLayout 提供 Scaffold
+    // 宽屏由壳层 AdaptiveShell 提供 Scaffold
     if (!isMobile) return body;
 
     return Scaffold(
@@ -236,7 +237,7 @@ class _SectionCard extends StatelessWidget {
       shape: RoundedRectangleBorder(
         borderRadius: BorderRadius.circular(14),
         side: BorderSide(
-          color: theme.colorScheme.onSurface.withAlpha((0.06 * 255).round()),
+          color: theme.palette.hairline,
         ),
       ),
       child: Padding(

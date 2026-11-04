@@ -222,19 +222,19 @@ ThemeData(
 
 ### 6.3 已注册字重
 
-`pubspec.yaml` 中注册的 Noto Sans SC 字重：
+`pubspec.yaml` 中注册的 Noto Sans SC 为官方**变量字体**（VF，wght 100–900 单文件
+`NotoSansSC-VF.ttf`，2026-11-04 由三档 static 替换而来，并移除了 24MB 的
+`NotoColorEmoji-Regular.ttf`——原生端走系统 emoji 兜底链，仅 web 端 emoji 渲染为 tofu）：
 
-| 字重            | 文件                       | 说明  |
-|---------------|--------------------------|-----|
-| 400 (Regular) | `NotoSansSC-Regular.ttf` | 正文  |
-| 500 (Medium)  | `NotoSansSC-Medium.ttf`  | 副标题 |
-| 700 (Bold)    | `NotoSansSC-Bold.ttf`    | 标题  |
+| 文件                     | 字重范围        | 说明                       |
+|------------------------|-------------|--------------------------|
+| `NotoSansSC-VF.ttf`    | wght 100–900 | 全字重单文件，FontWeight 自动映射 wght 轴 |
 
-使用方式：
+使用方式（无需手动 fontVariations）：
 ```dart
-fontWeight: FontWeight.w400    // → Regular
-fontWeight: FontWeight.w500    // → Medium
-fontWeight: FontWeight.bold   // → Bold (700)
+fontWeight: FontWeight.w400    // → 引擎映射 wght=400
+fontWeight: FontWeight.w500    // → 引擎映射 wght=500（VF 精确命中，static 时代会落到最近档）
+fontWeight: FontWeight.bold   // → 引擎映射 wght=700
 ```
 
 ---

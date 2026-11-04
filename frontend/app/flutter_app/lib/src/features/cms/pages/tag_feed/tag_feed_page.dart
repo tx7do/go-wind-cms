@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 import 'package:flutter_app/generated/l10n.dart';
 import 'package:flutter_app/generated/api/app/service/v1/index.dart'
@@ -9,8 +8,11 @@ import 'package:flutter_app/src/features/cms/services/post_service.dart';
 import 'package:flutter_app/src/features/cms/services/tag_service.dart';
 import 'package:flutter_app/src/features/cms/services/interaction_service.dart';
 import 'package:flutter_app/src/features/cms/widgets/post_card.dart';
-import 'package:flutter_app/src/core/constants/breakpoints.dart';
+import 'package:flutter_app/src/core/layout/adaptive_content.dart';
+import 'package:flutter_app/src/core/themes/tokens.dart';
 import 'package:flutter_app/src/core/widgets/app_back_button.dart';
+import 'package:flutter_app/src/features/cms/pages/home/widgets/section_header.dart';
+import 'package:flutter_app/src/features/cms/pages/home/widgets/web_post_grid.dart';
 import 'package:flutter_app/src/core/widgets/responsive_layout.dart';
 import 'package:flutter_app/src/core/utils/translation_helpers.dart';
 
@@ -111,19 +113,19 @@ class _TagFeedPageState extends State<TagFeedPage> {
       title: Row(
         mainAxisSize: MainAxisSize.min,
         children: [
-          Icon(Icons.tag, size: isMobile ? 18.sp : 18, color: theme.colorScheme.primary),
-          SizedBox(width: isMobile ? 4.w : 4),
-          Text(tagName, style: TextStyle(fontSize: isMobile ? 18.sp : 18, fontWeight: FontWeight.bold)),
+          Icon(Icons.tag, size: isMobile ? 18 : 18, color: theme.colorScheme.primary),
+          SizedBox(width: isMobile ? 4 : 4),
+          Text(tagName, style: TextStyle(fontSize: isMobile ? 18 : 18, fontWeight: FontWeight.bold)),
         ],
       ),
       centerTitle: true,
       bottom: PreferredSize(
-        preferredSize: Size.fromHeight(isMobile ? 32.h : 32),
+        preferredSize: Size.fromHeight(isMobile ? 32 : 32),
         child: Padding(
-          padding: EdgeInsets.only(bottom: isMobile ? 12.h : 12),
+          padding: EdgeInsets.only(bottom: isMobile ? 12 : 12),
           child: Text(
             S.of(context).relatedPostsCountFull(tag.postCount ?? 0),
-            style: TextStyle(fontSize: isMobile ? 13.sp : 13, color: theme.colorScheme.onSurface.withAlpha(120)),
+            style: TextStyle(fontSize: isMobile ? 13 : 13, color: theme.colorScheme.onSurface.withAlpha(120)),
           ),
         ),
       ),
@@ -142,7 +144,7 @@ class _TagFeedPageState extends State<TagFeedPage> {
           )
         : _buildBody(context, posts, isMobile);
 
-    // Web 端由 WebShellLayout 提供 Scaffold
+    // 宽屏由壳层 AdaptiveShell 提供 Scaffold
     if (!isMobile) return body;
 
     return Scaffold(
@@ -154,36 +156,49 @@ class _TagFeedPageState extends State<TagFeedPage> {
 
   Widget _buildBody(BuildContext context, List<Post> posts, bool isMobile) {
     if (!isMobile) {
-      // Web 端：CustomScrollView 避免无界高度问题
+      // Web 端：版心 + 页头（标签名此前只在移动端 AppBar 上）+ 自适应网格，
+      // 不再单列全宽渲染卡片（一张卡撑满 1250px 的观感）
+      final space = Theme.of(context).space;
+      final tagName = getTagName(_tags.firstWhere(
+        (t) => t.id != null && t.id == widget.tagId,
+        orElse: () => ContentServiceV1Tag(),
+      ));
       return CustomScrollView(
         slivers: [
           SliverPadding(
             padding: const EdgeInsets.symmetric(horizontal: 24),
             sliver: SliverToBoxAdapter(
-              child: Center(
-                child: ConstrainedBox(
-                  constraints: const BoxConstraints(maxWidth: Breakpoints.webContentMaxWidth),
-                  child: Column(
-                    children: posts.map((post) => Padding(
-                      padding: const EdgeInsets.only(bottom: 12),
-                      child: PostCard(
-                          post: post, likeCount: _likeCounts[post.id] ?? 0),
-                    )).toList(),
-                  ),
+              child: AdaptiveContent(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    SizedBox(height: space.lg),
+                    SectionHeader(
+                      title: tagName.isEmpty ? '#' : '# $tagName',
+                      count: posts.length,
+                    ),
+                    SizedBox(height: space.lg),
+                    WebPostGrid(
+                      posts: posts,
+                      categories: const [],
+                      tags: const [],
+                      likeCounts: _likeCounts,
+                    ),
+                    SizedBox(height: space.block - space.lg),
+                  ],
                 ),
               ),
             ),
           ),
-          const SliverToBoxAdapter(child: SizedBox(height: 32)),
         ],
       );
     }
 
     return ListView.builder(
-      padding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 8.h),
+      padding: EdgeInsets.symmetric(horizontal: 16, vertical: 8),
       itemCount: posts.length,
       itemBuilder: (context, index) => Padding(
-        padding: EdgeInsets.only(bottom: 12.h),
+        padding: EdgeInsets.only(bottom: 12),
         child: PostCard(
             post: posts[index],
             likeCount: _likeCounts[posts[index].id] ?? 0),

@@ -10,6 +10,10 @@ Set-Location (Join-Path $PSScriptRoot '..')
 flutter build web --release
 if ($LASTEXITCODE -ne 0) { throw "flutter build web failed (exit $LASTEXITCODE)" }
 
+# flutter build does not clean build/web; a stale archive left there from an
+# earlier manual run would get double-packed into the deliverable. Remove it.
+Get-ChildItem 'build/web' -Filter '*.zip' -ErrorAction SilentlyContinue | Remove-Item -Force
+
 $zip = 'build/flutter-web.zip'
 if (Test-Path $zip) { Remove-Item $zip }
 

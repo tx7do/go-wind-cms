@@ -1,19 +1,22 @@
 import 'dart:async';
 
 import 'package:flutter/material.dart';
-import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:go_router/go_router.dart';
 
 import 'package:flutter_app/generated/api/app/service/v1/index.dart'
     show ContentServiceV1Post, ContentServiceV1Category;
-import 'package:flutter_app/src/core/utils/responsive_utils.dart';
+import 'package:flutter_app/src/core/layout/width_class.dart';
+import 'package:flutter_app/src/core/themes/tokens.dart';
 import 'package:flutter_app/src/core/utils/translation_helpers.dart';
 
 typedef Post = ContentServiceV1Post;
 typedef Category = ContentServiceV1Category;
 
-/// 焦点推荐轮播组件
+/// 焦点推荐轮播
+///
+/// 大面积氛围件：允许用 hero 渐变与图上深色压暗层（doc §2 例外条款），
+/// 其余仍守 token——圆角 lg、主色只出现在指示器选中位。
 class FeaturedCarousel extends StatefulWidget {
   final List<Post> posts;
   final List<Category> categories;
@@ -59,54 +62,51 @@ class _FeaturedCarouselState extends State<FeaturedCarousel> {
     _startAutoPlay();
   }
 
+  void _goPage(int delta) {
+    setState(() {
+      _currentPage =
+          (_currentPage + delta + widget.posts.length) % widget.posts.length;
+    });
+    _resetAutoPlay();
+  }
+
   @override
   Widget build(BuildContext context) {
     if (widget.posts.isEmpty) return const SizedBox.shrink();
 
     final theme = Theme.of(context);
-    final isMobile = ResponsiveUtils.isMobile(context);
+    final compact = context.widthClass.isCompact;
     final post = widget.posts[_currentPage];
 
     return Padding(
-      padding: isMobile
-          ? EdgeInsets.fromLTRB(16.w, 12.h, 16.w, 4.h)
-          : const EdgeInsets.fromLTRB(0, 12, 0, 4),
+      padding: EdgeInsets.fromLTRB(
+        compact ? 16 : 0,
+        12,
+        compact ? 16 : 0,
+        4,
+      ),
       child: Column(
         children: [
-          // 轮播图 - 使用 AnimatedSwitcher 替代 PageView，避免嵌套 Viewport
+          // AnimatedSwitcher 而非 PageView：避免 CustomScrollView 里嵌 Viewport
           SizedBox(
-            height: isMobile ? 160.h : 180,
+            height: compact ? 160 : 200,
             child: GestureDetector(
               behavior: HitTestBehavior.opaque,
-              // 左右滑动/点击切换
-              onTap: () {
-                setState(() {
-                  _currentPage = (_currentPage + 1) % widget.posts.length;
-                });
-                _resetAutoPlay();
-              },
               onHorizontalDragEnd: (details) {
-                if (details.primaryVelocity == null) return;
-                if (details.primaryVelocity! < 0) {
-                  // 左滑 -> 下一页
-                  setState(() {
-                    _currentPage = (_currentPage + 1) % widget.posts.length;
-                  });
-                } else {
-                  // 右滑 -> 上一页
-                  setState(() {
-                    _currentPage = (_currentPage - 1 + widget.posts.length) % widget.posts.length;
-                  });
+                final v = details.primaryVelocity;
+                if (v == null) return;
+                if (v < 0) {
+                  _goPage(1); // 左滑 -> 下一页
+                } else if (v > 0) {
+                  _goPage(-1);
                 }
-                _resetAutoPlay();
               },
               child: AnimatedSwitcher(
-                duration: const Duration(milliseconds: 500),
+                duration: theme.motion.slow,
                 switchInCurve: Curves.easeInOut,
                 switchOutCurve: Curves.easeInOut,
-                transitionBuilder: (Widget child, Animation<double> animation) {
-                  return FadeTransition(opacity: animation, child: child);
-                },
+                transitionBuilder: (child, animation) =>
+                    FadeTransition(opacity: animation, child: child),
                 child: KeyedSubtree(
                   key: ValueKey(_currentPage),
                   child: _FeaturedCard(
@@ -117,23 +117,23 @@ class _FeaturedCarouselState extends State<FeaturedCarousel> {
               ),
             ),
           ),
-          SizedBox(height: isMobile ? 10.h : 10),
+          const SizedBox(height: 10),
           // 指示器
           Row(
             mainAxisAlignment: MainAxisAlignment.center,
             children: List.generate(widget.posts.length, (index) {
+              final active = _currentPage == index;
               return AnimatedContainer(
-                duration: const Duration(milliseconds: 300),
-                margin: EdgeInsets.symmetric(horizontal: isMobile ? 3.w : 3),
-                width: _currentPage == index
-                    ? (isMobile ? 20.w : 20)
-                    : (isMobile ? 6.w : 6),
-                height: isMobile ? 6.h : 6,
+                duration: theme.motion.base,
+                curve: theme.motion.curve,
+                margin: const EdgeInsets.symmetric(horizontal: 3),
+                width: active ? 18 : 6,
+                height: 6,
                 decoration: BoxDecoration(
-                  color: _currentPage == index
-                      ? theme.colorScheme.primary
-                      : theme.colorScheme.onSurface.withAlpha(40),
-                  borderRadius: BorderRadius.circular(isMobile ? 3.r : 3),
+                  color: active
+                      ? theme.palette.primary
+                      : theme.palette.borderStrong,
+                  borderRadius: theme.radius.fullAll,
                 ),
               );
             }),
@@ -145,24 +145,29 @@ class _FeaturedCarouselState extends State<FeaturedCarousel> {
 }
 
 class _FeaturedCard extends StatelessWidget {
+  const _FeaturedCard({required this.post, this.categories = const []});
+
   final Post post;
   final List<Category> categories;
 
-  const _FeaturedCard({required this.post, this.categories = const []});
+  /// 图上玻璃签的不透明度：照片是主题无关的，这层白纱不随主题变
+  static const int _glassAlpha = 0x3D;
 
   String get _title => getPostTitle(post);
 
-  /// 获取封面图
   String? get _coverImage => getPostThumbnail(post);
 
-  /// 获取文章关联的分类名称
   String get _categoryName {
     if ((post.categoryIds ?? []).isEmpty) return '';
     final catId = post.categoryIds!.first;
     try {
       final cat = categories.firstWhere((c) => c.id != null && c.id == catId);
       return getCategoryName(cat);
-    } catch (_) {
+    } catch (e) {
+      assert(() {
+        debugPrint('[FeaturedCarousel] category lookup failed: $e');
+        return true;
+      }());
       return '';
     }
   }
@@ -170,165 +175,125 @@ class _FeaturedCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
-    final isMobile = ResponsiveUtils.isMobile(context);
+    final p = theme.palette;
+    final hasCover = _coverImage != null;
 
     return GestureDetector(
       behavior: HitTestBehavior.opaque,
       onTap: () => context.go('/post/${post.id}'),
       child: Container(
-        margin: EdgeInsets.symmetric(horizontal: isMobile ? 4.w : 4),
+        margin: const EdgeInsets.symmetric(horizontal: 4),
         decoration: BoxDecoration(
-          borderRadius: BorderRadius.circular(isMobile ? 16.r : 16),
-          gradient: _coverImage == null
-              ? LinearGradient(
-                  begin: Alignment.topLeft,
-                  end: Alignment.bottomRight,
-                  colors: [
-                    theme.colorScheme.primaryContainer,
-                    theme.colorScheme.primary.withAlpha((0.3 * 255).round()),
-                  ],
-                )
-              : null,
-          color: _coverImage != null ? Colors.grey.shade100 : null,
+          borderRadius: theme.radius.lgAll,
+          gradient: hasCover ? null : p.heroGradient,
         ),
-        child: IgnorePointer(
-          child: ClipRRect(
-            borderRadius: BorderRadius.circular(isMobile ? 16.r : 16),
-            child: Stack(
-              children: [
-                // 背景图（如果有封面图）
-                if (_coverImage != null)
-                  Positioned.fill(
-                    child: CachedNetworkImage(
-                      imageUrl: _coverImage!,
-                      fit: BoxFit.cover,
-                      placeholder: (context, url) =>
-                          Container(color: Colors.grey.shade100),
-                      errorWidget: (context, url, error) => Container(
-                        color: Colors.grey.shade100,
-                        child: const Center(
-                          child: Icon(Icons.image_outlined, color: Colors.grey),
-                        ),
-                      ),
+        child: ClipRRect(
+          borderRadius: theme.radius.lgAll,
+          child: Stack(
+            fit: StackFit.expand,
+            children: [
+              if (hasCover)
+                CachedNetworkImage(
+                  imageUrl: _coverImage!,
+                  fit: BoxFit.cover,
+                  placeholder: (context, url) => Container(color: p.surfaceLow),
+                  errorWidget: (context, url, error) => Container(
+                    color: p.surfaceLow,
+                    alignment: Alignment.center,
+                    child: Icon(
+                      Icons.broken_image_outlined,
+                      color: p.inkTertiary,
                     ),
                   ),
-                // 渐变遮罩：有图片时用半透明深色遮罩保证文字可读性
-                if (_coverImage != null)
-                  Positioned.fill(
-                    child: Container(
-                      decoration: BoxDecoration(
-                        gradient: LinearGradient(
-                          begin: Alignment.topCenter,
-                          end: Alignment.bottomCenter,
-                          colors: [
-                            Colors.black.withAlpha((0.05 * 255).round()),
-                            Colors.black.withAlpha((0.55 * 255).round()),
-                          ],
-                        ),
-                      ),
-                    ),
-                  ),
-                // 无图片时的背景装饰圆圈
-                if (_coverImage == null) ...[
-                  Positioned(
-                    right: -20,
-                    top: -20,
-                    child: Container(
-                      width: 120,
-                      height: 120,
-                      decoration: BoxDecoration(
-                        shape: BoxShape.circle,
-                        color: theme.colorScheme.primary.withAlpha(
-                          (0.1 * 255).round(),
-                        ),
-                      ),
-                    ),
-                  ),
-                  Positioned(
-                    left: -30,
-                    bottom: -30,
-                    child: Container(
-                      width: 100,
-                      height: 100,
-                      decoration: BoxDecoration(
-                        shape: BoxShape.circle,
-                        color: theme.colorScheme.primary.withAlpha(
-                          (0.08 * 255).round(),
-                        ),
-                      ),
-                    ),
-                  ),
-                ],
-                // 文字内容
-                Padding(
-                  padding: EdgeInsets.all(isMobile ? 20.w : 20),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    mainAxisAlignment: MainAxisAlignment.end,
-                    children: [
-                      if (_categoryName.isNotEmpty)
-                        Container(
-                          padding: EdgeInsets.symmetric(
-                            horizontal: isMobile ? 10.w : 10,
-                            vertical: isMobile ? 4.h : 4,
-                          ),
-                          decoration: BoxDecoration(
-                            color: _coverImage != null
-                                ? Colors.white.withAlpha((0.25 * 255).round())
-                                : theme.colorScheme.primary.withAlpha(
-                                    (0.2 * 255).round(),
-                                  ),
-                            borderRadius: BorderRadius.circular(
-                              isMobile ? 12.r : 12,
-                            ),
-                          ),
-                          child: Text(
-                            _categoryName,
-                            style: TextStyle(
-                              fontSize: isMobile ? 11.sp : 11,
-                              fontWeight: FontWeight.w500,
-                              color: _coverImage != null
-                                  ? Colors.white
-                                  : theme.colorScheme.onSurface,
-                            ),
-                          ),
-                        ),
-                      SizedBox(height: isMobile ? 8.h : 8),
-                      Text(
-                        _title,
-                        maxLines: 2,
-                        overflow: TextOverflow.ellipsis,
-                        style: TextStyle(
-                          fontSize: isMobile ? 16.sp : 16,
-                          fontWeight: FontWeight.bold,
-                          color: _coverImage != null
-                              ? Colors.white
-                              : theme.colorScheme.onSurface,
-                          height: 1.3,
-                        ),
-                      ),
-                      SizedBox(height: isMobile ? 6.h : 6),
-                      Row(
-                        children: [
-                          Text(
-                            post.authorName ?? '',
-                            style: TextStyle(
-                              fontSize: isMobile ? 12.sp : 12,
-                              color: _coverImage != null
-                                  ? Colors.white.withAlpha((0.8 * 255).round())
-                                  : theme.colorScheme.onSurface.withAlpha(160),
-                            ),
-                          ),
-                        ],
-                      ),
-                    ],
-                  ),
+                )
+              else ...[
+                // 无图时的氛围圆：品牌淡底，给首屏一点呼吸感
+                Positioned(
+                  right: -20,
+                  top: -20,
+                  child: _circle(120, p.primaryTint),
+                ),
+                Positioned(
+                  left: -30,
+                  bottom: -30,
+                  child: _circle(100, p.primarySoft),
                 ),
               ],
-            ),
+              // 图上压暗层：保证白字可读（doc §2 允许的深色 scrim）
+              if (hasCover)
+                DecoratedBox(
+                  decoration: BoxDecoration(
+                    gradient: LinearGradient(
+                      begin: Alignment.topCenter,
+                      end: Alignment.bottomCenter,
+                      colors: [
+                        p.scrim.withAlpha(0x00),
+                        p.scrim,
+                      ],
+                    ),
+                  ),
+                ),
+              Padding(
+                padding: const EdgeInsets.all(20),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  mainAxisAlignment: MainAxisAlignment.end,
+                  children: [
+                    if (_categoryName.isNotEmpty) ...[
+                      Container(
+                        padding: const EdgeInsets.symmetric(
+                          horizontal: 10,
+                          vertical: 4,
+                        ),
+                        decoration: BoxDecoration(
+                          color: hasCover
+                              ? p.onImage.withAlpha(_glassAlpha)
+                              : p.primarySoft,
+                          borderRadius: theme.radius.smAll,
+                        ),
+                        child: Text(
+                          _categoryName,
+                          style: theme.textTheme.labelSmall?.copyWith(
+                            fontWeight: FontWeight.w600,
+                            color: hasCover ? p.onImage : p.primaryOnSoft,
+                          ),
+                        ),
+                      ),
+                      const SizedBox(height: 8),
+                    ],
+                    Text(
+                      _title,
+                      maxLines: 2,
+                      overflow: TextOverflow.ellipsis,
+                      style: theme.textTheme.headlineSmall?.copyWith(
+                        color: hasCover ? p.onImage : p.inkStrong,
+                        height: 1.35,
+                      ),
+                    ),
+                    const SizedBox(height: 6),
+                    Text(
+                      post.authorName ?? '',
+                      maxLines: 1,
+                      overflow: TextOverflow.ellipsis,
+                      style: theme.textTheme.labelMedium?.copyWith(
+                        color: hasCover
+                            ? p.onImage.withAlpha(0xCC)
+                            : p.inkSecondary,
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            ],
           ),
         ),
       ),
     );
   }
+
+  Widget _circle(double size, Color color) => Container(
+        width: size,
+        height: size,
+        decoration: BoxDecoration(shape: BoxShape.circle, color: color),
+      );
 }

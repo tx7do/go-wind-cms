@@ -1,16 +1,15 @@
 import 'package:flutter/widgets.dart';
 
-import 'package:flutter_app/src/core/constants/breakpoints.dart';
+import 'package:flutter_app/src/core/layout/width_class.dart';
 
-/// 响应式工具类
+/// 响应式工具类（旧 API 兼容层）。
 ///
-/// 提供根据屏幕宽度自适应的间距、字体等方法。
-/// - 手机端：使用 base 值
-/// - 平板/Web端：使用 base 值（不随窗口等比例放大）
-///
-/// 取代全量使用 flutter_screenutil 的 .w .h .sp 模式
+/// 分档口径全部转发到 [WidthClass]；新代码请直接用量宽反推的
+/// [AdaptiveGrid.columns]，不要再按视口猜列数。
 class ResponsiveUtils {
   ResponsiveUtils._();
+
+  static WidthClass _classOf(BuildContext context) => context.widthClass;
 
   /// 获取自适应内边距
   static EdgeInsets padding(
@@ -19,14 +18,12 @@ class ResponsiveUtils {
     double tablet = 24,
     double web = 32,
   }) {
-    final width = MediaQuery.sizeOf(context).width;
-    if (Breakpoints.isMobile(width)) {
-      return EdgeInsets.all(mobile);
-    } else if (Breakpoints.isTablet(width)) {
-      return EdgeInsets.all(tablet);
-    } else {
-      return EdgeInsets.all(web);
-    }
+    final value = switch (_classOf(context)) {
+      WidthClass.compact => mobile,
+      WidthClass.medium => tablet,
+      WidthClass.expanded || WidthClass.wide => web,
+    };
+    return EdgeInsets.all(value);
   }
 
   /// 获取自适应水平内边距
@@ -36,34 +33,26 @@ class ResponsiveUtils {
     double tablet = 24,
     double web = 32,
   }) {
-    final width = MediaQuery.sizeOf(context).width;
-    if (Breakpoints.isMobile(width)) {
-      return EdgeInsets.symmetric(horizontal: mobile);
-    } else if (Breakpoints.isTablet(width)) {
-      return EdgeInsets.symmetric(horizontal: tablet);
-    } else {
-      return EdgeInsets.symmetric(horizontal: web);
-    }
+    final value = switch (_classOf(context)) {
+      WidthClass.compact => mobile,
+      WidthClass.medium => tablet,
+      WidthClass.expanded || WidthClass.wide => web,
+    };
+    return EdgeInsets.symmetric(horizontal: value);
   }
 
   /// 获取自适应字体大小
-  ///
-  /// 手机端使用 screenutil 的 .sp（适配不同手机分辨率）
-  /// 平板/Web端直接使用固定值
   static double fontSize(
     BuildContext context,
     double mobileSize, {
     double? tabletSize,
     double? webSize,
   }) {
-    final width = MediaQuery.sizeOf(context).width;
-    if (Breakpoints.isMobile(width)) {
-      return mobileSize;
-    } else if (Breakpoints.isTablet(width)) {
-      return tabletSize ?? mobileSize;
-    } else {
-      return webSize ?? tabletSize ?? mobileSize;
-    }
+    return switch (_classOf(context)) {
+      WidthClass.compact => mobileSize,
+      WidthClass.medium => tabletSize ?? mobileSize,
+      WidthClass.expanded || WidthClass.wide => webSize ?? tabletSize ?? mobileSize,
+    };
   }
 
   /// 获取自适应间距
@@ -72,61 +61,58 @@ class ResponsiveUtils {
     double mobileSize, {
     double? tabletSize,
     double? webSize,
-  }) {
-    final width = MediaQuery.sizeOf(context).width;
-    if (Breakpoints.isMobile(width)) {
-      return mobileSize;
-    } else if (Breakpoints.isTablet(width)) {
-      return tabletSize ?? mobileSize;
-    } else {
-      return webSize ?? tabletSize ?? mobileSize;
-    }
-  }
+  }) => fontSize(context, mobileSize, tabletSize: tabletSize, webSize: webSize);
 
   /// 获取网格列数
-  static int gridColumns(BuildContext context) {
-    final width = MediaQuery.sizeOf(context).width;
-    if (Breakpoints.isMobile(width)) return 1;
-    if (Breakpoints.isTablet(width)) return 2;
-    return 3;
-  }
+  static int gridColumns(BuildContext context) =>
+      _classOf(context).maxGridColumns;
 
-  /// 获取文章列表网格列数
+  /// 获取文章列表网格列数（按视口反推，卡片最小宽 300dp）
   static int postGridColumns(BuildContext context) {
     final width = MediaQuery.sizeOf(context).width;
-    if (Breakpoints.isMobile(width)) return 1;
-    if (width < 900) return 2;
-    return 3;
+    final wc = _classOf(context);
+    return AdaptiveGrid.columns(
+      availableWidth: _mainColumnWidth(wc, width),
+      minItemWidth: AdaptiveGrid.minPostCardWidth,
+      maxColumns: wc.maxGridColumns,
+    );
   }
 
-  /// 获取分类网格列数
+  /// 获取分类网格列数（信息密度低，块最小宽 160dp）
   static int categoryGridColumns(BuildContext context) {
     final width = MediaQuery.sizeOf(context).width;
-    if (Breakpoints.isMobile(width)) return 2;
-    if (width < 900) return 3;
-    return 4;
+    final wc = _classOf(context);
+    return AdaptiveGrid.columns(
+      availableWidth: _mainColumnWidth(wc, width),
+      minItemWidth: AdaptiveGrid.minTileWidth,
+      maxColumns: 4,
+    );
+  }
+
+  /// 视口宽度 → 主列可用宽度（扣 gutter 与侧边栏）
+  static double _mainColumnWidth(WidthClass wc, double viewportWidth) {
+    final content = viewportWidth > wc.contentMaxWidth
+        ? wc.contentMaxWidth
+        : viewportWidth;
+    final usable = content - wc.gutter * 2;
+    return wc.showSidebar ? usable - wc.sidebarWidth - wc.sidebarGap : usable;
   }
 
   /// 判断当前是否为宽屏
-  static bool isWideScreen(BuildContext context) {
-    return Breakpoints.isWeb(MediaQuery.sizeOf(context).width);
-  }
+  static bool isWideScreen(BuildContext context) =>
+      !_classOf(context).isCompact;
 
   /// 判断当前是否为手机端
-  static bool isMobile(BuildContext context) {
-    return Breakpoints.isMobile(MediaQuery.sizeOf(context).width);
-  }
+  static bool isMobile(BuildContext context) => _classOf(context).isCompact;
 
   /// 判断当前是否为平板端
-  static bool isTablet(BuildContext context) {
-    return Breakpoints.isTablet(MediaQuery.sizeOf(context).width);
-  }
+  static bool isTablet(BuildContext context) =>
+      _classOf(context) == WidthClass.medium;
 
   /// 获取内容区域最大宽度
   static double contentMaxWidth(BuildContext context) {
+    final wc = _classOf(context);
     final width = MediaQuery.sizeOf(context).width;
-    if (Breakpoints.isWeb(width)) return Breakpoints.webContentMaxWidth;
-    if (Breakpoints.isTablet(width)) return width - 32;
-    return width;
+    return width > wc.contentMaxWidth ? wc.contentMaxWidth : width;
   }
 }

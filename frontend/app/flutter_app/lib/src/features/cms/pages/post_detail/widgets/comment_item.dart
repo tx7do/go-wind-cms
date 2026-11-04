@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 import 'package:flutter_app/generated/l10n.dart';
 import 'package:flutter_app/generated/api/app/service/v1/index.dart'
@@ -95,25 +94,25 @@ class _CommentItemState extends State<CommentItem> {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
-    final indent = (widget.depth * (widget.isMobile ? 36.w : 36)).toDouble();
+    final indent = (widget.depth * (widget.isMobile ? 36 : 36)).toDouble();
     final realChildren = findChildren(widget.comment, widget.allComments);
 
     return Padding(
-      padding: EdgeInsets.only(left: indent, bottom: widget.isMobile ? 14.h : 14),
+      padding: EdgeInsets.only(left: indent, bottom: widget.isMobile ? 14 : 14),
       child: Row(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           CircleAvatar(
-            radius: widget.isMobile ? 16.r : 16,
+            radius: widget.isMobile ? 16 : 16,
             backgroundColor: theme.colorScheme.primaryContainer,
             child: Text(
               (widget.comment.authorName ?? '').isNotEmpty
                   ? widget.comment.authorName![0]
                   : '?',
-              style: TextStyle(fontSize: widget.isMobile ? 12.sp : 12),
+              style: TextStyle(fontSize: widget.isMobile ? 12 : 12),
             ),
           ),
-          SizedBox(width: widget.isMobile ? 10.w : 10),
+          SizedBox(width: widget.isMobile ? 10 : 10),
           Expanded(
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
@@ -124,7 +123,7 @@ class _CommentItemState extends State<CommentItem> {
                       child: Text(
                         widget.comment.authorName ?? '',
                         style: TextStyle(
-                          fontSize: widget.isMobile ? 13.sp : 13,
+                          fontSize: widget.isMobile ? 13 : 13,
                           fontWeight: FontWeight.w500,
                           color: theme.colorScheme.onSurface,
                         ),
@@ -137,13 +136,13 @@ class _CommentItemState extends State<CommentItem> {
                           ? _formatDate(context, DateTime.parse(widget.comment.createdAt!))
                           : '',
                       style: TextStyle(
-                        fontSize: widget.isMobile ? 11.sp : 11,
+                        fontSize: widget.isMobile ? 11 : 11,
                         color: theme.colorScheme.onSurface.withAlpha(100),
                       ),
                     ),
                   ],
                 ),
-                SizedBox(height: widget.isMobile ? 4.h : 4),
+                SizedBox(height: widget.isMobile ? 4 : 4),
                 // 如果是回复（depth > 0），显示回复的 "@某人"
                 if (widget.depth > 0 && widget.comment.replyToId != null)
                   Padding(
@@ -151,7 +150,7 @@ class _CommentItemState extends State<CommentItem> {
                     child: Text(
                       _replyToText,
                       style: TextStyle(
-                        fontSize: widget.isMobile ? 12.sp : 12,
+                        fontSize: widget.isMobile ? 12 : 12,
                         color: theme.colorScheme.primary.withAlpha(180),
                       ),
                     ),
@@ -159,12 +158,12 @@ class _CommentItemState extends State<CommentItem> {
                 Text(
                   widget.comment.content ?? '',
                   style: TextStyle(
-                    fontSize: widget.isMobile ? 14.sp : 14,
+                    fontSize: widget.isMobile ? 14 : 14,
                     color: theme.colorScheme.onSurface.withAlpha(200),
                     height: 1.5,
                   ),
                 ),
-                SizedBox(height: widget.isMobile ? 6.h : 6),
+                SizedBox(height: widget.isMobile ? 6 : 6),
                 Row(
                   children: [
                     GestureDetector(
@@ -177,40 +176,40 @@ class _CommentItemState extends State<CommentItem> {
                             : theme.colorScheme.onSurface.withAlpha(100),
                       ),
                     ),
-                    SizedBox(width: widget.isMobile ? 3.w : 3),
+                    SizedBox(width: widget.isMobile ? 3 : 3),
                     Text(
                       '$_likeCount',
                       style: TextStyle(
-                        fontSize: widget.isMobile ? 11.sp : 11,
+                        fontSize: widget.isMobile ? 11 : 11,
                         color: _isLiked
                             ? theme.colorScheme.primary
                             : theme.colorScheme.onSurface.withAlpha(100),
                       ),
                     ),
-                    SizedBox(width: widget.isMobile ? 16.w : 16),
+                    SizedBox(width: widget.isMobile ? 16 : 16),
                     GestureDetector(
                       onTap: () => widget.onReply?.call(widget.comment),
                       child: Text(
                         S.of(context).reply,
                         style: TextStyle(
-                          fontSize: widget.isMobile ? 11.sp : 11,
+                          fontSize: widget.isMobile ? 11 : 11,
                           color: theme.colorScheme.primary,
                         ),
                       ),
                     ),
                     // 如果有子评论，显示回复数
                     if (realChildren.isNotEmpty) ...[
-                      SizedBox(width: widget.isMobile ? 16.w : 16),
+                      SizedBox(width: widget.isMobile ? 16 : 16),
                       Icon(
                         Icons.chat_bubble_outline,
                         size: 12,
                         color: theme.colorScheme.onSurface.withAlpha(80),
                       ),
-                      SizedBox(width: widget.isMobile ? 3.w : 3),
+                      SizedBox(width: widget.isMobile ? 3 : 3),
                       Text(
                         '${realChildren.length}',
                         style: TextStyle(
-                          fontSize: widget.isMobile ? 11.sp : 11,
+                          fontSize: widget.isMobile ? 11 : 11,
                           color: theme.colorScheme.onSurface.withAlpha(80),
                         ),
                       ),

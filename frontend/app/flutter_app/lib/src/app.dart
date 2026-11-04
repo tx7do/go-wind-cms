@@ -1,15 +1,12 @@
-import 'package:flutter/foundation.dart' show kIsWeb;
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
-import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_easyloading/flutter_easyloading.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 
 import 'package:flutter_app/generated/l10n.dart' as l10n;
 
 import 'package:flutter_app/src/core/extensions/app_localizations_context.dart';
-import 'package:flutter_app/src/core/constants/breakpoints.dart';
 import 'package:flutter_app/src/core/themes/index.dart' as theme;
 import 'package:flutter_app/src/core/utilities/logger.dart' show debug;
 
@@ -31,28 +28,8 @@ class _CMSAppState extends State<CMSApp> {
 
   @override
   Widget build(BuildContext context) {
-    return ScreenUtilInit(
-      designSize: Breakpoints.designSize,
-      minTextAdapt: true,
-      splitScreenMode: true,
-      ensureScreenSize: true,
-      builder: (ctx, child) {
-        // Web 端：动态将 designSize 设为当前视窗尺寸，使 .w/.h/.sp 始终 1:1
-        // 用户缩小浏览器窗口时字体不会跟着缩小，完美符合 Web 阅读习惯
-        if (kIsWeb) {
-          ScreenUtil.init(
-            ctx,
-            designSize: Size(
-              MediaQuery.of(ctx).size.width,
-              MediaQuery.of(ctx).size.height,
-            ),
-            minTextAdapt: false,
-          );
-        }
-        return _buildMaterialApp(context);
-      },
-      child: const SizedBox.shrink(),
-    );
+    // ScreenUtil 已移除：观感全部走 token + WidthClass，不再按 designSize 缩放
+    return _buildMaterialApp(context);
   }
 
   Widget _buildMaterialApp(BuildContext context) {
@@ -60,21 +37,14 @@ class _CMSAppState extends State<CMSApp> {
     final cubit = context.read<theme.AppThemeCubit>();
     cubit.init();
 
-    // 监听 Cubit 变化，获取最新的 seedColor
-    final state = context.watch<theme.AppThemeCubit>().state;
-    Color? seedColor;
-    if (state is theme.AppThemeInitial) {
-      seedColor = state.seedColor;
-    } else if (state is theme.AppThemeModified) {
-      seedColor = state.seedColor;
-    }
-
     return MaterialApp.router(
       debugShowCheckedModeBanner: false,
       onGenerateTitle: (context) => context.loc.appName,
       routerConfig: pages.AppRouter.router,
-      theme: theme.getLightTheme(seedColor: seedColor),
-      darkTheme: theme.getDarkTheme(seedColor: seedColor),
+      theme: theme.getLightTheme(),
+      darkTheme: theme.getDarkTheme(),
+      // 3.47 起滚动观感归 MaterialApp（ThemeData 不再收 scrollBehavior）
+      scrollBehavior: const theme.AppScrollBehavior(),
       themeMode: context.watch<theme.AppThemeCubit>().themeMode,
       locale: context.watch<theme.AppThemeCubit>().currentLocale,
       builder: (context, routerChild) {

@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 import 'package:flutter_app/generated/l10n.dart';
 import 'package:flutter_app/generated/api/app/service/v1/index.dart'
@@ -133,7 +132,7 @@ class _ExplorePageState extends State<ExplorePage> {
             title: Text(
               S.of(context).discover,
               style: TextStyle(
-                fontSize: 22.sp,
+                fontSize: 22,
                 fontWeight: FontWeight.bold,
                 color: theme.colorScheme.onSurface,
               ),
@@ -142,7 +141,7 @@ class _ExplorePageState extends State<ExplorePage> {
           _buildCategoryGridSliver(categories, isMobile: true),
           _buildTagSectionSliver(isMobile: true),
           _buildPostListSliver(filteredPosts, isMobile: true),
-          SliverToBoxAdapter(child: SizedBox(height: 24.h)),
+          SliverToBoxAdapter(child: SizedBox(height: 24)),
         ],
       ),
     );
@@ -248,14 +247,14 @@ class _ExplorePageState extends State<ExplorePage> {
     required bool isMobile,
   }) {
     return SliverPadding(
-      padding: EdgeInsets.symmetric(horizontal: isMobile ? 16.w : 24),
+      padding: EdgeInsets.symmetric(horizontal: isMobile ? 16 : 24),
       sliver: SliverGrid(
         gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
           crossAxisCount: isMobile
               ? 2
               : ResponsiveUtils.categoryGridColumns(context),
-          mainAxisSpacing: isMobile ? 10.h : 12,
-          crossAxisSpacing: isMobile ? 10.w : 12,
+          mainAxisSpacing: isMobile ? 10 : 12,
+          crossAxisSpacing: isMobile ? 10 : 12,
           childAspectRatio: 2.2,
         ),
         delegate: SliverChildBuilderDelegate((context, index) {
@@ -281,9 +280,9 @@ class _ExplorePageState extends State<ExplorePage> {
     return SliverToBoxAdapter(
       child: Padding(
         padding: EdgeInsets.fromLTRB(
-          isMobile ? 16.w : 24,
-          isMobile ? 20.h : 20,
-          isMobile ? 16.w : 24,
+          isMobile ? 16 : 24,
+          isMobile ? 20 : 20,
+          isMobile ? 16 : 24,
           4,
         ),
         child: Column(
@@ -292,12 +291,12 @@ class _ExplorePageState extends State<ExplorePage> {
             Text(
               S.of(context).hotTags,
               style: TextStyle(
-                fontSize: isMobile ? 16.sp : 16,
+                fontSize: isMobile ? 16 : 16,
                 fontWeight: FontWeight.w600,
                 color: theme.colorScheme.onSurface,
               ),
             ),
-            SizedBox(height: isMobile ? 12.h : 12),
+            SizedBox(height: isMobile ? 12 : 12),
             _TagWrap(tags: _tags),
           ],
         ),
@@ -311,28 +310,28 @@ class _ExplorePageState extends State<ExplorePage> {
       SliverToBoxAdapter(
         child: Padding(
           padding: EdgeInsets.fromLTRB(
-            isMobile ? 16.w : 24,
-            isMobile ? 20.h : 20,
-            isMobile ? 16.w : 24,
+            isMobile ? 16 : 24,
+            isMobile ? 20 : 20,
+            isMobile ? 16 : 24,
             8,
           ),
           child: Row(
             children: [
               Container(
-                width: isMobile ? 4.w : 4,
-                height: isMobile ? 18.h : 18,
+                width: isMobile ? 4 : 4,
+                height: isMobile ? 18 : 18,
                 decoration: BoxDecoration(
                   color: theme.colorScheme.primary,
                   borderRadius: BorderRadius.circular(2),
                 ),
               ),
-              SizedBox(width: isMobile ? 8.w : 8),
+              SizedBox(width: isMobile ? 8 : 8),
               Text(
                 _selectedCategory == null
                     ? S.of(context).allPosts
                     : getCategoryName(_selectedCategory),
                 style: TextStyle(
-                  fontSize: isMobile ? 16.sp : 16,
+                  fontSize: isMobile ? 16 : 16,
                   fontWeight: FontWeight.w600,
                   color: theme.colorScheme.onSurface,
                 ),
@@ -341,7 +340,7 @@ class _ExplorePageState extends State<ExplorePage> {
               Text(
                 S.of(context).postsCount(posts.length),
                 style: TextStyle(
-                  fontSize: isMobile ? 13.sp : 13,
+                  fontSize: isMobile ? 13 : 13,
                   color: theme.colorScheme.onSurface.withAlpha(128),
                 ),
               ),
@@ -350,11 +349,11 @@ class _ExplorePageState extends State<ExplorePage> {
         ),
       ),
       SliverPadding(
-        padding: EdgeInsets.symmetric(horizontal: isMobile ? 16.w : 24),
+        padding: EdgeInsets.symmetric(horizontal: isMobile ? 16 : 24),
         sliver: SliverList(
           delegate: SliverChildBuilderDelegate(
             (context, index) => Padding(
-              padding: EdgeInsets.only(bottom: isMobile ? 12.h : 12),
+              padding: EdgeInsets.only(bottom: isMobile ? 12 : 12),
               child: PostCard(
                 post: posts[index],
                 likeCount: _likeCounts[posts[index].id] ?? 0,
@@ -449,14 +448,14 @@ class _CategoryGridItemState extends State<_CategoryGridItem> {
             : _isHovered
             ? theme.colorScheme.surfaceContainerHighest
             : theme.colorScheme.surface,
-        borderRadius: BorderRadius.circular(widget.isMobile ? 14.r : 14),
+        borderRadius: BorderRadius.circular(widget.isMobile ? 14 : 14),
         child: InkWell(
           onTap: widget.onTap,
-          borderRadius: BorderRadius.circular(widget.isMobile ? 14.r : 14),
+          borderRadius: BorderRadius.circular(widget.isMobile ? 14 : 14),
           child: Container(
             width: widget.isMobile ? null : 180,
             decoration: BoxDecoration(
-              borderRadius: BorderRadius.circular(widget.isMobile ? 14.r : 14),
+              borderRadius: BorderRadius.circular(widget.isMobile ? 14 : 14),
               border: Border.all(
                 color: widget.isSelected
                     ? theme.colorScheme.primary
@@ -467,7 +466,7 @@ class _CategoryGridItemState extends State<_CategoryGridItem> {
               ),
             ),
             child: Padding(
-              padding: EdgeInsets.all(widget.isMobile ? 14.w : 14),
+              padding: EdgeInsets.all(widget.isMobile ? 14 : 14),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 mainAxisAlignment: MainAxisAlignment.center,
@@ -475,18 +474,18 @@ class _CategoryGridItemState extends State<_CategoryGridItem> {
                   Text(
                     name,
                     style: TextStyle(
-                      fontSize: widget.isMobile ? 15.sp : 15,
+                      fontSize: widget.isMobile ? 15 : 15,
                       fontWeight: FontWeight.w600,
                       color: theme.colorScheme.onSurface,
                     ),
                   ),
-                  SizedBox(height: widget.isMobile ? 4.h : 4),
+                  SizedBox(height: widget.isMobile ? 4 : 4),
                   Text(
                     S
                         .of(context)
                         .postsCountFull(widget.category.postCount ?? 0),
                     style: TextStyle(
-                      fontSize: widget.isMobile ? 12.sp : 12,
+                      fontSize: widget.isMobile ? 12 : 12,
                       color: theme.colorScheme.onSurface.withAlpha(140),
                     ),
                   ),

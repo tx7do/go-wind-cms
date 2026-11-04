@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 import 'package:flutter_app/generated/l10n.dart';
+import 'package:flutter_app/src/core/themes/tokens.dart';
 import 'package:flutter_app/generated/api/app/service/v1/index.dart'
     show ContentServiceV1Post, ContentServiceV1Category;
 import 'package:flutter_app/src/core/utils/translation_helpers.dart';
@@ -40,9 +40,9 @@ class PostHeader extends StatelessWidget {
 
     return Padding(
       padding: EdgeInsets.fromLTRB(
-        isMobile ? 20.w : 0,
+        isMobile ? 20 : 0,
         8,
-        isMobile ? 20.w : 0,
+        isMobile ? 20 : 0,
         0,
       ),
       child: Column(
@@ -51,29 +51,29 @@ class PostHeader extends StatelessWidget {
           Text(
             _title,
             style: TextStyle(
-              fontSize: isMobile ? 22.sp : 24,
+              fontSize: isMobile ? 22 : 24,
               fontWeight: FontWeight.bold,
               color: theme.colorScheme.onSurface,
               height: 1.4,
             ),
           ),
-          SizedBox(height: isMobile ? 14.h : 14),
+          SizedBox(height: isMobile ? 14 : 14),
           Row(
             children: [
               CircleAvatar(
-                radius: isMobile ? 18.r : 18,
+                radius: isMobile ? 18 : 18,
                 backgroundColor: theme.colorScheme.primaryContainer,
                 child: Text(
                   post.authorName?.isNotEmpty == true
                       ? post.authorName![0]
                       : '?',
                   style: TextStyle(
-                    fontSize: isMobile ? 14.sp : 14,
+                    fontSize: isMobile ? 14 : 14,
                     fontWeight: FontWeight.w600,
                   ),
                 ),
               ),
-              SizedBox(width: isMobile ? 10.w : 10),
+              SizedBox(width: isMobile ? 10 : 10),
               Expanded(
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
@@ -81,18 +81,18 @@ class PostHeader extends StatelessWidget {
                     Text(
                       post.authorName ?? '',
                       style: TextStyle(
-                        fontSize: isMobile ? 14.sp : 14,
+                        fontSize: isMobile ? 14 : 14,
                         fontWeight: FontWeight.w500,
                         color: theme.colorScheme.onSurface,
                       ),
                     ),
-                    SizedBox(height: isMobile ? 2.h : 2),
+                    SizedBox(height: isMobile ? 2 : 2),
                     Text(
                       post.publishTime != null
                           ? _formatDate(context, DateTime.parse(post.publishTime!))
                           : '',
                       style: TextStyle(
-                        fontSize: isMobile ? 12.sp : 12,
+                        fontSize: isMobile ? 12 : 12,
                         color: theme.colorScheme.onSurface.withAlpha(120),
                       ),
                     ),
@@ -102,26 +102,26 @@ class PostHeader extends StatelessWidget {
               if (_categoryName.isNotEmpty)
                 Container(
                   padding: EdgeInsets.symmetric(
-                    horizontal: isMobile ? 12.w : 12,
-                    vertical: isMobile ? 5.h : 5,
+                    horizontal: isMobile ? 12 : 12,
+                    vertical: isMobile ? 5 : 5,
                   ),
                   decoration: BoxDecoration(
                     color: theme.colorScheme.primaryContainer.withAlpha(
                       (0.5 * 255).round(),
                     ),
-                    borderRadius: BorderRadius.circular(isMobile ? 12.r : 12),
+                    borderRadius: BorderRadius.circular(isMobile ? 12 : 12),
                   ),
                   child: Text(
                     _categoryName,
-                    style: TextStyle(fontSize: isMobile ? 12.sp : 12),
+                    style: TextStyle(fontSize: isMobile ? 12 : 12),
                   ),
                 ),
             ],
           ),
           Divider(
-            height: isMobile ? 24.h : 24,
+            height: isMobile ? 24 : 24,
             thickness: 1,
-            color: theme.colorScheme.onSurface.withAlpha((0.06 * 255).round()),
+            color: theme.palette.hairline,
           ),
         ],
       ),

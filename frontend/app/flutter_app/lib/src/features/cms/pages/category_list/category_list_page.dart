@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:go_router/go_router.dart';
 
 import 'package:flutter_app/generated/l10n.dart';
+import 'package:flutter_app/src/core/themes/tokens.dart';
 import 'package:flutter_app/generated/api/app/service/v1/index.dart'
     show ContentServiceV1Category, ContentServiceV1ListCategoryResponse;
 import 'package:flutter_app/src/features/cms/services/category_service.dart';
@@ -72,9 +72,9 @@ class _CategoryListPageState extends State<CategoryListPage> {
       title: Row(
         mainAxisSize: MainAxisSize.min,
         children: [
-          Icon(Icons.folder_outlined, size: isMobile ? 20.sp : 20, color: theme.colorScheme.primary),
-          SizedBox(width: isMobile ? 6.w : 6),
-          Text(loc.browseCategories, style: TextStyle(fontSize: isMobile ? 18.sp : 18, fontWeight: FontWeight.bold)),
+          Icon(Icons.folder_outlined, size: isMobile ? 20 : 20, color: theme.colorScheme.primary),
+          SizedBox(width: isMobile ? 6 : 6),
+          Text(loc.browseCategories, style: TextStyle(fontSize: isMobile ? 18 : 18, fontWeight: FontWeight.bold)),
         ],
       ),
       centerTitle: true,
@@ -86,7 +86,7 @@ class _CategoryListPageState extends State<CategoryListPage> {
           )
         : _buildBody(isMobile);
 
-    // Web 端由 WebShellLayout 提供 Scaffold
+    // 宽屏由壳层 AdaptiveShell 提供 Scaffold
     if (!isMobile) return body;
 
     return Scaffold(
@@ -122,12 +122,12 @@ class _CategoryListPageState extends State<CategoryListPage> {
     }
 
     return Padding(
-      padding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 12.h),
+      padding: EdgeInsets.symmetric(horizontal: 16, vertical: 12),
       child: GridView.builder(
         gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
           crossAxisCount: 2,
-          mainAxisSpacing: 10.h,
-          crossAxisSpacing: 10.w,
+          mainAxisSpacing: 10,
+          crossAxisSpacing: 10,
           childAspectRatio: 2.2,
         ),
         itemCount: _categories.length,
@@ -181,21 +181,21 @@ class _CategoryCardState extends State<_CategoryCard> {
         color: _isHovered
             ? theme.colorScheme.surfaceContainerHighest
             : theme.colorScheme.surface,
-        borderRadius: BorderRadius.circular(widget.isMobile ? 14.r : 14),
+        borderRadius: BorderRadius.circular(widget.isMobile ? 14 : 14),
         child: InkWell(
           onTap: widget.onTap,
-          borderRadius: BorderRadius.circular(widget.isMobile ? 14.r : 14),
+          borderRadius: BorderRadius.circular(widget.isMobile ? 14 : 14),
           child: Container(
             width: widget.isMobile ? null : 200,
             decoration: BoxDecoration(
-              borderRadius: BorderRadius.circular(widget.isMobile ? 14.r : 14),
+              borderRadius: BorderRadius.circular(widget.isMobile ? 14 : 14),
               border: Border.all(
-                color: theme.colorScheme.onSurface.withAlpha((0.08 * 255).round()),
+                color: theme.palette.hairline,
                 width: 1,
               ),
             ),
             child: Padding(
-              padding: EdgeInsets.all(widget.isMobile ? 14.w : 14),
+              padding: EdgeInsets.all(widget.isMobile ? 14 : 14),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 mainAxisAlignment: MainAxisAlignment.center,
@@ -203,7 +203,7 @@ class _CategoryCardState extends State<_CategoryCard> {
                   Text(
                     name,
                     style: TextStyle(
-                      fontSize: widget.isMobile ? 15.sp : 15,
+                      fontSize: widget.isMobile ? 15 : 15,
                       fontWeight: FontWeight.w600,
                       color: theme.colorScheme.onSurface,
                     ),
@@ -211,22 +211,22 @@ class _CategoryCardState extends State<_CategoryCard> {
                     overflow: TextOverflow.ellipsis,
                   ),
                   if (desc.isNotEmpty) ...[
-                    SizedBox(height: widget.isMobile ? 4.h : 4),
+                    SizedBox(height: widget.isMobile ? 4 : 4),
                     Text(
                       desc,
                       style: TextStyle(
-                        fontSize: widget.isMobile ? 12.sp : 12,
+                        fontSize: widget.isMobile ? 12 : 12,
                         color: theme.colorScheme.onSurface.withAlpha(140),
                       ),
                       maxLines: 1,
                       overflow: TextOverflow.ellipsis,
                     ),
                   ],
-                  SizedBox(height: widget.isMobile ? 4.h : 4),
+                  SizedBox(height: widget.isMobile ? 4 : 4),
                   Text(
                     S.of(context).postsCountFull(widget.category.postCount ?? 0),
                     style: TextStyle(
-                      fontSize: widget.isMobile ? 12.sp : 12,
+                      fontSize: widget.isMobile ? 12 : 12,
                       color: theme.colorScheme.onSurface.withAlpha(140),
                     ),
                   ),

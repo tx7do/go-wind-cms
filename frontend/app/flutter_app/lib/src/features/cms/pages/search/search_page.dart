@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 
 import 'package:flutter_app/generated/l10n.dart';
+import 'package:flutter_app/src/core/themes/tokens.dart';
 import 'package:flutter_app/generated/api/app/service/v1/index.dart'
     show ContentServiceV1Post, ContentServiceV1Tag, ContentServiceV1SearchPostHit,
         InteractionServiceV1TargetType, InteractionServiceV1CounterMetric;
@@ -161,7 +162,7 @@ class _SearchPageState extends State<SearchPage> {
       return Scaffold(backgroundColor: theme.scaffoldBackgroundColor, appBar: appBar, body: loadingBody);
     }
 
-    // Web 端由 WebShellLayout 提供 Scaffold
+    // 宽屏由壳层 AdaptiveShell 提供 Scaffold
     if (!isMobile) return body;
 
     return Scaffold(
@@ -353,8 +354,8 @@ class _SearchHitCardState extends State<_SearchHitCard> {
             borderRadius: BorderRadius.circular(12),
             border: Border.all(
               color: _isHovered && !isMobile
-                  ? theme.colorScheme.primary.withAlpha((0.2 * 255).round())
-                  : theme.colorScheme.onSurface.withAlpha((0.06 * 255).round()),
+                  ? theme.palette.primarySoft
+                  : theme.palette.hairline,
             ),
           ),
           child: Row(
@@ -425,8 +426,8 @@ class _SimplePostCardState extends State<_SimplePostCard> {
           borderRadius: BorderRadius.circular(12),
           border: Border.all(
             color: _isHovered && !isMobile
-                ? theme.colorScheme.primary.withAlpha((0.2 * 255).round())
-                : theme.colorScheme.onSurface.withAlpha((0.06 * 255).round()),
+                ? theme.palette.primarySoft
+                : theme.palette.hairline,
           ),
         ),
         child: Column(

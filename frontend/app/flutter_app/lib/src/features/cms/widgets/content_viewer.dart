@@ -1,7 +1,7 @@
 import 'dart:convert';
+import 'package:flutter_app/src/core/themes/tokens.dart';
 
 import 'package:flutter/material.dart';
-import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_markdown/flutter_markdown.dart';
 import 'package:flutter_widget_from_html/flutter_widget_from_html.dart';
 
@@ -70,48 +70,48 @@ class ContentViewer extends StatelessWidget {
       selectable: true,
       styleSheet: MarkdownStyleSheet(
         p: TextStyle(
-          fontSize: isMobile ? 15.sp : 15,
+          fontSize: isMobile ? 15 : 15,
           color: theme.colorScheme.onSurface,
           height: 1.8,
         ),
         h1: TextStyle(
-          fontSize: isMobile ? 24.sp : 24,
+          fontSize: isMobile ? 24 : 24,
           fontWeight: FontWeight.bold,
           color: theme.colorScheme.onSurface,
           height: 1.4,
         ),
         h2: TextStyle(
-          fontSize: isMobile ? 22.sp : 22,
+          fontSize: isMobile ? 22 : 22,
           fontWeight: FontWeight.bold,
           color: theme.colorScheme.onSurface,
           height: 1.4,
         ),
         h3: TextStyle(
-          fontSize: isMobile ? 20.sp : 20,
+          fontSize: isMobile ? 20 : 20,
           fontWeight: FontWeight.bold,
           color: theme.colorScheme.onSurface,
           height: 1.4,
         ),
         h4: TextStyle(
-          fontSize: isMobile ? 18.sp : 18,
+          fontSize: isMobile ? 18 : 18,
           fontWeight: FontWeight.w600,
           color: theme.colorScheme.onSurface,
           height: 1.4,
         ),
         h5: TextStyle(
-          fontSize: isMobile ? 16.sp : 16,
+          fontSize: isMobile ? 16 : 16,
           fontWeight: FontWeight.w600,
           color: theme.colorScheme.onSurface,
           height: 1.4,
         ),
         h6: TextStyle(
-          fontSize: isMobile ? 15.sp : 15,
+          fontSize: isMobile ? 15 : 15,
           fontWeight: FontWeight.w600,
           color: theme.colorScheme.onSurface,
           height: 1.4,
         ),
         code: TextStyle(
-          fontSize: isMobile ? 13.sp : 13,
+          fontSize: isMobile ? 13 : 13,
           fontFamily: 'RobotoMono',
           fontFamilyFallback: const ['Courier', 'monospace'],
           color: theme.colorScheme.primary,
@@ -119,16 +119,16 @@ class ContentViewer extends StatelessWidget {
         ),
         codeblockDecoration: BoxDecoration(
           color: theme.brightness == Brightness.dark
-              ? const Color(0xFF1E1E1E)
-              : const Color(0xFFF5F5F5),
-          borderRadius: BorderRadius.circular(isMobile ? 10.r : 10),
+              ? theme.palette.inverseSurface
+              : theme.palette.surfaceLow,
+          borderRadius: BorderRadius.circular(isMobile ? 10 : 10),
           border: Border.all(
-            color: theme.colorScheme.onSurface.withAlpha((0.08 * 255).round()),
+            color: theme.palette.hairline,
           ),
         ),
         codeblockAlign: WrapAlignment.start,
         blockquote: TextStyle(
-          fontSize: isMobile ? 15.sp : 15,
+          fontSize: isMobile ? 15 : 15,
           color: theme.colorScheme.onSurface.withAlpha(180),
           height: 1.8,
           fontStyle: FontStyle.italic,
@@ -137,24 +137,24 @@ class ContentViewer extends StatelessWidget {
           color: theme.colorScheme.primaryContainer.withAlpha(
             (0.15 * 255).round(),
           ),
-          borderRadius: BorderRadius.circular(isMobile ? 8.r : 8),
+          borderRadius: BorderRadius.circular(isMobile ? 8 : 8),
         ),
         listBullet: TextStyle(
-          fontSize: isMobile ? 15.sp : 15,
+          fontSize: isMobile ? 15 : 15,
           color: theme.colorScheme.primary,
         ),
-        listIndent: isMobile ? 20.w : 20,
+        listIndent: isMobile ? 20 : 20,
         tableBody: TextStyle(
-          fontSize: isMobile ? 14.sp : 14,
+          fontSize: isMobile ? 14 : 14,
           color: theme.colorScheme.onSurface,
         ),
         tableHead: TextStyle(
-          fontSize: isMobile ? 14.sp : 14,
+          fontSize: isMobile ? 14 : 14,
           fontWeight: FontWeight.w600,
           color: theme.colorScheme.onSurface,
         ),
         a: TextStyle(
-          fontSize: isMobile ? 15.sp : 15,
+          fontSize: isMobile ? 15 : 15,
           color: theme.colorScheme.primary,
           decoration: TextDecoration.underline,
         ),
@@ -170,7 +170,7 @@ class ContentViewer extends StatelessWidget {
     return HtmlWidget(
       content,
       textStyle: TextStyle(
-        fontSize: isMobile ? 15.sp : 15,
+        fontSize: isMobile ? 15 : 15,
         color: theme.colorScheme.onSurface,
         height: 1.8,
       ),
@@ -189,7 +189,7 @@ class ContentViewer extends StatelessWidget {
     return SelectableText(
       content,
       style: TextStyle(
-        fontSize: isMobile ? 15.sp : 15,
+        fontSize: isMobile ? 15 : 15,
         color: theme.colorScheme.onSurface,
         height: 1.8,
       ),
@@ -204,12 +204,12 @@ class ContentViewer extends StatelessWidget {
 
     return Container(
       width: double.infinity,
-      padding: EdgeInsets.all(isMobile ? 14.w : 16),
+      padding: EdgeInsets.all(isMobile ? 14 : 16),
       decoration: BoxDecoration(
-        color: isDark ? const Color(0xFF1E1E1E) : const Color(0xFFF5F5F5),
-        borderRadius: BorderRadius.circular(isMobile ? 10.r : 10),
+        color: isDark ? theme.palette.inverseSurface : theme.palette.surfaceLow,
+        borderRadius: BorderRadius.circular(isMobile ? 10 : 10),
         border: Border.all(
-          color: theme.colorScheme.onSurface.withAlpha((0.08 * 255).round()),
+          color: theme.palette.hairline,
         ),
       ),
       child: SingleChildScrollView(
@@ -217,11 +217,11 @@ class ContentViewer extends StatelessWidget {
         child: Text(
           content,
           style: TextStyle(
-            fontSize: isMobile ? 13.sp : 13,
+            fontSize: isMobile ? 13 : 13,
             fontFamily: 'RobotoMono',
             // Roboto Mono 不支持中文，fallback 到系统等宽字体
             fontFamilyFallback: const ['Courier', 'monospace'],
-            color: isDark ? const Color(0xFFD4D4D4) : const Color(0xFF333333),
+            color: isDark ? theme.palette.inverseInk : theme.palette.ink,
             height: 1.6,
           ),
         ),
@@ -246,12 +246,12 @@ class ContentViewer extends StatelessWidget {
 
     return Container(
       width: double.infinity,
-      padding: EdgeInsets.all(isMobile ? 14.w : 16),
+      padding: EdgeInsets.all(isMobile ? 14 : 16),
       decoration: BoxDecoration(
-        color: isDark ? const Color(0xFF1A1A2E) : const Color(0xFFF8F9FA),
-        borderRadius: BorderRadius.circular(isMobile ? 10.r : 10),
+        color: isDark ? theme.palette.surfaceHigh : theme.palette.surfaceLow,
+        borderRadius: BorderRadius.circular(isMobile ? 10 : 10),
         border: Border.all(
-          color: theme.colorScheme.primary.withAlpha((0.2 * 255).round()),
+          color: theme.palette.primarySoft,
         ),
       ),
       child: SingleChildScrollView(
@@ -259,10 +259,10 @@ class ContentViewer extends StatelessWidget {
         child: Text(
           displayContent,
           style: TextStyle(
-            fontSize: isMobile ? 12.sp : 12,
+            fontSize: isMobile ? 12 : 12,
             fontFamily: 'RobotoMono',
             fontFamilyFallback: const ['Courier', 'monospace'],
-            color: isDark ? const Color(0xFFCCCCCC) : const Color(0xFF444444),
+            color: isDark ? theme.palette.inkSecondary : theme.palette.ink,
             height: 1.5,
           ),
         ),

@@ -20,12 +20,14 @@ server:
         - "http://localhost:15001"
         - "http://localhost:15011"
         - "http://localhost:15021"
+        - "http://localhost:15031"
         - "http://localhost:10086"
         # 127.0.0.1 形态的 dev 端口（浏览器按 IP 访问 dev server 时 Origin 是 127.0.0.1，
         # 与 localhost 不同源；缺失时预检无 ACAO 头、C 端登录等请求被浏览器拦截成"网络异常"）
         - "http://127.0.0.1:15001"
         - "http://127.0.0.1:15011"
         - "http://127.0.0.1:15021"
+        - "http://127.0.0.1:15031"
         - "https://api.cms.gowind.cloud"
         - "https://vue.cms.gowind.cloud"
         - "https://react.cms.gowind.cloud"

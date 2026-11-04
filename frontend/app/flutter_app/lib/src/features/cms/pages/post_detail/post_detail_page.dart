@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 import 'package:flutter_app/generated/api/app/service/v1/index.dart'
     show CommentServiceV1Comment, ContentServiceV1Post,
@@ -11,8 +10,10 @@ import 'package:flutter_app/src/features/cms/services/post_service.dart';
 import 'package:flutter_app/src/features/cms/services/category_service.dart';
 import 'package:flutter_app/src/features/cms/services/tag_service.dart';
 import 'package:flutter_app/src/features/cms/services/comment_service.dart';
-import 'package:flutter_app/src/core/constants/breakpoints.dart';
+import 'package:flutter_app/src/core/layout/width_class.dart';
+import 'package:flutter_app/src/core/themes/tokens.dart';
 import 'package:flutter_app/src/core/widgets/responsive_layout.dart';
+import 'package:flutter_app/src/features/cms/pages/post_detail/widgets/interaction_bar.dart';
 import 'package:flutter_app/src/core/widgets/app_back_button.dart';
 import 'package:flutter_app/src/core/services/pagination_query.dart';
 import 'package:flutter_app/src/core/transport/http/api_error_messages.dart';
@@ -20,7 +21,6 @@ import 'package:flutter_app/src/core/transport/http/status.dart';
 import 'package:flutter_app/src/features/cms/pages/post_detail/widgets/comment_tree_utils.dart';
 import 'package:flutter_app/src/features/cms/pages/post_detail/widgets/post_header.dart';
 import 'package:flutter_app/src/features/cms/pages/post_detail/widgets/post_content.dart';
-import 'package:flutter_app/src/features/cms/pages/post_detail/widgets/interaction_bar.dart';
 import 'package:flutter_app/src/features/cms/pages/post_detail/widgets/post_tags.dart';
 import 'package:flutter_app/src/features/cms/pages/post_detail/widgets/comment_section.dart';
 import 'package:flutter_app/src/features/cms/pages/post_detail/widgets/comment_input_bar.dart';
@@ -189,24 +189,11 @@ class _PostDetailPageState extends State<PostDetailPage> {
     );
   }
 
+  /// 评论输入栏在双视图之外渲染：拖拽窗口跨断点时草稿不丢
   Widget _buildView(BuildContext context, {required bool isMobile}) {
     final theme = Theme.of(context);
     final post = _post!;
     final commentCount = _comments.length;
-
-    final appBar = AppBar(
-      backgroundColor: theme.colorScheme.surface,
-      surfaceTintColor: Colors.transparent,
-      elevation: 0,
-      leading: const AppBackButton(),
-      actions: [
-        IconButton(
-          icon: const Icon(Icons.share_outlined, size: 22),
-          onPressed: () {},
-        ),
-        const SizedBox(width: 4),
-      ],
-    );
 
     final body = Column(
       children: [
@@ -224,32 +211,40 @@ class _PostDetailPageState extends State<PostDetailPage> {
       ],
     );
 
-    // Web 端：在内容顶部嵌入操作栏（返回 + 分享 + 收藏）
+    // Web 端：顶部轻量操作栏（返回 + 分享）。
+    // 细线铺满全宽（内容块本身限宽，边线不该跟着悬在半空）
     if (!isMobile) {
+      final p = theme.palette;
       return Column(
         children: [
-          // Web 端轻量操作栏
           Container(
+            width: double.infinity,
             decoration: BoxDecoration(
-              color: theme.colorScheme.surface,
+              color: p.surface,
               border: Border(
                 bottom: BorderSide(
-                  color: theme.colorScheme.onSurface.withAlpha(15),
-                  width: 1,
+                  color: p.hairline,
+                  width: theme.borderWidth.hairline,
                 ),
               ),
             ),
             child: Center(
               child: ConstrainedBox(
-                constraints: const BoxConstraints(maxWidth: Breakpoints.webContentMaxWidth),
+                constraints: const BoxConstraints(
+                  maxWidth: kArticleLineWidth + 96,
+                ),
                 child: Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 24),
+                  padding: EdgeInsets.symmetric(horizontal: theme.space.xxl),
                   child: Row(
                     children: [
-                      AppBackButton(color: theme.colorScheme.onSurface),
+                      AppBackButton(color: p.ink),
                       const Spacer(),
                       IconButton(
-                        icon: Icon(Icons.share_outlined, size: 20, color: theme.colorScheme.onSurface.withAlpha(150)),
+                        icon: Icon(
+                          Icons.share_outlined,
+                          size: 20,
+                          color: p.inkSecondary,
+                        ),
                         onPressed: () {},
                       ),
                     ],
@@ -258,20 +253,14 @@ class _PostDetailPageState extends State<PostDetailPage> {
               ),
             ),
           ),
-          Expanded(child: _buildWebBody(post, commentCount)),
-          CommentInputBar(
-            isMobile: false,
-            replyTo: _replyTo,
-            onReplyChanged: (c) => setState(() => _replyTo = c),
-            onSend: _sendComment,
-          ),
+          Expanded(child: body),
         ],
       );
     }
 
     return Scaffold(
       backgroundColor: theme.scaffoldBackgroundColor,
-      appBar: appBar,
+      appBar: AppBar(leading: const AppBackButton()),
       body: body,
     );
   }
@@ -305,48 +294,63 @@ class _PostDetailPageState extends State<PostDetailPage> {
           onReply: (c) => setState(() => _replyTo = c),
           commentLikeCounts: _commentLikeCounts,
         ),
-        SliverToBoxAdapter(child: SizedBox(height: 16.h)),
+        SliverToBoxAdapter(
+          child: SizedBox(height: Theme.of(context).space.lg),
+        ),
       ],
     );
   }
 
   // =================== Web 端 ===================
 
+  /// 正文列 ~760dp（中文一行 32–38 字的舒适行长），
+  /// 点赞/收藏悬浮右栏——桌面端把行动收口到视线端点，不插在正文和评论中间。
   Widget _buildWebBody(Post post, int commentCount) {
+    final theme = Theme.of(context);
+    final space = theme.space;
+
     return CustomScrollView(
       slivers: [
         SliverToBoxAdapter(
           child: Center(
             child: ConstrainedBox(
               constraints: const BoxConstraints(
-                maxWidth: Breakpoints.webContentMaxWidth,
+                maxWidth: kArticleLineWidth + 96,
               ),
               child: Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 24),
-                child: Column(
+                padding: EdgeInsets.symmetric(horizontal: space.xxl),
+                child: Row(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    PostHeader(
-                      post: post,
-                      isMobile: false,
-                      categories: _categories,
+                    Expanded(
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          PostHeader(
+                            post: post,
+                            isMobile: false,
+                            categories: _categories,
+                          ),
+                          PostContent(post: post, isMobile: false),
+                          PostTags(
+                            allTags: _tags,
+                            tagIds: post.tagIds,
+                            isMobile: false,
+                          ),
+                          CommentSection(
+                            commentCount: commentCount,
+                            commentTree: _commentTree,
+                            allComments: _comments,
+                            isMobile: false,
+                            onReply: (c) => setState(() => _replyTo = c),
+                            commentLikeCounts: _commentLikeCounts,
+                          ),
+                          SizedBox(height: space.lg),
+                        ],
+                      ),
                     ),
-                    PostContent(post: post, isMobile: false),
-                    PostTags(
-                      allTags: _tags,
-                      tagIds: post.tagIds,
-                      isMobile: false,
-                    ),
-                    InteractionBar(post: post, isMobile: false),
-                    CommentSection(
-                      commentCount: commentCount,
-                      commentTree: _commentTree,
-                      allComments: _comments,
-                      isMobile: false,
-                      onReply: (c) => setState(() => _replyTo = c),
-                      commentLikeCounts: _commentLikeCounts,
-                    ),
-                    const SizedBox(height: 16),
+                    SizedBox(width: space.xxl),
+                    _ActionRail(post: post),
                   ],
                 ),
               ),
@@ -354,6 +358,22 @@ class _PostDetailPageState extends State<PostDetailPage> {
           ),
         ),
       ],
+    );
+  }
+}
+
+/// 桌面端右栏：点赞 / 收藏纵排悬浮位（InteractionBar vertical 形态，态逻辑复用）
+class _ActionRail extends StatelessWidget {
+  const _ActionRail({required this.post});
+
+  final Post post;
+
+  @override
+  Widget build(BuildContext context) {
+    // 顶端留出呼吸位，不贴着操作条细线
+    return Padding(
+      padding: EdgeInsets.only(top: Theme.of(context).space.sm),
+      child: InteractionBar(post: post, isMobile: false, vertical: true),
     );
   }
 }

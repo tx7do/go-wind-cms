@@ -19,11 +19,11 @@ import 'package:flutter_app/src/core/preference/user_preference_cache.dart';
 /// // 分页加载
 /// _postService.list(PaginationQuery(page: 1, pageSize: 10));
 ///
-/// // 带过滤条件
+/// // 带过滤条件（键名与后端契约一致：分类/标签用复数数组形态）
 /// _postService.list(PaginationQuery(
 ///   page: 1,
 ///   pageSize: 10,
-///   formValues: {'category_id': 5, 'status': 'published'},
+///   formValues: {'category_ids': [5], 'status': 'published'},
 ///   orderBy: ['-created_at'],
 /// ));
 /// ```

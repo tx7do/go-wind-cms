@@ -6,10 +6,13 @@ import 'package:get_it/get_it.dart' show GetIt;
 
 import 'package:flutter_app/generated/l10n.dart' as l10n;
 import 'package:flutter_app/src/core/preference/preference.dart';
-import 'package:flutter_app/src/core/themes/light_theme.dart' show kDefaultSeedColor;
 
 part 'app_theme_state.dart';
 
+/// 外观偏好：主题模式（跟随系统 / 晴风 / 夜风）+ 语言。
+///
+/// 主题色不再可配——品牌蓝是 docs/design-language.md §1 的铁律，
+/// 八个预设色板会把「唯一行动色」降级成用户口味。
 class AppThemeCubit extends Cubit<AppThemeState> {
   UserPreferenceCache get _cache => GetIt.instance<UserPreferenceCache>();
 
@@ -18,9 +21,6 @@ class AppThemeCubit extends Cubit<AppThemeState> {
   AppThemeCubit() : super(const AppThemeInitial());
 
   ThemeMode get themeMode => _cache.themeMode;
-
-  /// 当前主题色
-  Color get seedColor => _cache.seedColorValue ?? kDefaultSeedColor;
 
   bool get isDarkMode => _cache.isDarkMode;
 
@@ -34,16 +34,6 @@ class AppThemeCubit extends Cubit<AppThemeState> {
       return (state as AppThemeModified).themeMode;
     }
     return ThemeMode.system;
-  }
-
-  /// 获取当前 seedColor
-  Color get currentSeedColor {
-    if (state is AppThemeInitial) {
-      return (state as AppThemeInitial).seedColor ?? seedColor;
-    } else if (state is AppThemeModified) {
-      return (state as AppThemeModified).seedColor ?? seedColor;
-    }
-    return kDefaultSeedColor;
   }
 
   /// 初始化值
@@ -60,15 +50,14 @@ class AppThemeCubit extends Cubit<AppThemeState> {
   /// 初始化
   void init() async {
     final currentMode = _cache.themeMode;
-    final color = _cache.seedColorValue ?? kDefaultSeedColor;
     final locale = _localeFromString(_cache.language);
-    emit(AppThemeInitial(themeMode: currentMode, seedColor: color, locale: locale));
+    emit(AppThemeInitial(themeMode: currentMode, locale: locale));
   }
 
   /// 设置初始化值
   void setInitValue(ThemeMode newMode) {
     _originalThemeMode ??= newMode;
-    emit(AppThemeInitial(themeMode: newMode, seedColor: seedColor, locale: currentLocale));
+    emit(AppThemeInitial(themeMode: newMode, locale: currentLocale));
   }
 
   /// 重置
@@ -84,7 +73,7 @@ class AppThemeCubit extends Cubit<AppThemeState> {
   }
 
   /// 修改主题模式
-  modify(ThemeMode newMode) async {
+  Future<void> modify(ThemeMode newMode) async {
     final current = currentValue;
 
     if (current == newMode) {
@@ -94,25 +83,16 @@ class AppThemeCubit extends Cubit<AppThemeState> {
     await _cache.setMaterialThemeMode(newMode);
     _setEasyLoadingTheme(newMode);
 
-    emit(AppThemeModified(themeMode: newMode, seedColor: currentSeedColor, locale: currentLocale));
-  }
-
-  /// 修改主题色
-  void modifySeedColor(Color color) async {
-    if (color == currentSeedColor) return;
-
-    await _cache.setSeedColor(color);
-
-    emit(AppThemeModified(themeMode: currentValue, seedColor: color, locale: currentLocale));
+    emit(AppThemeModified(themeMode: newMode, locale: currentLocale));
   }
 
   /// 强制修改
   void forceModify(ThemeMode newMode) {
     _cache.setMaterialThemeMode(newMode);
-    emit(AppThemeModified(themeMode: newMode, seedColor: currentSeedColor, locale: currentLocale));
+    emit(AppThemeModified(themeMode: newMode, locale: currentLocale));
   }
 
-  _setEasyLoadingTheme(ThemeMode mode) {
+  void _setEasyLoadingTheme(ThemeMode mode) {
     EasyLoadingStyle easyLoadingStyle = EasyLoadingStyle.dark;
     if (mode == ThemeMode.dark) {
       easyLoadingStyle = EasyLoadingStyle.light;
@@ -148,7 +128,6 @@ class AppThemeCubit extends Cubit<AppThemeState> {
 
     emit(AppThemeModified(
       themeMode: currentValue,
-      seedColor: currentSeedColor,
       locale: newLocale,
     ));
   }

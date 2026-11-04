@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 import 'package:flutter_app/generated/l10n.dart';
 import 'package:flutter_app/generated/api/app/service/v1/index.dart'
@@ -40,26 +39,26 @@ class CommentSection extends StatelessWidget {
     final theme = Theme.of(context);
     return Padding(
       padding: EdgeInsets.fromLTRB(
-        isMobile ? 20.w : 0,
+        isMobile ? 20 : 0,
         16,
-        isMobile ? 20.w : 0,
+        isMobile ? 20 : 0,
         8,
       ),
       child: Row(
         children: [
           Container(
-            width: isMobile ? 4.w : 4,
-            height: isMobile ? 18.h : 18,
+            width: isMobile ? 4 : 4,
+            height: isMobile ? 18 : 18,
             decoration: BoxDecoration(
               color: theme.colorScheme.primary,
               borderRadius: BorderRadius.circular(2),
             ),
           ),
-          SizedBox(width: isMobile ? 8.w : 8),
+          SizedBox(width: isMobile ? 8 : 8),
           Text(
             S.of(context).commentsCount(commentCount),
             style: TextStyle(
-              fontSize: isMobile ? 16.sp : 16,
+              fontSize: isMobile ? 16 : 16,
               fontWeight: FontWeight.w600,
               color: theme.colorScheme.onSurface,
             ),
@@ -97,7 +96,7 @@ class CommentSection extends StatelessWidget {
       slivers: [
         SliverToBoxAdapter(child: _buildHeader(context)),
         SliverPadding(
-          padding: EdgeInsets.symmetric(horizontal: isMobile ? 20.w : 0),
+          padding: EdgeInsets.symmetric(horizontal: isMobile ? 20 : 0),
           sliver: SliverList(
             delegate: SliverChildBuilderDelegate((context, index) {
               final widgets = _expandTree(commentTree[index]).toList();
