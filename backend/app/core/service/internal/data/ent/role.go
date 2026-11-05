@@ -47,7 +47,9 @@ type Role struct {
 	// 是否受保护的角色
 	IsProtected *bool `json:"is_protected,omitempty"`
 	// 角色类型
-	Type         *role.Type `json:"type,omitempty"`
+	Type *role.Type `json:"type,omitempty"`
+	// 父角色ID，0表示无父级
+	ParentID     *uint32 `json:"parent_id,omitempty"`
 	selectValues sql.SelectValues
 }
 
@@ -58,7 +60,7 @@ func (*Role) scanValues(columns []string) ([]any, error) {
 		switch columns[i] {
 		case role.FieldIsProtected:
 			values[i] = new(sql.NullBool)
-		case role.FieldID, role.FieldCreatedBy, role.FieldUpdatedBy, role.FieldDeletedBy, role.FieldSortOrder, role.FieldTenantID:
+		case role.FieldID, role.FieldCreatedBy, role.FieldUpdatedBy, role.FieldDeletedBy, role.FieldSortOrder, role.FieldTenantID, role.FieldParentID:
 			values[i] = new(sql.NullInt64)
 		case role.FieldRemark, role.FieldDescription, role.FieldStatus, role.FieldName, role.FieldCode, role.FieldType:
 			values[i] = new(sql.NullString)
@@ -190,6 +192,13 @@ func (_m *Role) assignValues(columns []string, values []any) error {
 				_m.Type = new(role.Type)
 				*_m.Type = role.Type(value.String)
 			}
+		case role.FieldParentID:
+			if value, ok := values[i].(*sql.NullInt64); !ok {
+				return fmt.Errorf("unexpected type %T for field parent_id", values[i])
+			} else if value.Valid {
+				_m.ParentID = new(uint32)
+				*_m.ParentID = uint32(value.Int64)
+			}
 		default:
 			_m.selectValues.Set(columns[i], values[i])
 		}
@@ -298,6 +307,11 @@ func (_m *Role) String() string {
 	builder.WriteString(", ")
 	if v := _m.Type; v != nil {
 		builder.WriteString("type=")
+		builder.WriteString(fmt.Sprintf("%v", *v))
+	}
+	builder.WriteString(", ")
+	if v := _m.ParentID; v != nil {
+		builder.WriteString("parent_id=")
 		builder.WriteString(fmt.Sprintf("%v", *v))
 	}
 	builder.WriteByte(')')

@@ -232,6 +232,20 @@ func (_c *RoleCreate) SetNillableType(v *role.Type) *RoleCreate {
 	return _c
 }
 
+// SetParentID sets the "parent_id" field.
+func (_c *RoleCreate) SetParentID(v uint32) *RoleCreate {
+	_c.mutation.SetParentID(v)
+	return _c
+}
+
+// SetNillableParentID sets the "parent_id" field if the given value is not nil.
+func (_c *RoleCreate) SetNillableParentID(v *uint32) *RoleCreate {
+	if v != nil {
+		_c.SetParentID(*v)
+	}
+	return _c
+}
+
 // SetID sets the "id" field.
 func (_c *RoleCreate) SetID(v uint32) *RoleCreate {
 	_c.mutation.SetID(v)
@@ -426,6 +440,10 @@ func (_c *RoleCreate) createSpec() (*Role, *sqlgraph.CreateSpec) {
 	if value, ok := _c.mutation.GetType(); ok {
 		_spec.SetField(role.FieldType, field.TypeEnum, value)
 		_node.Type = &value
+	}
+	if value, ok := _c.mutation.ParentID(); ok {
+		_spec.SetField(role.FieldParentID, field.TypeUint32, value)
+		_node.ParentID = &value
 	}
 	return _node, _spec
 }
@@ -716,6 +734,30 @@ func (u *RoleUpsert) SetType(v role.Type) *RoleUpsert {
 // UpdateType sets the "type" field to the value that was provided on create.
 func (u *RoleUpsert) UpdateType() *RoleUpsert {
 	u.SetExcluded(role.FieldType)
+	return u
+}
+
+// SetParentID sets the "parent_id" field.
+func (u *RoleUpsert) SetParentID(v uint32) *RoleUpsert {
+	u.Set(role.FieldParentID, v)
+	return u
+}
+
+// UpdateParentID sets the "parent_id" field to the value that was provided on create.
+func (u *RoleUpsert) UpdateParentID() *RoleUpsert {
+	u.SetExcluded(role.FieldParentID)
+	return u
+}
+
+// AddParentID adds v to the "parent_id" field.
+func (u *RoleUpsert) AddParentID(v uint32) *RoleUpsert {
+	u.Add(role.FieldParentID, v)
+	return u
+}
+
+// ClearParentID clears the value of the "parent_id" field.
+func (u *RoleUpsert) ClearParentID() *RoleUpsert {
+	u.SetNull(role.FieldParentID)
 	return u
 }
 
@@ -1050,6 +1092,34 @@ func (u *RoleUpsertOne) SetType(v role.Type) *RoleUpsertOne {
 func (u *RoleUpsertOne) UpdateType() *RoleUpsertOne {
 	return u.Update(func(s *RoleUpsert) {
 		s.UpdateType()
+	})
+}
+
+// SetParentID sets the "parent_id" field.
+func (u *RoleUpsertOne) SetParentID(v uint32) *RoleUpsertOne {
+	return u.Update(func(s *RoleUpsert) {
+		s.SetParentID(v)
+	})
+}
+
+// AddParentID adds v to the "parent_id" field.
+func (u *RoleUpsertOne) AddParentID(v uint32) *RoleUpsertOne {
+	return u.Update(func(s *RoleUpsert) {
+		s.AddParentID(v)
+	})
+}
+
+// UpdateParentID sets the "parent_id" field to the value that was provided on create.
+func (u *RoleUpsertOne) UpdateParentID() *RoleUpsertOne {
+	return u.Update(func(s *RoleUpsert) {
+		s.UpdateParentID()
+	})
+}
+
+// ClearParentID clears the value of the "parent_id" field.
+func (u *RoleUpsertOne) ClearParentID() *RoleUpsertOne {
+	return u.Update(func(s *RoleUpsert) {
+		s.ClearParentID()
 	})
 }
 
@@ -1550,6 +1620,34 @@ func (u *RoleUpsertBulk) SetType(v role.Type) *RoleUpsertBulk {
 func (u *RoleUpsertBulk) UpdateType() *RoleUpsertBulk {
 	return u.Update(func(s *RoleUpsert) {
 		s.UpdateType()
+	})
+}
+
+// SetParentID sets the "parent_id" field.
+func (u *RoleUpsertBulk) SetParentID(v uint32) *RoleUpsertBulk {
+	return u.Update(func(s *RoleUpsert) {
+		s.SetParentID(v)
+	})
+}
+
+// AddParentID adds v to the "parent_id" field.
+func (u *RoleUpsertBulk) AddParentID(v uint32) *RoleUpsertBulk {
+	return u.Update(func(s *RoleUpsert) {
+		s.AddParentID(v)
+	})
+}
+
+// UpdateParentID sets the "parent_id" field to the value that was provided on create.
+func (u *RoleUpsertBulk) UpdateParentID() *RoleUpsertBulk {
+	return u.Update(func(s *RoleUpsert) {
+		s.UpdateParentID()
+	})
+}
+
+// ClearParentID clears the value of the "parent_id" field.
+func (u *RoleUpsertBulk) ClearParentID() *RoleUpsertBulk {
+	return u.Update(func(s *RoleUpsert) {
+		s.ClearParentID()
 	})
 }
 

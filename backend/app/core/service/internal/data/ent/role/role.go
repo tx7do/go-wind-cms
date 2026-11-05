@@ -44,6 +44,8 @@ const (
 	FieldIsProtected = "is_protected"
 	// FieldType holds the string denoting the type field in the database.
 	FieldType = "type"
+	// FieldParentID holds the string denoting the parent_id field in the database.
+	FieldParentID = "parent_id"
 	// Table holds the table name of the role in the database.
 	Table = "sys_roles"
 )
@@ -66,6 +68,7 @@ var Columns = []string{
 	FieldCode,
 	FieldIsProtected,
 	FieldType,
+	FieldParentID,
 }
 
 // ValidColumn reports if the column name is valid (part of the table columns).
@@ -234,4 +237,9 @@ func ByIsProtected(opts ...sql.OrderTermOption) OrderOption {
 // ByType orders the results by the type field.
 func ByType(opts ...sql.OrderTermOption) OrderOption {
 	return sql.OrderByField(FieldType, opts...).ToFunc()
+}
+
+// ByParentID orders the results by the parent_id field.
+func ByParentID(opts ...sql.OrderTermOption) OrderOption {
+	return sql.OrderByField(FieldParentID, opts...).ToFunc()
 }

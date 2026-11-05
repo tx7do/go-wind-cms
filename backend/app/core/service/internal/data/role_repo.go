@@ -448,6 +448,9 @@ func (r *RoleRepo) CreateTenantRoleFromTemplate(ctx context.Context, tx *ent.Tx,
 	roleTemplate.IsProtected = trans.Ptr(true)
 	roleTemplate.TenantId = trans.Ptr(tenantID)
 	roleTemplate.CreatedBy = trans.Ptr(operatorID)
+	// 模板副本永远是根角色：模板本体可能挂了平台侧父角色，若把 parent_id 带进
+	// 租户副本会形成跨租户父引用（永远过不了父子绑定校验，副本一编辑即被拒）。
+	roleTemplate.ParentId = nil
 	roleTemplate.CreatedAt = nil
 	roleTemplate.UpdatedBy = nil
 	roleTemplate.UpdatedAt = nil
@@ -505,6 +508,7 @@ func (r *RoleRepo) CreateWithTx(ctx context.Context, tx *ent.Tx, data *permissio
 		SetNillableType(r.typeConverter.ToEntity(data.Type)).
 		SetNillableStatus(r.statusConverter.ToEntity(data.Status)).
 		SetNillableDescription(data.Description).
+		SetNillableParentID(data.ParentId).
 		SetNillableCreatedBy(data.CreatedBy).
 		SetCreatedAt(time.Now())
 
@@ -606,6 +610,8 @@ func (r *RoleRepo) Update(ctx context.Context, req *permissionV1.UpdateRoleReque
 	// 关联关系由下方的 ReplacePermissions 单独维护。
 	// 同时记录是否需要处理权限（用户在表单中提交了权限项，含清空场景）。
 	updatePermissions := req.UpdateMask != nil && hasPath("permissions", req.UpdateMask)
+	updateParentID := req.UpdateMask != nil &&
+		(hasPath("parent_id", req.UpdateMask) || hasPath("parentId", req.UpdateMask))
 	if req.UpdateMask != nil {
 		req.UpdateMask.Paths = utils.FilterBlacklist(req.UpdateMask.GetPaths(), []string{
 			"permissions",
@@ -633,6 +639,15 @@ func (r *RoleRepo) Update(ctx context.Context, req *permissionV1.UpdateRoleReque
 			// updated_by 强制取调用者身份，保证审计归属真实，忽略客户端值
 			if hasUser {
 				builder.SetUpdatedBy(callerUserID)
+			}
+
+			// parent_id 三态：mask 声明了 parentId 而载荷为 nil ⇒ 显式清空（解除父子
+			// 关系）——SetNillable 对 nil 不动旧值，不特殊处理会导致"清空父角色"静默
+			// 失效；载荷显式 0 表示降级为根角色，照常落库（本表无自引用外键）。
+			if updateParentID && req.Data.ParentId == nil {
+				builder.ClearParentID()
+			} else {
+				builder.SetNillableParentID(req.Data.ParentId)
 			}
 		},
 		func(s *sql.Selector) {
@@ -713,6 +728,16 @@ func (r *RoleRepo) Delete(ctx context.Context, req *permissionV1.DeleteRoleReque
 	if _, err = roleDel.Exec(ctx); err != nil {
 		r.log.Errorf("delete role failed: %s", err.Error())
 		return permissionV1.ErrorInternalServerError("delete role failed")
+	}
+
+	// 子角色自动解除父子关系（parent_id 置空），绑定权限保持不变——编辑时校验
+	// 语义下子角色既有权限不因父角色删除而扩大，删除父角色无需先处理子角色。
+	if _, err = tx.Role.Update().
+		Where(role.ParentIDEQ(req.GetId())).
+		ClearParentID().
+		Save(ctx); err != nil {
+		r.log.Errorf("detach child roles failed: %s", err.Error())
+		return permissionV1.ErrorInternalServerError("detach child roles failed")
 	}
 
 	if err = r.rolePermissionRepo.CleanPermissions(ctx, tx, req.GetId()); err != nil {

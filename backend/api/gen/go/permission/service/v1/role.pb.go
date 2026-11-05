@@ -235,6 +235,8 @@ type Role struct {
 	TenantId    *uint32                `protobuf:"varint,40,opt,name=tenant_id,json=tenantId,proto3,oneof" json:"tenant_id,omitempty"`                   // 租户ID，0代表系统全局角色
 	// 字段权限配置（读回显；写侧走 Create/Update 的 data.field_permissions）
 	FieldPermissions []*RoleFieldPermission `protobuf:"bytes,42,rep,name=field_permissions,json=fieldPermissions,proto3" json:"field_permissions,omitempty"` // 字段权限配置
+	ParentId         *uint32                `protobuf:"varint,13,opt,name=parent_id,json=parentId,proto3,oneof" json:"parent_id,omitempty"`                  // 父角色ID，0表示无父级（根角色）；子角色的权限集不得超出父角色已绑定的权限集
+	ParentName       *string                `protobuf:"bytes,14,opt,name=parent_name,json=parentName,proto3,oneof" json:"parent_name,omitempty"`             // 父角色名称（响应回填）
 	TenantName       *string                `protobuf:"bytes,41,opt,name=tenant_name,json=tenantName,proto3,oneof" json:"tenant_name,omitempty"`             // 租户名称
 	CreatedBy        *uint32                `protobuf:"varint,100,opt,name=created_by,json=createdBy,proto3,oneof" json:"created_by,omitempty"`              // 创建者用户ID
 	UpdatedBy        *uint32                `protobuf:"varint,101,opt,name=updated_by,json=updatedBy,proto3,oneof" json:"updated_by,omitempty"`              // 更新者用户ID
@@ -351,6 +353,20 @@ func (x *Role) GetFieldPermissions() []*RoleFieldPermission {
 		return x.FieldPermissions
 	}
 	return nil
+}
+
+func (x *Role) GetParentId() uint32 {
+	if x != nil && x.ParentId != nil {
+		return *x.ParentId
+	}
+	return 0
+}
+
+func (x *Role) GetParentName() string {
+	if x != nil && x.ParentName != nil {
+		return *x.ParentName
+	}
+	return ""
 }
 
 func (x *Role) GetTenantName() string {
@@ -2760,7 +2776,7 @@ var File_permission_service_v1_role_proto protoreflect.FileDescriptor
 
 const file_permission_service_v1_role_proto_rawDesc = "" +
 	"\n" +
-	" permission/service/v1/role.proto\x12\x15permission.service.v1\x1a$gnostic/openapi/v3/annotations.proto\x1a\x1bgoogle/protobuf/empty.proto\x1a\x1fgoogle/protobuf/timestamp.proto\x1a google/protobuf/field_mask.proto\x1a\x1epagination/v1/pagination.proto\x1a%permission/service/v1/user_role.proto\"\xb9\f\n" +
+	" permission/service/v1/role.proto\x12\x15permission.service.v1\x1a$gnostic/openapi/v3/annotations.proto\x1a\x1bgoogle/protobuf/empty.proto\x1a\x1fgoogle/protobuf/timestamp.proto\x1a google/protobuf/field_mask.proto\x1a\x1epagination/v1/pagination.proto\x1a%permission/service/v1/user_role.proto\"\xfd\r\n" +
 	"\x04Role\x12#\n" +
 	"\x02id\x18\x01 \x01(\rB\x0e\xbaG\v\x92\x02\b角色IDH\x00R\x02id\x88\x01\x01\x12+\n" +
 	"\x04name\x18\x02 \x01(\tB\x12\xbaG\x0f\x92\x02\f角色名称H\x01R\x04name\x88\x01\x01\x12O\n" +
@@ -2774,22 +2790,25 @@ const file_permission_service_v1_role_proto_rawDesc = "" +
 	"\vpermissions\x18\n" +
 	" \x03(\rB \xbaG\x1d\x92\x02\x1a绑定的权限点ID列表R\vpermissions\x12L\n" +
 	"\ttenant_id\x18( \x01(\rB*\xbaG'\x92\x02$租户ID，0代表系统全局角色H\bR\btenantId\x88\x01\x01\x12q\n" +
-	"\x11field_permissions\x18* \x03(\v2*.permission.service.v1.RoleFieldPermissionB\x18\xbaG\x15\x92\x02\x12字段权限配置R\x10fieldPermissions\x128\n" +
-	"\vtenant_name\x18) \x01(\tB\x12\xbaG\x0f\x92\x02\f租户名称H\tR\n" +
+	"\x11field_permissions\x18* \x03(\v2*.permission.service.v1.RoleFieldPermissionB\x18\xbaG\x15\x92\x02\x12字段权限配置R\x10fieldPermissions\x12U\n" +
+	"\tparent_id\x18\r \x01(\rB3\xbaG0\x92\x02-父角色ID，0表示无父级（根角色）H\tR\bparentId\x88\x01\x01\x12M\n" +
+	"\vparent_name\x18\x0e \x01(\tB'\xbaG$\x92\x02!父角色名称（响应回填）H\n" +
+	"R\n" +
+	"parentName\x88\x01\x01\x128\n" +
+	"\vtenant_name\x18) \x01(\tB\x12\xbaG\x0f\x92\x02\f租户名称H\vR\n" +
 	"tenantName\x88\x01\x01\x12;\n" +
 	"\n" +
-	"created_by\x18d \x01(\rB\x17\xbaG\x14\x92\x02\x11创建者用户IDH\n" +
-	"R\tcreatedBy\x88\x01\x01\x12;\n" +
+	"created_by\x18d \x01(\rB\x17\xbaG\x14\x92\x02\x11创建者用户IDH\fR\tcreatedBy\x88\x01\x01\x12;\n" +
 	"\n" +
-	"updated_by\x18e \x01(\rB\x17\xbaG\x14\x92\x02\x11更新者用户IDH\vR\tupdatedBy\x88\x01\x01\x12;\n" +
+	"updated_by\x18e \x01(\rB\x17\xbaG\x14\x92\x02\x11更新者用户IDH\rR\tupdatedBy\x88\x01\x01\x12;\n" +
 	"\n" +
-	"deleted_by\x18f \x01(\rB\x17\xbaG\x14\x92\x02\x11删除者用户IDH\fR\tdeletedBy\x88\x01\x01\x12S\n" +
+	"deleted_by\x18f \x01(\rB\x17\xbaG\x14\x92\x02\x11删除者用户IDH\x0eR\tdeletedBy\x88\x01\x01\x12S\n" +
 	"\n" +
-	"created_at\x18\xc8\x01 \x01(\v2\x1a.google.protobuf.TimestampB\x12\xbaG\x0f\x92\x02\f创建时间H\rR\tcreatedAt\x88\x01\x01\x12S\n" +
+	"created_at\x18\xc8\x01 \x01(\v2\x1a.google.protobuf.TimestampB\x12\xbaG\x0f\x92\x02\f创建时间H\x0fR\tcreatedAt\x88\x01\x01\x12S\n" +
 	"\n" +
-	"updated_at\x18\xc9\x01 \x01(\v2\x1a.google.protobuf.TimestampB\x12\xbaG\x0f\x92\x02\f更新时间H\x0eR\tupdatedAt\x88\x01\x01\x12S\n" +
+	"updated_at\x18\xc9\x01 \x01(\v2\x1a.google.protobuf.TimestampB\x12\xbaG\x0f\x92\x02\f更新时间H\x10R\tupdatedAt\x88\x01\x01\x12S\n" +
 	"\n" +
-	"deleted_at\x18\xca\x01 \x01(\v2\x1a.google.protobuf.TimestampB\x12\xbaG\x0f\x92\x02\f删除时间H\x0fR\tdeletedAt\x88\x01\x01\"\x19\n" +
+	"deleted_at\x18\xca\x01 \x01(\v2\x1a.google.protobuf.TimestampB\x12\xbaG\x0f\x92\x02\f删除时间H\x11R\tdeletedAt\x88\x01\x01\"\x19\n" +
 	"\x06Status\x12\a\n" +
 	"\x03OFF\x10\x00\x12\x06\n" +
 	"\x02ON\x10\x01\",\n" +
@@ -2808,7 +2827,10 @@ const file_permission_service_v1_role_proto_rawDesc = "" +
 	"\r_is_protectedB\a\n" +
 	"\x05_typeB\f\n" +
 	"\n" +
-	"_tenant_idB\x0e\n" +
+	"_tenant_idB\f\n" +
+	"\n" +
+	"_parent_idB\x0e\n" +
+	"\f_parent_nameB\x0e\n" +
 	"\f_tenant_nameB\r\n" +
 	"\v_created_byB\r\n" +
 	"\v_updated_byB\r\n" +
