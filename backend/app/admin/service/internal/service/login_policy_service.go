@@ -39,6 +39,10 @@ func (s *LoginPolicyService) Get(ctx context.Context, req *authenticationV1.GetL
 }
 
 func (s *LoginPolicyService) Create(ctx context.Context, req *authenticationV1.CreateLoginPolicyRequest) (*emptypb.Empty, error) {
+	if err := requirePlatformAdmin(ctx, s.log, "login policy management"); err != nil {
+		return nil, err
+	}
+
 	if req == nil || req.Data == nil {
 		return nil, adminV1.ErrorBadRequest("invalid request")
 	}
@@ -55,6 +59,10 @@ func (s *LoginPolicyService) Create(ctx context.Context, req *authenticationV1.C
 }
 
 func (s *LoginPolicyService) Update(ctx context.Context, req *authenticationV1.UpdateLoginPolicyRequest) (*emptypb.Empty, error) {
+	if err := requirePlatformAdmin(ctx, s.log, "login policy management"); err != nil {
+		return nil, err
+	}
+
 	if req == nil || req.Data == nil {
 		return nil, adminV1.ErrorBadRequest("invalid request")
 	}
@@ -76,6 +84,10 @@ func (s *LoginPolicyService) Update(ctx context.Context, req *authenticationV1.U
 }
 
 func (s *LoginPolicyService) Delete(ctx context.Context, req *authenticationV1.DeleteLoginPolicyRequest) (*emptypb.Empty, error) {
+	if err := requirePlatformAdmin(ctx, s.log, "login policy management"); err != nil {
+		return nil, err
+	}
+
 	if req == nil {
 		return nil, adminV1.ErrorBadRequest("invalid request")
 	}

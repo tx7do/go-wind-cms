@@ -47,6 +47,10 @@ func (s *ConfigService) Get(ctx context.Context, req *configV1.GetConfigRequest)
 
 // Create 创建系统参数（操作人盖章后透传）。
 func (s *ConfigService) Create(ctx context.Context, req *configV1.CreateConfigRequest) (*emptypb.Empty, error) {
+	if err := requirePlatformAdmin(ctx, s.log, "system config management"); err != nil {
+		return nil, err
+	}
+
 	if req == nil || req.Data == nil {
 		return nil, adminV1.ErrorBadRequest("invalid parameter")
 	}
@@ -60,6 +64,10 @@ func (s *ConfigService) Create(ctx context.Context, req *configV1.CreateConfigRe
 
 // Update 更新系统参数（操作人盖章后透传）。
 func (s *ConfigService) Update(ctx context.Context, req *configV1.UpdateConfigRequest) (*emptypb.Empty, error) {
+	if err := requirePlatformAdmin(ctx, s.log, "system config management"); err != nil {
+		return nil, err
+	}
+
 	if req == nil || req.Data == nil {
 		return nil, adminV1.ErrorBadRequest("invalid parameter")
 	}
@@ -76,5 +84,9 @@ func (s *ConfigService) Update(ctx context.Context, req *configV1.UpdateConfigRe
 
 // Delete 删除系统参数（内置参数禁删守卫在 core；透传）。
 func (s *ConfigService) Delete(ctx context.Context, req *configV1.DeleteConfigRequest) (*emptypb.Empty, error) {
+	if err := requirePlatformAdmin(ctx, s.log, "system config management"); err != nil {
+		return nil, err
+	}
+
 	return s.configServiceClient.Delete(ctx, req)
 }

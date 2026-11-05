@@ -63,5 +63,6 @@
   "parentName": "Parent Role",
   "permCapHint": "Selectable permissions are limited to the parent role's grant",
   "permTrimConfirmTitle": "Permission Trim Confirmation",
-  "permTrimConfirmContent": "{{count}} permission(s) of this role exceed the parent role's grant and will be removed on save. Continue?"
+  "permTrimConfirmContent": "{{count}} permission(s) of this role exceed the parent role's grant and will be removed on save. Continue?",
+  "reservedCode": "This role code is reserved by the system (platform: / template: / tenant:manager)"
 }

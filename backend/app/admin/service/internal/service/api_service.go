@@ -52,7 +52,9 @@ func NewApiService(
 func (s *ApiService) init() {
 	ctx := appViewer.NewSystemViewerContext(context.Background())
 	if resp, _ := s.apiServiceClient.Count(ctx, nil); resp != nil && resp.Count == 0 {
-		if _, serr := s.SyncApis(ctx, &emptypb.Empty{}); serr != nil {
+		// 启动期播种走内部函数而非 HTTP 方法 SyncApis：后者已加平台管理员闸门，
+		// 系统上下文没有操作者，会被自家闸门挡掉。
+		if serr := s.syncWithOpenAPI(ctx); serr != nil {
 			s.log.Errorf("startup sync apis failed: %v", serr)
 		}
 	}
@@ -71,6 +73,10 @@ func (s *ApiService) Get(ctx context.Context, req *permissionV1.GetApiRequest) (
 }
 
 func (s *ApiService) Create(ctx context.Context, req *permissionV1.CreateApiRequest) (*emptypb.Empty, error) {
+	if err := requirePlatformAdmin(ctx, s.log, "api management"); err != nil {
+		return nil, err
+	}
+
 	if req == nil || req.Data == nil {
 		return nil, adminV1.ErrorBadRequest("invalid parameter")
 	}
@@ -91,6 +97,10 @@ func (s *ApiService) Create(ctx context.Context, req *permissionV1.CreateApiRequ
 }
 
 func (s *ApiService) Update(ctx context.Context, req *permissionV1.UpdateApiRequest) (*emptypb.Empty, error) {
+	if err := requirePlatformAdmin(ctx, s.log, "api management"); err != nil {
+		return nil, err
+	}
+
 	if req == nil || req.Data == nil {
 		return nil, adminV1.ErrorBadRequest("invalid parameter")
 	}
@@ -116,6 +126,10 @@ func (s *ApiService) Update(ctx context.Context, req *permissionV1.UpdateApiRequ
 }
 
 func (s *ApiService) Delete(ctx context.Context, req *permissionV1.DeleteApiRequest) (*emptypb.Empty, error) {
+	if err := requirePlatformAdmin(ctx, s.log, "api management"); err != nil {
+		return nil, err
+	}
+
 	if _, err := s.apiServiceClient.Delete(ctx, req); err != nil {
 		return nil, err
 	}
@@ -124,6 +138,10 @@ func (s *ApiService) Delete(ctx context.Context, req *permissionV1.DeleteApiRequ
 }
 
 func (s *ApiService) SyncApis(ctx context.Context, _ *emptypb.Empty) (*emptypb.Empty, error) {
+	if err := requirePlatformAdmin(ctx, s.log, "api management"); err != nil {
+		return nil, err
+	}
+
 	if err := s.syncWithOpenAPI(ctx); err != nil {
 		return nil, err
 	}

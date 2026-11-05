@@ -187,6 +187,10 @@ func (s *PermissionService) Get(ctx context.Context, req *permissionV1.GetPermis
 }
 
 func (s *PermissionService) Create(ctx context.Context, req *permissionV1.CreatePermissionRequest) (*emptypb.Empty, error) {
+	if err := requirePlatformAdmin(ctx, s.log, "permission management"); err != nil {
+		return nil, err
+	}
+
 	if req == nil || req.Data == nil {
 		return nil, adminV1.ErrorBadRequest("invalid parameter")
 	}
@@ -203,6 +207,10 @@ func (s *PermissionService) Create(ctx context.Context, req *permissionV1.Create
 }
 
 func (s *PermissionService) Update(ctx context.Context, req *permissionV1.UpdatePermissionRequest) (*emptypb.Empty, error) {
+	if err := requirePlatformAdmin(ctx, s.log, "permission management"); err != nil {
+		return nil, err
+	}
+
 	if req == nil || req.Data == nil {
 		return nil, adminV1.ErrorBadRequest("invalid parameter")
 	}
@@ -224,11 +232,19 @@ func (s *PermissionService) Update(ctx context.Context, req *permissionV1.Update
 }
 
 func (s *PermissionService) Delete(ctx context.Context, req *permissionV1.DeletePermissionRequest) (*emptypb.Empty, error) {
+	if err := requirePlatformAdmin(ctx, s.log, "permission management"); err != nil {
+		return nil, err
+	}
+
 	return s.permissionServiceClient.Delete(ctx, req)
 }
 
 // SyncPermissions 同步权限点
 func (s *PermissionService) SyncPermissions(ctx context.Context, req *emptypb.Empty) (*emptypb.Empty, error) {
+	if err := requirePlatformAdmin(ctx, s.log, "permission management"); err != nil {
+		return nil, err
+	}
+
 	// 获取操作人信息
 	operator, err := auth.FromContext(ctx)
 	if err != nil {

@@ -299,6 +299,13 @@ func (s *RoleService) Create(ctx context.Context, req *permissionV1.CreateRoleRe
 		return nil, identityV1.ErrorBadRequest("invalid parameter")
 	}
 
+	// 角色码保留字校验：内置身份码（platform:* / template:* / tenant:manager）在
+	// 登录链路与鉴权引擎里按码值承载身份判定语义，用户自建角色不得占用，
+	// 否则自建 platform:admin 再登录即可拿到平台管理员标志（越权）。
+	if constants.IsReservedRoleCode(req.Data.GetCode()) {
+		return nil, identityV1.ErrorBadRequest("role code is reserved")
+	}
+
 	// 父角色绑定校验（权限继承）。租户操作者的归属租户以操作者上下文为准，
 	// 载荷里的 tenant_id 不可信。
 	roleTenantID := req.Data.GetTenantId()
@@ -351,6 +358,12 @@ func (s *RoleService) Update(ctx context.Context, req *permissionV1.UpdateRoleRe
 			req.Data.Status = nil
 			req.Data.Code = nil
 		}
+	}
+
+	// 角色码保留字校验：与 Create 同口径——受保护角色的 code 会被下方黑名单剥离，
+	// 但普通角色的 code 可改，必须拦住改成内置身份码的路径。
+	if req.Data.Code != nil && constants.IsReservedRoleCode(req.Data.GetCode()) {
+		return nil, identityV1.ErrorBadRequest("role code is reserved")
 	}
 
 	// 父角色绑定校验（权限继承，编辑时校验语义）：本次请求生效的父角色与权限集

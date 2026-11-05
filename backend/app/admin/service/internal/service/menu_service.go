@@ -51,6 +51,10 @@ func (s *MenuService) Get(ctx context.Context, req *permissionV1.GetMenuRequest)
 }
 
 func (s *MenuService) Create(ctx context.Context, req *permissionV1.CreateMenuRequest) (*emptypb.Empty, error) {
+	if err := requirePlatformAdmin(ctx, s.log, "menu management"); err != nil {
+		return nil, err
+	}
+
 	if req == nil || req.Data == nil {
 		return nil, adminV1.ErrorBadRequest("invalid parameter")
 	}
@@ -67,6 +71,10 @@ func (s *MenuService) Create(ctx context.Context, req *permissionV1.CreateMenuRe
 }
 
 func (s *MenuService) Update(ctx context.Context, req *permissionV1.UpdateMenuRequest) (*emptypb.Empty, error) {
+	if err := requirePlatformAdmin(ctx, s.log, "menu management"); err != nil {
+		return nil, err
+	}
+
 	if req == nil || req.Data == nil {
 		return nil, adminV1.ErrorBadRequest("invalid parameter")
 	}
@@ -88,6 +96,10 @@ func (s *MenuService) Update(ctx context.Context, req *permissionV1.UpdateMenuRe
 }
 
 func (s *MenuService) Delete(ctx context.Context, req *permissionV1.DeleteMenuRequest) (*emptypb.Empty, error) {
+	if err := requirePlatformAdmin(ctx, s.log, "menu management"); err != nil {
+		return nil, err
+	}
+
 	// 获取操作人信息
 	operator, err := auth.FromContext(ctx)
 	if err != nil {

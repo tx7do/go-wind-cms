@@ -76,6 +76,10 @@ func (s *TenantService) Get(ctx context.Context, req *identityV1.GetTenantReques
 }
 
 func (s *TenantService) Create(ctx context.Context, req *identityV1.CreateTenantRequest) (*emptypb.Empty, error) {
+	if err := requirePlatformAdmin(ctx, s.log, "tenant management"); err != nil {
+		return nil, err
+	}
+
 	if req == nil || req.Data == nil {
 		return nil, adminV1.ErrorBadRequest("invalid parameter")
 	}
@@ -96,6 +100,10 @@ func (s *TenantService) Create(ctx context.Context, req *identityV1.CreateTenant
 }
 
 func (s *TenantService) Update(ctx context.Context, req *identityV1.UpdateTenantRequest) (*emptypb.Empty, error) {
+	if err := requirePlatformAdmin(ctx, s.log, "tenant management"); err != nil {
+		return nil, err
+	}
+
 	if req == nil || req.Data == nil {
 		return nil, adminV1.ErrorBadRequest("invalid parameter")
 	}
@@ -117,6 +125,10 @@ func (s *TenantService) Update(ctx context.Context, req *identityV1.UpdateTenant
 }
 
 func (s *TenantService) Delete(ctx context.Context, req *identityV1.DeleteTenantRequest) (*emptypb.Empty, error) {
+	if err := requirePlatformAdmin(ctx, s.log, "tenant management"); err != nil {
+		return nil, err
+	}
+
 	return s.tenantServiceClient.Delete(ctx, req)
 }
 
@@ -125,6 +137,10 @@ func (s *TenantService) TenantExists(ctx context.Context, req *identityV1.Tenant
 }
 
 func (s *TenantService) CreateTenantWithAdminUser(ctx context.Context, req *identityV1.CreateTenantWithAdminUserRequest) (*emptypb.Empty, error) {
+	if err := requirePlatformAdmin(ctx, s.log, "tenant management"); err != nil {
+		return nil, err
+	}
+
 	if req == nil || req.Tenant == nil || req.User == nil {
 		s.log.Error("invalid parameter: tenant or user is nil", req)
 		return nil, adminV1.ErrorBadRequest("invalid parameter")

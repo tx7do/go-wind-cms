@@ -19,6 +19,7 @@ import (
 	"go-wind-cms/app/core/service/internal/data"
 
 	permissionV1 "go-wind-cms/api/gen/go/permission/service/v1"
+	identityV1 "go-wind-cms/api/gen/go/identity/service/v1"
 
 	"go-wind-cms/pkg/constants"
 	appViewer "go-wind-cms/pkg/entgo/viewer"
@@ -160,6 +161,10 @@ func (s *PermissionService) Get(ctx context.Context, req *permissionV1.GetPermis
 }
 
 func (s *PermissionService) Create(ctx context.Context, req *permissionV1.CreatePermissionRequest) (*emptypb.Empty, error) {
+	if constants.IsReservedPermissionCode(req.GetData().GetCode()) {
+		return nil, identityV1.ErrorBadRequest("permission code is reserved")
+	}
+
 	if req == nil || req.Data == nil {
 		return nil, permissionV1.ErrorBadRequest("invalid parameter")
 	}
@@ -172,6 +177,10 @@ func (s *PermissionService) Create(ctx context.Context, req *permissionV1.Create
 }
 
 func (s *PermissionService) Update(ctx context.Context, req *permissionV1.UpdatePermissionRequest) (*emptypb.Empty, error) {
+	if constants.IsReservedPermissionCode(req.GetData().GetCode()) {
+		return nil, identityV1.ErrorBadRequest("permission code is reserved")
+	}
+
 	if req == nil || req.Data == nil {
 		return nil, permissionV1.ErrorBadRequest("invalid parameter")
 	}

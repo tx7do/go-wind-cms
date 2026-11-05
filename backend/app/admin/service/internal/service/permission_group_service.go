@@ -53,6 +53,10 @@ func (s *PermissionGroupService) Get(ctx context.Context, req *permissionV1.GetP
 }
 
 func (s *PermissionGroupService) Create(ctx context.Context, req *permissionV1.CreatePermissionGroupRequest) (*emptypb.Empty, error) {
+	if err := requirePlatformAdmin(ctx, s.log, "permission group management"); err != nil {
+		return nil, err
+	}
+
 	if req == nil || req.Data == nil {
 		return nil, adminV1.ErrorBadRequest("invalid parameter")
 	}
@@ -73,6 +77,10 @@ func (s *PermissionGroupService) Create(ctx context.Context, req *permissionV1.C
 }
 
 func (s *PermissionGroupService) Update(ctx context.Context, req *permissionV1.UpdatePermissionGroupRequest) (*emptypb.Empty, error) {
+	if err := requirePlatformAdmin(ctx, s.log, "permission group management"); err != nil {
+		return nil, err
+	}
+
 	if req == nil || req.Data == nil {
 		return nil, adminV1.ErrorBadRequest("invalid parameter")
 	}
@@ -94,6 +102,10 @@ func (s *PermissionGroupService) Update(ctx context.Context, req *permissionV1.U
 }
 
 func (s *PermissionGroupService) Delete(ctx context.Context, req *permissionV1.DeletePermissionGroupRequest) (*emptypb.Empty, error) {
+	if err := requirePlatformAdmin(ctx, s.log, "permission group management"); err != nil {
+		return nil, err
+	}
+
 	var err error
 
 	if _, err = s.permissionGroupServiceClient.Delete(ctx, req); err != nil {

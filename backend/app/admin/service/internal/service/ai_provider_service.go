@@ -43,6 +43,10 @@ func (s *AiProviderService) Get(ctx context.Context, req *aiV1.GetAiProviderRequ
 // Create 创建提供商；api_key 明文经全局加密器（未启用则明文落库——与全局加密
 // 既有语义一致）加密后落库，hint 只存脱敏形态。
 func (s *AiProviderService) Create(ctx context.Context, req *aiV1.CreateAiProviderRequest) (*emptypb.Empty, error) {
+	if err := requirePlatformAdmin(ctx, s.log, "ai provider management"); err != nil {
+		return nil, err
+	}
+
 	if req == nil || req.Data == nil {
 		return nil, adminV1.ErrorBadRequest("invalid parameter")
 	}
@@ -61,6 +65,10 @@ func (s *AiProviderService) Create(ctx context.Context, req *aiV1.CreateAiProvid
 }
 
 func (s *AiProviderService) Update(ctx context.Context, req *aiV1.UpdateAiProviderRequest) (*emptypb.Empty, error) {
+	if err := requirePlatformAdmin(ctx, s.log, "ai provider management"); err != nil {
+		return nil, err
+	}
+
 	if req == nil || req.Data == nil {
 		return nil, adminV1.ErrorBadRequest("invalid parameter")
 	}
@@ -78,6 +86,10 @@ func (s *AiProviderService) Update(ctx context.Context, req *aiV1.UpdateAiProvid
 }
 
 func (s *AiProviderService) Delete(ctx context.Context, req *aiV1.DeleteAiProviderRequest) (*emptypb.Empty, error) {
+	if err := requirePlatformAdmin(ctx, s.log, "ai provider management"); err != nil {
+		return nil, err
+	}
+
 	return s.aiProviderServiceClient.Delete(ctx, req)
 }
 
