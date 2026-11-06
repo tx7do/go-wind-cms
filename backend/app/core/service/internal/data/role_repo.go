@@ -715,6 +715,10 @@ func (r *RoleRepo) Delete(ctx context.Context, req *permissionV1.DeleteRoleReque
 	}
 	ret, err := roleQuery.Only(ctx)
 	if err != nil {
+		// 行不存在（并发删除/重复删除）按 404 语义返回，而非 500。
+		if ent.IsNotFound(err) {
+			return permissionV1.ErrorNotFound("role not found")
+		}
 		r.log.Errorf("get role failed: %s", err.Error())
 		return permissionV1.ErrorInternalServerError("get role failed")
 	}
