@@ -609,7 +609,11 @@ func (r *RoleRepo) Update(ctx context.Context, req *permissionV1.UpdateRoleReque
 	// 若留在 updateMask 中，当其为空时会被当作 nil 字段生成 SET permissions=NULL 的 SQL，触发列不存在错误。
 	// 关联关系由下方的 ReplacePermissions 单独维护。
 	// 同时记录是否需要处理权限（用户在表单中提交了权限项，含清空场景）。
-	updatePermissions := req.UpdateMask != nil && hasPath("permissions", req.UpdateMask)
+	// 全量更新语义（mask 为空）：关联字段载荷非 nil 即处理（显式空数组=清空，
+	// 未设置=保持原值）。此前仅认 mask 声明，全量表单提交改权限会被静默丢弃。
+	fullUpdate := req.UpdateMask == nil || len(req.UpdateMask.GetPaths()) == 0
+	updatePermissions := fullUpdate && req.Data.Permissions != nil ||
+		(req.UpdateMask != nil && hasPath("permissions", req.UpdateMask))
 	updateParentID := req.UpdateMask != nil &&
 		(hasPath("parent_id", req.UpdateMask) || hasPath("parentId", req.UpdateMask))
 	if req.UpdateMask != nil {
