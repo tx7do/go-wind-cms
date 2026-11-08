@@ -240,6 +240,8 @@ github.com/gobwas/glob v0.2.3 h1:A4xDbljILXROh+kObIiy5kIaPYD8e96x1tgBhUI5J+Y=
 github.com/gobwas/glob v0.2.3/go.mod h1:d3Ez4x06l9bZtSvzIay5+Yzi0fmZzPgnTbPcKjJAkT8=
 github.com/goccy/go-json v0.10.6 h1:p8HrPJzOakx/mn/bQtjgNjdTcN+/S6FcG2CTtQOrHVU=
 github.com/goccy/go-json v0.10.6/go.mod h1:oq7eo15ShAhp70Anwd5lgX2pLfOS3QCiwU/PULtXL6M=
+github.com/goccy/go-yaml v1.19.2 h1:PmFC1S6h8ljIz6gMRBopkjP1TVT7xuwrButHID66PoM=
+github.com/goccy/go-yaml v1.19.2/go.mod h1:XBurs7gK8ATbW4ZPGKgcbrY1Br56PdM69F7LkFRi1kA=
 github.com/gogo/protobuf v1.3.2/go.mod h1:P1XiOD3dCwIKUDQYPy72D8LYyHL2YPYrpS2s69NZV8Q=
 github.com/golang-jwt/jwt/v5 v5.3.1 h1:kYf81DTWFe7t+1VvL7eS+jKFVWaUnK9cB1qbwn63YCY=
 github.com/golang-jwt/jwt/v5 v5.3.1/go.mod h1:fxCRLWMO43lRc8nhHWY6LGqRcf+1gQWArsqaEUEa5bE=
@@ -672,8 +674,6 @@ github.com/tx7do/kratos-bootstrap/registry v0.2.2 h1:CxeR6X1M94LhqYG8FtSNKgS06QY
 github.com/tx7do/kratos-bootstrap/registry v0.2.2/go.mod h1:c4Qv30GUXiFV2kcNx4z5+iiflkiGNMimp9TVuLFMAzE=
 github.com/tx7do/kratos-bootstrap/registry/etcd v0.2.2 h1:+KdIvTybRhHW1xigeTRsanaORrHn/YRb4A+cNnXE/1w=
 github.com/tx7do/kratos-bootstrap/registry/etcd v0.2.2/go.mod h1:89yZ0Z51ZFfpm4a6tnCgt1FPrNogD+tPgH5qkjf83+Y=
-github.com/tx7do/kratos-bootstrap/rpc v0.1.4 h1:h8+bQQEhsf1Fv5eCbPdJ/UDjo7BSqOWA1DudyKdq+BQ=
-github.com/tx7do/kratos-bootstrap/rpc v0.1.4/go.mod h1:i1lo4jiGJNSxyz7G5vOw1ckCHS28hBgftFeIuDIFh5Y=
 github.com/tx7do/kratos-bootstrap/tracer v0.1.4 h1:K9bzj5ngJhwD7qfxVWXhNsPtlCjN1U4NdhjmdbLdP+E=
 github.com/tx7do/kratos-bootstrap/tracer v0.1.4/go.mod h1:pot+03DQAoLsefBIi4DU/vVORvR82mKEzlzK+onR8MQ=
 github.com/tx7do/kratos-bootstrap/transport/mcp v0.0.5 h1:kT3EFJrTadHW+BPBPMBFft9cU9JyVYoyBr1v1Z94soQ=
@@ -702,6 +702,8 @@ github.com/tx7do/kratos-transport/transport/sse v1.3.8 h1:w38AlSYjfQnCvrpZbH6X13
 github.com/tx7do/kratos-transport/transport/sse v1.3.8/go.mod h1:2luD0/3iS4gh9dWv3F3o/75/TbV302NN4mjkV1jLT1w=
 github.com/tx7do/ygo v1.51.11 h1:07vsFCzW7RU5ffOMzbE64JQhWauKNqENXVq8TYnR0EQ=
 github.com/tx7do/ygo v1.51.11/go.mod h1:LpzEyyGErwVVVLNB+8rZfVy/zbZbhWjdkONAobCIlYA=
+github.com/urfave/cli/v3 v3.7.0 h1:AGSnbUyjtLiM+WJUb4dzXKldl/gL+F8OwmRDtVr6g2U=
+github.com/urfave/cli/v3 v3.7.0/go.mod h1:ysVLtOEmg2tOy6PknnYVhDoouyC/6N42TMeoMzskhso=
 github.com/valyala/fastjson v1.6.10 h1:/yjJg8jaVQdYR3arGxPE2X5z89xrlhS0eGXdv+ADTh4=
 github.com/valyala/fastjson v1.6.10/go.mod h1:e6FubmQouUNP73jtMLmcbxS6ydWIpOfhz34TSfO3JaE=
 github.com/vearutop/statigz v1.5.0 h1:FuWwZiT82yBw4xbWdWIawiP2XFTyEPhIo8upRxiKLqk=

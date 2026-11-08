@@ -15,7 +15,7 @@ ROOT_DIR	:= $(dir $(realpath $(lastword $(MAKEFILE_LIST))))
 
 SRCS_MK		:= $(foreach dir, app, $(wildcard $(dir)/*/*/Makefile))
 
-.PHONY: help register gen ent build api openapi init all vendor dep test cover vet lint docker \
+.PHONY: help register gen ent build api openapi graphql init all vendor dep test cover vet lint docker \
 		install-dev install-prod docker-up docker-down docker-libs pm2-deploy
 
 # show environment variables
@@ -84,12 +84,18 @@ ent:
     )
 
 # generate code
-gen: ent api openapi
+gen: ent api openapi graphql
 
 # generate protobuf api go code
 api:
 	@cd api && \
 	buf generate
+
+# regenerate graphql (gqlgen) code — `gow api` 会整目录清掉 api/gen/go/graphql/
+# 生成产物（已提交入库），清掉后或 schema.graphql 变更后运行本目标恢复/再生成；
+# 工具自动处理手写 resolver.go 与 gqlgen single-file 合并校验不兼容的挪位/放回。
+graphql:
+	go run ./tools/graphqlgen
 
 # generate protobuf api OpenAPI v3 docs.
 openapi:

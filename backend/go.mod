@@ -80,6 +80,7 @@ require (
 	github.com/tx7do/kratos-transport/transport/graphql v1.4.2-0.20261014230056-d5f78b017544
 	github.com/tx7do/kratos-transport/transport/mcp v1.3.4
 	github.com/tx7do/kratos-transport/transport/sse v1.3.8
+	github.com/vektah/gqlparser/v2 v2.5.33
 	github.com/xiaoqidun/entps v1.56.0
 	github.com/xuri/excelize/v2 v2.9.1
 	github.com/yuin/gopher-lua v1.1.2
@@ -150,6 +151,7 @@ require (
 	github.com/go-viper/mapstructure/v2 v2.5.0 // indirect
 	github.com/gobwas/glob v0.2.3 // indirect
 	github.com/goccy/go-json v0.10.6 // indirect
+	github.com/goccy/go-yaml v1.19.2 // indirect
 	github.com/golang/freetype v0.0.0-20170609003504-e2365dfdc4a0 // indirect
 	github.com/golang/protobuf v1.5.4 // indirect
 	github.com/golang/snappy v0.0.4 // indirect
@@ -254,9 +256,9 @@ require (
 	github.com/tx7do/kratos-transport/tracing v1.2.0 // indirect
 	github.com/tx7do/kratos-transport/transport v1.4.1 // indirect
 	github.com/tx7do/kratos-transport/transport/keepalive v1.3.5 // indirect
+	github.com/urfave/cli/v3 v3.7.0 // indirect
 	github.com/valyala/fastjson v1.6.10 // indirect
 	github.com/vearutop/statigz v1.5.0 // indirect
-	github.com/vektah/gqlparser/v2 v2.5.33 // indirect
 	github.com/wenlng/go-captcha/v2 v2.0.5 // indirect
 	github.com/xdg-go/pbkdf2 v1.0.0 // indirect
 	github.com/xdg-go/scram v1.2.0 // indirect
@@ -317,3 +319,11 @@ require (
 )
 
 replace github.com/reearth/ygo => github.com/tx7do/ygo v1.51.11
+
+// 本地修复 kratos-bootstrap/rpc v0.1.4 的 Filter 覆盖回归（CORS 被 pprof 拦截 Filter 冲掉，
+// 详见 third_party/kratos-bootstrap/rpc/rest.go 注释）；上游修复后移除本 replace。
+replace github.com/tx7do/kratos-bootstrap/rpc => ./third_party/kratos-bootstrap/rpc
+
+// gqlgen CLI（经 tools/graphqlgen 以 go tool 方式调用）——tool 指令让 go mod tidy
+// 记全 CLI 传递依赖的 go.sum 条目，第三方跑 make graphql 不会弄脏 go.mod/go.sum。
+tool github.com/99designs/gqlgen
