@@ -2,7 +2,7 @@
 //
 // 数据源复用 app BFF 的 REST 同源服务（internal/service），继承其
 // "仅已发布 + 翻译回退"语义；本包不直连 core，也不自行鉴权。
-// 契约：backend/api/graphql/schema.graphql；生成产物：api/gen/go/graphql。
+// 契约：backend/api/graphql/schema.graphql；生成产物：api/graphql/gen。
 package graphql
 
 // THIS CODE WILL BE UPDATED WITH SCHEMA CHANGES. PREVIOUS IMPLEMENTATION FOR SCHEMA CHANGES WILL BE KEPT IN THE COMMENT SECTION. IMPLEMENTATION FOR UNCHANGED SCHEMA WILL BE KEPT.
@@ -20,7 +20,7 @@ import (
 
 	appV1 "go-wind-cms/api/gen/go/app/service/v1"
 	contentV1 "go-wind-cms/api/gen/go/content/service/v1"
-	graphqlV1 "go-wind-cms/api/gen/go/graphql"
+	graphqlV1 "go-wind-cms/api/graphql/gen"
 	"go-wind-cms/app/app/service/internal/service"
 )
 

@@ -591,7 +591,7 @@ func newExecutionContext(
 }
 
 var sources = []*ast.Source{
-	{Name: "../../../graphql/schema.graphql", Input: `# GoWind Content Hub —— C 端只读内容 GraphQL API。
+	{Name: "../schema.graphql", Input: `# GoWind Content Hub —— C 端只读内容 GraphQL API。
 #
 # 语义与 REST app BFF 严格对齐：
 #   - 仅返回已发布内容（草稿/归档/私有按不存在处理）
@@ -1063,7 +1063,7 @@ func (ec *executionContext) _CategoryList_items(ctx context.Context, field graph
 			return obj.Items, nil
 		},
 		nil,
-		ec.marshalNCategory2ᚕᚖgoᚑwindᚑcmsᚋapiᚋgenᚋgoᚋgraphqlᚐCategoryᚄ,
+		ec.marshalNCategory2ᚕᚖgoᚑwindᚑcmsᚋapiᚋgraphqlᚋgenᚐCategoryᚄ,
 		true,
 		true,
 	)
@@ -1394,7 +1394,7 @@ func (ec *executionContext) _Page_sections(ctx context.Context, field graphql.Co
 			return obj.Sections, nil
 		},
 		nil,
-		ec.marshalNSection2ᚕᚖgoᚑwindᚑcmsᚋapiᚋgenᚋgoᚋgraphqlᚐSectionᚄ,
+		ec.marshalNSection2ᚕᚖgoᚑwindᚑcmsᚋapiᚋgraphqlᚋgenᚐSectionᚄ,
 		true,
 		true,
 	)
@@ -1464,7 +1464,7 @@ func (ec *executionContext) _PageList_items(ctx context.Context, field graphql.C
 			return obj.Items, nil
 		},
 		nil,
-		ec.marshalNPage2ᚕᚖgoᚑwindᚑcmsᚋapiᚋgenᚋgoᚋgraphqlᚐPageᚄ,
+		ec.marshalNPage2ᚕᚖgoᚑwindᚑcmsᚋapiᚋgraphqlᚋgenᚐPageᚄ,
 		true,
 		true,
 	)
@@ -1944,7 +1944,7 @@ func (ec *executionContext) _PostList_items(ctx context.Context, field graphql.C
 			return obj.Items, nil
 		},
 		nil,
-		ec.marshalNPost2ᚕᚖgoᚑwindᚑcmsᚋapiᚋgenᚋgoᚋgraphqlᚐPostᚄ,
+		ec.marshalNPost2ᚕᚖgoᚑwindᚑcmsᚋapiᚋgraphqlᚋgenᚐPostᚄ,
 		true,
 		true,
 	)
@@ -2087,7 +2087,7 @@ func (ec *executionContext) _Query_post(ctx context.Context, field graphql.Colle
 			return ec.Resolvers.Query().Post(ctx, fc.Args["id"].(*string), fc.Args["slug"].(*string), fc.Args["locale"].(*string))
 		},
 		nil,
-		ec.marshalOPost2ᚖgoᚑwindᚑcmsᚋapiᚋgenᚋgoᚋgraphqlᚐPost,
+		ec.marshalOPost2ᚖgoᚑwindᚑcmsᚋapiᚋgraphqlᚋgenᚐPost,
 		true,
 		false,
 	)
@@ -2154,7 +2154,7 @@ func (ec *executionContext) _Query_posts(ctx context.Context, field graphql.Coll
 			return ec.Resolvers.Query().Posts(ctx, fc.Args["page"].(*int), fc.Args["pageSize"].(*int), fc.Args["locale"].(*string))
 		},
 		nil,
-		ec.marshalNPostList2ᚖgoᚑwindᚑcmsᚋapiᚋgenᚋgoᚋgraphqlᚐPostList,
+		ec.marshalNPostList2ᚖgoᚑwindᚑcmsᚋapiᚋgraphqlᚋgenᚐPostList,
 		true,
 		true,
 	)
@@ -2205,7 +2205,7 @@ func (ec *executionContext) _Query_page(ctx context.Context, field graphql.Colle
 			return ec.Resolvers.Query().Page(ctx, fc.Args["id"].(*string), fc.Args["slug"].(*string), fc.Args["locale"].(*string))
 		},
 		nil,
-		ec.marshalOPage2ᚖgoᚑwindᚑcmsᚋapiᚋgenᚋgoᚋgraphqlᚐPage,
+		ec.marshalOPage2ᚖgoᚑwindᚑcmsᚋapiᚋgraphqlᚋgenᚐPage,
 		true,
 		false,
 	)
@@ -2262,7 +2262,7 @@ func (ec *executionContext) _Query_pages(ctx context.Context, field graphql.Coll
 			return ec.Resolvers.Query().Pages(ctx, fc.Args["page"].(*int), fc.Args["pageSize"].(*int), fc.Args["locale"].(*string))
 		},
 		nil,
-		ec.marshalNPageList2ᚖgoᚑwindᚑcmsᚋapiᚋgenᚋgoᚋgraphqlᚐPageList,
+		ec.marshalNPageList2ᚖgoᚑwindᚑcmsᚋapiᚋgraphqlᚋgenᚐPageList,
 		true,
 		true,
 	)
@@ -2313,7 +2313,7 @@ func (ec *executionContext) _Query_categories(ctx context.Context, field graphql
 			return ec.Resolvers.Query().Categories(ctx, fc.Args["page"].(*int), fc.Args["pageSize"].(*int), fc.Args["locale"].(*string))
 		},
 		nil,
-		ec.marshalNCategoryList2ᚖgoᚑwindᚑcmsᚋapiᚋgenᚋgoᚋgraphqlᚐCategoryList,
+		ec.marshalNCategoryList2ᚖgoᚑwindᚑcmsᚋapiᚋgraphqlᚋgenᚐCategoryList,
 		true,
 		true,
 	)
@@ -2364,7 +2364,7 @@ func (ec *executionContext) _Query_tags(ctx context.Context, field graphql.Colle
 			return ec.Resolvers.Query().Tags(ctx, fc.Args["page"].(*int), fc.Args["pageSize"].(*int), fc.Args["locale"].(*string))
 		},
 		nil,
-		ec.marshalNTagList2ᚖgoᚑwindᚑcmsᚋapiᚋgenᚋgoᚋgraphqlᚐTagList,
+		ec.marshalNTagList2ᚖgoᚑwindᚑcmsᚋapiᚋgraphqlᚋgenᚐTagList,
 		true,
 		true,
 	)
@@ -2638,7 +2638,7 @@ func (ec *executionContext) _Section_content(ctx context.Context, field graphql.
 			return obj.Content, nil
 		},
 		nil,
-		ec.marshalNKeyValue2ᚕᚖgoᚑwindᚑcmsᚋapiᚋgenᚋgoᚋgraphqlᚐKeyValueᚄ,
+		ec.marshalNKeyValue2ᚕᚖgoᚑwindᚑcmsᚋapiᚋgraphqlᚋgenᚐKeyValueᚄ,
 		true,
 		true,
 	)
@@ -2760,7 +2760,7 @@ func (ec *executionContext) _TagList_items(ctx context.Context, field graphql.Co
 			return obj.Items, nil
 		},
 		nil,
-		ec.marshalNTag2ᚕᚖgoᚑwindᚑcmsᚋapiᚋgenᚋgoᚋgraphqlᚐTagᚄ,
+		ec.marshalNTag2ᚕᚖgoᚑwindᚑcmsᚋapiᚋgraphqlᚋgenᚐTagᚄ,
 		true,
 		true,
 	)
@@ -5388,11 +5388,11 @@ func (ec *executionContext) marshalNBoolean2bool(ctx context.Context, sel ast.Se
 	return res
 }
 
-func (ec *executionContext) marshalNCategory2ᚕᚖgoᚑwindᚑcmsᚋapiᚋgenᚋgoᚋgraphqlᚐCategoryᚄ(ctx context.Context, sel ast.SelectionSet, v []*Category) graphql.Marshaler {
+func (ec *executionContext) marshalNCategory2ᚕᚖgoᚑwindᚑcmsᚋapiᚋgraphqlᚋgenᚐCategoryᚄ(ctx context.Context, sel ast.SelectionSet, v []*Category) graphql.Marshaler {
 	ret := graphql.MarshalSliceConcurrently(ctx, len(v), 0, false, func(ctx context.Context, i int) graphql.Marshaler {
 		fc := graphql.GetFieldContext(ctx)
 		fc.Result = &v[i]
-		return ec.marshalNCategory2ᚖgoᚑwindᚑcmsᚋapiᚋgenᚋgoᚋgraphqlᚐCategory(ctx, sel, v[i])
+		return ec.marshalNCategory2ᚖgoᚑwindᚑcmsᚋapiᚋgraphqlᚋgenᚐCategory(ctx, sel, v[i])
 	})
 
 	for _, e := range ret {
@@ -5404,7 +5404,7 @@ func (ec *executionContext) marshalNCategory2ᚕᚖgoᚑwindᚑcmsᚋapiᚋgen�
 	return ret
 }
 
-func (ec *executionContext) marshalNCategory2ᚖgoᚑwindᚑcmsᚋapiᚋgenᚋgoᚋgraphqlᚐCategory(ctx context.Context, sel ast.SelectionSet, v *Category) graphql.Marshaler {
+func (ec *executionContext) marshalNCategory2ᚖgoᚑwindᚑcmsᚋapiᚋgraphqlᚋgenᚐCategory(ctx context.Context, sel ast.SelectionSet, v *Category) graphql.Marshaler {
 	if v == nil {
 		if !graphql.HasFieldError(ctx, graphql.GetFieldContext(ctx)) {
 			graphql.AddErrorf(ctx, "the requested element is null which the schema does not allow")
@@ -5414,11 +5414,11 @@ func (ec *executionContext) marshalNCategory2ᚖgoᚑwindᚑcmsᚋapiᚋgenᚋgo
 	return ec._Category(ctx, sel, v)
 }
 
-func (ec *executionContext) marshalNCategoryList2goᚑwindᚑcmsᚋapiᚋgenᚋgoᚋgraphqlᚐCategoryList(ctx context.Context, sel ast.SelectionSet, v CategoryList) graphql.Marshaler {
+func (ec *executionContext) marshalNCategoryList2goᚑwindᚑcmsᚋapiᚋgraphqlᚋgenᚐCategoryList(ctx context.Context, sel ast.SelectionSet, v CategoryList) graphql.Marshaler {
 	return ec._CategoryList(ctx, sel, &v)
 }
 
-func (ec *executionContext) marshalNCategoryList2ᚖgoᚑwindᚑcmsᚋapiᚋgenᚋgoᚋgraphqlᚐCategoryList(ctx context.Context, sel ast.SelectionSet, v *CategoryList) graphql.Marshaler {
+func (ec *executionContext) marshalNCategoryList2ᚖgoᚑwindᚑcmsᚋapiᚋgraphqlᚋgenᚐCategoryList(ctx context.Context, sel ast.SelectionSet, v *CategoryList) graphql.Marshaler {
 	if v == nil {
 		if !graphql.HasFieldError(ctx, graphql.GetFieldContext(ctx)) {
 			graphql.AddErrorf(ctx, "the requested element is null which the schema does not allow")
@@ -5460,11 +5460,11 @@ func (ec *executionContext) marshalNInt2int(ctx context.Context, sel ast.Selecti
 	return res
 }
 
-func (ec *executionContext) marshalNKeyValue2ᚕᚖgoᚑwindᚑcmsᚋapiᚋgenᚋgoᚋgraphqlᚐKeyValueᚄ(ctx context.Context, sel ast.SelectionSet, v []*KeyValue) graphql.Marshaler {
+func (ec *executionContext) marshalNKeyValue2ᚕᚖgoᚑwindᚑcmsᚋapiᚋgraphqlᚋgenᚐKeyValueᚄ(ctx context.Context, sel ast.SelectionSet, v []*KeyValue) graphql.Marshaler {
 	ret := graphql.MarshalSliceConcurrently(ctx, len(v), 0, false, func(ctx context.Context, i int) graphql.Marshaler {
 		fc := graphql.GetFieldContext(ctx)
 		fc.Result = &v[i]
-		return ec.marshalNKeyValue2ᚖgoᚑwindᚑcmsᚋapiᚋgenᚋgoᚋgraphqlᚐKeyValue(ctx, sel, v[i])
+		return ec.marshalNKeyValue2ᚖgoᚑwindᚑcmsᚋapiᚋgraphqlᚋgenᚐKeyValue(ctx, sel, v[i])
 	})
 
 	for _, e := range ret {
@@ -5476,7 +5476,7 @@ func (ec *executionContext) marshalNKeyValue2ᚕᚖgoᚑwindᚑcmsᚋapiᚋgen�
 	return ret
 }
 
-func (ec *executionContext) marshalNKeyValue2ᚖgoᚑwindᚑcmsᚋapiᚋgenᚋgoᚋgraphqlᚐKeyValue(ctx context.Context, sel ast.SelectionSet, v *KeyValue) graphql.Marshaler {
+func (ec *executionContext) marshalNKeyValue2ᚖgoᚑwindᚑcmsᚋapiᚋgraphqlᚋgenᚐKeyValue(ctx context.Context, sel ast.SelectionSet, v *KeyValue) graphql.Marshaler {
 	if v == nil {
 		if !graphql.HasFieldError(ctx, graphql.GetFieldContext(ctx)) {
 			graphql.AddErrorf(ctx, "the requested element is null which the schema does not allow")
@@ -5486,11 +5486,11 @@ func (ec *executionContext) marshalNKeyValue2ᚖgoᚑwindᚑcmsᚋapiᚋgenᚋgo
 	return ec._KeyValue(ctx, sel, v)
 }
 
-func (ec *executionContext) marshalNPage2ᚕᚖgoᚑwindᚑcmsᚋapiᚋgenᚋgoᚋgraphqlᚐPageᚄ(ctx context.Context, sel ast.SelectionSet, v []*Page) graphql.Marshaler {
+func (ec *executionContext) marshalNPage2ᚕᚖgoᚑwindᚑcmsᚋapiᚋgraphqlᚋgenᚐPageᚄ(ctx context.Context, sel ast.SelectionSet, v []*Page) graphql.Marshaler {
 	ret := graphql.MarshalSliceConcurrently(ctx, len(v), 0, false, func(ctx context.Context, i int) graphql.Marshaler {
 		fc := graphql.GetFieldContext(ctx)
 		fc.Result = &v[i]
-		return ec.marshalNPage2ᚖgoᚑwindᚑcmsᚋapiᚋgenᚋgoᚋgraphqlᚐPage(ctx, sel, v[i])
+		return ec.marshalNPage2ᚖgoᚑwindᚑcmsᚋapiᚋgraphqlᚋgenᚐPage(ctx, sel, v[i])
 	})
 
 	for _, e := range ret {
@@ -5502,7 +5502,7 @@ func (ec *executionContext) marshalNPage2ᚕᚖgoᚑwindᚑcmsᚋapiᚋgenᚋgo�
 	return ret
 }
 
-func (ec *executionContext) marshalNPage2ᚖgoᚑwindᚑcmsᚋapiᚋgenᚋgoᚋgraphqlᚐPage(ctx context.Context, sel ast.SelectionSet, v *Page) graphql.Marshaler {
+func (ec *executionContext) marshalNPage2ᚖgoᚑwindᚑcmsᚋapiᚋgraphqlᚋgenᚐPage(ctx context.Context, sel ast.SelectionSet, v *Page) graphql.Marshaler {
 	if v == nil {
 		if !graphql.HasFieldError(ctx, graphql.GetFieldContext(ctx)) {
 			graphql.AddErrorf(ctx, "the requested element is null which the schema does not allow")
@@ -5512,11 +5512,11 @@ func (ec *executionContext) marshalNPage2ᚖgoᚑwindᚑcmsᚋapiᚋgenᚋgoᚋg
 	return ec._Page(ctx, sel, v)
 }
 
-func (ec *executionContext) marshalNPageList2goᚑwindᚑcmsᚋapiᚋgenᚋgoᚋgraphqlᚐPageList(ctx context.Context, sel ast.SelectionSet, v PageList) graphql.Marshaler {
+func (ec *executionContext) marshalNPageList2goᚑwindᚑcmsᚋapiᚋgraphqlᚋgenᚐPageList(ctx context.Context, sel ast.SelectionSet, v PageList) graphql.Marshaler {
 	return ec._PageList(ctx, sel, &v)
 }
 
-func (ec *executionContext) marshalNPageList2ᚖgoᚑwindᚑcmsᚋapiᚋgenᚋgoᚋgraphqlᚐPageList(ctx context.Context, sel ast.SelectionSet, v *PageList) graphql.Marshaler {
+func (ec *executionContext) marshalNPageList2ᚖgoᚑwindᚑcmsᚋapiᚋgraphqlᚋgenᚐPageList(ctx context.Context, sel ast.SelectionSet, v *PageList) graphql.Marshaler {
 	if v == nil {
 		if !graphql.HasFieldError(ctx, graphql.GetFieldContext(ctx)) {
 			graphql.AddErrorf(ctx, "the requested element is null which the schema does not allow")
@@ -5526,11 +5526,11 @@ func (ec *executionContext) marshalNPageList2ᚖgoᚑwindᚑcmsᚋapiᚋgenᚋgo
 	return ec._PageList(ctx, sel, v)
 }
 
-func (ec *executionContext) marshalNPost2ᚕᚖgoᚑwindᚑcmsᚋapiᚋgenᚋgoᚋgraphqlᚐPostᚄ(ctx context.Context, sel ast.SelectionSet, v []*Post) graphql.Marshaler {
+func (ec *executionContext) marshalNPost2ᚕᚖgoᚑwindᚑcmsᚋapiᚋgraphqlᚋgenᚐPostᚄ(ctx context.Context, sel ast.SelectionSet, v []*Post) graphql.Marshaler {
 	ret := graphql.MarshalSliceConcurrently(ctx, len(v), 0, false, func(ctx context.Context, i int) graphql.Marshaler {
 		fc := graphql.GetFieldContext(ctx)
 		fc.Result = &v[i]
-		return ec.marshalNPost2ᚖgoᚑwindᚑcmsᚋapiᚋgenᚋgoᚋgraphqlᚐPost(ctx, sel, v[i])
+		return ec.marshalNPost2ᚖgoᚑwindᚑcmsᚋapiᚋgraphqlᚋgenᚐPost(ctx, sel, v[i])
 	})
 
 	for _, e := range ret {
@@ -5542,7 +5542,7 @@ func (ec *executionContext) marshalNPost2ᚕᚖgoᚑwindᚑcmsᚋapiᚋgenᚋgo�
 	return ret
 }
 
-func (ec *executionContext) marshalNPost2ᚖgoᚑwindᚑcmsᚋapiᚋgenᚋgoᚋgraphqlᚐPost(ctx context.Context, sel ast.SelectionSet, v *Post) graphql.Marshaler {
+func (ec *executionContext) marshalNPost2ᚖgoᚑwindᚑcmsᚋapiᚋgraphqlᚋgenᚐPost(ctx context.Context, sel ast.SelectionSet, v *Post) graphql.Marshaler {
 	if v == nil {
 		if !graphql.HasFieldError(ctx, graphql.GetFieldContext(ctx)) {
 			graphql.AddErrorf(ctx, "the requested element is null which the schema does not allow")
@@ -5552,11 +5552,11 @@ func (ec *executionContext) marshalNPost2ᚖgoᚑwindᚑcmsᚋapiᚋgenᚋgoᚋg
 	return ec._Post(ctx, sel, v)
 }
 
-func (ec *executionContext) marshalNPostList2goᚑwindᚑcmsᚋapiᚋgenᚋgoᚋgraphqlᚐPostList(ctx context.Context, sel ast.SelectionSet, v PostList) graphql.Marshaler {
+func (ec *executionContext) marshalNPostList2goᚑwindᚑcmsᚋapiᚋgraphqlᚋgenᚐPostList(ctx context.Context, sel ast.SelectionSet, v PostList) graphql.Marshaler {
 	return ec._PostList(ctx, sel, &v)
 }
 
-func (ec *executionContext) marshalNPostList2ᚖgoᚑwindᚑcmsᚋapiᚋgenᚋgoᚋgraphqlᚐPostList(ctx context.Context, sel ast.SelectionSet, v *PostList) graphql.Marshaler {
+func (ec *executionContext) marshalNPostList2ᚖgoᚑwindᚑcmsᚋapiᚋgraphqlᚋgenᚐPostList(ctx context.Context, sel ast.SelectionSet, v *PostList) graphql.Marshaler {
 	if v == nil {
 		if !graphql.HasFieldError(ctx, graphql.GetFieldContext(ctx)) {
 			graphql.AddErrorf(ctx, "the requested element is null which the schema does not allow")
@@ -5566,11 +5566,11 @@ func (ec *executionContext) marshalNPostList2ᚖgoᚑwindᚑcmsᚋapiᚋgenᚋgo
 	return ec._PostList(ctx, sel, v)
 }
 
-func (ec *executionContext) marshalNSection2ᚕᚖgoᚑwindᚑcmsᚋapiᚋgenᚋgoᚋgraphqlᚐSectionᚄ(ctx context.Context, sel ast.SelectionSet, v []*Section) graphql.Marshaler {
+func (ec *executionContext) marshalNSection2ᚕᚖgoᚑwindᚑcmsᚋapiᚋgraphqlᚋgenᚐSectionᚄ(ctx context.Context, sel ast.SelectionSet, v []*Section) graphql.Marshaler {
 	ret := graphql.MarshalSliceConcurrently(ctx, len(v), 0, false, func(ctx context.Context, i int) graphql.Marshaler {
 		fc := graphql.GetFieldContext(ctx)
 		fc.Result = &v[i]
-		return ec.marshalNSection2ᚖgoᚑwindᚑcmsᚋapiᚋgenᚋgoᚋgraphqlᚐSection(ctx, sel, v[i])
+		return ec.marshalNSection2ᚖgoᚑwindᚑcmsᚋapiᚋgraphqlᚋgenᚐSection(ctx, sel, v[i])
 	})
 
 	for _, e := range ret {
@@ -5582,7 +5582,7 @@ func (ec *executionContext) marshalNSection2ᚕᚖgoᚑwindᚑcmsᚋapiᚋgenᚋ
 	return ret
 }
 
-func (ec *executionContext) marshalNSection2ᚖgoᚑwindᚑcmsᚋapiᚋgenᚋgoᚋgraphqlᚐSection(ctx context.Context, sel ast.SelectionSet, v *Section) graphql.Marshaler {
+func (ec *executionContext) marshalNSection2ᚖgoᚑwindᚑcmsᚋapiᚋgraphqlᚋgenᚐSection(ctx context.Context, sel ast.SelectionSet, v *Section) graphql.Marshaler {
 	if v == nil {
 		if !graphql.HasFieldError(ctx, graphql.GetFieldContext(ctx)) {
 			graphql.AddErrorf(ctx, "the requested element is null which the schema does not allow")
@@ -5638,11 +5638,11 @@ func (ec *executionContext) marshalNString2ᚕstringᚄ(ctx context.Context, sel
 	return ret
 }
 
-func (ec *executionContext) marshalNTag2ᚕᚖgoᚑwindᚑcmsᚋapiᚋgenᚋgoᚋgraphqlᚐTagᚄ(ctx context.Context, sel ast.SelectionSet, v []*Tag) graphql.Marshaler {
+func (ec *executionContext) marshalNTag2ᚕᚖgoᚑwindᚑcmsᚋapiᚋgraphqlᚋgenᚐTagᚄ(ctx context.Context, sel ast.SelectionSet, v []*Tag) graphql.Marshaler {
 	ret := graphql.MarshalSliceConcurrently(ctx, len(v), 0, false, func(ctx context.Context, i int) graphql.Marshaler {
 		fc := graphql.GetFieldContext(ctx)
 		fc.Result = &v[i]
-		return ec.marshalNTag2ᚖgoᚑwindᚑcmsᚋapiᚋgenᚋgoᚋgraphqlᚐTag(ctx, sel, v[i])
+		return ec.marshalNTag2ᚖgoᚑwindᚑcmsᚋapiᚋgraphqlᚋgenᚐTag(ctx, sel, v[i])
 	})
 
 	for _, e := range ret {
@@ -5654,7 +5654,7 @@ func (ec *executionContext) marshalNTag2ᚕᚖgoᚑwindᚑcmsᚋapiᚋgenᚋgo�
 	return ret
 }
 
-func (ec *executionContext) marshalNTag2ᚖgoᚑwindᚑcmsᚋapiᚋgenᚋgoᚋgraphqlᚐTag(ctx context.Context, sel ast.SelectionSet, v *Tag) graphql.Marshaler {
+func (ec *executionContext) marshalNTag2ᚖgoᚑwindᚑcmsᚋapiᚋgraphqlᚋgenᚐTag(ctx context.Context, sel ast.SelectionSet, v *Tag) graphql.Marshaler {
 	if v == nil {
 		if !graphql.HasFieldError(ctx, graphql.GetFieldContext(ctx)) {
 			graphql.AddErrorf(ctx, "the requested element is null which the schema does not allow")
@@ -5664,11 +5664,11 @@ func (ec *executionContext) marshalNTag2ᚖgoᚑwindᚑcmsᚋapiᚋgenᚋgoᚋgr
 	return ec._Tag(ctx, sel, v)
 }
 
-func (ec *executionContext) marshalNTagList2goᚑwindᚑcmsᚋapiᚋgenᚋgoᚋgraphqlᚐTagList(ctx context.Context, sel ast.SelectionSet, v TagList) graphql.Marshaler {
+func (ec *executionContext) marshalNTagList2goᚑwindᚑcmsᚋapiᚋgraphqlᚋgenᚐTagList(ctx context.Context, sel ast.SelectionSet, v TagList) graphql.Marshaler {
 	return ec._TagList(ctx, sel, &v)
 }
 
-func (ec *executionContext) marshalNTagList2ᚖgoᚑwindᚑcmsᚋapiᚋgenᚋgoᚋgraphqlᚐTagList(ctx context.Context, sel ast.SelectionSet, v *TagList) graphql.Marshaler {
+func (ec *executionContext) marshalNTagList2ᚖgoᚑwindᚑcmsᚋapiᚋgraphqlᚋgenᚐTagList(ctx context.Context, sel ast.SelectionSet, v *TagList) graphql.Marshaler {
 	if v == nil {
 		if !graphql.HasFieldError(ctx, graphql.GetFieldContext(ctx)) {
 			graphql.AddErrorf(ctx, "the requested element is null which the schema does not allow")
@@ -5885,14 +5885,14 @@ func (ec *executionContext) marshalOInt2ᚖint(ctx context.Context, sel ast.Sele
 	return res
 }
 
-func (ec *executionContext) marshalOPage2ᚖgoᚑwindᚑcmsᚋapiᚋgenᚋgoᚋgraphqlᚐPage(ctx context.Context, sel ast.SelectionSet, v *Page) graphql.Marshaler {
+func (ec *executionContext) marshalOPage2ᚖgoᚑwindᚑcmsᚋapiᚋgraphqlᚋgenᚐPage(ctx context.Context, sel ast.SelectionSet, v *Page) graphql.Marshaler {
 	if v == nil {
 		return graphql.Null
 	}
 	return ec._Page(ctx, sel, v)
 }
 
-func (ec *executionContext) marshalOPost2ᚖgoᚑwindᚑcmsᚋapiᚋgenᚋgoᚋgraphqlᚐPost(ctx context.Context, sel ast.SelectionSet, v *Post) graphql.Marshaler {
+func (ec *executionContext) marshalOPost2ᚖgoᚑwindᚑcmsᚋapiᚋgraphqlᚋgenᚐPost(ctx context.Context, sel ast.SelectionSet, v *Post) graphql.Marshaler {
 	if v == nil {
 		return graphql.Null
 	}

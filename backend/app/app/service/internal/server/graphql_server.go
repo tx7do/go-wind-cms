@@ -8,7 +8,7 @@ import (
 	"github.com/tx7do/kratos-bootstrap/bootstrap"
 	gqlTransport "github.com/tx7do/kratos-transport/transport/graphql"
 
-	graphqlV1 "go-wind-cms/api/gen/go/graphql"
+	graphqlV1 "go-wind-cms/api/graphql/gen"
 	graphqlResolver "go-wind-cms/app/app/service/internal/graphql"
 	"go-wind-cms/app/app/service/internal/service"
 )

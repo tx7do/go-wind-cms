@@ -21,8 +21,10 @@ import (
 )
 
 const (
-	gqlDir       = "api/graphql"
-	genDir       = "api/gen/go/graphql"
+	gqlDir = "api/graphql"
+	// 产物在 buf.gen.yaml 的 out（gen/go）之外——buf v2 clean:true 会删模板
+	// 所有 out 目录树，放 gen/go 会被 `gow api`/`make api` 连带清掉。
+	genDir       = "api/graphql/gen"
 	resolverPath = "app/app/service/internal/graphql/resolver.go"
 	stashSuffix  = ".gqlgen-stash"
 	// go.mod 的 tool 指令已记全 gqlgen CLI 传递依赖的 go.sum 条目，

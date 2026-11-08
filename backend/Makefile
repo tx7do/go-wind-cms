@@ -91,9 +91,9 @@ api:
 	@cd api && \
 	buf generate
 
-# regenerate graphql (gqlgen) code — `gow api` 会整目录清掉 api/gen/go/graphql/
-# 生成产物（已提交入库），清掉后或 schema.graphql 变更后运行本目标恢复/再生成；
-# 工具自动处理手写 resolver.go 与 gqlgen single-file 合并校验不兼容的挪位/放回。
+# regenerate graphql (gqlgen) code — schema.graphql 变更后运行；产物在
+# api/graphql/gen/（buf out 之外，gow api / make api 不会波及）。工具自动
+# 处理手写 resolver.go 与 gqlgen single-file 合并校验不兼容的挪位/放回。
 graphql:
 	go run ./tools/graphqlgen
 
