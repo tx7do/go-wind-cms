@@ -15,6 +15,10 @@ export interface ClientTransport {
     meta: TransportMeta,
   ): Promise<unknown>;
   serverStream<T>(path: string, meta: TransportMeta): ServerStream<T>;
+  // Raw byte chunks for google.api.HttpBody server streams: the first
+  // chunk's content type rides the HTTP response Content-Type header,
+  // every chunk is raw payload bytes (no JSON framing).
+  byteStream(path: string, meta: TransportMeta): ServerStream<Uint8Array>;
   duplexStream<TIn, TOut>(path: string, meta: TransportMeta): DuplexStream<TIn, TOut>;
 }
 
