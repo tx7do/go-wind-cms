@@ -278,7 +278,7 @@ make test
 <table>
     <tr>
         <td><img src="./docs/images/admin_login.png" alt="バックエンドログイン"/></td>
-        <td><img src="./docs/images/admin_register.png" alt="バックエンド登録"/></td>
+        <td><img src="./docs/images/admin_forgot_password.png" alt="バックエンドパスワード復元"/></td>
     </tr>
     <tr>
         <td><img src="./docs/images/admin_post_list.png" alt="バックエンド投稿リスト"/></td>
@@ -328,6 +328,32 @@ make test
     <tr>
         <td><img src="./docs/images/react_app_tag_list.png" alt="React フロントエンドタグリスト"/></td>
         <td><img src="./docs/images/react_app_tag_detail.png" alt="React フロントエンドタグ詳細"/></td>
+    </tr>
+</table>
+
+## ミニプログラムスクリーンショット（Taro · H5 プレビュー）
+
+<table>
+    <tr>
+        <td><img src="./docs/images/taro_app_homepage.png" alt="ミニプログラムホーム"/></td>
+        <td><img src="./docs/images/taro_app_post_list.png" alt="ミニプログラム投稿リスト"/></td>
+    </tr>
+    <tr>
+        <td><img src="./docs/images/taro_app_post_detail.png" alt="ミニプログラム投稿詳細"/></td>
+        <td><img src="./docs/images/taro_app_login.png" alt="ミニプログラムログイン"/></td>
+    </tr>
+</table>
+
+## Flutter スクリーンショット（Web プレビュー）
+
+<table>
+    <tr>
+        <td><img src="./docs/images/flutter_app_homepage.png" alt="Flutter ホーム"/></td>
+        <td><img src="./docs/images/flutter_app_explore.png" alt="Flutter 発見"/></td>
+    </tr>
+    <tr>
+        <td><img src="./docs/images/flutter_app_post_detail.png" alt="Flutter 投稿詳細"/></td>
+        <td><img src="./docs/images/flutter_app_profile.png" alt="Flutter マイページ"/></td>
     </tr>
 </table>
 

@@ -279,7 +279,7 @@ make test
 <table>
     <tr>
         <td><img src="./docs/images/admin_login.png" alt="后台用户登录界面"/></td>
-        <td><img src="./docs/images/admin_register.png" alt="后台用户注册界面"/></td>
+        <td><img src="./docs/images/admin_forgot_password.png" alt="后台找回密码界面"/></td>
     </tr>
     <tr>
         <td><img src="./docs/images/admin_post_list.png" alt="后台帖子列表"/></td>
@@ -329,6 +329,32 @@ make test
     <tr>
         <td><img src="./docs/images/react_app_tag_list.png" alt="React 前台标签列表"/></td>
         <td><img src="./docs/images/react_app_tag_detail.png" alt="React 前台标签详情"/></td>
+    </tr>
+</table>
+
+## 小程序截图（Taro · H5 预览）
+
+<table>
+    <tr>
+        <td><img src="./docs/images/taro_app_homepage.png" alt="小程序首页"/></td>
+        <td><img src="./docs/images/taro_app_post_list.png" alt="小程序文章列表"/></td>
+    </tr>
+    <tr>
+        <td><img src="./docs/images/taro_app_post_detail.png" alt="小程序文章详情"/></td>
+        <td><img src="./docs/images/taro_app_login.png" alt="小程序登录页"/></td>
+    </tr>
+</table>
+
+## Flutter 截图（Web 预览）
+
+<table>
+    <tr>
+        <td><img src="./docs/images/flutter_app_homepage.png" alt="Flutter 首页"/></td>
+        <td><img src="./docs/images/flutter_app_explore.png" alt="Flutter 发现页"/></td>
+    </tr>
+    <tr>
+        <td><img src="./docs/images/flutter_app_post_detail.png" alt="Flutter 文章详情"/></td>
+        <td><img src="./docs/images/flutter_app_profile.png" alt="Flutter 个人中心"/></td>
     </tr>
 </table>
 

@@ -278,7 +278,7 @@ make test
 <table>
     <tr>
         <td><img src="./docs/images/admin_login.png" alt="Backend login"/></td>
-        <td><img src="./docs/images/admin_register.png" alt="Backend registration"/></td>
+        <td><img src="./docs/images/admin_forgot_password.png" alt="Backend password recovery"/></td>
     </tr>
     <tr>
         <td><img src="./docs/images/admin_post_list.png" alt="Backend post list"/></td>
@@ -328,6 +328,32 @@ make test
     <tr>
         <td><img src="./docs/images/react_app_tag_list.png" alt="React frontend tag list"/></td>
         <td><img src="./docs/images/react_app_tag_detail.png" alt="React frontend tag detail"/></td>
+    </tr>
+</table>
+
+## Mini-program Screenshots (Taro · H5 Preview)
+
+<table>
+    <tr>
+        <td><img src="./docs/images/taro_app_homepage.png" alt="Taro homepage"/></td>
+        <td><img src="./docs/images/taro_app_post_list.png" alt="Taro post list"/></td>
+    </tr>
+    <tr>
+        <td><img src="./docs/images/taro_app_post_detail.png" alt="Taro post detail"/></td>
+        <td><img src="./docs/images/taro_app_login.png" alt="Taro login"/></td>
+    </tr>
+</table>
+
+## Flutter Screenshots (Web Preview)
+
+<table>
+    <tr>
+        <td><img src="./docs/images/flutter_app_homepage.png" alt="Flutter homepage"/></td>
+        <td><img src="./docs/images/flutter_app_explore.png" alt="Flutter explore"/></td>
+    </tr>
+    <tr>
+        <td><img src="./docs/images/flutter_app_post_detail.png" alt="Flutter post detail"/></td>
+        <td><img src="./docs/images/flutter_app_profile.png" alt="Flutter profile"/></td>
     </tr>
 </table>
 
