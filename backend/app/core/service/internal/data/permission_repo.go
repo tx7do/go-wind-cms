@@ -12,6 +12,7 @@ import (
 
 	"github.com/tx7do/go-utils/copierutil"
 	"github.com/tx7do/go-utils/mapper"
+	"github.com/tx7do/go-utils/trans"
 
 	paginationV1 "github.com/tx7do/go-crud/api/gen/go/pagination/v1"
 	entCrud "github.com/tx7do/go-crud/entgo"
@@ -636,6 +637,102 @@ func (r *PermissionRepo) TruncateBizPermissions(ctx context.Context) error {
 
 	_ = r.CleanApiPermissions(ctx)
 	_ = r.CleanMenuPermissions(ctx)
+
+	return nil
+}
+
+// ListBizPermissions 列出全部业务权限行（code 非空且非 sys: 前缀）的最小视图
+//（id+code+name），权限同步 MERGE 的 diff 基线用；规模有界，无分页必要。
+func (r *PermissionRepo) ListBizPermissions(ctx context.Context) ([]*permissionV1.Permission, error) {
+	rows, err := r.entClient.Client().Permission.Query().
+		Where(
+			permission.CodeNEQ(""),
+			permission.Not(permission.CodeHasPrefix(constants.SystemPermissionCodePrefix)),
+		).
+		All(ctx)
+	if err != nil {
+		r.log.Errorf("list biz permissions failed: %s", err.Error())
+		return nil, permissionV1.ErrorInternalServerError("list biz permissions failed")
+	}
+
+	dtos := make([]*permissionV1.Permission, 0, len(rows))
+	for _, row := range rows {
+		dtos = append(dtos, &permissionV1.Permission{
+			Id:   trans.Ptr(row.ID),
+			Code: row.Code,
+			Name: row.Name,
+		})
+	}
+	return dtos, nil
+}
+
+// UpdateForSync 权限同步 MERGE 的更新段：按派生集原位更新（名称/分组），
+// **保 id**——sys_role_permissions 角色授权、接口/菜单绑定因此免于漂移；
+// **不触碰 status**——管理端手工停用的权限不被同步重新启用。
+func (r *PermissionRepo) UpdateForSync(ctx context.Context, id uint32, derived *permissionV1.Permission) error {
+	builder := r.entClient.Client().Permission.UpdateOneID(id).
+		SetNillableName(derived.Name).
+		SetNillableGroupID(derived.GroupId).
+		SetUpdatedAt(time.Now())
+	if err := builder.Exec(ctx); err != nil {
+		r.log.Errorf("sync update permission failed: %s", err.Error())
+		return permissionV1.ErrorInternalServerError("sync update permission failed")
+	}
+	return nil
+}
+
+// AssignSyncBindings 权限同步 MERGE 的绑定替换段：按派生集整体替换接口/菜单
+// 绑定（AssignApis/AssignMenus 自带替换语义，空派生 = 清空该权限的绑定）。
+func (r *PermissionRepo) AssignSyncBindings(ctx context.Context, id uint32, apiIDs, menuIDs []uint32) error {
+	if err := r.permissionApiRepo.AssignApis(ctx, id, apiIDs); err != nil {
+		return err
+	}
+	return r.permissionMenuRepo.AssignMenus(ctx, id, menuIDs)
+}
+
+// DeleteByIDs 按 id 集合删除权限行并级联清理全部从属绑定（接口/菜单快照、
+// 角色授权 sys_role_permissions）——权限同步 MERGE 的删除段用。主删除与级联
+// 在同一事务内，避免中途失败留下悬空绑定。
+func (r *PermissionRepo) DeleteByIDs(ctx context.Context, permissionIDs []uint32) (err error) {
+	if len(permissionIDs) == 0 {
+		return nil
+	}
+
+	var tx *ent.Tx
+	tx, err = r.entClient.Client().Tx(ctx)
+	if err != nil {
+		r.log.Errorf("start transaction failed: %s", err.Error())
+		return permissionV1.ErrorInternalServerError("start transaction failed")
+	}
+	defer func() {
+		if err != nil {
+			if rollbackErr := tx.Rollback(); rollbackErr != nil {
+				r.log.Errorf("transaction rollback failed: %s", rollbackErr.Error())
+			}
+			return
+		}
+		if commitErr := tx.Commit(); commitErr != nil {
+			r.log.Errorf("transaction commit failed: %s", commitErr.Error())
+			err = permissionV1.ErrorInternalServerError("transaction commit failed")
+		}
+	}()
+
+	if _, err = tx.Permission.Delete().
+		Where(permission.IDIn(permissionIDs...)).
+		Exec(ctx); err != nil {
+		r.log.Errorf("delete permissions by ids failed: %s", err.Error())
+		return permissionV1.ErrorInternalServerError("delete permissions by ids failed")
+	}
+
+	if err = r.permissionApiRepo.CleanByPermissionIDs(ctx, tx, permissionIDs); err != nil {
+		return err
+	}
+	if err = r.permissionMenuRepo.CleanByPermissionIDs(ctx, tx, permissionIDs); err != nil {
+		return err
+	}
+	if err = r.rolePermissionRepo.CleanByPermissionIDs(ctx, tx, permissionIDs); err != nil {
+		return err
+	}
 
 	return nil
 }

@@ -219,6 +219,11 @@ func (s *AuthenticationService) authorizeAndEnrichUserTokenPayloadUserTenantRela
 	}
 	tokenPayload.Roles = roleCodes
 
+	// 平台管理员标记：持有 sys:platform_admin 权限即视为平台超级管理员。
+	// requirePlatformAdmin 护栏（平台级配置/台账端点）读的是本 claim——此前从不
+	// 写入导致护栏恒拒，权限同步等平台端点对所有账号 403。
+	tokenPayload.IsPlatformAdmin = trans.Ptr(containsPermission(permissionCodes, constants.SystemPlatformAdminPermissionCode))
+
 	return nil
 }
 

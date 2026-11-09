@@ -308,21 +308,24 @@ func (s *PermissionService) appendAPis(
 	return nil
 }
 
-// SyncPermissions 同步权限点
+// SyncPermissions 同步权限点。
+//
+// 按自然键 code 的 **MERGE 增量对齐**（与接口同步对账式 upsert 同一教义，仓内
+// 不再存在删除重建型同步）：派生集（BFF 菜单派生 + 本服务 appendAPis 补 API
+// 权限）里 code 已存在的权限行原位更新（**保 id**——sys_role_permissions 角色
+// 授权、接口/菜单绑定因此免于漂移，此前 Truncate+BatchCreate 全量重建会让角色
+// 授权整体悬空），缺失才插入；库里有、派生集没有的业务权限删除并级联清理其
+// 角色授权与接口/菜单绑定。管理端手工停用的权限 status 不被同步触碰。
+// 分组行无授权绑定引用，保持原重建语义（TruncateBizGroup + 重插）。
 func (s *PermissionService) SyncPermissions(ctx context.Context, req *permissionV1.SyncPermissionsRequest) (*emptypb.Empty, error) {
 	if req == nil {
 		return nil, permissionV1.ErrorBadRequest("invalid request")
 	}
 
-	// 清理菜单相关权限——失败必须返回错误，否则后续 BatchCreate 会产生重复数据
-	if err := s.permissionRepo.TruncateBizPermissions(ctx); err != nil {
-		s.log.Errorf("truncate biz permissions failed: %s", err.Error())
-		return nil, err
-	}
-	if err := s.permissionGroupRepo.TruncateBizGroup(ctx); err != nil {
-		s.log.Errorf("truncate biz permission groups failed: %s", err.Error())
-		return nil, err
-	}
+	// 同步是系统级全量操作，数据读写统一走系统上下文：管理端用户 viewer 会把
+	// 基线查询（ListBizPermissions 等）按租户过滤——基线恒空会让派生集全判
+	// "新增"而撞 code 唯一约束。
+	ctx = appViewer.NewSystemViewerContext(ctx)
 
 	// 为权限追加对应的 API 资源 ID 列表
 	// 操作人身份从 viewer context 推导，忽略客户端 operator_id，防止伪造审计归属
@@ -338,6 +341,11 @@ func (s *PermissionService) SyncPermissions(ctx context.Context, req *permission
 
 	var err error
 
+	// 分组行无授权绑定引用：保持重建语义（先重建分组，派生权限挂新组 id）
+	if err = s.permissionGroupRepo.TruncateBizGroup(ctx); err != nil {
+		s.log.Errorf("truncate biz permission groups failed: %s", err.Error())
+		return nil, err
+	}
 	var finalPermissionGroups []*permissionV1.PermissionGroup
 	if finalPermissionGroups, err = s.permissionGroupRepo.BatchCreate(ctx, req.PermissionGroups); err != nil {
 		s.log.Errorf("batch create permission groups failed: %s", err.Error())
@@ -352,10 +360,73 @@ func (s *PermissionService) SyncPermissions(ctx context.Context, req *permission
 		}
 	}
 
-	if err = s.permissionRepo.BatchCreate(ctx, req.Permissions); err != nil {
-		s.log.Errorf("batch create permissions failed: %s", err.Error())
+	// —— MERGE 分段：按 code 对齐派生集与库存 ——
+	derivedByCode := make(map[string]*permissionV1.Permission, len(req.Permissions))
+	for _, p := range req.Permissions {
+		derivedByCode[p.GetCode()] = p
+	}
+
+	var existing []*permissionV1.Permission
+	if existing, err = s.permissionRepo.ListBizPermissions(ctx); err != nil {
 		return nil, err
 	}
+	existingByCode := make(map[string]*permissionV1.Permission, len(existing))
+	for _, e := range existing {
+		existingByCode[e.GetCode()] = e
+	}
+
+	// 更新段：code 已存在 → 原位更新（保 id）+ 按派生集整体替换接口/菜单绑定
+	// mergeHit 记录已消化码：插入段与删除段都以它判定
+	updated, added, removed := 0, 0, 0
+	mergeHit := make(map[string]struct{}, len(derivedByCode))
+	for code, d := range derivedByCode {
+		exist, ok := existingByCode[code]
+		if !ok {
+			continue
+		}
+		if err = s.permissionRepo.UpdateForSync(ctx, exist.GetId(), d); err != nil {
+			s.log.Errorf("sync permissions update [%s] failed: %s", code, err.Error())
+			return nil, err
+		}
+		if err = s.permissionRepo.AssignSyncBindings(ctx, exist.GetId(), d.GetApiIds(), d.GetMenuIds()); err != nil {
+			return nil, err
+		}
+		updated++
+		mergeHit[code] = struct{}{}
+	}
+
+	// 插入段：派生集有、库没有
+	toInsert := make([]*permissionV1.Permission, 0, len(derivedByCode))
+	for _, d := range derivedByCode {
+		if _, hit := mergeHit[d.GetCode()]; hit {
+			continue
+		}
+		toInsert = append(toInsert, d)
+		added++
+	}
+	if len(toInsert) > 0 {
+		if err = s.permissionRepo.BatchCreate(ctx, toInsert); err != nil {
+			s.log.Errorf("batch create permissions failed: %s", err.Error())
+			return nil, err
+		}
+	}
+
+	// 删除段：库有、派生集没有 → 删行并级联清角色授权/接口/菜单绑定。放最后：
+	// 中途失败残留的是"本该删的旧码"，重跑同步即自愈，好过删多了。
+	goneIDs := make([]uint32, 0)
+	for code, e := range existingByCode {
+		if _, hit := mergeHit[code]; hit {
+			continue
+		}
+		goneIDs = append(goneIDs, e.GetId())
+		removed++
+	}
+	if len(goneIDs) > 0 {
+		if err = s.permissionRepo.DeleteByIDs(ctx, goneIDs); err != nil {
+			return nil, err
+		}
+	}
+	s.log.Infof("权限同步完成：新增 %d、更新 %d、移除 %d", added, updated, removed)
 
 	return &emptypb.Empty{}, nil
 }

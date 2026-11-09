@@ -2,6 +2,7 @@ package jwt
 
 import (
 	"errors"
+	"strconv"
 	"time"
 
 	"github.com/go-kratos/kratos/v2/log"
@@ -15,14 +16,15 @@ import (
 )
 
 const (
-	ClaimFieldUserName  = authn.ClaimFieldSubject // 用户名
-	ClaimFieldUserID    = "uid"                   // 用户 ID
-	ClaimFieldTenantID  = "tid"                   // 租户 ID
-	ClaimFieldClientID  = "cid"                   // 客户端 ID
-	ClaimFieldDeviceID  = "did"                   // 设备 ID
-	ClaimFieldRoleCodes = "roc"                   // 角色码列表
-	ClaimFieldDataScope = "ds"                    // 数据范围
-	ClaimFieldOrgUnitID = "ouid"                  // 组织单元 ID
+	ClaimFieldUserName       = authn.ClaimFieldSubject // 用户名
+	ClaimFieldUserID         = "uid"                   // 用户 ID
+	ClaimFieldTenantID       = "tid"                   // 租户 ID
+	ClaimFieldClientID       = "cid"                   // 客户端 ID
+	ClaimFieldDeviceID       = "did"                   // 设备 ID
+	ClaimFieldRoleCodes      = "roc"                   // 角色码列表
+	ClaimFieldDataScope      = "ds"                    // 数据范围
+	ClaimFieldOrgUnitID      = "ouid"                  // 组织单元 ID
+	ClaimFieldPlatformAdmin  = "ipa"                   // 平台超级管理员标记（与 proto json_name 同名）
 )
 
 const (
@@ -94,6 +96,12 @@ func NewUserTokenAuthClaims(
 	}
 	if tokenPayload.OrgUnitId != nil {
 		authClaims[ClaimFieldOrgUnitID] = tokenPayload.GetOrgUnitId()
+	}
+
+	// 平台管理员标记以字符串形式入 claim（AuthClaims 值经 JSON 编解码，布尔直存
+	// 会被某些中间件还原成 float64，字符串口径两端都稳定）
+	if tokenPayload.IsPlatformAdmin != nil {
+		authClaims[ClaimFieldPlatformAdmin] = strconv.FormatBool(tokenPayload.GetIsPlatformAdmin())
 	}
 
 	return &authClaims
@@ -172,10 +180,17 @@ func NewUserTokenPayloadWithClaims(claims *authn.AuthClaims) (*authenticationV1.
 
 	orgUnitID, err := claims.GetUint32(ClaimFieldOrgUnitID)
 	if err != nil {
-		log.Errorf("GetUint32 ClaimFieldOrgUnitID failed: %v", err)
+		log.Errorf("GetUint32 ClaimFieldOrgUnitID failed [%v]", err)
 	}
 	if orgUnitID != 0 {
 		payload.OrgUnitId = trans.Ptr(orgUnitID)
+	}
+
+	// 平台管理员标记还原：缺省（旧令牌）保持 nil=false
+	if platformAdmin, err := claims.GetString(ClaimFieldPlatformAdmin); err == nil && platformAdmin != "" {
+		if v, parseErr := strconv.ParseBool(platformAdmin); parseErr == nil {
+			payload.IsPlatformAdmin = trans.Ptr(v)
+		}
 	}
 
 	return payload, nil
