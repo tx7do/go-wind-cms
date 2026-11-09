@@ -77,13 +77,13 @@
     "title": "Duplicate assets (same content hash)",
     "empty": "No duplicate assets found",
     "loadFailed": "Failed to load duplicates",
-    "count": "{count} copies",
+    "count": "{{count}} copies",
     "keepFirst": "Keep (earliest upload)",
     "keepOrDelete": "Keep / Delete",
     "deleteThis": "Delete this copy",
     "cleanup": "Keep earliest, delete rest",
-    "cleanupConfirm": "Will delete {count} duplicate copies (keeping the earliest). Continue?",
-    "cleanupStarted": "Cleaning up {count} duplicates"
+    "cleanupConfirm": "Will delete {{count}} duplicate copies (keeping the earliest). Continue?",
+    "cleanupStarted": "Cleaning up {{count}} duplicates"
   },
   "references": {
     "title": "Referenced by",

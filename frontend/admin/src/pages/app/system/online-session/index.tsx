@@ -133,7 +133,7 @@ const OnlineSessionPage = () => {
     {
       title: t('actions'),
       valueType: 'option',
-      width: 110,
+      width: 120,
       fixed: 'right',
       render: (_, record) => (
         <TableActions

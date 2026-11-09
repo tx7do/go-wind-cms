@@ -51,5 +51,5 @@
   "stats": "Variant Stats",
   "loading": "Loading…",
   "noData": "No data",
-  "conversions": "{count} conversions ({rate}%)"
+  "conversions": "{{count}} conversions ({{rate}}%)"
 }

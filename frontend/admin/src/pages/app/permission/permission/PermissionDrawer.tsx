@@ -27,7 +27,6 @@ import {
   buildMenuTree,
   buildApiTree,
   filterNumbers,
-  extractLeafIds,
 } from './constants';
 
 interface PermissionDrawerProps {
@@ -66,6 +65,7 @@ const PermissionDrawer: React.FC<PermissionDrawerProps> = ({
   // 菜单树数据 + 勾选 + 展开
   const [menuTreeData, setMenuTreeData] = useState<any[]>([]);
   const [menuCheckedKeys, setMenuCheckedKeys] = useState<number[]>([]);
+  const [menuHalfCheckedKeys, setMenuHalfCheckedKeys] = useState<number[]>([]);
   const [menuExpandedKeys, setMenuExpandedKeys] = useState<React.Key[]>([]);
   const [menuTreeLoading, setMenuTreeLoading] = useState(false);
 
@@ -118,6 +118,7 @@ const PermissionDrawer: React.FC<PermissionDrawerProps> = ({
   useEffect(() => {
     if (open) {
       setMenuCheckedKeys([]);
+      setMenuHalfCheckedKeys([]);
       setApiCheckedKeys([]);
     }
   }, [open]);
@@ -251,10 +252,15 @@ const PermissionDrawer: React.FC<PermissionDrawerProps> = ({
 
       const payload = {
         ...values,
-        // 菜单树用叶子交集剥离父菜单 ID（父子联动会自动勾选父菜单，
-        // 其 ID 混入提交会被后端当作菜单 ID）。API 树父节点 key 是
-        // 'module_${mod}' 字符串，filterNumbers 能正确剥离，无需叶子过滤。
-        menuIds: extractLeafIds(menuCheckedKeys, menuTreeData),
+        // 菜单绑定 = 勾选节点 ∪ 半选父节点：目录菜单本身是可导航页面，
+        // 播种语义为含目录的全量绑定；父子联动下目录呈半选，只提交
+        // checkedKeys 会把目录级绑定剥掉（保存后导航目录层级塌陷，实测
+        // 53→42 正好丢了 11 个目录绑定）。API 树父节点 key 是
+        // 'module_${mod}' 字符串，filterNumbers 能正确剥离，无需半选合并。
+        menuIds: filterNumbers([
+          ...menuCheckedKeys,
+          ...menuHalfCheckedKeys,
+        ]),
         apiIds: filterNumbers(apiCheckedKeys),
       };
 
@@ -349,13 +355,19 @@ const PermissionDrawer: React.FC<PermissionDrawerProps> = ({
                 menuExpandedKeys,
                 menuCheckedKeys,
                 (keys) => setMenuExpandedKeys(keys),
-                (keys) => setMenuCheckedKeys(keys as number[]),
+                (keys) => {
+                  setMenuCheckedKeys(keys as number[]);
+                  // 工具栏全选/清空不走 Tree.onCheck：全选时勾选集已覆盖全部父节点，
+                  // 清空时则必须把残留半选一并归零，否则清空后保存仍会带出旧目录绑定
+                  setMenuHalfCheckedKeys([]);
+                },
               )}
               <Tree
                 checkable
                 checkedKeys={menuCheckedKeys}
-                onCheck={(checked) => {
+                onCheck={(checked, info) => {
                   setMenuCheckedKeys(checked as number[]);
+                  setMenuHalfCheckedKeys((info.halfCheckedKeys ?? []) as number[]);
                 }}
                 expandedKeys={menuExpandedKeys}
                 onExpand={(keys) => setMenuExpandedKeys(keys as React.Key[])}

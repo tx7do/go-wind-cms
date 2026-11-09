@@ -212,7 +212,9 @@ const TaskManagement = () => {
     {
       title: t('action'),
       valueType: 'option',
-      width: 310,
+      // 行内 3 钮（编辑/启动/停止）+ 图标「更多」实测需 241px；310 是按全量四钮给
+      // 的，第 4 钮收进下拉后列内 dead space ~70px，按钮视觉上偏在一边
+      width: 250,
       render: (_, record) => (
         <TableActions
           record={record}
@@ -363,7 +365,6 @@ const TaskManagement = () => {
                   {t('restartAll')}
                 </Button>
               </Popconfirm>,
-              <TableExportButton key="export" fetcher={fetchListTasks} columns={columns} filename="tasks" />,
               <Button
                 key="create"
                 color="primary"
@@ -377,6 +378,7 @@ const TaskManagement = () => {
               >
                 {t('common:button.add')}
               </Button>,
+              <TableExportButton key="export" fetcher={fetchListTasks} columns={columns} filename="tasks" />,
             ]}
             options={{
               density: true,

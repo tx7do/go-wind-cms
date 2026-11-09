@@ -8,3 +8,5 @@ allowBuilds:
   vue-demi: false
 patchedDependencies:
   '@ant-design/pro-form@2.32.0': patches/@ant-design__pro-form@2.32.0.patch
+  # scrollbarSize prop 暴露：ListTable 表体滚动条宽度实时下传（表头补偿列/固定列 sticky 对齐根修）
+  '@rc-component/table@1.10.0': patches/@rc-component__table@1.10.0.patch

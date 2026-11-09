@@ -22,7 +22,7 @@
   "helpIsSticky": "Sticky comments will be displayed at the top of the list",
   "action": "Action",
   "reply": "Reply",
-  "replyTo": "Reply: {authorName}",
+  "replyTo": "Reply: {{authorName}}",
   "edit": "Edit Comment",
   "requiredContent": "Please enter content",
   "requiredStatus": "Please select status",

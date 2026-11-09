@@ -22,7 +22,7 @@
   "helpIsSticky": "置顶后，该评论将显示在列表顶部",
   "action": "操作",
   "reply": "回复",
-  "replyTo": "回复：{authorName}",
+  "replyTo": "回复：{{authorName}}",
   "edit": "编辑评论",
   "requiredContent": "请输入评论内容",
   "requiredStatus": "请选择评论状态",

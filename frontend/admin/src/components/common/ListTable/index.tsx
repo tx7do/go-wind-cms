@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
+import { useCallback, useEffect, useId, useMemo, useRef, useState } from 'react';
 import type { HTMLAttributes, Key, MutableRefObject } from 'react';
 import { ProTable } from '@ant-design/pro-components';
 import type { ActionType, ProColumns, ProTableProps } from '@ant-design/pro-components';
@@ -96,6 +96,71 @@ export function ListTable<
   /** 列宽拖拽：null = 用户从未拖过（保持自适应布局），一旦有值即切换 fixed 布局 + 显式列宽 */
   const [resizeState, setResizeState] = useState<ResizeState | null>(null);
   const [resizingKey, setResizingKey] = useState<string | null>(null);
+
+  // 表体纵向滚动条宽度（0 = 不显示）实时下传 rc-table：它只在挂载时测一次滚动条宽度，
+  // 而表体的滚动条随内容显隐（useProTableScrollY）和全局自定义滚动条样式都会让那次测量
+  // 失真——信念过期时表头的补偿列与固定列 sticky 偏移全部错位。scrollbarSize prop 由
+  // patches/@rc-component__table@1.10.0.patch 暴露。
+  const tableDomId = useId();
+  const [scrollbarWidth, setScrollbarWidth] = useState<number | null>(null);
+
+  useEffect(() => {
+    let body: HTMLElement | null = null;
+    let bodyResizeObserver: ResizeObserver | null = null;
+    let innerTableResizeObserver: ResizeObserver | null = null;
+    let styleAttrObserver: MutationObserver | null = null;
+    let domMutationObserver: MutationObserver | null = null;
+    let rafId: number | null = null;
+    const measure = () => {
+      if (!body || !body.isConnected) return;
+      // 纵向滚动条占宽 = 边框盒 − 内容盒 − 左右边框；overflow-y 隐藏/未溢出时为 0。
+      // Chrome 对「纯滚动条显隐」不触发 ResizeObserver，故 style 属性变化由
+      // styleAttrObserver 兜底；内层 table 的 RO 兜住内容/容器尺寸变化引发的显隐。
+      const cs = getComputedStyle(body);
+      const borderX = (parseFloat(cs.borderLeftWidth) || 0) + (parseFloat(cs.borderRightWidth) || 0);
+      const width = body.offsetWidth - body.clientWidth - borderX;
+      setScrollbarWidth((prev) => (prev === width ? prev : width));
+    };
+    const scheduleMeasure = () => {
+      // 首提交时表格可能尚未布局（0×0）：用 rAF 等一帧真实布局再量
+      if (rafId != null) cancelAnimationFrame(rafId);
+      rafId = requestAnimationFrame(measure);
+    };
+    const syncBody = () => {
+      const root = document.getElementById(tableDomId);
+      const next = root?.querySelector('.ant-table-body') as HTMLElement | null;
+      // body 换节点（骨架 ↔ 真实表格互换、Spin 重挂）或已失联时重新接管；
+      // 节点未变且仍在文档中则保持现有观察
+      if (next === body && (!body || body.isConnected)) return;
+      bodyResizeObserver?.disconnect();
+      innerTableResizeObserver?.disconnect();
+      styleAttrObserver?.disconnect();
+      body = next;
+      if (body) {
+        bodyResizeObserver = new ResizeObserver(scheduleMeasure);
+        bodyResizeObserver.observe(body);
+        innerTableResizeObserver = new ResizeObserver(scheduleMeasure);
+        const innerTable = body.querySelector(':scope > table');
+        if (innerTable) innerTableResizeObserver.observe(innerTable);
+        styleAttrObserver = new MutationObserver(scheduleMeasure);
+        styleAttrObserver.observe(body, { attributes: true, attributeFilter: ['style'] });
+        scheduleMeasure();
+      }
+    };
+    syncBody();
+    // 骨架屏 ↔ 真实表格互换、Spin 包裹层重挂都可能把根节点整体换掉：
+    // 观察挂在 document.body 上（根节点被换也依旧有效），syncBody 每次按 id
+    // 重新查询，节点复用时零成本直返
+    domMutationObserver = new MutationObserver(syncBody);
+    domMutationObserver.observe(document.body, { childList: true, subtree: true });
+    return () => {
+      if (rafId != null) cancelAnimationFrame(rafId);
+      domMutationObserver?.disconnect();
+      bodyResizeObserver?.disconnect();
+      innerTableResizeObserver?.disconnect();
+      styleAttrObserver?.disconnect();
+    };
+  }, [tableDomId]);
 
   const loadedOnceRef = useRef(false);
   const skeletonTimerRef = useRef<number | null>(null);
@@ -407,6 +472,8 @@ export function ListTable<
   const tableNode = (
     <ProTable<RecordType, Params>
       {...restProps}
+      id={tableDomId}
+      scrollbarSize={scrollbarWidth ?? undefined}
       columns={resizableColumns}
       // 这六个 prop 上面为了喂骨架/算骨架行数/接管列宽拖拽而被解构出来，解构即从 restProps
       // 里摘走，不在此显式转交就会被 ProTable 静默丢掉（scroll.y 丢 → 无粘性表头与限高 body，
@@ -419,7 +486,7 @@ export function ListTable<
       components={mergedComponents}
       tableLayout={mergedTableLayout}
       actionRef={ownActionRef}
-      request={wrappedRequest}
+      request={request ? wrappedRequest : undefined}
       rowClassName={composedRowClassName}
       loading={{ ...(typeof loading === 'object' ? loading : {}), delay: LOADING_DELAY }}
       tableViewRender={tableViewRender}
