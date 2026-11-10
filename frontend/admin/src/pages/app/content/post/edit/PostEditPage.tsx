@@ -55,7 +55,7 @@ const emptyForm = (lang: string): PostEditProps => ({
   seo: {},
 });
 
-function getDraftKey(postId: null | number, lang: string, isCreateMode: boolean) {
+function getDraftKey(postId: null | string, lang: string, isCreateMode: boolean) {
   return isCreateMode ? `post-draft-create-${lang}` : `post-draft-edit-${postId}-${lang}`;
 }
 
@@ -92,7 +92,8 @@ const PostEditPage = () => {
 
   const initLang = searchParams.get('lang') || 'zh-CN';
   const isCreateMode = !id;
-  const postId = isCreateMode ? null : Number(id);
+  // 路由参数本就是字符串，uint64 id 直接透传
+  const postId = isCreateMode ? null : id;
   // 编辑锁（协同 v1）：他人持锁时展示提示横幅
   const editLock = useEditLock('post', postId);
   // 实时协同（仅富文本；房间按语言隔离，创建模式无 id 不启用）
@@ -110,7 +111,7 @@ const PostEditPage = () => {
   const [socialDistOpen, setSocialDistOpen] = useState(false);
   const [versionsOpen, setVersionsOpen] = useState(false);
   const createPreviewToken = useCreatePostPreviewToken();
-  const [categoryOptions, setCategoryOptions] = useState<{ label: string; value: number }[]>([]);
+  const [categoryOptions, setCategoryOptions] = useState<{ label: string; value: string }[]>([]);
   const [categoryOptionsLoading, setCategoryOptionsLoading] = useState(false);
 
   const translateMutation = useTranslate();
@@ -129,7 +130,7 @@ const PostEditPage = () => {
   /** 发布成功后的返回跳过拦截 */
   const leavingBySaveRef = useRef(false);
   /** 新建保存成功后拿到的新文章 id（state 异步，路由切换需同步值） */
-  const createdIdRef = useRef<number | null>(null);
+  const createdIdRef = useRef<string | null>(null);
 
   const goBack = useCallback(() => navigate('/content/posts'), [navigate]);
 
@@ -554,12 +555,12 @@ const PostEditPage = () => {
         // 先按创建模式的 key 清理本地草稿，再切换为编辑模式
         clearDraft(lang);
         if (created?.id) {
-          createdIdRef.current = Number(created.id);
-          setFormData((prev) => ({ ...prev, id: Number(created.id) }));
+          createdIdRef.current = created.id;
+          setFormData((prev) => ({ ...prev, id: created.id }));
         }
       } else {
         await updateMutation.mutateAsync({
-          id: formData.id || 0,
+          id: formData.id || '0',
           data,
           maskKeys: POST_SAVE_MASK_KEYS,
         });

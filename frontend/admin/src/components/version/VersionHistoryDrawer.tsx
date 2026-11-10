@@ -61,7 +61,7 @@ export interface VersionHistoryDrawerProps {
   onClose: () => void;
   kind: 'post' | 'page';
   /** 目标 id（帖子/页面），null 时不拉取 */
-  targetId: number | null;
+  targetId: string | null;
   /** 当前编辑语言（快照对比与展示用） */
   lang: string;
   /** 当前编辑器正文（diff 的"新"侧；页面无线性正文传空串） */
@@ -142,7 +142,7 @@ export default function VersionHistoryDrawer({
     staleTime: 5 * 60_000,
   });
   const userMap = useMemo(() => {
-    const map = new Map<number, { nickname?: string; username?: string; avatar?: string }>();
+    const map = new Map<string, { nickname?: string; username?: string; avatar?: string }>();
     for (const u of usersQuery.data?.items ?? []) {
       if (u.id !== undefined) map.set(u.id, { nickname: u.nickname, username: u.username, avatar: u.avatar });
     }
@@ -225,7 +225,7 @@ export default function VersionHistoryDrawer({
   );
 
   /** 操作人展示：优先昵称 → 用户名 → #ID（头像尽力取到） */
-  const renderOperator = (createdBy?: number) => {
+  const renderOperator = (createdBy?: string) => {
     if (createdBy === undefined) return null;
     const user = userMap.get(createdBy);
     const name = user?.nickname || user?.username || `#${createdBy}`;

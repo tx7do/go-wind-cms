@@ -22,8 +22,8 @@ import PermissionGroupDrawer from './PermissionGroupDrawer';
 import { searchOptionRender } from '@/components/common/searchSubmitter';
 
 interface PermissionGroupListProps {
-  currentGroupId: number | null;
-  onGroupSelect: (groupId: number) => void;
+  currentGroupId: string | null;
+  onGroupSelect: (groupId: string) => void;
 }
 
 /**
@@ -80,7 +80,7 @@ const PermissionGroupList: React.FC<PermissionGroupListProps> = ({
     const keys: React.Key[] = [];
     const collectKeys = (items: any[]) => {
       items.forEach((item) => {
-        keys.push(item.id as number);
+        keys.push(item.id as string);
         if (item.children?.length) collectKeys(item.children);
       });
     };
@@ -177,7 +177,7 @@ const PermissionGroupList: React.FC<PermissionGroupListProps> = ({
             const keys: React.Key[] = [];
             const collectKeys = (nodes: any[]) => {
               nodes.forEach((n) => {
-                keys.push(n.id as number);
+                keys.push(n.id as string);
                 if (n.children?.length) collectKeys(n.children);
               });
             };

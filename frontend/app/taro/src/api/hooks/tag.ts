@@ -45,7 +45,7 @@ export async function listTagsRaw(params: {
 /**
  * 获取单个标签
  */
-export async function getTag(id: number) {
+export async function getTag(id: string) {
   const locale = currentLocaleLanguageCode();
   return apiClient.tagService.Get({id, locale});
 }
@@ -63,7 +63,7 @@ export async function createTag(values: Partial<contentservicev1_Tag>) {
  * 更新标签
  */
 export async function updateTag(params: {
-  id: number;
+  id: string;
   values: Partial<contentservicev1_Tag>;
 }) {
   return apiClient.tagService.Update({
@@ -76,7 +76,7 @@ export async function updateTag(params: {
 /**
  * 删除标签
  */
-export async function deleteTag(id: number) {
+export async function deleteTag(id: string) {
   return apiClient.tagService.Delete({id});
 }
 
@@ -121,7 +121,7 @@ export async function fetchListTags(params: {
 // 获取单个标签 Hook
 // ==============================
 export function useGetTag(
-  options?: UseMutationOptions<contentservicev1_Tag, Error, number>,
+  options?: UseMutationOptions<contentservicev1_Tag, Error, string>,
 ) {
   return useMutation({
     mutationFn: (id) => getTag(id),
@@ -132,7 +132,7 @@ export function useGetTag(
 // ==============================================
 // 获取单个标签 【给 Store / 外部调用】不带 Hook 的方法
 // ==============================================
-export async function fetchTag(id: number) {
+export async function fetchTag(id: string) {
   return queryClient.fetchQuery({
     queryKey: ['getTag', id],
     queryFn: () => getTag(id),
@@ -159,7 +159,7 @@ export function useUpdateTag(
   options?: UseMutationOptions<
     contentservicev1_Tag,
     Error,
-    { id: number; values: Partial<contentservicev1_Tag> }
+    { id: string; values: Partial<contentservicev1_Tag> }
   >,
 ) {
   return useMutation({
@@ -171,7 +171,7 @@ export function useUpdateTag(
 // ==============================
 // 删除标签 Hook
 // ==============================
-export function useDeleteTag(options?: UseMutationOptions<Record<string, never>, Error, number>) {
+export function useDeleteTag(options?: UseMutationOptions<Record<string, never>, Error, string>) {
   return useMutation({
     mutationFn: (id) => deleteTag(id),
     ...options,

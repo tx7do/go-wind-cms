@@ -25,28 +25,29 @@ const CommentTree: React.FC<CommentTreeProps> = ({
                                                      onLoadChildren
                                                  }) => {
     const t = useTranslations('comment');
-    const [replyingCommentId, setReplyingCommentId] = useState<number | null>(null);
+    // 评论 ID 已升级为 uint64 字符串
+    const [replyingCommentId, setReplyingCommentId] = useState<string | null>(null);
     const [replyContent, setReplyContent] = useState('');
     const [submitting, setSubmitting] = useState(false);
-    const [expandedComments, setExpandedComments] = useState<Set<number>>(new Set());
-    const [loadingChildren, setLoadingChildren] = useState<Set<number>>(new Set());
+    const [expandedComments, setExpandedComments] = useState<Set<string>>(new Set());
+    const [loadingChildren, setLoadingChildren] = useState<Set<string>>(new Set());
 
     // 点赞状态：通过 interaction 子系统批量查询当前 viewer 对这些评论的点赞态。
     // targetIds 取当前渲染的顶层评论 id（children 由递归子组件自行查询）。
     const commentIds = comments
         .map(c => c.id)
-        .filter((id): id is number => typeof id === 'number');
+        .filter((id): id is string => typeof id === 'string' && id !== '');
     const statusQuery = useInteractionStatus('TARGET_TYPE_COMMENT', commentIds);
     // 点赞计数：通过 interaction_counter 表批量查询（comment.like_count 列已移除）。
     const countsQuery = useGetCounts('TARGET_TYPE_COMMENT', commentIds, ['COUNTER_METRIC_LIKE']);
     const likeMutation = useLike();
     const unlikeMutation = useUnlike();
 
-    function isLiked(commentId?: number): boolean {
-        if (typeof commentId !== 'number') return false;
+    function isLiked(commentId?: string): boolean {
+        if (!commentId) return false;
         const map = statusQuery.data?.statuses;
         if (!map) return false;
-        return map[String(commentId)]?.liked === true;
+        return map[commentId]?.liked === true;
     }
 
     function hasChildren(comment: commentservicev1_Comment): boolean {
@@ -58,15 +59,15 @@ const CommentTree: React.FC<CommentTreeProps> = ({
     }
 
     function isExpanded(comment: commentservicev1_Comment): boolean {
-        return expandedComments.has(comment.id || 0);
+        return expandedComments.has(comment.id || '');
     }
 
     function isLoading(comment: commentservicev1_Comment): boolean {
-        return loadingChildren.has(comment.id || 0);
+        return loadingChildren.has(comment.id || '');
     }
 
     function handleReply(comment: commentservicev1_Comment) {
-        setReplyingCommentId(comment.id || 0);
+        setReplyingCommentId(comment.id || '');
         setReplyContent('');
     }
 
@@ -99,7 +100,7 @@ const CommentTree: React.FC<CommentTreeProps> = ({
     // 幂等由后端保证；前端按当前态决定 Like/Unlike。计数由 GetCounts 返回（comment.like_count 列已移除）。
     async function handleLike(comment: commentservicev1_Comment) {
         const commentId = comment.id;
-        if (typeof commentId !== 'number') return;
+        if (!commentId) return;
         const liked = isLiked(commentId);
         try {
             if (liked) {
@@ -130,29 +131,29 @@ const CommentTree: React.FC<CommentTreeProps> = ({
             // 收起
             setExpandedComments(prev => {
                 const next = new Set(prev);
-                next.delete(comment.id || 0);
+                next.delete(comment.id || '');
                 return next;
             });
         } else {
             // 展开
             if (!comment.children) {
                 // 需要动态加载子评论
-                setLoadingChildren(prev => new Set(prev).add(comment.id || 0));
+                setLoadingChildren(prev => new Set(prev).add(comment.id || ''));
                 try {
                     await onLoadChildren(comment);
-                    setExpandedComments(prev => new Set(prev).add(comment.id || 0));
+                    setExpandedComments(prev => new Set(prev).add(comment.id || ''));
                 } catch (error) {
                     console.error('Load children failed:', error);
                 } finally {
                     setLoadingChildren(prev => {
                         const next = new Set(prev);
-                        next.delete(comment.id || 0);
+                        next.delete(comment.id || '');
                         return next;
                     });
                 }
             } else {
                 // 已经有子评论数据，直接展开
-                setExpandedComments(prev => new Set(prev).add(comment.id || 0));
+                setExpandedComments(prev => new Set(prev).add(comment.id || ''));
             }
         }
     }
@@ -231,7 +232,7 @@ const CommentTree: React.FC<CommentTreeProps> = ({
                                     title={isLiked(comment.id) ? t('unlike') : t('like')}
                                 >
                                     <XIcon name="carbon:thumbs-up" size={16}/>
-                                    {extractCount(countsQuery.data, comment.id as number, 'COUNTER_METRIC_LIKE')}
+                                    {extractCount(countsQuery.data, comment.id ?? '', 'COUNTER_METRIC_LIKE')}
                                 </span>
                                 <span
                                     className="flex cursor-pointer items-center gap-1.5 text-[13px] text-muted-foreground transition-all duration-200 select-none hover:text-primary hover:-translate-y-0.5 max-md:text-xs max-sm:text-[11px]"

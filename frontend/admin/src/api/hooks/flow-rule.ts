@@ -85,7 +85,7 @@ export function useDeleteFlowRule(
   options?: UseMutationOptions<
     Awaited<ReturnType<typeof apiClient.flowRuleService.Delete>>,
     Error,
-    { id: number }
+    { id: string }
   >,
 ) {
   return useMutation({

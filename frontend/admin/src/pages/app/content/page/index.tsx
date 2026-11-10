@@ -182,7 +182,7 @@ const PageList = () => {
               hidden: !(record.status === 'PAGE_STATUS_DRAFT' && !record.inProgress),
               onClick: async () => {
                 try {
-                  await submitReviewMutation.mutateAsync({ pageId: record.id as number });
+                  await submitReviewMutation.mutateAsync({ pageId: record.id as string });
                   message.success(t('review.submitted'));
                   actionRef.current?.reload();
                 } catch (error) {
@@ -199,7 +199,7 @@ const PageList = () => {
               hidden: !record.inProgress,
               onClick: async () => {
                 try {
-                  await approveReviewMutation.mutateAsync({ pageId: record.id as number });
+                  await approveReviewMutation.mutateAsync({ pageId: record.id as string });
                   message.success(t('review.approved'));
                   actionRef.current?.reload();
                 } catch (error) {
@@ -230,7 +230,7 @@ const PageList = () => {
                   onOk: async () => {
                     try {
                       await rejectReviewMutation.mutateAsync({
-                        pageId: record.id as number,
+                        pageId: record.id as string,
                         reason,
                       });
                       message.success(t('review.rejected'));
@@ -291,7 +291,7 @@ const PageList = () => {
 
           return {
             data: response.items || [],
-            total: response.total || 0,
+            total: Number(response.total ?? 0),
             success: true,
           };
         

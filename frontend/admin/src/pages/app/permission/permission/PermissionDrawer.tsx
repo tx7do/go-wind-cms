@@ -26,14 +26,14 @@ import {
   buildTreeSelectData,
   buildMenuTree,
   buildApiTree,
-  filterNumbers,
+  filterIds,
 } from './constants';
 
 interface PermissionDrawerProps {
   open: boolean;
   mode: 'create' | 'edit';
   data?: any;
-  groupId: number;
+  groupId: string;
   onClose: () => void;
   onSuccess: () => void;
 }
@@ -62,16 +62,16 @@ const PermissionDrawer: React.FC<PermissionDrawerProps> = ({
   // 分组下拉数据
   const [groupTreeData, setGroupTreeData] = useState<any[]>([]);
 
-  // 菜单树数据 + 勾选 + 展开
+  // 菜单树数据 + 勾选 + 展开（key/id 已是 uint64 字符串）
   const [menuTreeData, setMenuTreeData] = useState<any[]>([]);
-  const [menuCheckedKeys, setMenuCheckedKeys] = useState<number[]>([]);
-  const [menuHalfCheckedKeys, setMenuHalfCheckedKeys] = useState<number[]>([]);
+  const [menuCheckedKeys, setMenuCheckedKeys] = useState<string[]>([]);
+  const [menuHalfCheckedKeys, setMenuHalfCheckedKeys] = useState<string[]>([]);
   const [menuExpandedKeys, setMenuExpandedKeys] = useState<React.Key[]>([]);
   const [menuTreeLoading, setMenuTreeLoading] = useState(false);
 
   // API 树数据 + 勾选 + 展开
   const [apiTreeData, setApiTreeData] = useState<any[]>([]);
-  const [apiCheckedKeys, setApiCheckedKeys] = useState<number[]>([]);
+  const [apiCheckedKeys, setApiCheckedKeys] = useState<string[]>([]);
   const [apiExpandedKeys, setApiExpandedKeys] = useState<React.Key[]>([]);
   const [apiTreeLoading, setApiTreeLoading] = useState(false);
 
@@ -137,10 +137,10 @@ const PermissionDrawer: React.FC<PermissionDrawerProps> = ({
 
       // 设置菜单和 API 的勾选
       if (Array.isArray(data.menuIds)) {
-        setMenuCheckedKeys(data.menuIds.filter((v: any) => typeof v === 'number'));
+        setMenuCheckedKeys(data.menuIds.filter((v: any) => typeof v === 'string'));
       }
       if (Array.isArray(data.apiIds)) {
-        setApiCheckedKeys(data.apiIds.filter((v: any) => typeof v === 'number'));
+        setApiCheckedKeys(data.apiIds.filter((v: any) => typeof v === 'string'));
       }
     }
   }, [open, mode, data, groupId]);
@@ -256,12 +256,12 @@ const PermissionDrawer: React.FC<PermissionDrawerProps> = ({
         // 播种语义为含目录的全量绑定；父子联动下目录呈半选，只提交
         // checkedKeys 会把目录级绑定剥掉（保存后导航目录层级塌陷，实测
         // 53→42 正好丢了 11 个目录绑定）。API 树父节点 key 是
-        // 'module_${mod}' 字符串，filterNumbers 能正确剥离，无需半选合并。
-        menuIds: filterNumbers([
+        // 'module_${mod}' 字符串，filterIds 能正确剥离，无需半选合并。
+        menuIds: filterIds([
           ...menuCheckedKeys,
           ...menuHalfCheckedKeys,
         ]),
-        apiIds: filterNumbers(apiCheckedKeys),
+        apiIds: filterIds(apiCheckedKeys),
       };
 
       if (mode === 'edit' && data?.id) {
@@ -356,7 +356,7 @@ const PermissionDrawer: React.FC<PermissionDrawerProps> = ({
                 menuCheckedKeys,
                 (keys) => setMenuExpandedKeys(keys),
                 (keys) => {
-                  setMenuCheckedKeys(keys as number[]);
+                  setMenuCheckedKeys(keys as string[]);
                   // 工具栏全选/清空不走 Tree.onCheck：全选时勾选集已覆盖全部父节点，
                   // 清空时则必须把残留半选一并归零，否则清空后保存仍会带出旧目录绑定
                   setMenuHalfCheckedKeys([]);
@@ -366,8 +366,8 @@ const PermissionDrawer: React.FC<PermissionDrawerProps> = ({
                 checkable
                 checkedKeys={menuCheckedKeys}
                 onCheck={(checked, info) => {
-                  setMenuCheckedKeys(checked as number[]);
-                  setMenuHalfCheckedKeys((info.halfCheckedKeys ?? []) as number[]);
+                  setMenuCheckedKeys(checked as string[]);
+                  setMenuHalfCheckedKeys((info.halfCheckedKeys ?? []) as string[]);
                 }}
                 expandedKeys={menuExpandedKeys}
                 onExpand={(keys) => setMenuExpandedKeys(keys as React.Key[])}
@@ -410,13 +410,13 @@ const PermissionDrawer: React.FC<PermissionDrawerProps> = ({
                 apiExpandedKeys,
                 apiCheckedKeys,
                 (keys) => setApiExpandedKeys(keys),
-                (keys) => setApiCheckedKeys(keys as number[]),
+                (keys) => setApiCheckedKeys(keys as string[]),
               )}
               <Tree
                 checkable
                 checkedKeys={apiCheckedKeys}
                 onCheck={(checked) => {
-                  setApiCheckedKeys(checked as number[]);
+                  setApiCheckedKeys(checked as string[]);
                 }}
                 expandedKeys={apiExpandedKeys}
                 onExpand={(keys) => setApiExpandedKeys(keys as React.Key[])}

@@ -19,7 +19,8 @@ import {cn} from '@/lib/utils';
 interface PostCardProps {
     post: contentservicev1_Post;
     from?: string;
-    categoryId?: number;
+    // 分类 ID 已升级为 uint64 字符串
+    categoryId?: string;
     likeCount?: number;
 }
 

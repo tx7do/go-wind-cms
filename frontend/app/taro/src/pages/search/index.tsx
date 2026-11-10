@@ -22,7 +22,8 @@ export default function SearchPage() {
     const [keyword, setKeyword] = useState('');
     const [hits, setHits] = useState<contentservicev1_SearchPostHit[]>([]);
     const [total, setTotal] = useState(0);
-    const [details, setDetails] = useState<Record<number, contentservicev1_Post>>({});
+    // 文章 ID 已升级为 uint64 字符串，明细表按字符串 id 索引
+    const [details, setDetails] = useState<Record<string, contentservicev1_Post>>({});
     const [loading, setLoading] = useState(false);
     const [searched, setSearched] = useState(false);
 
@@ -48,10 +49,10 @@ export default function SearchPage() {
             const need = items.filter((it) => it.postId && !details[it.postId]).slice(0, 20);
             await Promise.all(
                 need.map((it) =>
-                    fetchPost(it.postId as number)
+                    fetchPost(it.postId!)
                         .then((post) => {
                             if (post?.id) {
-                                setDetails((prev) => ({...prev, [post.id as number]: post}));
+                                setDetails((prev) => ({...prev, [post.id!]: post}));
                             }
                         })
                         .catch((error) => console.error('Load search hit detail failed:', error)),

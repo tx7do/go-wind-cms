@@ -52,7 +52,7 @@ export function generateSummary(content: string, maxLength = 100): string {
 interface PostSettingsPanelProps {
   formData: PostEditProps;
   patch: (p: Partial<PostEditProps>) => void;
-  categoryOptions: { label: string; value: number }[];
+  categoryOptions: { label: string; value: string }[];
   categoryOptionsLoading: boolean;
 }
 

@@ -6,7 +6,8 @@ import {createContext, useContext, type Context} from 'react';
 // ==============================
 
 export interface IUser {
-    id: number;
+    // 用户 ID 已升级为 uint64，proto3 JSON 下为字符串
+    id: string;
     username: string;
     nickname: string;
     realname: string;

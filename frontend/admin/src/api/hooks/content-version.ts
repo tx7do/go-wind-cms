@@ -28,7 +28,7 @@ interface ListOptions {
 }
 
 export function useListPostVersions(
-  postId: number | null,
+  postId: string | null,
   options?: ListOptions,
 ) {
   return useQuery({
@@ -61,7 +61,7 @@ export function useRestorePostVersion(
 // ─── 页面版本 ───
 
 export function useListPageVersions(
-  pageId: number | null,
+  pageId: string | null,
   options?: ListOptions,
 ) {
   return useQuery({

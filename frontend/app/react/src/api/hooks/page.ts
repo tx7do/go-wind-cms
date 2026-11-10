@@ -47,21 +47,21 @@ export async function listPagesRaw(params: {
 /**
  * 获取单个页面
  */
-export async function getPage(id: number) {
+export async function getPage(id: string) {
   return apiClient.pageService.Get({id});
 }
 
 /**
  * 按 slug（或纯数字 id）获取单个页面，附当前语言。
- * 后端对 id=0 且带 slug 的请求按 slug 解析（app BFF Get 内重写 query_by）。
+ * 后端对 id 为空且带 slug 的请求按 slug 解析（app BFF Get 内重写 query_by）。
  */
 export async function getPageBySlug(slug: string) {
   const locale = currentLocaleLanguageCode();
-  const numericId = Number(slug);
   // 纯数字别名直接按 id 走详情；否则走 by-slug 专用端点
-  // （Get({id:0, slug}) 会让 id+slug 双绑定冲突 oneof，后端 400）
-  if (Number.isInteger(numericId) && numericId > 0) {
-    return apiClient.pageService.Get({id: numericId, locale});
+  // （Get({id, slug}) 会让 id+slug 双绑定冲突 oneof，后端 400）
+  // id 已升级为 uint64 字符串，命中时原样透传字符串
+  if (/^\d+$/.test(slug) && slug !== '0') {
+    return apiClient.pageService.Get({id: slug, locale});
   }
   return apiClient.pageService.GetBySlug({slug, locale});
 }
@@ -79,7 +79,7 @@ export async function createPage(values: Partial<contentservicev1_Page>) {
  * 更新页面
  */
 export async function updatePage(params: {
-  id: number;
+  id: string;
   values: Partial<contentservicev1_Page>;
 }) {
   return apiClient.pageService.Update({
@@ -92,7 +92,7 @@ export async function updatePage(params: {
 /**
  * 删除页面
  */
-export async function deletePage(id: number) {
+export async function deletePage(id: string) {
   return apiClient.pageService.Delete({id});
 }
 
@@ -137,7 +137,7 @@ export async function fetchListPages(params: {
 // 获取单个页面 Hook
 // ==============================
 export function useGetPage(
-  options?: UseMutationOptions<contentservicev1_Page, Error, number>,
+  options?: UseMutationOptions<contentservicev1_Page, Error, string>,
 ) {
   return useMutation({
     mutationFn: (id) => getPage(id),
@@ -148,7 +148,7 @@ export function useGetPage(
 // ==============================================
 // 获取单个页面 【给 Store / 外部调用】不带 Hook 的方法
 // ==============================================
-export async function fetchPage(id: number) {
+export async function fetchPage(id: string) {
   return queryClient.fetchQuery({
     queryKey: ['getPage', id],
     queryFn: () => getPage(id),
@@ -171,7 +171,7 @@ export async function fetchPageBySlug(slug: string) {
  * 草稿预览取数：携带 admin 签发的短时效 preview_token，
  * 后端校验通过则放行非已发布内容（preview_token 不在 proto 消息内，手拼 query 旁路传）。
  */
-export async function fetchPagePreview(id: number, token: string) {
+export async function fetchPagePreview(id: string, token: string) {
   const locale = currentLocaleLanguageCode();
   return queryClient.fetchQuery({
     queryKey: ['getPagePreview', id, token, locale],
@@ -248,7 +248,7 @@ export function useUpdatePage(
   options?: UseMutationOptions<
     contentservicev1_Page,
     Error,
-    { id: number; values: Partial<contentservicev1_Page> }
+    { id: string; values: Partial<contentservicev1_Page> }
   >,
 ) {
   return useMutation({
@@ -260,7 +260,7 @@ export function useUpdatePage(
 // ==============================
 // 删除页面 Hook
 // ==============================
-export function useDeletePage(options?: UseMutationOptions<Record<string, never>, Error, number>) {
+export function useDeletePage(options?: UseMutationOptions<Record<string, never>, Error, string>) {
   return useMutation({
     mutationFn: (id) => deletePage(id),
     ...options,

@@ -215,7 +215,7 @@ export type authenticationservicev1_LoginRequest = {
   totp_code?: string;
   // 登录客户端 User-Agent（BFF 注入）
   userAgent?: string;
-  user_id?: number;
+  user_id?: string;
   username?: string;
 };
 
@@ -233,13 +233,13 @@ export type authenticationservicev1_ClientType =
 // 用户登录 - 回应
 export type authenticationservicev1_LoginResponse = {
   access_token: string | undefined;
-  expires_in: number | undefined;
+  expires_in: string | undefined;
   id_token?: string;
   // 本次签发的会话令牌对 ID（在线会话管理用）
   jti?: string;
   // MFA 挑战凭据：非空表示密码验证已通过、须完成两步验证（此时不含任何令牌字段）
   mfa_operation_id?: string;
-  refresh_expires_in?: number;
+  refresh_expires_in?: string;
   refresh_token?: string;
   scope?: string;
   token_type: authenticationservicev1_TokenType | undefined;
@@ -473,7 +473,7 @@ export type pagination_PagingRequest = {
   // 是否不分页，如果为true，则page和pageSize参数无效。
   noPaging?: boolean;
   // 跳过的记录数（从0开始，默认0）
-  offset?: number;
+  offset?: string;
   // 排序条件
   orderBy?: string;
   // 当前页码（从1开始，默认1）
@@ -624,7 +624,7 @@ type wellKnownFieldMask = string;
 // 回应 - 类别列表
 export type contentservicev1_ListCategoryResponse = {
   items: contentservicev1_Category[] | undefined;
-  total: number | undefined;
+  total: string | undefined;
 };
 
 // 类别
@@ -632,18 +632,18 @@ export type contentservicev1_Category = {
   availableLanguages: string[] | undefined;
   children: contentservicev1_Category[] | undefined;
   code?: string;
-  contentModelId?: number;
+  contentModelId?: string;
   createdAt?: wellKnownTimestamp;
-  createdBy?: number;
+  createdBy?: string;
   customFields: { [key: string]: string } | undefined;
   deletedAt?: wellKnownTimestamp;
-  deletedBy?: number;
+  deletedBy?: string;
   depth?: number;
   directPostCount?: number;
   icon?: string;
-  id?: number;
+  id?: string;
   isNav?: boolean;
-  parentId?: number;
+  parentId?: string;
   path?: string;
   postCount?: number;
   sortOrder?: number;
@@ -651,7 +651,7 @@ export type contentservicev1_Category = {
   thumbnail?: string;
   translations: contentservicev1_CategoryTranslation[] | undefined;
   updatedAt?: wellKnownTimestamp;
-  updatedBy?: number;
+  updatedBy?: string;
 };
 
 // 分类状态
@@ -662,21 +662,21 @@ export type contentservicev1_Category_CategoryStatus =
   | 'CATEGORY_STATUS_UNSPECIFIED';
 // 类别翻译
 export type contentservicev1_CategoryTranslation = {
-  categoryId?: number;
+  categoryId?: string;
   coverImage?: string;
   createdAt?: wellKnownTimestamp;
-  createdBy?: number;
+  createdBy?: string;
   deletedAt?: wellKnownTimestamp;
-  deletedBy?: number;
+  deletedBy?: string;
   description?: string;
   fullPath?: string;
-  id?: number;
+  id?: string;
   languageCode?: string;
   name?: string;
   seo?: contentservicev1_SeoMeta;
   slug?: string;
   updatedAt?: wellKnownTimestamp;
-  updatedBy?: number;
+  updatedBy?: string;
 };
 
 // SEO 元信息结构设计
@@ -698,7 +698,7 @@ type wellKnownTimestamp = string;
 // 请求 - 类别数据
 export type contentservicev1_GetCategoryRequest = {
   code?: string;
-  id?: number;
+  id?: string;
   locale?: string;
   viewMask?: wellKnownFieldMask;
 };
@@ -712,13 +712,13 @@ export type contentservicev1_CreateCategoryRequest = {
 export type contentservicev1_UpdateCategoryRequest = {
   allowMissing?: boolean;
   data: contentservicev1_Category | undefined;
-  id: number | undefined;
+  id: string | undefined;
   updateMask: undefined | wellKnownFieldMask;
 };
 
 // 请求 - 删除类别
 export type contentservicev1_DeleteCategoryRequest = {
-  id?: number;
+  id?: string;
 };
 
 // 评论服务
@@ -875,13 +875,13 @@ export function createCommentServiceClient(
 // 回应 - 评论列表
 export type commentservicev1_ListCommentResponse = {
   items: commentservicev1_Comment[] | undefined;
-  total: number | undefined;
+  total: string | undefined;
 };
 
 // 评论
 export type commentservicev1_Comment = {
   authorEmail?: string;
-  authorId?: number;
+  authorId?: string;
   authorName?: string;
   authorType?: commentservicev1_Comment_AuthorType;
   authorUrl?: string;
@@ -889,21 +889,21 @@ export type commentservicev1_Comment = {
   content?: string;
   contentType?: commentservicev1_Comment_ContentType;
   createdAt?: wellKnownTimestamp;
-  createdBy?: number;
+  createdBy?: string;
   deletedAt?: wellKnownTimestamp;
-  deletedBy?: number;
+  deletedBy?: string;
   detectedLanguage?: string;
-  id?: number;
+  id?: string;
   ipAddress?: string;
   isSpam?: boolean;
   isSticky?: boolean;
   location?: string;
-  objectId?: number;
-  parentId?: number;
-  replyToId?: number;
+  objectId?: string;
+  parentId?: string;
+  replyToId?: string;
   status?: commentservicev1_Comment_Status;
   updatedAt?: wellKnownTimestamp;
-  updatedBy?: number;
+  updatedBy?: string;
   userAgent?: string;
 };
 
@@ -929,7 +929,7 @@ export type commentservicev1_Comment_Status =
   | 'STATUS_UNSPECIFIED';
 // 请求 - 评论数据
 export type commentservicev1_GetCommentRequest = {
-  id: number | undefined;
+  id: string | undefined;
   viewMask?: wellKnownFieldMask;
 };
 
@@ -942,13 +942,13 @@ export type commentservicev1_CreateCommentRequest = {
 export type commentservicev1_UpdateCommentRequest = {
   allowMissing?: boolean;
   data: commentservicev1_Comment | undefined;
-  id: number | undefined;
+  id: string | undefined;
   updateMask: undefined | wellKnownFieldMask;
 };
 
 // 请求 - 删除评论
 export type commentservicev1_DeleteCommentRequest = {
-  id?: number;
+  id?: string;
 };
 
 // 文件传输服务
@@ -1062,12 +1062,12 @@ export type storageservicev1_DownloadFileRequest = {
   acceptMime?: string;
   disposition?: string;
   downloadUrl?: string;
-  fileId?: number;
+  fileId?: string;
   preferPresignedUrl?: boolean;
   presignExpireSeconds?: number;
-  rangeEnd?: number;
+  rangeEnd?: string;
   // 可选的分段下载范围（闭区间 start，开区间 end；为 0/0 表示全量）
-  rangeStart?: number;
+  rangeStart?: string;
   storageObject?: storageservicev1_StorageObject;
 };
 
@@ -1084,7 +1084,7 @@ export type storageservicev1_DownloadFileResponse = {
   downloadUrl?: string;
   file?: string;
   mime: string | undefined;
-  size: number | undefined;
+  size: string | undefined;
   sourceFileName: string | undefined;
   storagePath: string | undefined;
   updatedAt?: wellKnownTimestamp;
@@ -1094,11 +1094,11 @@ export type storageservicev1_UploadFileRequest = {
   file?: string;
   mime?: string;
   presign?: storageservicev1_PresignOption;
-  size?: number;
+  size?: string;
   sourceFileName?: string;
   storageObject: storageservicev1_StorageObject | undefined;
-  tenantId?: number;
-  userId?: number;
+  tenantId?: string;
+  userId?: string;
 };
 
 // 预签名选项
@@ -1140,18 +1140,18 @@ export function createFormSubmissionServiceClient(
 // 请求 - 提交表单
 export type contentservicev1_SubmitFormSubmissionRequest = {
   data: { [key: string]: string } | undefined;
-  pageId: number | undefined;
-  sectionId: number | undefined;
+  pageId: string | undefined;
+  sectionId: string | undefined;
 };
 
 // 表单提交
 export type contentservicev1_FormSubmission = {
   createdAt?: wellKnownTimestamp;
   data: { [key: string]: string } | undefined;
-  id?: number;
-  pageId?: number;
-  sectionId?: number;
-  userId?: number;
+  id?: string;
+  pageId?: string;
+  sectionId?: string;
+  userId?: string;
 };
 
 // 交互服务（点赞/收藏）
@@ -1321,7 +1321,7 @@ export function createInteractionServiceClient(
   };
 }
 export type interactionservicev1_LikeRequest = {
-  targetId: number | undefined;
+  targetId: string | undefined;
   targetType: interactionservicev1_TargetType | undefined;
 };
 
@@ -1337,7 +1337,7 @@ export type interactionservicev1_LikeResponse = {
 };
 
 export type interactionservicev1_WatchRequest = {
-  postId: number | undefined;
+  postId: string | undefined;
 };
 
 export type interactionservicev1_WatchResponse = {
@@ -1346,7 +1346,7 @@ export type interactionservicev1_WatchResponse = {
 };
 
 export type interactionservicev1_GetInteractionStatusRequest = {
-  targetIds: number[] | undefined;
+  targetIds: string[] | undefined;
   targetType: interactionservicev1_TargetType | undefined;
 };
 
@@ -1362,36 +1362,36 @@ export type interactionservicev1_InteractionStatus = {
 // 回应 - 帖子列表
 export type contentservicev1_ListPostResponse = {
   items: contentservicev1_Post[] | undefined;
-  total: number | undefined;
+  total: string | undefined;
 };
 
 // 帖子
 export type contentservicev1_Post = {
-  authorId?: number;
+  authorId?: string;
   authorName?: string;
   autoSummary?: boolean;
   availableLanguages: string[] | undefined;
-  categoryIds: number[] | undefined;
+  categoryIds: string[] | undefined;
   code?: string;
   createdAt?: wellKnownTimestamp;
-  createdBy?: number;
+  createdBy?: string;
   customFields: { [key: string]: string } | undefined;
   deletedAt?: wellKnownTimestamp;
-  deletedBy?: number;
+  deletedBy?: string;
   disallowComment?: boolean;
   editorType?: contentservicev1_EditorType;
-  id?: number;
+  id?: string;
   inProgress?: boolean;
   isFeatured?: boolean;
   passwordHash?: string;
   publishTime?: wellKnownTimestamp;
   sortOrder?: number;
   status?: contentservicev1_Post_PostStatus;
-  tagIds: number[] | undefined;
+  tagIds: string[] | undefined;
   thumbnail?: string;
   translations: contentservicev1_PostTranslation[] | undefined;
   updatedAt?: wellKnownTimestamp;
-  updatedBy?: number;
+  updatedBy?: string;
 };
 
 // 帖子状态
@@ -1415,26 +1415,26 @@ export type contentservicev1_EditorType =
 export type contentservicev1_PostTranslation = {
   content?: string;
   createdAt?: wellKnownTimestamp;
-  createdBy?: number;
+  createdBy?: string;
   deletedAt?: wellKnownTimestamp;
-  deletedBy?: number;
+  deletedBy?: string;
   fullPath?: string;
-  id?: number;
+  id?: string;
   languageCode?: string;
   originalContent?: string;
-  postId?: number;
+  postId?: string;
   seo?: contentservicev1_SeoMeta;
   slug?: string;
   summary?: string;
   title?: string;
   updatedAt?: wellKnownTimestamp;
-  updatedBy?: number;
+  updatedBy?: string;
   wordCount?: number;
 };
 
 export type interactionservicev1_GetCountsRequest = {
   metrics: interactionservicev1_CounterMetric[] | undefined;
-  targetIds: number[] | undefined;
+  targetIds: string[] | undefined;
   targetType: interactionservicev1_TargetType | undefined;
 };
 
@@ -1459,19 +1459,19 @@ export type interactionservicev1_CountMap = {
 // 单个 (target, metric) 的计数条目。用于 GetCountsResponse 的内层结构。
 // 注意：proto3 不允许枚举类型作 map key，故内层用 repeated MetricCount 而非 map<CounterMetric,int64>。
 export type interactionservicev1_MetricCount = {
-  count: number | undefined;
+  count: string | undefined;
   metric: interactionservicev1_CounterMetric | undefined;
 };
 
 // 请求 - 上报浏览
 export type interactionservicev1_RecordViewRequest = {
-  targetId: number | undefined;
+  targetId: string | undefined;
   targetType: interactionservicev1_TargetType | undefined;
 };
 
 // 回应 - 上报浏览（返回累加后的浏览量，便于前端直接展示）
 export type interactionservicev1_RecordViewResponse = {
-  viewCount: number | undefined;
+  viewCount: string | undefined;
 };
 
 // 公开媒体资产服务（C 端渲染用最小面）
@@ -1511,7 +1511,7 @@ export function createMediaAssetServiceClient(
 }
 // 请求 - 媒体资源库数据
 export type mediaservicev1_GetMediaAssetRequest = {
-  id: number | undefined;
+  id: string | undefined;
   viewMask?: wellKnownFieldMask;
 };
 
@@ -1521,27 +1521,27 @@ export type mediaservicev1_MediaAsset = {
   altText?: string;
   caption?: string;
   createdAt?: wellKnownTimestamp;
-  createdBy?: number;
+  createdBy?: string;
   deletedAt?: wellKnownTimestamp;
-  deletedBy?: number;
+  deletedBy?: string;
   duration?: number;
   fileHash?: string;
-  fileId?: number;
+  fileId?: string;
   filename?: string;
-  folderId?: number;
+  folderId?: string;
   height?: number;
-  id?: number;
+  id?: string;
   isPrivate?: boolean;
   mimeType?: string;
   processingError?: string;
   processingStatus?: mediaservicev1_MediaAsset_ProcessingStatus;
   referenceCount?: number;
-  size?: number;
+  size?: string;
   storagePath?: string;
   title?: string;
   type?: mediaservicev1_MediaAsset_AssetType;
   updatedAt?: wellKnownTimestamp;
-  updatedBy?: number;
+  updatedBy?: string;
   url?: string;
   variantFileIds: { [key: string]: number } | undefined;
   // 尺寸信息（图片/视频）
@@ -1723,23 +1723,23 @@ export function createNavigationServiceClient(
 // 回应 - 导航列表
 export type siteservicev1_ListNavigationResponse = {
   items: siteservicev1_Navigation[] | undefined;
-  total: number | undefined;
+  total: string | undefined;
 };
 
 // 导航
 export type siteservicev1_Navigation = {
   createdAt?: wellKnownTimestamp;
-  createdBy?: number;
+  createdBy?: string;
   deletedAt?: wellKnownTimestamp;
-  deletedBy?: number;
-  id?: number;
+  deletedBy?: string;
+  id?: string;
   isActive?: boolean;
   items: siteservicev1_NavigationItem[] | undefined;
   locale?: string;
   location?: siteservicev1_Navigation_Location;
   name?: string;
   updatedAt?: wellKnownTimestamp;
-  updatedBy?: number;
+  updatedBy?: string;
 };
 
 // 导航位置枚举
@@ -1757,23 +1757,23 @@ export type siteservicev1_Navigation_Location =
 export type siteservicev1_NavigationItem = {
   children: siteservicev1_NavigationItem[] | undefined;
   createdAt?: wellKnownTimestamp;
-  createdBy?: number;
+  createdBy?: string;
   deletedAt?: wellKnownTimestamp;
-  deletedBy?: number;
+  deletedBy?: string;
   description?: string;
   icon?: string;
-  id?: number;
+  id?: string;
   isInvalid?: boolean;
   isOpenNewTab?: boolean;
   linkType?: siteservicev1_NavigationItem_LinkType;
-  navigationId?: number;
-  objectId?: number;
-  parentId?: number;
+  navigationId?: string;
+  objectId?: string;
+  parentId?: string;
   requiredPermission?: string;
   sortOrder?: number;
   title?: string;
   updatedAt?: wellKnownTimestamp;
-  updatedBy?: number;
+  updatedBy?: string;
   url?: string;
 };
 
@@ -1787,7 +1787,7 @@ export type siteservicev1_NavigationItem_LinkType =
   | 'LINK_TYPE_UNSPECIFIED';
 // 请求 - 导航数据
 export type siteservicev1_GetNavigationRequest = {
-  id?: number;
+  id?: string;
   name?: string;
   viewMask?: wellKnownFieldMask;
 };
@@ -1801,13 +1801,13 @@ export type siteservicev1_CreateNavigationRequest = {
 export type siteservicev1_UpdateNavigationRequest = {
   allowMissing?: boolean;
   data: siteservicev1_Navigation | undefined;
-  id: number | undefined;
+  id: string | undefined;
   updateMask: undefined | wellKnownFieldMask;
 };
 
 // 请求 - 删除导航
 export type siteservicev1_DeleteNavigationRequest = {
-  id?: number;
+  id?: string;
 };
 
 // 请求 - 按 slug 获取页面
@@ -2040,28 +2040,28 @@ export function createPageServiceClient(
 // 回应 - 页面列表
 export type contentservicev1_ListPageResponse = {
   items: contentservicev1_Page[] | undefined;
-  total: number | undefined;
+  total: string | undefined;
 };
 
 // 页面
 export type contentservicev1_Page = {
-  authorId?: number;
+  authorId?: string;
   authorName?: string;
   availableLanguages: string[] | undefined;
   children: contentservicev1_Page[] | undefined;
-  contentModelId?: number;
+  contentModelId?: string;
   createdAt?: wellKnownTimestamp;
-  createdBy?: number;
+  createdBy?: string;
   customFields: { [key: string]: string } | undefined;
   deletedAt?: wellKnownTimestamp;
-  deletedBy?: number;
+  deletedBy?: string;
   depth?: number;
   disallowComment?: boolean;
   editorType?: contentservicev1_EditorType;
-  id?: number;
+  id?: string;
   inProgress?: boolean;
   isCustomTemplate?: boolean;
-  parentId?: number;
+  parentId?: string;
   path?: string;
   redirectUrl?: string;
   // 页面区块（随页面整体读写，Create/Update 时整体替换，对齐 content_model.fields 惯例）
@@ -2075,7 +2075,7 @@ export type contentservicev1_Page = {
   translations: contentservicev1_PageTranslation[] | undefined;
   type?: contentservicev1_Page_PageType;
   updatedAt?: wellKnownTimestamp;
-  updatedBy?: number;
+  updatedBy?: string;
 };
 
 // 页面状态
@@ -2096,18 +2096,18 @@ export type contentservicev1_Page_PageType =
 export type contentservicev1_PageTranslation = {
   coverImage?: string;
   createdAt?: wellKnownTimestamp;
-  createdBy?: number;
+  createdBy?: string;
   deletedAt?: wellKnownTimestamp;
-  deletedBy?: number;
+  deletedBy?: string;
   fullPath?: string;
-  id?: number;
+  id?: string;
   languageCode?: string;
-  pageId?: number;
+  pageId?: string;
   seo?: contentservicev1_SeoMeta;
   slug?: string;
   title?: string;
   updatedAt?: wellKnownTimestamp;
-  updatedBy?: number;
+  updatedBy?: string;
 };
 
 // 页面区块（语言无关的结构，内容随语言变化在翻译表中）。
@@ -2116,17 +2116,17 @@ export type contentservicev1_Section = {
   availableLanguages: string[] | undefined;
   config: { [key: string]: string } | undefined;
   createdAt?: wellKnownTimestamp;
-  createdBy?: number;
+  createdBy?: string;
   deletedAt?: wellKnownTimestamp;
-  deletedBy?: number;
-  id?: number;
+  deletedBy?: string;
+  id?: string;
   name?: string;
-  pageId?: number;
+  pageId?: string;
   sortOrder?: number;
   translations: contentservicev1_SectionTranslation[] | undefined;
   type?: contentservicev1_SectionType;
   updatedAt?: wellKnownTimestamp;
-  updatedBy?: number;
+  updatedBy?: string;
 };
 
 // 区块类型
@@ -2150,19 +2150,19 @@ export type contentservicev1_SectionType =
 export type contentservicev1_SectionTranslation = {
   content: { [key: string]: string } | undefined;
   createdAt?: wellKnownTimestamp;
-  createdBy?: number;
+  createdBy?: string;
   deletedAt?: wellKnownTimestamp;
-  deletedBy?: number;
-  id?: number;
+  deletedBy?: string;
+  id?: string;
   languageCode?: string;
-  sectionId?: number;
+  sectionId?: string;
   updatedAt?: wellKnownTimestamp;
-  updatedBy?: number;
+  updatedBy?: string;
 };
 
 // 请求 - 页面数据
 export type contentservicev1_GetPageRequest = {
-  id?: number;
+  id?: string;
   locale?: string;
   slug?: string;
   viewMask?: wellKnownFieldMask;
@@ -2177,13 +2177,13 @@ export type contentservicev1_CreatePageRequest = {
 export type contentservicev1_UpdatePageRequest = {
   allowMissing?: boolean;
   data: contentservicev1_Page | undefined;
-  id: number | undefined;
+  id: string | undefined;
   updateMask: undefined | wellKnownFieldMask;
 };
 
 // 请求 - 删除页面
 export type contentservicev1_DeletePageRequest = {
-  id?: number;
+  id?: string;
 };
 
 // 请求 - 按 slug 获取帖子
@@ -2533,7 +2533,7 @@ export function createPostServiceClient(
 // 查询内容模型列表 - 回应
 // 请求 - 按文章取内容模型
 export type contentservicev1_GetModelByPostRequest = {
-  postId: number | undefined;
+  postId: string | undefined;
 };
 
 // 内容模型
@@ -2545,28 +2545,28 @@ export type contentservicev1_ContentModel = {
   // C 端渲染组件值所需的最小 schema 面）
   components: contentservicev1_ContentModelComponent[] | undefined;
   createdAt?: wellKnownTimestamp;
-  createdBy?: number;
+  createdBy?: string;
   description?: string;
   // 字段定义随模型整体读写（Create/Update 时整体替换，对齐 post 的 translations 惯例）
   fields: contentservicev1_FieldDefinition[] | undefined;
-  id?: number;
+  id?: string;
   name?: string;
   sortOrder?: number;
-  tenantId?: number;
+  tenantId?: string;
   translations: contentservicev1_ContentModelTranslation[] | undefined;
   updatedAt?: wellKnownTimestamp;
-  updatedBy?: number;
+  updatedBy?: string;
 };
 
 // 字段定义
 export type contentservicev1_FieldDefinition = {
   componentConfig?: contentservicev1_ComponentConfig;
-  componentId?: number;
-  contentModelId?: number;
+  componentId?: string;
+  contentModelId?: string;
   createdAt?: wellKnownTimestamp;
-  createdBy?: number;
+  createdBy?: string;
   description?: string;
-  id?: number;
+  id?: string;
   isRequired?: boolean;
   label?: string;
   name?: string;
@@ -2592,7 +2592,7 @@ export type contentservicev1_FieldDefinition_Type =
 // relation 类型字段的引用配置
 export type contentservicev1_RelationConfig = {
   allowCrossTenant?: boolean;
-  filterCategoryId?: number;
+  filterCategoryId?: string;
   targetEntityType?: string;
 };
 
@@ -2606,10 +2606,10 @@ export type contentservicev1_ComponentConfig = {
 // 字段定义翻译
 export type contentservicev1_FieldDefinitionTranslation = {
   createdAt?: wellKnownTimestamp;
-  createdBy?: number;
+  createdBy?: string;
   description?: string;
-  fieldDefinitionId?: number;
-  id?: number;
+  fieldDefinitionId?: string;
+  id?: string;
   label?: string;
   languageCode?: string;
   placeholder?: string;
@@ -2627,18 +2627,18 @@ export type contentservicev1_ComponentDefinition = {
   createdAt?: wellKnownTimestamp;
   description?: string;
   fieldCount?: number;
-  id?: number;
+  id?: string;
   name?: string;
   updatedAt?: wellKnownTimestamp;
 };
 
 // 内容模型翻译
 export type contentservicev1_ContentModelTranslation = {
-  contentModelId?: number;
+  contentModelId?: string;
   createdAt?: wellKnownTimestamp;
-  createdBy?: number;
+  createdBy?: string;
   description?: string;
-  id?: number;
+  id?: string;
   languageCode?: string;
   name?: string;
 };
@@ -2661,7 +2661,7 @@ export type contentservicev1_ContentReferenceSummary = {
   ref?: string;
   slug?: string;
   targetEntityType?: string;
-  targetId?: number;
+  targetId?: string;
   title?: string;
   urlPath?: string;
 };
@@ -2697,7 +2697,7 @@ export type contentservicev1_SearchPostHit = {
   // 语言代码
   language: string | undefined;
   // 帖子 ID（用于后续 GetPost 详情查询）
-  postId: number | undefined;
+  postId: string | undefined;
   // 摘要（来自翻译，搜索结果卡片展示用）
   summary: string | undefined;
   // 标题（来自翻译，用于搜索结果展示）
@@ -2723,7 +2723,7 @@ export type contentservicev1_SearchPostsSuggestResponse = {
 // 请求 - 帖子数据
 export type contentservicev1_GetPostRequest = {
   code?: string;
-  id?: number;
+  id?: string;
   locale?: string;
   viewMask?: wellKnownFieldMask;
 };
@@ -2737,13 +2737,13 @@ export type contentservicev1_CreatePostRequest = {
 export type contentservicev1_UpdatePostRequest = {
   allowMissing?: boolean;
   data: contentservicev1_Post | undefined;
-  id: number | undefined;
+  id: string | undefined;
   updateMask: undefined | wellKnownFieldMask;
 };
 
 // 请求 - 删除帖子
 export type contentservicev1_DeletePostRequest = {
-  id?: number;
+  id?: string;
 };
 
 // URL 重定向查询服务（公开站点）：
@@ -2777,21 +2777,21 @@ export type contentservicev1_ListRedirectsRequest = {
 // 回应 - 重定向列表
 export type contentservicev1_ListRedirectsResponse = {
   items: contentservicev1_Redirect[] | undefined;
-  total: number | undefined;
+  total: string | undefined;
 };
 
 // URL 重定向
 export type contentservicev1_Redirect = {
   createdAt?: wellKnownTimestamp;
-  createdBy?: number;
+  createdBy?: string;
   description?: string;
   enabled?: boolean;
   fromPath?: string;
-  id?: number;
+  id?: string;
   statusCode?: number;
   toUrl?: string;
   updatedAt?: wellKnownTimestamp;
-  updatedBy?: number;
+  updatedBy?: string;
 };
 
 // 站点服务（公开端点）
@@ -2953,28 +2953,28 @@ export function createSiteServiceClient(
 // 回应 - 站点列表
 export type siteservicev1_ListSiteResponse = {
   items: siteservicev1_Site[] | undefined;
-  total: number | undefined;
+  total: string | undefined;
 };
 
 // 站点
 export type siteservicev1_Site = {
   alternateDomains: string[] | undefined;
   createdAt?: wellKnownTimestamp;
-  createdBy?: number;
+  createdBy?: string;
   defaultLocale?: string;
   deletedAt?: wellKnownTimestamp;
-  deletedBy?: number;
+  deletedBy?: string;
   domain?: string;
-  id?: number;
+  id?: string;
   isDefault?: boolean;
   name?: string;
   slug?: string;
   status?: siteservicev1_Site_Status;
   template?: string;
-  tenantId?: number;
+  tenantId?: string;
   theme?: string;
   updatedAt?: wellKnownTimestamp;
-  updatedBy?: number;
+  updatedBy?: string;
 };
 
 // 站点状态
@@ -2998,13 +2998,13 @@ export type siteservicev1_CreateSiteRequest = {
 export type siteservicev1_UpdateSiteRequest = {
   allowMissing?: boolean;
   data: siteservicev1_Site | undefined;
-  id: number | undefined;
+  id: string | undefined;
   updateMask: undefined | wellKnownFieldMask;
 };
 
 // 请求 - 删除站点
 export type siteservicev1_DeleteSiteRequest = {
-  id?: number;
+  id?: string;
 };
 
 // 标签服务
@@ -3206,7 +3206,7 @@ export function createTagServiceClient(
 // 回应 - 标签列表
 export type contentservicev1_ListTagResponse = {
   items: contentservicev1_Tag[] | undefined;
-  total: number | undefined;
+  total: string | undefined;
 };
 
 // 标签
@@ -3215,19 +3215,19 @@ export type contentservicev1_Tag = {
   code?: string;
   color?: string;
   createdAt?: wellKnownTimestamp;
-  createdBy?: number;
+  createdBy?: string;
   deletedAt?: wellKnownTimestamp;
-  deletedBy?: number;
+  deletedBy?: string;
   group?: string;
   icon?: string;
-  id?: number;
+  id?: string;
   isFeatured?: boolean;
   postCount?: number;
   sortOrder?: number;
   status?: contentservicev1_Tag_TagStatus;
   translations: contentservicev1_TagTranslation[] | undefined;
   updatedAt?: wellKnownTimestamp;
-  updatedBy?: number;
+  updatedBy?: string;
 };
 
 // 标签状态
@@ -3240,25 +3240,25 @@ export type contentservicev1_Tag_TagStatus =
 export type contentservicev1_TagTranslation = {
   coverImage?: string;
   createdAt?: wellKnownTimestamp;
-  createdBy?: number;
+  createdBy?: string;
   deletedAt?: wellKnownTimestamp;
-  deletedBy?: number;
+  deletedBy?: string;
   description?: string;
   fullPath?: string;
-  id?: number;
+  id?: string;
   languageCode?: string;
   name?: string;
   seo?: contentservicev1_SeoMeta;
   slug?: string;
-  tagId?: number;
+  tagId?: string;
   updatedAt?: wellKnownTimestamp;
-  updatedBy?: number;
+  updatedBy?: string;
 };
 
 // 请求 - 标签数据
 export type contentservicev1_GetTagRequest = {
   code?: string;
-  id?: number;
+  id?: string;
   locale?: string;
   viewMask?: wellKnownFieldMask;
 };
@@ -3272,13 +3272,13 @@ export type contentservicev1_CreateTagRequest = {
 export type contentservicev1_UpdateTagRequest = {
   allowMissing?: boolean;
   data: contentservicev1_Tag | undefined;
-  id: number | undefined;
+  id: string | undefined;
   updateMask: undefined | wellKnownFieldMask;
 };
 
 // 请求 - 删除标签
 export type contentservicev1_DeleteTagRequest = {
-  id?: number;
+  id?: string;
 };
 
 // 用户个人资料服务
@@ -3355,47 +3355,47 @@ export function createUserProfileServiceClient(
 export type identityservicev1_User = {
   address?: string;
   avatar?: string;
-  commentCount?: number;
+  commentCount?: string;
   createdAt?: wellKnownTimestamp;
-  createdBy?: number;
+  createdBy?: string;
   deletedAt?: wellKnownTimestamp;
-  deletedBy?: number;
+  deletedBy?: string;
   description?: string;
   email?: string;
-  followers?: number;
-  following?: number;
+  followers?: string;
+  following?: string;
   gender?: identityservicev1_User_Gender;
-  id?: number;
+  id?: string;
   lastLoginAt?: wellKnownTimestamp;
   lastLoginIp?: string;
-  likeCount?: number;
+  likeCount?: string;
   // 偏好语言（事务性邮件/监控告警按收件人渲染；zh-CN/en-US，空=默认中文）
   locale?: string;
   lockedUntil?: wellKnownTimestamp;
   mobile?: string;
   nickname?: string;
-  orgUnitId?: number;
-  orgUnitIds: number[] | undefined;
+  orgUnitId?: string;
+  orgUnitIds: string[] | undefined;
   orgUnitName?: string;
   orgUnitNames: string[] | undefined;
-  positionId?: number;
-  positionIds: number[] | undefined;
+  positionId?: string;
+  positionIds: string[] | undefined;
   positionName?: string;
   positionNames: string[] | undefined;
-  postCount?: number;
+  postCount?: string;
   realname?: string;
   region?: string;
   remark?: string;
-  roleId?: number;
-  roleIds: number[] | undefined;
+  roleId?: string;
+  roleIds: string[] | undefined;
   roleNames: string[] | undefined;
   roles: string[] | undefined;
   status?: identityservicev1_User_Status;
   telephone?: string;
-  tenantId?: number;
+  tenantId?: string;
   tenantName?: string;
   updatedAt?: wellKnownTimestamp;
-  updatedBy?: number;
+  updatedBy?: string;
   username?: string;
 };
 
@@ -3418,7 +3418,7 @@ export type identityservicev1_UpdateUserRequest = {
   //
   // Behaviors: REQUIRED
   data: identityservicev1_User | undefined;
-  id: number | undefined;
+  id: string | undefined;
   password?: string;
   updateMask: undefined | wellKnownFieldMask;
 };

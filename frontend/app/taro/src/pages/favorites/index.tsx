@@ -45,7 +45,8 @@ export default function FavoritesPage() {
         loadFavorites();
     });
 
-    const unwatch = (postId: number) => {
+    // 文章 ID 已升级为 uint64 字符串
+    const unwatch = (postId: string) => {
         unwatchPost(postId)
             .then(() => {
                 setPosts((prev) => prev.filter((p) => p.id !== postId));

@@ -26,8 +26,9 @@ const UserProfile = () => {
   const user = userData as User | undefined | null;
 
   // 租户自助用量：租户用户可见本租户套餐用量与配额（平台用户不展示）
+  // tenantId 为 uint64 字符串，'0'/空 表示平台用户
   const accessToken = useAuthStore((st) => st.accessToken);
-  const isTenantUser = !!accessToken && (user?.tenantId ?? 0) > 0;
+  const isTenantUser = !!accessToken && !!user?.tenantId && user.tenantId !== '0';
 
   const handleSwitchTab = (key: string) => {
     setActiveKey(key);

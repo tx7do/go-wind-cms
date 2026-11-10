@@ -7,7 +7,7 @@ import { formatDate } from '@/utils/date'
 const props = withDefaults(defineProps<{
   post: any
   from?: string
-  categoryId?: number
+  categoryId?: string
   likeCount?: number
 }>(), {
   from: 'post-list',

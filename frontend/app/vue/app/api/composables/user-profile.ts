@@ -27,7 +27,7 @@ export async function getMe() {
 /**
  * 更新当前用户
  */
-export async function updateUser(id: number, values: Record<string, any> = {}) {
+export async function updateUser(id: string, values: Record<string, any> = {}) {
   const password = values.password ?? null;
   const cleaned = omit(values, 'password');
   const updateMask = makeUpdateMask(Object.keys(cleaned ?? []));
@@ -120,7 +120,7 @@ export function useUpdateUser(
   options?: UseMutationOptions<
     {},
     Error,
-    { id: number; values: Record<string, any> }
+    { id: string; values: Record<string, any> }
   >,
 ) {
   return useMutation({
@@ -132,7 +132,7 @@ export function useUpdateUser(
 /**
  * 更新用户资料【给 Store / 外部调用】不带 Hook 的方法
  */
-export async function fetchUpdateUser(id: number, values: Record<string, any> = {}) {
+export async function fetchUpdateUser(id: string, values: Record<string, any> = {}) {
   return queryClient.fetchQuery({
     queryKey: ['updateUser', id, values],
     queryFn: () => updateUser(id, values),

@@ -20,9 +20,9 @@ export default function CategoryDetailPage() {
     const router = useI18nRouter();
 
     const categoryId = useMemo(() => {
+        // id 已升级为 uint64 字符串，路由参数直接透传，不再 Number() 转换
         const raw = Taro.getCurrentInstance()?.router?.params?.id;
-        const id = Number(raw);
-        return Number.isInteger(id) && id > 0 ? id : 0;
+        return raw || '';
     }, []);
 
     const [detail, setDetail] = useState<contentservicev1_Category | null>(null);

@@ -10,9 +10,10 @@ import PostList from '@/components/post/PostList';
 
 export default function PostListPage() {
     const t = useTranslations('page');
-    const [selectedCategoryId, setSelectedCategoryId] = useState<number | null>(null);
+    // 分类 ID 已升级为 uint64 字符串
+    const [selectedCategoryId, setSelectedCategoryId] = useState<string | null>(null);
 
-    const handleCategoryChange = (categoryId: number | null) => {
+    const handleCategoryChange = (categoryId: string | null) => {
         console.log('[PostListPage] Category changed:', categoryId);
         setSelectedCategoryId(categoryId);
     };

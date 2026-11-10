@@ -30,7 +30,7 @@ import {useAccessStore} from '@/store/core/access/store';
 /**
  * 点赞（post 或 comment）。幂等。
  */
-export async function likePost(targetType: interactionservicev1_TargetType, targetId: number) {
+export async function likePost(targetType: interactionservicev1_TargetType, targetId: string) {
   return apiClient.interactionService.Like({
     targetType,
     targetId,
@@ -40,7 +40,7 @@ export async function likePost(targetType: interactionservicev1_TargetType, targ
 /**
  * 取消点赞。幂等。
  */
-export async function unlikePost(targetType: interactionservicev1_TargetType, targetId: number) {
+export async function unlikePost(targetType: interactionservicev1_TargetType, targetId: string) {
   return apiClient.interactionService.Unlike({
     targetType,
     targetId,
@@ -50,7 +50,7 @@ export async function unlikePost(targetType: interactionservicev1_TargetType, ta
 /**
  * 收藏 post。幂等。
  */
-export async function watchPost(postId: number) {
+export async function watchPost(postId: string) {
   return apiClient.interactionService.Watch({
     postId,
   });
@@ -59,7 +59,7 @@ export async function watchPost(postId: number) {
 /**
  * 取消收藏 post。幂等。
  */
-export async function unwatchPost(postId: number) {
+export async function unwatchPost(postId: string) {
   return apiClient.interactionService.Unwatch({
     postId,
   });
@@ -70,7 +70,7 @@ export async function unwatchPost(postId: number) {
  */
 export async function getInteractionStatus(
   targetType: interactionservicev1_TargetType,
-  targetIds: number[],
+  targetIds: string[],
 ) {
   return apiClient.interactionService.GetInteractionStatus({
     targetType,
@@ -83,7 +83,7 @@ export async function getInteractionStatus(
  */
 export async function getCounts(
   targetType: interactionservicev1_TargetType,
-  targetIds: number[],
+  targetIds: string[],
   metrics: interactionservicev1_CounterMetric[],
 ) {
   return apiClient.interactionService.GetCounts({
@@ -110,7 +110,7 @@ export async function listWatchedPosts(page?: number, pageSize?: number) {
  */
 export async function recordView(
   targetType: interactionservicev1_TargetType,
-  targetId: number,
+  targetId: string,
 ) {
   return apiClient.interactionService.RecordView({targetType, targetId});
 }
@@ -127,7 +127,7 @@ export async function recordView(
  */
 export function useInteractionStatus(
   targetType: interactionservicev1_TargetType,
-  targetIds: number[],
+  targetIds: string[],
   options?: Omit<
     UseQueryOptions<interactionservicev1_GetInteractionStatusResponse, Error>,
     'queryKey' | 'queryFn' | 'enabled'
@@ -154,7 +154,7 @@ export function useInteractionStatus(
  */
 export function useGetCounts(
   targetType: interactionservicev1_TargetType,
-  targetIds: number[],
+  targetIds: string[],
   metrics: interactionservicev1_CounterMetric[],
   options?: Omit<
     UseQueryOptions<interactionservicev1_GetCountsResponse, Error>,
@@ -176,15 +176,16 @@ export function useGetCounts(
  */
 export function extractCount(
   resp: interactionservicev1_GetCountsResponse | undefined,
-  targetId: number,
+  targetId: string,
   metric: interactionservicev1_CounterMetric,
 ): number {
   if (!resp?.counts) return 0;
-  const cm = resp.counts[String(targetId)];
+  const cm = resp.counts[targetId];
   if (!cm?.counts) return 0;
   for (const mc of cm.counts) {
     if (mc.metric === metric && mc.count !== undefined) {
-      return mc.count;
+      // count 为 uint64，proto3 JSON 下是字符串；计数语义保持 number
+      return Number(mc.count) || 0;
     }
   }
   return 0;
@@ -201,7 +202,7 @@ export function useLike(
   options?: UseMutationOptions<
     interactionservicev1_LikeResponse,
     Error,
-    { targetType: interactionservicev1_TargetType; targetId: number }
+    { targetType: interactionservicev1_TargetType; targetId: string }
   >,
 ) {
   const qc = useQueryClient();
@@ -219,7 +220,7 @@ export function useUnlike(
   options?: UseMutationOptions<
     interactionservicev1_LikeResponse,
     Error,
-    { targetType: interactionservicev1_TargetType; targetId: number }
+    { targetType: interactionservicev1_TargetType; targetId: string }
   >,
 ) {
   const qc = useQueryClient();
@@ -237,7 +238,7 @@ export function useWatch(
   options?: UseMutationOptions<
     interactionservicev1_WatchResponse,
     Error,
-    { postId: number }
+    { postId: string }
   >,
 ) {
   const qc = useQueryClient();
@@ -258,7 +259,7 @@ export function useUnwatch(
   options?: UseMutationOptions<
     interactionservicev1_WatchResponse,
     Error,
-    { postId: number }
+    { postId: string }
   >,
 ) {
   const qc = useQueryClient();

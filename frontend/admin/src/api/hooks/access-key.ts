@@ -35,10 +35,10 @@ export function useCreateAccessKey(
 
 /** 更新凭证（名称/状态/过期时间）；服务端白名单保护 access_key/secret_hash/tenant_id */
 export function useUpdateAccessKey(
-  options?: UseMutationOptions<void, Error, { id: number; values: Record<string, unknown> }>,
+  options?: UseMutationOptions<void, Error, { id: string; values: Record<string, unknown> }>,
 ) {
   return useMutation({
-    mutationFn: async ({ id, values }: { id: number; values: Record<string, unknown> }) => {
+    mutationFn: async ({ id, values }: { id: string; values: Record<string, unknown> }) => {
       await apiClient.accessKeyService.Update({
         id,
         // 表单 Partial → proto 消息边界：字段集为真子集，运行时安全

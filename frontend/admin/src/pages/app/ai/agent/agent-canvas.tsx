@@ -689,7 +689,7 @@ function TestRunDrawer({
   onTraceParsed,
 }: {
   open: boolean;
-  appId: number | undefined;
+  appId: string | undefined;
   inputVars: any[];
   onClose: () => void;
   runMutation: ReturnType<typeof useRunAiAgentApp>;

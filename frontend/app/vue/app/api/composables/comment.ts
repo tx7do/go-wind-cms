@@ -35,7 +35,7 @@ export async function listComment(
 /**
  * 获取评论
  */
-export async function getComment(id: number) {
+export async function getComment(id: string) {
   return await apiClient.commentService.Get({ id });
 }
 
@@ -54,7 +54,7 @@ export async function createComment(values: Record<string, any> = {}) {
 /**
  * 更新评论
  */
-export async function updateComment(id: number, values: Record<string, any> = {}) {
+export async function updateComment(id: string, values: Record<string, any> = {}) {
   return await apiClient.commentService.Update({
     id,
     // @ts-ignore proto generated code is error.
@@ -68,7 +68,7 @@ export async function updateComment(id: number, values: Record<string, any> = {}
 /**
  * 删除评论
  */
-export async function deleteComment(id: number) {
+export async function deleteComment(id: string) {
   return await apiClient.commentService.Delete({ id });
 }
 
@@ -117,7 +117,7 @@ export async function fetchListComment(params: ListCommentParams) {
 }
 
 export function useGetComment(
-  options?: UseMutationOptions<any, Error, number>,
+  options?: UseMutationOptions<any, Error, string>,
 ) {
   return useMutation({
     mutationFn: (id) => getComment(id),
@@ -125,7 +125,7 @@ export function useGetComment(
   });
 }
 
-export async function fetchComment(id: number) {
+export async function fetchComment(id: string) {
   return queryClient.fetchQuery({
     queryKey: ['getComment', id],
     queryFn: () => getComment(id),
@@ -146,7 +146,7 @@ export function useCreateComment(
 }
 
 export function useUpdateComment(
-  options?: UseMutationOptions<{}, Error, { id: number; values: Record<string, any> }>,
+  options?: UseMutationOptions<{}, Error, { id: string; values: Record<string, any> }>,
 ) {
   return useMutation({
     mutationFn: ({ id, values }) => updateComment(id, values),
@@ -155,7 +155,7 @@ export function useUpdateComment(
 }
 
 export function useDeleteComment(
-  options?: UseMutationOptions<{}, Error, number>,
+  options?: UseMutationOptions<{}, Error, string>,
 ) {
   return useMutation({
     mutationFn: (id) => deleteComment(id),

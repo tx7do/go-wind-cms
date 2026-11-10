@@ -44,7 +44,7 @@ export async function listPagesRaw(params: {
 /**
  * 获取单个页面
  */
-export async function getPage(id: number) {
+export async function getPage(id: string) {
   return apiClient.pageService.Get({id});
 }
 
@@ -61,7 +61,7 @@ export async function createPage(values: Partial<contentservicev1_Page>) {
  * 更新页面
  */
 export async function updatePage(params: {
-  id: number;
+  id: string;
   values: Partial<contentservicev1_Page>;
 }) {
   return apiClient.pageService.Update({
@@ -74,7 +74,7 @@ export async function updatePage(params: {
 /**
  * 删除页面
  */
-export async function deletePage(id: number) {
+export async function deletePage(id: string) {
   return apiClient.pageService.Delete({id});
 }
 
@@ -119,7 +119,7 @@ export async function fetchListPages(params: {
 // 获取单个页面 Hook
 // ==============================
 export function useGetPage(
-  options?: UseMutationOptions<contentservicev1_Page, Error, number>,
+  options?: UseMutationOptions<contentservicev1_Page, Error, string>,
 ) {
   return useMutation({
     mutationFn: (id) => getPage(id),
@@ -130,7 +130,7 @@ export function useGetPage(
 // ==============================================
 // 获取单个页面 【给 Store / 外部调用】不带 Hook 的方法
 // ==============================================
-export async function fetchPage(id: number) {
+export async function fetchPage(id: string) {
   return queryClient.fetchQuery({
     queryKey: ['getPage', id],
     queryFn: () => getPage(id),
@@ -157,7 +157,7 @@ export function useUpdatePage(
   options?: UseMutationOptions<
     contentservicev1_Page,
     Error,
-    { id: number; values: Partial<contentservicev1_Page> }
+    { id: string; values: Partial<contentservicev1_Page> }
   >,
 ) {
   return useMutation({
@@ -169,7 +169,7 @@ export function useUpdatePage(
 // ==============================
 // 删除页面 Hook
 // ==============================
-export function useDeletePage(options?: UseMutationOptions<Record<string, never>, Error, number>) {
+export function useDeletePage(options?: UseMutationOptions<Record<string, never>, Error, string>) {
   return useMutation({
     mutationFn: (id) => deletePage(id),
     ...options,

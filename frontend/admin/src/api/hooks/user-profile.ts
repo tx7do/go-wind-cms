@@ -41,10 +41,10 @@ export async function fetchUserProfile() {
 }
 
 export function useUpdateUserProfile(
-  options?: UseMutationOptions<unknown, Error, { id: number; values: Record<string, unknown> }>,
+  options?: UseMutationOptions<unknown, Error, { id: string; values: Record<string, unknown> }>,
 ) {
   return useMutation({
-    mutationFn: ({ id, values }: { id: number; values: Record<string, unknown> }) =>
+    mutationFn: ({ id, values }: { id: string; values: Record<string, unknown> }) =>
       apiClient.userProfileService.UpdateUser({
         id,
         // 表单 Partial → proto 消息边界：字段集为真子集，运行时安全

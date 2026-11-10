@@ -34,7 +34,7 @@ export async function fetchListContentModels(params: PaginationQuery) {
     queryKey: ['listContentModels', params],
     queryFn: () => apiClient.contentModelService.List(params.toRawParams()),
     retry: 0,
-  }) as Promise<{ items: contentservicev1_ContentModel[]; total?: number }>;
+  }) as Promise<{ items: contentservicev1_ContentModel[]; total?: string | number }>;
 }
 
 export async function fetchListFieldDefinitions(
@@ -67,7 +67,7 @@ export function useUpdateContentModel(
   options?: UseMutationOptions<
     contentservicev1_ContentModel,
     Error,
-    { id: number; values: Record<string, unknown> }
+    { id: string; values: Record<string, unknown> }
   >,
 ) {
   return useMutation({
@@ -86,7 +86,7 @@ export function useUpdateContentModel(
 }
 
 export function useDeleteContentModel(
-  options?: UseMutationOptions<unknown, Error, { id: number }>,
+  options?: UseMutationOptions<unknown, Error, { id: string }>,
 ) {
   return useMutation({
     mutationFn: (data) => apiClient.contentModelService.Delete(data),

@@ -21,10 +21,10 @@ export default function PageDetailPage() {
 
     const params = useMemo(() => {
         const routerParams = Taro.getCurrentInstance()?.router?.params ?? {};
-        const id = Number(routerParams.id);
+        // id 已升级为 uint64 字符串，路由参数直接透传，不再 Number() 转换
         return {
             slug: routerParams.slug || '',
-            id: Number.isInteger(id) && id > 0 ? id : 0,
+            id: routerParams.id || '',
         };
     }, []);
 
@@ -32,7 +32,7 @@ export default function PageDetailPage() {
     const [loading, setLoading] = useState(true);
 
     // PV 上报去重
-    const viewReportedRef = useRef<number | null>(null);
+    const viewReportedRef = useRef<string | null>(null);
     // redirectUrl 只跳一次
     const redirectedRef = useRef(false);
 

@@ -27,7 +27,7 @@ function absolutizeWsUrl(url: string): string {
  */
 export function useCollaboration(
   targetType: 'post' | 'page',
-  targetId?: number | null,
+  targetId?: string | null,
   locale?: string,
 ) {
   const token = useAuthStore((s) => s.accessToken);
@@ -43,12 +43,13 @@ export function useCollaboration(
 
   return useMemo(() => {
     if (!targetId || !token) return null;
-    const id = userId ?? 0;
+    // userId 是 uint64 字符串；取色需要数值下标，用 Number 折算（< 2^53 安全）
+    const id = Number(userId ?? 0) || 0;
     const result = {
       room: `${targetType}:${targetId}:${locale || 'zh-CN'}`,
       wsUrl: absolutizeWsUrl(import.meta.env.VITE_COLLAB_WS_URL || '/collab'),
       token,
-      userName: userName || `用户${id}`,
+      userName: userName || `用户${userId ?? ''}`,
       userColor: CURSOR_PALETTE[id % CURSOR_PALETTE.length],
     };
     return result;

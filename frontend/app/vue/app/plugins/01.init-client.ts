@@ -44,13 +44,16 @@ export default defineNuxtPlugin(async (nuxtApp) => {
                 const resp = await apiRefreshToken(refreshTokenValue)
                 const newToken = resp.access_token || ''
 
-                accessStore.setAccessToken(newToken, resp.expires_in && resp.expires_in !== 0
-                    ? Date.now() + resp.expires_in * 1000
+                // expires_in / refresh_expires_in 为 int64 秒数，proto3 JSON 下是字符串，转回 number 参与运算
+                const expiresIn = Number(resp.expires_in || 0)
+                accessStore.setAccessToken(newToken, expiresIn !== 0
+                    ? Date.now() + expiresIn * 1000
                     : undefined)
 
                 if (resp.refresh_token) {
-                    accessStore.setRefreshToken(resp.refresh_token, resp.refresh_expires_in && resp.refresh_expires_in !== 0
-                        ? Date.now() + resp.refresh_expires_in * 1000
+                    const refreshExpiresIn = Number(resp.refresh_expires_in || 0)
+                    accessStore.setRefreshToken(resp.refresh_token, refreshExpiresIn !== 0
+                        ? Date.now() + refreshExpiresIn * 1000
                         : undefined)
                 }
 

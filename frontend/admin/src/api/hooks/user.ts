@@ -98,7 +98,7 @@ export function useCreateUser(
 // ==============================
 // 删除用户
 // ==============================
-export function useDeleteUser(options?: UseMutationOptions<unknown, Error, number>) {
+export function useDeleteUser(options?: UseMutationOptions<unknown, Error, string>) {
   return useMutation({
     mutationFn: (id) => apiClient.userService.Delete({ id }),
     ...options,
@@ -109,12 +109,12 @@ export function useDeleteUser(options?: UseMutationOptions<unknown, Error, numbe
 // 更新用户
 // ==============================
 export function useUpdateUser(
-  options?: UseMutationOptions<unknown, Error, { id: number; values: Record<string, unknown> }>,
+  options?: UseMutationOptions<unknown, Error, { id: string; values: Record<string, unknown> }>,
 ) {
   return useMutation({
     // proto UpdateUserRequest.password 是顶层字段且要求 AES 密文：
     // 留在 data/updateMask 里后端读不到，会静默跳过重置密码（200 但密码未变）
-    mutationFn: ({ id, values }: { id: number; values: Record<string, unknown> }) => {
+    mutationFn: ({ id, values }: { id: string; values: Record<string, unknown> }) => {
       const { password, ...data } = values ?? {};
       return apiClient.userService.Update({
         id,

@@ -11,7 +11,7 @@ import { useListMediaAssetReferences } from '@/api/hooks/media-asset';
  */
 const MediaAssetReferencesModal: React.FC<{
   open: boolean;
-  mediaAssetId?: number;
+  mediaAssetId?: string;
   mediaAssetName?: string;
   onClose: () => void;
 }> = ({ open, mediaAssetId, mediaAssetName, onClose }) => {

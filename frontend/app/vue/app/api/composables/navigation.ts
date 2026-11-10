@@ -42,7 +42,7 @@ export async function listNavigation(
 /**
  * 获取导航
  */
-export async function getNavigation(id: number) {
+export async function getNavigation(id: string) {
   return await apiClient.navigationService.Get({ id });
 }
 
@@ -61,7 +61,7 @@ export async function createNavigation(values: Record<string, any> = {}) {
 /**
  * 更新导航
  */
-export async function updateNavigation(id: number, values: Record<string, any> = {}) {
+export async function updateNavigation(id: string, values: Record<string, any> = {}) {
   return await apiClient.navigationService.Update({
     id,
     // @ts-ignore proto generated code is error.
@@ -75,7 +75,7 @@ export async function updateNavigation(id: number, values: Record<string, any> =
 /**
  * 删除导航
  */
-export async function deleteNavigation(id: number) {
+export async function deleteNavigation(id: string) {
   return await apiClient.navigationService.Delete({ id });
 }
 
@@ -126,7 +126,7 @@ export async function fetchListNavigation(params: ListNavigationParams) {
 }
 
 export function useGetNavigation(
-  options?: UseMutationOptions<any, Error, number>,
+  options?: UseMutationOptions<any, Error, string>,
 ) {
   return useMutation({
     mutationFn: (id) => getNavigation(id),
@@ -134,7 +134,7 @@ export function useGetNavigation(
   });
 }
 
-export async function fetchNavigation(id: number) {
+export async function fetchNavigation(id: string) {
   return queryClient.fetchQuery({
     queryKey: ['getNavigation', id],
     queryFn: () => getNavigation(id),
@@ -155,7 +155,7 @@ export function useCreateNavigation(
 }
 
 export function useUpdateNavigation(
-  options?: UseMutationOptions<{}, Error, { id: number; values: Record<string, any> }>,
+  options?: UseMutationOptions<{}, Error, { id: string; values: Record<string, any> }>,
 ) {
   return useMutation({
     mutationFn: ({ id, values }) => updateNavigation(id, values),
@@ -164,7 +164,7 @@ export function useUpdateNavigation(
 }
 
 export function useDeleteNavigation(
-  options?: UseMutationOptions<{}, Error, number>,
+  options?: UseMutationOptions<{}, Error, string>,
 ) {
   return useMutation({
     mutationFn: (id) => deleteNavigation(id),
@@ -181,7 +181,7 @@ export function useDeleteNavigation(
  */
 export function findNavItem(
   items: siteservicev1_NavigationItem[],
-  key: number,
+  key: string,
 ): siteservicev1_NavigationItem | null {
   for (const item of items) {
     if (item.id === key) return item;

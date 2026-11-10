@@ -82,7 +82,7 @@ function useComponentSchemas(fields: FieldDef[]) {
       }
       try {
         const list = await fetchListComponentDefinitions();
-        const idByCode = new Map<string, number>();
+        const idByCode = new Map<string, string>();
         for (const c of list.items ?? []) {
           if (c.id && c.code) idByCode.set(c.code, c.id);
         }

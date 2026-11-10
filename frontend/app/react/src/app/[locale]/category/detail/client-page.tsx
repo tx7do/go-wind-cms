@@ -30,8 +30,9 @@ export default function CategoryDetailPage() {
     const [childCategories, setChildCategories] = useState<contentservicev1_Category[]>([]);
 
     const categoryId = useMemo(() => {
+        // id 已升级为 uint64 字符串，路由参数直接透传，不再 parseInt
         const id = searchParams.get('id');
-        return id ? parseInt(id) : null;
+        return id || null;
     }, [searchParams]);
 
     // Get parent category ID
@@ -63,7 +64,7 @@ export default function CategoryDetailPage() {
         }
     }
 
-    function handleViewChildCategory(id: number) {
+    function handleViewChildCategory(id: string) {
         router.push(`/category/detail?id=${id}`);
     }
 

@@ -82,7 +82,7 @@ export function useTestWebhookPing(
 }
 
 export function useListWebhookDeliveries(
-  params: { webhookId: number | null; limit?: number },
+  params: { webhookId: string | null; limit?: number },
   options?: { enabled?: boolean },
 ) {
   return useQuery({

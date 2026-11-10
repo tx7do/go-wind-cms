@@ -8,7 +8,7 @@ import { apiClient } from '@/api/client';
 export interface BackupArchive {
   objectKey: string;
   displayName: string;
-  sizeBytes: number;
+  sizeBytes: string;
   lastModified?: string;
 }
 

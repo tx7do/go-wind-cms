@@ -74,7 +74,8 @@ export default function CustomFieldsSection({
     postId,
     customFields,
 }: {
-    postId?: number | null;
+    // postId 已升级为 uint64 字符串
+    postId?: string | null;
     customFields?: {[key: string]: string};
 }) {
     const t = useTranslations('page');

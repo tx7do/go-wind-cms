@@ -50,10 +50,10 @@ export function useCreateTenantQuota(
 
 /** 更新配额（配额值） */
 export function useUpdateTenantQuota(
-  options?: UseMutationOptions<void, Error, { id: number; values: Record<string, unknown> }>,
+  options?: UseMutationOptions<void, Error, { id: string; values: Record<string, unknown> }>,
 ) {
   return useMutation({
-    mutationFn: async ({ id, values }: { id: number; values: Record<string, unknown> }) => {
+    mutationFn: async ({ id, values }: { id: string; values: Record<string, unknown> }) => {
       await apiClient.tenantQuotaService.Update({
         id,
         // eslint-disable-next-line @typescript-eslint/no-explicit-any -- 表单/proto 边界
@@ -96,7 +96,7 @@ export function useCreateQuotaPlan(
       data: {
         name: string;
         description?: string;
-        items: { quotaType: identityservicev1_TenantQuota_QuotaType; limit: number }[];
+        items: { quotaType: identityservicev1_TenantQuota_QuotaType; limit: string }[];
       };
     }
   >,
@@ -112,7 +112,7 @@ export function useDeleteQuotaPlan(
   options?: UseMutationOptions<
     Awaited<ReturnType<typeof apiClient.tenantQuotaService.DeleteQuotaPlan>>,
     Error,
-    { id: number }
+    { id: string }
   >,
 ) {
   return useMutation({
@@ -126,7 +126,7 @@ export function useApplyQuotaPlan(
   options?: UseMutationOptions<
     identityservicev1_ApplyQuotaPlanResponse,
     Error,
-    { planId: number; tenantId: number }
+    { planId: string; tenantId: string }
   >,
 ) {
   return useMutation({

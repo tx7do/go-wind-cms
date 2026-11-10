@@ -42,7 +42,7 @@ export async function listCommentsRaw(params: {
 /**
  * 获取单个评论
  */
-export async function getComment(id: number) {
+export async function getComment(id: string) {
   return apiClient.commentService.Get({id});
 }
 
@@ -59,7 +59,7 @@ export async function createComment(values: Partial<commentservicev1_Comment>) {
  * 更新评论
  */
 export async function updateComment(params: {
-  id: number;
+  id: string;
   values: Partial<commentservicev1_Comment>;
 }) {
   return apiClient.commentService.Update({
@@ -72,7 +72,7 @@ export async function updateComment(params: {
 /**
  * 删除评论
  */
-export async function deleteComment(id: number) {
+export async function deleteComment(id: string) {
   return apiClient.commentService.Delete({id});
 }
 
@@ -117,7 +117,7 @@ export async function fetchListComments(params: {
 // 获取单个评论 Hook
 // ==============================
 export function useGetComment(
-  options?: UseMutationOptions<commentservicev1_Comment, Error, number>,
+  options?: UseMutationOptions<commentservicev1_Comment, Error, string>,
 ) {
   return useMutation({
     mutationFn: (id) => getComment(id),
@@ -128,7 +128,7 @@ export function useGetComment(
 // ==============================================
 // 获取单个评论 【给 Store / 外部调用】不带 Hook 的方法
 // ==============================================
-export async function fetchComment(id: number) {
+export async function fetchComment(id: string) {
   return queryClient.fetchQuery({
     queryKey: ['getComment', id],
     queryFn: () => getComment(id),
@@ -155,7 +155,7 @@ export function useUpdateComment(
   options?: UseMutationOptions<
     commentservicev1_Comment,
     Error,
-    { id: number; values: Partial<commentservicev1_Comment> }
+    { id: string; values: Partial<commentservicev1_Comment> }
   >,
 ) {
   return useMutation({
@@ -167,7 +167,7 @@ export function useUpdateComment(
 // ==============================
 // 删除评论 Hook
 // ==============================
-export function useDeleteComment(options?: UseMutationOptions<Record<string, never>, Error, number>) {
+export function useDeleteComment(options?: UseMutationOptions<Record<string, never>, Error, string>) {
   return useMutation({
     mutationFn: (id) => deleteComment(id),
     ...options,

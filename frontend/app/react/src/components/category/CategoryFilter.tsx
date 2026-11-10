@@ -12,11 +12,12 @@ import {Skeleton} from '@/components/ui/skeleton';
 
 interface CategoryFilterProps {
     categories?: contentservicev1_Category[]; // 外部传入的分类数据（可选）
-    selectedCategory?: number | null;
+    // 分类 ID 已升级为 uint64 字符串
+    selectedCategory?: string | null;
     treeMode?: boolean;
-    parentId?: number | null; // 支持根据 parentId 过滤
+    parentId?: string | null; // 支持根据 parentId 过滤
     autoLoad?: boolean; // 是否自动加载数据
-    onCategoryChange?: (categoryId: number | null) => void;
+    onCategoryChange?: (categoryId: string | null) => void;
     onLoaded?: (categories: contentservicev1_Category[]) => void;
 }
 
@@ -35,10 +36,10 @@ const CategoryFilter: React.FC<CategoryFilterProps> = ({
     // 内部状态管理
     const [internalCategories, setInternalCategories] = useState<contentservicev1_Category[]>([]);
     const [loading, setLoading] = useState(false);
-    const [expandedIds, setExpandedIds] = useState<Set<number>>(new Set());
+    const [expandedIds, setExpandedIds] = useState<Set<string>>(new Set());
 
     // 定时器管理
-    const hideTimers = useRef<Map<number, ReturnType<typeof setTimeout>>>(new Map());
+    const hideTimers = useRef<Map<string, ReturnType<typeof setTimeout>>>(new Map());
 
     // 加载分类数据 - 移到 useEffect 内部，避免依赖项问题
     const loadCategories = async () => {
@@ -92,18 +93,18 @@ const CategoryFilter: React.FC<CategoryFilterProps> = ({
     // 平铺模式：只显示根节点
     const rootCategories = displayCategories.filter(cat => !cat.parentId);
 
-    const handleCategoryChange = (categoryId: number | null) => {
+    const handleCategoryChange = (categoryId: string | null) => {
         onCategoryChange?.(categoryId);
     };
 
     // 处理分类按钮点击 (同时切换菜单)
-    const handleCategoryClick = (nodeId: number) => {
+    const handleCategoryClick = (nodeId: string) => {
         handleTouchToggle(nodeId);
         handleCategoryChange(nodeId);
     };
 
     // 显示子菜单
-    const showSubmenu = (nodeId: number) => {
+    const showSubmenu = (nodeId: string) => {
         if (hasChildren(nodeId)) {
             if (hideTimers.current.has(nodeId)) {
                 clearTimeout(hideTimers.current.get(nodeId));
@@ -114,7 +115,7 @@ const CategoryFilter: React.FC<CategoryFilterProps> = ({
     };
 
     // 保持子菜单打开 (鼠标在菜单上时)
-    const keepSubmenuOpen = (nodeId: number) => {
+    const keepSubmenuOpen = (nodeId: string) => {
         if (hideTimers.current.has(nodeId)) {
             clearTimeout(hideTimers.current.get(nodeId));
             hideTimers.current.delete(nodeId);
@@ -122,7 +123,7 @@ const CategoryFilter: React.FC<CategoryFilterProps> = ({
     };
 
     // 隐藏子菜单 - 添加延时避免快速消失
-    const hideSubmenu = (nodeId: number) => {
+    const hideSubmenu = (nodeId: string) => {
         const timer = setTimeout(() => {
             setExpandedIds(prev => {
                 const next = new Set(prev);
@@ -135,7 +136,7 @@ const CategoryFilter: React.FC<CategoryFilterProps> = ({
     };
 
     // 处理触摸切换 (移动端)
-    const handleTouchToggle = (nodeId: number) => {
+    const handleTouchToggle = (nodeId: string) => {
         if (expandedIds.has(nodeId)) {
             hideSubmenu(nodeId);
         } else {
@@ -143,7 +144,7 @@ const CategoryFilter: React.FC<CategoryFilterProps> = ({
         }
     };
 
-    function hasChildren(categoryId: number): boolean {
+    function hasChildren(categoryId: string): boolean {
         const category = displayCategories.find(cat => cat.id === categoryId);
         return !!(category && category.children && category.children.length > 0);
     }
@@ -225,13 +226,13 @@ const CategoryFilter: React.FC<CategoryFilterProps> = ({
                                 >
                                     <XIcon name={node.icon || 'carbon:folder'} size={15}/>
                                     {getCategoryName(node)}
-                                    {hasChildren(node.id || 0) && (
+                                    {hasChildren(node.id || '') && (
                                         <XIcon name="carbon:chevron-down" size={14} className="ms-0.5 opacity-60"/>
                                     )}
                                 </button>
 
                                 {/* 子分类菜单 */}
-                                {hasChildren(node.id || 0) && expandedIds.has(node.id || 0) && (
+                                {hasChildren(node.id || '') && expandedIds.has(node.id || '') && (
                                     <div
                                         className={cn(
                                             'absolute start-0 top-full z-50 mt-1.5',
@@ -240,8 +241,8 @@ const CategoryFilter: React.FC<CategoryFilterProps> = ({
                                             'shadow-lg shadow-black/5',
                                             'animate-in fade-in-0 zoom-in-95 duration-150',
                                         )}
-                                        onMouseEnter={() => keepSubmenuOpen(node.id || 0)}
-                                        onMouseLeave={() => hideSubmenu(node.id || 0)}
+                                        onMouseEnter={() => keepSubmenuOpen(node.id || '')}
+                                        onMouseLeave={() => hideSubmenu(node.id || '')}
                                     >
                                         {node.children!.map((child) => (
                                             <button
@@ -249,7 +250,7 @@ const CategoryFilter: React.FC<CategoryFilterProps> = ({
                                                 type="button"
                                                 onClick={(e) => {
                                                     e.stopPropagation();
-                                                    handleCategoryChange(child.id || 0);
+                                                    handleCategoryChange(child.id || '');
                                                 }}
                                                 className={cn(
                                                     'flex w-full items-center gap-2 rounded-md px-2.5 py-2 text-start text-sm',
@@ -280,7 +281,7 @@ const CategoryFilter: React.FC<CategoryFilterProps> = ({
                             <button
                                 key={cat.id}
                                 type="button"
-                                onClick={() => handleCategoryChange(cat.id || 0)}
+                                onClick={() => handleCategoryChange(cat.id || '')}
                                 className={cn(btnBase, selectedCategory === cat.id ? btnActive : btnInactive, 'shrink-0')}
                             >
                                 <XIcon name={cat.icon || 'carbon:folder'} size={15}/>

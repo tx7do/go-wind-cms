@@ -22,7 +22,7 @@ import ContentContainer from '@/layouts/components/PageContainer/ContentContaine
 import { tagStatusOptions } from '../constants';
 
 interface TagEditProps {
-  id?: number;
+  id?: string;
   name: string;
   slug: string;
   description: string;
@@ -53,7 +53,7 @@ const EMPTY_FORM: TagEditProps = {
 };
 
 // 草稿存储：key 按 模式+id+语言 区分（对齐 vben StorageManager 语义）
-function getDraftKey(tagId: null | number, lang: string, isCreateMode: boolean) {
+function getDraftKey(tagId: null | string, lang: string, isCreateMode: boolean) {
   return isCreateMode ? `tag-draft-create-${lang}` : `tag-draft-edit-${tagId}-${lang}`;
 }
 
@@ -71,7 +71,8 @@ const TagEditPage = () => {
 
   const initLang = searchParams.get('lang') || 'zh-CN';
   const isCreateMode = !id;
-  const tagId = isCreateMode ? null : Number(id);
+  // 路由参数本就是字符串，uint64 id 直接透传
+  const tagId = isCreateMode ? null : id;
 
   const [lang, setLang] = useState(initLang);
   const [languageOptions, setLanguageOptions] = useState<LanguageOption[]>([]);
@@ -310,7 +311,7 @@ const TagEditPage = () => {
         await createMutation.mutateAsync({ data: data as any });
       } else {
         await updateMutation.mutateAsync({
-          id: values.id || 0,
+          id: values.id || '0',
           data: data as any,
           // translations 走整体 upsert，其余标量字段进 mask
           excludeMaskKeys: ['translations'],

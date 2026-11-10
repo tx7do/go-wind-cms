@@ -151,12 +151,12 @@ function formFields(section: contentservicev1_Section): FormFieldDef[] {
 }
 
 function formStateOf(section: contentservicev1_Section): string {
-  return formState.value[section.id ?? 0] ?? 'idle'
+  return formState.value[section.id ?? ''] ?? 'idle'
 }
 
 /** 表单值记录（惰性初始化，模板 v-model 直接绑定到返回对象） */
 function formValuesOf(section: contentservicev1_Section): Record<string, string> {
-  const sid = section.id ?? 0
+  const sid = section.id ?? ''
   if (!formValues.value[sid]) formValues.value[sid] = {}
   return formValues.value[sid]
 }
@@ -166,7 +166,7 @@ function fieldLabel(section: contentservicev1_Section, field: FormFieldDef): str
 }
 
 async function submitForm(section: contentservicev1_Section) {
-  const sid = section.id ?? 0
+  const sid = section.id ?? ''
   if (!section.pageId || formState.value[sid] === 'submitting') return
   formState.value[sid] = 'submitting'
   try {

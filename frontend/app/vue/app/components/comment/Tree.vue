@@ -18,20 +18,20 @@ const props = defineProps<{
 
 const { t } = useI18n()
 
-const replyingCommentId = ref<number | null>(null)
+const replyingCommentId = ref<string | null>(null)
 const replyContent = ref('')
 const replyAuthorName = ref('')
 const replyAuthorEmail = ref('')
 const submitting = ref(false)
-const expandedComments = ref<Set<number>>(new Set())
-const loadingChildren = ref<Set<number>>(new Set())
+const expandedComments = ref<Set<string>>(new Set())
+const loadingChildren = ref<Set<string>>(new Set())
 
 // 点赞状态：通过 interaction 子系统批量查询当前 viewer 对这些评论的点赞态。
 // targetIds 取当前渲染的顶层评论 id（children 由递归子组件自行查询）。
 const commentIds = computed(() =>
   (props.comments ?? [])
     .map(c => c.id)
-    .filter((id): id is number => typeof id === 'number'),
+    .filter((id): id is string => typeof id === 'string'),
 )
 const statusQuery = useInteractionStatus('TARGET_TYPE_COMMENT', commentIds)
 // 点赞计数：通过 interaction_counter 表批量查询（comment.like_count 列已移除）。
@@ -40,7 +40,7 @@ const likeMutation = useLike()
 const unlikeMutation = useUnlike()
 
 function isLiked(comment: any): boolean {
-  if (typeof comment.id !== 'number') return false
+  if (typeof comment.id !== 'string') return false
   const map = statusQuery.data?.value?.statuses
   if (!map) return false
   return map[String(comment.id)]?.liked === true
@@ -55,15 +55,15 @@ function isOwnerReply(comment: any): boolean {
 }
 
 function isExpanded(comment: any): boolean {
-  return expandedComments.value.has(comment.id || 0)
+  return expandedComments.value.has(comment.id || '')
 }
 
 function isLoading(comment: any): boolean {
-  return loadingChildren.value.has(comment.id || 0)
+  return loadingChildren.value.has(comment.id || '')
 }
 
 function handleReply(comment: any) {
-  replyingCommentId.value = comment.id || 0
+  replyingCommentId.value = comment.id || ''
   replyContent.value = ''
   replyAuthorName.value = ''
   replyAuthorEmail.value = ''
@@ -111,7 +111,7 @@ async function submitReply(comment: any) {
 // 幂等由后端保证；前端按当前态决定 Like/Unlike。计数由 GetCounts 返回（comment.like_count 列已移除）。
 async function handleLike(comment: any) {
   const commentId = comment.id
-  if (typeof commentId !== 'number') return
+  if (typeof commentId !== 'string') return
   const liked = isLiked(comment)
   try {
     if (liked) {
@@ -133,22 +133,22 @@ function handleShare(comment: any) {
 // 切换展开/收起子评论
 async function toggleExpand(comment: any) {
   if (isExpanded(comment)) {
-    expandedComments.value.delete(comment.id || 0)
+    expandedComments.value.delete(comment.id || '')
   } else {
     if (!comment.children) {
       // 需要动态加载子评论
-      loadingChildren.value.add(comment.id || 0)
+      loadingChildren.value.add(comment.id || '')
       try {
         await props.onLoadChildren(comment)
-        expandedComments.value.add(comment.id || 0)
+        expandedComments.value.add(comment.id || '')
       } catch (error) {
         console.error('Load children failed:', error)
       } finally {
-        loadingChildren.value.delete(comment.id || 0)
+        loadingChildren.value.delete(comment.id || '')
       }
     } else {
       // 已经有子评论数据，直接展开
-      expandedComments.value.add(comment.id || 0)
+      expandedComments.value.add(comment.id || '')
     }
   }
 }

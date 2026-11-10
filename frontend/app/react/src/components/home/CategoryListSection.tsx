@@ -92,7 +92,7 @@ export default function CategoryListSection({
         };
     }, []); // 空依赖数组，只在首次渲染时执行
 
-    const handleViewCategoryDetail = (id: number) => {
+    const handleViewCategoryDetail = (id: string) => {
         router.push(`/category/detail?id=${id}`);
     };
 

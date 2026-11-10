@@ -3,9 +3,9 @@ const { t } = useI18n()
 
 useHead({ title: t('page.posts.posts_list') })
 
-const selectedCategoryId = ref<number | null>(null)
+const selectedCategoryId = ref<string | null>(null)
 
-const handleCategoryChange = (categoryId: number | null) => {
+const handleCategoryChange = (categoryId: string | null) => {
   selectedCategoryId.value = categoryId
 }
 

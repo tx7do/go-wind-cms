@@ -16,7 +16,8 @@ interface CategoryListProps {
     showSkeleton?: boolean;
     columns?: number;
     gap?: number;
-    onCategoryClick?: (id: number) => void;
+    // 分类 ID 已升级为 uint64 字符串
+    onCategoryClick?: (id: string) => void;
 }
 
 const CategoryList: React.FC<CategoryListProps> = ({
@@ -29,7 +30,7 @@ const CategoryList: React.FC<CategoryListProps> = ({
                                                    }) => {
     const t = useTranslations('page.categories');
 
-    const handleCategoryClick = (id: number) => {
+    const handleCategoryClick = (id: string) => {
         onCategoryClick?.(id);
     };
 

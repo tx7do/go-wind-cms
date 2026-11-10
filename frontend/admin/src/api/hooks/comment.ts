@@ -62,7 +62,7 @@ export function useUpdateComment(
   options?: UseMutationOptions<
     commentservicev1_Comment,
     Error,
-    { id: number; values: Record<string, unknown>; maskKeys?: string[] }
+    { id: string; values: Record<string, unknown>; maskKeys?: string[] }
   >,
 ) {
   return useMutation({

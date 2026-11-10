@@ -24,8 +24,9 @@ interface PostListProps {
     initialPageSize?: number; // 初始每页条数
     showSkeleton?: boolean;
     from?: string;
-    categoryId?: number;
-    tagId?: number; // 新增 tagId 支持
+    // 分类/标签 ID 已升级为 uint64 字符串
+    categoryId?: string;
+    tagId?: string; // 新增 tagId 支持
     columns?: number; // 控制列数
     showPagination?: boolean; // 是否显示分页
     pageSizes?: number[]; // 每页条数选项
@@ -55,7 +56,7 @@ const PostList: React.FC<PostListProps> = ({
 
     // 收集当前页 post 的 ID，用于批量查询点赞计数。
     // 计数由 interaction_counter 表提供（post.likes 列已移除）。
-    const postIds = useMemo(() => posts.map(p => p.id).filter((id): id is number => typeof id === 'number'), [posts]);
+    const postIds = useMemo(() => posts.map(p => p.id).filter((id): id is string => typeof id === 'string' && id !== ''), [posts]);
     const countsResp = useGetCounts(
         'TARGET_TYPE_POST',
         postIds,
@@ -100,7 +101,8 @@ const PostList: React.FC<PostListProps> = ({
                 orderBy: orderBy
             }) as unknown as contentservicev1_ListPostResponse;
             setPosts(res.items || []);
-            setTotal(res.total || 0);
+            // total 为 uint64，proto3 JSON 下是字符串；计数语义保持 number
+            setTotal(Number(res.total) || 0);
         } catch (error) {
             console.error('PostList fetch failed:', error);
             setPosts([]);
@@ -171,7 +173,7 @@ const PostList: React.FC<PostListProps> = ({
                                 post={post}
                                 from={from}
                                 categoryId={categoryId}
-                                likeCount={extractCount(countsResp.data, post.id as number, 'COUNTER_METRIC_LIKE')}
+                                likeCount={extractCount(countsResp.data, post.id ?? '', 'COUNTER_METRIC_LIKE')}
                             />
                         ))}
                     </div>

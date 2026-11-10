@@ -45,7 +45,7 @@ export async function listPostsRaw(params: {
 /**
  * 获取单个文章
  */
-export async function getPost(id: number) {
+export async function getPost(id: string) {
   const locale = currentLocaleLanguageCode();
   return apiClient.postService.Get({id, locale});
 }
@@ -63,7 +63,7 @@ export async function createPost(values: Partial<contentservicev1_Post>) {
  * 更新文章
  */
 export async function updatePost(params: {
-  id: number;
+  id: string;
   values: Partial<contentservicev1_Post>;
 }) {
   return apiClient.postService.Update({
@@ -76,7 +76,7 @@ export async function updatePost(params: {
 /**
  * 删除文章
  */
-export async function deletePost(id: number) {
+export async function deletePost(id: string) {
   return apiClient.postService.Delete({id});
 }
 
@@ -141,7 +141,7 @@ export async function fetchListPosts(params: {
 // 获取单个文章 Hook
 // ==============================
 export function useGetPost(
-  options?: UseMutationOptions<contentservicev1_Post, Error, number>,
+  options?: UseMutationOptions<contentservicev1_Post, Error, string>,
 ) {
   return useMutation({
     mutationFn: (id) => getPost(id),
@@ -152,7 +152,7 @@ export function useGetPost(
 // ==============================================
 // 获取单个文章 【给 Store / 外部调用】不带 Hook 的方法
 // ==============================================
-export async function fetchPost(id: number) {
+export async function fetchPost(id: string) {
   return queryClient.fetchQuery({
     queryKey: ['getPost', id],
     queryFn: () => getPost(id),
@@ -190,7 +190,7 @@ export function useUpdatePost(
   options?: UseMutationOptions<
     contentservicev1_Post,
     Error,
-    { id: number; values: Partial<contentservicev1_Post> }
+    { id: string; values: Partial<contentservicev1_Post> }
   >,
 ) {
   return useMutation({
@@ -202,7 +202,7 @@ export function useUpdatePost(
 // ==============================
 // 删除文章 Hook
 // ==============================
-export function useDeletePost(options?: UseMutationOptions<Record<string, never>, Error, number>) {
+export function useDeletePost(options?: UseMutationOptions<Record<string, never>, Error, string>) {
   return useMutation({
     mutationFn: (id) => deletePost(id),
     ...options,

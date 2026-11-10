@@ -18,7 +18,7 @@ import { searchOptionRender } from '@/components/common/searchSubmitter';
 import { ColumnSlidersIcon } from '@/components/common/columnSettingIcon';
 
 interface PermissionListProps {
-  groupId: number | null;
+  groupId: string | null;
 }
 
 /**
@@ -161,7 +161,7 @@ const PermissionList: React.FC<PermissionListProps> = ({ groupId }) => {
 
               return {
                 data: response.items || [],
-                total: response.total || 0,
+                total: Number(response.total ?? 0),
                 success: true,
               };
             

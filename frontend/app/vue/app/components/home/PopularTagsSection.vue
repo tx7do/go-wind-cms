@@ -7,7 +7,7 @@ const { t } = useI18n()
 const localePath = useLocalePath()
 
 interface TagItem {
-  id: number
+  id: string
   name: string
   color: string
   postCount: number
@@ -15,7 +15,7 @@ interface TagItem {
 
 const loading = ref(true)
 const displayTags = ref<TagItem[]>([])
-const hoveredId = ref<number | null>(null)
+const hoveredId = ref<string | null>(null)
 
 let abortController: AbortController | null = null
 

@@ -141,7 +141,8 @@ const MenuDrawer: React.FC<MenuDrawerProps> = ({ open, mode, data, onClose, onSu
         status: values.status,
         path: values.path,
         component: values.component,
-        parentId: values.parentId || 0,
+        // uint64 字符串语义：根节点 parentId 用 '0'（protojson 下数字会判型失败）
+        parentId: values.parentId || '0',
         // children 是树的只读虚拟边：表里没有该列，进 updateMask 会让后端生成非法 SQL
         meta: {
           title: values['meta.title'],

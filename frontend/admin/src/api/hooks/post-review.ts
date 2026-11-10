@@ -44,7 +44,7 @@ export function useRejectPostReview(
 }
 
 /** 供操作列刷新：失效文章列表与详情缓存 */
-export function invalidatePostCaches(postId?: number) {
+export function invalidatePostCaches(postId?: string) {
   queryClient.invalidateQueries({ queryKey: ['listPosts'] });
   if (postId) queryClient.invalidateQueries({ queryKey: ['getPost', { id: postId }] });
 }

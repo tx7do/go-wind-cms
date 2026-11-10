@@ -62,7 +62,7 @@ export function useUpdateSiteSetting(
   options?: UseMutationOptions<
     siteservicev1_SiteSetting,
     Error,
-    { id: number; values: Record<string, unknown>; maskKeys?: string[] }
+    { id: string; values: Record<string, unknown>; maskKeys?: string[] }
   >,
 ) {
   return useMutation({
@@ -71,7 +71,7 @@ export function useUpdateSiteSetting(
       values,
       maskKeys,
     }: {
-      id: number;
+      id: string;
       values: Record<string, unknown>;
       maskKeys?: string[];
     }) =>

@@ -24,7 +24,7 @@ onMounted(async () => {
   }
 })
 
-function handleCategoryClick(id: number) {
+function handleCategoryClick(id: string) {
   navigateTo(localePath(`/category/${id}`))
 }
 </script>

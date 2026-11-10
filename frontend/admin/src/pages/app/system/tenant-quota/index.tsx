@@ -73,8 +73,8 @@ export default function TenantQuotaPage() {
   // ── 配额套餐模板 ──
   const [planOpen, setPlanOpen] = useState(false);
   const [applyOpen, setApplyOpen] = useState(false);
-  const [applyPlan, setApplyPlan] = useState<{ id: number; name: string } | undefined>();
-  const [tenantOptions, setTenantOptions] = useState<{ value: number; label: string }[]>([]);
+  const [applyPlan, setApplyPlan] = useState<{ id: string; name: string } | undefined>();
+  const [tenantOptions, setTenantOptions] = useState<{ value: string; label: string }[]>([]);
   const [planForm] = Form.useForm();
   const [applyForm] = Form.useForm();
 
@@ -118,7 +118,7 @@ export default function TenantQuotaPage() {
     },
   });
 
-  const openApply = async (plan: { id: number; name: string }) => {
+  const openApply = async (plan: { id: string; name: string }) => {
     setApplyPlan(plan);
     applyForm.resetFields();
     setApplyOpen(true);
@@ -129,7 +129,7 @@ export default function TenantQuotaPage() {
           paging: { page: 1, pageSize: 100 },
         }));
         setTenantOptions((res.items ?? []).map((x) => ({
-          value: Number((x as { id?: unknown }).id),
+          value: String((x as { id?: unknown }).id),
           label: String((x as { name?: unknown }).name ?? (x as { id?: unknown }).id),
         })));
       } catch (error) {
@@ -141,12 +141,14 @@ export default function TenantQuotaPage() {
   const submitPlan = async () => {
     const values = await planForm.validateFields().catch(() => null);
     if (values === null) return;
+    // limit 是 uint64 → string（proto3 JSON）：表单数值先过滤再字符串化
     const items: {
       quotaType: 'USER_LIMIT' | 'STORAGE' | 'API_CALL' | 'AI_TOKENS';
-      limit: number;
+      limit: string;
     }[] = (['USER_LIMIT', 'STORAGE', 'API_CALL', 'AI_TOKENS'] as const)
       .map((type) => ({ quotaType: type, limit: Number(values[type] ?? 0) }))
-      .filter((x) => Number.isFinite(x.limit) && x.limit > 0);
+      .filter((x) => Number.isFinite(x.limit) && x.limit > 0)
+      .map((x) => ({ quotaType: x.quotaType, limit: String(x.limit) }));
     if (items.length === 0) {
       message.warning(t('planItemRequired'));
       return;
@@ -348,7 +350,7 @@ export default function TenantQuotaPage() {
                 type="primary"
                 ghost
                 icon={<ThunderboltOutlined />}
-                onClick={() => openApply({ id: Number(p.id), name: String(p.name) })}
+                onClick={() => openApply({ id: String(p.id), name: String(p.name) })}
               >
                 {t('apply')}
               </Button>
@@ -357,7 +359,7 @@ export default function TenantQuotaPage() {
                 danger
                 icon={<DeleteOutlined />}
                 onClick={() =>
-                  deletePlanMutation.mutate({ id: Number(p.id) })
+                  deletePlanMutation.mutate({ id: String(p.id) })
                 }
               />
             </div>

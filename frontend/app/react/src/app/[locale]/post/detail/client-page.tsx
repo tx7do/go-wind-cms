@@ -58,9 +58,10 @@ export default function PostDetailPage({ initialPost }: { initialPost?: contents
 
     // 路由身份仅取自 searchParams：?id= 直接用；?slug= 时由拉取到的 post 回填
     // （静态导出后详情页无服务端取数，slug → id 的解析发生在客户端拉取完成时）。
+    // id 已升级为 uint64 字符串，路由参数直接透传，不再 parseInt。
     const routePostId = useMemo(() => {
         const id = searchParams.get('id');
-        return id ? parseInt(id) : null;
+        return id || null;
     }, [searchParams]);
     // 草稿预览：admin「预览」按钮带短时效令牌跳转，后端校验后放行非已发布内容
     const previewToken = useMemo(() => searchParams.get('preview_token') || '', [searchParams]);
@@ -68,7 +69,7 @@ export default function PostDetailPage({ initialPost }: { initialPost?: contents
     const slug = useMemo(() => searchParams.get('slug') || '', [searchParams]);
     // 互动计数/状态/浏览上报都挂在这个 id 上：slug 路由在 post 到手后由 null 变为真实 id，
     // 相关查询随之以真实 id 重跑。
-    const postId = routePostId ?? post?.id ?? null;
+    const postId: string | null = routePostId ?? post?.id ?? null;
 
     // 点赞/收藏状态：由 interaction 子系统提供。
     // useInteractionStatus 取当前 viewer 对此 post 的 {liked, watched} 初始态；
@@ -150,7 +151,7 @@ export default function PostDetailPage({ initialPost }: { initialPost?: contents
     }, [countsResp.data, postId]);
 
     // 浏览量上报（PV +1）：每次进入详情记一次；ref 守卫避免 StrictMode 双挂载重复计数
-    const viewReportedRef = useRef<number | null>(null);
+    const viewReportedRef = useRef<string | null>(null);
     useEffect(() => {
         if (!postId || viewReportedRef.current === postId) return;
         viewReportedRef.current = postId;

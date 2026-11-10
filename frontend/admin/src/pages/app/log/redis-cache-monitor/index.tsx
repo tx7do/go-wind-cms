@@ -55,7 +55,7 @@ const RedisCacheMonitor = () => {
       <Card size="small" style={{ marginBottom: 16 }} title={<Text strong>{t('dbSize')}</Text>}>
         <Descriptions column={1} size="small" bordered colon>
           <Descriptions.Item label={t('dbSize')}>
-            <Tag color={dbSize > 0 ? 'orange' : 'default'}>{String(dbSize)}</Tag>
+            <Tag color={Number(dbSize) > 0 ? 'orange' : 'default'}>{String(dbSize)}</Tag>
           </Descriptions.Item>
         </Descriptions>
       </Card>

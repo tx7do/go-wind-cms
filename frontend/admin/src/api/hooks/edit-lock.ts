@@ -18,19 +18,19 @@ export interface EditLockInfo {
 
 const EDIT_LOCK_HEARTBEAT_MS = 60_000;
 
-export function useEditLock(targetType: 'post' | 'page', targetId?: number | null) {
+export function useEditLock(targetType: 'post' | 'page', targetId?: string | null) {
   const [lock, setLock] = useState<EditLockInfo>({});
 
   const acquireMutation = useMutation({
-    mutationFn: (req: { targetType: string; targetId: number }) =>
+    mutationFn: (req: { targetType: string; targetId: string }) =>
       apiClient.editLockService.Acquire(req as never),
   });
   const releaseMutation = useMutation({
-    mutationFn: (req: { targetType: string; targetId: number }) =>
+    mutationFn: (req: { targetType: string; targetId: string }) =>
       apiClient.editLockService.Release(req as never),
   });
 
-  const targetRef = useRef<{ targetType: string; targetId: number } | undefined>(undefined);
+  const targetRef = useRef<{ targetType: string; targetId: string } | undefined>(undefined);
 
   useEffect(() => {
     targetRef.current = targetId ? { targetType, targetId } : undefined;

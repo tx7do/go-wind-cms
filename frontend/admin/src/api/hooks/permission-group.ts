@@ -58,10 +58,10 @@ export function useCreatePermissionGroup(
 }
 
 export function useUpdatePermissionGroup(
-  options?: UseMutationOptions<unknown, Error, { id: number; values: Record<string, unknown> }>,
+  options?: UseMutationOptions<unknown, Error, { id: string; values: Record<string, unknown> }>,
 ) {
   return useMutation({
-    mutationFn: ({ id, values }: { id: number; values: Record<string, unknown> }) =>
+    mutationFn: ({ id, values }: { id: string; values: Record<string, unknown> }) =>
       apiClient.permissionGroupService.Update({
         id,
         // eslint-disable-next-line @typescript-eslint/no-explicit-any -- 表单 Partial → proto 消息边界

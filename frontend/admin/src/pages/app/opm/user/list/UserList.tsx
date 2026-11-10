@@ -23,8 +23,8 @@ import { searchOptionRender } from '@/components/common/searchSubmitter';
 import { ColumnSlidersIcon } from '@/components/common/columnSettingIcon';
 
 interface UserListProps {
-  tenantId: number | undefined;
-  orgUnitId: number | undefined;
+  tenantId: string | undefined;
+  orgUnitId: string | undefined;
 }
 
 /**
@@ -67,11 +67,11 @@ const UserList: React.FC<UserListProps> = ({ tenantId, orgUnitId }) => {
   });
 
   // 管理端救援重置：清空目标用户 TOTP 因子（认证器丢失解锁用）
-  // 仅平台侧操作者（tenantId=0）显示救援重置；非平台用户由后端权限兜底
+  // 仅平台侧操作者（tenantId='0'）显示救援重置；非平台用户由后端权限兜底
   const operatorTenantId = useUserStore((s) => s.tenantId);
-  const isPlatformOperator = operatorTenantId === 0;
+  const isPlatformOperator = operatorTenantId === '0';
   const resetMfaMutation = useMutation({
-    mutationFn: (userId: number) => apiClient.mFAService.ResetUserMFA({ userId }),
+    mutationFn: (userId: string) => apiClient.mFAService.ResetUserMFA({ userId }),
     onSuccess: () => {
       message.success(t('resetMfaSuccess'));
     },
@@ -295,7 +295,7 @@ const UserList: React.FC<UserListProps> = ({ tenantId, orgUnitId }) => {
 
             return {
               data: response.items || [],
-              total: response.total || 0,
+              total: Number(response.total ?? 0),
               success: true,
             };
           

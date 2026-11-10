@@ -6,9 +6,9 @@ import { cn } from '@/lib/utils'
 
 const props = withDefaults(defineProps<{
   categories?: contentservicev1_Category[]
-  selectedCategory?: number | null
+  selectedCategory?: string | null
   treeMode?: boolean
-  parentId?: number | null
+  parentId?: string | null
   autoLoad?: boolean
 }>(), {
   selectedCategory: null,
@@ -18,7 +18,7 @@ const props = withDefaults(defineProps<{
 })
 
 const emit = defineEmits<{
-  categoryChange: [categoryId: number | null]
+  categoryChange: [categoryId: string | null]
   loaded: [categories: contentservicev1_Category[]]
 }>()
 
@@ -26,8 +26,8 @@ const { t } = useI18n()
 
 const internalCategories = ref<contentservicev1_Category[]>([])
 const loading = ref(false)
-const expandedIds = ref<Set<number>>(new Set())
-const hideTimers = new Map<number, ReturnType<typeof setTimeout>>()
+const expandedIds = ref<Set<string>>(new Set())
+const hideTimers = new Map<string, ReturnType<typeof setTimeout>>()
 
 const displayCategories = computed(() => props.categories || internalCategories.value)
 
@@ -59,21 +59,21 @@ function getCategoryName(category: contentservicev1_Category | null): string {
   return getCategoryNameHelper(category)
 }
 
-function hasChildren(categoryId: number): boolean {
+function hasChildren(categoryId: string): boolean {
   const category = displayCategories.value.find(cat => cat.id === categoryId)
   return !!(category?.children && category.children.length > 0)
 }
 
-function handleCategoryChange(categoryId: number | null) {
+function handleCategoryChange(categoryId: string | null) {
   emit('categoryChange', categoryId)
 }
 
-function handleCategoryClick(nodeId: number) {
+function handleCategoryClick(nodeId: string) {
   handleTouchToggle(nodeId)
   handleCategoryChange(nodeId)
 }
 
-function showSubmenu(nodeId: number) {
+function showSubmenu(nodeId: string) {
   if (hasChildren(nodeId)) {
     if (hideTimers.has(nodeId)) {
       clearTimeout(hideTimers.get(nodeId)!)
@@ -83,14 +83,14 @@ function showSubmenu(nodeId: number) {
   }
 }
 
-function keepSubmenuOpen(nodeId: number) {
+function keepSubmenuOpen(nodeId: string) {
   if (hideTimers.has(nodeId)) {
     clearTimeout(hideTimers.get(nodeId)!)
     hideTimers.delete(nodeId)
   }
 }
 
-function hideSubmenu(nodeId: number) {
+function hideSubmenu(nodeId: string) {
   const timer = setTimeout(() => {
     const next = new Set(expandedIds.value)
     next.delete(nodeId)
@@ -100,7 +100,7 @@ function hideSubmenu(nodeId: number) {
   hideTimers.set(nodeId, timer)
 }
 
-function handleTouchToggle(nodeId: number) {
+function handleTouchToggle(nodeId: string) {
   if (expandedIds.value.has(nodeId)) {
     hideSubmenu(nodeId)
   } else {
@@ -124,7 +124,7 @@ onUnmounted(() => {
 // LTR 下用 rect.left；RTL 下用 rect.right（元素右边即其 inline-start 边）。
 // 通过 insetInlineStart 设置，该属性在 LTR 解析为 left、RTL 解析为 right，
 // 从而保证子菜单在两种方向下都正确贴齐触发元素的起始边。
-function submenuStyle(nodeId: number) {
+function submenuStyle(nodeId: string) {
   const el = document.querySelector(`[data-category-id="${nodeId}"]`)
   if (!el) return {}
   const rect = el.getBoundingClientRect()
@@ -199,7 +199,7 @@ const btnActive = 'bg-primary text-primary-foreground border-primary hover:bg-pr
             <XIcon :icon="node.icon || 'carbon:folder'" :size="15" />
             {{ getCategoryName(node) }}
             <XIcon
-              v-if="hasChildren(node.id || 0)"
+              v-if="hasChildren(node.id || '')"
               icon="carbon:chevron-down"
               :size="14"
               class="ms-0.5 opacity-60"
@@ -215,7 +215,7 @@ const btnActive = 'bg-primary text-primary-foreground border-primary hover:bg-pr
           :key="cat.id"
           type="button"
           :class="cn(btnBase, selectedCategory === cat.id ? btnActive : btnInactive, 'shrink-0')"
-          @click="handleCategoryChange(cat.id || 0)"
+          @click="handleCategoryChange(cat.id || null)"
         >
           <XIcon :icon="cat.icon || 'carbon:folder'" :size="15" />
           {{ getCategoryName(cat) }}
@@ -229,7 +229,7 @@ const btnActive = 'bg-primary text-primary-foreground border-primary hover:bg-pr
       :key="'submenu-' + node.id"
     >
       <div
-        v-if="treeMode && hasChildren(node.id || 0) && expandedIds.has(node.id || 0)"
+        v-if="treeMode && hasChildren(node.id || '') && expandedIds.has(node.id || '')"
         :class="cn(
           'fixed z-[1001] mt-1.5',
           'min-w-[200px] max-w-[320px]',
@@ -237,9 +237,9 @@ const btnActive = 'bg-primary text-primary-foreground border-primary hover:bg-pr
           'shadow-lg shadow-black/5',
           'animate-in fade-in-0 zoom-in-95 duration-150',
         )"
-        :style="submenuStyle(node.id || 0)"
-        @mouseenter="keepSubmenuOpen(node.id || 0)"
-        @mouseleave="hideSubmenu(node.id || 0)"
+        :style="submenuStyle(node.id || '')"
+        @mouseenter="keepSubmenuOpen(node.id || '')"
+        @mouseleave="hideSubmenu(node.id || '')"
       >
         <button
           v-for="child in node.children"
@@ -252,7 +252,7 @@ const btnActive = 'bg-primary text-primary-foreground border-primary hover:bg-pr
               ? 'bg-primary/10 text-primary font-medium'
               : 'text-foreground/80 hover:bg-muted hover:text-foreground',
           )"
-          @click.stop="handleCategoryChange(child.id || 0)"
+          @click.stop="handleCategoryChange(child.id || null)"
         >
           <XIcon :icon="child.icon || 'carbon:folder'" :size="14" />
           <span class="truncate">{{ getCategoryName(child) }}</span>

@@ -12,7 +12,7 @@ import ContentContainer from '@/layouts/components/PageContainer/ContentContaine
 import { TABLE } from '@/config/constants';
 
 interface UsageRow {
-  id?: number;
+  id?: string;
   modelName?: string;
   promptTokens?: number;
   completionTokens?: number;
@@ -60,9 +60,10 @@ export default function AiUsagePage() {
   ];
 
   const summaryData = summary.data;
+  // quotaLimit/monthTokens 是 uint64 → string（proto3 JSON），聚合运算前 Number 化
   const quotaPct =
-    summaryData?.quotaConfigured && (summaryData.quotaLimit ?? 0) > 0
-      ? Math.min(100, Math.round(((summaryData.monthTokens ?? 0) * 100) / (summaryData.quotaLimit || 1)))
+    summaryData?.quotaConfigured && Number(summaryData.quotaLimit ?? 0) > 0
+      ? Math.min(100, Math.round((Number(summaryData.monthTokens ?? 0) * 100) / (Number(summaryData.quotaLimit) || 1)))
       : 0;
 
   // 汇总卡数值是"文字"，取值随主题走 --metric-* 档（定义在 styles/semantic-text.css，
@@ -174,7 +175,7 @@ export default function AiUsagePage() {
               paging: { page: current || 1, pageSize: pageSize || TABLE.DEFAULT_PAGE_SIZE },
             });
             const res = await fetchListAiUsageLogs(query);
-            return { data: res.items || [], total: res.total || 0, success: true };
+            return { data: res.items || [], total: Number(res.total ?? 0), success: true };
           }}
           columns={columns}
         />

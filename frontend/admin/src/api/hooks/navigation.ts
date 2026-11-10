@@ -50,11 +50,11 @@ export function useUpdateNavigation(
   options?: UseMutationOptions<
     siteservicev1_Navigation,
     Error,
-    { id: number; values: Record<string, unknown> }
+    { id: string; values: Record<string, unknown> }
   >,
 ) {
   return useMutation({
-    mutationFn: ({ id, values }: { id: number; values: Record<string, unknown> }) =>
+    mutationFn: ({ id, values }: { id: string; values: Record<string, unknown> }) =>
       apiClient.navigationService.Update({
         id,
         data: { ...values } as unknown as siteservicev1_Navigation,

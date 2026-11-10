@@ -27,7 +27,7 @@ const isLogin = computed(() => {
 
 const open = ref(false)
 const navigationItems = ref<siteservicev1_NavigationItem[]>([])
-const expandedId = ref<number | null>(null)
+const expandedId = ref<string | null>(null)
 
 const loadNav = async () => {
   try {
@@ -116,7 +116,7 @@ const handleAction = (action: () => void) => {
       <div class="flex-1 overflow-y-auto px-3 py-3">
         <!-- 主导航 -->
         <nav v-if="navigationItems.length > 0" class="mb-3 space-y-0.5">
-          <div v-for="item in navigationItems" :key="item.id ?? 0">
+          <div v-for="item in navigationItems" :key="item.id ?? ''">
             <button
               type="button"
               :class="cn(
@@ -127,7 +127,7 @@ const handleAction = (action: () => void) => {
               @click="() => {
                 const hasChildren = (item.children?.length ?? 0) > 0
                 if (hasChildren) {
-                  expandedId = expandedId === (item.id ?? 0) ? null : (item.id ?? 0)
+                  expandedId = expandedId === (item.id ?? '') ? null : (item.id ?? '')
                 } else {
                   handleNavigate(item)
                 }
@@ -140,13 +140,13 @@ const handleAction = (action: () => void) => {
               <XIcon                 v-if="(item.children?.length ?? 0) > 0"
                 icon="lucide:chevron-down"
                 width="16" height="16"
-                :class="cn('transition-transform', expandedId === (item.id ?? 0) && 'rotate-180')"
+                :class="cn('transition-transform', expandedId === (item.id ?? '') && 'rotate-180')"
               />
             </button>
 
             <!-- 子菜单 -->
             <div
-              v-if="(item.children?.length ?? 0) > 0 && expandedId === (item.id ?? 0)"
+              v-if="(item.children?.length ?? 0) > 0 && expandedId === (item.id ?? '')"
               class="ms-3 mt-0.5 space-y-0.5 border-s border-border ps-3"
             >
               <button

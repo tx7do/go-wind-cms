@@ -62,10 +62,10 @@ export function useGetInternalMessage(
 }
 
 export function useUpdateInternalMessage(
-  options?: UseMutationOptions<unknown, Error, { id: number; values: Record<string, unknown> }>,
+  options?: UseMutationOptions<unknown, Error, { id: string; values: Record<string, unknown> }>,
 ) {
   return useMutation({
-    mutationFn: ({ id, values }: { id: number; values: Record<string, unknown> }) =>
+    mutationFn: ({ id, values }: { id: string; values: Record<string, unknown> }) =>
       apiClient.internalMessageService.UpdateMessage({
         id,
         data: { ...values } as unknown as internal_messageservicev1_InternalMessageCategory,
@@ -156,11 +156,11 @@ export function useUpdateMessageCategory(
   options?: UseMutationOptions<
     unknown,
     Error,
-    { id: number; values: Record<string, unknown> }
+    { id: string; values: Record<string, unknown> }
   >,
 ) {
   return useMutation({
-    mutationFn: ({ id, values }: { id: number; values: Record<string, unknown> }) =>
+    mutationFn: ({ id, values }: { id: string; values: Record<string, unknown> }) =>
       apiClient.internalMessageCategoryService.Update({
         id,
         data: { ...values } as unknown as internal_messageservicev1_InternalMessageCategory,

@@ -45,7 +45,7 @@ export async function listTag(
 /**
  * 获取标签
  */
-export async function getTag(id: number, locale?: string) {
+export async function getTag(id: string, locale?: string) {
   return await apiClient.tagService.Get({ id, locale });
 }
 
@@ -64,7 +64,7 @@ export async function createTag(values: Record<string, any> = {}) {
 /**
  * 更新标签
  */
-export async function updateTag(id: number, values: Record<string, any> = {}) {
+export async function updateTag(id: string, values: Record<string, any> = {}) {
   return await apiClient.tagService.Update({
     id,
     // @ts-ignore proto generated code is error.
@@ -78,7 +78,7 @@ export async function updateTag(id: number, values: Record<string, any> = {}) {
 /**
  * 删除标签
  */
-export async function deleteTag(id: number) {
+export async function deleteTag(id: string) {
   return await apiClient.tagService.Delete({ id });
 }
 
@@ -129,7 +129,7 @@ export async function fetchListTag(params: ListTagParams) {
 }
 
 export function useGetTag(
-  options?: UseMutationOptions<any, Error, number>,
+  options?: UseMutationOptions<any, Error, string>,
 ) {
   return useMutation({
     mutationFn: (id) => {
@@ -140,7 +140,7 @@ export function useGetTag(
   });
 }
 
-export async function fetchTag(id: number) {
+export async function fetchTag(id: string) {
   const locale = getCurrentLocale();
   return queryClient.fetchQuery({
     queryKey: ['getTag', id, locale],
@@ -162,7 +162,7 @@ export function useCreateTag(
 }
 
 export function useUpdateTag(
-  options?: UseMutationOptions<{}, Error, { id: number; values: Record<string, any> }>,
+  options?: UseMutationOptions<{}, Error, { id: string; values: Record<string, any> }>,
 ) {
   return useMutation({
     mutationFn: ({ id, values }) => updateTag(id, values),
@@ -171,7 +171,7 @@ export function useUpdateTag(
 }
 
 export function useDeleteTag(
-  options?: UseMutationOptions<{}, Error, number>,
+  options?: UseMutationOptions<{}, Error, string>,
 ) {
   return useMutation({
     mutationFn: (id) => deleteTag(id),

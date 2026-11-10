@@ -65,11 +65,11 @@ export function useUpdateDictType(
   options?: UseMutationOptions<
     dictservicev1_DictType,
     Error,
-    { id: number; values: Record<string, unknown> }
+    { id: string; values: Record<string, unknown> }
   >,
 ) {
   return useMutation({
-    mutationFn: ({ id, values }: { id: number; values: Record<string, unknown> }) =>
+    mutationFn: ({ id, values }: { id: string; values: Record<string, unknown> }) =>
       apiClient.dictTypeService.Update({
         id,
         data: { ...values },
@@ -121,10 +121,10 @@ export function useCreateDictEntry(
 }
 
 export function useUpdateDictEntry(
-  options?: UseMutationOptions<unknown, Error, { id: number; values: Record<string, unknown> }>,
+  options?: UseMutationOptions<unknown, Error, { id: string; values: Record<string, unknown> }>,
 ) {
   return useMutation({
-    mutationFn: ({ id, values }: { id: number; values: Record<string, unknown> }) =>
+    mutationFn: ({ id, values }: { id: string; values: Record<string, unknown> }) =>
       apiClient.dictEntryService.Update({
         id,
         // 表单 Partial → proto 消息边界：字段集为真子集，运行时安全

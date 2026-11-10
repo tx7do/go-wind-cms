@@ -4,7 +4,8 @@ interface IUser {
     [key: string]: any
 
     avatar: string
-    id: number
+    // ID 已升级为 uint64（proto3 JSON 下为字符串）
+    id: string
     nickname: string
     realname: string
     roles?: string[]
@@ -22,11 +23,12 @@ export const useUserStore = defineStore('core-user', {
         roles: [],
     }),
     getters: {
-        tenantId: (state): number | null => state.user?.tenantId ?? null,
+        tenantId: (state): string | null => state.user?.tenantId ?? null,
         isLoggedIn: (state): boolean => state.user !== null,
         isTenantUser: (state): boolean => {
+            // tenantId 为 uint64 字符串；空串与 '0' 均视为无租户
             const tenantId = state.user?.tenantId;
-            return tenantId !== null && tenantId !== undefined && tenantId > 0;
+            return !!tenantId && tenantId !== '0';
         },
     },
     actions: {

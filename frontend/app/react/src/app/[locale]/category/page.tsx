@@ -41,7 +41,7 @@ export default function CategoryListPage() {
         loadCategories();
     }, []);
 
-    const handleCategoryClick = (id: number) => {
+    const handleCategoryClick = (id: string) => {
         router.push(`/category/detail?id=${id}`);
     };
 

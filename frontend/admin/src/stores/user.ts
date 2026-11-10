@@ -10,7 +10,7 @@ export interface UserState {
     hiddenFields: string[];      // 字段权限隐藏字段集（"资源.字段" 串，来自 GetMyPermissionCode）
 
     // 计算属性（函数形式，React 中不需要 computed）
-    tenantId: number | null;
+    tenantId: string | null;
     isLoggedIn: boolean;
 
     // 动作
@@ -64,10 +64,10 @@ export const useUserStore = create<UserState>()(
                 set({hiddenFields: fields});
             },
 
-            // 判断是否为租户用户
+            // 判断是否为租户用户（tenantId 已是 uint64 字符串，0/'' 表示无租户）
             isTenantUser: () => {
                 const {tenantId} = get();
-                return tenantId !== null && tenantId !== undefined && tenantId > 0;
+                return !!tenantId && tenantId !== '0';
             },
 
             // 重置状态

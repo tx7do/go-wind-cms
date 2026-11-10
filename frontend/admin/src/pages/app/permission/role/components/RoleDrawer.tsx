@@ -62,34 +62,34 @@ const RoleDrawer: React.FC<RoleDrawerProps> = ({ open, mode, data, onClose, onSu
 
   const [confirmLoading, setConfirmLoading] = useState(false);
   const [treeData, setTreeData] = useState<any[]>([]);
-  const [checkedKeys, setCheckedKeys] = useState<number[]>([]);
+  const [checkedKeys, setCheckedKeys] = useState<string[]>([]);
   const [treeVersion, setTreeVersion] = useState(0);
   const [treeLoading, setTreeLoading] = useState(false);
   const [unitTreeData, setUnitTreeData] = useState<any[]>([]);
-  const [unitCheckedKeys, setUnitCheckedKeys] = useState<number[]>([]);
+  const [unitCheckedKeys, setUnitCheckedKeys] = useState<string[]>([]);
   const [unitTreeVersion, setUnitTreeVersion] = useState(0);
   // 字段权限：User 资源上勾选隐藏的字段（json_name）
   const [userHiddenFields, setUserHiddenFields] = useState<string[]>([]);
-  // 权限继承：父角色候选树（排除自身及后代防环）、当前选中父角色（0=根角色）、
+  // 权限继承：父角色候选树（排除自身及后代防环）、当前选中父角色（'0'=根角色）、
   // 父角色权限上限集（null=无父角色，不收窄）
   const [roleTreeData, setRoleTreeData] = useState<any[]>([]);
-  const [selectedParentId, setSelectedParentId] = useState(0);
-  const [permCapIds, setPermCapIds] = useState<number[] | null>(null);
+  const [selectedParentId, setSelectedParentId] = useState('0');
+  const [permCapIds, setPermCapIds] = useState<string[] | null>(null);
   // 权限树全量数据源（groups + permissions），父角色切换时按 cap 过滤重建
   const treeSourceRef = useRef<{ groups: any[]; permissions: any[] } | null>(null);
 
   // 按父角色上限集重建权限树；返回本次生效的 cap（供调用方做勾选收敛）。
   // 拉取父角色失败时按全量展示，保存仍由后端子集校验兜底。
-  const rebuildTree = async (parentId: number | null): Promise<number[] | null> => {
+  const rebuildTree = async (parentId: string | null): Promise<string[] | null> => {
     const src = treeSourceRef.current;
     if (!src) return null;
-    let cap: number[] | null = null;
+    let cap: string[] | null = null;
     if (parentId) {
       try {
         const parent = await fetchGetRole({ id: parentId });
         cap = ((parent as any)?.permissions || [])
-          .map((v: any) => Number(v))
-          .filter((v: any) => Number.isFinite(v));
+          .map((v: any) => String(v))
+          .filter(Boolean);
       } catch (error) {
         console.error('加载父角色权限上限失败:', error);
       }
@@ -99,7 +99,7 @@ const RoleDrawer: React.FC<RoleDrawerProps> = ({ open, mode, data, onClose, onSu
     if (filtered.groups.length === 0 && filtered.permissions.length > 0) {
       // 无权限组时，直接罗列权限（平铺，不嵌套）
       setTreeData(filtered.permissions.map((p) => ({
-        key: Number(p.id),
+        key: String(p.id),
         title: p.name || p.code || String(p.id),
       })));
     } else {
@@ -110,12 +110,12 @@ const RoleDrawer: React.FC<RoleDrawerProps> = ({ open, mode, data, onClose, onSu
   };
 
   // 切换父角色：重建权限树，并把已勾权限收敛到新 cap 内（后端保存时还有子集校验兜底）
-  const handleParentChange = async (pid: number) => {
+  const handleParentChange = async (pid: string) => {
     setSelectedParentId(pid);
     formRef.current?.setFieldValue('parentId', pid);
-    const cap = await rebuildTree(pid || null);
-    if (pid && cap) {
-      setCheckedKeys((prev) => prev.filter((k) => typeof k === 'number' && cap!.includes(k)));
+    const cap = await rebuildTree(pid && pid !== '0' ? pid : null);
+    if (pid && pid !== '0' && cap) {
+      setCheckedKeys((prev) => prev.filter((k) => typeof k === 'string' && cap!.includes(k)));
     }
   };
 
@@ -139,7 +139,7 @@ const RoleDrawer: React.FC<RoleDrawerProps> = ({ open, mode, data, onClose, onSu
               collectSelfAndDescendantIds(roleRes?.items || [], data?.id),
             ),
           );
-          await rebuildTree(mode === 'edit' ? Number(data?.parentId || 0) : null);
+          await rebuildTree(mode === 'edit' ? String(data?.parentId || '0') : null);
         })
         .catch((error) => {
           console.error('加载权限树数据失败:', error);
@@ -171,22 +171,22 @@ const RoleDrawer: React.FC<RoleDrawerProps> = ({ open, mode, data, onClose, onSu
           sortOrder: (data as any).sortOrder ?? 1,
           status: data.status || 'ON',
           dataScope: (data as any).dataScope || 'ALL',
-          // 父角色回填为数值（0=根角色），保证清空选择时提交的是显式 0 而非 undefined
-          parentId: Number((data as any).parentId || 0),
+          // 父角色回填为字符串（'0'=根角色），保证清空选择时提交的是显式 '0' 而非 undefined
+          parentId: String((data as any).parentId || '0'),
           description: (data as any).description || '',
         });
       }, 0);
       // 设置已勾选的权限
-      setSelectedParentId(Number((data as any).parentId || 0));
+      setSelectedParentId(String((data as any).parentId || '0'));
       const perms = (data as any).permissions;
       if (Array.isArray(perms)) {
-        setCheckedKeys(perms.filter((v: any) => typeof v === 'number'));
+        setCheckedKeys(perms.filter((v: any) => typeof v === 'string'));
       }
       // SELECTED_UNITS 时回填已配置的授权单元集
       if ((data as any).dataScope === 'SELECTED_UNITS') {
         const units = (data as any).orgUnits;
         if (Array.isArray(units)) {
-          setUnitCheckedKeys(units.filter((v: any) => typeof v === 'number'));
+          setUnitCheckedKeys(units.filter((v: any) => typeof v === 'string'));
         }
       }
       // 回填字段权限（User 资源的隐藏字段集）
@@ -230,11 +230,11 @@ const RoleDrawer: React.FC<RoleDrawerProps> = ({ open, mode, data, onClose, onSu
 
     // 保存收敛确认：存量越权（超出父角色上限）的已勾权限点在收窄后的树上不可见，
     // 提交时会被剥离，先向操作者确认（编辑时校验语义的前端引导；后端亦有校验兜底）。
-    const storedPerms: number[] = Array.isArray((data as any)?.permissions)
-      ? (data as any).permissions.filter((v: any) => typeof v === 'number')
+    const storedPerms: string[] = Array.isArray((data as any)?.permissions)
+      ? (data as any).permissions.filter((v: any) => typeof v === 'string')
       : [];
     const outOfCap = permCapIds
-      ? storedPerms.filter((id) => !permCapIds!.includes(Number(id)))
+      ? storedPerms.filter((id) => !permCapIds!.includes(String(id)))
       : [];
 
     const doSubmit = async () => {
@@ -245,15 +245,15 @@ const RoleDrawer: React.FC<RoleDrawerProps> = ({ open, mode, data, onClose, onSu
         // 用叶子交集剥离权限组父节点 ID（父子联动会自动勾选父节点，
         // 组 ID 混入提交会被后端当作权限 ID，可能越权绑定）。
         permissions: submittedPerms,
-        // 父角色始终随表单提交：0=根角色（清空父角色须显式 0 进 updateMask，
+        // 父角色始终随表单提交：'0'=根角色（清空父角色须显式 '0' 进 updateMask，
         // 否则后端三态语义会把它当"未声明"静默跳过）。
-        parentId: selectedParentId || 0,
+        parentId: selectedParentId || '0',
       };
 
       // 仅 SELECTED_UNITS 档提交授权单元集（含清空场景）；
       // 其余档位不携带该字段，后端维持既有集不替换。
       if (values.dataScope === 'SELECTED_UNITS') {
-        payload.orgUnits = unitCheckedKeys.filter((v) => typeof v === 'number');
+        payload.orgUnits = unitCheckedKeys.filter((v) => typeof v === 'string');
       }
 
       // 字段权限始终随表单提交（含清空场景）：抽屉所见即保存后的最终态。
@@ -298,7 +298,7 @@ const RoleDrawer: React.FC<RoleDrawerProps> = ({ open, mode, data, onClose, onSu
           // 权限继承中间态一并清空，防上个角色残留进下一次创建
           treeSourceRef.current = null;
           setPermCapIds(null);
-          setSelectedParentId(0);
+          setSelectedParentId('0');
           setRoleTreeData([]);
           onClose();
         }
@@ -386,7 +386,7 @@ const RoleDrawer: React.FC<RoleDrawerProps> = ({ open, mode, data, onClose, onSu
           allowClear: true,
           treeData: roleTreeData,
           onChange: (value: any) => {
-            handleParentChange(typeof value === 'number' ? value : 0);
+            handleParentChange(value == null || value === '' ? '0' : String(value));
           },
         }}
       />
@@ -404,7 +404,7 @@ const RoleDrawer: React.FC<RoleDrawerProps> = ({ open, mode, data, onClose, onSu
                     checkable
                     checkedKeys={unitCheckedKeys}
                     onCheck={(checked) => {
-                      setUnitCheckedKeys(checked as number[]);
+                      setUnitCheckedKeys(checked as string[]);
                     }}
                     treeData={unitTreeData}
                     defaultExpandAll
@@ -457,7 +457,7 @@ const RoleDrawer: React.FC<RoleDrawerProps> = ({ open, mode, data, onClose, onSu
                 checkable
                 checkedKeys={checkedKeys}
                 onCheck={(checked) => {
-                  setCheckedKeys(checked as number[]);
+                  setCheckedKeys(checked as string[]);
                 }}
                 treeData={treeData}
                 defaultExpandAll

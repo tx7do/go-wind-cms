@@ -18,7 +18,8 @@ const isBookmarked = ref(false)
 const isTocExpanded = ref(true)
 const contentRef = ref<HTMLElement | null>(null)
 
-const postId = computed(() => Number(route.params.id))
+// 路由参数本就是字符串，ID 升级 uint64 后直接透传（勿再 Number 转换）
+const postId = computed(() => route.params.id as string)
 // 草稿预览：admin「预览」按钮带短时效令牌跳转，后端校验后放行非已发布内容
 const previewToken = computed(() => String(route.query.preview_token || ''))
 
@@ -45,7 +46,7 @@ watch(
 )
 
 // 浏览量上报（PV +1）：每次进入详情记一次
-const viewReportedId = ref<number | null>(null)
+const viewReportedId = ref<string | null>(null)
 watch(
   postId,
   (pid) => {

@@ -62,7 +62,7 @@ const NotificationPreference = () => {
       initialMutedCategoryIds={pref?.mutedCategoryIds ?? []}
       categoryOptions={(categoriesQuery.data?.items ?? []).map((c) => ({
         label: c.name ?? '',
-        value: c.id ?? 0,
+        value: c.id ?? '',
       }))}
       onSaved={() => prefQuery.refetch()}
     />
@@ -72,8 +72,8 @@ const NotificationPreference = () => {
 type QuietHoursFormProps = {
   initialEnabled: boolean;
   initialRange: [Dayjs | undefined, Dayjs | undefined];
-  initialMutedCategoryIds: number[];
-  categoryOptions: { label: string; value: number }[];
+  initialMutedCategoryIds: string[];
+  categoryOptions: { label: string; value: string }[];
   onSaved: () => void;
 };
 
@@ -89,7 +89,7 @@ const QuietHoursForm = ({
   const [saving, setSaving] = useState(false);
   const [quietEnabled, setQuietEnabled] = useState<boolean>(initialEnabled);
   const [quietRange, setQuietRange] = useState<[Dayjs | undefined, Dayjs | undefined]>(initialRange);
-  const [mutedCategoryIds, setMutedCategoryIds] = useState<number[]>(initialMutedCategoryIds);
+  const [mutedCategoryIds, setMutedCategoryIds] = useState<string[]>(initialMutedCategoryIds);
 
   const handleSave = useCallback(async () => {
     const startMinute = dayjsToMinutes(quietRange[0]);
@@ -166,7 +166,7 @@ const QuietHoursForm = ({
           <Checkbox.Group
             options={categoryOptions}
             value={mutedCategoryIds}
-            onChange={(values) => setMutedCategoryIds(values as number[])}
+            onChange={(values) => setMutedCategoryIds(values as string[])}
             style={{ display: 'flex', flexWrap: 'wrap', gap: '8px 16px' }}
           />
         ) : (

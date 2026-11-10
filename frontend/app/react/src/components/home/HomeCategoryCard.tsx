@@ -8,7 +8,8 @@ import {cn} from '@/lib/utils';
 
 interface HomeCategoryCardProps {
     category: contentservicev1_Category;
-    onClick?: (id: number) => void;
+    // 分类 ID 已升级为 uint64 字符串
+    onClick?: (id: string) => void;
     mobileCompact?: boolean;
 }
 

@@ -72,8 +72,9 @@ export default function StoreProvider({children}: { children: ReactNode }) {
 
                     accessStore.getState().setAccessToken({
                         value: newToken,
-                        expiresAt: resp.expires_in && resp.expires_in != 0
-                            ? Date.now() + resp.expires_in * 1000
+                        // expires_in 为 int64，proto3 JSON 下是字符串（秒数）
+                        expiresAt: resp.expires_in && resp.expires_in !== '0'
+                            ? Date.now() + Number(resp.expires_in) * 1000
                             : undefined,
                     });
 
@@ -81,8 +82,8 @@ export default function StoreProvider({children}: { children: ReactNode }) {
                     if (resp.refresh_token) {
                         accessStore.getState().setRefreshToken({
                             value: resp.refresh_token,
-                            expiresAt: resp.refresh_expires_in && resp.refresh_expires_in != 0
-                                ? Date.now() + resp.refresh_expires_in * 1000
+                            expiresAt: resp.refresh_expires_in && resp.refresh_expires_in !== '0'
+                                ? Date.now() + Number(resp.refresh_expires_in) * 1000
                                 : undefined,
                         });
                     }

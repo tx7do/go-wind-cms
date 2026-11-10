@@ -4,7 +4,7 @@ import { cn } from '@/lib/utils'
 import { fetchListComment, createComment } from '@/api/composables/comment'
 
 const props = defineProps<{
-  objectId: number | null
+  objectId: string | null
   contentType: string | null
 }>()
 
@@ -51,7 +51,8 @@ async function loadComments(reset = false) {
       },
     })
     const newComments = res?.items || []
-    const newTotal = res?.total || 0
+    // total 为 uint64，proto3 JSON 下是字符串，转回 number 参与分页比较
+    const newTotal = Number(res?.total || 0)
 
     if (reset) {
       comments.value = newComments

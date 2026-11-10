@@ -10,7 +10,7 @@ import PermissionList from './PermissionList';
  * 使用 Splitter 实现左右分栏布局
  */
 const PermissionPointManagement = () => {
-  const [currentGroupId, setCurrentGroupId] = useState<number | null>(null);
+  const [currentGroupId, setCurrentGroupId] = useState<string | null>(null);
 
   return (
     <ContentContainer heightMode="fixed" padding="16px" bottomMargin={0}>

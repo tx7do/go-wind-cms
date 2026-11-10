@@ -33,7 +33,7 @@ function onError() {
     // 变换端点不可用：回退元数据 url。取元数据失败仅告警——
     // 这是 best-effort 兜底链的中间环，终态仍会落占位图。
     apiClient.mediaAssetService
-      .Get({id: Number(id.value)})
+      .Get({id: id.value})
       .then((asset) => {
         if (asset.url) fallbackUrl.value = asset.url
         else failed.value = true

@@ -65,7 +65,7 @@ export function useUpdatePage(
   options?: UseMutationOptions<
     contentservicev1_Page,
     Error,
-    { id: number; data: Record<string, unknown>; excludeMaskKeys?: string[] }
+    { id: string; data: Record<string, unknown>; excludeMaskKeys?: string[] }
   >,
 ) {
   return useMutation({

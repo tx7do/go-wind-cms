@@ -68,10 +68,10 @@ export function useCreateTenant(
 // 更新租户
 // ==============================
 export function useUpdateTenant(
-  options?: UseMutationOptions<unknown, Error, { id: number; values: Record<string, unknown> }>,
+  options?: UseMutationOptions<unknown, Error, { id: string; values: Record<string, unknown> }>,
 ) {
   return useMutation({
-    mutationFn: ({ id, values }: { id: number; values: Record<string, unknown> }) =>
+    mutationFn: ({ id, values }: { id: string; values: Record<string, unknown> }) =>
       apiClient.tenantService.Update({
         id,
         data: {
@@ -108,13 +108,13 @@ export function useCreateTenantWithAdminUser(
 export function useFetchTenantOptions() {
   return useQuery({
     queryKey: ['tenantOptions'],
-    queryFn: async (): Promise<{ label: string; value: number }[]> => {
+    queryFn: async (): Promise<{ label: string; value: string }[]> => {
       const res = await apiClient.tenantService.List(
         new PaginationQuery({ paging: { page: 1, pageSize: 500 } }).toRawParams(),
       );
       return (res.items || []).map((it) => ({
         label: `${it.name ?? '-'} (#${it.id})`,
-        value: Number(it.id ?? 0),
+        value: it.id ?? '',
       }));
     },
     staleTime: 5 * 60 * 1000,

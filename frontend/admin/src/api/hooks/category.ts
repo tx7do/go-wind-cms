@@ -62,7 +62,7 @@ export function useUpdateCategory(
   options?: UseMutationOptions<
     contentservicev1_Category,
     Error,
-    { id: number; data: Record<string, unknown>; excludeMaskKeys?: string[] }
+    { id: string; data: Record<string, unknown>; excludeMaskKeys?: string[] }
   >,
 ) {
   return useMutation({
@@ -93,7 +93,7 @@ export function useDeleteCategory(
  */
 export async function fetchFlattenedCategoryOptions(
   lang: string,
-): Promise<{ label: string; value: number }[]> {
+): Promise<{ label: string; value: string }[]> {
   const resp = await fetchListCategories(
     new PaginationQuery({
       paging: { page: 1, pageSize: 500 },
@@ -102,9 +102,9 @@ export async function fetchFlattenedCategoryOptions(
     }),
   );
 
-  const result: { label: string; value: number }[] = [];
+  const result: { label: string; value: string }[] = [];
   interface CategoryTreeNode {
-    id?: number;
+    id?: string;
     name?: string;
     translations?: { languageCode?: string; name?: string }[];
     children?: CategoryTreeNode[];
@@ -115,7 +115,7 @@ export async function fetchFlattenedCategoryOptions(
         item.translations?.find((tr) => tr.languageCode === lang) ||
         item.translations?.[0];
       if (translation?.name) {
-        result.push({ label: `${prefix}${translation.name}`, value: item.id ?? 0 });
+        result.push({ label: `${prefix}${translation.name}`, value: item.id ?? '' });
         if (item.children?.length) {
           walk(item.children, `${prefix}${translation.name} / `);
         }

@@ -88,7 +88,7 @@ export function useRunAiAgentApp(
 }
 
 export function useListAiAgentRuns(
-  appId: number | undefined,
+  appId: string | undefined,
   query: PaginationQuery,
   options?: UseQueryOptions<aiservicev1_ListAiAgentRunsResponse, Error>,
 ) {
@@ -123,7 +123,7 @@ export function useApproveAgentRun(
   options?: UseMutationOptions<
     aiservicev1_AiAgentRun,
     Error,
-    { runId: number; approved: boolean; note: string }
+    { runId: string; approved: boolean; note: string }
   >,
 ) {
   return useMutation({

@@ -11,8 +11,8 @@ const props = withDefaults(defineProps<{
   initialPageSize?: number
   showSkeleton?: boolean
   from?: string
-  categoryId?: number
-  tagId?: number
+  categoryId?: string
+  tagId?: string
   columns?: number
   showPagination?: boolean
 }>(), {
@@ -48,7 +48,8 @@ async function fetchPosts(page: number, pageSize: number) {
       orderBy: props.orderBy,
     })
     posts.value = res?.items || []
-    total.value = res?.total || 0
+    // total 为 uint64，proto3 JSON 下是字符串，转回 number 参与分页
+    total.value = Number(res?.total || 0)
   } catch (error) {
     console.error('PostList fetch failed:', error)
     posts.value = []
@@ -62,7 +63,7 @@ async function fetchPosts(page: number, pageSize: number) {
 const postIds = computed(() =>
   (posts.value ?? [])
     .map(p => p.id)
-    .filter((id): id is number => typeof id === 'number'),
+    .filter((id): id is string => typeof id === 'string'),
 )
 const countsResp = useGetCounts('TARGET_TYPE_POST', postIds, ['COUNTER_METRIC_LIKE'])
 

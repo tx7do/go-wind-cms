@@ -6,7 +6,7 @@ import { queryClient } from '@/core';
 
 interface EditPasswordModalProps {
   open: boolean;
-  userId: number | undefined;
+  userId: string | undefined;
   onClose: () => void;
 }
 

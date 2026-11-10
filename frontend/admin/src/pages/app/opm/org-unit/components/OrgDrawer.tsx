@@ -41,7 +41,7 @@ const OrgDrawer: React.FC<OrgDrawerProps> = ({ open, mode, data, onClose, onSucc
 
   const [confirmLoading, setConfirmLoading] = useState(false);
   const [parentTreeData, setParentTreeData] = useState<any[]>([]);
-  const [leaderOptions, setLeaderOptions] = useState<{ label: string; value: number }[]>([]);
+  const [leaderOptions, setLeaderOptions] = useState<{ label: string; value: string }[]>([]);
 
   // 加载上级组织树和用户列表
   useEffect(() => {
@@ -63,7 +63,7 @@ const OrgDrawer: React.FC<OrgDrawerProps> = ({ open, mode, data, onClose, onSucc
           setLeaderOptions(
             items.map((u: any) => ({
               label: u.nickname || u.username || String(u.id),
-              value: u.id as number,
+              value: u.id as string,
             })),
           );
         })

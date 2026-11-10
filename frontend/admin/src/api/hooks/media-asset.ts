@@ -66,14 +66,14 @@ export function useListDuplicatedMediaAssets(
 
 /** 媒体被内容引用的关系（哪些文章/页面在用） */
 export function useListMediaAssetReferences(
-  mediaAssetId?: number,
+  mediaAssetId?: string,
   options?: UseQueryOptions<mediaservicev1_ListMediaAssetReferencesResponse, Error>,
 ) {
   return useQuery({
     queryKey: ['listMediaAssetReferences', mediaAssetId],
     queryFn: () =>
       apiClient.mediaAssetService.ListMediaAssetReferences({
-        mediaAssetId: mediaAssetId ?? 0,
+        mediaAssetId: mediaAssetId ?? '0',
       }),
     enabled: !!mediaAssetId,
     ...options,
@@ -104,7 +104,7 @@ export function useUpdateMediaAsset(
   options?: UseMutationOptions<
     mediaservicev1_MediaAsset,
     Error,
-    { id: number; values: Record<string, unknown>; maskKeys?: string[] }
+    { id: string; values: Record<string, unknown>; maskKeys?: string[] }
   >,
 ) {
   return useMutation({

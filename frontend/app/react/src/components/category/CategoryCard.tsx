@@ -17,7 +17,8 @@ import Image from '@/components/ui/image';
 interface CategoryCardProps {
     category: contentservicev1_Category | null;
     clickable?: boolean;
-    onClick?: (id: number) => void;
+    // 分类 ID 已升级为 uint64 字符串
+    onClick?: (id: string) => void;
 }
 
 const CategoryCard: React.FC<CategoryCardProps> = ({

@@ -7,7 +7,8 @@ const route = useRoute()
 
 const tag = ref<any>(null)
 const loading = ref(true)
-const tagId = computed(() => Number(route.params.id))
+// 路由参数本就是字符串，ID 升级 uint64 后直接透传（勿再 Number 转换）
+const tagId = computed(() => route.params.id as string)
 
 // 动态标题
 const tagTitle = computed(() =>

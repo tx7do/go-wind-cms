@@ -15,7 +15,7 @@ import { fetchListPosts } from '@/api/hooks/post';
  */
 
 type PostRow = {
-  id?: number;
+  id?: string;
   status?: string;
   publishTime?: string;
   translations?: { title?: string; languageCode?: string }[];

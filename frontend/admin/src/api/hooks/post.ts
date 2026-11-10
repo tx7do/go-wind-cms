@@ -80,7 +80,7 @@ export function useUpdatePost(
   options?: UseMutationOptions<
     contentservicev1_Post,
     Error,
-    { id: number; data: Record<string, unknown>; maskKeys?: readonly string[] }
+    { id: string; data: Record<string, unknown>; maskKeys?: readonly string[] }
   >,
 ) {
   return useMutation({

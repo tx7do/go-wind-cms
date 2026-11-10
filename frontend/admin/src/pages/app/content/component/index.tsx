@@ -64,12 +64,12 @@ const ComponentDefinitionManagement = () => {
   const [formOpen, setFormOpen] = useState(false);
   const [saving, setSaving] = useState(false);
   const [form, setForm] = useState<{
-    id: number;
+    id: string;
     code: string;
     name: string;
     description: string;
     fields: FieldPanel[];
-  }>({ id: 0, code: '', name: '', description: '', fields: [] });
+  }>({ id: '0', code: '', name: '', description: '', fields: [] });
   const [activeKeys, setActiveKeys] = useState<string[]>([]);
 
   const listQuery = useListComponentDefinitions();
@@ -104,12 +104,12 @@ const ComponentDefinitionManagement = () => {
   };
 
   const openCreate = () => {
-    setForm({ id: 0, code: '', name: '', description: '', fields: [] });
+    setForm({ id: '0', code: '', name: '', description: '', fields: [] });
     setFormOpen(true);
   };
 
   const openEdit = (record: ComponentDefinition) => {
-    const componentId = record.id ?? 0;
+    const componentId = record.id ?? '0';
     setForm({
       id: componentId,
       code: record.code ?? '',
@@ -156,7 +156,8 @@ const ComponentDefinitionManagement = () => {
         isRequired: f.isRequired,
         sortOrder: f.sortOrder,
       })) as Array<Partial<contentservicev1_FieldDefinition>>;
-      if (form.id) {
+      // id 为 '0' 表示新建（uint64 字符串语义下 0 不再是 falsy）
+      if (form.id && form.id !== '0') {
         await updateMutation.mutateAsync({
           id: form.id,
           values: { name: form.name.trim(), description: form.description },

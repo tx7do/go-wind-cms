@@ -46,7 +46,7 @@ export async function listPost(
 /**
  * 获取帖子
  */
-export async function getPost(id: number, locale?: string) {
+export async function getPost(id: string, locale?: string) {
   if (!id) return null;
   return await apiClient.postService.Get({ id, locale });
 }
@@ -66,7 +66,7 @@ export async function createPost(values: Record<string, any> = {}) {
 /**
  * 更新帖子
  */
-export async function updatePost(id: number, values: Record<string, any> = {}) {
+export async function updatePost(id: string, values: Record<string, any> = {}) {
   return await apiClient.postService.Update({
     id,
     // @ts-ignore proto generated code is error.
@@ -80,7 +80,7 @@ export async function updatePost(id: number, values: Record<string, any> = {}) {
 /**
  * 删除帖子
  */
-export async function deletePost(id: number) {
+export async function deletePost(id: string) {
   return await apiClient.postService.Delete({ id });
 }
 
@@ -150,7 +150,7 @@ export async function fetchListPost(params: ListPostParams) {
 }
 
 export function useGetPost(
-  options?: UseMutationOptions<any, Error, number>,
+  options?: UseMutationOptions<any, Error, string>,
 ) {
   return useMutation({
     mutationFn: (id) => {
@@ -161,7 +161,7 @@ export function useGetPost(
   });
 }
 
-export async function fetchPost(id: number) {
+export async function fetchPost(id: string) {
   const locale = getCurrentLocale();
   return queryClient.fetchQuery({
     queryKey: ['getPost', id, locale],
@@ -174,7 +174,7 @@ export async function fetchPost(id: number) {
  * 草稿预览取数：携带 admin 签发的短时效 preview_token，
  * 后端校验通过则放行非已发布内容（preview_token 不在 proto 消息内，手拼 query 旁路传）。
  */
-export async function fetchPostPreview(id: number, token: string) {
+export async function fetchPostPreview(id: string, token: string) {
   const locale = getCurrentLocale();
   return queryClient.fetchQuery({
     queryKey: ['getPostPreview', id, token, locale],
@@ -226,7 +226,7 @@ export function useCreatePost(
 }
 
 export function useUpdatePost(
-  options?: UseMutationOptions<{}, Error, { id: number; values: Record<string, any> }>,
+  options?: UseMutationOptions<{}, Error, { id: string; values: Record<string, any> }>,
 ) {
   return useMutation({
     mutationFn: ({ id, values }) => updatePost(id, values),
@@ -235,7 +235,7 @@ export function useUpdatePost(
 }
 
 export function useDeletePost(
-  options?: UseMutationOptions<{}, Error, number>,
+  options?: UseMutationOptions<{}, Error, string>,
 ) {
   return useMutation({
     mutationFn: (id) => deletePost(id),

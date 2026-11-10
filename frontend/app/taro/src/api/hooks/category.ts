@@ -73,7 +73,7 @@ export async function createCategory(data: Partial<contentservicev1_Category>) {
  * 更新分类
  */
 export async function updateCategory(params: {
-  id: number;
+  id: string;
   values: Partial<contentservicev1_Category>;
 }) {
   return apiClient.categoryService.Update({
@@ -92,7 +92,7 @@ export async function updateCategory(params: {
 /**
  * 删除分类
  */
-export async function deleteCategory(id: number) {
+export async function deleteCategory(id: string) {
   return apiClient.categoryService.Delete({id});
 }
 
@@ -175,7 +175,7 @@ export function useUpdateCategory(
   options?: UseMutationOptions<
     contentservicev1_Category,
     Error,
-    { id: number; values: Partial<contentservicev1_Category> }
+    { id: string; values: Partial<contentservicev1_Category> }
   >,
 ) {
   return useMutation({
@@ -187,7 +187,7 @@ export function useUpdateCategory(
 // ==============================
 // 删除分类 Hook
 // ==============================
-export function useDeleteCategory(options?: UseMutationOptions<Record<string, never>, Error, number>) {
+export function useDeleteCategory(options?: UseMutationOptions<Record<string, never>, Error, string>) {
   return useMutation({
     mutationFn: (id) => deleteCategory(id),
     ...options,

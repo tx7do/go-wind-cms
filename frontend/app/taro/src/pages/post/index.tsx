@@ -26,12 +26,13 @@ export default function PostListPage() {
     const [posts, setPosts] = useState<contentservicev1_Post[]>([]);
     const [total, setTotal] = useState(0);
     const [categories, setCategories] = useState<contentservicev1_Category[]>([]);
-    const [selectedCategory, setSelectedCategory] = useState<number | null>(null);
+    // 分类 ID 已升级为 uint64 字符串
+    const [selectedCategory, setSelectedCategory] = useState<string | null>(null);
     const [page, setPage] = useState(1);
     const [loading, setLoading] = useState(true);
     const [loadingMore, setLoadingMore] = useState(false);
 
-    const loadPage = async (targetPage: number, categoryId: number | null, append: boolean) => {
+    const loadPage = async (targetPage: number, categoryId: string | null, append: boolean) => {
         append ? setLoadingMore(true) : setLoading(true);
         try {
             const res = await fetchListPosts({
@@ -69,7 +70,7 @@ export default function PostListPage() {
         }
     });
 
-    const switchCategory = (categoryId: number | null) => {
+    const switchCategory = (categoryId: string | null) => {
         setSelectedCategory(categoryId);
         loadPage(1, categoryId, false);
     };

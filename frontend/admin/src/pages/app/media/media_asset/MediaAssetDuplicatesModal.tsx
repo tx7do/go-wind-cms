@@ -17,9 +17,9 @@ import { formatBytes } from '@/utils';
 const MediaAssetDuplicatesModal: React.FC<{
   open: boolean;
   onClose: () => void;
-  onDeleteAsset?: (id: number) => void;
+  onDeleteAsset?: (id: string) => void;
   /** 一键清理：保留组内最早上传的一份，删除其余（ids 由调用方批量删除） */
-  onCleanupGroup?: (deleteIds: number[]) => void;
+  onCleanupGroup?: (deleteIds: string[]) => void;
 }> = ({ open, onClose, onDeleteAsset, onCleanupGroup }) => {
   const { t } = useTranslation('media-asset');
   // limit 传 0 表示不拉取（弹窗未开时禁用查询）
@@ -109,7 +109,7 @@ const MediaAssetDuplicatesModal: React.FC<{
                     onCleanupGroup(
                       (g.assets || [])
                         .slice(1)
-                        .map((a) => Number(a.id))
+                        .map((a) => String(a.id))
                         .filter(Boolean),
                     )
                   }

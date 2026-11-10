@@ -41,7 +41,8 @@ export default function TagListPage() {
                 orderBy: undefined,
             }) as unknown as contentservicev1_ListTagResponse;
             setTags(res.items || []);
-            setTotal(res.total || 0);
+            // total 为 uint64，proto3 JSON 下是字符串；计数语义保持 number
+            setTotal(Number(res.total) || 0);
         } catch (error) {
             console.error('Load tags failed:', error);
         } finally {
@@ -49,7 +50,7 @@ export default function TagListPage() {
         }
     }
 
-    function handleTagClick(id: number) {
+    function handleTagClick(id: string) {
         router.push(`/tag/detail?id=${id}`);
     }
 
@@ -110,7 +111,7 @@ export default function TagListPage() {
                                             borderColor: tag.color || 'hsl(var(--border))',
                                             background: `linear-gradient(135deg, ${tag.color}10 0%, hsl(var(--card)) 100%)`,
                                         }}
-                                        onClick={() => handleTagClick(tag.id || 0)}
+                                        onClick={() => handleTagClick(tag.id || '')}
                                     >
                                         <div
                                             className="flex h-12 w-12 items-center justify-center rounded-lg transition-transform duration-300 group-hover:scale-110"

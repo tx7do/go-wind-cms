@@ -7,7 +7,7 @@
  */
 
 interface TreeNode {
-  value: number;
+  value: string;
   title: string;
   children?: TreeNode[];
 }
@@ -18,12 +18,12 @@ interface TreeNode {
  * @param excludeId 可选，需从候选中排除的节点 id（防止把自身设为父级形成自环）
  */
 export function buildOrgTreeSelectData(
-  items: Array<{ id?: number; name?: string; children?: any[] }>,
-  excludeId?: number,
+  items: Array<{ id?: string; name?: string; children?: any[] }>,
+  excludeId?: string,
 ): TreeNode[] {
   if (!items || items.length === 0) return [];
 
-  const build = (nodes: Array<{ id?: number; name?: string; children?: any[] }>): TreeNode[] => {
+  const build = (nodes: Array<{ id?: string; name?: string; children?: any[] }>): TreeNode[] => {
     const result: TreeNode[] = [];
     nodes.forEach((item) => {
       if (item.id == null) return;

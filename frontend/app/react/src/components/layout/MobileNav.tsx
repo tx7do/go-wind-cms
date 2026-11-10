@@ -52,7 +52,8 @@ export default function MobileNav() {
 
     const [open, setOpen] = useState(false);
     const [navigationItems, setNavigationItems] = useState<siteservicev1_NavigationItem[]>([]);
-    const [expandedId, setExpandedId] = useState<number | null>(null);
+    // 导航项 ID 已升级为 uint64 字符串
+    const [expandedId, setExpandedId] = useState<string | null>(null);
 
     useEffect(() => {
         let cancelled = false;
@@ -153,7 +154,7 @@ export default function MobileNav() {
                         {navigationItems.length > 0 && (
                             <nav className="mb-3 space-y-0.5">
                                 {navigationItems.map((item) => {
-                                    const itemId = item.id ?? 0;
+                                    const itemId = item.id ?? '';
                                     const hasChildren = (item.children?.length ?? 0) > 0;
                                     const isExpanded = expandedId === itemId;
 

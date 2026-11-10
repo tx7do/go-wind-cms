@@ -49,13 +49,16 @@ export const useAuthStore = defineStore('auth', () => {
 
             // 如果成功获取到 accessToken
             if (loginResp.access_token) {
-                accessStore.setAccessToken(loginResp.access_token, loginResp.expires_in && loginResp.expires_in !== 0
-                    ? Date.now() + loginResp.expires_in * 1000
+                // expires_in / refresh_expires_in 为 int64 秒数，proto3 JSON 下是字符串，转回 number 参与运算
+                const expiresIn = Number(loginResp.expires_in || 0)
+                accessStore.setAccessToken(loginResp.access_token, expiresIn !== 0
+                    ? Date.now() + expiresIn * 1000
                     : undefined)
 
                 if (loginResp.refresh_token) {
-                    accessStore.setRefreshToken(loginResp.refresh_token, loginResp.refresh_expires_in && loginResp.refresh_expires_in !== 0
-                        ? Date.now() + loginResp.refresh_expires_in * 1000
+                    const refreshExpiresIn = Number(loginResp.refresh_expires_in || 0)
+                    accessStore.setRefreshToken(loginResp.refresh_token, refreshExpiresIn !== 0
+                        ? Date.now() + refreshExpiresIn * 1000
                         : undefined)
                 }
 

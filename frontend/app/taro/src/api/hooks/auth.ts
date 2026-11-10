@@ -171,14 +171,15 @@ export function useAuth() {
         if (response.access_token) {
             accessStore.setAccessToken({
                 value: response.access_token,
-                expiresAt: response.expires_in && response.expires_in != 0
-                    ? Date.now() + response.expires_in * 1000
+                // expires_in 为 int64，proto3 JSON 下是字符串（秒数）
+                expiresAt: response.expires_in && response.expires_in !== '0'
+                    ? Date.now() + Number(response.expires_in) * 1000
                     : undefined,
             });
             accessStore.setRefreshToken({
                 value: response.refresh_token || '',
-                expiresAt: response.refresh_expires_in && response.refresh_expires_in != 0
-                    ? Date.now() + response.refresh_expires_in * 1000
+                expiresAt: response.refresh_expires_in && response.refresh_expires_in !== '0'
+                    ? Date.now() + Number(response.refresh_expires_in) * 1000
                     : undefined,
             });
             accessStore.setLoginExpired(false);
@@ -236,8 +237,9 @@ export function useAuth() {
 
         accessStore.setAccessToken({
             value: newToken,
-            expiresAt: resp.expires_in && resp.expires_in != 0
-                ? Date.now() + resp.expires_in * 1000
+            // expires_in 为 int64，proto3 JSON 下是字符串（秒数）
+            expiresAt: resp.expires_in && resp.expires_in !== '0'
+                ? Date.now() + Number(resp.expires_in) * 1000
                 : undefined,
         });
 

@@ -32,7 +32,7 @@ interface FieldPanel {
 }
 
 interface ModelFormData {
-  id: number;
+  id: string;
   name: string;
   code: string;
   description: string;
@@ -105,7 +105,7 @@ const ContentModelDrawer: React.FC<ContentModelDrawerProps> = ({
 
   const [saving, setSaving] = useState(false);
   const [formData, setFormData] = useState<ModelFormData>({
-    id: 0,
+    id: '0',
     name: '',
     code: '',
     description: '',
@@ -141,7 +141,7 @@ const ContentModelDrawer: React.FC<ContentModelDrawerProps> = ({
     if (!open) return;
     if (data?.id) {
       setFormData({
-        id: data.id ?? 0,
+        id: data.id ?? '0',
         name: data.name ?? '',
         code: data.code ?? '',
         description: data.description ?? '',
@@ -171,7 +171,7 @@ const ContentModelDrawer: React.FC<ContentModelDrawerProps> = ({
         }),
       });
     } else {
-      setFormData({ id: 0, name: '', code: '', description: '', sortOrder: 0, fields: [] });
+      setFormData({ id: '0', name: '', code: '', description: '', sortOrder: 0, fields: [] });
     }
   }, [open, data]);
 
@@ -220,7 +220,7 @@ const ContentModelDrawer: React.FC<ContentModelDrawerProps> = ({
         fields: fieldsPayload,
       };
 
-      if (formData.id) {
+      if (formData.id && formData.id !== '0') {
         await updateMutationRef.current.mutateAsync({ id: formData.id, values: payload });
       } else {
         await createMutationRef.current.mutateAsync(payload);
@@ -250,7 +250,7 @@ const ContentModelDrawer: React.FC<ContentModelDrawerProps> = ({
 
   return (
     <Drawer
-      title={formData.id ? t('editTitle') : t('createTitle')}
+      title={formData.id && formData.id !== '0' ? t('editTitle') : t('createTitle')}
       width="60%"
       open={open}
       onClose={onClose}

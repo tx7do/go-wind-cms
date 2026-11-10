@@ -7,7 +7,7 @@ const props = withDefaults(defineProps<{
   showSkeleton?: boolean
   columns?: number
   gap?: number
-  onCategoryClick?: (id: number) => void
+  onCategoryClick?: (id: string) => void
 }>(), {
   loading: false,
   showSkeleton: true,
@@ -15,7 +15,7 @@ const props = withDefaults(defineProps<{
   gap: 20,
 })
 
-function handleCategoryClick(id: number) {
+function handleCategoryClick(id: string) {
   props.onCategoryClick?.(id)
 }
 </script>

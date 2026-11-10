@@ -24,8 +24,9 @@ export default function TagDetailPage() {
     const [tag, setTag] = useState<contentservicev1_Tag | null>(null);
 
     const tagId = useMemo(() => {
+        // id 已升级为 uint64 字符串，路由参数直接透传，不再 parseInt
         const id = searchParams.get('id');
-        return id ? parseInt(id) : null;
+        return id || null;
     }, [searchParams]);
 
     async function loadTag() {

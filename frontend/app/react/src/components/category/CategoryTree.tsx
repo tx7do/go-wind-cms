@@ -17,7 +17,8 @@ import Image from '@/components/ui/image';
 interface CategoryTreeProps {
     categories: contentservicev1_Category[];
     level?: number;
-    onCategoryClick?: (id: number) => void;
+    // 分类 ID 已升级为 uint64 字符串
+    onCategoryClick?: (id: string) => void;
 }
 
 const levelMarginClass: Record<number, string> = {
@@ -33,9 +34,9 @@ const CategoryTree: React.FC<CategoryTreeProps> = ({
                                                        onCategoryClick
                                                    }) => {
     const t = useTranslations('page.categories');
-    const [expandedCategories, setExpandedCategories] = useState<Set<number>>(new Set());
+    const [expandedCategories, setExpandedCategories] = useState<Set<string>>(new Set());
 
-    const handleViewCategory = (id: number) => {
+    const handleViewCategory = (id: string) => {
         onCategoryClick?.(id);
     };
 
@@ -43,17 +44,17 @@ const CategoryTree: React.FC<CategoryTreeProps> = ({
         e.stopPropagation();
         if (category.children && category.children.length > 0) {
             const newExpanded = new Set(expandedCategories);
-            if (newExpanded.has(category.id || 0)) {
-                newExpanded.delete(category.id || 0);
+            if (newExpanded.has(category.id || '')) {
+                newExpanded.delete(category.id || '');
             } else {
-                newExpanded.add(category.id || 0);
+                newExpanded.add(category.id || '');
             }
             setExpandedCategories(newExpanded);
         }
     };
 
     const isExpanded = (category: contentservicev1_Category) => {
-        return expandedCategories.has(category.id || 0);
+        return expandedCategories.has(category.id || '');
     };
 
     if (!categories || categories.length === 0) return null;
@@ -77,7 +78,7 @@ const CategoryTree: React.FC<CategoryTreeProps> = ({
                                 'hover:bg-card hover:border-primary/30 hover:shadow-[0_8px_24px_-8px_hsl(var(--primary)/0.12)]',
                                 expanded && 'border-primary/40 bg-card shadow-sm',
                             )}
-                            onClick={() => handleViewCategory(category.id || 0)}
+                            onClick={() => handleViewCategory(category.id || '')}
                         >
                             {/* 左侧色条指示器 */}
                             <div className={cn(

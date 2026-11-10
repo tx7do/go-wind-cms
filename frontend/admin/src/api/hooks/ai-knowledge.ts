@@ -45,10 +45,10 @@ export function useCreateAiKnowledgeBase(
 
 // useUpdateAiKnowledgeBase — 固定签名 { id, values }
 export function useUpdateAiKnowledgeBase(
-  options?: UseMutationOptions<unknown, Error, { id: number; values: Record<string, unknown> }>,
+  options?: UseMutationOptions<unknown, Error, { id: string; values: Record<string, unknown> }>,
 ) {
   return useMutation({
-    mutationFn: ({ id, values }: { id: number; values: Record<string, unknown> }) =>
+    mutationFn: ({ id, values }: { id: string; values: Record<string, unknown> }) =>
       apiClient.aiKnowledgeBaseService.Update({
         id,
         // 表单 Partial → proto 消息边界：字段集为真子集，运行时安全
@@ -73,7 +73,7 @@ export function useDeleteAiKnowledgeBase(
 // ── 文档 ────────────────────────────────────────────────────────────
 
 // fetchListAiDocs — 文档管理抽屉
-export async function fetchListAiDocs(baseId: number) {
+export async function fetchListAiDocs(baseId: string) {
   return queryClient.fetchQuery({
     queryKey: ['listAiDocs', baseId],
     queryFn: () =>
@@ -87,7 +87,7 @@ export function useUploadAiDoc(
   options?: UseMutationOptions<
     { doc?: aiservicev1_AiDoc; chunkCount?: number },
     Error,
-    { baseId: number; name: string; content: string }
+    { baseId: string; name: string; content: string }
   >,
 ) {
   return useMutation({
@@ -103,7 +103,7 @@ export function useUploadDocFile(
   options?: UseMutationOptions<
     { doc?: aiservicev1_AiDoc; chunkCount?: number },
     Error,
-    { baseId: number; fileName: string; contentBase64: string }
+    { baseId: string; fileName: string; contentBase64: string }
   >,
 ) {
   return useMutation({
@@ -115,7 +115,7 @@ export function useUploadDocFile(
 
 // useDeleteAiDoc — 级联删除切片
 export function useDeleteAiDoc(
-  options?: UseMutationOptions<unknown, Error, { baseId: number; id: number }>,
+  options?: UseMutationOptions<unknown, Error, { baseId: string; id: string }>,
 ) {
   return useMutation({
     mutationFn: ({ baseId, id }) =>
@@ -130,10 +130,10 @@ export type AiDoc = aiservicev1_AiDoc;
 // useReindexDocs — 重索引（异步任务）：换 embedding 模型/provider 后重建切片向量。
 // baseId=0 表示全部知识库。
 export function useReindexDocs(
-  options?: UseMutationOptions<unknown, Error, { baseId?: number }>,
+  options?: UseMutationOptions<unknown, Error, { baseId?: string }>,
 ) {
   return useMutation({
-    mutationFn: (req) => apiClient.aiKnowledgeBaseService.ReindexDocs({ baseId: req.baseId ?? 0 }),
+    mutationFn: (req) => apiClient.aiKnowledgeBaseService.ReindexDocs({ baseId: req.baseId ?? '0' }),
     ...options,
   });
 }

@@ -63,7 +63,7 @@ export function useUpdateTag(
   options?: UseMutationOptions<
     contentservicev1_Tag,
     Error,
-    { id: number; data: Record<string, unknown>; excludeMaskKeys?: string[] }
+    { id: string; data: Record<string, unknown>; excludeMaskKeys?: string[] }
   >,
 ) {
   return useMutation({

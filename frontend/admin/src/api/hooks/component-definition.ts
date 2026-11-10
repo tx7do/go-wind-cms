@@ -30,9 +30,9 @@ export function useListComponentDefinitions(
   });
 }
 
-export function fetchComponentFieldDefinitions(componentId: number) {
+export function fetchComponentFieldDefinitions(componentId: string) {
   return apiClient.componentDefinitionService.ListFieldDefinitions({
-    contentModelId: 0,
+    contentModelId: '0',
     componentId,
   });
 }
@@ -61,7 +61,7 @@ export function useUpdateComponentDefinition(
   options?: UseMutationOptions<
     Awaited<ReturnType<typeof apiClient.componentDefinitionService.Update>>,
     Error,
-    { id: number; values: Partial<contentservicev1_ComponentDefinition> }
+    { id: string; values: Partial<contentservicev1_ComponentDefinition> }
   >,
 ) {
   return useMutation({
@@ -82,7 +82,7 @@ export function useDeleteComponentDefinition(
   options?: UseMutationOptions<
     Awaited<ReturnType<typeof apiClient.componentDefinitionService.Delete>>,
     Error,
-    { id: number }
+    { id: string }
   >,
 ) {
   return useMutation({
@@ -95,7 +95,7 @@ export function useSaveComponentFieldDefinitions(
   options?: UseMutationOptions<
     Awaited<ReturnType<typeof apiClient.componentDefinitionService.SaveFieldDefinitions>>,
     Error,
-    { componentId: number; fields: Array<Partial<contentservicev1_FieldDefinition>> }
+    { componentId: string; fields: Array<Partial<contentservicev1_FieldDefinition>> }
   >,
 ) {
   return useMutation({

@@ -56,7 +56,7 @@ function parseInstances(value: string, expectArray: boolean): InstanceData[] | n
 }
 
 /** 变换图片：变换 URL 失败回退元数据 url，再败回原样文本（媒体资产是增强信息不阻断） */
-function TransformImage({assetId, fallbackText}: {assetId: number; fallbackText: string}) {
+function TransformImage({assetId, fallbackText}: {assetId: string; fallbackText: string}) {
   const [fallbackUrl, setFallbackUrl] = useState<string | null>(null);
   const [failed, setFailed] = useState(false);
 
@@ -83,7 +83,7 @@ function TransformImage({assetId, fallbackText}: {assetId: number; fallbackText:
 
   return (
     <Image
-      src={fallbackUrl ?? mediaTransformUrl(String(assetId))}
+      src={fallbackUrl ?? mediaTransformUrl(assetId)}
       mode='widthFix'
       className='w-full rounded-[16rpx]'
       lazyLoad
@@ -92,14 +92,15 @@ function TransformImage({assetId, fallbackText}: {assetId: number; fallbackText:
   );
 }
 
-function FieldValue({type, value, relations}: {type: string; value: string; relations?: Map<string, {title: string; targetId?: number}>}) {
+function FieldValue({type, value, relations}: {type: string; value: string; relations?: Map<string, {title: string; targetId?: string}>}) {
   const router = useI18nRouter();
   const isUrl = /^https?:\/\//.test(value);
   const mediaId = mediaRefId(value);
   const needsAsset = (type === 'FIELD_TYPE_IMAGE' || type === 'FIELD_TYPE_FILE') && mediaId !== null;
   const assetQuery = useQuery({
     queryKey: ['mediaAssetUrl', mediaId],
-    queryFn: () => apiClient.mediaAssetService.Get({id: Number(mediaId)}),
+    // 媒体资产 ID 已升级为 uint64 字符串，原样透传
+    queryFn: () => apiClient.mediaAssetService.Get({id: mediaId ?? ''}),
     enabled: needsAsset,
     retry: 0,
     staleTime: 5 * 60 * 1000,
@@ -110,7 +111,7 @@ function FieldValue({type, value, relations}: {type: string; value: string; rela
     return <RichText nodes={value} />;
   }
   if (type === 'FIELD_TYPE_IMAGE') {
-    if (mediaId !== null) return <TransformImage assetId={Number(mediaId)} fallbackText={value} />;
+    if (mediaId !== null) return <TransformImage assetId={mediaId} fallbackText={value} />;
     if (isUrl) return <Image src={value} mode='widthFix' className='w-full rounded-[16rpx]' lazyLoad />;
     return <Text className='break-all text-sm text-textMain'>{value}</Text>;
   }
@@ -140,8 +141,8 @@ export default function CustomFieldsSection({
     postId,
     customFields,
 }: {
-    /** 详情页的 postId 为 number|null（路由参数解析语义），null 时不渲染 */
-    postId?: number | null;
+    /** 详情页的 postId 为 string|null（uint64 字符串 ID 路由透传语义），null 时不渲染 */
+    postId?: string | null;
     customFields?: {[key: string]: string};
 }) {
     const {t} = useTranslation();
@@ -185,7 +186,7 @@ export default function CustomFieldsSection({
 
     if (!postId || fields.length === 0 || !customFields) return null;
     if (rows.length === 0) return null;
-    const relations = new Map<string, {title: string; targetId?: number}>(
+    const relations = new Map<string, {title: string; targetId?: string}>(
         (relationsQuery.data?.items ?? []).map((it) => [
             it.ref ?? '',
             {title: it.title ?? '', targetId: it.targetEntityType === 'post' ? it.targetId : undefined},
@@ -235,7 +236,7 @@ export default function CustomFieldsSection({
                                 <View key={j} className='py-[4rpx]'>
                                     <Text className='block text-tips text-textSec'>{p.label}</Text>
                                     {p.image && p.assetId !== null ? (
-                                        <TransformImage assetId={Number(p.assetId)} fallbackText={p.text} />
+                                        <TransformImage assetId={p.assetId} fallbackText={p.text} />
                                     ) : (
                                         <Text className='break-all text-desc text-textMain'>{p.text}</Text>
                                     )}

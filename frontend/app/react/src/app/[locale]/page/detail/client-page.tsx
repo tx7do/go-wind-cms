@@ -22,10 +22,8 @@ export default function PageDetailClient({ initialPage }: { initialPage?: conten
     const searchParams = useSearchParams();
 
     const slug = useMemo(() => searchParams.get('slug') || '', [searchParams]);
-    const id = useMemo(() => {
-        const raw = searchParams.get('id');
-        return raw ? parseInt(raw) : 0;
-    }, [searchParams]);
+    // id 已升级为 uint64 字符串，路由参数直接透传，不再 parseInt
+    const id = useMemo(() => searchParams.get('id') || '', [searchParams]);
     const previewToken = useMemo(() => searchParams.get('preview_token') || '', [searchParams]);
 
     // SSR 下传 initialPage 时跳过客户端首拉
@@ -69,7 +67,7 @@ export default function PageDetailClient({ initialPage }: { initialPage?: conten
     }, [page]);
 
     // 浏览量上报（PV +1）：ref 守卫避免 StrictMode 双挂载重复计数
-    const viewReportedRef = useRef<number | null>(null);
+    const viewReportedRef = useRef<string | null>(null);
     useEffect(() => {
         if (!page?.id || viewReportedRef.current === page.id) return;
         viewReportedRef.current = page.id;

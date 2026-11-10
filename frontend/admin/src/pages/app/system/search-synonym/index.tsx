@@ -45,7 +45,7 @@ export default function SearchSynonymPage() {
   });
 
   const deleteMutation = useMutation({
-    mutationFn: (id: number) => apiClient.searchSynonymService.Delete({ id }),
+    mutationFn: (id: string) => apiClient.searchSynonymService.Delete({ id }),
     onSuccess: () => {
       message.success(t('deleted'));
       refresh();
@@ -79,7 +79,7 @@ export default function SearchSynonymPage() {
     {
       title: t('action'),
       width: 90,
-      render: (_: unknown, record: { id?: number }) => (
+      render: (_: unknown, record: { id?: string }) => (
         <Button
           size="small"
           danger

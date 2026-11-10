@@ -43,9 +43,9 @@ export default function PostDetailPage() {
   const isLogin = useIsLogin();
 
   const postId = useMemo(() => {
+    // id 已升级为 uint64 字符串，路由参数直接透传，不再 Number() 转换
     const raw = Taro.getCurrentInstance()?.router?.params?.id;
-    const id = Number(raw);
-    return Number.isInteger(id) && id > 0 ? id : 0;
+    return raw || '';
   }, []);
 
   const [post, setPost] = useState<contentservicev1_Post | null>(null);
@@ -78,7 +78,7 @@ export default function PostDetailPage() {
   };
 
   // PV 上报去重：StrictMode/重复 useDidShow 不重复计数
-  const viewReportedRef = useRef<number | null>(null);
+  const viewReportedRef = useRef<string | null>(null);
 
   const loadAll = async () => {
     if (!postId) {
@@ -94,7 +94,8 @@ export default function PostDetailPage() {
       if (viewReportedRef.current !== postId) {
         viewReportedRef.current = postId;
         recordView('TARGET_TYPE_POST', postId)
-          .then((resp) => setViewCount(resp.viewCount ?? null))
+          // viewCount 为 uint64，proto3 JSON 下是字符串；计数语义保持 number
+          .then((resp) => setViewCount(resp.viewCount !== undefined ? Number(resp.viewCount) : null))
           .catch((error) => console.error('Record view failed:', error));
       }
 

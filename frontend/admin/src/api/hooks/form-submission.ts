@@ -21,7 +21,7 @@ export function useFormSubmissionsList() {
   });
 }
 
-export async function fetchFormSubmission(id: number) {
+export async function fetchFormSubmission(id: string) {
   return queryClient.fetchQuery({
     queryKey: ['getFormSubmission', id],
     queryFn: () => apiClient.formSubmissionService.Get({ id }),

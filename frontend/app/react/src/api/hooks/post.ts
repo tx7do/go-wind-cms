@@ -46,20 +46,20 @@ export async function listPostsRaw(params: {
 /**
  * 获取单个文章
  */
-export async function getPost(id: number) {
+export async function getPost(id: string) {
   return apiClient.postService.Get({id});
 }
 
 /**
  * 按 slug（别名 code）获取单篇已发布文章 【公开帖子渲染用】
  * 纯数字别名直接按 id 走详情；否则走 by-slug 专用端点
- * （Get({id:0, slug}) 会让 id+slug 双绑定冲突 oneof，后端 400，与 getPageBySlug 同口径）。
+ * （Get({id, slug}) 会让 id+slug 双绑定冲突 oneof，后端 400，与 getPageBySlug 同口径）。
+ * id 已升级为 uint64 字符串，命中时原样透传字符串。
  */
 export async function getPostBySlug(slug: string) {
   const locale = currentLocaleLanguageCode();
-  const numericId = Number(slug);
-  if (Number.isInteger(numericId) && numericId > 0) {
-    return apiClient.postService.Get({id: numericId, locale});
+  if (/^\d+$/.test(slug) && slug !== '0') {
+    return apiClient.postService.Get({id: slug, locale});
   }
   return apiClient.postService.GetBySlug({slug, locale});
 }
@@ -77,7 +77,7 @@ export async function createPost(values: Partial<contentservicev1_Post>) {
  * 更新文章
  */
 export async function updatePost(params: {
-  id: number;
+  id: string;
   values: Partial<contentservicev1_Post>;
 }) {
   return apiClient.postService.Update({
@@ -90,7 +90,7 @@ export async function updatePost(params: {
 /**
  * 删除文章
  */
-export async function deletePost(id: number) {
+export async function deletePost(id: string) {
   return apiClient.postService.Delete({id});
 }
 
@@ -155,7 +155,7 @@ export async function fetchListPosts(params: {
 // 获取单个文章 Hook
 // ==============================
 export function useGetPost(
-  options?: UseMutationOptions<contentservicev1_Post, Error, number>,
+  options?: UseMutationOptions<contentservicev1_Post, Error, string>,
 ) {
   return useMutation({
     mutationFn: (id) => getPost(id),
@@ -166,7 +166,7 @@ export function useGetPost(
 // ==============================================
 // 获取单个文章 【给 Store / 外部调用】不带 Hook 的方法
 // ==============================================
-export async function fetchPost(id: number) {
+export async function fetchPost(id: string) {
   return queryClient.fetchQuery({
     queryKey: ['getPost', id],
     queryFn: () => getPost(id),
@@ -187,7 +187,7 @@ export async function fetchPostBySlug(slug: string) {
  * 草稿预览取数：携带 admin 签发的短时效 preview_token，
  * 后端校验通过则放行非已发布内容（preview_token 不在 proto 消息内，手拼 query 旁路传）。
  */
-export async function fetchPostPreview(id: number, token: string) {
+export async function fetchPostPreview(id: string, token: string) {
   const locale = currentLocaleLanguageCode();
   return queryClient.fetchQuery({
     queryKey: ['getPostPreview', id, token, locale],
@@ -243,7 +243,7 @@ export function useUpdatePost(
   options?: UseMutationOptions<
     contentservicev1_Post,
     Error,
-    { id: number; values: Partial<contentservicev1_Post> }
+    { id: string; values: Partial<contentservicev1_Post> }
   >,
 ) {
   return useMutation({
@@ -255,7 +255,7 @@ export function useUpdatePost(
 // ==============================
 // 删除文章 Hook
 // ==============================
-export function useDeletePost(options?: UseMutationOptions<Record<string, never>, Error, number>) {
+export function useDeletePost(options?: UseMutationOptions<Record<string, never>, Error, string>) {
   return useMutation({
     mutationFn: (id) => deletePost(id),
     ...options,

@@ -25,9 +25,10 @@ async function load() {
   }
   loading.value = true
   try {
+    // 纯数字 slug 视为 id（ID 升级 uint64 后为字符串，透传原字符串即可）
     const numericId = Number(slugParam.value)
     const fetched = previewToken.value
-      ? await fetchPagePreview(numericId > 0 ? numericId : 0, previewToken.value)
+      ? await fetchPagePreview(numericId > 0 ? slugParam.value : '0', previewToken.value)
       : await fetchPageBySlug(slugParam.value)
     page.value = fetched ?? null
   } catch (e) {
@@ -41,7 +42,7 @@ async function load() {
 watch([slugParam, previewToken], load, { immediate: true })
 
 // 浏览量上报（PV +1）：页面加载成功且拿到 id 后记一次
-const viewReportedId = ref<number | null>(null)
+const viewReportedId = ref<string | null>(null)
 watch(
   () => page.value?.id,
   (pid) => {

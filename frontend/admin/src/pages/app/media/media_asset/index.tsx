@@ -52,7 +52,7 @@ const MediaAssetList = () => {
   const [editingRow, setEditingRow] = useState<any>(null);
   const [duplicatesOpen, setDuplicatesOpen] = useState(false);
   const [referencesRow, setReferencesRow] = useState<{
-    id?: number;
+    id?: string;
     filename?: string;
   } | null>(null);
 
@@ -276,7 +276,7 @@ const MediaAssetList = () => {
 
             return {
               data: response.items || [],
-              total: response.total || 0,
+              total: Number(response.total ?? 0),
               success: true,
             };
           

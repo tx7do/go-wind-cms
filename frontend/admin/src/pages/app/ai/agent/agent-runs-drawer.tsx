@@ -32,8 +32,8 @@ export default function AgentRunsDrawer({
   const { message } = App.useApp();
   const [page, setPage] = useState(1);
   const pageSize = 10;
-  const [approvingId, setApprovingId] = useState<number | undefined>();
-  const [rejectingId, setRejectingId] = useState<number | undefined>();
+  const [approvingId, setApprovingId] = useState<string | undefined>();
+  const [rejectingId, setRejectingId] = useState<string | undefined>();
   const approveMutation = useApproveAgentRun({
     onSuccess: () => {
       message.success(t('runs.approved'));
@@ -137,7 +137,7 @@ export default function AgentRunsDrawer({
                     setApprovingId(run.id);
                     try {
                       await approveMutation.mutateAsync({
-                        runId: Number(run.id),
+                        runId: run.id!,
                         approved: true,
                         note: '',
                       });
@@ -156,7 +156,7 @@ export default function AgentRunsDrawer({
                     setRejectingId(run.id);
                     try {
                       await approveMutation.mutateAsync({
-                        runId: Number(run.id),
+                        runId: run.id!,
                         approved: false,
                         note: '',
                       });
@@ -207,10 +207,10 @@ export default function AgentRunsDrawer({
  * 丢帧可容忍：Run 同步响应携带完整 trace，以响应为准。
  */
 export function useAgentRunStream(
-  appId: number | undefined,
+  appId: string | undefined,
   onFrame: (frame: {
-    runId: number;
-    appId: number;
+    runId: string;
+    appId: string;
     seq: number;
     phase: string;
     nodeId?: string;
@@ -222,7 +222,7 @@ export function useAgentRunStream(
   useEffect(() => {
     if (!enabled || !appId) return;
     const handler = (data: unknown) => {
-      const frame = data as { appId?: number };
+      const frame = data as { appId?: string };
       if (!frame || typeof frame !== 'object' || frame.appId !== appId) return;
       onFrame(frame as Parameters<typeof onFrame>[0]);
     };

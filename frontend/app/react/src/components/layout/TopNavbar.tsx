@@ -22,14 +22,15 @@ export interface TopNavbarItem {
 
 interface TopNavbarProps {
     items?: TopNavbarItem[];
-    onClick?: (key: number) => void;
+    // 导航项 ID 已升级为 uint64 字符串
+    onClick?: (key: string) => void;
 }
 
 export default function TopNavbar({onClick}: TopNavbarProps) {
     const router = useI18nRouter();
     const [navigationItems, setNavigationItems] = useState<siteservicev1_NavigationItem[]>([]);
     const [isLoading, setIsLoading] = useState(true);
-    const [openMenuId, setOpenMenuId] = useState<number | null>(null);
+    const [openMenuId, setOpenMenuId] = useState<string | null>(null);
     const closeTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
     const loadNav = async () => {
@@ -96,7 +97,7 @@ export default function TopNavbar({onClick}: TopNavbarProps) {
         }
     };
 
-    const handleMouseEnter = (id: number) => {
+    const handleMouseEnter = (id: string) => {
         if (closeTimerRef.current) {
             clearTimeout(closeTimerRef.current);
             closeTimerRef.current = null;
@@ -127,7 +128,7 @@ export default function TopNavbar({onClick}: TopNavbarProps) {
     return (
         <nav className="flex h-full items-center gap-0.5">
             {navigationItems.map((item) => {
-                const itemId = item.id ?? 0;
+                const itemId = item.id ?? '';
                 const hasChildren = (item.children?.length ?? 0) > 0;
                 const isOpen = openMenuId === itemId;
 
@@ -150,7 +151,7 @@ export default function TopNavbar({onClick}: TopNavbarProps) {
                             onClick={() => {
                                 if (!hasChildren) {
                                     handleNavigate(item);
-                                    onClick?.(Number(itemId));
+                                    onClick?.(itemId);
                                 }
                             }}
                         >
@@ -179,7 +180,7 @@ export default function TopNavbar({onClick}: TopNavbarProps) {
                                         className="flex w-full cursor-pointer items-center gap-2 rounded-md px-2.5 py-2 text-start text-sm text-foreground/80 transition-colors duration-150 hover:bg-primary/10 hover:text-primary"
                                         onClick={() => {
                                             handleNavigate(child);
-                                            onClick?.(Number(child.id));
+                                            onClick?.(child.id ?? '');
                                             setOpenMenuId(null);
                                         }}
                                     >

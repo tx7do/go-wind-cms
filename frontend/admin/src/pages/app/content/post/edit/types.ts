@@ -6,7 +6,7 @@ import type { EditorType } from '@/components/common/Editor';
  * summary/slug/seo 为翻译级字段（跟随当前编辑语言）。
  */
 export interface PostEditProps {
-  id?: number;
+  id?: string;
   title: string;
   content: string;
   lang: string;
@@ -14,7 +14,8 @@ export interface PostEditProps {
   status?: string;
 
   code?: string;
-  categoryIds?: number[];
+  /** 分类 id 集合（uint64 → string） */
+  categoryIds?: string[];
   // 自定义字段（Post 级，全语言共用）：组件值为 JSON 字符串
   customFields?: Record<string, string>;
   isFeatured?: boolean;

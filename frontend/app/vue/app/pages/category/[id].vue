@@ -11,7 +11,8 @@ const childCategories = ref<any[]>([])
 const loading = ref(true)
 const error = ref('')
 
-const categoryId = computed(() => Number(route.params.id))
+// 路由参数本就是字符串，ID 升级 uint64 后直接透传（勿再 Number 转换）
+const categoryId = computed(() => route.params.id as string)
 
 // 动态标题
 const categoryTitle = computed(() =>
@@ -52,7 +53,7 @@ async function loadCategory() {
   }
 }
 
-function handleViewChildCategory(id: number) {
+function handleViewChildCategory(id: string) {
   navigateTo(localePath(`/category/${id}`))
 }
 

@@ -96,7 +96,7 @@ export function useRefreshToken(
 // ------------------------------
 export const refreshTokenMutation = queryClient.getMutationCache().build(queryClient, {
   mutationKey: ['refreshToken'],
-  mutationFn: (binding?: { userId?: number; jti?: string }) =>
+  mutationFn: (binding?: { userId?: string; jti?: string }) =>
     apiClient.authenticationService.RefreshToken({
       grant_type: 'refresh_token',
       user_id: binding?.userId,

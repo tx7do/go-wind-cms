@@ -31,14 +31,14 @@ export async function fetchListOnlineSessions(params: ListOnlineSessionsParams) 
 
 export function useListMyOnlineSessions(
   currentJti: string | undefined,
-  userId: number | undefined,
+  userId: string | undefined,
   options?: UseQueryOptions<online_sessionservicev1_ListOnlineSessionResponse, Error>,
 ) {
   return useQuery({
     queryKey: ['listMyOnlineSessions', userId],
     queryFn: () =>
       apiClient.onlineSessionService.ListMyOnlineSession({
-        userId: userId ?? 0,
+        userId: userId ?? '0',
         currentJti: currentJti,
       }),
     enabled: !!userId,

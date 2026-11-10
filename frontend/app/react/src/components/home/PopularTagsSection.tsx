@@ -12,7 +12,8 @@ import {
 } from '@/api/generated/app/service/v1';
 
 interface TagItem {
-    id: number;
+    // 标签 ID 已升级为 uint64 字符串
+    id: string;
     name: string;
     color: string;
     postCount: number;
@@ -25,7 +26,7 @@ export default function PopularTagsSection() {
     const [_tags, setTags] = useState<contentservicev1_Tag[]>([]);
     const [loading, setLoading] = useState(false);
     const [displayTags, setDisplayTags] = useState<TagItem[]>([]);
-    const [hoveredId, setHoveredId] = useState<number | null>(null);
+    const [hoveredId, setHoveredId] = useState<string | null>(null);
 
     // 用于取消异步操作
     const abortControllerRef = useRef<AbortController | null>(null);

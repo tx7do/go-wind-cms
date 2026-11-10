@@ -21,10 +21,8 @@ const UserDetail = () => {
   const { message } = App.useApp();
 
   const { id } = useParams<{ id: string }>();
-  const userId = useMemo(() => {
-    const num = Number(id);
-    return isNaN(num) ? undefined : num;
-  }, [id]);
+  // 路由参数本就是字符串，uint64 id 直接透传
+  const userId = useMemo(() => id || undefined, [id]);
 
   const [activeTab, setActiveTab] = useState<string>(TabEnum.BASIC_INFO);
   const [passwordModalOpen, setPasswordModalOpen] = useState(false);

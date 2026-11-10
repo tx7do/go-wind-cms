@@ -27,17 +27,17 @@ import { useTranslate } from '@/api/hooks/tag';
 import { categoryStatusOptions } from '../constants';
 
 interface CategoryEditProps {
-  id?: number;
+  id?: string;
   name: string;
   slug: string;
   description: string;
   lang: string;
-  parentId?: number;
+  parentId?: string;
   icon?: string;
   isNav: boolean;
   sortOrder: number;
   status?: string;
-  contentModelId?: number;
+  contentModelId?: string;
   customFields?: Record<string, any>;
 }
 
@@ -56,7 +56,7 @@ const EMPTY_FORM: CategoryEditProps = {
   isNav: false,
 };
 
-function getDraftKey(categoryId: null | number, lang: string, isCreateMode: boolean) {
+function getDraftKey(categoryId: null | string, lang: string, isCreateMode: boolean) {
   return isCreateMode
     ? `category-draft-create-${lang}`
     : `category-draft-edit-${categoryId}-${lang}`;
@@ -76,14 +76,15 @@ const CategoryEditPage = () => {
 
   const initLang = searchParams.get('lang') || 'zh-CN';
   const isCreateMode = !id;
-  const categoryId = isCreateMode ? null : Number(id);
+  // 路由参数本就是字符串，uint64 id 直接透传
+  const categoryId = isCreateMode ? null : id;
 
   const [lang, setLang] = useState(initLang);
   const [languageOptions, setLanguageOptions] = useState<LanguageOption[]>([]);
   const [needTranslate, setNeedTranslate] = useState(false);
   const [saving, setSaving] = useState(false);
   const [contentModelOptions, setContentModelOptions] = useState<
-    { label: string; value: number }[]
+    { label: string; value: string }[]
   >([]);
   const [fieldDefinitions, setFieldDefinitions] = useState<any[]>([]);
 
@@ -347,7 +348,7 @@ const CategoryEditPage = () => {
         await createMutation.mutateAsync({ data });
       } else {
         await updateMutation.mutateAsync({
-          id: values.id || 0,
+          id: values.id || '0',
           data,
           excludeMaskKeys: ['translations'],
         });

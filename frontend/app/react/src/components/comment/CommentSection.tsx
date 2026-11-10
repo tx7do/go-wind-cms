@@ -24,7 +24,8 @@ interface CommentForm {
 }
 
 interface CommentSectionProps {
-    objectId: number | null;
+    // 目标对象 ID 已升级为 uint64 字符串
+    objectId: string | null;
     contentType: commentservicev1_Comment_ContentType | null;
     onUpdateComments?: (comments: commentservicev1_Comment[]) => void;
 }
@@ -86,7 +87,8 @@ const CommentSection: React.FC<CommentSectionProps> = ({
             }) as unknown as commentservicev1_ListCommentResponse;
 
             const newComments = res.items || [];
-            const newTotal = res.total || 0;
+            // total 为 uint64，proto3 JSON 下是字符串；计数语义保持 number
+            const newTotal = Number(res.total) || 0;
 
             if (reset) {
                 setComments(newComments);

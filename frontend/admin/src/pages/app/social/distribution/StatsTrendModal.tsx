@@ -7,7 +7,7 @@ import { useSocialDistributionStatsHistory } from '@/api/hooks/social';
 
 interface StatsTrendModalProps {
   open: boolean;
-  distributionId?: number;
+  distributionId?: string;
   onClose: () => void;
 }
 
@@ -37,7 +37,7 @@ const StatsTrendModal: React.FC<StatsTrendModalProps> = ({ open, distributionId,
   const { t } = useTranslation('social');
 
   const { data, isLoading } = useSocialDistributionStatsHistory(
-    { id: distributionId ?? 0, limit: 200 },
+    { id: distributionId ?? '0', limit: 200 },
     { enabled: open && !!distributionId },
   );
 

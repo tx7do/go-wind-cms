@@ -205,7 +205,7 @@ class AuthenticationServiceV1LoginRequest {
       scope: json['scope'] as String?,
       tenant_code: json['tenant_code'] as String?,
       totp_code: json['totp_code'] as String?,
-      user_id: json['user_id'] as int?,
+      user_id: json['user_id'] != null ? int.parse(json['user_id'].toString()) : null,
       userAgent: json['userAgent'] as String?,
       username: json['username'] as String?,
     );
@@ -232,7 +232,7 @@ class AuthenticationServiceV1LoginRequest {
     if (scope != null) json['scope'] = scope;
     if (tenant_code != null) json['tenant_code'] = tenant_code;
     if (totp_code != null) json['totp_code'] = totp_code;
-    if (user_id != null) json['user_id'] = user_id;
+    if (user_id != null) json['user_id'] = user_id.toString();
     if (userAgent != null) json['userAgent'] = userAgent;
     if (username != null) json['username'] = username;
     return json;
@@ -384,7 +384,7 @@ class AuthenticationServiceV1LoginRequest {
     // field 6: user_id
     final f6 = user_id;
     if (f6 != null) {
-      w.writeUint32(6, f6);
+      w.writeUint64(6, f6);
     }
     // field 10: username
     final f10 = username;
@@ -503,7 +503,7 @@ class AuthenticationServiceV1LoginRequest {
         }
         // field 6: user_id
         case 6: {
-          m.user_id = r.readUint32();
+          m.user_id = r.readUint64();
           break;
         }
         // field 10: username
@@ -2207,18 +2207,18 @@ class ContentServiceV1Category {
       availableLanguages: (json['availableLanguages'] as List<dynamic>?)?.map((e) => e as String).toList(),
       children: (json['children'] as List<dynamic>?)?.map((e) => ContentServiceV1Category.fromJson(e as Map<String, dynamic>)).toList(),
       code: json['code'] as String?,
-      contentModelId: json['contentModelId'] as int?,
+      contentModelId: json['contentModelId'] != null ? int.parse(json['contentModelId'].toString()) : null,
       createdAt: json['createdAt'] as String?,
-      createdBy: json['createdBy'] as int?,
+      createdBy: json['createdBy'] != null ? int.parse(json['createdBy'].toString()) : null,
       customFields: (json['customFields'] as Map<String, dynamic>?)?.map((k, v) => MapEntry(k, v as String)),
       deletedAt: json['deletedAt'] as String?,
-      deletedBy: json['deletedBy'] as int?,
+      deletedBy: json['deletedBy'] != null ? int.parse(json['deletedBy'].toString()) : null,
       depth: json['depth'] as int?,
       directPostCount: json['directPostCount'] as int?,
       icon: json['icon'] as String?,
-      id: json['id'] as int?,
+      id: json['id'] != null ? int.parse(json['id'].toString()) : null,
       isNav: json['isNav'] as bool?,
-      parentId: json['parentId'] as int?,
+      parentId: json['parentId'] != null ? int.parse(json['parentId'].toString()) : null,
       path: json['path'] as String?,
       postCount: json['postCount'] as int?,
       sortOrder: json['sortOrder'] as int?,
@@ -2226,7 +2226,7 @@ class ContentServiceV1Category {
       thumbnail: json['thumbnail'] as String?,
       translations: (json['translations'] as List<dynamic>?)?.map((e) => ContentServiceV1CategoryTranslation.fromJson(e as Map<String, dynamic>)).toList(),
       updatedAt: json['updatedAt'] as String?,
-      updatedBy: json['updatedBy'] as int?,
+      updatedBy: json['updatedBy'] != null ? int.parse(json['updatedBy'].toString()) : null,
     );
   }
 
@@ -2235,18 +2235,18 @@ class ContentServiceV1Category {
     if (availableLanguages != null) json['availableLanguages'] = availableLanguages;
     if (children != null) json['children'] = children!.map((e) => e.toJson()).toList();
     if (code != null) json['code'] = code;
-    if (contentModelId != null) json['contentModelId'] = contentModelId;
+    if (contentModelId != null) json['contentModelId'] = contentModelId.toString();
     if (createdAt != null) json['createdAt'] = createdAt;
-    if (createdBy != null) json['createdBy'] = createdBy;
+    if (createdBy != null) json['createdBy'] = createdBy.toString();
     if (customFields != null) json['customFields'] = customFields;
     if (deletedAt != null) json['deletedAt'] = deletedAt;
-    if (deletedBy != null) json['deletedBy'] = deletedBy;
+    if (deletedBy != null) json['deletedBy'] = deletedBy.toString();
     if (depth != null) json['depth'] = depth;
     if (directPostCount != null) json['directPostCount'] = directPostCount;
     if (icon != null) json['icon'] = icon;
-    if (id != null) json['id'] = id;
+    if (id != null) json['id'] = id.toString();
     if (isNav != null) json['isNav'] = isNav;
-    if (parentId != null) json['parentId'] = parentId;
+    if (parentId != null) json['parentId'] = parentId.toString();
     if (path != null) json['path'] = path;
     if (postCount != null) json['postCount'] = postCount;
     if (sortOrder != null) json['sortOrder'] = sortOrder;
@@ -2254,7 +2254,7 @@ class ContentServiceV1Category {
     if (thumbnail != null) json['thumbnail'] = thumbnail;
     if (translations != null) json['translations'] = translations!.map((e) => e.toJson()).toList();
     if (updatedAt != null) json['updatedAt'] = updatedAt;
-    if (updatedBy != null) json['updatedBy'] = updatedBy;
+    if (updatedBy != null) json['updatedBy'] = updatedBy.toString();
     return json;
   }
 
@@ -2383,7 +2383,7 @@ class ContentServiceV1Category {
     // field 1: id
     final f1 = id;
     if (f1 != null) {
-      w.writeUint32(1, f1);
+      w.writeUint64(1, f1);
     }
     // field 2: status
     final f2 = status;
@@ -2448,12 +2448,12 @@ class ContentServiceV1Category {
     // field 31: contentModelId
     final f31 = contentModelId;
     if (f31 != null) {
-      w.writeUint32(31, f31);
+      w.writeUint64(31, f31);
     }
     // field 60: parentId
     final f60 = parentId;
     if (f60 != null) {
-      w.writeUint32(60, f60);
+      w.writeUint64(60, f60);
     }
     // field 61: children
     final f61 = children;
@@ -2473,17 +2473,17 @@ class ContentServiceV1Category {
     // field 100: createdBy
     final f100 = createdBy;
     if (f100 != null) {
-      w.writeUint32(100, f100);
+      w.writeUint64(100, f100);
     }
     // field 101: updatedBy
     final f101 = updatedBy;
     if (f101 != null) {
-      w.writeUint32(101, f101);
+      w.writeUint64(101, f101);
     }
     // field 102: deletedBy
     final f102 = deletedBy;
     if (f102 != null) {
-      w.writeUint32(102, f102);
+      w.writeUint64(102, f102);
     }
     // field 200: createdAt
     final f200 = createdAt;
@@ -2512,7 +2512,7 @@ class ContentServiceV1Category {
       switch (r.fieldNumber) {
         // field 1: id
         case 1: {
-          m.id = r.readUint32();
+          m.id = r.readUint64();
           break;
         }
         // field 2: status
@@ -2590,12 +2590,12 @@ class ContentServiceV1Category {
         }
         // field 31: contentModelId
         case 31: {
-          m.contentModelId = r.readUint32();
+          m.contentModelId = r.readUint64();
           break;
         }
         // field 60: parentId
         case 60: {
-          m.parentId = r.readUint32();
+          m.parentId = r.readUint64();
           break;
         }
         // field 61: children
@@ -2615,17 +2615,17 @@ class ContentServiceV1Category {
         }
         // field 100: createdBy
         case 100: {
-          m.createdBy = r.readUint32();
+          m.createdBy = r.readUint64();
           break;
         }
         // field 101: updatedBy
         case 101: {
-          m.updatedBy = r.readUint32();
+          m.updatedBy = r.readUint64();
           break;
         }
         // field 102: deletedBy
         case 102: {
-          m.deletedBy = r.readUint32();
+          m.deletedBy = r.readUint64();
           break;
         }
         // field 200: createdAt
@@ -2711,41 +2711,41 @@ class ContentServiceV1CategoryTranslation {
 
   factory ContentServiceV1CategoryTranslation.fromJson(Map<String, dynamic> json) {
     return ContentServiceV1CategoryTranslation(
-      categoryId: json['categoryId'] as int?,
+      categoryId: json['categoryId'] != null ? int.parse(json['categoryId'].toString()) : null,
       coverImage: json['coverImage'] as String?,
       createdAt: json['createdAt'] as String?,
-      createdBy: json['createdBy'] as int?,
+      createdBy: json['createdBy'] != null ? int.parse(json['createdBy'].toString()) : null,
       deletedAt: json['deletedAt'] as String?,
-      deletedBy: json['deletedBy'] as int?,
+      deletedBy: json['deletedBy'] != null ? int.parse(json['deletedBy'].toString()) : null,
       description: json['description'] as String?,
       fullPath: json['fullPath'] as String?,
-      id: json['id'] as int?,
+      id: json['id'] != null ? int.parse(json['id'].toString()) : null,
       languageCode: json['languageCode'] as String?,
       name: json['name'] as String?,
       seo: json['seo'] != null ? ContentServiceV1SeoMeta.fromJson(json['seo'] as Map<String, dynamic>) : null,
       slug: json['slug'] as String?,
       updatedAt: json['updatedAt'] as String?,
-      updatedBy: json['updatedBy'] as int?,
+      updatedBy: json['updatedBy'] != null ? int.parse(json['updatedBy'].toString()) : null,
     );
   }
 
   Map<String, dynamic> toJson() {
     final json = <String, dynamic>{};
-    if (categoryId != null) json['categoryId'] = categoryId;
+    if (categoryId != null) json['categoryId'] = categoryId.toString();
     if (coverImage != null) json['coverImage'] = coverImage;
     if (createdAt != null) json['createdAt'] = createdAt;
-    if (createdBy != null) json['createdBy'] = createdBy;
+    if (createdBy != null) json['createdBy'] = createdBy.toString();
     if (deletedAt != null) json['deletedAt'] = deletedAt;
-    if (deletedBy != null) json['deletedBy'] = deletedBy;
+    if (deletedBy != null) json['deletedBy'] = deletedBy.toString();
     if (description != null) json['description'] = description;
     if (fullPath != null) json['fullPath'] = fullPath;
-    if (id != null) json['id'] = id;
+    if (id != null) json['id'] = id.toString();
     if (languageCode != null) json['languageCode'] = languageCode;
     if (name != null) json['name'] = name;
     if (seo != null) json['seo'] = seo!.toJson();
     if (slug != null) json['slug'] = slug;
     if (updatedAt != null) json['updatedAt'] = updatedAt;
-    if (updatedBy != null) json['updatedBy'] = updatedBy;
+    if (updatedBy != null) json['updatedBy'] = updatedBy.toString();
     return json;
   }
 
@@ -2842,12 +2842,12 @@ class ContentServiceV1CategoryTranslation {
     // field 1: id
     final f1 = id;
     if (f1 != null) {
-      w.writeUint32(1, f1);
+      w.writeUint64(1, f1);
     }
     // field 2: categoryId
     final f2 = categoryId;
     if (f2 != null) {
-      w.writeUint32(2, f2);
+      w.writeUint64(2, f2);
     }
     // field 3: languageCode
     final f3 = languageCode;
@@ -2887,17 +2887,17 @@ class ContentServiceV1CategoryTranslation {
     // field 100: createdBy
     final f100 = createdBy;
     if (f100 != null) {
-      w.writeUint32(100, f100);
+      w.writeUint64(100, f100);
     }
     // field 101: updatedBy
     final f101 = updatedBy;
     if (f101 != null) {
-      w.writeUint32(101, f101);
+      w.writeUint64(101, f101);
     }
     // field 102: deletedBy
     final f102 = deletedBy;
     if (f102 != null) {
-      w.writeUint32(102, f102);
+      w.writeUint64(102, f102);
     }
     // field 200: createdAt
     final f200 = createdAt;
@@ -2926,12 +2926,12 @@ class ContentServiceV1CategoryTranslation {
       switch (r.fieldNumber) {
         // field 1: id
         case 1: {
-          m.id = r.readUint32();
+          m.id = r.readUint64();
           break;
         }
         // field 2: categoryId
         case 2: {
-          m.categoryId = r.readUint32();
+          m.categoryId = r.readUint64();
           break;
         }
         // field 3: languageCode
@@ -2971,17 +2971,17 @@ class ContentServiceV1CategoryTranslation {
         }
         // field 100: createdBy
         case 100: {
-          m.createdBy = r.readUint32();
+          m.createdBy = r.readUint64();
           break;
         }
         // field 101: updatedBy
         case 101: {
-          m.updatedBy = r.readUint32();
+          m.updatedBy = r.readUint64();
           break;
         }
         // field 102: deletedBy
         case 102: {
-          m.deletedBy = r.readUint32();
+          m.deletedBy = r.readUint64();
           break;
         }
         // field 200: createdAt
@@ -3222,7 +3222,7 @@ class ContentServiceV1GetCategoryRequest {
   factory ContentServiceV1GetCategoryRequest.fromJson(Map<String, dynamic> json) {
     return ContentServiceV1GetCategoryRequest(
       code: json['code'] as String?,
-      id: json['id'] as int?,
+      id: json['id'] != null ? int.parse(json['id'].toString()) : null,
       locale: json['locale'] as String?,
       viewMask: json['viewMask'] as String?,
     );
@@ -3231,7 +3231,7 @@ class ContentServiceV1GetCategoryRequest {
   Map<String, dynamic> toJson() {
     final json = <String, dynamic>{};
     if (code != null) json['code'] = code;
-    if (id != null) json['id'] = id;
+    if (id != null) json['id'] = id.toString();
     if (locale != null) json['locale'] = locale;
     if (viewMask != null) json['viewMask'] = viewMask;
     return json;
@@ -3286,7 +3286,7 @@ class ContentServiceV1GetCategoryRequest {
     // field 1: id
     final f1 = id;
     if (f1 != null) {
-      w.writeUint32(1, f1);
+      w.writeUint64(1, f1);
     }
     // field 2: code
     final f2 = code;
@@ -3315,7 +3315,7 @@ class ContentServiceV1GetCategoryRequest {
       switch (r.fieldNumber) {
         // field 1: id
         case 1: {
-          m.id = r.readUint32();
+          m.id = r.readUint64();
           break;
         }
         // field 2: code
@@ -3445,7 +3445,7 @@ class ContentServiceV1UpdateCategoryRequest {
     return ContentServiceV1UpdateCategoryRequest(
       allowMissing: json['allowMissing'] as bool?,
       data: json['data'] != null ? ContentServiceV1Category.fromJson(json['data'] as Map<String, dynamic>) : null,
-      id: json['id'] as int?,
+      id: json['id'] != null ? int.parse(json['id'].toString()) : null,
       updateMask: json['updateMask'] as String?,
     );
   }
@@ -3454,7 +3454,7 @@ class ContentServiceV1UpdateCategoryRequest {
     final json = <String, dynamic>{};
     if (allowMissing != null) json['allowMissing'] = allowMissing;
     if (data != null) json['data'] = data!.toJson();
-    if (id != null) json['id'] = id;
+    if (id != null) json['id'] = id.toString();
     if (updateMask != null) json['updateMask'] = updateMask;
     return json;
   }
@@ -3508,7 +3508,7 @@ class ContentServiceV1UpdateCategoryRequest {
     // field 1: id
     final f1 = id;
     if (f1 != null) {
-      w.writeUint32(1, f1);
+      w.writeUint64(1, f1);
     }
     // field 2: data
     final f2 = data;
@@ -3537,7 +3537,7 @@ class ContentServiceV1UpdateCategoryRequest {
       switch (r.fieldNumber) {
         // field 1: id
         case 1: {
-          m.id = r.readUint32();
+          m.id = r.readUint64();
           break;
         }
         // field 2: data
@@ -3575,13 +3575,13 @@ class ContentServiceV1DeleteCategoryRequest {
 
   factory ContentServiceV1DeleteCategoryRequest.fromJson(Map<String, dynamic> json) {
     return ContentServiceV1DeleteCategoryRequest(
-      id: json['id'] as int?,
+      id: json['id'] != null ? int.parse(json['id'].toString()) : null,
     );
   }
 
   Map<String, dynamic> toJson() {
     final json = <String, dynamic>{};
-    if (id != null) json['id'] = id;
+    if (id != null) json['id'] = id.toString();
     return json;
   }
 
@@ -3622,7 +3622,7 @@ class ContentServiceV1DeleteCategoryRequest {
     // field 1: id
     final f1 = id;
     if (f1 != null) {
-      w.writeUint32(1, f1);
+      w.writeUint64(1, f1);
     }
   }
 
@@ -3636,7 +3636,7 @@ class ContentServiceV1DeleteCategoryRequest {
       switch (r.fieldNumber) {
         // field 1: id
         case 1: {
-          m.id = r.readUint32();
+          m.id = r.readUint64();
           break;
         }
         default: {
@@ -3926,7 +3926,7 @@ class CommentServiceV1Comment {
   factory CommentServiceV1Comment.fromJson(Map<String, dynamic> json) {
     return CommentServiceV1Comment(
       authorEmail: json['authorEmail'] as String?,
-      authorId: json['authorId'] as int?,
+      authorId: json['authorId'] != null ? int.parse(json['authorId'].toString()) : null,
       authorName: json['authorName'] as String?,
       authorType: json['authorType'] != null ? CommentServiceV1Comment$AuthorType.fromString(json['authorType'] as String) : null,
       authorUrl: json['authorUrl'] as String?,
@@ -3934,21 +3934,21 @@ class CommentServiceV1Comment {
       content: json['content'] as String?,
       contentType: json['contentType'] != null ? CommentServiceV1Comment$ContentType.fromString(json['contentType'] as String) : null,
       createdAt: json['createdAt'] as String?,
-      createdBy: json['createdBy'] as int?,
+      createdBy: json['createdBy'] != null ? int.parse(json['createdBy'].toString()) : null,
       deletedAt: json['deletedAt'] as String?,
-      deletedBy: json['deletedBy'] as int?,
+      deletedBy: json['deletedBy'] != null ? int.parse(json['deletedBy'].toString()) : null,
       detectedLanguage: json['detectedLanguage'] as String?,
-      id: json['id'] as int?,
+      id: json['id'] != null ? int.parse(json['id'].toString()) : null,
       ipAddress: json['ipAddress'] as String?,
       isSpam: json['isSpam'] as bool?,
       isSticky: json['isSticky'] as bool?,
       location: json['location'] as String?,
-      objectId: json['objectId'] as int?,
-      parentId: json['parentId'] as int?,
-      replyToId: json['replyToId'] as int?,
+      objectId: json['objectId'] != null ? int.parse(json['objectId'].toString()) : null,
+      parentId: json['parentId'] != null ? int.parse(json['parentId'].toString()) : null,
+      replyToId: json['replyToId'] != null ? int.parse(json['replyToId'].toString()) : null,
       status: json['status'] != null ? CommentServiceV1Comment$Status.fromString(json['status'] as String) : null,
       updatedAt: json['updatedAt'] as String?,
-      updatedBy: json['updatedBy'] as int?,
+      updatedBy: json['updatedBy'] != null ? int.parse(json['updatedBy'].toString()) : null,
       userAgent: json['userAgent'] as String?,
     );
   }
@@ -3956,7 +3956,7 @@ class CommentServiceV1Comment {
   Map<String, dynamic> toJson() {
     final json = <String, dynamic>{};
     if (authorEmail != null) json['authorEmail'] = authorEmail;
-    if (authorId != null) json['authorId'] = authorId;
+    if (authorId != null) json['authorId'] = authorId.toString();
     if (authorName != null) json['authorName'] = authorName;
     if (authorType != null) json['authorType'] = authorType!.value;
     if (authorUrl != null) json['authorUrl'] = authorUrl;
@@ -3964,21 +3964,21 @@ class CommentServiceV1Comment {
     if (content != null) json['content'] = content;
     if (contentType != null) json['contentType'] = contentType!.value;
     if (createdAt != null) json['createdAt'] = createdAt;
-    if (createdBy != null) json['createdBy'] = createdBy;
+    if (createdBy != null) json['createdBy'] = createdBy.toString();
     if (deletedAt != null) json['deletedAt'] = deletedAt;
-    if (deletedBy != null) json['deletedBy'] = deletedBy;
+    if (deletedBy != null) json['deletedBy'] = deletedBy.toString();
     if (detectedLanguage != null) json['detectedLanguage'] = detectedLanguage;
-    if (id != null) json['id'] = id;
+    if (id != null) json['id'] = id.toString();
     if (ipAddress != null) json['ipAddress'] = ipAddress;
     if (isSpam != null) json['isSpam'] = isSpam;
     if (isSticky != null) json['isSticky'] = isSticky;
     if (location != null) json['location'] = location;
-    if (objectId != null) json['objectId'] = objectId;
-    if (parentId != null) json['parentId'] = parentId;
-    if (replyToId != null) json['replyToId'] = replyToId;
+    if (objectId != null) json['objectId'] = objectId.toString();
+    if (parentId != null) json['parentId'] = parentId.toString();
+    if (replyToId != null) json['replyToId'] = replyToId.toString();
     if (status != null) json['status'] = status!.value;
     if (updatedAt != null) json['updatedAt'] = updatedAt;
-    if (updatedBy != null) json['updatedBy'] = updatedBy;
+    if (updatedBy != null) json['updatedBy'] = updatedBy.toString();
     if (userAgent != null) json['userAgent'] = userAgent;
     return json;
   }
@@ -4116,7 +4116,7 @@ class CommentServiceV1Comment {
     // field 1: id
     final f1 = id;
     if (f1 != null) {
-      w.writeUint32(1, f1);
+      w.writeUint64(1, f1);
     }
     // field 2: contentType
     final f2 = contentType;
@@ -4126,7 +4126,7 @@ class CommentServiceV1Comment {
     // field 3: objectId
     final f3 = objectId;
     if (f3 != null) {
-      w.writeUint32(3, f3);
+      w.writeUint64(3, f3);
     }
     // field 4: content
     final f4 = content;
@@ -4136,7 +4136,7 @@ class CommentServiceV1Comment {
     // field 10: authorId
     final f10 = authorId;
     if (f10 != null) {
-      w.writeUint32(10, f10);
+      w.writeUint64(10, f10);
     }
     // field 11: authorName
     final f11 = authorName;
@@ -4196,7 +4196,7 @@ class CommentServiceV1Comment {
     // field 50: parentId
     final f50 = parentId;
     if (f50 != null) {
-      w.writeUint32(50, f50);
+      w.writeUint64(50, f50);
     }
     // field 51: children
     final f51 = children;
@@ -4206,22 +4206,22 @@ class CommentServiceV1Comment {
     // field 52: replyToId
     final f52 = replyToId;
     if (f52 != null) {
-      w.writeUint32(52, f52);
+      w.writeUint64(52, f52);
     }
     // field 100: createdBy
     final f100 = createdBy;
     if (f100 != null) {
-      w.writeUint32(100, f100);
+      w.writeUint64(100, f100);
     }
     // field 101: updatedBy
     final f101 = updatedBy;
     if (f101 != null) {
-      w.writeUint32(101, f101);
+      w.writeUint64(101, f101);
     }
     // field 102: deletedBy
     final f102 = deletedBy;
     if (f102 != null) {
-      w.writeUint32(102, f102);
+      w.writeUint64(102, f102);
     }
     // field 200: createdAt
     final f200 = createdAt;
@@ -4250,7 +4250,7 @@ class CommentServiceV1Comment {
       switch (r.fieldNumber) {
         // field 1: id
         case 1: {
-          m.id = r.readUint32();
+          m.id = r.readUint64();
           break;
         }
         // field 2: contentType
@@ -4260,7 +4260,7 @@ class CommentServiceV1Comment {
         }
         // field 3: objectId
         case 3: {
-          m.objectId = r.readUint32();
+          m.objectId = r.readUint64();
           break;
         }
         // field 4: content
@@ -4270,7 +4270,7 @@ class CommentServiceV1Comment {
         }
         // field 10: authorId
         case 10: {
-          m.authorId = r.readUint32();
+          m.authorId = r.readUint64();
           break;
         }
         // field 11: authorName
@@ -4330,7 +4330,7 @@ class CommentServiceV1Comment {
         }
         // field 50: parentId
         case 50: {
-          m.parentId = r.readUint32();
+          m.parentId = r.readUint64();
           break;
         }
         // field 51: children
@@ -4340,22 +4340,22 @@ class CommentServiceV1Comment {
         }
         // field 52: replyToId
         case 52: {
-          m.replyToId = r.readUint32();
+          m.replyToId = r.readUint64();
           break;
         }
         // field 100: createdBy
         case 100: {
-          m.createdBy = r.readUint32();
+          m.createdBy = r.readUint64();
           break;
         }
         // field 101: updatedBy
         case 101: {
-          m.updatedBy = r.readUint32();
+          m.updatedBy = r.readUint64();
           break;
         }
         // field 102: deletedBy
         case 102: {
-          m.deletedBy = r.readUint32();
+          m.deletedBy = r.readUint64();
           break;
         }
         // field 200: createdAt
@@ -4457,14 +4457,14 @@ class CommentServiceV1GetCommentRequest {
 
   factory CommentServiceV1GetCommentRequest.fromJson(Map<String, dynamic> json) {
     return CommentServiceV1GetCommentRequest(
-      id: json['id'] as int?,
+      id: json['id'] != null ? int.parse(json['id'].toString()) : null,
       viewMask: json['viewMask'] as String?,
     );
   }
 
   Map<String, dynamic> toJson() {
     final json = <String, dynamic>{};
-    if (id != null) json['id'] = id;
+    if (id != null) json['id'] = id.toString();
     if (viewMask != null) json['viewMask'] = viewMask;
     return json;
   }
@@ -4510,7 +4510,7 @@ class CommentServiceV1GetCommentRequest {
     // field 1: id
     final f1 = id;
     if (f1 != null) {
-      w.writeUint32(1, f1);
+      w.writeUint64(1, f1);
     }
     // field 100: viewMask
     final f100 = viewMask;
@@ -4529,7 +4529,7 @@ class CommentServiceV1GetCommentRequest {
       switch (r.fieldNumber) {
         // field 1: id
         case 1: {
-          m.id = r.readUint32();
+          m.id = r.readUint64();
           break;
         }
         // field 100: viewMask
@@ -4649,7 +4649,7 @@ class CommentServiceV1UpdateCommentRequest {
     return CommentServiceV1UpdateCommentRequest(
       allowMissing: json['allowMissing'] as bool?,
       data: json['data'] != null ? CommentServiceV1Comment.fromJson(json['data'] as Map<String, dynamic>) : null,
-      id: json['id'] as int?,
+      id: json['id'] != null ? int.parse(json['id'].toString()) : null,
       updateMask: json['updateMask'] as String?,
     );
   }
@@ -4658,7 +4658,7 @@ class CommentServiceV1UpdateCommentRequest {
     final json = <String, dynamic>{};
     if (allowMissing != null) json['allowMissing'] = allowMissing;
     if (data != null) json['data'] = data!.toJson();
-    if (id != null) json['id'] = id;
+    if (id != null) json['id'] = id.toString();
     if (updateMask != null) json['updateMask'] = updateMask;
     return json;
   }
@@ -4712,7 +4712,7 @@ class CommentServiceV1UpdateCommentRequest {
     // field 1: id
     final f1 = id;
     if (f1 != null) {
-      w.writeUint32(1, f1);
+      w.writeUint64(1, f1);
     }
     // field 2: data
     final f2 = data;
@@ -4741,7 +4741,7 @@ class CommentServiceV1UpdateCommentRequest {
       switch (r.fieldNumber) {
         // field 1: id
         case 1: {
-          m.id = r.readUint32();
+          m.id = r.readUint64();
           break;
         }
         // field 2: data
@@ -4779,13 +4779,13 @@ class CommentServiceV1DeleteCommentRequest {
 
   factory CommentServiceV1DeleteCommentRequest.fromJson(Map<String, dynamic> json) {
     return CommentServiceV1DeleteCommentRequest(
-      id: json['id'] as int?,
+      id: json['id'] != null ? int.parse(json['id'].toString()) : null,
     );
   }
 
   Map<String, dynamic> toJson() {
     final json = <String, dynamic>{};
-    if (id != null) json['id'] = id;
+    if (id != null) json['id'] = id.toString();
     return json;
   }
 
@@ -4826,7 +4826,7 @@ class CommentServiceV1DeleteCommentRequest {
     // field 1: id
     final f1 = id;
     if (f1 != null) {
-      w.writeUint32(1, f1);
+      w.writeUint64(1, f1);
     }
   }
 
@@ -4840,7 +4840,7 @@ class CommentServiceV1DeleteCommentRequest {
       switch (r.fieldNumber) {
         // field 1: id
         case 1: {
-          m.id = r.readUint32();
+          m.id = r.readUint64();
           break;
         }
         default: {
@@ -4960,7 +4960,7 @@ class StorageServiceV1DownloadFileRequest {
       acceptMime: json['acceptMime'] as String?,
       disposition: json['disposition'] as String?,
       downloadUrl: json['downloadUrl'] as String?,
-      fileId: json['fileId'] as int?,
+      fileId: json['fileId'] != null ? int.parse(json['fileId'].toString()) : null,
       preferPresignedUrl: json['preferPresignedUrl'] as bool?,
       presignExpireSeconds: json['presignExpireSeconds'] as int?,
       rangeEnd: json['rangeEnd'] != null ? int.parse(json['rangeEnd'].toString()) : null,
@@ -4974,7 +4974,7 @@ class StorageServiceV1DownloadFileRequest {
     if (acceptMime != null) json['acceptMime'] = acceptMime;
     if (disposition != null) json['disposition'] = disposition;
     if (downloadUrl != null) json['downloadUrl'] = downloadUrl;
-    if (fileId != null) json['fileId'] = fileId;
+    if (fileId != null) json['fileId'] = fileId.toString();
     if (preferPresignedUrl != null) json['preferPresignedUrl'] = preferPresignedUrl;
     if (presignExpireSeconds != null) json['presignExpireSeconds'] = presignExpireSeconds;
     if (rangeEnd != null) json['rangeEnd'] = rangeEnd.toString();
@@ -5052,7 +5052,7 @@ class StorageServiceV1DownloadFileRequest {
     // field 1: fileId
     final f1 = fileId;
     if (f1 != null) {
-      w.writeUint32(1, f1);
+      w.writeUint64(1, f1);
     }
     // field 2: storageObject
     final f2 = storageObject;
@@ -5106,7 +5106,7 @@ class StorageServiceV1DownloadFileRequest {
       switch (r.fieldNumber) {
         // field 1: fileId
         case 1: {
-          m.fileId = r.readUint32();
+          m.fileId = r.readUint64();
           break;
         }
         // field 2: storageObject
@@ -5518,8 +5518,8 @@ class StorageServiceV1UploadFileRequest {
       size: json['size'] != null ? int.parse(json['size'].toString()) : null,
       sourceFileName: json['sourceFileName'] as String?,
       storageObject: json['storageObject'] != null ? StorageServiceV1StorageObject.fromJson(json['storageObject'] as Map<String, dynamic>) : null,
-      tenantId: json['tenantId'] as int?,
-      userId: json['userId'] as int?,
+      tenantId: json['tenantId'] != null ? int.parse(json['tenantId'].toString()) : null,
+      userId: json['userId'] != null ? int.parse(json['userId'].toString()) : null,
     );
   }
 
@@ -5531,8 +5531,8 @@ class StorageServiceV1UploadFileRequest {
     if (size != null) json['size'] = size.toString();
     if (sourceFileName != null) json['sourceFileName'] = sourceFileName;
     if (storageObject != null) json['storageObject'] = storageObject!.toJson();
-    if (tenantId != null) json['tenantId'] = tenantId;
-    if (userId != null) json['userId'] = userId;
+    if (tenantId != null) json['tenantId'] = tenantId.toString();
+    if (userId != null) json['userId'] = userId.toString();
     return json;
   }
 
@@ -5631,12 +5631,12 @@ class StorageServiceV1UploadFileRequest {
     // field 10: tenantId
     final f10 = tenantId;
     if (f10 != null) {
-      w.writeUint32(10, f10);
+      w.writeUint64(10, f10);
     }
     // field 11: userId
     final f11 = userId;
     if (f11 != null) {
-      w.writeUint32(11, f11);
+      w.writeUint64(11, f11);
     }
   }
 
@@ -5680,12 +5680,12 @@ class StorageServiceV1UploadFileRequest {
         }
         // field 10: tenantId
         case 10: {
-          m.tenantId = r.readUint32();
+          m.tenantId = r.readUint64();
           break;
         }
         // field 11: userId
         case 11: {
-          m.userId = r.readUint32();
+          m.userId = r.readUint64();
           break;
         }
         default: {
@@ -5954,16 +5954,16 @@ class ContentServiceV1SubmitFormSubmissionRequest {
   factory ContentServiceV1SubmitFormSubmissionRequest.fromJson(Map<String, dynamic> json) {
     return ContentServiceV1SubmitFormSubmissionRequest(
       data: (json['data'] as Map<String, dynamic>?)?.map((k, v) => MapEntry(k, v as String)),
-      pageId: json['pageId'] as int?,
-      sectionId: json['sectionId'] as int?,
+      pageId: json['pageId'] != null ? int.parse(json['pageId'].toString()) : null,
+      sectionId: json['sectionId'] != null ? int.parse(json['sectionId'].toString()) : null,
     );
   }
 
   Map<String, dynamic> toJson() {
     final json = <String, dynamic>{};
     if (data != null) json['data'] = data;
-    if (pageId != null) json['pageId'] = pageId;
-    if (sectionId != null) json['sectionId'] = sectionId;
+    if (pageId != null) json['pageId'] = pageId.toString();
+    if (sectionId != null) json['sectionId'] = sectionId.toString();
     return json;
   }
 
@@ -6012,12 +6012,12 @@ class ContentServiceV1SubmitFormSubmissionRequest {
     // field 1: pageId
     final f1 = pageId;
     if (f1 != null) {
-      w.writeUint32(1, f1);
+      w.writeUint64(1, f1);
     }
     // field 2: sectionId
     final f2 = sectionId;
     if (f2 != null) {
-      w.writeUint32(2, f2);
+      w.writeUint64(2, f2);
     }
     // field 3: data
     final f3 = data;
@@ -6041,12 +6041,12 @@ class ContentServiceV1SubmitFormSubmissionRequest {
       switch (r.fieldNumber) {
         // field 1: pageId
         case 1: {
-          m.pageId = r.readUint32();
+          m.pageId = r.readUint64();
           break;
         }
         // field 2: sectionId
         case 2: {
-          m.sectionId = r.readUint32();
+          m.sectionId = r.readUint64();
           break;
         }
         // field 3: data
@@ -6104,10 +6104,10 @@ class ContentServiceV1FormSubmission {
     return ContentServiceV1FormSubmission(
       createdAt: json['createdAt'] as String?,
       data: (json['data'] as Map<String, dynamic>?)?.map((k, v) => MapEntry(k, v as String)),
-      id: json['id'] as int?,
-      pageId: json['pageId'] as int?,
-      sectionId: json['sectionId'] as int?,
-      userId: json['userId'] as int?,
+      id: json['id'] != null ? int.parse(json['id'].toString()) : null,
+      pageId: json['pageId'] != null ? int.parse(json['pageId'].toString()) : null,
+      sectionId: json['sectionId'] != null ? int.parse(json['sectionId'].toString()) : null,
+      userId: json['userId'] != null ? int.parse(json['userId'].toString()) : null,
     );
   }
 
@@ -6115,10 +6115,10 @@ class ContentServiceV1FormSubmission {
     final json = <String, dynamic>{};
     if (createdAt != null) json['createdAt'] = createdAt;
     if (data != null) json['data'] = data;
-    if (id != null) json['id'] = id;
-    if (pageId != null) json['pageId'] = pageId;
-    if (sectionId != null) json['sectionId'] = sectionId;
-    if (userId != null) json['userId'] = userId;
+    if (id != null) json['id'] = id.toString();
+    if (pageId != null) json['pageId'] = pageId.toString();
+    if (sectionId != null) json['sectionId'] = sectionId.toString();
+    if (userId != null) json['userId'] = userId.toString();
     return json;
   }
 
@@ -6179,17 +6179,17 @@ class ContentServiceV1FormSubmission {
     // field 1: id
     final f1 = id;
     if (f1 != null) {
-      w.writeUint32(1, f1);
+      w.writeUint64(1, f1);
     }
     // field 2: pageId
     final f2 = pageId;
     if (f2 != null) {
-      w.writeUint32(2, f2);
+      w.writeUint64(2, f2);
     }
     // field 3: sectionId
     final f3 = sectionId;
     if (f3 != null) {
-      w.writeUint32(3, f3);
+      w.writeUint64(3, f3);
     }
     // field 4: data
     final f4 = data;
@@ -6204,7 +6204,7 @@ class ContentServiceV1FormSubmission {
     // field 5: userId
     final f5 = userId;
     if (f5 != null) {
-      w.writeUint32(5, f5);
+      w.writeUint64(5, f5);
     }
     // field 200: createdAt
     final f200 = createdAt;
@@ -6223,17 +6223,17 @@ class ContentServiceV1FormSubmission {
       switch (r.fieldNumber) {
         // field 1: id
         case 1: {
-          m.id = r.readUint32();
+          m.id = r.readUint64();
           break;
         }
         // field 2: pageId
         case 2: {
-          m.pageId = r.readUint32();
+          m.pageId = r.readUint64();
           break;
         }
         // field 3: sectionId
         case 3: {
-          m.sectionId = r.readUint32();
+          m.sectionId = r.readUint64();
           break;
         }
         // field 4: data
@@ -6261,7 +6261,7 @@ class ContentServiceV1FormSubmission {
         }
         // field 5: userId
         case 5: {
-          m.userId = r.readUint32();
+          m.userId = r.readUint64();
           break;
         }
         // field 200: createdAt
@@ -6422,14 +6422,14 @@ class InteractionServiceV1LikeRequest {
 
   factory InteractionServiceV1LikeRequest.fromJson(Map<String, dynamic> json) {
     return InteractionServiceV1LikeRequest(
-      targetId: json['targetId'] as int?,
+      targetId: json['targetId'] != null ? int.parse(json['targetId'].toString()) : null,
       targetType: json['targetType'] != null ? InteractionServiceV1TargetType.fromString(json['targetType'] as String) : null,
     );
   }
 
   Map<String, dynamic> toJson() {
     final json = <String, dynamic>{};
-    if (targetId != null) json['targetId'] = targetId;
+    if (targetId != null) json['targetId'] = targetId.toString();
     if (targetType != null) json['targetType'] = targetType!.value;
     return json;
   }
@@ -6480,7 +6480,7 @@ class InteractionServiceV1LikeRequest {
     // field 2: targetId
     final f2 = targetId;
     if (f2 != null) {
-      w.writeUint32(2, f2);
+      w.writeUint64(2, f2);
     }
   }
 
@@ -6499,7 +6499,7 @@ class InteractionServiceV1LikeRequest {
         }
         // field 2: targetId
         case 2: {
-          m.targetId = r.readUint32();
+          m.targetId = r.readUint64();
           break;
         }
         default: {
@@ -6642,13 +6642,13 @@ class InteractionServiceV1WatchRequest {
 
   factory InteractionServiceV1WatchRequest.fromJson(Map<String, dynamic> json) {
     return InteractionServiceV1WatchRequest(
-      postId: json['postId'] as int?,
+      postId: json['postId'] != null ? int.parse(json['postId'].toString()) : null,
     );
   }
 
   Map<String, dynamic> toJson() {
     final json = <String, dynamic>{};
-    if (postId != null) json['postId'] = postId;
+    if (postId != null) json['postId'] = postId.toString();
     return json;
   }
 
@@ -6689,7 +6689,7 @@ class InteractionServiceV1WatchRequest {
     // field 1: postId
     final f1 = postId;
     if (f1 != null) {
-      w.writeUint32(1, f1);
+      w.writeUint64(1, f1);
     }
   }
 
@@ -6703,7 +6703,7 @@ class InteractionServiceV1WatchRequest {
       switch (r.fieldNumber) {
         // field 1: postId
         case 1: {
-          m.postId = r.readUint32();
+          m.postId = r.readUint64();
           break;
         }
         default: {
@@ -6828,14 +6828,14 @@ class InteractionServiceV1GetInteractionStatusRequest {
 
   factory InteractionServiceV1GetInteractionStatusRequest.fromJson(Map<String, dynamic> json) {
     return InteractionServiceV1GetInteractionStatusRequest(
-      targetIds: (json['targetIds'] as List<dynamic>?)?.map((e) => e as int).toList(),
+      targetIds: (json['targetIds'] as List<dynamic>?)?.map((e) => int.parse(e.toString())).toList(),
       targetType: json['targetType'] != null ? InteractionServiceV1TargetType.fromString(json['targetType'] as String) : null,
     );
   }
 
   Map<String, dynamic> toJson() {
     final json = <String, dynamic>{};
-    if (targetIds != null) json['targetIds'] = targetIds;
+    if (targetIds != null) json['targetIds'] = targetIds!.map((e) => e.toString()).toList();
     if (targetType != null) json['targetType'] = targetType!.value;
     return json;
   }
@@ -7285,61 +7285,61 @@ class ContentServiceV1Post {
 
   factory ContentServiceV1Post.fromJson(Map<String, dynamic> json) {
     return ContentServiceV1Post(
-      authorId: json['authorId'] as int?,
+      authorId: json['authorId'] != null ? int.parse(json['authorId'].toString()) : null,
       authorName: json['authorName'] as String?,
       autoSummary: json['autoSummary'] as bool?,
       availableLanguages: (json['availableLanguages'] as List<dynamic>?)?.map((e) => e as String).toList(),
-      categoryIds: (json['categoryIds'] as List<dynamic>?)?.map((e) => e as int).toList(),
+      categoryIds: (json['categoryIds'] as List<dynamic>?)?.map((e) => int.parse(e.toString())).toList(),
       code: json['code'] as String?,
       createdAt: json['createdAt'] as String?,
-      createdBy: json['createdBy'] as int?,
+      createdBy: json['createdBy'] != null ? int.parse(json['createdBy'].toString()) : null,
       customFields: (json['customFields'] as Map<String, dynamic>?)?.map((k, v) => MapEntry(k, v as String)),
       deletedAt: json['deletedAt'] as String?,
-      deletedBy: json['deletedBy'] as int?,
+      deletedBy: json['deletedBy'] != null ? int.parse(json['deletedBy'].toString()) : null,
       disallowComment: json['disallowComment'] as bool?,
       editorType: json['editorType'] != null ? ContentServiceV1EditorType.fromString(json['editorType'] as String) : null,
-      id: json['id'] as int?,
+      id: json['id'] != null ? int.parse(json['id'].toString()) : null,
       inProgress: json['inProgress'] as bool?,
       isFeatured: json['isFeatured'] as bool?,
       passwordHash: json['passwordHash'] as String?,
       publishTime: json['publishTime'] as String?,
       sortOrder: json['sortOrder'] as int?,
       status: json['status'] != null ? ContentServiceV1Post$PostStatus.fromString(json['status'] as String) : null,
-      tagIds: (json['tagIds'] as List<dynamic>?)?.map((e) => e as int).toList(),
+      tagIds: (json['tagIds'] as List<dynamic>?)?.map((e) => int.parse(e.toString())).toList(),
       thumbnail: json['thumbnail'] as String?,
       translations: (json['translations'] as List<dynamic>?)?.map((e) => ContentServiceV1PostTranslation.fromJson(e as Map<String, dynamic>)).toList(),
       updatedAt: json['updatedAt'] as String?,
-      updatedBy: json['updatedBy'] as int?,
+      updatedBy: json['updatedBy'] != null ? int.parse(json['updatedBy'].toString()) : null,
     );
   }
 
   Map<String, dynamic> toJson() {
     final json = <String, dynamic>{};
-    if (authorId != null) json['authorId'] = authorId;
+    if (authorId != null) json['authorId'] = authorId.toString();
     if (authorName != null) json['authorName'] = authorName;
     if (autoSummary != null) json['autoSummary'] = autoSummary;
     if (availableLanguages != null) json['availableLanguages'] = availableLanguages;
-    if (categoryIds != null) json['categoryIds'] = categoryIds;
+    if (categoryIds != null) json['categoryIds'] = categoryIds!.map((e) => e.toString()).toList();
     if (code != null) json['code'] = code;
     if (createdAt != null) json['createdAt'] = createdAt;
-    if (createdBy != null) json['createdBy'] = createdBy;
+    if (createdBy != null) json['createdBy'] = createdBy.toString();
     if (customFields != null) json['customFields'] = customFields;
     if (deletedAt != null) json['deletedAt'] = deletedAt;
-    if (deletedBy != null) json['deletedBy'] = deletedBy;
+    if (deletedBy != null) json['deletedBy'] = deletedBy.toString();
     if (disallowComment != null) json['disallowComment'] = disallowComment;
     if (editorType != null) json['editorType'] = editorType!.value;
-    if (id != null) json['id'] = id;
+    if (id != null) json['id'] = id.toString();
     if (inProgress != null) json['inProgress'] = inProgress;
     if (isFeatured != null) json['isFeatured'] = isFeatured;
     if (passwordHash != null) json['passwordHash'] = passwordHash;
     if (publishTime != null) json['publishTime'] = publishTime;
     if (sortOrder != null) json['sortOrder'] = sortOrder;
     if (status != null) json['status'] = status!.value;
-    if (tagIds != null) json['tagIds'] = tagIds;
+    if (tagIds != null) json['tagIds'] = tagIds!.map((e) => e.toString()).toList();
     if (thumbnail != null) json['thumbnail'] = thumbnail;
     if (translations != null) json['translations'] = translations!.map((e) => e.toJson()).toList();
     if (updatedAt != null) json['updatedAt'] = updatedAt;
-    if (updatedBy != null) json['updatedBy'] = updatedBy;
+    if (updatedBy != null) json['updatedBy'] = updatedBy.toString();
     return json;
   }
 
@@ -7476,7 +7476,7 @@ class ContentServiceV1Post {
     // field 1: id
     final f1 = id;
     if (f1 != null) {
-      w.writeUint32(1, f1);
+      w.writeUint64(1, f1);
     }
     // field 2: status
     final f2 = status;
@@ -7526,7 +7526,7 @@ class ContentServiceV1Post {
     // field 20: authorId
     final f20 = authorId;
     if (f20 != null) {
-      w.writeUint32(20, f20);
+      w.writeUint64(20, f20);
     }
     // field 21: authorName
     final f21 = authorName;
@@ -7571,17 +7571,17 @@ class ContentServiceV1Post {
     // field 100: createdBy
     final f100 = createdBy;
     if (f100 != null) {
-      w.writeUint32(100, f100);
+      w.writeUint64(100, f100);
     }
     // field 101: updatedBy
     final f101 = updatedBy;
     if (f101 != null) {
-      w.writeUint32(101, f101);
+      w.writeUint64(101, f101);
     }
     // field 102: deletedBy
     final f102 = deletedBy;
     if (f102 != null) {
-      w.writeUint32(102, f102);
+      w.writeUint64(102, f102);
     }
     // field 200: createdAt
     final f200 = createdAt;
@@ -7615,7 +7615,7 @@ class ContentServiceV1Post {
       switch (r.fieldNumber) {
         // field 1: id
         case 1: {
-          m.id = r.readUint32();
+          m.id = r.readUint64();
           break;
         }
         // field 2: status
@@ -7665,7 +7665,7 @@ class ContentServiceV1Post {
         }
         // field 20: authorId
         case 20: {
-          m.authorId = r.readUint32();
+          m.authorId = r.readUint64();
           break;
         }
         // field 21: authorName
@@ -7723,17 +7723,17 @@ class ContentServiceV1Post {
         }
         // field 100: createdBy
         case 100: {
-          m.createdBy = r.readUint32();
+          m.createdBy = r.readUint64();
           break;
         }
         // field 101: updatedBy
         case 101: {
-          m.updatedBy = r.readUint32();
+          m.updatedBy = r.readUint64();
           break;
         }
         // field 102: deletedBy
         case 102: {
-          m.deletedBy = r.readUint32();
+          m.deletedBy = r.readUint64();
           break;
         }
         // field 200: createdAt
@@ -7854,20 +7854,20 @@ class ContentServiceV1PostTranslation {
     return ContentServiceV1PostTranslation(
       content: json['content'] as String?,
       createdAt: json['createdAt'] as String?,
-      createdBy: json['createdBy'] as int?,
+      createdBy: json['createdBy'] != null ? int.parse(json['createdBy'].toString()) : null,
       deletedAt: json['deletedAt'] as String?,
-      deletedBy: json['deletedBy'] as int?,
+      deletedBy: json['deletedBy'] != null ? int.parse(json['deletedBy'].toString()) : null,
       fullPath: json['fullPath'] as String?,
-      id: json['id'] as int?,
+      id: json['id'] != null ? int.parse(json['id'].toString()) : null,
       languageCode: json['languageCode'] as String?,
       originalContent: json['originalContent'] as String?,
-      postId: json['postId'] as int?,
+      postId: json['postId'] != null ? int.parse(json['postId'].toString()) : null,
       seo: json['seo'] != null ? ContentServiceV1SeoMeta.fromJson(json['seo'] as Map<String, dynamic>) : null,
       slug: json['slug'] as String?,
       summary: json['summary'] as String?,
       title: json['title'] as String?,
       updatedAt: json['updatedAt'] as String?,
-      updatedBy: json['updatedBy'] as int?,
+      updatedBy: json['updatedBy'] != null ? int.parse(json['updatedBy'].toString()) : null,
       wordCount: json['wordCount'] as int?,
     );
   }
@@ -7876,20 +7876,20 @@ class ContentServiceV1PostTranslation {
     final json = <String, dynamic>{};
     if (content != null) json['content'] = content;
     if (createdAt != null) json['createdAt'] = createdAt;
-    if (createdBy != null) json['createdBy'] = createdBy;
+    if (createdBy != null) json['createdBy'] = createdBy.toString();
     if (deletedAt != null) json['deletedAt'] = deletedAt;
-    if (deletedBy != null) json['deletedBy'] = deletedBy;
+    if (deletedBy != null) json['deletedBy'] = deletedBy.toString();
     if (fullPath != null) json['fullPath'] = fullPath;
-    if (id != null) json['id'] = id;
+    if (id != null) json['id'] = id.toString();
     if (languageCode != null) json['languageCode'] = languageCode;
     if (originalContent != null) json['originalContent'] = originalContent;
-    if (postId != null) json['postId'] = postId;
+    if (postId != null) json['postId'] = postId.toString();
     if (seo != null) json['seo'] = seo!.toJson();
     if (slug != null) json['slug'] = slug;
     if (summary != null) json['summary'] = summary;
     if (title != null) json['title'] = title;
     if (updatedAt != null) json['updatedAt'] = updatedAt;
-    if (updatedBy != null) json['updatedBy'] = updatedBy;
+    if (updatedBy != null) json['updatedBy'] = updatedBy.toString();
     if (wordCount != null) json['wordCount'] = wordCount;
     return json;
   }
@@ -7995,12 +7995,12 @@ class ContentServiceV1PostTranslation {
     // field 1: id
     final f1 = id;
     if (f1 != null) {
-      w.writeUint32(1, f1);
+      w.writeUint64(1, f1);
     }
     // field 2: postId
     final f2 = postId;
     if (f2 != null) {
-      w.writeUint32(2, f2);
+      w.writeUint64(2, f2);
     }
     // field 3: languageCode
     final f3 = languageCode;
@@ -8050,17 +8050,17 @@ class ContentServiceV1PostTranslation {
     // field 100: createdBy
     final f100 = createdBy;
     if (f100 != null) {
-      w.writeUint32(100, f100);
+      w.writeUint64(100, f100);
     }
     // field 101: updatedBy
     final f101 = updatedBy;
     if (f101 != null) {
-      w.writeUint32(101, f101);
+      w.writeUint64(101, f101);
     }
     // field 102: deletedBy
     final f102 = deletedBy;
     if (f102 != null) {
-      w.writeUint32(102, f102);
+      w.writeUint64(102, f102);
     }
     // field 200: createdAt
     final f200 = createdAt;
@@ -8089,12 +8089,12 @@ class ContentServiceV1PostTranslation {
       switch (r.fieldNumber) {
         // field 1: id
         case 1: {
-          m.id = r.readUint32();
+          m.id = r.readUint64();
           break;
         }
         // field 2: postId
         case 2: {
-          m.postId = r.readUint32();
+          m.postId = r.readUint64();
           break;
         }
         // field 3: languageCode
@@ -8144,17 +8144,17 @@ class ContentServiceV1PostTranslation {
         }
         // field 100: createdBy
         case 100: {
-          m.createdBy = r.readUint32();
+          m.createdBy = r.readUint64();
           break;
         }
         // field 101: updatedBy
         case 101: {
-          m.updatedBy = r.readUint32();
+          m.updatedBy = r.readUint64();
           break;
         }
         // field 102: deletedBy
         case 102: {
-          m.deletedBy = r.readUint32();
+          m.deletedBy = r.readUint64();
           break;
         }
         // field 200: createdAt
@@ -8196,7 +8196,7 @@ class InteractionServiceV1GetCountsRequest {
   factory InteractionServiceV1GetCountsRequest.fromJson(Map<String, dynamic> json) {
     return InteractionServiceV1GetCountsRequest(
       metrics: (json['metrics'] as List<dynamic>?)?.map((e) => InteractionServiceV1CounterMetric.fromString(e as String)).toList(),
-      targetIds: (json['targetIds'] as List<dynamic>?)?.map((e) => e as int).toList(),
+      targetIds: (json['targetIds'] as List<dynamic>?)?.map((e) => int.parse(e.toString())).toList(),
       targetType: json['targetType'] != null ? InteractionServiceV1TargetType.fromString(json['targetType'] as String) : null,
     );
   }
@@ -8204,7 +8204,7 @@ class InteractionServiceV1GetCountsRequest {
   Map<String, dynamic> toJson() {
     final json = <String, dynamic>{};
     if (metrics != null) json['metrics'] = metrics!.map((e) => e.value).toList();
-    if (targetIds != null) json['targetIds'] = targetIds;
+    if (targetIds != null) json['targetIds'] = targetIds!.map((e) => e.toString()).toList();
     if (targetType != null) json['targetType'] = targetType!.value;
     return json;
   }
@@ -8629,14 +8629,14 @@ class InteractionServiceV1RecordViewRequest {
 
   factory InteractionServiceV1RecordViewRequest.fromJson(Map<String, dynamic> json) {
     return InteractionServiceV1RecordViewRequest(
-      targetId: json['targetId'] as int?,
+      targetId: json['targetId'] != null ? int.parse(json['targetId'].toString()) : null,
       targetType: json['targetType'] != null ? InteractionServiceV1TargetType.fromString(json['targetType'] as String) : null,
     );
   }
 
   Map<String, dynamic> toJson() {
     final json = <String, dynamic>{};
-    if (targetId != null) json['targetId'] = targetId;
+    if (targetId != null) json['targetId'] = targetId.toString();
     if (targetType != null) json['targetType'] = targetType!.value;
     return json;
   }
@@ -8687,7 +8687,7 @@ class InteractionServiceV1RecordViewRequest {
     // field 2: targetId
     final f2 = targetId;
     if (f2 != null) {
-      w.writeUint32(2, f2);
+      w.writeUint64(2, f2);
     }
   }
 
@@ -8706,7 +8706,7 @@ class InteractionServiceV1RecordViewRequest {
         }
         // field 2: targetId
         case 2: {
-          m.targetId = r.readUint32();
+          m.targetId = r.readUint64();
           break;
         }
         default: {
@@ -8843,14 +8843,14 @@ class MediaServiceV1GetMediaAssetRequest {
 
   factory MediaServiceV1GetMediaAssetRequest.fromJson(Map<String, dynamic> json) {
     return MediaServiceV1GetMediaAssetRequest(
-      id: json['id'] as int?,
+      id: json['id'] != null ? int.parse(json['id'].toString()) : null,
       viewMask: json['viewMask'] as String?,
     );
   }
 
   Map<String, dynamic> toJson() {
     final json = <String, dynamic>{};
-    if (id != null) json['id'] = id;
+    if (id != null) json['id'] = id.toString();
     if (viewMask != null) json['viewMask'] = viewMask;
     return json;
   }
@@ -8896,7 +8896,7 @@ class MediaServiceV1GetMediaAssetRequest {
     // field 1: id
     final f1 = id;
     if (f1 != null) {
-      w.writeUint32(1, f1);
+      w.writeUint64(1, f1);
     }
     // field 100: viewMask
     final f100 = viewMask;
@@ -8915,7 +8915,7 @@ class MediaServiceV1GetMediaAssetRequest {
       switch (r.fieldNumber) {
         // field 1: id
         case 1: {
-          m.id = r.readUint32();
+          m.id = r.readUint64();
           break;
         }
         // field 100: viewMask
@@ -9000,16 +9000,16 @@ class MediaServiceV1MediaAsset {
       altText: json['altText'] as String?,
       caption: json['caption'] as String?,
       createdAt: json['createdAt'] as String?,
-      createdBy: json['createdBy'] as int?,
+      createdBy: json['createdBy'] != null ? int.parse(json['createdBy'].toString()) : null,
       deletedAt: json['deletedAt'] as String?,
-      deletedBy: json['deletedBy'] as int?,
+      deletedBy: json['deletedBy'] != null ? int.parse(json['deletedBy'].toString()) : null,
       duration: json['duration'] as int?,
       fileHash: json['fileHash'] as String?,
-      fileId: json['fileId'] as int?,
+      fileId: json['fileId'] != null ? int.parse(json['fileId'].toString()) : null,
       filename: json['filename'] as String?,
-      folderId: json['folderId'] as int?,
+      folderId: json['folderId'] != null ? int.parse(json['folderId'].toString()) : null,
       height: json['height'] as int?,
-      id: json['id'] as int?,
+      id: json['id'] != null ? int.parse(json['id'].toString()) : null,
       isPrivate: json['isPrivate'] as bool?,
       mimeType: json['mimeType'] as String?,
       processingError: json['processingError'] as String?,
@@ -9020,7 +9020,7 @@ class MediaServiceV1MediaAsset {
       title: json['title'] as String?,
       type: json['type'] != null ? MediaServiceV1MediaAsset$AssetType.fromString(json['type'] as String) : null,
       updatedAt: json['updatedAt'] as String?,
-      updatedBy: json['updatedBy'] as int?,
+      updatedBy: json['updatedBy'] != null ? int.parse(json['updatedBy'].toString()) : null,
       url: json['url'] as String?,
       variantFileIds: (json['variantFileIds'] as Map<String, dynamic>?)?.map((k, v) => MapEntry(k, v as int)),
       width: json['width'] as int?,
@@ -9032,16 +9032,16 @@ class MediaServiceV1MediaAsset {
     if (altText != null) json['altText'] = altText;
     if (caption != null) json['caption'] = caption;
     if (createdAt != null) json['createdAt'] = createdAt;
-    if (createdBy != null) json['createdBy'] = createdBy;
+    if (createdBy != null) json['createdBy'] = createdBy.toString();
     if (deletedAt != null) json['deletedAt'] = deletedAt;
-    if (deletedBy != null) json['deletedBy'] = deletedBy;
+    if (deletedBy != null) json['deletedBy'] = deletedBy.toString();
     if (duration != null) json['duration'] = duration;
     if (fileHash != null) json['fileHash'] = fileHash;
-    if (fileId != null) json['fileId'] = fileId;
+    if (fileId != null) json['fileId'] = fileId.toString();
     if (filename != null) json['filename'] = filename;
-    if (folderId != null) json['folderId'] = folderId;
+    if (folderId != null) json['folderId'] = folderId.toString();
     if (height != null) json['height'] = height;
-    if (id != null) json['id'] = id;
+    if (id != null) json['id'] = id.toString();
     if (isPrivate != null) json['isPrivate'] = isPrivate;
     if (mimeType != null) json['mimeType'] = mimeType;
     if (processingError != null) json['processingError'] = processingError;
@@ -9052,7 +9052,7 @@ class MediaServiceV1MediaAsset {
     if (title != null) json['title'] = title;
     if (type != null) json['type'] = type!.value;
     if (updatedAt != null) json['updatedAt'] = updatedAt;
-    if (updatedBy != null) json['updatedBy'] = updatedBy;
+    if (updatedBy != null) json['updatedBy'] = updatedBy.toString();
     if (url != null) json['url'] = url;
     if (variantFileIds != null) json['variantFileIds'] = variantFileIds;
     if (width != null) json['width'] = width;
@@ -9200,7 +9200,7 @@ class MediaServiceV1MediaAsset {
     // field 1: id
     final f1 = id;
     if (f1 != null) {
-      w.writeUint32(1, f1);
+      w.writeUint64(1, f1);
     }
     // field 2: type
     final f2 = type;
@@ -9300,27 +9300,27 @@ class MediaServiceV1MediaAsset {
     // field 21: fileId
     final f21 = fileId;
     if (f21 != null) {
-      w.writeUint32(21, f21);
+      w.writeUint64(21, f21);
     }
     // field 22: folderId
     final f22 = folderId;
     if (f22 != null) {
-      w.writeUint32(22, f22);
+      w.writeUint64(22, f22);
     }
     // field 100: createdBy
     final f100 = createdBy;
     if (f100 != null) {
-      w.writeUint32(100, f100);
+      w.writeUint64(100, f100);
     }
     // field 101: updatedBy
     final f101 = updatedBy;
     if (f101 != null) {
-      w.writeUint32(101, f101);
+      w.writeUint64(101, f101);
     }
     // field 102: deletedBy
     final f102 = deletedBy;
     if (f102 != null) {
-      w.writeUint32(102, f102);
+      w.writeUint64(102, f102);
     }
     // field 200: createdAt
     final f200 = createdAt;
@@ -9349,7 +9349,7 @@ class MediaServiceV1MediaAsset {
       switch (r.fieldNumber) {
         // field 1: id
         case 1: {
-          m.id = r.readUint32();
+          m.id = r.readUint64();
           break;
         }
         // field 2: type
@@ -9462,27 +9462,27 @@ class MediaServiceV1MediaAsset {
         }
         // field 21: fileId
         case 21: {
-          m.fileId = r.readUint32();
+          m.fileId = r.readUint64();
           break;
         }
         // field 22: folderId
         case 22: {
-          m.folderId = r.readUint32();
+          m.folderId = r.readUint64();
           break;
         }
         // field 100: createdBy
         case 100: {
-          m.createdBy = r.readUint32();
+          m.createdBy = r.readUint64();
           break;
         }
         // field 101: updatedBy
         case 101: {
-          m.updatedBy = r.readUint32();
+          m.updatedBy = r.readUint64();
           break;
         }
         // field 102: deletedBy
         case 102: {
-          m.deletedBy = r.readUint32();
+          m.deletedBy = r.readUint64();
           break;
         }
         // field 200: createdAt
@@ -9808,34 +9808,34 @@ class SiteServiceV1Navigation {
   factory SiteServiceV1Navigation.fromJson(Map<String, dynamic> json) {
     return SiteServiceV1Navigation(
       createdAt: json['createdAt'] as String?,
-      createdBy: json['createdBy'] as int?,
+      createdBy: json['createdBy'] != null ? int.parse(json['createdBy'].toString()) : null,
       deletedAt: json['deletedAt'] as String?,
-      deletedBy: json['deletedBy'] as int?,
-      id: json['id'] as int?,
+      deletedBy: json['deletedBy'] != null ? int.parse(json['deletedBy'].toString()) : null,
+      id: json['id'] != null ? int.parse(json['id'].toString()) : null,
       isActive: json['isActive'] as bool?,
       items: (json['items'] as List<dynamic>?)?.map((e) => SiteServiceV1NavigationItem.fromJson(e as Map<String, dynamic>)).toList(),
       locale: json['locale'] as String?,
       location: json['location'] != null ? SiteServiceV1Navigation$Location.fromString(json['location'] as String) : null,
       name: json['name'] as String?,
       updatedAt: json['updatedAt'] as String?,
-      updatedBy: json['updatedBy'] as int?,
+      updatedBy: json['updatedBy'] != null ? int.parse(json['updatedBy'].toString()) : null,
     );
   }
 
   Map<String, dynamic> toJson() {
     final json = <String, dynamic>{};
     if (createdAt != null) json['createdAt'] = createdAt;
-    if (createdBy != null) json['createdBy'] = createdBy;
+    if (createdBy != null) json['createdBy'] = createdBy.toString();
     if (deletedAt != null) json['deletedAt'] = deletedAt;
-    if (deletedBy != null) json['deletedBy'] = deletedBy;
-    if (id != null) json['id'] = id;
+    if (deletedBy != null) json['deletedBy'] = deletedBy.toString();
+    if (id != null) json['id'] = id.toString();
     if (isActive != null) json['isActive'] = isActive;
     if (items != null) json['items'] = items!.map((e) => e.toJson()).toList();
     if (locale != null) json['locale'] = locale;
     if (location != null) json['location'] = location!.value;
     if (name != null) json['name'] = name;
     if (updatedAt != null) json['updatedAt'] = updatedAt;
-    if (updatedBy != null) json['updatedBy'] = updatedBy;
+    if (updatedBy != null) json['updatedBy'] = updatedBy.toString();
     return json;
   }
 
@@ -9920,7 +9920,7 @@ class SiteServiceV1Navigation {
     // field 1: id
     final f1 = id;
     if (f1 != null) {
-      w.writeUint32(1, f1);
+      w.writeUint64(1, f1);
     }
     // field 2: name
     final f2 = name;
@@ -9950,17 +9950,17 @@ class SiteServiceV1Navigation {
     // field 100: createdBy
     final f100 = createdBy;
     if (f100 != null) {
-      w.writeUint32(100, f100);
+      w.writeUint64(100, f100);
     }
     // field 101: updatedBy
     final f101 = updatedBy;
     if (f101 != null) {
-      w.writeUint32(101, f101);
+      w.writeUint64(101, f101);
     }
     // field 102: deletedBy
     final f102 = deletedBy;
     if (f102 != null) {
-      w.writeUint32(102, f102);
+      w.writeUint64(102, f102);
     }
     // field 200: createdAt
     final f200 = createdAt;
@@ -9989,7 +9989,7 @@ class SiteServiceV1Navigation {
       switch (r.fieldNumber) {
         // field 1: id
         case 1: {
-          m.id = r.readUint32();
+          m.id = r.readUint64();
           break;
         }
         // field 2: name
@@ -10019,17 +10019,17 @@ class SiteServiceV1Navigation {
         }
         // field 100: createdBy
         case 100: {
-          m.createdBy = r.readUint32();
+          m.createdBy = r.readUint64();
           break;
         }
         // field 101: updatedBy
         case 101: {
-          m.updatedBy = r.readUint32();
+          m.updatedBy = r.readUint64();
           break;
         }
         // field 102: deletedBy
         case 102: {
-          m.deletedBy = r.readUint32();
+          m.deletedBy = r.readUint64();
           break;
         }
         // field 200: createdAt
@@ -10130,23 +10130,23 @@ class SiteServiceV1NavigationItem {
     return SiteServiceV1NavigationItem(
       children: (json['children'] as List<dynamic>?)?.map((e) => SiteServiceV1NavigationItem.fromJson(e as Map<String, dynamic>)).toList(),
       createdAt: json['createdAt'] as String?,
-      createdBy: json['createdBy'] as int?,
+      createdBy: json['createdBy'] != null ? int.parse(json['createdBy'].toString()) : null,
       deletedAt: json['deletedAt'] as String?,
-      deletedBy: json['deletedBy'] as int?,
+      deletedBy: json['deletedBy'] != null ? int.parse(json['deletedBy'].toString()) : null,
       description: json['description'] as String?,
       icon: json['icon'] as String?,
-      id: json['id'] as int?,
+      id: json['id'] != null ? int.parse(json['id'].toString()) : null,
       isInvalid: json['isInvalid'] as bool?,
       isOpenNewTab: json['isOpenNewTab'] as bool?,
       linkType: json['linkType'] != null ? SiteServiceV1NavigationItem$LinkType.fromString(json['linkType'] as String) : null,
-      navigationId: json['navigationId'] as int?,
-      objectId: json['objectId'] as int?,
-      parentId: json['parentId'] as int?,
+      navigationId: json['navigationId'] != null ? int.parse(json['navigationId'].toString()) : null,
+      objectId: json['objectId'] != null ? int.parse(json['objectId'].toString()) : null,
+      parentId: json['parentId'] != null ? int.parse(json['parentId'].toString()) : null,
       requiredPermission: json['requiredPermission'] as String?,
       sortOrder: json['sortOrder'] as int?,
       title: json['title'] as String?,
       updatedAt: json['updatedAt'] as String?,
-      updatedBy: json['updatedBy'] as int?,
+      updatedBy: json['updatedBy'] != null ? int.parse(json['updatedBy'].toString()) : null,
       url: json['url'] as String?,
     );
   }
@@ -10155,23 +10155,23 @@ class SiteServiceV1NavigationItem {
     final json = <String, dynamic>{};
     if (children != null) json['children'] = children!.map((e) => e.toJson()).toList();
     if (createdAt != null) json['createdAt'] = createdAt;
-    if (createdBy != null) json['createdBy'] = createdBy;
+    if (createdBy != null) json['createdBy'] = createdBy.toString();
     if (deletedAt != null) json['deletedAt'] = deletedAt;
-    if (deletedBy != null) json['deletedBy'] = deletedBy;
+    if (deletedBy != null) json['deletedBy'] = deletedBy.toString();
     if (description != null) json['description'] = description;
     if (icon != null) json['icon'] = icon;
-    if (id != null) json['id'] = id;
+    if (id != null) json['id'] = id.toString();
     if (isInvalid != null) json['isInvalid'] = isInvalid;
     if (isOpenNewTab != null) json['isOpenNewTab'] = isOpenNewTab;
     if (linkType != null) json['linkType'] = linkType!.value;
-    if (navigationId != null) json['navigationId'] = navigationId;
-    if (objectId != null) json['objectId'] = objectId;
-    if (parentId != null) json['parentId'] = parentId;
+    if (navigationId != null) json['navigationId'] = navigationId.toString();
+    if (objectId != null) json['objectId'] = objectId.toString();
+    if (parentId != null) json['parentId'] = parentId.toString();
     if (requiredPermission != null) json['requiredPermission'] = requiredPermission;
     if (sortOrder != null) json['sortOrder'] = sortOrder;
     if (title != null) json['title'] = title;
     if (updatedAt != null) json['updatedAt'] = updatedAt;
-    if (updatedBy != null) json['updatedBy'] = updatedBy;
+    if (updatedBy != null) json['updatedBy'] = updatedBy.toString();
     if (url != null) json['url'] = url;
     return json;
   }
@@ -10289,12 +10289,12 @@ class SiteServiceV1NavigationItem {
     // field 1: id
     final f1 = id;
     if (f1 != null) {
-      w.writeUint32(1, f1);
+      w.writeUint64(1, f1);
     }
     // field 2: navigationId
     final f2 = navigationId;
     if (f2 != null) {
-      w.writeUint32(2, f2);
+      w.writeUint64(2, f2);
     }
     // field 3: title
     final f3 = title;
@@ -10324,7 +10324,7 @@ class SiteServiceV1NavigationItem {
     // field 8: objectId
     final f8 = objectId;
     if (f8 != null) {
-      w.writeUint32(8, f8);
+      w.writeUint64(8, f8);
     }
     // field 9: sortOrder
     final f9 = sortOrder;
@@ -10349,7 +10349,7 @@ class SiteServiceV1NavigationItem {
     // field 50: parentId
     final f50 = parentId;
     if (f50 != null) {
-      w.writeUint32(50, f50);
+      w.writeUint64(50, f50);
     }
     // field 51: children
     final f51 = children;
@@ -10359,17 +10359,17 @@ class SiteServiceV1NavigationItem {
     // field 100: createdBy
     final f100 = createdBy;
     if (f100 != null) {
-      w.writeUint32(100, f100);
+      w.writeUint64(100, f100);
     }
     // field 101: updatedBy
     final f101 = updatedBy;
     if (f101 != null) {
-      w.writeUint32(101, f101);
+      w.writeUint64(101, f101);
     }
     // field 102: deletedBy
     final f102 = deletedBy;
     if (f102 != null) {
-      w.writeUint32(102, f102);
+      w.writeUint64(102, f102);
     }
     // field 200: createdAt
     final f200 = createdAt;
@@ -10398,12 +10398,12 @@ class SiteServiceV1NavigationItem {
       switch (r.fieldNumber) {
         // field 1: id
         case 1: {
-          m.id = r.readUint32();
+          m.id = r.readUint64();
           break;
         }
         // field 2: navigationId
         case 2: {
-          m.navigationId = r.readUint32();
+          m.navigationId = r.readUint64();
           break;
         }
         // field 3: title
@@ -10433,7 +10433,7 @@ class SiteServiceV1NavigationItem {
         }
         // field 8: objectId
         case 8: {
-          m.objectId = r.readUint32();
+          m.objectId = r.readUint64();
           break;
         }
         // field 9: sortOrder
@@ -10458,7 +10458,7 @@ class SiteServiceV1NavigationItem {
         }
         // field 50: parentId
         case 50: {
-          m.parentId = r.readUint32();
+          m.parentId = r.readUint64();
           break;
         }
         // field 51: children
@@ -10468,17 +10468,17 @@ class SiteServiceV1NavigationItem {
         }
         // field 100: createdBy
         case 100: {
-          m.createdBy = r.readUint32();
+          m.createdBy = r.readUint64();
           break;
         }
         // field 101: updatedBy
         case 101: {
-          m.updatedBy = r.readUint32();
+          m.updatedBy = r.readUint64();
           break;
         }
         // field 102: deletedBy
         case 102: {
-          m.deletedBy = r.readUint32();
+          m.deletedBy = r.readUint64();
           break;
         }
         // field 200: createdAt
@@ -10542,7 +10542,7 @@ class SiteServiceV1GetNavigationRequest {
 
   factory SiteServiceV1GetNavigationRequest.fromJson(Map<String, dynamic> json) {
     return SiteServiceV1GetNavigationRequest(
-      id: json['id'] as int?,
+      id: json['id'] != null ? int.parse(json['id'].toString()) : null,
       name: json['name'] as String?,
       viewMask: json['viewMask'] as String?,
     );
@@ -10550,7 +10550,7 @@ class SiteServiceV1GetNavigationRequest {
 
   Map<String, dynamic> toJson() {
     final json = <String, dynamic>{};
-    if (id != null) json['id'] = id;
+    if (id != null) json['id'] = id.toString();
     if (name != null) json['name'] = name;
     if (viewMask != null) json['viewMask'] = viewMask;
     return json;
@@ -10601,7 +10601,7 @@ class SiteServiceV1GetNavigationRequest {
     // field 1: id
     final f1 = id;
     if (f1 != null) {
-      w.writeUint32(1, f1);
+      w.writeUint64(1, f1);
     }
     // field 2: name
     final f2 = name;
@@ -10625,7 +10625,7 @@ class SiteServiceV1GetNavigationRequest {
       switch (r.fieldNumber) {
         // field 1: id
         case 1: {
-          m.id = r.readUint32();
+          m.id = r.readUint64();
           break;
         }
         // field 2: name
@@ -10750,7 +10750,7 @@ class SiteServiceV1UpdateNavigationRequest {
     return SiteServiceV1UpdateNavigationRequest(
       allowMissing: json['allowMissing'] as bool?,
       data: json['data'] != null ? SiteServiceV1Navigation.fromJson(json['data'] as Map<String, dynamic>) : null,
-      id: json['id'] as int?,
+      id: json['id'] != null ? int.parse(json['id'].toString()) : null,
       updateMask: json['updateMask'] as String?,
     );
   }
@@ -10759,7 +10759,7 @@ class SiteServiceV1UpdateNavigationRequest {
     final json = <String, dynamic>{};
     if (allowMissing != null) json['allowMissing'] = allowMissing;
     if (data != null) json['data'] = data!.toJson();
-    if (id != null) json['id'] = id;
+    if (id != null) json['id'] = id.toString();
     if (updateMask != null) json['updateMask'] = updateMask;
     return json;
   }
@@ -10813,7 +10813,7 @@ class SiteServiceV1UpdateNavigationRequest {
     // field 1: id
     final f1 = id;
     if (f1 != null) {
-      w.writeUint32(1, f1);
+      w.writeUint64(1, f1);
     }
     // field 2: data
     final f2 = data;
@@ -10842,7 +10842,7 @@ class SiteServiceV1UpdateNavigationRequest {
       switch (r.fieldNumber) {
         // field 1: id
         case 1: {
-          m.id = r.readUint32();
+          m.id = r.readUint64();
           break;
         }
         // field 2: data
@@ -10880,13 +10880,13 @@ class SiteServiceV1DeleteNavigationRequest {
 
   factory SiteServiceV1DeleteNavigationRequest.fromJson(Map<String, dynamic> json) {
     return SiteServiceV1DeleteNavigationRequest(
-      id: json['id'] as int?,
+      id: json['id'] != null ? int.parse(json['id'].toString()) : null,
     );
   }
 
   Map<String, dynamic> toJson() {
     final json = <String, dynamic>{};
-    if (id != null) json['id'] = id;
+    if (id != null) json['id'] = id.toString();
     return json;
   }
 
@@ -10927,7 +10927,7 @@ class SiteServiceV1DeleteNavigationRequest {
     // field 1: id
     final f1 = id;
     if (f1 != null) {
-      w.writeUint32(1, f1);
+      w.writeUint64(1, f1);
     }
   }
 
@@ -10941,7 +10941,7 @@ class SiteServiceV1DeleteNavigationRequest {
       switch (r.fieldNumber) {
         // field 1: id
         case 1: {
-          m.id = r.readUint32();
+          m.id = r.readUint64();
           break;
         }
         default: {
@@ -11397,23 +11397,23 @@ class ContentServiceV1Page {
 
   factory ContentServiceV1Page.fromJson(Map<String, dynamic> json) {
     return ContentServiceV1Page(
-      authorId: json['authorId'] as int?,
+      authorId: json['authorId'] != null ? int.parse(json['authorId'].toString()) : null,
       authorName: json['authorName'] as String?,
       availableLanguages: (json['availableLanguages'] as List<dynamic>?)?.map((e) => e as String).toList(),
       children: (json['children'] as List<dynamic>?)?.map((e) => ContentServiceV1Page.fromJson(e as Map<String, dynamic>)).toList(),
-      contentModelId: json['contentModelId'] as int?,
+      contentModelId: json['contentModelId'] != null ? int.parse(json['contentModelId'].toString()) : null,
       createdAt: json['createdAt'] as String?,
-      createdBy: json['createdBy'] as int?,
+      createdBy: json['createdBy'] != null ? int.parse(json['createdBy'].toString()) : null,
       customFields: (json['customFields'] as Map<String, dynamic>?)?.map((k, v) => MapEntry(k, v as String)),
       deletedAt: json['deletedAt'] as String?,
-      deletedBy: json['deletedBy'] as int?,
+      deletedBy: json['deletedBy'] != null ? int.parse(json['deletedBy'].toString()) : null,
       depth: json['depth'] as int?,
       disallowComment: json['disallowComment'] as bool?,
       editorType: json['editorType'] != null ? ContentServiceV1EditorType.fromString(json['editorType'] as String) : null,
-      id: json['id'] as int?,
+      id: json['id'] != null ? int.parse(json['id'].toString()) : null,
       inProgress: json['inProgress'] as bool?,
       isCustomTemplate: json['isCustomTemplate'] as bool?,
-      parentId: json['parentId'] as int?,
+      parentId: json['parentId'] != null ? int.parse(json['parentId'].toString()) : null,
       path: json['path'] as String?,
       redirectUrl: json['redirectUrl'] as String?,
       sections: (json['sections'] as List<dynamic>?)?.map((e) => ContentServiceV1Section.fromJson(e as Map<String, dynamic>)).toList(),
@@ -11426,29 +11426,29 @@ class ContentServiceV1Page {
       translations: (json['translations'] as List<dynamic>?)?.map((e) => ContentServiceV1PageTranslation.fromJson(e as Map<String, dynamic>)).toList(),
       type: json['type'] != null ? ContentServiceV1Page$PageType.fromString(json['type'] as String) : null,
       updatedAt: json['updatedAt'] as String?,
-      updatedBy: json['updatedBy'] as int?,
+      updatedBy: json['updatedBy'] != null ? int.parse(json['updatedBy'].toString()) : null,
     );
   }
 
   Map<String, dynamic> toJson() {
     final json = <String, dynamic>{};
-    if (authorId != null) json['authorId'] = authorId;
+    if (authorId != null) json['authorId'] = authorId.toString();
     if (authorName != null) json['authorName'] = authorName;
     if (availableLanguages != null) json['availableLanguages'] = availableLanguages;
     if (children != null) json['children'] = children!.map((e) => e.toJson()).toList();
-    if (contentModelId != null) json['contentModelId'] = contentModelId;
+    if (contentModelId != null) json['contentModelId'] = contentModelId.toString();
     if (createdAt != null) json['createdAt'] = createdAt;
-    if (createdBy != null) json['createdBy'] = createdBy;
+    if (createdBy != null) json['createdBy'] = createdBy.toString();
     if (customFields != null) json['customFields'] = customFields;
     if (deletedAt != null) json['deletedAt'] = deletedAt;
-    if (deletedBy != null) json['deletedBy'] = deletedBy;
+    if (deletedBy != null) json['deletedBy'] = deletedBy.toString();
     if (depth != null) json['depth'] = depth;
     if (disallowComment != null) json['disallowComment'] = disallowComment;
     if (editorType != null) json['editorType'] = editorType!.value;
-    if (id != null) json['id'] = id;
+    if (id != null) json['id'] = id.toString();
     if (inProgress != null) json['inProgress'] = inProgress;
     if (isCustomTemplate != null) json['isCustomTemplate'] = isCustomTemplate;
-    if (parentId != null) json['parentId'] = parentId;
+    if (parentId != null) json['parentId'] = parentId.toString();
     if (path != null) json['path'] = path;
     if (redirectUrl != null) json['redirectUrl'] = redirectUrl;
     if (sections != null) json['sections'] = sections!.map((e) => e.toJson()).toList();
@@ -11461,7 +11461,7 @@ class ContentServiceV1Page {
     if (translations != null) json['translations'] = translations!.map((e) => e.toJson()).toList();
     if (type != null) json['type'] = type!.value;
     if (updatedAt != null) json['updatedAt'] = updatedAt;
-    if (updatedBy != null) json['updatedBy'] = updatedBy;
+    if (updatedBy != null) json['updatedBy'] = updatedBy.toString();
     return json;
   }
 
@@ -11618,7 +11618,7 @@ class ContentServiceV1Page {
     // field 1: id
     final f1 = id;
     if (f1 != null) {
-      w.writeUint32(1, f1);
+      w.writeUint64(1, f1);
     }
     // field 2: status
     final f2 = status;
@@ -11643,7 +11643,7 @@ class ContentServiceV1Page {
     // field 6: authorId
     final f6 = authorId;
     if (f6 != null) {
-      w.writeUint32(6, f6);
+      w.writeUint64(6, f6);
     }
     // field 7: authorName
     final f7 = authorName;
@@ -11703,7 +11703,7 @@ class ContentServiceV1Page {
     // field 22: contentModelId
     final f22 = contentModelId;
     if (f22 != null) {
-      w.writeUint32(22, f22);
+      w.writeUint64(22, f22);
     }
     // field 30: translations
     final f30 = translations;
@@ -11723,7 +11723,7 @@ class ContentServiceV1Page {
     // field 50: parentId
     final f50 = parentId;
     if (f50 != null) {
-      w.writeUint32(50, f50);
+      w.writeUint64(50, f50);
     }
     // field 52: depth
     final f52 = depth;
@@ -11743,17 +11743,17 @@ class ContentServiceV1Page {
     // field 100: createdBy
     final f100 = createdBy;
     if (f100 != null) {
-      w.writeUint32(100, f100);
+      w.writeUint64(100, f100);
     }
     // field 101: updatedBy
     final f101 = updatedBy;
     if (f101 != null) {
-      w.writeUint32(101, f101);
+      w.writeUint64(101, f101);
     }
     // field 102: deletedBy
     final f102 = deletedBy;
     if (f102 != null) {
-      w.writeUint32(102, f102);
+      w.writeUint64(102, f102);
     }
     // field 200: createdAt
     final f200 = createdAt;
@@ -11782,7 +11782,7 @@ class ContentServiceV1Page {
       switch (r.fieldNumber) {
         // field 1: id
         case 1: {
-          m.id = r.readUint32();
+          m.id = r.readUint64();
           break;
         }
         // field 2: status
@@ -11807,7 +11807,7 @@ class ContentServiceV1Page {
         }
         // field 6: authorId
         case 6: {
-          m.authorId = r.readUint32();
+          m.authorId = r.readUint64();
           break;
         }
         // field 7: authorName
@@ -11880,7 +11880,7 @@ class ContentServiceV1Page {
         }
         // field 22: contentModelId
         case 22: {
-          m.contentModelId = r.readUint32();
+          m.contentModelId = r.readUint64();
           break;
         }
         // field 30: translations
@@ -11900,7 +11900,7 @@ class ContentServiceV1Page {
         }
         // field 50: parentId
         case 50: {
-          m.parentId = r.readUint32();
+          m.parentId = r.readUint64();
           break;
         }
         // field 52: depth
@@ -11920,17 +11920,17 @@ class ContentServiceV1Page {
         }
         // field 100: createdBy
         case 100: {
-          m.createdBy = r.readUint32();
+          m.createdBy = r.readUint64();
           break;
         }
         // field 101: updatedBy
         case 101: {
-          m.updatedBy = r.readUint32();
+          m.updatedBy = r.readUint64();
           break;
         }
         // field 102: deletedBy
         case 102: {
-          m.deletedBy = r.readUint32();
+          m.deletedBy = r.readUint64();
           break;
         }
         // field 200: createdAt
@@ -12038,18 +12038,18 @@ class ContentServiceV1PageTranslation {
     return ContentServiceV1PageTranslation(
       coverImage: json['coverImage'] as String?,
       createdAt: json['createdAt'] as String?,
-      createdBy: json['createdBy'] as int?,
+      createdBy: json['createdBy'] != null ? int.parse(json['createdBy'].toString()) : null,
       deletedAt: json['deletedAt'] as String?,
-      deletedBy: json['deletedBy'] as int?,
+      deletedBy: json['deletedBy'] != null ? int.parse(json['deletedBy'].toString()) : null,
       fullPath: json['fullPath'] as String?,
-      id: json['id'] as int?,
+      id: json['id'] != null ? int.parse(json['id'].toString()) : null,
       languageCode: json['languageCode'] as String?,
-      pageId: json['pageId'] as int?,
+      pageId: json['pageId'] != null ? int.parse(json['pageId'].toString()) : null,
       seo: json['seo'] != null ? ContentServiceV1SeoMeta.fromJson(json['seo'] as Map<String, dynamic>) : null,
       slug: json['slug'] as String?,
       title: json['title'] as String?,
       updatedAt: json['updatedAt'] as String?,
-      updatedBy: json['updatedBy'] as int?,
+      updatedBy: json['updatedBy'] != null ? int.parse(json['updatedBy'].toString()) : null,
     );
   }
 
@@ -12057,18 +12057,18 @@ class ContentServiceV1PageTranslation {
     final json = <String, dynamic>{};
     if (coverImage != null) json['coverImage'] = coverImage;
     if (createdAt != null) json['createdAt'] = createdAt;
-    if (createdBy != null) json['createdBy'] = createdBy;
+    if (createdBy != null) json['createdBy'] = createdBy.toString();
     if (deletedAt != null) json['deletedAt'] = deletedAt;
-    if (deletedBy != null) json['deletedBy'] = deletedBy;
+    if (deletedBy != null) json['deletedBy'] = deletedBy.toString();
     if (fullPath != null) json['fullPath'] = fullPath;
-    if (id != null) json['id'] = id;
+    if (id != null) json['id'] = id.toString();
     if (languageCode != null) json['languageCode'] = languageCode;
-    if (pageId != null) json['pageId'] = pageId;
+    if (pageId != null) json['pageId'] = pageId.toString();
     if (seo != null) json['seo'] = seo!.toJson();
     if (slug != null) json['slug'] = slug;
     if (title != null) json['title'] = title;
     if (updatedAt != null) json['updatedAt'] = updatedAt;
-    if (updatedBy != null) json['updatedBy'] = updatedBy;
+    if (updatedBy != null) json['updatedBy'] = updatedBy.toString();
     return json;
   }
 
@@ -12161,12 +12161,12 @@ class ContentServiceV1PageTranslation {
     // field 1: id
     final f1 = id;
     if (f1 != null) {
-      w.writeUint32(1, f1);
+      w.writeUint64(1, f1);
     }
     // field 2: pageId
     final f2 = pageId;
     if (f2 != null) {
-      w.writeUint32(2, f2);
+      w.writeUint64(2, f2);
     }
     // field 3: languageCode
     final f3 = languageCode;
@@ -12201,17 +12201,17 @@ class ContentServiceV1PageTranslation {
     // field 100: createdBy
     final f100 = createdBy;
     if (f100 != null) {
-      w.writeUint32(100, f100);
+      w.writeUint64(100, f100);
     }
     // field 101: updatedBy
     final f101 = updatedBy;
     if (f101 != null) {
-      w.writeUint32(101, f101);
+      w.writeUint64(101, f101);
     }
     // field 102: deletedBy
     final f102 = deletedBy;
     if (f102 != null) {
-      w.writeUint32(102, f102);
+      w.writeUint64(102, f102);
     }
     // field 200: createdAt
     final f200 = createdAt;
@@ -12240,12 +12240,12 @@ class ContentServiceV1PageTranslation {
       switch (r.fieldNumber) {
         // field 1: id
         case 1: {
-          m.id = r.readUint32();
+          m.id = r.readUint64();
           break;
         }
         // field 2: pageId
         case 2: {
-          m.pageId = r.readUint32();
+          m.pageId = r.readUint64();
           break;
         }
         // field 3: languageCode
@@ -12280,17 +12280,17 @@ class ContentServiceV1PageTranslation {
         }
         // field 100: createdBy
         case 100: {
-          m.createdBy = r.readUint32();
+          m.createdBy = r.readUint64();
           break;
         }
         // field 101: updatedBy
         case 101: {
-          m.updatedBy = r.readUint32();
+          m.updatedBy = r.readUint64();
           break;
         }
         // field 102: deletedBy
         case 102: {
-          m.deletedBy = r.readUint32();
+          m.deletedBy = r.readUint64();
           break;
         }
         // field 200: createdAt
@@ -12358,17 +12358,17 @@ class ContentServiceV1Section {
       availableLanguages: (json['availableLanguages'] as List<dynamic>?)?.map((e) => e as String).toList(),
       config: (json['config'] as Map<String, dynamic>?)?.map((k, v) => MapEntry(k, v as String)),
       createdAt: json['createdAt'] as String?,
-      createdBy: json['createdBy'] as int?,
+      createdBy: json['createdBy'] != null ? int.parse(json['createdBy'].toString()) : null,
       deletedAt: json['deletedAt'] as String?,
-      deletedBy: json['deletedBy'] as int?,
-      id: json['id'] as int?,
+      deletedBy: json['deletedBy'] != null ? int.parse(json['deletedBy'].toString()) : null,
+      id: json['id'] != null ? int.parse(json['id'].toString()) : null,
       name: json['name'] as String?,
-      pageId: json['pageId'] as int?,
+      pageId: json['pageId'] != null ? int.parse(json['pageId'].toString()) : null,
       sortOrder: json['sortOrder'] as int?,
       translations: (json['translations'] as List<dynamic>?)?.map((e) => ContentServiceV1SectionTranslation.fromJson(e as Map<String, dynamic>)).toList(),
       type: json['type'] != null ? ContentServiceV1SectionType.fromString(json['type'] as String) : null,
       updatedAt: json['updatedAt'] as String?,
-      updatedBy: json['updatedBy'] as int?,
+      updatedBy: json['updatedBy'] != null ? int.parse(json['updatedBy'].toString()) : null,
     );
   }
 
@@ -12377,17 +12377,17 @@ class ContentServiceV1Section {
     if (availableLanguages != null) json['availableLanguages'] = availableLanguages;
     if (config != null) json['config'] = config;
     if (createdAt != null) json['createdAt'] = createdAt;
-    if (createdBy != null) json['createdBy'] = createdBy;
+    if (createdBy != null) json['createdBy'] = createdBy.toString();
     if (deletedAt != null) json['deletedAt'] = deletedAt;
-    if (deletedBy != null) json['deletedBy'] = deletedBy;
-    if (id != null) json['id'] = id;
+    if (deletedBy != null) json['deletedBy'] = deletedBy.toString();
+    if (id != null) json['id'] = id.toString();
     if (name != null) json['name'] = name;
-    if (pageId != null) json['pageId'] = pageId;
+    if (pageId != null) json['pageId'] = pageId.toString();
     if (sortOrder != null) json['sortOrder'] = sortOrder;
     if (translations != null) json['translations'] = translations!.map((e) => e.toJson()).toList();
     if (type != null) json['type'] = type!.value;
     if (updatedAt != null) json['updatedAt'] = updatedAt;
-    if (updatedBy != null) json['updatedBy'] = updatedBy;
+    if (updatedBy != null) json['updatedBy'] = updatedBy.toString();
     return json;
   }
 
@@ -12480,12 +12480,12 @@ class ContentServiceV1Section {
     // field 1: id
     final f1 = id;
     if (f1 != null) {
-      w.writeUint32(1, f1);
+      w.writeUint64(1, f1);
     }
     // field 2: pageId
     final f2 = pageId;
     if (f2 != null) {
-      w.writeUint32(2, f2);
+      w.writeUint64(2, f2);
     }
     // field 3: type
     final f3 = type;
@@ -12525,17 +12525,17 @@ class ContentServiceV1Section {
     // field 100: createdBy
     final f100 = createdBy;
     if (f100 != null) {
-      w.writeUint32(100, f100);
+      w.writeUint64(100, f100);
     }
     // field 101: updatedBy
     final f101 = updatedBy;
     if (f101 != null) {
-      w.writeUint32(101, f101);
+      w.writeUint64(101, f101);
     }
     // field 102: deletedBy
     final f102 = deletedBy;
     if (f102 != null) {
-      w.writeUint32(102, f102);
+      w.writeUint64(102, f102);
     }
     // field 200: createdAt
     final f200 = createdAt;
@@ -12564,12 +12564,12 @@ class ContentServiceV1Section {
       switch (r.fieldNumber) {
         // field 1: id
         case 1: {
-          m.id = r.readUint32();
+          m.id = r.readUint64();
           break;
         }
         // field 2: pageId
         case 2: {
-          m.pageId = r.readUint32();
+          m.pageId = r.readUint64();
           break;
         }
         // field 3: type
@@ -12622,17 +12622,17 @@ class ContentServiceV1Section {
         }
         // field 100: createdBy
         case 100: {
-          m.createdBy = r.readUint32();
+          m.createdBy = r.readUint64();
           break;
         }
         // field 101: updatedBy
         case 101: {
-          m.updatedBy = r.readUint32();
+          m.updatedBy = r.readUint64();
           break;
         }
         // field 102: deletedBy
         case 102: {
-          m.deletedBy = r.readUint32();
+          m.deletedBy = r.readUint64();
           break;
         }
         // field 200: createdAt
@@ -12721,14 +12721,14 @@ class ContentServiceV1SectionTranslation {
     return ContentServiceV1SectionTranslation(
       content: (json['content'] as Map<String, dynamic>?)?.map((k, v) => MapEntry(k, v as String)),
       createdAt: json['createdAt'] as String?,
-      createdBy: json['createdBy'] as int?,
+      createdBy: json['createdBy'] != null ? int.parse(json['createdBy'].toString()) : null,
       deletedAt: json['deletedAt'] as String?,
-      deletedBy: json['deletedBy'] as int?,
-      id: json['id'] as int?,
+      deletedBy: json['deletedBy'] != null ? int.parse(json['deletedBy'].toString()) : null,
+      id: json['id'] != null ? int.parse(json['id'].toString()) : null,
       languageCode: json['languageCode'] as String?,
-      sectionId: json['sectionId'] as int?,
+      sectionId: json['sectionId'] != null ? int.parse(json['sectionId'].toString()) : null,
       updatedAt: json['updatedAt'] as String?,
-      updatedBy: json['updatedBy'] as int?,
+      updatedBy: json['updatedBy'] != null ? int.parse(json['updatedBy'].toString()) : null,
     );
   }
 
@@ -12736,14 +12736,14 @@ class ContentServiceV1SectionTranslation {
     final json = <String, dynamic>{};
     if (content != null) json['content'] = content;
     if (createdAt != null) json['createdAt'] = createdAt;
-    if (createdBy != null) json['createdBy'] = createdBy;
+    if (createdBy != null) json['createdBy'] = createdBy.toString();
     if (deletedAt != null) json['deletedAt'] = deletedAt;
-    if (deletedBy != null) json['deletedBy'] = deletedBy;
-    if (id != null) json['id'] = id;
+    if (deletedBy != null) json['deletedBy'] = deletedBy.toString();
+    if (id != null) json['id'] = id.toString();
     if (languageCode != null) json['languageCode'] = languageCode;
-    if (sectionId != null) json['sectionId'] = sectionId;
+    if (sectionId != null) json['sectionId'] = sectionId.toString();
     if (updatedAt != null) json['updatedAt'] = updatedAt;
-    if (updatedBy != null) json['updatedBy'] = updatedBy;
+    if (updatedBy != null) json['updatedBy'] = updatedBy.toString();
     return json;
   }
 
@@ -12820,12 +12820,12 @@ class ContentServiceV1SectionTranslation {
     // field 1: id
     final f1 = id;
     if (f1 != null) {
-      w.writeUint32(1, f1);
+      w.writeUint64(1, f1);
     }
     // field 2: sectionId
     final f2 = sectionId;
     if (f2 != null) {
-      w.writeUint32(2, f2);
+      w.writeUint64(2, f2);
     }
     // field 3: languageCode
     final f3 = languageCode;
@@ -12845,17 +12845,17 @@ class ContentServiceV1SectionTranslation {
     // field 100: createdBy
     final f100 = createdBy;
     if (f100 != null) {
-      w.writeUint32(100, f100);
+      w.writeUint64(100, f100);
     }
     // field 101: updatedBy
     final f101 = updatedBy;
     if (f101 != null) {
-      w.writeUint32(101, f101);
+      w.writeUint64(101, f101);
     }
     // field 102: deletedBy
     final f102 = deletedBy;
     if (f102 != null) {
-      w.writeUint32(102, f102);
+      w.writeUint64(102, f102);
     }
     // field 200: createdAt
     final f200 = createdAt;
@@ -12884,12 +12884,12 @@ class ContentServiceV1SectionTranslation {
       switch (r.fieldNumber) {
         // field 1: id
         case 1: {
-          m.id = r.readUint32();
+          m.id = r.readUint64();
           break;
         }
         // field 2: sectionId
         case 2: {
-          m.sectionId = r.readUint32();
+          m.sectionId = r.readUint64();
           break;
         }
         // field 3: languageCode
@@ -12922,17 +12922,17 @@ class ContentServiceV1SectionTranslation {
         }
         // field 100: createdBy
         case 100: {
-          m.createdBy = r.readUint32();
+          m.createdBy = r.readUint64();
           break;
         }
         // field 101: updatedBy
         case 101: {
-          m.updatedBy = r.readUint32();
+          m.updatedBy = r.readUint64();
           break;
         }
         // field 102: deletedBy
         case 102: {
-          m.deletedBy = r.readUint32();
+          m.deletedBy = r.readUint64();
           break;
         }
         // field 200: createdAt
@@ -12976,7 +12976,7 @@ class ContentServiceV1GetPageRequest {
 
   factory ContentServiceV1GetPageRequest.fromJson(Map<String, dynamic> json) {
     return ContentServiceV1GetPageRequest(
-      id: json['id'] as int?,
+      id: json['id'] != null ? int.parse(json['id'].toString()) : null,
       locale: json['locale'] as String?,
       slug: json['slug'] as String?,
       viewMask: json['viewMask'] as String?,
@@ -12985,7 +12985,7 @@ class ContentServiceV1GetPageRequest {
 
   Map<String, dynamic> toJson() {
     final json = <String, dynamic>{};
-    if (id != null) json['id'] = id;
+    if (id != null) json['id'] = id.toString();
     if (locale != null) json['locale'] = locale;
     if (slug != null) json['slug'] = slug;
     if (viewMask != null) json['viewMask'] = viewMask;
@@ -13041,7 +13041,7 @@ class ContentServiceV1GetPageRequest {
     // field 1: id
     final f1 = id;
     if (f1 != null) {
-      w.writeUint32(1, f1);
+      w.writeUint64(1, f1);
     }
     // field 2: slug
     final f2 = slug;
@@ -13070,7 +13070,7 @@ class ContentServiceV1GetPageRequest {
       switch (r.fieldNumber) {
         // field 1: id
         case 1: {
-          m.id = r.readUint32();
+          m.id = r.readUint64();
           break;
         }
         // field 2: slug
@@ -13200,7 +13200,7 @@ class ContentServiceV1UpdatePageRequest {
     return ContentServiceV1UpdatePageRequest(
       allowMissing: json['allowMissing'] as bool?,
       data: json['data'] != null ? ContentServiceV1Page.fromJson(json['data'] as Map<String, dynamic>) : null,
-      id: json['id'] as int?,
+      id: json['id'] != null ? int.parse(json['id'].toString()) : null,
       updateMask: json['updateMask'] as String?,
     );
   }
@@ -13209,7 +13209,7 @@ class ContentServiceV1UpdatePageRequest {
     final json = <String, dynamic>{};
     if (allowMissing != null) json['allowMissing'] = allowMissing;
     if (data != null) json['data'] = data!.toJson();
-    if (id != null) json['id'] = id;
+    if (id != null) json['id'] = id.toString();
     if (updateMask != null) json['updateMask'] = updateMask;
     return json;
   }
@@ -13263,7 +13263,7 @@ class ContentServiceV1UpdatePageRequest {
     // field 1: id
     final f1 = id;
     if (f1 != null) {
-      w.writeUint32(1, f1);
+      w.writeUint64(1, f1);
     }
     // field 2: data
     final f2 = data;
@@ -13292,7 +13292,7 @@ class ContentServiceV1UpdatePageRequest {
       switch (r.fieldNumber) {
         // field 1: id
         case 1: {
-          m.id = r.readUint32();
+          m.id = r.readUint64();
           break;
         }
         // field 2: data
@@ -13330,13 +13330,13 @@ class ContentServiceV1DeletePageRequest {
 
   factory ContentServiceV1DeletePageRequest.fromJson(Map<String, dynamic> json) {
     return ContentServiceV1DeletePageRequest(
-      id: json['id'] as int?,
+      id: json['id'] != null ? int.parse(json['id'].toString()) : null,
     );
   }
 
   Map<String, dynamic> toJson() {
     final json = <String, dynamic>{};
-    if (id != null) json['id'] = id;
+    if (id != null) json['id'] = id.toString();
     return json;
   }
 
@@ -13377,7 +13377,7 @@ class ContentServiceV1DeletePageRequest {
     // field 1: id
     final f1 = id;
     if (f1 != null) {
-      w.writeUint32(1, f1);
+      w.writeUint64(1, f1);
     }
   }
 
@@ -13391,7 +13391,7 @@ class ContentServiceV1DeletePageRequest {
       switch (r.fieldNumber) {
         // field 1: id
         case 1: {
-          m.id = r.readUint32();
+          m.id = r.readUint64();
           break;
         }
         default: {
@@ -13778,13 +13778,13 @@ class ContentServiceV1GetModelByPostRequest {
 
   factory ContentServiceV1GetModelByPostRequest.fromJson(Map<String, dynamic> json) {
     return ContentServiceV1GetModelByPostRequest(
-      postId: json['postId'] as int?,
+      postId: json['postId'] != null ? int.parse(json['postId'].toString()) : null,
     );
   }
 
   Map<String, dynamic> toJson() {
     final json = <String, dynamic>{};
-    if (postId != null) json['postId'] = postId;
+    if (postId != null) json['postId'] = postId.toString();
     return json;
   }
 
@@ -13825,7 +13825,7 @@ class ContentServiceV1GetModelByPostRequest {
     // field 1: postId
     final f1 = postId;
     if (f1 != null) {
-      w.writeUint32(1, f1);
+      w.writeUint64(1, f1);
     }
   }
 
@@ -13839,7 +13839,7 @@ class ContentServiceV1GetModelByPostRequest {
       switch (r.fieldNumber) {
         // field 1: postId
         case 1: {
-          m.postId = r.readUint32();
+          m.postId = r.readUint64();
           break;
         }
         default: {
@@ -13894,16 +13894,16 @@ class ContentServiceV1ContentModel {
       code: json['code'] as String?,
       components: (json['components'] as List<dynamic>?)?.map((e) => ContentServiceV1ContentModelComponent.fromJson(e as Map<String, dynamic>)).toList(),
       createdAt: json['createdAt'] as String?,
-      createdBy: json['createdBy'] as int?,
+      createdBy: json['createdBy'] != null ? int.parse(json['createdBy'].toString()) : null,
       description: json['description'] as String?,
       fields: (json['fields'] as List<dynamic>?)?.map((e) => ContentServiceV1FieldDefinition.fromJson(e as Map<String, dynamic>)).toList(),
-      id: json['id'] as int?,
+      id: json['id'] != null ? int.parse(json['id'].toString()) : null,
       name: json['name'] as String?,
       sortOrder: json['sortOrder'] as int?,
-      tenantId: json['tenantId'] as int?,
+      tenantId: json['tenantId'] != null ? int.parse(json['tenantId'].toString()) : null,
       translations: (json['translations'] as List<dynamic>?)?.map((e) => ContentServiceV1ContentModelTranslation.fromJson(e as Map<String, dynamic>)).toList(),
       updatedAt: json['updatedAt'] as String?,
-      updatedBy: json['updatedBy'] as int?,
+      updatedBy: json['updatedBy'] != null ? int.parse(json['updatedBy'].toString()) : null,
     );
   }
 
@@ -13912,16 +13912,16 @@ class ContentServiceV1ContentModel {
     if (code != null) json['code'] = code;
     if (components != null) json['components'] = components!.map((e) => e.toJson()).toList();
     if (createdAt != null) json['createdAt'] = createdAt;
-    if (createdBy != null) json['createdBy'] = createdBy;
+    if (createdBy != null) json['createdBy'] = createdBy.toString();
     if (description != null) json['description'] = description;
     if (fields != null) json['fields'] = fields!.map((e) => e.toJson()).toList();
-    if (id != null) json['id'] = id;
+    if (id != null) json['id'] = id.toString();
     if (name != null) json['name'] = name;
     if (sortOrder != null) json['sortOrder'] = sortOrder;
-    if (tenantId != null) json['tenantId'] = tenantId;
+    if (tenantId != null) json['tenantId'] = tenantId.toString();
     if (translations != null) json['translations'] = translations!.map((e) => e.toJson()).toList();
     if (updatedAt != null) json['updatedAt'] = updatedAt;
-    if (updatedBy != null) json['updatedBy'] = updatedBy;
+    if (updatedBy != null) json['updatedBy'] = updatedBy.toString();
     return json;
   }
 
@@ -14010,7 +14010,7 @@ class ContentServiceV1ContentModel {
     // field 1: id
     final f1 = id;
     if (f1 != null) {
-      w.writeUint32(1, f1);
+      w.writeUint64(1, f1);
     }
     // field 2: name
     final f2 = name;
@@ -14050,17 +14050,17 @@ class ContentServiceV1ContentModel {
     // field 40: tenantId
     final f40 = tenantId;
     if (f40 != null) {
-      w.writeUint32(40, f40);
+      w.writeUint64(40, f40);
     }
     // field 100: createdBy
     final f100 = createdBy;
     if (f100 != null) {
-      w.writeUint32(100, f100);
+      w.writeUint64(100, f100);
     }
     // field 101: updatedBy
     final f101 = updatedBy;
     if (f101 != null) {
-      w.writeUint32(101, f101);
+      w.writeUint64(101, f101);
     }
     // field 200: createdAt
     final f200 = createdAt;
@@ -14084,7 +14084,7 @@ class ContentServiceV1ContentModel {
       switch (r.fieldNumber) {
         // field 1: id
         case 1: {
-          m.id = r.readUint32();
+          m.id = r.readUint64();
           break;
         }
         // field 2: name
@@ -14124,17 +14124,17 @@ class ContentServiceV1ContentModel {
         }
         // field 40: tenantId
         case 40: {
-          m.tenantId = r.readUint32();
+          m.tenantId = r.readUint64();
           break;
         }
         // field 100: createdBy
         case 100: {
-          m.createdBy = r.readUint32();
+          m.createdBy = r.readUint64();
           break;
         }
         // field 101: updatedBy
         case 101: {
-          m.updatedBy = r.readUint32();
+          m.updatedBy = r.readUint64();
           break;
         }
         // field 200: createdAt
@@ -14200,12 +14200,12 @@ class ContentServiceV1FieldDefinition {
   factory ContentServiceV1FieldDefinition.fromJson(Map<String, dynamic> json) {
     return ContentServiceV1FieldDefinition(
       componentConfig: json['componentConfig'] != null ? ContentServiceV1ComponentConfig.fromJson(json['componentConfig'] as Map<String, dynamic>) : null,
-      componentId: json['componentId'] as int?,
-      contentModelId: json['contentModelId'] as int?,
+      componentId: json['componentId'] != null ? int.parse(json['componentId'].toString()) : null,
+      contentModelId: json['contentModelId'] != null ? int.parse(json['contentModelId'].toString()) : null,
       createdAt: json['createdAt'] as String?,
-      createdBy: json['createdBy'] as int?,
+      createdBy: json['createdBy'] != null ? int.parse(json['createdBy'].toString()) : null,
       description: json['description'] as String?,
-      id: json['id'] as int?,
+      id: json['id'] != null ? int.parse(json['id'].toString()) : null,
       isRequired: json['isRequired'] as bool?,
       label: json['label'] as String?,
       name: json['name'] as String?,
@@ -14222,12 +14222,12 @@ class ContentServiceV1FieldDefinition {
   Map<String, dynamic> toJson() {
     final json = <String, dynamic>{};
     if (componentConfig != null) json['componentConfig'] = componentConfig!.toJson();
-    if (componentId != null) json['componentId'] = componentId;
-    if (contentModelId != null) json['contentModelId'] = contentModelId;
+    if (componentId != null) json['componentId'] = componentId.toString();
+    if (contentModelId != null) json['contentModelId'] = contentModelId.toString();
     if (createdAt != null) json['createdAt'] = createdAt;
-    if (createdBy != null) json['createdBy'] = createdBy;
+    if (createdBy != null) json['createdBy'] = createdBy.toString();
     if (description != null) json['description'] = description;
-    if (id != null) json['id'] = id;
+    if (id != null) json['id'] = id.toString();
     if (isRequired != null) json['isRequired'] = isRequired;
     if (label != null) json['label'] = label;
     if (name != null) json['name'] = name;
@@ -14342,12 +14342,12 @@ class ContentServiceV1FieldDefinition {
     // field 1: id
     final f1 = id;
     if (f1 != null) {
-      w.writeUint32(1, f1);
+      w.writeUint64(1, f1);
     }
     // field 2: contentModelId
     final f2 = contentModelId;
     if (f2 != null) {
-      w.writeUint32(2, f2);
+      w.writeUint64(2, f2);
     }
     // field 3: name
     final f3 = name;
@@ -14412,7 +14412,7 @@ class ContentServiceV1FieldDefinition {
     // field 14: componentId
     final f14 = componentId;
     if (f14 != null) {
-      w.writeUint32(14, f14);
+      w.writeUint64(14, f14);
     }
     // field 15: componentConfig
     final f15 = componentConfig;
@@ -14422,7 +14422,7 @@ class ContentServiceV1FieldDefinition {
     // field 100: createdBy
     final f100 = createdBy;
     if (f100 != null) {
-      w.writeUint32(100, f100);
+      w.writeUint64(100, f100);
     }
     // field 200: createdAt
     final f200 = createdAt;
@@ -14441,12 +14441,12 @@ class ContentServiceV1FieldDefinition {
       switch (r.fieldNumber) {
         // field 1: id
         case 1: {
-          m.id = r.readUint32();
+          m.id = r.readUint64();
           break;
         }
         // field 2: contentModelId
         case 2: {
-          m.contentModelId = r.readUint32();
+          m.contentModelId = r.readUint64();
           break;
         }
         // field 3: name
@@ -14524,7 +14524,7 @@ class ContentServiceV1FieldDefinition {
         }
         // field 14: componentId
         case 14: {
-          m.componentId = r.readUint32();
+          m.componentId = r.readUint64();
           break;
         }
         // field 15: componentConfig
@@ -14534,7 +14534,7 @@ class ContentServiceV1FieldDefinition {
         }
         // field 100: createdBy
         case 100: {
-          m.createdBy = r.readUint32();
+          m.createdBy = r.readUint64();
           break;
         }
         // field 200: createdAt
@@ -14591,7 +14591,7 @@ class ContentServiceV1RelationConfig {
   factory ContentServiceV1RelationConfig.fromJson(Map<String, dynamic> json) {
     return ContentServiceV1RelationConfig(
       allowCrossTenant: json['allowCrossTenant'] as bool?,
-      filterCategoryId: json['filterCategoryId'] as int?,
+      filterCategoryId: json['filterCategoryId'] != null ? int.parse(json['filterCategoryId'].toString()) : null,
       targetEntityType: json['targetEntityType'] as String?,
     );
   }
@@ -14599,7 +14599,7 @@ class ContentServiceV1RelationConfig {
   Map<String, dynamic> toJson() {
     final json = <String, dynamic>{};
     if (allowCrossTenant != null) json['allowCrossTenant'] = allowCrossTenant;
-    if (filterCategoryId != null) json['filterCategoryId'] = filterCategoryId;
+    if (filterCategoryId != null) json['filterCategoryId'] = filterCategoryId.toString();
     if (targetEntityType != null) json['targetEntityType'] = targetEntityType;
     return json;
   }
@@ -14659,7 +14659,7 @@ class ContentServiceV1RelationConfig {
     // field 3: filterCategoryId
     final f3 = filterCategoryId;
     if (f3 != null) {
-      w.writeUint32(3, f3);
+      w.writeUint64(3, f3);
     }
   }
 
@@ -14683,7 +14683,7 @@ class ContentServiceV1RelationConfig {
         }
         // field 3: filterCategoryId
         case 3: {
-          m.filterCategoryId = r.readUint32();
+          m.filterCategoryId = r.readUint64();
           break;
         }
         default: {
@@ -14841,10 +14841,10 @@ class ContentServiceV1FieldDefinitionTranslation {
   factory ContentServiceV1FieldDefinitionTranslation.fromJson(Map<String, dynamic> json) {
     return ContentServiceV1FieldDefinitionTranslation(
       createdAt: json['createdAt'] as String?,
-      createdBy: json['createdBy'] as int?,
+      createdBy: json['createdBy'] != null ? int.parse(json['createdBy'].toString()) : null,
       description: json['description'] as String?,
-      fieldDefinitionId: json['fieldDefinitionId'] as int?,
-      id: json['id'] as int?,
+      fieldDefinitionId: json['fieldDefinitionId'] != null ? int.parse(json['fieldDefinitionId'].toString()) : null,
+      id: json['id'] != null ? int.parse(json['id'].toString()) : null,
       label: json['label'] as String?,
       languageCode: json['languageCode'] as String?,
       placeholder: json['placeholder'] as String?,
@@ -14854,10 +14854,10 @@ class ContentServiceV1FieldDefinitionTranslation {
   Map<String, dynamic> toJson() {
     final json = <String, dynamic>{};
     if (createdAt != null) json['createdAt'] = createdAt;
-    if (createdBy != null) json['createdBy'] = createdBy;
+    if (createdBy != null) json['createdBy'] = createdBy.toString();
     if (description != null) json['description'] = description;
-    if (fieldDefinitionId != null) json['fieldDefinitionId'] = fieldDefinitionId;
-    if (id != null) json['id'] = id;
+    if (fieldDefinitionId != null) json['fieldDefinitionId'] = fieldDefinitionId.toString();
+    if (id != null) json['id'] = id.toString();
     if (label != null) json['label'] = label;
     if (languageCode != null) json['languageCode'] = languageCode;
     if (placeholder != null) json['placeholder'] = placeholder;
@@ -14929,12 +14929,12 @@ class ContentServiceV1FieldDefinitionTranslation {
     // field 1: id
     final f1 = id;
     if (f1 != null) {
-      w.writeUint32(1, f1);
+      w.writeUint64(1, f1);
     }
     // field 2: fieldDefinitionId
     final f2 = fieldDefinitionId;
     if (f2 != null) {
-      w.writeUint32(2, f2);
+      w.writeUint64(2, f2);
     }
     // field 3: languageCode
     final f3 = languageCode;
@@ -14959,7 +14959,7 @@ class ContentServiceV1FieldDefinitionTranslation {
     // field 100: createdBy
     final f100 = createdBy;
     if (f100 != null) {
-      w.writeUint32(100, f100);
+      w.writeUint64(100, f100);
     }
     // field 200: createdAt
     final f200 = createdAt;
@@ -14978,12 +14978,12 @@ class ContentServiceV1FieldDefinitionTranslation {
       switch (r.fieldNumber) {
         // field 1: id
         case 1: {
-          m.id = r.readUint32();
+          m.id = r.readUint64();
           break;
         }
         // field 2: fieldDefinitionId
         case 2: {
-          m.fieldDefinitionId = r.readUint32();
+          m.fieldDefinitionId = r.readUint64();
           break;
         }
         // field 3: languageCode
@@ -15008,7 +15008,7 @@ class ContentServiceV1FieldDefinitionTranslation {
         }
         // field 100: createdBy
         case 100: {
-          m.createdBy = r.readUint32();
+          m.createdBy = r.readUint64();
           break;
         }
         // field 200: createdAt
@@ -15154,7 +15154,7 @@ class ContentServiceV1ComponentDefinition {
       createdAt: json['createdAt'] as String?,
       description: json['description'] as String?,
       fieldCount: json['fieldCount'] as int?,
-      id: json['id'] as int?,
+      id: json['id'] != null ? int.parse(json['id'].toString()) : null,
       name: json['name'] as String?,
       updatedAt: json['updatedAt'] as String?,
     );
@@ -15166,7 +15166,7 @@ class ContentServiceV1ComponentDefinition {
     if (createdAt != null) json['createdAt'] = createdAt;
     if (description != null) json['description'] = description;
     if (fieldCount != null) json['fieldCount'] = fieldCount;
-    if (id != null) json['id'] = id;
+    if (id != null) json['id'] = id.toString();
     if (name != null) json['name'] = name;
     if (updatedAt != null) json['updatedAt'] = updatedAt;
     return json;
@@ -15233,7 +15233,7 @@ class ContentServiceV1ComponentDefinition {
     // field 1: id
     final f1 = id;
     if (f1 != null) {
-      w.writeUint32(1, f1);
+      w.writeUint64(1, f1);
     }
     // field 2: code
     final f2 = code;
@@ -15277,7 +15277,7 @@ class ContentServiceV1ComponentDefinition {
       switch (r.fieldNumber) {
         // field 1: id
         case 1: {
-          m.id = r.readUint32();
+          m.id = r.readUint64();
           break;
         }
         // field 2: code
@@ -15342,11 +15342,11 @@ class ContentServiceV1ContentModelTranslation {
 
   factory ContentServiceV1ContentModelTranslation.fromJson(Map<String, dynamic> json) {
     return ContentServiceV1ContentModelTranslation(
-      contentModelId: json['contentModelId'] as int?,
+      contentModelId: json['contentModelId'] != null ? int.parse(json['contentModelId'].toString()) : null,
       createdAt: json['createdAt'] as String?,
-      createdBy: json['createdBy'] as int?,
+      createdBy: json['createdBy'] != null ? int.parse(json['createdBy'].toString()) : null,
       description: json['description'] as String?,
-      id: json['id'] as int?,
+      id: json['id'] != null ? int.parse(json['id'].toString()) : null,
       languageCode: json['languageCode'] as String?,
       name: json['name'] as String?,
     );
@@ -15354,11 +15354,11 @@ class ContentServiceV1ContentModelTranslation {
 
   Map<String, dynamic> toJson() {
     final json = <String, dynamic>{};
-    if (contentModelId != null) json['contentModelId'] = contentModelId;
+    if (contentModelId != null) json['contentModelId'] = contentModelId.toString();
     if (createdAt != null) json['createdAt'] = createdAt;
-    if (createdBy != null) json['createdBy'] = createdBy;
+    if (createdBy != null) json['createdBy'] = createdBy.toString();
     if (description != null) json['description'] = description;
-    if (id != null) json['id'] = id;
+    if (id != null) json['id'] = id.toString();
     if (languageCode != null) json['languageCode'] = languageCode;
     if (name != null) json['name'] = name;
     return json;
@@ -15425,12 +15425,12 @@ class ContentServiceV1ContentModelTranslation {
     // field 1: id
     final f1 = id;
     if (f1 != null) {
-      w.writeUint32(1, f1);
+      w.writeUint64(1, f1);
     }
     // field 2: contentModelId
     final f2 = contentModelId;
     if (f2 != null) {
-      w.writeUint32(2, f2);
+      w.writeUint64(2, f2);
     }
     // field 3: languageCode
     final f3 = languageCode;
@@ -15450,7 +15450,7 @@ class ContentServiceV1ContentModelTranslation {
     // field 100: createdBy
     final f100 = createdBy;
     if (f100 != null) {
-      w.writeUint32(100, f100);
+      w.writeUint64(100, f100);
     }
     // field 200: createdAt
     final f200 = createdAt;
@@ -15469,12 +15469,12 @@ class ContentServiceV1ContentModelTranslation {
       switch (r.fieldNumber) {
         // field 1: id
         case 1: {
-          m.id = r.readUint32();
+          m.id = r.readUint64();
           break;
         }
         // field 2: contentModelId
         case 2: {
-          m.contentModelId = r.readUint32();
+          m.contentModelId = r.readUint64();
           break;
         }
         // field 3: languageCode
@@ -15494,7 +15494,7 @@ class ContentServiceV1ContentModelTranslation {
         }
         // field 100: createdBy
         case 100: {
-          m.createdBy = r.readUint32();
+          m.createdBy = r.readUint64();
           break;
         }
         // field 200: createdAt
@@ -15723,7 +15723,7 @@ class ContentServiceV1ContentReferenceSummary {
       ref: json['ref'] as String?,
       slug: json['slug'] as String?,
       targetEntityType: json['targetEntityType'] as String?,
-      targetId: json['targetId'] as int?,
+      targetId: json['targetId'] != null ? int.parse(json['targetId'].toString()) : null,
       title: json['title'] as String?,
       urlPath: json['urlPath'] as String?,
     );
@@ -15734,7 +15734,7 @@ class ContentServiceV1ContentReferenceSummary {
     if (ref != null) json['ref'] = ref;
     if (slug != null) json['slug'] = slug;
     if (targetEntityType != null) json['targetEntityType'] = targetEntityType;
-    if (targetId != null) json['targetId'] = targetId;
+    if (targetId != null) json['targetId'] = targetId.toString();
     if (title != null) json['title'] = title;
     if (urlPath != null) json['urlPath'] = urlPath;
     return json;
@@ -15807,7 +15807,7 @@ class ContentServiceV1ContentReferenceSummary {
     // field 3: targetId
     final f3 = targetId;
     if (f3 != null) {
-      w.writeUint32(3, f3);
+      w.writeUint64(3, f3);
     }
     // field 4: title
     final f4 = title;
@@ -15846,7 +15846,7 @@ class ContentServiceV1ContentReferenceSummary {
         }
         // field 3: targetId
         case 3: {
-          m.targetId = r.readUint32();
+          m.targetId = r.readUint64();
           break;
         }
         // field 4: title
@@ -16149,7 +16149,7 @@ class ContentServiceV1SearchPostHit {
     return ContentServiceV1SearchPostHit(
       highlightFragments: (json['highlightFragments'] as List<dynamic>?)?.map((e) => e as String).toList(),
       language: json['language'] as String?,
-      postId: json['postId'] as int?,
+      postId: json['postId'] != null ? int.parse(json['postId'].toString()) : null,
       summary: json['summary'] as String?,
       title: json['title'] as String?,
     );
@@ -16159,7 +16159,7 @@ class ContentServiceV1SearchPostHit {
     final json = <String, dynamic>{};
     if (highlightFragments != null) json['highlightFragments'] = highlightFragments;
     if (language != null) json['language'] = language;
-    if (postId != null) json['postId'] = postId;
+    if (postId != null) json['postId'] = postId.toString();
     if (summary != null) json['summary'] = summary;
     if (title != null) json['title'] = title;
     return json;
@@ -16218,7 +16218,7 @@ class ContentServiceV1SearchPostHit {
     // field 1: postId
     final f1 = postId;
     if (f1 != null) {
-      w.writeUint32(1, f1);
+      w.writeUint64(1, f1);
     }
     // field 2: language
     final f2 = language;
@@ -16252,7 +16252,7 @@ class ContentServiceV1SearchPostHit {
       switch (r.fieldNumber) {
         // field 1: postId
         case 1: {
-          m.postId = r.readUint32();
+          m.postId = r.readUint64();
           break;
         }
         // field 2: language
@@ -16510,7 +16510,7 @@ class ContentServiceV1GetPostRequest {
   factory ContentServiceV1GetPostRequest.fromJson(Map<String, dynamic> json) {
     return ContentServiceV1GetPostRequest(
       code: json['code'] as String?,
-      id: json['id'] as int?,
+      id: json['id'] != null ? int.parse(json['id'].toString()) : null,
       locale: json['locale'] as String?,
       viewMask: json['viewMask'] as String?,
     );
@@ -16519,7 +16519,7 @@ class ContentServiceV1GetPostRequest {
   Map<String, dynamic> toJson() {
     final json = <String, dynamic>{};
     if (code != null) json['code'] = code;
-    if (id != null) json['id'] = id;
+    if (id != null) json['id'] = id.toString();
     if (locale != null) json['locale'] = locale;
     if (viewMask != null) json['viewMask'] = viewMask;
     return json;
@@ -16574,7 +16574,7 @@ class ContentServiceV1GetPostRequest {
     // field 1: id
     final f1 = id;
     if (f1 != null) {
-      w.writeUint32(1, f1);
+      w.writeUint64(1, f1);
     }
     // field 2: code
     final f2 = code;
@@ -16603,7 +16603,7 @@ class ContentServiceV1GetPostRequest {
       switch (r.fieldNumber) {
         // field 1: id
         case 1: {
-          m.id = r.readUint32();
+          m.id = r.readUint64();
           break;
         }
         // field 2: code
@@ -16733,7 +16733,7 @@ class ContentServiceV1UpdatePostRequest {
     return ContentServiceV1UpdatePostRequest(
       allowMissing: json['allowMissing'] as bool?,
       data: json['data'] != null ? ContentServiceV1Post.fromJson(json['data'] as Map<String, dynamic>) : null,
-      id: json['id'] as int?,
+      id: json['id'] != null ? int.parse(json['id'].toString()) : null,
       updateMask: json['updateMask'] as String?,
     );
   }
@@ -16742,7 +16742,7 @@ class ContentServiceV1UpdatePostRequest {
     final json = <String, dynamic>{};
     if (allowMissing != null) json['allowMissing'] = allowMissing;
     if (data != null) json['data'] = data!.toJson();
-    if (id != null) json['id'] = id;
+    if (id != null) json['id'] = id.toString();
     if (updateMask != null) json['updateMask'] = updateMask;
     return json;
   }
@@ -16796,7 +16796,7 @@ class ContentServiceV1UpdatePostRequest {
     // field 1: id
     final f1 = id;
     if (f1 != null) {
-      w.writeUint32(1, f1);
+      w.writeUint64(1, f1);
     }
     // field 2: data
     final f2 = data;
@@ -16825,7 +16825,7 @@ class ContentServiceV1UpdatePostRequest {
       switch (r.fieldNumber) {
         // field 1: id
         case 1: {
-          m.id = r.readUint32();
+          m.id = r.readUint64();
           break;
         }
         // field 2: data
@@ -16863,13 +16863,13 @@ class ContentServiceV1DeletePostRequest {
 
   factory ContentServiceV1DeletePostRequest.fromJson(Map<String, dynamic> json) {
     return ContentServiceV1DeletePostRequest(
-      id: json['id'] as int?,
+      id: json['id'] != null ? int.parse(json['id'].toString()) : null,
     );
   }
 
   Map<String, dynamic> toJson() {
     final json = <String, dynamic>{};
-    if (id != null) json['id'] = id;
+    if (id != null) json['id'] = id.toString();
     return json;
   }
 
@@ -16910,7 +16910,7 @@ class ContentServiceV1DeletePostRequest {
     // field 1: id
     final f1 = id;
     if (f1 != null) {
-      w.writeUint32(1, f1);
+      w.writeUint64(1, f1);
     }
   }
 
@@ -16924,7 +16924,7 @@ class ContentServiceV1DeletePostRequest {
       switch (r.fieldNumber) {
         // field 1: id
         case 1: {
-          m.id = r.readUint32();
+          m.id = r.readUint64();
           break;
         }
         default: {
@@ -17146,30 +17146,30 @@ class ContentServiceV1Redirect {
   factory ContentServiceV1Redirect.fromJson(Map<String, dynamic> json) {
     return ContentServiceV1Redirect(
       createdAt: json['createdAt'] as String?,
-      createdBy: json['createdBy'] as int?,
+      createdBy: json['createdBy'] != null ? int.parse(json['createdBy'].toString()) : null,
       description: json['description'] as String?,
       enabled: json['enabled'] as bool?,
       fromPath: json['fromPath'] as String?,
-      id: json['id'] as int?,
+      id: json['id'] != null ? int.parse(json['id'].toString()) : null,
       statusCode: json['statusCode'] as int?,
       toUrl: json['toUrl'] as String?,
       updatedAt: json['updatedAt'] as String?,
-      updatedBy: json['updatedBy'] as int?,
+      updatedBy: json['updatedBy'] != null ? int.parse(json['updatedBy'].toString()) : null,
     );
   }
 
   Map<String, dynamic> toJson() {
     final json = <String, dynamic>{};
     if (createdAt != null) json['createdAt'] = createdAt;
-    if (createdBy != null) json['createdBy'] = createdBy;
+    if (createdBy != null) json['createdBy'] = createdBy.toString();
     if (description != null) json['description'] = description;
     if (enabled != null) json['enabled'] = enabled;
     if (fromPath != null) json['fromPath'] = fromPath;
-    if (id != null) json['id'] = id;
+    if (id != null) json['id'] = id.toString();
     if (statusCode != null) json['statusCode'] = statusCode;
     if (toUrl != null) json['toUrl'] = toUrl;
     if (updatedAt != null) json['updatedAt'] = updatedAt;
-    if (updatedBy != null) json['updatedBy'] = updatedBy;
+    if (updatedBy != null) json['updatedBy'] = updatedBy.toString();
     return json;
   }
 
@@ -17246,7 +17246,7 @@ class ContentServiceV1Redirect {
     // field 1: id
     final f1 = id;
     if (f1 != null) {
-      w.writeUint32(1, f1);
+      w.writeUint64(1, f1);
     }
     // field 2: fromPath
     final f2 = fromPath;
@@ -17276,12 +17276,12 @@ class ContentServiceV1Redirect {
     // field 100: createdBy
     final f100 = createdBy;
     if (f100 != null) {
-      w.writeUint32(100, f100);
+      w.writeUint64(100, f100);
     }
     // field 101: updatedBy
     final f101 = updatedBy;
     if (f101 != null) {
-      w.writeUint32(101, f101);
+      w.writeUint64(101, f101);
     }
     // field 200: createdAt
     final f200 = createdAt;
@@ -17305,7 +17305,7 @@ class ContentServiceV1Redirect {
       switch (r.fieldNumber) {
         // field 1: id
         case 1: {
-          m.id = r.readUint32();
+          m.id = r.readUint64();
           break;
         }
         // field 2: fromPath
@@ -17335,12 +17335,12 @@ class ContentServiceV1Redirect {
         }
         // field 100: createdBy
         case 100: {
-          m.createdBy = r.readUint32();
+          m.createdBy = r.readUint64();
           break;
         }
         // field 101: updatedBy
         case 101: {
-          m.updatedBy = r.readUint32();
+          m.updatedBy = r.readUint64();
           break;
         }
         // field 200: createdAt
@@ -17628,21 +17628,21 @@ class SiteServiceV1Site {
     return SiteServiceV1Site(
       alternateDomains: (json['alternateDomains'] as List<dynamic>?)?.map((e) => e as String).toList(),
       createdAt: json['createdAt'] as String?,
-      createdBy: json['createdBy'] as int?,
+      createdBy: json['createdBy'] != null ? int.parse(json['createdBy'].toString()) : null,
       defaultLocale: json['defaultLocale'] as String?,
       deletedAt: json['deletedAt'] as String?,
-      deletedBy: json['deletedBy'] as int?,
+      deletedBy: json['deletedBy'] != null ? int.parse(json['deletedBy'].toString()) : null,
       domain: json['domain'] as String?,
-      id: json['id'] as int?,
+      id: json['id'] != null ? int.parse(json['id'].toString()) : null,
       isDefault: json['isDefault'] as bool?,
       name: json['name'] as String?,
       slug: json['slug'] as String?,
       status: json['status'] != null ? SiteServiceV1Site$Status.fromString(json['status'] as String) : null,
       template: json['template'] as String?,
-      tenantId: json['tenantId'] as int?,
+      tenantId: json['tenantId'] != null ? int.parse(json['tenantId'].toString()) : null,
       theme: json['theme'] as String?,
       updatedAt: json['updatedAt'] as String?,
-      updatedBy: json['updatedBy'] as int?,
+      updatedBy: json['updatedBy'] != null ? int.parse(json['updatedBy'].toString()) : null,
     );
   }
 
@@ -17650,21 +17650,21 @@ class SiteServiceV1Site {
     final json = <String, dynamic>{};
     if (alternateDomains != null) json['alternateDomains'] = alternateDomains;
     if (createdAt != null) json['createdAt'] = createdAt;
-    if (createdBy != null) json['createdBy'] = createdBy;
+    if (createdBy != null) json['createdBy'] = createdBy.toString();
     if (defaultLocale != null) json['defaultLocale'] = defaultLocale;
     if (deletedAt != null) json['deletedAt'] = deletedAt;
-    if (deletedBy != null) json['deletedBy'] = deletedBy;
+    if (deletedBy != null) json['deletedBy'] = deletedBy.toString();
     if (domain != null) json['domain'] = domain;
-    if (id != null) json['id'] = id;
+    if (id != null) json['id'] = id.toString();
     if (isDefault != null) json['isDefault'] = isDefault;
     if (name != null) json['name'] = name;
     if (slug != null) json['slug'] = slug;
     if (status != null) json['status'] = status!.value;
     if (template != null) json['template'] = template;
-    if (tenantId != null) json['tenantId'] = tenantId;
+    if (tenantId != null) json['tenantId'] = tenantId.toString();
     if (theme != null) json['theme'] = theme;
     if (updatedAt != null) json['updatedAt'] = updatedAt;
-    if (updatedBy != null) json['updatedBy'] = updatedBy;
+    if (updatedBy != null) json['updatedBy'] = updatedBy.toString();
     return json;
   }
 
@@ -17769,12 +17769,12 @@ class SiteServiceV1Site {
     // field 1: id
     final f1 = id;
     if (f1 != null) {
-      w.writeUint32(1, f1);
+      w.writeUint64(1, f1);
     }
     // field 2: tenantId
     final f2 = tenantId;
     if (f2 != null) {
-      w.writeUint32(2, f2);
+      w.writeUint64(2, f2);
     }
     // field 3: name
     final f3 = name;
@@ -17824,17 +17824,17 @@ class SiteServiceV1Site {
     // field 100: createdBy
     final f100 = createdBy;
     if (f100 != null) {
-      w.writeUint32(100, f100);
+      w.writeUint64(100, f100);
     }
     // field 101: updatedBy
     final f101 = updatedBy;
     if (f101 != null) {
-      w.writeUint32(101, f101);
+      w.writeUint64(101, f101);
     }
     // field 102: deletedBy
     final f102 = deletedBy;
     if (f102 != null) {
-      w.writeUint32(102, f102);
+      w.writeUint64(102, f102);
     }
     // field 200: createdAt
     final f200 = createdAt;
@@ -17863,12 +17863,12 @@ class SiteServiceV1Site {
       switch (r.fieldNumber) {
         // field 1: id
         case 1: {
-          m.id = r.readUint32();
+          m.id = r.readUint64();
           break;
         }
         // field 2: tenantId
         case 2: {
-          m.tenantId = r.readUint32();
+          m.tenantId = r.readUint64();
           break;
         }
         // field 3: name
@@ -17918,17 +17918,17 @@ class SiteServiceV1Site {
         }
         // field 100: createdBy
         case 100: {
-          m.createdBy = r.readUint32();
+          m.createdBy = r.readUint64();
           break;
         }
         // field 101: updatedBy
         case 101: {
-          m.updatedBy = r.readUint32();
+          m.updatedBy = r.readUint64();
           break;
         }
         // field 102: deletedBy
         case 102: {
-          m.deletedBy = r.readUint32();
+          m.deletedBy = r.readUint64();
           break;
         }
         // field 200: createdAt
@@ -18180,7 +18180,7 @@ class SiteServiceV1UpdateSiteRequest {
     return SiteServiceV1UpdateSiteRequest(
       allowMissing: json['allowMissing'] as bool?,
       data: json['data'] != null ? SiteServiceV1Site.fromJson(json['data'] as Map<String, dynamic>) : null,
-      id: json['id'] as int?,
+      id: json['id'] != null ? int.parse(json['id'].toString()) : null,
       updateMask: json['updateMask'] as String?,
     );
   }
@@ -18189,7 +18189,7 @@ class SiteServiceV1UpdateSiteRequest {
     final json = <String, dynamic>{};
     if (allowMissing != null) json['allowMissing'] = allowMissing;
     if (data != null) json['data'] = data!.toJson();
-    if (id != null) json['id'] = id;
+    if (id != null) json['id'] = id.toString();
     if (updateMask != null) json['updateMask'] = updateMask;
     return json;
   }
@@ -18243,7 +18243,7 @@ class SiteServiceV1UpdateSiteRequest {
     // field 1: id
     final f1 = id;
     if (f1 != null) {
-      w.writeUint32(1, f1);
+      w.writeUint64(1, f1);
     }
     // field 2: data
     final f2 = data;
@@ -18272,7 +18272,7 @@ class SiteServiceV1UpdateSiteRequest {
       switch (r.fieldNumber) {
         // field 1: id
         case 1: {
-          m.id = r.readUint32();
+          m.id = r.readUint64();
           break;
         }
         // field 2: data
@@ -18310,13 +18310,13 @@ class SiteServiceV1DeleteSiteRequest {
 
   factory SiteServiceV1DeleteSiteRequest.fromJson(Map<String, dynamic> json) {
     return SiteServiceV1DeleteSiteRequest(
-      id: json['id'] as int?,
+      id: json['id'] != null ? int.parse(json['id'].toString()) : null,
     );
   }
 
   Map<String, dynamic> toJson() {
     final json = <String, dynamic>{};
-    if (id != null) json['id'] = id;
+    if (id != null) json['id'] = id.toString();
     return json;
   }
 
@@ -18357,7 +18357,7 @@ class SiteServiceV1DeleteSiteRequest {
     // field 1: id
     final f1 = id;
     if (f1 != null) {
-      w.writeUint32(1, f1);
+      w.writeUint64(1, f1);
     }
   }
 
@@ -18371,7 +18371,7 @@ class SiteServiceV1DeleteSiteRequest {
       switch (r.fieldNumber) {
         // field 1: id
         case 1: {
-          m.id = r.readUint32();
+          m.id = r.readUint64();
           break;
         }
         default: {
@@ -18681,19 +18681,19 @@ class ContentServiceV1Tag {
       code: json['code'] as String?,
       color: json['color'] as String?,
       createdAt: json['createdAt'] as String?,
-      createdBy: json['createdBy'] as int?,
+      createdBy: json['createdBy'] != null ? int.parse(json['createdBy'].toString()) : null,
       deletedAt: json['deletedAt'] as String?,
-      deletedBy: json['deletedBy'] as int?,
+      deletedBy: json['deletedBy'] != null ? int.parse(json['deletedBy'].toString()) : null,
       group: json['group'] as String?,
       icon: json['icon'] as String?,
-      id: json['id'] as int?,
+      id: json['id'] != null ? int.parse(json['id'].toString()) : null,
       isFeatured: json['isFeatured'] as bool?,
       postCount: json['postCount'] as int?,
       sortOrder: json['sortOrder'] as int?,
       status: json['status'] != null ? ContentServiceV1Tag$TagStatus.fromString(json['status'] as String) : null,
       translations: (json['translations'] as List<dynamic>?)?.map((e) => ContentServiceV1TagTranslation.fromJson(e as Map<String, dynamic>)).toList(),
       updatedAt: json['updatedAt'] as String?,
-      updatedBy: json['updatedBy'] as int?,
+      updatedBy: json['updatedBy'] != null ? int.parse(json['updatedBy'].toString()) : null,
     );
   }
 
@@ -18703,19 +18703,19 @@ class ContentServiceV1Tag {
     if (code != null) json['code'] = code;
     if (color != null) json['color'] = color;
     if (createdAt != null) json['createdAt'] = createdAt;
-    if (createdBy != null) json['createdBy'] = createdBy;
+    if (createdBy != null) json['createdBy'] = createdBy.toString();
     if (deletedAt != null) json['deletedAt'] = deletedAt;
-    if (deletedBy != null) json['deletedBy'] = deletedBy;
+    if (deletedBy != null) json['deletedBy'] = deletedBy.toString();
     if (group != null) json['group'] = group;
     if (icon != null) json['icon'] = icon;
-    if (id != null) json['id'] = id;
+    if (id != null) json['id'] = id.toString();
     if (isFeatured != null) json['isFeatured'] = isFeatured;
     if (postCount != null) json['postCount'] = postCount;
     if (sortOrder != null) json['sortOrder'] = sortOrder;
     if (status != null) json['status'] = status!.value;
     if (translations != null) json['translations'] = translations!.map((e) => e.toJson()).toList();
     if (updatedAt != null) json['updatedAt'] = updatedAt;
-    if (updatedBy != null) json['updatedBy'] = updatedBy;
+    if (updatedBy != null) json['updatedBy'] = updatedBy.toString();
     return json;
   }
 
@@ -18820,7 +18820,7 @@ class ContentServiceV1Tag {
     // field 1: id
     final f1 = id;
     if (f1 != null) {
-      w.writeUint32(1, f1);
+      w.writeUint64(1, f1);
     }
     // field 2: status
     final f2 = status;
@@ -18875,17 +18875,17 @@ class ContentServiceV1Tag {
     // field 100: createdBy
     final f100 = createdBy;
     if (f100 != null) {
-      w.writeUint32(100, f100);
+      w.writeUint64(100, f100);
     }
     // field 101: updatedBy
     final f101 = updatedBy;
     if (f101 != null) {
-      w.writeUint32(101, f101);
+      w.writeUint64(101, f101);
     }
     // field 102: deletedBy
     final f102 = deletedBy;
     if (f102 != null) {
-      w.writeUint32(102, f102);
+      w.writeUint64(102, f102);
     }
     // field 200: createdAt
     final f200 = createdAt;
@@ -18914,7 +18914,7 @@ class ContentServiceV1Tag {
       switch (r.fieldNumber) {
         // field 1: id
         case 1: {
-          m.id = r.readUint32();
+          m.id = r.readUint64();
           break;
         }
         // field 2: status
@@ -18969,17 +18969,17 @@ class ContentServiceV1Tag {
         }
         // field 100: createdBy
         case 100: {
-          m.createdBy = r.readUint32();
+          m.createdBy = r.readUint64();
           break;
         }
         // field 101: updatedBy
         case 101: {
-          m.updatedBy = r.readUint32();
+          m.updatedBy = r.readUint64();
           break;
         }
         // field 102: deletedBy
         case 102: {
-          m.deletedBy = r.readUint32();
+          m.deletedBy = r.readUint64();
           break;
         }
         // field 200: createdAt
@@ -19067,19 +19067,19 @@ class ContentServiceV1TagTranslation {
     return ContentServiceV1TagTranslation(
       coverImage: json['coverImage'] as String?,
       createdAt: json['createdAt'] as String?,
-      createdBy: json['createdBy'] as int?,
+      createdBy: json['createdBy'] != null ? int.parse(json['createdBy'].toString()) : null,
       deletedAt: json['deletedAt'] as String?,
-      deletedBy: json['deletedBy'] as int?,
+      deletedBy: json['deletedBy'] != null ? int.parse(json['deletedBy'].toString()) : null,
       description: json['description'] as String?,
       fullPath: json['fullPath'] as String?,
-      id: json['id'] as int?,
+      id: json['id'] != null ? int.parse(json['id'].toString()) : null,
       languageCode: json['languageCode'] as String?,
       name: json['name'] as String?,
       seo: json['seo'] != null ? ContentServiceV1SeoMeta.fromJson(json['seo'] as Map<String, dynamic>) : null,
       slug: json['slug'] as String?,
-      tagId: json['tagId'] as int?,
+      tagId: json['tagId'] != null ? int.parse(json['tagId'].toString()) : null,
       updatedAt: json['updatedAt'] as String?,
-      updatedBy: json['updatedBy'] as int?,
+      updatedBy: json['updatedBy'] != null ? int.parse(json['updatedBy'].toString()) : null,
     );
   }
 
@@ -19087,19 +19087,19 @@ class ContentServiceV1TagTranslation {
     final json = <String, dynamic>{};
     if (coverImage != null) json['coverImage'] = coverImage;
     if (createdAt != null) json['createdAt'] = createdAt;
-    if (createdBy != null) json['createdBy'] = createdBy;
+    if (createdBy != null) json['createdBy'] = createdBy.toString();
     if (deletedAt != null) json['deletedAt'] = deletedAt;
-    if (deletedBy != null) json['deletedBy'] = deletedBy;
+    if (deletedBy != null) json['deletedBy'] = deletedBy.toString();
     if (description != null) json['description'] = description;
     if (fullPath != null) json['fullPath'] = fullPath;
-    if (id != null) json['id'] = id;
+    if (id != null) json['id'] = id.toString();
     if (languageCode != null) json['languageCode'] = languageCode;
     if (name != null) json['name'] = name;
     if (seo != null) json['seo'] = seo!.toJson();
     if (slug != null) json['slug'] = slug;
-    if (tagId != null) json['tagId'] = tagId;
+    if (tagId != null) json['tagId'] = tagId.toString();
     if (updatedAt != null) json['updatedAt'] = updatedAt;
-    if (updatedBy != null) json['updatedBy'] = updatedBy;
+    if (updatedBy != null) json['updatedBy'] = updatedBy.toString();
     return json;
   }
 
@@ -19196,12 +19196,12 @@ class ContentServiceV1TagTranslation {
     // field 1: id
     final f1 = id;
     if (f1 != null) {
-      w.writeUint32(1, f1);
+      w.writeUint64(1, f1);
     }
     // field 2: tagId
     final f2 = tagId;
     if (f2 != null) {
-      w.writeUint32(2, f2);
+      w.writeUint64(2, f2);
     }
     // field 3: languageCode
     final f3 = languageCode;
@@ -19241,17 +19241,17 @@ class ContentServiceV1TagTranslation {
     // field 100: createdBy
     final f100 = createdBy;
     if (f100 != null) {
-      w.writeUint32(100, f100);
+      w.writeUint64(100, f100);
     }
     // field 101: updatedBy
     final f101 = updatedBy;
     if (f101 != null) {
-      w.writeUint32(101, f101);
+      w.writeUint64(101, f101);
     }
     // field 102: deletedBy
     final f102 = deletedBy;
     if (f102 != null) {
-      w.writeUint32(102, f102);
+      w.writeUint64(102, f102);
     }
     // field 200: createdAt
     final f200 = createdAt;
@@ -19280,12 +19280,12 @@ class ContentServiceV1TagTranslation {
       switch (r.fieldNumber) {
         // field 1: id
         case 1: {
-          m.id = r.readUint32();
+          m.id = r.readUint64();
           break;
         }
         // field 2: tagId
         case 2: {
-          m.tagId = r.readUint32();
+          m.tagId = r.readUint64();
           break;
         }
         // field 3: languageCode
@@ -19325,17 +19325,17 @@ class ContentServiceV1TagTranslation {
         }
         // field 100: createdBy
         case 100: {
-          m.createdBy = r.readUint32();
+          m.createdBy = r.readUint64();
           break;
         }
         // field 101: updatedBy
         case 101: {
-          m.updatedBy = r.readUint32();
+          m.updatedBy = r.readUint64();
           break;
         }
         // field 102: deletedBy
         case 102: {
-          m.deletedBy = r.readUint32();
+          m.deletedBy = r.readUint64();
           break;
         }
         // field 200: createdAt
@@ -19380,7 +19380,7 @@ class ContentServiceV1GetTagRequest {
   factory ContentServiceV1GetTagRequest.fromJson(Map<String, dynamic> json) {
     return ContentServiceV1GetTagRequest(
       code: json['code'] as String?,
-      id: json['id'] as int?,
+      id: json['id'] != null ? int.parse(json['id'].toString()) : null,
       locale: json['locale'] as String?,
       viewMask: json['viewMask'] as String?,
     );
@@ -19389,7 +19389,7 @@ class ContentServiceV1GetTagRequest {
   Map<String, dynamic> toJson() {
     final json = <String, dynamic>{};
     if (code != null) json['code'] = code;
-    if (id != null) json['id'] = id;
+    if (id != null) json['id'] = id.toString();
     if (locale != null) json['locale'] = locale;
     if (viewMask != null) json['viewMask'] = viewMask;
     return json;
@@ -19444,7 +19444,7 @@ class ContentServiceV1GetTagRequest {
     // field 1: id
     final f1 = id;
     if (f1 != null) {
-      w.writeUint32(1, f1);
+      w.writeUint64(1, f1);
     }
     // field 2: code
     final f2 = code;
@@ -19473,7 +19473,7 @@ class ContentServiceV1GetTagRequest {
       switch (r.fieldNumber) {
         // field 1: id
         case 1: {
-          m.id = r.readUint32();
+          m.id = r.readUint64();
           break;
         }
         // field 2: code
@@ -19603,7 +19603,7 @@ class ContentServiceV1UpdateTagRequest {
     return ContentServiceV1UpdateTagRequest(
       allowMissing: json['allowMissing'] as bool?,
       data: json['data'] != null ? ContentServiceV1Tag.fromJson(json['data'] as Map<String, dynamic>) : null,
-      id: json['id'] as int?,
+      id: json['id'] != null ? int.parse(json['id'].toString()) : null,
       updateMask: json['updateMask'] as String?,
     );
   }
@@ -19612,7 +19612,7 @@ class ContentServiceV1UpdateTagRequest {
     final json = <String, dynamic>{};
     if (allowMissing != null) json['allowMissing'] = allowMissing;
     if (data != null) json['data'] = data!.toJson();
-    if (id != null) json['id'] = id;
+    if (id != null) json['id'] = id.toString();
     if (updateMask != null) json['updateMask'] = updateMask;
     return json;
   }
@@ -19666,7 +19666,7 @@ class ContentServiceV1UpdateTagRequest {
     // field 1: id
     final f1 = id;
     if (f1 != null) {
-      w.writeUint32(1, f1);
+      w.writeUint64(1, f1);
     }
     // field 2: data
     final f2 = data;
@@ -19695,7 +19695,7 @@ class ContentServiceV1UpdateTagRequest {
       switch (r.fieldNumber) {
         // field 1: id
         case 1: {
-          m.id = r.readUint32();
+          m.id = r.readUint64();
           break;
         }
         // field 2: data
@@ -19733,13 +19733,13 @@ class ContentServiceV1DeleteTagRequest {
 
   factory ContentServiceV1DeleteTagRequest.fromJson(Map<String, dynamic> json) {
     return ContentServiceV1DeleteTagRequest(
-      id: json['id'] as int?,
+      id: json['id'] != null ? int.parse(json['id'].toString()) : null,
     );
   }
 
   Map<String, dynamic> toJson() {
     final json = <String, dynamic>{};
-    if (id != null) json['id'] = id;
+    if (id != null) json['id'] = id.toString();
     return json;
   }
 
@@ -19780,7 +19780,7 @@ class ContentServiceV1DeleteTagRequest {
     // field 1: id
     final f1 = id;
     if (f1 != null) {
-      w.writeUint32(1, f1);
+      w.writeUint64(1, f1);
     }
   }
 
@@ -19794,7 +19794,7 @@ class ContentServiceV1DeleteTagRequest {
       switch (r.fieldNumber) {
         // field 1: id
         case 1: {
-          m.id = r.readUint32();
+          m.id = r.readUint64();
           break;
         }
         default: {
@@ -19967,15 +19967,15 @@ class IdentityServiceV1User {
       avatar: json['avatar'] as String?,
       commentCount: json['commentCount'] != null ? int.parse(json['commentCount'].toString()) : null,
       createdAt: json['createdAt'] as String?,
-      createdBy: json['createdBy'] as int?,
+      createdBy: json['createdBy'] != null ? int.parse(json['createdBy'].toString()) : null,
       deletedAt: json['deletedAt'] as String?,
-      deletedBy: json['deletedBy'] as int?,
+      deletedBy: json['deletedBy'] != null ? int.parse(json['deletedBy'].toString()) : null,
       description: json['description'] as String?,
       email: json['email'] as String?,
       followers: json['followers'] != null ? int.parse(json['followers'].toString()) : null,
       following: json['following'] != null ? int.parse(json['following'].toString()) : null,
       gender: json['gender'] != null ? IdentityServiceV1User$Gender.fromString(json['gender'] as String) : null,
-      id: json['id'] as int?,
+      id: json['id'] != null ? int.parse(json['id'].toString()) : null,
       lastLoginAt: json['lastLoginAt'] as String?,
       lastLoginIp: json['lastLoginIp'] as String?,
       likeCount: json['likeCount'] != null ? int.parse(json['likeCount'].toString()) : null,
@@ -19983,28 +19983,28 @@ class IdentityServiceV1User {
       lockedUntil: json['lockedUntil'] as String?,
       mobile: json['mobile'] as String?,
       nickname: json['nickname'] as String?,
-      orgUnitId: json['orgUnitId'] as int?,
-      orgUnitIds: (json['orgUnitIds'] as List<dynamic>?)?.map((e) => e as int).toList(),
+      orgUnitId: json['orgUnitId'] != null ? int.parse(json['orgUnitId'].toString()) : null,
+      orgUnitIds: (json['orgUnitIds'] as List<dynamic>?)?.map((e) => int.parse(e.toString())).toList(),
       orgUnitName: json['orgUnitName'] as String?,
       orgUnitNames: (json['orgUnitNames'] as List<dynamic>?)?.map((e) => e as String).toList(),
-      positionId: json['positionId'] as int?,
-      positionIds: (json['positionIds'] as List<dynamic>?)?.map((e) => e as int).toList(),
+      positionId: json['positionId'] != null ? int.parse(json['positionId'].toString()) : null,
+      positionIds: (json['positionIds'] as List<dynamic>?)?.map((e) => int.parse(e.toString())).toList(),
       positionName: json['positionName'] as String?,
       positionNames: (json['positionNames'] as List<dynamic>?)?.map((e) => e as String).toList(),
       postCount: json['postCount'] != null ? int.parse(json['postCount'].toString()) : null,
       realname: json['realname'] as String?,
       region: json['region'] as String?,
       remark: json['remark'] as String?,
-      roleId: json['roleId'] as int?,
-      roleIds: (json['roleIds'] as List<dynamic>?)?.map((e) => e as int).toList(),
+      roleId: json['roleId'] != null ? int.parse(json['roleId'].toString()) : null,
+      roleIds: (json['roleIds'] as List<dynamic>?)?.map((e) => int.parse(e.toString())).toList(),
       roleNames: (json['roleNames'] as List<dynamic>?)?.map((e) => e as String).toList(),
       roles: (json['roles'] as List<dynamic>?)?.map((e) => e as String).toList(),
       status: json['status'] != null ? IdentityServiceV1User$Status.fromString(json['status'] as String) : null,
       telephone: json['telephone'] as String?,
-      tenantId: json['tenantId'] as int?,
+      tenantId: json['tenantId'] != null ? int.parse(json['tenantId'].toString()) : null,
       tenantName: json['tenantName'] as String?,
       updatedAt: json['updatedAt'] as String?,
-      updatedBy: json['updatedBy'] as int?,
+      updatedBy: json['updatedBy'] != null ? int.parse(json['updatedBy'].toString()) : null,
       username: json['username'] as String?,
     );
   }
@@ -20015,15 +20015,15 @@ class IdentityServiceV1User {
     if (avatar != null) json['avatar'] = avatar;
     if (commentCount != null) json['commentCount'] = commentCount.toString();
     if (createdAt != null) json['createdAt'] = createdAt;
-    if (createdBy != null) json['createdBy'] = createdBy;
+    if (createdBy != null) json['createdBy'] = createdBy.toString();
     if (deletedAt != null) json['deletedAt'] = deletedAt;
-    if (deletedBy != null) json['deletedBy'] = deletedBy;
+    if (deletedBy != null) json['deletedBy'] = deletedBy.toString();
     if (description != null) json['description'] = description;
     if (email != null) json['email'] = email;
     if (followers != null) json['followers'] = followers.toString();
     if (following != null) json['following'] = following.toString();
     if (gender != null) json['gender'] = gender!.value;
-    if (id != null) json['id'] = id;
+    if (id != null) json['id'] = id.toString();
     if (lastLoginAt != null) json['lastLoginAt'] = lastLoginAt;
     if (lastLoginIp != null) json['lastLoginIp'] = lastLoginIp;
     if (likeCount != null) json['likeCount'] = likeCount.toString();
@@ -20031,28 +20031,28 @@ class IdentityServiceV1User {
     if (lockedUntil != null) json['lockedUntil'] = lockedUntil;
     if (mobile != null) json['mobile'] = mobile;
     if (nickname != null) json['nickname'] = nickname;
-    if (orgUnitId != null) json['orgUnitId'] = orgUnitId;
-    if (orgUnitIds != null) json['orgUnitIds'] = orgUnitIds;
+    if (orgUnitId != null) json['orgUnitId'] = orgUnitId.toString();
+    if (orgUnitIds != null) json['orgUnitIds'] = orgUnitIds!.map((e) => e.toString()).toList();
     if (orgUnitName != null) json['orgUnitName'] = orgUnitName;
     if (orgUnitNames != null) json['orgUnitNames'] = orgUnitNames;
-    if (positionId != null) json['positionId'] = positionId;
-    if (positionIds != null) json['positionIds'] = positionIds;
+    if (positionId != null) json['positionId'] = positionId.toString();
+    if (positionIds != null) json['positionIds'] = positionIds!.map((e) => e.toString()).toList();
     if (positionName != null) json['positionName'] = positionName;
     if (positionNames != null) json['positionNames'] = positionNames;
     if (postCount != null) json['postCount'] = postCount.toString();
     if (realname != null) json['realname'] = realname;
     if (region != null) json['region'] = region;
     if (remark != null) json['remark'] = remark;
-    if (roleId != null) json['roleId'] = roleId;
-    if (roleIds != null) json['roleIds'] = roleIds;
+    if (roleId != null) json['roleId'] = roleId.toString();
+    if (roleIds != null) json['roleIds'] = roleIds!.map((e) => e.toString()).toList();
     if (roleNames != null) json['roleNames'] = roleNames;
     if (roles != null) json['roles'] = roles;
     if (status != null) json['status'] = status!.value;
     if (telephone != null) json['telephone'] = telephone;
-    if (tenantId != null) json['tenantId'] = tenantId;
+    if (tenantId != null) json['tenantId'] = tenantId.toString();
     if (tenantName != null) json['tenantName'] = tenantName;
     if (updatedAt != null) json['updatedAt'] = updatedAt;
-    if (updatedBy != null) json['updatedBy'] = updatedBy;
+    if (updatedBy != null) json['updatedBy'] = updatedBy.toString();
     if (username != null) json['username'] = username;
     return json;
   }
@@ -20262,12 +20262,12 @@ class IdentityServiceV1User {
     // field 1: id
     final f1 = id;
     if (f1 != null) {
-      w.writeUint32(1, f1);
+      w.writeUint64(1, f1);
     }
     // field 2: tenantId
     final f2 = tenantId;
     if (f2 != null) {
-      w.writeUint32(2, f2);
+      w.writeUint64(2, f2);
     }
     // field 3: tenantName
     final f3 = tenantName;
@@ -20277,7 +20277,7 @@ class IdentityServiceV1User {
     // field 4: orgUnitId
     final f4 = orgUnitId;
     if (f4 != null) {
-      w.writeUint32(4, f4);
+      w.writeUint64(4, f4);
     }
     // field 5: orgUnitIds
     final f5 = orgUnitIds;
@@ -20297,7 +20297,7 @@ class IdentityServiceV1User {
     // field 8: positionId
     final f8 = positionId;
     if (f8 != null) {
-      w.writeUint32(8, f8);
+      w.writeUint64(8, f8);
     }
     // field 9: positionIds
     final f9 = positionIds;
@@ -20317,7 +20317,7 @@ class IdentityServiceV1User {
     // field 12: roleId
     final f12 = roleId;
     if (f12 != null) {
-      w.writeUint32(12, f12);
+      w.writeUint64(12, f12);
     }
     // field 13: roleIds
     final f13 = roleIds;
@@ -20447,17 +20447,17 @@ class IdentityServiceV1User {
     // field 100: createdBy
     final f100 = createdBy;
     if (f100 != null) {
-      w.writeUint32(100, f100);
+      w.writeUint64(100, f100);
     }
     // field 101: updatedBy
     final f101 = updatedBy;
     if (f101 != null) {
-      w.writeUint32(101, f101);
+      w.writeUint64(101, f101);
     }
     // field 102: deletedBy
     final f102 = deletedBy;
     if (f102 != null) {
-      w.writeUint32(102, f102);
+      w.writeUint64(102, f102);
     }
     // field 200: createdAt
     final f200 = createdAt;
@@ -20486,12 +20486,12 @@ class IdentityServiceV1User {
       switch (r.fieldNumber) {
         // field 1: id
         case 1: {
-          m.id = r.readUint32();
+          m.id = r.readUint64();
           break;
         }
         // field 2: tenantId
         case 2: {
-          m.tenantId = r.readUint32();
+          m.tenantId = r.readUint64();
           break;
         }
         // field 3: tenantName
@@ -20501,7 +20501,7 @@ class IdentityServiceV1User {
         }
         // field 4: orgUnitId
         case 4: {
-          m.orgUnitId = r.readUint32();
+          m.orgUnitId = r.readUint64();
           break;
         }
         // field 5: orgUnitIds
@@ -20521,7 +20521,7 @@ class IdentityServiceV1User {
         }
         // field 8: positionId
         case 8: {
-          m.positionId = r.readUint32();
+          m.positionId = r.readUint64();
           break;
         }
         // field 9: positionIds
@@ -20541,7 +20541,7 @@ class IdentityServiceV1User {
         }
         // field 12: roleId
         case 12: {
-          m.roleId = r.readUint32();
+          m.roleId = r.readUint64();
           break;
         }
         // field 13: roleIds
@@ -20671,17 +20671,17 @@ class IdentityServiceV1User {
         }
         // field 100: createdBy
         case 100: {
-          m.createdBy = r.readUint32();
+          m.createdBy = r.readUint64();
           break;
         }
         // field 101: updatedBy
         case 101: {
-          m.updatedBy = r.readUint32();
+          m.updatedBy = r.readUint64();
           break;
         }
         // field 102: deletedBy
         case 102: {
-          m.deletedBy = r.readUint32();
+          m.deletedBy = r.readUint64();
           break;
         }
         // field 200: createdAt
@@ -20772,7 +20772,7 @@ class IdentityServiceV1UpdateUserRequest {
     return IdentityServiceV1UpdateUserRequest(
       allowMissing: json['allowMissing'] as bool?,
       data: json['data'] != null ? IdentityServiceV1User.fromJson(json['data'] as Map<String, dynamic>) : null,
-      id: json['id'] as int?,
+      id: json['id'] != null ? int.parse(json['id'].toString()) : null,
       password: json['password'] as String?,
       updateMask: json['updateMask'] as String?,
     );
@@ -20782,7 +20782,7 @@ class IdentityServiceV1UpdateUserRequest {
     final json = <String, dynamic>{};
     if (allowMissing != null) json['allowMissing'] = allowMissing;
     if (data != null) json['data'] = data!.toJson();
-    if (id != null) json['id'] = id;
+    if (id != null) json['id'] = id.toString();
     if (password != null) json['password'] = password;
     if (updateMask != null) json['updateMask'] = updateMask;
     return json;
@@ -20841,7 +20841,7 @@ class IdentityServiceV1UpdateUserRequest {
     // field 1: id
     final f1 = id;
     if (f1 != null) {
-      w.writeUint32(1, f1);
+      w.writeUint64(1, f1);
     }
     // field 2: data
     final f2 = data;
@@ -20875,7 +20875,7 @@ class IdentityServiceV1UpdateUserRequest {
       switch (r.fieldNumber) {
         // field 1: id
         case 1: {
-          m.id = r.readUint32();
+          m.id = r.readUint64();
           break;
         }
         // field 2: data

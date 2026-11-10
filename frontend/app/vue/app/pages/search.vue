@@ -17,7 +17,7 @@ const { data, pending, error } = await useAsyncData(
 )
 
 interface SearchHit {
-  postId?: number
+  postId?: string
   language?: string
   title?: string
   summary?: string
@@ -55,7 +55,7 @@ function hitExcerpt(hit: SearchHit) {
   return hit.summary ?? ''
 }
 
-function openPost(postId?: number) {
+function openPost(postId?: string) {
   if (!postId) return
   navigateTo(localePath(`/post/${postId}`))
   window.scrollTo({ top: 0, behavior: 'smooth' })

@@ -65,11 +65,11 @@ export function useDeleteMonitorAlertRule(
   options?: UseMutationOptions<
     Awaited<ReturnType<typeof apiClient.monitorAlertService.DeleteMonitorAlertRule>>,
     Error,
-    { id: number }
+    { id: string }
   >,
 ) {
   return useMutation({
-    mutationFn: ({ id }: { id: number }) =>
+    mutationFn: ({ id }: { id: string }) =>
       apiClient.monitorAlertService.DeleteMonitorAlertRule({ id }),
     onSuccess: () => queryClient.invalidateQueries({ queryKey: ['listMonitorAlertRules'] }),
     ...options,

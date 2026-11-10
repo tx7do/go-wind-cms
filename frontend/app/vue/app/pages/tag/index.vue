@@ -32,7 +32,8 @@ async function loadTags() {
       formValues: { status: 'TAG_STATUS_ACTIVE' },
     }) as any
     tags.value = res?.items || []
-    total.value = res?.total || 0
+    // total 为 uint64，proto3 JSON 下是字符串，转回 number 参与分页
+    total.value = Number(res?.total || 0)
   } catch (e) {
     console.error('[Tag List] 加载失败:', e)
   } finally {

@@ -45,7 +45,7 @@ export async function listNavigationsRaw(params: {
 /**
  * 获取单个导航
  */
-export async function getNavigation(id: number) {
+export async function getNavigation(id: string) {
   return apiClient.navigationService.Get({id});
 }
 
@@ -62,7 +62,7 @@ export async function createNavigation(values: Partial<siteservicev1_Navigation>
  * 更新导航
  */
 export async function updateNavigation(params: {
-  id: number;
+  id: string;
   values: Partial<siteservicev1_Navigation>;
 }) {
   return apiClient.navigationService.Update({
@@ -75,7 +75,7 @@ export async function updateNavigation(params: {
 /**
  * 删除导航
  */
-export async function deleteNavigation(id: number) {
+export async function deleteNavigation(id: string) {
   return apiClient.navigationService.Delete({id});
 }
 
@@ -120,7 +120,7 @@ export async function fetchListNavigations(params: {
 // 获取单个导航 Hook
 // ==============================
 export function useGetNavigation(
-  options?: UseMutationOptions<siteservicev1_Navigation, Error, number>,
+  options?: UseMutationOptions<siteservicev1_Navigation, Error, string>,
 ) {
   return useMutation({
     mutationFn: (id) => getNavigation(id),
@@ -131,7 +131,7 @@ export function useGetNavigation(
 // ==============================================
 // 获取单个导航 【给 Store / 外部调用】不带 Hook 的方法
 // ==============================================
-export async function fetchNavigation(id: number) {
+export async function fetchNavigation(id: string) {
   return queryClient.fetchQuery({
     queryKey: ['getNavigation', id],
     queryFn: () => getNavigation(id),
@@ -158,7 +158,7 @@ export function useUpdateNavigation(
   options?: UseMutationOptions<
     siteservicev1_Navigation,
     Error,
-    { id: number; values: Partial<siteservicev1_Navigation> }
+    { id: string; values: Partial<siteservicev1_Navigation> }
   >,
 ) {
   return useMutation({
@@ -170,7 +170,7 @@ export function useUpdateNavigation(
 // ==============================
 // 删除导航 Hook
 // ==============================
-export function useDeleteNavigation(options?: UseMutationOptions<Record<string, never>, Error, number>) {
+export function useDeleteNavigation(options?: UseMutationOptions<Record<string, never>, Error, string>) {
   return useMutation({
     mutationFn: (id) => deleteNavigation(id),
     ...options,
@@ -184,7 +184,7 @@ export function useDeleteNavigation(options?: UseMutationOptions<Record<string, 
 /**
  * 递归查找导航项
  */
-export function findNavItem(items: siteservicev1_NavigationItem[], key: number): siteservicev1_NavigationItem | null {
+export function findNavItem(items: siteservicev1_NavigationItem[], key: string): siteservicev1_NavigationItem | null {
   for (const item of items) {
     if (item.id === key) return item;
     if (item.children) {

@@ -14,7 +14,7 @@ const { t } = useI18n()
 
 const navigationItems = ref<siteservicev1_NavigationItem[]>([])
 const isLoading = ref(true)
-const openMenuId = ref<number | null>(null)
+const openMenuId = ref<string | null>(null)
 let closeTimer: ReturnType<typeof setTimeout> | null = null
 
 const loadNav = async () => {
@@ -82,7 +82,7 @@ const handleNavigate = (item: siteservicev1_NavigationItem) => {
   }
 }
 
-const handleMouseEnter = (id: number) => {
+const handleMouseEnter = (id: string) => {
   if (closeTimer) {
     clearTimeout(closeTimer)
     closeTimer = null
@@ -104,9 +104,9 @@ usePreferences() // keep theme reactivity
   <nav v-else-if="navigationItems.length > 0" class="flex h-full items-center gap-0.5">
     <div
       v-for="item in navigationItems"
-      :key="item.id ?? 0"
+      :key="item.id ?? ''"
       class="relative"
-      @mouseenter="handleMouseEnter(item.id ?? 0)"
+      @mouseenter="handleMouseEnter(item.id ?? '')"
       @mouseleave="handleMouseLeave"
     >
       <button
@@ -115,7 +115,7 @@ usePreferences() // keep theme reactivity
           'inline-flex h-9 items-center gap-1.5 rounded-lg px-3 text-sm font-medium',
           'text-foreground/80 transition-all duration-200',
           'hover:bg-primary/10 hover:text-primary',
-          (item.children?.length ?? 0) > 0 && openMenuId === (item.id ?? 0) && 'bg-primary/10 text-primary',
+          (item.children?.length ?? 0) > 0 && openMenuId === (item.id ?? '') && 'bg-primary/10 text-primary',
           'max-md:px-2',
         )"
         @click="() => {
@@ -130,19 +130,19 @@ usePreferences() // keep theme reactivity
           v-if="(item.children?.length ?? 0) > 0"
           icon="carbon:chevron-down"
           :size="12"
-          :class="cn('transition-transform duration-200', openMenuId === (item.id ?? 0) && 'rotate-180')"
+          :class="cn('transition-transform duration-200', openMenuId === (item.id ?? '') && 'rotate-180')"
         />
       </button>
 
       <div
-        v-if="(item.children?.length ?? 0) > 0 && openMenuId === (item.id ?? 0)"
+        v-if="(item.children?.length ?? 0) > 0 && openMenuId === (item.id ?? '')"
         :class="cn(
           'absolute start-0 top-full z-1001 mt-1.5',
           'min-w-50 rounded-lg border border-border bg-popover p-1.5',
           'shadow-lg shadow-black/5',
           'animate-in fade-in-0 zoom-in-95 duration-150',
         )"
-        @mouseenter="handleMouseEnter(item.id ?? 0)"
+        @mouseenter="handleMouseEnter(item.id ?? '')"
         @mouseleave="handleMouseLeave"
       >
         <button

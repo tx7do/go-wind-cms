@@ -10,14 +10,14 @@ import { cn } from '@/lib/utils'
 const props = withDefaults(defineProps<{
   categories: any[]
   level?: number
-  onCategoryClick?: (id: number) => void
+  onCategoryClick?: (id: string) => void
 }>(), {
   level: 0,
 })
 
 const { t } = useI18n()
 
-const expandedCategories = ref<Set<number>>(new Set())
+const expandedCategories = ref<Set<string>>(new Set())
 
 const levelMarginClass: Record<number, string> = {
   0: '',
@@ -26,14 +26,14 @@ const levelMarginClass: Record<number, string> = {
   3: 'ms-24 max-md:ms-12',
 }
 
-function handleViewCategory(id: number) {
+function handleViewCategory(id: string) {
   props.onCategoryClick?.(id)
 }
 
 function toggleExpand(e: Event, category: any) {
   e.stopPropagation()
   if (category.children && category.children.length > 0) {
-    const id = category.id || 0
+    const id = category.id || ''
     if (expandedCategories.value.has(id)) {
       expandedCategories.value.delete(id)
     } else {
@@ -43,7 +43,7 @@ function toggleExpand(e: Event, category: any) {
 }
 
 function isExpanded(category: any) {
-  return expandedCategories.value.has(category.id || 0)
+  return expandedCategories.value.has(category.id || '')
 }
 </script>
 
@@ -62,7 +62,7 @@ function isExpanded(category: any) {
           'hover:bg-card hover:border-primary/30 hover:shadow-[0_8px_24px_-8px_hsl(var(--primary)/0.12)]',
           isExpanded(category) && 'border-primary/40 bg-card shadow-sm',
         )"
-        @click="handleViewCategory(category.id || 0)"
+        @click="handleViewCategory(category.id || '')"
       >
         <!-- 左侧色条指示器 -->
         <div :class="cn(

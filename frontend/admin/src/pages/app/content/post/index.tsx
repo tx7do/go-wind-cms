@@ -63,7 +63,7 @@ const PostList = () => {
   const [activeStatus, setActiveStatus] = useState<string>(ALL_STATUS);
   const [statusCounts, setStatusCounts] = useState<Record<string, number>>({});
   const [categoryOptions, setCategoryOptions] = useState<
-    { label: string; value: number }[]
+    { label: string; value: string }[]
   >([]);
 
   const countThrottleRef = useRef({ lastAt: 0, inFlight: false, queued: false });
@@ -258,7 +258,7 @@ const PostList = () => {
               hidden: !(record.status === 'POST_STATUS_DRAFT' && !record.inProgress),
               onClick: async () => {
                 try {
-                  await submitReviewMutation.mutateAsync({ postId: record.id as number });
+                  await submitReviewMutation.mutateAsync({ postId: record.id as string });
                   message.success(t('review.submitted'));
                   actionRef.current?.reload();
                 } catch (error) {
@@ -275,7 +275,7 @@ const PostList = () => {
               hidden: !record.inProgress,
               onClick: async () => {
                 try {
-                  await approveReviewMutation.mutateAsync({ postId: record.id as number });
+                  await approveReviewMutation.mutateAsync({ postId: record.id as string });
                   message.success(t('review.approved'));
                   actionRef.current?.reload();
                 } catch (error) {
@@ -306,7 +306,7 @@ const PostList = () => {
                   onOk: async () => {
                     try {
                       await rejectReviewMutation.mutateAsync({
-                        postId: record.id as number,
+                        postId: record.id as string,
                         reason,
                       });
                       message.success(t('review.rejected'));

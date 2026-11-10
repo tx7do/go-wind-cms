@@ -69,7 +69,7 @@ export function useUpdateSocialAccount(
   options?: UseMutationOptions<
     socialservicev1_SocialAccount,
     Error,
-    { id: number; values: Record<string, unknown>; maskKeys?: string[] }
+    { id: string; values: Record<string, unknown>; maskKeys?: string[] }
   >,
 ) {
   return useMutation({
@@ -130,7 +130,7 @@ export function useUpdateSocialDistribution(
   options?: UseMutationOptions<
     socialservicev1_SocialDistribution,
     Error,
-    { id: number; values: Record<string, unknown>; maskKeys?: string[] }
+    { id: string; values: Record<string, unknown>; maskKeys?: string[] }
   >,
 ) {
   return useMutation({

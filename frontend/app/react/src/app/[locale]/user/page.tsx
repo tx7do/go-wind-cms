@@ -34,8 +34,9 @@ export default function UserProfilePage() {
 
     // 收集当前页 post/collection 的 ID，用于批量查询点赞计数。
     // 计数由 interaction_counter 表提供（post.likes 列已移除）。
-    const postIds = useMemo(() => posts.map(p => p.id).filter((id): id is number => typeof id === 'number'), [posts]);
-    const collectionIds = useMemo(() => collections.map(p => p.id).filter((id): id is number => typeof id === 'number'), [collections]);
+    // id 已升级为 uint64 字符串。
+    const postIds = useMemo(() => posts.map(p => p.id).filter((id): id is string => typeof id === 'string' && id !== ''), [posts]);
+    const collectionIds = useMemo(() => collections.map(p => p.id).filter((id): id is string => typeof id === 'string' && id !== ''), [collections]);
     const postsCountsResp = useGetCounts('TARGET_TYPE_POST', postIds, ['COUNTER_METRIC_LIKE']);
     const collectionsCountsResp = useGetCounts('TARGET_TYPE_POST', collectionIds, ['COUNTER_METRIC_LIKE']);
 
@@ -133,7 +134,7 @@ export default function UserProfilePage() {
         }
     }
 
-    async function loadUserPosts(userId?: number) {
+    async function loadUserPosts(userId?: string) {
         const targetId = userId || user?.id;
         if (!targetId) return;
 
@@ -147,7 +148,8 @@ export default function UserProfilePage() {
             }) as unknown as contentservicev1_ListPostResponse;
 
             setPosts(result.items || []);
-            setPostsTotal(result.total || 0);
+            // total 为 uint64，proto3 JSON 下是字符串；计数语义保持 number
+            setPostsTotal(Number(result.total) || 0);
         } catch (error) {
             console.error('Load user posts failed:', error);
         } finally {
@@ -162,7 +164,8 @@ export default function UserProfilePage() {
         try {
             const result = await listWatchedPosts(1, 10) as unknown as contentservicev1_ListPostResponse;
             setCollections(result.items || []);
-            setCollectionsTotal(result.total || 0);
+            // total 为 uint64，proto3 JSON 下是字符串；计数语义保持 number
+            setCollectionsTotal(Number(result.total) || 0);
         } catch (error) {
             console.error('Load collections failed:', error);
             setCollections([]);
@@ -329,7 +332,7 @@ export default function UserProfilePage() {
                                                         <h3 className="mb-1 font-semibold text-foreground">{getPostTitle(post)}</h3>
                                                         <p className="mb-2 line-clamp-2 text-sm text-muted-foreground">{getPostSummary(post)}</p>
                                                         <div className="flex flex-wrap items-center gap-3 text-xs text-muted-foreground">
-                                                            <MetaDataItem icon="carbon:thumbs-up" text={`${extractCount(postsCountsResp.data, post.id as number, 'COUNTER_METRIC_LIKE')} ${t('likes')}`}/>
+                                                            <MetaDataItem icon="carbon:thumbs-up" text={`${extractCount(postsCountsResp.data, post.id ?? '', 'COUNTER_METRIC_LIKE')} ${t('likes')}`}/>
                                                             <MetaDataItem icon="carbon:time" text={formatDateTime(post.createdAt)}/>
                                                         </div>
                                                     </div>
@@ -364,7 +367,7 @@ export default function UserProfilePage() {
                                                         <h3 className="mb-1 font-semibold text-foreground">{getPostTitle(post)}</h3>
                                                         <p className="mb-2 line-clamp-2 text-sm text-muted-foreground">{getPostSummary(post)}</p>
                                                         <div className="flex flex-wrap items-center gap-3 text-xs text-muted-foreground">
-                                                            <MetaDataItem icon="carbon:thumbs-up" text={`${extractCount(collectionsCountsResp.data, post.id as number, 'COUNTER_METRIC_LIKE')} ${t('likes')}`}/>
+                                                            <MetaDataItem icon="carbon:thumbs-up" text={`${extractCount(collectionsCountsResp.data, post.id ?? '', 'COUNTER_METRIC_LIKE')} ${t('likes')}`}/>
                                                             <MetaDataItem icon="carbon:time" text={formatDateTime(post.createdAt)}/>
                                                         </div>
                                                     </div>

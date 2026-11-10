@@ -52,13 +52,13 @@ import {
 } from '../constants';
 
 interface SectionFormItemTranslation {
-  id?: number;
+  id?: string;
   languageCode?: string;
   content?: Record<string, string>;
 }
 
 interface SectionFormItem {
-  id?: number;
+  id?: string;
   type?: string;
   name?: string;
   sortOrder?: number;
@@ -67,13 +67,13 @@ interface SectionFormItem {
 }
 
 interface PageEditProps {
-  id?: number;
+  id?: string;
   title: string;
   slug: string;
   content: string;
   lang: string;
   editorType: string;
-  parentId?: number;
+  parentId?: string;
   type?: string;
   status?: string;
   showInNavigation?: boolean;
@@ -81,7 +81,7 @@ interface PageEditProps {
   template?: string;
   isCustomTemplate?: boolean;
   sortOrder?: number;
-  contentModelId?: number;
+  contentModelId?: string;
   customFields?: Record<string, string>;
   /** 页面嵌套区块列表。作为页面子部件随页面整体读写（对齐后端 Page.Sections 整体替换语义） */
   sections?: SectionFormItem[];
@@ -114,7 +114,7 @@ const emptyForm = (lang: string): PageEditProps => ({
   sections: [],
 });
 
-function getDraftKey(pageId: null | number, lang: string, isCreateMode: boolean) {
+function getDraftKey(pageId: null | string, lang: string, isCreateMode: boolean) {
   return isCreateMode
     ? `page-draft-create-${lang}`
     : `page-draft-edit-${pageId}-${lang}`;
@@ -134,7 +134,8 @@ const PageEditPage = () => {
 
   const initLang = searchParams.get('lang') || 'zh-CN';
   const isCreateMode = !id;
-  const pageId = isCreateMode ? null : Number(id);
+  // 路由参数本就是字符串，uint64 id 直接透传
+  const pageId = isCreateMode ? null : id;
   // 编辑锁（协同 v1）：他人持锁时展示提示横幅
   const editLock = useEditLock('page', pageId);
   // 实时协同（仅富文本；房间按语言隔离，创建模式无 id 不启用）
@@ -149,7 +150,7 @@ const PageEditPage = () => {
   const [needTranslate, setNeedTranslate] = useState(false);
   const [saving, setSaving] = useState(false);
   const [contentModelOptions, setContentModelOptions] = useState<
-    { label: string; value: number }[]
+    { label: string; value: string }[]
   >([]);
   const [fieldDefinitions, setFieldDefinitions] = useState<any[]>([]);
 
@@ -601,7 +602,7 @@ const PageEditPage = () => {
         await apiClient.pageService.Create({ data: data as any });
       } else {
         await apiClient.pageService.Update({
-          id: formData.id || 0,
+          id: formData.id || '0',
           data: data as any,
           updateMask: Object.keys(data)
             .filter((k) => k !== 'translations' && k !== 'sections')

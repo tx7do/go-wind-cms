@@ -31,7 +31,7 @@ export function getStatusOptions(t: TFn) {
 // ========== TreeSelect 数据构建（用于 Drawer 的父级选择） ==========
 
 interface TreeSelectNode {
-  value: number;
+  value: string;
   title: string;
   children?: TreeSelectNode[];
 }
@@ -50,7 +50,7 @@ export function buildTreeSelectData(
   items.forEach((item) => {
     if (item.id === undefined || item.id === null) return;
     if (excludeId !== undefined && item.id === excludeId) return;
-    map.set(item.id, { value: Number(item.id), title: item.name || '', children: [], parentId: item.parentId });
+    map.set(item.id, { value: String(item.id), title: item.name || '', children: [], parentId: item.parentId });
   });
 
   const tree: TreeSelectNode[] = [];
@@ -81,16 +81,16 @@ export function buildTreeSelectData(
 export function buildGroupTreeData(items: any[]): any[] {
   if (!items || items.length === 0) return [];
 
-  const map = new Map<number, any>();
+  const map = new Map<string, any>();
   const roots: any[] = [];
 
   items.forEach((item: any) => {
     if (item.id == null) return;
-    map.set(Number(item.id), { ...item, children: [] });
+    map.set(String(item.id), { ...item, children: [] });
   });
 
   map.forEach((node) => {
-    const parentId = node.parentId ? Number(node.parentId) : null;
+    const parentId = node.parentId ? String(node.parentId) : null;
     if (parentId && map.has(parentId)) {
       map.get(parentId)!.children.push(node);
     } else {
@@ -116,7 +116,7 @@ export function buildGroupTreeData(items: any[]): any[] {
 // ========== Tree 组件数据构建（用于 Drawer 的勾选树） ==========
 
 interface TreeNode {
-  key: number;
+  key: string;
   title: string;
   children?: TreeNode[];
 }
@@ -139,7 +139,7 @@ export function buildMenuTree(
   items.forEach((item) => {
     if (item.id === undefined || item.id === null) return;
     map.set(item.id, {
-      key: Number(item.id),
+      key: String(item.id),
       title: item.meta?.title || item.name || '',
       children: [],
       parentId: item.parentId,
@@ -197,7 +197,7 @@ export function buildApiTree(
     title: mod,
     selectable: false,
     children: apis.map((api) => ({
-      key: Number(api.id),
+      key: String(api.id),
       title: `${api.method || ''} ${api.path || ''} - ${api.description || api.name}`,
     })),
   }));
@@ -206,32 +206,30 @@ export function buildApiTree(
 // ========== 工具函数 ==========
 
 /**
- * 从勾选值中提取所有数字 ID（过滤掉模块分组等非数字值）
+ * 从勾选值中提取实体 ID 字符串（过滤掉模块分组等非 ID key，如 'module_xxx'）
  */
-export function filterNumbers(values: any[]): number[] {
+export function filterIds(values: any[]): string[] {
   if (!Array.isArray(values)) return [];
   return values
     .flat(Infinity)
-    .filter((v) => typeof v === 'number' && !isNaN(v))
-    .map((v) => Number(v));
+    .filter((v): v is string => typeof v === 'string' && v !== '' && !v.startsWith('module_'));
 }
 
 /**
  * 递归收集树中所有「叶子节点」（无 children）的 key。
  * 用于提交勾选值时剥离父节点 key：
  * 菜单树默认开启父子联动，勾选某父菜单下全部子菜单时父菜单会被自动勾选，
- * 其 key（父菜单 ID）会混入 checkedKeys。filterNumbers 只能过滤非数字 key，
- * 而父菜单 key 是 Number(id)（数字）无法被过滤，会被后端当作菜单 ID 处理。
+ * 其 key（父菜单 ID）会混入 checkedKeys。filterIds 无法区分 ID 与父节点 key，
  * 这里用叶子集合对 checkedKeys 求交集，只保留真正的叶子菜单 ID。
  */
-export function extractLeafIds(checkedKeys: any[], treeData: any[]): number[] {
+export function extractLeafIds(checkedKeys: any[], treeData: any[]): string[] {
   if (!Array.isArray(checkedKeys) || !Array.isArray(treeData)) return [];
-  const leafIds = new Set<number>();
+  const leafIds = new Set<string>();
   const collect = (nodes: any[]) => {
     for (const node of nodes) {
       if (node.children && node.children.length > 0) {
         collect(node.children);
-      } else if (typeof node.key === 'number' && !isNaN(node.key)) {
+      } else if (typeof node.key === 'string' && node.key !== '') {
         leafIds.add(node.key);
       }
     }
@@ -239,6 +237,5 @@ export function extractLeafIds(checkedKeys: any[], treeData: any[]): number[] {
   collect(treeData);
   return checkedKeys
     .flat(Infinity)
-    .filter((v): v is number => typeof v === 'number' && !isNaN(v) && leafIds.has(v))
-    .map((v) => Number(v));
+    .filter((v): v is string => typeof v === 'string' && v !== '' && leafIds.has(v));
 }

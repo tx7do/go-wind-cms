@@ -14,7 +14,8 @@ import SectionContainer from '@/components/layout/SectionContainer';
 import {useI18nRouter} from '@/i18n/helpers';
 
 interface SearchHit {
-    postId?: number;
+    // postId 已升级为 uint64，proto3 JSON 下为字符串
+    postId?: string;
     language?: string;
     title?: string;
     summary?: string;
@@ -88,7 +89,8 @@ function SearchPageContent() {
                 if (cancelled) return;
                 const data = res as unknown as SearchResponse;
                 setHits(data?.items ?? []);
-                setTotal(data?.total ?? 0);
+                // total 为 uint64，proto3 JSON 下是字符串；计数语义保持 number
+                setTotal(Number(data?.total) || 0);
             })
             .catch((err) => {
                 console.error('Search failed:', err);
@@ -104,7 +106,7 @@ function SearchPageContent() {
         };
     }, [query]);
 
-    const openPost = (postId?: number) => {
+    const openPost = (postId?: string) => {
         if (!postId) return;
         router.push(`/post/${postId}`);
         if (typeof window !== 'undefined') {

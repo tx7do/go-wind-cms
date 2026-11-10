@@ -43,7 +43,7 @@ const WebhookManagement = () => {
   });
 
   const [deliveriesTarget, setDeliveriesTarget] = useState<Webhook | undefined>();
-  const [pingLoadingId, setPingLoadingId] = useState<number | undefined>();
+  const [pingLoadingId, setPingLoadingId] = useState<string | undefined>();
 
   const listMutation = useListWebhooks();
   const createMutation = useCreateWebhook();

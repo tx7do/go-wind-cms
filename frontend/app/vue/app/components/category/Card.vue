@@ -11,7 +11,7 @@ const props = withDefaults(defineProps<{
 })
 
 const emit = defineEmits<{
-  click: [id: number]
+  click: [id: string]
 }>()
 
 const { t } = useI18n()

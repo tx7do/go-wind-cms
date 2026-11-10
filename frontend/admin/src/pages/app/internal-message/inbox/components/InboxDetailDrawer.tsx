@@ -34,7 +34,7 @@ export const InboxDetailDrawer = ({ open, record, onClose }: InboxDetailDrawerPr
   // 列表行只有标题/正文/状态/时间，发送人要按 messageId 补拉；失败不影响抽屉其余部分。
   // sender_id=0 的系统消息（定时任务产出）senderName 为空，显示"系统"而非占位符
   const { data: messageDetail, isPending: detailPending } = useGetInternalMessage(
-    { id: record?.messageId ?? 0 },
+    { id: String(record?.messageId ?? '0') },
     { enabled: open && !!record?.messageId },
   );
   const senderName = messageDetail?.senderName || (detailPending ? '-' : t('senderSystem'));

@@ -313,7 +313,7 @@ function FormSection({section}: SectionProps) {
         try {
             await apiClient.formSubmissionService.Submit({
                 pageId: section.pageId,
-                sectionId: section.id ?? 0,
+                sectionId: section.id ?? '',
                 data: values,
             });
             setState('done');

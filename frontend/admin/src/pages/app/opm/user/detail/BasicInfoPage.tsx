@@ -9,7 +9,7 @@ import { useUserStore } from '@/stores/user';
 import { isFieldHidden } from '@/core/access';
 
 interface BasicInfoPageProps {
-  userId: number | undefined;
+  userId: string | undefined;
 }
 
 /**
@@ -22,7 +22,7 @@ const BasicInfoPage: React.FC<BasicInfoPageProps> = ({ userId }) => {
   const { token } = theme.useToken();
   const hiddenFieldEntries = useUserStore((s) => s.hiddenFields);
 
-  const { data, isLoading } = useGetUser({ id: userId ?? 0 }, { enabled: !!userId } as any);
+  const { data, isLoading } = useGetUser({ id: userId ?? '0' }, { enabled: !!userId } as any);
 
   if (isLoading) {
     return (

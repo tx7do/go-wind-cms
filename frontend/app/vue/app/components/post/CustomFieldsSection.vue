@@ -12,7 +12,7 @@ import {apiClient} from '@/api/client'
  *   - 其余原样展示。模型未绑定或加载失败静默不渲染。
  */
 const props = defineProps<{
-  postId?: number | null
+  postId?: string | null
   customFields?: Record<string, string>
 }>()
 

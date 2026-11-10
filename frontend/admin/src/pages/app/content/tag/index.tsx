@@ -187,7 +187,7 @@ const TagList = () => {
 
           return {
             data: response.items || [],
-            total: response.total || 0,
+            total: Number(response.total ?? 0),
             success: true,
           };
         

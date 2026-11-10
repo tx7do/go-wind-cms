@@ -45,7 +45,7 @@ export async function listCategory(
 /**
  * 获取分类
  */
-export async function getCategory(id: number, fieldMask?: undefined | string, locale?: string) {
+export async function getCategory(id: string, fieldMask?: undefined | string, locale?: string) {
   return await apiClient.categoryService.Get({
     id,
     locale,
@@ -68,7 +68,7 @@ export async function createCategory(values: Record<string, any> = {}) {
 /**
  * 更新分类
  */
-export async function updateCategory(id: number, values: Record<string, any> = {}) {
+export async function updateCategory(id: string, values: Record<string, any> = {}) {
   return await apiClient.categoryService.Update({
     id,
     // @ts-ignore proto generated code is error.
@@ -82,7 +82,7 @@ export async function updateCategory(id: number, values: Record<string, any> = {
 /**
  * 删除分类
  */
-export async function deleteCategory(id: number) {
+export async function deleteCategory(id: string) {
   return await apiClient.categoryService.Delete({ id });
 }
 
@@ -133,7 +133,7 @@ export async function fetchListCategory(params: ListCategoryParams) {
 }
 
 export function useGetCategory(
-  options?: UseMutationOptions<any, Error, { id: number; fieldMask?: string }>,
+  options?: UseMutationOptions<any, Error, { id: string; fieldMask?: string }>,
 ) {
   return useMutation({
     mutationFn: ({ id, fieldMask }) => {
@@ -144,7 +144,7 @@ export function useGetCategory(
   });
 }
 
-export async function fetchCategory(id: number, fieldMask?: string) {
+export async function fetchCategory(id: string, fieldMask?: string) {
   const locale = getCurrentLocale();
   return queryClient.fetchQuery({
     queryKey: ['getCategory', id, fieldMask, locale],
@@ -166,7 +166,7 @@ export function useCreateCategory(
 }
 
 export function useUpdateCategory(
-  options?: UseMutationOptions<{}, Error, { id: number; values: Record<string, any> }>,
+  options?: UseMutationOptions<{}, Error, { id: string; values: Record<string, any> }>,
 ) {
   return useMutation({
     mutationFn: ({ id, values }) => updateCategory(id, values),
@@ -175,7 +175,7 @@ export function useUpdateCategory(
 }
 
 export function useDeleteCategory(
-  options?: UseMutationOptions<{}, Error, number>,
+  options?: UseMutationOptions<{}, Error, string>,
 ) {
   return useMutation({
     mutationFn: (id) => deleteCategory(id),

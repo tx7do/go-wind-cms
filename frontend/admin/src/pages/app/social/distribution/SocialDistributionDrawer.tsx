@@ -194,7 +194,7 @@ const SocialDistributionDrawer: React.FC<SocialDistributionDrawerProps> = ({
         message.error(t('mediaUnsupported'));
         return false;
       }
-      const mediaIds: number[] = values.mediaIds || [];
+      const mediaIds: string[] = values.mediaIds || [];
 
       if (isEdit) {
         const maskKeys: string[] = ['overrideText', 'publishTime'];

@@ -46,7 +46,7 @@ export async function listPage(
 /**
  * 获取页面
  */
-export async function getPage(id: number) {
+export async function getPage(id: string) {
   return await apiClient.pageService.Get({ id });
 }
 
@@ -56,11 +56,12 @@ export async function getPage(id: number) {
  */
 export async function getPageBySlug(slug: string) {
   const locale = getCurrentLocale();
-  const numericId = Number(slug);
   // 纯数字别名直接按 id 走详情；否则走 by-slug 专用端点
-  // （Get({id:0, slug}) 会让 id+slug 双绑定冲突 oneof，后端 400）
+  // （Get({id, slug}) 会让 id+slug 双绑定冲突 oneof，后端 400）
+  // 注：id 已升级为 uint64（proto3 JSON 下为字符串），此处 Number 仅用于判定 slug 是否纯数字 id，透传原字符串
+  const numericId = Number(slug);
   if (Number.isInteger(numericId) && numericId > 0) {
-    return await apiClient.pageService.Get({ id: numericId, locale });
+    return await apiClient.pageService.Get({ id: slug, locale });
   }
   // @ts-ignore proto generated code is error.
   return await apiClient.pageService.GetBySlug({ slug, locale });
@@ -81,7 +82,7 @@ export async function createPage(values: Record<string, any> = {}) {
 /**
  * 更新页面
  */
-export async function updatePage(id: number, values: Record<string, any> = {}) {
+export async function updatePage(id: string, values: Record<string, any> = {}) {
   return await apiClient.pageService.Update({
     id,
     // @ts-ignore proto generated code is error.
@@ -95,7 +96,7 @@ export async function updatePage(id: number, values: Record<string, any> = {}) {
 /**
  * 删除页面
  */
-export async function deletePage(id: number) {
+export async function deletePage(id: string) {
   return await apiClient.pageService.Delete({ id });
 }
 
@@ -146,7 +147,7 @@ export async function fetchListPage(params: ListPageParams) {
 }
 
 export function useGetPage(
-  options?: UseMutationOptions<any, Error, number>,
+  options?: UseMutationOptions<any, Error, string>,
 ) {
   return useMutation({
     mutationFn: (id) => getPage(id),
@@ -154,7 +155,7 @@ export function useGetPage(
   });
 }
 
-export async function fetchPage(id: number) {
+export async function fetchPage(id: string) {
   return queryClient.fetchQuery({
     queryKey: ['getPage', id],
     queryFn: () => getPage(id),
@@ -176,7 +177,7 @@ export async function fetchPageBySlug(slug: string) {
  * 草稿预览取数：携带 admin 签发的短时效 preview_token，
  * 后端校验通过则放行非已发布内容（preview_token 不在 proto 消息内，手拼 query 旁路传）。
  */
-export async function fetchPagePreview(id: number, token: string) {
+export async function fetchPagePreview(id: string, token: string) {
   const locale = getCurrentLocale();
   return queryClient.fetchQuery({
     queryKey: ['getPagePreview', id, token, locale],
@@ -203,7 +204,7 @@ export function useCreatePage(
 }
 
 export function useUpdatePage(
-  options?: UseMutationOptions<{}, Error, { id: number; values: Record<string, any> }>,
+  options?: UseMutationOptions<{}, Error, { id: string; values: Record<string, any> }>,
 ) {
   return useMutation({
     mutationFn: ({ id, values }) => updatePage(id, values),
@@ -212,7 +213,7 @@ export function useUpdatePage(
 }
 
 export function useDeletePage(
-  options?: UseMutationOptions<{}, Error, number>,
+  options?: UseMutationOptions<{}, Error, string>,
 ) {
   return useMutation({
     mutationFn: (id) => deletePage(id),
