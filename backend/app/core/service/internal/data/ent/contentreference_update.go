@@ -70,14 +70,14 @@ func (_u *ContentReferenceUpdate) ClearDeletedAt() *ContentReferenceUpdate {
 }
 
 // SetCreatedBy sets the "created_by" field.
-func (_u *ContentReferenceUpdate) SetCreatedBy(v uint64) *ContentReferenceUpdate {
+func (_u *ContentReferenceUpdate) SetCreatedBy(v int64) *ContentReferenceUpdate {
 	_u.mutation.ResetCreatedBy()
 	_u.mutation.SetCreatedBy(v)
 	return _u
 }
 
 // SetNillableCreatedBy sets the "created_by" field if the given value is not nil.
-func (_u *ContentReferenceUpdate) SetNillableCreatedBy(v *uint64) *ContentReferenceUpdate {
+func (_u *ContentReferenceUpdate) SetNillableCreatedBy(v *int64) *ContentReferenceUpdate {
 	if v != nil {
 		_u.SetCreatedBy(*v)
 	}
@@ -97,14 +97,14 @@ func (_u *ContentReferenceUpdate) ClearCreatedBy() *ContentReferenceUpdate {
 }
 
 // SetUpdatedBy sets the "updated_by" field.
-func (_u *ContentReferenceUpdate) SetUpdatedBy(v uint64) *ContentReferenceUpdate {
+func (_u *ContentReferenceUpdate) SetUpdatedBy(v int64) *ContentReferenceUpdate {
 	_u.mutation.ResetUpdatedBy()
 	_u.mutation.SetUpdatedBy(v)
 	return _u
 }
 
 // SetNillableUpdatedBy sets the "updated_by" field if the given value is not nil.
-func (_u *ContentReferenceUpdate) SetNillableUpdatedBy(v *uint64) *ContentReferenceUpdate {
+func (_u *ContentReferenceUpdate) SetNillableUpdatedBy(v *int64) *ContentReferenceUpdate {
 	if v != nil {
 		_u.SetUpdatedBy(*v)
 	}
@@ -124,14 +124,14 @@ func (_u *ContentReferenceUpdate) ClearUpdatedBy() *ContentReferenceUpdate {
 }
 
 // SetDeletedBy sets the "deleted_by" field.
-func (_u *ContentReferenceUpdate) SetDeletedBy(v uint64) *ContentReferenceUpdate {
+func (_u *ContentReferenceUpdate) SetDeletedBy(v int64) *ContentReferenceUpdate {
 	_u.mutation.ResetDeletedBy()
 	_u.mutation.SetDeletedBy(v)
 	return _u
 }
 
 // SetNillableDeletedBy sets the "deleted_by" field if the given value is not nil.
-func (_u *ContentReferenceUpdate) SetNillableDeletedBy(v *uint64) *ContentReferenceUpdate {
+func (_u *ContentReferenceUpdate) SetNillableDeletedBy(v *int64) *ContentReferenceUpdate {
 	if v != nil {
 		_u.SetDeletedBy(*v)
 	}
@@ -165,14 +165,14 @@ func (_u *ContentReferenceUpdate) SetNillableSourceType(v *string) *ContentRefer
 }
 
 // SetSourceID sets the "source_id" field.
-func (_u *ContentReferenceUpdate) SetSourceID(v uint64) *ContentReferenceUpdate {
+func (_u *ContentReferenceUpdate) SetSourceID(v int64) *ContentReferenceUpdate {
 	_u.mutation.ResetSourceID()
 	_u.mutation.SetSourceID(v)
 	return _u
 }
 
 // SetNillableSourceID sets the "source_id" field if the given value is not nil.
-func (_u *ContentReferenceUpdate) SetNillableSourceID(v *uint64) *ContentReferenceUpdate {
+func (_u *ContentReferenceUpdate) SetNillableSourceID(v *int64) *ContentReferenceUpdate {
 	if v != nil {
 		_u.SetSourceID(*v)
 	}
@@ -200,14 +200,14 @@ func (_u *ContentReferenceUpdate) SetNillableTargetType(v *string) *ContentRefer
 }
 
 // SetTargetID sets the "target_id" field.
-func (_u *ContentReferenceUpdate) SetTargetID(v uint64) *ContentReferenceUpdate {
+func (_u *ContentReferenceUpdate) SetTargetID(v int64) *ContentReferenceUpdate {
 	_u.mutation.ResetTargetID()
 	_u.mutation.SetTargetID(v)
 	return _u
 }
 
 // SetNillableTargetID sets the "target_id" field if the given value is not nil.
-func (_u *ContentReferenceUpdate) SetNillableTargetID(v *uint64) *ContentReferenceUpdate {
+func (_u *ContentReferenceUpdate) SetNillableTargetID(v *int64) *ContentReferenceUpdate {
 	if v != nil {
 		_u.SetTargetID(*v)
 	}
@@ -296,7 +296,7 @@ func (_u *ContentReferenceUpdate) sqlSave(ctx context.Context) (_node int, err e
 	if err := _u.check(); err != nil {
 		return _node, err
 	}
-	_spec := sqlgraph.NewUpdateSpec(contentreference.Table, contentreference.Columns, sqlgraph.NewFieldSpec(contentreference.FieldID, field.TypeUint64))
+	_spec := sqlgraph.NewUpdateSpec(contentreference.Table, contentreference.Columns, sqlgraph.NewFieldSpec(contentreference.FieldID, field.TypeInt64))
 	if ps := _u.mutation.predicates; len(ps) > 0 {
 		_spec.Predicate = func(selector *sql.Selector) {
 			for i := range ps {
@@ -320,52 +320,52 @@ func (_u *ContentReferenceUpdate) sqlSave(ctx context.Context) (_node int, err e
 		_spec.ClearField(contentreference.FieldDeletedAt, field.TypeTime)
 	}
 	if value, ok := _u.mutation.CreatedBy(); ok {
-		_spec.SetField(contentreference.FieldCreatedBy, field.TypeUint64, value)
+		_spec.SetField(contentreference.FieldCreatedBy, field.TypeInt64, value)
 	}
 	if value, ok := _u.mutation.AddedCreatedBy(); ok {
-		_spec.AddField(contentreference.FieldCreatedBy, field.TypeUint64, value)
+		_spec.AddField(contentreference.FieldCreatedBy, field.TypeInt64, value)
 	}
 	if _u.mutation.CreatedByCleared() {
-		_spec.ClearField(contentreference.FieldCreatedBy, field.TypeUint64)
+		_spec.ClearField(contentreference.FieldCreatedBy, field.TypeInt64)
 	}
 	if value, ok := _u.mutation.UpdatedBy(); ok {
-		_spec.SetField(contentreference.FieldUpdatedBy, field.TypeUint64, value)
+		_spec.SetField(contentreference.FieldUpdatedBy, field.TypeInt64, value)
 	}
 	if value, ok := _u.mutation.AddedUpdatedBy(); ok {
-		_spec.AddField(contentreference.FieldUpdatedBy, field.TypeUint64, value)
+		_spec.AddField(contentreference.FieldUpdatedBy, field.TypeInt64, value)
 	}
 	if _u.mutation.UpdatedByCleared() {
-		_spec.ClearField(contentreference.FieldUpdatedBy, field.TypeUint64)
+		_spec.ClearField(contentreference.FieldUpdatedBy, field.TypeInt64)
 	}
 	if value, ok := _u.mutation.DeletedBy(); ok {
-		_spec.SetField(contentreference.FieldDeletedBy, field.TypeUint64, value)
+		_spec.SetField(contentreference.FieldDeletedBy, field.TypeInt64, value)
 	}
 	if value, ok := _u.mutation.AddedDeletedBy(); ok {
-		_spec.AddField(contentreference.FieldDeletedBy, field.TypeUint64, value)
+		_spec.AddField(contentreference.FieldDeletedBy, field.TypeInt64, value)
 	}
 	if _u.mutation.DeletedByCleared() {
-		_spec.ClearField(contentreference.FieldDeletedBy, field.TypeUint64)
+		_spec.ClearField(contentreference.FieldDeletedBy, field.TypeInt64)
 	}
 	if _u.mutation.TenantIDCleared() {
-		_spec.ClearField(contentreference.FieldTenantID, field.TypeUint64)
+		_spec.ClearField(contentreference.FieldTenantID, field.TypeInt64)
 	}
 	if value, ok := _u.mutation.SourceType(); ok {
 		_spec.SetField(contentreference.FieldSourceType, field.TypeString, value)
 	}
 	if value, ok := _u.mutation.SourceID(); ok {
-		_spec.SetField(contentreference.FieldSourceID, field.TypeUint64, value)
+		_spec.SetField(contentreference.FieldSourceID, field.TypeInt64, value)
 	}
 	if value, ok := _u.mutation.AddedSourceID(); ok {
-		_spec.AddField(contentreference.FieldSourceID, field.TypeUint64, value)
+		_spec.AddField(contentreference.FieldSourceID, field.TypeInt64, value)
 	}
 	if value, ok := _u.mutation.TargetType(); ok {
 		_spec.SetField(contentreference.FieldTargetType, field.TypeString, value)
 	}
 	if value, ok := _u.mutation.TargetID(); ok {
-		_spec.SetField(contentreference.FieldTargetID, field.TypeUint64, value)
+		_spec.SetField(contentreference.FieldTargetID, field.TypeInt64, value)
 	}
 	if value, ok := _u.mutation.AddedTargetID(); ok {
-		_spec.AddField(contentreference.FieldTargetID, field.TypeUint64, value)
+		_spec.AddField(contentreference.FieldTargetID, field.TypeInt64, value)
 	}
 	if value, ok := _u.mutation.GetField(); ok {
 		_spec.SetField(contentreference.FieldField, field.TypeString, value)
@@ -433,14 +433,14 @@ func (_u *ContentReferenceUpdateOne) ClearDeletedAt() *ContentReferenceUpdateOne
 }
 
 // SetCreatedBy sets the "created_by" field.
-func (_u *ContentReferenceUpdateOne) SetCreatedBy(v uint64) *ContentReferenceUpdateOne {
+func (_u *ContentReferenceUpdateOne) SetCreatedBy(v int64) *ContentReferenceUpdateOne {
 	_u.mutation.ResetCreatedBy()
 	_u.mutation.SetCreatedBy(v)
 	return _u
 }
 
 // SetNillableCreatedBy sets the "created_by" field if the given value is not nil.
-func (_u *ContentReferenceUpdateOne) SetNillableCreatedBy(v *uint64) *ContentReferenceUpdateOne {
+func (_u *ContentReferenceUpdateOne) SetNillableCreatedBy(v *int64) *ContentReferenceUpdateOne {
 	if v != nil {
 		_u.SetCreatedBy(*v)
 	}
@@ -460,14 +460,14 @@ func (_u *ContentReferenceUpdateOne) ClearCreatedBy() *ContentReferenceUpdateOne
 }
 
 // SetUpdatedBy sets the "updated_by" field.
-func (_u *ContentReferenceUpdateOne) SetUpdatedBy(v uint64) *ContentReferenceUpdateOne {
+func (_u *ContentReferenceUpdateOne) SetUpdatedBy(v int64) *ContentReferenceUpdateOne {
 	_u.mutation.ResetUpdatedBy()
 	_u.mutation.SetUpdatedBy(v)
 	return _u
 }
 
 // SetNillableUpdatedBy sets the "updated_by" field if the given value is not nil.
-func (_u *ContentReferenceUpdateOne) SetNillableUpdatedBy(v *uint64) *ContentReferenceUpdateOne {
+func (_u *ContentReferenceUpdateOne) SetNillableUpdatedBy(v *int64) *ContentReferenceUpdateOne {
 	if v != nil {
 		_u.SetUpdatedBy(*v)
 	}
@@ -487,14 +487,14 @@ func (_u *ContentReferenceUpdateOne) ClearUpdatedBy() *ContentReferenceUpdateOne
 }
 
 // SetDeletedBy sets the "deleted_by" field.
-func (_u *ContentReferenceUpdateOne) SetDeletedBy(v uint64) *ContentReferenceUpdateOne {
+func (_u *ContentReferenceUpdateOne) SetDeletedBy(v int64) *ContentReferenceUpdateOne {
 	_u.mutation.ResetDeletedBy()
 	_u.mutation.SetDeletedBy(v)
 	return _u
 }
 
 // SetNillableDeletedBy sets the "deleted_by" field if the given value is not nil.
-func (_u *ContentReferenceUpdateOne) SetNillableDeletedBy(v *uint64) *ContentReferenceUpdateOne {
+func (_u *ContentReferenceUpdateOne) SetNillableDeletedBy(v *int64) *ContentReferenceUpdateOne {
 	if v != nil {
 		_u.SetDeletedBy(*v)
 	}
@@ -528,14 +528,14 @@ func (_u *ContentReferenceUpdateOne) SetNillableSourceType(v *string) *ContentRe
 }
 
 // SetSourceID sets the "source_id" field.
-func (_u *ContentReferenceUpdateOne) SetSourceID(v uint64) *ContentReferenceUpdateOne {
+func (_u *ContentReferenceUpdateOne) SetSourceID(v int64) *ContentReferenceUpdateOne {
 	_u.mutation.ResetSourceID()
 	_u.mutation.SetSourceID(v)
 	return _u
 }
 
 // SetNillableSourceID sets the "source_id" field if the given value is not nil.
-func (_u *ContentReferenceUpdateOne) SetNillableSourceID(v *uint64) *ContentReferenceUpdateOne {
+func (_u *ContentReferenceUpdateOne) SetNillableSourceID(v *int64) *ContentReferenceUpdateOne {
 	if v != nil {
 		_u.SetSourceID(*v)
 	}
@@ -563,14 +563,14 @@ func (_u *ContentReferenceUpdateOne) SetNillableTargetType(v *string) *ContentRe
 }
 
 // SetTargetID sets the "target_id" field.
-func (_u *ContentReferenceUpdateOne) SetTargetID(v uint64) *ContentReferenceUpdateOne {
+func (_u *ContentReferenceUpdateOne) SetTargetID(v int64) *ContentReferenceUpdateOne {
 	_u.mutation.ResetTargetID()
 	_u.mutation.SetTargetID(v)
 	return _u
 }
 
 // SetNillableTargetID sets the "target_id" field if the given value is not nil.
-func (_u *ContentReferenceUpdateOne) SetNillableTargetID(v *uint64) *ContentReferenceUpdateOne {
+func (_u *ContentReferenceUpdateOne) SetNillableTargetID(v *int64) *ContentReferenceUpdateOne {
 	if v != nil {
 		_u.SetTargetID(*v)
 	}
@@ -672,7 +672,7 @@ func (_u *ContentReferenceUpdateOne) sqlSave(ctx context.Context) (_node *Conten
 	if err := _u.check(); err != nil {
 		return _node, err
 	}
-	_spec := sqlgraph.NewUpdateSpec(contentreference.Table, contentreference.Columns, sqlgraph.NewFieldSpec(contentreference.FieldID, field.TypeUint64))
+	_spec := sqlgraph.NewUpdateSpec(contentreference.Table, contentreference.Columns, sqlgraph.NewFieldSpec(contentreference.FieldID, field.TypeInt64))
 	id, ok := _u.mutation.ID()
 	if !ok {
 		return nil, &ValidationError{Name: "id", err: errors.New(`ent: missing "ContentReference.id" for update`)}
@@ -713,52 +713,52 @@ func (_u *ContentReferenceUpdateOne) sqlSave(ctx context.Context) (_node *Conten
 		_spec.ClearField(contentreference.FieldDeletedAt, field.TypeTime)
 	}
 	if value, ok := _u.mutation.CreatedBy(); ok {
-		_spec.SetField(contentreference.FieldCreatedBy, field.TypeUint64, value)
+		_spec.SetField(contentreference.FieldCreatedBy, field.TypeInt64, value)
 	}
 	if value, ok := _u.mutation.AddedCreatedBy(); ok {
-		_spec.AddField(contentreference.FieldCreatedBy, field.TypeUint64, value)
+		_spec.AddField(contentreference.FieldCreatedBy, field.TypeInt64, value)
 	}
 	if _u.mutation.CreatedByCleared() {
-		_spec.ClearField(contentreference.FieldCreatedBy, field.TypeUint64)
+		_spec.ClearField(contentreference.FieldCreatedBy, field.TypeInt64)
 	}
 	if value, ok := _u.mutation.UpdatedBy(); ok {
-		_spec.SetField(contentreference.FieldUpdatedBy, field.TypeUint64, value)
+		_spec.SetField(contentreference.FieldUpdatedBy, field.TypeInt64, value)
 	}
 	if value, ok := _u.mutation.AddedUpdatedBy(); ok {
-		_spec.AddField(contentreference.FieldUpdatedBy, field.TypeUint64, value)
+		_spec.AddField(contentreference.FieldUpdatedBy, field.TypeInt64, value)
 	}
 	if _u.mutation.UpdatedByCleared() {
-		_spec.ClearField(contentreference.FieldUpdatedBy, field.TypeUint64)
+		_spec.ClearField(contentreference.FieldUpdatedBy, field.TypeInt64)
 	}
 	if value, ok := _u.mutation.DeletedBy(); ok {
-		_spec.SetField(contentreference.FieldDeletedBy, field.TypeUint64, value)
+		_spec.SetField(contentreference.FieldDeletedBy, field.TypeInt64, value)
 	}
 	if value, ok := _u.mutation.AddedDeletedBy(); ok {
-		_spec.AddField(contentreference.FieldDeletedBy, field.TypeUint64, value)
+		_spec.AddField(contentreference.FieldDeletedBy, field.TypeInt64, value)
 	}
 	if _u.mutation.DeletedByCleared() {
-		_spec.ClearField(contentreference.FieldDeletedBy, field.TypeUint64)
+		_spec.ClearField(contentreference.FieldDeletedBy, field.TypeInt64)
 	}
 	if _u.mutation.TenantIDCleared() {
-		_spec.ClearField(contentreference.FieldTenantID, field.TypeUint64)
+		_spec.ClearField(contentreference.FieldTenantID, field.TypeInt64)
 	}
 	if value, ok := _u.mutation.SourceType(); ok {
 		_spec.SetField(contentreference.FieldSourceType, field.TypeString, value)
 	}
 	if value, ok := _u.mutation.SourceID(); ok {
-		_spec.SetField(contentreference.FieldSourceID, field.TypeUint64, value)
+		_spec.SetField(contentreference.FieldSourceID, field.TypeInt64, value)
 	}
 	if value, ok := _u.mutation.AddedSourceID(); ok {
-		_spec.AddField(contentreference.FieldSourceID, field.TypeUint64, value)
+		_spec.AddField(contentreference.FieldSourceID, field.TypeInt64, value)
 	}
 	if value, ok := _u.mutation.TargetType(); ok {
 		_spec.SetField(contentreference.FieldTargetType, field.TypeString, value)
 	}
 	if value, ok := _u.mutation.TargetID(); ok {
-		_spec.SetField(contentreference.FieldTargetID, field.TypeUint64, value)
+		_spec.SetField(contentreference.FieldTargetID, field.TypeInt64, value)
 	}
 	if value, ok := _u.mutation.AddedTargetID(); ok {
-		_spec.AddField(contentreference.FieldTargetID, field.TypeUint64, value)
+		_spec.AddField(contentreference.FieldTargetID, field.TypeInt64, value)
 	}
 	if value, ok := _u.mutation.GetField(); ok {
 		_spec.SetField(contentreference.FieldField, field.TypeString, value)

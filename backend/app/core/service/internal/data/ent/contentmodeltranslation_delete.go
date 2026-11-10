@@ -40,7 +40,7 @@ func (_d *ContentModelTranslationDelete) ExecX(ctx context.Context) int {
 }
 
 func (_d *ContentModelTranslationDelete) sqlExec(ctx context.Context) (int, error) {
-	_spec := sqlgraph.NewDeleteSpec(contentmodeltranslation.Table, sqlgraph.NewFieldSpec(contentmodeltranslation.FieldID, field.TypeUint64))
+	_spec := sqlgraph.NewDeleteSpec(contentmodeltranslation.Table, sqlgraph.NewFieldSpec(contentmodeltranslation.FieldID, field.TypeInt64))
 	if ps := _d.mutation.predicates; len(ps) > 0 {
 		_spec.Predicate = func(selector *sql.Selector) {
 			for i := range ps {

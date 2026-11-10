@@ -108,10 +108,10 @@ func (s *AiContentService) IndexPostWorker(taskType string, payload *task.AiPost
 	}
 	if s.usageRepo != nil {
 		_ = s.usageRepo.Create(ctx, &data.UsageRecord{
-			TenantID:    uint64(tenantId),
-			ModelName:   aiMenuEmbedModel,
+			TenantID:     int64(tenantId),
+			ModelName:    aiMenuEmbedModel,
 			PromptTokens: uint32(resp.Usage.PromptTokens),
-			TotalTokens: uint32(resp.Usage.TotalTokens),
+			TotalTokens:  uint32(resp.Usage.TotalTokens),
 		})
 	}
 	vec := vectorToLiteral(resp.Data[0].Embedding)
@@ -154,7 +154,7 @@ func (s *AiContentService) BuildPostSearchIndex(ctx context.Context) (int, error
 		return 0, fmt.Errorf("fetch posts for index: %w", err)
 	}
 	type postIdxRow struct {
-		id       uint64
+		id       int64
 		tenantId int64
 		text     string
 	}

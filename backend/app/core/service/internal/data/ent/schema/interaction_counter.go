@@ -37,7 +37,7 @@ func (InteractionCounter) Fields() []ent.Field {
 			Comment("目标类型，对应 interaction.TargetType 枚举").
 			Optional().
 			Nillable(),
-		field.Uint64("target_id").
+		field.Int64("target_id").
 			Comment("目标ID").
 			Optional().
 			Nillable(),
@@ -57,7 +57,7 @@ func (InteractionCounter) Mixin() []ent.Mixin {
 	return []ent.Mixin{
 		mixin.AutoIncrementId64{},
 		mixin.TimeAt{},
-		mixin.TenantID[uint64]{},
+		mixin.TenantID[int64]{},
 	}
 }
 

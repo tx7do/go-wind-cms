@@ -96,7 +96,7 @@ func (r *MembershipRepo) AssignTenantMembershipWithTx(ctx context.Context, tx *e
 		return err
 	}
 
-	var roleIDs []uint64
+	var roleIDs []int64
 	if data.RoleId != nil {
 		roleIDs = append(roleIDs, data.GetRoleId())
 	}
@@ -105,7 +105,7 @@ func (r *MembershipRepo) AssignTenantMembershipWithTx(ctx context.Context, tx *e
 	}
 	roleIDs = sliceutil.Unique(roleIDs)
 
-	var orgUnitIDs []uint64
+	var orgUnitIDs []int64
 	if data.OrgUnitId != nil {
 		orgUnitIDs = append(orgUnitIDs, data.GetOrgUnitId())
 	}
@@ -114,7 +114,7 @@ func (r *MembershipRepo) AssignTenantMembershipWithTx(ctx context.Context, tx *e
 	}
 	orgUnitIDs = sliceutil.Unique(orgUnitIDs)
 
-	var positionIDs []uint64
+	var positionIDs []int64
 	if data.PositionId != nil {
 		positionIDs = append(positionIDs, data.GetPositionId())
 	}
@@ -196,7 +196,7 @@ func (r *MembershipRepo) AssignTenantMembershipWithTx(ctx context.Context, tx *e
 }
 
 func (r *MembershipRepo) AssignMembershipRoles(ctx context.Context,
-	userID uint64,
+	userID int64,
 	datas []*permissionV1.MembershipRole,
 ) (err error) {
 	var tx *ent.Tx
@@ -218,7 +218,7 @@ func (r *MembershipRepo) AssignMembershipRoles(ctx context.Context,
 		}
 	}()
 
-	var membershipID uint64
+	var membershipID int64
 	membershipID, err = r.queryMembershipID(ctx, tx, userID)
 	if err != nil {
 		r.log.Errorf("get membership id failed: %s", err.Error())
@@ -235,7 +235,7 @@ func (r *MembershipRepo) AssignMembershipRoles(ctx context.Context,
 // AssignMembershipPositions 分配职位给用户
 func (r *MembershipRepo) AssignMembershipPositions(
 	ctx context.Context,
-	userID uint64,
+	userID int64,
 	datas []*identityV1.MembershipPosition,
 ) (err error) {
 	var tx *ent.Tx
@@ -257,7 +257,7 @@ func (r *MembershipRepo) AssignMembershipPositions(
 		}
 	}()
 
-	var membershipID uint64
+	var membershipID int64
 	membershipID, err = r.queryMembershipID(ctx, tx, userID)
 	if err != nil {
 		r.log.Errorf("get membership id failed: %s", err.Error())
@@ -273,7 +273,7 @@ func (r *MembershipRepo) AssignMembershipPositions(
 
 // AssignMembershipOrgUnits 分配组织单元给用户
 func (r *MembershipRepo) AssignMembershipOrgUnits(ctx context.Context,
-	userID uint64,
+	userID int64,
 	datas []*identityV1.MembershipOrgUnit,
 ) (err error) {
 	var tx *ent.Tx
@@ -295,7 +295,7 @@ func (r *MembershipRepo) AssignMembershipOrgUnits(ctx context.Context,
 		}
 	}()
 
-	var membershipID uint64
+	var membershipID int64
 	membershipID, err = r.queryMembershipID(ctx, tx, userID)
 	if err != nil {
 		r.log.Errorf("get membership id failed: %s", err.Error())
@@ -311,7 +311,7 @@ func (r *MembershipRepo) AssignMembershipOrgUnits(ctx context.Context,
 
 // SetUserOrgUnitID 设置用户的组织单元 ID
 // 如果只是单一一个组织，可以直接在 Membership 表中设置 org_unit_id 字段。
-func (r *MembershipRepo) SetUserOrgUnitID(ctx context.Context, userID uint64, orgUnitID uint64) error {
+func (r *MembershipRepo) SetUserOrgUnitID(ctx context.Context, userID int64, orgUnitID int64) error {
 	up := r.entClient.Client().Membership.
 		Update().
 		Where(
@@ -339,7 +339,7 @@ func (r *MembershipRepo) SetUserOrgUnitID(ctx context.Context, userID uint64, or
 
 // SetUserRoleID 设置用户的角色 ID
 // 如果只是单一一个角色，可以直接在 Membership 表中设置 role_id 字段。
-func (r *MembershipRepo) SetUserRoleID(ctx context.Context, userID uint64, roleID uint64) error {
+func (r *MembershipRepo) SetUserRoleID(ctx context.Context, userID int64, roleID int64) error {
 	up := r.entClient.Client().Membership.
 		Update().
 		Where(
@@ -360,14 +360,14 @@ func (r *MembershipRepo) SetUserRoleID(ctx context.Context, userID uint64, roleI
 
 	if _, err := up.SetRoleID(roleID).Save(ctx); err != nil {
 		r.log.Errorf("update membership role_id failed: %s", err.Error())
-			return identityV1.ErrorInternalServerError("update membership role_id failed")
+		return identityV1.ErrorInternalServerError("update membership role_id failed")
 	}
 	return nil
 }
 
 // SetUserPositionID 设置用户的职位 ID
 // 如果只是单一个职位，可以直接在 Membership 表中设置 position_id 字段。
-func (r *MembershipRepo) SetUserPositionID(ctx context.Context, userID uint64, positionID uint64) error {
+func (r *MembershipRepo) SetUserPositionID(ctx context.Context, userID int64, positionID int64) error {
 	up := r.entClient.Client().Membership.
 		Update().
 		Where(
@@ -394,7 +394,7 @@ func (r *MembershipRepo) SetUserPositionID(ctx context.Context, userID uint64, p
 }
 
 // SetUserStatus 设置用户的状态
-func (r *MembershipRepo) SetUserStatus(ctx context.Context, userID uint64, status *identityV1.Membership_Status) error {
+func (r *MembershipRepo) SetUserStatus(ctx context.Context, userID int64, status *identityV1.Membership_Status) error {
 	up := r.entClient.Client().Membership.
 		Update().
 		Where(
@@ -421,7 +421,7 @@ func (r *MembershipRepo) SetUserStatus(ctx context.Context, userID uint64, statu
 }
 
 // SetUserEndAt 设置用户的结束时间
-func (r *MembershipRepo) SetUserEndAt(ctx context.Context, userID uint64, endAt *time.Time) error {
+func (r *MembershipRepo) SetUserEndAt(ctx context.Context, userID int64, endAt *time.Time) error {
 	up := r.entClient.Client().Membership.
 		Update().
 		Where(
@@ -448,12 +448,12 @@ func (r *MembershipRepo) SetUserEndAt(ctx context.Context, userID uint64, endAt 
 }
 
 // GetMembershipID 获取 Membership ID
-func (r *MembershipRepo) GetMembershipID(ctx context.Context, userID uint64) (membershipID uint64, err error) {
+func (r *MembershipRepo) GetMembershipID(ctx context.Context, userID int64) (membershipID int64, err error) {
 	var tx *ent.Tx
 	tx, err = r.entClient.Client().Tx(ctx)
 	if err != nil {
 		r.log.Errorf("start transaction failed: %s", err.Error())
-		return uint64(0), identityV1.ErrorInternalServerError("start transaction failed")
+		return int64(0), identityV1.ErrorInternalServerError("start transaction failed")
 	}
 	defer func() {
 		if err != nil {
@@ -472,7 +472,7 @@ func (r *MembershipRepo) GetMembershipID(ctx context.Context, userID uint64) (me
 }
 
 // GetMembershipByUserTenant 获取用户在租户下的 Membership 记录
-func (r *MembershipRepo) GetMembershipByUserTenant(ctx context.Context, userID uint64) (*identityV1.Membership, error) {
+func (r *MembershipRepo) GetMembershipByUserTenant(ctx context.Context, userID int64) (*identityV1.Membership, error) {
 	now := time.Now()
 	builder := r.entClient.Client().Membership.Query()
 	builder.Where(
@@ -495,7 +495,7 @@ func (r *MembershipRepo) GetMembershipByUserTenant(ctx context.Context, userID u
 }
 
 // GetUserActiveMemberships 获取用户所有有效的 Membership 列表
-func (r *MembershipRepo) GetUserActiveMemberships(ctx context.Context, userID uint64) ([]*identityV1.Membership, error) {
+func (r *MembershipRepo) GetUserActiveMemberships(ctx context.Context, userID int64) ([]*identityV1.Membership, error) {
 	now := time.Now()
 	builder := r.entClient.Client().Membership.Query()
 	builder.Where(
@@ -521,7 +521,7 @@ func (r *MembershipRepo) GetUserActiveMemberships(ctx context.Context, userID ui
 }
 
 // ListMembershipRoleIDs 获取 Membership 关联的角色 ID 列表
-func (r *MembershipRepo) ListMembershipRoleIDs(ctx context.Context, userID uint64) (roleIDs []uint64, err error) {
+func (r *MembershipRepo) ListMembershipRoleIDs(ctx context.Context, userID int64) (roleIDs []int64, err error) {
 	var tx *ent.Tx
 	tx, err = r.entClient.Client().Tx(ctx)
 	if err != nil {
@@ -541,7 +541,7 @@ func (r *MembershipRepo) ListMembershipRoleIDs(ctx context.Context, userID uint6
 		}
 	}()
 
-	var membershipID uint64
+	var membershipID int64
 	membershipID, err = r.queryMembershipID(ctx, tx, userID)
 	if err != nil {
 		r.log.Errorf("get membership id failed: %s", err.Error())
@@ -552,12 +552,12 @@ func (r *MembershipRepo) ListMembershipRoleIDs(ctx context.Context, userID uint6
 }
 
 // GetRoleIDsByMembership 根据 Membership ID 获取关联的角色 ID 列表
-func (r *MembershipRepo) GetRoleIDsByMembership(ctx context.Context, membershipID uint64) (roleIDs []uint64, err error) {
+func (r *MembershipRepo) GetRoleIDsByMembership(ctx context.Context, membershipID int64) (roleIDs []int64, err error) {
 	return r.membershipRoleRepo.ListRoleIDs(ctx, membershipID, false)
 }
 
 // ListMembershipOrgUnitIDs 获取 Membership 关联的组织单元 ID 列表
-func (r *MembershipRepo) ListMembershipOrgUnitIDs(ctx context.Context, userID uint64) (orgUnitIDs []uint64, err error) {
+func (r *MembershipRepo) ListMembershipOrgUnitIDs(ctx context.Context, userID int64) (orgUnitIDs []int64, err error) {
 	var tx *ent.Tx
 	tx, err = r.entClient.Client().Tx(ctx)
 	if err != nil {
@@ -587,7 +587,7 @@ func (r *MembershipRepo) ListMembershipOrgUnitIDs(ctx context.Context, userID ui
 }
 
 // ListMembershipPositionIDs 获取 Membership 关联的职位 ID 列表
-func (r *MembershipRepo) ListMembershipPositionIDs(ctx context.Context, userID uint64) (positionIDs []uint64, err error) {
+func (r *MembershipRepo) ListMembershipPositionIDs(ctx context.Context, userID int64) (positionIDs []int64, err error) {
 	var tx *ent.Tx
 	tx, err = r.entClient.Client().Tx(ctx)
 	if err != nil {
@@ -617,7 +617,7 @@ func (r *MembershipRepo) ListMembershipPositionIDs(ctx context.Context, userID u
 }
 
 // GetMembershipIDByUserID 获取 Membership ID By User ID
-func (r *MembershipRepo) GetMembershipIDByUserID(ctx context.Context, userID uint64) (membershipID uint64, err error) {
+func (r *MembershipRepo) GetMembershipIDByUserID(ctx context.Context, userID int64) (membershipID int64, err error) {
 	now := time.Now()
 
 	// membership 按 (tenant_id, user_id) 维度组织，一对多租户模式下同一 user_id 可能
@@ -656,9 +656,9 @@ func (r *MembershipRepo) GetMembershipIDByUserID(ctx context.Context, userID uin
 }
 
 // ListMembershipRelationIDs 获取 Membership 关联的角色、职位、组织单元 ID 列表
-func (r *MembershipRepo) ListMembershipRelationIDs(ctx context.Context, userID uint64) (roleIDs []uint64, positionIDs []uint64, orgUnitIDs []uint64, err error) {
+func (r *MembershipRepo) ListMembershipRelationIDs(ctx context.Context, userID int64) (roleIDs []int64, positionIDs []int64, orgUnitIDs []int64, err error) {
 	// 获取 Membership ID
-	var membershipID uint64
+	var membershipID int64
 	if membershipID, err = r.GetMembershipIDByUserID(ctx, userID); err != nil {
 		return nil, nil, nil, err
 	}
@@ -733,8 +733,8 @@ func (r *MembershipRepo) upsertMembership(ctx context.Context, tx *ent.Tx, data 
 // queryMembershipID 查询 Membership ID
 func (r *MembershipRepo) queryMembershipID(
 	ctx context.Context, tx *ent.Tx,
-	userID uint64,
-) (uint64, error) {
+	userID int64,
+) (int64, error) {
 	now := time.Now()
 
 	// membership 按 (tenant_id, user_id) 维度组织，一对多租户模式下同一 user_id 可能
@@ -763,7 +763,7 @@ func (r *MembershipRepo) queryMembershipID(
 }
 
 // ListUserIDs 获取 Membership ID 关联的用户 ID 列表
-func (r *MembershipRepo) ListUserIDs(ctx context.Context, membershipID uint64, excludeExpired bool) ([]uint64, error) {
+func (r *MembershipRepo) ListUserIDs(ctx context.Context, membershipID int64, excludeExpired bool) ([]int64, error) {
 	q := r.entClient.Client().Membership.Query().
 		Where(
 			membership.IDEQ(membershipID),
@@ -786,16 +786,16 @@ func (r *MembershipRepo) ListUserIDs(ctx context.Context, membershipID uint64, e
 		r.log.Errorf("query user ids by membership id failed: %s", err.Error())
 		return nil, identityV1.ErrorInternalServerError("query user ids by membership id failed")
 	}
-	ids := make([]uint64, len(intIDs))
+	ids := make([]int64, len(intIDs))
 	for i, v := range intIDs {
-		ids[i] = uint64(v)
+		ids[i] = int64(v)
 	}
 	return ids, nil
 
 }
 
 // ListUserIDsByMembershipIDs 获取 Membership ID 列表关联的用户 ID 列表
-func (r *MembershipRepo) ListUserIDsByMembershipIDs(ctx context.Context, membershipIDs []uint64, excludeExpired bool) ([]uint64, error) {
+func (r *MembershipRepo) ListUserIDsByMembershipIDs(ctx context.Context, membershipIDs []int64, excludeExpired bool) ([]int64, error) {
 	q := r.entClient.Client().Membership.Query().
 		Where(
 			membership.IDIn(membershipIDs...),
@@ -817,15 +817,15 @@ func (r *MembershipRepo) ListUserIDsByMembershipIDs(ctx context.Context, members
 		r.log.Errorf("query user ids by membership ids failed: %s", err.Error())
 		return nil, identityV1.ErrorInternalServerError("query user ids by membership ids failed")
 	}
-	ids := make([]uint64, len(intIDs))
+	ids := make([]int64, len(intIDs))
 	for i, v := range intIDs {
-		ids[i] = uint64(v)
+		ids[i] = int64(v)
 	}
 	return ids, nil
 }
 
 // ListUserIDsByOrgUnitID 获取组织单元关联的用户 ID 列表
-func (r *MembershipRepo) ListUserIDsByOrgUnitID(ctx context.Context, orgUnitID uint64, excludeExpired bool) ([]uint64, error) {
+func (r *MembershipRepo) ListUserIDsByOrgUnitID(ctx context.Context, orgUnitID int64, excludeExpired bool) ([]int64, error) {
 	membershipIDs, err := r.membershipOrgUnitRepo.ListMembershipIDs(ctx, orgUnitID, excludeExpired)
 	if err != nil {
 		return nil, err
@@ -835,7 +835,7 @@ func (r *MembershipRepo) ListUserIDsByOrgUnitID(ctx context.Context, orgUnitID u
 }
 
 // ListUserIDsByOrgUnitIDs 获取多个组织单元关联的用户 ID 列表
-func (r *MembershipRepo) ListUserIDsByOrgUnitIDs(ctx context.Context, orgUnitIDs []uint64, excludeExpired bool) ([]uint64, error) {
+func (r *MembershipRepo) ListUserIDsByOrgUnitIDs(ctx context.Context, orgUnitIDs []int64, excludeExpired bool) ([]int64, error) {
 	membershipIDs, err := r.membershipOrgUnitRepo.ListMembershipIDsByOrgUnitIDs(ctx, orgUnitIDs, excludeExpired)
 	if err != nil {
 		return nil, err
@@ -845,7 +845,7 @@ func (r *MembershipRepo) ListUserIDsByOrgUnitIDs(ctx context.Context, orgUnitIDs
 }
 
 // ListUserIDsByPositionID 获取职位关联的用户 ID 列表
-func (r *MembershipRepo) ListUserIDsByPositionID(ctx context.Context, positionID uint64, excludeExpired bool) ([]uint64, error) {
+func (r *MembershipRepo) ListUserIDsByPositionID(ctx context.Context, positionID int64, excludeExpired bool) ([]int64, error) {
 	membershipIDs, err := r.membershipPositionRepo.ListMembershipIDs(ctx, positionID, excludeExpired)
 	if err != nil {
 		return nil, err
@@ -855,7 +855,7 @@ func (r *MembershipRepo) ListUserIDsByPositionID(ctx context.Context, positionID
 }
 
 // ListUserIDsByPositionIDs 获取多个职位关联的用户 ID 列表
-func (r *MembershipRepo) ListUserIDsByPositionIDs(ctx context.Context, positionIDs []uint64, excludeExpired bool) ([]uint64, error) {
+func (r *MembershipRepo) ListUserIDsByPositionIDs(ctx context.Context, positionIDs []int64, excludeExpired bool) ([]int64, error) {
 	membershipIDs, err := r.membershipPositionRepo.ListMembershipIDsByPositionIDs(ctx, positionIDs, excludeExpired)
 	if err != nil {
 		return nil, err
@@ -865,7 +865,7 @@ func (r *MembershipRepo) ListUserIDsByPositionIDs(ctx context.Context, positionI
 }
 
 // ListUserIDsByRoleID 获取角色关联的用户 ID 列表
-func (r *MembershipRepo) ListUserIDsByRoleID(ctx context.Context, roleID uint64, excludeExpired bool) ([]uint64, error) {
+func (r *MembershipRepo) ListUserIDsByRoleID(ctx context.Context, roleID int64, excludeExpired bool) ([]int64, error) {
 	membershipIDs, err := r.membershipRoleRepo.ListMembershipIDs(ctx, roleID, excludeExpired)
 	if err != nil {
 		return nil, err
@@ -875,7 +875,7 @@ func (r *MembershipRepo) ListUserIDsByRoleID(ctx context.Context, roleID uint64,
 }
 
 // ListUserIDsByRoleIDs 获取多个角色关联的用户 ID 列表
-func (r *MembershipRepo) ListUserIDsByRoleIDs(ctx context.Context, roleIDs []uint64, excludeExpired bool) ([]uint64, error) {
+func (r *MembershipRepo) ListUserIDsByRoleIDs(ctx context.Context, roleIDs []int64, excludeExpired bool) ([]int64, error) {
 	membershipIDs, err := r.membershipRoleRepo.ListMembershipIDsByRoleIDs(ctx, roleIDs, excludeExpired)
 	if err != nil {
 		return nil, err
@@ -885,7 +885,7 @@ func (r *MembershipRepo) ListUserIDsByRoleIDs(ctx context.Context, roleIDs []uin
 }
 
 // CleanRelationsByUserID 清理用户关联的所有关系数据
-func (r *MembershipRepo) CleanRelationsByUserID(ctx context.Context, tx *ent.Tx, userID uint64) error {
+func (r *MembershipRepo) CleanRelationsByUserID(ctx context.Context, tx *ent.Tx, userID int64) error {
 	if userID == 0 {
 		return nil
 	}

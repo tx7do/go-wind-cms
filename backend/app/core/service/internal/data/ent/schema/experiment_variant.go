@@ -32,7 +32,7 @@ func (ExperimentVariant) Annotations() []schema.Annotation {
 // Fields of the ExperimentVariant.
 func (ExperimentVariant) Fields() []ent.Field {
 	return []ent.Field{
-		field.Uint64("experiment_id").
+		field.Int64("experiment_id").
 			Comment("所属实验 ID").
 			Optional().
 			Nillable(),
@@ -64,7 +64,7 @@ func (ExperimentVariant) Mixin() []ent.Mixin {
 		mixin.AutoIncrementId64{},
 		mixin.TimeAt{},
 		mixin.OperatorID64{},
-		mixin.TenantID[uint64]{},
+		mixin.TenantID[int64]{},
 	}
 }
 

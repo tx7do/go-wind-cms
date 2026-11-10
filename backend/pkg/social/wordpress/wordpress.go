@@ -82,9 +82,9 @@ type mediaView struct {
 }
 
 type createPostRequest struct {
-	Title        string `json:"title"`
-	Content      string `json:"content"`
-	Status       string `json:"status"`
+	Title         string `json:"title"`
+	Content       string `json:"content"`
+	Status        string `json:"status"`
 	FeaturedMedia int64  `json:"featured_media,omitempty"`
 }
 

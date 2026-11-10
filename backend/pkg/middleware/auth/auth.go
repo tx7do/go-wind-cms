@@ -87,9 +87,9 @@ func Server(opts ...Option) middleware.Middleware {
 				}
 
 				userViewer := appViewer.NewUserViewer(
-					uint64(tokenPayload.GetUserId()),
-					uint64(tokenPayload.GetTenantId()),
-					uint64(tokenPayload.GetOrgUnitId()),
+					int64(tokenPayload.GetUserId()),
+					int64(tokenPayload.GetTenantId()),
+					int64(tokenPayload.GetOrgUnitId()),
 					traceID,
 					tokenPayload.GetDataScope(),
 				)
@@ -99,9 +99,9 @@ func Server(opts ...Option) middleware.Middleware {
 			if op.injectMetadata {
 				//op.log.Debugf("auth middleware: injecting operator metadata into context")
 				operator := metadata.NewUserOperator(
-					uint64(tokenPayload.GetUserId()),
-					uint64(tokenPayload.GetTenantId()),
-					uint64(tokenPayload.GetOrgUnitId()),
+					int64(tokenPayload.GetUserId()),
+					int64(tokenPayload.GetTenantId()),
+					int64(tokenPayload.GetOrgUnitId()),
 					tokenPayload.GetDataScope(),
 				)
 				ctx, err = metadata.NewContext(ctx, operator)

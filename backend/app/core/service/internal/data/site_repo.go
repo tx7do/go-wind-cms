@@ -68,7 +68,7 @@ func (r *SiteRepo) init() {
 	r.mapper.AppendConverters(r.statusConverter.NewConverterPair())
 }
 
-func (r *SiteRepo) IsExist(ctx context.Context, id uint64) (bool, error) {
+func (r *SiteRepo) IsExist(ctx context.Context, id int64) (bool, error) {
 	exist, err := r.entClient.Client().Site.Query().
 		Where(site.IDEQ(id)).
 		Exist(ctx)
@@ -229,9 +229,9 @@ func (r *SiteRepo) Update(ctx context.Context, req *siteV1.UpdateSiteRequest) (*
 				SetNillableDomain(req.Data.Domain).
 				SetNillableIsDefault(req.Data.IsDefault).
 				SetNillableDefaultLocale(req.Data.DefaultLocale).
-			SetNillableTemplate(req.Data.Template).
-			SetNillableTheme(req.Data.Theme).
-			SetUpdatedAt(time.Now())
+				SetNillableTemplate(req.Data.Template).
+				SetNillableTheme(req.Data.Theme).
+				SetUpdatedAt(time.Now())
 
 			// updated_by 强制由服务端 viewer context 推导，忽略客户端传入值
 			if hasUser {

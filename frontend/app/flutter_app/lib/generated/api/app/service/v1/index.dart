@@ -384,7 +384,7 @@ class AuthenticationServiceV1LoginRequest {
     // field 6: user_id
     final f6 = user_id;
     if (f6 != null) {
-      w.writeUint64(6, f6);
+      w.writeInt64(6, f6);
     }
     // field 10: username
     final f10 = username;
@@ -503,7 +503,7 @@ class AuthenticationServiceV1LoginRequest {
         }
         // field 6: user_id
         case 6: {
-          m.user_id = r.readUint64();
+          m.user_id = r.readInt64();
           break;
         }
         // field 10: username
@@ -2118,7 +2118,7 @@ class ContentServiceV1ListCategoryResponse {
     // field 2: total
     final f2 = total;
     if (f2 != null) {
-      w.writeUint64(2, f2);
+      w.writeInt64(2, f2);
     }
   }
 
@@ -2137,7 +2137,7 @@ class ContentServiceV1ListCategoryResponse {
         }
         // field 2: total
         case 2: {
-          m.total = r.readUint64();
+          m.total = r.readInt64();
           break;
         }
         default: {
@@ -2383,7 +2383,7 @@ class ContentServiceV1Category {
     // field 1: id
     final f1 = id;
     if (f1 != null) {
-      w.writeUint64(1, f1);
+      w.writeInt64(1, f1);
     }
     // field 2: status
     final f2 = status;
@@ -2448,12 +2448,12 @@ class ContentServiceV1Category {
     // field 31: contentModelId
     final f31 = contentModelId;
     if (f31 != null) {
-      w.writeUint64(31, f31);
+      w.writeInt64(31, f31);
     }
     // field 60: parentId
     final f60 = parentId;
     if (f60 != null) {
-      w.writeUint64(60, f60);
+      w.writeInt64(60, f60);
     }
     // field 61: children
     final f61 = children;
@@ -2473,17 +2473,17 @@ class ContentServiceV1Category {
     // field 100: createdBy
     final f100 = createdBy;
     if (f100 != null) {
-      w.writeUint64(100, f100);
+      w.writeInt64(100, f100);
     }
     // field 101: updatedBy
     final f101 = updatedBy;
     if (f101 != null) {
-      w.writeUint64(101, f101);
+      w.writeInt64(101, f101);
     }
     // field 102: deletedBy
     final f102 = deletedBy;
     if (f102 != null) {
-      w.writeUint64(102, f102);
+      w.writeInt64(102, f102);
     }
     // field 200: createdAt
     final f200 = createdAt;
@@ -2512,7 +2512,7 @@ class ContentServiceV1Category {
       switch (r.fieldNumber) {
         // field 1: id
         case 1: {
-          m.id = r.readUint64();
+          m.id = r.readInt64();
           break;
         }
         // field 2: status
@@ -2590,12 +2590,12 @@ class ContentServiceV1Category {
         }
         // field 31: contentModelId
         case 31: {
-          m.contentModelId = r.readUint64();
+          m.contentModelId = r.readInt64();
           break;
         }
         // field 60: parentId
         case 60: {
-          m.parentId = r.readUint64();
+          m.parentId = r.readInt64();
           break;
         }
         // field 61: children
@@ -2615,17 +2615,17 @@ class ContentServiceV1Category {
         }
         // field 100: createdBy
         case 100: {
-          m.createdBy = r.readUint64();
+          m.createdBy = r.readInt64();
           break;
         }
         // field 101: updatedBy
         case 101: {
-          m.updatedBy = r.readUint64();
+          m.updatedBy = r.readInt64();
           break;
         }
         // field 102: deletedBy
         case 102: {
-          m.deletedBy = r.readUint64();
+          m.deletedBy = r.readInt64();
           break;
         }
         // field 200: createdAt
@@ -2842,12 +2842,12 @@ class ContentServiceV1CategoryTranslation {
     // field 1: id
     final f1 = id;
     if (f1 != null) {
-      w.writeUint64(1, f1);
+      w.writeInt64(1, f1);
     }
     // field 2: categoryId
     final f2 = categoryId;
     if (f2 != null) {
-      w.writeUint64(2, f2);
+      w.writeInt64(2, f2);
     }
     // field 3: languageCode
     final f3 = languageCode;
@@ -2887,17 +2887,17 @@ class ContentServiceV1CategoryTranslation {
     // field 100: createdBy
     final f100 = createdBy;
     if (f100 != null) {
-      w.writeUint64(100, f100);
+      w.writeInt64(100, f100);
     }
     // field 101: updatedBy
     final f101 = updatedBy;
     if (f101 != null) {
-      w.writeUint64(101, f101);
+      w.writeInt64(101, f101);
     }
     // field 102: deletedBy
     final f102 = deletedBy;
     if (f102 != null) {
-      w.writeUint64(102, f102);
+      w.writeInt64(102, f102);
     }
     // field 200: createdAt
     final f200 = createdAt;
@@ -2926,12 +2926,12 @@ class ContentServiceV1CategoryTranslation {
       switch (r.fieldNumber) {
         // field 1: id
         case 1: {
-          m.id = r.readUint64();
+          m.id = r.readInt64();
           break;
         }
         // field 2: categoryId
         case 2: {
-          m.categoryId = r.readUint64();
+          m.categoryId = r.readInt64();
           break;
         }
         // field 3: languageCode
@@ -2971,17 +2971,17 @@ class ContentServiceV1CategoryTranslation {
         }
         // field 100: createdBy
         case 100: {
-          m.createdBy = r.readUint64();
+          m.createdBy = r.readInt64();
           break;
         }
         // field 101: updatedBy
         case 101: {
-          m.updatedBy = r.readUint64();
+          m.updatedBy = r.readInt64();
           break;
         }
         // field 102: deletedBy
         case 102: {
-          m.deletedBy = r.readUint64();
+          m.deletedBy = r.readInt64();
           break;
         }
         // field 200: createdAt
@@ -3286,7 +3286,7 @@ class ContentServiceV1GetCategoryRequest {
     // field 1: id
     final f1 = id;
     if (f1 != null) {
-      w.writeUint64(1, f1);
+      w.writeInt64(1, f1);
     }
     // field 2: code
     final f2 = code;
@@ -3315,7 +3315,7 @@ class ContentServiceV1GetCategoryRequest {
       switch (r.fieldNumber) {
         // field 1: id
         case 1: {
-          m.id = r.readUint64();
+          m.id = r.readInt64();
           break;
         }
         // field 2: code
@@ -3508,7 +3508,7 @@ class ContentServiceV1UpdateCategoryRequest {
     // field 1: id
     final f1 = id;
     if (f1 != null) {
-      w.writeUint64(1, f1);
+      w.writeInt64(1, f1);
     }
     // field 2: data
     final f2 = data;
@@ -3537,7 +3537,7 @@ class ContentServiceV1UpdateCategoryRequest {
       switch (r.fieldNumber) {
         // field 1: id
         case 1: {
-          m.id = r.readUint64();
+          m.id = r.readInt64();
           break;
         }
         // field 2: data
@@ -3622,7 +3622,7 @@ class ContentServiceV1DeleteCategoryRequest {
     // field 1: id
     final f1 = id;
     if (f1 != null) {
-      w.writeUint64(1, f1);
+      w.writeInt64(1, f1);
     }
   }
 
@@ -3636,7 +3636,7 @@ class ContentServiceV1DeleteCategoryRequest {
       switch (r.fieldNumber) {
         // field 1: id
         case 1: {
-          m.id = r.readUint64();
+          m.id = r.readInt64();
           break;
         }
         default: {
@@ -3835,7 +3835,7 @@ class CommentServiceV1ListCommentResponse {
     // field 2: total
     final f2 = total;
     if (f2 != null) {
-      w.writeUint64(2, f2);
+      w.writeInt64(2, f2);
     }
   }
 
@@ -3854,7 +3854,7 @@ class CommentServiceV1ListCommentResponse {
         }
         // field 2: total
         case 2: {
-          m.total = r.readUint64();
+          m.total = r.readInt64();
           break;
         }
         default: {
@@ -4116,7 +4116,7 @@ class CommentServiceV1Comment {
     // field 1: id
     final f1 = id;
     if (f1 != null) {
-      w.writeUint64(1, f1);
+      w.writeInt64(1, f1);
     }
     // field 2: contentType
     final f2 = contentType;
@@ -4126,7 +4126,7 @@ class CommentServiceV1Comment {
     // field 3: objectId
     final f3 = objectId;
     if (f3 != null) {
-      w.writeUint64(3, f3);
+      w.writeInt64(3, f3);
     }
     // field 4: content
     final f4 = content;
@@ -4136,7 +4136,7 @@ class CommentServiceV1Comment {
     // field 10: authorId
     final f10 = authorId;
     if (f10 != null) {
-      w.writeUint64(10, f10);
+      w.writeInt64(10, f10);
     }
     // field 11: authorName
     final f11 = authorName;
@@ -4196,7 +4196,7 @@ class CommentServiceV1Comment {
     // field 50: parentId
     final f50 = parentId;
     if (f50 != null) {
-      w.writeUint64(50, f50);
+      w.writeInt64(50, f50);
     }
     // field 51: children
     final f51 = children;
@@ -4206,22 +4206,22 @@ class CommentServiceV1Comment {
     // field 52: replyToId
     final f52 = replyToId;
     if (f52 != null) {
-      w.writeUint64(52, f52);
+      w.writeInt64(52, f52);
     }
     // field 100: createdBy
     final f100 = createdBy;
     if (f100 != null) {
-      w.writeUint64(100, f100);
+      w.writeInt64(100, f100);
     }
     // field 101: updatedBy
     final f101 = updatedBy;
     if (f101 != null) {
-      w.writeUint64(101, f101);
+      w.writeInt64(101, f101);
     }
     // field 102: deletedBy
     final f102 = deletedBy;
     if (f102 != null) {
-      w.writeUint64(102, f102);
+      w.writeInt64(102, f102);
     }
     // field 200: createdAt
     final f200 = createdAt;
@@ -4250,7 +4250,7 @@ class CommentServiceV1Comment {
       switch (r.fieldNumber) {
         // field 1: id
         case 1: {
-          m.id = r.readUint64();
+          m.id = r.readInt64();
           break;
         }
         // field 2: contentType
@@ -4260,7 +4260,7 @@ class CommentServiceV1Comment {
         }
         // field 3: objectId
         case 3: {
-          m.objectId = r.readUint64();
+          m.objectId = r.readInt64();
           break;
         }
         // field 4: content
@@ -4270,7 +4270,7 @@ class CommentServiceV1Comment {
         }
         // field 10: authorId
         case 10: {
-          m.authorId = r.readUint64();
+          m.authorId = r.readInt64();
           break;
         }
         // field 11: authorName
@@ -4330,7 +4330,7 @@ class CommentServiceV1Comment {
         }
         // field 50: parentId
         case 50: {
-          m.parentId = r.readUint64();
+          m.parentId = r.readInt64();
           break;
         }
         // field 51: children
@@ -4340,22 +4340,22 @@ class CommentServiceV1Comment {
         }
         // field 52: replyToId
         case 52: {
-          m.replyToId = r.readUint64();
+          m.replyToId = r.readInt64();
           break;
         }
         // field 100: createdBy
         case 100: {
-          m.createdBy = r.readUint64();
+          m.createdBy = r.readInt64();
           break;
         }
         // field 101: updatedBy
         case 101: {
-          m.updatedBy = r.readUint64();
+          m.updatedBy = r.readInt64();
           break;
         }
         // field 102: deletedBy
         case 102: {
-          m.deletedBy = r.readUint64();
+          m.deletedBy = r.readInt64();
           break;
         }
         // field 200: createdAt
@@ -4510,7 +4510,7 @@ class CommentServiceV1GetCommentRequest {
     // field 1: id
     final f1 = id;
     if (f1 != null) {
-      w.writeUint64(1, f1);
+      w.writeInt64(1, f1);
     }
     // field 100: viewMask
     final f100 = viewMask;
@@ -4529,7 +4529,7 @@ class CommentServiceV1GetCommentRequest {
       switch (r.fieldNumber) {
         // field 1: id
         case 1: {
-          m.id = r.readUint64();
+          m.id = r.readInt64();
           break;
         }
         // field 100: viewMask
@@ -4712,7 +4712,7 @@ class CommentServiceV1UpdateCommentRequest {
     // field 1: id
     final f1 = id;
     if (f1 != null) {
-      w.writeUint64(1, f1);
+      w.writeInt64(1, f1);
     }
     // field 2: data
     final f2 = data;
@@ -4741,7 +4741,7 @@ class CommentServiceV1UpdateCommentRequest {
       switch (r.fieldNumber) {
         // field 1: id
         case 1: {
-          m.id = r.readUint64();
+          m.id = r.readInt64();
           break;
         }
         // field 2: data
@@ -4826,7 +4826,7 @@ class CommentServiceV1DeleteCommentRequest {
     // field 1: id
     final f1 = id;
     if (f1 != null) {
-      w.writeUint64(1, f1);
+      w.writeInt64(1, f1);
     }
   }
 
@@ -4840,7 +4840,7 @@ class CommentServiceV1DeleteCommentRequest {
       switch (r.fieldNumber) {
         // field 1: id
         case 1: {
-          m.id = r.readUint64();
+          m.id = r.readInt64();
           break;
         }
         default: {
@@ -5052,7 +5052,7 @@ class StorageServiceV1DownloadFileRequest {
     // field 1: fileId
     final f1 = fileId;
     if (f1 != null) {
-      w.writeUint64(1, f1);
+      w.writeInt64(1, f1);
     }
     // field 2: storageObject
     final f2 = storageObject;
@@ -5106,7 +5106,7 @@ class StorageServiceV1DownloadFileRequest {
       switch (r.fieldNumber) {
         // field 1: fileId
         case 1: {
-          m.fileId = r.readUint64();
+          m.fileId = r.readInt64();
           break;
         }
         // field 2: storageObject
@@ -5631,12 +5631,12 @@ class StorageServiceV1UploadFileRequest {
     // field 10: tenantId
     final f10 = tenantId;
     if (f10 != null) {
-      w.writeUint64(10, f10);
+      w.writeInt64(10, f10);
     }
     // field 11: userId
     final f11 = userId;
     if (f11 != null) {
-      w.writeUint64(11, f11);
+      w.writeInt64(11, f11);
     }
   }
 
@@ -5680,12 +5680,12 @@ class StorageServiceV1UploadFileRequest {
         }
         // field 10: tenantId
         case 10: {
-          m.tenantId = r.readUint64();
+          m.tenantId = r.readInt64();
           break;
         }
         // field 11: userId
         case 11: {
-          m.userId = r.readUint64();
+          m.userId = r.readInt64();
           break;
         }
         default: {
@@ -6012,12 +6012,12 @@ class ContentServiceV1SubmitFormSubmissionRequest {
     // field 1: pageId
     final f1 = pageId;
     if (f1 != null) {
-      w.writeUint64(1, f1);
+      w.writeInt64(1, f1);
     }
     // field 2: sectionId
     final f2 = sectionId;
     if (f2 != null) {
-      w.writeUint64(2, f2);
+      w.writeInt64(2, f2);
     }
     // field 3: data
     final f3 = data;
@@ -6041,12 +6041,12 @@ class ContentServiceV1SubmitFormSubmissionRequest {
       switch (r.fieldNumber) {
         // field 1: pageId
         case 1: {
-          m.pageId = r.readUint64();
+          m.pageId = r.readInt64();
           break;
         }
         // field 2: sectionId
         case 2: {
-          m.sectionId = r.readUint64();
+          m.sectionId = r.readInt64();
           break;
         }
         // field 3: data
@@ -6179,17 +6179,17 @@ class ContentServiceV1FormSubmission {
     // field 1: id
     final f1 = id;
     if (f1 != null) {
-      w.writeUint64(1, f1);
+      w.writeInt64(1, f1);
     }
     // field 2: pageId
     final f2 = pageId;
     if (f2 != null) {
-      w.writeUint64(2, f2);
+      w.writeInt64(2, f2);
     }
     // field 3: sectionId
     final f3 = sectionId;
     if (f3 != null) {
-      w.writeUint64(3, f3);
+      w.writeInt64(3, f3);
     }
     // field 4: data
     final f4 = data;
@@ -6204,7 +6204,7 @@ class ContentServiceV1FormSubmission {
     // field 5: userId
     final f5 = userId;
     if (f5 != null) {
-      w.writeUint64(5, f5);
+      w.writeInt64(5, f5);
     }
     // field 200: createdAt
     final f200 = createdAt;
@@ -6223,17 +6223,17 @@ class ContentServiceV1FormSubmission {
       switch (r.fieldNumber) {
         // field 1: id
         case 1: {
-          m.id = r.readUint64();
+          m.id = r.readInt64();
           break;
         }
         // field 2: pageId
         case 2: {
-          m.pageId = r.readUint64();
+          m.pageId = r.readInt64();
           break;
         }
         // field 3: sectionId
         case 3: {
-          m.sectionId = r.readUint64();
+          m.sectionId = r.readInt64();
           break;
         }
         // field 4: data
@@ -6261,7 +6261,7 @@ class ContentServiceV1FormSubmission {
         }
         // field 5: userId
         case 5: {
-          m.userId = r.readUint64();
+          m.userId = r.readInt64();
           break;
         }
         // field 200: createdAt
@@ -6480,7 +6480,7 @@ class InteractionServiceV1LikeRequest {
     // field 2: targetId
     final f2 = targetId;
     if (f2 != null) {
-      w.writeUint64(2, f2);
+      w.writeInt64(2, f2);
     }
   }
 
@@ -6499,7 +6499,7 @@ class InteractionServiceV1LikeRequest {
         }
         // field 2: targetId
         case 2: {
-          m.targetId = r.readUint64();
+          m.targetId = r.readInt64();
           break;
         }
         default: {
@@ -6689,7 +6689,7 @@ class InteractionServiceV1WatchRequest {
     // field 1: postId
     final f1 = postId;
     if (f1 != null) {
-      w.writeUint64(1, f1);
+      w.writeInt64(1, f1);
     }
   }
 
@@ -6703,7 +6703,7 @@ class InteractionServiceV1WatchRequest {
       switch (r.fieldNumber) {
         // field 1: postId
         case 1: {
-          m.postId = r.readUint64();
+          m.postId = r.readInt64();
           break;
         }
         default: {
@@ -7195,7 +7195,7 @@ class ContentServiceV1ListPostResponse {
     // field 2: total
     final f2 = total;
     if (f2 != null) {
-      w.writeUint64(2, f2);
+      w.writeInt64(2, f2);
     }
   }
 
@@ -7214,7 +7214,7 @@ class ContentServiceV1ListPostResponse {
         }
         // field 2: total
         case 2: {
-          m.total = r.readUint64();
+          m.total = r.readInt64();
           break;
         }
         default: {
@@ -7476,7 +7476,7 @@ class ContentServiceV1Post {
     // field 1: id
     final f1 = id;
     if (f1 != null) {
-      w.writeUint64(1, f1);
+      w.writeInt64(1, f1);
     }
     // field 2: status
     final f2 = status;
@@ -7526,7 +7526,7 @@ class ContentServiceV1Post {
     // field 20: authorId
     final f20 = authorId;
     if (f20 != null) {
-      w.writeUint64(20, f20);
+      w.writeInt64(20, f20);
     }
     // field 21: authorName
     final f21 = authorName;
@@ -7571,17 +7571,17 @@ class ContentServiceV1Post {
     // field 100: createdBy
     final f100 = createdBy;
     if (f100 != null) {
-      w.writeUint64(100, f100);
+      w.writeInt64(100, f100);
     }
     // field 101: updatedBy
     final f101 = updatedBy;
     if (f101 != null) {
-      w.writeUint64(101, f101);
+      w.writeInt64(101, f101);
     }
     // field 102: deletedBy
     final f102 = deletedBy;
     if (f102 != null) {
-      w.writeUint64(102, f102);
+      w.writeInt64(102, f102);
     }
     // field 200: createdAt
     final f200 = createdAt;
@@ -7615,7 +7615,7 @@ class ContentServiceV1Post {
       switch (r.fieldNumber) {
         // field 1: id
         case 1: {
-          m.id = r.readUint64();
+          m.id = r.readInt64();
           break;
         }
         // field 2: status
@@ -7665,7 +7665,7 @@ class ContentServiceV1Post {
         }
         // field 20: authorId
         case 20: {
-          m.authorId = r.readUint64();
+          m.authorId = r.readInt64();
           break;
         }
         // field 21: authorName
@@ -7723,17 +7723,17 @@ class ContentServiceV1Post {
         }
         // field 100: createdBy
         case 100: {
-          m.createdBy = r.readUint64();
+          m.createdBy = r.readInt64();
           break;
         }
         // field 101: updatedBy
         case 101: {
-          m.updatedBy = r.readUint64();
+          m.updatedBy = r.readInt64();
           break;
         }
         // field 102: deletedBy
         case 102: {
-          m.deletedBy = r.readUint64();
+          m.deletedBy = r.readInt64();
           break;
         }
         // field 200: createdAt
@@ -7995,12 +7995,12 @@ class ContentServiceV1PostTranslation {
     // field 1: id
     final f1 = id;
     if (f1 != null) {
-      w.writeUint64(1, f1);
+      w.writeInt64(1, f1);
     }
     // field 2: postId
     final f2 = postId;
     if (f2 != null) {
-      w.writeUint64(2, f2);
+      w.writeInt64(2, f2);
     }
     // field 3: languageCode
     final f3 = languageCode;
@@ -8050,17 +8050,17 @@ class ContentServiceV1PostTranslation {
     // field 100: createdBy
     final f100 = createdBy;
     if (f100 != null) {
-      w.writeUint64(100, f100);
+      w.writeInt64(100, f100);
     }
     // field 101: updatedBy
     final f101 = updatedBy;
     if (f101 != null) {
-      w.writeUint64(101, f101);
+      w.writeInt64(101, f101);
     }
     // field 102: deletedBy
     final f102 = deletedBy;
     if (f102 != null) {
-      w.writeUint64(102, f102);
+      w.writeInt64(102, f102);
     }
     // field 200: createdAt
     final f200 = createdAt;
@@ -8089,12 +8089,12 @@ class ContentServiceV1PostTranslation {
       switch (r.fieldNumber) {
         // field 1: id
         case 1: {
-          m.id = r.readUint64();
+          m.id = r.readInt64();
           break;
         }
         // field 2: postId
         case 2: {
-          m.postId = r.readUint64();
+          m.postId = r.readInt64();
           break;
         }
         // field 3: languageCode
@@ -8144,17 +8144,17 @@ class ContentServiceV1PostTranslation {
         }
         // field 100: createdBy
         case 100: {
-          m.createdBy = r.readUint64();
+          m.createdBy = r.readInt64();
           break;
         }
         // field 101: updatedBy
         case 101: {
-          m.updatedBy = r.readUint64();
+          m.updatedBy = r.readInt64();
           break;
         }
         // field 102: deletedBy
         case 102: {
-          m.deletedBy = r.readUint64();
+          m.deletedBy = r.readInt64();
           break;
         }
         // field 200: createdAt
@@ -8687,7 +8687,7 @@ class InteractionServiceV1RecordViewRequest {
     // field 2: targetId
     final f2 = targetId;
     if (f2 != null) {
-      w.writeUint64(2, f2);
+      w.writeInt64(2, f2);
     }
   }
 
@@ -8706,7 +8706,7 @@ class InteractionServiceV1RecordViewRequest {
         }
         // field 2: targetId
         case 2: {
-          m.targetId = r.readUint64();
+          m.targetId = r.readInt64();
           break;
         }
         default: {
@@ -8896,7 +8896,7 @@ class MediaServiceV1GetMediaAssetRequest {
     // field 1: id
     final f1 = id;
     if (f1 != null) {
-      w.writeUint64(1, f1);
+      w.writeInt64(1, f1);
     }
     // field 100: viewMask
     final f100 = viewMask;
@@ -8915,7 +8915,7 @@ class MediaServiceV1GetMediaAssetRequest {
       switch (r.fieldNumber) {
         // field 1: id
         case 1: {
-          m.id = r.readUint64();
+          m.id = r.readInt64();
           break;
         }
         // field 100: viewMask
@@ -9200,7 +9200,7 @@ class MediaServiceV1MediaAsset {
     // field 1: id
     final f1 = id;
     if (f1 != null) {
-      w.writeUint64(1, f1);
+      w.writeInt64(1, f1);
     }
     // field 2: type
     final f2 = type;
@@ -9300,27 +9300,27 @@ class MediaServiceV1MediaAsset {
     // field 21: fileId
     final f21 = fileId;
     if (f21 != null) {
-      w.writeUint64(21, f21);
+      w.writeInt64(21, f21);
     }
     // field 22: folderId
     final f22 = folderId;
     if (f22 != null) {
-      w.writeUint64(22, f22);
+      w.writeInt64(22, f22);
     }
     // field 100: createdBy
     final f100 = createdBy;
     if (f100 != null) {
-      w.writeUint64(100, f100);
+      w.writeInt64(100, f100);
     }
     // field 101: updatedBy
     final f101 = updatedBy;
     if (f101 != null) {
-      w.writeUint64(101, f101);
+      w.writeInt64(101, f101);
     }
     // field 102: deletedBy
     final f102 = deletedBy;
     if (f102 != null) {
-      w.writeUint64(102, f102);
+      w.writeInt64(102, f102);
     }
     // field 200: createdAt
     final f200 = createdAt;
@@ -9349,7 +9349,7 @@ class MediaServiceV1MediaAsset {
       switch (r.fieldNumber) {
         // field 1: id
         case 1: {
-          m.id = r.readUint64();
+          m.id = r.readInt64();
           break;
         }
         // field 2: type
@@ -9462,27 +9462,27 @@ class MediaServiceV1MediaAsset {
         }
         // field 21: fileId
         case 21: {
-          m.fileId = r.readUint64();
+          m.fileId = r.readInt64();
           break;
         }
         // field 22: folderId
         case 22: {
-          m.folderId = r.readUint64();
+          m.folderId = r.readInt64();
           break;
         }
         // field 100: createdBy
         case 100: {
-          m.createdBy = r.readUint64();
+          m.createdBy = r.readInt64();
           break;
         }
         // field 101: updatedBy
         case 101: {
-          m.updatedBy = r.readUint64();
+          m.updatedBy = r.readInt64();
           break;
         }
         // field 102: deletedBy
         case 102: {
-          m.deletedBy = r.readUint64();
+          m.deletedBy = r.readInt64();
           break;
         }
         // field 200: createdAt
@@ -9743,7 +9743,7 @@ class SiteServiceV1ListNavigationResponse {
     // field 2: total
     final f2 = total;
     if (f2 != null) {
-      w.writeUint64(2, f2);
+      w.writeInt64(2, f2);
     }
   }
 
@@ -9762,7 +9762,7 @@ class SiteServiceV1ListNavigationResponse {
         }
         // field 2: total
         case 2: {
-          m.total = r.readUint64();
+          m.total = r.readInt64();
           break;
         }
         default: {
@@ -9920,7 +9920,7 @@ class SiteServiceV1Navigation {
     // field 1: id
     final f1 = id;
     if (f1 != null) {
-      w.writeUint64(1, f1);
+      w.writeInt64(1, f1);
     }
     // field 2: name
     final f2 = name;
@@ -9950,17 +9950,17 @@ class SiteServiceV1Navigation {
     // field 100: createdBy
     final f100 = createdBy;
     if (f100 != null) {
-      w.writeUint64(100, f100);
+      w.writeInt64(100, f100);
     }
     // field 101: updatedBy
     final f101 = updatedBy;
     if (f101 != null) {
-      w.writeUint64(101, f101);
+      w.writeInt64(101, f101);
     }
     // field 102: deletedBy
     final f102 = deletedBy;
     if (f102 != null) {
-      w.writeUint64(102, f102);
+      w.writeInt64(102, f102);
     }
     // field 200: createdAt
     final f200 = createdAt;
@@ -9989,7 +9989,7 @@ class SiteServiceV1Navigation {
       switch (r.fieldNumber) {
         // field 1: id
         case 1: {
-          m.id = r.readUint64();
+          m.id = r.readInt64();
           break;
         }
         // field 2: name
@@ -10019,17 +10019,17 @@ class SiteServiceV1Navigation {
         }
         // field 100: createdBy
         case 100: {
-          m.createdBy = r.readUint64();
+          m.createdBy = r.readInt64();
           break;
         }
         // field 101: updatedBy
         case 101: {
-          m.updatedBy = r.readUint64();
+          m.updatedBy = r.readInt64();
           break;
         }
         // field 102: deletedBy
         case 102: {
-          m.deletedBy = r.readUint64();
+          m.deletedBy = r.readInt64();
           break;
         }
         // field 200: createdAt
@@ -10289,12 +10289,12 @@ class SiteServiceV1NavigationItem {
     // field 1: id
     final f1 = id;
     if (f1 != null) {
-      w.writeUint64(1, f1);
+      w.writeInt64(1, f1);
     }
     // field 2: navigationId
     final f2 = navigationId;
     if (f2 != null) {
-      w.writeUint64(2, f2);
+      w.writeInt64(2, f2);
     }
     // field 3: title
     final f3 = title;
@@ -10324,7 +10324,7 @@ class SiteServiceV1NavigationItem {
     // field 8: objectId
     final f8 = objectId;
     if (f8 != null) {
-      w.writeUint64(8, f8);
+      w.writeInt64(8, f8);
     }
     // field 9: sortOrder
     final f9 = sortOrder;
@@ -10349,7 +10349,7 @@ class SiteServiceV1NavigationItem {
     // field 50: parentId
     final f50 = parentId;
     if (f50 != null) {
-      w.writeUint64(50, f50);
+      w.writeInt64(50, f50);
     }
     // field 51: children
     final f51 = children;
@@ -10359,17 +10359,17 @@ class SiteServiceV1NavigationItem {
     // field 100: createdBy
     final f100 = createdBy;
     if (f100 != null) {
-      w.writeUint64(100, f100);
+      w.writeInt64(100, f100);
     }
     // field 101: updatedBy
     final f101 = updatedBy;
     if (f101 != null) {
-      w.writeUint64(101, f101);
+      w.writeInt64(101, f101);
     }
     // field 102: deletedBy
     final f102 = deletedBy;
     if (f102 != null) {
-      w.writeUint64(102, f102);
+      w.writeInt64(102, f102);
     }
     // field 200: createdAt
     final f200 = createdAt;
@@ -10398,12 +10398,12 @@ class SiteServiceV1NavigationItem {
       switch (r.fieldNumber) {
         // field 1: id
         case 1: {
-          m.id = r.readUint64();
+          m.id = r.readInt64();
           break;
         }
         // field 2: navigationId
         case 2: {
-          m.navigationId = r.readUint64();
+          m.navigationId = r.readInt64();
           break;
         }
         // field 3: title
@@ -10433,7 +10433,7 @@ class SiteServiceV1NavigationItem {
         }
         // field 8: objectId
         case 8: {
-          m.objectId = r.readUint64();
+          m.objectId = r.readInt64();
           break;
         }
         // field 9: sortOrder
@@ -10458,7 +10458,7 @@ class SiteServiceV1NavigationItem {
         }
         // field 50: parentId
         case 50: {
-          m.parentId = r.readUint64();
+          m.parentId = r.readInt64();
           break;
         }
         // field 51: children
@@ -10468,17 +10468,17 @@ class SiteServiceV1NavigationItem {
         }
         // field 100: createdBy
         case 100: {
-          m.createdBy = r.readUint64();
+          m.createdBy = r.readInt64();
           break;
         }
         // field 101: updatedBy
         case 101: {
-          m.updatedBy = r.readUint64();
+          m.updatedBy = r.readInt64();
           break;
         }
         // field 102: deletedBy
         case 102: {
-          m.deletedBy = r.readUint64();
+          m.deletedBy = r.readInt64();
           break;
         }
         // field 200: createdAt
@@ -10601,7 +10601,7 @@ class SiteServiceV1GetNavigationRequest {
     // field 1: id
     final f1 = id;
     if (f1 != null) {
-      w.writeUint64(1, f1);
+      w.writeInt64(1, f1);
     }
     // field 2: name
     final f2 = name;
@@ -10625,7 +10625,7 @@ class SiteServiceV1GetNavigationRequest {
       switch (r.fieldNumber) {
         // field 1: id
         case 1: {
-          m.id = r.readUint64();
+          m.id = r.readInt64();
           break;
         }
         // field 2: name
@@ -10813,7 +10813,7 @@ class SiteServiceV1UpdateNavigationRequest {
     // field 1: id
     final f1 = id;
     if (f1 != null) {
-      w.writeUint64(1, f1);
+      w.writeInt64(1, f1);
     }
     // field 2: data
     final f2 = data;
@@ -10842,7 +10842,7 @@ class SiteServiceV1UpdateNavigationRequest {
       switch (r.fieldNumber) {
         // field 1: id
         case 1: {
-          m.id = r.readUint64();
+          m.id = r.readInt64();
           break;
         }
         // field 2: data
@@ -10927,7 +10927,7 @@ class SiteServiceV1DeleteNavigationRequest {
     // field 1: id
     final f1 = id;
     if (f1 != null) {
-      w.writeUint64(1, f1);
+      w.writeInt64(1, f1);
     }
   }
 
@@ -10941,7 +10941,7 @@ class SiteServiceV1DeleteNavigationRequest {
       switch (r.fieldNumber) {
         // field 1: id
         case 1: {
-          m.id = r.readUint64();
+          m.id = r.readInt64();
           break;
         }
         default: {
@@ -11296,7 +11296,7 @@ class ContentServiceV1ListPageResponse {
     // field 2: total
     final f2 = total;
     if (f2 != null) {
-      w.writeUint64(2, f2);
+      w.writeInt64(2, f2);
     }
   }
 
@@ -11315,7 +11315,7 @@ class ContentServiceV1ListPageResponse {
         }
         // field 2: total
         case 2: {
-          m.total = r.readUint64();
+          m.total = r.readInt64();
           break;
         }
         default: {
@@ -11618,7 +11618,7 @@ class ContentServiceV1Page {
     // field 1: id
     final f1 = id;
     if (f1 != null) {
-      w.writeUint64(1, f1);
+      w.writeInt64(1, f1);
     }
     // field 2: status
     final f2 = status;
@@ -11643,7 +11643,7 @@ class ContentServiceV1Page {
     // field 6: authorId
     final f6 = authorId;
     if (f6 != null) {
-      w.writeUint64(6, f6);
+      w.writeInt64(6, f6);
     }
     // field 7: authorName
     final f7 = authorName;
@@ -11703,7 +11703,7 @@ class ContentServiceV1Page {
     // field 22: contentModelId
     final f22 = contentModelId;
     if (f22 != null) {
-      w.writeUint64(22, f22);
+      w.writeInt64(22, f22);
     }
     // field 30: translations
     final f30 = translations;
@@ -11723,7 +11723,7 @@ class ContentServiceV1Page {
     // field 50: parentId
     final f50 = parentId;
     if (f50 != null) {
-      w.writeUint64(50, f50);
+      w.writeInt64(50, f50);
     }
     // field 52: depth
     final f52 = depth;
@@ -11743,17 +11743,17 @@ class ContentServiceV1Page {
     // field 100: createdBy
     final f100 = createdBy;
     if (f100 != null) {
-      w.writeUint64(100, f100);
+      w.writeInt64(100, f100);
     }
     // field 101: updatedBy
     final f101 = updatedBy;
     if (f101 != null) {
-      w.writeUint64(101, f101);
+      w.writeInt64(101, f101);
     }
     // field 102: deletedBy
     final f102 = deletedBy;
     if (f102 != null) {
-      w.writeUint64(102, f102);
+      w.writeInt64(102, f102);
     }
     // field 200: createdAt
     final f200 = createdAt;
@@ -11782,7 +11782,7 @@ class ContentServiceV1Page {
       switch (r.fieldNumber) {
         // field 1: id
         case 1: {
-          m.id = r.readUint64();
+          m.id = r.readInt64();
           break;
         }
         // field 2: status
@@ -11807,7 +11807,7 @@ class ContentServiceV1Page {
         }
         // field 6: authorId
         case 6: {
-          m.authorId = r.readUint64();
+          m.authorId = r.readInt64();
           break;
         }
         // field 7: authorName
@@ -11880,7 +11880,7 @@ class ContentServiceV1Page {
         }
         // field 22: contentModelId
         case 22: {
-          m.contentModelId = r.readUint64();
+          m.contentModelId = r.readInt64();
           break;
         }
         // field 30: translations
@@ -11900,7 +11900,7 @@ class ContentServiceV1Page {
         }
         // field 50: parentId
         case 50: {
-          m.parentId = r.readUint64();
+          m.parentId = r.readInt64();
           break;
         }
         // field 52: depth
@@ -11920,17 +11920,17 @@ class ContentServiceV1Page {
         }
         // field 100: createdBy
         case 100: {
-          m.createdBy = r.readUint64();
+          m.createdBy = r.readInt64();
           break;
         }
         // field 101: updatedBy
         case 101: {
-          m.updatedBy = r.readUint64();
+          m.updatedBy = r.readInt64();
           break;
         }
         // field 102: deletedBy
         case 102: {
-          m.deletedBy = r.readUint64();
+          m.deletedBy = r.readInt64();
           break;
         }
         // field 200: createdAt
@@ -12161,12 +12161,12 @@ class ContentServiceV1PageTranslation {
     // field 1: id
     final f1 = id;
     if (f1 != null) {
-      w.writeUint64(1, f1);
+      w.writeInt64(1, f1);
     }
     // field 2: pageId
     final f2 = pageId;
     if (f2 != null) {
-      w.writeUint64(2, f2);
+      w.writeInt64(2, f2);
     }
     // field 3: languageCode
     final f3 = languageCode;
@@ -12201,17 +12201,17 @@ class ContentServiceV1PageTranslation {
     // field 100: createdBy
     final f100 = createdBy;
     if (f100 != null) {
-      w.writeUint64(100, f100);
+      w.writeInt64(100, f100);
     }
     // field 101: updatedBy
     final f101 = updatedBy;
     if (f101 != null) {
-      w.writeUint64(101, f101);
+      w.writeInt64(101, f101);
     }
     // field 102: deletedBy
     final f102 = deletedBy;
     if (f102 != null) {
-      w.writeUint64(102, f102);
+      w.writeInt64(102, f102);
     }
     // field 200: createdAt
     final f200 = createdAt;
@@ -12240,12 +12240,12 @@ class ContentServiceV1PageTranslation {
       switch (r.fieldNumber) {
         // field 1: id
         case 1: {
-          m.id = r.readUint64();
+          m.id = r.readInt64();
           break;
         }
         // field 2: pageId
         case 2: {
-          m.pageId = r.readUint64();
+          m.pageId = r.readInt64();
           break;
         }
         // field 3: languageCode
@@ -12280,17 +12280,17 @@ class ContentServiceV1PageTranslation {
         }
         // field 100: createdBy
         case 100: {
-          m.createdBy = r.readUint64();
+          m.createdBy = r.readInt64();
           break;
         }
         // field 101: updatedBy
         case 101: {
-          m.updatedBy = r.readUint64();
+          m.updatedBy = r.readInt64();
           break;
         }
         // field 102: deletedBy
         case 102: {
-          m.deletedBy = r.readUint64();
+          m.deletedBy = r.readInt64();
           break;
         }
         // field 200: createdAt
@@ -12480,12 +12480,12 @@ class ContentServiceV1Section {
     // field 1: id
     final f1 = id;
     if (f1 != null) {
-      w.writeUint64(1, f1);
+      w.writeInt64(1, f1);
     }
     // field 2: pageId
     final f2 = pageId;
     if (f2 != null) {
-      w.writeUint64(2, f2);
+      w.writeInt64(2, f2);
     }
     // field 3: type
     final f3 = type;
@@ -12525,17 +12525,17 @@ class ContentServiceV1Section {
     // field 100: createdBy
     final f100 = createdBy;
     if (f100 != null) {
-      w.writeUint64(100, f100);
+      w.writeInt64(100, f100);
     }
     // field 101: updatedBy
     final f101 = updatedBy;
     if (f101 != null) {
-      w.writeUint64(101, f101);
+      w.writeInt64(101, f101);
     }
     // field 102: deletedBy
     final f102 = deletedBy;
     if (f102 != null) {
-      w.writeUint64(102, f102);
+      w.writeInt64(102, f102);
     }
     // field 200: createdAt
     final f200 = createdAt;
@@ -12564,12 +12564,12 @@ class ContentServiceV1Section {
       switch (r.fieldNumber) {
         // field 1: id
         case 1: {
-          m.id = r.readUint64();
+          m.id = r.readInt64();
           break;
         }
         // field 2: pageId
         case 2: {
-          m.pageId = r.readUint64();
+          m.pageId = r.readInt64();
           break;
         }
         // field 3: type
@@ -12622,17 +12622,17 @@ class ContentServiceV1Section {
         }
         // field 100: createdBy
         case 100: {
-          m.createdBy = r.readUint64();
+          m.createdBy = r.readInt64();
           break;
         }
         // field 101: updatedBy
         case 101: {
-          m.updatedBy = r.readUint64();
+          m.updatedBy = r.readInt64();
           break;
         }
         // field 102: deletedBy
         case 102: {
-          m.deletedBy = r.readUint64();
+          m.deletedBy = r.readInt64();
           break;
         }
         // field 200: createdAt
@@ -12820,12 +12820,12 @@ class ContentServiceV1SectionTranslation {
     // field 1: id
     final f1 = id;
     if (f1 != null) {
-      w.writeUint64(1, f1);
+      w.writeInt64(1, f1);
     }
     // field 2: sectionId
     final f2 = sectionId;
     if (f2 != null) {
-      w.writeUint64(2, f2);
+      w.writeInt64(2, f2);
     }
     // field 3: languageCode
     final f3 = languageCode;
@@ -12845,17 +12845,17 @@ class ContentServiceV1SectionTranslation {
     // field 100: createdBy
     final f100 = createdBy;
     if (f100 != null) {
-      w.writeUint64(100, f100);
+      w.writeInt64(100, f100);
     }
     // field 101: updatedBy
     final f101 = updatedBy;
     if (f101 != null) {
-      w.writeUint64(101, f101);
+      w.writeInt64(101, f101);
     }
     // field 102: deletedBy
     final f102 = deletedBy;
     if (f102 != null) {
-      w.writeUint64(102, f102);
+      w.writeInt64(102, f102);
     }
     // field 200: createdAt
     final f200 = createdAt;
@@ -12884,12 +12884,12 @@ class ContentServiceV1SectionTranslation {
       switch (r.fieldNumber) {
         // field 1: id
         case 1: {
-          m.id = r.readUint64();
+          m.id = r.readInt64();
           break;
         }
         // field 2: sectionId
         case 2: {
-          m.sectionId = r.readUint64();
+          m.sectionId = r.readInt64();
           break;
         }
         // field 3: languageCode
@@ -12922,17 +12922,17 @@ class ContentServiceV1SectionTranslation {
         }
         // field 100: createdBy
         case 100: {
-          m.createdBy = r.readUint64();
+          m.createdBy = r.readInt64();
           break;
         }
         // field 101: updatedBy
         case 101: {
-          m.updatedBy = r.readUint64();
+          m.updatedBy = r.readInt64();
           break;
         }
         // field 102: deletedBy
         case 102: {
-          m.deletedBy = r.readUint64();
+          m.deletedBy = r.readInt64();
           break;
         }
         // field 200: createdAt
@@ -13041,7 +13041,7 @@ class ContentServiceV1GetPageRequest {
     // field 1: id
     final f1 = id;
     if (f1 != null) {
-      w.writeUint64(1, f1);
+      w.writeInt64(1, f1);
     }
     // field 2: slug
     final f2 = slug;
@@ -13070,7 +13070,7 @@ class ContentServiceV1GetPageRequest {
       switch (r.fieldNumber) {
         // field 1: id
         case 1: {
-          m.id = r.readUint64();
+          m.id = r.readInt64();
           break;
         }
         // field 2: slug
@@ -13263,7 +13263,7 @@ class ContentServiceV1UpdatePageRequest {
     // field 1: id
     final f1 = id;
     if (f1 != null) {
-      w.writeUint64(1, f1);
+      w.writeInt64(1, f1);
     }
     // field 2: data
     final f2 = data;
@@ -13292,7 +13292,7 @@ class ContentServiceV1UpdatePageRequest {
       switch (r.fieldNumber) {
         // field 1: id
         case 1: {
-          m.id = r.readUint64();
+          m.id = r.readInt64();
           break;
         }
         // field 2: data
@@ -13377,7 +13377,7 @@ class ContentServiceV1DeletePageRequest {
     // field 1: id
     final f1 = id;
     if (f1 != null) {
-      w.writeUint64(1, f1);
+      w.writeInt64(1, f1);
     }
   }
 
@@ -13391,7 +13391,7 @@ class ContentServiceV1DeletePageRequest {
       switch (r.fieldNumber) {
         // field 1: id
         case 1: {
-          m.id = r.readUint64();
+          m.id = r.readInt64();
           break;
         }
         default: {
@@ -13825,7 +13825,7 @@ class ContentServiceV1GetModelByPostRequest {
     // field 1: postId
     final f1 = postId;
     if (f1 != null) {
-      w.writeUint64(1, f1);
+      w.writeInt64(1, f1);
     }
   }
 
@@ -13839,7 +13839,7 @@ class ContentServiceV1GetModelByPostRequest {
       switch (r.fieldNumber) {
         // field 1: postId
         case 1: {
-          m.postId = r.readUint64();
+          m.postId = r.readInt64();
           break;
         }
         default: {
@@ -14010,7 +14010,7 @@ class ContentServiceV1ContentModel {
     // field 1: id
     final f1 = id;
     if (f1 != null) {
-      w.writeUint64(1, f1);
+      w.writeInt64(1, f1);
     }
     // field 2: name
     final f2 = name;
@@ -14050,17 +14050,17 @@ class ContentServiceV1ContentModel {
     // field 40: tenantId
     final f40 = tenantId;
     if (f40 != null) {
-      w.writeUint64(40, f40);
+      w.writeInt64(40, f40);
     }
     // field 100: createdBy
     final f100 = createdBy;
     if (f100 != null) {
-      w.writeUint64(100, f100);
+      w.writeInt64(100, f100);
     }
     // field 101: updatedBy
     final f101 = updatedBy;
     if (f101 != null) {
-      w.writeUint64(101, f101);
+      w.writeInt64(101, f101);
     }
     // field 200: createdAt
     final f200 = createdAt;
@@ -14084,7 +14084,7 @@ class ContentServiceV1ContentModel {
       switch (r.fieldNumber) {
         // field 1: id
         case 1: {
-          m.id = r.readUint64();
+          m.id = r.readInt64();
           break;
         }
         // field 2: name
@@ -14124,17 +14124,17 @@ class ContentServiceV1ContentModel {
         }
         // field 40: tenantId
         case 40: {
-          m.tenantId = r.readUint64();
+          m.tenantId = r.readInt64();
           break;
         }
         // field 100: createdBy
         case 100: {
-          m.createdBy = r.readUint64();
+          m.createdBy = r.readInt64();
           break;
         }
         // field 101: updatedBy
         case 101: {
-          m.updatedBy = r.readUint64();
+          m.updatedBy = r.readInt64();
           break;
         }
         // field 200: createdAt
@@ -14342,12 +14342,12 @@ class ContentServiceV1FieldDefinition {
     // field 1: id
     final f1 = id;
     if (f1 != null) {
-      w.writeUint64(1, f1);
+      w.writeInt64(1, f1);
     }
     // field 2: contentModelId
     final f2 = contentModelId;
     if (f2 != null) {
-      w.writeUint64(2, f2);
+      w.writeInt64(2, f2);
     }
     // field 3: name
     final f3 = name;
@@ -14412,7 +14412,7 @@ class ContentServiceV1FieldDefinition {
     // field 14: componentId
     final f14 = componentId;
     if (f14 != null) {
-      w.writeUint64(14, f14);
+      w.writeInt64(14, f14);
     }
     // field 15: componentConfig
     final f15 = componentConfig;
@@ -14422,7 +14422,7 @@ class ContentServiceV1FieldDefinition {
     // field 100: createdBy
     final f100 = createdBy;
     if (f100 != null) {
-      w.writeUint64(100, f100);
+      w.writeInt64(100, f100);
     }
     // field 200: createdAt
     final f200 = createdAt;
@@ -14441,12 +14441,12 @@ class ContentServiceV1FieldDefinition {
       switch (r.fieldNumber) {
         // field 1: id
         case 1: {
-          m.id = r.readUint64();
+          m.id = r.readInt64();
           break;
         }
         // field 2: contentModelId
         case 2: {
-          m.contentModelId = r.readUint64();
+          m.contentModelId = r.readInt64();
           break;
         }
         // field 3: name
@@ -14524,7 +14524,7 @@ class ContentServiceV1FieldDefinition {
         }
         // field 14: componentId
         case 14: {
-          m.componentId = r.readUint64();
+          m.componentId = r.readInt64();
           break;
         }
         // field 15: componentConfig
@@ -14534,7 +14534,7 @@ class ContentServiceV1FieldDefinition {
         }
         // field 100: createdBy
         case 100: {
-          m.createdBy = r.readUint64();
+          m.createdBy = r.readInt64();
           break;
         }
         // field 200: createdAt
@@ -14659,7 +14659,7 @@ class ContentServiceV1RelationConfig {
     // field 3: filterCategoryId
     final f3 = filterCategoryId;
     if (f3 != null) {
-      w.writeUint64(3, f3);
+      w.writeInt64(3, f3);
     }
   }
 
@@ -14683,7 +14683,7 @@ class ContentServiceV1RelationConfig {
         }
         // field 3: filterCategoryId
         case 3: {
-          m.filterCategoryId = r.readUint64();
+          m.filterCategoryId = r.readInt64();
           break;
         }
         default: {
@@ -14929,12 +14929,12 @@ class ContentServiceV1FieldDefinitionTranslation {
     // field 1: id
     final f1 = id;
     if (f1 != null) {
-      w.writeUint64(1, f1);
+      w.writeInt64(1, f1);
     }
     // field 2: fieldDefinitionId
     final f2 = fieldDefinitionId;
     if (f2 != null) {
-      w.writeUint64(2, f2);
+      w.writeInt64(2, f2);
     }
     // field 3: languageCode
     final f3 = languageCode;
@@ -14959,7 +14959,7 @@ class ContentServiceV1FieldDefinitionTranslation {
     // field 100: createdBy
     final f100 = createdBy;
     if (f100 != null) {
-      w.writeUint64(100, f100);
+      w.writeInt64(100, f100);
     }
     // field 200: createdAt
     final f200 = createdAt;
@@ -14978,12 +14978,12 @@ class ContentServiceV1FieldDefinitionTranslation {
       switch (r.fieldNumber) {
         // field 1: id
         case 1: {
-          m.id = r.readUint64();
+          m.id = r.readInt64();
           break;
         }
         // field 2: fieldDefinitionId
         case 2: {
-          m.fieldDefinitionId = r.readUint64();
+          m.fieldDefinitionId = r.readInt64();
           break;
         }
         // field 3: languageCode
@@ -15008,7 +15008,7 @@ class ContentServiceV1FieldDefinitionTranslation {
         }
         // field 100: createdBy
         case 100: {
-          m.createdBy = r.readUint64();
+          m.createdBy = r.readInt64();
           break;
         }
         // field 200: createdAt
@@ -15233,7 +15233,7 @@ class ContentServiceV1ComponentDefinition {
     // field 1: id
     final f1 = id;
     if (f1 != null) {
-      w.writeUint64(1, f1);
+      w.writeInt64(1, f1);
     }
     // field 2: code
     final f2 = code;
@@ -15277,7 +15277,7 @@ class ContentServiceV1ComponentDefinition {
       switch (r.fieldNumber) {
         // field 1: id
         case 1: {
-          m.id = r.readUint64();
+          m.id = r.readInt64();
           break;
         }
         // field 2: code
@@ -15425,12 +15425,12 @@ class ContentServiceV1ContentModelTranslation {
     // field 1: id
     final f1 = id;
     if (f1 != null) {
-      w.writeUint64(1, f1);
+      w.writeInt64(1, f1);
     }
     // field 2: contentModelId
     final f2 = contentModelId;
     if (f2 != null) {
-      w.writeUint64(2, f2);
+      w.writeInt64(2, f2);
     }
     // field 3: languageCode
     final f3 = languageCode;
@@ -15450,7 +15450,7 @@ class ContentServiceV1ContentModelTranslation {
     // field 100: createdBy
     final f100 = createdBy;
     if (f100 != null) {
-      w.writeUint64(100, f100);
+      w.writeInt64(100, f100);
     }
     // field 200: createdAt
     final f200 = createdAt;
@@ -15469,12 +15469,12 @@ class ContentServiceV1ContentModelTranslation {
       switch (r.fieldNumber) {
         // field 1: id
         case 1: {
-          m.id = r.readUint64();
+          m.id = r.readInt64();
           break;
         }
         // field 2: contentModelId
         case 2: {
-          m.contentModelId = r.readUint64();
+          m.contentModelId = r.readInt64();
           break;
         }
         // field 3: languageCode
@@ -15494,7 +15494,7 @@ class ContentServiceV1ContentModelTranslation {
         }
         // field 100: createdBy
         case 100: {
-          m.createdBy = r.readUint64();
+          m.createdBy = r.readInt64();
           break;
         }
         // field 200: createdAt
@@ -15807,7 +15807,7 @@ class ContentServiceV1ContentReferenceSummary {
     // field 3: targetId
     final f3 = targetId;
     if (f3 != null) {
-      w.writeUint64(3, f3);
+      w.writeInt64(3, f3);
     }
     // field 4: title
     final f4 = title;
@@ -15846,7 +15846,7 @@ class ContentServiceV1ContentReferenceSummary {
         }
         // field 3: targetId
         case 3: {
-          m.targetId = r.readUint64();
+          m.targetId = r.readInt64();
           break;
         }
         // field 4: title
@@ -16218,7 +16218,7 @@ class ContentServiceV1SearchPostHit {
     // field 1: postId
     final f1 = postId;
     if (f1 != null) {
-      w.writeUint64(1, f1);
+      w.writeInt64(1, f1);
     }
     // field 2: language
     final f2 = language;
@@ -16252,7 +16252,7 @@ class ContentServiceV1SearchPostHit {
       switch (r.fieldNumber) {
         // field 1: postId
         case 1: {
-          m.postId = r.readUint64();
+          m.postId = r.readInt64();
           break;
         }
         // field 2: language
@@ -16574,7 +16574,7 @@ class ContentServiceV1GetPostRequest {
     // field 1: id
     final f1 = id;
     if (f1 != null) {
-      w.writeUint64(1, f1);
+      w.writeInt64(1, f1);
     }
     // field 2: code
     final f2 = code;
@@ -16603,7 +16603,7 @@ class ContentServiceV1GetPostRequest {
       switch (r.fieldNumber) {
         // field 1: id
         case 1: {
-          m.id = r.readUint64();
+          m.id = r.readInt64();
           break;
         }
         // field 2: code
@@ -16796,7 +16796,7 @@ class ContentServiceV1UpdatePostRequest {
     // field 1: id
     final f1 = id;
     if (f1 != null) {
-      w.writeUint64(1, f1);
+      w.writeInt64(1, f1);
     }
     // field 2: data
     final f2 = data;
@@ -16825,7 +16825,7 @@ class ContentServiceV1UpdatePostRequest {
       switch (r.fieldNumber) {
         // field 1: id
         case 1: {
-          m.id = r.readUint64();
+          m.id = r.readInt64();
           break;
         }
         // field 2: data
@@ -16910,7 +16910,7 @@ class ContentServiceV1DeletePostRequest {
     // field 1: id
     final f1 = id;
     if (f1 != null) {
-      w.writeUint64(1, f1);
+      w.writeInt64(1, f1);
     }
   }
 
@@ -16924,7 +16924,7 @@ class ContentServiceV1DeletePostRequest {
       switch (r.fieldNumber) {
         // field 1: id
         case 1: {
-          m.id = r.readUint64();
+          m.id = r.readInt64();
           break;
         }
         default: {
@@ -17085,7 +17085,7 @@ class ContentServiceV1ListRedirectsResponse {
     // field 2: total
     final f2 = total;
     if (f2 != null) {
-      w.writeUint64(2, f2);
+      w.writeInt64(2, f2);
     }
   }
 
@@ -17104,7 +17104,7 @@ class ContentServiceV1ListRedirectsResponse {
         }
         // field 2: total
         case 2: {
-          m.total = r.readUint64();
+          m.total = r.readInt64();
           break;
         }
         default: {
@@ -17246,7 +17246,7 @@ class ContentServiceV1Redirect {
     // field 1: id
     final f1 = id;
     if (f1 != null) {
-      w.writeUint64(1, f1);
+      w.writeInt64(1, f1);
     }
     // field 2: fromPath
     final f2 = fromPath;
@@ -17276,12 +17276,12 @@ class ContentServiceV1Redirect {
     // field 100: createdBy
     final f100 = createdBy;
     if (f100 != null) {
-      w.writeUint64(100, f100);
+      w.writeInt64(100, f100);
     }
     // field 101: updatedBy
     final f101 = updatedBy;
     if (f101 != null) {
-      w.writeUint64(101, f101);
+      w.writeInt64(101, f101);
     }
     // field 200: createdAt
     final f200 = createdAt;
@@ -17305,7 +17305,7 @@ class ContentServiceV1Redirect {
       switch (r.fieldNumber) {
         // field 1: id
         case 1: {
-          m.id = r.readUint64();
+          m.id = r.readInt64();
           break;
         }
         // field 2: fromPath
@@ -17335,12 +17335,12 @@ class ContentServiceV1Redirect {
         }
         // field 100: createdBy
         case 100: {
-          m.createdBy = r.readUint64();
+          m.createdBy = r.readInt64();
           break;
         }
         // field 101: updatedBy
         case 101: {
-          m.updatedBy = r.readUint64();
+          m.updatedBy = r.readInt64();
           break;
         }
         // field 200: createdAt
@@ -17552,7 +17552,7 @@ class SiteServiceV1ListSiteResponse {
     // field 2: total
     final f2 = total;
     if (f2 != null) {
-      w.writeUint64(2, f2);
+      w.writeInt64(2, f2);
     }
   }
 
@@ -17571,7 +17571,7 @@ class SiteServiceV1ListSiteResponse {
         }
         // field 2: total
         case 2: {
-          m.total = r.readUint64();
+          m.total = r.readInt64();
           break;
         }
         default: {
@@ -17769,12 +17769,12 @@ class SiteServiceV1Site {
     // field 1: id
     final f1 = id;
     if (f1 != null) {
-      w.writeUint64(1, f1);
+      w.writeInt64(1, f1);
     }
     // field 2: tenantId
     final f2 = tenantId;
     if (f2 != null) {
-      w.writeUint64(2, f2);
+      w.writeInt64(2, f2);
     }
     // field 3: name
     final f3 = name;
@@ -17824,17 +17824,17 @@ class SiteServiceV1Site {
     // field 100: createdBy
     final f100 = createdBy;
     if (f100 != null) {
-      w.writeUint64(100, f100);
+      w.writeInt64(100, f100);
     }
     // field 101: updatedBy
     final f101 = updatedBy;
     if (f101 != null) {
-      w.writeUint64(101, f101);
+      w.writeInt64(101, f101);
     }
     // field 102: deletedBy
     final f102 = deletedBy;
     if (f102 != null) {
-      w.writeUint64(102, f102);
+      w.writeInt64(102, f102);
     }
     // field 200: createdAt
     final f200 = createdAt;
@@ -17863,12 +17863,12 @@ class SiteServiceV1Site {
       switch (r.fieldNumber) {
         // field 1: id
         case 1: {
-          m.id = r.readUint64();
+          m.id = r.readInt64();
           break;
         }
         // field 2: tenantId
         case 2: {
-          m.tenantId = r.readUint64();
+          m.tenantId = r.readInt64();
           break;
         }
         // field 3: name
@@ -17918,17 +17918,17 @@ class SiteServiceV1Site {
         }
         // field 100: createdBy
         case 100: {
-          m.createdBy = r.readUint64();
+          m.createdBy = r.readInt64();
           break;
         }
         // field 101: updatedBy
         case 101: {
-          m.updatedBy = r.readUint64();
+          m.updatedBy = r.readInt64();
           break;
         }
         // field 102: deletedBy
         case 102: {
-          m.deletedBy = r.readUint64();
+          m.deletedBy = r.readInt64();
           break;
         }
         // field 200: createdAt
@@ -18243,7 +18243,7 @@ class SiteServiceV1UpdateSiteRequest {
     // field 1: id
     final f1 = id;
     if (f1 != null) {
-      w.writeUint64(1, f1);
+      w.writeInt64(1, f1);
     }
     // field 2: data
     final f2 = data;
@@ -18272,7 +18272,7 @@ class SiteServiceV1UpdateSiteRequest {
       switch (r.fieldNumber) {
         // field 1: id
         case 1: {
-          m.id = r.readUint64();
+          m.id = r.readInt64();
           break;
         }
         // field 2: data
@@ -18357,7 +18357,7 @@ class SiteServiceV1DeleteSiteRequest {
     // field 1: id
     final f1 = id;
     if (f1 != null) {
-      w.writeUint64(1, f1);
+      w.writeInt64(1, f1);
     }
   }
 
@@ -18371,7 +18371,7 @@ class SiteServiceV1DeleteSiteRequest {
       switch (r.fieldNumber) {
         // field 1: id
         case 1: {
-          m.id = r.readUint64();
+          m.id = r.readInt64();
           break;
         }
         default: {
@@ -18603,7 +18603,7 @@ class ContentServiceV1ListTagResponse {
     // field 2: total
     final f2 = total;
     if (f2 != null) {
-      w.writeUint64(2, f2);
+      w.writeInt64(2, f2);
     }
   }
 
@@ -18622,7 +18622,7 @@ class ContentServiceV1ListTagResponse {
         }
         // field 2: total
         case 2: {
-          m.total = r.readUint64();
+          m.total = r.readInt64();
           break;
         }
         default: {
@@ -18820,7 +18820,7 @@ class ContentServiceV1Tag {
     // field 1: id
     final f1 = id;
     if (f1 != null) {
-      w.writeUint64(1, f1);
+      w.writeInt64(1, f1);
     }
     // field 2: status
     final f2 = status;
@@ -18875,17 +18875,17 @@ class ContentServiceV1Tag {
     // field 100: createdBy
     final f100 = createdBy;
     if (f100 != null) {
-      w.writeUint64(100, f100);
+      w.writeInt64(100, f100);
     }
     // field 101: updatedBy
     final f101 = updatedBy;
     if (f101 != null) {
-      w.writeUint64(101, f101);
+      w.writeInt64(101, f101);
     }
     // field 102: deletedBy
     final f102 = deletedBy;
     if (f102 != null) {
-      w.writeUint64(102, f102);
+      w.writeInt64(102, f102);
     }
     // field 200: createdAt
     final f200 = createdAt;
@@ -18914,7 +18914,7 @@ class ContentServiceV1Tag {
       switch (r.fieldNumber) {
         // field 1: id
         case 1: {
-          m.id = r.readUint64();
+          m.id = r.readInt64();
           break;
         }
         // field 2: status
@@ -18969,17 +18969,17 @@ class ContentServiceV1Tag {
         }
         // field 100: createdBy
         case 100: {
-          m.createdBy = r.readUint64();
+          m.createdBy = r.readInt64();
           break;
         }
         // field 101: updatedBy
         case 101: {
-          m.updatedBy = r.readUint64();
+          m.updatedBy = r.readInt64();
           break;
         }
         // field 102: deletedBy
         case 102: {
-          m.deletedBy = r.readUint64();
+          m.deletedBy = r.readInt64();
           break;
         }
         // field 200: createdAt
@@ -19196,12 +19196,12 @@ class ContentServiceV1TagTranslation {
     // field 1: id
     final f1 = id;
     if (f1 != null) {
-      w.writeUint64(1, f1);
+      w.writeInt64(1, f1);
     }
     // field 2: tagId
     final f2 = tagId;
     if (f2 != null) {
-      w.writeUint64(2, f2);
+      w.writeInt64(2, f2);
     }
     // field 3: languageCode
     final f3 = languageCode;
@@ -19241,17 +19241,17 @@ class ContentServiceV1TagTranslation {
     // field 100: createdBy
     final f100 = createdBy;
     if (f100 != null) {
-      w.writeUint64(100, f100);
+      w.writeInt64(100, f100);
     }
     // field 101: updatedBy
     final f101 = updatedBy;
     if (f101 != null) {
-      w.writeUint64(101, f101);
+      w.writeInt64(101, f101);
     }
     // field 102: deletedBy
     final f102 = deletedBy;
     if (f102 != null) {
-      w.writeUint64(102, f102);
+      w.writeInt64(102, f102);
     }
     // field 200: createdAt
     final f200 = createdAt;
@@ -19280,12 +19280,12 @@ class ContentServiceV1TagTranslation {
       switch (r.fieldNumber) {
         // field 1: id
         case 1: {
-          m.id = r.readUint64();
+          m.id = r.readInt64();
           break;
         }
         // field 2: tagId
         case 2: {
-          m.tagId = r.readUint64();
+          m.tagId = r.readInt64();
           break;
         }
         // field 3: languageCode
@@ -19325,17 +19325,17 @@ class ContentServiceV1TagTranslation {
         }
         // field 100: createdBy
         case 100: {
-          m.createdBy = r.readUint64();
+          m.createdBy = r.readInt64();
           break;
         }
         // field 101: updatedBy
         case 101: {
-          m.updatedBy = r.readUint64();
+          m.updatedBy = r.readInt64();
           break;
         }
         // field 102: deletedBy
         case 102: {
-          m.deletedBy = r.readUint64();
+          m.deletedBy = r.readInt64();
           break;
         }
         // field 200: createdAt
@@ -19444,7 +19444,7 @@ class ContentServiceV1GetTagRequest {
     // field 1: id
     final f1 = id;
     if (f1 != null) {
-      w.writeUint64(1, f1);
+      w.writeInt64(1, f1);
     }
     // field 2: code
     final f2 = code;
@@ -19473,7 +19473,7 @@ class ContentServiceV1GetTagRequest {
       switch (r.fieldNumber) {
         // field 1: id
         case 1: {
-          m.id = r.readUint64();
+          m.id = r.readInt64();
           break;
         }
         // field 2: code
@@ -19666,7 +19666,7 @@ class ContentServiceV1UpdateTagRequest {
     // field 1: id
     final f1 = id;
     if (f1 != null) {
-      w.writeUint64(1, f1);
+      w.writeInt64(1, f1);
     }
     // field 2: data
     final f2 = data;
@@ -19695,7 +19695,7 @@ class ContentServiceV1UpdateTagRequest {
       switch (r.fieldNumber) {
         // field 1: id
         case 1: {
-          m.id = r.readUint64();
+          m.id = r.readInt64();
           break;
         }
         // field 2: data
@@ -19780,7 +19780,7 @@ class ContentServiceV1DeleteTagRequest {
     // field 1: id
     final f1 = id;
     if (f1 != null) {
-      w.writeUint64(1, f1);
+      w.writeInt64(1, f1);
     }
   }
 
@@ -19794,7 +19794,7 @@ class ContentServiceV1DeleteTagRequest {
       switch (r.fieldNumber) {
         // field 1: id
         case 1: {
-          m.id = r.readUint64();
+          m.id = r.readInt64();
           break;
         }
         default: {
@@ -20262,12 +20262,12 @@ class IdentityServiceV1User {
     // field 1: id
     final f1 = id;
     if (f1 != null) {
-      w.writeUint64(1, f1);
+      w.writeInt64(1, f1);
     }
     // field 2: tenantId
     final f2 = tenantId;
     if (f2 != null) {
-      w.writeUint64(2, f2);
+      w.writeInt64(2, f2);
     }
     // field 3: tenantName
     final f3 = tenantName;
@@ -20277,7 +20277,7 @@ class IdentityServiceV1User {
     // field 4: orgUnitId
     final f4 = orgUnitId;
     if (f4 != null) {
-      w.writeUint64(4, f4);
+      w.writeInt64(4, f4);
     }
     // field 5: orgUnitIds
     final f5 = orgUnitIds;
@@ -20297,7 +20297,7 @@ class IdentityServiceV1User {
     // field 8: positionId
     final f8 = positionId;
     if (f8 != null) {
-      w.writeUint64(8, f8);
+      w.writeInt64(8, f8);
     }
     // field 9: positionIds
     final f9 = positionIds;
@@ -20317,7 +20317,7 @@ class IdentityServiceV1User {
     // field 12: roleId
     final f12 = roleId;
     if (f12 != null) {
-      w.writeUint64(12, f12);
+      w.writeInt64(12, f12);
     }
     // field 13: roleIds
     final f13 = roleIds;
@@ -20422,42 +20422,42 @@ class IdentityServiceV1User {
     // field 80: followers
     final f80 = followers;
     if (f80 != null) {
-      w.writeUint64(80, f80);
+      w.writeInt64(80, f80);
     }
     // field 81: following
     final f81 = following;
     if (f81 != null) {
-      w.writeUint64(81, f81);
+      w.writeInt64(81, f81);
     }
     // field 90: postCount
     final f90 = postCount;
     if (f90 != null) {
-      w.writeUint64(90, f90);
+      w.writeInt64(90, f90);
     }
     // field 91: commentCount
     final f91 = commentCount;
     if (f91 != null) {
-      w.writeUint64(91, f91);
+      w.writeInt64(91, f91);
     }
     // field 92: likeCount
     final f92 = likeCount;
     if (f92 != null) {
-      w.writeUint64(92, f92);
+      w.writeInt64(92, f92);
     }
     // field 100: createdBy
     final f100 = createdBy;
     if (f100 != null) {
-      w.writeUint64(100, f100);
+      w.writeInt64(100, f100);
     }
     // field 101: updatedBy
     final f101 = updatedBy;
     if (f101 != null) {
-      w.writeUint64(101, f101);
+      w.writeInt64(101, f101);
     }
     // field 102: deletedBy
     final f102 = deletedBy;
     if (f102 != null) {
-      w.writeUint64(102, f102);
+      w.writeInt64(102, f102);
     }
     // field 200: createdAt
     final f200 = createdAt;
@@ -20486,12 +20486,12 @@ class IdentityServiceV1User {
       switch (r.fieldNumber) {
         // field 1: id
         case 1: {
-          m.id = r.readUint64();
+          m.id = r.readInt64();
           break;
         }
         // field 2: tenantId
         case 2: {
-          m.tenantId = r.readUint64();
+          m.tenantId = r.readInt64();
           break;
         }
         // field 3: tenantName
@@ -20501,7 +20501,7 @@ class IdentityServiceV1User {
         }
         // field 4: orgUnitId
         case 4: {
-          m.orgUnitId = r.readUint64();
+          m.orgUnitId = r.readInt64();
           break;
         }
         // field 5: orgUnitIds
@@ -20521,7 +20521,7 @@ class IdentityServiceV1User {
         }
         // field 8: positionId
         case 8: {
-          m.positionId = r.readUint64();
+          m.positionId = r.readInt64();
           break;
         }
         // field 9: positionIds
@@ -20541,7 +20541,7 @@ class IdentityServiceV1User {
         }
         // field 12: roleId
         case 12: {
-          m.roleId = r.readUint64();
+          m.roleId = r.readInt64();
           break;
         }
         // field 13: roleIds
@@ -20646,42 +20646,42 @@ class IdentityServiceV1User {
         }
         // field 80: followers
         case 80: {
-          m.followers = r.readUint64();
+          m.followers = r.readInt64();
           break;
         }
         // field 81: following
         case 81: {
-          m.following = r.readUint64();
+          m.following = r.readInt64();
           break;
         }
         // field 90: postCount
         case 90: {
-          m.postCount = r.readUint64();
+          m.postCount = r.readInt64();
           break;
         }
         // field 91: commentCount
         case 91: {
-          m.commentCount = r.readUint64();
+          m.commentCount = r.readInt64();
           break;
         }
         // field 92: likeCount
         case 92: {
-          m.likeCount = r.readUint64();
+          m.likeCount = r.readInt64();
           break;
         }
         // field 100: createdBy
         case 100: {
-          m.createdBy = r.readUint64();
+          m.createdBy = r.readInt64();
           break;
         }
         // field 101: updatedBy
         case 101: {
-          m.updatedBy = r.readUint64();
+          m.updatedBy = r.readInt64();
           break;
         }
         // field 102: deletedBy
         case 102: {
-          m.deletedBy = r.readUint64();
+          m.deletedBy = r.readInt64();
           break;
         }
         // field 200: createdAt
@@ -20841,7 +20841,7 @@ class IdentityServiceV1UpdateUserRequest {
     // field 1: id
     final f1 = id;
     if (f1 != null) {
-      w.writeUint64(1, f1);
+      w.writeInt64(1, f1);
     }
     // field 2: data
     final f2 = data;
@@ -20875,7 +20875,7 @@ class IdentityServiceV1UpdateUserRequest {
       switch (r.fieldNumber) {
         // field 1: id
         case 1: {
-          m.id = r.readUint64();
+          m.id = r.readInt64();
           break;
         }
         // field 2: data

@@ -47,11 +47,11 @@ func NewInternalMessageRepo(
 	internalMessageRecipientRepo *InternalMessageRecipientRepo,
 ) *InternalMessageRepo {
 	repo := &InternalMessageRepo{
-		log:             ctx.NewLoggerHelper("internal-message/repo/core-service"),
-		entClient:       entClient,
-		mapper:          mapper.NewCopierMapper[internalMessageV1.InternalMessage, ent.InternalMessage](),
-		statusConverter: mapper.NewEnumTypeConverter[internalMessageV1.InternalMessage_Status, internalmessage.Status](internalMessageV1.InternalMessage_Status_name, internalMessageV1.InternalMessage_Status_value),
-		typeConverter:   mapper.NewEnumTypeConverter[internalMessageV1.InternalMessage_Type, internalmessage.Type](internalMessageV1.InternalMessage_Type_name, internalMessageV1.InternalMessage_Type_value),
+		log:                          ctx.NewLoggerHelper("internal-message/repo/core-service"),
+		entClient:                    entClient,
+		mapper:                       mapper.NewCopierMapper[internalMessageV1.InternalMessage, ent.InternalMessage](),
+		statusConverter:              mapper.NewEnumTypeConverter[internalMessageV1.InternalMessage_Status, internalmessage.Status](internalMessageV1.InternalMessage_Status_name, internalMessageV1.InternalMessage_Status_value),
+		typeConverter:                mapper.NewEnumTypeConverter[internalMessageV1.InternalMessage_Type, internalmessage.Type](internalMessageV1.InternalMessage_Type_name, internalMessageV1.InternalMessage_Type_value),
 		internalMessageRecipientRepo: internalMessageRecipientRepo,
 	}
 
@@ -117,7 +117,7 @@ func (r *InternalMessageRepo) List(ctx context.Context, req *paginationV1.Paging
 	}, nil
 }
 
-func (r *InternalMessageRepo) IsExist(ctx context.Context, id uint64) (bool, error) {
+func (r *InternalMessageRepo) IsExist(ctx context.Context, id int64) (bool, error) {
 	exist, err := r.entClient.Client().InternalMessage.Query().
 		Where(internalmessage.IDEQ(id)).
 		Exist(ctx)
@@ -235,7 +235,7 @@ func (r *InternalMessageRepo) Update(ctx context.Context, req *internalMessageV1
 	return err
 }
 
-func (r *InternalMessageRepo) Delete(ctx context.Context, id uint64) (err error) {
+func (r *InternalMessageRepo) Delete(ctx context.Context, id int64) (err error) {
 	if id == 0 {
 		return internalMessageV1.ErrorBadRequest("invalid parameter")
 	}

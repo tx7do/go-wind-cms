@@ -3,12 +3,12 @@ package service
 import (
 	"context"
 	"fmt"
-	"time"
 	"strconv"
+	"time"
 
 	"github.com/go-kratos/kratos/v2/log"
-	khttp "github.com/go-kratos/kratos/v2/transport/http"
 	kratosMetadata "github.com/go-kratos/kratos/v2/metadata"
+	khttp "github.com/go-kratos/kratos/v2/transport/http"
 	"github.com/tx7do/kratos-bootstrap/bootstrap"
 
 	appV1 "go-wind-cms/api/gen/go/app/service/v1"
@@ -44,7 +44,7 @@ func (s *FormSubmissionService) Submit(ctx context.Context, req *contentV1.Submi
 	if s.tenantResolve != nil {
 		if hr, ok := khttp.RequestFromServerContext(ctx); ok && hr != nil && hr.Host != "" {
 			if tid, err := s.tenantResolve.ResolveTenantIDByDomain(ctx, hr.Host); err == nil && tid > 0 {
-				tenantMD = strconv.FormatUint(uint64(tid), 10)
+				tenantMD = strconv.FormatInt(int64(tid), 10)
 				ctx = kratosMetadata.AppendToClientContext(ctx, "x-md-global-tenant-id", tenantMD)
 			}
 		}
@@ -69,7 +69,7 @@ func (s *FormSubmissionService) Submit(ctx context.Context, req *contentV1.Submi
 
 // attributeConversion 表单提交 → 实验转化归因（后台协程执行）。
 // 页面上运行中的首个实验若已记录该访客的参与，则标记转化。
-func (s *FormSubmissionService) attributeConversion(tenantMD string, pageID uint64, vidValue string) {
+func (s *FormSubmissionService) attributeConversion(tenantMD string, pageID int64, vidValue string) {
 	if s.experimentClient == nil || pageID == 0 || vidValue == "" {
 		return
 	}

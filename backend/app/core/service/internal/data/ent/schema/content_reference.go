@@ -34,13 +34,13 @@ func (ContentReference) Fields() []ent.Field {
 			Comment("源内容类型（post/page）").
 			NotEmpty().
 			MaxLen(32),
-		field.Uint64("source_id").
+		field.Int64("source_id").
 			Comment("源内容 ID"),
 		field.String("target_type").
 			Comment("目标资源类型（media_asset）").
 			NotEmpty().
 			MaxLen(32),
-		field.Uint64("target_id").
+		field.Int64("target_id").
 			Comment("目标资源 ID"),
 		field.String("field").
 			Comment("引用位置（body=正文内嵌，thumbnail=缩略图字段）").
@@ -56,7 +56,7 @@ func (ContentReference) Mixin() []ent.Mixin {
 		mixin.AutoIncrementId64{},
 		mixin.TimeAt{},
 		mixin.OperatorID64{},
-		mixin.TenantID[uint64]{},
+		mixin.TenantID[int64]{},
 	}
 }
 

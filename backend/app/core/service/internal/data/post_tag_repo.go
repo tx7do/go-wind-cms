@@ -32,7 +32,7 @@ func (r *PostTagRepo) init() {
 }
 
 // Create 创建帖子标签关联关系，通常在创建帖子时调用
-func (r *PostTagRepo) Create(ctx context.Context, postID, tagID uint64) error {
+func (r *PostTagRepo) Create(ctx context.Context, postID, tagID int64) error {
 	if postID == 0 || tagID == 0 {
 		return nil
 	}
@@ -50,7 +50,7 @@ func (r *PostTagRepo) Create(ctx context.Context, postID, tagID uint64) error {
 }
 
 // BatchCreate 批量创建帖子标签关联关系，通常在创建或更新帖子时调用
-func (r *PostTagRepo) BatchCreate(ctx context.Context, tx *ent.Tx, postID uint64, tagIDs []uint64) error {
+func (r *PostTagRepo) BatchCreate(ctx context.Context, tx *ent.Tx, postID int64, tagIDs []int64) error {
 	if postID == 0 || len(tagIDs) == 0 {
 		return nil
 	}
@@ -73,7 +73,7 @@ func (r *PostTagRepo) BatchCreate(ctx context.Context, tx *ent.Tx, postID uint64
 }
 
 // CleanTags 删除指定帖子关联的所有帖子标签关联关系，通常在更新帖子标签时调用
-func (r *PostTagRepo) CleanTags(ctx context.Context, tx *ent.Tx, postID uint64) error {
+func (r *PostTagRepo) CleanTags(ctx context.Context, tx *ent.Tx, postID int64) error {
 	delBuilder := tx.PostTag.Delete().Where(posttag.PostIDEQ(postID))
 	if tid, hasTenant := maybeTenantFromViewer(ctx); hasTenant {
 		delBuilder.Where(posttag.TenantIDEQ(tid))
@@ -86,7 +86,7 @@ func (r *PostTagRepo) CleanTags(ctx context.Context, tx *ent.Tx, postID uint64) 
 }
 
 // CleanPosts 删除指定标签关联的所有帖子标签关联关系，通常在删除标签时调用
-func (r *PostTagRepo) CleanPosts(ctx context.Context, tx *ent.Tx, tagID uint64) error {
+func (r *PostTagRepo) CleanPosts(ctx context.Context, tx *ent.Tx, tagID int64) error {
 	delBuilder := tx.PostTag.Delete().Where(posttag.TagIDEQ(tagID))
 	if tid, hasTenant := maybeTenantFromViewer(ctx); hasTenant {
 		delBuilder.Where(posttag.TenantIDEQ(tid))
@@ -99,7 +99,7 @@ func (r *PostTagRepo) CleanPosts(ctx context.Context, tx *ent.Tx, tagID uint64) 
 }
 
 // ListTagIDs 列出指定帖子关联的所有标签ID，通常在查询帖子详情时调用
-func (r *PostTagRepo) ListTagIDs(ctx context.Context, postID uint64) ([]uint64, error) {
+func (r *PostTagRepo) ListTagIDs(ctx context.Context, postID int64) ([]int64, error) {
 	if postID == 0 {
 		return nil, nil
 	}
@@ -114,7 +114,7 @@ func (r *PostTagRepo) ListTagIDs(ctx context.Context, postID uint64) ([]uint64, 
 		return nil, err
 	}
 
-	tagIDs := make([]uint64, 0, len(tags))
+	tagIDs := make([]int64, 0, len(tags))
 	for _, tag := range tags {
 		if tag == nil || tag.TagID == nil {
 			continue
@@ -125,7 +125,7 @@ func (r *PostTagRepo) ListTagIDs(ctx context.Context, postID uint64) ([]uint64, 
 	return tagIDs, nil
 }
 
-func (r *PostTagRepo) ListTagIDsByPostIDs(ctx context.Context, postIDs []uint64) ([]uint64, error) {
+func (r *PostTagRepo) ListTagIDsByPostIDs(ctx context.Context, postIDs []int64) ([]int64, error) {
 	if len(postIDs) == 0 {
 		return nil, nil
 	}
@@ -140,7 +140,7 @@ func (r *PostTagRepo) ListTagIDsByPostIDs(ctx context.Context, postIDs []uint64)
 		return nil, err
 	}
 
-	tagIDs := make([]uint64, 0, len(tags))
+	tagIDs := make([]int64, 0, len(tags))
 	for _, tag := range tags {
 		if tag == nil || tag.TagID == nil {
 			continue
@@ -152,7 +152,7 @@ func (r *PostTagRepo) ListTagIDsByPostIDs(ctx context.Context, postIDs []uint64)
 }
 
 // ListPostIDs 列出指定标签关联的所有帖子ID，通常在查询标签详情时调用
-func (r *PostTagRepo) ListPostIDs(ctx context.Context, tagID uint64) ([]uint64, error) {
+func (r *PostTagRepo) ListPostIDs(ctx context.Context, tagID int64) ([]int64, error) {
 	if tagID == 0 {
 		return nil, nil
 	}
@@ -167,7 +167,7 @@ func (r *PostTagRepo) ListPostIDs(ctx context.Context, tagID uint64) ([]uint64, 
 		return nil, err
 	}
 
-	postIDs := make([]uint64, 0, len(posts))
+	postIDs := make([]int64, 0, len(posts))
 	for _, post := range posts {
 		if post.PostID == nil {
 			continue
@@ -178,7 +178,7 @@ func (r *PostTagRepo) ListPostIDs(ctx context.Context, tagID uint64) ([]uint64, 
 	return postIDs, nil
 }
 
-func (r *PostTagRepo) ListPostIDsByTagIDs(ctx context.Context, tagIDs []uint64) ([]uint64, error) {
+func (r *PostTagRepo) ListPostIDsByTagIDs(ctx context.Context, tagIDs []int64) ([]int64, error) {
 	if len(tagIDs) == 0 {
 		return nil, nil
 	}
@@ -193,7 +193,7 @@ func (r *PostTagRepo) ListPostIDsByTagIDs(ctx context.Context, tagIDs []uint64) 
 		return nil, err
 	}
 
-	postIDs := make([]uint64, 0, len(posts))
+	postIDs := make([]int64, 0, len(posts))
 	for _, post := range posts {
 		if post.PostID == nil {
 			continue
@@ -205,7 +205,7 @@ func (r *PostTagRepo) ListPostIDsByTagIDs(ctx context.Context, tagIDs []uint64) 
 }
 
 // IsExist 判断指定帖子和标签的关联关系是否存在，通常在创建或更新帖子标签时调用，避免重复关联
-func (r *PostTagRepo) IsExist(ctx context.Context, postID, tagID uint64) (bool, error) {
+func (r *PostTagRepo) IsExist(ctx context.Context, postID, tagID int64) (bool, error) {
 	exist, err := r.entClient.Client().PostTag.Query().
 		Where(
 			posttag.TagIDEQ(tagID),
@@ -220,7 +220,7 @@ func (r *PostTagRepo) IsExist(ctx context.Context, postID, tagID uint64) (bool, 
 }
 
 // CountPosts 统计指定标签关联的帖子数量，通常在查询标签详情时调用
-func (r *PostTagRepo) CountPosts(ctx context.Context, tagID uint64) (int, error) {
+func (r *PostTagRepo) CountPosts(ctx context.Context, tagID int64) (int, error) {
 	count, err := r.entClient.Client().PostTag.Query().
 		Where(posttag.TagIDEQ(tagID)).
 		Count(ctx)
@@ -232,7 +232,7 @@ func (r *PostTagRepo) CountPosts(ctx context.Context, tagID uint64) (int, error)
 }
 
 // CountTags 统计指定帖子关联的标签数量，通常在查询帖子详情时调用
-func (r *PostTagRepo) CountTags(ctx context.Context, postID uint64) (int, error) {
+func (r *PostTagRepo) CountTags(ctx context.Context, postID int64) (int, error) {
 	count, err := r.entClient.Client().PostTag.Query().
 		Where(posttag.PostIDEQ(postID)).
 		Count(ctx)
@@ -244,7 +244,7 @@ func (r *PostTagRepo) CountTags(ctx context.Context, postID uint64) (int, error)
 }
 
 // Delete 删除指定帖子和标签的关联关系，通常在更新帖子标签时调用，删除旧的关联关系
-func (r *PostTagRepo) Delete(ctx context.Context, tx *ent.Tx, postID, tagID uint64) error {
+func (r *PostTagRepo) Delete(ctx context.Context, tx *ent.Tx, postID, tagID int64) error {
 	delBuilder := tx.PostTag.Delete().
 		Where(
 			posttag.TagIDEQ(tagID),

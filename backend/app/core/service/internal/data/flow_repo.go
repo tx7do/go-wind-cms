@@ -60,10 +60,10 @@ func (r *FlowRepo) List(ctx context.Context, req *paginationV1.PagingRequest) (*
 	for _, row := range rows {
 		items = append(items, r.mapper.ToDTO(row))
 	}
-	return &flowV1.ListFlowRuleResponse{Items: items, Total: uint64(total)}, nil
+	return &flowV1.ListFlowRuleResponse{Items: items, Total: int64(total)}, nil
 }
 
-func (r *FlowRepo) Get(ctx context.Context, id uint64) (*flowV1.FlowRule, error) {
+func (r *FlowRepo) Get(ctx context.Context, id int64) (*flowV1.FlowRule, error) {
 	row, err := r.entClient.Client().FlowRule.Query().
 		Where(flowrule.IDEQ(id)).
 		First(ctx)
@@ -105,7 +105,7 @@ func (r *FlowRepo) Create(ctx context.Context, dto *flowV1.FlowRule) (*flowV1.Fl
 	return r.mapper.ToDTO(row), nil
 }
 
-func (r *FlowRepo) Update(ctx context.Context, id uint64, dto *flowV1.FlowRule) (*flowV1.FlowRule, error) {
+func (r *FlowRepo) Update(ctx context.Context, id int64, dto *flowV1.FlowRule) (*flowV1.FlowRule, error) {
 	row, err := r.entClient.Client().FlowRule.Query().
 		Where(flowrule.IDEQ(id)).
 		First(ctx)
@@ -149,7 +149,7 @@ func (r *FlowRepo) Update(ctx context.Context, id uint64, dto *flowV1.FlowRule) 
 	return r.mapper.ToDTO(updated), nil
 }
 
-func (r *FlowRepo) Delete(ctx context.Context, id uint64) error {
+func (r *FlowRepo) Delete(ctx context.Context, id int64) error {
 	// 租户作用域：DeleteOneID 是 ent 变更路径，TenantPrivacy 不覆盖，必须显式加租户
 	// 过滤（与 Update 的作用域预读同语义），否则仅按 id 删除，跨租户可删他人规则。
 	conds := []predicate.FlowRule{flowrule.IDEQ(id)}
@@ -168,7 +168,7 @@ func (r *FlowRepo) Delete(ctx context.Context, id uint64) error {
 }
 
 // ListEnabledForEvent 列出某事件下启用的规则（worker 用，SystemViewer 全租户）。
-func (r *FlowRepo) ListEnabledForEvent(ctx context.Context, tenantID uint64, event string) ([]*flowV1.FlowRule, error) {
+func (r *FlowRepo) ListEnabledForEvent(ctx context.Context, tenantID int64, event string) ([]*flowV1.FlowRule, error) {
 	// 定时规则（trigger_cron 非空）只走 cron 调度，不参与事件扇出，避免双重触发
 	conds := []predicate.FlowRule{
 		flowrule.EnabledEQ(true),
@@ -192,8 +192,8 @@ func (r *FlowRepo) ListEnabledForEvent(ctx context.Context, tenantID uint64, eve
 
 // FlowCronRule 定时规则最小投影（调度 tick 用；FlowRule DTO 不含租户，故单列）。
 type FlowCronRule struct {
-	ID       uint64
-	TenantID uint64
+	ID       int64
+	TenantID int64
 	Cron     string
 	Event    string // trigger_event 原值（观测/占位符参考，触发事件固定 "schedule"）
 }
@@ -226,7 +226,7 @@ func (r *FlowRepo) ListEnabledCronRules(ctx context.Context) ([]FlowCronRule, er
 }
 
 // IncrMatchCount 命中计数 +1（观测用，调用方 best-effort 吞错）。
-func (r *FlowRepo) IncrMatchCount(ctx context.Context, id uint64) error {
+func (r *FlowRepo) IncrMatchCount(ctx context.Context, id int64) error {
 	if _, err := r.entClient.Client().FlowRule.UpdateOneID(id).
 		AddMatchCount(1).
 		Save(ctx); err != nil {

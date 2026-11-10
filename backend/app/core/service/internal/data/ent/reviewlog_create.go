@@ -65,13 +65,13 @@ func (_c *ReviewLogCreate) SetNillableDeletedAt(v *time.Time) *ReviewLogCreate {
 }
 
 // SetTenantID sets the "tenant_id" field.
-func (_c *ReviewLogCreate) SetTenantID(v uint64) *ReviewLogCreate {
+func (_c *ReviewLogCreate) SetTenantID(v int64) *ReviewLogCreate {
 	_c.mutation.SetTenantID(v)
 	return _c
 }
 
 // SetNillableTenantID sets the "tenant_id" field if the given value is not nil.
-func (_c *ReviewLogCreate) SetNillableTenantID(v *uint64) *ReviewLogCreate {
+func (_c *ReviewLogCreate) SetNillableTenantID(v *int64) *ReviewLogCreate {
 	if v != nil {
 		_c.SetTenantID(*v)
 	}
@@ -79,13 +79,13 @@ func (_c *ReviewLogCreate) SetNillableTenantID(v *uint64) *ReviewLogCreate {
 }
 
 // SetCreatedBy sets the "created_by" field.
-func (_c *ReviewLogCreate) SetCreatedBy(v uint64) *ReviewLogCreate {
+func (_c *ReviewLogCreate) SetCreatedBy(v int64) *ReviewLogCreate {
 	_c.mutation.SetCreatedBy(v)
 	return _c
 }
 
 // SetNillableCreatedBy sets the "created_by" field if the given value is not nil.
-func (_c *ReviewLogCreate) SetNillableCreatedBy(v *uint64) *ReviewLogCreate {
+func (_c *ReviewLogCreate) SetNillableCreatedBy(v *int64) *ReviewLogCreate {
 	if v != nil {
 		_c.SetCreatedBy(*v)
 	}
@@ -93,13 +93,13 @@ func (_c *ReviewLogCreate) SetNillableCreatedBy(v *uint64) *ReviewLogCreate {
 }
 
 // SetUpdatedBy sets the "updated_by" field.
-func (_c *ReviewLogCreate) SetUpdatedBy(v uint64) *ReviewLogCreate {
+func (_c *ReviewLogCreate) SetUpdatedBy(v int64) *ReviewLogCreate {
 	_c.mutation.SetUpdatedBy(v)
 	return _c
 }
 
 // SetNillableUpdatedBy sets the "updated_by" field if the given value is not nil.
-func (_c *ReviewLogCreate) SetNillableUpdatedBy(v *uint64) *ReviewLogCreate {
+func (_c *ReviewLogCreate) SetNillableUpdatedBy(v *int64) *ReviewLogCreate {
 	if v != nil {
 		_c.SetUpdatedBy(*v)
 	}
@@ -107,13 +107,13 @@ func (_c *ReviewLogCreate) SetNillableUpdatedBy(v *uint64) *ReviewLogCreate {
 }
 
 // SetDeletedBy sets the "deleted_by" field.
-func (_c *ReviewLogCreate) SetDeletedBy(v uint64) *ReviewLogCreate {
+func (_c *ReviewLogCreate) SetDeletedBy(v int64) *ReviewLogCreate {
 	_c.mutation.SetDeletedBy(v)
 	return _c
 }
 
 // SetNillableDeletedBy sets the "deleted_by" field if the given value is not nil.
-func (_c *ReviewLogCreate) SetNillableDeletedBy(v *uint64) *ReviewLogCreate {
+func (_c *ReviewLogCreate) SetNillableDeletedBy(v *int64) *ReviewLogCreate {
 	if v != nil {
 		_c.SetDeletedBy(*v)
 	}
@@ -127,7 +127,7 @@ func (_c *ReviewLogCreate) SetEntityType(v string) *ReviewLogCreate {
 }
 
 // SetEntityID sets the "entity_id" field.
-func (_c *ReviewLogCreate) SetEntityID(v uint64) *ReviewLogCreate {
+func (_c *ReviewLogCreate) SetEntityID(v int64) *ReviewLogCreate {
 	_c.mutation.SetEntityID(v)
 	return _c
 }
@@ -167,7 +167,7 @@ func (_c *ReviewLogCreate) SetNillableNote(v *string) *ReviewLogCreate {
 }
 
 // SetID sets the "id" field.
-func (_c *ReviewLogCreate) SetID(v uint64) *ReviewLogCreate {
+func (_c *ReviewLogCreate) SetID(v int64) *ReviewLogCreate {
 	_c.mutation.SetID(v)
 	return _c
 }
@@ -270,7 +270,7 @@ func (_c *ReviewLogCreate) sqlSave(ctx context.Context) (*ReviewLog, error) {
 	}
 	if _spec.ID.Value != _node.ID {
 		id := _spec.ID.Value.(int64)
-		_node.ID = uint64(id)
+		_node.ID = int64(id)
 	}
 	_c.mutation.id = &_node.ID
 	_c.mutation.done = true
@@ -280,7 +280,7 @@ func (_c *ReviewLogCreate) sqlSave(ctx context.Context) (*ReviewLog, error) {
 func (_c *ReviewLogCreate) createSpec() (*ReviewLog, *sqlgraph.CreateSpec) {
 	var (
 		_node = &ReviewLog{config: _c.config}
-		_spec = sqlgraph.NewCreateSpec(reviewlog.Table, sqlgraph.NewFieldSpec(reviewlog.FieldID, field.TypeUint64))
+		_spec = sqlgraph.NewCreateSpec(reviewlog.Table, sqlgraph.NewFieldSpec(reviewlog.FieldID, field.TypeInt64))
 	)
 	_spec.OnConflict = _c.conflict
 	if id, ok := _c.mutation.ID(); ok {
@@ -300,19 +300,19 @@ func (_c *ReviewLogCreate) createSpec() (*ReviewLog, *sqlgraph.CreateSpec) {
 		_node.DeletedAt = &value
 	}
 	if value, ok := _c.mutation.TenantID(); ok {
-		_spec.SetField(reviewlog.FieldTenantID, field.TypeUint64, value)
+		_spec.SetField(reviewlog.FieldTenantID, field.TypeInt64, value)
 		_node.TenantID = &value
 	}
 	if value, ok := _c.mutation.CreatedBy(); ok {
-		_spec.SetField(reviewlog.FieldCreatedBy, field.TypeUint64, value)
+		_spec.SetField(reviewlog.FieldCreatedBy, field.TypeInt64, value)
 		_node.CreatedBy = &value
 	}
 	if value, ok := _c.mutation.UpdatedBy(); ok {
-		_spec.SetField(reviewlog.FieldUpdatedBy, field.TypeUint64, value)
+		_spec.SetField(reviewlog.FieldUpdatedBy, field.TypeInt64, value)
 		_node.UpdatedBy = &value
 	}
 	if value, ok := _c.mutation.DeletedBy(); ok {
-		_spec.SetField(reviewlog.FieldDeletedBy, field.TypeUint64, value)
+		_spec.SetField(reviewlog.FieldDeletedBy, field.TypeInt64, value)
 		_node.DeletedBy = &value
 	}
 	if value, ok := _c.mutation.EntityType(); ok {
@@ -320,7 +320,7 @@ func (_c *ReviewLogCreate) createSpec() (*ReviewLog, *sqlgraph.CreateSpec) {
 		_node.EntityType = value
 	}
 	if value, ok := _c.mutation.EntityID(); ok {
-		_spec.SetField(reviewlog.FieldEntityID, field.TypeUint64, value)
+		_spec.SetField(reviewlog.FieldEntityID, field.TypeInt64, value)
 		_node.EntityID = value
 	}
 	if value, ok := _c.mutation.Action(); ok {
@@ -424,7 +424,7 @@ func (u *ReviewLogUpsert) ClearDeletedAt() *ReviewLogUpsert {
 }
 
 // SetCreatedBy sets the "created_by" field.
-func (u *ReviewLogUpsert) SetCreatedBy(v uint64) *ReviewLogUpsert {
+func (u *ReviewLogUpsert) SetCreatedBy(v int64) *ReviewLogUpsert {
 	u.Set(reviewlog.FieldCreatedBy, v)
 	return u
 }
@@ -436,7 +436,7 @@ func (u *ReviewLogUpsert) UpdateCreatedBy() *ReviewLogUpsert {
 }
 
 // AddCreatedBy adds v to the "created_by" field.
-func (u *ReviewLogUpsert) AddCreatedBy(v uint64) *ReviewLogUpsert {
+func (u *ReviewLogUpsert) AddCreatedBy(v int64) *ReviewLogUpsert {
 	u.Add(reviewlog.FieldCreatedBy, v)
 	return u
 }
@@ -448,7 +448,7 @@ func (u *ReviewLogUpsert) ClearCreatedBy() *ReviewLogUpsert {
 }
 
 // SetUpdatedBy sets the "updated_by" field.
-func (u *ReviewLogUpsert) SetUpdatedBy(v uint64) *ReviewLogUpsert {
+func (u *ReviewLogUpsert) SetUpdatedBy(v int64) *ReviewLogUpsert {
 	u.Set(reviewlog.FieldUpdatedBy, v)
 	return u
 }
@@ -460,7 +460,7 @@ func (u *ReviewLogUpsert) UpdateUpdatedBy() *ReviewLogUpsert {
 }
 
 // AddUpdatedBy adds v to the "updated_by" field.
-func (u *ReviewLogUpsert) AddUpdatedBy(v uint64) *ReviewLogUpsert {
+func (u *ReviewLogUpsert) AddUpdatedBy(v int64) *ReviewLogUpsert {
 	u.Add(reviewlog.FieldUpdatedBy, v)
 	return u
 }
@@ -472,7 +472,7 @@ func (u *ReviewLogUpsert) ClearUpdatedBy() *ReviewLogUpsert {
 }
 
 // SetDeletedBy sets the "deleted_by" field.
-func (u *ReviewLogUpsert) SetDeletedBy(v uint64) *ReviewLogUpsert {
+func (u *ReviewLogUpsert) SetDeletedBy(v int64) *ReviewLogUpsert {
 	u.Set(reviewlog.FieldDeletedBy, v)
 	return u
 }
@@ -484,7 +484,7 @@ func (u *ReviewLogUpsert) UpdateDeletedBy() *ReviewLogUpsert {
 }
 
 // AddDeletedBy adds v to the "deleted_by" field.
-func (u *ReviewLogUpsert) AddDeletedBy(v uint64) *ReviewLogUpsert {
+func (u *ReviewLogUpsert) AddDeletedBy(v int64) *ReviewLogUpsert {
 	u.Add(reviewlog.FieldDeletedBy, v)
 	return u
 }
@@ -508,7 +508,7 @@ func (u *ReviewLogUpsert) UpdateEntityType() *ReviewLogUpsert {
 }
 
 // SetEntityID sets the "entity_id" field.
-func (u *ReviewLogUpsert) SetEntityID(v uint64) *ReviewLogUpsert {
+func (u *ReviewLogUpsert) SetEntityID(v int64) *ReviewLogUpsert {
 	u.Set(reviewlog.FieldEntityID, v)
 	return u
 }
@@ -520,7 +520,7 @@ func (u *ReviewLogUpsert) UpdateEntityID() *ReviewLogUpsert {
 }
 
 // AddEntityID adds v to the "entity_id" field.
-func (u *ReviewLogUpsert) AddEntityID(v uint64) *ReviewLogUpsert {
+func (u *ReviewLogUpsert) AddEntityID(v int64) *ReviewLogUpsert {
 	u.Add(reviewlog.FieldEntityID, v)
 	return u
 }
@@ -670,14 +670,14 @@ func (u *ReviewLogUpsertOne) ClearDeletedAt() *ReviewLogUpsertOne {
 }
 
 // SetCreatedBy sets the "created_by" field.
-func (u *ReviewLogUpsertOne) SetCreatedBy(v uint64) *ReviewLogUpsertOne {
+func (u *ReviewLogUpsertOne) SetCreatedBy(v int64) *ReviewLogUpsertOne {
 	return u.Update(func(s *ReviewLogUpsert) {
 		s.SetCreatedBy(v)
 	})
 }
 
 // AddCreatedBy adds v to the "created_by" field.
-func (u *ReviewLogUpsertOne) AddCreatedBy(v uint64) *ReviewLogUpsertOne {
+func (u *ReviewLogUpsertOne) AddCreatedBy(v int64) *ReviewLogUpsertOne {
 	return u.Update(func(s *ReviewLogUpsert) {
 		s.AddCreatedBy(v)
 	})
@@ -698,14 +698,14 @@ func (u *ReviewLogUpsertOne) ClearCreatedBy() *ReviewLogUpsertOne {
 }
 
 // SetUpdatedBy sets the "updated_by" field.
-func (u *ReviewLogUpsertOne) SetUpdatedBy(v uint64) *ReviewLogUpsertOne {
+func (u *ReviewLogUpsertOne) SetUpdatedBy(v int64) *ReviewLogUpsertOne {
 	return u.Update(func(s *ReviewLogUpsert) {
 		s.SetUpdatedBy(v)
 	})
 }
 
 // AddUpdatedBy adds v to the "updated_by" field.
-func (u *ReviewLogUpsertOne) AddUpdatedBy(v uint64) *ReviewLogUpsertOne {
+func (u *ReviewLogUpsertOne) AddUpdatedBy(v int64) *ReviewLogUpsertOne {
 	return u.Update(func(s *ReviewLogUpsert) {
 		s.AddUpdatedBy(v)
 	})
@@ -726,14 +726,14 @@ func (u *ReviewLogUpsertOne) ClearUpdatedBy() *ReviewLogUpsertOne {
 }
 
 // SetDeletedBy sets the "deleted_by" field.
-func (u *ReviewLogUpsertOne) SetDeletedBy(v uint64) *ReviewLogUpsertOne {
+func (u *ReviewLogUpsertOne) SetDeletedBy(v int64) *ReviewLogUpsertOne {
 	return u.Update(func(s *ReviewLogUpsert) {
 		s.SetDeletedBy(v)
 	})
 }
 
 // AddDeletedBy adds v to the "deleted_by" field.
-func (u *ReviewLogUpsertOne) AddDeletedBy(v uint64) *ReviewLogUpsertOne {
+func (u *ReviewLogUpsertOne) AddDeletedBy(v int64) *ReviewLogUpsertOne {
 	return u.Update(func(s *ReviewLogUpsert) {
 		s.AddDeletedBy(v)
 	})
@@ -768,14 +768,14 @@ func (u *ReviewLogUpsertOne) UpdateEntityType() *ReviewLogUpsertOne {
 }
 
 // SetEntityID sets the "entity_id" field.
-func (u *ReviewLogUpsertOne) SetEntityID(v uint64) *ReviewLogUpsertOne {
+func (u *ReviewLogUpsertOne) SetEntityID(v int64) *ReviewLogUpsertOne {
 	return u.Update(func(s *ReviewLogUpsert) {
 		s.SetEntityID(v)
 	})
 }
 
 // AddEntityID adds v to the "entity_id" field.
-func (u *ReviewLogUpsertOne) AddEntityID(v uint64) *ReviewLogUpsertOne {
+func (u *ReviewLogUpsertOne) AddEntityID(v int64) *ReviewLogUpsertOne {
 	return u.Update(func(s *ReviewLogUpsert) {
 		s.AddEntityID(v)
 	})
@@ -860,7 +860,7 @@ func (u *ReviewLogUpsertOne) ExecX(ctx context.Context) {
 }
 
 // Exec executes the UPSERT query and returns the inserted/updated ID.
-func (u *ReviewLogUpsertOne) ID(ctx context.Context) (id uint64, err error) {
+func (u *ReviewLogUpsertOne) ID(ctx context.Context) (id int64, err error) {
 	node, err := u.create.Save(ctx)
 	if err != nil {
 		return id, err
@@ -869,7 +869,7 @@ func (u *ReviewLogUpsertOne) ID(ctx context.Context) (id uint64, err error) {
 }
 
 // IDX is like ID, but panics if an error occurs.
-func (u *ReviewLogUpsertOne) IDX(ctx context.Context) uint64 {
+func (u *ReviewLogUpsertOne) IDX(ctx context.Context) int64 {
 	id, err := u.ID(ctx)
 	if err != nil {
 		panic(err)
@@ -926,7 +926,7 @@ func (_c *ReviewLogCreateBulk) Save(ctx context.Context) ([]*ReviewLog, error) {
 				mutation.id = &nodes[i].ID
 				if specs[i].ID.Value != nil && nodes[i].ID == 0 {
 					id := specs[i].ID.Value.(int64)
-					nodes[i].ID = uint64(id)
+					nodes[i].ID = int64(id)
 				}
 				mutation.done = true
 				return nodes[i], nil
@@ -1107,14 +1107,14 @@ func (u *ReviewLogUpsertBulk) ClearDeletedAt() *ReviewLogUpsertBulk {
 }
 
 // SetCreatedBy sets the "created_by" field.
-func (u *ReviewLogUpsertBulk) SetCreatedBy(v uint64) *ReviewLogUpsertBulk {
+func (u *ReviewLogUpsertBulk) SetCreatedBy(v int64) *ReviewLogUpsertBulk {
 	return u.Update(func(s *ReviewLogUpsert) {
 		s.SetCreatedBy(v)
 	})
 }
 
 // AddCreatedBy adds v to the "created_by" field.
-func (u *ReviewLogUpsertBulk) AddCreatedBy(v uint64) *ReviewLogUpsertBulk {
+func (u *ReviewLogUpsertBulk) AddCreatedBy(v int64) *ReviewLogUpsertBulk {
 	return u.Update(func(s *ReviewLogUpsert) {
 		s.AddCreatedBy(v)
 	})
@@ -1135,14 +1135,14 @@ func (u *ReviewLogUpsertBulk) ClearCreatedBy() *ReviewLogUpsertBulk {
 }
 
 // SetUpdatedBy sets the "updated_by" field.
-func (u *ReviewLogUpsertBulk) SetUpdatedBy(v uint64) *ReviewLogUpsertBulk {
+func (u *ReviewLogUpsertBulk) SetUpdatedBy(v int64) *ReviewLogUpsertBulk {
 	return u.Update(func(s *ReviewLogUpsert) {
 		s.SetUpdatedBy(v)
 	})
 }
 
 // AddUpdatedBy adds v to the "updated_by" field.
-func (u *ReviewLogUpsertBulk) AddUpdatedBy(v uint64) *ReviewLogUpsertBulk {
+func (u *ReviewLogUpsertBulk) AddUpdatedBy(v int64) *ReviewLogUpsertBulk {
 	return u.Update(func(s *ReviewLogUpsert) {
 		s.AddUpdatedBy(v)
 	})
@@ -1163,14 +1163,14 @@ func (u *ReviewLogUpsertBulk) ClearUpdatedBy() *ReviewLogUpsertBulk {
 }
 
 // SetDeletedBy sets the "deleted_by" field.
-func (u *ReviewLogUpsertBulk) SetDeletedBy(v uint64) *ReviewLogUpsertBulk {
+func (u *ReviewLogUpsertBulk) SetDeletedBy(v int64) *ReviewLogUpsertBulk {
 	return u.Update(func(s *ReviewLogUpsert) {
 		s.SetDeletedBy(v)
 	})
 }
 
 // AddDeletedBy adds v to the "deleted_by" field.
-func (u *ReviewLogUpsertBulk) AddDeletedBy(v uint64) *ReviewLogUpsertBulk {
+func (u *ReviewLogUpsertBulk) AddDeletedBy(v int64) *ReviewLogUpsertBulk {
 	return u.Update(func(s *ReviewLogUpsert) {
 		s.AddDeletedBy(v)
 	})
@@ -1205,14 +1205,14 @@ func (u *ReviewLogUpsertBulk) UpdateEntityType() *ReviewLogUpsertBulk {
 }
 
 // SetEntityID sets the "entity_id" field.
-func (u *ReviewLogUpsertBulk) SetEntityID(v uint64) *ReviewLogUpsertBulk {
+func (u *ReviewLogUpsertBulk) SetEntityID(v int64) *ReviewLogUpsertBulk {
 	return u.Update(func(s *ReviewLogUpsert) {
 		s.SetEntityID(v)
 	})
 }
 
 // AddEntityID adds v to the "entity_id" field.
-func (u *ReviewLogUpsertBulk) AddEntityID(v uint64) *ReviewLogUpsertBulk {
+func (u *ReviewLogUpsertBulk) AddEntityID(v int64) *ReviewLogUpsertBulk {
 	return u.Update(func(s *ReviewLogUpsert) {
 		s.AddEntityID(v)
 	})

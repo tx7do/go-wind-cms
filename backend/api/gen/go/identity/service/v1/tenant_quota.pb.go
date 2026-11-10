@@ -85,13 +85,13 @@ func (TenantQuota_QuotaType) EnumDescriptor() ([]byte, []int) {
 // 租户配额
 type TenantQuota struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
-	Id            *uint64                `protobuf:"varint,1,opt,name=id,proto3,oneof" json:"id,omitempty"`                                                                               // 配额项ID
-	TenantId      *uint64                `protobuf:"varint,2,opt,name=tenant_id,json=tenantId,proto3,oneof" json:"tenant_id,omitempty"`                                                   // 租户ID
+	Id            *int64                 `protobuf:"varint,1,opt,name=id,proto3,oneof" json:"id,omitempty"`                                                                               // 配额项ID
+	TenantId      *int64                 `protobuf:"varint,2,opt,name=tenant_id,json=tenantId,proto3,oneof" json:"tenant_id,omitempty"`                                                   // 租户ID
 	QuotaType     *TenantQuota_QuotaType `protobuf:"varint,3,opt,name=quota_type,json=quotaType,proto3,enum=identity.service.v1.TenantQuota_QuotaType,oneof" json:"quota_type,omitempty"` // 配额类型
 	QuotaValue    *uint64                `protobuf:"varint,4,opt,name=quota_value,json=quotaValue,proto3,oneof" json:"quota_value,omitempty"`                                             // 配额值
-	CreatedBy     *uint64                `protobuf:"varint,100,opt,name=created_by,json=createdBy,proto3,oneof" json:"created_by,omitempty"`                                              // 创建者用户ID
-	UpdatedBy     *uint64                `protobuf:"varint,101,opt,name=updated_by,json=updatedBy,proto3,oneof" json:"updated_by,omitempty"`                                              // 更新者用户ID
-	DeletedBy     *uint64                `protobuf:"varint,102,opt,name=deleted_by,json=deletedBy,proto3,oneof" json:"deleted_by,omitempty"`                                              // 删除者用户ID
+	CreatedBy     *int64                 `protobuf:"varint,100,opt,name=created_by,json=createdBy,proto3,oneof" json:"created_by,omitempty"`                                              // 创建者用户ID
+	UpdatedBy     *int64                 `protobuf:"varint,101,opt,name=updated_by,json=updatedBy,proto3,oneof" json:"updated_by,omitempty"`                                              // 更新者用户ID
+	DeletedBy     *int64                 `protobuf:"varint,102,opt,name=deleted_by,json=deletedBy,proto3,oneof" json:"deleted_by,omitempty"`                                              // 删除者用户ID
 	CreatedAt     *timestamppb.Timestamp `protobuf:"bytes,200,opt,name=created_at,json=createdAt,proto3,oneof" json:"created_at,omitempty"`                                               // 创建时间
 	UpdatedAt     *timestamppb.Timestamp `protobuf:"bytes,201,opt,name=updated_at,json=updatedAt,proto3,oneof" json:"updated_at,omitempty"`                                               // 更新时间
 	DeletedAt     *timestamppb.Timestamp `protobuf:"bytes,202,opt,name=deleted_at,json=deletedAt,proto3,oneof" json:"deleted_at,omitempty"`                                               // 删除时间
@@ -129,14 +129,14 @@ func (*TenantQuota) Descriptor() ([]byte, []int) {
 	return file_identity_service_v1_tenant_quota_proto_rawDescGZIP(), []int{0}
 }
 
-func (x *TenantQuota) GetId() uint64 {
+func (x *TenantQuota) GetId() int64 {
 	if x != nil && x.Id != nil {
 		return *x.Id
 	}
 	return 0
 }
 
-func (x *TenantQuota) GetTenantId() uint64 {
+func (x *TenantQuota) GetTenantId() int64 {
 	if x != nil && x.TenantId != nil {
 		return *x.TenantId
 	}
@@ -157,21 +157,21 @@ func (x *TenantQuota) GetQuotaValue() uint64 {
 	return 0
 }
 
-func (x *TenantQuota) GetCreatedBy() uint64 {
+func (x *TenantQuota) GetCreatedBy() int64 {
 	if x != nil && x.CreatedBy != nil {
 		return *x.CreatedBy
 	}
 	return 0
 }
 
-func (x *TenantQuota) GetUpdatedBy() uint64 {
+func (x *TenantQuota) GetUpdatedBy() int64 {
 	if x != nil && x.UpdatedBy != nil {
 		return *x.UpdatedBy
 	}
 	return 0
 }
 
-func (x *TenantQuota) GetDeletedBy() uint64 {
+func (x *TenantQuota) GetDeletedBy() int64 {
 	if x != nil && x.DeletedBy != nil {
 		return *x.DeletedBy
 	}
@@ -255,10 +255,10 @@ func (x *QuotaUsage) GetQuotaValue() uint64 {
 // 租户用量聚合（计量与闸门同源：同一张表、同一个查询）
 type TenantUsage struct {
 	state            protoimpl.MessageState `protogen:"open.v1"`
-	TenantId         *uint64                `protobuf:"varint,1,opt,name=tenant_id,json=tenantId,proto3,oneof" json:"tenant_id,omitempty"`                           // 租户ID
-	UserCount        *uint64                `protobuf:"varint,2,opt,name=user_count,json=userCount,proto3,oneof" json:"user_count,omitempty"`                        // 当前用户数
-	StorageUsedBytes *uint64                `protobuf:"varint,3,opt,name=storage_used_bytes,json=storageUsedBytes,proto3,oneof" json:"storage_used_bytes,omitempty"` // 存储占用字节数
-	ApiCallCount     *uint64                `protobuf:"varint,4,opt,name=api_call_count,json=apiCallCount,proto3,oneof" json:"api_call_count,omitempty"`             // API 调用次数
+	TenantId         *int64                 `protobuf:"varint,1,opt,name=tenant_id,json=tenantId,proto3,oneof" json:"tenant_id,omitempty"`                           // 租户ID
+	UserCount        *int64                 `protobuf:"varint,2,opt,name=user_count,json=userCount,proto3,oneof" json:"user_count,omitempty"`                        // 当前用户数
+	StorageUsedBytes *int64                 `protobuf:"varint,3,opt,name=storage_used_bytes,json=storageUsedBytes,proto3,oneof" json:"storage_used_bytes,omitempty"` // 存储占用字节数
+	ApiCallCount     *int64                 `protobuf:"varint,4,opt,name=api_call_count,json=apiCallCount,proto3,oneof" json:"api_call_count,omitempty"`             // API 调用次数
 	AiTokensMonth    *uint64                `protobuf:"varint,5,opt,name=ai_tokens_month,json=aiTokensMonth,proto3,oneof" json:"ai_tokens_month,omitempty"`          // 本月 AI token 用量
 	SubscriptionPlan *string                `protobuf:"bytes,6,opt,name=subscription_plan,json=subscriptionPlan,proto3,oneof" json:"subscription_plan,omitempty"`    // 订阅套餐名
 	Quotas           []*QuotaUsage          `protobuf:"bytes,7,rep,name=quotas,proto3" json:"quotas,omitempty"`                                                      // 配额上限列表
@@ -296,28 +296,28 @@ func (*TenantUsage) Descriptor() ([]byte, []int) {
 	return file_identity_service_v1_tenant_quota_proto_rawDescGZIP(), []int{2}
 }
 
-func (x *TenantUsage) GetTenantId() uint64 {
+func (x *TenantUsage) GetTenantId() int64 {
 	if x != nil && x.TenantId != nil {
 		return *x.TenantId
 	}
 	return 0
 }
 
-func (x *TenantUsage) GetUserCount() uint64 {
+func (x *TenantUsage) GetUserCount() int64 {
 	if x != nil && x.UserCount != nil {
 		return *x.UserCount
 	}
 	return 0
 }
 
-func (x *TenantUsage) GetStorageUsedBytes() uint64 {
+func (x *TenantUsage) GetStorageUsedBytes() int64 {
 	if x != nil && x.StorageUsedBytes != nil {
 		return *x.StorageUsedBytes
 	}
 	return 0
 }
 
-func (x *TenantUsage) GetApiCallCount() uint64 {
+func (x *TenantUsage) GetApiCallCount() int64 {
 	if x != nil && x.ApiCallCount != nil {
 		return *x.ApiCallCount
 	}
@@ -349,7 +349,7 @@ func (x *TenantUsage) GetQuotas() []*QuotaUsage {
 type ListTenantQuotaResponse struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
 	Items         []*TenantQuota         `protobuf:"bytes,1,rep,name=items,proto3" json:"items,omitempty"`
-	Total         uint64                 `protobuf:"varint,2,opt,name=total,proto3" json:"total,omitempty"`
+	Total         int64                  `protobuf:"varint,2,opt,name=total,proto3" json:"total,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -391,7 +391,7 @@ func (x *ListTenantQuotaResponse) GetItems() []*TenantQuota {
 	return nil
 }
 
-func (x *ListTenantQuotaResponse) GetTotal() uint64 {
+func (x *ListTenantQuotaResponse) GetTotal() int64 {
 	if x != nil {
 		return x.Total
 	}
@@ -447,7 +447,7 @@ func (x *GetTenantQuotaRequest) GetQueryBy() isGetTenantQuotaRequest_QueryBy {
 	return nil
 }
 
-func (x *GetTenantQuotaRequest) GetId() uint64 {
+func (x *GetTenantQuotaRequest) GetId() int64 {
 	if x != nil {
 		if x, ok := x.QueryBy.(*GetTenantQuotaRequest_Id); ok {
 			return x.Id
@@ -468,7 +468,7 @@ type isGetTenantQuotaRequest_QueryBy interface {
 }
 
 type GetTenantQuotaRequest_Id struct {
-	Id uint64 `protobuf:"varint,1,opt,name=id,proto3,oneof"`
+	Id int64 `protobuf:"varint,1,opt,name=id,proto3,oneof"`
 }
 
 func (*GetTenantQuotaRequest_Id) isGetTenantQuotaRequest_QueryBy() {}
@@ -521,7 +521,7 @@ func (x *CreateTenantQuotaRequest) GetData() *TenantQuota {
 // 更新租户配额 - 请求
 type UpdateTenantQuotaRequest struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
-	Id            uint64                 `protobuf:"varint,1,opt,name=id,proto3" json:"id,omitempty"`
+	Id            int64                  `protobuf:"varint,1,opt,name=id,proto3" json:"id,omitempty"`
 	Data          *TenantQuota           `protobuf:"bytes,2,opt,name=data,proto3" json:"data,omitempty"`
 	UpdateMask    *fieldmaskpb.FieldMask `protobuf:"bytes,3,opt,name=update_mask,json=updateMask,proto3" json:"update_mask,omitempty"`              // 要更新的字段列表
 	AllowMissing  *bool                  `protobuf:"varint,4,opt,name=allow_missing,json=allowMissing,proto3,oneof" json:"allow_missing,omitempty"` // 资源不存在则新增（插入）
@@ -559,7 +559,7 @@ func (*UpdateTenantQuotaRequest) Descriptor() ([]byte, []int) {
 	return file_identity_service_v1_tenant_quota_proto_rawDescGZIP(), []int{6}
 }
 
-func (x *UpdateTenantQuotaRequest) GetId() uint64 {
+func (x *UpdateTenantQuotaRequest) GetId() int64 {
 	if x != nil {
 		return x.Id
 	}
@@ -590,7 +590,7 @@ func (x *UpdateTenantQuotaRequest) GetAllowMissing() bool {
 // 删除租户配额 - 请求
 type DeleteTenantQuotaRequest struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
-	Id            uint64                 `protobuf:"varint,1,opt,name=id,proto3" json:"id,omitempty"`
+	Id            int64                  `protobuf:"varint,1,opt,name=id,proto3" json:"id,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -625,7 +625,7 @@ func (*DeleteTenantQuotaRequest) Descriptor() ([]byte, []int) {
 	return file_identity_service_v1_tenant_quota_proto_rawDescGZIP(), []int{7}
 }
 
-func (x *DeleteTenantQuotaRequest) GetId() uint64 {
+func (x *DeleteTenantQuotaRequest) GetId() int64 {
 	if x != nil {
 		return x.Id
 	}
@@ -635,7 +635,7 @@ func (x *DeleteTenantQuotaRequest) GetId() uint64 {
 // 查询租户用量 - 请求
 type GetTenantUsageRequest struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
-	TenantId      uint64                 `protobuf:"varint,1,opt,name=tenant_id,json=tenantId,proto3" json:"tenant_id,omitempty"` // 租户ID
+	TenantId      int64                  `protobuf:"varint,1,opt,name=tenant_id,json=tenantId,proto3" json:"tenant_id,omitempty"` // 租户ID
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -670,7 +670,7 @@ func (*GetTenantUsageRequest) Descriptor() ([]byte, []int) {
 	return file_identity_service_v1_tenant_quota_proto_rawDescGZIP(), []int{8}
 }
 
-func (x *GetTenantUsageRequest) GetTenantId() uint64 {
+func (x *GetTenantUsageRequest) GetTenantId() int64 {
 	if x != nil {
 		return x.TenantId
 	}
@@ -680,7 +680,7 @@ func (x *GetTenantUsageRequest) GetTenantId() uint64 {
 // 自助用量 - 请求（tenant_id 由 BFF 从认证上下文注入，不接受客户端传值）
 type GetMyTenantUsageRequest struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
-	TenantId      uint64                 `protobuf:"varint,1,opt,name=tenant_id,json=tenantId,proto3" json:"tenant_id,omitempty"` // 租户ID
+	TenantId      int64                  `protobuf:"varint,1,opt,name=tenant_id,json=tenantId,proto3" json:"tenant_id,omitempty"` // 租户ID
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -715,7 +715,7 @@ func (*GetMyTenantUsageRequest) Descriptor() ([]byte, []int) {
 	return file_identity_service_v1_tenant_quota_proto_rawDescGZIP(), []int{9}
 }
 
-func (x *GetMyTenantUsageRequest) GetTenantId() uint64 {
+func (x *GetMyTenantUsageRequest) GetTenantId() int64 {
 	if x != nil {
 		return x.TenantId
 	}
@@ -725,7 +725,7 @@ func (x *GetMyTenantUsageRequest) GetTenantId() uint64 {
 // 租户访问闸门 - 请求
 type CheckTenantAccessRequest struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
-	TenantId      uint64                 `protobuf:"varint,1,opt,name=tenant_id,json=tenantId,proto3" json:"tenant_id,omitempty"` // 租户ID
+	TenantId      int64                  `protobuf:"varint,1,opt,name=tenant_id,json=tenantId,proto3" json:"tenant_id,omitempty"` // 租户ID
 	Method        string                 `protobuf:"bytes,2,opt,name=method,proto3" json:"method,omitempty"`                      // HTTP 方法
 	Path          string                 `protobuf:"bytes,3,opt,name=path,proto3" json:"path,omitempty"`                          // 请求路径
 	unknownFields protoimpl.UnknownFields
@@ -762,7 +762,7 @@ func (*CheckTenantAccessRequest) Descriptor() ([]byte, []int) {
 	return file_identity_service_v1_tenant_quota_proto_rawDescGZIP(), []int{10}
 }
 
-func (x *CheckTenantAccessRequest) GetTenantId() uint64 {
+func (x *CheckTenantAccessRequest) GetTenantId() int64 {
 	if x != nil {
 		return x.TenantId
 	}
@@ -823,7 +823,7 @@ func (*CheckTenantAccessResponse) Descriptor() ([]byte, []int) {
 // 业务入口配额闸门 - 请求
 type CheckQuotaRequest struct {
 	state     protoimpl.MessageState `protogen:"open.v1"`
-	TenantId  uint64                 `protobuf:"varint,1,opt,name=tenant_id,json=tenantId,proto3" json:"tenant_id,omitempty"`                                                   // 租户ID
+	TenantId  int64                  `protobuf:"varint,1,opt,name=tenant_id,json=tenantId,proto3" json:"tenant_id,omitempty"`                                                   // 租户ID
 	QuotaType TenantQuota_QuotaType  `protobuf:"varint,2,opt,name=quota_type,json=quotaType,proto3,enum=identity.service.v1.TenantQuota_QuotaType" json:"quota_type,omitempty"` // 配额类型
 	// 本次操作新增的量（STORAGE=上传字节数；USER_LIMIT 等忽略）
 	Additional    *uint64 `protobuf:"varint,3,opt,name=additional,proto3,oneof" json:"additional,omitempty"` // 本次新增用量
@@ -861,7 +861,7 @@ func (*CheckQuotaRequest) Descriptor() ([]byte, []int) {
 	return file_identity_service_v1_tenant_quota_proto_rawDescGZIP(), []int{12}
 }
 
-func (x *CheckQuotaRequest) GetTenantId() uint64 {
+func (x *CheckQuotaRequest) GetTenantId() int64 {
 	if x != nil {
 		return x.TenantId
 	}
@@ -975,7 +975,7 @@ func (x *QuotaPlanItem) GetLimit() int64 {
 // 套餐模板
 type QuotaPlan struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
-	Id            *uint64                `protobuf:"varint,1,opt,name=id,proto3,oneof" json:"id,omitempty"`                                 // 模板ID
+	Id            *int64                 `protobuf:"varint,1,opt,name=id,proto3,oneof" json:"id,omitempty"`                                 // 模板ID
 	Name          string                 `protobuf:"bytes,2,opt,name=name,proto3" json:"name,omitempty"`                                    // 模板名
 	Description   *string                `protobuf:"bytes,3,opt,name=description,proto3,oneof" json:"description,omitempty"`                // 描述
 	Items         []*QuotaPlanItem       `protobuf:"bytes,4,rep,name=items,proto3" json:"items,omitempty"`                                  // 配额项
@@ -1015,7 +1015,7 @@ func (*QuotaPlan) Descriptor() ([]byte, []int) {
 	return file_identity_service_v1_tenant_quota_proto_rawDescGZIP(), []int{15}
 }
 
-func (x *QuotaPlan) GetId() uint64 {
+func (x *QuotaPlan) GetId() int64 {
 	if x != nil && x.Id != nil {
 		return *x.Id
 	}
@@ -1187,7 +1187,7 @@ func (x *CreateQuotaPlanRequest) GetData() *QuotaPlan {
 // 删除套餐 - 请求
 type DeleteQuotaPlanRequest struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
-	Id            uint64                 `protobuf:"varint,1,opt,name=id,proto3" json:"id,omitempty"`
+	Id            int64                  `protobuf:"varint,1,opt,name=id,proto3" json:"id,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -1222,7 +1222,7 @@ func (*DeleteQuotaPlanRequest) Descriptor() ([]byte, []int) {
 	return file_identity_service_v1_tenant_quota_proto_rawDescGZIP(), []int{19}
 }
 
-func (x *DeleteQuotaPlanRequest) GetId() uint64 {
+func (x *DeleteQuotaPlanRequest) GetId() int64 {
 	if x != nil {
 		return x.Id
 	}
@@ -1232,8 +1232,8 @@ func (x *DeleteQuotaPlanRequest) GetId() uint64 {
 // 套用套餐 - 请求
 type ApplyQuotaPlanRequest struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
-	PlanId        uint64                 `protobuf:"varint,1,opt,name=plan_id,json=planId,proto3" json:"plan_id,omitempty"`       // 模板ID
-	TenantId      uint64                 `protobuf:"varint,2,opt,name=tenant_id,json=tenantId,proto3" json:"tenant_id,omitempty"` // 目标租户
+	PlanId        int64                  `protobuf:"varint,1,opt,name=plan_id,json=planId,proto3" json:"plan_id,omitempty"`       // 模板ID
+	TenantId      int64                  `protobuf:"varint,2,opt,name=tenant_id,json=tenantId,proto3" json:"tenant_id,omitempty"` // 目标租户
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -1268,14 +1268,14 @@ func (*ApplyQuotaPlanRequest) Descriptor() ([]byte, []int) {
 	return file_identity_service_v1_tenant_quota_proto_rawDescGZIP(), []int{20}
 }
 
-func (x *ApplyQuotaPlanRequest) GetPlanId() uint64 {
+func (x *ApplyQuotaPlanRequest) GetPlanId() int64 {
 	if x != nil {
 		return x.PlanId
 	}
 	return 0
 }
 
-func (x *ApplyQuotaPlanRequest) GetTenantId() uint64 {
+func (x *ApplyQuotaPlanRequest) GetTenantId() int64 {
 	if x != nil {
 		return x.TenantId
 	}
@@ -1333,18 +1333,18 @@ const file_identity_service_v1_tenant_quota_proto_rawDesc = "" +
 	"\n" +
 	"&identity/service/v1/tenant_quota.proto\x12\x13identity.service.v1\x1a$gnostic/openapi/v3/annotations.proto\x1a\x1bgoogle/protobuf/empty.proto\x1a google/protobuf/field_mask.proto\x1a\x1fgoogle/protobuf/timestamp.proto\x1a\x1epagination/v1/pagination.proto\"\xfa\a\n" +
 	"\vTenantQuota\x12&\n" +
-	"\x02id\x18\x01 \x01(\x04B\x11\xbaG\x0e\x92\x02\v配额项IDH\x00R\x02id\x88\x01\x01\x120\n" +
-	"\ttenant_id\x18\x02 \x01(\x04B\x0e\xbaG\v\x92\x02\b租户IDH\x01R\btenantId\x88\x01\x01\x12b\n" +
+	"\x02id\x18\x01 \x01(\x03B\x11\xbaG\x0e\x92\x02\v配额项IDH\x00R\x02id\x88\x01\x01\x120\n" +
+	"\ttenant_id\x18\x02 \x01(\x03B\x0e\xbaG\v\x92\x02\b租户IDH\x01R\btenantId\x88\x01\x01\x12b\n" +
 	"\n" +
 	"quota_type\x18\x03 \x01(\x0e2*.identity.service.v1.TenantQuota.QuotaTypeB\x12\xbaG\x0f\x92\x02\f配额类型H\x02R\tquotaType\x88\x01\x01\x12\x85\x01\n" +
 	"\vquota_value\x18\x04 \x01(\x04B_\xbaG\\\x92\x02Y配额值（USER_LIMIT=人数、STORAGE=字节、API_CALL=次数、AI_TOKENS=token 数）H\x03R\n" +
 	"quotaValue\x88\x01\x01\x12;\n" +
 	"\n" +
-	"created_by\x18d \x01(\x04B\x17\xbaG\x14\x92\x02\x11创建者用户IDH\x04R\tcreatedBy\x88\x01\x01\x12;\n" +
+	"created_by\x18d \x01(\x03B\x17\xbaG\x14\x92\x02\x11创建者用户IDH\x04R\tcreatedBy\x88\x01\x01\x12;\n" +
 	"\n" +
-	"updated_by\x18e \x01(\x04B\x17\xbaG\x14\x92\x02\x11更新者用户IDH\x05R\tupdatedBy\x88\x01\x01\x12;\n" +
+	"updated_by\x18e \x01(\x03B\x17\xbaG\x14\x92\x02\x11更新者用户IDH\x05R\tupdatedBy\x88\x01\x01\x12;\n" +
 	"\n" +
-	"deleted_by\x18f \x01(\x04B\x17\xbaG\x14\x92\x02\x11删除者用户IDH\x06R\tdeletedBy\x88\x01\x01\x12S\n" +
+	"deleted_by\x18f \x01(\x03B\x17\xbaG\x14\x92\x02\x11删除者用户IDH\x06R\tdeletedBy\x88\x01\x01\x12S\n" +
 	"\n" +
 	"created_at\x18\xc8\x01 \x01(\v2\x1a.google.protobuf.TimestampB\x12\xbaG\x0f\x92\x02\f创建时间H\aR\tcreatedAt\x88\x01\x01\x12S\n" +
 	"\n" +
@@ -1378,11 +1378,11 @@ const file_identity_service_v1_tenant_quota_proto_rawDesc = "" +
 	"\v_quota_typeB\x0e\n" +
 	"\f_quota_value\"\xab\x05\n" +
 	"\vTenantUsage\x120\n" +
-	"\ttenant_id\x18\x01 \x01(\x04B\x0e\xbaG\v\x92\x02\b租户IDH\x00R\btenantId\x88\x01\x01\x129\n" +
+	"\ttenant_id\x18\x01 \x01(\x03B\x0e\xbaG\v\x92\x02\b租户IDH\x00R\btenantId\x88\x01\x01\x129\n" +
 	"\n" +
-	"user_count\x18\x02 \x01(\x04B\x15\xbaG\x12\x92\x02\x0f当前用户数H\x01R\tuserCount\x88\x01\x01\x12N\n" +
-	"\x12storage_used_bytes\x18\x03 \x01(\x04B\x1b\xbaG\x18\x92\x02\x15存储占用字节数H\x02R\x10storageUsedBytes\x88\x01\x01\x12_\n" +
-	"\x0eapi_call_count\x18\x04 \x01(\x04B4\xbaG1\x92\x02.API 调用次数（审计活表现存行数）H\x03R\fapiCallCount\x88\x01\x01\x12I\n" +
+	"user_count\x18\x02 \x01(\x03B\x15\xbaG\x12\x92\x02\x0f当前用户数H\x01R\tuserCount\x88\x01\x01\x12N\n" +
+	"\x12storage_used_bytes\x18\x03 \x01(\x03B\x1b\xbaG\x18\x92\x02\x15存储占用字节数H\x02R\x10storageUsedBytes\x88\x01\x01\x12_\n" +
+	"\x0eapi_call_count\x18\x04 \x01(\x03B4\xbaG1\x92\x02.API 调用次数（审计活表现存行数）H\x03R\fapiCallCount\x88\x01\x01\x12I\n" +
 	"\x0fai_tokens_month\x18\x05 \x01(\x04B\x1c\xbaG\x19\x92\x02\x16本月 AI token 用量H\x04R\raiTokensMonth\x88\x01\x01\x12o\n" +
 	"\x11subscription_plan\x18\x06 \x01(\tB=\xbaG:\x92\x027订阅套餐名（tenant.subscription_plan 字符串）H\x05R\x10subscriptionPlan\x88\x01\x01\x12Q\n" +
 	"\x06quotas\x18\a \x03(\v2\x1f.identity.service.v1.QuotaUsageB\x18\xbaG\x15\x92\x02\x12配额上限列表R\x06quotasB\f\n" +
@@ -1395,9 +1395,9 @@ const file_identity_service_v1_tenant_quota_proto_rawDesc = "" +
 	"\x12_subscription_plan\"g\n" +
 	"\x17ListTenantQuotaResponse\x126\n" +
 	"\x05items\x18\x01 \x03(\v2 .identity.service.v1.TenantQuotaR\x05items\x12\x14\n" +
-	"\x05total\x18\x02 \x01(\x04R\x05total\"\x9e\x01\n" +
+	"\x05total\x18\x02 \x01(\x03R\x05total\"\x9e\x01\n" +
 	"\x15GetTenantQuotaRequest\x12\x10\n" +
-	"\x02id\x18\x01 \x01(\x04H\x00R\x02id\x12Y\n" +
+	"\x02id\x18\x01 \x01(\x03H\x00R\x02id\x12Y\n" +
 	"\tview_mask\x18d \x01(\v2\x1a.google.protobuf.FieldMaskB\x1b\xbaG\x18\x92\x02\x15视图字段过滤器H\x01R\bviewMask\x88\x01\x01B\n" +
 	"\n" +
 	"\bquery_byB\f\n" +
@@ -1406,25 +1406,25 @@ const file_identity_service_v1_tenant_quota_proto_rawDesc = "" +
 	"\x18CreateTenantQuotaRequest\x124\n" +
 	"\x04data\x18\x01 \x01(\v2 .identity.service.v1.TenantQuotaR\x04data\"\xba\x02\n" +
 	"\x18UpdateTenantQuotaRequest\x12\x0e\n" +
-	"\x02id\x18\x01 \x01(\x04R\x02id\x124\n" +
+	"\x02id\x18\x01 \x01(\x03R\x02id\x124\n" +
 	"\x04data\x18\x02 \x01(\v2 .identity.service.v1.TenantQuotaR\x04data\x12m\n" +
 	"\vupdate_mask\x18\x03 \x01(\v2\x1a.google.protobuf.FieldMaskB0\xbaG-:\x10\x12\x0eid,quota_value\x92\x02\x18要更新的字段列表R\n" +
 	"updateMask\x12W\n" +
 	"\rallow_missing\x18\x04 \x01(\bB-\xbaG*\x92\x02'资源不存在则新增（插入）。H\x00R\fallowMissing\x88\x01\x01B\x10\n" +
 	"\x0e_allow_missing\"*\n" +
 	"\x18DeleteTenantQuotaRequest\x12\x0e\n" +
-	"\x02id\x18\x01 \x01(\x04R\x02id\"D\n" +
+	"\x02id\x18\x01 \x01(\x03R\x02id\"D\n" +
 	"\x15GetTenantUsageRequest\x12+\n" +
-	"\ttenant_id\x18\x01 \x01(\x04B\x0e\xbaG\v\x92\x02\b租户IDR\btenantId\"V\n" +
+	"\ttenant_id\x18\x01 \x01(\x03B\x0e\xbaG\v\x92\x02\b租户IDR\btenantId\"V\n" +
 	"\x17GetMyTenantUsageRequest\x12;\n" +
-	"\ttenant_id\x18\x01 \x01(\x04B\x1e\xbaG\x1b\x92\x02\x18租户ID（BFF 注入）R\btenantId\"\x9a\x01\n" +
+	"\ttenant_id\x18\x01 \x01(\x03B\x1e\xbaG\x1b\x92\x02\x18租户ID（BFF 注入）R\btenantId\"\x9a\x01\n" +
 	"\x18CheckTenantAccessRequest\x12+\n" +
-	"\ttenant_id\x18\x01 \x01(\x04B\x0e\xbaG\v\x92\x02\b租户IDR\btenantId\x12)\n" +
+	"\ttenant_id\x18\x01 \x01(\x03B\x0e\xbaG\v\x92\x02\b租户IDR\btenantId\x12)\n" +
 	"\x06method\x18\x02 \x01(\tB\x11\xbaG\x0e\x92\x02\vHTTP 方法R\x06method\x12&\n" +
 	"\x04path\x18\x03 \x01(\tB\x12\xbaG\x0f\x92\x02\f请求路径R\x04path\"\x1b\n" +
 	"\x19CheckTenantAccessResponse\"\xed\x01\n" +
 	"\x11CheckQuotaRequest\x12+\n" +
-	"\ttenant_id\x18\x01 \x01(\x04B\x0e\xbaG\v\x92\x02\b租户IDR\btenantId\x12]\n" +
+	"\ttenant_id\x18\x01 \x01(\x03B\x0e\xbaG\v\x92\x02\b租户IDR\btenantId\x12]\n" +
 	"\n" +
 	"quota_type\x18\x02 \x01(\x0e2*.identity.service.v1.TenantQuota.QuotaTypeB\x12\xbaG\x0f\x92\x02\f配额类型R\tquotaType\x12=\n" +
 	"\n" +
@@ -1437,7 +1437,7 @@ const file_identity_service_v1_tenant_quota_proto_rawDesc = "" +
 	"quota_type\x18\x01 \x01(\x0e2*.identity.service.v1.TenantQuota.QuotaTypeB4\xbaG1\x92\x02.配额类型（复用 TenantQuota 的枚举）R\tquotaType\x12^\n" +
 	"\x05limit\x18\x02 \x01(\x03BH\xbaGE\x92\x02B配额上限（语义随类型：用户数/字节/次数/tokens）R\x05limit\"\xf2\x02\n" +
 	"\tQuotaPlan\x12\x13\n" +
-	"\x02id\x18\x01 \x01(\x04H\x00R\x02id\x88\x01\x01\x128\n" +
+	"\x02id\x18\x01 \x01(\x03H\x00R\x02id\x88\x01\x01\x128\n" +
 	"\x04name\x18\x02 \x01(\tB$\xbaG!\x92\x02\x1e模板名（租户内唯一）R\x04name\x12%\n" +
 	"\vdescription\x18\x03 \x01(\tH\x01R\vdescription\x88\x01\x01\x128\n" +
 	"\x05items\x18\x04 \x03(\v2\".identity.service.v1.QuotaPlanItemR\x05items\x12?\n" +
@@ -1455,10 +1455,10 @@ const file_identity_service_v1_tenant_quota_proto_rawDesc = "" +
 	"\x16CreateQuotaPlanRequest\x122\n" +
 	"\x04data\x18\x01 \x01(\v2\x1e.identity.service.v1.QuotaPlanR\x04data\"(\n" +
 	"\x16DeleteQuotaPlanRequest\x12\x0e\n" +
-	"\x02id\x18\x01 \x01(\x04R\x02id\"M\n" +
+	"\x02id\x18\x01 \x01(\x03R\x02id\"M\n" +
 	"\x15ApplyQuotaPlanRequest\x12\x17\n" +
-	"\aplan_id\x18\x01 \x01(\x04R\x06planId\x12\x1b\n" +
-	"\ttenant_id\x18\x02 \x01(\x04R\btenantId\"2\n" +
+	"\aplan_id\x18\x01 \x01(\x03R\x06planId\x12\x1b\n" +
+	"\ttenant_id\x18\x02 \x01(\x03R\btenantId\"2\n" +
 	"\x16ApplyQuotaPlanResponse\x12\x18\n" +
 	"\aapplied\x18\x01 \x01(\rR\aapplied2\xe6\t\n" +
 	"\x12TenantQuotaService\x12Q\n" +

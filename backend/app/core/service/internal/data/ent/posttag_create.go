@@ -37,13 +37,13 @@ func (_c *PostTagCreate) SetNillableCreatedAt(v *time.Time) *PostTagCreate {
 }
 
 // SetTenantID sets the "tenant_id" field.
-func (_c *PostTagCreate) SetTenantID(v uint64) *PostTagCreate {
+func (_c *PostTagCreate) SetTenantID(v int64) *PostTagCreate {
 	_c.mutation.SetTenantID(v)
 	return _c
 }
 
 // SetNillableTenantID sets the "tenant_id" field if the given value is not nil.
-func (_c *PostTagCreate) SetNillableTenantID(v *uint64) *PostTagCreate {
+func (_c *PostTagCreate) SetNillableTenantID(v *int64) *PostTagCreate {
 	if v != nil {
 		_c.SetTenantID(*v)
 	}
@@ -51,19 +51,19 @@ func (_c *PostTagCreate) SetNillableTenantID(v *uint64) *PostTagCreate {
 }
 
 // SetPostID sets the "post_id" field.
-func (_c *PostTagCreate) SetPostID(v uint64) *PostTagCreate {
+func (_c *PostTagCreate) SetPostID(v int64) *PostTagCreate {
 	_c.mutation.SetPostID(v)
 	return _c
 }
 
 // SetTagID sets the "tag_id" field.
-func (_c *PostTagCreate) SetTagID(v uint64) *PostTagCreate {
+func (_c *PostTagCreate) SetTagID(v int64) *PostTagCreate {
 	_c.mutation.SetTagID(v)
 	return _c
 }
 
 // SetID sets the "id" field.
-func (_c *PostTagCreate) SetID(v uint64) *PostTagCreate {
+func (_c *PostTagCreate) SetID(v int64) *PostTagCreate {
 	_c.mutation.SetID(v)
 	return _c
 }
@@ -141,7 +141,7 @@ func (_c *PostTagCreate) sqlSave(ctx context.Context) (*PostTag, error) {
 	}
 	if _spec.ID.Value != _node.ID {
 		id := _spec.ID.Value.(int64)
-		_node.ID = uint64(id)
+		_node.ID = int64(id)
 	}
 	_c.mutation.id = &_node.ID
 	_c.mutation.done = true
@@ -151,7 +151,7 @@ func (_c *PostTagCreate) sqlSave(ctx context.Context) (*PostTag, error) {
 func (_c *PostTagCreate) createSpec() (*PostTag, *sqlgraph.CreateSpec) {
 	var (
 		_node = &PostTag{config: _c.config}
-		_spec = sqlgraph.NewCreateSpec(posttag.Table, sqlgraph.NewFieldSpec(posttag.FieldID, field.TypeUint64))
+		_spec = sqlgraph.NewCreateSpec(posttag.Table, sqlgraph.NewFieldSpec(posttag.FieldID, field.TypeInt64))
 	)
 	_spec.OnConflict = _c.conflict
 	if id, ok := _c.mutation.ID(); ok {
@@ -163,15 +163,15 @@ func (_c *PostTagCreate) createSpec() (*PostTag, *sqlgraph.CreateSpec) {
 		_node.CreatedAt = &value
 	}
 	if value, ok := _c.mutation.TenantID(); ok {
-		_spec.SetField(posttag.FieldTenantID, field.TypeUint64, value)
+		_spec.SetField(posttag.FieldTenantID, field.TypeInt64, value)
 		_node.TenantID = &value
 	}
 	if value, ok := _c.mutation.PostID(); ok {
-		_spec.SetField(posttag.FieldPostID, field.TypeUint64, value)
+		_spec.SetField(posttag.FieldPostID, field.TypeInt64, value)
 		_node.PostID = &value
 	}
 	if value, ok := _c.mutation.TagID(); ok {
-		_spec.SetField(posttag.FieldTagID, field.TypeUint64, value)
+		_spec.SetField(posttag.FieldTagID, field.TypeInt64, value)
 		_node.TagID = &value
 	}
 	return _node, _spec
@@ -227,7 +227,7 @@ type (
 )
 
 // SetPostID sets the "post_id" field.
-func (u *PostTagUpsert) SetPostID(v uint64) *PostTagUpsert {
+func (u *PostTagUpsert) SetPostID(v int64) *PostTagUpsert {
 	u.Set(posttag.FieldPostID, v)
 	return u
 }
@@ -239,13 +239,13 @@ func (u *PostTagUpsert) UpdatePostID() *PostTagUpsert {
 }
 
 // AddPostID adds v to the "post_id" field.
-func (u *PostTagUpsert) AddPostID(v uint64) *PostTagUpsert {
+func (u *PostTagUpsert) AddPostID(v int64) *PostTagUpsert {
 	u.Add(posttag.FieldPostID, v)
 	return u
 }
 
 // SetTagID sets the "tag_id" field.
-func (u *PostTagUpsert) SetTagID(v uint64) *PostTagUpsert {
+func (u *PostTagUpsert) SetTagID(v int64) *PostTagUpsert {
 	u.Set(posttag.FieldTagID, v)
 	return u
 }
@@ -257,7 +257,7 @@ func (u *PostTagUpsert) UpdateTagID() *PostTagUpsert {
 }
 
 // AddTagID adds v to the "tag_id" field.
-func (u *PostTagUpsert) AddTagID(v uint64) *PostTagUpsert {
+func (u *PostTagUpsert) AddTagID(v int64) *PostTagUpsert {
 	u.Add(posttag.FieldTagID, v)
 	return u
 }
@@ -317,14 +317,14 @@ func (u *PostTagUpsertOne) Update(set func(*PostTagUpsert)) *PostTagUpsertOne {
 }
 
 // SetPostID sets the "post_id" field.
-func (u *PostTagUpsertOne) SetPostID(v uint64) *PostTagUpsertOne {
+func (u *PostTagUpsertOne) SetPostID(v int64) *PostTagUpsertOne {
 	return u.Update(func(s *PostTagUpsert) {
 		s.SetPostID(v)
 	})
 }
 
 // AddPostID adds v to the "post_id" field.
-func (u *PostTagUpsertOne) AddPostID(v uint64) *PostTagUpsertOne {
+func (u *PostTagUpsertOne) AddPostID(v int64) *PostTagUpsertOne {
 	return u.Update(func(s *PostTagUpsert) {
 		s.AddPostID(v)
 	})
@@ -338,14 +338,14 @@ func (u *PostTagUpsertOne) UpdatePostID() *PostTagUpsertOne {
 }
 
 // SetTagID sets the "tag_id" field.
-func (u *PostTagUpsertOne) SetTagID(v uint64) *PostTagUpsertOne {
+func (u *PostTagUpsertOne) SetTagID(v int64) *PostTagUpsertOne {
 	return u.Update(func(s *PostTagUpsert) {
 		s.SetTagID(v)
 	})
 }
 
 // AddTagID adds v to the "tag_id" field.
-func (u *PostTagUpsertOne) AddTagID(v uint64) *PostTagUpsertOne {
+func (u *PostTagUpsertOne) AddTagID(v int64) *PostTagUpsertOne {
 	return u.Update(func(s *PostTagUpsert) {
 		s.AddTagID(v)
 	})
@@ -374,7 +374,7 @@ func (u *PostTagUpsertOne) ExecX(ctx context.Context) {
 }
 
 // Exec executes the UPSERT query and returns the inserted/updated ID.
-func (u *PostTagUpsertOne) ID(ctx context.Context) (id uint64, err error) {
+func (u *PostTagUpsertOne) ID(ctx context.Context) (id int64, err error) {
 	node, err := u.create.Save(ctx)
 	if err != nil {
 		return id, err
@@ -383,7 +383,7 @@ func (u *PostTagUpsertOne) ID(ctx context.Context) (id uint64, err error) {
 }
 
 // IDX is like ID, but panics if an error occurs.
-func (u *PostTagUpsertOne) IDX(ctx context.Context) uint64 {
+func (u *PostTagUpsertOne) IDX(ctx context.Context) int64 {
 	id, err := u.ID(ctx)
 	if err != nil {
 		panic(err)
@@ -440,7 +440,7 @@ func (_c *PostTagCreateBulk) Save(ctx context.Context) ([]*PostTag, error) {
 				mutation.id = &nodes[i].ID
 				if specs[i].ID.Value != nil && nodes[i].ID == 0 {
 					id := specs[i].ID.Value.(int64)
-					nodes[i].ID = uint64(id)
+					nodes[i].ID = int64(id)
 				}
 				mutation.done = true
 				return nodes[i], nil
@@ -579,14 +579,14 @@ func (u *PostTagUpsertBulk) Update(set func(*PostTagUpsert)) *PostTagUpsertBulk 
 }
 
 // SetPostID sets the "post_id" field.
-func (u *PostTagUpsertBulk) SetPostID(v uint64) *PostTagUpsertBulk {
+func (u *PostTagUpsertBulk) SetPostID(v int64) *PostTagUpsertBulk {
 	return u.Update(func(s *PostTagUpsert) {
 		s.SetPostID(v)
 	})
 }
 
 // AddPostID adds v to the "post_id" field.
-func (u *PostTagUpsertBulk) AddPostID(v uint64) *PostTagUpsertBulk {
+func (u *PostTagUpsertBulk) AddPostID(v int64) *PostTagUpsertBulk {
 	return u.Update(func(s *PostTagUpsert) {
 		s.AddPostID(v)
 	})
@@ -600,14 +600,14 @@ func (u *PostTagUpsertBulk) UpdatePostID() *PostTagUpsertBulk {
 }
 
 // SetTagID sets the "tag_id" field.
-func (u *PostTagUpsertBulk) SetTagID(v uint64) *PostTagUpsertBulk {
+func (u *PostTagUpsertBulk) SetTagID(v int64) *PostTagUpsertBulk {
 	return u.Update(func(s *PostTagUpsert) {
 		s.SetTagID(v)
 	})
 }
 
 // AddTagID adds v to the "tag_id" field.
-func (u *PostTagUpsertBulk) AddTagID(v uint64) *PostTagUpsertBulk {
+func (u *PostTagUpsertBulk) AddTagID(v int64) *PostTagUpsertBulk {
 	return u.Update(func(s *PostTagUpsert) {
 		s.AddTagID(v)
 	})

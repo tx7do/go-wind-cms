@@ -47,7 +47,7 @@ service MFAService {
 // 管理员救援重置 - 请求
 message ResetUserMFARequest {
   // 目标用户 ID
-  uint64 user_id = 1 [(gnostic.openapi.v3.property) = { description: "目标用户 ID" }];
+  int64 user_id = 1 [(gnostic.openapi.v3.property) = { description: "目标用户 ID" }];
 }
 
 // 多因素认证方法
@@ -106,7 +106,7 @@ message StartEnrollMethodRequest {
   optional string phone = 2;
   optional string email = 3;
   // 操作者用户 ID（BFF 从会话注入；上下文不可靠时显式传递）
-  optional uint64 user_id = 30 [(gnostic.openapi.v3.property) = { description: "操作者用户 ID" }];
+  optional int64 user_id = 30 [(gnostic.openapi.v3.property) = { description: "操作者用户 ID" }];
   // 绑定展示用账号标识（otpauth URI 的 account 段，如用户名/邮箱）
   optional string account = 31 [(gnostic.openapi.v3.property) = { description: "绑定展示用账号标识" }];
 }
@@ -173,7 +173,7 @@ message DisableMFARequest {
   }
   optional string reason = 20;
   // 操作者用户 ID（BFF 从会话注入）
-  optional uint64 user_id = 30 [(gnostic.openapi.v3.property) = { description: "操作者用户 ID" }];
+  optional int64 user_id = 30 [(gnostic.openapi.v3.property) = { description: "操作者用户 ID" }];
 }
 
 // Start authentication challenge

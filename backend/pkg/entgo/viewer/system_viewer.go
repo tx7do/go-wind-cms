@@ -23,17 +23,17 @@ func (v SystemViewer) ShouldAudit() bool {
 }
 
 // UserID 返回当前用户ID
-func (v SystemViewer) UserID() uint64 {
+func (v SystemViewer) UserID() int64 {
 	return 0
 }
 
 // TenantID 返回租户ID
-func (v SystemViewer) TenantID() uint64 {
+func (v SystemViewer) TenantID() int64 {
 	return 0
 }
 
 // OrgUnitID 返回当前身份挂载的组织单元 ID
-func (v SystemViewer) OrgUnitID() uint64 {
+func (v SystemViewer) OrgUnitID() int64 {
 	return 0
 }
 

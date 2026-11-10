@@ -10,15 +10,15 @@ import (
 	"github.com/tx7do/kratos-bootstrap/bootstrap"
 	"google.golang.org/protobuf/types/known/timestamppb"
 
-	paginationFilter "github.com/tx7do/go-crud/pagination/filter"
 	kratosMetadata "github.com/go-kratos/kratos/v2/metadata"
+	paginationFilter "github.com/tx7do/go-crud/pagination/filter"
 
 	entCrud "github.com/tx7do/go-crud/entgo"
 
+	contentV1 "go-wind-cms/api/gen/go/content/service/v1"
 	"go-wind-cms/app/core/service/internal/data/ent"
 	"go-wind-cms/app/core/service/internal/data/ent/formsubmission"
 	"go-wind-cms/app/core/service/internal/data/ent/predicate"
-	contentV1 "go-wind-cms/api/gen/go/content/service/v1"
 )
 
 // FormSubmissionRepo 表单提交仓储（只增读删，无更新——提交数据不可篡改）。
@@ -35,7 +35,7 @@ func NewFormSubmissionRepo(ctx *bootstrap.Context, entClient *entCrud.EntClient[
 }
 
 // Create 落一条提交。
-func (r *FormSubmissionRepo) Create(ctx context.Context, pageID, sectionID uint64, data map[string]string, userID uint64) (*contentV1.FormSubmission, error) {
+func (r *FormSubmissionRepo) Create(ctx context.Context, pageID, sectionID int64, data map[string]string, userID int64) (*contentV1.FormSubmission, error) {
 	builder := r.entClient.Client().FormSubmission.Create().
 		SetNillablePageID(&pageID).
 		SetNillableSectionID(&sectionID).
@@ -113,20 +113,20 @@ func (r *FormSubmissionRepo) List(ctx context.Context, req *paginationV1.PagingR
 	return items, total, nil
 }
 
-// condValueUint 把过滤条件值解析为 uint64（仅接受十进制正整数）。
-func condValueUint(v string) (uint64, bool) {
+// condValueUint 把过滤条件值解析为 int64（仅接受十进制正整数）。
+func condValueUint(v string) (int64, bool) {
 	if v == "" {
 		return 0, false
 	}
-	n, err := strconv.ParseUint(v, 10, 32)
+	n, err := strconv.ParseInt(v, 10, 64)
 	if err != nil || n == 0 {
 		return 0, false
 	}
-	return uint64(n), true
+	return int64(n), true
 }
 
 // Get 提交详情。
-func (r *FormSubmissionRepo) Get(ctx context.Context, id uint64) (*contentV1.FormSubmission, error) {
+func (r *FormSubmissionRepo) Get(ctx context.Context, id int64) (*contentV1.FormSubmission, error) {
 	conds := append(r.tenantConds(ctx), formsubmission.IDEQ(id))
 	row, err := r.entClient.Client().FormSubmission.Query().Where(conds...).Only(ctx)
 	if err != nil {
@@ -140,7 +140,7 @@ func (r *FormSubmissionRepo) Get(ctx context.Context, id uint64) (*contentV1.For
 }
 
 // Delete 删除提交。
-func (r *FormSubmissionRepo) Delete(ctx context.Context, id uint64) error {
+func (r *FormSubmissionRepo) Delete(ctx context.Context, id int64) error {
 	conds := append(r.tenantConds(ctx), formsubmission.IDEQ(id))
 	count, err := r.entClient.Client().FormSubmission.Delete().Where(conds...).Exec(ctx)
 	if err != nil {
@@ -162,12 +162,12 @@ func (r *FormSubmissionRepo) tenantConds(ctx context.Context) []predicate.FormSu
 }
 
 // tenantIDFromInternalMetadata 从内网可信元数据 x-md-global-tenant-id 读租户
-//（匿名提交链路：app BFF 按 Host 解析后注入；与 comment_repo 同口径）。
-func (r *FormSubmissionRepo) tenantIDFromInternalMetadata(ctx context.Context) uint64 {
+// （匿名提交链路：app BFF 按 Host 解析后注入；与 comment_repo 同口径）。
+func (r *FormSubmissionRepo) tenantIDFromInternalMetadata(ctx context.Context) int64 {
 	if md, ok := kratosMetadata.FromServerContext(ctx); ok {
 		if v := md.Get("x-md-global-tenant-id"); v != "" {
-			if tid, err := strconv.ParseUint(v, 10, 32); err == nil && tid > 0 {
-				return uint64(tid)
+			if tid, err := strconv.ParseInt(v, 10, 64); err == nil && tid > 0 {
+				return int64(tid)
 			}
 		}
 	}
@@ -176,10 +176,10 @@ func (r *FormSubmissionRepo) tenantIDFromInternalMetadata(ctx context.Context) u
 
 func (r *FormSubmissionRepo) toDTO(row *ent.FormSubmission) *contentV1.FormSubmission {
 	dto := &contentV1.FormSubmission{
-		Id:      &row.ID,
-		PageId:  row.PageID,
+		Id:        &row.ID,
+		PageId:    row.PageID,
 		SectionId: row.SectionID,
-		UserId:  row.UserID,
+		UserId:    row.UserID,
 	}
 	if row.Data != nil {
 		dto.Data = *row.Data

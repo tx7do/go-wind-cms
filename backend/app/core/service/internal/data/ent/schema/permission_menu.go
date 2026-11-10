@@ -29,11 +29,11 @@ func (PermissionMenu) Annotations() []schema.Annotation {
 // Fields of the PermissionMenu.
 func (PermissionMenu) Fields() []ent.Field {
 	return []ent.Field{
-		field.Uint64("permission_id").
+		field.Int64("permission_id").
 			Comment("权限ID（关联sys_permissions.id）").
 			Nillable(),
 
-		field.Uint64("menu_id").
+		field.Int64("menu_id").
 			Comment("菜单ID（关联sys_menus.id）").
 			Nillable(),
 	}
@@ -45,7 +45,7 @@ func (PermissionMenu) Mixin() []ent.Mixin {
 		mixin.AutoIncrementId64{},
 		mixin.TimeAt{},
 		mixin.OperatorID64{},
-		mixin.TenantID[uint64]{},
+		mixin.TenantID[int64]{},
 	}
 }
 

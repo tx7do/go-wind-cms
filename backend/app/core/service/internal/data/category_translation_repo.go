@@ -67,7 +67,7 @@ func (r *CategoryTranslationRepo) init() {
 func (r *CategoryTranslationRepo) CleanTranslations(
 	ctx context.Context,
 	tx *ent.Tx,
-	categoryID uint64,
+	categoryID int64,
 ) error {
 	if _, err := tx.CategoryTranslation.Delete().
 		Where(
@@ -80,7 +80,7 @@ func (r *CategoryTranslationRepo) CleanTranslations(
 	return nil
 }
 
-func (r *CategoryTranslationRepo) ListTranslations(ctx context.Context, categoryID uint64, locale string, viewMask *fieldmaskpb.FieldMask) ([]*contentV1.CategoryTranslation, error) {
+func (r *CategoryTranslationRepo) ListTranslations(ctx context.Context, categoryID int64, locale string, viewMask *fieldmaskpb.FieldMask) ([]*contentV1.CategoryTranslation, error) {
 	builder := r.entClient.Client().CategoryTranslation.Query().
 		Where(
 			categorytranslation.CategoryIDEQ(categoryID),
@@ -121,7 +121,7 @@ func (r *CategoryTranslationRepo) ListTranslations(ctx context.Context, category
 
 // ListTranslationsWithFallback 优先返回指定语言的译文；该语言缺译时返回全部译文，
 // 供前端按"匹配当前语言→回退第一条"兜底（只回传空数组会让前端无 fallback 可用）。
-func (r *CategoryTranslationRepo) ListTranslationsWithFallback(ctx context.Context, categoryID uint64, locale string, viewMask *fieldmaskpb.FieldMask) ([]*contentV1.CategoryTranslation, error) {
+func (r *CategoryTranslationRepo) ListTranslationsWithFallback(ctx context.Context, categoryID int64, locale string, viewMask *fieldmaskpb.FieldMask) ([]*contentV1.CategoryTranslation, error) {
 	translations, err := r.ListTranslations(ctx, categoryID, locale, viewMask)
 	if err != nil {
 		return nil, err
@@ -182,7 +182,7 @@ func (r *CategoryTranslationRepo) BatchCreate(ctx context.Context, tx *ent.Tx, i
 // 已存在则原行就地更新（保留 created_by/created_at 与未提交字段），
 // 不存在则插入；同语言历史重复行仅保留 id 最小的一条并更新，其余删除。
 // Update 语义据此从"整表替换"改为按语言合并，删除译文请走 DeleteTranslation。
-func (r *CategoryTranslationRepo) UpsertTranslations(ctx context.Context, tx *ent.Tx, categoryID uint64, items []*contentV1.CategoryTranslation) error {
+func (r *CategoryTranslationRepo) UpsertTranslations(ctx context.Context, tx *ent.Tx, categoryID int64, items []*contentV1.CategoryTranslation) error {
 	if len(items) == 0 {
 		return nil
 	}
@@ -249,7 +249,7 @@ func (r *CategoryTranslationRepo) UpsertTranslations(ctx context.Context, tx *en
 		}
 
 		if len(existings) > 1 {
-			dupeIDs := make([]uint64, 0, len(existings)-1)
+			dupeIDs := make([]int64, 0, len(existings)-1)
 			for _, e := range existings[1:] {
 				dupeIDs = append(dupeIDs, e.ID)
 			}
@@ -277,7 +277,7 @@ func (r *CategoryTranslationRepo) CreateTranslation(ctx context.Context, data *c
 	return r.mapper.ToDTO(entity), nil
 }
 
-func (r *CategoryTranslationRepo) UpdateTranslation(ctx context.Context, id uint64, data *contentV1.CategoryTranslation, updateMask *fieldmaskpb.FieldMask) (*contentV1.CategoryTranslation, error) {
+func (r *CategoryTranslationRepo) UpdateTranslation(ctx context.Context, id int64, data *contentV1.CategoryTranslation, updateMask *fieldmaskpb.FieldMask) (*contentV1.CategoryTranslation, error) {
 	if data == nil {
 		return nil, nil
 	}
@@ -341,7 +341,7 @@ func (r *CategoryTranslationRepo) countByBaseSlug(ctx context.Context, ct *ent.C
 }
 
 // TranslationExists checks if a translation exists for the given category ID and language code.
-func (r *CategoryTranslationRepo) TranslationExists(ctx context.Context, categoryId uint64, languageCode string) (bool, error) {
+func (r *CategoryTranslationRepo) TranslationExists(ctx context.Context, categoryId int64, languageCode string) (bool, error) {
 	c, err := r.entClient.Client().CategoryTranslation.Query().
 		Where(
 			categorytranslation.CategoryIDEQ(categoryId),
@@ -357,7 +357,7 @@ func (r *CategoryTranslationRepo) TranslationExists(ctx context.Context, categor
 }
 
 // ListAvailedLanguages lists the language codes of all translations available for the given category ID.
-func (r *CategoryTranslationRepo) ListAvailedLanguages(ctx context.Context, categoryId uint64) ([]string, error) {
+func (r *CategoryTranslationRepo) ListAvailedLanguages(ctx context.Context, categoryId int64) ([]string, error) {
 	entities, err := r.entClient.Client().CategoryTranslation.Query().
 		Where(
 			categorytranslation.CategoryIDEQ(categoryId),
@@ -372,7 +372,7 @@ func (r *CategoryTranslationRepo) ListAvailedLanguages(ctx context.Context, cate
 	return entities, nil
 }
 
-func (r *CategoryTranslationRepo) GetTranslation(ctx context.Context, categoryId uint64, languageCode string) (*contentV1.CategoryTranslation, error) {
+func (r *CategoryTranslationRepo) GetTranslation(ctx context.Context, categoryId int64, languageCode string) (*contentV1.CategoryTranslation, error) {
 	// 取 id 最小的一条保证结果确定（防历史重复行）；缺译文不是错误，交由调用方按 nil 处理
 	entity, err := r.entClient.Client().CategoryTranslation.Query().
 		Where(

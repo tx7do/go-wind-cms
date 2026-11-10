@@ -88,7 +88,7 @@ message GetInteractionStatsRequest {
 
 // 点赞 TOP 榜条目。已删除的帖子不出现在榜单中。
 message InteractionTopItem {
-  uint64 target_id = 1; // 帖子 ID
+  int64 target_id = 1; // 帖子 ID
   string title = 2;     // 帖子标题（当前默认语言，取不到时为空串）
   int64 like_count = 3; // 点赞计数
 }

@@ -17,7 +17,7 @@ type FieldDefinitionTranslation struct {
 	config `json:"-"`
 	// ID of the ent.
 	// id
-	ID uint64 `json:"id,omitempty"`
+	ID int64 `json:"id,omitempty"`
 	// 创建时间
 	CreatedAt *time.Time `json:"created_at,omitempty"`
 	// 更新时间
@@ -25,13 +25,13 @@ type FieldDefinitionTranslation struct {
 	// 删除时间
 	DeletedAt *time.Time `json:"deleted_at,omitempty"`
 	// 创建者ID
-	CreatedBy *uint64 `json:"created_by,omitempty"`
+	CreatedBy *int64 `json:"created_by,omitempty"`
 	// 更新者ID
-	UpdatedBy *uint64 `json:"updated_by,omitempty"`
+	UpdatedBy *int64 `json:"updated_by,omitempty"`
 	// 删除者ID
-	DeletedBy *uint64 `json:"deleted_by,omitempty"`
+	DeletedBy *int64 `json:"deleted_by,omitempty"`
 	// 字段定义ID
-	FieldDefinitionID *uint64 `json:"field_definition_id,omitempty"`
+	FieldDefinitionID *int64 `json:"field_definition_id,omitempty"`
 	// 语言代码（BCP 47，如 zh-CN）
 	LanguageCode *string `json:"language_code,omitempty"`
 	// 翻译后字段标签
@@ -74,7 +74,7 @@ func (_m *FieldDefinitionTranslation) assignValues(columns []string, values []an
 			if !ok {
 				return fmt.Errorf("unexpected type %T for field id", value)
 			}
-			_m.ID = uint64(value.Int64)
+			_m.ID = int64(value.Int64)
 		case fielddefinitiontranslation.FieldCreatedAt:
 			if value, ok := values[i].(*sql.NullTime); !ok {
 				return fmt.Errorf("unexpected type %T for field created_at", values[i])
@@ -100,29 +100,29 @@ func (_m *FieldDefinitionTranslation) assignValues(columns []string, values []an
 			if value, ok := values[i].(*sql.NullInt64); !ok {
 				return fmt.Errorf("unexpected type %T for field created_by", values[i])
 			} else if value.Valid {
-				_m.CreatedBy = new(uint64)
-				*_m.CreatedBy = uint64(value.Int64)
+				_m.CreatedBy = new(int64)
+				*_m.CreatedBy = value.Int64
 			}
 		case fielddefinitiontranslation.FieldUpdatedBy:
 			if value, ok := values[i].(*sql.NullInt64); !ok {
 				return fmt.Errorf("unexpected type %T for field updated_by", values[i])
 			} else if value.Valid {
-				_m.UpdatedBy = new(uint64)
-				*_m.UpdatedBy = uint64(value.Int64)
+				_m.UpdatedBy = new(int64)
+				*_m.UpdatedBy = value.Int64
 			}
 		case fielddefinitiontranslation.FieldDeletedBy:
 			if value, ok := values[i].(*sql.NullInt64); !ok {
 				return fmt.Errorf("unexpected type %T for field deleted_by", values[i])
 			} else if value.Valid {
-				_m.DeletedBy = new(uint64)
-				*_m.DeletedBy = uint64(value.Int64)
+				_m.DeletedBy = new(int64)
+				*_m.DeletedBy = value.Int64
 			}
 		case fielddefinitiontranslation.FieldFieldDefinitionID:
 			if value, ok := values[i].(*sql.NullInt64); !ok {
 				return fmt.Errorf("unexpected type %T for field field_definition_id", values[i])
 			} else if value.Valid {
-				_m.FieldDefinitionID = new(uint64)
-				*_m.FieldDefinitionID = uint64(value.Int64)
+				_m.FieldDefinitionID = new(int64)
+				*_m.FieldDefinitionID = value.Int64
 			}
 		case fielddefinitiontranslation.FieldLanguageCode:
 			if value, ok := values[i].(*sql.NullString); !ok {

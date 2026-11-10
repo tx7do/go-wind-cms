@@ -75,15 +75,15 @@ var (
 	Hooks  [1]ent.Hook
 	Policy ent.Policy
 	// DefaultTenantID holds the default value on creation for the "tenant_id" field.
-	DefaultTenantID uint64
+	DefaultTenantID int64
 	// DefaultEntityID holds the default value on creation for the "entity_id" field.
-	DefaultEntityID uint64
+	DefaultEntityID int64
 	// DefaultHTTPStatus holds the default value on creation for the "http_status" field.
 	DefaultHTTPStatus int
 	// DefaultDurationMs holds the default value on creation for the "duration_ms" field.
 	DefaultDurationMs uint32
 	// IDValidator is a validator for the "id" field. It is called by the builders before save.
-	IDValidator func(uint64) error
+	IDValidator func(int64) error
 )
 
 // Status defines the type for the "status" enum field.

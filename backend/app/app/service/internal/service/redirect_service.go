@@ -5,9 +5,9 @@ import (
 	"strconv"
 
 	"github.com/go-kratos/kratos/v2/log"
-	paginationV1 "github.com/tx7do/go-crud/api/gen/go/pagination/v1"
-	khttp "github.com/go-kratos/kratos/v2/transport/http"
 	kratosMetadata "github.com/go-kratos/kratos/v2/metadata"
+	khttp "github.com/go-kratos/kratos/v2/transport/http"
+	paginationV1 "github.com/tx7do/go-crud/api/gen/go/pagination/v1"
 	"github.com/tx7do/go-utils/trans"
 	"github.com/tx7do/kratos-bootstrap/bootstrap"
 
@@ -39,7 +39,7 @@ func (s *RedirectService) ListEnabled(ctx context.Context, req *contentV1.ListRe
 	if s.tenantResolve != nil {
 		if hr, ok := khttp.RequestFromServerContext(ctx); ok && hr != nil && hr.Host != "" {
 			if tid, err := s.tenantResolve.ResolveTenantIDByDomain(ctx, hr.Host); err == nil && tid > 0 {
-				ctx = kratosMetadata.AppendToClientContext(ctx, "x-md-global-tenant-id", strconv.FormatUint(uint64(tid), 10))
+				ctx = kratosMetadata.AppendToClientContext(ctx, "x-md-global-tenant-id", strconv.FormatInt(int64(tid), 10))
 			}
 		}
 	}
@@ -57,5 +57,5 @@ func (s *RedirectService) ListEnabled(ctx context.Context, req *contentV1.ListRe
 			enabled = append(enabled, item)
 		}
 	}
-	return &contentV1.ListRedirectsResponse{Items: enabled, Total: uint64(len(enabled))}, nil
+	return &contentV1.ListRedirectsResponse{Items: enabled, Total: int64(len(enabled))}, nil
 }

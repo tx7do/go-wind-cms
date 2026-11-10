@@ -70,14 +70,14 @@ func (_u *WebhookUpdate) ClearDeletedAt() *WebhookUpdate {
 }
 
 // SetCreatedBy sets the "created_by" field.
-func (_u *WebhookUpdate) SetCreatedBy(v uint64) *WebhookUpdate {
+func (_u *WebhookUpdate) SetCreatedBy(v int64) *WebhookUpdate {
 	_u.mutation.ResetCreatedBy()
 	_u.mutation.SetCreatedBy(v)
 	return _u
 }
 
 // SetNillableCreatedBy sets the "created_by" field if the given value is not nil.
-func (_u *WebhookUpdate) SetNillableCreatedBy(v *uint64) *WebhookUpdate {
+func (_u *WebhookUpdate) SetNillableCreatedBy(v *int64) *WebhookUpdate {
 	if v != nil {
 		_u.SetCreatedBy(*v)
 	}
@@ -97,14 +97,14 @@ func (_u *WebhookUpdate) ClearCreatedBy() *WebhookUpdate {
 }
 
 // SetUpdatedBy sets the "updated_by" field.
-func (_u *WebhookUpdate) SetUpdatedBy(v uint64) *WebhookUpdate {
+func (_u *WebhookUpdate) SetUpdatedBy(v int64) *WebhookUpdate {
 	_u.mutation.ResetUpdatedBy()
 	_u.mutation.SetUpdatedBy(v)
 	return _u
 }
 
 // SetNillableUpdatedBy sets the "updated_by" field if the given value is not nil.
-func (_u *WebhookUpdate) SetNillableUpdatedBy(v *uint64) *WebhookUpdate {
+func (_u *WebhookUpdate) SetNillableUpdatedBy(v *int64) *WebhookUpdate {
 	if v != nil {
 		_u.SetUpdatedBy(*v)
 	}
@@ -124,14 +124,14 @@ func (_u *WebhookUpdate) ClearUpdatedBy() *WebhookUpdate {
 }
 
 // SetDeletedBy sets the "deleted_by" field.
-func (_u *WebhookUpdate) SetDeletedBy(v uint64) *WebhookUpdate {
+func (_u *WebhookUpdate) SetDeletedBy(v int64) *WebhookUpdate {
 	_u.mutation.ResetDeletedBy()
 	_u.mutation.SetDeletedBy(v)
 	return _u
 }
 
 // SetNillableDeletedBy sets the "deleted_by" field if the given value is not nil.
-func (_u *WebhookUpdate) SetNillableDeletedBy(v *uint64) *WebhookUpdate {
+func (_u *WebhookUpdate) SetNillableDeletedBy(v *int64) *WebhookUpdate {
 	if v != nil {
 		_u.SetDeletedBy(*v)
 	}
@@ -288,7 +288,7 @@ func (_u *WebhookUpdate) sqlSave(ctx context.Context) (_node int, err error) {
 	if err := _u.check(); err != nil {
 		return _node, err
 	}
-	_spec := sqlgraph.NewUpdateSpec(webhook.Table, webhook.Columns, sqlgraph.NewFieldSpec(webhook.FieldID, field.TypeUint64))
+	_spec := sqlgraph.NewUpdateSpec(webhook.Table, webhook.Columns, sqlgraph.NewFieldSpec(webhook.FieldID, field.TypeInt64))
 	if ps := _u.mutation.predicates; len(ps) > 0 {
 		_spec.Predicate = func(selector *sql.Selector) {
 			for i := range ps {
@@ -312,34 +312,34 @@ func (_u *WebhookUpdate) sqlSave(ctx context.Context) (_node int, err error) {
 		_spec.ClearField(webhook.FieldDeletedAt, field.TypeTime)
 	}
 	if value, ok := _u.mutation.CreatedBy(); ok {
-		_spec.SetField(webhook.FieldCreatedBy, field.TypeUint64, value)
+		_spec.SetField(webhook.FieldCreatedBy, field.TypeInt64, value)
 	}
 	if value, ok := _u.mutation.AddedCreatedBy(); ok {
-		_spec.AddField(webhook.FieldCreatedBy, field.TypeUint64, value)
+		_spec.AddField(webhook.FieldCreatedBy, field.TypeInt64, value)
 	}
 	if _u.mutation.CreatedByCleared() {
-		_spec.ClearField(webhook.FieldCreatedBy, field.TypeUint64)
+		_spec.ClearField(webhook.FieldCreatedBy, field.TypeInt64)
 	}
 	if value, ok := _u.mutation.UpdatedBy(); ok {
-		_spec.SetField(webhook.FieldUpdatedBy, field.TypeUint64, value)
+		_spec.SetField(webhook.FieldUpdatedBy, field.TypeInt64, value)
 	}
 	if value, ok := _u.mutation.AddedUpdatedBy(); ok {
-		_spec.AddField(webhook.FieldUpdatedBy, field.TypeUint64, value)
+		_spec.AddField(webhook.FieldUpdatedBy, field.TypeInt64, value)
 	}
 	if _u.mutation.UpdatedByCleared() {
-		_spec.ClearField(webhook.FieldUpdatedBy, field.TypeUint64)
+		_spec.ClearField(webhook.FieldUpdatedBy, field.TypeInt64)
 	}
 	if value, ok := _u.mutation.DeletedBy(); ok {
-		_spec.SetField(webhook.FieldDeletedBy, field.TypeUint64, value)
+		_spec.SetField(webhook.FieldDeletedBy, field.TypeInt64, value)
 	}
 	if value, ok := _u.mutation.AddedDeletedBy(); ok {
-		_spec.AddField(webhook.FieldDeletedBy, field.TypeUint64, value)
+		_spec.AddField(webhook.FieldDeletedBy, field.TypeInt64, value)
 	}
 	if _u.mutation.DeletedByCleared() {
-		_spec.ClearField(webhook.FieldDeletedBy, field.TypeUint64)
+		_spec.ClearField(webhook.FieldDeletedBy, field.TypeInt64)
 	}
 	if _u.mutation.TenantIDCleared() {
-		_spec.ClearField(webhook.FieldTenantID, field.TypeUint64)
+		_spec.ClearField(webhook.FieldTenantID, field.TypeInt64)
 	}
 	if value, ok := _u.mutation.URL(); ok {
 		_spec.SetField(webhook.FieldURL, field.TypeString, value)
@@ -431,14 +431,14 @@ func (_u *WebhookUpdateOne) ClearDeletedAt() *WebhookUpdateOne {
 }
 
 // SetCreatedBy sets the "created_by" field.
-func (_u *WebhookUpdateOne) SetCreatedBy(v uint64) *WebhookUpdateOne {
+func (_u *WebhookUpdateOne) SetCreatedBy(v int64) *WebhookUpdateOne {
 	_u.mutation.ResetCreatedBy()
 	_u.mutation.SetCreatedBy(v)
 	return _u
 }
 
 // SetNillableCreatedBy sets the "created_by" field if the given value is not nil.
-func (_u *WebhookUpdateOne) SetNillableCreatedBy(v *uint64) *WebhookUpdateOne {
+func (_u *WebhookUpdateOne) SetNillableCreatedBy(v *int64) *WebhookUpdateOne {
 	if v != nil {
 		_u.SetCreatedBy(*v)
 	}
@@ -458,14 +458,14 @@ func (_u *WebhookUpdateOne) ClearCreatedBy() *WebhookUpdateOne {
 }
 
 // SetUpdatedBy sets the "updated_by" field.
-func (_u *WebhookUpdateOne) SetUpdatedBy(v uint64) *WebhookUpdateOne {
+func (_u *WebhookUpdateOne) SetUpdatedBy(v int64) *WebhookUpdateOne {
 	_u.mutation.ResetUpdatedBy()
 	_u.mutation.SetUpdatedBy(v)
 	return _u
 }
 
 // SetNillableUpdatedBy sets the "updated_by" field if the given value is not nil.
-func (_u *WebhookUpdateOne) SetNillableUpdatedBy(v *uint64) *WebhookUpdateOne {
+func (_u *WebhookUpdateOne) SetNillableUpdatedBy(v *int64) *WebhookUpdateOne {
 	if v != nil {
 		_u.SetUpdatedBy(*v)
 	}
@@ -485,14 +485,14 @@ func (_u *WebhookUpdateOne) ClearUpdatedBy() *WebhookUpdateOne {
 }
 
 // SetDeletedBy sets the "deleted_by" field.
-func (_u *WebhookUpdateOne) SetDeletedBy(v uint64) *WebhookUpdateOne {
+func (_u *WebhookUpdateOne) SetDeletedBy(v int64) *WebhookUpdateOne {
 	_u.mutation.ResetDeletedBy()
 	_u.mutation.SetDeletedBy(v)
 	return _u
 }
 
 // SetNillableDeletedBy sets the "deleted_by" field if the given value is not nil.
-func (_u *WebhookUpdateOne) SetNillableDeletedBy(v *uint64) *WebhookUpdateOne {
+func (_u *WebhookUpdateOne) SetNillableDeletedBy(v *int64) *WebhookUpdateOne {
 	if v != nil {
 		_u.SetDeletedBy(*v)
 	}
@@ -662,7 +662,7 @@ func (_u *WebhookUpdateOne) sqlSave(ctx context.Context) (_node *Webhook, err er
 	if err := _u.check(); err != nil {
 		return _node, err
 	}
-	_spec := sqlgraph.NewUpdateSpec(webhook.Table, webhook.Columns, sqlgraph.NewFieldSpec(webhook.FieldID, field.TypeUint64))
+	_spec := sqlgraph.NewUpdateSpec(webhook.Table, webhook.Columns, sqlgraph.NewFieldSpec(webhook.FieldID, field.TypeInt64))
 	id, ok := _u.mutation.ID()
 	if !ok {
 		return nil, &ValidationError{Name: "id", err: errors.New(`ent: missing "Webhook.id" for update`)}
@@ -703,34 +703,34 @@ func (_u *WebhookUpdateOne) sqlSave(ctx context.Context) (_node *Webhook, err er
 		_spec.ClearField(webhook.FieldDeletedAt, field.TypeTime)
 	}
 	if value, ok := _u.mutation.CreatedBy(); ok {
-		_spec.SetField(webhook.FieldCreatedBy, field.TypeUint64, value)
+		_spec.SetField(webhook.FieldCreatedBy, field.TypeInt64, value)
 	}
 	if value, ok := _u.mutation.AddedCreatedBy(); ok {
-		_spec.AddField(webhook.FieldCreatedBy, field.TypeUint64, value)
+		_spec.AddField(webhook.FieldCreatedBy, field.TypeInt64, value)
 	}
 	if _u.mutation.CreatedByCleared() {
-		_spec.ClearField(webhook.FieldCreatedBy, field.TypeUint64)
+		_spec.ClearField(webhook.FieldCreatedBy, field.TypeInt64)
 	}
 	if value, ok := _u.mutation.UpdatedBy(); ok {
-		_spec.SetField(webhook.FieldUpdatedBy, field.TypeUint64, value)
+		_spec.SetField(webhook.FieldUpdatedBy, field.TypeInt64, value)
 	}
 	if value, ok := _u.mutation.AddedUpdatedBy(); ok {
-		_spec.AddField(webhook.FieldUpdatedBy, field.TypeUint64, value)
+		_spec.AddField(webhook.FieldUpdatedBy, field.TypeInt64, value)
 	}
 	if _u.mutation.UpdatedByCleared() {
-		_spec.ClearField(webhook.FieldUpdatedBy, field.TypeUint64)
+		_spec.ClearField(webhook.FieldUpdatedBy, field.TypeInt64)
 	}
 	if value, ok := _u.mutation.DeletedBy(); ok {
-		_spec.SetField(webhook.FieldDeletedBy, field.TypeUint64, value)
+		_spec.SetField(webhook.FieldDeletedBy, field.TypeInt64, value)
 	}
 	if value, ok := _u.mutation.AddedDeletedBy(); ok {
-		_spec.AddField(webhook.FieldDeletedBy, field.TypeUint64, value)
+		_spec.AddField(webhook.FieldDeletedBy, field.TypeInt64, value)
 	}
 	if _u.mutation.DeletedByCleared() {
-		_spec.ClearField(webhook.FieldDeletedBy, field.TypeUint64)
+		_spec.ClearField(webhook.FieldDeletedBy, field.TypeInt64)
 	}
 	if _u.mutation.TenantIDCleared() {
-		_spec.ClearField(webhook.FieldTenantID, field.TypeUint64)
+		_spec.ClearField(webhook.FieldTenantID, field.TypeInt64)
 	}
 	if value, ok := _u.mutation.URL(); ok {
 		_spec.SetField(webhook.FieldURL, field.TypeString, value)

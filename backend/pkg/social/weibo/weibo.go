@@ -84,10 +84,10 @@ type rateLimitView struct {
 }
 
 type statusView struct {
-	ID             int64  `json:"id"`
-	CommentsCount  int64  `json:"comments_count"`
-	RepostsCount   int64  `json:"reposts_count"`
-	AttitudesCount int64  `json:"attitudes_count"`
+	ID             int64 `json:"id"`
+	CommentsCount  int64 `json:"comments_count"`
+	RepostsCount   int64 `json:"reposts_count"`
+	AttitudesCount int64 `json:"attitudes_count"`
 	User           struct {
 		ID int64 `json:"id"`
 	} `json:"user"`
@@ -290,9 +290,9 @@ func classifyError(status int, raw []byte) error {
 	}
 }
 
-func clampUint64(v int64) uint64 {
+func clampUint64(v int64) int64 {
 	if v < 0 {
 		return 0
 	}
-	return uint64(v)
+	return int64(v)
 }

@@ -90,7 +90,7 @@ func initApp(ctx *bootstrap.Context) (*kratos.App, func(), error) {
 	userProfileService := service.NewUserProfileService(ctx, userServiceClient, tenantServiceClient, orgUnitServiceClient, positionServiceClient, roleServiceClient, userCredentialServiceClient)
 
 	// 内容
-		contentModelServiceClient := data.NewContentModelServiceClient(ctx, discovery)
+	contentModelServiceClient := data.NewContentModelServiceClient(ctx, discovery)
 	mediaAssetServiceClient := data.NewMediaAssetServiceClient(ctx, discovery)
 	mediaAssetService := service.NewMediaAssetService(ctx, mediaAssetServiceClient, minIOClient)
 	postService := service.NewPostService(ctx, postServiceClient, contentModelServiceClient, tenantResolver)

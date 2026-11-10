@@ -72,7 +72,7 @@ func (r *NavigationItemRepo) init() {
 	r.mapper.AppendConverters(r.linkTypeConverter.NewConverterPair())
 }
 
-func (r *NavigationItemRepo) IsExist(ctx context.Context, navigationID uint64) (bool, error) {
+func (r *NavigationItemRepo) IsExist(ctx context.Context, navigationID int64) (bool, error) {
 	exist, err := r.entClient.Client().NavigationItem.Query().
 		Where(navigationitem.NavigationIDEQ(navigationID)).
 		Exist(ctx)
@@ -86,7 +86,7 @@ func (r *NavigationItemRepo) IsExist(ctx context.Context, navigationID uint64) (
 func (r *NavigationItemRepo) CleanItems(
 	ctx context.Context,
 	tx *ent.Tx,
-	navigationID uint64,
+	navigationID int64,
 ) error {
 	if _, err := tx.NavigationItem.Delete().
 		Where(
@@ -237,7 +237,7 @@ func (r *NavigationItemRepo) newUpdateOneBuilder(tx *ent.Tx, data *siteV1.Naviga
 		SetNillableIsInvalid(data.IsInvalid).
 		SetNillableRequiredPermission(data.RequiredPermission).
 		SetNillableParentID(data.ParentId).
-			SetUpdatedAt(now)
+		SetUpdatedAt(now)
 	return builder
 }
 
@@ -307,7 +307,7 @@ func (r *NavigationItemRepo) Upsert(ctx context.Context, data *siteV1.Navigation
 		return siteV1.ErrorBadRequest("invalid parameter")
 	}
 
-	var operatorID *uint64
+	var operatorID *int64
 	if data.UpdatedBy != nil {
 		operatorID = data.UpdatedBy
 	} else {
@@ -361,7 +361,7 @@ func (r *NavigationItemRepo) Upsert(ctx context.Context, data *siteV1.Navigation
 	return nil
 }
 
-func (r *NavigationItemRepo) buildNavigationItemTree(items []*siteV1.NavigationItem, parentId uint64) []*siteV1.NavigationItem {
+func (r *NavigationItemRepo) buildNavigationItemTree(items []*siteV1.NavigationItem, parentId int64) []*siteV1.NavigationItem {
 	var tree []*siteV1.NavigationItem
 	for _, item := range items {
 		if item.GetParentId() == parentId {
@@ -374,7 +374,7 @@ func (r *NavigationItemRepo) buildNavigationItemTree(items []*siteV1.NavigationI
 	return tree
 }
 
-func (r *NavigationItemRepo) ListItems(ctx context.Context, navigationID uint64, treeTravel bool) ([]*siteV1.NavigationItem, error) {
+func (r *NavigationItemRepo) ListItems(ctx context.Context, navigationID int64, treeTravel bool) ([]*siteV1.NavigationItem, error) {
 	q := r.entClient.Client().NavigationItem.Query().
 		Where(
 			navigationitem.NavigationIDEQ(navigationID),
@@ -395,9 +395,9 @@ func (r *NavigationItemRepo) ListItems(ctx context.Context, navigationID uint64,
 		return dtos, nil
 	}
 
-	grouped := make(map[uint64][]*siteV1.NavigationItem)
+	grouped := make(map[int64][]*siteV1.NavigationItem)
 	for _, entity := range entities {
-		pid := uint64(0)
+		pid := int64(0)
 		if entity.ParentID != nil {
 			pid = *entity.ParentID
 		}
@@ -419,8 +419,8 @@ func (r *NavigationItemRepo) ListItems(ctx context.Context, navigationID uint64,
 		})
 	}
 
-	var buildTree func(parentID uint64) []*siteV1.NavigationItem
-	buildTree = func(parentID uint64) []*siteV1.NavigationItem {
+	var buildTree func(parentID int64) []*siteV1.NavigationItem
+	buildTree = func(parentID int64) []*siteV1.NavigationItem {
 		items := grouped[parentID]
 		sortByOrder(items)
 		for _, item := range items {

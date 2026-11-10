@@ -85,7 +85,7 @@ func (Post_PostStatus) EnumDescriptor() ([]byte, []int) {
 // 帖子
 type Post struct {
 	state              protoimpl.MessageState `protogen:"open.v1"`
-	Id                 *uint64                `protobuf:"varint,1,opt,name=id,proto3,oneof" json:"id,omitempty"`                                                                                                             // 帖子ID
+	Id                 *int64                 `protobuf:"varint,1,opt,name=id,proto3,oneof" json:"id,omitempty"`                                                                                                             // 帖子ID
 	Status             *Post_PostStatus       `protobuf:"varint,2,opt,name=status,proto3,enum=content.service.v1.Post_PostStatus,oneof" json:"status,omitempty"`                                                             // 帖子状态
 	EditorType         *EditorType            `protobuf:"varint,3,opt,name=editor_type,json=editorType,proto3,enum=content.service.v1.EditorType,oneof" json:"editor_type,omitempty"`                                        // 编辑器类型
 	Code               *string                `protobuf:"bytes,4,opt,name=code,proto3,oneof" json:"code,omitempty"`                                                                                                          // 唯一编码（必须唯一，建议使用英文，前端可用来构建 URL，如 /post/{code}）
@@ -94,18 +94,18 @@ type Post struct {
 	AutoSummary        *bool                  `protobuf:"varint,7,opt,name=auto_summary,json=autoSummary,proto3,oneof" json:"auto_summary,omitempty"`                                                                        // 是否自动生成摘要（如果 content 发生变化且 summary 为空，则自动生成摘要）
 	IsFeatured         *bool                  `protobuf:"varint,8,opt,name=is_featured,json=isFeatured,proto3,oneof" json:"is_featured,omitempty"`                                                                           // 是否推荐（前台可用来突出显示，如列表中加大字体或特殊标识）
 	SortOrder          *uint32                `protobuf:"varint,9,opt,name=sort_order,json=sortOrder,proto3,oneof" json:"sort_order,omitempty"`                                                                              // 排序优先级（数值越小越靠前，同组内排序）
-	AuthorId           *uint64                `protobuf:"varint,20,opt,name=author_id,json=authorId,proto3,oneof" json:"author_id,omitempty"`                                                                                // 帖子作者ID，0表示游客
+	AuthorId           *int64                 `protobuf:"varint,20,opt,name=author_id,json=authorId,proto3,oneof" json:"author_id,omitempty"`                                                                                // 帖子作者ID，0表示游客
 	AuthorName         *string                `protobuf:"bytes,21,opt,name=author_name,json=authorName,proto3,oneof" json:"author_name,omitempty"`                                                                           // 帖子作者名称（游客填写）
 	Thumbnail          *string                `protobuf:"bytes,13,opt,name=thumbnail,proto3,oneof" json:"thumbnail,omitempty"`                                                                                               // 缩略图（全语言共用，存主表）
 	CustomFields       map[string]string      `protobuf:"bytes,30,rep,name=custom_fields,json=customFields,proto3" json:"custom_fields,omitempty" protobuf_key:"bytes,1,opt,name=key" protobuf_val:"bytes,2,opt,name=value"` // 自定义字段，键值对形式，便于扩展
 	Translations       []*PostTranslation     `protobuf:"bytes,40,rep,name=translations,proto3" json:"translations,omitempty"`                                                                                               // 多语言翻译列表
 	AvailableLanguages []string               `protobuf:"bytes,41,rep,name=available_languages,json=availableLanguages,proto3" json:"available_languages,omitempty"`                                                         // 可用的语言代码列表
-	CategoryIds        []uint64               `protobuf:"varint,50,rep,packed,name=category_ids,json=categoryIds,proto3" json:"category_ids,omitempty"`                                                                      // 关联的分类ID列表（多选）
-	TagIds             []uint64               `protobuf:"varint,51,rep,packed,name=tag_ids,json=tagIds,proto3" json:"tag_ids,omitempty"`                                                                                     // 关联的标签ID列表（多选）
+	CategoryIds        []int64                `protobuf:"varint,50,rep,packed,name=category_ids,json=categoryIds,proto3" json:"category_ids,omitempty"`                                                                      // 关联的分类ID列表（多选）
+	TagIds             []int64                `protobuf:"varint,51,rep,packed,name=tag_ids,json=tagIds,proto3" json:"tag_ids,omitempty"`                                                                                     // 关联的标签ID列表（多选）
 	PasswordHash       *string                `protobuf:"bytes,60,opt,name=password_hash,json=passwordHash,proto3,oneof" json:"password_hash,omitempty"`                                                                     // 密码哈希（如果帖子受密码保护，存储密码的哈希值，前端不返回该字段）
-	CreatedBy          *uint64                `protobuf:"varint,100,opt,name=created_by,json=createdBy,proto3,oneof" json:"created_by,omitempty"`                                                                            // 创建者用户ID
-	UpdatedBy          *uint64                `protobuf:"varint,101,opt,name=updated_by,json=updatedBy,proto3,oneof" json:"updated_by,omitempty"`                                                                            // 更新者用户ID
-	DeletedBy          *uint64                `protobuf:"varint,102,opt,name=deleted_by,json=deletedBy,proto3,oneof" json:"deleted_by,omitempty"`                                                                            // 删除者用户ID
+	CreatedBy          *int64                 `protobuf:"varint,100,opt,name=created_by,json=createdBy,proto3,oneof" json:"created_by,omitempty"`                                                                            // 创建者用户ID
+	UpdatedBy          *int64                 `protobuf:"varint,101,opt,name=updated_by,json=updatedBy,proto3,oneof" json:"updated_by,omitempty"`                                                                            // 更新者用户ID
+	DeletedBy          *int64                 `protobuf:"varint,102,opt,name=deleted_by,json=deletedBy,proto3,oneof" json:"deleted_by,omitempty"`                                                                            // 删除者用户ID
 	CreatedAt          *timestamppb.Timestamp `protobuf:"bytes,200,opt,name=created_at,json=createdAt,proto3,oneof" json:"created_at,omitempty"`                                                                             // 创建时间
 	UpdatedAt          *timestamppb.Timestamp `protobuf:"bytes,201,opt,name=updated_at,json=updatedAt,proto3,oneof" json:"updated_at,omitempty"`                                                                             // 更新时间
 	DeletedAt          *timestamppb.Timestamp `protobuf:"bytes,202,opt,name=deleted_at,json=deletedAt,proto3,oneof" json:"deleted_at,omitempty"`                                                                             // 删除时间
@@ -144,7 +144,7 @@ func (*Post) Descriptor() ([]byte, []int) {
 	return file_content_service_v1_post_proto_rawDescGZIP(), []int{0}
 }
 
-func (x *Post) GetId() uint64 {
+func (x *Post) GetId() int64 {
 	if x != nil && x.Id != nil {
 		return *x.Id
 	}
@@ -207,7 +207,7 @@ func (x *Post) GetSortOrder() uint32 {
 	return 0
 }
 
-func (x *Post) GetAuthorId() uint64 {
+func (x *Post) GetAuthorId() int64 {
 	if x != nil && x.AuthorId != nil {
 		return *x.AuthorId
 	}
@@ -249,14 +249,14 @@ func (x *Post) GetAvailableLanguages() []string {
 	return nil
 }
 
-func (x *Post) GetCategoryIds() []uint64 {
+func (x *Post) GetCategoryIds() []int64 {
 	if x != nil {
 		return x.CategoryIds
 	}
 	return nil
 }
 
-func (x *Post) GetTagIds() []uint64 {
+func (x *Post) GetTagIds() []int64 {
 	if x != nil {
 		return x.TagIds
 	}
@@ -270,21 +270,21 @@ func (x *Post) GetPasswordHash() string {
 	return ""
 }
 
-func (x *Post) GetCreatedBy() uint64 {
+func (x *Post) GetCreatedBy() int64 {
 	if x != nil && x.CreatedBy != nil {
 		return *x.CreatedBy
 	}
 	return 0
 }
 
-func (x *Post) GetUpdatedBy() uint64 {
+func (x *Post) GetUpdatedBy() int64 {
 	if x != nil && x.UpdatedBy != nil {
 		return *x.UpdatedBy
 	}
 	return 0
 }
 
-func (x *Post) GetDeletedBy() uint64 {
+func (x *Post) GetDeletedBy() int64 {
 	if x != nil && x.DeletedBy != nil {
 		return *x.DeletedBy
 	}
@@ -322,8 +322,8 @@ func (x *Post) GetPublishTime() *timestamppb.Timestamp {
 // 帖子翻译
 type PostTranslation struct {
 	state           protoimpl.MessageState `protogen:"open.v1"`
-	Id              *uint64                `protobuf:"varint,1,opt,name=id,proto3,oneof" json:"id,omitempty"`                                                  // 帖子翻译ID
-	PostId          *uint64                `protobuf:"varint,2,opt,name=post_id,json=postId,proto3,oneof" json:"post_id,omitempty"`                            // 关联的帖子ID
+	Id              *int64                 `protobuf:"varint,1,opt,name=id,proto3,oneof" json:"id,omitempty"`                                                  // 帖子翻译ID
+	PostId          *int64                 `protobuf:"varint,2,opt,name=post_id,json=postId,proto3,oneof" json:"post_id,omitempty"`                            // 关联的帖子ID
 	LanguageCode    *string                `protobuf:"bytes,3,opt,name=language_code,json=languageCode,proto3,oneof" json:"language_code,omitempty"`           // 语言代码
 	Title           *string                `protobuf:"bytes,10,opt,name=title,proto3,oneof" json:"title,omitempty"`                                            // 帖子标题
 	Slug            *string                `protobuf:"bytes,11,opt,name=slug,proto3,oneof" json:"slug,omitempty"`                                              // 语言特定 slug（覆盖主表 slug，如中文用拼音 /post/hou-duan）
@@ -333,9 +333,9 @@ type PostTranslation struct {
 	FullPath        *string                `protobuf:"bytes,17,opt,name=full_path,json=fullPath,proto3,oneof" json:"full_path,omitempty"`                      // 完整路径（如 /zh-CN/blog/post-slug）
 	WordCount       *uint32                `protobuf:"varint,18,opt,name=word_count,json=wordCount,proto3,oneof" json:"word_count,omitempty"`                  // 当前语言版本的字数（中文按字符数，英文按单词数）
 	Seo             *SeoMeta               `protobuf:"bytes,20,opt,name=seo,proto3,oneof" json:"seo,omitempty"`
-	CreatedBy       *uint64                `protobuf:"varint,100,opt,name=created_by,json=createdBy,proto3,oneof" json:"created_by,omitempty"` // 创建者用户ID
-	UpdatedBy       *uint64                `protobuf:"varint,101,opt,name=updated_by,json=updatedBy,proto3,oneof" json:"updated_by,omitempty"` // 更新者用户ID
-	DeletedBy       *uint64                `protobuf:"varint,102,opt,name=deleted_by,json=deletedBy,proto3,oneof" json:"deleted_by,omitempty"` // 删除者用户ID
+	CreatedBy       *int64                 `protobuf:"varint,100,opt,name=created_by,json=createdBy,proto3,oneof" json:"created_by,omitempty"` // 创建者用户ID
+	UpdatedBy       *int64                 `protobuf:"varint,101,opt,name=updated_by,json=updatedBy,proto3,oneof" json:"updated_by,omitempty"` // 更新者用户ID
+	DeletedBy       *int64                 `protobuf:"varint,102,opt,name=deleted_by,json=deletedBy,proto3,oneof" json:"deleted_by,omitempty"` // 删除者用户ID
 	CreatedAt       *timestamppb.Timestamp `protobuf:"bytes,200,opt,name=created_at,json=createdAt,proto3,oneof" json:"created_at,omitempty"`  // 创建时间
 	UpdatedAt       *timestamppb.Timestamp `protobuf:"bytes,201,opt,name=updated_at,json=updatedAt,proto3,oneof" json:"updated_at,omitempty"`  // 更新时间
 	DeletedAt       *timestamppb.Timestamp `protobuf:"bytes,202,opt,name=deleted_at,json=deletedAt,proto3,oneof" json:"deleted_at,omitempty"`  // 删除时间
@@ -373,14 +373,14 @@ func (*PostTranslation) Descriptor() ([]byte, []int) {
 	return file_content_service_v1_post_proto_rawDescGZIP(), []int{1}
 }
 
-func (x *PostTranslation) GetId() uint64 {
+func (x *PostTranslation) GetId() int64 {
 	if x != nil && x.Id != nil {
 		return *x.Id
 	}
 	return 0
 }
 
-func (x *PostTranslation) GetPostId() uint64 {
+func (x *PostTranslation) GetPostId() int64 {
 	if x != nil && x.PostId != nil {
 		return *x.PostId
 	}
@@ -450,21 +450,21 @@ func (x *PostTranslation) GetSeo() *SeoMeta {
 	return nil
 }
 
-func (x *PostTranslation) GetCreatedBy() uint64 {
+func (x *PostTranslation) GetCreatedBy() int64 {
 	if x != nil && x.CreatedBy != nil {
 		return *x.CreatedBy
 	}
 	return 0
 }
 
-func (x *PostTranslation) GetUpdatedBy() uint64 {
+func (x *PostTranslation) GetUpdatedBy() int64 {
 	if x != nil && x.UpdatedBy != nil {
 		return *x.UpdatedBy
 	}
 	return 0
 }
 
-func (x *PostTranslation) GetDeletedBy() uint64 {
+func (x *PostTranslation) GetDeletedBy() int64 {
 	if x != nil && x.DeletedBy != nil {
 		return *x.DeletedBy
 	}
@@ -496,7 +496,7 @@ func (x *PostTranslation) GetDeletedAt() *timestamppb.Timestamp {
 type ListPostResponse struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
 	Items         []*Post                `protobuf:"bytes,1,rep,name=items,proto3" json:"items,omitempty"`
-	Total         uint64                 `protobuf:"varint,2,opt,name=total,proto3" json:"total,omitempty"`
+	Total         int64                  `protobuf:"varint,2,opt,name=total,proto3" json:"total,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -538,7 +538,7 @@ func (x *ListPostResponse) GetItems() []*Post {
 	return nil
 }
 
-func (x *ListPostResponse) GetTotal() uint64 {
+func (x *ListPostResponse) GetTotal() int64 {
 	if x != nil {
 		return x.Total
 	}
@@ -596,7 +596,7 @@ func (x *GetPostRequest) GetQueryBy() isGetPostRequest_QueryBy {
 	return nil
 }
 
-func (x *GetPostRequest) GetId() uint64 {
+func (x *GetPostRequest) GetId() int64 {
 	if x != nil {
 		if x, ok := x.QueryBy.(*GetPostRequest_Id); ok {
 			return x.Id
@@ -633,7 +633,7 @@ type isGetPostRequest_QueryBy interface {
 }
 
 type GetPostRequest_Id struct {
-	Id uint64 `protobuf:"varint,1,opt,name=id,proto3,oneof"` // ID
+	Id int64 `protobuf:"varint,1,opt,name=id,proto3,oneof"` // ID
 }
 
 type GetPostRequest_Code struct {
@@ -692,7 +692,7 @@ func (x *CreatePostRequest) GetData() *Post {
 // 请求 - 更新帖子
 type UpdatePostRequest struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
-	Id            uint64                 `protobuf:"varint,1,opt,name=id,proto3" json:"id,omitempty"`
+	Id            int64                  `protobuf:"varint,1,opt,name=id,proto3" json:"id,omitempty"`
 	Data          *Post                  `protobuf:"bytes,2,opt,name=data,proto3" json:"data,omitempty"`
 	UpdateMask    *fieldmaskpb.FieldMask `protobuf:"bytes,3,opt,name=update_mask,json=updateMask,proto3" json:"update_mask,omitempty"`              // 要更新的字段列表
 	AllowMissing  *bool                  `protobuf:"varint,4,opt,name=allow_missing,json=allowMissing,proto3,oneof" json:"allow_missing,omitempty"` // 如果设置为true的时候，资源不存在则会新增(插入)，并且在这种情况下`updateMask`字段将会被忽略。
@@ -730,7 +730,7 @@ func (*UpdatePostRequest) Descriptor() ([]byte, []int) {
 	return file_content_service_v1_post_proto_rawDescGZIP(), []int{5}
 }
 
-func (x *UpdatePostRequest) GetId() uint64 {
+func (x *UpdatePostRequest) GetId() int64 {
 	if x != nil {
 		return x.Id
 	}
@@ -806,7 +806,7 @@ func (x *DeletePostRequest) GetQueryBy() isDeletePostRequest_QueryBy {
 	return nil
 }
 
-func (x *DeletePostRequest) GetId() uint64 {
+func (x *DeletePostRequest) GetId() int64 {
 	if x != nil {
 		if x, ok := x.QueryBy.(*DeletePostRequest_Id); ok {
 			return x.Id
@@ -820,14 +820,14 @@ type isDeletePostRequest_QueryBy interface {
 }
 
 type DeletePostRequest_Id struct {
-	Id uint64 `protobuf:"varint,1,opt,name=id,proto3,oneof"` // ID
+	Id int64 `protobuf:"varint,1,opt,name=id,proto3,oneof"` // ID
 }
 
 func (*DeletePostRequest_Id) isDeletePostRequest_QueryBy() {}
 
 type PostTranslationExistsRequest struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
-	PostId        uint64                 `protobuf:"varint,1,opt,name=post_id,json=postId,proto3" json:"post_id,omitempty"`                  // 帖子ID
+	PostId        int64                  `protobuf:"varint,1,opt,name=post_id,json=postId,proto3" json:"post_id,omitempty"`                  // 帖子ID
 	LanguageCode  string                 `protobuf:"bytes,2,opt,name=language_code,json=languageCode,proto3" json:"language_code,omitempty"` // 语言代码
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
@@ -863,7 +863,7 @@ func (*PostTranslationExistsRequest) Descriptor() ([]byte, []int) {
 	return file_content_service_v1_post_proto_rawDescGZIP(), []int{7}
 }
 
-func (x *PostTranslationExistsRequest) GetPostId() uint64 {
+func (x *PostTranslationExistsRequest) GetPostId() int64 {
 	if x != nil {
 		return x.PostId
 	}
@@ -923,7 +923,7 @@ func (x *PostTranslationExistsResponse) GetExists() bool {
 
 type CreatePostTranslationRequest struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
-	PostId        uint64                 `protobuf:"varint,1,opt,name=post_id,json=postId,proto3" json:"post_id,omitempty"` // 关联的帖子ID
+	PostId        int64                  `protobuf:"varint,1,opt,name=post_id,json=postId,proto3" json:"post_id,omitempty"` // 关联的帖子ID
 	Data          *PostTranslation       `protobuf:"bytes,2,opt,name=data,proto3" json:"data,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
@@ -959,7 +959,7 @@ func (*CreatePostTranslationRequest) Descriptor() ([]byte, []int) {
 	return file_content_service_v1_post_proto_rawDescGZIP(), []int{9}
 }
 
-func (x *CreatePostTranslationRequest) GetPostId() uint64 {
+func (x *CreatePostTranslationRequest) GetPostId() int64 {
 	if x != nil {
 		return x.PostId
 	}
@@ -975,7 +975,7 @@ func (x *CreatePostTranslationRequest) GetData() *PostTranslation {
 
 type UpdatePostTranslationRequest struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
-	Id            uint64                 `protobuf:"varint,1,opt,name=id,proto3" json:"id,omitempty"` // 翻译ID
+	Id            int64                  `protobuf:"varint,1,opt,name=id,proto3" json:"id,omitempty"` // 翻译ID
 	Data          *PostTranslation       `protobuf:"bytes,2,opt,name=data,proto3" json:"data,omitempty"`
 	UpdateMask    *fieldmaskpb.FieldMask `protobuf:"bytes,3,opt,name=update_mask,json=updateMask,proto3" json:"update_mask,omitempty"`              // 要更新的字段列表
 	AllowMissing  *bool                  `protobuf:"varint,4,opt,name=allow_missing,json=allowMissing,proto3,oneof" json:"allow_missing,omitempty"` // 如果设置为true的时候，资源不存在则会新增(插入)，并且在这种情况下`updateMask`字段将会被忽略。
@@ -1013,7 +1013,7 @@ func (*UpdatePostTranslationRequest) Descriptor() ([]byte, []int) {
 	return file_content_service_v1_post_proto_rawDescGZIP(), []int{10}
 }
 
-func (x *UpdatePostTranslationRequest) GetId() uint64 {
+func (x *UpdatePostTranslationRequest) GetId() int64 {
 	if x != nil {
 		return x.Id
 	}
@@ -1043,7 +1043,7 @@ func (x *UpdatePostTranslationRequest) GetAllowMissing() bool {
 
 type PostTranslationIdentifier struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
-	PostId        uint64                 `protobuf:"varint,1,opt,name=post_id,json=postId,proto3" json:"post_id,omitempty"`                  // 关联的帖子ID
+	PostId        int64                  `protobuf:"varint,1,opt,name=post_id,json=postId,proto3" json:"post_id,omitempty"`                  // 关联的帖子ID
 	LanguageCode  string                 `protobuf:"bytes,2,opt,name=language_code,json=languageCode,proto3" json:"language_code,omitempty"` // 语言代码
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
@@ -1079,7 +1079,7 @@ func (*PostTranslationIdentifier) Descriptor() ([]byte, []int) {
 	return file_content_service_v1_post_proto_rawDescGZIP(), []int{11}
 }
 
-func (x *PostTranslationIdentifier) GetPostId() uint64 {
+func (x *PostTranslationIdentifier) GetPostId() int64 {
 	if x != nil {
 		return x.PostId
 	}
@@ -1141,7 +1141,7 @@ func (x *DeletePostTranslationRequest) GetQueryBy() isDeletePostTranslationReque
 	return nil
 }
 
-func (x *DeletePostTranslationRequest) GetId() uint64 {
+func (x *DeletePostTranslationRequest) GetId() int64 {
 	if x != nil {
 		if x, ok := x.QueryBy.(*DeletePostTranslationRequest_Id); ok {
 			return x.Id
@@ -1164,7 +1164,7 @@ type isDeletePostTranslationRequest_QueryBy interface {
 }
 
 type DeletePostTranslationRequest_Id struct {
-	Id uint64 `protobuf:"varint,1,opt,name=id,proto3,oneof"` // ID
+	Id int64 `protobuf:"varint,1,opt,name=id,proto3,oneof"` // ID
 }
 
 type DeletePostTranslationRequest_Identifier struct {
@@ -1311,7 +1311,7 @@ func (x *SearchPostsResponse) GetTotal() int32 {
 type SearchPostHit struct {
 	state protoimpl.MessageState `protogen:"open.v1"`
 	// 帖子 ID（用于后续 GetPost 详情查询）
-	PostId uint64 `protobuf:"varint,1,opt,name=post_id,json=postId,proto3" json:"post_id,omitempty"`
+	PostId int64 `protobuf:"varint,1,opt,name=post_id,json=postId,proto3" json:"post_id,omitempty"`
 	// 语言代码
 	Language string `protobuf:"bytes,2,opt,name=language,proto3" json:"language,omitempty"`
 	// 标题（来自翻译，用于搜索结果展示）
@@ -1354,7 +1354,7 @@ func (*SearchPostHit) Descriptor() ([]byte, []int) {
 	return file_content_service_v1_post_proto_rawDescGZIP(), []int{15}
 }
 
-func (x *SearchPostHit) GetPostId() uint64 {
+func (x *SearchPostHit) GetPostId() int64 {
 	if x != nil {
 		return x.PostId
 	}
@@ -1392,12 +1392,12 @@ func (x *SearchPostHit) GetHighlightFragments() []string {
 // 帖子版本（内容快照）
 type PostVersion struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
-	Id            *uint64                `protobuf:"varint,1,opt,name=id,proto3,oneof" json:"id,omitempty"`                                            // 版本记录ID
-	PostId        *uint64                `protobuf:"varint,2,opt,name=post_id,json=postId,proto3,oneof" json:"post_id,omitempty"`                      // 关联的帖子ID
+	Id            *int64                 `protobuf:"varint,1,opt,name=id,proto3,oneof" json:"id,omitempty"`                                            // 版本记录ID
+	PostId        *int64                 `protobuf:"varint,2,opt,name=post_id,json=postId,proto3,oneof" json:"post_id,omitempty"`                      // 关联的帖子ID
 	VersionNumber *uint32                `protobuf:"varint,3,opt,name=version_number,json=versionNumber,proto3,oneof" json:"version_number,omitempty"` // 版本号
 	Content       *string                `protobuf:"bytes,4,opt,name=content,proto3,oneof" json:"content,omitempty"`                                   // 快照 JSON
 	Comment       *string                `protobuf:"bytes,5,opt,name=comment,proto3,oneof" json:"comment,omitempty"`                                   // 版本说明
-	CreatedBy     *uint64                `protobuf:"varint,100,opt,name=created_by,json=createdBy,proto3,oneof" json:"created_by,omitempty"`           // 创建者用户ID
+	CreatedBy     *int64                 `protobuf:"varint,100,opt,name=created_by,json=createdBy,proto3,oneof" json:"created_by,omitempty"`           // 创建者用户ID
 	CreatedAt     *timestamppb.Timestamp `protobuf:"bytes,200,opt,name=created_at,json=createdAt,proto3,oneof" json:"created_at,omitempty"`            // 创建时间
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
@@ -1433,14 +1433,14 @@ func (*PostVersion) Descriptor() ([]byte, []int) {
 	return file_content_service_v1_post_proto_rawDescGZIP(), []int{16}
 }
 
-func (x *PostVersion) GetId() uint64 {
+func (x *PostVersion) GetId() int64 {
 	if x != nil && x.Id != nil {
 		return *x.Id
 	}
 	return 0
 }
 
-func (x *PostVersion) GetPostId() uint64 {
+func (x *PostVersion) GetPostId() int64 {
 	if x != nil && x.PostId != nil {
 		return *x.PostId
 	}
@@ -1468,7 +1468,7 @@ func (x *PostVersion) GetComment() string {
 	return ""
 }
 
-func (x *PostVersion) GetCreatedBy() uint64 {
+func (x *PostVersion) GetCreatedBy() int64 {
 	if x != nil && x.CreatedBy != nil {
 		return *x.CreatedBy
 	}
@@ -1485,7 +1485,7 @@ func (x *PostVersion) GetCreatedAt() *timestamppb.Timestamp {
 // 请求 - 列出帖子版本
 type ListPostVersionsRequest struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
-	PostId        uint64                 `protobuf:"varint,1,opt,name=post_id,json=postId,proto3" json:"post_id,omitempty"`
+	PostId        int64                  `protobuf:"varint,1,opt,name=post_id,json=postId,proto3" json:"post_id,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -1520,7 +1520,7 @@ func (*ListPostVersionsRequest) Descriptor() ([]byte, []int) {
 	return file_content_service_v1_post_proto_rawDescGZIP(), []int{17}
 }
 
-func (x *ListPostVersionsRequest) GetPostId() uint64 {
+func (x *ListPostVersionsRequest) GetPostId() int64 {
 	if x != nil {
 		return x.PostId
 	}
@@ -1531,7 +1531,7 @@ func (x *ListPostVersionsRequest) GetPostId() uint64 {
 type ListPostVersionsResponse struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
 	Items         []*PostVersion         `protobuf:"bytes,1,rep,name=items,proto3" json:"items,omitempty"`
-	Total         uint64                 `protobuf:"varint,2,opt,name=total,proto3" json:"total,omitempty"`
+	Total         int64                  `protobuf:"varint,2,opt,name=total,proto3" json:"total,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -1573,7 +1573,7 @@ func (x *ListPostVersionsResponse) GetItems() []*PostVersion {
 	return nil
 }
 
-func (x *ListPostVersionsResponse) GetTotal() uint64 {
+func (x *ListPostVersionsResponse) GetTotal() int64 {
 	if x != nil {
 		return x.Total
 	}
@@ -1583,7 +1583,7 @@ func (x *ListPostVersionsResponse) GetTotal() uint64 {
 // 请求 - 帖子版本详情
 type GetPostVersionRequest struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
-	Id            uint64                 `protobuf:"varint,1,opt,name=id,proto3" json:"id,omitempty"`
+	Id            int64                  `protobuf:"varint,1,opt,name=id,proto3" json:"id,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -1618,7 +1618,7 @@ func (*GetPostVersionRequest) Descriptor() ([]byte, []int) {
 	return file_content_service_v1_post_proto_rawDescGZIP(), []int{19}
 }
 
-func (x *GetPostVersionRequest) GetId() uint64 {
+func (x *GetPostVersionRequest) GetId() int64 {
 	if x != nil {
 		return x.Id
 	}
@@ -1628,8 +1628,8 @@ func (x *GetPostVersionRequest) GetId() uint64 {
 // 请求 - 恢复帖子版本
 type RestorePostVersionRequest struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
-	PostId        uint64                 `protobuf:"varint,1,opt,name=post_id,json=postId,proto3" json:"post_id,omitempty"`
-	VersionId     uint64                 `protobuf:"varint,2,opt,name=version_id,json=versionId,proto3" json:"version_id,omitempty"`
+	PostId        int64                  `protobuf:"varint,1,opt,name=post_id,json=postId,proto3" json:"post_id,omitempty"`
+	VersionId     int64                  `protobuf:"varint,2,opt,name=version_id,json=versionId,proto3" json:"version_id,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -1664,14 +1664,14 @@ func (*RestorePostVersionRequest) Descriptor() ([]byte, []int) {
 	return file_content_service_v1_post_proto_rawDescGZIP(), []int{20}
 }
 
-func (x *RestorePostVersionRequest) GetPostId() uint64 {
+func (x *RestorePostVersionRequest) GetPostId() int64 {
 	if x != nil {
 		return x.PostId
 	}
 	return 0
 }
 
-func (x *RestorePostVersionRequest) GetVersionId() uint64 {
+func (x *RestorePostVersionRequest) GetVersionId() int64 {
 	if x != nil {
 		return x.VersionId
 	}
@@ -1681,7 +1681,7 @@ func (x *RestorePostVersionRequest) GetVersionId() uint64 {
 // 请求 - 提交审核
 type SubmitPostReviewRequest struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
-	PostId        uint64                 `protobuf:"varint,1,opt,name=post_id,json=postId,proto3" json:"post_id,omitempty"`
+	PostId        int64                  `protobuf:"varint,1,opt,name=post_id,json=postId,proto3" json:"post_id,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -1716,7 +1716,7 @@ func (*SubmitPostReviewRequest) Descriptor() ([]byte, []int) {
 	return file_content_service_v1_post_proto_rawDescGZIP(), []int{21}
 }
 
-func (x *SubmitPostReviewRequest) GetPostId() uint64 {
+func (x *SubmitPostReviewRequest) GetPostId() int64 {
 	if x != nil {
 		return x.PostId
 	}
@@ -1726,7 +1726,7 @@ func (x *SubmitPostReviewRequest) GetPostId() uint64 {
 // 请求 - 审核通过/驳回的公共载体
 type ReviewPostRequest struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
-	PostId        uint64                 `protobuf:"varint,1,opt,name=post_id,json=postId,proto3" json:"post_id,omitempty"`
+	PostId        int64                  `protobuf:"varint,1,opt,name=post_id,json=postId,proto3" json:"post_id,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -1761,7 +1761,7 @@ func (*ReviewPostRequest) Descriptor() ([]byte, []int) {
 	return file_content_service_v1_post_proto_rawDescGZIP(), []int{22}
 }
 
-func (x *ReviewPostRequest) GetPostId() uint64 {
+func (x *ReviewPostRequest) GetPostId() int64 {
 	if x != nil {
 		return x.PostId
 	}
@@ -1771,7 +1771,7 @@ func (x *ReviewPostRequest) GetPostId() uint64 {
 // 请求 - 审核驳回（带理由）
 type RejectPostReviewRequest struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
-	PostId        uint64                 `protobuf:"varint,1,opt,name=post_id,json=postId,proto3" json:"post_id,omitempty"`
+	PostId        int64                  `protobuf:"varint,1,opt,name=post_id,json=postId,proto3" json:"post_id,omitempty"`
 	Reason        string                 `protobuf:"bytes,2,opt,name=reason,proto3" json:"reason,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
@@ -1807,7 +1807,7 @@ func (*RejectPostReviewRequest) Descriptor() ([]byte, []int) {
 	return file_content_service_v1_post_proto_rawDescGZIP(), []int{23}
 }
 
-func (x *RejectPostReviewRequest) GetPostId() uint64 {
+func (x *RejectPostReviewRequest) GetPostId() int64 {
 	if x != nil {
 		return x.PostId
 	}
@@ -1934,7 +1934,7 @@ func (x *SearchPostsSuggestResponse) GetTitles() []string {
 // 搜索同义词条目
 type SearchSynonym struct {
 	state protoimpl.MessageState `protogen:"open.v1"`
-	Id    *uint64                `protobuf:"varint,1,opt,name=id,proto3,oneof" json:"id,omitempty"`
+	Id    *int64                 `protobuf:"varint,1,opt,name=id,proto3,oneof" json:"id,omitempty"`
 	// 触发词（搜索词命中即扩展）
 	Term string `protobuf:"bytes,2,opt,name=term,proto3" json:"term,omitempty"`
 	// 扩展词列表（与触发词一起以 OR 参与检索）
@@ -1974,7 +1974,7 @@ func (*SearchSynonym) Descriptor() ([]byte, []int) {
 	return file_content_service_v1_post_proto_rawDescGZIP(), []int{26}
 }
 
-func (x *SearchSynonym) GetId() uint64 {
+func (x *SearchSynonym) GetId() int64 {
 	if x != nil && x.Id != nil {
 		return *x.Id
 	}
@@ -2095,7 +2095,7 @@ func (x *CreateSearchSynonymRequest) GetData() *SearchSynonym {
 // 删除同义词 - 请求
 type DeleteSearchSynonymRequest struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
-	Id            uint64                 `protobuf:"varint,1,opt,name=id,proto3" json:"id,omitempty"`
+	Id            int64                  `protobuf:"varint,1,opt,name=id,proto3" json:"id,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -2130,7 +2130,7 @@ func (*DeleteSearchSynonymRequest) Descriptor() ([]byte, []int) {
 	return file_content_service_v1_post_proto_rawDescGZIP(), []int{29}
 }
 
-func (x *DeleteSearchSynonymRequest) GetId() uint64 {
+func (x *DeleteSearchSynonymRequest) GetId() int64 {
 	if x != nil {
 		return x.Id
 	}
@@ -2143,7 +2143,7 @@ const file_content_service_v1_post_proto_rawDesc = "" +
 	"\n" +
 	"\x1dcontent/service/v1/post.proto\x12\x12content.service.v1\x1a$gnostic/openapi/v3/annotations.proto\x1a\x1bgoogle/protobuf/empty.proto\x1a\x1fgoogle/protobuf/timestamp.proto\x1a google/protobuf/field_mask.proto\x1a\x1epagination/v1/pagination.proto\x1a\x1econtent/service/v1/types.proto\"\x81\x15\n" +
 	"\x04Post\x12#\n" +
-	"\x02id\x18\x01 \x01(\x04B\x0e\xbaG\v\x92\x02\b帖子IDH\x00R\x02id\x88\x01\x01\x12T\n" +
+	"\x02id\x18\x01 \x01(\x03B\x0e\xbaG\v\x92\x02\b帖子IDH\x00R\x02id\x88\x01\x01\x12T\n" +
 	"\x06status\x18\x02 \x01(\x0e2#.content.service.v1.Post.PostStatusB\x12\xbaG\x0f\x92\x02\f帖子状态H\x01R\x06status\x88\x01\x01\x12[\n" +
 	"\veditor_type\x18\x03 \x01(\x0e2\x1e.content.service.v1.EditorTypeB\x15\xbaG\x12\x92\x02\x0f编辑器类型H\x02R\n" +
 	"editorType\x88\x01\x01\x12R\n" +
@@ -2156,7 +2156,7 @@ const file_content_service_v1_post_proto_rawDesc = "" +
 	"isFeatured\x88\x01\x01\x12f\n" +
 	"\n" +
 	"sort_order\x18\t \x01(\rBB\xbaG?\x92\x02<排序优先级（数值越小越靠前，同组内排序）H\bR\tsortOrder\x88\x01\x01\x12F\n" +
-	"\tauthor_id\x18\x14 \x01(\x04B$\xbaG!\x92\x02\x1e评论作者ID，0表示游客H\tR\bauthorId\x88\x01\x01\x12P\n" +
+	"\tauthor_id\x18\x14 \x01(\x03B$\xbaG!\x92\x02\x1e评论作者ID，0表示游客H\tR\bauthorId\x88\x01\x01\x12P\n" +
 	"\vauthor_name\x18\x15 \x01(\tB*\xbaG'\x92\x02$帖子作者名称（游客填写）H\n" +
 	"R\n" +
 	"authorName\x88\x01\x01\x12S\n" +
@@ -2164,15 +2164,15 @@ const file_content_service_v1_post_proto_rawDesc = "" +
 	"\rcustom_fields\x18\x1e \x03(\v2*.content.service.v1.Post.CustomFieldsEntryB6\xbaG3\x92\x020自定义字段，键值对形式，便于扩展R\fcustomFields\x12d\n" +
 	"\ftranslations\x18( \x03(\v2#.content.service.v1.PostTranslationB\x1b\xbaG\x18\x92\x02\x15多语言翻译列表R\ftranslations\x12\x9f\x01\n" +
 	"\x13available_languages\x18) \x03(\tBn\xbaGk:\x1d\x12\x1b[\"zh-CN\", \"en-US\", \"ja-JP\"]\x92\x02I可用的语言代码列表（快速查询，避免遍历 translations）R\x12availableLanguages\x12L\n" +
-	"\fcategory_ids\x182 \x03(\x04B)\xbaG&\x92\x02#关联的分类ID列表（多选）R\vcategoryIds\x12B\n" +
-	"\atag_ids\x183 \x03(\x04B)\xbaG&\x92\x02#关联的标签ID列表（多选）R\x06tagIds\x12<\n" +
+	"\fcategory_ids\x182 \x03(\x03B)\xbaG&\x92\x02#关联的分类ID列表（多选）R\vcategoryIds\x12B\n" +
+	"\atag_ids\x183 \x03(\x03B)\xbaG&\x92\x02#关联的标签ID列表（多选）R\x06tagIds\x12<\n" +
 	"\rpassword_hash\x18< \x01(\tB\x12\xbaG\x0f\x92\x02\f密码哈希H\fR\fpasswordHash\x88\x01\x01\x12;\n" +
 	"\n" +
-	"created_by\x18d \x01(\x04B\x17\xbaG\x14\x92\x02\x11创建者用户IDH\rR\tcreatedBy\x88\x01\x01\x12;\n" +
+	"created_by\x18d \x01(\x03B\x17\xbaG\x14\x92\x02\x11创建者用户IDH\rR\tcreatedBy\x88\x01\x01\x12;\n" +
 	"\n" +
-	"updated_by\x18e \x01(\x04B\x17\xbaG\x14\x92\x02\x11更新者用户IDH\x0eR\tupdatedBy\x88\x01\x01\x12;\n" +
+	"updated_by\x18e \x01(\x03B\x17\xbaG\x14\x92\x02\x11更新者用户IDH\x0eR\tupdatedBy\x88\x01\x01\x12;\n" +
 	"\n" +
-	"deleted_by\x18f \x01(\x04B\x17\xbaG\x14\x92\x02\x11删除者用户IDH\x0fR\tdeletedBy\x88\x01\x01\x12S\n" +
+	"deleted_by\x18f \x01(\x03B\x17\xbaG\x14\x92\x02\x11删除者用户IDH\x0fR\tdeletedBy\x88\x01\x01\x12S\n" +
 	"\n" +
 	"created_at\x18\xc8\x01 \x01(\v2\x1a.google.protobuf.TimestampB\x12\xbaG\x0f\x92\x02\f创建时间H\x10R\tcreatedAt\x88\x01\x01\x12S\n" +
 	"\n" +
@@ -2214,8 +2214,8 @@ const file_content_service_v1_post_proto_rawDesc = "" +
 	"\r_publish_timeJ\x04\b\n" +
 	"\x10\vJ\x04\b\v\x10\fJ\x04\b\f\x10\rR\x06visitsR\x05likesR\rcomment_count\"\xbd\v\n" +
 	"\x0fPostTranslation\x12)\n" +
-	"\x02id\x18\x01 \x01(\x04B\x14\xbaG\x11\x92\x02\x0e帖子翻译IDH\x00R\x02id\x88\x01\x01\x125\n" +
-	"\apost_id\x18\x02 \x01(\x04B\x17\xbaG\x14\x92\x02\x11关联的帖子IDH\x01R\x06postId\x88\x01\x01\x12<\n" +
+	"\x02id\x18\x01 \x01(\x03B\x14\xbaG\x11\x92\x02\x0e帖子翻译IDH\x00R\x02id\x88\x01\x01\x125\n" +
+	"\apost_id\x18\x02 \x01(\x03B\x17\xbaG\x14\x92\x02\x11关联的帖子IDH\x01R\x06postId\x88\x01\x01\x12<\n" +
 	"\rlanguage_code\x18\x03 \x01(\tB\x12\xbaG\x0f\x92\x02\f语言代码H\x02R\flanguageCode\x88\x01\x01\x12-\n" +
 	"\x05title\x18\n" +
 	" \x01(\tB\x12\xbaG\x0f\x92\x02\f帖子标题H\x03R\x05title\x88\x01\x01\x12k\n" +
@@ -2229,11 +2229,11 @@ const file_content_service_v1_post_proto_rawDesc = "" +
 	"\x03seo\x18\x14 \x01(\v2\x1b.content.service.v1.SeoMetaB\x1c\xbaG\x19\x92\x02\x16SEO 结构化元数据H\n" +
 	"R\x03seo\x88\x01\x01\x12;\n" +
 	"\n" +
-	"created_by\x18d \x01(\x04B\x17\xbaG\x14\x92\x02\x11创建者用户IDH\vR\tcreatedBy\x88\x01\x01\x12;\n" +
+	"created_by\x18d \x01(\x03B\x17\xbaG\x14\x92\x02\x11创建者用户IDH\vR\tcreatedBy\x88\x01\x01\x12;\n" +
 	"\n" +
-	"updated_by\x18e \x01(\x04B\x17\xbaG\x14\x92\x02\x11更新者用户IDH\fR\tupdatedBy\x88\x01\x01\x12;\n" +
+	"updated_by\x18e \x01(\x03B\x17\xbaG\x14\x92\x02\x11更新者用户IDH\fR\tupdatedBy\x88\x01\x01\x12;\n" +
 	"\n" +
-	"deleted_by\x18f \x01(\x04B\x17\xbaG\x14\x92\x02\x11删除者用户IDH\rR\tdeletedBy\x88\x01\x01\x12S\n" +
+	"deleted_by\x18f \x01(\x03B\x17\xbaG\x14\x92\x02\x11删除者用户IDH\rR\tdeletedBy\x88\x01\x01\x12S\n" +
 	"\n" +
 	"created_at\x18\xc8\x01 \x01(\v2\x1a.google.protobuf.TimestampB\x12\xbaG\x0f\x92\x02\f创建时间H\x0eR\tcreatedAt\x88\x01\x01\x12S\n" +
 	"\n" +
@@ -2263,9 +2263,9 @@ const file_content_service_v1_post_proto_rawDesc = "" +
 	"\v_deleted_atJ\x04\b\x0f\x10\x10R\tthumbnail\"X\n" +
 	"\x10ListPostResponse\x12.\n" +
 	"\x05items\x18\x01 \x03(\v2\x18.content.service.v1.PostR\x05items\x12\x14\n" +
-	"\x05total\x18\x02 \x01(\x04R\x05total\"\xd9\x02\n" +
+	"\x05total\x18\x02 \x01(\x03R\x05total\"\xd9\x02\n" +
 	"\x0eGetPostRequest\x12\x1c\n" +
-	"\x02id\x18\x01 \x01(\x04B\n" +
+	"\x02id\x18\x01 \x01(\x03B\n" +
 	"\xbaG\a\x18\x01\x92\x02\x02IDH\x00R\x02id\x12*\n" +
 	"\x04code\x18\x02 \x01(\tB\x14\xbaG\x11\x18\x01\x92\x02\f唯一编码H\x00R\x04code\x12_\n" +
 	"\x06locale\x18\n" +
@@ -2279,37 +2279,37 @@ const file_content_service_v1_post_proto_rawDesc = "" +
 	"\x11CreatePostRequest\x12,\n" +
 	"\x04data\x18\x01 \x01(\v2\x18.content.service.v1.PostR\x04data\"\x8f\x03\n" +
 	"\x11UpdatePostRequest\x12\x0e\n" +
-	"\x02id\x18\x01 \x01(\x04R\x02id\x12,\n" +
+	"\x02id\x18\x01 \x01(\x03R\x02id\x12,\n" +
 	"\x04data\x18\x02 \x01(\v2\x18.content.service.v1.PostR\x04data\x12s\n" +
 	"\vupdate_mask\x18\x03 \x01(\v2\x1a.google.protobuf.FieldMaskB6\xbaG3:\x16\x12\x14id,realname,username\x92\x02\x18要更新的字段列表R\n" +
 	"updateMask\x12\xb4\x01\n" +
 	"\rallow_missing\x18\x04 \x01(\bB\x89\x01\xbaG\x85\x01\x92\x02\x81\x01如果设置为true的时候，资源不存在则会新增(插入)，并且在这种情况下`updateMask`字段将会被忽略。H\x00R\fallowMissing\x88\x01\x01B\x10\n" +
 	"\x0e_allow_missing\"=\n" +
 	"\x11DeletePostRequest\x12\x1c\n" +
-	"\x02id\x18\x01 \x01(\x04B\n" +
+	"\x02id\x18\x01 \x01(\x03B\n" +
 	"\xbaG\a\x18\x01\x92\x02\x02IDH\x00R\x02idB\n" +
 	"\n" +
 	"\bquery_by\"\x80\x01\n" +
 	"\x1cPostTranslationExistsRequest\x12'\n" +
-	"\apost_id\x18\x01 \x01(\x04B\x0e\xbaG\v\x92\x02\b帖子IDR\x06postId\x127\n" +
+	"\apost_id\x18\x01 \x01(\x03B\x0e\xbaG\v\x92\x02\b帖子IDR\x06postId\x127\n" +
 	"\rlanguage_code\x18\x02 \x01(\tB\x12\xbaG\x0f\x92\x02\f语言代码R\flanguageCode\"Q\n" +
 	"\x1dPostTranslationExistsResponse\x120\n" +
 	"\x06exists\x18\x01 \x01(\bB\x18\xbaG\x15\x92\x02\x12翻译是否存在R\x06exists\"\x89\x01\n" +
 	"\x1cCreatePostTranslationRequest\x120\n" +
-	"\apost_id\x18\x01 \x01(\x04B\x17\xbaG\x14\x92\x02\x11关联的帖子IDR\x06postId\x127\n" +
+	"\apost_id\x18\x01 \x01(\x03B\x17\xbaG\x14\x92\x02\x11关联的帖子IDR\x06postId\x127\n" +
 	"\x04data\x18\x02 \x01(\v2#.content.service.v1.PostTranslationR\x04data\"\xb5\x03\n" +
 	"\x1cUpdatePostTranslationRequest\x12\x1e\n" +
-	"\x02id\x18\x01 \x01(\x04B\x0e\xbaG\v\x92\x02\b翻译IDR\x02id\x127\n" +
+	"\x02id\x18\x01 \x01(\x03B\x0e\xbaG\v\x92\x02\b翻译IDR\x02id\x127\n" +
 	"\x04data\x18\x02 \x01(\v2#.content.service.v1.PostTranslationR\x04data\x12s\n" +
 	"\vupdate_mask\x18\x03 \x01(\v2\x1a.google.protobuf.FieldMaskB6\xbaG3:\x16\x12\x14id,realname,username\x92\x02\x18要更新的字段列表R\n" +
 	"updateMask\x12\xb4\x01\n" +
 	"\rallow_missing\x18\x04 \x01(\bB\x89\x01\xbaG\x85\x01\x92\x02\x81\x01如果设置为true的时候，资源不存在则会新增(插入)，并且在这种情况下`updateMask`字段将会被忽略。H\x00R\fallowMissing\x88\x01\x01B\x10\n" +
 	"\x0e_allow_missing\"\x86\x01\n" +
 	"\x19PostTranslationIdentifier\x120\n" +
-	"\apost_id\x18\x01 \x01(\x04B\x17\xbaG\x14\x92\x02\x11关联的帖子IDR\x06postId\x127\n" +
+	"\apost_id\x18\x01 \x01(\x03B\x17\xbaG\x14\x92\x02\x11关联的帖子IDR\x06postId\x127\n" +
 	"\rlanguage_code\x18\x02 \x01(\tB\x12\xbaG\x0f\x92\x02\f语言代码R\flanguageCode\"\xcf\x01\n" +
 	"\x1cDeletePostTranslationRequest\x12\x1c\n" +
-	"\x02id\x18\x01 \x01(\x04B\n" +
+	"\x02id\x18\x01 \x01(\x03B\n" +
 	"\xbaG\a\x18\x01\x92\x02\x02IDH\x00R\x02id\x12\x84\x01\n" +
 	"\n" +
 	"identifier\x18\x02 \x01(\v2-.content.service.v1.PostTranslationIdentifierB3\xbaG0\x92\x02-通过 post_id 和 language_code 组合查询H\x00R\n" +
@@ -2325,19 +2325,19 @@ const file_content_service_v1_post_proto_rawDesc = "" +
 	"\x05items\x18\x01 \x03(\v2!.content.service.v1.SearchPostHitR\x05items\x12\x14\n" +
 	"\x05total\x18\x02 \x01(\x05R\x05total\"\xa5\x01\n" +
 	"\rSearchPostHit\x12\x17\n" +
-	"\apost_id\x18\x01 \x01(\x04R\x06postId\x12\x1a\n" +
+	"\apost_id\x18\x01 \x01(\x03R\x06postId\x12\x1a\n" +
 	"\blanguage\x18\x02 \x01(\tR\blanguage\x12\x14\n" +
 	"\x05title\x18\x03 \x01(\tR\x05title\x12\x18\n" +
 	"\asummary\x18\x04 \x01(\tR\asummary\x12/\n" +
 	"\x13highlight_fragments\x18\x05 \x03(\tR\x12highlightFragments\"\xdd\x04\n" +
 	"\vPostVersion\x12)\n" +
-	"\x02id\x18\x01 \x01(\x04B\x14\xbaG\x11\x92\x02\x0e版本记录IDH\x00R\x02id\x88\x01\x01\x125\n" +
-	"\apost_id\x18\x02 \x01(\x04B\x17\xbaG\x14\x92\x02\x11关联的帖子IDH\x01R\x06postId\x88\x01\x01\x12U\n" +
+	"\x02id\x18\x01 \x01(\x03B\x14\xbaG\x11\x92\x02\x0e版本记录IDH\x00R\x02id\x88\x01\x01\x125\n" +
+	"\apost_id\x18\x02 \x01(\x03B\x17\xbaG\x14\x92\x02\x11关联的帖子IDH\x01R\x06postId\x88\x01\x01\x12U\n" +
 	"\x0eversion_number\x18\x03 \x01(\rB)\xbaG&\x92\x02#版本号（每帖递增，1 起）H\x02R\rversionNumber\x88\x01\x01\x12\\\n" +
 	"\acontent\x18\x04 \x01(\tB=\xbaG:\x92\x027快照 JSON（Post DTO 全量，不含 password_hash）H\x03R\acontent\x88\x01\x01\x12I\n" +
 	"\acomment\x18\x05 \x01(\tB*\xbaG'\x92\x02$版本说明（自动保存为空）H\x04R\acomment\x88\x01\x01\x12;\n" +
 	"\n" +
-	"created_by\x18d \x01(\x04B\x17\xbaG\x14\x92\x02\x11创建者用户IDH\x05R\tcreatedBy\x88\x01\x01\x12S\n" +
+	"created_by\x18d \x01(\x03B\x17\xbaG\x14\x92\x02\x11创建者用户IDH\x05R\tcreatedBy\x88\x01\x01\x12S\n" +
 	"\n" +
 	"created_at\x18\xc8\x01 \x01(\v2\x1a.google.protobuf.TimestampB\x12\xbaG\x0f\x92\x02\f创建时间H\x06R\tcreatedAt\x88\x01\x01B\x05\n" +
 	"\x03_idB\n" +
@@ -2351,22 +2351,22 @@ const file_content_service_v1_post_proto_rawDesc = "" +
 	"\v_created_byB\r\n" +
 	"\v_created_at\"B\n" +
 	"\x17ListPostVersionsRequest\x12'\n" +
-	"\apost_id\x18\x01 \x01(\x04B\x0e\xbaG\v\x92\x02\b帖子IDR\x06postId\"g\n" +
+	"\apost_id\x18\x01 \x01(\x03B\x0e\xbaG\v\x92\x02\b帖子IDR\x06postId\"g\n" +
 	"\x18ListPostVersionsResponse\x125\n" +
 	"\x05items\x18\x01 \x03(\v2\x1f.content.service.v1.PostVersionR\x05items\x12\x14\n" +
-	"\x05total\x18\x02 \x01(\x04R\x05total\"=\n" +
+	"\x05total\x18\x02 \x01(\x03R\x05total\"=\n" +
 	"\x15GetPostVersionRequest\x12$\n" +
-	"\x02id\x18\x01 \x01(\x04B\x14\xbaG\x11\x92\x02\x0e版本记录IDR\x02id\"\x88\x01\n" +
+	"\x02id\x18\x01 \x01(\x03B\x14\xbaG\x11\x92\x02\x0e版本记录IDR\x02id\"\x88\x01\n" +
 	"\x19RestorePostVersionRequest\x12'\n" +
-	"\apost_id\x18\x01 \x01(\x04B\x0e\xbaG\v\x92\x02\b帖子IDR\x06postId\x12B\n" +
+	"\apost_id\x18\x01 \x01(\x03B\x0e\xbaG\v\x92\x02\b帖子IDR\x06postId\x12B\n" +
 	"\n" +
-	"version_id\x18\x02 \x01(\x04B#\xbaG \x92\x02\x1d要恢复到的版本记录IDR\tversionId\"B\n" +
+	"version_id\x18\x02 \x01(\x03B#\xbaG \x92\x02\x1d要恢复到的版本记录IDR\tversionId\"B\n" +
 	"\x17SubmitPostReviewRequest\x12'\n" +
-	"\apost_id\x18\x01 \x01(\x04B\x0e\xbaG\v\x92\x02\b帖子IDR\x06postId\"<\n" +
+	"\apost_id\x18\x01 \x01(\x03B\x0e\xbaG\v\x92\x02\b帖子IDR\x06postId\"<\n" +
 	"\x11ReviewPostRequest\x12'\n" +
-	"\apost_id\x18\x01 \x01(\x04B\x0e\xbaG\v\x92\x02\b帖子IDR\x06postId\"\x80\x01\n" +
+	"\apost_id\x18\x01 \x01(\x03B\x0e\xbaG\v\x92\x02\b帖子IDR\x06postId\"\x80\x01\n" +
 	"\x17RejectPostReviewRequest\x12'\n" +
-	"\apost_id\x18\x01 \x01(\x04B\x0e\xbaG\v\x92\x02\b帖子IDR\x06postId\x12<\n" +
+	"\apost_id\x18\x01 \x01(\x03B\x0e\xbaG\v\x92\x02\b帖子IDR\x06postId\x12<\n" +
 	"\x06reason\x18\x02 \x01(\tB$\xbaG!\x92\x02\x1e驳回理由（通知作者）R\x06reason\"j\n" +
 	"\x19SearchPostsSuggestRequest\x12\x14\n" +
 	"\x05query\x18\x01 \x01(\tR\x05query\x12\x1a\n" +
@@ -2375,7 +2375,7 @@ const file_content_service_v1_post_proto_rawDesc = "" +
 	"\x1aSearchPostsSuggestResponse\x12\x16\n" +
 	"\x06titles\x18\x01 \x03(\tR\x06titles\"\x86\x01\n" +
 	"\rSearchSynonym\x12\x13\n" +
-	"\x02id\x18\x01 \x01(\x04H\x00R\x02id\x88\x01\x01\x12\x12\n" +
+	"\x02id\x18\x01 \x01(\x03H\x00R\x02id\x88\x01\x01\x12\x12\n" +
 	"\x04term\x18\x02 \x01(\tR\x04term\x12\x1a\n" +
 	"\bsynonyms\x18\x03 \x03(\tR\bsynonyms\x12\x1d\n" +
 	"\aenabled\x18\x04 \x01(\bH\x01R\aenabled\x88\x01\x01B\x05\n" +
@@ -2387,7 +2387,7 @@ const file_content_service_v1_post_proto_rawDesc = "" +
 	"\x1aCreateSearchSynonymRequest\x125\n" +
 	"\x04data\x18\x01 \x01(\v2!.content.service.v1.SearchSynonymR\x04data\",\n" +
 	"\x1aDeleteSearchSynonymRequest\x12\x0e\n" +
-	"\x02id\x18\x01 \x01(\x04R\x02id2\x9f\r\n" +
+	"\x02id\x18\x01 \x01(\x03R\x02id2\x9f\r\n" +
 	"\vPostService\x12u\n" +
 	"\x12SearchPostsSuggest\x12-.content.service.v1.SearchPostsSuggestRequest\x1a..content.service.v1.SearchPostsSuggestResponse\"\x00\x12I\n" +
 	"\x04List\x12\x19.pagination.PagingRequest\x1a$.content.service.v1.ListPostResponse\"\x00\x12E\n" +

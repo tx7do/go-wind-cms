@@ -32,11 +32,11 @@ func (CommentLike) Annotations() []schema.Annotation {
 
 func (CommentLike) Fields() []ent.Field {
 	return []ent.Field{
-		field.Uint64("user_id").
+		field.Int64("user_id").
 			Comment("点赞用户ID").
 			Optional().
 			Nillable(),
-		field.Uint64("comment_id").
+		field.Int64("comment_id").
 			Comment("被点赞评论ID").
 			Optional().
 			Nillable(),
@@ -47,7 +47,7 @@ func (CommentLike) Mixin() []ent.Mixin {
 	return []ent.Mixin{
 		mixin.AutoIncrementId64{},
 		mixin.TimeAt{},
-		mixin.TenantID[uint64]{},
+		mixin.TenantID[int64]{},
 	}
 }
 

@@ -133,7 +133,7 @@ func (r *SocialDistributionRepo) Get(ctx context.Context, req *socialV1.GetSocia
 }
 
 // GetByID 内部读取（worker 的 SystemViewer 上下文，跨租户）。
-func (r *SocialDistributionRepo) GetByID(ctx context.Context, id uint64) (*socialV1.SocialDistribution, error) {
+func (r *SocialDistributionRepo) GetByID(ctx context.Context, id int64) (*socialV1.SocialDistribution, error) {
 	entity, err := r.entClient.Client().SocialDistribution.Get(ctx, id)
 	if err != nil {
 		if ent.IsNotFound(err) {
@@ -258,7 +258,7 @@ func (r *SocialDistributionRepo) Delete(ctx context.Context, req *socialV1.Delet
 
 // tryLockPublishing 状态闸门：仅 DRAFT/SCHEDULED/FAILED 可进入 PUBLISHING。
 // 返回 false 表示当前状态不可发布（并发点击/重复发布的守卫）。
-func (r *SocialDistributionRepo) TryLockPublishing(ctx context.Context, id uint64) (bool, error) {
+func (r *SocialDistributionRepo) TryLockPublishing(ctx context.Context, id int64) (bool, error) {
 	n, err := r.entClient.Client().SocialDistribution.Update().
 		Where(
 			socialdistribution.IDEQ(id),
@@ -279,7 +279,7 @@ func (r *SocialDistributionRepo) TryLockPublishing(ctx context.Context, id uint6
 }
 
 // markPublishing worker 开工前置标记（从 SCHEDULED 直入时可见；幂等）。
-func (r *SocialDistributionRepo) MarkPublishing(ctx context.Context, id uint64) {
+func (r *SocialDistributionRepo) MarkPublishing(ctx context.Context, id int64) {
 	_, _ = r.entClient.Client().SocialDistribution.Update().
 		Where(
 			socialdistribution.IDEQ(id),
@@ -290,7 +290,7 @@ func (r *SocialDistributionRepo) MarkPublishing(ctx context.Context, id uint64) 
 }
 
 // markPublished 发布成功回写。
-func (r *SocialDistributionRepo) MarkPublished(ctx context.Context, id uint64, externalID, externalURI string) error {
+func (r *SocialDistributionRepo) MarkPublished(ctx context.Context, id int64, externalID, externalURI string) error {
 	builder := r.entClient.Client().SocialDistribution.UpdateOneID(id).
 		SetStatus(socialdistribution.StatusStatusPublished).
 		SetPublishedAt(time.Now()).
@@ -312,7 +312,7 @@ func (r *SocialDistributionRepo) MarkPublished(ctx context.Context, id uint64, e
 // MarkFailed 发布失败回写并累计尝试次数（error_message 覆盖为最近一次原因）。
 // 返回累计尝试次数：worker 据此判定 asynq 重试是否已穷尽（次数达到
 // 1+MaxRetry 即最终失败，触发站内通知）。
-func (r *SocialDistributionRepo) MarkFailed(ctx context.Context, id uint64, message string) (uint32, error) {
+func (r *SocialDistributionRepo) MarkFailed(ctx context.Context, id int64, message string) (uint32, error) {
 	entity, err := r.entClient.Client().SocialDistribution.UpdateOneID(id).
 		SetStatus(socialdistribution.StatusStatusFailed).
 		SetErrorMessage(message).
@@ -331,7 +331,7 @@ func (r *SocialDistributionRepo) MarkFailed(ctx context.Context, id uint64, mess
 }
 
 // updateStats 回拉统计快照回写。
-func (r *SocialDistributionRepo) UpdateStats(ctx context.Context, id uint64, likes, replies, reposts uint32, syncedAt time.Time) error {
+func (r *SocialDistributionRepo) UpdateStats(ctx context.Context, id int64, likes, replies, reposts uint32, syncedAt time.Time) error {
 	_, err := r.entClient.Client().SocialDistribution.UpdateOneID(id).
 		SetLikes(likes).
 		SetReplies(replies).
@@ -374,10 +374,9 @@ func (r *SocialDistributionRepo) ListStatsSyncCandidates(ctx context.Context, si
 	return dtos, nil
 }
 
-
 // ListDueScheduledIDs 兜底扫描用：到期（publish_time 为空或已过）仍未发布的
 // SCHEDULED 分发记录 ID。SystemViewer 上下文调用（跨租户扫描）。
-func (r *SocialDistributionRepo) ListDueScheduledIDs(ctx context.Context, now time.Time) ([]uint64, error) {
+func (r *SocialDistributionRepo) ListDueScheduledIDs(ctx context.Context, now time.Time) ([]int64, error) {
 	ids, err := r.entClient.Client().SocialDistribution.Query().
 		Where(
 			socialdistribution.StatusEQ(socialdistribution.StatusStatusScheduled),
@@ -394,10 +393,9 @@ func (r *SocialDistributionRepo) ListDueScheduledIDs(ctx context.Context, now ti
 	return ids, nil
 }
 
-
 // countUnfinishedByAccount 统计某账号名下未完结（DRAFT/SCHEDULED/PUBLISHING）的分发数，
 // 用于删除账号前的引用守卫。
-func (r *SocialDistributionRepo) CountUnfinishedByAccount(ctx context.Context, accountID uint64) (int, error) {
+func (r *SocialDistributionRepo) CountUnfinishedByAccount(ctx context.Context, accountID int64) (int, error) {
 	count, err := r.entClient.Client().SocialDistribution.Query().
 		Where(
 			socialdistribution.AccountIDEQ(accountID),
@@ -416,7 +414,7 @@ func (r *SocialDistributionRepo) CountUnfinishedByAccount(ctx context.Context, a
 }
 
 // TouchStatsSyncedAt 仅推进统计回拉时间戳（平台不支持统计时用来节流跳过）。
-func (r *SocialDistributionRepo) TouchStatsSyncedAt(ctx context.Context, id uint64, syncedAt time.Time) error {
+func (r *SocialDistributionRepo) TouchStatsSyncedAt(ctx context.Context, id int64, syncedAt time.Time) error {
 	_, err := r.entClient.Client().SocialDistribution.UpdateOneID(id).
 		SetStatsSyncedAt(syncedAt).
 		Save(ctx)
@@ -429,15 +427,15 @@ func (r *SocialDistributionRepo) TouchStatsSyncedAt(ctx context.Context, id uint
 
 // SummaryRow 汇总指标行。
 type SummaryRow struct {
-	TotalPublished    uint64
-	TotalLikes        uint64
-	TotalReplies      uint64
-	TotalReposts      uint64
-	PublishedLast7Day uint64
+	TotalPublished    int64
+	TotalLikes        int64
+	TotalReplies      int64
+	TotalReposts      int64
+	PublishedLast7Day int64
 }
 
 // Summary 汇总当前租户（tid=0 为平台视角看全部）已发布分发的 KPI 指标。
-func (r *SocialDistributionRepo) Summary(ctx context.Context, tenantID uint64, since7d time.Time) (*SummaryRow, error) {
+func (r *SocialDistributionRepo) Summary(ctx context.Context, tenantID int64, since7d time.Time) (*SummaryRow, error) {
 	base := func(s *sql.Selector) {
 		s.Where(sql.EQ(socialdistribution.FieldStatus, socialdistribution.StatusStatusPublished))
 		if tenantID != 0 {
@@ -446,10 +444,10 @@ func (r *SocialDistributionRepo) Summary(ctx context.Context, tenantID uint64, s
 	}
 
 	var rows []struct {
-		Count   uint64 `json:"count"`
-		Likes   uint64 `json:"likes"`
-		Replies uint64 `json:"replies"`
-		Reposts uint64 `json:"reposts"`
+		Count   int64 `json:"count"`
+		Likes   int64 `json:"likes"`
+		Replies int64 `json:"replies"`
+		Reposts int64 `json:"reposts"`
 	}
 	err := r.entClient.Client().SocialDistribution.Query().
 		Modify(func(s *sql.Selector) {
@@ -501,7 +499,7 @@ func (r *SocialDistributionRepo) Summary(ctx context.Context, tenantID uint64, s
 //   - →SCHEDULED：从 DRAFT/FAILED
 //
 // 返回是否发生移动；目标/来源非法或并发变化返回 false。
-func (r *SocialDistributionRepo) MoveStatus(ctx context.Context, id uint64, target socialV1.SocialDistribution_Status, tenantID uint64) (bool, error) {
+func (r *SocialDistributionRepo) MoveStatus(ctx context.Context, id int64, target socialV1.SocialDistribution_Status, tenantID int64) (bool, error) {
 	var froms []socialdistribution.Status
 	switch target {
 	case socialV1.SocialDistribution_STATUS_DRAFT:

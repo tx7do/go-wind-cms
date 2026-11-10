@@ -65,13 +65,13 @@ func (_c *ContentModelCreate) SetNillableDeletedAt(v *time.Time) *ContentModelCr
 }
 
 // SetCreatedBy sets the "created_by" field.
-func (_c *ContentModelCreate) SetCreatedBy(v uint64) *ContentModelCreate {
+func (_c *ContentModelCreate) SetCreatedBy(v int64) *ContentModelCreate {
 	_c.mutation.SetCreatedBy(v)
 	return _c
 }
 
 // SetNillableCreatedBy sets the "created_by" field if the given value is not nil.
-func (_c *ContentModelCreate) SetNillableCreatedBy(v *uint64) *ContentModelCreate {
+func (_c *ContentModelCreate) SetNillableCreatedBy(v *int64) *ContentModelCreate {
 	if v != nil {
 		_c.SetCreatedBy(*v)
 	}
@@ -79,13 +79,13 @@ func (_c *ContentModelCreate) SetNillableCreatedBy(v *uint64) *ContentModelCreat
 }
 
 // SetUpdatedBy sets the "updated_by" field.
-func (_c *ContentModelCreate) SetUpdatedBy(v uint64) *ContentModelCreate {
+func (_c *ContentModelCreate) SetUpdatedBy(v int64) *ContentModelCreate {
 	_c.mutation.SetUpdatedBy(v)
 	return _c
 }
 
 // SetNillableUpdatedBy sets the "updated_by" field if the given value is not nil.
-func (_c *ContentModelCreate) SetNillableUpdatedBy(v *uint64) *ContentModelCreate {
+func (_c *ContentModelCreate) SetNillableUpdatedBy(v *int64) *ContentModelCreate {
 	if v != nil {
 		_c.SetUpdatedBy(*v)
 	}
@@ -93,13 +93,13 @@ func (_c *ContentModelCreate) SetNillableUpdatedBy(v *uint64) *ContentModelCreat
 }
 
 // SetDeletedBy sets the "deleted_by" field.
-func (_c *ContentModelCreate) SetDeletedBy(v uint64) *ContentModelCreate {
+func (_c *ContentModelCreate) SetDeletedBy(v int64) *ContentModelCreate {
 	_c.mutation.SetDeletedBy(v)
 	return _c
 }
 
 // SetNillableDeletedBy sets the "deleted_by" field if the given value is not nil.
-func (_c *ContentModelCreate) SetNillableDeletedBy(v *uint64) *ContentModelCreate {
+func (_c *ContentModelCreate) SetNillableDeletedBy(v *int64) *ContentModelCreate {
 	if v != nil {
 		_c.SetDeletedBy(*v)
 	}
@@ -121,13 +121,13 @@ func (_c *ContentModelCreate) SetNillableSortOrder(v *uint32) *ContentModelCreat
 }
 
 // SetTenantID sets the "tenant_id" field.
-func (_c *ContentModelCreate) SetTenantID(v uint64) *ContentModelCreate {
+func (_c *ContentModelCreate) SetTenantID(v int64) *ContentModelCreate {
 	_c.mutation.SetTenantID(v)
 	return _c
 }
 
 // SetNillableTenantID sets the "tenant_id" field if the given value is not nil.
-func (_c *ContentModelCreate) SetNillableTenantID(v *uint64) *ContentModelCreate {
+func (_c *ContentModelCreate) SetNillableTenantID(v *int64) *ContentModelCreate {
 	if v != nil {
 		_c.SetTenantID(*v)
 	}
@@ -177,7 +177,7 @@ func (_c *ContentModelCreate) SetNillableDescription(v *string) *ContentModelCre
 }
 
 // SetID sets the "id" field.
-func (_c *ContentModelCreate) SetID(v uint64) *ContentModelCreate {
+func (_c *ContentModelCreate) SetID(v int64) *ContentModelCreate {
 	_c.mutation.SetID(v)
 	return _c
 }
@@ -263,7 +263,7 @@ func (_c *ContentModelCreate) sqlSave(ctx context.Context) (*ContentModel, error
 	}
 	if _spec.ID.Value != _node.ID {
 		id := _spec.ID.Value.(int64)
-		_node.ID = uint64(id)
+		_node.ID = int64(id)
 	}
 	_c.mutation.id = &_node.ID
 	_c.mutation.done = true
@@ -273,7 +273,7 @@ func (_c *ContentModelCreate) sqlSave(ctx context.Context) (*ContentModel, error
 func (_c *ContentModelCreate) createSpec() (*ContentModel, *sqlgraph.CreateSpec) {
 	var (
 		_node = &ContentModel{config: _c.config}
-		_spec = sqlgraph.NewCreateSpec(contentmodel.Table, sqlgraph.NewFieldSpec(contentmodel.FieldID, field.TypeUint64))
+		_spec = sqlgraph.NewCreateSpec(contentmodel.Table, sqlgraph.NewFieldSpec(contentmodel.FieldID, field.TypeInt64))
 	)
 	_spec.OnConflict = _c.conflict
 	if id, ok := _c.mutation.ID(); ok {
@@ -293,15 +293,15 @@ func (_c *ContentModelCreate) createSpec() (*ContentModel, *sqlgraph.CreateSpec)
 		_node.DeletedAt = &value
 	}
 	if value, ok := _c.mutation.CreatedBy(); ok {
-		_spec.SetField(contentmodel.FieldCreatedBy, field.TypeUint64, value)
+		_spec.SetField(contentmodel.FieldCreatedBy, field.TypeInt64, value)
 		_node.CreatedBy = &value
 	}
 	if value, ok := _c.mutation.UpdatedBy(); ok {
-		_spec.SetField(contentmodel.FieldUpdatedBy, field.TypeUint64, value)
+		_spec.SetField(contentmodel.FieldUpdatedBy, field.TypeInt64, value)
 		_node.UpdatedBy = &value
 	}
 	if value, ok := _c.mutation.DeletedBy(); ok {
-		_spec.SetField(contentmodel.FieldDeletedBy, field.TypeUint64, value)
+		_spec.SetField(contentmodel.FieldDeletedBy, field.TypeInt64, value)
 		_node.DeletedBy = &value
 	}
 	if value, ok := _c.mutation.SortOrder(); ok {
@@ -309,7 +309,7 @@ func (_c *ContentModelCreate) createSpec() (*ContentModel, *sqlgraph.CreateSpec)
 		_node.SortOrder = &value
 	}
 	if value, ok := _c.mutation.TenantID(); ok {
-		_spec.SetField(contentmodel.FieldTenantID, field.TypeUint64, value)
+		_spec.SetField(contentmodel.FieldTenantID, field.TypeInt64, value)
 		_node.TenantID = &value
 	}
 	if value, ok := _c.mutation.Name(); ok {
@@ -413,7 +413,7 @@ func (u *ContentModelUpsert) ClearDeletedAt() *ContentModelUpsert {
 }
 
 // SetCreatedBy sets the "created_by" field.
-func (u *ContentModelUpsert) SetCreatedBy(v uint64) *ContentModelUpsert {
+func (u *ContentModelUpsert) SetCreatedBy(v int64) *ContentModelUpsert {
 	u.Set(contentmodel.FieldCreatedBy, v)
 	return u
 }
@@ -425,7 +425,7 @@ func (u *ContentModelUpsert) UpdateCreatedBy() *ContentModelUpsert {
 }
 
 // AddCreatedBy adds v to the "created_by" field.
-func (u *ContentModelUpsert) AddCreatedBy(v uint64) *ContentModelUpsert {
+func (u *ContentModelUpsert) AddCreatedBy(v int64) *ContentModelUpsert {
 	u.Add(contentmodel.FieldCreatedBy, v)
 	return u
 }
@@ -437,7 +437,7 @@ func (u *ContentModelUpsert) ClearCreatedBy() *ContentModelUpsert {
 }
 
 // SetUpdatedBy sets the "updated_by" field.
-func (u *ContentModelUpsert) SetUpdatedBy(v uint64) *ContentModelUpsert {
+func (u *ContentModelUpsert) SetUpdatedBy(v int64) *ContentModelUpsert {
 	u.Set(contentmodel.FieldUpdatedBy, v)
 	return u
 }
@@ -449,7 +449,7 @@ func (u *ContentModelUpsert) UpdateUpdatedBy() *ContentModelUpsert {
 }
 
 // AddUpdatedBy adds v to the "updated_by" field.
-func (u *ContentModelUpsert) AddUpdatedBy(v uint64) *ContentModelUpsert {
+func (u *ContentModelUpsert) AddUpdatedBy(v int64) *ContentModelUpsert {
 	u.Add(contentmodel.FieldUpdatedBy, v)
 	return u
 }
@@ -461,7 +461,7 @@ func (u *ContentModelUpsert) ClearUpdatedBy() *ContentModelUpsert {
 }
 
 // SetDeletedBy sets the "deleted_by" field.
-func (u *ContentModelUpsert) SetDeletedBy(v uint64) *ContentModelUpsert {
+func (u *ContentModelUpsert) SetDeletedBy(v int64) *ContentModelUpsert {
 	u.Set(contentmodel.FieldDeletedBy, v)
 	return u
 }
@@ -473,7 +473,7 @@ func (u *ContentModelUpsert) UpdateDeletedBy() *ContentModelUpsert {
 }
 
 // AddDeletedBy adds v to the "deleted_by" field.
-func (u *ContentModelUpsert) AddDeletedBy(v uint64) *ContentModelUpsert {
+func (u *ContentModelUpsert) AddDeletedBy(v int64) *ContentModelUpsert {
 	u.Add(contentmodel.FieldDeletedBy, v)
 	return u
 }
@@ -659,14 +659,14 @@ func (u *ContentModelUpsertOne) ClearDeletedAt() *ContentModelUpsertOne {
 }
 
 // SetCreatedBy sets the "created_by" field.
-func (u *ContentModelUpsertOne) SetCreatedBy(v uint64) *ContentModelUpsertOne {
+func (u *ContentModelUpsertOne) SetCreatedBy(v int64) *ContentModelUpsertOne {
 	return u.Update(func(s *ContentModelUpsert) {
 		s.SetCreatedBy(v)
 	})
 }
 
 // AddCreatedBy adds v to the "created_by" field.
-func (u *ContentModelUpsertOne) AddCreatedBy(v uint64) *ContentModelUpsertOne {
+func (u *ContentModelUpsertOne) AddCreatedBy(v int64) *ContentModelUpsertOne {
 	return u.Update(func(s *ContentModelUpsert) {
 		s.AddCreatedBy(v)
 	})
@@ -687,14 +687,14 @@ func (u *ContentModelUpsertOne) ClearCreatedBy() *ContentModelUpsertOne {
 }
 
 // SetUpdatedBy sets the "updated_by" field.
-func (u *ContentModelUpsertOne) SetUpdatedBy(v uint64) *ContentModelUpsertOne {
+func (u *ContentModelUpsertOne) SetUpdatedBy(v int64) *ContentModelUpsertOne {
 	return u.Update(func(s *ContentModelUpsert) {
 		s.SetUpdatedBy(v)
 	})
 }
 
 // AddUpdatedBy adds v to the "updated_by" field.
-func (u *ContentModelUpsertOne) AddUpdatedBy(v uint64) *ContentModelUpsertOne {
+func (u *ContentModelUpsertOne) AddUpdatedBy(v int64) *ContentModelUpsertOne {
 	return u.Update(func(s *ContentModelUpsert) {
 		s.AddUpdatedBy(v)
 	})
@@ -715,14 +715,14 @@ func (u *ContentModelUpsertOne) ClearUpdatedBy() *ContentModelUpsertOne {
 }
 
 // SetDeletedBy sets the "deleted_by" field.
-func (u *ContentModelUpsertOne) SetDeletedBy(v uint64) *ContentModelUpsertOne {
+func (u *ContentModelUpsertOne) SetDeletedBy(v int64) *ContentModelUpsertOne {
 	return u.Update(func(s *ContentModelUpsert) {
 		s.SetDeletedBy(v)
 	})
 }
 
 // AddDeletedBy adds v to the "deleted_by" field.
-func (u *ContentModelUpsertOne) AddDeletedBy(v uint64) *ContentModelUpsertOne {
+func (u *ContentModelUpsertOne) AddDeletedBy(v int64) *ContentModelUpsertOne {
 	return u.Update(func(s *ContentModelUpsert) {
 		s.AddDeletedBy(v)
 	})
@@ -849,7 +849,7 @@ func (u *ContentModelUpsertOne) ExecX(ctx context.Context) {
 }
 
 // Exec executes the UPSERT query and returns the inserted/updated ID.
-func (u *ContentModelUpsertOne) ID(ctx context.Context) (id uint64, err error) {
+func (u *ContentModelUpsertOne) ID(ctx context.Context) (id int64, err error) {
 	node, err := u.create.Save(ctx)
 	if err != nil {
 		return id, err
@@ -858,7 +858,7 @@ func (u *ContentModelUpsertOne) ID(ctx context.Context) (id uint64, err error) {
 }
 
 // IDX is like ID, but panics if an error occurs.
-func (u *ContentModelUpsertOne) IDX(ctx context.Context) uint64 {
+func (u *ContentModelUpsertOne) IDX(ctx context.Context) int64 {
 	id, err := u.ID(ctx)
 	if err != nil {
 		panic(err)
@@ -915,7 +915,7 @@ func (_c *ContentModelCreateBulk) Save(ctx context.Context) ([]*ContentModel, er
 				mutation.id = &nodes[i].ID
 				if specs[i].ID.Value != nil && nodes[i].ID == 0 {
 					id := specs[i].ID.Value.(int64)
-					nodes[i].ID = uint64(id)
+					nodes[i].ID = int64(id)
 				}
 				mutation.done = true
 				return nodes[i], nil
@@ -1096,14 +1096,14 @@ func (u *ContentModelUpsertBulk) ClearDeletedAt() *ContentModelUpsertBulk {
 }
 
 // SetCreatedBy sets the "created_by" field.
-func (u *ContentModelUpsertBulk) SetCreatedBy(v uint64) *ContentModelUpsertBulk {
+func (u *ContentModelUpsertBulk) SetCreatedBy(v int64) *ContentModelUpsertBulk {
 	return u.Update(func(s *ContentModelUpsert) {
 		s.SetCreatedBy(v)
 	})
 }
 
 // AddCreatedBy adds v to the "created_by" field.
-func (u *ContentModelUpsertBulk) AddCreatedBy(v uint64) *ContentModelUpsertBulk {
+func (u *ContentModelUpsertBulk) AddCreatedBy(v int64) *ContentModelUpsertBulk {
 	return u.Update(func(s *ContentModelUpsert) {
 		s.AddCreatedBy(v)
 	})
@@ -1124,14 +1124,14 @@ func (u *ContentModelUpsertBulk) ClearCreatedBy() *ContentModelUpsertBulk {
 }
 
 // SetUpdatedBy sets the "updated_by" field.
-func (u *ContentModelUpsertBulk) SetUpdatedBy(v uint64) *ContentModelUpsertBulk {
+func (u *ContentModelUpsertBulk) SetUpdatedBy(v int64) *ContentModelUpsertBulk {
 	return u.Update(func(s *ContentModelUpsert) {
 		s.SetUpdatedBy(v)
 	})
 }
 
 // AddUpdatedBy adds v to the "updated_by" field.
-func (u *ContentModelUpsertBulk) AddUpdatedBy(v uint64) *ContentModelUpsertBulk {
+func (u *ContentModelUpsertBulk) AddUpdatedBy(v int64) *ContentModelUpsertBulk {
 	return u.Update(func(s *ContentModelUpsert) {
 		s.AddUpdatedBy(v)
 	})
@@ -1152,14 +1152,14 @@ func (u *ContentModelUpsertBulk) ClearUpdatedBy() *ContentModelUpsertBulk {
 }
 
 // SetDeletedBy sets the "deleted_by" field.
-func (u *ContentModelUpsertBulk) SetDeletedBy(v uint64) *ContentModelUpsertBulk {
+func (u *ContentModelUpsertBulk) SetDeletedBy(v int64) *ContentModelUpsertBulk {
 	return u.Update(func(s *ContentModelUpsert) {
 		s.SetDeletedBy(v)
 	})
 }
 
 // AddDeletedBy adds v to the "deleted_by" field.
-func (u *ContentModelUpsertBulk) AddDeletedBy(v uint64) *ContentModelUpsertBulk {
+func (u *ContentModelUpsertBulk) AddDeletedBy(v int64) *ContentModelUpsertBulk {
 	return u.Update(func(s *ContentModelUpsert) {
 		s.AddDeletedBy(v)
 	})

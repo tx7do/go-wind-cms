@@ -9,9 +9,9 @@ import (
 	"strings"
 	"time"
 
-	"github.com/hibiken/asynq"
 	kratosErrors "github.com/go-kratos/kratos/v2/errors"
 	"github.com/go-kratos/kratos/v2/log"
+	"github.com/hibiken/asynq"
 	paginationV1 "github.com/tx7do/go-crud/api/gen/go/pagination/v1"
 	"github.com/tx7do/go-utils/id"
 	"github.com/tx7do/go-utils/timeutil"
@@ -31,7 +31,7 @@ import (
 //
 // 与站内信（InternalMessageService）的分工：站内信是"消息本体 + 收件箱"的内容域，
 // 本服务是"某事件经某渠道投递出去的结果"的投递域。站内信自己也是一种渠道
-//（InternalMessageSender 注册为 Channel_INTERNAL），生产点经 Notifier 缝走这里。
+// （InternalMessageSender 注册为 Channel_INTERNAL），生产点经 Notifier 缝走这里。
 type NotificationService struct {
 	notifyV1.UnimplementedNotificationServiceServer
 
@@ -250,7 +250,7 @@ func (s *NotificationService) applyTemplate(ctx context.Context, req *notifyV1.S
 // deliver 当场投递并回写台账结论。同步事件、以及入队失败的兜底共用这一条路。
 func (s *NotificationService) deliver(
 	ctx context.Context,
-	deliveryId uint64,
+	deliveryId int64,
 	req *notifyV1.SendDirectNotificationRequest,
 	sender channel.Sender,
 ) (*notifyV1.SendNotificationResponse, error) {
@@ -337,7 +337,7 @@ func (s *NotificationService) sendOnce(
 // 再抄一份进 Redis 只是多一个会漂移的副本。
 func (s *NotificationService) dispatchAsync(
 	ctx context.Context,
-	deliveryId uint64,
+	deliveryId int64,
 	req *notifyV1.SendDirectNotificationRequest,
 	sender channel.Sender,
 ) (*notifyV1.SendNotificationResponse, bool, error) {
@@ -502,7 +502,7 @@ func providerIdOf(receipt *channel.SendReceipt) *string {
 	return trans.Ptr(receipt.ProviderID)
 }
 
-func pickedChannelId(receipt *channel.SendReceipt) *uint64 {
+func pickedChannelId(receipt *channel.SendReceipt) *int64 {
 	if receipt == nil || receipt.ChannelID == 0 {
 		return nil
 	}
@@ -603,7 +603,7 @@ func (s *NotificationService) deliveryStaleAfter(ctx context.Context) time.Durat
 //
 // 这里刻意不做进程内重试：异步侧的重试机制就是 asynq，再造一个只会把"重投递"和"重写台账"
 // 两件事混成一个计数器；而同步侧无论重试几次都不改变"不能回错给调用方"这个结论。
-func (s *NotificationService) markResult(ctx context.Context, deliveryId uint64, outcome *data.DeliveryOutcome) error {
+func (s *NotificationService) markResult(ctx context.Context, deliveryId int64, outcome *data.DeliveryOutcome) error {
 	if err := s.deliveryRepo.MarkResult(ctx, deliveryId, outcome); err != nil {
 		s.log.Errorf("write back delivery [%d] result [%s] failed, the row keeps its previous status (notification.delivery.sweep will settle it): %s",
 			deliveryId, outcome.Status.String(), err.Error())

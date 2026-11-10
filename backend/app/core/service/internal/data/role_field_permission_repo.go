@@ -61,7 +61,7 @@ func (r *RoleFieldPermissionRepo) validateEntries(entries []*permissionV1.RoleFi
 // ReplaceForRole 整体替换角色的字段权限配置：先清空既有配置，再插入新集合。
 func (r *RoleFieldPermissionRepo) ReplaceForRole(
 	ctx context.Context,
-	roleID uint64,
+	roleID int64,
 	entries []*permissionV1.RoleFieldPermission,
 ) error {
 	if err := r.validateEntries(entries); err != nil {
@@ -115,9 +115,9 @@ func (r *RoleFieldPermissionRepo) ReplaceForRole(
 
 // ListHiddenFieldGroupsByRoleIDs 按角色ID列表取字段权限配置（按角色分组）。
 // 登录聚合用：一次查询取全部角色的配置，避免 N+1。
-func (r *RoleFieldPermissionRepo) ListHiddenFieldGroupsByRoleIDs(ctx context.Context, roleIDs []uint64) (map[uint64][]*permissionV1.RoleFieldPermission, error) {
+func (r *RoleFieldPermissionRepo) ListHiddenFieldGroupsByRoleIDs(ctx context.Context, roleIDs []int64) (map[int64][]*permissionV1.RoleFieldPermission, error) {
 	if len(roleIDs) == 0 {
-		return map[uint64][]*permissionV1.RoleFieldPermission{}, nil
+		return map[int64][]*permissionV1.RoleFieldPermission{}, nil
 	}
 
 	entities, err := r.entClient.Client().RoleFieldPermission.Query().
@@ -136,12 +136,12 @@ func (r *RoleFieldPermissionRepo) ListHiddenFieldGroupsByRoleIDs(ctx context.Con
 	}
 
 	type groupKey struct {
-		roleID   uint64
+		roleID   int64
 		resource string
 	}
 
 	index := make(map[groupKey]int)
-	result := make(map[uint64][]*permissionV1.RoleFieldPermission, len(roleIDs))
+	result := make(map[int64][]*permissionV1.RoleFieldPermission, len(roleIDs))
 	for _, e := range entities {
 		key := groupKey{roleID: e.RoleID, resource: e.Resource}
 		idx, ok := index[key]
@@ -160,8 +160,8 @@ func (r *RoleFieldPermissionRepo) ListHiddenFieldGroupsByRoleIDs(ctx context.Con
 }
 
 // ListByRoleID 列出角色的字段权限配置（角色详情回显用）。
-func (r *RoleFieldPermissionRepo) ListByRoleID(ctx context.Context, roleID uint64) ([]*permissionV1.RoleFieldPermission, error) {
-	groups, err := r.ListHiddenFieldGroupsByRoleIDs(ctx, []uint64{roleID})
+func (r *RoleFieldPermissionRepo) ListByRoleID(ctx context.Context, roleID int64) ([]*permissionV1.RoleFieldPermission, error) {
+	groups, err := r.ListHiddenFieldGroupsByRoleIDs(ctx, []int64{roleID})
 	if err != nil {
 		return nil, err
 	}
@@ -170,7 +170,7 @@ func (r *RoleFieldPermissionRepo) ListByRoleID(ctx context.Context, roleID uint6
 
 // ListHiddenFieldsByUser 聚合用户全部角色的隐藏字段为 "资源.字段" 串数组。
 // 非租户上下文的用户（tenant_id=0 平台用户）一律空集：平台管理员字段全可见。
-func (r *RoleFieldPermissionRepo) ListHiddenFieldsByUser(ctx context.Context, userRepo UserRepo, userRoleRepo *UserRoleRepo, userID uint64) ([]string, error) {
+func (r *RoleFieldPermissionRepo) ListHiddenFieldsByUser(ctx context.Context, userRepo UserRepo, userRoleRepo *UserRoleRepo, userID int64) ([]string, error) {
 	// 平台用户（tenant_id=0）不做字段裁剪
 	user, err := userRepo.Get(ctx, &identityV1.GetUserRequest{
 		QueryBy: &identityV1.GetUserRequest_Id{Id: userID},

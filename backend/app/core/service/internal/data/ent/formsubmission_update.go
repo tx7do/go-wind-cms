@@ -70,14 +70,14 @@ func (_u *FormSubmissionUpdate) ClearDeletedAt() *FormSubmissionUpdate {
 }
 
 // SetPageID sets the "page_id" field.
-func (_u *FormSubmissionUpdate) SetPageID(v uint64) *FormSubmissionUpdate {
+func (_u *FormSubmissionUpdate) SetPageID(v int64) *FormSubmissionUpdate {
 	_u.mutation.ResetPageID()
 	_u.mutation.SetPageID(v)
 	return _u
 }
 
 // SetNillablePageID sets the "page_id" field if the given value is not nil.
-func (_u *FormSubmissionUpdate) SetNillablePageID(v *uint64) *FormSubmissionUpdate {
+func (_u *FormSubmissionUpdate) SetNillablePageID(v *int64) *FormSubmissionUpdate {
 	if v != nil {
 		_u.SetPageID(*v)
 	}
@@ -97,14 +97,14 @@ func (_u *FormSubmissionUpdate) ClearPageID() *FormSubmissionUpdate {
 }
 
 // SetSectionID sets the "section_id" field.
-func (_u *FormSubmissionUpdate) SetSectionID(v uint64) *FormSubmissionUpdate {
+func (_u *FormSubmissionUpdate) SetSectionID(v int64) *FormSubmissionUpdate {
 	_u.mutation.ResetSectionID()
 	_u.mutation.SetSectionID(v)
 	return _u
 }
 
 // SetNillableSectionID sets the "section_id" field if the given value is not nil.
-func (_u *FormSubmissionUpdate) SetNillableSectionID(v *uint64) *FormSubmissionUpdate {
+func (_u *FormSubmissionUpdate) SetNillableSectionID(v *int64) *FormSubmissionUpdate {
 	if v != nil {
 		_u.SetSectionID(*v)
 	}
@@ -136,14 +136,14 @@ func (_u *FormSubmissionUpdate) ClearData() *FormSubmissionUpdate {
 }
 
 // SetUserID sets the "user_id" field.
-func (_u *FormSubmissionUpdate) SetUserID(v uint64) *FormSubmissionUpdate {
+func (_u *FormSubmissionUpdate) SetUserID(v int64) *FormSubmissionUpdate {
 	_u.mutation.ResetUserID()
 	_u.mutation.SetUserID(v)
 	return _u
 }
 
 // SetNillableUserID sets the "user_id" field if the given value is not nil.
-func (_u *FormSubmissionUpdate) SetNillableUserID(v *uint64) *FormSubmissionUpdate {
+func (_u *FormSubmissionUpdate) SetNillableUserID(v *int64) *FormSubmissionUpdate {
 	if v != nil {
 		_u.SetUserID(*v)
 	}
@@ -201,7 +201,7 @@ func (_u *FormSubmissionUpdate) Modify(modifiers ...func(u *sql.UpdateBuilder)) 
 }
 
 func (_u *FormSubmissionUpdate) sqlSave(ctx context.Context) (_node int, err error) {
-	_spec := sqlgraph.NewUpdateSpec(formsubmission.Table, formsubmission.Columns, sqlgraph.NewFieldSpec(formsubmission.FieldID, field.TypeUint64))
+	_spec := sqlgraph.NewUpdateSpec(formsubmission.Table, formsubmission.Columns, sqlgraph.NewFieldSpec(formsubmission.FieldID, field.TypeInt64))
 	if ps := _u.mutation.predicates; len(ps) > 0 {
 		_spec.Predicate = func(selector *sql.Selector) {
 			for i := range ps {
@@ -225,25 +225,25 @@ func (_u *FormSubmissionUpdate) sqlSave(ctx context.Context) (_node int, err err
 		_spec.ClearField(formsubmission.FieldDeletedAt, field.TypeTime)
 	}
 	if _u.mutation.TenantIDCleared() {
-		_spec.ClearField(formsubmission.FieldTenantID, field.TypeUint64)
+		_spec.ClearField(formsubmission.FieldTenantID, field.TypeInt64)
 	}
 	if value, ok := _u.mutation.PageID(); ok {
-		_spec.SetField(formsubmission.FieldPageID, field.TypeUint64, value)
+		_spec.SetField(formsubmission.FieldPageID, field.TypeInt64, value)
 	}
 	if value, ok := _u.mutation.AddedPageID(); ok {
-		_spec.AddField(formsubmission.FieldPageID, field.TypeUint64, value)
+		_spec.AddField(formsubmission.FieldPageID, field.TypeInt64, value)
 	}
 	if _u.mutation.PageIDCleared() {
-		_spec.ClearField(formsubmission.FieldPageID, field.TypeUint64)
+		_spec.ClearField(formsubmission.FieldPageID, field.TypeInt64)
 	}
 	if value, ok := _u.mutation.SectionID(); ok {
-		_spec.SetField(formsubmission.FieldSectionID, field.TypeUint64, value)
+		_spec.SetField(formsubmission.FieldSectionID, field.TypeInt64, value)
 	}
 	if value, ok := _u.mutation.AddedSectionID(); ok {
-		_spec.AddField(formsubmission.FieldSectionID, field.TypeUint64, value)
+		_spec.AddField(formsubmission.FieldSectionID, field.TypeInt64, value)
 	}
 	if _u.mutation.SectionIDCleared() {
-		_spec.ClearField(formsubmission.FieldSectionID, field.TypeUint64)
+		_spec.ClearField(formsubmission.FieldSectionID, field.TypeInt64)
 	}
 	if value, ok := _u.mutation.Data(); ok {
 		_spec.SetField(formsubmission.FieldData, field.TypeJSON, value)
@@ -252,13 +252,13 @@ func (_u *FormSubmissionUpdate) sqlSave(ctx context.Context) (_node int, err err
 		_spec.ClearField(formsubmission.FieldData, field.TypeJSON)
 	}
 	if value, ok := _u.mutation.UserID(); ok {
-		_spec.SetField(formsubmission.FieldUserID, field.TypeUint64, value)
+		_spec.SetField(formsubmission.FieldUserID, field.TypeInt64, value)
 	}
 	if value, ok := _u.mutation.AddedUserID(); ok {
-		_spec.AddField(formsubmission.FieldUserID, field.TypeUint64, value)
+		_spec.AddField(formsubmission.FieldUserID, field.TypeInt64, value)
 	}
 	if _u.mutation.UserIDCleared() {
-		_spec.ClearField(formsubmission.FieldUserID, field.TypeUint64)
+		_spec.ClearField(formsubmission.FieldUserID, field.TypeInt64)
 	}
 	_spec.AddModifiers(_u.modifiers...)
 	if _node, err = sqlgraph.UpdateNodes(ctx, _u.driver, _spec); err != nil {
@@ -323,14 +323,14 @@ func (_u *FormSubmissionUpdateOne) ClearDeletedAt() *FormSubmissionUpdateOne {
 }
 
 // SetPageID sets the "page_id" field.
-func (_u *FormSubmissionUpdateOne) SetPageID(v uint64) *FormSubmissionUpdateOne {
+func (_u *FormSubmissionUpdateOne) SetPageID(v int64) *FormSubmissionUpdateOne {
 	_u.mutation.ResetPageID()
 	_u.mutation.SetPageID(v)
 	return _u
 }
 
 // SetNillablePageID sets the "page_id" field if the given value is not nil.
-func (_u *FormSubmissionUpdateOne) SetNillablePageID(v *uint64) *FormSubmissionUpdateOne {
+func (_u *FormSubmissionUpdateOne) SetNillablePageID(v *int64) *FormSubmissionUpdateOne {
 	if v != nil {
 		_u.SetPageID(*v)
 	}
@@ -350,14 +350,14 @@ func (_u *FormSubmissionUpdateOne) ClearPageID() *FormSubmissionUpdateOne {
 }
 
 // SetSectionID sets the "section_id" field.
-func (_u *FormSubmissionUpdateOne) SetSectionID(v uint64) *FormSubmissionUpdateOne {
+func (_u *FormSubmissionUpdateOne) SetSectionID(v int64) *FormSubmissionUpdateOne {
 	_u.mutation.ResetSectionID()
 	_u.mutation.SetSectionID(v)
 	return _u
 }
 
 // SetNillableSectionID sets the "section_id" field if the given value is not nil.
-func (_u *FormSubmissionUpdateOne) SetNillableSectionID(v *uint64) *FormSubmissionUpdateOne {
+func (_u *FormSubmissionUpdateOne) SetNillableSectionID(v *int64) *FormSubmissionUpdateOne {
 	if v != nil {
 		_u.SetSectionID(*v)
 	}
@@ -389,14 +389,14 @@ func (_u *FormSubmissionUpdateOne) ClearData() *FormSubmissionUpdateOne {
 }
 
 // SetUserID sets the "user_id" field.
-func (_u *FormSubmissionUpdateOne) SetUserID(v uint64) *FormSubmissionUpdateOne {
+func (_u *FormSubmissionUpdateOne) SetUserID(v int64) *FormSubmissionUpdateOne {
 	_u.mutation.ResetUserID()
 	_u.mutation.SetUserID(v)
 	return _u
 }
 
 // SetNillableUserID sets the "user_id" field if the given value is not nil.
-func (_u *FormSubmissionUpdateOne) SetNillableUserID(v *uint64) *FormSubmissionUpdateOne {
+func (_u *FormSubmissionUpdateOne) SetNillableUserID(v *int64) *FormSubmissionUpdateOne {
 	if v != nil {
 		_u.SetUserID(*v)
 	}
@@ -467,7 +467,7 @@ func (_u *FormSubmissionUpdateOne) Modify(modifiers ...func(u *sql.UpdateBuilder
 }
 
 func (_u *FormSubmissionUpdateOne) sqlSave(ctx context.Context) (_node *FormSubmission, err error) {
-	_spec := sqlgraph.NewUpdateSpec(formsubmission.Table, formsubmission.Columns, sqlgraph.NewFieldSpec(formsubmission.FieldID, field.TypeUint64))
+	_spec := sqlgraph.NewUpdateSpec(formsubmission.Table, formsubmission.Columns, sqlgraph.NewFieldSpec(formsubmission.FieldID, field.TypeInt64))
 	id, ok := _u.mutation.ID()
 	if !ok {
 		return nil, &ValidationError{Name: "id", err: errors.New(`ent: missing "FormSubmission.id" for update`)}
@@ -508,25 +508,25 @@ func (_u *FormSubmissionUpdateOne) sqlSave(ctx context.Context) (_node *FormSubm
 		_spec.ClearField(formsubmission.FieldDeletedAt, field.TypeTime)
 	}
 	if _u.mutation.TenantIDCleared() {
-		_spec.ClearField(formsubmission.FieldTenantID, field.TypeUint64)
+		_spec.ClearField(formsubmission.FieldTenantID, field.TypeInt64)
 	}
 	if value, ok := _u.mutation.PageID(); ok {
-		_spec.SetField(formsubmission.FieldPageID, field.TypeUint64, value)
+		_spec.SetField(formsubmission.FieldPageID, field.TypeInt64, value)
 	}
 	if value, ok := _u.mutation.AddedPageID(); ok {
-		_spec.AddField(formsubmission.FieldPageID, field.TypeUint64, value)
+		_spec.AddField(formsubmission.FieldPageID, field.TypeInt64, value)
 	}
 	if _u.mutation.PageIDCleared() {
-		_spec.ClearField(formsubmission.FieldPageID, field.TypeUint64)
+		_spec.ClearField(formsubmission.FieldPageID, field.TypeInt64)
 	}
 	if value, ok := _u.mutation.SectionID(); ok {
-		_spec.SetField(formsubmission.FieldSectionID, field.TypeUint64, value)
+		_spec.SetField(formsubmission.FieldSectionID, field.TypeInt64, value)
 	}
 	if value, ok := _u.mutation.AddedSectionID(); ok {
-		_spec.AddField(formsubmission.FieldSectionID, field.TypeUint64, value)
+		_spec.AddField(formsubmission.FieldSectionID, field.TypeInt64, value)
 	}
 	if _u.mutation.SectionIDCleared() {
-		_spec.ClearField(formsubmission.FieldSectionID, field.TypeUint64)
+		_spec.ClearField(formsubmission.FieldSectionID, field.TypeInt64)
 	}
 	if value, ok := _u.mutation.Data(); ok {
 		_spec.SetField(formsubmission.FieldData, field.TypeJSON, value)
@@ -535,13 +535,13 @@ func (_u *FormSubmissionUpdateOne) sqlSave(ctx context.Context) (_node *FormSubm
 		_spec.ClearField(formsubmission.FieldData, field.TypeJSON)
 	}
 	if value, ok := _u.mutation.UserID(); ok {
-		_spec.SetField(formsubmission.FieldUserID, field.TypeUint64, value)
+		_spec.SetField(formsubmission.FieldUserID, field.TypeInt64, value)
 	}
 	if value, ok := _u.mutation.AddedUserID(); ok {
-		_spec.AddField(formsubmission.FieldUserID, field.TypeUint64, value)
+		_spec.AddField(formsubmission.FieldUserID, field.TypeInt64, value)
 	}
 	if _u.mutation.UserIDCleared() {
-		_spec.ClearField(formsubmission.FieldUserID, field.TypeUint64)
+		_spec.ClearField(formsubmission.FieldUserID, field.TypeInt64)
 	}
 	_spec.AddModifiers(_u.modifiers...)
 	_node = &FormSubmission{config: _u.config}

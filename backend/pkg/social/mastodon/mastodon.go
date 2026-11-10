@@ -72,11 +72,11 @@ type accountView struct {
 }
 
 type statusView struct {
-	ID            string `json:"id"`
-	URL           string `json:"url"`
-	RepliesCount  int64  `json:"replies_count"`
-	ReblogsCount  int64  `json:"reblogs_count"`
-	FavouritesCount int64 `json:"favourites_count"`
+	ID              string `json:"id"`
+	URL             string `json:"url"`
+	RepliesCount    int64  `json:"replies_count"`
+	ReblogsCount    int64  `json:"reblogs_count"`
+	FavouritesCount int64  `json:"favourites_count"`
 }
 
 // ── social.Provider 实现 ──
@@ -413,9 +413,9 @@ func classifyError(status int, raw []byte) error {
 	}
 }
 
-func clampUint64(v int64) uint64 {
+func clampUint64(v int64) int64 {
 	if v < 0 {
 		return 0
 	}
-	return uint64(v)
+	return int64(v)
 }

@@ -9,8 +9,8 @@ import (
 	"github.com/tx7do/kratos-bootstrap/bootstrap"
 	"google.golang.org/protobuf/types/known/emptypb"
 
-	"go-wind-cms/app/core/service/internal/data"
 	contentV1 "go-wind-cms/api/gen/go/content/service/v1"
+	"go-wind-cms/app/core/service/internal/data"
 )
 
 // ExperimentService 内容实验（A/B 分流 + 受众定向）。
@@ -35,7 +35,7 @@ func (s *ExperimentService) List(ctx context.Context, req *paginationV1.PagingRe
 	if err != nil {
 		return nil, err
 	}
-	return &contentV1.ListExperimentsResponse{Items: items, Total: uint64(total)}, nil
+	return &contentV1.ListExperimentsResponse{Items: items, Total: int64(total)}, nil
 }
 
 func (s *ExperimentService) Get(ctx context.Context, req *contentV1.GetExperimentRequest) (*contentV1.Experiment, error) {

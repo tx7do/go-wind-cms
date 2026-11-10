@@ -10,47 +10,47 @@ import (
 )
 
 // ID filters vertices based on their ID field.
-func ID(id uint64) predicate.MediaVariant {
+func ID(id int64) predicate.MediaVariant {
 	return predicate.MediaVariant(sql.FieldEQ(FieldID, id))
 }
 
 // IDEQ applies the EQ predicate on the ID field.
-func IDEQ(id uint64) predicate.MediaVariant {
+func IDEQ(id int64) predicate.MediaVariant {
 	return predicate.MediaVariant(sql.FieldEQ(FieldID, id))
 }
 
 // IDNEQ applies the NEQ predicate on the ID field.
-func IDNEQ(id uint64) predicate.MediaVariant {
+func IDNEQ(id int64) predicate.MediaVariant {
 	return predicate.MediaVariant(sql.FieldNEQ(FieldID, id))
 }
 
 // IDIn applies the In predicate on the ID field.
-func IDIn(ids ...uint64) predicate.MediaVariant {
+func IDIn(ids ...int64) predicate.MediaVariant {
 	return predicate.MediaVariant(sql.FieldIn(FieldID, ids...))
 }
 
 // IDNotIn applies the NotIn predicate on the ID field.
-func IDNotIn(ids ...uint64) predicate.MediaVariant {
+func IDNotIn(ids ...int64) predicate.MediaVariant {
 	return predicate.MediaVariant(sql.FieldNotIn(FieldID, ids...))
 }
 
 // IDGT applies the GT predicate on the ID field.
-func IDGT(id uint64) predicate.MediaVariant {
+func IDGT(id int64) predicate.MediaVariant {
 	return predicate.MediaVariant(sql.FieldGT(FieldID, id))
 }
 
 // IDGTE applies the GTE predicate on the ID field.
-func IDGTE(id uint64) predicate.MediaVariant {
+func IDGTE(id int64) predicate.MediaVariant {
 	return predicate.MediaVariant(sql.FieldGTE(FieldID, id))
 }
 
 // IDLT applies the LT predicate on the ID field.
-func IDLT(id uint64) predicate.MediaVariant {
+func IDLT(id int64) predicate.MediaVariant {
 	return predicate.MediaVariant(sql.FieldLT(FieldID, id))
 }
 
 // IDLTE applies the LTE predicate on the ID field.
-func IDLTE(id uint64) predicate.MediaVariant {
+func IDLTE(id int64) predicate.MediaVariant {
 	return predicate.MediaVariant(sql.FieldLTE(FieldID, id))
 }
 
@@ -60,17 +60,17 @@ func CreatedAt(v time.Time) predicate.MediaVariant {
 }
 
 // TenantID applies equality check predicate on the "tenant_id" field. It's identical to TenantIDEQ.
-func TenantID(v uint64) predicate.MediaVariant {
+func TenantID(v int64) predicate.MediaVariant {
 	return predicate.MediaVariant(sql.FieldEQ(FieldTenantID, v))
 }
 
 // MediaID applies equality check predicate on the "media_id" field. It's identical to MediaIDEQ.
-func MediaID(v uint64) predicate.MediaVariant {
+func MediaID(v int64) predicate.MediaVariant {
 	return predicate.MediaVariant(sql.FieldEQ(FieldMediaID, v))
 }
 
 // FileID applies equality check predicate on the "file_id" field. It's identical to FileIDEQ.
-func FileID(v uint64) predicate.MediaVariant {
+func FileID(v int64) predicate.MediaVariant {
 	return predicate.MediaVariant(sql.FieldEQ(FieldFileID, v))
 }
 
@@ -130,42 +130,42 @@ func CreatedAtNotNil() predicate.MediaVariant {
 }
 
 // TenantIDEQ applies the EQ predicate on the "tenant_id" field.
-func TenantIDEQ(v uint64) predicate.MediaVariant {
+func TenantIDEQ(v int64) predicate.MediaVariant {
 	return predicate.MediaVariant(sql.FieldEQ(FieldTenantID, v))
 }
 
 // TenantIDNEQ applies the NEQ predicate on the "tenant_id" field.
-func TenantIDNEQ(v uint64) predicate.MediaVariant {
+func TenantIDNEQ(v int64) predicate.MediaVariant {
 	return predicate.MediaVariant(sql.FieldNEQ(FieldTenantID, v))
 }
 
 // TenantIDIn applies the In predicate on the "tenant_id" field.
-func TenantIDIn(vs ...uint64) predicate.MediaVariant {
+func TenantIDIn(vs ...int64) predicate.MediaVariant {
 	return predicate.MediaVariant(sql.FieldIn(FieldTenantID, vs...))
 }
 
 // TenantIDNotIn applies the NotIn predicate on the "tenant_id" field.
-func TenantIDNotIn(vs ...uint64) predicate.MediaVariant {
+func TenantIDNotIn(vs ...int64) predicate.MediaVariant {
 	return predicate.MediaVariant(sql.FieldNotIn(FieldTenantID, vs...))
 }
 
 // TenantIDGT applies the GT predicate on the "tenant_id" field.
-func TenantIDGT(v uint64) predicate.MediaVariant {
+func TenantIDGT(v int64) predicate.MediaVariant {
 	return predicate.MediaVariant(sql.FieldGT(FieldTenantID, v))
 }
 
 // TenantIDGTE applies the GTE predicate on the "tenant_id" field.
-func TenantIDGTE(v uint64) predicate.MediaVariant {
+func TenantIDGTE(v int64) predicate.MediaVariant {
 	return predicate.MediaVariant(sql.FieldGTE(FieldTenantID, v))
 }
 
 // TenantIDLT applies the LT predicate on the "tenant_id" field.
-func TenantIDLT(v uint64) predicate.MediaVariant {
+func TenantIDLT(v int64) predicate.MediaVariant {
 	return predicate.MediaVariant(sql.FieldLT(FieldTenantID, v))
 }
 
 // TenantIDLTE applies the LTE predicate on the "tenant_id" field.
-func TenantIDLTE(v uint64) predicate.MediaVariant {
+func TenantIDLTE(v int64) predicate.MediaVariant {
 	return predicate.MediaVariant(sql.FieldLTE(FieldTenantID, v))
 }
 
@@ -180,82 +180,82 @@ func TenantIDNotNil() predicate.MediaVariant {
 }
 
 // MediaIDEQ applies the EQ predicate on the "media_id" field.
-func MediaIDEQ(v uint64) predicate.MediaVariant {
+func MediaIDEQ(v int64) predicate.MediaVariant {
 	return predicate.MediaVariant(sql.FieldEQ(FieldMediaID, v))
 }
 
 // MediaIDNEQ applies the NEQ predicate on the "media_id" field.
-func MediaIDNEQ(v uint64) predicate.MediaVariant {
+func MediaIDNEQ(v int64) predicate.MediaVariant {
 	return predicate.MediaVariant(sql.FieldNEQ(FieldMediaID, v))
 }
 
 // MediaIDIn applies the In predicate on the "media_id" field.
-func MediaIDIn(vs ...uint64) predicate.MediaVariant {
+func MediaIDIn(vs ...int64) predicate.MediaVariant {
 	return predicate.MediaVariant(sql.FieldIn(FieldMediaID, vs...))
 }
 
 // MediaIDNotIn applies the NotIn predicate on the "media_id" field.
-func MediaIDNotIn(vs ...uint64) predicate.MediaVariant {
+func MediaIDNotIn(vs ...int64) predicate.MediaVariant {
 	return predicate.MediaVariant(sql.FieldNotIn(FieldMediaID, vs...))
 }
 
 // MediaIDGT applies the GT predicate on the "media_id" field.
-func MediaIDGT(v uint64) predicate.MediaVariant {
+func MediaIDGT(v int64) predicate.MediaVariant {
 	return predicate.MediaVariant(sql.FieldGT(FieldMediaID, v))
 }
 
 // MediaIDGTE applies the GTE predicate on the "media_id" field.
-func MediaIDGTE(v uint64) predicate.MediaVariant {
+func MediaIDGTE(v int64) predicate.MediaVariant {
 	return predicate.MediaVariant(sql.FieldGTE(FieldMediaID, v))
 }
 
 // MediaIDLT applies the LT predicate on the "media_id" field.
-func MediaIDLT(v uint64) predicate.MediaVariant {
+func MediaIDLT(v int64) predicate.MediaVariant {
 	return predicate.MediaVariant(sql.FieldLT(FieldMediaID, v))
 }
 
 // MediaIDLTE applies the LTE predicate on the "media_id" field.
-func MediaIDLTE(v uint64) predicate.MediaVariant {
+func MediaIDLTE(v int64) predicate.MediaVariant {
 	return predicate.MediaVariant(sql.FieldLTE(FieldMediaID, v))
 }
 
 // FileIDEQ applies the EQ predicate on the "file_id" field.
-func FileIDEQ(v uint64) predicate.MediaVariant {
+func FileIDEQ(v int64) predicate.MediaVariant {
 	return predicate.MediaVariant(sql.FieldEQ(FieldFileID, v))
 }
 
 // FileIDNEQ applies the NEQ predicate on the "file_id" field.
-func FileIDNEQ(v uint64) predicate.MediaVariant {
+func FileIDNEQ(v int64) predicate.MediaVariant {
 	return predicate.MediaVariant(sql.FieldNEQ(FieldFileID, v))
 }
 
 // FileIDIn applies the In predicate on the "file_id" field.
-func FileIDIn(vs ...uint64) predicate.MediaVariant {
+func FileIDIn(vs ...int64) predicate.MediaVariant {
 	return predicate.MediaVariant(sql.FieldIn(FieldFileID, vs...))
 }
 
 // FileIDNotIn applies the NotIn predicate on the "file_id" field.
-func FileIDNotIn(vs ...uint64) predicate.MediaVariant {
+func FileIDNotIn(vs ...int64) predicate.MediaVariant {
 	return predicate.MediaVariant(sql.FieldNotIn(FieldFileID, vs...))
 }
 
 // FileIDGT applies the GT predicate on the "file_id" field.
-func FileIDGT(v uint64) predicate.MediaVariant {
+func FileIDGT(v int64) predicate.MediaVariant {
 	return predicate.MediaVariant(sql.FieldGT(FieldFileID, v))
 }
 
 // FileIDGTE applies the GTE predicate on the "file_id" field.
-func FileIDGTE(v uint64) predicate.MediaVariant {
+func FileIDGTE(v int64) predicate.MediaVariant {
 	return predicate.MediaVariant(sql.FieldGTE(FieldFileID, v))
 }
 
 // FileIDLT applies the LT predicate on the "file_id" field.
-func FileIDLT(v uint64) predicate.MediaVariant {
+func FileIDLT(v int64) predicate.MediaVariant {
 	return predicate.MediaVariant(sql.FieldLT(FieldFileID, v))
 }
 
 // FileIDLTE applies the LTE predicate on the "file_id" field.
-func FileIDLTE(v uint64) predicate.MediaVariant {
+func FileIDLTE(v int64) predicate.MediaVariant {
 	return predicate.MediaVariant(sql.FieldLTE(FieldFileID, v))
 }
 

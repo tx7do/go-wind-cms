@@ -8,12 +8,12 @@ import (
 	"time"
 
 	"github.com/go-kratos/kratos/v2/log"
+	"github.com/hibiken/asynq"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
-	"github.com/hibiken/asynq"
 	"github.com/tx7do/go-utils/trans"
-	"github.com/tx7do/kratos-bootstrap/bootstrap"
 	conf "github.com/tx7do/kratos-bootstrap/api/gen/go/conf/v1"
+	"github.com/tx7do/kratos-bootstrap/bootstrap"
 
 	entCrud "github.com/tx7do/go-crud/entgo"
 
@@ -126,14 +126,14 @@ func TestNotificationServiceSendDirectStateMachine(t *testing.T) {
 		Target:          "42",
 		Title:           "标题",
 		Content:         "正文",
-		RecipientUserId: trans.Ptr(uint64(42)),
-		RelatedId:       trans.Ptr(uint64(7)),
+		RecipientUserId: trans.Ptr(int64(42)),
+		RelatedId:       trans.Ptr(int64(7)),
 	})
 	require.NoError(t, err)
 	require.NotZero(t, resp.GetDeliveryId())
 	assert.Equal(t, notifyV1.DeliveryStatus_SENT, resp.GetStatus())
 	require.Len(t, sender.sent, 1)
-	assert.Equal(t, uint64(7), sender.sent[0].RelatedID, "relatedId 透传给渠道（站内信挂收件行靠它）")
+	assert.Equal(t, int64(7), sender.sent[0].RelatedID, "relatedId 透传给渠道（站内信挂收件行靠它）")
 	assert.Equal(t, "42", sender.sent[0].Target)
 
 	row, err := deliveryRepo.Get(ctx, resp.GetDeliveryId())

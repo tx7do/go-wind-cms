@@ -11,47 +11,47 @@ import (
 )
 
 // ID filters vertices based on their ID field.
-func ID(id uint64) predicate.Page {
+func ID(id int64) predicate.Page {
 	return predicate.Page(sql.FieldEQ(FieldID, id))
 }
 
 // IDEQ applies the EQ predicate on the ID field.
-func IDEQ(id uint64) predicate.Page {
+func IDEQ(id int64) predicate.Page {
 	return predicate.Page(sql.FieldEQ(FieldID, id))
 }
 
 // IDNEQ applies the NEQ predicate on the ID field.
-func IDNEQ(id uint64) predicate.Page {
+func IDNEQ(id int64) predicate.Page {
 	return predicate.Page(sql.FieldNEQ(FieldID, id))
 }
 
 // IDIn applies the In predicate on the ID field.
-func IDIn(ids ...uint64) predicate.Page {
+func IDIn(ids ...int64) predicate.Page {
 	return predicate.Page(sql.FieldIn(FieldID, ids...))
 }
 
 // IDNotIn applies the NotIn predicate on the ID field.
-func IDNotIn(ids ...uint64) predicate.Page {
+func IDNotIn(ids ...int64) predicate.Page {
 	return predicate.Page(sql.FieldNotIn(FieldID, ids...))
 }
 
 // IDGT applies the GT predicate on the ID field.
-func IDGT(id uint64) predicate.Page {
+func IDGT(id int64) predicate.Page {
 	return predicate.Page(sql.FieldGT(FieldID, id))
 }
 
 // IDGTE applies the GTE predicate on the ID field.
-func IDGTE(id uint64) predicate.Page {
+func IDGTE(id int64) predicate.Page {
 	return predicate.Page(sql.FieldGTE(FieldID, id))
 }
 
 // IDLT applies the LT predicate on the ID field.
-func IDLT(id uint64) predicate.Page {
+func IDLT(id int64) predicate.Page {
 	return predicate.Page(sql.FieldLT(FieldID, id))
 }
 
 // IDLTE applies the LTE predicate on the ID field.
-func IDLTE(id uint64) predicate.Page {
+func IDLTE(id int64) predicate.Page {
 	return predicate.Page(sql.FieldLTE(FieldID, id))
 }
 
@@ -71,17 +71,17 @@ func DeletedAt(v time.Time) predicate.Page {
 }
 
 // CreatedBy applies equality check predicate on the "created_by" field. It's identical to CreatedByEQ.
-func CreatedBy(v uint64) predicate.Page {
+func CreatedBy(v int64) predicate.Page {
 	return predicate.Page(sql.FieldEQ(FieldCreatedBy, v))
 }
 
 // UpdatedBy applies equality check predicate on the "updated_by" field. It's identical to UpdatedByEQ.
-func UpdatedBy(v uint64) predicate.Page {
+func UpdatedBy(v int64) predicate.Page {
 	return predicate.Page(sql.FieldEQ(FieldUpdatedBy, v))
 }
 
 // DeletedBy applies equality check predicate on the "deleted_by" field. It's identical to DeletedByEQ.
-func DeletedBy(v uint64) predicate.Page {
+func DeletedBy(v int64) predicate.Page {
 	return predicate.Page(sql.FieldEQ(FieldDeletedBy, v))
 }
 
@@ -96,12 +96,12 @@ func Path(v string) predicate.Page {
 }
 
 // ParentID applies equality check predicate on the "parent_id" field. It's identical to ParentIDEQ.
-func ParentID(v uint64) predicate.Page {
+func ParentID(v int64) predicate.Page {
 	return predicate.Page(sql.FieldEQ(FieldParentID, v))
 }
 
 // TenantID applies equality check predicate on the "tenant_id" field. It's identical to TenantIDEQ.
-func TenantID(v uint64) predicate.Page {
+func TenantID(v int64) predicate.Page {
 	return predicate.Page(sql.FieldEQ(FieldTenantID, v))
 }
 
@@ -111,7 +111,7 @@ func Slug(v string) predicate.Page {
 }
 
 // AuthorID applies equality check predicate on the "author_id" field. It's identical to AuthorIDEQ.
-func AuthorID(v uint64) predicate.Page {
+func AuthorID(v int64) predicate.Page {
 	return predicate.Page(sql.FieldEQ(FieldAuthorID, v))
 }
 
@@ -156,7 +156,7 @@ func Thumbnail(v string) predicate.Page {
 }
 
 // ContentModelID applies equality check predicate on the "content_model_id" field. It's identical to ContentModelIDEQ.
-func ContentModelID(v uint64) predicate.Page {
+func ContentModelID(v int64) predicate.Page {
 	return predicate.Page(sql.FieldEQ(FieldContentModelID, v))
 }
 
@@ -316,42 +316,42 @@ func DeletedAtNotNil() predicate.Page {
 }
 
 // CreatedByEQ applies the EQ predicate on the "created_by" field.
-func CreatedByEQ(v uint64) predicate.Page {
+func CreatedByEQ(v int64) predicate.Page {
 	return predicate.Page(sql.FieldEQ(FieldCreatedBy, v))
 }
 
 // CreatedByNEQ applies the NEQ predicate on the "created_by" field.
-func CreatedByNEQ(v uint64) predicate.Page {
+func CreatedByNEQ(v int64) predicate.Page {
 	return predicate.Page(sql.FieldNEQ(FieldCreatedBy, v))
 }
 
 // CreatedByIn applies the In predicate on the "created_by" field.
-func CreatedByIn(vs ...uint64) predicate.Page {
+func CreatedByIn(vs ...int64) predicate.Page {
 	return predicate.Page(sql.FieldIn(FieldCreatedBy, vs...))
 }
 
 // CreatedByNotIn applies the NotIn predicate on the "created_by" field.
-func CreatedByNotIn(vs ...uint64) predicate.Page {
+func CreatedByNotIn(vs ...int64) predicate.Page {
 	return predicate.Page(sql.FieldNotIn(FieldCreatedBy, vs...))
 }
 
 // CreatedByGT applies the GT predicate on the "created_by" field.
-func CreatedByGT(v uint64) predicate.Page {
+func CreatedByGT(v int64) predicate.Page {
 	return predicate.Page(sql.FieldGT(FieldCreatedBy, v))
 }
 
 // CreatedByGTE applies the GTE predicate on the "created_by" field.
-func CreatedByGTE(v uint64) predicate.Page {
+func CreatedByGTE(v int64) predicate.Page {
 	return predicate.Page(sql.FieldGTE(FieldCreatedBy, v))
 }
 
 // CreatedByLT applies the LT predicate on the "created_by" field.
-func CreatedByLT(v uint64) predicate.Page {
+func CreatedByLT(v int64) predicate.Page {
 	return predicate.Page(sql.FieldLT(FieldCreatedBy, v))
 }
 
 // CreatedByLTE applies the LTE predicate on the "created_by" field.
-func CreatedByLTE(v uint64) predicate.Page {
+func CreatedByLTE(v int64) predicate.Page {
 	return predicate.Page(sql.FieldLTE(FieldCreatedBy, v))
 }
 
@@ -366,42 +366,42 @@ func CreatedByNotNil() predicate.Page {
 }
 
 // UpdatedByEQ applies the EQ predicate on the "updated_by" field.
-func UpdatedByEQ(v uint64) predicate.Page {
+func UpdatedByEQ(v int64) predicate.Page {
 	return predicate.Page(sql.FieldEQ(FieldUpdatedBy, v))
 }
 
 // UpdatedByNEQ applies the NEQ predicate on the "updated_by" field.
-func UpdatedByNEQ(v uint64) predicate.Page {
+func UpdatedByNEQ(v int64) predicate.Page {
 	return predicate.Page(sql.FieldNEQ(FieldUpdatedBy, v))
 }
 
 // UpdatedByIn applies the In predicate on the "updated_by" field.
-func UpdatedByIn(vs ...uint64) predicate.Page {
+func UpdatedByIn(vs ...int64) predicate.Page {
 	return predicate.Page(sql.FieldIn(FieldUpdatedBy, vs...))
 }
 
 // UpdatedByNotIn applies the NotIn predicate on the "updated_by" field.
-func UpdatedByNotIn(vs ...uint64) predicate.Page {
+func UpdatedByNotIn(vs ...int64) predicate.Page {
 	return predicate.Page(sql.FieldNotIn(FieldUpdatedBy, vs...))
 }
 
 // UpdatedByGT applies the GT predicate on the "updated_by" field.
-func UpdatedByGT(v uint64) predicate.Page {
+func UpdatedByGT(v int64) predicate.Page {
 	return predicate.Page(sql.FieldGT(FieldUpdatedBy, v))
 }
 
 // UpdatedByGTE applies the GTE predicate on the "updated_by" field.
-func UpdatedByGTE(v uint64) predicate.Page {
+func UpdatedByGTE(v int64) predicate.Page {
 	return predicate.Page(sql.FieldGTE(FieldUpdatedBy, v))
 }
 
 // UpdatedByLT applies the LT predicate on the "updated_by" field.
-func UpdatedByLT(v uint64) predicate.Page {
+func UpdatedByLT(v int64) predicate.Page {
 	return predicate.Page(sql.FieldLT(FieldUpdatedBy, v))
 }
 
 // UpdatedByLTE applies the LTE predicate on the "updated_by" field.
-func UpdatedByLTE(v uint64) predicate.Page {
+func UpdatedByLTE(v int64) predicate.Page {
 	return predicate.Page(sql.FieldLTE(FieldUpdatedBy, v))
 }
 
@@ -416,42 +416,42 @@ func UpdatedByNotNil() predicate.Page {
 }
 
 // DeletedByEQ applies the EQ predicate on the "deleted_by" field.
-func DeletedByEQ(v uint64) predicate.Page {
+func DeletedByEQ(v int64) predicate.Page {
 	return predicate.Page(sql.FieldEQ(FieldDeletedBy, v))
 }
 
 // DeletedByNEQ applies the NEQ predicate on the "deleted_by" field.
-func DeletedByNEQ(v uint64) predicate.Page {
+func DeletedByNEQ(v int64) predicate.Page {
 	return predicate.Page(sql.FieldNEQ(FieldDeletedBy, v))
 }
 
 // DeletedByIn applies the In predicate on the "deleted_by" field.
-func DeletedByIn(vs ...uint64) predicate.Page {
+func DeletedByIn(vs ...int64) predicate.Page {
 	return predicate.Page(sql.FieldIn(FieldDeletedBy, vs...))
 }
 
 // DeletedByNotIn applies the NotIn predicate on the "deleted_by" field.
-func DeletedByNotIn(vs ...uint64) predicate.Page {
+func DeletedByNotIn(vs ...int64) predicate.Page {
 	return predicate.Page(sql.FieldNotIn(FieldDeletedBy, vs...))
 }
 
 // DeletedByGT applies the GT predicate on the "deleted_by" field.
-func DeletedByGT(v uint64) predicate.Page {
+func DeletedByGT(v int64) predicate.Page {
 	return predicate.Page(sql.FieldGT(FieldDeletedBy, v))
 }
 
 // DeletedByGTE applies the GTE predicate on the "deleted_by" field.
-func DeletedByGTE(v uint64) predicate.Page {
+func DeletedByGTE(v int64) predicate.Page {
 	return predicate.Page(sql.FieldGTE(FieldDeletedBy, v))
 }
 
 // DeletedByLT applies the LT predicate on the "deleted_by" field.
-func DeletedByLT(v uint64) predicate.Page {
+func DeletedByLT(v int64) predicate.Page {
 	return predicate.Page(sql.FieldLT(FieldDeletedBy, v))
 }
 
 // DeletedByLTE applies the LTE predicate on the "deleted_by" field.
-func DeletedByLTE(v uint64) predicate.Page {
+func DeletedByLTE(v int64) predicate.Page {
 	return predicate.Page(sql.FieldLTE(FieldDeletedBy, v))
 }
 
@@ -591,22 +591,22 @@ func PathContainsFold(v string) predicate.Page {
 }
 
 // ParentIDEQ applies the EQ predicate on the "parent_id" field.
-func ParentIDEQ(v uint64) predicate.Page {
+func ParentIDEQ(v int64) predicate.Page {
 	return predicate.Page(sql.FieldEQ(FieldParentID, v))
 }
 
 // ParentIDNEQ applies the NEQ predicate on the "parent_id" field.
-func ParentIDNEQ(v uint64) predicate.Page {
+func ParentIDNEQ(v int64) predicate.Page {
 	return predicate.Page(sql.FieldNEQ(FieldParentID, v))
 }
 
 // ParentIDIn applies the In predicate on the "parent_id" field.
-func ParentIDIn(vs ...uint64) predicate.Page {
+func ParentIDIn(vs ...int64) predicate.Page {
 	return predicate.Page(sql.FieldIn(FieldParentID, vs...))
 }
 
 // ParentIDNotIn applies the NotIn predicate on the "parent_id" field.
-func ParentIDNotIn(vs ...uint64) predicate.Page {
+func ParentIDNotIn(vs ...int64) predicate.Page {
 	return predicate.Page(sql.FieldNotIn(FieldParentID, vs...))
 }
 
@@ -651,42 +651,42 @@ func EditorTypeNotNil() predicate.Page {
 }
 
 // TenantIDEQ applies the EQ predicate on the "tenant_id" field.
-func TenantIDEQ(v uint64) predicate.Page {
+func TenantIDEQ(v int64) predicate.Page {
 	return predicate.Page(sql.FieldEQ(FieldTenantID, v))
 }
 
 // TenantIDNEQ applies the NEQ predicate on the "tenant_id" field.
-func TenantIDNEQ(v uint64) predicate.Page {
+func TenantIDNEQ(v int64) predicate.Page {
 	return predicate.Page(sql.FieldNEQ(FieldTenantID, v))
 }
 
 // TenantIDIn applies the In predicate on the "tenant_id" field.
-func TenantIDIn(vs ...uint64) predicate.Page {
+func TenantIDIn(vs ...int64) predicate.Page {
 	return predicate.Page(sql.FieldIn(FieldTenantID, vs...))
 }
 
 // TenantIDNotIn applies the NotIn predicate on the "tenant_id" field.
-func TenantIDNotIn(vs ...uint64) predicate.Page {
+func TenantIDNotIn(vs ...int64) predicate.Page {
 	return predicate.Page(sql.FieldNotIn(FieldTenantID, vs...))
 }
 
 // TenantIDGT applies the GT predicate on the "tenant_id" field.
-func TenantIDGT(v uint64) predicate.Page {
+func TenantIDGT(v int64) predicate.Page {
 	return predicate.Page(sql.FieldGT(FieldTenantID, v))
 }
 
 // TenantIDGTE applies the GTE predicate on the "tenant_id" field.
-func TenantIDGTE(v uint64) predicate.Page {
+func TenantIDGTE(v int64) predicate.Page {
 	return predicate.Page(sql.FieldGTE(FieldTenantID, v))
 }
 
 // TenantIDLT applies the LT predicate on the "tenant_id" field.
-func TenantIDLT(v uint64) predicate.Page {
+func TenantIDLT(v int64) predicate.Page {
 	return predicate.Page(sql.FieldLT(FieldTenantID, v))
 }
 
 // TenantIDLTE applies the LTE predicate on the "tenant_id" field.
-func TenantIDLTE(v uint64) predicate.Page {
+func TenantIDLTE(v int64) predicate.Page {
 	return predicate.Page(sql.FieldLTE(FieldTenantID, v))
 }
 
@@ -836,42 +836,42 @@ func SlugContainsFold(v string) predicate.Page {
 }
 
 // AuthorIDEQ applies the EQ predicate on the "author_id" field.
-func AuthorIDEQ(v uint64) predicate.Page {
+func AuthorIDEQ(v int64) predicate.Page {
 	return predicate.Page(sql.FieldEQ(FieldAuthorID, v))
 }
 
 // AuthorIDNEQ applies the NEQ predicate on the "author_id" field.
-func AuthorIDNEQ(v uint64) predicate.Page {
+func AuthorIDNEQ(v int64) predicate.Page {
 	return predicate.Page(sql.FieldNEQ(FieldAuthorID, v))
 }
 
 // AuthorIDIn applies the In predicate on the "author_id" field.
-func AuthorIDIn(vs ...uint64) predicate.Page {
+func AuthorIDIn(vs ...int64) predicate.Page {
 	return predicate.Page(sql.FieldIn(FieldAuthorID, vs...))
 }
 
 // AuthorIDNotIn applies the NotIn predicate on the "author_id" field.
-func AuthorIDNotIn(vs ...uint64) predicate.Page {
+func AuthorIDNotIn(vs ...int64) predicate.Page {
 	return predicate.Page(sql.FieldNotIn(FieldAuthorID, vs...))
 }
 
 // AuthorIDGT applies the GT predicate on the "author_id" field.
-func AuthorIDGT(v uint64) predicate.Page {
+func AuthorIDGT(v int64) predicate.Page {
 	return predicate.Page(sql.FieldGT(FieldAuthorID, v))
 }
 
 // AuthorIDGTE applies the GTE predicate on the "author_id" field.
-func AuthorIDGTE(v uint64) predicate.Page {
+func AuthorIDGTE(v int64) predicate.Page {
 	return predicate.Page(sql.FieldGTE(FieldAuthorID, v))
 }
 
 // AuthorIDLT applies the LT predicate on the "author_id" field.
-func AuthorIDLT(v uint64) predicate.Page {
+func AuthorIDLT(v int64) predicate.Page {
 	return predicate.Page(sql.FieldLT(FieldAuthorID, v))
 }
 
 // AuthorIDLTE applies the LTE predicate on the "author_id" field.
-func AuthorIDLTE(v uint64) predicate.Page {
+func AuthorIDLTE(v int64) predicate.Page {
 	return predicate.Page(sql.FieldLTE(FieldAuthorID, v))
 }
 
@@ -1276,42 +1276,42 @@ func CustomFieldsNotNil() predicate.Page {
 }
 
 // ContentModelIDEQ applies the EQ predicate on the "content_model_id" field.
-func ContentModelIDEQ(v uint64) predicate.Page {
+func ContentModelIDEQ(v int64) predicate.Page {
 	return predicate.Page(sql.FieldEQ(FieldContentModelID, v))
 }
 
 // ContentModelIDNEQ applies the NEQ predicate on the "content_model_id" field.
-func ContentModelIDNEQ(v uint64) predicate.Page {
+func ContentModelIDNEQ(v int64) predicate.Page {
 	return predicate.Page(sql.FieldNEQ(FieldContentModelID, v))
 }
 
 // ContentModelIDIn applies the In predicate on the "content_model_id" field.
-func ContentModelIDIn(vs ...uint64) predicate.Page {
+func ContentModelIDIn(vs ...int64) predicate.Page {
 	return predicate.Page(sql.FieldIn(FieldContentModelID, vs...))
 }
 
 // ContentModelIDNotIn applies the NotIn predicate on the "content_model_id" field.
-func ContentModelIDNotIn(vs ...uint64) predicate.Page {
+func ContentModelIDNotIn(vs ...int64) predicate.Page {
 	return predicate.Page(sql.FieldNotIn(FieldContentModelID, vs...))
 }
 
 // ContentModelIDGT applies the GT predicate on the "content_model_id" field.
-func ContentModelIDGT(v uint64) predicate.Page {
+func ContentModelIDGT(v int64) predicate.Page {
 	return predicate.Page(sql.FieldGT(FieldContentModelID, v))
 }
 
 // ContentModelIDGTE applies the GTE predicate on the "content_model_id" field.
-func ContentModelIDGTE(v uint64) predicate.Page {
+func ContentModelIDGTE(v int64) predicate.Page {
 	return predicate.Page(sql.FieldGTE(FieldContentModelID, v))
 }
 
 // ContentModelIDLT applies the LT predicate on the "content_model_id" field.
-func ContentModelIDLT(v uint64) predicate.Page {
+func ContentModelIDLT(v int64) predicate.Page {
 	return predicate.Page(sql.FieldLT(FieldContentModelID, v))
 }
 
 // ContentModelIDLTE applies the LTE predicate on the "content_model_id" field.
-func ContentModelIDLTE(v uint64) predicate.Page {
+func ContentModelIDLTE(v int64) predicate.Page {
 	return predicate.Page(sql.FieldLTE(FieldContentModelID, v))
 }
 

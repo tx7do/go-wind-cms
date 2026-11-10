@@ -69,7 +69,7 @@ func (r *TagTranslationRepo) init() {
 func (r *TagTranslationRepo) CleanTranslations(
 	ctx context.Context,
 	tx *ent.Tx,
-	tagID uint64,
+	tagID int64,
 ) error {
 	delBuilder := tx.TagTranslation.Delete().Where(tagtranslation.TagIDEQ(tagID))
 	// 租户作用域：仅清除本租户翻译，避免跨租户删他人翻译（按 hasTenant 条件加）
@@ -83,7 +83,7 @@ func (r *TagTranslationRepo) CleanTranslations(
 	return nil
 }
 
-func (r *TagTranslationRepo) ListTranslations(ctx context.Context, tagID uint64, locale string, viewMask *fieldmaskpb.FieldMask) ([]*contentV1.TagTranslation, error) {
+func (r *TagTranslationRepo) ListTranslations(ctx context.Context, tagID int64, locale string, viewMask *fieldmaskpb.FieldMask) ([]*contentV1.TagTranslation, error) {
 	builder := r.entClient.Client().TagTranslation.Query().
 		Where(
 			tagtranslation.TagIDEQ(tagID),
@@ -124,7 +124,7 @@ func (r *TagTranslationRepo) ListTranslations(ctx context.Context, tagID uint64,
 
 // ListTranslationsWithFallback 优先返回指定语言的译文；该语言缺译时返回全部译文，
 // 供前端按"匹配当前语言→回退第一条"兜底（只回传空数组会让前端无 fallback 可用）。
-func (r *TagTranslationRepo) ListTranslationsWithFallback(ctx context.Context, tagID uint64, locale string, viewMask *fieldmaskpb.FieldMask) ([]*contentV1.TagTranslation, error) {
+func (r *TagTranslationRepo) ListTranslationsWithFallback(ctx context.Context, tagID int64, locale string, viewMask *fieldmaskpb.FieldMask) ([]*contentV1.TagTranslation, error) {
 	translations, err := r.ListTranslations(ctx, tagID, locale, viewMask)
 	if err != nil {
 		return nil, err
@@ -181,7 +181,7 @@ func (r *TagTranslationRepo) BatchCreate(ctx context.Context, tx *ent.Tx, items 
 // 已存在则原行就地更新（保留 created_by/created_at 与未提交字段），
 // 不存在则插入；同语言历史重复行仅保留 id 最小的一条并更新，其余删除。
 // Update 语义据此从"整表替换"改为按语言合并，删除译文请走 DeleteTranslation。
-func (r *TagTranslationRepo) UpsertTranslations(ctx context.Context, tx *ent.Tx, tagID uint64, items []*contentV1.TagTranslation) error {
+func (r *TagTranslationRepo) UpsertTranslations(ctx context.Context, tx *ent.Tx, tagID int64, items []*contentV1.TagTranslation) error {
 	if len(items) == 0 {
 		return nil
 	}
@@ -248,7 +248,7 @@ func (r *TagTranslationRepo) UpsertTranslations(ctx context.Context, tx *ent.Tx,
 		}
 
 		if len(existings) > 1 {
-			dupeIDs := make([]uint64, 0, len(existings)-1)
+			dupeIDs := make([]int64, 0, len(existings)-1)
 			for _, e := range existings[1:] {
 				dupeIDs = append(dupeIDs, e.ID)
 			}
@@ -277,7 +277,7 @@ func (r *TagTranslationRepo) CreateTranslation(ctx context.Context, data *conten
 	return r.mapper.ToDTO(entity), nil
 }
 
-func (r *TagTranslationRepo) UpdateTranslation(ctx context.Context, id uint64, data *contentV1.TagTranslation, updateMask *fieldmaskpb.FieldMask) (*contentV1.TagTranslation, error) {
+func (r *TagTranslationRepo) UpdateTranslation(ctx context.Context, id int64, data *contentV1.TagTranslation, updateMask *fieldmaskpb.FieldMask) (*contentV1.TagTranslation, error) {
 	if data == nil {
 		return nil, nil
 	}
@@ -341,7 +341,7 @@ func (r *TagTranslationRepo) countByBaseSlug(ctx context.Context, tt *ent.TagTra
 }
 
 // TranslationExists checks if a translation exists for the given tag ID and language code.
-func (r *TagTranslationRepo) TranslationExists(ctx context.Context, tagId uint64, languageCode string) (bool, error) {
+func (r *TagTranslationRepo) TranslationExists(ctx context.Context, tagId int64, languageCode string) (bool, error) {
 	c, err := r.entClient.Client().TagTranslation.Query().
 		Where(
 			tagtranslation.TagIDEQ(tagId),
@@ -357,7 +357,7 @@ func (r *TagTranslationRepo) TranslationExists(ctx context.Context, tagId uint64
 }
 
 // ListAvailedLanguages lists the language codes of all translations available for the given tag ID.
-func (r *TagTranslationRepo) ListAvailedLanguages(ctx context.Context, tagId uint64) ([]string, error) {
+func (r *TagTranslationRepo) ListAvailedLanguages(ctx context.Context, tagId int64) ([]string, error) {
 	entities, err := r.entClient.Client().TagTranslation.Query().
 		Where(
 			tagtranslation.TagIDEQ(tagId),
@@ -372,7 +372,7 @@ func (r *TagTranslationRepo) ListAvailedLanguages(ctx context.Context, tagId uin
 	return entities, nil
 }
 
-func (r *TagTranslationRepo) GetTranslation(ctx context.Context, tagId uint64, languageCode string) (*contentV1.TagTranslation, error) {
+func (r *TagTranslationRepo) GetTranslation(ctx context.Context, tagId int64, languageCode string) (*contentV1.TagTranslation, error) {
 	// 取 id 最小的一条保证结果确定（防历史重复行）；缺译文不是错误，交由调用方按 nil 处理
 	entity, err := r.entClient.Client().TagTranslation.Query().
 		Where(

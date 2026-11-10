@@ -139,7 +139,7 @@ func (r *PageRepo) prepareTranslationMaskFields(req *paginationV1.PagingRequest)
 	return
 }
 
-func (r *PageRepo) IsExist(ctx context.Context, id uint64) (bool, error) {
+func (r *PageRepo) IsExist(ctx context.Context, id int64) (bool, error) {
 	exist, err := r.entClient.Client().Page.Query().
 		Where(page.IDEQ(id)).
 		Exist(ctx)
@@ -150,7 +150,7 @@ func (r *PageRepo) IsExist(ctx context.Context, id uint64) (bool, error) {
 	return exist, nil
 }
 
-func (r *PageRepo) buildPageTree(items []*contentV1.Page, parentId uint64) []*contentV1.Page {
+func (r *PageRepo) buildPageTree(items []*contentV1.Page, parentId int64) []*contentV1.Page {
 	var tree []*contentV1.Page
 	for _, item := range items {
 		if item.GetParentId() == parentId {
@@ -543,7 +543,7 @@ func (r *PageRepo) Delete(ctx context.Context, req *contentV1.DeletePageRequest)
 	return nil
 }
 
-func (r *PageRepo) TranslationExists(ctx context.Context, pageId uint64, languageCode string) (bool, error) {
+func (r *PageRepo) TranslationExists(ctx context.Context, pageId int64, languageCode string) (bool, error) {
 	return r.pageTranslationRepo.TranslationExists(ctx, pageId, languageCode)
 }
 
@@ -602,7 +602,7 @@ func (r *PageRepo) GetTranslation(ctx context.Context, req *contentV1.GetPageReq
 	return r.pageTranslationRepo.GetTranslation(ctx, req.GetId(), req.GetLocale())
 }
 
-func (r *PageRepo) ListTranslations(ctx context.Context, pageID uint64, locale string, viewMask *fieldmaskpb.FieldMask) ([]*contentV1.PageTranslation, error) {
+func (r *PageRepo) ListTranslations(ctx context.Context, pageID int64, locale string, viewMask *fieldmaskpb.FieldMask) ([]*contentV1.PageTranslation, error) {
 	return r.pageTranslationRepo.ListTranslations(ctx, pageID, locale, viewMask)
 }
 
@@ -610,6 +610,6 @@ func (r *PageRepo) DeleteTranslation(ctx context.Context, req *contentV1.DeleteP
 	return r.pageTranslationRepo.DeleteTranslation(ctx, req)
 }
 
-func (r *PageRepo) CleanTranslations(ctx context.Context, tx *ent.Tx, pageID uint64) error {
+func (r *PageRepo) CleanTranslations(ctx context.Context, tx *ent.Tx, pageID int64) error {
 	return r.pageTranslationRepo.CleanTranslations(ctx, tx, pageID)
 }

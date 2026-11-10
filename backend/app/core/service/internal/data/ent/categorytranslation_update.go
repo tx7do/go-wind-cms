@@ -71,14 +71,14 @@ func (_u *CategoryTranslationUpdate) ClearDeletedAt() *CategoryTranslationUpdate
 }
 
 // SetCreatedBy sets the "created_by" field.
-func (_u *CategoryTranslationUpdate) SetCreatedBy(v uint64) *CategoryTranslationUpdate {
+func (_u *CategoryTranslationUpdate) SetCreatedBy(v int64) *CategoryTranslationUpdate {
 	_u.mutation.ResetCreatedBy()
 	_u.mutation.SetCreatedBy(v)
 	return _u
 }
 
 // SetNillableCreatedBy sets the "created_by" field if the given value is not nil.
-func (_u *CategoryTranslationUpdate) SetNillableCreatedBy(v *uint64) *CategoryTranslationUpdate {
+func (_u *CategoryTranslationUpdate) SetNillableCreatedBy(v *int64) *CategoryTranslationUpdate {
 	if v != nil {
 		_u.SetCreatedBy(*v)
 	}
@@ -98,14 +98,14 @@ func (_u *CategoryTranslationUpdate) ClearCreatedBy() *CategoryTranslationUpdate
 }
 
 // SetUpdatedBy sets the "updated_by" field.
-func (_u *CategoryTranslationUpdate) SetUpdatedBy(v uint64) *CategoryTranslationUpdate {
+func (_u *CategoryTranslationUpdate) SetUpdatedBy(v int64) *CategoryTranslationUpdate {
 	_u.mutation.ResetUpdatedBy()
 	_u.mutation.SetUpdatedBy(v)
 	return _u
 }
 
 // SetNillableUpdatedBy sets the "updated_by" field if the given value is not nil.
-func (_u *CategoryTranslationUpdate) SetNillableUpdatedBy(v *uint64) *CategoryTranslationUpdate {
+func (_u *CategoryTranslationUpdate) SetNillableUpdatedBy(v *int64) *CategoryTranslationUpdate {
 	if v != nil {
 		_u.SetUpdatedBy(*v)
 	}
@@ -125,14 +125,14 @@ func (_u *CategoryTranslationUpdate) ClearUpdatedBy() *CategoryTranslationUpdate
 }
 
 // SetDeletedBy sets the "deleted_by" field.
-func (_u *CategoryTranslationUpdate) SetDeletedBy(v uint64) *CategoryTranslationUpdate {
+func (_u *CategoryTranslationUpdate) SetDeletedBy(v int64) *CategoryTranslationUpdate {
 	_u.mutation.ResetDeletedBy()
 	_u.mutation.SetDeletedBy(v)
 	return _u
 }
 
 // SetNillableDeletedBy sets the "deleted_by" field if the given value is not nil.
-func (_u *CategoryTranslationUpdate) SetNillableDeletedBy(v *uint64) *CategoryTranslationUpdate {
+func (_u *CategoryTranslationUpdate) SetNillableDeletedBy(v *int64) *CategoryTranslationUpdate {
 	if v != nil {
 		_u.SetDeletedBy(*v)
 	}
@@ -164,14 +164,14 @@ func (_u *CategoryTranslationUpdate) ClearSeo() *CategoryTranslationUpdate {
 }
 
 // SetCategoryID sets the "category_id" field.
-func (_u *CategoryTranslationUpdate) SetCategoryID(v uint64) *CategoryTranslationUpdate {
+func (_u *CategoryTranslationUpdate) SetCategoryID(v int64) *CategoryTranslationUpdate {
 	_u.mutation.ResetCategoryID()
 	_u.mutation.SetCategoryID(v)
 	return _u
 }
 
 // SetNillableCategoryID sets the "category_id" field if the given value is not nil.
-func (_u *CategoryTranslationUpdate) SetNillableCategoryID(v *uint64) *CategoryTranslationUpdate {
+func (_u *CategoryTranslationUpdate) SetNillableCategoryID(v *int64) *CategoryTranslationUpdate {
 	if v != nil {
 		_u.SetCategoryID(*v)
 	}
@@ -349,7 +349,7 @@ func (_u *CategoryTranslationUpdate) Modify(modifiers ...func(u *sql.UpdateBuild
 }
 
 func (_u *CategoryTranslationUpdate) sqlSave(ctx context.Context) (_node int, err error) {
-	_spec := sqlgraph.NewUpdateSpec(categorytranslation.Table, categorytranslation.Columns, sqlgraph.NewFieldSpec(categorytranslation.FieldID, field.TypeUint64))
+	_spec := sqlgraph.NewUpdateSpec(categorytranslation.Table, categorytranslation.Columns, sqlgraph.NewFieldSpec(categorytranslation.FieldID, field.TypeInt64))
 	if ps := _u.mutation.predicates; len(ps) > 0 {
 		_spec.Predicate = func(selector *sql.Selector) {
 			for i := range ps {
@@ -373,31 +373,31 @@ func (_u *CategoryTranslationUpdate) sqlSave(ctx context.Context) (_node int, er
 		_spec.ClearField(categorytranslation.FieldDeletedAt, field.TypeTime)
 	}
 	if value, ok := _u.mutation.CreatedBy(); ok {
-		_spec.SetField(categorytranslation.FieldCreatedBy, field.TypeUint64, value)
+		_spec.SetField(categorytranslation.FieldCreatedBy, field.TypeInt64, value)
 	}
 	if value, ok := _u.mutation.AddedCreatedBy(); ok {
-		_spec.AddField(categorytranslation.FieldCreatedBy, field.TypeUint64, value)
+		_spec.AddField(categorytranslation.FieldCreatedBy, field.TypeInt64, value)
 	}
 	if _u.mutation.CreatedByCleared() {
-		_spec.ClearField(categorytranslation.FieldCreatedBy, field.TypeUint64)
+		_spec.ClearField(categorytranslation.FieldCreatedBy, field.TypeInt64)
 	}
 	if value, ok := _u.mutation.UpdatedBy(); ok {
-		_spec.SetField(categorytranslation.FieldUpdatedBy, field.TypeUint64, value)
+		_spec.SetField(categorytranslation.FieldUpdatedBy, field.TypeInt64, value)
 	}
 	if value, ok := _u.mutation.AddedUpdatedBy(); ok {
-		_spec.AddField(categorytranslation.FieldUpdatedBy, field.TypeUint64, value)
+		_spec.AddField(categorytranslation.FieldUpdatedBy, field.TypeInt64, value)
 	}
 	if _u.mutation.UpdatedByCleared() {
-		_spec.ClearField(categorytranslation.FieldUpdatedBy, field.TypeUint64)
+		_spec.ClearField(categorytranslation.FieldUpdatedBy, field.TypeInt64)
 	}
 	if value, ok := _u.mutation.DeletedBy(); ok {
-		_spec.SetField(categorytranslation.FieldDeletedBy, field.TypeUint64, value)
+		_spec.SetField(categorytranslation.FieldDeletedBy, field.TypeInt64, value)
 	}
 	if value, ok := _u.mutation.AddedDeletedBy(); ok {
-		_spec.AddField(categorytranslation.FieldDeletedBy, field.TypeUint64, value)
+		_spec.AddField(categorytranslation.FieldDeletedBy, field.TypeInt64, value)
 	}
 	if _u.mutation.DeletedByCleared() {
-		_spec.ClearField(categorytranslation.FieldDeletedBy, field.TypeUint64)
+		_spec.ClearField(categorytranslation.FieldDeletedBy, field.TypeInt64)
 	}
 	if value, ok := _u.mutation.Seo(); ok {
 		_spec.SetField(categorytranslation.FieldSeo, field.TypeJSON, value)
@@ -406,16 +406,16 @@ func (_u *CategoryTranslationUpdate) sqlSave(ctx context.Context) (_node int, er
 		_spec.ClearField(categorytranslation.FieldSeo, field.TypeJSON)
 	}
 	if _u.mutation.TenantIDCleared() {
-		_spec.ClearField(categorytranslation.FieldTenantID, field.TypeUint64)
+		_spec.ClearField(categorytranslation.FieldTenantID, field.TypeInt64)
 	}
 	if value, ok := _u.mutation.CategoryID(); ok {
-		_spec.SetField(categorytranslation.FieldCategoryID, field.TypeUint64, value)
+		_spec.SetField(categorytranslation.FieldCategoryID, field.TypeInt64, value)
 	}
 	if value, ok := _u.mutation.AddedCategoryID(); ok {
-		_spec.AddField(categorytranslation.FieldCategoryID, field.TypeUint64, value)
+		_spec.AddField(categorytranslation.FieldCategoryID, field.TypeInt64, value)
 	}
 	if _u.mutation.CategoryIDCleared() {
-		_spec.ClearField(categorytranslation.FieldCategoryID, field.TypeUint64)
+		_spec.ClearField(categorytranslation.FieldCategoryID, field.TypeInt64)
 	}
 	if value, ok := _u.mutation.LanguageCode(); ok {
 		_spec.SetField(categorytranslation.FieldLanguageCode, field.TypeString, value)
@@ -516,14 +516,14 @@ func (_u *CategoryTranslationUpdateOne) ClearDeletedAt() *CategoryTranslationUpd
 }
 
 // SetCreatedBy sets the "created_by" field.
-func (_u *CategoryTranslationUpdateOne) SetCreatedBy(v uint64) *CategoryTranslationUpdateOne {
+func (_u *CategoryTranslationUpdateOne) SetCreatedBy(v int64) *CategoryTranslationUpdateOne {
 	_u.mutation.ResetCreatedBy()
 	_u.mutation.SetCreatedBy(v)
 	return _u
 }
 
 // SetNillableCreatedBy sets the "created_by" field if the given value is not nil.
-func (_u *CategoryTranslationUpdateOne) SetNillableCreatedBy(v *uint64) *CategoryTranslationUpdateOne {
+func (_u *CategoryTranslationUpdateOne) SetNillableCreatedBy(v *int64) *CategoryTranslationUpdateOne {
 	if v != nil {
 		_u.SetCreatedBy(*v)
 	}
@@ -543,14 +543,14 @@ func (_u *CategoryTranslationUpdateOne) ClearCreatedBy() *CategoryTranslationUpd
 }
 
 // SetUpdatedBy sets the "updated_by" field.
-func (_u *CategoryTranslationUpdateOne) SetUpdatedBy(v uint64) *CategoryTranslationUpdateOne {
+func (_u *CategoryTranslationUpdateOne) SetUpdatedBy(v int64) *CategoryTranslationUpdateOne {
 	_u.mutation.ResetUpdatedBy()
 	_u.mutation.SetUpdatedBy(v)
 	return _u
 }
 
 // SetNillableUpdatedBy sets the "updated_by" field if the given value is not nil.
-func (_u *CategoryTranslationUpdateOne) SetNillableUpdatedBy(v *uint64) *CategoryTranslationUpdateOne {
+func (_u *CategoryTranslationUpdateOne) SetNillableUpdatedBy(v *int64) *CategoryTranslationUpdateOne {
 	if v != nil {
 		_u.SetUpdatedBy(*v)
 	}
@@ -570,14 +570,14 @@ func (_u *CategoryTranslationUpdateOne) ClearUpdatedBy() *CategoryTranslationUpd
 }
 
 // SetDeletedBy sets the "deleted_by" field.
-func (_u *CategoryTranslationUpdateOne) SetDeletedBy(v uint64) *CategoryTranslationUpdateOne {
+func (_u *CategoryTranslationUpdateOne) SetDeletedBy(v int64) *CategoryTranslationUpdateOne {
 	_u.mutation.ResetDeletedBy()
 	_u.mutation.SetDeletedBy(v)
 	return _u
 }
 
 // SetNillableDeletedBy sets the "deleted_by" field if the given value is not nil.
-func (_u *CategoryTranslationUpdateOne) SetNillableDeletedBy(v *uint64) *CategoryTranslationUpdateOne {
+func (_u *CategoryTranslationUpdateOne) SetNillableDeletedBy(v *int64) *CategoryTranslationUpdateOne {
 	if v != nil {
 		_u.SetDeletedBy(*v)
 	}
@@ -609,14 +609,14 @@ func (_u *CategoryTranslationUpdateOne) ClearSeo() *CategoryTranslationUpdateOne
 }
 
 // SetCategoryID sets the "category_id" field.
-func (_u *CategoryTranslationUpdateOne) SetCategoryID(v uint64) *CategoryTranslationUpdateOne {
+func (_u *CategoryTranslationUpdateOne) SetCategoryID(v int64) *CategoryTranslationUpdateOne {
 	_u.mutation.ResetCategoryID()
 	_u.mutation.SetCategoryID(v)
 	return _u
 }
 
 // SetNillableCategoryID sets the "category_id" field if the given value is not nil.
-func (_u *CategoryTranslationUpdateOne) SetNillableCategoryID(v *uint64) *CategoryTranslationUpdateOne {
+func (_u *CategoryTranslationUpdateOne) SetNillableCategoryID(v *int64) *CategoryTranslationUpdateOne {
 	if v != nil {
 		_u.SetCategoryID(*v)
 	}
@@ -807,7 +807,7 @@ func (_u *CategoryTranslationUpdateOne) Modify(modifiers ...func(u *sql.UpdateBu
 }
 
 func (_u *CategoryTranslationUpdateOne) sqlSave(ctx context.Context) (_node *CategoryTranslation, err error) {
-	_spec := sqlgraph.NewUpdateSpec(categorytranslation.Table, categorytranslation.Columns, sqlgraph.NewFieldSpec(categorytranslation.FieldID, field.TypeUint64))
+	_spec := sqlgraph.NewUpdateSpec(categorytranslation.Table, categorytranslation.Columns, sqlgraph.NewFieldSpec(categorytranslation.FieldID, field.TypeInt64))
 	id, ok := _u.mutation.ID()
 	if !ok {
 		return nil, &ValidationError{Name: "id", err: errors.New(`ent: missing "CategoryTranslation.id" for update`)}
@@ -848,31 +848,31 @@ func (_u *CategoryTranslationUpdateOne) sqlSave(ctx context.Context) (_node *Cat
 		_spec.ClearField(categorytranslation.FieldDeletedAt, field.TypeTime)
 	}
 	if value, ok := _u.mutation.CreatedBy(); ok {
-		_spec.SetField(categorytranslation.FieldCreatedBy, field.TypeUint64, value)
+		_spec.SetField(categorytranslation.FieldCreatedBy, field.TypeInt64, value)
 	}
 	if value, ok := _u.mutation.AddedCreatedBy(); ok {
-		_spec.AddField(categorytranslation.FieldCreatedBy, field.TypeUint64, value)
+		_spec.AddField(categorytranslation.FieldCreatedBy, field.TypeInt64, value)
 	}
 	if _u.mutation.CreatedByCleared() {
-		_spec.ClearField(categorytranslation.FieldCreatedBy, field.TypeUint64)
+		_spec.ClearField(categorytranslation.FieldCreatedBy, field.TypeInt64)
 	}
 	if value, ok := _u.mutation.UpdatedBy(); ok {
-		_spec.SetField(categorytranslation.FieldUpdatedBy, field.TypeUint64, value)
+		_spec.SetField(categorytranslation.FieldUpdatedBy, field.TypeInt64, value)
 	}
 	if value, ok := _u.mutation.AddedUpdatedBy(); ok {
-		_spec.AddField(categorytranslation.FieldUpdatedBy, field.TypeUint64, value)
+		_spec.AddField(categorytranslation.FieldUpdatedBy, field.TypeInt64, value)
 	}
 	if _u.mutation.UpdatedByCleared() {
-		_spec.ClearField(categorytranslation.FieldUpdatedBy, field.TypeUint64)
+		_spec.ClearField(categorytranslation.FieldUpdatedBy, field.TypeInt64)
 	}
 	if value, ok := _u.mutation.DeletedBy(); ok {
-		_spec.SetField(categorytranslation.FieldDeletedBy, field.TypeUint64, value)
+		_spec.SetField(categorytranslation.FieldDeletedBy, field.TypeInt64, value)
 	}
 	if value, ok := _u.mutation.AddedDeletedBy(); ok {
-		_spec.AddField(categorytranslation.FieldDeletedBy, field.TypeUint64, value)
+		_spec.AddField(categorytranslation.FieldDeletedBy, field.TypeInt64, value)
 	}
 	if _u.mutation.DeletedByCleared() {
-		_spec.ClearField(categorytranslation.FieldDeletedBy, field.TypeUint64)
+		_spec.ClearField(categorytranslation.FieldDeletedBy, field.TypeInt64)
 	}
 	if value, ok := _u.mutation.Seo(); ok {
 		_spec.SetField(categorytranslation.FieldSeo, field.TypeJSON, value)
@@ -881,16 +881,16 @@ func (_u *CategoryTranslationUpdateOne) sqlSave(ctx context.Context) (_node *Cat
 		_spec.ClearField(categorytranslation.FieldSeo, field.TypeJSON)
 	}
 	if _u.mutation.TenantIDCleared() {
-		_spec.ClearField(categorytranslation.FieldTenantID, field.TypeUint64)
+		_spec.ClearField(categorytranslation.FieldTenantID, field.TypeInt64)
 	}
 	if value, ok := _u.mutation.CategoryID(); ok {
-		_spec.SetField(categorytranslation.FieldCategoryID, field.TypeUint64, value)
+		_spec.SetField(categorytranslation.FieldCategoryID, field.TypeInt64, value)
 	}
 	if value, ok := _u.mutation.AddedCategoryID(); ok {
-		_spec.AddField(categorytranslation.FieldCategoryID, field.TypeUint64, value)
+		_spec.AddField(categorytranslation.FieldCategoryID, field.TypeInt64, value)
 	}
 	if _u.mutation.CategoryIDCleared() {
-		_spec.ClearField(categorytranslation.FieldCategoryID, field.TypeUint64)
+		_spec.ClearField(categorytranslation.FieldCategoryID, field.TypeInt64)
 	}
 	if value, ok := _u.mutation.LanguageCode(); ok {
 		_spec.SetField(categorytranslation.FieldLanguageCode, field.TypeString, value)

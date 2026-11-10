@@ -145,8 +145,8 @@ func (r *OrgUnitRepo) List(ctx context.Context, req *paginationV1.PagingRequest)
 	// 构建树形结构
 	dtos = pagination.BuildTree(
 		dtos,
-		func(node *identityV1.OrgUnit) *uint64 { return node.Id },
-		func(node *identityV1.OrgUnit) *uint64 { return node.ParentId },
+		func(node *identityV1.OrgUnit) *int64 { return node.Id },
+		func(node *identityV1.OrgUnit) *int64 { return node.ParentId },
 		func(node *identityV1.OrgUnit) *[]*identityV1.OrgUnit { return &node.Children },
 	)
 
@@ -156,12 +156,12 @@ func (r *OrgUnitRepo) List(ctx context.Context, req *paginationV1.PagingRequest)
 	}
 
 	return &identityV1.ListOrgUnitResponse{
-		Total: uint64(count),
+		Total: int64(count),
 		Items: dtos,
 	}, err
 }
 
-func (r *OrgUnitRepo) IsExist(ctx context.Context, id uint64) (bool, error) {
+func (r *OrgUnitRepo) IsExist(ctx context.Context, id int64) (bool, error) {
 	exist, err := r.entClient.Client().OrgUnit.Query().
 		Where(orgunit.IDEQ(id)).
 		Exist(ctx)
@@ -195,7 +195,7 @@ func (r *OrgUnitRepo) Get(ctx context.Context, req *identityV1.GetOrgUnitRequest
 }
 
 // ListOrgUnitsByIds 通过多个ID获取组织列表
-func (r *OrgUnitRepo) ListOrgUnitsByIds(ctx context.Context, ids []uint64) ([]*identityV1.OrgUnit, error) {
+func (r *OrgUnitRepo) ListOrgUnitsByIds(ctx context.Context, ids []int64) ([]*identityV1.OrgUnit, error) {
 	if len(ids) == 0 {
 		return []*identityV1.OrgUnit{}, nil
 	}

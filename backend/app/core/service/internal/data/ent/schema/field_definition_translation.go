@@ -30,7 +30,7 @@ func (FieldDefinitionTranslation) Annotations() []schema.Annotation {
 
 func (FieldDefinitionTranslation) Fields() []ent.Field {
 	return []ent.Field{
-		field.Uint64("field_definition_id").
+		field.Int64("field_definition_id").
 			Comment("字段定义ID").
 			Optional().
 			Nillable(),

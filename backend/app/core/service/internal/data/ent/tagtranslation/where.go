@@ -10,47 +10,47 @@ import (
 )
 
 // ID filters vertices based on their ID field.
-func ID(id uint64) predicate.TagTranslation {
+func ID(id int64) predicate.TagTranslation {
 	return predicate.TagTranslation(sql.FieldEQ(FieldID, id))
 }
 
 // IDEQ applies the EQ predicate on the ID field.
-func IDEQ(id uint64) predicate.TagTranslation {
+func IDEQ(id int64) predicate.TagTranslation {
 	return predicate.TagTranslation(sql.FieldEQ(FieldID, id))
 }
 
 // IDNEQ applies the NEQ predicate on the ID field.
-func IDNEQ(id uint64) predicate.TagTranslation {
+func IDNEQ(id int64) predicate.TagTranslation {
 	return predicate.TagTranslation(sql.FieldNEQ(FieldID, id))
 }
 
 // IDIn applies the In predicate on the ID field.
-func IDIn(ids ...uint64) predicate.TagTranslation {
+func IDIn(ids ...int64) predicate.TagTranslation {
 	return predicate.TagTranslation(sql.FieldIn(FieldID, ids...))
 }
 
 // IDNotIn applies the NotIn predicate on the ID field.
-func IDNotIn(ids ...uint64) predicate.TagTranslation {
+func IDNotIn(ids ...int64) predicate.TagTranslation {
 	return predicate.TagTranslation(sql.FieldNotIn(FieldID, ids...))
 }
 
 // IDGT applies the GT predicate on the ID field.
-func IDGT(id uint64) predicate.TagTranslation {
+func IDGT(id int64) predicate.TagTranslation {
 	return predicate.TagTranslation(sql.FieldGT(FieldID, id))
 }
 
 // IDGTE applies the GTE predicate on the ID field.
-func IDGTE(id uint64) predicate.TagTranslation {
+func IDGTE(id int64) predicate.TagTranslation {
 	return predicate.TagTranslation(sql.FieldGTE(FieldID, id))
 }
 
 // IDLT applies the LT predicate on the ID field.
-func IDLT(id uint64) predicate.TagTranslation {
+func IDLT(id int64) predicate.TagTranslation {
 	return predicate.TagTranslation(sql.FieldLT(FieldID, id))
 }
 
 // IDLTE applies the LTE predicate on the ID field.
-func IDLTE(id uint64) predicate.TagTranslation {
+func IDLTE(id int64) predicate.TagTranslation {
 	return predicate.TagTranslation(sql.FieldLTE(FieldID, id))
 }
 
@@ -70,27 +70,27 @@ func DeletedAt(v time.Time) predicate.TagTranslation {
 }
 
 // CreatedBy applies equality check predicate on the "created_by" field. It's identical to CreatedByEQ.
-func CreatedBy(v uint64) predicate.TagTranslation {
+func CreatedBy(v int64) predicate.TagTranslation {
 	return predicate.TagTranslation(sql.FieldEQ(FieldCreatedBy, v))
 }
 
 // UpdatedBy applies equality check predicate on the "updated_by" field. It's identical to UpdatedByEQ.
-func UpdatedBy(v uint64) predicate.TagTranslation {
+func UpdatedBy(v int64) predicate.TagTranslation {
 	return predicate.TagTranslation(sql.FieldEQ(FieldUpdatedBy, v))
 }
 
 // DeletedBy applies equality check predicate on the "deleted_by" field. It's identical to DeletedByEQ.
-func DeletedBy(v uint64) predicate.TagTranslation {
+func DeletedBy(v int64) predicate.TagTranslation {
 	return predicate.TagTranslation(sql.FieldEQ(FieldDeletedBy, v))
 }
 
 // TenantID applies equality check predicate on the "tenant_id" field. It's identical to TenantIDEQ.
-func TenantID(v uint64) predicate.TagTranslation {
+func TenantID(v int64) predicate.TagTranslation {
 	return predicate.TagTranslation(sql.FieldEQ(FieldTenantID, v))
 }
 
 // TagID applies equality check predicate on the "tag_id" field. It's identical to TagIDEQ.
-func TagID(v uint64) predicate.TagTranslation {
+func TagID(v int64) predicate.TagTranslation {
 	return predicate.TagTranslation(sql.FieldEQ(FieldTagID, v))
 }
 
@@ -275,42 +275,42 @@ func DeletedAtNotNil() predicate.TagTranslation {
 }
 
 // CreatedByEQ applies the EQ predicate on the "created_by" field.
-func CreatedByEQ(v uint64) predicate.TagTranslation {
+func CreatedByEQ(v int64) predicate.TagTranslation {
 	return predicate.TagTranslation(sql.FieldEQ(FieldCreatedBy, v))
 }
 
 // CreatedByNEQ applies the NEQ predicate on the "created_by" field.
-func CreatedByNEQ(v uint64) predicate.TagTranslation {
+func CreatedByNEQ(v int64) predicate.TagTranslation {
 	return predicate.TagTranslation(sql.FieldNEQ(FieldCreatedBy, v))
 }
 
 // CreatedByIn applies the In predicate on the "created_by" field.
-func CreatedByIn(vs ...uint64) predicate.TagTranslation {
+func CreatedByIn(vs ...int64) predicate.TagTranslation {
 	return predicate.TagTranslation(sql.FieldIn(FieldCreatedBy, vs...))
 }
 
 // CreatedByNotIn applies the NotIn predicate on the "created_by" field.
-func CreatedByNotIn(vs ...uint64) predicate.TagTranslation {
+func CreatedByNotIn(vs ...int64) predicate.TagTranslation {
 	return predicate.TagTranslation(sql.FieldNotIn(FieldCreatedBy, vs...))
 }
 
 // CreatedByGT applies the GT predicate on the "created_by" field.
-func CreatedByGT(v uint64) predicate.TagTranslation {
+func CreatedByGT(v int64) predicate.TagTranslation {
 	return predicate.TagTranslation(sql.FieldGT(FieldCreatedBy, v))
 }
 
 // CreatedByGTE applies the GTE predicate on the "created_by" field.
-func CreatedByGTE(v uint64) predicate.TagTranslation {
+func CreatedByGTE(v int64) predicate.TagTranslation {
 	return predicate.TagTranslation(sql.FieldGTE(FieldCreatedBy, v))
 }
 
 // CreatedByLT applies the LT predicate on the "created_by" field.
-func CreatedByLT(v uint64) predicate.TagTranslation {
+func CreatedByLT(v int64) predicate.TagTranslation {
 	return predicate.TagTranslation(sql.FieldLT(FieldCreatedBy, v))
 }
 
 // CreatedByLTE applies the LTE predicate on the "created_by" field.
-func CreatedByLTE(v uint64) predicate.TagTranslation {
+func CreatedByLTE(v int64) predicate.TagTranslation {
 	return predicate.TagTranslation(sql.FieldLTE(FieldCreatedBy, v))
 }
 
@@ -325,42 +325,42 @@ func CreatedByNotNil() predicate.TagTranslation {
 }
 
 // UpdatedByEQ applies the EQ predicate on the "updated_by" field.
-func UpdatedByEQ(v uint64) predicate.TagTranslation {
+func UpdatedByEQ(v int64) predicate.TagTranslation {
 	return predicate.TagTranslation(sql.FieldEQ(FieldUpdatedBy, v))
 }
 
 // UpdatedByNEQ applies the NEQ predicate on the "updated_by" field.
-func UpdatedByNEQ(v uint64) predicate.TagTranslation {
+func UpdatedByNEQ(v int64) predicate.TagTranslation {
 	return predicate.TagTranslation(sql.FieldNEQ(FieldUpdatedBy, v))
 }
 
 // UpdatedByIn applies the In predicate on the "updated_by" field.
-func UpdatedByIn(vs ...uint64) predicate.TagTranslation {
+func UpdatedByIn(vs ...int64) predicate.TagTranslation {
 	return predicate.TagTranslation(sql.FieldIn(FieldUpdatedBy, vs...))
 }
 
 // UpdatedByNotIn applies the NotIn predicate on the "updated_by" field.
-func UpdatedByNotIn(vs ...uint64) predicate.TagTranslation {
+func UpdatedByNotIn(vs ...int64) predicate.TagTranslation {
 	return predicate.TagTranslation(sql.FieldNotIn(FieldUpdatedBy, vs...))
 }
 
 // UpdatedByGT applies the GT predicate on the "updated_by" field.
-func UpdatedByGT(v uint64) predicate.TagTranslation {
+func UpdatedByGT(v int64) predicate.TagTranslation {
 	return predicate.TagTranslation(sql.FieldGT(FieldUpdatedBy, v))
 }
 
 // UpdatedByGTE applies the GTE predicate on the "updated_by" field.
-func UpdatedByGTE(v uint64) predicate.TagTranslation {
+func UpdatedByGTE(v int64) predicate.TagTranslation {
 	return predicate.TagTranslation(sql.FieldGTE(FieldUpdatedBy, v))
 }
 
 // UpdatedByLT applies the LT predicate on the "updated_by" field.
-func UpdatedByLT(v uint64) predicate.TagTranslation {
+func UpdatedByLT(v int64) predicate.TagTranslation {
 	return predicate.TagTranslation(sql.FieldLT(FieldUpdatedBy, v))
 }
 
 // UpdatedByLTE applies the LTE predicate on the "updated_by" field.
-func UpdatedByLTE(v uint64) predicate.TagTranslation {
+func UpdatedByLTE(v int64) predicate.TagTranslation {
 	return predicate.TagTranslation(sql.FieldLTE(FieldUpdatedBy, v))
 }
 
@@ -375,42 +375,42 @@ func UpdatedByNotNil() predicate.TagTranslation {
 }
 
 // DeletedByEQ applies the EQ predicate on the "deleted_by" field.
-func DeletedByEQ(v uint64) predicate.TagTranslation {
+func DeletedByEQ(v int64) predicate.TagTranslation {
 	return predicate.TagTranslation(sql.FieldEQ(FieldDeletedBy, v))
 }
 
 // DeletedByNEQ applies the NEQ predicate on the "deleted_by" field.
-func DeletedByNEQ(v uint64) predicate.TagTranslation {
+func DeletedByNEQ(v int64) predicate.TagTranslation {
 	return predicate.TagTranslation(sql.FieldNEQ(FieldDeletedBy, v))
 }
 
 // DeletedByIn applies the In predicate on the "deleted_by" field.
-func DeletedByIn(vs ...uint64) predicate.TagTranslation {
+func DeletedByIn(vs ...int64) predicate.TagTranslation {
 	return predicate.TagTranslation(sql.FieldIn(FieldDeletedBy, vs...))
 }
 
 // DeletedByNotIn applies the NotIn predicate on the "deleted_by" field.
-func DeletedByNotIn(vs ...uint64) predicate.TagTranslation {
+func DeletedByNotIn(vs ...int64) predicate.TagTranslation {
 	return predicate.TagTranslation(sql.FieldNotIn(FieldDeletedBy, vs...))
 }
 
 // DeletedByGT applies the GT predicate on the "deleted_by" field.
-func DeletedByGT(v uint64) predicate.TagTranslation {
+func DeletedByGT(v int64) predicate.TagTranslation {
 	return predicate.TagTranslation(sql.FieldGT(FieldDeletedBy, v))
 }
 
 // DeletedByGTE applies the GTE predicate on the "deleted_by" field.
-func DeletedByGTE(v uint64) predicate.TagTranslation {
+func DeletedByGTE(v int64) predicate.TagTranslation {
 	return predicate.TagTranslation(sql.FieldGTE(FieldDeletedBy, v))
 }
 
 // DeletedByLT applies the LT predicate on the "deleted_by" field.
-func DeletedByLT(v uint64) predicate.TagTranslation {
+func DeletedByLT(v int64) predicate.TagTranslation {
 	return predicate.TagTranslation(sql.FieldLT(FieldDeletedBy, v))
 }
 
 // DeletedByLTE applies the LTE predicate on the "deleted_by" field.
-func DeletedByLTE(v uint64) predicate.TagTranslation {
+func DeletedByLTE(v int64) predicate.TagTranslation {
 	return predicate.TagTranslation(sql.FieldLTE(FieldDeletedBy, v))
 }
 
@@ -435,42 +435,42 @@ func SeoNotNil() predicate.TagTranslation {
 }
 
 // TenantIDEQ applies the EQ predicate on the "tenant_id" field.
-func TenantIDEQ(v uint64) predicate.TagTranslation {
+func TenantIDEQ(v int64) predicate.TagTranslation {
 	return predicate.TagTranslation(sql.FieldEQ(FieldTenantID, v))
 }
 
 // TenantIDNEQ applies the NEQ predicate on the "tenant_id" field.
-func TenantIDNEQ(v uint64) predicate.TagTranslation {
+func TenantIDNEQ(v int64) predicate.TagTranslation {
 	return predicate.TagTranslation(sql.FieldNEQ(FieldTenantID, v))
 }
 
 // TenantIDIn applies the In predicate on the "tenant_id" field.
-func TenantIDIn(vs ...uint64) predicate.TagTranslation {
+func TenantIDIn(vs ...int64) predicate.TagTranslation {
 	return predicate.TagTranslation(sql.FieldIn(FieldTenantID, vs...))
 }
 
 // TenantIDNotIn applies the NotIn predicate on the "tenant_id" field.
-func TenantIDNotIn(vs ...uint64) predicate.TagTranslation {
+func TenantIDNotIn(vs ...int64) predicate.TagTranslation {
 	return predicate.TagTranslation(sql.FieldNotIn(FieldTenantID, vs...))
 }
 
 // TenantIDGT applies the GT predicate on the "tenant_id" field.
-func TenantIDGT(v uint64) predicate.TagTranslation {
+func TenantIDGT(v int64) predicate.TagTranslation {
 	return predicate.TagTranslation(sql.FieldGT(FieldTenantID, v))
 }
 
 // TenantIDGTE applies the GTE predicate on the "tenant_id" field.
-func TenantIDGTE(v uint64) predicate.TagTranslation {
+func TenantIDGTE(v int64) predicate.TagTranslation {
 	return predicate.TagTranslation(sql.FieldGTE(FieldTenantID, v))
 }
 
 // TenantIDLT applies the LT predicate on the "tenant_id" field.
-func TenantIDLT(v uint64) predicate.TagTranslation {
+func TenantIDLT(v int64) predicate.TagTranslation {
 	return predicate.TagTranslation(sql.FieldLT(FieldTenantID, v))
 }
 
 // TenantIDLTE applies the LTE predicate on the "tenant_id" field.
-func TenantIDLTE(v uint64) predicate.TagTranslation {
+func TenantIDLTE(v int64) predicate.TagTranslation {
 	return predicate.TagTranslation(sql.FieldLTE(FieldTenantID, v))
 }
 
@@ -485,42 +485,42 @@ func TenantIDNotNil() predicate.TagTranslation {
 }
 
 // TagIDEQ applies the EQ predicate on the "tag_id" field.
-func TagIDEQ(v uint64) predicate.TagTranslation {
+func TagIDEQ(v int64) predicate.TagTranslation {
 	return predicate.TagTranslation(sql.FieldEQ(FieldTagID, v))
 }
 
 // TagIDNEQ applies the NEQ predicate on the "tag_id" field.
-func TagIDNEQ(v uint64) predicate.TagTranslation {
+func TagIDNEQ(v int64) predicate.TagTranslation {
 	return predicate.TagTranslation(sql.FieldNEQ(FieldTagID, v))
 }
 
 // TagIDIn applies the In predicate on the "tag_id" field.
-func TagIDIn(vs ...uint64) predicate.TagTranslation {
+func TagIDIn(vs ...int64) predicate.TagTranslation {
 	return predicate.TagTranslation(sql.FieldIn(FieldTagID, vs...))
 }
 
 // TagIDNotIn applies the NotIn predicate on the "tag_id" field.
-func TagIDNotIn(vs ...uint64) predicate.TagTranslation {
+func TagIDNotIn(vs ...int64) predicate.TagTranslation {
 	return predicate.TagTranslation(sql.FieldNotIn(FieldTagID, vs...))
 }
 
 // TagIDGT applies the GT predicate on the "tag_id" field.
-func TagIDGT(v uint64) predicate.TagTranslation {
+func TagIDGT(v int64) predicate.TagTranslation {
 	return predicate.TagTranslation(sql.FieldGT(FieldTagID, v))
 }
 
 // TagIDGTE applies the GTE predicate on the "tag_id" field.
-func TagIDGTE(v uint64) predicate.TagTranslation {
+func TagIDGTE(v int64) predicate.TagTranslation {
 	return predicate.TagTranslation(sql.FieldGTE(FieldTagID, v))
 }
 
 // TagIDLT applies the LT predicate on the "tag_id" field.
-func TagIDLT(v uint64) predicate.TagTranslation {
+func TagIDLT(v int64) predicate.TagTranslation {
 	return predicate.TagTranslation(sql.FieldLT(FieldTagID, v))
 }
 
 // TagIDLTE applies the LTE predicate on the "tag_id" field.
-func TagIDLTE(v uint64) predicate.TagTranslation {
+func TagIDLTE(v int64) predicate.TagTranslation {
 	return predicate.TagTranslation(sql.FieldLTE(FieldTagID, v))
 }
 

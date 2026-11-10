@@ -29,8 +29,8 @@ const (
 
 // mfaChallengePayload 挑战凭据承载的半登录态（通过校验后据此重走授权签发令牌）。
 type mfaChallengePayload struct {
-	UserID     uint64 `json:"uid"`
-	TenantID   uint64 `json:"tid"`
+	UserID     int64  `json:"uid"`
+	TenantID   int64  `json:"tid"`
 	Username   string `json:"username"`
 	ClientID   string `json:"client_id,omitempty"`
 	DeviceID   string `json:"device_id,omitempty"`

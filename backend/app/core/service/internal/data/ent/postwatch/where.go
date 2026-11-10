@@ -10,47 +10,47 @@ import (
 )
 
 // ID filters vertices based on their ID field.
-func ID(id uint64) predicate.PostWatch {
+func ID(id int64) predicate.PostWatch {
 	return predicate.PostWatch(sql.FieldEQ(FieldID, id))
 }
 
 // IDEQ applies the EQ predicate on the ID field.
-func IDEQ(id uint64) predicate.PostWatch {
+func IDEQ(id int64) predicate.PostWatch {
 	return predicate.PostWatch(sql.FieldEQ(FieldID, id))
 }
 
 // IDNEQ applies the NEQ predicate on the ID field.
-func IDNEQ(id uint64) predicate.PostWatch {
+func IDNEQ(id int64) predicate.PostWatch {
 	return predicate.PostWatch(sql.FieldNEQ(FieldID, id))
 }
 
 // IDIn applies the In predicate on the ID field.
-func IDIn(ids ...uint64) predicate.PostWatch {
+func IDIn(ids ...int64) predicate.PostWatch {
 	return predicate.PostWatch(sql.FieldIn(FieldID, ids...))
 }
 
 // IDNotIn applies the NotIn predicate on the ID field.
-func IDNotIn(ids ...uint64) predicate.PostWatch {
+func IDNotIn(ids ...int64) predicate.PostWatch {
 	return predicate.PostWatch(sql.FieldNotIn(FieldID, ids...))
 }
 
 // IDGT applies the GT predicate on the ID field.
-func IDGT(id uint64) predicate.PostWatch {
+func IDGT(id int64) predicate.PostWatch {
 	return predicate.PostWatch(sql.FieldGT(FieldID, id))
 }
 
 // IDGTE applies the GTE predicate on the ID field.
-func IDGTE(id uint64) predicate.PostWatch {
+func IDGTE(id int64) predicate.PostWatch {
 	return predicate.PostWatch(sql.FieldGTE(FieldID, id))
 }
 
 // IDLT applies the LT predicate on the ID field.
-func IDLT(id uint64) predicate.PostWatch {
+func IDLT(id int64) predicate.PostWatch {
 	return predicate.PostWatch(sql.FieldLT(FieldID, id))
 }
 
 // IDLTE applies the LTE predicate on the ID field.
-func IDLTE(id uint64) predicate.PostWatch {
+func IDLTE(id int64) predicate.PostWatch {
 	return predicate.PostWatch(sql.FieldLTE(FieldID, id))
 }
 
@@ -70,17 +70,17 @@ func DeletedAt(v time.Time) predicate.PostWatch {
 }
 
 // TenantID applies equality check predicate on the "tenant_id" field. It's identical to TenantIDEQ.
-func TenantID(v uint64) predicate.PostWatch {
+func TenantID(v int64) predicate.PostWatch {
 	return predicate.PostWatch(sql.FieldEQ(FieldTenantID, v))
 }
 
 // UserID applies equality check predicate on the "user_id" field. It's identical to UserIDEQ.
-func UserID(v uint64) predicate.PostWatch {
+func UserID(v int64) predicate.PostWatch {
 	return predicate.PostWatch(sql.FieldEQ(FieldUserID, v))
 }
 
 // PostID applies equality check predicate on the "post_id" field. It's identical to PostIDEQ.
-func PostID(v uint64) predicate.PostWatch {
+func PostID(v int64) predicate.PostWatch {
 	return predicate.PostWatch(sql.FieldEQ(FieldPostID, v))
 }
 
@@ -235,42 +235,42 @@ func DeletedAtNotNil() predicate.PostWatch {
 }
 
 // TenantIDEQ applies the EQ predicate on the "tenant_id" field.
-func TenantIDEQ(v uint64) predicate.PostWatch {
+func TenantIDEQ(v int64) predicate.PostWatch {
 	return predicate.PostWatch(sql.FieldEQ(FieldTenantID, v))
 }
 
 // TenantIDNEQ applies the NEQ predicate on the "tenant_id" field.
-func TenantIDNEQ(v uint64) predicate.PostWatch {
+func TenantIDNEQ(v int64) predicate.PostWatch {
 	return predicate.PostWatch(sql.FieldNEQ(FieldTenantID, v))
 }
 
 // TenantIDIn applies the In predicate on the "tenant_id" field.
-func TenantIDIn(vs ...uint64) predicate.PostWatch {
+func TenantIDIn(vs ...int64) predicate.PostWatch {
 	return predicate.PostWatch(sql.FieldIn(FieldTenantID, vs...))
 }
 
 // TenantIDNotIn applies the NotIn predicate on the "tenant_id" field.
-func TenantIDNotIn(vs ...uint64) predicate.PostWatch {
+func TenantIDNotIn(vs ...int64) predicate.PostWatch {
 	return predicate.PostWatch(sql.FieldNotIn(FieldTenantID, vs...))
 }
 
 // TenantIDGT applies the GT predicate on the "tenant_id" field.
-func TenantIDGT(v uint64) predicate.PostWatch {
+func TenantIDGT(v int64) predicate.PostWatch {
 	return predicate.PostWatch(sql.FieldGT(FieldTenantID, v))
 }
 
 // TenantIDGTE applies the GTE predicate on the "tenant_id" field.
-func TenantIDGTE(v uint64) predicate.PostWatch {
+func TenantIDGTE(v int64) predicate.PostWatch {
 	return predicate.PostWatch(sql.FieldGTE(FieldTenantID, v))
 }
 
 // TenantIDLT applies the LT predicate on the "tenant_id" field.
-func TenantIDLT(v uint64) predicate.PostWatch {
+func TenantIDLT(v int64) predicate.PostWatch {
 	return predicate.PostWatch(sql.FieldLT(FieldTenantID, v))
 }
 
 // TenantIDLTE applies the LTE predicate on the "tenant_id" field.
-func TenantIDLTE(v uint64) predicate.PostWatch {
+func TenantIDLTE(v int64) predicate.PostWatch {
 	return predicate.PostWatch(sql.FieldLTE(FieldTenantID, v))
 }
 
@@ -285,42 +285,42 @@ func TenantIDNotNil() predicate.PostWatch {
 }
 
 // UserIDEQ applies the EQ predicate on the "user_id" field.
-func UserIDEQ(v uint64) predicate.PostWatch {
+func UserIDEQ(v int64) predicate.PostWatch {
 	return predicate.PostWatch(sql.FieldEQ(FieldUserID, v))
 }
 
 // UserIDNEQ applies the NEQ predicate on the "user_id" field.
-func UserIDNEQ(v uint64) predicate.PostWatch {
+func UserIDNEQ(v int64) predicate.PostWatch {
 	return predicate.PostWatch(sql.FieldNEQ(FieldUserID, v))
 }
 
 // UserIDIn applies the In predicate on the "user_id" field.
-func UserIDIn(vs ...uint64) predicate.PostWatch {
+func UserIDIn(vs ...int64) predicate.PostWatch {
 	return predicate.PostWatch(sql.FieldIn(FieldUserID, vs...))
 }
 
 // UserIDNotIn applies the NotIn predicate on the "user_id" field.
-func UserIDNotIn(vs ...uint64) predicate.PostWatch {
+func UserIDNotIn(vs ...int64) predicate.PostWatch {
 	return predicate.PostWatch(sql.FieldNotIn(FieldUserID, vs...))
 }
 
 // UserIDGT applies the GT predicate on the "user_id" field.
-func UserIDGT(v uint64) predicate.PostWatch {
+func UserIDGT(v int64) predicate.PostWatch {
 	return predicate.PostWatch(sql.FieldGT(FieldUserID, v))
 }
 
 // UserIDGTE applies the GTE predicate on the "user_id" field.
-func UserIDGTE(v uint64) predicate.PostWatch {
+func UserIDGTE(v int64) predicate.PostWatch {
 	return predicate.PostWatch(sql.FieldGTE(FieldUserID, v))
 }
 
 // UserIDLT applies the LT predicate on the "user_id" field.
-func UserIDLT(v uint64) predicate.PostWatch {
+func UserIDLT(v int64) predicate.PostWatch {
 	return predicate.PostWatch(sql.FieldLT(FieldUserID, v))
 }
 
 // UserIDLTE applies the LTE predicate on the "user_id" field.
-func UserIDLTE(v uint64) predicate.PostWatch {
+func UserIDLTE(v int64) predicate.PostWatch {
 	return predicate.PostWatch(sql.FieldLTE(FieldUserID, v))
 }
 
@@ -335,42 +335,42 @@ func UserIDNotNil() predicate.PostWatch {
 }
 
 // PostIDEQ applies the EQ predicate on the "post_id" field.
-func PostIDEQ(v uint64) predicate.PostWatch {
+func PostIDEQ(v int64) predicate.PostWatch {
 	return predicate.PostWatch(sql.FieldEQ(FieldPostID, v))
 }
 
 // PostIDNEQ applies the NEQ predicate on the "post_id" field.
-func PostIDNEQ(v uint64) predicate.PostWatch {
+func PostIDNEQ(v int64) predicate.PostWatch {
 	return predicate.PostWatch(sql.FieldNEQ(FieldPostID, v))
 }
 
 // PostIDIn applies the In predicate on the "post_id" field.
-func PostIDIn(vs ...uint64) predicate.PostWatch {
+func PostIDIn(vs ...int64) predicate.PostWatch {
 	return predicate.PostWatch(sql.FieldIn(FieldPostID, vs...))
 }
 
 // PostIDNotIn applies the NotIn predicate on the "post_id" field.
-func PostIDNotIn(vs ...uint64) predicate.PostWatch {
+func PostIDNotIn(vs ...int64) predicate.PostWatch {
 	return predicate.PostWatch(sql.FieldNotIn(FieldPostID, vs...))
 }
 
 // PostIDGT applies the GT predicate on the "post_id" field.
-func PostIDGT(v uint64) predicate.PostWatch {
+func PostIDGT(v int64) predicate.PostWatch {
 	return predicate.PostWatch(sql.FieldGT(FieldPostID, v))
 }
 
 // PostIDGTE applies the GTE predicate on the "post_id" field.
-func PostIDGTE(v uint64) predicate.PostWatch {
+func PostIDGTE(v int64) predicate.PostWatch {
 	return predicate.PostWatch(sql.FieldGTE(FieldPostID, v))
 }
 
 // PostIDLT applies the LT predicate on the "post_id" field.
-func PostIDLT(v uint64) predicate.PostWatch {
+func PostIDLT(v int64) predicate.PostWatch {
 	return predicate.PostWatch(sql.FieldLT(FieldPostID, v))
 }
 
 // PostIDLTE applies the LTE predicate on the "post_id" field.
-func PostIDLTE(v uint64) predicate.PostWatch {
+func PostIDLTE(v int64) predicate.PostWatch {
 	return predicate.PostWatch(sql.FieldLTE(FieldPostID, v))
 }
 

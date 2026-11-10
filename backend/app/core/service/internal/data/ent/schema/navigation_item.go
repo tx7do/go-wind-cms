@@ -43,7 +43,7 @@ func (NavigationItem) Fields() []ent.Field {
 			Optional().
 			Nillable(),
 
-		field.Uint64("navigation_id").
+		field.Int64("navigation_id").
 			Comment("所属导航菜单ID").
 			Optional().
 			Nillable(),
@@ -58,7 +58,7 @@ func (NavigationItem) Fields() []ent.Field {
 			Optional().
 			Nillable(),
 
-		field.Uint64("object_id").
+		field.Int64("object_id").
 			Comment("关联对象ID").
 			Optional().
 			Nillable(),
@@ -100,7 +100,7 @@ func (NavigationItem) Mixin() []ent.Mixin {
 		mixin.OperatorID64{},
 		mixin.SortOrder{},
 		mixin.Tree64[NavigationItem]{},
-		mixin.TenantID[uint64]{},
+		mixin.TenantID[int64]{},
 	}
 }
 

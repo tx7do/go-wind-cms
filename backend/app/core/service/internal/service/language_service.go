@@ -61,7 +61,7 @@ func (s *LanguageService) Count(ctx context.Context, req *paginationV1.PagingReq
 	}
 
 	return &dictV1.CountLanguageResponse{
-		Count: uint64(count),
+		Count: int64(count),
 	}, nil
 }
 

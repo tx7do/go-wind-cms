@@ -162,11 +162,11 @@ func (SocialDistribution_Status) EnumDescriptor() ([]byte, []int) {
 // 分发汇总指标
 type SocialDistributionSummary struct {
 	state               protoimpl.MessageState `protogen:"open.v1"`
-	TotalPublished      *uint64                `protobuf:"varint,1,opt,name=total_published,json=totalPublished,proto3,oneof" json:"total_published,omitempty"`                 // 已发布总数
-	TotalLikes          *uint64                `protobuf:"varint,2,opt,name=total_likes,json=totalLikes,proto3,oneof" json:"total_likes,omitempty"`                             // 累计点赞
-	TotalReplies        *uint64                `protobuf:"varint,3,opt,name=total_replies,json=totalReplies,proto3,oneof" json:"total_replies,omitempty"`                       // 累计回复
-	TotalReposts        *uint64                `protobuf:"varint,4,opt,name=total_reposts,json=totalReposts,proto3,oneof" json:"total_reposts,omitempty"`                       // 累计转发
-	PublishedLast_7Days *uint64                `protobuf:"varint,5,opt,name=published_last_7_days,json=publishedLast7Days,proto3,oneof" json:"published_last_7_days,omitempty"` // 近 7 天发布数
+	TotalPublished      *int64                 `protobuf:"varint,1,opt,name=total_published,json=totalPublished,proto3,oneof" json:"total_published,omitempty"`                 // 已发布总数
+	TotalLikes          *int64                 `protobuf:"varint,2,opt,name=total_likes,json=totalLikes,proto3,oneof" json:"total_likes,omitempty"`                             // 累计点赞
+	TotalReplies        *int64                 `protobuf:"varint,3,opt,name=total_replies,json=totalReplies,proto3,oneof" json:"total_replies,omitempty"`                       // 累计回复
+	TotalReposts        *int64                 `protobuf:"varint,4,opt,name=total_reposts,json=totalReposts,proto3,oneof" json:"total_reposts,omitempty"`                       // 累计转发
+	PublishedLast_7Days *int64                 `protobuf:"varint,5,opt,name=published_last_7_days,json=publishedLast7Days,proto3,oneof" json:"published_last_7_days,omitempty"` // 近 7 天发布数
 	unknownFields       protoimpl.UnknownFields
 	sizeCache           protoimpl.SizeCache
 }
@@ -201,35 +201,35 @@ func (*SocialDistributionSummary) Descriptor() ([]byte, []int) {
 	return file_social_service_v1_social_proto_rawDescGZIP(), []int{0}
 }
 
-func (x *SocialDistributionSummary) GetTotalPublished() uint64 {
+func (x *SocialDistributionSummary) GetTotalPublished() int64 {
 	if x != nil && x.TotalPublished != nil {
 		return *x.TotalPublished
 	}
 	return 0
 }
 
-func (x *SocialDistributionSummary) GetTotalLikes() uint64 {
+func (x *SocialDistributionSummary) GetTotalLikes() int64 {
 	if x != nil && x.TotalLikes != nil {
 		return *x.TotalLikes
 	}
 	return 0
 }
 
-func (x *SocialDistributionSummary) GetTotalReplies() uint64 {
+func (x *SocialDistributionSummary) GetTotalReplies() int64 {
 	if x != nil && x.TotalReplies != nil {
 		return *x.TotalReplies
 	}
 	return 0
 }
 
-func (x *SocialDistributionSummary) GetTotalReposts() uint64 {
+func (x *SocialDistributionSummary) GetTotalReposts() int64 {
 	if x != nil && x.TotalReposts != nil {
 		return *x.TotalReposts
 	}
 	return 0
 }
 
-func (x *SocialDistributionSummary) GetPublishedLast_7Days() uint64 {
+func (x *SocialDistributionSummary) GetPublishedLast_7Days() int64 {
 	if x != nil && x.PublishedLast_7Days != nil {
 		return *x.PublishedLast_7Days
 	}
@@ -308,7 +308,7 @@ func (x *SocialStatsHistoryPoint) GetReposts() uint32 {
 // 请求 - 统计历史
 type ListSocialDistributionStatsHistoryRequest struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
-	Id            uint64                 `protobuf:"varint,1,opt,name=id,proto3" json:"id,omitempty"`             // 分发记录ID
+	Id            int64                  `protobuf:"varint,1,opt,name=id,proto3" json:"id,omitempty"`             // 分发记录ID
 	Limit         *uint32                `protobuf:"varint,2,opt,name=limit,proto3,oneof" json:"limit,omitempty"` // 点数上限
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
@@ -344,7 +344,7 @@ func (*ListSocialDistributionStatsHistoryRequest) Descriptor() ([]byte, []int) {
 	return file_social_service_v1_social_proto_rawDescGZIP(), []int{2}
 }
 
-func (x *ListSocialDistributionStatsHistoryRequest) GetId() uint64 {
+func (x *ListSocialDistributionStatsHistoryRequest) GetId() int64 {
 	if x != nil {
 		return x.Id
 	}
@@ -406,7 +406,7 @@ func (x *ListSocialDistributionStatsHistoryResponse) GetItems() []*SocialStatsHi
 // 社交账号
 type SocialAccount struct {
 	state          protoimpl.MessageState `protogen:"open.v1"`
-	Id             *uint64                `protobuf:"varint,1,opt,name=id,proto3,oneof" json:"id,omitempty"`                                              // 账号ID
+	Id             *int64                 `protobuf:"varint,1,opt,name=id,proto3,oneof" json:"id,omitempty"`                                              // 账号ID
 	Platform       *Platform              `protobuf:"varint,2,opt,name=platform,proto3,enum=social.service.v1.Platform,oneof" json:"platform,omitempty"`  // 社交平台
 	Name           *string                `protobuf:"bytes,3,opt,name=name,proto3,oneof" json:"name,omitempty"`                                           // 账号显示名称
 	Handle         *string                `protobuf:"bytes,4,opt,name=handle,proto3,oneof" json:"handle,omitempty"`                                       // 平台内账号标识
@@ -414,9 +414,9 @@ type SocialAccount struct {
 	CredentialHint *string                `protobuf:"bytes,6,opt,name=credential_hint,json=credentialHint,proto3,oneof" json:"credential_hint,omitempty"` // 凭据脱敏提示
 	IsEnabled      *bool                  `protobuf:"varint,7,opt,name=is_enabled,json=isEnabled,proto3,oneof" json:"is_enabled,omitempty"`               // 是否启用
 	Remark         *string                `protobuf:"bytes,8,opt,name=remark,proto3,oneof" json:"remark,omitempty"`                                       // 备注
-	CreatedBy      *uint64                `protobuf:"varint,100,opt,name=created_by,json=createdBy,proto3,oneof" json:"created_by,omitempty"`             // 创建者用户ID
-	UpdatedBy      *uint64                `protobuf:"varint,101,opt,name=updated_by,json=updatedBy,proto3,oneof" json:"updated_by,omitempty"`             // 更新者用户ID
-	DeletedBy      *uint64                `protobuf:"varint,102,opt,name=deleted_by,json=deletedBy,proto3,oneof" json:"deleted_by,omitempty"`             // 删除者用户ID
+	CreatedBy      *int64                 `protobuf:"varint,100,opt,name=created_by,json=createdBy,proto3,oneof" json:"created_by,omitempty"`             // 创建者用户ID
+	UpdatedBy      *int64                 `protobuf:"varint,101,opt,name=updated_by,json=updatedBy,proto3,oneof" json:"updated_by,omitempty"`             // 更新者用户ID
+	DeletedBy      *int64                 `protobuf:"varint,102,opt,name=deleted_by,json=deletedBy,proto3,oneof" json:"deleted_by,omitempty"`             // 删除者用户ID
 	CreatedAt      *timestamppb.Timestamp `protobuf:"bytes,200,opt,name=created_at,json=createdAt,proto3,oneof" json:"created_at,omitempty"`              // 创建时间
 	UpdatedAt      *timestamppb.Timestamp `protobuf:"bytes,201,opt,name=updated_at,json=updatedAt,proto3,oneof" json:"updated_at,omitempty"`              // 更新时间
 	DeletedAt      *timestamppb.Timestamp `protobuf:"bytes,202,opt,name=deleted_at,json=deletedAt,proto3,oneof" json:"deleted_at,omitempty"`              // 删除时间
@@ -454,7 +454,7 @@ func (*SocialAccount) Descriptor() ([]byte, []int) {
 	return file_social_service_v1_social_proto_rawDescGZIP(), []int{4}
 }
 
-func (x *SocialAccount) GetId() uint64 {
+func (x *SocialAccount) GetId() int64 {
 	if x != nil && x.Id != nil {
 		return *x.Id
 	}
@@ -510,21 +510,21 @@ func (x *SocialAccount) GetRemark() string {
 	return ""
 }
 
-func (x *SocialAccount) GetCreatedBy() uint64 {
+func (x *SocialAccount) GetCreatedBy() int64 {
 	if x != nil && x.CreatedBy != nil {
 		return *x.CreatedBy
 	}
 	return 0
 }
 
-func (x *SocialAccount) GetUpdatedBy() uint64 {
+func (x *SocialAccount) GetUpdatedBy() int64 {
 	if x != nil && x.UpdatedBy != nil {
 		return *x.UpdatedBy
 	}
 	return 0
 }
 
-func (x *SocialAccount) GetDeletedBy() uint64 {
+func (x *SocialAccount) GetDeletedBy() int64 {
 	if x != nil && x.DeletedBy != nil {
 		return *x.DeletedBy
 	}
@@ -555,11 +555,11 @@ func (x *SocialAccount) GetDeletedAt() *timestamppb.Timestamp {
 // 内容分发记录
 type SocialDistribution struct {
 	state         protoimpl.MessageState     `protogen:"open.v1"`
-	Id            *uint64                    `protobuf:"varint,1,opt,name=id,proto3,oneof" json:"id,omitempty"`                                                          // 分发记录ID
+	Id            *int64                     `protobuf:"varint,1,opt,name=id,proto3,oneof" json:"id,omitempty"`                                                          // 分发记录ID
 	Platform      *Platform                  `protobuf:"varint,2,opt,name=platform,proto3,enum=social.service.v1.Platform,oneof" json:"platform,omitempty"`              // 社交平台
-	AccountId     *uint64                    `protobuf:"varint,3,opt,name=account_id,json=accountId,proto3,oneof" json:"account_id,omitempty"`                           // 使用的社交账号ID
+	AccountId     *int64                     `protobuf:"varint,3,opt,name=account_id,json=accountId,proto3,oneof" json:"account_id,omitempty"`                           // 使用的社交账号ID
 	AccountName   *string                    `protobuf:"bytes,4,opt,name=account_name,json=accountName,proto3,oneof" json:"account_name,omitempty"`                      // 社交账号显示名称（展示字段）
-	PostId        *uint64                    `protobuf:"varint,5,opt,name=post_id,json=postId,proto3,oneof" json:"post_id,omitempty"`                                    // 关联的 CMS 文章ID
+	PostId        *int64                     `protobuf:"varint,5,opt,name=post_id,json=postId,proto3,oneof" json:"post_id,omitempty"`                                    // 关联的 CMS 文章ID
 	PostTitle     *string                    `protobuf:"bytes,6,opt,name=post_title,json=postTitle,proto3,oneof" json:"post_title,omitempty"`                            // 关联文章标题（展示字段）
 	OverrideText  *string                    `protobuf:"bytes,7,opt,name=override_text,json=overrideText,proto3,oneof" json:"override_text,omitempty"`                   // 按平台覆盖的发布文案
 	Status        *SocialDistribution_Status `protobuf:"varint,8,opt,name=status,proto3,enum=social.service.v1.SocialDistribution_Status,oneof" json:"status,omitempty"` // 分发状态
@@ -569,14 +569,14 @@ type SocialDistribution struct {
 	ExternalId    *string                    `protobuf:"bytes,12,opt,name=external_id,json=externalId,proto3,oneof" json:"external_id,omitempty"`                        // 平台侧帖子 ID
 	ErrorMessage  *string                    `protobuf:"bytes,13,opt,name=error_message,json=errorMessage,proto3,oneof" json:"error_message,omitempty"`                  // 最近一次发布失败的原因
 	Title         *string                    `protobuf:"bytes,14,opt,name=title,proto3,oneof" json:"title,omitempty"`                                                    // 平台文章标题
-	MediaIds      []uint64                   `protobuf:"varint,15,rep,packed,name=media_ids,json=mediaIds,proto3" json:"media_ids,omitempty"`                            // 配图媒体资产ID列表
+	MediaIds      []int64                    `protobuf:"varint,15,rep,packed,name=media_ids,json=mediaIds,proto3" json:"media_ids,omitempty"`                            // 配图媒体资产ID列表
 	Likes         *uint32                    `protobuf:"varint,20,opt,name=likes,proto3,oneof" json:"likes,omitempty"`                                                   // 点赞数（回拉快照）
 	Replies       *uint32                    `protobuf:"varint,21,opt,name=replies,proto3,oneof" json:"replies,omitempty"`                                               // 回复数（回拉快照）
 	Reposts       *uint32                    `protobuf:"varint,22,opt,name=reposts,proto3,oneof" json:"reposts,omitempty"`                                               // 转发数（回拉快照）
 	StatsSyncedAt *timestamppb.Timestamp     `protobuf:"bytes,23,opt,name=stats_synced_at,json=statsSyncedAt,proto3,oneof" json:"stats_synced_at,omitempty"`             // 统计回拉时间
-	CreatedBy     *uint64                    `protobuf:"varint,100,opt,name=created_by,json=createdBy,proto3,oneof" json:"created_by,omitempty"`                         // 创建者用户ID
-	UpdatedBy     *uint64                    `protobuf:"varint,101,opt,name=updated_by,json=updatedBy,proto3,oneof" json:"updated_by,omitempty"`                         // 更新者用户ID
-	DeletedBy     *uint64                    `protobuf:"varint,102,opt,name=deleted_by,json=deletedBy,proto3,oneof" json:"deleted_by,omitempty"`                         // 删除者用户ID
+	CreatedBy     *int64                     `protobuf:"varint,100,opt,name=created_by,json=createdBy,proto3,oneof" json:"created_by,omitempty"`                         // 创建者用户ID
+	UpdatedBy     *int64                     `protobuf:"varint,101,opt,name=updated_by,json=updatedBy,proto3,oneof" json:"updated_by,omitempty"`                         // 更新者用户ID
+	DeletedBy     *int64                     `protobuf:"varint,102,opt,name=deleted_by,json=deletedBy,proto3,oneof" json:"deleted_by,omitempty"`                         // 删除者用户ID
 	CreatedAt     *timestamppb.Timestamp     `protobuf:"bytes,200,opt,name=created_at,json=createdAt,proto3,oneof" json:"created_at,omitempty"`                          // 创建时间
 	UpdatedAt     *timestamppb.Timestamp     `protobuf:"bytes,201,opt,name=updated_at,json=updatedAt,proto3,oneof" json:"updated_at,omitempty"`                          // 更新时间
 	DeletedAt     *timestamppb.Timestamp     `protobuf:"bytes,202,opt,name=deleted_at,json=deletedAt,proto3,oneof" json:"deleted_at,omitempty"`                          // 删除时间
@@ -614,7 +614,7 @@ func (*SocialDistribution) Descriptor() ([]byte, []int) {
 	return file_social_service_v1_social_proto_rawDescGZIP(), []int{5}
 }
 
-func (x *SocialDistribution) GetId() uint64 {
+func (x *SocialDistribution) GetId() int64 {
 	if x != nil && x.Id != nil {
 		return *x.Id
 	}
@@ -628,7 +628,7 @@ func (x *SocialDistribution) GetPlatform() Platform {
 	return Platform_PLATFORM_UNSPECIFIED
 }
 
-func (x *SocialDistribution) GetAccountId() uint64 {
+func (x *SocialDistribution) GetAccountId() int64 {
 	if x != nil && x.AccountId != nil {
 		return *x.AccountId
 	}
@@ -642,7 +642,7 @@ func (x *SocialDistribution) GetAccountName() string {
 	return ""
 }
 
-func (x *SocialDistribution) GetPostId() uint64 {
+func (x *SocialDistribution) GetPostId() int64 {
 	if x != nil && x.PostId != nil {
 		return *x.PostId
 	}
@@ -712,7 +712,7 @@ func (x *SocialDistribution) GetTitle() string {
 	return ""
 }
 
-func (x *SocialDistribution) GetMediaIds() []uint64 {
+func (x *SocialDistribution) GetMediaIds() []int64 {
 	if x != nil {
 		return x.MediaIds
 	}
@@ -747,21 +747,21 @@ func (x *SocialDistribution) GetStatsSyncedAt() *timestamppb.Timestamp {
 	return nil
 }
 
-func (x *SocialDistribution) GetCreatedBy() uint64 {
+func (x *SocialDistribution) GetCreatedBy() int64 {
 	if x != nil && x.CreatedBy != nil {
 		return *x.CreatedBy
 	}
 	return 0
 }
 
-func (x *SocialDistribution) GetUpdatedBy() uint64 {
+func (x *SocialDistribution) GetUpdatedBy() int64 {
 	if x != nil && x.UpdatedBy != nil {
 		return *x.UpdatedBy
 	}
 	return 0
 }
 
-func (x *SocialDistribution) GetDeletedBy() uint64 {
+func (x *SocialDistribution) GetDeletedBy() int64 {
 	if x != nil && x.DeletedBy != nil {
 		return *x.DeletedBy
 	}
@@ -793,7 +793,7 @@ func (x *SocialDistribution) GetDeletedAt() *timestamppb.Timestamp {
 type ListSocialAccountsResponse struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
 	Items         []*SocialAccount       `protobuf:"bytes,1,rep,name=items,proto3" json:"items,omitempty"`
-	Total         uint64                 `protobuf:"varint,2,opt,name=total,proto3" json:"total,omitempty"`
+	Total         int64                  `protobuf:"varint,2,opt,name=total,proto3" json:"total,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -835,7 +835,7 @@ func (x *ListSocialAccountsResponse) GetItems() []*SocialAccount {
 	return nil
 }
 
-func (x *ListSocialAccountsResponse) GetTotal() uint64 {
+func (x *ListSocialAccountsResponse) GetTotal() int64 {
 	if x != nil {
 		return x.Total
 	}
@@ -845,7 +845,7 @@ func (x *ListSocialAccountsResponse) GetTotal() uint64 {
 // 请求 - 社交账号数据
 type GetSocialAccountRequest struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
-	Id            uint64                 `protobuf:"varint,1,opt,name=id,proto3" json:"id,omitempty"`
+	Id            int64                  `protobuf:"varint,1,opt,name=id,proto3" json:"id,omitempty"`
 	ViewMask      *fieldmaskpb.FieldMask `protobuf:"bytes,100,opt,name=view_mask,json=viewMask,proto3,oneof" json:"view_mask,omitempty"` // 视图字段过滤器
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
@@ -881,7 +881,7 @@ func (*GetSocialAccountRequest) Descriptor() ([]byte, []int) {
 	return file_social_service_v1_social_proto_rawDescGZIP(), []int{7}
 }
 
-func (x *GetSocialAccountRequest) GetId() uint64 {
+func (x *GetSocialAccountRequest) GetId() int64 {
 	if x != nil {
 		return x.Id
 	}
@@ -943,7 +943,7 @@ func (x *CreateSocialAccountRequest) GetData() *SocialAccount {
 // 请求 - 更新社交账号
 type UpdateSocialAccountRequest struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
-	Id            uint64                 `protobuf:"varint,1,opt,name=id,proto3" json:"id,omitempty"`
+	Id            int64                  `protobuf:"varint,1,opt,name=id,proto3" json:"id,omitempty"`
 	Data          *SocialAccount         `protobuf:"bytes,2,opt,name=data,proto3" json:"data,omitempty"`
 	UpdateMask    *fieldmaskpb.FieldMask `protobuf:"bytes,3,opt,name=update_mask,json=updateMask,proto3" json:"update_mask,omitempty"`              // 要更新的字段列表
 	AllowMissing  *bool                  `protobuf:"varint,4,opt,name=allow_missing,json=allowMissing,proto3,oneof" json:"allow_missing,omitempty"` // 资源不存在则新增
@@ -981,7 +981,7 @@ func (*UpdateSocialAccountRequest) Descriptor() ([]byte, []int) {
 	return file_social_service_v1_social_proto_rawDescGZIP(), []int{9}
 }
 
-func (x *UpdateSocialAccountRequest) GetId() uint64 {
+func (x *UpdateSocialAccountRequest) GetId() int64 {
 	if x != nil {
 		return x.Id
 	}
@@ -1057,7 +1057,7 @@ func (x *DeleteSocialAccountRequest) GetQueryBy() isDeleteSocialAccountRequest_Q
 	return nil
 }
 
-func (x *DeleteSocialAccountRequest) GetId() uint64 {
+func (x *DeleteSocialAccountRequest) GetId() int64 {
 	if x != nil {
 		if x, ok := x.QueryBy.(*DeleteSocialAccountRequest_Id); ok {
 			return x.Id
@@ -1071,7 +1071,7 @@ type isDeleteSocialAccountRequest_QueryBy interface {
 }
 
 type DeleteSocialAccountRequest_Id struct {
-	Id uint64 `protobuf:"varint,1,opt,name=id,proto3,oneof"` // ID
+	Id int64 `protobuf:"varint,1,opt,name=id,proto3,oneof"` // ID
 }
 
 func (*DeleteSocialAccountRequest_Id) isDeleteSocialAccountRequest_QueryBy() {}
@@ -1080,7 +1080,7 @@ func (*DeleteSocialAccountRequest_Id) isDeleteSocialAccountRequest_QueryBy() {}
 type ListSocialDistributionsResponse struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
 	Items         []*SocialDistribution  `protobuf:"bytes,1,rep,name=items,proto3" json:"items,omitempty"`
-	Total         uint64                 `protobuf:"varint,2,opt,name=total,proto3" json:"total,omitempty"`
+	Total         int64                  `protobuf:"varint,2,opt,name=total,proto3" json:"total,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -1122,7 +1122,7 @@ func (x *ListSocialDistributionsResponse) GetItems() []*SocialDistribution {
 	return nil
 }
 
-func (x *ListSocialDistributionsResponse) GetTotal() uint64 {
+func (x *ListSocialDistributionsResponse) GetTotal() int64 {
 	if x != nil {
 		return x.Total
 	}
@@ -1132,7 +1132,7 @@ func (x *ListSocialDistributionsResponse) GetTotal() uint64 {
 // 请求 - 分发记录数据
 type GetSocialDistributionRequest struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
-	Id            uint64                 `protobuf:"varint,1,opt,name=id,proto3" json:"id,omitempty"`
+	Id            int64                  `protobuf:"varint,1,opt,name=id,proto3" json:"id,omitempty"`
 	ViewMask      *fieldmaskpb.FieldMask `protobuf:"bytes,100,opt,name=view_mask,json=viewMask,proto3,oneof" json:"view_mask,omitempty"` // 视图字段过滤器
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
@@ -1168,7 +1168,7 @@ func (*GetSocialDistributionRequest) Descriptor() ([]byte, []int) {
 	return file_social_service_v1_social_proto_rawDescGZIP(), []int{12}
 }
 
-func (x *GetSocialDistributionRequest) GetId() uint64 {
+func (x *GetSocialDistributionRequest) GetId() int64 {
 	if x != nil {
 		return x.Id
 	}
@@ -1230,7 +1230,7 @@ func (x *CreateSocialDistributionRequest) GetData() *SocialDistribution {
 // 请求 - 更新分发记录
 type UpdateSocialDistributionRequest struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
-	Id            uint64                 `protobuf:"varint,1,opt,name=id,proto3" json:"id,omitempty"`
+	Id            int64                  `protobuf:"varint,1,opt,name=id,proto3" json:"id,omitempty"`
 	Data          *SocialDistribution    `protobuf:"bytes,2,opt,name=data,proto3" json:"data,omitempty"`
 	UpdateMask    *fieldmaskpb.FieldMask `protobuf:"bytes,3,opt,name=update_mask,json=updateMask,proto3" json:"update_mask,omitempty"`              // 要更新的字段列表
 	AllowMissing  *bool                  `protobuf:"varint,4,opt,name=allow_missing,json=allowMissing,proto3,oneof" json:"allow_missing,omitempty"` // 资源不存在则新增
@@ -1268,7 +1268,7 @@ func (*UpdateSocialDistributionRequest) Descriptor() ([]byte, []int) {
 	return file_social_service_v1_social_proto_rawDescGZIP(), []int{14}
 }
 
-func (x *UpdateSocialDistributionRequest) GetId() uint64 {
+func (x *UpdateSocialDistributionRequest) GetId() int64 {
 	if x != nil {
 		return x.Id
 	}
@@ -1344,7 +1344,7 @@ func (x *DeleteSocialDistributionRequest) GetQueryBy() isDeleteSocialDistributio
 	return nil
 }
 
-func (x *DeleteSocialDistributionRequest) GetId() uint64 {
+func (x *DeleteSocialDistributionRequest) GetId() int64 {
 	if x != nil {
 		if x, ok := x.QueryBy.(*DeleteSocialDistributionRequest_Id); ok {
 			return x.Id
@@ -1358,7 +1358,7 @@ type isDeleteSocialDistributionRequest_QueryBy interface {
 }
 
 type DeleteSocialDistributionRequest_Id struct {
-	Id uint64 `protobuf:"varint,1,opt,name=id,proto3,oneof"` // ID
+	Id int64 `protobuf:"varint,1,opt,name=id,proto3,oneof"` // ID
 }
 
 func (*DeleteSocialDistributionRequest_Id) isDeleteSocialDistributionRequest_QueryBy() {}
@@ -1366,7 +1366,7 @@ func (*DeleteSocialDistributionRequest_Id) isDeleteSocialDistributionRequest_Que
 // 请求 - 立即发布分发记录
 type PublishSocialDistributionRequest struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
-	Id            uint64                 `protobuf:"varint,1,opt,name=id,proto3" json:"id,omitempty"`
+	Id            int64                  `protobuf:"varint,1,opt,name=id,proto3" json:"id,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -1401,7 +1401,7 @@ func (*PublishSocialDistributionRequest) Descriptor() ([]byte, []int) {
 	return file_social_service_v1_social_proto_rawDescGZIP(), []int{16}
 }
 
-func (x *PublishSocialDistributionRequest) GetId() uint64 {
+func (x *PublishSocialDistributionRequest) GetId() int64 {
 	if x != nil {
 		return x.Id
 	}
@@ -1411,7 +1411,7 @@ func (x *PublishSocialDistributionRequest) GetId() uint64 {
 // 请求 - 回拉分发记录统计
 type RefreshSocialDistributionStatsRequest struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
-	Id            uint64                 `protobuf:"varint,1,opt,name=id,proto3" json:"id,omitempty"`
+	Id            int64                  `protobuf:"varint,1,opt,name=id,proto3" json:"id,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -1446,7 +1446,7 @@ func (*RefreshSocialDistributionStatsRequest) Descriptor() ([]byte, []int) {
 	return file_social_service_v1_social_proto_rawDescGZIP(), []int{17}
 }
 
-func (x *RefreshSocialDistributionStatsRequest) GetId() uint64 {
+func (x *RefreshSocialDistributionStatsRequest) GetId() int64 {
 	if x != nil {
 		return x.Id
 	}
@@ -1456,7 +1456,7 @@ func (x *RefreshSocialDistributionStatsRequest) GetId() uint64 {
 // 请求 - 移动分发状态（看板拖拽）
 type MoveSocialDistributionRequest struct {
 	state         protoimpl.MessageState    `protogen:"open.v1"`
-	Id            uint64                    `protobuf:"varint,1,opt,name=id,proto3" json:"id,omitempty"`                                                                                          // 分发记录ID
+	Id            int64                     `protobuf:"varint,1,opt,name=id,proto3" json:"id,omitempty"`                                                                                          // 分发记录ID
 	TargetStatus  SocialDistribution_Status `protobuf:"varint,2,opt,name=target_status,json=targetStatus,proto3,enum=social.service.v1.SocialDistribution_Status" json:"target_status,omitempty"` // 目标状态
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
@@ -1492,7 +1492,7 @@ func (*MoveSocialDistributionRequest) Descriptor() ([]byte, []int) {
 	return file_social_service_v1_social_proto_rawDescGZIP(), []int{18}
 }
 
-func (x *MoveSocialDistributionRequest) GetId() uint64 {
+func (x *MoveSocialDistributionRequest) GetId() int64 {
 	if x != nil {
 		return x.Id
 	}
@@ -1509,9 +1509,9 @@ func (x *MoveSocialDistributionRequest) GetTargetStatus() SocialDistribution_Sta
 // 社交收件箱条目（平台回复/提及回拉）
 type SocialInboxItem struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
-	Id            *uint64                `protobuf:"varint,1,opt,name=id,proto3,oneof" json:"id,omitempty"`                                             // 收件项ID
+	Id            *int64                 `protobuf:"varint,1,opt,name=id,proto3,oneof" json:"id,omitempty"`                                             // 收件项ID
 	Platform      *Platform              `protobuf:"varint,2,opt,name=platform,proto3,enum=social.service.v1.Platform,oneof" json:"platform,omitempty"` // 社交平台
-	AccountId     *uint64                `protobuf:"varint,3,opt,name=account_id,json=accountId,proto3,oneof" json:"account_id,omitempty"`              // 关联的社交账号ID
+	AccountId     *int64                 `protobuf:"varint,3,opt,name=account_id,json=accountId,proto3,oneof" json:"account_id,omitempty"`              // 关联的社交账号ID
 	Type          *string                `protobuf:"bytes,4,opt,name=type,proto3,oneof" json:"type,omitempty"`                                          // 条目类型
 	ExternalId    *string                `protobuf:"bytes,5,opt,name=external_id,json=externalId,proto3,oneof" json:"external_id,omitempty"`            // 平台侧条目唯一标识
 	AuthorName    *string                `protobuf:"bytes,6,opt,name=author_name,json=authorName,proto3,oneof" json:"author_name,omitempty"`            // 作者显示名
@@ -1520,9 +1520,9 @@ type SocialInboxItem struct {
 	Url           *string                `protobuf:"bytes,9,opt,name=url,proto3,oneof" json:"url,omitempty"`                                            // 平台侧链接
 	OccurredAt    *timestamppb.Timestamp `protobuf:"bytes,10,opt,name=occurred_at,json=occurredAt,proto3,oneof" json:"occurred_at,omitempty"`           // 平台侧发生时间
 	ReadAt        *timestamppb.Timestamp `protobuf:"bytes,11,opt,name=read_at,json=readAt,proto3,oneof" json:"read_at,omitempty"`                       // 标记已读时间
-	CreatedBy     *uint64                `protobuf:"varint,100,opt,name=created_by,json=createdBy,proto3,oneof" json:"created_by,omitempty"`            // 创建者用户ID
-	UpdatedBy     *uint64                `protobuf:"varint,101,opt,name=updated_by,json=updatedBy,proto3,oneof" json:"updated_by,omitempty"`            // 更新者用户ID
-	DeletedBy     *uint64                `protobuf:"varint,102,opt,name=deleted_by,json=deletedBy,proto3,oneof" json:"deleted_by,omitempty"`            // 删除者用户ID
+	CreatedBy     *int64                 `protobuf:"varint,100,opt,name=created_by,json=createdBy,proto3,oneof" json:"created_by,omitempty"`            // 创建者用户ID
+	UpdatedBy     *int64                 `protobuf:"varint,101,opt,name=updated_by,json=updatedBy,proto3,oneof" json:"updated_by,omitempty"`            // 更新者用户ID
+	DeletedBy     *int64                 `protobuf:"varint,102,opt,name=deleted_by,json=deletedBy,proto3,oneof" json:"deleted_by,omitempty"`            // 删除者用户ID
 	CreatedAt     *timestamppb.Timestamp `protobuf:"bytes,200,opt,name=created_at,json=createdAt,proto3,oneof" json:"created_at,omitempty"`             // 创建时间
 	UpdatedAt     *timestamppb.Timestamp `protobuf:"bytes,201,opt,name=updated_at,json=updatedAt,proto3,oneof" json:"updated_at,omitempty"`             // 更新时间
 	DeletedAt     *timestamppb.Timestamp `protobuf:"bytes,202,opt,name=deleted_at,json=deletedAt,proto3,oneof" json:"deleted_at,omitempty"`             // 删除时间
@@ -1560,7 +1560,7 @@ func (*SocialInboxItem) Descriptor() ([]byte, []int) {
 	return file_social_service_v1_social_proto_rawDescGZIP(), []int{19}
 }
 
-func (x *SocialInboxItem) GetId() uint64 {
+func (x *SocialInboxItem) GetId() int64 {
 	if x != nil && x.Id != nil {
 		return *x.Id
 	}
@@ -1574,7 +1574,7 @@ func (x *SocialInboxItem) GetPlatform() Platform {
 	return Platform_PLATFORM_UNSPECIFIED
 }
 
-func (x *SocialInboxItem) GetAccountId() uint64 {
+func (x *SocialInboxItem) GetAccountId() int64 {
 	if x != nil && x.AccountId != nil {
 		return *x.AccountId
 	}
@@ -1637,21 +1637,21 @@ func (x *SocialInboxItem) GetReadAt() *timestamppb.Timestamp {
 	return nil
 }
 
-func (x *SocialInboxItem) GetCreatedBy() uint64 {
+func (x *SocialInboxItem) GetCreatedBy() int64 {
 	if x != nil && x.CreatedBy != nil {
 		return *x.CreatedBy
 	}
 	return 0
 }
 
-func (x *SocialInboxItem) GetUpdatedBy() uint64 {
+func (x *SocialInboxItem) GetUpdatedBy() int64 {
 	if x != nil && x.UpdatedBy != nil {
 		return *x.UpdatedBy
 	}
 	return 0
 }
 
-func (x *SocialInboxItem) GetDeletedBy() uint64 {
+func (x *SocialInboxItem) GetDeletedBy() int64 {
 	if x != nil && x.DeletedBy != nil {
 		return *x.DeletedBy
 	}
@@ -1682,7 +1682,7 @@ func (x *SocialInboxItem) GetDeletedAt() *timestamppb.Timestamp {
 // 请求 - 收件箱列表
 type ListSocialInboxRequest struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
-	AccountId     *uint64                `protobuf:"varint,1,opt,name=account_id,json=accountId,proto3,oneof" json:"account_id,omitempty"`    // 按社交账号筛选
+	AccountId     *int64                 `protobuf:"varint,1,opt,name=account_id,json=accountId,proto3,oneof" json:"account_id,omitempty"`    // 按社交账号筛选
 	UnreadOnly    *bool                  `protobuf:"varint,2,opt,name=unread_only,json=unreadOnly,proto3,oneof" json:"unread_only,omitempty"` // 仅看未读
 	Limit         *uint32                `protobuf:"varint,3,opt,name=limit,proto3,oneof" json:"limit,omitempty"`                             // 返回条数
 	unknownFields protoimpl.UnknownFields
@@ -1719,7 +1719,7 @@ func (*ListSocialInboxRequest) Descriptor() ([]byte, []int) {
 	return file_social_service_v1_social_proto_rawDescGZIP(), []int{20}
 }
 
-func (x *ListSocialInboxRequest) GetAccountId() uint64 {
+func (x *ListSocialInboxRequest) GetAccountId() int64 {
 	if x != nil && x.AccountId != nil {
 		return *x.AccountId
 	}
@@ -1744,7 +1744,7 @@ func (x *ListSocialInboxRequest) GetLimit() uint32 {
 type ListSocialInboxResponse struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
 	Items         []*SocialInboxItem     `protobuf:"bytes,1,rep,name=items,proto3" json:"items,omitempty"`
-	UnreadCount   uint64                 `protobuf:"varint,2,opt,name=unread_count,json=unreadCount,proto3" json:"unread_count,omitempty"`
+	UnreadCount   int64                  `protobuf:"varint,2,opt,name=unread_count,json=unreadCount,proto3" json:"unread_count,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -1786,7 +1786,7 @@ func (x *ListSocialInboxResponse) GetItems() []*SocialInboxItem {
 	return nil
 }
 
-func (x *ListSocialInboxResponse) GetUnreadCount() uint64 {
+func (x *ListSocialInboxResponse) GetUnreadCount() int64 {
 	if x != nil {
 		return x.UnreadCount
 	}
@@ -1796,7 +1796,7 @@ func (x *ListSocialInboxResponse) GetUnreadCount() uint64 {
 // 请求 - 标记收件项已读
 type MarkSocialInboxReadRequest struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
-	Id            uint64                 `protobuf:"varint,1,opt,name=id,proto3" json:"id,omitempty"` // 收件项ID
+	Id            int64                  `protobuf:"varint,1,opt,name=id,proto3" json:"id,omitempty"` // 收件项ID
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -1831,7 +1831,7 @@ func (*MarkSocialInboxReadRequest) Descriptor() ([]byte, []int) {
 	return file_social_service_v1_social_proto_rawDescGZIP(), []int{22}
 }
 
-func (x *MarkSocialInboxReadRequest) GetId() uint64 {
+func (x *MarkSocialInboxReadRequest) GetId() int64 {
 	if x != nil {
 		return x.Id
 	}
@@ -1844,12 +1844,12 @@ const file_social_service_v1_social_proto_rawDesc = "" +
 	"\n" +
 	"\x1esocial/service/v1/social.proto\x12\x11social.service.v1\x1a$gnostic/openapi/v3/annotations.proto\x1a\x1bgoogle/protobuf/empty.proto\x1a\x1fgoogle/protobuf/timestamp.proto\x1a google/protobuf/field_mask.proto\x1a\x1epagination/v1/pagination.proto\"\xa1\x04\n" +
 	"\x19SocialDistributionSummary\x12I\n" +
-	"\x0ftotal_published\x18\x01 \x01(\x04B\x1b\xbaG\x18\x92\x02\x15已发布分发总数H\x00R\x0etotalPublished\x88\x01\x01\x12S\n" +
-	"\vtotal_likes\x18\x02 \x01(\x04B-\xbaG*\x92\x02'累计点赞数（最新快照合计）H\x01R\n" +
+	"\x0ftotal_published\x18\x01 \x01(\x03B\x1b\xbaG\x18\x92\x02\x15已发布分发总数H\x00R\x0etotalPublished\x88\x01\x01\x12S\n" +
+	"\vtotal_likes\x18\x02 \x01(\x03B-\xbaG*\x92\x02'累计点赞数（最新快照合计）H\x01R\n" +
 	"totalLikes\x88\x01\x01\x12W\n" +
-	"\rtotal_replies\x18\x03 \x01(\x04B-\xbaG*\x92\x02'累计回复数（最新快照合计）H\x02R\ftotalReplies\x88\x01\x01\x12W\n" +
-	"\rtotal_reposts\x18\x04 \x01(\x04B-\xbaG*\x92\x02'累计转发数（最新快照合计）H\x03R\ftotalReposts\x88\x01\x01\x12P\n" +
-	"\x15published_last_7_days\x18\x05 \x01(\x04B\x18\xbaG\x15\x92\x02\x12近 7 天发布数H\x04R\x12publishedLast7Days\x88\x01\x01B\x12\n" +
+	"\rtotal_replies\x18\x03 \x01(\x03B-\xbaG*\x92\x02'累计回复数（最新快照合计）H\x02R\ftotalReplies\x88\x01\x01\x12W\n" +
+	"\rtotal_reposts\x18\x04 \x01(\x03B-\xbaG*\x92\x02'累计转发数（最新快照合计）H\x03R\ftotalReposts\x88\x01\x01\x12P\n" +
+	"\x15published_last_7_days\x18\x05 \x01(\x03B\x18\xbaG\x15\x92\x02\x12近 7 天发布数H\x04R\x12publishedLast7Days\x88\x01\x01B\x12\n" +
 	"\x10_total_publishedB\x0e\n" +
 	"\f_total_likesB\x10\n" +
 	"\x0e_total_repliesB\x10\n" +
@@ -1868,14 +1868,14 @@ const file_social_service_v1_social_proto_rawDesc = "" +
 	"\n" +
 	"\b_reposts\"\xab\x01\n" +
 	")ListSocialDistributionStatsHistoryRequest\x12\x0e\n" +
-	"\x02id\x18\x01 \x01(\x04R\x02id\x12d\n" +
+	"\x02id\x18\x01 \x01(\x03R\x02id\x12d\n" +
 	"\x05limit\x18\x02 \x01(\rBI\xbaGF\x92\x02C返回点数上限（缺省 200，按时间升序取最近 N 点）H\x00R\x05limit\x88\x01\x01B\b\n" +
 	"\x06_limit\"n\n" +
 	"*ListSocialDistributionStatsHistoryResponse\x12@\n" +
 	"\x05items\x18\x01 \x03(\v2*.social.service.v1.SocialStatsHistoryPointR\x05items\"\xa6\n" +
 	"\n" +
 	"\rSocialAccount\x12#\n" +
-	"\x02id\x18\x01 \x01(\x04B\x0e\xbaG\v\x92\x02\b账号IDH\x00R\x02id\x88\x01\x01\x12P\n" +
+	"\x02id\x18\x01 \x01(\x03B\x0e\xbaG\v\x92\x02\b账号IDH\x00R\x02id\x88\x01\x01\x12P\n" +
 	"\bplatform\x18\x02 \x01(\x0e2\x1b.social.service.v1.PlatformB\x12\xbaG\x0f\x92\x02\f社交平台H\x01R\bplatform\x88\x01\x01\x121\n" +
 	"\x04name\x18\x03 \x01(\tB\x18\xbaG\x15\x92\x02\x12账号显示名称H\x02R\x04name\x88\x01\x01\x12R\n" +
 	"\x06handle\x18\x04 \x01(\tB5\xbaG2\x92\x02/平台内账号标识（如 user.bsky.social）H\x03R\x06handle\x88\x01\x01\x12\xb6\x01\n" +
@@ -1885,11 +1885,11 @@ const file_social_service_v1_social_proto_rawDesc = "" +
 	"is_enabled\x18\a \x01(\bB3\xbaG0\x92\x02-是否启用（停用账号不参与发布）H\x06R\tisEnabled\x88\x01\x01\x12)\n" +
 	"\x06remark\x18\b \x01(\tB\f\xbaG\t\x92\x02\x06备注H\aR\x06remark\x88\x01\x01\x12;\n" +
 	"\n" +
-	"created_by\x18d \x01(\x04B\x17\xbaG\x14\x92\x02\x11创建者用户IDH\bR\tcreatedBy\x88\x01\x01\x12;\n" +
+	"created_by\x18d \x01(\x03B\x17\xbaG\x14\x92\x02\x11创建者用户IDH\bR\tcreatedBy\x88\x01\x01\x12;\n" +
 	"\n" +
-	"updated_by\x18e \x01(\x04B\x17\xbaG\x14\x92\x02\x11更新者用户IDH\tR\tupdatedBy\x88\x01\x01\x12;\n" +
+	"updated_by\x18e \x01(\x03B\x17\xbaG\x14\x92\x02\x11更新者用户IDH\tR\tupdatedBy\x88\x01\x01\x12;\n" +
 	"\n" +
-	"deleted_by\x18f \x01(\x04B\x17\xbaG\x14\x92\x02\x11删除者用户IDH\n" +
+	"deleted_by\x18f \x01(\x03B\x17\xbaG\x14\x92\x02\x11删除者用户IDH\n" +
 	"R\tdeletedBy\x88\x01\x01\x12S\n" +
 	"\n" +
 	"created_at\x18\xc8\x01 \x01(\v2\x1a.google.protobuf.TimestampB\x12\xbaG\x0f\x92\x02\f创建时间H\vR\tcreatedAt\x88\x01\x01\x12S\n" +
@@ -1912,12 +1912,12 @@ const file_social_service_v1_social_proto_rawDesc = "" +
 	"\v_updated_atB\r\n" +
 	"\v_deleted_at\"\xd3\x15\n" +
 	"\x12SocialDistribution\x12)\n" +
-	"\x02id\x18\x01 \x01(\x04B\x14\xbaG\x11\x92\x02\x0e分发记录IDH\x00R\x02id\x88\x01\x01\x12P\n" +
+	"\x02id\x18\x01 \x01(\x03B\x14\xbaG\x11\x92\x02\x0e分发记录IDH\x00R\x02id\x88\x01\x01\x12P\n" +
 	"\bplatform\x18\x02 \x01(\x0e2\x1b.social.service.v1.PlatformB\x12\xbaG\x0f\x92\x02\f社交平台H\x01R\bplatform\x88\x01\x01\x12A\n" +
 	"\n" +
-	"account_id\x18\x03 \x01(\x04B\x1d\xbaG\x1a\x92\x02\x17使用的社交账号IDH\x02R\taccountId\x88\x01\x01\x12j\n" +
+	"account_id\x18\x03 \x01(\x03B\x1d\xbaG\x1a\x92\x02\x17使用的社交账号IDH\x02R\taccountId\x88\x01\x01\x12j\n" +
 	"\faccount_name\x18\x04 \x01(\tBB\xbaG?\x92\x02<社交账号显示名称（服务端填充的展示字段）H\x03R\vaccountName\x88\x01\x01\x12q\n" +
-	"\apost_id\x18\x05 \x01(\x04BS\xbaGP\x92\x02M关联的 CMS 文章ID（内容事实源在 CMS，本域不存内容本体）H\x04R\x06postId\x88\x01\x01\x12`\n" +
+	"\apost_id\x18\x05 \x01(\x03BS\xbaGP\x92\x02M关联的 CMS 文章ID（内容事实源在 CMS，本域不存内容本体）H\x04R\x06postId\x88\x01\x01\x12`\n" +
 	"\n" +
 	"post_title\x18\x06 \x01(\tB<\xbaG9\x92\x026关联文章标题（服务端填充的展示字段）H\x05R\tpostTitle\x88\x01\x01\x12o\n" +
 	"\roverride_text\x18\a \x01(\tBE\xbaGB\x92\x02?按平台覆盖的发布文案（空则应从源内容推导）H\x06R\foverrideText\x88\x01\x01\x12]\n" +
@@ -1931,17 +1931,17 @@ const file_social_service_v1_social_proto_rawDesc = "" +
 	"externalId\x88\x01\x01\x12Q\n" +
 	"\rerror_message\x18\r \x01(\tB'\xbaG$\x92\x02!最近一次发布失败的原因H\fR\ferrorMessage\x88\x01\x01\x12\x8e\x01\n" +
 	"\x05title\x18\x0e \x01(\tBs\xbaGp\x92\x02m平台文章标题（DEV.to 等需要标题的平台使用；关联文章且留空时缺省取文章标题）H\rR\x05title\x88\x01\x01\x12\x9a\x01\n" +
-	"\tmedia_ids\x18\x0f \x03(\x04B}\xbaGz\x92\x02w配图媒体资产ID列表（支持图片的平台使用：Telegram/Bluesky/Mastodon/WordPress/微博；至多 4 张）R\bmediaIds\x12B\n" +
+	"\tmedia_ids\x18\x0f \x03(\x03B}\xbaGz\x92\x02w配图媒体资产ID列表（支持图片的平台使用：Telegram/Bluesky/Mastodon/WordPress/微博；至多 4 张）R\bmediaIds\x12B\n" +
 	"\x05likes\x18\x14 \x01(\rB'\xbaG$\x92\x02!点赞数（平台回拉快照）H\x0eR\x05likes\x88\x01\x01\x12F\n" +
 	"\areplies\x18\x15 \x01(\rB'\xbaG$\x92\x02!回复数（平台回拉快照）H\x0fR\areplies\x88\x01\x01\x12F\n" +
 	"\areposts\x18\x16 \x01(\rB'\xbaG$\x92\x02!转发数（平台回拉快照）H\x10R\areposts\x88\x01\x01\x12a\n" +
 	"\x0fstats_synced_at\x18\x17 \x01(\v2\x1a.google.protobuf.TimestampB\x18\xbaG\x15\x92\x02\x12统计回拉时间H\x11R\rstatsSyncedAt\x88\x01\x01\x12;\n" +
 	"\n" +
-	"created_by\x18d \x01(\x04B\x17\xbaG\x14\x92\x02\x11创建者用户IDH\x12R\tcreatedBy\x88\x01\x01\x12;\n" +
+	"created_by\x18d \x01(\x03B\x17\xbaG\x14\x92\x02\x11创建者用户IDH\x12R\tcreatedBy\x88\x01\x01\x12;\n" +
 	"\n" +
-	"updated_by\x18e \x01(\x04B\x17\xbaG\x14\x92\x02\x11更新者用户IDH\x13R\tupdatedBy\x88\x01\x01\x12;\n" +
+	"updated_by\x18e \x01(\x03B\x17\xbaG\x14\x92\x02\x11更新者用户IDH\x13R\tupdatedBy\x88\x01\x01\x12;\n" +
 	"\n" +
-	"deleted_by\x18f \x01(\x04B\x17\xbaG\x14\x92\x02\x11删除者用户IDH\x14R\tdeletedBy\x88\x01\x01\x12S\n" +
+	"deleted_by\x18f \x01(\x03B\x17\xbaG\x14\x92\x02\x11删除者用户IDH\x14R\tdeletedBy\x88\x01\x01\x12S\n" +
 	"\n" +
 	"created_at\x18\xc8\x01 \x01(\v2\x1a.google.protobuf.TimestampB\x12\xbaG\x0f\x92\x02\f创建时间H\x15R\tcreatedAt\x88\x01\x01\x12S\n" +
 	"\n" +
@@ -1984,60 +1984,60 @@ const file_social_service_v1_social_proto_rawDesc = "" +
 	"\v_deleted_at\"j\n" +
 	"\x1aListSocialAccountsResponse\x126\n" +
 	"\x05items\x18\x01 \x03(\v2 .social.service.v1.SocialAccountR\x05items\x12\x14\n" +
-	"\x05total\x18\x02 \x01(\x04R\x05total\"\xb0\x01\n" +
+	"\x05total\x18\x02 \x01(\x03R\x05total\"\xb0\x01\n" +
 	"\x17GetSocialAccountRequest\x12\x0e\n" +
-	"\x02id\x18\x01 \x01(\x04R\x02id\x12w\n" +
+	"\x02id\x18\x01 \x01(\x03R\x02id\x12w\n" +
 	"\tview_mask\x18d \x01(\v2\x1a.google.protobuf.FieldMaskB9\xbaG6\x92\x023视图字段过滤器，用于控制返回的字段H\x00R\bviewMask\x88\x01\x01B\f\n" +
 	"\n" +
 	"_view_mask\"R\n" +
 	"\x1aCreateSocialAccountRequest\x124\n" +
 	"\x04data\x18\x01 \x01(\v2 .social.service.v1.SocialAccountR\x04data\"\x9d\x03\n" +
 	"\x1aUpdateSocialAccountRequest\x12\x0e\n" +
-	"\x02id\x18\x01 \x01(\x04R\x02id\x124\n" +
+	"\x02id\x18\x01 \x01(\x03R\x02id\x124\n" +
 	"\x04data\x18\x02 \x01(\v2 .social.service.v1.SocialAccountR\x04data\x12p\n" +
 	"\vupdate_mask\x18\x03 \x01(\v2\x1a.google.protobuf.FieldMaskB3\xbaG0:\x13\x12\x11id,name,isEnabled\x92\x02\x18要更新的字段列表R\n" +
 	"updateMask\x12\xb4\x01\n" +
 	"\rallow_missing\x18\x04 \x01(\bB\x89\x01\xbaG\x85\x01\x92\x02\x81\x01如果设置为true的时候，资源不存在则会新增(插入)，并且在这种情况下`updateMask`字段将会被忽略。H\x00R\fallowMissing\x88\x01\x01B\x10\n" +
 	"\x0e_allow_missing\"F\n" +
 	"\x1aDeleteSocialAccountRequest\x12\x1c\n" +
-	"\x02id\x18\x01 \x01(\x04B\n" +
+	"\x02id\x18\x01 \x01(\x03B\n" +
 	"\xbaG\a\x18\x01\x92\x02\x02IDH\x00R\x02idB\n" +
 	"\n" +
 	"\bquery_by\"t\n" +
 	"\x1fListSocialDistributionsResponse\x12;\n" +
 	"\x05items\x18\x01 \x03(\v2%.social.service.v1.SocialDistributionR\x05items\x12\x14\n" +
-	"\x05total\x18\x02 \x01(\x04R\x05total\"\xb5\x01\n" +
+	"\x05total\x18\x02 \x01(\x03R\x05total\"\xb5\x01\n" +
 	"\x1cGetSocialDistributionRequest\x12\x0e\n" +
-	"\x02id\x18\x01 \x01(\x04R\x02id\x12w\n" +
+	"\x02id\x18\x01 \x01(\x03R\x02id\x12w\n" +
 	"\tview_mask\x18d \x01(\v2\x1a.google.protobuf.FieldMaskB9\xbaG6\x92\x023视图字段过滤器，用于控制返回的字段H\x00R\bviewMask\x88\x01\x01B\f\n" +
 	"\n" +
 	"_view_mask\"\\\n" +
 	"\x1fCreateSocialDistributionRequest\x129\n" +
 	"\x04data\x18\x01 \x01(\v2%.social.service.v1.SocialDistributionR\x04data\"\xb1\x03\n" +
 	"\x1fUpdateSocialDistributionRequest\x12\x0e\n" +
-	"\x02id\x18\x01 \x01(\x04R\x02id\x129\n" +
+	"\x02id\x18\x01 \x01(\x03R\x02id\x129\n" +
 	"\x04data\x18\x02 \x01(\v2%.social.service.v1.SocialDistributionR\x04data\x12z\n" +
 	"\vupdate_mask\x18\x03 \x01(\v2\x1a.google.protobuf.FieldMaskB=\xbaG::\x1d\x12\x1bid,overrideText,publishTime\x92\x02\x18要更新的字段列表R\n" +
 	"updateMask\x12\xb4\x01\n" +
 	"\rallow_missing\x18\x04 \x01(\bB\x89\x01\xbaG\x85\x01\x92\x02\x81\x01如果设置为true的时候，资源不存在则会新增(插入)，并且在这种情况下`updateMask`字段将会被忽略。H\x00R\fallowMissing\x88\x01\x01B\x10\n" +
 	"\x0e_allow_missing\"K\n" +
 	"\x1fDeleteSocialDistributionRequest\x12\x1c\n" +
-	"\x02id\x18\x01 \x01(\x04B\n" +
+	"\x02id\x18\x01 \x01(\x03B\n" +
 	"\xbaG\a\x18\x01\x92\x02\x02IDH\x00R\x02idB\n" +
 	"\n" +
 	"\bquery_by\"2\n" +
 	" PublishSocialDistributionRequest\x12\x0e\n" +
-	"\x02id\x18\x01 \x01(\x04R\x02id\"7\n" +
+	"\x02id\x18\x01 \x01(\x03R\x02id\"7\n" +
 	"%RefreshSocialDistributionStatsRequest\x12\x0e\n" +
-	"\x02id\x18\x01 \x01(\x04R\x02id\"\xc0\x01\n" +
+	"\x02id\x18\x01 \x01(\x03R\x02id\"\xc0\x01\n" +
 	"\x1dMoveSocialDistributionRequest\x12\x0e\n" +
-	"\x02id\x18\x01 \x01(\x04R\x02id\x12\x8e\x01\n" +
+	"\x02id\x18\x01 \x01(\x03R\x02id\x12\x8e\x01\n" +
 	"\rtarget_status\x18\x02 \x01(\x0e2,.social.service.v1.SocialDistribution.StatusB;\xbaG8\x92\x025目标状态（仅 STATUS_DRAFT / STATUS_SCHEDULED）R\ftargetStatus\"\xc6\v\n" +
 	"\x0fSocialInboxItem\x12&\n" +
-	"\x02id\x18\x01 \x01(\x04B\x11\xbaG\x0e\x92\x02\v收件项IDH\x00R\x02id\x88\x01\x01\x12P\n" +
+	"\x02id\x18\x01 \x01(\x03B\x11\xbaG\x0e\x92\x02\v收件项IDH\x00R\x02id\x88\x01\x01\x12P\n" +
 	"\bplatform\x18\x02 \x01(\x0e2\x1b.social.service.v1.PlatformB\x12\xbaG\x0f\x92\x02\f社交平台H\x01R\bplatform\x88\x01\x01\x12A\n" +
 	"\n" +
-	"account_id\x18\x03 \x01(\x04B\x1d\xbaG\x1a\x92\x02\x17关联的社交账号IDH\x02R\taccountId\x88\x01\x01\x12k\n" +
+	"account_id\x18\x03 \x01(\x03B\x1d\xbaG\x1a\x92\x02\x17关联的社交账号IDH\x02R\taccountId\x88\x01\x01\x12k\n" +
 	"\x04type\x18\x04 \x01(\tBR\xbaGO\x92\x02L条目类型（REPLY 回复 / MENTION 提及 / LIKE 点赞 / OTHER 其他）H\x03R\x04type\x88\x01\x01\x12V\n" +
 	"\vexternal_id\x18\x05 \x01(\tB0\xbaG-\x92\x02*平台侧条目唯一标识（去重键）H\x04R\n" +
 	"externalId\x88\x01\x01\x12;\n" +
@@ -2052,11 +2052,11 @@ const file_social_service_v1_social_proto_rawDesc = "" +
 	"\aread_at\x18\v \x01(\v2\x1a.google.protobuf.TimestampB\x18\xbaG\x15\x92\x02\x12标记已读时间H\n" +
 	"R\x06readAt\x88\x01\x01\x12;\n" +
 	"\n" +
-	"created_by\x18d \x01(\x04B\x17\xbaG\x14\x92\x02\x11创建者用户IDH\vR\tcreatedBy\x88\x01\x01\x12;\n" +
+	"created_by\x18d \x01(\x03B\x17\xbaG\x14\x92\x02\x11创建者用户IDH\vR\tcreatedBy\x88\x01\x01\x12;\n" +
 	"\n" +
-	"updated_by\x18e \x01(\x04B\x17\xbaG\x14\x92\x02\x11更新者用户IDH\fR\tupdatedBy\x88\x01\x01\x12;\n" +
+	"updated_by\x18e \x01(\x03B\x17\xbaG\x14\x92\x02\x11更新者用户IDH\fR\tupdatedBy\x88\x01\x01\x12;\n" +
 	"\n" +
-	"deleted_by\x18f \x01(\x04B\x17\xbaG\x14\x92\x02\x11删除者用户IDH\rR\tdeletedBy\x88\x01\x01\x12S\n" +
+	"deleted_by\x18f \x01(\x03B\x17\xbaG\x14\x92\x02\x11删除者用户IDH\rR\tdeletedBy\x88\x01\x01\x12S\n" +
 	"\n" +
 	"created_at\x18\xc8\x01 \x01(\v2\x1a.google.protobuf.TimestampB\x12\xbaG\x0f\x92\x02\f创建时间H\x0eR\tcreatedAt\x88\x01\x01\x12S\n" +
 	"\n" +
@@ -2084,7 +2084,7 @@ const file_social_service_v1_social_proto_rawDesc = "" +
 	"\v_deleted_at\"\x87\x02\n" +
 	"\x16ListSocialInboxRequest\x12?\n" +
 	"\n" +
-	"account_id\x18\x01 \x01(\x04B\x1b\xbaG\x18\x92\x02\x15按社交账号筛选H\x00R\taccountId\x88\x01\x01\x128\n" +
+	"account_id\x18\x01 \x01(\x03B\x1b\xbaG\x18\x92\x02\x15按社交账号筛选H\x00R\taccountId\x88\x01\x01\x128\n" +
 	"\vunread_only\x18\x02 \x01(\bB\x12\xbaG\x0f\x92\x02\f仅看未读H\x01R\n" +
 	"unreadOnly\x88\x01\x01\x12I\n" +
 	"\x05limit\x18\x03 \x01(\rB.\xbaG+\x92\x02(返回条数（缺省 50，至多 200）H\x02R\x05limit\x88\x01\x01B\r\n" +
@@ -2093,9 +2093,9 @@ const file_social_service_v1_social_proto_rawDesc = "" +
 	"\x06_limit\"v\n" +
 	"\x17ListSocialInboxResponse\x128\n" +
 	"\x05items\x18\x01 \x03(\v2\".social.service.v1.SocialInboxItemR\x05items\x12!\n" +
-	"\funread_count\x18\x02 \x01(\x04R\vunreadCount\",\n" +
+	"\funread_count\x18\x02 \x01(\x03R\vunreadCount\",\n" +
 	"\x1aMarkSocialInboxReadRequest\x12\x0e\n" +
-	"\x02id\x18\x01 \x01(\x04R\x02id*\x84\x02\n" +
+	"\x02id\x18\x01 \x01(\x03R\x02id*\x84\x02\n" +
 	"\bPlatform\x12\x18\n" +
 	"\x14PLATFORM_UNSPECIFIED\x10\x00\x12\x14\n" +
 	"\x10PLATFORM_BLUESKY\x10\x01\x12\x15\n" +

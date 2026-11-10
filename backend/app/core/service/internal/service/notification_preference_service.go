@@ -47,7 +47,7 @@ func NewNotificationPreferenceService(
 }
 
 // GetMyNotificationPreference 返回当前用户的偏好；从未配置过时返回默认值
-//（未启用静音、无退订），前端据此渲染表单，落库发生在第一次保存。
+// （未启用静音、无退订），前端据此渲染表单，落库发生在第一次保存。
 func (s *NotificationPreferenceService) GetMyNotificationPreference(ctx context.Context, _ *emptypb.Empty) (*notifyV1.NotificationPreference, error) {
 	userID, hasUser := viewerUserIDFromContext(ctx)
 	if !hasUser {
@@ -122,7 +122,7 @@ func (s *NotificationPreferenceService) ListMyNotificationCategories(ctx context
 }
 
 // validateQuietWindow 校验静音窗口：分钟数在 0..1439 且启用时 start != end
-//（start == end 的窗口宽为零，等价于不静音，按配置错误拒绝而不是默默不生效）。
+// （start == end 的窗口宽为零，等价于不静音，按配置错误拒绝而不是默默不生效）。
 // start > end 是合法的跨零点窗口（如 22:00→08:00）。
 func validateQuietWindow(enabled bool, startMinute, endMinute int32) error {
 	for _, m := range []int32{startMinute, endMinute} {

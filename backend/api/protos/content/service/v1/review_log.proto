@@ -20,13 +20,13 @@ service ReviewLogService {
 
 // 审批留痕条目
 message ReviewLog {
-  optional uint64 id = 1 [json_name = "id"];
+  optional int64 id = 1 [json_name = "id"];
 
   // 实体类型（post/page）
   string entity_type = 2 [json_name = "entityType"];
 
   // 实体 ID
-  uint64 entity_id = 3 [json_name = "entityId"];
+  int64 entity_id = 3 [json_name = "entityId"];
 
   // 动作
   string action = 4 [json_name = "action"]; // SUBMIT / APPROVE / REJECT
@@ -38,7 +38,7 @@ message ReviewLog {
   optional string note = 6 [json_name = "note"];
 
   // 操作人 ID
-  optional uint64 operator_id = 7 [json_name = "operatorId"];
+  optional int64 operator_id = 7 [json_name = "operatorId"];
 
   optional google.protobuf.Timestamp created_at = 20 [json_name = "createdAt"];
 }
@@ -49,7 +49,7 @@ message ListReviewLogsRequest {
   string entity_type = 1 [json_name = "entityType"];
 
   // 实体 ID
-  uint64 entity_id = 2 [json_name = "entityId"];
+  int64 entity_id = 2 [json_name = "entityId"];
 }
 
 // 查询审批记录 - 回应
@@ -60,10 +60,10 @@ message ListReviewLogsResponse {
 // 统计计数 - 请求
 message CountReviewLogsRequest {
   string entity_type = 1 [json_name = "entityType"];
-  uint64 entity_id = 2 [json_name = "entityId"];
+  int64 entity_id = 2 [json_name = "entityId"];
 }
 
 // 统计计数 - 回应
 message CountReviewLogsResponse {
-  uint64 count = 1;
+  int64 count = 1;
 }

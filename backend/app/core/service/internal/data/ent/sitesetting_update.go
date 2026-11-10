@@ -70,14 +70,14 @@ func (_u *SiteSettingUpdate) ClearDeletedAt() *SiteSettingUpdate {
 }
 
 // SetCreatedBy sets the "created_by" field.
-func (_u *SiteSettingUpdate) SetCreatedBy(v uint64) *SiteSettingUpdate {
+func (_u *SiteSettingUpdate) SetCreatedBy(v int64) *SiteSettingUpdate {
 	_u.mutation.ResetCreatedBy()
 	_u.mutation.SetCreatedBy(v)
 	return _u
 }
 
 // SetNillableCreatedBy sets the "created_by" field if the given value is not nil.
-func (_u *SiteSettingUpdate) SetNillableCreatedBy(v *uint64) *SiteSettingUpdate {
+func (_u *SiteSettingUpdate) SetNillableCreatedBy(v *int64) *SiteSettingUpdate {
 	if v != nil {
 		_u.SetCreatedBy(*v)
 	}
@@ -97,14 +97,14 @@ func (_u *SiteSettingUpdate) ClearCreatedBy() *SiteSettingUpdate {
 }
 
 // SetUpdatedBy sets the "updated_by" field.
-func (_u *SiteSettingUpdate) SetUpdatedBy(v uint64) *SiteSettingUpdate {
+func (_u *SiteSettingUpdate) SetUpdatedBy(v int64) *SiteSettingUpdate {
 	_u.mutation.ResetUpdatedBy()
 	_u.mutation.SetUpdatedBy(v)
 	return _u
 }
 
 // SetNillableUpdatedBy sets the "updated_by" field if the given value is not nil.
-func (_u *SiteSettingUpdate) SetNillableUpdatedBy(v *uint64) *SiteSettingUpdate {
+func (_u *SiteSettingUpdate) SetNillableUpdatedBy(v *int64) *SiteSettingUpdate {
 	if v != nil {
 		_u.SetUpdatedBy(*v)
 	}
@@ -124,14 +124,14 @@ func (_u *SiteSettingUpdate) ClearUpdatedBy() *SiteSettingUpdate {
 }
 
 // SetDeletedBy sets the "deleted_by" field.
-func (_u *SiteSettingUpdate) SetDeletedBy(v uint64) *SiteSettingUpdate {
+func (_u *SiteSettingUpdate) SetDeletedBy(v int64) *SiteSettingUpdate {
 	_u.mutation.ResetDeletedBy()
 	_u.mutation.SetDeletedBy(v)
 	return _u
 }
 
 // SetNillableDeletedBy sets the "deleted_by" field if the given value is not nil.
-func (_u *SiteSettingUpdate) SetNillableDeletedBy(v *uint64) *SiteSettingUpdate {
+func (_u *SiteSettingUpdate) SetNillableDeletedBy(v *int64) *SiteSettingUpdate {
 	if v != nil {
 		_u.SetDeletedBy(*v)
 	}
@@ -151,14 +151,14 @@ func (_u *SiteSettingUpdate) ClearDeletedBy() *SiteSettingUpdate {
 }
 
 // SetSiteID sets the "site_id" field.
-func (_u *SiteSettingUpdate) SetSiteID(v uint64) *SiteSettingUpdate {
+func (_u *SiteSettingUpdate) SetSiteID(v int64) *SiteSettingUpdate {
 	_u.mutation.ResetSiteID()
 	_u.mutation.SetSiteID(v)
 	return _u
 }
 
 // SetNillableSiteID sets the "site_id" field if the given value is not nil.
-func (_u *SiteSettingUpdate) SetNillableSiteID(v *uint64) *SiteSettingUpdate {
+func (_u *SiteSettingUpdate) SetNillableSiteID(v *int64) *SiteSettingUpdate {
 	if v != nil {
 		_u.SetSiteID(*v)
 	}
@@ -441,7 +441,7 @@ func (_u *SiteSettingUpdate) sqlSave(ctx context.Context) (_node int, err error)
 	if err := _u.check(); err != nil {
 		return _node, err
 	}
-	_spec := sqlgraph.NewUpdateSpec(sitesetting.Table, sitesetting.Columns, sqlgraph.NewFieldSpec(sitesetting.FieldID, field.TypeUint64))
+	_spec := sqlgraph.NewUpdateSpec(sitesetting.Table, sitesetting.Columns, sqlgraph.NewFieldSpec(sitesetting.FieldID, field.TypeInt64))
 	if ps := _u.mutation.predicates; len(ps) > 0 {
 		_spec.Predicate = func(selector *sql.Selector) {
 			for i := range ps {
@@ -465,43 +465,43 @@ func (_u *SiteSettingUpdate) sqlSave(ctx context.Context) (_node int, err error)
 		_spec.ClearField(sitesetting.FieldDeletedAt, field.TypeTime)
 	}
 	if value, ok := _u.mutation.CreatedBy(); ok {
-		_spec.SetField(sitesetting.FieldCreatedBy, field.TypeUint64, value)
+		_spec.SetField(sitesetting.FieldCreatedBy, field.TypeInt64, value)
 	}
 	if value, ok := _u.mutation.AddedCreatedBy(); ok {
-		_spec.AddField(sitesetting.FieldCreatedBy, field.TypeUint64, value)
+		_spec.AddField(sitesetting.FieldCreatedBy, field.TypeInt64, value)
 	}
 	if _u.mutation.CreatedByCleared() {
-		_spec.ClearField(sitesetting.FieldCreatedBy, field.TypeUint64)
+		_spec.ClearField(sitesetting.FieldCreatedBy, field.TypeInt64)
 	}
 	if value, ok := _u.mutation.UpdatedBy(); ok {
-		_spec.SetField(sitesetting.FieldUpdatedBy, field.TypeUint64, value)
+		_spec.SetField(sitesetting.FieldUpdatedBy, field.TypeInt64, value)
 	}
 	if value, ok := _u.mutation.AddedUpdatedBy(); ok {
-		_spec.AddField(sitesetting.FieldUpdatedBy, field.TypeUint64, value)
+		_spec.AddField(sitesetting.FieldUpdatedBy, field.TypeInt64, value)
 	}
 	if _u.mutation.UpdatedByCleared() {
-		_spec.ClearField(sitesetting.FieldUpdatedBy, field.TypeUint64)
+		_spec.ClearField(sitesetting.FieldUpdatedBy, field.TypeInt64)
 	}
 	if value, ok := _u.mutation.DeletedBy(); ok {
-		_spec.SetField(sitesetting.FieldDeletedBy, field.TypeUint64, value)
+		_spec.SetField(sitesetting.FieldDeletedBy, field.TypeInt64, value)
 	}
 	if value, ok := _u.mutation.AddedDeletedBy(); ok {
-		_spec.AddField(sitesetting.FieldDeletedBy, field.TypeUint64, value)
+		_spec.AddField(sitesetting.FieldDeletedBy, field.TypeInt64, value)
 	}
 	if _u.mutation.DeletedByCleared() {
-		_spec.ClearField(sitesetting.FieldDeletedBy, field.TypeUint64)
+		_spec.ClearField(sitesetting.FieldDeletedBy, field.TypeInt64)
 	}
 	if _u.mutation.TenantIDCleared() {
-		_spec.ClearField(sitesetting.FieldTenantID, field.TypeUint64)
+		_spec.ClearField(sitesetting.FieldTenantID, field.TypeInt64)
 	}
 	if value, ok := _u.mutation.SiteID(); ok {
-		_spec.SetField(sitesetting.FieldSiteID, field.TypeUint64, value)
+		_spec.SetField(sitesetting.FieldSiteID, field.TypeInt64, value)
 	}
 	if value, ok := _u.mutation.AddedSiteID(); ok {
-		_spec.AddField(sitesetting.FieldSiteID, field.TypeUint64, value)
+		_spec.AddField(sitesetting.FieldSiteID, field.TypeInt64, value)
 	}
 	if _u.mutation.SiteIDCleared() {
-		_spec.ClearField(sitesetting.FieldSiteID, field.TypeUint64)
+		_spec.ClearField(sitesetting.FieldSiteID, field.TypeInt64)
 	}
 	if value, ok := _u.mutation.Locale(); ok {
 		_spec.SetField(sitesetting.FieldLocale, field.TypeString, value)
@@ -632,14 +632,14 @@ func (_u *SiteSettingUpdateOne) ClearDeletedAt() *SiteSettingUpdateOne {
 }
 
 // SetCreatedBy sets the "created_by" field.
-func (_u *SiteSettingUpdateOne) SetCreatedBy(v uint64) *SiteSettingUpdateOne {
+func (_u *SiteSettingUpdateOne) SetCreatedBy(v int64) *SiteSettingUpdateOne {
 	_u.mutation.ResetCreatedBy()
 	_u.mutation.SetCreatedBy(v)
 	return _u
 }
 
 // SetNillableCreatedBy sets the "created_by" field if the given value is not nil.
-func (_u *SiteSettingUpdateOne) SetNillableCreatedBy(v *uint64) *SiteSettingUpdateOne {
+func (_u *SiteSettingUpdateOne) SetNillableCreatedBy(v *int64) *SiteSettingUpdateOne {
 	if v != nil {
 		_u.SetCreatedBy(*v)
 	}
@@ -659,14 +659,14 @@ func (_u *SiteSettingUpdateOne) ClearCreatedBy() *SiteSettingUpdateOne {
 }
 
 // SetUpdatedBy sets the "updated_by" field.
-func (_u *SiteSettingUpdateOne) SetUpdatedBy(v uint64) *SiteSettingUpdateOne {
+func (_u *SiteSettingUpdateOne) SetUpdatedBy(v int64) *SiteSettingUpdateOne {
 	_u.mutation.ResetUpdatedBy()
 	_u.mutation.SetUpdatedBy(v)
 	return _u
 }
 
 // SetNillableUpdatedBy sets the "updated_by" field if the given value is not nil.
-func (_u *SiteSettingUpdateOne) SetNillableUpdatedBy(v *uint64) *SiteSettingUpdateOne {
+func (_u *SiteSettingUpdateOne) SetNillableUpdatedBy(v *int64) *SiteSettingUpdateOne {
 	if v != nil {
 		_u.SetUpdatedBy(*v)
 	}
@@ -686,14 +686,14 @@ func (_u *SiteSettingUpdateOne) ClearUpdatedBy() *SiteSettingUpdateOne {
 }
 
 // SetDeletedBy sets the "deleted_by" field.
-func (_u *SiteSettingUpdateOne) SetDeletedBy(v uint64) *SiteSettingUpdateOne {
+func (_u *SiteSettingUpdateOne) SetDeletedBy(v int64) *SiteSettingUpdateOne {
 	_u.mutation.ResetDeletedBy()
 	_u.mutation.SetDeletedBy(v)
 	return _u
 }
 
 // SetNillableDeletedBy sets the "deleted_by" field if the given value is not nil.
-func (_u *SiteSettingUpdateOne) SetNillableDeletedBy(v *uint64) *SiteSettingUpdateOne {
+func (_u *SiteSettingUpdateOne) SetNillableDeletedBy(v *int64) *SiteSettingUpdateOne {
 	if v != nil {
 		_u.SetDeletedBy(*v)
 	}
@@ -713,14 +713,14 @@ func (_u *SiteSettingUpdateOne) ClearDeletedBy() *SiteSettingUpdateOne {
 }
 
 // SetSiteID sets the "site_id" field.
-func (_u *SiteSettingUpdateOne) SetSiteID(v uint64) *SiteSettingUpdateOne {
+func (_u *SiteSettingUpdateOne) SetSiteID(v int64) *SiteSettingUpdateOne {
 	_u.mutation.ResetSiteID()
 	_u.mutation.SetSiteID(v)
 	return _u
 }
 
 // SetNillableSiteID sets the "site_id" field if the given value is not nil.
-func (_u *SiteSettingUpdateOne) SetNillableSiteID(v *uint64) *SiteSettingUpdateOne {
+func (_u *SiteSettingUpdateOne) SetNillableSiteID(v *int64) *SiteSettingUpdateOne {
 	if v != nil {
 		_u.SetSiteID(*v)
 	}
@@ -1016,7 +1016,7 @@ func (_u *SiteSettingUpdateOne) sqlSave(ctx context.Context) (_node *SiteSetting
 	if err := _u.check(); err != nil {
 		return _node, err
 	}
-	_spec := sqlgraph.NewUpdateSpec(sitesetting.Table, sitesetting.Columns, sqlgraph.NewFieldSpec(sitesetting.FieldID, field.TypeUint64))
+	_spec := sqlgraph.NewUpdateSpec(sitesetting.Table, sitesetting.Columns, sqlgraph.NewFieldSpec(sitesetting.FieldID, field.TypeInt64))
 	id, ok := _u.mutation.ID()
 	if !ok {
 		return nil, &ValidationError{Name: "id", err: errors.New(`ent: missing "SiteSetting.id" for update`)}
@@ -1057,43 +1057,43 @@ func (_u *SiteSettingUpdateOne) sqlSave(ctx context.Context) (_node *SiteSetting
 		_spec.ClearField(sitesetting.FieldDeletedAt, field.TypeTime)
 	}
 	if value, ok := _u.mutation.CreatedBy(); ok {
-		_spec.SetField(sitesetting.FieldCreatedBy, field.TypeUint64, value)
+		_spec.SetField(sitesetting.FieldCreatedBy, field.TypeInt64, value)
 	}
 	if value, ok := _u.mutation.AddedCreatedBy(); ok {
-		_spec.AddField(sitesetting.FieldCreatedBy, field.TypeUint64, value)
+		_spec.AddField(sitesetting.FieldCreatedBy, field.TypeInt64, value)
 	}
 	if _u.mutation.CreatedByCleared() {
-		_spec.ClearField(sitesetting.FieldCreatedBy, field.TypeUint64)
+		_spec.ClearField(sitesetting.FieldCreatedBy, field.TypeInt64)
 	}
 	if value, ok := _u.mutation.UpdatedBy(); ok {
-		_spec.SetField(sitesetting.FieldUpdatedBy, field.TypeUint64, value)
+		_spec.SetField(sitesetting.FieldUpdatedBy, field.TypeInt64, value)
 	}
 	if value, ok := _u.mutation.AddedUpdatedBy(); ok {
-		_spec.AddField(sitesetting.FieldUpdatedBy, field.TypeUint64, value)
+		_spec.AddField(sitesetting.FieldUpdatedBy, field.TypeInt64, value)
 	}
 	if _u.mutation.UpdatedByCleared() {
-		_spec.ClearField(sitesetting.FieldUpdatedBy, field.TypeUint64)
+		_spec.ClearField(sitesetting.FieldUpdatedBy, field.TypeInt64)
 	}
 	if value, ok := _u.mutation.DeletedBy(); ok {
-		_spec.SetField(sitesetting.FieldDeletedBy, field.TypeUint64, value)
+		_spec.SetField(sitesetting.FieldDeletedBy, field.TypeInt64, value)
 	}
 	if value, ok := _u.mutation.AddedDeletedBy(); ok {
-		_spec.AddField(sitesetting.FieldDeletedBy, field.TypeUint64, value)
+		_spec.AddField(sitesetting.FieldDeletedBy, field.TypeInt64, value)
 	}
 	if _u.mutation.DeletedByCleared() {
-		_spec.ClearField(sitesetting.FieldDeletedBy, field.TypeUint64)
+		_spec.ClearField(sitesetting.FieldDeletedBy, field.TypeInt64)
 	}
 	if _u.mutation.TenantIDCleared() {
-		_spec.ClearField(sitesetting.FieldTenantID, field.TypeUint64)
+		_spec.ClearField(sitesetting.FieldTenantID, field.TypeInt64)
 	}
 	if value, ok := _u.mutation.SiteID(); ok {
-		_spec.SetField(sitesetting.FieldSiteID, field.TypeUint64, value)
+		_spec.SetField(sitesetting.FieldSiteID, field.TypeInt64, value)
 	}
 	if value, ok := _u.mutation.AddedSiteID(); ok {
-		_spec.AddField(sitesetting.FieldSiteID, field.TypeUint64, value)
+		_spec.AddField(sitesetting.FieldSiteID, field.TypeInt64, value)
 	}
 	if _u.mutation.SiteIDCleared() {
-		_spec.ClearField(sitesetting.FieldSiteID, field.TypeUint64)
+		_spec.ClearField(sitesetting.FieldSiteID, field.TypeInt64)
 	}
 	if value, ok := _u.mutation.Locale(); ok {
 		_spec.SetField(sitesetting.FieldLocale, field.TypeString, value)

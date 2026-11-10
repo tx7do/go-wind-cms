@@ -16,15 +16,15 @@ import (
 )
 
 const (
-	ClaimFieldUserName       = authn.ClaimFieldSubject // 用户名
-	ClaimFieldUserID         = "uid"                   // 用户 ID
-	ClaimFieldTenantID       = "tid"                   // 租户 ID
-	ClaimFieldClientID       = "cid"                   // 客户端 ID
-	ClaimFieldDeviceID       = "did"                   // 设备 ID
-	ClaimFieldRoleCodes      = "roc"                   // 角色码列表
-	ClaimFieldDataScope      = "ds"                    // 数据范围
-	ClaimFieldOrgUnitID      = "ouid"                  // 组织单元 ID
-	ClaimFieldPlatformAdmin  = "ipa"                   // 平台超级管理员标记（与 proto json_name 同名）
+	ClaimFieldUserName      = authn.ClaimFieldSubject // 用户名
+	ClaimFieldUserID        = "uid"                   // 用户 ID
+	ClaimFieldTenantID      = "tid"                   // 租户 ID
+	ClaimFieldClientID      = "cid"                   // 客户端 ID
+	ClaimFieldDeviceID      = "did"                   // 设备 ID
+	ClaimFieldRoleCodes     = "roc"                   // 角色码列表
+	ClaimFieldDataScope     = "ds"                    // 数据范围
+	ClaimFieldOrgUnitID     = "ouid"                  // 组织单元 ID
+	ClaimFieldPlatformAdmin = "ipa"                   // 平台超级管理员标记（与 proto json_name 同名）
 )
 
 const (
@@ -41,9 +41,9 @@ const (
 // NewUserTokenPayload 创建用户令牌
 func NewUserTokenPayload(
 	username string,
-	userID uint64,
-	tenantID uint64,
-	orgUnitID *uint64,
+	userID int64,
+	tenantID int64,
+	orgUnitID *int64,
 	roleCodes []string,
 	dataScope *identityV1.DataScope,
 	clientID *string,
@@ -127,17 +127,17 @@ func NewUserTokenPayloadWithClaims(claims *authn.AuthClaims) (*authenticationV1.
 		payload.Jti = trans.Ptr(jti)
 	}
 
-	userId, err := claims.GetUint64(ClaimFieldUserID)
+	userId, err := claims.GetInt64(ClaimFieldUserID)
 	if err != nil {
-		log.Errorf("GetUint64 ClaimFieldUserID failed: %v", err)
+		log.Errorf("GetInt64 ClaimFieldUserID failed: %v", err)
 	}
 	if userId != 0 {
 		payload.UserId = userId
 	}
 
-	tenantId, err := claims.GetUint64(ClaimFieldTenantID)
+	tenantId, err := claims.GetInt64(ClaimFieldTenantID)
 	if err != nil {
-		log.Errorf("GetUint64 ClaimFieldTenantID failed: %v", err)
+		log.Errorf("GetInt64 ClaimFieldTenantID failed: %v", err)
 	}
 	if tenantId != 0 {
 		payload.TenantId = trans.Ptr(tenantId)
@@ -178,9 +178,9 @@ func NewUserTokenPayloadWithClaims(claims *authn.AuthClaims) (*authenticationV1.
 		}
 	}
 
-	orgUnitID, err := claims.GetUint64(ClaimFieldOrgUnitID)
+	orgUnitID, err := claims.GetInt64(ClaimFieldOrgUnitID)
 	if err != nil {
-		log.Errorf("GetUint64 ClaimFieldOrgUnitID failed [%v]", err)
+		log.Errorf("GetInt64 ClaimFieldOrgUnitID failed [%v]", err)
 	}
 	if orgUnitID != 0 {
 		payload.OrgUnitId = trans.Ptr(orgUnitID)
@@ -213,11 +213,11 @@ func NewUserTokenPayloadWithJwtMapClaims(claims jwt.MapClaims) (*authenticationV
 	// 不符（如把数字字段填成字符串），裸类型断言会 panic，导致中间件崩溃。
 	// 因此所有断言必须用 ,ok 形式，类型不符时跳过该字段而不是 panic。
 	if userId, ok := claims[ClaimFieldUserID].(float64); ok {
-		payload.UserId = uint64(userId)
+		payload.UserId = int64(userId)
 	}
 
 	if tenantId, ok := claims[ClaimFieldTenantID].(float64); ok {
-		payload.TenantId = trans.Ptr(uint64(tenantId))
+		payload.TenantId = trans.Ptr(int64(tenantId))
 	}
 
 	if clientId, ok := claims[ClaimFieldClientID].(string); ok {
@@ -235,7 +235,7 @@ func NewUserTokenPayloadWithJwtMapClaims(claims jwt.MapClaims) (*authenticationV
 	}
 
 	if orgUnitID, ok := claims[ClaimFieldOrgUnitID].(float64); ok {
-		payload.OrgUnitId = trans.Ptr(uint64(orgUnitID))
+		payload.OrgUnitId = trans.Ptr(int64(orgUnitID))
 	}
 
 	roleCodes, _ := claims[ClaimFieldRoleCodes]

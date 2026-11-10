@@ -18,8 +18,8 @@ import (
 
 	"go-wind-cms/app/core/service/internal/data"
 
-	permissionV1 "go-wind-cms/api/gen/go/permission/service/v1"
 	identityV1 "go-wind-cms/api/gen/go/identity/service/v1"
+	permissionV1 "go-wind-cms/api/gen/go/permission/service/v1"
 
 	"go-wind-cms/pkg/constants"
 	appViewer "go-wind-cms/pkg/entgo/viewer"
@@ -76,7 +76,7 @@ func (s *PermissionService) init() {
 
 func (s *PermissionService) extractRelationIDs(
 	permissions []*permissionV1.Permission,
-	groupSet aggregator.ResourceMap[uint64, *permissionV1.PermissionGroup],
+	groupSet aggregator.ResourceMap[int64, *permissionV1.PermissionGroup],
 ) {
 	for _, p := range permissions {
 		if p.GetGroupId() > 0 {
@@ -87,10 +87,10 @@ func (s *PermissionService) extractRelationIDs(
 
 func (s *PermissionService) fetchRelationInfo(
 	ctx context.Context,
-	groupSet aggregator.ResourceMap[uint64, *permissionV1.PermissionGroup],
+	groupSet aggregator.ResourceMap[int64, *permissionV1.PermissionGroup],
 ) error {
 	if len(groupSet) > 0 {
-		groupIds := make([]uint64, 0, len(groupSet))
+		groupIds := make([]int64, 0, len(groupSet))
 		for id := range groupSet {
 			groupIds = append(groupIds, id)
 		}
@@ -111,12 +111,12 @@ func (s *PermissionService) fetchRelationInfo(
 
 func (s *PermissionService) bindRelations(
 	permissions []*permissionV1.Permission,
-	groupSet aggregator.ResourceMap[uint64, *permissionV1.PermissionGroup],
+	groupSet aggregator.ResourceMap[int64, *permissionV1.PermissionGroup],
 ) {
 	aggregator.Populate(
 		permissions,
 		groupSet,
-		func(ou *permissionV1.Permission) uint64 { return ou.GetGroupId() },
+		func(ou *permissionV1.Permission) int64 { return ou.GetGroupId() },
 		func(ou *permissionV1.Permission, g *permissionV1.PermissionGroup) {
 			ou.GroupName = g.Name
 		},
@@ -124,7 +124,7 @@ func (s *PermissionService) bindRelations(
 }
 
 func (s *PermissionService) enrichRelations(ctx context.Context, permissions []*permissionV1.Permission) error {
-	var groupSet = make(aggregator.ResourceMap[uint64, *permissionV1.PermissionGroup])
+	var groupSet = make(aggregator.ResourceMap[int64, *permissionV1.PermissionGroup])
 	s.extractRelationIDs(permissions, groupSet)
 	if err := s.fetchRelationInfo(ctx, groupSet); err != nil {
 		return err
@@ -205,7 +205,7 @@ func (s *PermissionService) appendAPis(
 	ctx context.Context,
 	permissions *[]*permissionV1.Permission,
 	mapPermissions *map[string][]*permissionV1.Permission,
-	operatorUserId uint64,
+	operatorUserId int64,
 ) error {
 	// 查询所有启用的 API 资源
 	apis, err := s.apiRepo.List(ctx, &paginationV1.PagingRequest{
@@ -232,7 +232,7 @@ func (s *PermissionService) appendAPis(
 
 	type moduleApis struct {
 		module string
-		apis   []uint64
+		apis   []int64
 	}
 
 	codes := make(map[string]*moduleApis)
@@ -268,7 +268,7 @@ func (s *PermissionService) appendAPis(
 
 			codes[code] = &moduleApis{
 				module: module,
-				apis:   []uint64{api.GetId()},
+				apis:   []int64{api.GetId()},
 			}
 		} else {
 			curCode.apis = append(curCode.apis, api.GetId())
@@ -329,7 +329,7 @@ func (s *PermissionService) SyncPermissions(ctx context.Context, req *permission
 
 	// 为权限追加对应的 API 资源 ID 列表
 	// 操作人身份从 viewer context 推导，忽略客户端 operator_id，防止伪造审计归属
-	var operatorUserID uint64
+	var operatorUserID int64
 	if opID, hasOp := viewerUserIDFromContext(ctx); hasOp {
 		operatorUserID = opID
 	}
@@ -413,7 +413,7 @@ func (s *PermissionService) SyncPermissions(ctx context.Context, req *permission
 
 	// 删除段：库有、派生集没有 → 删行并级联清角色授权/接口/菜单绑定。放最后：
 	// 中途失败残留的是"本该删的旧码"，重跑同步即自愈，好过删多了。
-	goneIDs := make([]uint64, 0)
+	goneIDs := make([]int64, 0)
 	for code, e := range existingByCode {
 		if _, hit := mergeHit[code]; hit {
 			continue
@@ -440,7 +440,7 @@ func (s *PermissionService) ListPermissionResources(ctx context.Context, req *pe
 	}
 
 	if len(req.RoleIds) > 0 {
-		var limitPermissionIDs []uint64
+		var limitPermissionIDs []int64
 		limitPermissionIDs, err := s.roleRepo.ListPermissionIDsByRoleIDs(ctx, req.GetRoleIds())
 		if err != nil {
 			return nil, err

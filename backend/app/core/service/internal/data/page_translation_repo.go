@@ -70,7 +70,7 @@ func (r *PageTranslationRepo) init() {
 func (r *PageTranslationRepo) CleanTranslations(
 	ctx context.Context,
 	tx *ent.Tx,
-	pageID uint64,
+	pageID int64,
 ) error {
 	if _, err := tx.PageTranslation.Delete().
 		Where(
@@ -83,7 +83,7 @@ func (r *PageTranslationRepo) CleanTranslations(
 	return nil
 }
 
-func (r *PageTranslationRepo) ListTranslations(ctx context.Context, pageID uint64, locale string, viewMask *fieldmaskpb.FieldMask) ([]*contentV1.PageTranslation, error) {
+func (r *PageTranslationRepo) ListTranslations(ctx context.Context, pageID int64, locale string, viewMask *fieldmaskpb.FieldMask) ([]*contentV1.PageTranslation, error) {
 	builder := r.entClient.Client().PageTranslation.Query().
 		Where(
 			pagetranslation.PageIDEQ(pageID),
@@ -124,7 +124,7 @@ func (r *PageTranslationRepo) ListTranslations(ctx context.Context, pageID uint6
 
 // ListTranslationsWithFallback 优先返回指定语言的译文；该语言缺译时返回全部译文，
 // 供前端按"匹配当前语言→回退第一条"兜底（只回传空数组会让前端无 fallback 可用）。
-func (r *PageTranslationRepo) ListTranslationsWithFallback(ctx context.Context, pageID uint64, locale string, viewMask *fieldmaskpb.FieldMask) ([]*contentV1.PageTranslation, error) {
+func (r *PageTranslationRepo) ListTranslationsWithFallback(ctx context.Context, pageID int64, locale string, viewMask *fieldmaskpb.FieldMask) ([]*contentV1.PageTranslation, error) {
 	translations, err := r.ListTranslations(ctx, pageID, locale, viewMask)
 	if err != nil {
 		return nil, err
@@ -184,7 +184,7 @@ func (r *PageTranslationRepo) BatchCreate(ctx context.Context, tx *ent.Tx, items
 // 已存在则原行就地更新（保留 created_by/created_at 与未提交字段），
 // 不存在则插入；同语言历史重复行仅保留 id 最小的一条并更新，其余删除。
 // Update 语义据此从"整表替换"改为按语言合并，删除译文请走 DeleteTranslation。
-func (r *PageTranslationRepo) UpsertTranslations(ctx context.Context, tx *ent.Tx, pageID uint64, items []*contentV1.PageTranslation) error {
+func (r *PageTranslationRepo) UpsertTranslations(ctx context.Context, tx *ent.Tx, pageID int64, items []*contentV1.PageTranslation) error {
 	if len(items) == 0 {
 		return nil
 	}
@@ -250,7 +250,7 @@ func (r *PageTranslationRepo) UpsertTranslations(ctx context.Context, tx *ent.Tx
 		}
 
 		if len(existings) > 1 {
-			dupeIDs := make([]uint64, 0, len(existings)-1)
+			dupeIDs := make([]int64, 0, len(existings)-1)
 			for _, e := range existings[1:] {
 				dupeIDs = append(dupeIDs, e.ID)
 			}
@@ -282,7 +282,7 @@ func (r *PageTranslationRepo) CreateTranslation(ctx context.Context, data *conte
 	return dto, nil
 }
 
-func (r *PageTranslationRepo) UpdateTranslation(ctx context.Context, id uint64, data *contentV1.PageTranslation, updateMask *fieldmaskpb.FieldMask) (*contentV1.PageTranslation, error) {
+func (r *PageTranslationRepo) UpdateTranslation(ctx context.Context, id int64, data *contentV1.PageTranslation, updateMask *fieldmaskpb.FieldMask) (*contentV1.PageTranslation, error) {
 	if data == nil {
 		return nil, nil
 	}
@@ -342,7 +342,7 @@ func (r *PageTranslationRepo) countByBaseSlug(ctx context.Context, pt *ent.PageT
 }
 
 // TranslationExists checks if a translation exists for the given page ID and language code.
-func (r *PageTranslationRepo) TranslationExists(ctx context.Context, pageId uint64, languageCode string) (bool, error) {
+func (r *PageTranslationRepo) TranslationExists(ctx context.Context, pageId int64, languageCode string) (bool, error) {
 	c, err := r.entClient.Client().PageTranslation.Query().
 		Where(
 			pagetranslation.PageIDEQ(pageId),
@@ -358,7 +358,7 @@ func (r *PageTranslationRepo) TranslationExists(ctx context.Context, pageId uint
 }
 
 // ListAvailedLanguages lists the language codes of all translations available for the given page ID.
-func (r *PageTranslationRepo) ListAvailedLanguages(ctx context.Context, pageId uint64) ([]string, error) {
+func (r *PageTranslationRepo) ListAvailedLanguages(ctx context.Context, pageId int64) ([]string, error) {
 	entities, err := r.entClient.Client().PageTranslation.Query().
 		Where(
 			pagetranslation.PageIDEQ(pageId),
@@ -394,7 +394,7 @@ func (r *PageTranslationRepo) PrepareTranslation(ctx context.Context, pt *ent.Pa
 	return nil
 }
 
-func (r *PageTranslationRepo) GetTranslation(ctx context.Context, pageId uint64, languageCode string) (*contentV1.PageTranslation, error) {
+func (r *PageTranslationRepo) GetTranslation(ctx context.Context, pageId int64, languageCode string) (*contentV1.PageTranslation, error) {
 	// 同 (page_id, language_code) 历史上可能存在重复行（旧 Update 直插遗留），
 	// 取 id 最小的一条保证结果确定；缺译文不是错误，交由调用方按 nil 处理
 	entity, err := r.entClient.Client().PageTranslation.Query().

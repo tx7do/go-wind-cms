@@ -10,47 +10,47 @@ import (
 )
 
 // ID filters vertices based on their ID field.
-func ID(id uint64) predicate.SearchSynonym {
+func ID(id int64) predicate.SearchSynonym {
 	return predicate.SearchSynonym(sql.FieldEQ(FieldID, id))
 }
 
 // IDEQ applies the EQ predicate on the ID field.
-func IDEQ(id uint64) predicate.SearchSynonym {
+func IDEQ(id int64) predicate.SearchSynonym {
 	return predicate.SearchSynonym(sql.FieldEQ(FieldID, id))
 }
 
 // IDNEQ applies the NEQ predicate on the ID field.
-func IDNEQ(id uint64) predicate.SearchSynonym {
+func IDNEQ(id int64) predicate.SearchSynonym {
 	return predicate.SearchSynonym(sql.FieldNEQ(FieldID, id))
 }
 
 // IDIn applies the In predicate on the ID field.
-func IDIn(ids ...uint64) predicate.SearchSynonym {
+func IDIn(ids ...int64) predicate.SearchSynonym {
 	return predicate.SearchSynonym(sql.FieldIn(FieldID, ids...))
 }
 
 // IDNotIn applies the NotIn predicate on the ID field.
-func IDNotIn(ids ...uint64) predicate.SearchSynonym {
+func IDNotIn(ids ...int64) predicate.SearchSynonym {
 	return predicate.SearchSynonym(sql.FieldNotIn(FieldID, ids...))
 }
 
 // IDGT applies the GT predicate on the ID field.
-func IDGT(id uint64) predicate.SearchSynonym {
+func IDGT(id int64) predicate.SearchSynonym {
 	return predicate.SearchSynonym(sql.FieldGT(FieldID, id))
 }
 
 // IDGTE applies the GTE predicate on the ID field.
-func IDGTE(id uint64) predicate.SearchSynonym {
+func IDGTE(id int64) predicate.SearchSynonym {
 	return predicate.SearchSynonym(sql.FieldGTE(FieldID, id))
 }
 
 // IDLT applies the LT predicate on the ID field.
-func IDLT(id uint64) predicate.SearchSynonym {
+func IDLT(id int64) predicate.SearchSynonym {
 	return predicate.SearchSynonym(sql.FieldLT(FieldID, id))
 }
 
 // IDLTE applies the LTE predicate on the ID field.
-func IDLTE(id uint64) predicate.SearchSynonym {
+func IDLTE(id int64) predicate.SearchSynonym {
 	return predicate.SearchSynonym(sql.FieldLTE(FieldID, id))
 }
 
@@ -70,7 +70,7 @@ func DeletedAt(v time.Time) predicate.SearchSynonym {
 }
 
 // TenantID applies equality check predicate on the "tenant_id" field. It's identical to TenantIDEQ.
-func TenantID(v uint64) predicate.SearchSynonym {
+func TenantID(v int64) predicate.SearchSynonym {
 	return predicate.SearchSynonym(sql.FieldEQ(FieldTenantID, v))
 }
 
@@ -240,42 +240,42 @@ func DeletedAtNotNil() predicate.SearchSynonym {
 }
 
 // TenantIDEQ applies the EQ predicate on the "tenant_id" field.
-func TenantIDEQ(v uint64) predicate.SearchSynonym {
+func TenantIDEQ(v int64) predicate.SearchSynonym {
 	return predicate.SearchSynonym(sql.FieldEQ(FieldTenantID, v))
 }
 
 // TenantIDNEQ applies the NEQ predicate on the "tenant_id" field.
-func TenantIDNEQ(v uint64) predicate.SearchSynonym {
+func TenantIDNEQ(v int64) predicate.SearchSynonym {
 	return predicate.SearchSynonym(sql.FieldNEQ(FieldTenantID, v))
 }
 
 // TenantIDIn applies the In predicate on the "tenant_id" field.
-func TenantIDIn(vs ...uint64) predicate.SearchSynonym {
+func TenantIDIn(vs ...int64) predicate.SearchSynonym {
 	return predicate.SearchSynonym(sql.FieldIn(FieldTenantID, vs...))
 }
 
 // TenantIDNotIn applies the NotIn predicate on the "tenant_id" field.
-func TenantIDNotIn(vs ...uint64) predicate.SearchSynonym {
+func TenantIDNotIn(vs ...int64) predicate.SearchSynonym {
 	return predicate.SearchSynonym(sql.FieldNotIn(FieldTenantID, vs...))
 }
 
 // TenantIDGT applies the GT predicate on the "tenant_id" field.
-func TenantIDGT(v uint64) predicate.SearchSynonym {
+func TenantIDGT(v int64) predicate.SearchSynonym {
 	return predicate.SearchSynonym(sql.FieldGT(FieldTenantID, v))
 }
 
 // TenantIDGTE applies the GTE predicate on the "tenant_id" field.
-func TenantIDGTE(v uint64) predicate.SearchSynonym {
+func TenantIDGTE(v int64) predicate.SearchSynonym {
 	return predicate.SearchSynonym(sql.FieldGTE(FieldTenantID, v))
 }
 
 // TenantIDLT applies the LT predicate on the "tenant_id" field.
-func TenantIDLT(v uint64) predicate.SearchSynonym {
+func TenantIDLT(v int64) predicate.SearchSynonym {
 	return predicate.SearchSynonym(sql.FieldLT(FieldTenantID, v))
 }
 
 // TenantIDLTE applies the LTE predicate on the "tenant_id" field.
-func TenantIDLTE(v uint64) predicate.SearchSynonym {
+func TenantIDLTE(v int64) predicate.SearchSynonym {
 	return predicate.SearchSynonym(sql.FieldLTE(FieldTenantID, v))
 }
 

@@ -25,8 +25,8 @@ import (
 
 	"go-wind-cms/pkg/metadata"
 	"go-wind-cms/pkg/middleware/auth"
-	applogging "go-wind-cms/pkg/middleware/logging"
 	entmiddleware "go-wind-cms/pkg/middleware/ent"
+	applogging "go-wind-cms/pkg/middleware/logging"
 	"go-wind-cms/pkg/middleware/tenantgate"
 )
 

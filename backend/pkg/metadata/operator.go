@@ -6,7 +6,7 @@ import (
 )
 
 // NewSystemOperator 创建系统操作员的 OperatorMetadata
-func NewSystemOperator(tenantID uint64) *authenticationV1.OperatorMetadata {
+func NewSystemOperator(tenantID int64) *authenticationV1.OperatorMetadata {
 	return &authenticationV1.OperatorMetadata{
 		Type:      authenticationV1.OperatorMetadata_SYSTEM,
 		UserId:    0, // 系统操作员用户ID通常为0
@@ -16,7 +16,7 @@ func NewSystemOperator(tenantID uint64) *authenticationV1.OperatorMetadata {
 }
 
 // NewServiceOperator 创建服务操作员的 OperatorMetadata
-func NewServiceOperator(userID, tenantID uint64) *authenticationV1.OperatorMetadata {
+func NewServiceOperator(userID, tenantID int64) *authenticationV1.OperatorMetadata {
 	return &authenticationV1.OperatorMetadata{
 		Type:      authenticationV1.OperatorMetadata_SERVICE,
 		UserId:    userID,
@@ -26,7 +26,7 @@ func NewServiceOperator(userID, tenantID uint64) *authenticationV1.OperatorMetad
 }
 
 // NewUserOperator 创建用户操作员的 OperatorMetadata
-func NewUserOperator(userID, tenantID, orgUnitID uint64, dataScope identityV1.DataScope) *authenticationV1.OperatorMetadata {
+func NewUserOperator(userID, tenantID, orgUnitID int64, dataScope identityV1.DataScope) *authenticationV1.OperatorMetadata {
 	return &authenticationV1.OperatorMetadata{
 		Type:      authenticationV1.OperatorMetadata_USER,
 		UserId:    userID,

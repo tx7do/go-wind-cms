@@ -92,7 +92,8 @@ func operationActionByMethod(method string) (auditV1.OperationAuditLog_ActionTyp
 // extractResource 从路径模板与实际请求路径提取资源类型与资源ID。
 // 模板末段为 {id} 占位符时，用实际请求路径同位置段作为资源ID。
 // 例：模板 /admin/v1/users/{id} + 请求 /admin/v1/users/42 → ("users", "42")；
-//    模板 /admin/v1/users + 请求 /admin/v1/users → ("users", "")
+//
+//	模板 /admin/v1/users + 请求 /admin/v1/users → ("users", "")
 func extractResource(pathTemplate string, requestPath string) (resourceType string, resourceId string) {
 	if pathTemplate == "" {
 		return "", ""

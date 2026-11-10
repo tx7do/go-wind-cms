@@ -15,7 +15,7 @@ import (
 type NotificationPreferenceService struct {
 	adminV1.NotificationPreferenceServiceHTTPServer
 
-	log          *log.Helper
+	log           *log.Helper
 	preferenceCli notifyV1.NotificationPreferenceServiceClient
 }
 

@@ -100,8 +100,8 @@ func (SiteSetting_SettingType) EnumDescriptor() ([]byte, []int) {
 // 站点配置
 type SiteSetting struct {
 	state           protoimpl.MessageState   `protogen:"open.v1"`
-	Id              *uint64                  `protobuf:"varint,1,opt,name=id,proto3,oneof" json:"id,omitempty"`                                                                               // 站点配置ID
-	SiteId          *uint64                  `protobuf:"varint,2,opt,name=site_id,json=siteId,proto3,oneof" json:"site_id,omitempty"`                                                         // 站点ID（多站点场景下隔离配置，0 表示全局默认配置）
+	Id              *int64                   `protobuf:"varint,1,opt,name=id,proto3,oneof" json:"id,omitempty"`                                                                               // 站点配置ID
+	SiteId          *int64                   `protobuf:"varint,2,opt,name=site_id,json=siteId,proto3,oneof" json:"site_id,omitempty"`                                                         // 站点ID（多站点场景下隔离配置，0 表示全局默认配置）
 	Locale          *string                  `protobuf:"bytes,3,opt,name=locale,proto3,oneof" json:"locale,omitempty"`                                                                        // 语言区域（如 'zh-CN', 'en-US'，空值表示默认语言配置）
 	Group           *string                  `protobuf:"bytes,4,opt,name=group,proto3,oneof" json:"group,omitempty"`                                                                          // 配置分组（前端表单分组，如 'general', 'seo', 'social', 'comment'）
 	Key             *string                  `protobuf:"bytes,5,opt,name=key,proto3,oneof" json:"key,omitempty"`                                                                              // 配置键（唯一标识，同 site_id+locale+key 唯一）
@@ -113,9 +113,9 @@ type SiteSetting struct {
 	Options         map[string]string        `protobuf:"bytes,11,rep,name=options,proto3" json:"options,omitempty" protobuf_key:"bytes,1,opt,name=key" protobuf_val:"bytes,2,opt,name=value"` // SELECT 类型的选项（JSON 数组，格式：[{\"label\":\"中文\",\"value\":\"zh-CN\"}]）
 	IsRequired      *bool                    `protobuf:"varint,12,opt,name=is_required,json=isRequired,proto3,oneof" json:"is_required,omitempty"`                                            // 是否必填
 	ValidationRegex *string                  `protobuf:"bytes,13,opt,name=validation_regex,json=validationRegex,proto3,oneof" json:"validation_regex,omitempty"`                              // 自定义正则验证（可选）
-	CreatedBy       *uint64                  `protobuf:"varint,100,opt,name=created_by,json=createdBy,proto3,oneof" json:"created_by,omitempty"`                                              // 创建者用户ID
-	UpdatedBy       *uint64                  `protobuf:"varint,101,opt,name=updated_by,json=updatedBy,proto3,oneof" json:"updated_by,omitempty"`                                              // 更新者用户ID
-	DeletedBy       *uint64                  `protobuf:"varint,102,opt,name=deleted_by,json=deletedBy,proto3,oneof" json:"deleted_by,omitempty"`                                              // 删除者用户ID
+	CreatedBy       *int64                   `protobuf:"varint,100,opt,name=created_by,json=createdBy,proto3,oneof" json:"created_by,omitempty"`                                              // 创建者用户ID
+	UpdatedBy       *int64                   `protobuf:"varint,101,opt,name=updated_by,json=updatedBy,proto3,oneof" json:"updated_by,omitempty"`                                              // 更新者用户ID
+	DeletedBy       *int64                   `protobuf:"varint,102,opt,name=deleted_by,json=deletedBy,proto3,oneof" json:"deleted_by,omitempty"`                                              // 删除者用户ID
 	CreatedAt       *timestamppb.Timestamp   `protobuf:"bytes,200,opt,name=created_at,json=createdAt,proto3,oneof" json:"created_at,omitempty"`                                               // 创建时间
 	UpdatedAt       *timestamppb.Timestamp   `protobuf:"bytes,201,opt,name=updated_at,json=updatedAt,proto3,oneof" json:"updated_at,omitempty"`                                               // 更新时间
 	DeletedAt       *timestamppb.Timestamp   `protobuf:"bytes,202,opt,name=deleted_at,json=deletedAt,proto3,oneof" json:"deleted_at,omitempty"`                                               // 删除时间
@@ -153,14 +153,14 @@ func (*SiteSetting) Descriptor() ([]byte, []int) {
 	return file_site_service_v1_site_setting_proto_rawDescGZIP(), []int{0}
 }
 
-func (x *SiteSetting) GetId() uint64 {
+func (x *SiteSetting) GetId() int64 {
 	if x != nil && x.Id != nil {
 		return *x.Id
 	}
 	return 0
 }
 
-func (x *SiteSetting) GetSiteId() uint64 {
+func (x *SiteSetting) GetSiteId() int64 {
 	if x != nil && x.SiteId != nil {
 		return *x.SiteId
 	}
@@ -244,21 +244,21 @@ func (x *SiteSetting) GetValidationRegex() string {
 	return ""
 }
 
-func (x *SiteSetting) GetCreatedBy() uint64 {
+func (x *SiteSetting) GetCreatedBy() int64 {
 	if x != nil && x.CreatedBy != nil {
 		return *x.CreatedBy
 	}
 	return 0
 }
 
-func (x *SiteSetting) GetUpdatedBy() uint64 {
+func (x *SiteSetting) GetUpdatedBy() int64 {
 	if x != nil && x.UpdatedBy != nil {
 		return *x.UpdatedBy
 	}
 	return 0
 }
 
-func (x *SiteSetting) GetDeletedBy() uint64 {
+func (x *SiteSetting) GetDeletedBy() int64 {
 	if x != nil && x.DeletedBy != nil {
 		return *x.DeletedBy
 	}
@@ -290,7 +290,7 @@ func (x *SiteSetting) GetDeletedAt() *timestamppb.Timestamp {
 type ListSiteSettingResponse struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
 	Items         []*SiteSetting         `protobuf:"bytes,1,rep,name=items,proto3" json:"items,omitempty"`
-	Total         uint64                 `protobuf:"varint,2,opt,name=total,proto3" json:"total,omitempty"`
+	Total         int64                  `protobuf:"varint,2,opt,name=total,proto3" json:"total,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -332,7 +332,7 @@ func (x *ListSiteSettingResponse) GetItems() []*SiteSetting {
 	return nil
 }
 
-func (x *ListSiteSettingResponse) GetTotal() uint64 {
+func (x *ListSiteSettingResponse) GetTotal() int64 {
 	if x != nil {
 		return x.Total
 	}
@@ -342,7 +342,7 @@ func (x *ListSiteSettingResponse) GetTotal() uint64 {
 // 请求 - 站点配置数据
 type GetSiteSettingRequest struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
-	Id            uint64                 `protobuf:"varint,1,opt,name=id,proto3" json:"id,omitempty"`
+	Id            int64                  `protobuf:"varint,1,opt,name=id,proto3" json:"id,omitempty"`
 	ViewMask      *fieldmaskpb.FieldMask `protobuf:"bytes,100,opt,name=view_mask,json=viewMask,proto3,oneof" json:"view_mask,omitempty"` // 视图字段过滤器，用于控制返回的字段
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
@@ -378,7 +378,7 @@ func (*GetSiteSettingRequest) Descriptor() ([]byte, []int) {
 	return file_site_service_v1_site_setting_proto_rawDescGZIP(), []int{2}
 }
 
-func (x *GetSiteSettingRequest) GetId() uint64 {
+func (x *GetSiteSettingRequest) GetId() int64 {
 	if x != nil {
 		return x.Id
 	}
@@ -440,7 +440,7 @@ func (x *CreateSiteSettingRequest) GetData() *SiteSetting {
 // 请求 - 更新站点配置
 type UpdateSiteSettingRequest struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
-	Id            uint64                 `protobuf:"varint,1,opt,name=id,proto3" json:"id,omitempty"`
+	Id            int64                  `protobuf:"varint,1,opt,name=id,proto3" json:"id,omitempty"`
 	Data          *SiteSetting           `protobuf:"bytes,2,opt,name=data,proto3" json:"data,omitempty"`
 	UpdateMask    *fieldmaskpb.FieldMask `protobuf:"bytes,3,opt,name=update_mask,json=updateMask,proto3" json:"update_mask,omitempty"`              // 要更新的字段列表
 	AllowMissing  *bool                  `protobuf:"varint,4,opt,name=allow_missing,json=allowMissing,proto3,oneof" json:"allow_missing,omitempty"` // 如果设置为true的时候，资源不存在则会新增(插入)，并且在这种情况下`updateMask`字段将会被忽略。
@@ -478,7 +478,7 @@ func (*UpdateSiteSettingRequest) Descriptor() ([]byte, []int) {
 	return file_site_service_v1_site_setting_proto_rawDescGZIP(), []int{4}
 }
 
-func (x *UpdateSiteSettingRequest) GetId() uint64 {
+func (x *UpdateSiteSettingRequest) GetId() int64 {
 	if x != nil {
 		return x.Id
 	}
@@ -554,7 +554,7 @@ func (x *DeleteSiteSettingRequest) GetQueryBy() isDeleteSiteSettingRequest_Query
 	return nil
 }
 
-func (x *DeleteSiteSettingRequest) GetId() uint64 {
+func (x *DeleteSiteSettingRequest) GetId() int64 {
 	if x != nil {
 		if x, ok := x.QueryBy.(*DeleteSiteSettingRequest_Id); ok {
 			return x.Id
@@ -568,7 +568,7 @@ type isDeleteSiteSettingRequest_QueryBy interface {
 }
 
 type DeleteSiteSettingRequest_Id struct {
-	Id uint64 `protobuf:"varint,1,opt,name=id,proto3,oneof"` // ID
+	Id int64 `protobuf:"varint,1,opt,name=id,proto3,oneof"` // ID
 }
 
 func (*DeleteSiteSettingRequest_Id) isDeleteSiteSettingRequest_QueryBy() {}
@@ -579,8 +579,8 @@ const file_site_service_v1_site_setting_proto_rawDesc = "" +
 	"\n" +
 	"\"site/service/v1/site_setting.proto\x12\x0fsite.service.v1\x1a$gnostic/openapi/v3/annotations.proto\x1a\x1bgoogle/protobuf/empty.proto\x1a\x1fgoogle/protobuf/timestamp.proto\x1a google/protobuf/field_mask.proto\x1a\x1epagination/v1/pagination.proto\"\xe5\x10\n" +
 	"\vSiteSetting\x12)\n" +
-	"\x02id\x18\x01 \x01(\x04B\x14\xbaG\x11\x92\x02\x0e站点配置IDH\x00R\x02id\x88\x01\x01\x12m\n" +
-	"\asite_id\x18\x02 \x01(\x04BO\xbaGL\x92\x02I站点ID（多站点场景下隔离配置，0 表示全局默认配置）H\x01R\x06siteId\x88\x01\x01\x12j\n" +
+	"\x02id\x18\x01 \x01(\x03B\x14\xbaG\x11\x92\x02\x0e站点配置IDH\x00R\x02id\x88\x01\x01\x12m\n" +
+	"\asite_id\x18\x02 \x01(\x03BO\xbaGL\x92\x02I站点ID（多站点场景下隔离配置，0 表示全局默认配置）H\x01R\x06siteId\x88\x01\x01\x12j\n" +
 	"\x06locale\x18\x03 \x01(\tBM\xbaGJ\x92\x02G语言区域（如 'zh-CN', 'en-US'，空值表示默认语言配置）H\x02R\x06locale\x88\x01\x01\x123\n" +
 	"\x05group\x18\x04 \x01(\tB\x18\xbaG\x15\x92\x02\x12配置分组标识H\x03R\x05group\x88\x01\x01\x12W\n" +
 	"\x03key\x18\x05 \x01(\tB@\xbaG=\x92\x02:配置键（如 'site_title', 'ga_id', 'posts_per_page'）H\x04R\x03key\x88\x01\x01\x12t\n" +
@@ -596,11 +596,11 @@ const file_site_service_v1_site_setting_proto_rawDesc = "" +
 	"isRequired\x88\x01\x01\x12W\n" +
 	"\x10validation_regex\x18\r \x01(\tB'\xbaG$\x92\x02!验证正则表达式（可选）H\vR\x0fvalidationRegex\x88\x01\x01\x12;\n" +
 	"\n" +
-	"created_by\x18d \x01(\x04B\x17\xbaG\x14\x92\x02\x11创建者用户IDH\fR\tcreatedBy\x88\x01\x01\x12;\n" +
+	"created_by\x18d \x01(\x03B\x17\xbaG\x14\x92\x02\x11创建者用户IDH\fR\tcreatedBy\x88\x01\x01\x12;\n" +
 	"\n" +
-	"updated_by\x18e \x01(\x04B\x17\xbaG\x14\x92\x02\x11更新者用户IDH\rR\tupdatedBy\x88\x01\x01\x12;\n" +
+	"updated_by\x18e \x01(\x03B\x17\xbaG\x14\x92\x02\x11更新者用户IDH\rR\tupdatedBy\x88\x01\x01\x12;\n" +
 	"\n" +
-	"deleted_by\x18f \x01(\x04B\x17\xbaG\x14\x92\x02\x11删除者用户IDH\x0eR\tdeletedBy\x88\x01\x01\x12S\n" +
+	"deleted_by\x18f \x01(\x03B\x17\xbaG\x14\x92\x02\x11删除者用户IDH\x0eR\tdeletedBy\x88\x01\x01\x12S\n" +
 	"\n" +
 	"created_at\x18\xc8\x01 \x01(\v2\x1a.google.protobuf.TimestampB\x12\xbaG\x0f\x92\x02\f创建时间H\x0fR\tcreatedAt\x88\x01\x01\x12S\n" +
 	"\n" +
@@ -642,23 +642,23 @@ const file_site_service_v1_site_setting_proto_rawDesc = "" +
 	"\v_deleted_at\"c\n" +
 	"\x17ListSiteSettingResponse\x122\n" +
 	"\x05items\x18\x01 \x03(\v2\x1c.site.service.v1.SiteSettingR\x05items\x12\x14\n" +
-	"\x05total\x18\x02 \x01(\x04R\x05total\"\xae\x01\n" +
+	"\x05total\x18\x02 \x01(\x03R\x05total\"\xae\x01\n" +
 	"\x15GetSiteSettingRequest\x12\x0e\n" +
-	"\x02id\x18\x01 \x01(\x04R\x02id\x12w\n" +
+	"\x02id\x18\x01 \x01(\x03R\x02id\x12w\n" +
 	"\tview_mask\x18d \x01(\v2\x1a.google.protobuf.FieldMaskB9\xbaG6\x92\x023视图字段过滤器，用于控制返回的字段H\x00R\bviewMask\x88\x01\x01B\f\n" +
 	"\n" +
 	"_view_mask\"L\n" +
 	"\x18CreateSiteSettingRequest\x120\n" +
 	"\x04data\x18\x01 \x01(\v2\x1c.site.service.v1.SiteSettingR\x04data\"\x9a\x03\n" +
 	"\x18UpdateSiteSettingRequest\x12\x0e\n" +
-	"\x02id\x18\x01 \x01(\x04R\x02id\x120\n" +
+	"\x02id\x18\x01 \x01(\x03R\x02id\x120\n" +
 	"\x04data\x18\x02 \x01(\v2\x1c.site.service.v1.SiteSettingR\x04data\x12s\n" +
 	"\vupdate_mask\x18\x03 \x01(\v2\x1a.google.protobuf.FieldMaskB6\xbaG3:\x16\x12\x14id,realname,username\x92\x02\x18要更新的字段列表R\n" +
 	"updateMask\x12\xb4\x01\n" +
 	"\rallow_missing\x18\x04 \x01(\bB\x89\x01\xbaG\x85\x01\x92\x02\x81\x01如果设置为true的时候，资源不存在则会新增(插入)，并且在这种情况下`updateMask`字段将会被忽略。H\x00R\fallowMissing\x88\x01\x01B\x10\n" +
 	"\x0e_allow_missing\"D\n" +
 	"\x18DeleteSiteSettingRequest\x12\x1c\n" +
-	"\x02id\x18\x01 \x01(\x04B\n" +
+	"\x02id\x18\x01 \x01(\x03B\n" +
 	"\xbaG\a\x18\x01\x92\x02\x02IDH\x00R\x02idB\n" +
 	"\n" +
 	"\bquery_by2\xab\x03\n" +

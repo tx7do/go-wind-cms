@@ -40,7 +40,7 @@ func (_d *PageTranslationDelete) ExecX(ctx context.Context) int {
 }
 
 func (_d *PageTranslationDelete) sqlExec(ctx context.Context) (int, error) {
-	_spec := sqlgraph.NewDeleteSpec(pagetranslation.Table, sqlgraph.NewFieldSpec(pagetranslation.FieldID, field.TypeUint64))
+	_spec := sqlgraph.NewDeleteSpec(pagetranslation.Table, sqlgraph.NewFieldSpec(pagetranslation.FieldID, field.TypeInt64))
 	if ps := _d.mutation.predicates; len(ps) > 0 {
 		_spec.Predicate = func(selector *sql.Selector) {
 			for i := range ps {

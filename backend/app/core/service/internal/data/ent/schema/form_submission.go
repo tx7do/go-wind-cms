@@ -30,12 +30,12 @@ func (FormSubmission) Annotations() []schema.Annotation {
 // Fields of the FormSubmission.
 func (FormSubmission) Fields() []ent.Field {
 	return []ent.Field{
-		field.Uint64("page_id").
+		field.Int64("page_id").
 			Comment("所属页面ID").
 			Optional().
 			Nillable(),
 
-		field.Uint64("section_id").
+		field.Int64("section_id").
 			Comment("所属区块ID（FORM 类型 Section）").
 			Optional().
 			Nillable(),
@@ -44,7 +44,7 @@ func (FormSubmission) Fields() []ent.Field {
 			Comment("提交数据（字段名→值；字段集须为该区块 config.fields 的子集）").
 			Optional(),
 
-		field.Uint64("user_id").
+		field.Int64("user_id").
 			Comment("提交者用户ID（匿名提交为 0）").
 			Default(0).
 			Optional().
@@ -57,7 +57,7 @@ func (FormSubmission) Mixin() []ent.Mixin {
 	return []ent.Mixin{
 		mixin.AutoIncrementId64{},
 		mixin.TimeAt{},
-		mixin.TenantID[uint64]{},
+		mixin.TenantID[int64]{},
 	}
 }
 

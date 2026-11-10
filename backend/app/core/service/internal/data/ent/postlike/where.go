@@ -10,47 +10,47 @@ import (
 )
 
 // ID filters vertices based on their ID field.
-func ID(id uint64) predicate.PostLike {
+func ID(id int64) predicate.PostLike {
 	return predicate.PostLike(sql.FieldEQ(FieldID, id))
 }
 
 // IDEQ applies the EQ predicate on the ID field.
-func IDEQ(id uint64) predicate.PostLike {
+func IDEQ(id int64) predicate.PostLike {
 	return predicate.PostLike(sql.FieldEQ(FieldID, id))
 }
 
 // IDNEQ applies the NEQ predicate on the ID field.
-func IDNEQ(id uint64) predicate.PostLike {
+func IDNEQ(id int64) predicate.PostLike {
 	return predicate.PostLike(sql.FieldNEQ(FieldID, id))
 }
 
 // IDIn applies the In predicate on the ID field.
-func IDIn(ids ...uint64) predicate.PostLike {
+func IDIn(ids ...int64) predicate.PostLike {
 	return predicate.PostLike(sql.FieldIn(FieldID, ids...))
 }
 
 // IDNotIn applies the NotIn predicate on the ID field.
-func IDNotIn(ids ...uint64) predicate.PostLike {
+func IDNotIn(ids ...int64) predicate.PostLike {
 	return predicate.PostLike(sql.FieldNotIn(FieldID, ids...))
 }
 
 // IDGT applies the GT predicate on the ID field.
-func IDGT(id uint64) predicate.PostLike {
+func IDGT(id int64) predicate.PostLike {
 	return predicate.PostLike(sql.FieldGT(FieldID, id))
 }
 
 // IDGTE applies the GTE predicate on the ID field.
-func IDGTE(id uint64) predicate.PostLike {
+func IDGTE(id int64) predicate.PostLike {
 	return predicate.PostLike(sql.FieldGTE(FieldID, id))
 }
 
 // IDLT applies the LT predicate on the ID field.
-func IDLT(id uint64) predicate.PostLike {
+func IDLT(id int64) predicate.PostLike {
 	return predicate.PostLike(sql.FieldLT(FieldID, id))
 }
 
 // IDLTE applies the LTE predicate on the ID field.
-func IDLTE(id uint64) predicate.PostLike {
+func IDLTE(id int64) predicate.PostLike {
 	return predicate.PostLike(sql.FieldLTE(FieldID, id))
 }
 
@@ -70,17 +70,17 @@ func DeletedAt(v time.Time) predicate.PostLike {
 }
 
 // TenantID applies equality check predicate on the "tenant_id" field. It's identical to TenantIDEQ.
-func TenantID(v uint64) predicate.PostLike {
+func TenantID(v int64) predicate.PostLike {
 	return predicate.PostLike(sql.FieldEQ(FieldTenantID, v))
 }
 
 // UserID applies equality check predicate on the "user_id" field. It's identical to UserIDEQ.
-func UserID(v uint64) predicate.PostLike {
+func UserID(v int64) predicate.PostLike {
 	return predicate.PostLike(sql.FieldEQ(FieldUserID, v))
 }
 
 // PostID applies equality check predicate on the "post_id" field. It's identical to PostIDEQ.
-func PostID(v uint64) predicate.PostLike {
+func PostID(v int64) predicate.PostLike {
 	return predicate.PostLike(sql.FieldEQ(FieldPostID, v))
 }
 
@@ -235,42 +235,42 @@ func DeletedAtNotNil() predicate.PostLike {
 }
 
 // TenantIDEQ applies the EQ predicate on the "tenant_id" field.
-func TenantIDEQ(v uint64) predicate.PostLike {
+func TenantIDEQ(v int64) predicate.PostLike {
 	return predicate.PostLike(sql.FieldEQ(FieldTenantID, v))
 }
 
 // TenantIDNEQ applies the NEQ predicate on the "tenant_id" field.
-func TenantIDNEQ(v uint64) predicate.PostLike {
+func TenantIDNEQ(v int64) predicate.PostLike {
 	return predicate.PostLike(sql.FieldNEQ(FieldTenantID, v))
 }
 
 // TenantIDIn applies the In predicate on the "tenant_id" field.
-func TenantIDIn(vs ...uint64) predicate.PostLike {
+func TenantIDIn(vs ...int64) predicate.PostLike {
 	return predicate.PostLike(sql.FieldIn(FieldTenantID, vs...))
 }
 
 // TenantIDNotIn applies the NotIn predicate on the "tenant_id" field.
-func TenantIDNotIn(vs ...uint64) predicate.PostLike {
+func TenantIDNotIn(vs ...int64) predicate.PostLike {
 	return predicate.PostLike(sql.FieldNotIn(FieldTenantID, vs...))
 }
 
 // TenantIDGT applies the GT predicate on the "tenant_id" field.
-func TenantIDGT(v uint64) predicate.PostLike {
+func TenantIDGT(v int64) predicate.PostLike {
 	return predicate.PostLike(sql.FieldGT(FieldTenantID, v))
 }
 
 // TenantIDGTE applies the GTE predicate on the "tenant_id" field.
-func TenantIDGTE(v uint64) predicate.PostLike {
+func TenantIDGTE(v int64) predicate.PostLike {
 	return predicate.PostLike(sql.FieldGTE(FieldTenantID, v))
 }
 
 // TenantIDLT applies the LT predicate on the "tenant_id" field.
-func TenantIDLT(v uint64) predicate.PostLike {
+func TenantIDLT(v int64) predicate.PostLike {
 	return predicate.PostLike(sql.FieldLT(FieldTenantID, v))
 }
 
 // TenantIDLTE applies the LTE predicate on the "tenant_id" field.
-func TenantIDLTE(v uint64) predicate.PostLike {
+func TenantIDLTE(v int64) predicate.PostLike {
 	return predicate.PostLike(sql.FieldLTE(FieldTenantID, v))
 }
 
@@ -285,42 +285,42 @@ func TenantIDNotNil() predicate.PostLike {
 }
 
 // UserIDEQ applies the EQ predicate on the "user_id" field.
-func UserIDEQ(v uint64) predicate.PostLike {
+func UserIDEQ(v int64) predicate.PostLike {
 	return predicate.PostLike(sql.FieldEQ(FieldUserID, v))
 }
 
 // UserIDNEQ applies the NEQ predicate on the "user_id" field.
-func UserIDNEQ(v uint64) predicate.PostLike {
+func UserIDNEQ(v int64) predicate.PostLike {
 	return predicate.PostLike(sql.FieldNEQ(FieldUserID, v))
 }
 
 // UserIDIn applies the In predicate on the "user_id" field.
-func UserIDIn(vs ...uint64) predicate.PostLike {
+func UserIDIn(vs ...int64) predicate.PostLike {
 	return predicate.PostLike(sql.FieldIn(FieldUserID, vs...))
 }
 
 // UserIDNotIn applies the NotIn predicate on the "user_id" field.
-func UserIDNotIn(vs ...uint64) predicate.PostLike {
+func UserIDNotIn(vs ...int64) predicate.PostLike {
 	return predicate.PostLike(sql.FieldNotIn(FieldUserID, vs...))
 }
 
 // UserIDGT applies the GT predicate on the "user_id" field.
-func UserIDGT(v uint64) predicate.PostLike {
+func UserIDGT(v int64) predicate.PostLike {
 	return predicate.PostLike(sql.FieldGT(FieldUserID, v))
 }
 
 // UserIDGTE applies the GTE predicate on the "user_id" field.
-func UserIDGTE(v uint64) predicate.PostLike {
+func UserIDGTE(v int64) predicate.PostLike {
 	return predicate.PostLike(sql.FieldGTE(FieldUserID, v))
 }
 
 // UserIDLT applies the LT predicate on the "user_id" field.
-func UserIDLT(v uint64) predicate.PostLike {
+func UserIDLT(v int64) predicate.PostLike {
 	return predicate.PostLike(sql.FieldLT(FieldUserID, v))
 }
 
 // UserIDLTE applies the LTE predicate on the "user_id" field.
-func UserIDLTE(v uint64) predicate.PostLike {
+func UserIDLTE(v int64) predicate.PostLike {
 	return predicate.PostLike(sql.FieldLTE(FieldUserID, v))
 }
 
@@ -335,42 +335,42 @@ func UserIDNotNil() predicate.PostLike {
 }
 
 // PostIDEQ applies the EQ predicate on the "post_id" field.
-func PostIDEQ(v uint64) predicate.PostLike {
+func PostIDEQ(v int64) predicate.PostLike {
 	return predicate.PostLike(sql.FieldEQ(FieldPostID, v))
 }
 
 // PostIDNEQ applies the NEQ predicate on the "post_id" field.
-func PostIDNEQ(v uint64) predicate.PostLike {
+func PostIDNEQ(v int64) predicate.PostLike {
 	return predicate.PostLike(sql.FieldNEQ(FieldPostID, v))
 }
 
 // PostIDIn applies the In predicate on the "post_id" field.
-func PostIDIn(vs ...uint64) predicate.PostLike {
+func PostIDIn(vs ...int64) predicate.PostLike {
 	return predicate.PostLike(sql.FieldIn(FieldPostID, vs...))
 }
 
 // PostIDNotIn applies the NotIn predicate on the "post_id" field.
-func PostIDNotIn(vs ...uint64) predicate.PostLike {
+func PostIDNotIn(vs ...int64) predicate.PostLike {
 	return predicate.PostLike(sql.FieldNotIn(FieldPostID, vs...))
 }
 
 // PostIDGT applies the GT predicate on the "post_id" field.
-func PostIDGT(v uint64) predicate.PostLike {
+func PostIDGT(v int64) predicate.PostLike {
 	return predicate.PostLike(sql.FieldGT(FieldPostID, v))
 }
 
 // PostIDGTE applies the GTE predicate on the "post_id" field.
-func PostIDGTE(v uint64) predicate.PostLike {
+func PostIDGTE(v int64) predicate.PostLike {
 	return predicate.PostLike(sql.FieldGTE(FieldPostID, v))
 }
 
 // PostIDLT applies the LT predicate on the "post_id" field.
-func PostIDLT(v uint64) predicate.PostLike {
+func PostIDLT(v int64) predicate.PostLike {
 	return predicate.PostLike(sql.FieldLT(FieldPostID, v))
 }
 
 // PostIDLTE applies the LTE predicate on the "post_id" field.
-func PostIDLTE(v uint64) predicate.PostLike {
+func PostIDLTE(v int64) predicate.PostLike {
 	return predicate.PostLike(sql.FieldLTE(FieldPostID, v))
 }
 

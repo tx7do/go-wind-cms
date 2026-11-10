@@ -48,7 +48,7 @@ func NewRouterService(
 	}
 }
 
-func (s *AdminPortalService) menuListToQueryString(menus []uint64, onlyButton bool) string {
+func (s *AdminPortalService) menuListToQueryString(menus []int64, onlyButton bool) string {
 	var ids []string
 	for _, menu := range menus {
 		ids = append(ids, fmt.Sprintf("\"%d\"", menu))
@@ -73,7 +73,7 @@ func (s *AdminPortalService) menuListToQueryString(menus []uint64, onlyButton bo
 }
 
 // queryMultipleRolesMenusByRoleIds 使用RoleIDs查询菜单，即多个角色的菜单
-func (s *AdminPortalService) queryMultipleRolesMenusByRoleIds(ctx context.Context, roleIDs []uint64) ([]uint64, error) {
+func (s *AdminPortalService) queryMultipleRolesMenusByRoleIds(ctx context.Context, roleIDs []int64) ([]int64, error) {
 	if len(roleIDs) == 0 {
 		s.log.Warnf("user has no roles assigned")
 		return nil, nil

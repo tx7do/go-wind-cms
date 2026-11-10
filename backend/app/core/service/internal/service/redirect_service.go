@@ -9,8 +9,8 @@ import (
 	"github.com/tx7do/kratos-bootstrap/bootstrap"
 	"google.golang.org/protobuf/types/known/emptypb"
 
-	"go-wind-cms/app/core/service/internal/data"
 	contentV1 "go-wind-cms/api/gen/go/content/service/v1"
+	"go-wind-cms/app/core/service/internal/data"
 )
 
 // RedirectService URL 重定向管理。
@@ -33,7 +33,7 @@ func (s *RedirectService) List(ctx context.Context, req *paginationV1.PagingRequ
 	if err != nil {
 		return nil, errors.New(500, "REDIRECT_LIST_FAILED", "list redirects failed")
 	}
-	return &contentV1.ListRedirectsResponse{Items: items, Total: uint64(total)}, nil
+	return &contentV1.ListRedirectsResponse{Items: items, Total: int64(total)}, nil
 }
 
 func (s *RedirectService) Get(ctx context.Context, req *contentV1.GetRedirectRequest) (*contentV1.Redirect, error) {

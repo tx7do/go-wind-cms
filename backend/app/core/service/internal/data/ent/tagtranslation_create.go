@@ -66,13 +66,13 @@ func (_c *TagTranslationCreate) SetNillableDeletedAt(v *time.Time) *TagTranslati
 }
 
 // SetCreatedBy sets the "created_by" field.
-func (_c *TagTranslationCreate) SetCreatedBy(v uint64) *TagTranslationCreate {
+func (_c *TagTranslationCreate) SetCreatedBy(v int64) *TagTranslationCreate {
 	_c.mutation.SetCreatedBy(v)
 	return _c
 }
 
 // SetNillableCreatedBy sets the "created_by" field if the given value is not nil.
-func (_c *TagTranslationCreate) SetNillableCreatedBy(v *uint64) *TagTranslationCreate {
+func (_c *TagTranslationCreate) SetNillableCreatedBy(v *int64) *TagTranslationCreate {
 	if v != nil {
 		_c.SetCreatedBy(*v)
 	}
@@ -80,13 +80,13 @@ func (_c *TagTranslationCreate) SetNillableCreatedBy(v *uint64) *TagTranslationC
 }
 
 // SetUpdatedBy sets the "updated_by" field.
-func (_c *TagTranslationCreate) SetUpdatedBy(v uint64) *TagTranslationCreate {
+func (_c *TagTranslationCreate) SetUpdatedBy(v int64) *TagTranslationCreate {
 	_c.mutation.SetUpdatedBy(v)
 	return _c
 }
 
 // SetNillableUpdatedBy sets the "updated_by" field if the given value is not nil.
-func (_c *TagTranslationCreate) SetNillableUpdatedBy(v *uint64) *TagTranslationCreate {
+func (_c *TagTranslationCreate) SetNillableUpdatedBy(v *int64) *TagTranslationCreate {
 	if v != nil {
 		_c.SetUpdatedBy(*v)
 	}
@@ -94,13 +94,13 @@ func (_c *TagTranslationCreate) SetNillableUpdatedBy(v *uint64) *TagTranslationC
 }
 
 // SetDeletedBy sets the "deleted_by" field.
-func (_c *TagTranslationCreate) SetDeletedBy(v uint64) *TagTranslationCreate {
+func (_c *TagTranslationCreate) SetDeletedBy(v int64) *TagTranslationCreate {
 	_c.mutation.SetDeletedBy(v)
 	return _c
 }
 
 // SetNillableDeletedBy sets the "deleted_by" field if the given value is not nil.
-func (_c *TagTranslationCreate) SetNillableDeletedBy(v *uint64) *TagTranslationCreate {
+func (_c *TagTranslationCreate) SetNillableDeletedBy(v *int64) *TagTranslationCreate {
 	if v != nil {
 		_c.SetDeletedBy(*v)
 	}
@@ -114,13 +114,13 @@ func (_c *TagTranslationCreate) SetSeo(v *contentpb.SeoMeta) *TagTranslationCrea
 }
 
 // SetTenantID sets the "tenant_id" field.
-func (_c *TagTranslationCreate) SetTenantID(v uint64) *TagTranslationCreate {
+func (_c *TagTranslationCreate) SetTenantID(v int64) *TagTranslationCreate {
 	_c.mutation.SetTenantID(v)
 	return _c
 }
 
 // SetNillableTenantID sets the "tenant_id" field if the given value is not nil.
-func (_c *TagTranslationCreate) SetNillableTenantID(v *uint64) *TagTranslationCreate {
+func (_c *TagTranslationCreate) SetNillableTenantID(v *int64) *TagTranslationCreate {
 	if v != nil {
 		_c.SetTenantID(*v)
 	}
@@ -128,13 +128,13 @@ func (_c *TagTranslationCreate) SetNillableTenantID(v *uint64) *TagTranslationCr
 }
 
 // SetTagID sets the "tag_id" field.
-func (_c *TagTranslationCreate) SetTagID(v uint64) *TagTranslationCreate {
+func (_c *TagTranslationCreate) SetTagID(v int64) *TagTranslationCreate {
 	_c.mutation.SetTagID(v)
 	return _c
 }
 
 // SetNillableTagID sets the "tag_id" field if the given value is not nil.
-func (_c *TagTranslationCreate) SetNillableTagID(v *uint64) *TagTranslationCreate {
+func (_c *TagTranslationCreate) SetNillableTagID(v *int64) *TagTranslationCreate {
 	if v != nil {
 		_c.SetTagID(*v)
 	}
@@ -226,7 +226,7 @@ func (_c *TagTranslationCreate) SetNillableFullPath(v *string) *TagTranslationCr
 }
 
 // SetID sets the "id" field.
-func (_c *TagTranslationCreate) SetID(v uint64) *TagTranslationCreate {
+func (_c *TagTranslationCreate) SetID(v int64) *TagTranslationCreate {
 	_c.mutation.SetID(v)
 	return _c
 }
@@ -303,7 +303,7 @@ func (_c *TagTranslationCreate) sqlSave(ctx context.Context) (*TagTranslation, e
 	}
 	if _spec.ID.Value != _node.ID {
 		id := _spec.ID.Value.(int64)
-		_node.ID = uint64(id)
+		_node.ID = int64(id)
 	}
 	_c.mutation.id = &_node.ID
 	_c.mutation.done = true
@@ -313,7 +313,7 @@ func (_c *TagTranslationCreate) sqlSave(ctx context.Context) (*TagTranslation, e
 func (_c *TagTranslationCreate) createSpec() (*TagTranslation, *sqlgraph.CreateSpec) {
 	var (
 		_node = &TagTranslation{config: _c.config}
-		_spec = sqlgraph.NewCreateSpec(tagtranslation.Table, sqlgraph.NewFieldSpec(tagtranslation.FieldID, field.TypeUint64))
+		_spec = sqlgraph.NewCreateSpec(tagtranslation.Table, sqlgraph.NewFieldSpec(tagtranslation.FieldID, field.TypeInt64))
 	)
 	_spec.OnConflict = _c.conflict
 	if id, ok := _c.mutation.ID(); ok {
@@ -333,15 +333,15 @@ func (_c *TagTranslationCreate) createSpec() (*TagTranslation, *sqlgraph.CreateS
 		_node.DeletedAt = &value
 	}
 	if value, ok := _c.mutation.CreatedBy(); ok {
-		_spec.SetField(tagtranslation.FieldCreatedBy, field.TypeUint64, value)
+		_spec.SetField(tagtranslation.FieldCreatedBy, field.TypeInt64, value)
 		_node.CreatedBy = &value
 	}
 	if value, ok := _c.mutation.UpdatedBy(); ok {
-		_spec.SetField(tagtranslation.FieldUpdatedBy, field.TypeUint64, value)
+		_spec.SetField(tagtranslation.FieldUpdatedBy, field.TypeInt64, value)
 		_node.UpdatedBy = &value
 	}
 	if value, ok := _c.mutation.DeletedBy(); ok {
-		_spec.SetField(tagtranslation.FieldDeletedBy, field.TypeUint64, value)
+		_spec.SetField(tagtranslation.FieldDeletedBy, field.TypeInt64, value)
 		_node.DeletedBy = &value
 	}
 	if value, ok := _c.mutation.Seo(); ok {
@@ -349,11 +349,11 @@ func (_c *TagTranslationCreate) createSpec() (*TagTranslation, *sqlgraph.CreateS
 		_node.Seo = value
 	}
 	if value, ok := _c.mutation.TenantID(); ok {
-		_spec.SetField(tagtranslation.FieldTenantID, field.TypeUint64, value)
+		_spec.SetField(tagtranslation.FieldTenantID, field.TypeInt64, value)
 		_node.TenantID = &value
 	}
 	if value, ok := _c.mutation.TagID(); ok {
-		_spec.SetField(tagtranslation.FieldTagID, field.TypeUint64, value)
+		_spec.SetField(tagtranslation.FieldTagID, field.TypeInt64, value)
 		_node.TagID = &value
 	}
 	if value, ok := _c.mutation.LanguageCode(); ok {
@@ -469,7 +469,7 @@ func (u *TagTranslationUpsert) ClearDeletedAt() *TagTranslationUpsert {
 }
 
 // SetCreatedBy sets the "created_by" field.
-func (u *TagTranslationUpsert) SetCreatedBy(v uint64) *TagTranslationUpsert {
+func (u *TagTranslationUpsert) SetCreatedBy(v int64) *TagTranslationUpsert {
 	u.Set(tagtranslation.FieldCreatedBy, v)
 	return u
 }
@@ -481,7 +481,7 @@ func (u *TagTranslationUpsert) UpdateCreatedBy() *TagTranslationUpsert {
 }
 
 // AddCreatedBy adds v to the "created_by" field.
-func (u *TagTranslationUpsert) AddCreatedBy(v uint64) *TagTranslationUpsert {
+func (u *TagTranslationUpsert) AddCreatedBy(v int64) *TagTranslationUpsert {
 	u.Add(tagtranslation.FieldCreatedBy, v)
 	return u
 }
@@ -493,7 +493,7 @@ func (u *TagTranslationUpsert) ClearCreatedBy() *TagTranslationUpsert {
 }
 
 // SetUpdatedBy sets the "updated_by" field.
-func (u *TagTranslationUpsert) SetUpdatedBy(v uint64) *TagTranslationUpsert {
+func (u *TagTranslationUpsert) SetUpdatedBy(v int64) *TagTranslationUpsert {
 	u.Set(tagtranslation.FieldUpdatedBy, v)
 	return u
 }
@@ -505,7 +505,7 @@ func (u *TagTranslationUpsert) UpdateUpdatedBy() *TagTranslationUpsert {
 }
 
 // AddUpdatedBy adds v to the "updated_by" field.
-func (u *TagTranslationUpsert) AddUpdatedBy(v uint64) *TagTranslationUpsert {
+func (u *TagTranslationUpsert) AddUpdatedBy(v int64) *TagTranslationUpsert {
 	u.Add(tagtranslation.FieldUpdatedBy, v)
 	return u
 }
@@ -517,7 +517,7 @@ func (u *TagTranslationUpsert) ClearUpdatedBy() *TagTranslationUpsert {
 }
 
 // SetDeletedBy sets the "deleted_by" field.
-func (u *TagTranslationUpsert) SetDeletedBy(v uint64) *TagTranslationUpsert {
+func (u *TagTranslationUpsert) SetDeletedBy(v int64) *TagTranslationUpsert {
 	u.Set(tagtranslation.FieldDeletedBy, v)
 	return u
 }
@@ -529,7 +529,7 @@ func (u *TagTranslationUpsert) UpdateDeletedBy() *TagTranslationUpsert {
 }
 
 // AddDeletedBy adds v to the "deleted_by" field.
-func (u *TagTranslationUpsert) AddDeletedBy(v uint64) *TagTranslationUpsert {
+func (u *TagTranslationUpsert) AddDeletedBy(v int64) *TagTranslationUpsert {
 	u.Add(tagtranslation.FieldDeletedBy, v)
 	return u
 }
@@ -559,7 +559,7 @@ func (u *TagTranslationUpsert) ClearSeo() *TagTranslationUpsert {
 }
 
 // SetTagID sets the "tag_id" field.
-func (u *TagTranslationUpsert) SetTagID(v uint64) *TagTranslationUpsert {
+func (u *TagTranslationUpsert) SetTagID(v int64) *TagTranslationUpsert {
 	u.Set(tagtranslation.FieldTagID, v)
 	return u
 }
@@ -571,7 +571,7 @@ func (u *TagTranslationUpsert) UpdateTagID() *TagTranslationUpsert {
 }
 
 // AddTagID adds v to the "tag_id" field.
-func (u *TagTranslationUpsert) AddTagID(v uint64) *TagTranslationUpsert {
+func (u *TagTranslationUpsert) AddTagID(v int64) *TagTranslationUpsert {
 	u.Add(tagtranslation.FieldTagID, v)
 	return u
 }
@@ -787,14 +787,14 @@ func (u *TagTranslationUpsertOne) ClearDeletedAt() *TagTranslationUpsertOne {
 }
 
 // SetCreatedBy sets the "created_by" field.
-func (u *TagTranslationUpsertOne) SetCreatedBy(v uint64) *TagTranslationUpsertOne {
+func (u *TagTranslationUpsertOne) SetCreatedBy(v int64) *TagTranslationUpsertOne {
 	return u.Update(func(s *TagTranslationUpsert) {
 		s.SetCreatedBy(v)
 	})
 }
 
 // AddCreatedBy adds v to the "created_by" field.
-func (u *TagTranslationUpsertOne) AddCreatedBy(v uint64) *TagTranslationUpsertOne {
+func (u *TagTranslationUpsertOne) AddCreatedBy(v int64) *TagTranslationUpsertOne {
 	return u.Update(func(s *TagTranslationUpsert) {
 		s.AddCreatedBy(v)
 	})
@@ -815,14 +815,14 @@ func (u *TagTranslationUpsertOne) ClearCreatedBy() *TagTranslationUpsertOne {
 }
 
 // SetUpdatedBy sets the "updated_by" field.
-func (u *TagTranslationUpsertOne) SetUpdatedBy(v uint64) *TagTranslationUpsertOne {
+func (u *TagTranslationUpsertOne) SetUpdatedBy(v int64) *TagTranslationUpsertOne {
 	return u.Update(func(s *TagTranslationUpsert) {
 		s.SetUpdatedBy(v)
 	})
 }
 
 // AddUpdatedBy adds v to the "updated_by" field.
-func (u *TagTranslationUpsertOne) AddUpdatedBy(v uint64) *TagTranslationUpsertOne {
+func (u *TagTranslationUpsertOne) AddUpdatedBy(v int64) *TagTranslationUpsertOne {
 	return u.Update(func(s *TagTranslationUpsert) {
 		s.AddUpdatedBy(v)
 	})
@@ -843,14 +843,14 @@ func (u *TagTranslationUpsertOne) ClearUpdatedBy() *TagTranslationUpsertOne {
 }
 
 // SetDeletedBy sets the "deleted_by" field.
-func (u *TagTranslationUpsertOne) SetDeletedBy(v uint64) *TagTranslationUpsertOne {
+func (u *TagTranslationUpsertOne) SetDeletedBy(v int64) *TagTranslationUpsertOne {
 	return u.Update(func(s *TagTranslationUpsert) {
 		s.SetDeletedBy(v)
 	})
 }
 
 // AddDeletedBy adds v to the "deleted_by" field.
-func (u *TagTranslationUpsertOne) AddDeletedBy(v uint64) *TagTranslationUpsertOne {
+func (u *TagTranslationUpsertOne) AddDeletedBy(v int64) *TagTranslationUpsertOne {
 	return u.Update(func(s *TagTranslationUpsert) {
 		s.AddDeletedBy(v)
 	})
@@ -892,14 +892,14 @@ func (u *TagTranslationUpsertOne) ClearSeo() *TagTranslationUpsertOne {
 }
 
 // SetTagID sets the "tag_id" field.
-func (u *TagTranslationUpsertOne) SetTagID(v uint64) *TagTranslationUpsertOne {
+func (u *TagTranslationUpsertOne) SetTagID(v int64) *TagTranslationUpsertOne {
 	return u.Update(func(s *TagTranslationUpsert) {
 		s.SetTagID(v)
 	})
 }
 
 // AddTagID adds v to the "tag_id" field.
-func (u *TagTranslationUpsertOne) AddTagID(v uint64) *TagTranslationUpsertOne {
+func (u *TagTranslationUpsertOne) AddTagID(v int64) *TagTranslationUpsertOne {
 	return u.Update(func(s *TagTranslationUpsert) {
 		s.AddTagID(v)
 	})
@@ -1061,7 +1061,7 @@ func (u *TagTranslationUpsertOne) ExecX(ctx context.Context) {
 }
 
 // Exec executes the UPSERT query and returns the inserted/updated ID.
-func (u *TagTranslationUpsertOne) ID(ctx context.Context) (id uint64, err error) {
+func (u *TagTranslationUpsertOne) ID(ctx context.Context) (id int64, err error) {
 	node, err := u.create.Save(ctx)
 	if err != nil {
 		return id, err
@@ -1070,7 +1070,7 @@ func (u *TagTranslationUpsertOne) ID(ctx context.Context) (id uint64, err error)
 }
 
 // IDX is like ID, but panics if an error occurs.
-func (u *TagTranslationUpsertOne) IDX(ctx context.Context) uint64 {
+func (u *TagTranslationUpsertOne) IDX(ctx context.Context) int64 {
 	id, err := u.ID(ctx)
 	if err != nil {
 		panic(err)
@@ -1127,7 +1127,7 @@ func (_c *TagTranslationCreateBulk) Save(ctx context.Context) ([]*TagTranslation
 				mutation.id = &nodes[i].ID
 				if specs[i].ID.Value != nil && nodes[i].ID == 0 {
 					id := specs[i].ID.Value.(int64)
-					nodes[i].ID = uint64(id)
+					nodes[i].ID = int64(id)
 				}
 				mutation.done = true
 				return nodes[i], nil
@@ -1308,14 +1308,14 @@ func (u *TagTranslationUpsertBulk) ClearDeletedAt() *TagTranslationUpsertBulk {
 }
 
 // SetCreatedBy sets the "created_by" field.
-func (u *TagTranslationUpsertBulk) SetCreatedBy(v uint64) *TagTranslationUpsertBulk {
+func (u *TagTranslationUpsertBulk) SetCreatedBy(v int64) *TagTranslationUpsertBulk {
 	return u.Update(func(s *TagTranslationUpsert) {
 		s.SetCreatedBy(v)
 	})
 }
 
 // AddCreatedBy adds v to the "created_by" field.
-func (u *TagTranslationUpsertBulk) AddCreatedBy(v uint64) *TagTranslationUpsertBulk {
+func (u *TagTranslationUpsertBulk) AddCreatedBy(v int64) *TagTranslationUpsertBulk {
 	return u.Update(func(s *TagTranslationUpsert) {
 		s.AddCreatedBy(v)
 	})
@@ -1336,14 +1336,14 @@ func (u *TagTranslationUpsertBulk) ClearCreatedBy() *TagTranslationUpsertBulk {
 }
 
 // SetUpdatedBy sets the "updated_by" field.
-func (u *TagTranslationUpsertBulk) SetUpdatedBy(v uint64) *TagTranslationUpsertBulk {
+func (u *TagTranslationUpsertBulk) SetUpdatedBy(v int64) *TagTranslationUpsertBulk {
 	return u.Update(func(s *TagTranslationUpsert) {
 		s.SetUpdatedBy(v)
 	})
 }
 
 // AddUpdatedBy adds v to the "updated_by" field.
-func (u *TagTranslationUpsertBulk) AddUpdatedBy(v uint64) *TagTranslationUpsertBulk {
+func (u *TagTranslationUpsertBulk) AddUpdatedBy(v int64) *TagTranslationUpsertBulk {
 	return u.Update(func(s *TagTranslationUpsert) {
 		s.AddUpdatedBy(v)
 	})
@@ -1364,14 +1364,14 @@ func (u *TagTranslationUpsertBulk) ClearUpdatedBy() *TagTranslationUpsertBulk {
 }
 
 // SetDeletedBy sets the "deleted_by" field.
-func (u *TagTranslationUpsertBulk) SetDeletedBy(v uint64) *TagTranslationUpsertBulk {
+func (u *TagTranslationUpsertBulk) SetDeletedBy(v int64) *TagTranslationUpsertBulk {
 	return u.Update(func(s *TagTranslationUpsert) {
 		s.SetDeletedBy(v)
 	})
 }
 
 // AddDeletedBy adds v to the "deleted_by" field.
-func (u *TagTranslationUpsertBulk) AddDeletedBy(v uint64) *TagTranslationUpsertBulk {
+func (u *TagTranslationUpsertBulk) AddDeletedBy(v int64) *TagTranslationUpsertBulk {
 	return u.Update(func(s *TagTranslationUpsert) {
 		s.AddDeletedBy(v)
 	})
@@ -1413,14 +1413,14 @@ func (u *TagTranslationUpsertBulk) ClearSeo() *TagTranslationUpsertBulk {
 }
 
 // SetTagID sets the "tag_id" field.
-func (u *TagTranslationUpsertBulk) SetTagID(v uint64) *TagTranslationUpsertBulk {
+func (u *TagTranslationUpsertBulk) SetTagID(v int64) *TagTranslationUpsertBulk {
 	return u.Update(func(s *TagTranslationUpsert) {
 		s.SetTagID(v)
 	})
 }
 
 // AddTagID adds v to the "tag_id" field.
-func (u *TagTranslationUpsertBulk) AddTagID(v uint64) *TagTranslationUpsertBulk {
+func (u *TagTranslationUpsertBulk) AddTagID(v int64) *TagTranslationUpsertBulk {
 	return u.Update(func(s *TagTranslationUpsert) {
 		s.AddTagID(v)
 	})

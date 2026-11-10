@@ -9,9 +9,9 @@ import (
 
 	entCrud "github.com/tx7do/go-crud/entgo"
 
+	contentV1 "go-wind-cms/api/gen/go/content/service/v1"
 	"go-wind-cms/app/core/service/internal/data/ent"
 	"go-wind-cms/app/core/service/internal/data/ent/collabdocstate"
-	contentV1 "go-wind-cms/api/gen/go/content/service/v1"
 )
 
 // CollabDocStateRepo 协同文档状态仓储（房间 → 最新 CRDT update）。

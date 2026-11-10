@@ -17,24 +17,24 @@ import (
 
 	"github.com/tx7do/go-utils/timeutil"
 
-	appViewer "go-wind-cms/pkg/entgo/viewer"
 	"github.com/tx7do/go-crud/viewer"
+	appViewer "go-wind-cms/pkg/entgo/viewer"
 	"go-wind-cms/pkg/social"
 
 	"go-wind-cms/app/core/service/internal/data"
 
 	contentV1 "go-wind-cms/api/gen/go/content/service/v1"
 	mediaV1 "go-wind-cms/api/gen/go/media/service/v1"
-	storageV1 "go-wind-cms/api/gen/go/storage/service/v1"
 	socialV1 "go-wind-cms/api/gen/go/social/service/v1"
+	storageV1 "go-wind-cms/api/gen/go/storage/service/v1"
 
 	"github.com/minio/minio-go/v7"
 
 	"go-wind-cms/pkg/crypto"
 	"go-wind-cms/pkg/oss"
-	_ "go-wind-cms/pkg/social/bluesky"    // 注册 Bluesky 平台适配器
-	_ "go-wind-cms/pkg/social/devto"      // 注册 DEV.to 平台适配器
-	_ "go-wind-cms/pkg/social/mastodon"   // 注册 Mastodon 平台适配器
+	_ "go-wind-cms/pkg/social/bluesky"  // 注册 Bluesky 平台适配器
+	_ "go-wind-cms/pkg/social/devto"    // 注册 DEV.to 平台适配器
+	_ "go-wind-cms/pkg/social/mastodon" // 注册 Mastodon 平台适配器
 	"go-wind-cms/pkg/task"
 )
 
@@ -60,11 +60,11 @@ var socialInboxPlatforms = []socialV1.Platform{
 
 // socialMediaPlatforms 支持配图的平台集合（其余平台带图会在创建时报错）。
 var socialMediaPlatforms = map[socialV1.Platform]bool{
-	socialV1.Platform_PLATFORM_TELEGRAM:   true,
-	socialV1.Platform_PLATFORM_BLUESKY:    true,
-	socialV1.Platform_PLATFORM_MASTODON:   true,
-	socialV1.Platform_PLATFORM_WORDPRESS:  true,
-	socialV1.Platform_PLATFORM_WEIBO:      true,
+	socialV1.Platform_PLATFORM_TELEGRAM:  true,
+	socialV1.Platform_PLATFORM_BLUESKY:   true,
+	socialV1.Platform_PLATFORM_MASTODON:  true,
+	socialV1.Platform_PLATFORM_WORDPRESS: true,
+	socialV1.Platform_PLATFORM_WEIBO:     true,
 }
 
 type SocialService struct {
@@ -577,7 +577,7 @@ func (s *SocialService) PublishDistributionWorker(taskType string, payload *task
 
 	creds, err := s.decryptCredentials(acct)
 	if err != nil {
-		_, _ = 		s.distributionRepo.MarkFailed(ctx, d.GetId(), "credentials unavailable: "+err.Error())
+		_, _ = s.distributionRepo.MarkFailed(ctx, d.GetId(), "credentials unavailable: "+err.Error())
 		return nil
 	}
 
@@ -744,8 +744,8 @@ func (s *SocialService) enrichDistributions(ctx context.Context, items []*social
 		return
 	}
 
-	accountNames := make(map[uint64]string)
-	postTitles := make(map[uint64]string)
+	accountNames := make(map[int64]string)
+	postTitles := make(map[int64]string)
 	for _, item := range items {
 		if item == nil {
 			continue
@@ -913,9 +913,9 @@ func (s *SocialService) StatsSyncWorker(taskType string, payload *task.StatsSync
 
 // GetSocialDistributionSummary 当前租户的分发汇总指标（KPI 卡片）。
 func (s *SocialService) GetSocialDistributionSummary(ctx context.Context, _ *emptypb.Empty) (*socialV1.SocialDistributionSummary, error) {
-	tid := uint64(0)
+	tid := int64(0)
 	if vc, exist := viewer.FromContext(ctx); exist && vc != nil {
-		tid = uint64(vc.TenantID())
+		tid = int64(vc.TenantID())
 	}
 	row, err := s.distributionRepo.Summary(ctx, tid, time.Now().Add(-7*24*time.Hour))
 	if err != nil {
@@ -964,7 +964,7 @@ const socialMaxMediaPerPost = 4
 
 // resolveMedia 把媒体资产 ID 解析为图片字节（SystemViewer 上下文跨租户读取）。
 // 单张失败跳过并记日志；仅接受图片类型；至多解析 socialMaxMediaPerPost 张。
-func (s *SocialService) resolveMedia(ctx context.Context, mediaIDs []uint64) []social.MediaAttachment {
+func (s *SocialService) resolveMedia(ctx context.Context, mediaIDs []int64) []social.MediaAttachment {
 	if len(mediaIDs) == 0 {
 		return nil
 	}
@@ -1033,7 +1033,7 @@ func (s *SocialService) resolveMedia(ctx context.Context, mediaIDs []uint64) []s
 }
 
 // recordStatsHistory 追加一行统计快照（趋势数据从今天开始积累；失败不影响主流程）。
-func (s *SocialService) recordStatsHistory(ctx context.Context, distributionID uint64, stats *social.Stats, now time.Time) {
+func (s *SocialService) recordStatsHistory(ctx context.Context, distributionID int64, stats *social.Stats, now time.Time) {
 	if s.statsHistoryRepo == nil || stats == nil {
 		return
 	}
@@ -1219,7 +1219,7 @@ func (s *SocialService) InboxSyncWorker(taskType string, payload *task.PublishSw
 }
 
 // maybeTenantFromViewerSocial viewer → 租户 ID（服务包内复用）。
-func maybeTenantFromViewerSocial(ctx context.Context) (uint64, bool) {
+func maybeTenantFromViewerSocial(ctx context.Context) (int64, bool) {
 	vc, exist := viewer.FromContext(ctx)
 	if !exist || vc == nil {
 		return 0, false
@@ -1228,13 +1228,13 @@ func maybeTenantFromViewerSocial(ctx context.Context) (uint64, bool) {
 	if tid == 0 {
 		return 0, false
 	}
-	return uint64(tid), true
+	return int64(tid), true
 }
 
 // socialTenantIDFromViewerContext SystemViewer 上下文下的租户 ID（无则 0 平台）。
-func socialTenantIDFromViewerContext(ctx context.Context) uint64 {
+func socialTenantIDFromViewerContext(ctx context.Context) int64 {
 	if vc, exist := viewer.FromContext(ctx); exist && vc != nil {
-		return uint64(vc.TenantID())
+		return int64(vc.TenantID())
 	}
 	return 0
 }

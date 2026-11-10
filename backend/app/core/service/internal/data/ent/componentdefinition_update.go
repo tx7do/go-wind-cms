@@ -70,14 +70,14 @@ func (_u *ComponentDefinitionUpdate) ClearDeletedAt() *ComponentDefinitionUpdate
 }
 
 // SetCreatedBy sets the "created_by" field.
-func (_u *ComponentDefinitionUpdate) SetCreatedBy(v uint64) *ComponentDefinitionUpdate {
+func (_u *ComponentDefinitionUpdate) SetCreatedBy(v int64) *ComponentDefinitionUpdate {
 	_u.mutation.ResetCreatedBy()
 	_u.mutation.SetCreatedBy(v)
 	return _u
 }
 
 // SetNillableCreatedBy sets the "created_by" field if the given value is not nil.
-func (_u *ComponentDefinitionUpdate) SetNillableCreatedBy(v *uint64) *ComponentDefinitionUpdate {
+func (_u *ComponentDefinitionUpdate) SetNillableCreatedBy(v *int64) *ComponentDefinitionUpdate {
 	if v != nil {
 		_u.SetCreatedBy(*v)
 	}
@@ -97,14 +97,14 @@ func (_u *ComponentDefinitionUpdate) ClearCreatedBy() *ComponentDefinitionUpdate
 }
 
 // SetUpdatedBy sets the "updated_by" field.
-func (_u *ComponentDefinitionUpdate) SetUpdatedBy(v uint64) *ComponentDefinitionUpdate {
+func (_u *ComponentDefinitionUpdate) SetUpdatedBy(v int64) *ComponentDefinitionUpdate {
 	_u.mutation.ResetUpdatedBy()
 	_u.mutation.SetUpdatedBy(v)
 	return _u
 }
 
 // SetNillableUpdatedBy sets the "updated_by" field if the given value is not nil.
-func (_u *ComponentDefinitionUpdate) SetNillableUpdatedBy(v *uint64) *ComponentDefinitionUpdate {
+func (_u *ComponentDefinitionUpdate) SetNillableUpdatedBy(v *int64) *ComponentDefinitionUpdate {
 	if v != nil {
 		_u.SetUpdatedBy(*v)
 	}
@@ -124,14 +124,14 @@ func (_u *ComponentDefinitionUpdate) ClearUpdatedBy() *ComponentDefinitionUpdate
 }
 
 // SetDeletedBy sets the "deleted_by" field.
-func (_u *ComponentDefinitionUpdate) SetDeletedBy(v uint64) *ComponentDefinitionUpdate {
+func (_u *ComponentDefinitionUpdate) SetDeletedBy(v int64) *ComponentDefinitionUpdate {
 	_u.mutation.ResetDeletedBy()
 	_u.mutation.SetDeletedBy(v)
 	return _u
 }
 
 // SetNillableDeletedBy sets the "deleted_by" field if the given value is not nil.
-func (_u *ComponentDefinitionUpdate) SetNillableDeletedBy(v *uint64) *ComponentDefinitionUpdate {
+func (_u *ComponentDefinitionUpdate) SetNillableDeletedBy(v *int64) *ComponentDefinitionUpdate {
 	if v != nil {
 		_u.SetDeletedBy(*v)
 	}
@@ -255,7 +255,7 @@ func (_u *ComponentDefinitionUpdate) sqlSave(ctx context.Context) (_node int, er
 	if err := _u.check(); err != nil {
 		return _node, err
 	}
-	_spec := sqlgraph.NewUpdateSpec(componentdefinition.Table, componentdefinition.Columns, sqlgraph.NewFieldSpec(componentdefinition.FieldID, field.TypeUint64))
+	_spec := sqlgraph.NewUpdateSpec(componentdefinition.Table, componentdefinition.Columns, sqlgraph.NewFieldSpec(componentdefinition.FieldID, field.TypeInt64))
 	if ps := _u.mutation.predicates; len(ps) > 0 {
 		_spec.Predicate = func(selector *sql.Selector) {
 			for i := range ps {
@@ -279,34 +279,34 @@ func (_u *ComponentDefinitionUpdate) sqlSave(ctx context.Context) (_node int, er
 		_spec.ClearField(componentdefinition.FieldDeletedAt, field.TypeTime)
 	}
 	if value, ok := _u.mutation.CreatedBy(); ok {
-		_spec.SetField(componentdefinition.FieldCreatedBy, field.TypeUint64, value)
+		_spec.SetField(componentdefinition.FieldCreatedBy, field.TypeInt64, value)
 	}
 	if value, ok := _u.mutation.AddedCreatedBy(); ok {
-		_spec.AddField(componentdefinition.FieldCreatedBy, field.TypeUint64, value)
+		_spec.AddField(componentdefinition.FieldCreatedBy, field.TypeInt64, value)
 	}
 	if _u.mutation.CreatedByCleared() {
-		_spec.ClearField(componentdefinition.FieldCreatedBy, field.TypeUint64)
+		_spec.ClearField(componentdefinition.FieldCreatedBy, field.TypeInt64)
 	}
 	if value, ok := _u.mutation.UpdatedBy(); ok {
-		_spec.SetField(componentdefinition.FieldUpdatedBy, field.TypeUint64, value)
+		_spec.SetField(componentdefinition.FieldUpdatedBy, field.TypeInt64, value)
 	}
 	if value, ok := _u.mutation.AddedUpdatedBy(); ok {
-		_spec.AddField(componentdefinition.FieldUpdatedBy, field.TypeUint64, value)
+		_spec.AddField(componentdefinition.FieldUpdatedBy, field.TypeInt64, value)
 	}
 	if _u.mutation.UpdatedByCleared() {
-		_spec.ClearField(componentdefinition.FieldUpdatedBy, field.TypeUint64)
+		_spec.ClearField(componentdefinition.FieldUpdatedBy, field.TypeInt64)
 	}
 	if value, ok := _u.mutation.DeletedBy(); ok {
-		_spec.SetField(componentdefinition.FieldDeletedBy, field.TypeUint64, value)
+		_spec.SetField(componentdefinition.FieldDeletedBy, field.TypeInt64, value)
 	}
 	if value, ok := _u.mutation.AddedDeletedBy(); ok {
-		_spec.AddField(componentdefinition.FieldDeletedBy, field.TypeUint64, value)
+		_spec.AddField(componentdefinition.FieldDeletedBy, field.TypeInt64, value)
 	}
 	if _u.mutation.DeletedByCleared() {
-		_spec.ClearField(componentdefinition.FieldDeletedBy, field.TypeUint64)
+		_spec.ClearField(componentdefinition.FieldDeletedBy, field.TypeInt64)
 	}
 	if _u.mutation.TenantIDCleared() {
-		_spec.ClearField(componentdefinition.FieldTenantID, field.TypeUint64)
+		_spec.ClearField(componentdefinition.FieldTenantID, field.TypeInt64)
 	}
 	if value, ok := _u.mutation.Code(); ok {
 		_spec.SetField(componentdefinition.FieldCode, field.TypeString, value)
@@ -383,14 +383,14 @@ func (_u *ComponentDefinitionUpdateOne) ClearDeletedAt() *ComponentDefinitionUpd
 }
 
 // SetCreatedBy sets the "created_by" field.
-func (_u *ComponentDefinitionUpdateOne) SetCreatedBy(v uint64) *ComponentDefinitionUpdateOne {
+func (_u *ComponentDefinitionUpdateOne) SetCreatedBy(v int64) *ComponentDefinitionUpdateOne {
 	_u.mutation.ResetCreatedBy()
 	_u.mutation.SetCreatedBy(v)
 	return _u
 }
 
 // SetNillableCreatedBy sets the "created_by" field if the given value is not nil.
-func (_u *ComponentDefinitionUpdateOne) SetNillableCreatedBy(v *uint64) *ComponentDefinitionUpdateOne {
+func (_u *ComponentDefinitionUpdateOne) SetNillableCreatedBy(v *int64) *ComponentDefinitionUpdateOne {
 	if v != nil {
 		_u.SetCreatedBy(*v)
 	}
@@ -410,14 +410,14 @@ func (_u *ComponentDefinitionUpdateOne) ClearCreatedBy() *ComponentDefinitionUpd
 }
 
 // SetUpdatedBy sets the "updated_by" field.
-func (_u *ComponentDefinitionUpdateOne) SetUpdatedBy(v uint64) *ComponentDefinitionUpdateOne {
+func (_u *ComponentDefinitionUpdateOne) SetUpdatedBy(v int64) *ComponentDefinitionUpdateOne {
 	_u.mutation.ResetUpdatedBy()
 	_u.mutation.SetUpdatedBy(v)
 	return _u
 }
 
 // SetNillableUpdatedBy sets the "updated_by" field if the given value is not nil.
-func (_u *ComponentDefinitionUpdateOne) SetNillableUpdatedBy(v *uint64) *ComponentDefinitionUpdateOne {
+func (_u *ComponentDefinitionUpdateOne) SetNillableUpdatedBy(v *int64) *ComponentDefinitionUpdateOne {
 	if v != nil {
 		_u.SetUpdatedBy(*v)
 	}
@@ -437,14 +437,14 @@ func (_u *ComponentDefinitionUpdateOne) ClearUpdatedBy() *ComponentDefinitionUpd
 }
 
 // SetDeletedBy sets the "deleted_by" field.
-func (_u *ComponentDefinitionUpdateOne) SetDeletedBy(v uint64) *ComponentDefinitionUpdateOne {
+func (_u *ComponentDefinitionUpdateOne) SetDeletedBy(v int64) *ComponentDefinitionUpdateOne {
 	_u.mutation.ResetDeletedBy()
 	_u.mutation.SetDeletedBy(v)
 	return _u
 }
 
 // SetNillableDeletedBy sets the "deleted_by" field if the given value is not nil.
-func (_u *ComponentDefinitionUpdateOne) SetNillableDeletedBy(v *uint64) *ComponentDefinitionUpdateOne {
+func (_u *ComponentDefinitionUpdateOne) SetNillableDeletedBy(v *int64) *ComponentDefinitionUpdateOne {
 	if v != nil {
 		_u.SetDeletedBy(*v)
 	}
@@ -581,7 +581,7 @@ func (_u *ComponentDefinitionUpdateOne) sqlSave(ctx context.Context) (_node *Com
 	if err := _u.check(); err != nil {
 		return _node, err
 	}
-	_spec := sqlgraph.NewUpdateSpec(componentdefinition.Table, componentdefinition.Columns, sqlgraph.NewFieldSpec(componentdefinition.FieldID, field.TypeUint64))
+	_spec := sqlgraph.NewUpdateSpec(componentdefinition.Table, componentdefinition.Columns, sqlgraph.NewFieldSpec(componentdefinition.FieldID, field.TypeInt64))
 	id, ok := _u.mutation.ID()
 	if !ok {
 		return nil, &ValidationError{Name: "id", err: errors.New(`ent: missing "ComponentDefinition.id" for update`)}
@@ -622,34 +622,34 @@ func (_u *ComponentDefinitionUpdateOne) sqlSave(ctx context.Context) (_node *Com
 		_spec.ClearField(componentdefinition.FieldDeletedAt, field.TypeTime)
 	}
 	if value, ok := _u.mutation.CreatedBy(); ok {
-		_spec.SetField(componentdefinition.FieldCreatedBy, field.TypeUint64, value)
+		_spec.SetField(componentdefinition.FieldCreatedBy, field.TypeInt64, value)
 	}
 	if value, ok := _u.mutation.AddedCreatedBy(); ok {
-		_spec.AddField(componentdefinition.FieldCreatedBy, field.TypeUint64, value)
+		_spec.AddField(componentdefinition.FieldCreatedBy, field.TypeInt64, value)
 	}
 	if _u.mutation.CreatedByCleared() {
-		_spec.ClearField(componentdefinition.FieldCreatedBy, field.TypeUint64)
+		_spec.ClearField(componentdefinition.FieldCreatedBy, field.TypeInt64)
 	}
 	if value, ok := _u.mutation.UpdatedBy(); ok {
-		_spec.SetField(componentdefinition.FieldUpdatedBy, field.TypeUint64, value)
+		_spec.SetField(componentdefinition.FieldUpdatedBy, field.TypeInt64, value)
 	}
 	if value, ok := _u.mutation.AddedUpdatedBy(); ok {
-		_spec.AddField(componentdefinition.FieldUpdatedBy, field.TypeUint64, value)
+		_spec.AddField(componentdefinition.FieldUpdatedBy, field.TypeInt64, value)
 	}
 	if _u.mutation.UpdatedByCleared() {
-		_spec.ClearField(componentdefinition.FieldUpdatedBy, field.TypeUint64)
+		_spec.ClearField(componentdefinition.FieldUpdatedBy, field.TypeInt64)
 	}
 	if value, ok := _u.mutation.DeletedBy(); ok {
-		_spec.SetField(componentdefinition.FieldDeletedBy, field.TypeUint64, value)
+		_spec.SetField(componentdefinition.FieldDeletedBy, field.TypeInt64, value)
 	}
 	if value, ok := _u.mutation.AddedDeletedBy(); ok {
-		_spec.AddField(componentdefinition.FieldDeletedBy, field.TypeUint64, value)
+		_spec.AddField(componentdefinition.FieldDeletedBy, field.TypeInt64, value)
 	}
 	if _u.mutation.DeletedByCleared() {
-		_spec.ClearField(componentdefinition.FieldDeletedBy, field.TypeUint64)
+		_spec.ClearField(componentdefinition.FieldDeletedBy, field.TypeInt64)
 	}
 	if _u.mutation.TenantIDCleared() {
-		_spec.ClearField(componentdefinition.FieldTenantID, field.TypeUint64)
+		_spec.ClearField(componentdefinition.FieldTenantID, field.TypeInt64)
 	}
 	if value, ok := _u.mutation.Code(); ok {
 		_spec.SetField(componentdefinition.FieldCode, field.TypeString, value)

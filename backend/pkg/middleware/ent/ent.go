@@ -26,7 +26,7 @@ import (
 // tenant_id，注入只读 tenant-scoped viewer，使公开读按 tenant 隔离而非跨租户。
 // admin/core 不注入，保持原 SystemViewer 兜底。
 type TenantResolver interface {
-	ResolveTenantIDByDomain(ctx context.Context, domain string) (uint64, error)
+	ResolveTenantIDByDomain(ctx context.Context, domain string) (int64, error)
 }
 
 type entMiddlewareOptions struct {
@@ -118,7 +118,7 @@ func resolveAnonymousViewer(ctx context.Context, resolver TenantResolver, traceI
 		log.Warnf("ent middleware: tenant resolve failed for host %q, fail-closed: %v", host, err)
 		return viewer.NewNoopContext()
 	}
-	return appViewer.NewAnonymousTenantViewer(uint64(tid), traceID)
+	return appViewer.NewAnonymousTenantViewer(int64(tid), traceID)
 }
 
 // hostFromContext 从 server transport 提取请求 Host（仅 HTTP transport 有意义）。

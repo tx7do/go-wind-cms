@@ -71,14 +71,14 @@ func (_u *TagTranslationUpdate) ClearDeletedAt() *TagTranslationUpdate {
 }
 
 // SetCreatedBy sets the "created_by" field.
-func (_u *TagTranslationUpdate) SetCreatedBy(v uint64) *TagTranslationUpdate {
+func (_u *TagTranslationUpdate) SetCreatedBy(v int64) *TagTranslationUpdate {
 	_u.mutation.ResetCreatedBy()
 	_u.mutation.SetCreatedBy(v)
 	return _u
 }
 
 // SetNillableCreatedBy sets the "created_by" field if the given value is not nil.
-func (_u *TagTranslationUpdate) SetNillableCreatedBy(v *uint64) *TagTranslationUpdate {
+func (_u *TagTranslationUpdate) SetNillableCreatedBy(v *int64) *TagTranslationUpdate {
 	if v != nil {
 		_u.SetCreatedBy(*v)
 	}
@@ -98,14 +98,14 @@ func (_u *TagTranslationUpdate) ClearCreatedBy() *TagTranslationUpdate {
 }
 
 // SetUpdatedBy sets the "updated_by" field.
-func (_u *TagTranslationUpdate) SetUpdatedBy(v uint64) *TagTranslationUpdate {
+func (_u *TagTranslationUpdate) SetUpdatedBy(v int64) *TagTranslationUpdate {
 	_u.mutation.ResetUpdatedBy()
 	_u.mutation.SetUpdatedBy(v)
 	return _u
 }
 
 // SetNillableUpdatedBy sets the "updated_by" field if the given value is not nil.
-func (_u *TagTranslationUpdate) SetNillableUpdatedBy(v *uint64) *TagTranslationUpdate {
+func (_u *TagTranslationUpdate) SetNillableUpdatedBy(v *int64) *TagTranslationUpdate {
 	if v != nil {
 		_u.SetUpdatedBy(*v)
 	}
@@ -125,14 +125,14 @@ func (_u *TagTranslationUpdate) ClearUpdatedBy() *TagTranslationUpdate {
 }
 
 // SetDeletedBy sets the "deleted_by" field.
-func (_u *TagTranslationUpdate) SetDeletedBy(v uint64) *TagTranslationUpdate {
+func (_u *TagTranslationUpdate) SetDeletedBy(v int64) *TagTranslationUpdate {
 	_u.mutation.ResetDeletedBy()
 	_u.mutation.SetDeletedBy(v)
 	return _u
 }
 
 // SetNillableDeletedBy sets the "deleted_by" field if the given value is not nil.
-func (_u *TagTranslationUpdate) SetNillableDeletedBy(v *uint64) *TagTranslationUpdate {
+func (_u *TagTranslationUpdate) SetNillableDeletedBy(v *int64) *TagTranslationUpdate {
 	if v != nil {
 		_u.SetDeletedBy(*v)
 	}
@@ -164,14 +164,14 @@ func (_u *TagTranslationUpdate) ClearSeo() *TagTranslationUpdate {
 }
 
 // SetTagID sets the "tag_id" field.
-func (_u *TagTranslationUpdate) SetTagID(v uint64) *TagTranslationUpdate {
+func (_u *TagTranslationUpdate) SetTagID(v int64) *TagTranslationUpdate {
 	_u.mutation.ResetTagID()
 	_u.mutation.SetTagID(v)
 	return _u
 }
 
 // SetNillableTagID sets the "tag_id" field if the given value is not nil.
-func (_u *TagTranslationUpdate) SetNillableTagID(v *uint64) *TagTranslationUpdate {
+func (_u *TagTranslationUpdate) SetNillableTagID(v *int64) *TagTranslationUpdate {
 	if v != nil {
 		_u.SetTagID(*v)
 	}
@@ -349,7 +349,7 @@ func (_u *TagTranslationUpdate) Modify(modifiers ...func(u *sql.UpdateBuilder)) 
 }
 
 func (_u *TagTranslationUpdate) sqlSave(ctx context.Context) (_node int, err error) {
-	_spec := sqlgraph.NewUpdateSpec(tagtranslation.Table, tagtranslation.Columns, sqlgraph.NewFieldSpec(tagtranslation.FieldID, field.TypeUint64))
+	_spec := sqlgraph.NewUpdateSpec(tagtranslation.Table, tagtranslation.Columns, sqlgraph.NewFieldSpec(tagtranslation.FieldID, field.TypeInt64))
 	if ps := _u.mutation.predicates; len(ps) > 0 {
 		_spec.Predicate = func(selector *sql.Selector) {
 			for i := range ps {
@@ -373,31 +373,31 @@ func (_u *TagTranslationUpdate) sqlSave(ctx context.Context) (_node int, err err
 		_spec.ClearField(tagtranslation.FieldDeletedAt, field.TypeTime)
 	}
 	if value, ok := _u.mutation.CreatedBy(); ok {
-		_spec.SetField(tagtranslation.FieldCreatedBy, field.TypeUint64, value)
+		_spec.SetField(tagtranslation.FieldCreatedBy, field.TypeInt64, value)
 	}
 	if value, ok := _u.mutation.AddedCreatedBy(); ok {
-		_spec.AddField(tagtranslation.FieldCreatedBy, field.TypeUint64, value)
+		_spec.AddField(tagtranslation.FieldCreatedBy, field.TypeInt64, value)
 	}
 	if _u.mutation.CreatedByCleared() {
-		_spec.ClearField(tagtranslation.FieldCreatedBy, field.TypeUint64)
+		_spec.ClearField(tagtranslation.FieldCreatedBy, field.TypeInt64)
 	}
 	if value, ok := _u.mutation.UpdatedBy(); ok {
-		_spec.SetField(tagtranslation.FieldUpdatedBy, field.TypeUint64, value)
+		_spec.SetField(tagtranslation.FieldUpdatedBy, field.TypeInt64, value)
 	}
 	if value, ok := _u.mutation.AddedUpdatedBy(); ok {
-		_spec.AddField(tagtranslation.FieldUpdatedBy, field.TypeUint64, value)
+		_spec.AddField(tagtranslation.FieldUpdatedBy, field.TypeInt64, value)
 	}
 	if _u.mutation.UpdatedByCleared() {
-		_spec.ClearField(tagtranslation.FieldUpdatedBy, field.TypeUint64)
+		_spec.ClearField(tagtranslation.FieldUpdatedBy, field.TypeInt64)
 	}
 	if value, ok := _u.mutation.DeletedBy(); ok {
-		_spec.SetField(tagtranslation.FieldDeletedBy, field.TypeUint64, value)
+		_spec.SetField(tagtranslation.FieldDeletedBy, field.TypeInt64, value)
 	}
 	if value, ok := _u.mutation.AddedDeletedBy(); ok {
-		_spec.AddField(tagtranslation.FieldDeletedBy, field.TypeUint64, value)
+		_spec.AddField(tagtranslation.FieldDeletedBy, field.TypeInt64, value)
 	}
 	if _u.mutation.DeletedByCleared() {
-		_spec.ClearField(tagtranslation.FieldDeletedBy, field.TypeUint64)
+		_spec.ClearField(tagtranslation.FieldDeletedBy, field.TypeInt64)
 	}
 	if value, ok := _u.mutation.Seo(); ok {
 		_spec.SetField(tagtranslation.FieldSeo, field.TypeJSON, value)
@@ -406,16 +406,16 @@ func (_u *TagTranslationUpdate) sqlSave(ctx context.Context) (_node int, err err
 		_spec.ClearField(tagtranslation.FieldSeo, field.TypeJSON)
 	}
 	if _u.mutation.TenantIDCleared() {
-		_spec.ClearField(tagtranslation.FieldTenantID, field.TypeUint64)
+		_spec.ClearField(tagtranslation.FieldTenantID, field.TypeInt64)
 	}
 	if value, ok := _u.mutation.TagID(); ok {
-		_spec.SetField(tagtranslation.FieldTagID, field.TypeUint64, value)
+		_spec.SetField(tagtranslation.FieldTagID, field.TypeInt64, value)
 	}
 	if value, ok := _u.mutation.AddedTagID(); ok {
-		_spec.AddField(tagtranslation.FieldTagID, field.TypeUint64, value)
+		_spec.AddField(tagtranslation.FieldTagID, field.TypeInt64, value)
 	}
 	if _u.mutation.TagIDCleared() {
-		_spec.ClearField(tagtranslation.FieldTagID, field.TypeUint64)
+		_spec.ClearField(tagtranslation.FieldTagID, field.TypeInt64)
 	}
 	if value, ok := _u.mutation.LanguageCode(); ok {
 		_spec.SetField(tagtranslation.FieldLanguageCode, field.TypeString, value)
@@ -516,14 +516,14 @@ func (_u *TagTranslationUpdateOne) ClearDeletedAt() *TagTranslationUpdateOne {
 }
 
 // SetCreatedBy sets the "created_by" field.
-func (_u *TagTranslationUpdateOne) SetCreatedBy(v uint64) *TagTranslationUpdateOne {
+func (_u *TagTranslationUpdateOne) SetCreatedBy(v int64) *TagTranslationUpdateOne {
 	_u.mutation.ResetCreatedBy()
 	_u.mutation.SetCreatedBy(v)
 	return _u
 }
 
 // SetNillableCreatedBy sets the "created_by" field if the given value is not nil.
-func (_u *TagTranslationUpdateOne) SetNillableCreatedBy(v *uint64) *TagTranslationUpdateOne {
+func (_u *TagTranslationUpdateOne) SetNillableCreatedBy(v *int64) *TagTranslationUpdateOne {
 	if v != nil {
 		_u.SetCreatedBy(*v)
 	}
@@ -543,14 +543,14 @@ func (_u *TagTranslationUpdateOne) ClearCreatedBy() *TagTranslationUpdateOne {
 }
 
 // SetUpdatedBy sets the "updated_by" field.
-func (_u *TagTranslationUpdateOne) SetUpdatedBy(v uint64) *TagTranslationUpdateOne {
+func (_u *TagTranslationUpdateOne) SetUpdatedBy(v int64) *TagTranslationUpdateOne {
 	_u.mutation.ResetUpdatedBy()
 	_u.mutation.SetUpdatedBy(v)
 	return _u
 }
 
 // SetNillableUpdatedBy sets the "updated_by" field if the given value is not nil.
-func (_u *TagTranslationUpdateOne) SetNillableUpdatedBy(v *uint64) *TagTranslationUpdateOne {
+func (_u *TagTranslationUpdateOne) SetNillableUpdatedBy(v *int64) *TagTranslationUpdateOne {
 	if v != nil {
 		_u.SetUpdatedBy(*v)
 	}
@@ -570,14 +570,14 @@ func (_u *TagTranslationUpdateOne) ClearUpdatedBy() *TagTranslationUpdateOne {
 }
 
 // SetDeletedBy sets the "deleted_by" field.
-func (_u *TagTranslationUpdateOne) SetDeletedBy(v uint64) *TagTranslationUpdateOne {
+func (_u *TagTranslationUpdateOne) SetDeletedBy(v int64) *TagTranslationUpdateOne {
 	_u.mutation.ResetDeletedBy()
 	_u.mutation.SetDeletedBy(v)
 	return _u
 }
 
 // SetNillableDeletedBy sets the "deleted_by" field if the given value is not nil.
-func (_u *TagTranslationUpdateOne) SetNillableDeletedBy(v *uint64) *TagTranslationUpdateOne {
+func (_u *TagTranslationUpdateOne) SetNillableDeletedBy(v *int64) *TagTranslationUpdateOne {
 	if v != nil {
 		_u.SetDeletedBy(*v)
 	}
@@ -609,14 +609,14 @@ func (_u *TagTranslationUpdateOne) ClearSeo() *TagTranslationUpdateOne {
 }
 
 // SetTagID sets the "tag_id" field.
-func (_u *TagTranslationUpdateOne) SetTagID(v uint64) *TagTranslationUpdateOne {
+func (_u *TagTranslationUpdateOne) SetTagID(v int64) *TagTranslationUpdateOne {
 	_u.mutation.ResetTagID()
 	_u.mutation.SetTagID(v)
 	return _u
 }
 
 // SetNillableTagID sets the "tag_id" field if the given value is not nil.
-func (_u *TagTranslationUpdateOne) SetNillableTagID(v *uint64) *TagTranslationUpdateOne {
+func (_u *TagTranslationUpdateOne) SetNillableTagID(v *int64) *TagTranslationUpdateOne {
 	if v != nil {
 		_u.SetTagID(*v)
 	}
@@ -807,7 +807,7 @@ func (_u *TagTranslationUpdateOne) Modify(modifiers ...func(u *sql.UpdateBuilder
 }
 
 func (_u *TagTranslationUpdateOne) sqlSave(ctx context.Context) (_node *TagTranslation, err error) {
-	_spec := sqlgraph.NewUpdateSpec(tagtranslation.Table, tagtranslation.Columns, sqlgraph.NewFieldSpec(tagtranslation.FieldID, field.TypeUint64))
+	_spec := sqlgraph.NewUpdateSpec(tagtranslation.Table, tagtranslation.Columns, sqlgraph.NewFieldSpec(tagtranslation.FieldID, field.TypeInt64))
 	id, ok := _u.mutation.ID()
 	if !ok {
 		return nil, &ValidationError{Name: "id", err: errors.New(`ent: missing "TagTranslation.id" for update`)}
@@ -848,31 +848,31 @@ func (_u *TagTranslationUpdateOne) sqlSave(ctx context.Context) (_node *TagTrans
 		_spec.ClearField(tagtranslation.FieldDeletedAt, field.TypeTime)
 	}
 	if value, ok := _u.mutation.CreatedBy(); ok {
-		_spec.SetField(tagtranslation.FieldCreatedBy, field.TypeUint64, value)
+		_spec.SetField(tagtranslation.FieldCreatedBy, field.TypeInt64, value)
 	}
 	if value, ok := _u.mutation.AddedCreatedBy(); ok {
-		_spec.AddField(tagtranslation.FieldCreatedBy, field.TypeUint64, value)
+		_spec.AddField(tagtranslation.FieldCreatedBy, field.TypeInt64, value)
 	}
 	if _u.mutation.CreatedByCleared() {
-		_spec.ClearField(tagtranslation.FieldCreatedBy, field.TypeUint64)
+		_spec.ClearField(tagtranslation.FieldCreatedBy, field.TypeInt64)
 	}
 	if value, ok := _u.mutation.UpdatedBy(); ok {
-		_spec.SetField(tagtranslation.FieldUpdatedBy, field.TypeUint64, value)
+		_spec.SetField(tagtranslation.FieldUpdatedBy, field.TypeInt64, value)
 	}
 	if value, ok := _u.mutation.AddedUpdatedBy(); ok {
-		_spec.AddField(tagtranslation.FieldUpdatedBy, field.TypeUint64, value)
+		_spec.AddField(tagtranslation.FieldUpdatedBy, field.TypeInt64, value)
 	}
 	if _u.mutation.UpdatedByCleared() {
-		_spec.ClearField(tagtranslation.FieldUpdatedBy, field.TypeUint64)
+		_spec.ClearField(tagtranslation.FieldUpdatedBy, field.TypeInt64)
 	}
 	if value, ok := _u.mutation.DeletedBy(); ok {
-		_spec.SetField(tagtranslation.FieldDeletedBy, field.TypeUint64, value)
+		_spec.SetField(tagtranslation.FieldDeletedBy, field.TypeInt64, value)
 	}
 	if value, ok := _u.mutation.AddedDeletedBy(); ok {
-		_spec.AddField(tagtranslation.FieldDeletedBy, field.TypeUint64, value)
+		_spec.AddField(tagtranslation.FieldDeletedBy, field.TypeInt64, value)
 	}
 	if _u.mutation.DeletedByCleared() {
-		_spec.ClearField(tagtranslation.FieldDeletedBy, field.TypeUint64)
+		_spec.ClearField(tagtranslation.FieldDeletedBy, field.TypeInt64)
 	}
 	if value, ok := _u.mutation.Seo(); ok {
 		_spec.SetField(tagtranslation.FieldSeo, field.TypeJSON, value)
@@ -881,16 +881,16 @@ func (_u *TagTranslationUpdateOne) sqlSave(ctx context.Context) (_node *TagTrans
 		_spec.ClearField(tagtranslation.FieldSeo, field.TypeJSON)
 	}
 	if _u.mutation.TenantIDCleared() {
-		_spec.ClearField(tagtranslation.FieldTenantID, field.TypeUint64)
+		_spec.ClearField(tagtranslation.FieldTenantID, field.TypeInt64)
 	}
 	if value, ok := _u.mutation.TagID(); ok {
-		_spec.SetField(tagtranslation.FieldTagID, field.TypeUint64, value)
+		_spec.SetField(tagtranslation.FieldTagID, field.TypeInt64, value)
 	}
 	if value, ok := _u.mutation.AddedTagID(); ok {
-		_spec.AddField(tagtranslation.FieldTagID, field.TypeUint64, value)
+		_spec.AddField(tagtranslation.FieldTagID, field.TypeInt64, value)
 	}
 	if _u.mutation.TagIDCleared() {
-		_spec.ClearField(tagtranslation.FieldTagID, field.TypeUint64)
+		_spec.ClearField(tagtranslation.FieldTagID, field.TypeInt64)
 	}
 	if value, ok := _u.mutation.LanguageCode(); ok {
 		_spec.SetField(tagtranslation.FieldLanguageCode, field.TypeString, value)

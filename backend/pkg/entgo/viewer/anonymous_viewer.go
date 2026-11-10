@@ -18,27 +18,27 @@ import (
 // 解析失败（Host 未配 domain 等）不回退此 viewer，而由中间件注入 viewer.NewNoopContext
 // fail-closed。
 type AnonymousTenantViewer struct {
-	tid     uint64
+	tid     int64
 	traceID string
 }
 
 // NewAnonymousTenantViewer 构造一个绑定指定 tenant 的只读匿名 viewer。
-func NewAnonymousTenantViewer(tid uint64, traceID string) viewer.Context {
+func NewAnonymousTenantViewer(tid int64, traceID string) viewer.Context {
 	return AnonymousTenantViewer{tid: tid, traceID: traceID}
 }
 
 // UserID 返回当前用户ID（匿名访问者无用户身份）
-func (v AnonymousTenantViewer) UserID() uint64 {
+func (v AnonymousTenantViewer) UserID() int64 {
 	return 0
 }
 
 // TenantID 返回解析到的租户ID
-func (v AnonymousTenantViewer) TenantID() uint64 {
+func (v AnonymousTenantViewer) TenantID() int64 {
 	return v.tid
 }
 
 // OrgUnitID 返回当前身份挂载的组织单元 ID（匿名无）
-func (v AnonymousTenantViewer) OrgUnitID() uint64 {
+func (v AnonymousTenantViewer) OrgUnitID() int64 {
 	return 0
 }
 

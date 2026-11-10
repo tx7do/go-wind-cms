@@ -83,7 +83,7 @@ func (Category) Fields() []ent.Field {
 			Comment("自定义字段").
 			Optional(),
 
-		field.Uint64("content_model_id").
+		field.Int64("content_model_id").
 			Comment("绑定的内容模型ID（该分类下的内容继承模型字段，0/null=无绑定）").
 			Optional().
 			Nillable(),
@@ -99,7 +99,7 @@ func (Category) Mixin() []ent.Mixin {
 		mixin.SortOrder{},
 		mixin.TreePath{},
 		mixin.Tree64[Category]{},
-		mixin.TenantID[uint64]{},
+		mixin.TenantID[int64]{},
 	}
 }
 

@@ -62,7 +62,7 @@ func (s *AiUsageLogService) GetUsageSummary(ctx context.Context, _ *emptypb.Empt
 
 	// 按 provider×模型 细分（best-effort：聚合失败不打断汇总主体）
 	if rows, bErr := s.repo.MonthBreakdown(ctx, tenantId, monthStart); bErr == nil {
-		names := map[uint64]string{}
+		names := map[int64]string{}
 		if s.providerRepo != nil {
 			// provider 量少（个位数），pagination 拉一页足够
 			if plist, pErr := s.providerRepo.List(ctx, &paginationV1.PagingRequest{NoPaging: trans.Ptr(true)}); pErr == nil {
@@ -80,10 +80,10 @@ func (s *AiUsageLogService) GetUsageSummary(ctx context.Context, _ *emptypb.Empt
 }
 
 // operatorTenant 取调用者租户（viewer 上下文；平台用户 tenantId=0 见全量）。
-func (s *AiUsageLogService) operatorTenant(ctx context.Context) (uint64, bool) {
+func (s *AiUsageLogService) operatorTenant(ctx context.Context) (int64, bool) {
 	vc, exist := viewer.FromContext(ctx)
 	if !exist || vc == nil {
 		return 0, false
 	}
-	return uint64(vc.TenantID()), true
+	return int64(vc.TenantID()), true
 }

@@ -30,7 +30,7 @@ func NewPermissionMenuRepo(ctx *bootstrap.Context, entClient *entCrud.EntClient[
 func (r *PermissionMenuRepo) CleanMenus(
 	ctx context.Context,
 	tx *ent.Tx,
-	permissionIDs []uint64,
+	permissionIDs []int64,
 ) error {
 	delBuilder := tx.PermissionMenu.Delete().Where(permissionmenu.PermissionIDIn(permissionIDs...))
 	if tid, hasTenant := maybeTenantFromViewer(ctx); hasTenant {
@@ -47,8 +47,8 @@ func (r *PermissionMenuRepo) CleanMenus(
 func (r *PermissionMenuRepo) CleanNotExistMenus(
 	ctx context.Context,
 	tx *ent.Tx,
-	permissionID uint64,
-	menuIDs []uint64,
+	permissionID int64,
+	menuIDs []int64,
 ) error {
 	delBuilder := tx.PermissionMenu.Delete().
 		Where(
@@ -66,7 +66,7 @@ func (r *PermissionMenuRepo) CleanNotExistMenus(
 }
 
 // AssignMenus 给权限分配菜单
-func (r *PermissionMenuRepo) AssignMenus(ctx context.Context, permissionID uint64, menuIDs []uint64) (err error) {
+func (r *PermissionMenuRepo) AssignMenus(ctx context.Context, permissionID int64, menuIDs []int64) (err error) {
 	var tx *ent.Tx
 	tx, err = r.entClient.Client().Tx(ctx)
 	if err != nil {
@@ -94,7 +94,7 @@ func (r *PermissionMenuRepo) AssignMenus(ctx context.Context, permissionID uint6
 }
 
 // AssignMenusWithTx 给权限分配菜单
-func (r *PermissionMenuRepo) AssignMenusWithTx(ctx context.Context, tx *ent.Tx, permissionID uint64, menuIDs []uint64) error {
+func (r *PermissionMenuRepo) AssignMenusWithTx(ctx context.Context, tx *ent.Tx, permissionID int64, menuIDs []int64) error {
 	if len(menuIDs) == 0 {
 		return nil
 	}
@@ -123,7 +123,7 @@ func (r *PermissionMenuRepo) AssignMenusWithTx(ctx context.Context, tx *ent.Tx, 
 }
 
 // ListMenuIDs 列出权限关联的菜单ID列表
-func (r *PermissionMenuRepo) ListMenuIDs(ctx context.Context, permissionIDs []uint64) ([]uint64, error) {
+func (r *PermissionMenuRepo) ListMenuIDs(ctx context.Context, permissionIDs []int64) ([]int64, error) {
 	q := r.entClient.Client().PermissionMenu.
 		Query().
 		Where(
@@ -138,9 +138,9 @@ func (r *PermissionMenuRepo) ListMenuIDs(ctx context.Context, permissionIDs []ui
 		return nil, permissionV1.ErrorInternalServerError("list permission menus by permission id failed")
 	}
 
-	ids := make([]uint64, len(intIDs))
+	ids := make([]int64, len(intIDs))
 	for i, v := range intIDs {
-		ids[i] = uint64(v)
+		ids[i] = int64(v)
 	}
 	return ids, nil
 }
@@ -161,7 +161,7 @@ func (r *PermissionMenuRepo) Truncate(ctx context.Context) error {
 }
 
 // Delete 删除权限关联的菜单
-func (r *PermissionMenuRepo) Delete(ctx context.Context, permissionID uint64) error {
+func (r *PermissionMenuRepo) Delete(ctx context.Context, permissionID int64) error {
 	delBuilder := r.entClient.Client().PermissionMenu.Delete().Where(permissionmenu.PermissionIDEQ(permissionID))
 	if tid, hasTenant := maybeTenantFromViewer(ctx); hasTenant {
 		delBuilder.Where(permissionmenu.TenantIDEQ(tid))
@@ -174,7 +174,7 @@ func (r *PermissionMenuRepo) Delete(ctx context.Context, permissionID uint64) er
 	return nil
 }
 
-func (r *PermissionMenuRepo) DeleteByPermissionIDs(ctx context.Context, permissionIDs []uint64) error {
+func (r *PermissionMenuRepo) DeleteByPermissionIDs(ctx context.Context, permissionIDs []int64) error {
 	delBuilder := r.entClient.Client().PermissionMenu.Delete().Where(permissionmenu.PermissionIDIn(permissionIDs...))
 	if tid, hasTenant := maybeTenantFromViewer(ctx); hasTenant {
 		delBuilder.Where(permissionmenu.TenantIDEQ(tid))
@@ -191,7 +191,7 @@ func (r *PermissionMenuRepo) DeleteByPermissionIDs(ctx context.Context, permissi
 func (r *PermissionMenuRepo) CleanByPermissionIDs(
 	ctx context.Context,
 	tx *ent.Tx,
-	permissionIDs []uint64,
+	permissionIDs []int64,
 ) error {
 	if len(permissionIDs) == 0 {
 		return nil
@@ -208,7 +208,7 @@ func (r *PermissionMenuRepo) CleanByPermissionIDs(
 }
 
 // AssignMenu 给权限分配菜单
-func (r *PermissionMenuRepo) AssignMenu(ctx context.Context, permissionID uint64, menuID uint64) error {
+func (r *PermissionMenuRepo) AssignMenu(ctx context.Context, permissionID int64, menuID int64) error {
 	now := time.Now()
 
 	pm := r.entClient.Client().PermissionMenu.

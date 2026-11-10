@@ -32,7 +32,7 @@ func (TenantQuota) Annotations() []schema.Annotation {
 // Fields of the TenantQuota.
 func (TenantQuota) Fields() []ent.Field {
 	return []ent.Field{
-		field.Uint64("tenant_id").Comment("租户ID").Positive(),
+		field.Int64("tenant_id").Comment("租户ID").Positive(),
 		field.Enum("quota_type").
 			Comment("配额类型").
 			NamedValues(

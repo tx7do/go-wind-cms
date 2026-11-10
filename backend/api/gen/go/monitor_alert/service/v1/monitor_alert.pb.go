@@ -148,7 +148,7 @@ func (AlertOp) EnumDescriptor() ([]byte, []int) {
 // 路由表解决的是"事件该发去哪类渠道"，而这里要的是"这条告警发到这个邮箱"。
 type MonitorAlertRule struct {
 	state  protoimpl.MessageState `protogen:"open.v1"`
-	Id     *uint64                `protobuf:"varint,1,opt,name=id,proto3,oneof" json:"id,omitempty"`
+	Id     *int64                 `protobuf:"varint,1,opt,name=id,proto3,oneof" json:"id,omitempty"`
 	Name   *string                `protobuf:"bytes,2,opt,name=name,proto3,oneof" json:"name,omitempty"`
 	Metric *MonitorMetric         `protobuf:"varint,3,opt,name=metric,proto3,enum=monitor_alert.service.v1.MonitorMetric,oneof" json:"metric,omitempty"`
 	// DB_PING_FAIL 时忽略 op/threshold
@@ -167,8 +167,8 @@ type MonitorAlertRule struct {
 	LastValue     *float64               `protobuf:"fixed64,15,opt,name=last_value,json=lastValue,proto3,oneof" json:"last_value,omitempty"`
 	LastAlertedAt *timestamppb.Timestamp `protobuf:"bytes,16,opt,name=last_alerted_at,json=lastAlertedAt,proto3,oneof" json:"last_alerted_at,omitempty"`
 	UpdatedAt     *timestamppb.Timestamp `protobuf:"bytes,17,opt,name=updated_at,json=updatedAt,proto3,oneof" json:"updated_at,omitempty"`
-	CreatedBy     *uint64                `protobuf:"varint,100,opt,name=created_by,json=createdBy,proto3,oneof" json:"created_by,omitempty"`
-	UpdatedBy     *uint64                `protobuf:"varint,101,opt,name=updated_by,json=updatedBy,proto3,oneof" json:"updated_by,omitempty"`
+	CreatedBy     *int64                 `protobuf:"varint,100,opt,name=created_by,json=createdBy,proto3,oneof" json:"created_by,omitempty"`
+	UpdatedBy     *int64                 `protobuf:"varint,101,opt,name=updated_by,json=updatedBy,proto3,oneof" json:"updated_by,omitempty"`
 	CreatedAt     *timestamppb.Timestamp `protobuf:"bytes,200,opt,name=created_at,json=createdAt,proto3,oneof" json:"created_at,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
@@ -204,7 +204,7 @@ func (*MonitorAlertRule) Descriptor() ([]byte, []int) {
 	return file_monitor_alert_service_v1_monitor_alert_proto_rawDescGZIP(), []int{0}
 }
 
-func (x *MonitorAlertRule) GetId() uint64 {
+func (x *MonitorAlertRule) GetId() int64 {
 	if x != nil && x.Id != nil {
 		return *x.Id
 	}
@@ -302,14 +302,14 @@ func (x *MonitorAlertRule) GetUpdatedAt() *timestamppb.Timestamp {
 	return nil
 }
 
-func (x *MonitorAlertRule) GetCreatedBy() uint64 {
+func (x *MonitorAlertRule) GetCreatedBy() int64 {
 	if x != nil && x.CreatedBy != nil {
 		return *x.CreatedBy
 	}
 	return 0
 }
 
-func (x *MonitorAlertRule) GetUpdatedBy() uint64 {
+func (x *MonitorAlertRule) GetUpdatedBy() int64 {
 	if x != nil && x.UpdatedBy != nil {
 		return *x.UpdatedBy
 	}
@@ -325,7 +325,7 @@ func (x *MonitorAlertRule) GetCreatedAt() *timestamppb.Timestamp {
 
 type GetMonitorAlertRuleRequest struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
-	Id            uint64                 `protobuf:"varint,1,opt,name=id,proto3" json:"id,omitempty"`
+	Id            int64                  `protobuf:"varint,1,opt,name=id,proto3" json:"id,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -360,7 +360,7 @@ func (*GetMonitorAlertRuleRequest) Descriptor() ([]byte, []int) {
 	return file_monitor_alert_service_v1_monitor_alert_proto_rawDescGZIP(), []int{1}
 }
 
-func (x *GetMonitorAlertRuleRequest) GetId() uint64 {
+func (x *GetMonitorAlertRuleRequest) GetId() int64 {
 	if x != nil {
 		return x.Id
 	}
@@ -413,7 +413,7 @@ func (x *CreateMonitorAlertRuleRequest) GetData() *MonitorAlertRule {
 
 type UpdateMonitorAlertRuleRequest struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
-	Id            uint64                 `protobuf:"varint,1,opt,name=id,proto3" json:"id,omitempty"`
+	Id            int64                  `protobuf:"varint,1,opt,name=id,proto3" json:"id,omitempty"`
 	Data          *MonitorAlertRule      `protobuf:"bytes,2,opt,name=data,proto3" json:"data,omitempty"`
 	UpdateMask    *fieldmaskpb.FieldMask `protobuf:"bytes,3,opt,name=update_mask,json=updateMask,proto3,oneof" json:"update_mask,omitempty"`
 	unknownFields protoimpl.UnknownFields
@@ -450,7 +450,7 @@ func (*UpdateMonitorAlertRuleRequest) Descriptor() ([]byte, []int) {
 	return file_monitor_alert_service_v1_monitor_alert_proto_rawDescGZIP(), []int{3}
 }
 
-func (x *UpdateMonitorAlertRuleRequest) GetId() uint64 {
+func (x *UpdateMonitorAlertRuleRequest) GetId() int64 {
 	if x != nil {
 		return x.Id
 	}
@@ -473,7 +473,7 @@ func (x *UpdateMonitorAlertRuleRequest) GetUpdateMask() *fieldmaskpb.FieldMask {
 
 type DeleteMonitorAlertRuleRequest struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
-	Id            uint64                 `protobuf:"varint,1,opt,name=id,proto3" json:"id,omitempty"`
+	Id            int64                  `protobuf:"varint,1,opt,name=id,proto3" json:"id,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -508,7 +508,7 @@ func (*DeleteMonitorAlertRuleRequest) Descriptor() ([]byte, []int) {
 	return file_monitor_alert_service_v1_monitor_alert_proto_rawDescGZIP(), []int{4}
 }
 
-func (x *DeleteMonitorAlertRuleRequest) GetId() uint64 {
+func (x *DeleteMonitorAlertRuleRequest) GetId() int64 {
 	if x != nil {
 		return x.Id
 	}
@@ -517,7 +517,7 @@ func (x *DeleteMonitorAlertRuleRequest) GetId() uint64 {
 
 type ListMonitorAlertRuleResponse struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
-	Total         uint64                 `protobuf:"varint,1,opt,name=total,proto3" json:"total,omitempty"`
+	Total         int64                  `protobuf:"varint,1,opt,name=total,proto3" json:"total,omitempty"`
 	Items         []*MonitorAlertRule    `protobuf:"bytes,2,rep,name=items,proto3" json:"items,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
@@ -553,7 +553,7 @@ func (*ListMonitorAlertRuleResponse) Descriptor() ([]byte, []int) {
 	return file_monitor_alert_service_v1_monitor_alert_proto_rawDescGZIP(), []int{5}
 }
 
-func (x *ListMonitorAlertRuleResponse) GetTotal() uint64 {
+func (x *ListMonitorAlertRuleResponse) GetTotal() int64 {
 	if x != nil {
 		return x.Total
 	}
@@ -650,7 +650,7 @@ func (x *EvaluateMonitorAlertsResponse) GetOutcomes() []*EvaluateMonitorAlertsRe
 
 type EvaluateMonitorAlertsResponse_RuleOutcome struct {
 	state  protoimpl.MessageState `protogen:"open.v1"`
-	RuleId uint64                 `protobuf:"varint,1,opt,name=rule_id,json=ruleId,proto3" json:"rule_id,omitempty"`
+	RuleId int64                  `protobuf:"varint,1,opt,name=rule_id,json=ruleId,proto3" json:"rule_id,omitempty"`
 	Name   string                 `protobuf:"bytes,2,opt,name=name,proto3" json:"name,omitempty"`
 	// 本次扫描是否越限
 	Firing bool `protobuf:"varint,3,opt,name=firing,proto3" json:"firing,omitempty"`
@@ -694,7 +694,7 @@ func (*EvaluateMonitorAlertsResponse_RuleOutcome) Descriptor() ([]byte, []int) {
 	return file_monitor_alert_service_v1_monitor_alert_proto_rawDescGZIP(), []int{7, 0}
 }
 
-func (x *EvaluateMonitorAlertsResponse_RuleOutcome) GetRuleId() uint64 {
+func (x *EvaluateMonitorAlertsResponse_RuleOutcome) GetRuleId() int64 {
 	if x != nil {
 		return x.RuleId
 	}
@@ -742,7 +742,7 @@ const file_monitor_alert_service_v1_monitor_alert_proto_rawDesc = "" +
 	"\n" +
 	",monitor_alert/service/v1/monitor_alert.proto\x12\x18monitor_alert.service.v1\x1a\x1bgoogle/protobuf/empty.proto\x1a google/protobuf/field_mask.proto\x1a\x1fgoogle/protobuf/timestamp.proto\x1a$notify/service/v1/notification.proto\x1a\x1epagination/v1/pagination.proto\"\xeb\a\n" +
 	"\x10MonitorAlertRule\x12\x13\n" +
-	"\x02id\x18\x01 \x01(\x04H\x00R\x02id\x88\x01\x01\x12\x17\n" +
+	"\x02id\x18\x01 \x01(\x03H\x00R\x02id\x88\x01\x01\x12\x17\n" +
 	"\x04name\x18\x02 \x01(\tH\x01R\x04name\x88\x01\x01\x12D\n" +
 	"\x06metric\x18\x03 \x01(\x0e2'.monitor_alert.service.v1.MonitorMetricH\x02R\x06metric\x88\x01\x01\x126\n" +
 	"\x02op\x18\x04 \x01(\x0e2!.monitor_alert.service.v1.AlertOpH\x03R\x02op\x88\x01\x01\x12!\n" +
@@ -763,9 +763,9 @@ const file_monitor_alert_service_v1_monitor_alert_proto_rawDesc = "" +
 	"\n" +
 	"updated_at\x18\x11 \x01(\v2\x1a.google.protobuf.TimestampH\rR\tupdatedAt\x88\x01\x01\x12\"\n" +
 	"\n" +
-	"created_by\x18d \x01(\x04H\x0eR\tcreatedBy\x88\x01\x01\x12\"\n" +
+	"created_by\x18d \x01(\x03H\x0eR\tcreatedBy\x88\x01\x01\x12\"\n" +
 	"\n" +
-	"updated_by\x18e \x01(\x04H\x0fR\tupdatedBy\x88\x01\x01\x12?\n" +
+	"updated_by\x18e \x01(\x03H\x0fR\tupdatedBy\x88\x01\x01\x12?\n" +
 	"\n" +
 	"created_at\x18\xc8\x01 \x01(\v2\x1a.google.protobuf.TimestampH\x10R\tcreatedAt\x88\x01\x01B\x05\n" +
 	"\x03_idB\a\n" +
@@ -788,25 +788,25 @@ const file_monitor_alert_service_v1_monitor_alert_proto_rawDesc = "" +
 	"\v_updated_byB\r\n" +
 	"\v_created_at\",\n" +
 	"\x1aGetMonitorAlertRuleRequest\x12\x0e\n" +
-	"\x02id\x18\x01 \x01(\x04R\x02id\"_\n" +
+	"\x02id\x18\x01 \x01(\x03R\x02id\"_\n" +
 	"\x1dCreateMonitorAlertRuleRequest\x12>\n" +
 	"\x04data\x18\x01 \x01(\v2*.monitor_alert.service.v1.MonitorAlertRuleR\x04data\"\xc1\x01\n" +
 	"\x1dUpdateMonitorAlertRuleRequest\x12\x0e\n" +
-	"\x02id\x18\x01 \x01(\x04R\x02id\x12>\n" +
+	"\x02id\x18\x01 \x01(\x03R\x02id\x12>\n" +
 	"\x04data\x18\x02 \x01(\v2*.monitor_alert.service.v1.MonitorAlertRuleR\x04data\x12@\n" +
 	"\vupdate_mask\x18\x03 \x01(\v2\x1a.google.protobuf.FieldMaskH\x00R\n" +
 	"updateMask\x88\x01\x01B\x0e\n" +
 	"\f_update_mask\"/\n" +
 	"\x1dDeleteMonitorAlertRuleRequest\x12\x0e\n" +
-	"\x02id\x18\x01 \x01(\x04R\x02id\"v\n" +
+	"\x02id\x18\x01 \x01(\x03R\x02id\"v\n" +
 	"\x1cListMonitorAlertRuleResponse\x12\x14\n" +
-	"\x05total\x18\x01 \x01(\x04R\x05total\x12@\n" +
+	"\x05total\x18\x01 \x01(\x03R\x05total\x12@\n" +
 	"\x05items\x18\x02 \x03(\v2*.monitor_alert.service.v1.MonitorAlertRuleR\x05items\"\x1e\n" +
 	"\x1cEvaluateMonitorAlertsRequest\"\xd5\x02\n" +
 	"\x1dEvaluateMonitorAlertsResponse\x12_\n" +
 	"\boutcomes\x18\x01 \x03(\v2C.monitor_alert.service.v1.EvaluateMonitorAlertsResponse.RuleOutcomeR\boutcomes\x1a\xd2\x01\n" +
 	"\vRuleOutcome\x12\x17\n" +
-	"\arule_id\x18\x01 \x01(\x04R\x06ruleId\x12\x12\n" +
+	"\arule_id\x18\x01 \x01(\x03R\x06ruleId\x12\x12\n" +
 	"\x04name\x18\x02 \x01(\tR\x04name\x12\x16\n" +
 	"\x06firing\x18\x03 \x01(\bR\x06firing\x12(\n" +
 	"\rcurrent_value\x18\x04 \x01(\x01H\x00R\fcurrentValue\x88\x01\x01\x12\x1a\n" +

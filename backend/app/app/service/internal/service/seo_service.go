@@ -42,8 +42,8 @@ func NewSeoService(ctx *bootstrap.Context, postClient contentV1.PostServiceClien
 }
 
 type sitemapURL struct {
-	Loc        string
-	LastMod    string // W3C date (2006-01-02)
+	Loc     string
+	LastMod string // W3C date (2006-01-02)
 }
 
 // envPath 取路径模板并把反斜杠归一为斜杠（Windows 环境变量手滑容错）。
@@ -72,15 +72,15 @@ func (s *SeoService) Sitemap(ctx context.Context) (string, error) {
 	}
 
 	// 首页
-	b.WriteString("  <url><loc>" + xmlEscape(base + "/") + "</loc></url>\n")
+	b.WriteString("  <url><loc>" + xmlEscape(base+"/") + "</loc></url>\n")
 
 	postPath := envPath("SEO_POST_PATH", "/{locale}/post/detail?id={id}")
 	pagePath := envPath("SEO_PAGE_PATH", "/{locale}/page/detail?slug={slug}")
 
 	// 帖子：已发布（app List 已过滤），带翻译行生成多语言 URL
 	posts, err := s.postClient.List(ctx, &paginationV1.PagingRequest{
-		Page:     trans.Ptr(uint32(1)),
-		PageSize: trans.Ptr(uint32(1000)),
+		Page:      trans.Ptr(uint32(1)),
+		PageSize:  trans.Ptr(uint32(1000)),
 		FieldMask: pathMask("id", "updated_at", "translations.language_code", "translations.slug"),
 	})
 	if err != nil {
@@ -102,8 +102,8 @@ func (s *SeoService) Sitemap(ctx context.Context) (string, error) {
 
 	// 页面：已发布（app List 已过滤）
 	pages, err := s.pageClient.List(ctx, &paginationV1.PagingRequest{
-		Page:     trans.Ptr(uint32(1)),
-		PageSize: trans.Ptr(uint32(1000)),
+		Page:      trans.Ptr(uint32(1)),
+		PageSize:  trans.Ptr(uint32(1000)),
 		FieldMask: pathMask("id", "updated_at", "slug", "translations.language_code", "translations.slug"),
 	})
 	if err != nil {

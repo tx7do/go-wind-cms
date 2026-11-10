@@ -85,8 +85,8 @@ func (_q *CategoryTranslationQuery) FirstX(ctx context.Context) *CategoryTransla
 
 // FirstID returns the first CategoryTranslation ID from the query.
 // Returns a *NotFoundError when no CategoryTranslation ID was found.
-func (_q *CategoryTranslationQuery) FirstID(ctx context.Context) (id uint64, err error) {
-	var ids []uint64
+func (_q *CategoryTranslationQuery) FirstID(ctx context.Context) (id int64, err error) {
+	var ids []int64
 	if ids, err = _q.Limit(1).IDs(setContextOp(ctx, _q.ctx, ent.OpQueryFirstID)); err != nil {
 		return
 	}
@@ -98,7 +98,7 @@ func (_q *CategoryTranslationQuery) FirstID(ctx context.Context) (id uint64, err
 }
 
 // FirstIDX is like FirstID, but panics if an error occurs.
-func (_q *CategoryTranslationQuery) FirstIDX(ctx context.Context) uint64 {
+func (_q *CategoryTranslationQuery) FirstIDX(ctx context.Context) int64 {
 	id, err := _q.FirstID(ctx)
 	if err != nil && !IsNotFound(err) {
 		panic(err)
@@ -136,8 +136,8 @@ func (_q *CategoryTranslationQuery) OnlyX(ctx context.Context) *CategoryTranslat
 // OnlyID is like Only, but returns the only CategoryTranslation ID in the query.
 // Returns a *NotSingularError when more than one CategoryTranslation ID is found.
 // Returns a *NotFoundError when no entities are found.
-func (_q *CategoryTranslationQuery) OnlyID(ctx context.Context) (id uint64, err error) {
-	var ids []uint64
+func (_q *CategoryTranslationQuery) OnlyID(ctx context.Context) (id int64, err error) {
+	var ids []int64
 	if ids, err = _q.Limit(2).IDs(setContextOp(ctx, _q.ctx, ent.OpQueryOnlyID)); err != nil {
 		return
 	}
@@ -153,7 +153,7 @@ func (_q *CategoryTranslationQuery) OnlyID(ctx context.Context) (id uint64, err 
 }
 
 // OnlyIDX is like OnlyID, but panics if an error occurs.
-func (_q *CategoryTranslationQuery) OnlyIDX(ctx context.Context) uint64 {
+func (_q *CategoryTranslationQuery) OnlyIDX(ctx context.Context) int64 {
 	id, err := _q.OnlyID(ctx)
 	if err != nil {
 		panic(err)
@@ -181,7 +181,7 @@ func (_q *CategoryTranslationQuery) AllX(ctx context.Context) []*CategoryTransla
 }
 
 // IDs executes the query and returns a list of CategoryTranslation IDs.
-func (_q *CategoryTranslationQuery) IDs(ctx context.Context) (ids []uint64, err error) {
+func (_q *CategoryTranslationQuery) IDs(ctx context.Context) (ids []int64, err error) {
 	if _q.ctx.Unique == nil && _q.path != nil {
 		_q.Unique(true)
 	}
@@ -193,7 +193,7 @@ func (_q *CategoryTranslationQuery) IDs(ctx context.Context) (ids []uint64, err 
 }
 
 // IDsX is like IDs, but panics if an error occurs.
-func (_q *CategoryTranslationQuery) IDsX(ctx context.Context) []uint64 {
+func (_q *CategoryTranslationQuery) IDsX(ctx context.Context) []int64 {
 	ids, err := _q.IDs(ctx)
 	if err != nil {
 		panic(err)
@@ -381,7 +381,7 @@ func (_q *CategoryTranslationQuery) sqlCount(ctx context.Context) (int, error) {
 }
 
 func (_q *CategoryTranslationQuery) querySpec() *sqlgraph.QuerySpec {
-	_spec := sqlgraph.NewQuerySpec(categorytranslation.Table, categorytranslation.Columns, sqlgraph.NewFieldSpec(categorytranslation.FieldID, field.TypeUint64))
+	_spec := sqlgraph.NewQuerySpec(categorytranslation.Table, categorytranslation.Columns, sqlgraph.NewFieldSpec(categorytranslation.FieldID, field.TypeInt64))
 	_spec.From = _q.sql
 	if unique := _q.ctx.Unique; unique != nil {
 		_spec.Unique = *unique

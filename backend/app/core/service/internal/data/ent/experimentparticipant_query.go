@@ -85,8 +85,8 @@ func (_q *ExperimentParticipantQuery) FirstX(ctx context.Context) *ExperimentPar
 
 // FirstID returns the first ExperimentParticipant ID from the query.
 // Returns a *NotFoundError when no ExperimentParticipant ID was found.
-func (_q *ExperimentParticipantQuery) FirstID(ctx context.Context) (id uint64, err error) {
-	var ids []uint64
+func (_q *ExperimentParticipantQuery) FirstID(ctx context.Context) (id int64, err error) {
+	var ids []int64
 	if ids, err = _q.Limit(1).IDs(setContextOp(ctx, _q.ctx, ent.OpQueryFirstID)); err != nil {
 		return
 	}
@@ -98,7 +98,7 @@ func (_q *ExperimentParticipantQuery) FirstID(ctx context.Context) (id uint64, e
 }
 
 // FirstIDX is like FirstID, but panics if an error occurs.
-func (_q *ExperimentParticipantQuery) FirstIDX(ctx context.Context) uint64 {
+func (_q *ExperimentParticipantQuery) FirstIDX(ctx context.Context) int64 {
 	id, err := _q.FirstID(ctx)
 	if err != nil && !IsNotFound(err) {
 		panic(err)
@@ -136,8 +136,8 @@ func (_q *ExperimentParticipantQuery) OnlyX(ctx context.Context) *ExperimentPart
 // OnlyID is like Only, but returns the only ExperimentParticipant ID in the query.
 // Returns a *NotSingularError when more than one ExperimentParticipant ID is found.
 // Returns a *NotFoundError when no entities are found.
-func (_q *ExperimentParticipantQuery) OnlyID(ctx context.Context) (id uint64, err error) {
-	var ids []uint64
+func (_q *ExperimentParticipantQuery) OnlyID(ctx context.Context) (id int64, err error) {
+	var ids []int64
 	if ids, err = _q.Limit(2).IDs(setContextOp(ctx, _q.ctx, ent.OpQueryOnlyID)); err != nil {
 		return
 	}
@@ -153,7 +153,7 @@ func (_q *ExperimentParticipantQuery) OnlyID(ctx context.Context) (id uint64, er
 }
 
 // OnlyIDX is like OnlyID, but panics if an error occurs.
-func (_q *ExperimentParticipantQuery) OnlyIDX(ctx context.Context) uint64 {
+func (_q *ExperimentParticipantQuery) OnlyIDX(ctx context.Context) int64 {
 	id, err := _q.OnlyID(ctx)
 	if err != nil {
 		panic(err)
@@ -181,7 +181,7 @@ func (_q *ExperimentParticipantQuery) AllX(ctx context.Context) []*ExperimentPar
 }
 
 // IDs executes the query and returns a list of ExperimentParticipant IDs.
-func (_q *ExperimentParticipantQuery) IDs(ctx context.Context) (ids []uint64, err error) {
+func (_q *ExperimentParticipantQuery) IDs(ctx context.Context) (ids []int64, err error) {
 	if _q.ctx.Unique == nil && _q.path != nil {
 		_q.Unique(true)
 	}
@@ -193,7 +193,7 @@ func (_q *ExperimentParticipantQuery) IDs(ctx context.Context) (ids []uint64, er
 }
 
 // IDsX is like IDs, but panics if an error occurs.
-func (_q *ExperimentParticipantQuery) IDsX(ctx context.Context) []uint64 {
+func (_q *ExperimentParticipantQuery) IDsX(ctx context.Context) []int64 {
 	ids, err := _q.IDs(ctx)
 	if err != nil {
 		panic(err)
@@ -381,7 +381,7 @@ func (_q *ExperimentParticipantQuery) sqlCount(ctx context.Context) (int, error)
 }
 
 func (_q *ExperimentParticipantQuery) querySpec() *sqlgraph.QuerySpec {
-	_spec := sqlgraph.NewQuerySpec(experimentparticipant.Table, experimentparticipant.Columns, sqlgraph.NewFieldSpec(experimentparticipant.FieldID, field.TypeUint64))
+	_spec := sqlgraph.NewQuerySpec(experimentparticipant.Table, experimentparticipant.Columns, sqlgraph.NewFieldSpec(experimentparticipant.FieldID, field.TypeInt64))
 	_spec.From = _q.sql
 	if unique := _q.ctx.Unique; unique != nil {
 		_spec.Unique = *unique

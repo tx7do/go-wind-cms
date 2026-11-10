@@ -17,7 +17,7 @@ import (
 type OnlineSessionService struct {
 	adminV1.OnlineSessionServiceHTTPServer
 
-	log             *log.Helper
+	log              *log.Helper
 	onlineSessionCli onlineSessionV1.OnlineSessionServiceClient
 }
 

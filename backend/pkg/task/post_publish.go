@@ -22,6 +22,6 @@ const PostPublishTaskType = "post.publish"
 //
 // TenantID 仅供日志/排查展示，worker 以 DB 记录为准。
 type PostPublishPayload struct {
-	PostID   uint64 `json:"post_id"`
-	TenantID uint64 `json:"tenant_id"`
+	PostID   int64 `json:"post_id"`
+	TenantID int64 `json:"tenant_id"`
 }

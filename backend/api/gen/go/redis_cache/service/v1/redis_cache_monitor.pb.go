@@ -26,7 +26,7 @@ const (
 type RedisCacheMonitorInfo struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
 	Sections      []*InfoSection         `protobuf:"bytes,1,rep,name=sections,proto3" json:"sections,omitempty"`
-	DbSize        uint64                 `protobuf:"varint,2,opt,name=db_size,json=dbSize,proto3" json:"db_size,omitempty"`
+	DbSize        int64                  `protobuf:"varint,2,opt,name=db_size,json=dbSize,proto3" json:"db_size,omitempty"`
 	Slowlog       []*SlowLogEntry        `protobuf:"bytes,3,rep,name=slowlog,proto3" json:"slowlog,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
@@ -69,7 +69,7 @@ func (x *RedisCacheMonitorInfo) GetSections() []*InfoSection {
 	return nil
 }
 
-func (x *RedisCacheMonitorInfo) GetDbSize() uint64 {
+func (x *RedisCacheMonitorInfo) GetDbSize() int64 {
 	if x != nil {
 		return x.DbSize
 	}
@@ -318,7 +318,7 @@ const file_redis_cache_service_v1_redis_cache_monitor_proto_rawDesc = "" +
 	"0redis_cache/service/v1/redis_cache_monitor.proto\x12\x16redis_cache.service.v1\x1a\x1fgoogle/protobuf/timestamp.proto\"\xb1\x01\n" +
 	"\x15RedisCacheMonitorInfo\x12?\n" +
 	"\bsections\x18\x01 \x03(\v2#.redis_cache.service.v1.InfoSectionR\bsections\x12\x17\n" +
-	"\adb_size\x18\x02 \x01(\x04R\x06dbSize\x12>\n" +
+	"\adb_size\x18\x02 \x01(\x03R\x06dbSize\x12>\n" +
 	"\aslowlog\x18\x03 \x03(\v2$.redis_cache.service.v1.SlowLogEntryR\aslowlog\"^\n" +
 	"\vInfoSection\x12\x12\n" +
 	"\x04name\x18\x01 \x01(\tR\x04name\x12;\n" +

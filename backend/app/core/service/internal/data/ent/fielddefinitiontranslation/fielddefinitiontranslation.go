@@ -67,7 +67,7 @@ var (
 	// LanguageCodeValidator is a validator for the "language_code" field. It is called by the builders before save.
 	LanguageCodeValidator func(string) error
 	// IDValidator is a validator for the "id" field. It is called by the builders before save.
-	IDValidator func(uint64) error
+	IDValidator func(int64) error
 )
 
 // OrderOption defines the ordering options for the FieldDefinitionTranslation queries.

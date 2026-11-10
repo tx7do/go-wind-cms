@@ -70,14 +70,14 @@ func (_u *NavigationUpdate) ClearDeletedAt() *NavigationUpdate {
 }
 
 // SetCreatedBy sets the "created_by" field.
-func (_u *NavigationUpdate) SetCreatedBy(v uint64) *NavigationUpdate {
+func (_u *NavigationUpdate) SetCreatedBy(v int64) *NavigationUpdate {
 	_u.mutation.ResetCreatedBy()
 	_u.mutation.SetCreatedBy(v)
 	return _u
 }
 
 // SetNillableCreatedBy sets the "created_by" field if the given value is not nil.
-func (_u *NavigationUpdate) SetNillableCreatedBy(v *uint64) *NavigationUpdate {
+func (_u *NavigationUpdate) SetNillableCreatedBy(v *int64) *NavigationUpdate {
 	if v != nil {
 		_u.SetCreatedBy(*v)
 	}
@@ -97,14 +97,14 @@ func (_u *NavigationUpdate) ClearCreatedBy() *NavigationUpdate {
 }
 
 // SetUpdatedBy sets the "updated_by" field.
-func (_u *NavigationUpdate) SetUpdatedBy(v uint64) *NavigationUpdate {
+func (_u *NavigationUpdate) SetUpdatedBy(v int64) *NavigationUpdate {
 	_u.mutation.ResetUpdatedBy()
 	_u.mutation.SetUpdatedBy(v)
 	return _u
 }
 
 // SetNillableUpdatedBy sets the "updated_by" field if the given value is not nil.
-func (_u *NavigationUpdate) SetNillableUpdatedBy(v *uint64) *NavigationUpdate {
+func (_u *NavigationUpdate) SetNillableUpdatedBy(v *int64) *NavigationUpdate {
 	if v != nil {
 		_u.SetUpdatedBy(*v)
 	}
@@ -124,14 +124,14 @@ func (_u *NavigationUpdate) ClearUpdatedBy() *NavigationUpdate {
 }
 
 // SetDeletedBy sets the "deleted_by" field.
-func (_u *NavigationUpdate) SetDeletedBy(v uint64) *NavigationUpdate {
+func (_u *NavigationUpdate) SetDeletedBy(v int64) *NavigationUpdate {
 	_u.mutation.ResetDeletedBy()
 	_u.mutation.SetDeletedBy(v)
 	return _u
 }
 
 // SetNillableDeletedBy sets the "deleted_by" field if the given value is not nil.
-func (_u *NavigationUpdate) SetNillableDeletedBy(v *uint64) *NavigationUpdate {
+func (_u *NavigationUpdate) SetNillableDeletedBy(v *int64) *NavigationUpdate {
 	if v != nil {
 		_u.SetDeletedBy(*v)
 	}
@@ -282,7 +282,7 @@ func (_u *NavigationUpdate) sqlSave(ctx context.Context) (_node int, err error) 
 	if err := _u.check(); err != nil {
 		return _node, err
 	}
-	_spec := sqlgraph.NewUpdateSpec(navigation.Table, navigation.Columns, sqlgraph.NewFieldSpec(navigation.FieldID, field.TypeUint64))
+	_spec := sqlgraph.NewUpdateSpec(navigation.Table, navigation.Columns, sqlgraph.NewFieldSpec(navigation.FieldID, field.TypeInt64))
 	if ps := _u.mutation.predicates; len(ps) > 0 {
 		_spec.Predicate = func(selector *sql.Selector) {
 			for i := range ps {
@@ -306,34 +306,34 @@ func (_u *NavigationUpdate) sqlSave(ctx context.Context) (_node int, err error) 
 		_spec.ClearField(navigation.FieldDeletedAt, field.TypeTime)
 	}
 	if value, ok := _u.mutation.CreatedBy(); ok {
-		_spec.SetField(navigation.FieldCreatedBy, field.TypeUint64, value)
+		_spec.SetField(navigation.FieldCreatedBy, field.TypeInt64, value)
 	}
 	if value, ok := _u.mutation.AddedCreatedBy(); ok {
-		_spec.AddField(navigation.FieldCreatedBy, field.TypeUint64, value)
+		_spec.AddField(navigation.FieldCreatedBy, field.TypeInt64, value)
 	}
 	if _u.mutation.CreatedByCleared() {
-		_spec.ClearField(navigation.FieldCreatedBy, field.TypeUint64)
+		_spec.ClearField(navigation.FieldCreatedBy, field.TypeInt64)
 	}
 	if value, ok := _u.mutation.UpdatedBy(); ok {
-		_spec.SetField(navigation.FieldUpdatedBy, field.TypeUint64, value)
+		_spec.SetField(navigation.FieldUpdatedBy, field.TypeInt64, value)
 	}
 	if value, ok := _u.mutation.AddedUpdatedBy(); ok {
-		_spec.AddField(navigation.FieldUpdatedBy, field.TypeUint64, value)
+		_spec.AddField(navigation.FieldUpdatedBy, field.TypeInt64, value)
 	}
 	if _u.mutation.UpdatedByCleared() {
-		_spec.ClearField(navigation.FieldUpdatedBy, field.TypeUint64)
+		_spec.ClearField(navigation.FieldUpdatedBy, field.TypeInt64)
 	}
 	if value, ok := _u.mutation.DeletedBy(); ok {
-		_spec.SetField(navigation.FieldDeletedBy, field.TypeUint64, value)
+		_spec.SetField(navigation.FieldDeletedBy, field.TypeInt64, value)
 	}
 	if value, ok := _u.mutation.AddedDeletedBy(); ok {
-		_spec.AddField(navigation.FieldDeletedBy, field.TypeUint64, value)
+		_spec.AddField(navigation.FieldDeletedBy, field.TypeInt64, value)
 	}
 	if _u.mutation.DeletedByCleared() {
-		_spec.ClearField(navigation.FieldDeletedBy, field.TypeUint64)
+		_spec.ClearField(navigation.FieldDeletedBy, field.TypeInt64)
 	}
 	if _u.mutation.TenantIDCleared() {
-		_spec.ClearField(navigation.FieldTenantID, field.TypeUint64)
+		_spec.ClearField(navigation.FieldTenantID, field.TypeInt64)
 	}
 	if value, ok := _u.mutation.Name(); ok {
 		_spec.SetField(navigation.FieldName, field.TypeString, value)
@@ -422,14 +422,14 @@ func (_u *NavigationUpdateOne) ClearDeletedAt() *NavigationUpdateOne {
 }
 
 // SetCreatedBy sets the "created_by" field.
-func (_u *NavigationUpdateOne) SetCreatedBy(v uint64) *NavigationUpdateOne {
+func (_u *NavigationUpdateOne) SetCreatedBy(v int64) *NavigationUpdateOne {
 	_u.mutation.ResetCreatedBy()
 	_u.mutation.SetCreatedBy(v)
 	return _u
 }
 
 // SetNillableCreatedBy sets the "created_by" field if the given value is not nil.
-func (_u *NavigationUpdateOne) SetNillableCreatedBy(v *uint64) *NavigationUpdateOne {
+func (_u *NavigationUpdateOne) SetNillableCreatedBy(v *int64) *NavigationUpdateOne {
 	if v != nil {
 		_u.SetCreatedBy(*v)
 	}
@@ -449,14 +449,14 @@ func (_u *NavigationUpdateOne) ClearCreatedBy() *NavigationUpdateOne {
 }
 
 // SetUpdatedBy sets the "updated_by" field.
-func (_u *NavigationUpdateOne) SetUpdatedBy(v uint64) *NavigationUpdateOne {
+func (_u *NavigationUpdateOne) SetUpdatedBy(v int64) *NavigationUpdateOne {
 	_u.mutation.ResetUpdatedBy()
 	_u.mutation.SetUpdatedBy(v)
 	return _u
 }
 
 // SetNillableUpdatedBy sets the "updated_by" field if the given value is not nil.
-func (_u *NavigationUpdateOne) SetNillableUpdatedBy(v *uint64) *NavigationUpdateOne {
+func (_u *NavigationUpdateOne) SetNillableUpdatedBy(v *int64) *NavigationUpdateOne {
 	if v != nil {
 		_u.SetUpdatedBy(*v)
 	}
@@ -476,14 +476,14 @@ func (_u *NavigationUpdateOne) ClearUpdatedBy() *NavigationUpdateOne {
 }
 
 // SetDeletedBy sets the "deleted_by" field.
-func (_u *NavigationUpdateOne) SetDeletedBy(v uint64) *NavigationUpdateOne {
+func (_u *NavigationUpdateOne) SetDeletedBy(v int64) *NavigationUpdateOne {
 	_u.mutation.ResetDeletedBy()
 	_u.mutation.SetDeletedBy(v)
 	return _u
 }
 
 // SetNillableDeletedBy sets the "deleted_by" field if the given value is not nil.
-func (_u *NavigationUpdateOne) SetNillableDeletedBy(v *uint64) *NavigationUpdateOne {
+func (_u *NavigationUpdateOne) SetNillableDeletedBy(v *int64) *NavigationUpdateOne {
 	if v != nil {
 		_u.SetDeletedBy(*v)
 	}
@@ -647,7 +647,7 @@ func (_u *NavigationUpdateOne) sqlSave(ctx context.Context) (_node *Navigation, 
 	if err := _u.check(); err != nil {
 		return _node, err
 	}
-	_spec := sqlgraph.NewUpdateSpec(navigation.Table, navigation.Columns, sqlgraph.NewFieldSpec(navigation.FieldID, field.TypeUint64))
+	_spec := sqlgraph.NewUpdateSpec(navigation.Table, navigation.Columns, sqlgraph.NewFieldSpec(navigation.FieldID, field.TypeInt64))
 	id, ok := _u.mutation.ID()
 	if !ok {
 		return nil, &ValidationError{Name: "id", err: errors.New(`ent: missing "Navigation.id" for update`)}
@@ -688,34 +688,34 @@ func (_u *NavigationUpdateOne) sqlSave(ctx context.Context) (_node *Navigation, 
 		_spec.ClearField(navigation.FieldDeletedAt, field.TypeTime)
 	}
 	if value, ok := _u.mutation.CreatedBy(); ok {
-		_spec.SetField(navigation.FieldCreatedBy, field.TypeUint64, value)
+		_spec.SetField(navigation.FieldCreatedBy, field.TypeInt64, value)
 	}
 	if value, ok := _u.mutation.AddedCreatedBy(); ok {
-		_spec.AddField(navigation.FieldCreatedBy, field.TypeUint64, value)
+		_spec.AddField(navigation.FieldCreatedBy, field.TypeInt64, value)
 	}
 	if _u.mutation.CreatedByCleared() {
-		_spec.ClearField(navigation.FieldCreatedBy, field.TypeUint64)
+		_spec.ClearField(navigation.FieldCreatedBy, field.TypeInt64)
 	}
 	if value, ok := _u.mutation.UpdatedBy(); ok {
-		_spec.SetField(navigation.FieldUpdatedBy, field.TypeUint64, value)
+		_spec.SetField(navigation.FieldUpdatedBy, field.TypeInt64, value)
 	}
 	if value, ok := _u.mutation.AddedUpdatedBy(); ok {
-		_spec.AddField(navigation.FieldUpdatedBy, field.TypeUint64, value)
+		_spec.AddField(navigation.FieldUpdatedBy, field.TypeInt64, value)
 	}
 	if _u.mutation.UpdatedByCleared() {
-		_spec.ClearField(navigation.FieldUpdatedBy, field.TypeUint64)
+		_spec.ClearField(navigation.FieldUpdatedBy, field.TypeInt64)
 	}
 	if value, ok := _u.mutation.DeletedBy(); ok {
-		_spec.SetField(navigation.FieldDeletedBy, field.TypeUint64, value)
+		_spec.SetField(navigation.FieldDeletedBy, field.TypeInt64, value)
 	}
 	if value, ok := _u.mutation.AddedDeletedBy(); ok {
-		_spec.AddField(navigation.FieldDeletedBy, field.TypeUint64, value)
+		_spec.AddField(navigation.FieldDeletedBy, field.TypeInt64, value)
 	}
 	if _u.mutation.DeletedByCleared() {
-		_spec.ClearField(navigation.FieldDeletedBy, field.TypeUint64)
+		_spec.ClearField(navigation.FieldDeletedBy, field.TypeInt64)
 	}
 	if _u.mutation.TenantIDCleared() {
-		_spec.ClearField(navigation.FieldTenantID, field.TypeUint64)
+		_spec.ClearField(navigation.FieldTenantID, field.TypeInt64)
 	}
 	if value, ok := _u.mutation.Name(); ok {
 		_spec.SetField(navigation.FieldName, field.TypeString, value)

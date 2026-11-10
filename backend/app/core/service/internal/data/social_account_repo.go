@@ -10,8 +10,8 @@ import (
 	kratosMetadata "github.com/go-kratos/kratos/v2/metadata"
 
 	"github.com/tx7do/go-utils/copierutil"
-	"github.com/tx7do/go-utils/trans"
 	"github.com/tx7do/go-utils/mapper"
+	"github.com/tx7do/go-utils/trans"
 
 	paginationV1 "github.com/tx7do/go-crud/api/gen/go/pagination/v1"
 	entCrud "github.com/tx7do/go-crud/entgo"
@@ -127,7 +127,7 @@ func (r *SocialAccountRepo) Get(ctx context.Context, req *socialV1.GetSocialAcco
 }
 
 // GetByID 内部读取（发布 worker 的 SystemViewer 上下文，跨租户）。
-func (r *SocialAccountRepo) GetByID(ctx context.Context, id uint64) (*socialV1.SocialAccount, error) {
+func (r *SocialAccountRepo) GetByID(ctx context.Context, id int64) (*socialV1.SocialAccount, error) {
 	entity, err := r.entClient.Client().SocialAccount.Get(ctx, id)
 	if err != nil {
 		if ent.IsNotFound(err) {
@@ -271,14 +271,14 @@ func (r *SocialAccountRepo) ListEnabledByPlatforms(ctx context.Context, platform
 
 // socialTenantIDFromContext 解析写入侧租户归属：viewer 优先，
 // 回落内网可信元数据 x-md-global-tenant-id（与评论链路口径一致），缺省 0（平台）。
-func socialTenantIDFromContext(ctx context.Context) uint64 {
+func socialTenantIDFromContext(ctx context.Context) int64 {
 	if tid, ok := maybeTenantFromViewer(ctx); ok {
 		return tid
 	}
 	if md, ok := kratosMetadata.FromServerContext(ctx); ok {
 		if v := md.Get("x-md-global-tenant-id"); v != "" {
-			if parsed, perr := strconv.ParseUint(v, 10, 32); perr == nil {
-				return uint64(parsed)
+			if parsed, perr := strconv.ParseInt(v, 10, 64); perr == nil {
+				return int64(parsed)
 			}
 		}
 	}

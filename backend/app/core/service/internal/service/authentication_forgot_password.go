@@ -13,7 +13,6 @@ import (
 	authenticationV1 "go-wind-cms/api/gen/go/authentication/service/v1"
 	identityV1 "go-wind-cms/api/gen/go/identity/service/v1"
 	notifyV1 "go-wind-cms/api/gen/go/notify/service/v1"
-
 )
 
 // generateVCode 生成 6 位数字验证码。

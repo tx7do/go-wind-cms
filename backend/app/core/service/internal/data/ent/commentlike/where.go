@@ -10,47 +10,47 @@ import (
 )
 
 // ID filters vertices based on their ID field.
-func ID(id uint64) predicate.CommentLike {
+func ID(id int64) predicate.CommentLike {
 	return predicate.CommentLike(sql.FieldEQ(FieldID, id))
 }
 
 // IDEQ applies the EQ predicate on the ID field.
-func IDEQ(id uint64) predicate.CommentLike {
+func IDEQ(id int64) predicate.CommentLike {
 	return predicate.CommentLike(sql.FieldEQ(FieldID, id))
 }
 
 // IDNEQ applies the NEQ predicate on the ID field.
-func IDNEQ(id uint64) predicate.CommentLike {
+func IDNEQ(id int64) predicate.CommentLike {
 	return predicate.CommentLike(sql.FieldNEQ(FieldID, id))
 }
 
 // IDIn applies the In predicate on the ID field.
-func IDIn(ids ...uint64) predicate.CommentLike {
+func IDIn(ids ...int64) predicate.CommentLike {
 	return predicate.CommentLike(sql.FieldIn(FieldID, ids...))
 }
 
 // IDNotIn applies the NotIn predicate on the ID field.
-func IDNotIn(ids ...uint64) predicate.CommentLike {
+func IDNotIn(ids ...int64) predicate.CommentLike {
 	return predicate.CommentLike(sql.FieldNotIn(FieldID, ids...))
 }
 
 // IDGT applies the GT predicate on the ID field.
-func IDGT(id uint64) predicate.CommentLike {
+func IDGT(id int64) predicate.CommentLike {
 	return predicate.CommentLike(sql.FieldGT(FieldID, id))
 }
 
 // IDGTE applies the GTE predicate on the ID field.
-func IDGTE(id uint64) predicate.CommentLike {
+func IDGTE(id int64) predicate.CommentLike {
 	return predicate.CommentLike(sql.FieldGTE(FieldID, id))
 }
 
 // IDLT applies the LT predicate on the ID field.
-func IDLT(id uint64) predicate.CommentLike {
+func IDLT(id int64) predicate.CommentLike {
 	return predicate.CommentLike(sql.FieldLT(FieldID, id))
 }
 
 // IDLTE applies the LTE predicate on the ID field.
-func IDLTE(id uint64) predicate.CommentLike {
+func IDLTE(id int64) predicate.CommentLike {
 	return predicate.CommentLike(sql.FieldLTE(FieldID, id))
 }
 
@@ -70,17 +70,17 @@ func DeletedAt(v time.Time) predicate.CommentLike {
 }
 
 // TenantID applies equality check predicate on the "tenant_id" field. It's identical to TenantIDEQ.
-func TenantID(v uint64) predicate.CommentLike {
+func TenantID(v int64) predicate.CommentLike {
 	return predicate.CommentLike(sql.FieldEQ(FieldTenantID, v))
 }
 
 // UserID applies equality check predicate on the "user_id" field. It's identical to UserIDEQ.
-func UserID(v uint64) predicate.CommentLike {
+func UserID(v int64) predicate.CommentLike {
 	return predicate.CommentLike(sql.FieldEQ(FieldUserID, v))
 }
 
 // CommentID applies equality check predicate on the "comment_id" field. It's identical to CommentIDEQ.
-func CommentID(v uint64) predicate.CommentLike {
+func CommentID(v int64) predicate.CommentLike {
 	return predicate.CommentLike(sql.FieldEQ(FieldCommentID, v))
 }
 
@@ -235,42 +235,42 @@ func DeletedAtNotNil() predicate.CommentLike {
 }
 
 // TenantIDEQ applies the EQ predicate on the "tenant_id" field.
-func TenantIDEQ(v uint64) predicate.CommentLike {
+func TenantIDEQ(v int64) predicate.CommentLike {
 	return predicate.CommentLike(sql.FieldEQ(FieldTenantID, v))
 }
 
 // TenantIDNEQ applies the NEQ predicate on the "tenant_id" field.
-func TenantIDNEQ(v uint64) predicate.CommentLike {
+func TenantIDNEQ(v int64) predicate.CommentLike {
 	return predicate.CommentLike(sql.FieldNEQ(FieldTenantID, v))
 }
 
 // TenantIDIn applies the In predicate on the "tenant_id" field.
-func TenantIDIn(vs ...uint64) predicate.CommentLike {
+func TenantIDIn(vs ...int64) predicate.CommentLike {
 	return predicate.CommentLike(sql.FieldIn(FieldTenantID, vs...))
 }
 
 // TenantIDNotIn applies the NotIn predicate on the "tenant_id" field.
-func TenantIDNotIn(vs ...uint64) predicate.CommentLike {
+func TenantIDNotIn(vs ...int64) predicate.CommentLike {
 	return predicate.CommentLike(sql.FieldNotIn(FieldTenantID, vs...))
 }
 
 // TenantIDGT applies the GT predicate on the "tenant_id" field.
-func TenantIDGT(v uint64) predicate.CommentLike {
+func TenantIDGT(v int64) predicate.CommentLike {
 	return predicate.CommentLike(sql.FieldGT(FieldTenantID, v))
 }
 
 // TenantIDGTE applies the GTE predicate on the "tenant_id" field.
-func TenantIDGTE(v uint64) predicate.CommentLike {
+func TenantIDGTE(v int64) predicate.CommentLike {
 	return predicate.CommentLike(sql.FieldGTE(FieldTenantID, v))
 }
 
 // TenantIDLT applies the LT predicate on the "tenant_id" field.
-func TenantIDLT(v uint64) predicate.CommentLike {
+func TenantIDLT(v int64) predicate.CommentLike {
 	return predicate.CommentLike(sql.FieldLT(FieldTenantID, v))
 }
 
 // TenantIDLTE applies the LTE predicate on the "tenant_id" field.
-func TenantIDLTE(v uint64) predicate.CommentLike {
+func TenantIDLTE(v int64) predicate.CommentLike {
 	return predicate.CommentLike(sql.FieldLTE(FieldTenantID, v))
 }
 
@@ -285,42 +285,42 @@ func TenantIDNotNil() predicate.CommentLike {
 }
 
 // UserIDEQ applies the EQ predicate on the "user_id" field.
-func UserIDEQ(v uint64) predicate.CommentLike {
+func UserIDEQ(v int64) predicate.CommentLike {
 	return predicate.CommentLike(sql.FieldEQ(FieldUserID, v))
 }
 
 // UserIDNEQ applies the NEQ predicate on the "user_id" field.
-func UserIDNEQ(v uint64) predicate.CommentLike {
+func UserIDNEQ(v int64) predicate.CommentLike {
 	return predicate.CommentLike(sql.FieldNEQ(FieldUserID, v))
 }
 
 // UserIDIn applies the In predicate on the "user_id" field.
-func UserIDIn(vs ...uint64) predicate.CommentLike {
+func UserIDIn(vs ...int64) predicate.CommentLike {
 	return predicate.CommentLike(sql.FieldIn(FieldUserID, vs...))
 }
 
 // UserIDNotIn applies the NotIn predicate on the "user_id" field.
-func UserIDNotIn(vs ...uint64) predicate.CommentLike {
+func UserIDNotIn(vs ...int64) predicate.CommentLike {
 	return predicate.CommentLike(sql.FieldNotIn(FieldUserID, vs...))
 }
 
 // UserIDGT applies the GT predicate on the "user_id" field.
-func UserIDGT(v uint64) predicate.CommentLike {
+func UserIDGT(v int64) predicate.CommentLike {
 	return predicate.CommentLike(sql.FieldGT(FieldUserID, v))
 }
 
 // UserIDGTE applies the GTE predicate on the "user_id" field.
-func UserIDGTE(v uint64) predicate.CommentLike {
+func UserIDGTE(v int64) predicate.CommentLike {
 	return predicate.CommentLike(sql.FieldGTE(FieldUserID, v))
 }
 
 // UserIDLT applies the LT predicate on the "user_id" field.
-func UserIDLT(v uint64) predicate.CommentLike {
+func UserIDLT(v int64) predicate.CommentLike {
 	return predicate.CommentLike(sql.FieldLT(FieldUserID, v))
 }
 
 // UserIDLTE applies the LTE predicate on the "user_id" field.
-func UserIDLTE(v uint64) predicate.CommentLike {
+func UserIDLTE(v int64) predicate.CommentLike {
 	return predicate.CommentLike(sql.FieldLTE(FieldUserID, v))
 }
 
@@ -335,42 +335,42 @@ func UserIDNotNil() predicate.CommentLike {
 }
 
 // CommentIDEQ applies the EQ predicate on the "comment_id" field.
-func CommentIDEQ(v uint64) predicate.CommentLike {
+func CommentIDEQ(v int64) predicate.CommentLike {
 	return predicate.CommentLike(sql.FieldEQ(FieldCommentID, v))
 }
 
 // CommentIDNEQ applies the NEQ predicate on the "comment_id" field.
-func CommentIDNEQ(v uint64) predicate.CommentLike {
+func CommentIDNEQ(v int64) predicate.CommentLike {
 	return predicate.CommentLike(sql.FieldNEQ(FieldCommentID, v))
 }
 
 // CommentIDIn applies the In predicate on the "comment_id" field.
-func CommentIDIn(vs ...uint64) predicate.CommentLike {
+func CommentIDIn(vs ...int64) predicate.CommentLike {
 	return predicate.CommentLike(sql.FieldIn(FieldCommentID, vs...))
 }
 
 // CommentIDNotIn applies the NotIn predicate on the "comment_id" field.
-func CommentIDNotIn(vs ...uint64) predicate.CommentLike {
+func CommentIDNotIn(vs ...int64) predicate.CommentLike {
 	return predicate.CommentLike(sql.FieldNotIn(FieldCommentID, vs...))
 }
 
 // CommentIDGT applies the GT predicate on the "comment_id" field.
-func CommentIDGT(v uint64) predicate.CommentLike {
+func CommentIDGT(v int64) predicate.CommentLike {
 	return predicate.CommentLike(sql.FieldGT(FieldCommentID, v))
 }
 
 // CommentIDGTE applies the GTE predicate on the "comment_id" field.
-func CommentIDGTE(v uint64) predicate.CommentLike {
+func CommentIDGTE(v int64) predicate.CommentLike {
 	return predicate.CommentLike(sql.FieldGTE(FieldCommentID, v))
 }
 
 // CommentIDLT applies the LT predicate on the "comment_id" field.
-func CommentIDLT(v uint64) predicate.CommentLike {
+func CommentIDLT(v int64) predicate.CommentLike {
 	return predicate.CommentLike(sql.FieldLT(FieldCommentID, v))
 }
 
 // CommentIDLTE applies the LTE predicate on the "comment_id" field.
-func CommentIDLTE(v uint64) predicate.CommentLike {
+func CommentIDLTE(v int64) predicate.CommentLike {
 	return predicate.CommentLike(sql.FieldLTE(FieldCommentID, v))
 }
 

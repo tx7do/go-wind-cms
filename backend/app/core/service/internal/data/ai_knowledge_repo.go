@@ -7,8 +7,8 @@ import (
 	"time"
 
 	"entgo.io/ent/dialect/sql"
-	"github.com/tx7do/kratos-bootstrap/bootstrap"
 	"github.com/go-kratos/kratos/v2/log"
+	"github.com/tx7do/kratos-bootstrap/bootstrap"
 
 	paginationV1 "github.com/tx7do/go-crud/api/gen/go/pagination/v1"
 	entCrud "github.com/tx7do/go-crud/entgo"
@@ -72,7 +72,7 @@ func (r *AiKnowledgeRepo) init() {
 
 // ── 知识库 CRUD（泛型仓库标准形态） ─────────────────────────────────
 
-func (r *AiKnowledgeRepo) Count(ctx context.Context, req *paginationV1.PagingRequest) (uint64, error) {
+func (r *AiKnowledgeRepo) Count(ctx context.Context, req *paginationV1.PagingRequest) (int64, error) {
 	builder := r.entClient.Client().AiKnowledgeBase.Query()
 
 	whereSelectors, _, _ := r.repository.BuildListSelectorWithPaging(builder, req)
@@ -85,10 +85,10 @@ func (r *AiKnowledgeRepo) Count(ctx context.Context, req *paginationV1.PagingReq
 		r.log.Errorf("query ai knowledge base count failed: %s", err.Error())
 		return 0, aiV1.ErrorInternalServerError("query ai knowledge base count failed")
 	}
-	return uint64(count), nil
+	return int64(count), nil
 }
 
-func (r *AiKnowledgeRepo) List(ctx context.Context, req *paginationV1.PagingRequest) ([]*aiV1.AiKnowledgeBase, uint64, error) {
+func (r *AiKnowledgeRepo) List(ctx context.Context, req *paginationV1.PagingRequest) ([]*aiV1.AiKnowledgeBase, int64, error) {
 	if req == nil {
 		return nil, 0, aiV1.ErrorBadRequest("invalid parameter")
 	}
@@ -180,7 +180,7 @@ func (r *AiKnowledgeRepo) Update(ctx context.Context, req *aiV1.UpdateAiKnowledg
 }
 
 // Delete 删除知识库；docs 边 Cascade 级联删文档行，文档的 chunks 由 doc 侧 Cascade 删除。
-func (r *AiKnowledgeRepo) Delete(ctx context.Context, id uint64) error {
+func (r *AiKnowledgeRepo) Delete(ctx context.Context, id int64) error {
 	// 租户作用域：Delete 是 ent 变更路径，TenantPrivacy 不覆盖，必须显式加租户过滤，
 	// 否则仅按 id 删除，跨租户可删他人知识库。
 	builder := r.entClient.Client().AiKnowledgeBase.Delete().
@@ -199,7 +199,7 @@ func (r *AiKnowledgeRepo) Delete(ctx context.Context, id uint64) error {
 	return nil
 }
 
-func (r *AiKnowledgeRepo) GetEntityByID(ctx context.Context, id uint64) (*ent.AiKnowledgeBase, error) {
+func (r *AiKnowledgeRepo) GetEntityByID(ctx context.Context, id int64) (*ent.AiKnowledgeBase, error) {
 	entity, err := r.entClient.Client().AiKnowledgeBase.Query().
 		Where(aiknowledgebase.IDEQ(id)).
 		Only(ctx)
@@ -243,7 +243,7 @@ func (r *AiKnowledgeRepo) CreateDoc(ctx context.Context, data *aiV1.AiDoc) (*ent
 	return entity, nil
 }
 
-func (r *AiKnowledgeRepo) UpdateDocStatus(ctx context.Context, id uint64, status string, chunkCount uint32, errMsg string) error {
+func (r *AiKnowledgeRepo) UpdateDocStatus(ctx context.Context, id int64, status string, chunkCount uint32, errMsg string) error {
 	builder := r.entClient.Client().AiDoc.UpdateOneID(id).
 		SetNillableStatus(&status).
 		SetChunkCount(chunkCount)
@@ -257,14 +257,14 @@ func (r *AiKnowledgeRepo) UpdateDocStatus(ctx context.Context, id uint64, status
 	return nil
 }
 
-func (r *AiKnowledgeRepo) ListDocs(ctx context.Context, baseId uint64) ([]*ent.AiDoc, error) {
+func (r *AiKnowledgeRepo) ListDocs(ctx context.Context, baseId int64) ([]*ent.AiDoc, error) {
 	return r.entClient.Client().AiDoc.Query().
 		Where(aidoc.BaseIDEQ(baseId)).
 		Order(ent.Asc(aidoc.FieldID)).
 		All(ctx)
 }
 
-func (r *AiKnowledgeRepo) GetDocByID(ctx context.Context, id uint64) (*ent.AiDoc, error) {
+func (r *AiKnowledgeRepo) GetDocByID(ctx context.Context, id int64) (*ent.AiDoc, error) {
 	entity, err := r.entClient.Client().AiDoc.Query().
 		Where(aidoc.IDEQ(id)).
 		Only(ctx)
@@ -278,7 +278,7 @@ func (r *AiKnowledgeRepo) GetDocByID(ctx context.Context, id uint64) (*ent.AiDoc
 	return entity, nil
 }
 
-func (r *AiKnowledgeRepo) DeleteDoc(ctx context.Context, id uint64) error {
+func (r *AiKnowledgeRepo) DeleteDoc(ctx context.Context, id int64) error {
 	// 租户作用域：同 Delete——doc 删除是 ent 变更路径，必须显式加租户过滤
 	// （路由中的 base_id 不参与定位，归属约束只能落在 doc 自身租户上）。
 	builder := r.entClient.Client().AiDoc.Delete().
@@ -319,7 +319,7 @@ func (r *AiKnowledgeRepo) ToDocDTO(entity *ent.AiDoc) *aiV1.AiDoc {
 // 任一片失败全文档回滚，不再留半截切片（文档行随后由调用方标 FAILED）。
 // vecLiteral 为 pgvector 字面量 '[0.1,0.2,...]'；列定维 1536 由
 // EnsureVectorColumnDim 保证，异维向量在此 fail-fast。
-func (r *AiKnowledgeRepo) InsertChunks(ctx context.Context, tenantId uint64, docId uint64, chunks []string, vectors []string) error {
+func (r *AiKnowledgeRepo) InsertChunks(ctx context.Context, tenantId int64, docId int64, chunks []string, vectors []string) error {
 	if len(chunks) != len(vectors) {
 		return aiV1.ErrorInternalServerError("chunk/vector length mismatch")
 	}
@@ -354,7 +354,7 @@ func (r *AiKnowledgeRepo) InsertChunks(ctx context.Context, tenantId uint64, doc
 			}
 			base := (j - start) * 5
 			_, _ = fmt.Fprintf(&sb, "(NOW(),$%d,$%d,$%d,$%d,$%d::vector)", base+1, base+2, base+3, base+4, base+5)
-			args = append(args, tenantId, docId, chunks[j], uint64(j), vectors[j])
+			args = append(args, tenantId, docId, chunks[j], int64(j), vectors[j])
 		}
 		if _, execErr := tx.ExecContext(ctx, sb.String(), args...); execErr != nil {
 			r.log.Errorf("insert ai chunks batch failed: %s", execErr.Error())
@@ -374,12 +374,12 @@ func (r *AiKnowledgeRepo) InsertChunks(ctx context.Context, tenantId uint64, doc
 type ChunkHit struct {
 	Content    string  `json:"content"`
 	ChunkIndex uint32  `json:"chunk_index"`
-	DocID      uint64  `json:"doc_id"`
+	DocID      int64   `json:"doc_id"`
 	Score      float64 `json:"score"`
 }
 
 // SearchChunks 余弦相似度检索：限定租户 + 知识库，取 topK。
-func (r *AiKnowledgeRepo) SearchChunks(ctx context.Context, tenantId, baseId uint64, vecLiteral string, topK int) ([]*ChunkHit, error) {
+func (r *AiKnowledgeRepo) SearchChunks(ctx context.Context, tenantId, baseId int64, vecLiteral string, topK int) ([]*ChunkHit, error) {
 	if topK <= 0 {
 		topK = 3
 	}
@@ -447,8 +447,8 @@ func (r *AiKnowledgeRepo) MigrateVectorColumn(ctx context.Context) error {
 			r.log.Errorf("set hnsw.iterative_scan default failed: %s", gErr.Error())
 		}
 		r.log.Warnf("sys_ai_chunks 行数(%d)已越过 HNSW 门槛(%d)，已自动建 HNSW cosine 索引并将本库 hnsw.iterative_scan 默认设为 relaxed_order。"+
-				"此后 ANN 检索为近似召回（top-K 可能漏配）、距离序可能不严格、写入承担索引维护代价（实测 ~3×/行）；"+
-				"建议尽快评估把向量负载迁出主库（docs/ai_module.md 部署要求）",
+			"此后 ANN 检索为近似召回（top-K 可能漏配）、距离序可能不严格、写入承担索引维护代价（实测 ~3×/行）；"+
+			"建议尽快评估把向量负载迁出主库（docs/ai_module.md 部署要求）",
 			rows, HnswIndexRowThreshold)
 	}
 	r.log.Infof("pgvector ready: sys_ai_chunks.embedding vector(%d)", AiEmbeddingDimensions)
@@ -468,7 +468,7 @@ func (r *AiKnowledgeRepo) FillDocCounts(ctx context.Context, bases []*aiV1.AiKno
 	if len(bases) == 0 {
 		return
 	}
-	ids := make([]uint64, 0, len(bases))
+	ids := make([]int64, 0, len(bases))
 	for _, b := range bases {
 		if b.Id != nil {
 			ids = append(ids, *b.Id)
@@ -479,8 +479,8 @@ func (r *AiKnowledgeRepo) FillDocCounts(ctx context.Context, bases []*aiV1.AiKno
 	}
 
 	var rows []struct {
-		BaseID uint64 `sql:"base_id"`
-		Count  uint64 `sql:"count"`
+		BaseID int64 `sql:"base_id"`
+		Count  int64 `sql:"count"`
 	}
 	sysCtx := appViewer.NewSystemViewerContext(ctx)
 	if err := r.entClient.Client().AiDoc.Query().
@@ -491,7 +491,7 @@ func (r *AiKnowledgeRepo) FillDocCounts(ctx context.Context, bases []*aiV1.AiKno
 		r.log.Errorf("count ai docs failed: %s", err.Error())
 		return
 	}
-	counts := make(map[uint64]uint32, len(rows))
+	counts := make(map[int64]uint32, len(rows))
 	for _, row := range rows {
 		counts[row.BaseID] = uint32(row.Count)
 	}
@@ -507,7 +507,7 @@ func (r *AiKnowledgeRepo) FillDocCounts(ctx context.Context, bases []*aiV1.AiKno
 
 // ChunkRef 重索引用的切片引用。
 type ChunkRef struct {
-	ID      uint64
+	ID      int64
 	Content string
 }
 
@@ -518,7 +518,7 @@ func (r *AiKnowledgeRepo) ListBases(ctx context.Context) ([]*ent.AiKnowledgeBase
 }
 
 // ListChunkRefsByBase 取知识库下全部切片的 id+content（原生 SQL：chunks 表不在泛型仓库域）。
-func (r *AiKnowledgeRepo) ListChunkRefsByBase(ctx context.Context, baseId uint64) ([]ChunkRef, error) {
+func (r *AiKnowledgeRepo) ListChunkRefsByBase(ctx context.Context, baseId int64) ([]ChunkRef, error) {
 	rows, err := r.entClient.DB().QueryContext(ctx,
 		`SELECT c.id, c.content FROM sys_ai_chunks c
 		 JOIN sys_ai_docs d ON d.id = c.doc_id
@@ -547,7 +547,7 @@ func (r *AiKnowledgeRepo) ListChunkRefsByBase(ctx context.Context, baseId uint64
 }
 
 // UpdateChunkEmbedding 就地更新切片向量。
-func (r *AiKnowledgeRepo) UpdateChunkEmbedding(ctx context.Context, chunkId uint64, vecLiteral string) error {
+func (r *AiKnowledgeRepo) UpdateChunkEmbedding(ctx context.Context, chunkId int64, vecLiteral string) error {
 	_, err := r.entClient.DB().ExecContext(ctx,
 		`UPDATE sys_ai_chunks SET embedding = $1::vector WHERE id = $2`,
 		vecLiteral, chunkId,

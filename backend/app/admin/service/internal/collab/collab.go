@@ -133,16 +133,16 @@ func (s *Service) seedRoom(room string, doc *crdt.Doc) {
 }
 
 // parseRoom 解析房间名 post:{id}:{locale} / page:{id}:{locale}。
-func parseRoom(room string) (targetType string, targetID uint64, locale string, ok bool) {
+func parseRoom(room string) (targetType string, targetID int64, locale string, ok bool) {
 	parts := strings.SplitN(room, ":", 3)
 	if len(parts) != 3 {
 		return "", 0, "", false
 	}
-	id, err := strconv.ParseUint(parts[1], 10, 32)
+	id, err := strconv.ParseInt(parts[1], 10, 64)
 	if err != nil || id == 0 {
 		return "", 0, "", false
 	}
-	return parts[0], uint64(id), parts[2], true
+	return parts[0], int64(id), parts[2], true
 }
 
 // pickTranslationContent 挑选语言内容：精确匹配 locale，回退第一条。
@@ -177,7 +177,7 @@ func (s *Service) trackRoom(room string, loaded bool) {
 func (s *Service) CloseRoomsByPrefix(prefix string) {
 	s.roomsMu.Lock()
 	s.log.Infof("CloseRoomsByPrefix: prefix=%s liveRooms=%d svc=%p", prefix, len(s.liveRooms), s)
-	
+
 	var matches []string
 	for room := range s.liveRooms {
 		if strings.HasPrefix(room, prefix) {

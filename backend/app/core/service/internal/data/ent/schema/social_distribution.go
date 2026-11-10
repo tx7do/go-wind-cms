@@ -40,12 +40,12 @@ func (SocialDistribution) Fields() []ent.Field {
 			Optional().
 			Nillable(),
 
-		field.Uint64("account_id").
+		field.Int64("account_id").
 			Comment("使用的社交账号ID").
 			Optional().
 			Nillable(),
 
-		field.Uint64("post_id").
+		field.Int64("post_id").
 			Comment("关联的 CMS 文章ID").
 			Optional().
 			Nillable(),
@@ -97,7 +97,7 @@ func (SocialDistribution) Fields() []ent.Field {
 			Optional().
 			Nillable(),
 
-		field.JSON("media_ids", []uint64{}).
+		field.JSON("media_ids", []int64{}).
 			Comment("配图媒体资产ID列表（支持图片的平台）").
 			Optional(),
 
@@ -137,7 +137,7 @@ func (SocialDistribution) Mixin() []ent.Mixin {
 		mixin.AutoIncrementId64{},
 		mixin.TimeAt{},
 		mixin.OperatorID64{},
-		mixin.TenantID[uint64]{},
+		mixin.TenantID[int64]{},
 	}
 }
 

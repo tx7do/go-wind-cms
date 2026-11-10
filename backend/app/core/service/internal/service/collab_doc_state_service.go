@@ -7,8 +7,8 @@ import (
 	"github.com/tx7do/kratos-bootstrap/bootstrap"
 	"google.golang.org/protobuf/types/known/emptypb"
 
-	"go-wind-cms/app/core/service/internal/data"
 	contentV1 "go-wind-cms/api/gen/go/content/service/v1"
+	"go-wind-cms/app/core/service/internal/data"
 )
 
 // CollabDocStateService 协同文档状态（collab ws 引擎的持久化后端）。

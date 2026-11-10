@@ -157,7 +157,7 @@ func (r *SearchRepo) IndexPost(ctx context.Context, doc *PostDocument) error {
 // DeletePost 删除指定帖子在 ES 中的所有语言文档。
 // 按 post_id 单条件 delete-by-query。post_id 是 ent 自增主键、全局唯一，
 // 单条件即可精确定位，覆盖软删/硬删/状态变更三种场景。
-func (r *SearchRepo) DeletePost(ctx context.Context, postID uint64) error {
+func (r *SearchRepo) DeletePost(ctx context.Context, postID int64) error {
 	if r.esClient == nil {
 		return errors.New("elasticsearch client is nil")
 	}
@@ -165,7 +165,7 @@ func (r *SearchRepo) DeletePost(ctx context.Context, postID uint64) error {
 		return errors.New("delete post requires non-zero postID")
 	}
 
-	pidStr := strconv.FormatUint(uint64(postID), 10)
+	pidStr := strconv.FormatInt(int64(postID), 10)
 
 	// delete-by-query body：bool.filter 单条件（post_id 全局唯一）
 	queryBody := map[string]any{
@@ -223,7 +223,7 @@ func (r *SearchRepo) DeletePost(ctx context.Context, postID uint64) error {
 func (r *SearchRepo) SearchPosts(
 	ctx context.Context,
 	query string,
-	tenantID uint64,
+	tenantID int64,
 	language string,
 	status string,
 	page int,
@@ -261,7 +261,7 @@ func (r *SearchRepo) SearchPosts(
 		from = maxSearchResultFrom
 	}
 
-	tidStr := strconv.FormatUint(uint64(tenantID), 10)
+	tidStr := strconv.FormatInt(int64(tenantID), 10)
 
 	// 构建 DSL：filter（访问控制，不参与评分）+ must（相关性评分）+ highlight
 	dsl := map[string]any{
@@ -365,7 +365,7 @@ func (r *SearchRepo) SearchPostsExpanded(
 	ctx context.Context,
 	query string,
 	expanded []string,
-	tenantID uint64,
+	tenantID int64,
 	language string,
 	status string,
 	page int,
@@ -396,7 +396,7 @@ func (r *SearchRepo) SearchPostsExpanded(
 	if from > maxSearchResultFrom {
 		from = maxSearchResultFrom
 	}
-	tidStr := strconv.FormatUint(uint64(tenantID), 10)
+	tidStr := strconv.FormatInt(int64(tenantID), 10)
 
 	fields := []string{"title", "summary", "content"}
 	should := make([]any, 0, len(expanded)+1)
@@ -511,7 +511,7 @@ func collectHighlightFragments(highlight map[string][]string) []string {
 func (r *SearchRepo) SuggestPostTitles(
 	ctx context.Context,
 	prefix string,
-	tenantID uint64,
+	tenantID int64,
 	language string,
 	limit int,
 ) ([]string, error) {
@@ -527,7 +527,7 @@ func (r *SearchRepo) SuggestPostTitles(
 	if limit > 20 {
 		limit = 20
 	}
-	tidStr := strconv.FormatUint(uint64(tenantID), 10)
+	tidStr := strconv.FormatInt(int64(tenantID), 10)
 
 	dsl := map[string]any{
 		"size": limit * 2, // 去重余量

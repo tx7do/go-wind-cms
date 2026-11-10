@@ -115,7 +115,7 @@ message ListLinkedAccountsRequest {
 }
 message ListLinkedAccountsResponse {
   repeated UserCredential items = 1 [json_name = "items"];
-  uint64 total = 2 [json_name = "total"];
+  int64 total = 2 [json_name = "total"];
   string next_page_token = 3 [json_name = "nextPageToken"];
 }
 

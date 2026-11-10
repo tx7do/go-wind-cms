@@ -11,8 +11,8 @@ import (
 	"github.com/tx7do/kratos-bootstrap/bootstrap"
 	"google.golang.org/protobuf/types/known/emptypb"
 
-	"go-wind-cms/app/core/service/internal/data"
 	contentV1 "go-wind-cms/api/gen/go/content/service/v1"
+	"go-wind-cms/app/core/service/internal/data"
 )
 
 // 单条提交的大小约束：字段数/值长防滥用（公开端点，无鉴权）。
@@ -25,9 +25,9 @@ const (
 type FormSubmissionService struct {
 	contentV1.UnimplementedFormSubmissionServiceServer
 
-	formRepo   *data.FormSubmissionRepo
-	pageRepo   *data.PageRepo
-	log        *log.Helper
+	formRepo *data.FormSubmissionRepo
+	pageRepo *data.PageRepo
+	log      *log.Helper
 }
 
 func NewFormSubmissionService(ctx *bootstrap.Context, formRepo *data.FormSubmissionRepo, pageRepo *data.PageRepo) *FormSubmissionService {
@@ -81,9 +81,9 @@ func (s *FormSubmissionService) Submit(ctx context.Context, req *contentV1.Submi
 	}
 
 	// 提交者：登录态取 viewer 用户，匿名 0
-	var userID uint64
+	var userID int64
 	if vc, exist := viewer.FromContext(ctx); exist && vc != nil {
-		userID = uint64(vc.UserID())
+		userID = int64(vc.UserID())
 	}
 
 	return s.formRepo.Create(ctx, req.GetPageId(), req.GetSectionId(), req.GetData(), userID)
@@ -153,7 +153,7 @@ func (s *FormSubmissionService) List(ctx context.Context, req *paginationV1.Pagi
 	if err != nil {
 		return nil, errors.New(500, "FORM_SUBMISSION_LIST_FAILED", "list form submissions failed")
 	}
-	return &contentV1.ListFormSubmissionsResponse{Items: items, Total: uint64(total)}, nil
+	return &contentV1.ListFormSubmissionsResponse{Items: items, Total: int64(total)}, nil
 }
 
 func (s *FormSubmissionService) Get(ctx context.Context, req *contentV1.GetFormSubmissionRequest) (*contentV1.FormSubmission, error) {

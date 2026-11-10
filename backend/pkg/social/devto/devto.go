@@ -77,11 +77,11 @@ type userView struct {
 }
 
 type articleView struct {
-	ID                    int    `json:"id"`
-	URL                   string `json:"url"`
-	Title                 string `json:"title"`
-	PositiveReactionsCount int64 `json:"positive_reactions_count"`
-	CommentsCount         int64  `json:"comments_count"`
+	ID                     int    `json:"id"`
+	URL                    string `json:"url"`
+	Title                  string `json:"title"`
+	PositiveReactionsCount int64  `json:"positive_reactions_count"`
+	CommentsCount          int64  `json:"comments_count"`
 }
 
 type createArticleRequest struct {
@@ -279,9 +279,9 @@ func classifyError(status int, raw []byte) error {
 	}
 }
 
-func clampUint64(v int64) uint64 {
+func clampUint64(v int64) int64 {
 	if v < 0 {
 		return 0
 	}
-	return uint64(v)
+	return int64(v)
 }

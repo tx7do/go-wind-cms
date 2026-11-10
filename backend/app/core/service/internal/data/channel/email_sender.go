@@ -24,7 +24,7 @@ import (
 //
 // 账号解析策略收在这一处：显式指定 channel_id 则用该条（配置页的测试邮件），
 // 否则取第一个启用的 EMAIL 渠道；花名册无可用行时回退 SMTP_* 环境变量
-//（与旧 resolveMailerConfig 同一条兜底口径，空环境起步行为不变），
+// （与旧 resolveMailerConfig 同一条兜底口径，空环境起步行为不变），
 // 两者皆无才 ErrChannelNotConfigured。
 //
 // 不持有 logger：发送失败由服务层统一记账并写日志（脱敏后的目标 + 台账 ID），
@@ -68,7 +68,7 @@ func (s *EmailSender) Send(ctx context.Context, req *SendRequest) (*SendReceipt,
 }
 
 // Precheck 只解析 SMTP 配置并自检可用性，不拨号。见 channel.Prechecker。
-func (s *EmailSender) Precheck(ctx context.Context, channelID uint64) error {
+func (s *EmailSender) Precheck(ctx context.Context, channelID int64) error {
 	_, _, err := s.pickAccount(ctx, channelID)
 	return err
 }
@@ -79,7 +79,7 @@ func (s *EmailSender) Precheck(ctx context.Context, channelID uint64) error {
 // 一切"渠道用不了"（没配、没启用、类型不对、查不到、env 也没配）都包成
 // ErrChannelNotConfigured 返回——服务层据此把台账记 SKIPPED（没尝试过投递）
 // 而非 FAILED（投递报错），原始原因留在 error 文本里。
-func (s *EmailSender) pickAccount(ctx context.Context, channelID uint64) (mailer.Config, uint64, error) {
+func (s *EmailSender) pickAccount(ctx context.Context, channelID int64) (mailer.Config, int64, error) {
 	cfg, account, err := s.resolveAccount(ctx, channelID)
 	if err != nil {
 		// 花名册自选落空 → env 兜底；显式点名渠道失败不兜底（管理员点名的就是那一行）
@@ -108,7 +108,7 @@ func checkUsable(cfg mailer.Config) error {
 	return nil
 }
 
-func (s *EmailSender) resolveAccount(ctx context.Context, channelID uint64) (mailer.Config, uint64, error) {
+func (s *EmailSender) resolveAccount(ctx context.Context, channelID int64) (mailer.Config, int64, error) {
 	if channelID == 0 {
 		account, err := s.channel.GetFirstEnabledEmailChannel(ctx)
 		if err != nil {

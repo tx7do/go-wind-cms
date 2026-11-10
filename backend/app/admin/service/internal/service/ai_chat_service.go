@@ -11,8 +11,8 @@ import (
 	"google.golang.org/protobuf/encoding/protojson"
 	"google.golang.org/protobuf/proto"
 
-	aiV1 "go-wind-cms/api/gen/go/ai/service/v1"
 	adminV1 "go-wind-cms/api/gen/go/admin/service/v1"
+	aiV1 "go-wind-cms/api/gen/go/ai/service/v1"
 	authenticationV1 "go-wind-cms/api/gen/go/authentication/service/v1"
 
 	"go-wind-cms/pkg/middleware/auth"

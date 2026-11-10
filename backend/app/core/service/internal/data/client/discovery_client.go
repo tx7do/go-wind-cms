@@ -1,4 +1,4 @@
-﻿package client
+package client
 
 import (
 	"github.com/go-kratos/kratos/v2/registry"

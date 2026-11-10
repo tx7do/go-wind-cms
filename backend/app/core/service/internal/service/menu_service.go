@@ -59,7 +59,7 @@ func (s *MenuService) Count(ctx context.Context, req *paginationV1.PagingRequest
 	}
 
 	return &permissionV1.CountMenuResponse{
-		Count: uint64(count),
+		Count: int64(count),
 	}, nil
 }
 

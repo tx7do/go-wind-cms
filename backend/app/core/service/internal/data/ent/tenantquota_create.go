@@ -65,13 +65,13 @@ func (_c *TenantQuotaCreate) SetNillableDeletedAt(v *time.Time) *TenantQuotaCrea
 }
 
 // SetCreatedBy sets the "created_by" field.
-func (_c *TenantQuotaCreate) SetCreatedBy(v uint64) *TenantQuotaCreate {
+func (_c *TenantQuotaCreate) SetCreatedBy(v int64) *TenantQuotaCreate {
 	_c.mutation.SetCreatedBy(v)
 	return _c
 }
 
 // SetNillableCreatedBy sets the "created_by" field if the given value is not nil.
-func (_c *TenantQuotaCreate) SetNillableCreatedBy(v *uint64) *TenantQuotaCreate {
+func (_c *TenantQuotaCreate) SetNillableCreatedBy(v *int64) *TenantQuotaCreate {
 	if v != nil {
 		_c.SetCreatedBy(*v)
 	}
@@ -79,13 +79,13 @@ func (_c *TenantQuotaCreate) SetNillableCreatedBy(v *uint64) *TenantQuotaCreate 
 }
 
 // SetUpdatedBy sets the "updated_by" field.
-func (_c *TenantQuotaCreate) SetUpdatedBy(v uint64) *TenantQuotaCreate {
+func (_c *TenantQuotaCreate) SetUpdatedBy(v int64) *TenantQuotaCreate {
 	_c.mutation.SetUpdatedBy(v)
 	return _c
 }
 
 // SetNillableUpdatedBy sets the "updated_by" field if the given value is not nil.
-func (_c *TenantQuotaCreate) SetNillableUpdatedBy(v *uint64) *TenantQuotaCreate {
+func (_c *TenantQuotaCreate) SetNillableUpdatedBy(v *int64) *TenantQuotaCreate {
 	if v != nil {
 		_c.SetUpdatedBy(*v)
 	}
@@ -93,13 +93,13 @@ func (_c *TenantQuotaCreate) SetNillableUpdatedBy(v *uint64) *TenantQuotaCreate 
 }
 
 // SetDeletedBy sets the "deleted_by" field.
-func (_c *TenantQuotaCreate) SetDeletedBy(v uint64) *TenantQuotaCreate {
+func (_c *TenantQuotaCreate) SetDeletedBy(v int64) *TenantQuotaCreate {
 	_c.mutation.SetDeletedBy(v)
 	return _c
 }
 
 // SetNillableDeletedBy sets the "deleted_by" field if the given value is not nil.
-func (_c *TenantQuotaCreate) SetNillableDeletedBy(v *uint64) *TenantQuotaCreate {
+func (_c *TenantQuotaCreate) SetNillableDeletedBy(v *int64) *TenantQuotaCreate {
 	if v != nil {
 		_c.SetDeletedBy(*v)
 	}
@@ -107,7 +107,7 @@ func (_c *TenantQuotaCreate) SetNillableDeletedBy(v *uint64) *TenantQuotaCreate 
 }
 
 // SetTenantID sets the "tenant_id" field.
-func (_c *TenantQuotaCreate) SetTenantID(v uint64) *TenantQuotaCreate {
+func (_c *TenantQuotaCreate) SetTenantID(v int64) *TenantQuotaCreate {
 	_c.mutation.SetTenantID(v)
 	return _c
 }
@@ -125,7 +125,7 @@ func (_c *TenantQuotaCreate) SetQuotaValue(v uint64) *TenantQuotaCreate {
 }
 
 // SetID sets the "id" field.
-func (_c *TenantQuotaCreate) SetID(v uint64) *TenantQuotaCreate {
+func (_c *TenantQuotaCreate) SetID(v int64) *TenantQuotaCreate {
 	_c.mutation.SetID(v)
 	return _c
 }
@@ -204,7 +204,7 @@ func (_c *TenantQuotaCreate) sqlSave(ctx context.Context) (*TenantQuota, error) 
 	}
 	if _spec.ID.Value != _node.ID {
 		id := _spec.ID.Value.(int64)
-		_node.ID = uint64(id)
+		_node.ID = int64(id)
 	}
 	_c.mutation.id = &_node.ID
 	_c.mutation.done = true
@@ -214,7 +214,7 @@ func (_c *TenantQuotaCreate) sqlSave(ctx context.Context) (*TenantQuota, error) 
 func (_c *TenantQuotaCreate) createSpec() (*TenantQuota, *sqlgraph.CreateSpec) {
 	var (
 		_node = &TenantQuota{config: _c.config}
-		_spec = sqlgraph.NewCreateSpec(tenantquota.Table, sqlgraph.NewFieldSpec(tenantquota.FieldID, field.TypeUint64))
+		_spec = sqlgraph.NewCreateSpec(tenantquota.Table, sqlgraph.NewFieldSpec(tenantquota.FieldID, field.TypeInt64))
 	)
 	_spec.OnConflict = _c.conflict
 	if id, ok := _c.mutation.ID(); ok {
@@ -234,19 +234,19 @@ func (_c *TenantQuotaCreate) createSpec() (*TenantQuota, *sqlgraph.CreateSpec) {
 		_node.DeletedAt = &value
 	}
 	if value, ok := _c.mutation.CreatedBy(); ok {
-		_spec.SetField(tenantquota.FieldCreatedBy, field.TypeUint64, value)
+		_spec.SetField(tenantquota.FieldCreatedBy, field.TypeInt64, value)
 		_node.CreatedBy = &value
 	}
 	if value, ok := _c.mutation.UpdatedBy(); ok {
-		_spec.SetField(tenantquota.FieldUpdatedBy, field.TypeUint64, value)
+		_spec.SetField(tenantquota.FieldUpdatedBy, field.TypeInt64, value)
 		_node.UpdatedBy = &value
 	}
 	if value, ok := _c.mutation.DeletedBy(); ok {
-		_spec.SetField(tenantquota.FieldDeletedBy, field.TypeUint64, value)
+		_spec.SetField(tenantquota.FieldDeletedBy, field.TypeInt64, value)
 		_node.DeletedBy = &value
 	}
 	if value, ok := _c.mutation.TenantID(); ok {
-		_spec.SetField(tenantquota.FieldTenantID, field.TypeUint64, value)
+		_spec.SetField(tenantquota.FieldTenantID, field.TypeInt64, value)
 		_node.TenantID = value
 	}
 	if value, ok := _c.mutation.QuotaType(); ok {
@@ -346,7 +346,7 @@ func (u *TenantQuotaUpsert) ClearDeletedAt() *TenantQuotaUpsert {
 }
 
 // SetCreatedBy sets the "created_by" field.
-func (u *TenantQuotaUpsert) SetCreatedBy(v uint64) *TenantQuotaUpsert {
+func (u *TenantQuotaUpsert) SetCreatedBy(v int64) *TenantQuotaUpsert {
 	u.Set(tenantquota.FieldCreatedBy, v)
 	return u
 }
@@ -358,7 +358,7 @@ func (u *TenantQuotaUpsert) UpdateCreatedBy() *TenantQuotaUpsert {
 }
 
 // AddCreatedBy adds v to the "created_by" field.
-func (u *TenantQuotaUpsert) AddCreatedBy(v uint64) *TenantQuotaUpsert {
+func (u *TenantQuotaUpsert) AddCreatedBy(v int64) *TenantQuotaUpsert {
 	u.Add(tenantquota.FieldCreatedBy, v)
 	return u
 }
@@ -370,7 +370,7 @@ func (u *TenantQuotaUpsert) ClearCreatedBy() *TenantQuotaUpsert {
 }
 
 // SetUpdatedBy sets the "updated_by" field.
-func (u *TenantQuotaUpsert) SetUpdatedBy(v uint64) *TenantQuotaUpsert {
+func (u *TenantQuotaUpsert) SetUpdatedBy(v int64) *TenantQuotaUpsert {
 	u.Set(tenantquota.FieldUpdatedBy, v)
 	return u
 }
@@ -382,7 +382,7 @@ func (u *TenantQuotaUpsert) UpdateUpdatedBy() *TenantQuotaUpsert {
 }
 
 // AddUpdatedBy adds v to the "updated_by" field.
-func (u *TenantQuotaUpsert) AddUpdatedBy(v uint64) *TenantQuotaUpsert {
+func (u *TenantQuotaUpsert) AddUpdatedBy(v int64) *TenantQuotaUpsert {
 	u.Add(tenantquota.FieldUpdatedBy, v)
 	return u
 }
@@ -394,7 +394,7 @@ func (u *TenantQuotaUpsert) ClearUpdatedBy() *TenantQuotaUpsert {
 }
 
 // SetDeletedBy sets the "deleted_by" field.
-func (u *TenantQuotaUpsert) SetDeletedBy(v uint64) *TenantQuotaUpsert {
+func (u *TenantQuotaUpsert) SetDeletedBy(v int64) *TenantQuotaUpsert {
 	u.Set(tenantquota.FieldDeletedBy, v)
 	return u
 }
@@ -406,7 +406,7 @@ func (u *TenantQuotaUpsert) UpdateDeletedBy() *TenantQuotaUpsert {
 }
 
 // AddDeletedBy adds v to the "deleted_by" field.
-func (u *TenantQuotaUpsert) AddDeletedBy(v uint64) *TenantQuotaUpsert {
+func (u *TenantQuotaUpsert) AddDeletedBy(v int64) *TenantQuotaUpsert {
 	u.Add(tenantquota.FieldDeletedBy, v)
 	return u
 }
@@ -418,7 +418,7 @@ func (u *TenantQuotaUpsert) ClearDeletedBy() *TenantQuotaUpsert {
 }
 
 // SetTenantID sets the "tenant_id" field.
-func (u *TenantQuotaUpsert) SetTenantID(v uint64) *TenantQuotaUpsert {
+func (u *TenantQuotaUpsert) SetTenantID(v int64) *TenantQuotaUpsert {
 	u.Set(tenantquota.FieldTenantID, v)
 	return u
 }
@@ -430,7 +430,7 @@ func (u *TenantQuotaUpsert) UpdateTenantID() *TenantQuotaUpsert {
 }
 
 // AddTenantID adds v to the "tenant_id" field.
-func (u *TenantQuotaUpsert) AddTenantID(v uint64) *TenantQuotaUpsert {
+func (u *TenantQuotaUpsert) AddTenantID(v int64) *TenantQuotaUpsert {
 	u.Add(tenantquota.FieldTenantID, v)
 	return u
 }
@@ -559,14 +559,14 @@ func (u *TenantQuotaUpsertOne) ClearDeletedAt() *TenantQuotaUpsertOne {
 }
 
 // SetCreatedBy sets the "created_by" field.
-func (u *TenantQuotaUpsertOne) SetCreatedBy(v uint64) *TenantQuotaUpsertOne {
+func (u *TenantQuotaUpsertOne) SetCreatedBy(v int64) *TenantQuotaUpsertOne {
 	return u.Update(func(s *TenantQuotaUpsert) {
 		s.SetCreatedBy(v)
 	})
 }
 
 // AddCreatedBy adds v to the "created_by" field.
-func (u *TenantQuotaUpsertOne) AddCreatedBy(v uint64) *TenantQuotaUpsertOne {
+func (u *TenantQuotaUpsertOne) AddCreatedBy(v int64) *TenantQuotaUpsertOne {
 	return u.Update(func(s *TenantQuotaUpsert) {
 		s.AddCreatedBy(v)
 	})
@@ -587,14 +587,14 @@ func (u *TenantQuotaUpsertOne) ClearCreatedBy() *TenantQuotaUpsertOne {
 }
 
 // SetUpdatedBy sets the "updated_by" field.
-func (u *TenantQuotaUpsertOne) SetUpdatedBy(v uint64) *TenantQuotaUpsertOne {
+func (u *TenantQuotaUpsertOne) SetUpdatedBy(v int64) *TenantQuotaUpsertOne {
 	return u.Update(func(s *TenantQuotaUpsert) {
 		s.SetUpdatedBy(v)
 	})
 }
 
 // AddUpdatedBy adds v to the "updated_by" field.
-func (u *TenantQuotaUpsertOne) AddUpdatedBy(v uint64) *TenantQuotaUpsertOne {
+func (u *TenantQuotaUpsertOne) AddUpdatedBy(v int64) *TenantQuotaUpsertOne {
 	return u.Update(func(s *TenantQuotaUpsert) {
 		s.AddUpdatedBy(v)
 	})
@@ -615,14 +615,14 @@ func (u *TenantQuotaUpsertOne) ClearUpdatedBy() *TenantQuotaUpsertOne {
 }
 
 // SetDeletedBy sets the "deleted_by" field.
-func (u *TenantQuotaUpsertOne) SetDeletedBy(v uint64) *TenantQuotaUpsertOne {
+func (u *TenantQuotaUpsertOne) SetDeletedBy(v int64) *TenantQuotaUpsertOne {
 	return u.Update(func(s *TenantQuotaUpsert) {
 		s.SetDeletedBy(v)
 	})
 }
 
 // AddDeletedBy adds v to the "deleted_by" field.
-func (u *TenantQuotaUpsertOne) AddDeletedBy(v uint64) *TenantQuotaUpsertOne {
+func (u *TenantQuotaUpsertOne) AddDeletedBy(v int64) *TenantQuotaUpsertOne {
 	return u.Update(func(s *TenantQuotaUpsert) {
 		s.AddDeletedBy(v)
 	})
@@ -643,14 +643,14 @@ func (u *TenantQuotaUpsertOne) ClearDeletedBy() *TenantQuotaUpsertOne {
 }
 
 // SetTenantID sets the "tenant_id" field.
-func (u *TenantQuotaUpsertOne) SetTenantID(v uint64) *TenantQuotaUpsertOne {
+func (u *TenantQuotaUpsertOne) SetTenantID(v int64) *TenantQuotaUpsertOne {
 	return u.Update(func(s *TenantQuotaUpsert) {
 		s.SetTenantID(v)
 	})
 }
 
 // AddTenantID adds v to the "tenant_id" field.
-func (u *TenantQuotaUpsertOne) AddTenantID(v uint64) *TenantQuotaUpsertOne {
+func (u *TenantQuotaUpsertOne) AddTenantID(v int64) *TenantQuotaUpsertOne {
 	return u.Update(func(s *TenantQuotaUpsert) {
 		s.AddTenantID(v)
 	})
@@ -714,7 +714,7 @@ func (u *TenantQuotaUpsertOne) ExecX(ctx context.Context) {
 }
 
 // Exec executes the UPSERT query and returns the inserted/updated ID.
-func (u *TenantQuotaUpsertOne) ID(ctx context.Context) (id uint64, err error) {
+func (u *TenantQuotaUpsertOne) ID(ctx context.Context) (id int64, err error) {
 	node, err := u.create.Save(ctx)
 	if err != nil {
 		return id, err
@@ -723,7 +723,7 @@ func (u *TenantQuotaUpsertOne) ID(ctx context.Context) (id uint64, err error) {
 }
 
 // IDX is like ID, but panics if an error occurs.
-func (u *TenantQuotaUpsertOne) IDX(ctx context.Context) uint64 {
+func (u *TenantQuotaUpsertOne) IDX(ctx context.Context) int64 {
 	id, err := u.ID(ctx)
 	if err != nil {
 		panic(err)
@@ -779,7 +779,7 @@ func (_c *TenantQuotaCreateBulk) Save(ctx context.Context) ([]*TenantQuota, erro
 				mutation.id = &nodes[i].ID
 				if specs[i].ID.Value != nil && nodes[i].ID == 0 {
 					id := specs[i].ID.Value.(int64)
-					nodes[i].ID = uint64(id)
+					nodes[i].ID = int64(id)
 				}
 				mutation.done = true
 				return nodes[i], nil
@@ -957,14 +957,14 @@ func (u *TenantQuotaUpsertBulk) ClearDeletedAt() *TenantQuotaUpsertBulk {
 }
 
 // SetCreatedBy sets the "created_by" field.
-func (u *TenantQuotaUpsertBulk) SetCreatedBy(v uint64) *TenantQuotaUpsertBulk {
+func (u *TenantQuotaUpsertBulk) SetCreatedBy(v int64) *TenantQuotaUpsertBulk {
 	return u.Update(func(s *TenantQuotaUpsert) {
 		s.SetCreatedBy(v)
 	})
 }
 
 // AddCreatedBy adds v to the "created_by" field.
-func (u *TenantQuotaUpsertBulk) AddCreatedBy(v uint64) *TenantQuotaUpsertBulk {
+func (u *TenantQuotaUpsertBulk) AddCreatedBy(v int64) *TenantQuotaUpsertBulk {
 	return u.Update(func(s *TenantQuotaUpsert) {
 		s.AddCreatedBy(v)
 	})
@@ -985,14 +985,14 @@ func (u *TenantQuotaUpsertBulk) ClearCreatedBy() *TenantQuotaUpsertBulk {
 }
 
 // SetUpdatedBy sets the "updated_by" field.
-func (u *TenantQuotaUpsertBulk) SetUpdatedBy(v uint64) *TenantQuotaUpsertBulk {
+func (u *TenantQuotaUpsertBulk) SetUpdatedBy(v int64) *TenantQuotaUpsertBulk {
 	return u.Update(func(s *TenantQuotaUpsert) {
 		s.SetUpdatedBy(v)
 	})
 }
 
 // AddUpdatedBy adds v to the "updated_by" field.
-func (u *TenantQuotaUpsertBulk) AddUpdatedBy(v uint64) *TenantQuotaUpsertBulk {
+func (u *TenantQuotaUpsertBulk) AddUpdatedBy(v int64) *TenantQuotaUpsertBulk {
 	return u.Update(func(s *TenantQuotaUpsert) {
 		s.AddUpdatedBy(v)
 	})
@@ -1013,14 +1013,14 @@ func (u *TenantQuotaUpsertBulk) ClearUpdatedBy() *TenantQuotaUpsertBulk {
 }
 
 // SetDeletedBy sets the "deleted_by" field.
-func (u *TenantQuotaUpsertBulk) SetDeletedBy(v uint64) *TenantQuotaUpsertBulk {
+func (u *TenantQuotaUpsertBulk) SetDeletedBy(v int64) *TenantQuotaUpsertBulk {
 	return u.Update(func(s *TenantQuotaUpsert) {
 		s.SetDeletedBy(v)
 	})
 }
 
 // AddDeletedBy adds v to the "deleted_by" field.
-func (u *TenantQuotaUpsertBulk) AddDeletedBy(v uint64) *TenantQuotaUpsertBulk {
+func (u *TenantQuotaUpsertBulk) AddDeletedBy(v int64) *TenantQuotaUpsertBulk {
 	return u.Update(func(s *TenantQuotaUpsert) {
 		s.AddDeletedBy(v)
 	})
@@ -1041,14 +1041,14 @@ func (u *TenantQuotaUpsertBulk) ClearDeletedBy() *TenantQuotaUpsertBulk {
 }
 
 // SetTenantID sets the "tenant_id" field.
-func (u *TenantQuotaUpsertBulk) SetTenantID(v uint64) *TenantQuotaUpsertBulk {
+func (u *TenantQuotaUpsertBulk) SetTenantID(v int64) *TenantQuotaUpsertBulk {
 	return u.Update(func(s *TenantQuotaUpsert) {
 		s.SetTenantID(v)
 	})
 }
 
 // AddTenantID adds v to the "tenant_id" field.
-func (u *TenantQuotaUpsertBulk) AddTenantID(v uint64) *TenantQuotaUpsertBulk {
+func (u *TenantQuotaUpsertBulk) AddTenantID(v int64) *TenantQuotaUpsertBulk {
 	return u.Update(func(s *TenantQuotaUpsert) {
 		s.AddTenantID(v)
 	})

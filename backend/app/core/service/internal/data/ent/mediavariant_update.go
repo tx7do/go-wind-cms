@@ -29,14 +29,14 @@ func (_u *MediaVariantUpdate) Where(ps ...predicate.MediaVariant) *MediaVariantU
 }
 
 // SetMediaID sets the "media_id" field.
-func (_u *MediaVariantUpdate) SetMediaID(v uint64) *MediaVariantUpdate {
+func (_u *MediaVariantUpdate) SetMediaID(v int64) *MediaVariantUpdate {
 	_u.mutation.ResetMediaID()
 	_u.mutation.SetMediaID(v)
 	return _u
 }
 
 // SetNillableMediaID sets the "media_id" field if the given value is not nil.
-func (_u *MediaVariantUpdate) SetNillableMediaID(v *uint64) *MediaVariantUpdate {
+func (_u *MediaVariantUpdate) SetNillableMediaID(v *int64) *MediaVariantUpdate {
 	if v != nil {
 		_u.SetMediaID(*v)
 	}
@@ -50,14 +50,14 @@ func (_u *MediaVariantUpdate) AddMediaID(v int64) *MediaVariantUpdate {
 }
 
 // SetFileID sets the "file_id" field.
-func (_u *MediaVariantUpdate) SetFileID(v uint64) *MediaVariantUpdate {
+func (_u *MediaVariantUpdate) SetFileID(v int64) *MediaVariantUpdate {
 	_u.mutation.ResetFileID()
 	_u.mutation.SetFileID(v)
 	return _u
 }
 
 // SetNillableFileID sets the "file_id" field if the given value is not nil.
-func (_u *MediaVariantUpdate) SetNillableFileID(v *uint64) *MediaVariantUpdate {
+func (_u *MediaVariantUpdate) SetNillableFileID(v *int64) *MediaVariantUpdate {
 	if v != nil {
 		_u.SetFileID(*v)
 	}
@@ -136,7 +136,7 @@ func (_u *MediaVariantUpdate) Modify(modifiers ...func(u *sql.UpdateBuilder)) *M
 }
 
 func (_u *MediaVariantUpdate) sqlSave(ctx context.Context) (_node int, err error) {
-	_spec := sqlgraph.NewUpdateSpec(mediavariant.Table, mediavariant.Columns, sqlgraph.NewFieldSpec(mediavariant.FieldID, field.TypeUint64))
+	_spec := sqlgraph.NewUpdateSpec(mediavariant.Table, mediavariant.Columns, sqlgraph.NewFieldSpec(mediavariant.FieldID, field.TypeInt64))
 	if ps := _u.mutation.predicates; len(ps) > 0 {
 		_spec.Predicate = func(selector *sql.Selector) {
 			for i := range ps {
@@ -148,19 +148,19 @@ func (_u *MediaVariantUpdate) sqlSave(ctx context.Context) (_node int, err error
 		_spec.ClearField(mediavariant.FieldCreatedAt, field.TypeTime)
 	}
 	if _u.mutation.TenantIDCleared() {
-		_spec.ClearField(mediavariant.FieldTenantID, field.TypeUint64)
+		_spec.ClearField(mediavariant.FieldTenantID, field.TypeInt64)
 	}
 	if value, ok := _u.mutation.MediaID(); ok {
-		_spec.SetField(mediavariant.FieldMediaID, field.TypeUint64, value)
+		_spec.SetField(mediavariant.FieldMediaID, field.TypeInt64, value)
 	}
 	if value, ok := _u.mutation.AddedMediaID(); ok {
-		_spec.AddField(mediavariant.FieldMediaID, field.TypeUint64, value)
+		_spec.AddField(mediavariant.FieldMediaID, field.TypeInt64, value)
 	}
 	if value, ok := _u.mutation.FileID(); ok {
-		_spec.SetField(mediavariant.FieldFileID, field.TypeUint64, value)
+		_spec.SetField(mediavariant.FieldFileID, field.TypeInt64, value)
 	}
 	if value, ok := _u.mutation.AddedFileID(); ok {
-		_spec.AddField(mediavariant.FieldFileID, field.TypeUint64, value)
+		_spec.AddField(mediavariant.FieldFileID, field.TypeInt64, value)
 	}
 	if value, ok := _u.mutation.VariantName(); ok {
 		_spec.SetField(mediavariant.FieldVariantName, field.TypeUint32, value)
@@ -194,14 +194,14 @@ type MediaVariantUpdateOne struct {
 }
 
 // SetMediaID sets the "media_id" field.
-func (_u *MediaVariantUpdateOne) SetMediaID(v uint64) *MediaVariantUpdateOne {
+func (_u *MediaVariantUpdateOne) SetMediaID(v int64) *MediaVariantUpdateOne {
 	_u.mutation.ResetMediaID()
 	_u.mutation.SetMediaID(v)
 	return _u
 }
 
 // SetNillableMediaID sets the "media_id" field if the given value is not nil.
-func (_u *MediaVariantUpdateOne) SetNillableMediaID(v *uint64) *MediaVariantUpdateOne {
+func (_u *MediaVariantUpdateOne) SetNillableMediaID(v *int64) *MediaVariantUpdateOne {
 	if v != nil {
 		_u.SetMediaID(*v)
 	}
@@ -215,14 +215,14 @@ func (_u *MediaVariantUpdateOne) AddMediaID(v int64) *MediaVariantUpdateOne {
 }
 
 // SetFileID sets the "file_id" field.
-func (_u *MediaVariantUpdateOne) SetFileID(v uint64) *MediaVariantUpdateOne {
+func (_u *MediaVariantUpdateOne) SetFileID(v int64) *MediaVariantUpdateOne {
 	_u.mutation.ResetFileID()
 	_u.mutation.SetFileID(v)
 	return _u
 }
 
 // SetNillableFileID sets the "file_id" field if the given value is not nil.
-func (_u *MediaVariantUpdateOne) SetNillableFileID(v *uint64) *MediaVariantUpdateOne {
+func (_u *MediaVariantUpdateOne) SetNillableFileID(v *int64) *MediaVariantUpdateOne {
 	if v != nil {
 		_u.SetFileID(*v)
 	}
@@ -314,7 +314,7 @@ func (_u *MediaVariantUpdateOne) Modify(modifiers ...func(u *sql.UpdateBuilder))
 }
 
 func (_u *MediaVariantUpdateOne) sqlSave(ctx context.Context) (_node *MediaVariant, err error) {
-	_spec := sqlgraph.NewUpdateSpec(mediavariant.Table, mediavariant.Columns, sqlgraph.NewFieldSpec(mediavariant.FieldID, field.TypeUint64))
+	_spec := sqlgraph.NewUpdateSpec(mediavariant.Table, mediavariant.Columns, sqlgraph.NewFieldSpec(mediavariant.FieldID, field.TypeInt64))
 	id, ok := _u.mutation.ID()
 	if !ok {
 		return nil, &ValidationError{Name: "id", err: errors.New(`ent: missing "MediaVariant.id" for update`)}
@@ -343,19 +343,19 @@ func (_u *MediaVariantUpdateOne) sqlSave(ctx context.Context) (_node *MediaVaria
 		_spec.ClearField(mediavariant.FieldCreatedAt, field.TypeTime)
 	}
 	if _u.mutation.TenantIDCleared() {
-		_spec.ClearField(mediavariant.FieldTenantID, field.TypeUint64)
+		_spec.ClearField(mediavariant.FieldTenantID, field.TypeInt64)
 	}
 	if value, ok := _u.mutation.MediaID(); ok {
-		_spec.SetField(mediavariant.FieldMediaID, field.TypeUint64, value)
+		_spec.SetField(mediavariant.FieldMediaID, field.TypeInt64, value)
 	}
 	if value, ok := _u.mutation.AddedMediaID(); ok {
-		_spec.AddField(mediavariant.FieldMediaID, field.TypeUint64, value)
+		_spec.AddField(mediavariant.FieldMediaID, field.TypeInt64, value)
 	}
 	if value, ok := _u.mutation.FileID(); ok {
-		_spec.SetField(mediavariant.FieldFileID, field.TypeUint64, value)
+		_spec.SetField(mediavariant.FieldFileID, field.TypeInt64, value)
 	}
 	if value, ok := _u.mutation.AddedFileID(); ok {
-		_spec.AddField(mediavariant.FieldFileID, field.TypeUint64, value)
+		_spec.AddField(mediavariant.FieldFileID, field.TypeInt64, value)
 	}
 	if value, ok := _u.mutation.VariantName(); ok {
 		_spec.SetField(mediavariant.FieldVariantName, field.TypeUint32, value)

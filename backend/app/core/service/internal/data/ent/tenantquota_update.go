@@ -70,14 +70,14 @@ func (_u *TenantQuotaUpdate) ClearDeletedAt() *TenantQuotaUpdate {
 }
 
 // SetCreatedBy sets the "created_by" field.
-func (_u *TenantQuotaUpdate) SetCreatedBy(v uint64) *TenantQuotaUpdate {
+func (_u *TenantQuotaUpdate) SetCreatedBy(v int64) *TenantQuotaUpdate {
 	_u.mutation.ResetCreatedBy()
 	_u.mutation.SetCreatedBy(v)
 	return _u
 }
 
 // SetNillableCreatedBy sets the "created_by" field if the given value is not nil.
-func (_u *TenantQuotaUpdate) SetNillableCreatedBy(v *uint64) *TenantQuotaUpdate {
+func (_u *TenantQuotaUpdate) SetNillableCreatedBy(v *int64) *TenantQuotaUpdate {
 	if v != nil {
 		_u.SetCreatedBy(*v)
 	}
@@ -97,14 +97,14 @@ func (_u *TenantQuotaUpdate) ClearCreatedBy() *TenantQuotaUpdate {
 }
 
 // SetUpdatedBy sets the "updated_by" field.
-func (_u *TenantQuotaUpdate) SetUpdatedBy(v uint64) *TenantQuotaUpdate {
+func (_u *TenantQuotaUpdate) SetUpdatedBy(v int64) *TenantQuotaUpdate {
 	_u.mutation.ResetUpdatedBy()
 	_u.mutation.SetUpdatedBy(v)
 	return _u
 }
 
 // SetNillableUpdatedBy sets the "updated_by" field if the given value is not nil.
-func (_u *TenantQuotaUpdate) SetNillableUpdatedBy(v *uint64) *TenantQuotaUpdate {
+func (_u *TenantQuotaUpdate) SetNillableUpdatedBy(v *int64) *TenantQuotaUpdate {
 	if v != nil {
 		_u.SetUpdatedBy(*v)
 	}
@@ -124,14 +124,14 @@ func (_u *TenantQuotaUpdate) ClearUpdatedBy() *TenantQuotaUpdate {
 }
 
 // SetDeletedBy sets the "deleted_by" field.
-func (_u *TenantQuotaUpdate) SetDeletedBy(v uint64) *TenantQuotaUpdate {
+func (_u *TenantQuotaUpdate) SetDeletedBy(v int64) *TenantQuotaUpdate {
 	_u.mutation.ResetDeletedBy()
 	_u.mutation.SetDeletedBy(v)
 	return _u
 }
 
 // SetNillableDeletedBy sets the "deleted_by" field if the given value is not nil.
-func (_u *TenantQuotaUpdate) SetNillableDeletedBy(v *uint64) *TenantQuotaUpdate {
+func (_u *TenantQuotaUpdate) SetNillableDeletedBy(v *int64) *TenantQuotaUpdate {
 	if v != nil {
 		_u.SetDeletedBy(*v)
 	}
@@ -151,14 +151,14 @@ func (_u *TenantQuotaUpdate) ClearDeletedBy() *TenantQuotaUpdate {
 }
 
 // SetTenantID sets the "tenant_id" field.
-func (_u *TenantQuotaUpdate) SetTenantID(v uint64) *TenantQuotaUpdate {
+func (_u *TenantQuotaUpdate) SetTenantID(v int64) *TenantQuotaUpdate {
 	_u.mutation.ResetTenantID()
 	_u.mutation.SetTenantID(v)
 	return _u
 }
 
 // SetNillableTenantID sets the "tenant_id" field if the given value is not nil.
-func (_u *TenantQuotaUpdate) SetNillableTenantID(v *uint64) *TenantQuotaUpdate {
+func (_u *TenantQuotaUpdate) SetNillableTenantID(v *int64) *TenantQuotaUpdate {
 	if v != nil {
 		_u.SetTenantID(*v)
 	}
@@ -263,7 +263,7 @@ func (_u *TenantQuotaUpdate) sqlSave(ctx context.Context) (_node int, err error)
 	if err := _u.check(); err != nil {
 		return _node, err
 	}
-	_spec := sqlgraph.NewUpdateSpec(tenantquota.Table, tenantquota.Columns, sqlgraph.NewFieldSpec(tenantquota.FieldID, field.TypeUint64))
+	_spec := sqlgraph.NewUpdateSpec(tenantquota.Table, tenantquota.Columns, sqlgraph.NewFieldSpec(tenantquota.FieldID, field.TypeInt64))
 	if ps := _u.mutation.predicates; len(ps) > 0 {
 		_spec.Predicate = func(selector *sql.Selector) {
 			for i := range ps {
@@ -287,37 +287,37 @@ func (_u *TenantQuotaUpdate) sqlSave(ctx context.Context) (_node int, err error)
 		_spec.ClearField(tenantquota.FieldDeletedAt, field.TypeTime)
 	}
 	if value, ok := _u.mutation.CreatedBy(); ok {
-		_spec.SetField(tenantquota.FieldCreatedBy, field.TypeUint64, value)
+		_spec.SetField(tenantquota.FieldCreatedBy, field.TypeInt64, value)
 	}
 	if value, ok := _u.mutation.AddedCreatedBy(); ok {
-		_spec.AddField(tenantquota.FieldCreatedBy, field.TypeUint64, value)
+		_spec.AddField(tenantquota.FieldCreatedBy, field.TypeInt64, value)
 	}
 	if _u.mutation.CreatedByCleared() {
-		_spec.ClearField(tenantquota.FieldCreatedBy, field.TypeUint64)
+		_spec.ClearField(tenantquota.FieldCreatedBy, field.TypeInt64)
 	}
 	if value, ok := _u.mutation.UpdatedBy(); ok {
-		_spec.SetField(tenantquota.FieldUpdatedBy, field.TypeUint64, value)
+		_spec.SetField(tenantquota.FieldUpdatedBy, field.TypeInt64, value)
 	}
 	if value, ok := _u.mutation.AddedUpdatedBy(); ok {
-		_spec.AddField(tenantquota.FieldUpdatedBy, field.TypeUint64, value)
+		_spec.AddField(tenantquota.FieldUpdatedBy, field.TypeInt64, value)
 	}
 	if _u.mutation.UpdatedByCleared() {
-		_spec.ClearField(tenantquota.FieldUpdatedBy, field.TypeUint64)
+		_spec.ClearField(tenantquota.FieldUpdatedBy, field.TypeInt64)
 	}
 	if value, ok := _u.mutation.DeletedBy(); ok {
-		_spec.SetField(tenantquota.FieldDeletedBy, field.TypeUint64, value)
+		_spec.SetField(tenantquota.FieldDeletedBy, field.TypeInt64, value)
 	}
 	if value, ok := _u.mutation.AddedDeletedBy(); ok {
-		_spec.AddField(tenantquota.FieldDeletedBy, field.TypeUint64, value)
+		_spec.AddField(tenantquota.FieldDeletedBy, field.TypeInt64, value)
 	}
 	if _u.mutation.DeletedByCleared() {
-		_spec.ClearField(tenantquota.FieldDeletedBy, field.TypeUint64)
+		_spec.ClearField(tenantquota.FieldDeletedBy, field.TypeInt64)
 	}
 	if value, ok := _u.mutation.TenantID(); ok {
-		_spec.SetField(tenantquota.FieldTenantID, field.TypeUint64, value)
+		_spec.SetField(tenantquota.FieldTenantID, field.TypeInt64, value)
 	}
 	if value, ok := _u.mutation.AddedTenantID(); ok {
-		_spec.AddField(tenantquota.FieldTenantID, field.TypeUint64, value)
+		_spec.AddField(tenantquota.FieldTenantID, field.TypeInt64, value)
 	}
 	if value, ok := _u.mutation.QuotaType(); ok {
 		_spec.SetField(tenantquota.FieldQuotaType, field.TypeEnum, value)
@@ -391,14 +391,14 @@ func (_u *TenantQuotaUpdateOne) ClearDeletedAt() *TenantQuotaUpdateOne {
 }
 
 // SetCreatedBy sets the "created_by" field.
-func (_u *TenantQuotaUpdateOne) SetCreatedBy(v uint64) *TenantQuotaUpdateOne {
+func (_u *TenantQuotaUpdateOne) SetCreatedBy(v int64) *TenantQuotaUpdateOne {
 	_u.mutation.ResetCreatedBy()
 	_u.mutation.SetCreatedBy(v)
 	return _u
 }
 
 // SetNillableCreatedBy sets the "created_by" field if the given value is not nil.
-func (_u *TenantQuotaUpdateOne) SetNillableCreatedBy(v *uint64) *TenantQuotaUpdateOne {
+func (_u *TenantQuotaUpdateOne) SetNillableCreatedBy(v *int64) *TenantQuotaUpdateOne {
 	if v != nil {
 		_u.SetCreatedBy(*v)
 	}
@@ -418,14 +418,14 @@ func (_u *TenantQuotaUpdateOne) ClearCreatedBy() *TenantQuotaUpdateOne {
 }
 
 // SetUpdatedBy sets the "updated_by" field.
-func (_u *TenantQuotaUpdateOne) SetUpdatedBy(v uint64) *TenantQuotaUpdateOne {
+func (_u *TenantQuotaUpdateOne) SetUpdatedBy(v int64) *TenantQuotaUpdateOne {
 	_u.mutation.ResetUpdatedBy()
 	_u.mutation.SetUpdatedBy(v)
 	return _u
 }
 
 // SetNillableUpdatedBy sets the "updated_by" field if the given value is not nil.
-func (_u *TenantQuotaUpdateOne) SetNillableUpdatedBy(v *uint64) *TenantQuotaUpdateOne {
+func (_u *TenantQuotaUpdateOne) SetNillableUpdatedBy(v *int64) *TenantQuotaUpdateOne {
 	if v != nil {
 		_u.SetUpdatedBy(*v)
 	}
@@ -445,14 +445,14 @@ func (_u *TenantQuotaUpdateOne) ClearUpdatedBy() *TenantQuotaUpdateOne {
 }
 
 // SetDeletedBy sets the "deleted_by" field.
-func (_u *TenantQuotaUpdateOne) SetDeletedBy(v uint64) *TenantQuotaUpdateOne {
+func (_u *TenantQuotaUpdateOne) SetDeletedBy(v int64) *TenantQuotaUpdateOne {
 	_u.mutation.ResetDeletedBy()
 	_u.mutation.SetDeletedBy(v)
 	return _u
 }
 
 // SetNillableDeletedBy sets the "deleted_by" field if the given value is not nil.
-func (_u *TenantQuotaUpdateOne) SetNillableDeletedBy(v *uint64) *TenantQuotaUpdateOne {
+func (_u *TenantQuotaUpdateOne) SetNillableDeletedBy(v *int64) *TenantQuotaUpdateOne {
 	if v != nil {
 		_u.SetDeletedBy(*v)
 	}
@@ -472,14 +472,14 @@ func (_u *TenantQuotaUpdateOne) ClearDeletedBy() *TenantQuotaUpdateOne {
 }
 
 // SetTenantID sets the "tenant_id" field.
-func (_u *TenantQuotaUpdateOne) SetTenantID(v uint64) *TenantQuotaUpdateOne {
+func (_u *TenantQuotaUpdateOne) SetTenantID(v int64) *TenantQuotaUpdateOne {
 	_u.mutation.ResetTenantID()
 	_u.mutation.SetTenantID(v)
 	return _u
 }
 
 // SetNillableTenantID sets the "tenant_id" field if the given value is not nil.
-func (_u *TenantQuotaUpdateOne) SetNillableTenantID(v *uint64) *TenantQuotaUpdateOne {
+func (_u *TenantQuotaUpdateOne) SetNillableTenantID(v *int64) *TenantQuotaUpdateOne {
 	if v != nil {
 		_u.SetTenantID(*v)
 	}
@@ -597,7 +597,7 @@ func (_u *TenantQuotaUpdateOne) sqlSave(ctx context.Context) (_node *TenantQuota
 	if err := _u.check(); err != nil {
 		return _node, err
 	}
-	_spec := sqlgraph.NewUpdateSpec(tenantquota.Table, tenantquota.Columns, sqlgraph.NewFieldSpec(tenantquota.FieldID, field.TypeUint64))
+	_spec := sqlgraph.NewUpdateSpec(tenantquota.Table, tenantquota.Columns, sqlgraph.NewFieldSpec(tenantquota.FieldID, field.TypeInt64))
 	id, ok := _u.mutation.ID()
 	if !ok {
 		return nil, &ValidationError{Name: "id", err: errors.New(`ent: missing "TenantQuota.id" for update`)}
@@ -638,37 +638,37 @@ func (_u *TenantQuotaUpdateOne) sqlSave(ctx context.Context) (_node *TenantQuota
 		_spec.ClearField(tenantquota.FieldDeletedAt, field.TypeTime)
 	}
 	if value, ok := _u.mutation.CreatedBy(); ok {
-		_spec.SetField(tenantquota.FieldCreatedBy, field.TypeUint64, value)
+		_spec.SetField(tenantquota.FieldCreatedBy, field.TypeInt64, value)
 	}
 	if value, ok := _u.mutation.AddedCreatedBy(); ok {
-		_spec.AddField(tenantquota.FieldCreatedBy, field.TypeUint64, value)
+		_spec.AddField(tenantquota.FieldCreatedBy, field.TypeInt64, value)
 	}
 	if _u.mutation.CreatedByCleared() {
-		_spec.ClearField(tenantquota.FieldCreatedBy, field.TypeUint64)
+		_spec.ClearField(tenantquota.FieldCreatedBy, field.TypeInt64)
 	}
 	if value, ok := _u.mutation.UpdatedBy(); ok {
-		_spec.SetField(tenantquota.FieldUpdatedBy, field.TypeUint64, value)
+		_spec.SetField(tenantquota.FieldUpdatedBy, field.TypeInt64, value)
 	}
 	if value, ok := _u.mutation.AddedUpdatedBy(); ok {
-		_spec.AddField(tenantquota.FieldUpdatedBy, field.TypeUint64, value)
+		_spec.AddField(tenantquota.FieldUpdatedBy, field.TypeInt64, value)
 	}
 	if _u.mutation.UpdatedByCleared() {
-		_spec.ClearField(tenantquota.FieldUpdatedBy, field.TypeUint64)
+		_spec.ClearField(tenantquota.FieldUpdatedBy, field.TypeInt64)
 	}
 	if value, ok := _u.mutation.DeletedBy(); ok {
-		_spec.SetField(tenantquota.FieldDeletedBy, field.TypeUint64, value)
+		_spec.SetField(tenantquota.FieldDeletedBy, field.TypeInt64, value)
 	}
 	if value, ok := _u.mutation.AddedDeletedBy(); ok {
-		_spec.AddField(tenantquota.FieldDeletedBy, field.TypeUint64, value)
+		_spec.AddField(tenantquota.FieldDeletedBy, field.TypeInt64, value)
 	}
 	if _u.mutation.DeletedByCleared() {
-		_spec.ClearField(tenantquota.FieldDeletedBy, field.TypeUint64)
+		_spec.ClearField(tenantquota.FieldDeletedBy, field.TypeInt64)
 	}
 	if value, ok := _u.mutation.TenantID(); ok {
-		_spec.SetField(tenantquota.FieldTenantID, field.TypeUint64, value)
+		_spec.SetField(tenantquota.FieldTenantID, field.TypeInt64, value)
 	}
 	if value, ok := _u.mutation.AddedTenantID(); ok {
-		_spec.AddField(tenantquota.FieldTenantID, field.TypeUint64, value)
+		_spec.AddField(tenantquota.FieldTenantID, field.TypeInt64, value)
 	}
 	if value, ok := _u.mutation.QuotaType(); ok {
 		_spec.SetField(tenantquota.FieldQuotaType, field.TypeEnum, value)

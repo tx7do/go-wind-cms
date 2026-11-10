@@ -40,7 +40,7 @@ func (_d *PostCategoryDelete) ExecX(ctx context.Context) int {
 }
 
 func (_d *PostCategoryDelete) sqlExec(ctx context.Context) (int, error) {
-	_spec := sqlgraph.NewDeleteSpec(postcategory.Table, sqlgraph.NewFieldSpec(postcategory.FieldID, field.TypeUint64))
+	_spec := sqlgraph.NewDeleteSpec(postcategory.Table, sqlgraph.NewFieldSpec(postcategory.FieldID, field.TypeInt64))
 	if ps := _d.mutation.predicates; len(ps) > 0 {
 		_spec.Predicate = func(selector *sql.Selector) {
 			for i := range ps {

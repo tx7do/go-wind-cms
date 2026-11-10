@@ -12,7 +12,7 @@ import (
 // NotificationPreference 用户通知偏好，每用户一行：实时推送静音时段 + 消息分类退订。
 //
 // 刻意不挂 TenantID mixin：偏好跟着人走而不是跟着租户走，读方既有用户自己的上下文
-//（个人中心），也有跨租户上下文（系统通知在 SystemContext 下逐收件人投递）。
+// （个人中心），也有跨租户上下文（系统通知在 SystemContext 下逐收件人投递）。
 // 挂了租户 mixin 后投递链读偏好会被租户过滤按发送方租户拦截，其他租户收件人的
 // 偏好永远查不到；去租户化后唯一访问锚是 user_id（服务端从操作人/收件人钉定，不接受
 // 客户端传入），越权面不因此扩大。全链 fail-open：读不到偏好 = 不静音不退订。
@@ -35,7 +35,7 @@ func (NotificationPreference) Annotations() []schema.Annotation {
 // Fields of the NotificationPreference.
 func (NotificationPreference) Fields() []ent.Field {
 	return []ent.Field{
-		field.Uint64("user_id").
+		field.Int64("user_id").
 			Comment("用户ID（唯一，每用户一行）").
 			Unique(),
 
@@ -51,7 +51,7 @@ func (NotificationPreference) Fields() []ent.Field {
 			Comment("静音结束：自当日 00:00 起的分钟数（0-1439）；跨零点窗口 start > end 合法").
 			Default(480), // 08:00
 
-		field.JSON("muted_category_ids", []uint64{}).
+		field.JSON("muted_category_ids", []int64{}).
 			Comment("退订的站内信分类ID列表（预留：v1 无全员广播，无执行点，仅落库）").
 			Optional(),
 	}

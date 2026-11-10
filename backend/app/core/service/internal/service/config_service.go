@@ -10,8 +10,8 @@ import (
 	"github.com/tx7do/kratos-bootstrap/bootstrap"
 	"google.golang.org/protobuf/types/known/emptypb"
 
-	appViewer "go-wind-cms/pkg/entgo/viewer"
 	"go-wind-cms/pkg/constants"
+	appViewer "go-wind-cms/pkg/entgo/viewer"
 
 	configV1 "go-wind-cms/api/gen/go/config/service/v1"
 

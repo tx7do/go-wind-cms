@@ -141,12 +141,12 @@ func (Page_PageType) EnumDescriptor() ([]byte, []int) {
 // 页面
 type Page struct {
 	state              protoimpl.MessageState `protogen:"open.v1"`
-	Id                 *uint64                `protobuf:"varint,1,opt,name=id,proto3,oneof" json:"id,omitempty"`                                                                                                             // 页面ID
+	Id                 *int64                 `protobuf:"varint,1,opt,name=id,proto3,oneof" json:"id,omitempty"`                                                                                                             // 页面ID
 	Status             *Page_PageStatus       `protobuf:"varint,2,opt,name=status,proto3,enum=content.service.v1.Page_PageStatus,oneof" json:"status,omitempty"`                                                             // 页面状态
 	Type               *Page_PageType         `protobuf:"varint,3,opt,name=type,proto3,enum=content.service.v1.Page_PageType,oneof" json:"type,omitempty"`                                                                   // 页面类型
 	EditorType         *EditorType            `protobuf:"varint,4,opt,name=editor_type,json=editorType,proto3,enum=content.service.v1.EditorType,oneof" json:"editor_type,omitempty"`                                        // 编辑器类型
 	Slug               *string                `protobuf:"bytes,5,opt,name=slug,proto3,oneof" json:"slug,omitempty"`                                                                                                          // 页面唯一标识（默认语言，URL 友好，决定主路由）
-	AuthorId           *uint64                `protobuf:"varint,6,opt,name=author_id,json=authorId,proto3,oneof" json:"author_id,omitempty"`                                                                                 // 页面作者ID
+	AuthorId           *int64                 `protobuf:"varint,6,opt,name=author_id,json=authorId,proto3,oneof" json:"author_id,omitempty"`                                                                                 // 页面作者ID
 	AuthorName         *string                `protobuf:"bytes,7,opt,name=author_name,json=authorName,proto3,oneof" json:"author_name,omitempty"`                                                                            // 页面作者名称
 	InProgress         *bool                  `protobuf:"varint,15,opt,name=in_progress,json=inProgress,proto3,oneof" json:"in_progress,omitempty"`                                                                          // 审核中
 	DisallowComment    *bool                  `protobuf:"varint,8,opt,name=disallow_comment,json=disallowComment,proto3,oneof" json:"disallow_comment,omitempty"`                                                            // 是否禁止评论
@@ -157,18 +157,18 @@ type Page struct {
 	IsCustomTemplate   *bool                  `protobuf:"varint,13,opt,name=is_custom_template,json=isCustomTemplate,proto3,oneof" json:"is_custom_template,omitempty"`                                                      // 是否使用自定义模板代码
 	Thumbnail          *string                `protobuf:"bytes,14,opt,name=thumbnail,proto3,oneof" json:"thumbnail,omitempty"`                                                                                               // 缩略图（全语言共用，存主表）
 	CustomFields       map[string]string      `protobuf:"bytes,21,rep,name=custom_fields,json=customFields,proto3" json:"custom_fields,omitempty" protobuf_key:"bytes,1,opt,name=key" protobuf_val:"bytes,2,opt,name=value"` // 自定义字段，键值对形式，便于扩展
-	ContentModelId     *uint64                `protobuf:"varint,22,opt,name=content_model_id,json=contentModelId,proto3,oneof" json:"content_model_id,omitempty"`                                                            // 绑定的内容模型ID
+	ContentModelId     *int64                 `protobuf:"varint,22,opt,name=content_model_id,json=contentModelId,proto3,oneof" json:"content_model_id,omitempty"`                                                            // 绑定的内容模型ID
 	Translations       []*PageTranslation     `protobuf:"bytes,30,rep,name=translations,proto3" json:"translations,omitempty"`                                                                                               // 多语言翻译列表
 	AvailableLanguages []string               `protobuf:"bytes,31,rep,name=available_languages,json=availableLanguages,proto3" json:"available_languages,omitempty"`                                                         // 可用的语言代码列表
 	// 页面区块（随页面整体读写，Create/Update 时整体替换，对齐 content_model.fields 惯例）
 	Sections      []*Section             `protobuf:"bytes,40,rep,name=sections,proto3" json:"sections,omitempty"`                            // 页面区块列表
-	ParentId      *uint64                `protobuf:"varint,50,opt,name=parent_id,json=parentId,proto3,oneof" json:"parent_id,omitempty"`     // 父页面ID
+	ParentId      *int64                 `protobuf:"varint,50,opt,name=parent_id,json=parentId,proto3,oneof" json:"parent_id,omitempty"`     // 父页面ID
 	Children      []*Page                `protobuf:"bytes,61,rep,name=children,proto3" json:"children,omitempty"`                            // 子节点树
 	Depth         *int32                 `protobuf:"varint,52,opt,name=depth,proto3,oneof" json:"depth,omitempty"`                           // 页面层级深度
 	Path          *string                `protobuf:"bytes,53,opt,name=path,proto3,oneof" json:"path,omitempty"`                              // 物化路径
-	CreatedBy     *uint64                `protobuf:"varint,100,opt,name=created_by,json=createdBy,proto3,oneof" json:"created_by,omitempty"` // 创建者用户ID
-	UpdatedBy     *uint64                `protobuf:"varint,101,opt,name=updated_by,json=updatedBy,proto3,oneof" json:"updated_by,omitempty"` // 更新者用户ID
-	DeletedBy     *uint64                `protobuf:"varint,102,opt,name=deleted_by,json=deletedBy,proto3,oneof" json:"deleted_by,omitempty"` // 删除者用户ID
+	CreatedBy     *int64                 `protobuf:"varint,100,opt,name=created_by,json=createdBy,proto3,oneof" json:"created_by,omitempty"` // 创建者用户ID
+	UpdatedBy     *int64                 `protobuf:"varint,101,opt,name=updated_by,json=updatedBy,proto3,oneof" json:"updated_by,omitempty"` // 更新者用户ID
+	DeletedBy     *int64                 `protobuf:"varint,102,opt,name=deleted_by,json=deletedBy,proto3,oneof" json:"deleted_by,omitempty"` // 删除者用户ID
 	CreatedAt     *timestamppb.Timestamp `protobuf:"bytes,200,opt,name=created_at,json=createdAt,proto3,oneof" json:"created_at,omitempty"`  // 创建时间
 	UpdatedAt     *timestamppb.Timestamp `protobuf:"bytes,201,opt,name=updated_at,json=updatedAt,proto3,oneof" json:"updated_at,omitempty"`  // 更新时间
 	DeletedAt     *timestamppb.Timestamp `protobuf:"bytes,202,opt,name=deleted_at,json=deletedAt,proto3,oneof" json:"deleted_at,omitempty"`  // 删除时间
@@ -206,7 +206,7 @@ func (*Page) Descriptor() ([]byte, []int) {
 	return file_content_service_v1_page_proto_rawDescGZIP(), []int{0}
 }
 
-func (x *Page) GetId() uint64 {
+func (x *Page) GetId() int64 {
 	if x != nil && x.Id != nil {
 		return *x.Id
 	}
@@ -241,7 +241,7 @@ func (x *Page) GetSlug() string {
 	return ""
 }
 
-func (x *Page) GetAuthorId() uint64 {
+func (x *Page) GetAuthorId() int64 {
 	if x != nil && x.AuthorId != nil {
 		return *x.AuthorId
 	}
@@ -318,7 +318,7 @@ func (x *Page) GetCustomFields() map[string]string {
 	return nil
 }
 
-func (x *Page) GetContentModelId() uint64 {
+func (x *Page) GetContentModelId() int64 {
 	if x != nil && x.ContentModelId != nil {
 		return *x.ContentModelId
 	}
@@ -346,7 +346,7 @@ func (x *Page) GetSections() []*Section {
 	return nil
 }
 
-func (x *Page) GetParentId() uint64 {
+func (x *Page) GetParentId() int64 {
 	if x != nil && x.ParentId != nil {
 		return *x.ParentId
 	}
@@ -374,21 +374,21 @@ func (x *Page) GetPath() string {
 	return ""
 }
 
-func (x *Page) GetCreatedBy() uint64 {
+func (x *Page) GetCreatedBy() int64 {
 	if x != nil && x.CreatedBy != nil {
 		return *x.CreatedBy
 	}
 	return 0
 }
 
-func (x *Page) GetUpdatedBy() uint64 {
+func (x *Page) GetUpdatedBy() int64 {
 	if x != nil && x.UpdatedBy != nil {
 		return *x.UpdatedBy
 	}
 	return 0
 }
 
-func (x *Page) GetDeletedBy() uint64 {
+func (x *Page) GetDeletedBy() int64 {
 	if x != nil && x.DeletedBy != nil {
 		return *x.DeletedBy
 	}
@@ -419,17 +419,17 @@ func (x *Page) GetDeletedAt() *timestamppb.Timestamp {
 // 页面翻译
 type PageTranslation struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
-	Id            *uint64                `protobuf:"varint,1,opt,name=id,proto3,oneof" json:"id,omitempty"`                                        // 翻译记录ID
-	PageId        *uint64                `protobuf:"varint,2,opt,name=page_id,json=pageId,proto3,oneof" json:"page_id,omitempty"`                  // 关联的页面ID
+	Id            *int64                 `protobuf:"varint,1,opt,name=id,proto3,oneof" json:"id,omitempty"`                                        // 翻译记录ID
+	PageId        *int64                 `protobuf:"varint,2,opt,name=page_id,json=pageId,proto3,oneof" json:"page_id,omitempty"`                  // 关联的页面ID
 	LanguageCode  *string                `protobuf:"bytes,3,opt,name=language_code,json=languageCode,proto3,oneof" json:"language_code,omitempty"` // 语言代码
 	Title         *string                `protobuf:"bytes,10,opt,name=title,proto3,oneof" json:"title,omitempty"`                                  // 页面标题
 	Slug          *string                `protobuf:"bytes,11,opt,name=slug,proto3,oneof" json:"slug,omitempty"`                                    // 语言特定的 slug
 	CoverImage    *string                `protobuf:"bytes,14,opt,name=cover_image,json=coverImage,proto3,oneof" json:"cover_image,omitempty"`      // 封面图
 	FullPath      *string                `protobuf:"bytes,20,opt,name=full_path,json=fullPath,proto3,oneof" json:"full_path,omitempty"`            // 完整路径
 	Seo           *SeoMeta               `protobuf:"bytes,30,opt,name=seo,proto3,oneof" json:"seo,omitempty"`                                      // SEO 结构化元数据
-	CreatedBy     *uint64                `protobuf:"varint,100,opt,name=created_by,json=createdBy,proto3,oneof" json:"created_by,omitempty"`       // 创建者用户ID
-	UpdatedBy     *uint64                `protobuf:"varint,101,opt,name=updated_by,json=updatedBy,proto3,oneof" json:"updated_by,omitempty"`       // 更新者用户ID
-	DeletedBy     *uint64                `protobuf:"varint,102,opt,name=deleted_by,json=deletedBy,proto3,oneof" json:"deleted_by,omitempty"`       // 删除者用户ID
+	CreatedBy     *int64                 `protobuf:"varint,100,opt,name=created_by,json=createdBy,proto3,oneof" json:"created_by,omitempty"`       // 创建者用户ID
+	UpdatedBy     *int64                 `protobuf:"varint,101,opt,name=updated_by,json=updatedBy,proto3,oneof" json:"updated_by,omitempty"`       // 更新者用户ID
+	DeletedBy     *int64                 `protobuf:"varint,102,opt,name=deleted_by,json=deletedBy,proto3,oneof" json:"deleted_by,omitempty"`       // 删除者用户ID
 	CreatedAt     *timestamppb.Timestamp `protobuf:"bytes,200,opt,name=created_at,json=createdAt,proto3,oneof" json:"created_at,omitempty"`        // 创建时间
 	UpdatedAt     *timestamppb.Timestamp `protobuf:"bytes,201,opt,name=updated_at,json=updatedAt,proto3,oneof" json:"updated_at,omitempty"`        // 更新时间
 	DeletedAt     *timestamppb.Timestamp `protobuf:"bytes,202,opt,name=deleted_at,json=deletedAt,proto3,oneof" json:"deleted_at,omitempty"`        // 删除时间
@@ -467,14 +467,14 @@ func (*PageTranslation) Descriptor() ([]byte, []int) {
 	return file_content_service_v1_page_proto_rawDescGZIP(), []int{1}
 }
 
-func (x *PageTranslation) GetId() uint64 {
+func (x *PageTranslation) GetId() int64 {
 	if x != nil && x.Id != nil {
 		return *x.Id
 	}
 	return 0
 }
 
-func (x *PageTranslation) GetPageId() uint64 {
+func (x *PageTranslation) GetPageId() int64 {
 	if x != nil && x.PageId != nil {
 		return *x.PageId
 	}
@@ -523,21 +523,21 @@ func (x *PageTranslation) GetSeo() *SeoMeta {
 	return nil
 }
 
-func (x *PageTranslation) GetCreatedBy() uint64 {
+func (x *PageTranslation) GetCreatedBy() int64 {
 	if x != nil && x.CreatedBy != nil {
 		return *x.CreatedBy
 	}
 	return 0
 }
 
-func (x *PageTranslation) GetUpdatedBy() uint64 {
+func (x *PageTranslation) GetUpdatedBy() int64 {
 	if x != nil && x.UpdatedBy != nil {
 		return *x.UpdatedBy
 	}
 	return 0
 }
 
-func (x *PageTranslation) GetDeletedBy() uint64 {
+func (x *PageTranslation) GetDeletedBy() int64 {
 	if x != nil && x.DeletedBy != nil {
 		return *x.DeletedBy
 	}
@@ -569,7 +569,7 @@ func (x *PageTranslation) GetDeletedAt() *timestamppb.Timestamp {
 type ListPageResponse struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
 	Items         []*Page                `protobuf:"bytes,1,rep,name=items,proto3" json:"items,omitempty"`
-	Total         uint64                 `protobuf:"varint,2,opt,name=total,proto3" json:"total,omitempty"`
+	Total         int64                  `protobuf:"varint,2,opt,name=total,proto3" json:"total,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -611,7 +611,7 @@ func (x *ListPageResponse) GetItems() []*Page {
 	return nil
 }
 
-func (x *ListPageResponse) GetTotal() uint64 {
+func (x *ListPageResponse) GetTotal() int64 {
 	if x != nil {
 		return x.Total
 	}
@@ -669,7 +669,7 @@ func (x *GetPageRequest) GetQueryBy() isGetPageRequest_QueryBy {
 	return nil
 }
 
-func (x *GetPageRequest) GetId() uint64 {
+func (x *GetPageRequest) GetId() int64 {
 	if x != nil {
 		if x, ok := x.QueryBy.(*GetPageRequest_Id); ok {
 			return x.Id
@@ -706,7 +706,7 @@ type isGetPageRequest_QueryBy interface {
 }
 
 type GetPageRequest_Id struct {
-	Id uint64 `protobuf:"varint,1,opt,name=id,proto3,oneof"` // ID
+	Id int64 `protobuf:"varint,1,opt,name=id,proto3,oneof"` // ID
 }
 
 type GetPageRequest_Slug struct {
@@ -765,7 +765,7 @@ func (x *CreatePageRequest) GetData() *Page {
 // 请求 - 更新页面
 type UpdatePageRequest struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
-	Id            uint64                 `protobuf:"varint,1,opt,name=id,proto3" json:"id,omitempty"`
+	Id            int64                  `protobuf:"varint,1,opt,name=id,proto3" json:"id,omitempty"`
 	Data          *Page                  `protobuf:"bytes,2,opt,name=data,proto3" json:"data,omitempty"`
 	UpdateMask    *fieldmaskpb.FieldMask `protobuf:"bytes,3,opt,name=update_mask,json=updateMask,proto3" json:"update_mask,omitempty"`              // 要更新的字段列表
 	AllowMissing  *bool                  `protobuf:"varint,4,opt,name=allow_missing,json=allowMissing,proto3,oneof" json:"allow_missing,omitempty"` // 如果设置为true的时候，资源不存在则会新增(插入)，并且在这种情况下`updateMask`字段将会被忽略。
@@ -803,7 +803,7 @@ func (*UpdatePageRequest) Descriptor() ([]byte, []int) {
 	return file_content_service_v1_page_proto_rawDescGZIP(), []int{5}
 }
 
-func (x *UpdatePageRequest) GetId() uint64 {
+func (x *UpdatePageRequest) GetId() int64 {
 	if x != nil {
 		return x.Id
 	}
@@ -879,7 +879,7 @@ func (x *DeletePageRequest) GetQueryBy() isDeletePageRequest_QueryBy {
 	return nil
 }
 
-func (x *DeletePageRequest) GetId() uint64 {
+func (x *DeletePageRequest) GetId() int64 {
 	if x != nil {
 		if x, ok := x.QueryBy.(*DeletePageRequest_Id); ok {
 			return x.Id
@@ -893,14 +893,14 @@ type isDeletePageRequest_QueryBy interface {
 }
 
 type DeletePageRequest_Id struct {
-	Id uint64 `protobuf:"varint,1,opt,name=id,proto3,oneof"` // ID
+	Id int64 `protobuf:"varint,1,opt,name=id,proto3,oneof"` // ID
 }
 
 func (*DeletePageRequest_Id) isDeletePageRequest_QueryBy() {}
 
 type PageTranslationExistsRequest struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
-	PageId        uint64                 `protobuf:"varint,1,opt,name=page_id,json=pageId,proto3" json:"page_id,omitempty"`                  // 关联的页面ID
+	PageId        int64                  `protobuf:"varint,1,opt,name=page_id,json=pageId,proto3" json:"page_id,omitempty"`                  // 关联的页面ID
 	LanguageCode  string                 `protobuf:"bytes,2,opt,name=language_code,json=languageCode,proto3" json:"language_code,omitempty"` // 语言代码
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
@@ -936,7 +936,7 @@ func (*PageTranslationExistsRequest) Descriptor() ([]byte, []int) {
 	return file_content_service_v1_page_proto_rawDescGZIP(), []int{7}
 }
 
-func (x *PageTranslationExistsRequest) GetPageId() uint64 {
+func (x *PageTranslationExistsRequest) GetPageId() int64 {
 	if x != nil {
 		return x.PageId
 	}
@@ -996,7 +996,7 @@ func (x *PageTranslationExistsResponse) GetExists() bool {
 
 type CreatePageTranslationRequest struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
-	PageId        uint64                 `protobuf:"varint,1,opt,name=page_id,json=pageId,proto3" json:"page_id,omitempty"` // 关联的页面ID
+	PageId        int64                  `protobuf:"varint,1,opt,name=page_id,json=pageId,proto3" json:"page_id,omitempty"` // 关联的页面ID
 	Data          *PageTranslation       `protobuf:"bytes,2,opt,name=data,proto3" json:"data,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
@@ -1032,7 +1032,7 @@ func (*CreatePageTranslationRequest) Descriptor() ([]byte, []int) {
 	return file_content_service_v1_page_proto_rawDescGZIP(), []int{9}
 }
 
-func (x *CreatePageTranslationRequest) GetPageId() uint64 {
+func (x *CreatePageTranslationRequest) GetPageId() int64 {
 	if x != nil {
 		return x.PageId
 	}
@@ -1048,7 +1048,7 @@ func (x *CreatePageTranslationRequest) GetData() *PageTranslation {
 
 type UpdatePageTranslationRequest struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
-	Id            uint64                 `protobuf:"varint,1,opt,name=id,proto3" json:"id,omitempty"` // 翻译ID
+	Id            int64                  `protobuf:"varint,1,opt,name=id,proto3" json:"id,omitempty"` // 翻译ID
 	Data          *PageTranslation       `protobuf:"bytes,2,opt,name=data,proto3" json:"data,omitempty"`
 	UpdateMask    *fieldmaskpb.FieldMask `protobuf:"bytes,3,opt,name=update_mask,json=updateMask,proto3" json:"update_mask,omitempty"`              // 要更新的字段列表
 	AllowMissing  *bool                  `protobuf:"varint,4,opt,name=allow_missing,json=allowMissing,proto3,oneof" json:"allow_missing,omitempty"` // 如果设置为true的时候，资源不存在则会新增(插入)，并且在这种情况下`updateMask`字段将会被忽略。
@@ -1086,7 +1086,7 @@ func (*UpdatePageTranslationRequest) Descriptor() ([]byte, []int) {
 	return file_content_service_v1_page_proto_rawDescGZIP(), []int{10}
 }
 
-func (x *UpdatePageTranslationRequest) GetId() uint64 {
+func (x *UpdatePageTranslationRequest) GetId() int64 {
 	if x != nil {
 		return x.Id
 	}
@@ -1116,7 +1116,7 @@ func (x *UpdatePageTranslationRequest) GetAllowMissing() bool {
 
 type PageTranslationIdentifier struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
-	PageId        uint64                 `protobuf:"varint,1,opt,name=page_id,json=pageId,proto3" json:"page_id,omitempty"`                  // 关联的页面ID
+	PageId        int64                  `protobuf:"varint,1,opt,name=page_id,json=pageId,proto3" json:"page_id,omitempty"`                  // 关联的页面ID
 	LanguageCode  string                 `protobuf:"bytes,2,opt,name=language_code,json=languageCode,proto3" json:"language_code,omitempty"` // 语言代码
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
@@ -1152,7 +1152,7 @@ func (*PageTranslationIdentifier) Descriptor() ([]byte, []int) {
 	return file_content_service_v1_page_proto_rawDescGZIP(), []int{11}
 }
 
-func (x *PageTranslationIdentifier) GetPageId() uint64 {
+func (x *PageTranslationIdentifier) GetPageId() int64 {
 	if x != nil {
 		return x.PageId
 	}
@@ -1214,7 +1214,7 @@ func (x *DeletePageTranslationRequest) GetQueryBy() isDeletePageTranslationReque
 	return nil
 }
 
-func (x *DeletePageTranslationRequest) GetId() uint64 {
+func (x *DeletePageTranslationRequest) GetId() int64 {
 	if x != nil {
 		if x, ok := x.QueryBy.(*DeletePageTranslationRequest_Id); ok {
 			return x.Id
@@ -1237,7 +1237,7 @@ type isDeletePageTranslationRequest_QueryBy interface {
 }
 
 type DeletePageTranslationRequest_Id struct {
-	Id uint64 `protobuf:"varint,1,opt,name=id,proto3,oneof"` // ID
+	Id int64 `protobuf:"varint,1,opt,name=id,proto3,oneof"` // ID
 }
 
 type DeletePageTranslationRequest_Identifier struct {
@@ -1251,12 +1251,12 @@ func (*DeletePageTranslationRequest_Identifier) isDeletePageTranslationRequest_Q
 // 页面版本（内容快照）
 type PageVersion struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
-	Id            *uint64                `protobuf:"varint,1,opt,name=id,proto3,oneof" json:"id,omitempty"`                                            // 版本记录ID
-	PageId        *uint64                `protobuf:"varint,2,opt,name=page_id,json=pageId,proto3,oneof" json:"page_id,omitempty"`                      // 关联的页面ID
+	Id            *int64                 `protobuf:"varint,1,opt,name=id,proto3,oneof" json:"id,omitempty"`                                            // 版本记录ID
+	PageId        *int64                 `protobuf:"varint,2,opt,name=page_id,json=pageId,proto3,oneof" json:"page_id,omitempty"`                      // 关联的页面ID
 	VersionNumber *uint32                `protobuf:"varint,3,opt,name=version_number,json=versionNumber,proto3,oneof" json:"version_number,omitempty"` // 版本号
 	Content       *string                `protobuf:"bytes,4,opt,name=content,proto3,oneof" json:"content,omitempty"`                                   // 快照 JSON
 	Comment       *string                `protobuf:"bytes,5,opt,name=comment,proto3,oneof" json:"comment,omitempty"`                                   // 版本说明
-	CreatedBy     *uint64                `protobuf:"varint,100,opt,name=created_by,json=createdBy,proto3,oneof" json:"created_by,omitempty"`           // 创建者用户ID
+	CreatedBy     *int64                 `protobuf:"varint,100,opt,name=created_by,json=createdBy,proto3,oneof" json:"created_by,omitempty"`           // 创建者用户ID
 	CreatedAt     *timestamppb.Timestamp `protobuf:"bytes,200,opt,name=created_at,json=createdAt,proto3,oneof" json:"created_at,omitempty"`            // 创建时间
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
@@ -1292,14 +1292,14 @@ func (*PageVersion) Descriptor() ([]byte, []int) {
 	return file_content_service_v1_page_proto_rawDescGZIP(), []int{13}
 }
 
-func (x *PageVersion) GetId() uint64 {
+func (x *PageVersion) GetId() int64 {
 	if x != nil && x.Id != nil {
 		return *x.Id
 	}
 	return 0
 }
 
-func (x *PageVersion) GetPageId() uint64 {
+func (x *PageVersion) GetPageId() int64 {
 	if x != nil && x.PageId != nil {
 		return *x.PageId
 	}
@@ -1327,7 +1327,7 @@ func (x *PageVersion) GetComment() string {
 	return ""
 }
 
-func (x *PageVersion) GetCreatedBy() uint64 {
+func (x *PageVersion) GetCreatedBy() int64 {
 	if x != nil && x.CreatedBy != nil {
 		return *x.CreatedBy
 	}
@@ -1344,7 +1344,7 @@ func (x *PageVersion) GetCreatedAt() *timestamppb.Timestamp {
 // 请求 - 列出页面版本
 type ListPageVersionsRequest struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
-	PageId        uint64                 `protobuf:"varint,1,opt,name=page_id,json=pageId,proto3" json:"page_id,omitempty"`
+	PageId        int64                  `protobuf:"varint,1,opt,name=page_id,json=pageId,proto3" json:"page_id,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -1379,7 +1379,7 @@ func (*ListPageVersionsRequest) Descriptor() ([]byte, []int) {
 	return file_content_service_v1_page_proto_rawDescGZIP(), []int{14}
 }
 
-func (x *ListPageVersionsRequest) GetPageId() uint64 {
+func (x *ListPageVersionsRequest) GetPageId() int64 {
 	if x != nil {
 		return x.PageId
 	}
@@ -1390,7 +1390,7 @@ func (x *ListPageVersionsRequest) GetPageId() uint64 {
 type ListPageVersionsResponse struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
 	Items         []*PageVersion         `protobuf:"bytes,1,rep,name=items,proto3" json:"items,omitempty"`
-	Total         uint64                 `protobuf:"varint,2,opt,name=total,proto3" json:"total,omitempty"`
+	Total         int64                  `protobuf:"varint,2,opt,name=total,proto3" json:"total,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -1432,7 +1432,7 @@ func (x *ListPageVersionsResponse) GetItems() []*PageVersion {
 	return nil
 }
 
-func (x *ListPageVersionsResponse) GetTotal() uint64 {
+func (x *ListPageVersionsResponse) GetTotal() int64 {
 	if x != nil {
 		return x.Total
 	}
@@ -1442,7 +1442,7 @@ func (x *ListPageVersionsResponse) GetTotal() uint64 {
 // 请求 - 页面版本详情
 type GetPageVersionRequest struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
-	Id            uint64                 `protobuf:"varint,1,opt,name=id,proto3" json:"id,omitempty"`
+	Id            int64                  `protobuf:"varint,1,opt,name=id,proto3" json:"id,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -1477,7 +1477,7 @@ func (*GetPageVersionRequest) Descriptor() ([]byte, []int) {
 	return file_content_service_v1_page_proto_rawDescGZIP(), []int{16}
 }
 
-func (x *GetPageVersionRequest) GetId() uint64 {
+func (x *GetPageVersionRequest) GetId() int64 {
 	if x != nil {
 		return x.Id
 	}
@@ -1487,8 +1487,8 @@ func (x *GetPageVersionRequest) GetId() uint64 {
 // 请求 - 恢复页面版本
 type RestorePageVersionRequest struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
-	PageId        uint64                 `protobuf:"varint,1,opt,name=page_id,json=pageId,proto3" json:"page_id,omitempty"`
-	VersionId     uint64                 `protobuf:"varint,2,opt,name=version_id,json=versionId,proto3" json:"version_id,omitempty"`
+	PageId        int64                  `protobuf:"varint,1,opt,name=page_id,json=pageId,proto3" json:"page_id,omitempty"`
+	VersionId     int64                  `protobuf:"varint,2,opt,name=version_id,json=versionId,proto3" json:"version_id,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -1523,14 +1523,14 @@ func (*RestorePageVersionRequest) Descriptor() ([]byte, []int) {
 	return file_content_service_v1_page_proto_rawDescGZIP(), []int{17}
 }
 
-func (x *RestorePageVersionRequest) GetPageId() uint64 {
+func (x *RestorePageVersionRequest) GetPageId() int64 {
 	if x != nil {
 		return x.PageId
 	}
 	return 0
 }
 
-func (x *RestorePageVersionRequest) GetVersionId() uint64 {
+func (x *RestorePageVersionRequest) GetVersionId() int64 {
 	if x != nil {
 		return x.VersionId
 	}
@@ -1540,7 +1540,7 @@ func (x *RestorePageVersionRequest) GetVersionId() uint64 {
 // 请求 - 提交页面审核
 type SubmitPageReviewRequest struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
-	PageId        uint64                 `protobuf:"varint,1,opt,name=page_id,json=pageId,proto3" json:"page_id,omitempty"`
+	PageId        int64                  `protobuf:"varint,1,opt,name=page_id,json=pageId,proto3" json:"page_id,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -1575,7 +1575,7 @@ func (*SubmitPageReviewRequest) Descriptor() ([]byte, []int) {
 	return file_content_service_v1_page_proto_rawDescGZIP(), []int{18}
 }
 
-func (x *SubmitPageReviewRequest) GetPageId() uint64 {
+func (x *SubmitPageReviewRequest) GetPageId() int64 {
 	if x != nil {
 		return x.PageId
 	}
@@ -1585,7 +1585,7 @@ func (x *SubmitPageReviewRequest) GetPageId() uint64 {
 // 请求 - 页面审核通过/驳回的公共载体
 type ReviewPageRequest struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
-	PageId        uint64                 `protobuf:"varint,1,opt,name=page_id,json=pageId,proto3" json:"page_id,omitempty"`
+	PageId        int64                  `protobuf:"varint,1,opt,name=page_id,json=pageId,proto3" json:"page_id,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -1620,7 +1620,7 @@ func (*ReviewPageRequest) Descriptor() ([]byte, []int) {
 	return file_content_service_v1_page_proto_rawDescGZIP(), []int{19}
 }
 
-func (x *ReviewPageRequest) GetPageId() uint64 {
+func (x *ReviewPageRequest) GetPageId() int64 {
 	if x != nil {
 		return x.PageId
 	}
@@ -1630,7 +1630,7 @@ func (x *ReviewPageRequest) GetPageId() uint64 {
 // 请求 - 页面审核驳回（带理由）
 type RejectPageReviewRequest struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
-	PageId        uint64                 `protobuf:"varint,1,opt,name=page_id,json=pageId,proto3" json:"page_id,omitempty"`
+	PageId        int64                  `protobuf:"varint,1,opt,name=page_id,json=pageId,proto3" json:"page_id,omitempty"`
 	Reason        string                 `protobuf:"bytes,2,opt,name=reason,proto3" json:"reason,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
@@ -1666,7 +1666,7 @@ func (*RejectPageReviewRequest) Descriptor() ([]byte, []int) {
 	return file_content_service_v1_page_proto_rawDescGZIP(), []int{20}
 }
 
-func (x *RejectPageReviewRequest) GetPageId() uint64 {
+func (x *RejectPageReviewRequest) GetPageId() int64 {
 	if x != nil {
 		return x.PageId
 	}
@@ -1686,13 +1686,13 @@ const file_content_service_v1_page_proto_rawDesc = "" +
 	"\n" +
 	"\x1dcontent/service/v1/page.proto\x12\x12content.service.v1\x1a$gnostic/openapi/v3/annotations.proto\x1a\x1bgoogle/protobuf/empty.proto\x1a\x1fgoogle/protobuf/timestamp.proto\x1a google/protobuf/field_mask.proto\x1a\x1epagination/v1/pagination.proto\x1a\x1econtent/service/v1/types.proto\x1a content/service/v1/section.proto\"\xc8\x1b\n" +
 	"\x04Page\x12#\n" +
-	"\x02id\x18\x01 \x01(\x04B\x0e\xbaG\v\x92\x02\b页面IDH\x00R\x02id\x88\x01\x01\x12T\n" +
+	"\x02id\x18\x01 \x01(\x03B\x0e\xbaG\v\x92\x02\b页面IDH\x00R\x02id\x88\x01\x01\x12T\n" +
 	"\x06status\x18\x02 \x01(\x0e2#.content.service.v1.Page.PageStatusB\x12\xbaG\x0f\x92\x02\f页面状态H\x01R\x06status\x88\x01\x01\x12\x8c\x01\n" +
 	"\x04type\x18\x03 \x01(\x0e2!.content.service.v1.Page.PageTypeBP\xbaGM\x92\x02J页面类型（首页/404/普通页面等，影响路由和渲染逻辑）H\x02R\x04type\x88\x01\x01\x12[\n" +
 	"\veditor_type\x18\x04 \x01(\x0e2\x1e.content.service.v1.EditorTypeB\x15\xbaG\x12\x92\x02\x0f编辑器类型H\x03R\n" +
 	"editorType\x88\x01\x01\x12b\n" +
 	"\x04slug\x18\x05 \x01(\tBI\xbaGF\x92\x02C页面唯一标识（默认语言，URL 友好，决定主路由）H\x04R\x04slug\x88\x01\x01\x126\n" +
-	"\tauthor_id\x18\x06 \x01(\x04B\x14\xbaG\x11\x92\x02\x0e页面作者IDH\x05R\bauthorId\x88\x01\x01\x12>\n" +
+	"\tauthor_id\x18\x06 \x01(\x03B\x14\xbaG\x11\x92\x02\x0e页面作者IDH\x05R\bauthorId\x88\x01\x01\x12>\n" +
 	"\vauthor_name\x18\a \x01(\tB\x18\xbaG\x15\x92\x02\x12页面作者名称H\x06R\n" +
 	"authorName\x88\x01\x01\x125\n" +
 	"\vin_progress\x18\x0f \x01(\bB\x0f\xbaG\f\x92\x02\t审核中H\aR\n" +
@@ -1708,20 +1708,20 @@ const file_content_service_v1_page_proto_rawDesc = "" +
 	"\x12is_custom_template\x18\r \x01(\bB?\xbaG<\x92\x029是否使用自定义模板代码（而非预设模板）H\rR\x10isCustomTemplate\x88\x01\x01\x12S\n" +
 	"\tthumbnail\x18\x0e \x01(\tB0\xbaG-\x92\x02*缩略图（全语言共用，存主表）H\x0eR\tthumbnail\x88\x01\x01\x12\x87\x01\n" +
 	"\rcustom_fields\x18\x15 \x03(\v2*.content.service.v1.Page.CustomFieldsEntryB6\xbaG3\x92\x020自定义字段，键值对形式，便于扩展R\fcustomFields\x12\x80\x01\n" +
-	"\x10content_model_id\x18\x16 \x01(\x04BQ\xbaGN\x92\x02K绑定的内容模型ID（该页面继承模型字段，0/null=无绑定）H\x0fR\x0econtentModelId\x88\x01\x01\x12d\n" +
+	"\x10content_model_id\x18\x16 \x01(\x03BQ\xbaGN\x92\x02K绑定的内容模型ID（该页面继承模型字段，0/null=无绑定）H\x0fR\x0econtentModelId\x88\x01\x01\x12d\n" +
 	"\ftranslations\x18\x1e \x03(\v2#.content.service.v1.PageTranslationB\x1b\xbaG\x18\x92\x02\x15多语言翻译列表R\ftranslations\x12\x9f\x01\n" +
 	"\x13available_languages\x18\x1f \x03(\tBn\xbaGk:\x1d\x12\x1b[\"zh-CN\", \"en-US\", \"ja-JP\"]\x92\x02I可用的语言代码列表（快速查询，避免遍历 translations）R\x12availableLanguages\x12~\n" +
 	"\bsections\x18( \x03(\v2\x1b.content.service.v1.SectionBE\xbaGB\x92\x02?页面区块列表（嵌套子部件，随页面整体读写）R\bsections\x12n\n" +
-	"\tparent_id\x182 \x01(\x04BL\xbaGI\x92\x02F父页面ID（0 表示顶级页面，用于构建站点树形结构）H\x10R\bparentId\x88\x01\x01\x12H\n" +
+	"\tparent_id\x182 \x01(\x03BL\xbaGI\x92\x02F父页面ID（0 表示顶级页面，用于构建站点树形结构）H\x10R\bparentId\x88\x01\x01\x12H\n" +
 	"\bchildren\x18= \x03(\v2\x18.content.service.v1.PageB\x12\xbaG\x0f\x92\x02\f子节点树R\bchildren\x12d\n" +
 	"\x05depth\x184 \x01(\x05BI\xbaGF\x92\x02C页面层级深度（0=顶级，1=二级，用于面包屑导航）H\x11R\x05depth\x88\x01\x01\x12R\n" +
 	"\x04path\x185 \x01(\tB9\xbaG6\x92\x023物化路径（如 '1/5/23'，便于层级查询）H\x12R\x04path\x88\x01\x01\x12;\n" +
 	"\n" +
-	"created_by\x18d \x01(\x04B\x17\xbaG\x14\x92\x02\x11创建者用户IDH\x13R\tcreatedBy\x88\x01\x01\x12;\n" +
+	"created_by\x18d \x01(\x03B\x17\xbaG\x14\x92\x02\x11创建者用户IDH\x13R\tcreatedBy\x88\x01\x01\x12;\n" +
 	"\n" +
-	"updated_by\x18e \x01(\x04B\x17\xbaG\x14\x92\x02\x11更新者用户IDH\x14R\tupdatedBy\x88\x01\x01\x12;\n" +
+	"updated_by\x18e \x01(\x03B\x17\xbaG\x14\x92\x02\x11更新者用户IDH\x14R\tupdatedBy\x88\x01\x01\x12;\n" +
 	"\n" +
-	"deleted_by\x18f \x01(\x04B\x17\xbaG\x14\x92\x02\x11删除者用户IDH\x15R\tdeletedBy\x88\x01\x01\x12S\n" +
+	"deleted_by\x18f \x01(\x03B\x17\xbaG\x14\x92\x02\x11删除者用户IDH\x15R\tdeletedBy\x88\x01\x01\x12S\n" +
 	"\n" +
 	"created_at\x18\xc8\x01 \x01(\v2\x1a.google.protobuf.TimestampB\x12\xbaG\x0f\x92\x02\f创建时间H\x16R\tcreatedAt\x88\x01\x01\x12S\n" +
 	"\n" +
@@ -1773,8 +1773,8 @@ const file_content_service_v1_page_proto_rawDesc = "" +
 	"\v_updated_atB\r\n" +
 	"\v_deleted_atJ\x04\b\x14\x10\x15R\x06visits\"\xe7\t\n" +
 	"\x0fPageTranslation\x12)\n" +
-	"\x02id\x18\x01 \x01(\x04B\x14\xbaG\x11\x92\x02\x0e翻译记录IDH\x00R\x02id\x88\x01\x01\x125\n" +
-	"\apage_id\x18\x02 \x01(\x04B\x17\xbaG\x14\x92\x02\x11关联的页面IDH\x01R\x06pageId\x88\x01\x01\x12R\n" +
+	"\x02id\x18\x01 \x01(\x03B\x14\xbaG\x11\x92\x02\x0e翻译记录IDH\x00R\x02id\x88\x01\x01\x125\n" +
+	"\apage_id\x18\x02 \x01(\x03B\x17\xbaG\x14\x92\x02\x11关联的页面IDH\x01R\x06pageId\x88\x01\x01\x12R\n" +
 	"\rlanguage_code\x18\x03 \x01(\tB(\xbaG%\x92\x02\"语言代码（ISO 639-1 标准）H\x02R\flanguageCode\x88\x01\x01\x12-\n" +
 	"\x05title\x18\n" +
 	" \x01(\tB\x12\xbaG\x0f\x92\x02\f页面标题H\x03R\x05title\x88\x01\x01\x12w\n" +
@@ -1784,11 +1784,11 @@ const file_content_service_v1_page_proto_rawDesc = "" +
 	"\tfull_path\x18\x14 \x01(\tBL\xbaGI\x92\x02F完整路径（如 /zh-CN/about-us），首页应为 '/' 或 '/zh-CN/'H\x06R\bfullPath\x88\x01\x01\x12P\n" +
 	"\x03seo\x18\x1e \x01(\v2\x1b.content.service.v1.SeoMetaB\x1c\xbaG\x19\x92\x02\x16SEO 结构化元数据H\aR\x03seo\x88\x01\x01\x12;\n" +
 	"\n" +
-	"created_by\x18d \x01(\x04B\x17\xbaG\x14\x92\x02\x11创建者用户IDH\bR\tcreatedBy\x88\x01\x01\x12;\n" +
+	"created_by\x18d \x01(\x03B\x17\xbaG\x14\x92\x02\x11创建者用户IDH\bR\tcreatedBy\x88\x01\x01\x12;\n" +
 	"\n" +
-	"updated_by\x18e \x01(\x04B\x17\xbaG\x14\x92\x02\x11更新者用户IDH\tR\tupdatedBy\x88\x01\x01\x12;\n" +
+	"updated_by\x18e \x01(\x03B\x17\xbaG\x14\x92\x02\x11更新者用户IDH\tR\tupdatedBy\x88\x01\x01\x12;\n" +
 	"\n" +
-	"deleted_by\x18f \x01(\x04B\x17\xbaG\x14\x92\x02\x11删除者用户IDH\n" +
+	"deleted_by\x18f \x01(\x03B\x17\xbaG\x14\x92\x02\x11删除者用户IDH\n" +
 	"R\tdeletedBy\x88\x01\x01\x12S\n" +
 	"\n" +
 	"created_at\x18\xc8\x01 \x01(\v2\x1a.google.protobuf.TimestampB\x12\xbaG\x0f\x92\x02\f创建时间H\vR\tcreatedAt\x88\x01\x01\x12S\n" +
@@ -1814,9 +1814,9 @@ const file_content_service_v1_page_proto_rawDesc = "" +
 	"\v_deleted_atJ\x04\b\r\x10\x0eR\tthumbnail\"X\n" +
 	"\x10ListPageResponse\x12.\n" +
 	"\x05items\x18\x01 \x03(\v2\x18.content.service.v1.PageR\x05items\x12\x14\n" +
-	"\x05total\x18\x02 \x01(\x04R\x05total\"\xdf\x02\n" +
+	"\x05total\x18\x02 \x01(\x03R\x05total\"\xdf\x02\n" +
 	"\x0eGetPageRequest\x12\x1c\n" +
-	"\x02id\x18\x01 \x01(\x04B\n" +
+	"\x02id\x18\x01 \x01(\x03B\n" +
 	"\xbaG\a\x18\x01\x92\x02\x02IDH\x00R\x02id\x120\n" +
 	"\x04slug\x18\x02 \x01(\tB\x1a\xbaG\x17\x18\x01\x92\x02\x12页面唯一标识H\x00R\x04slug\x12_\n" +
 	"\x06locale\x18\n" +
@@ -1830,37 +1830,37 @@ const file_content_service_v1_page_proto_rawDesc = "" +
 	"\x11CreatePageRequest\x12,\n" +
 	"\x04data\x18\x01 \x01(\v2\x18.content.service.v1.PageR\x04data\"\x8f\x03\n" +
 	"\x11UpdatePageRequest\x12\x0e\n" +
-	"\x02id\x18\x01 \x01(\x04R\x02id\x12,\n" +
+	"\x02id\x18\x01 \x01(\x03R\x02id\x12,\n" +
 	"\x04data\x18\x02 \x01(\v2\x18.content.service.v1.PageR\x04data\x12s\n" +
 	"\vupdate_mask\x18\x03 \x01(\v2\x1a.google.protobuf.FieldMaskB6\xbaG3:\x16\x12\x14id,realname,username\x92\x02\x18要更新的字段列表R\n" +
 	"updateMask\x12\xb4\x01\n" +
 	"\rallow_missing\x18\x04 \x01(\bB\x89\x01\xbaG\x85\x01\x92\x02\x81\x01如果设置为true的时候，资源不存在则会新增(插入)，并且在这种情况下`updateMask`字段将会被忽略。H\x00R\fallowMissing\x88\x01\x01B\x10\n" +
 	"\x0e_allow_missing\"=\n" +
 	"\x11DeletePageRequest\x12\x1c\n" +
-	"\x02id\x18\x01 \x01(\x04B\n" +
+	"\x02id\x18\x01 \x01(\x03B\n" +
 	"\xbaG\a\x18\x01\x92\x02\x02IDH\x00R\x02idB\n" +
 	"\n" +
 	"\bquery_by\"\x89\x01\n" +
 	"\x1cPageTranslationExistsRequest\x120\n" +
-	"\apage_id\x18\x01 \x01(\x04B\x17\xbaG\x14\x92\x02\x11关联的页面IDR\x06pageId\x127\n" +
+	"\apage_id\x18\x01 \x01(\x03B\x17\xbaG\x14\x92\x02\x11关联的页面IDR\x06pageId\x127\n" +
 	"\rlanguage_code\x18\x02 \x01(\tB\x12\xbaG\x0f\x92\x02\f语言代码R\flanguageCode\"Q\n" +
 	"\x1dPageTranslationExistsResponse\x120\n" +
 	"\x06exists\x18\x01 \x01(\bB\x18\xbaG\x15\x92\x02\x12翻译是否存在R\x06exists\"\x89\x01\n" +
 	"\x1cCreatePageTranslationRequest\x120\n" +
-	"\apage_id\x18\x01 \x01(\x04B\x17\xbaG\x14\x92\x02\x11关联的页面IDR\x06pageId\x127\n" +
+	"\apage_id\x18\x01 \x01(\x03B\x17\xbaG\x14\x92\x02\x11关联的页面IDR\x06pageId\x127\n" +
 	"\x04data\x18\x02 \x01(\v2#.content.service.v1.PageTranslationR\x04data\"\xb5\x03\n" +
 	"\x1cUpdatePageTranslationRequest\x12\x1e\n" +
-	"\x02id\x18\x01 \x01(\x04B\x0e\xbaG\v\x92\x02\b翻译IDR\x02id\x127\n" +
+	"\x02id\x18\x01 \x01(\x03B\x0e\xbaG\v\x92\x02\b翻译IDR\x02id\x127\n" +
 	"\x04data\x18\x02 \x01(\v2#.content.service.v1.PageTranslationR\x04data\x12s\n" +
 	"\vupdate_mask\x18\x03 \x01(\v2\x1a.google.protobuf.FieldMaskB6\xbaG3:\x16\x12\x14id,realname,username\x92\x02\x18要更新的字段列表R\n" +
 	"updateMask\x12\xb4\x01\n" +
 	"\rallow_missing\x18\x04 \x01(\bB\x89\x01\xbaG\x85\x01\x92\x02\x81\x01如果设置为true的时候，资源不存在则会新增(插入)，并且在这种情况下`updateMask`字段将会被忽略。H\x00R\fallowMissing\x88\x01\x01B\x10\n" +
 	"\x0e_allow_missing\"\x86\x01\n" +
 	"\x19PageTranslationIdentifier\x120\n" +
-	"\apage_id\x18\x01 \x01(\x04B\x17\xbaG\x14\x92\x02\x11关联的页面IDR\x06pageId\x127\n" +
+	"\apage_id\x18\x01 \x01(\x03B\x17\xbaG\x14\x92\x02\x11关联的页面IDR\x06pageId\x127\n" +
 	"\rlanguage_code\x18\x02 \x01(\tB\x12\xbaG\x0f\x92\x02\f语言代码R\flanguageCode\"\xff\x01\n" +
 	"\x1cDeletePageTranslationRequest\x12\x1c\n" +
-	"\x02id\x18\x01 \x01(\x04B\n" +
+	"\x02id\x18\x01 \x01(\x03B\n" +
 	"\xbaG\a\x18\x01\x92\x02\x02IDH\x00R\x02id\x12\xb4\x01\n" +
 	"\n" +
 	"identifier\x18\x02 \x01(\v2-.content.service.v1.PageTranslationIdentifierBc\xbaG`\x92\x02]通过 page_id 和 language_code 组合唯一确定一条翻译记录（优先级高于 ID）H\x00R\n" +
@@ -1868,13 +1868,13 @@ const file_content_service_v1_page_proto_rawDesc = "" +
 	"\n" +
 	"\bquery_by\"\xe2\x04\n" +
 	"\vPageVersion\x12)\n" +
-	"\x02id\x18\x01 \x01(\x04B\x14\xbaG\x11\x92\x02\x0e版本记录IDH\x00R\x02id\x88\x01\x01\x125\n" +
-	"\apage_id\x18\x02 \x01(\x04B\x17\xbaG\x14\x92\x02\x11关联的页面IDH\x01R\x06pageId\x88\x01\x01\x12U\n" +
+	"\x02id\x18\x01 \x01(\x03B\x14\xbaG\x11\x92\x02\x0e版本记录IDH\x00R\x02id\x88\x01\x01\x125\n" +
+	"\apage_id\x18\x02 \x01(\x03B\x17\xbaG\x14\x92\x02\x11关联的页面IDH\x01R\x06pageId\x88\x01\x01\x12U\n" +
 	"\x0eversion_number\x18\x03 \x01(\rB)\xbaG&\x92\x02#版本号（每页递增，1 起）H\x02R\rversionNumber\x88\x01\x01\x12a\n" +
 	"\acontent\x18\x04 \x01(\tBB\xbaG?\x92\x02<快照 JSON（Page DTO 全量，含 translations/sections）H\x03R\acontent\x88\x01\x01\x12I\n" +
 	"\acomment\x18\x05 \x01(\tB*\xbaG'\x92\x02$版本说明（自动保存为空）H\x04R\acomment\x88\x01\x01\x12;\n" +
 	"\n" +
-	"created_by\x18d \x01(\x04B\x17\xbaG\x14\x92\x02\x11创建者用户IDH\x05R\tcreatedBy\x88\x01\x01\x12S\n" +
+	"created_by\x18d \x01(\x03B\x17\xbaG\x14\x92\x02\x11创建者用户IDH\x05R\tcreatedBy\x88\x01\x01\x12S\n" +
 	"\n" +
 	"created_at\x18\xc8\x01 \x01(\v2\x1a.google.protobuf.TimestampB\x12\xbaG\x0f\x92\x02\f创建时间H\x06R\tcreatedAt\x88\x01\x01B\x05\n" +
 	"\x03_idB\n" +
@@ -1888,22 +1888,22 @@ const file_content_service_v1_page_proto_rawDesc = "" +
 	"\v_created_byB\r\n" +
 	"\v_created_at\"B\n" +
 	"\x17ListPageVersionsRequest\x12'\n" +
-	"\apage_id\x18\x01 \x01(\x04B\x0e\xbaG\v\x92\x02\b页面IDR\x06pageId\"g\n" +
+	"\apage_id\x18\x01 \x01(\x03B\x0e\xbaG\v\x92\x02\b页面IDR\x06pageId\"g\n" +
 	"\x18ListPageVersionsResponse\x125\n" +
 	"\x05items\x18\x01 \x03(\v2\x1f.content.service.v1.PageVersionR\x05items\x12\x14\n" +
-	"\x05total\x18\x02 \x01(\x04R\x05total\"=\n" +
+	"\x05total\x18\x02 \x01(\x03R\x05total\"=\n" +
 	"\x15GetPageVersionRequest\x12$\n" +
-	"\x02id\x18\x01 \x01(\x04B\x14\xbaG\x11\x92\x02\x0e版本记录IDR\x02id\"\x88\x01\n" +
+	"\x02id\x18\x01 \x01(\x03B\x14\xbaG\x11\x92\x02\x0e版本记录IDR\x02id\"\x88\x01\n" +
 	"\x19RestorePageVersionRequest\x12'\n" +
-	"\apage_id\x18\x01 \x01(\x04B\x0e\xbaG\v\x92\x02\b页面IDR\x06pageId\x12B\n" +
+	"\apage_id\x18\x01 \x01(\x03B\x0e\xbaG\v\x92\x02\b页面IDR\x06pageId\x12B\n" +
 	"\n" +
-	"version_id\x18\x02 \x01(\x04B#\xbaG \x92\x02\x1d要恢复到的版本记录IDR\tversionId\"B\n" +
+	"version_id\x18\x02 \x01(\x03B#\xbaG \x92\x02\x1d要恢复到的版本记录IDR\tversionId\"B\n" +
 	"\x17SubmitPageReviewRequest\x12'\n" +
-	"\apage_id\x18\x01 \x01(\x04B\x0e\xbaG\v\x92\x02\b页面IDR\x06pageId\"<\n" +
+	"\apage_id\x18\x01 \x01(\x03B\x0e\xbaG\v\x92\x02\b页面IDR\x06pageId\"<\n" +
 	"\x11ReviewPageRequest\x12'\n" +
-	"\apage_id\x18\x01 \x01(\x04B\x0e\xbaG\v\x92\x02\b页面IDR\x06pageId\"\x80\x01\n" +
+	"\apage_id\x18\x01 \x01(\x03B\x0e\xbaG\v\x92\x02\b页面IDR\x06pageId\"\x80\x01\n" +
 	"\x17RejectPageReviewRequest\x12'\n" +
-	"\apage_id\x18\x01 \x01(\x04B\x0e\xbaG\v\x92\x02\b页面IDR\x06pageId\x12<\n" +
+	"\apage_id\x18\x01 \x01(\x03B\x0e\xbaG\v\x92\x02\b页面IDR\x06pageId\x12<\n" +
 	"\x06reason\x18\x02 \x01(\tB$\xbaG!\x92\x02\x1e驳回理由（通知作者）R\x06reason2\xc6\v\n" +
 	"\vPageService\x12I\n" +
 	"\x04List\x12\x19.pagination.PagingRequest\x1a$.content.service.v1.ListPageResponse\"\x00\x12E\n" +

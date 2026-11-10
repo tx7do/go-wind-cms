@@ -66,7 +66,7 @@ func (InternalMessageCategory) Mixin() []ent.Mixin {
 		mixin.TreePath{},
 		mixin.Tree64[InternalMessageCategory]{},
 		mixin.Remark{},
-		mixin.TenantID[uint64]{},
+		mixin.TenantID[int64]{},
 	}
 }
 

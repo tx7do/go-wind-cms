@@ -11,7 +11,7 @@ import (
 )
 
 // QuotaPlan 配额套餐模板：平台级命名模板（名称唯一），items 为配额项 JSON 数组
-//（[{quotaType:"USER_LIMIT",limit:10}, ...]，quotaType 复用 TenantQuota 枚举名）。
+// （[{quotaType:"USER_LIMIT",limit:10}, ...]，quotaType 复用 TenantQuota 枚举名）。
 // 套用到租户 = 按模板逐项 upsert 该租户的 sys_tenant_quotas（模板未含的类型不动）。
 type QuotaPlan struct {
 	ent.Schema
@@ -52,7 +52,7 @@ func (QuotaPlan) Mixin() []ent.Mixin {
 	return []ent.Mixin{
 		mixin.TimeAt{},
 		mixin.AutoIncrementId64{},
-		mixin.TenantID[uint64]{},
+		mixin.TenantID[int64]{},
 	}
 }
 

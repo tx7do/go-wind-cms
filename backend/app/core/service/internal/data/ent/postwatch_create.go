@@ -65,13 +65,13 @@ func (_c *PostWatchCreate) SetNillableDeletedAt(v *time.Time) *PostWatchCreate {
 }
 
 // SetTenantID sets the "tenant_id" field.
-func (_c *PostWatchCreate) SetTenantID(v uint64) *PostWatchCreate {
+func (_c *PostWatchCreate) SetTenantID(v int64) *PostWatchCreate {
 	_c.mutation.SetTenantID(v)
 	return _c
 }
 
 // SetNillableTenantID sets the "tenant_id" field if the given value is not nil.
-func (_c *PostWatchCreate) SetNillableTenantID(v *uint64) *PostWatchCreate {
+func (_c *PostWatchCreate) SetNillableTenantID(v *int64) *PostWatchCreate {
 	if v != nil {
 		_c.SetTenantID(*v)
 	}
@@ -79,13 +79,13 @@ func (_c *PostWatchCreate) SetNillableTenantID(v *uint64) *PostWatchCreate {
 }
 
 // SetUserID sets the "user_id" field.
-func (_c *PostWatchCreate) SetUserID(v uint64) *PostWatchCreate {
+func (_c *PostWatchCreate) SetUserID(v int64) *PostWatchCreate {
 	_c.mutation.SetUserID(v)
 	return _c
 }
 
 // SetNillableUserID sets the "user_id" field if the given value is not nil.
-func (_c *PostWatchCreate) SetNillableUserID(v *uint64) *PostWatchCreate {
+func (_c *PostWatchCreate) SetNillableUserID(v *int64) *PostWatchCreate {
 	if v != nil {
 		_c.SetUserID(*v)
 	}
@@ -93,13 +93,13 @@ func (_c *PostWatchCreate) SetNillableUserID(v *uint64) *PostWatchCreate {
 }
 
 // SetPostID sets the "post_id" field.
-func (_c *PostWatchCreate) SetPostID(v uint64) *PostWatchCreate {
+func (_c *PostWatchCreate) SetPostID(v int64) *PostWatchCreate {
 	_c.mutation.SetPostID(v)
 	return _c
 }
 
 // SetNillablePostID sets the "post_id" field if the given value is not nil.
-func (_c *PostWatchCreate) SetNillablePostID(v *uint64) *PostWatchCreate {
+func (_c *PostWatchCreate) SetNillablePostID(v *int64) *PostWatchCreate {
 	if v != nil {
 		_c.SetPostID(*v)
 	}
@@ -107,7 +107,7 @@ func (_c *PostWatchCreate) SetNillablePostID(v *uint64) *PostWatchCreate {
 }
 
 // SetID sets the "id" field.
-func (_c *PostWatchCreate) SetID(v uint64) *PostWatchCreate {
+func (_c *PostWatchCreate) SetID(v int64) *PostWatchCreate {
 	_c.mutation.SetID(v)
 	return _c
 }
@@ -179,7 +179,7 @@ func (_c *PostWatchCreate) sqlSave(ctx context.Context) (*PostWatch, error) {
 	}
 	if _spec.ID.Value != _node.ID {
 		id := _spec.ID.Value.(int64)
-		_node.ID = uint64(id)
+		_node.ID = int64(id)
 	}
 	_c.mutation.id = &_node.ID
 	_c.mutation.done = true
@@ -189,7 +189,7 @@ func (_c *PostWatchCreate) sqlSave(ctx context.Context) (*PostWatch, error) {
 func (_c *PostWatchCreate) createSpec() (*PostWatch, *sqlgraph.CreateSpec) {
 	var (
 		_node = &PostWatch{config: _c.config}
-		_spec = sqlgraph.NewCreateSpec(postwatch.Table, sqlgraph.NewFieldSpec(postwatch.FieldID, field.TypeUint64))
+		_spec = sqlgraph.NewCreateSpec(postwatch.Table, sqlgraph.NewFieldSpec(postwatch.FieldID, field.TypeInt64))
 	)
 	_spec.OnConflict = _c.conflict
 	if id, ok := _c.mutation.ID(); ok {
@@ -209,15 +209,15 @@ func (_c *PostWatchCreate) createSpec() (*PostWatch, *sqlgraph.CreateSpec) {
 		_node.DeletedAt = &value
 	}
 	if value, ok := _c.mutation.TenantID(); ok {
-		_spec.SetField(postwatch.FieldTenantID, field.TypeUint64, value)
+		_spec.SetField(postwatch.FieldTenantID, field.TypeInt64, value)
 		_node.TenantID = &value
 	}
 	if value, ok := _c.mutation.UserID(); ok {
-		_spec.SetField(postwatch.FieldUserID, field.TypeUint64, value)
+		_spec.SetField(postwatch.FieldUserID, field.TypeInt64, value)
 		_node.UserID = &value
 	}
 	if value, ok := _c.mutation.PostID(); ok {
-		_spec.SetField(postwatch.FieldPostID, field.TypeUint64, value)
+		_spec.SetField(postwatch.FieldPostID, field.TypeInt64, value)
 		_node.PostID = &value
 	}
 	return _node, _spec
@@ -309,7 +309,7 @@ func (u *PostWatchUpsert) ClearDeletedAt() *PostWatchUpsert {
 }
 
 // SetUserID sets the "user_id" field.
-func (u *PostWatchUpsert) SetUserID(v uint64) *PostWatchUpsert {
+func (u *PostWatchUpsert) SetUserID(v int64) *PostWatchUpsert {
 	u.Set(postwatch.FieldUserID, v)
 	return u
 }
@@ -321,7 +321,7 @@ func (u *PostWatchUpsert) UpdateUserID() *PostWatchUpsert {
 }
 
 // AddUserID adds v to the "user_id" field.
-func (u *PostWatchUpsert) AddUserID(v uint64) *PostWatchUpsert {
+func (u *PostWatchUpsert) AddUserID(v int64) *PostWatchUpsert {
 	u.Add(postwatch.FieldUserID, v)
 	return u
 }
@@ -333,7 +333,7 @@ func (u *PostWatchUpsert) ClearUserID() *PostWatchUpsert {
 }
 
 // SetPostID sets the "post_id" field.
-func (u *PostWatchUpsert) SetPostID(v uint64) *PostWatchUpsert {
+func (u *PostWatchUpsert) SetPostID(v int64) *PostWatchUpsert {
 	u.Set(postwatch.FieldPostID, v)
 	return u
 }
@@ -345,7 +345,7 @@ func (u *PostWatchUpsert) UpdatePostID() *PostWatchUpsert {
 }
 
 // AddPostID adds v to the "post_id" field.
-func (u *PostWatchUpsert) AddPostID(v uint64) *PostWatchUpsert {
+func (u *PostWatchUpsert) AddPostID(v int64) *PostWatchUpsert {
 	u.Add(postwatch.FieldPostID, v)
 	return u
 }
@@ -453,14 +453,14 @@ func (u *PostWatchUpsertOne) ClearDeletedAt() *PostWatchUpsertOne {
 }
 
 // SetUserID sets the "user_id" field.
-func (u *PostWatchUpsertOne) SetUserID(v uint64) *PostWatchUpsertOne {
+func (u *PostWatchUpsertOne) SetUserID(v int64) *PostWatchUpsertOne {
 	return u.Update(func(s *PostWatchUpsert) {
 		s.SetUserID(v)
 	})
 }
 
 // AddUserID adds v to the "user_id" field.
-func (u *PostWatchUpsertOne) AddUserID(v uint64) *PostWatchUpsertOne {
+func (u *PostWatchUpsertOne) AddUserID(v int64) *PostWatchUpsertOne {
 	return u.Update(func(s *PostWatchUpsert) {
 		s.AddUserID(v)
 	})
@@ -481,14 +481,14 @@ func (u *PostWatchUpsertOne) ClearUserID() *PostWatchUpsertOne {
 }
 
 // SetPostID sets the "post_id" field.
-func (u *PostWatchUpsertOne) SetPostID(v uint64) *PostWatchUpsertOne {
+func (u *PostWatchUpsertOne) SetPostID(v int64) *PostWatchUpsertOne {
 	return u.Update(func(s *PostWatchUpsert) {
 		s.SetPostID(v)
 	})
 }
 
 // AddPostID adds v to the "post_id" field.
-func (u *PostWatchUpsertOne) AddPostID(v uint64) *PostWatchUpsertOne {
+func (u *PostWatchUpsertOne) AddPostID(v int64) *PostWatchUpsertOne {
 	return u.Update(func(s *PostWatchUpsert) {
 		s.AddPostID(v)
 	})
@@ -524,7 +524,7 @@ func (u *PostWatchUpsertOne) ExecX(ctx context.Context) {
 }
 
 // Exec executes the UPSERT query and returns the inserted/updated ID.
-func (u *PostWatchUpsertOne) ID(ctx context.Context) (id uint64, err error) {
+func (u *PostWatchUpsertOne) ID(ctx context.Context) (id int64, err error) {
 	node, err := u.create.Save(ctx)
 	if err != nil {
 		return id, err
@@ -533,7 +533,7 @@ func (u *PostWatchUpsertOne) ID(ctx context.Context) (id uint64, err error) {
 }
 
 // IDX is like ID, but panics if an error occurs.
-func (u *PostWatchUpsertOne) IDX(ctx context.Context) uint64 {
+func (u *PostWatchUpsertOne) IDX(ctx context.Context) int64 {
 	id, err := u.ID(ctx)
 	if err != nil {
 		panic(err)
@@ -590,7 +590,7 @@ func (_c *PostWatchCreateBulk) Save(ctx context.Context) ([]*PostWatch, error) {
 				mutation.id = &nodes[i].ID
 				if specs[i].ID.Value != nil && nodes[i].ID == 0 {
 					id := specs[i].ID.Value.(int64)
-					nodes[i].ID = uint64(id)
+					nodes[i].ID = int64(id)
 				}
 				mutation.done = true
 				return nodes[i], nil
@@ -771,14 +771,14 @@ func (u *PostWatchUpsertBulk) ClearDeletedAt() *PostWatchUpsertBulk {
 }
 
 // SetUserID sets the "user_id" field.
-func (u *PostWatchUpsertBulk) SetUserID(v uint64) *PostWatchUpsertBulk {
+func (u *PostWatchUpsertBulk) SetUserID(v int64) *PostWatchUpsertBulk {
 	return u.Update(func(s *PostWatchUpsert) {
 		s.SetUserID(v)
 	})
 }
 
 // AddUserID adds v to the "user_id" field.
-func (u *PostWatchUpsertBulk) AddUserID(v uint64) *PostWatchUpsertBulk {
+func (u *PostWatchUpsertBulk) AddUserID(v int64) *PostWatchUpsertBulk {
 	return u.Update(func(s *PostWatchUpsert) {
 		s.AddUserID(v)
 	})
@@ -799,14 +799,14 @@ func (u *PostWatchUpsertBulk) ClearUserID() *PostWatchUpsertBulk {
 }
 
 // SetPostID sets the "post_id" field.
-func (u *PostWatchUpsertBulk) SetPostID(v uint64) *PostWatchUpsertBulk {
+func (u *PostWatchUpsertBulk) SetPostID(v int64) *PostWatchUpsertBulk {
 	return u.Update(func(s *PostWatchUpsert) {
 		s.SetPostID(v)
 	})
 }
 
 // AddPostID adds v to the "post_id" field.
-func (u *PostWatchUpsertBulk) AddPostID(v uint64) *PostWatchUpsertBulk {
+func (u *PostWatchUpsertBulk) AddPostID(v int64) *PostWatchUpsertBulk {
 	return u.Update(func(s *PostWatchUpsert) {
 		s.AddPostID(v)
 	})

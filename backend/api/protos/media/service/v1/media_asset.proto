@@ -59,7 +59,7 @@ message MediaAsset {
     PROCESSING_STATUS_FAILED = 4;      // 处理失败
   }
 
-  optional uint64 id = 1 [
+  optional int64 id = 1 [
     json_name = "id",
     (gnostic.openapi.v3.property) = {description: "媒体资源库ID"}
   ]; // 媒体资源库ID
@@ -158,20 +158,20 @@ message MediaAsset {
     (gnostic.openapi.v3.property) = {description: "是否私密资源"}
   ]; // 是否私密资源（true 表示仅管理员可见，前端不展示）
 
-  optional uint64 file_id = 21 [
+  optional int64 file_id = 21 [
     json_name = "fileId",
     (gnostic.openapi.v3.property) = {description: "存储文件ID（如果使用了文件表存储文件元数据，则关联的文件ID）"}
   ]; // 存储文件ID（如果使用了文件表存储文件元数据，则关联的文件ID）
 
-  optional uint64 folder_id = 22 [
+  optional int64 folder_id = 22 [
     json_name = "folderId",
     (gnostic.openapi.v3.property) = {description: "所属文件夹ID（0 表示根目录）"}
   ]; // 所属文件夹ID（0 表示根目录）
 
 
-  optional uint64 created_by = 100 [json_name = "createdBy", (gnostic.openapi.v3.property) = {description: "创建者用户ID"}]; // 创建者用户ID
-  optional uint64 updated_by = 101 [json_name = "updatedBy", (gnostic.openapi.v3.property) = {description: "更新者用户ID"}]; // 更新者用户ID
-  optional uint64 deleted_by = 102 [json_name = "deletedBy", (gnostic.openapi.v3.property) = {description: "删除者用户ID"}]; // 删除者用户ID
+  optional int64 created_by = 100 [json_name = "createdBy", (gnostic.openapi.v3.property) = {description: "创建者用户ID"}]; // 创建者用户ID
+  optional int64 updated_by = 101 [json_name = "updatedBy", (gnostic.openapi.v3.property) = {description: "更新者用户ID"}]; // 更新者用户ID
+  optional int64 deleted_by = 102 [json_name = "deletedBy", (gnostic.openapi.v3.property) = {description: "删除者用户ID"}]; // 删除者用户ID
 
   optional google.protobuf.Timestamp created_at = 200 [json_name = "createdAt", (gnostic.openapi.v3.property) = {description: "创建时间"}];// 创建时间
   optional google.protobuf.Timestamp updated_at = 201 [json_name = "updatedAt", (gnostic.openapi.v3.property) = {description: "更新时间"}];// 更新时间
@@ -185,12 +185,12 @@ message MediaVariant {
 // 回应 - 媒体资源库列表
 message ListMediaAssetResponse {
   repeated MediaAsset items = 1;
-  uint64 total = 2;
+  int64 total = 2;
 }
 
 // 请求 - 媒体资源库数据
 message GetMediaAssetRequest {
-  uint64 id = 1;
+  int64 id = 1;
 
   optional google.protobuf.FieldMask view_mask = 100 [
     json_name = "viewMask",
@@ -207,7 +207,7 @@ message CreateMediaAssetRequest {
 
 // 请求 - 更新媒体资源库
 message UpdateMediaAssetRequest {
-  uint64 id = 1;
+  int64 id = 1;
 
   MediaAsset data = 2;
 
@@ -228,7 +228,7 @@ message UpdateMediaAssetRequest {
 // 请求 - 删除媒体资源库
 message DeleteMediaAssetRequest {
   oneof query_by {
-    uint64 id = 1 [
+    int64 id = 1 [
       (gnostic.openapi.v3.property) = {description: "ID", read_only: true},
       json_name = "id"
     ]; // ID
@@ -281,7 +281,7 @@ message ListDuplicatedMediaAssetsResponse {
     json_name = "groups",
     (gnostic.openapi.v3.property) = {description: "重复组列表"}
   ]; // 重复组列表
-  uint64 total = 2 [
+  int64 total = 2 [
     json_name = "total",
     (gnostic.openapi.v3.property) = {description: "重复组总数"}
   ]; // 重复组总数
@@ -289,7 +289,7 @@ message ListDuplicatedMediaAssetsResponse {
 
 // 请求 - 媒体引用关系列表
 message ListMediaAssetReferencesRequest {
-  uint64 media_asset_id = 1 [
+  int64 media_asset_id = 1 [
     json_name = "mediaAssetId",
     (gnostic.openapi.v3.property) = {description: "媒体资源 ID"}
   ]; // 媒体资源 ID
@@ -297,7 +297,7 @@ message ListMediaAssetReferencesRequest {
 
 // 引用关系：源内容（文章/页面）在哪个字段使用了该媒体
 message MediaAssetReference {
-  optional uint64 media_asset_id = 1 [
+  optional int64 media_asset_id = 1 [
     json_name = "mediaAssetId",
     (gnostic.openapi.v3.property) = {description: "媒体资源 ID"}
   ]; // 媒体资源 ID
@@ -305,7 +305,7 @@ message MediaAssetReference {
     json_name = "sourceType",
     (gnostic.openapi.v3.property) = {description: "源内容类型（post/page）"}
   ]; // 源内容类型
-  optional uint64 source_id = 3 [
+  optional int64 source_id = 3 [
     json_name = "sourceId",
     (gnostic.openapi.v3.property) = {description: "源内容 ID"}
   ]; // 源内容 ID
@@ -329,7 +329,7 @@ message ListMediaAssetReferencesResponse {
     json_name = "items",
     (gnostic.openapi.v3.property) = {description: "引用关系列表"}
   ]; // 引用关系列表
-  uint64 total = 2 [
+  int64 total = 2 [
     json_name = "total",
     (gnostic.openapi.v3.property) = {description: "引用关系总数"}
   ]; // 引用关系总数

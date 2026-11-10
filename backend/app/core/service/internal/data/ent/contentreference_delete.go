@@ -40,7 +40,7 @@ func (_d *ContentReferenceDelete) ExecX(ctx context.Context) int {
 }
 
 func (_d *ContentReferenceDelete) sqlExec(ctx context.Context) (int, error) {
-	_spec := sqlgraph.NewDeleteSpec(contentreference.Table, sqlgraph.NewFieldSpec(contentreference.FieldID, field.TypeUint64))
+	_spec := sqlgraph.NewDeleteSpec(contentreference.Table, sqlgraph.NewFieldSpec(contentreference.FieldID, field.TypeInt64))
 	if ps := _d.mutation.predicates; len(ps) > 0 {
 		_spec.Predicate = func(selector *sql.Selector) {
 			for i := range ps {

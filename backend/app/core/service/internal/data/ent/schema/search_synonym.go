@@ -51,7 +51,7 @@ func (SearchSynonym) Mixin() []ent.Mixin {
 	return []ent.Mixin{
 		mixin.TimeAt{},
 		mixin.AutoIncrementId64{},
-		mixin.TenantID[uint64]{},
+		mixin.TenantID[int64]{},
 	}
 }
 

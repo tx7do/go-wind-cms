@@ -10,47 +10,47 @@ import (
 )
 
 // ID filters vertices based on their ID field.
-func ID(id uint64) predicate.Post {
+func ID(id int64) predicate.Post {
 	return predicate.Post(sql.FieldEQ(FieldID, id))
 }
 
 // IDEQ applies the EQ predicate on the ID field.
-func IDEQ(id uint64) predicate.Post {
+func IDEQ(id int64) predicate.Post {
 	return predicate.Post(sql.FieldEQ(FieldID, id))
 }
 
 // IDNEQ applies the NEQ predicate on the ID field.
-func IDNEQ(id uint64) predicate.Post {
+func IDNEQ(id int64) predicate.Post {
 	return predicate.Post(sql.FieldNEQ(FieldID, id))
 }
 
 // IDIn applies the In predicate on the ID field.
-func IDIn(ids ...uint64) predicate.Post {
+func IDIn(ids ...int64) predicate.Post {
 	return predicate.Post(sql.FieldIn(FieldID, ids...))
 }
 
 // IDNotIn applies the NotIn predicate on the ID field.
-func IDNotIn(ids ...uint64) predicate.Post {
+func IDNotIn(ids ...int64) predicate.Post {
 	return predicate.Post(sql.FieldNotIn(FieldID, ids...))
 }
 
 // IDGT applies the GT predicate on the ID field.
-func IDGT(id uint64) predicate.Post {
+func IDGT(id int64) predicate.Post {
 	return predicate.Post(sql.FieldGT(FieldID, id))
 }
 
 // IDGTE applies the GTE predicate on the ID field.
-func IDGTE(id uint64) predicate.Post {
+func IDGTE(id int64) predicate.Post {
 	return predicate.Post(sql.FieldGTE(FieldID, id))
 }
 
 // IDLT applies the LT predicate on the ID field.
-func IDLT(id uint64) predicate.Post {
+func IDLT(id int64) predicate.Post {
 	return predicate.Post(sql.FieldLT(FieldID, id))
 }
 
 // IDLTE applies the LTE predicate on the ID field.
-func IDLTE(id uint64) predicate.Post {
+func IDLTE(id int64) predicate.Post {
 	return predicate.Post(sql.FieldLTE(FieldID, id))
 }
 
@@ -70,17 +70,17 @@ func DeletedAt(v time.Time) predicate.Post {
 }
 
 // CreatedBy applies equality check predicate on the "created_by" field. It's identical to CreatedByEQ.
-func CreatedBy(v uint64) predicate.Post {
+func CreatedBy(v int64) predicate.Post {
 	return predicate.Post(sql.FieldEQ(FieldCreatedBy, v))
 }
 
 // UpdatedBy applies equality check predicate on the "updated_by" field. It's identical to UpdatedByEQ.
-func UpdatedBy(v uint64) predicate.Post {
+func UpdatedBy(v int64) predicate.Post {
 	return predicate.Post(sql.FieldEQ(FieldUpdatedBy, v))
 }
 
 // DeletedBy applies equality check predicate on the "deleted_by" field. It's identical to DeletedByEQ.
-func DeletedBy(v uint64) predicate.Post {
+func DeletedBy(v int64) predicate.Post {
 	return predicate.Post(sql.FieldEQ(FieldDeletedBy, v))
 }
 
@@ -90,7 +90,7 @@ func SortOrder(v uint32) predicate.Post {
 }
 
 // TenantID applies equality check predicate on the "tenant_id" field. It's identical to TenantIDEQ.
-func TenantID(v uint64) predicate.Post {
+func TenantID(v int64) predicate.Post {
 	return predicate.Post(sql.FieldEQ(FieldTenantID, v))
 }
 
@@ -120,7 +120,7 @@ func IsFeatured(v bool) predicate.Post {
 }
 
 // AuthorID applies equality check predicate on the "author_id" field. It's identical to AuthorIDEQ.
-func AuthorID(v uint64) predicate.Post {
+func AuthorID(v int64) predicate.Post {
 	return predicate.Post(sql.FieldEQ(FieldAuthorID, v))
 }
 
@@ -295,42 +295,42 @@ func DeletedAtNotNil() predicate.Post {
 }
 
 // CreatedByEQ applies the EQ predicate on the "created_by" field.
-func CreatedByEQ(v uint64) predicate.Post {
+func CreatedByEQ(v int64) predicate.Post {
 	return predicate.Post(sql.FieldEQ(FieldCreatedBy, v))
 }
 
 // CreatedByNEQ applies the NEQ predicate on the "created_by" field.
-func CreatedByNEQ(v uint64) predicate.Post {
+func CreatedByNEQ(v int64) predicate.Post {
 	return predicate.Post(sql.FieldNEQ(FieldCreatedBy, v))
 }
 
 // CreatedByIn applies the In predicate on the "created_by" field.
-func CreatedByIn(vs ...uint64) predicate.Post {
+func CreatedByIn(vs ...int64) predicate.Post {
 	return predicate.Post(sql.FieldIn(FieldCreatedBy, vs...))
 }
 
 // CreatedByNotIn applies the NotIn predicate on the "created_by" field.
-func CreatedByNotIn(vs ...uint64) predicate.Post {
+func CreatedByNotIn(vs ...int64) predicate.Post {
 	return predicate.Post(sql.FieldNotIn(FieldCreatedBy, vs...))
 }
 
 // CreatedByGT applies the GT predicate on the "created_by" field.
-func CreatedByGT(v uint64) predicate.Post {
+func CreatedByGT(v int64) predicate.Post {
 	return predicate.Post(sql.FieldGT(FieldCreatedBy, v))
 }
 
 // CreatedByGTE applies the GTE predicate on the "created_by" field.
-func CreatedByGTE(v uint64) predicate.Post {
+func CreatedByGTE(v int64) predicate.Post {
 	return predicate.Post(sql.FieldGTE(FieldCreatedBy, v))
 }
 
 // CreatedByLT applies the LT predicate on the "created_by" field.
-func CreatedByLT(v uint64) predicate.Post {
+func CreatedByLT(v int64) predicate.Post {
 	return predicate.Post(sql.FieldLT(FieldCreatedBy, v))
 }
 
 // CreatedByLTE applies the LTE predicate on the "created_by" field.
-func CreatedByLTE(v uint64) predicate.Post {
+func CreatedByLTE(v int64) predicate.Post {
 	return predicate.Post(sql.FieldLTE(FieldCreatedBy, v))
 }
 
@@ -345,42 +345,42 @@ func CreatedByNotNil() predicate.Post {
 }
 
 // UpdatedByEQ applies the EQ predicate on the "updated_by" field.
-func UpdatedByEQ(v uint64) predicate.Post {
+func UpdatedByEQ(v int64) predicate.Post {
 	return predicate.Post(sql.FieldEQ(FieldUpdatedBy, v))
 }
 
 // UpdatedByNEQ applies the NEQ predicate on the "updated_by" field.
-func UpdatedByNEQ(v uint64) predicate.Post {
+func UpdatedByNEQ(v int64) predicate.Post {
 	return predicate.Post(sql.FieldNEQ(FieldUpdatedBy, v))
 }
 
 // UpdatedByIn applies the In predicate on the "updated_by" field.
-func UpdatedByIn(vs ...uint64) predicate.Post {
+func UpdatedByIn(vs ...int64) predicate.Post {
 	return predicate.Post(sql.FieldIn(FieldUpdatedBy, vs...))
 }
 
 // UpdatedByNotIn applies the NotIn predicate on the "updated_by" field.
-func UpdatedByNotIn(vs ...uint64) predicate.Post {
+func UpdatedByNotIn(vs ...int64) predicate.Post {
 	return predicate.Post(sql.FieldNotIn(FieldUpdatedBy, vs...))
 }
 
 // UpdatedByGT applies the GT predicate on the "updated_by" field.
-func UpdatedByGT(v uint64) predicate.Post {
+func UpdatedByGT(v int64) predicate.Post {
 	return predicate.Post(sql.FieldGT(FieldUpdatedBy, v))
 }
 
 // UpdatedByGTE applies the GTE predicate on the "updated_by" field.
-func UpdatedByGTE(v uint64) predicate.Post {
+func UpdatedByGTE(v int64) predicate.Post {
 	return predicate.Post(sql.FieldGTE(FieldUpdatedBy, v))
 }
 
 // UpdatedByLT applies the LT predicate on the "updated_by" field.
-func UpdatedByLT(v uint64) predicate.Post {
+func UpdatedByLT(v int64) predicate.Post {
 	return predicate.Post(sql.FieldLT(FieldUpdatedBy, v))
 }
 
 // UpdatedByLTE applies the LTE predicate on the "updated_by" field.
-func UpdatedByLTE(v uint64) predicate.Post {
+func UpdatedByLTE(v int64) predicate.Post {
 	return predicate.Post(sql.FieldLTE(FieldUpdatedBy, v))
 }
 
@@ -395,42 +395,42 @@ func UpdatedByNotNil() predicate.Post {
 }
 
 // DeletedByEQ applies the EQ predicate on the "deleted_by" field.
-func DeletedByEQ(v uint64) predicate.Post {
+func DeletedByEQ(v int64) predicate.Post {
 	return predicate.Post(sql.FieldEQ(FieldDeletedBy, v))
 }
 
 // DeletedByNEQ applies the NEQ predicate on the "deleted_by" field.
-func DeletedByNEQ(v uint64) predicate.Post {
+func DeletedByNEQ(v int64) predicate.Post {
 	return predicate.Post(sql.FieldNEQ(FieldDeletedBy, v))
 }
 
 // DeletedByIn applies the In predicate on the "deleted_by" field.
-func DeletedByIn(vs ...uint64) predicate.Post {
+func DeletedByIn(vs ...int64) predicate.Post {
 	return predicate.Post(sql.FieldIn(FieldDeletedBy, vs...))
 }
 
 // DeletedByNotIn applies the NotIn predicate on the "deleted_by" field.
-func DeletedByNotIn(vs ...uint64) predicate.Post {
+func DeletedByNotIn(vs ...int64) predicate.Post {
 	return predicate.Post(sql.FieldNotIn(FieldDeletedBy, vs...))
 }
 
 // DeletedByGT applies the GT predicate on the "deleted_by" field.
-func DeletedByGT(v uint64) predicate.Post {
+func DeletedByGT(v int64) predicate.Post {
 	return predicate.Post(sql.FieldGT(FieldDeletedBy, v))
 }
 
 // DeletedByGTE applies the GTE predicate on the "deleted_by" field.
-func DeletedByGTE(v uint64) predicate.Post {
+func DeletedByGTE(v int64) predicate.Post {
 	return predicate.Post(sql.FieldGTE(FieldDeletedBy, v))
 }
 
 // DeletedByLT applies the LT predicate on the "deleted_by" field.
-func DeletedByLT(v uint64) predicate.Post {
+func DeletedByLT(v int64) predicate.Post {
 	return predicate.Post(sql.FieldLT(FieldDeletedBy, v))
 }
 
 // DeletedByLTE applies the LTE predicate on the "deleted_by" field.
-func DeletedByLTE(v uint64) predicate.Post {
+func DeletedByLTE(v int64) predicate.Post {
 	return predicate.Post(sql.FieldLTE(FieldDeletedBy, v))
 }
 
@@ -525,42 +525,42 @@ func EditorTypeNotNil() predicate.Post {
 }
 
 // TenantIDEQ applies the EQ predicate on the "tenant_id" field.
-func TenantIDEQ(v uint64) predicate.Post {
+func TenantIDEQ(v int64) predicate.Post {
 	return predicate.Post(sql.FieldEQ(FieldTenantID, v))
 }
 
 // TenantIDNEQ applies the NEQ predicate on the "tenant_id" field.
-func TenantIDNEQ(v uint64) predicate.Post {
+func TenantIDNEQ(v int64) predicate.Post {
 	return predicate.Post(sql.FieldNEQ(FieldTenantID, v))
 }
 
 // TenantIDIn applies the In predicate on the "tenant_id" field.
-func TenantIDIn(vs ...uint64) predicate.Post {
+func TenantIDIn(vs ...int64) predicate.Post {
 	return predicate.Post(sql.FieldIn(FieldTenantID, vs...))
 }
 
 // TenantIDNotIn applies the NotIn predicate on the "tenant_id" field.
-func TenantIDNotIn(vs ...uint64) predicate.Post {
+func TenantIDNotIn(vs ...int64) predicate.Post {
 	return predicate.Post(sql.FieldNotIn(FieldTenantID, vs...))
 }
 
 // TenantIDGT applies the GT predicate on the "tenant_id" field.
-func TenantIDGT(v uint64) predicate.Post {
+func TenantIDGT(v int64) predicate.Post {
 	return predicate.Post(sql.FieldGT(FieldTenantID, v))
 }
 
 // TenantIDGTE applies the GTE predicate on the "tenant_id" field.
-func TenantIDGTE(v uint64) predicate.Post {
+func TenantIDGTE(v int64) predicate.Post {
 	return predicate.Post(sql.FieldGTE(FieldTenantID, v))
 }
 
 // TenantIDLT applies the LT predicate on the "tenant_id" field.
-func TenantIDLT(v uint64) predicate.Post {
+func TenantIDLT(v int64) predicate.Post {
 	return predicate.Post(sql.FieldLT(FieldTenantID, v))
 }
 
 // TenantIDLTE applies the LTE predicate on the "tenant_id" field.
-func TenantIDLTE(v uint64) predicate.Post {
+func TenantIDLTE(v int64) predicate.Post {
 	return predicate.Post(sql.FieldLTE(FieldTenantID, v))
 }
 
@@ -760,42 +760,42 @@ func IsFeaturedNotNil() predicate.Post {
 }
 
 // AuthorIDEQ applies the EQ predicate on the "author_id" field.
-func AuthorIDEQ(v uint64) predicate.Post {
+func AuthorIDEQ(v int64) predicate.Post {
 	return predicate.Post(sql.FieldEQ(FieldAuthorID, v))
 }
 
 // AuthorIDNEQ applies the NEQ predicate on the "author_id" field.
-func AuthorIDNEQ(v uint64) predicate.Post {
+func AuthorIDNEQ(v int64) predicate.Post {
 	return predicate.Post(sql.FieldNEQ(FieldAuthorID, v))
 }
 
 // AuthorIDIn applies the In predicate on the "author_id" field.
-func AuthorIDIn(vs ...uint64) predicate.Post {
+func AuthorIDIn(vs ...int64) predicate.Post {
 	return predicate.Post(sql.FieldIn(FieldAuthorID, vs...))
 }
 
 // AuthorIDNotIn applies the NotIn predicate on the "author_id" field.
-func AuthorIDNotIn(vs ...uint64) predicate.Post {
+func AuthorIDNotIn(vs ...int64) predicate.Post {
 	return predicate.Post(sql.FieldNotIn(FieldAuthorID, vs...))
 }
 
 // AuthorIDGT applies the GT predicate on the "author_id" field.
-func AuthorIDGT(v uint64) predicate.Post {
+func AuthorIDGT(v int64) predicate.Post {
 	return predicate.Post(sql.FieldGT(FieldAuthorID, v))
 }
 
 // AuthorIDGTE applies the GTE predicate on the "author_id" field.
-func AuthorIDGTE(v uint64) predicate.Post {
+func AuthorIDGTE(v int64) predicate.Post {
 	return predicate.Post(sql.FieldGTE(FieldAuthorID, v))
 }
 
 // AuthorIDLT applies the LT predicate on the "author_id" field.
-func AuthorIDLT(v uint64) predicate.Post {
+func AuthorIDLT(v int64) predicate.Post {
 	return predicate.Post(sql.FieldLT(FieldAuthorID, v))
 }
 
 // AuthorIDLTE applies the LTE predicate on the "author_id" field.
-func AuthorIDLTE(v uint64) predicate.Post {
+func AuthorIDLTE(v int64) predicate.Post {
 	return predicate.Post(sql.FieldLTE(FieldAuthorID, v))
 }
 

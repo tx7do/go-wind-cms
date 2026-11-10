@@ -65,13 +65,13 @@ func (_c *FieldDefinitionTranslationCreate) SetNillableDeletedAt(v *time.Time) *
 }
 
 // SetCreatedBy sets the "created_by" field.
-func (_c *FieldDefinitionTranslationCreate) SetCreatedBy(v uint64) *FieldDefinitionTranslationCreate {
+func (_c *FieldDefinitionTranslationCreate) SetCreatedBy(v int64) *FieldDefinitionTranslationCreate {
 	_c.mutation.SetCreatedBy(v)
 	return _c
 }
 
 // SetNillableCreatedBy sets the "created_by" field if the given value is not nil.
-func (_c *FieldDefinitionTranslationCreate) SetNillableCreatedBy(v *uint64) *FieldDefinitionTranslationCreate {
+func (_c *FieldDefinitionTranslationCreate) SetNillableCreatedBy(v *int64) *FieldDefinitionTranslationCreate {
 	if v != nil {
 		_c.SetCreatedBy(*v)
 	}
@@ -79,13 +79,13 @@ func (_c *FieldDefinitionTranslationCreate) SetNillableCreatedBy(v *uint64) *Fie
 }
 
 // SetUpdatedBy sets the "updated_by" field.
-func (_c *FieldDefinitionTranslationCreate) SetUpdatedBy(v uint64) *FieldDefinitionTranslationCreate {
+func (_c *FieldDefinitionTranslationCreate) SetUpdatedBy(v int64) *FieldDefinitionTranslationCreate {
 	_c.mutation.SetUpdatedBy(v)
 	return _c
 }
 
 // SetNillableUpdatedBy sets the "updated_by" field if the given value is not nil.
-func (_c *FieldDefinitionTranslationCreate) SetNillableUpdatedBy(v *uint64) *FieldDefinitionTranslationCreate {
+func (_c *FieldDefinitionTranslationCreate) SetNillableUpdatedBy(v *int64) *FieldDefinitionTranslationCreate {
 	if v != nil {
 		_c.SetUpdatedBy(*v)
 	}
@@ -93,13 +93,13 @@ func (_c *FieldDefinitionTranslationCreate) SetNillableUpdatedBy(v *uint64) *Fie
 }
 
 // SetDeletedBy sets the "deleted_by" field.
-func (_c *FieldDefinitionTranslationCreate) SetDeletedBy(v uint64) *FieldDefinitionTranslationCreate {
+func (_c *FieldDefinitionTranslationCreate) SetDeletedBy(v int64) *FieldDefinitionTranslationCreate {
 	_c.mutation.SetDeletedBy(v)
 	return _c
 }
 
 // SetNillableDeletedBy sets the "deleted_by" field if the given value is not nil.
-func (_c *FieldDefinitionTranslationCreate) SetNillableDeletedBy(v *uint64) *FieldDefinitionTranslationCreate {
+func (_c *FieldDefinitionTranslationCreate) SetNillableDeletedBy(v *int64) *FieldDefinitionTranslationCreate {
 	if v != nil {
 		_c.SetDeletedBy(*v)
 	}
@@ -107,13 +107,13 @@ func (_c *FieldDefinitionTranslationCreate) SetNillableDeletedBy(v *uint64) *Fie
 }
 
 // SetFieldDefinitionID sets the "field_definition_id" field.
-func (_c *FieldDefinitionTranslationCreate) SetFieldDefinitionID(v uint64) *FieldDefinitionTranslationCreate {
+func (_c *FieldDefinitionTranslationCreate) SetFieldDefinitionID(v int64) *FieldDefinitionTranslationCreate {
 	_c.mutation.SetFieldDefinitionID(v)
 	return _c
 }
 
 // SetNillableFieldDefinitionID sets the "field_definition_id" field if the given value is not nil.
-func (_c *FieldDefinitionTranslationCreate) SetNillableFieldDefinitionID(v *uint64) *FieldDefinitionTranslationCreate {
+func (_c *FieldDefinitionTranslationCreate) SetNillableFieldDefinitionID(v *int64) *FieldDefinitionTranslationCreate {
 	if v != nil {
 		_c.SetFieldDefinitionID(*v)
 	}
@@ -177,7 +177,7 @@ func (_c *FieldDefinitionTranslationCreate) SetNillablePlaceholder(v *string) *F
 }
 
 // SetID sets the "id" field.
-func (_c *FieldDefinitionTranslationCreate) SetID(v uint64) *FieldDefinitionTranslationCreate {
+func (_c *FieldDefinitionTranslationCreate) SetID(v int64) *FieldDefinitionTranslationCreate {
 	_c.mutation.SetID(v)
 	return _c
 }
@@ -242,7 +242,7 @@ func (_c *FieldDefinitionTranslationCreate) sqlSave(ctx context.Context) (*Field
 	}
 	if _spec.ID.Value != _node.ID {
 		id := _spec.ID.Value.(int64)
-		_node.ID = uint64(id)
+		_node.ID = int64(id)
 	}
 	_c.mutation.id = &_node.ID
 	_c.mutation.done = true
@@ -252,7 +252,7 @@ func (_c *FieldDefinitionTranslationCreate) sqlSave(ctx context.Context) (*Field
 func (_c *FieldDefinitionTranslationCreate) createSpec() (*FieldDefinitionTranslation, *sqlgraph.CreateSpec) {
 	var (
 		_node = &FieldDefinitionTranslation{config: _c.config}
-		_spec = sqlgraph.NewCreateSpec(fielddefinitiontranslation.Table, sqlgraph.NewFieldSpec(fielddefinitiontranslation.FieldID, field.TypeUint64))
+		_spec = sqlgraph.NewCreateSpec(fielddefinitiontranslation.Table, sqlgraph.NewFieldSpec(fielddefinitiontranslation.FieldID, field.TypeInt64))
 	)
 	_spec.OnConflict = _c.conflict
 	if id, ok := _c.mutation.ID(); ok {
@@ -272,19 +272,19 @@ func (_c *FieldDefinitionTranslationCreate) createSpec() (*FieldDefinitionTransl
 		_node.DeletedAt = &value
 	}
 	if value, ok := _c.mutation.CreatedBy(); ok {
-		_spec.SetField(fielddefinitiontranslation.FieldCreatedBy, field.TypeUint64, value)
+		_spec.SetField(fielddefinitiontranslation.FieldCreatedBy, field.TypeInt64, value)
 		_node.CreatedBy = &value
 	}
 	if value, ok := _c.mutation.UpdatedBy(); ok {
-		_spec.SetField(fielddefinitiontranslation.FieldUpdatedBy, field.TypeUint64, value)
+		_spec.SetField(fielddefinitiontranslation.FieldUpdatedBy, field.TypeInt64, value)
 		_node.UpdatedBy = &value
 	}
 	if value, ok := _c.mutation.DeletedBy(); ok {
-		_spec.SetField(fielddefinitiontranslation.FieldDeletedBy, field.TypeUint64, value)
+		_spec.SetField(fielddefinitiontranslation.FieldDeletedBy, field.TypeInt64, value)
 		_node.DeletedBy = &value
 	}
 	if value, ok := _c.mutation.FieldDefinitionID(); ok {
-		_spec.SetField(fielddefinitiontranslation.FieldFieldDefinitionID, field.TypeUint64, value)
+		_spec.SetField(fielddefinitiontranslation.FieldFieldDefinitionID, field.TypeInt64, value)
 		_node.FieldDefinitionID = &value
 	}
 	if value, ok := _c.mutation.LanguageCode(); ok {
@@ -392,7 +392,7 @@ func (u *FieldDefinitionTranslationUpsert) ClearDeletedAt() *FieldDefinitionTran
 }
 
 // SetCreatedBy sets the "created_by" field.
-func (u *FieldDefinitionTranslationUpsert) SetCreatedBy(v uint64) *FieldDefinitionTranslationUpsert {
+func (u *FieldDefinitionTranslationUpsert) SetCreatedBy(v int64) *FieldDefinitionTranslationUpsert {
 	u.Set(fielddefinitiontranslation.FieldCreatedBy, v)
 	return u
 }
@@ -404,7 +404,7 @@ func (u *FieldDefinitionTranslationUpsert) UpdateCreatedBy() *FieldDefinitionTra
 }
 
 // AddCreatedBy adds v to the "created_by" field.
-func (u *FieldDefinitionTranslationUpsert) AddCreatedBy(v uint64) *FieldDefinitionTranslationUpsert {
+func (u *FieldDefinitionTranslationUpsert) AddCreatedBy(v int64) *FieldDefinitionTranslationUpsert {
 	u.Add(fielddefinitiontranslation.FieldCreatedBy, v)
 	return u
 }
@@ -416,7 +416,7 @@ func (u *FieldDefinitionTranslationUpsert) ClearCreatedBy() *FieldDefinitionTran
 }
 
 // SetUpdatedBy sets the "updated_by" field.
-func (u *FieldDefinitionTranslationUpsert) SetUpdatedBy(v uint64) *FieldDefinitionTranslationUpsert {
+func (u *FieldDefinitionTranslationUpsert) SetUpdatedBy(v int64) *FieldDefinitionTranslationUpsert {
 	u.Set(fielddefinitiontranslation.FieldUpdatedBy, v)
 	return u
 }
@@ -428,7 +428,7 @@ func (u *FieldDefinitionTranslationUpsert) UpdateUpdatedBy() *FieldDefinitionTra
 }
 
 // AddUpdatedBy adds v to the "updated_by" field.
-func (u *FieldDefinitionTranslationUpsert) AddUpdatedBy(v uint64) *FieldDefinitionTranslationUpsert {
+func (u *FieldDefinitionTranslationUpsert) AddUpdatedBy(v int64) *FieldDefinitionTranslationUpsert {
 	u.Add(fielddefinitiontranslation.FieldUpdatedBy, v)
 	return u
 }
@@ -440,7 +440,7 @@ func (u *FieldDefinitionTranslationUpsert) ClearUpdatedBy() *FieldDefinitionTran
 }
 
 // SetDeletedBy sets the "deleted_by" field.
-func (u *FieldDefinitionTranslationUpsert) SetDeletedBy(v uint64) *FieldDefinitionTranslationUpsert {
+func (u *FieldDefinitionTranslationUpsert) SetDeletedBy(v int64) *FieldDefinitionTranslationUpsert {
 	u.Set(fielddefinitiontranslation.FieldDeletedBy, v)
 	return u
 }
@@ -452,7 +452,7 @@ func (u *FieldDefinitionTranslationUpsert) UpdateDeletedBy() *FieldDefinitionTra
 }
 
 // AddDeletedBy adds v to the "deleted_by" field.
-func (u *FieldDefinitionTranslationUpsert) AddDeletedBy(v uint64) *FieldDefinitionTranslationUpsert {
+func (u *FieldDefinitionTranslationUpsert) AddDeletedBy(v int64) *FieldDefinitionTranslationUpsert {
 	u.Add(fielddefinitiontranslation.FieldDeletedBy, v)
 	return u
 }
@@ -464,7 +464,7 @@ func (u *FieldDefinitionTranslationUpsert) ClearDeletedBy() *FieldDefinitionTran
 }
 
 // SetFieldDefinitionID sets the "field_definition_id" field.
-func (u *FieldDefinitionTranslationUpsert) SetFieldDefinitionID(v uint64) *FieldDefinitionTranslationUpsert {
+func (u *FieldDefinitionTranslationUpsert) SetFieldDefinitionID(v int64) *FieldDefinitionTranslationUpsert {
 	u.Set(fielddefinitiontranslation.FieldFieldDefinitionID, v)
 	return u
 }
@@ -476,7 +476,7 @@ func (u *FieldDefinitionTranslationUpsert) UpdateFieldDefinitionID() *FieldDefin
 }
 
 // AddFieldDefinitionID adds v to the "field_definition_id" field.
-func (u *FieldDefinitionTranslationUpsert) AddFieldDefinitionID(v uint64) *FieldDefinitionTranslationUpsert {
+func (u *FieldDefinitionTranslationUpsert) AddFieldDefinitionID(v int64) *FieldDefinitionTranslationUpsert {
 	u.Add(fielddefinitiontranslation.FieldFieldDefinitionID, v)
 	return u
 }
@@ -653,14 +653,14 @@ func (u *FieldDefinitionTranslationUpsertOne) ClearDeletedAt() *FieldDefinitionT
 }
 
 // SetCreatedBy sets the "created_by" field.
-func (u *FieldDefinitionTranslationUpsertOne) SetCreatedBy(v uint64) *FieldDefinitionTranslationUpsertOne {
+func (u *FieldDefinitionTranslationUpsertOne) SetCreatedBy(v int64) *FieldDefinitionTranslationUpsertOne {
 	return u.Update(func(s *FieldDefinitionTranslationUpsert) {
 		s.SetCreatedBy(v)
 	})
 }
 
 // AddCreatedBy adds v to the "created_by" field.
-func (u *FieldDefinitionTranslationUpsertOne) AddCreatedBy(v uint64) *FieldDefinitionTranslationUpsertOne {
+func (u *FieldDefinitionTranslationUpsertOne) AddCreatedBy(v int64) *FieldDefinitionTranslationUpsertOne {
 	return u.Update(func(s *FieldDefinitionTranslationUpsert) {
 		s.AddCreatedBy(v)
 	})
@@ -681,14 +681,14 @@ func (u *FieldDefinitionTranslationUpsertOne) ClearCreatedBy() *FieldDefinitionT
 }
 
 // SetUpdatedBy sets the "updated_by" field.
-func (u *FieldDefinitionTranslationUpsertOne) SetUpdatedBy(v uint64) *FieldDefinitionTranslationUpsertOne {
+func (u *FieldDefinitionTranslationUpsertOne) SetUpdatedBy(v int64) *FieldDefinitionTranslationUpsertOne {
 	return u.Update(func(s *FieldDefinitionTranslationUpsert) {
 		s.SetUpdatedBy(v)
 	})
 }
 
 // AddUpdatedBy adds v to the "updated_by" field.
-func (u *FieldDefinitionTranslationUpsertOne) AddUpdatedBy(v uint64) *FieldDefinitionTranslationUpsertOne {
+func (u *FieldDefinitionTranslationUpsertOne) AddUpdatedBy(v int64) *FieldDefinitionTranslationUpsertOne {
 	return u.Update(func(s *FieldDefinitionTranslationUpsert) {
 		s.AddUpdatedBy(v)
 	})
@@ -709,14 +709,14 @@ func (u *FieldDefinitionTranslationUpsertOne) ClearUpdatedBy() *FieldDefinitionT
 }
 
 // SetDeletedBy sets the "deleted_by" field.
-func (u *FieldDefinitionTranslationUpsertOne) SetDeletedBy(v uint64) *FieldDefinitionTranslationUpsertOne {
+func (u *FieldDefinitionTranslationUpsertOne) SetDeletedBy(v int64) *FieldDefinitionTranslationUpsertOne {
 	return u.Update(func(s *FieldDefinitionTranslationUpsert) {
 		s.SetDeletedBy(v)
 	})
 }
 
 // AddDeletedBy adds v to the "deleted_by" field.
-func (u *FieldDefinitionTranslationUpsertOne) AddDeletedBy(v uint64) *FieldDefinitionTranslationUpsertOne {
+func (u *FieldDefinitionTranslationUpsertOne) AddDeletedBy(v int64) *FieldDefinitionTranslationUpsertOne {
 	return u.Update(func(s *FieldDefinitionTranslationUpsert) {
 		s.AddDeletedBy(v)
 	})
@@ -737,14 +737,14 @@ func (u *FieldDefinitionTranslationUpsertOne) ClearDeletedBy() *FieldDefinitionT
 }
 
 // SetFieldDefinitionID sets the "field_definition_id" field.
-func (u *FieldDefinitionTranslationUpsertOne) SetFieldDefinitionID(v uint64) *FieldDefinitionTranslationUpsertOne {
+func (u *FieldDefinitionTranslationUpsertOne) SetFieldDefinitionID(v int64) *FieldDefinitionTranslationUpsertOne {
 	return u.Update(func(s *FieldDefinitionTranslationUpsert) {
 		s.SetFieldDefinitionID(v)
 	})
 }
 
 // AddFieldDefinitionID adds v to the "field_definition_id" field.
-func (u *FieldDefinitionTranslationUpsertOne) AddFieldDefinitionID(v uint64) *FieldDefinitionTranslationUpsertOne {
+func (u *FieldDefinitionTranslationUpsertOne) AddFieldDefinitionID(v int64) *FieldDefinitionTranslationUpsertOne {
 	return u.Update(func(s *FieldDefinitionTranslationUpsert) {
 		s.AddFieldDefinitionID(v)
 	})
@@ -864,7 +864,7 @@ func (u *FieldDefinitionTranslationUpsertOne) ExecX(ctx context.Context) {
 }
 
 // Exec executes the UPSERT query and returns the inserted/updated ID.
-func (u *FieldDefinitionTranslationUpsertOne) ID(ctx context.Context) (id uint64, err error) {
+func (u *FieldDefinitionTranslationUpsertOne) ID(ctx context.Context) (id int64, err error) {
 	node, err := u.create.Save(ctx)
 	if err != nil {
 		return id, err
@@ -873,7 +873,7 @@ func (u *FieldDefinitionTranslationUpsertOne) ID(ctx context.Context) (id uint64
 }
 
 // IDX is like ID, but panics if an error occurs.
-func (u *FieldDefinitionTranslationUpsertOne) IDX(ctx context.Context) uint64 {
+func (u *FieldDefinitionTranslationUpsertOne) IDX(ctx context.Context) int64 {
 	id, err := u.ID(ctx)
 	if err != nil {
 		panic(err)
@@ -929,7 +929,7 @@ func (_c *FieldDefinitionTranslationCreateBulk) Save(ctx context.Context) ([]*Fi
 				mutation.id = &nodes[i].ID
 				if specs[i].ID.Value != nil && nodes[i].ID == 0 {
 					id := specs[i].ID.Value.(int64)
-					nodes[i].ID = uint64(id)
+					nodes[i].ID = int64(id)
 				}
 				mutation.done = true
 				return nodes[i], nil
@@ -1107,14 +1107,14 @@ func (u *FieldDefinitionTranslationUpsertBulk) ClearDeletedAt() *FieldDefinition
 }
 
 // SetCreatedBy sets the "created_by" field.
-func (u *FieldDefinitionTranslationUpsertBulk) SetCreatedBy(v uint64) *FieldDefinitionTranslationUpsertBulk {
+func (u *FieldDefinitionTranslationUpsertBulk) SetCreatedBy(v int64) *FieldDefinitionTranslationUpsertBulk {
 	return u.Update(func(s *FieldDefinitionTranslationUpsert) {
 		s.SetCreatedBy(v)
 	})
 }
 
 // AddCreatedBy adds v to the "created_by" field.
-func (u *FieldDefinitionTranslationUpsertBulk) AddCreatedBy(v uint64) *FieldDefinitionTranslationUpsertBulk {
+func (u *FieldDefinitionTranslationUpsertBulk) AddCreatedBy(v int64) *FieldDefinitionTranslationUpsertBulk {
 	return u.Update(func(s *FieldDefinitionTranslationUpsert) {
 		s.AddCreatedBy(v)
 	})
@@ -1135,14 +1135,14 @@ func (u *FieldDefinitionTranslationUpsertBulk) ClearCreatedBy() *FieldDefinition
 }
 
 // SetUpdatedBy sets the "updated_by" field.
-func (u *FieldDefinitionTranslationUpsertBulk) SetUpdatedBy(v uint64) *FieldDefinitionTranslationUpsertBulk {
+func (u *FieldDefinitionTranslationUpsertBulk) SetUpdatedBy(v int64) *FieldDefinitionTranslationUpsertBulk {
 	return u.Update(func(s *FieldDefinitionTranslationUpsert) {
 		s.SetUpdatedBy(v)
 	})
 }
 
 // AddUpdatedBy adds v to the "updated_by" field.
-func (u *FieldDefinitionTranslationUpsertBulk) AddUpdatedBy(v uint64) *FieldDefinitionTranslationUpsertBulk {
+func (u *FieldDefinitionTranslationUpsertBulk) AddUpdatedBy(v int64) *FieldDefinitionTranslationUpsertBulk {
 	return u.Update(func(s *FieldDefinitionTranslationUpsert) {
 		s.AddUpdatedBy(v)
 	})
@@ -1163,14 +1163,14 @@ func (u *FieldDefinitionTranslationUpsertBulk) ClearUpdatedBy() *FieldDefinition
 }
 
 // SetDeletedBy sets the "deleted_by" field.
-func (u *FieldDefinitionTranslationUpsertBulk) SetDeletedBy(v uint64) *FieldDefinitionTranslationUpsertBulk {
+func (u *FieldDefinitionTranslationUpsertBulk) SetDeletedBy(v int64) *FieldDefinitionTranslationUpsertBulk {
 	return u.Update(func(s *FieldDefinitionTranslationUpsert) {
 		s.SetDeletedBy(v)
 	})
 }
 
 // AddDeletedBy adds v to the "deleted_by" field.
-func (u *FieldDefinitionTranslationUpsertBulk) AddDeletedBy(v uint64) *FieldDefinitionTranslationUpsertBulk {
+func (u *FieldDefinitionTranslationUpsertBulk) AddDeletedBy(v int64) *FieldDefinitionTranslationUpsertBulk {
 	return u.Update(func(s *FieldDefinitionTranslationUpsert) {
 		s.AddDeletedBy(v)
 	})
@@ -1191,14 +1191,14 @@ func (u *FieldDefinitionTranslationUpsertBulk) ClearDeletedBy() *FieldDefinition
 }
 
 // SetFieldDefinitionID sets the "field_definition_id" field.
-func (u *FieldDefinitionTranslationUpsertBulk) SetFieldDefinitionID(v uint64) *FieldDefinitionTranslationUpsertBulk {
+func (u *FieldDefinitionTranslationUpsertBulk) SetFieldDefinitionID(v int64) *FieldDefinitionTranslationUpsertBulk {
 	return u.Update(func(s *FieldDefinitionTranslationUpsert) {
 		s.SetFieldDefinitionID(v)
 	})
 }
 
 // AddFieldDefinitionID adds v to the "field_definition_id" field.
-func (u *FieldDefinitionTranslationUpsertBulk) AddFieldDefinitionID(v uint64) *FieldDefinitionTranslationUpsertBulk {
+func (u *FieldDefinitionTranslationUpsertBulk) AddFieldDefinitionID(v int64) *FieldDefinitionTranslationUpsertBulk {
 	return u.Update(func(s *FieldDefinitionTranslationUpsert) {
 		s.AddFieldDefinitionID(v)
 	})

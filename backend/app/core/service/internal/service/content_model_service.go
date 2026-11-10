@@ -83,7 +83,7 @@ func (s *ContentModelService) Count(ctx context.Context, req *paginationV1.Pagin
 	if err != nil {
 		return nil, err
 	}
-	return &contentV1.CountContentModelResponse{Count: uint64(count)}, nil
+	return &contentV1.CountContentModelResponse{Count: int64(count)}, nil
 }
 
 func (s *ContentModelService) Get(ctx context.Context, req *contentV1.GetContentModelRequest) (*contentV1.ContentModel, error) {
@@ -133,7 +133,7 @@ func (s *ContentModelService) ResolveContentReferences(ctx context.Context, req 
 
 	type refWant struct {
 		entityType string
-		id         uint64
+		id         int64
 	}
 	seen := make(map[string]struct{}, len(req.GetRefs()))
 	wants := make([]refWant, 0, len(req.GetRefs()))
@@ -149,8 +149,8 @@ func (s *ContentModelService) ResolveContentReferences(ctx context.Context, req 
 			continue
 		}
 		seen[m[0]] = struct{}{}
-		id, _ := strconv.ParseUint(m[2], 10, 32)
-		wants = append(wants, refWant{entityType: m[1], id: uint64(id)})
+		id, _ := strconv.ParseInt(m[2], 10, 64)
+		wants = append(wants, refWant{entityType: m[1], id: int64(id)})
 	}
 
 	lang := req.GetLanguageCode()
@@ -169,7 +169,7 @@ func (s *ContentModelService) ResolveContentReferences(ctx context.Context, req 
 				continue
 			}
 			items = append(items, &contentV1.ContentReferenceSummary{
-				Ref:              trans.Ptr(w.entityType + ":" + strconv.FormatUint(uint64(w.id), 10)),
+				Ref:              trans.Ptr(w.entityType + ":" + strconv.FormatInt(int64(w.id), 10)),
 				TargetEntityType: trans.Ptr(w.entityType),
 				TargetId:         trans.Ptr(w.id),
 				Title:            trans.Ptr(title),
@@ -191,7 +191,7 @@ func (s *ContentModelService) ResolveContentReferences(ctx context.Context, req 
 				continue
 			}
 			items = append(items, &contentV1.ContentReferenceSummary{
-				Ref:              trans.Ptr(w.entityType + ":" + strconv.FormatUint(uint64(w.id), 10)),
+				Ref:              trans.Ptr(w.entityType + ":" + strconv.FormatInt(int64(w.id), 10)),
 				TargetEntityType: trans.Ptr(w.entityType),
 				TargetId:         trans.Ptr(w.id),
 				Title:            trans.Ptr(title),

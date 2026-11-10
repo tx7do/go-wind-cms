@@ -65,13 +65,13 @@ func (_c *PostLikeCreate) SetNillableDeletedAt(v *time.Time) *PostLikeCreate {
 }
 
 // SetTenantID sets the "tenant_id" field.
-func (_c *PostLikeCreate) SetTenantID(v uint64) *PostLikeCreate {
+func (_c *PostLikeCreate) SetTenantID(v int64) *PostLikeCreate {
 	_c.mutation.SetTenantID(v)
 	return _c
 }
 
 // SetNillableTenantID sets the "tenant_id" field if the given value is not nil.
-func (_c *PostLikeCreate) SetNillableTenantID(v *uint64) *PostLikeCreate {
+func (_c *PostLikeCreate) SetNillableTenantID(v *int64) *PostLikeCreate {
 	if v != nil {
 		_c.SetTenantID(*v)
 	}
@@ -79,13 +79,13 @@ func (_c *PostLikeCreate) SetNillableTenantID(v *uint64) *PostLikeCreate {
 }
 
 // SetUserID sets the "user_id" field.
-func (_c *PostLikeCreate) SetUserID(v uint64) *PostLikeCreate {
+func (_c *PostLikeCreate) SetUserID(v int64) *PostLikeCreate {
 	_c.mutation.SetUserID(v)
 	return _c
 }
 
 // SetNillableUserID sets the "user_id" field if the given value is not nil.
-func (_c *PostLikeCreate) SetNillableUserID(v *uint64) *PostLikeCreate {
+func (_c *PostLikeCreate) SetNillableUserID(v *int64) *PostLikeCreate {
 	if v != nil {
 		_c.SetUserID(*v)
 	}
@@ -93,13 +93,13 @@ func (_c *PostLikeCreate) SetNillableUserID(v *uint64) *PostLikeCreate {
 }
 
 // SetPostID sets the "post_id" field.
-func (_c *PostLikeCreate) SetPostID(v uint64) *PostLikeCreate {
+func (_c *PostLikeCreate) SetPostID(v int64) *PostLikeCreate {
 	_c.mutation.SetPostID(v)
 	return _c
 }
 
 // SetNillablePostID sets the "post_id" field if the given value is not nil.
-func (_c *PostLikeCreate) SetNillablePostID(v *uint64) *PostLikeCreate {
+func (_c *PostLikeCreate) SetNillablePostID(v *int64) *PostLikeCreate {
 	if v != nil {
 		_c.SetPostID(*v)
 	}
@@ -107,7 +107,7 @@ func (_c *PostLikeCreate) SetNillablePostID(v *uint64) *PostLikeCreate {
 }
 
 // SetID sets the "id" field.
-func (_c *PostLikeCreate) SetID(v uint64) *PostLikeCreate {
+func (_c *PostLikeCreate) SetID(v int64) *PostLikeCreate {
 	_c.mutation.SetID(v)
 	return _c
 }
@@ -179,7 +179,7 @@ func (_c *PostLikeCreate) sqlSave(ctx context.Context) (*PostLike, error) {
 	}
 	if _spec.ID.Value != _node.ID {
 		id := _spec.ID.Value.(int64)
-		_node.ID = uint64(id)
+		_node.ID = int64(id)
 	}
 	_c.mutation.id = &_node.ID
 	_c.mutation.done = true
@@ -189,7 +189,7 @@ func (_c *PostLikeCreate) sqlSave(ctx context.Context) (*PostLike, error) {
 func (_c *PostLikeCreate) createSpec() (*PostLike, *sqlgraph.CreateSpec) {
 	var (
 		_node = &PostLike{config: _c.config}
-		_spec = sqlgraph.NewCreateSpec(postlike.Table, sqlgraph.NewFieldSpec(postlike.FieldID, field.TypeUint64))
+		_spec = sqlgraph.NewCreateSpec(postlike.Table, sqlgraph.NewFieldSpec(postlike.FieldID, field.TypeInt64))
 	)
 	_spec.OnConflict = _c.conflict
 	if id, ok := _c.mutation.ID(); ok {
@@ -209,15 +209,15 @@ func (_c *PostLikeCreate) createSpec() (*PostLike, *sqlgraph.CreateSpec) {
 		_node.DeletedAt = &value
 	}
 	if value, ok := _c.mutation.TenantID(); ok {
-		_spec.SetField(postlike.FieldTenantID, field.TypeUint64, value)
+		_spec.SetField(postlike.FieldTenantID, field.TypeInt64, value)
 		_node.TenantID = &value
 	}
 	if value, ok := _c.mutation.UserID(); ok {
-		_spec.SetField(postlike.FieldUserID, field.TypeUint64, value)
+		_spec.SetField(postlike.FieldUserID, field.TypeInt64, value)
 		_node.UserID = &value
 	}
 	if value, ok := _c.mutation.PostID(); ok {
-		_spec.SetField(postlike.FieldPostID, field.TypeUint64, value)
+		_spec.SetField(postlike.FieldPostID, field.TypeInt64, value)
 		_node.PostID = &value
 	}
 	return _node, _spec
@@ -309,7 +309,7 @@ func (u *PostLikeUpsert) ClearDeletedAt() *PostLikeUpsert {
 }
 
 // SetUserID sets the "user_id" field.
-func (u *PostLikeUpsert) SetUserID(v uint64) *PostLikeUpsert {
+func (u *PostLikeUpsert) SetUserID(v int64) *PostLikeUpsert {
 	u.Set(postlike.FieldUserID, v)
 	return u
 }
@@ -321,7 +321,7 @@ func (u *PostLikeUpsert) UpdateUserID() *PostLikeUpsert {
 }
 
 // AddUserID adds v to the "user_id" field.
-func (u *PostLikeUpsert) AddUserID(v uint64) *PostLikeUpsert {
+func (u *PostLikeUpsert) AddUserID(v int64) *PostLikeUpsert {
 	u.Add(postlike.FieldUserID, v)
 	return u
 }
@@ -333,7 +333,7 @@ func (u *PostLikeUpsert) ClearUserID() *PostLikeUpsert {
 }
 
 // SetPostID sets the "post_id" field.
-func (u *PostLikeUpsert) SetPostID(v uint64) *PostLikeUpsert {
+func (u *PostLikeUpsert) SetPostID(v int64) *PostLikeUpsert {
 	u.Set(postlike.FieldPostID, v)
 	return u
 }
@@ -345,7 +345,7 @@ func (u *PostLikeUpsert) UpdatePostID() *PostLikeUpsert {
 }
 
 // AddPostID adds v to the "post_id" field.
-func (u *PostLikeUpsert) AddPostID(v uint64) *PostLikeUpsert {
+func (u *PostLikeUpsert) AddPostID(v int64) *PostLikeUpsert {
 	u.Add(postlike.FieldPostID, v)
 	return u
 }
@@ -453,14 +453,14 @@ func (u *PostLikeUpsertOne) ClearDeletedAt() *PostLikeUpsertOne {
 }
 
 // SetUserID sets the "user_id" field.
-func (u *PostLikeUpsertOne) SetUserID(v uint64) *PostLikeUpsertOne {
+func (u *PostLikeUpsertOne) SetUserID(v int64) *PostLikeUpsertOne {
 	return u.Update(func(s *PostLikeUpsert) {
 		s.SetUserID(v)
 	})
 }
 
 // AddUserID adds v to the "user_id" field.
-func (u *PostLikeUpsertOne) AddUserID(v uint64) *PostLikeUpsertOne {
+func (u *PostLikeUpsertOne) AddUserID(v int64) *PostLikeUpsertOne {
 	return u.Update(func(s *PostLikeUpsert) {
 		s.AddUserID(v)
 	})
@@ -481,14 +481,14 @@ func (u *PostLikeUpsertOne) ClearUserID() *PostLikeUpsertOne {
 }
 
 // SetPostID sets the "post_id" field.
-func (u *PostLikeUpsertOne) SetPostID(v uint64) *PostLikeUpsertOne {
+func (u *PostLikeUpsertOne) SetPostID(v int64) *PostLikeUpsertOne {
 	return u.Update(func(s *PostLikeUpsert) {
 		s.SetPostID(v)
 	})
 }
 
 // AddPostID adds v to the "post_id" field.
-func (u *PostLikeUpsertOne) AddPostID(v uint64) *PostLikeUpsertOne {
+func (u *PostLikeUpsertOne) AddPostID(v int64) *PostLikeUpsertOne {
 	return u.Update(func(s *PostLikeUpsert) {
 		s.AddPostID(v)
 	})
@@ -524,7 +524,7 @@ func (u *PostLikeUpsertOne) ExecX(ctx context.Context) {
 }
 
 // Exec executes the UPSERT query and returns the inserted/updated ID.
-func (u *PostLikeUpsertOne) ID(ctx context.Context) (id uint64, err error) {
+func (u *PostLikeUpsertOne) ID(ctx context.Context) (id int64, err error) {
 	node, err := u.create.Save(ctx)
 	if err != nil {
 		return id, err
@@ -533,7 +533,7 @@ func (u *PostLikeUpsertOne) ID(ctx context.Context) (id uint64, err error) {
 }
 
 // IDX is like ID, but panics if an error occurs.
-func (u *PostLikeUpsertOne) IDX(ctx context.Context) uint64 {
+func (u *PostLikeUpsertOne) IDX(ctx context.Context) int64 {
 	id, err := u.ID(ctx)
 	if err != nil {
 		panic(err)
@@ -590,7 +590,7 @@ func (_c *PostLikeCreateBulk) Save(ctx context.Context) ([]*PostLike, error) {
 				mutation.id = &nodes[i].ID
 				if specs[i].ID.Value != nil && nodes[i].ID == 0 {
 					id := specs[i].ID.Value.(int64)
-					nodes[i].ID = uint64(id)
+					nodes[i].ID = int64(id)
 				}
 				mutation.done = true
 				return nodes[i], nil
@@ -771,14 +771,14 @@ func (u *PostLikeUpsertBulk) ClearDeletedAt() *PostLikeUpsertBulk {
 }
 
 // SetUserID sets the "user_id" field.
-func (u *PostLikeUpsertBulk) SetUserID(v uint64) *PostLikeUpsertBulk {
+func (u *PostLikeUpsertBulk) SetUserID(v int64) *PostLikeUpsertBulk {
 	return u.Update(func(s *PostLikeUpsert) {
 		s.SetUserID(v)
 	})
 }
 
 // AddUserID adds v to the "user_id" field.
-func (u *PostLikeUpsertBulk) AddUserID(v uint64) *PostLikeUpsertBulk {
+func (u *PostLikeUpsertBulk) AddUserID(v int64) *PostLikeUpsertBulk {
 	return u.Update(func(s *PostLikeUpsert) {
 		s.AddUserID(v)
 	})
@@ -799,14 +799,14 @@ func (u *PostLikeUpsertBulk) ClearUserID() *PostLikeUpsertBulk {
 }
 
 // SetPostID sets the "post_id" field.
-func (u *PostLikeUpsertBulk) SetPostID(v uint64) *PostLikeUpsertBulk {
+func (u *PostLikeUpsertBulk) SetPostID(v int64) *PostLikeUpsertBulk {
 	return u.Update(func(s *PostLikeUpsert) {
 		s.SetPostID(v)
 	})
 }
 
 // AddPostID adds v to the "post_id" field.
-func (u *PostLikeUpsertBulk) AddPostID(v uint64) *PostLikeUpsertBulk {
+func (u *PostLikeUpsertBulk) AddPostID(v int64) *PostLikeUpsertBulk {
 	return u.Update(func(s *PostLikeUpsert) {
 		s.AddPostID(v)
 	})

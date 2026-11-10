@@ -57,7 +57,7 @@ func (s *RedisCacheMonitorService) Get(ctx context.Context, _ *redisCacheV1.GetR
 	if n, err := s.rdb.DBSize(ctx).Result(); err != nil {
 		s.log.Errorf("redis DBSIZE failed: %s", err.Error())
 	} else if n >= 0 {
-		info.DbSize = uint64(n)
+		info.DbSize = int64(n)
 	}
 
 	if entries, err := s.rdb.SlowLogGet(ctx, slowLogFetchLimit).Result(); err != nil {

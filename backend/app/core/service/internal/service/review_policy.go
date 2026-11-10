@@ -7,22 +7,22 @@ import (
 	"github.com/go-kratos/kratos/v2/log"
 	"github.com/tx7do/kratos-bootstrap/bootstrap"
 
-	contentV1 "go-wind-cms/api/gen/go/content/service/v1"
 	"github.com/tx7do/go-crud/viewer"
+	contentV1 "go-wind-cms/api/gen/go/content/service/v1"
 
 	"go-wind-cms/app/core/service/internal/data"
 )
 
 // ReviewPolicy 发布审批多级策略：级数与各级角色来自系统参数
-//（review.post.levels / review.post.levelRoles，configservice 懒加载+失效广播）。
+// （review.post.levels / review.post.levelRoles，configservice 懒加载+失效广播）。
 // roleCodes 解析器由 wiring 注入（userRepo/roleRepo 在身份域，避免循环依赖）。
 type ReviewPolicy struct {
 	configRepo *data.ConfigRepo
-	roleCodes  func(ctx context.Context, userID uint64) []string
+	roleCodes  func(ctx context.Context, userID int64) []string
 	log        *log.Helper
 }
 
-func NewReviewPolicy(ctx *bootstrap.Context, configRepo *data.ConfigRepo, roleCodes func(ctx context.Context, userID uint64) []string) *ReviewPolicy {
+func NewReviewPolicy(ctx *bootstrap.Context, configRepo *data.ConfigRepo, roleCodes func(ctx context.Context, userID int64) []string) *ReviewPolicy {
 	return &ReviewPolicy{
 		configRepo: configRepo,
 		roleCodes:  roleCodes,
@@ -31,7 +31,7 @@ func NewReviewPolicy(ctx *bootstrap.Context, configRepo *data.ConfigRepo, roleCo
 }
 
 // Levels 发布审批级数（钳位 1..8；配置缺失/非法回落 1=单级，历史行为）。
-func (p *ReviewPolicy) Levels(ctx context.Context, tenantID uint64) int {
+func (p *ReviewPolicy) Levels(ctx context.Context, tenantID int64) int {
 	if p == nil || p.configRepo == nil {
 		return 1
 	}
@@ -46,7 +46,7 @@ func (p *ReviewPolicy) Levels(ctx context.Context, tenantID uint64) int {
 }
 
 // levelRoles 第 level 级（1 起）允许的审批角色 code 列表（空切片=不校验角色）。
-func (p *ReviewPolicy) levelRoles(ctx context.Context, tenantID uint64, level int) []string {
+func (p *ReviewPolicy) levelRoles(ctx context.Context, tenantID int64, level int) []string {
 	if p == nil || p.configRepo == nil {
 		return nil
 	}
@@ -73,7 +73,7 @@ func (p *ReviewPolicy) levelRoles(ctx context.Context, tenantID uint64, level in
 }
 
 // CheckApprover 校验操作者可审第 level 级（配置了角色才校验；无匹配角色 403）。
-func (p *ReviewPolicy) CheckApprover(ctx context.Context, tenantID uint64, userID uint64, level int) error {
+func (p *ReviewPolicy) CheckApprover(ctx context.Context, tenantID int64, userID int64, level int) error {
 	required := p.levelRoles(ctx, tenantID, level)
 	if len(required) == 0 || p.roleCodes == nil {
 		return nil
@@ -92,10 +92,10 @@ func (p *ReviewPolicy) CheckApprover(ctx context.Context, tenantID uint64, userI
 }
 
 // operatorTenantUserID 从 viewer 取操作者与租户（审批留痕与校验用）。
-func operatorTenantUserID(ctx context.Context) (userID, tenantID uint64, ok bool) {
+func operatorTenantUserID(ctx context.Context) (userID, tenantID int64, ok bool) {
 	vc, exist := viewer.FromContext(ctx)
 	if !exist || vc == nil {
 		return 0, 0, false
 	}
-	return uint64(vc.UserID()), uint64(vc.TenantID()), true
+	return int64(vc.UserID()), int64(vc.TenantID()), true
 }

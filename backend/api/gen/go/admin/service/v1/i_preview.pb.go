@@ -27,7 +27,7 @@ const (
 // 请求 - 签发帖子预览令牌
 type CreatePostPreviewTokenRequest struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
-	Id            uint64                 `protobuf:"varint,1,opt,name=id,proto3" json:"id,omitempty"`
+	Id            int64                  `protobuf:"varint,1,opt,name=id,proto3" json:"id,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -62,7 +62,7 @@ func (*CreatePostPreviewTokenRequest) Descriptor() ([]byte, []int) {
 	return file_admin_service_v1_i_preview_proto_rawDescGZIP(), []int{0}
 }
 
-func (x *CreatePostPreviewTokenRequest) GetId() uint64 {
+func (x *CreatePostPreviewTokenRequest) GetId() int64 {
 	if x != nil {
 		return x.Id
 	}
@@ -72,7 +72,7 @@ func (x *CreatePostPreviewTokenRequest) GetId() uint64 {
 // 请求 - 签发页面预览令牌
 type CreatePagePreviewTokenRequest struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
-	Id            uint64                 `protobuf:"varint,1,opt,name=id,proto3" json:"id,omitempty"`
+	Id            int64                  `protobuf:"varint,1,opt,name=id,proto3" json:"id,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -107,7 +107,7 @@ func (*CreatePagePreviewTokenRequest) Descriptor() ([]byte, []int) {
 	return file_admin_service_v1_i_preview_proto_rawDescGZIP(), []int{1}
 }
 
-func (x *CreatePagePreviewTokenRequest) GetId() uint64 {
+func (x *CreatePagePreviewTokenRequest) GetId() int64 {
 	if x != nil {
 		return x.Id
 	}
@@ -173,9 +173,9 @@ const file_admin_service_v1_i_preview_proto_rawDesc = "" +
 	"\n" +
 	" admin/service/v1/i_preview.proto\x12\x10admin.service.v1\x1a$gnostic/openapi/v3/annotations.proto\x1a\x1cgoogle/api/annotations.proto\x1a\x1fgoogle/protobuf/timestamp.proto\"?\n" +
 	"\x1dCreatePostPreviewTokenRequest\x12\x1e\n" +
-	"\x02id\x18\x01 \x01(\x04B\x0e\xbaG\v\x92\x02\b帖子IDR\x02id\"?\n" +
+	"\x02id\x18\x01 \x01(\x03B\x0e\xbaG\v\x92\x02\b帖子IDR\x02id\"?\n" +
 	"\x1dCreatePagePreviewTokenRequest\x12\x1e\n" +
-	"\x02id\x18\x01 \x01(\x04B\x0e\xbaG\v\x92\x02\b页面IDR\x02id\"\xe2\x01\n" +
+	"\x02id\x18\x01 \x01(\x03B\x0e\xbaG\v\x92\x02\b页面IDR\x02id\"\xe2\x01\n" +
 	"\fPreviewToken\x12e\n" +
 	"\x05token\x18\x01 \x01(\tBJ\xbaGG\x92\x02D预览令牌（拼接到 C 端详情 URL 的 preview_token 参数）H\x00R\x05token\x88\x01\x01\x12R\n" +
 	"\n" +

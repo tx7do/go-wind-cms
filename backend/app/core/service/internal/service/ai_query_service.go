@@ -41,20 +41,20 @@ const (
 // 白名单按本仓 CMS 真实 schema 适配（列清单经 information_schema 核对）。
 // 键为表名，值为给 LLM 的列说明（拼进提示词当数据字典）。
 var aiQueryTableWhitelist = map[string]string{
-	"posts":            "帖子主表：id, code(唯一编码), status(POST_STATUS_DRAFT草稿/POST_STATUS_PUBLISHED已发布/POST_STATUS_SCHEDULED定时/POST_STATUS_TRASHED回收站), author_id(作者用户ID), author_name, is_featured(是否推荐), publish_time, created_at；注意：标题和摘要在 post_translations 表（经 post_id 关联），posts 表没有 title 列",
-	"post_translations": "帖子翻译表：post_id(帖子ID), language_code(语言代码), title(标题), summary(摘要), word_count, created_at；查帖子标题必须 JOIN 此表",
-	"categories":        "分类表：id, code, status, parent_id(父分类), post_count(帖子数冗余), created_at；分类名在 category_translations（经 category_id 关联）",
-	"category_translations": "分类翻译表：category_id(分类ID), language_code, name(分类名), description, created_at",
-	"tags":            "标签表：id, code, status, post_count(帖子数冗余), created_at；标签名在 tag_translations（经 tag_id 关联）",
-	"tag_translations": "标签翻译表：tag_id(标签ID), language_code, name(标签名), created_at",
-	"post_tags":       "帖子-标签关联表：post_id, tag_id（查每帖标签或每标签帖子数用此表 JOIN）",
-	"post_categories": "帖子-分类关联表：post_id, category_id",
-	"comments":        "评论表：id, content(评论内容), author_name(评论者名), author_email, status(PUBLISHED=已发布/PENDING=待审/TRASHED), ip_address, created_at；帖子评论经 content_type 与 object_id(=帖子ID) 关联",
-	"interaction_counters": "互动计数表：target_type(对象类型), target_id(对象ID), metric(指标如 likes), count(计数), created_at",
-	"media_assets":   "媒体资产表：id, filename(文件名), type, mime_type, size(字节), url, width, height, created_at",
-	"sys_users":      "用户表：id, username(登录名), nickname(昵称), email, status, last_login_at, created_at；用户与角色是多对多，经 sys_user_roles 关联，sys_users 表没有 role_id 列",
-	"sys_roles":      "角色表：id, name(角色名), code(角色编码), status, created_at",
-	"sys_user_roles": "用户-角色关联表：user_id, role_id",
+	"posts":                    "帖子主表：id, code(唯一编码), status(POST_STATUS_DRAFT草稿/POST_STATUS_PUBLISHED已发布/POST_STATUS_SCHEDULED定时/POST_STATUS_TRASHED回收站), author_id(作者用户ID), author_name, is_featured(是否推荐), publish_time, created_at；注意：标题和摘要在 post_translations 表（经 post_id 关联），posts 表没有 title 列",
+	"post_translations":        "帖子翻译表：post_id(帖子ID), language_code(语言代码), title(标题), summary(摘要), word_count, created_at；查帖子标题必须 JOIN 此表",
+	"categories":               "分类表：id, code, status, parent_id(父分类), post_count(帖子数冗余), created_at；分类名在 category_translations（经 category_id 关联）",
+	"category_translations":    "分类翻译表：category_id(分类ID), language_code, name(分类名), description, created_at",
+	"tags":                     "标签表：id, code, status, post_count(帖子数冗余), created_at；标签名在 tag_translations（经 tag_id 关联）",
+	"tag_translations":         "标签翻译表：tag_id(标签ID), language_code, name(标签名), created_at",
+	"post_tags":                "帖子-标签关联表：post_id, tag_id（查每帖标签或每标签帖子数用此表 JOIN）",
+	"post_categories":          "帖子-分类关联表：post_id, category_id",
+	"comments":                 "评论表：id, content(评论内容), author_name(评论者名), author_email, status(PUBLISHED=已发布/PENDING=待审/TRASHED), ip_address, created_at；帖子评论经 content_type 与 object_id(=帖子ID) 关联",
+	"interaction_counters":     "互动计数表：target_type(对象类型), target_id(对象ID), metric(指标如 likes), count(计数), created_at",
+	"media_assets":             "媒体资产表：id, filename(文件名), type, mime_type, size(字节), url, width, height, created_at",
+	"sys_users":                "用户表：id, username(登录名), nickname(昵称), email, status, last_login_at, created_at；用户与角色是多对多，经 sys_user_roles 关联，sys_users 表没有 role_id 列",
+	"sys_roles":                "角色表：id, name(角色名), code(角色编码), status, created_at",
+	"sys_user_roles":           "用户-角色关联表：user_id, role_id",
 	"sys_operation_audit_logs": "操作审计日志：id, user_id, username, action(CREATE/UPDATE/DELETE/READ/EXPORT/…), resource_type, success(bool), failure_reason, created_at",
 	"sys_login_audit_logs":     "登录审计日志：id, user_id, username, status(SUCCESS/FAILED), ip_address, created_at",
 	"sys_ai_usage_logs":        "AI 用量流水：id, user_id, tenant_id, model_name, prompt_tokens, completion_tokens, total_tokens, duration_ms, created_at",
@@ -63,22 +63,22 @@ var aiQueryTableWhitelist = map[string]string{
 // aiQueryTenantTableWhitelist 租户表白名单：只含带 tenant_id 列、可安全暴露给
 // 租户自助分析的本租户数据表（平台级表不在其中）。
 var aiQueryTenantTableWhitelist = map[string]string{
-	"posts":            "帖子表（本租户）：id, code, status(POST_STATUS_*), author_id, is_featured, created_at；标题在 post_translations（经 post_id 关联）",
-	"post_translations": "帖子翻译表（本租户）：post_id, language_code, title, summary, created_at",
-	"categories":       "分类表（本租户）：id, code, post_count, created_at；分类名在 category_translations",
-	"category_translations": "分类翻译表（本租户）：category_id, language_code, name, created_at",
-	"tags":             "标签表（本租户）：id, code, post_count, created_at；标签名在 tag_translations",
-	"tag_translations": "标签翻译表（本租户）：tag_id, language_code, name, created_at",
-	"comments":         "评论表（本租户）：id, content, author_name, status, created_at",
-	"interaction_counters": "互动计数表（本租户）：target_type, target_id, metric, count, created_at",
-	"media_assets":     "媒体资产表（本租户）：id, filename, mime_type, size, url, created_at",
+	"posts":                    "帖子表（本租户）：id, code, status(POST_STATUS_*), author_id, is_featured, created_at；标题在 post_translations（经 post_id 关联）",
+	"post_translations":        "帖子翻译表（本租户）：post_id, language_code, title, summary, created_at",
+	"categories":               "分类表（本租户）：id, code, post_count, created_at；分类名在 category_translations",
+	"category_translations":    "分类翻译表（本租户）：category_id, language_code, name, created_at",
+	"tags":                     "标签表（本租户）：id, code, post_count, created_at；标签名在 tag_translations",
+	"tag_translations":         "标签翻译表（本租户）：tag_id, language_code, name, created_at",
+	"comments":                 "评论表（本租户）：id, content, author_name, status, created_at",
+	"interaction_counters":     "互动计数表（本租户）：target_type, target_id, metric, count, created_at",
+	"media_assets":             "媒体资产表（本租户）：id, filename, mime_type, size, url, created_at",
 	"sys_operation_audit_logs": "操作审计日志（本租户）：id, user_id, username, action, success, failure_reason, created_at",
 	"sys_login_audit_logs":     "登录审计日志（本租户）：id, user_id, username, status(SUCCESS/FAILED), ip_address, created_at",
 	"sys_ai_usage_logs":        "AI 用量流水（本租户）：id, user_id, model_name, prompt_tokens, completion_tokens, total_tokens, created_at",
 }
 
 // tenantIDPatternFor 构造"tenant_id = {id}"存在性校验的正则（容忍别名与空白）。
-func tenantIDPatternFor(tenantID uint64) *regexp.Regexp {
+func tenantIDPatternFor(tenantID int64) *regexp.Regexp {
 	return regexp.MustCompile(`(?i)\btenant_id\s*=\s*` + fmt.Sprintf("%d", tenantID) + `\b`)
 }
 
@@ -219,14 +219,14 @@ func (s *AiQueryService) Ask(ctx context.Context, req *aiV1.AskAiQueryRequest) (
 }
 
 // operatorTenant / operatorID：viewer 上下文取操作者（unary 中间件注入）。
-func (s *AiQueryService) operatorTenant(ctx context.Context) (uint64, bool) {
+func (s *AiQueryService) operatorTenant(ctx context.Context) (int64, bool) {
 	if vc, exist := viewer.FromContext(ctx); exist && vc != nil {
-		return uint64(vc.TenantID()), true
+		return int64(vc.TenantID()), true
 	}
 	return 0, false
 }
 
-func (s *AiQueryService) operatorID(ctx context.Context) uint64 {
+func (s *AiQueryService) operatorID(ctx context.Context) int64 {
 	if uid, ok := viewerUserIDFromContext(ctx); ok {
 		return uid
 	}
@@ -234,7 +234,7 @@ func (s *AiQueryService) operatorID(ctx context.Context) uint64 {
 }
 
 // generateSQL 数据字典 + 对话历史 + 问题 → 只读 SQL。
-func (s *AiQueryService) generateSQL(ctx context.Context, client *openai.Client, provider *ent.AiProvider, question, lang string, history []aiV1.AiQueryHistoryItem, whitelist map[string]string, tenantID uint64) (string, uint64, error) {
+func (s *AiQueryService) generateSQL(ctx context.Context, client *openai.Client, provider *ent.AiProvider, question, lang string, history []aiV1.AiQueryHistoryItem, whitelist map[string]string, tenantID int64) (string, int64, error) {
 	var sb strings.Builder
 	sb.WriteString("你是本系统的只读数据分析引擎。用户的提问永远是对上面列出的数据库表发起查询——哪怕措辞听起来像个人账号问题，一律直接生成 SQL，绝不拒绝。\n")
 	sb.WriteString("根据表结构与用户问题，生成一条 Postgres 只读 SELECT 语句。\n")
@@ -310,7 +310,7 @@ func (s *AiQueryService) generateSQL(ctx context.Context, client *openai.Client,
 	if err != nil {
 		return "", 0, aiV1.ErrorInternalServerError("ai query generate failed: %v", err)
 	}
-	tokens := uint64(resp.Usage.TotalTokens)
+	tokens := int64(resp.Usage.TotalTokens)
 	if len(resp.Choices) == 0 {
 		return "", tokens, aiV1.ErrorInternalServerError("ai query generate empty")
 	}
@@ -419,7 +419,7 @@ func (s *AiQueryService) executeReadOnly(ctx context.Context, sqlText string) ([
 }
 
 // generateAnswer 结果集 → 自然语言结论（第二次调用）。
-func (s *AiQueryService) generateAnswer(ctx context.Context, client *openai.Client, provider *ent.AiProvider, question, sqlText string, columns []string, rows []*aiV1.AiQueryRow, lang string) (string, uint64, error) {
+func (s *AiQueryService) generateAnswer(ctx context.Context, client *openai.Client, provider *ent.AiProvider, question, sqlText string, columns []string, rows []*aiV1.AiQueryRow, lang string) (string, int64, error) {
 	var sb strings.Builder
 	sb.WriteString(fmt.Sprintf("用户问题：%s\n\n执行的 SQL：%s\n\n查询结果（列：%s）：\n", question, sqlText, strings.Join(columns, ", ")))
 	maxRows := len(rows)
@@ -453,7 +453,7 @@ func (s *AiQueryService) generateAnswer(ctx context.Context, client *openai.Clie
 	if err != nil {
 		return "", 0, err
 	}
-	tokens := uint64(resp.Usage.TotalTokens)
+	tokens := int64(resp.Usage.TotalTokens)
 	if len(resp.Choices) == 0 {
 		return "", tokens, fmt.Errorf("empty answer")
 	}
@@ -603,7 +603,7 @@ func (s *AiQueryService) pushInternalMessage(ctx context.Context, title, content
 			Content:   &content,
 			Status:    trans.Ptr(internalMessageV1.InternalMessage_PUBLISHED),
 			Type:      trans.Ptr(internalMessageV1.InternalMessage_NOTIFICATION),
-			CreatedBy: trans.Ptr(uint64(0)),
+			CreatedBy: trans.Ptr(int64(0)),
 			CreatedAt: timestamppb.New(now),
 		},
 	})

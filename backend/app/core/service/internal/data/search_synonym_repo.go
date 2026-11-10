@@ -71,7 +71,7 @@ func (r *SearchSynonymRepo) List(ctx context.Context) ([]*contentV1.SearchSynony
 }
 
 // Create 创建（term 重复由唯一索引兜底）。
-func (r *SearchSynonymRepo) Create(ctx context.Context, tenantID uint64, dto *contentV1.SearchSynonym) (*contentV1.SearchSynonym, error) {
+func (r *SearchSynonymRepo) Create(ctx context.Context, tenantID int64, dto *contentV1.SearchSynonym) (*contentV1.SearchSynonym, error) {
 	raw, err := json.Marshal(dto.GetSynonyms())
 	if err != nil {
 		return nil, contentV1.ErrorBadRequest("invalid synonyms payload")
@@ -96,7 +96,7 @@ func (r *SearchSynonymRepo) Create(ctx context.Context, tenantID uint64, dto *co
 }
 
 // Delete 删除。
-func (r *SearchSynonymRepo) Delete(ctx context.Context, id uint64) error {
+func (r *SearchSynonymRepo) Delete(ctx context.Context, id int64) error {
 	err := r.entClient.Client().SearchSynonym.DeleteOneID(id).Exec(ctx)
 	if err != nil {
 		if ent.IsNotFound(err) {
@@ -110,7 +110,7 @@ func (r *SearchSynonymRepo) Delete(ctx context.Context, id uint64) error {
 
 // EnabledTermMap 本租户启用词表：触发词 → 扩展词列表（检索查询侧扩展用）。
 // 词表量小（几十条），每次搜索直查可接受。
-func (r *SearchSynonymRepo) EnabledTermMap(ctx context.Context, tenantID uint64) map[string][]string {
+func (r *SearchSynonymRepo) EnabledTermMap(ctx context.Context, tenantID int64) map[string][]string {
 	rows, err := r.entClient.Client().SearchSynonym.Query().
 		Where(
 			searchsynonym.TenantIDEQ(tenantID),
@@ -134,7 +134,7 @@ func (r *SearchSynonymRepo) EnabledTermMap(ctx context.Context, tenantID uint64)
 
 // ExpandQuery 查询侧同义词扩展：把查询串按词表展开成候选查询组
 // （原始查询永远在首位）。命中不到词表时返回 nil（无需扩展）。
-func (r *SearchSynonymRepo) ExpandQuery(ctx context.Context, tenantID uint64, query string) []string {
+func (r *SearchSynonymRepo) ExpandQuery(ctx context.Context, tenantID int64, query string) []string {
 	if r.entClient == nil {
 		return nil
 	}

@@ -17,7 +17,7 @@ type NavigationItem struct {
 	config `json:"-"`
 	// ID of the ent.
 	// id
-	ID uint64 `json:"id,omitempty"`
+	ID int64 `json:"id,omitempty"`
 	// 创建时间
 	CreatedAt *time.Time `json:"created_at,omitempty"`
 	// 更新时间
@@ -25,27 +25,27 @@ type NavigationItem struct {
 	// 删除时间
 	DeletedAt *time.Time `json:"deleted_at,omitempty"`
 	// 创建者ID
-	CreatedBy *uint64 `json:"created_by,omitempty"`
+	CreatedBy *int64 `json:"created_by,omitempty"`
 	// 更新者ID
-	UpdatedBy *uint64 `json:"updated_by,omitempty"`
+	UpdatedBy *int64 `json:"updated_by,omitempty"`
 	// 删除者ID
-	DeletedBy *uint64 `json:"deleted_by,omitempty"`
+	DeletedBy *int64 `json:"deleted_by,omitempty"`
 	// 排序值（越小越靠前）
 	SortOrder *uint32 `json:"sort_order,omitempty"`
 	// 父节点ID
-	ParentID *uint64 `json:"parent_id,omitempty"`
+	ParentID *int64 `json:"parent_id,omitempty"`
 	// 租户ID
-	TenantID *uint64 `json:"tenant_id,omitempty"`
+	TenantID *int64 `json:"tenant_id,omitempty"`
 	// 链接类型
 	LinkType *navigationitem.LinkType `json:"link_type,omitempty"`
 	// 所属导航菜单ID
-	NavigationID *uint64 `json:"navigation_id,omitempty"`
+	NavigationID *int64 `json:"navigation_id,omitempty"`
 	// 显示文本
 	Title *string `json:"title,omitempty"`
 	// 目标 URL
 	URL *string `json:"url,omitempty"`
 	// 关联对象ID
-	ObjectID *uint64 `json:"object_id,omitempty"`
+	ObjectID *int64 `json:"object_id,omitempty"`
 	// 图标
 	Icon *string `json:"icon,omitempty"`
 	// 描述文本
@@ -126,7 +126,7 @@ func (_m *NavigationItem) assignValues(columns []string, values []any) error {
 			if !ok {
 				return fmt.Errorf("unexpected type %T for field id", value)
 			}
-			_m.ID = uint64(value.Int64)
+			_m.ID = int64(value.Int64)
 		case navigationitem.FieldCreatedAt:
 			if value, ok := values[i].(*sql.NullTime); !ok {
 				return fmt.Errorf("unexpected type %T for field created_at", values[i])
@@ -152,22 +152,22 @@ func (_m *NavigationItem) assignValues(columns []string, values []any) error {
 			if value, ok := values[i].(*sql.NullInt64); !ok {
 				return fmt.Errorf("unexpected type %T for field created_by", values[i])
 			} else if value.Valid {
-				_m.CreatedBy = new(uint64)
-				*_m.CreatedBy = uint64(value.Int64)
+				_m.CreatedBy = new(int64)
+				*_m.CreatedBy = value.Int64
 			}
 		case navigationitem.FieldUpdatedBy:
 			if value, ok := values[i].(*sql.NullInt64); !ok {
 				return fmt.Errorf("unexpected type %T for field updated_by", values[i])
 			} else if value.Valid {
-				_m.UpdatedBy = new(uint64)
-				*_m.UpdatedBy = uint64(value.Int64)
+				_m.UpdatedBy = new(int64)
+				*_m.UpdatedBy = value.Int64
 			}
 		case navigationitem.FieldDeletedBy:
 			if value, ok := values[i].(*sql.NullInt64); !ok {
 				return fmt.Errorf("unexpected type %T for field deleted_by", values[i])
 			} else if value.Valid {
-				_m.DeletedBy = new(uint64)
-				*_m.DeletedBy = uint64(value.Int64)
+				_m.DeletedBy = new(int64)
+				*_m.DeletedBy = value.Int64
 			}
 		case navigationitem.FieldSortOrder:
 			if value, ok := values[i].(*sql.NullInt64); !ok {
@@ -180,15 +180,15 @@ func (_m *NavigationItem) assignValues(columns []string, values []any) error {
 			if value, ok := values[i].(*sql.NullInt64); !ok {
 				return fmt.Errorf("unexpected type %T for field parent_id", values[i])
 			} else if value.Valid {
-				_m.ParentID = new(uint64)
-				*_m.ParentID = uint64(value.Int64)
+				_m.ParentID = new(int64)
+				*_m.ParentID = value.Int64
 			}
 		case navigationitem.FieldTenantID:
 			if value, ok := values[i].(*sql.NullInt64); !ok {
 				return fmt.Errorf("unexpected type %T for field tenant_id", values[i])
 			} else if value.Valid {
-				_m.TenantID = new(uint64)
-				*_m.TenantID = uint64(value.Int64)
+				_m.TenantID = new(int64)
+				*_m.TenantID = value.Int64
 			}
 		case navigationitem.FieldLinkType:
 			if value, ok := values[i].(*sql.NullString); !ok {
@@ -201,8 +201,8 @@ func (_m *NavigationItem) assignValues(columns []string, values []any) error {
 			if value, ok := values[i].(*sql.NullInt64); !ok {
 				return fmt.Errorf("unexpected type %T for field navigation_id", values[i])
 			} else if value.Valid {
-				_m.NavigationID = new(uint64)
-				*_m.NavigationID = uint64(value.Int64)
+				_m.NavigationID = new(int64)
+				*_m.NavigationID = value.Int64
 			}
 		case navigationitem.FieldTitle:
 			if value, ok := values[i].(*sql.NullString); !ok {
@@ -222,8 +222,8 @@ func (_m *NavigationItem) assignValues(columns []string, values []any) error {
 			if value, ok := values[i].(*sql.NullInt64); !ok {
 				return fmt.Errorf("unexpected type %T for field object_id", values[i])
 			} else if value.Valid {
-				_m.ObjectID = new(uint64)
-				*_m.ObjectID = uint64(value.Int64)
+				_m.ObjectID = new(int64)
+				*_m.ObjectID = value.Int64
 			}
 		case navigationitem.FieldIcon:
 			if value, ok := values[i].(*sql.NullString); !ok {

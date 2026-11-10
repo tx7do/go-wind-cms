@@ -70,14 +70,14 @@ func (_u *PostLikeUpdate) ClearDeletedAt() *PostLikeUpdate {
 }
 
 // SetUserID sets the "user_id" field.
-func (_u *PostLikeUpdate) SetUserID(v uint64) *PostLikeUpdate {
+func (_u *PostLikeUpdate) SetUserID(v int64) *PostLikeUpdate {
 	_u.mutation.ResetUserID()
 	_u.mutation.SetUserID(v)
 	return _u
 }
 
 // SetNillableUserID sets the "user_id" field if the given value is not nil.
-func (_u *PostLikeUpdate) SetNillableUserID(v *uint64) *PostLikeUpdate {
+func (_u *PostLikeUpdate) SetNillableUserID(v *int64) *PostLikeUpdate {
 	if v != nil {
 		_u.SetUserID(*v)
 	}
@@ -97,14 +97,14 @@ func (_u *PostLikeUpdate) ClearUserID() *PostLikeUpdate {
 }
 
 // SetPostID sets the "post_id" field.
-func (_u *PostLikeUpdate) SetPostID(v uint64) *PostLikeUpdate {
+func (_u *PostLikeUpdate) SetPostID(v int64) *PostLikeUpdate {
 	_u.mutation.ResetPostID()
 	_u.mutation.SetPostID(v)
 	return _u
 }
 
 // SetNillablePostID sets the "post_id" field if the given value is not nil.
-func (_u *PostLikeUpdate) SetNillablePostID(v *uint64) *PostLikeUpdate {
+func (_u *PostLikeUpdate) SetNillablePostID(v *int64) *PostLikeUpdate {
 	if v != nil {
 		_u.SetPostID(*v)
 	}
@@ -162,7 +162,7 @@ func (_u *PostLikeUpdate) Modify(modifiers ...func(u *sql.UpdateBuilder)) *PostL
 }
 
 func (_u *PostLikeUpdate) sqlSave(ctx context.Context) (_node int, err error) {
-	_spec := sqlgraph.NewUpdateSpec(postlike.Table, postlike.Columns, sqlgraph.NewFieldSpec(postlike.FieldID, field.TypeUint64))
+	_spec := sqlgraph.NewUpdateSpec(postlike.Table, postlike.Columns, sqlgraph.NewFieldSpec(postlike.FieldID, field.TypeInt64))
 	if ps := _u.mutation.predicates; len(ps) > 0 {
 		_spec.Predicate = func(selector *sql.Selector) {
 			for i := range ps {
@@ -186,25 +186,25 @@ func (_u *PostLikeUpdate) sqlSave(ctx context.Context) (_node int, err error) {
 		_spec.ClearField(postlike.FieldDeletedAt, field.TypeTime)
 	}
 	if _u.mutation.TenantIDCleared() {
-		_spec.ClearField(postlike.FieldTenantID, field.TypeUint64)
+		_spec.ClearField(postlike.FieldTenantID, field.TypeInt64)
 	}
 	if value, ok := _u.mutation.UserID(); ok {
-		_spec.SetField(postlike.FieldUserID, field.TypeUint64, value)
+		_spec.SetField(postlike.FieldUserID, field.TypeInt64, value)
 	}
 	if value, ok := _u.mutation.AddedUserID(); ok {
-		_spec.AddField(postlike.FieldUserID, field.TypeUint64, value)
+		_spec.AddField(postlike.FieldUserID, field.TypeInt64, value)
 	}
 	if _u.mutation.UserIDCleared() {
-		_spec.ClearField(postlike.FieldUserID, field.TypeUint64)
+		_spec.ClearField(postlike.FieldUserID, field.TypeInt64)
 	}
 	if value, ok := _u.mutation.PostID(); ok {
-		_spec.SetField(postlike.FieldPostID, field.TypeUint64, value)
+		_spec.SetField(postlike.FieldPostID, field.TypeInt64, value)
 	}
 	if value, ok := _u.mutation.AddedPostID(); ok {
-		_spec.AddField(postlike.FieldPostID, field.TypeUint64, value)
+		_spec.AddField(postlike.FieldPostID, field.TypeInt64, value)
 	}
 	if _u.mutation.PostIDCleared() {
-		_spec.ClearField(postlike.FieldPostID, field.TypeUint64)
+		_spec.ClearField(postlike.FieldPostID, field.TypeInt64)
 	}
 	_spec.AddModifiers(_u.modifiers...)
 	if _node, err = sqlgraph.UpdateNodes(ctx, _u.driver, _spec); err != nil {
@@ -269,14 +269,14 @@ func (_u *PostLikeUpdateOne) ClearDeletedAt() *PostLikeUpdateOne {
 }
 
 // SetUserID sets the "user_id" field.
-func (_u *PostLikeUpdateOne) SetUserID(v uint64) *PostLikeUpdateOne {
+func (_u *PostLikeUpdateOne) SetUserID(v int64) *PostLikeUpdateOne {
 	_u.mutation.ResetUserID()
 	_u.mutation.SetUserID(v)
 	return _u
 }
 
 // SetNillableUserID sets the "user_id" field if the given value is not nil.
-func (_u *PostLikeUpdateOne) SetNillableUserID(v *uint64) *PostLikeUpdateOne {
+func (_u *PostLikeUpdateOne) SetNillableUserID(v *int64) *PostLikeUpdateOne {
 	if v != nil {
 		_u.SetUserID(*v)
 	}
@@ -296,14 +296,14 @@ func (_u *PostLikeUpdateOne) ClearUserID() *PostLikeUpdateOne {
 }
 
 // SetPostID sets the "post_id" field.
-func (_u *PostLikeUpdateOne) SetPostID(v uint64) *PostLikeUpdateOne {
+func (_u *PostLikeUpdateOne) SetPostID(v int64) *PostLikeUpdateOne {
 	_u.mutation.ResetPostID()
 	_u.mutation.SetPostID(v)
 	return _u
 }
 
 // SetNillablePostID sets the "post_id" field if the given value is not nil.
-func (_u *PostLikeUpdateOne) SetNillablePostID(v *uint64) *PostLikeUpdateOne {
+func (_u *PostLikeUpdateOne) SetNillablePostID(v *int64) *PostLikeUpdateOne {
 	if v != nil {
 		_u.SetPostID(*v)
 	}
@@ -374,7 +374,7 @@ func (_u *PostLikeUpdateOne) Modify(modifiers ...func(u *sql.UpdateBuilder)) *Po
 }
 
 func (_u *PostLikeUpdateOne) sqlSave(ctx context.Context) (_node *PostLike, err error) {
-	_spec := sqlgraph.NewUpdateSpec(postlike.Table, postlike.Columns, sqlgraph.NewFieldSpec(postlike.FieldID, field.TypeUint64))
+	_spec := sqlgraph.NewUpdateSpec(postlike.Table, postlike.Columns, sqlgraph.NewFieldSpec(postlike.FieldID, field.TypeInt64))
 	id, ok := _u.mutation.ID()
 	if !ok {
 		return nil, &ValidationError{Name: "id", err: errors.New(`ent: missing "PostLike.id" for update`)}
@@ -415,25 +415,25 @@ func (_u *PostLikeUpdateOne) sqlSave(ctx context.Context) (_node *PostLike, err 
 		_spec.ClearField(postlike.FieldDeletedAt, field.TypeTime)
 	}
 	if _u.mutation.TenantIDCleared() {
-		_spec.ClearField(postlike.FieldTenantID, field.TypeUint64)
+		_spec.ClearField(postlike.FieldTenantID, field.TypeInt64)
 	}
 	if value, ok := _u.mutation.UserID(); ok {
-		_spec.SetField(postlike.FieldUserID, field.TypeUint64, value)
+		_spec.SetField(postlike.FieldUserID, field.TypeInt64, value)
 	}
 	if value, ok := _u.mutation.AddedUserID(); ok {
-		_spec.AddField(postlike.FieldUserID, field.TypeUint64, value)
+		_spec.AddField(postlike.FieldUserID, field.TypeInt64, value)
 	}
 	if _u.mutation.UserIDCleared() {
-		_spec.ClearField(postlike.FieldUserID, field.TypeUint64)
+		_spec.ClearField(postlike.FieldUserID, field.TypeInt64)
 	}
 	if value, ok := _u.mutation.PostID(); ok {
-		_spec.SetField(postlike.FieldPostID, field.TypeUint64, value)
+		_spec.SetField(postlike.FieldPostID, field.TypeInt64, value)
 	}
 	if value, ok := _u.mutation.AddedPostID(); ok {
-		_spec.AddField(postlike.FieldPostID, field.TypeUint64, value)
+		_spec.AddField(postlike.FieldPostID, field.TypeInt64, value)
 	}
 	if _u.mutation.PostIDCleared() {
-		_spec.ClearField(postlike.FieldPostID, field.TypeUint64)
+		_spec.ClearField(postlike.FieldPostID, field.TypeInt64)
 	}
 	_spec.AddModifiers(_u.modifiers...)
 	_node = &PostLike{config: _u.config}

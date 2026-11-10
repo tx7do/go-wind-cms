@@ -31,11 +31,11 @@ func (PostWatch) Annotations() []schema.Annotation {
 
 func (PostWatch) Fields() []ent.Field {
 	return []ent.Field{
-		field.Uint64("user_id").
+		field.Int64("user_id").
 			Comment("收藏用户ID").
 			Optional().
 			Nillable(),
-		field.Uint64("post_id").
+		field.Int64("post_id").
 			Comment("被收藏帖子ID").
 			Optional().
 			Nillable(),
@@ -46,7 +46,7 @@ func (PostWatch) Mixin() []ent.Mixin {
 	return []ent.Mixin{
 		mixin.AutoIncrementId64{},
 		mixin.TimeAt{},
-		mixin.TenantID[uint64]{},
+		mixin.TenantID[int64]{},
 	}
 }
 

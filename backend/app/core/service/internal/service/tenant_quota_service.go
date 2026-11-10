@@ -42,13 +42,12 @@ type TenantQuotaService struct {
 	// internalMessages 站内信投递缝（水位告警出口）：双向引用，构造后注册
 	//（与通知域 Notifier 缝同型；未注入时水位任务只扫描不投递并留告警日志）。
 	internalMessages internalMessageSender
-	quotaPlanRepo *data.QuotaPlanRepo
-
+	quotaPlanRepo    *data.QuotaPlanRepo
 }
 
 // internalMessageSender 水位告警投递所需的最小站内信面（便于测试桩替）。
 type internalMessageSender interface {
-	SendSystemNotification(ctx context.Context, title, content string, targetUserIDs []uint64) (uint64, error)
+	SendSystemNotification(ctx context.Context, title, content string, targetUserIDs []int64) (int64, error)
 }
 
 // RegisterInternalMessages 注册站内信投递缝（构造完成后调用，解双向引用）。
@@ -116,7 +115,7 @@ func (s *TenantQuotaService) Delete(ctx context.Context, req *identityV1.DeleteT
 
 // buildUsage 聚合租户用量与配额（GetUsage/GetMyTenantUsage 共用）。
 // 单维度计量失败记日志后按 0 计——展示不因单表抖动整页失败（闸门另有 fail-open）。
-func (s *TenantQuotaService) buildUsage(ctx context.Context, tenantID uint64) (*identityV1.TenantUsage, error) {
+func (s *TenantQuotaService) buildUsage(ctx context.Context, tenantID int64) (*identityV1.TenantUsage, error) {
 	sysCtx := appViewer.NewSystemViewerContext(ctx)
 	now := time.Now()
 	monthStart := time.Date(now.Year(), now.Month(), 1, 0, 0, 0, 0, time.Local)
@@ -131,7 +130,7 @@ func (s *TenantQuotaService) buildUsage(ctx context.Context, tenantID uint64) (*
 	}
 	for _, q := range quotas {
 		usage.Quotas = append(usage.Quotas, &identityV1.QuotaUsage{
-			QuotaType: quotaTypeEntToProto(q.QuotaType),
+			QuotaType:  quotaTypeEntToProto(q.QuotaType),
 			QuotaValue: &q.QuotaValue,
 		})
 	}
@@ -160,7 +159,8 @@ func (s *TenantQuotaService) buildUsage(ctx context.Context, tenantID uint64) (*
 	if n, terr := s.repo.SumAiTokensInTenantSince(sysCtx, tenantID, monthStart); terr != nil {
 		s.log.Errorf("get usage: sum ai tokens for tenant %d failed: %s", tenantID, terr.Error())
 	} else {
-		usage.AiTokensMonth = &n
+		t64 := uint64(n)
+		usage.AiTokensMonth = &t64
 	}
 
 	return usage, nil
@@ -218,7 +218,7 @@ func (s *TenantQuotaService) CheckTenantAccess(ctx context.Context, req *identit
 			s.log.Errorf("tenant gate: api call count for tenant %d failed: %s", req.GetTenantId(), cerr.Error())
 			return &identityV1.CheckTenantAccessResponse{}, nil // fail-open
 		}
-		if err := checkQuotaNotExceeded("API_CALL", limit, uint64(cnt), 0); err != nil {
+		if err := checkQuotaNotExceeded("API_CALL", limit, int64(cnt), 0); err != nil {
 			s.log.Warnf("tenant gate: tenant %d request %s %s blocked by API_CALL quota", req.GetTenantId(), req.GetMethod(), req.GetPath())
 			return nil, err
 		}
@@ -268,7 +268,7 @@ func (s *TenantQuotaService) CheckQuota(ctx context.Context, req *identityV1.Che
 			s.log.Errorf("quota gate: storage sum for tenant %d failed: %s", req.GetTenantId(), cerr.Error())
 			return &identityV1.CheckQuotaResponse{}, nil // fail-open
 		}
-		if err := checkQuotaNotExceeded("STORAGE", limit, used, req.GetAdditional()); err != nil {
+		if err := checkQuotaNotExceeded("STORAGE", limit, used, int64(req.GetAdditional())); err != nil {
 			return nil, err
 		}
 
@@ -281,14 +281,14 @@ func (s *TenantQuotaService) CheckQuota(ctx context.Context, req *identityV1.Che
 }
 
 // quotaLimitOf 取租户指定类型的配额上限；无条目返回 hasLimit=false（未限售）。
-func (s *TenantQuotaService) quotaLimitOf(ctx context.Context, tenantID uint64, qt identityV1.TenantQuota_QuotaType) (limit uint64, hasLimit bool, err error) {
+func (s *TenantQuotaService) quotaLimitOf(ctx context.Context, tenantID int64, qt identityV1.TenantQuota_QuotaType) (limit int64, hasLimit bool, err error) {
 	quotas, err := s.repo.ListByTenant(ctx, tenantID)
 	if err != nil {
 		return 0, false, err
 	}
 	for _, q := range quotas {
 		if q.QuotaType == tenantquota.QuotaType(quotaTypeName(qt)) {
-			return q.QuotaValue, true, nil
+			return int64(q.QuotaValue), true, nil
 		}
 	}
 	return 0, false, nil
@@ -313,7 +313,7 @@ func quotaTypeEntToProto(qt tenantquota.QuotaType) *identityV1.TenantQuota_Quota
 // checkQuotaNotExceeded 纯判定：配额存在且超限 → 403（消息带类型与数值供前端展示）。
 //   - STORAGE（容量型）：used+本次上传 > limit 即超；
 //   - USER_LIMIT / API_CALL（计数型）：used >= limit 即超。
-func checkQuotaNotExceeded(quotaType string, limit, used, additional uint64) error {
+func checkQuotaNotExceeded(quotaType string, limit, used, additional int64) error {
 	exceeded := false
 	if quotaType == "STORAGE" {
 		exceeded = used+additional > limit
@@ -330,21 +330,21 @@ func checkQuotaNotExceeded(quotaType string, limit, used, additional uint64) err
 
 // QuotaWatermarkHit 单租户单配额类型的水位命中（只读扫描结果，无任何拒绝语义）。
 type QuotaWatermarkHit struct {
-	TenantID   uint64
+	TenantID   int64
 	TenantName string
 	// AdminUserID 租户管理员（sys_tenants.admin_user_id；0 = 未设置，投递侧跳过）。
-	AdminUserID uint64
+	AdminUserID int64
 	// QuotaType 配额类型技术名（proto 枚举名，与用量页/闸门报错口径一致，不做翻译）。
 	QuotaType string
-	Used      uint64
-	Limit     uint64
+	Used      int64
+	Limit     int64
 	// RatioPct 用量百分数（四舍五入；limit==0 且 used>0 视为 100）。
-	RatioPct uint64
+	RatioPct int64
 }
 
 // quotaWatermarkExceeded 纯判定（可测）：limit==0 且 used>0 视为命中（配 0 上限
 // 且已有用量 = 事实超限）；否则 used >= 阈值×limit 即命中。
-func quotaWatermarkExceeded(used, limit uint64) bool {
+func quotaWatermarkExceeded(used, limit int64) bool {
 	if limit == 0 {
 		return used > 0
 	}
@@ -352,14 +352,14 @@ func quotaWatermarkExceeded(used, limit uint64) bool {
 }
 
 // ratioPct 纯函数（可测）：用量百分数。
-func ratioPct(used, limit uint64) uint64 {
+func ratioPct(used, limit int64) int64 {
 	if limit == 0 {
 		if used > 0 {
 			return 100
 		}
 		return 0
 	}
-	return uint64(math.Round(float64(used) / float64(limit) * 100))
+	return int64(math.Round(float64(used) / float64(limit) * 100))
 }
 
 // ScanQuotaWatermarks 扫描全部 ON 租户的配额水位，返回命中清单。
@@ -377,9 +377,9 @@ func (s *TenantQuotaService) ScanQuotaWatermarks(ctx context.Context, monthStart
 	}
 
 	// 按租户归集配额；只扫描 status==ON 的租户（停用/冻结租户已被闸门拦截，告警是噪音）
-	quotaByTenant := make(map[uint64][]*tenantquotaRow, 4)
-	tenantIDs := make([]uint64, 0, 8)
-	seen := map[uint64]bool{}
+	quotaByTenant := make(map[int64][]*tenantquotaRow, 4)
+	tenantIDs := make([]int64, 0, 8)
+	seen := map[int64]bool{}
 	for _, q := range quotas {
 		if !seen[q.TenantID] {
 			seen[q.TenantID] = true
@@ -388,7 +388,7 @@ func (s *TenantQuotaService) ScanQuotaWatermarks(ctx context.Context, monthStart
 	}
 	sort.Slice(tenantIDs, func(i, j int) bool { return tenantIDs[i] < tenantIDs[j] })
 	for _, q := range quotas {
-		quotaByTenant[q.TenantID] = append(quotaByTenant[q.TenantID], &tenantquotaRow{typ: string(q.QuotaType), value: q.QuotaValue})
+		quotaByTenant[q.TenantID] = append(quotaByTenant[q.TenantID], &tenantquotaRow{typ: string(q.QuotaType), value: int64(q.QuotaValue)})
 	}
 
 	var hits []QuotaWatermarkHit
@@ -406,14 +406,14 @@ func (s *TenantQuotaService) ScanQuotaWatermarks(ctx context.Context, monthStart
 		if t.Name != nil {
 			tenantName = *t.Name
 		}
-		adminUserID := uint64(0)
+		adminUserID := int64(0)
 		if t.AdminUserID != nil {
 			adminUserID = *t.AdminUserID
 		}
 
 		// 各维度用量。单维度计量失败记日志（带原始错误）后跳过该维度：
 		// 扫描继续、该租户该维度不产生命中。
-		usage := map[string]uint64{}
+		usage := map[string]int64{}
 		if n, uerr := s.repo.CountUsersInTenant(sysCtx, tenantID); uerr != nil {
 			s.log.Errorf("quota watermark scan: count users for tenant %d failed: %s", tenantID, uerr.Error())
 		} else {
@@ -464,7 +464,7 @@ func (s *TenantQuotaService) ScanQuotaWatermarks(ctx context.Context, monthStart
 // tenantquotaRow 扫描用轻量行（类型技术名 + 上限）。
 type tenantquotaRow struct {
 	typ   string
-	value uint64
+	value int64
 }
 
 // ─── 水位告警 worker（asynq：tenant_quota_watermark_scan，每日 09:00） ───
@@ -491,9 +491,9 @@ func (s *TenantQuotaService) AsyncTenantQuotaWatermarkScan(taskType string, payl
 		return nil
 	}
 
-	grouped := make(map[uint64][]QuotaWatermarkHit)
-	adminOf := make(map[uint64]uint64)
-	nameOf := make(map[uint64]string)
+	grouped := make(map[int64][]QuotaWatermarkHit)
+	adminOf := make(map[int64]int64)
+	nameOf := make(map[int64]string)
 	for _, h := range hits {
 		grouped[h.TenantID] = append(grouped[h.TenantID], h)
 		adminOf[h.TenantID] = h.AdminUserID
@@ -519,7 +519,7 @@ func (s *TenantQuotaService) AsyncTenantQuotaWatermarkScan(taskType string, payl
 		locale := s.adminLocaleOf(ctx, adminID)
 		title := watermarkTitle(locale, nameOf[tenantID])
 		content := watermarkBody(locale, nameOf[tenantID], tenantHits)
-		if _, derr := s.internalMessages.SendSystemNotification(ctx, title, content, []uint64{adminID}); derr != nil {
+		if _, derr := s.internalMessages.SendSystemNotification(ctx, title, content, []int64{adminID}); derr != nil {
 			s.log.Errorf("quota watermark: deliver to admin %d of tenant %d failed: %s", adminID, tenantID, derr.Error())
 			failed++
 		}
@@ -532,7 +532,7 @@ func (s *TenantQuotaService) AsyncTenantQuotaWatermarkScan(taskType string, payl
 }
 
 // adminLocaleOf 查租户管理员的偏好语言（未设置/未识别回落中文）。
-func (s *TenantQuotaService) adminLocaleOf(ctx context.Context, adminUserID uint64) string {
+func (s *TenantQuotaService) adminLocaleOf(ctx context.Context, adminUserID int64) string {
 	svCtx := appViewer.NewSystemViewerContext(ctx)
 	u, err := s.repo.GetUserByID(svCtx, adminUserID)
 	if err != nil || u == nil || u.Locale == nil || *u.Locale == "" {

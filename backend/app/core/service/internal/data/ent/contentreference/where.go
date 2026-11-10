@@ -10,47 +10,47 @@ import (
 )
 
 // ID filters vertices based on their ID field.
-func ID(id uint64) predicate.ContentReference {
+func ID(id int64) predicate.ContentReference {
 	return predicate.ContentReference(sql.FieldEQ(FieldID, id))
 }
 
 // IDEQ applies the EQ predicate on the ID field.
-func IDEQ(id uint64) predicate.ContentReference {
+func IDEQ(id int64) predicate.ContentReference {
 	return predicate.ContentReference(sql.FieldEQ(FieldID, id))
 }
 
 // IDNEQ applies the NEQ predicate on the ID field.
-func IDNEQ(id uint64) predicate.ContentReference {
+func IDNEQ(id int64) predicate.ContentReference {
 	return predicate.ContentReference(sql.FieldNEQ(FieldID, id))
 }
 
 // IDIn applies the In predicate on the ID field.
-func IDIn(ids ...uint64) predicate.ContentReference {
+func IDIn(ids ...int64) predicate.ContentReference {
 	return predicate.ContentReference(sql.FieldIn(FieldID, ids...))
 }
 
 // IDNotIn applies the NotIn predicate on the ID field.
-func IDNotIn(ids ...uint64) predicate.ContentReference {
+func IDNotIn(ids ...int64) predicate.ContentReference {
 	return predicate.ContentReference(sql.FieldNotIn(FieldID, ids...))
 }
 
 // IDGT applies the GT predicate on the ID field.
-func IDGT(id uint64) predicate.ContentReference {
+func IDGT(id int64) predicate.ContentReference {
 	return predicate.ContentReference(sql.FieldGT(FieldID, id))
 }
 
 // IDGTE applies the GTE predicate on the ID field.
-func IDGTE(id uint64) predicate.ContentReference {
+func IDGTE(id int64) predicate.ContentReference {
 	return predicate.ContentReference(sql.FieldGTE(FieldID, id))
 }
 
 // IDLT applies the LT predicate on the ID field.
-func IDLT(id uint64) predicate.ContentReference {
+func IDLT(id int64) predicate.ContentReference {
 	return predicate.ContentReference(sql.FieldLT(FieldID, id))
 }
 
 // IDLTE applies the LTE predicate on the ID field.
-func IDLTE(id uint64) predicate.ContentReference {
+func IDLTE(id int64) predicate.ContentReference {
 	return predicate.ContentReference(sql.FieldLTE(FieldID, id))
 }
 
@@ -70,22 +70,22 @@ func DeletedAt(v time.Time) predicate.ContentReference {
 }
 
 // CreatedBy applies equality check predicate on the "created_by" field. It's identical to CreatedByEQ.
-func CreatedBy(v uint64) predicate.ContentReference {
+func CreatedBy(v int64) predicate.ContentReference {
 	return predicate.ContentReference(sql.FieldEQ(FieldCreatedBy, v))
 }
 
 // UpdatedBy applies equality check predicate on the "updated_by" field. It's identical to UpdatedByEQ.
-func UpdatedBy(v uint64) predicate.ContentReference {
+func UpdatedBy(v int64) predicate.ContentReference {
 	return predicate.ContentReference(sql.FieldEQ(FieldUpdatedBy, v))
 }
 
 // DeletedBy applies equality check predicate on the "deleted_by" field. It's identical to DeletedByEQ.
-func DeletedBy(v uint64) predicate.ContentReference {
+func DeletedBy(v int64) predicate.ContentReference {
 	return predicate.ContentReference(sql.FieldEQ(FieldDeletedBy, v))
 }
 
 // TenantID applies equality check predicate on the "tenant_id" field. It's identical to TenantIDEQ.
-func TenantID(v uint64) predicate.ContentReference {
+func TenantID(v int64) predicate.ContentReference {
 	return predicate.ContentReference(sql.FieldEQ(FieldTenantID, v))
 }
 
@@ -95,7 +95,7 @@ func SourceType(v string) predicate.ContentReference {
 }
 
 // SourceID applies equality check predicate on the "source_id" field. It's identical to SourceIDEQ.
-func SourceID(v uint64) predicate.ContentReference {
+func SourceID(v int64) predicate.ContentReference {
 	return predicate.ContentReference(sql.FieldEQ(FieldSourceID, v))
 }
 
@@ -105,7 +105,7 @@ func TargetType(v string) predicate.ContentReference {
 }
 
 // TargetID applies equality check predicate on the "target_id" field. It's identical to TargetIDEQ.
-func TargetID(v uint64) predicate.ContentReference {
+func TargetID(v int64) predicate.ContentReference {
 	return predicate.ContentReference(sql.FieldEQ(FieldTargetID, v))
 }
 
@@ -265,42 +265,42 @@ func DeletedAtNotNil() predicate.ContentReference {
 }
 
 // CreatedByEQ applies the EQ predicate on the "created_by" field.
-func CreatedByEQ(v uint64) predicate.ContentReference {
+func CreatedByEQ(v int64) predicate.ContentReference {
 	return predicate.ContentReference(sql.FieldEQ(FieldCreatedBy, v))
 }
 
 // CreatedByNEQ applies the NEQ predicate on the "created_by" field.
-func CreatedByNEQ(v uint64) predicate.ContentReference {
+func CreatedByNEQ(v int64) predicate.ContentReference {
 	return predicate.ContentReference(sql.FieldNEQ(FieldCreatedBy, v))
 }
 
 // CreatedByIn applies the In predicate on the "created_by" field.
-func CreatedByIn(vs ...uint64) predicate.ContentReference {
+func CreatedByIn(vs ...int64) predicate.ContentReference {
 	return predicate.ContentReference(sql.FieldIn(FieldCreatedBy, vs...))
 }
 
 // CreatedByNotIn applies the NotIn predicate on the "created_by" field.
-func CreatedByNotIn(vs ...uint64) predicate.ContentReference {
+func CreatedByNotIn(vs ...int64) predicate.ContentReference {
 	return predicate.ContentReference(sql.FieldNotIn(FieldCreatedBy, vs...))
 }
 
 // CreatedByGT applies the GT predicate on the "created_by" field.
-func CreatedByGT(v uint64) predicate.ContentReference {
+func CreatedByGT(v int64) predicate.ContentReference {
 	return predicate.ContentReference(sql.FieldGT(FieldCreatedBy, v))
 }
 
 // CreatedByGTE applies the GTE predicate on the "created_by" field.
-func CreatedByGTE(v uint64) predicate.ContentReference {
+func CreatedByGTE(v int64) predicate.ContentReference {
 	return predicate.ContentReference(sql.FieldGTE(FieldCreatedBy, v))
 }
 
 // CreatedByLT applies the LT predicate on the "created_by" field.
-func CreatedByLT(v uint64) predicate.ContentReference {
+func CreatedByLT(v int64) predicate.ContentReference {
 	return predicate.ContentReference(sql.FieldLT(FieldCreatedBy, v))
 }
 
 // CreatedByLTE applies the LTE predicate on the "created_by" field.
-func CreatedByLTE(v uint64) predicate.ContentReference {
+func CreatedByLTE(v int64) predicate.ContentReference {
 	return predicate.ContentReference(sql.FieldLTE(FieldCreatedBy, v))
 }
 
@@ -315,42 +315,42 @@ func CreatedByNotNil() predicate.ContentReference {
 }
 
 // UpdatedByEQ applies the EQ predicate on the "updated_by" field.
-func UpdatedByEQ(v uint64) predicate.ContentReference {
+func UpdatedByEQ(v int64) predicate.ContentReference {
 	return predicate.ContentReference(sql.FieldEQ(FieldUpdatedBy, v))
 }
 
 // UpdatedByNEQ applies the NEQ predicate on the "updated_by" field.
-func UpdatedByNEQ(v uint64) predicate.ContentReference {
+func UpdatedByNEQ(v int64) predicate.ContentReference {
 	return predicate.ContentReference(sql.FieldNEQ(FieldUpdatedBy, v))
 }
 
 // UpdatedByIn applies the In predicate on the "updated_by" field.
-func UpdatedByIn(vs ...uint64) predicate.ContentReference {
+func UpdatedByIn(vs ...int64) predicate.ContentReference {
 	return predicate.ContentReference(sql.FieldIn(FieldUpdatedBy, vs...))
 }
 
 // UpdatedByNotIn applies the NotIn predicate on the "updated_by" field.
-func UpdatedByNotIn(vs ...uint64) predicate.ContentReference {
+func UpdatedByNotIn(vs ...int64) predicate.ContentReference {
 	return predicate.ContentReference(sql.FieldNotIn(FieldUpdatedBy, vs...))
 }
 
 // UpdatedByGT applies the GT predicate on the "updated_by" field.
-func UpdatedByGT(v uint64) predicate.ContentReference {
+func UpdatedByGT(v int64) predicate.ContentReference {
 	return predicate.ContentReference(sql.FieldGT(FieldUpdatedBy, v))
 }
 
 // UpdatedByGTE applies the GTE predicate on the "updated_by" field.
-func UpdatedByGTE(v uint64) predicate.ContentReference {
+func UpdatedByGTE(v int64) predicate.ContentReference {
 	return predicate.ContentReference(sql.FieldGTE(FieldUpdatedBy, v))
 }
 
 // UpdatedByLT applies the LT predicate on the "updated_by" field.
-func UpdatedByLT(v uint64) predicate.ContentReference {
+func UpdatedByLT(v int64) predicate.ContentReference {
 	return predicate.ContentReference(sql.FieldLT(FieldUpdatedBy, v))
 }
 
 // UpdatedByLTE applies the LTE predicate on the "updated_by" field.
-func UpdatedByLTE(v uint64) predicate.ContentReference {
+func UpdatedByLTE(v int64) predicate.ContentReference {
 	return predicate.ContentReference(sql.FieldLTE(FieldUpdatedBy, v))
 }
 
@@ -365,42 +365,42 @@ func UpdatedByNotNil() predicate.ContentReference {
 }
 
 // DeletedByEQ applies the EQ predicate on the "deleted_by" field.
-func DeletedByEQ(v uint64) predicate.ContentReference {
+func DeletedByEQ(v int64) predicate.ContentReference {
 	return predicate.ContentReference(sql.FieldEQ(FieldDeletedBy, v))
 }
 
 // DeletedByNEQ applies the NEQ predicate on the "deleted_by" field.
-func DeletedByNEQ(v uint64) predicate.ContentReference {
+func DeletedByNEQ(v int64) predicate.ContentReference {
 	return predicate.ContentReference(sql.FieldNEQ(FieldDeletedBy, v))
 }
 
 // DeletedByIn applies the In predicate on the "deleted_by" field.
-func DeletedByIn(vs ...uint64) predicate.ContentReference {
+func DeletedByIn(vs ...int64) predicate.ContentReference {
 	return predicate.ContentReference(sql.FieldIn(FieldDeletedBy, vs...))
 }
 
 // DeletedByNotIn applies the NotIn predicate on the "deleted_by" field.
-func DeletedByNotIn(vs ...uint64) predicate.ContentReference {
+func DeletedByNotIn(vs ...int64) predicate.ContentReference {
 	return predicate.ContentReference(sql.FieldNotIn(FieldDeletedBy, vs...))
 }
 
 // DeletedByGT applies the GT predicate on the "deleted_by" field.
-func DeletedByGT(v uint64) predicate.ContentReference {
+func DeletedByGT(v int64) predicate.ContentReference {
 	return predicate.ContentReference(sql.FieldGT(FieldDeletedBy, v))
 }
 
 // DeletedByGTE applies the GTE predicate on the "deleted_by" field.
-func DeletedByGTE(v uint64) predicate.ContentReference {
+func DeletedByGTE(v int64) predicate.ContentReference {
 	return predicate.ContentReference(sql.FieldGTE(FieldDeletedBy, v))
 }
 
 // DeletedByLT applies the LT predicate on the "deleted_by" field.
-func DeletedByLT(v uint64) predicate.ContentReference {
+func DeletedByLT(v int64) predicate.ContentReference {
 	return predicate.ContentReference(sql.FieldLT(FieldDeletedBy, v))
 }
 
 // DeletedByLTE applies the LTE predicate on the "deleted_by" field.
-func DeletedByLTE(v uint64) predicate.ContentReference {
+func DeletedByLTE(v int64) predicate.ContentReference {
 	return predicate.ContentReference(sql.FieldLTE(FieldDeletedBy, v))
 }
 
@@ -415,42 +415,42 @@ func DeletedByNotNil() predicate.ContentReference {
 }
 
 // TenantIDEQ applies the EQ predicate on the "tenant_id" field.
-func TenantIDEQ(v uint64) predicate.ContentReference {
+func TenantIDEQ(v int64) predicate.ContentReference {
 	return predicate.ContentReference(sql.FieldEQ(FieldTenantID, v))
 }
 
 // TenantIDNEQ applies the NEQ predicate on the "tenant_id" field.
-func TenantIDNEQ(v uint64) predicate.ContentReference {
+func TenantIDNEQ(v int64) predicate.ContentReference {
 	return predicate.ContentReference(sql.FieldNEQ(FieldTenantID, v))
 }
 
 // TenantIDIn applies the In predicate on the "tenant_id" field.
-func TenantIDIn(vs ...uint64) predicate.ContentReference {
+func TenantIDIn(vs ...int64) predicate.ContentReference {
 	return predicate.ContentReference(sql.FieldIn(FieldTenantID, vs...))
 }
 
 // TenantIDNotIn applies the NotIn predicate on the "tenant_id" field.
-func TenantIDNotIn(vs ...uint64) predicate.ContentReference {
+func TenantIDNotIn(vs ...int64) predicate.ContentReference {
 	return predicate.ContentReference(sql.FieldNotIn(FieldTenantID, vs...))
 }
 
 // TenantIDGT applies the GT predicate on the "tenant_id" field.
-func TenantIDGT(v uint64) predicate.ContentReference {
+func TenantIDGT(v int64) predicate.ContentReference {
 	return predicate.ContentReference(sql.FieldGT(FieldTenantID, v))
 }
 
 // TenantIDGTE applies the GTE predicate on the "tenant_id" field.
-func TenantIDGTE(v uint64) predicate.ContentReference {
+func TenantIDGTE(v int64) predicate.ContentReference {
 	return predicate.ContentReference(sql.FieldGTE(FieldTenantID, v))
 }
 
 // TenantIDLT applies the LT predicate on the "tenant_id" field.
-func TenantIDLT(v uint64) predicate.ContentReference {
+func TenantIDLT(v int64) predicate.ContentReference {
 	return predicate.ContentReference(sql.FieldLT(FieldTenantID, v))
 }
 
 // TenantIDLTE applies the LTE predicate on the "tenant_id" field.
-func TenantIDLTE(v uint64) predicate.ContentReference {
+func TenantIDLTE(v int64) predicate.ContentReference {
 	return predicate.ContentReference(sql.FieldLTE(FieldTenantID, v))
 }
 
@@ -530,42 +530,42 @@ func SourceTypeContainsFold(v string) predicate.ContentReference {
 }
 
 // SourceIDEQ applies the EQ predicate on the "source_id" field.
-func SourceIDEQ(v uint64) predicate.ContentReference {
+func SourceIDEQ(v int64) predicate.ContentReference {
 	return predicate.ContentReference(sql.FieldEQ(FieldSourceID, v))
 }
 
 // SourceIDNEQ applies the NEQ predicate on the "source_id" field.
-func SourceIDNEQ(v uint64) predicate.ContentReference {
+func SourceIDNEQ(v int64) predicate.ContentReference {
 	return predicate.ContentReference(sql.FieldNEQ(FieldSourceID, v))
 }
 
 // SourceIDIn applies the In predicate on the "source_id" field.
-func SourceIDIn(vs ...uint64) predicate.ContentReference {
+func SourceIDIn(vs ...int64) predicate.ContentReference {
 	return predicate.ContentReference(sql.FieldIn(FieldSourceID, vs...))
 }
 
 // SourceIDNotIn applies the NotIn predicate on the "source_id" field.
-func SourceIDNotIn(vs ...uint64) predicate.ContentReference {
+func SourceIDNotIn(vs ...int64) predicate.ContentReference {
 	return predicate.ContentReference(sql.FieldNotIn(FieldSourceID, vs...))
 }
 
 // SourceIDGT applies the GT predicate on the "source_id" field.
-func SourceIDGT(v uint64) predicate.ContentReference {
+func SourceIDGT(v int64) predicate.ContentReference {
 	return predicate.ContentReference(sql.FieldGT(FieldSourceID, v))
 }
 
 // SourceIDGTE applies the GTE predicate on the "source_id" field.
-func SourceIDGTE(v uint64) predicate.ContentReference {
+func SourceIDGTE(v int64) predicate.ContentReference {
 	return predicate.ContentReference(sql.FieldGTE(FieldSourceID, v))
 }
 
 // SourceIDLT applies the LT predicate on the "source_id" field.
-func SourceIDLT(v uint64) predicate.ContentReference {
+func SourceIDLT(v int64) predicate.ContentReference {
 	return predicate.ContentReference(sql.FieldLT(FieldSourceID, v))
 }
 
 // SourceIDLTE applies the LTE predicate on the "source_id" field.
-func SourceIDLTE(v uint64) predicate.ContentReference {
+func SourceIDLTE(v int64) predicate.ContentReference {
 	return predicate.ContentReference(sql.FieldLTE(FieldSourceID, v))
 }
 
@@ -635,42 +635,42 @@ func TargetTypeContainsFold(v string) predicate.ContentReference {
 }
 
 // TargetIDEQ applies the EQ predicate on the "target_id" field.
-func TargetIDEQ(v uint64) predicate.ContentReference {
+func TargetIDEQ(v int64) predicate.ContentReference {
 	return predicate.ContentReference(sql.FieldEQ(FieldTargetID, v))
 }
 
 // TargetIDNEQ applies the NEQ predicate on the "target_id" field.
-func TargetIDNEQ(v uint64) predicate.ContentReference {
+func TargetIDNEQ(v int64) predicate.ContentReference {
 	return predicate.ContentReference(sql.FieldNEQ(FieldTargetID, v))
 }
 
 // TargetIDIn applies the In predicate on the "target_id" field.
-func TargetIDIn(vs ...uint64) predicate.ContentReference {
+func TargetIDIn(vs ...int64) predicate.ContentReference {
 	return predicate.ContentReference(sql.FieldIn(FieldTargetID, vs...))
 }
 
 // TargetIDNotIn applies the NotIn predicate on the "target_id" field.
-func TargetIDNotIn(vs ...uint64) predicate.ContentReference {
+func TargetIDNotIn(vs ...int64) predicate.ContentReference {
 	return predicate.ContentReference(sql.FieldNotIn(FieldTargetID, vs...))
 }
 
 // TargetIDGT applies the GT predicate on the "target_id" field.
-func TargetIDGT(v uint64) predicate.ContentReference {
+func TargetIDGT(v int64) predicate.ContentReference {
 	return predicate.ContentReference(sql.FieldGT(FieldTargetID, v))
 }
 
 // TargetIDGTE applies the GTE predicate on the "target_id" field.
-func TargetIDGTE(v uint64) predicate.ContentReference {
+func TargetIDGTE(v int64) predicate.ContentReference {
 	return predicate.ContentReference(sql.FieldGTE(FieldTargetID, v))
 }
 
 // TargetIDLT applies the LT predicate on the "target_id" field.
-func TargetIDLT(v uint64) predicate.ContentReference {
+func TargetIDLT(v int64) predicate.ContentReference {
 	return predicate.ContentReference(sql.FieldLT(FieldTargetID, v))
 }
 
 // TargetIDLTE applies the LTE predicate on the "target_id" field.
-func TargetIDLTE(v uint64) predicate.ContentReference {
+func TargetIDLTE(v int64) predicate.ContentReference {
 	return predicate.ContentReference(sql.FieldLTE(FieldTargetID, v))
 }
 

@@ -4,11 +4,11 @@
 // 现取现用，免除刷新管理；**服务器 IP 必须在公众号后台「IP 白名单」内**。
 //
 // 发布链路（图文以"草稿箱 → 发布"两段式进行）：
-//   1. GET  /cgi-bin/token             换 access_token
-//   2. POST /cgi-bin/draft/add         建草稿（thumb_media_id 必填——请把一张
-//      封面图在公众号后台「素材管理」传为永久素材，将其 media_id 填入账号凭据）
-//   3. POST /cgi-bin/freepublish/submit  提交发布（异步任务）
-//   4. POST /cgi-bin/freepublish/get     轮询发布结果拿文章链接
+//  1. GET  /cgi-bin/token             换 access_token
+//  2. POST /cgi-bin/draft/add         建草稿（thumb_media_id 必填——请把一张
+//     封面图在公众号后台「素材管理」传为永久素材，将其 media_id 填入账号凭据）
+//  3. POST /cgi-bin/freepublish/submit  提交发布（异步任务）
+//  4. POST /cgi-bin/freepublish/get     轮询发布结果拿文章链接
 //
 // 统计：阅读/在看等数据在 datacube 统计接口且按天滞后，第一版不回拉
 // （FetchStats 返回 ErrStatsUnsupported）。
@@ -37,16 +37,16 @@ const (
 	Platform = "PLATFORM_WECHAT_OA"
 
 	apiBase         = "https://api.weixin.qq.com"
-	maxTitleRunes   = 64   // 公众号文章标题上限
-	maxDigestRunes  = 120  // 摘要上限
+	maxTitleRunes   = 64  // 公众号文章标题上限
+	maxDigestRunes  = 120 // 摘要上限
 	defaultTimeout  = 30 * time.Second
 	maxResponseSize = 10 << 20 // 10MB
 )
 
 // Client 微信公众号客户端（并发安全）。
 type Client struct {
-	httpClient  *http.Client
-	endpoint    string
+	httpClient   *http.Client
+	endpoint     string
 	pollInterval time.Duration // freepublish 结果轮询间隔（默认 2s，测试可注入）
 }
 
@@ -144,7 +144,7 @@ type freepublishGetResponse struct {
 // ── social.Provider 实现 ──
 
 // ValidateCredentials 校验凭据：换取 access_token 成功即有效
-//（secret 错误与 IP 不在白名单都会在此暴露）。
+// （secret 错误与 IP 不在白名单都会在此暴露）。
 func (c *Client) ValidateCredentials(ctx context.Context, creds social.Credentials) error {
 	_, err := c.fetchAccessToken(ctx, creds)
 	return err

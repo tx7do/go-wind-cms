@@ -10,47 +10,47 @@ import (
 )
 
 // ID filters vertices based on their ID field.
-func ID(id uint64) predicate.ReviewLog {
+func ID(id int64) predicate.ReviewLog {
 	return predicate.ReviewLog(sql.FieldEQ(FieldID, id))
 }
 
 // IDEQ applies the EQ predicate on the ID field.
-func IDEQ(id uint64) predicate.ReviewLog {
+func IDEQ(id int64) predicate.ReviewLog {
 	return predicate.ReviewLog(sql.FieldEQ(FieldID, id))
 }
 
 // IDNEQ applies the NEQ predicate on the ID field.
-func IDNEQ(id uint64) predicate.ReviewLog {
+func IDNEQ(id int64) predicate.ReviewLog {
 	return predicate.ReviewLog(sql.FieldNEQ(FieldID, id))
 }
 
 // IDIn applies the In predicate on the ID field.
-func IDIn(ids ...uint64) predicate.ReviewLog {
+func IDIn(ids ...int64) predicate.ReviewLog {
 	return predicate.ReviewLog(sql.FieldIn(FieldID, ids...))
 }
 
 // IDNotIn applies the NotIn predicate on the ID field.
-func IDNotIn(ids ...uint64) predicate.ReviewLog {
+func IDNotIn(ids ...int64) predicate.ReviewLog {
 	return predicate.ReviewLog(sql.FieldNotIn(FieldID, ids...))
 }
 
 // IDGT applies the GT predicate on the ID field.
-func IDGT(id uint64) predicate.ReviewLog {
+func IDGT(id int64) predicate.ReviewLog {
 	return predicate.ReviewLog(sql.FieldGT(FieldID, id))
 }
 
 // IDGTE applies the GTE predicate on the ID field.
-func IDGTE(id uint64) predicate.ReviewLog {
+func IDGTE(id int64) predicate.ReviewLog {
 	return predicate.ReviewLog(sql.FieldGTE(FieldID, id))
 }
 
 // IDLT applies the LT predicate on the ID field.
-func IDLT(id uint64) predicate.ReviewLog {
+func IDLT(id int64) predicate.ReviewLog {
 	return predicate.ReviewLog(sql.FieldLT(FieldID, id))
 }
 
 // IDLTE applies the LTE predicate on the ID field.
-func IDLTE(id uint64) predicate.ReviewLog {
+func IDLTE(id int64) predicate.ReviewLog {
 	return predicate.ReviewLog(sql.FieldLTE(FieldID, id))
 }
 
@@ -70,22 +70,22 @@ func DeletedAt(v time.Time) predicate.ReviewLog {
 }
 
 // TenantID applies equality check predicate on the "tenant_id" field. It's identical to TenantIDEQ.
-func TenantID(v uint64) predicate.ReviewLog {
+func TenantID(v int64) predicate.ReviewLog {
 	return predicate.ReviewLog(sql.FieldEQ(FieldTenantID, v))
 }
 
 // CreatedBy applies equality check predicate on the "created_by" field. It's identical to CreatedByEQ.
-func CreatedBy(v uint64) predicate.ReviewLog {
+func CreatedBy(v int64) predicate.ReviewLog {
 	return predicate.ReviewLog(sql.FieldEQ(FieldCreatedBy, v))
 }
 
 // UpdatedBy applies equality check predicate on the "updated_by" field. It's identical to UpdatedByEQ.
-func UpdatedBy(v uint64) predicate.ReviewLog {
+func UpdatedBy(v int64) predicate.ReviewLog {
 	return predicate.ReviewLog(sql.FieldEQ(FieldUpdatedBy, v))
 }
 
 // DeletedBy applies equality check predicate on the "deleted_by" field. It's identical to DeletedByEQ.
-func DeletedBy(v uint64) predicate.ReviewLog {
+func DeletedBy(v int64) predicate.ReviewLog {
 	return predicate.ReviewLog(sql.FieldEQ(FieldDeletedBy, v))
 }
 
@@ -95,7 +95,7 @@ func EntityType(v string) predicate.ReviewLog {
 }
 
 // EntityID applies equality check predicate on the "entity_id" field. It's identical to EntityIDEQ.
-func EntityID(v uint64) predicate.ReviewLog {
+func EntityID(v int64) predicate.ReviewLog {
 	return predicate.ReviewLog(sql.FieldEQ(FieldEntityID, v))
 }
 
@@ -260,42 +260,42 @@ func DeletedAtNotNil() predicate.ReviewLog {
 }
 
 // TenantIDEQ applies the EQ predicate on the "tenant_id" field.
-func TenantIDEQ(v uint64) predicate.ReviewLog {
+func TenantIDEQ(v int64) predicate.ReviewLog {
 	return predicate.ReviewLog(sql.FieldEQ(FieldTenantID, v))
 }
 
 // TenantIDNEQ applies the NEQ predicate on the "tenant_id" field.
-func TenantIDNEQ(v uint64) predicate.ReviewLog {
+func TenantIDNEQ(v int64) predicate.ReviewLog {
 	return predicate.ReviewLog(sql.FieldNEQ(FieldTenantID, v))
 }
 
 // TenantIDIn applies the In predicate on the "tenant_id" field.
-func TenantIDIn(vs ...uint64) predicate.ReviewLog {
+func TenantIDIn(vs ...int64) predicate.ReviewLog {
 	return predicate.ReviewLog(sql.FieldIn(FieldTenantID, vs...))
 }
 
 // TenantIDNotIn applies the NotIn predicate on the "tenant_id" field.
-func TenantIDNotIn(vs ...uint64) predicate.ReviewLog {
+func TenantIDNotIn(vs ...int64) predicate.ReviewLog {
 	return predicate.ReviewLog(sql.FieldNotIn(FieldTenantID, vs...))
 }
 
 // TenantIDGT applies the GT predicate on the "tenant_id" field.
-func TenantIDGT(v uint64) predicate.ReviewLog {
+func TenantIDGT(v int64) predicate.ReviewLog {
 	return predicate.ReviewLog(sql.FieldGT(FieldTenantID, v))
 }
 
 // TenantIDGTE applies the GTE predicate on the "tenant_id" field.
-func TenantIDGTE(v uint64) predicate.ReviewLog {
+func TenantIDGTE(v int64) predicate.ReviewLog {
 	return predicate.ReviewLog(sql.FieldGTE(FieldTenantID, v))
 }
 
 // TenantIDLT applies the LT predicate on the "tenant_id" field.
-func TenantIDLT(v uint64) predicate.ReviewLog {
+func TenantIDLT(v int64) predicate.ReviewLog {
 	return predicate.ReviewLog(sql.FieldLT(FieldTenantID, v))
 }
 
 // TenantIDLTE applies the LTE predicate on the "tenant_id" field.
-func TenantIDLTE(v uint64) predicate.ReviewLog {
+func TenantIDLTE(v int64) predicate.ReviewLog {
 	return predicate.ReviewLog(sql.FieldLTE(FieldTenantID, v))
 }
 
@@ -310,42 +310,42 @@ func TenantIDNotNil() predicate.ReviewLog {
 }
 
 // CreatedByEQ applies the EQ predicate on the "created_by" field.
-func CreatedByEQ(v uint64) predicate.ReviewLog {
+func CreatedByEQ(v int64) predicate.ReviewLog {
 	return predicate.ReviewLog(sql.FieldEQ(FieldCreatedBy, v))
 }
 
 // CreatedByNEQ applies the NEQ predicate on the "created_by" field.
-func CreatedByNEQ(v uint64) predicate.ReviewLog {
+func CreatedByNEQ(v int64) predicate.ReviewLog {
 	return predicate.ReviewLog(sql.FieldNEQ(FieldCreatedBy, v))
 }
 
 // CreatedByIn applies the In predicate on the "created_by" field.
-func CreatedByIn(vs ...uint64) predicate.ReviewLog {
+func CreatedByIn(vs ...int64) predicate.ReviewLog {
 	return predicate.ReviewLog(sql.FieldIn(FieldCreatedBy, vs...))
 }
 
 // CreatedByNotIn applies the NotIn predicate on the "created_by" field.
-func CreatedByNotIn(vs ...uint64) predicate.ReviewLog {
+func CreatedByNotIn(vs ...int64) predicate.ReviewLog {
 	return predicate.ReviewLog(sql.FieldNotIn(FieldCreatedBy, vs...))
 }
 
 // CreatedByGT applies the GT predicate on the "created_by" field.
-func CreatedByGT(v uint64) predicate.ReviewLog {
+func CreatedByGT(v int64) predicate.ReviewLog {
 	return predicate.ReviewLog(sql.FieldGT(FieldCreatedBy, v))
 }
 
 // CreatedByGTE applies the GTE predicate on the "created_by" field.
-func CreatedByGTE(v uint64) predicate.ReviewLog {
+func CreatedByGTE(v int64) predicate.ReviewLog {
 	return predicate.ReviewLog(sql.FieldGTE(FieldCreatedBy, v))
 }
 
 // CreatedByLT applies the LT predicate on the "created_by" field.
-func CreatedByLT(v uint64) predicate.ReviewLog {
+func CreatedByLT(v int64) predicate.ReviewLog {
 	return predicate.ReviewLog(sql.FieldLT(FieldCreatedBy, v))
 }
 
 // CreatedByLTE applies the LTE predicate on the "created_by" field.
-func CreatedByLTE(v uint64) predicate.ReviewLog {
+func CreatedByLTE(v int64) predicate.ReviewLog {
 	return predicate.ReviewLog(sql.FieldLTE(FieldCreatedBy, v))
 }
 
@@ -360,42 +360,42 @@ func CreatedByNotNil() predicate.ReviewLog {
 }
 
 // UpdatedByEQ applies the EQ predicate on the "updated_by" field.
-func UpdatedByEQ(v uint64) predicate.ReviewLog {
+func UpdatedByEQ(v int64) predicate.ReviewLog {
 	return predicate.ReviewLog(sql.FieldEQ(FieldUpdatedBy, v))
 }
 
 // UpdatedByNEQ applies the NEQ predicate on the "updated_by" field.
-func UpdatedByNEQ(v uint64) predicate.ReviewLog {
+func UpdatedByNEQ(v int64) predicate.ReviewLog {
 	return predicate.ReviewLog(sql.FieldNEQ(FieldUpdatedBy, v))
 }
 
 // UpdatedByIn applies the In predicate on the "updated_by" field.
-func UpdatedByIn(vs ...uint64) predicate.ReviewLog {
+func UpdatedByIn(vs ...int64) predicate.ReviewLog {
 	return predicate.ReviewLog(sql.FieldIn(FieldUpdatedBy, vs...))
 }
 
 // UpdatedByNotIn applies the NotIn predicate on the "updated_by" field.
-func UpdatedByNotIn(vs ...uint64) predicate.ReviewLog {
+func UpdatedByNotIn(vs ...int64) predicate.ReviewLog {
 	return predicate.ReviewLog(sql.FieldNotIn(FieldUpdatedBy, vs...))
 }
 
 // UpdatedByGT applies the GT predicate on the "updated_by" field.
-func UpdatedByGT(v uint64) predicate.ReviewLog {
+func UpdatedByGT(v int64) predicate.ReviewLog {
 	return predicate.ReviewLog(sql.FieldGT(FieldUpdatedBy, v))
 }
 
 // UpdatedByGTE applies the GTE predicate on the "updated_by" field.
-func UpdatedByGTE(v uint64) predicate.ReviewLog {
+func UpdatedByGTE(v int64) predicate.ReviewLog {
 	return predicate.ReviewLog(sql.FieldGTE(FieldUpdatedBy, v))
 }
 
 // UpdatedByLT applies the LT predicate on the "updated_by" field.
-func UpdatedByLT(v uint64) predicate.ReviewLog {
+func UpdatedByLT(v int64) predicate.ReviewLog {
 	return predicate.ReviewLog(sql.FieldLT(FieldUpdatedBy, v))
 }
 
 // UpdatedByLTE applies the LTE predicate on the "updated_by" field.
-func UpdatedByLTE(v uint64) predicate.ReviewLog {
+func UpdatedByLTE(v int64) predicate.ReviewLog {
 	return predicate.ReviewLog(sql.FieldLTE(FieldUpdatedBy, v))
 }
 
@@ -410,42 +410,42 @@ func UpdatedByNotNil() predicate.ReviewLog {
 }
 
 // DeletedByEQ applies the EQ predicate on the "deleted_by" field.
-func DeletedByEQ(v uint64) predicate.ReviewLog {
+func DeletedByEQ(v int64) predicate.ReviewLog {
 	return predicate.ReviewLog(sql.FieldEQ(FieldDeletedBy, v))
 }
 
 // DeletedByNEQ applies the NEQ predicate on the "deleted_by" field.
-func DeletedByNEQ(v uint64) predicate.ReviewLog {
+func DeletedByNEQ(v int64) predicate.ReviewLog {
 	return predicate.ReviewLog(sql.FieldNEQ(FieldDeletedBy, v))
 }
 
 // DeletedByIn applies the In predicate on the "deleted_by" field.
-func DeletedByIn(vs ...uint64) predicate.ReviewLog {
+func DeletedByIn(vs ...int64) predicate.ReviewLog {
 	return predicate.ReviewLog(sql.FieldIn(FieldDeletedBy, vs...))
 }
 
 // DeletedByNotIn applies the NotIn predicate on the "deleted_by" field.
-func DeletedByNotIn(vs ...uint64) predicate.ReviewLog {
+func DeletedByNotIn(vs ...int64) predicate.ReviewLog {
 	return predicate.ReviewLog(sql.FieldNotIn(FieldDeletedBy, vs...))
 }
 
 // DeletedByGT applies the GT predicate on the "deleted_by" field.
-func DeletedByGT(v uint64) predicate.ReviewLog {
+func DeletedByGT(v int64) predicate.ReviewLog {
 	return predicate.ReviewLog(sql.FieldGT(FieldDeletedBy, v))
 }
 
 // DeletedByGTE applies the GTE predicate on the "deleted_by" field.
-func DeletedByGTE(v uint64) predicate.ReviewLog {
+func DeletedByGTE(v int64) predicate.ReviewLog {
 	return predicate.ReviewLog(sql.FieldGTE(FieldDeletedBy, v))
 }
 
 // DeletedByLT applies the LT predicate on the "deleted_by" field.
-func DeletedByLT(v uint64) predicate.ReviewLog {
+func DeletedByLT(v int64) predicate.ReviewLog {
 	return predicate.ReviewLog(sql.FieldLT(FieldDeletedBy, v))
 }
 
 // DeletedByLTE applies the LTE predicate on the "deleted_by" field.
-func DeletedByLTE(v uint64) predicate.ReviewLog {
+func DeletedByLTE(v int64) predicate.ReviewLog {
 	return predicate.ReviewLog(sql.FieldLTE(FieldDeletedBy, v))
 }
 
@@ -525,42 +525,42 @@ func EntityTypeContainsFold(v string) predicate.ReviewLog {
 }
 
 // EntityIDEQ applies the EQ predicate on the "entity_id" field.
-func EntityIDEQ(v uint64) predicate.ReviewLog {
+func EntityIDEQ(v int64) predicate.ReviewLog {
 	return predicate.ReviewLog(sql.FieldEQ(FieldEntityID, v))
 }
 
 // EntityIDNEQ applies the NEQ predicate on the "entity_id" field.
-func EntityIDNEQ(v uint64) predicate.ReviewLog {
+func EntityIDNEQ(v int64) predicate.ReviewLog {
 	return predicate.ReviewLog(sql.FieldNEQ(FieldEntityID, v))
 }
 
 // EntityIDIn applies the In predicate on the "entity_id" field.
-func EntityIDIn(vs ...uint64) predicate.ReviewLog {
+func EntityIDIn(vs ...int64) predicate.ReviewLog {
 	return predicate.ReviewLog(sql.FieldIn(FieldEntityID, vs...))
 }
 
 // EntityIDNotIn applies the NotIn predicate on the "entity_id" field.
-func EntityIDNotIn(vs ...uint64) predicate.ReviewLog {
+func EntityIDNotIn(vs ...int64) predicate.ReviewLog {
 	return predicate.ReviewLog(sql.FieldNotIn(FieldEntityID, vs...))
 }
 
 // EntityIDGT applies the GT predicate on the "entity_id" field.
-func EntityIDGT(v uint64) predicate.ReviewLog {
+func EntityIDGT(v int64) predicate.ReviewLog {
 	return predicate.ReviewLog(sql.FieldGT(FieldEntityID, v))
 }
 
 // EntityIDGTE applies the GTE predicate on the "entity_id" field.
-func EntityIDGTE(v uint64) predicate.ReviewLog {
+func EntityIDGTE(v int64) predicate.ReviewLog {
 	return predicate.ReviewLog(sql.FieldGTE(FieldEntityID, v))
 }
 
 // EntityIDLT applies the LT predicate on the "entity_id" field.
-func EntityIDLT(v uint64) predicate.ReviewLog {
+func EntityIDLT(v int64) predicate.ReviewLog {
 	return predicate.ReviewLog(sql.FieldLT(FieldEntityID, v))
 }
 
 // EntityIDLTE applies the LTE predicate on the "entity_id" field.
-func EntityIDLTE(v uint64) predicate.ReviewLog {
+func EntityIDLTE(v int64) predicate.ReviewLog {
 	return predicate.ReviewLog(sql.FieldLTE(FieldEntityID, v))
 }
 

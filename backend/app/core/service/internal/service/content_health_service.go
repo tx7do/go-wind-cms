@@ -65,7 +65,7 @@ func (s *ContentHealthService) RegisterInternalMessages(sender internalMessageSe
 
 // healthIssue 单条问题（作者 ID → 行列表的聚合粒度）。
 type healthIssue struct {
-	postID uint64
+	postID int64
 	title  string
 	detail string
 }
@@ -89,14 +89,14 @@ func (s *ContentHealthService) AsyncContentHealthSweep(taskType string, taskData
 	}
 
 	// 作者 → 问题行
-	byAuthor := make(map[uint64][]string, 8)
+	byAuthor := make(map[int64][]string, 8)
 	checkedLinks := 0
 	for _, p := range resp.GetItems() {
 		author := p.GetAuthorId()
 		for _, tr := range p.GetTranslations() {
 			if strings.TrimSpace(tr.GetSummary()) == "" {
 				byAuthor[author] = append(byAuthor[author], fmt.Sprintf(
-					"《%s》(#%d) %s 缺少摘要", firstNonEmptyMcp(tr.GetTitle(), "#"+strconv.FormatUint(uint64(p.GetId()), 10)),
+					"《%s》(#%d) %s 缺少摘要", firstNonEmptyMcp(tr.GetTitle(), "#"+strconv.FormatInt(int64(p.GetId()), 10)),
 					p.GetId(), tr.GetLanguageCode()))
 			}
 			// 外链探测（每篇限 10 条；全局预算防长尾）
@@ -114,7 +114,7 @@ func (s *ContentHealthService) AsyncContentHealthSweep(taskType string, taskData
 					}
 					byAuthor[author] = append(byAuthor[author], fmt.Sprintf(
 						"《%s》(#%d) 疑似死链 %s（%s）",
-						firstNonEmptyMcp(tr.GetTitle(), "#"+strconv.FormatUint(uint64(p.GetId()), 10)),
+						firstNonEmptyMcp(tr.GetTitle(), "#"+strconv.FormatInt(int64(p.GetId()), 10)),
 						p.GetId(), link, detail))
 				}
 			}
@@ -144,7 +144,7 @@ func (s *ContentHealthService) AsyncContentHealthSweep(taskType string, taskData
 			b.WriteString(fmt.Sprintf("\n…另有 %d 条问题未列出", omitted))
 		}
 		if _, nerr := s.internalMessages.SendSystemNotification(ctx,
-			"内容健康度提醒", b.String(), []uint64{author}); nerr != nil {
+			"内容健康度提醒", b.String(), []int64{author}); nerr != nil {
 			s.log.Errorf("content health sweep: notify author [%d] failed: %s", author, nerr.Error())
 		}
 	}
@@ -218,7 +218,7 @@ func countDistinctPosts(issueLines []string) int {
 	return len(set)
 }
 
-func flattenIssues(byAuthor map[uint64][]string) []string {
+func flattenIssues(byAuthor map[int64][]string) []string {
 	var out []string
 	for _, lines := range byAuthor {
 		out = append(out, lines...)

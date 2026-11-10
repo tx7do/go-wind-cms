@@ -34,10 +34,10 @@ require (
 	github.com/sashabaranov/go-openai v1.41.2
 	github.com/stretchr/testify v1.12.1
 	github.com/tx7do/go-crud/api v0.0.7
-	github.com/tx7do/go-crud/entgo v0.1.0
+	github.com/tx7do/go-crud/entgo v0.2.6
 	github.com/tx7do/go-crud/opensearch v0.0.5
 	github.com/tx7do/go-crud/pagination v0.1.0
-	github.com/tx7do/go-crud/viewer v0.0.8
+	github.com/tx7do/go-crud/viewer v0.0.9
 	github.com/tx7do/go-utils v1.1.40
 	github.com/tx7do/go-utils/aggregator v0.0.5
 	github.com/tx7do/go-utils/captcha v0.0.4
@@ -248,7 +248,7 @@ require (
 	github.com/tklauser/go-sysconf v0.4.0 // indirect
 	github.com/tklauser/numcpus v0.12.0 // indirect
 	github.com/twitchyliquid64/golang-asm v0.15.1 // indirect
-	github.com/tx7do/go-crud/audit v0.0.3 // indirect
+	github.com/tx7do/go-crud/audit v0.0.4 // indirect
 	github.com/tx7do/go-crud/cache v0.0.2 // indirect
 	github.com/tx7do/go-wind v0.0.2 // indirect
 	github.com/tx7do/go-wind-plugins/encoding v0.0.1 // indirect

@@ -76,7 +76,7 @@ var (
 	Hooks  [1]ent.Hook
 	Policy ent.Policy
 	// DefaultTenantID holds the default value on creation for the "tenant_id" field.
-	DefaultTenantID uint64
+	DefaultTenantID int64
 	// FromPathValidator is a validator for the "from_path" field. It is called by the builders before save.
 	FromPathValidator func(string) error
 	// ToURLValidator is a validator for the "to_url" field. It is called by the builders before save.
@@ -86,7 +86,7 @@ var (
 	// DefaultEnabled holds the default value on creation for the "enabled" field.
 	DefaultEnabled bool
 	// IDValidator is a validator for the "id" field. It is called by the builders before save.
-	IDValidator func(uint64) error
+	IDValidator func(int64) error
 )
 
 // OrderOption defines the ordering options for the Redirect queries.

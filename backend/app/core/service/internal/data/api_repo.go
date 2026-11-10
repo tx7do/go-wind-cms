@@ -89,7 +89,7 @@ func (r *ApiRepo) Count(ctx context.Context, req *paginationV1.PagingRequest) (*
 	}
 
 	return &permissionV1.CountApiResponse{
-		Count: uint64(count),
+		Count: int64(count),
 	}, nil
 }
 
@@ -114,7 +114,7 @@ func (r *ApiRepo) List(ctx context.Context, req *paginationV1.PagingRequest) (*p
 	}, nil
 }
 
-func (r *ApiRepo) IsExist(ctx context.Context, id uint64) (bool, error) {
+func (r *ApiRepo) IsExist(ctx context.Context, id int64) (bool, error) {
 	exist, err := r.entClient.Client().Api.Query().
 		Where(api.IDEQ(id)).
 		Exist(ctx)
@@ -173,7 +173,7 @@ func (r *ApiRepo) GetApiByEndpoint(ctx context.Context, path, method string) (*p
 }
 
 // GetApiByIDs 根据ID列表获取API资源
-func (r *ApiRepo) GetApiByIDs(ctx context.Context, ids []uint64) ([]*permissionV1.Api, error) {
+func (r *ApiRepo) GetApiByIDs(ctx context.Context, ids []int64) ([]*permissionV1.Api, error) {
 	if len(ids) == 0 {
 		return nil, permissionV1.ErrorBadRequest("invalid parameter")
 	}
@@ -290,7 +290,7 @@ func (r *ApiRepo) SyncApis(ctx context.Context, apis []*permissionV1.Api) error 
 		method string
 	}
 	existing := make(map[key]*ent.Api, len(rows))
-	maxID := uint64(0)
+	maxID := int64(0)
 	for _, row := range rows {
 		existing[key{path: derefString(row.Path), method: derefString(row.Method)}] = row
 		if row.ID > maxID {

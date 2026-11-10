@@ -65,13 +65,13 @@ func (_c *ContentReferenceCreate) SetNillableDeletedAt(v *time.Time) *ContentRef
 }
 
 // SetCreatedBy sets the "created_by" field.
-func (_c *ContentReferenceCreate) SetCreatedBy(v uint64) *ContentReferenceCreate {
+func (_c *ContentReferenceCreate) SetCreatedBy(v int64) *ContentReferenceCreate {
 	_c.mutation.SetCreatedBy(v)
 	return _c
 }
 
 // SetNillableCreatedBy sets the "created_by" field if the given value is not nil.
-func (_c *ContentReferenceCreate) SetNillableCreatedBy(v *uint64) *ContentReferenceCreate {
+func (_c *ContentReferenceCreate) SetNillableCreatedBy(v *int64) *ContentReferenceCreate {
 	if v != nil {
 		_c.SetCreatedBy(*v)
 	}
@@ -79,13 +79,13 @@ func (_c *ContentReferenceCreate) SetNillableCreatedBy(v *uint64) *ContentRefere
 }
 
 // SetUpdatedBy sets the "updated_by" field.
-func (_c *ContentReferenceCreate) SetUpdatedBy(v uint64) *ContentReferenceCreate {
+func (_c *ContentReferenceCreate) SetUpdatedBy(v int64) *ContentReferenceCreate {
 	_c.mutation.SetUpdatedBy(v)
 	return _c
 }
 
 // SetNillableUpdatedBy sets the "updated_by" field if the given value is not nil.
-func (_c *ContentReferenceCreate) SetNillableUpdatedBy(v *uint64) *ContentReferenceCreate {
+func (_c *ContentReferenceCreate) SetNillableUpdatedBy(v *int64) *ContentReferenceCreate {
 	if v != nil {
 		_c.SetUpdatedBy(*v)
 	}
@@ -93,13 +93,13 @@ func (_c *ContentReferenceCreate) SetNillableUpdatedBy(v *uint64) *ContentRefere
 }
 
 // SetDeletedBy sets the "deleted_by" field.
-func (_c *ContentReferenceCreate) SetDeletedBy(v uint64) *ContentReferenceCreate {
+func (_c *ContentReferenceCreate) SetDeletedBy(v int64) *ContentReferenceCreate {
 	_c.mutation.SetDeletedBy(v)
 	return _c
 }
 
 // SetNillableDeletedBy sets the "deleted_by" field if the given value is not nil.
-func (_c *ContentReferenceCreate) SetNillableDeletedBy(v *uint64) *ContentReferenceCreate {
+func (_c *ContentReferenceCreate) SetNillableDeletedBy(v *int64) *ContentReferenceCreate {
 	if v != nil {
 		_c.SetDeletedBy(*v)
 	}
@@ -107,13 +107,13 @@ func (_c *ContentReferenceCreate) SetNillableDeletedBy(v *uint64) *ContentRefere
 }
 
 // SetTenantID sets the "tenant_id" field.
-func (_c *ContentReferenceCreate) SetTenantID(v uint64) *ContentReferenceCreate {
+func (_c *ContentReferenceCreate) SetTenantID(v int64) *ContentReferenceCreate {
 	_c.mutation.SetTenantID(v)
 	return _c
 }
 
 // SetNillableTenantID sets the "tenant_id" field if the given value is not nil.
-func (_c *ContentReferenceCreate) SetNillableTenantID(v *uint64) *ContentReferenceCreate {
+func (_c *ContentReferenceCreate) SetNillableTenantID(v *int64) *ContentReferenceCreate {
 	if v != nil {
 		_c.SetTenantID(*v)
 	}
@@ -127,7 +127,7 @@ func (_c *ContentReferenceCreate) SetSourceType(v string) *ContentReferenceCreat
 }
 
 // SetSourceID sets the "source_id" field.
-func (_c *ContentReferenceCreate) SetSourceID(v uint64) *ContentReferenceCreate {
+func (_c *ContentReferenceCreate) SetSourceID(v int64) *ContentReferenceCreate {
 	_c.mutation.SetSourceID(v)
 	return _c
 }
@@ -139,7 +139,7 @@ func (_c *ContentReferenceCreate) SetTargetType(v string) *ContentReferenceCreat
 }
 
 // SetTargetID sets the "target_id" field.
-func (_c *ContentReferenceCreate) SetTargetID(v uint64) *ContentReferenceCreate {
+func (_c *ContentReferenceCreate) SetTargetID(v int64) *ContentReferenceCreate {
 	_c.mutation.SetTargetID(v)
 	return _c
 }
@@ -159,7 +159,7 @@ func (_c *ContentReferenceCreate) SetNillableField(v *string) *ContentReferenceC
 }
 
 // SetID sets the "id" field.
-func (_c *ContentReferenceCreate) SetID(v uint64) *ContentReferenceCreate {
+func (_c *ContentReferenceCreate) SetID(v int64) *ContentReferenceCreate {
 	_c.mutation.SetID(v)
 	return _c
 }
@@ -265,7 +265,7 @@ func (_c *ContentReferenceCreate) sqlSave(ctx context.Context) (*ContentReferenc
 	}
 	if _spec.ID.Value != _node.ID {
 		id := _spec.ID.Value.(int64)
-		_node.ID = uint64(id)
+		_node.ID = int64(id)
 	}
 	_c.mutation.id = &_node.ID
 	_c.mutation.done = true
@@ -275,7 +275,7 @@ func (_c *ContentReferenceCreate) sqlSave(ctx context.Context) (*ContentReferenc
 func (_c *ContentReferenceCreate) createSpec() (*ContentReference, *sqlgraph.CreateSpec) {
 	var (
 		_node = &ContentReference{config: _c.config}
-		_spec = sqlgraph.NewCreateSpec(contentreference.Table, sqlgraph.NewFieldSpec(contentreference.FieldID, field.TypeUint64))
+		_spec = sqlgraph.NewCreateSpec(contentreference.Table, sqlgraph.NewFieldSpec(contentreference.FieldID, field.TypeInt64))
 	)
 	_spec.OnConflict = _c.conflict
 	if id, ok := _c.mutation.ID(); ok {
@@ -295,19 +295,19 @@ func (_c *ContentReferenceCreate) createSpec() (*ContentReference, *sqlgraph.Cre
 		_node.DeletedAt = &value
 	}
 	if value, ok := _c.mutation.CreatedBy(); ok {
-		_spec.SetField(contentreference.FieldCreatedBy, field.TypeUint64, value)
+		_spec.SetField(contentreference.FieldCreatedBy, field.TypeInt64, value)
 		_node.CreatedBy = &value
 	}
 	if value, ok := _c.mutation.UpdatedBy(); ok {
-		_spec.SetField(contentreference.FieldUpdatedBy, field.TypeUint64, value)
+		_spec.SetField(contentreference.FieldUpdatedBy, field.TypeInt64, value)
 		_node.UpdatedBy = &value
 	}
 	if value, ok := _c.mutation.DeletedBy(); ok {
-		_spec.SetField(contentreference.FieldDeletedBy, field.TypeUint64, value)
+		_spec.SetField(contentreference.FieldDeletedBy, field.TypeInt64, value)
 		_node.DeletedBy = &value
 	}
 	if value, ok := _c.mutation.TenantID(); ok {
-		_spec.SetField(contentreference.FieldTenantID, field.TypeUint64, value)
+		_spec.SetField(contentreference.FieldTenantID, field.TypeInt64, value)
 		_node.TenantID = &value
 	}
 	if value, ok := _c.mutation.SourceType(); ok {
@@ -315,7 +315,7 @@ func (_c *ContentReferenceCreate) createSpec() (*ContentReference, *sqlgraph.Cre
 		_node.SourceType = value
 	}
 	if value, ok := _c.mutation.SourceID(); ok {
-		_spec.SetField(contentreference.FieldSourceID, field.TypeUint64, value)
+		_spec.SetField(contentreference.FieldSourceID, field.TypeInt64, value)
 		_node.SourceID = value
 	}
 	if value, ok := _c.mutation.TargetType(); ok {
@@ -323,7 +323,7 @@ func (_c *ContentReferenceCreate) createSpec() (*ContentReference, *sqlgraph.Cre
 		_node.TargetType = value
 	}
 	if value, ok := _c.mutation.TargetID(); ok {
-		_spec.SetField(contentreference.FieldTargetID, field.TypeUint64, value)
+		_spec.SetField(contentreference.FieldTargetID, field.TypeInt64, value)
 		_node.TargetID = value
 	}
 	if value, ok := _c.mutation.GetField(); ok {
@@ -419,7 +419,7 @@ func (u *ContentReferenceUpsert) ClearDeletedAt() *ContentReferenceUpsert {
 }
 
 // SetCreatedBy sets the "created_by" field.
-func (u *ContentReferenceUpsert) SetCreatedBy(v uint64) *ContentReferenceUpsert {
+func (u *ContentReferenceUpsert) SetCreatedBy(v int64) *ContentReferenceUpsert {
 	u.Set(contentreference.FieldCreatedBy, v)
 	return u
 }
@@ -431,7 +431,7 @@ func (u *ContentReferenceUpsert) UpdateCreatedBy() *ContentReferenceUpsert {
 }
 
 // AddCreatedBy adds v to the "created_by" field.
-func (u *ContentReferenceUpsert) AddCreatedBy(v uint64) *ContentReferenceUpsert {
+func (u *ContentReferenceUpsert) AddCreatedBy(v int64) *ContentReferenceUpsert {
 	u.Add(contentreference.FieldCreatedBy, v)
 	return u
 }
@@ -443,7 +443,7 @@ func (u *ContentReferenceUpsert) ClearCreatedBy() *ContentReferenceUpsert {
 }
 
 // SetUpdatedBy sets the "updated_by" field.
-func (u *ContentReferenceUpsert) SetUpdatedBy(v uint64) *ContentReferenceUpsert {
+func (u *ContentReferenceUpsert) SetUpdatedBy(v int64) *ContentReferenceUpsert {
 	u.Set(contentreference.FieldUpdatedBy, v)
 	return u
 }
@@ -455,7 +455,7 @@ func (u *ContentReferenceUpsert) UpdateUpdatedBy() *ContentReferenceUpsert {
 }
 
 // AddUpdatedBy adds v to the "updated_by" field.
-func (u *ContentReferenceUpsert) AddUpdatedBy(v uint64) *ContentReferenceUpsert {
+func (u *ContentReferenceUpsert) AddUpdatedBy(v int64) *ContentReferenceUpsert {
 	u.Add(contentreference.FieldUpdatedBy, v)
 	return u
 }
@@ -467,7 +467,7 @@ func (u *ContentReferenceUpsert) ClearUpdatedBy() *ContentReferenceUpsert {
 }
 
 // SetDeletedBy sets the "deleted_by" field.
-func (u *ContentReferenceUpsert) SetDeletedBy(v uint64) *ContentReferenceUpsert {
+func (u *ContentReferenceUpsert) SetDeletedBy(v int64) *ContentReferenceUpsert {
 	u.Set(contentreference.FieldDeletedBy, v)
 	return u
 }
@@ -479,7 +479,7 @@ func (u *ContentReferenceUpsert) UpdateDeletedBy() *ContentReferenceUpsert {
 }
 
 // AddDeletedBy adds v to the "deleted_by" field.
-func (u *ContentReferenceUpsert) AddDeletedBy(v uint64) *ContentReferenceUpsert {
+func (u *ContentReferenceUpsert) AddDeletedBy(v int64) *ContentReferenceUpsert {
 	u.Add(contentreference.FieldDeletedBy, v)
 	return u
 }
@@ -503,7 +503,7 @@ func (u *ContentReferenceUpsert) UpdateSourceType() *ContentReferenceUpsert {
 }
 
 // SetSourceID sets the "source_id" field.
-func (u *ContentReferenceUpsert) SetSourceID(v uint64) *ContentReferenceUpsert {
+func (u *ContentReferenceUpsert) SetSourceID(v int64) *ContentReferenceUpsert {
 	u.Set(contentreference.FieldSourceID, v)
 	return u
 }
@@ -515,7 +515,7 @@ func (u *ContentReferenceUpsert) UpdateSourceID() *ContentReferenceUpsert {
 }
 
 // AddSourceID adds v to the "source_id" field.
-func (u *ContentReferenceUpsert) AddSourceID(v uint64) *ContentReferenceUpsert {
+func (u *ContentReferenceUpsert) AddSourceID(v int64) *ContentReferenceUpsert {
 	u.Add(contentreference.FieldSourceID, v)
 	return u
 }
@@ -533,7 +533,7 @@ func (u *ContentReferenceUpsert) UpdateTargetType() *ContentReferenceUpsert {
 }
 
 // SetTargetID sets the "target_id" field.
-func (u *ContentReferenceUpsert) SetTargetID(v uint64) *ContentReferenceUpsert {
+func (u *ContentReferenceUpsert) SetTargetID(v int64) *ContentReferenceUpsert {
 	u.Set(contentreference.FieldTargetID, v)
 	return u
 }
@@ -545,7 +545,7 @@ func (u *ContentReferenceUpsert) UpdateTargetID() *ContentReferenceUpsert {
 }
 
 // AddTargetID adds v to the "target_id" field.
-func (u *ContentReferenceUpsert) AddTargetID(v uint64) *ContentReferenceUpsert {
+func (u *ContentReferenceUpsert) AddTargetID(v int64) *ContentReferenceUpsert {
 	u.Add(contentreference.FieldTargetID, v)
 	return u
 }
@@ -659,14 +659,14 @@ func (u *ContentReferenceUpsertOne) ClearDeletedAt() *ContentReferenceUpsertOne 
 }
 
 // SetCreatedBy sets the "created_by" field.
-func (u *ContentReferenceUpsertOne) SetCreatedBy(v uint64) *ContentReferenceUpsertOne {
+func (u *ContentReferenceUpsertOne) SetCreatedBy(v int64) *ContentReferenceUpsertOne {
 	return u.Update(func(s *ContentReferenceUpsert) {
 		s.SetCreatedBy(v)
 	})
 }
 
 // AddCreatedBy adds v to the "created_by" field.
-func (u *ContentReferenceUpsertOne) AddCreatedBy(v uint64) *ContentReferenceUpsertOne {
+func (u *ContentReferenceUpsertOne) AddCreatedBy(v int64) *ContentReferenceUpsertOne {
 	return u.Update(func(s *ContentReferenceUpsert) {
 		s.AddCreatedBy(v)
 	})
@@ -687,14 +687,14 @@ func (u *ContentReferenceUpsertOne) ClearCreatedBy() *ContentReferenceUpsertOne 
 }
 
 // SetUpdatedBy sets the "updated_by" field.
-func (u *ContentReferenceUpsertOne) SetUpdatedBy(v uint64) *ContentReferenceUpsertOne {
+func (u *ContentReferenceUpsertOne) SetUpdatedBy(v int64) *ContentReferenceUpsertOne {
 	return u.Update(func(s *ContentReferenceUpsert) {
 		s.SetUpdatedBy(v)
 	})
 }
 
 // AddUpdatedBy adds v to the "updated_by" field.
-func (u *ContentReferenceUpsertOne) AddUpdatedBy(v uint64) *ContentReferenceUpsertOne {
+func (u *ContentReferenceUpsertOne) AddUpdatedBy(v int64) *ContentReferenceUpsertOne {
 	return u.Update(func(s *ContentReferenceUpsert) {
 		s.AddUpdatedBy(v)
 	})
@@ -715,14 +715,14 @@ func (u *ContentReferenceUpsertOne) ClearUpdatedBy() *ContentReferenceUpsertOne 
 }
 
 // SetDeletedBy sets the "deleted_by" field.
-func (u *ContentReferenceUpsertOne) SetDeletedBy(v uint64) *ContentReferenceUpsertOne {
+func (u *ContentReferenceUpsertOne) SetDeletedBy(v int64) *ContentReferenceUpsertOne {
 	return u.Update(func(s *ContentReferenceUpsert) {
 		s.SetDeletedBy(v)
 	})
 }
 
 // AddDeletedBy adds v to the "deleted_by" field.
-func (u *ContentReferenceUpsertOne) AddDeletedBy(v uint64) *ContentReferenceUpsertOne {
+func (u *ContentReferenceUpsertOne) AddDeletedBy(v int64) *ContentReferenceUpsertOne {
 	return u.Update(func(s *ContentReferenceUpsert) {
 		s.AddDeletedBy(v)
 	})
@@ -757,14 +757,14 @@ func (u *ContentReferenceUpsertOne) UpdateSourceType() *ContentReferenceUpsertOn
 }
 
 // SetSourceID sets the "source_id" field.
-func (u *ContentReferenceUpsertOne) SetSourceID(v uint64) *ContentReferenceUpsertOne {
+func (u *ContentReferenceUpsertOne) SetSourceID(v int64) *ContentReferenceUpsertOne {
 	return u.Update(func(s *ContentReferenceUpsert) {
 		s.SetSourceID(v)
 	})
 }
 
 // AddSourceID adds v to the "source_id" field.
-func (u *ContentReferenceUpsertOne) AddSourceID(v uint64) *ContentReferenceUpsertOne {
+func (u *ContentReferenceUpsertOne) AddSourceID(v int64) *ContentReferenceUpsertOne {
 	return u.Update(func(s *ContentReferenceUpsert) {
 		s.AddSourceID(v)
 	})
@@ -792,14 +792,14 @@ func (u *ContentReferenceUpsertOne) UpdateTargetType() *ContentReferenceUpsertOn
 }
 
 // SetTargetID sets the "target_id" field.
-func (u *ContentReferenceUpsertOne) SetTargetID(v uint64) *ContentReferenceUpsertOne {
+func (u *ContentReferenceUpsertOne) SetTargetID(v int64) *ContentReferenceUpsertOne {
 	return u.Update(func(s *ContentReferenceUpsert) {
 		s.SetTargetID(v)
 	})
 }
 
 // AddTargetID adds v to the "target_id" field.
-func (u *ContentReferenceUpsertOne) AddTargetID(v uint64) *ContentReferenceUpsertOne {
+func (u *ContentReferenceUpsertOne) AddTargetID(v int64) *ContentReferenceUpsertOne {
 	return u.Update(func(s *ContentReferenceUpsert) {
 		s.AddTargetID(v)
 	})
@@ -842,7 +842,7 @@ func (u *ContentReferenceUpsertOne) ExecX(ctx context.Context) {
 }
 
 // Exec executes the UPSERT query and returns the inserted/updated ID.
-func (u *ContentReferenceUpsertOne) ID(ctx context.Context) (id uint64, err error) {
+func (u *ContentReferenceUpsertOne) ID(ctx context.Context) (id int64, err error) {
 	node, err := u.create.Save(ctx)
 	if err != nil {
 		return id, err
@@ -851,7 +851,7 @@ func (u *ContentReferenceUpsertOne) ID(ctx context.Context) (id uint64, err erro
 }
 
 // IDX is like ID, but panics if an error occurs.
-func (u *ContentReferenceUpsertOne) IDX(ctx context.Context) uint64 {
+func (u *ContentReferenceUpsertOne) IDX(ctx context.Context) int64 {
 	id, err := u.ID(ctx)
 	if err != nil {
 		panic(err)
@@ -908,7 +908,7 @@ func (_c *ContentReferenceCreateBulk) Save(ctx context.Context) ([]*ContentRefer
 				mutation.id = &nodes[i].ID
 				if specs[i].ID.Value != nil && nodes[i].ID == 0 {
 					id := specs[i].ID.Value.(int64)
-					nodes[i].ID = uint64(id)
+					nodes[i].ID = int64(id)
 				}
 				mutation.done = true
 				return nodes[i], nil
@@ -1089,14 +1089,14 @@ func (u *ContentReferenceUpsertBulk) ClearDeletedAt() *ContentReferenceUpsertBul
 }
 
 // SetCreatedBy sets the "created_by" field.
-func (u *ContentReferenceUpsertBulk) SetCreatedBy(v uint64) *ContentReferenceUpsertBulk {
+func (u *ContentReferenceUpsertBulk) SetCreatedBy(v int64) *ContentReferenceUpsertBulk {
 	return u.Update(func(s *ContentReferenceUpsert) {
 		s.SetCreatedBy(v)
 	})
 }
 
 // AddCreatedBy adds v to the "created_by" field.
-func (u *ContentReferenceUpsertBulk) AddCreatedBy(v uint64) *ContentReferenceUpsertBulk {
+func (u *ContentReferenceUpsertBulk) AddCreatedBy(v int64) *ContentReferenceUpsertBulk {
 	return u.Update(func(s *ContentReferenceUpsert) {
 		s.AddCreatedBy(v)
 	})
@@ -1117,14 +1117,14 @@ func (u *ContentReferenceUpsertBulk) ClearCreatedBy() *ContentReferenceUpsertBul
 }
 
 // SetUpdatedBy sets the "updated_by" field.
-func (u *ContentReferenceUpsertBulk) SetUpdatedBy(v uint64) *ContentReferenceUpsertBulk {
+func (u *ContentReferenceUpsertBulk) SetUpdatedBy(v int64) *ContentReferenceUpsertBulk {
 	return u.Update(func(s *ContentReferenceUpsert) {
 		s.SetUpdatedBy(v)
 	})
 }
 
 // AddUpdatedBy adds v to the "updated_by" field.
-func (u *ContentReferenceUpsertBulk) AddUpdatedBy(v uint64) *ContentReferenceUpsertBulk {
+func (u *ContentReferenceUpsertBulk) AddUpdatedBy(v int64) *ContentReferenceUpsertBulk {
 	return u.Update(func(s *ContentReferenceUpsert) {
 		s.AddUpdatedBy(v)
 	})
@@ -1145,14 +1145,14 @@ func (u *ContentReferenceUpsertBulk) ClearUpdatedBy() *ContentReferenceUpsertBul
 }
 
 // SetDeletedBy sets the "deleted_by" field.
-func (u *ContentReferenceUpsertBulk) SetDeletedBy(v uint64) *ContentReferenceUpsertBulk {
+func (u *ContentReferenceUpsertBulk) SetDeletedBy(v int64) *ContentReferenceUpsertBulk {
 	return u.Update(func(s *ContentReferenceUpsert) {
 		s.SetDeletedBy(v)
 	})
 }
 
 // AddDeletedBy adds v to the "deleted_by" field.
-func (u *ContentReferenceUpsertBulk) AddDeletedBy(v uint64) *ContentReferenceUpsertBulk {
+func (u *ContentReferenceUpsertBulk) AddDeletedBy(v int64) *ContentReferenceUpsertBulk {
 	return u.Update(func(s *ContentReferenceUpsert) {
 		s.AddDeletedBy(v)
 	})
@@ -1187,14 +1187,14 @@ func (u *ContentReferenceUpsertBulk) UpdateSourceType() *ContentReferenceUpsertB
 }
 
 // SetSourceID sets the "source_id" field.
-func (u *ContentReferenceUpsertBulk) SetSourceID(v uint64) *ContentReferenceUpsertBulk {
+func (u *ContentReferenceUpsertBulk) SetSourceID(v int64) *ContentReferenceUpsertBulk {
 	return u.Update(func(s *ContentReferenceUpsert) {
 		s.SetSourceID(v)
 	})
 }
 
 // AddSourceID adds v to the "source_id" field.
-func (u *ContentReferenceUpsertBulk) AddSourceID(v uint64) *ContentReferenceUpsertBulk {
+func (u *ContentReferenceUpsertBulk) AddSourceID(v int64) *ContentReferenceUpsertBulk {
 	return u.Update(func(s *ContentReferenceUpsert) {
 		s.AddSourceID(v)
 	})
@@ -1222,14 +1222,14 @@ func (u *ContentReferenceUpsertBulk) UpdateTargetType() *ContentReferenceUpsertB
 }
 
 // SetTargetID sets the "target_id" field.
-func (u *ContentReferenceUpsertBulk) SetTargetID(v uint64) *ContentReferenceUpsertBulk {
+func (u *ContentReferenceUpsertBulk) SetTargetID(v int64) *ContentReferenceUpsertBulk {
 	return u.Update(func(s *ContentReferenceUpsert) {
 		s.SetTargetID(v)
 	})
 }
 
 // AddTargetID adds v to the "target_id" field.
-func (u *ContentReferenceUpsertBulk) AddTargetID(v uint64) *ContentReferenceUpsertBulk {
+func (u *ContentReferenceUpsertBulk) AddTargetID(v int64) *ContentReferenceUpsertBulk {
 	return u.Update(func(s *ContentReferenceUpsert) {
 		s.AddTargetID(v)
 	})

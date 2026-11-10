@@ -8,9 +8,9 @@ import (
 
 // UserViewer describes a user-viewer.
 type UserViewer struct {
-	uid         uint64
-	tid         uint64
-	ouid        uint64
+	uid         int64
+	tid         int64
+	ouid        int64
 	dataScopes  []viewer.DataScope
 	roles       []string
 	permissions []string
@@ -18,9 +18,9 @@ type UserViewer struct {
 }
 
 func NewUserViewer(
-	uid uint64,
-	tid uint64,
-	ouid uint64,
+	uid int64,
+	tid int64,
+	ouid int64,
 	traceID string,
 	dataScope identityV1.DataScope,
 ) viewer.Context {
@@ -35,9 +35,9 @@ func NewUserViewer(
 }
 
 func NewUserViewerWithDataScopes(
-	uid uint64,
-	tid uint64,
-	ouid uint64,
+	uid int64,
+	tid int64,
+	ouid int64,
 	traceID string,
 	dataScopes []viewer.DataScope,
 ) viewer.Context {
@@ -52,17 +52,17 @@ func NewUserViewerWithDataScopes(
 }
 
 // UserID 返回当前用户ID
-func (v UserViewer) UserID() uint64 {
+func (v UserViewer) UserID() int64 {
 	return v.uid
 }
 
 // TenantID 返回租户ID
-func (v UserViewer) TenantID() uint64 {
+func (v UserViewer) TenantID() int64 {
 	return v.tid
 }
 
 // OrgUnitID 返回当前身份挂载的组织单元 ID
-func (v UserViewer) OrgUnitID() uint64 {
+func (v UserViewer) OrgUnitID() int64 {
 	return v.ouid
 }
 

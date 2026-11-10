@@ -136,7 +136,7 @@ func makeTestPNG(t *testing.T, srcW, srcH int) []byte {
 	}
 	// 右上角一块全透明，验证 JPEG 输出铺白底而不是黑底
 	for y := 0; y < srcH/10; y++ {
-		for x := srcW*9/10; x < srcW; x++ {
+		for x := srcW * 9 / 10; x < srcW; x++ {
 			img.Set(x, y, color.RGBA{A: 0})
 		}
 	}

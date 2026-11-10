@@ -587,7 +587,7 @@ func (x *ListChannelSchemasResponse) GetItems() []*ChannelSchema {
 // 通知渠道
 type NotificationChannel struct {
 	state        protoimpl.MessageState    `protogen:"open.v1"`
-	Id           *uint64                   `protobuf:"varint,1,opt,name=id,proto3,oneof" json:"id,omitempty"`                                                     // 渠道ID
+	Id           *int64                    `protobuf:"varint,1,opt,name=id,proto3,oneof" json:"id,omitempty"`                                                     // 渠道ID
 	Name         *string                   `protobuf:"bytes,2,opt,name=name,proto3,oneof" json:"name,omitempty"`                                                  // 渠道名称
 	Type         *NotificationChannel_Type `protobuf:"varint,3,opt,name=type,proto3,enum=notify.service.v1.NotificationChannel_Type,oneof" json:"type,omitempty"` // 渠道类型
 	SmtpHost     *string                   `protobuf:"bytes,10,opt,name=smtp_host,json=smtpHost,proto3,oneof" json:"smtp_host,omitempty"`                         // SMTP 服务器地址
@@ -618,8 +618,8 @@ type NotificationChannel struct {
 	Settings      *string                `protobuf:"bytes,25,opt,name=settings,proto3,oneof" json:"settings,omitempty"` // 扩展渠道配置
 	Enabled       *bool                  `protobuf:"varint,30,opt,name=enabled,proto3,oneof" json:"enabled,omitempty"`  // 是否启用
 	Remark        *string                `protobuf:"bytes,31,opt,name=remark,proto3,oneof" json:"remark,omitempty"`     // 备注
-	CreatedBy     *uint64                `protobuf:"varint,100,opt,name=created_by,json=createdBy,proto3,oneof" json:"created_by,omitempty"`
-	UpdatedBy     *uint64                `protobuf:"varint,101,opt,name=updated_by,json=updatedBy,proto3,oneof" json:"updated_by,omitempty"`
+	CreatedBy     *int64                 `protobuf:"varint,100,opt,name=created_by,json=createdBy,proto3,oneof" json:"created_by,omitempty"`
+	UpdatedBy     *int64                 `protobuf:"varint,101,opt,name=updated_by,json=updatedBy,proto3,oneof" json:"updated_by,omitempty"`
 	CreatedAt     *timestamppb.Timestamp `protobuf:"bytes,200,opt,name=created_at,json=createdAt,proto3,oneof" json:"created_at,omitempty"`
 	UpdatedAt     *timestamppb.Timestamp `protobuf:"bytes,201,opt,name=updated_at,json=updatedAt,proto3,oneof" json:"updated_at,omitempty"`
 	unknownFields protoimpl.UnknownFields
@@ -656,7 +656,7 @@ func (*NotificationChannel) Descriptor() ([]byte, []int) {
 	return file_notify_service_v1_notification_channel_proto_rawDescGZIP(), []int{3}
 }
 
-func (x *NotificationChannel) GetId() uint64 {
+func (x *NotificationChannel) GetId() int64 {
 	if x != nil && x.Id != nil {
 		return *x.Id
 	}
@@ -824,14 +824,14 @@ func (x *NotificationChannel) GetRemark() string {
 	return ""
 }
 
-func (x *NotificationChannel) GetCreatedBy() uint64 {
+func (x *NotificationChannel) GetCreatedBy() int64 {
 	if x != nil && x.CreatedBy != nil {
 		return *x.CreatedBy
 	}
 	return 0
 }
 
-func (x *NotificationChannel) GetUpdatedBy() uint64 {
+func (x *NotificationChannel) GetUpdatedBy() int64 {
 	if x != nil && x.UpdatedBy != nil {
 		return *x.UpdatedBy
 	}
@@ -856,7 +856,7 @@ func (x *NotificationChannel) GetUpdatedAt() *timestamppb.Timestamp {
 type ListNotificationChannelResponse struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
 	Items         []*NotificationChannel `protobuf:"bytes,1,rep,name=items,proto3" json:"items,omitempty"`
-	Total         uint64                 `protobuf:"varint,2,opt,name=total,proto3" json:"total,omitempty"`
+	Total         int64                  `protobuf:"varint,2,opt,name=total,proto3" json:"total,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -898,7 +898,7 @@ func (x *ListNotificationChannelResponse) GetItems() []*NotificationChannel {
 	return nil
 }
 
-func (x *ListNotificationChannelResponse) GetTotal() uint64 {
+func (x *ListNotificationChannelResponse) GetTotal() int64 {
 	if x != nil {
 		return x.Total
 	}
@@ -908,7 +908,7 @@ func (x *ListNotificationChannelResponse) GetTotal() uint64 {
 // 查询通知渠道详情 - 请求
 type GetNotificationChannelRequest struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
-	Id            uint64                 `protobuf:"varint,1,opt,name=id,proto3" json:"id,omitempty"`
+	Id            int64                  `protobuf:"varint,1,opt,name=id,proto3" json:"id,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -943,7 +943,7 @@ func (*GetNotificationChannelRequest) Descriptor() ([]byte, []int) {
 	return file_notify_service_v1_notification_channel_proto_rawDescGZIP(), []int{5}
 }
 
-func (x *GetNotificationChannelRequest) GetId() uint64 {
+func (x *GetNotificationChannelRequest) GetId() int64 {
 	if x != nil {
 		return x.Id
 	}
@@ -1034,7 +1034,7 @@ func (x *CreateNotificationChannelRequest) GetSmsAccessSecret() string {
 // 更新通知渠道 - 请求
 type UpdateNotificationChannelRequest struct {
 	state      protoimpl.MessageState `protogen:"open.v1"`
-	Id         uint64                 `protobuf:"varint,1,opt,name=id,proto3" json:"id,omitempty"`
+	Id         int64                  `protobuf:"varint,1,opt,name=id,proto3" json:"id,omitempty"`
 	Data       *NotificationChannel   `protobuf:"bytes,2,opt,name=data,proto3" json:"data,omitempty"`
 	UpdateMask *fieldmaskpb.FieldMask `protobuf:"bytes,3,opt,name=update_mask,json=updateMask,proto3" json:"update_mask,omitempty"`
 	// 明文密码；留空表示不修改已存密码
@@ -1079,7 +1079,7 @@ func (*UpdateNotificationChannelRequest) Descriptor() ([]byte, []int) {
 	return file_notify_service_v1_notification_channel_proto_rawDescGZIP(), []int{7}
 }
 
-func (x *UpdateNotificationChannelRequest) GetId() uint64 {
+func (x *UpdateNotificationChannelRequest) GetId() int64 {
 	if x != nil {
 		return x.Id
 	}
@@ -1131,7 +1131,7 @@ func (x *UpdateNotificationChannelRequest) GetSmsAccessSecret() string {
 // 删除通知渠道 - 请求
 type DeleteNotificationChannelRequest struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
-	Id            uint64                 `protobuf:"varint,1,opt,name=id,proto3" json:"id,omitempty"`
+	Id            int64                  `protobuf:"varint,1,opt,name=id,proto3" json:"id,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -1166,7 +1166,7 @@ func (*DeleteNotificationChannelRequest) Descriptor() ([]byte, []int) {
 	return file_notify_service_v1_notification_channel_proto_rawDescGZIP(), []int{8}
 }
 
-func (x *DeleteNotificationChannelRequest) GetId() uint64 {
+func (x *DeleteNotificationChannelRequest) GetId() int64 {
 	if x != nil {
 		return x.Id
 	}
@@ -1176,7 +1176,7 @@ func (x *DeleteNotificationChannelRequest) GetId() uint64 {
 // 发送测试邮件 - 请求
 type SendTestEmailRequest struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
-	Id            uint64                 `protobuf:"varint,1,opt,name=id,proto3" json:"id,omitempty"`              // 渠道ID
+	Id            int64                  `protobuf:"varint,1,opt,name=id,proto3" json:"id,omitempty"`              // 渠道ID
 	Recipient     string                 `protobuf:"bytes,2,opt,name=recipient,proto3" json:"recipient,omitempty"` // 测试收件人邮箱
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
@@ -1212,7 +1212,7 @@ func (*SendTestEmailRequest) Descriptor() ([]byte, []int) {
 	return file_notify_service_v1_notification_channel_proto_rawDescGZIP(), []int{9}
 }
 
-func (x *SendTestEmailRequest) GetId() uint64 {
+func (x *SendTestEmailRequest) GetId() int64 {
 	if x != nil {
 		return x.Id
 	}
@@ -1303,7 +1303,7 @@ const file_notify_service_v1_notification_channel_proto_rawDesc = "" +
 	"\x1aListChannelSchemasResponse\x126\n" +
 	"\x05items\x18\x01 \x03(\v2 .notify.service.v1.ChannelSchemaR\x05items\"\xbb\x19\n" +
 	"\x13NotificationChannel\x12#\n" +
-	"\x02id\x18\x01 \x01(\x04B\x0e\xbaG\v\x92\x02\b渠道IDH\x00R\x02id\x88\x01\x01\x12+\n" +
+	"\x02id\x18\x01 \x01(\x03B\x0e\xbaG\v\x92\x02\b渠道IDH\x00R\x02id\x88\x01\x01\x12+\n" +
 	"\x04name\x18\x02 \x01(\tB\x12\xbaG\x0f\x92\x02\f渠道名称H\x01R\x04name\x88\x01\x01\x12X\n" +
 	"\x04type\x18\x03 \x01(\x0e2+.notify.service.v1.NotificationChannel.TypeB\x12\xbaG\x0f\x92\x02\f渠道类型H\x02R\x04type\x88\x01\x01\x12<\n" +
 	"\tsmtp_host\x18\n" +
@@ -1333,9 +1333,9 @@ const file_notify_service_v1_notification_channel_proto_rawDesc = "" +
 	"\aenabled\x18\x1e \x01(\bB\x12\xbaG\x0f\x92\x02\f是否启用H\x16R\aenabled\x88\x01\x01\x12)\n" +
 	"\x06remark\x18\x1f \x01(\tB\f\xbaG\t\x92\x02\x06备注H\x17R\x06remark\x88\x01\x01\x12\"\n" +
 	"\n" +
-	"created_by\x18d \x01(\x04H\x18R\tcreatedBy\x88\x01\x01\x12\"\n" +
+	"created_by\x18d \x01(\x03H\x18R\tcreatedBy\x88\x01\x01\x12\"\n" +
 	"\n" +
-	"updated_by\x18e \x01(\x04H\x19R\tupdatedBy\x88\x01\x01\x12?\n" +
+	"updated_by\x18e \x01(\x03H\x19R\tupdatedBy\x88\x01\x01\x12?\n" +
 	"\n" +
 	"created_at\x18\xc8\x01 \x01(\v2\x1a.google.protobuf.TimestampH\x1aR\tcreatedAt\x88\x01\x01\x12?\n" +
 	"\n" +
@@ -1436,9 +1436,9 @@ const file_notify_service_v1_notification_channel_proto_rawDesc = "" +
 	"\v_updated_at\"u\n" +
 	"\x1fListNotificationChannelResponse\x12<\n" +
 	"\x05items\x18\x01 \x03(\v2&.notify.service.v1.NotificationChannelR\x05items\x12\x14\n" +
-	"\x05total\x18\x02 \x01(\x04R\x05total\"/\n" +
+	"\x05total\x18\x02 \x01(\x03R\x05total\"/\n" +
 	"\x1dGetNotificationChannelRequest\x12\x0e\n" +
-	"\x02id\x18\x01 \x01(\x04R\x02id\"\xbc\x03\n" +
+	"\x02id\x18\x01 \x01(\x03R\x02id\"\xbc\x03\n" +
 	" CreateNotificationChannelRequest\x12:\n" +
 	"\x04data\x18\x01 \x01(\v2&.notify.service.v1.NotificationChannelR\x04data\x12<\n" +
 	"\bpassword\x18\x02 \x01(\tB\x1b\xbaG\x18\x92\x02\x15SMTP 密码/授权码H\x00R\bpassword\x88\x01\x01\x12F\n" +
@@ -1450,7 +1450,7 @@ const file_notify_service_v1_notification_channel_proto_rawDesc = "" +
 	"\t_settingsB\x14\n" +
 	"\x12_sms_access_secret\"\xd1\x04\n" +
 	" UpdateNotificationChannelRequest\x12\x0e\n" +
-	"\x02id\x18\x01 \x01(\x04R\x02id\x12:\n" +
+	"\x02id\x18\x01 \x01(\x03R\x02id\x12:\n" +
 	"\x04data\x18\x02 \x01(\v2&.notify.service.v1.NotificationChannelR\x04data\x12;\n" +
 	"\vupdate_mask\x18\x03 \x01(\v2\x1a.google.protobuf.FieldMaskR\n" +
 	"updateMask\x12N\n" +
@@ -1463,9 +1463,9 @@ const file_notify_service_v1_notification_channel_proto_rawDesc = "" +
 	"\t_settingsB\x14\n" +
 	"\x12_sms_access_secret\"2\n" +
 	" DeleteNotificationChannelRequest\x12\x0e\n" +
-	"\x02id\x18\x01 \x01(\x04R\x02id\"q\n" +
+	"\x02id\x18\x01 \x01(\x03R\x02id\"q\n" +
 	"\x14SendTestEmailRequest\x12\x1e\n" +
-	"\x02id\x18\x01 \x01(\x04B\x0e\xbaG\v\x92\x02\b渠道IDR\x02id\x129\n" +
+	"\x02id\x18\x01 \x01(\x03B\x0e\xbaG\v\x92\x02\b渠道IDR\x02id\x129\n" +
 	"\trecipient\x18\x02 \x01(\tB\x1b\xbaG\x18\x92\x02\x15测试收件人邮箱R\trecipient\"G\n" +
 	"\x15SendTestEmailResponse\x12\x18\n" +
 	"\asuccess\x18\x01 \x01(\bR\asuccess\x12\x14\n" +

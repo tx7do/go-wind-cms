@@ -13,7 +13,7 @@ const NotificationDispatchTaskType = "notification.dispatch"
 // 台账不存正文快照且 target 已脱敏，所以载荷必须自带投递所需的正文原文；
 // 重试不重新解析模板（SendDirect 落台账前就渲染好了）。
 type NotificationDispatchTaskData struct {
-	DeliveryId uint64            `json:"deliveryId"`
+	DeliveryId int64             `json:"deliveryId"`
 	Target     string            `json:"target"`
 	Title      string            `json:"title"`
 	Content    string            `json:"content"`

@@ -40,7 +40,7 @@ func (_d *CollabDocStateDelete) ExecX(ctx context.Context) int {
 }
 
 func (_d *CollabDocStateDelete) sqlExec(ctx context.Context) (int, error) {
-	_spec := sqlgraph.NewDeleteSpec(collabdocstate.Table, sqlgraph.NewFieldSpec(collabdocstate.FieldID, field.TypeUint64))
+	_spec := sqlgraph.NewDeleteSpec(collabdocstate.Table, sqlgraph.NewFieldSpec(collabdocstate.FieldID, field.TypeInt64))
 	if ps := _d.mutation.predicates; len(ps) > 0 {
 		_spec.Predicate = func(selector *sql.Selector) {
 			for i := range ps {

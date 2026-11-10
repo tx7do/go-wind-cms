@@ -20,7 +20,7 @@ type RelationConfig struct {
 
 // ComponentConfig component/dynamic_zone 类型字段的组件配置（typed-JSON 存储）。
 // COMPONENT 用 ComponentCode + Repeatable；DYNAMIC_ZONE 用 AllowedComponentCodes
-//（非空白名单）。组件字段不支持嵌套组件（校验器显式拒绝）。
+// （非空白名单）。组件字段不支持嵌套组件（校验器显式拒绝）。
 type ComponentConfig struct {
 	ComponentCode         string   `json:"component_code,omitempty"`
 	Repeatable            bool     `json:"repeatable,omitempty"`
@@ -49,12 +49,12 @@ func (FieldDefinition) Annotations() []schema.Annotation {
 
 func (FieldDefinition) Fields() []ent.Field {
 	return []ent.Field{
-		field.Uint64("content_model_id").
+		field.Int64("content_model_id").
 			Comment("所属内容模型ID").
 			Optional().
 			Nillable(),
 
-		field.Uint64("component_id").
+		field.Int64("component_id").
 			Comment("所属组件定义ID（与 content_model_id 恰好其一非空）").
 			Optional().
 			Nillable(),
@@ -127,7 +127,7 @@ func (FieldDefinition) Mixin() []ent.Mixin {
 		mixin.TimeAt{},
 		mixin.OperatorID64{},
 		mixin.SortOrder{},
-		mixin.TenantID[uint64]{},
+		mixin.TenantID[int64]{},
 	}
 }
 

@@ -43,7 +43,7 @@ func (s *MFAService) GetMFAStatus(ctx context.Context, _ *authenticationV1.GetMF
 		return nil, err
 	}
 	return s.mfaServiceClient.GetMFAStatus(ctx, &authenticationV1.GetMFAStatusRequest{
-		UserId: trans.Ptr(strconv.FormatUint(uint64(operator.GetUserId()), 10)),
+		UserId: trans.Ptr(strconv.FormatInt(int64(operator.GetUserId()), 10)),
 	})
 }
 

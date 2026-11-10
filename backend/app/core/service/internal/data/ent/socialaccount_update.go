@@ -70,14 +70,14 @@ func (_u *SocialAccountUpdate) ClearDeletedAt() *SocialAccountUpdate {
 }
 
 // SetCreatedBy sets the "created_by" field.
-func (_u *SocialAccountUpdate) SetCreatedBy(v uint64) *SocialAccountUpdate {
+func (_u *SocialAccountUpdate) SetCreatedBy(v int64) *SocialAccountUpdate {
 	_u.mutation.ResetCreatedBy()
 	_u.mutation.SetCreatedBy(v)
 	return _u
 }
 
 // SetNillableCreatedBy sets the "created_by" field if the given value is not nil.
-func (_u *SocialAccountUpdate) SetNillableCreatedBy(v *uint64) *SocialAccountUpdate {
+func (_u *SocialAccountUpdate) SetNillableCreatedBy(v *int64) *SocialAccountUpdate {
 	if v != nil {
 		_u.SetCreatedBy(*v)
 	}
@@ -97,14 +97,14 @@ func (_u *SocialAccountUpdate) ClearCreatedBy() *SocialAccountUpdate {
 }
 
 // SetUpdatedBy sets the "updated_by" field.
-func (_u *SocialAccountUpdate) SetUpdatedBy(v uint64) *SocialAccountUpdate {
+func (_u *SocialAccountUpdate) SetUpdatedBy(v int64) *SocialAccountUpdate {
 	_u.mutation.ResetUpdatedBy()
 	_u.mutation.SetUpdatedBy(v)
 	return _u
 }
 
 // SetNillableUpdatedBy sets the "updated_by" field if the given value is not nil.
-func (_u *SocialAccountUpdate) SetNillableUpdatedBy(v *uint64) *SocialAccountUpdate {
+func (_u *SocialAccountUpdate) SetNillableUpdatedBy(v *int64) *SocialAccountUpdate {
 	if v != nil {
 		_u.SetUpdatedBy(*v)
 	}
@@ -124,14 +124,14 @@ func (_u *SocialAccountUpdate) ClearUpdatedBy() *SocialAccountUpdate {
 }
 
 // SetDeletedBy sets the "deleted_by" field.
-func (_u *SocialAccountUpdate) SetDeletedBy(v uint64) *SocialAccountUpdate {
+func (_u *SocialAccountUpdate) SetDeletedBy(v int64) *SocialAccountUpdate {
 	_u.mutation.ResetDeletedBy()
 	_u.mutation.SetDeletedBy(v)
 	return _u
 }
 
 // SetNillableDeletedBy sets the "deleted_by" field if the given value is not nil.
-func (_u *SocialAccountUpdate) SetNillableDeletedBy(v *uint64) *SocialAccountUpdate {
+func (_u *SocialAccountUpdate) SetNillableDeletedBy(v *int64) *SocialAccountUpdate {
 	if v != nil {
 		_u.SetDeletedBy(*v)
 	}
@@ -342,7 +342,7 @@ func (_u *SocialAccountUpdate) sqlSave(ctx context.Context) (_node int, err erro
 	if err := _u.check(); err != nil {
 		return _node, err
 	}
-	_spec := sqlgraph.NewUpdateSpec(socialaccount.Table, socialaccount.Columns, sqlgraph.NewFieldSpec(socialaccount.FieldID, field.TypeUint64))
+	_spec := sqlgraph.NewUpdateSpec(socialaccount.Table, socialaccount.Columns, sqlgraph.NewFieldSpec(socialaccount.FieldID, field.TypeInt64))
 	if ps := _u.mutation.predicates; len(ps) > 0 {
 		_spec.Predicate = func(selector *sql.Selector) {
 			for i := range ps {
@@ -366,31 +366,31 @@ func (_u *SocialAccountUpdate) sqlSave(ctx context.Context) (_node int, err erro
 		_spec.ClearField(socialaccount.FieldDeletedAt, field.TypeTime)
 	}
 	if value, ok := _u.mutation.CreatedBy(); ok {
-		_spec.SetField(socialaccount.FieldCreatedBy, field.TypeUint64, value)
+		_spec.SetField(socialaccount.FieldCreatedBy, field.TypeInt64, value)
 	}
 	if value, ok := _u.mutation.AddedCreatedBy(); ok {
-		_spec.AddField(socialaccount.FieldCreatedBy, field.TypeUint64, value)
+		_spec.AddField(socialaccount.FieldCreatedBy, field.TypeInt64, value)
 	}
 	if _u.mutation.CreatedByCleared() {
-		_spec.ClearField(socialaccount.FieldCreatedBy, field.TypeUint64)
+		_spec.ClearField(socialaccount.FieldCreatedBy, field.TypeInt64)
 	}
 	if value, ok := _u.mutation.UpdatedBy(); ok {
-		_spec.SetField(socialaccount.FieldUpdatedBy, field.TypeUint64, value)
+		_spec.SetField(socialaccount.FieldUpdatedBy, field.TypeInt64, value)
 	}
 	if value, ok := _u.mutation.AddedUpdatedBy(); ok {
-		_spec.AddField(socialaccount.FieldUpdatedBy, field.TypeUint64, value)
+		_spec.AddField(socialaccount.FieldUpdatedBy, field.TypeInt64, value)
 	}
 	if _u.mutation.UpdatedByCleared() {
-		_spec.ClearField(socialaccount.FieldUpdatedBy, field.TypeUint64)
+		_spec.ClearField(socialaccount.FieldUpdatedBy, field.TypeInt64)
 	}
 	if value, ok := _u.mutation.DeletedBy(); ok {
-		_spec.SetField(socialaccount.FieldDeletedBy, field.TypeUint64, value)
+		_spec.SetField(socialaccount.FieldDeletedBy, field.TypeInt64, value)
 	}
 	if value, ok := _u.mutation.AddedDeletedBy(); ok {
-		_spec.AddField(socialaccount.FieldDeletedBy, field.TypeUint64, value)
+		_spec.AddField(socialaccount.FieldDeletedBy, field.TypeInt64, value)
 	}
 	if _u.mutation.DeletedByCleared() {
-		_spec.ClearField(socialaccount.FieldDeletedBy, field.TypeUint64)
+		_spec.ClearField(socialaccount.FieldDeletedBy, field.TypeInt64)
 	}
 	if value, ok := _u.mutation.IsEnabled(); ok {
 		_spec.SetField(socialaccount.FieldIsEnabled, field.TypeBool, value)
@@ -399,7 +399,7 @@ func (_u *SocialAccountUpdate) sqlSave(ctx context.Context) (_node int, err erro
 		_spec.ClearField(socialaccount.FieldIsEnabled, field.TypeBool)
 	}
 	if _u.mutation.TenantIDCleared() {
-		_spec.ClearField(socialaccount.FieldTenantID, field.TypeUint64)
+		_spec.ClearField(socialaccount.FieldTenantID, field.TypeInt64)
 	}
 	if value, ok := _u.mutation.Platform(); ok {
 		_spec.SetField(socialaccount.FieldPlatform, field.TypeEnum, value)
@@ -500,14 +500,14 @@ func (_u *SocialAccountUpdateOne) ClearDeletedAt() *SocialAccountUpdateOne {
 }
 
 // SetCreatedBy sets the "created_by" field.
-func (_u *SocialAccountUpdateOne) SetCreatedBy(v uint64) *SocialAccountUpdateOne {
+func (_u *SocialAccountUpdateOne) SetCreatedBy(v int64) *SocialAccountUpdateOne {
 	_u.mutation.ResetCreatedBy()
 	_u.mutation.SetCreatedBy(v)
 	return _u
 }
 
 // SetNillableCreatedBy sets the "created_by" field if the given value is not nil.
-func (_u *SocialAccountUpdateOne) SetNillableCreatedBy(v *uint64) *SocialAccountUpdateOne {
+func (_u *SocialAccountUpdateOne) SetNillableCreatedBy(v *int64) *SocialAccountUpdateOne {
 	if v != nil {
 		_u.SetCreatedBy(*v)
 	}
@@ -527,14 +527,14 @@ func (_u *SocialAccountUpdateOne) ClearCreatedBy() *SocialAccountUpdateOne {
 }
 
 // SetUpdatedBy sets the "updated_by" field.
-func (_u *SocialAccountUpdateOne) SetUpdatedBy(v uint64) *SocialAccountUpdateOne {
+func (_u *SocialAccountUpdateOne) SetUpdatedBy(v int64) *SocialAccountUpdateOne {
 	_u.mutation.ResetUpdatedBy()
 	_u.mutation.SetUpdatedBy(v)
 	return _u
 }
 
 // SetNillableUpdatedBy sets the "updated_by" field if the given value is not nil.
-func (_u *SocialAccountUpdateOne) SetNillableUpdatedBy(v *uint64) *SocialAccountUpdateOne {
+func (_u *SocialAccountUpdateOne) SetNillableUpdatedBy(v *int64) *SocialAccountUpdateOne {
 	if v != nil {
 		_u.SetUpdatedBy(*v)
 	}
@@ -554,14 +554,14 @@ func (_u *SocialAccountUpdateOne) ClearUpdatedBy() *SocialAccountUpdateOne {
 }
 
 // SetDeletedBy sets the "deleted_by" field.
-func (_u *SocialAccountUpdateOne) SetDeletedBy(v uint64) *SocialAccountUpdateOne {
+func (_u *SocialAccountUpdateOne) SetDeletedBy(v int64) *SocialAccountUpdateOne {
 	_u.mutation.ResetDeletedBy()
 	_u.mutation.SetDeletedBy(v)
 	return _u
 }
 
 // SetNillableDeletedBy sets the "deleted_by" field if the given value is not nil.
-func (_u *SocialAccountUpdateOne) SetNillableDeletedBy(v *uint64) *SocialAccountUpdateOne {
+func (_u *SocialAccountUpdateOne) SetNillableDeletedBy(v *int64) *SocialAccountUpdateOne {
 	if v != nil {
 		_u.SetDeletedBy(*v)
 	}
@@ -785,7 +785,7 @@ func (_u *SocialAccountUpdateOne) sqlSave(ctx context.Context) (_node *SocialAcc
 	if err := _u.check(); err != nil {
 		return _node, err
 	}
-	_spec := sqlgraph.NewUpdateSpec(socialaccount.Table, socialaccount.Columns, sqlgraph.NewFieldSpec(socialaccount.FieldID, field.TypeUint64))
+	_spec := sqlgraph.NewUpdateSpec(socialaccount.Table, socialaccount.Columns, sqlgraph.NewFieldSpec(socialaccount.FieldID, field.TypeInt64))
 	id, ok := _u.mutation.ID()
 	if !ok {
 		return nil, &ValidationError{Name: "id", err: errors.New(`ent: missing "SocialAccount.id" for update`)}
@@ -826,31 +826,31 @@ func (_u *SocialAccountUpdateOne) sqlSave(ctx context.Context) (_node *SocialAcc
 		_spec.ClearField(socialaccount.FieldDeletedAt, field.TypeTime)
 	}
 	if value, ok := _u.mutation.CreatedBy(); ok {
-		_spec.SetField(socialaccount.FieldCreatedBy, field.TypeUint64, value)
+		_spec.SetField(socialaccount.FieldCreatedBy, field.TypeInt64, value)
 	}
 	if value, ok := _u.mutation.AddedCreatedBy(); ok {
-		_spec.AddField(socialaccount.FieldCreatedBy, field.TypeUint64, value)
+		_spec.AddField(socialaccount.FieldCreatedBy, field.TypeInt64, value)
 	}
 	if _u.mutation.CreatedByCleared() {
-		_spec.ClearField(socialaccount.FieldCreatedBy, field.TypeUint64)
+		_spec.ClearField(socialaccount.FieldCreatedBy, field.TypeInt64)
 	}
 	if value, ok := _u.mutation.UpdatedBy(); ok {
-		_spec.SetField(socialaccount.FieldUpdatedBy, field.TypeUint64, value)
+		_spec.SetField(socialaccount.FieldUpdatedBy, field.TypeInt64, value)
 	}
 	if value, ok := _u.mutation.AddedUpdatedBy(); ok {
-		_spec.AddField(socialaccount.FieldUpdatedBy, field.TypeUint64, value)
+		_spec.AddField(socialaccount.FieldUpdatedBy, field.TypeInt64, value)
 	}
 	if _u.mutation.UpdatedByCleared() {
-		_spec.ClearField(socialaccount.FieldUpdatedBy, field.TypeUint64)
+		_spec.ClearField(socialaccount.FieldUpdatedBy, field.TypeInt64)
 	}
 	if value, ok := _u.mutation.DeletedBy(); ok {
-		_spec.SetField(socialaccount.FieldDeletedBy, field.TypeUint64, value)
+		_spec.SetField(socialaccount.FieldDeletedBy, field.TypeInt64, value)
 	}
 	if value, ok := _u.mutation.AddedDeletedBy(); ok {
-		_spec.AddField(socialaccount.FieldDeletedBy, field.TypeUint64, value)
+		_spec.AddField(socialaccount.FieldDeletedBy, field.TypeInt64, value)
 	}
 	if _u.mutation.DeletedByCleared() {
-		_spec.ClearField(socialaccount.FieldDeletedBy, field.TypeUint64)
+		_spec.ClearField(socialaccount.FieldDeletedBy, field.TypeInt64)
 	}
 	if value, ok := _u.mutation.IsEnabled(); ok {
 		_spec.SetField(socialaccount.FieldIsEnabled, field.TypeBool, value)
@@ -859,7 +859,7 @@ func (_u *SocialAccountUpdateOne) sqlSave(ctx context.Context) (_node *SocialAcc
 		_spec.ClearField(socialaccount.FieldIsEnabled, field.TypeBool)
 	}
 	if _u.mutation.TenantIDCleared() {
-		_spec.ClearField(socialaccount.FieldTenantID, field.TypeUint64)
+		_spec.ClearField(socialaccount.FieldTenantID, field.TypeInt64)
 	}
 	if value, ok := _u.mutation.Platform(); ok {
 		_spec.SetField(socialaccount.FieldPlatform, field.TypeEnum, value)

@@ -16,8 +16,8 @@ import (
 type NotificationRuleService struct {
 	adminV1.NotificationRuleServiceHTTPServer
 
-	log      *log.Helper
-	ruleCli  notifyV1.NotificationRuleServiceClient
+	log     *log.Helper
+	ruleCli notifyV1.NotificationRuleServiceClient
 }
 
 func NewNotificationRuleService(ctx *bootstrap.Context, ruleClient notifyV1.NotificationRuleServiceClient) *NotificationRuleService {

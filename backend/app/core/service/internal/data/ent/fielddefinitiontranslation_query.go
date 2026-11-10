@@ -84,8 +84,8 @@ func (_q *FieldDefinitionTranslationQuery) FirstX(ctx context.Context) *FieldDef
 
 // FirstID returns the first FieldDefinitionTranslation ID from the query.
 // Returns a *NotFoundError when no FieldDefinitionTranslation ID was found.
-func (_q *FieldDefinitionTranslationQuery) FirstID(ctx context.Context) (id uint64, err error) {
-	var ids []uint64
+func (_q *FieldDefinitionTranslationQuery) FirstID(ctx context.Context) (id int64, err error) {
+	var ids []int64
 	if ids, err = _q.Limit(1).IDs(setContextOp(ctx, _q.ctx, ent.OpQueryFirstID)); err != nil {
 		return
 	}
@@ -97,7 +97,7 @@ func (_q *FieldDefinitionTranslationQuery) FirstID(ctx context.Context) (id uint
 }
 
 // FirstIDX is like FirstID, but panics if an error occurs.
-func (_q *FieldDefinitionTranslationQuery) FirstIDX(ctx context.Context) uint64 {
+func (_q *FieldDefinitionTranslationQuery) FirstIDX(ctx context.Context) int64 {
 	id, err := _q.FirstID(ctx)
 	if err != nil && !IsNotFound(err) {
 		panic(err)
@@ -135,8 +135,8 @@ func (_q *FieldDefinitionTranslationQuery) OnlyX(ctx context.Context) *FieldDefi
 // OnlyID is like Only, but returns the only FieldDefinitionTranslation ID in the query.
 // Returns a *NotSingularError when more than one FieldDefinitionTranslation ID is found.
 // Returns a *NotFoundError when no entities are found.
-func (_q *FieldDefinitionTranslationQuery) OnlyID(ctx context.Context) (id uint64, err error) {
-	var ids []uint64
+func (_q *FieldDefinitionTranslationQuery) OnlyID(ctx context.Context) (id int64, err error) {
+	var ids []int64
 	if ids, err = _q.Limit(2).IDs(setContextOp(ctx, _q.ctx, ent.OpQueryOnlyID)); err != nil {
 		return
 	}
@@ -152,7 +152,7 @@ func (_q *FieldDefinitionTranslationQuery) OnlyID(ctx context.Context) (id uint6
 }
 
 // OnlyIDX is like OnlyID, but panics if an error occurs.
-func (_q *FieldDefinitionTranslationQuery) OnlyIDX(ctx context.Context) uint64 {
+func (_q *FieldDefinitionTranslationQuery) OnlyIDX(ctx context.Context) int64 {
 	id, err := _q.OnlyID(ctx)
 	if err != nil {
 		panic(err)
@@ -180,7 +180,7 @@ func (_q *FieldDefinitionTranslationQuery) AllX(ctx context.Context) []*FieldDef
 }
 
 // IDs executes the query and returns a list of FieldDefinitionTranslation IDs.
-func (_q *FieldDefinitionTranslationQuery) IDs(ctx context.Context) (ids []uint64, err error) {
+func (_q *FieldDefinitionTranslationQuery) IDs(ctx context.Context) (ids []int64, err error) {
 	if _q.ctx.Unique == nil && _q.path != nil {
 		_q.Unique(true)
 	}
@@ -192,7 +192,7 @@ func (_q *FieldDefinitionTranslationQuery) IDs(ctx context.Context) (ids []uint6
 }
 
 // IDsX is like IDs, but panics if an error occurs.
-func (_q *FieldDefinitionTranslationQuery) IDsX(ctx context.Context) []uint64 {
+func (_q *FieldDefinitionTranslationQuery) IDsX(ctx context.Context) []int64 {
 	ids, err := _q.IDs(ctx)
 	if err != nil {
 		panic(err)
@@ -374,7 +374,7 @@ func (_q *FieldDefinitionTranslationQuery) sqlCount(ctx context.Context) (int, e
 }
 
 func (_q *FieldDefinitionTranslationQuery) querySpec() *sqlgraph.QuerySpec {
-	_spec := sqlgraph.NewQuerySpec(fielddefinitiontranslation.Table, fielddefinitiontranslation.Columns, sqlgraph.NewFieldSpec(fielddefinitiontranslation.FieldID, field.TypeUint64))
+	_spec := sqlgraph.NewQuerySpec(fielddefinitiontranslation.Table, fielddefinitiontranslation.Columns, sqlgraph.NewFieldSpec(fielddefinitiontranslation.FieldID, field.TypeInt64))
 	_spec.From = _q.sql
 	if unique := _q.ctx.Unique; unique != nil {
 		_spec.Unique = *unique

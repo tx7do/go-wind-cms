@@ -11,10 +11,10 @@ import (
 
 	entCrud "github.com/tx7do/go-crud/entgo"
 
+	contentV1 "go-wind-cms/api/gen/go/content/service/v1"
 	"go-wind-cms/app/core/service/internal/data/ent"
 	"go-wind-cms/app/core/service/internal/data/ent/pageversion"
 	"go-wind-cms/app/core/service/internal/data/ent/predicate"
-	contentV1 "go-wind-cms/api/gen/go/content/service/v1"
 )
 
 // PageVersionRepo 页面版本快照仓储。行只增不改，由 PageService 在
@@ -36,7 +36,7 @@ func NewPageVersionRepo(ctx *bootstrap.Context, entClient *entCrud.EntClient[*en
 const pageSnapshotMaxBytes = 2 << 20
 
 // CreateSnapshot 为页面写入一条版本快照，返回新版本号。
-func (r *PageVersionRepo) CreateSnapshot(ctx context.Context, pageID uint64, dto *contentV1.Page, comment string) (uint32, error) {
+func (r *PageVersionRepo) CreateSnapshot(ctx context.Context, pageID int64, dto *contentV1.Page, comment string) (uint32, error) {
 	if dto == nil {
 		return 0, nil
 	}
@@ -86,7 +86,7 @@ func (r *PageVersionRepo) tenantGuard(ctx context.Context) ([]predicate.PageVers
 
 // nextVersionNumber 取该页下一版本号（max+1）。并发竞态下可能出现重号，
 // (page_id, version_number) 为非唯一索引，宁可重号也不阻断保存。
-func (r *PageVersionRepo) nextVersionNumber(ctx context.Context, pageID uint64) (uint32, error) {
+func (r *PageVersionRepo) nextVersionNumber(ctx context.Context, pageID int64) (uint32, error) {
 	conds := []predicate.PageVersion{pageversion.PageIDEQ(pageID)}
 	if tenantConds, has := r.tenantGuard(ctx); has {
 		conds = append(conds, tenantConds...)
@@ -111,7 +111,7 @@ func (r *PageVersionRepo) nextVersionNumber(ctx context.Context, pageID uint64) 
 }
 
 // ListByPage 取页面的版本列表（版本号倒序，仅元数据，不含快照正文）。
-func (r *PageVersionRepo) ListByPage(ctx context.Context, pageID uint64) ([]*contentV1.PageVersion, error) {
+func (r *PageVersionRepo) ListByPage(ctx context.Context, pageID int64) ([]*contentV1.PageVersion, error) {
 	conds := []predicate.PageVersion{pageversion.PageIDEQ(pageID)}
 	if tenantConds, has := r.tenantGuard(ctx); has {
 		conds = append(conds, tenantConds...)
@@ -133,7 +133,7 @@ func (r *PageVersionRepo) ListByPage(ctx context.Context, pageID uint64) ([]*con
 }
 
 // Get 取版本详情（含快照正文）。
-func (r *PageVersionRepo) Get(ctx context.Context, id uint64) (*contentV1.PageVersion, error) {
+func (r *PageVersionRepo) Get(ctx context.Context, id int64) (*contentV1.PageVersion, error) {
 	conds := []predicate.PageVersion{pageversion.IDEQ(id)}
 	if tenantConds, has := r.tenantGuard(ctx); has {
 		conds = append(conds, tenantConds...)
@@ -151,7 +151,7 @@ func (r *PageVersionRepo) Get(ctx context.Context, id uint64) (*contentV1.PageVe
 	return pageVersionToDTO(row.ID, row.PageID, row.VersionNumber, row.Content, row.Comment, row.CreatedBy, row.CreatedAt), nil
 }
 
-func pageVersionToDTO(id uint64, parentID *uint64, versionNumber *uint32, content, comment *string, createdBy *uint64, createdAt *time.Time) *contentV1.PageVersion {
+func pageVersionToDTO(id int64, parentID *int64, versionNumber *uint32, content, comment *string, createdBy *int64, createdAt *time.Time) *contentV1.PageVersion {
 	dto := &contentV1.PageVersion{
 		Id:      &id,
 		Content: content,

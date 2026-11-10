@@ -13,7 +13,7 @@ service RedisCacheMonitorService {
 // Redis缓存监控信息
 message RedisCacheMonitorInfo {
   repeated InfoSection sections = 1;
-  uint64 db_size = 2 [json_name = "dbSize"];
+  int64 db_size = 2 [json_name = "dbSize"];
   repeated SlowLogEntry slowlog = 3;
 }
 

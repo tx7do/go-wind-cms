@@ -69,7 +69,7 @@ func (r *SiteSettingRepo) init() {
 	r.mapper.AppendConverters(r.settingTypeConverter.NewConverterPair())
 }
 
-func (r *SiteSettingRepo) IsExist(ctx context.Context, id uint64) (bool, error) {
+func (r *SiteSettingRepo) IsExist(ctx context.Context, id int64) (bool, error) {
 	exist, err := r.entClient.Client().SiteSetting.Query().
 		Where(sitesetting.IDEQ(id)).
 		Exist(ctx)

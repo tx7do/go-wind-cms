@@ -47,7 +47,7 @@ func (s *FileService) Count(ctx context.Context, req *paginationV1.PagingRequest
 	}
 
 	return &storageV1.CountFileResponse{
-		Count: uint64(count),
+		Count: int64(count),
 	}, nil
 }
 

@@ -103,7 +103,7 @@ func (r *NotificationDeliveryRepo) List(ctx context.Context, req *paginationV1.P
 	}, nil
 }
 
-func (r *NotificationDeliveryRepo) Get(ctx context.Context, id uint64) (*notifyV1.NotificationDelivery, error) {
+func (r *NotificationDeliveryRepo) Get(ctx context.Context, id int64) (*notifyV1.NotificationDelivery, error) {
 	if id == 0 {
 		return nil, errors.BadRequest("NOTIFICATION_DELIVERY", "id is required")
 	}
@@ -123,7 +123,7 @@ func (r *NotificationDeliveryRepo) Get(ctx context.Context, id uint64) (*notifyV
 // Create 落一条投递台账（status 由 req 决定，未给时列默认 SENDING）。
 //
 // attempts 不从 req 取：它是结果列，只有 MarkAttempted / MarkResult 写得动
-//（新建时靠列默认 0），否则"台账不提供 Update"这条约束就从旁边漏了个洞。
+// （新建时靠列默认 0），否则"台账不提供 Update"这条约束就从旁边漏了个洞。
 func (r *NotificationDeliveryRepo) Create(ctx context.Context, req *notifyV1.NotificationDelivery) (*notifyV1.NotificationDelivery, error) {
 	if req == nil {
 		return nil, errors.BadRequest("NOTIFICATION_DELIVERY", "invalid parameter")
@@ -156,7 +156,7 @@ type DeliveryOutcome struct {
 	Status    notifyV1.DeliveryStatus
 	LastError string
 	// ChannelID 实际选中的渠道配置；nil 表示不修改（自选渠道时 Create 阶段还不知道）。
-	ChannelID *uint64
+	ChannelID *int64
 	// Attempts 已尝试次数；nil 表示不修改（异步路径在拨号前用 MarkAttempted 写过，回写时就不再碰）。
 	Attempts *uint32
 	// SentAt 投递完成时间；FAILED/SKIPPED 传 nil，列保持空。
@@ -168,7 +168,7 @@ type DeliveryOutcome struct {
 // MarkResult 回写投递结果。
 //
 // 只按主键定位、只覆盖结果字段：台账其余部分是投递意图的快照，不应被结果回写篡改。
-func (r *NotificationDeliveryRepo) MarkResult(ctx context.Context, id uint64, outcome *DeliveryOutcome) error {
+func (r *NotificationDeliveryRepo) MarkResult(ctx context.Context, id int64, outcome *DeliveryOutcome) error {
 	if id == 0 || outcome == nil {
 		return errors.BadRequest("NOTIFICATION_DELIVERY", "id and outcome are required")
 	}
@@ -204,7 +204,7 @@ func (r *NotificationDeliveryRepo) MarkResult(ctx context.Context, id uint64, ou
 // 为什么不跟结果一起写：进程在 SMTP 握手中途被杀，这一行会永远停在 SENDING，
 // 而 attempts 是那次"发了一半"唯一留得下来的痕迹（没有它，重试到第几次、有没有真的拨过号
 // 全都看不出来，异步派发就成了黑盒）。
-func (r *NotificationDeliveryRepo) MarkAttempted(ctx context.Context, id uint64, attempts uint32) error {
+func (r *NotificationDeliveryRepo) MarkAttempted(ctx context.Context, id int64, attempts uint32) error {
 	if id == 0 {
 		return errors.BadRequest("NOTIFICATION_DELIVERY", "id is required")
 	}
@@ -231,7 +231,7 @@ func (r *NotificationDeliveryRepo) MarkAttempted(ctx context.Context, id uint64,
 // 语句里做，抢跑的那一行自然不命中、也就不会被扫。
 //
 // 判据用 created_at 而不是 updated_at：台账这张表的 updated_at 从来没被写过
-//（mixin 的列是 Optional 无默认，MarkResult/MarkAttempted 都不碰它），拿它当锚等于把所有行
+// （mixin 的列是 Optional 无默认，MarkResult/MarkAttempted 都不碰它），拿它当锚等于把所有行
 // 判成"从未更新"；而生成的 (status, created_at) 索引正好服务这条查询。
 // 异步派发的尝试预算本身也有界（4 次 × 30s + 退避 ≈ 4 分钟），
 // 从"意图产生"起算的超期阈值只要明显大于它就是安全的。

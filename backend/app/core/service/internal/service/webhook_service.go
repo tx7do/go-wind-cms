@@ -24,8 +24,8 @@ import (
 	appViewer "go-wind-cms/pkg/entgo/viewer"
 	"go-wind-cms/pkg/task"
 
-	"go-wind-cms/app/core/service/internal/data"
 	webhookV1 "go-wind-cms/api/gen/go/webhook/service/v1"
+	"go-wind-cms/app/core/service/internal/data"
 )
 
 // webhookHTTPTimeout 投递超时：接收端无响应时快速失败交由 asynq 退避重试。
@@ -58,7 +58,7 @@ func (s *WebhookService) List(ctx context.Context, req *paginationV1.PagingReque
 	if err != nil {
 		return nil, errors.New(http.StatusInternalServerError, "WEBHOOK_LIST_FAILED", "list webhooks failed")
 	}
-	return &webhookV1.ListWebhookResponse{Items: items, Total: uint64(total)}, nil
+	return &webhookV1.ListWebhookResponse{Items: items, Total: int64(total)}, nil
 }
 
 func (s *WebhookService) Get(ctx context.Context, req *webhookV1.GetWebhookRequest) (*webhookV1.Webhook, error) {
@@ -106,9 +106,9 @@ func (s *WebhookService) TestPing(ctx context.Context, req *webhookV1.TestWebhoo
 		return nil, err
 	}
 
-	var tenantID uint64
+	var tenantID int64
 	if vc, exist := viewer.FromContext(ctx); exist && vc != nil {
-		tenantID = uint64(vc.TenantID())
+		tenantID = int64(vc.TenantID())
 	}
 
 	deliveryID, err := s.webhookRepo.CreateDelivery(ctx, wh.GetId(), "ping", 0, tenantID)
@@ -144,20 +144,20 @@ func (s *WebhookService) ListDeliveries(ctx context.Context, req *webhookV1.List
 	if err != nil {
 		return nil, errors.New(http.StatusInternalServerError, "WEBHOOK_DELIVERIES_FAILED", "list webhook deliveries failed")
 	}
-	return &webhookV1.ListWebhookDeliveriesResponse{Items: items, Total: uint64(total)}, nil
+	return &webhookV1.ListWebhookDeliveriesResponse{Items: items, Total: int64(total)}, nil
 }
 
 // ─── 事件发布（由 PostService/PageService 写路径调用） ───
 
 // DispatchEvent 扇出一个内容事件（best-effort：调度器未注入或入队失败仅记日志，
 // 不阻断内容保存主链路）。
-func (s *WebhookService) DispatchEvent(ctx context.Context, event string, entityID uint64) {
+func (s *WebhookService) DispatchEvent(ctx context.Context, event string, entityID int64) {
 	if s.taskService == nil || entityID == 0 {
 		return
 	}
-	var tenantID uint64
+	var tenantID int64
 	if vc, exist := viewer.FromContext(ctx); exist && vc != nil {
-		tenantID = uint64(vc.TenantID())
+		tenantID = int64(vc.TenantID())
 	}
 	if err := s.taskService.EnqueueWebhookFanout(&task.WebhookFanoutPayload{
 		Event:    event,
@@ -242,7 +242,7 @@ func (s *WebhookService) DeliverWorker(taskType string, payload *task.WebhookDel
 }
 
 // post 执行签名投递。body 为最小 envelope（不含内容全文）。
-func (s *WebhookService) post(url, secret, event string, webhookID, entityID, tenantID uint64) (bool, int, string, uint32) {
+func (s *WebhookService) post(url, secret, event string, webhookID, entityID, tenantID int64) (bool, int, string, uint32) {
 	body, _ := json.Marshal(map[string]any{
 		"event":      event,
 		"webhook_id": webhookID,
@@ -259,7 +259,7 @@ func (s *WebhookService) post(url, secret, event string, webhookID, entityID, te
 	req.Header.Set("Content-Type", "application/json")
 	req.Header.Set("User-Agent", "GoWind-Content-Hub-Webhook/1.0")
 	req.Header.Set("X-Webhook-Event", event)
-	req.Header.Set("X-Webhook-Delivery", strconv.FormatUint(uint64(start.UnixNano()), 16))
+	req.Header.Set("X-Webhook-Delivery", strconv.FormatInt(int64(start.UnixNano()), 16))
 	if secret != "" {
 		mac := hmac.New(sha256.New, []byte(secret))
 		mac.Write(body)

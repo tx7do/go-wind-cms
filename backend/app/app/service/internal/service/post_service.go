@@ -66,7 +66,7 @@ func (s *PostService) List(ctx context.Context, req *paginationV1.PagingRequest)
 			}
 		}
 		resp.Items = filtered
-		resp.Total = uint64(len(filtered))
+		resp.Total = int64(len(filtered))
 	}
 	return resp, nil
 }
@@ -111,7 +111,7 @@ func (s *PostService) GetBySlug(ctx context.Context, req *appV1.GetPostBySlugReq
 	}
 	return resp, nil
 }
-func (s *PostService) hasValidPreviewToken(ctx context.Context, targetID uint64) bool {
+func (s *PostService) hasValidPreviewToken(ctx context.Context, targetID int64) bool {
 	token := rawQueryValue(ctx, "preview_token")
 	if token == "" {
 		return false
@@ -154,7 +154,7 @@ func (s *PostService) SearchPosts(ctx context.Context, req *contentV1.SearchPost
 	if s.tenantResolve != nil {
 		if hr, ok := khttp.RequestFromServerContext(ctx); ok && hr != nil && hr.Host != "" {
 			if tid, err := s.tenantResolve.ResolveTenantIDByDomain(ctx, hr.Host); err == nil && tid > 0 {
-				ctx = kratosMetadata.AppendToClientContext(ctx, "x-md-global-tenant-id", strconv.FormatUint(uint64(tid), 10))
+				ctx = kratosMetadata.AppendToClientContext(ctx, "x-md-global-tenant-id", strconv.FormatInt(int64(tid), 10))
 			}
 		}
 	}
@@ -168,7 +168,7 @@ func (s *PostService) SearchPostsSuggest(ctx context.Context, req *contentV1.Sea
 	if s.tenantResolve != nil {
 		if hr, ok := khttp.RequestFromServerContext(ctx); ok && hr != nil && hr.Host != "" {
 			if tid, err := s.tenantResolve.ResolveTenantIDByDomain(ctx, hr.Host); err == nil && tid > 0 {
-				ctx = kratosMetadata.AppendToClientContext(ctx, "x-md-global-tenant-id", strconv.FormatUint(uint64(tid), 10))
+				ctx = kratosMetadata.AppendToClientContext(ctx, "x-md-global-tenant-id", strconv.FormatInt(int64(tid), 10))
 			}
 		}
 	}

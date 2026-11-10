@@ -68,7 +68,7 @@ type BackupArchive struct {
 	// 展示名（去前缀去日期目录）
 	DisplayName string `protobuf:"bytes,2,opt,name=display_name,json=displayName,proto3" json:"display_name,omitempty"`
 	// 压缩后字节数
-	SizeBytes uint64 `protobuf:"varint,3,opt,name=size_bytes,json=sizeBytes,proto3" json:"size_bytes,omitempty"`
+	SizeBytes int64 `protobuf:"varint,3,opt,name=size_bytes,json=sizeBytes,proto3" json:"size_bytes,omitempty"`
 	// 上传时间
 	LastModified  *timestamppb.Timestamp `protobuf:"bytes,4,opt,name=last_modified,json=lastModified,proto3,oneof" json:"last_modified,omitempty"`
 	unknownFields protoimpl.UnknownFields
@@ -119,7 +119,7 @@ func (x *BackupArchive) GetDisplayName() string {
 	return ""
 }
 
-func (x *BackupArchive) GetSizeBytes() uint64 {
+func (x *BackupArchive) GetSizeBytes() int64 {
 	if x != nil {
 		return x.SizeBytes
 	}
@@ -290,7 +290,7 @@ const file_task_service_v1_backup_proto_rawDesc = "" +
 	"object_key\x18\x01 \x01(\tB$\xbaG!\x92\x02\x1e对象键（下载时回传）R\tobjectKey\x12!\n" +
 	"\fdisplay_name\x18\x02 \x01(\tR\vdisplayName\x12\x1d\n" +
 	"\n" +
-	"size_bytes\x18\x03 \x01(\x04R\tsizeBytes\x12D\n" +
+	"size_bytes\x18\x03 \x01(\x03R\tsizeBytes\x12D\n" +
 	"\rlast_modified\x18\x04 \x01(\v2\x1a.google.protobuf.TimestampH\x00R\flastModified\x88\x01\x01B\x10\n" +
 	"\x0e_last_modified\"K\n" +
 	"\x13ListBackupsResponse\x124\n" +

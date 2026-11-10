@@ -70,14 +70,14 @@ func (_u *PermissionUpdate) ClearDeletedAt() *PermissionUpdate {
 }
 
 // SetCreatedBy sets the "created_by" field.
-func (_u *PermissionUpdate) SetCreatedBy(v uint64) *PermissionUpdate {
+func (_u *PermissionUpdate) SetCreatedBy(v int64) *PermissionUpdate {
 	_u.mutation.ResetCreatedBy()
 	_u.mutation.SetCreatedBy(v)
 	return _u
 }
 
 // SetNillableCreatedBy sets the "created_by" field if the given value is not nil.
-func (_u *PermissionUpdate) SetNillableCreatedBy(v *uint64) *PermissionUpdate {
+func (_u *PermissionUpdate) SetNillableCreatedBy(v *int64) *PermissionUpdate {
 	if v != nil {
 		_u.SetCreatedBy(*v)
 	}
@@ -97,14 +97,14 @@ func (_u *PermissionUpdate) ClearCreatedBy() *PermissionUpdate {
 }
 
 // SetUpdatedBy sets the "updated_by" field.
-func (_u *PermissionUpdate) SetUpdatedBy(v uint64) *PermissionUpdate {
+func (_u *PermissionUpdate) SetUpdatedBy(v int64) *PermissionUpdate {
 	_u.mutation.ResetUpdatedBy()
 	_u.mutation.SetUpdatedBy(v)
 	return _u
 }
 
 // SetNillableUpdatedBy sets the "updated_by" field if the given value is not nil.
-func (_u *PermissionUpdate) SetNillableUpdatedBy(v *uint64) *PermissionUpdate {
+func (_u *PermissionUpdate) SetNillableUpdatedBy(v *int64) *PermissionUpdate {
 	if v != nil {
 		_u.SetUpdatedBy(*v)
 	}
@@ -124,14 +124,14 @@ func (_u *PermissionUpdate) ClearUpdatedBy() *PermissionUpdate {
 }
 
 // SetDeletedBy sets the "deleted_by" field.
-func (_u *PermissionUpdate) SetDeletedBy(v uint64) *PermissionUpdate {
+func (_u *PermissionUpdate) SetDeletedBy(v int64) *PermissionUpdate {
 	_u.mutation.ResetDeletedBy()
 	_u.mutation.SetDeletedBy(v)
 	return _u
 }
 
 // SetNillableDeletedBy sets the "deleted_by" field if the given value is not nil.
-func (_u *PermissionUpdate) SetNillableDeletedBy(v *uint64) *PermissionUpdate {
+func (_u *PermissionUpdate) SetNillableDeletedBy(v *int64) *PermissionUpdate {
 	if v != nil {
 		_u.SetDeletedBy(*v)
 	}
@@ -213,14 +213,14 @@ func (_u *PermissionUpdate) SetNillableCode(v *string) *PermissionUpdate {
 }
 
 // SetGroupID sets the "group_id" field.
-func (_u *PermissionUpdate) SetGroupID(v uint64) *PermissionUpdate {
+func (_u *PermissionUpdate) SetGroupID(v int64) *PermissionUpdate {
 	_u.mutation.ResetGroupID()
 	_u.mutation.SetGroupID(v)
 	return _u
 }
 
 // SetNillableGroupID sets the "group_id" field if the given value is not nil.
-func (_u *PermissionUpdate) SetNillableGroupID(v *uint64) *PermissionUpdate {
+func (_u *PermissionUpdate) SetNillableGroupID(v *int64) *PermissionUpdate {
 	if v != nil {
 		_u.SetGroupID(*v)
 	}
@@ -296,7 +296,7 @@ func (_u *PermissionUpdate) sqlSave(ctx context.Context) (_node int, err error) 
 	if err := _u.check(); err != nil {
 		return _node, err
 	}
-	_spec := sqlgraph.NewUpdateSpec(permission.Table, permission.Columns, sqlgraph.NewFieldSpec(permission.FieldID, field.TypeUint64))
+	_spec := sqlgraph.NewUpdateSpec(permission.Table, permission.Columns, sqlgraph.NewFieldSpec(permission.FieldID, field.TypeInt64))
 	if ps := _u.mutation.predicates; len(ps) > 0 {
 		_spec.Predicate = func(selector *sql.Selector) {
 			for i := range ps {
@@ -320,31 +320,31 @@ func (_u *PermissionUpdate) sqlSave(ctx context.Context) (_node int, err error) 
 		_spec.ClearField(permission.FieldDeletedAt, field.TypeTime)
 	}
 	if value, ok := _u.mutation.CreatedBy(); ok {
-		_spec.SetField(permission.FieldCreatedBy, field.TypeUint64, value)
+		_spec.SetField(permission.FieldCreatedBy, field.TypeInt64, value)
 	}
 	if value, ok := _u.mutation.AddedCreatedBy(); ok {
-		_spec.AddField(permission.FieldCreatedBy, field.TypeUint64, value)
+		_spec.AddField(permission.FieldCreatedBy, field.TypeInt64, value)
 	}
 	if _u.mutation.CreatedByCleared() {
-		_spec.ClearField(permission.FieldCreatedBy, field.TypeUint64)
+		_spec.ClearField(permission.FieldCreatedBy, field.TypeInt64)
 	}
 	if value, ok := _u.mutation.UpdatedBy(); ok {
-		_spec.SetField(permission.FieldUpdatedBy, field.TypeUint64, value)
+		_spec.SetField(permission.FieldUpdatedBy, field.TypeInt64, value)
 	}
 	if value, ok := _u.mutation.AddedUpdatedBy(); ok {
-		_spec.AddField(permission.FieldUpdatedBy, field.TypeUint64, value)
+		_spec.AddField(permission.FieldUpdatedBy, field.TypeInt64, value)
 	}
 	if _u.mutation.UpdatedByCleared() {
-		_spec.ClearField(permission.FieldUpdatedBy, field.TypeUint64)
+		_spec.ClearField(permission.FieldUpdatedBy, field.TypeInt64)
 	}
 	if value, ok := _u.mutation.DeletedBy(); ok {
-		_spec.SetField(permission.FieldDeletedBy, field.TypeUint64, value)
+		_spec.SetField(permission.FieldDeletedBy, field.TypeInt64, value)
 	}
 	if value, ok := _u.mutation.AddedDeletedBy(); ok {
-		_spec.AddField(permission.FieldDeletedBy, field.TypeUint64, value)
+		_spec.AddField(permission.FieldDeletedBy, field.TypeInt64, value)
 	}
 	if _u.mutation.DeletedByCleared() {
-		_spec.ClearField(permission.FieldDeletedBy, field.TypeUint64)
+		_spec.ClearField(permission.FieldDeletedBy, field.TypeInt64)
 	}
 	if value, ok := _u.mutation.Status(); ok {
 		_spec.SetField(permission.FieldStatus, field.TypeEnum, value)
@@ -356,7 +356,7 @@ func (_u *PermissionUpdate) sqlSave(ctx context.Context) (_node int, err error) 
 		_spec.ClearField(permission.FieldDescription, field.TypeString)
 	}
 	if _u.mutation.TenantIDCleared() {
-		_spec.ClearField(permission.FieldTenantID, field.TypeUint64)
+		_spec.ClearField(permission.FieldTenantID, field.TypeInt64)
 	}
 	if value, ok := _u.mutation.Name(); ok {
 		_spec.SetField(permission.FieldName, field.TypeString, value)
@@ -365,13 +365,13 @@ func (_u *PermissionUpdate) sqlSave(ctx context.Context) (_node int, err error) 
 		_spec.SetField(permission.FieldCode, field.TypeString, value)
 	}
 	if value, ok := _u.mutation.GroupID(); ok {
-		_spec.SetField(permission.FieldGroupID, field.TypeUint64, value)
+		_spec.SetField(permission.FieldGroupID, field.TypeInt64, value)
 	}
 	if value, ok := _u.mutation.AddedGroupID(); ok {
-		_spec.AddField(permission.FieldGroupID, field.TypeUint64, value)
+		_spec.AddField(permission.FieldGroupID, field.TypeInt64, value)
 	}
 	if _u.mutation.GroupIDCleared() {
-		_spec.ClearField(permission.FieldGroupID, field.TypeUint64)
+		_spec.ClearField(permission.FieldGroupID, field.TypeInt64)
 	}
 	_spec.AddModifiers(_u.modifiers...)
 	if _node, err = sqlgraph.UpdateNodes(ctx, _u.driver, _spec); err != nil {
@@ -436,14 +436,14 @@ func (_u *PermissionUpdateOne) ClearDeletedAt() *PermissionUpdateOne {
 }
 
 // SetCreatedBy sets the "created_by" field.
-func (_u *PermissionUpdateOne) SetCreatedBy(v uint64) *PermissionUpdateOne {
+func (_u *PermissionUpdateOne) SetCreatedBy(v int64) *PermissionUpdateOne {
 	_u.mutation.ResetCreatedBy()
 	_u.mutation.SetCreatedBy(v)
 	return _u
 }
 
 // SetNillableCreatedBy sets the "created_by" field if the given value is not nil.
-func (_u *PermissionUpdateOne) SetNillableCreatedBy(v *uint64) *PermissionUpdateOne {
+func (_u *PermissionUpdateOne) SetNillableCreatedBy(v *int64) *PermissionUpdateOne {
 	if v != nil {
 		_u.SetCreatedBy(*v)
 	}
@@ -463,14 +463,14 @@ func (_u *PermissionUpdateOne) ClearCreatedBy() *PermissionUpdateOne {
 }
 
 // SetUpdatedBy sets the "updated_by" field.
-func (_u *PermissionUpdateOne) SetUpdatedBy(v uint64) *PermissionUpdateOne {
+func (_u *PermissionUpdateOne) SetUpdatedBy(v int64) *PermissionUpdateOne {
 	_u.mutation.ResetUpdatedBy()
 	_u.mutation.SetUpdatedBy(v)
 	return _u
 }
 
 // SetNillableUpdatedBy sets the "updated_by" field if the given value is not nil.
-func (_u *PermissionUpdateOne) SetNillableUpdatedBy(v *uint64) *PermissionUpdateOne {
+func (_u *PermissionUpdateOne) SetNillableUpdatedBy(v *int64) *PermissionUpdateOne {
 	if v != nil {
 		_u.SetUpdatedBy(*v)
 	}
@@ -490,14 +490,14 @@ func (_u *PermissionUpdateOne) ClearUpdatedBy() *PermissionUpdateOne {
 }
 
 // SetDeletedBy sets the "deleted_by" field.
-func (_u *PermissionUpdateOne) SetDeletedBy(v uint64) *PermissionUpdateOne {
+func (_u *PermissionUpdateOne) SetDeletedBy(v int64) *PermissionUpdateOne {
 	_u.mutation.ResetDeletedBy()
 	_u.mutation.SetDeletedBy(v)
 	return _u
 }
 
 // SetNillableDeletedBy sets the "deleted_by" field if the given value is not nil.
-func (_u *PermissionUpdateOne) SetNillableDeletedBy(v *uint64) *PermissionUpdateOne {
+func (_u *PermissionUpdateOne) SetNillableDeletedBy(v *int64) *PermissionUpdateOne {
 	if v != nil {
 		_u.SetDeletedBy(*v)
 	}
@@ -579,14 +579,14 @@ func (_u *PermissionUpdateOne) SetNillableCode(v *string) *PermissionUpdateOne {
 }
 
 // SetGroupID sets the "group_id" field.
-func (_u *PermissionUpdateOne) SetGroupID(v uint64) *PermissionUpdateOne {
+func (_u *PermissionUpdateOne) SetGroupID(v int64) *PermissionUpdateOne {
 	_u.mutation.ResetGroupID()
 	_u.mutation.SetGroupID(v)
 	return _u
 }
 
 // SetNillableGroupID sets the "group_id" field if the given value is not nil.
-func (_u *PermissionUpdateOne) SetNillableGroupID(v *uint64) *PermissionUpdateOne {
+func (_u *PermissionUpdateOne) SetNillableGroupID(v *int64) *PermissionUpdateOne {
 	if v != nil {
 		_u.SetGroupID(*v)
 	}
@@ -675,7 +675,7 @@ func (_u *PermissionUpdateOne) sqlSave(ctx context.Context) (_node *Permission, 
 	if err := _u.check(); err != nil {
 		return _node, err
 	}
-	_spec := sqlgraph.NewUpdateSpec(permission.Table, permission.Columns, sqlgraph.NewFieldSpec(permission.FieldID, field.TypeUint64))
+	_spec := sqlgraph.NewUpdateSpec(permission.Table, permission.Columns, sqlgraph.NewFieldSpec(permission.FieldID, field.TypeInt64))
 	id, ok := _u.mutation.ID()
 	if !ok {
 		return nil, &ValidationError{Name: "id", err: errors.New(`ent: missing "Permission.id" for update`)}
@@ -716,31 +716,31 @@ func (_u *PermissionUpdateOne) sqlSave(ctx context.Context) (_node *Permission, 
 		_spec.ClearField(permission.FieldDeletedAt, field.TypeTime)
 	}
 	if value, ok := _u.mutation.CreatedBy(); ok {
-		_spec.SetField(permission.FieldCreatedBy, field.TypeUint64, value)
+		_spec.SetField(permission.FieldCreatedBy, field.TypeInt64, value)
 	}
 	if value, ok := _u.mutation.AddedCreatedBy(); ok {
-		_spec.AddField(permission.FieldCreatedBy, field.TypeUint64, value)
+		_spec.AddField(permission.FieldCreatedBy, field.TypeInt64, value)
 	}
 	if _u.mutation.CreatedByCleared() {
-		_spec.ClearField(permission.FieldCreatedBy, field.TypeUint64)
+		_spec.ClearField(permission.FieldCreatedBy, field.TypeInt64)
 	}
 	if value, ok := _u.mutation.UpdatedBy(); ok {
-		_spec.SetField(permission.FieldUpdatedBy, field.TypeUint64, value)
+		_spec.SetField(permission.FieldUpdatedBy, field.TypeInt64, value)
 	}
 	if value, ok := _u.mutation.AddedUpdatedBy(); ok {
-		_spec.AddField(permission.FieldUpdatedBy, field.TypeUint64, value)
+		_spec.AddField(permission.FieldUpdatedBy, field.TypeInt64, value)
 	}
 	if _u.mutation.UpdatedByCleared() {
-		_spec.ClearField(permission.FieldUpdatedBy, field.TypeUint64)
+		_spec.ClearField(permission.FieldUpdatedBy, field.TypeInt64)
 	}
 	if value, ok := _u.mutation.DeletedBy(); ok {
-		_spec.SetField(permission.FieldDeletedBy, field.TypeUint64, value)
+		_spec.SetField(permission.FieldDeletedBy, field.TypeInt64, value)
 	}
 	if value, ok := _u.mutation.AddedDeletedBy(); ok {
-		_spec.AddField(permission.FieldDeletedBy, field.TypeUint64, value)
+		_spec.AddField(permission.FieldDeletedBy, field.TypeInt64, value)
 	}
 	if _u.mutation.DeletedByCleared() {
-		_spec.ClearField(permission.FieldDeletedBy, field.TypeUint64)
+		_spec.ClearField(permission.FieldDeletedBy, field.TypeInt64)
 	}
 	if value, ok := _u.mutation.Status(); ok {
 		_spec.SetField(permission.FieldStatus, field.TypeEnum, value)
@@ -752,7 +752,7 @@ func (_u *PermissionUpdateOne) sqlSave(ctx context.Context) (_node *Permission, 
 		_spec.ClearField(permission.FieldDescription, field.TypeString)
 	}
 	if _u.mutation.TenantIDCleared() {
-		_spec.ClearField(permission.FieldTenantID, field.TypeUint64)
+		_spec.ClearField(permission.FieldTenantID, field.TypeInt64)
 	}
 	if value, ok := _u.mutation.Name(); ok {
 		_spec.SetField(permission.FieldName, field.TypeString, value)
@@ -761,13 +761,13 @@ func (_u *PermissionUpdateOne) sqlSave(ctx context.Context) (_node *Permission, 
 		_spec.SetField(permission.FieldCode, field.TypeString, value)
 	}
 	if value, ok := _u.mutation.GroupID(); ok {
-		_spec.SetField(permission.FieldGroupID, field.TypeUint64, value)
+		_spec.SetField(permission.FieldGroupID, field.TypeInt64, value)
 	}
 	if value, ok := _u.mutation.AddedGroupID(); ok {
-		_spec.AddField(permission.FieldGroupID, field.TypeUint64, value)
+		_spec.AddField(permission.FieldGroupID, field.TypeInt64, value)
 	}
 	if _u.mutation.GroupIDCleared() {
-		_spec.ClearField(permission.FieldGroupID, field.TypeUint64)
+		_spec.ClearField(permission.FieldGroupID, field.TypeInt64)
 	}
 	_spec.AddModifiers(_u.modifiers...)
 	_node = &Permission{config: _u.config}

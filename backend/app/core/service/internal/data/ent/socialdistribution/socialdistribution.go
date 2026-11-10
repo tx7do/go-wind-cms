@@ -114,7 +114,7 @@ var (
 	Hooks  [1]ent.Hook
 	Policy ent.Policy
 	// DefaultTenantID holds the default value on creation for the "tenant_id" field.
-	DefaultTenantID uint64
+	DefaultTenantID int64
 	// DefaultLikes holds the default value on creation for the "likes" field.
 	DefaultLikes uint32
 	// DefaultReplies holds the default value on creation for the "replies" field.
@@ -124,7 +124,7 @@ var (
 	// DefaultPublishAttempts holds the default value on creation for the "publish_attempts" field.
 	DefaultPublishAttempts uint32
 	// IDValidator is a validator for the "id" field. It is called by the builders before save.
-	IDValidator func(uint64) error
+	IDValidator func(int64) error
 )
 
 // Platform defines the type for the "platform" enum field.

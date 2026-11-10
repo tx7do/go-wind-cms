@@ -28,11 +28,11 @@ const (
 // 审批留痕条目
 type ReviewLog struct {
 	state protoimpl.MessageState `protogen:"open.v1"`
-	Id    *uint64                `protobuf:"varint,1,opt,name=id,proto3,oneof" json:"id,omitempty"`
+	Id    *int64                 `protobuf:"varint,1,opt,name=id,proto3,oneof" json:"id,omitempty"`
 	// 实体类型（post/page）
 	EntityType string `protobuf:"bytes,2,opt,name=entity_type,json=entityType,proto3" json:"entity_type,omitempty"`
 	// 实体 ID
-	EntityId uint64 `protobuf:"varint,3,opt,name=entity_id,json=entityId,proto3" json:"entity_id,omitempty"`
+	EntityId int64 `protobuf:"varint,3,opt,name=entity_id,json=entityId,proto3" json:"entity_id,omitempty"`
 	// 动作
 	Action string `protobuf:"bytes,4,opt,name=action,proto3" json:"action,omitempty"` // SUBMIT / APPROVE / REJECT
 	// 审批级别（submit=0；第 N 次 approve=N）
@@ -40,7 +40,7 @@ type ReviewLog struct {
 	// 意见（驳回理由/批准备注）
 	Note *string `protobuf:"bytes,6,opt,name=note,proto3,oneof" json:"note,omitempty"`
 	// 操作人 ID
-	OperatorId    *uint64                `protobuf:"varint,7,opt,name=operator_id,json=operatorId,proto3,oneof" json:"operator_id,omitempty"`
+	OperatorId    *int64                 `protobuf:"varint,7,opt,name=operator_id,json=operatorId,proto3,oneof" json:"operator_id,omitempty"`
 	CreatedAt     *timestamppb.Timestamp `protobuf:"bytes,20,opt,name=created_at,json=createdAt,proto3,oneof" json:"created_at,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
@@ -76,7 +76,7 @@ func (*ReviewLog) Descriptor() ([]byte, []int) {
 	return file_content_service_v1_review_log_proto_rawDescGZIP(), []int{0}
 }
 
-func (x *ReviewLog) GetId() uint64 {
+func (x *ReviewLog) GetId() int64 {
 	if x != nil && x.Id != nil {
 		return *x.Id
 	}
@@ -90,7 +90,7 @@ func (x *ReviewLog) GetEntityType() string {
 	return ""
 }
 
-func (x *ReviewLog) GetEntityId() uint64 {
+func (x *ReviewLog) GetEntityId() int64 {
 	if x != nil {
 		return x.EntityId
 	}
@@ -118,7 +118,7 @@ func (x *ReviewLog) GetNote() string {
 	return ""
 }
 
-func (x *ReviewLog) GetOperatorId() uint64 {
+func (x *ReviewLog) GetOperatorId() int64 {
 	if x != nil && x.OperatorId != nil {
 		return *x.OperatorId
 	}
@@ -138,7 +138,7 @@ type ListReviewLogsRequest struct {
 	// 实体类型（post/page）
 	EntityType string `protobuf:"bytes,1,opt,name=entity_type,json=entityType,proto3" json:"entity_type,omitempty"`
 	// 实体 ID
-	EntityId      uint64 `protobuf:"varint,2,opt,name=entity_id,json=entityId,proto3" json:"entity_id,omitempty"`
+	EntityId      int64 `protobuf:"varint,2,opt,name=entity_id,json=entityId,proto3" json:"entity_id,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -180,7 +180,7 @@ func (x *ListReviewLogsRequest) GetEntityType() string {
 	return ""
 }
 
-func (x *ListReviewLogsRequest) GetEntityId() uint64 {
+func (x *ListReviewLogsRequest) GetEntityId() int64 {
 	if x != nil {
 		return x.EntityId
 	}
@@ -236,7 +236,7 @@ func (x *ListReviewLogsResponse) GetItems() []*ReviewLog {
 type CountReviewLogsRequest struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
 	EntityType    string                 `protobuf:"bytes,1,opt,name=entity_type,json=entityType,proto3" json:"entity_type,omitempty"`
-	EntityId      uint64                 `protobuf:"varint,2,opt,name=entity_id,json=entityId,proto3" json:"entity_id,omitempty"`
+	EntityId      int64                  `protobuf:"varint,2,opt,name=entity_id,json=entityId,proto3" json:"entity_id,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -278,7 +278,7 @@ func (x *CountReviewLogsRequest) GetEntityType() string {
 	return ""
 }
 
-func (x *CountReviewLogsRequest) GetEntityId() uint64 {
+func (x *CountReviewLogsRequest) GetEntityId() int64 {
 	if x != nil {
 		return x.EntityId
 	}
@@ -288,7 +288,7 @@ func (x *CountReviewLogsRequest) GetEntityId() uint64 {
 // 统计计数 - 回应
 type CountReviewLogsResponse struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
-	Count         uint64                 `protobuf:"varint,1,opt,name=count,proto3" json:"count,omitempty"`
+	Count         int64                  `protobuf:"varint,1,opt,name=count,proto3" json:"count,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -323,7 +323,7 @@ func (*CountReviewLogsResponse) Descriptor() ([]byte, []int) {
 	return file_content_service_v1_review_log_proto_rawDescGZIP(), []int{4}
 }
 
-func (x *CountReviewLogsResponse) GetCount() uint64 {
+func (x *CountReviewLogsResponse) GetCount() int64 {
 	if x != nil {
 		return x.Count
 	}
@@ -336,14 +336,14 @@ const file_content_service_v1_review_log_proto_rawDesc = "" +
 	"\n" +
 	"#content/service/v1/review_log.proto\x12\x12content.service.v1\x1a$gnostic/openapi/v3/annotations.proto\x1a\x1bgoogle/protobuf/empty.proto\x1a\x1fgoogle/protobuf/timestamp.proto\x1a\x1epagination/v1/pagination.proto\"\xba\x02\n" +
 	"\tReviewLog\x12\x13\n" +
-	"\x02id\x18\x01 \x01(\x04H\x00R\x02id\x88\x01\x01\x12\x1f\n" +
+	"\x02id\x18\x01 \x01(\x03H\x00R\x02id\x88\x01\x01\x12\x1f\n" +
 	"\ventity_type\x18\x02 \x01(\tR\n" +
 	"entityType\x12\x1b\n" +
-	"\tentity_id\x18\x03 \x01(\x04R\bentityId\x12\x16\n" +
+	"\tentity_id\x18\x03 \x01(\x03R\bentityId\x12\x16\n" +
 	"\x06action\x18\x04 \x01(\tR\x06action\x12\x14\n" +
 	"\x05level\x18\x05 \x01(\rR\x05level\x12\x17\n" +
 	"\x04note\x18\x06 \x01(\tH\x01R\x04note\x88\x01\x01\x12$\n" +
-	"\voperator_id\x18\a \x01(\x04H\x02R\n" +
+	"\voperator_id\x18\a \x01(\x03H\x02R\n" +
 	"operatorId\x88\x01\x01\x12>\n" +
 	"\n" +
 	"created_at\x18\x14 \x01(\v2\x1a.google.protobuf.TimestampH\x03R\tcreatedAt\x88\x01\x01B\x05\n" +
@@ -354,15 +354,15 @@ const file_content_service_v1_review_log_proto_rawDesc = "" +
 	"\x15ListReviewLogsRequest\x12\x1f\n" +
 	"\ventity_type\x18\x01 \x01(\tR\n" +
 	"entityType\x12\x1b\n" +
-	"\tentity_id\x18\x02 \x01(\x04R\bentityId\"M\n" +
+	"\tentity_id\x18\x02 \x01(\x03R\bentityId\"M\n" +
 	"\x16ListReviewLogsResponse\x123\n" +
 	"\x05items\x18\x01 \x03(\v2\x1d.content.service.v1.ReviewLogR\x05items\"V\n" +
 	"\x16CountReviewLogsRequest\x12\x1f\n" +
 	"\ventity_type\x18\x01 \x01(\tR\n" +
 	"entityType\x12\x1b\n" +
-	"\tentity_id\x18\x02 \x01(\x04R\bentityId\"/\n" +
+	"\tentity_id\x18\x02 \x01(\x03R\bentityId\"/\n" +
 	"\x17CountReviewLogsResponse\x12\x14\n" +
-	"\x05count\x18\x01 \x01(\x04R\x05count2\xd7\x01\n" +
+	"\x05count\x18\x01 \x01(\x03R\x05count2\xd7\x01\n" +
 	"\x10ReviewLogService\x12_\n" +
 	"\x04List\x12).content.service.v1.ListReviewLogsRequest\x1a*.content.service.v1.ListReviewLogsResponse\"\x00\x12b\n" +
 	"\x05Count\x12*.content.service.v1.CountReviewLogsRequest\x1a+.content.service.v1.CountReviewLogsResponse\"\x00B\xc7\x01\n" +

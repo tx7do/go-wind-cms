@@ -31,7 +31,7 @@ service FlowRuleService {
 
 // 自动化 Flow 规则：内容事件触发，条件命中后执行动作链
 message FlowRule {
-  optional uint64 id = 1 [
+  optional int64 id = 1 [
     json_name = "id",
     (gnostic.openapi.v3.property) = {description: "规则 ID"}
   ]; // 规则 ID
@@ -100,12 +100,12 @@ message FlowRule {
 // 回应 - 规则列表
 message ListFlowRuleResponse {
   repeated FlowRule items = 1 [json_name = "items"]; // 规则列表
-  uint64 total = 2 [json_name = "total"]; // 总数
+  int64 total = 2 [json_name = "total"]; // 总数
 }
 
 // 请求 - 规则详情
 message GetFlowRuleRequest {
-  uint64 id = 1 [json_name = "id"]; // 规则 ID
+  int64 id = 1 [json_name = "id"]; // 规则 ID
 }
 
 // 请求 - 创建规则
@@ -115,7 +115,7 @@ message CreateFlowRuleRequest {
 
 // 请求 - 更新规则
 message UpdateFlowRuleRequest {
-  uint64 id = 1 [json_name = "id"]; // 规则 ID
+  int64 id = 1 [json_name = "id"]; // 规则 ID
 
   FlowRule data = 2 [json_name = "data"]; // 规则
 
@@ -124,5 +124,5 @@ message UpdateFlowRuleRequest {
 
 // 请求 - 删除规则
 message DeleteFlowRuleRequest {
-  uint64 id = 1 [json_name = "id"]; // 规则 ID
+  int64 id = 1 [json_name = "id"]; // 规则 ID
 }

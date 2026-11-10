@@ -40,7 +40,7 @@ func (_d *MediaAssetDelete) ExecX(ctx context.Context) int {
 }
 
 func (_d *MediaAssetDelete) sqlExec(ctx context.Context) (int, error) {
-	_spec := sqlgraph.NewDeleteSpec(mediaasset.Table, sqlgraph.NewFieldSpec(mediaasset.FieldID, field.TypeUint64))
+	_spec := sqlgraph.NewDeleteSpec(mediaasset.Table, sqlgraph.NewFieldSpec(mediaasset.FieldID, field.TypeInt64))
 	if ps := _d.mutation.predicates; len(ps) > 0 {
 		_spec.Predicate = func(selector *sql.Selector) {
 			for i := range ps {

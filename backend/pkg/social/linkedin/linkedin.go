@@ -29,11 +29,11 @@ const (
 	// Platform 本适配器注册进 pkg/social 注册表的键（proto 枚举名）。
 	Platform = "PLATFORM_LINKEDIN"
 
-	apiBase             = "https://api.linkedin.com"
-	linkedinAPIVersion  = "202405" // Posts API 要求带版本头
-	maxCommentaryRunes  = 3000     // Posts API commentary 上限
-	defaultTimeout      = 30 * time.Second
-	maxResponseSize     = 10 << 20 // 10MB
+	apiBase            = "https://api.linkedin.com"
+	linkedinAPIVersion = "202405" // Posts API 要求带版本头
+	maxCommentaryRunes = 3000     // Posts API commentary 上限
+	defaultTimeout     = 30 * time.Second
+	maxResponseSize    = 10 << 20 // 10MB
 )
 
 // Client LinkedIn 客户端（并发安全）。
@@ -80,15 +80,15 @@ func init() {
 // ── 数据结构 ──
 
 type userInfoView struct {
-	Sub         string `json:"sub"` // OIDC 成员标识 → urn:li:person:{sub}
-	Name        string `json:"name"`
+	Sub  string `json:"sub"` // OIDC 成员标识 → urn:li:person:{sub}
+	Name string `json:"name"`
 }
 
 type createPostRequest struct {
-	Author      string            `json:"author"`
-	Commentary  string            `json:"commentary"`
-	Visibility  string            `json:"visibility"`
-	Distribution map[string]any   `json:"distribution"`
+	Author       string         `json:"author"`
+	Commentary   string         `json:"commentary"`
+	Visibility   string         `json:"visibility"`
+	Distribution map[string]any `json:"distribution"`
 }
 
 // ── social.Provider 实现 ──
@@ -124,9 +124,9 @@ func (c *Client) Publish(ctx context.Context, creds social.Credentials, input *s
 	}
 
 	body := createPostRequest{
-		Author:      "urn:li:person:" + user.Sub,
-		Commentary:  input.Text,
-		Visibility:  "PUBLIC",
+		Author:       "urn:li:person:" + user.Sub,
+		Commentary:   input.Text,
+		Visibility:   "PUBLIC",
 		Distribution: map[string]any{"linkedInDistributionSource": struct{}{}},
 	}
 

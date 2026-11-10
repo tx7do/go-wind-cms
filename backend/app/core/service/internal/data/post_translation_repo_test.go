@@ -56,7 +56,7 @@ func newTestPostTranslationRepo(t *testing.T) (*PostTranslationRepo, *ent.Client
 	return repo, db, cleanup
 }
 
-func upsertPostTranslations(t *testing.T, repo *PostTranslationRepo, db *ent.Client, ctx context.Context, postID uint64, items ...*contentV1.PostTranslation) {
+func upsertPostTranslations(t *testing.T, repo *PostTranslationRepo, db *ent.Client, ctx context.Context, postID int64, items ...*contentV1.PostTranslation) {
 	t.Helper()
 
 	tx, err := db.Tx(ctx)
@@ -65,7 +65,7 @@ func upsertPostTranslations(t *testing.T, repo *PostTranslationRepo, db *ent.Cli
 	require.NoError(t, tx.Commit(), "提交事务失败")
 }
 
-func countPostTranslations(t *testing.T, db *ent.Client, ctx context.Context, postID uint64, languageCode string) int {
+func countPostTranslations(t *testing.T, db *ent.Client, ctx context.Context, postID int64, languageCode string) int {
 	t.Helper()
 
 	builder := db.PostTranslation.Query().Where(posttranslation.PostIDEQ(postID))

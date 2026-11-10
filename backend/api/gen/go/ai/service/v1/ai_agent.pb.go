@@ -85,16 +85,16 @@ func (AiAgentRun_Status) EnumDescriptor() ([]byte, []int) {
 // Agent 编排应用
 type AiAgentApp struct {
 	state       protoimpl.MessageState `protogen:"open.v1"`
-	Id          *uint64                `protobuf:"varint,1,opt,name=id,proto3,oneof" json:"id,omitempty"`                  // 应用ID
+	Id          *int64                 `protobuf:"varint,1,opt,name=id,proto3,oneof" json:"id,omitempty"`                  // 应用ID
 	Name        *string                `protobuf:"bytes,2,opt,name=name,proto3,oneof" json:"name,omitempty"`               // 应用名称
 	Description *string                `protobuf:"bytes,3,opt,name=description,proto3,oneof" json:"description,omitempty"` // 应用描述
 	// 图 DSL（JSON：nodes/edges；节点五种、模板与条件表达式语义见设计文档 §2）
 	Graph   *string `protobuf:"bytes,4,opt,name=graph,proto3,oneof" json:"graph,omitempty"`      // 图 DSL
 	Enabled *bool   `protobuf:"varint,5,opt,name=enabled,proto3,oneof" json:"enabled,omitempty"` // 是否启用
 	// 创建/更新入参带出（与 AiConversation 同口径）：租户隔离 mixin 无创建钩子，租户必须显式写
-	TenantId      *uint64                `protobuf:"varint,6,opt,name=tenant_id,json=tenantId,proto3,oneof" json:"tenant_id,omitempty"`
-	CreatedBy     *uint64                `protobuf:"varint,100,opt,name=created_by,json=createdBy,proto3,oneof" json:"created_by,omitempty"`
-	UpdatedBy     *uint64                `protobuf:"varint,101,opt,name=updated_by,json=updatedBy,proto3,oneof" json:"updated_by,omitempty"`
+	TenantId      *int64                 `protobuf:"varint,6,opt,name=tenant_id,json=tenantId,proto3,oneof" json:"tenant_id,omitempty"`
+	CreatedBy     *int64                 `protobuf:"varint,100,opt,name=created_by,json=createdBy,proto3,oneof" json:"created_by,omitempty"`
+	UpdatedBy     *int64                 `protobuf:"varint,101,opt,name=updated_by,json=updatedBy,proto3,oneof" json:"updated_by,omitempty"`
 	CreatedAt     *timestamppb.Timestamp `protobuf:"bytes,200,opt,name=created_at,json=createdAt,proto3,oneof" json:"created_at,omitempty"`
 	UpdatedAt     *timestamppb.Timestamp `protobuf:"bytes,201,opt,name=updated_at,json=updatedAt,proto3,oneof" json:"updated_at,omitempty"`
 	unknownFields protoimpl.UnknownFields
@@ -131,7 +131,7 @@ func (*AiAgentApp) Descriptor() ([]byte, []int) {
 	return file_ai_service_v1_ai_agent_proto_rawDescGZIP(), []int{0}
 }
 
-func (x *AiAgentApp) GetId() uint64 {
+func (x *AiAgentApp) GetId() int64 {
 	if x != nil && x.Id != nil {
 		return *x.Id
 	}
@@ -166,21 +166,21 @@ func (x *AiAgentApp) GetEnabled() bool {
 	return false
 }
 
-func (x *AiAgentApp) GetTenantId() uint64 {
+func (x *AiAgentApp) GetTenantId() int64 {
 	if x != nil && x.TenantId != nil {
 		return *x.TenantId
 	}
 	return 0
 }
 
-func (x *AiAgentApp) GetCreatedBy() uint64 {
+func (x *AiAgentApp) GetCreatedBy() int64 {
 	if x != nil && x.CreatedBy != nil {
 		return *x.CreatedBy
 	}
 	return 0
 }
 
-func (x *AiAgentApp) GetUpdatedBy() uint64 {
+func (x *AiAgentApp) GetUpdatedBy() int64 {
 	if x != nil && x.UpdatedBy != nil {
 		return *x.UpdatedBy
 	}
@@ -208,8 +208,8 @@ func (x *AiAgentApp) GetUpdatedAt() *timestamppb.Timestamp {
 // 尽力而为丢帧可容忍：Run 同步响应携带完整 trace 与终态，以响应为准。
 type AgentRunEvent struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
-	RunId         uint64                 `protobuf:"varint,1,opt,name=run_id,json=runId,proto3" json:"run_id,omitempty"`   // 运行 ID
-	AppId         uint64                 `protobuf:"varint,2,opt,name=app_id,json=appId,proto3" json:"app_id,omitempty"`   // 应用 ID
+	RunId         int64                  `protobuf:"varint,1,opt,name=run_id,json=runId,proto3" json:"run_id,omitempty"`   // 运行 ID
+	AppId         int64                  `protobuf:"varint,2,opt,name=app_id,json=appId,proto3" json:"app_id,omitempty"`   // 应用 ID
 	Seq           uint32                 `protobuf:"varint,3,opt,name=seq,proto3" json:"seq,omitempty"`                    // 帧序号（运行内单调递增，从 0 开始）
 	Phase         string                 `protobuf:"bytes,4,opt,name=phase,proto3" json:"phase,omitempty"`                 // node_start | node_end | error | done
 	NodeId        string                 `protobuf:"bytes,5,opt,name=node_id,json=nodeId,proto3" json:"node_id,omitempty"` // 节点 ID（phase=done 时为空）
@@ -249,14 +249,14 @@ func (*AgentRunEvent) Descriptor() ([]byte, []int) {
 	return file_ai_service_v1_ai_agent_proto_rawDescGZIP(), []int{1}
 }
 
-func (x *AgentRunEvent) GetRunId() uint64 {
+func (x *AgentRunEvent) GetRunId() int64 {
 	if x != nil {
 		return x.RunId
 	}
 	return 0
 }
 
-func (x *AgentRunEvent) GetAppId() uint64 {
+func (x *AgentRunEvent) GetAppId() int64 {
 	if x != nil {
 		return x.AppId
 	}
@@ -301,8 +301,8 @@ func (x *AgentRunEvent) GetStatus() string {
 // Agent 运行记录
 type AiAgentRun struct {
 	state  protoimpl.MessageState `protogen:"open.v1"`
-	Id     *uint64                `protobuf:"varint,1,opt,name=id,proto3,oneof" json:"id,omitempty"`                                              // 运行ID
-	AppId  *uint64                `protobuf:"varint,2,opt,name=app_id,json=appId,proto3,oneof" json:"app_id,omitempty"`                           // 应用ID
+	Id     *int64                 `protobuf:"varint,1,opt,name=id,proto3,oneof" json:"id,omitempty"`                                              // 运行ID
+	AppId  *int64                 `protobuf:"varint,2,opt,name=app_id,json=appId,proto3,oneof" json:"app_id,omitempty"`                           // 应用ID
 	Status *AiAgentRun_Status     `protobuf:"varint,3,opt,name=status,proto3,enum=ai.service.v1.AiAgentRun_Status,oneof" json:"status,omitempty"` // 运行状态
 	// 运行入参（JSON 对象：start 节点 inputVars 的 name → 值）
 	Input  *string `protobuf:"bytes,4,opt,name=input,proto3,oneof" json:"input,omitempty"`   // 入参 JSON
@@ -353,14 +353,14 @@ func (*AiAgentRun) Descriptor() ([]byte, []int) {
 	return file_ai_service_v1_ai_agent_proto_rawDescGZIP(), []int{2}
 }
 
-func (x *AiAgentRun) GetId() uint64 {
+func (x *AiAgentRun) GetId() int64 {
 	if x != nil && x.Id != nil {
 		return *x.Id
 	}
 	return 0
 }
 
-func (x *AiAgentRun) GetAppId() uint64 {
+func (x *AiAgentRun) GetAppId() int64 {
 	if x != nil && x.AppId != nil {
 		return *x.AppId
 	}
@@ -455,7 +455,7 @@ func (x *AiAgentRun) GetCreatedAt() *timestamppb.Timestamp {
 type ListAiAgentAppsResponse struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
 	Items         []*AiAgentApp          `protobuf:"bytes,1,rep,name=items,proto3" json:"items,omitempty"`
-	Total         uint64                 `protobuf:"varint,2,opt,name=total,proto3" json:"total,omitempty"`
+	Total         int64                  `protobuf:"varint,2,opt,name=total,proto3" json:"total,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -497,7 +497,7 @@ func (x *ListAiAgentAppsResponse) GetItems() []*AiAgentApp {
 	return nil
 }
 
-func (x *ListAiAgentAppsResponse) GetTotal() uint64 {
+func (x *ListAiAgentAppsResponse) GetTotal() int64 {
 	if x != nil {
 		return x.Total
 	}
@@ -507,7 +507,7 @@ func (x *ListAiAgentAppsResponse) GetTotal() uint64 {
 // 查询详情 - 请求
 type GetAiAgentAppRequest struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
-	Id            uint64                 `protobuf:"varint,1,opt,name=id,proto3" json:"id,omitempty"`
+	Id            int64                  `protobuf:"varint,1,opt,name=id,proto3" json:"id,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -542,7 +542,7 @@ func (*GetAiAgentAppRequest) Descriptor() ([]byte, []int) {
 	return file_ai_service_v1_ai_agent_proto_rawDescGZIP(), []int{4}
 }
 
-func (x *GetAiAgentAppRequest) GetId() uint64 {
+func (x *GetAiAgentAppRequest) GetId() int64 {
 	if x != nil {
 		return x.Id
 	}
@@ -597,7 +597,7 @@ func (x *CreateAiAgentAppRequest) GetData() *AiAgentApp {
 // 更新 - 请求
 type UpdateAiAgentAppRequest struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
-	Id            uint64                 `protobuf:"varint,1,opt,name=id,proto3" json:"id,omitempty"`
+	Id            int64                  `protobuf:"varint,1,opt,name=id,proto3" json:"id,omitempty"`
 	Data          *AiAgentApp            `protobuf:"bytes,2,opt,name=data,proto3" json:"data,omitempty"`
 	UpdateMask    *fieldmaskpb.FieldMask `protobuf:"bytes,3,opt,name=update_mask,json=updateMask,proto3" json:"update_mask,omitempty"`
 	unknownFields protoimpl.UnknownFields
@@ -634,7 +634,7 @@ func (*UpdateAiAgentAppRequest) Descriptor() ([]byte, []int) {
 	return file_ai_service_v1_ai_agent_proto_rawDescGZIP(), []int{6}
 }
 
-func (x *UpdateAiAgentAppRequest) GetId() uint64 {
+func (x *UpdateAiAgentAppRequest) GetId() int64 {
 	if x != nil {
 		return x.Id
 	}
@@ -658,7 +658,7 @@ func (x *UpdateAiAgentAppRequest) GetUpdateMask() *fieldmaskpb.FieldMask {
 // 删除 - 请求
 type DeleteAiAgentAppRequest struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
-	Id            uint64                 `protobuf:"varint,1,opt,name=id,proto3" json:"id,omitempty"`
+	Id            int64                  `protobuf:"varint,1,opt,name=id,proto3" json:"id,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -693,7 +693,7 @@ func (*DeleteAiAgentAppRequest) Descriptor() ([]byte, []int) {
 	return file_ai_service_v1_ai_agent_proto_rawDescGZIP(), []int{7}
 }
 
-func (x *DeleteAiAgentAppRequest) GetId() uint64 {
+func (x *DeleteAiAgentAppRequest) GetId() int64 {
 	if x != nil {
 		return x.Id
 	}
@@ -703,7 +703,7 @@ func (x *DeleteAiAgentAppRequest) GetId() uint64 {
 // 审批裁决运行 - 请求
 type ApproveAgentRunRequest struct {
 	state    protoimpl.MessageState `protogen:"open.v1"`
-	RunId    uint64                 `protobuf:"varint,1,opt,name=run_id,json=runId,proto3" json:"run_id,omitempty"` // 运行ID
+	RunId    int64                  `protobuf:"varint,1,opt,name=run_id,json=runId,proto3" json:"run_id,omitempty"` // 运行ID
 	Approved bool                   `protobuf:"varint,2,opt,name=approved,proto3" json:"approved,omitempty"`        // 是否批准
 	// 审批意见（驳回时写入运行 error；批准时注入挂起节点 note 变量）
 	Note          string `protobuf:"bytes,3,opt,name=note,proto3" json:"note,omitempty"` // 审批意见
@@ -741,7 +741,7 @@ func (*ApproveAgentRunRequest) Descriptor() ([]byte, []int) {
 	return file_ai_service_v1_ai_agent_proto_rawDescGZIP(), []int{8}
 }
 
-func (x *ApproveAgentRunRequest) GetRunId() uint64 {
+func (x *ApproveAgentRunRequest) GetRunId() int64 {
 	if x != nil {
 		return x.RunId
 	}
@@ -765,7 +765,7 @@ func (x *ApproveAgentRunRequest) GetNote() string {
 // 试运行 - 请求
 type RunAiAgentAppRequest struct {
 	state protoimpl.MessageState `protogen:"open.v1"`
-	Id    uint64                 `protobuf:"varint,1,opt,name=id,proto3" json:"id,omitempty"` // 应用ID
+	Id    int64                  `protobuf:"varint,1,opt,name=id,proto3" json:"id,omitempty"` // 应用ID
 	// 运行入参：start 节点声明的输入变量名 → 值（JSON 对象字符串）
 	Input         map[string]string `protobuf:"bytes,2,rep,name=input,proto3" json:"input,omitempty" protobuf_key:"bytes,1,opt,name=key" protobuf_val:"bytes,2,opt,name=value"` // 运行入参
 	unknownFields protoimpl.UnknownFields
@@ -802,7 +802,7 @@ func (*RunAiAgentAppRequest) Descriptor() ([]byte, []int) {
 	return file_ai_service_v1_ai_agent_proto_rawDescGZIP(), []int{9}
 }
 
-func (x *RunAiAgentAppRequest) GetId() uint64 {
+func (x *RunAiAgentAppRequest) GetId() int64 {
 	if x != nil {
 		return x.Id
 	}
@@ -820,7 +820,7 @@ func (x *RunAiAgentAppRequest) GetInput() map[string]string {
 type ListAiAgentRunsResponse struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
 	Items         []*AiAgentRun          `protobuf:"bytes,1,rep,name=items,proto3" json:"items,omitempty"`
-	Total         uint64                 `protobuf:"varint,2,opt,name=total,proto3" json:"total,omitempty"`
+	Total         int64                  `protobuf:"varint,2,opt,name=total,proto3" json:"total,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -862,7 +862,7 @@ func (x *ListAiAgentRunsResponse) GetItems() []*AiAgentRun {
 	return nil
 }
 
-func (x *ListAiAgentRunsResponse) GetTotal() uint64 {
+func (x *ListAiAgentRunsResponse) GetTotal() int64 {
 	if x != nil {
 		return x.Total
 	}
@@ -872,7 +872,7 @@ func (x *ListAiAgentRunsResponse) GetTotal() uint64 {
 // 运行详情 - 请求
 type GetAiAgentRunRequest struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
-	Id            uint64                 `protobuf:"varint,1,opt,name=id,proto3" json:"id,omitempty"`
+	Id            int64                  `protobuf:"varint,1,opt,name=id,proto3" json:"id,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -907,7 +907,7 @@ func (*GetAiAgentRunRequest) Descriptor() ([]byte, []int) {
 	return file_ai_service_v1_ai_agent_proto_rawDescGZIP(), []int{11}
 }
 
-func (x *GetAiAgentRunRequest) GetId() uint64 {
+func (x *GetAiAgentRunRequest) GetId() int64 {
 	if x != nil {
 		return x.Id
 	}
@@ -921,16 +921,16 @@ const file_ai_service_v1_ai_agent_proto_rawDesc = "" +
 	"\x1cai/service/v1/ai_agent.proto\x12\rai.service.v1\x1a$gnostic/openapi/v3/annotations.proto\x1a\x1bgoogle/protobuf/empty.proto\x1a\x1fgoogle/protobuf/timestamp.proto\x1a google/protobuf/field_mask.proto\x1a\x1epagination/v1/pagination.proto\"\xa9\x05\n" +
 	"\n" +
 	"AiAgentApp\x12#\n" +
-	"\x02id\x18\x01 \x01(\x04B\x0e\xbaG\v\x92\x02\b应用IDH\x00R\x02id\x88\x01\x01\x12@\n" +
+	"\x02id\x18\x01 \x01(\x03B\x0e\xbaG\v\x92\x02\b应用IDH\x00R\x02id\x88\x01\x01\x12@\n" +
 	"\x04name\x18\x02 \x01(\tB'\xbaG$\x92\x02!应用名称（租户内唯一）H\x01R\x04name\x88\x01\x01\x129\n" +
 	"\vdescription\x18\x03 \x01(\tB\x12\xbaG\x0f\x92\x02\f应用描述H\x02R\vdescription\x88\x01\x01\x129\n" +
 	"\x05graph\x18\x04 \x01(\tB\x1e\xbaG\x1b\x92\x02\x18图 DSL（JSON 文本）H\x03R\x05graph\x88\x01\x01\x12R\n" +
 	"\aenabled\x18\x05 \x01(\bB3\xbaG0\x92\x02-是否启用（停用的应用拒绝运行）H\x04R\aenabled\x88\x01\x01\x12 \n" +
-	"\ttenant_id\x18\x06 \x01(\x04H\x05R\btenantId\x88\x01\x01\x12\"\n" +
+	"\ttenant_id\x18\x06 \x01(\x03H\x05R\btenantId\x88\x01\x01\x12\"\n" +
 	"\n" +
-	"created_by\x18d \x01(\x04H\x06R\tcreatedBy\x88\x01\x01\x12\"\n" +
+	"created_by\x18d \x01(\x03H\x06R\tcreatedBy\x88\x01\x01\x12\"\n" +
 	"\n" +
-	"updated_by\x18e \x01(\x04H\aR\tupdatedBy\x88\x01\x01\x12?\n" +
+	"updated_by\x18e \x01(\x03H\aR\tupdatedBy\x88\x01\x01\x12?\n" +
 	"\n" +
 	"created_at\x18\xc8\x01 \x01(\v2\x1a.google.protobuf.TimestampH\bR\tcreatedAt\x88\x01\x01\x12?\n" +
 	"\n" +
@@ -948,8 +948,8 @@ const file_ai_service_v1_ai_agent_proto_rawDesc = "" +
 	"\v_created_atB\r\n" +
 	"\v_updated_at\"\xb0\x01\n" +
 	"\rAgentRunEvent\x12\x15\n" +
-	"\x06run_id\x18\x01 \x01(\x04R\x05runId\x12\x15\n" +
-	"\x06app_id\x18\x02 \x01(\x04R\x05appId\x12\x10\n" +
+	"\x06run_id\x18\x01 \x01(\x03R\x05runId\x12\x15\n" +
+	"\x06app_id\x18\x02 \x01(\x03R\x05appId\x12\x10\n" +
 	"\x03seq\x18\x03 \x01(\rR\x03seq\x12\x14\n" +
 	"\x05phase\x18\x04 \x01(\tR\x05phase\x12\x17\n" +
 	"\anode_id\x18\x05 \x01(\tR\x06nodeId\x12\x18\n" +
@@ -957,8 +957,8 @@ const file_ai_service_v1_ai_agent_proto_rawDesc = "" +
 	"\x06status\x18\a \x01(\tR\x06status\"\xcc\x06\n" +
 	"\n" +
 	"AiAgentRun\x12\x13\n" +
-	"\x02id\x18\x01 \x01(\x04H\x00R\x02id\x88\x01\x01\x12\x1a\n" +
-	"\x06app_id\x18\x02 \x01(\x04H\x01R\x05appId\x88\x01\x01\x12=\n" +
+	"\x02id\x18\x01 \x01(\x03H\x00R\x02id\x88\x01\x01\x12\x1a\n" +
+	"\x06app_id\x18\x02 \x01(\x03H\x01R\x05appId\x88\x01\x01\x12=\n" +
 	"\x06status\x18\x03 \x01(\x0e2 .ai.service.v1.AiAgentRun.StatusH\x02R\x06status\x88\x01\x01\x12\x19\n" +
 	"\x05input\x18\x04 \x01(\tH\x03R\x05input\x88\x01\x01\x12\x1b\n" +
 	"\x06output\x18\x05 \x01(\tH\x04R\x06output\x88\x01\x01\x12\x19\n" +
@@ -998,24 +998,24 @@ const file_ai_service_v1_ai_agent_proto_rawDesc = "" +
 	"\v_created_at\"`\n" +
 	"\x17ListAiAgentAppsResponse\x12/\n" +
 	"\x05items\x18\x01 \x03(\v2\x19.ai.service.v1.AiAgentAppR\x05items\x12\x14\n" +
-	"\x05total\x18\x02 \x01(\x04R\x05total\"&\n" +
+	"\x05total\x18\x02 \x01(\x03R\x05total\"&\n" +
 	"\x14GetAiAgentAppRequest\x12\x0e\n" +
-	"\x02id\x18\x01 \x01(\x04R\x02id\"H\n" +
+	"\x02id\x18\x01 \x01(\x03R\x02id\"H\n" +
 	"\x17CreateAiAgentAppRequest\x12-\n" +
 	"\x04data\x18\x01 \x01(\v2\x19.ai.service.v1.AiAgentAppR\x04data\"\x95\x01\n" +
 	"\x17UpdateAiAgentAppRequest\x12\x0e\n" +
-	"\x02id\x18\x01 \x01(\x04R\x02id\x12-\n" +
+	"\x02id\x18\x01 \x01(\x03R\x02id\x12-\n" +
 	"\x04data\x18\x02 \x01(\v2\x19.ai.service.v1.AiAgentAppR\x04data\x12;\n" +
 	"\vupdate_mask\x18\x03 \x01(\v2\x1a.google.protobuf.FieldMaskR\n" +
 	"updateMask\")\n" +
 	"\x17DeleteAiAgentAppRequest\x12\x0e\n" +
-	"\x02id\x18\x01 \x01(\x04R\x02id\"\xe3\x01\n" +
+	"\x02id\x18\x01 \x01(\x03R\x02id\"\xe3\x01\n" +
 	"\x16ApproveAgentRunRequest\x12@\n" +
-	"\x06run_id\x18\x01 \x01(\x04B)\xbaG&\x92\x02#WAITING_APPROVAL 状态的运行 IDR\x05runId\x12s\n" +
+	"\x06run_id\x18\x01 \x01(\x03B)\xbaG&\x92\x02#WAITING_APPROVAL 状态的运行 IDR\x05runId\x12s\n" +
 	"\bapproved\x18\x02 \x01(\bBW\xbaGT\x92\x02Qtrue=批准（从挂起节点继续执行）；false=驳回（运行置 FAILED）R\bapproved\x12\x12\n" +
 	"\x04note\x18\x03 \x01(\tR\x04note\"\xeb\x01\n" +
 	"\x14RunAiAgentAppRequest\x12\x1e\n" +
-	"\x02id\x18\x01 \x01(\x04B\x0e\xbaG\v\x92\x02\b应用IDR\x02id\x12y\n" +
+	"\x02id\x18\x01 \x01(\x03B\x0e\xbaG\v\x92\x02\b应用IDR\x02id\x12y\n" +
 	"\x05input\x18\x02 \x03(\v2..ai.service.v1.RunAiAgentAppRequest.InputEntryB3\xbaG0\x92\x02-运行入参（start 节点声明的变量）R\x05input\x1a8\n" +
 	"\n" +
 	"InputEntry\x12\x10\n" +
@@ -1023,9 +1023,9 @@ const file_ai_service_v1_ai_agent_proto_rawDesc = "" +
 	"\x05value\x18\x02 \x01(\tR\x05value:\x028\x01\"`\n" +
 	"\x17ListAiAgentRunsResponse\x12/\n" +
 	"\x05items\x18\x01 \x03(\v2\x19.ai.service.v1.AiAgentRunR\x05items\x12\x14\n" +
-	"\x05total\x18\x02 \x01(\x04R\x05total\"&\n" +
+	"\x05total\x18\x02 \x01(\x03R\x05total\"&\n" +
 	"\x14GetAiAgentRunRequest\x12\x0e\n" +
-	"\x02id\x18\x01 \x01(\x04R\x02id2\xc5\x05\n" +
+	"\x02id\x18\x01 \x01(\x03R\x02id2\xc5\x05\n" +
 	"\x0eAiAgentService\x12K\n" +
 	"\x04List\x12\x19.pagination.PagingRequest\x1a&.ai.service.v1.ListAiAgentAppsResponse\"\x00\x12G\n" +
 	"\x03Get\x12#.ai.service.v1.GetAiAgentAppRequest\x1a\x19.ai.service.v1.AiAgentApp\"\x00\x12M\n" +

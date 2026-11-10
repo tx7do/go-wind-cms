@@ -13,8 +13,8 @@ import (
 	"google.golang.org/protobuf/types/known/emptypb"
 	"google.golang.org/protobuf/types/known/timestamppb"
 
-	identityV1 "go-wind-cms/api/gen/go/identity/service/v1"
 	contentV1 "go-wind-cms/api/gen/go/content/service/v1"
+	identityV1 "go-wind-cms/api/gen/go/identity/service/v1"
 	"go-wind-cms/app/core/service/internal/data"
 )
 
@@ -55,7 +55,7 @@ return 1
 
 // editLockValue Redis 锁值。
 type editLockValue struct {
-	UserID     uint64 `json:"user_id"`
+	UserID     int64  `json:"user_id"`
 	UserName   string `json:"user_name"`
 	AcquiredAt string `json:"acquired_at"`
 }
@@ -149,7 +149,7 @@ func (s *EditLockService) Release(ctx context.Context, req *contentV1.ReleaseEdi
 	return &emptypb.Empty{}, nil
 }
 
-func editLockKey(targetType string, targetID uint64) string {
+func editLockKey(targetType string, targetID int64) string {
 	return fmt.Sprintf("gowind-cms:editlock:%s:%d", targetType, targetID)
 }
 

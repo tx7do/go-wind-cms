@@ -28,7 +28,7 @@ const (
 type EditLock struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
 	Acquired      *bool                  `protobuf:"varint,1,opt,name=acquired,proto3,oneof" json:"acquired,omitempty"`                      // 调用者是否持锁
-	HolderId      *uint64                `protobuf:"varint,2,opt,name=holder_id,json=holderId,proto3,oneof" json:"holder_id,omitempty"`      // 持锁者用户ID
+	HolderId      *int64                 `protobuf:"varint,2,opt,name=holder_id,json=holderId,proto3,oneof" json:"holder_id,omitempty"`      // 持锁者用户ID
 	HolderName    *string                `protobuf:"bytes,3,opt,name=holder_name,json=holderName,proto3,oneof" json:"holder_name,omitempty"` // 持锁者用户名
 	AcquiredAt    *timestamppb.Timestamp `protobuf:"bytes,4,opt,name=acquired_at,json=acquiredAt,proto3,oneof" json:"acquired_at,omitempty"` // 获锁时间
 	unknownFields protoimpl.UnknownFields
@@ -72,7 +72,7 @@ func (x *EditLock) GetAcquired() bool {
 	return false
 }
 
-func (x *EditLock) GetHolderId() uint64 {
+func (x *EditLock) GetHolderId() int64 {
 	if x != nil && x.HolderId != nil {
 		return *x.HolderId
 	}
@@ -97,7 +97,7 @@ func (x *EditLock) GetAcquiredAt() *timestamppb.Timestamp {
 type AcquireEditLockRequest struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
 	TargetType    string                 `protobuf:"bytes,1,opt,name=target_type,json=targetType,proto3" json:"target_type,omitempty"` // 目标类型
-	TargetId      uint64                 `protobuf:"varint,2,opt,name=target_id,json=targetId,proto3" json:"target_id,omitempty"`      // 目标ID
+	TargetId      int64                  `protobuf:"varint,2,opt,name=target_id,json=targetId,proto3" json:"target_id,omitempty"`      // 目标ID
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -139,7 +139,7 @@ func (x *AcquireEditLockRequest) GetTargetType() string {
 	return ""
 }
 
-func (x *AcquireEditLockRequest) GetTargetId() uint64 {
+func (x *AcquireEditLockRequest) GetTargetId() int64 {
 	if x != nil {
 		return x.TargetId
 	}
@@ -150,7 +150,7 @@ func (x *AcquireEditLockRequest) GetTargetId() uint64 {
 type ReleaseEditLockRequest struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
 	TargetType    string                 `protobuf:"bytes,1,opt,name=target_type,json=targetType,proto3" json:"target_type,omitempty"` // 目标类型
-	TargetId      uint64                 `protobuf:"varint,2,opt,name=target_id,json=targetId,proto3" json:"target_id,omitempty"`      // 目标ID
+	TargetId      int64                  `protobuf:"varint,2,opt,name=target_id,json=targetId,proto3" json:"target_id,omitempty"`      // 目标ID
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -192,7 +192,7 @@ func (x *ReleaseEditLockRequest) GetTargetType() string {
 	return ""
 }
 
-func (x *ReleaseEditLockRequest) GetTargetId() uint64 {
+func (x *ReleaseEditLockRequest) GetTargetId() int64 {
 	if x != nil {
 		return x.TargetId
 	}
@@ -206,7 +206,7 @@ const file_content_service_v1_edit_lock_proto_rawDesc = "" +
 	"\"content/service/v1/edit_lock.proto\x12\x12content.service.v1\x1a$gnostic/openapi/v3/annotations.proto\x1a\x1bgoogle/protobuf/empty.proto\x1a\x1fgoogle/protobuf/timestamp.proto\"\xd4\x02\n" +
 	"\bEditLock\x12<\n" +
 	"\bacquired\x18\x01 \x01(\bB\x1b\xbaG\x18\x92\x02\x15调用者是否持锁H\x00R\bacquired\x88\x01\x01\x129\n" +
-	"\tholder_id\x18\x02 \x01(\x04B\x17\xbaG\x14\x92\x02\x11持锁者用户IDH\x01R\bholderId\x88\x01\x01\x12>\n" +
+	"\tholder_id\x18\x02 \x01(\x03B\x17\xbaG\x14\x92\x02\x11持锁者用户IDH\x01R\bholderId\x88\x01\x01\x12>\n" +
 	"\vholder_name\x18\x03 \x01(\tB\x18\xbaG\x15\x92\x02\x12持锁者用户名H\x02R\n" +
 	"holderName\x88\x01\x01\x12T\n" +
 	"\vacquired_at\x18\x04 \x01(\v2\x1a.google.protobuf.TimestampB\x12\xbaG\x0f\x92\x02\f获锁时间H\x03R\n" +
@@ -219,11 +219,11 @@ const file_content_service_v1_edit_lock_proto_rawDesc = "" +
 	"\x16AcquireEditLockRequest\x12B\n" +
 	"\vtarget_type\x18\x01 \x01(\tB!\xbaG\x1e\x92\x02\x1b目标类型（post/page）R\n" +
 	"targetType\x12+\n" +
-	"\ttarget_id\x18\x02 \x01(\x04B\x0e\xbaG\v\x92\x02\b目标IDR\btargetId\"\x89\x01\n" +
+	"\ttarget_id\x18\x02 \x01(\x03B\x0e\xbaG\v\x92\x02\b目标IDR\btargetId\"\x89\x01\n" +
 	"\x16ReleaseEditLockRequest\x12B\n" +
 	"\vtarget_type\x18\x01 \x01(\tB!\xbaG\x1e\x92\x02\x1b目标类型（post/page）R\n" +
 	"targetType\x12+\n" +
-	"\ttarget_id\x18\x02 \x01(\x04B\x0e\xbaG\v\x92\x02\b目标IDR\btargetId2\xb9\x01\n" +
+	"\ttarget_id\x18\x02 \x01(\x03B\x0e\xbaG\v\x92\x02\b目标IDR\btargetId2\xb9\x01\n" +
 	"\x0fEditLockService\x12U\n" +
 	"\aAcquire\x12*.content.service.v1.AcquireEditLockRequest\x1a\x1c.content.service.v1.EditLock\"\x00\x12O\n" +
 	"\aRelease\x12*.content.service.v1.ReleaseEditLockRequest\x1a\x16.google.protobuf.Empty\"\x00B\xc6\x01\n" +

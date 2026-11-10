@@ -29,15 +29,15 @@ const (
 // 邮件模板
 type EmailTemplate struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
-	Id            *uint64                `protobuf:"varint,1,opt,name=id,proto3,oneof" json:"id,omitempty"`                                  // 模板ID
+	Id            *int64                 `protobuf:"varint,1,opt,name=id,proto3,oneof" json:"id,omitempty"`                                  // 模板ID
 	Code          *string                `protobuf:"bytes,2,opt,name=code,proto3,oneof" json:"code,omitempty"`                               // 模板代码
 	Name          *string                `protobuf:"bytes,3,opt,name=name,proto3,oneof" json:"name,omitempty"`                               // 模板名称
 	Subject       *string                `protobuf:"bytes,4,opt,name=subject,proto3,oneof" json:"subject,omitempty"`                         // 邮件主题模板
 	BodyHtml      *string                `protobuf:"bytes,5,opt,name=body_html,json=bodyHtml,proto3,oneof" json:"body_html,omitempty"`       // 邮件正文 HTML 模板
 	Enabled       *bool                  `protobuf:"varint,6,opt,name=enabled,proto3,oneof" json:"enabled,omitempty"`                        // 是否启用
 	Description   *string                `protobuf:"bytes,7,opt,name=description,proto3,oneof" json:"description,omitempty"`                 // 用途说明
-	CreatedBy     *uint64                `protobuf:"varint,100,opt,name=created_by,json=createdBy,proto3,oneof" json:"created_by,omitempty"` // 创建者用户ID
-	UpdatedBy     *uint64                `protobuf:"varint,101,opt,name=updated_by,json=updatedBy,proto3,oneof" json:"updated_by,omitempty"` // 更新者用户ID
+	CreatedBy     *int64                 `protobuf:"varint,100,opt,name=created_by,json=createdBy,proto3,oneof" json:"created_by,omitempty"` // 创建者用户ID
+	UpdatedBy     *int64                 `protobuf:"varint,101,opt,name=updated_by,json=updatedBy,proto3,oneof" json:"updated_by,omitempty"` // 更新者用户ID
 	CreatedAt     *timestamppb.Timestamp `protobuf:"bytes,200,opt,name=created_at,json=createdAt,proto3,oneof" json:"created_at,omitempty"`  // 创建时间
 	UpdatedAt     *timestamppb.Timestamp `protobuf:"bytes,201,opt,name=updated_at,json=updatedAt,proto3,oneof" json:"updated_at,omitempty"`  // 更新时间
 	unknownFields protoimpl.UnknownFields
@@ -74,7 +74,7 @@ func (*EmailTemplate) Descriptor() ([]byte, []int) {
 	return file_content_service_v1_email_template_proto_rawDescGZIP(), []int{0}
 }
 
-func (x *EmailTemplate) GetId() uint64 {
+func (x *EmailTemplate) GetId() int64 {
 	if x != nil && x.Id != nil {
 		return *x.Id
 	}
@@ -123,14 +123,14 @@ func (x *EmailTemplate) GetDescription() string {
 	return ""
 }
 
-func (x *EmailTemplate) GetCreatedBy() uint64 {
+func (x *EmailTemplate) GetCreatedBy() int64 {
 	if x != nil && x.CreatedBy != nil {
 		return *x.CreatedBy
 	}
 	return 0
 }
 
-func (x *EmailTemplate) GetUpdatedBy() uint64 {
+func (x *EmailTemplate) GetUpdatedBy() int64 {
 	if x != nil && x.UpdatedBy != nil {
 		return *x.UpdatedBy
 	}
@@ -155,7 +155,7 @@ func (x *EmailTemplate) GetUpdatedAt() *timestamppb.Timestamp {
 type ListEmailTemplatesResponse struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
 	Items         []*EmailTemplate       `protobuf:"bytes,1,rep,name=items,proto3" json:"items,omitempty"`
-	Total         uint64                 `protobuf:"varint,2,opt,name=total,proto3" json:"total,omitempty"`
+	Total         int64                  `protobuf:"varint,2,opt,name=total,proto3" json:"total,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -197,7 +197,7 @@ func (x *ListEmailTemplatesResponse) GetItems() []*EmailTemplate {
 	return nil
 }
 
-func (x *ListEmailTemplatesResponse) GetTotal() uint64 {
+func (x *ListEmailTemplatesResponse) GetTotal() int64 {
 	if x != nil {
 		return x.Total
 	}
@@ -207,7 +207,7 @@ func (x *ListEmailTemplatesResponse) GetTotal() uint64 {
 // 请求 - 模板数据
 type GetEmailTemplateRequest struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
-	Id            uint64                 `protobuf:"varint,1,opt,name=id,proto3" json:"id,omitempty"`
+	Id            int64                  `protobuf:"varint,1,opt,name=id,proto3" json:"id,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -242,7 +242,7 @@ func (*GetEmailTemplateRequest) Descriptor() ([]byte, []int) {
 	return file_content_service_v1_email_template_proto_rawDescGZIP(), []int{2}
 }
 
-func (x *GetEmailTemplateRequest) GetId() uint64 {
+func (x *GetEmailTemplateRequest) GetId() int64 {
 	if x != nil {
 		return x.Id
 	}
@@ -297,7 +297,7 @@ func (x *CreateEmailTemplateRequest) GetData() *EmailTemplate {
 // 请求 - 更新模板
 type UpdateEmailTemplateRequest struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
-	Id            uint64                 `protobuf:"varint,1,opt,name=id,proto3" json:"id,omitempty"`
+	Id            int64                  `protobuf:"varint,1,opt,name=id,proto3" json:"id,omitempty"`
 	Data          *EmailTemplate         `protobuf:"bytes,2,opt,name=data,proto3" json:"data,omitempty"`
 	UpdateMask    *fieldmaskpb.FieldMask `protobuf:"bytes,3,opt,name=update_mask,json=updateMask,proto3" json:"update_mask,omitempty"`              // 要更新的字段列表
 	AllowMissing  *bool                  `protobuf:"varint,4,opt,name=allow_missing,json=allowMissing,proto3,oneof" json:"allow_missing,omitempty"` // 不存在则新增
@@ -335,7 +335,7 @@ func (*UpdateEmailTemplateRequest) Descriptor() ([]byte, []int) {
 	return file_content_service_v1_email_template_proto_rawDescGZIP(), []int{4}
 }
 
-func (x *UpdateEmailTemplateRequest) GetId() uint64 {
+func (x *UpdateEmailTemplateRequest) GetId() int64 {
 	if x != nil {
 		return x.Id
 	}
@@ -366,7 +366,7 @@ func (x *UpdateEmailTemplateRequest) GetAllowMissing() bool {
 // 请求 - 删除模板
 type DeleteEmailTemplateRequest struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
-	Id            uint64                 `protobuf:"varint,1,opt,name=id,proto3" json:"id,omitempty"`
+	Id            int64                  `protobuf:"varint,1,opt,name=id,proto3" json:"id,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -401,7 +401,7 @@ func (*DeleteEmailTemplateRequest) Descriptor() ([]byte, []int) {
 	return file_content_service_v1_email_template_proto_rawDescGZIP(), []int{5}
 }
 
-func (x *DeleteEmailTemplateRequest) GetId() uint64 {
+func (x *DeleteEmailTemplateRequest) GetId() int64 {
 	if x != nil {
 		return x.Id
 	}
@@ -459,7 +459,7 @@ const file_content_service_v1_email_template_proto_rawDesc = "" +
 	"\n" +
 	"'content/service/v1/email_template.proto\x12\x12content.service.v1\x1a$gnostic/openapi/v3/annotations.proto\x1a\x1bgoogle/protobuf/empty.proto\x1a\x1fgoogle/protobuf/timestamp.proto\x1a google/protobuf/field_mask.proto\x1a\x1epagination/v1/pagination.proto\"\xc6\x06\n" +
 	"\rEmailTemplate\x12#\n" +
-	"\x02id\x18\x01 \x01(\x04B\x0e\xbaG\v\x92\x02\b模板IDH\x00R\x02id\x88\x01\x01\x12K\n" +
+	"\x02id\x18\x01 \x01(\x03B\x0e\xbaG\v\x92\x02\b模板IDH\x00R\x02id\x88\x01\x01\x12K\n" +
 	"\x04code\x18\x02 \x01(\tB2\xbaG/\x92\x02,模板代码（唯一，如 notify/system）H\x01R\x04code\x88\x01\x01\x12+\n" +
 	"\x04name\x18\x03 \x01(\tB\x12\xbaG\x0f\x92\x02\f模板名称H\x02R\x04name\x88\x01\x01\x127\n" +
 	"\asubject\x18\x04 \x01(\tB\x18\xbaG\x15\x92\x02\x12邮件主题模板H\x03R\asubject\x88\x01\x01\x12@\n" +
@@ -467,9 +467,9 @@ const file_content_service_v1_email_template_proto_rawDesc = "" +
 	"\aenabled\x18\x06 \x01(\bB\x12\xbaG\x0f\x92\x02\f是否启用H\x05R\aenabled\x88\x01\x01\x129\n" +
 	"\vdescription\x18\a \x01(\tB\x12\xbaG\x0f\x92\x02\f用途说明H\x06R\vdescription\x88\x01\x01\x12;\n" +
 	"\n" +
-	"created_by\x18d \x01(\x04B\x17\xbaG\x14\x92\x02\x11创建者用户IDH\aR\tcreatedBy\x88\x01\x01\x12;\n" +
+	"created_by\x18d \x01(\x03B\x17\xbaG\x14\x92\x02\x11创建者用户IDH\aR\tcreatedBy\x88\x01\x01\x12;\n" +
 	"\n" +
-	"updated_by\x18e \x01(\x04B\x17\xbaG\x14\x92\x02\x11更新者用户IDH\bR\tupdatedBy\x88\x01\x01\x12S\n" +
+	"updated_by\x18e \x01(\x03B\x17\xbaG\x14\x92\x02\x11更新者用户IDH\bR\tupdatedBy\x88\x01\x01\x12S\n" +
 	"\n" +
 	"created_at\x18\xc8\x01 \x01(\v2\x1a.google.protobuf.TimestampB\x12\xbaG\x0f\x92\x02\f创建时间H\tR\tcreatedAt\x88\x01\x01\x12S\n" +
 	"\n" +
@@ -491,20 +491,20 @@ const file_content_service_v1_email_template_proto_rawDesc = "" +
 	"\v_updated_at\"k\n" +
 	"\x1aListEmailTemplatesResponse\x127\n" +
 	"\x05items\x18\x01 \x03(\v2!.content.service.v1.EmailTemplateR\x05items\x12\x14\n" +
-	"\x05total\x18\x02 \x01(\x04R\x05total\")\n" +
+	"\x05total\x18\x02 \x01(\x03R\x05total\")\n" +
 	"\x17GetEmailTemplateRequest\x12\x0e\n" +
-	"\x02id\x18\x01 \x01(\x04R\x02id\"S\n" +
+	"\x02id\x18\x01 \x01(\x03R\x02id\"S\n" +
 	"\x1aCreateEmailTemplateRequest\x125\n" +
 	"\x04data\x18\x01 \x01(\v2!.content.service.v1.EmailTemplateR\x04data\"\x96\x02\n" +
 	"\x1aUpdateEmailTemplateRequest\x12\x0e\n" +
-	"\x02id\x18\x01 \x01(\x04R\x02id\x125\n" +
+	"\x02id\x18\x01 \x01(\x03R\x02id\x125\n" +
 	"\x04data\x18\x02 \x01(\v2!.content.service.v1.EmailTemplateR\x04data\x12[\n" +
 	"\vupdate_mask\x18\x03 \x01(\v2\x1a.google.protobuf.FieldMaskB\x1e\xbaG\x1b\x92\x02\x18要更新的字段列表R\n" +
 	"updateMask\x12B\n" +
 	"\rallow_missing\x18\x04 \x01(\bB\x18\xbaG\x15\x92\x02\x12不存在则新增H\x00R\fallowMissing\x88\x01\x01B\x10\n" +
 	"\x0e_allow_missing\",\n" +
 	"\x1aDeleteEmailTemplateRequest\x12\x0e\n" +
-	"\x02id\x18\x01 \x01(\x04R\x02id\";\n" +
+	"\x02id\x18\x01 \x01(\x03R\x02id\";\n" +
 	"%FindEnabledEmailTemplateByCodeRequest\x12\x12\n" +
 	"\x04code\x18\x01 \x01(\tR\x04code2\xcb\x04\n" +
 	"\x14EmailTemplateService\x12S\n" +

@@ -6,8 +6,8 @@ import (
 	"github.com/go-kratos/kratos/v2/log"
 	"github.com/tx7do/kratos-bootstrap/bootstrap"
 
-	aiV1 "go-wind-cms/api/gen/go/ai/service/v1"
 	adminV1 "go-wind-cms/api/gen/go/admin/service/v1"
+	aiV1 "go-wind-cms/api/gen/go/ai/service/v1"
 )
 
 // AiQueryService 智能问数（BFF 直通转发；

@@ -17,7 +17,7 @@ type Comment struct {
 	config `json:"-"`
 	// ID of the ent.
 	// id
-	ID uint64 `json:"id,omitempty"`
+	ID int64 `json:"id,omitempty"`
 	// 创建时间
 	CreatedAt *time.Time `json:"created_at,omitempty"`
 	// 更新时间
@@ -25,23 +25,23 @@ type Comment struct {
 	// 删除时间
 	DeletedAt *time.Time `json:"deleted_at,omitempty"`
 	// 创建者ID
-	CreatedBy *uint64 `json:"created_by,omitempty"`
+	CreatedBy *int64 `json:"created_by,omitempty"`
 	// 更新者ID
-	UpdatedBy *uint64 `json:"updated_by,omitempty"`
+	UpdatedBy *int64 `json:"updated_by,omitempty"`
 	// 删除者ID
-	DeletedBy *uint64 `json:"deleted_by,omitempty"`
+	DeletedBy *int64 `json:"deleted_by,omitempty"`
 	// 父节点ID
-	ParentID *uint64 `json:"parent_id,omitempty"`
+	ParentID *int64 `json:"parent_id,omitempty"`
 	// 租户ID
-	TenantID *uint64 `json:"tenant_id,omitempty"`
+	TenantID *int64 `json:"tenant_id,omitempty"`
 	// 内容类型
 	ContentType *comment.ContentType `json:"content_type,omitempty"`
 	// 对象ID
-	ObjectID *uint64 `json:"object_id,omitempty"`
+	ObjectID *int64 `json:"object_id,omitempty"`
 	// 评论内容
 	Content *string `json:"content,omitempty"`
 	// 评论作者ID，0表示游客
-	AuthorID *uint64 `json:"author_id,omitempty"`
+	AuthorID *int64 `json:"author_id,omitempty"`
 	// 评论作者名称
 	AuthorName *string `json:"author_name,omitempty"`
 	// 评论作者邮箱
@@ -65,7 +65,7 @@ type Comment struct {
 	// 是否置顶评论
 	IsSticky *bool `json:"is_sticky,omitempty"`
 	// 回复的评论ID
-	ReplyToID *uint64 `json:"reply_to_id,omitempty"`
+	ReplyToID *int64 `json:"reply_to_id,omitempty"`
 	// Edges holds the relations/edges for other nodes in the graph.
 	// The values are being populated by the CommentQuery when eager-loading is set.
 	Edges        CommentEdges `json:"edges"`
@@ -136,7 +136,7 @@ func (_m *Comment) assignValues(columns []string, values []any) error {
 			if !ok {
 				return fmt.Errorf("unexpected type %T for field id", value)
 			}
-			_m.ID = uint64(value.Int64)
+			_m.ID = int64(value.Int64)
 		case comment.FieldCreatedAt:
 			if value, ok := values[i].(*sql.NullTime); !ok {
 				return fmt.Errorf("unexpected type %T for field created_at", values[i])
@@ -162,36 +162,36 @@ func (_m *Comment) assignValues(columns []string, values []any) error {
 			if value, ok := values[i].(*sql.NullInt64); !ok {
 				return fmt.Errorf("unexpected type %T for field created_by", values[i])
 			} else if value.Valid {
-				_m.CreatedBy = new(uint64)
-				*_m.CreatedBy = uint64(value.Int64)
+				_m.CreatedBy = new(int64)
+				*_m.CreatedBy = value.Int64
 			}
 		case comment.FieldUpdatedBy:
 			if value, ok := values[i].(*sql.NullInt64); !ok {
 				return fmt.Errorf("unexpected type %T for field updated_by", values[i])
 			} else if value.Valid {
-				_m.UpdatedBy = new(uint64)
-				*_m.UpdatedBy = uint64(value.Int64)
+				_m.UpdatedBy = new(int64)
+				*_m.UpdatedBy = value.Int64
 			}
 		case comment.FieldDeletedBy:
 			if value, ok := values[i].(*sql.NullInt64); !ok {
 				return fmt.Errorf("unexpected type %T for field deleted_by", values[i])
 			} else if value.Valid {
-				_m.DeletedBy = new(uint64)
-				*_m.DeletedBy = uint64(value.Int64)
+				_m.DeletedBy = new(int64)
+				*_m.DeletedBy = value.Int64
 			}
 		case comment.FieldParentID:
 			if value, ok := values[i].(*sql.NullInt64); !ok {
 				return fmt.Errorf("unexpected type %T for field parent_id", values[i])
 			} else if value.Valid {
-				_m.ParentID = new(uint64)
-				*_m.ParentID = uint64(value.Int64)
+				_m.ParentID = new(int64)
+				*_m.ParentID = value.Int64
 			}
 		case comment.FieldTenantID:
 			if value, ok := values[i].(*sql.NullInt64); !ok {
 				return fmt.Errorf("unexpected type %T for field tenant_id", values[i])
 			} else if value.Valid {
-				_m.TenantID = new(uint64)
-				*_m.TenantID = uint64(value.Int64)
+				_m.TenantID = new(int64)
+				*_m.TenantID = value.Int64
 			}
 		case comment.FieldContentType:
 			if value, ok := values[i].(*sql.NullString); !ok {
@@ -204,8 +204,8 @@ func (_m *Comment) assignValues(columns []string, values []any) error {
 			if value, ok := values[i].(*sql.NullInt64); !ok {
 				return fmt.Errorf("unexpected type %T for field object_id", values[i])
 			} else if value.Valid {
-				_m.ObjectID = new(uint64)
-				*_m.ObjectID = uint64(value.Int64)
+				_m.ObjectID = new(int64)
+				*_m.ObjectID = value.Int64
 			}
 		case comment.FieldContent:
 			if value, ok := values[i].(*sql.NullString); !ok {
@@ -218,8 +218,8 @@ func (_m *Comment) assignValues(columns []string, values []any) error {
 			if value, ok := values[i].(*sql.NullInt64); !ok {
 				return fmt.Errorf("unexpected type %T for field author_id", values[i])
 			} else if value.Valid {
-				_m.AuthorID = new(uint64)
-				*_m.AuthorID = uint64(value.Int64)
+				_m.AuthorID = new(int64)
+				*_m.AuthorID = value.Int64
 			}
 		case comment.FieldAuthorName:
 			if value, ok := values[i].(*sql.NullString); !ok {
@@ -302,8 +302,8 @@ func (_m *Comment) assignValues(columns []string, values []any) error {
 			if value, ok := values[i].(*sql.NullInt64); !ok {
 				return fmt.Errorf("unexpected type %T for field reply_to_id", values[i])
 			} else if value.Valid {
-				_m.ReplyToID = new(uint64)
-				*_m.ReplyToID = uint64(value.Int64)
+				_m.ReplyToID = new(int64)
+				*_m.ReplyToID = value.Int64
 			}
 		default:
 			_m.selectValues.Set(columns[i], values[i])

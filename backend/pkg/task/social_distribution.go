@@ -22,6 +22,6 @@ const SocialDistributionPublishTaskType = "social.distribution.publish"
 // TenantID 仅供日志/排查展示，worker 以 DB 记录的 tenant_id 为准（不可用
 // payload 值覆盖，与 SearchReindexPayload 的既有口径一致）。
 type SocialDistributionPublishPayload struct {
-	DistributionID uint64 `json:"distribution_id"`
-	TenantID       uint64 `json:"tenant_id"`
+	DistributionID int64 `json:"distribution_id"`
+	TenantID       int64 `json:"tenant_id"`
 }

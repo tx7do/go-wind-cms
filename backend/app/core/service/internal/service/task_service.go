@@ -161,7 +161,7 @@ func (s *TaskService) ListTaskExecutions(ctx context.Context, req *taskV1.ListTa
 		infos = filtered
 	}
 
-	total := uint64(len(infos))
+	total := int64(len(infos))
 
 	// 内存分页
 	page := int(req.GetPage())
@@ -1001,7 +1001,7 @@ func (s *TaskService) EnqueueWebhookDeliver(payload *task.WebhookDeliverPayload)
 	return nil
 }
 
-func (s *TaskService) EnqueueAiDocReindex(baseID uint64) error {
+func (s *TaskService) EnqueueAiDocReindex(baseID int64) error {
 	if s.taskScheduler == nil {
 		s.log.Warnf("ai doc reindex skipped: task scheduler not available (base=%d)", baseID)
 		return nil

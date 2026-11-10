@@ -14,13 +14,13 @@ import (
 	entSql "entgo.io/ent/dialect/sql"
 
 	entCrud "github.com/tx7do/go-crud/entgo"
-	"github.com/tx7do/kratos-bootstrap/bootstrap"
 	conf "github.com/tx7do/kratos-bootstrap/api/gen/go/conf/v1"
+	"github.com/tx7do/kratos-bootstrap/bootstrap"
 
+	paginationV1 "github.com/tx7do/go-crud/api/gen/go/pagination/v1"
 	"go-wind-cms/app/core/service/internal/data/client"
 	"go-wind-cms/app/core/service/internal/data/ent"
 	"go-wind-cms/app/core/service/internal/data/ent/enttest"
-	paginationV1 "github.com/tx7do/go-crud/api/gen/go/pagination/v1"
 
 	notifyV1 "go-wind-cms/api/gen/go/notify/service/v1"
 
@@ -33,7 +33,7 @@ import (
 // enttest.NewClient 同时自动跑 schema migration。
 // updateDeliveryCreatedAtForTest 直接改台账行的 created_at（TimeAt mixin 把该列标成不可变，
 // 生成的 builder 没有 SetCreatedAt；清扫测试要造陈旧行只能绕过 ORM 走裸 SQL）。
-func updateDeliveryCreatedAtForTest(ctx context.Context, drv *entSql.Driver, id uint64, at time.Time) error {
+func updateDeliveryCreatedAtForTest(ctx context.Context, drv *entSql.Driver, id int64, at time.Time) error {
 	_, err := drv.ExecContext(ctx, "UPDATE notification_deliveries SET created_at = ? WHERE id = ?", at, id)
 	return err
 }
@@ -90,7 +90,7 @@ func TestNotificationDeliveryStateMachine(t *testing.T) {
 		Status:    notifyV1.DeliveryStatus_SENT,
 		SentAt:    &sentAt,
 		Attempts:  trans.Ptr(uint32(1)),
-		ChannelID: trans.Ptr(uint64(7)),
+		ChannelID: trans.Ptr(int64(7)),
 	})
 	require.NoError(t, err)
 
@@ -98,7 +98,7 @@ func TestNotificationDeliveryStateMachine(t *testing.T) {
 	require.NoError(t, err)
 	assert.Equal(t, notifyV1.DeliveryStatus_SENT, row.GetStatus())
 	assert.Equal(t, uint32(1), row.GetAttempts())
-	assert.Equal(t, uint64(7), row.GetChannelId())
+	assert.Equal(t, int64(7), row.GetChannelId())
 	assert.NotNil(t, row.GetSentAt())
 }
 
@@ -254,7 +254,7 @@ func TestNotificationPreferenceUpsert(t *testing.T) {
 	require.NoError(t, err)
 	assert.False(t, saved.GetQuietEnabled())
 
-	list, err := prefRepo.ListByUserIDs(ctx, []uint64{42, 43})
+	list, err := prefRepo.ListByUserIDs(ctx, []int64{42, 43})
 	require.NoError(t, err)
 	assert.Len(t, list, 1, "缺偏好的用户不在返回值里")
 }
@@ -265,10 +265,10 @@ func TestNotificationChannelListFillsFlagsAndEnabled(t *testing.T) {
 
 	created, err := channelRepo.Create(ctx, &notifyV1.CreateNotificationChannelRequest{
 		Data: &notifyV1.NotificationChannel{
-			Name:     trans.Ptr("主 SMTP"),
-			Type:     trans.Ptr(notifyV1.NotificationChannel_EMAIL),
-			Enabled:  trans.Ptr(true),
-			SmtpTls:  trans.Ptr(notifyV1.NotificationChannel_START_TLS),
+			Name:    trans.Ptr("主 SMTP"),
+			Type:    trans.Ptr(notifyV1.NotificationChannel_EMAIL),
+			Enabled: trans.Ptr(true),
+			SmtpTls: trans.Ptr(notifyV1.NotificationChannel_START_TLS),
 		},
 		Password: trans.Ptr("secret-password"),
 	})

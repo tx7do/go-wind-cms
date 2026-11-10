@@ -61,13 +61,14 @@ func RegisterTask(L *lua.LState, engine VMManager, logger *log.Helper) {
 
 // registerTaskHandler is the Lua API function to register a task handler
 // Usage:
-//   task.register_handler("my_handler", "Description", function(ctx)
-//     -- handler logic
-//     return true
-//   end, {
-//     required = {"field1", "field2"},
-//     optional = {field3 = "default", field4 = 123}
-//   })
+//
+//	task.register_handler("my_handler", "Description", function(ctx)
+//	  -- handler logic
+//	  return true
+//	end, {
+//	  required = {"field1", "field2"},
+//	  optional = {field3 = "default", field4 = 123}
+//	})
 func registerTaskHandler(L *lua.LState) int {
 	// Get arguments
 	name := L.CheckString(1)

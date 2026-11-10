@@ -10,47 +10,47 @@ import (
 )
 
 // ID filters vertices based on their ID field.
-func ID(id uint64) predicate.TenantQuota {
+func ID(id int64) predicate.TenantQuota {
 	return predicate.TenantQuota(sql.FieldEQ(FieldID, id))
 }
 
 // IDEQ applies the EQ predicate on the ID field.
-func IDEQ(id uint64) predicate.TenantQuota {
+func IDEQ(id int64) predicate.TenantQuota {
 	return predicate.TenantQuota(sql.FieldEQ(FieldID, id))
 }
 
 // IDNEQ applies the NEQ predicate on the ID field.
-func IDNEQ(id uint64) predicate.TenantQuota {
+func IDNEQ(id int64) predicate.TenantQuota {
 	return predicate.TenantQuota(sql.FieldNEQ(FieldID, id))
 }
 
 // IDIn applies the In predicate on the ID field.
-func IDIn(ids ...uint64) predicate.TenantQuota {
+func IDIn(ids ...int64) predicate.TenantQuota {
 	return predicate.TenantQuota(sql.FieldIn(FieldID, ids...))
 }
 
 // IDNotIn applies the NotIn predicate on the ID field.
-func IDNotIn(ids ...uint64) predicate.TenantQuota {
+func IDNotIn(ids ...int64) predicate.TenantQuota {
 	return predicate.TenantQuota(sql.FieldNotIn(FieldID, ids...))
 }
 
 // IDGT applies the GT predicate on the ID field.
-func IDGT(id uint64) predicate.TenantQuota {
+func IDGT(id int64) predicate.TenantQuota {
 	return predicate.TenantQuota(sql.FieldGT(FieldID, id))
 }
 
 // IDGTE applies the GTE predicate on the ID field.
-func IDGTE(id uint64) predicate.TenantQuota {
+func IDGTE(id int64) predicate.TenantQuota {
 	return predicate.TenantQuota(sql.FieldGTE(FieldID, id))
 }
 
 // IDLT applies the LT predicate on the ID field.
-func IDLT(id uint64) predicate.TenantQuota {
+func IDLT(id int64) predicate.TenantQuota {
 	return predicate.TenantQuota(sql.FieldLT(FieldID, id))
 }
 
 // IDLTE applies the LTE predicate on the ID field.
-func IDLTE(id uint64) predicate.TenantQuota {
+func IDLTE(id int64) predicate.TenantQuota {
 	return predicate.TenantQuota(sql.FieldLTE(FieldID, id))
 }
 
@@ -70,22 +70,22 @@ func DeletedAt(v time.Time) predicate.TenantQuota {
 }
 
 // CreatedBy applies equality check predicate on the "created_by" field. It's identical to CreatedByEQ.
-func CreatedBy(v uint64) predicate.TenantQuota {
+func CreatedBy(v int64) predicate.TenantQuota {
 	return predicate.TenantQuota(sql.FieldEQ(FieldCreatedBy, v))
 }
 
 // UpdatedBy applies equality check predicate on the "updated_by" field. It's identical to UpdatedByEQ.
-func UpdatedBy(v uint64) predicate.TenantQuota {
+func UpdatedBy(v int64) predicate.TenantQuota {
 	return predicate.TenantQuota(sql.FieldEQ(FieldUpdatedBy, v))
 }
 
 // DeletedBy applies equality check predicate on the "deleted_by" field. It's identical to DeletedByEQ.
-func DeletedBy(v uint64) predicate.TenantQuota {
+func DeletedBy(v int64) predicate.TenantQuota {
 	return predicate.TenantQuota(sql.FieldEQ(FieldDeletedBy, v))
 }
 
 // TenantID applies equality check predicate on the "tenant_id" field. It's identical to TenantIDEQ.
-func TenantID(v uint64) predicate.TenantQuota {
+func TenantID(v int64) predicate.TenantQuota {
 	return predicate.TenantQuota(sql.FieldEQ(FieldTenantID, v))
 }
 
@@ -245,42 +245,42 @@ func DeletedAtNotNil() predicate.TenantQuota {
 }
 
 // CreatedByEQ applies the EQ predicate on the "created_by" field.
-func CreatedByEQ(v uint64) predicate.TenantQuota {
+func CreatedByEQ(v int64) predicate.TenantQuota {
 	return predicate.TenantQuota(sql.FieldEQ(FieldCreatedBy, v))
 }
 
 // CreatedByNEQ applies the NEQ predicate on the "created_by" field.
-func CreatedByNEQ(v uint64) predicate.TenantQuota {
+func CreatedByNEQ(v int64) predicate.TenantQuota {
 	return predicate.TenantQuota(sql.FieldNEQ(FieldCreatedBy, v))
 }
 
 // CreatedByIn applies the In predicate on the "created_by" field.
-func CreatedByIn(vs ...uint64) predicate.TenantQuota {
+func CreatedByIn(vs ...int64) predicate.TenantQuota {
 	return predicate.TenantQuota(sql.FieldIn(FieldCreatedBy, vs...))
 }
 
 // CreatedByNotIn applies the NotIn predicate on the "created_by" field.
-func CreatedByNotIn(vs ...uint64) predicate.TenantQuota {
+func CreatedByNotIn(vs ...int64) predicate.TenantQuota {
 	return predicate.TenantQuota(sql.FieldNotIn(FieldCreatedBy, vs...))
 }
 
 // CreatedByGT applies the GT predicate on the "created_by" field.
-func CreatedByGT(v uint64) predicate.TenantQuota {
+func CreatedByGT(v int64) predicate.TenantQuota {
 	return predicate.TenantQuota(sql.FieldGT(FieldCreatedBy, v))
 }
 
 // CreatedByGTE applies the GTE predicate on the "created_by" field.
-func CreatedByGTE(v uint64) predicate.TenantQuota {
+func CreatedByGTE(v int64) predicate.TenantQuota {
 	return predicate.TenantQuota(sql.FieldGTE(FieldCreatedBy, v))
 }
 
 // CreatedByLT applies the LT predicate on the "created_by" field.
-func CreatedByLT(v uint64) predicate.TenantQuota {
+func CreatedByLT(v int64) predicate.TenantQuota {
 	return predicate.TenantQuota(sql.FieldLT(FieldCreatedBy, v))
 }
 
 // CreatedByLTE applies the LTE predicate on the "created_by" field.
-func CreatedByLTE(v uint64) predicate.TenantQuota {
+func CreatedByLTE(v int64) predicate.TenantQuota {
 	return predicate.TenantQuota(sql.FieldLTE(FieldCreatedBy, v))
 }
 
@@ -295,42 +295,42 @@ func CreatedByNotNil() predicate.TenantQuota {
 }
 
 // UpdatedByEQ applies the EQ predicate on the "updated_by" field.
-func UpdatedByEQ(v uint64) predicate.TenantQuota {
+func UpdatedByEQ(v int64) predicate.TenantQuota {
 	return predicate.TenantQuota(sql.FieldEQ(FieldUpdatedBy, v))
 }
 
 // UpdatedByNEQ applies the NEQ predicate on the "updated_by" field.
-func UpdatedByNEQ(v uint64) predicate.TenantQuota {
+func UpdatedByNEQ(v int64) predicate.TenantQuota {
 	return predicate.TenantQuota(sql.FieldNEQ(FieldUpdatedBy, v))
 }
 
 // UpdatedByIn applies the In predicate on the "updated_by" field.
-func UpdatedByIn(vs ...uint64) predicate.TenantQuota {
+func UpdatedByIn(vs ...int64) predicate.TenantQuota {
 	return predicate.TenantQuota(sql.FieldIn(FieldUpdatedBy, vs...))
 }
 
 // UpdatedByNotIn applies the NotIn predicate on the "updated_by" field.
-func UpdatedByNotIn(vs ...uint64) predicate.TenantQuota {
+func UpdatedByNotIn(vs ...int64) predicate.TenantQuota {
 	return predicate.TenantQuota(sql.FieldNotIn(FieldUpdatedBy, vs...))
 }
 
 // UpdatedByGT applies the GT predicate on the "updated_by" field.
-func UpdatedByGT(v uint64) predicate.TenantQuota {
+func UpdatedByGT(v int64) predicate.TenantQuota {
 	return predicate.TenantQuota(sql.FieldGT(FieldUpdatedBy, v))
 }
 
 // UpdatedByGTE applies the GTE predicate on the "updated_by" field.
-func UpdatedByGTE(v uint64) predicate.TenantQuota {
+func UpdatedByGTE(v int64) predicate.TenantQuota {
 	return predicate.TenantQuota(sql.FieldGTE(FieldUpdatedBy, v))
 }
 
 // UpdatedByLT applies the LT predicate on the "updated_by" field.
-func UpdatedByLT(v uint64) predicate.TenantQuota {
+func UpdatedByLT(v int64) predicate.TenantQuota {
 	return predicate.TenantQuota(sql.FieldLT(FieldUpdatedBy, v))
 }
 
 // UpdatedByLTE applies the LTE predicate on the "updated_by" field.
-func UpdatedByLTE(v uint64) predicate.TenantQuota {
+func UpdatedByLTE(v int64) predicate.TenantQuota {
 	return predicate.TenantQuota(sql.FieldLTE(FieldUpdatedBy, v))
 }
 
@@ -345,42 +345,42 @@ func UpdatedByNotNil() predicate.TenantQuota {
 }
 
 // DeletedByEQ applies the EQ predicate on the "deleted_by" field.
-func DeletedByEQ(v uint64) predicate.TenantQuota {
+func DeletedByEQ(v int64) predicate.TenantQuota {
 	return predicate.TenantQuota(sql.FieldEQ(FieldDeletedBy, v))
 }
 
 // DeletedByNEQ applies the NEQ predicate on the "deleted_by" field.
-func DeletedByNEQ(v uint64) predicate.TenantQuota {
+func DeletedByNEQ(v int64) predicate.TenantQuota {
 	return predicate.TenantQuota(sql.FieldNEQ(FieldDeletedBy, v))
 }
 
 // DeletedByIn applies the In predicate on the "deleted_by" field.
-func DeletedByIn(vs ...uint64) predicate.TenantQuota {
+func DeletedByIn(vs ...int64) predicate.TenantQuota {
 	return predicate.TenantQuota(sql.FieldIn(FieldDeletedBy, vs...))
 }
 
 // DeletedByNotIn applies the NotIn predicate on the "deleted_by" field.
-func DeletedByNotIn(vs ...uint64) predicate.TenantQuota {
+func DeletedByNotIn(vs ...int64) predicate.TenantQuota {
 	return predicate.TenantQuota(sql.FieldNotIn(FieldDeletedBy, vs...))
 }
 
 // DeletedByGT applies the GT predicate on the "deleted_by" field.
-func DeletedByGT(v uint64) predicate.TenantQuota {
+func DeletedByGT(v int64) predicate.TenantQuota {
 	return predicate.TenantQuota(sql.FieldGT(FieldDeletedBy, v))
 }
 
 // DeletedByGTE applies the GTE predicate on the "deleted_by" field.
-func DeletedByGTE(v uint64) predicate.TenantQuota {
+func DeletedByGTE(v int64) predicate.TenantQuota {
 	return predicate.TenantQuota(sql.FieldGTE(FieldDeletedBy, v))
 }
 
 // DeletedByLT applies the LT predicate on the "deleted_by" field.
-func DeletedByLT(v uint64) predicate.TenantQuota {
+func DeletedByLT(v int64) predicate.TenantQuota {
 	return predicate.TenantQuota(sql.FieldLT(FieldDeletedBy, v))
 }
 
 // DeletedByLTE applies the LTE predicate on the "deleted_by" field.
-func DeletedByLTE(v uint64) predicate.TenantQuota {
+func DeletedByLTE(v int64) predicate.TenantQuota {
 	return predicate.TenantQuota(sql.FieldLTE(FieldDeletedBy, v))
 }
 
@@ -395,42 +395,42 @@ func DeletedByNotNil() predicate.TenantQuota {
 }
 
 // TenantIDEQ applies the EQ predicate on the "tenant_id" field.
-func TenantIDEQ(v uint64) predicate.TenantQuota {
+func TenantIDEQ(v int64) predicate.TenantQuota {
 	return predicate.TenantQuota(sql.FieldEQ(FieldTenantID, v))
 }
 
 // TenantIDNEQ applies the NEQ predicate on the "tenant_id" field.
-func TenantIDNEQ(v uint64) predicate.TenantQuota {
+func TenantIDNEQ(v int64) predicate.TenantQuota {
 	return predicate.TenantQuota(sql.FieldNEQ(FieldTenantID, v))
 }
 
 // TenantIDIn applies the In predicate on the "tenant_id" field.
-func TenantIDIn(vs ...uint64) predicate.TenantQuota {
+func TenantIDIn(vs ...int64) predicate.TenantQuota {
 	return predicate.TenantQuota(sql.FieldIn(FieldTenantID, vs...))
 }
 
 // TenantIDNotIn applies the NotIn predicate on the "tenant_id" field.
-func TenantIDNotIn(vs ...uint64) predicate.TenantQuota {
+func TenantIDNotIn(vs ...int64) predicate.TenantQuota {
 	return predicate.TenantQuota(sql.FieldNotIn(FieldTenantID, vs...))
 }
 
 // TenantIDGT applies the GT predicate on the "tenant_id" field.
-func TenantIDGT(v uint64) predicate.TenantQuota {
+func TenantIDGT(v int64) predicate.TenantQuota {
 	return predicate.TenantQuota(sql.FieldGT(FieldTenantID, v))
 }
 
 // TenantIDGTE applies the GTE predicate on the "tenant_id" field.
-func TenantIDGTE(v uint64) predicate.TenantQuota {
+func TenantIDGTE(v int64) predicate.TenantQuota {
 	return predicate.TenantQuota(sql.FieldGTE(FieldTenantID, v))
 }
 
 // TenantIDLT applies the LT predicate on the "tenant_id" field.
-func TenantIDLT(v uint64) predicate.TenantQuota {
+func TenantIDLT(v int64) predicate.TenantQuota {
 	return predicate.TenantQuota(sql.FieldLT(FieldTenantID, v))
 }
 
 // TenantIDLTE applies the LTE predicate on the "tenant_id" field.
-func TenantIDLTE(v uint64) predicate.TenantQuota {
+func TenantIDLTE(v int64) predicate.TenantQuota {
 	return predicate.TenantQuota(sql.FieldLTE(FieldTenantID, v))
 }
 

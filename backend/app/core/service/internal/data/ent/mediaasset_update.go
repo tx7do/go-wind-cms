@@ -70,14 +70,14 @@ func (_u *MediaAssetUpdate) ClearDeletedAt() *MediaAssetUpdate {
 }
 
 // SetCreatedBy sets the "created_by" field.
-func (_u *MediaAssetUpdate) SetCreatedBy(v uint64) *MediaAssetUpdate {
+func (_u *MediaAssetUpdate) SetCreatedBy(v int64) *MediaAssetUpdate {
 	_u.mutation.ResetCreatedBy()
 	_u.mutation.SetCreatedBy(v)
 	return _u
 }
 
 // SetNillableCreatedBy sets the "created_by" field if the given value is not nil.
-func (_u *MediaAssetUpdate) SetNillableCreatedBy(v *uint64) *MediaAssetUpdate {
+func (_u *MediaAssetUpdate) SetNillableCreatedBy(v *int64) *MediaAssetUpdate {
 	if v != nil {
 		_u.SetCreatedBy(*v)
 	}
@@ -97,14 +97,14 @@ func (_u *MediaAssetUpdate) ClearCreatedBy() *MediaAssetUpdate {
 }
 
 // SetUpdatedBy sets the "updated_by" field.
-func (_u *MediaAssetUpdate) SetUpdatedBy(v uint64) *MediaAssetUpdate {
+func (_u *MediaAssetUpdate) SetUpdatedBy(v int64) *MediaAssetUpdate {
 	_u.mutation.ResetUpdatedBy()
 	_u.mutation.SetUpdatedBy(v)
 	return _u
 }
 
 // SetNillableUpdatedBy sets the "updated_by" field if the given value is not nil.
-func (_u *MediaAssetUpdate) SetNillableUpdatedBy(v *uint64) *MediaAssetUpdate {
+func (_u *MediaAssetUpdate) SetNillableUpdatedBy(v *int64) *MediaAssetUpdate {
 	if v != nil {
 		_u.SetUpdatedBy(*v)
 	}
@@ -124,14 +124,14 @@ func (_u *MediaAssetUpdate) ClearUpdatedBy() *MediaAssetUpdate {
 }
 
 // SetDeletedBy sets the "deleted_by" field.
-func (_u *MediaAssetUpdate) SetDeletedBy(v uint64) *MediaAssetUpdate {
+func (_u *MediaAssetUpdate) SetDeletedBy(v int64) *MediaAssetUpdate {
 	_u.mutation.ResetDeletedBy()
 	_u.mutation.SetDeletedBy(v)
 	return _u
 }
 
 // SetNillableDeletedBy sets the "deleted_by" field if the given value is not nil.
-func (_u *MediaAssetUpdate) SetNillableDeletedBy(v *uint64) *MediaAssetUpdate {
+func (_u *MediaAssetUpdate) SetNillableDeletedBy(v *int64) *MediaAssetUpdate {
 	if v != nil {
 		_u.SetDeletedBy(*v)
 	}
@@ -479,14 +479,14 @@ func (_u *MediaAssetUpdate) ClearFileHash() *MediaAssetUpdate {
 }
 
 // SetFolderID sets the "folder_id" field.
-func (_u *MediaAssetUpdate) SetFolderID(v uint64) *MediaAssetUpdate {
+func (_u *MediaAssetUpdate) SetFolderID(v int64) *MediaAssetUpdate {
 	_u.mutation.ResetFolderID()
 	_u.mutation.SetFolderID(v)
 	return _u
 }
 
 // SetNillableFolderID sets the "folder_id" field if the given value is not nil.
-func (_u *MediaAssetUpdate) SetNillableFolderID(v *uint64) *MediaAssetUpdate {
+func (_u *MediaAssetUpdate) SetNillableFolderID(v *int64) *MediaAssetUpdate {
 	if v != nil {
 		_u.SetFolderID(*v)
 	}
@@ -506,14 +506,14 @@ func (_u *MediaAssetUpdate) ClearFolderID() *MediaAssetUpdate {
 }
 
 // SetFileID sets the "file_id" field.
-func (_u *MediaAssetUpdate) SetFileID(v uint64) *MediaAssetUpdate {
+func (_u *MediaAssetUpdate) SetFileID(v int64) *MediaAssetUpdate {
 	_u.mutation.ResetFileID()
 	_u.mutation.SetFileID(v)
 	return _u
 }
 
 // SetNillableFileID sets the "file_id" field if the given value is not nil.
-func (_u *MediaAssetUpdate) SetNillableFileID(v *uint64) *MediaAssetUpdate {
+func (_u *MediaAssetUpdate) SetNillableFileID(v *int64) *MediaAssetUpdate {
 	if v != nil {
 		_u.SetFileID(*v)
 	}
@@ -636,7 +636,7 @@ func (_u *MediaAssetUpdate) sqlSave(ctx context.Context) (_node int, err error) 
 	if err := _u.check(); err != nil {
 		return _node, err
 	}
-	_spec := sqlgraph.NewUpdateSpec(mediaasset.Table, mediaasset.Columns, sqlgraph.NewFieldSpec(mediaasset.FieldID, field.TypeUint64))
+	_spec := sqlgraph.NewUpdateSpec(mediaasset.Table, mediaasset.Columns, sqlgraph.NewFieldSpec(mediaasset.FieldID, field.TypeInt64))
 	if ps := _u.mutation.predicates; len(ps) > 0 {
 		_spec.Predicate = func(selector *sql.Selector) {
 			for i := range ps {
@@ -660,34 +660,34 @@ func (_u *MediaAssetUpdate) sqlSave(ctx context.Context) (_node int, err error) 
 		_spec.ClearField(mediaasset.FieldDeletedAt, field.TypeTime)
 	}
 	if value, ok := _u.mutation.CreatedBy(); ok {
-		_spec.SetField(mediaasset.FieldCreatedBy, field.TypeUint64, value)
+		_spec.SetField(mediaasset.FieldCreatedBy, field.TypeInt64, value)
 	}
 	if value, ok := _u.mutation.AddedCreatedBy(); ok {
-		_spec.AddField(mediaasset.FieldCreatedBy, field.TypeUint64, value)
+		_spec.AddField(mediaasset.FieldCreatedBy, field.TypeInt64, value)
 	}
 	if _u.mutation.CreatedByCleared() {
-		_spec.ClearField(mediaasset.FieldCreatedBy, field.TypeUint64)
+		_spec.ClearField(mediaasset.FieldCreatedBy, field.TypeInt64)
 	}
 	if value, ok := _u.mutation.UpdatedBy(); ok {
-		_spec.SetField(mediaasset.FieldUpdatedBy, field.TypeUint64, value)
+		_spec.SetField(mediaasset.FieldUpdatedBy, field.TypeInt64, value)
 	}
 	if value, ok := _u.mutation.AddedUpdatedBy(); ok {
-		_spec.AddField(mediaasset.FieldUpdatedBy, field.TypeUint64, value)
+		_spec.AddField(mediaasset.FieldUpdatedBy, field.TypeInt64, value)
 	}
 	if _u.mutation.UpdatedByCleared() {
-		_spec.ClearField(mediaasset.FieldUpdatedBy, field.TypeUint64)
+		_spec.ClearField(mediaasset.FieldUpdatedBy, field.TypeInt64)
 	}
 	if value, ok := _u.mutation.DeletedBy(); ok {
-		_spec.SetField(mediaasset.FieldDeletedBy, field.TypeUint64, value)
+		_spec.SetField(mediaasset.FieldDeletedBy, field.TypeInt64, value)
 	}
 	if value, ok := _u.mutation.AddedDeletedBy(); ok {
-		_spec.AddField(mediaasset.FieldDeletedBy, field.TypeUint64, value)
+		_spec.AddField(mediaasset.FieldDeletedBy, field.TypeInt64, value)
 	}
 	if _u.mutation.DeletedByCleared() {
-		_spec.ClearField(mediaasset.FieldDeletedBy, field.TypeUint64)
+		_spec.ClearField(mediaasset.FieldDeletedBy, field.TypeInt64)
 	}
 	if _u.mutation.TenantIDCleared() {
-		_spec.ClearField(mediaasset.FieldTenantID, field.TypeUint64)
+		_spec.ClearField(mediaasset.FieldTenantID, field.TypeInt64)
 	}
 	if value, ok := _u.mutation.Filename(); ok {
 		_spec.SetField(mediaasset.FieldFilename, field.TypeString, value)
@@ -792,22 +792,22 @@ func (_u *MediaAssetUpdate) sqlSave(ctx context.Context) (_node int, err error) 
 		_spec.ClearField(mediaasset.FieldFileHash, field.TypeString)
 	}
 	if value, ok := _u.mutation.FolderID(); ok {
-		_spec.SetField(mediaasset.FieldFolderID, field.TypeUint64, value)
+		_spec.SetField(mediaasset.FieldFolderID, field.TypeInt64, value)
 	}
 	if value, ok := _u.mutation.AddedFolderID(); ok {
-		_spec.AddField(mediaasset.FieldFolderID, field.TypeUint64, value)
+		_spec.AddField(mediaasset.FieldFolderID, field.TypeInt64, value)
 	}
 	if _u.mutation.FolderIDCleared() {
-		_spec.ClearField(mediaasset.FieldFolderID, field.TypeUint64)
+		_spec.ClearField(mediaasset.FieldFolderID, field.TypeInt64)
 	}
 	if value, ok := _u.mutation.FileID(); ok {
-		_spec.SetField(mediaasset.FieldFileID, field.TypeUint64, value)
+		_spec.SetField(mediaasset.FieldFileID, field.TypeInt64, value)
 	}
 	if value, ok := _u.mutation.AddedFileID(); ok {
-		_spec.AddField(mediaasset.FieldFileID, field.TypeUint64, value)
+		_spec.AddField(mediaasset.FieldFileID, field.TypeInt64, value)
 	}
 	if _u.mutation.FileIDCleared() {
-		_spec.ClearField(mediaasset.FieldFileID, field.TypeUint64)
+		_spec.ClearField(mediaasset.FieldFileID, field.TypeInt64)
 	}
 	if value, ok := _u.mutation.ReferenceCount(); ok {
 		_spec.SetField(mediaasset.FieldReferenceCount, field.TypeUint32, value)
@@ -887,14 +887,14 @@ func (_u *MediaAssetUpdateOne) ClearDeletedAt() *MediaAssetUpdateOne {
 }
 
 // SetCreatedBy sets the "created_by" field.
-func (_u *MediaAssetUpdateOne) SetCreatedBy(v uint64) *MediaAssetUpdateOne {
+func (_u *MediaAssetUpdateOne) SetCreatedBy(v int64) *MediaAssetUpdateOne {
 	_u.mutation.ResetCreatedBy()
 	_u.mutation.SetCreatedBy(v)
 	return _u
 }
 
 // SetNillableCreatedBy sets the "created_by" field if the given value is not nil.
-func (_u *MediaAssetUpdateOne) SetNillableCreatedBy(v *uint64) *MediaAssetUpdateOne {
+func (_u *MediaAssetUpdateOne) SetNillableCreatedBy(v *int64) *MediaAssetUpdateOne {
 	if v != nil {
 		_u.SetCreatedBy(*v)
 	}
@@ -914,14 +914,14 @@ func (_u *MediaAssetUpdateOne) ClearCreatedBy() *MediaAssetUpdateOne {
 }
 
 // SetUpdatedBy sets the "updated_by" field.
-func (_u *MediaAssetUpdateOne) SetUpdatedBy(v uint64) *MediaAssetUpdateOne {
+func (_u *MediaAssetUpdateOne) SetUpdatedBy(v int64) *MediaAssetUpdateOne {
 	_u.mutation.ResetUpdatedBy()
 	_u.mutation.SetUpdatedBy(v)
 	return _u
 }
 
 // SetNillableUpdatedBy sets the "updated_by" field if the given value is not nil.
-func (_u *MediaAssetUpdateOne) SetNillableUpdatedBy(v *uint64) *MediaAssetUpdateOne {
+func (_u *MediaAssetUpdateOne) SetNillableUpdatedBy(v *int64) *MediaAssetUpdateOne {
 	if v != nil {
 		_u.SetUpdatedBy(*v)
 	}
@@ -941,14 +941,14 @@ func (_u *MediaAssetUpdateOne) ClearUpdatedBy() *MediaAssetUpdateOne {
 }
 
 // SetDeletedBy sets the "deleted_by" field.
-func (_u *MediaAssetUpdateOne) SetDeletedBy(v uint64) *MediaAssetUpdateOne {
+func (_u *MediaAssetUpdateOne) SetDeletedBy(v int64) *MediaAssetUpdateOne {
 	_u.mutation.ResetDeletedBy()
 	_u.mutation.SetDeletedBy(v)
 	return _u
 }
 
 // SetNillableDeletedBy sets the "deleted_by" field if the given value is not nil.
-func (_u *MediaAssetUpdateOne) SetNillableDeletedBy(v *uint64) *MediaAssetUpdateOne {
+func (_u *MediaAssetUpdateOne) SetNillableDeletedBy(v *int64) *MediaAssetUpdateOne {
 	if v != nil {
 		_u.SetDeletedBy(*v)
 	}
@@ -1296,14 +1296,14 @@ func (_u *MediaAssetUpdateOne) ClearFileHash() *MediaAssetUpdateOne {
 }
 
 // SetFolderID sets the "folder_id" field.
-func (_u *MediaAssetUpdateOne) SetFolderID(v uint64) *MediaAssetUpdateOne {
+func (_u *MediaAssetUpdateOne) SetFolderID(v int64) *MediaAssetUpdateOne {
 	_u.mutation.ResetFolderID()
 	_u.mutation.SetFolderID(v)
 	return _u
 }
 
 // SetNillableFolderID sets the "folder_id" field if the given value is not nil.
-func (_u *MediaAssetUpdateOne) SetNillableFolderID(v *uint64) *MediaAssetUpdateOne {
+func (_u *MediaAssetUpdateOne) SetNillableFolderID(v *int64) *MediaAssetUpdateOne {
 	if v != nil {
 		_u.SetFolderID(*v)
 	}
@@ -1323,14 +1323,14 @@ func (_u *MediaAssetUpdateOne) ClearFolderID() *MediaAssetUpdateOne {
 }
 
 // SetFileID sets the "file_id" field.
-func (_u *MediaAssetUpdateOne) SetFileID(v uint64) *MediaAssetUpdateOne {
+func (_u *MediaAssetUpdateOne) SetFileID(v int64) *MediaAssetUpdateOne {
 	_u.mutation.ResetFileID()
 	_u.mutation.SetFileID(v)
 	return _u
 }
 
 // SetNillableFileID sets the "file_id" field if the given value is not nil.
-func (_u *MediaAssetUpdateOne) SetNillableFileID(v *uint64) *MediaAssetUpdateOne {
+func (_u *MediaAssetUpdateOne) SetNillableFileID(v *int64) *MediaAssetUpdateOne {
 	if v != nil {
 		_u.SetFileID(*v)
 	}
@@ -1466,7 +1466,7 @@ func (_u *MediaAssetUpdateOne) sqlSave(ctx context.Context) (_node *MediaAsset, 
 	if err := _u.check(); err != nil {
 		return _node, err
 	}
-	_spec := sqlgraph.NewUpdateSpec(mediaasset.Table, mediaasset.Columns, sqlgraph.NewFieldSpec(mediaasset.FieldID, field.TypeUint64))
+	_spec := sqlgraph.NewUpdateSpec(mediaasset.Table, mediaasset.Columns, sqlgraph.NewFieldSpec(mediaasset.FieldID, field.TypeInt64))
 	id, ok := _u.mutation.ID()
 	if !ok {
 		return nil, &ValidationError{Name: "id", err: errors.New(`ent: missing "MediaAsset.id" for update`)}
@@ -1507,34 +1507,34 @@ func (_u *MediaAssetUpdateOne) sqlSave(ctx context.Context) (_node *MediaAsset, 
 		_spec.ClearField(mediaasset.FieldDeletedAt, field.TypeTime)
 	}
 	if value, ok := _u.mutation.CreatedBy(); ok {
-		_spec.SetField(mediaasset.FieldCreatedBy, field.TypeUint64, value)
+		_spec.SetField(mediaasset.FieldCreatedBy, field.TypeInt64, value)
 	}
 	if value, ok := _u.mutation.AddedCreatedBy(); ok {
-		_spec.AddField(mediaasset.FieldCreatedBy, field.TypeUint64, value)
+		_spec.AddField(mediaasset.FieldCreatedBy, field.TypeInt64, value)
 	}
 	if _u.mutation.CreatedByCleared() {
-		_spec.ClearField(mediaasset.FieldCreatedBy, field.TypeUint64)
+		_spec.ClearField(mediaasset.FieldCreatedBy, field.TypeInt64)
 	}
 	if value, ok := _u.mutation.UpdatedBy(); ok {
-		_spec.SetField(mediaasset.FieldUpdatedBy, field.TypeUint64, value)
+		_spec.SetField(mediaasset.FieldUpdatedBy, field.TypeInt64, value)
 	}
 	if value, ok := _u.mutation.AddedUpdatedBy(); ok {
-		_spec.AddField(mediaasset.FieldUpdatedBy, field.TypeUint64, value)
+		_spec.AddField(mediaasset.FieldUpdatedBy, field.TypeInt64, value)
 	}
 	if _u.mutation.UpdatedByCleared() {
-		_spec.ClearField(mediaasset.FieldUpdatedBy, field.TypeUint64)
+		_spec.ClearField(mediaasset.FieldUpdatedBy, field.TypeInt64)
 	}
 	if value, ok := _u.mutation.DeletedBy(); ok {
-		_spec.SetField(mediaasset.FieldDeletedBy, field.TypeUint64, value)
+		_spec.SetField(mediaasset.FieldDeletedBy, field.TypeInt64, value)
 	}
 	if value, ok := _u.mutation.AddedDeletedBy(); ok {
-		_spec.AddField(mediaasset.FieldDeletedBy, field.TypeUint64, value)
+		_spec.AddField(mediaasset.FieldDeletedBy, field.TypeInt64, value)
 	}
 	if _u.mutation.DeletedByCleared() {
-		_spec.ClearField(mediaasset.FieldDeletedBy, field.TypeUint64)
+		_spec.ClearField(mediaasset.FieldDeletedBy, field.TypeInt64)
 	}
 	if _u.mutation.TenantIDCleared() {
-		_spec.ClearField(mediaasset.FieldTenantID, field.TypeUint64)
+		_spec.ClearField(mediaasset.FieldTenantID, field.TypeInt64)
 	}
 	if value, ok := _u.mutation.Filename(); ok {
 		_spec.SetField(mediaasset.FieldFilename, field.TypeString, value)
@@ -1639,22 +1639,22 @@ func (_u *MediaAssetUpdateOne) sqlSave(ctx context.Context) (_node *MediaAsset, 
 		_spec.ClearField(mediaasset.FieldFileHash, field.TypeString)
 	}
 	if value, ok := _u.mutation.FolderID(); ok {
-		_spec.SetField(mediaasset.FieldFolderID, field.TypeUint64, value)
+		_spec.SetField(mediaasset.FieldFolderID, field.TypeInt64, value)
 	}
 	if value, ok := _u.mutation.AddedFolderID(); ok {
-		_spec.AddField(mediaasset.FieldFolderID, field.TypeUint64, value)
+		_spec.AddField(mediaasset.FieldFolderID, field.TypeInt64, value)
 	}
 	if _u.mutation.FolderIDCleared() {
-		_spec.ClearField(mediaasset.FieldFolderID, field.TypeUint64)
+		_spec.ClearField(mediaasset.FieldFolderID, field.TypeInt64)
 	}
 	if value, ok := _u.mutation.FileID(); ok {
-		_spec.SetField(mediaasset.FieldFileID, field.TypeUint64, value)
+		_spec.SetField(mediaasset.FieldFileID, field.TypeInt64, value)
 	}
 	if value, ok := _u.mutation.AddedFileID(); ok {
-		_spec.AddField(mediaasset.FieldFileID, field.TypeUint64, value)
+		_spec.AddField(mediaasset.FieldFileID, field.TypeInt64, value)
 	}
 	if _u.mutation.FileIDCleared() {
-		_spec.ClearField(mediaasset.FieldFileID, field.TypeUint64)
+		_spec.ClearField(mediaasset.FieldFileID, field.TypeInt64)
 	}
 	if value, ok := _u.mutation.ReferenceCount(); ok {
 		_spec.SetField(mediaasset.FieldReferenceCount, field.TypeUint32, value)

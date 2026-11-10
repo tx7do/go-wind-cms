@@ -122,13 +122,13 @@ func (MediaAsset) Fields() []ent.Field {
 			Optional().
 			Nillable(),
 
-		field.Uint64("folder_id").
+		field.Int64("folder_id").
 			Comment("所属文件夹ID").
 			Default(0).
 			Optional().
 			Nillable(),
 
-		field.Uint64("file_id").
+		field.Int64("file_id").
 			Comment("存储文件ID").
 			Optional().
 			Nillable(),
@@ -157,7 +157,7 @@ func (MediaAsset) Mixin() []ent.Mixin {
 		mixin.AutoIncrementId64{},
 		mixin.TimeAt{},
 		mixin.OperatorID64{},
-		mixin.TenantID[uint64]{},
+		mixin.TenantID[int64]{},
 	}
 }
 

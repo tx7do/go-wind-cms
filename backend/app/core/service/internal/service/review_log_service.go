@@ -47,5 +47,5 @@ func (s *ReviewLogService) Count(ctx context.Context, req *contentV1.CountReview
 	if err != nil {
 		return nil, err
 	}
-	return &contentV1.CountReviewLogsResponse{Count: uint64(len(items))}, nil
+	return &contentV1.CountReviewLogsResponse{Count: int64(len(items))}, nil
 }

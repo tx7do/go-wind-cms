@@ -70,14 +70,14 @@ func (_u *ExperimentParticipantUpdate) ClearDeletedAt() *ExperimentParticipantUp
 }
 
 // SetExperimentID sets the "experiment_id" field.
-func (_u *ExperimentParticipantUpdate) SetExperimentID(v uint64) *ExperimentParticipantUpdate {
+func (_u *ExperimentParticipantUpdate) SetExperimentID(v int64) *ExperimentParticipantUpdate {
 	_u.mutation.ResetExperimentID()
 	_u.mutation.SetExperimentID(v)
 	return _u
 }
 
 // SetNillableExperimentID sets the "experiment_id" field if the given value is not nil.
-func (_u *ExperimentParticipantUpdate) SetNillableExperimentID(v *uint64) *ExperimentParticipantUpdate {
+func (_u *ExperimentParticipantUpdate) SetNillableExperimentID(v *int64) *ExperimentParticipantUpdate {
 	if v != nil {
 		_u.SetExperimentID(*v)
 	}
@@ -221,7 +221,7 @@ func (_u *ExperimentParticipantUpdate) sqlSave(ctx context.Context) (_node int, 
 	if err := _u.check(); err != nil {
 		return _node, err
 	}
-	_spec := sqlgraph.NewUpdateSpec(experimentparticipant.Table, experimentparticipant.Columns, sqlgraph.NewFieldSpec(experimentparticipant.FieldID, field.TypeUint64))
+	_spec := sqlgraph.NewUpdateSpec(experimentparticipant.Table, experimentparticipant.Columns, sqlgraph.NewFieldSpec(experimentparticipant.FieldID, field.TypeInt64))
 	if ps := _u.mutation.predicates; len(ps) > 0 {
 		_spec.Predicate = func(selector *sql.Selector) {
 			for i := range ps {
@@ -245,16 +245,16 @@ func (_u *ExperimentParticipantUpdate) sqlSave(ctx context.Context) (_node int, 
 		_spec.ClearField(experimentparticipant.FieldDeletedAt, field.TypeTime)
 	}
 	if _u.mutation.TenantIDCleared() {
-		_spec.ClearField(experimentparticipant.FieldTenantID, field.TypeUint64)
+		_spec.ClearField(experimentparticipant.FieldTenantID, field.TypeInt64)
 	}
 	if value, ok := _u.mutation.ExperimentID(); ok {
-		_spec.SetField(experimentparticipant.FieldExperimentID, field.TypeUint64, value)
+		_spec.SetField(experimentparticipant.FieldExperimentID, field.TypeInt64, value)
 	}
 	if value, ok := _u.mutation.AddedExperimentID(); ok {
-		_spec.AddField(experimentparticipant.FieldExperimentID, field.TypeUint64, value)
+		_spec.AddField(experimentparticipant.FieldExperimentID, field.TypeInt64, value)
 	}
 	if _u.mutation.ExperimentIDCleared() {
-		_spec.ClearField(experimentparticipant.FieldExperimentID, field.TypeUint64)
+		_spec.ClearField(experimentparticipant.FieldExperimentID, field.TypeInt64)
 	}
 	if value, ok := _u.mutation.VisitorHash(); ok {
 		_spec.SetField(experimentparticipant.FieldVisitorHash, field.TypeString, value)
@@ -337,14 +337,14 @@ func (_u *ExperimentParticipantUpdateOne) ClearDeletedAt() *ExperimentParticipan
 }
 
 // SetExperimentID sets the "experiment_id" field.
-func (_u *ExperimentParticipantUpdateOne) SetExperimentID(v uint64) *ExperimentParticipantUpdateOne {
+func (_u *ExperimentParticipantUpdateOne) SetExperimentID(v int64) *ExperimentParticipantUpdateOne {
 	_u.mutation.ResetExperimentID()
 	_u.mutation.SetExperimentID(v)
 	return _u
 }
 
 // SetNillableExperimentID sets the "experiment_id" field if the given value is not nil.
-func (_u *ExperimentParticipantUpdateOne) SetNillableExperimentID(v *uint64) *ExperimentParticipantUpdateOne {
+func (_u *ExperimentParticipantUpdateOne) SetNillableExperimentID(v *int64) *ExperimentParticipantUpdateOne {
 	if v != nil {
 		_u.SetExperimentID(*v)
 	}
@@ -501,7 +501,7 @@ func (_u *ExperimentParticipantUpdateOne) sqlSave(ctx context.Context) (_node *E
 	if err := _u.check(); err != nil {
 		return _node, err
 	}
-	_spec := sqlgraph.NewUpdateSpec(experimentparticipant.Table, experimentparticipant.Columns, sqlgraph.NewFieldSpec(experimentparticipant.FieldID, field.TypeUint64))
+	_spec := sqlgraph.NewUpdateSpec(experimentparticipant.Table, experimentparticipant.Columns, sqlgraph.NewFieldSpec(experimentparticipant.FieldID, field.TypeInt64))
 	id, ok := _u.mutation.ID()
 	if !ok {
 		return nil, &ValidationError{Name: "id", err: errors.New(`ent: missing "ExperimentParticipant.id" for update`)}
@@ -542,16 +542,16 @@ func (_u *ExperimentParticipantUpdateOne) sqlSave(ctx context.Context) (_node *E
 		_spec.ClearField(experimentparticipant.FieldDeletedAt, field.TypeTime)
 	}
 	if _u.mutation.TenantIDCleared() {
-		_spec.ClearField(experimentparticipant.FieldTenantID, field.TypeUint64)
+		_spec.ClearField(experimentparticipant.FieldTenantID, field.TypeInt64)
 	}
 	if value, ok := _u.mutation.ExperimentID(); ok {
-		_spec.SetField(experimentparticipant.FieldExperimentID, field.TypeUint64, value)
+		_spec.SetField(experimentparticipant.FieldExperimentID, field.TypeInt64, value)
 	}
 	if value, ok := _u.mutation.AddedExperimentID(); ok {
-		_spec.AddField(experimentparticipant.FieldExperimentID, field.TypeUint64, value)
+		_spec.AddField(experimentparticipant.FieldExperimentID, field.TypeInt64, value)
 	}
 	if _u.mutation.ExperimentIDCleared() {
-		_spec.ClearField(experimentparticipant.FieldExperimentID, field.TypeUint64)
+		_spec.ClearField(experimentparticipant.FieldExperimentID, field.TypeInt64)
 	}
 	if value, ok := _u.mutation.VisitorHash(); ok {
 		_spec.SetField(experimentparticipant.FieldVisitorHash, field.TypeString, value)

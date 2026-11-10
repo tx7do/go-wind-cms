@@ -65,13 +65,13 @@ func (_c *ExperimentVariantCreate) SetNillableDeletedAt(v *time.Time) *Experimen
 }
 
 // SetCreatedBy sets the "created_by" field.
-func (_c *ExperimentVariantCreate) SetCreatedBy(v uint64) *ExperimentVariantCreate {
+func (_c *ExperimentVariantCreate) SetCreatedBy(v int64) *ExperimentVariantCreate {
 	_c.mutation.SetCreatedBy(v)
 	return _c
 }
 
 // SetNillableCreatedBy sets the "created_by" field if the given value is not nil.
-func (_c *ExperimentVariantCreate) SetNillableCreatedBy(v *uint64) *ExperimentVariantCreate {
+func (_c *ExperimentVariantCreate) SetNillableCreatedBy(v *int64) *ExperimentVariantCreate {
 	if v != nil {
 		_c.SetCreatedBy(*v)
 	}
@@ -79,13 +79,13 @@ func (_c *ExperimentVariantCreate) SetNillableCreatedBy(v *uint64) *ExperimentVa
 }
 
 // SetUpdatedBy sets the "updated_by" field.
-func (_c *ExperimentVariantCreate) SetUpdatedBy(v uint64) *ExperimentVariantCreate {
+func (_c *ExperimentVariantCreate) SetUpdatedBy(v int64) *ExperimentVariantCreate {
 	_c.mutation.SetUpdatedBy(v)
 	return _c
 }
 
 // SetNillableUpdatedBy sets the "updated_by" field if the given value is not nil.
-func (_c *ExperimentVariantCreate) SetNillableUpdatedBy(v *uint64) *ExperimentVariantCreate {
+func (_c *ExperimentVariantCreate) SetNillableUpdatedBy(v *int64) *ExperimentVariantCreate {
 	if v != nil {
 		_c.SetUpdatedBy(*v)
 	}
@@ -93,13 +93,13 @@ func (_c *ExperimentVariantCreate) SetNillableUpdatedBy(v *uint64) *ExperimentVa
 }
 
 // SetDeletedBy sets the "deleted_by" field.
-func (_c *ExperimentVariantCreate) SetDeletedBy(v uint64) *ExperimentVariantCreate {
+func (_c *ExperimentVariantCreate) SetDeletedBy(v int64) *ExperimentVariantCreate {
 	_c.mutation.SetDeletedBy(v)
 	return _c
 }
 
 // SetNillableDeletedBy sets the "deleted_by" field if the given value is not nil.
-func (_c *ExperimentVariantCreate) SetNillableDeletedBy(v *uint64) *ExperimentVariantCreate {
+func (_c *ExperimentVariantCreate) SetNillableDeletedBy(v *int64) *ExperimentVariantCreate {
 	if v != nil {
 		_c.SetDeletedBy(*v)
 	}
@@ -107,13 +107,13 @@ func (_c *ExperimentVariantCreate) SetNillableDeletedBy(v *uint64) *ExperimentVa
 }
 
 // SetTenantID sets the "tenant_id" field.
-func (_c *ExperimentVariantCreate) SetTenantID(v uint64) *ExperimentVariantCreate {
+func (_c *ExperimentVariantCreate) SetTenantID(v int64) *ExperimentVariantCreate {
 	_c.mutation.SetTenantID(v)
 	return _c
 }
 
 // SetNillableTenantID sets the "tenant_id" field if the given value is not nil.
-func (_c *ExperimentVariantCreate) SetNillableTenantID(v *uint64) *ExperimentVariantCreate {
+func (_c *ExperimentVariantCreate) SetNillableTenantID(v *int64) *ExperimentVariantCreate {
 	if v != nil {
 		_c.SetTenantID(*v)
 	}
@@ -121,13 +121,13 @@ func (_c *ExperimentVariantCreate) SetNillableTenantID(v *uint64) *ExperimentVar
 }
 
 // SetExperimentID sets the "experiment_id" field.
-func (_c *ExperimentVariantCreate) SetExperimentID(v uint64) *ExperimentVariantCreate {
+func (_c *ExperimentVariantCreate) SetExperimentID(v int64) *ExperimentVariantCreate {
 	_c.mutation.SetExperimentID(v)
 	return _c
 }
 
 // SetNillableExperimentID sets the "experiment_id" field if the given value is not nil.
-func (_c *ExperimentVariantCreate) SetNillableExperimentID(v *uint64) *ExperimentVariantCreate {
+func (_c *ExperimentVariantCreate) SetNillableExperimentID(v *int64) *ExperimentVariantCreate {
 	if v != nil {
 		_c.SetExperimentID(*v)
 	}
@@ -197,7 +197,7 @@ func (_c *ExperimentVariantCreate) SetNillableSortOrder(v *uint32) *ExperimentVa
 }
 
 // SetID sets the "id" field.
-func (_c *ExperimentVariantCreate) SetID(v uint64) *ExperimentVariantCreate {
+func (_c *ExperimentVariantCreate) SetID(v int64) *ExperimentVariantCreate {
 	_c.mutation.SetID(v)
 	return _c
 }
@@ -285,7 +285,7 @@ func (_c *ExperimentVariantCreate) sqlSave(ctx context.Context) (*ExperimentVari
 	}
 	if _spec.ID.Value != _node.ID {
 		id := _spec.ID.Value.(int64)
-		_node.ID = uint64(id)
+		_node.ID = int64(id)
 	}
 	_c.mutation.id = &_node.ID
 	_c.mutation.done = true
@@ -295,7 +295,7 @@ func (_c *ExperimentVariantCreate) sqlSave(ctx context.Context) (*ExperimentVari
 func (_c *ExperimentVariantCreate) createSpec() (*ExperimentVariant, *sqlgraph.CreateSpec) {
 	var (
 		_node = &ExperimentVariant{config: _c.config}
-		_spec = sqlgraph.NewCreateSpec(experimentvariant.Table, sqlgraph.NewFieldSpec(experimentvariant.FieldID, field.TypeUint64))
+		_spec = sqlgraph.NewCreateSpec(experimentvariant.Table, sqlgraph.NewFieldSpec(experimentvariant.FieldID, field.TypeInt64))
 	)
 	_spec.OnConflict = _c.conflict
 	if id, ok := _c.mutation.ID(); ok {
@@ -315,23 +315,23 @@ func (_c *ExperimentVariantCreate) createSpec() (*ExperimentVariant, *sqlgraph.C
 		_node.DeletedAt = &value
 	}
 	if value, ok := _c.mutation.CreatedBy(); ok {
-		_spec.SetField(experimentvariant.FieldCreatedBy, field.TypeUint64, value)
+		_spec.SetField(experimentvariant.FieldCreatedBy, field.TypeInt64, value)
 		_node.CreatedBy = &value
 	}
 	if value, ok := _c.mutation.UpdatedBy(); ok {
-		_spec.SetField(experimentvariant.FieldUpdatedBy, field.TypeUint64, value)
+		_spec.SetField(experimentvariant.FieldUpdatedBy, field.TypeInt64, value)
 		_node.UpdatedBy = &value
 	}
 	if value, ok := _c.mutation.DeletedBy(); ok {
-		_spec.SetField(experimentvariant.FieldDeletedBy, field.TypeUint64, value)
+		_spec.SetField(experimentvariant.FieldDeletedBy, field.TypeInt64, value)
 		_node.DeletedBy = &value
 	}
 	if value, ok := _c.mutation.TenantID(); ok {
-		_spec.SetField(experimentvariant.FieldTenantID, field.TypeUint64, value)
+		_spec.SetField(experimentvariant.FieldTenantID, field.TypeInt64, value)
 		_node.TenantID = &value
 	}
 	if value, ok := _c.mutation.ExperimentID(); ok {
-		_spec.SetField(experimentvariant.FieldExperimentID, field.TypeUint64, value)
+		_spec.SetField(experimentvariant.FieldExperimentID, field.TypeInt64, value)
 		_node.ExperimentID = &value
 	}
 	if value, ok := _c.mutation.Name(); ok {
@@ -443,7 +443,7 @@ func (u *ExperimentVariantUpsert) ClearDeletedAt() *ExperimentVariantUpsert {
 }
 
 // SetCreatedBy sets the "created_by" field.
-func (u *ExperimentVariantUpsert) SetCreatedBy(v uint64) *ExperimentVariantUpsert {
+func (u *ExperimentVariantUpsert) SetCreatedBy(v int64) *ExperimentVariantUpsert {
 	u.Set(experimentvariant.FieldCreatedBy, v)
 	return u
 }
@@ -455,7 +455,7 @@ func (u *ExperimentVariantUpsert) UpdateCreatedBy() *ExperimentVariantUpsert {
 }
 
 // AddCreatedBy adds v to the "created_by" field.
-func (u *ExperimentVariantUpsert) AddCreatedBy(v uint64) *ExperimentVariantUpsert {
+func (u *ExperimentVariantUpsert) AddCreatedBy(v int64) *ExperimentVariantUpsert {
 	u.Add(experimentvariant.FieldCreatedBy, v)
 	return u
 }
@@ -467,7 +467,7 @@ func (u *ExperimentVariantUpsert) ClearCreatedBy() *ExperimentVariantUpsert {
 }
 
 // SetUpdatedBy sets the "updated_by" field.
-func (u *ExperimentVariantUpsert) SetUpdatedBy(v uint64) *ExperimentVariantUpsert {
+func (u *ExperimentVariantUpsert) SetUpdatedBy(v int64) *ExperimentVariantUpsert {
 	u.Set(experimentvariant.FieldUpdatedBy, v)
 	return u
 }
@@ -479,7 +479,7 @@ func (u *ExperimentVariantUpsert) UpdateUpdatedBy() *ExperimentVariantUpsert {
 }
 
 // AddUpdatedBy adds v to the "updated_by" field.
-func (u *ExperimentVariantUpsert) AddUpdatedBy(v uint64) *ExperimentVariantUpsert {
+func (u *ExperimentVariantUpsert) AddUpdatedBy(v int64) *ExperimentVariantUpsert {
 	u.Add(experimentvariant.FieldUpdatedBy, v)
 	return u
 }
@@ -491,7 +491,7 @@ func (u *ExperimentVariantUpsert) ClearUpdatedBy() *ExperimentVariantUpsert {
 }
 
 // SetDeletedBy sets the "deleted_by" field.
-func (u *ExperimentVariantUpsert) SetDeletedBy(v uint64) *ExperimentVariantUpsert {
+func (u *ExperimentVariantUpsert) SetDeletedBy(v int64) *ExperimentVariantUpsert {
 	u.Set(experimentvariant.FieldDeletedBy, v)
 	return u
 }
@@ -503,7 +503,7 @@ func (u *ExperimentVariantUpsert) UpdateDeletedBy() *ExperimentVariantUpsert {
 }
 
 // AddDeletedBy adds v to the "deleted_by" field.
-func (u *ExperimentVariantUpsert) AddDeletedBy(v uint64) *ExperimentVariantUpsert {
+func (u *ExperimentVariantUpsert) AddDeletedBy(v int64) *ExperimentVariantUpsert {
 	u.Add(experimentvariant.FieldDeletedBy, v)
 	return u
 }
@@ -515,7 +515,7 @@ func (u *ExperimentVariantUpsert) ClearDeletedBy() *ExperimentVariantUpsert {
 }
 
 // SetExperimentID sets the "experiment_id" field.
-func (u *ExperimentVariantUpsert) SetExperimentID(v uint64) *ExperimentVariantUpsert {
+func (u *ExperimentVariantUpsert) SetExperimentID(v int64) *ExperimentVariantUpsert {
 	u.Set(experimentvariant.FieldExperimentID, v)
 	return u
 }
@@ -527,7 +527,7 @@ func (u *ExperimentVariantUpsert) UpdateExperimentID() *ExperimentVariantUpsert 
 }
 
 // AddExperimentID adds v to the "experiment_id" field.
-func (u *ExperimentVariantUpsert) AddExperimentID(v uint64) *ExperimentVariantUpsert {
+func (u *ExperimentVariantUpsert) AddExperimentID(v int64) *ExperimentVariantUpsert {
 	u.Add(experimentvariant.FieldExperimentID, v)
 	return u
 }
@@ -731,14 +731,14 @@ func (u *ExperimentVariantUpsertOne) ClearDeletedAt() *ExperimentVariantUpsertOn
 }
 
 // SetCreatedBy sets the "created_by" field.
-func (u *ExperimentVariantUpsertOne) SetCreatedBy(v uint64) *ExperimentVariantUpsertOne {
+func (u *ExperimentVariantUpsertOne) SetCreatedBy(v int64) *ExperimentVariantUpsertOne {
 	return u.Update(func(s *ExperimentVariantUpsert) {
 		s.SetCreatedBy(v)
 	})
 }
 
 // AddCreatedBy adds v to the "created_by" field.
-func (u *ExperimentVariantUpsertOne) AddCreatedBy(v uint64) *ExperimentVariantUpsertOne {
+func (u *ExperimentVariantUpsertOne) AddCreatedBy(v int64) *ExperimentVariantUpsertOne {
 	return u.Update(func(s *ExperimentVariantUpsert) {
 		s.AddCreatedBy(v)
 	})
@@ -759,14 +759,14 @@ func (u *ExperimentVariantUpsertOne) ClearCreatedBy() *ExperimentVariantUpsertOn
 }
 
 // SetUpdatedBy sets the "updated_by" field.
-func (u *ExperimentVariantUpsertOne) SetUpdatedBy(v uint64) *ExperimentVariantUpsertOne {
+func (u *ExperimentVariantUpsertOne) SetUpdatedBy(v int64) *ExperimentVariantUpsertOne {
 	return u.Update(func(s *ExperimentVariantUpsert) {
 		s.SetUpdatedBy(v)
 	})
 }
 
 // AddUpdatedBy adds v to the "updated_by" field.
-func (u *ExperimentVariantUpsertOne) AddUpdatedBy(v uint64) *ExperimentVariantUpsertOne {
+func (u *ExperimentVariantUpsertOne) AddUpdatedBy(v int64) *ExperimentVariantUpsertOne {
 	return u.Update(func(s *ExperimentVariantUpsert) {
 		s.AddUpdatedBy(v)
 	})
@@ -787,14 +787,14 @@ func (u *ExperimentVariantUpsertOne) ClearUpdatedBy() *ExperimentVariantUpsertOn
 }
 
 // SetDeletedBy sets the "deleted_by" field.
-func (u *ExperimentVariantUpsertOne) SetDeletedBy(v uint64) *ExperimentVariantUpsertOne {
+func (u *ExperimentVariantUpsertOne) SetDeletedBy(v int64) *ExperimentVariantUpsertOne {
 	return u.Update(func(s *ExperimentVariantUpsert) {
 		s.SetDeletedBy(v)
 	})
 }
 
 // AddDeletedBy adds v to the "deleted_by" field.
-func (u *ExperimentVariantUpsertOne) AddDeletedBy(v uint64) *ExperimentVariantUpsertOne {
+func (u *ExperimentVariantUpsertOne) AddDeletedBy(v int64) *ExperimentVariantUpsertOne {
 	return u.Update(func(s *ExperimentVariantUpsert) {
 		s.AddDeletedBy(v)
 	})
@@ -815,14 +815,14 @@ func (u *ExperimentVariantUpsertOne) ClearDeletedBy() *ExperimentVariantUpsertOn
 }
 
 // SetExperimentID sets the "experiment_id" field.
-func (u *ExperimentVariantUpsertOne) SetExperimentID(v uint64) *ExperimentVariantUpsertOne {
+func (u *ExperimentVariantUpsertOne) SetExperimentID(v int64) *ExperimentVariantUpsertOne {
 	return u.Update(func(s *ExperimentVariantUpsert) {
 		s.SetExperimentID(v)
 	})
 }
 
 // AddExperimentID adds v to the "experiment_id" field.
-func (u *ExperimentVariantUpsertOne) AddExperimentID(v uint64) *ExperimentVariantUpsertOne {
+func (u *ExperimentVariantUpsertOne) AddExperimentID(v int64) *ExperimentVariantUpsertOne {
 	return u.Update(func(s *ExperimentVariantUpsert) {
 		s.AddExperimentID(v)
 	})
@@ -970,7 +970,7 @@ func (u *ExperimentVariantUpsertOne) ExecX(ctx context.Context) {
 }
 
 // Exec executes the UPSERT query and returns the inserted/updated ID.
-func (u *ExperimentVariantUpsertOne) ID(ctx context.Context) (id uint64, err error) {
+func (u *ExperimentVariantUpsertOne) ID(ctx context.Context) (id int64, err error) {
 	node, err := u.create.Save(ctx)
 	if err != nil {
 		return id, err
@@ -979,7 +979,7 @@ func (u *ExperimentVariantUpsertOne) ID(ctx context.Context) (id uint64, err err
 }
 
 // IDX is like ID, but panics if an error occurs.
-func (u *ExperimentVariantUpsertOne) IDX(ctx context.Context) uint64 {
+func (u *ExperimentVariantUpsertOne) IDX(ctx context.Context) int64 {
 	id, err := u.ID(ctx)
 	if err != nil {
 		panic(err)
@@ -1036,7 +1036,7 @@ func (_c *ExperimentVariantCreateBulk) Save(ctx context.Context) ([]*ExperimentV
 				mutation.id = &nodes[i].ID
 				if specs[i].ID.Value != nil && nodes[i].ID == 0 {
 					id := specs[i].ID.Value.(int64)
-					nodes[i].ID = uint64(id)
+					nodes[i].ID = int64(id)
 				}
 				mutation.done = true
 				return nodes[i], nil
@@ -1217,14 +1217,14 @@ func (u *ExperimentVariantUpsertBulk) ClearDeletedAt() *ExperimentVariantUpsertB
 }
 
 // SetCreatedBy sets the "created_by" field.
-func (u *ExperimentVariantUpsertBulk) SetCreatedBy(v uint64) *ExperimentVariantUpsertBulk {
+func (u *ExperimentVariantUpsertBulk) SetCreatedBy(v int64) *ExperimentVariantUpsertBulk {
 	return u.Update(func(s *ExperimentVariantUpsert) {
 		s.SetCreatedBy(v)
 	})
 }
 
 // AddCreatedBy adds v to the "created_by" field.
-func (u *ExperimentVariantUpsertBulk) AddCreatedBy(v uint64) *ExperimentVariantUpsertBulk {
+func (u *ExperimentVariantUpsertBulk) AddCreatedBy(v int64) *ExperimentVariantUpsertBulk {
 	return u.Update(func(s *ExperimentVariantUpsert) {
 		s.AddCreatedBy(v)
 	})
@@ -1245,14 +1245,14 @@ func (u *ExperimentVariantUpsertBulk) ClearCreatedBy() *ExperimentVariantUpsertB
 }
 
 // SetUpdatedBy sets the "updated_by" field.
-func (u *ExperimentVariantUpsertBulk) SetUpdatedBy(v uint64) *ExperimentVariantUpsertBulk {
+func (u *ExperimentVariantUpsertBulk) SetUpdatedBy(v int64) *ExperimentVariantUpsertBulk {
 	return u.Update(func(s *ExperimentVariantUpsert) {
 		s.SetUpdatedBy(v)
 	})
 }
 
 // AddUpdatedBy adds v to the "updated_by" field.
-func (u *ExperimentVariantUpsertBulk) AddUpdatedBy(v uint64) *ExperimentVariantUpsertBulk {
+func (u *ExperimentVariantUpsertBulk) AddUpdatedBy(v int64) *ExperimentVariantUpsertBulk {
 	return u.Update(func(s *ExperimentVariantUpsert) {
 		s.AddUpdatedBy(v)
 	})
@@ -1273,14 +1273,14 @@ func (u *ExperimentVariantUpsertBulk) ClearUpdatedBy() *ExperimentVariantUpsertB
 }
 
 // SetDeletedBy sets the "deleted_by" field.
-func (u *ExperimentVariantUpsertBulk) SetDeletedBy(v uint64) *ExperimentVariantUpsertBulk {
+func (u *ExperimentVariantUpsertBulk) SetDeletedBy(v int64) *ExperimentVariantUpsertBulk {
 	return u.Update(func(s *ExperimentVariantUpsert) {
 		s.SetDeletedBy(v)
 	})
 }
 
 // AddDeletedBy adds v to the "deleted_by" field.
-func (u *ExperimentVariantUpsertBulk) AddDeletedBy(v uint64) *ExperimentVariantUpsertBulk {
+func (u *ExperimentVariantUpsertBulk) AddDeletedBy(v int64) *ExperimentVariantUpsertBulk {
 	return u.Update(func(s *ExperimentVariantUpsert) {
 		s.AddDeletedBy(v)
 	})
@@ -1301,14 +1301,14 @@ func (u *ExperimentVariantUpsertBulk) ClearDeletedBy() *ExperimentVariantUpsertB
 }
 
 // SetExperimentID sets the "experiment_id" field.
-func (u *ExperimentVariantUpsertBulk) SetExperimentID(v uint64) *ExperimentVariantUpsertBulk {
+func (u *ExperimentVariantUpsertBulk) SetExperimentID(v int64) *ExperimentVariantUpsertBulk {
 	return u.Update(func(s *ExperimentVariantUpsert) {
 		s.SetExperimentID(v)
 	})
 }
 
 // AddExperimentID adds v to the "experiment_id" field.
-func (u *ExperimentVariantUpsertBulk) AddExperimentID(v uint64) *ExperimentVariantUpsertBulk {
+func (u *ExperimentVariantUpsertBulk) AddExperimentID(v int64) *ExperimentVariantUpsertBulk {
 	return u.Update(func(s *ExperimentVariantUpsert) {
 		s.AddExperimentID(v)
 	})

@@ -63,7 +63,7 @@ message Experiment {
     ASSIGNMENT_TYPE_RULE = 2;    // 受众规则定向（个性化，未中回退权重分流）
   }
 
-  optional uint64 id = 1 [
+  optional int64 id = 1 [
     json_name = "id",
     (gnostic.openapi.v3.property) = {description: "实验ID"}
   ]; // 实验ID
@@ -73,7 +73,7 @@ message Experiment {
     (gnostic.openapi.v3.property) = {description: "实验名称"}
   ]; // 实验名称
 
-  optional uint64 page_id = 3 [
+  optional int64 page_id = 3 [
     json_name = "pageId",
     (gnostic.openapi.v3.property) = {description: "目标页面ID"}
   ]; // 目标页面ID
@@ -98,8 +98,8 @@ message Experiment {
     (gnostic.openapi.v3.property) = {description: "实验变体（随实验整组托管）"}
   ]; // 实验变体
 
-  optional uint64 created_by = 100 [json_name = "createdBy", (gnostic.openapi.v3.property) = {description: "创建者用户ID"}]; // 创建者用户ID
-  optional uint64 updated_by = 101 [json_name = "updatedBy", (gnostic.openapi.v3.property) = {description: "更新者用户ID"}]; // 更新者用户ID
+  optional int64 created_by = 100 [json_name = "createdBy", (gnostic.openapi.v3.property) = {description: "创建者用户ID"}]; // 创建者用户ID
+  optional int64 updated_by = 101 [json_name = "updatedBy", (gnostic.openapi.v3.property) = {description: "更新者用户ID"}]; // 更新者用户ID
 
   optional google.protobuf.Timestamp created_at = 200 [json_name = "createdAt", (gnostic.openapi.v3.property) = {description: "创建时间"}]; // 创建时间
   optional google.protobuf.Timestamp updated_at = 201 [json_name = "updatedAt", (gnostic.openapi.v3.property) = {description: "更新时间"}]; // 更新时间
@@ -107,12 +107,12 @@ message Experiment {
 
 // 实验变体
 message ExperimentVariant {
-  optional uint64 id = 1 [
+  optional int64 id = 1 [
     json_name = "id",
     (gnostic.openapi.v3.property) = {description: "变体ID"}
   ]; // 变体ID
 
-  optional uint64 experiment_id = 2 [
+  optional int64 experiment_id = 2 [
     json_name = "experimentId",
     (gnostic.openapi.v3.property) = {description: "所属实验ID"}
   ]; // 所属实验ID
@@ -146,12 +146,12 @@ message ExperimentVariant {
 // 回应 - 实验列表
 message ListExperimentsResponse {
   repeated Experiment items = 1;
-  uint64 total = 2;
+  int64 total = 2;
 }
 
 // 请求 - 实验数据
 message GetExperimentRequest {
-  uint64 id = 1;
+  int64 id = 1;
 }
 
 // 请求 - 创建实验
@@ -161,7 +161,7 @@ message CreateExperimentRequest {
 
 // 请求 - 更新实验
 message UpdateExperimentRequest {
-  uint64 id = 1;
+  int64 id = 1;
 
   Experiment data = 2;
 
@@ -178,23 +178,23 @@ message UpdateExperimentRequest {
 
 // 请求 - 删除实验
 message DeleteExperimentRequest {
-  uint64 id = 1;
+  int64 id = 1;
 }
 
 // 请求 - 设置实验状态
 message SetExperimentStatusRequest {
-  uint64 id = 1;
+  int64 id = 1;
   Experiment.Status status = 2;
 }
 
 // 请求 - 页面运行中的实验
 message ListRunningExperimentsByPageRequest {
-  uint64 page_id = 1 [json_name = "pageId"]; // 目标页面ID
+  int64 page_id = 1 [json_name = "pageId"]; // 目标页面ID
 }
 
 // 请求 - 记录访客分配
 message RecordExperimentParticipantRequest {
-  uint64 experiment_id = 1 [json_name = "experimentId"]; // 实验ID
+  int64 experiment_id = 1 [json_name = "experimentId"]; // 实验ID
   string visitor_hash = 2 [json_name = "visitorHash"];   // 访客标识哈希
   string variant_name = 3 [json_name = "variantName"];   // 变体名称快照
 }
@@ -203,25 +203,25 @@ message RecordExperimentParticipantRequest {
 message ExperimentVariantStatsResponse {
   message VariantCount {
     string variant_name = 1 [json_name = "variantName"]; // 变体名称
-    uint64 participants = 2;                             // 参与人数
-    uint64 conversions = 3 [json_name = "conversions"];  // 转化数
+    int64 participants = 2;                             // 参与人数
+    int64 conversions = 3 [json_name = "conversions"];  // 转化数
   }
   repeated VariantCount items = 1;
 }
 
 // 请求 - 变体参与统计
 message GetExperimentVariantStatsRequest {
-  uint64 experiment_id = 1 [json_name = "experimentId"]; // 实验ID
+  int64 experiment_id = 1 [json_name = "experimentId"]; // 实验ID
 }
 
 // 请求 - 标记转化
 message RecordExperimentConversionRequest {
-  uint64 experiment_id = 1 [json_name = "experimentId"]; // 实验ID
+  int64 experiment_id = 1 [json_name = "experimentId"]; // 实验ID
   string visitor_hash = 2 [json_name = "visitorHash"];   // 访客标识哈希（与参与记录一致）
 }
 
 // 请求 - 页面运行实验的转化归因（app BFF 表单提交内部调用）
 message RecordPageExperimentConversionRequest {
-  uint64 page_id = 1 [json_name = "pageId"];  // 页面ID
+  int64 page_id = 1 [json_name = "pageId"];  // 页面ID
   string visitor_hash_seed = 2 [json_name = "visitorHashSeed"]; // 访客标识（cookie vid 原值，实验 ID 由服务端派生）
 }

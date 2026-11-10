@@ -98,7 +98,7 @@ func (r *TagRepo) count(ctx context.Context, whereCond []func(s *sql.Selector)) 
 	return count, err
 }
 
-func (r *TagRepo) IsExist(ctx context.Context, id uint64) (bool, error) {
+func (r *TagRepo) IsExist(ctx context.Context, id int64) (bool, error) {
 	exist, err := r.entClient.Client().Tag.Query().
 		Where(tag.IDEQ(id)).
 		Exist(ctx)
@@ -456,7 +456,7 @@ func (r *TagRepo) Delete(ctx context.Context, req *contentV1.DeleteTagRequest) (
 	return nil
 }
 
-func (r *TagRepo) TranslationExists(ctx context.Context, tagId uint64, languageCode string) (bool, error) {
+func (r *TagRepo) TranslationExists(ctx context.Context, tagId int64, languageCode string) (bool, error) {
 	return r.tagTranslationRepo.TranslationExists(ctx, tagId, languageCode)
 }
 
@@ -515,7 +515,7 @@ func (r *TagRepo) GetTranslation(ctx context.Context, req *contentV1.GetTagReque
 	return r.tagTranslationRepo.GetTranslation(ctx, req.GetId(), req.GetLocale())
 }
 
-func (r *TagRepo) ListTranslations(ctx context.Context, tagID uint64) ([]*contentV1.TagTranslation, error) {
+func (r *TagRepo) ListTranslations(ctx context.Context, tagID int64) ([]*contentV1.TagTranslation, error) {
 	return r.tagTranslationRepo.ListTranslations(ctx, tagID, "", nil)
 }
 
@@ -523,6 +523,6 @@ func (r *TagRepo) DeleteTranslation(ctx context.Context, req *contentV1.DeleteTa
 	return r.tagTranslationRepo.DeleteTranslation(ctx, req)
 }
 
-func (r *TagRepo) CleanTranslations(ctx context.Context, tx *ent.Tx, tagID uint64) error {
+func (r *TagRepo) CleanTranslations(ctx context.Context, tx *ent.Tx, tagID int64) error {
 	return r.tagTranslationRepo.CleanTranslations(ctx, tx, tagID)
 }

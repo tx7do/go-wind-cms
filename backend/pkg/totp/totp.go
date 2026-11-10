@@ -51,19 +51,19 @@ func codeAt(secret string, t time.Time) (string, error) {
 	if err != nil {
 		return "", err
 	}
-	counter := uint64(t.Unix()) / 30
+	counter := int64(t.Unix()) / 30
 	var msg [8]byte
-	binary.BigEndian.PutUint64(msg[:], counter)
+	binary.BigEndian.PutUint64(msg[:], uint64(counter))
 
 	mac := hmac.New(sha1.New, key)
 	mac.Write(msg[:])
 	sum := mac.Sum(nil)
 
 	offset := sum[len(sum)-1] & 0x0f
-	bin := (uint64(sum[offset])&0x7f)<<24 |
-		uint64(sum[offset+1])<<16 |
-		uint64(sum[offset+2])<<8 |
-		uint64(sum[offset+3])
+	bin := (int64(sum[offset])&0x7f)<<24 |
+		int64(sum[offset+1])<<16 |
+		int64(sum[offset+2])<<8 |
+		int64(sum[offset+3])
 	return fmt.Sprintf("%06d", bin%1_000_000), nil
 }
 

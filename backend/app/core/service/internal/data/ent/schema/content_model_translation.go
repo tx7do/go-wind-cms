@@ -30,7 +30,7 @@ func (ContentModelTranslation) Annotations() []schema.Annotation {
 
 func (ContentModelTranslation) Fields() []ent.Field {
 	return []ent.Field{
-		field.Uint64("content_model_id").
+		field.Int64("content_model_id").
 			Comment("内容模型ID").
 			Optional().
 			Nillable(),

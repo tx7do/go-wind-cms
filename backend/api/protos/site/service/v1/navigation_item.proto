@@ -39,12 +39,12 @@ message NavigationItem {
     LINK_TYPE_EXTERNAL = 5;     // 外部链接（http/https）
   }
 
-  optional uint64 id = 1 [
+  optional int64 id = 1 [
     json_name = "id",
     (gnostic.openapi.v3.property) = {description: "导航项目项ID"}
   ]; // 导航项目项ID
 
-  optional uint64 navigation_id = 2 [
+  optional int64 navigation_id = 2 [
     json_name = "navigationId",
     (gnostic.openapi.v3.property) = {description: "所属导航项目菜单ID"}
   ]; // 所属导航项目菜单ID
@@ -78,7 +78,7 @@ message NavigationItem {
     (gnostic.openapi.v3.property) = {description: "链接类型"}
   ]; // 链接类型
 
-  optional uint64 object_id = 8 [
+  optional int64 object_id = 8 [
     json_name = "objectId",
     (gnostic.openapi.v3.property) = {
       description: "关联对象ID（link_type=POST/PAGE/CATEGORY 时使用）"
@@ -106,7 +106,7 @@ message NavigationItem {
   ]; // 访问权限标识（如 "view_admin_panel"，前端可根据用户权限决定是否显示该导航项目项）
 
 
-  optional uint64 parent_id = 50 [
+  optional int64 parent_id = 50 [
     json_name = "parentId",
     (gnostic.openapi.v3.property) = {description: "父菜单项ID（0 表示顶级项）"}
   ]; // 父菜单项ID（0 表示顶级项）
@@ -115,9 +115,9 @@ message NavigationItem {
     (gnostic.openapi.v3.property) = {description: "子节点树"}
   ];  // 子节点树
 
-  optional uint64 created_by = 100 [json_name = "createdBy", (gnostic.openapi.v3.property) = {description: "创建者用户ID"}]; // 创建者用户ID
-  optional uint64 updated_by = 101 [json_name = "updatedBy", (gnostic.openapi.v3.property) = {description: "更新者用户ID"}]; // 更新者用户ID
-  optional uint64 deleted_by = 102 [json_name = "deletedBy", (gnostic.openapi.v3.property) = {description: "删除者用户ID"}]; // 删除者用户ID
+  optional int64 created_by = 100 [json_name = "createdBy", (gnostic.openapi.v3.property) = {description: "创建者用户ID"}]; // 创建者用户ID
+  optional int64 updated_by = 101 [json_name = "updatedBy", (gnostic.openapi.v3.property) = {description: "更新者用户ID"}]; // 更新者用户ID
+  optional int64 deleted_by = 102 [json_name = "deletedBy", (gnostic.openapi.v3.property) = {description: "删除者用户ID"}]; // 删除者用户ID
 
   optional google.protobuf.Timestamp created_at = 200 [json_name = "createdAt", (gnostic.openapi.v3.property) = {description: "创建时间"}];// 创建时间
   optional google.protobuf.Timestamp updated_at = 201 [json_name = "updatedAt", (gnostic.openapi.v3.property) = {description: "更新时间"}];// 更新时间
@@ -127,13 +127,13 @@ message NavigationItem {
 // 回应 - 导航项目列表
 message ListNavigationItemResponse {
   repeated NavigationItem items = 1;
-  uint64 total = 2;
+  int64 total = 2;
 }
 
 // 请求 - 导航项目数据
 message GetNavigationItemRequest {
   oneof query_by {
-    uint64 id = 1 [
+    int64 id = 1 [
       (gnostic.openapi.v3.property) = {description: "ID", read_only: true},
       json_name = "id"
     ]; // ID
@@ -159,7 +159,7 @@ message CreateNavigationItemRequest {
 
 // 请求 - 更新导航项目
 message UpdateNavigationItemRequest {
-  uint64 id = 1;
+  int64 id = 1;
 
   NavigationItem data = 2;
 
@@ -180,7 +180,7 @@ message UpdateNavigationItemRequest {
 // 请求 - 删除导航项目
 message DeleteNavigationItemRequest {
   oneof query_by {
-    uint64 id = 1 [
+    int64 id = 1 [
       (gnostic.openapi.v3.property) = {description: "ID", read_only: true},
       json_name = "id"
     ]; // ID

@@ -29,14 +29,14 @@ func (_u *PostCategoryUpdate) Where(ps ...predicate.PostCategory) *PostCategoryU
 }
 
 // SetPostID sets the "post_id" field.
-func (_u *PostCategoryUpdate) SetPostID(v uint64) *PostCategoryUpdate {
+func (_u *PostCategoryUpdate) SetPostID(v int64) *PostCategoryUpdate {
 	_u.mutation.ResetPostID()
 	_u.mutation.SetPostID(v)
 	return _u
 }
 
 // SetNillablePostID sets the "post_id" field if the given value is not nil.
-func (_u *PostCategoryUpdate) SetNillablePostID(v *uint64) *PostCategoryUpdate {
+func (_u *PostCategoryUpdate) SetNillablePostID(v *int64) *PostCategoryUpdate {
 	if v != nil {
 		_u.SetPostID(*v)
 	}
@@ -50,14 +50,14 @@ func (_u *PostCategoryUpdate) AddPostID(v int64) *PostCategoryUpdate {
 }
 
 // SetCategoryID sets the "category_id" field.
-func (_u *PostCategoryUpdate) SetCategoryID(v uint64) *PostCategoryUpdate {
+func (_u *PostCategoryUpdate) SetCategoryID(v int64) *PostCategoryUpdate {
 	_u.mutation.ResetCategoryID()
 	_u.mutation.SetCategoryID(v)
 	return _u
 }
 
 // SetNillableCategoryID sets the "category_id" field if the given value is not nil.
-func (_u *PostCategoryUpdate) SetNillableCategoryID(v *uint64) *PostCategoryUpdate {
+func (_u *PostCategoryUpdate) SetNillableCategoryID(v *int64) *PostCategoryUpdate {
 	if v != nil {
 		_u.SetCategoryID(*v)
 	}
@@ -109,7 +109,7 @@ func (_u *PostCategoryUpdate) Modify(modifiers ...func(u *sql.UpdateBuilder)) *P
 }
 
 func (_u *PostCategoryUpdate) sqlSave(ctx context.Context) (_node int, err error) {
-	_spec := sqlgraph.NewUpdateSpec(postcategory.Table, postcategory.Columns, sqlgraph.NewFieldSpec(postcategory.FieldID, field.TypeUint64))
+	_spec := sqlgraph.NewUpdateSpec(postcategory.Table, postcategory.Columns, sqlgraph.NewFieldSpec(postcategory.FieldID, field.TypeInt64))
 	if ps := _u.mutation.predicates; len(ps) > 0 {
 		_spec.Predicate = func(selector *sql.Selector) {
 			for i := range ps {
@@ -121,19 +121,19 @@ func (_u *PostCategoryUpdate) sqlSave(ctx context.Context) (_node int, err error
 		_spec.ClearField(postcategory.FieldCreatedAt, field.TypeTime)
 	}
 	if _u.mutation.TenantIDCleared() {
-		_spec.ClearField(postcategory.FieldTenantID, field.TypeUint64)
+		_spec.ClearField(postcategory.FieldTenantID, field.TypeInt64)
 	}
 	if value, ok := _u.mutation.PostID(); ok {
-		_spec.SetField(postcategory.FieldPostID, field.TypeUint64, value)
+		_spec.SetField(postcategory.FieldPostID, field.TypeInt64, value)
 	}
 	if value, ok := _u.mutation.AddedPostID(); ok {
-		_spec.AddField(postcategory.FieldPostID, field.TypeUint64, value)
+		_spec.AddField(postcategory.FieldPostID, field.TypeInt64, value)
 	}
 	if value, ok := _u.mutation.CategoryID(); ok {
-		_spec.SetField(postcategory.FieldCategoryID, field.TypeUint64, value)
+		_spec.SetField(postcategory.FieldCategoryID, field.TypeInt64, value)
 	}
 	if value, ok := _u.mutation.AddedCategoryID(); ok {
-		_spec.AddField(postcategory.FieldCategoryID, field.TypeUint64, value)
+		_spec.AddField(postcategory.FieldCategoryID, field.TypeInt64, value)
 	}
 	_spec.AddModifiers(_u.modifiers...)
 	if _node, err = sqlgraph.UpdateNodes(ctx, _u.driver, _spec); err != nil {
@@ -158,14 +158,14 @@ type PostCategoryUpdateOne struct {
 }
 
 // SetPostID sets the "post_id" field.
-func (_u *PostCategoryUpdateOne) SetPostID(v uint64) *PostCategoryUpdateOne {
+func (_u *PostCategoryUpdateOne) SetPostID(v int64) *PostCategoryUpdateOne {
 	_u.mutation.ResetPostID()
 	_u.mutation.SetPostID(v)
 	return _u
 }
 
 // SetNillablePostID sets the "post_id" field if the given value is not nil.
-func (_u *PostCategoryUpdateOne) SetNillablePostID(v *uint64) *PostCategoryUpdateOne {
+func (_u *PostCategoryUpdateOne) SetNillablePostID(v *int64) *PostCategoryUpdateOne {
 	if v != nil {
 		_u.SetPostID(*v)
 	}
@@ -179,14 +179,14 @@ func (_u *PostCategoryUpdateOne) AddPostID(v int64) *PostCategoryUpdateOne {
 }
 
 // SetCategoryID sets the "category_id" field.
-func (_u *PostCategoryUpdateOne) SetCategoryID(v uint64) *PostCategoryUpdateOne {
+func (_u *PostCategoryUpdateOne) SetCategoryID(v int64) *PostCategoryUpdateOne {
 	_u.mutation.ResetCategoryID()
 	_u.mutation.SetCategoryID(v)
 	return _u
 }
 
 // SetNillableCategoryID sets the "category_id" field if the given value is not nil.
-func (_u *PostCategoryUpdateOne) SetNillableCategoryID(v *uint64) *PostCategoryUpdateOne {
+func (_u *PostCategoryUpdateOne) SetNillableCategoryID(v *int64) *PostCategoryUpdateOne {
 	if v != nil {
 		_u.SetCategoryID(*v)
 	}
@@ -251,7 +251,7 @@ func (_u *PostCategoryUpdateOne) Modify(modifiers ...func(u *sql.UpdateBuilder))
 }
 
 func (_u *PostCategoryUpdateOne) sqlSave(ctx context.Context) (_node *PostCategory, err error) {
-	_spec := sqlgraph.NewUpdateSpec(postcategory.Table, postcategory.Columns, sqlgraph.NewFieldSpec(postcategory.FieldID, field.TypeUint64))
+	_spec := sqlgraph.NewUpdateSpec(postcategory.Table, postcategory.Columns, sqlgraph.NewFieldSpec(postcategory.FieldID, field.TypeInt64))
 	id, ok := _u.mutation.ID()
 	if !ok {
 		return nil, &ValidationError{Name: "id", err: errors.New(`ent: missing "PostCategory.id" for update`)}
@@ -280,19 +280,19 @@ func (_u *PostCategoryUpdateOne) sqlSave(ctx context.Context) (_node *PostCatego
 		_spec.ClearField(postcategory.FieldCreatedAt, field.TypeTime)
 	}
 	if _u.mutation.TenantIDCleared() {
-		_spec.ClearField(postcategory.FieldTenantID, field.TypeUint64)
+		_spec.ClearField(postcategory.FieldTenantID, field.TypeInt64)
 	}
 	if value, ok := _u.mutation.PostID(); ok {
-		_spec.SetField(postcategory.FieldPostID, field.TypeUint64, value)
+		_spec.SetField(postcategory.FieldPostID, field.TypeInt64, value)
 	}
 	if value, ok := _u.mutation.AddedPostID(); ok {
-		_spec.AddField(postcategory.FieldPostID, field.TypeUint64, value)
+		_spec.AddField(postcategory.FieldPostID, field.TypeInt64, value)
 	}
 	if value, ok := _u.mutation.CategoryID(); ok {
-		_spec.SetField(postcategory.FieldCategoryID, field.TypeUint64, value)
+		_spec.SetField(postcategory.FieldCategoryID, field.TypeInt64, value)
 	}
 	if value, ok := _u.mutation.AddedCategoryID(); ok {
-		_spec.AddField(postcategory.FieldCategoryID, field.TypeUint64, value)
+		_spec.AddField(postcategory.FieldCategoryID, field.TypeInt64, value)
 	}
 	_spec.AddModifiers(_u.modifiers...)
 	_node = &PostCategory{config: _u.config}

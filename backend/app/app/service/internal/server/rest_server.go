@@ -264,11 +264,11 @@ func NewRestServer(
 		mediaContentRoute := srv.Route("/")
 		mediaContentRoute.GET("/app/v1/media-assets/{id}/content", func(ctx http.Context) error {
 			http.SetOperation(ctx, OperationMediaAssetServiceGetContent)
-			id64, err := strconv.ParseUint(ctx.Vars().Get("id"), 10, 32)
+			id64, err := strconv.ParseInt(ctx.Vars().Get("id"), 10, 64)
 			if err != nil || id64 == 0 {
 				return mediaV1.ErrorBadRequest("invalid media asset id")
 			}
-			return mediaAssetService.ServeContent(ctx, ctx.Response(), ctx.Request(), uint64(id64))
+			return mediaAssetService.ServeContent(ctx, ctx.Response(), ctx.Request(), int64(id64))
 		})
 	}
 

@@ -89,7 +89,7 @@ func (s *OnlineSessionService) List(ctx context.Context, req *onlineSessionV1.Li
 	}
 
 	items := entriesToProto(entries, req.GetKeyword(), "")
-	total := uint64(len(items))
+	total := int64(len(items))
 
 	page := int(req.GetPage())
 	if page <= 0 {
@@ -153,7 +153,7 @@ func (s *OnlineSessionService) ListMy(ctx context.Context, req *onlineSessionV1.
 
 	return &onlineSessionV1.ListOnlineSessionResponse{
 		Items: entriesToProto(mine, "", req.GetCurrentJti()),
-		Total: uint64(len(mine)),
+		Total: int64(len(mine)),
 	}, nil
 }
 

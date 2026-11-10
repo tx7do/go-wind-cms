@@ -125,7 +125,7 @@ func (s *AuthenticationService) Login(ctx context.Context, req *authenticationV1
 // checkLoginPolicies 拉取租户登录策略并按当前上下文匹配（两段式：
 // 密码校验前 userId=0 只查全局条目；凭证校验通过后带 userId 查全局+定向）。
 // 策略读取失败 fail-open（与上游一致：登录基础设施抖动不打死登录）。
-func (s *AuthenticationService) checkLoginPolicies(ctx context.Context, tenantID, userId uint64, clientIP, deviceId string) (bool, string) {
+func (s *AuthenticationService) checkLoginPolicies(ctx context.Context, tenantID, userId int64, clientIP, deviceId string) (bool, string) {
 	policies, err := s.loginPolicyRepo.ListForLogin(ctx, tenantID)
 	if err != nil {
 		s.log.Errorf("list login policies failed for tenant [%d]: %s", tenantID, err.Error())
@@ -159,7 +159,7 @@ func containsPermission(perms []string, target string) bool {
 }
 
 // authorizeAndEnrichUserTokenPayloadUserTenantRelationOneToOne 一对一用户-租户关系的授权与丰富
-func (s *AuthenticationService) authorizeAndEnrichUserTokenPayloadUserTenantRelationOneToOne(ctx context.Context, userID, tenantID uint64, clientType authenticationV1.ClientType, tokenPayload *authenticationV1.UserTokenPayload) error {
+func (s *AuthenticationService) authorizeAndEnrichUserTokenPayloadUserTenantRelationOneToOne(ctx context.Context, userID, tenantID int64, clientType authenticationV1.ClientType, tokenPayload *authenticationV1.UserTokenPayload) error {
 	// 登录所需权限按客户端类型区分:
 	//   - admin(默认): 要求 sys:access_backend,保护管理后台
 	//   - app:        要求 sys:access_app,C 端用户无需后台权限
@@ -228,7 +228,7 @@ func (s *AuthenticationService) authorizeAndEnrichUserTokenPayloadUserTenantRela
 }
 
 // authorizeAndEnrichUserTokenPayload 授权并丰富用户令牌载荷
-func (s *AuthenticationService) authorizeAndEnrichUserTokenPayload(ctx context.Context, userID, tenantID uint64, clientType authenticationV1.ClientType, tokenPayload *authenticationV1.UserTokenPayload) error {
+func (s *AuthenticationService) authorizeAndEnrichUserTokenPayload(ctx context.Context, userID, tenantID int64, clientType authenticationV1.ClientType, tokenPayload *authenticationV1.UserTokenPayload) error {
 	switch constants.DefaultUserTenantRelationType {
 	default:
 		fallthrough
@@ -263,7 +263,7 @@ func (s *AuthenticationService) doGrantTypePassword(ctx context.Context, req *au
 	}
 	// ===== 租户解析：tenant_code 留空视为平台（tenant 0），非空则按编号定位租户 =====
 	// 解析后的 tenantID 限定后续凭证查询范围，消除同名 identifier 跨租户歧义。
-	var tenantID uint64 = 0
+	var tenantID int64 = 0
 	if code := req.GetTenantCode(); strings.TrimSpace(code) != "" {
 		tenant, _ := s.tenantRepo.Get(ctx, &identityV1.GetTenantRequest{
 			QueryBy: &identityV1.GetTenantRequest_Code{Code: code},
@@ -291,7 +291,7 @@ func (s *AuthenticationService) doGrantTypePassword(ctx context.Context, req *au
 		identifier = strings.TrimSpace(req.GetEmail())
 	}
 
-	var matchedUserID uint64
+	var matchedUserID int64
 	var err error
 	matchedUserID, err = s.userCredentialRepo.FindUserCredential(ctx, tenantID, identityType, identifier, req.GetPassword(), true)
 	if err != nil && tenantID == 0 {
@@ -299,7 +299,7 @@ func (s *AuthenticationService) doGrantTypePassword(ctx context.Context, req *au
 		// 精确查找；UserNotFound 再跨租户回退一次——仅当标识符全局唯一命中时放行，
 		// 并以凭证归属租户为准，消除"租户用户在 C 端永远无法登录"的问题。
 		// 同名歧义仍要求调用方显式传 tenant_code。身份鉴别已通过后才更新 tenantID。
-		var globalUserID, globalTenantID uint64
+		var globalUserID, globalTenantID int64
 		if authenticationV1.IsUserNotFound(err) {
 			globalUserID, globalTenantID, err = s.userCredentialRepo.FindUserCredentialAcrossTenants(ctx, identityType, identifier, req.GetPassword(), true)
 		}
@@ -478,7 +478,7 @@ func (s *AuthenticationService) RegisterUser(ctx context.Context, req *authentic
 		return nil, authenticationV1.ErrorBadRequest("invalid request")
 	}
 
-	var tenantId *uint64
+	var tenantId *int64
 	if constants.IsTenantModeEnabled {
 		var tenant *identityV1.Tenant
 		tenant, err = s.tenantRepo.Get(ctx, &identityV1.GetTenantRequest{
@@ -503,7 +503,7 @@ func (s *AuthenticationService) RegisterUser(ctx context.Context, req *authentic
 
 	// 查找租户的普通用户角色，分配给新注册用户（否则用户无角色将无法登录）。
 	// 注意不能授租户管理员角色:注册用户只应有 C 端访问能力。
-	var roleID *uint64
+	var roleID *int64
 	if tenantId != nil {
 		tenantRole, roleErr := s.roleRepo.GetTenantRoleByCode(ctx, *tenantId, constants.TenantUserRoleCode)
 		if roleErr != nil {

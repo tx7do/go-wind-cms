@@ -71,14 +71,14 @@ func (_u *SiteUpdate) ClearDeletedAt() *SiteUpdate {
 }
 
 // SetCreatedBy sets the "created_by" field.
-func (_u *SiteUpdate) SetCreatedBy(v uint64) *SiteUpdate {
+func (_u *SiteUpdate) SetCreatedBy(v int64) *SiteUpdate {
 	_u.mutation.ResetCreatedBy()
 	_u.mutation.SetCreatedBy(v)
 	return _u
 }
 
 // SetNillableCreatedBy sets the "created_by" field if the given value is not nil.
-func (_u *SiteUpdate) SetNillableCreatedBy(v *uint64) *SiteUpdate {
+func (_u *SiteUpdate) SetNillableCreatedBy(v *int64) *SiteUpdate {
 	if v != nil {
 		_u.SetCreatedBy(*v)
 	}
@@ -98,14 +98,14 @@ func (_u *SiteUpdate) ClearCreatedBy() *SiteUpdate {
 }
 
 // SetUpdatedBy sets the "updated_by" field.
-func (_u *SiteUpdate) SetUpdatedBy(v uint64) *SiteUpdate {
+func (_u *SiteUpdate) SetUpdatedBy(v int64) *SiteUpdate {
 	_u.mutation.ResetUpdatedBy()
 	_u.mutation.SetUpdatedBy(v)
 	return _u
 }
 
 // SetNillableUpdatedBy sets the "updated_by" field if the given value is not nil.
-func (_u *SiteUpdate) SetNillableUpdatedBy(v *uint64) *SiteUpdate {
+func (_u *SiteUpdate) SetNillableUpdatedBy(v *int64) *SiteUpdate {
 	if v != nil {
 		_u.SetUpdatedBy(*v)
 	}
@@ -125,14 +125,14 @@ func (_u *SiteUpdate) ClearUpdatedBy() *SiteUpdate {
 }
 
 // SetDeletedBy sets the "deleted_by" field.
-func (_u *SiteUpdate) SetDeletedBy(v uint64) *SiteUpdate {
+func (_u *SiteUpdate) SetDeletedBy(v int64) *SiteUpdate {
 	_u.mutation.ResetDeletedBy()
 	_u.mutation.SetDeletedBy(v)
 	return _u
 }
 
 // SetNillableDeletedBy sets the "deleted_by" field if the given value is not nil.
-func (_u *SiteUpdate) SetNillableDeletedBy(v *uint64) *SiteUpdate {
+func (_u *SiteUpdate) SetNillableDeletedBy(v *int64) *SiteUpdate {
 	if v != nil {
 		_u.SetDeletedBy(*v)
 	}
@@ -381,7 +381,7 @@ func (_u *SiteUpdate) sqlSave(ctx context.Context) (_node int, err error) {
 	if err := _u.check(); err != nil {
 		return _node, err
 	}
-	_spec := sqlgraph.NewUpdateSpec(site.Table, site.Columns, sqlgraph.NewFieldSpec(site.FieldID, field.TypeUint64))
+	_spec := sqlgraph.NewUpdateSpec(site.Table, site.Columns, sqlgraph.NewFieldSpec(site.FieldID, field.TypeInt64))
 	if ps := _u.mutation.predicates; len(ps) > 0 {
 		_spec.Predicate = func(selector *sql.Selector) {
 			for i := range ps {
@@ -405,34 +405,34 @@ func (_u *SiteUpdate) sqlSave(ctx context.Context) (_node int, err error) {
 		_spec.ClearField(site.FieldDeletedAt, field.TypeTime)
 	}
 	if value, ok := _u.mutation.CreatedBy(); ok {
-		_spec.SetField(site.FieldCreatedBy, field.TypeUint64, value)
+		_spec.SetField(site.FieldCreatedBy, field.TypeInt64, value)
 	}
 	if value, ok := _u.mutation.AddedCreatedBy(); ok {
-		_spec.AddField(site.FieldCreatedBy, field.TypeUint64, value)
+		_spec.AddField(site.FieldCreatedBy, field.TypeInt64, value)
 	}
 	if _u.mutation.CreatedByCleared() {
-		_spec.ClearField(site.FieldCreatedBy, field.TypeUint64)
+		_spec.ClearField(site.FieldCreatedBy, field.TypeInt64)
 	}
 	if value, ok := _u.mutation.UpdatedBy(); ok {
-		_spec.SetField(site.FieldUpdatedBy, field.TypeUint64, value)
+		_spec.SetField(site.FieldUpdatedBy, field.TypeInt64, value)
 	}
 	if value, ok := _u.mutation.AddedUpdatedBy(); ok {
-		_spec.AddField(site.FieldUpdatedBy, field.TypeUint64, value)
+		_spec.AddField(site.FieldUpdatedBy, field.TypeInt64, value)
 	}
 	if _u.mutation.UpdatedByCleared() {
-		_spec.ClearField(site.FieldUpdatedBy, field.TypeUint64)
+		_spec.ClearField(site.FieldUpdatedBy, field.TypeInt64)
 	}
 	if value, ok := _u.mutation.DeletedBy(); ok {
-		_spec.SetField(site.FieldDeletedBy, field.TypeUint64, value)
+		_spec.SetField(site.FieldDeletedBy, field.TypeInt64, value)
 	}
 	if value, ok := _u.mutation.AddedDeletedBy(); ok {
-		_spec.AddField(site.FieldDeletedBy, field.TypeUint64, value)
+		_spec.AddField(site.FieldDeletedBy, field.TypeInt64, value)
 	}
 	if _u.mutation.DeletedByCleared() {
-		_spec.ClearField(site.FieldDeletedBy, field.TypeUint64)
+		_spec.ClearField(site.FieldDeletedBy, field.TypeInt64)
 	}
 	if _u.mutation.TenantIDCleared() {
-		_spec.ClearField(site.FieldTenantID, field.TypeUint64)
+		_spec.ClearField(site.FieldTenantID, field.TypeInt64)
 	}
 	if value, ok := _u.mutation.Name(); ok {
 		_spec.SetField(site.FieldName, field.TypeString, value)
@@ -556,14 +556,14 @@ func (_u *SiteUpdateOne) ClearDeletedAt() *SiteUpdateOne {
 }
 
 // SetCreatedBy sets the "created_by" field.
-func (_u *SiteUpdateOne) SetCreatedBy(v uint64) *SiteUpdateOne {
+func (_u *SiteUpdateOne) SetCreatedBy(v int64) *SiteUpdateOne {
 	_u.mutation.ResetCreatedBy()
 	_u.mutation.SetCreatedBy(v)
 	return _u
 }
 
 // SetNillableCreatedBy sets the "created_by" field if the given value is not nil.
-func (_u *SiteUpdateOne) SetNillableCreatedBy(v *uint64) *SiteUpdateOne {
+func (_u *SiteUpdateOne) SetNillableCreatedBy(v *int64) *SiteUpdateOne {
 	if v != nil {
 		_u.SetCreatedBy(*v)
 	}
@@ -583,14 +583,14 @@ func (_u *SiteUpdateOne) ClearCreatedBy() *SiteUpdateOne {
 }
 
 // SetUpdatedBy sets the "updated_by" field.
-func (_u *SiteUpdateOne) SetUpdatedBy(v uint64) *SiteUpdateOne {
+func (_u *SiteUpdateOne) SetUpdatedBy(v int64) *SiteUpdateOne {
 	_u.mutation.ResetUpdatedBy()
 	_u.mutation.SetUpdatedBy(v)
 	return _u
 }
 
 // SetNillableUpdatedBy sets the "updated_by" field if the given value is not nil.
-func (_u *SiteUpdateOne) SetNillableUpdatedBy(v *uint64) *SiteUpdateOne {
+func (_u *SiteUpdateOne) SetNillableUpdatedBy(v *int64) *SiteUpdateOne {
 	if v != nil {
 		_u.SetUpdatedBy(*v)
 	}
@@ -610,14 +610,14 @@ func (_u *SiteUpdateOne) ClearUpdatedBy() *SiteUpdateOne {
 }
 
 // SetDeletedBy sets the "deleted_by" field.
-func (_u *SiteUpdateOne) SetDeletedBy(v uint64) *SiteUpdateOne {
+func (_u *SiteUpdateOne) SetDeletedBy(v int64) *SiteUpdateOne {
 	_u.mutation.ResetDeletedBy()
 	_u.mutation.SetDeletedBy(v)
 	return _u
 }
 
 // SetNillableDeletedBy sets the "deleted_by" field if the given value is not nil.
-func (_u *SiteUpdateOne) SetNillableDeletedBy(v *uint64) *SiteUpdateOne {
+func (_u *SiteUpdateOne) SetNillableDeletedBy(v *int64) *SiteUpdateOne {
 	if v != nil {
 		_u.SetDeletedBy(*v)
 	}
@@ -879,7 +879,7 @@ func (_u *SiteUpdateOne) sqlSave(ctx context.Context) (_node *Site, err error) {
 	if err := _u.check(); err != nil {
 		return _node, err
 	}
-	_spec := sqlgraph.NewUpdateSpec(site.Table, site.Columns, sqlgraph.NewFieldSpec(site.FieldID, field.TypeUint64))
+	_spec := sqlgraph.NewUpdateSpec(site.Table, site.Columns, sqlgraph.NewFieldSpec(site.FieldID, field.TypeInt64))
 	id, ok := _u.mutation.ID()
 	if !ok {
 		return nil, &ValidationError{Name: "id", err: errors.New(`ent: missing "Site.id" for update`)}
@@ -920,34 +920,34 @@ func (_u *SiteUpdateOne) sqlSave(ctx context.Context) (_node *Site, err error) {
 		_spec.ClearField(site.FieldDeletedAt, field.TypeTime)
 	}
 	if value, ok := _u.mutation.CreatedBy(); ok {
-		_spec.SetField(site.FieldCreatedBy, field.TypeUint64, value)
+		_spec.SetField(site.FieldCreatedBy, field.TypeInt64, value)
 	}
 	if value, ok := _u.mutation.AddedCreatedBy(); ok {
-		_spec.AddField(site.FieldCreatedBy, field.TypeUint64, value)
+		_spec.AddField(site.FieldCreatedBy, field.TypeInt64, value)
 	}
 	if _u.mutation.CreatedByCleared() {
-		_spec.ClearField(site.FieldCreatedBy, field.TypeUint64)
+		_spec.ClearField(site.FieldCreatedBy, field.TypeInt64)
 	}
 	if value, ok := _u.mutation.UpdatedBy(); ok {
-		_spec.SetField(site.FieldUpdatedBy, field.TypeUint64, value)
+		_spec.SetField(site.FieldUpdatedBy, field.TypeInt64, value)
 	}
 	if value, ok := _u.mutation.AddedUpdatedBy(); ok {
-		_spec.AddField(site.FieldUpdatedBy, field.TypeUint64, value)
+		_spec.AddField(site.FieldUpdatedBy, field.TypeInt64, value)
 	}
 	if _u.mutation.UpdatedByCleared() {
-		_spec.ClearField(site.FieldUpdatedBy, field.TypeUint64)
+		_spec.ClearField(site.FieldUpdatedBy, field.TypeInt64)
 	}
 	if value, ok := _u.mutation.DeletedBy(); ok {
-		_spec.SetField(site.FieldDeletedBy, field.TypeUint64, value)
+		_spec.SetField(site.FieldDeletedBy, field.TypeInt64, value)
 	}
 	if value, ok := _u.mutation.AddedDeletedBy(); ok {
-		_spec.AddField(site.FieldDeletedBy, field.TypeUint64, value)
+		_spec.AddField(site.FieldDeletedBy, field.TypeInt64, value)
 	}
 	if _u.mutation.DeletedByCleared() {
-		_spec.ClearField(site.FieldDeletedBy, field.TypeUint64)
+		_spec.ClearField(site.FieldDeletedBy, field.TypeInt64)
 	}
 	if _u.mutation.TenantIDCleared() {
-		_spec.ClearField(site.FieldTenantID, field.TypeUint64)
+		_spec.ClearField(site.FieldTenantID, field.TypeInt64)
 	}
 	if value, ok := _u.mutation.Name(); ok {
 		_spec.SetField(site.FieldName, field.TypeString, value)

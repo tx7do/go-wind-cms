@@ -51,7 +51,7 @@ func (s *CommentService) Count(ctx context.Context, req *paginationV1.PagingRequ
 	}
 
 	return &commentV1.CountCommentResponse{
-		Count: uint64(count),
+		Count: int64(count),
 	}, nil
 }
 

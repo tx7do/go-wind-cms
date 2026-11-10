@@ -70,14 +70,14 @@ func (_u *NavigationItemUpdate) ClearDeletedAt() *NavigationItemUpdate {
 }
 
 // SetCreatedBy sets the "created_by" field.
-func (_u *NavigationItemUpdate) SetCreatedBy(v uint64) *NavigationItemUpdate {
+func (_u *NavigationItemUpdate) SetCreatedBy(v int64) *NavigationItemUpdate {
 	_u.mutation.ResetCreatedBy()
 	_u.mutation.SetCreatedBy(v)
 	return _u
 }
 
 // SetNillableCreatedBy sets the "created_by" field if the given value is not nil.
-func (_u *NavigationItemUpdate) SetNillableCreatedBy(v *uint64) *NavigationItemUpdate {
+func (_u *NavigationItemUpdate) SetNillableCreatedBy(v *int64) *NavigationItemUpdate {
 	if v != nil {
 		_u.SetCreatedBy(*v)
 	}
@@ -97,14 +97,14 @@ func (_u *NavigationItemUpdate) ClearCreatedBy() *NavigationItemUpdate {
 }
 
 // SetUpdatedBy sets the "updated_by" field.
-func (_u *NavigationItemUpdate) SetUpdatedBy(v uint64) *NavigationItemUpdate {
+func (_u *NavigationItemUpdate) SetUpdatedBy(v int64) *NavigationItemUpdate {
 	_u.mutation.ResetUpdatedBy()
 	_u.mutation.SetUpdatedBy(v)
 	return _u
 }
 
 // SetNillableUpdatedBy sets the "updated_by" field if the given value is not nil.
-func (_u *NavigationItemUpdate) SetNillableUpdatedBy(v *uint64) *NavigationItemUpdate {
+func (_u *NavigationItemUpdate) SetNillableUpdatedBy(v *int64) *NavigationItemUpdate {
 	if v != nil {
 		_u.SetUpdatedBy(*v)
 	}
@@ -124,14 +124,14 @@ func (_u *NavigationItemUpdate) ClearUpdatedBy() *NavigationItemUpdate {
 }
 
 // SetDeletedBy sets the "deleted_by" field.
-func (_u *NavigationItemUpdate) SetDeletedBy(v uint64) *NavigationItemUpdate {
+func (_u *NavigationItemUpdate) SetDeletedBy(v int64) *NavigationItemUpdate {
 	_u.mutation.ResetDeletedBy()
 	_u.mutation.SetDeletedBy(v)
 	return _u
 }
 
 // SetNillableDeletedBy sets the "deleted_by" field if the given value is not nil.
-func (_u *NavigationItemUpdate) SetNillableDeletedBy(v *uint64) *NavigationItemUpdate {
+func (_u *NavigationItemUpdate) SetNillableDeletedBy(v *int64) *NavigationItemUpdate {
 	if v != nil {
 		_u.SetDeletedBy(*v)
 	}
@@ -178,13 +178,13 @@ func (_u *NavigationItemUpdate) ClearSortOrder() *NavigationItemUpdate {
 }
 
 // SetParentID sets the "parent_id" field.
-func (_u *NavigationItemUpdate) SetParentID(v uint64) *NavigationItemUpdate {
+func (_u *NavigationItemUpdate) SetParentID(v int64) *NavigationItemUpdate {
 	_u.mutation.SetParentID(v)
 	return _u
 }
 
 // SetNillableParentID sets the "parent_id" field if the given value is not nil.
-func (_u *NavigationItemUpdate) SetNillableParentID(v *uint64) *NavigationItemUpdate {
+func (_u *NavigationItemUpdate) SetNillableParentID(v *int64) *NavigationItemUpdate {
 	if v != nil {
 		_u.SetParentID(*v)
 	}
@@ -218,14 +218,14 @@ func (_u *NavigationItemUpdate) ClearLinkType() *NavigationItemUpdate {
 }
 
 // SetNavigationID sets the "navigation_id" field.
-func (_u *NavigationItemUpdate) SetNavigationID(v uint64) *NavigationItemUpdate {
+func (_u *NavigationItemUpdate) SetNavigationID(v int64) *NavigationItemUpdate {
 	_u.mutation.ResetNavigationID()
 	_u.mutation.SetNavigationID(v)
 	return _u
 }
 
 // SetNillableNavigationID sets the "navigation_id" field if the given value is not nil.
-func (_u *NavigationItemUpdate) SetNillableNavigationID(v *uint64) *NavigationItemUpdate {
+func (_u *NavigationItemUpdate) SetNillableNavigationID(v *int64) *NavigationItemUpdate {
 	if v != nil {
 		_u.SetNavigationID(*v)
 	}
@@ -285,14 +285,14 @@ func (_u *NavigationItemUpdate) ClearURL() *NavigationItemUpdate {
 }
 
 // SetObjectID sets the "object_id" field.
-func (_u *NavigationItemUpdate) SetObjectID(v uint64) *NavigationItemUpdate {
+func (_u *NavigationItemUpdate) SetObjectID(v int64) *NavigationItemUpdate {
 	_u.mutation.ResetObjectID()
 	_u.mutation.SetObjectID(v)
 	return _u
 }
 
 // SetNillableObjectID sets the "object_id" field if the given value is not nil.
-func (_u *NavigationItemUpdate) SetNillableObjectID(v *uint64) *NavigationItemUpdate {
+func (_u *NavigationItemUpdate) SetNillableObjectID(v *int64) *NavigationItemUpdate {
 	if v != nil {
 		_u.SetObjectID(*v)
 	}
@@ -417,14 +417,14 @@ func (_u *NavigationItemUpdate) SetParent(v *NavigationItem) *NavigationItemUpda
 }
 
 // AddChildIDs adds the "children" edge to the NavigationItem entity by IDs.
-func (_u *NavigationItemUpdate) AddChildIDs(ids ...uint64) *NavigationItemUpdate {
+func (_u *NavigationItemUpdate) AddChildIDs(ids ...int64) *NavigationItemUpdate {
 	_u.mutation.AddChildIDs(ids...)
 	return _u
 }
 
 // AddChildren adds the "children" edges to the NavigationItem entity.
 func (_u *NavigationItemUpdate) AddChildren(v ...*NavigationItem) *NavigationItemUpdate {
-	ids := make([]uint64, len(v))
+	ids := make([]int64, len(v))
 	for i := range v {
 		ids[i] = v[i].ID
 	}
@@ -449,14 +449,14 @@ func (_u *NavigationItemUpdate) ClearChildren() *NavigationItemUpdate {
 }
 
 // RemoveChildIDs removes the "children" edge to NavigationItem entities by IDs.
-func (_u *NavigationItemUpdate) RemoveChildIDs(ids ...uint64) *NavigationItemUpdate {
+func (_u *NavigationItemUpdate) RemoveChildIDs(ids ...int64) *NavigationItemUpdate {
 	_u.mutation.RemoveChildIDs(ids...)
 	return _u
 }
 
 // RemoveChildren removes "children" edges to NavigationItem entities.
 func (_u *NavigationItemUpdate) RemoveChildren(v ...*NavigationItem) *NavigationItemUpdate {
-	ids := make([]uint64, len(v))
+	ids := make([]int64, len(v))
 	for i := range v {
 		ids[i] = v[i].ID
 	}
@@ -510,7 +510,7 @@ func (_u *NavigationItemUpdate) sqlSave(ctx context.Context) (_node int, err err
 	if err := _u.check(); err != nil {
 		return _node, err
 	}
-	_spec := sqlgraph.NewUpdateSpec(navigationitem.Table, navigationitem.Columns, sqlgraph.NewFieldSpec(navigationitem.FieldID, field.TypeUint64))
+	_spec := sqlgraph.NewUpdateSpec(navigationitem.Table, navigationitem.Columns, sqlgraph.NewFieldSpec(navigationitem.FieldID, field.TypeInt64))
 	if ps := _u.mutation.predicates; len(ps) > 0 {
 		_spec.Predicate = func(selector *sql.Selector) {
 			for i := range ps {
@@ -534,31 +534,31 @@ func (_u *NavigationItemUpdate) sqlSave(ctx context.Context) (_node int, err err
 		_spec.ClearField(navigationitem.FieldDeletedAt, field.TypeTime)
 	}
 	if value, ok := _u.mutation.CreatedBy(); ok {
-		_spec.SetField(navigationitem.FieldCreatedBy, field.TypeUint64, value)
+		_spec.SetField(navigationitem.FieldCreatedBy, field.TypeInt64, value)
 	}
 	if value, ok := _u.mutation.AddedCreatedBy(); ok {
-		_spec.AddField(navigationitem.FieldCreatedBy, field.TypeUint64, value)
+		_spec.AddField(navigationitem.FieldCreatedBy, field.TypeInt64, value)
 	}
 	if _u.mutation.CreatedByCleared() {
-		_spec.ClearField(navigationitem.FieldCreatedBy, field.TypeUint64)
+		_spec.ClearField(navigationitem.FieldCreatedBy, field.TypeInt64)
 	}
 	if value, ok := _u.mutation.UpdatedBy(); ok {
-		_spec.SetField(navigationitem.FieldUpdatedBy, field.TypeUint64, value)
+		_spec.SetField(navigationitem.FieldUpdatedBy, field.TypeInt64, value)
 	}
 	if value, ok := _u.mutation.AddedUpdatedBy(); ok {
-		_spec.AddField(navigationitem.FieldUpdatedBy, field.TypeUint64, value)
+		_spec.AddField(navigationitem.FieldUpdatedBy, field.TypeInt64, value)
 	}
 	if _u.mutation.UpdatedByCleared() {
-		_spec.ClearField(navigationitem.FieldUpdatedBy, field.TypeUint64)
+		_spec.ClearField(navigationitem.FieldUpdatedBy, field.TypeInt64)
 	}
 	if value, ok := _u.mutation.DeletedBy(); ok {
-		_spec.SetField(navigationitem.FieldDeletedBy, field.TypeUint64, value)
+		_spec.SetField(navigationitem.FieldDeletedBy, field.TypeInt64, value)
 	}
 	if value, ok := _u.mutation.AddedDeletedBy(); ok {
-		_spec.AddField(navigationitem.FieldDeletedBy, field.TypeUint64, value)
+		_spec.AddField(navigationitem.FieldDeletedBy, field.TypeInt64, value)
 	}
 	if _u.mutation.DeletedByCleared() {
-		_spec.ClearField(navigationitem.FieldDeletedBy, field.TypeUint64)
+		_spec.ClearField(navigationitem.FieldDeletedBy, field.TypeInt64)
 	}
 	if value, ok := _u.mutation.SortOrder(); ok {
 		_spec.SetField(navigationitem.FieldSortOrder, field.TypeUint32, value)
@@ -570,7 +570,7 @@ func (_u *NavigationItemUpdate) sqlSave(ctx context.Context) (_node int, err err
 		_spec.ClearField(navigationitem.FieldSortOrder, field.TypeUint32)
 	}
 	if _u.mutation.TenantIDCleared() {
-		_spec.ClearField(navigationitem.FieldTenantID, field.TypeUint64)
+		_spec.ClearField(navigationitem.FieldTenantID, field.TypeInt64)
 	}
 	if value, ok := _u.mutation.LinkType(); ok {
 		_spec.SetField(navigationitem.FieldLinkType, field.TypeEnum, value)
@@ -579,13 +579,13 @@ func (_u *NavigationItemUpdate) sqlSave(ctx context.Context) (_node int, err err
 		_spec.ClearField(navigationitem.FieldLinkType, field.TypeEnum)
 	}
 	if value, ok := _u.mutation.NavigationID(); ok {
-		_spec.SetField(navigationitem.FieldNavigationID, field.TypeUint64, value)
+		_spec.SetField(navigationitem.FieldNavigationID, field.TypeInt64, value)
 	}
 	if value, ok := _u.mutation.AddedNavigationID(); ok {
-		_spec.AddField(navigationitem.FieldNavigationID, field.TypeUint64, value)
+		_spec.AddField(navigationitem.FieldNavigationID, field.TypeInt64, value)
 	}
 	if _u.mutation.NavigationIDCleared() {
-		_spec.ClearField(navigationitem.FieldNavigationID, field.TypeUint64)
+		_spec.ClearField(navigationitem.FieldNavigationID, field.TypeInt64)
 	}
 	if value, ok := _u.mutation.Title(); ok {
 		_spec.SetField(navigationitem.FieldTitle, field.TypeString, value)
@@ -600,13 +600,13 @@ func (_u *NavigationItemUpdate) sqlSave(ctx context.Context) (_node int, err err
 		_spec.ClearField(navigationitem.FieldURL, field.TypeString)
 	}
 	if value, ok := _u.mutation.ObjectID(); ok {
-		_spec.SetField(navigationitem.FieldObjectID, field.TypeUint64, value)
+		_spec.SetField(navigationitem.FieldObjectID, field.TypeInt64, value)
 	}
 	if value, ok := _u.mutation.AddedObjectID(); ok {
-		_spec.AddField(navigationitem.FieldObjectID, field.TypeUint64, value)
+		_spec.AddField(navigationitem.FieldObjectID, field.TypeInt64, value)
 	}
 	if _u.mutation.ObjectIDCleared() {
-		_spec.ClearField(navigationitem.FieldObjectID, field.TypeUint64)
+		_spec.ClearField(navigationitem.FieldObjectID, field.TypeInt64)
 	}
 	if value, ok := _u.mutation.Icon(); ok {
 		_spec.SetField(navigationitem.FieldIcon, field.TypeString, value)
@@ -646,7 +646,7 @@ func (_u *NavigationItemUpdate) sqlSave(ctx context.Context) (_node int, err err
 			Columns: []string{navigationitem.ParentColumn},
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
-				IDSpec: sqlgraph.NewFieldSpec(navigationitem.FieldID, field.TypeUint64),
+				IDSpec: sqlgraph.NewFieldSpec(navigationitem.FieldID, field.TypeInt64),
 			},
 		}
 		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
@@ -659,7 +659,7 @@ func (_u *NavigationItemUpdate) sqlSave(ctx context.Context) (_node int, err err
 			Columns: []string{navigationitem.ParentColumn},
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
-				IDSpec: sqlgraph.NewFieldSpec(navigationitem.FieldID, field.TypeUint64),
+				IDSpec: sqlgraph.NewFieldSpec(navigationitem.FieldID, field.TypeInt64),
 			},
 		}
 		for _, k := range nodes {
@@ -675,7 +675,7 @@ func (_u *NavigationItemUpdate) sqlSave(ctx context.Context) (_node int, err err
 			Columns: []string{navigationitem.ChildrenColumn},
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
-				IDSpec: sqlgraph.NewFieldSpec(navigationitem.FieldID, field.TypeUint64),
+				IDSpec: sqlgraph.NewFieldSpec(navigationitem.FieldID, field.TypeInt64),
 			},
 		}
 		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
@@ -688,7 +688,7 @@ func (_u *NavigationItemUpdate) sqlSave(ctx context.Context) (_node int, err err
 			Columns: []string{navigationitem.ChildrenColumn},
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
-				IDSpec: sqlgraph.NewFieldSpec(navigationitem.FieldID, field.TypeUint64),
+				IDSpec: sqlgraph.NewFieldSpec(navigationitem.FieldID, field.TypeInt64),
 			},
 		}
 		for _, k := range nodes {
@@ -704,7 +704,7 @@ func (_u *NavigationItemUpdate) sqlSave(ctx context.Context) (_node int, err err
 			Columns: []string{navigationitem.ChildrenColumn},
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
-				IDSpec: sqlgraph.NewFieldSpec(navigationitem.FieldID, field.TypeUint64),
+				IDSpec: sqlgraph.NewFieldSpec(navigationitem.FieldID, field.TypeInt64),
 			},
 		}
 		for _, k := range nodes {
@@ -775,14 +775,14 @@ func (_u *NavigationItemUpdateOne) ClearDeletedAt() *NavigationItemUpdateOne {
 }
 
 // SetCreatedBy sets the "created_by" field.
-func (_u *NavigationItemUpdateOne) SetCreatedBy(v uint64) *NavigationItemUpdateOne {
+func (_u *NavigationItemUpdateOne) SetCreatedBy(v int64) *NavigationItemUpdateOne {
 	_u.mutation.ResetCreatedBy()
 	_u.mutation.SetCreatedBy(v)
 	return _u
 }
 
 // SetNillableCreatedBy sets the "created_by" field if the given value is not nil.
-func (_u *NavigationItemUpdateOne) SetNillableCreatedBy(v *uint64) *NavigationItemUpdateOne {
+func (_u *NavigationItemUpdateOne) SetNillableCreatedBy(v *int64) *NavigationItemUpdateOne {
 	if v != nil {
 		_u.SetCreatedBy(*v)
 	}
@@ -802,14 +802,14 @@ func (_u *NavigationItemUpdateOne) ClearCreatedBy() *NavigationItemUpdateOne {
 }
 
 // SetUpdatedBy sets the "updated_by" field.
-func (_u *NavigationItemUpdateOne) SetUpdatedBy(v uint64) *NavigationItemUpdateOne {
+func (_u *NavigationItemUpdateOne) SetUpdatedBy(v int64) *NavigationItemUpdateOne {
 	_u.mutation.ResetUpdatedBy()
 	_u.mutation.SetUpdatedBy(v)
 	return _u
 }
 
 // SetNillableUpdatedBy sets the "updated_by" field if the given value is not nil.
-func (_u *NavigationItemUpdateOne) SetNillableUpdatedBy(v *uint64) *NavigationItemUpdateOne {
+func (_u *NavigationItemUpdateOne) SetNillableUpdatedBy(v *int64) *NavigationItemUpdateOne {
 	if v != nil {
 		_u.SetUpdatedBy(*v)
 	}
@@ -829,14 +829,14 @@ func (_u *NavigationItemUpdateOne) ClearUpdatedBy() *NavigationItemUpdateOne {
 }
 
 // SetDeletedBy sets the "deleted_by" field.
-func (_u *NavigationItemUpdateOne) SetDeletedBy(v uint64) *NavigationItemUpdateOne {
+func (_u *NavigationItemUpdateOne) SetDeletedBy(v int64) *NavigationItemUpdateOne {
 	_u.mutation.ResetDeletedBy()
 	_u.mutation.SetDeletedBy(v)
 	return _u
 }
 
 // SetNillableDeletedBy sets the "deleted_by" field if the given value is not nil.
-func (_u *NavigationItemUpdateOne) SetNillableDeletedBy(v *uint64) *NavigationItemUpdateOne {
+func (_u *NavigationItemUpdateOne) SetNillableDeletedBy(v *int64) *NavigationItemUpdateOne {
 	if v != nil {
 		_u.SetDeletedBy(*v)
 	}
@@ -883,13 +883,13 @@ func (_u *NavigationItemUpdateOne) ClearSortOrder() *NavigationItemUpdateOne {
 }
 
 // SetParentID sets the "parent_id" field.
-func (_u *NavigationItemUpdateOne) SetParentID(v uint64) *NavigationItemUpdateOne {
+func (_u *NavigationItemUpdateOne) SetParentID(v int64) *NavigationItemUpdateOne {
 	_u.mutation.SetParentID(v)
 	return _u
 }
 
 // SetNillableParentID sets the "parent_id" field if the given value is not nil.
-func (_u *NavigationItemUpdateOne) SetNillableParentID(v *uint64) *NavigationItemUpdateOne {
+func (_u *NavigationItemUpdateOne) SetNillableParentID(v *int64) *NavigationItemUpdateOne {
 	if v != nil {
 		_u.SetParentID(*v)
 	}
@@ -923,14 +923,14 @@ func (_u *NavigationItemUpdateOne) ClearLinkType() *NavigationItemUpdateOne {
 }
 
 // SetNavigationID sets the "navigation_id" field.
-func (_u *NavigationItemUpdateOne) SetNavigationID(v uint64) *NavigationItemUpdateOne {
+func (_u *NavigationItemUpdateOne) SetNavigationID(v int64) *NavigationItemUpdateOne {
 	_u.mutation.ResetNavigationID()
 	_u.mutation.SetNavigationID(v)
 	return _u
 }
 
 // SetNillableNavigationID sets the "navigation_id" field if the given value is not nil.
-func (_u *NavigationItemUpdateOne) SetNillableNavigationID(v *uint64) *NavigationItemUpdateOne {
+func (_u *NavigationItemUpdateOne) SetNillableNavigationID(v *int64) *NavigationItemUpdateOne {
 	if v != nil {
 		_u.SetNavigationID(*v)
 	}
@@ -990,14 +990,14 @@ func (_u *NavigationItemUpdateOne) ClearURL() *NavigationItemUpdateOne {
 }
 
 // SetObjectID sets the "object_id" field.
-func (_u *NavigationItemUpdateOne) SetObjectID(v uint64) *NavigationItemUpdateOne {
+func (_u *NavigationItemUpdateOne) SetObjectID(v int64) *NavigationItemUpdateOne {
 	_u.mutation.ResetObjectID()
 	_u.mutation.SetObjectID(v)
 	return _u
 }
 
 // SetNillableObjectID sets the "object_id" field if the given value is not nil.
-func (_u *NavigationItemUpdateOne) SetNillableObjectID(v *uint64) *NavigationItemUpdateOne {
+func (_u *NavigationItemUpdateOne) SetNillableObjectID(v *int64) *NavigationItemUpdateOne {
 	if v != nil {
 		_u.SetObjectID(*v)
 	}
@@ -1122,14 +1122,14 @@ func (_u *NavigationItemUpdateOne) SetParent(v *NavigationItem) *NavigationItemU
 }
 
 // AddChildIDs adds the "children" edge to the NavigationItem entity by IDs.
-func (_u *NavigationItemUpdateOne) AddChildIDs(ids ...uint64) *NavigationItemUpdateOne {
+func (_u *NavigationItemUpdateOne) AddChildIDs(ids ...int64) *NavigationItemUpdateOne {
 	_u.mutation.AddChildIDs(ids...)
 	return _u
 }
 
 // AddChildren adds the "children" edges to the NavigationItem entity.
 func (_u *NavigationItemUpdateOne) AddChildren(v ...*NavigationItem) *NavigationItemUpdateOne {
-	ids := make([]uint64, len(v))
+	ids := make([]int64, len(v))
 	for i := range v {
 		ids[i] = v[i].ID
 	}
@@ -1154,14 +1154,14 @@ func (_u *NavigationItemUpdateOne) ClearChildren() *NavigationItemUpdateOne {
 }
 
 // RemoveChildIDs removes the "children" edge to NavigationItem entities by IDs.
-func (_u *NavigationItemUpdateOne) RemoveChildIDs(ids ...uint64) *NavigationItemUpdateOne {
+func (_u *NavigationItemUpdateOne) RemoveChildIDs(ids ...int64) *NavigationItemUpdateOne {
 	_u.mutation.RemoveChildIDs(ids...)
 	return _u
 }
 
 // RemoveChildren removes "children" edges to NavigationItem entities.
 func (_u *NavigationItemUpdateOne) RemoveChildren(v ...*NavigationItem) *NavigationItemUpdateOne {
-	ids := make([]uint64, len(v))
+	ids := make([]int64, len(v))
 	for i := range v {
 		ids[i] = v[i].ID
 	}
@@ -1228,7 +1228,7 @@ func (_u *NavigationItemUpdateOne) sqlSave(ctx context.Context) (_node *Navigati
 	if err := _u.check(); err != nil {
 		return _node, err
 	}
-	_spec := sqlgraph.NewUpdateSpec(navigationitem.Table, navigationitem.Columns, sqlgraph.NewFieldSpec(navigationitem.FieldID, field.TypeUint64))
+	_spec := sqlgraph.NewUpdateSpec(navigationitem.Table, navigationitem.Columns, sqlgraph.NewFieldSpec(navigationitem.FieldID, field.TypeInt64))
 	id, ok := _u.mutation.ID()
 	if !ok {
 		return nil, &ValidationError{Name: "id", err: errors.New(`ent: missing "NavigationItem.id" for update`)}
@@ -1269,31 +1269,31 @@ func (_u *NavigationItemUpdateOne) sqlSave(ctx context.Context) (_node *Navigati
 		_spec.ClearField(navigationitem.FieldDeletedAt, field.TypeTime)
 	}
 	if value, ok := _u.mutation.CreatedBy(); ok {
-		_spec.SetField(navigationitem.FieldCreatedBy, field.TypeUint64, value)
+		_spec.SetField(navigationitem.FieldCreatedBy, field.TypeInt64, value)
 	}
 	if value, ok := _u.mutation.AddedCreatedBy(); ok {
-		_spec.AddField(navigationitem.FieldCreatedBy, field.TypeUint64, value)
+		_spec.AddField(navigationitem.FieldCreatedBy, field.TypeInt64, value)
 	}
 	if _u.mutation.CreatedByCleared() {
-		_spec.ClearField(navigationitem.FieldCreatedBy, field.TypeUint64)
+		_spec.ClearField(navigationitem.FieldCreatedBy, field.TypeInt64)
 	}
 	if value, ok := _u.mutation.UpdatedBy(); ok {
-		_spec.SetField(navigationitem.FieldUpdatedBy, field.TypeUint64, value)
+		_spec.SetField(navigationitem.FieldUpdatedBy, field.TypeInt64, value)
 	}
 	if value, ok := _u.mutation.AddedUpdatedBy(); ok {
-		_spec.AddField(navigationitem.FieldUpdatedBy, field.TypeUint64, value)
+		_spec.AddField(navigationitem.FieldUpdatedBy, field.TypeInt64, value)
 	}
 	if _u.mutation.UpdatedByCleared() {
-		_spec.ClearField(navigationitem.FieldUpdatedBy, field.TypeUint64)
+		_spec.ClearField(navigationitem.FieldUpdatedBy, field.TypeInt64)
 	}
 	if value, ok := _u.mutation.DeletedBy(); ok {
-		_spec.SetField(navigationitem.FieldDeletedBy, field.TypeUint64, value)
+		_spec.SetField(navigationitem.FieldDeletedBy, field.TypeInt64, value)
 	}
 	if value, ok := _u.mutation.AddedDeletedBy(); ok {
-		_spec.AddField(navigationitem.FieldDeletedBy, field.TypeUint64, value)
+		_spec.AddField(navigationitem.FieldDeletedBy, field.TypeInt64, value)
 	}
 	if _u.mutation.DeletedByCleared() {
-		_spec.ClearField(navigationitem.FieldDeletedBy, field.TypeUint64)
+		_spec.ClearField(navigationitem.FieldDeletedBy, field.TypeInt64)
 	}
 	if value, ok := _u.mutation.SortOrder(); ok {
 		_spec.SetField(navigationitem.FieldSortOrder, field.TypeUint32, value)
@@ -1305,7 +1305,7 @@ func (_u *NavigationItemUpdateOne) sqlSave(ctx context.Context) (_node *Navigati
 		_spec.ClearField(navigationitem.FieldSortOrder, field.TypeUint32)
 	}
 	if _u.mutation.TenantIDCleared() {
-		_spec.ClearField(navigationitem.FieldTenantID, field.TypeUint64)
+		_spec.ClearField(navigationitem.FieldTenantID, field.TypeInt64)
 	}
 	if value, ok := _u.mutation.LinkType(); ok {
 		_spec.SetField(navigationitem.FieldLinkType, field.TypeEnum, value)
@@ -1314,13 +1314,13 @@ func (_u *NavigationItemUpdateOne) sqlSave(ctx context.Context) (_node *Navigati
 		_spec.ClearField(navigationitem.FieldLinkType, field.TypeEnum)
 	}
 	if value, ok := _u.mutation.NavigationID(); ok {
-		_spec.SetField(navigationitem.FieldNavigationID, field.TypeUint64, value)
+		_spec.SetField(navigationitem.FieldNavigationID, field.TypeInt64, value)
 	}
 	if value, ok := _u.mutation.AddedNavigationID(); ok {
-		_spec.AddField(navigationitem.FieldNavigationID, field.TypeUint64, value)
+		_spec.AddField(navigationitem.FieldNavigationID, field.TypeInt64, value)
 	}
 	if _u.mutation.NavigationIDCleared() {
-		_spec.ClearField(navigationitem.FieldNavigationID, field.TypeUint64)
+		_spec.ClearField(navigationitem.FieldNavigationID, field.TypeInt64)
 	}
 	if value, ok := _u.mutation.Title(); ok {
 		_spec.SetField(navigationitem.FieldTitle, field.TypeString, value)
@@ -1335,13 +1335,13 @@ func (_u *NavigationItemUpdateOne) sqlSave(ctx context.Context) (_node *Navigati
 		_spec.ClearField(navigationitem.FieldURL, field.TypeString)
 	}
 	if value, ok := _u.mutation.ObjectID(); ok {
-		_spec.SetField(navigationitem.FieldObjectID, field.TypeUint64, value)
+		_spec.SetField(navigationitem.FieldObjectID, field.TypeInt64, value)
 	}
 	if value, ok := _u.mutation.AddedObjectID(); ok {
-		_spec.AddField(navigationitem.FieldObjectID, field.TypeUint64, value)
+		_spec.AddField(navigationitem.FieldObjectID, field.TypeInt64, value)
 	}
 	if _u.mutation.ObjectIDCleared() {
-		_spec.ClearField(navigationitem.FieldObjectID, field.TypeUint64)
+		_spec.ClearField(navigationitem.FieldObjectID, field.TypeInt64)
 	}
 	if value, ok := _u.mutation.Icon(); ok {
 		_spec.SetField(navigationitem.FieldIcon, field.TypeString, value)
@@ -1381,7 +1381,7 @@ func (_u *NavigationItemUpdateOne) sqlSave(ctx context.Context) (_node *Navigati
 			Columns: []string{navigationitem.ParentColumn},
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
-				IDSpec: sqlgraph.NewFieldSpec(navigationitem.FieldID, field.TypeUint64),
+				IDSpec: sqlgraph.NewFieldSpec(navigationitem.FieldID, field.TypeInt64),
 			},
 		}
 		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
@@ -1394,7 +1394,7 @@ func (_u *NavigationItemUpdateOne) sqlSave(ctx context.Context) (_node *Navigati
 			Columns: []string{navigationitem.ParentColumn},
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
-				IDSpec: sqlgraph.NewFieldSpec(navigationitem.FieldID, field.TypeUint64),
+				IDSpec: sqlgraph.NewFieldSpec(navigationitem.FieldID, field.TypeInt64),
 			},
 		}
 		for _, k := range nodes {
@@ -1410,7 +1410,7 @@ func (_u *NavigationItemUpdateOne) sqlSave(ctx context.Context) (_node *Navigati
 			Columns: []string{navigationitem.ChildrenColumn},
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
-				IDSpec: sqlgraph.NewFieldSpec(navigationitem.FieldID, field.TypeUint64),
+				IDSpec: sqlgraph.NewFieldSpec(navigationitem.FieldID, field.TypeInt64),
 			},
 		}
 		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
@@ -1423,7 +1423,7 @@ func (_u *NavigationItemUpdateOne) sqlSave(ctx context.Context) (_node *Navigati
 			Columns: []string{navigationitem.ChildrenColumn},
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
-				IDSpec: sqlgraph.NewFieldSpec(navigationitem.FieldID, field.TypeUint64),
+				IDSpec: sqlgraph.NewFieldSpec(navigationitem.FieldID, field.TypeInt64),
 			},
 		}
 		for _, k := range nodes {
@@ -1439,7 +1439,7 @@ func (_u *NavigationItemUpdateOne) sqlSave(ctx context.Context) (_node *Navigati
 			Columns: []string{navigationitem.ChildrenColumn},
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
-				IDSpec: sqlgraph.NewFieldSpec(navigationitem.FieldID, field.TypeUint64),
+				IDSpec: sqlgraph.NewFieldSpec(navigationitem.FieldID, field.TypeInt64),
 			},
 		}
 		for _, k := range nodes {

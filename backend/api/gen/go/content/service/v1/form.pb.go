@@ -28,11 +28,11 @@ const (
 // 表单提交
 type FormSubmission struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
-	Id            *uint64                `protobuf:"varint,1,opt,name=id,proto3,oneof" json:"id,omitempty"`                                                                        // 提交ID
-	PageId        *uint64                `protobuf:"varint,2,opt,name=page_id,json=pageId,proto3,oneof" json:"page_id,omitempty"`                                                  // 所属页面ID
-	SectionId     *uint64                `protobuf:"varint,3,opt,name=section_id,json=sectionId,proto3,oneof" json:"section_id,omitempty"`                                         // 所属区块ID
+	Id            *int64                 `protobuf:"varint,1,opt,name=id,proto3,oneof" json:"id,omitempty"`                                                                        // 提交ID
+	PageId        *int64                 `protobuf:"varint,2,opt,name=page_id,json=pageId,proto3,oneof" json:"page_id,omitempty"`                                                  // 所属页面ID
+	SectionId     *int64                 `protobuf:"varint,3,opt,name=section_id,json=sectionId,proto3,oneof" json:"section_id,omitempty"`                                         // 所属区块ID
 	Data          map[string]string      `protobuf:"bytes,4,rep,name=data,proto3" json:"data,omitempty" protobuf_key:"bytes,1,opt,name=key" protobuf_val:"bytes,2,opt,name=value"` // 提交数据
-	UserId        *uint64                `protobuf:"varint,5,opt,name=user_id,json=userId,proto3,oneof" json:"user_id,omitempty"`                                                  // 提交者用户ID
+	UserId        *int64                 `protobuf:"varint,5,opt,name=user_id,json=userId,proto3,oneof" json:"user_id,omitempty"`                                                  // 提交者用户ID
 	CreatedAt     *timestamppb.Timestamp `protobuf:"bytes,200,opt,name=created_at,json=createdAt,proto3,oneof" json:"created_at,omitempty"`                                        // 提交时间
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
@@ -68,21 +68,21 @@ func (*FormSubmission) Descriptor() ([]byte, []int) {
 	return file_content_service_v1_form_proto_rawDescGZIP(), []int{0}
 }
 
-func (x *FormSubmission) GetId() uint64 {
+func (x *FormSubmission) GetId() int64 {
 	if x != nil && x.Id != nil {
 		return *x.Id
 	}
 	return 0
 }
 
-func (x *FormSubmission) GetPageId() uint64 {
+func (x *FormSubmission) GetPageId() int64 {
 	if x != nil && x.PageId != nil {
 		return *x.PageId
 	}
 	return 0
 }
 
-func (x *FormSubmission) GetSectionId() uint64 {
+func (x *FormSubmission) GetSectionId() int64 {
 	if x != nil && x.SectionId != nil {
 		return *x.SectionId
 	}
@@ -96,7 +96,7 @@ func (x *FormSubmission) GetData() map[string]string {
 	return nil
 }
 
-func (x *FormSubmission) GetUserId() uint64 {
+func (x *FormSubmission) GetUserId() int64 {
 	if x != nil && x.UserId != nil {
 		return *x.UserId
 	}
@@ -114,7 +114,7 @@ func (x *FormSubmission) GetCreatedAt() *timestamppb.Timestamp {
 type ListFormSubmissionsResponse struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
 	Items         []*FormSubmission      `protobuf:"bytes,1,rep,name=items,proto3" json:"items,omitempty"`
-	Total         uint64                 `protobuf:"varint,2,opt,name=total,proto3" json:"total,omitempty"`
+	Total         int64                  `protobuf:"varint,2,opt,name=total,proto3" json:"total,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -156,7 +156,7 @@ func (x *ListFormSubmissionsResponse) GetItems() []*FormSubmission {
 	return nil
 }
 
-func (x *ListFormSubmissionsResponse) GetTotal() uint64 {
+func (x *ListFormSubmissionsResponse) GetTotal() int64 {
 	if x != nil {
 		return x.Total
 	}
@@ -166,8 +166,8 @@ func (x *ListFormSubmissionsResponse) GetTotal() uint64 {
 // 请求 - 提交表单
 type SubmitFormSubmissionRequest struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
-	PageId        uint64                 `protobuf:"varint,1,opt,name=page_id,json=pageId,proto3" json:"page_id,omitempty"`
-	SectionId     uint64                 `protobuf:"varint,2,opt,name=section_id,json=sectionId,proto3" json:"section_id,omitempty"`
+	PageId        int64                  `protobuf:"varint,1,opt,name=page_id,json=pageId,proto3" json:"page_id,omitempty"`
+	SectionId     int64                  `protobuf:"varint,2,opt,name=section_id,json=sectionId,proto3" json:"section_id,omitempty"`
 	Data          map[string]string      `protobuf:"bytes,3,rep,name=data,proto3" json:"data,omitempty" protobuf_key:"bytes,1,opt,name=key" protobuf_val:"bytes,2,opt,name=value"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
@@ -203,14 +203,14 @@ func (*SubmitFormSubmissionRequest) Descriptor() ([]byte, []int) {
 	return file_content_service_v1_form_proto_rawDescGZIP(), []int{2}
 }
 
-func (x *SubmitFormSubmissionRequest) GetPageId() uint64 {
+func (x *SubmitFormSubmissionRequest) GetPageId() int64 {
 	if x != nil {
 		return x.PageId
 	}
 	return 0
 }
 
-func (x *SubmitFormSubmissionRequest) GetSectionId() uint64 {
+func (x *SubmitFormSubmissionRequest) GetSectionId() int64 {
 	if x != nil {
 		return x.SectionId
 	}
@@ -227,7 +227,7 @@ func (x *SubmitFormSubmissionRequest) GetData() map[string]string {
 // 请求 - 提交详情
 type GetFormSubmissionRequest struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
-	Id            uint64                 `protobuf:"varint,1,opt,name=id,proto3" json:"id,omitempty"`
+	Id            int64                  `protobuf:"varint,1,opt,name=id,proto3" json:"id,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -262,7 +262,7 @@ func (*GetFormSubmissionRequest) Descriptor() ([]byte, []int) {
 	return file_content_service_v1_form_proto_rawDescGZIP(), []int{3}
 }
 
-func (x *GetFormSubmissionRequest) GetId() uint64 {
+func (x *GetFormSubmissionRequest) GetId() int64 {
 	if x != nil {
 		return x.Id
 	}
@@ -272,7 +272,7 @@ func (x *GetFormSubmissionRequest) GetId() uint64 {
 // 请求 - 删除提交
 type DeleteFormSubmissionRequest struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
-	Id            uint64                 `protobuf:"varint,1,opt,name=id,proto3" json:"id,omitempty"`
+	Id            int64                  `protobuf:"varint,1,opt,name=id,proto3" json:"id,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -307,7 +307,7 @@ func (*DeleteFormSubmissionRequest) Descriptor() ([]byte, []int) {
 	return file_content_service_v1_form_proto_rawDescGZIP(), []int{4}
 }
 
-func (x *DeleteFormSubmissionRequest) GetId() uint64 {
+func (x *DeleteFormSubmissionRequest) GetId() int64 {
 	if x != nil {
 		return x.Id
 	}
@@ -320,12 +320,12 @@ const file_content_service_v1_form_proto_rawDesc = "" +
 	"\n" +
 	"\x1dcontent/service/v1/form.proto\x12\x12content.service.v1\x1a$gnostic/openapi/v3/annotations.proto\x1a\x1bgoogle/protobuf/empty.proto\x1a\x1fgoogle/protobuf/timestamp.proto\x1a\x1epagination/v1/pagination.proto\"\xa7\x04\n" +
 	"\x0eFormSubmission\x12#\n" +
-	"\x02id\x18\x01 \x01(\x04B\x0e\xbaG\v\x92\x02\b提交IDH\x00R\x02id\x88\x01\x01\x122\n" +
-	"\apage_id\x18\x02 \x01(\x04B\x14\xbaG\x11\x92\x02\x0e所属页面IDH\x01R\x06pageId\x88\x01\x01\x128\n" +
+	"\x02id\x18\x01 \x01(\x03B\x0e\xbaG\v\x92\x02\b提交IDH\x00R\x02id\x88\x01\x01\x122\n" +
+	"\apage_id\x18\x02 \x01(\x03B\x14\xbaG\x11\x92\x02\x0e所属页面IDH\x01R\x06pageId\x88\x01\x01\x128\n" +
 	"\n" +
-	"section_id\x18\x03 \x01(\x04B\x14\xbaG\x11\x92\x02\x0e所属区块IDH\x02R\tsectionId\x88\x01\x01\x12i\n" +
+	"section_id\x18\x03 \x01(\x03B\x14\xbaG\x11\x92\x02\x0e所属区块IDH\x02R\tsectionId\x88\x01\x01\x12i\n" +
 	"\x04data\x18\x04 \x03(\v2,.content.service.v1.FormSubmission.DataEntryB'\xbaG$\x92\x02!提交数据（字段名→值）R\x04data\x12L\n" +
-	"\auser_id\x18\x05 \x01(\x04B.\xbaG+\x92\x02(提交者用户ID（匿名提交为 0）H\x03R\x06userId\x88\x01\x01\x12S\n" +
+	"\auser_id\x18\x05 \x01(\x03B.\xbaG+\x92\x02(提交者用户ID（匿名提交为 0）H\x03R\x06userId\x88\x01\x01\x12S\n" +
 	"\n" +
 	"created_at\x18\xc8\x01 \x01(\v2\x1a.google.protobuf.TimestampB\x12\xbaG\x0f\x92\x02\f提交时间H\x04R\tcreatedAt\x88\x01\x01\x1a7\n" +
 	"\tDataEntry\x12\x10\n" +
@@ -340,19 +340,19 @@ const file_content_service_v1_form_proto_rawDesc = "" +
 	"\v_created_at\"m\n" +
 	"\x1bListFormSubmissionsResponse\x128\n" +
 	"\x05items\x18\x01 \x03(\v2\".content.service.v1.FormSubmissionR\x05items\x12\x14\n" +
-	"\x05total\x18\x02 \x01(\x04R\x05total\"\xca\x02\n" +
+	"\x05total\x18\x02 \x01(\x03R\x05total\"\xca\x02\n" +
 	"\x1bSubmitFormSubmissionRequest\x12'\n" +
-	"\apage_id\x18\x01 \x01(\x04B\x0e\xbaG\v\x92\x02\b页面IDR\x06pageId\x12Q\n" +
+	"\apage_id\x18\x01 \x01(\x03B\x0e\xbaG\v\x92\x02\b页面IDR\x06pageId\x12Q\n" +
 	"\n" +
-	"section_id\x18\x02 \x01(\x04B2\xbaG/\x92\x02,区块ID（须为该页面的 FORM 区块）R\tsectionId\x12v\n" +
+	"section_id\x18\x02 \x01(\x03B2\xbaG/\x92\x02,区块ID（须为该页面的 FORM 区块）R\tsectionId\x12v\n" +
 	"\x04data\x18\x03 \x03(\v29.content.service.v1.SubmitFormSubmissionRequest.DataEntryB'\xbaG$\x92\x02!提交数据（字段名→值）R\x04data\x1a7\n" +
 	"\tDataEntry\x12\x10\n" +
 	"\x03key\x18\x01 \x01(\tR\x03key\x12\x14\n" +
 	"\x05value\x18\x02 \x01(\tR\x05value:\x028\x01\"*\n" +
 	"\x18GetFormSubmissionRequest\x12\x0e\n" +
-	"\x02id\x18\x01 \x01(\x04R\x02id\"-\n" +
+	"\x02id\x18\x01 \x01(\x03R\x02id\"-\n" +
 	"\x1bDeleteFormSubmissionRequest\x12\x0e\n" +
-	"\x02id\x18\x01 \x01(\x04R\x02id2\xfe\x02\n" +
+	"\x02id\x18\x01 \x01(\x03R\x02id2\xfe\x02\n" +
 	"\x15FormSubmissionService\x12_\n" +
 	"\x06Submit\x12/.content.service.v1.SubmitFormSubmissionRequest\x1a\".content.service.v1.FormSubmission\"\x00\x12T\n" +
 	"\x04List\x12\x19.pagination.PagingRequest\x1a/.content.service.v1.ListFormSubmissionsResponse\"\x00\x12Y\n" +

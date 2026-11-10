@@ -7,12 +7,12 @@ import (
 	"github.com/go-kratos/kratos/v2/errors"
 	"time"
 
+	"entgo.io/ent/dialect/sql"
 	"github.com/go-kratos/kratos/v2/log"
 	kratosMetadata "github.com/go-kratos/kratos/v2/metadata"
 	paginationV1 "github.com/tx7do/go-crud/api/gen/go/pagination/v1"
 	paginationFilter "github.com/tx7do/go-crud/pagination/filter"
 	"github.com/tx7do/kratos-bootstrap/bootstrap"
-	"entgo.io/ent/dialect/sql"
 	"google.golang.org/protobuf/types/known/timestamppb"
 
 	entCrud "github.com/tx7do/go-crud/entgo"
@@ -56,7 +56,7 @@ func (r *ExperimentRepo) List(ctx context.Context, req *paginationV1.PagingReque
 						conds = append(conds, experiment.StatusEQ(st))
 					}
 				case "pageId", "page_id":
-					if v, pErr := strconv.ParseUint(cond.GetValue(), 10, 64); pErr == nil && v > 0 {
+					if v, pErr := strconv.ParseInt(cond.GetValue(), 10, 64); pErr == nil && v > 0 {
 						conds = append(conds, experiment.PageIDEQ(v))
 					}
 				}
@@ -101,7 +101,7 @@ func (r *ExperimentRepo) List(ctx context.Context, req *paginationV1.PagingReque
 }
 
 // ListRunningByPage 某页面上运行中的实验（app 分流入口，匿名链路可达）。
-func (r *ExperimentRepo) ListRunningByPage(ctx context.Context, pageID uint64) ([]*contentV1.Experiment, error) {
+func (r *ExperimentRepo) ListRunningByPage(ctx context.Context, pageID int64) ([]*contentV1.Experiment, error) {
 	conds := append(r.tenantConds(ctx),
 		experiment.StatusEQ(experiment.StatusRunning),
 		experiment.PageIDEQ(pageID),
@@ -121,7 +121,7 @@ func (r *ExperimentRepo) ListRunningByPage(ctx context.Context, pageID uint64) (
 }
 
 // Get 实验详情（含变体）。
-func (r *ExperimentRepo) Get(ctx context.Context, id uint64) (*contentV1.Experiment, error) {
+func (r *ExperimentRepo) Get(ctx context.Context, id int64) (*contentV1.Experiment, error) {
 	conds := append(r.tenantConds(ctx), experiment.IDEQ(id))
 	row, err := r.entClient.Client().Experiment.Query().Where(conds...).Only(ctx)
 	if err != nil {
@@ -165,7 +165,7 @@ func (r *ExperimentRepo) Create(ctx context.Context, dto *contentV1.Experiment) 
 }
 
 // Update 按 mask 更新；variants 出现在 data 里即整组替换。
-func (r *ExperimentRepo) Update(ctx context.Context, id uint64, dto *contentV1.Experiment, dtoHasVariants bool) (*contentV1.Experiment, error) {
+func (r *ExperimentRepo) Update(ctx context.Context, id int64, dto *contentV1.Experiment, dtoHasVariants bool) (*contentV1.Experiment, error) {
 	conds := append(r.tenantConds(ctx), experiment.IDEQ(id))
 	exist, err := r.entClient.Client().Experiment.Query().Where(conds...).Only(ctx)
 	if err != nil {
@@ -212,7 +212,7 @@ func (r *ExperimentRepo) Update(ctx context.Context, id uint64, dto *contentV1.E
 }
 
 // SetStatus 状态机流转（服务层已校验，这里落库）。
-func (r *ExperimentRepo) SetStatus(ctx context.Context, id uint64, status contentV1.Experiment_Status) (*contentV1.Experiment, error) {
+func (r *ExperimentRepo) SetStatus(ctx context.Context, id int64, status contentV1.Experiment_Status) (*contentV1.Experiment, error) {
 	conds := append(r.tenantConds(ctx), experiment.IDEQ(id))
 	exist, err := r.entClient.Client().Experiment.Query().Where(conds...).Only(ctx)
 	if err != nil {
@@ -233,7 +233,7 @@ func (r *ExperimentRepo) SetStatus(ctx context.Context, id uint64, status conten
 }
 
 // Delete 删除实验（变体与参与记录一并清理）。
-func (r *ExperimentRepo) Delete(ctx context.Context, id uint64) error {
+func (r *ExperimentRepo) Delete(ctx context.Context, id int64) error {
 	conds := append(r.tenantConds(ctx), experiment.IDEQ(id))
 	exist, err := r.entClient.Client().Experiment.Query().Where(conds...).Only(ctx)
 	if err != nil {
@@ -261,7 +261,7 @@ func (r *ExperimentRepo) Delete(ctx context.Context, id uint64) error {
 
 // RecordParticipant 幂等落参与记录（唯一索引冲突忽略）。
 // 变体名以快照存储，历史归因不受变体改名影响。
-func (r *ExperimentRepo) RecordParticipant(ctx context.Context, experimentID uint64, visitorHash, variantName string) error {
+func (r *ExperimentRepo) RecordParticipant(ctx context.Context, experimentID int64, visitorHash, variantName string) error {
 	conds := append(r.tenantConds(ctx), experiment.IDEQ(experimentID))
 	exist, err := r.entClient.Client().Experiment.Query().Where(conds...).Only(ctx)
 	if err != nil {
@@ -293,7 +293,7 @@ func (r *ExperimentRepo) RecordParticipant(ctx context.Context, experimentID uin
 }
 
 // RecordConversion 幂等标记转化（参与记录存在才更新；不存在静默忽略）。
-func (r *ExperimentRepo) RecordConversion(ctx context.Context, experimentID uint64, visitorHash string) error {
+func (r *ExperimentRepo) RecordConversion(ctx context.Context, experimentID int64, visitorHash string) error {
 	// 不做租户过滤：(experiment_id, visitor_hash) 本身全局唯一且服务端派生，
 	// 与参与记录的归属口径一致；viewer 侧租户视角在此只会引入口径歧义
 	conds := []predicate.ExperimentParticipant{
@@ -314,7 +314,7 @@ func (r *ExperimentRepo) RecordConversion(ctx context.Context, experimentID uint
 }
 
 // GetVariantStats 按变体名快照计数（含转化数；空实验返回空列表）。
-func (r *ExperimentRepo) GetVariantStats(ctx context.Context, experimentID uint64) (*contentV1.ExperimentVariantStatsResponse, error) {
+func (r *ExperimentRepo) GetVariantStats(ctx context.Context, experimentID int64) (*contentV1.ExperimentVariantStatsResponse, error) {
 	var conds []predicate.ExperimentParticipant
 	if tid, hasTenant := maybeTenantFromViewer(ctx); hasTenant {
 		conds = append(conds, experimentparticipant.TenantIDEQ(tid))
@@ -358,14 +358,14 @@ func (r *ExperimentRepo) GetVariantStats(ctx context.Context, experimentID uint6
 	for _, row := range rows {
 		resp.Items = append(resp.Items, &contentV1.ExperimentVariantStatsResponse_VariantCount{
 			VariantName:  row.VariantName,
-			Participants: uint64(row.Count),
-			Conversions:  uint64(convertedMap[row.VariantName]),
+			Participants: int64(row.Count),
+			Conversions:  int64(convertedMap[row.VariantName]),
 		})
 	}
 	return resp, nil
 }
 
-func (r *ExperimentRepo) replaceVariants(ctx context.Context, experimentID uint64, variants []*contentV1.ExperimentVariant) error {
+func (r *ExperimentRepo) replaceVariants(ctx context.Context, experimentID int64, variants []*contentV1.ExperimentVariant) error {
 	if _, err := r.entClient.Client().ExperimentVariant.Delete().
 		Where(experimentvariant.ExperimentIDEQ(experimentID)).Exec(ctx); err != nil {
 		r.log.Errorf("clear experiment variants failed (experiment=%d): %s", experimentID, err.Error())
@@ -397,7 +397,7 @@ func (r *ExperimentRepo) replaceVariants(ctx context.Context, experimentID uint6
 }
 
 // listVariants 实验的变体（sort_order,id 升序；rule 型即求值顺序）。
-func (r *ExperimentRepo) listVariants(ctx context.Context, experimentID uint64) ([]*contentV1.ExperimentVariant, error) {
+func (r *ExperimentRepo) listVariants(ctx context.Context, experimentID int64) ([]*contentV1.ExperimentVariant, error) {
 	rows, err := r.entClient.Client().ExperimentVariant.Query().
 		Where(experimentvariant.ExperimentIDEQ(experimentID)).
 		Order(ent.Asc(experimentvariant.FieldSortOrder), ent.Asc(experimentvariant.FieldID)).
@@ -467,11 +467,11 @@ func (r *ExperimentRepo) tenantConds(ctx context.Context) []predicate.Experiment
 }
 
 // tenantIDFromInternalMetadata 从内网可信元数据 x-md-global-tenant-id 读租户。
-func (r *ExperimentRepo) tenantIDFromInternalMetadata(ctx context.Context) uint64 {
+func (r *ExperimentRepo) tenantIDFromInternalMetadata(ctx context.Context) int64 {
 	if md, ok := kratosMetadata.FromServerContext(ctx); ok {
 		if v := md.Get("x-md-global-tenant-id"); v != "" {
-			if tid, err := strconv.ParseUint(v, 10, 32); err == nil && tid > 0 {
-				return uint64(tid)
+			if tid, err := strconv.ParseInt(v, 10, 64); err == nil && tid > 0 {
+				return int64(tid)
 			}
 		}
 	}

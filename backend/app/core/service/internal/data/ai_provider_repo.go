@@ -5,8 +5,8 @@ import (
 	"time"
 
 	"entgo.io/ent/dialect/sql"
-	"github.com/tx7do/kratos-bootstrap/bootstrap"
 	"github.com/go-kratos/kratos/v2/log"
+	"github.com/tx7do/kratos-bootstrap/bootstrap"
 
 	paginationV1 "github.com/tx7do/go-crud/api/gen/go/pagination/v1"
 	entCrud "github.com/tx7do/go-crud/entgo"
@@ -82,7 +82,7 @@ func (r *AiProviderRepo) Count(ctx context.Context, req *paginationV1.PagingRequ
 		return nil, aiV1.ErrorInternalServerError("query ai provider count failed")
 	}
 
-	return &aiV1.CountAiProviderResponse{Count: uint64(count)}, nil
+	return &aiV1.CountAiProviderResponse{Count: int64(count)}, nil
 }
 
 func (r *AiProviderRepo) List(ctx context.Context, req *paginationV1.PagingRequest) (*aiV1.ListAiProviderResponse, error) {
@@ -160,7 +160,7 @@ func (r *AiProviderRepo) GetEnabledDefault(ctx context.Context) (*ent.AiProvider
 }
 
 // GetApiKeyDecrypted 返回 provider 的 api_key 密文（解密在 service 层做，repo 不管密钥材料）。
-func (r *AiProviderRepo) GetApiKeyEncrypted(ctx context.Context, id uint64) (string, error) {
+func (r *AiProviderRepo) GetApiKeyEncrypted(ctx context.Context, id int64) (string, error) {
 	entity, err := r.entClient.Client().AiProvider.Query().
 		Where(aiprovider.IDEQ(id)).
 		Select(aiprovider.FieldAPIKey).
@@ -308,7 +308,7 @@ func int32PtrToIntPtr(p *int32) *int {
 }
 
 // GetEntityByID 取提供商实体（chat 链路解析与归属校验用）。
-func (r *AiProviderRepo) GetEntityByID(ctx context.Context, id uint64) (*ent.AiProvider, error) {
+func (r *AiProviderRepo) GetEntityByID(ctx context.Context, id int64) (*ent.AiProvider, error) {
 	entity, err := r.entClient.Client().AiProvider.Query().
 		Where(aiprovider.IDEQ(id)).
 		Only(ctx)

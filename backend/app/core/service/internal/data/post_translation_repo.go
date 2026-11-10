@@ -72,7 +72,7 @@ func (r *PostTranslationRepo) init() {
 func (r *PostTranslationRepo) CleanTranslations(
 	ctx context.Context,
 	tx *ent.Tx,
-	postID uint64,
+	postID int64,
 ) error {
 	if _, err := tx.PostTranslation.Delete().
 		Where(
@@ -85,7 +85,7 @@ func (r *PostTranslationRepo) CleanTranslations(
 	return nil
 }
 
-func (r *PostTranslationRepo) ListTranslations(ctx context.Context, postID uint64, locale string, viewMask *fieldmaskpb.FieldMask) ([]*contentV1.PostTranslation, error) {
+func (r *PostTranslationRepo) ListTranslations(ctx context.Context, postID int64, locale string, viewMask *fieldmaskpb.FieldMask) ([]*contentV1.PostTranslation, error) {
 	builder := r.entClient.Client().PostTranslation.Query().
 		Where(
 			posttranslation.PostIDEQ(postID),
@@ -126,7 +126,7 @@ func (r *PostTranslationRepo) ListTranslations(ctx context.Context, postID uint6
 
 // ListTranslationsWithFallback 优先返回指定语言的译文；该语言缺译时返回全部译文，
 // 供前端按"匹配当前语言→回退第一条"兜底（只回传空数组会让前端无 fallback 可用）。
-func (r *PostTranslationRepo) ListTranslationsWithFallback(ctx context.Context, postID uint64, locale string, viewMask *fieldmaskpb.FieldMask) ([]*contentV1.PostTranslation, error) {
+func (r *PostTranslationRepo) ListTranslationsWithFallback(ctx context.Context, postID int64, locale string, viewMask *fieldmaskpb.FieldMask) ([]*contentV1.PostTranslation, error) {
 	translations, err := r.ListTranslations(ctx, postID, locale, viewMask)
 	if err != nil {
 		return nil, err
@@ -137,7 +137,7 @@ func (r *PostTranslationRepo) ListTranslationsWithFallback(ctx context.Context, 
 	return translations, nil
 }
 
-func (r *PostTranslationRepo) GetTranslation(ctx context.Context, postID uint64, languageCode string) (*contentV1.PostTranslation, error) {
+func (r *PostTranslationRepo) GetTranslation(ctx context.Context, postID int64, languageCode string) (*contentV1.PostTranslation, error) {
 	// 同 (post_id, language_code) 历史上可能存在重复行（旧 Update 直插遗留），
 	// 取 id 最小的一条保证结果确定；缺译文不是错误，交由调用方按 nil 处理
 	entity, err := r.entClient.Client().PostTranslation.Query().
@@ -207,7 +207,7 @@ func (r *PostTranslationRepo) BatchCreate(ctx context.Context, tx *ent.Tx, items
 // 不存在则插入；同语言历史重复行（旧 Update 直插遗留）仅保留 id 最小的
 // 一条并更新，其余删除。Update 语义据此从"整表替换/直插"改为按语言合并，
 // 删除译文请走 DeleteTranslation。
-func (r *PostTranslationRepo) UpsertTranslations(ctx context.Context, tx *ent.Tx, postID uint64, items []*contentV1.PostTranslation) error {
+func (r *PostTranslationRepo) UpsertTranslations(ctx context.Context, tx *ent.Tx, postID int64, items []*contentV1.PostTranslation) error {
 	if len(items) == 0 {
 		return nil
 	}
@@ -283,7 +283,7 @@ func (r *PostTranslationRepo) UpsertTranslations(ctx context.Context, tx *ent.Tx
 		}
 
 		if len(existings) > 1 {
-			dupeIDs := make([]uint64, 0, len(existings)-1)
+			dupeIDs := make([]int64, 0, len(existings)-1)
 			for _, e := range existings[1:] {
 				dupeIDs = append(dupeIDs, e.ID)
 			}
@@ -346,7 +346,7 @@ func (r *PostTranslationRepo) CreateTranslation(ctx context.Context, data *conte
 	return r.mapper.ToDTO(entity), nil
 }
 
-func (r *PostTranslationRepo) UpdateTranslation(ctx context.Context, id uint64, data *contentV1.PostTranslation, updateMask *fieldmaskpb.FieldMask) (*contentV1.PostTranslation, error) {
+func (r *PostTranslationRepo) UpdateTranslation(ctx context.Context, id int64, data *contentV1.PostTranslation, updateMask *fieldmaskpb.FieldMask) (*contentV1.PostTranslation, error) {
 	if data == nil {
 		return nil, nil
 	}
@@ -417,7 +417,7 @@ func (r *PostTranslationRepo) countByBaseSlug(ctx context.Context, pt *ent.PostT
 }
 
 // TranslationExists checks if a translation exists for the given post ID and language code.
-func (r *PostTranslationRepo) TranslationExists(ctx context.Context, postId uint64, languageCode string) (bool, error) {
+func (r *PostTranslationRepo) TranslationExists(ctx context.Context, postId int64, languageCode string) (bool, error) {
 	c, err := r.entClient.Client().PostTranslation.Query().
 		Where(
 			posttranslation.PostIDEQ(postId),
@@ -433,7 +433,7 @@ func (r *PostTranslationRepo) TranslationExists(ctx context.Context, postId uint
 }
 
 // ListAvailedLanguages lists the language codes of all translations available for the given post ID.
-func (r *PostTranslationRepo) ListAvailedLanguages(ctx context.Context, postId uint64) ([]string, error) {
+func (r *PostTranslationRepo) ListAvailedLanguages(ctx context.Context, postId int64) ([]string, error) {
 	entities, err := r.entClient.Client().PostTranslation.Query().
 		Where(
 			posttranslation.PostIDEQ(postId),

@@ -144,9 +144,9 @@ func (s *InteractionService) RecordView(ctx context.Context, req *interactionV1.
 		return nil, interactionV1.ErrorBadRequest("invalid parameter")
 	}
 
-	var tid uint64
+	var tid int64
 	if vc, exist := viewer.FromContext(ctx); exist && vc != nil && vc.TenantID() > 0 {
-		tid = uint64(vc.TenantID())
+		tid = int64(vc.TenantID())
 	} else {
 		tid = tenantIDFromInternalMetadata(ctx)
 	}
@@ -159,20 +159,20 @@ func (s *InteractionService) RecordView(ctx context.Context, req *interactionV1.
 }
 
 // tenantIDFromInternalMetadata 从内网可信元数据 x-md-global-tenant-id 读租户
-//（app BFF 按请求 Host 解析后注入；该 header 仅内网 gRPC 可达，外部不可伪造）。
-func tenantIDFromInternalMetadata(ctx context.Context) uint64 {
+// （app BFF 按请求 Host 解析后注入；该 header 仅内网 gRPC 可达，外部不可伪造）。
+func tenantIDFromInternalMetadata(ctx context.Context) int64 {
 	if md, ok := kratosMetadata.FromServerContext(ctx); ok {
 		if v := md.Get("x-md-global-tenant-id"); v != "" {
-			if tid, err := strconv.ParseUint(v, 10, 32); err == nil && tid > 0 {
-				return uint64(tid)
+			if tid, err := strconv.ParseInt(v, 10, 64); err == nil && tid > 0 {
+				return int64(tid)
 			}
 		}
 	}
 	return 0
 }
 
-// toUint32KeyMap map[uint64]V -> map[uint32]V（proto 计数键为 uint32；现网 ID 均在范围内）。
-func toUint32KeyMap[V any](m map[uint64]V) map[uint32]V {
+// toUint32KeyMap map[int64]V -> map[uint32]V（proto 计数键为 uint32；现网 ID 均在范围内）。
+func toUint32KeyMap[V any](m map[int64]V) map[uint32]V {
 	out := make(map[uint32]V, len(m))
 	for k, v := range m {
 		out[uint32(k)] = v

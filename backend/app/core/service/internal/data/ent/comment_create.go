@@ -65,13 +65,13 @@ func (_c *CommentCreate) SetNillableDeletedAt(v *time.Time) *CommentCreate {
 }
 
 // SetCreatedBy sets the "created_by" field.
-func (_c *CommentCreate) SetCreatedBy(v uint64) *CommentCreate {
+func (_c *CommentCreate) SetCreatedBy(v int64) *CommentCreate {
 	_c.mutation.SetCreatedBy(v)
 	return _c
 }
 
 // SetNillableCreatedBy sets the "created_by" field if the given value is not nil.
-func (_c *CommentCreate) SetNillableCreatedBy(v *uint64) *CommentCreate {
+func (_c *CommentCreate) SetNillableCreatedBy(v *int64) *CommentCreate {
 	if v != nil {
 		_c.SetCreatedBy(*v)
 	}
@@ -79,13 +79,13 @@ func (_c *CommentCreate) SetNillableCreatedBy(v *uint64) *CommentCreate {
 }
 
 // SetUpdatedBy sets the "updated_by" field.
-func (_c *CommentCreate) SetUpdatedBy(v uint64) *CommentCreate {
+func (_c *CommentCreate) SetUpdatedBy(v int64) *CommentCreate {
 	_c.mutation.SetUpdatedBy(v)
 	return _c
 }
 
 // SetNillableUpdatedBy sets the "updated_by" field if the given value is not nil.
-func (_c *CommentCreate) SetNillableUpdatedBy(v *uint64) *CommentCreate {
+func (_c *CommentCreate) SetNillableUpdatedBy(v *int64) *CommentCreate {
 	if v != nil {
 		_c.SetUpdatedBy(*v)
 	}
@@ -93,13 +93,13 @@ func (_c *CommentCreate) SetNillableUpdatedBy(v *uint64) *CommentCreate {
 }
 
 // SetDeletedBy sets the "deleted_by" field.
-func (_c *CommentCreate) SetDeletedBy(v uint64) *CommentCreate {
+func (_c *CommentCreate) SetDeletedBy(v int64) *CommentCreate {
 	_c.mutation.SetDeletedBy(v)
 	return _c
 }
 
 // SetNillableDeletedBy sets the "deleted_by" field if the given value is not nil.
-func (_c *CommentCreate) SetNillableDeletedBy(v *uint64) *CommentCreate {
+func (_c *CommentCreate) SetNillableDeletedBy(v *int64) *CommentCreate {
 	if v != nil {
 		_c.SetDeletedBy(*v)
 	}
@@ -107,13 +107,13 @@ func (_c *CommentCreate) SetNillableDeletedBy(v *uint64) *CommentCreate {
 }
 
 // SetParentID sets the "parent_id" field.
-func (_c *CommentCreate) SetParentID(v uint64) *CommentCreate {
+func (_c *CommentCreate) SetParentID(v int64) *CommentCreate {
 	_c.mutation.SetParentID(v)
 	return _c
 }
 
 // SetNillableParentID sets the "parent_id" field if the given value is not nil.
-func (_c *CommentCreate) SetNillableParentID(v *uint64) *CommentCreate {
+func (_c *CommentCreate) SetNillableParentID(v *int64) *CommentCreate {
 	if v != nil {
 		_c.SetParentID(*v)
 	}
@@ -121,13 +121,13 @@ func (_c *CommentCreate) SetNillableParentID(v *uint64) *CommentCreate {
 }
 
 // SetTenantID sets the "tenant_id" field.
-func (_c *CommentCreate) SetTenantID(v uint64) *CommentCreate {
+func (_c *CommentCreate) SetTenantID(v int64) *CommentCreate {
 	_c.mutation.SetTenantID(v)
 	return _c
 }
 
 // SetNillableTenantID sets the "tenant_id" field if the given value is not nil.
-func (_c *CommentCreate) SetNillableTenantID(v *uint64) *CommentCreate {
+func (_c *CommentCreate) SetNillableTenantID(v *int64) *CommentCreate {
 	if v != nil {
 		_c.SetTenantID(*v)
 	}
@@ -149,13 +149,13 @@ func (_c *CommentCreate) SetNillableContentType(v *comment.ContentType) *Comment
 }
 
 // SetObjectID sets the "object_id" field.
-func (_c *CommentCreate) SetObjectID(v uint64) *CommentCreate {
+func (_c *CommentCreate) SetObjectID(v int64) *CommentCreate {
 	_c.mutation.SetObjectID(v)
 	return _c
 }
 
 // SetNillableObjectID sets the "object_id" field if the given value is not nil.
-func (_c *CommentCreate) SetNillableObjectID(v *uint64) *CommentCreate {
+func (_c *CommentCreate) SetNillableObjectID(v *int64) *CommentCreate {
 	if v != nil {
 		_c.SetObjectID(*v)
 	}
@@ -177,13 +177,13 @@ func (_c *CommentCreate) SetNillableContent(v *string) *CommentCreate {
 }
 
 // SetAuthorID sets the "author_id" field.
-func (_c *CommentCreate) SetAuthorID(v uint64) *CommentCreate {
+func (_c *CommentCreate) SetAuthorID(v int64) *CommentCreate {
 	_c.mutation.SetAuthorID(v)
 	return _c
 }
 
 // SetNillableAuthorID sets the "author_id" field if the given value is not nil.
-func (_c *CommentCreate) SetNillableAuthorID(v *uint64) *CommentCreate {
+func (_c *CommentCreate) SetNillableAuthorID(v *int64) *CommentCreate {
 	if v != nil {
 		_c.SetAuthorID(*v)
 	}
@@ -345,13 +345,13 @@ func (_c *CommentCreate) SetNillableIsSticky(v *bool) *CommentCreate {
 }
 
 // SetReplyToID sets the "reply_to_id" field.
-func (_c *CommentCreate) SetReplyToID(v uint64) *CommentCreate {
+func (_c *CommentCreate) SetReplyToID(v int64) *CommentCreate {
 	_c.mutation.SetReplyToID(v)
 	return _c
 }
 
 // SetNillableReplyToID sets the "reply_to_id" field if the given value is not nil.
-func (_c *CommentCreate) SetNillableReplyToID(v *uint64) *CommentCreate {
+func (_c *CommentCreate) SetNillableReplyToID(v *int64) *CommentCreate {
 	if v != nil {
 		_c.SetReplyToID(*v)
 	}
@@ -359,7 +359,7 @@ func (_c *CommentCreate) SetNillableReplyToID(v *uint64) *CommentCreate {
 }
 
 // SetID sets the "id" field.
-func (_c *CommentCreate) SetID(v uint64) *CommentCreate {
+func (_c *CommentCreate) SetID(v int64) *CommentCreate {
 	_c.mutation.SetID(v)
 	return _c
 }
@@ -370,14 +370,14 @@ func (_c *CommentCreate) SetParent(v *Comment) *CommentCreate {
 }
 
 // AddChildIDs adds the "children" edge to the Comment entity by IDs.
-func (_c *CommentCreate) AddChildIDs(ids ...uint64) *CommentCreate {
+func (_c *CommentCreate) AddChildIDs(ids ...int64) *CommentCreate {
 	_c.mutation.AddChildIDs(ids...)
 	return _c
 }
 
 // AddChildren adds the "children" edges to the Comment entity.
 func (_c *CommentCreate) AddChildren(v ...*Comment) *CommentCreate {
-	ids := make([]uint64, len(v))
+	ids := make([]int64, len(v))
 	for i := range v {
 		ids[i] = v[i].ID
 	}
@@ -478,7 +478,7 @@ func (_c *CommentCreate) sqlSave(ctx context.Context) (*Comment, error) {
 	}
 	if _spec.ID.Value != _node.ID {
 		id := _spec.ID.Value.(int64)
-		_node.ID = uint64(id)
+		_node.ID = int64(id)
 	}
 	_c.mutation.id = &_node.ID
 	_c.mutation.done = true
@@ -488,7 +488,7 @@ func (_c *CommentCreate) sqlSave(ctx context.Context) (*Comment, error) {
 func (_c *CommentCreate) createSpec() (*Comment, *sqlgraph.CreateSpec) {
 	var (
 		_node = &Comment{config: _c.config}
-		_spec = sqlgraph.NewCreateSpec(comment.Table, sqlgraph.NewFieldSpec(comment.FieldID, field.TypeUint64))
+		_spec = sqlgraph.NewCreateSpec(comment.Table, sqlgraph.NewFieldSpec(comment.FieldID, field.TypeInt64))
 	)
 	_spec.OnConflict = _c.conflict
 	if id, ok := _c.mutation.ID(); ok {
@@ -508,19 +508,19 @@ func (_c *CommentCreate) createSpec() (*Comment, *sqlgraph.CreateSpec) {
 		_node.DeletedAt = &value
 	}
 	if value, ok := _c.mutation.CreatedBy(); ok {
-		_spec.SetField(comment.FieldCreatedBy, field.TypeUint64, value)
+		_spec.SetField(comment.FieldCreatedBy, field.TypeInt64, value)
 		_node.CreatedBy = &value
 	}
 	if value, ok := _c.mutation.UpdatedBy(); ok {
-		_spec.SetField(comment.FieldUpdatedBy, field.TypeUint64, value)
+		_spec.SetField(comment.FieldUpdatedBy, field.TypeInt64, value)
 		_node.UpdatedBy = &value
 	}
 	if value, ok := _c.mutation.DeletedBy(); ok {
-		_spec.SetField(comment.FieldDeletedBy, field.TypeUint64, value)
+		_spec.SetField(comment.FieldDeletedBy, field.TypeInt64, value)
 		_node.DeletedBy = &value
 	}
 	if value, ok := _c.mutation.TenantID(); ok {
-		_spec.SetField(comment.FieldTenantID, field.TypeUint64, value)
+		_spec.SetField(comment.FieldTenantID, field.TypeInt64, value)
 		_node.TenantID = &value
 	}
 	if value, ok := _c.mutation.ContentType(); ok {
@@ -528,7 +528,7 @@ func (_c *CommentCreate) createSpec() (*Comment, *sqlgraph.CreateSpec) {
 		_node.ContentType = &value
 	}
 	if value, ok := _c.mutation.ObjectID(); ok {
-		_spec.SetField(comment.FieldObjectID, field.TypeUint64, value)
+		_spec.SetField(comment.FieldObjectID, field.TypeInt64, value)
 		_node.ObjectID = &value
 	}
 	if value, ok := _c.mutation.Content(); ok {
@@ -536,7 +536,7 @@ func (_c *CommentCreate) createSpec() (*Comment, *sqlgraph.CreateSpec) {
 		_node.Content = &value
 	}
 	if value, ok := _c.mutation.AuthorID(); ok {
-		_spec.SetField(comment.FieldAuthorID, field.TypeUint64, value)
+		_spec.SetField(comment.FieldAuthorID, field.TypeInt64, value)
 		_node.AuthorID = &value
 	}
 	if value, ok := _c.mutation.AuthorName(); ok {
@@ -584,7 +584,7 @@ func (_c *CommentCreate) createSpec() (*Comment, *sqlgraph.CreateSpec) {
 		_node.IsSticky = &value
 	}
 	if value, ok := _c.mutation.ReplyToID(); ok {
-		_spec.SetField(comment.FieldReplyToID, field.TypeUint64, value)
+		_spec.SetField(comment.FieldReplyToID, field.TypeInt64, value)
 		_node.ReplyToID = &value
 	}
 	if nodes := _c.mutation.ParentIDs(); len(nodes) > 0 {
@@ -595,7 +595,7 @@ func (_c *CommentCreate) createSpec() (*Comment, *sqlgraph.CreateSpec) {
 			Columns: []string{comment.ParentColumn},
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
-				IDSpec: sqlgraph.NewFieldSpec(comment.FieldID, field.TypeUint64),
+				IDSpec: sqlgraph.NewFieldSpec(comment.FieldID, field.TypeInt64),
 			},
 		}
 		for _, k := range nodes {
@@ -612,7 +612,7 @@ func (_c *CommentCreate) createSpec() (*Comment, *sqlgraph.CreateSpec) {
 			Columns: []string{comment.ChildrenColumn},
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
-				IDSpec: sqlgraph.NewFieldSpec(comment.FieldID, field.TypeUint64),
+				IDSpec: sqlgraph.NewFieldSpec(comment.FieldID, field.TypeInt64),
 			},
 		}
 		for _, k := range nodes {
@@ -709,7 +709,7 @@ func (u *CommentUpsert) ClearDeletedAt() *CommentUpsert {
 }
 
 // SetCreatedBy sets the "created_by" field.
-func (u *CommentUpsert) SetCreatedBy(v uint64) *CommentUpsert {
+func (u *CommentUpsert) SetCreatedBy(v int64) *CommentUpsert {
 	u.Set(comment.FieldCreatedBy, v)
 	return u
 }
@@ -721,7 +721,7 @@ func (u *CommentUpsert) UpdateCreatedBy() *CommentUpsert {
 }
 
 // AddCreatedBy adds v to the "created_by" field.
-func (u *CommentUpsert) AddCreatedBy(v uint64) *CommentUpsert {
+func (u *CommentUpsert) AddCreatedBy(v int64) *CommentUpsert {
 	u.Add(comment.FieldCreatedBy, v)
 	return u
 }
@@ -733,7 +733,7 @@ func (u *CommentUpsert) ClearCreatedBy() *CommentUpsert {
 }
 
 // SetUpdatedBy sets the "updated_by" field.
-func (u *CommentUpsert) SetUpdatedBy(v uint64) *CommentUpsert {
+func (u *CommentUpsert) SetUpdatedBy(v int64) *CommentUpsert {
 	u.Set(comment.FieldUpdatedBy, v)
 	return u
 }
@@ -745,7 +745,7 @@ func (u *CommentUpsert) UpdateUpdatedBy() *CommentUpsert {
 }
 
 // AddUpdatedBy adds v to the "updated_by" field.
-func (u *CommentUpsert) AddUpdatedBy(v uint64) *CommentUpsert {
+func (u *CommentUpsert) AddUpdatedBy(v int64) *CommentUpsert {
 	u.Add(comment.FieldUpdatedBy, v)
 	return u
 }
@@ -757,7 +757,7 @@ func (u *CommentUpsert) ClearUpdatedBy() *CommentUpsert {
 }
 
 // SetDeletedBy sets the "deleted_by" field.
-func (u *CommentUpsert) SetDeletedBy(v uint64) *CommentUpsert {
+func (u *CommentUpsert) SetDeletedBy(v int64) *CommentUpsert {
 	u.Set(comment.FieldDeletedBy, v)
 	return u
 }
@@ -769,7 +769,7 @@ func (u *CommentUpsert) UpdateDeletedBy() *CommentUpsert {
 }
 
 // AddDeletedBy adds v to the "deleted_by" field.
-func (u *CommentUpsert) AddDeletedBy(v uint64) *CommentUpsert {
+func (u *CommentUpsert) AddDeletedBy(v int64) *CommentUpsert {
 	u.Add(comment.FieldDeletedBy, v)
 	return u
 }
@@ -781,7 +781,7 @@ func (u *CommentUpsert) ClearDeletedBy() *CommentUpsert {
 }
 
 // SetParentID sets the "parent_id" field.
-func (u *CommentUpsert) SetParentID(v uint64) *CommentUpsert {
+func (u *CommentUpsert) SetParentID(v int64) *CommentUpsert {
 	u.Set(comment.FieldParentID, v)
 	return u
 }
@@ -817,7 +817,7 @@ func (u *CommentUpsert) ClearContentType() *CommentUpsert {
 }
 
 // SetObjectID sets the "object_id" field.
-func (u *CommentUpsert) SetObjectID(v uint64) *CommentUpsert {
+func (u *CommentUpsert) SetObjectID(v int64) *CommentUpsert {
 	u.Set(comment.FieldObjectID, v)
 	return u
 }
@@ -829,7 +829,7 @@ func (u *CommentUpsert) UpdateObjectID() *CommentUpsert {
 }
 
 // AddObjectID adds v to the "object_id" field.
-func (u *CommentUpsert) AddObjectID(v uint64) *CommentUpsert {
+func (u *CommentUpsert) AddObjectID(v int64) *CommentUpsert {
 	u.Add(comment.FieldObjectID, v)
 	return u
 }
@@ -859,7 +859,7 @@ func (u *CommentUpsert) ClearContent() *CommentUpsert {
 }
 
 // SetAuthorID sets the "author_id" field.
-func (u *CommentUpsert) SetAuthorID(v uint64) *CommentUpsert {
+func (u *CommentUpsert) SetAuthorID(v int64) *CommentUpsert {
 	u.Set(comment.FieldAuthorID, v)
 	return u
 }
@@ -871,7 +871,7 @@ func (u *CommentUpsert) UpdateAuthorID() *CommentUpsert {
 }
 
 // AddAuthorID adds v to the "author_id" field.
-func (u *CommentUpsert) AddAuthorID(v uint64) *CommentUpsert {
+func (u *CommentUpsert) AddAuthorID(v int64) *CommentUpsert {
 	u.Add(comment.FieldAuthorID, v)
 	return u
 }
@@ -1081,7 +1081,7 @@ func (u *CommentUpsert) ClearIsSticky() *CommentUpsert {
 }
 
 // SetReplyToID sets the "reply_to_id" field.
-func (u *CommentUpsert) SetReplyToID(v uint64) *CommentUpsert {
+func (u *CommentUpsert) SetReplyToID(v int64) *CommentUpsert {
 	u.Set(comment.FieldReplyToID, v)
 	return u
 }
@@ -1093,7 +1093,7 @@ func (u *CommentUpsert) UpdateReplyToID() *CommentUpsert {
 }
 
 // AddReplyToID adds v to the "reply_to_id" field.
-func (u *CommentUpsert) AddReplyToID(v uint64) *CommentUpsert {
+func (u *CommentUpsert) AddReplyToID(v int64) *CommentUpsert {
 	u.Add(comment.FieldReplyToID, v)
 	return u
 }
@@ -1201,14 +1201,14 @@ func (u *CommentUpsertOne) ClearDeletedAt() *CommentUpsertOne {
 }
 
 // SetCreatedBy sets the "created_by" field.
-func (u *CommentUpsertOne) SetCreatedBy(v uint64) *CommentUpsertOne {
+func (u *CommentUpsertOne) SetCreatedBy(v int64) *CommentUpsertOne {
 	return u.Update(func(s *CommentUpsert) {
 		s.SetCreatedBy(v)
 	})
 }
 
 // AddCreatedBy adds v to the "created_by" field.
-func (u *CommentUpsertOne) AddCreatedBy(v uint64) *CommentUpsertOne {
+func (u *CommentUpsertOne) AddCreatedBy(v int64) *CommentUpsertOne {
 	return u.Update(func(s *CommentUpsert) {
 		s.AddCreatedBy(v)
 	})
@@ -1229,14 +1229,14 @@ func (u *CommentUpsertOne) ClearCreatedBy() *CommentUpsertOne {
 }
 
 // SetUpdatedBy sets the "updated_by" field.
-func (u *CommentUpsertOne) SetUpdatedBy(v uint64) *CommentUpsertOne {
+func (u *CommentUpsertOne) SetUpdatedBy(v int64) *CommentUpsertOne {
 	return u.Update(func(s *CommentUpsert) {
 		s.SetUpdatedBy(v)
 	})
 }
 
 // AddUpdatedBy adds v to the "updated_by" field.
-func (u *CommentUpsertOne) AddUpdatedBy(v uint64) *CommentUpsertOne {
+func (u *CommentUpsertOne) AddUpdatedBy(v int64) *CommentUpsertOne {
 	return u.Update(func(s *CommentUpsert) {
 		s.AddUpdatedBy(v)
 	})
@@ -1257,14 +1257,14 @@ func (u *CommentUpsertOne) ClearUpdatedBy() *CommentUpsertOne {
 }
 
 // SetDeletedBy sets the "deleted_by" field.
-func (u *CommentUpsertOne) SetDeletedBy(v uint64) *CommentUpsertOne {
+func (u *CommentUpsertOne) SetDeletedBy(v int64) *CommentUpsertOne {
 	return u.Update(func(s *CommentUpsert) {
 		s.SetDeletedBy(v)
 	})
 }
 
 // AddDeletedBy adds v to the "deleted_by" field.
-func (u *CommentUpsertOne) AddDeletedBy(v uint64) *CommentUpsertOne {
+func (u *CommentUpsertOne) AddDeletedBy(v int64) *CommentUpsertOne {
 	return u.Update(func(s *CommentUpsert) {
 		s.AddDeletedBy(v)
 	})
@@ -1285,7 +1285,7 @@ func (u *CommentUpsertOne) ClearDeletedBy() *CommentUpsertOne {
 }
 
 // SetParentID sets the "parent_id" field.
-func (u *CommentUpsertOne) SetParentID(v uint64) *CommentUpsertOne {
+func (u *CommentUpsertOne) SetParentID(v int64) *CommentUpsertOne {
 	return u.Update(func(s *CommentUpsert) {
 		s.SetParentID(v)
 	})
@@ -1327,14 +1327,14 @@ func (u *CommentUpsertOne) ClearContentType() *CommentUpsertOne {
 }
 
 // SetObjectID sets the "object_id" field.
-func (u *CommentUpsertOne) SetObjectID(v uint64) *CommentUpsertOne {
+func (u *CommentUpsertOne) SetObjectID(v int64) *CommentUpsertOne {
 	return u.Update(func(s *CommentUpsert) {
 		s.SetObjectID(v)
 	})
 }
 
 // AddObjectID adds v to the "object_id" field.
-func (u *CommentUpsertOne) AddObjectID(v uint64) *CommentUpsertOne {
+func (u *CommentUpsertOne) AddObjectID(v int64) *CommentUpsertOne {
 	return u.Update(func(s *CommentUpsert) {
 		s.AddObjectID(v)
 	})
@@ -1376,14 +1376,14 @@ func (u *CommentUpsertOne) ClearContent() *CommentUpsertOne {
 }
 
 // SetAuthorID sets the "author_id" field.
-func (u *CommentUpsertOne) SetAuthorID(v uint64) *CommentUpsertOne {
+func (u *CommentUpsertOne) SetAuthorID(v int64) *CommentUpsertOne {
 	return u.Update(func(s *CommentUpsert) {
 		s.SetAuthorID(v)
 	})
 }
 
 // AddAuthorID adds v to the "author_id" field.
-func (u *CommentUpsertOne) AddAuthorID(v uint64) *CommentUpsertOne {
+func (u *CommentUpsertOne) AddAuthorID(v int64) *CommentUpsertOne {
 	return u.Update(func(s *CommentUpsert) {
 		s.AddAuthorID(v)
 	})
@@ -1635,14 +1635,14 @@ func (u *CommentUpsertOne) ClearIsSticky() *CommentUpsertOne {
 }
 
 // SetReplyToID sets the "reply_to_id" field.
-func (u *CommentUpsertOne) SetReplyToID(v uint64) *CommentUpsertOne {
+func (u *CommentUpsertOne) SetReplyToID(v int64) *CommentUpsertOne {
 	return u.Update(func(s *CommentUpsert) {
 		s.SetReplyToID(v)
 	})
 }
 
 // AddReplyToID adds v to the "reply_to_id" field.
-func (u *CommentUpsertOne) AddReplyToID(v uint64) *CommentUpsertOne {
+func (u *CommentUpsertOne) AddReplyToID(v int64) *CommentUpsertOne {
 	return u.Update(func(s *CommentUpsert) {
 		s.AddReplyToID(v)
 	})
@@ -1678,7 +1678,7 @@ func (u *CommentUpsertOne) ExecX(ctx context.Context) {
 }
 
 // Exec executes the UPSERT query and returns the inserted/updated ID.
-func (u *CommentUpsertOne) ID(ctx context.Context) (id uint64, err error) {
+func (u *CommentUpsertOne) ID(ctx context.Context) (id int64, err error) {
 	node, err := u.create.Save(ctx)
 	if err != nil {
 		return id, err
@@ -1687,7 +1687,7 @@ func (u *CommentUpsertOne) ID(ctx context.Context) (id uint64, err error) {
 }
 
 // IDX is like ID, but panics if an error occurs.
-func (u *CommentUpsertOne) IDX(ctx context.Context) uint64 {
+func (u *CommentUpsertOne) IDX(ctx context.Context) int64 {
 	id, err := u.ID(ctx)
 	if err != nil {
 		panic(err)
@@ -1744,7 +1744,7 @@ func (_c *CommentCreateBulk) Save(ctx context.Context) ([]*Comment, error) {
 				mutation.id = &nodes[i].ID
 				if specs[i].ID.Value != nil && nodes[i].ID == 0 {
 					id := specs[i].ID.Value.(int64)
-					nodes[i].ID = uint64(id)
+					nodes[i].ID = int64(id)
 				}
 				mutation.done = true
 				return nodes[i], nil
@@ -1925,14 +1925,14 @@ func (u *CommentUpsertBulk) ClearDeletedAt() *CommentUpsertBulk {
 }
 
 // SetCreatedBy sets the "created_by" field.
-func (u *CommentUpsertBulk) SetCreatedBy(v uint64) *CommentUpsertBulk {
+func (u *CommentUpsertBulk) SetCreatedBy(v int64) *CommentUpsertBulk {
 	return u.Update(func(s *CommentUpsert) {
 		s.SetCreatedBy(v)
 	})
 }
 
 // AddCreatedBy adds v to the "created_by" field.
-func (u *CommentUpsertBulk) AddCreatedBy(v uint64) *CommentUpsertBulk {
+func (u *CommentUpsertBulk) AddCreatedBy(v int64) *CommentUpsertBulk {
 	return u.Update(func(s *CommentUpsert) {
 		s.AddCreatedBy(v)
 	})
@@ -1953,14 +1953,14 @@ func (u *CommentUpsertBulk) ClearCreatedBy() *CommentUpsertBulk {
 }
 
 // SetUpdatedBy sets the "updated_by" field.
-func (u *CommentUpsertBulk) SetUpdatedBy(v uint64) *CommentUpsertBulk {
+func (u *CommentUpsertBulk) SetUpdatedBy(v int64) *CommentUpsertBulk {
 	return u.Update(func(s *CommentUpsert) {
 		s.SetUpdatedBy(v)
 	})
 }
 
 // AddUpdatedBy adds v to the "updated_by" field.
-func (u *CommentUpsertBulk) AddUpdatedBy(v uint64) *CommentUpsertBulk {
+func (u *CommentUpsertBulk) AddUpdatedBy(v int64) *CommentUpsertBulk {
 	return u.Update(func(s *CommentUpsert) {
 		s.AddUpdatedBy(v)
 	})
@@ -1981,14 +1981,14 @@ func (u *CommentUpsertBulk) ClearUpdatedBy() *CommentUpsertBulk {
 }
 
 // SetDeletedBy sets the "deleted_by" field.
-func (u *CommentUpsertBulk) SetDeletedBy(v uint64) *CommentUpsertBulk {
+func (u *CommentUpsertBulk) SetDeletedBy(v int64) *CommentUpsertBulk {
 	return u.Update(func(s *CommentUpsert) {
 		s.SetDeletedBy(v)
 	})
 }
 
 // AddDeletedBy adds v to the "deleted_by" field.
-func (u *CommentUpsertBulk) AddDeletedBy(v uint64) *CommentUpsertBulk {
+func (u *CommentUpsertBulk) AddDeletedBy(v int64) *CommentUpsertBulk {
 	return u.Update(func(s *CommentUpsert) {
 		s.AddDeletedBy(v)
 	})
@@ -2009,7 +2009,7 @@ func (u *CommentUpsertBulk) ClearDeletedBy() *CommentUpsertBulk {
 }
 
 // SetParentID sets the "parent_id" field.
-func (u *CommentUpsertBulk) SetParentID(v uint64) *CommentUpsertBulk {
+func (u *CommentUpsertBulk) SetParentID(v int64) *CommentUpsertBulk {
 	return u.Update(func(s *CommentUpsert) {
 		s.SetParentID(v)
 	})
@@ -2051,14 +2051,14 @@ func (u *CommentUpsertBulk) ClearContentType() *CommentUpsertBulk {
 }
 
 // SetObjectID sets the "object_id" field.
-func (u *CommentUpsertBulk) SetObjectID(v uint64) *CommentUpsertBulk {
+func (u *CommentUpsertBulk) SetObjectID(v int64) *CommentUpsertBulk {
 	return u.Update(func(s *CommentUpsert) {
 		s.SetObjectID(v)
 	})
 }
 
 // AddObjectID adds v to the "object_id" field.
-func (u *CommentUpsertBulk) AddObjectID(v uint64) *CommentUpsertBulk {
+func (u *CommentUpsertBulk) AddObjectID(v int64) *CommentUpsertBulk {
 	return u.Update(func(s *CommentUpsert) {
 		s.AddObjectID(v)
 	})
@@ -2100,14 +2100,14 @@ func (u *CommentUpsertBulk) ClearContent() *CommentUpsertBulk {
 }
 
 // SetAuthorID sets the "author_id" field.
-func (u *CommentUpsertBulk) SetAuthorID(v uint64) *CommentUpsertBulk {
+func (u *CommentUpsertBulk) SetAuthorID(v int64) *CommentUpsertBulk {
 	return u.Update(func(s *CommentUpsert) {
 		s.SetAuthorID(v)
 	})
 }
 
 // AddAuthorID adds v to the "author_id" field.
-func (u *CommentUpsertBulk) AddAuthorID(v uint64) *CommentUpsertBulk {
+func (u *CommentUpsertBulk) AddAuthorID(v int64) *CommentUpsertBulk {
 	return u.Update(func(s *CommentUpsert) {
 		s.AddAuthorID(v)
 	})
@@ -2359,14 +2359,14 @@ func (u *CommentUpsertBulk) ClearIsSticky() *CommentUpsertBulk {
 }
 
 // SetReplyToID sets the "reply_to_id" field.
-func (u *CommentUpsertBulk) SetReplyToID(v uint64) *CommentUpsertBulk {
+func (u *CommentUpsertBulk) SetReplyToID(v int64) *CommentUpsertBulk {
 	return u.Update(func(s *CommentUpsert) {
 		s.SetReplyToID(v)
 	})
 }
 
 // AddReplyToID adds v to the "reply_to_id" field.
-func (u *CommentUpsertBulk) AddReplyToID(v uint64) *CommentUpsertBulk {
+func (u *CommentUpsertBulk) AddReplyToID(v int64) *CommentUpsertBulk {
 	return u.Update(func(s *CommentUpsert) {
 		s.AddReplyToID(v)
 	})

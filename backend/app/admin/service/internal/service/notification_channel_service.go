@@ -16,8 +16,8 @@ import (
 type NotificationChannelService struct {
 	adminV1.NotificationChannelServiceHTTPServer
 
-	log         *log.Helper
-	channelCli  notifyV1.NotificationChannelServiceClient
+	log        *log.Helper
+	channelCli notifyV1.NotificationChannelServiceClient
 }
 
 func NewNotificationChannelService(ctx *bootstrap.Context, channelClient notifyV1.NotificationChannelServiceClient) *NotificationChannelService {

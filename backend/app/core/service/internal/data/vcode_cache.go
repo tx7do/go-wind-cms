@@ -11,7 +11,7 @@ import (
 // VCodeCache 验证码缓存（Redis）：一次性消费 + TTL。
 //
 // 与图形验证码（captcha 包自管）分开的原因：验证码按业务 scope 隔离
-//（"reset_password"/"phone_bind"…），键形 vcode:{scope}:{identifier}，
+// （"reset_password"/"phone_bind"…），键形 vcode:{scope}:{identifier}，
 // Verify 命中即删——单次有效由删除保证，不做重放窗口。
 type VCodeCache struct {
 	rdb *redis.Client

@@ -81,7 +81,7 @@ func (x *DownloadFileRequest) GetSelector() isDownloadFileRequest_Selector {
 	return nil
 }
 
-func (x *DownloadFileRequest) GetFileId() uint64 {
+func (x *DownloadFileRequest) GetFileId() int64 {
 	if x != nil {
 		if x, ok := x.Selector.(*DownloadFileRequest_FileId); ok {
 			return x.FileId
@@ -155,7 +155,7 @@ type isDownloadFileRequest_Selector interface {
 }
 
 type DownloadFileRequest_FileId struct {
-	FileId uint64 `protobuf:"varint,1,opt,name=file_id,json=fileId,proto3,oneof"` // 服务端内部文件 ID
+	FileId int64 `protobuf:"varint,1,opt,name=file_id,json=fileId,proto3,oneof"` // 服务端内部文件 ID
 }
 
 type DownloadFileRequest_StorageObject struct {
@@ -316,8 +316,8 @@ type UploadFileRequest struct {
 	SourceFileName *string                    `protobuf:"bytes,4,opt,name=source_file_name,json=sourceFileName,proto3,oneof" json:"source_file_name,omitempty"` // 原文件文件名
 	Mime           *string                    `protobuf:"bytes,5,opt,name=mime,proto3,oneof" json:"mime,omitempty"`                                             // 文件的MIME类型
 	Size           *int64                     `protobuf:"varint,6,opt,name=size,proto3,oneof" json:"size,omitempty"`                                            // 文件大小（字节）
-	TenantId       *uint64                    `protobuf:"varint,10,opt,name=tenant_id,json=tenantId,proto3,oneof" json:"tenant_id,omitempty"`
-	UserId         *uint64                    `protobuf:"varint,11,opt,name=user_id,json=userId,proto3,oneof" json:"user_id,omitempty"`
+	TenantId       *int64                     `protobuf:"varint,10,opt,name=tenant_id,json=tenantId,proto3,oneof" json:"tenant_id,omitempty"`
+	UserId         *int64                     `protobuf:"varint,11,opt,name=user_id,json=userId,proto3,oneof" json:"user_id,omitempty"`
 	unknownFields  protoimpl.UnknownFields
 	sizeCache      protoimpl.SizeCache
 }
@@ -405,14 +405,14 @@ func (x *UploadFileRequest) GetSize() int64 {
 	return 0
 }
 
-func (x *UploadFileRequest) GetTenantId() uint64 {
+func (x *UploadFileRequest) GetTenantId() int64 {
 	if x != nil && x.TenantId != nil {
 		return *x.TenantId
 	}
 	return 0
 }
 
-func (x *UploadFileRequest) GetUserId() uint64 {
+func (x *UploadFileRequest) GetUserId() int64 {
 	if x != nil && x.UserId != nil {
 		return *x.UserId
 	}
@@ -493,8 +493,8 @@ type UploadMediaAssetRequest struct {
 	SourceFileName *string                `protobuf:"bytes,2,opt,name=source_file_name,json=sourceFileName,proto3,oneof" json:"source_file_name,omitempty"` // 原文件文件名
 	MimeType       *string                `protobuf:"bytes,3,opt,name=mime_type,json=mimeType,proto3,oneof" json:"mime_type,omitempty"`                     // 文件的MIME类型
 	FileDirectory  *string                `protobuf:"bytes,4,opt,name=file_directory,json=fileDirectory,proto3,oneof" json:"file_directory,omitempty"`
-	TenantId       *uint64                `protobuf:"varint,10,opt,name=tenant_id,json=tenantId,proto3,oneof" json:"tenant_id,omitempty"`
-	UserId         *uint64                `protobuf:"varint,11,opt,name=user_id,json=userId,proto3,oneof" json:"user_id,omitempty"`
+	TenantId       *int64                 `protobuf:"varint,10,opt,name=tenant_id,json=tenantId,proto3,oneof" json:"tenant_id,omitempty"`
+	UserId         *int64                 `protobuf:"varint,11,opt,name=user_id,json=userId,proto3,oneof" json:"user_id,omitempty"`
 	// SEO 与展示
 	AltText       *string `protobuf:"bytes,20,opt,name=alt_text,json=altText,proto3,oneof" json:"alt_text,omitempty"` // ALT 文本（SEO 优化，图片必需）
 	Title         *string `protobuf:"bytes,21,opt,name=title,proto3,oneof" json:"title,omitempty"`                    // 标题（后台管理/图库展示用）
@@ -561,14 +561,14 @@ func (x *UploadMediaAssetRequest) GetFileDirectory() string {
 	return ""
 }
 
-func (x *UploadMediaAssetRequest) GetTenantId() uint64 {
+func (x *UploadMediaAssetRequest) GetTenantId() int64 {
 	if x != nil && x.TenantId != nil {
 		return *x.TenantId
 	}
 	return 0
 }
 
-func (x *UploadMediaAssetRequest) GetUserId() uint64 {
+func (x *UploadMediaAssetRequest) GetUserId() int64 {
 	if x != nil && x.UserId != nil {
 		return *x.UserId
 	}
@@ -602,7 +602,7 @@ const file_storage_service_v1_file_transfer_proto_rawDesc = "" +
 	"\n" +
 	"&storage/service/v1/file_transfer.proto\x12\x12storage.service.v1\x1a$gnostic/openapi/v3/annotations.proto\x1a\x19google/api/httpbody.proto\x1a\x1fgoogle/protobuf/timestamp.proto\x1a\x1cstorage/service/v1/oss.proto\"\xd7\b\n" +
 	"\x13DownloadFileRequest\x129\n" +
-	"\afile_id\x18\x01 \x01(\x04B\x1e\xbaG\x1b\x92\x02\x18服务端内部文件 IDH\x00R\x06fileId\x12d\n" +
+	"\afile_id\x18\x01 \x01(\x03B\x1e\xbaG\x1b\x92\x02\x18服务端内部文件 IDH\x00R\x06fileId\x12d\n" +
 	"\x0estorage_object\x18\x02 \x01(\v2!.storage.service.v1.StorageObjectB\x18\xbaG\x15\x92\x02\x12对象存储对象H\x00R\rstorageObject\x12\\\n" +
 	"\fdownload_url\x18\x03 \x01(\tB7\xbaG4\x92\x021直接的外部 URL（可用于代理或验证）H\x00R\vdownloadUrl\x12P\n" +
 	"\vrange_start\x18\x04 \x01(\x03B*\xbaG'\x92\x02$下载范围开始区域，闭区间H\x01R\n" +
@@ -642,8 +642,8 @@ const file_storage_service_v1_file_transfer_proto_rawDesc = "" +
 	"\x04mime\x18\x05 \x01(\tB\x19\xbaG\x16\x92\x02\x13文件的MIME类型H\x02R\x04mime\x88\x01\x01\x127\n" +
 	"\x04size\x18\x06 \x01(\x03B\x1e\xbaG\x1b\x92\x02\x18文件大小（字节）H\x03R\x04size\x88\x01\x01\x12L\n" +
 	"\ttenant_id\x18\n" +
-	" \x01(\x04B*\xbaG'\x92\x02$租户ID，0代表系统全局角色H\x04R\btenantId\x88\x01\x01\x12,\n" +
-	"\auser_id\x18\v \x01(\x04B\x0e\xbaG\v\x92\x02\b用户IDH\x05R\x06userId\x88\x01\x01B\b\n" +
+	" \x01(\x03B*\xbaG'\x92\x02$租户ID，0代表系统全局角色H\x04R\btenantId\x88\x01\x01\x12,\n" +
+	"\auser_id\x18\v \x01(\x03B\x0e\xbaG\v\x92\x02\b用户IDH\x05R\x06userId\x88\x01\x01B\b\n" +
 	"\x06sourceB\x13\n" +
 	"\x11_source_file_nameB\a\n" +
 	"\x05_mimeB\a\n" +
@@ -664,8 +664,8 @@ const file_storage_service_v1_file_transfer_proto_rawDesc = "" +
 	"\tmime_type\x18\x03 \x01(\tB\x19\xbaG\x16\x92\x02\x13文件的MIME类型H\x02R\bmimeType\x88\x01\x01\x12\xaa\x01\n" +
 	"\x0efile_directory\x18\x04 \x01(\tB~\xbaG{:\x1a\x12\x18tenant/1001/user/avatar/\x92\x02\\存储目录（如 'user/1001/avatar/'），服务端会在此目录下生成唯一文件名H\x03R\rfileDirectory\x88\x01\x01\x12L\n" +
 	"\ttenant_id\x18\n" +
-	" \x01(\x04B*\xbaG'\x92\x02$租户ID，0代表系统全局角色H\x04R\btenantId\x88\x01\x01\x12,\n" +
-	"\auser_id\x18\v \x01(\x04B\x0e\xbaG\v\x92\x02\b用户IDH\x05R\x06userId\x88\x01\x01\x12O\n" +
+	" \x01(\x03B*\xbaG'\x92\x02$租户ID，0代表系统全局角色H\x04R\btenantId\x88\x01\x01\x12,\n" +
+	"\auser_id\x18\v \x01(\x03B\x0e\xbaG\v\x92\x02\b用户IDH\x05R\x06userId\x88\x01\x01\x12O\n" +
 	"\balt_text\x18\x14 \x01(\tB/\xbaG,\x92\x02)ALT 文本（SEO 优化，图片必需）H\x06R\aaltText\x88\x01\x01\x12I\n" +
 	"\x05title\x18\x15 \x01(\tB.\xbaG+\x92\x02(标题（后台管理/图库展示用）H\aR\x05title\x88\x01\x01\x12F\n" +
 	"\acaption\x18\x16 \x01(\tB'\xbaG$\x92\x02!说明文字（前端展示用）H\bR\acaption\x88\x01\x01B\a\n" +

@@ -66,13 +66,13 @@ func (_c *PostTranslationCreate) SetNillableDeletedAt(v *time.Time) *PostTransla
 }
 
 // SetCreatedBy sets the "created_by" field.
-func (_c *PostTranslationCreate) SetCreatedBy(v uint64) *PostTranslationCreate {
+func (_c *PostTranslationCreate) SetCreatedBy(v int64) *PostTranslationCreate {
 	_c.mutation.SetCreatedBy(v)
 	return _c
 }
 
 // SetNillableCreatedBy sets the "created_by" field if the given value is not nil.
-func (_c *PostTranslationCreate) SetNillableCreatedBy(v *uint64) *PostTranslationCreate {
+func (_c *PostTranslationCreate) SetNillableCreatedBy(v *int64) *PostTranslationCreate {
 	if v != nil {
 		_c.SetCreatedBy(*v)
 	}
@@ -80,13 +80,13 @@ func (_c *PostTranslationCreate) SetNillableCreatedBy(v *uint64) *PostTranslatio
 }
 
 // SetUpdatedBy sets the "updated_by" field.
-func (_c *PostTranslationCreate) SetUpdatedBy(v uint64) *PostTranslationCreate {
+func (_c *PostTranslationCreate) SetUpdatedBy(v int64) *PostTranslationCreate {
 	_c.mutation.SetUpdatedBy(v)
 	return _c
 }
 
 // SetNillableUpdatedBy sets the "updated_by" field if the given value is not nil.
-func (_c *PostTranslationCreate) SetNillableUpdatedBy(v *uint64) *PostTranslationCreate {
+func (_c *PostTranslationCreate) SetNillableUpdatedBy(v *int64) *PostTranslationCreate {
 	if v != nil {
 		_c.SetUpdatedBy(*v)
 	}
@@ -94,13 +94,13 @@ func (_c *PostTranslationCreate) SetNillableUpdatedBy(v *uint64) *PostTranslatio
 }
 
 // SetDeletedBy sets the "deleted_by" field.
-func (_c *PostTranslationCreate) SetDeletedBy(v uint64) *PostTranslationCreate {
+func (_c *PostTranslationCreate) SetDeletedBy(v int64) *PostTranslationCreate {
 	_c.mutation.SetDeletedBy(v)
 	return _c
 }
 
 // SetNillableDeletedBy sets the "deleted_by" field if the given value is not nil.
-func (_c *PostTranslationCreate) SetNillableDeletedBy(v *uint64) *PostTranslationCreate {
+func (_c *PostTranslationCreate) SetNillableDeletedBy(v *int64) *PostTranslationCreate {
 	if v != nil {
 		_c.SetDeletedBy(*v)
 	}
@@ -114,13 +114,13 @@ func (_c *PostTranslationCreate) SetSeo(v *contentpb.SeoMeta) *PostTranslationCr
 }
 
 // SetTenantID sets the "tenant_id" field.
-func (_c *PostTranslationCreate) SetTenantID(v uint64) *PostTranslationCreate {
+func (_c *PostTranslationCreate) SetTenantID(v int64) *PostTranslationCreate {
 	_c.mutation.SetTenantID(v)
 	return _c
 }
 
 // SetNillableTenantID sets the "tenant_id" field if the given value is not nil.
-func (_c *PostTranslationCreate) SetNillableTenantID(v *uint64) *PostTranslationCreate {
+func (_c *PostTranslationCreate) SetNillableTenantID(v *int64) *PostTranslationCreate {
 	if v != nil {
 		_c.SetTenantID(*v)
 	}
@@ -128,13 +128,13 @@ func (_c *PostTranslationCreate) SetNillableTenantID(v *uint64) *PostTranslation
 }
 
 // SetPostID sets the "post_id" field.
-func (_c *PostTranslationCreate) SetPostID(v uint64) *PostTranslationCreate {
+func (_c *PostTranslationCreate) SetPostID(v int64) *PostTranslationCreate {
 	_c.mutation.SetPostID(v)
 	return _c
 }
 
 // SetNillablePostID sets the "post_id" field if the given value is not nil.
-func (_c *PostTranslationCreate) SetNillablePostID(v *uint64) *PostTranslationCreate {
+func (_c *PostTranslationCreate) SetNillablePostID(v *int64) *PostTranslationCreate {
 	if v != nil {
 		_c.SetPostID(*v)
 	}
@@ -254,7 +254,7 @@ func (_c *PostTranslationCreate) SetNillableWordCount(v *uint32) *PostTranslatio
 }
 
 // SetID sets the "id" field.
-func (_c *PostTranslationCreate) SetID(v uint64) *PostTranslationCreate {
+func (_c *PostTranslationCreate) SetID(v int64) *PostTranslationCreate {
 	_c.mutation.SetID(v)
 	return _c
 }
@@ -335,7 +335,7 @@ func (_c *PostTranslationCreate) sqlSave(ctx context.Context) (*PostTranslation,
 	}
 	if _spec.ID.Value != _node.ID {
 		id := _spec.ID.Value.(int64)
-		_node.ID = uint64(id)
+		_node.ID = int64(id)
 	}
 	_c.mutation.id = &_node.ID
 	_c.mutation.done = true
@@ -345,7 +345,7 @@ func (_c *PostTranslationCreate) sqlSave(ctx context.Context) (*PostTranslation,
 func (_c *PostTranslationCreate) createSpec() (*PostTranslation, *sqlgraph.CreateSpec) {
 	var (
 		_node = &PostTranslation{config: _c.config}
-		_spec = sqlgraph.NewCreateSpec(posttranslation.Table, sqlgraph.NewFieldSpec(posttranslation.FieldID, field.TypeUint64))
+		_spec = sqlgraph.NewCreateSpec(posttranslation.Table, sqlgraph.NewFieldSpec(posttranslation.FieldID, field.TypeInt64))
 	)
 	_spec.OnConflict = _c.conflict
 	if id, ok := _c.mutation.ID(); ok {
@@ -365,15 +365,15 @@ func (_c *PostTranslationCreate) createSpec() (*PostTranslation, *sqlgraph.Creat
 		_node.DeletedAt = &value
 	}
 	if value, ok := _c.mutation.CreatedBy(); ok {
-		_spec.SetField(posttranslation.FieldCreatedBy, field.TypeUint64, value)
+		_spec.SetField(posttranslation.FieldCreatedBy, field.TypeInt64, value)
 		_node.CreatedBy = &value
 	}
 	if value, ok := _c.mutation.UpdatedBy(); ok {
-		_spec.SetField(posttranslation.FieldUpdatedBy, field.TypeUint64, value)
+		_spec.SetField(posttranslation.FieldUpdatedBy, field.TypeInt64, value)
 		_node.UpdatedBy = &value
 	}
 	if value, ok := _c.mutation.DeletedBy(); ok {
-		_spec.SetField(posttranslation.FieldDeletedBy, field.TypeUint64, value)
+		_spec.SetField(posttranslation.FieldDeletedBy, field.TypeInt64, value)
 		_node.DeletedBy = &value
 	}
 	if value, ok := _c.mutation.Seo(); ok {
@@ -381,11 +381,11 @@ func (_c *PostTranslationCreate) createSpec() (*PostTranslation, *sqlgraph.Creat
 		_node.Seo = value
 	}
 	if value, ok := _c.mutation.TenantID(); ok {
-		_spec.SetField(posttranslation.FieldTenantID, field.TypeUint64, value)
+		_spec.SetField(posttranslation.FieldTenantID, field.TypeInt64, value)
 		_node.TenantID = &value
 	}
 	if value, ok := _c.mutation.PostID(); ok {
-		_spec.SetField(posttranslation.FieldPostID, field.TypeUint64, value)
+		_spec.SetField(posttranslation.FieldPostID, field.TypeInt64, value)
 		_node.PostID = &value
 	}
 	if value, ok := _c.mutation.LanguageCode(); ok {
@@ -509,7 +509,7 @@ func (u *PostTranslationUpsert) ClearDeletedAt() *PostTranslationUpsert {
 }
 
 // SetCreatedBy sets the "created_by" field.
-func (u *PostTranslationUpsert) SetCreatedBy(v uint64) *PostTranslationUpsert {
+func (u *PostTranslationUpsert) SetCreatedBy(v int64) *PostTranslationUpsert {
 	u.Set(posttranslation.FieldCreatedBy, v)
 	return u
 }
@@ -521,7 +521,7 @@ func (u *PostTranslationUpsert) UpdateCreatedBy() *PostTranslationUpsert {
 }
 
 // AddCreatedBy adds v to the "created_by" field.
-func (u *PostTranslationUpsert) AddCreatedBy(v uint64) *PostTranslationUpsert {
+func (u *PostTranslationUpsert) AddCreatedBy(v int64) *PostTranslationUpsert {
 	u.Add(posttranslation.FieldCreatedBy, v)
 	return u
 }
@@ -533,7 +533,7 @@ func (u *PostTranslationUpsert) ClearCreatedBy() *PostTranslationUpsert {
 }
 
 // SetUpdatedBy sets the "updated_by" field.
-func (u *PostTranslationUpsert) SetUpdatedBy(v uint64) *PostTranslationUpsert {
+func (u *PostTranslationUpsert) SetUpdatedBy(v int64) *PostTranslationUpsert {
 	u.Set(posttranslation.FieldUpdatedBy, v)
 	return u
 }
@@ -545,7 +545,7 @@ func (u *PostTranslationUpsert) UpdateUpdatedBy() *PostTranslationUpsert {
 }
 
 // AddUpdatedBy adds v to the "updated_by" field.
-func (u *PostTranslationUpsert) AddUpdatedBy(v uint64) *PostTranslationUpsert {
+func (u *PostTranslationUpsert) AddUpdatedBy(v int64) *PostTranslationUpsert {
 	u.Add(posttranslation.FieldUpdatedBy, v)
 	return u
 }
@@ -557,7 +557,7 @@ func (u *PostTranslationUpsert) ClearUpdatedBy() *PostTranslationUpsert {
 }
 
 // SetDeletedBy sets the "deleted_by" field.
-func (u *PostTranslationUpsert) SetDeletedBy(v uint64) *PostTranslationUpsert {
+func (u *PostTranslationUpsert) SetDeletedBy(v int64) *PostTranslationUpsert {
 	u.Set(posttranslation.FieldDeletedBy, v)
 	return u
 }
@@ -569,7 +569,7 @@ func (u *PostTranslationUpsert) UpdateDeletedBy() *PostTranslationUpsert {
 }
 
 // AddDeletedBy adds v to the "deleted_by" field.
-func (u *PostTranslationUpsert) AddDeletedBy(v uint64) *PostTranslationUpsert {
+func (u *PostTranslationUpsert) AddDeletedBy(v int64) *PostTranslationUpsert {
 	u.Add(posttranslation.FieldDeletedBy, v)
 	return u
 }
@@ -599,7 +599,7 @@ func (u *PostTranslationUpsert) ClearSeo() *PostTranslationUpsert {
 }
 
 // SetPostID sets the "post_id" field.
-func (u *PostTranslationUpsert) SetPostID(v uint64) *PostTranslationUpsert {
+func (u *PostTranslationUpsert) SetPostID(v int64) *PostTranslationUpsert {
 	u.Set(posttranslation.FieldPostID, v)
 	return u
 }
@@ -611,7 +611,7 @@ func (u *PostTranslationUpsert) UpdatePostID() *PostTranslationUpsert {
 }
 
 // AddPostID adds v to the "post_id" field.
-func (u *PostTranslationUpsert) AddPostID(v uint64) *PostTranslationUpsert {
+func (u *PostTranslationUpsert) AddPostID(v int64) *PostTranslationUpsert {
 	u.Add(posttranslation.FieldPostID, v)
 	return u
 }
@@ -869,14 +869,14 @@ func (u *PostTranslationUpsertOne) ClearDeletedAt() *PostTranslationUpsertOne {
 }
 
 // SetCreatedBy sets the "created_by" field.
-func (u *PostTranslationUpsertOne) SetCreatedBy(v uint64) *PostTranslationUpsertOne {
+func (u *PostTranslationUpsertOne) SetCreatedBy(v int64) *PostTranslationUpsertOne {
 	return u.Update(func(s *PostTranslationUpsert) {
 		s.SetCreatedBy(v)
 	})
 }
 
 // AddCreatedBy adds v to the "created_by" field.
-func (u *PostTranslationUpsertOne) AddCreatedBy(v uint64) *PostTranslationUpsertOne {
+func (u *PostTranslationUpsertOne) AddCreatedBy(v int64) *PostTranslationUpsertOne {
 	return u.Update(func(s *PostTranslationUpsert) {
 		s.AddCreatedBy(v)
 	})
@@ -897,14 +897,14 @@ func (u *PostTranslationUpsertOne) ClearCreatedBy() *PostTranslationUpsertOne {
 }
 
 // SetUpdatedBy sets the "updated_by" field.
-func (u *PostTranslationUpsertOne) SetUpdatedBy(v uint64) *PostTranslationUpsertOne {
+func (u *PostTranslationUpsertOne) SetUpdatedBy(v int64) *PostTranslationUpsertOne {
 	return u.Update(func(s *PostTranslationUpsert) {
 		s.SetUpdatedBy(v)
 	})
 }
 
 // AddUpdatedBy adds v to the "updated_by" field.
-func (u *PostTranslationUpsertOne) AddUpdatedBy(v uint64) *PostTranslationUpsertOne {
+func (u *PostTranslationUpsertOne) AddUpdatedBy(v int64) *PostTranslationUpsertOne {
 	return u.Update(func(s *PostTranslationUpsert) {
 		s.AddUpdatedBy(v)
 	})
@@ -925,14 +925,14 @@ func (u *PostTranslationUpsertOne) ClearUpdatedBy() *PostTranslationUpsertOne {
 }
 
 // SetDeletedBy sets the "deleted_by" field.
-func (u *PostTranslationUpsertOne) SetDeletedBy(v uint64) *PostTranslationUpsertOne {
+func (u *PostTranslationUpsertOne) SetDeletedBy(v int64) *PostTranslationUpsertOne {
 	return u.Update(func(s *PostTranslationUpsert) {
 		s.SetDeletedBy(v)
 	})
 }
 
 // AddDeletedBy adds v to the "deleted_by" field.
-func (u *PostTranslationUpsertOne) AddDeletedBy(v uint64) *PostTranslationUpsertOne {
+func (u *PostTranslationUpsertOne) AddDeletedBy(v int64) *PostTranslationUpsertOne {
 	return u.Update(func(s *PostTranslationUpsert) {
 		s.AddDeletedBy(v)
 	})
@@ -974,14 +974,14 @@ func (u *PostTranslationUpsertOne) ClearSeo() *PostTranslationUpsertOne {
 }
 
 // SetPostID sets the "post_id" field.
-func (u *PostTranslationUpsertOne) SetPostID(v uint64) *PostTranslationUpsertOne {
+func (u *PostTranslationUpsertOne) SetPostID(v int64) *PostTranslationUpsertOne {
 	return u.Update(func(s *PostTranslationUpsert) {
 		s.SetPostID(v)
 	})
 }
 
 // AddPostID adds v to the "post_id" field.
-func (u *PostTranslationUpsertOne) AddPostID(v uint64) *PostTranslationUpsertOne {
+func (u *PostTranslationUpsertOne) AddPostID(v int64) *PostTranslationUpsertOne {
 	return u.Update(func(s *PostTranslationUpsert) {
 		s.AddPostID(v)
 	})
@@ -1192,7 +1192,7 @@ func (u *PostTranslationUpsertOne) ExecX(ctx context.Context) {
 }
 
 // Exec executes the UPSERT query and returns the inserted/updated ID.
-func (u *PostTranslationUpsertOne) ID(ctx context.Context) (id uint64, err error) {
+func (u *PostTranslationUpsertOne) ID(ctx context.Context) (id int64, err error) {
 	node, err := u.create.Save(ctx)
 	if err != nil {
 		return id, err
@@ -1201,7 +1201,7 @@ func (u *PostTranslationUpsertOne) ID(ctx context.Context) (id uint64, err error
 }
 
 // IDX is like ID, but panics if an error occurs.
-func (u *PostTranslationUpsertOne) IDX(ctx context.Context) uint64 {
+func (u *PostTranslationUpsertOne) IDX(ctx context.Context) int64 {
 	id, err := u.ID(ctx)
 	if err != nil {
 		panic(err)
@@ -1258,7 +1258,7 @@ func (_c *PostTranslationCreateBulk) Save(ctx context.Context) ([]*PostTranslati
 				mutation.id = &nodes[i].ID
 				if specs[i].ID.Value != nil && nodes[i].ID == 0 {
 					id := specs[i].ID.Value.(int64)
-					nodes[i].ID = uint64(id)
+					nodes[i].ID = int64(id)
 				}
 				mutation.done = true
 				return nodes[i], nil
@@ -1439,14 +1439,14 @@ func (u *PostTranslationUpsertBulk) ClearDeletedAt() *PostTranslationUpsertBulk 
 }
 
 // SetCreatedBy sets the "created_by" field.
-func (u *PostTranslationUpsertBulk) SetCreatedBy(v uint64) *PostTranslationUpsertBulk {
+func (u *PostTranslationUpsertBulk) SetCreatedBy(v int64) *PostTranslationUpsertBulk {
 	return u.Update(func(s *PostTranslationUpsert) {
 		s.SetCreatedBy(v)
 	})
 }
 
 // AddCreatedBy adds v to the "created_by" field.
-func (u *PostTranslationUpsertBulk) AddCreatedBy(v uint64) *PostTranslationUpsertBulk {
+func (u *PostTranslationUpsertBulk) AddCreatedBy(v int64) *PostTranslationUpsertBulk {
 	return u.Update(func(s *PostTranslationUpsert) {
 		s.AddCreatedBy(v)
 	})
@@ -1467,14 +1467,14 @@ func (u *PostTranslationUpsertBulk) ClearCreatedBy() *PostTranslationUpsertBulk 
 }
 
 // SetUpdatedBy sets the "updated_by" field.
-func (u *PostTranslationUpsertBulk) SetUpdatedBy(v uint64) *PostTranslationUpsertBulk {
+func (u *PostTranslationUpsertBulk) SetUpdatedBy(v int64) *PostTranslationUpsertBulk {
 	return u.Update(func(s *PostTranslationUpsert) {
 		s.SetUpdatedBy(v)
 	})
 }
 
 // AddUpdatedBy adds v to the "updated_by" field.
-func (u *PostTranslationUpsertBulk) AddUpdatedBy(v uint64) *PostTranslationUpsertBulk {
+func (u *PostTranslationUpsertBulk) AddUpdatedBy(v int64) *PostTranslationUpsertBulk {
 	return u.Update(func(s *PostTranslationUpsert) {
 		s.AddUpdatedBy(v)
 	})
@@ -1495,14 +1495,14 @@ func (u *PostTranslationUpsertBulk) ClearUpdatedBy() *PostTranslationUpsertBulk 
 }
 
 // SetDeletedBy sets the "deleted_by" field.
-func (u *PostTranslationUpsertBulk) SetDeletedBy(v uint64) *PostTranslationUpsertBulk {
+func (u *PostTranslationUpsertBulk) SetDeletedBy(v int64) *PostTranslationUpsertBulk {
 	return u.Update(func(s *PostTranslationUpsert) {
 		s.SetDeletedBy(v)
 	})
 }
 
 // AddDeletedBy adds v to the "deleted_by" field.
-func (u *PostTranslationUpsertBulk) AddDeletedBy(v uint64) *PostTranslationUpsertBulk {
+func (u *PostTranslationUpsertBulk) AddDeletedBy(v int64) *PostTranslationUpsertBulk {
 	return u.Update(func(s *PostTranslationUpsert) {
 		s.AddDeletedBy(v)
 	})
@@ -1544,14 +1544,14 @@ func (u *PostTranslationUpsertBulk) ClearSeo() *PostTranslationUpsertBulk {
 }
 
 // SetPostID sets the "post_id" field.
-func (u *PostTranslationUpsertBulk) SetPostID(v uint64) *PostTranslationUpsertBulk {
+func (u *PostTranslationUpsertBulk) SetPostID(v int64) *PostTranslationUpsertBulk {
 	return u.Update(func(s *PostTranslationUpsert) {
 		s.SetPostID(v)
 	})
 }
 
 // AddPostID adds v to the "post_id" field.
-func (u *PostTranslationUpsertBulk) AddPostID(v uint64) *PostTranslationUpsertBulk {
+func (u *PostTranslationUpsertBulk) AddPostID(v int64) *PostTranslationUpsertBulk {
 	return u.Update(func(s *PostTranslationUpsert) {
 		s.AddPostID(v)
 	})

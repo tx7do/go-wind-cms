@@ -132,7 +132,7 @@ func (c *Client) callXMLRPC(ctx context.Context, creds social.Credentials, metho
 }
 
 // ctxTransport 把调用级 ctx 透传给 XML-RPC 库的 HTTP 层
-//（kolo/xmlrpc 的 NewClient 收 RoundTripper 而非 ctx）。
+// （kolo/xmlrpc 的 NewClient 收 RoundTripper 而非 ctx）。
 type ctxTransport struct {
 	ctx  context.Context
 	base http.RoundTripper

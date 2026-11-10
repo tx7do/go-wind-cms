@@ -70,14 +70,14 @@ func (_u *FieldDefinitionTranslationUpdate) ClearDeletedAt() *FieldDefinitionTra
 }
 
 // SetCreatedBy sets the "created_by" field.
-func (_u *FieldDefinitionTranslationUpdate) SetCreatedBy(v uint64) *FieldDefinitionTranslationUpdate {
+func (_u *FieldDefinitionTranslationUpdate) SetCreatedBy(v int64) *FieldDefinitionTranslationUpdate {
 	_u.mutation.ResetCreatedBy()
 	_u.mutation.SetCreatedBy(v)
 	return _u
 }
 
 // SetNillableCreatedBy sets the "created_by" field if the given value is not nil.
-func (_u *FieldDefinitionTranslationUpdate) SetNillableCreatedBy(v *uint64) *FieldDefinitionTranslationUpdate {
+func (_u *FieldDefinitionTranslationUpdate) SetNillableCreatedBy(v *int64) *FieldDefinitionTranslationUpdate {
 	if v != nil {
 		_u.SetCreatedBy(*v)
 	}
@@ -97,14 +97,14 @@ func (_u *FieldDefinitionTranslationUpdate) ClearCreatedBy() *FieldDefinitionTra
 }
 
 // SetUpdatedBy sets the "updated_by" field.
-func (_u *FieldDefinitionTranslationUpdate) SetUpdatedBy(v uint64) *FieldDefinitionTranslationUpdate {
+func (_u *FieldDefinitionTranslationUpdate) SetUpdatedBy(v int64) *FieldDefinitionTranslationUpdate {
 	_u.mutation.ResetUpdatedBy()
 	_u.mutation.SetUpdatedBy(v)
 	return _u
 }
 
 // SetNillableUpdatedBy sets the "updated_by" field if the given value is not nil.
-func (_u *FieldDefinitionTranslationUpdate) SetNillableUpdatedBy(v *uint64) *FieldDefinitionTranslationUpdate {
+func (_u *FieldDefinitionTranslationUpdate) SetNillableUpdatedBy(v *int64) *FieldDefinitionTranslationUpdate {
 	if v != nil {
 		_u.SetUpdatedBy(*v)
 	}
@@ -124,14 +124,14 @@ func (_u *FieldDefinitionTranslationUpdate) ClearUpdatedBy() *FieldDefinitionTra
 }
 
 // SetDeletedBy sets the "deleted_by" field.
-func (_u *FieldDefinitionTranslationUpdate) SetDeletedBy(v uint64) *FieldDefinitionTranslationUpdate {
+func (_u *FieldDefinitionTranslationUpdate) SetDeletedBy(v int64) *FieldDefinitionTranslationUpdate {
 	_u.mutation.ResetDeletedBy()
 	_u.mutation.SetDeletedBy(v)
 	return _u
 }
 
 // SetNillableDeletedBy sets the "deleted_by" field if the given value is not nil.
-func (_u *FieldDefinitionTranslationUpdate) SetNillableDeletedBy(v *uint64) *FieldDefinitionTranslationUpdate {
+func (_u *FieldDefinitionTranslationUpdate) SetNillableDeletedBy(v *int64) *FieldDefinitionTranslationUpdate {
 	if v != nil {
 		_u.SetDeletedBy(*v)
 	}
@@ -151,14 +151,14 @@ func (_u *FieldDefinitionTranslationUpdate) ClearDeletedBy() *FieldDefinitionTra
 }
 
 // SetFieldDefinitionID sets the "field_definition_id" field.
-func (_u *FieldDefinitionTranslationUpdate) SetFieldDefinitionID(v uint64) *FieldDefinitionTranslationUpdate {
+func (_u *FieldDefinitionTranslationUpdate) SetFieldDefinitionID(v int64) *FieldDefinitionTranslationUpdate {
 	_u.mutation.ResetFieldDefinitionID()
 	_u.mutation.SetFieldDefinitionID(v)
 	return _u
 }
 
 // SetNillableFieldDefinitionID sets the "field_definition_id" field if the given value is not nil.
-func (_u *FieldDefinitionTranslationUpdate) SetNillableFieldDefinitionID(v *uint64) *FieldDefinitionTranslationUpdate {
+func (_u *FieldDefinitionTranslationUpdate) SetNillableFieldDefinitionID(v *int64) *FieldDefinitionTranslationUpdate {
 	if v != nil {
 		_u.SetFieldDefinitionID(*v)
 	}
@@ -309,7 +309,7 @@ func (_u *FieldDefinitionTranslationUpdate) sqlSave(ctx context.Context) (_node 
 	if err := _u.check(); err != nil {
 		return _node, err
 	}
-	_spec := sqlgraph.NewUpdateSpec(fielddefinitiontranslation.Table, fielddefinitiontranslation.Columns, sqlgraph.NewFieldSpec(fielddefinitiontranslation.FieldID, field.TypeUint64))
+	_spec := sqlgraph.NewUpdateSpec(fielddefinitiontranslation.Table, fielddefinitiontranslation.Columns, sqlgraph.NewFieldSpec(fielddefinitiontranslation.FieldID, field.TypeInt64))
 	if ps := _u.mutation.predicates; len(ps) > 0 {
 		_spec.Predicate = func(selector *sql.Selector) {
 			for i := range ps {
@@ -333,40 +333,40 @@ func (_u *FieldDefinitionTranslationUpdate) sqlSave(ctx context.Context) (_node 
 		_spec.ClearField(fielddefinitiontranslation.FieldDeletedAt, field.TypeTime)
 	}
 	if value, ok := _u.mutation.CreatedBy(); ok {
-		_spec.SetField(fielddefinitiontranslation.FieldCreatedBy, field.TypeUint64, value)
+		_spec.SetField(fielddefinitiontranslation.FieldCreatedBy, field.TypeInt64, value)
 	}
 	if value, ok := _u.mutation.AddedCreatedBy(); ok {
-		_spec.AddField(fielddefinitiontranslation.FieldCreatedBy, field.TypeUint64, value)
+		_spec.AddField(fielddefinitiontranslation.FieldCreatedBy, field.TypeInt64, value)
 	}
 	if _u.mutation.CreatedByCleared() {
-		_spec.ClearField(fielddefinitiontranslation.FieldCreatedBy, field.TypeUint64)
+		_spec.ClearField(fielddefinitiontranslation.FieldCreatedBy, field.TypeInt64)
 	}
 	if value, ok := _u.mutation.UpdatedBy(); ok {
-		_spec.SetField(fielddefinitiontranslation.FieldUpdatedBy, field.TypeUint64, value)
+		_spec.SetField(fielddefinitiontranslation.FieldUpdatedBy, field.TypeInt64, value)
 	}
 	if value, ok := _u.mutation.AddedUpdatedBy(); ok {
-		_spec.AddField(fielddefinitiontranslation.FieldUpdatedBy, field.TypeUint64, value)
+		_spec.AddField(fielddefinitiontranslation.FieldUpdatedBy, field.TypeInt64, value)
 	}
 	if _u.mutation.UpdatedByCleared() {
-		_spec.ClearField(fielddefinitiontranslation.FieldUpdatedBy, field.TypeUint64)
+		_spec.ClearField(fielddefinitiontranslation.FieldUpdatedBy, field.TypeInt64)
 	}
 	if value, ok := _u.mutation.DeletedBy(); ok {
-		_spec.SetField(fielddefinitiontranslation.FieldDeletedBy, field.TypeUint64, value)
+		_spec.SetField(fielddefinitiontranslation.FieldDeletedBy, field.TypeInt64, value)
 	}
 	if value, ok := _u.mutation.AddedDeletedBy(); ok {
-		_spec.AddField(fielddefinitiontranslation.FieldDeletedBy, field.TypeUint64, value)
+		_spec.AddField(fielddefinitiontranslation.FieldDeletedBy, field.TypeInt64, value)
 	}
 	if _u.mutation.DeletedByCleared() {
-		_spec.ClearField(fielddefinitiontranslation.FieldDeletedBy, field.TypeUint64)
+		_spec.ClearField(fielddefinitiontranslation.FieldDeletedBy, field.TypeInt64)
 	}
 	if value, ok := _u.mutation.FieldDefinitionID(); ok {
-		_spec.SetField(fielddefinitiontranslation.FieldFieldDefinitionID, field.TypeUint64, value)
+		_spec.SetField(fielddefinitiontranslation.FieldFieldDefinitionID, field.TypeInt64, value)
 	}
 	if value, ok := _u.mutation.AddedFieldDefinitionID(); ok {
-		_spec.AddField(fielddefinitiontranslation.FieldFieldDefinitionID, field.TypeUint64, value)
+		_spec.AddField(fielddefinitiontranslation.FieldFieldDefinitionID, field.TypeInt64, value)
 	}
 	if _u.mutation.FieldDefinitionIDCleared() {
-		_spec.ClearField(fielddefinitiontranslation.FieldFieldDefinitionID, field.TypeUint64)
+		_spec.ClearField(fielddefinitiontranslation.FieldFieldDefinitionID, field.TypeInt64)
 	}
 	if value, ok := _u.mutation.LanguageCode(); ok {
 		_spec.SetField(fielddefinitiontranslation.FieldLanguageCode, field.TypeString, value)
@@ -455,14 +455,14 @@ func (_u *FieldDefinitionTranslationUpdateOne) ClearDeletedAt() *FieldDefinition
 }
 
 // SetCreatedBy sets the "created_by" field.
-func (_u *FieldDefinitionTranslationUpdateOne) SetCreatedBy(v uint64) *FieldDefinitionTranslationUpdateOne {
+func (_u *FieldDefinitionTranslationUpdateOne) SetCreatedBy(v int64) *FieldDefinitionTranslationUpdateOne {
 	_u.mutation.ResetCreatedBy()
 	_u.mutation.SetCreatedBy(v)
 	return _u
 }
 
 // SetNillableCreatedBy sets the "created_by" field if the given value is not nil.
-func (_u *FieldDefinitionTranslationUpdateOne) SetNillableCreatedBy(v *uint64) *FieldDefinitionTranslationUpdateOne {
+func (_u *FieldDefinitionTranslationUpdateOne) SetNillableCreatedBy(v *int64) *FieldDefinitionTranslationUpdateOne {
 	if v != nil {
 		_u.SetCreatedBy(*v)
 	}
@@ -482,14 +482,14 @@ func (_u *FieldDefinitionTranslationUpdateOne) ClearCreatedBy() *FieldDefinition
 }
 
 // SetUpdatedBy sets the "updated_by" field.
-func (_u *FieldDefinitionTranslationUpdateOne) SetUpdatedBy(v uint64) *FieldDefinitionTranslationUpdateOne {
+func (_u *FieldDefinitionTranslationUpdateOne) SetUpdatedBy(v int64) *FieldDefinitionTranslationUpdateOne {
 	_u.mutation.ResetUpdatedBy()
 	_u.mutation.SetUpdatedBy(v)
 	return _u
 }
 
 // SetNillableUpdatedBy sets the "updated_by" field if the given value is not nil.
-func (_u *FieldDefinitionTranslationUpdateOne) SetNillableUpdatedBy(v *uint64) *FieldDefinitionTranslationUpdateOne {
+func (_u *FieldDefinitionTranslationUpdateOne) SetNillableUpdatedBy(v *int64) *FieldDefinitionTranslationUpdateOne {
 	if v != nil {
 		_u.SetUpdatedBy(*v)
 	}
@@ -509,14 +509,14 @@ func (_u *FieldDefinitionTranslationUpdateOne) ClearUpdatedBy() *FieldDefinition
 }
 
 // SetDeletedBy sets the "deleted_by" field.
-func (_u *FieldDefinitionTranslationUpdateOne) SetDeletedBy(v uint64) *FieldDefinitionTranslationUpdateOne {
+func (_u *FieldDefinitionTranslationUpdateOne) SetDeletedBy(v int64) *FieldDefinitionTranslationUpdateOne {
 	_u.mutation.ResetDeletedBy()
 	_u.mutation.SetDeletedBy(v)
 	return _u
 }
 
 // SetNillableDeletedBy sets the "deleted_by" field if the given value is not nil.
-func (_u *FieldDefinitionTranslationUpdateOne) SetNillableDeletedBy(v *uint64) *FieldDefinitionTranslationUpdateOne {
+func (_u *FieldDefinitionTranslationUpdateOne) SetNillableDeletedBy(v *int64) *FieldDefinitionTranslationUpdateOne {
 	if v != nil {
 		_u.SetDeletedBy(*v)
 	}
@@ -536,14 +536,14 @@ func (_u *FieldDefinitionTranslationUpdateOne) ClearDeletedBy() *FieldDefinition
 }
 
 // SetFieldDefinitionID sets the "field_definition_id" field.
-func (_u *FieldDefinitionTranslationUpdateOne) SetFieldDefinitionID(v uint64) *FieldDefinitionTranslationUpdateOne {
+func (_u *FieldDefinitionTranslationUpdateOne) SetFieldDefinitionID(v int64) *FieldDefinitionTranslationUpdateOne {
 	_u.mutation.ResetFieldDefinitionID()
 	_u.mutation.SetFieldDefinitionID(v)
 	return _u
 }
 
 // SetNillableFieldDefinitionID sets the "field_definition_id" field if the given value is not nil.
-func (_u *FieldDefinitionTranslationUpdateOne) SetNillableFieldDefinitionID(v *uint64) *FieldDefinitionTranslationUpdateOne {
+func (_u *FieldDefinitionTranslationUpdateOne) SetNillableFieldDefinitionID(v *int64) *FieldDefinitionTranslationUpdateOne {
 	if v != nil {
 		_u.SetFieldDefinitionID(*v)
 	}
@@ -707,7 +707,7 @@ func (_u *FieldDefinitionTranslationUpdateOne) sqlSave(ctx context.Context) (_no
 	if err := _u.check(); err != nil {
 		return _node, err
 	}
-	_spec := sqlgraph.NewUpdateSpec(fielddefinitiontranslation.Table, fielddefinitiontranslation.Columns, sqlgraph.NewFieldSpec(fielddefinitiontranslation.FieldID, field.TypeUint64))
+	_spec := sqlgraph.NewUpdateSpec(fielddefinitiontranslation.Table, fielddefinitiontranslation.Columns, sqlgraph.NewFieldSpec(fielddefinitiontranslation.FieldID, field.TypeInt64))
 	id, ok := _u.mutation.ID()
 	if !ok {
 		return nil, &ValidationError{Name: "id", err: errors.New(`ent: missing "FieldDefinitionTranslation.id" for update`)}
@@ -748,40 +748,40 @@ func (_u *FieldDefinitionTranslationUpdateOne) sqlSave(ctx context.Context) (_no
 		_spec.ClearField(fielddefinitiontranslation.FieldDeletedAt, field.TypeTime)
 	}
 	if value, ok := _u.mutation.CreatedBy(); ok {
-		_spec.SetField(fielddefinitiontranslation.FieldCreatedBy, field.TypeUint64, value)
+		_spec.SetField(fielddefinitiontranslation.FieldCreatedBy, field.TypeInt64, value)
 	}
 	if value, ok := _u.mutation.AddedCreatedBy(); ok {
-		_spec.AddField(fielddefinitiontranslation.FieldCreatedBy, field.TypeUint64, value)
+		_spec.AddField(fielddefinitiontranslation.FieldCreatedBy, field.TypeInt64, value)
 	}
 	if _u.mutation.CreatedByCleared() {
-		_spec.ClearField(fielddefinitiontranslation.FieldCreatedBy, field.TypeUint64)
+		_spec.ClearField(fielddefinitiontranslation.FieldCreatedBy, field.TypeInt64)
 	}
 	if value, ok := _u.mutation.UpdatedBy(); ok {
-		_spec.SetField(fielddefinitiontranslation.FieldUpdatedBy, field.TypeUint64, value)
+		_spec.SetField(fielddefinitiontranslation.FieldUpdatedBy, field.TypeInt64, value)
 	}
 	if value, ok := _u.mutation.AddedUpdatedBy(); ok {
-		_spec.AddField(fielddefinitiontranslation.FieldUpdatedBy, field.TypeUint64, value)
+		_spec.AddField(fielddefinitiontranslation.FieldUpdatedBy, field.TypeInt64, value)
 	}
 	if _u.mutation.UpdatedByCleared() {
-		_spec.ClearField(fielddefinitiontranslation.FieldUpdatedBy, field.TypeUint64)
+		_spec.ClearField(fielddefinitiontranslation.FieldUpdatedBy, field.TypeInt64)
 	}
 	if value, ok := _u.mutation.DeletedBy(); ok {
-		_spec.SetField(fielddefinitiontranslation.FieldDeletedBy, field.TypeUint64, value)
+		_spec.SetField(fielddefinitiontranslation.FieldDeletedBy, field.TypeInt64, value)
 	}
 	if value, ok := _u.mutation.AddedDeletedBy(); ok {
-		_spec.AddField(fielddefinitiontranslation.FieldDeletedBy, field.TypeUint64, value)
+		_spec.AddField(fielddefinitiontranslation.FieldDeletedBy, field.TypeInt64, value)
 	}
 	if _u.mutation.DeletedByCleared() {
-		_spec.ClearField(fielddefinitiontranslation.FieldDeletedBy, field.TypeUint64)
+		_spec.ClearField(fielddefinitiontranslation.FieldDeletedBy, field.TypeInt64)
 	}
 	if value, ok := _u.mutation.FieldDefinitionID(); ok {
-		_spec.SetField(fielddefinitiontranslation.FieldFieldDefinitionID, field.TypeUint64, value)
+		_spec.SetField(fielddefinitiontranslation.FieldFieldDefinitionID, field.TypeInt64, value)
 	}
 	if value, ok := _u.mutation.AddedFieldDefinitionID(); ok {
-		_spec.AddField(fielddefinitiontranslation.FieldFieldDefinitionID, field.TypeUint64, value)
+		_spec.AddField(fielddefinitiontranslation.FieldFieldDefinitionID, field.TypeInt64, value)
 	}
 	if _u.mutation.FieldDefinitionIDCleared() {
-		_spec.ClearField(fielddefinitiontranslation.FieldFieldDefinitionID, field.TypeUint64)
+		_spec.ClearField(fielddefinitiontranslation.FieldFieldDefinitionID, field.TypeInt64)
 	}
 	if value, ok := _u.mutation.LanguageCode(); ok {
 		_spec.SetField(fielddefinitiontranslation.FieldLanguageCode, field.TypeString, value)

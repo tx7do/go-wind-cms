@@ -46,10 +46,10 @@ type flowAction struct {
 	Content string `json:"content"`
 	// 英文变体（模板 lite）：可选。两者齐备时，偏好语言为英文的收件人的
 	// 邮件触达按 EN 文案渲染（站内信仍共享主文案单行）；任一为空即忽略变体。
-	TitleEn       string   `json:"title_en,omitempty"`
-	ContentEn     string   `json:"content_en,omitempty"`
-	TargetUserIDs []uint64 `json:"target_user_ids"`
-	Seconds       int      `json:"seconds"` // delay 动作：延时秒数
+	TitleEn       string  `json:"title_en,omitempty"`
+	ContentEn     string  `json:"content_en,omitempty"`
+	TargetUserIDs []int64 `json:"target_user_ids"`
+	Seconds       int     `json:"seconds"` // delay 动作：延时秒数
 	// http 动作：自定义 HTTP 外呼（webhook 动作的泛化形态）
 	Method  string            `json:"method"`  // GET/POST（缺省 POST）
 	Headers map[string]string `json:"headers"` // 自定义请求头（≤8 个）
@@ -231,7 +231,7 @@ func PostEventSnapshot(post *contentV1.Post, prevStatus string) map[string]strin
 	}
 	snap := map[string]string{
 		"status":    post.GetStatus().String(),
-		"author_id": strconv.FormatUint(uint64(post.GetAuthorId()), 10),
+		"author_id": strconv.FormatInt(int64(post.GetAuthorId()), 10),
 	}
 	if prevStatus != "" {
 		snap["prev_status"] = prevStatus
@@ -239,7 +239,7 @@ func PostEventSnapshot(post *contentV1.Post, prevStatus string) map[string]strin
 	if ids := post.GetCategoryIds(); len(ids) > 0 {
 		parts := make([]string, 0, len(ids))
 		for _, id := range ids {
-			parts = append(parts, strconv.FormatUint(uint64(id), 10))
+			parts = append(parts, strconv.FormatInt(int64(id), 10))
 		}
 		snap["category_id"] = strings.Join(parts, "|")
 	}
@@ -294,8 +294,8 @@ func CommentEventSnapshot(comment *commentV1.Comment) map[string]string {
 	return map[string]string{
 		"status":     comment.GetStatus().String(),
 		"content":    content,
-		"object_id":  strconv.FormatUint(uint64(comment.GetObjectId()), 10),
-		"author_id":  strconv.FormatUint(uint64(comment.GetAuthorId()), 10),
+		"object_id":  strconv.FormatInt(int64(comment.GetObjectId()), 10),
+		"author_id":  strconv.FormatInt(int64(comment.GetAuthorId()), 10),
 		"authorType": comment.GetAuthorType().String(),
 	}
 }
@@ -309,7 +309,7 @@ func MediaEventSnapshot(asset *mediaV1.MediaAsset) map[string]string {
 		"asset_type": asset.GetType().String(),
 		"mime_type":  asset.GetMimeType(),
 		"file_name":  asset.GetFilename(),
-		"size_bytes": strconv.FormatUint(uint64(asset.GetSize()), 10),
+		"size_bytes": strconv.FormatInt(int64(asset.GetSize()), 10),
 	}
 }
 
@@ -328,13 +328,13 @@ func UserEventSnapshot(user *identityV1.User) map[string]string {
 // DispatchFlow 内容事件触发流规则（内容写路径钩子，best-effort：入队失败仅记日志）。
 // snapshot 为触发时刻的实体字段快照（值统一字符串），供字段级条件与占位符渲染；
 // 旧调用方可传 nil（条件判定回退 DB 只支持 status）。
-func (s *FlowService) DispatchFlow(ctx context.Context, event string, entityID uint64, snapshot map[string]string) {
+func (s *FlowService) DispatchFlow(ctx context.Context, event string, entityID int64, snapshot map[string]string) {
 	if s.taskService == nil || entityID == 0 {
 		return
 	}
-	var tenantID uint64
+	var tenantID int64
 	if vc, exist := viewer.FromContext(ctx); exist && vc != nil {
-		tenantID = uint64(vc.TenantID())
+		tenantID = int64(vc.TenantID())
 	}
 	if err := s.taskService.EnqueueFlowExecute(&task.FlowExecutePayload{
 		RuleID:   0, // 0=按事件扇出所有匹配规则
@@ -350,7 +350,7 @@ func (s *FlowService) DispatchFlow(ctx context.Context, event string, entityID u
 // enrichSnapshot 快照补全：触发点 DTO 常不带翻译（title/slug 只在 translations
 // 里），此处 best-effort 回查补齐（已删除实体回查失败则保留原样——删除事件的
 // title 类条件判不命中，status/prev_status 不受影响）。
-func (s *FlowService) enrichSnapshot(ctx context.Context, event string, entityID uint64, snapshot map[string]string) map[string]string {
+func (s *FlowService) enrichSnapshot(ctx context.Context, event string, entityID int64, snapshot map[string]string) map[string]string {
 	if snapshot == nil {
 		snapshot = map[string]string{}
 	}
@@ -547,7 +547,7 @@ func (s *FlowService) evaluateCondition(ctx context.Context, rule *flowV1.FlowRu
 }
 
 // entityStatus 按事件族加载实体当前状态（供条件判定）。
-func (s *FlowService) entityStatus(ctx context.Context, event string, entityID uint64) (string, error) {
+func (s *FlowService) entityStatus(ctx context.Context, event string, entityID int64) (string, error) {
 	if strings.HasPrefix(event, "post.") {
 		post, err := s.postRepo.Get(ctx, &contentV1.GetPostRequest{
 			QueryBy: &contentV1.GetPostRequest_Id{Id: entityID},
@@ -768,8 +768,8 @@ func (s *FlowService) ScheduleTickWorker(taskType string, payload *task.FlowSche
 // 事件快照字段 {status}/{title}/{slug} 等（{field} 形态，未知字段原样保留）。
 func (s *FlowService) expandPlaceholders(tpl string, rule *flowV1.FlowRule, payload *task.FlowExecutePayload) string {
 	out := strings.ReplaceAll(tpl, "{event}", payload.Event)
-	out = strings.ReplaceAll(out, "{entity_id}", strconv.FormatUint(uint64(payload.EntityID), 10))
-	out = strings.ReplaceAll(out, "{rule_id}", strconv.FormatUint(uint64(rule.GetId()), 10))
+	out = strings.ReplaceAll(out, "{entity_id}", strconv.FormatInt(int64(payload.EntityID), 10))
+	out = strings.ReplaceAll(out, "{rule_id}", strconv.FormatInt(int64(rule.GetId()), 10))
 	for field, value := range payload.Snapshot {
 		out = strings.ReplaceAll(out, "{"+field+"}", value)
 	}

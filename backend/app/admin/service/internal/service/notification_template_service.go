@@ -16,7 +16,7 @@ import (
 type NotificationTemplateService struct {
 	adminV1.NotificationTemplateServiceHTTPServer
 
-	log        *log.Helper
+	log         *log.Helper
 	templateCli notifyV1.NotificationTemplateServiceClient
 }
 

@@ -76,7 +76,7 @@ func (s *BackupArchiveService) ListBackups(ctx context.Context, req *taskV1.List
 		items = append(items, &taskV1.BackupArchive{
 			ObjectKey:    obj.Key,
 			DisplayName:  backupDisplayName(obj.Key),
-			SizeBytes:    uint64(obj.Size),
+			SizeBytes:    int64(obj.Size),
 			LastModified: timestamppb.New(obj.LastModified),
 		})
 	}

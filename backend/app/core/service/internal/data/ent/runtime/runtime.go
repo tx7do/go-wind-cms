@@ -140,11 +140,11 @@ func init() {
 	// accesskeyDescTenantID is the schema descriptor for tenant_id field.
 	accesskeyDescTenantID := accesskeyMixinFields4[0].Descriptor()
 	// accesskey.DefaultTenantID holds the default value on creation for the tenant_id field.
-	accesskey.DefaultTenantID = accesskeyDescTenantID.Default.(uint64)
+	accesskey.DefaultTenantID = accesskeyDescTenantID.Default.(int64)
 	// accesskeyDescID is the schema descriptor for id field.
 	accesskeyDescID := accesskeyMixinFields0[0].Descriptor()
 	// accesskey.IDValidator is a validator for the "id" field. It is called by the builders before save.
-	accesskey.IDValidator = accesskeyDescID.Validators[0].(func(uint64) error)
+	accesskey.IDValidator = accesskeyDescID.Validators[0].(func(int64) error)
 	aiagentappMixin := schema.AiAgentApp{}.Mixin()
 	aiagentapp.Policy = privacy.NewPolicies(aiagentappMixin[3], schema.AiAgentApp{})
 	aiagentapp.Hooks[0] = func(next ent.Mutator) ent.Mutator {
@@ -164,7 +164,7 @@ func init() {
 	// aiagentappDescTenantID is the schema descriptor for tenant_id field.
 	aiagentappDescTenantID := aiagentappMixinFields3[0].Descriptor()
 	// aiagentapp.DefaultTenantID holds the default value on creation for the tenant_id field.
-	aiagentapp.DefaultTenantID = aiagentappDescTenantID.Default.(uint64)
+	aiagentapp.DefaultTenantID = aiagentappDescTenantID.Default.(int64)
 	// aiagentappDescName is the schema descriptor for name field.
 	aiagentappDescName := aiagentappFields[0].Descriptor()
 	// aiagentapp.NameValidator is a validator for the "name" field. It is called by the builders before save.
@@ -176,7 +176,7 @@ func init() {
 	// aiagentappDescID is the schema descriptor for id field.
 	aiagentappDescID := aiagentappMixinFields0[0].Descriptor()
 	// aiagentapp.IDValidator is a validator for the "id" field. It is called by the builders before save.
-	aiagentapp.IDValidator = aiagentappDescID.Validators[0].(func(uint64) error)
+	aiagentapp.IDValidator = aiagentappDescID.Validators[0].(func(int64) error)
 	aiagentrunMixin := schema.AiAgentRun{}.Mixin()
 	aiagentrun.Policy = privacy.NewPolicies(aiagentrunMixin[3], schema.AiAgentRun{})
 	aiagentrun.Hooks[0] = func(next ent.Mutator) ent.Mutator {
@@ -196,7 +196,7 @@ func init() {
 	// aiagentrunDescTenantID is the schema descriptor for tenant_id field.
 	aiagentrunDescTenantID := aiagentrunMixinFields3[0].Descriptor()
 	// aiagentrun.DefaultTenantID holds the default value on creation for the tenant_id field.
-	aiagentrun.DefaultTenantID = aiagentrunDescTenantID.Default.(uint64)
+	aiagentrun.DefaultTenantID = aiagentrunDescTenantID.Default.(int64)
 	// aiagentrunDescPendingNodeID is the schema descriptor for pending_node_id field.
 	aiagentrunDescPendingNodeID := aiagentrunFields[2].Descriptor()
 	// aiagentrun.PendingNodeIDValidator is a validator for the "pending_node_id" field. It is called by the builders before save.
@@ -220,7 +220,7 @@ func init() {
 	// aiagentrunDescID is the schema descriptor for id field.
 	aiagentrunDescID := aiagentrunMixinFields0[0].Descriptor()
 	// aiagentrun.IDValidator is a validator for the "id" field. It is called by the builders before save.
-	aiagentrun.IDValidator = aiagentrunDescID.Validators[0].(func(uint64) error)
+	aiagentrun.IDValidator = aiagentrunDescID.Validators[0].(func(int64) error)
 	aichunkMixin := schema.AiChunk{}.Mixin()
 	aichunk.Policy = privacy.NewPolicies(aichunkMixin[2], schema.AiChunk{})
 	aichunk.Hooks[0] = func(next ent.Mutator) ent.Mutator {
@@ -240,11 +240,11 @@ func init() {
 	// aichunkDescTenantID is the schema descriptor for tenant_id field.
 	aichunkDescTenantID := aichunkMixinFields2[0].Descriptor()
 	// aichunk.DefaultTenantID holds the default value on creation for the tenant_id field.
-	aichunk.DefaultTenantID = aichunkDescTenantID.Default.(uint64)
+	aichunk.DefaultTenantID = aichunkDescTenantID.Default.(int64)
 	// aichunkDescID is the schema descriptor for id field.
 	aichunkDescID := aichunkMixinFields0[0].Descriptor()
 	// aichunk.IDValidator is a validator for the "id" field. It is called by the builders before save.
-	aichunk.IDValidator = aichunkDescID.Validators[0].(func(uint64) error)
+	aichunk.IDValidator = aichunkDescID.Validators[0].(func(int64) error)
 	aiconversationMixin := schema.AiConversation{}.Mixin()
 	aiconversation.Policy = privacy.NewPolicies(aiconversationMixin[3], schema.AiConversation{})
 	aiconversation.Hooks[0] = func(next ent.Mutator) ent.Mutator {
@@ -264,11 +264,11 @@ func init() {
 	// aiconversationDescTenantID is the schema descriptor for tenant_id field.
 	aiconversationDescTenantID := aiconversationMixinFields3[0].Descriptor()
 	// aiconversation.DefaultTenantID holds the default value on creation for the tenant_id field.
-	aiconversation.DefaultTenantID = aiconversationDescTenantID.Default.(uint64)
+	aiconversation.DefaultTenantID = aiconversationDescTenantID.Default.(int64)
 	// aiconversationDescID is the schema descriptor for id field.
 	aiconversationDescID := aiconversationMixinFields0[0].Descriptor()
 	// aiconversation.IDValidator is a validator for the "id" field. It is called by the builders before save.
-	aiconversation.IDValidator = aiconversationDescID.Validators[0].(func(uint64) error)
+	aiconversation.IDValidator = aiconversationDescID.Validators[0].(func(int64) error)
 	aidocMixin := schema.AiDoc{}.Mixin()
 	aidoc.Policy = privacy.NewPolicies(aidocMixin[3], schema.AiDoc{})
 	aidoc.Hooks[0] = func(next ent.Mutator) ent.Mutator {
@@ -288,11 +288,11 @@ func init() {
 	// aidocDescTenantID is the schema descriptor for tenant_id field.
 	aidocDescTenantID := aidocMixinFields3[0].Descriptor()
 	// aidoc.DefaultTenantID holds the default value on creation for the tenant_id field.
-	aidoc.DefaultTenantID = aidocDescTenantID.Default.(uint64)
+	aidoc.DefaultTenantID = aidocDescTenantID.Default.(int64)
 	// aidocDescID is the schema descriptor for id field.
 	aidocDescID := aidocMixinFields0[0].Descriptor()
 	// aidoc.IDValidator is a validator for the "id" field. It is called by the builders before save.
-	aidoc.IDValidator = aidocDescID.Validators[0].(func(uint64) error)
+	aidoc.IDValidator = aidocDescID.Validators[0].(func(int64) error)
 	aiknowledgebaseMixin := schema.AiKnowledgeBase{}.Mixin()
 	aiknowledgebase.Policy = privacy.NewPolicies(aiknowledgebaseMixin[3], schema.AiKnowledgeBase{})
 	aiknowledgebase.Hooks[0] = func(next ent.Mutator) ent.Mutator {
@@ -312,11 +312,11 @@ func init() {
 	// aiknowledgebaseDescTenantID is the schema descriptor for tenant_id field.
 	aiknowledgebaseDescTenantID := aiknowledgebaseMixinFields3[0].Descriptor()
 	// aiknowledgebase.DefaultTenantID holds the default value on creation for the tenant_id field.
-	aiknowledgebase.DefaultTenantID = aiknowledgebaseDescTenantID.Default.(uint64)
+	aiknowledgebase.DefaultTenantID = aiknowledgebaseDescTenantID.Default.(int64)
 	// aiknowledgebaseDescID is the schema descriptor for id field.
 	aiknowledgebaseDescID := aiknowledgebaseMixinFields0[0].Descriptor()
 	// aiknowledgebase.IDValidator is a validator for the "id" field. It is called by the builders before save.
-	aiknowledgebase.IDValidator = aiknowledgebaseDescID.Validators[0].(func(uint64) error)
+	aiknowledgebase.IDValidator = aiknowledgebaseDescID.Validators[0].(func(int64) error)
 	aimessageMixin := schema.AiMessage{}.Mixin()
 	aimessage.Policy = privacy.NewPolicies(aimessageMixin[3], schema.AiMessage{})
 	aimessage.Hooks[0] = func(next ent.Mutator) ent.Mutator {
@@ -336,11 +336,11 @@ func init() {
 	// aimessageDescTenantID is the schema descriptor for tenant_id field.
 	aimessageDescTenantID := aimessageMixinFields3[0].Descriptor()
 	// aimessage.DefaultTenantID holds the default value on creation for the tenant_id field.
-	aimessage.DefaultTenantID = aimessageDescTenantID.Default.(uint64)
+	aimessage.DefaultTenantID = aimessageDescTenantID.Default.(int64)
 	// aimessageDescID is the schema descriptor for id field.
 	aimessageDescID := aimessageMixinFields0[0].Descriptor()
 	// aimessage.IDValidator is a validator for the "id" field. It is called by the builders before save.
-	aimessage.IDValidator = aimessageDescID.Validators[0].(func(uint64) error)
+	aimessage.IDValidator = aimessageDescID.Validators[0].(func(int64) error)
 	aiproviderMixin := schema.AiProvider{}.Mixin()
 	aiproviderMixinFields0 := aiproviderMixin[0].Fields()
 	_ = aiproviderMixinFields0
@@ -359,7 +359,7 @@ func init() {
 	// aiproviderDescID is the schema descriptor for id field.
 	aiproviderDescID := aiproviderMixinFields0[0].Descriptor()
 	// aiprovider.IDValidator is a validator for the "id" field. It is called by the builders before save.
-	aiprovider.IDValidator = aiproviderDescID.Validators[0].(func(uint64) error)
+	aiprovider.IDValidator = aiproviderDescID.Validators[0].(func(int64) error)
 	aiusagelogMixin := schema.AiUsageLog{}.Mixin()
 	aiusagelog.Policy = privacy.NewPolicies(aiusagelogMixin[2], schema.AiUsageLog{})
 	aiusagelog.Hooks[0] = func(next ent.Mutator) ent.Mutator {
@@ -379,11 +379,11 @@ func init() {
 	// aiusagelogDescTenantID is the schema descriptor for tenant_id field.
 	aiusagelogDescTenantID := aiusagelogMixinFields2[0].Descriptor()
 	// aiusagelog.DefaultTenantID holds the default value on creation for the tenant_id field.
-	aiusagelog.DefaultTenantID = aiusagelogDescTenantID.Default.(uint64)
+	aiusagelog.DefaultTenantID = aiusagelogDescTenantID.Default.(int64)
 	// aiusagelogDescID is the schema descriptor for id field.
 	aiusagelogDescID := aiusagelogMixinFields0[0].Descriptor()
 	// aiusagelog.IDValidator is a validator for the "id" field. It is called by the builders before save.
-	aiusagelog.IDValidator = aiusagelogDescID.Validators[0].(func(uint64) error)
+	aiusagelog.IDValidator = aiusagelogDescID.Validators[0].(func(int64) error)
 	apiMixin := schema.Api{}.Mixin()
 	api.Policy = privacy.NewPolicies(apiMixin[4], schema.Api{})
 	api.Hooks[0] = func(next ent.Mutator) ent.Mutator {
@@ -405,11 +405,11 @@ func init() {
 	// apiDescTenantID is the schema descriptor for tenant_id field.
 	apiDescTenantID := apiMixinFields4[0].Descriptor()
 	// api.DefaultTenantID holds the default value on creation for the tenant_id field.
-	api.DefaultTenantID = apiDescTenantID.Default.(uint64)
+	api.DefaultTenantID = apiDescTenantID.Default.(int64)
 	// apiDescID is the schema descriptor for id field.
 	apiDescID := apiMixinFields0[0].Descriptor()
 	// api.IDValidator is a validator for the "id" field. It is called by the builders before save.
-	api.IDValidator = apiDescID.Validators[0].(func(uint64) error)
+	api.IDValidator = apiDescID.Validators[0].(func(int64) error)
 	apiauditlogMixin := schema.ApiAuditLog{}.Mixin()
 	apiauditlog.Policy = privacy.NewPolicies(apiauditlogMixin[2], schema.ApiAuditLog{})
 	apiauditlog.Hooks[0] = func(next ent.Mutator) ent.Mutator {
@@ -429,11 +429,11 @@ func init() {
 	// apiauditlogDescTenantID is the schema descriptor for tenant_id field.
 	apiauditlogDescTenantID := apiauditlogMixinFields2[0].Descriptor()
 	// apiauditlog.DefaultTenantID holds the default value on creation for the tenant_id field.
-	apiauditlog.DefaultTenantID = apiauditlogDescTenantID.Default.(uint64)
+	apiauditlog.DefaultTenantID = apiauditlogDescTenantID.Default.(int64)
 	// apiauditlogDescID is the schema descriptor for id field.
 	apiauditlogDescID := apiauditlogMixinFields0[0].Descriptor()
 	// apiauditlog.IDValidator is a validator for the "id" field. It is called by the builders before save.
-	apiauditlog.IDValidator = apiauditlogDescID.Validators[0].(func(uint64) error)
+	apiauditlog.IDValidator = apiauditlogDescID.Validators[0].(func(int64) error)
 	categoryMixin := schema.Category{}.Mixin()
 	category.Policy = privacy.NewPolicies(categoryMixin[6], schema.Category{})
 	category.Hooks[0] = func(next ent.Mutator) ent.Mutator {
@@ -465,7 +465,7 @@ func init() {
 	// categoryDescTenantID is the schema descriptor for tenant_id field.
 	categoryDescTenantID := categoryMixinFields6[0].Descriptor()
 	// category.DefaultTenantID holds the default value on creation for the tenant_id field.
-	category.DefaultTenantID = categoryDescTenantID.Default.(uint64)
+	category.DefaultTenantID = categoryDescTenantID.Default.(int64)
 	// categoryDescIsNav is the schema descriptor for is_nav field.
 	categoryDescIsNav := categoryFields[1].Descriptor()
 	// category.DefaultIsNav holds the default value on creation for the is_nav field.
@@ -485,7 +485,7 @@ func init() {
 	// categoryDescID is the schema descriptor for id field.
 	categoryDescID := categoryMixinFields0[0].Descriptor()
 	// category.IDValidator is a validator for the "id" field. It is called by the builders before save.
-	category.IDValidator = categoryDescID.Validators[0].(func(uint64) error)
+	category.IDValidator = categoryDescID.Validators[0].(func(int64) error)
 	categorytranslationMixin := schema.CategoryTranslation{}.Mixin()
 	categorytranslation.Policy = privacy.NewPolicies(categorytranslationMixin[4], schema.CategoryTranslation{})
 	categorytranslation.Hooks[0] = func(next ent.Mutator) ent.Mutator {
@@ -505,11 +505,11 @@ func init() {
 	// categorytranslationDescTenantID is the schema descriptor for tenant_id field.
 	categorytranslationDescTenantID := categorytranslationMixinFields4[0].Descriptor()
 	// categorytranslation.DefaultTenantID holds the default value on creation for the tenant_id field.
-	categorytranslation.DefaultTenantID = categorytranslationDescTenantID.Default.(uint64)
+	categorytranslation.DefaultTenantID = categorytranslationDescTenantID.Default.(int64)
 	// categorytranslationDescID is the schema descriptor for id field.
 	categorytranslationDescID := categorytranslationMixinFields0[0].Descriptor()
 	// categorytranslation.IDValidator is a validator for the "id" field. It is called by the builders before save.
-	categorytranslation.IDValidator = categorytranslationDescID.Validators[0].(func(uint64) error)
+	categorytranslation.IDValidator = categorytranslationDescID.Validators[0].(func(int64) error)
 	collabdocstateMixin := schema.CollabDocState{}.Mixin()
 	collabdocstateMixinFields0 := collabdocstateMixin[0].Fields()
 	_ = collabdocstateMixinFields0
@@ -522,7 +522,7 @@ func init() {
 	// collabdocstateDescID is the schema descriptor for id field.
 	collabdocstateDescID := collabdocstateMixinFields0[0].Descriptor()
 	// collabdocstate.IDValidator is a validator for the "id" field. It is called by the builders before save.
-	collabdocstate.IDValidator = collabdocstateDescID.Validators[0].(func(uint64) error)
+	collabdocstate.IDValidator = collabdocstateDescID.Validators[0].(func(int64) error)
 	commentMixin := schema.Comment{}.Mixin()
 	comment.Policy = privacy.NewPolicies(commentMixin[4], schema.Comment{})
 	comment.Hooks[0] = func(next ent.Mutator) ent.Mutator {
@@ -542,11 +542,11 @@ func init() {
 	// commentDescTenantID is the schema descriptor for tenant_id field.
 	commentDescTenantID := commentMixinFields4[0].Descriptor()
 	// comment.DefaultTenantID holds the default value on creation for the tenant_id field.
-	comment.DefaultTenantID = commentDescTenantID.Default.(uint64)
+	comment.DefaultTenantID = commentDescTenantID.Default.(int64)
 	// commentDescAuthorID is the schema descriptor for author_id field.
 	commentDescAuthorID := commentFields[3].Descriptor()
 	// comment.DefaultAuthorID holds the default value on creation for the author_id field.
-	comment.DefaultAuthorID = commentDescAuthorID.Default.(uint64)
+	comment.DefaultAuthorID = commentDescAuthorID.Default.(int64)
 	// commentDescIsSpam is the schema descriptor for is_spam field.
 	commentDescIsSpam := commentFields[13].Descriptor()
 	// comment.DefaultIsSpam holds the default value on creation for the is_spam field.
@@ -558,7 +558,7 @@ func init() {
 	// commentDescID is the schema descriptor for id field.
 	commentDescID := commentMixinFields0[0].Descriptor()
 	// comment.IDValidator is a validator for the "id" field. It is called by the builders before save.
-	comment.IDValidator = commentDescID.Validators[0].(func(uint64) error)
+	comment.IDValidator = commentDescID.Validators[0].(func(int64) error)
 	commentlikeMixin := schema.CommentLike{}.Mixin()
 	commentlike.Policy = privacy.NewPolicies(commentlikeMixin[2], schema.CommentLike{})
 	commentlike.Hooks[0] = func(next ent.Mutator) ent.Mutator {
@@ -578,11 +578,11 @@ func init() {
 	// commentlikeDescTenantID is the schema descriptor for tenant_id field.
 	commentlikeDescTenantID := commentlikeMixinFields2[0].Descriptor()
 	// commentlike.DefaultTenantID holds the default value on creation for the tenant_id field.
-	commentlike.DefaultTenantID = commentlikeDescTenantID.Default.(uint64)
+	commentlike.DefaultTenantID = commentlikeDescTenantID.Default.(int64)
 	// commentlikeDescID is the schema descriptor for id field.
 	commentlikeDescID := commentlikeMixinFields0[0].Descriptor()
 	// commentlike.IDValidator is a validator for the "id" field. It is called by the builders before save.
-	commentlike.IDValidator = commentlikeDescID.Validators[0].(func(uint64) error)
+	commentlike.IDValidator = commentlikeDescID.Validators[0].(func(int64) error)
 	componentdefinitionMixin := schema.ComponentDefinition{}.Mixin()
 	componentdefinition.Policy = privacy.NewPolicies(componentdefinitionMixin[3], schema.ComponentDefinition{})
 	componentdefinition.Hooks[0] = func(next ent.Mutator) ent.Mutator {
@@ -602,7 +602,7 @@ func init() {
 	// componentdefinitionDescTenantID is the schema descriptor for tenant_id field.
 	componentdefinitionDescTenantID := componentdefinitionMixinFields3[0].Descriptor()
 	// componentdefinition.DefaultTenantID holds the default value on creation for the tenant_id field.
-	componentdefinition.DefaultTenantID = componentdefinitionDescTenantID.Default.(uint64)
+	componentdefinition.DefaultTenantID = componentdefinitionDescTenantID.Default.(int64)
 	// componentdefinitionDescCode is the schema descriptor for code field.
 	componentdefinitionDescCode := componentdefinitionFields[0].Descriptor()
 	// componentdefinition.CodeValidator is a validator for the "code" field. It is called by the builders before save.
@@ -642,7 +642,7 @@ func init() {
 	// componentdefinitionDescID is the schema descriptor for id field.
 	componentdefinitionDescID := componentdefinitionMixinFields0[0].Descriptor()
 	// componentdefinition.IDValidator is a validator for the "id" field. It is called by the builders before save.
-	componentdefinition.IDValidator = componentdefinitionDescID.Validators[0].(func(uint64) error)
+	componentdefinition.IDValidator = componentdefinitionDescID.Validators[0].(func(int64) error)
 	contentmodelMixin := schema.ContentModel{}.Mixin()
 	contentmodel.Policy = privacy.NewPolicies(contentmodelMixin[4], schema.ContentModel{})
 	contentmodel.Hooks[0] = func(next ent.Mutator) ent.Mutator {
@@ -668,7 +668,7 @@ func init() {
 	// contentmodelDescTenantID is the schema descriptor for tenant_id field.
 	contentmodelDescTenantID := contentmodelMixinFields4[0].Descriptor()
 	// contentmodel.DefaultTenantID holds the default value on creation for the tenant_id field.
-	contentmodel.DefaultTenantID = contentmodelDescTenantID.Default.(uint64)
+	contentmodel.DefaultTenantID = contentmodelDescTenantID.Default.(int64)
 	// contentmodelDescName is the schema descriptor for name field.
 	contentmodelDescName := contentmodelFields[0].Descriptor()
 	// contentmodel.NameValidator is a validator for the "name" field. It is called by the builders before save.
@@ -680,7 +680,7 @@ func init() {
 	// contentmodelDescID is the schema descriptor for id field.
 	contentmodelDescID := contentmodelMixinFields0[0].Descriptor()
 	// contentmodel.IDValidator is a validator for the "id" field. It is called by the builders before save.
-	contentmodel.IDValidator = contentmodelDescID.Validators[0].(func(uint64) error)
+	contentmodel.IDValidator = contentmodelDescID.Validators[0].(func(int64) error)
 	contentmodeltranslationMixin := schema.ContentModelTranslation{}.Mixin()
 	contentmodeltranslationMixinFields0 := contentmodeltranslationMixin[0].Fields()
 	_ = contentmodeltranslationMixinFields0
@@ -693,7 +693,7 @@ func init() {
 	// contentmodeltranslationDescID is the schema descriptor for id field.
 	contentmodeltranslationDescID := contentmodeltranslationMixinFields0[0].Descriptor()
 	// contentmodeltranslation.IDValidator is a validator for the "id" field. It is called by the builders before save.
-	contentmodeltranslation.IDValidator = contentmodeltranslationDescID.Validators[0].(func(uint64) error)
+	contentmodeltranslation.IDValidator = contentmodeltranslationDescID.Validators[0].(func(int64) error)
 	contentreferenceMixin := schema.ContentReference{}.Mixin()
 	contentreference.Policy = privacy.NewPolicies(contentreferenceMixin[3], schema.ContentReference{})
 	contentreference.Hooks[0] = func(next ent.Mutator) ent.Mutator {
@@ -713,7 +713,7 @@ func init() {
 	// contentreferenceDescTenantID is the schema descriptor for tenant_id field.
 	contentreferenceDescTenantID := contentreferenceMixinFields3[0].Descriptor()
 	// contentreference.DefaultTenantID holds the default value on creation for the tenant_id field.
-	contentreference.DefaultTenantID = contentreferenceDescTenantID.Default.(uint64)
+	contentreference.DefaultTenantID = contentreferenceDescTenantID.Default.(int64)
 	// contentreferenceDescSourceType is the schema descriptor for source_type field.
 	contentreferenceDescSourceType := contentreferenceFields[0].Descriptor()
 	// contentreference.SourceTypeValidator is a validator for the "source_type" field. It is called by the builders before save.
@@ -773,7 +773,7 @@ func init() {
 	// contentreferenceDescID is the schema descriptor for id field.
 	contentreferenceDescID := contentreferenceMixinFields0[0].Descriptor()
 	// contentreference.IDValidator is a validator for the "id" field. It is called by the builders before save.
-	contentreference.IDValidator = contentreferenceDescID.Validators[0].(func(uint64) error)
+	contentreference.IDValidator = contentreferenceDescID.Validators[0].(func(int64) error)
 	dataaccessauditlogMixin := schema.DataAccessAuditLog{}.Mixin()
 	dataaccessauditlog.Policy = privacy.NewPolicies(dataaccessauditlogMixin[2], schema.DataAccessAuditLog{})
 	dataaccessauditlog.Hooks[0] = func(next ent.Mutator) ent.Mutator {
@@ -793,11 +793,11 @@ func init() {
 	// dataaccessauditlogDescTenantID is the schema descriptor for tenant_id field.
 	dataaccessauditlogDescTenantID := dataaccessauditlogMixinFields2[0].Descriptor()
 	// dataaccessauditlog.DefaultTenantID holds the default value on creation for the tenant_id field.
-	dataaccessauditlog.DefaultTenantID = dataaccessauditlogDescTenantID.Default.(uint64)
+	dataaccessauditlog.DefaultTenantID = dataaccessauditlogDescTenantID.Default.(int64)
 	// dataaccessauditlogDescID is the schema descriptor for id field.
 	dataaccessauditlogDescID := dataaccessauditlogMixinFields0[0].Descriptor()
 	// dataaccessauditlog.IDValidator is a validator for the "id" field. It is called by the builders before save.
-	dataaccessauditlog.IDValidator = dataaccessauditlogDescID.Validators[0].(func(uint64) error)
+	dataaccessauditlog.IDValidator = dataaccessauditlogDescID.Validators[0].(func(int64) error)
 	dictentryMixin := schema.DictEntry{}.Mixin()
 	dictentry.Policy = privacy.NewPolicies(dictentryMixin[5], schema.DictEntry{})
 	dictentry.Hooks[0] = func(next ent.Mutator) ent.Mutator {
@@ -829,7 +829,7 @@ func init() {
 	// dictentryDescTenantID is the schema descriptor for tenant_id field.
 	dictentryDescTenantID := dictentryMixinFields5[0].Descriptor()
 	// dictentry.DefaultTenantID holds the default value on creation for the tenant_id field.
-	dictentry.DefaultTenantID = dictentryDescTenantID.Default.(uint64)
+	dictentry.DefaultTenantID = dictentryDescTenantID.Default.(int64)
 	// dictentryDescEntryValue is the schema descriptor for entry_value field.
 	dictentryDescEntryValue := dictentryFields[0].Descriptor()
 	// dictentry.EntryValueValidator is a validator for the "entry_value" field. It is called by the builders before save.
@@ -837,7 +837,7 @@ func init() {
 	// dictentryDescID is the schema descriptor for id field.
 	dictentryDescID := dictentryMixinFields0[0].Descriptor()
 	// dictentry.IDValidator is a validator for the "id" field. It is called by the builders before save.
-	dictentry.IDValidator = dictentryDescID.Validators[0].(func(uint64) error)
+	dictentry.IDValidator = dictentryDescID.Validators[0].(func(int64) error)
 	dictentryi18nMixin := schema.DictEntryI18n{}.Mixin()
 	dictentryi18n.Policy = privacy.NewPolicies(dictentryi18nMixin[5], schema.DictEntryI18n{})
 	dictentryi18n.Hooks[0] = func(next ent.Mutator) ent.Mutator {
@@ -863,7 +863,7 @@ func init() {
 	// dictentryi18nDescTenantID is the schema descriptor for tenant_id field.
 	dictentryi18nDescTenantID := dictentryi18nMixinFields5[0].Descriptor()
 	// dictentryi18n.DefaultTenantID holds the default value on creation for the tenant_id field.
-	dictentryi18n.DefaultTenantID = dictentryi18nDescTenantID.Default.(uint64)
+	dictentryi18n.DefaultTenantID = dictentryi18nDescTenantID.Default.(int64)
 	// dictentryi18nDescLanguageCode is the schema descriptor for language_code field.
 	dictentryi18nDescLanguageCode := dictentryi18nFields[0].Descriptor()
 	// dictentryi18n.LanguageCodeValidator is a validator for the "language_code" field. It is called by the builders before save.
@@ -875,7 +875,7 @@ func init() {
 	// dictentryi18nDescID is the schema descriptor for id field.
 	dictentryi18nDescID := dictentryi18nMixinFields0[0].Descriptor()
 	// dictentryi18n.IDValidator is a validator for the "id" field. It is called by the builders before save.
-	dictentryi18n.IDValidator = dictentryi18nDescID.Validators[0].(func(uint64) error)
+	dictentryi18n.IDValidator = dictentryi18nDescID.Validators[0].(func(int64) error)
 	dicttypeMixin := schema.DictType{}.Mixin()
 	dicttype.Policy = privacy.NewPolicies(dicttypeMixin[5], schema.DictType{})
 	dicttype.Hooks[0] = func(next ent.Mutator) ent.Mutator {
@@ -907,7 +907,7 @@ func init() {
 	// dicttypeDescTenantID is the schema descriptor for tenant_id field.
 	dicttypeDescTenantID := dicttypeMixinFields5[0].Descriptor()
 	// dicttype.DefaultTenantID holds the default value on creation for the tenant_id field.
-	dicttype.DefaultTenantID = dicttypeDescTenantID.Default.(uint64)
+	dicttype.DefaultTenantID = dicttypeDescTenantID.Default.(int64)
 	// dicttypeDescTypeCode is the schema descriptor for type_code field.
 	dicttypeDescTypeCode := dicttypeFields[0].Descriptor()
 	// dicttype.TypeCodeValidator is a validator for the "type_code" field. It is called by the builders before save.
@@ -919,7 +919,7 @@ func init() {
 	// dicttypeDescID is the schema descriptor for id field.
 	dicttypeDescID := dicttypeMixinFields0[0].Descriptor()
 	// dicttype.IDValidator is a validator for the "id" field. It is called by the builders before save.
-	dicttype.IDValidator = dicttypeDescID.Validators[0].(func(uint64) error)
+	dicttype.IDValidator = dicttypeDescID.Validators[0].(func(int64) error)
 	experimentMixin := schema.Experiment{}.Mixin()
 	experiment.Policy = privacy.NewPolicies(experimentMixin[3], schema.Experiment{})
 	experiment.Hooks[0] = func(next ent.Mutator) ent.Mutator {
@@ -939,7 +939,7 @@ func init() {
 	// experimentDescTenantID is the schema descriptor for tenant_id field.
 	experimentDescTenantID := experimentMixinFields3[0].Descriptor()
 	// experiment.DefaultTenantID holds the default value on creation for the tenant_id field.
-	experiment.DefaultTenantID = experimentDescTenantID.Default.(uint64)
+	experiment.DefaultTenantID = experimentDescTenantID.Default.(int64)
 	// experimentDescName is the schema descriptor for name field.
 	experimentDescName := experimentFields[0].Descriptor()
 	// experiment.NameValidator is a validator for the "name" field. It is called by the builders before save.
@@ -947,7 +947,7 @@ func init() {
 	// experimentDescID is the schema descriptor for id field.
 	experimentDescID := experimentMixinFields0[0].Descriptor()
 	// experiment.IDValidator is a validator for the "id" field. It is called by the builders before save.
-	experiment.IDValidator = experimentDescID.Validators[0].(func(uint64) error)
+	experiment.IDValidator = experimentDescID.Validators[0].(func(int64) error)
 	experimentparticipantMixin := schema.ExperimentParticipant{}.Mixin()
 	experimentparticipant.Policy = privacy.NewPolicies(experimentparticipantMixin[2], schema.ExperimentParticipant{})
 	experimentparticipant.Hooks[0] = func(next ent.Mutator) ent.Mutator {
@@ -967,7 +967,7 @@ func init() {
 	// experimentparticipantDescTenantID is the schema descriptor for tenant_id field.
 	experimentparticipantDescTenantID := experimentparticipantMixinFields2[0].Descriptor()
 	// experimentparticipant.DefaultTenantID holds the default value on creation for the tenant_id field.
-	experimentparticipant.DefaultTenantID = experimentparticipantDescTenantID.Default.(uint64)
+	experimentparticipant.DefaultTenantID = experimentparticipantDescTenantID.Default.(int64)
 	// experimentparticipantDescVisitorHash is the schema descriptor for visitor_hash field.
 	experimentparticipantDescVisitorHash := experimentparticipantFields[1].Descriptor()
 	// experimentparticipant.VisitorHashValidator is a validator for the "visitor_hash" field. It is called by the builders before save.
@@ -983,7 +983,7 @@ func init() {
 	// experimentparticipantDescID is the schema descriptor for id field.
 	experimentparticipantDescID := experimentparticipantMixinFields0[0].Descriptor()
 	// experimentparticipant.IDValidator is a validator for the "id" field. It is called by the builders before save.
-	experimentparticipant.IDValidator = experimentparticipantDescID.Validators[0].(func(uint64) error)
+	experimentparticipant.IDValidator = experimentparticipantDescID.Validators[0].(func(int64) error)
 	experimentvariantMixin := schema.ExperimentVariant{}.Mixin()
 	experimentvariant.Policy = privacy.NewPolicies(experimentvariantMixin[3], schema.ExperimentVariant{})
 	experimentvariant.Hooks[0] = func(next ent.Mutator) ent.Mutator {
@@ -1003,7 +1003,7 @@ func init() {
 	// experimentvariantDescTenantID is the schema descriptor for tenant_id field.
 	experimentvariantDescTenantID := experimentvariantMixinFields3[0].Descriptor()
 	// experimentvariant.DefaultTenantID holds the default value on creation for the tenant_id field.
-	experimentvariant.DefaultTenantID = experimentvariantDescTenantID.Default.(uint64)
+	experimentvariant.DefaultTenantID = experimentvariantDescTenantID.Default.(int64)
 	// experimentvariantDescName is the schema descriptor for name field.
 	experimentvariantDescName := experimentvariantFields[1].Descriptor()
 	// experimentvariant.NameValidator is a validator for the "name" field. It is called by the builders before save.
@@ -1019,7 +1019,7 @@ func init() {
 	// experimentvariantDescID is the schema descriptor for id field.
 	experimentvariantDescID := experimentvariantMixinFields0[0].Descriptor()
 	// experimentvariant.IDValidator is a validator for the "id" field. It is called by the builders before save.
-	experimentvariant.IDValidator = experimentvariantDescID.Validators[0].(func(uint64) error)
+	experimentvariant.IDValidator = experimentvariantDescID.Validators[0].(func(int64) error)
 	fielddefinitionMixin := schema.FieldDefinition{}.Mixin()
 	fielddefinition.Policy = privacy.NewPolicies(fielddefinitionMixin[4], schema.FieldDefinition{})
 	fielddefinition.Hooks[0] = func(next ent.Mutator) ent.Mutator {
@@ -1045,7 +1045,7 @@ func init() {
 	// fielddefinitionDescTenantID is the schema descriptor for tenant_id field.
 	fielddefinitionDescTenantID := fielddefinitionMixinFields4[0].Descriptor()
 	// fielddefinition.DefaultTenantID holds the default value on creation for the tenant_id field.
-	fielddefinition.DefaultTenantID = fielddefinitionDescTenantID.Default.(uint64)
+	fielddefinition.DefaultTenantID = fielddefinitionDescTenantID.Default.(int64)
 	// fielddefinitionDescName is the schema descriptor for name field.
 	fielddefinitionDescName := fielddefinitionFields[2].Descriptor()
 	// fielddefinition.NameValidator is a validator for the "name" field. It is called by the builders before save.
@@ -1057,7 +1057,7 @@ func init() {
 	// fielddefinitionDescID is the schema descriptor for id field.
 	fielddefinitionDescID := fielddefinitionMixinFields0[0].Descriptor()
 	// fielddefinition.IDValidator is a validator for the "id" field. It is called by the builders before save.
-	fielddefinition.IDValidator = fielddefinitionDescID.Validators[0].(func(uint64) error)
+	fielddefinition.IDValidator = fielddefinitionDescID.Validators[0].(func(int64) error)
 	fielddefinitiontranslationMixin := schema.FieldDefinitionTranslation{}.Mixin()
 	fielddefinitiontranslationMixinFields0 := fielddefinitiontranslationMixin[0].Fields()
 	_ = fielddefinitiontranslationMixinFields0
@@ -1070,7 +1070,7 @@ func init() {
 	// fielddefinitiontranslationDescID is the schema descriptor for id field.
 	fielddefinitiontranslationDescID := fielddefinitiontranslationMixinFields0[0].Descriptor()
 	// fielddefinitiontranslation.IDValidator is a validator for the "id" field. It is called by the builders before save.
-	fielddefinitiontranslation.IDValidator = fielddefinitiontranslationDescID.Validators[0].(func(uint64) error)
+	fielddefinitiontranslation.IDValidator = fielddefinitiontranslationDescID.Validators[0].(func(int64) error)
 	fileMixin := schema.File{}.Mixin()
 	file.Policy = privacy.NewPolicies(fileMixin[4], schema.File{})
 	file.Hooks[0] = func(next ent.Mutator) ent.Mutator {
@@ -1090,11 +1090,11 @@ func init() {
 	// fileDescTenantID is the schema descriptor for tenant_id field.
 	fileDescTenantID := fileMixinFields4[0].Descriptor()
 	// file.DefaultTenantID holds the default value on creation for the tenant_id field.
-	file.DefaultTenantID = fileDescTenantID.Default.(uint64)
+	file.DefaultTenantID = fileDescTenantID.Default.(int64)
 	// fileDescID is the schema descriptor for id field.
 	fileDescID := fileMixinFields0[0].Descriptor()
 	// file.IDValidator is a validator for the "id" field. It is called by the builders before save.
-	file.IDValidator = fileDescID.Validators[0].(func(uint64) error)
+	file.IDValidator = fileDescID.Validators[0].(func(int64) error)
 	flowruleMixin := schema.FlowRule{}.Mixin()
 	flowrule.Policy = privacy.NewPolicies(flowruleMixin[3], schema.FlowRule{})
 	flowrule.Hooks[0] = func(next ent.Mutator) ent.Mutator {
@@ -1114,7 +1114,7 @@ func init() {
 	// flowruleDescTenantID is the schema descriptor for tenant_id field.
 	flowruleDescTenantID := flowruleMixinFields3[0].Descriptor()
 	// flowrule.DefaultTenantID holds the default value on creation for the tenant_id field.
-	flowrule.DefaultTenantID = flowruleDescTenantID.Default.(uint64)
+	flowrule.DefaultTenantID = flowruleDescTenantID.Default.(int64)
 	// flowruleDescName is the schema descriptor for name field.
 	flowruleDescName := flowruleFields[0].Descriptor()
 	// flowrule.NameValidator is a validator for the "name" field. It is called by the builders before save.
@@ -1176,7 +1176,7 @@ func init() {
 	// flowruleDescID is the schema descriptor for id field.
 	flowruleDescID := flowruleMixinFields0[0].Descriptor()
 	// flowrule.IDValidator is a validator for the "id" field. It is called by the builders before save.
-	flowrule.IDValidator = flowruleDescID.Validators[0].(func(uint64) error)
+	flowrule.IDValidator = flowruleDescID.Validators[0].(func(int64) error)
 	formsubmissionMixin := schema.FormSubmission{}.Mixin()
 	formsubmission.Policy = privacy.NewPolicies(formsubmissionMixin[2], schema.FormSubmission{})
 	formsubmission.Hooks[0] = func(next ent.Mutator) ent.Mutator {
@@ -1196,15 +1196,15 @@ func init() {
 	// formsubmissionDescTenantID is the schema descriptor for tenant_id field.
 	formsubmissionDescTenantID := formsubmissionMixinFields2[0].Descriptor()
 	// formsubmission.DefaultTenantID holds the default value on creation for the tenant_id field.
-	formsubmission.DefaultTenantID = formsubmissionDescTenantID.Default.(uint64)
+	formsubmission.DefaultTenantID = formsubmissionDescTenantID.Default.(int64)
 	// formsubmissionDescUserID is the schema descriptor for user_id field.
 	formsubmissionDescUserID := formsubmissionFields[3].Descriptor()
 	// formsubmission.DefaultUserID holds the default value on creation for the user_id field.
-	formsubmission.DefaultUserID = formsubmissionDescUserID.Default.(uint64)
+	formsubmission.DefaultUserID = formsubmissionDescUserID.Default.(int64)
 	// formsubmissionDescID is the schema descriptor for id field.
 	formsubmissionDescID := formsubmissionMixinFields0[0].Descriptor()
 	// formsubmission.IDValidator is a validator for the "id" field. It is called by the builders before save.
-	formsubmission.IDValidator = formsubmissionDescID.Validators[0].(func(uint64) error)
+	formsubmission.IDValidator = formsubmissionDescID.Validators[0].(func(int64) error)
 	interactioncounterMixin := schema.InteractionCounter{}.Mixin()
 	interactioncounter.Policy = privacy.NewPolicies(interactioncounterMixin[2], schema.InteractionCounter{})
 	interactioncounter.Hooks[0] = func(next ent.Mutator) ent.Mutator {
@@ -1224,7 +1224,7 @@ func init() {
 	// interactioncounterDescTenantID is the schema descriptor for tenant_id field.
 	interactioncounterDescTenantID := interactioncounterMixinFields2[0].Descriptor()
 	// interactioncounter.DefaultTenantID holds the default value on creation for the tenant_id field.
-	interactioncounter.DefaultTenantID = interactioncounterDescTenantID.Default.(uint64)
+	interactioncounter.DefaultTenantID = interactioncounterDescTenantID.Default.(int64)
 	// interactioncounterDescCount is the schema descriptor for count field.
 	interactioncounterDescCount := interactioncounterFields[3].Descriptor()
 	// interactioncounter.DefaultCount holds the default value on creation for the count field.
@@ -1232,7 +1232,7 @@ func init() {
 	// interactioncounterDescID is the schema descriptor for id field.
 	interactioncounterDescID := interactioncounterMixinFields0[0].Descriptor()
 	// interactioncounter.IDValidator is a validator for the "id" field. It is called by the builders before save.
-	interactioncounter.IDValidator = interactioncounterDescID.Validators[0].(func(uint64) error)
+	interactioncounter.IDValidator = interactioncounterDescID.Validators[0].(func(int64) error)
 	internalmessageMixin := schema.InternalMessage{}.Mixin()
 	internalmessage.Policy = privacy.NewPolicies(internalmessageMixin[3], schema.InternalMessage{})
 	internalmessage.Hooks[0] = func(next ent.Mutator) ent.Mutator {
@@ -1252,11 +1252,11 @@ func init() {
 	// internalmessageDescTenantID is the schema descriptor for tenant_id field.
 	internalmessageDescTenantID := internalmessageMixinFields3[0].Descriptor()
 	// internalmessage.DefaultTenantID holds the default value on creation for the tenant_id field.
-	internalmessage.DefaultTenantID = internalmessageDescTenantID.Default.(uint64)
+	internalmessage.DefaultTenantID = internalmessageDescTenantID.Default.(int64)
 	// internalmessageDescID is the schema descriptor for id field.
 	internalmessageDescID := internalmessageMixinFields0[0].Descriptor()
 	// internalmessage.IDValidator is a validator for the "id" field. It is called by the builders before save.
-	internalmessage.IDValidator = internalmessageDescID.Validators[0].(func(uint64) error)
+	internalmessage.IDValidator = internalmessageDescID.Validators[0].(func(int64) error)
 	internalmessagecategoryMixin := schema.InternalMessageCategory{}.Mixin()
 	internalmessagecategory.Policy = privacy.NewPolicies(internalmessagecategoryMixin[8], schema.InternalMessageCategory{})
 	internalmessagecategory.Hooks[0] = func(next ent.Mutator) ent.Mutator {
@@ -1294,7 +1294,7 @@ func init() {
 	// internalmessagecategoryDescTenantID is the schema descriptor for tenant_id field.
 	internalmessagecategoryDescTenantID := internalmessagecategoryMixinFields8[0].Descriptor()
 	// internalmessagecategory.DefaultTenantID holds the default value on creation for the tenant_id field.
-	internalmessagecategory.DefaultTenantID = internalmessagecategoryDescTenantID.Default.(uint64)
+	internalmessagecategory.DefaultTenantID = internalmessagecategoryDescTenantID.Default.(int64)
 	// internalmessagecategoryDescName is the schema descriptor for name field.
 	internalmessagecategoryDescName := internalmessagecategoryFields[0].Descriptor()
 	// internalmessagecategory.NameValidator is a validator for the "name" field. It is called by the builders before save.
@@ -1310,7 +1310,7 @@ func init() {
 	// internalmessagecategoryDescID is the schema descriptor for id field.
 	internalmessagecategoryDescID := internalmessagecategoryMixinFields0[0].Descriptor()
 	// internalmessagecategory.IDValidator is a validator for the "id" field. It is called by the builders before save.
-	internalmessagecategory.IDValidator = internalmessagecategoryDescID.Validators[0].(func(uint64) error)
+	internalmessagecategory.IDValidator = internalmessagecategoryDescID.Validators[0].(func(int64) error)
 	internalmessagerecipientMixin := schema.InternalMessageRecipient{}.Mixin()
 	internalmessagerecipient.Policy = privacy.NewPolicies(internalmessagerecipientMixin[2], schema.InternalMessageRecipient{})
 	internalmessagerecipient.Hooks[0] = func(next ent.Mutator) ent.Mutator {
@@ -1330,11 +1330,11 @@ func init() {
 	// internalmessagerecipientDescTenantID is the schema descriptor for tenant_id field.
 	internalmessagerecipientDescTenantID := internalmessagerecipientMixinFields2[0].Descriptor()
 	// internalmessagerecipient.DefaultTenantID holds the default value on creation for the tenant_id field.
-	internalmessagerecipient.DefaultTenantID = internalmessagerecipientDescTenantID.Default.(uint64)
+	internalmessagerecipient.DefaultTenantID = internalmessagerecipientDescTenantID.Default.(int64)
 	// internalmessagerecipientDescID is the schema descriptor for id field.
 	internalmessagerecipientDescID := internalmessagerecipientMixinFields0[0].Descriptor()
 	// internalmessagerecipient.IDValidator is a validator for the "id" field. It is called by the builders before save.
-	internalmessagerecipient.IDValidator = internalmessagerecipientDescID.Validators[0].(func(uint64) error)
+	internalmessagerecipient.IDValidator = internalmessagerecipientDescID.Validators[0].(func(int64) error)
 	languageMixin := schema.Language{}.Mixin()
 	languageMixinFields0 := languageMixin[0].Fields()
 	_ = languageMixinFields0
@@ -1371,7 +1371,7 @@ func init() {
 	// languageDescID is the schema descriptor for id field.
 	languageDescID := languageMixinFields0[0].Descriptor()
 	// language.IDValidator is a validator for the "id" field. It is called by the builders before save.
-	language.IDValidator = languageDescID.Validators[0].(func(uint64) error)
+	language.IDValidator = languageDescID.Validators[0].(func(int64) error)
 	loginauditlogMixin := schema.LoginAuditLog{}.Mixin()
 	loginauditlog.Policy = privacy.NewPolicies(loginauditlogMixin[2], schema.LoginAuditLog{})
 	loginauditlog.Hooks[0] = func(next ent.Mutator) ent.Mutator {
@@ -1391,11 +1391,11 @@ func init() {
 	// loginauditlogDescTenantID is the schema descriptor for tenant_id field.
 	loginauditlogDescTenantID := loginauditlogMixinFields2[0].Descriptor()
 	// loginauditlog.DefaultTenantID holds the default value on creation for the tenant_id field.
-	loginauditlog.DefaultTenantID = loginauditlogDescTenantID.Default.(uint64)
+	loginauditlog.DefaultTenantID = loginauditlogDescTenantID.Default.(int64)
 	// loginauditlogDescID is the schema descriptor for id field.
 	loginauditlogDescID := loginauditlogMixinFields0[0].Descriptor()
 	// loginauditlog.IDValidator is a validator for the "id" field. It is called by the builders before save.
-	loginauditlog.IDValidator = loginauditlogDescID.Validators[0].(func(uint64) error)
+	loginauditlog.IDValidator = loginauditlogDescID.Validators[0].(func(int64) error)
 	loginpolicyMixin := schema.LoginPolicy{}.Mixin()
 	loginpolicy.Policy = privacy.NewPolicies(loginpolicyMixin[3], schema.LoginPolicy{})
 	loginpolicy.Hooks[0] = func(next ent.Mutator) ent.Mutator {
@@ -1415,11 +1415,11 @@ func init() {
 	// loginpolicyDescTenantID is the schema descriptor for tenant_id field.
 	loginpolicyDescTenantID := loginpolicyMixinFields3[0].Descriptor()
 	// loginpolicy.DefaultTenantID holds the default value on creation for the tenant_id field.
-	loginpolicy.DefaultTenantID = loginpolicyDescTenantID.Default.(uint64)
+	loginpolicy.DefaultTenantID = loginpolicyDescTenantID.Default.(int64)
 	// loginpolicyDescID is the schema descriptor for id field.
 	loginpolicyDescID := loginpolicyMixinFields0[0].Descriptor()
 	// loginpolicy.IDValidator is a validator for the "id" field. It is called by the builders before save.
-	loginpolicy.IDValidator = loginpolicyDescID.Validators[0].(func(uint64) error)
+	loginpolicy.IDValidator = loginpolicyDescID.Validators[0].(func(int64) error)
 	mediaassetMixin := schema.MediaAsset{}.Mixin()
 	mediaasset.Policy = privacy.NewPolicies(mediaassetMixin[3], schema.MediaAsset{})
 	mediaasset.Hooks[0] = func(next ent.Mutator) ent.Mutator {
@@ -1439,7 +1439,7 @@ func init() {
 	// mediaassetDescTenantID is the schema descriptor for tenant_id field.
 	mediaassetDescTenantID := mediaassetMixinFields3[0].Descriptor()
 	// mediaasset.DefaultTenantID holds the default value on creation for the tenant_id field.
-	mediaasset.DefaultTenantID = mediaassetDescTenantID.Default.(uint64)
+	mediaasset.DefaultTenantID = mediaassetDescTenantID.Default.(int64)
 	// mediaassetDescSize is the schema descriptor for size field.
 	mediaassetDescSize := mediaassetFields[3].Descriptor()
 	// mediaasset.DefaultSize holds the default value on creation for the size field.
@@ -1459,7 +1459,7 @@ func init() {
 	// mediaassetDescFolderID is the schema descriptor for folder_id field.
 	mediaassetDescFolderID := mediaassetFields[15].Descriptor()
 	// mediaasset.DefaultFolderID holds the default value on creation for the folder_id field.
-	mediaasset.DefaultFolderID = mediaassetDescFolderID.Default.(uint64)
+	mediaasset.DefaultFolderID = mediaassetDescFolderID.Default.(int64)
 	// mediaassetDescReferenceCount is the schema descriptor for reference_count field.
 	mediaassetDescReferenceCount := mediaassetFields[17].Descriptor()
 	// mediaasset.DefaultReferenceCount holds the default value on creation for the reference_count field.
@@ -1471,7 +1471,7 @@ func init() {
 	// mediaassetDescID is the schema descriptor for id field.
 	mediaassetDescID := mediaassetMixinFields0[0].Descriptor()
 	// mediaasset.IDValidator is a validator for the "id" field. It is called by the builders before save.
-	mediaasset.IDValidator = mediaassetDescID.Validators[0].(func(uint64) error)
+	mediaasset.IDValidator = mediaassetDescID.Validators[0].(func(int64) error)
 	mediavariantMixin := schema.MediaVariant{}.Mixin()
 	mediavariant.Policy = privacy.NewPolicies(mediavariantMixin[2], schema.MediaVariant{})
 	mediavariant.Hooks[0] = func(next ent.Mutator) ent.Mutator {
@@ -1491,11 +1491,11 @@ func init() {
 	// mediavariantDescTenantID is the schema descriptor for tenant_id field.
 	mediavariantDescTenantID := mediavariantMixinFields2[0].Descriptor()
 	// mediavariant.DefaultTenantID holds the default value on creation for the tenant_id field.
-	mediavariant.DefaultTenantID = mediavariantDescTenantID.Default.(uint64)
+	mediavariant.DefaultTenantID = mediavariantDescTenantID.Default.(int64)
 	// mediavariantDescID is the schema descriptor for id field.
 	mediavariantDescID := mediavariantMixinFields0[0].Descriptor()
 	// mediavariant.IDValidator is a validator for the "id" field. It is called by the builders before save.
-	mediavariant.IDValidator = mediavariantDescID.Validators[0].(func(uint64) error)
+	mediavariant.IDValidator = mediavariantDescID.Validators[0].(func(int64) error)
 	membershipMixin := schema.Membership{}.Mixin()
 	membership.Policy = privacy.NewPolicies(membershipMixin[3], schema.Membership{})
 	membership.Hooks[0] = func(next ent.Mutator) ent.Mutator {
@@ -1515,7 +1515,7 @@ func init() {
 	// membershipDescTenantID is the schema descriptor for tenant_id field.
 	membershipDescTenantID := membershipMixinFields3[0].Descriptor()
 	// membership.DefaultTenantID holds the default value on creation for the tenant_id field.
-	membership.DefaultTenantID = membershipDescTenantID.Default.(uint64)
+	membership.DefaultTenantID = membershipDescTenantID.Default.(int64)
 	// membershipDescIsPrimary is the schema descriptor for is_primary field.
 	membershipDescIsPrimary := membershipFields[4].Descriptor()
 	// membership.DefaultIsPrimary holds the default value on creation for the is_primary field.
@@ -1523,7 +1523,7 @@ func init() {
 	// membershipDescID is the schema descriptor for id field.
 	membershipDescID := membershipMixinFields0[0].Descriptor()
 	// membership.IDValidator is a validator for the "id" field. It is called by the builders before save.
-	membership.IDValidator = membershipDescID.Validators[0].(func(uint64) error)
+	membership.IDValidator = membershipDescID.Validators[0].(func(int64) error)
 	membershiporgunitMixin := schema.MembershipOrgUnit{}.Mixin()
 	membershiporgunit.Policy = privacy.NewPolicies(membershiporgunitMixin[3], schema.MembershipOrgUnit{})
 	membershiporgunit.Hooks[0] = func(next ent.Mutator) ent.Mutator {
@@ -1543,7 +1543,7 @@ func init() {
 	// membershiporgunitDescTenantID is the schema descriptor for tenant_id field.
 	membershiporgunitDescTenantID := membershiporgunitMixinFields3[0].Descriptor()
 	// membershiporgunit.DefaultTenantID holds the default value on creation for the tenant_id field.
-	membershiporgunit.DefaultTenantID = membershiporgunitDescTenantID.Default.(uint64)
+	membershiporgunit.DefaultTenantID = membershiporgunitDescTenantID.Default.(int64)
 	// membershiporgunitDescIsPrimary is the schema descriptor for is_primary field.
 	membershiporgunitDescIsPrimary := membershiporgunitFields[8].Descriptor()
 	// membershiporgunit.DefaultIsPrimary holds the default value on creation for the is_primary field.
@@ -1551,7 +1551,7 @@ func init() {
 	// membershiporgunitDescID is the schema descriptor for id field.
 	membershiporgunitDescID := membershiporgunitMixinFields0[0].Descriptor()
 	// membershiporgunit.IDValidator is a validator for the "id" field. It is called by the builders before save.
-	membershiporgunit.IDValidator = membershiporgunitDescID.Validators[0].(func(uint64) error)
+	membershiporgunit.IDValidator = membershiporgunitDescID.Validators[0].(func(int64) error)
 	membershippositionMixin := schema.MembershipPosition{}.Mixin()
 	membershipposition.Policy = privacy.NewPolicies(membershippositionMixin[3], schema.MembershipPosition{})
 	membershipposition.Hooks[0] = func(next ent.Mutator) ent.Mutator {
@@ -1571,7 +1571,7 @@ func init() {
 	// membershippositionDescTenantID is the schema descriptor for tenant_id field.
 	membershippositionDescTenantID := membershippositionMixinFields3[0].Descriptor()
 	// membershipposition.DefaultTenantID holds the default value on creation for the tenant_id field.
-	membershipposition.DefaultTenantID = membershippositionDescTenantID.Default.(uint64)
+	membershipposition.DefaultTenantID = membershippositionDescTenantID.Default.(int64)
 	// membershippositionDescIsPrimary is the schema descriptor for is_primary field.
 	membershippositionDescIsPrimary := membershippositionFields[2].Descriptor()
 	// membershipposition.DefaultIsPrimary holds the default value on creation for the is_primary field.
@@ -1579,7 +1579,7 @@ func init() {
 	// membershippositionDescID is the schema descriptor for id field.
 	membershippositionDescID := membershippositionMixinFields0[0].Descriptor()
 	// membershipposition.IDValidator is a validator for the "id" field. It is called by the builders before save.
-	membershipposition.IDValidator = membershippositionDescID.Validators[0].(func(uint64) error)
+	membershipposition.IDValidator = membershippositionDescID.Validators[0].(func(int64) error)
 	membershiproleMixin := schema.MembershipRole{}.Mixin()
 	membershiprole.Policy = privacy.NewPolicies(membershiproleMixin[3], schema.MembershipRole{})
 	membershiprole.Hooks[0] = func(next ent.Mutator) ent.Mutator {
@@ -1599,7 +1599,7 @@ func init() {
 	// membershiproleDescTenantID is the schema descriptor for tenant_id field.
 	membershiproleDescTenantID := membershiproleMixinFields3[0].Descriptor()
 	// membershiprole.DefaultTenantID holds the default value on creation for the tenant_id field.
-	membershiprole.DefaultTenantID = membershiproleDescTenantID.Default.(uint64)
+	membershiprole.DefaultTenantID = membershiproleDescTenantID.Default.(int64)
 	// membershiproleDescIsPrimary is the schema descriptor for is_primary field.
 	membershiproleDescIsPrimary := membershiproleFields[6].Descriptor()
 	// membershiprole.DefaultIsPrimary holds the default value on creation for the is_primary field.
@@ -1607,7 +1607,7 @@ func init() {
 	// membershiproleDescID is the schema descriptor for id field.
 	membershiproleDescID := membershiproleMixinFields0[0].Descriptor()
 	// membershiprole.IDValidator is a validator for the "id" field. It is called by the builders before save.
-	membershiprole.IDValidator = membershiproleDescID.Validators[0].(func(uint64) error)
+	membershiprole.IDValidator = membershiproleDescID.Validators[0].(func(int64) error)
 	menuMixin := schema.Menu{}.Mixin()
 	menu.Policy = privacy.NewPolicies(menuMixin[6], schema.Menu{})
 	menu.Hooks[0] = func(next ent.Mutator) ent.Mutator {
@@ -1629,7 +1629,7 @@ func init() {
 	// menuDescTenantID is the schema descriptor for tenant_id field.
 	menuDescTenantID := menuMixinFields6[0].Descriptor()
 	// menu.DefaultTenantID holds the default value on creation for the tenant_id field.
-	menu.DefaultTenantID = menuDescTenantID.Default.(uint64)
+	menu.DefaultTenantID = menuDescTenantID.Default.(int64)
 	// menuDescPath is the schema descriptor for path field.
 	menuDescPath := menuFields[1].Descriptor()
 	// menu.DefaultPath holds the default value on creation for the path field.
@@ -1641,7 +1641,7 @@ func init() {
 	// menuDescID is the schema descriptor for id field.
 	menuDescID := menuMixinFields0[0].Descriptor()
 	// menu.IDValidator is a validator for the "id" field. It is called by the builders before save.
-	menu.IDValidator = menuDescID.Validators[0].(func(uint64) error)
+	menu.IDValidator = menuDescID.Validators[0].(func(int64) error)
 	monitoralertruleMixin := schema.MonitorAlertRule{}.Mixin()
 	monitoralertruleMixinFields0 := monitoralertruleMixin[0].Fields()
 	_ = monitoralertruleMixinFields0
@@ -1670,7 +1670,7 @@ func init() {
 	// monitoralertruleDescID is the schema descriptor for id field.
 	monitoralertruleDescID := monitoralertruleMixinFields0[0].Descriptor()
 	// monitoralertrule.IDValidator is a validator for the "id" field. It is called by the builders before save.
-	monitoralertrule.IDValidator = monitoralertruleDescID.Validators[0].(func(uint64) error)
+	monitoralertrule.IDValidator = monitoralertruleDescID.Validators[0].(func(int64) error)
 	navigationMixin := schema.Navigation{}.Mixin()
 	navigation.Policy = privacy.NewPolicies(navigationMixin[3], schema.Navigation{})
 	navigation.Hooks[0] = func(next ent.Mutator) ent.Mutator {
@@ -1690,7 +1690,7 @@ func init() {
 	// navigationDescTenantID is the schema descriptor for tenant_id field.
 	navigationDescTenantID := navigationMixinFields3[0].Descriptor()
 	// navigation.DefaultTenantID holds the default value on creation for the tenant_id field.
-	navigation.DefaultTenantID = navigationDescTenantID.Default.(uint64)
+	navigation.DefaultTenantID = navigationDescTenantID.Default.(int64)
 	// navigationDescIsActive is the schema descriptor for is_active field.
 	navigationDescIsActive := navigationFields[3].Descriptor()
 	// navigation.DefaultIsActive holds the default value on creation for the is_active field.
@@ -1698,7 +1698,7 @@ func init() {
 	// navigationDescID is the schema descriptor for id field.
 	navigationDescID := navigationMixinFields0[0].Descriptor()
 	// navigation.IDValidator is a validator for the "id" field. It is called by the builders before save.
-	navigation.IDValidator = navigationDescID.Validators[0].(func(uint64) error)
+	navigation.IDValidator = navigationDescID.Validators[0].(func(int64) error)
 	navigationitemMixin := schema.NavigationItem{}.Mixin()
 	navigationitem.Policy = privacy.NewPolicies(navigationitemMixin[5], schema.NavigationItem{})
 	navigationitem.Hooks[0] = func(next ent.Mutator) ent.Mutator {
@@ -1724,7 +1724,7 @@ func init() {
 	// navigationitemDescTenantID is the schema descriptor for tenant_id field.
 	navigationitemDescTenantID := navigationitemMixinFields5[0].Descriptor()
 	// navigationitem.DefaultTenantID holds the default value on creation for the tenant_id field.
-	navigationitem.DefaultTenantID = navigationitemDescTenantID.Default.(uint64)
+	navigationitem.DefaultTenantID = navigationitemDescTenantID.Default.(int64)
 	// navigationitemDescIsOpenNewTab is the schema descriptor for is_open_new_tab field.
 	navigationitemDescIsOpenNewTab := navigationitemFields[7].Descriptor()
 	// navigationitem.DefaultIsOpenNewTab holds the default value on creation for the is_open_new_tab field.
@@ -1736,7 +1736,7 @@ func init() {
 	// navigationitemDescID is the schema descriptor for id field.
 	navigationitemDescID := navigationitemMixinFields0[0].Descriptor()
 	// navigationitem.IDValidator is a validator for the "id" field. It is called by the builders before save.
-	navigationitem.IDValidator = navigationitemDescID.Validators[0].(func(uint64) error)
+	navigationitem.IDValidator = navigationitemDescID.Validators[0].(func(int64) error)
 	notificationchannelMixin := schema.NotificationChannel{}.Mixin()
 	notificationchannelMixinFields0 := notificationchannelMixin[0].Fields()
 	_ = notificationchannelMixinFields0
@@ -1751,7 +1751,7 @@ func init() {
 	// notificationchannelDescID is the schema descriptor for id field.
 	notificationchannelDescID := notificationchannelMixinFields0[0].Descriptor()
 	// notificationchannel.IDValidator is a validator for the "id" field. It is called by the builders before save.
-	notificationchannel.IDValidator = notificationchannelDescID.Validators[0].(func(uint64) error)
+	notificationchannel.IDValidator = notificationchannelDescID.Validators[0].(func(int64) error)
 	notificationdeliveryMixin := schema.NotificationDelivery{}.Mixin()
 	notificationdeliveryMixinFields0 := notificationdeliveryMixin[0].Fields()
 	_ = notificationdeliveryMixinFields0
@@ -1768,7 +1768,7 @@ func init() {
 	// notificationdeliveryDescID is the schema descriptor for id field.
 	notificationdeliveryDescID := notificationdeliveryMixinFields0[0].Descriptor()
 	// notificationdelivery.IDValidator is a validator for the "id" field. It is called by the builders before save.
-	notificationdelivery.IDValidator = notificationdeliveryDescID.Validators[0].(func(uint64) error)
+	notificationdelivery.IDValidator = notificationdeliveryDescID.Validators[0].(func(int64) error)
 	notificationpreferenceMixin := schema.NotificationPreference{}.Mixin()
 	notificationpreferenceMixinFields0 := notificationpreferenceMixin[0].Fields()
 	_ = notificationpreferenceMixinFields0
@@ -1789,7 +1789,7 @@ func init() {
 	// notificationpreferenceDescID is the schema descriptor for id field.
 	notificationpreferenceDescID := notificationpreferenceMixinFields0[0].Descriptor()
 	// notificationpreference.IDValidator is a validator for the "id" field. It is called by the builders before save.
-	notificationpreference.IDValidator = notificationpreferenceDescID.Validators[0].(func(uint64) error)
+	notificationpreference.IDValidator = notificationpreferenceDescID.Validators[0].(func(int64) error)
 	notificationruleMixin := schema.NotificationRule{}.Mixin()
 	notificationruleMixinFields0 := notificationruleMixin[0].Fields()
 	_ = notificationruleMixinFields0
@@ -1808,7 +1808,7 @@ func init() {
 	// notificationruleDescID is the schema descriptor for id field.
 	notificationruleDescID := notificationruleMixinFields0[0].Descriptor()
 	// notificationrule.IDValidator is a validator for the "id" field. It is called by the builders before save.
-	notificationrule.IDValidator = notificationruleDescID.Validators[0].(func(uint64) error)
+	notificationrule.IDValidator = notificationruleDescID.Validators[0].(func(int64) error)
 	notificationtemplateMixin := schema.NotificationTemplate{}.Mixin()
 	notificationtemplateMixinFields0 := notificationtemplateMixin[0].Fields()
 	_ = notificationtemplateMixinFields0
@@ -1839,7 +1839,7 @@ func init() {
 	// notificationtemplateDescID is the schema descriptor for id field.
 	notificationtemplateDescID := notificationtemplateMixinFields0[0].Descriptor()
 	// notificationtemplate.IDValidator is a validator for the "id" field. It is called by the builders before save.
-	notificationtemplate.IDValidator = notificationtemplateDescID.Validators[0].(func(uint64) error)
+	notificationtemplate.IDValidator = notificationtemplateDescID.Validators[0].(func(int64) error)
 	operationauditlogMixin := schema.OperationAuditLog{}.Mixin()
 	operationauditlog.Policy = privacy.NewPolicies(operationauditlogMixin[2], schema.OperationAuditLog{})
 	operationauditlog.Hooks[0] = func(next ent.Mutator) ent.Mutator {
@@ -1859,11 +1859,11 @@ func init() {
 	// operationauditlogDescTenantID is the schema descriptor for tenant_id field.
 	operationauditlogDescTenantID := operationauditlogMixinFields2[0].Descriptor()
 	// operationauditlog.DefaultTenantID holds the default value on creation for the tenant_id field.
-	operationauditlog.DefaultTenantID = operationauditlogDescTenantID.Default.(uint64)
+	operationauditlog.DefaultTenantID = operationauditlogDescTenantID.Default.(int64)
 	// operationauditlogDescID is the schema descriptor for id field.
 	operationauditlogDescID := operationauditlogMixinFields0[0].Descriptor()
 	// operationauditlog.IDValidator is a validator for the "id" field. It is called by the builders before save.
-	operationauditlog.IDValidator = operationauditlogDescID.Validators[0].(func(uint64) error)
+	operationauditlog.IDValidator = operationauditlogDescID.Validators[0].(func(int64) error)
 	orgunitMixin := schema.OrgUnit{}.Mixin()
 	orgunit.Policy = privacy.NewPolicies(orgunitMixin[5], schema.OrgUnit{})
 	orgunit.Hooks[0] = func(next ent.Mutator) ent.Mutator {
@@ -1893,7 +1893,7 @@ func init() {
 	// orgunitDescTenantID is the schema descriptor for tenant_id field.
 	orgunitDescTenantID := orgunitMixinFields5[0].Descriptor()
 	// orgunit.DefaultTenantID holds the default value on creation for the tenant_id field.
-	orgunit.DefaultTenantID = orgunitDescTenantID.Default.(uint64)
+	orgunit.DefaultTenantID = orgunitDescTenantID.Default.(int64)
 	// orgunitDescPath is the schema descriptor for path field.
 	orgunitDescPath := orgunitMixinFields9[0].Descriptor()
 	// orgunit.PathValidator is a validator for the "path" field. It is called by the builders before save.
@@ -1909,7 +1909,7 @@ func init() {
 	// orgunitDescID is the schema descriptor for id field.
 	orgunitDescID := orgunitMixinFields0[0].Descriptor()
 	// orgunit.IDValidator is a validator for the "id" field. It is called by the builders before save.
-	orgunit.IDValidator = orgunitDescID.Validators[0].(func(uint64) error)
+	orgunit.IDValidator = orgunitDescID.Validators[0].(func(int64) error)
 	pageMixin := schema.Page{}.Mixin()
 	page.Policy = privacy.NewPolicies(pageMixin[7], schema.Page{})
 	page.Hooks[0] = func(next ent.Mutator) ent.Mutator {
@@ -1943,11 +1943,11 @@ func init() {
 	// pageDescTenantID is the schema descriptor for tenant_id field.
 	pageDescTenantID := pageMixinFields7[0].Descriptor()
 	// page.DefaultTenantID holds the default value on creation for the tenant_id field.
-	page.DefaultTenantID = pageDescTenantID.Default.(uint64)
+	page.DefaultTenantID = pageDescTenantID.Default.(int64)
 	// pageDescAuthorID is the schema descriptor for author_id field.
 	pageDescAuthorID := pageFields[3].Descriptor()
 	// page.DefaultAuthorID holds the default value on creation for the author_id field.
-	page.DefaultAuthorID = pageDescAuthorID.Default.(uint64)
+	page.DefaultAuthorID = pageDescAuthorID.Default.(int64)
 	// pageDescDisallowComment is the schema descriptor for disallow_comment field.
 	pageDescDisallowComment := pageFields[5].Descriptor()
 	// page.DefaultDisallowComment holds the default value on creation for the disallow_comment field.
@@ -1971,7 +1971,7 @@ func init() {
 	// pageDescID is the schema descriptor for id field.
 	pageDescID := pageMixinFields0[0].Descriptor()
 	// page.IDValidator is a validator for the "id" field. It is called by the builders before save.
-	page.IDValidator = pageDescID.Validators[0].(func(uint64) error)
+	page.IDValidator = pageDescID.Validators[0].(func(int64) error)
 	pagetranslationMixin := schema.PageTranslation{}.Mixin()
 	pagetranslation.Policy = privacy.NewPolicies(pagetranslationMixin[4], schema.PageTranslation{})
 	pagetranslation.Hooks[0] = func(next ent.Mutator) ent.Mutator {
@@ -1991,11 +1991,11 @@ func init() {
 	// pagetranslationDescTenantID is the schema descriptor for tenant_id field.
 	pagetranslationDescTenantID := pagetranslationMixinFields4[0].Descriptor()
 	// pagetranslation.DefaultTenantID holds the default value on creation for the tenant_id field.
-	pagetranslation.DefaultTenantID = pagetranslationDescTenantID.Default.(uint64)
+	pagetranslation.DefaultTenantID = pagetranslationDescTenantID.Default.(int64)
 	// pagetranslationDescID is the schema descriptor for id field.
 	pagetranslationDescID := pagetranslationMixinFields0[0].Descriptor()
 	// pagetranslation.IDValidator is a validator for the "id" field. It is called by the builders before save.
-	pagetranslation.IDValidator = pagetranslationDescID.Validators[0].(func(uint64) error)
+	pagetranslation.IDValidator = pagetranslationDescID.Validators[0].(func(int64) error)
 	pageversionMixin := schema.PageVersion{}.Mixin()
 	pageversion.Policy = privacy.NewPolicies(pageversionMixin[3], schema.PageVersion{})
 	pageversion.Hooks[0] = func(next ent.Mutator) ent.Mutator {
@@ -2015,7 +2015,7 @@ func init() {
 	// pageversionDescTenantID is the schema descriptor for tenant_id field.
 	pageversionDescTenantID := pageversionMixinFields3[0].Descriptor()
 	// pageversion.DefaultTenantID holds the default value on creation for the tenant_id field.
-	pageversion.DefaultTenantID = pageversionDescTenantID.Default.(uint64)
+	pageversion.DefaultTenantID = pageversionDescTenantID.Default.(int64)
 	// pageversionDescVersionNumber is the schema descriptor for version_number field.
 	pageversionDescVersionNumber := pageversionFields[1].Descriptor()
 	// pageversion.DefaultVersionNumber holds the default value on creation for the version_number field.
@@ -2023,7 +2023,7 @@ func init() {
 	// pageversionDescID is the schema descriptor for id field.
 	pageversionDescID := pageversionMixinFields0[0].Descriptor()
 	// pageversion.IDValidator is a validator for the "id" field. It is called by the builders before save.
-	pageversion.IDValidator = pageversionDescID.Validators[0].(func(uint64) error)
+	pageversion.IDValidator = pageversionDescID.Validators[0].(func(int64) error)
 	permissionMixin := schema.Permission{}.Mixin()
 	permission.Policy = privacy.NewPolicies(permissionMixin[5], schema.Permission{})
 	permission.Hooks[0] = func(next ent.Mutator) ent.Mutator {
@@ -2045,7 +2045,7 @@ func init() {
 	// permissionDescTenantID is the schema descriptor for tenant_id field.
 	permissionDescTenantID := permissionMixinFields5[0].Descriptor()
 	// permission.DefaultTenantID holds the default value on creation for the tenant_id field.
-	permission.DefaultTenantID = permissionDescTenantID.Default.(uint64)
+	permission.DefaultTenantID = permissionDescTenantID.Default.(int64)
 	// permissionDescName is the schema descriptor for name field.
 	permissionDescName := permissionFields[0].Descriptor()
 	// permission.NameValidator is a validator for the "name" field. It is called by the builders before save.
@@ -2053,7 +2053,7 @@ func init() {
 	// permissionDescID is the schema descriptor for id field.
 	permissionDescID := permissionMixinFields0[0].Descriptor()
 	// permission.IDValidator is a validator for the "id" field. It is called by the builders before save.
-	permission.IDValidator = permissionDescID.Validators[0].(func(uint64) error)
+	permission.IDValidator = permissionDescID.Validators[0].(func(int64) error)
 	permissionapiMixin := schema.PermissionApi{}.Mixin()
 	permissionapi.Policy = privacy.NewPolicies(permissionapiMixin[3], schema.PermissionApi{})
 	permissionapi.Hooks[0] = func(next ent.Mutator) ent.Mutator {
@@ -2073,11 +2073,11 @@ func init() {
 	// permissionapiDescTenantID is the schema descriptor for tenant_id field.
 	permissionapiDescTenantID := permissionapiMixinFields3[0].Descriptor()
 	// permissionapi.DefaultTenantID holds the default value on creation for the tenant_id field.
-	permissionapi.DefaultTenantID = permissionapiDescTenantID.Default.(uint64)
+	permissionapi.DefaultTenantID = permissionapiDescTenantID.Default.(int64)
 	// permissionapiDescID is the schema descriptor for id field.
 	permissionapiDescID := permissionapiMixinFields0[0].Descriptor()
 	// permissionapi.IDValidator is a validator for the "id" field. It is called by the builders before save.
-	permissionapi.IDValidator = permissionapiDescID.Validators[0].(func(uint64) error)
+	permissionapi.IDValidator = permissionapiDescID.Validators[0].(func(int64) error)
 	permissionauditlogMixin := schema.PermissionAuditLog{}.Mixin()
 	permissionauditlog.Policy = privacy.NewPolicies(permissionauditlogMixin[2], schema.PermissionAuditLog{})
 	permissionauditlog.Hooks[0] = func(next ent.Mutator) ent.Mutator {
@@ -2097,11 +2097,11 @@ func init() {
 	// permissionauditlogDescTenantID is the schema descriptor for tenant_id field.
 	permissionauditlogDescTenantID := permissionauditlogMixinFields2[0].Descriptor()
 	// permissionauditlog.DefaultTenantID holds the default value on creation for the tenant_id field.
-	permissionauditlog.DefaultTenantID = permissionauditlogDescTenantID.Default.(uint64)
+	permissionauditlog.DefaultTenantID = permissionauditlogDescTenantID.Default.(int64)
 	// permissionauditlogDescID is the schema descriptor for id field.
 	permissionauditlogDescID := permissionauditlogMixinFields0[0].Descriptor()
 	// permissionauditlog.IDValidator is a validator for the "id" field. It is called by the builders before save.
-	permissionauditlog.IDValidator = permissionauditlogDescID.Validators[0].(func(uint64) error)
+	permissionauditlog.IDValidator = permissionauditlogDescID.Validators[0].(func(int64) error)
 	permissiongroupMixin := schema.PermissionGroup{}.Mixin()
 	permissiongroup.Policy = privacy.NewPolicies(permissiongroupMixin[8], schema.PermissionGroup{})
 	permissiongroup.Hooks[0] = func(next ent.Mutator) ent.Mutator {
@@ -2135,7 +2135,7 @@ func init() {
 	// permissiongroupDescTenantID is the schema descriptor for tenant_id field.
 	permissiongroupDescTenantID := permissiongroupMixinFields8[0].Descriptor()
 	// permissiongroup.DefaultTenantID holds the default value on creation for the tenant_id field.
-	permissiongroup.DefaultTenantID = permissiongroupDescTenantID.Default.(uint64)
+	permissiongroup.DefaultTenantID = permissiongroupDescTenantID.Default.(int64)
 	// permissiongroupDescName is the schema descriptor for name field.
 	permissiongroupDescName := permissiongroupFields[0].Descriptor()
 	// permissiongroup.NameValidator is a validator for the "name" field. It is called by the builders before save.
@@ -2143,7 +2143,7 @@ func init() {
 	// permissiongroupDescID is the schema descriptor for id field.
 	permissiongroupDescID := permissiongroupMixinFields0[0].Descriptor()
 	// permissiongroup.IDValidator is a validator for the "id" field. It is called by the builders before save.
-	permissiongroup.IDValidator = permissiongroupDescID.Validators[0].(func(uint64) error)
+	permissiongroup.IDValidator = permissiongroupDescID.Validators[0].(func(int64) error)
 	permissionmenuMixin := schema.PermissionMenu{}.Mixin()
 	permissionmenu.Policy = privacy.NewPolicies(permissionmenuMixin[3], schema.PermissionMenu{})
 	permissionmenu.Hooks[0] = func(next ent.Mutator) ent.Mutator {
@@ -2163,11 +2163,11 @@ func init() {
 	// permissionmenuDescTenantID is the schema descriptor for tenant_id field.
 	permissionmenuDescTenantID := permissionmenuMixinFields3[0].Descriptor()
 	// permissionmenu.DefaultTenantID holds the default value on creation for the tenant_id field.
-	permissionmenu.DefaultTenantID = permissionmenuDescTenantID.Default.(uint64)
+	permissionmenu.DefaultTenantID = permissionmenuDescTenantID.Default.(int64)
 	// permissionmenuDescID is the schema descriptor for id field.
 	permissionmenuDescID := permissionmenuMixinFields0[0].Descriptor()
 	// permissionmenu.IDValidator is a validator for the "id" field. It is called by the builders before save.
-	permissionmenu.IDValidator = permissionmenuDescID.Validators[0].(func(uint64) error)
+	permissionmenu.IDValidator = permissionmenuDescID.Validators[0].(func(int64) error)
 	permissionpolicyMixin := schema.PermissionPolicy{}.Mixin()
 	permissionpolicy.Policy = privacy.NewPolicies(permissionpolicyMixin[4], schema.PermissionPolicy{})
 	permissionpolicy.Hooks[0] = func(next ent.Mutator) ent.Mutator {
@@ -2189,7 +2189,7 @@ func init() {
 	// permissionpolicyDescTenantID is the schema descriptor for tenant_id field.
 	permissionpolicyDescTenantID := permissionpolicyMixinFields4[0].Descriptor()
 	// permissionpolicy.DefaultTenantID holds the default value on creation for the tenant_id field.
-	permissionpolicy.DefaultTenantID = permissionpolicyDescTenantID.Default.(uint64)
+	permissionpolicy.DefaultTenantID = permissionpolicyDescTenantID.Default.(int64)
 	// permissionpolicyDescVersion is the schema descriptor for version field.
 	permissionpolicyDescVersion := permissionpolicyFields[3].Descriptor()
 	// permissionpolicy.DefaultVersion holds the default value on creation for the version field.
@@ -2205,7 +2205,7 @@ func init() {
 	// permissionpolicyDescID is the schema descriptor for id field.
 	permissionpolicyDescID := permissionpolicyMixinFields0[0].Descriptor()
 	// permissionpolicy.IDValidator is a validator for the "id" field. It is called by the builders before save.
-	permissionpolicy.IDValidator = permissionpolicyDescID.Validators[0].(func(uint64) error)
+	permissionpolicy.IDValidator = permissionpolicyDescID.Validators[0].(func(int64) error)
 	policyevaluationlogMixin := schema.PolicyEvaluationLog{}.Mixin()
 	policyevaluationlog.Policy = privacy.NewPolicies(policyevaluationlogMixin[2], schema.PolicyEvaluationLog{})
 	policyevaluationlog.Hooks[0] = func(next ent.Mutator) ent.Mutator {
@@ -2225,7 +2225,7 @@ func init() {
 	// policyevaluationlogDescTenantID is the schema descriptor for tenant_id field.
 	policyevaluationlogDescTenantID := policyevaluationlogMixinFields2[0].Descriptor()
 	// policyevaluationlog.DefaultTenantID holds the default value on creation for the tenant_id field.
-	policyevaluationlog.DefaultTenantID = policyevaluationlogDescTenantID.Default.(uint64)
+	policyevaluationlog.DefaultTenantID = policyevaluationlogDescTenantID.Default.(int64)
 	// policyevaluationlogDescResult is the schema descriptor for result field.
 	policyevaluationlogDescResult := policyevaluationlogFields[6].Descriptor()
 	// policyevaluationlog.DefaultResult holds the default value on creation for the result field.
@@ -2233,7 +2233,7 @@ func init() {
 	// policyevaluationlogDescID is the schema descriptor for id field.
 	policyevaluationlogDescID := policyevaluationlogMixinFields0[0].Descriptor()
 	// policyevaluationlog.IDValidator is a validator for the "id" field. It is called by the builders before save.
-	policyevaluationlog.IDValidator = policyevaluationlogDescID.Validators[0].(func(uint64) error)
+	policyevaluationlog.IDValidator = policyevaluationlogDescID.Validators[0].(func(int64) error)
 	positionMixin := schema.Position{}.Mixin()
 	position.Policy = privacy.NewPolicies(positionMixin[5], schema.Position{})
 	position.Hooks[0] = func(next ent.Mutator) ent.Mutator {
@@ -2261,7 +2261,7 @@ func init() {
 	// positionDescTenantID is the schema descriptor for tenant_id field.
 	positionDescTenantID := positionMixinFields5[0].Descriptor()
 	// position.DefaultTenantID holds the default value on creation for the tenant_id field.
-	position.DefaultTenantID = positionDescTenantID.Default.(uint64)
+	position.DefaultTenantID = positionDescTenantID.Default.(int64)
 	// positionDescName is the schema descriptor for name field.
 	positionDescName := positionFields[0].Descriptor()
 	// position.NameValidator is a validator for the "name" field. It is called by the builders before save.
@@ -2281,7 +2281,7 @@ func init() {
 	// positionDescID is the schema descriptor for id field.
 	positionDescID := positionMixinFields0[0].Descriptor()
 	// position.IDValidator is a validator for the "id" field. It is called by the builders before save.
-	position.IDValidator = positionDescID.Validators[0].(func(uint64) error)
+	position.IDValidator = positionDescID.Validators[0].(func(int64) error)
 	postMixin := schema.Post{}.Mixin()
 	post.Policy = privacy.NewPolicies(postMixin[5], schema.Post{})
 	post.Hooks[0] = func(next ent.Mutator) ent.Mutator {
@@ -2309,7 +2309,7 @@ func init() {
 	// postDescTenantID is the schema descriptor for tenant_id field.
 	postDescTenantID := postMixinFields5[0].Descriptor()
 	// post.DefaultTenantID holds the default value on creation for the tenant_id field.
-	post.DefaultTenantID = postDescTenantID.Default.(uint64)
+	post.DefaultTenantID = postDescTenantID.Default.(int64)
 	// postDescDisallowComment is the schema descriptor for disallow_comment field.
 	postDescDisallowComment := postFields[2].Descriptor()
 	// post.DefaultDisallowComment holds the default value on creation for the disallow_comment field.
@@ -2329,11 +2329,11 @@ func init() {
 	// postDescAuthorID is the schema descriptor for author_id field.
 	postDescAuthorID := postFields[6].Descriptor()
 	// post.DefaultAuthorID holds the default value on creation for the author_id field.
-	post.DefaultAuthorID = postDescAuthorID.Default.(uint64)
+	post.DefaultAuthorID = postDescAuthorID.Default.(int64)
 	// postDescID is the schema descriptor for id field.
 	postDescID := postMixinFields0[0].Descriptor()
 	// post.IDValidator is a validator for the "id" field. It is called by the builders before save.
-	post.IDValidator = postDescID.Validators[0].(func(uint64) error)
+	post.IDValidator = postDescID.Validators[0].(func(int64) error)
 	postcategoryMixin := schema.PostCategory{}.Mixin()
 	postcategory.Policy = privacy.NewPolicies(postcategoryMixin[2], schema.PostCategory{})
 	postcategory.Hooks[0] = func(next ent.Mutator) ent.Mutator {
@@ -2353,11 +2353,11 @@ func init() {
 	// postcategoryDescTenantID is the schema descriptor for tenant_id field.
 	postcategoryDescTenantID := postcategoryMixinFields2[0].Descriptor()
 	// postcategory.DefaultTenantID holds the default value on creation for the tenant_id field.
-	postcategory.DefaultTenantID = postcategoryDescTenantID.Default.(uint64)
+	postcategory.DefaultTenantID = postcategoryDescTenantID.Default.(int64)
 	// postcategoryDescID is the schema descriptor for id field.
 	postcategoryDescID := postcategoryMixinFields0[0].Descriptor()
 	// postcategory.IDValidator is a validator for the "id" field. It is called by the builders before save.
-	postcategory.IDValidator = postcategoryDescID.Validators[0].(func(uint64) error)
+	postcategory.IDValidator = postcategoryDescID.Validators[0].(func(int64) error)
 	postlikeMixin := schema.PostLike{}.Mixin()
 	postlike.Policy = privacy.NewPolicies(postlikeMixin[2], schema.PostLike{})
 	postlike.Hooks[0] = func(next ent.Mutator) ent.Mutator {
@@ -2377,11 +2377,11 @@ func init() {
 	// postlikeDescTenantID is the schema descriptor for tenant_id field.
 	postlikeDescTenantID := postlikeMixinFields2[0].Descriptor()
 	// postlike.DefaultTenantID holds the default value on creation for the tenant_id field.
-	postlike.DefaultTenantID = postlikeDescTenantID.Default.(uint64)
+	postlike.DefaultTenantID = postlikeDescTenantID.Default.(int64)
 	// postlikeDescID is the schema descriptor for id field.
 	postlikeDescID := postlikeMixinFields0[0].Descriptor()
 	// postlike.IDValidator is a validator for the "id" field. It is called by the builders before save.
-	postlike.IDValidator = postlikeDescID.Validators[0].(func(uint64) error)
+	postlike.IDValidator = postlikeDescID.Validators[0].(func(int64) error)
 	posttagMixin := schema.PostTag{}.Mixin()
 	posttag.Policy = privacy.NewPolicies(posttagMixin[2], schema.PostTag{})
 	posttag.Hooks[0] = func(next ent.Mutator) ent.Mutator {
@@ -2401,11 +2401,11 @@ func init() {
 	// posttagDescTenantID is the schema descriptor for tenant_id field.
 	posttagDescTenantID := posttagMixinFields2[0].Descriptor()
 	// posttag.DefaultTenantID holds the default value on creation for the tenant_id field.
-	posttag.DefaultTenantID = posttagDescTenantID.Default.(uint64)
+	posttag.DefaultTenantID = posttagDescTenantID.Default.(int64)
 	// posttagDescID is the schema descriptor for id field.
 	posttagDescID := posttagMixinFields0[0].Descriptor()
 	// posttag.IDValidator is a validator for the "id" field. It is called by the builders before save.
-	posttag.IDValidator = posttagDescID.Validators[0].(func(uint64) error)
+	posttag.IDValidator = posttagDescID.Validators[0].(func(int64) error)
 	posttranslationMixin := schema.PostTranslation{}.Mixin()
 	posttranslation.Policy = privacy.NewPolicies(posttranslationMixin[4], schema.PostTranslation{})
 	posttranslation.Hooks[0] = func(next ent.Mutator) ent.Mutator {
@@ -2425,7 +2425,7 @@ func init() {
 	// posttranslationDescTenantID is the schema descriptor for tenant_id field.
 	posttranslationDescTenantID := posttranslationMixinFields4[0].Descriptor()
 	// posttranslation.DefaultTenantID holds the default value on creation for the tenant_id field.
-	posttranslation.DefaultTenantID = posttranslationDescTenantID.Default.(uint64)
+	posttranslation.DefaultTenantID = posttranslationDescTenantID.Default.(int64)
 	// posttranslationDescWordCount is the schema descriptor for word_count field.
 	posttranslationDescWordCount := posttranslationFields[8].Descriptor()
 	// posttranslation.DefaultWordCount holds the default value on creation for the word_count field.
@@ -2433,7 +2433,7 @@ func init() {
 	// posttranslationDescID is the schema descriptor for id field.
 	posttranslationDescID := posttranslationMixinFields0[0].Descriptor()
 	// posttranslation.IDValidator is a validator for the "id" field. It is called by the builders before save.
-	posttranslation.IDValidator = posttranslationDescID.Validators[0].(func(uint64) error)
+	posttranslation.IDValidator = posttranslationDescID.Validators[0].(func(int64) error)
 	postversionMixin := schema.PostVersion{}.Mixin()
 	postversion.Policy = privacy.NewPolicies(postversionMixin[3], schema.PostVersion{})
 	postversion.Hooks[0] = func(next ent.Mutator) ent.Mutator {
@@ -2453,7 +2453,7 @@ func init() {
 	// postversionDescTenantID is the schema descriptor for tenant_id field.
 	postversionDescTenantID := postversionMixinFields3[0].Descriptor()
 	// postversion.DefaultTenantID holds the default value on creation for the tenant_id field.
-	postversion.DefaultTenantID = postversionDescTenantID.Default.(uint64)
+	postversion.DefaultTenantID = postversionDescTenantID.Default.(int64)
 	// postversionDescVersionNumber is the schema descriptor for version_number field.
 	postversionDescVersionNumber := postversionFields[1].Descriptor()
 	// postversion.DefaultVersionNumber holds the default value on creation for the version_number field.
@@ -2461,7 +2461,7 @@ func init() {
 	// postversionDescID is the schema descriptor for id field.
 	postversionDescID := postversionMixinFields0[0].Descriptor()
 	// postversion.IDValidator is a validator for the "id" field. It is called by the builders before save.
-	postversion.IDValidator = postversionDescID.Validators[0].(func(uint64) error)
+	postversion.IDValidator = postversionDescID.Validators[0].(func(int64) error)
 	postwatchMixin := schema.PostWatch{}.Mixin()
 	postwatch.Policy = privacy.NewPolicies(postwatchMixin[2], schema.PostWatch{})
 	postwatch.Hooks[0] = func(next ent.Mutator) ent.Mutator {
@@ -2481,11 +2481,11 @@ func init() {
 	// postwatchDescTenantID is the schema descriptor for tenant_id field.
 	postwatchDescTenantID := postwatchMixinFields2[0].Descriptor()
 	// postwatch.DefaultTenantID holds the default value on creation for the tenant_id field.
-	postwatch.DefaultTenantID = postwatchDescTenantID.Default.(uint64)
+	postwatch.DefaultTenantID = postwatchDescTenantID.Default.(int64)
 	// postwatchDescID is the schema descriptor for id field.
 	postwatchDescID := postwatchMixinFields0[0].Descriptor()
 	// postwatch.IDValidator is a validator for the "id" field. It is called by the builders before save.
-	postwatch.IDValidator = postwatchDescID.Validators[0].(func(uint64) error)
+	postwatch.IDValidator = postwatchDescID.Validators[0].(func(int64) error)
 	quotaplanMixin := schema.QuotaPlan{}.Mixin()
 	quotaplan.Policy = privacy.NewPolicies(quotaplanMixin[2], schema.QuotaPlan{})
 	quotaplan.Hooks[0] = func(next ent.Mutator) ent.Mutator {
@@ -2505,7 +2505,7 @@ func init() {
 	// quotaplanDescTenantID is the schema descriptor for tenant_id field.
 	quotaplanDescTenantID := quotaplanMixinFields2[0].Descriptor()
 	// quotaplan.DefaultTenantID holds the default value on creation for the tenant_id field.
-	quotaplan.DefaultTenantID = quotaplanDescTenantID.Default.(uint64)
+	quotaplan.DefaultTenantID = quotaplanDescTenantID.Default.(int64)
 	// quotaplanDescName is the schema descriptor for name field.
 	quotaplanDescName := quotaplanFields[0].Descriptor()
 	// quotaplan.NameValidator is a validator for the "name" field. It is called by the builders before save.
@@ -2537,7 +2537,7 @@ func init() {
 	// quotaplanDescID is the schema descriptor for id field.
 	quotaplanDescID := quotaplanMixinFields1[0].Descriptor()
 	// quotaplan.IDValidator is a validator for the "id" field. It is called by the builders before save.
-	quotaplan.IDValidator = quotaplanDescID.Validators[0].(func(uint64) error)
+	quotaplan.IDValidator = quotaplanDescID.Validators[0].(func(int64) error)
 	redirectMixin := schema.Redirect{}.Mixin()
 	redirect.Policy = privacy.NewPolicies(redirectMixin[3], schema.Redirect{})
 	redirect.Hooks[0] = func(next ent.Mutator) ent.Mutator {
@@ -2557,7 +2557,7 @@ func init() {
 	// redirectDescTenantID is the schema descriptor for tenant_id field.
 	redirectDescTenantID := redirectMixinFields3[0].Descriptor()
 	// redirect.DefaultTenantID holds the default value on creation for the tenant_id field.
-	redirect.DefaultTenantID = redirectDescTenantID.Default.(uint64)
+	redirect.DefaultTenantID = redirectDescTenantID.Default.(int64)
 	// redirectDescFromPath is the schema descriptor for from_path field.
 	redirectDescFromPath := redirectFields[0].Descriptor()
 	// redirect.FromPathValidator is a validator for the "from_path" field. It is called by the builders before save.
@@ -2577,7 +2577,7 @@ func init() {
 	// redirectDescID is the schema descriptor for id field.
 	redirectDescID := redirectMixinFields0[0].Descriptor()
 	// redirect.IDValidator is a validator for the "id" field. It is called by the builders before save.
-	redirect.IDValidator = redirectDescID.Validators[0].(func(uint64) error)
+	redirect.IDValidator = redirectDescID.Validators[0].(func(int64) error)
 	reviewlogMixin := schema.ReviewLog{}.Mixin()
 	reviewlog.Policy = privacy.NewPolicies(reviewlogMixin[2], schema.ReviewLog{})
 	reviewlog.Hooks[0] = func(next ent.Mutator) ent.Mutator {
@@ -2597,7 +2597,7 @@ func init() {
 	// reviewlogDescTenantID is the schema descriptor for tenant_id field.
 	reviewlogDescTenantID := reviewlogMixinFields2[0].Descriptor()
 	// reviewlog.DefaultTenantID holds the default value on creation for the tenant_id field.
-	reviewlog.DefaultTenantID = reviewlogDescTenantID.Default.(uint64)
+	reviewlog.DefaultTenantID = reviewlogDescTenantID.Default.(int64)
 	// reviewlogDescEntityType is the schema descriptor for entity_type field.
 	reviewlogDescEntityType := reviewlogFields[0].Descriptor()
 	// reviewlog.EntityTypeValidator is a validator for the "entity_type" field. It is called by the builders before save.
@@ -2623,7 +2623,7 @@ func init() {
 	// reviewlogDescID is the schema descriptor for id field.
 	reviewlogDescID := reviewlogMixinFields1[0].Descriptor()
 	// reviewlog.IDValidator is a validator for the "id" field. It is called by the builders before save.
-	reviewlog.IDValidator = reviewlogDescID.Validators[0].(func(uint64) error)
+	reviewlog.IDValidator = reviewlogDescID.Validators[0].(func(int64) error)
 	roleMixin := schema.Role{}.Mixin()
 	role.Policy = privacy.NewPolicies(roleMixin[6], schema.Role{})
 	role.Hooks[0] = func(next ent.Mutator) ent.Mutator {
@@ -2651,7 +2651,7 @@ func init() {
 	// roleDescTenantID is the schema descriptor for tenant_id field.
 	roleDescTenantID := roleMixinFields6[0].Descriptor()
 	// role.DefaultTenantID holds the default value on creation for the tenant_id field.
-	role.DefaultTenantID = roleDescTenantID.Default.(uint64)
+	role.DefaultTenantID = roleDescTenantID.Default.(int64)
 	// roleDescName is the schema descriptor for name field.
 	roleDescName := roleFields[0].Descriptor()
 	// role.NameValidator is a validator for the "name" field. It is called by the builders before save.
@@ -2667,7 +2667,7 @@ func init() {
 	// roleDescID is the schema descriptor for id field.
 	roleDescID := roleMixinFields0[0].Descriptor()
 	// role.IDValidator is a validator for the "id" field. It is called by the builders before save.
-	role.IDValidator = roleDescID.Validators[0].(func(uint64) error)
+	role.IDValidator = roleDescID.Validators[0].(func(int64) error)
 	rolefieldpermissionMixin := schema.RoleFieldPermission{}.Mixin()
 	rolefieldpermissionMixinFields0 := rolefieldpermissionMixin[0].Fields()
 	_ = rolefieldpermissionMixinFields0
@@ -2676,7 +2676,7 @@ func init() {
 	// rolefieldpermissionDescRoleID is the schema descriptor for role_id field.
 	rolefieldpermissionDescRoleID := rolefieldpermissionFields[0].Descriptor()
 	// rolefieldpermission.RoleIDValidator is a validator for the "role_id" field. It is called by the builders before save.
-	rolefieldpermission.RoleIDValidator = rolefieldpermissionDescRoleID.Validators[0].(func(uint64) error)
+	rolefieldpermission.RoleIDValidator = rolefieldpermissionDescRoleID.Validators[0].(func(int64) error)
 	// rolefieldpermissionDescResource is the schema descriptor for resource field.
 	rolefieldpermissionDescResource := rolefieldpermissionFields[1].Descriptor()
 	// rolefieldpermission.ResourceValidator is a validator for the "resource" field. It is called by the builders before save.
@@ -2688,7 +2688,7 @@ func init() {
 	// rolefieldpermissionDescID is the schema descriptor for id field.
 	rolefieldpermissionDescID := rolefieldpermissionMixinFields0[0].Descriptor()
 	// rolefieldpermission.IDValidator is a validator for the "id" field. It is called by the builders before save.
-	rolefieldpermission.IDValidator = rolefieldpermissionDescID.Validators[0].(func(uint64) error)
+	rolefieldpermission.IDValidator = rolefieldpermissionDescID.Validators[0].(func(int64) error)
 	rolemetadataMixin := schema.RoleMetadata{}.Mixin()
 	rolemetadata.Policy = privacy.NewPolicies(rolemetadataMixin[3], schema.RoleMetadata{})
 	rolemetadata.Hooks[0] = func(next ent.Mutator) ent.Mutator {
@@ -2708,7 +2708,7 @@ func init() {
 	// rolemetadataDescTenantID is the schema descriptor for tenant_id field.
 	rolemetadataDescTenantID := rolemetadataMixinFields3[0].Descriptor()
 	// rolemetadata.DefaultTenantID holds the default value on creation for the tenant_id field.
-	rolemetadata.DefaultTenantID = rolemetadataDescTenantID.Default.(uint64)
+	rolemetadata.DefaultTenantID = rolemetadataDescTenantID.Default.(int64)
 	// rolemetadataDescIsTemplate is the schema descriptor for is_template field.
 	rolemetadataDescIsTemplate := rolemetadataFields[1].Descriptor()
 	// rolemetadata.DefaultIsTemplate holds the default value on creation for the is_template field.
@@ -2724,7 +2724,7 @@ func init() {
 	// rolemetadataDescID is the schema descriptor for id field.
 	rolemetadataDescID := rolemetadataMixinFields0[0].Descriptor()
 	// rolemetadata.IDValidator is a validator for the "id" field. It is called by the builders before save.
-	rolemetadata.IDValidator = rolemetadataDescID.Validators[0].(func(uint64) error)
+	rolemetadata.IDValidator = rolemetadataDescID.Validators[0].(func(int64) error)
 	rolepermissionMixin := schema.RolePermission{}.Mixin()
 	rolepermission.Policy = privacy.NewPolicies(rolepermissionMixin[3], schema.RolePermission{})
 	rolepermission.Hooks[0] = func(next ent.Mutator) ent.Mutator {
@@ -2746,7 +2746,7 @@ func init() {
 	// rolepermissionDescTenantID is the schema descriptor for tenant_id field.
 	rolepermissionDescTenantID := rolepermissionMixinFields3[0].Descriptor()
 	// rolepermission.DefaultTenantID holds the default value on creation for the tenant_id field.
-	rolepermission.DefaultTenantID = rolepermissionDescTenantID.Default.(uint64)
+	rolepermission.DefaultTenantID = rolepermissionDescTenantID.Default.(int64)
 	// rolepermissionDescPriority is the schema descriptor for priority field.
 	rolepermissionDescPriority := rolepermissionFields[3].Descriptor()
 	// rolepermission.DefaultPriority holds the default value on creation for the priority field.
@@ -2754,7 +2754,7 @@ func init() {
 	// rolepermissionDescID is the schema descriptor for id field.
 	rolepermissionDescID := rolepermissionMixinFields0[0].Descriptor()
 	// rolepermission.IDValidator is a validator for the "id" field. It is called by the builders before save.
-	rolepermission.IDValidator = rolepermissionDescID.Validators[0].(func(uint64) error)
+	rolepermission.IDValidator = rolepermissionDescID.Validators[0].(func(int64) error)
 	searchsynonymMixin := schema.SearchSynonym{}.Mixin()
 	searchsynonym.Policy = privacy.NewPolicies(searchsynonymMixin[2], schema.SearchSynonym{})
 	searchsynonym.Hooks[0] = func(next ent.Mutator) ent.Mutator {
@@ -2774,7 +2774,7 @@ func init() {
 	// searchsynonymDescTenantID is the schema descriptor for tenant_id field.
 	searchsynonymDescTenantID := searchsynonymMixinFields2[0].Descriptor()
 	// searchsynonym.DefaultTenantID holds the default value on creation for the tenant_id field.
-	searchsynonym.DefaultTenantID = searchsynonymDescTenantID.Default.(uint64)
+	searchsynonym.DefaultTenantID = searchsynonymDescTenantID.Default.(int64)
 	// searchsynonymDescTerm is the schema descriptor for term field.
 	searchsynonymDescTerm := searchsynonymFields[0].Descriptor()
 	// searchsynonym.TermValidator is a validator for the "term" field. It is called by the builders before save.
@@ -2806,7 +2806,7 @@ func init() {
 	// searchsynonymDescID is the schema descriptor for id field.
 	searchsynonymDescID := searchsynonymMixinFields1[0].Descriptor()
 	// searchsynonym.IDValidator is a validator for the "id" field. It is called by the builders before save.
-	searchsynonym.IDValidator = searchsynonymDescID.Validators[0].(func(uint64) error)
+	searchsynonym.IDValidator = searchsynonymDescID.Validators[0].(func(int64) error)
 	sectionMixin := schema.Section{}.Mixin()
 	section.Policy = privacy.NewPolicies(sectionMixin[4], schema.Section{})
 	section.Hooks[0] = func(next ent.Mutator) ent.Mutator {
@@ -2832,11 +2832,11 @@ func init() {
 	// sectionDescTenantID is the schema descriptor for tenant_id field.
 	sectionDescTenantID := sectionMixinFields4[0].Descriptor()
 	// section.DefaultTenantID holds the default value on creation for the tenant_id field.
-	section.DefaultTenantID = sectionDescTenantID.Default.(uint64)
+	section.DefaultTenantID = sectionDescTenantID.Default.(int64)
 	// sectionDescID is the schema descriptor for id field.
 	sectionDescID := sectionMixinFields0[0].Descriptor()
 	// section.IDValidator is a validator for the "id" field. It is called by the builders before save.
-	section.IDValidator = sectionDescID.Validators[0].(func(uint64) error)
+	section.IDValidator = sectionDescID.Validators[0].(func(int64) error)
 	sectiontranslationMixin := schema.SectionTranslation{}.Mixin()
 	sectiontranslation.Policy = privacy.NewPolicies(sectiontranslationMixin[3], schema.SectionTranslation{})
 	sectiontranslation.Hooks[0] = func(next ent.Mutator) ent.Mutator {
@@ -2856,11 +2856,11 @@ func init() {
 	// sectiontranslationDescTenantID is the schema descriptor for tenant_id field.
 	sectiontranslationDescTenantID := sectiontranslationMixinFields3[0].Descriptor()
 	// sectiontranslation.DefaultTenantID holds the default value on creation for the tenant_id field.
-	sectiontranslation.DefaultTenantID = sectiontranslationDescTenantID.Default.(uint64)
+	sectiontranslation.DefaultTenantID = sectiontranslationDescTenantID.Default.(int64)
 	// sectiontranslationDescID is the schema descriptor for id field.
 	sectiontranslationDescID := sectiontranslationMixinFields0[0].Descriptor()
 	// sectiontranslation.IDValidator is a validator for the "id" field. It is called by the builders before save.
-	sectiontranslation.IDValidator = sectiontranslationDescID.Validators[0].(func(uint64) error)
+	sectiontranslation.IDValidator = sectiontranslationDescID.Validators[0].(func(int64) error)
 	siteMixin := schema.Site{}.Mixin()
 	site.Policy = privacy.NewPolicies(siteMixin[3], schema.Site{})
 	site.Hooks[0] = func(next ent.Mutator) ent.Mutator {
@@ -2880,7 +2880,7 @@ func init() {
 	// siteDescTenantID is the schema descriptor for tenant_id field.
 	siteDescTenantID := siteMixinFields3[0].Descriptor()
 	// site.DefaultTenantID holds the default value on creation for the tenant_id field.
-	site.DefaultTenantID = siteDescTenantID.Default.(uint64)
+	site.DefaultTenantID = siteDescTenantID.Default.(int64)
 	// siteDescIsDefault is the schema descriptor for is_default field.
 	siteDescIsDefault := siteFields[4].Descriptor()
 	// site.DefaultIsDefault holds the default value on creation for the is_default field.
@@ -2888,7 +2888,7 @@ func init() {
 	// siteDescID is the schema descriptor for id field.
 	siteDescID := siteMixinFields0[0].Descriptor()
 	// site.IDValidator is a validator for the "id" field. It is called by the builders before save.
-	site.IDValidator = siteDescID.Validators[0].(func(uint64) error)
+	site.IDValidator = siteDescID.Validators[0].(func(int64) error)
 	sitesettingMixin := schema.SiteSetting{}.Mixin()
 	sitesetting.Policy = privacy.NewPolicies(sitesettingMixin[3], schema.SiteSetting{})
 	sitesetting.Hooks[0] = func(next ent.Mutator) ent.Mutator {
@@ -2908,7 +2908,7 @@ func init() {
 	// sitesettingDescTenantID is the schema descriptor for tenant_id field.
 	sitesettingDescTenantID := sitesettingMixinFields3[0].Descriptor()
 	// sitesetting.DefaultTenantID holds the default value on creation for the tenant_id field.
-	sitesetting.DefaultTenantID = sitesettingDescTenantID.Default.(uint64)
+	sitesetting.DefaultTenantID = sitesettingDescTenantID.Default.(int64)
 	// sitesettingDescIsRequired is the schema descriptor for is_required field.
 	sitesettingDescIsRequired := sitesettingFields[10].Descriptor()
 	// sitesetting.DefaultIsRequired holds the default value on creation for the is_required field.
@@ -2916,7 +2916,7 @@ func init() {
 	// sitesettingDescID is the schema descriptor for id field.
 	sitesettingDescID := sitesettingMixinFields0[0].Descriptor()
 	// sitesetting.IDValidator is a validator for the "id" field. It is called by the builders before save.
-	sitesetting.IDValidator = sitesettingDescID.Validators[0].(func(uint64) error)
+	sitesetting.IDValidator = sitesettingDescID.Validators[0].(func(int64) error)
 	socialaccountMixin := schema.SocialAccount{}.Mixin()
 	socialaccount.Policy = privacy.NewPolicies(socialaccountMixin[4], schema.SocialAccount{})
 	socialaccount.Hooks[0] = func(next ent.Mutator) ent.Mutator {
@@ -2942,11 +2942,11 @@ func init() {
 	// socialaccountDescTenantID is the schema descriptor for tenant_id field.
 	socialaccountDescTenantID := socialaccountMixinFields4[0].Descriptor()
 	// socialaccount.DefaultTenantID holds the default value on creation for the tenant_id field.
-	socialaccount.DefaultTenantID = socialaccountDescTenantID.Default.(uint64)
+	socialaccount.DefaultTenantID = socialaccountDescTenantID.Default.(int64)
 	// socialaccountDescID is the schema descriptor for id field.
 	socialaccountDescID := socialaccountMixinFields0[0].Descriptor()
 	// socialaccount.IDValidator is a validator for the "id" field. It is called by the builders before save.
-	socialaccount.IDValidator = socialaccountDescID.Validators[0].(func(uint64) error)
+	socialaccount.IDValidator = socialaccountDescID.Validators[0].(func(int64) error)
 	socialdistributionMixin := schema.SocialDistribution{}.Mixin()
 	socialdistribution.Policy = privacy.NewPolicies(socialdistributionMixin[3], schema.SocialDistribution{})
 	socialdistribution.Hooks[0] = func(next ent.Mutator) ent.Mutator {
@@ -2966,7 +2966,7 @@ func init() {
 	// socialdistributionDescTenantID is the schema descriptor for tenant_id field.
 	socialdistributionDescTenantID := socialdistributionMixinFields3[0].Descriptor()
 	// socialdistribution.DefaultTenantID holds the default value on creation for the tenant_id field.
-	socialdistribution.DefaultTenantID = socialdistributionDescTenantID.Default.(uint64)
+	socialdistribution.DefaultTenantID = socialdistributionDescTenantID.Default.(int64)
 	// socialdistributionDescLikes is the schema descriptor for likes field.
 	socialdistributionDescLikes := socialdistributionFields[12].Descriptor()
 	// socialdistribution.DefaultLikes holds the default value on creation for the likes field.
@@ -2986,7 +2986,7 @@ func init() {
 	// socialdistributionDescID is the schema descriptor for id field.
 	socialdistributionDescID := socialdistributionMixinFields0[0].Descriptor()
 	// socialdistribution.IDValidator is a validator for the "id" field. It is called by the builders before save.
-	socialdistribution.IDValidator = socialdistributionDescID.Validators[0].(func(uint64) error)
+	socialdistribution.IDValidator = socialdistributionDescID.Validators[0].(func(int64) error)
 	socialinboxitemMixin := schema.SocialInboxItem{}.Mixin()
 	socialinboxitem.Policy = privacy.NewPolicies(socialinboxitemMixin[3], schema.SocialInboxItem{})
 	socialinboxitem.Hooks[0] = func(next ent.Mutator) ent.Mutator {
@@ -3006,11 +3006,11 @@ func init() {
 	// socialinboxitemDescTenantID is the schema descriptor for tenant_id field.
 	socialinboxitemDescTenantID := socialinboxitemMixinFields3[0].Descriptor()
 	// socialinboxitem.DefaultTenantID holds the default value on creation for the tenant_id field.
-	socialinboxitem.DefaultTenantID = socialinboxitemDescTenantID.Default.(uint64)
+	socialinboxitem.DefaultTenantID = socialinboxitemDescTenantID.Default.(int64)
 	// socialinboxitemDescID is the schema descriptor for id field.
 	socialinboxitemDescID := socialinboxitemMixinFields0[0].Descriptor()
 	// socialinboxitem.IDValidator is a validator for the "id" field. It is called by the builders before save.
-	socialinboxitem.IDValidator = socialinboxitemDescID.Validators[0].(func(uint64) error)
+	socialinboxitem.IDValidator = socialinboxitemDescID.Validators[0].(func(int64) error)
 	socialstatshistoryMixin := schema.SocialStatsHistory{}.Mixin()
 	socialstatshistoryMixinFields0 := socialstatshistoryMixin[0].Fields()
 	_ = socialstatshistoryMixinFields0
@@ -3031,7 +3031,7 @@ func init() {
 	// socialstatshistoryDescID is the schema descriptor for id field.
 	socialstatshistoryDescID := socialstatshistoryMixinFields0[0].Descriptor()
 	// socialstatshistory.IDValidator is a validator for the "id" field. It is called by the builders before save.
-	socialstatshistory.IDValidator = socialstatshistoryDescID.Validators[0].(func(uint64) error)
+	socialstatshistory.IDValidator = socialstatshistoryDescID.Validators[0].(func(int64) error)
 	sysconfigMixin := schema.SysConfig{}.Mixin()
 	sysconfigMixinFields0 := sysconfigMixin[0].Fields()
 	_ = sysconfigMixinFields0
@@ -3044,7 +3044,7 @@ func init() {
 	// sysconfigDescID is the schema descriptor for id field.
 	sysconfigDescID := sysconfigMixinFields0[0].Descriptor()
 	// sysconfig.IDValidator is a validator for the "id" field. It is called by the builders before save.
-	sysconfig.IDValidator = sysconfigDescID.Validators[0].(func(uint64) error)
+	sysconfig.IDValidator = sysconfigDescID.Validators[0].(func(int64) error)
 	tagMixin := schema.Tag{}.Mixin()
 	tag.Policy = privacy.NewPolicies(tagMixin[4], schema.Tag{})
 	tag.Hooks[0] = func(next ent.Mutator) ent.Mutator {
@@ -3070,7 +3070,7 @@ func init() {
 	// tagDescTenantID is the schema descriptor for tenant_id field.
 	tagDescTenantID := tagMixinFields4[0].Descriptor()
 	// tag.DefaultTenantID holds the default value on creation for the tenant_id field.
-	tag.DefaultTenantID = tagDescTenantID.Default.(uint64)
+	tag.DefaultTenantID = tagDescTenantID.Default.(int64)
 	// tagDescIsFeatured is the schema descriptor for is_featured field.
 	tagDescIsFeatured := tagFields[5].Descriptor()
 	// tag.DefaultIsFeatured holds the default value on creation for the is_featured field.
@@ -3082,7 +3082,7 @@ func init() {
 	// tagDescID is the schema descriptor for id field.
 	tagDescID := tagMixinFields0[0].Descriptor()
 	// tag.IDValidator is a validator for the "id" field. It is called by the builders before save.
-	tag.IDValidator = tagDescID.Validators[0].(func(uint64) error)
+	tag.IDValidator = tagDescID.Validators[0].(func(int64) error)
 	tagtranslationMixin := schema.TagTranslation{}.Mixin()
 	tagtranslation.Policy = privacy.NewPolicies(tagtranslationMixin[4], schema.TagTranslation{})
 	tagtranslation.Hooks[0] = func(next ent.Mutator) ent.Mutator {
@@ -3102,11 +3102,11 @@ func init() {
 	// tagtranslationDescTenantID is the schema descriptor for tenant_id field.
 	tagtranslationDescTenantID := tagtranslationMixinFields4[0].Descriptor()
 	// tagtranslation.DefaultTenantID holds the default value on creation for the tenant_id field.
-	tagtranslation.DefaultTenantID = tagtranslationDescTenantID.Default.(uint64)
+	tagtranslation.DefaultTenantID = tagtranslationDescTenantID.Default.(int64)
 	// tagtranslationDescID is the schema descriptor for id field.
 	tagtranslationDescID := tagtranslationMixinFields0[0].Descriptor()
 	// tagtranslation.IDValidator is a validator for the "id" field. It is called by the builders before save.
-	tagtranslation.IDValidator = tagtranslationDescID.Validators[0].(func(uint64) error)
+	tagtranslation.IDValidator = tagtranslationDescID.Validators[0].(func(int64) error)
 	taskMixin := schema.Task{}.Mixin()
 	task.Policy = privacy.NewPolicies(taskMixin[4], schema.Task{})
 	task.Hooks[0] = func(next ent.Mutator) ent.Mutator {
@@ -3126,7 +3126,7 @@ func init() {
 	// taskDescTenantID is the schema descriptor for tenant_id field.
 	taskDescTenantID := taskMixinFields4[0].Descriptor()
 	// task.DefaultTenantID holds the default value on creation for the tenant_id field.
-	task.DefaultTenantID = taskDescTenantID.Default.(uint64)
+	task.DefaultTenantID = taskDescTenantID.Default.(int64)
 	// taskDescEnable is the schema descriptor for enable field.
 	taskDescEnable := taskFields[5].Descriptor()
 	// task.DefaultEnable holds the default value on creation for the enable field.
@@ -3134,7 +3134,7 @@ func init() {
 	// taskDescID is the schema descriptor for id field.
 	taskDescID := taskMixinFields0[0].Descriptor()
 	// task.IDValidator is a validator for the "id" field. It is called by the builders before save.
-	task.IDValidator = taskDescID.Validators[0].(func(uint64) error)
+	task.IDValidator = taskDescID.Validators[0].(func(int64) error)
 	tenantMixin := schema.Tenant{}.Mixin()
 	tenantMixinFields0 := tenantMixin[0].Fields()
 	_ = tenantMixinFields0
@@ -3151,7 +3151,7 @@ func init() {
 	// tenantDescID is the schema descriptor for id field.
 	tenantDescID := tenantMixinFields0[0].Descriptor()
 	// tenant.IDValidator is a validator for the "id" field. It is called by the builders before save.
-	tenant.IDValidator = tenantDescID.Validators[0].(func(uint64) error)
+	tenant.IDValidator = tenantDescID.Validators[0].(func(int64) error)
 	tenantquotaMixin := schema.TenantQuota{}.Mixin()
 	tenantquotaMixinFields0 := tenantquotaMixin[0].Fields()
 	_ = tenantquotaMixinFields0
@@ -3160,11 +3160,11 @@ func init() {
 	// tenantquotaDescTenantID is the schema descriptor for tenant_id field.
 	tenantquotaDescTenantID := tenantquotaFields[0].Descriptor()
 	// tenantquota.TenantIDValidator is a validator for the "tenant_id" field. It is called by the builders before save.
-	tenantquota.TenantIDValidator = tenantquotaDescTenantID.Validators[0].(func(uint64) error)
+	tenantquota.TenantIDValidator = tenantquotaDescTenantID.Validators[0].(func(int64) error)
 	// tenantquotaDescID is the schema descriptor for id field.
 	tenantquotaDescID := tenantquotaMixinFields0[0].Descriptor()
 	// tenantquota.IDValidator is a validator for the "id" field. It is called by the builders before save.
-	tenantquota.IDValidator = tenantquotaDescID.Validators[0].(func(uint64) error)
+	tenantquota.IDValidator = tenantquotaDescID.Validators[0].(func(int64) error)
 	userMixin := schema.User{}.Mixin()
 	user.Policy = privacy.NewPolicies(userMixin[4], schema.User{})
 	user.Hooks[0] = func(next ent.Mutator) ent.Mutator {
@@ -3184,7 +3184,7 @@ func init() {
 	// userDescTenantID is the schema descriptor for tenant_id field.
 	userDescTenantID := userMixinFields4[0].Descriptor()
 	// user.DefaultTenantID holds the default value on creation for the tenant_id field.
-	user.DefaultTenantID = userDescTenantID.Default.(uint64)
+	user.DefaultTenantID = userDescTenantID.Default.(int64)
 	// userDescUsername is the schema descriptor for username field.
 	userDescUsername := userFields[0].Descriptor()
 	// user.UsernameValidator is a validator for the "username" field. It is called by the builders before save.
@@ -3224,7 +3224,7 @@ func init() {
 	// userDescID is the schema descriptor for id field.
 	userDescID := userMixinFields0[0].Descriptor()
 	// user.IDValidator is a validator for the "id" field. It is called by the builders before save.
-	user.IDValidator = userDescID.Validators[0].(func(uint64) error)
+	user.IDValidator = userDescID.Validators[0].(func(int64) error)
 	usercredentialMixin := schema.UserCredential{}.Mixin()
 	usercredential.Policy = privacy.NewPolicies(usercredentialMixin[2], schema.UserCredential{})
 	usercredential.Hooks[0] = func(next ent.Mutator) ent.Mutator {
@@ -3244,7 +3244,7 @@ func init() {
 	// usercredentialDescTenantID is the schema descriptor for tenant_id field.
 	usercredentialDescTenantID := usercredentialMixinFields2[0].Descriptor()
 	// usercredential.DefaultTenantID holds the default value on creation for the tenant_id field.
-	usercredential.DefaultTenantID = usercredentialDescTenantID.Default.(uint64)
+	usercredential.DefaultTenantID = usercredentialDescTenantID.Default.(int64)
 	// usercredentialDescIdentifier is the schema descriptor for identifier field.
 	usercredentialDescIdentifier := usercredentialFields[2].Descriptor()
 	// usercredential.IdentifierValidator is a validator for the "identifier" field. It is called by the builders before save.
@@ -3268,7 +3268,7 @@ func init() {
 	// usercredentialDescID is the schema descriptor for id field.
 	usercredentialDescID := usercredentialMixinFields1[0].Descriptor()
 	// usercredential.IDValidator is a validator for the "id" field. It is called by the builders before save.
-	usercredential.IDValidator = usercredentialDescID.Validators[0].(func(uint64) error)
+	usercredential.IDValidator = usercredentialDescID.Validators[0].(func(int64) error)
 	userorgunitMixin := schema.UserOrgUnit{}.Mixin()
 	userorgunit.Policy = privacy.NewPolicies(userorgunitMixin[3], schema.UserOrgUnit{})
 	userorgunit.Hooks[0] = func(next ent.Mutator) ent.Mutator {
@@ -3288,7 +3288,7 @@ func init() {
 	// userorgunitDescTenantID is the schema descriptor for tenant_id field.
 	userorgunitDescTenantID := userorgunitMixinFields3[0].Descriptor()
 	// userorgunit.DefaultTenantID holds the default value on creation for the tenant_id field.
-	userorgunit.DefaultTenantID = userorgunitDescTenantID.Default.(uint64)
+	userorgunit.DefaultTenantID = userorgunitDescTenantID.Default.(int64)
 	// userorgunitDescIsPrimary is the schema descriptor for is_primary field.
 	userorgunitDescIsPrimary := userorgunitFields[7].Descriptor()
 	// userorgunit.DefaultIsPrimary holds the default value on creation for the is_primary field.
@@ -3296,7 +3296,7 @@ func init() {
 	// userorgunitDescID is the schema descriptor for id field.
 	userorgunitDescID := userorgunitMixinFields0[0].Descriptor()
 	// userorgunit.IDValidator is a validator for the "id" field. It is called by the builders before save.
-	userorgunit.IDValidator = userorgunitDescID.Validators[0].(func(uint64) error)
+	userorgunit.IDValidator = userorgunitDescID.Validators[0].(func(int64) error)
 	userpositionMixin := schema.UserPosition{}.Mixin()
 	userposition.Policy = privacy.NewPolicies(userpositionMixin[3], schema.UserPosition{})
 	userposition.Hooks[0] = func(next ent.Mutator) ent.Mutator {
@@ -3316,7 +3316,7 @@ func init() {
 	// userpositionDescTenantID is the schema descriptor for tenant_id field.
 	userpositionDescTenantID := userpositionMixinFields3[0].Descriptor()
 	// userposition.DefaultTenantID holds the default value on creation for the tenant_id field.
-	userposition.DefaultTenantID = userpositionDescTenantID.Default.(uint64)
+	userposition.DefaultTenantID = userpositionDescTenantID.Default.(int64)
 	// userpositionDescIsPrimary is the schema descriptor for is_primary field.
 	userpositionDescIsPrimary := userpositionFields[2].Descriptor()
 	// userposition.DefaultIsPrimary holds the default value on creation for the is_primary field.
@@ -3324,7 +3324,7 @@ func init() {
 	// userpositionDescID is the schema descriptor for id field.
 	userpositionDescID := userpositionMixinFields0[0].Descriptor()
 	// userposition.IDValidator is a validator for the "id" field. It is called by the builders before save.
-	userposition.IDValidator = userpositionDescID.Validators[0].(func(uint64) error)
+	userposition.IDValidator = userpositionDescID.Validators[0].(func(int64) error)
 	userroleMixin := schema.UserRole{}.Mixin()
 	userrole.Policy = privacy.NewPolicies(userroleMixin[3], schema.UserRole{})
 	userrole.Hooks[0] = func(next ent.Mutator) ent.Mutator {
@@ -3344,7 +3344,7 @@ func init() {
 	// userroleDescTenantID is the schema descriptor for tenant_id field.
 	userroleDescTenantID := userroleMixinFields3[0].Descriptor()
 	// userrole.DefaultTenantID holds the default value on creation for the tenant_id field.
-	userrole.DefaultTenantID = userroleDescTenantID.Default.(uint64)
+	userrole.DefaultTenantID = userroleDescTenantID.Default.(int64)
 	// userroleDescIsPrimary is the schema descriptor for is_primary field.
 	userroleDescIsPrimary := userroleFields[6].Descriptor()
 	// userrole.DefaultIsPrimary holds the default value on creation for the is_primary field.
@@ -3352,7 +3352,7 @@ func init() {
 	// userroleDescID is the schema descriptor for id field.
 	userroleDescID := userroleMixinFields0[0].Descriptor()
 	// userrole.IDValidator is a validator for the "id" field. It is called by the builders before save.
-	userrole.IDValidator = userroleDescID.Validators[0].(func(uint64) error)
+	userrole.IDValidator = userroleDescID.Validators[0].(func(int64) error)
 	webhookMixin := schema.Webhook{}.Mixin()
 	webhook.Policy = privacy.NewPolicies(webhookMixin[3], schema.Webhook{})
 	webhook.Hooks[0] = func(next ent.Mutator) ent.Mutator {
@@ -3372,7 +3372,7 @@ func init() {
 	// webhookDescTenantID is the schema descriptor for tenant_id field.
 	webhookDescTenantID := webhookMixinFields3[0].Descriptor()
 	// webhook.DefaultTenantID holds the default value on creation for the tenant_id field.
-	webhook.DefaultTenantID = webhookDescTenantID.Default.(uint64)
+	webhook.DefaultTenantID = webhookDescTenantID.Default.(int64)
 	// webhookDescURL is the schema descriptor for url field.
 	webhookDescURL := webhookFields[0].Descriptor()
 	// webhook.URLValidator is a validator for the "url" field. It is called by the builders before save.
@@ -3384,7 +3384,7 @@ func init() {
 	// webhookDescID is the schema descriptor for id field.
 	webhookDescID := webhookMixinFields0[0].Descriptor()
 	// webhook.IDValidator is a validator for the "id" field. It is called by the builders before save.
-	webhook.IDValidator = webhookDescID.Validators[0].(func(uint64) error)
+	webhook.IDValidator = webhookDescID.Validators[0].(func(int64) error)
 	webhookdeliveryMixin := schema.WebhookDelivery{}.Mixin()
 	webhookdelivery.Policy = privacy.NewPolicies(webhookdeliveryMixin[2], schema.WebhookDelivery{})
 	webhookdelivery.Hooks[0] = func(next ent.Mutator) ent.Mutator {
@@ -3404,11 +3404,11 @@ func init() {
 	// webhookdeliveryDescTenantID is the schema descriptor for tenant_id field.
 	webhookdeliveryDescTenantID := webhookdeliveryMixinFields2[0].Descriptor()
 	// webhookdelivery.DefaultTenantID holds the default value on creation for the tenant_id field.
-	webhookdelivery.DefaultTenantID = webhookdeliveryDescTenantID.Default.(uint64)
+	webhookdelivery.DefaultTenantID = webhookdeliveryDescTenantID.Default.(int64)
 	// webhookdeliveryDescEntityID is the schema descriptor for entity_id field.
 	webhookdeliveryDescEntityID := webhookdeliveryFields[2].Descriptor()
 	// webhookdelivery.DefaultEntityID holds the default value on creation for the entity_id field.
-	webhookdelivery.DefaultEntityID = webhookdeliveryDescEntityID.Default.(uint64)
+	webhookdelivery.DefaultEntityID = webhookdeliveryDescEntityID.Default.(int64)
 	// webhookdeliveryDescHTTPStatus is the schema descriptor for http_status field.
 	webhookdeliveryDescHTTPStatus := webhookdeliveryFields[4].Descriptor()
 	// webhookdelivery.DefaultHTTPStatus holds the default value on creation for the http_status field.
@@ -3420,7 +3420,7 @@ func init() {
 	// webhookdeliveryDescID is the schema descriptor for id field.
 	webhookdeliveryDescID := webhookdeliveryMixinFields0[0].Descriptor()
 	// webhookdelivery.IDValidator is a validator for the "id" field. It is called by the builders before save.
-	webhookdelivery.IDValidator = webhookdeliveryDescID.Validators[0].(func(uint64) error)
+	webhookdelivery.IDValidator = webhookdeliveryDescID.Validators[0].(func(int64) error)
 }
 
 const (

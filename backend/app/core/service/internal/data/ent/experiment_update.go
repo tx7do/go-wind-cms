@@ -70,14 +70,14 @@ func (_u *ExperimentUpdate) ClearDeletedAt() *ExperimentUpdate {
 }
 
 // SetCreatedBy sets the "created_by" field.
-func (_u *ExperimentUpdate) SetCreatedBy(v uint64) *ExperimentUpdate {
+func (_u *ExperimentUpdate) SetCreatedBy(v int64) *ExperimentUpdate {
 	_u.mutation.ResetCreatedBy()
 	_u.mutation.SetCreatedBy(v)
 	return _u
 }
 
 // SetNillableCreatedBy sets the "created_by" field if the given value is not nil.
-func (_u *ExperimentUpdate) SetNillableCreatedBy(v *uint64) *ExperimentUpdate {
+func (_u *ExperimentUpdate) SetNillableCreatedBy(v *int64) *ExperimentUpdate {
 	if v != nil {
 		_u.SetCreatedBy(*v)
 	}
@@ -97,14 +97,14 @@ func (_u *ExperimentUpdate) ClearCreatedBy() *ExperimentUpdate {
 }
 
 // SetUpdatedBy sets the "updated_by" field.
-func (_u *ExperimentUpdate) SetUpdatedBy(v uint64) *ExperimentUpdate {
+func (_u *ExperimentUpdate) SetUpdatedBy(v int64) *ExperimentUpdate {
 	_u.mutation.ResetUpdatedBy()
 	_u.mutation.SetUpdatedBy(v)
 	return _u
 }
 
 // SetNillableUpdatedBy sets the "updated_by" field if the given value is not nil.
-func (_u *ExperimentUpdate) SetNillableUpdatedBy(v *uint64) *ExperimentUpdate {
+func (_u *ExperimentUpdate) SetNillableUpdatedBy(v *int64) *ExperimentUpdate {
 	if v != nil {
 		_u.SetUpdatedBy(*v)
 	}
@@ -124,14 +124,14 @@ func (_u *ExperimentUpdate) ClearUpdatedBy() *ExperimentUpdate {
 }
 
 // SetDeletedBy sets the "deleted_by" field.
-func (_u *ExperimentUpdate) SetDeletedBy(v uint64) *ExperimentUpdate {
+func (_u *ExperimentUpdate) SetDeletedBy(v int64) *ExperimentUpdate {
 	_u.mutation.ResetDeletedBy()
 	_u.mutation.SetDeletedBy(v)
 	return _u
 }
 
 // SetNillableDeletedBy sets the "deleted_by" field if the given value is not nil.
-func (_u *ExperimentUpdate) SetNillableDeletedBy(v *uint64) *ExperimentUpdate {
+func (_u *ExperimentUpdate) SetNillableDeletedBy(v *int64) *ExperimentUpdate {
 	if v != nil {
 		_u.SetDeletedBy(*v)
 	}
@@ -165,14 +165,14 @@ func (_u *ExperimentUpdate) SetNillableName(v *string) *ExperimentUpdate {
 }
 
 // SetPageID sets the "page_id" field.
-func (_u *ExperimentUpdate) SetPageID(v uint64) *ExperimentUpdate {
+func (_u *ExperimentUpdate) SetPageID(v int64) *ExperimentUpdate {
 	_u.mutation.ResetPageID()
 	_u.mutation.SetPageID(v)
 	return _u
 }
 
 // SetNillablePageID sets the "page_id" field if the given value is not nil.
-func (_u *ExperimentUpdate) SetNillablePageID(v *uint64) *ExperimentUpdate {
+func (_u *ExperimentUpdate) SetNillablePageID(v *int64) *ExperimentUpdate {
 	if v != nil {
 		_u.SetPageID(*v)
 	}
@@ -313,7 +313,7 @@ func (_u *ExperimentUpdate) sqlSave(ctx context.Context) (_node int, err error) 
 	if err := _u.check(); err != nil {
 		return _node, err
 	}
-	_spec := sqlgraph.NewUpdateSpec(experiment.Table, experiment.Columns, sqlgraph.NewFieldSpec(experiment.FieldID, field.TypeUint64))
+	_spec := sqlgraph.NewUpdateSpec(experiment.Table, experiment.Columns, sqlgraph.NewFieldSpec(experiment.FieldID, field.TypeInt64))
 	if ps := _u.mutation.predicates; len(ps) > 0 {
 		_spec.Predicate = func(selector *sql.Selector) {
 			for i := range ps {
@@ -337,46 +337,46 @@ func (_u *ExperimentUpdate) sqlSave(ctx context.Context) (_node int, err error) 
 		_spec.ClearField(experiment.FieldDeletedAt, field.TypeTime)
 	}
 	if value, ok := _u.mutation.CreatedBy(); ok {
-		_spec.SetField(experiment.FieldCreatedBy, field.TypeUint64, value)
+		_spec.SetField(experiment.FieldCreatedBy, field.TypeInt64, value)
 	}
 	if value, ok := _u.mutation.AddedCreatedBy(); ok {
-		_spec.AddField(experiment.FieldCreatedBy, field.TypeUint64, value)
+		_spec.AddField(experiment.FieldCreatedBy, field.TypeInt64, value)
 	}
 	if _u.mutation.CreatedByCleared() {
-		_spec.ClearField(experiment.FieldCreatedBy, field.TypeUint64)
+		_spec.ClearField(experiment.FieldCreatedBy, field.TypeInt64)
 	}
 	if value, ok := _u.mutation.UpdatedBy(); ok {
-		_spec.SetField(experiment.FieldUpdatedBy, field.TypeUint64, value)
+		_spec.SetField(experiment.FieldUpdatedBy, field.TypeInt64, value)
 	}
 	if value, ok := _u.mutation.AddedUpdatedBy(); ok {
-		_spec.AddField(experiment.FieldUpdatedBy, field.TypeUint64, value)
+		_spec.AddField(experiment.FieldUpdatedBy, field.TypeInt64, value)
 	}
 	if _u.mutation.UpdatedByCleared() {
-		_spec.ClearField(experiment.FieldUpdatedBy, field.TypeUint64)
+		_spec.ClearField(experiment.FieldUpdatedBy, field.TypeInt64)
 	}
 	if value, ok := _u.mutation.DeletedBy(); ok {
-		_spec.SetField(experiment.FieldDeletedBy, field.TypeUint64, value)
+		_spec.SetField(experiment.FieldDeletedBy, field.TypeInt64, value)
 	}
 	if value, ok := _u.mutation.AddedDeletedBy(); ok {
-		_spec.AddField(experiment.FieldDeletedBy, field.TypeUint64, value)
+		_spec.AddField(experiment.FieldDeletedBy, field.TypeInt64, value)
 	}
 	if _u.mutation.DeletedByCleared() {
-		_spec.ClearField(experiment.FieldDeletedBy, field.TypeUint64)
+		_spec.ClearField(experiment.FieldDeletedBy, field.TypeInt64)
 	}
 	if _u.mutation.TenantIDCleared() {
-		_spec.ClearField(experiment.FieldTenantID, field.TypeUint64)
+		_spec.ClearField(experiment.FieldTenantID, field.TypeInt64)
 	}
 	if value, ok := _u.mutation.Name(); ok {
 		_spec.SetField(experiment.FieldName, field.TypeString, value)
 	}
 	if value, ok := _u.mutation.PageID(); ok {
-		_spec.SetField(experiment.FieldPageID, field.TypeUint64, value)
+		_spec.SetField(experiment.FieldPageID, field.TypeInt64, value)
 	}
 	if value, ok := _u.mutation.AddedPageID(); ok {
-		_spec.AddField(experiment.FieldPageID, field.TypeUint64, value)
+		_spec.AddField(experiment.FieldPageID, field.TypeInt64, value)
 	}
 	if _u.mutation.PageIDCleared() {
-		_spec.ClearField(experiment.FieldPageID, field.TypeUint64)
+		_spec.ClearField(experiment.FieldPageID, field.TypeInt64)
 	}
 	if value, ok := _u.mutation.Status(); ok {
 		_spec.SetField(experiment.FieldStatus, field.TypeEnum, value)
@@ -459,14 +459,14 @@ func (_u *ExperimentUpdateOne) ClearDeletedAt() *ExperimentUpdateOne {
 }
 
 // SetCreatedBy sets the "created_by" field.
-func (_u *ExperimentUpdateOne) SetCreatedBy(v uint64) *ExperimentUpdateOne {
+func (_u *ExperimentUpdateOne) SetCreatedBy(v int64) *ExperimentUpdateOne {
 	_u.mutation.ResetCreatedBy()
 	_u.mutation.SetCreatedBy(v)
 	return _u
 }
 
 // SetNillableCreatedBy sets the "created_by" field if the given value is not nil.
-func (_u *ExperimentUpdateOne) SetNillableCreatedBy(v *uint64) *ExperimentUpdateOne {
+func (_u *ExperimentUpdateOne) SetNillableCreatedBy(v *int64) *ExperimentUpdateOne {
 	if v != nil {
 		_u.SetCreatedBy(*v)
 	}
@@ -486,14 +486,14 @@ func (_u *ExperimentUpdateOne) ClearCreatedBy() *ExperimentUpdateOne {
 }
 
 // SetUpdatedBy sets the "updated_by" field.
-func (_u *ExperimentUpdateOne) SetUpdatedBy(v uint64) *ExperimentUpdateOne {
+func (_u *ExperimentUpdateOne) SetUpdatedBy(v int64) *ExperimentUpdateOne {
 	_u.mutation.ResetUpdatedBy()
 	_u.mutation.SetUpdatedBy(v)
 	return _u
 }
 
 // SetNillableUpdatedBy sets the "updated_by" field if the given value is not nil.
-func (_u *ExperimentUpdateOne) SetNillableUpdatedBy(v *uint64) *ExperimentUpdateOne {
+func (_u *ExperimentUpdateOne) SetNillableUpdatedBy(v *int64) *ExperimentUpdateOne {
 	if v != nil {
 		_u.SetUpdatedBy(*v)
 	}
@@ -513,14 +513,14 @@ func (_u *ExperimentUpdateOne) ClearUpdatedBy() *ExperimentUpdateOne {
 }
 
 // SetDeletedBy sets the "deleted_by" field.
-func (_u *ExperimentUpdateOne) SetDeletedBy(v uint64) *ExperimentUpdateOne {
+func (_u *ExperimentUpdateOne) SetDeletedBy(v int64) *ExperimentUpdateOne {
 	_u.mutation.ResetDeletedBy()
 	_u.mutation.SetDeletedBy(v)
 	return _u
 }
 
 // SetNillableDeletedBy sets the "deleted_by" field if the given value is not nil.
-func (_u *ExperimentUpdateOne) SetNillableDeletedBy(v *uint64) *ExperimentUpdateOne {
+func (_u *ExperimentUpdateOne) SetNillableDeletedBy(v *int64) *ExperimentUpdateOne {
 	if v != nil {
 		_u.SetDeletedBy(*v)
 	}
@@ -554,14 +554,14 @@ func (_u *ExperimentUpdateOne) SetNillableName(v *string) *ExperimentUpdateOne {
 }
 
 // SetPageID sets the "page_id" field.
-func (_u *ExperimentUpdateOne) SetPageID(v uint64) *ExperimentUpdateOne {
+func (_u *ExperimentUpdateOne) SetPageID(v int64) *ExperimentUpdateOne {
 	_u.mutation.ResetPageID()
 	_u.mutation.SetPageID(v)
 	return _u
 }
 
 // SetNillablePageID sets the "page_id" field if the given value is not nil.
-func (_u *ExperimentUpdateOne) SetNillablePageID(v *uint64) *ExperimentUpdateOne {
+func (_u *ExperimentUpdateOne) SetNillablePageID(v *int64) *ExperimentUpdateOne {
 	if v != nil {
 		_u.SetPageID(*v)
 	}
@@ -715,7 +715,7 @@ func (_u *ExperimentUpdateOne) sqlSave(ctx context.Context) (_node *Experiment, 
 	if err := _u.check(); err != nil {
 		return _node, err
 	}
-	_spec := sqlgraph.NewUpdateSpec(experiment.Table, experiment.Columns, sqlgraph.NewFieldSpec(experiment.FieldID, field.TypeUint64))
+	_spec := sqlgraph.NewUpdateSpec(experiment.Table, experiment.Columns, sqlgraph.NewFieldSpec(experiment.FieldID, field.TypeInt64))
 	id, ok := _u.mutation.ID()
 	if !ok {
 		return nil, &ValidationError{Name: "id", err: errors.New(`ent: missing "Experiment.id" for update`)}
@@ -756,46 +756,46 @@ func (_u *ExperimentUpdateOne) sqlSave(ctx context.Context) (_node *Experiment, 
 		_spec.ClearField(experiment.FieldDeletedAt, field.TypeTime)
 	}
 	if value, ok := _u.mutation.CreatedBy(); ok {
-		_spec.SetField(experiment.FieldCreatedBy, field.TypeUint64, value)
+		_spec.SetField(experiment.FieldCreatedBy, field.TypeInt64, value)
 	}
 	if value, ok := _u.mutation.AddedCreatedBy(); ok {
-		_spec.AddField(experiment.FieldCreatedBy, field.TypeUint64, value)
+		_spec.AddField(experiment.FieldCreatedBy, field.TypeInt64, value)
 	}
 	if _u.mutation.CreatedByCleared() {
-		_spec.ClearField(experiment.FieldCreatedBy, field.TypeUint64)
+		_spec.ClearField(experiment.FieldCreatedBy, field.TypeInt64)
 	}
 	if value, ok := _u.mutation.UpdatedBy(); ok {
-		_spec.SetField(experiment.FieldUpdatedBy, field.TypeUint64, value)
+		_spec.SetField(experiment.FieldUpdatedBy, field.TypeInt64, value)
 	}
 	if value, ok := _u.mutation.AddedUpdatedBy(); ok {
-		_spec.AddField(experiment.FieldUpdatedBy, field.TypeUint64, value)
+		_spec.AddField(experiment.FieldUpdatedBy, field.TypeInt64, value)
 	}
 	if _u.mutation.UpdatedByCleared() {
-		_spec.ClearField(experiment.FieldUpdatedBy, field.TypeUint64)
+		_spec.ClearField(experiment.FieldUpdatedBy, field.TypeInt64)
 	}
 	if value, ok := _u.mutation.DeletedBy(); ok {
-		_spec.SetField(experiment.FieldDeletedBy, field.TypeUint64, value)
+		_spec.SetField(experiment.FieldDeletedBy, field.TypeInt64, value)
 	}
 	if value, ok := _u.mutation.AddedDeletedBy(); ok {
-		_spec.AddField(experiment.FieldDeletedBy, field.TypeUint64, value)
+		_spec.AddField(experiment.FieldDeletedBy, field.TypeInt64, value)
 	}
 	if _u.mutation.DeletedByCleared() {
-		_spec.ClearField(experiment.FieldDeletedBy, field.TypeUint64)
+		_spec.ClearField(experiment.FieldDeletedBy, field.TypeInt64)
 	}
 	if _u.mutation.TenantIDCleared() {
-		_spec.ClearField(experiment.FieldTenantID, field.TypeUint64)
+		_spec.ClearField(experiment.FieldTenantID, field.TypeInt64)
 	}
 	if value, ok := _u.mutation.Name(); ok {
 		_spec.SetField(experiment.FieldName, field.TypeString, value)
 	}
 	if value, ok := _u.mutation.PageID(); ok {
-		_spec.SetField(experiment.FieldPageID, field.TypeUint64, value)
+		_spec.SetField(experiment.FieldPageID, field.TypeInt64, value)
 	}
 	if value, ok := _u.mutation.AddedPageID(); ok {
-		_spec.AddField(experiment.FieldPageID, field.TypeUint64, value)
+		_spec.AddField(experiment.FieldPageID, field.TypeInt64, value)
 	}
 	if _u.mutation.PageIDCleared() {
-		_spec.ClearField(experiment.FieldPageID, field.TypeUint64)
+		_spec.ClearField(experiment.FieldPageID, field.TypeInt64)
 	}
 	if value, ok := _u.mutation.Status(); ok {
 		_spec.SetField(experiment.FieldStatus, field.TypeEnum, value)

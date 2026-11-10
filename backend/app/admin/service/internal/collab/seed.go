@@ -189,7 +189,7 @@ func insertIntoContainer(elem *crdt.YXmlElement, txn *crdt.Transaction, idx int,
 }
 
 // collectInlineExcludingLists 收集行内内容但跳过嵌套列表子树
-//（嵌套列表由 fillListItems 单独结构化插入，其文本不得混入父级行内内容）。
+// （嵌套列表由 fillListItems 单独结构化插入，其文本不得混入父级行内内容）。
 func collectInlineExcludingLists(n *html.Node) []inlineItem {
 	var items []inlineItem
 	for c := n.FirstChild; c != nil; c = c.NextSibling {

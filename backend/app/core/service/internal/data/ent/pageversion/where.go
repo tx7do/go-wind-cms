@@ -10,47 +10,47 @@ import (
 )
 
 // ID filters vertices based on their ID field.
-func ID(id uint64) predicate.PageVersion {
+func ID(id int64) predicate.PageVersion {
 	return predicate.PageVersion(sql.FieldEQ(FieldID, id))
 }
 
 // IDEQ applies the EQ predicate on the ID field.
-func IDEQ(id uint64) predicate.PageVersion {
+func IDEQ(id int64) predicate.PageVersion {
 	return predicate.PageVersion(sql.FieldEQ(FieldID, id))
 }
 
 // IDNEQ applies the NEQ predicate on the ID field.
-func IDNEQ(id uint64) predicate.PageVersion {
+func IDNEQ(id int64) predicate.PageVersion {
 	return predicate.PageVersion(sql.FieldNEQ(FieldID, id))
 }
 
 // IDIn applies the In predicate on the ID field.
-func IDIn(ids ...uint64) predicate.PageVersion {
+func IDIn(ids ...int64) predicate.PageVersion {
 	return predicate.PageVersion(sql.FieldIn(FieldID, ids...))
 }
 
 // IDNotIn applies the NotIn predicate on the ID field.
-func IDNotIn(ids ...uint64) predicate.PageVersion {
+func IDNotIn(ids ...int64) predicate.PageVersion {
 	return predicate.PageVersion(sql.FieldNotIn(FieldID, ids...))
 }
 
 // IDGT applies the GT predicate on the ID field.
-func IDGT(id uint64) predicate.PageVersion {
+func IDGT(id int64) predicate.PageVersion {
 	return predicate.PageVersion(sql.FieldGT(FieldID, id))
 }
 
 // IDGTE applies the GTE predicate on the ID field.
-func IDGTE(id uint64) predicate.PageVersion {
+func IDGTE(id int64) predicate.PageVersion {
 	return predicate.PageVersion(sql.FieldGTE(FieldID, id))
 }
 
 // IDLT applies the LT predicate on the ID field.
-func IDLT(id uint64) predicate.PageVersion {
+func IDLT(id int64) predicate.PageVersion {
 	return predicate.PageVersion(sql.FieldLT(FieldID, id))
 }
 
 // IDLTE applies the LTE predicate on the ID field.
-func IDLTE(id uint64) predicate.PageVersion {
+func IDLTE(id int64) predicate.PageVersion {
 	return predicate.PageVersion(sql.FieldLTE(FieldID, id))
 }
 
@@ -70,27 +70,27 @@ func DeletedAt(v time.Time) predicate.PageVersion {
 }
 
 // CreatedBy applies equality check predicate on the "created_by" field. It's identical to CreatedByEQ.
-func CreatedBy(v uint64) predicate.PageVersion {
+func CreatedBy(v int64) predicate.PageVersion {
 	return predicate.PageVersion(sql.FieldEQ(FieldCreatedBy, v))
 }
 
 // UpdatedBy applies equality check predicate on the "updated_by" field. It's identical to UpdatedByEQ.
-func UpdatedBy(v uint64) predicate.PageVersion {
+func UpdatedBy(v int64) predicate.PageVersion {
 	return predicate.PageVersion(sql.FieldEQ(FieldUpdatedBy, v))
 }
 
 // DeletedBy applies equality check predicate on the "deleted_by" field. It's identical to DeletedByEQ.
-func DeletedBy(v uint64) predicate.PageVersion {
+func DeletedBy(v int64) predicate.PageVersion {
 	return predicate.PageVersion(sql.FieldEQ(FieldDeletedBy, v))
 }
 
 // TenantID applies equality check predicate on the "tenant_id" field. It's identical to TenantIDEQ.
-func TenantID(v uint64) predicate.PageVersion {
+func TenantID(v int64) predicate.PageVersion {
 	return predicate.PageVersion(sql.FieldEQ(FieldTenantID, v))
 }
 
 // PageID applies equality check predicate on the "page_id" field. It's identical to PageIDEQ.
-func PageID(v uint64) predicate.PageVersion {
+func PageID(v int64) predicate.PageVersion {
 	return predicate.PageVersion(sql.FieldEQ(FieldPageID, v))
 }
 
@@ -260,42 +260,42 @@ func DeletedAtNotNil() predicate.PageVersion {
 }
 
 // CreatedByEQ applies the EQ predicate on the "created_by" field.
-func CreatedByEQ(v uint64) predicate.PageVersion {
+func CreatedByEQ(v int64) predicate.PageVersion {
 	return predicate.PageVersion(sql.FieldEQ(FieldCreatedBy, v))
 }
 
 // CreatedByNEQ applies the NEQ predicate on the "created_by" field.
-func CreatedByNEQ(v uint64) predicate.PageVersion {
+func CreatedByNEQ(v int64) predicate.PageVersion {
 	return predicate.PageVersion(sql.FieldNEQ(FieldCreatedBy, v))
 }
 
 // CreatedByIn applies the In predicate on the "created_by" field.
-func CreatedByIn(vs ...uint64) predicate.PageVersion {
+func CreatedByIn(vs ...int64) predicate.PageVersion {
 	return predicate.PageVersion(sql.FieldIn(FieldCreatedBy, vs...))
 }
 
 // CreatedByNotIn applies the NotIn predicate on the "created_by" field.
-func CreatedByNotIn(vs ...uint64) predicate.PageVersion {
+func CreatedByNotIn(vs ...int64) predicate.PageVersion {
 	return predicate.PageVersion(sql.FieldNotIn(FieldCreatedBy, vs...))
 }
 
 // CreatedByGT applies the GT predicate on the "created_by" field.
-func CreatedByGT(v uint64) predicate.PageVersion {
+func CreatedByGT(v int64) predicate.PageVersion {
 	return predicate.PageVersion(sql.FieldGT(FieldCreatedBy, v))
 }
 
 // CreatedByGTE applies the GTE predicate on the "created_by" field.
-func CreatedByGTE(v uint64) predicate.PageVersion {
+func CreatedByGTE(v int64) predicate.PageVersion {
 	return predicate.PageVersion(sql.FieldGTE(FieldCreatedBy, v))
 }
 
 // CreatedByLT applies the LT predicate on the "created_by" field.
-func CreatedByLT(v uint64) predicate.PageVersion {
+func CreatedByLT(v int64) predicate.PageVersion {
 	return predicate.PageVersion(sql.FieldLT(FieldCreatedBy, v))
 }
 
 // CreatedByLTE applies the LTE predicate on the "created_by" field.
-func CreatedByLTE(v uint64) predicate.PageVersion {
+func CreatedByLTE(v int64) predicate.PageVersion {
 	return predicate.PageVersion(sql.FieldLTE(FieldCreatedBy, v))
 }
 
@@ -310,42 +310,42 @@ func CreatedByNotNil() predicate.PageVersion {
 }
 
 // UpdatedByEQ applies the EQ predicate on the "updated_by" field.
-func UpdatedByEQ(v uint64) predicate.PageVersion {
+func UpdatedByEQ(v int64) predicate.PageVersion {
 	return predicate.PageVersion(sql.FieldEQ(FieldUpdatedBy, v))
 }
 
 // UpdatedByNEQ applies the NEQ predicate on the "updated_by" field.
-func UpdatedByNEQ(v uint64) predicate.PageVersion {
+func UpdatedByNEQ(v int64) predicate.PageVersion {
 	return predicate.PageVersion(sql.FieldNEQ(FieldUpdatedBy, v))
 }
 
 // UpdatedByIn applies the In predicate on the "updated_by" field.
-func UpdatedByIn(vs ...uint64) predicate.PageVersion {
+func UpdatedByIn(vs ...int64) predicate.PageVersion {
 	return predicate.PageVersion(sql.FieldIn(FieldUpdatedBy, vs...))
 }
 
 // UpdatedByNotIn applies the NotIn predicate on the "updated_by" field.
-func UpdatedByNotIn(vs ...uint64) predicate.PageVersion {
+func UpdatedByNotIn(vs ...int64) predicate.PageVersion {
 	return predicate.PageVersion(sql.FieldNotIn(FieldUpdatedBy, vs...))
 }
 
 // UpdatedByGT applies the GT predicate on the "updated_by" field.
-func UpdatedByGT(v uint64) predicate.PageVersion {
+func UpdatedByGT(v int64) predicate.PageVersion {
 	return predicate.PageVersion(sql.FieldGT(FieldUpdatedBy, v))
 }
 
 // UpdatedByGTE applies the GTE predicate on the "updated_by" field.
-func UpdatedByGTE(v uint64) predicate.PageVersion {
+func UpdatedByGTE(v int64) predicate.PageVersion {
 	return predicate.PageVersion(sql.FieldGTE(FieldUpdatedBy, v))
 }
 
 // UpdatedByLT applies the LT predicate on the "updated_by" field.
-func UpdatedByLT(v uint64) predicate.PageVersion {
+func UpdatedByLT(v int64) predicate.PageVersion {
 	return predicate.PageVersion(sql.FieldLT(FieldUpdatedBy, v))
 }
 
 // UpdatedByLTE applies the LTE predicate on the "updated_by" field.
-func UpdatedByLTE(v uint64) predicate.PageVersion {
+func UpdatedByLTE(v int64) predicate.PageVersion {
 	return predicate.PageVersion(sql.FieldLTE(FieldUpdatedBy, v))
 }
 
@@ -360,42 +360,42 @@ func UpdatedByNotNil() predicate.PageVersion {
 }
 
 // DeletedByEQ applies the EQ predicate on the "deleted_by" field.
-func DeletedByEQ(v uint64) predicate.PageVersion {
+func DeletedByEQ(v int64) predicate.PageVersion {
 	return predicate.PageVersion(sql.FieldEQ(FieldDeletedBy, v))
 }
 
 // DeletedByNEQ applies the NEQ predicate on the "deleted_by" field.
-func DeletedByNEQ(v uint64) predicate.PageVersion {
+func DeletedByNEQ(v int64) predicate.PageVersion {
 	return predicate.PageVersion(sql.FieldNEQ(FieldDeletedBy, v))
 }
 
 // DeletedByIn applies the In predicate on the "deleted_by" field.
-func DeletedByIn(vs ...uint64) predicate.PageVersion {
+func DeletedByIn(vs ...int64) predicate.PageVersion {
 	return predicate.PageVersion(sql.FieldIn(FieldDeletedBy, vs...))
 }
 
 // DeletedByNotIn applies the NotIn predicate on the "deleted_by" field.
-func DeletedByNotIn(vs ...uint64) predicate.PageVersion {
+func DeletedByNotIn(vs ...int64) predicate.PageVersion {
 	return predicate.PageVersion(sql.FieldNotIn(FieldDeletedBy, vs...))
 }
 
 // DeletedByGT applies the GT predicate on the "deleted_by" field.
-func DeletedByGT(v uint64) predicate.PageVersion {
+func DeletedByGT(v int64) predicate.PageVersion {
 	return predicate.PageVersion(sql.FieldGT(FieldDeletedBy, v))
 }
 
 // DeletedByGTE applies the GTE predicate on the "deleted_by" field.
-func DeletedByGTE(v uint64) predicate.PageVersion {
+func DeletedByGTE(v int64) predicate.PageVersion {
 	return predicate.PageVersion(sql.FieldGTE(FieldDeletedBy, v))
 }
 
 // DeletedByLT applies the LT predicate on the "deleted_by" field.
-func DeletedByLT(v uint64) predicate.PageVersion {
+func DeletedByLT(v int64) predicate.PageVersion {
 	return predicate.PageVersion(sql.FieldLT(FieldDeletedBy, v))
 }
 
 // DeletedByLTE applies the LTE predicate on the "deleted_by" field.
-func DeletedByLTE(v uint64) predicate.PageVersion {
+func DeletedByLTE(v int64) predicate.PageVersion {
 	return predicate.PageVersion(sql.FieldLTE(FieldDeletedBy, v))
 }
 
@@ -410,42 +410,42 @@ func DeletedByNotNil() predicate.PageVersion {
 }
 
 // TenantIDEQ applies the EQ predicate on the "tenant_id" field.
-func TenantIDEQ(v uint64) predicate.PageVersion {
+func TenantIDEQ(v int64) predicate.PageVersion {
 	return predicate.PageVersion(sql.FieldEQ(FieldTenantID, v))
 }
 
 // TenantIDNEQ applies the NEQ predicate on the "tenant_id" field.
-func TenantIDNEQ(v uint64) predicate.PageVersion {
+func TenantIDNEQ(v int64) predicate.PageVersion {
 	return predicate.PageVersion(sql.FieldNEQ(FieldTenantID, v))
 }
 
 // TenantIDIn applies the In predicate on the "tenant_id" field.
-func TenantIDIn(vs ...uint64) predicate.PageVersion {
+func TenantIDIn(vs ...int64) predicate.PageVersion {
 	return predicate.PageVersion(sql.FieldIn(FieldTenantID, vs...))
 }
 
 // TenantIDNotIn applies the NotIn predicate on the "tenant_id" field.
-func TenantIDNotIn(vs ...uint64) predicate.PageVersion {
+func TenantIDNotIn(vs ...int64) predicate.PageVersion {
 	return predicate.PageVersion(sql.FieldNotIn(FieldTenantID, vs...))
 }
 
 // TenantIDGT applies the GT predicate on the "tenant_id" field.
-func TenantIDGT(v uint64) predicate.PageVersion {
+func TenantIDGT(v int64) predicate.PageVersion {
 	return predicate.PageVersion(sql.FieldGT(FieldTenantID, v))
 }
 
 // TenantIDGTE applies the GTE predicate on the "tenant_id" field.
-func TenantIDGTE(v uint64) predicate.PageVersion {
+func TenantIDGTE(v int64) predicate.PageVersion {
 	return predicate.PageVersion(sql.FieldGTE(FieldTenantID, v))
 }
 
 // TenantIDLT applies the LT predicate on the "tenant_id" field.
-func TenantIDLT(v uint64) predicate.PageVersion {
+func TenantIDLT(v int64) predicate.PageVersion {
 	return predicate.PageVersion(sql.FieldLT(FieldTenantID, v))
 }
 
 // TenantIDLTE applies the LTE predicate on the "tenant_id" field.
-func TenantIDLTE(v uint64) predicate.PageVersion {
+func TenantIDLTE(v int64) predicate.PageVersion {
 	return predicate.PageVersion(sql.FieldLTE(FieldTenantID, v))
 }
 
@@ -460,42 +460,42 @@ func TenantIDNotNil() predicate.PageVersion {
 }
 
 // PageIDEQ applies the EQ predicate on the "page_id" field.
-func PageIDEQ(v uint64) predicate.PageVersion {
+func PageIDEQ(v int64) predicate.PageVersion {
 	return predicate.PageVersion(sql.FieldEQ(FieldPageID, v))
 }
 
 // PageIDNEQ applies the NEQ predicate on the "page_id" field.
-func PageIDNEQ(v uint64) predicate.PageVersion {
+func PageIDNEQ(v int64) predicate.PageVersion {
 	return predicate.PageVersion(sql.FieldNEQ(FieldPageID, v))
 }
 
 // PageIDIn applies the In predicate on the "page_id" field.
-func PageIDIn(vs ...uint64) predicate.PageVersion {
+func PageIDIn(vs ...int64) predicate.PageVersion {
 	return predicate.PageVersion(sql.FieldIn(FieldPageID, vs...))
 }
 
 // PageIDNotIn applies the NotIn predicate on the "page_id" field.
-func PageIDNotIn(vs ...uint64) predicate.PageVersion {
+func PageIDNotIn(vs ...int64) predicate.PageVersion {
 	return predicate.PageVersion(sql.FieldNotIn(FieldPageID, vs...))
 }
 
 // PageIDGT applies the GT predicate on the "page_id" field.
-func PageIDGT(v uint64) predicate.PageVersion {
+func PageIDGT(v int64) predicate.PageVersion {
 	return predicate.PageVersion(sql.FieldGT(FieldPageID, v))
 }
 
 // PageIDGTE applies the GTE predicate on the "page_id" field.
-func PageIDGTE(v uint64) predicate.PageVersion {
+func PageIDGTE(v int64) predicate.PageVersion {
 	return predicate.PageVersion(sql.FieldGTE(FieldPageID, v))
 }
 
 // PageIDLT applies the LT predicate on the "page_id" field.
-func PageIDLT(v uint64) predicate.PageVersion {
+func PageIDLT(v int64) predicate.PageVersion {
 	return predicate.PageVersion(sql.FieldLT(FieldPageID, v))
 }
 
 // PageIDLTE applies the LTE predicate on the "page_id" field.
-func PageIDLTE(v uint64) predicate.PageVersion {
+func PageIDLTE(v int64) predicate.PageVersion {
 	return predicate.PageVersion(sql.FieldLTE(FieldPageID, v))
 }
 

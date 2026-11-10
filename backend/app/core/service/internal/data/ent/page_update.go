@@ -70,14 +70,14 @@ func (_u *PageUpdate) ClearDeletedAt() *PageUpdate {
 }
 
 // SetCreatedBy sets the "created_by" field.
-func (_u *PageUpdate) SetCreatedBy(v uint64) *PageUpdate {
+func (_u *PageUpdate) SetCreatedBy(v int64) *PageUpdate {
 	_u.mutation.ResetCreatedBy()
 	_u.mutation.SetCreatedBy(v)
 	return _u
 }
 
 // SetNillableCreatedBy sets the "created_by" field if the given value is not nil.
-func (_u *PageUpdate) SetNillableCreatedBy(v *uint64) *PageUpdate {
+func (_u *PageUpdate) SetNillableCreatedBy(v *int64) *PageUpdate {
 	if v != nil {
 		_u.SetCreatedBy(*v)
 	}
@@ -97,14 +97,14 @@ func (_u *PageUpdate) ClearCreatedBy() *PageUpdate {
 }
 
 // SetUpdatedBy sets the "updated_by" field.
-func (_u *PageUpdate) SetUpdatedBy(v uint64) *PageUpdate {
+func (_u *PageUpdate) SetUpdatedBy(v int64) *PageUpdate {
 	_u.mutation.ResetUpdatedBy()
 	_u.mutation.SetUpdatedBy(v)
 	return _u
 }
 
 // SetNillableUpdatedBy sets the "updated_by" field if the given value is not nil.
-func (_u *PageUpdate) SetNillableUpdatedBy(v *uint64) *PageUpdate {
+func (_u *PageUpdate) SetNillableUpdatedBy(v *int64) *PageUpdate {
 	if v != nil {
 		_u.SetUpdatedBy(*v)
 	}
@@ -124,14 +124,14 @@ func (_u *PageUpdate) ClearUpdatedBy() *PageUpdate {
 }
 
 // SetDeletedBy sets the "deleted_by" field.
-func (_u *PageUpdate) SetDeletedBy(v uint64) *PageUpdate {
+func (_u *PageUpdate) SetDeletedBy(v int64) *PageUpdate {
 	_u.mutation.ResetDeletedBy()
 	_u.mutation.SetDeletedBy(v)
 	return _u
 }
 
 // SetNillableDeletedBy sets the "deleted_by" field if the given value is not nil.
-func (_u *PageUpdate) SetNillableDeletedBy(v *uint64) *PageUpdate {
+func (_u *PageUpdate) SetNillableDeletedBy(v *int64) *PageUpdate {
 	if v != nil {
 		_u.SetDeletedBy(*v)
 	}
@@ -198,13 +198,13 @@ func (_u *PageUpdate) ClearPath() *PageUpdate {
 }
 
 // SetParentID sets the "parent_id" field.
-func (_u *PageUpdate) SetParentID(v uint64) *PageUpdate {
+func (_u *PageUpdate) SetParentID(v int64) *PageUpdate {
 	_u.mutation.SetParentID(v)
 	return _u
 }
 
 // SetNillableParentID sets the "parent_id" field if the given value is not nil.
-func (_u *PageUpdate) SetNillableParentID(v *uint64) *PageUpdate {
+func (_u *PageUpdate) SetNillableParentID(v *int64) *PageUpdate {
 	if v != nil {
 		_u.SetParentID(*v)
 	}
@@ -298,14 +298,14 @@ func (_u *PageUpdate) ClearSlug() *PageUpdate {
 }
 
 // SetAuthorID sets the "author_id" field.
-func (_u *PageUpdate) SetAuthorID(v uint64) *PageUpdate {
+func (_u *PageUpdate) SetAuthorID(v int64) *PageUpdate {
 	_u.mutation.ResetAuthorID()
 	_u.mutation.SetAuthorID(v)
 	return _u
 }
 
 // SetNillableAuthorID sets the "author_id" field if the given value is not nil.
-func (_u *PageUpdate) SetNillableAuthorID(v *uint64) *PageUpdate {
+func (_u *PageUpdate) SetNillableAuthorID(v *int64) *PageUpdate {
 	if v != nil {
 		_u.SetAuthorID(*v)
 	}
@@ -497,14 +497,14 @@ func (_u *PageUpdate) ClearCustomFields() *PageUpdate {
 }
 
 // SetContentModelID sets the "content_model_id" field.
-func (_u *PageUpdate) SetContentModelID(v uint64) *PageUpdate {
+func (_u *PageUpdate) SetContentModelID(v int64) *PageUpdate {
 	_u.mutation.ResetContentModelID()
 	_u.mutation.SetContentModelID(v)
 	return _u
 }
 
 // SetNillableContentModelID sets the "content_model_id" field if the given value is not nil.
-func (_u *PageUpdate) SetNillableContentModelID(v *uint64) *PageUpdate {
+func (_u *PageUpdate) SetNillableContentModelID(v *int64) *PageUpdate {
 	if v != nil {
 		_u.SetContentModelID(*v)
 	}
@@ -556,14 +556,14 @@ func (_u *PageUpdate) SetParent(v *Page) *PageUpdate {
 }
 
 // AddChildIDs adds the "children" edge to the Page entity by IDs.
-func (_u *PageUpdate) AddChildIDs(ids ...uint64) *PageUpdate {
+func (_u *PageUpdate) AddChildIDs(ids ...int64) *PageUpdate {
 	_u.mutation.AddChildIDs(ids...)
 	return _u
 }
 
 // AddChildren adds the "children" edges to the Page entity.
 func (_u *PageUpdate) AddChildren(v ...*Page) *PageUpdate {
-	ids := make([]uint64, len(v))
+	ids := make([]int64, len(v))
 	for i := range v {
 		ids[i] = v[i].ID
 	}
@@ -588,14 +588,14 @@ func (_u *PageUpdate) ClearChildren() *PageUpdate {
 }
 
 // RemoveChildIDs removes the "children" edge to Page entities by IDs.
-func (_u *PageUpdate) RemoveChildIDs(ids ...uint64) *PageUpdate {
+func (_u *PageUpdate) RemoveChildIDs(ids ...int64) *PageUpdate {
 	_u.mutation.RemoveChildIDs(ids...)
 	return _u
 }
 
 // RemoveChildren removes "children" edges to Page entities.
 func (_u *PageUpdate) RemoveChildren(v ...*Page) *PageUpdate {
-	ids := make([]uint64, len(v))
+	ids := make([]int64, len(v))
 	for i := range v {
 		ids[i] = v[i].ID
 	}
@@ -664,7 +664,7 @@ func (_u *PageUpdate) sqlSave(ctx context.Context) (_node int, err error) {
 	if err := _u.check(); err != nil {
 		return _node, err
 	}
-	_spec := sqlgraph.NewUpdateSpec(page.Table, page.Columns, sqlgraph.NewFieldSpec(page.FieldID, field.TypeUint64))
+	_spec := sqlgraph.NewUpdateSpec(page.Table, page.Columns, sqlgraph.NewFieldSpec(page.FieldID, field.TypeInt64))
 	if ps := _u.mutation.predicates; len(ps) > 0 {
 		_spec.Predicate = func(selector *sql.Selector) {
 			for i := range ps {
@@ -688,31 +688,31 @@ func (_u *PageUpdate) sqlSave(ctx context.Context) (_node int, err error) {
 		_spec.ClearField(page.FieldDeletedAt, field.TypeTime)
 	}
 	if value, ok := _u.mutation.CreatedBy(); ok {
-		_spec.SetField(page.FieldCreatedBy, field.TypeUint64, value)
+		_spec.SetField(page.FieldCreatedBy, field.TypeInt64, value)
 	}
 	if value, ok := _u.mutation.AddedCreatedBy(); ok {
-		_spec.AddField(page.FieldCreatedBy, field.TypeUint64, value)
+		_spec.AddField(page.FieldCreatedBy, field.TypeInt64, value)
 	}
 	if _u.mutation.CreatedByCleared() {
-		_spec.ClearField(page.FieldCreatedBy, field.TypeUint64)
+		_spec.ClearField(page.FieldCreatedBy, field.TypeInt64)
 	}
 	if value, ok := _u.mutation.UpdatedBy(); ok {
-		_spec.SetField(page.FieldUpdatedBy, field.TypeUint64, value)
+		_spec.SetField(page.FieldUpdatedBy, field.TypeInt64, value)
 	}
 	if value, ok := _u.mutation.AddedUpdatedBy(); ok {
-		_spec.AddField(page.FieldUpdatedBy, field.TypeUint64, value)
+		_spec.AddField(page.FieldUpdatedBy, field.TypeInt64, value)
 	}
 	if _u.mutation.UpdatedByCleared() {
-		_spec.ClearField(page.FieldUpdatedBy, field.TypeUint64)
+		_spec.ClearField(page.FieldUpdatedBy, field.TypeInt64)
 	}
 	if value, ok := _u.mutation.DeletedBy(); ok {
-		_spec.SetField(page.FieldDeletedBy, field.TypeUint64, value)
+		_spec.SetField(page.FieldDeletedBy, field.TypeInt64, value)
 	}
 	if value, ok := _u.mutation.AddedDeletedBy(); ok {
-		_spec.AddField(page.FieldDeletedBy, field.TypeUint64, value)
+		_spec.AddField(page.FieldDeletedBy, field.TypeInt64, value)
 	}
 	if _u.mutation.DeletedByCleared() {
-		_spec.ClearField(page.FieldDeletedBy, field.TypeUint64)
+		_spec.ClearField(page.FieldDeletedBy, field.TypeInt64)
 	}
 	if value, ok := _u.mutation.SortOrder(); ok {
 		_spec.SetField(page.FieldSortOrder, field.TypeUint32, value)
@@ -736,7 +736,7 @@ func (_u *PageUpdate) sqlSave(ctx context.Context) (_node int, err error) {
 		_spec.ClearField(page.FieldEditorType, field.TypeEnum)
 	}
 	if _u.mutation.TenantIDCleared() {
-		_spec.ClearField(page.FieldTenantID, field.TypeUint64)
+		_spec.ClearField(page.FieldTenantID, field.TypeInt64)
 	}
 	if value, ok := _u.mutation.Status(); ok {
 		_spec.SetField(page.FieldStatus, field.TypeEnum, value)
@@ -757,13 +757,13 @@ func (_u *PageUpdate) sqlSave(ctx context.Context) (_node int, err error) {
 		_spec.ClearField(page.FieldSlug, field.TypeString)
 	}
 	if value, ok := _u.mutation.AuthorID(); ok {
-		_spec.SetField(page.FieldAuthorID, field.TypeUint64, value)
+		_spec.SetField(page.FieldAuthorID, field.TypeInt64, value)
 	}
 	if value, ok := _u.mutation.AddedAuthorID(); ok {
-		_spec.AddField(page.FieldAuthorID, field.TypeUint64, value)
+		_spec.AddField(page.FieldAuthorID, field.TypeInt64, value)
 	}
 	if _u.mutation.AuthorIDCleared() {
-		_spec.ClearField(page.FieldAuthorID, field.TypeUint64)
+		_spec.ClearField(page.FieldAuthorID, field.TypeInt64)
 	}
 	if value, ok := _u.mutation.AuthorName(); ok {
 		_spec.SetField(page.FieldAuthorName, field.TypeString, value)
@@ -820,13 +820,13 @@ func (_u *PageUpdate) sqlSave(ctx context.Context) (_node int, err error) {
 		_spec.ClearField(page.FieldCustomFields, field.TypeJSON)
 	}
 	if value, ok := _u.mutation.ContentModelID(); ok {
-		_spec.SetField(page.FieldContentModelID, field.TypeUint64, value)
+		_spec.SetField(page.FieldContentModelID, field.TypeInt64, value)
 	}
 	if value, ok := _u.mutation.AddedContentModelID(); ok {
-		_spec.AddField(page.FieldContentModelID, field.TypeUint64, value)
+		_spec.AddField(page.FieldContentModelID, field.TypeInt64, value)
 	}
 	if _u.mutation.ContentModelIDCleared() {
-		_spec.ClearField(page.FieldContentModelID, field.TypeUint64)
+		_spec.ClearField(page.FieldContentModelID, field.TypeInt64)
 	}
 	if value, ok := _u.mutation.Depth(); ok {
 		_spec.SetField(page.FieldDepth, field.TypeInt32, value)
@@ -845,7 +845,7 @@ func (_u *PageUpdate) sqlSave(ctx context.Context) (_node int, err error) {
 			Columns: []string{page.ParentColumn},
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
-				IDSpec: sqlgraph.NewFieldSpec(page.FieldID, field.TypeUint64),
+				IDSpec: sqlgraph.NewFieldSpec(page.FieldID, field.TypeInt64),
 			},
 		}
 		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
@@ -858,7 +858,7 @@ func (_u *PageUpdate) sqlSave(ctx context.Context) (_node int, err error) {
 			Columns: []string{page.ParentColumn},
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
-				IDSpec: sqlgraph.NewFieldSpec(page.FieldID, field.TypeUint64),
+				IDSpec: sqlgraph.NewFieldSpec(page.FieldID, field.TypeInt64),
 			},
 		}
 		for _, k := range nodes {
@@ -874,7 +874,7 @@ func (_u *PageUpdate) sqlSave(ctx context.Context) (_node int, err error) {
 			Columns: []string{page.ChildrenColumn},
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
-				IDSpec: sqlgraph.NewFieldSpec(page.FieldID, field.TypeUint64),
+				IDSpec: sqlgraph.NewFieldSpec(page.FieldID, field.TypeInt64),
 			},
 		}
 		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
@@ -887,7 +887,7 @@ func (_u *PageUpdate) sqlSave(ctx context.Context) (_node int, err error) {
 			Columns: []string{page.ChildrenColumn},
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
-				IDSpec: sqlgraph.NewFieldSpec(page.FieldID, field.TypeUint64),
+				IDSpec: sqlgraph.NewFieldSpec(page.FieldID, field.TypeInt64),
 			},
 		}
 		for _, k := range nodes {
@@ -903,7 +903,7 @@ func (_u *PageUpdate) sqlSave(ctx context.Context) (_node int, err error) {
 			Columns: []string{page.ChildrenColumn},
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
-				IDSpec: sqlgraph.NewFieldSpec(page.FieldID, field.TypeUint64),
+				IDSpec: sqlgraph.NewFieldSpec(page.FieldID, field.TypeInt64),
 			},
 		}
 		for _, k := range nodes {
@@ -974,14 +974,14 @@ func (_u *PageUpdateOne) ClearDeletedAt() *PageUpdateOne {
 }
 
 // SetCreatedBy sets the "created_by" field.
-func (_u *PageUpdateOne) SetCreatedBy(v uint64) *PageUpdateOne {
+func (_u *PageUpdateOne) SetCreatedBy(v int64) *PageUpdateOne {
 	_u.mutation.ResetCreatedBy()
 	_u.mutation.SetCreatedBy(v)
 	return _u
 }
 
 // SetNillableCreatedBy sets the "created_by" field if the given value is not nil.
-func (_u *PageUpdateOne) SetNillableCreatedBy(v *uint64) *PageUpdateOne {
+func (_u *PageUpdateOne) SetNillableCreatedBy(v *int64) *PageUpdateOne {
 	if v != nil {
 		_u.SetCreatedBy(*v)
 	}
@@ -1001,14 +1001,14 @@ func (_u *PageUpdateOne) ClearCreatedBy() *PageUpdateOne {
 }
 
 // SetUpdatedBy sets the "updated_by" field.
-func (_u *PageUpdateOne) SetUpdatedBy(v uint64) *PageUpdateOne {
+func (_u *PageUpdateOne) SetUpdatedBy(v int64) *PageUpdateOne {
 	_u.mutation.ResetUpdatedBy()
 	_u.mutation.SetUpdatedBy(v)
 	return _u
 }
 
 // SetNillableUpdatedBy sets the "updated_by" field if the given value is not nil.
-func (_u *PageUpdateOne) SetNillableUpdatedBy(v *uint64) *PageUpdateOne {
+func (_u *PageUpdateOne) SetNillableUpdatedBy(v *int64) *PageUpdateOne {
 	if v != nil {
 		_u.SetUpdatedBy(*v)
 	}
@@ -1028,14 +1028,14 @@ func (_u *PageUpdateOne) ClearUpdatedBy() *PageUpdateOne {
 }
 
 // SetDeletedBy sets the "deleted_by" field.
-func (_u *PageUpdateOne) SetDeletedBy(v uint64) *PageUpdateOne {
+func (_u *PageUpdateOne) SetDeletedBy(v int64) *PageUpdateOne {
 	_u.mutation.ResetDeletedBy()
 	_u.mutation.SetDeletedBy(v)
 	return _u
 }
 
 // SetNillableDeletedBy sets the "deleted_by" field if the given value is not nil.
-func (_u *PageUpdateOne) SetNillableDeletedBy(v *uint64) *PageUpdateOne {
+func (_u *PageUpdateOne) SetNillableDeletedBy(v *int64) *PageUpdateOne {
 	if v != nil {
 		_u.SetDeletedBy(*v)
 	}
@@ -1102,13 +1102,13 @@ func (_u *PageUpdateOne) ClearPath() *PageUpdateOne {
 }
 
 // SetParentID sets the "parent_id" field.
-func (_u *PageUpdateOne) SetParentID(v uint64) *PageUpdateOne {
+func (_u *PageUpdateOne) SetParentID(v int64) *PageUpdateOne {
 	_u.mutation.SetParentID(v)
 	return _u
 }
 
 // SetNillableParentID sets the "parent_id" field if the given value is not nil.
-func (_u *PageUpdateOne) SetNillableParentID(v *uint64) *PageUpdateOne {
+func (_u *PageUpdateOne) SetNillableParentID(v *int64) *PageUpdateOne {
 	if v != nil {
 		_u.SetParentID(*v)
 	}
@@ -1202,14 +1202,14 @@ func (_u *PageUpdateOne) ClearSlug() *PageUpdateOne {
 }
 
 // SetAuthorID sets the "author_id" field.
-func (_u *PageUpdateOne) SetAuthorID(v uint64) *PageUpdateOne {
+func (_u *PageUpdateOne) SetAuthorID(v int64) *PageUpdateOne {
 	_u.mutation.ResetAuthorID()
 	_u.mutation.SetAuthorID(v)
 	return _u
 }
 
 // SetNillableAuthorID sets the "author_id" field if the given value is not nil.
-func (_u *PageUpdateOne) SetNillableAuthorID(v *uint64) *PageUpdateOne {
+func (_u *PageUpdateOne) SetNillableAuthorID(v *int64) *PageUpdateOne {
 	if v != nil {
 		_u.SetAuthorID(*v)
 	}
@@ -1401,14 +1401,14 @@ func (_u *PageUpdateOne) ClearCustomFields() *PageUpdateOne {
 }
 
 // SetContentModelID sets the "content_model_id" field.
-func (_u *PageUpdateOne) SetContentModelID(v uint64) *PageUpdateOne {
+func (_u *PageUpdateOne) SetContentModelID(v int64) *PageUpdateOne {
 	_u.mutation.ResetContentModelID()
 	_u.mutation.SetContentModelID(v)
 	return _u
 }
 
 // SetNillableContentModelID sets the "content_model_id" field if the given value is not nil.
-func (_u *PageUpdateOne) SetNillableContentModelID(v *uint64) *PageUpdateOne {
+func (_u *PageUpdateOne) SetNillableContentModelID(v *int64) *PageUpdateOne {
 	if v != nil {
 		_u.SetContentModelID(*v)
 	}
@@ -1460,14 +1460,14 @@ func (_u *PageUpdateOne) SetParent(v *Page) *PageUpdateOne {
 }
 
 // AddChildIDs adds the "children" edge to the Page entity by IDs.
-func (_u *PageUpdateOne) AddChildIDs(ids ...uint64) *PageUpdateOne {
+func (_u *PageUpdateOne) AddChildIDs(ids ...int64) *PageUpdateOne {
 	_u.mutation.AddChildIDs(ids...)
 	return _u
 }
 
 // AddChildren adds the "children" edges to the Page entity.
 func (_u *PageUpdateOne) AddChildren(v ...*Page) *PageUpdateOne {
-	ids := make([]uint64, len(v))
+	ids := make([]int64, len(v))
 	for i := range v {
 		ids[i] = v[i].ID
 	}
@@ -1492,14 +1492,14 @@ func (_u *PageUpdateOne) ClearChildren() *PageUpdateOne {
 }
 
 // RemoveChildIDs removes the "children" edge to Page entities by IDs.
-func (_u *PageUpdateOne) RemoveChildIDs(ids ...uint64) *PageUpdateOne {
+func (_u *PageUpdateOne) RemoveChildIDs(ids ...int64) *PageUpdateOne {
 	_u.mutation.RemoveChildIDs(ids...)
 	return _u
 }
 
 // RemoveChildren removes "children" edges to Page entities.
 func (_u *PageUpdateOne) RemoveChildren(v ...*Page) *PageUpdateOne {
-	ids := make([]uint64, len(v))
+	ids := make([]int64, len(v))
 	for i := range v {
 		ids[i] = v[i].ID
 	}
@@ -1581,7 +1581,7 @@ func (_u *PageUpdateOne) sqlSave(ctx context.Context) (_node *Page, err error) {
 	if err := _u.check(); err != nil {
 		return _node, err
 	}
-	_spec := sqlgraph.NewUpdateSpec(page.Table, page.Columns, sqlgraph.NewFieldSpec(page.FieldID, field.TypeUint64))
+	_spec := sqlgraph.NewUpdateSpec(page.Table, page.Columns, sqlgraph.NewFieldSpec(page.FieldID, field.TypeInt64))
 	id, ok := _u.mutation.ID()
 	if !ok {
 		return nil, &ValidationError{Name: "id", err: errors.New(`ent: missing "Page.id" for update`)}
@@ -1622,31 +1622,31 @@ func (_u *PageUpdateOne) sqlSave(ctx context.Context) (_node *Page, err error) {
 		_spec.ClearField(page.FieldDeletedAt, field.TypeTime)
 	}
 	if value, ok := _u.mutation.CreatedBy(); ok {
-		_spec.SetField(page.FieldCreatedBy, field.TypeUint64, value)
+		_spec.SetField(page.FieldCreatedBy, field.TypeInt64, value)
 	}
 	if value, ok := _u.mutation.AddedCreatedBy(); ok {
-		_spec.AddField(page.FieldCreatedBy, field.TypeUint64, value)
+		_spec.AddField(page.FieldCreatedBy, field.TypeInt64, value)
 	}
 	if _u.mutation.CreatedByCleared() {
-		_spec.ClearField(page.FieldCreatedBy, field.TypeUint64)
+		_spec.ClearField(page.FieldCreatedBy, field.TypeInt64)
 	}
 	if value, ok := _u.mutation.UpdatedBy(); ok {
-		_spec.SetField(page.FieldUpdatedBy, field.TypeUint64, value)
+		_spec.SetField(page.FieldUpdatedBy, field.TypeInt64, value)
 	}
 	if value, ok := _u.mutation.AddedUpdatedBy(); ok {
-		_spec.AddField(page.FieldUpdatedBy, field.TypeUint64, value)
+		_spec.AddField(page.FieldUpdatedBy, field.TypeInt64, value)
 	}
 	if _u.mutation.UpdatedByCleared() {
-		_spec.ClearField(page.FieldUpdatedBy, field.TypeUint64)
+		_spec.ClearField(page.FieldUpdatedBy, field.TypeInt64)
 	}
 	if value, ok := _u.mutation.DeletedBy(); ok {
-		_spec.SetField(page.FieldDeletedBy, field.TypeUint64, value)
+		_spec.SetField(page.FieldDeletedBy, field.TypeInt64, value)
 	}
 	if value, ok := _u.mutation.AddedDeletedBy(); ok {
-		_spec.AddField(page.FieldDeletedBy, field.TypeUint64, value)
+		_spec.AddField(page.FieldDeletedBy, field.TypeInt64, value)
 	}
 	if _u.mutation.DeletedByCleared() {
-		_spec.ClearField(page.FieldDeletedBy, field.TypeUint64)
+		_spec.ClearField(page.FieldDeletedBy, field.TypeInt64)
 	}
 	if value, ok := _u.mutation.SortOrder(); ok {
 		_spec.SetField(page.FieldSortOrder, field.TypeUint32, value)
@@ -1670,7 +1670,7 @@ func (_u *PageUpdateOne) sqlSave(ctx context.Context) (_node *Page, err error) {
 		_spec.ClearField(page.FieldEditorType, field.TypeEnum)
 	}
 	if _u.mutation.TenantIDCleared() {
-		_spec.ClearField(page.FieldTenantID, field.TypeUint64)
+		_spec.ClearField(page.FieldTenantID, field.TypeInt64)
 	}
 	if value, ok := _u.mutation.Status(); ok {
 		_spec.SetField(page.FieldStatus, field.TypeEnum, value)
@@ -1691,13 +1691,13 @@ func (_u *PageUpdateOne) sqlSave(ctx context.Context) (_node *Page, err error) {
 		_spec.ClearField(page.FieldSlug, field.TypeString)
 	}
 	if value, ok := _u.mutation.AuthorID(); ok {
-		_spec.SetField(page.FieldAuthorID, field.TypeUint64, value)
+		_spec.SetField(page.FieldAuthorID, field.TypeInt64, value)
 	}
 	if value, ok := _u.mutation.AddedAuthorID(); ok {
-		_spec.AddField(page.FieldAuthorID, field.TypeUint64, value)
+		_spec.AddField(page.FieldAuthorID, field.TypeInt64, value)
 	}
 	if _u.mutation.AuthorIDCleared() {
-		_spec.ClearField(page.FieldAuthorID, field.TypeUint64)
+		_spec.ClearField(page.FieldAuthorID, field.TypeInt64)
 	}
 	if value, ok := _u.mutation.AuthorName(); ok {
 		_spec.SetField(page.FieldAuthorName, field.TypeString, value)
@@ -1754,13 +1754,13 @@ func (_u *PageUpdateOne) sqlSave(ctx context.Context) (_node *Page, err error) {
 		_spec.ClearField(page.FieldCustomFields, field.TypeJSON)
 	}
 	if value, ok := _u.mutation.ContentModelID(); ok {
-		_spec.SetField(page.FieldContentModelID, field.TypeUint64, value)
+		_spec.SetField(page.FieldContentModelID, field.TypeInt64, value)
 	}
 	if value, ok := _u.mutation.AddedContentModelID(); ok {
-		_spec.AddField(page.FieldContentModelID, field.TypeUint64, value)
+		_spec.AddField(page.FieldContentModelID, field.TypeInt64, value)
 	}
 	if _u.mutation.ContentModelIDCleared() {
-		_spec.ClearField(page.FieldContentModelID, field.TypeUint64)
+		_spec.ClearField(page.FieldContentModelID, field.TypeInt64)
 	}
 	if value, ok := _u.mutation.Depth(); ok {
 		_spec.SetField(page.FieldDepth, field.TypeInt32, value)
@@ -1779,7 +1779,7 @@ func (_u *PageUpdateOne) sqlSave(ctx context.Context) (_node *Page, err error) {
 			Columns: []string{page.ParentColumn},
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
-				IDSpec: sqlgraph.NewFieldSpec(page.FieldID, field.TypeUint64),
+				IDSpec: sqlgraph.NewFieldSpec(page.FieldID, field.TypeInt64),
 			},
 		}
 		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
@@ -1792,7 +1792,7 @@ func (_u *PageUpdateOne) sqlSave(ctx context.Context) (_node *Page, err error) {
 			Columns: []string{page.ParentColumn},
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
-				IDSpec: sqlgraph.NewFieldSpec(page.FieldID, field.TypeUint64),
+				IDSpec: sqlgraph.NewFieldSpec(page.FieldID, field.TypeInt64),
 			},
 		}
 		for _, k := range nodes {
@@ -1808,7 +1808,7 @@ func (_u *PageUpdateOne) sqlSave(ctx context.Context) (_node *Page, err error) {
 			Columns: []string{page.ChildrenColumn},
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
-				IDSpec: sqlgraph.NewFieldSpec(page.FieldID, field.TypeUint64),
+				IDSpec: sqlgraph.NewFieldSpec(page.FieldID, field.TypeInt64),
 			},
 		}
 		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
@@ -1821,7 +1821,7 @@ func (_u *PageUpdateOne) sqlSave(ctx context.Context) (_node *Page, err error) {
 			Columns: []string{page.ChildrenColumn},
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
-				IDSpec: sqlgraph.NewFieldSpec(page.FieldID, field.TypeUint64),
+				IDSpec: sqlgraph.NewFieldSpec(page.FieldID, field.TypeInt64),
 			},
 		}
 		for _, k := range nodes {
@@ -1837,7 +1837,7 @@ func (_u *PageUpdateOne) sqlSave(ctx context.Context) (_node *Page, err error) {
 			Columns: []string{page.ChildrenColumn},
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
-				IDSpec: sqlgraph.NewFieldSpec(page.FieldID, field.TypeUint64),
+				IDSpec: sqlgraph.NewFieldSpec(page.FieldID, field.TypeInt64),
 			},
 		}
 		for _, k := range nodes {

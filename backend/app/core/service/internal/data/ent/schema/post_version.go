@@ -30,7 +30,7 @@ func (PostVersion) Annotations() []schema.Annotation {
 // Fields of the PostVersion.
 func (PostVersion) Fields() []ent.Field {
 	return []ent.Field{
-		field.Uint64("post_id").
+		field.Int64("post_id").
 			Comment("关联的帖子ID").
 			Optional().
 			Nillable(),
@@ -59,7 +59,7 @@ func (PostVersion) Mixin() []ent.Mixin {
 		mixin.AutoIncrementId64{},
 		mixin.TimeAt{},
 		mixin.OperatorID64{},
-		mixin.TenantID[uint64]{},
+		mixin.TenantID[int64]{},
 	}
 }
 

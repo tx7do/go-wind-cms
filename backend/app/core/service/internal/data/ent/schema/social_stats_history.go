@@ -25,7 +25,7 @@ func (SocialStatsHistory) Annotations() []schema.Annotation {
 
 func (SocialStatsHistory) Fields() []ent.Field {
 	return []ent.Field{
-		field.Uint64("distribution_id").
+		field.Int64("distribution_id").
 			Comment("分发记录ID").
 			Optional().
 			Nillable(),

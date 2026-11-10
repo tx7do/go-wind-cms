@@ -10,47 +10,47 @@ import (
 )
 
 // ID filters vertices based on their ID field.
-func ID(id uint64) predicate.PostVersion {
+func ID(id int64) predicate.PostVersion {
 	return predicate.PostVersion(sql.FieldEQ(FieldID, id))
 }
 
 // IDEQ applies the EQ predicate on the ID field.
-func IDEQ(id uint64) predicate.PostVersion {
+func IDEQ(id int64) predicate.PostVersion {
 	return predicate.PostVersion(sql.FieldEQ(FieldID, id))
 }
 
 // IDNEQ applies the NEQ predicate on the ID field.
-func IDNEQ(id uint64) predicate.PostVersion {
+func IDNEQ(id int64) predicate.PostVersion {
 	return predicate.PostVersion(sql.FieldNEQ(FieldID, id))
 }
 
 // IDIn applies the In predicate on the ID field.
-func IDIn(ids ...uint64) predicate.PostVersion {
+func IDIn(ids ...int64) predicate.PostVersion {
 	return predicate.PostVersion(sql.FieldIn(FieldID, ids...))
 }
 
 // IDNotIn applies the NotIn predicate on the ID field.
-func IDNotIn(ids ...uint64) predicate.PostVersion {
+func IDNotIn(ids ...int64) predicate.PostVersion {
 	return predicate.PostVersion(sql.FieldNotIn(FieldID, ids...))
 }
 
 // IDGT applies the GT predicate on the ID field.
-func IDGT(id uint64) predicate.PostVersion {
+func IDGT(id int64) predicate.PostVersion {
 	return predicate.PostVersion(sql.FieldGT(FieldID, id))
 }
 
 // IDGTE applies the GTE predicate on the ID field.
-func IDGTE(id uint64) predicate.PostVersion {
+func IDGTE(id int64) predicate.PostVersion {
 	return predicate.PostVersion(sql.FieldGTE(FieldID, id))
 }
 
 // IDLT applies the LT predicate on the ID field.
-func IDLT(id uint64) predicate.PostVersion {
+func IDLT(id int64) predicate.PostVersion {
 	return predicate.PostVersion(sql.FieldLT(FieldID, id))
 }
 
 // IDLTE applies the LTE predicate on the ID field.
-func IDLTE(id uint64) predicate.PostVersion {
+func IDLTE(id int64) predicate.PostVersion {
 	return predicate.PostVersion(sql.FieldLTE(FieldID, id))
 }
 
@@ -70,27 +70,27 @@ func DeletedAt(v time.Time) predicate.PostVersion {
 }
 
 // CreatedBy applies equality check predicate on the "created_by" field. It's identical to CreatedByEQ.
-func CreatedBy(v uint64) predicate.PostVersion {
+func CreatedBy(v int64) predicate.PostVersion {
 	return predicate.PostVersion(sql.FieldEQ(FieldCreatedBy, v))
 }
 
 // UpdatedBy applies equality check predicate on the "updated_by" field. It's identical to UpdatedByEQ.
-func UpdatedBy(v uint64) predicate.PostVersion {
+func UpdatedBy(v int64) predicate.PostVersion {
 	return predicate.PostVersion(sql.FieldEQ(FieldUpdatedBy, v))
 }
 
 // DeletedBy applies equality check predicate on the "deleted_by" field. It's identical to DeletedByEQ.
-func DeletedBy(v uint64) predicate.PostVersion {
+func DeletedBy(v int64) predicate.PostVersion {
 	return predicate.PostVersion(sql.FieldEQ(FieldDeletedBy, v))
 }
 
 // TenantID applies equality check predicate on the "tenant_id" field. It's identical to TenantIDEQ.
-func TenantID(v uint64) predicate.PostVersion {
+func TenantID(v int64) predicate.PostVersion {
 	return predicate.PostVersion(sql.FieldEQ(FieldTenantID, v))
 }
 
 // PostID applies equality check predicate on the "post_id" field. It's identical to PostIDEQ.
-func PostID(v uint64) predicate.PostVersion {
+func PostID(v int64) predicate.PostVersion {
 	return predicate.PostVersion(sql.FieldEQ(FieldPostID, v))
 }
 
@@ -260,42 +260,42 @@ func DeletedAtNotNil() predicate.PostVersion {
 }
 
 // CreatedByEQ applies the EQ predicate on the "created_by" field.
-func CreatedByEQ(v uint64) predicate.PostVersion {
+func CreatedByEQ(v int64) predicate.PostVersion {
 	return predicate.PostVersion(sql.FieldEQ(FieldCreatedBy, v))
 }
 
 // CreatedByNEQ applies the NEQ predicate on the "created_by" field.
-func CreatedByNEQ(v uint64) predicate.PostVersion {
+func CreatedByNEQ(v int64) predicate.PostVersion {
 	return predicate.PostVersion(sql.FieldNEQ(FieldCreatedBy, v))
 }
 
 // CreatedByIn applies the In predicate on the "created_by" field.
-func CreatedByIn(vs ...uint64) predicate.PostVersion {
+func CreatedByIn(vs ...int64) predicate.PostVersion {
 	return predicate.PostVersion(sql.FieldIn(FieldCreatedBy, vs...))
 }
 
 // CreatedByNotIn applies the NotIn predicate on the "created_by" field.
-func CreatedByNotIn(vs ...uint64) predicate.PostVersion {
+func CreatedByNotIn(vs ...int64) predicate.PostVersion {
 	return predicate.PostVersion(sql.FieldNotIn(FieldCreatedBy, vs...))
 }
 
 // CreatedByGT applies the GT predicate on the "created_by" field.
-func CreatedByGT(v uint64) predicate.PostVersion {
+func CreatedByGT(v int64) predicate.PostVersion {
 	return predicate.PostVersion(sql.FieldGT(FieldCreatedBy, v))
 }
 
 // CreatedByGTE applies the GTE predicate on the "created_by" field.
-func CreatedByGTE(v uint64) predicate.PostVersion {
+func CreatedByGTE(v int64) predicate.PostVersion {
 	return predicate.PostVersion(sql.FieldGTE(FieldCreatedBy, v))
 }
 
 // CreatedByLT applies the LT predicate on the "created_by" field.
-func CreatedByLT(v uint64) predicate.PostVersion {
+func CreatedByLT(v int64) predicate.PostVersion {
 	return predicate.PostVersion(sql.FieldLT(FieldCreatedBy, v))
 }
 
 // CreatedByLTE applies the LTE predicate on the "created_by" field.
-func CreatedByLTE(v uint64) predicate.PostVersion {
+func CreatedByLTE(v int64) predicate.PostVersion {
 	return predicate.PostVersion(sql.FieldLTE(FieldCreatedBy, v))
 }
 
@@ -310,42 +310,42 @@ func CreatedByNotNil() predicate.PostVersion {
 }
 
 // UpdatedByEQ applies the EQ predicate on the "updated_by" field.
-func UpdatedByEQ(v uint64) predicate.PostVersion {
+func UpdatedByEQ(v int64) predicate.PostVersion {
 	return predicate.PostVersion(sql.FieldEQ(FieldUpdatedBy, v))
 }
 
 // UpdatedByNEQ applies the NEQ predicate on the "updated_by" field.
-func UpdatedByNEQ(v uint64) predicate.PostVersion {
+func UpdatedByNEQ(v int64) predicate.PostVersion {
 	return predicate.PostVersion(sql.FieldNEQ(FieldUpdatedBy, v))
 }
 
 // UpdatedByIn applies the In predicate on the "updated_by" field.
-func UpdatedByIn(vs ...uint64) predicate.PostVersion {
+func UpdatedByIn(vs ...int64) predicate.PostVersion {
 	return predicate.PostVersion(sql.FieldIn(FieldUpdatedBy, vs...))
 }
 
 // UpdatedByNotIn applies the NotIn predicate on the "updated_by" field.
-func UpdatedByNotIn(vs ...uint64) predicate.PostVersion {
+func UpdatedByNotIn(vs ...int64) predicate.PostVersion {
 	return predicate.PostVersion(sql.FieldNotIn(FieldUpdatedBy, vs...))
 }
 
 // UpdatedByGT applies the GT predicate on the "updated_by" field.
-func UpdatedByGT(v uint64) predicate.PostVersion {
+func UpdatedByGT(v int64) predicate.PostVersion {
 	return predicate.PostVersion(sql.FieldGT(FieldUpdatedBy, v))
 }
 
 // UpdatedByGTE applies the GTE predicate on the "updated_by" field.
-func UpdatedByGTE(v uint64) predicate.PostVersion {
+func UpdatedByGTE(v int64) predicate.PostVersion {
 	return predicate.PostVersion(sql.FieldGTE(FieldUpdatedBy, v))
 }
 
 // UpdatedByLT applies the LT predicate on the "updated_by" field.
-func UpdatedByLT(v uint64) predicate.PostVersion {
+func UpdatedByLT(v int64) predicate.PostVersion {
 	return predicate.PostVersion(sql.FieldLT(FieldUpdatedBy, v))
 }
 
 // UpdatedByLTE applies the LTE predicate on the "updated_by" field.
-func UpdatedByLTE(v uint64) predicate.PostVersion {
+func UpdatedByLTE(v int64) predicate.PostVersion {
 	return predicate.PostVersion(sql.FieldLTE(FieldUpdatedBy, v))
 }
 
@@ -360,42 +360,42 @@ func UpdatedByNotNil() predicate.PostVersion {
 }
 
 // DeletedByEQ applies the EQ predicate on the "deleted_by" field.
-func DeletedByEQ(v uint64) predicate.PostVersion {
+func DeletedByEQ(v int64) predicate.PostVersion {
 	return predicate.PostVersion(sql.FieldEQ(FieldDeletedBy, v))
 }
 
 // DeletedByNEQ applies the NEQ predicate on the "deleted_by" field.
-func DeletedByNEQ(v uint64) predicate.PostVersion {
+func DeletedByNEQ(v int64) predicate.PostVersion {
 	return predicate.PostVersion(sql.FieldNEQ(FieldDeletedBy, v))
 }
 
 // DeletedByIn applies the In predicate on the "deleted_by" field.
-func DeletedByIn(vs ...uint64) predicate.PostVersion {
+func DeletedByIn(vs ...int64) predicate.PostVersion {
 	return predicate.PostVersion(sql.FieldIn(FieldDeletedBy, vs...))
 }
 
 // DeletedByNotIn applies the NotIn predicate on the "deleted_by" field.
-func DeletedByNotIn(vs ...uint64) predicate.PostVersion {
+func DeletedByNotIn(vs ...int64) predicate.PostVersion {
 	return predicate.PostVersion(sql.FieldNotIn(FieldDeletedBy, vs...))
 }
 
 // DeletedByGT applies the GT predicate on the "deleted_by" field.
-func DeletedByGT(v uint64) predicate.PostVersion {
+func DeletedByGT(v int64) predicate.PostVersion {
 	return predicate.PostVersion(sql.FieldGT(FieldDeletedBy, v))
 }
 
 // DeletedByGTE applies the GTE predicate on the "deleted_by" field.
-func DeletedByGTE(v uint64) predicate.PostVersion {
+func DeletedByGTE(v int64) predicate.PostVersion {
 	return predicate.PostVersion(sql.FieldGTE(FieldDeletedBy, v))
 }
 
 // DeletedByLT applies the LT predicate on the "deleted_by" field.
-func DeletedByLT(v uint64) predicate.PostVersion {
+func DeletedByLT(v int64) predicate.PostVersion {
 	return predicate.PostVersion(sql.FieldLT(FieldDeletedBy, v))
 }
 
 // DeletedByLTE applies the LTE predicate on the "deleted_by" field.
-func DeletedByLTE(v uint64) predicate.PostVersion {
+func DeletedByLTE(v int64) predicate.PostVersion {
 	return predicate.PostVersion(sql.FieldLTE(FieldDeletedBy, v))
 }
 
@@ -410,42 +410,42 @@ func DeletedByNotNil() predicate.PostVersion {
 }
 
 // TenantIDEQ applies the EQ predicate on the "tenant_id" field.
-func TenantIDEQ(v uint64) predicate.PostVersion {
+func TenantIDEQ(v int64) predicate.PostVersion {
 	return predicate.PostVersion(sql.FieldEQ(FieldTenantID, v))
 }
 
 // TenantIDNEQ applies the NEQ predicate on the "tenant_id" field.
-func TenantIDNEQ(v uint64) predicate.PostVersion {
+func TenantIDNEQ(v int64) predicate.PostVersion {
 	return predicate.PostVersion(sql.FieldNEQ(FieldTenantID, v))
 }
 
 // TenantIDIn applies the In predicate on the "tenant_id" field.
-func TenantIDIn(vs ...uint64) predicate.PostVersion {
+func TenantIDIn(vs ...int64) predicate.PostVersion {
 	return predicate.PostVersion(sql.FieldIn(FieldTenantID, vs...))
 }
 
 // TenantIDNotIn applies the NotIn predicate on the "tenant_id" field.
-func TenantIDNotIn(vs ...uint64) predicate.PostVersion {
+func TenantIDNotIn(vs ...int64) predicate.PostVersion {
 	return predicate.PostVersion(sql.FieldNotIn(FieldTenantID, vs...))
 }
 
 // TenantIDGT applies the GT predicate on the "tenant_id" field.
-func TenantIDGT(v uint64) predicate.PostVersion {
+func TenantIDGT(v int64) predicate.PostVersion {
 	return predicate.PostVersion(sql.FieldGT(FieldTenantID, v))
 }
 
 // TenantIDGTE applies the GTE predicate on the "tenant_id" field.
-func TenantIDGTE(v uint64) predicate.PostVersion {
+func TenantIDGTE(v int64) predicate.PostVersion {
 	return predicate.PostVersion(sql.FieldGTE(FieldTenantID, v))
 }
 
 // TenantIDLT applies the LT predicate on the "tenant_id" field.
-func TenantIDLT(v uint64) predicate.PostVersion {
+func TenantIDLT(v int64) predicate.PostVersion {
 	return predicate.PostVersion(sql.FieldLT(FieldTenantID, v))
 }
 
 // TenantIDLTE applies the LTE predicate on the "tenant_id" field.
-func TenantIDLTE(v uint64) predicate.PostVersion {
+func TenantIDLTE(v int64) predicate.PostVersion {
 	return predicate.PostVersion(sql.FieldLTE(FieldTenantID, v))
 }
 
@@ -460,42 +460,42 @@ func TenantIDNotNil() predicate.PostVersion {
 }
 
 // PostIDEQ applies the EQ predicate on the "post_id" field.
-func PostIDEQ(v uint64) predicate.PostVersion {
+func PostIDEQ(v int64) predicate.PostVersion {
 	return predicate.PostVersion(sql.FieldEQ(FieldPostID, v))
 }
 
 // PostIDNEQ applies the NEQ predicate on the "post_id" field.
-func PostIDNEQ(v uint64) predicate.PostVersion {
+func PostIDNEQ(v int64) predicate.PostVersion {
 	return predicate.PostVersion(sql.FieldNEQ(FieldPostID, v))
 }
 
 // PostIDIn applies the In predicate on the "post_id" field.
-func PostIDIn(vs ...uint64) predicate.PostVersion {
+func PostIDIn(vs ...int64) predicate.PostVersion {
 	return predicate.PostVersion(sql.FieldIn(FieldPostID, vs...))
 }
 
 // PostIDNotIn applies the NotIn predicate on the "post_id" field.
-func PostIDNotIn(vs ...uint64) predicate.PostVersion {
+func PostIDNotIn(vs ...int64) predicate.PostVersion {
 	return predicate.PostVersion(sql.FieldNotIn(FieldPostID, vs...))
 }
 
 // PostIDGT applies the GT predicate on the "post_id" field.
-func PostIDGT(v uint64) predicate.PostVersion {
+func PostIDGT(v int64) predicate.PostVersion {
 	return predicate.PostVersion(sql.FieldGT(FieldPostID, v))
 }
 
 // PostIDGTE applies the GTE predicate on the "post_id" field.
-func PostIDGTE(v uint64) predicate.PostVersion {
+func PostIDGTE(v int64) predicate.PostVersion {
 	return predicate.PostVersion(sql.FieldGTE(FieldPostID, v))
 }
 
 // PostIDLT applies the LT predicate on the "post_id" field.
-func PostIDLT(v uint64) predicate.PostVersion {
+func PostIDLT(v int64) predicate.PostVersion {
 	return predicate.PostVersion(sql.FieldLT(FieldPostID, v))
 }
 
 // PostIDLTE applies the LTE predicate on the "post_id" field.
-func PostIDLTE(v uint64) predicate.PostVersion {
+func PostIDLTE(v int64) predicate.PostVersion {
 	return predicate.PostVersion(sql.FieldLTE(FieldPostID, v))
 }
 

@@ -71,14 +71,14 @@ func (_u *PostTranslationUpdate) ClearDeletedAt() *PostTranslationUpdate {
 }
 
 // SetCreatedBy sets the "created_by" field.
-func (_u *PostTranslationUpdate) SetCreatedBy(v uint64) *PostTranslationUpdate {
+func (_u *PostTranslationUpdate) SetCreatedBy(v int64) *PostTranslationUpdate {
 	_u.mutation.ResetCreatedBy()
 	_u.mutation.SetCreatedBy(v)
 	return _u
 }
 
 // SetNillableCreatedBy sets the "created_by" field if the given value is not nil.
-func (_u *PostTranslationUpdate) SetNillableCreatedBy(v *uint64) *PostTranslationUpdate {
+func (_u *PostTranslationUpdate) SetNillableCreatedBy(v *int64) *PostTranslationUpdate {
 	if v != nil {
 		_u.SetCreatedBy(*v)
 	}
@@ -98,14 +98,14 @@ func (_u *PostTranslationUpdate) ClearCreatedBy() *PostTranslationUpdate {
 }
 
 // SetUpdatedBy sets the "updated_by" field.
-func (_u *PostTranslationUpdate) SetUpdatedBy(v uint64) *PostTranslationUpdate {
+func (_u *PostTranslationUpdate) SetUpdatedBy(v int64) *PostTranslationUpdate {
 	_u.mutation.ResetUpdatedBy()
 	_u.mutation.SetUpdatedBy(v)
 	return _u
 }
 
 // SetNillableUpdatedBy sets the "updated_by" field if the given value is not nil.
-func (_u *PostTranslationUpdate) SetNillableUpdatedBy(v *uint64) *PostTranslationUpdate {
+func (_u *PostTranslationUpdate) SetNillableUpdatedBy(v *int64) *PostTranslationUpdate {
 	if v != nil {
 		_u.SetUpdatedBy(*v)
 	}
@@ -125,14 +125,14 @@ func (_u *PostTranslationUpdate) ClearUpdatedBy() *PostTranslationUpdate {
 }
 
 // SetDeletedBy sets the "deleted_by" field.
-func (_u *PostTranslationUpdate) SetDeletedBy(v uint64) *PostTranslationUpdate {
+func (_u *PostTranslationUpdate) SetDeletedBy(v int64) *PostTranslationUpdate {
 	_u.mutation.ResetDeletedBy()
 	_u.mutation.SetDeletedBy(v)
 	return _u
 }
 
 // SetNillableDeletedBy sets the "deleted_by" field if the given value is not nil.
-func (_u *PostTranslationUpdate) SetNillableDeletedBy(v *uint64) *PostTranslationUpdate {
+func (_u *PostTranslationUpdate) SetNillableDeletedBy(v *int64) *PostTranslationUpdate {
 	if v != nil {
 		_u.SetDeletedBy(*v)
 	}
@@ -164,14 +164,14 @@ func (_u *PostTranslationUpdate) ClearSeo() *PostTranslationUpdate {
 }
 
 // SetPostID sets the "post_id" field.
-func (_u *PostTranslationUpdate) SetPostID(v uint64) *PostTranslationUpdate {
+func (_u *PostTranslationUpdate) SetPostID(v int64) *PostTranslationUpdate {
 	_u.mutation.ResetPostID()
 	_u.mutation.SetPostID(v)
 	return _u
 }
 
 // SetNillablePostID sets the "post_id" field if the given value is not nil.
-func (_u *PostTranslationUpdate) SetNillablePostID(v *uint64) *PostTranslationUpdate {
+func (_u *PostTranslationUpdate) SetNillablePostID(v *int64) *PostTranslationUpdate {
 	if v != nil {
 		_u.SetPostID(*v)
 	}
@@ -396,7 +396,7 @@ func (_u *PostTranslationUpdate) Modify(modifiers ...func(u *sql.UpdateBuilder))
 }
 
 func (_u *PostTranslationUpdate) sqlSave(ctx context.Context) (_node int, err error) {
-	_spec := sqlgraph.NewUpdateSpec(posttranslation.Table, posttranslation.Columns, sqlgraph.NewFieldSpec(posttranslation.FieldID, field.TypeUint64))
+	_spec := sqlgraph.NewUpdateSpec(posttranslation.Table, posttranslation.Columns, sqlgraph.NewFieldSpec(posttranslation.FieldID, field.TypeInt64))
 	if ps := _u.mutation.predicates; len(ps) > 0 {
 		_spec.Predicate = func(selector *sql.Selector) {
 			for i := range ps {
@@ -420,31 +420,31 @@ func (_u *PostTranslationUpdate) sqlSave(ctx context.Context) (_node int, err er
 		_spec.ClearField(posttranslation.FieldDeletedAt, field.TypeTime)
 	}
 	if value, ok := _u.mutation.CreatedBy(); ok {
-		_spec.SetField(posttranslation.FieldCreatedBy, field.TypeUint64, value)
+		_spec.SetField(posttranslation.FieldCreatedBy, field.TypeInt64, value)
 	}
 	if value, ok := _u.mutation.AddedCreatedBy(); ok {
-		_spec.AddField(posttranslation.FieldCreatedBy, field.TypeUint64, value)
+		_spec.AddField(posttranslation.FieldCreatedBy, field.TypeInt64, value)
 	}
 	if _u.mutation.CreatedByCleared() {
-		_spec.ClearField(posttranslation.FieldCreatedBy, field.TypeUint64)
+		_spec.ClearField(posttranslation.FieldCreatedBy, field.TypeInt64)
 	}
 	if value, ok := _u.mutation.UpdatedBy(); ok {
-		_spec.SetField(posttranslation.FieldUpdatedBy, field.TypeUint64, value)
+		_spec.SetField(posttranslation.FieldUpdatedBy, field.TypeInt64, value)
 	}
 	if value, ok := _u.mutation.AddedUpdatedBy(); ok {
-		_spec.AddField(posttranslation.FieldUpdatedBy, field.TypeUint64, value)
+		_spec.AddField(posttranslation.FieldUpdatedBy, field.TypeInt64, value)
 	}
 	if _u.mutation.UpdatedByCleared() {
-		_spec.ClearField(posttranslation.FieldUpdatedBy, field.TypeUint64)
+		_spec.ClearField(posttranslation.FieldUpdatedBy, field.TypeInt64)
 	}
 	if value, ok := _u.mutation.DeletedBy(); ok {
-		_spec.SetField(posttranslation.FieldDeletedBy, field.TypeUint64, value)
+		_spec.SetField(posttranslation.FieldDeletedBy, field.TypeInt64, value)
 	}
 	if value, ok := _u.mutation.AddedDeletedBy(); ok {
-		_spec.AddField(posttranslation.FieldDeletedBy, field.TypeUint64, value)
+		_spec.AddField(posttranslation.FieldDeletedBy, field.TypeInt64, value)
 	}
 	if _u.mutation.DeletedByCleared() {
-		_spec.ClearField(posttranslation.FieldDeletedBy, field.TypeUint64)
+		_spec.ClearField(posttranslation.FieldDeletedBy, field.TypeInt64)
 	}
 	if value, ok := _u.mutation.Seo(); ok {
 		_spec.SetField(posttranslation.FieldSeo, field.TypeJSON, value)
@@ -453,16 +453,16 @@ func (_u *PostTranslationUpdate) sqlSave(ctx context.Context) (_node int, err er
 		_spec.ClearField(posttranslation.FieldSeo, field.TypeJSON)
 	}
 	if _u.mutation.TenantIDCleared() {
-		_spec.ClearField(posttranslation.FieldTenantID, field.TypeUint64)
+		_spec.ClearField(posttranslation.FieldTenantID, field.TypeInt64)
 	}
 	if value, ok := _u.mutation.PostID(); ok {
-		_spec.SetField(posttranslation.FieldPostID, field.TypeUint64, value)
+		_spec.SetField(posttranslation.FieldPostID, field.TypeInt64, value)
 	}
 	if value, ok := _u.mutation.AddedPostID(); ok {
-		_spec.AddField(posttranslation.FieldPostID, field.TypeUint64, value)
+		_spec.AddField(posttranslation.FieldPostID, field.TypeInt64, value)
 	}
 	if _u.mutation.PostIDCleared() {
-		_spec.ClearField(posttranslation.FieldPostID, field.TypeUint64)
+		_spec.ClearField(posttranslation.FieldPostID, field.TypeInt64)
 	}
 	if value, ok := _u.mutation.LanguageCode(); ok {
 		_spec.SetField(posttranslation.FieldLanguageCode, field.TypeString, value)
@@ -578,14 +578,14 @@ func (_u *PostTranslationUpdateOne) ClearDeletedAt() *PostTranslationUpdateOne {
 }
 
 // SetCreatedBy sets the "created_by" field.
-func (_u *PostTranslationUpdateOne) SetCreatedBy(v uint64) *PostTranslationUpdateOne {
+func (_u *PostTranslationUpdateOne) SetCreatedBy(v int64) *PostTranslationUpdateOne {
 	_u.mutation.ResetCreatedBy()
 	_u.mutation.SetCreatedBy(v)
 	return _u
 }
 
 // SetNillableCreatedBy sets the "created_by" field if the given value is not nil.
-func (_u *PostTranslationUpdateOne) SetNillableCreatedBy(v *uint64) *PostTranslationUpdateOne {
+func (_u *PostTranslationUpdateOne) SetNillableCreatedBy(v *int64) *PostTranslationUpdateOne {
 	if v != nil {
 		_u.SetCreatedBy(*v)
 	}
@@ -605,14 +605,14 @@ func (_u *PostTranslationUpdateOne) ClearCreatedBy() *PostTranslationUpdateOne {
 }
 
 // SetUpdatedBy sets the "updated_by" field.
-func (_u *PostTranslationUpdateOne) SetUpdatedBy(v uint64) *PostTranslationUpdateOne {
+func (_u *PostTranslationUpdateOne) SetUpdatedBy(v int64) *PostTranslationUpdateOne {
 	_u.mutation.ResetUpdatedBy()
 	_u.mutation.SetUpdatedBy(v)
 	return _u
 }
 
 // SetNillableUpdatedBy sets the "updated_by" field if the given value is not nil.
-func (_u *PostTranslationUpdateOne) SetNillableUpdatedBy(v *uint64) *PostTranslationUpdateOne {
+func (_u *PostTranslationUpdateOne) SetNillableUpdatedBy(v *int64) *PostTranslationUpdateOne {
 	if v != nil {
 		_u.SetUpdatedBy(*v)
 	}
@@ -632,14 +632,14 @@ func (_u *PostTranslationUpdateOne) ClearUpdatedBy() *PostTranslationUpdateOne {
 }
 
 // SetDeletedBy sets the "deleted_by" field.
-func (_u *PostTranslationUpdateOne) SetDeletedBy(v uint64) *PostTranslationUpdateOne {
+func (_u *PostTranslationUpdateOne) SetDeletedBy(v int64) *PostTranslationUpdateOne {
 	_u.mutation.ResetDeletedBy()
 	_u.mutation.SetDeletedBy(v)
 	return _u
 }
 
 // SetNillableDeletedBy sets the "deleted_by" field if the given value is not nil.
-func (_u *PostTranslationUpdateOne) SetNillableDeletedBy(v *uint64) *PostTranslationUpdateOne {
+func (_u *PostTranslationUpdateOne) SetNillableDeletedBy(v *int64) *PostTranslationUpdateOne {
 	if v != nil {
 		_u.SetDeletedBy(*v)
 	}
@@ -671,14 +671,14 @@ func (_u *PostTranslationUpdateOne) ClearSeo() *PostTranslationUpdateOne {
 }
 
 // SetPostID sets the "post_id" field.
-func (_u *PostTranslationUpdateOne) SetPostID(v uint64) *PostTranslationUpdateOne {
+func (_u *PostTranslationUpdateOne) SetPostID(v int64) *PostTranslationUpdateOne {
 	_u.mutation.ResetPostID()
 	_u.mutation.SetPostID(v)
 	return _u
 }
 
 // SetNillablePostID sets the "post_id" field if the given value is not nil.
-func (_u *PostTranslationUpdateOne) SetNillablePostID(v *uint64) *PostTranslationUpdateOne {
+func (_u *PostTranslationUpdateOne) SetNillablePostID(v *int64) *PostTranslationUpdateOne {
 	if v != nil {
 		_u.SetPostID(*v)
 	}
@@ -916,7 +916,7 @@ func (_u *PostTranslationUpdateOne) Modify(modifiers ...func(u *sql.UpdateBuilde
 }
 
 func (_u *PostTranslationUpdateOne) sqlSave(ctx context.Context) (_node *PostTranslation, err error) {
-	_spec := sqlgraph.NewUpdateSpec(posttranslation.Table, posttranslation.Columns, sqlgraph.NewFieldSpec(posttranslation.FieldID, field.TypeUint64))
+	_spec := sqlgraph.NewUpdateSpec(posttranslation.Table, posttranslation.Columns, sqlgraph.NewFieldSpec(posttranslation.FieldID, field.TypeInt64))
 	id, ok := _u.mutation.ID()
 	if !ok {
 		return nil, &ValidationError{Name: "id", err: errors.New(`ent: missing "PostTranslation.id" for update`)}
@@ -957,31 +957,31 @@ func (_u *PostTranslationUpdateOne) sqlSave(ctx context.Context) (_node *PostTra
 		_spec.ClearField(posttranslation.FieldDeletedAt, field.TypeTime)
 	}
 	if value, ok := _u.mutation.CreatedBy(); ok {
-		_spec.SetField(posttranslation.FieldCreatedBy, field.TypeUint64, value)
+		_spec.SetField(posttranslation.FieldCreatedBy, field.TypeInt64, value)
 	}
 	if value, ok := _u.mutation.AddedCreatedBy(); ok {
-		_spec.AddField(posttranslation.FieldCreatedBy, field.TypeUint64, value)
+		_spec.AddField(posttranslation.FieldCreatedBy, field.TypeInt64, value)
 	}
 	if _u.mutation.CreatedByCleared() {
-		_spec.ClearField(posttranslation.FieldCreatedBy, field.TypeUint64)
+		_spec.ClearField(posttranslation.FieldCreatedBy, field.TypeInt64)
 	}
 	if value, ok := _u.mutation.UpdatedBy(); ok {
-		_spec.SetField(posttranslation.FieldUpdatedBy, field.TypeUint64, value)
+		_spec.SetField(posttranslation.FieldUpdatedBy, field.TypeInt64, value)
 	}
 	if value, ok := _u.mutation.AddedUpdatedBy(); ok {
-		_spec.AddField(posttranslation.FieldUpdatedBy, field.TypeUint64, value)
+		_spec.AddField(posttranslation.FieldUpdatedBy, field.TypeInt64, value)
 	}
 	if _u.mutation.UpdatedByCleared() {
-		_spec.ClearField(posttranslation.FieldUpdatedBy, field.TypeUint64)
+		_spec.ClearField(posttranslation.FieldUpdatedBy, field.TypeInt64)
 	}
 	if value, ok := _u.mutation.DeletedBy(); ok {
-		_spec.SetField(posttranslation.FieldDeletedBy, field.TypeUint64, value)
+		_spec.SetField(posttranslation.FieldDeletedBy, field.TypeInt64, value)
 	}
 	if value, ok := _u.mutation.AddedDeletedBy(); ok {
-		_spec.AddField(posttranslation.FieldDeletedBy, field.TypeUint64, value)
+		_spec.AddField(posttranslation.FieldDeletedBy, field.TypeInt64, value)
 	}
 	if _u.mutation.DeletedByCleared() {
-		_spec.ClearField(posttranslation.FieldDeletedBy, field.TypeUint64)
+		_spec.ClearField(posttranslation.FieldDeletedBy, field.TypeInt64)
 	}
 	if value, ok := _u.mutation.Seo(); ok {
 		_spec.SetField(posttranslation.FieldSeo, field.TypeJSON, value)
@@ -990,16 +990,16 @@ func (_u *PostTranslationUpdateOne) sqlSave(ctx context.Context) (_node *PostTra
 		_spec.ClearField(posttranslation.FieldSeo, field.TypeJSON)
 	}
 	if _u.mutation.TenantIDCleared() {
-		_spec.ClearField(posttranslation.FieldTenantID, field.TypeUint64)
+		_spec.ClearField(posttranslation.FieldTenantID, field.TypeInt64)
 	}
 	if value, ok := _u.mutation.PostID(); ok {
-		_spec.SetField(posttranslation.FieldPostID, field.TypeUint64, value)
+		_spec.SetField(posttranslation.FieldPostID, field.TypeInt64, value)
 	}
 	if value, ok := _u.mutation.AddedPostID(); ok {
-		_spec.AddField(posttranslation.FieldPostID, field.TypeUint64, value)
+		_spec.AddField(posttranslation.FieldPostID, field.TypeInt64, value)
 	}
 	if _u.mutation.PostIDCleared() {
-		_spec.ClearField(posttranslation.FieldPostID, field.TypeUint64)
+		_spec.ClearField(posttranslation.FieldPostID, field.TypeInt64)
 	}
 	if value, ok := _u.mutation.LanguageCode(); ok {
 		_spec.SetField(posttranslation.FieldLanguageCode, field.TypeString, value)

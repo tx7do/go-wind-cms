@@ -40,7 +40,7 @@ func (s *PreviewService) CreatePagePreviewToken(ctx context.Context, req *adminV
 	return s.mint(ctx, preview.KindPage, req.GetId())
 }
 
-func (s *PreviewService) mint(ctx context.Context, kind string, id uint64) (*adminV1.PreviewToken, error) {
+func (s *PreviewService) mint(ctx context.Context, kind string, id int64) (*adminV1.PreviewToken, error) {
 	token, exp, err := preview.Mint(kind, id, preview.DefaultTTL, time.Now())
 	if err != nil {
 		s.log.Errorf("mint preview token failed (kind=%s id=%d): %v", kind, id, err)

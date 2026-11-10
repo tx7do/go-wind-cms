@@ -14,10 +14,10 @@ import (
 
 	entCrud "github.com/tx7do/go-crud/entgo"
 
+	contentV1 "go-wind-cms/api/gen/go/content/service/v1"
 	"go-wind-cms/app/core/service/internal/data/ent"
 	"go-wind-cms/app/core/service/internal/data/ent/predicate"
 	"go-wind-cms/app/core/service/internal/data/ent/redirect"
-	contentV1 "go-wind-cms/api/gen/go/content/service/v1"
 )
 
 // RedirectRepo URL 重定向仓储。
@@ -105,7 +105,7 @@ func (r *RedirectRepo) ListEnabled(ctx context.Context) ([]*contentV1.Redirect, 
 }
 
 // Get 重定向详情。
-func (r *RedirectRepo) Get(ctx context.Context, id uint64) (*contentV1.Redirect, error) {
+func (r *RedirectRepo) Get(ctx context.Context, id int64) (*contentV1.Redirect, error) {
 	conds := append(r.tenantConds(ctx), redirect.IDEQ(id))
 	row, err := r.entClient.Client().Redirect.Query().Where(conds...).Only(ctx)
 	if err != nil {
@@ -158,7 +158,7 @@ func (r *RedirectRepo) Create(ctx context.Context, dto *contentV1.Redirect) (*co
 }
 
 // Update 按 mask 更新。
-func (r *RedirectRepo) Update(ctx context.Context, id uint64, dto *contentV1.Redirect) (*contentV1.Redirect, error) {
+func (r *RedirectRepo) Update(ctx context.Context, id int64, dto *contentV1.Redirect) (*contentV1.Redirect, error) {
 	conds := append(r.tenantConds(ctx), redirect.IDEQ(id))
 	exist, err := r.entClient.Client().Redirect.Query().Where(conds...).Only(ctx)
 	if err != nil {
@@ -201,7 +201,7 @@ func (r *RedirectRepo) Update(ctx context.Context, id uint64, dto *contentV1.Red
 }
 
 // Delete 删除。
-func (r *RedirectRepo) Delete(ctx context.Context, id uint64) error {
+func (r *RedirectRepo) Delete(ctx context.Context, id int64) error {
 	conds := append(r.tenantConds(ctx), redirect.IDEQ(id))
 	count, err := r.entClient.Client().Redirect.Delete().Where(conds...).Exec(ctx)
 	if err != nil {
@@ -223,11 +223,11 @@ func (r *RedirectRepo) tenantConds(ctx context.Context) []predicate.Redirect {
 }
 
 // tenantIDFromInternalMetadata 从内网可信元数据 x-md-global-tenant-id 读租户。
-func (r *RedirectRepo) tenantIDFromInternalMetadata(ctx context.Context) uint64 {
+func (r *RedirectRepo) tenantIDFromInternalMetadata(ctx context.Context) int64 {
 	if md, ok := kratosMetadata.FromServerContext(ctx); ok {
 		if v := md.Get("x-md-global-tenant-id"); v != "" {
-			if tid, err := strconv.ParseUint(v, 10, 32); err == nil && tid > 0 {
-				return uint64(tid)
+			if tid, err := strconv.ParseInt(v, 10, 64); err == nil && tid > 0 {
+				return int64(tid)
 			}
 		}
 	}

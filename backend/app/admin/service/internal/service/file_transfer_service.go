@@ -100,7 +100,7 @@ func parseKey(key string) (folder, filename, ext string) {
 // recordFile 记录文件元数据到数据库
 func (s *FileTransferService) recordFile(
 	ctx context.Context,
-	tenantID, userID uint64,
+	tenantID, userID int64,
 	sourceFileName string,
 	info minio.UploadInfo,
 	downloadUrl string,
@@ -458,7 +458,6 @@ func (s *FileTransferService) UploadMediaAsset(ctx context.Context, req *storage
 		return nil, err
 	}
 	fileHash := hex.EncodeToString(hasher.Sum(nil))
-
 
 	var file *storageV1.File
 	if file, err = s.recordFile(

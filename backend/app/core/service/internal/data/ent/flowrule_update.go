@@ -70,14 +70,14 @@ func (_u *FlowRuleUpdate) ClearDeletedAt() *FlowRuleUpdate {
 }
 
 // SetCreatedBy sets the "created_by" field.
-func (_u *FlowRuleUpdate) SetCreatedBy(v uint64) *FlowRuleUpdate {
+func (_u *FlowRuleUpdate) SetCreatedBy(v int64) *FlowRuleUpdate {
 	_u.mutation.ResetCreatedBy()
 	_u.mutation.SetCreatedBy(v)
 	return _u
 }
 
 // SetNillableCreatedBy sets the "created_by" field if the given value is not nil.
-func (_u *FlowRuleUpdate) SetNillableCreatedBy(v *uint64) *FlowRuleUpdate {
+func (_u *FlowRuleUpdate) SetNillableCreatedBy(v *int64) *FlowRuleUpdate {
 	if v != nil {
 		_u.SetCreatedBy(*v)
 	}
@@ -97,14 +97,14 @@ func (_u *FlowRuleUpdate) ClearCreatedBy() *FlowRuleUpdate {
 }
 
 // SetUpdatedBy sets the "updated_by" field.
-func (_u *FlowRuleUpdate) SetUpdatedBy(v uint64) *FlowRuleUpdate {
+func (_u *FlowRuleUpdate) SetUpdatedBy(v int64) *FlowRuleUpdate {
 	_u.mutation.ResetUpdatedBy()
 	_u.mutation.SetUpdatedBy(v)
 	return _u
 }
 
 // SetNillableUpdatedBy sets the "updated_by" field if the given value is not nil.
-func (_u *FlowRuleUpdate) SetNillableUpdatedBy(v *uint64) *FlowRuleUpdate {
+func (_u *FlowRuleUpdate) SetNillableUpdatedBy(v *int64) *FlowRuleUpdate {
 	if v != nil {
 		_u.SetUpdatedBy(*v)
 	}
@@ -124,14 +124,14 @@ func (_u *FlowRuleUpdate) ClearUpdatedBy() *FlowRuleUpdate {
 }
 
 // SetDeletedBy sets the "deleted_by" field.
-func (_u *FlowRuleUpdate) SetDeletedBy(v uint64) *FlowRuleUpdate {
+func (_u *FlowRuleUpdate) SetDeletedBy(v int64) *FlowRuleUpdate {
 	_u.mutation.ResetDeletedBy()
 	_u.mutation.SetDeletedBy(v)
 	return _u
 }
 
 // SetNillableDeletedBy sets the "deleted_by" field if the given value is not nil.
-func (_u *FlowRuleUpdate) SetNillableDeletedBy(v *uint64) *FlowRuleUpdate {
+func (_u *FlowRuleUpdate) SetNillableDeletedBy(v *int64) *FlowRuleUpdate {
 	if v != nil {
 		_u.SetDeletedBy(*v)
 	}
@@ -391,7 +391,7 @@ func (_u *FlowRuleUpdate) sqlSave(ctx context.Context) (_node int, err error) {
 	if err := _u.check(); err != nil {
 		return _node, err
 	}
-	_spec := sqlgraph.NewUpdateSpec(flowrule.Table, flowrule.Columns, sqlgraph.NewFieldSpec(flowrule.FieldID, field.TypeUint64))
+	_spec := sqlgraph.NewUpdateSpec(flowrule.Table, flowrule.Columns, sqlgraph.NewFieldSpec(flowrule.FieldID, field.TypeInt64))
 	if ps := _u.mutation.predicates; len(ps) > 0 {
 		_spec.Predicate = func(selector *sql.Selector) {
 			for i := range ps {
@@ -415,34 +415,34 @@ func (_u *FlowRuleUpdate) sqlSave(ctx context.Context) (_node int, err error) {
 		_spec.ClearField(flowrule.FieldDeletedAt, field.TypeTime)
 	}
 	if value, ok := _u.mutation.CreatedBy(); ok {
-		_spec.SetField(flowrule.FieldCreatedBy, field.TypeUint64, value)
+		_spec.SetField(flowrule.FieldCreatedBy, field.TypeInt64, value)
 	}
 	if value, ok := _u.mutation.AddedCreatedBy(); ok {
-		_spec.AddField(flowrule.FieldCreatedBy, field.TypeUint64, value)
+		_spec.AddField(flowrule.FieldCreatedBy, field.TypeInt64, value)
 	}
 	if _u.mutation.CreatedByCleared() {
-		_spec.ClearField(flowrule.FieldCreatedBy, field.TypeUint64)
+		_spec.ClearField(flowrule.FieldCreatedBy, field.TypeInt64)
 	}
 	if value, ok := _u.mutation.UpdatedBy(); ok {
-		_spec.SetField(flowrule.FieldUpdatedBy, field.TypeUint64, value)
+		_spec.SetField(flowrule.FieldUpdatedBy, field.TypeInt64, value)
 	}
 	if value, ok := _u.mutation.AddedUpdatedBy(); ok {
-		_spec.AddField(flowrule.FieldUpdatedBy, field.TypeUint64, value)
+		_spec.AddField(flowrule.FieldUpdatedBy, field.TypeInt64, value)
 	}
 	if _u.mutation.UpdatedByCleared() {
-		_spec.ClearField(flowrule.FieldUpdatedBy, field.TypeUint64)
+		_spec.ClearField(flowrule.FieldUpdatedBy, field.TypeInt64)
 	}
 	if value, ok := _u.mutation.DeletedBy(); ok {
-		_spec.SetField(flowrule.FieldDeletedBy, field.TypeUint64, value)
+		_spec.SetField(flowrule.FieldDeletedBy, field.TypeInt64, value)
 	}
 	if value, ok := _u.mutation.AddedDeletedBy(); ok {
-		_spec.AddField(flowrule.FieldDeletedBy, field.TypeUint64, value)
+		_spec.AddField(flowrule.FieldDeletedBy, field.TypeInt64, value)
 	}
 	if _u.mutation.DeletedByCleared() {
-		_spec.ClearField(flowrule.FieldDeletedBy, field.TypeUint64)
+		_spec.ClearField(flowrule.FieldDeletedBy, field.TypeInt64)
 	}
 	if _u.mutation.TenantIDCleared() {
-		_spec.ClearField(flowrule.FieldTenantID, field.TypeUint64)
+		_spec.ClearField(flowrule.FieldTenantID, field.TypeInt64)
 	}
 	if value, ok := _u.mutation.Name(); ok {
 		_spec.SetField(flowrule.FieldName, field.TypeString, value)
@@ -555,14 +555,14 @@ func (_u *FlowRuleUpdateOne) ClearDeletedAt() *FlowRuleUpdateOne {
 }
 
 // SetCreatedBy sets the "created_by" field.
-func (_u *FlowRuleUpdateOne) SetCreatedBy(v uint64) *FlowRuleUpdateOne {
+func (_u *FlowRuleUpdateOne) SetCreatedBy(v int64) *FlowRuleUpdateOne {
 	_u.mutation.ResetCreatedBy()
 	_u.mutation.SetCreatedBy(v)
 	return _u
 }
 
 // SetNillableCreatedBy sets the "created_by" field if the given value is not nil.
-func (_u *FlowRuleUpdateOne) SetNillableCreatedBy(v *uint64) *FlowRuleUpdateOne {
+func (_u *FlowRuleUpdateOne) SetNillableCreatedBy(v *int64) *FlowRuleUpdateOne {
 	if v != nil {
 		_u.SetCreatedBy(*v)
 	}
@@ -582,14 +582,14 @@ func (_u *FlowRuleUpdateOne) ClearCreatedBy() *FlowRuleUpdateOne {
 }
 
 // SetUpdatedBy sets the "updated_by" field.
-func (_u *FlowRuleUpdateOne) SetUpdatedBy(v uint64) *FlowRuleUpdateOne {
+func (_u *FlowRuleUpdateOne) SetUpdatedBy(v int64) *FlowRuleUpdateOne {
 	_u.mutation.ResetUpdatedBy()
 	_u.mutation.SetUpdatedBy(v)
 	return _u
 }
 
 // SetNillableUpdatedBy sets the "updated_by" field if the given value is not nil.
-func (_u *FlowRuleUpdateOne) SetNillableUpdatedBy(v *uint64) *FlowRuleUpdateOne {
+func (_u *FlowRuleUpdateOne) SetNillableUpdatedBy(v *int64) *FlowRuleUpdateOne {
 	if v != nil {
 		_u.SetUpdatedBy(*v)
 	}
@@ -609,14 +609,14 @@ func (_u *FlowRuleUpdateOne) ClearUpdatedBy() *FlowRuleUpdateOne {
 }
 
 // SetDeletedBy sets the "deleted_by" field.
-func (_u *FlowRuleUpdateOne) SetDeletedBy(v uint64) *FlowRuleUpdateOne {
+func (_u *FlowRuleUpdateOne) SetDeletedBy(v int64) *FlowRuleUpdateOne {
 	_u.mutation.ResetDeletedBy()
 	_u.mutation.SetDeletedBy(v)
 	return _u
 }
 
 // SetNillableDeletedBy sets the "deleted_by" field if the given value is not nil.
-func (_u *FlowRuleUpdateOne) SetNillableDeletedBy(v *uint64) *FlowRuleUpdateOne {
+func (_u *FlowRuleUpdateOne) SetNillableDeletedBy(v *int64) *FlowRuleUpdateOne {
 	if v != nil {
 		_u.SetDeletedBy(*v)
 	}
@@ -889,7 +889,7 @@ func (_u *FlowRuleUpdateOne) sqlSave(ctx context.Context) (_node *FlowRule, err 
 	if err := _u.check(); err != nil {
 		return _node, err
 	}
-	_spec := sqlgraph.NewUpdateSpec(flowrule.Table, flowrule.Columns, sqlgraph.NewFieldSpec(flowrule.FieldID, field.TypeUint64))
+	_spec := sqlgraph.NewUpdateSpec(flowrule.Table, flowrule.Columns, sqlgraph.NewFieldSpec(flowrule.FieldID, field.TypeInt64))
 	id, ok := _u.mutation.ID()
 	if !ok {
 		return nil, &ValidationError{Name: "id", err: errors.New(`ent: missing "FlowRule.id" for update`)}
@@ -930,34 +930,34 @@ func (_u *FlowRuleUpdateOne) sqlSave(ctx context.Context) (_node *FlowRule, err 
 		_spec.ClearField(flowrule.FieldDeletedAt, field.TypeTime)
 	}
 	if value, ok := _u.mutation.CreatedBy(); ok {
-		_spec.SetField(flowrule.FieldCreatedBy, field.TypeUint64, value)
+		_spec.SetField(flowrule.FieldCreatedBy, field.TypeInt64, value)
 	}
 	if value, ok := _u.mutation.AddedCreatedBy(); ok {
-		_spec.AddField(flowrule.FieldCreatedBy, field.TypeUint64, value)
+		_spec.AddField(flowrule.FieldCreatedBy, field.TypeInt64, value)
 	}
 	if _u.mutation.CreatedByCleared() {
-		_spec.ClearField(flowrule.FieldCreatedBy, field.TypeUint64)
+		_spec.ClearField(flowrule.FieldCreatedBy, field.TypeInt64)
 	}
 	if value, ok := _u.mutation.UpdatedBy(); ok {
-		_spec.SetField(flowrule.FieldUpdatedBy, field.TypeUint64, value)
+		_spec.SetField(flowrule.FieldUpdatedBy, field.TypeInt64, value)
 	}
 	if value, ok := _u.mutation.AddedUpdatedBy(); ok {
-		_spec.AddField(flowrule.FieldUpdatedBy, field.TypeUint64, value)
+		_spec.AddField(flowrule.FieldUpdatedBy, field.TypeInt64, value)
 	}
 	if _u.mutation.UpdatedByCleared() {
-		_spec.ClearField(flowrule.FieldUpdatedBy, field.TypeUint64)
+		_spec.ClearField(flowrule.FieldUpdatedBy, field.TypeInt64)
 	}
 	if value, ok := _u.mutation.DeletedBy(); ok {
-		_spec.SetField(flowrule.FieldDeletedBy, field.TypeUint64, value)
+		_spec.SetField(flowrule.FieldDeletedBy, field.TypeInt64, value)
 	}
 	if value, ok := _u.mutation.AddedDeletedBy(); ok {
-		_spec.AddField(flowrule.FieldDeletedBy, field.TypeUint64, value)
+		_spec.AddField(flowrule.FieldDeletedBy, field.TypeInt64, value)
 	}
 	if _u.mutation.DeletedByCleared() {
-		_spec.ClearField(flowrule.FieldDeletedBy, field.TypeUint64)
+		_spec.ClearField(flowrule.FieldDeletedBy, field.TypeInt64)
 	}
 	if _u.mutation.TenantIDCleared() {
-		_spec.ClearField(flowrule.FieldTenantID, field.TypeUint64)
+		_spec.ClearField(flowrule.FieldTenantID, field.TypeInt64)
 	}
 	if value, ok := _u.mutation.Name(); ok {
 		_spec.SetField(flowrule.FieldName, field.TypeString, value)

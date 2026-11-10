@@ -70,14 +70,14 @@ func (_u *RedirectUpdate) ClearDeletedAt() *RedirectUpdate {
 }
 
 // SetCreatedBy sets the "created_by" field.
-func (_u *RedirectUpdate) SetCreatedBy(v uint64) *RedirectUpdate {
+func (_u *RedirectUpdate) SetCreatedBy(v int64) *RedirectUpdate {
 	_u.mutation.ResetCreatedBy()
 	_u.mutation.SetCreatedBy(v)
 	return _u
 }
 
 // SetNillableCreatedBy sets the "created_by" field if the given value is not nil.
-func (_u *RedirectUpdate) SetNillableCreatedBy(v *uint64) *RedirectUpdate {
+func (_u *RedirectUpdate) SetNillableCreatedBy(v *int64) *RedirectUpdate {
 	if v != nil {
 		_u.SetCreatedBy(*v)
 	}
@@ -97,14 +97,14 @@ func (_u *RedirectUpdate) ClearCreatedBy() *RedirectUpdate {
 }
 
 // SetUpdatedBy sets the "updated_by" field.
-func (_u *RedirectUpdate) SetUpdatedBy(v uint64) *RedirectUpdate {
+func (_u *RedirectUpdate) SetUpdatedBy(v int64) *RedirectUpdate {
 	_u.mutation.ResetUpdatedBy()
 	_u.mutation.SetUpdatedBy(v)
 	return _u
 }
 
 // SetNillableUpdatedBy sets the "updated_by" field if the given value is not nil.
-func (_u *RedirectUpdate) SetNillableUpdatedBy(v *uint64) *RedirectUpdate {
+func (_u *RedirectUpdate) SetNillableUpdatedBy(v *int64) *RedirectUpdate {
 	if v != nil {
 		_u.SetUpdatedBy(*v)
 	}
@@ -124,14 +124,14 @@ func (_u *RedirectUpdate) ClearUpdatedBy() *RedirectUpdate {
 }
 
 // SetDeletedBy sets the "deleted_by" field.
-func (_u *RedirectUpdate) SetDeletedBy(v uint64) *RedirectUpdate {
+func (_u *RedirectUpdate) SetDeletedBy(v int64) *RedirectUpdate {
 	_u.mutation.ResetDeletedBy()
 	_u.mutation.SetDeletedBy(v)
 	return _u
 }
 
 // SetNillableDeletedBy sets the "deleted_by" field if the given value is not nil.
-func (_u *RedirectUpdate) SetNillableDeletedBy(v *uint64) *RedirectUpdate {
+func (_u *RedirectUpdate) SetNillableDeletedBy(v *int64) *RedirectUpdate {
 	if v != nil {
 		_u.SetDeletedBy(*v)
 	}
@@ -302,7 +302,7 @@ func (_u *RedirectUpdate) sqlSave(ctx context.Context) (_node int, err error) {
 	if err := _u.check(); err != nil {
 		return _node, err
 	}
-	_spec := sqlgraph.NewUpdateSpec(redirect.Table, redirect.Columns, sqlgraph.NewFieldSpec(redirect.FieldID, field.TypeUint64))
+	_spec := sqlgraph.NewUpdateSpec(redirect.Table, redirect.Columns, sqlgraph.NewFieldSpec(redirect.FieldID, field.TypeInt64))
 	if ps := _u.mutation.predicates; len(ps) > 0 {
 		_spec.Predicate = func(selector *sql.Selector) {
 			for i := range ps {
@@ -326,34 +326,34 @@ func (_u *RedirectUpdate) sqlSave(ctx context.Context) (_node int, err error) {
 		_spec.ClearField(redirect.FieldDeletedAt, field.TypeTime)
 	}
 	if value, ok := _u.mutation.CreatedBy(); ok {
-		_spec.SetField(redirect.FieldCreatedBy, field.TypeUint64, value)
+		_spec.SetField(redirect.FieldCreatedBy, field.TypeInt64, value)
 	}
 	if value, ok := _u.mutation.AddedCreatedBy(); ok {
-		_spec.AddField(redirect.FieldCreatedBy, field.TypeUint64, value)
+		_spec.AddField(redirect.FieldCreatedBy, field.TypeInt64, value)
 	}
 	if _u.mutation.CreatedByCleared() {
-		_spec.ClearField(redirect.FieldCreatedBy, field.TypeUint64)
+		_spec.ClearField(redirect.FieldCreatedBy, field.TypeInt64)
 	}
 	if value, ok := _u.mutation.UpdatedBy(); ok {
-		_spec.SetField(redirect.FieldUpdatedBy, field.TypeUint64, value)
+		_spec.SetField(redirect.FieldUpdatedBy, field.TypeInt64, value)
 	}
 	if value, ok := _u.mutation.AddedUpdatedBy(); ok {
-		_spec.AddField(redirect.FieldUpdatedBy, field.TypeUint64, value)
+		_spec.AddField(redirect.FieldUpdatedBy, field.TypeInt64, value)
 	}
 	if _u.mutation.UpdatedByCleared() {
-		_spec.ClearField(redirect.FieldUpdatedBy, field.TypeUint64)
+		_spec.ClearField(redirect.FieldUpdatedBy, field.TypeInt64)
 	}
 	if value, ok := _u.mutation.DeletedBy(); ok {
-		_spec.SetField(redirect.FieldDeletedBy, field.TypeUint64, value)
+		_spec.SetField(redirect.FieldDeletedBy, field.TypeInt64, value)
 	}
 	if value, ok := _u.mutation.AddedDeletedBy(); ok {
-		_spec.AddField(redirect.FieldDeletedBy, field.TypeUint64, value)
+		_spec.AddField(redirect.FieldDeletedBy, field.TypeInt64, value)
 	}
 	if _u.mutation.DeletedByCleared() {
-		_spec.ClearField(redirect.FieldDeletedBy, field.TypeUint64)
+		_spec.ClearField(redirect.FieldDeletedBy, field.TypeInt64)
 	}
 	if _u.mutation.TenantIDCleared() {
-		_spec.ClearField(redirect.FieldTenantID, field.TypeUint64)
+		_spec.ClearField(redirect.FieldTenantID, field.TypeInt64)
 	}
 	if value, ok := _u.mutation.FromPath(); ok {
 		_spec.SetField(redirect.FieldFromPath, field.TypeString, value)
@@ -445,14 +445,14 @@ func (_u *RedirectUpdateOne) ClearDeletedAt() *RedirectUpdateOne {
 }
 
 // SetCreatedBy sets the "created_by" field.
-func (_u *RedirectUpdateOne) SetCreatedBy(v uint64) *RedirectUpdateOne {
+func (_u *RedirectUpdateOne) SetCreatedBy(v int64) *RedirectUpdateOne {
 	_u.mutation.ResetCreatedBy()
 	_u.mutation.SetCreatedBy(v)
 	return _u
 }
 
 // SetNillableCreatedBy sets the "created_by" field if the given value is not nil.
-func (_u *RedirectUpdateOne) SetNillableCreatedBy(v *uint64) *RedirectUpdateOne {
+func (_u *RedirectUpdateOne) SetNillableCreatedBy(v *int64) *RedirectUpdateOne {
 	if v != nil {
 		_u.SetCreatedBy(*v)
 	}
@@ -472,14 +472,14 @@ func (_u *RedirectUpdateOne) ClearCreatedBy() *RedirectUpdateOne {
 }
 
 // SetUpdatedBy sets the "updated_by" field.
-func (_u *RedirectUpdateOne) SetUpdatedBy(v uint64) *RedirectUpdateOne {
+func (_u *RedirectUpdateOne) SetUpdatedBy(v int64) *RedirectUpdateOne {
 	_u.mutation.ResetUpdatedBy()
 	_u.mutation.SetUpdatedBy(v)
 	return _u
 }
 
 // SetNillableUpdatedBy sets the "updated_by" field if the given value is not nil.
-func (_u *RedirectUpdateOne) SetNillableUpdatedBy(v *uint64) *RedirectUpdateOne {
+func (_u *RedirectUpdateOne) SetNillableUpdatedBy(v *int64) *RedirectUpdateOne {
 	if v != nil {
 		_u.SetUpdatedBy(*v)
 	}
@@ -499,14 +499,14 @@ func (_u *RedirectUpdateOne) ClearUpdatedBy() *RedirectUpdateOne {
 }
 
 // SetDeletedBy sets the "deleted_by" field.
-func (_u *RedirectUpdateOne) SetDeletedBy(v uint64) *RedirectUpdateOne {
+func (_u *RedirectUpdateOne) SetDeletedBy(v int64) *RedirectUpdateOne {
 	_u.mutation.ResetDeletedBy()
 	_u.mutation.SetDeletedBy(v)
 	return _u
 }
 
 // SetNillableDeletedBy sets the "deleted_by" field if the given value is not nil.
-func (_u *RedirectUpdateOne) SetNillableDeletedBy(v *uint64) *RedirectUpdateOne {
+func (_u *RedirectUpdateOne) SetNillableDeletedBy(v *int64) *RedirectUpdateOne {
 	if v != nil {
 		_u.SetDeletedBy(*v)
 	}
@@ -690,7 +690,7 @@ func (_u *RedirectUpdateOne) sqlSave(ctx context.Context) (_node *Redirect, err 
 	if err := _u.check(); err != nil {
 		return _node, err
 	}
-	_spec := sqlgraph.NewUpdateSpec(redirect.Table, redirect.Columns, sqlgraph.NewFieldSpec(redirect.FieldID, field.TypeUint64))
+	_spec := sqlgraph.NewUpdateSpec(redirect.Table, redirect.Columns, sqlgraph.NewFieldSpec(redirect.FieldID, field.TypeInt64))
 	id, ok := _u.mutation.ID()
 	if !ok {
 		return nil, &ValidationError{Name: "id", err: errors.New(`ent: missing "Redirect.id" for update`)}
@@ -731,34 +731,34 @@ func (_u *RedirectUpdateOne) sqlSave(ctx context.Context) (_node *Redirect, err 
 		_spec.ClearField(redirect.FieldDeletedAt, field.TypeTime)
 	}
 	if value, ok := _u.mutation.CreatedBy(); ok {
-		_spec.SetField(redirect.FieldCreatedBy, field.TypeUint64, value)
+		_spec.SetField(redirect.FieldCreatedBy, field.TypeInt64, value)
 	}
 	if value, ok := _u.mutation.AddedCreatedBy(); ok {
-		_spec.AddField(redirect.FieldCreatedBy, field.TypeUint64, value)
+		_spec.AddField(redirect.FieldCreatedBy, field.TypeInt64, value)
 	}
 	if _u.mutation.CreatedByCleared() {
-		_spec.ClearField(redirect.FieldCreatedBy, field.TypeUint64)
+		_spec.ClearField(redirect.FieldCreatedBy, field.TypeInt64)
 	}
 	if value, ok := _u.mutation.UpdatedBy(); ok {
-		_spec.SetField(redirect.FieldUpdatedBy, field.TypeUint64, value)
+		_spec.SetField(redirect.FieldUpdatedBy, field.TypeInt64, value)
 	}
 	if value, ok := _u.mutation.AddedUpdatedBy(); ok {
-		_spec.AddField(redirect.FieldUpdatedBy, field.TypeUint64, value)
+		_spec.AddField(redirect.FieldUpdatedBy, field.TypeInt64, value)
 	}
 	if _u.mutation.UpdatedByCleared() {
-		_spec.ClearField(redirect.FieldUpdatedBy, field.TypeUint64)
+		_spec.ClearField(redirect.FieldUpdatedBy, field.TypeInt64)
 	}
 	if value, ok := _u.mutation.DeletedBy(); ok {
-		_spec.SetField(redirect.FieldDeletedBy, field.TypeUint64, value)
+		_spec.SetField(redirect.FieldDeletedBy, field.TypeInt64, value)
 	}
 	if value, ok := _u.mutation.AddedDeletedBy(); ok {
-		_spec.AddField(redirect.FieldDeletedBy, field.TypeUint64, value)
+		_spec.AddField(redirect.FieldDeletedBy, field.TypeInt64, value)
 	}
 	if _u.mutation.DeletedByCleared() {
-		_spec.ClearField(redirect.FieldDeletedBy, field.TypeUint64)
+		_spec.ClearField(redirect.FieldDeletedBy, field.TypeInt64)
 	}
 	if _u.mutation.TenantIDCleared() {
-		_spec.ClearField(redirect.FieldTenantID, field.TypeUint64)
+		_spec.ClearField(redirect.FieldTenantID, field.TypeInt64)
 	}
 	if value, ok := _u.mutation.FromPath(); ok {
 		_spec.SetField(redirect.FieldFromPath, field.TypeString, value)

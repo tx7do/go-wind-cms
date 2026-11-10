@@ -39,7 +39,7 @@ func (s *InternalMessageCategoryService) Count(ctx context.Context, req *paginat
 	}
 
 	return &internalMessageV1.CountInternalMessageCategoryResponse{
-		Count: uint64(count),
+		Count: int64(count),
 	}, nil
 }
 

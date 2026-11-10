@@ -16,9 +16,9 @@ import (
 type CategoryService struct {
 	contentV1.UnimplementedCategoryServiceServer
 
-	categoryRepo      *data.CategoryRepo
-	contentModelRepo  *data.ContentModelRepo
-	log               *log.Helper
+	categoryRepo     *data.CategoryRepo
+	contentModelRepo *data.ContentModelRepo
+	log              *log.Helper
 }
 
 func NewCategoryService(ctx *bootstrap.Context, uc *data.CategoryRepo, contentModelRepo *data.ContentModelRepo) *CategoryService {

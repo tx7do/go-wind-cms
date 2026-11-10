@@ -4,13 +4,13 @@ import (
 	"context"
 	"strconv"
 
-	authnEngine "github.com/tx7do/kratos-authn/engine"
 	"github.com/go-kratos/kratos/v2/log"
-	khttp "github.com/go-kratos/kratos/v2/transport/http"
 	kratosMetadata "github.com/go-kratos/kratos/v2/metadata"
+	khttp "github.com/go-kratos/kratos/v2/transport/http"
 	paginationV1 "github.com/tx7do/go-crud/api/gen/go/pagination/v1"
-	"github.com/tx7do/kratos-bootstrap/bootstrap"
 	"github.com/tx7do/go-utils/trans"
+	authnEngine "github.com/tx7do/kratos-authn/engine"
+	"github.com/tx7do/kratos-bootstrap/bootstrap"
 	"google.golang.org/protobuf/types/known/emptypb"
 
 	appV1 "go-wind-cms/api/gen/go/app/service/v1"
@@ -43,7 +43,6 @@ func NewCommentService(
 	}
 }
 
-
 func (s *CommentService) List(ctx context.Context, req *paginationV1.PagingRequest) (*commentV1.ListCommentResponse, error) {
 	resp, err := s.commentClient.List(ctx, req)
 	if err != nil {
@@ -58,7 +57,7 @@ func (s *CommentService) List(ctx context.Context, req *paginationV1.PagingReque
 			}
 		}
 		resp.Items = filtered
-		resp.Total = uint64(len(filtered))
+		resp.Total = int64(len(filtered))
 	}
 	return resp, nil
 }
@@ -92,7 +91,7 @@ func (s *CommentService) Create(ctx context.Context, req *commentV1.CreateCommen
 	// ── 可选认证:白名单操作不会注入 operator,手动校验 bearer(存在才解析) ──
 	var (
 		isLogin       bool
-		loginUserID   uint64
+		loginUserID   int64
 		loginUsername string
 	)
 	if s.accessTokenChecker != nil {
@@ -115,7 +114,7 @@ func (s *CommentService) Create(ctx context.Context, req *commentV1.CreateCommen
 	if s.tenantResolve != nil {
 		if hr, ok := khttp.RequestFromServerContext(ctx); ok && hr != nil && hr.Host != "" {
 			if tid, terr := s.tenantResolve.ResolveTenantIDByDomain(ctx, hr.Host); terr == nil && tid > 0 {
-				ctx = kratosMetadata.AppendToClientContext(ctx, "x-md-global-tenant-id", strconv.FormatUint(uint64(tid), 10))
+				ctx = kratosMetadata.AppendToClientContext(ctx, "x-md-global-tenant-id", strconv.FormatInt(int64(tid), 10))
 			}
 		}
 	}
@@ -134,8 +133,8 @@ func (s *CommentService) Create(ctx context.Context, req *commentV1.CreateCommen
 			return nil, commentV1.ErrorBadRequest("author name and email are required for guest comments")
 		}
 		req.Data.AuthorType = trans.Ptr(commentV1.Comment_AUTHOR_TYPE_GUEST)
-		req.Data.AuthorId = trans.Ptr(uint64(0))
-		req.Data.CreatedBy = trans.Ptr(uint64(0))
+		req.Data.AuthorId = trans.Ptr(int64(0))
+		req.Data.CreatedBy = trans.Ptr(int64(0))
 	}
 
 	// 统一待审核入库,审核通过后前台可见
@@ -144,9 +143,8 @@ func (s *CommentService) Create(ctx context.Context, req *commentV1.CreateCommen
 	return s.commentClient.Create(ctx, req)
 }
 
-
 // ensureCommentOwner 校验调用者是否为目标评论的作者，防止任意登录用户改/删他人评论（IDOR）。
-func (s *CommentService) ensureCommentOwner(ctx context.Context, commentID uint64) error {
+func (s *CommentService) ensureCommentOwner(ctx context.Context, commentID int64) error {
 	operator, err := auth.FromContext(ctx)
 	if err != nil {
 		return commentV1.ErrorUnauthorized("authentication required")

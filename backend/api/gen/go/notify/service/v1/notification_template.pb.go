@@ -30,7 +30,7 @@ const (
 // 通知模板：可复用的标题/正文占位模板（{{var}}），平台全局、code 全局唯一。
 type NotificationTemplate struct {
 	state protoimpl.MessageState `protogen:"open.v1"`
-	Id    *uint64                `protobuf:"varint,1,opt,name=id,proto3,oneof" json:"id,omitempty"`
+	Id    *int64                 `protobuf:"varint,1,opt,name=id,proto3,oneof" json:"id,omitempty"`
 	Name  *string                `protobuf:"bytes,2,opt,name=name,proto3,oneof" json:"name,omitempty"`
 	// 模板编码，发送方以 template_code 引用；全局唯一，仅限字母数字与下划线/连字符
 	Code *string `protobuf:"bytes,3,opt,name=code,proto3,oneof" json:"code,omitempty"`
@@ -76,7 +76,7 @@ func (*NotificationTemplate) Descriptor() ([]byte, []int) {
 	return file_notify_service_v1_notification_template_proto_rawDescGZIP(), []int{0}
 }
 
-func (x *NotificationTemplate) GetId() uint64 {
+func (x *NotificationTemplate) GetId() int64 {
 	if x != nil && x.Id != nil {
 		return *x.Id
 	}
@@ -141,7 +141,7 @@ func (x *NotificationTemplate) GetUpdatedAt() *timestamppb.Timestamp {
 
 type GetNotificationTemplateRequest struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
-	Id            uint64                 `protobuf:"varint,1,opt,name=id,proto3" json:"id,omitempty"`
+	Id            int64                  `protobuf:"varint,1,opt,name=id,proto3" json:"id,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -176,7 +176,7 @@ func (*GetNotificationTemplateRequest) Descriptor() ([]byte, []int) {
 	return file_notify_service_v1_notification_template_proto_rawDescGZIP(), []int{1}
 }
 
-func (x *GetNotificationTemplateRequest) GetId() uint64 {
+func (x *GetNotificationTemplateRequest) GetId() int64 {
 	if x != nil {
 		return x.Id
 	}
@@ -273,7 +273,7 @@ func (x *CreateNotificationTemplateRequest) GetData() *NotificationTemplate {
 
 type UpdateNotificationTemplateRequest struct {
 	state protoimpl.MessageState `protogen:"open.v1"`
-	Id    uint64                 `protobuf:"varint,1,opt,name=id,proto3" json:"id,omitempty"`
+	Id    int64                  `protobuf:"varint,1,opt,name=id,proto3" json:"id,omitempty"`
 	Data  *NotificationTemplate  `protobuf:"bytes,2,opt,name=data,proto3" json:"data,omitempty"`
 	// 字段掩码：留空更新全部字段
 	UpdateMask    *fieldmaskpb.FieldMask `protobuf:"bytes,3,opt,name=update_mask,json=updateMask,proto3,oneof" json:"update_mask,omitempty"`
@@ -311,7 +311,7 @@ func (*UpdateNotificationTemplateRequest) Descriptor() ([]byte, []int) {
 	return file_notify_service_v1_notification_template_proto_rawDescGZIP(), []int{4}
 }
 
-func (x *UpdateNotificationTemplateRequest) GetId() uint64 {
+func (x *UpdateNotificationTemplateRequest) GetId() int64 {
 	if x != nil {
 		return x.Id
 	}
@@ -334,7 +334,7 @@ func (x *UpdateNotificationTemplateRequest) GetUpdateMask() *fieldmaskpb.FieldMa
 
 type DeleteNotificationTemplateRequest struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
-	Id            uint64                 `protobuf:"varint,1,opt,name=id,proto3" json:"id,omitempty"`
+	Id            int64                  `protobuf:"varint,1,opt,name=id,proto3" json:"id,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -369,7 +369,7 @@ func (*DeleteNotificationTemplateRequest) Descriptor() ([]byte, []int) {
 	return file_notify_service_v1_notification_template_proto_rawDescGZIP(), []int{5}
 }
 
-func (x *DeleteNotificationTemplateRequest) GetId() uint64 {
+func (x *DeleteNotificationTemplateRequest) GetId() int64 {
 	if x != nil {
 		return x.Id
 	}
@@ -378,7 +378,7 @@ func (x *DeleteNotificationTemplateRequest) GetId() uint64 {
 
 type ListNotificationTemplateResponse struct {
 	state         protoimpl.MessageState  `protogen:"open.v1"`
-	Total         uint64                  `protobuf:"varint,1,opt,name=total,proto3" json:"total,omitempty"`
+	Total         int64                   `protobuf:"varint,1,opt,name=total,proto3" json:"total,omitempty"`
 	Items         []*NotificationTemplate `protobuf:"bytes,2,rep,name=items,proto3" json:"items,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
@@ -414,7 +414,7 @@ func (*ListNotificationTemplateResponse) Descriptor() ([]byte, []int) {
 	return file_notify_service_v1_notification_template_proto_rawDescGZIP(), []int{6}
 }
 
-func (x *ListNotificationTemplateResponse) GetTotal() uint64 {
+func (x *ListNotificationTemplateResponse) GetTotal() int64 {
 	if x != nil {
 		return x.Total
 	}
@@ -432,7 +432,7 @@ func (x *ListNotificationTemplateResponse) GetItems() []*NotificationTemplate {
 type RenderNotificationTemplateRequest struct {
 	state protoimpl.MessageState `protogen:"open.v1"`
 	// 被渲染的模板 ID
-	Id uint64 `protobuf:"varint,1,opt,name=id,proto3" json:"id,omitempty"`
+	Id int64 `protobuf:"varint,1,opt,name=id,proto3" json:"id,omitempty"`
 	// 变量集：占位符名 → 值；模板引用了变量集里没有的占位符时整个渲染报错
 	Variables     map[string]string `protobuf:"bytes,2,rep,name=variables,proto3" json:"variables,omitempty" protobuf_key:"bytes,1,opt,name=key" protobuf_val:"bytes,2,opt,name=value"`
 	unknownFields protoimpl.UnknownFields
@@ -469,7 +469,7 @@ func (*RenderNotificationTemplateRequest) Descriptor() ([]byte, []int) {
 	return file_notify_service_v1_notification_template_proto_rawDescGZIP(), []int{7}
 }
 
-func (x *RenderNotificationTemplateRequest) GetId() uint64 {
+func (x *RenderNotificationTemplateRequest) GetId() int64 {
 	if x != nil {
 		return x.Id
 	}
@@ -541,7 +541,7 @@ const file_notify_service_v1_notification_template_proto_rawDesc = "" +
 	"\n" +
 	"-notify/service/v1/notification_template.proto\x12\x11notify.service.v1\x1a$gnostic/openapi/v3/annotations.proto\x1a\x1bgoogle/protobuf/empty.proto\x1a\x1fgoogle/protobuf/timestamp.proto\x1a google/protobuf/field_mask.proto\x1a\x1epagination/v1/pagination.proto\x1a\x17validate/validate.proto\"\xbf\x04\n" +
 	"\x14NotificationTemplate\x12\x13\n" +
-	"\x02id\x18\x01 \x01(\x04H\x00R\x02id\x88\x01\x01\x12\"\n" +
+	"\x02id\x18\x01 \x01(\x03H\x00R\x02id\x88\x01\x01\x12\"\n" +
 	"\x04name\x18\x02 \x01(\tB\t\xfaB\x06r\x04\x10\x01\x18dH\x01R\x04name\x88\x01\x01\x125\n" +
 	"\x04code\x18\x03 \x01(\tB\x1c\xfaB\x19r\x172\x15^[A-Za-z0-9_-]{1,64}$H\x02R\x04code\x88\x01\x01\x126\n" +
 	"\x0etitle_template\x18\x04 \x01(\tB\n" +
@@ -564,24 +564,24 @@ const file_notify_service_v1_notification_template_proto_rawDesc = "" +
 	"\v_created_atB\r\n" +
 	"\v_updated_at\"0\n" +
 	"\x1eGetNotificationTemplateRequest\x12\x0e\n" +
-	"\x02id\x18\x01 \x01(\x04R\x02id\":\n" +
+	"\x02id\x18\x01 \x01(\x03R\x02id\":\n" +
 	"$GetNotificationTemplateByCodeRequest\x12\x12\n" +
 	"\x04code\x18\x01 \x01(\tR\x04code\"`\n" +
 	"!CreateNotificationTemplateRequest\x12;\n" +
 	"\x04data\x18\x01 \x01(\v2'.notify.service.v1.NotificationTemplateR\x04data\"\xc2\x01\n" +
 	"!UpdateNotificationTemplateRequest\x12\x0e\n" +
-	"\x02id\x18\x01 \x01(\x04R\x02id\x12;\n" +
+	"\x02id\x18\x01 \x01(\x03R\x02id\x12;\n" +
 	"\x04data\x18\x02 \x01(\v2'.notify.service.v1.NotificationTemplateR\x04data\x12@\n" +
 	"\vupdate_mask\x18\x03 \x01(\v2\x1a.google.protobuf.FieldMaskH\x00R\n" +
 	"updateMask\x88\x01\x01B\x0e\n" +
 	"\f_update_mask\"3\n" +
 	"!DeleteNotificationTemplateRequest\x12\x0e\n" +
-	"\x02id\x18\x01 \x01(\x04R\x02id\"w\n" +
+	"\x02id\x18\x01 \x01(\x03R\x02id\"w\n" +
 	" ListNotificationTemplateResponse\x12\x14\n" +
-	"\x05total\x18\x01 \x01(\x04R\x05total\x12=\n" +
+	"\x05total\x18\x01 \x01(\x03R\x05total\x12=\n" +
 	"\x05items\x18\x02 \x03(\v2'.notify.service.v1.NotificationTemplateR\x05items\"\xd4\x01\n" +
 	"!RenderNotificationTemplateRequest\x12\x0e\n" +
-	"\x02id\x18\x01 \x01(\x04R\x02id\x12a\n" +
+	"\x02id\x18\x01 \x01(\x03R\x02id\x12a\n" +
 	"\tvariables\x18\x02 \x03(\v2C.notify.service.v1.RenderNotificationTemplateRequest.VariablesEntryR\tvariables\x1a<\n" +
 	"\x0eVariablesEntry\x12\x10\n" +
 	"\x03key\x18\x01 \x01(\tR\x03key\x12\x14\n" +

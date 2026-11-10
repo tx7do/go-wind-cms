@@ -53,9 +53,9 @@ func Publish() broker.PublishMiddleware {
 				msg.SetHeader(TraceIDHeaderKey, traceID)
 			}
 
-			msg.SetHeader(UserIDHeaderKey, strconv.FormatUint(vCtx.UserID(), 10))
-			msg.SetHeader(TenantIDHeaderKey, strconv.FormatUint(vCtx.TenantID(), 10))
-			msg.SetHeader(OrgUnitIDHeaderKey, strconv.FormatUint(vCtx.OrgUnitID(), 10))
+			msg.SetHeader(UserIDHeaderKey, strconv.FormatInt(vCtx.UserID(), 10))
+			msg.SetHeader(TenantIDHeaderKey, strconv.FormatInt(vCtx.TenantID(), 10))
+			msg.SetHeader(OrgUnitIDHeaderKey, strconv.FormatInt(vCtx.OrgUnitID(), 10))
 			if len(vCtx.Permissions()) > 0 {
 				msg.SetHeader(PermissionsHeaderKey, strings.Join(vCtx.Permissions(), ","))
 			}
@@ -116,25 +116,25 @@ func Subscriber() broker.SubscriberMiddleware {
 				}
 			}
 
-			var userID, tenantID, orgUnitID uint64
+			var userID, tenantID, orgUnitID int64
 			var err error
 
 			if userIDStr != "" {
-				userID, err = strconv.ParseUint(userIDStr, 10, 64)
+				userID, err = strconv.ParseInt(userIDStr, 10, 64)
 				if err != nil {
 					log.Warnf("ent broker middleware: invalid user id header: %v", err)
 				}
 			}
 
 			if tenantIDStr != "" {
-				tenantID, err = strconv.ParseUint(tenantIDStr, 10, 64)
+				tenantID, err = strconv.ParseInt(tenantIDStr, 10, 64)
 				if err != nil {
 					log.Warnf("ent broker middleware: invalid tenant id header: %v", err)
 				}
 			}
 
 			if orgUnitIDStr != "" {
-				orgUnitID, err = strconv.ParseUint(orgUnitIDStr, 10, 64)
+				orgUnitID, err = strconv.ParseInt(orgUnitIDStr, 10, 64)
 				if err != nil {
 					log.Warnf("ent broker middleware: invalid org unit id header: %v", err)
 				}

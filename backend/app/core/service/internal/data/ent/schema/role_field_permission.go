@@ -31,7 +31,7 @@ func (RoleFieldPermission) Annotations() []schema.Annotation {
 // Fields of the RoleFieldPermission.
 func (RoleFieldPermission) Fields() []ent.Field {
 	return []ent.Field{
-		field.Uint64("role_id").
+		field.Int64("role_id").
 			Comment("角色ID").
 			Positive(),
 

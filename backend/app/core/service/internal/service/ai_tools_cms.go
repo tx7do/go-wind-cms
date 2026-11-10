@@ -70,7 +70,7 @@ func cmsToolDefs() []openai.Tool {
 
 // execCMSTool 执行一个 CMS 工具调用。返回 ok=false 表示非 CMS 工具（回退内置执行器）。
 // 未知参数/执行错误返回错误文本（回传模型让它自行纠正，而非中断整轮）。
-func (s *AiChatService) execCMSTool(ctx context.Context, tenantId uint64, name, args string) (string, bool, error) {
+func (s *AiChatService) execCMSTool(ctx context.Context, tenantId int64, name, args string) (string, bool, error) {
 	var p map[string]any
 	if args != "" {
 		_ = json.Unmarshal([]byte(args), &p)

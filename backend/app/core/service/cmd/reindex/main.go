@@ -3,7 +3,7 @@
 // 背景搜索索引只由写路径的 asynq "search.reindex" 任务逐条维护（帖子
 // 创建/更新时触发），存量数据（如 demo SQL 直灌）永远没有索引。本命令
 // 遍历 DB 中全部帖子，复用与写路径完全相同的处理器
-//（SearchService.ReindexPost，含 SystemViewer 特权、tenant_id 取自 DB、
+// （SearchService.ReindexPost，含 SystemViewer 特权、tenant_id 取自 DB、
 // 非 PUBLISHED 清理残留）把已发布文章及其翻译写入 posts 索引。
 //
 // 用法（在 service 目录下运行，配置取自 ./configs）：
@@ -19,12 +19,12 @@ import (
 	conf "github.com/tx7do/kratos-bootstrap/api/gen/go/conf/v1"
 	"github.com/tx7do/kratos-bootstrap/bootstrap"
 
+	bConfig "github.com/tx7do/kratos-bootstrap/config"
+	bLogger "github.com/tx7do/kratos-bootstrap/logger"
 	authenticationV1 "go-wind-cms/api/gen/go/authentication/service/v1"
 	"go-wind-cms/app/core/service/internal/data"
 	"go-wind-cms/app/core/service/internal/data/client"
 	"go-wind-cms/app/core/service/internal/service"
-	bConfig "github.com/tx7do/kratos-bootstrap/config"
-	bLogger "github.com/tx7do/kratos-bootstrap/logger"
 	appViewer "go-wind-cms/pkg/entgo/viewer"
 	"go-wind-cms/pkg/serviceid"
 	"go-wind-cms/pkg/task"

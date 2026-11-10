@@ -40,7 +40,7 @@ func (s *CategoryService) List(ctx context.Context, req *paginationV1.PagingRequ
 			}
 		}
 		resp.Items = filtered
-		resp.Total = uint64(len(filtered))
+		resp.Total = int64(len(filtered))
 	}
 	return resp, nil
 }

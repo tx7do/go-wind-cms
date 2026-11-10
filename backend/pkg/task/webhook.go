@@ -40,15 +40,15 @@ const (
 
 // WebhookFanoutPayload 事件扇出任务 payload。
 type WebhookFanoutPayload struct {
-	Event     string `json:"event"`      // 事件名（post.published 等）
-	EntityID  uint64 `json:"entity_id"`  // 事件主体 ID
-	TenantID  uint64 `json:"tenant_id"`  // 租户 ID（扇出查询按租户过滤）
+	Event    string `json:"event"`     // 事件名（post.published 等）
+	EntityID int64  `json:"entity_id"` // 事件主体 ID
+	TenantID int64  `json:"tenant_id"` // 租户 ID（扇出查询按租户过滤）
 }
 
 // WebhookDeliverPayload 单订阅投递任务 payload。
 type WebhookDeliverPayload struct {
-	WebhookID uint64 `json:"webhook_id"` // 订阅 ID
+	WebhookID int64  `json:"webhook_id"` // 订阅 ID
 	Event     string `json:"event"`      // 事件名
-	EntityID  uint64 `json:"entity_id"`  // 事件主体 ID
-	TenantID  uint64 `json:"tenant_id"`  // 租户 ID（仅日志/排查）
+	EntityID  int64  `json:"entity_id"`  // 事件主体 ID
+	TenantID  int64  `json:"tenant_id"`  // 租户 ID（仅日志/排查）
 }

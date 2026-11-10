@@ -15,7 +15,7 @@ import (
 //
 // 与 notification_channels 同为平台级全局表（无租户隔离）：渠道花名册本就是平台配的，
 // 台账记录"平台用了它发没发出去"。收件地址跨租户，读侧只开放给平台视图
-//（service 层 IsPlatformContext 守卫）。
+// （service 层 IsPlatformContext 守卫）。
 type NotificationDelivery struct {
 	ent.Schema
 }
@@ -64,12 +64,12 @@ func (NotificationDelivery) Fields() []ent.Field {
 			Optional().
 			Nillable(),
 
-		field.Uint64("channel_id").
+		field.Int64("channel_id").
 			Comment("实际选中的渠道配置ID").
 			Optional().
 			Nillable(),
 
-		field.Uint64("recipient_user_id").
+		field.Int64("recipient_user_id").
 			Comment("收件用户ID（直发模式可为空）").
 			Optional().
 			Nillable(),
@@ -77,7 +77,7 @@ func (NotificationDelivery) Fields() []ent.Field {
 		// 产生本条投递的业务对象主键，含义由 event_type 决定（INTERNAL_MESSAGE → internal_messages.id）。
 		// 台账不存正文快照（防敏感正文明文集邮），
 		// 这一列是"这条投递发的是什么"的唯一回跳入口。
-		field.Uint64("related_id").
+		field.Int64("related_id").
 			Comment("关联业务对象ID（按事件类型解释）").
 			Optional().
 			Nillable(),

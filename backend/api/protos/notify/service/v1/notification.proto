@@ -87,7 +87,7 @@ enum DeliveryStatus {
 // 一条通知 × 一个渠道 × 一个收件人 = 一行投递台账。
 // 不存正文快照（防敏感正文明文集邮），target 落脱敏串；排障经 related_id 跳回业务对象。
 message NotificationDelivery {
-  optional uint64 id = 1 [
+  optional int64 id = 1 [
     json_name = "id",
     (gnostic.openapi.v3.property) = { description: "台账ID" }
   ]; // 台账ID
@@ -102,12 +102,12 @@ message NotificationDelivery {
     (gnostic.openapi.v3.property) = { description: "投递渠道" }
   ]; // 投递渠道
 
-  optional uint64 channel_id = 4 [
+  optional int64 channel_id = 4 [
     json_name = "channelId",
     (gnostic.openapi.v3.property) = { description: "实际选中的渠道配置ID" }
   ]; // 实际选中的渠道配置ID
 
-  optional uint64 recipient_user_id = 5 [
+  optional int64 recipient_user_id = 5 [
     json_name = "recipientUserId",
     (gnostic.openapi.v3.property) = { description: "收件用户ID（直发模式可为空）" }
   ]; // 收件用户ID（直发模式可为空）
@@ -134,7 +134,7 @@ message NotificationDelivery {
   ]; // 投递完成时间
 
   // 产生本条投递的业务对象主键，含义由 event_type 决定（INTERNAL_MESSAGE → internal_messages.id）。
-  optional uint64 related_id = 10 [
+  optional int64 related_id = 10 [
     json_name = "relatedId",
     (gnostic.openapi.v3.property) = { description: "关联业务对象ID（按 event_type 解释）" }
   ]; // 关联业务对象ID
@@ -158,8 +158,8 @@ message NotificationDelivery {
     (gnostic.openapi.v3.property) = { description: "服务商侧消息ID" }
   ]; // 服务商侧消息ID
 
-  optional uint64 created_by = 100 [json_name = "createdBy"];
-  optional uint64 updated_by = 101 [json_name = "updatedBy"];
+  optional int64 created_by = 100 [json_name = "createdBy"];
+  optional int64 updated_by = 101 [json_name = "updatedBy"];
 
   optional google.protobuf.Timestamp created_at = 200 [json_name = "createdAt"];
   optional google.protobuf.Timestamp updated_at = 201 [json_name = "updatedAt"];
@@ -168,12 +168,12 @@ message NotificationDelivery {
 // 查询投递台账列表 - 回应
 message ListNotificationDeliveryResponse {
   repeated NotificationDelivery items = 1;
-  uint64 total = 2;
+  int64 total = 2;
 }
 
 // 查询投递台账详情 - 请求
 message GetNotificationDeliveryRequest {
-  uint64 id = 1;
+  int64 id = 1;
 }
 
 // 直发通知 - 请求
@@ -202,7 +202,7 @@ message SendDirectNotificationRequest {
 
   // 显式指定渠道配置：测试邮件必须打到"正在调的那一条"，不能退化成"取第一个启用的"。
   // 留空则由渠道选择策略取第一个启用的同类型渠道。
-  optional uint64 channel_id = 5 [
+  optional int64 channel_id = 5 [
     json_name = "channelId",
     (gnostic.openapi.v3.property) = { description: "指定渠道配置ID，留空取第一个启用的" }
   ]; // 指定渠道配置ID
@@ -212,12 +212,12 @@ message SendDirectNotificationRequest {
     (gnostic.openapi.v3.property) = { description: "投递渠道，留空由事件类型路由决定" }
   ]; // 投递渠道（留空由事件类型路由决定）
 
-  optional uint64 recipient_user_id = 7 [
+  optional int64 recipient_user_id = 7 [
     json_name = "recipientUserId",
     (gnostic.openapi.v3.property) = { description: "收件用户ID（仅台账归类用）" }
   ]; // 收件用户ID（仅台账归类用）
 
-  optional uint64 operator_user_id = 8 [
+  optional int64 operator_user_id = 8 [
     json_name = "operatorUserId",
     (gnostic.openapi.v3.property) = { description: "操作人用户ID（系统发起时留空）" }
   ]; // 操作人用户ID（系统发起时留空）
@@ -229,7 +229,7 @@ message SendDirectNotificationRequest {
   ]; // 渠道原生参数
 
   // 产生本次投递的业务对象主键，原样落到台账的 related_id（含义由 event_type 决定）。
-  optional uint64 related_id = 9 [
+  optional int64 related_id = 9 [
     json_name = "relatedId",
     (gnostic.openapi.v3.property) = { description: "关联业务对象ID（按 event_type 解释）" }
   ]; // 关联业务对象ID
@@ -256,7 +256,7 @@ message SendDirectNotificationRequest {
 
 // 直发通知 - 回应。失败时本回应仍非 nil（台账 ID + 状态），与 error 同时返回。
 message SendNotificationResponse {
-  uint64 delivery_id = 1 [
+  int64 delivery_id = 1 [
     json_name = "deliveryId",
     (gnostic.openapi.v3.property) = { description: "台账ID" }
   ]; // 台账ID

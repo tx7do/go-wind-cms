@@ -26,7 +26,7 @@ func NewReviewLogRepo(ctx *bootstrap.Context, entClient *entCrud.EntClient[*ent.
 }
 
 // Create 落一条留痕（operatorID/tenantID 由调用方显式传入——写入方在服务层从 viewer 取）。
-func (r *ReviewLogRepo) Create(ctx context.Context, entityType string, entityID uint64, action string, level uint32, note string, operatorID, tenantID uint64) error {
+func (r *ReviewLogRepo) Create(ctx context.Context, entityType string, entityID int64, action string, level uint32, note string, operatorID, tenantID int64) error {
 	builder := r.entClient.Client().ReviewLog.Create().
 		SetEntityType(entityType).
 		SetEntityID(entityID).
@@ -47,7 +47,7 @@ func (r *ReviewLogRepo) Create(ctx context.Context, entityType string, entityID 
 }
 
 // CurrentLevel 取实体当前审批推进到的级别（本批次内最大 APPROVE level；无记录=0）。
-func (r *ReviewLogRepo) CurrentLevel(ctx context.Context, entityType string, entityID uint64) (uint32, error) {
+func (r *ReviewLogRepo) CurrentLevel(ctx context.Context, entityType string, entityID int64) (uint32, error) {
 	rows, err := r.entClient.Client().ReviewLog.Query().
 		Where(
 			reviewlog.EntityTypeEQ(entityType),
@@ -69,7 +69,7 @@ func (r *ReviewLogRepo) CurrentLevel(ctx context.Context, entityType string, ent
 }
 
 // ListByEntity 按实体取全部留痕（created_at 正序，id 兜底排序）。
-func (r *ReviewLogRepo) ListByEntity(ctx context.Context, entityType string, entityID uint64) ([]*contentV1.ReviewLog, error) {
+func (r *ReviewLogRepo) ListByEntity(ctx context.Context, entityType string, entityID int64) ([]*contentV1.ReviewLog, error) {
 	rows, err := r.entClient.Client().ReviewLog.Query().
 		Where(
 			reviewlog.EntityTypeEQ(entityType),

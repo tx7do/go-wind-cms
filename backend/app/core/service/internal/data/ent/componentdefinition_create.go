@@ -65,13 +65,13 @@ func (_c *ComponentDefinitionCreate) SetNillableDeletedAt(v *time.Time) *Compone
 }
 
 // SetCreatedBy sets the "created_by" field.
-func (_c *ComponentDefinitionCreate) SetCreatedBy(v uint64) *ComponentDefinitionCreate {
+func (_c *ComponentDefinitionCreate) SetCreatedBy(v int64) *ComponentDefinitionCreate {
 	_c.mutation.SetCreatedBy(v)
 	return _c
 }
 
 // SetNillableCreatedBy sets the "created_by" field if the given value is not nil.
-func (_c *ComponentDefinitionCreate) SetNillableCreatedBy(v *uint64) *ComponentDefinitionCreate {
+func (_c *ComponentDefinitionCreate) SetNillableCreatedBy(v *int64) *ComponentDefinitionCreate {
 	if v != nil {
 		_c.SetCreatedBy(*v)
 	}
@@ -79,13 +79,13 @@ func (_c *ComponentDefinitionCreate) SetNillableCreatedBy(v *uint64) *ComponentD
 }
 
 // SetUpdatedBy sets the "updated_by" field.
-func (_c *ComponentDefinitionCreate) SetUpdatedBy(v uint64) *ComponentDefinitionCreate {
+func (_c *ComponentDefinitionCreate) SetUpdatedBy(v int64) *ComponentDefinitionCreate {
 	_c.mutation.SetUpdatedBy(v)
 	return _c
 }
 
 // SetNillableUpdatedBy sets the "updated_by" field if the given value is not nil.
-func (_c *ComponentDefinitionCreate) SetNillableUpdatedBy(v *uint64) *ComponentDefinitionCreate {
+func (_c *ComponentDefinitionCreate) SetNillableUpdatedBy(v *int64) *ComponentDefinitionCreate {
 	if v != nil {
 		_c.SetUpdatedBy(*v)
 	}
@@ -93,13 +93,13 @@ func (_c *ComponentDefinitionCreate) SetNillableUpdatedBy(v *uint64) *ComponentD
 }
 
 // SetDeletedBy sets the "deleted_by" field.
-func (_c *ComponentDefinitionCreate) SetDeletedBy(v uint64) *ComponentDefinitionCreate {
+func (_c *ComponentDefinitionCreate) SetDeletedBy(v int64) *ComponentDefinitionCreate {
 	_c.mutation.SetDeletedBy(v)
 	return _c
 }
 
 // SetNillableDeletedBy sets the "deleted_by" field if the given value is not nil.
-func (_c *ComponentDefinitionCreate) SetNillableDeletedBy(v *uint64) *ComponentDefinitionCreate {
+func (_c *ComponentDefinitionCreate) SetNillableDeletedBy(v *int64) *ComponentDefinitionCreate {
 	if v != nil {
 		_c.SetDeletedBy(*v)
 	}
@@ -107,13 +107,13 @@ func (_c *ComponentDefinitionCreate) SetNillableDeletedBy(v *uint64) *ComponentD
 }
 
 // SetTenantID sets the "tenant_id" field.
-func (_c *ComponentDefinitionCreate) SetTenantID(v uint64) *ComponentDefinitionCreate {
+func (_c *ComponentDefinitionCreate) SetTenantID(v int64) *ComponentDefinitionCreate {
 	_c.mutation.SetTenantID(v)
 	return _c
 }
 
 // SetNillableTenantID sets the "tenant_id" field if the given value is not nil.
-func (_c *ComponentDefinitionCreate) SetNillableTenantID(v *uint64) *ComponentDefinitionCreate {
+func (_c *ComponentDefinitionCreate) SetNillableTenantID(v *int64) *ComponentDefinitionCreate {
 	if v != nil {
 		_c.SetTenantID(*v)
 	}
@@ -147,7 +147,7 @@ func (_c *ComponentDefinitionCreate) SetNillableDescription(v *string) *Componen
 }
 
 // SetID sets the "id" field.
-func (_c *ComponentDefinitionCreate) SetID(v uint64) *ComponentDefinitionCreate {
+func (_c *ComponentDefinitionCreate) SetID(v int64) *ComponentDefinitionCreate {
 	_c.mutation.SetID(v)
 	return _c
 }
@@ -235,7 +235,7 @@ func (_c *ComponentDefinitionCreate) sqlSave(ctx context.Context) (*ComponentDef
 	}
 	if _spec.ID.Value != _node.ID {
 		id := _spec.ID.Value.(int64)
-		_node.ID = uint64(id)
+		_node.ID = int64(id)
 	}
 	_c.mutation.id = &_node.ID
 	_c.mutation.done = true
@@ -245,7 +245,7 @@ func (_c *ComponentDefinitionCreate) sqlSave(ctx context.Context) (*ComponentDef
 func (_c *ComponentDefinitionCreate) createSpec() (*ComponentDefinition, *sqlgraph.CreateSpec) {
 	var (
 		_node = &ComponentDefinition{config: _c.config}
-		_spec = sqlgraph.NewCreateSpec(componentdefinition.Table, sqlgraph.NewFieldSpec(componentdefinition.FieldID, field.TypeUint64))
+		_spec = sqlgraph.NewCreateSpec(componentdefinition.Table, sqlgraph.NewFieldSpec(componentdefinition.FieldID, field.TypeInt64))
 	)
 	_spec.OnConflict = _c.conflict
 	if id, ok := _c.mutation.ID(); ok {
@@ -265,19 +265,19 @@ func (_c *ComponentDefinitionCreate) createSpec() (*ComponentDefinition, *sqlgra
 		_node.DeletedAt = &value
 	}
 	if value, ok := _c.mutation.CreatedBy(); ok {
-		_spec.SetField(componentdefinition.FieldCreatedBy, field.TypeUint64, value)
+		_spec.SetField(componentdefinition.FieldCreatedBy, field.TypeInt64, value)
 		_node.CreatedBy = &value
 	}
 	if value, ok := _c.mutation.UpdatedBy(); ok {
-		_spec.SetField(componentdefinition.FieldUpdatedBy, field.TypeUint64, value)
+		_spec.SetField(componentdefinition.FieldUpdatedBy, field.TypeInt64, value)
 		_node.UpdatedBy = &value
 	}
 	if value, ok := _c.mutation.DeletedBy(); ok {
-		_spec.SetField(componentdefinition.FieldDeletedBy, field.TypeUint64, value)
+		_spec.SetField(componentdefinition.FieldDeletedBy, field.TypeInt64, value)
 		_node.DeletedBy = &value
 	}
 	if value, ok := _c.mutation.TenantID(); ok {
-		_spec.SetField(componentdefinition.FieldTenantID, field.TypeUint64, value)
+		_spec.SetField(componentdefinition.FieldTenantID, field.TypeInt64, value)
 		_node.TenantID = &value
 	}
 	if value, ok := _c.mutation.Code(); ok {
@@ -381,7 +381,7 @@ func (u *ComponentDefinitionUpsert) ClearDeletedAt() *ComponentDefinitionUpsert 
 }
 
 // SetCreatedBy sets the "created_by" field.
-func (u *ComponentDefinitionUpsert) SetCreatedBy(v uint64) *ComponentDefinitionUpsert {
+func (u *ComponentDefinitionUpsert) SetCreatedBy(v int64) *ComponentDefinitionUpsert {
 	u.Set(componentdefinition.FieldCreatedBy, v)
 	return u
 }
@@ -393,7 +393,7 @@ func (u *ComponentDefinitionUpsert) UpdateCreatedBy() *ComponentDefinitionUpsert
 }
 
 // AddCreatedBy adds v to the "created_by" field.
-func (u *ComponentDefinitionUpsert) AddCreatedBy(v uint64) *ComponentDefinitionUpsert {
+func (u *ComponentDefinitionUpsert) AddCreatedBy(v int64) *ComponentDefinitionUpsert {
 	u.Add(componentdefinition.FieldCreatedBy, v)
 	return u
 }
@@ -405,7 +405,7 @@ func (u *ComponentDefinitionUpsert) ClearCreatedBy() *ComponentDefinitionUpsert 
 }
 
 // SetUpdatedBy sets the "updated_by" field.
-func (u *ComponentDefinitionUpsert) SetUpdatedBy(v uint64) *ComponentDefinitionUpsert {
+func (u *ComponentDefinitionUpsert) SetUpdatedBy(v int64) *ComponentDefinitionUpsert {
 	u.Set(componentdefinition.FieldUpdatedBy, v)
 	return u
 }
@@ -417,7 +417,7 @@ func (u *ComponentDefinitionUpsert) UpdateUpdatedBy() *ComponentDefinitionUpsert
 }
 
 // AddUpdatedBy adds v to the "updated_by" field.
-func (u *ComponentDefinitionUpsert) AddUpdatedBy(v uint64) *ComponentDefinitionUpsert {
+func (u *ComponentDefinitionUpsert) AddUpdatedBy(v int64) *ComponentDefinitionUpsert {
 	u.Add(componentdefinition.FieldUpdatedBy, v)
 	return u
 }
@@ -429,7 +429,7 @@ func (u *ComponentDefinitionUpsert) ClearUpdatedBy() *ComponentDefinitionUpsert 
 }
 
 // SetDeletedBy sets the "deleted_by" field.
-func (u *ComponentDefinitionUpsert) SetDeletedBy(v uint64) *ComponentDefinitionUpsert {
+func (u *ComponentDefinitionUpsert) SetDeletedBy(v int64) *ComponentDefinitionUpsert {
 	u.Set(componentdefinition.FieldDeletedBy, v)
 	return u
 }
@@ -441,7 +441,7 @@ func (u *ComponentDefinitionUpsert) UpdateDeletedBy() *ComponentDefinitionUpsert
 }
 
 // AddDeletedBy adds v to the "deleted_by" field.
-func (u *ComponentDefinitionUpsert) AddDeletedBy(v uint64) *ComponentDefinitionUpsert {
+func (u *ComponentDefinitionUpsert) AddDeletedBy(v int64) *ComponentDefinitionUpsert {
 	u.Add(componentdefinition.FieldDeletedBy, v)
 	return u
 }
@@ -591,14 +591,14 @@ func (u *ComponentDefinitionUpsertOne) ClearDeletedAt() *ComponentDefinitionUpse
 }
 
 // SetCreatedBy sets the "created_by" field.
-func (u *ComponentDefinitionUpsertOne) SetCreatedBy(v uint64) *ComponentDefinitionUpsertOne {
+func (u *ComponentDefinitionUpsertOne) SetCreatedBy(v int64) *ComponentDefinitionUpsertOne {
 	return u.Update(func(s *ComponentDefinitionUpsert) {
 		s.SetCreatedBy(v)
 	})
 }
 
 // AddCreatedBy adds v to the "created_by" field.
-func (u *ComponentDefinitionUpsertOne) AddCreatedBy(v uint64) *ComponentDefinitionUpsertOne {
+func (u *ComponentDefinitionUpsertOne) AddCreatedBy(v int64) *ComponentDefinitionUpsertOne {
 	return u.Update(func(s *ComponentDefinitionUpsert) {
 		s.AddCreatedBy(v)
 	})
@@ -619,14 +619,14 @@ func (u *ComponentDefinitionUpsertOne) ClearCreatedBy() *ComponentDefinitionUpse
 }
 
 // SetUpdatedBy sets the "updated_by" field.
-func (u *ComponentDefinitionUpsertOne) SetUpdatedBy(v uint64) *ComponentDefinitionUpsertOne {
+func (u *ComponentDefinitionUpsertOne) SetUpdatedBy(v int64) *ComponentDefinitionUpsertOne {
 	return u.Update(func(s *ComponentDefinitionUpsert) {
 		s.SetUpdatedBy(v)
 	})
 }
 
 // AddUpdatedBy adds v to the "updated_by" field.
-func (u *ComponentDefinitionUpsertOne) AddUpdatedBy(v uint64) *ComponentDefinitionUpsertOne {
+func (u *ComponentDefinitionUpsertOne) AddUpdatedBy(v int64) *ComponentDefinitionUpsertOne {
 	return u.Update(func(s *ComponentDefinitionUpsert) {
 		s.AddUpdatedBy(v)
 	})
@@ -647,14 +647,14 @@ func (u *ComponentDefinitionUpsertOne) ClearUpdatedBy() *ComponentDefinitionUpse
 }
 
 // SetDeletedBy sets the "deleted_by" field.
-func (u *ComponentDefinitionUpsertOne) SetDeletedBy(v uint64) *ComponentDefinitionUpsertOne {
+func (u *ComponentDefinitionUpsertOne) SetDeletedBy(v int64) *ComponentDefinitionUpsertOne {
 	return u.Update(func(s *ComponentDefinitionUpsert) {
 		s.SetDeletedBy(v)
 	})
 }
 
 // AddDeletedBy adds v to the "deleted_by" field.
-func (u *ComponentDefinitionUpsertOne) AddDeletedBy(v uint64) *ComponentDefinitionUpsertOne {
+func (u *ComponentDefinitionUpsertOne) AddDeletedBy(v int64) *ComponentDefinitionUpsertOne {
 	return u.Update(func(s *ComponentDefinitionUpsert) {
 		s.AddDeletedBy(v)
 	})
@@ -739,7 +739,7 @@ func (u *ComponentDefinitionUpsertOne) ExecX(ctx context.Context) {
 }
 
 // Exec executes the UPSERT query and returns the inserted/updated ID.
-func (u *ComponentDefinitionUpsertOne) ID(ctx context.Context) (id uint64, err error) {
+func (u *ComponentDefinitionUpsertOne) ID(ctx context.Context) (id int64, err error) {
 	node, err := u.create.Save(ctx)
 	if err != nil {
 		return id, err
@@ -748,7 +748,7 @@ func (u *ComponentDefinitionUpsertOne) ID(ctx context.Context) (id uint64, err e
 }
 
 // IDX is like ID, but panics if an error occurs.
-func (u *ComponentDefinitionUpsertOne) IDX(ctx context.Context) uint64 {
+func (u *ComponentDefinitionUpsertOne) IDX(ctx context.Context) int64 {
 	id, err := u.ID(ctx)
 	if err != nil {
 		panic(err)
@@ -805,7 +805,7 @@ func (_c *ComponentDefinitionCreateBulk) Save(ctx context.Context) ([]*Component
 				mutation.id = &nodes[i].ID
 				if specs[i].ID.Value != nil && nodes[i].ID == 0 {
 					id := specs[i].ID.Value.(int64)
-					nodes[i].ID = uint64(id)
+					nodes[i].ID = int64(id)
 				}
 				mutation.done = true
 				return nodes[i], nil
@@ -986,14 +986,14 @@ func (u *ComponentDefinitionUpsertBulk) ClearDeletedAt() *ComponentDefinitionUps
 }
 
 // SetCreatedBy sets the "created_by" field.
-func (u *ComponentDefinitionUpsertBulk) SetCreatedBy(v uint64) *ComponentDefinitionUpsertBulk {
+func (u *ComponentDefinitionUpsertBulk) SetCreatedBy(v int64) *ComponentDefinitionUpsertBulk {
 	return u.Update(func(s *ComponentDefinitionUpsert) {
 		s.SetCreatedBy(v)
 	})
 }
 
 // AddCreatedBy adds v to the "created_by" field.
-func (u *ComponentDefinitionUpsertBulk) AddCreatedBy(v uint64) *ComponentDefinitionUpsertBulk {
+func (u *ComponentDefinitionUpsertBulk) AddCreatedBy(v int64) *ComponentDefinitionUpsertBulk {
 	return u.Update(func(s *ComponentDefinitionUpsert) {
 		s.AddCreatedBy(v)
 	})
@@ -1014,14 +1014,14 @@ func (u *ComponentDefinitionUpsertBulk) ClearCreatedBy() *ComponentDefinitionUps
 }
 
 // SetUpdatedBy sets the "updated_by" field.
-func (u *ComponentDefinitionUpsertBulk) SetUpdatedBy(v uint64) *ComponentDefinitionUpsertBulk {
+func (u *ComponentDefinitionUpsertBulk) SetUpdatedBy(v int64) *ComponentDefinitionUpsertBulk {
 	return u.Update(func(s *ComponentDefinitionUpsert) {
 		s.SetUpdatedBy(v)
 	})
 }
 
 // AddUpdatedBy adds v to the "updated_by" field.
-func (u *ComponentDefinitionUpsertBulk) AddUpdatedBy(v uint64) *ComponentDefinitionUpsertBulk {
+func (u *ComponentDefinitionUpsertBulk) AddUpdatedBy(v int64) *ComponentDefinitionUpsertBulk {
 	return u.Update(func(s *ComponentDefinitionUpsert) {
 		s.AddUpdatedBy(v)
 	})
@@ -1042,14 +1042,14 @@ func (u *ComponentDefinitionUpsertBulk) ClearUpdatedBy() *ComponentDefinitionUps
 }
 
 // SetDeletedBy sets the "deleted_by" field.
-func (u *ComponentDefinitionUpsertBulk) SetDeletedBy(v uint64) *ComponentDefinitionUpsertBulk {
+func (u *ComponentDefinitionUpsertBulk) SetDeletedBy(v int64) *ComponentDefinitionUpsertBulk {
 	return u.Update(func(s *ComponentDefinitionUpsert) {
 		s.SetDeletedBy(v)
 	})
 }
 
 // AddDeletedBy adds v to the "deleted_by" field.
-func (u *ComponentDefinitionUpsertBulk) AddDeletedBy(v uint64) *ComponentDefinitionUpsertBulk {
+func (u *ComponentDefinitionUpsertBulk) AddDeletedBy(v int64) *ComponentDefinitionUpsertBulk {
 	return u.Update(func(s *ComponentDefinitionUpsert) {
 		s.AddDeletedBy(v)
 	})

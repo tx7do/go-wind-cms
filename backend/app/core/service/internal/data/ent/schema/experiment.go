@@ -35,7 +35,7 @@ func (Experiment) Fields() []ent.Field {
 		field.String("name").
 			Comment("实验名称").
 			NotEmpty(),
-		field.Uint64("page_id").
+		field.Int64("page_id").
 			Comment("目标页面 ID（实验作用于该页面的 sections）").
 			Optional().
 			Nillable(),
@@ -64,7 +64,7 @@ func (Experiment) Mixin() []ent.Mixin {
 		mixin.AutoIncrementId64{},
 		mixin.TimeAt{},
 		mixin.OperatorID64{},
-		mixin.TenantID[uint64]{},
+		mixin.TenantID[int64]{},
 	}
 }
 

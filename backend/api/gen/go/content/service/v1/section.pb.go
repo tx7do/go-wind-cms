@@ -27,17 +27,17 @@ const (
 // 作为 Page 的嵌套子部件随页面整体读写，无独立服务入口。
 type Section struct {
 	state              protoimpl.MessageState `protogen:"open.v1"`
-	Id                 *uint64                `protobuf:"varint,1,opt,name=id,proto3,oneof" json:"id,omitempty"`                                                                             // 区块ID
-	PageId             *uint64                `protobuf:"varint,2,opt,name=page_id,json=pageId,proto3,oneof" json:"page_id,omitempty"`                                                       // 所属页面ID
+	Id                 *int64                 `protobuf:"varint,1,opt,name=id,proto3,oneof" json:"id,omitempty"`                                                                             // 区块ID
+	PageId             *int64                 `protobuf:"varint,2,opt,name=page_id,json=pageId,proto3,oneof" json:"page_id,omitempty"`                                                       // 所属页面ID
 	Type               *SectionType           `protobuf:"varint,3,opt,name=type,proto3,enum=content.service.v1.SectionType,oneof" json:"type,omitempty"`                                     // 区块类型
 	Name               *string                `protobuf:"bytes,4,opt,name=name,proto3,oneof" json:"name,omitempty"`                                                                          // 区块名称（后台标识用，语言无关）
 	SortOrder          *uint32                `protobuf:"varint,5,opt,name=sort_order,json=sortOrder,proto3,oneof" json:"sort_order,omitempty"`                                              // 排序（越小越靠前）
 	Config             map[string]string      `protobuf:"bytes,10,rep,name=config,proto3" json:"config,omitempty" protobuf_key:"bytes,1,opt,name=key" protobuf_val:"bytes,2,opt,name=value"` // 区块样式/布局配置（语言无关）
 	Translations       []*SectionTranslation  `protobuf:"bytes,20,rep,name=translations,proto3" json:"translations,omitempty"`                                                               // 多语言翻译列表
 	AvailableLanguages []string               `protobuf:"bytes,21,rep,name=available_languages,json=availableLanguages,proto3" json:"available_languages,omitempty"`                         // 可用的语言代码列表
-	CreatedBy          *uint64                `protobuf:"varint,100,opt,name=created_by,json=createdBy,proto3,oneof" json:"created_by,omitempty"`                                            // 创建者用户ID
-	UpdatedBy          *uint64                `protobuf:"varint,101,opt,name=updated_by,json=updatedBy,proto3,oneof" json:"updated_by,omitempty"`                                            // 更新者用户ID
-	DeletedBy          *uint64                `protobuf:"varint,102,opt,name=deleted_by,json=deletedBy,proto3,oneof" json:"deleted_by,omitempty"`                                            // 删除者用户ID
+	CreatedBy          *int64                 `protobuf:"varint,100,opt,name=created_by,json=createdBy,proto3,oneof" json:"created_by,omitempty"`                                            // 创建者用户ID
+	UpdatedBy          *int64                 `protobuf:"varint,101,opt,name=updated_by,json=updatedBy,proto3,oneof" json:"updated_by,omitempty"`                                            // 更新者用户ID
+	DeletedBy          *int64                 `protobuf:"varint,102,opt,name=deleted_by,json=deletedBy,proto3,oneof" json:"deleted_by,omitempty"`                                            // 删除者用户ID
 	CreatedAt          *timestamppb.Timestamp `protobuf:"bytes,200,opt,name=created_at,json=createdAt,proto3,oneof" json:"created_at,omitempty"`                                             // 创建时间
 	UpdatedAt          *timestamppb.Timestamp `protobuf:"bytes,201,opt,name=updated_at,json=updatedAt,proto3,oneof" json:"updated_at,omitempty"`                                             // 更新时间
 	DeletedAt          *timestamppb.Timestamp `protobuf:"bytes,202,opt,name=deleted_at,json=deletedAt,proto3,oneof" json:"deleted_at,omitempty"`                                             // 删除时间
@@ -75,14 +75,14 @@ func (*Section) Descriptor() ([]byte, []int) {
 	return file_content_service_v1_section_proto_rawDescGZIP(), []int{0}
 }
 
-func (x *Section) GetId() uint64 {
+func (x *Section) GetId() int64 {
 	if x != nil && x.Id != nil {
 		return *x.Id
 	}
 	return 0
 }
 
-func (x *Section) GetPageId() uint64 {
+func (x *Section) GetPageId() int64 {
 	if x != nil && x.PageId != nil {
 		return *x.PageId
 	}
@@ -131,21 +131,21 @@ func (x *Section) GetAvailableLanguages() []string {
 	return nil
 }
 
-func (x *Section) GetCreatedBy() uint64 {
+func (x *Section) GetCreatedBy() int64 {
 	if x != nil && x.CreatedBy != nil {
 		return *x.CreatedBy
 	}
 	return 0
 }
 
-func (x *Section) GetUpdatedBy() uint64 {
+func (x *Section) GetUpdatedBy() int64 {
 	if x != nil && x.UpdatedBy != nil {
 		return *x.UpdatedBy
 	}
 	return 0
 }
 
-func (x *Section) GetDeletedBy() uint64 {
+func (x *Section) GetDeletedBy() int64 {
 	if x != nil && x.DeletedBy != nil {
 		return *x.DeletedBy
 	}
@@ -176,13 +176,13 @@ func (x *Section) GetDeletedAt() *timestamppb.Timestamp {
 // 区块翻译（语言相关的内容）
 type SectionTranslation struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
-	Id            *uint64                `protobuf:"varint,1,opt,name=id,proto3,oneof" json:"id,omitempty"`                                                                               // 翻译记录ID
-	SectionId     *uint64                `protobuf:"varint,2,opt,name=section_id,json=sectionId,proto3,oneof" json:"section_id,omitempty"`                                                // 关联的区块ID
+	Id            *int64                 `protobuf:"varint,1,opt,name=id,proto3,oneof" json:"id,omitempty"`                                                                               // 翻译记录ID
+	SectionId     *int64                 `protobuf:"varint,2,opt,name=section_id,json=sectionId,proto3,oneof" json:"section_id,omitempty"`                                                // 关联的区块ID
 	LanguageCode  *string                `protobuf:"bytes,3,opt,name=language_code,json=languageCode,proto3,oneof" json:"language_code,omitempty"`                                        // 语言代码
 	Content       map[string]string      `protobuf:"bytes,10,rep,name=content,proto3" json:"content,omitempty" protobuf_key:"bytes,1,opt,name=key" protobuf_val:"bytes,2,opt,name=value"` // 区块内容（键值对，适配不同类型区块，随语言变化）
-	CreatedBy     *uint64                `protobuf:"varint,100,opt,name=created_by,json=createdBy,proto3,oneof" json:"created_by,omitempty"`                                              // 创建者用户ID
-	UpdatedBy     *uint64                `protobuf:"varint,101,opt,name=updated_by,json=updatedBy,proto3,oneof" json:"updated_by,omitempty"`                                              // 更新者用户ID
-	DeletedBy     *uint64                `protobuf:"varint,102,opt,name=deleted_by,json=deletedBy,proto3,oneof" json:"deleted_by,omitempty"`                                              // 删除者用户ID
+	CreatedBy     *int64                 `protobuf:"varint,100,opt,name=created_by,json=createdBy,proto3,oneof" json:"created_by,omitempty"`                                              // 创建者用户ID
+	UpdatedBy     *int64                 `protobuf:"varint,101,opt,name=updated_by,json=updatedBy,proto3,oneof" json:"updated_by,omitempty"`                                              // 更新者用户ID
+	DeletedBy     *int64                 `protobuf:"varint,102,opt,name=deleted_by,json=deletedBy,proto3,oneof" json:"deleted_by,omitempty"`                                              // 删除者用户ID
 	CreatedAt     *timestamppb.Timestamp `protobuf:"bytes,200,opt,name=created_at,json=createdAt,proto3,oneof" json:"created_at,omitempty"`                                               // 创建时间
 	UpdatedAt     *timestamppb.Timestamp `protobuf:"bytes,201,opt,name=updated_at,json=updatedAt,proto3,oneof" json:"updated_at,omitempty"`                                               // 更新时间
 	DeletedAt     *timestamppb.Timestamp `protobuf:"bytes,202,opt,name=deleted_at,json=deletedAt,proto3,oneof" json:"deleted_at,omitempty"`                                               // 删除时间
@@ -220,14 +220,14 @@ func (*SectionTranslation) Descriptor() ([]byte, []int) {
 	return file_content_service_v1_section_proto_rawDescGZIP(), []int{1}
 }
 
-func (x *SectionTranslation) GetId() uint64 {
+func (x *SectionTranslation) GetId() int64 {
 	if x != nil && x.Id != nil {
 		return *x.Id
 	}
 	return 0
 }
 
-func (x *SectionTranslation) GetSectionId() uint64 {
+func (x *SectionTranslation) GetSectionId() int64 {
 	if x != nil && x.SectionId != nil {
 		return *x.SectionId
 	}
@@ -248,21 +248,21 @@ func (x *SectionTranslation) GetContent() map[string]string {
 	return nil
 }
 
-func (x *SectionTranslation) GetCreatedBy() uint64 {
+func (x *SectionTranslation) GetCreatedBy() int64 {
 	if x != nil && x.CreatedBy != nil {
 		return *x.CreatedBy
 	}
 	return 0
 }
 
-func (x *SectionTranslation) GetUpdatedBy() uint64 {
+func (x *SectionTranslation) GetUpdatedBy() int64 {
 	if x != nil && x.UpdatedBy != nil {
 		return *x.UpdatedBy
 	}
 	return 0
 }
 
-func (x *SectionTranslation) GetDeletedBy() uint64 {
+func (x *SectionTranslation) GetDeletedBy() int64 {
 	if x != nil && x.DeletedBy != nil {
 		return *x.DeletedBy
 	}
@@ -297,8 +297,8 @@ const file_content_service_v1_section_proto_rawDesc = "" +
 	" content/service/v1/section.proto\x12\x12content.service.v1\x1a$gnostic/openapi/v3/annotations.proto\x1a\x1fgoogle/protobuf/timestamp.proto\x1a\x1econtent/service/v1/types.proto\"\xe8\n" +
 	"\n" +
 	"\aSection\x12#\n" +
-	"\x02id\x18\x01 \x01(\x04B\x0e\xbaG\v\x92\x02\b区块IDH\x00R\x02id\x88\x01\x01\x122\n" +
-	"\apage_id\x18\x02 \x01(\x04B\x14\xbaG\x11\x92\x02\x0e所属页面IDH\x01R\x06pageId\x88\x01\x01\x12L\n" +
+	"\x02id\x18\x01 \x01(\x03B\x0e\xbaG\v\x92\x02\b区块IDH\x00R\x02id\x88\x01\x01\x122\n" +
+	"\apage_id\x18\x02 \x01(\x03B\x14\xbaG\x11\x92\x02\x0e所属页面IDH\x01R\x06pageId\x88\x01\x01\x12L\n" +
 	"\x04type\x18\x03 \x01(\x0e2\x1f.content.service.v1.SectionTypeB\x12\xbaG\x0f\x92\x02\f区块类型H\x02R\x04type\x88\x01\x01\x12O\n" +
 	"\x04name\x18\x04 \x01(\tB6\xbaG3\x92\x020区块名称（后台标识用，语言无关）H\x03R\x04name\x88\x01\x01\x12E\n" +
 	"\n" +
@@ -308,11 +308,11 @@ const file_content_service_v1_section_proto_rawDesc = "" +
 	"\ftranslations\x18\x14 \x03(\v2&.content.service.v1.SectionTranslationB\x1b\xbaG\x18\x92\x02\x15多语言翻译列表R\ftranslations\x12\x9f\x01\n" +
 	"\x13available_languages\x18\x15 \x03(\tBn\xbaGk:\x1d\x12\x1b[\"zh-CN\", \"en-US\", \"ja-JP\"]\x92\x02I可用的语言代码列表（快速查询，避免遍历 translations）R\x12availableLanguages\x12;\n" +
 	"\n" +
-	"created_by\x18d \x01(\x04B\x17\xbaG\x14\x92\x02\x11创建者用户IDH\x05R\tcreatedBy\x88\x01\x01\x12;\n" +
+	"created_by\x18d \x01(\x03B\x17\xbaG\x14\x92\x02\x11创建者用户IDH\x05R\tcreatedBy\x88\x01\x01\x12;\n" +
 	"\n" +
-	"updated_by\x18e \x01(\x04B\x17\xbaG\x14\x92\x02\x11更新者用户IDH\x06R\tupdatedBy\x88\x01\x01\x12;\n" +
+	"updated_by\x18e \x01(\x03B\x17\xbaG\x14\x92\x02\x11更新者用户IDH\x06R\tupdatedBy\x88\x01\x01\x12;\n" +
 	"\n" +
-	"deleted_by\x18f \x01(\x04B\x17\xbaG\x14\x92\x02\x11删除者用户IDH\aR\tdeletedBy\x88\x01\x01\x12S\n" +
+	"deleted_by\x18f \x01(\x03B\x17\xbaG\x14\x92\x02\x11删除者用户IDH\aR\tdeletedBy\x88\x01\x01\x12S\n" +
 	"\n" +
 	"created_at\x18\xc8\x01 \x01(\v2\x1a.google.protobuf.TimestampB\x12\xbaG\x0f\x92\x02\f创建时间H\bR\tcreatedAt\x88\x01\x01\x12S\n" +
 	"\n" +
@@ -336,18 +336,18 @@ const file_content_service_v1_section_proto_rawDesc = "" +
 	"\v_updated_atB\r\n" +
 	"\v_deleted_at\"\xe4\a\n" +
 	"\x12SectionTranslation\x12)\n" +
-	"\x02id\x18\x01 \x01(\x04B\x14\xbaG\x11\x92\x02\x0e翻译记录IDH\x00R\x02id\x88\x01\x01\x12;\n" +
+	"\x02id\x18\x01 \x01(\x03B\x14\xbaG\x11\x92\x02\x0e翻译记录IDH\x00R\x02id\x88\x01\x01\x12;\n" +
 	"\n" +
-	"section_id\x18\x02 \x01(\x04B\x17\xbaG\x14\x92\x02\x11关联的区块IDH\x01R\tsectionId\x88\x01\x01\x12R\n" +
+	"section_id\x18\x02 \x01(\x03B\x17\xbaG\x14\x92\x02\x11关联的区块IDH\x01R\tsectionId\x88\x01\x01\x12R\n" +
 	"\rlanguage_code\x18\x03 \x01(\tB(\xbaG%\x92\x02\"语言代码（ISO 639-1 标准）H\x02R\flanguageCode\x88\x01\x01\x12\x9d\x01\n" +
 	"\acontent\x18\n" +
 	" \x03(\v23.content.service.v1.SectionTranslation.ContentEntryBN\xbaGK\x92\x02H区块内容（键值对，适配不同类型区块，随语言变化）R\acontent\x12;\n" +
 	"\n" +
-	"created_by\x18d \x01(\x04B\x17\xbaG\x14\x92\x02\x11创建者用户IDH\x03R\tcreatedBy\x88\x01\x01\x12;\n" +
+	"created_by\x18d \x01(\x03B\x17\xbaG\x14\x92\x02\x11创建者用户IDH\x03R\tcreatedBy\x88\x01\x01\x12;\n" +
 	"\n" +
-	"updated_by\x18e \x01(\x04B\x17\xbaG\x14\x92\x02\x11更新者用户IDH\x04R\tupdatedBy\x88\x01\x01\x12;\n" +
+	"updated_by\x18e \x01(\x03B\x17\xbaG\x14\x92\x02\x11更新者用户IDH\x04R\tupdatedBy\x88\x01\x01\x12;\n" +
 	"\n" +
-	"deleted_by\x18f \x01(\x04B\x17\xbaG\x14\x92\x02\x11删除者用户IDH\x05R\tdeletedBy\x88\x01\x01\x12S\n" +
+	"deleted_by\x18f \x01(\x03B\x17\xbaG\x14\x92\x02\x11删除者用户IDH\x05R\tdeletedBy\x88\x01\x01\x12S\n" +
 	"\n" +
 	"created_at\x18\xc8\x01 \x01(\v2\x1a.google.protobuf.TimestampB\x12\xbaG\x0f\x92\x02\f创建时间H\x06R\tcreatedAt\x88\x01\x01\x12S\n" +
 	"\n" +

@@ -20,7 +20,7 @@ import (
 type ConfigService struct {
 	adminV1.ConfigServiceHTTPServer
 
-	log           *log.Helper
+	log                 *log.Helper
 	configServiceClient configV1.ConfigServiceClient
 }
 

@@ -128,7 +128,7 @@ func TargetSize(srcW, srcH int, p TransformParams) (int, int) {
 		if scale >= 1 {
 			return srcW, srcH
 		}
-		return roundPositive(float64(srcW)*scale), roundPositive(float64(srcH)*scale)
+		return roundPositive(float64(srcW) * scale), roundPositive(float64(srcH) * scale)
 	case p.Width > 0:
 		if p.Width >= srcW {
 			return srcW, srcH

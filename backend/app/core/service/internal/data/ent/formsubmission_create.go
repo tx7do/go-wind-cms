@@ -65,13 +65,13 @@ func (_c *FormSubmissionCreate) SetNillableDeletedAt(v *time.Time) *FormSubmissi
 }
 
 // SetTenantID sets the "tenant_id" field.
-func (_c *FormSubmissionCreate) SetTenantID(v uint64) *FormSubmissionCreate {
+func (_c *FormSubmissionCreate) SetTenantID(v int64) *FormSubmissionCreate {
 	_c.mutation.SetTenantID(v)
 	return _c
 }
 
 // SetNillableTenantID sets the "tenant_id" field if the given value is not nil.
-func (_c *FormSubmissionCreate) SetNillableTenantID(v *uint64) *FormSubmissionCreate {
+func (_c *FormSubmissionCreate) SetNillableTenantID(v *int64) *FormSubmissionCreate {
 	if v != nil {
 		_c.SetTenantID(*v)
 	}
@@ -79,13 +79,13 @@ func (_c *FormSubmissionCreate) SetNillableTenantID(v *uint64) *FormSubmissionCr
 }
 
 // SetPageID sets the "page_id" field.
-func (_c *FormSubmissionCreate) SetPageID(v uint64) *FormSubmissionCreate {
+func (_c *FormSubmissionCreate) SetPageID(v int64) *FormSubmissionCreate {
 	_c.mutation.SetPageID(v)
 	return _c
 }
 
 // SetNillablePageID sets the "page_id" field if the given value is not nil.
-func (_c *FormSubmissionCreate) SetNillablePageID(v *uint64) *FormSubmissionCreate {
+func (_c *FormSubmissionCreate) SetNillablePageID(v *int64) *FormSubmissionCreate {
 	if v != nil {
 		_c.SetPageID(*v)
 	}
@@ -93,13 +93,13 @@ func (_c *FormSubmissionCreate) SetNillablePageID(v *uint64) *FormSubmissionCrea
 }
 
 // SetSectionID sets the "section_id" field.
-func (_c *FormSubmissionCreate) SetSectionID(v uint64) *FormSubmissionCreate {
+func (_c *FormSubmissionCreate) SetSectionID(v int64) *FormSubmissionCreate {
 	_c.mutation.SetSectionID(v)
 	return _c
 }
 
 // SetNillableSectionID sets the "section_id" field if the given value is not nil.
-func (_c *FormSubmissionCreate) SetNillableSectionID(v *uint64) *FormSubmissionCreate {
+func (_c *FormSubmissionCreate) SetNillableSectionID(v *int64) *FormSubmissionCreate {
 	if v != nil {
 		_c.SetSectionID(*v)
 	}
@@ -113,13 +113,13 @@ func (_c *FormSubmissionCreate) SetData(v *map[string]string) *FormSubmissionCre
 }
 
 // SetUserID sets the "user_id" field.
-func (_c *FormSubmissionCreate) SetUserID(v uint64) *FormSubmissionCreate {
+func (_c *FormSubmissionCreate) SetUserID(v int64) *FormSubmissionCreate {
 	_c.mutation.SetUserID(v)
 	return _c
 }
 
 // SetNillableUserID sets the "user_id" field if the given value is not nil.
-func (_c *FormSubmissionCreate) SetNillableUserID(v *uint64) *FormSubmissionCreate {
+func (_c *FormSubmissionCreate) SetNillableUserID(v *int64) *FormSubmissionCreate {
 	if v != nil {
 		_c.SetUserID(*v)
 	}
@@ -127,7 +127,7 @@ func (_c *FormSubmissionCreate) SetNillableUserID(v *uint64) *FormSubmissionCrea
 }
 
 // SetID sets the "id" field.
-func (_c *FormSubmissionCreate) SetID(v uint64) *FormSubmissionCreate {
+func (_c *FormSubmissionCreate) SetID(v int64) *FormSubmissionCreate {
 	_c.mutation.SetID(v)
 	return _c
 }
@@ -203,7 +203,7 @@ func (_c *FormSubmissionCreate) sqlSave(ctx context.Context) (*FormSubmission, e
 	}
 	if _spec.ID.Value != _node.ID {
 		id := _spec.ID.Value.(int64)
-		_node.ID = uint64(id)
+		_node.ID = int64(id)
 	}
 	_c.mutation.id = &_node.ID
 	_c.mutation.done = true
@@ -213,7 +213,7 @@ func (_c *FormSubmissionCreate) sqlSave(ctx context.Context) (*FormSubmission, e
 func (_c *FormSubmissionCreate) createSpec() (*FormSubmission, *sqlgraph.CreateSpec) {
 	var (
 		_node = &FormSubmission{config: _c.config}
-		_spec = sqlgraph.NewCreateSpec(formsubmission.Table, sqlgraph.NewFieldSpec(formsubmission.FieldID, field.TypeUint64))
+		_spec = sqlgraph.NewCreateSpec(formsubmission.Table, sqlgraph.NewFieldSpec(formsubmission.FieldID, field.TypeInt64))
 	)
 	_spec.OnConflict = _c.conflict
 	if id, ok := _c.mutation.ID(); ok {
@@ -233,15 +233,15 @@ func (_c *FormSubmissionCreate) createSpec() (*FormSubmission, *sqlgraph.CreateS
 		_node.DeletedAt = &value
 	}
 	if value, ok := _c.mutation.TenantID(); ok {
-		_spec.SetField(formsubmission.FieldTenantID, field.TypeUint64, value)
+		_spec.SetField(formsubmission.FieldTenantID, field.TypeInt64, value)
 		_node.TenantID = &value
 	}
 	if value, ok := _c.mutation.PageID(); ok {
-		_spec.SetField(formsubmission.FieldPageID, field.TypeUint64, value)
+		_spec.SetField(formsubmission.FieldPageID, field.TypeInt64, value)
 		_node.PageID = &value
 	}
 	if value, ok := _c.mutation.SectionID(); ok {
-		_spec.SetField(formsubmission.FieldSectionID, field.TypeUint64, value)
+		_spec.SetField(formsubmission.FieldSectionID, field.TypeInt64, value)
 		_node.SectionID = &value
 	}
 	if value, ok := _c.mutation.Data(); ok {
@@ -249,7 +249,7 @@ func (_c *FormSubmissionCreate) createSpec() (*FormSubmission, *sqlgraph.CreateS
 		_node.Data = value
 	}
 	if value, ok := _c.mutation.UserID(); ok {
-		_spec.SetField(formsubmission.FieldUserID, field.TypeUint64, value)
+		_spec.SetField(formsubmission.FieldUserID, field.TypeInt64, value)
 		_node.UserID = &value
 	}
 	return _node, _spec
@@ -341,7 +341,7 @@ func (u *FormSubmissionUpsert) ClearDeletedAt() *FormSubmissionUpsert {
 }
 
 // SetPageID sets the "page_id" field.
-func (u *FormSubmissionUpsert) SetPageID(v uint64) *FormSubmissionUpsert {
+func (u *FormSubmissionUpsert) SetPageID(v int64) *FormSubmissionUpsert {
 	u.Set(formsubmission.FieldPageID, v)
 	return u
 }
@@ -353,7 +353,7 @@ func (u *FormSubmissionUpsert) UpdatePageID() *FormSubmissionUpsert {
 }
 
 // AddPageID adds v to the "page_id" field.
-func (u *FormSubmissionUpsert) AddPageID(v uint64) *FormSubmissionUpsert {
+func (u *FormSubmissionUpsert) AddPageID(v int64) *FormSubmissionUpsert {
 	u.Add(formsubmission.FieldPageID, v)
 	return u
 }
@@ -365,7 +365,7 @@ func (u *FormSubmissionUpsert) ClearPageID() *FormSubmissionUpsert {
 }
 
 // SetSectionID sets the "section_id" field.
-func (u *FormSubmissionUpsert) SetSectionID(v uint64) *FormSubmissionUpsert {
+func (u *FormSubmissionUpsert) SetSectionID(v int64) *FormSubmissionUpsert {
 	u.Set(formsubmission.FieldSectionID, v)
 	return u
 }
@@ -377,7 +377,7 @@ func (u *FormSubmissionUpsert) UpdateSectionID() *FormSubmissionUpsert {
 }
 
 // AddSectionID adds v to the "section_id" field.
-func (u *FormSubmissionUpsert) AddSectionID(v uint64) *FormSubmissionUpsert {
+func (u *FormSubmissionUpsert) AddSectionID(v int64) *FormSubmissionUpsert {
 	u.Add(formsubmission.FieldSectionID, v)
 	return u
 }
@@ -407,7 +407,7 @@ func (u *FormSubmissionUpsert) ClearData() *FormSubmissionUpsert {
 }
 
 // SetUserID sets the "user_id" field.
-func (u *FormSubmissionUpsert) SetUserID(v uint64) *FormSubmissionUpsert {
+func (u *FormSubmissionUpsert) SetUserID(v int64) *FormSubmissionUpsert {
 	u.Set(formsubmission.FieldUserID, v)
 	return u
 }
@@ -419,7 +419,7 @@ func (u *FormSubmissionUpsert) UpdateUserID() *FormSubmissionUpsert {
 }
 
 // AddUserID adds v to the "user_id" field.
-func (u *FormSubmissionUpsert) AddUserID(v uint64) *FormSubmissionUpsert {
+func (u *FormSubmissionUpsert) AddUserID(v int64) *FormSubmissionUpsert {
 	u.Add(formsubmission.FieldUserID, v)
 	return u
 }
@@ -527,14 +527,14 @@ func (u *FormSubmissionUpsertOne) ClearDeletedAt() *FormSubmissionUpsertOne {
 }
 
 // SetPageID sets the "page_id" field.
-func (u *FormSubmissionUpsertOne) SetPageID(v uint64) *FormSubmissionUpsertOne {
+func (u *FormSubmissionUpsertOne) SetPageID(v int64) *FormSubmissionUpsertOne {
 	return u.Update(func(s *FormSubmissionUpsert) {
 		s.SetPageID(v)
 	})
 }
 
 // AddPageID adds v to the "page_id" field.
-func (u *FormSubmissionUpsertOne) AddPageID(v uint64) *FormSubmissionUpsertOne {
+func (u *FormSubmissionUpsertOne) AddPageID(v int64) *FormSubmissionUpsertOne {
 	return u.Update(func(s *FormSubmissionUpsert) {
 		s.AddPageID(v)
 	})
@@ -555,14 +555,14 @@ func (u *FormSubmissionUpsertOne) ClearPageID() *FormSubmissionUpsertOne {
 }
 
 // SetSectionID sets the "section_id" field.
-func (u *FormSubmissionUpsertOne) SetSectionID(v uint64) *FormSubmissionUpsertOne {
+func (u *FormSubmissionUpsertOne) SetSectionID(v int64) *FormSubmissionUpsertOne {
 	return u.Update(func(s *FormSubmissionUpsert) {
 		s.SetSectionID(v)
 	})
 }
 
 // AddSectionID adds v to the "section_id" field.
-func (u *FormSubmissionUpsertOne) AddSectionID(v uint64) *FormSubmissionUpsertOne {
+func (u *FormSubmissionUpsertOne) AddSectionID(v int64) *FormSubmissionUpsertOne {
 	return u.Update(func(s *FormSubmissionUpsert) {
 		s.AddSectionID(v)
 	})
@@ -604,14 +604,14 @@ func (u *FormSubmissionUpsertOne) ClearData() *FormSubmissionUpsertOne {
 }
 
 // SetUserID sets the "user_id" field.
-func (u *FormSubmissionUpsertOne) SetUserID(v uint64) *FormSubmissionUpsertOne {
+func (u *FormSubmissionUpsertOne) SetUserID(v int64) *FormSubmissionUpsertOne {
 	return u.Update(func(s *FormSubmissionUpsert) {
 		s.SetUserID(v)
 	})
 }
 
 // AddUserID adds v to the "user_id" field.
-func (u *FormSubmissionUpsertOne) AddUserID(v uint64) *FormSubmissionUpsertOne {
+func (u *FormSubmissionUpsertOne) AddUserID(v int64) *FormSubmissionUpsertOne {
 	return u.Update(func(s *FormSubmissionUpsert) {
 		s.AddUserID(v)
 	})
@@ -647,7 +647,7 @@ func (u *FormSubmissionUpsertOne) ExecX(ctx context.Context) {
 }
 
 // Exec executes the UPSERT query and returns the inserted/updated ID.
-func (u *FormSubmissionUpsertOne) ID(ctx context.Context) (id uint64, err error) {
+func (u *FormSubmissionUpsertOne) ID(ctx context.Context) (id int64, err error) {
 	node, err := u.create.Save(ctx)
 	if err != nil {
 		return id, err
@@ -656,7 +656,7 @@ func (u *FormSubmissionUpsertOne) ID(ctx context.Context) (id uint64, err error)
 }
 
 // IDX is like ID, but panics if an error occurs.
-func (u *FormSubmissionUpsertOne) IDX(ctx context.Context) uint64 {
+func (u *FormSubmissionUpsertOne) IDX(ctx context.Context) int64 {
 	id, err := u.ID(ctx)
 	if err != nil {
 		panic(err)
@@ -713,7 +713,7 @@ func (_c *FormSubmissionCreateBulk) Save(ctx context.Context) ([]*FormSubmission
 				mutation.id = &nodes[i].ID
 				if specs[i].ID.Value != nil && nodes[i].ID == 0 {
 					id := specs[i].ID.Value.(int64)
-					nodes[i].ID = uint64(id)
+					nodes[i].ID = int64(id)
 				}
 				mutation.done = true
 				return nodes[i], nil
@@ -894,14 +894,14 @@ func (u *FormSubmissionUpsertBulk) ClearDeletedAt() *FormSubmissionUpsertBulk {
 }
 
 // SetPageID sets the "page_id" field.
-func (u *FormSubmissionUpsertBulk) SetPageID(v uint64) *FormSubmissionUpsertBulk {
+func (u *FormSubmissionUpsertBulk) SetPageID(v int64) *FormSubmissionUpsertBulk {
 	return u.Update(func(s *FormSubmissionUpsert) {
 		s.SetPageID(v)
 	})
 }
 
 // AddPageID adds v to the "page_id" field.
-func (u *FormSubmissionUpsertBulk) AddPageID(v uint64) *FormSubmissionUpsertBulk {
+func (u *FormSubmissionUpsertBulk) AddPageID(v int64) *FormSubmissionUpsertBulk {
 	return u.Update(func(s *FormSubmissionUpsert) {
 		s.AddPageID(v)
 	})
@@ -922,14 +922,14 @@ func (u *FormSubmissionUpsertBulk) ClearPageID() *FormSubmissionUpsertBulk {
 }
 
 // SetSectionID sets the "section_id" field.
-func (u *FormSubmissionUpsertBulk) SetSectionID(v uint64) *FormSubmissionUpsertBulk {
+func (u *FormSubmissionUpsertBulk) SetSectionID(v int64) *FormSubmissionUpsertBulk {
 	return u.Update(func(s *FormSubmissionUpsert) {
 		s.SetSectionID(v)
 	})
 }
 
 // AddSectionID adds v to the "section_id" field.
-func (u *FormSubmissionUpsertBulk) AddSectionID(v uint64) *FormSubmissionUpsertBulk {
+func (u *FormSubmissionUpsertBulk) AddSectionID(v int64) *FormSubmissionUpsertBulk {
 	return u.Update(func(s *FormSubmissionUpsert) {
 		s.AddSectionID(v)
 	})
@@ -971,14 +971,14 @@ func (u *FormSubmissionUpsertBulk) ClearData() *FormSubmissionUpsertBulk {
 }
 
 // SetUserID sets the "user_id" field.
-func (u *FormSubmissionUpsertBulk) SetUserID(v uint64) *FormSubmissionUpsertBulk {
+func (u *FormSubmissionUpsertBulk) SetUserID(v int64) *FormSubmissionUpsertBulk {
 	return u.Update(func(s *FormSubmissionUpsert) {
 		s.SetUserID(v)
 	})
 }
 
 // AddUserID adds v to the "user_id" field.
-func (u *FormSubmissionUpsertBulk) AddUserID(v uint64) *FormSubmissionUpsertBulk {
+func (u *FormSubmissionUpsertBulk) AddUserID(v int64) *FormSubmissionUpsertBulk {
 	return u.Update(func(s *FormSubmissionUpsert) {
 		s.AddUserID(v)
 	})

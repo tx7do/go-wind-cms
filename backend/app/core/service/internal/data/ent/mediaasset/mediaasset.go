@@ -120,7 +120,7 @@ var (
 	Hooks  [1]ent.Hook
 	Policy ent.Policy
 	// DefaultTenantID holds the default value on creation for the "tenant_id" field.
-	DefaultTenantID uint64
+	DefaultTenantID int64
 	// DefaultSize holds the default value on creation for the "size" field.
 	DefaultSize uint64
 	// DefaultWidth holds the default value on creation for the "width" field.
@@ -130,13 +130,13 @@ var (
 	// DefaultDuration holds the default value on creation for the "duration" field.
 	DefaultDuration uint32
 	// DefaultFolderID holds the default value on creation for the "folder_id" field.
-	DefaultFolderID uint64
+	DefaultFolderID int64
 	// DefaultReferenceCount holds the default value on creation for the "reference_count" field.
 	DefaultReferenceCount uint32
 	// DefaultIsPrivate holds the default value on creation for the "is_private" field.
 	DefaultIsPrivate bool
 	// IDValidator is a validator for the "id" field. It is called by the builders before save.
-	IDValidator func(uint64) error
+	IDValidator func(int64) error
 )
 
 // Type defines the type for the "type" enum field.

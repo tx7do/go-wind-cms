@@ -10,47 +10,47 @@ import (
 )
 
 // ID filters vertices based on their ID field.
-func ID(id uint64) predicate.MediaAsset {
+func ID(id int64) predicate.MediaAsset {
 	return predicate.MediaAsset(sql.FieldEQ(FieldID, id))
 }
 
 // IDEQ applies the EQ predicate on the ID field.
-func IDEQ(id uint64) predicate.MediaAsset {
+func IDEQ(id int64) predicate.MediaAsset {
 	return predicate.MediaAsset(sql.FieldEQ(FieldID, id))
 }
 
 // IDNEQ applies the NEQ predicate on the ID field.
-func IDNEQ(id uint64) predicate.MediaAsset {
+func IDNEQ(id int64) predicate.MediaAsset {
 	return predicate.MediaAsset(sql.FieldNEQ(FieldID, id))
 }
 
 // IDIn applies the In predicate on the ID field.
-func IDIn(ids ...uint64) predicate.MediaAsset {
+func IDIn(ids ...int64) predicate.MediaAsset {
 	return predicate.MediaAsset(sql.FieldIn(FieldID, ids...))
 }
 
 // IDNotIn applies the NotIn predicate on the ID field.
-func IDNotIn(ids ...uint64) predicate.MediaAsset {
+func IDNotIn(ids ...int64) predicate.MediaAsset {
 	return predicate.MediaAsset(sql.FieldNotIn(FieldID, ids...))
 }
 
 // IDGT applies the GT predicate on the ID field.
-func IDGT(id uint64) predicate.MediaAsset {
+func IDGT(id int64) predicate.MediaAsset {
 	return predicate.MediaAsset(sql.FieldGT(FieldID, id))
 }
 
 // IDGTE applies the GTE predicate on the ID field.
-func IDGTE(id uint64) predicate.MediaAsset {
+func IDGTE(id int64) predicate.MediaAsset {
 	return predicate.MediaAsset(sql.FieldGTE(FieldID, id))
 }
 
 // IDLT applies the LT predicate on the ID field.
-func IDLT(id uint64) predicate.MediaAsset {
+func IDLT(id int64) predicate.MediaAsset {
 	return predicate.MediaAsset(sql.FieldLT(FieldID, id))
 }
 
 // IDLTE applies the LTE predicate on the ID field.
-func IDLTE(id uint64) predicate.MediaAsset {
+func IDLTE(id int64) predicate.MediaAsset {
 	return predicate.MediaAsset(sql.FieldLTE(FieldID, id))
 }
 
@@ -70,22 +70,22 @@ func DeletedAt(v time.Time) predicate.MediaAsset {
 }
 
 // CreatedBy applies equality check predicate on the "created_by" field. It's identical to CreatedByEQ.
-func CreatedBy(v uint64) predicate.MediaAsset {
+func CreatedBy(v int64) predicate.MediaAsset {
 	return predicate.MediaAsset(sql.FieldEQ(FieldCreatedBy, v))
 }
 
 // UpdatedBy applies equality check predicate on the "updated_by" field. It's identical to UpdatedByEQ.
-func UpdatedBy(v uint64) predicate.MediaAsset {
+func UpdatedBy(v int64) predicate.MediaAsset {
 	return predicate.MediaAsset(sql.FieldEQ(FieldUpdatedBy, v))
 }
 
 // DeletedBy applies equality check predicate on the "deleted_by" field. It's identical to DeletedByEQ.
-func DeletedBy(v uint64) predicate.MediaAsset {
+func DeletedBy(v int64) predicate.MediaAsset {
 	return predicate.MediaAsset(sql.FieldEQ(FieldDeletedBy, v))
 }
 
 // TenantID applies equality check predicate on the "tenant_id" field. It's identical to TenantIDEQ.
-func TenantID(v uint64) predicate.MediaAsset {
+func TenantID(v int64) predicate.MediaAsset {
 	return predicate.MediaAsset(sql.FieldEQ(FieldTenantID, v))
 }
 
@@ -155,12 +155,12 @@ func FileHash(v string) predicate.MediaAsset {
 }
 
 // FolderID applies equality check predicate on the "folder_id" field. It's identical to FolderIDEQ.
-func FolderID(v uint64) predicate.MediaAsset {
+func FolderID(v int64) predicate.MediaAsset {
 	return predicate.MediaAsset(sql.FieldEQ(FieldFolderID, v))
 }
 
 // FileID applies equality check predicate on the "file_id" field. It's identical to FileIDEQ.
-func FileID(v uint64) predicate.MediaAsset {
+func FileID(v int64) predicate.MediaAsset {
 	return predicate.MediaAsset(sql.FieldEQ(FieldFileID, v))
 }
 
@@ -325,42 +325,42 @@ func DeletedAtNotNil() predicate.MediaAsset {
 }
 
 // CreatedByEQ applies the EQ predicate on the "created_by" field.
-func CreatedByEQ(v uint64) predicate.MediaAsset {
+func CreatedByEQ(v int64) predicate.MediaAsset {
 	return predicate.MediaAsset(sql.FieldEQ(FieldCreatedBy, v))
 }
 
 // CreatedByNEQ applies the NEQ predicate on the "created_by" field.
-func CreatedByNEQ(v uint64) predicate.MediaAsset {
+func CreatedByNEQ(v int64) predicate.MediaAsset {
 	return predicate.MediaAsset(sql.FieldNEQ(FieldCreatedBy, v))
 }
 
 // CreatedByIn applies the In predicate on the "created_by" field.
-func CreatedByIn(vs ...uint64) predicate.MediaAsset {
+func CreatedByIn(vs ...int64) predicate.MediaAsset {
 	return predicate.MediaAsset(sql.FieldIn(FieldCreatedBy, vs...))
 }
 
 // CreatedByNotIn applies the NotIn predicate on the "created_by" field.
-func CreatedByNotIn(vs ...uint64) predicate.MediaAsset {
+func CreatedByNotIn(vs ...int64) predicate.MediaAsset {
 	return predicate.MediaAsset(sql.FieldNotIn(FieldCreatedBy, vs...))
 }
 
 // CreatedByGT applies the GT predicate on the "created_by" field.
-func CreatedByGT(v uint64) predicate.MediaAsset {
+func CreatedByGT(v int64) predicate.MediaAsset {
 	return predicate.MediaAsset(sql.FieldGT(FieldCreatedBy, v))
 }
 
 // CreatedByGTE applies the GTE predicate on the "created_by" field.
-func CreatedByGTE(v uint64) predicate.MediaAsset {
+func CreatedByGTE(v int64) predicate.MediaAsset {
 	return predicate.MediaAsset(sql.FieldGTE(FieldCreatedBy, v))
 }
 
 // CreatedByLT applies the LT predicate on the "created_by" field.
-func CreatedByLT(v uint64) predicate.MediaAsset {
+func CreatedByLT(v int64) predicate.MediaAsset {
 	return predicate.MediaAsset(sql.FieldLT(FieldCreatedBy, v))
 }
 
 // CreatedByLTE applies the LTE predicate on the "created_by" field.
-func CreatedByLTE(v uint64) predicate.MediaAsset {
+func CreatedByLTE(v int64) predicate.MediaAsset {
 	return predicate.MediaAsset(sql.FieldLTE(FieldCreatedBy, v))
 }
 
@@ -375,42 +375,42 @@ func CreatedByNotNil() predicate.MediaAsset {
 }
 
 // UpdatedByEQ applies the EQ predicate on the "updated_by" field.
-func UpdatedByEQ(v uint64) predicate.MediaAsset {
+func UpdatedByEQ(v int64) predicate.MediaAsset {
 	return predicate.MediaAsset(sql.FieldEQ(FieldUpdatedBy, v))
 }
 
 // UpdatedByNEQ applies the NEQ predicate on the "updated_by" field.
-func UpdatedByNEQ(v uint64) predicate.MediaAsset {
+func UpdatedByNEQ(v int64) predicate.MediaAsset {
 	return predicate.MediaAsset(sql.FieldNEQ(FieldUpdatedBy, v))
 }
 
 // UpdatedByIn applies the In predicate on the "updated_by" field.
-func UpdatedByIn(vs ...uint64) predicate.MediaAsset {
+func UpdatedByIn(vs ...int64) predicate.MediaAsset {
 	return predicate.MediaAsset(sql.FieldIn(FieldUpdatedBy, vs...))
 }
 
 // UpdatedByNotIn applies the NotIn predicate on the "updated_by" field.
-func UpdatedByNotIn(vs ...uint64) predicate.MediaAsset {
+func UpdatedByNotIn(vs ...int64) predicate.MediaAsset {
 	return predicate.MediaAsset(sql.FieldNotIn(FieldUpdatedBy, vs...))
 }
 
 // UpdatedByGT applies the GT predicate on the "updated_by" field.
-func UpdatedByGT(v uint64) predicate.MediaAsset {
+func UpdatedByGT(v int64) predicate.MediaAsset {
 	return predicate.MediaAsset(sql.FieldGT(FieldUpdatedBy, v))
 }
 
 // UpdatedByGTE applies the GTE predicate on the "updated_by" field.
-func UpdatedByGTE(v uint64) predicate.MediaAsset {
+func UpdatedByGTE(v int64) predicate.MediaAsset {
 	return predicate.MediaAsset(sql.FieldGTE(FieldUpdatedBy, v))
 }
 
 // UpdatedByLT applies the LT predicate on the "updated_by" field.
-func UpdatedByLT(v uint64) predicate.MediaAsset {
+func UpdatedByLT(v int64) predicate.MediaAsset {
 	return predicate.MediaAsset(sql.FieldLT(FieldUpdatedBy, v))
 }
 
 // UpdatedByLTE applies the LTE predicate on the "updated_by" field.
-func UpdatedByLTE(v uint64) predicate.MediaAsset {
+func UpdatedByLTE(v int64) predicate.MediaAsset {
 	return predicate.MediaAsset(sql.FieldLTE(FieldUpdatedBy, v))
 }
 
@@ -425,42 +425,42 @@ func UpdatedByNotNil() predicate.MediaAsset {
 }
 
 // DeletedByEQ applies the EQ predicate on the "deleted_by" field.
-func DeletedByEQ(v uint64) predicate.MediaAsset {
+func DeletedByEQ(v int64) predicate.MediaAsset {
 	return predicate.MediaAsset(sql.FieldEQ(FieldDeletedBy, v))
 }
 
 // DeletedByNEQ applies the NEQ predicate on the "deleted_by" field.
-func DeletedByNEQ(v uint64) predicate.MediaAsset {
+func DeletedByNEQ(v int64) predicate.MediaAsset {
 	return predicate.MediaAsset(sql.FieldNEQ(FieldDeletedBy, v))
 }
 
 // DeletedByIn applies the In predicate on the "deleted_by" field.
-func DeletedByIn(vs ...uint64) predicate.MediaAsset {
+func DeletedByIn(vs ...int64) predicate.MediaAsset {
 	return predicate.MediaAsset(sql.FieldIn(FieldDeletedBy, vs...))
 }
 
 // DeletedByNotIn applies the NotIn predicate on the "deleted_by" field.
-func DeletedByNotIn(vs ...uint64) predicate.MediaAsset {
+func DeletedByNotIn(vs ...int64) predicate.MediaAsset {
 	return predicate.MediaAsset(sql.FieldNotIn(FieldDeletedBy, vs...))
 }
 
 // DeletedByGT applies the GT predicate on the "deleted_by" field.
-func DeletedByGT(v uint64) predicate.MediaAsset {
+func DeletedByGT(v int64) predicate.MediaAsset {
 	return predicate.MediaAsset(sql.FieldGT(FieldDeletedBy, v))
 }
 
 // DeletedByGTE applies the GTE predicate on the "deleted_by" field.
-func DeletedByGTE(v uint64) predicate.MediaAsset {
+func DeletedByGTE(v int64) predicate.MediaAsset {
 	return predicate.MediaAsset(sql.FieldGTE(FieldDeletedBy, v))
 }
 
 // DeletedByLT applies the LT predicate on the "deleted_by" field.
-func DeletedByLT(v uint64) predicate.MediaAsset {
+func DeletedByLT(v int64) predicate.MediaAsset {
 	return predicate.MediaAsset(sql.FieldLT(FieldDeletedBy, v))
 }
 
 // DeletedByLTE applies the LTE predicate on the "deleted_by" field.
-func DeletedByLTE(v uint64) predicate.MediaAsset {
+func DeletedByLTE(v int64) predicate.MediaAsset {
 	return predicate.MediaAsset(sql.FieldLTE(FieldDeletedBy, v))
 }
 
@@ -475,42 +475,42 @@ func DeletedByNotNil() predicate.MediaAsset {
 }
 
 // TenantIDEQ applies the EQ predicate on the "tenant_id" field.
-func TenantIDEQ(v uint64) predicate.MediaAsset {
+func TenantIDEQ(v int64) predicate.MediaAsset {
 	return predicate.MediaAsset(sql.FieldEQ(FieldTenantID, v))
 }
 
 // TenantIDNEQ applies the NEQ predicate on the "tenant_id" field.
-func TenantIDNEQ(v uint64) predicate.MediaAsset {
+func TenantIDNEQ(v int64) predicate.MediaAsset {
 	return predicate.MediaAsset(sql.FieldNEQ(FieldTenantID, v))
 }
 
 // TenantIDIn applies the In predicate on the "tenant_id" field.
-func TenantIDIn(vs ...uint64) predicate.MediaAsset {
+func TenantIDIn(vs ...int64) predicate.MediaAsset {
 	return predicate.MediaAsset(sql.FieldIn(FieldTenantID, vs...))
 }
 
 // TenantIDNotIn applies the NotIn predicate on the "tenant_id" field.
-func TenantIDNotIn(vs ...uint64) predicate.MediaAsset {
+func TenantIDNotIn(vs ...int64) predicate.MediaAsset {
 	return predicate.MediaAsset(sql.FieldNotIn(FieldTenantID, vs...))
 }
 
 // TenantIDGT applies the GT predicate on the "tenant_id" field.
-func TenantIDGT(v uint64) predicate.MediaAsset {
+func TenantIDGT(v int64) predicate.MediaAsset {
 	return predicate.MediaAsset(sql.FieldGT(FieldTenantID, v))
 }
 
 // TenantIDGTE applies the GTE predicate on the "tenant_id" field.
-func TenantIDGTE(v uint64) predicate.MediaAsset {
+func TenantIDGTE(v int64) predicate.MediaAsset {
 	return predicate.MediaAsset(sql.FieldGTE(FieldTenantID, v))
 }
 
 // TenantIDLT applies the LT predicate on the "tenant_id" field.
-func TenantIDLT(v uint64) predicate.MediaAsset {
+func TenantIDLT(v int64) predicate.MediaAsset {
 	return predicate.MediaAsset(sql.FieldLT(FieldTenantID, v))
 }
 
 // TenantIDLTE applies the LTE predicate on the "tenant_id" field.
-func TenantIDLTE(v uint64) predicate.MediaAsset {
+func TenantIDLTE(v int64) predicate.MediaAsset {
 	return predicate.MediaAsset(sql.FieldLTE(FieldTenantID, v))
 }
 
@@ -1460,42 +1460,42 @@ func FileHashContainsFold(v string) predicate.MediaAsset {
 }
 
 // FolderIDEQ applies the EQ predicate on the "folder_id" field.
-func FolderIDEQ(v uint64) predicate.MediaAsset {
+func FolderIDEQ(v int64) predicate.MediaAsset {
 	return predicate.MediaAsset(sql.FieldEQ(FieldFolderID, v))
 }
 
 // FolderIDNEQ applies the NEQ predicate on the "folder_id" field.
-func FolderIDNEQ(v uint64) predicate.MediaAsset {
+func FolderIDNEQ(v int64) predicate.MediaAsset {
 	return predicate.MediaAsset(sql.FieldNEQ(FieldFolderID, v))
 }
 
 // FolderIDIn applies the In predicate on the "folder_id" field.
-func FolderIDIn(vs ...uint64) predicate.MediaAsset {
+func FolderIDIn(vs ...int64) predicate.MediaAsset {
 	return predicate.MediaAsset(sql.FieldIn(FieldFolderID, vs...))
 }
 
 // FolderIDNotIn applies the NotIn predicate on the "folder_id" field.
-func FolderIDNotIn(vs ...uint64) predicate.MediaAsset {
+func FolderIDNotIn(vs ...int64) predicate.MediaAsset {
 	return predicate.MediaAsset(sql.FieldNotIn(FieldFolderID, vs...))
 }
 
 // FolderIDGT applies the GT predicate on the "folder_id" field.
-func FolderIDGT(v uint64) predicate.MediaAsset {
+func FolderIDGT(v int64) predicate.MediaAsset {
 	return predicate.MediaAsset(sql.FieldGT(FieldFolderID, v))
 }
 
 // FolderIDGTE applies the GTE predicate on the "folder_id" field.
-func FolderIDGTE(v uint64) predicate.MediaAsset {
+func FolderIDGTE(v int64) predicate.MediaAsset {
 	return predicate.MediaAsset(sql.FieldGTE(FieldFolderID, v))
 }
 
 // FolderIDLT applies the LT predicate on the "folder_id" field.
-func FolderIDLT(v uint64) predicate.MediaAsset {
+func FolderIDLT(v int64) predicate.MediaAsset {
 	return predicate.MediaAsset(sql.FieldLT(FieldFolderID, v))
 }
 
 // FolderIDLTE applies the LTE predicate on the "folder_id" field.
-func FolderIDLTE(v uint64) predicate.MediaAsset {
+func FolderIDLTE(v int64) predicate.MediaAsset {
 	return predicate.MediaAsset(sql.FieldLTE(FieldFolderID, v))
 }
 
@@ -1510,42 +1510,42 @@ func FolderIDNotNil() predicate.MediaAsset {
 }
 
 // FileIDEQ applies the EQ predicate on the "file_id" field.
-func FileIDEQ(v uint64) predicate.MediaAsset {
+func FileIDEQ(v int64) predicate.MediaAsset {
 	return predicate.MediaAsset(sql.FieldEQ(FieldFileID, v))
 }
 
 // FileIDNEQ applies the NEQ predicate on the "file_id" field.
-func FileIDNEQ(v uint64) predicate.MediaAsset {
+func FileIDNEQ(v int64) predicate.MediaAsset {
 	return predicate.MediaAsset(sql.FieldNEQ(FieldFileID, v))
 }
 
 // FileIDIn applies the In predicate on the "file_id" field.
-func FileIDIn(vs ...uint64) predicate.MediaAsset {
+func FileIDIn(vs ...int64) predicate.MediaAsset {
 	return predicate.MediaAsset(sql.FieldIn(FieldFileID, vs...))
 }
 
 // FileIDNotIn applies the NotIn predicate on the "file_id" field.
-func FileIDNotIn(vs ...uint64) predicate.MediaAsset {
+func FileIDNotIn(vs ...int64) predicate.MediaAsset {
 	return predicate.MediaAsset(sql.FieldNotIn(FieldFileID, vs...))
 }
 
 // FileIDGT applies the GT predicate on the "file_id" field.
-func FileIDGT(v uint64) predicate.MediaAsset {
+func FileIDGT(v int64) predicate.MediaAsset {
 	return predicate.MediaAsset(sql.FieldGT(FieldFileID, v))
 }
 
 // FileIDGTE applies the GTE predicate on the "file_id" field.
-func FileIDGTE(v uint64) predicate.MediaAsset {
+func FileIDGTE(v int64) predicate.MediaAsset {
 	return predicate.MediaAsset(sql.FieldGTE(FieldFileID, v))
 }
 
 // FileIDLT applies the LT predicate on the "file_id" field.
-func FileIDLT(v uint64) predicate.MediaAsset {
+func FileIDLT(v int64) predicate.MediaAsset {
 	return predicate.MediaAsset(sql.FieldLT(FieldFileID, v))
 }
 
 // FileIDLTE applies the LTE predicate on the "file_id" field.
-func FileIDLTE(v uint64) predicate.MediaAsset {
+func FileIDLTE(v int64) predicate.MediaAsset {
 	return predicate.MediaAsset(sql.FieldLTE(FieldFileID, v))
 }
 

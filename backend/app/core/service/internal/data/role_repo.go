@@ -130,7 +130,7 @@ func (r *RoleRepo) Count(ctx context.Context, req *paginationV1.PagingRequest) (
 }
 
 // IsExist 判断角色是否存在
-func (r *RoleRepo) IsExist(ctx context.Context, id uint64) (bool, error) {
+func (r *RoleRepo) IsExist(ctx context.Context, id int64) (bool, error) {
 	exist, err := r.entClient.Client().Role.Query().
 		Where(role.IDEQ(id)).
 		Exist(ctx)
@@ -179,7 +179,7 @@ func (r *RoleRepo) fillPermissionIDs(ctx context.Context, dto *permissionV1.Role
 }
 
 // ListRoleCodesByIds 通过角色ID列表获取角色编码列表
-func (r *RoleRepo) ListRoleCodesByIds(ctx context.Context, roleIDs []uint64) ([]string, error) {
+func (r *RoleRepo) ListRoleCodesByIds(ctx context.Context, roleIDs []int64) ([]string, error) {
 	if len(roleIDs) == 0 {
 		return []string{}, nil
 	}
@@ -236,7 +236,7 @@ func (r *RoleRepo) ListRolesByRoleCodes(ctx context.Context, codes []string) ([]
 }
 
 // ListRolesByRoleIds 通过角色ID列表获取角色列表
-func (r *RoleRepo) ListRolesByRoleIds(ctx context.Context, ids []uint64) ([]*permissionV1.Role, error) {
+func (r *RoleRepo) ListRolesByRoleIds(ctx context.Context, ids []int64) ([]*permissionV1.Role, error) {
 	if len(ids) == 0 {
 		return []*permissionV1.Role{}, nil
 	}
@@ -263,7 +263,7 @@ func (r *RoleRepo) ListRolesByRoleIds(ctx context.Context, ids []uint64) ([]*per
 }
 
 // ListRoleCodesByRoleIds 通过角色ID列表获取角色编码列表
-func (r *RoleRepo) ListRoleCodesByRoleIds(ctx context.Context, ids []uint64) ([]string, error) {
+func (r *RoleRepo) ListRoleCodesByRoleIds(ctx context.Context, ids []int64) ([]string, error) {
 	if len(ids) == 0 {
 		return []string{}, nil
 	}
@@ -287,9 +287,9 @@ func (r *RoleRepo) ListRoleCodesByRoleIds(ctx context.Context, ids []uint64) ([]
 }
 
 // ListRoleIDsByRoleCodes 通过角色编码列表获取角色ID列表
-func (r *RoleRepo) ListRoleIDsByRoleCodes(ctx context.Context, codes []string) ([]uint64, error) {
+func (r *RoleRepo) ListRoleIDsByRoleCodes(ctx context.Context, codes []string) ([]int64, error) {
 	if len(codes) == 0 {
-		return []uint64{}, nil
+		return []int64{}, nil
 	}
 
 	// role.code 仅在 (tenant_id, code) 维度唯一，平台上下文(tid=0)下按 code 列表查询
@@ -307,7 +307,7 @@ func (r *RoleRepo) ListRoleIDsByRoleCodes(ctx context.Context, codes []string) (
 		return nil, permissionV1.ErrorInternalServerError("query role ids failed")
 	}
 
-	ids := make([]uint64, 0, len(entities))
+	ids := make([]int64, 0, len(entities))
 	for _, entity := range entities {
 		ids = append(ids, entity.ID)
 	}
@@ -357,7 +357,7 @@ func (r *RoleRepo) Get(ctx context.Context, req *permissionV1.GetRoleRequest) (*
 
 // GetTenantRoleByCode 在指定租户内按 code 查找角色。
 // 使用显式 tenantID 而非 viewer context，用于注册流程中为新用户查找其租户的默认角色。
-func (r *RoleRepo) GetTenantRoleByCode(ctx context.Context, tenantID uint64, code string) (*permissionV1.Role, error) {
+func (r *RoleRepo) GetTenantRoleByCode(ctx context.Context, tenantID int64, code string) (*permissionV1.Role, error) {
 	if tenantID == 0 || code == "" {
 		return nil, permissionV1.ErrorBadRequest("invalid parameter")
 	}
@@ -432,7 +432,7 @@ func (r *RoleRepo) GetTemplateRole(ctx context.Context, templateCode string) (*p
 }
 
 // CreateTenantRoleFromTemplate 从模版创建租户角色
-func (r *RoleRepo) CreateTenantRoleFromTemplate(ctx context.Context, tx *ent.Tx, tenantID, operatorID uint64) (dto *permissionV1.Role, err error) {
+func (r *RoleRepo) CreateTenantRoleFromTemplate(ctx context.Context, tx *ent.Tx, tenantID, operatorID int64) (dto *permissionV1.Role, err error) {
 	// 通过专门的 GetTemplateRole 查询模板角色（tenant_id=0 的受保护模板），
 	// 它自带 TenantIDIsNil/TenantIDEQ(0) 过滤，避免通用 Get(Code) 在平台上下文下
 	// 跨租户匹配多行或误中非模板角色。
@@ -756,12 +756,12 @@ func (r *RoleRepo) Delete(ctx context.Context, req *permissionV1.DeleteRoleReque
 }
 
 // ListPermissionIDsByRoleIDs 通过角色ID列表获取权限ID列表
-func (r *RoleRepo) ListPermissionIDsByRoleIDs(ctx context.Context, roleIDs []uint64) ([]uint64, error) {
+func (r *RoleRepo) ListPermissionIDsByRoleIDs(ctx context.Context, roleIDs []int64) ([]int64, error) {
 	return r.rolePermissionRepo.ListPermissionIDsByRoleIDs(ctx, roleIDs)
 }
 
 // ListPermissionIDsByRoleCodes 通过角色编码列表获取权限ID列表
-func (r *RoleRepo) ListPermissionIDsByRoleCodes(ctx context.Context, roleCodes []string) ([]uint64, error) {
+func (r *RoleRepo) ListPermissionIDsByRoleCodes(ctx context.Context, roleCodes []string) ([]int64, error) {
 	roleIDs, err := r.ListRoleIDsByRoleCodes(ctx, roleCodes)
 	if err != nil {
 		return nil, err
@@ -770,7 +770,7 @@ func (r *RoleRepo) ListPermissionIDsByRoleCodes(ctx context.Context, roleCodes [
 	return r.rolePermissionRepo.ListPermissionIDsByRoleIDs(ctx, roleIDs)
 }
 
-func (r *RoleRepo) ListPermissionIDsByUserID(ctx context.Context, userID uint64) ([]uint64, error) {
+func (r *RoleRepo) ListPermissionIDsByUserID(ctx context.Context, userID int64) ([]int64, error) {
 	roleIDs, err := r.userRoleRepo.ListRoleIDs(ctx, userID, false)
 	if err != nil {
 		return nil, err
@@ -781,8 +781,8 @@ func (r *RoleRepo) ListPermissionIDsByUserID(ctx context.Context, userID uint64)
 
 // assignPermissionCodesToRole 分配权限编码给角色
 func (r *RoleRepo) assignPermissionCodesToRole(ctx context.Context, tx *ent.Tx,
-	tenantID, operatorID uint64,
-	roleID uint64,
+	tenantID, operatorID int64,
+	roleID int64,
 	codes []string,
 ) error {
 	ids, err := r.permissionRepo.GetPermissionIDsByCodesWithTx(ctx, tx, codes)
@@ -795,15 +795,15 @@ func (r *RoleRepo) assignPermissionCodesToRole(ctx context.Context, tx *ent.Tx,
 
 // assignPermissionsToRole 分配权限给角色
 func (r *RoleRepo) assignPermissionsToRole(ctx context.Context, tx *ent.Tx,
-	tenantID, operatorID uint64,
-	roleID uint64,
-	permissionIDs []uint64,
+	tenantID, operatorID int64,
+	roleID int64,
+	permissionIDs []int64,
 ) error {
 	return r.rolePermissionRepo.AssignPermissions(ctx, tx, tenantID, operatorID, roleID, permissionIDs)
 }
 
 // GetRolePermissionApiIDs 获取角色关联的权限API资源ID列表
-func (r *RoleRepo) GetRolePermissionApiIDs(ctx context.Context, roleID uint64) ([]uint64, error) {
+func (r *RoleRepo) GetRolePermissionApiIDs(ctx context.Context, roleID int64) ([]int64, error) {
 	permissionIDs, err := r.rolePermissionRepo.ListPermissionIDs(ctx, roleID)
 	if err != nil {
 		return nil, err
@@ -818,7 +818,7 @@ func (r *RoleRepo) GetRolePermissionApiIDs(ctx context.Context, roleID uint64) (
 }
 
 // GetRolePermissionMenuIDs 获取角色关联的权限菜单ID列表
-func (r *RoleRepo) GetRolePermissionMenuIDs(ctx context.Context, roleID uint64) ([]uint64, error) {
+func (r *RoleRepo) GetRolePermissionMenuIDs(ctx context.Context, roleID int64) ([]int64, error) {
 	permissionIDs, err := r.rolePermissionRepo.ListPermissionIDs(ctx, roleID)
 	if err != nil {
 		return nil, err
@@ -833,7 +833,7 @@ func (r *RoleRepo) GetRolePermissionMenuIDs(ctx context.Context, roleID uint64) 
 }
 
 // GetRolesPermissionMenuIDs 获取多个角色关联的权限菜单ID列表
-func (r *RoleRepo) GetRolesPermissionMenuIDs(ctx context.Context, roleIDs []uint64) ([]uint64, error) {
+func (r *RoleRepo) GetRolesPermissionMenuIDs(ctx context.Context, roleIDs []int64) ([]int64, error) {
 	permissionIDs, err := r.rolePermissionRepo.ListPermissionIDsByRoleIDs(ctx, roleIDs)
 	if err != nil {
 		return nil, err
@@ -848,7 +848,7 @@ func (r *RoleRepo) GetRolesPermissionMenuIDs(ctx context.Context, roleIDs []uint
 }
 
 // CanAssignRole 判断角色是否可以被分配（非保护且启用状态）
-func (r *RoleRepo) CanAssignRole(ctx context.Context, roleID uint64) (bool, error) {
+func (r *RoleRepo) CanAssignRole(ctx context.Context, roleID int64) (bool, error) {
 	aRole, err := r.Get(ctx, &permissionV1.GetRoleRequest{QueryBy: &permissionV1.GetRoleRequest_Id{Id: roleID}})
 	if err != nil {
 		return false, err

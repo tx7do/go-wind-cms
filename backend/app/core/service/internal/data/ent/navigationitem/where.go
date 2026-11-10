@@ -11,47 +11,47 @@ import (
 )
 
 // ID filters vertices based on their ID field.
-func ID(id uint64) predicate.NavigationItem {
+func ID(id int64) predicate.NavigationItem {
 	return predicate.NavigationItem(sql.FieldEQ(FieldID, id))
 }
 
 // IDEQ applies the EQ predicate on the ID field.
-func IDEQ(id uint64) predicate.NavigationItem {
+func IDEQ(id int64) predicate.NavigationItem {
 	return predicate.NavigationItem(sql.FieldEQ(FieldID, id))
 }
 
 // IDNEQ applies the NEQ predicate on the ID field.
-func IDNEQ(id uint64) predicate.NavigationItem {
+func IDNEQ(id int64) predicate.NavigationItem {
 	return predicate.NavigationItem(sql.FieldNEQ(FieldID, id))
 }
 
 // IDIn applies the In predicate on the ID field.
-func IDIn(ids ...uint64) predicate.NavigationItem {
+func IDIn(ids ...int64) predicate.NavigationItem {
 	return predicate.NavigationItem(sql.FieldIn(FieldID, ids...))
 }
 
 // IDNotIn applies the NotIn predicate on the ID field.
-func IDNotIn(ids ...uint64) predicate.NavigationItem {
+func IDNotIn(ids ...int64) predicate.NavigationItem {
 	return predicate.NavigationItem(sql.FieldNotIn(FieldID, ids...))
 }
 
 // IDGT applies the GT predicate on the ID field.
-func IDGT(id uint64) predicate.NavigationItem {
+func IDGT(id int64) predicate.NavigationItem {
 	return predicate.NavigationItem(sql.FieldGT(FieldID, id))
 }
 
 // IDGTE applies the GTE predicate on the ID field.
-func IDGTE(id uint64) predicate.NavigationItem {
+func IDGTE(id int64) predicate.NavigationItem {
 	return predicate.NavigationItem(sql.FieldGTE(FieldID, id))
 }
 
 // IDLT applies the LT predicate on the ID field.
-func IDLT(id uint64) predicate.NavigationItem {
+func IDLT(id int64) predicate.NavigationItem {
 	return predicate.NavigationItem(sql.FieldLT(FieldID, id))
 }
 
 // IDLTE applies the LTE predicate on the ID field.
-func IDLTE(id uint64) predicate.NavigationItem {
+func IDLTE(id int64) predicate.NavigationItem {
 	return predicate.NavigationItem(sql.FieldLTE(FieldID, id))
 }
 
@@ -71,17 +71,17 @@ func DeletedAt(v time.Time) predicate.NavigationItem {
 }
 
 // CreatedBy applies equality check predicate on the "created_by" field. It's identical to CreatedByEQ.
-func CreatedBy(v uint64) predicate.NavigationItem {
+func CreatedBy(v int64) predicate.NavigationItem {
 	return predicate.NavigationItem(sql.FieldEQ(FieldCreatedBy, v))
 }
 
 // UpdatedBy applies equality check predicate on the "updated_by" field. It's identical to UpdatedByEQ.
-func UpdatedBy(v uint64) predicate.NavigationItem {
+func UpdatedBy(v int64) predicate.NavigationItem {
 	return predicate.NavigationItem(sql.FieldEQ(FieldUpdatedBy, v))
 }
 
 // DeletedBy applies equality check predicate on the "deleted_by" field. It's identical to DeletedByEQ.
-func DeletedBy(v uint64) predicate.NavigationItem {
+func DeletedBy(v int64) predicate.NavigationItem {
 	return predicate.NavigationItem(sql.FieldEQ(FieldDeletedBy, v))
 }
 
@@ -91,17 +91,17 @@ func SortOrder(v uint32) predicate.NavigationItem {
 }
 
 // ParentID applies equality check predicate on the "parent_id" field. It's identical to ParentIDEQ.
-func ParentID(v uint64) predicate.NavigationItem {
+func ParentID(v int64) predicate.NavigationItem {
 	return predicate.NavigationItem(sql.FieldEQ(FieldParentID, v))
 }
 
 // TenantID applies equality check predicate on the "tenant_id" field. It's identical to TenantIDEQ.
-func TenantID(v uint64) predicate.NavigationItem {
+func TenantID(v int64) predicate.NavigationItem {
 	return predicate.NavigationItem(sql.FieldEQ(FieldTenantID, v))
 }
 
 // NavigationID applies equality check predicate on the "navigation_id" field. It's identical to NavigationIDEQ.
-func NavigationID(v uint64) predicate.NavigationItem {
+func NavigationID(v int64) predicate.NavigationItem {
 	return predicate.NavigationItem(sql.FieldEQ(FieldNavigationID, v))
 }
 
@@ -116,7 +116,7 @@ func URL(v string) predicate.NavigationItem {
 }
 
 // ObjectID applies equality check predicate on the "object_id" field. It's identical to ObjectIDEQ.
-func ObjectID(v uint64) predicate.NavigationItem {
+func ObjectID(v int64) predicate.NavigationItem {
 	return predicate.NavigationItem(sql.FieldEQ(FieldObjectID, v))
 }
 
@@ -296,42 +296,42 @@ func DeletedAtNotNil() predicate.NavigationItem {
 }
 
 // CreatedByEQ applies the EQ predicate on the "created_by" field.
-func CreatedByEQ(v uint64) predicate.NavigationItem {
+func CreatedByEQ(v int64) predicate.NavigationItem {
 	return predicate.NavigationItem(sql.FieldEQ(FieldCreatedBy, v))
 }
 
 // CreatedByNEQ applies the NEQ predicate on the "created_by" field.
-func CreatedByNEQ(v uint64) predicate.NavigationItem {
+func CreatedByNEQ(v int64) predicate.NavigationItem {
 	return predicate.NavigationItem(sql.FieldNEQ(FieldCreatedBy, v))
 }
 
 // CreatedByIn applies the In predicate on the "created_by" field.
-func CreatedByIn(vs ...uint64) predicate.NavigationItem {
+func CreatedByIn(vs ...int64) predicate.NavigationItem {
 	return predicate.NavigationItem(sql.FieldIn(FieldCreatedBy, vs...))
 }
 
 // CreatedByNotIn applies the NotIn predicate on the "created_by" field.
-func CreatedByNotIn(vs ...uint64) predicate.NavigationItem {
+func CreatedByNotIn(vs ...int64) predicate.NavigationItem {
 	return predicate.NavigationItem(sql.FieldNotIn(FieldCreatedBy, vs...))
 }
 
 // CreatedByGT applies the GT predicate on the "created_by" field.
-func CreatedByGT(v uint64) predicate.NavigationItem {
+func CreatedByGT(v int64) predicate.NavigationItem {
 	return predicate.NavigationItem(sql.FieldGT(FieldCreatedBy, v))
 }
 
 // CreatedByGTE applies the GTE predicate on the "created_by" field.
-func CreatedByGTE(v uint64) predicate.NavigationItem {
+func CreatedByGTE(v int64) predicate.NavigationItem {
 	return predicate.NavigationItem(sql.FieldGTE(FieldCreatedBy, v))
 }
 
 // CreatedByLT applies the LT predicate on the "created_by" field.
-func CreatedByLT(v uint64) predicate.NavigationItem {
+func CreatedByLT(v int64) predicate.NavigationItem {
 	return predicate.NavigationItem(sql.FieldLT(FieldCreatedBy, v))
 }
 
 // CreatedByLTE applies the LTE predicate on the "created_by" field.
-func CreatedByLTE(v uint64) predicate.NavigationItem {
+func CreatedByLTE(v int64) predicate.NavigationItem {
 	return predicate.NavigationItem(sql.FieldLTE(FieldCreatedBy, v))
 }
 
@@ -346,42 +346,42 @@ func CreatedByNotNil() predicate.NavigationItem {
 }
 
 // UpdatedByEQ applies the EQ predicate on the "updated_by" field.
-func UpdatedByEQ(v uint64) predicate.NavigationItem {
+func UpdatedByEQ(v int64) predicate.NavigationItem {
 	return predicate.NavigationItem(sql.FieldEQ(FieldUpdatedBy, v))
 }
 
 // UpdatedByNEQ applies the NEQ predicate on the "updated_by" field.
-func UpdatedByNEQ(v uint64) predicate.NavigationItem {
+func UpdatedByNEQ(v int64) predicate.NavigationItem {
 	return predicate.NavigationItem(sql.FieldNEQ(FieldUpdatedBy, v))
 }
 
 // UpdatedByIn applies the In predicate on the "updated_by" field.
-func UpdatedByIn(vs ...uint64) predicate.NavigationItem {
+func UpdatedByIn(vs ...int64) predicate.NavigationItem {
 	return predicate.NavigationItem(sql.FieldIn(FieldUpdatedBy, vs...))
 }
 
 // UpdatedByNotIn applies the NotIn predicate on the "updated_by" field.
-func UpdatedByNotIn(vs ...uint64) predicate.NavigationItem {
+func UpdatedByNotIn(vs ...int64) predicate.NavigationItem {
 	return predicate.NavigationItem(sql.FieldNotIn(FieldUpdatedBy, vs...))
 }
 
 // UpdatedByGT applies the GT predicate on the "updated_by" field.
-func UpdatedByGT(v uint64) predicate.NavigationItem {
+func UpdatedByGT(v int64) predicate.NavigationItem {
 	return predicate.NavigationItem(sql.FieldGT(FieldUpdatedBy, v))
 }
 
 // UpdatedByGTE applies the GTE predicate on the "updated_by" field.
-func UpdatedByGTE(v uint64) predicate.NavigationItem {
+func UpdatedByGTE(v int64) predicate.NavigationItem {
 	return predicate.NavigationItem(sql.FieldGTE(FieldUpdatedBy, v))
 }
 
 // UpdatedByLT applies the LT predicate on the "updated_by" field.
-func UpdatedByLT(v uint64) predicate.NavigationItem {
+func UpdatedByLT(v int64) predicate.NavigationItem {
 	return predicate.NavigationItem(sql.FieldLT(FieldUpdatedBy, v))
 }
 
 // UpdatedByLTE applies the LTE predicate on the "updated_by" field.
-func UpdatedByLTE(v uint64) predicate.NavigationItem {
+func UpdatedByLTE(v int64) predicate.NavigationItem {
 	return predicate.NavigationItem(sql.FieldLTE(FieldUpdatedBy, v))
 }
 
@@ -396,42 +396,42 @@ func UpdatedByNotNil() predicate.NavigationItem {
 }
 
 // DeletedByEQ applies the EQ predicate on the "deleted_by" field.
-func DeletedByEQ(v uint64) predicate.NavigationItem {
+func DeletedByEQ(v int64) predicate.NavigationItem {
 	return predicate.NavigationItem(sql.FieldEQ(FieldDeletedBy, v))
 }
 
 // DeletedByNEQ applies the NEQ predicate on the "deleted_by" field.
-func DeletedByNEQ(v uint64) predicate.NavigationItem {
+func DeletedByNEQ(v int64) predicate.NavigationItem {
 	return predicate.NavigationItem(sql.FieldNEQ(FieldDeletedBy, v))
 }
 
 // DeletedByIn applies the In predicate on the "deleted_by" field.
-func DeletedByIn(vs ...uint64) predicate.NavigationItem {
+func DeletedByIn(vs ...int64) predicate.NavigationItem {
 	return predicate.NavigationItem(sql.FieldIn(FieldDeletedBy, vs...))
 }
 
 // DeletedByNotIn applies the NotIn predicate on the "deleted_by" field.
-func DeletedByNotIn(vs ...uint64) predicate.NavigationItem {
+func DeletedByNotIn(vs ...int64) predicate.NavigationItem {
 	return predicate.NavigationItem(sql.FieldNotIn(FieldDeletedBy, vs...))
 }
 
 // DeletedByGT applies the GT predicate on the "deleted_by" field.
-func DeletedByGT(v uint64) predicate.NavigationItem {
+func DeletedByGT(v int64) predicate.NavigationItem {
 	return predicate.NavigationItem(sql.FieldGT(FieldDeletedBy, v))
 }
 
 // DeletedByGTE applies the GTE predicate on the "deleted_by" field.
-func DeletedByGTE(v uint64) predicate.NavigationItem {
+func DeletedByGTE(v int64) predicate.NavigationItem {
 	return predicate.NavigationItem(sql.FieldGTE(FieldDeletedBy, v))
 }
 
 // DeletedByLT applies the LT predicate on the "deleted_by" field.
-func DeletedByLT(v uint64) predicate.NavigationItem {
+func DeletedByLT(v int64) predicate.NavigationItem {
 	return predicate.NavigationItem(sql.FieldLT(FieldDeletedBy, v))
 }
 
 // DeletedByLTE applies the LTE predicate on the "deleted_by" field.
-func DeletedByLTE(v uint64) predicate.NavigationItem {
+func DeletedByLTE(v int64) predicate.NavigationItem {
 	return predicate.NavigationItem(sql.FieldLTE(FieldDeletedBy, v))
 }
 
@@ -496,22 +496,22 @@ func SortOrderNotNil() predicate.NavigationItem {
 }
 
 // ParentIDEQ applies the EQ predicate on the "parent_id" field.
-func ParentIDEQ(v uint64) predicate.NavigationItem {
+func ParentIDEQ(v int64) predicate.NavigationItem {
 	return predicate.NavigationItem(sql.FieldEQ(FieldParentID, v))
 }
 
 // ParentIDNEQ applies the NEQ predicate on the "parent_id" field.
-func ParentIDNEQ(v uint64) predicate.NavigationItem {
+func ParentIDNEQ(v int64) predicate.NavigationItem {
 	return predicate.NavigationItem(sql.FieldNEQ(FieldParentID, v))
 }
 
 // ParentIDIn applies the In predicate on the "parent_id" field.
-func ParentIDIn(vs ...uint64) predicate.NavigationItem {
+func ParentIDIn(vs ...int64) predicate.NavigationItem {
 	return predicate.NavigationItem(sql.FieldIn(FieldParentID, vs...))
 }
 
 // ParentIDNotIn applies the NotIn predicate on the "parent_id" field.
-func ParentIDNotIn(vs ...uint64) predicate.NavigationItem {
+func ParentIDNotIn(vs ...int64) predicate.NavigationItem {
 	return predicate.NavigationItem(sql.FieldNotIn(FieldParentID, vs...))
 }
 
@@ -526,42 +526,42 @@ func ParentIDNotNil() predicate.NavigationItem {
 }
 
 // TenantIDEQ applies the EQ predicate on the "tenant_id" field.
-func TenantIDEQ(v uint64) predicate.NavigationItem {
+func TenantIDEQ(v int64) predicate.NavigationItem {
 	return predicate.NavigationItem(sql.FieldEQ(FieldTenantID, v))
 }
 
 // TenantIDNEQ applies the NEQ predicate on the "tenant_id" field.
-func TenantIDNEQ(v uint64) predicate.NavigationItem {
+func TenantIDNEQ(v int64) predicate.NavigationItem {
 	return predicate.NavigationItem(sql.FieldNEQ(FieldTenantID, v))
 }
 
 // TenantIDIn applies the In predicate on the "tenant_id" field.
-func TenantIDIn(vs ...uint64) predicate.NavigationItem {
+func TenantIDIn(vs ...int64) predicate.NavigationItem {
 	return predicate.NavigationItem(sql.FieldIn(FieldTenantID, vs...))
 }
 
 // TenantIDNotIn applies the NotIn predicate on the "tenant_id" field.
-func TenantIDNotIn(vs ...uint64) predicate.NavigationItem {
+func TenantIDNotIn(vs ...int64) predicate.NavigationItem {
 	return predicate.NavigationItem(sql.FieldNotIn(FieldTenantID, vs...))
 }
 
 // TenantIDGT applies the GT predicate on the "tenant_id" field.
-func TenantIDGT(v uint64) predicate.NavigationItem {
+func TenantIDGT(v int64) predicate.NavigationItem {
 	return predicate.NavigationItem(sql.FieldGT(FieldTenantID, v))
 }
 
 // TenantIDGTE applies the GTE predicate on the "tenant_id" field.
-func TenantIDGTE(v uint64) predicate.NavigationItem {
+func TenantIDGTE(v int64) predicate.NavigationItem {
 	return predicate.NavigationItem(sql.FieldGTE(FieldTenantID, v))
 }
 
 // TenantIDLT applies the LT predicate on the "tenant_id" field.
-func TenantIDLT(v uint64) predicate.NavigationItem {
+func TenantIDLT(v int64) predicate.NavigationItem {
 	return predicate.NavigationItem(sql.FieldLT(FieldTenantID, v))
 }
 
 // TenantIDLTE applies the LTE predicate on the "tenant_id" field.
-func TenantIDLTE(v uint64) predicate.NavigationItem {
+func TenantIDLTE(v int64) predicate.NavigationItem {
 	return predicate.NavigationItem(sql.FieldLTE(FieldTenantID, v))
 }
 
@@ -606,42 +606,42 @@ func LinkTypeNotNil() predicate.NavigationItem {
 }
 
 // NavigationIDEQ applies the EQ predicate on the "navigation_id" field.
-func NavigationIDEQ(v uint64) predicate.NavigationItem {
+func NavigationIDEQ(v int64) predicate.NavigationItem {
 	return predicate.NavigationItem(sql.FieldEQ(FieldNavigationID, v))
 }
 
 // NavigationIDNEQ applies the NEQ predicate on the "navigation_id" field.
-func NavigationIDNEQ(v uint64) predicate.NavigationItem {
+func NavigationIDNEQ(v int64) predicate.NavigationItem {
 	return predicate.NavigationItem(sql.FieldNEQ(FieldNavigationID, v))
 }
 
 // NavigationIDIn applies the In predicate on the "navigation_id" field.
-func NavigationIDIn(vs ...uint64) predicate.NavigationItem {
+func NavigationIDIn(vs ...int64) predicate.NavigationItem {
 	return predicate.NavigationItem(sql.FieldIn(FieldNavigationID, vs...))
 }
 
 // NavigationIDNotIn applies the NotIn predicate on the "navigation_id" field.
-func NavigationIDNotIn(vs ...uint64) predicate.NavigationItem {
+func NavigationIDNotIn(vs ...int64) predicate.NavigationItem {
 	return predicate.NavigationItem(sql.FieldNotIn(FieldNavigationID, vs...))
 }
 
 // NavigationIDGT applies the GT predicate on the "navigation_id" field.
-func NavigationIDGT(v uint64) predicate.NavigationItem {
+func NavigationIDGT(v int64) predicate.NavigationItem {
 	return predicate.NavigationItem(sql.FieldGT(FieldNavigationID, v))
 }
 
 // NavigationIDGTE applies the GTE predicate on the "navigation_id" field.
-func NavigationIDGTE(v uint64) predicate.NavigationItem {
+func NavigationIDGTE(v int64) predicate.NavigationItem {
 	return predicate.NavigationItem(sql.FieldGTE(FieldNavigationID, v))
 }
 
 // NavigationIDLT applies the LT predicate on the "navigation_id" field.
-func NavigationIDLT(v uint64) predicate.NavigationItem {
+func NavigationIDLT(v int64) predicate.NavigationItem {
 	return predicate.NavigationItem(sql.FieldLT(FieldNavigationID, v))
 }
 
 // NavigationIDLTE applies the LTE predicate on the "navigation_id" field.
-func NavigationIDLTE(v uint64) predicate.NavigationItem {
+func NavigationIDLTE(v int64) predicate.NavigationItem {
 	return predicate.NavigationItem(sql.FieldLTE(FieldNavigationID, v))
 }
 
@@ -806,42 +806,42 @@ func URLContainsFold(v string) predicate.NavigationItem {
 }
 
 // ObjectIDEQ applies the EQ predicate on the "object_id" field.
-func ObjectIDEQ(v uint64) predicate.NavigationItem {
+func ObjectIDEQ(v int64) predicate.NavigationItem {
 	return predicate.NavigationItem(sql.FieldEQ(FieldObjectID, v))
 }
 
 // ObjectIDNEQ applies the NEQ predicate on the "object_id" field.
-func ObjectIDNEQ(v uint64) predicate.NavigationItem {
+func ObjectIDNEQ(v int64) predicate.NavigationItem {
 	return predicate.NavigationItem(sql.FieldNEQ(FieldObjectID, v))
 }
 
 // ObjectIDIn applies the In predicate on the "object_id" field.
-func ObjectIDIn(vs ...uint64) predicate.NavigationItem {
+func ObjectIDIn(vs ...int64) predicate.NavigationItem {
 	return predicate.NavigationItem(sql.FieldIn(FieldObjectID, vs...))
 }
 
 // ObjectIDNotIn applies the NotIn predicate on the "object_id" field.
-func ObjectIDNotIn(vs ...uint64) predicate.NavigationItem {
+func ObjectIDNotIn(vs ...int64) predicate.NavigationItem {
 	return predicate.NavigationItem(sql.FieldNotIn(FieldObjectID, vs...))
 }
 
 // ObjectIDGT applies the GT predicate on the "object_id" field.
-func ObjectIDGT(v uint64) predicate.NavigationItem {
+func ObjectIDGT(v int64) predicate.NavigationItem {
 	return predicate.NavigationItem(sql.FieldGT(FieldObjectID, v))
 }
 
 // ObjectIDGTE applies the GTE predicate on the "object_id" field.
-func ObjectIDGTE(v uint64) predicate.NavigationItem {
+func ObjectIDGTE(v int64) predicate.NavigationItem {
 	return predicate.NavigationItem(sql.FieldGTE(FieldObjectID, v))
 }
 
 // ObjectIDLT applies the LT predicate on the "object_id" field.
-func ObjectIDLT(v uint64) predicate.NavigationItem {
+func ObjectIDLT(v int64) predicate.NavigationItem {
 	return predicate.NavigationItem(sql.FieldLT(FieldObjectID, v))
 }
 
 // ObjectIDLTE applies the LTE predicate on the "object_id" field.
-func ObjectIDLTE(v uint64) predicate.NavigationItem {
+func ObjectIDLTE(v int64) predicate.NavigationItem {
 	return predicate.NavigationItem(sql.FieldLTE(FieldObjectID, v))
 }
 

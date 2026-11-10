@@ -90,10 +90,10 @@ func (s *AiAgentService) Create(ctx context.Context, req *aiV1.CreateAiAgentAppR
 		return nil, err
 	}
 
-	var operatorID, tenantID uint64
+	var operatorID, tenantID int64
 	if vc, exist := viewer.FromContext(ctx); exist && vc != nil {
-		operatorID = uint64(vc.UserID())
-		tenantID = uint64(vc.TenantID())
+		operatorID = int64(vc.UserID())
+		tenantID = int64(vc.TenantID())
 	}
 	req.Data.TenantId = trans.Ptr(tenantID)
 
@@ -174,10 +174,10 @@ func (s *AiAgentService) Run(ctx context.Context, req *aiV1.RunAiAgentAppRequest
 		return nil, errors.BadRequest("AI_AGENT", "id is required")
 	}
 
-	var operatorID, tenantID uint64
+	var operatorID, tenantID int64
 	if vc, exist := viewer.FromContext(ctx); exist && vc != nil {
-		operatorID = uint64(vc.UserID())
-		tenantID = uint64(vc.TenantID())
+		operatorID = int64(vc.UserID())
+		tenantID = int64(vc.TenantID())
 	}
 
 	app, err := s.appRepo.GetEntityByID(ctx, req.GetId())
@@ -292,10 +292,10 @@ func (s *AiAgentService) ApproveRun(ctx context.Context, req *aiV1.ApproveAgentR
 		return nil, errors.BadRequest("AI_AGENT", err.Error())
 	}
 
-	var operatorID, tenantID uint64
+	var operatorID, tenantID int64
 	if vc, exist := viewer.FromContext(ctx); exist && vc != nil {
-		operatorID = uint64(vc.UserID())
-		tenantID = uint64(vc.TenantID())
+		operatorID = int64(vc.UserID())
+		tenantID = int64(vc.TenantID())
 	}
 
 	// 驳回：置 FAILED（审批意见进 error），保留 trace
@@ -401,9 +401,9 @@ func (s *AiAgentService) ApproveRun(ctx context.Context, req *aiV1.ApproveAgentR
 
 	if err := s.runRepo.SettleResult(ctx, req.GetRunId(), status, output, errMsg, string(mergedJSON),
 		data.AgentRunTokens{
-			Prompt:     usage.Prompt + uint64(entity.PromptTokens),
-			Completion: usage.Completion + uint64(entity.CompletionTokens),
-			Total:      usage.Total + uint64(entity.TotalTokens),
+			Prompt:     usage.Prompt + int64(entity.PromptTokens),
+			Completion: usage.Completion + int64(entity.CompletionTokens),
+			Total:      usage.Total + int64(entity.TotalTokens),
 		},
 		entity.DurationMs+durationMs); err != nil {
 		return nil, err
@@ -412,14 +412,14 @@ func (s *AiAgentService) ApproveRun(ctx context.Context, req *aiV1.ApproveAgentR
 	return s.runRepo.Get(ctx, req.GetRunId())
 }
 
-func derefAgentUint(p *uint64) uint64 {
+func derefAgentUint(p *int64) int64 {
 	if p == nil {
 		return 0
 	}
 	return *p
 }
 
-func derefAgentUint32(p *uint64) uint64 {
+func derefAgentUint32(p *int64) int64 {
 	if p == nil {
 		return 0
 	}
@@ -428,7 +428,7 @@ func derefAgentUint32(p *uint64) uint64 {
 
 // publishAgentFrame 把一帧轨迹事件发往 Redis（admin 订阅后按发起用户转 SSE）。
 // 尽力而为：Redis 不可用/发布失败只留日志，不影响执行与同步响应。
-func (s *AiAgentService) publishAgentFrame(ctx context.Context, userID uint64, frame *aiV1.AgentRunEvent) {
+func (s *AiAgentService) publishAgentFrame(ctx context.Context, userID int64, frame *aiV1.AgentRunEvent) {
 	if s.rdb == nil {
 		return
 	}
@@ -445,7 +445,7 @@ func (s *AiAgentService) publishAgentFrame(ctx context.Context, userID uint64, f
 
 // searchKnowledgeForAgent 知识检索节点的真实现：复用 chat 同一条 RAG 链路
 // （embed + 余弦检索 + embed 用量记账），命中片段按序拼接为上下文。
-func (s *AiAgentService) searchKnowledgeForAgent(userID, tenantID uint64) func(ctx context.Context, node *agentGraphNode, query string) (string, int, error) {
+func (s *AiAgentService) searchKnowledgeForAgent(userID, tenantID int64) func(ctx context.Context, node *agentGraphNode, query string) (string, int, error) {
 	return func(ctx context.Context, node *agentGraphNode, query string) (string, int, error) {
 		baseID := agentDataUint32(node.Data, "baseId")
 		if baseID == 0 {
@@ -470,7 +470,7 @@ func (s *AiAgentService) searchKnowledgeForAgent(userID, tenantID uint64) func(c
 // runLLMForAgent LLM 节点的真实现：provider 解析（节点点名，留空取默认启用）→
 // 客户端构造（密文解密就地）→ aiToolLoop 多轮工具调用 → 逐节点落用量流水
 // （conversation_id=0 的非对话调用，与 chat 共用 AI_TOKENS 配额口径）。
-func (s *AiAgentService) runLLMForAgent(userID, tenantID uint64) func(ctx context.Context, node *agentGraphNode, system, user string) (string, agentUsage, error) {
+func (s *AiAgentService) runLLMForAgent(userID, tenantID int64) func(ctx context.Context, node *agentGraphNode, system, user string) (string, agentUsage, error) {
 	return func(ctx context.Context, node *agentGraphNode, system, user string) (string, agentUsage, error) {
 		var provider *ent.AiProvider
 		var err error
@@ -546,9 +546,9 @@ func (s *AiAgentService) runLLMForAgent(userID, tenantID uint64) func(ctx contex
 			return "", agentUsage{}, err
 		}
 		return answer, agentUsage{
-			Prompt:     uint64(usage.PromptTokens),
-			Completion: uint64(usage.CompletionTokens),
-			Total:      uint64(usage.TotalTokens),
+			Prompt:     int64(usage.PromptTokens),
+			Completion: int64(usage.CompletionTokens),
+			Total:      int64(usage.TotalTokens),
 		}, nil
 	}
 }

@@ -140,7 +140,7 @@ func (r *InternalMessageCategoryRepo) List(ctx context.Context, req *paginationV
 }
 
 // buildTree 递归组装树形结构（参照 CategoryRepo.buildCategoryTree）
-func (r *InternalMessageCategoryRepo) buildTree(items []*internalMessageV1.InternalMessageCategory, parentId uint64) []*internalMessageV1.InternalMessageCategory {
+func (r *InternalMessageCategoryRepo) buildTree(items []*internalMessageV1.InternalMessageCategory, parentId int64) []*internalMessageV1.InternalMessageCategory {
 	var tree []*internalMessageV1.InternalMessageCategory
 	for _, item := range items {
 		if item.GetParentId() == parentId {
@@ -153,7 +153,7 @@ func (r *InternalMessageCategoryRepo) buildTree(items []*internalMessageV1.Inter
 	return tree
 }
 
-func (r *InternalMessageCategoryRepo) IsExist(ctx context.Context, id uint64) (bool, error) {
+func (r *InternalMessageCategoryRepo) IsExist(ctx context.Context, id int64) (bool, error) {
 	exist, err := r.entClient.Client().InternalMessageCategory.Query().
 		Where(internalmessagecategory.IDEQ(id)).
 		Exist(ctx)
@@ -205,7 +205,7 @@ func (r *InternalMessageCategoryRepo) Get(ctx context.Context, req *internalMess
 }
 
 // getWithChildren 递归查询节点及其子树（参照 CategoryRepo.getCategoryWithChildren，无翻译层）
-func (r *InternalMessageCategoryRepo) getWithChildren(ctx context.Context, id uint64) (*internalMessageV1.InternalMessageCategory, error) {
+func (r *InternalMessageCategoryRepo) getWithChildren(ctx context.Context, id int64) (*internalMessageV1.InternalMessageCategory, error) {
 	entity, err := r.entClient.Client().InternalMessageCategory.Query().
 		Where(internalmessagecategory.IDEQ(id)).
 		Only(ctx)
@@ -239,7 +239,7 @@ func (r *InternalMessageCategoryRepo) getWithChildren(ctx context.Context, id ui
 }
 
 // ListCategoriesByIds 根据ID列表获取分类列表
-func (r *InternalMessageCategoryRepo) ListCategoriesByIds(ctx context.Context, ids []uint64) ([]*internalMessageV1.InternalMessageCategory, error) {
+func (r *InternalMessageCategoryRepo) ListCategoriesByIds(ctx context.Context, ids []int64) ([]*internalMessageV1.InternalMessageCategory, error) {
 	if len(ids) == 0 {
 		return []*internalMessageV1.InternalMessageCategory{}, nil
 	}
@@ -264,7 +264,7 @@ func (r *InternalMessageCategoryRepo) ListCategoriesByIds(ctx context.Context, i
 // ensureParentAcyclic 校验 parentId 不构成环：沿 parent 链上溯，命中 selfID 即拒绝。
 // 数据成环会让 buildTree/getWithChildren 的递归无限循环，参照实现（content Category）
 // 没有此防护，这里补上。
-func (r *InternalMessageCategoryRepo) ensureParentAcyclic(ctx context.Context, selfID, parentID uint64) error {
+func (r *InternalMessageCategoryRepo) ensureParentAcyclic(ctx context.Context, selfID, parentID int64) error {
 	if parentID == 0 {
 		return nil
 	}

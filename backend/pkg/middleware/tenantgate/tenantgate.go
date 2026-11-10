@@ -4,8 +4,8 @@ import (
 	"context"
 
 	"github.com/go-kratos/kratos/v2/middleware"
-	khttp "github.com/go-kratos/kratos/v2/transport/http"
 	ktransport "github.com/go-kratos/kratos/v2/transport"
+	khttp "github.com/go-kratos/kratos/v2/transport/http"
 	"google.golang.org/grpc"
 
 	identityV1 "go-wind-cms/api/gen/go/identity/service/v1"
@@ -32,7 +32,7 @@ func Server(checker Checker) middleware.Middleware {
 			}
 
 			if op, err := metadata.FromContext(ctx, true); err == nil && op != nil {
-				if tenantID := uint64(op.GetTenantId()); tenantID != 0 {
+				if tenantID := int64(op.GetTenantId()); tenantID != 0 {
 					method, path := requestInfo(ctx)
 					if _, err := checker.CheckTenantAccess(ctx, &identityV1.CheckTenantAccessRequest{
 						TenantId: tenantID,

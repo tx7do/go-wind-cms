@@ -11,11 +11,11 @@ import (
 	"go-wind-cms/app/core/service/internal/service"
 
 	accesskeyV1 "go-wind-cms/api/gen/go/access_key/service/v1"
-	configV1 "go-wind-cms/api/gen/go/config/service/v1"
 	aiV1 "go-wind-cms/api/gen/go/ai/service/v1"
 	auditV1 "go-wind-cms/api/gen/go/audit/service/v1"
 	authenticationV1 "go-wind-cms/api/gen/go/authentication/service/v1"
 	commentV1 "go-wind-cms/api/gen/go/comment/service/v1"
+	configV1 "go-wind-cms/api/gen/go/config/service/v1"
 	contentV1 "go-wind-cms/api/gen/go/content/service/v1"
 	dictV1 "go-wind-cms/api/gen/go/dict/service/v1"
 	flowV1 "go-wind-cms/api/gen/go/flow/service/v1"

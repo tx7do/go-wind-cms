@@ -76,14 +76,14 @@ message TenantQuota {
     AI_TOKENS = 4;   // AI token 月度用量
   }
 
-  optional uint64 id = 1 [
+  optional int64 id = 1 [
     json_name = "id",
     (gnostic.openapi.v3.property) = {
       description: "配额项ID"
     }
   ]; // 配额项ID
 
-  optional uint64 tenant_id = 2 [
+  optional int64 tenant_id = 2 [
     json_name = "tenantId",
     (gnostic.openapi.v3.property) = {
       description: "租户ID"
@@ -100,9 +100,9 @@ message TenantQuota {
     (gnostic.openapi.v3.property) = {description: "配额值（USER_LIMIT=人数、STORAGE=字节、API_CALL=次数、AI_TOKENS=token 数）"}
   ]; // 配额值
 
-  optional uint64 created_by = 100 [json_name = "createdBy", (gnostic.openapi.v3.property) = {description: "创建者用户ID"}]; // 创建者用户ID
-  optional uint64 updated_by = 101 [json_name = "updatedBy", (gnostic.openapi.v3.property) = {description: "更新者用户ID"}]; // 更新者用户ID
-  optional uint64 deleted_by = 102 [json_name = "deletedBy", (gnostic.openapi.v3.property) = {description: "删除者用户ID"}]; // 删除者用户ID
+  optional int64 created_by = 100 [json_name = "createdBy", (gnostic.openapi.v3.property) = {description: "创建者用户ID"}]; // 创建者用户ID
+  optional int64 updated_by = 101 [json_name = "updatedBy", (gnostic.openapi.v3.property) = {description: "更新者用户ID"}]; // 更新者用户ID
+  optional int64 deleted_by = 102 [json_name = "deletedBy", (gnostic.openapi.v3.property) = {description: "删除者用户ID"}]; // 删除者用户ID
 
   optional google.protobuf.Timestamp created_at = 200 [json_name = "createdAt", (gnostic.openapi.v3.property) = {description: "创建时间"}]; // 创建时间
   optional google.protobuf.Timestamp updated_at = 201 [json_name = "updatedAt", (gnostic.openapi.v3.property) = {description: "更新时间"}]; // 更新时间
@@ -124,22 +124,22 @@ message QuotaUsage {
 
 // 租户用量聚合（计量与闸门同源：同一张表、同一个查询）
 message TenantUsage {
-  optional uint64 tenant_id = 1 [
+  optional int64 tenant_id = 1 [
     json_name = "tenantId",
     (gnostic.openapi.v3.property) = {description: "租户ID"}
   ]; // 租户ID
 
-  optional uint64 user_count = 2 [
+  optional int64 user_count = 2 [
     json_name = "userCount",
     (gnostic.openapi.v3.property) = {description: "当前用户数"}
   ]; // 当前用户数
 
-  optional uint64 storage_used_bytes = 3 [
+  optional int64 storage_used_bytes = 3 [
     json_name = "storageUsedBytes",
     (gnostic.openapi.v3.property) = {description: "存储占用字节数"}
   ]; // 存储占用字节数
 
-  optional uint64 api_call_count = 4 [
+  optional int64 api_call_count = 4 [
     json_name = "apiCallCount",
     (gnostic.openapi.v3.property) = {description: "API 调用次数（审计活表现存行数）"}
   ]; // API 调用次数
@@ -163,13 +163,13 @@ message TenantUsage {
 // 租户配额列表 - 答复
 message ListTenantQuotaResponse {
   repeated TenantQuota items = 1;
-  uint64 total = 2;
+  int64 total = 2;
 }
 
 // 查询租户配额 - 请求
 message GetTenantQuotaRequest {
   oneof query_by {
-    uint64 id = 1;
+    int64 id = 1;
   }
 
   optional google.protobuf.FieldMask view_mask = 100 [
@@ -187,7 +187,7 @@ message CreateTenantQuotaRequest {
 
 // 更新租户配额 - 请求
 message UpdateTenantQuotaRequest {
-  uint64 id = 1;
+  int64 id = 1;
 
   TenantQuota data = 2;
 
@@ -207,12 +207,12 @@ message UpdateTenantQuotaRequest {
 
 // 删除租户配额 - 请求
 message DeleteTenantQuotaRequest {
-  uint64 id = 1;
+  int64 id = 1;
 }
 
 // 查询租户用量 - 请求
 message GetTenantUsageRequest {
-  uint64 tenant_id = 1 [
+  int64 tenant_id = 1 [
     json_name = "tenantId",
     (gnostic.openapi.v3.property) = {description: "租户ID"}
   ]; // 租户ID
@@ -220,7 +220,7 @@ message GetTenantUsageRequest {
 
 // 自助用量 - 请求（tenant_id 由 BFF 从认证上下文注入，不接受客户端传值）
 message GetMyTenantUsageRequest {
-  uint64 tenant_id = 1 [
+  int64 tenant_id = 1 [
     json_name = "tenantId",
     (gnostic.openapi.v3.property) = {description: "租户ID（BFF 注入）"}
   ]; // 租户ID
@@ -228,7 +228,7 @@ message GetMyTenantUsageRequest {
 
 // 租户访问闸门 - 请求
 message CheckTenantAccessRequest {
-  uint64 tenant_id = 1 [
+  int64 tenant_id = 1 [
     json_name = "tenantId",
     (gnostic.openapi.v3.property) = {description: "租户ID"}
   ]; // 租户ID
@@ -249,7 +249,7 @@ message CheckTenantAccessResponse {}
 
 // 业务入口配额闸门 - 请求
 message CheckQuotaRequest {
-  uint64 tenant_id = 1 [
+  int64 tenant_id = 1 [
     json_name = "tenantId",
     (gnostic.openapi.v3.property) = {description: "租户ID"}
   ]; // 租户ID
@@ -290,7 +290,7 @@ message QuotaPlanItem {
 
 // 套餐模板
 message QuotaPlan {
-  optional uint64 id = 1 [
+  optional int64 id = 1 [
     json_name = "id"
   ]; // 模板ID
 
@@ -333,16 +333,16 @@ message CreateQuotaPlanRequest {
 
 // 删除套餐 - 请求
 message DeleteQuotaPlanRequest {
-  uint64 id = 1;
+  int64 id = 1;
 }
 
 // 套用套餐 - 请求
 message ApplyQuotaPlanRequest {
-  uint64 plan_id = 1 [
+  int64 plan_id = 1 [
     json_name = "planId"
   ]; // 模板ID
 
-  uint64 tenant_id = 2 [
+  int64 tenant_id = 2 [
     json_name = "tenantId"
   ]; // 目标租户
 }

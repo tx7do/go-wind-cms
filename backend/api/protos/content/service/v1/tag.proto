@@ -55,7 +55,7 @@ message Tag {
     TAG_STATUS_ARCHIVED = 3;  // 归档（不再使用，但保留历史数据）
   }
 
-  optional uint64 id = 1 [
+  optional int64 id = 1 [
     json_name = "id",
     (gnostic.openapi.v3.property) = {description: "标签ID"}
   ]; // 标签ID
@@ -121,9 +121,9 @@ message Tag {
   ]; // 可用的语言代码列表
 
 
-  optional uint64 created_by = 100 [json_name = "createdBy", (gnostic.openapi.v3.property) = {description: "创建者用户ID"}]; // 创建者用户ID
-  optional uint64 updated_by = 101 [json_name = "updatedBy", (gnostic.openapi.v3.property) = {description: "更新者用户ID"}]; // 更新者用户ID
-  optional uint64 deleted_by = 102 [json_name = "deletedBy", (gnostic.openapi.v3.property) = {description: "删除者用户ID"}]; // 删除者用户ID
+  optional int64 created_by = 100 [json_name = "createdBy", (gnostic.openapi.v3.property) = {description: "创建者用户ID"}]; // 创建者用户ID
+  optional int64 updated_by = 101 [json_name = "updatedBy", (gnostic.openapi.v3.property) = {description: "更新者用户ID"}]; // 更新者用户ID
+  optional int64 deleted_by = 102 [json_name = "deletedBy", (gnostic.openapi.v3.property) = {description: "删除者用户ID"}]; // 删除者用户ID
 
   optional google.protobuf.Timestamp created_at = 200 [json_name = "createdAt", (gnostic.openapi.v3.property) = {description: "创建时间"}];// 创建时间
   optional google.protobuf.Timestamp updated_at = 201 [json_name = "updatedAt", (gnostic.openapi.v3.property) = {description: "更新时间"}];// 更新时间
@@ -132,12 +132,12 @@ message Tag {
 
 // 标签翻译
 message TagTranslation {
-  optional uint64 id = 1 [
+  optional int64 id = 1 [
     json_name = "id",
     (gnostic.openapi.v3.property) = {description: "翻译记录ID"}
   ]; // 翻译记录ID
 
-  optional uint64 tag_id = 2 [
+  optional int64 tag_id = 2 [
     json_name = "tagId",
     (gnostic.openapi.v3.property) = {description: "关联的标签ID"}
   ]; // 关联的标签ID
@@ -181,9 +181,9 @@ message TagTranslation {
     (gnostic.openapi.v3.property) = {description: "SEO 结构化元数据"}
   ];
 
-  optional uint64 created_by = 100 [json_name = "createdBy", (gnostic.openapi.v3.property) = {description: "创建者用户ID"}]; // 创建者用户ID
-  optional uint64 updated_by = 101 [json_name = "updatedBy", (gnostic.openapi.v3.property) = {description: "更新者用户ID"}]; // 更新者用户ID
-  optional uint64 deleted_by = 102 [json_name = "deletedBy", (gnostic.openapi.v3.property) = {description: "删除者用户ID"}]; // 删除者用户ID
+  optional int64 created_by = 100 [json_name = "createdBy", (gnostic.openapi.v3.property) = {description: "创建者用户ID"}]; // 创建者用户ID
+  optional int64 updated_by = 101 [json_name = "updatedBy", (gnostic.openapi.v3.property) = {description: "更新者用户ID"}]; // 更新者用户ID
+  optional int64 deleted_by = 102 [json_name = "deletedBy", (gnostic.openapi.v3.property) = {description: "删除者用户ID"}]; // 删除者用户ID
 
   optional google.protobuf.Timestamp created_at = 200 [json_name = "createdAt", (gnostic.openapi.v3.property) = {description: "创建时间"}];// 创建时间
   optional google.protobuf.Timestamp updated_at = 201 [json_name = "updatedAt", (gnostic.openapi.v3.property) = {description: "更新时间"}];// 更新时间
@@ -193,13 +193,13 @@ message TagTranslation {
 // 回应 - 标签列表
 message ListTagResponse {
   repeated Tag items = 1;
-  uint64 total = 2;
+  int64 total = 2;
 }
 
 // 请求 - 标签数据
 message GetTagRequest {
   oneof query_by {
-    uint64 id = 1 [
+    int64 id = 1 [
       (gnostic.openapi.v3.property) = {description: "ID", read_only: true},
       json_name = "id"
     ]; // ID
@@ -230,7 +230,7 @@ message CreateTagRequest {
 
 // 请求 - 更新标签
 message UpdateTagRequest {
-  uint64 id = 1;
+  int64 id = 1;
 
   Tag data = 2;
 
@@ -251,7 +251,7 @@ message UpdateTagRequest {
 // 请求 - 删除标签
 message DeleteTagRequest {
   oneof query_by {
-    uint64 id = 1 [
+    int64 id = 1 [
       (gnostic.openapi.v3.property) = {description: "ID", read_only: true},
       json_name = "id"
     ]; // ID
@@ -259,7 +259,7 @@ message DeleteTagRequest {
 }
 
 message TagTranslationExistsRequest {
-  uint64 tag_id = 1 [
+  int64 tag_id = 1 [
     json_name = "tagId",
     (gnostic.openapi.v3.property) = {description: "关联的标签ID"}
   ]; // 关联的标签ID
@@ -274,7 +274,7 @@ message TagTranslationExistsResponse {
 }
 
 message CreateTagTranslationRequest {
-  uint64 tag_id = 1 [
+  int64 tag_id = 1 [
     json_name = "tagId",
     (gnostic.openapi.v3.property) = {description: "关联的标签ID"}
   ]; // 关联的标签ID
@@ -283,7 +283,7 @@ message CreateTagTranslationRequest {
 }
 
 message UpdateTagTranslationRequest {
-  uint64 id = 1 [
+  int64 id = 1 [
     json_name = "id",
     (gnostic.openapi.v3.property) = {description: "翻译ID"}
   ]; // 翻译ID
@@ -305,7 +305,7 @@ message UpdateTagTranslationRequest {
 }
 
 message TagTranslationIdentifier {
-  uint64 tag_id = 1 [
+  int64 tag_id = 1 [
     json_name = "tagId",
     (gnostic.openapi.v3.property) = {description: "关联的标签ID"}
   ]; // 关联的标签ID
@@ -318,7 +318,7 @@ message TagTranslationIdentifier {
 
 message DeleteTagTranslationRequest {
   oneof query_by {
-    uint64 id = 1 [
+    int64 id = 1 [
       (gnostic.openapi.v3.property) = {description: "ID", read_only: true},
       json_name = "id"
     ]; // ID

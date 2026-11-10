@@ -112,13 +112,14 @@ func (s *TenantQuotaService) ApplyQuotaPlan(ctx context.Context, req *identityV1
 	sysCtx := privacy.DecisionContext(appViewer.NewSystemViewerContext(ctx), privacy.Allow)
 	applied := uint32(0)
 	for _, item := range plan.GetItems() {
-		limit := uint64(item.GetLimit())
+		limit := item.GetLimit()
+		qLimit := uint64(limit) // proto TenantQuota.QuotaValue 为 uint64（容量语义），ent 同型
 		if cur, ok := byType[item.GetQuotaType()]; ok {
-			if cur.QuotaValue == limit {
+			if cur.QuotaValue == qLimit {
 				continue // 同值跳过，不刷 updated_at
 			}
 			if uerr := s.repo.Update(sysCtx, cur.ID, &identityV1.TenantQuota{
-				QuotaValue: &limit,
+				QuotaValue: &qLimit,
 			}, 0); uerr != nil {
 				return nil, uerr
 			}
@@ -126,7 +127,7 @@ func (s *TenantQuotaService) ApplyQuotaPlan(ctx context.Context, req *identityV1
 			if _, cerr := s.repo.Create(sysCtx, &identityV1.TenantQuota{
 				TenantId:   &req.TenantId,
 				QuotaType:  item.QuotaType.Enum(),
-				QuotaValue: &limit,
+				QuotaValue: &qLimit,
 			}, 0); cerr != nil {
 				return nil, cerr
 			}

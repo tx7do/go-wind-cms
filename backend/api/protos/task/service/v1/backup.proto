@@ -34,7 +34,7 @@ message BackupArchive {
   ];
 
   // 压缩后字节数
-  uint64 size_bytes = 3 [
+  int64 size_bytes = 3 [
     json_name = "sizeBytes"
   ];
 

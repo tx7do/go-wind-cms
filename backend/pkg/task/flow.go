@@ -18,10 +18,10 @@ const FlowExecuteTaskType = "flow.execute"
 
 // FlowExecutePayload 规则执行任务 payload。
 type FlowExecutePayload struct {
-	RuleID   uint64 `json:"rule_id"`   // 规则 ID
+	RuleID   int64  `json:"rule_id"`   // 规则 ID
 	Event    string `json:"event"`     // 事件名（post.published 等，同 Webhook 事件族；定时触发固定 "schedule"）
-	EntityID uint64 `json:"entity_id"` // 事件主体 ID（定时触发为 0）
-	TenantID uint64 `json:"tenant_id"` // 租户 ID（条件查询按租户过滤）
+	EntityID int64  `json:"entity_id"` // 事件主体 ID（定时触发为 0）
+	TenantID int64  `json:"tenant_id"` // 租户 ID（条件查询按租户过滤）
 	// ActionIndex 延时续跑起始动作下标（0=完整执行：含条件判定；>0=跳过条件，
 	// 从该下标继续动作链——命中判定已在触发时完成）。
 	ActionIndex int `json:"action_index,omitempty"`

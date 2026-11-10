@@ -54,7 +54,7 @@ func NewInteractionRepo(ctx *bootstrap.Context, entClient *entCrud.EntClient[*en
 // 历史教训：平台上下文（tid=0）曾被当成「无身份」一律 401，而 BFF 的统一认证
 // 链把 401 当令牌失效处理（刷新成功后重试仍 401 → 判定彻底失效），导致 admin
 // 进入收藏页即被强制登出。已认证用户的租户边界不足属权限语义，绝不能映射 401。
-func (r *InteractionRepo) requireTenantViewer(ctx context.Context, viewerUserID uint64) (uint64, error) {
+func (r *InteractionRepo) requireTenantViewer(ctx context.Context, viewerUserID int64) (int64, error) {
 	if viewerUserID == 0 {
 		return 0, interactionV1.ErrorUnauthorized("viewer identity required")
 	}
@@ -69,7 +69,7 @@ func (r *InteractionRepo) requireTenantViewer(ctx context.Context, viewerUserID 
 // 任何非系统 viewer 都按其租户域读计数——匿名访问者读域名解析出的租户、
 // 租户用户读本租户、平台账号读平台内容域（tenant_id=0）。
 // 仅系统后台任务（无业务租户归属）返回空。
-func countableTenantFromViewer(ctx context.Context) (uint64, bool) {
+func countableTenantFromViewer(ctx context.Context) (int64, bool) {
 	vc, exist := viewer.FromContext(ctx)
 	if !exist || vc == nil || vc.IsSystemContext() {
 		return 0, false
@@ -102,7 +102,7 @@ func (r *InteractionRepo) txn(ctx context.Context, fn func(tx *ent.Tx) error) (e
 
 // Like 点赞 post 或 comment。幂等：已点赞则 no-op。
 // 返回操作后的点赞状态与最新计数。
-func (r *InteractionRepo) Like(ctx context.Context, viewerUserID uint64, targetType interactionV1.TargetType, targetID uint64) (bool, int32, error) {
+func (r *InteractionRepo) Like(ctx context.Context, viewerUserID int64, targetType interactionV1.TargetType, targetID int64) (bool, int32, error) {
 	tid, err := r.requireTenantViewer(ctx, viewerUserID)
 	if err != nil {
 		return false, 0, err
@@ -122,7 +122,7 @@ func (r *InteractionRepo) Like(ctx context.Context, viewerUserID uint64, targetT
 }
 
 // Unlike 取消点赞。幂等：未点赞则 no-op。
-func (r *InteractionRepo) Unlike(ctx context.Context, viewerUserID uint64, targetType interactionV1.TargetType, targetID uint64) (bool, int32, error) {
+func (r *InteractionRepo) Unlike(ctx context.Context, viewerUserID int64, targetType interactionV1.TargetType, targetID int64) (bool, int32, error) {
 	tid, err := r.requireTenantViewer(ctx, viewerUserID)
 	if err != nil {
 		return false, 0, err
@@ -143,7 +143,7 @@ func (r *InteractionRepo) Unlike(ctx context.Context, viewerUserID uint64, targe
 
 // readCount 读取 interaction_counter 表中 (tenant, target_type, target_id, metric) 的当前计数。
 // 不存在行则返回 0。
-func (r *InteractionRepo) readCount(ctx context.Context, tid, targetID uint64, targetType interactionV1.TargetType, metric interactionV1.CounterMetric) (int32, error) {
+func (r *InteractionRepo) readCount(ctx context.Context, tid, targetID int64, targetType interactionV1.TargetType, metric interactionV1.CounterMetric) (int32, error) {
 	entity, err := r.entClient.Client().InteractionCounter.Query().
 		Where(
 			interactioncounter.TenantIDEQ(tid),
@@ -167,7 +167,7 @@ func (r *InteractionRepo) readCount(ctx context.Context, tid, targetID uint64, t
 
 // likeTarget 在单个 tx 内：写 ledger（post_like 或 comment_like）+ 在 interaction_counter
 // 表中 upsert 计数（LIKE 指标 +1）。幂等：若 ledger 行已存在则 no-op。
-func (r *InteractionRepo) likeTarget(ctx context.Context, tid, viewerUserID, targetID uint64, targetType interactionV1.TargetType) (int32, bool, error) {
+func (r *InteractionRepo) likeTarget(ctx context.Context, tid, viewerUserID, targetID int64, targetType interactionV1.TargetType) (int32, bool, error) {
 	exists, err := r.ledgerExists(ctx, tid, viewerUserID, targetID, targetType, interactionV1.CounterMetric_COUNTER_METRIC_LIKE)
 	if err != nil {
 		return 0, false, err
@@ -204,7 +204,7 @@ func (r *InteractionRepo) likeTarget(ctx context.Context, tid, viewerUserID, tar
 
 // unlikeTarget 在单个 tx 内：删 ledger + 在 interaction_counter 表中递减计数。
 // 幂等：若 ledger 行不存在则 no-op。
-func (r *InteractionRepo) unlikeTarget(ctx context.Context, tid, viewerUserID, targetID uint64, targetType interactionV1.TargetType) (int32, bool, error) {
+func (r *InteractionRepo) unlikeTarget(ctx context.Context, tid, viewerUserID, targetID int64, targetType interactionV1.TargetType) (int32, bool, error) {
 	exists, err := r.ledgerExists(ctx, tid, viewerUserID, targetID, targetType, interactionV1.CounterMetric_COUNTER_METRIC_LIKE)
 	if err != nil {
 		return 0, false, err
@@ -246,7 +246,7 @@ func (r *InteractionRepo) unlikeTarget(ctx context.Context, tid, viewerUserID, t
 
 // ledgerExists 查询 (tenant, viewer, target) 的 ledger 行是否存在。
 // metric 决定查哪张 ledger 表：LIKE→post_like/comment_like，WATCH→post_watch。
-func (r *InteractionRepo) ledgerExists(ctx context.Context, tid, viewerUserID, targetID uint64, targetType interactionV1.TargetType, metric interactionV1.CounterMetric) (bool, error) {
+func (r *InteractionRepo) ledgerExists(ctx context.Context, tid, viewerUserID, targetID int64, targetType interactionV1.TargetType, metric interactionV1.CounterMetric) (bool, error) {
 	switch metric {
 	case interactionV1.CounterMetric_COUNTER_METRIC_LIKE:
 		switch targetType {
@@ -304,7 +304,7 @@ func (r *InteractionRepo) ledgerExists(ctx context.Context, tid, viewerUserID, t
 
 // createLedgerRow 在 tx 内创建 ledger 行。
 // metric 决定写哪张 ledger 表。
-func (r *InteractionRepo) createLedgerRow(ctx context.Context, tx *ent.Tx, tid, viewerUserID, targetID uint64, targetType interactionV1.TargetType, metric interactionV1.CounterMetric) error {
+func (r *InteractionRepo) createLedgerRow(ctx context.Context, tx *ent.Tx, tid, viewerUserID, targetID int64, targetType interactionV1.TargetType, metric interactionV1.CounterMetric) error {
 	switch metric {
 	case interactionV1.CounterMetric_COUNTER_METRIC_LIKE:
 		switch targetType {
@@ -352,7 +352,7 @@ func (r *InteractionRepo) createLedgerRow(ctx context.Context, tx *ent.Tx, tid, 
 
 // deleteLedgerRow 在 tx 内删除 ledger 行，返回受影响行数。
 // metric 决定删哪张 ledger 表。
-func (r *InteractionRepo) deleteLedgerRow(ctx context.Context, tx *ent.Tx, tid, viewerUserID, targetID uint64, targetType interactionV1.TargetType, metric interactionV1.CounterMetric) (int, error) {
+func (r *InteractionRepo) deleteLedgerRow(ctx context.Context, tx *ent.Tx, tid, viewerUserID, targetID int64, targetType interactionV1.TargetType, metric interactionV1.CounterMetric) (int, error) {
 	switch metric {
 	case interactionV1.CounterMetric_COUNTER_METRIC_LIKE:
 		switch targetType {
@@ -411,7 +411,7 @@ func (r *InteractionRepo) deleteLedgerRow(ctx context.Context, tx *ent.Tx, tid, 
 //
 // 行不存在时按 delta 创建（仅当 delta>0）；存在时按 delta 递增，归 0 则删行。
 // 复合 unique 索引 (tenant, target_type, target_id, metric) 保证单目标单 metric 仅一行。
-func (r *InteractionRepo) adjustCounterRow(ctx context.Context, tx *ent.Tx, tid, targetID uint64, targetType interactionV1.TargetType, metric interactionV1.CounterMetric, delta int64) error {
+func (r *InteractionRepo) adjustCounterRow(ctx context.Context, tx *ent.Tx, tid, targetID int64, targetType interactionV1.TargetType, metric interactionV1.CounterMetric, delta int64) error {
 	existing, err := tx.InteractionCounter.Query().
 		Where(
 			interactioncounter.TenantIDEQ(tid),
@@ -464,7 +464,7 @@ func (r *InteractionRepo) adjustCounterRow(ctx context.Context, tx *ent.Tx, tid,
 // 与 Like/Unwatch 的差别：匿名即可调用（租户归属由服务层从 viewer/内网元数据解析），
 // 计数行只增不删（ VIEW 归零仅经 admin ResetCounter/Purge 显式操作）。
 // 返回累加后的浏览量。
-func (r *InteractionRepo) RecordView(ctx context.Context, tid, targetID uint64, targetType interactionV1.TargetType) (int64, error) {
+func (r *InteractionRepo) RecordView(ctx context.Context, tid, targetID int64, targetType interactionV1.TargetType) (int64, error) {
 	var count int64
 	txErr := r.txn(ctx, func(tx *ent.Tx) error {
 		existing, err := tx.InteractionCounter.Query().
@@ -510,16 +510,16 @@ func (r *InteractionRepo) RecordView(ctx context.Context, tid, targetID uint64, 
 
 // GetCounts 批量查询 interaction_counter 表中指定 (target_type, target_ids, metrics) 的计数。
 // 返回 target_id → metric → count 的嵌套 map。未记录的 (target, metric) 不出现在响应中。
-func (r *InteractionRepo) GetCounts(ctx context.Context, targetType interactionV1.TargetType, targetIDs []uint64, metrics []interactionV1.CounterMetric) (map[uint64]*interactionV1.CountMap, error) {
+func (r *InteractionRepo) GetCounts(ctx context.Context, targetType interactionV1.TargetType, targetIDs []int64, metrics []interactionV1.CounterMetric) (map[int64]*interactionV1.CountMap, error) {
 	tid, hasTenant := countableTenantFromViewer(ctx)
 	if !hasTenant {
 		// 仅系统后台任务（无业务租户归属）返回空结果而非 401，以免打断
 		// 公开页渲染。匿名访问者（域名解析租户）、租户用户与平台账号
 		// 各自按租户域过滤，平台账号现在也能读到平台内容域的计数。
-		return map[uint64]*interactionV1.CountMap{}, nil
+		return map[int64]*interactionV1.CountMap{}, nil
 	}
 	if len(targetIDs) == 0 || len(metrics) == 0 {
-		return map[uint64]*interactionV1.CountMap{}, nil
+		return map[int64]*interactionV1.CountMap{}, nil
 	}
 
 	// 转换 metrics 为 uint8 谓词列表
@@ -531,7 +531,7 @@ func (r *InteractionRepo) GetCounts(ctx context.Context, targetType interactionV
 		metricPreds = append(metricPreds, uint8(m))
 	}
 	if len(metricPreds) == 0 {
-		return map[uint64]*interactionV1.CountMap{}, nil
+		return map[int64]*interactionV1.CountMap{}, nil
 	}
 
 	rows, err := r.entClient.Client().InteractionCounter.Query().
@@ -547,7 +547,7 @@ func (r *InteractionRepo) GetCounts(ctx context.Context, targetType interactionV
 		return nil, interactionV1.ErrorInternalServerError("query interaction_counter batch failed")
 	}
 
-	result := make(map[uint64]*interactionV1.CountMap, len(rows))
+	result := make(map[int64]*interactionV1.CountMap, len(rows))
 	for _, row := range rows {
 		if row.TargetID == nil || row.Metric == nil || row.Count == nil {
 			continue
@@ -571,7 +571,7 @@ func (r *InteractionRepo) GetCounts(ctx context.Context, targetType interactionV
 // Watch 收藏 post。幂等：已收藏则 no-op。
 // 在单个 tx 内写 post_watch ledger + 在 interaction_counter 表中 upsert 计数（WATCH 指标 +1）。
 // 返回操作后的收藏状态与最新收藏计数。
-func (r *InteractionRepo) Watch(ctx context.Context, viewerUserID uint64, postID uint64) (bool, int32, error) {
+func (r *InteractionRepo) Watch(ctx context.Context, viewerUserID int64, postID int64) (bool, int32, error) {
 	tid, err := r.requireTenantViewer(ctx, viewerUserID)
 	if err != nil {
 		return false, 0, err
@@ -613,7 +613,7 @@ func (r *InteractionRepo) Watch(ctx context.Context, viewerUserID uint64, postID
 
 // Unwatch 取消收藏 post。幂等。
 // 在单个 tx 内删 post_watch ledger + 在 interaction_counter 表中递减计数。
-func (r *InteractionRepo) Unwatch(ctx context.Context, viewerUserID uint64, postID uint64) (bool, int32, error) {
+func (r *InteractionRepo) Unwatch(ctx context.Context, viewerUserID int64, postID int64) (bool, int32, error) {
 	tid, err := r.requireTenantViewer(ctx, viewerUserID)
 	if err != nil {
 		return false, 0, err
@@ -660,13 +660,13 @@ func (r *InteractionRepo) Unwatch(ctx context.Context, viewerUserID uint64, post
 
 // GetInteractionStatus 批量查询当前 viewer 对指定目标的 {liked, watched} 状态。
 // comment 目标的 watched 永远为 false（收藏仅对 post）。
-func (r *InteractionRepo) GetInteractionStatus(ctx context.Context, viewerUserID uint64, targetType interactionV1.TargetType, targetIDs []uint64) (map[uint64]*interactionV1.InteractionStatus, error) {
+func (r *InteractionRepo) GetInteractionStatus(ctx context.Context, viewerUserID int64, targetType interactionV1.TargetType, targetIDs []int64) (map[int64]*interactionV1.InteractionStatus, error) {
 	tid, err := r.requireTenantViewer(ctx, viewerUserID)
 	if err != nil {
 		return nil, err
 	}
 
-	result := make(map[uint64]*interactionV1.InteractionStatus, len(targetIDs))
+	result := make(map[int64]*interactionV1.InteractionStatus, len(targetIDs))
 	for _, id := range targetIDs {
 		result[id] = &interactionV1.InteractionStatus{Liked: false, Watched: false}
 	}
@@ -744,7 +744,7 @@ func (r *InteractionRepo) GetInteractionStatus(ctx context.Context, viewerUserID
 // ListWatchedPosts 列出当前 viewer 收藏的 post。
 // 查 post_watch 拿到分页后的 post_ids，再逐个调 PostRepo.Get 复用其完整的
 // 附带查询（translations/tags/categories/view_mask）逻辑。
-func (r *InteractionRepo) ListWatchedPosts(ctx context.Context, viewerUserID uint64, postRepo *PostRepo, req *paginationV1.PagingRequest) (*contentV1.ListPostResponse, error) {
+func (r *InteractionRepo) ListWatchedPosts(ctx context.Context, viewerUserID int64, postRepo *PostRepo, req *paginationV1.PagingRequest) (*contentV1.ListPostResponse, error) {
 	tid, err := r.requireTenantViewer(ctx, viewerUserID)
 	if err != nil {
 		return nil, err
@@ -809,7 +809,7 @@ func (r *InteractionRepo) ListWatchedPosts(ctx context.Context, viewerUserID uin
 
 	return &contentV1.ListPostResponse{
 		Items: items,
-		Total: uint64(total),
+		Total: int64(total),
 	}, nil
 }
 
@@ -817,7 +817,7 @@ func (r *InteractionRepo) ListWatchedPosts(ctx context.Context, viewerUserID uin
 // 并在同一事务内把对应 interaction_counter 行归零删除。
 // tenant 从 viewer context 提取，targetType/targetID 来自运营请求。
 // 返回被删除的 ledger 行数。
-func (r *InteractionRepo) PurgeTargetInteractions(ctx context.Context, targetType interactionV1.TargetType, targetID uint64) (uint64, error) {
+func (r *InteractionRepo) PurgeTargetInteractions(ctx context.Context, targetType interactionV1.TargetType, targetID int64) (int64, error) {
 	tid, hasTenant := maybeTenantFromViewer(ctx)
 	if !hasTenant {
 		return 0, interactionV1.ErrorUnauthorized("viewer identity required")
@@ -904,7 +904,7 @@ func (r *InteractionRepo) PurgeTargetInteractions(ctx context.Context, targetTyp
 	if txErr != nil {
 		return 0, txErr
 	}
-	return uint64(affected), nil
+	return int64(affected), nil
 }
 
 // purgeBatchSize 是 PurgeUserInteractions 分批删除的批大小。
@@ -916,20 +916,20 @@ const purgeBatchSize = 200
 // 回滚 counter（adjustCounterRow delta=-1）。
 // tenant 从 viewer context 提取，userID 来自运营请求。
 // 返回累计被删除的 ledger 行数。中途失败则返回已删行数 + 错误。
-func (r *InteractionRepo) PurgeUserInteractions(ctx context.Context, userID uint64) (uint64, error) {
+func (r *InteractionRepo) PurgeUserInteractions(ctx context.Context, userID int64) (int64, error) {
 	tid, hasTenant := maybeTenantFromViewer(ctx)
 	if !hasTenant {
 		return 0, interactionV1.ErrorUnauthorized("viewer identity required")
 	}
 
-	var totalAffected uint64
+	var totalAffected int64
 
 	// post_likes（LIKE metric, target=post）
 	nPost, err := r.purgeUserBatchFromLedger(ctx, tid, userID, "post_like",
-		func(tx *ent.Tx, tid uint64, uid, targetID uint64) error {
+		func(tx *ent.Tx, tid int64, uid, targetID int64) error {
 			return r.adjustCounterRow(ctx, tx, tid, targetID, interactionV1.TargetType_TARGET_TYPE_POST, interactionV1.CounterMetric_COUNTER_METRIC_LIKE, -1)
 		},
-		func(ctx context.Context, tid, uid uint64, offset, limit int) (ids []uint64, err error) {
+		func(ctx context.Context, tid, uid int64, offset, limit int) (ids []int64, err error) {
 			rows, qerr := r.entClient.Client().PostLike.Query().
 				Where(
 					postlike.TenantIDEQ(tid),
@@ -948,16 +948,16 @@ func (r *InteractionRepo) PurgeUserInteractions(ctx context.Context, userID uint
 			}
 			return ids, nil
 		},
-		func(tx *ent.Tx, ctx context.Context, tid, uid, targetID uint64) (int, error) {
+		func(tx *ent.Tx, ctx context.Context, tid, uid, targetID int64) (int, error) {
 			return tx.PostLike.Delete().
 				Where(
 					postlike.TenantIDEQ(tid),
 					postlike.UserIDEQ(uid),
 					postlike.PostIDEQ(targetID),
 				).
-		Exec(ctx)
-	},
-)
+				Exec(ctx)
+		},
+	)
 	if err != nil {
 		r.log.Errorf("purge user post_like batch failed: %s", err.Error())
 		return totalAffected, err
@@ -966,10 +966,10 @@ func (r *InteractionRepo) PurgeUserInteractions(ctx context.Context, userID uint
 
 	// comment_likes（LIKE metric, target=comment）
 	nComment, err := r.purgeUserBatchFromLedger(ctx, tid, userID, "comment_like",
-		func(tx *ent.Tx, tid uint64, uid, targetID uint64) error {
+		func(tx *ent.Tx, tid int64, uid, targetID int64) error {
 			return r.adjustCounterRow(ctx, tx, tid, targetID, interactionV1.TargetType_TARGET_TYPE_COMMENT, interactionV1.CounterMetric_COUNTER_METRIC_LIKE, -1)
 		},
-		func(ctx context.Context, tid, uid uint64, offset, limit int) (ids []uint64, err error) {
+		func(ctx context.Context, tid, uid int64, offset, limit int) (ids []int64, err error) {
 			rows, qerr := r.entClient.Client().CommentLike.Query().
 				Where(
 					commentlike.TenantIDEQ(tid),
@@ -988,7 +988,7 @@ func (r *InteractionRepo) PurgeUserInteractions(ctx context.Context, userID uint
 			}
 			return ids, nil
 		},
-		func(tx *ent.Tx, ctx context.Context, tid, uid, targetID uint64) (int, error) {
+		func(tx *ent.Tx, ctx context.Context, tid, uid, targetID int64) (int, error) {
 			return tx.CommentLike.Delete().
 				Where(
 					commentlike.TenantIDEQ(tid),
@@ -1006,10 +1006,10 @@ func (r *InteractionRepo) PurgeUserInteractions(ctx context.Context, userID uint
 
 	// post_watches（WATCH metric, target=post）
 	nWatch, err := r.purgeUserBatchFromLedger(ctx, tid, userID, "post_watch",
-		func(tx *ent.Tx, tid uint64, uid, targetID uint64) error {
+		func(tx *ent.Tx, tid int64, uid, targetID int64) error {
 			return r.adjustCounterRow(ctx, tx, tid, targetID, interactionV1.TargetType_TARGET_TYPE_POST, interactionV1.CounterMetric_COUNTER_METRIC_WATCH, -1)
 		},
-		func(ctx context.Context, tid, uid uint64, offset, limit int) (ids []uint64, err error) {
+		func(ctx context.Context, tid, uid int64, offset, limit int) (ids []int64, err error) {
 			rows, qerr := r.entClient.Client().PostWatch.Query().
 				Where(
 					postwatch.TenantIDEQ(tid),
@@ -1028,7 +1028,7 @@ func (r *InteractionRepo) PurgeUserInteractions(ctx context.Context, userID uint
 			}
 			return ids, nil
 		},
-		func(tx *ent.Tx, ctx context.Context, tid, uid, targetID uint64) (int, error) {
+		func(tx *ent.Tx, ctx context.Context, tid, uid, targetID int64) (int, error) {
 			return tx.PostWatch.Delete().
 				Where(
 					postwatch.TenantIDEQ(tid),
@@ -1055,14 +1055,14 @@ func (r *InteractionRepo) PurgeUserInteractions(ctx context.Context, userID uint
 // 每批一个独立 txn。命中 0 行时停止该表。
 func (r *InteractionRepo) purgeUserBatchFromLedger(
 	ctx context.Context,
-	tid uint64,
-	uid uint64,
+	tid int64,
+	uid int64,
 	label string,
-	counterAdjust func(tx *ent.Tx, tid uint64, uid, targetID uint64) error,
-	queryBatch func(ctx context.Context, tid, uid uint64, offset, limit int) ([]uint64, error),
-	deleteOne func(tx *ent.Tx, ctx context.Context, tid, uid, targetID uint64) (int, error),
-) (uint64, error) {
-	var affected uint64
+	counterAdjust func(tx *ent.Tx, tid int64, uid, targetID int64) error,
+	queryBatch func(ctx context.Context, tid, uid int64, offset, limit int) ([]int64, error),
+	deleteOne func(tx *ent.Tx, ctx context.Context, tid, uid, targetID int64) (int, error),
+) (int64, error) {
+	var affected int64
 	for {
 		// 每批从头查（offset=0）：上一批删了行后，剩余行前移到头部。
 		ids, qerr := queryBatch(ctx, tid, uid, 0, purgeBatchSize)
@@ -1073,7 +1073,7 @@ func (r *InteractionRepo) purgeUserBatchFromLedger(
 		if len(ids) == 0 {
 			return affected, nil
 		}
-		var batchDeleted uint64
+		var batchDeleted int64
 		txErr := r.txn(ctx, func(tx *ent.Tx) error {
 			for _, targetID := range ids {
 				n, derr := deleteOne(tx, ctx, tid, uid, targetID)
@@ -1081,8 +1081,8 @@ func (r *InteractionRepo) purgeUserBatchFromLedger(
 					return derr
 				}
 				if n > 0 {
-					affected += uint64(n)
-					batchDeleted += uint64(n)
+					affected += int64(n)
+					batchDeleted += int64(n)
 					if aerr := counterAdjust(tx, tid, uid, targetID); aerr != nil {
 						return aerr
 					}
@@ -1103,7 +1103,7 @@ func (r *InteractionRepo) purgeUserBatchFromLedger(
 // ResetCounter 按 ledger 真实计数重算指定 (target, metric) 的 interaction_counter 行。
 // recount==0 → 删行；recount>0 → set 绝对值；行不存在 + recount>0 → 创建。
 // 用于修复 counter 与 ledger 不一致的漂移。
-func (r *InteractionRepo) ResetCounter(ctx context.Context, targetType interactionV1.TargetType, targetID uint64, metric interactionV1.CounterMetric) (int64, error) {
+func (r *InteractionRepo) ResetCounter(ctx context.Context, targetType interactionV1.TargetType, targetID int64, metric interactionV1.CounterMetric) (int64, error) {
 	tid, hasTenant := maybeTenantFromViewer(ctx)
 	if !hasTenant {
 		return 0, interactionV1.ErrorUnauthorized("viewer identity required")

@@ -80,7 +80,7 @@ enum CounterMetric {
 
 message LikeRequest {
   TargetType target_type = 1;
-  uint64 target_id = 2;
+  int64 target_id = 2;
 }
 
 message LikeResponse {
@@ -89,7 +89,7 @@ message LikeResponse {
 }
 
 message WatchRequest {
-  uint64 post_id = 1;
+  int64 post_id = 1;
 }
 
 message WatchResponse {
@@ -99,7 +99,7 @@ message WatchResponse {
 
 message GetInteractionStatusRequest {
   TargetType target_type = 1;
-  repeated uint64 target_ids = 2;
+  repeated int64 target_ids = 2;
 }
 
 message InteractionStatus {
@@ -125,7 +125,7 @@ message CountMap {
 
 message GetCountsRequest {
   TargetType target_type = 1;
-  repeated uint64 target_ids = 2;
+  repeated int64 target_ids = 2;
   repeated CounterMetric metrics = 3;
 }
 
@@ -139,7 +139,7 @@ message GetCountsResponse {
 
 message PurgeTargetInteractionsRequest {
   TargetType target_type = 1;
-  uint64 target_id = 2;
+  int64 target_id = 2;
 }
 
 message PurgeTargetInteractionsResponse {
@@ -147,7 +147,7 @@ message PurgeTargetInteractionsResponse {
 }
 
 message PurgeUserInteractionsRequest {
-  uint64 user_id = 1;
+  int64 user_id = 1;
 }
 
 message PurgeUserInteractionsResponse {
@@ -156,7 +156,7 @@ message PurgeUserInteractionsResponse {
 
 message ResetCounterRequest {
   TargetType target_type = 1;
-  uint64 target_id = 2;
+  int64 target_id = 2;
   CounterMetric metric = 3;
 }
 
@@ -167,7 +167,7 @@ message ResetCounterResponse {
 // 请求 - 上报浏览
 message RecordViewRequest {
   TargetType target_type = 1;
-  uint64 target_id = 2;
+  int64 target_id = 2;
 }
 
 // 回应 - 上报浏览（返回累加后的浏览量，便于前端直接展示）

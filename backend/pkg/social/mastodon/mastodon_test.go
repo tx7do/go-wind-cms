@@ -3,8 +3,8 @@ package mastodon
 import (
 	"context"
 	"encoding/json"
-	"io"
 	"errors"
+	"io"
 	"net/http"
 	"net/http/httptest"
 	"strings"

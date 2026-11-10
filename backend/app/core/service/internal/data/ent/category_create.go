@@ -65,13 +65,13 @@ func (_c *CategoryCreate) SetNillableDeletedAt(v *time.Time) *CategoryCreate {
 }
 
 // SetCreatedBy sets the "created_by" field.
-func (_c *CategoryCreate) SetCreatedBy(v uint64) *CategoryCreate {
+func (_c *CategoryCreate) SetCreatedBy(v int64) *CategoryCreate {
 	_c.mutation.SetCreatedBy(v)
 	return _c
 }
 
 // SetNillableCreatedBy sets the "created_by" field if the given value is not nil.
-func (_c *CategoryCreate) SetNillableCreatedBy(v *uint64) *CategoryCreate {
+func (_c *CategoryCreate) SetNillableCreatedBy(v *int64) *CategoryCreate {
 	if v != nil {
 		_c.SetCreatedBy(*v)
 	}
@@ -79,13 +79,13 @@ func (_c *CategoryCreate) SetNillableCreatedBy(v *uint64) *CategoryCreate {
 }
 
 // SetUpdatedBy sets the "updated_by" field.
-func (_c *CategoryCreate) SetUpdatedBy(v uint64) *CategoryCreate {
+func (_c *CategoryCreate) SetUpdatedBy(v int64) *CategoryCreate {
 	_c.mutation.SetUpdatedBy(v)
 	return _c
 }
 
 // SetNillableUpdatedBy sets the "updated_by" field if the given value is not nil.
-func (_c *CategoryCreate) SetNillableUpdatedBy(v *uint64) *CategoryCreate {
+func (_c *CategoryCreate) SetNillableUpdatedBy(v *int64) *CategoryCreate {
 	if v != nil {
 		_c.SetUpdatedBy(*v)
 	}
@@ -93,13 +93,13 @@ func (_c *CategoryCreate) SetNillableUpdatedBy(v *uint64) *CategoryCreate {
 }
 
 // SetDeletedBy sets the "deleted_by" field.
-func (_c *CategoryCreate) SetDeletedBy(v uint64) *CategoryCreate {
+func (_c *CategoryCreate) SetDeletedBy(v int64) *CategoryCreate {
 	_c.mutation.SetDeletedBy(v)
 	return _c
 }
 
 // SetNillableDeletedBy sets the "deleted_by" field if the given value is not nil.
-func (_c *CategoryCreate) SetNillableDeletedBy(v *uint64) *CategoryCreate {
+func (_c *CategoryCreate) SetNillableDeletedBy(v *int64) *CategoryCreate {
 	if v != nil {
 		_c.SetDeletedBy(*v)
 	}
@@ -135,13 +135,13 @@ func (_c *CategoryCreate) SetNillablePath(v *string) *CategoryCreate {
 }
 
 // SetParentID sets the "parent_id" field.
-func (_c *CategoryCreate) SetParentID(v uint64) *CategoryCreate {
+func (_c *CategoryCreate) SetParentID(v int64) *CategoryCreate {
 	_c.mutation.SetParentID(v)
 	return _c
 }
 
 // SetNillableParentID sets the "parent_id" field if the given value is not nil.
-func (_c *CategoryCreate) SetNillableParentID(v *uint64) *CategoryCreate {
+func (_c *CategoryCreate) SetNillableParentID(v *int64) *CategoryCreate {
 	if v != nil {
 		_c.SetParentID(*v)
 	}
@@ -149,13 +149,13 @@ func (_c *CategoryCreate) SetNillableParentID(v *uint64) *CategoryCreate {
 }
 
 // SetTenantID sets the "tenant_id" field.
-func (_c *CategoryCreate) SetTenantID(v uint64) *CategoryCreate {
+func (_c *CategoryCreate) SetTenantID(v int64) *CategoryCreate {
 	_c.mutation.SetTenantID(v)
 	return _c
 }
 
 // SetNillableTenantID sets the "tenant_id" field if the given value is not nil.
-func (_c *CategoryCreate) SetNillableTenantID(v *uint64) *CategoryCreate {
+func (_c *CategoryCreate) SetNillableTenantID(v *int64) *CategoryCreate {
 	if v != nil {
 		_c.SetTenantID(*v)
 	}
@@ -281,13 +281,13 @@ func (_c *CategoryCreate) SetCustomFields(v *map[string]string) *CategoryCreate 
 }
 
 // SetContentModelID sets the "content_model_id" field.
-func (_c *CategoryCreate) SetContentModelID(v uint64) *CategoryCreate {
+func (_c *CategoryCreate) SetContentModelID(v int64) *CategoryCreate {
 	_c.mutation.SetContentModelID(v)
 	return _c
 }
 
 // SetNillableContentModelID sets the "content_model_id" field if the given value is not nil.
-func (_c *CategoryCreate) SetNillableContentModelID(v *uint64) *CategoryCreate {
+func (_c *CategoryCreate) SetNillableContentModelID(v *int64) *CategoryCreate {
 	if v != nil {
 		_c.SetContentModelID(*v)
 	}
@@ -295,7 +295,7 @@ func (_c *CategoryCreate) SetNillableContentModelID(v *uint64) *CategoryCreate {
 }
 
 // SetID sets the "id" field.
-func (_c *CategoryCreate) SetID(v uint64) *CategoryCreate {
+func (_c *CategoryCreate) SetID(v int64) *CategoryCreate {
 	_c.mutation.SetID(v)
 	return _c
 }
@@ -306,14 +306,14 @@ func (_c *CategoryCreate) SetParent(v *Category) *CategoryCreate {
 }
 
 // AddChildIDs adds the "children" edge to the Category entity by IDs.
-func (_c *CategoryCreate) AddChildIDs(ids ...uint64) *CategoryCreate {
+func (_c *CategoryCreate) AddChildIDs(ids ...int64) *CategoryCreate {
 	_c.mutation.AddChildIDs(ids...)
 	return _c
 }
 
 // AddChildren adds the "children" edges to the Category entity.
 func (_c *CategoryCreate) AddChildren(v ...*Category) *CategoryCreate {
-	ids := make([]uint64, len(v))
+	ids := make([]int64, len(v))
 	for i := range v {
 		ids[i] = v[i].ID
 	}
@@ -417,7 +417,7 @@ func (_c *CategoryCreate) sqlSave(ctx context.Context) (*Category, error) {
 	}
 	if _spec.ID.Value != _node.ID {
 		id := _spec.ID.Value.(int64)
-		_node.ID = uint64(id)
+		_node.ID = int64(id)
 	}
 	_c.mutation.id = &_node.ID
 	_c.mutation.done = true
@@ -427,7 +427,7 @@ func (_c *CategoryCreate) sqlSave(ctx context.Context) (*Category, error) {
 func (_c *CategoryCreate) createSpec() (*Category, *sqlgraph.CreateSpec) {
 	var (
 		_node = &Category{config: _c.config}
-		_spec = sqlgraph.NewCreateSpec(category.Table, sqlgraph.NewFieldSpec(category.FieldID, field.TypeUint64))
+		_spec = sqlgraph.NewCreateSpec(category.Table, sqlgraph.NewFieldSpec(category.FieldID, field.TypeInt64))
 	)
 	_spec.OnConflict = _c.conflict
 	if id, ok := _c.mutation.ID(); ok {
@@ -447,15 +447,15 @@ func (_c *CategoryCreate) createSpec() (*Category, *sqlgraph.CreateSpec) {
 		_node.DeletedAt = &value
 	}
 	if value, ok := _c.mutation.CreatedBy(); ok {
-		_spec.SetField(category.FieldCreatedBy, field.TypeUint64, value)
+		_spec.SetField(category.FieldCreatedBy, field.TypeInt64, value)
 		_node.CreatedBy = &value
 	}
 	if value, ok := _c.mutation.UpdatedBy(); ok {
-		_spec.SetField(category.FieldUpdatedBy, field.TypeUint64, value)
+		_spec.SetField(category.FieldUpdatedBy, field.TypeInt64, value)
 		_node.UpdatedBy = &value
 	}
 	if value, ok := _c.mutation.DeletedBy(); ok {
-		_spec.SetField(category.FieldDeletedBy, field.TypeUint64, value)
+		_spec.SetField(category.FieldDeletedBy, field.TypeInt64, value)
 		_node.DeletedBy = &value
 	}
 	if value, ok := _c.mutation.SortOrder(); ok {
@@ -467,7 +467,7 @@ func (_c *CategoryCreate) createSpec() (*Category, *sqlgraph.CreateSpec) {
 		_node.Path = &value
 	}
 	if value, ok := _c.mutation.TenantID(); ok {
-		_spec.SetField(category.FieldTenantID, field.TypeUint64, value)
+		_spec.SetField(category.FieldTenantID, field.TypeInt64, value)
 		_node.TenantID = &value
 	}
 	if value, ok := _c.mutation.Status(); ok {
@@ -507,7 +507,7 @@ func (_c *CategoryCreate) createSpec() (*Category, *sqlgraph.CreateSpec) {
 		_node.CustomFields = value
 	}
 	if value, ok := _c.mutation.ContentModelID(); ok {
-		_spec.SetField(category.FieldContentModelID, field.TypeUint64, value)
+		_spec.SetField(category.FieldContentModelID, field.TypeInt64, value)
 		_node.ContentModelID = &value
 	}
 	if nodes := _c.mutation.ParentIDs(); len(nodes) > 0 {
@@ -518,7 +518,7 @@ func (_c *CategoryCreate) createSpec() (*Category, *sqlgraph.CreateSpec) {
 			Columns: []string{category.ParentColumn},
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
-				IDSpec: sqlgraph.NewFieldSpec(category.FieldID, field.TypeUint64),
+				IDSpec: sqlgraph.NewFieldSpec(category.FieldID, field.TypeInt64),
 			},
 		}
 		for _, k := range nodes {
@@ -535,7 +535,7 @@ func (_c *CategoryCreate) createSpec() (*Category, *sqlgraph.CreateSpec) {
 			Columns: []string{category.ChildrenColumn},
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
-				IDSpec: sqlgraph.NewFieldSpec(category.FieldID, field.TypeUint64),
+				IDSpec: sqlgraph.NewFieldSpec(category.FieldID, field.TypeInt64),
 			},
 		}
 		for _, k := range nodes {
@@ -632,7 +632,7 @@ func (u *CategoryUpsert) ClearDeletedAt() *CategoryUpsert {
 }
 
 // SetCreatedBy sets the "created_by" field.
-func (u *CategoryUpsert) SetCreatedBy(v uint64) *CategoryUpsert {
+func (u *CategoryUpsert) SetCreatedBy(v int64) *CategoryUpsert {
 	u.Set(category.FieldCreatedBy, v)
 	return u
 }
@@ -644,7 +644,7 @@ func (u *CategoryUpsert) UpdateCreatedBy() *CategoryUpsert {
 }
 
 // AddCreatedBy adds v to the "created_by" field.
-func (u *CategoryUpsert) AddCreatedBy(v uint64) *CategoryUpsert {
+func (u *CategoryUpsert) AddCreatedBy(v int64) *CategoryUpsert {
 	u.Add(category.FieldCreatedBy, v)
 	return u
 }
@@ -656,7 +656,7 @@ func (u *CategoryUpsert) ClearCreatedBy() *CategoryUpsert {
 }
 
 // SetUpdatedBy sets the "updated_by" field.
-func (u *CategoryUpsert) SetUpdatedBy(v uint64) *CategoryUpsert {
+func (u *CategoryUpsert) SetUpdatedBy(v int64) *CategoryUpsert {
 	u.Set(category.FieldUpdatedBy, v)
 	return u
 }
@@ -668,7 +668,7 @@ func (u *CategoryUpsert) UpdateUpdatedBy() *CategoryUpsert {
 }
 
 // AddUpdatedBy adds v to the "updated_by" field.
-func (u *CategoryUpsert) AddUpdatedBy(v uint64) *CategoryUpsert {
+func (u *CategoryUpsert) AddUpdatedBy(v int64) *CategoryUpsert {
 	u.Add(category.FieldUpdatedBy, v)
 	return u
 }
@@ -680,7 +680,7 @@ func (u *CategoryUpsert) ClearUpdatedBy() *CategoryUpsert {
 }
 
 // SetDeletedBy sets the "deleted_by" field.
-func (u *CategoryUpsert) SetDeletedBy(v uint64) *CategoryUpsert {
+func (u *CategoryUpsert) SetDeletedBy(v int64) *CategoryUpsert {
 	u.Set(category.FieldDeletedBy, v)
 	return u
 }
@@ -692,7 +692,7 @@ func (u *CategoryUpsert) UpdateDeletedBy() *CategoryUpsert {
 }
 
 // AddDeletedBy adds v to the "deleted_by" field.
-func (u *CategoryUpsert) AddDeletedBy(v uint64) *CategoryUpsert {
+func (u *CategoryUpsert) AddDeletedBy(v int64) *CategoryUpsert {
 	u.Add(category.FieldDeletedBy, v)
 	return u
 }
@@ -746,7 +746,7 @@ func (u *CategoryUpsert) ClearPath() *CategoryUpsert {
 }
 
 // SetParentID sets the "parent_id" field.
-func (u *CategoryUpsert) SetParentID(v uint64) *CategoryUpsert {
+func (u *CategoryUpsert) SetParentID(v int64) *CategoryUpsert {
 	u.Set(category.FieldParentID, v)
 	return u
 }
@@ -944,7 +944,7 @@ func (u *CategoryUpsert) ClearCustomFields() *CategoryUpsert {
 }
 
 // SetContentModelID sets the "content_model_id" field.
-func (u *CategoryUpsert) SetContentModelID(v uint64) *CategoryUpsert {
+func (u *CategoryUpsert) SetContentModelID(v int64) *CategoryUpsert {
 	u.Set(category.FieldContentModelID, v)
 	return u
 }
@@ -956,7 +956,7 @@ func (u *CategoryUpsert) UpdateContentModelID() *CategoryUpsert {
 }
 
 // AddContentModelID adds v to the "content_model_id" field.
-func (u *CategoryUpsert) AddContentModelID(v uint64) *CategoryUpsert {
+func (u *CategoryUpsert) AddContentModelID(v int64) *CategoryUpsert {
 	u.Add(category.FieldContentModelID, v)
 	return u
 }
@@ -1064,14 +1064,14 @@ func (u *CategoryUpsertOne) ClearDeletedAt() *CategoryUpsertOne {
 }
 
 // SetCreatedBy sets the "created_by" field.
-func (u *CategoryUpsertOne) SetCreatedBy(v uint64) *CategoryUpsertOne {
+func (u *CategoryUpsertOne) SetCreatedBy(v int64) *CategoryUpsertOne {
 	return u.Update(func(s *CategoryUpsert) {
 		s.SetCreatedBy(v)
 	})
 }
 
 // AddCreatedBy adds v to the "created_by" field.
-func (u *CategoryUpsertOne) AddCreatedBy(v uint64) *CategoryUpsertOne {
+func (u *CategoryUpsertOne) AddCreatedBy(v int64) *CategoryUpsertOne {
 	return u.Update(func(s *CategoryUpsert) {
 		s.AddCreatedBy(v)
 	})
@@ -1092,14 +1092,14 @@ func (u *CategoryUpsertOne) ClearCreatedBy() *CategoryUpsertOne {
 }
 
 // SetUpdatedBy sets the "updated_by" field.
-func (u *CategoryUpsertOne) SetUpdatedBy(v uint64) *CategoryUpsertOne {
+func (u *CategoryUpsertOne) SetUpdatedBy(v int64) *CategoryUpsertOne {
 	return u.Update(func(s *CategoryUpsert) {
 		s.SetUpdatedBy(v)
 	})
 }
 
 // AddUpdatedBy adds v to the "updated_by" field.
-func (u *CategoryUpsertOne) AddUpdatedBy(v uint64) *CategoryUpsertOne {
+func (u *CategoryUpsertOne) AddUpdatedBy(v int64) *CategoryUpsertOne {
 	return u.Update(func(s *CategoryUpsert) {
 		s.AddUpdatedBy(v)
 	})
@@ -1120,14 +1120,14 @@ func (u *CategoryUpsertOne) ClearUpdatedBy() *CategoryUpsertOne {
 }
 
 // SetDeletedBy sets the "deleted_by" field.
-func (u *CategoryUpsertOne) SetDeletedBy(v uint64) *CategoryUpsertOne {
+func (u *CategoryUpsertOne) SetDeletedBy(v int64) *CategoryUpsertOne {
 	return u.Update(func(s *CategoryUpsert) {
 		s.SetDeletedBy(v)
 	})
 }
 
 // AddDeletedBy adds v to the "deleted_by" field.
-func (u *CategoryUpsertOne) AddDeletedBy(v uint64) *CategoryUpsertOne {
+func (u *CategoryUpsertOne) AddDeletedBy(v int64) *CategoryUpsertOne {
 	return u.Update(func(s *CategoryUpsert) {
 		s.AddDeletedBy(v)
 	})
@@ -1197,7 +1197,7 @@ func (u *CategoryUpsertOne) ClearPath() *CategoryUpsertOne {
 }
 
 // SetParentID sets the "parent_id" field.
-func (u *CategoryUpsertOne) SetParentID(v uint64) *CategoryUpsertOne {
+func (u *CategoryUpsertOne) SetParentID(v int64) *CategoryUpsertOne {
 	return u.Update(func(s *CategoryUpsert) {
 		s.SetParentID(v)
 	})
@@ -1428,14 +1428,14 @@ func (u *CategoryUpsertOne) ClearCustomFields() *CategoryUpsertOne {
 }
 
 // SetContentModelID sets the "content_model_id" field.
-func (u *CategoryUpsertOne) SetContentModelID(v uint64) *CategoryUpsertOne {
+func (u *CategoryUpsertOne) SetContentModelID(v int64) *CategoryUpsertOne {
 	return u.Update(func(s *CategoryUpsert) {
 		s.SetContentModelID(v)
 	})
 }
 
 // AddContentModelID adds v to the "content_model_id" field.
-func (u *CategoryUpsertOne) AddContentModelID(v uint64) *CategoryUpsertOne {
+func (u *CategoryUpsertOne) AddContentModelID(v int64) *CategoryUpsertOne {
 	return u.Update(func(s *CategoryUpsert) {
 		s.AddContentModelID(v)
 	})
@@ -1471,7 +1471,7 @@ func (u *CategoryUpsertOne) ExecX(ctx context.Context) {
 }
 
 // Exec executes the UPSERT query and returns the inserted/updated ID.
-func (u *CategoryUpsertOne) ID(ctx context.Context) (id uint64, err error) {
+func (u *CategoryUpsertOne) ID(ctx context.Context) (id int64, err error) {
 	node, err := u.create.Save(ctx)
 	if err != nil {
 		return id, err
@@ -1480,7 +1480,7 @@ func (u *CategoryUpsertOne) ID(ctx context.Context) (id uint64, err error) {
 }
 
 // IDX is like ID, but panics if an error occurs.
-func (u *CategoryUpsertOne) IDX(ctx context.Context) uint64 {
+func (u *CategoryUpsertOne) IDX(ctx context.Context) int64 {
 	id, err := u.ID(ctx)
 	if err != nil {
 		panic(err)
@@ -1537,7 +1537,7 @@ func (_c *CategoryCreateBulk) Save(ctx context.Context) ([]*Category, error) {
 				mutation.id = &nodes[i].ID
 				if specs[i].ID.Value != nil && nodes[i].ID == 0 {
 					id := specs[i].ID.Value.(int64)
-					nodes[i].ID = uint64(id)
+					nodes[i].ID = int64(id)
 				}
 				mutation.done = true
 				return nodes[i], nil
@@ -1718,14 +1718,14 @@ func (u *CategoryUpsertBulk) ClearDeletedAt() *CategoryUpsertBulk {
 }
 
 // SetCreatedBy sets the "created_by" field.
-func (u *CategoryUpsertBulk) SetCreatedBy(v uint64) *CategoryUpsertBulk {
+func (u *CategoryUpsertBulk) SetCreatedBy(v int64) *CategoryUpsertBulk {
 	return u.Update(func(s *CategoryUpsert) {
 		s.SetCreatedBy(v)
 	})
 }
 
 // AddCreatedBy adds v to the "created_by" field.
-func (u *CategoryUpsertBulk) AddCreatedBy(v uint64) *CategoryUpsertBulk {
+func (u *CategoryUpsertBulk) AddCreatedBy(v int64) *CategoryUpsertBulk {
 	return u.Update(func(s *CategoryUpsert) {
 		s.AddCreatedBy(v)
 	})
@@ -1746,14 +1746,14 @@ func (u *CategoryUpsertBulk) ClearCreatedBy() *CategoryUpsertBulk {
 }
 
 // SetUpdatedBy sets the "updated_by" field.
-func (u *CategoryUpsertBulk) SetUpdatedBy(v uint64) *CategoryUpsertBulk {
+func (u *CategoryUpsertBulk) SetUpdatedBy(v int64) *CategoryUpsertBulk {
 	return u.Update(func(s *CategoryUpsert) {
 		s.SetUpdatedBy(v)
 	})
 }
 
 // AddUpdatedBy adds v to the "updated_by" field.
-func (u *CategoryUpsertBulk) AddUpdatedBy(v uint64) *CategoryUpsertBulk {
+func (u *CategoryUpsertBulk) AddUpdatedBy(v int64) *CategoryUpsertBulk {
 	return u.Update(func(s *CategoryUpsert) {
 		s.AddUpdatedBy(v)
 	})
@@ -1774,14 +1774,14 @@ func (u *CategoryUpsertBulk) ClearUpdatedBy() *CategoryUpsertBulk {
 }
 
 // SetDeletedBy sets the "deleted_by" field.
-func (u *CategoryUpsertBulk) SetDeletedBy(v uint64) *CategoryUpsertBulk {
+func (u *CategoryUpsertBulk) SetDeletedBy(v int64) *CategoryUpsertBulk {
 	return u.Update(func(s *CategoryUpsert) {
 		s.SetDeletedBy(v)
 	})
 }
 
 // AddDeletedBy adds v to the "deleted_by" field.
-func (u *CategoryUpsertBulk) AddDeletedBy(v uint64) *CategoryUpsertBulk {
+func (u *CategoryUpsertBulk) AddDeletedBy(v int64) *CategoryUpsertBulk {
 	return u.Update(func(s *CategoryUpsert) {
 		s.AddDeletedBy(v)
 	})
@@ -1851,7 +1851,7 @@ func (u *CategoryUpsertBulk) ClearPath() *CategoryUpsertBulk {
 }
 
 // SetParentID sets the "parent_id" field.
-func (u *CategoryUpsertBulk) SetParentID(v uint64) *CategoryUpsertBulk {
+func (u *CategoryUpsertBulk) SetParentID(v int64) *CategoryUpsertBulk {
 	return u.Update(func(s *CategoryUpsert) {
 		s.SetParentID(v)
 	})
@@ -2082,14 +2082,14 @@ func (u *CategoryUpsertBulk) ClearCustomFields() *CategoryUpsertBulk {
 }
 
 // SetContentModelID sets the "content_model_id" field.
-func (u *CategoryUpsertBulk) SetContentModelID(v uint64) *CategoryUpsertBulk {
+func (u *CategoryUpsertBulk) SetContentModelID(v int64) *CategoryUpsertBulk {
 	return u.Update(func(s *CategoryUpsert) {
 		s.SetContentModelID(v)
 	})
 }
 
 // AddContentModelID adds v to the "content_model_id" field.
-func (u *CategoryUpsertBulk) AddContentModelID(v uint64) *CategoryUpsertBulk {
+func (u *CategoryUpsertBulk) AddContentModelID(v int64) *CategoryUpsertBulk {
 	return u.Update(func(s *CategoryUpsert) {
 		s.AddContentModelID(v)
 	})

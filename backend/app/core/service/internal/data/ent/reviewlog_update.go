@@ -70,14 +70,14 @@ func (_u *ReviewLogUpdate) ClearDeletedAt() *ReviewLogUpdate {
 }
 
 // SetCreatedBy sets the "created_by" field.
-func (_u *ReviewLogUpdate) SetCreatedBy(v uint64) *ReviewLogUpdate {
+func (_u *ReviewLogUpdate) SetCreatedBy(v int64) *ReviewLogUpdate {
 	_u.mutation.ResetCreatedBy()
 	_u.mutation.SetCreatedBy(v)
 	return _u
 }
 
 // SetNillableCreatedBy sets the "created_by" field if the given value is not nil.
-func (_u *ReviewLogUpdate) SetNillableCreatedBy(v *uint64) *ReviewLogUpdate {
+func (_u *ReviewLogUpdate) SetNillableCreatedBy(v *int64) *ReviewLogUpdate {
 	if v != nil {
 		_u.SetCreatedBy(*v)
 	}
@@ -97,14 +97,14 @@ func (_u *ReviewLogUpdate) ClearCreatedBy() *ReviewLogUpdate {
 }
 
 // SetUpdatedBy sets the "updated_by" field.
-func (_u *ReviewLogUpdate) SetUpdatedBy(v uint64) *ReviewLogUpdate {
+func (_u *ReviewLogUpdate) SetUpdatedBy(v int64) *ReviewLogUpdate {
 	_u.mutation.ResetUpdatedBy()
 	_u.mutation.SetUpdatedBy(v)
 	return _u
 }
 
 // SetNillableUpdatedBy sets the "updated_by" field if the given value is not nil.
-func (_u *ReviewLogUpdate) SetNillableUpdatedBy(v *uint64) *ReviewLogUpdate {
+func (_u *ReviewLogUpdate) SetNillableUpdatedBy(v *int64) *ReviewLogUpdate {
 	if v != nil {
 		_u.SetUpdatedBy(*v)
 	}
@@ -124,14 +124,14 @@ func (_u *ReviewLogUpdate) ClearUpdatedBy() *ReviewLogUpdate {
 }
 
 // SetDeletedBy sets the "deleted_by" field.
-func (_u *ReviewLogUpdate) SetDeletedBy(v uint64) *ReviewLogUpdate {
+func (_u *ReviewLogUpdate) SetDeletedBy(v int64) *ReviewLogUpdate {
 	_u.mutation.ResetDeletedBy()
 	_u.mutation.SetDeletedBy(v)
 	return _u
 }
 
 // SetNillableDeletedBy sets the "deleted_by" field if the given value is not nil.
-func (_u *ReviewLogUpdate) SetNillableDeletedBy(v *uint64) *ReviewLogUpdate {
+func (_u *ReviewLogUpdate) SetNillableDeletedBy(v *int64) *ReviewLogUpdate {
 	if v != nil {
 		_u.SetDeletedBy(*v)
 	}
@@ -165,14 +165,14 @@ func (_u *ReviewLogUpdate) SetNillableEntityType(v *string) *ReviewLogUpdate {
 }
 
 // SetEntityID sets the "entity_id" field.
-func (_u *ReviewLogUpdate) SetEntityID(v uint64) *ReviewLogUpdate {
+func (_u *ReviewLogUpdate) SetEntityID(v int64) *ReviewLogUpdate {
 	_u.mutation.ResetEntityID()
 	_u.mutation.SetEntityID(v)
 	return _u
 }
 
 // SetNillableEntityID sets the "entity_id" field if the given value is not nil.
-func (_u *ReviewLogUpdate) SetNillableEntityID(v *uint64) *ReviewLogUpdate {
+func (_u *ReviewLogUpdate) SetNillableEntityID(v *int64) *ReviewLogUpdate {
 	if v != nil {
 		_u.SetEntityID(*v)
 	}
@@ -302,7 +302,7 @@ func (_u *ReviewLogUpdate) sqlSave(ctx context.Context) (_node int, err error) {
 	if err := _u.check(); err != nil {
 		return _node, err
 	}
-	_spec := sqlgraph.NewUpdateSpec(reviewlog.Table, reviewlog.Columns, sqlgraph.NewFieldSpec(reviewlog.FieldID, field.TypeUint64))
+	_spec := sqlgraph.NewUpdateSpec(reviewlog.Table, reviewlog.Columns, sqlgraph.NewFieldSpec(reviewlog.FieldID, field.TypeInt64))
 	if ps := _u.mutation.predicates; len(ps) > 0 {
 		_spec.Predicate = func(selector *sql.Selector) {
 			for i := range ps {
@@ -326,43 +326,43 @@ func (_u *ReviewLogUpdate) sqlSave(ctx context.Context) (_node int, err error) {
 		_spec.ClearField(reviewlog.FieldDeletedAt, field.TypeTime)
 	}
 	if _u.mutation.TenantIDCleared() {
-		_spec.ClearField(reviewlog.FieldTenantID, field.TypeUint64)
+		_spec.ClearField(reviewlog.FieldTenantID, field.TypeInt64)
 	}
 	if value, ok := _u.mutation.CreatedBy(); ok {
-		_spec.SetField(reviewlog.FieldCreatedBy, field.TypeUint64, value)
+		_spec.SetField(reviewlog.FieldCreatedBy, field.TypeInt64, value)
 	}
 	if value, ok := _u.mutation.AddedCreatedBy(); ok {
-		_spec.AddField(reviewlog.FieldCreatedBy, field.TypeUint64, value)
+		_spec.AddField(reviewlog.FieldCreatedBy, field.TypeInt64, value)
 	}
 	if _u.mutation.CreatedByCleared() {
-		_spec.ClearField(reviewlog.FieldCreatedBy, field.TypeUint64)
+		_spec.ClearField(reviewlog.FieldCreatedBy, field.TypeInt64)
 	}
 	if value, ok := _u.mutation.UpdatedBy(); ok {
-		_spec.SetField(reviewlog.FieldUpdatedBy, field.TypeUint64, value)
+		_spec.SetField(reviewlog.FieldUpdatedBy, field.TypeInt64, value)
 	}
 	if value, ok := _u.mutation.AddedUpdatedBy(); ok {
-		_spec.AddField(reviewlog.FieldUpdatedBy, field.TypeUint64, value)
+		_spec.AddField(reviewlog.FieldUpdatedBy, field.TypeInt64, value)
 	}
 	if _u.mutation.UpdatedByCleared() {
-		_spec.ClearField(reviewlog.FieldUpdatedBy, field.TypeUint64)
+		_spec.ClearField(reviewlog.FieldUpdatedBy, field.TypeInt64)
 	}
 	if value, ok := _u.mutation.DeletedBy(); ok {
-		_spec.SetField(reviewlog.FieldDeletedBy, field.TypeUint64, value)
+		_spec.SetField(reviewlog.FieldDeletedBy, field.TypeInt64, value)
 	}
 	if value, ok := _u.mutation.AddedDeletedBy(); ok {
-		_spec.AddField(reviewlog.FieldDeletedBy, field.TypeUint64, value)
+		_spec.AddField(reviewlog.FieldDeletedBy, field.TypeInt64, value)
 	}
 	if _u.mutation.DeletedByCleared() {
-		_spec.ClearField(reviewlog.FieldDeletedBy, field.TypeUint64)
+		_spec.ClearField(reviewlog.FieldDeletedBy, field.TypeInt64)
 	}
 	if value, ok := _u.mutation.EntityType(); ok {
 		_spec.SetField(reviewlog.FieldEntityType, field.TypeString, value)
 	}
 	if value, ok := _u.mutation.EntityID(); ok {
-		_spec.SetField(reviewlog.FieldEntityID, field.TypeUint64, value)
+		_spec.SetField(reviewlog.FieldEntityID, field.TypeInt64, value)
 	}
 	if value, ok := _u.mutation.AddedEntityID(); ok {
-		_spec.AddField(reviewlog.FieldEntityID, field.TypeUint64, value)
+		_spec.AddField(reviewlog.FieldEntityID, field.TypeInt64, value)
 	}
 	if value, ok := _u.mutation.Action(); ok {
 		_spec.SetField(reviewlog.FieldAction, field.TypeEnum, value)
@@ -442,14 +442,14 @@ func (_u *ReviewLogUpdateOne) ClearDeletedAt() *ReviewLogUpdateOne {
 }
 
 // SetCreatedBy sets the "created_by" field.
-func (_u *ReviewLogUpdateOne) SetCreatedBy(v uint64) *ReviewLogUpdateOne {
+func (_u *ReviewLogUpdateOne) SetCreatedBy(v int64) *ReviewLogUpdateOne {
 	_u.mutation.ResetCreatedBy()
 	_u.mutation.SetCreatedBy(v)
 	return _u
 }
 
 // SetNillableCreatedBy sets the "created_by" field if the given value is not nil.
-func (_u *ReviewLogUpdateOne) SetNillableCreatedBy(v *uint64) *ReviewLogUpdateOne {
+func (_u *ReviewLogUpdateOne) SetNillableCreatedBy(v *int64) *ReviewLogUpdateOne {
 	if v != nil {
 		_u.SetCreatedBy(*v)
 	}
@@ -469,14 +469,14 @@ func (_u *ReviewLogUpdateOne) ClearCreatedBy() *ReviewLogUpdateOne {
 }
 
 // SetUpdatedBy sets the "updated_by" field.
-func (_u *ReviewLogUpdateOne) SetUpdatedBy(v uint64) *ReviewLogUpdateOne {
+func (_u *ReviewLogUpdateOne) SetUpdatedBy(v int64) *ReviewLogUpdateOne {
 	_u.mutation.ResetUpdatedBy()
 	_u.mutation.SetUpdatedBy(v)
 	return _u
 }
 
 // SetNillableUpdatedBy sets the "updated_by" field if the given value is not nil.
-func (_u *ReviewLogUpdateOne) SetNillableUpdatedBy(v *uint64) *ReviewLogUpdateOne {
+func (_u *ReviewLogUpdateOne) SetNillableUpdatedBy(v *int64) *ReviewLogUpdateOne {
 	if v != nil {
 		_u.SetUpdatedBy(*v)
 	}
@@ -496,14 +496,14 @@ func (_u *ReviewLogUpdateOne) ClearUpdatedBy() *ReviewLogUpdateOne {
 }
 
 // SetDeletedBy sets the "deleted_by" field.
-func (_u *ReviewLogUpdateOne) SetDeletedBy(v uint64) *ReviewLogUpdateOne {
+func (_u *ReviewLogUpdateOne) SetDeletedBy(v int64) *ReviewLogUpdateOne {
 	_u.mutation.ResetDeletedBy()
 	_u.mutation.SetDeletedBy(v)
 	return _u
 }
 
 // SetNillableDeletedBy sets the "deleted_by" field if the given value is not nil.
-func (_u *ReviewLogUpdateOne) SetNillableDeletedBy(v *uint64) *ReviewLogUpdateOne {
+func (_u *ReviewLogUpdateOne) SetNillableDeletedBy(v *int64) *ReviewLogUpdateOne {
 	if v != nil {
 		_u.SetDeletedBy(*v)
 	}
@@ -537,14 +537,14 @@ func (_u *ReviewLogUpdateOne) SetNillableEntityType(v *string) *ReviewLogUpdateO
 }
 
 // SetEntityID sets the "entity_id" field.
-func (_u *ReviewLogUpdateOne) SetEntityID(v uint64) *ReviewLogUpdateOne {
+func (_u *ReviewLogUpdateOne) SetEntityID(v int64) *ReviewLogUpdateOne {
 	_u.mutation.ResetEntityID()
 	_u.mutation.SetEntityID(v)
 	return _u
 }
 
 // SetNillableEntityID sets the "entity_id" field if the given value is not nil.
-func (_u *ReviewLogUpdateOne) SetNillableEntityID(v *uint64) *ReviewLogUpdateOne {
+func (_u *ReviewLogUpdateOne) SetNillableEntityID(v *int64) *ReviewLogUpdateOne {
 	if v != nil {
 		_u.SetEntityID(*v)
 	}
@@ -687,7 +687,7 @@ func (_u *ReviewLogUpdateOne) sqlSave(ctx context.Context) (_node *ReviewLog, er
 	if err := _u.check(); err != nil {
 		return _node, err
 	}
-	_spec := sqlgraph.NewUpdateSpec(reviewlog.Table, reviewlog.Columns, sqlgraph.NewFieldSpec(reviewlog.FieldID, field.TypeUint64))
+	_spec := sqlgraph.NewUpdateSpec(reviewlog.Table, reviewlog.Columns, sqlgraph.NewFieldSpec(reviewlog.FieldID, field.TypeInt64))
 	id, ok := _u.mutation.ID()
 	if !ok {
 		return nil, &ValidationError{Name: "id", err: errors.New(`ent: missing "ReviewLog.id" for update`)}
@@ -728,43 +728,43 @@ func (_u *ReviewLogUpdateOne) sqlSave(ctx context.Context) (_node *ReviewLog, er
 		_spec.ClearField(reviewlog.FieldDeletedAt, field.TypeTime)
 	}
 	if _u.mutation.TenantIDCleared() {
-		_spec.ClearField(reviewlog.FieldTenantID, field.TypeUint64)
+		_spec.ClearField(reviewlog.FieldTenantID, field.TypeInt64)
 	}
 	if value, ok := _u.mutation.CreatedBy(); ok {
-		_spec.SetField(reviewlog.FieldCreatedBy, field.TypeUint64, value)
+		_spec.SetField(reviewlog.FieldCreatedBy, field.TypeInt64, value)
 	}
 	if value, ok := _u.mutation.AddedCreatedBy(); ok {
-		_spec.AddField(reviewlog.FieldCreatedBy, field.TypeUint64, value)
+		_spec.AddField(reviewlog.FieldCreatedBy, field.TypeInt64, value)
 	}
 	if _u.mutation.CreatedByCleared() {
-		_spec.ClearField(reviewlog.FieldCreatedBy, field.TypeUint64)
+		_spec.ClearField(reviewlog.FieldCreatedBy, field.TypeInt64)
 	}
 	if value, ok := _u.mutation.UpdatedBy(); ok {
-		_spec.SetField(reviewlog.FieldUpdatedBy, field.TypeUint64, value)
+		_spec.SetField(reviewlog.FieldUpdatedBy, field.TypeInt64, value)
 	}
 	if value, ok := _u.mutation.AddedUpdatedBy(); ok {
-		_spec.AddField(reviewlog.FieldUpdatedBy, field.TypeUint64, value)
+		_spec.AddField(reviewlog.FieldUpdatedBy, field.TypeInt64, value)
 	}
 	if _u.mutation.UpdatedByCleared() {
-		_spec.ClearField(reviewlog.FieldUpdatedBy, field.TypeUint64)
+		_spec.ClearField(reviewlog.FieldUpdatedBy, field.TypeInt64)
 	}
 	if value, ok := _u.mutation.DeletedBy(); ok {
-		_spec.SetField(reviewlog.FieldDeletedBy, field.TypeUint64, value)
+		_spec.SetField(reviewlog.FieldDeletedBy, field.TypeInt64, value)
 	}
 	if value, ok := _u.mutation.AddedDeletedBy(); ok {
-		_spec.AddField(reviewlog.FieldDeletedBy, field.TypeUint64, value)
+		_spec.AddField(reviewlog.FieldDeletedBy, field.TypeInt64, value)
 	}
 	if _u.mutation.DeletedByCleared() {
-		_spec.ClearField(reviewlog.FieldDeletedBy, field.TypeUint64)
+		_spec.ClearField(reviewlog.FieldDeletedBy, field.TypeInt64)
 	}
 	if value, ok := _u.mutation.EntityType(); ok {
 		_spec.SetField(reviewlog.FieldEntityType, field.TypeString, value)
 	}
 	if value, ok := _u.mutation.EntityID(); ok {
-		_spec.SetField(reviewlog.FieldEntityID, field.TypeUint64, value)
+		_spec.SetField(reviewlog.FieldEntityID, field.TypeInt64, value)
 	}
 	if value, ok := _u.mutation.AddedEntityID(); ok {
-		_spec.AddField(reviewlog.FieldEntityID, field.TypeUint64, value)
+		_spec.AddField(reviewlog.FieldEntityID, field.TypeInt64, value)
 	}
 	if value, ok := _u.mutation.Action(); ok {
 		_spec.SetField(reviewlog.FieldAction, field.TypeEnum, value)

@@ -33,7 +33,7 @@ const (
 	DefaultPDS = "https://bsky.social"
 
 	postCollection  = "app.bsky.feed.post"
-	maxPostRunes    = 300  // Bluesky 单帖上限（服务端按 grapheme 计数，这里按 rune 预检，接近即可）
+	maxPostRunes    = 300 // Bluesky 单帖上限（服务端按 grapheme 计数，这里按 rune 预检，接近即可）
 	defaultTimeout  = 30 * time.Second
 	maxResponseSize = 10 << 20 // 10MB
 )
@@ -133,9 +133,9 @@ type getPostsResponse struct {
 type postView struct {
 	Uri         string `json:"uri"`
 	Cid         string `json:"cid"`
-	LikeCount    int64  `json:"likeCount"`
-	ReplyCount   int64  `json:"replyCount"`
-	RepostCount  int64  `json:"repostCount"`
+	LikeCount   int64  `json:"likeCount"`
+	ReplyCount  int64  `json:"replyCount"`
+	RepostCount int64  `json:"repostCount"`
 }
 
 // ── social.Provider 实现 ──
@@ -453,9 +453,9 @@ func webURL(handle, atURI string) string {
 	return fmt.Sprintf("https://bsky.app/profile/%s/post/%s", handle, rkey)
 }
 
-func clampUint64(v int64) uint64 {
+func clampUint64(v int64) int64 {
 	if v < 0 {
 		return 0
 	}
-	return uint64(v)
+	return int64(v)
 }

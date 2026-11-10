@@ -130,7 +130,7 @@ func (s *AuthenticationService) Register(ctx context.Context, req *authenticatio
 		return nil, authenticationV1.ErrorServiceUnavailable("register unavailable")
 	}
 
-	var tenantID uint64
+	var tenantID int64
 	if hr, ok := khttp.RequestFromServerContext(ctx); ok && hr != nil && hr.Host != "" {
 		if tid, err := s.tenantResolve.ResolveTenantIDByDomain(ctx, hr.Host); err == nil {
 			tenantID = tid

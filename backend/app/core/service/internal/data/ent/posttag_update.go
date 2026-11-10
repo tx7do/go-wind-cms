@@ -29,14 +29,14 @@ func (_u *PostTagUpdate) Where(ps ...predicate.PostTag) *PostTagUpdate {
 }
 
 // SetPostID sets the "post_id" field.
-func (_u *PostTagUpdate) SetPostID(v uint64) *PostTagUpdate {
+func (_u *PostTagUpdate) SetPostID(v int64) *PostTagUpdate {
 	_u.mutation.ResetPostID()
 	_u.mutation.SetPostID(v)
 	return _u
 }
 
 // SetNillablePostID sets the "post_id" field if the given value is not nil.
-func (_u *PostTagUpdate) SetNillablePostID(v *uint64) *PostTagUpdate {
+func (_u *PostTagUpdate) SetNillablePostID(v *int64) *PostTagUpdate {
 	if v != nil {
 		_u.SetPostID(*v)
 	}
@@ -50,14 +50,14 @@ func (_u *PostTagUpdate) AddPostID(v int64) *PostTagUpdate {
 }
 
 // SetTagID sets the "tag_id" field.
-func (_u *PostTagUpdate) SetTagID(v uint64) *PostTagUpdate {
+func (_u *PostTagUpdate) SetTagID(v int64) *PostTagUpdate {
 	_u.mutation.ResetTagID()
 	_u.mutation.SetTagID(v)
 	return _u
 }
 
 // SetNillableTagID sets the "tag_id" field if the given value is not nil.
-func (_u *PostTagUpdate) SetNillableTagID(v *uint64) *PostTagUpdate {
+func (_u *PostTagUpdate) SetNillableTagID(v *int64) *PostTagUpdate {
 	if v != nil {
 		_u.SetTagID(*v)
 	}
@@ -109,7 +109,7 @@ func (_u *PostTagUpdate) Modify(modifiers ...func(u *sql.UpdateBuilder)) *PostTa
 }
 
 func (_u *PostTagUpdate) sqlSave(ctx context.Context) (_node int, err error) {
-	_spec := sqlgraph.NewUpdateSpec(posttag.Table, posttag.Columns, sqlgraph.NewFieldSpec(posttag.FieldID, field.TypeUint64))
+	_spec := sqlgraph.NewUpdateSpec(posttag.Table, posttag.Columns, sqlgraph.NewFieldSpec(posttag.FieldID, field.TypeInt64))
 	if ps := _u.mutation.predicates; len(ps) > 0 {
 		_spec.Predicate = func(selector *sql.Selector) {
 			for i := range ps {
@@ -121,19 +121,19 @@ func (_u *PostTagUpdate) sqlSave(ctx context.Context) (_node int, err error) {
 		_spec.ClearField(posttag.FieldCreatedAt, field.TypeTime)
 	}
 	if _u.mutation.TenantIDCleared() {
-		_spec.ClearField(posttag.FieldTenantID, field.TypeUint64)
+		_spec.ClearField(posttag.FieldTenantID, field.TypeInt64)
 	}
 	if value, ok := _u.mutation.PostID(); ok {
-		_spec.SetField(posttag.FieldPostID, field.TypeUint64, value)
+		_spec.SetField(posttag.FieldPostID, field.TypeInt64, value)
 	}
 	if value, ok := _u.mutation.AddedPostID(); ok {
-		_spec.AddField(posttag.FieldPostID, field.TypeUint64, value)
+		_spec.AddField(posttag.FieldPostID, field.TypeInt64, value)
 	}
 	if value, ok := _u.mutation.TagID(); ok {
-		_spec.SetField(posttag.FieldTagID, field.TypeUint64, value)
+		_spec.SetField(posttag.FieldTagID, field.TypeInt64, value)
 	}
 	if value, ok := _u.mutation.AddedTagID(); ok {
-		_spec.AddField(posttag.FieldTagID, field.TypeUint64, value)
+		_spec.AddField(posttag.FieldTagID, field.TypeInt64, value)
 	}
 	_spec.AddModifiers(_u.modifiers...)
 	if _node, err = sqlgraph.UpdateNodes(ctx, _u.driver, _spec); err != nil {
@@ -158,14 +158,14 @@ type PostTagUpdateOne struct {
 }
 
 // SetPostID sets the "post_id" field.
-func (_u *PostTagUpdateOne) SetPostID(v uint64) *PostTagUpdateOne {
+func (_u *PostTagUpdateOne) SetPostID(v int64) *PostTagUpdateOne {
 	_u.mutation.ResetPostID()
 	_u.mutation.SetPostID(v)
 	return _u
 }
 
 // SetNillablePostID sets the "post_id" field if the given value is not nil.
-func (_u *PostTagUpdateOne) SetNillablePostID(v *uint64) *PostTagUpdateOne {
+func (_u *PostTagUpdateOne) SetNillablePostID(v *int64) *PostTagUpdateOne {
 	if v != nil {
 		_u.SetPostID(*v)
 	}
@@ -179,14 +179,14 @@ func (_u *PostTagUpdateOne) AddPostID(v int64) *PostTagUpdateOne {
 }
 
 // SetTagID sets the "tag_id" field.
-func (_u *PostTagUpdateOne) SetTagID(v uint64) *PostTagUpdateOne {
+func (_u *PostTagUpdateOne) SetTagID(v int64) *PostTagUpdateOne {
 	_u.mutation.ResetTagID()
 	_u.mutation.SetTagID(v)
 	return _u
 }
 
 // SetNillableTagID sets the "tag_id" field if the given value is not nil.
-func (_u *PostTagUpdateOne) SetNillableTagID(v *uint64) *PostTagUpdateOne {
+func (_u *PostTagUpdateOne) SetNillableTagID(v *int64) *PostTagUpdateOne {
 	if v != nil {
 		_u.SetTagID(*v)
 	}
@@ -251,7 +251,7 @@ func (_u *PostTagUpdateOne) Modify(modifiers ...func(u *sql.UpdateBuilder)) *Pos
 }
 
 func (_u *PostTagUpdateOne) sqlSave(ctx context.Context) (_node *PostTag, err error) {
-	_spec := sqlgraph.NewUpdateSpec(posttag.Table, posttag.Columns, sqlgraph.NewFieldSpec(posttag.FieldID, field.TypeUint64))
+	_spec := sqlgraph.NewUpdateSpec(posttag.Table, posttag.Columns, sqlgraph.NewFieldSpec(posttag.FieldID, field.TypeInt64))
 	id, ok := _u.mutation.ID()
 	if !ok {
 		return nil, &ValidationError{Name: "id", err: errors.New(`ent: missing "PostTag.id" for update`)}
@@ -280,19 +280,19 @@ func (_u *PostTagUpdateOne) sqlSave(ctx context.Context) (_node *PostTag, err er
 		_spec.ClearField(posttag.FieldCreatedAt, field.TypeTime)
 	}
 	if _u.mutation.TenantIDCleared() {
-		_spec.ClearField(posttag.FieldTenantID, field.TypeUint64)
+		_spec.ClearField(posttag.FieldTenantID, field.TypeInt64)
 	}
 	if value, ok := _u.mutation.PostID(); ok {
-		_spec.SetField(posttag.FieldPostID, field.TypeUint64, value)
+		_spec.SetField(posttag.FieldPostID, field.TypeInt64, value)
 	}
 	if value, ok := _u.mutation.AddedPostID(); ok {
-		_spec.AddField(posttag.FieldPostID, field.TypeUint64, value)
+		_spec.AddField(posttag.FieldPostID, field.TypeInt64, value)
 	}
 	if value, ok := _u.mutation.TagID(); ok {
-		_spec.SetField(posttag.FieldTagID, field.TypeUint64, value)
+		_spec.SetField(posttag.FieldTagID, field.TypeInt64, value)
 	}
 	if value, ok := _u.mutation.AddedTagID(); ok {
-		_spec.AddField(posttag.FieldTagID, field.TypeUint64, value)
+		_spec.AddField(posttag.FieldTagID, field.TypeInt64, value)
 	}
 	_spec.AddModifiers(_u.modifiers...)
 	_node = &PostTag{config: _u.config}

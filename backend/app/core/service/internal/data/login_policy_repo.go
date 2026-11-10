@@ -111,7 +111,7 @@ func (r *LoginPolicyRepo) List(ctx context.Context, req *paginationV1.PagingRequ
 	}, nil
 }
 
-func (r *LoginPolicyRepo) IsExist(ctx context.Context, id uint64) (bool, error) {
+func (r *LoginPolicyRepo) IsExist(ctx context.Context, id int64) (bool, error) {
 	exist, err := r.entClient.Client().LoginPolicy.Query().
 		Where(loginpolicy.IDEQ(id)).
 		Exist(ctx)
@@ -236,10 +236,9 @@ func (r *LoginPolicyRepo) Delete(ctx context.Context, req *authenticationV1.Dele
 	return nil
 }
 
-
 // EffectivePolicy 登录闸门用的策略条目（ent 实体的精简视图，避免服务层依赖生成代码）。
 type EffectivePolicy struct {
-	TargetID uint64
+	TargetID int64
 	Value    string
 	Type     string
 	Method   string
@@ -250,7 +249,7 @@ type EffectivePolicy struct {
 // MatchLoginPolicy 匹配（策略条目量小，不分页全量）。
 // 登录流程的 ctx 带 privacy.Allow（Noop viewer），无租户过滤；
 // 租户范围由本查询的 TenantIDEQ 显式圈定。
-func (r *LoginPolicyRepo) ListForLogin(ctx context.Context, tenantID uint64) ([]EffectivePolicy, error) {
+func (r *LoginPolicyRepo) ListForLogin(ctx context.Context, tenantID int64) ([]EffectivePolicy, error) {
 	entities, err := r.entClient.Client().LoginPolicy.Query().
 		Where(loginpolicy.TenantIDEQ(tenantID)).
 		All(ctx)
@@ -271,7 +270,7 @@ func (r *LoginPolicyRepo) ListForLogin(ctx context.Context, tenantID uint64) ([]
 	return policies, nil
 }
 
-func derefLoginPolicyUint32(p *uint64) uint64 {
+func derefLoginPolicyUint32(p *int64) int64 {
 	if p == nil {
 		return 0
 	}

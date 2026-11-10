@@ -38,8 +38,8 @@ const (
 // 双重定位删除；index 操作时 worker 仍从 DB 取真实 tenant_id 写入 ES。
 type SearchReindexPayload struct {
 	Entity   string `json:"entity"`
-	ID       uint64 `json:"id"`
-	TenantID uint64 `json:"tenant_id"`
+	ID       int64  `json:"id"`
+	TenantID int64  `json:"tenant_id"`
 	Op       string `json:"op"`
 }
 
@@ -50,7 +50,7 @@ const AiDocReindexTaskType = "ai.doc.reindex"
 // AiDocReindexPayload 知识库切片重索引任务 payload。
 // BaseID=0 表示对全部知识库重索引；>0 只处理指定库。
 type AiDocReindexPayload struct {
-	BaseID uint64 `json:"base_id"`
+	BaseID int64 `json:"base_id"`
 }
 
 // AiQueryRunTaskType 定时问数任务的 asynq 任务类型。
@@ -69,8 +69,8 @@ const AiPostIndexTaskType = "ai.post.index"
 
 // AiPostIndexPayload 帖子语义索引任务 payload。
 type AiPostIndexPayload struct {
-	PostID   uint64 `json:"post_id"`
-	TenantID uint64 `json:"tenant_id"`
+	PostID   int64  `json:"post_id"`
+	TenantID int64  `json:"tenant_id"`
 	Op       string `json:"op"` // index / delete
 }
 

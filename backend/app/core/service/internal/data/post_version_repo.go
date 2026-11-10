@@ -11,10 +11,10 @@ import (
 
 	entCrud "github.com/tx7do/go-crud/entgo"
 
+	contentV1 "go-wind-cms/api/gen/go/content/service/v1"
 	"go-wind-cms/app/core/service/internal/data/ent"
 	"go-wind-cms/app/core/service/internal/data/ent/postversion"
 	"go-wind-cms/app/core/service/internal/data/ent/predicate"
-	contentV1 "go-wind-cms/api/gen/go/content/service/v1"
 )
 
 // PostVersionRepo 帖子版本快照仓储。行只增不改，由 PostService 在
@@ -36,7 +36,7 @@ func NewPostVersionRepo(ctx *bootstrap.Context, entClient *entCrud.EntClient[*en
 const postSnapshotMaxBytes = 2 << 20
 
 // CreateSnapshot 为帖子写入一条版本快照，返回新版本号。
-func (r *PostVersionRepo) CreateSnapshot(ctx context.Context, postID uint64, dto *contentV1.Post, comment string) (uint32, error) {
+func (r *PostVersionRepo) CreateSnapshot(ctx context.Context, postID int64, dto *contentV1.Post, comment string) (uint32, error) {
 	if dto == nil {
 		return 0, nil
 	}
@@ -89,7 +89,7 @@ func (r *PostVersionRepo) tenantGuard(ctx context.Context) ([]predicate.PostVers
 
 // nextVersionNumber 取该帖下一版本号（max+1）。并发竞态下可能出现重号，
 // (post_id, version_number) 为非唯一索引，宁可重号也不阻断保存。
-func (r *PostVersionRepo) nextVersionNumber(ctx context.Context, postID uint64) (uint32, error) {
+func (r *PostVersionRepo) nextVersionNumber(ctx context.Context, postID int64) (uint32, error) {
 	conds := []predicate.PostVersion{postversion.PostIDEQ(postID)}
 	if tenantConds, has := r.tenantGuard(ctx); has {
 		conds = append(conds, tenantConds...)
@@ -114,7 +114,7 @@ func (r *PostVersionRepo) nextVersionNumber(ctx context.Context, postID uint64) 
 }
 
 // ListByPost 取帖子的版本列表（版本号倒序，仅元数据，不含快照正文）。
-func (r *PostVersionRepo) ListByPost(ctx context.Context, postID uint64) ([]*contentV1.PostVersion, error) {
+func (r *PostVersionRepo) ListByPost(ctx context.Context, postID int64) ([]*contentV1.PostVersion, error) {
 	conds := []predicate.PostVersion{postversion.PostIDEQ(postID)}
 	if tenantConds, has := r.tenantGuard(ctx); has {
 		conds = append(conds, tenantConds...)
@@ -136,7 +136,7 @@ func (r *PostVersionRepo) ListByPost(ctx context.Context, postID uint64) ([]*con
 }
 
 // Get 取版本详情（含快照正文）。
-func (r *PostVersionRepo) Get(ctx context.Context, id uint64) (*contentV1.PostVersion, error) {
+func (r *PostVersionRepo) Get(ctx context.Context, id int64) (*contentV1.PostVersion, error) {
 	conds := []predicate.PostVersion{postversion.IDEQ(id)}
 	if tenantConds, has := r.tenantGuard(ctx); has {
 		conds = append(conds, tenantConds...)
@@ -154,7 +154,7 @@ func (r *PostVersionRepo) Get(ctx context.Context, id uint64) (*contentV1.PostVe
 	return postVersionToDTO(row.ID, row.PostID, row.VersionNumber, row.Content, row.Comment, row.CreatedBy, row.CreatedAt), nil
 }
 
-func postVersionToDTO(id uint64, parentID *uint64, versionNumber *uint32, content, comment *string, createdBy *uint64, createdAt *time.Time) *contentV1.PostVersion {
+func postVersionToDTO(id int64, parentID *int64, versionNumber *uint32, content, comment *string, createdBy *int64, createdAt *time.Time) *contentV1.PostVersion {
 	dto := &contentV1.PostVersion{
 		Id:      &id,
 		Content: content,

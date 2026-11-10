@@ -39,12 +39,12 @@ func NewPageService(ctx *bootstrap.Context, pageServiceClient contentV1.PageServ
 }
 
 // withTenantMetadata 匿名链路的 BFF→core gRPC 需要 host 解析的租户元数据
-//（SearchPosts/RecordView 同款：x-md-global-tenant-id 仅内网可信注入）。
+// （SearchPosts/RecordView 同款：x-md-global-tenant-id 仅内网可信注入）。
 func (s *PageService) withTenantMetadata(ctx context.Context) context.Context {
 	if s.tenantResolve != nil {
 		if hr, ok := khttp.RequestFromServerContext(ctx); ok && hr != nil && hr.Host != "" {
 			if tid, err := s.tenantResolve.ResolveTenantIDByDomain(ctx, hr.Host); err == nil && tid > 0 {
-				return kratosMetadata.AppendToClientContext(ctx, "x-md-global-tenant-id", strconv.FormatUint(uint64(tid), 10))
+				return kratosMetadata.AppendToClientContext(ctx, "x-md-global-tenant-id", strconv.FormatInt(int64(tid), 10))
 			}
 		}
 	}
@@ -65,7 +65,7 @@ func (s *PageService) List(ctx context.Context, req *paginationV1.PagingRequest)
 			}
 		}
 		resp.Items = filtered
-		resp.Total = uint64(len(filtered))
+		resp.Total = int64(len(filtered))
 	}
 	return resp, nil
 }
@@ -94,7 +94,7 @@ func (s *PageService) Get(ctx context.Context, req *contentV1.GetPageRequest) (*
 
 // hasValidPreviewToken 校验请求 query 里的 preview_token：令牌有效且指向该资源
 // （kind/Id 匹配）时放行；令牌存在但无效按"不存在"处理，不暴露令牌有效性细节。
-func (s *PageService) hasValidPreviewToken(ctx context.Context, kind string, targetID uint64) bool {
+func (s *PageService) hasValidPreviewToken(ctx context.Context, kind string, targetID int64) bool {
 	token := rawQueryValue(ctx, "preview_token")
 	if token == "" {
 		return false
@@ -132,7 +132,7 @@ func (s *PageService) GetBySlug(ctx context.Context, req *appV1.GetPageBySlugReq
 }
 
 // rawQueryValue 从 kratos transport 读原始 HTTP 请求的 query 参数
-//（生成代码按 proto 字段装配 query，preview_token 不在消息内，须旁路读取）。
+// （生成代码按 proto 字段装配 query，preview_token 不在消息内，须旁路读取）。
 func rawQueryValue(ctx context.Context, key string) string {
 	if hr, ok := khttp.RequestFromServerContext(ctx); ok && hr != nil {
 		return hr.URL.Query().Get(key)

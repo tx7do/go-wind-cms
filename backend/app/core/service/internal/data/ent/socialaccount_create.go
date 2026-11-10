@@ -65,13 +65,13 @@ func (_c *SocialAccountCreate) SetNillableDeletedAt(v *time.Time) *SocialAccount
 }
 
 // SetCreatedBy sets the "created_by" field.
-func (_c *SocialAccountCreate) SetCreatedBy(v uint64) *SocialAccountCreate {
+func (_c *SocialAccountCreate) SetCreatedBy(v int64) *SocialAccountCreate {
 	_c.mutation.SetCreatedBy(v)
 	return _c
 }
 
 // SetNillableCreatedBy sets the "created_by" field if the given value is not nil.
-func (_c *SocialAccountCreate) SetNillableCreatedBy(v *uint64) *SocialAccountCreate {
+func (_c *SocialAccountCreate) SetNillableCreatedBy(v *int64) *SocialAccountCreate {
 	if v != nil {
 		_c.SetCreatedBy(*v)
 	}
@@ -79,13 +79,13 @@ func (_c *SocialAccountCreate) SetNillableCreatedBy(v *uint64) *SocialAccountCre
 }
 
 // SetUpdatedBy sets the "updated_by" field.
-func (_c *SocialAccountCreate) SetUpdatedBy(v uint64) *SocialAccountCreate {
+func (_c *SocialAccountCreate) SetUpdatedBy(v int64) *SocialAccountCreate {
 	_c.mutation.SetUpdatedBy(v)
 	return _c
 }
 
 // SetNillableUpdatedBy sets the "updated_by" field if the given value is not nil.
-func (_c *SocialAccountCreate) SetNillableUpdatedBy(v *uint64) *SocialAccountCreate {
+func (_c *SocialAccountCreate) SetNillableUpdatedBy(v *int64) *SocialAccountCreate {
 	if v != nil {
 		_c.SetUpdatedBy(*v)
 	}
@@ -93,13 +93,13 @@ func (_c *SocialAccountCreate) SetNillableUpdatedBy(v *uint64) *SocialAccountCre
 }
 
 // SetDeletedBy sets the "deleted_by" field.
-func (_c *SocialAccountCreate) SetDeletedBy(v uint64) *SocialAccountCreate {
+func (_c *SocialAccountCreate) SetDeletedBy(v int64) *SocialAccountCreate {
 	_c.mutation.SetDeletedBy(v)
 	return _c
 }
 
 // SetNillableDeletedBy sets the "deleted_by" field if the given value is not nil.
-func (_c *SocialAccountCreate) SetNillableDeletedBy(v *uint64) *SocialAccountCreate {
+func (_c *SocialAccountCreate) SetNillableDeletedBy(v *int64) *SocialAccountCreate {
 	if v != nil {
 		_c.SetDeletedBy(*v)
 	}
@@ -121,13 +121,13 @@ func (_c *SocialAccountCreate) SetNillableIsEnabled(v *bool) *SocialAccountCreat
 }
 
 // SetTenantID sets the "tenant_id" field.
-func (_c *SocialAccountCreate) SetTenantID(v uint64) *SocialAccountCreate {
+func (_c *SocialAccountCreate) SetTenantID(v int64) *SocialAccountCreate {
 	_c.mutation.SetTenantID(v)
 	return _c
 }
 
 // SetNillableTenantID sets the "tenant_id" field if the given value is not nil.
-func (_c *SocialAccountCreate) SetNillableTenantID(v *uint64) *SocialAccountCreate {
+func (_c *SocialAccountCreate) SetNillableTenantID(v *int64) *SocialAccountCreate {
 	if v != nil {
 		_c.SetTenantID(*v)
 	}
@@ -219,7 +219,7 @@ func (_c *SocialAccountCreate) SetNillableRemark(v *string) *SocialAccountCreate
 }
 
 // SetID sets the "id" field.
-func (_c *SocialAccountCreate) SetID(v uint64) *SocialAccountCreate {
+func (_c *SocialAccountCreate) SetID(v int64) *SocialAccountCreate {
 	_c.mutation.SetID(v)
 	return _c
 }
@@ -300,7 +300,7 @@ func (_c *SocialAccountCreate) sqlSave(ctx context.Context) (*SocialAccount, err
 	}
 	if _spec.ID.Value != _node.ID {
 		id := _spec.ID.Value.(int64)
-		_node.ID = uint64(id)
+		_node.ID = int64(id)
 	}
 	_c.mutation.id = &_node.ID
 	_c.mutation.done = true
@@ -310,7 +310,7 @@ func (_c *SocialAccountCreate) sqlSave(ctx context.Context) (*SocialAccount, err
 func (_c *SocialAccountCreate) createSpec() (*SocialAccount, *sqlgraph.CreateSpec) {
 	var (
 		_node = &SocialAccount{config: _c.config}
-		_spec = sqlgraph.NewCreateSpec(socialaccount.Table, sqlgraph.NewFieldSpec(socialaccount.FieldID, field.TypeUint64))
+		_spec = sqlgraph.NewCreateSpec(socialaccount.Table, sqlgraph.NewFieldSpec(socialaccount.FieldID, field.TypeInt64))
 	)
 	_spec.OnConflict = _c.conflict
 	if id, ok := _c.mutation.ID(); ok {
@@ -330,15 +330,15 @@ func (_c *SocialAccountCreate) createSpec() (*SocialAccount, *sqlgraph.CreateSpe
 		_node.DeletedAt = &value
 	}
 	if value, ok := _c.mutation.CreatedBy(); ok {
-		_spec.SetField(socialaccount.FieldCreatedBy, field.TypeUint64, value)
+		_spec.SetField(socialaccount.FieldCreatedBy, field.TypeInt64, value)
 		_node.CreatedBy = &value
 	}
 	if value, ok := _c.mutation.UpdatedBy(); ok {
-		_spec.SetField(socialaccount.FieldUpdatedBy, field.TypeUint64, value)
+		_spec.SetField(socialaccount.FieldUpdatedBy, field.TypeInt64, value)
 		_node.UpdatedBy = &value
 	}
 	if value, ok := _c.mutation.DeletedBy(); ok {
-		_spec.SetField(socialaccount.FieldDeletedBy, field.TypeUint64, value)
+		_spec.SetField(socialaccount.FieldDeletedBy, field.TypeInt64, value)
 		_node.DeletedBy = &value
 	}
 	if value, ok := _c.mutation.IsEnabled(); ok {
@@ -346,7 +346,7 @@ func (_c *SocialAccountCreate) createSpec() (*SocialAccount, *sqlgraph.CreateSpe
 		_node.IsEnabled = &value
 	}
 	if value, ok := _c.mutation.TenantID(); ok {
-		_spec.SetField(socialaccount.FieldTenantID, field.TypeUint64, value)
+		_spec.SetField(socialaccount.FieldTenantID, field.TypeInt64, value)
 		_node.TenantID = &value
 	}
 	if value, ok := _c.mutation.Platform(); ok {
@@ -462,7 +462,7 @@ func (u *SocialAccountUpsert) ClearDeletedAt() *SocialAccountUpsert {
 }
 
 // SetCreatedBy sets the "created_by" field.
-func (u *SocialAccountUpsert) SetCreatedBy(v uint64) *SocialAccountUpsert {
+func (u *SocialAccountUpsert) SetCreatedBy(v int64) *SocialAccountUpsert {
 	u.Set(socialaccount.FieldCreatedBy, v)
 	return u
 }
@@ -474,7 +474,7 @@ func (u *SocialAccountUpsert) UpdateCreatedBy() *SocialAccountUpsert {
 }
 
 // AddCreatedBy adds v to the "created_by" field.
-func (u *SocialAccountUpsert) AddCreatedBy(v uint64) *SocialAccountUpsert {
+func (u *SocialAccountUpsert) AddCreatedBy(v int64) *SocialAccountUpsert {
 	u.Add(socialaccount.FieldCreatedBy, v)
 	return u
 }
@@ -486,7 +486,7 @@ func (u *SocialAccountUpsert) ClearCreatedBy() *SocialAccountUpsert {
 }
 
 // SetUpdatedBy sets the "updated_by" field.
-func (u *SocialAccountUpsert) SetUpdatedBy(v uint64) *SocialAccountUpsert {
+func (u *SocialAccountUpsert) SetUpdatedBy(v int64) *SocialAccountUpsert {
 	u.Set(socialaccount.FieldUpdatedBy, v)
 	return u
 }
@@ -498,7 +498,7 @@ func (u *SocialAccountUpsert) UpdateUpdatedBy() *SocialAccountUpsert {
 }
 
 // AddUpdatedBy adds v to the "updated_by" field.
-func (u *SocialAccountUpsert) AddUpdatedBy(v uint64) *SocialAccountUpsert {
+func (u *SocialAccountUpsert) AddUpdatedBy(v int64) *SocialAccountUpsert {
 	u.Add(socialaccount.FieldUpdatedBy, v)
 	return u
 }
@@ -510,7 +510,7 @@ func (u *SocialAccountUpsert) ClearUpdatedBy() *SocialAccountUpsert {
 }
 
 // SetDeletedBy sets the "deleted_by" field.
-func (u *SocialAccountUpsert) SetDeletedBy(v uint64) *SocialAccountUpsert {
+func (u *SocialAccountUpsert) SetDeletedBy(v int64) *SocialAccountUpsert {
 	u.Set(socialaccount.FieldDeletedBy, v)
 	return u
 }
@@ -522,7 +522,7 @@ func (u *SocialAccountUpsert) UpdateDeletedBy() *SocialAccountUpsert {
 }
 
 // AddDeletedBy adds v to the "deleted_by" field.
-func (u *SocialAccountUpsert) AddDeletedBy(v uint64) *SocialAccountUpsert {
+func (u *SocialAccountUpsert) AddDeletedBy(v int64) *SocialAccountUpsert {
 	u.Add(socialaccount.FieldDeletedBy, v)
 	return u
 }
@@ -756,14 +756,14 @@ func (u *SocialAccountUpsertOne) ClearDeletedAt() *SocialAccountUpsertOne {
 }
 
 // SetCreatedBy sets the "created_by" field.
-func (u *SocialAccountUpsertOne) SetCreatedBy(v uint64) *SocialAccountUpsertOne {
+func (u *SocialAccountUpsertOne) SetCreatedBy(v int64) *SocialAccountUpsertOne {
 	return u.Update(func(s *SocialAccountUpsert) {
 		s.SetCreatedBy(v)
 	})
 }
 
 // AddCreatedBy adds v to the "created_by" field.
-func (u *SocialAccountUpsertOne) AddCreatedBy(v uint64) *SocialAccountUpsertOne {
+func (u *SocialAccountUpsertOne) AddCreatedBy(v int64) *SocialAccountUpsertOne {
 	return u.Update(func(s *SocialAccountUpsert) {
 		s.AddCreatedBy(v)
 	})
@@ -784,14 +784,14 @@ func (u *SocialAccountUpsertOne) ClearCreatedBy() *SocialAccountUpsertOne {
 }
 
 // SetUpdatedBy sets the "updated_by" field.
-func (u *SocialAccountUpsertOne) SetUpdatedBy(v uint64) *SocialAccountUpsertOne {
+func (u *SocialAccountUpsertOne) SetUpdatedBy(v int64) *SocialAccountUpsertOne {
 	return u.Update(func(s *SocialAccountUpsert) {
 		s.SetUpdatedBy(v)
 	})
 }
 
 // AddUpdatedBy adds v to the "updated_by" field.
-func (u *SocialAccountUpsertOne) AddUpdatedBy(v uint64) *SocialAccountUpsertOne {
+func (u *SocialAccountUpsertOne) AddUpdatedBy(v int64) *SocialAccountUpsertOne {
 	return u.Update(func(s *SocialAccountUpsert) {
 		s.AddUpdatedBy(v)
 	})
@@ -812,14 +812,14 @@ func (u *SocialAccountUpsertOne) ClearUpdatedBy() *SocialAccountUpsertOne {
 }
 
 // SetDeletedBy sets the "deleted_by" field.
-func (u *SocialAccountUpsertOne) SetDeletedBy(v uint64) *SocialAccountUpsertOne {
+func (u *SocialAccountUpsertOne) SetDeletedBy(v int64) *SocialAccountUpsertOne {
 	return u.Update(func(s *SocialAccountUpsert) {
 		s.SetDeletedBy(v)
 	})
 }
 
 // AddDeletedBy adds v to the "deleted_by" field.
-func (u *SocialAccountUpsertOne) AddDeletedBy(v uint64) *SocialAccountUpsertOne {
+func (u *SocialAccountUpsertOne) AddDeletedBy(v int64) *SocialAccountUpsertOne {
 	return u.Update(func(s *SocialAccountUpsert) {
 		s.AddDeletedBy(v)
 	})
@@ -1002,7 +1002,7 @@ func (u *SocialAccountUpsertOne) ExecX(ctx context.Context) {
 }
 
 // Exec executes the UPSERT query and returns the inserted/updated ID.
-func (u *SocialAccountUpsertOne) ID(ctx context.Context) (id uint64, err error) {
+func (u *SocialAccountUpsertOne) ID(ctx context.Context) (id int64, err error) {
 	node, err := u.create.Save(ctx)
 	if err != nil {
 		return id, err
@@ -1011,7 +1011,7 @@ func (u *SocialAccountUpsertOne) ID(ctx context.Context) (id uint64, err error) 
 }
 
 // IDX is like ID, but panics if an error occurs.
-func (u *SocialAccountUpsertOne) IDX(ctx context.Context) uint64 {
+func (u *SocialAccountUpsertOne) IDX(ctx context.Context) int64 {
 	id, err := u.ID(ctx)
 	if err != nil {
 		panic(err)
@@ -1068,7 +1068,7 @@ func (_c *SocialAccountCreateBulk) Save(ctx context.Context) ([]*SocialAccount, 
 				mutation.id = &nodes[i].ID
 				if specs[i].ID.Value != nil && nodes[i].ID == 0 {
 					id := specs[i].ID.Value.(int64)
-					nodes[i].ID = uint64(id)
+					nodes[i].ID = int64(id)
 				}
 				mutation.done = true
 				return nodes[i], nil
@@ -1249,14 +1249,14 @@ func (u *SocialAccountUpsertBulk) ClearDeletedAt() *SocialAccountUpsertBulk {
 }
 
 // SetCreatedBy sets the "created_by" field.
-func (u *SocialAccountUpsertBulk) SetCreatedBy(v uint64) *SocialAccountUpsertBulk {
+func (u *SocialAccountUpsertBulk) SetCreatedBy(v int64) *SocialAccountUpsertBulk {
 	return u.Update(func(s *SocialAccountUpsert) {
 		s.SetCreatedBy(v)
 	})
 }
 
 // AddCreatedBy adds v to the "created_by" field.
-func (u *SocialAccountUpsertBulk) AddCreatedBy(v uint64) *SocialAccountUpsertBulk {
+func (u *SocialAccountUpsertBulk) AddCreatedBy(v int64) *SocialAccountUpsertBulk {
 	return u.Update(func(s *SocialAccountUpsert) {
 		s.AddCreatedBy(v)
 	})
@@ -1277,14 +1277,14 @@ func (u *SocialAccountUpsertBulk) ClearCreatedBy() *SocialAccountUpsertBulk {
 }
 
 // SetUpdatedBy sets the "updated_by" field.
-func (u *SocialAccountUpsertBulk) SetUpdatedBy(v uint64) *SocialAccountUpsertBulk {
+func (u *SocialAccountUpsertBulk) SetUpdatedBy(v int64) *SocialAccountUpsertBulk {
 	return u.Update(func(s *SocialAccountUpsert) {
 		s.SetUpdatedBy(v)
 	})
 }
 
 // AddUpdatedBy adds v to the "updated_by" field.
-func (u *SocialAccountUpsertBulk) AddUpdatedBy(v uint64) *SocialAccountUpsertBulk {
+func (u *SocialAccountUpsertBulk) AddUpdatedBy(v int64) *SocialAccountUpsertBulk {
 	return u.Update(func(s *SocialAccountUpsert) {
 		s.AddUpdatedBy(v)
 	})
@@ -1305,14 +1305,14 @@ func (u *SocialAccountUpsertBulk) ClearUpdatedBy() *SocialAccountUpsertBulk {
 }
 
 // SetDeletedBy sets the "deleted_by" field.
-func (u *SocialAccountUpsertBulk) SetDeletedBy(v uint64) *SocialAccountUpsertBulk {
+func (u *SocialAccountUpsertBulk) SetDeletedBy(v int64) *SocialAccountUpsertBulk {
 	return u.Update(func(s *SocialAccountUpsert) {
 		s.SetDeletedBy(v)
 	})
 }
 
 // AddDeletedBy adds v to the "deleted_by" field.
-func (u *SocialAccountUpsertBulk) AddDeletedBy(v uint64) *SocialAccountUpsertBulk {
+func (u *SocialAccountUpsertBulk) AddDeletedBy(v int64) *SocialAccountUpsertBulk {
 	return u.Update(func(s *SocialAccountUpsert) {
 		s.AddDeletedBy(v)
 	})

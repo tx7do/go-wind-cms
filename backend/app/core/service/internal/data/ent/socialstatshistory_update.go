@@ -70,14 +70,14 @@ func (_u *SocialStatsHistoryUpdate) ClearDeletedAt() *SocialStatsHistoryUpdate {
 }
 
 // SetDistributionID sets the "distribution_id" field.
-func (_u *SocialStatsHistoryUpdate) SetDistributionID(v uint64) *SocialStatsHistoryUpdate {
+func (_u *SocialStatsHistoryUpdate) SetDistributionID(v int64) *SocialStatsHistoryUpdate {
 	_u.mutation.ResetDistributionID()
 	_u.mutation.SetDistributionID(v)
 	return _u
 }
 
 // SetNillableDistributionID sets the "distribution_id" field if the given value is not nil.
-func (_u *SocialStatsHistoryUpdate) SetNillableDistributionID(v *uint64) *SocialStatsHistoryUpdate {
+func (_u *SocialStatsHistoryUpdate) SetNillableDistributionID(v *int64) *SocialStatsHistoryUpdate {
 	if v != nil {
 		_u.SetDistributionID(*v)
 	}
@@ -216,7 +216,7 @@ func (_u *SocialStatsHistoryUpdate) Modify(modifiers ...func(u *sql.UpdateBuilde
 }
 
 func (_u *SocialStatsHistoryUpdate) sqlSave(ctx context.Context) (_node int, err error) {
-	_spec := sqlgraph.NewUpdateSpec(socialstatshistory.Table, socialstatshistory.Columns, sqlgraph.NewFieldSpec(socialstatshistory.FieldID, field.TypeUint64))
+	_spec := sqlgraph.NewUpdateSpec(socialstatshistory.Table, socialstatshistory.Columns, sqlgraph.NewFieldSpec(socialstatshistory.FieldID, field.TypeInt64))
 	if ps := _u.mutation.predicates; len(ps) > 0 {
 		_spec.Predicate = func(selector *sql.Selector) {
 			for i := range ps {
@@ -240,13 +240,13 @@ func (_u *SocialStatsHistoryUpdate) sqlSave(ctx context.Context) (_node int, err
 		_spec.ClearField(socialstatshistory.FieldDeletedAt, field.TypeTime)
 	}
 	if value, ok := _u.mutation.DistributionID(); ok {
-		_spec.SetField(socialstatshistory.FieldDistributionID, field.TypeUint64, value)
+		_spec.SetField(socialstatshistory.FieldDistributionID, field.TypeInt64, value)
 	}
 	if value, ok := _u.mutation.AddedDistributionID(); ok {
-		_spec.AddField(socialstatshistory.FieldDistributionID, field.TypeUint64, value)
+		_spec.AddField(socialstatshistory.FieldDistributionID, field.TypeInt64, value)
 	}
 	if _u.mutation.DistributionIDCleared() {
-		_spec.ClearField(socialstatshistory.FieldDistributionID, field.TypeUint64)
+		_spec.ClearField(socialstatshistory.FieldDistributionID, field.TypeInt64)
 	}
 	if value, ok := _u.mutation.Likes(); ok {
 		_spec.SetField(socialstatshistory.FieldLikes, field.TypeUint32, value)
@@ -338,14 +338,14 @@ func (_u *SocialStatsHistoryUpdateOne) ClearDeletedAt() *SocialStatsHistoryUpdat
 }
 
 // SetDistributionID sets the "distribution_id" field.
-func (_u *SocialStatsHistoryUpdateOne) SetDistributionID(v uint64) *SocialStatsHistoryUpdateOne {
+func (_u *SocialStatsHistoryUpdateOne) SetDistributionID(v int64) *SocialStatsHistoryUpdateOne {
 	_u.mutation.ResetDistributionID()
 	_u.mutation.SetDistributionID(v)
 	return _u
 }
 
 // SetNillableDistributionID sets the "distribution_id" field if the given value is not nil.
-func (_u *SocialStatsHistoryUpdateOne) SetNillableDistributionID(v *uint64) *SocialStatsHistoryUpdateOne {
+func (_u *SocialStatsHistoryUpdateOne) SetNillableDistributionID(v *int64) *SocialStatsHistoryUpdateOne {
 	if v != nil {
 		_u.SetDistributionID(*v)
 	}
@@ -497,7 +497,7 @@ func (_u *SocialStatsHistoryUpdateOne) Modify(modifiers ...func(u *sql.UpdateBui
 }
 
 func (_u *SocialStatsHistoryUpdateOne) sqlSave(ctx context.Context) (_node *SocialStatsHistory, err error) {
-	_spec := sqlgraph.NewUpdateSpec(socialstatshistory.Table, socialstatshistory.Columns, sqlgraph.NewFieldSpec(socialstatshistory.FieldID, field.TypeUint64))
+	_spec := sqlgraph.NewUpdateSpec(socialstatshistory.Table, socialstatshistory.Columns, sqlgraph.NewFieldSpec(socialstatshistory.FieldID, field.TypeInt64))
 	id, ok := _u.mutation.ID()
 	if !ok {
 		return nil, &ValidationError{Name: "id", err: errors.New(`ent: missing "SocialStatsHistory.id" for update`)}
@@ -538,13 +538,13 @@ func (_u *SocialStatsHistoryUpdateOne) sqlSave(ctx context.Context) (_node *Soci
 		_spec.ClearField(socialstatshistory.FieldDeletedAt, field.TypeTime)
 	}
 	if value, ok := _u.mutation.DistributionID(); ok {
-		_spec.SetField(socialstatshistory.FieldDistributionID, field.TypeUint64, value)
+		_spec.SetField(socialstatshistory.FieldDistributionID, field.TypeInt64, value)
 	}
 	if value, ok := _u.mutation.AddedDistributionID(); ok {
-		_spec.AddField(socialstatshistory.FieldDistributionID, field.TypeUint64, value)
+		_spec.AddField(socialstatshistory.FieldDistributionID, field.TypeInt64, value)
 	}
 	if _u.mutation.DistributionIDCleared() {
-		_spec.ClearField(socialstatshistory.FieldDistributionID, field.TypeUint64)
+		_spec.ClearField(socialstatshistory.FieldDistributionID, field.TypeInt64)
 	}
 	if value, ok := _u.mutation.Likes(); ok {
 		_spec.SetField(socialstatshistory.FieldLikes, field.TypeUint32, value)

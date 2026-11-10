@@ -40,7 +40,7 @@ func (_d *WebhookDeliveryDelete) ExecX(ctx context.Context) int {
 }
 
 func (_d *WebhookDeliveryDelete) sqlExec(ctx context.Context) (int, error) {
-	_spec := sqlgraph.NewDeleteSpec(webhookdelivery.Table, sqlgraph.NewFieldSpec(webhookdelivery.FieldID, field.TypeUint64))
+	_spec := sqlgraph.NewDeleteSpec(webhookdelivery.Table, sqlgraph.NewFieldSpec(webhookdelivery.FieldID, field.TypeInt64))
 	if ps := _d.mutation.predicates; len(ps) > 0 {
 		_spec.Predicate = func(selector *sql.Selector) {
 			for i := range ps {

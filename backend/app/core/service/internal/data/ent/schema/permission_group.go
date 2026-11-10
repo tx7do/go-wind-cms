@@ -50,7 +50,7 @@ func (PermissionGroup) Mixin() []ent.Mixin {
 		mixin.SortOrder{},
 		mixin.Tree64[PermissionGroup]{},
 		mixin.TreePath{},
-		mixin.TenantID[uint64]{},
+		mixin.TenantID[int64]{},
 	}
 }
 

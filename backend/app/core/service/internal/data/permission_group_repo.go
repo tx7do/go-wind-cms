@@ -90,7 +90,7 @@ func (r *PermissionGroupRepo) Count(ctx context.Context, whereCond []func(s *sql
 	return count, nil
 }
 
-func (r *PermissionGroupRepo) buildPermissionGroupTree(items []*permissionV1.PermissionGroup, parentId uint64) []*permissionV1.PermissionGroup {
+func (r *PermissionGroupRepo) buildPermissionGroupTree(items []*permissionV1.PermissionGroup, parentId int64) []*permissionV1.PermissionGroup {
 	var tree []*permissionV1.PermissionGroup
 	for _, item := range items {
 		if item.GetParentId() == parentId {
@@ -133,8 +133,8 @@ func (r *PermissionGroupRepo) List(ctx context.Context, req *paginationV1.Paging
 	if treeTravel {
 		dtos = pagination.BuildTree(
 			dtos,
-			func(node *permissionV1.PermissionGroup) *uint64 { return node.Id },
-			func(node *permissionV1.PermissionGroup) *uint64 { return node.ParentId },
+			func(node *permissionV1.PermissionGroup) *int64 { return node.Id },
+			func(node *permissionV1.PermissionGroup) *int64 { return node.ParentId },
 			func(node *permissionV1.PermissionGroup) *[]*permissionV1.PermissionGroup { return &node.Children },
 		)
 	}
@@ -145,12 +145,12 @@ func (r *PermissionGroupRepo) List(ctx context.Context, req *paginationV1.Paging
 	}
 
 	return &permissionV1.ListPermissionGroupResponse{
-		Total: uint64(count),
+		Total: int64(count),
 		Items: dtos,
 	}, nil
 }
 
-func (r *PermissionGroupRepo) IsExist(ctx context.Context, id uint64) (bool, error) {
+func (r *PermissionGroupRepo) IsExist(ctx context.Context, id int64) (bool, error) {
 	exist, err := r.entClient.Client().PermissionGroup.Query().
 		Where(permissiongroup.IDEQ(id)).
 		Exist(ctx)
@@ -332,7 +332,7 @@ func (r *PermissionGroupRepo) Update(ctx context.Context, req *permissionV1.Upda
 }
 
 // UpdateParentIDs 更新 Permission ParentID
-func (r *PermissionGroupRepo) UpdateParentIDs(ctx context.Context, parentIDs map[uint64]uint64) (err error) {
+func (r *PermissionGroupRepo) UpdateParentIDs(ctx context.Context, parentIDs map[int64]int64) (err error) {
 	if len(parentIDs) == 0 {
 		return nil
 	}
@@ -422,7 +422,7 @@ func (r *PermissionGroupRepo) TruncateBizGroup(ctx context.Context) error {
 	return nil
 }
 
-func (r *PermissionGroupRepo) ListByIDs(ctx context.Context, ids []uint64) ([]*permissionV1.PermissionGroup, error) {
+func (r *PermissionGroupRepo) ListByIDs(ctx context.Context, ids []int64) ([]*permissionV1.PermissionGroup, error) {
 	if len(ids) == 0 {
 		return []*permissionV1.PermissionGroup{}, nil
 	}

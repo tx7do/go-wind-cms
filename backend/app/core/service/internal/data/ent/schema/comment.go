@@ -39,7 +39,7 @@ func (Comment) Fields() []ent.Field {
 			Optional().
 			Nillable(),
 
-		field.Uint64("object_id").
+		field.Int64("object_id").
 			Comment("对象ID").
 			Optional().
 			Nillable(),
@@ -49,7 +49,7 @@ func (Comment) Fields() []ent.Field {
 			Optional().
 			Nillable(),
 
-		field.Uint64("author_id").
+		field.Int64("author_id").
 			Comment("评论作者ID，0表示游客").
 			Default(0).
 			Optional().
@@ -124,7 +124,7 @@ func (Comment) Fields() []ent.Field {
 			Optional().
 			Nillable(),
 
-		field.Uint64("reply_to_id").
+		field.Int64("reply_to_id").
 			Comment("回复的评论ID").
 			Optional().
 			Nillable(),
@@ -138,7 +138,7 @@ func (Comment) Mixin() []ent.Mixin {
 		mixin.TimeAt{},
 		mixin.OperatorID64{},
 		mixin.Tree64[Comment]{},
-		mixin.TenantID[uint64]{},
+		mixin.TenantID[int64]{},
 	}
 }
 
