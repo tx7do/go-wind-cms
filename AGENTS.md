@@ -71,7 +71,7 @@ gow 未覆盖的任务才退回 Makefile（`backend/` 根目录执行）：`make
 - **端口**：admin REST `:6600`（SSE `:6601`，协同 ws `:6602`）、C 端 app REST `:6700`（SSE `:6701`，GraphQL `:6702`，`GRAPHQL_ADDR=off` 停用）；前端 dev 见布局表。admin 后端的 CORS 默认只放行 `localhost:15999`（`app/admin/service/configs/server.yaml`），换端口联调要同步改。
 - **登录账号**：全新环境由服务启动时自动播种——管理员 `admin / admin`、普通用户默认口令 `12345678`（`pkg/constants/default_data.go`），**不要**找 SQL 种子脚本，`backend/sql/` 下只有演示数据。登录带图形验证码（Redis 存储）。
 - **refresh-token 勿手动调**：刷新接口会轮换令牌对，手动调用会使内存中的旧 access token 立即失效，表现为"假 401"，别误判成鉴权 bug。
-- **admin 前端坑**：go-crud List 的 `total` 是字符串（uint64 JSON），展示/比较前须 `Number()`；antd Tabs 走 `items` prop 之外的旧写法会静默渲染空壳。
+- **admin 前端坑**：go-crud List 的 `total` 是字符串（int64 JSON），展示/比较前须 `Number()`；antd Tabs 走 `items` prop 之外的旧写法会静默渲染空壳。
 - **ListTable 必传 `request`**：不传时内部 wrappedRequest 拿到 undefined 结果即判定失败态，页面恒定渲染「加载失败/重试」且无任何日志。新列表页一律用 redirects 页模式（`loadItems` + `request` prop + 受控 dataSource，增删改后 `actionRef.reload()` 重跑）。
 - **列表页高度不要再手接**：ListTable 已内置高度自动撑满——页面不传 `scroll.y` 即自动接管（外层用 `ContentContainer`，非 flex 列父级自动退回自然高度），分页器钉底；页面传了 `scroll.y` 则完全尊重。新列表页一律 `<ContentContainer><ListTable/></ContentContainer>` 两层完事，手写 `useProTableScrollY` 样板会被 eslint 警告（存量未迁移页 warn 过渡中）。
 - **新 List 接口禁传空 `sorting=[]`**：生成客户端会序列化成空 `sorting=` 参数，kratos 解析 `pagination.Sorting` 报 400（CODEC）。排序走 `orderBy`（JSON 字符串参数）。
