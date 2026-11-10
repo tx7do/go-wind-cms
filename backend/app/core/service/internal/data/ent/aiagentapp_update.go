@@ -70,14 +70,14 @@ func (_u *AiAgentAppUpdate) ClearDeletedAt() *AiAgentAppUpdate {
 }
 
 // SetCreatedBy sets the "created_by" field.
-func (_u *AiAgentAppUpdate) SetCreatedBy(v uint32) *AiAgentAppUpdate {
+func (_u *AiAgentAppUpdate) SetCreatedBy(v uint64) *AiAgentAppUpdate {
 	_u.mutation.ResetCreatedBy()
 	_u.mutation.SetCreatedBy(v)
 	return _u
 }
 
 // SetNillableCreatedBy sets the "created_by" field if the given value is not nil.
-func (_u *AiAgentAppUpdate) SetNillableCreatedBy(v *uint32) *AiAgentAppUpdate {
+func (_u *AiAgentAppUpdate) SetNillableCreatedBy(v *uint64) *AiAgentAppUpdate {
 	if v != nil {
 		_u.SetCreatedBy(*v)
 	}
@@ -85,7 +85,7 @@ func (_u *AiAgentAppUpdate) SetNillableCreatedBy(v *uint32) *AiAgentAppUpdate {
 }
 
 // AddCreatedBy adds value to the "created_by" field.
-func (_u *AiAgentAppUpdate) AddCreatedBy(v int32) *AiAgentAppUpdate {
+func (_u *AiAgentAppUpdate) AddCreatedBy(v int64) *AiAgentAppUpdate {
 	_u.mutation.AddCreatedBy(v)
 	return _u
 }
@@ -97,14 +97,14 @@ func (_u *AiAgentAppUpdate) ClearCreatedBy() *AiAgentAppUpdate {
 }
 
 // SetUpdatedBy sets the "updated_by" field.
-func (_u *AiAgentAppUpdate) SetUpdatedBy(v uint32) *AiAgentAppUpdate {
+func (_u *AiAgentAppUpdate) SetUpdatedBy(v uint64) *AiAgentAppUpdate {
 	_u.mutation.ResetUpdatedBy()
 	_u.mutation.SetUpdatedBy(v)
 	return _u
 }
 
 // SetNillableUpdatedBy sets the "updated_by" field if the given value is not nil.
-func (_u *AiAgentAppUpdate) SetNillableUpdatedBy(v *uint32) *AiAgentAppUpdate {
+func (_u *AiAgentAppUpdate) SetNillableUpdatedBy(v *uint64) *AiAgentAppUpdate {
 	if v != nil {
 		_u.SetUpdatedBy(*v)
 	}
@@ -112,7 +112,7 @@ func (_u *AiAgentAppUpdate) SetNillableUpdatedBy(v *uint32) *AiAgentAppUpdate {
 }
 
 // AddUpdatedBy adds value to the "updated_by" field.
-func (_u *AiAgentAppUpdate) AddUpdatedBy(v int32) *AiAgentAppUpdate {
+func (_u *AiAgentAppUpdate) AddUpdatedBy(v int64) *AiAgentAppUpdate {
 	_u.mutation.AddUpdatedBy(v)
 	return _u
 }
@@ -124,14 +124,14 @@ func (_u *AiAgentAppUpdate) ClearUpdatedBy() *AiAgentAppUpdate {
 }
 
 // SetDeletedBy sets the "deleted_by" field.
-func (_u *AiAgentAppUpdate) SetDeletedBy(v uint32) *AiAgentAppUpdate {
+func (_u *AiAgentAppUpdate) SetDeletedBy(v uint64) *AiAgentAppUpdate {
 	_u.mutation.ResetDeletedBy()
 	_u.mutation.SetDeletedBy(v)
 	return _u
 }
 
 // SetNillableDeletedBy sets the "deleted_by" field if the given value is not nil.
-func (_u *AiAgentAppUpdate) SetNillableDeletedBy(v *uint32) *AiAgentAppUpdate {
+func (_u *AiAgentAppUpdate) SetNillableDeletedBy(v *uint64) *AiAgentAppUpdate {
 	if v != nil {
 		_u.SetDeletedBy(*v)
 	}
@@ -139,7 +139,7 @@ func (_u *AiAgentAppUpdate) SetNillableDeletedBy(v *uint32) *AiAgentAppUpdate {
 }
 
 // AddDeletedBy adds value to the "deleted_by" field.
-func (_u *AiAgentAppUpdate) AddDeletedBy(v int32) *AiAgentAppUpdate {
+func (_u *AiAgentAppUpdate) AddDeletedBy(v int64) *AiAgentAppUpdate {
 	_u.mutation.AddDeletedBy(v)
 	return _u
 }
@@ -270,7 +270,7 @@ func (_u *AiAgentAppUpdate) sqlSave(ctx context.Context) (_node int, err error) 
 	if err := _u.check(); err != nil {
 		return _node, err
 	}
-	_spec := sqlgraph.NewUpdateSpec(aiagentapp.Table, aiagentapp.Columns, sqlgraph.NewFieldSpec(aiagentapp.FieldID, field.TypeUint32))
+	_spec := sqlgraph.NewUpdateSpec(aiagentapp.Table, aiagentapp.Columns, sqlgraph.NewFieldSpec(aiagentapp.FieldID, field.TypeUint64))
 	if ps := _u.mutation.predicates; len(ps) > 0 {
 		_spec.Predicate = func(selector *sql.Selector) {
 			for i := range ps {
@@ -294,34 +294,34 @@ func (_u *AiAgentAppUpdate) sqlSave(ctx context.Context) (_node int, err error) 
 		_spec.ClearField(aiagentapp.FieldDeletedAt, field.TypeTime)
 	}
 	if value, ok := _u.mutation.CreatedBy(); ok {
-		_spec.SetField(aiagentapp.FieldCreatedBy, field.TypeUint32, value)
+		_spec.SetField(aiagentapp.FieldCreatedBy, field.TypeUint64, value)
 	}
 	if value, ok := _u.mutation.AddedCreatedBy(); ok {
-		_spec.AddField(aiagentapp.FieldCreatedBy, field.TypeUint32, value)
+		_spec.AddField(aiagentapp.FieldCreatedBy, field.TypeUint64, value)
 	}
 	if _u.mutation.CreatedByCleared() {
-		_spec.ClearField(aiagentapp.FieldCreatedBy, field.TypeUint32)
+		_spec.ClearField(aiagentapp.FieldCreatedBy, field.TypeUint64)
 	}
 	if value, ok := _u.mutation.UpdatedBy(); ok {
-		_spec.SetField(aiagentapp.FieldUpdatedBy, field.TypeUint32, value)
+		_spec.SetField(aiagentapp.FieldUpdatedBy, field.TypeUint64, value)
 	}
 	if value, ok := _u.mutation.AddedUpdatedBy(); ok {
-		_spec.AddField(aiagentapp.FieldUpdatedBy, field.TypeUint32, value)
+		_spec.AddField(aiagentapp.FieldUpdatedBy, field.TypeUint64, value)
 	}
 	if _u.mutation.UpdatedByCleared() {
-		_spec.ClearField(aiagentapp.FieldUpdatedBy, field.TypeUint32)
+		_spec.ClearField(aiagentapp.FieldUpdatedBy, field.TypeUint64)
 	}
 	if value, ok := _u.mutation.DeletedBy(); ok {
-		_spec.SetField(aiagentapp.FieldDeletedBy, field.TypeUint32, value)
+		_spec.SetField(aiagentapp.FieldDeletedBy, field.TypeUint64, value)
 	}
 	if value, ok := _u.mutation.AddedDeletedBy(); ok {
-		_spec.AddField(aiagentapp.FieldDeletedBy, field.TypeUint32, value)
+		_spec.AddField(aiagentapp.FieldDeletedBy, field.TypeUint64, value)
 	}
 	if _u.mutation.DeletedByCleared() {
-		_spec.ClearField(aiagentapp.FieldDeletedBy, field.TypeUint32)
+		_spec.ClearField(aiagentapp.FieldDeletedBy, field.TypeUint64)
 	}
 	if _u.mutation.TenantIDCleared() {
-		_spec.ClearField(aiagentapp.FieldTenantID, field.TypeUint32)
+		_spec.ClearField(aiagentapp.FieldTenantID, field.TypeUint64)
 	}
 	if value, ok := _u.mutation.Name(); ok {
 		_spec.SetField(aiagentapp.FieldName, field.TypeString, value)
@@ -404,14 +404,14 @@ func (_u *AiAgentAppUpdateOne) ClearDeletedAt() *AiAgentAppUpdateOne {
 }
 
 // SetCreatedBy sets the "created_by" field.
-func (_u *AiAgentAppUpdateOne) SetCreatedBy(v uint32) *AiAgentAppUpdateOne {
+func (_u *AiAgentAppUpdateOne) SetCreatedBy(v uint64) *AiAgentAppUpdateOne {
 	_u.mutation.ResetCreatedBy()
 	_u.mutation.SetCreatedBy(v)
 	return _u
 }
 
 // SetNillableCreatedBy sets the "created_by" field if the given value is not nil.
-func (_u *AiAgentAppUpdateOne) SetNillableCreatedBy(v *uint32) *AiAgentAppUpdateOne {
+func (_u *AiAgentAppUpdateOne) SetNillableCreatedBy(v *uint64) *AiAgentAppUpdateOne {
 	if v != nil {
 		_u.SetCreatedBy(*v)
 	}
@@ -419,7 +419,7 @@ func (_u *AiAgentAppUpdateOne) SetNillableCreatedBy(v *uint32) *AiAgentAppUpdate
 }
 
 // AddCreatedBy adds value to the "created_by" field.
-func (_u *AiAgentAppUpdateOne) AddCreatedBy(v int32) *AiAgentAppUpdateOne {
+func (_u *AiAgentAppUpdateOne) AddCreatedBy(v int64) *AiAgentAppUpdateOne {
 	_u.mutation.AddCreatedBy(v)
 	return _u
 }
@@ -431,14 +431,14 @@ func (_u *AiAgentAppUpdateOne) ClearCreatedBy() *AiAgentAppUpdateOne {
 }
 
 // SetUpdatedBy sets the "updated_by" field.
-func (_u *AiAgentAppUpdateOne) SetUpdatedBy(v uint32) *AiAgentAppUpdateOne {
+func (_u *AiAgentAppUpdateOne) SetUpdatedBy(v uint64) *AiAgentAppUpdateOne {
 	_u.mutation.ResetUpdatedBy()
 	_u.mutation.SetUpdatedBy(v)
 	return _u
 }
 
 // SetNillableUpdatedBy sets the "updated_by" field if the given value is not nil.
-func (_u *AiAgentAppUpdateOne) SetNillableUpdatedBy(v *uint32) *AiAgentAppUpdateOne {
+func (_u *AiAgentAppUpdateOne) SetNillableUpdatedBy(v *uint64) *AiAgentAppUpdateOne {
 	if v != nil {
 		_u.SetUpdatedBy(*v)
 	}
@@ -446,7 +446,7 @@ func (_u *AiAgentAppUpdateOne) SetNillableUpdatedBy(v *uint32) *AiAgentAppUpdate
 }
 
 // AddUpdatedBy adds value to the "updated_by" field.
-func (_u *AiAgentAppUpdateOne) AddUpdatedBy(v int32) *AiAgentAppUpdateOne {
+func (_u *AiAgentAppUpdateOne) AddUpdatedBy(v int64) *AiAgentAppUpdateOne {
 	_u.mutation.AddUpdatedBy(v)
 	return _u
 }
@@ -458,14 +458,14 @@ func (_u *AiAgentAppUpdateOne) ClearUpdatedBy() *AiAgentAppUpdateOne {
 }
 
 // SetDeletedBy sets the "deleted_by" field.
-func (_u *AiAgentAppUpdateOne) SetDeletedBy(v uint32) *AiAgentAppUpdateOne {
+func (_u *AiAgentAppUpdateOne) SetDeletedBy(v uint64) *AiAgentAppUpdateOne {
 	_u.mutation.ResetDeletedBy()
 	_u.mutation.SetDeletedBy(v)
 	return _u
 }
 
 // SetNillableDeletedBy sets the "deleted_by" field if the given value is not nil.
-func (_u *AiAgentAppUpdateOne) SetNillableDeletedBy(v *uint32) *AiAgentAppUpdateOne {
+func (_u *AiAgentAppUpdateOne) SetNillableDeletedBy(v *uint64) *AiAgentAppUpdateOne {
 	if v != nil {
 		_u.SetDeletedBy(*v)
 	}
@@ -473,7 +473,7 @@ func (_u *AiAgentAppUpdateOne) SetNillableDeletedBy(v *uint32) *AiAgentAppUpdate
 }
 
 // AddDeletedBy adds value to the "deleted_by" field.
-func (_u *AiAgentAppUpdateOne) AddDeletedBy(v int32) *AiAgentAppUpdateOne {
+func (_u *AiAgentAppUpdateOne) AddDeletedBy(v int64) *AiAgentAppUpdateOne {
 	_u.mutation.AddDeletedBy(v)
 	return _u
 }
@@ -617,7 +617,7 @@ func (_u *AiAgentAppUpdateOne) sqlSave(ctx context.Context) (_node *AiAgentApp, 
 	if err := _u.check(); err != nil {
 		return _node, err
 	}
-	_spec := sqlgraph.NewUpdateSpec(aiagentapp.Table, aiagentapp.Columns, sqlgraph.NewFieldSpec(aiagentapp.FieldID, field.TypeUint32))
+	_spec := sqlgraph.NewUpdateSpec(aiagentapp.Table, aiagentapp.Columns, sqlgraph.NewFieldSpec(aiagentapp.FieldID, field.TypeUint64))
 	id, ok := _u.mutation.ID()
 	if !ok {
 		return nil, &ValidationError{Name: "id", err: errors.New(`ent: missing "AiAgentApp.id" for update`)}
@@ -658,34 +658,34 @@ func (_u *AiAgentAppUpdateOne) sqlSave(ctx context.Context) (_node *AiAgentApp, 
 		_spec.ClearField(aiagentapp.FieldDeletedAt, field.TypeTime)
 	}
 	if value, ok := _u.mutation.CreatedBy(); ok {
-		_spec.SetField(aiagentapp.FieldCreatedBy, field.TypeUint32, value)
+		_spec.SetField(aiagentapp.FieldCreatedBy, field.TypeUint64, value)
 	}
 	if value, ok := _u.mutation.AddedCreatedBy(); ok {
-		_spec.AddField(aiagentapp.FieldCreatedBy, field.TypeUint32, value)
+		_spec.AddField(aiagentapp.FieldCreatedBy, field.TypeUint64, value)
 	}
 	if _u.mutation.CreatedByCleared() {
-		_spec.ClearField(aiagentapp.FieldCreatedBy, field.TypeUint32)
+		_spec.ClearField(aiagentapp.FieldCreatedBy, field.TypeUint64)
 	}
 	if value, ok := _u.mutation.UpdatedBy(); ok {
-		_spec.SetField(aiagentapp.FieldUpdatedBy, field.TypeUint32, value)
+		_spec.SetField(aiagentapp.FieldUpdatedBy, field.TypeUint64, value)
 	}
 	if value, ok := _u.mutation.AddedUpdatedBy(); ok {
-		_spec.AddField(aiagentapp.FieldUpdatedBy, field.TypeUint32, value)
+		_spec.AddField(aiagentapp.FieldUpdatedBy, field.TypeUint64, value)
 	}
 	if _u.mutation.UpdatedByCleared() {
-		_spec.ClearField(aiagentapp.FieldUpdatedBy, field.TypeUint32)
+		_spec.ClearField(aiagentapp.FieldUpdatedBy, field.TypeUint64)
 	}
 	if value, ok := _u.mutation.DeletedBy(); ok {
-		_spec.SetField(aiagentapp.FieldDeletedBy, field.TypeUint32, value)
+		_spec.SetField(aiagentapp.FieldDeletedBy, field.TypeUint64, value)
 	}
 	if value, ok := _u.mutation.AddedDeletedBy(); ok {
-		_spec.AddField(aiagentapp.FieldDeletedBy, field.TypeUint32, value)
+		_spec.AddField(aiagentapp.FieldDeletedBy, field.TypeUint64, value)
 	}
 	if _u.mutation.DeletedByCleared() {
-		_spec.ClearField(aiagentapp.FieldDeletedBy, field.TypeUint32)
+		_spec.ClearField(aiagentapp.FieldDeletedBy, field.TypeUint64)
 	}
 	if _u.mutation.TenantIDCleared() {
-		_spec.ClearField(aiagentapp.FieldTenantID, field.TypeUint32)
+		_spec.ClearField(aiagentapp.FieldTenantID, field.TypeUint64)
 	}
 	if value, ok := _u.mutation.Name(); ok {
 		_spec.SetField(aiagentapp.FieldName, field.TypeString, value)

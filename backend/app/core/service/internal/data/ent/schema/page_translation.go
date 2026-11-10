@@ -32,7 +32,7 @@ func (PageTranslation) Annotations() []schema.Annotation {
 // Fields of the PageTranslation.
 func (PageTranslation) Fields() []ent.Field {
 	return []ent.Field{
-		field.Uint32("page_id").
+		field.Uint64("page_id").
 			Comment("关联的页面ID").
 			Optional().
 			Nillable(),
@@ -67,11 +67,11 @@ func (PageTranslation) Fields() []ent.Field {
 // Mixin of the PageTranslation.
 func (PageTranslation) Mixin() []ent.Mixin {
 	return []ent.Mixin{
-		mixin.AutoIncrementId{},
+		mixin.AutoIncrementId64{},
 		mixin.TimeAt{},
-		mixin.OperatorID{},
+		mixin.OperatorID64{},
 		appMixin.Seo{},
-		mixin.TenantID[uint32]{},
+		mixin.TenantID[uint64]{},
 	}
 }
 

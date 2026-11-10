@@ -32,7 +32,7 @@ func (r *PostCategoryRepo) init() {
 }
 
 // Create 创建帖子分类关联关系，通常在创建帖子时调用
-func (r *PostCategoryRepo) Create(ctx context.Context, postID, categoryID uint32) error {
+func (r *PostCategoryRepo) Create(ctx context.Context, postID, categoryID uint64) error {
 	if postID == 0 || categoryID == 0 {
 		return nil
 	}
@@ -50,7 +50,7 @@ func (r *PostCategoryRepo) Create(ctx context.Context, postID, categoryID uint32
 }
 
 // BatchCreate 批量创建帖子分类关联关系，通常在创建或更新帖子时调用
-func (r *PostCategoryRepo) BatchCreate(ctx context.Context, tx *ent.Tx, postID uint32, categoryIDs []uint32) error {
+func (r *PostCategoryRepo) BatchCreate(ctx context.Context, tx *ent.Tx, postID uint64, categoryIDs []uint64) error {
 	if postID == 0 || len(categoryIDs) == 0 {
 		return nil
 	}
@@ -73,7 +73,7 @@ func (r *PostCategoryRepo) BatchCreate(ctx context.Context, tx *ent.Tx, postID u
 }
 
 // ListCategoryIDs 列出指定帖子关联的所有分类ID，通常在查询帖子详情时调用
-func (r *PostCategoryRepo) ListCategoryIDs(ctx context.Context, postID uint32) ([]uint32, error) {
+func (r *PostCategoryRepo) ListCategoryIDs(ctx context.Context, postID uint64) ([]uint64, error) {
 	if postID == 0 {
 		return nil, nil
 	}
@@ -86,7 +86,7 @@ func (r *PostCategoryRepo) ListCategoryIDs(ctx context.Context, postID uint32) (
 		return nil, err
 	}
 
-	categoryIDs := make([]uint32, 0, len(categories))
+	categoryIDs := make([]uint64, 0, len(categories))
 	for _, c := range categories {
 		if c == nil || c.CategoryID == nil {
 			continue
@@ -96,7 +96,7 @@ func (r *PostCategoryRepo) ListCategoryIDs(ctx context.Context, postID uint32) (
 	return categoryIDs, nil
 }
 
-func (r *PostCategoryRepo) ListCategoryIDsByPostIDs(ctx context.Context, postIDs []uint32) ([]uint32, error) {
+func (r *PostCategoryRepo) ListCategoryIDsByPostIDs(ctx context.Context, postIDs []uint64) ([]uint64, error) {
 	if len(postIDs) == 0 {
 		return nil, nil
 	}
@@ -109,7 +109,7 @@ func (r *PostCategoryRepo) ListCategoryIDsByPostIDs(ctx context.Context, postIDs
 		return nil, err
 	}
 
-	categoryIDs := make([]uint32, 0, len(categories))
+	categoryIDs := make([]uint64, 0, len(categories))
 	for _, c := range categories {
 		if c == nil || c.CategoryID == nil {
 			continue
@@ -120,7 +120,7 @@ func (r *PostCategoryRepo) ListCategoryIDsByPostIDs(ctx context.Context, postIDs
 }
 
 // ListPostIDs 列出指定分类关联的所有帖子ID，通常在查询分类详情时调用
-func (r *PostCategoryRepo) ListPostIDs(ctx context.Context, categoryID uint32) ([]uint32, error) {
+func (r *PostCategoryRepo) ListPostIDs(ctx context.Context, categoryID uint64) ([]uint64, error) {
 	if categoryID == 0 {
 		return nil, nil
 	}
@@ -133,7 +133,7 @@ func (r *PostCategoryRepo) ListPostIDs(ctx context.Context, categoryID uint32) (
 		return nil, err
 	}
 
-	postIDs := make([]uint32, 0, len(posts))
+	postIDs := make([]uint64, 0, len(posts))
 	for _, p := range posts {
 		if p.PostID == nil {
 			continue
@@ -143,7 +143,7 @@ func (r *PostCategoryRepo) ListPostIDs(ctx context.Context, categoryID uint32) (
 	return postIDs, nil
 }
 
-func (r *PostCategoryRepo) ListPostIDsByCategoryIDs(ctx context.Context, categoryIDs []uint32) ([]uint32, error) {
+func (r *PostCategoryRepo) ListPostIDsByCategoryIDs(ctx context.Context, categoryIDs []uint64) ([]uint64, error) {
 	if len(categoryIDs) == 0 {
 		return nil, nil
 	}
@@ -156,7 +156,7 @@ func (r *PostCategoryRepo) ListPostIDsByCategoryIDs(ctx context.Context, categor
 		return nil, err
 	}
 
-	postIDs := make([]uint32, 0, len(posts))
+	postIDs := make([]uint64, 0, len(posts))
 	for _, p := range posts {
 		if p.PostID == nil {
 			continue
@@ -167,7 +167,7 @@ func (r *PostCategoryRepo) ListPostIDsByCategoryIDs(ctx context.Context, categor
 }
 
 // CleanCategories 删除指定帖子关联的所有帖子分类关联关系，通常在更新帖子分类时调用
-func (r *PostCategoryRepo) CleanCategories(ctx context.Context, tx *ent.Tx, postID uint32) error {
+func (r *PostCategoryRepo) CleanCategories(ctx context.Context, tx *ent.Tx, postID uint64) error {
 	delBuilder := tx.PostCategory.Delete().Where(postcategory.PostIDEQ(postID))
 	// 租户作用域：仅删除本租户关联，避免跨租户删他人数据（按 hasTenant 条件加）
 	if tid, hasTenant := maybeTenantFromViewer(ctx); hasTenant {
@@ -182,7 +182,7 @@ func (r *PostCategoryRepo) CleanCategories(ctx context.Context, tx *ent.Tx, post
 }
 
 // CleanPosts 删除指定分类关联的所有帖子分类关联关系，通常在删除分类时调用
-func (r *PostCategoryRepo) CleanPosts(ctx context.Context, tx *ent.Tx, categoryID uint32) error {
+func (r *PostCategoryRepo) CleanPosts(ctx context.Context, tx *ent.Tx, categoryID uint64) error {
 	delBuilder := tx.PostCategory.Delete().Where(postcategory.CategoryIDEQ(categoryID))
 	// 租户作用域：仅删除本租户关联，避免跨租户删他人数据（按 hasTenant 条件加）
 	if tid, hasTenant := maybeTenantFromViewer(ctx); hasTenant {
@@ -197,7 +197,7 @@ func (r *PostCategoryRepo) CleanPosts(ctx context.Context, tx *ent.Tx, categoryI
 }
 
 // IsExist 判断指定帖子和分类的关联关系是否存在，通常在创建或更新帖子分类时调用，避免重复关联
-func (r *PostCategoryRepo) IsExist(ctx context.Context, postID, categoryID uint32) (bool, error) {
+func (r *PostCategoryRepo) IsExist(ctx context.Context, postID, categoryID uint64) (bool, error) {
 	exist, err := r.entClient.Client().PostCategory.Query().
 		Where(
 			postcategory.PostIDEQ(postID),
@@ -212,7 +212,7 @@ func (r *PostCategoryRepo) IsExist(ctx context.Context, postID, categoryID uint3
 }
 
 // CountPosts 统计指定分类关联的帖子数量，通常在查询分类详情时调用
-func (r *PostCategoryRepo) CountPosts(ctx context.Context, categoryID uint32) (int, error) {
+func (r *PostCategoryRepo) CountPosts(ctx context.Context, categoryID uint64) (int, error) {
 	count, err := r.entClient.Client().PostCategory.Query().
 		Where(postcategory.CategoryIDEQ(categoryID)).
 		Count(ctx)
@@ -224,7 +224,7 @@ func (r *PostCategoryRepo) CountPosts(ctx context.Context, categoryID uint32) (i
 }
 
 // CountCategories 统计指定帖子关联的分类数量，通常在查询帖子详情时调用
-func (r *PostCategoryRepo) CountCategories(ctx context.Context, postID uint32) (int, error) {
+func (r *PostCategoryRepo) CountCategories(ctx context.Context, postID uint64) (int, error) {
 	count, err := r.entClient.Client().PostCategory.Query().
 		Where(postcategory.PostIDEQ(postID)).
 		Count(ctx)
@@ -236,7 +236,7 @@ func (r *PostCategoryRepo) CountCategories(ctx context.Context, postID uint32) (
 }
 
 // Delete 删除指定帖子和分类的关联关系，通常在更新帖子分类时调用，删除旧的关联关系
-func (r *PostCategoryRepo) Delete(ctx context.Context, tx *ent.Tx, postID, categoryID uint32) error {
+func (r *PostCategoryRepo) Delete(ctx context.Context, tx *ent.Tx, postID, categoryID uint64) error {
 	delBuilder := tx.PostCategory.Delete().Where(
 		postcategory.PostIDEQ(postID),
 		postcategory.CategoryIDEQ(categoryID),

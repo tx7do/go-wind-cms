@@ -1001,7 +1001,7 @@ func (s *TaskService) EnqueueWebhookDeliver(payload *task.WebhookDeliverPayload)
 	return nil
 }
 
-func (s *TaskService) EnqueueAiDocReindex(baseID uint32) error {
+func (s *TaskService) EnqueueAiDocReindex(baseID uint64) error {
 	if s.taskScheduler == nil {
 		s.log.Warnf("ai doc reindex skipped: task scheduler not available (base=%d)", baseID)
 		return nil

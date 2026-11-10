@@ -73,7 +73,7 @@ func (Post) Fields() []ent.Field {
 			Optional().
 			Nillable(),
 
-		field.Uint32("author_id").
+		field.Uint64("author_id").
 			Comment("评论作者ID，0表示游客").
 			Default(0).
 			Optional().
@@ -116,12 +116,12 @@ func (Post) Fields() []ent.Field {
 // Mixin of the Post.
 func (Post) Mixin() []ent.Mixin {
 	return []ent.Mixin{
-		mixin.AutoIncrementId{},
+		mixin.AutoIncrementId64{},
 		mixin.TimeAt{},
-		mixin.OperatorID{},
+		mixin.OperatorID64{},
 		mixin.SortOrder{},
 		appMixin.EditorType{},
-		mixin.TenantID[uint32]{},
+		mixin.TenantID[uint64]{},
 	}
 }
 

@@ -85,7 +85,7 @@ func (r *TenantQuotaRepo) List(ctx context.Context, req *paginationV1.PagingRequ
 	return &identityV1.ListTenantQuotaResponse{Total: uint64(total), Items: dtos}, nil
 }
 
-func (r *TenantQuotaRepo) Get(ctx context.Context, id uint32) (*identityV1.TenantQuota, error) {
+func (r *TenantQuotaRepo) Get(ctx context.Context, id uint64) (*identityV1.TenantQuota, error) {
 	if id == 0 {
 		return nil, errors.BadRequest("TENANT_QUOTA", "id is required")
 	}
@@ -102,7 +102,7 @@ func (r *TenantQuotaRepo) Get(ctx context.Context, id uint32) (*identityV1.Tenan
 }
 
 // Create 新建配额行；同一租户同一类型唯一（库层唯一索引兜底，先查给出可读错误）。
-func (r *TenantQuotaRepo) Create(ctx context.Context, data *identityV1.TenantQuota, operatorID uint32) (uint32, error) {
+func (r *TenantQuotaRepo) Create(ctx context.Context, data *identityV1.TenantQuota, operatorID uint64) (uint64, error) {
 	if data == nil || data.GetTenantId() == 0 || data.GetQuotaType() == identityV1.TenantQuota_QUOTA_TYPE_UNSPECIFIED {
 		return 0, errors.BadRequest("TENANT_QUOTA", "tenant id and quota type are required")
 	}
@@ -139,7 +139,7 @@ func (r *TenantQuotaRepo) Create(ctx context.Context, data *identityV1.TenantQuo
 }
 
 // Update 更新配额值；tenant_id/quota_type 创建后不可改（改配额口径=换行重建）。
-func (r *TenantQuotaRepo) Update(ctx context.Context, id uint32, data *identityV1.TenantQuota, operatorID uint32) error {
+func (r *TenantQuotaRepo) Update(ctx context.Context, id uint64, data *identityV1.TenantQuota, operatorID uint64) error {
 	if data == nil {
 		return errors.BadRequest("TENANT_QUOTA", "invalid parameter")
 	}
@@ -164,7 +164,7 @@ func (r *TenantQuotaRepo) Update(ctx context.Context, id uint32, data *identityV
 	return nil
 }
 
-func (r *TenantQuotaRepo) Delete(ctx context.Context, id uint32) error {
+func (r *TenantQuotaRepo) Delete(ctx context.Context, id uint64) error {
 	if id == 0 {
 		return errors.BadRequest("TENANT_QUOTA", "id is required")
 	}
@@ -179,7 +179,7 @@ func (r *TenantQuotaRepo) Delete(ctx context.Context, id uint32) error {
 }
 
 // ListByTenant 取租户全部配额行（GetUsage / 闸门 / 水位扫描共用）。
-func (r *TenantQuotaRepo) ListByTenant(ctx context.Context, tenantID uint32) ([]*ent.TenantQuota, error) {
+func (r *TenantQuotaRepo) ListByTenant(ctx context.Context, tenantID uint64) ([]*ent.TenantQuota, error) {
 	return r.entClient.Client().TenantQuota.Query().
 		Where(tenantquota.TenantIDEQ(tenantID)).
 		All(ctx)
@@ -194,14 +194,14 @@ func (r *TenantQuotaRepo) ListAll(ctx context.Context) ([]*ent.TenantQuota, erro
 
 // ─── 计量聚合（与 GetUsage / 闸门 / 水位扫描同源） ───
 
-func (r *TenantQuotaRepo) CountUsersInTenant(ctx context.Context, tenantID uint32) (uint64, error) {
+func (r *TenantQuotaRepo) CountUsersInTenant(ctx context.Context, tenantID uint64) (uint64, error) {
 	count, err := r.entClient.Client().User.Query().
 		Where(user.TenantIDEQ(tenantID)).
 		Count(ctx)
 	return uint64(count), err
 }
 
-func (r *TenantQuotaRepo) SumStorageInTenant(ctx context.Context, tenantID uint32) (uint64, error) {
+func (r *TenantQuotaRepo) SumStorageInTenant(ctx context.Context, tenantID uint64) (uint64, error) {
 	var rows []struct {
 		Total uint64 `json:"total"`
 	}
@@ -218,14 +218,14 @@ func (r *TenantQuotaRepo) SumStorageInTenant(ctx context.Context, tenantID uint3
 	return 0, nil
 }
 
-func (r *TenantQuotaRepo) CountApiCallsInTenant(ctx context.Context, tenantID uint32) (uint64, error) {
+func (r *TenantQuotaRepo) CountApiCallsInTenant(ctx context.Context, tenantID uint64) (uint64, error) {
 	cnt, err := r.entClient.Client().ApiAuditLog.Query().
 		Where(apiauditlog.TenantIDEQ(tenantID)).
 		Count(ctx)
 	return uint64(cnt), err
 }
 
-func (r *TenantQuotaRepo) SumAiTokensInTenantSince(ctx context.Context, tenantID uint32, since time.Time) (uint64, error) {
+func (r *TenantQuotaRepo) SumAiTokensInTenantSince(ctx context.Context, tenantID uint64, since time.Time) (uint64, error) {
 	var rows []struct {
 		Total uint64 `json:"total"`
 	}
@@ -246,7 +246,7 @@ func (r *TenantQuotaRepo) SumAiTokensInTenantSince(ctx context.Context, tenantID
 }
 
 // GetTenantStatus 查租户状态与基础信息（闸门第 1 步；未命中返回 nil）。
-func (r *TenantQuotaRepo) GetTenantStatus(ctx context.Context, tenantID uint32) (*ent.Tenant, error) {
+func (r *TenantQuotaRepo) GetTenantStatus(ctx context.Context, tenantID uint64) (*ent.Tenant, error) {
 	svCtx := appViewer.NewSystemViewerContext(ctx)
 	t, err := r.entClient.Client().Tenant.Query().
 		Where(tenant.IDEQ(tenantID)).
@@ -261,7 +261,7 @@ func (r *TenantQuotaRepo) GetTenantStatus(ctx context.Context, tenantID uint32) 
 }
 
 // GetUserByID 查用户行（水位告警读管理员偏好语言用；调用方需传系统旁路上下文）。
-func (r *TenantQuotaRepo) GetUserByID(ctx context.Context, id uint32) (*ent.User, error) {
+func (r *TenantQuotaRepo) GetUserByID(ctx context.Context, id uint64) (*ent.User, error) {
 	u, err := r.entClient.Client().User.Query().
 		Where(user.IDEQ(id)).
 		Only(ctx)

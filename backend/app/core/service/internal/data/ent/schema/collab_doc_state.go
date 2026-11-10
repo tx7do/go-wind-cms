@@ -46,7 +46,7 @@ func (CollabDocState) Fields() []ent.Field {
 // Mixin of the CollabDocState.
 func (CollabDocState) Mixin() []ent.Mixin {
 	return []ent.Mixin{
-		mixin.AutoIncrementId{},
+		mixin.AutoIncrementId64{},
 		mixin.TimeAt{},
 	}
 }

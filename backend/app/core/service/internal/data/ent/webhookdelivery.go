@@ -17,7 +17,7 @@ type WebhookDelivery struct {
 	config `json:"-"`
 	// ID of the ent.
 	// id
-	ID uint32 `json:"id,omitempty"`
+	ID uint64 `json:"id,omitempty"`
 	// 创建时间
 	CreatedAt *time.Time `json:"created_at,omitempty"`
 	// 更新时间
@@ -25,13 +25,13 @@ type WebhookDelivery struct {
 	// 删除时间
 	DeletedAt *time.Time `json:"deleted_at,omitempty"`
 	// 租户ID
-	TenantID *uint32 `json:"tenant_id,omitempty"`
+	TenantID *uint64 `json:"tenant_id,omitempty"`
 	// 关联的 Webhook ID
-	WebhookID *uint32 `json:"webhook_id,omitempty"`
+	WebhookID *uint64 `json:"webhook_id,omitempty"`
 	// 事件类型（post.published 等）
 	Event *string `json:"event,omitempty"`
 	// 事件主体 ID（帖子/页面）
-	EntityID *uint32 `json:"entity_id,omitempty"`
+	EntityID *uint64 `json:"entity_id,omitempty"`
 	// 投递状态
 	Status *webhookdelivery.Status `json:"status,omitempty"`
 	// 响应 HTTP 状态码（0=未达 HTTP 层）
@@ -74,7 +74,7 @@ func (_m *WebhookDelivery) assignValues(columns []string, values []any) error {
 			if !ok {
 				return fmt.Errorf("unexpected type %T for field id", value)
 			}
-			_m.ID = uint32(value.Int64)
+			_m.ID = uint64(value.Int64)
 		case webhookdelivery.FieldCreatedAt:
 			if value, ok := values[i].(*sql.NullTime); !ok {
 				return fmt.Errorf("unexpected type %T for field created_at", values[i])
@@ -100,15 +100,15 @@ func (_m *WebhookDelivery) assignValues(columns []string, values []any) error {
 			if value, ok := values[i].(*sql.NullInt64); !ok {
 				return fmt.Errorf("unexpected type %T for field tenant_id", values[i])
 			} else if value.Valid {
-				_m.TenantID = new(uint32)
-				*_m.TenantID = uint32(value.Int64)
+				_m.TenantID = new(uint64)
+				*_m.TenantID = uint64(value.Int64)
 			}
 		case webhookdelivery.FieldWebhookID:
 			if value, ok := values[i].(*sql.NullInt64); !ok {
 				return fmt.Errorf("unexpected type %T for field webhook_id", values[i])
 			} else if value.Valid {
-				_m.WebhookID = new(uint32)
-				*_m.WebhookID = uint32(value.Int64)
+				_m.WebhookID = new(uint64)
+				*_m.WebhookID = uint64(value.Int64)
 			}
 		case webhookdelivery.FieldEvent:
 			if value, ok := values[i].(*sql.NullString); !ok {
@@ -121,8 +121,8 @@ func (_m *WebhookDelivery) assignValues(columns []string, values []any) error {
 			if value, ok := values[i].(*sql.NullInt64); !ok {
 				return fmt.Errorf("unexpected type %T for field entity_id", values[i])
 			} else if value.Valid {
-				_m.EntityID = new(uint32)
-				*_m.EntityID = uint32(value.Int64)
+				_m.EntityID = new(uint64)
+				*_m.EntityID = uint64(value.Int64)
 			}
 		case webhookdelivery.FieldStatus:
 			if value, ok := values[i].(*sql.NullString); !ok {

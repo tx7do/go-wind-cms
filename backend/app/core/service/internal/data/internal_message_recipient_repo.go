@@ -84,7 +84,7 @@ func (r *InternalMessageRecipientRepo) Count(ctx context.Context, whereCond []fu
 	return count, nil
 }
 
-func (r *InternalMessageRecipientRepo) IsExist(ctx context.Context, id uint32) (bool, error) {
+func (r *InternalMessageRecipientRepo) IsExist(ctx context.Context, id uint64) (bool, error) {
 	// 强制按调用者 user_id 过滤——只能查询自己的收件箱记录
 	callerUserID, hasUser := viewerUserIDFromContext(ctx)
 	if !hasUser {
@@ -236,7 +236,7 @@ func (r *InternalMessageRecipientRepo) Update(ctx context.Context, req *internal
 	return err
 }
 
-func (r *InternalMessageRecipientRepo) Delete(ctx context.Context, id uint32) error {
+func (r *InternalMessageRecipientRepo) Delete(ctx context.Context, id uint64) error {
 	if id == 0 {
 		return internalMessageV1.ErrorBadRequest("invalid parameter")
 	}
@@ -331,7 +331,7 @@ func (r *InternalMessageRecipientRepo) MarkNotificationsStatus(ctx context.Conte
 func (r *InternalMessageRecipientRepo) CleanByMessageID(
 	ctx context.Context,
 	tx *ent.Tx,
-	messageID uint32,
+	messageID uint64,
 ) error {
 	if messageID == 0 {
 		return nil

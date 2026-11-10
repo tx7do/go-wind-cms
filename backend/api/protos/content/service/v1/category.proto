@@ -55,7 +55,7 @@ message Category {
     CATEGORY_STATUS_ARCHIVED = 3;  // 归档（不再使用，但保留历史数据）
   }
 
-  optional uint32 id = 1 [
+  optional uint64 id = 1 [
     json_name = "id",
     (gnostic.openapi.v3.property) = {description: "类别ID"}
   ]; // 类别ID
@@ -119,13 +119,13 @@ message Category {
     (gnostic.openapi.v3.property) = {description: "自定义字段，键值对形式，便于扩展"}
   ]; // 自定义字段，键值对形式，便于扩展
 
-  optional uint32 content_model_id = 31 [
+  optional uint64 content_model_id = 31 [
     json_name = "contentModelId",
     (gnostic.openapi.v3.property) = {description: "绑定的内容模型ID（该分类下的内容继承模型字段，0/null=无绑定）"}
   ]; // 绑定的内容模型ID
 
 
-  optional uint32 parent_id = 60 [
+  optional uint64 parent_id = 60 [
     json_name = "parentId",
     (gnostic.openapi.v3.property) = {description: "父节点ID"}
   ];  // 父节点ID
@@ -142,9 +142,9 @@ message Category {
     (gnostic.openapi.v3.property) = {description: "物化路径（Materialized Path），如 '1/5/23'，便于层级查询"}
   ]; // 物化路径（Materialized Path），如 '1/5/23'，便于层级查询
 
-  optional uint32 created_by = 100 [json_name = "createdBy", (gnostic.openapi.v3.property) = {description: "创建者用户ID"}]; // 创建者用户ID
-  optional uint32 updated_by = 101 [json_name = "updatedBy", (gnostic.openapi.v3.property) = {description: "更新者用户ID"}]; // 更新者用户ID
-  optional uint32 deleted_by = 102 [json_name = "deletedBy", (gnostic.openapi.v3.property) = {description: "删除者用户ID"}]; // 删除者用户ID
+  optional uint64 created_by = 100 [json_name = "createdBy", (gnostic.openapi.v3.property) = {description: "创建者用户ID"}]; // 创建者用户ID
+  optional uint64 updated_by = 101 [json_name = "updatedBy", (gnostic.openapi.v3.property) = {description: "更新者用户ID"}]; // 更新者用户ID
+  optional uint64 deleted_by = 102 [json_name = "deletedBy", (gnostic.openapi.v3.property) = {description: "删除者用户ID"}]; // 删除者用户ID
 
   optional google.protobuf.Timestamp created_at = 200 [json_name = "createdAt", (gnostic.openapi.v3.property) = {description: "创建时间"}];// 创建时间
   optional google.protobuf.Timestamp updated_at = 201 [json_name = "updatedAt", (gnostic.openapi.v3.property) = {description: "更新时间"}];// 更新时间
@@ -153,12 +153,12 @@ message Category {
 
 // 类别翻译
 message CategoryTranslation {
-  optional uint32 id = 1 [
+  optional uint64 id = 1 [
     json_name = "id",
     (gnostic.openapi.v3.property) = {description: "翻译记录ID"}
   ]; // 翻译记录ID
 
-  optional uint32 category_id = 2 [
+  optional uint64 category_id = 2 [
     json_name = "categoryId",
     (gnostic.openapi.v3.property) = {description: "关联的分类ID"}
   ]; // 关联的分类ID
@@ -207,9 +207,9 @@ message CategoryTranslation {
   ];
 
 
-  optional uint32 created_by = 100 [json_name = "createdBy", (gnostic.openapi.v3.property) = {description: "创建者用户ID"}]; // 创建者用户ID
-  optional uint32 updated_by = 101 [json_name = "updatedBy", (gnostic.openapi.v3.property) = {description: "更新者用户ID"}]; // 更新者用户ID
-  optional uint32 deleted_by = 102 [json_name = "deletedBy", (gnostic.openapi.v3.property) = {description: "删除者用户ID"}]; // 删除者用户ID
+  optional uint64 created_by = 100 [json_name = "createdBy", (gnostic.openapi.v3.property) = {description: "创建者用户ID"}]; // 创建者用户ID
+  optional uint64 updated_by = 101 [json_name = "updatedBy", (gnostic.openapi.v3.property) = {description: "更新者用户ID"}]; // 更新者用户ID
+  optional uint64 deleted_by = 102 [json_name = "deletedBy", (gnostic.openapi.v3.property) = {description: "删除者用户ID"}]; // 删除者用户ID
 
   optional google.protobuf.Timestamp created_at = 200 [json_name = "createdAt", (gnostic.openapi.v3.property) = {description: "创建时间"}];// 创建时间
   optional google.protobuf.Timestamp updated_at = 201 [json_name = "updatedAt", (gnostic.openapi.v3.property) = {description: "更新时间"}];// 更新时间
@@ -225,7 +225,7 @@ message ListCategoryResponse {
 // 请求 - 类别数据
 message GetCategoryRequest {
   oneof query_by {
-    uint32 id = 1 [
+    uint64 id = 1 [
       (gnostic.openapi.v3.property) = {description: "ID", read_only: true},
       json_name = "id"
     ]; // ID
@@ -256,7 +256,7 @@ message CreateCategoryRequest {
 
 // 请求 - 更新类别
 message UpdateCategoryRequest {
-  uint32 id = 1;
+  uint64 id = 1;
 
   Category data = 2;
 
@@ -277,7 +277,7 @@ message UpdateCategoryRequest {
 // 请求 - 删除类别
 message DeleteCategoryRequest {
   oneof query_by {
-    uint32 id = 1 [
+    uint64 id = 1 [
       (gnostic.openapi.v3.property) = {description: "ID", read_only: true},
       json_name = "id"
     ]; // ID
@@ -285,7 +285,7 @@ message DeleteCategoryRequest {
 }
 
 message CategoryTranslationExistsRequest {
-  uint32 category_id = 1 [
+  uint64 category_id = 1 [
     json_name = "categoryId",
     (gnostic.openapi.v3.property) = {description: "关联的分类ID"}
   ]; // 关联的分类ID
@@ -300,7 +300,7 @@ message CategoryTranslationExistsResponse {
 }
 
 message CreateCategoryTranslationRequest {
-  uint32 category_id = 1 [
+  uint64 category_id = 1 [
     json_name = "categoryId",
     (gnostic.openapi.v3.property) = {description: "关联的分类ID"}
   ]; // 关联的分类ID
@@ -309,7 +309,7 @@ message CreateCategoryTranslationRequest {
 }
 
 message UpdateCategoryTranslationRequest {
-  uint32 id = 1 [
+  uint64 id = 1 [
     json_name = "id",
     (gnostic.openapi.v3.property) = {description: "翻译ID"}
   ]; // 翻译ID
@@ -331,7 +331,7 @@ message UpdateCategoryTranslationRequest {
 }
 
 message CategoryTranslationIdentifier {
-  uint32 category_id = 1 [
+  uint64 category_id = 1 [
     json_name = "categoryId",
     (gnostic.openapi.v3.property) = {description: "关联的分类ID"}
   ]; // 关联的分类ID
@@ -344,7 +344,7 @@ message CategoryTranslationIdentifier {
 
 message DeleteCategoryTranslationRequest {
   oneof query_by {
-    uint32 id = 1 [
+    uint64 id = 1 [
       (gnostic.openapi.v3.property) = {description: "ID", read_only: true},
       json_name = "id"
     ]; // ID

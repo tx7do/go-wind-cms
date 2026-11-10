@@ -32,7 +32,7 @@ func (TenantQuota) Annotations() []schema.Annotation {
 // Fields of the TenantQuota.
 func (TenantQuota) Fields() []ent.Field {
 	return []ent.Field{
-		field.Uint32("tenant_id").Comment("租户ID").Positive(),
+		field.Uint64("tenant_id").Comment("租户ID").Positive(),
 		field.Enum("quota_type").
 			Comment("配额类型").
 			NamedValues(
@@ -49,9 +49,9 @@ func (TenantQuota) Fields() []ent.Field {
 // Mixin of the TenantQuota.
 func (TenantQuota) Mixin() []ent.Mixin {
 	return []ent.Mixin{
-		mixin.AutoIncrementId{},
+		mixin.AutoIncrementId64{},
 		mixin.TimeAt{},
-		mixin.OperatorID{},
+		mixin.OperatorID64{},
 	}
 }
 

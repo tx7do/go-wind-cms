@@ -10,47 +10,47 @@ import (
 )
 
 // ID filters vertices based on their ID field.
-func ID(id uint32) predicate.ExperimentVariant {
+func ID(id uint64) predicate.ExperimentVariant {
 	return predicate.ExperimentVariant(sql.FieldEQ(FieldID, id))
 }
 
 // IDEQ applies the EQ predicate on the ID field.
-func IDEQ(id uint32) predicate.ExperimentVariant {
+func IDEQ(id uint64) predicate.ExperimentVariant {
 	return predicate.ExperimentVariant(sql.FieldEQ(FieldID, id))
 }
 
 // IDNEQ applies the NEQ predicate on the ID field.
-func IDNEQ(id uint32) predicate.ExperimentVariant {
+func IDNEQ(id uint64) predicate.ExperimentVariant {
 	return predicate.ExperimentVariant(sql.FieldNEQ(FieldID, id))
 }
 
 // IDIn applies the In predicate on the ID field.
-func IDIn(ids ...uint32) predicate.ExperimentVariant {
+func IDIn(ids ...uint64) predicate.ExperimentVariant {
 	return predicate.ExperimentVariant(sql.FieldIn(FieldID, ids...))
 }
 
 // IDNotIn applies the NotIn predicate on the ID field.
-func IDNotIn(ids ...uint32) predicate.ExperimentVariant {
+func IDNotIn(ids ...uint64) predicate.ExperimentVariant {
 	return predicate.ExperimentVariant(sql.FieldNotIn(FieldID, ids...))
 }
 
 // IDGT applies the GT predicate on the ID field.
-func IDGT(id uint32) predicate.ExperimentVariant {
+func IDGT(id uint64) predicate.ExperimentVariant {
 	return predicate.ExperimentVariant(sql.FieldGT(FieldID, id))
 }
 
 // IDGTE applies the GTE predicate on the ID field.
-func IDGTE(id uint32) predicate.ExperimentVariant {
+func IDGTE(id uint64) predicate.ExperimentVariant {
 	return predicate.ExperimentVariant(sql.FieldGTE(FieldID, id))
 }
 
 // IDLT applies the LT predicate on the ID field.
-func IDLT(id uint32) predicate.ExperimentVariant {
+func IDLT(id uint64) predicate.ExperimentVariant {
 	return predicate.ExperimentVariant(sql.FieldLT(FieldID, id))
 }
 
 // IDLTE applies the LTE predicate on the ID field.
-func IDLTE(id uint32) predicate.ExperimentVariant {
+func IDLTE(id uint64) predicate.ExperimentVariant {
 	return predicate.ExperimentVariant(sql.FieldLTE(FieldID, id))
 }
 
@@ -70,27 +70,27 @@ func DeletedAt(v time.Time) predicate.ExperimentVariant {
 }
 
 // CreatedBy applies equality check predicate on the "created_by" field. It's identical to CreatedByEQ.
-func CreatedBy(v uint32) predicate.ExperimentVariant {
+func CreatedBy(v uint64) predicate.ExperimentVariant {
 	return predicate.ExperimentVariant(sql.FieldEQ(FieldCreatedBy, v))
 }
 
 // UpdatedBy applies equality check predicate on the "updated_by" field. It's identical to UpdatedByEQ.
-func UpdatedBy(v uint32) predicate.ExperimentVariant {
+func UpdatedBy(v uint64) predicate.ExperimentVariant {
 	return predicate.ExperimentVariant(sql.FieldEQ(FieldUpdatedBy, v))
 }
 
 // DeletedBy applies equality check predicate on the "deleted_by" field. It's identical to DeletedByEQ.
-func DeletedBy(v uint32) predicate.ExperimentVariant {
+func DeletedBy(v uint64) predicate.ExperimentVariant {
 	return predicate.ExperimentVariant(sql.FieldEQ(FieldDeletedBy, v))
 }
 
 // TenantID applies equality check predicate on the "tenant_id" field. It's identical to TenantIDEQ.
-func TenantID(v uint32) predicate.ExperimentVariant {
+func TenantID(v uint64) predicate.ExperimentVariant {
 	return predicate.ExperimentVariant(sql.FieldEQ(FieldTenantID, v))
 }
 
 // ExperimentID applies equality check predicate on the "experiment_id" field. It's identical to ExperimentIDEQ.
-func ExperimentID(v uint32) predicate.ExperimentVariant {
+func ExperimentID(v uint64) predicate.ExperimentVariant {
 	return predicate.ExperimentVariant(sql.FieldEQ(FieldExperimentID, v))
 }
 
@@ -270,42 +270,42 @@ func DeletedAtNotNil() predicate.ExperimentVariant {
 }
 
 // CreatedByEQ applies the EQ predicate on the "created_by" field.
-func CreatedByEQ(v uint32) predicate.ExperimentVariant {
+func CreatedByEQ(v uint64) predicate.ExperimentVariant {
 	return predicate.ExperimentVariant(sql.FieldEQ(FieldCreatedBy, v))
 }
 
 // CreatedByNEQ applies the NEQ predicate on the "created_by" field.
-func CreatedByNEQ(v uint32) predicate.ExperimentVariant {
+func CreatedByNEQ(v uint64) predicate.ExperimentVariant {
 	return predicate.ExperimentVariant(sql.FieldNEQ(FieldCreatedBy, v))
 }
 
 // CreatedByIn applies the In predicate on the "created_by" field.
-func CreatedByIn(vs ...uint32) predicate.ExperimentVariant {
+func CreatedByIn(vs ...uint64) predicate.ExperimentVariant {
 	return predicate.ExperimentVariant(sql.FieldIn(FieldCreatedBy, vs...))
 }
 
 // CreatedByNotIn applies the NotIn predicate on the "created_by" field.
-func CreatedByNotIn(vs ...uint32) predicate.ExperimentVariant {
+func CreatedByNotIn(vs ...uint64) predicate.ExperimentVariant {
 	return predicate.ExperimentVariant(sql.FieldNotIn(FieldCreatedBy, vs...))
 }
 
 // CreatedByGT applies the GT predicate on the "created_by" field.
-func CreatedByGT(v uint32) predicate.ExperimentVariant {
+func CreatedByGT(v uint64) predicate.ExperimentVariant {
 	return predicate.ExperimentVariant(sql.FieldGT(FieldCreatedBy, v))
 }
 
 // CreatedByGTE applies the GTE predicate on the "created_by" field.
-func CreatedByGTE(v uint32) predicate.ExperimentVariant {
+func CreatedByGTE(v uint64) predicate.ExperimentVariant {
 	return predicate.ExperimentVariant(sql.FieldGTE(FieldCreatedBy, v))
 }
 
 // CreatedByLT applies the LT predicate on the "created_by" field.
-func CreatedByLT(v uint32) predicate.ExperimentVariant {
+func CreatedByLT(v uint64) predicate.ExperimentVariant {
 	return predicate.ExperimentVariant(sql.FieldLT(FieldCreatedBy, v))
 }
 
 // CreatedByLTE applies the LTE predicate on the "created_by" field.
-func CreatedByLTE(v uint32) predicate.ExperimentVariant {
+func CreatedByLTE(v uint64) predicate.ExperimentVariant {
 	return predicate.ExperimentVariant(sql.FieldLTE(FieldCreatedBy, v))
 }
 
@@ -320,42 +320,42 @@ func CreatedByNotNil() predicate.ExperimentVariant {
 }
 
 // UpdatedByEQ applies the EQ predicate on the "updated_by" field.
-func UpdatedByEQ(v uint32) predicate.ExperimentVariant {
+func UpdatedByEQ(v uint64) predicate.ExperimentVariant {
 	return predicate.ExperimentVariant(sql.FieldEQ(FieldUpdatedBy, v))
 }
 
 // UpdatedByNEQ applies the NEQ predicate on the "updated_by" field.
-func UpdatedByNEQ(v uint32) predicate.ExperimentVariant {
+func UpdatedByNEQ(v uint64) predicate.ExperimentVariant {
 	return predicate.ExperimentVariant(sql.FieldNEQ(FieldUpdatedBy, v))
 }
 
 // UpdatedByIn applies the In predicate on the "updated_by" field.
-func UpdatedByIn(vs ...uint32) predicate.ExperimentVariant {
+func UpdatedByIn(vs ...uint64) predicate.ExperimentVariant {
 	return predicate.ExperimentVariant(sql.FieldIn(FieldUpdatedBy, vs...))
 }
 
 // UpdatedByNotIn applies the NotIn predicate on the "updated_by" field.
-func UpdatedByNotIn(vs ...uint32) predicate.ExperimentVariant {
+func UpdatedByNotIn(vs ...uint64) predicate.ExperimentVariant {
 	return predicate.ExperimentVariant(sql.FieldNotIn(FieldUpdatedBy, vs...))
 }
 
 // UpdatedByGT applies the GT predicate on the "updated_by" field.
-func UpdatedByGT(v uint32) predicate.ExperimentVariant {
+func UpdatedByGT(v uint64) predicate.ExperimentVariant {
 	return predicate.ExperimentVariant(sql.FieldGT(FieldUpdatedBy, v))
 }
 
 // UpdatedByGTE applies the GTE predicate on the "updated_by" field.
-func UpdatedByGTE(v uint32) predicate.ExperimentVariant {
+func UpdatedByGTE(v uint64) predicate.ExperimentVariant {
 	return predicate.ExperimentVariant(sql.FieldGTE(FieldUpdatedBy, v))
 }
 
 // UpdatedByLT applies the LT predicate on the "updated_by" field.
-func UpdatedByLT(v uint32) predicate.ExperimentVariant {
+func UpdatedByLT(v uint64) predicate.ExperimentVariant {
 	return predicate.ExperimentVariant(sql.FieldLT(FieldUpdatedBy, v))
 }
 
 // UpdatedByLTE applies the LTE predicate on the "updated_by" field.
-func UpdatedByLTE(v uint32) predicate.ExperimentVariant {
+func UpdatedByLTE(v uint64) predicate.ExperimentVariant {
 	return predicate.ExperimentVariant(sql.FieldLTE(FieldUpdatedBy, v))
 }
 
@@ -370,42 +370,42 @@ func UpdatedByNotNil() predicate.ExperimentVariant {
 }
 
 // DeletedByEQ applies the EQ predicate on the "deleted_by" field.
-func DeletedByEQ(v uint32) predicate.ExperimentVariant {
+func DeletedByEQ(v uint64) predicate.ExperimentVariant {
 	return predicate.ExperimentVariant(sql.FieldEQ(FieldDeletedBy, v))
 }
 
 // DeletedByNEQ applies the NEQ predicate on the "deleted_by" field.
-func DeletedByNEQ(v uint32) predicate.ExperimentVariant {
+func DeletedByNEQ(v uint64) predicate.ExperimentVariant {
 	return predicate.ExperimentVariant(sql.FieldNEQ(FieldDeletedBy, v))
 }
 
 // DeletedByIn applies the In predicate on the "deleted_by" field.
-func DeletedByIn(vs ...uint32) predicate.ExperimentVariant {
+func DeletedByIn(vs ...uint64) predicate.ExperimentVariant {
 	return predicate.ExperimentVariant(sql.FieldIn(FieldDeletedBy, vs...))
 }
 
 // DeletedByNotIn applies the NotIn predicate on the "deleted_by" field.
-func DeletedByNotIn(vs ...uint32) predicate.ExperimentVariant {
+func DeletedByNotIn(vs ...uint64) predicate.ExperimentVariant {
 	return predicate.ExperimentVariant(sql.FieldNotIn(FieldDeletedBy, vs...))
 }
 
 // DeletedByGT applies the GT predicate on the "deleted_by" field.
-func DeletedByGT(v uint32) predicate.ExperimentVariant {
+func DeletedByGT(v uint64) predicate.ExperimentVariant {
 	return predicate.ExperimentVariant(sql.FieldGT(FieldDeletedBy, v))
 }
 
 // DeletedByGTE applies the GTE predicate on the "deleted_by" field.
-func DeletedByGTE(v uint32) predicate.ExperimentVariant {
+func DeletedByGTE(v uint64) predicate.ExperimentVariant {
 	return predicate.ExperimentVariant(sql.FieldGTE(FieldDeletedBy, v))
 }
 
 // DeletedByLT applies the LT predicate on the "deleted_by" field.
-func DeletedByLT(v uint32) predicate.ExperimentVariant {
+func DeletedByLT(v uint64) predicate.ExperimentVariant {
 	return predicate.ExperimentVariant(sql.FieldLT(FieldDeletedBy, v))
 }
 
 // DeletedByLTE applies the LTE predicate on the "deleted_by" field.
-func DeletedByLTE(v uint32) predicate.ExperimentVariant {
+func DeletedByLTE(v uint64) predicate.ExperimentVariant {
 	return predicate.ExperimentVariant(sql.FieldLTE(FieldDeletedBy, v))
 }
 
@@ -420,42 +420,42 @@ func DeletedByNotNil() predicate.ExperimentVariant {
 }
 
 // TenantIDEQ applies the EQ predicate on the "tenant_id" field.
-func TenantIDEQ(v uint32) predicate.ExperimentVariant {
+func TenantIDEQ(v uint64) predicate.ExperimentVariant {
 	return predicate.ExperimentVariant(sql.FieldEQ(FieldTenantID, v))
 }
 
 // TenantIDNEQ applies the NEQ predicate on the "tenant_id" field.
-func TenantIDNEQ(v uint32) predicate.ExperimentVariant {
+func TenantIDNEQ(v uint64) predicate.ExperimentVariant {
 	return predicate.ExperimentVariant(sql.FieldNEQ(FieldTenantID, v))
 }
 
 // TenantIDIn applies the In predicate on the "tenant_id" field.
-func TenantIDIn(vs ...uint32) predicate.ExperimentVariant {
+func TenantIDIn(vs ...uint64) predicate.ExperimentVariant {
 	return predicate.ExperimentVariant(sql.FieldIn(FieldTenantID, vs...))
 }
 
 // TenantIDNotIn applies the NotIn predicate on the "tenant_id" field.
-func TenantIDNotIn(vs ...uint32) predicate.ExperimentVariant {
+func TenantIDNotIn(vs ...uint64) predicate.ExperimentVariant {
 	return predicate.ExperimentVariant(sql.FieldNotIn(FieldTenantID, vs...))
 }
 
 // TenantIDGT applies the GT predicate on the "tenant_id" field.
-func TenantIDGT(v uint32) predicate.ExperimentVariant {
+func TenantIDGT(v uint64) predicate.ExperimentVariant {
 	return predicate.ExperimentVariant(sql.FieldGT(FieldTenantID, v))
 }
 
 // TenantIDGTE applies the GTE predicate on the "tenant_id" field.
-func TenantIDGTE(v uint32) predicate.ExperimentVariant {
+func TenantIDGTE(v uint64) predicate.ExperimentVariant {
 	return predicate.ExperimentVariant(sql.FieldGTE(FieldTenantID, v))
 }
 
 // TenantIDLT applies the LT predicate on the "tenant_id" field.
-func TenantIDLT(v uint32) predicate.ExperimentVariant {
+func TenantIDLT(v uint64) predicate.ExperimentVariant {
 	return predicate.ExperimentVariant(sql.FieldLT(FieldTenantID, v))
 }
 
 // TenantIDLTE applies the LTE predicate on the "tenant_id" field.
-func TenantIDLTE(v uint32) predicate.ExperimentVariant {
+func TenantIDLTE(v uint64) predicate.ExperimentVariant {
 	return predicate.ExperimentVariant(sql.FieldLTE(FieldTenantID, v))
 }
 
@@ -470,42 +470,42 @@ func TenantIDNotNil() predicate.ExperimentVariant {
 }
 
 // ExperimentIDEQ applies the EQ predicate on the "experiment_id" field.
-func ExperimentIDEQ(v uint32) predicate.ExperimentVariant {
+func ExperimentIDEQ(v uint64) predicate.ExperimentVariant {
 	return predicate.ExperimentVariant(sql.FieldEQ(FieldExperimentID, v))
 }
 
 // ExperimentIDNEQ applies the NEQ predicate on the "experiment_id" field.
-func ExperimentIDNEQ(v uint32) predicate.ExperimentVariant {
+func ExperimentIDNEQ(v uint64) predicate.ExperimentVariant {
 	return predicate.ExperimentVariant(sql.FieldNEQ(FieldExperimentID, v))
 }
 
 // ExperimentIDIn applies the In predicate on the "experiment_id" field.
-func ExperimentIDIn(vs ...uint32) predicate.ExperimentVariant {
+func ExperimentIDIn(vs ...uint64) predicate.ExperimentVariant {
 	return predicate.ExperimentVariant(sql.FieldIn(FieldExperimentID, vs...))
 }
 
 // ExperimentIDNotIn applies the NotIn predicate on the "experiment_id" field.
-func ExperimentIDNotIn(vs ...uint32) predicate.ExperimentVariant {
+func ExperimentIDNotIn(vs ...uint64) predicate.ExperimentVariant {
 	return predicate.ExperimentVariant(sql.FieldNotIn(FieldExperimentID, vs...))
 }
 
 // ExperimentIDGT applies the GT predicate on the "experiment_id" field.
-func ExperimentIDGT(v uint32) predicate.ExperimentVariant {
+func ExperimentIDGT(v uint64) predicate.ExperimentVariant {
 	return predicate.ExperimentVariant(sql.FieldGT(FieldExperimentID, v))
 }
 
 // ExperimentIDGTE applies the GTE predicate on the "experiment_id" field.
-func ExperimentIDGTE(v uint32) predicate.ExperimentVariant {
+func ExperimentIDGTE(v uint64) predicate.ExperimentVariant {
 	return predicate.ExperimentVariant(sql.FieldGTE(FieldExperimentID, v))
 }
 
 // ExperimentIDLT applies the LT predicate on the "experiment_id" field.
-func ExperimentIDLT(v uint32) predicate.ExperimentVariant {
+func ExperimentIDLT(v uint64) predicate.ExperimentVariant {
 	return predicate.ExperimentVariant(sql.FieldLT(FieldExperimentID, v))
 }
 
 // ExperimentIDLTE applies the LTE predicate on the "experiment_id" field.
-func ExperimentIDLTE(v uint32) predicate.ExperimentVariant {
+func ExperimentIDLTE(v uint64) predicate.ExperimentVariant {
 	return predicate.ExperimentVariant(sql.FieldLTE(FieldExperimentID, v))
 }
 

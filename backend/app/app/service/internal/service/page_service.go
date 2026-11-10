@@ -94,7 +94,7 @@ func (s *PageService) Get(ctx context.Context, req *contentV1.GetPageRequest) (*
 
 // hasValidPreviewToken 校验请求 query 里的 preview_token：令牌有效且指向该资源
 // （kind/Id 匹配）时放行；令牌存在但无效按"不存在"处理，不暴露令牌有效性细节。
-func (s *PageService) hasValidPreviewToken(ctx context.Context, kind string, targetID uint32) bool {
+func (s *PageService) hasValidPreviewToken(ctx context.Context, kind string, targetID uint64) bool {
 	token := rawQueryValue(ctx, "preview_token")
 	if token == "" {
 		return false

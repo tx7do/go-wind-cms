@@ -186,7 +186,7 @@ func (r *DictEntryRepo) Get(ctx context.Context, req *dictV1.GetDictEntryRequest
 	return dto, err
 }
 
-func (r *DictEntryRepo) IsExist(ctx context.Context, id uint32) (bool, error) {
+func (r *DictEntryRepo) IsExist(ctx context.Context, id uint64) (bool, error) {
 	exist, err := r.entClient.Client().DictEntry.Query().
 		Where(dictentry.IDEQ(id)).
 		Exist(ctx)
@@ -359,7 +359,7 @@ func (r *DictEntryRepo) Update(ctx context.Context, req *dictV1.UpdateDictEntryR
 	return err
 }
 
-func (r *DictEntryRepo) Delete(ctx context.Context, id uint32) error {
+func (r *DictEntryRepo) Delete(ctx context.Context, id uint64) error {
 	if id == 0 {
 		return dictV1.ErrorBadRequest("invalid parameter")
 	}
@@ -382,7 +382,7 @@ func (r *DictEntryRepo) Delete(ctx context.Context, id uint32) error {
 	return nil
 }
 
-func (r *DictEntryRepo) BatchDelete(ctx context.Context, ids []uint32) error {
+func (r *DictEntryRepo) BatchDelete(ctx context.Context, ids []uint64) error {
 	if len(ids) == 0 {
 		return dictV1.ErrorBadRequest("invalid parameter")
 	}
@@ -407,7 +407,7 @@ func (r *DictEntryRepo) BatchDelete(ctx context.Context, ids []uint32) error {
 
 // CleanByTypeID 清理指定字典类型下的所有字典项及其多语言数据。
 // 必须在调用方事务中执行，保证类型删除与条目/i18n 删除的原子性。
-func (r *DictEntryRepo) CleanByTypeID(ctx context.Context, tx *ent.Tx, typeID uint32) error {
+func (r *DictEntryRepo) CleanByTypeID(ctx context.Context, tx *ent.Tx, typeID uint64) error {
 	if typeID == 0 {
 		return dictV1.ErrorBadRequest("invalid parameter")
 	}

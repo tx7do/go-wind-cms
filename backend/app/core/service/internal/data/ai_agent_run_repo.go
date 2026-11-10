@@ -88,7 +88,7 @@ func (r *AiAgentRunRepo) List(ctx context.Context, req *paginationV1.PagingReque
 	if err != nil {
 		r.log.Errorf("backfill status failed: %s", err.Error())
 	} else {
-		statusByID := make(map[uint32]aiagentrun.Status, len(entities))
+		statusByID := make(map[uint64]aiagentrun.Status, len(entities))
 		for _, e := range entities {
 			statusByID[e.ID] = e.Status
 		}
@@ -106,7 +106,7 @@ func (r *AiAgentRunRepo) List(ctx context.Context, req *paginationV1.PagingReque
 }
 
 // Get 按 ID 查询运行记录。
-func (r *AiAgentRunRepo) Get(ctx context.Context, id uint32) (*aiV1.AiAgentRun, error) {
+func (r *AiAgentRunRepo) Get(ctx context.Context, id uint64) (*aiV1.AiAgentRun, error) {
 	entity, err := r.entClient.Client().AiAgentRun.Get(ctx, id)
 	if err != nil {
 		if ent.IsNotFound(err) {
@@ -124,7 +124,7 @@ func (r *AiAgentRunRepo) Get(ctx context.Context, id uint32) (*aiV1.AiAgentRun, 
 }
 
 // CreateRunning 建一条 RUNNING 运行行（Run 流程第一步，执行引擎批接入）。
-func (r *AiAgentRunRepo) CreateRunning(ctx context.Context, appID uint32, inputJSON string, operatorID uint32, tenantID uint32) (uint32, error) {
+func (r *AiAgentRunRepo) CreateRunning(ctx context.Context, appID uint64, inputJSON string, operatorID uint64, tenantID uint64) (uint64, error) {
 	created, err := r.entClient.Client().AiAgentRun.Create().
 		SetAppID(appID).
 		SetStatus(aiagentrun.StatusRunning).
@@ -143,15 +143,15 @@ func (r *AiAgentRunRepo) CreateRunning(ctx context.Context, appID uint32, inputJ
 
 // AgentRunTokens 运行用量三件套（repo 落参用，避免一串同形参数）。
 type AgentRunTokens struct {
-	Prompt     uint32
-	Completion uint32
-	Total      uint32
+	Prompt     uint64
+	Completion uint64
+	Total      uint64
 }
 
 // SettleResult 回写运行结论（终态 + 产出/错误/轨迹/用量/耗时）。
 func (r *AiAgentRunRepo) SettleResult(
 	ctx context.Context,
-	id uint32,
+	id uint64,
 	status aiagentrun.Status,
 	output string,
 	errMsg string,
@@ -162,9 +162,9 @@ func (r *AiAgentRunRepo) SettleResult(
 	builder := r.entClient.Client().AiAgentRun.UpdateOneID(id).
 		SetStatus(status).
 		SetTrace(traceJSON).
-		SetPromptTokens(usage.Prompt).
-		SetCompletionTokens(usage.Completion).
-		SetTotalTokens(usage.Total).
+		SetPromptTokens(uint32(usage.Prompt)).
+		SetCompletionTokens(uint32(usage.Completion)).
+		SetTotalTokens(uint32(usage.Total)).
 		SetDurationMs(durationMs)
 	if output != "" {
 		builder.SetOutput(output)
@@ -182,7 +182,7 @@ func (r *AiAgentRunRepo) SettleResult(
 // SetPending 落 WAITING_APPROVAL 挂起态（挂起节点 + 恢复快照 + 已耗 tokens/trace）。
 func (r *AiAgentRunRepo) SetPending(
 	ctx context.Context,
-	id uint32,
+	id uint64,
 	pendingNodeID string,
 	resumeStateJSON string,
 	traceJSON string,
@@ -194,9 +194,9 @@ func (r *AiAgentRunRepo) SetPending(
 		SetPendingNodeID(pendingNodeID).
 		SetResumeState(resumeStateJSON).
 		SetTrace(traceJSON).
-		SetPromptTokens(usage.Prompt).
-		SetCompletionTokens(usage.Completion).
-		SetTotalTokens(usage.Total).
+		SetPromptTokens(uint32(usage.Prompt)).
+		SetCompletionTokens(uint32(usage.Completion)).
+		SetTotalTokens(uint32(usage.Total)).
 		SetDurationMs(durationMs).
 		Exec(ctx); err != nil {
 		r.log.Errorf("set pending ai agent run [%d] failed: %s", id, err.Error())
@@ -206,6 +206,6 @@ func (r *AiAgentRunRepo) SetPending(
 }
 
 // GetPendingNodeID 读挂起节点 ID（非 WAITING_APPROVAL 行为空）。
-func (r *AiAgentRunRepo) GetStatusEntity(ctx context.Context, id uint32) (*ent.AiAgentRun, error) {
+func (r *AiAgentRunRepo) GetStatusEntity(ctx context.Context, id uint64) (*ent.AiAgentRun, error) {
 	return r.entClient.Client().AiAgentRun.Get(ctx, id)
 }

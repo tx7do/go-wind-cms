@@ -46,7 +46,7 @@ func (s *MediaAssetService) Get(ctx context.Context, req *mediaV1.GetMediaAssetR
 // 可见性复用 core Get（匿名 viewer 按请求 Host 注入、软删资产 404、跨租户隔离），
 // 拿到元数据后才经 MinIO 读字节；变换结果按参数键落派生对象缓存，
 // 命中免解码直出。参数语义见 image_transform.go。
-func (s *MediaAssetService) ServeContent(ctx context.Context, w http.ResponseWriter, r *http.Request, assetID uint32) error {
+func (s *MediaAssetService) ServeContent(ctx context.Context, w http.ResponseWriter, r *http.Request, assetID uint64) error {
 	p, err := ParseTransformParams(r.URL.Query())
 	if err != nil {
 		return mediaV1.ErrorBadRequest("invalid transform params: %v", err)

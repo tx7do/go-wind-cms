@@ -71,14 +71,14 @@ func (_u *PageTranslationUpdate) ClearDeletedAt() *PageTranslationUpdate {
 }
 
 // SetCreatedBy sets the "created_by" field.
-func (_u *PageTranslationUpdate) SetCreatedBy(v uint32) *PageTranslationUpdate {
+func (_u *PageTranslationUpdate) SetCreatedBy(v uint64) *PageTranslationUpdate {
 	_u.mutation.ResetCreatedBy()
 	_u.mutation.SetCreatedBy(v)
 	return _u
 }
 
 // SetNillableCreatedBy sets the "created_by" field if the given value is not nil.
-func (_u *PageTranslationUpdate) SetNillableCreatedBy(v *uint32) *PageTranslationUpdate {
+func (_u *PageTranslationUpdate) SetNillableCreatedBy(v *uint64) *PageTranslationUpdate {
 	if v != nil {
 		_u.SetCreatedBy(*v)
 	}
@@ -86,7 +86,7 @@ func (_u *PageTranslationUpdate) SetNillableCreatedBy(v *uint32) *PageTranslatio
 }
 
 // AddCreatedBy adds value to the "created_by" field.
-func (_u *PageTranslationUpdate) AddCreatedBy(v int32) *PageTranslationUpdate {
+func (_u *PageTranslationUpdate) AddCreatedBy(v int64) *PageTranslationUpdate {
 	_u.mutation.AddCreatedBy(v)
 	return _u
 }
@@ -98,14 +98,14 @@ func (_u *PageTranslationUpdate) ClearCreatedBy() *PageTranslationUpdate {
 }
 
 // SetUpdatedBy sets the "updated_by" field.
-func (_u *PageTranslationUpdate) SetUpdatedBy(v uint32) *PageTranslationUpdate {
+func (_u *PageTranslationUpdate) SetUpdatedBy(v uint64) *PageTranslationUpdate {
 	_u.mutation.ResetUpdatedBy()
 	_u.mutation.SetUpdatedBy(v)
 	return _u
 }
 
 // SetNillableUpdatedBy sets the "updated_by" field if the given value is not nil.
-func (_u *PageTranslationUpdate) SetNillableUpdatedBy(v *uint32) *PageTranslationUpdate {
+func (_u *PageTranslationUpdate) SetNillableUpdatedBy(v *uint64) *PageTranslationUpdate {
 	if v != nil {
 		_u.SetUpdatedBy(*v)
 	}
@@ -113,7 +113,7 @@ func (_u *PageTranslationUpdate) SetNillableUpdatedBy(v *uint32) *PageTranslatio
 }
 
 // AddUpdatedBy adds value to the "updated_by" field.
-func (_u *PageTranslationUpdate) AddUpdatedBy(v int32) *PageTranslationUpdate {
+func (_u *PageTranslationUpdate) AddUpdatedBy(v int64) *PageTranslationUpdate {
 	_u.mutation.AddUpdatedBy(v)
 	return _u
 }
@@ -125,14 +125,14 @@ func (_u *PageTranslationUpdate) ClearUpdatedBy() *PageTranslationUpdate {
 }
 
 // SetDeletedBy sets the "deleted_by" field.
-func (_u *PageTranslationUpdate) SetDeletedBy(v uint32) *PageTranslationUpdate {
+func (_u *PageTranslationUpdate) SetDeletedBy(v uint64) *PageTranslationUpdate {
 	_u.mutation.ResetDeletedBy()
 	_u.mutation.SetDeletedBy(v)
 	return _u
 }
 
 // SetNillableDeletedBy sets the "deleted_by" field if the given value is not nil.
-func (_u *PageTranslationUpdate) SetNillableDeletedBy(v *uint32) *PageTranslationUpdate {
+func (_u *PageTranslationUpdate) SetNillableDeletedBy(v *uint64) *PageTranslationUpdate {
 	if v != nil {
 		_u.SetDeletedBy(*v)
 	}
@@ -140,7 +140,7 @@ func (_u *PageTranslationUpdate) SetNillableDeletedBy(v *uint32) *PageTranslatio
 }
 
 // AddDeletedBy adds value to the "deleted_by" field.
-func (_u *PageTranslationUpdate) AddDeletedBy(v int32) *PageTranslationUpdate {
+func (_u *PageTranslationUpdate) AddDeletedBy(v int64) *PageTranslationUpdate {
 	_u.mutation.AddDeletedBy(v)
 	return _u
 }
@@ -164,14 +164,14 @@ func (_u *PageTranslationUpdate) ClearSeo() *PageTranslationUpdate {
 }
 
 // SetPageID sets the "page_id" field.
-func (_u *PageTranslationUpdate) SetPageID(v uint32) *PageTranslationUpdate {
+func (_u *PageTranslationUpdate) SetPageID(v uint64) *PageTranslationUpdate {
 	_u.mutation.ResetPageID()
 	_u.mutation.SetPageID(v)
 	return _u
 }
 
 // SetNillablePageID sets the "page_id" field if the given value is not nil.
-func (_u *PageTranslationUpdate) SetNillablePageID(v *uint32) *PageTranslationUpdate {
+func (_u *PageTranslationUpdate) SetNillablePageID(v *uint64) *PageTranslationUpdate {
 	if v != nil {
 		_u.SetPageID(*v)
 	}
@@ -179,7 +179,7 @@ func (_u *PageTranslationUpdate) SetNillablePageID(v *uint32) *PageTranslationUp
 }
 
 // AddPageID adds value to the "page_id" field.
-func (_u *PageTranslationUpdate) AddPageID(v int32) *PageTranslationUpdate {
+func (_u *PageTranslationUpdate) AddPageID(v int64) *PageTranslationUpdate {
 	_u.mutation.AddPageID(v)
 	return _u
 }
@@ -329,7 +329,7 @@ func (_u *PageTranslationUpdate) Modify(modifiers ...func(u *sql.UpdateBuilder))
 }
 
 func (_u *PageTranslationUpdate) sqlSave(ctx context.Context) (_node int, err error) {
-	_spec := sqlgraph.NewUpdateSpec(pagetranslation.Table, pagetranslation.Columns, sqlgraph.NewFieldSpec(pagetranslation.FieldID, field.TypeUint32))
+	_spec := sqlgraph.NewUpdateSpec(pagetranslation.Table, pagetranslation.Columns, sqlgraph.NewFieldSpec(pagetranslation.FieldID, field.TypeUint64))
 	if ps := _u.mutation.predicates; len(ps) > 0 {
 		_spec.Predicate = func(selector *sql.Selector) {
 			for i := range ps {
@@ -353,31 +353,31 @@ func (_u *PageTranslationUpdate) sqlSave(ctx context.Context) (_node int, err er
 		_spec.ClearField(pagetranslation.FieldDeletedAt, field.TypeTime)
 	}
 	if value, ok := _u.mutation.CreatedBy(); ok {
-		_spec.SetField(pagetranslation.FieldCreatedBy, field.TypeUint32, value)
+		_spec.SetField(pagetranslation.FieldCreatedBy, field.TypeUint64, value)
 	}
 	if value, ok := _u.mutation.AddedCreatedBy(); ok {
-		_spec.AddField(pagetranslation.FieldCreatedBy, field.TypeUint32, value)
+		_spec.AddField(pagetranslation.FieldCreatedBy, field.TypeUint64, value)
 	}
 	if _u.mutation.CreatedByCleared() {
-		_spec.ClearField(pagetranslation.FieldCreatedBy, field.TypeUint32)
+		_spec.ClearField(pagetranslation.FieldCreatedBy, field.TypeUint64)
 	}
 	if value, ok := _u.mutation.UpdatedBy(); ok {
-		_spec.SetField(pagetranslation.FieldUpdatedBy, field.TypeUint32, value)
+		_spec.SetField(pagetranslation.FieldUpdatedBy, field.TypeUint64, value)
 	}
 	if value, ok := _u.mutation.AddedUpdatedBy(); ok {
-		_spec.AddField(pagetranslation.FieldUpdatedBy, field.TypeUint32, value)
+		_spec.AddField(pagetranslation.FieldUpdatedBy, field.TypeUint64, value)
 	}
 	if _u.mutation.UpdatedByCleared() {
-		_spec.ClearField(pagetranslation.FieldUpdatedBy, field.TypeUint32)
+		_spec.ClearField(pagetranslation.FieldUpdatedBy, field.TypeUint64)
 	}
 	if value, ok := _u.mutation.DeletedBy(); ok {
-		_spec.SetField(pagetranslation.FieldDeletedBy, field.TypeUint32, value)
+		_spec.SetField(pagetranslation.FieldDeletedBy, field.TypeUint64, value)
 	}
 	if value, ok := _u.mutation.AddedDeletedBy(); ok {
-		_spec.AddField(pagetranslation.FieldDeletedBy, field.TypeUint32, value)
+		_spec.AddField(pagetranslation.FieldDeletedBy, field.TypeUint64, value)
 	}
 	if _u.mutation.DeletedByCleared() {
-		_spec.ClearField(pagetranslation.FieldDeletedBy, field.TypeUint32)
+		_spec.ClearField(pagetranslation.FieldDeletedBy, field.TypeUint64)
 	}
 	if value, ok := _u.mutation.Seo(); ok {
 		_spec.SetField(pagetranslation.FieldSeo, field.TypeJSON, value)
@@ -386,16 +386,16 @@ func (_u *PageTranslationUpdate) sqlSave(ctx context.Context) (_node int, err er
 		_spec.ClearField(pagetranslation.FieldSeo, field.TypeJSON)
 	}
 	if _u.mutation.TenantIDCleared() {
-		_spec.ClearField(pagetranslation.FieldTenantID, field.TypeUint32)
+		_spec.ClearField(pagetranslation.FieldTenantID, field.TypeUint64)
 	}
 	if value, ok := _u.mutation.PageID(); ok {
-		_spec.SetField(pagetranslation.FieldPageID, field.TypeUint32, value)
+		_spec.SetField(pagetranslation.FieldPageID, field.TypeUint64, value)
 	}
 	if value, ok := _u.mutation.AddedPageID(); ok {
-		_spec.AddField(pagetranslation.FieldPageID, field.TypeUint32, value)
+		_spec.AddField(pagetranslation.FieldPageID, field.TypeUint64, value)
 	}
 	if _u.mutation.PageIDCleared() {
-		_spec.ClearField(pagetranslation.FieldPageID, field.TypeUint32)
+		_spec.ClearField(pagetranslation.FieldPageID, field.TypeUint64)
 	}
 	if value, ok := _u.mutation.LanguageCode(); ok {
 		_spec.SetField(pagetranslation.FieldLanguageCode, field.TypeString, value)
@@ -490,14 +490,14 @@ func (_u *PageTranslationUpdateOne) ClearDeletedAt() *PageTranslationUpdateOne {
 }
 
 // SetCreatedBy sets the "created_by" field.
-func (_u *PageTranslationUpdateOne) SetCreatedBy(v uint32) *PageTranslationUpdateOne {
+func (_u *PageTranslationUpdateOne) SetCreatedBy(v uint64) *PageTranslationUpdateOne {
 	_u.mutation.ResetCreatedBy()
 	_u.mutation.SetCreatedBy(v)
 	return _u
 }
 
 // SetNillableCreatedBy sets the "created_by" field if the given value is not nil.
-func (_u *PageTranslationUpdateOne) SetNillableCreatedBy(v *uint32) *PageTranslationUpdateOne {
+func (_u *PageTranslationUpdateOne) SetNillableCreatedBy(v *uint64) *PageTranslationUpdateOne {
 	if v != nil {
 		_u.SetCreatedBy(*v)
 	}
@@ -505,7 +505,7 @@ func (_u *PageTranslationUpdateOne) SetNillableCreatedBy(v *uint32) *PageTransla
 }
 
 // AddCreatedBy adds value to the "created_by" field.
-func (_u *PageTranslationUpdateOne) AddCreatedBy(v int32) *PageTranslationUpdateOne {
+func (_u *PageTranslationUpdateOne) AddCreatedBy(v int64) *PageTranslationUpdateOne {
 	_u.mutation.AddCreatedBy(v)
 	return _u
 }
@@ -517,14 +517,14 @@ func (_u *PageTranslationUpdateOne) ClearCreatedBy() *PageTranslationUpdateOne {
 }
 
 // SetUpdatedBy sets the "updated_by" field.
-func (_u *PageTranslationUpdateOne) SetUpdatedBy(v uint32) *PageTranslationUpdateOne {
+func (_u *PageTranslationUpdateOne) SetUpdatedBy(v uint64) *PageTranslationUpdateOne {
 	_u.mutation.ResetUpdatedBy()
 	_u.mutation.SetUpdatedBy(v)
 	return _u
 }
 
 // SetNillableUpdatedBy sets the "updated_by" field if the given value is not nil.
-func (_u *PageTranslationUpdateOne) SetNillableUpdatedBy(v *uint32) *PageTranslationUpdateOne {
+func (_u *PageTranslationUpdateOne) SetNillableUpdatedBy(v *uint64) *PageTranslationUpdateOne {
 	if v != nil {
 		_u.SetUpdatedBy(*v)
 	}
@@ -532,7 +532,7 @@ func (_u *PageTranslationUpdateOne) SetNillableUpdatedBy(v *uint32) *PageTransla
 }
 
 // AddUpdatedBy adds value to the "updated_by" field.
-func (_u *PageTranslationUpdateOne) AddUpdatedBy(v int32) *PageTranslationUpdateOne {
+func (_u *PageTranslationUpdateOne) AddUpdatedBy(v int64) *PageTranslationUpdateOne {
 	_u.mutation.AddUpdatedBy(v)
 	return _u
 }
@@ -544,14 +544,14 @@ func (_u *PageTranslationUpdateOne) ClearUpdatedBy() *PageTranslationUpdateOne {
 }
 
 // SetDeletedBy sets the "deleted_by" field.
-func (_u *PageTranslationUpdateOne) SetDeletedBy(v uint32) *PageTranslationUpdateOne {
+func (_u *PageTranslationUpdateOne) SetDeletedBy(v uint64) *PageTranslationUpdateOne {
 	_u.mutation.ResetDeletedBy()
 	_u.mutation.SetDeletedBy(v)
 	return _u
 }
 
 // SetNillableDeletedBy sets the "deleted_by" field if the given value is not nil.
-func (_u *PageTranslationUpdateOne) SetNillableDeletedBy(v *uint32) *PageTranslationUpdateOne {
+func (_u *PageTranslationUpdateOne) SetNillableDeletedBy(v *uint64) *PageTranslationUpdateOne {
 	if v != nil {
 		_u.SetDeletedBy(*v)
 	}
@@ -559,7 +559,7 @@ func (_u *PageTranslationUpdateOne) SetNillableDeletedBy(v *uint32) *PageTransla
 }
 
 // AddDeletedBy adds value to the "deleted_by" field.
-func (_u *PageTranslationUpdateOne) AddDeletedBy(v int32) *PageTranslationUpdateOne {
+func (_u *PageTranslationUpdateOne) AddDeletedBy(v int64) *PageTranslationUpdateOne {
 	_u.mutation.AddDeletedBy(v)
 	return _u
 }
@@ -583,14 +583,14 @@ func (_u *PageTranslationUpdateOne) ClearSeo() *PageTranslationUpdateOne {
 }
 
 // SetPageID sets the "page_id" field.
-func (_u *PageTranslationUpdateOne) SetPageID(v uint32) *PageTranslationUpdateOne {
+func (_u *PageTranslationUpdateOne) SetPageID(v uint64) *PageTranslationUpdateOne {
 	_u.mutation.ResetPageID()
 	_u.mutation.SetPageID(v)
 	return _u
 }
 
 // SetNillablePageID sets the "page_id" field if the given value is not nil.
-func (_u *PageTranslationUpdateOne) SetNillablePageID(v *uint32) *PageTranslationUpdateOne {
+func (_u *PageTranslationUpdateOne) SetNillablePageID(v *uint64) *PageTranslationUpdateOne {
 	if v != nil {
 		_u.SetPageID(*v)
 	}
@@ -598,7 +598,7 @@ func (_u *PageTranslationUpdateOne) SetNillablePageID(v *uint32) *PageTranslatio
 }
 
 // AddPageID adds value to the "page_id" field.
-func (_u *PageTranslationUpdateOne) AddPageID(v int32) *PageTranslationUpdateOne {
+func (_u *PageTranslationUpdateOne) AddPageID(v int64) *PageTranslationUpdateOne {
 	_u.mutation.AddPageID(v)
 	return _u
 }
@@ -761,7 +761,7 @@ func (_u *PageTranslationUpdateOne) Modify(modifiers ...func(u *sql.UpdateBuilde
 }
 
 func (_u *PageTranslationUpdateOne) sqlSave(ctx context.Context) (_node *PageTranslation, err error) {
-	_spec := sqlgraph.NewUpdateSpec(pagetranslation.Table, pagetranslation.Columns, sqlgraph.NewFieldSpec(pagetranslation.FieldID, field.TypeUint32))
+	_spec := sqlgraph.NewUpdateSpec(pagetranslation.Table, pagetranslation.Columns, sqlgraph.NewFieldSpec(pagetranslation.FieldID, field.TypeUint64))
 	id, ok := _u.mutation.ID()
 	if !ok {
 		return nil, &ValidationError{Name: "id", err: errors.New(`ent: missing "PageTranslation.id" for update`)}
@@ -802,31 +802,31 @@ func (_u *PageTranslationUpdateOne) sqlSave(ctx context.Context) (_node *PageTra
 		_spec.ClearField(pagetranslation.FieldDeletedAt, field.TypeTime)
 	}
 	if value, ok := _u.mutation.CreatedBy(); ok {
-		_spec.SetField(pagetranslation.FieldCreatedBy, field.TypeUint32, value)
+		_spec.SetField(pagetranslation.FieldCreatedBy, field.TypeUint64, value)
 	}
 	if value, ok := _u.mutation.AddedCreatedBy(); ok {
-		_spec.AddField(pagetranslation.FieldCreatedBy, field.TypeUint32, value)
+		_spec.AddField(pagetranslation.FieldCreatedBy, field.TypeUint64, value)
 	}
 	if _u.mutation.CreatedByCleared() {
-		_spec.ClearField(pagetranslation.FieldCreatedBy, field.TypeUint32)
+		_spec.ClearField(pagetranslation.FieldCreatedBy, field.TypeUint64)
 	}
 	if value, ok := _u.mutation.UpdatedBy(); ok {
-		_spec.SetField(pagetranslation.FieldUpdatedBy, field.TypeUint32, value)
+		_spec.SetField(pagetranslation.FieldUpdatedBy, field.TypeUint64, value)
 	}
 	if value, ok := _u.mutation.AddedUpdatedBy(); ok {
-		_spec.AddField(pagetranslation.FieldUpdatedBy, field.TypeUint32, value)
+		_spec.AddField(pagetranslation.FieldUpdatedBy, field.TypeUint64, value)
 	}
 	if _u.mutation.UpdatedByCleared() {
-		_spec.ClearField(pagetranslation.FieldUpdatedBy, field.TypeUint32)
+		_spec.ClearField(pagetranslation.FieldUpdatedBy, field.TypeUint64)
 	}
 	if value, ok := _u.mutation.DeletedBy(); ok {
-		_spec.SetField(pagetranslation.FieldDeletedBy, field.TypeUint32, value)
+		_spec.SetField(pagetranslation.FieldDeletedBy, field.TypeUint64, value)
 	}
 	if value, ok := _u.mutation.AddedDeletedBy(); ok {
-		_spec.AddField(pagetranslation.FieldDeletedBy, field.TypeUint32, value)
+		_spec.AddField(pagetranslation.FieldDeletedBy, field.TypeUint64, value)
 	}
 	if _u.mutation.DeletedByCleared() {
-		_spec.ClearField(pagetranslation.FieldDeletedBy, field.TypeUint32)
+		_spec.ClearField(pagetranslation.FieldDeletedBy, field.TypeUint64)
 	}
 	if value, ok := _u.mutation.Seo(); ok {
 		_spec.SetField(pagetranslation.FieldSeo, field.TypeJSON, value)
@@ -835,16 +835,16 @@ func (_u *PageTranslationUpdateOne) sqlSave(ctx context.Context) (_node *PageTra
 		_spec.ClearField(pagetranslation.FieldSeo, field.TypeJSON)
 	}
 	if _u.mutation.TenantIDCleared() {
-		_spec.ClearField(pagetranslation.FieldTenantID, field.TypeUint32)
+		_spec.ClearField(pagetranslation.FieldTenantID, field.TypeUint64)
 	}
 	if value, ok := _u.mutation.PageID(); ok {
-		_spec.SetField(pagetranslation.FieldPageID, field.TypeUint32, value)
+		_spec.SetField(pagetranslation.FieldPageID, field.TypeUint64, value)
 	}
 	if value, ok := _u.mutation.AddedPageID(); ok {
-		_spec.AddField(pagetranslation.FieldPageID, field.TypeUint32, value)
+		_spec.AddField(pagetranslation.FieldPageID, field.TypeUint64, value)
 	}
 	if _u.mutation.PageIDCleared() {
-		_spec.ClearField(pagetranslation.FieldPageID, field.TypeUint32)
+		_spec.ClearField(pagetranslation.FieldPageID, field.TypeUint64)
 	}
 	if value, ok := _u.mutation.LanguageCode(); ok {
 		_spec.SetField(pagetranslation.FieldLanguageCode, field.TypeString, value)

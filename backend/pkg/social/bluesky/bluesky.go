@@ -303,9 +303,9 @@ func (c *Client) FetchStats(ctx context.Context, creds social.Credentials, exter
 
 	p := resp.Posts[0]
 	return &social.Stats{
-		Likes:   clampUint32(p.LikeCount),
-		Replies: clampUint32(p.ReplyCount),
-		Reposts: clampUint32(p.RepostCount),
+		Likes:   clampUint64(p.LikeCount),
+		Replies: clampUint64(p.ReplyCount),
+		Reposts: clampUint64(p.RepostCount),
 	}, nil
 }
 
@@ -453,12 +453,9 @@ func webURL(handle, atURI string) string {
 	return fmt.Sprintf("https://bsky.app/profile/%s/post/%s", handle, rkey)
 }
 
-func clampUint32(v int64) uint32 {
+func clampUint64(v int64) uint64 {
 	if v < 0 {
 		return 0
 	}
-	if v > int64(^uint32(0)) {
-		return ^uint32(0)
-	}
-	return uint32(v)
+	return uint64(v)
 }

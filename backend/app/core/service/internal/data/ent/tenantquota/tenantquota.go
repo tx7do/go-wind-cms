@@ -61,9 +61,9 @@ func ValidColumn(column string) bool {
 
 var (
 	// TenantIDValidator is a validator for the "tenant_id" field. It is called by the builders before save.
-	TenantIDValidator func(uint32) error
+	TenantIDValidator func(uint64) error
 	// IDValidator is a validator for the "id" field. It is called by the builders before save.
-	IDValidator func(uint32) error
+	IDValidator func(uint64) error
 )
 
 // QuotaType defines the type for the "quota_type" enum field.

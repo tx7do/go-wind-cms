@@ -75,13 +75,13 @@ func (s *AiChatService) Chat(req *aiV1.ChatRequest, stream grpc.ServerStreamingS
 
 	// BFF 注入的 operator 字段优先（流式 RPC 的元数据转发不可靠，见 proto 注释）；
 	// 缺失时回落 viewer 上下文。
-	var userId, tenantId uint32
+	var userId, tenantId uint64
 	if uid := req.GetOperatorUserId(); uid > 0 {
 		userId = uid
 		tenantId = req.GetOperatorTenantId()
 	} else {
 		if vc, exist := viewer.FromContext(ctx); exist && vc != nil {
-			tenantId = uint32(vc.TenantID())
+			tenantId = uint64(vc.TenantID())
 		}
 		if uid, hasUser := viewerUserIDFromContext(ctx); hasUser {
 			userId = uid
@@ -270,7 +270,7 @@ func (s *AiChatService) Chat(req *aiV1.ChatRequest, stream grpc.ServerStreamingS
 }
 
 // resolveProvider 解析本次对话使用的提供商。
-func (s *AiChatService) resolveProvider(ctx context.Context, providerId uint32) (*ent.AiProvider, error) {
+func (s *AiChatService) resolveProvider(ctx context.Context, providerId uint64) (*ent.AiProvider, error) {
 	if providerId > 0 {
 		entity, err := s.providerRepo.GetEntityByID(ctx, providerId)
 		if err != nil {
@@ -285,7 +285,7 @@ func (s *AiChatService) resolveProvider(ctx context.Context, providerId uint32) 
 }
 
 // resolveConversation 会话复用或新建（新建时标题取首条消息摘要）。
-func (s *AiChatService) resolveConversation(ctx context.Context, userId, tenantId, conversationId uint32, provider *ent.AiProvider, content string) (*ent.AiConversation, error) {
+func (s *AiChatService) resolveConversation(ctx context.Context, userId, tenantId, conversationId uint64, provider *ent.AiProvider, content string) (*ent.AiConversation, error) {
 	if conversationId > 0 {
 		entity, err := s.conversationRepo.GetEntityByID(ctx, conversationId)
 		if err != nil {

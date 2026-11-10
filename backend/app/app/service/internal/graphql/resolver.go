@@ -63,7 +63,7 @@ func (r *queryResolver) Post(ctx context.Context, id *string, slug *string, loca
 	if hasSlug {
 		p, err = r.postSvc.GetBySlug(ctx, &appV1.GetPostBySlugRequest{Slug: *slug, Locale: loc})
 	} else {
-		var pid uint32
+		var pid uint64
 		if pid, err = parseID(*id); err == nil {
 			p, err = r.postSvc.Get(ctx, &contentV1.GetPostRequest{
 				QueryBy: &contentV1.GetPostRequest_Id{Id: pid},
@@ -113,7 +113,7 @@ func (r *queryResolver) Page(ctx context.Context, id *string, slug *string, loca
 	if hasSlug {
 		pg, err = r.pageSvc.GetBySlug(ctx, &appV1.GetPageBySlugRequest{Slug: *slug, Locale: loc})
 	} else {
-		var pid uint32
+		var pid uint64
 		if pid, err = parseID(*id); err == nil {
 			pg, err = r.pageSvc.Get(ctx, &contentV1.GetPageRequest{
 				QueryBy: &contentV1.GetPageRequest_Id{Id: pid},
@@ -339,15 +339,15 @@ func normPageSize(pageSize *int) int {
 	return 20
 }
 
-func parseID(raw string) (uint32, error) {
+func parseID(raw string) (uint64, error) {
 	v, err := strconv.ParseUint(raw, 10, 32)
 	if err != nil {
 		return 0, contentV1.ErrorBadRequest("invalid id: %s", raw)
 	}
-	return uint32(v), nil
+	return uint64(v), nil
 }
 
-func formatID(id uint32) string {
+func formatID(id uint64) string {
 	return strconv.FormatUint(uint64(id), 10)
 }
 

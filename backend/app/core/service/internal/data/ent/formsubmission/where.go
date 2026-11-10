@@ -10,47 +10,47 @@ import (
 )
 
 // ID filters vertices based on their ID field.
-func ID(id uint32) predicate.FormSubmission {
+func ID(id uint64) predicate.FormSubmission {
 	return predicate.FormSubmission(sql.FieldEQ(FieldID, id))
 }
 
 // IDEQ applies the EQ predicate on the ID field.
-func IDEQ(id uint32) predicate.FormSubmission {
+func IDEQ(id uint64) predicate.FormSubmission {
 	return predicate.FormSubmission(sql.FieldEQ(FieldID, id))
 }
 
 // IDNEQ applies the NEQ predicate on the ID field.
-func IDNEQ(id uint32) predicate.FormSubmission {
+func IDNEQ(id uint64) predicate.FormSubmission {
 	return predicate.FormSubmission(sql.FieldNEQ(FieldID, id))
 }
 
 // IDIn applies the In predicate on the ID field.
-func IDIn(ids ...uint32) predicate.FormSubmission {
+func IDIn(ids ...uint64) predicate.FormSubmission {
 	return predicate.FormSubmission(sql.FieldIn(FieldID, ids...))
 }
 
 // IDNotIn applies the NotIn predicate on the ID field.
-func IDNotIn(ids ...uint32) predicate.FormSubmission {
+func IDNotIn(ids ...uint64) predicate.FormSubmission {
 	return predicate.FormSubmission(sql.FieldNotIn(FieldID, ids...))
 }
 
 // IDGT applies the GT predicate on the ID field.
-func IDGT(id uint32) predicate.FormSubmission {
+func IDGT(id uint64) predicate.FormSubmission {
 	return predicate.FormSubmission(sql.FieldGT(FieldID, id))
 }
 
 // IDGTE applies the GTE predicate on the ID field.
-func IDGTE(id uint32) predicate.FormSubmission {
+func IDGTE(id uint64) predicate.FormSubmission {
 	return predicate.FormSubmission(sql.FieldGTE(FieldID, id))
 }
 
 // IDLT applies the LT predicate on the ID field.
-func IDLT(id uint32) predicate.FormSubmission {
+func IDLT(id uint64) predicate.FormSubmission {
 	return predicate.FormSubmission(sql.FieldLT(FieldID, id))
 }
 
 // IDLTE applies the LTE predicate on the ID field.
-func IDLTE(id uint32) predicate.FormSubmission {
+func IDLTE(id uint64) predicate.FormSubmission {
 	return predicate.FormSubmission(sql.FieldLTE(FieldID, id))
 }
 
@@ -70,22 +70,22 @@ func DeletedAt(v time.Time) predicate.FormSubmission {
 }
 
 // TenantID applies equality check predicate on the "tenant_id" field. It's identical to TenantIDEQ.
-func TenantID(v uint32) predicate.FormSubmission {
+func TenantID(v uint64) predicate.FormSubmission {
 	return predicate.FormSubmission(sql.FieldEQ(FieldTenantID, v))
 }
 
 // PageID applies equality check predicate on the "page_id" field. It's identical to PageIDEQ.
-func PageID(v uint32) predicate.FormSubmission {
+func PageID(v uint64) predicate.FormSubmission {
 	return predicate.FormSubmission(sql.FieldEQ(FieldPageID, v))
 }
 
 // SectionID applies equality check predicate on the "section_id" field. It's identical to SectionIDEQ.
-func SectionID(v uint32) predicate.FormSubmission {
+func SectionID(v uint64) predicate.FormSubmission {
 	return predicate.FormSubmission(sql.FieldEQ(FieldSectionID, v))
 }
 
 // UserID applies equality check predicate on the "user_id" field. It's identical to UserIDEQ.
-func UserID(v uint32) predicate.FormSubmission {
+func UserID(v uint64) predicate.FormSubmission {
 	return predicate.FormSubmission(sql.FieldEQ(FieldUserID, v))
 }
 
@@ -240,42 +240,42 @@ func DeletedAtNotNil() predicate.FormSubmission {
 }
 
 // TenantIDEQ applies the EQ predicate on the "tenant_id" field.
-func TenantIDEQ(v uint32) predicate.FormSubmission {
+func TenantIDEQ(v uint64) predicate.FormSubmission {
 	return predicate.FormSubmission(sql.FieldEQ(FieldTenantID, v))
 }
 
 // TenantIDNEQ applies the NEQ predicate on the "tenant_id" field.
-func TenantIDNEQ(v uint32) predicate.FormSubmission {
+func TenantIDNEQ(v uint64) predicate.FormSubmission {
 	return predicate.FormSubmission(sql.FieldNEQ(FieldTenantID, v))
 }
 
 // TenantIDIn applies the In predicate on the "tenant_id" field.
-func TenantIDIn(vs ...uint32) predicate.FormSubmission {
+func TenantIDIn(vs ...uint64) predicate.FormSubmission {
 	return predicate.FormSubmission(sql.FieldIn(FieldTenantID, vs...))
 }
 
 // TenantIDNotIn applies the NotIn predicate on the "tenant_id" field.
-func TenantIDNotIn(vs ...uint32) predicate.FormSubmission {
+func TenantIDNotIn(vs ...uint64) predicate.FormSubmission {
 	return predicate.FormSubmission(sql.FieldNotIn(FieldTenantID, vs...))
 }
 
 // TenantIDGT applies the GT predicate on the "tenant_id" field.
-func TenantIDGT(v uint32) predicate.FormSubmission {
+func TenantIDGT(v uint64) predicate.FormSubmission {
 	return predicate.FormSubmission(sql.FieldGT(FieldTenantID, v))
 }
 
 // TenantIDGTE applies the GTE predicate on the "tenant_id" field.
-func TenantIDGTE(v uint32) predicate.FormSubmission {
+func TenantIDGTE(v uint64) predicate.FormSubmission {
 	return predicate.FormSubmission(sql.FieldGTE(FieldTenantID, v))
 }
 
 // TenantIDLT applies the LT predicate on the "tenant_id" field.
-func TenantIDLT(v uint32) predicate.FormSubmission {
+func TenantIDLT(v uint64) predicate.FormSubmission {
 	return predicate.FormSubmission(sql.FieldLT(FieldTenantID, v))
 }
 
 // TenantIDLTE applies the LTE predicate on the "tenant_id" field.
-func TenantIDLTE(v uint32) predicate.FormSubmission {
+func TenantIDLTE(v uint64) predicate.FormSubmission {
 	return predicate.FormSubmission(sql.FieldLTE(FieldTenantID, v))
 }
 
@@ -290,42 +290,42 @@ func TenantIDNotNil() predicate.FormSubmission {
 }
 
 // PageIDEQ applies the EQ predicate on the "page_id" field.
-func PageIDEQ(v uint32) predicate.FormSubmission {
+func PageIDEQ(v uint64) predicate.FormSubmission {
 	return predicate.FormSubmission(sql.FieldEQ(FieldPageID, v))
 }
 
 // PageIDNEQ applies the NEQ predicate on the "page_id" field.
-func PageIDNEQ(v uint32) predicate.FormSubmission {
+func PageIDNEQ(v uint64) predicate.FormSubmission {
 	return predicate.FormSubmission(sql.FieldNEQ(FieldPageID, v))
 }
 
 // PageIDIn applies the In predicate on the "page_id" field.
-func PageIDIn(vs ...uint32) predicate.FormSubmission {
+func PageIDIn(vs ...uint64) predicate.FormSubmission {
 	return predicate.FormSubmission(sql.FieldIn(FieldPageID, vs...))
 }
 
 // PageIDNotIn applies the NotIn predicate on the "page_id" field.
-func PageIDNotIn(vs ...uint32) predicate.FormSubmission {
+func PageIDNotIn(vs ...uint64) predicate.FormSubmission {
 	return predicate.FormSubmission(sql.FieldNotIn(FieldPageID, vs...))
 }
 
 // PageIDGT applies the GT predicate on the "page_id" field.
-func PageIDGT(v uint32) predicate.FormSubmission {
+func PageIDGT(v uint64) predicate.FormSubmission {
 	return predicate.FormSubmission(sql.FieldGT(FieldPageID, v))
 }
 
 // PageIDGTE applies the GTE predicate on the "page_id" field.
-func PageIDGTE(v uint32) predicate.FormSubmission {
+func PageIDGTE(v uint64) predicate.FormSubmission {
 	return predicate.FormSubmission(sql.FieldGTE(FieldPageID, v))
 }
 
 // PageIDLT applies the LT predicate on the "page_id" field.
-func PageIDLT(v uint32) predicate.FormSubmission {
+func PageIDLT(v uint64) predicate.FormSubmission {
 	return predicate.FormSubmission(sql.FieldLT(FieldPageID, v))
 }
 
 // PageIDLTE applies the LTE predicate on the "page_id" field.
-func PageIDLTE(v uint32) predicate.FormSubmission {
+func PageIDLTE(v uint64) predicate.FormSubmission {
 	return predicate.FormSubmission(sql.FieldLTE(FieldPageID, v))
 }
 
@@ -340,42 +340,42 @@ func PageIDNotNil() predicate.FormSubmission {
 }
 
 // SectionIDEQ applies the EQ predicate on the "section_id" field.
-func SectionIDEQ(v uint32) predicate.FormSubmission {
+func SectionIDEQ(v uint64) predicate.FormSubmission {
 	return predicate.FormSubmission(sql.FieldEQ(FieldSectionID, v))
 }
 
 // SectionIDNEQ applies the NEQ predicate on the "section_id" field.
-func SectionIDNEQ(v uint32) predicate.FormSubmission {
+func SectionIDNEQ(v uint64) predicate.FormSubmission {
 	return predicate.FormSubmission(sql.FieldNEQ(FieldSectionID, v))
 }
 
 // SectionIDIn applies the In predicate on the "section_id" field.
-func SectionIDIn(vs ...uint32) predicate.FormSubmission {
+func SectionIDIn(vs ...uint64) predicate.FormSubmission {
 	return predicate.FormSubmission(sql.FieldIn(FieldSectionID, vs...))
 }
 
 // SectionIDNotIn applies the NotIn predicate on the "section_id" field.
-func SectionIDNotIn(vs ...uint32) predicate.FormSubmission {
+func SectionIDNotIn(vs ...uint64) predicate.FormSubmission {
 	return predicate.FormSubmission(sql.FieldNotIn(FieldSectionID, vs...))
 }
 
 // SectionIDGT applies the GT predicate on the "section_id" field.
-func SectionIDGT(v uint32) predicate.FormSubmission {
+func SectionIDGT(v uint64) predicate.FormSubmission {
 	return predicate.FormSubmission(sql.FieldGT(FieldSectionID, v))
 }
 
 // SectionIDGTE applies the GTE predicate on the "section_id" field.
-func SectionIDGTE(v uint32) predicate.FormSubmission {
+func SectionIDGTE(v uint64) predicate.FormSubmission {
 	return predicate.FormSubmission(sql.FieldGTE(FieldSectionID, v))
 }
 
 // SectionIDLT applies the LT predicate on the "section_id" field.
-func SectionIDLT(v uint32) predicate.FormSubmission {
+func SectionIDLT(v uint64) predicate.FormSubmission {
 	return predicate.FormSubmission(sql.FieldLT(FieldSectionID, v))
 }
 
 // SectionIDLTE applies the LTE predicate on the "section_id" field.
-func SectionIDLTE(v uint32) predicate.FormSubmission {
+func SectionIDLTE(v uint64) predicate.FormSubmission {
 	return predicate.FormSubmission(sql.FieldLTE(FieldSectionID, v))
 }
 
@@ -400,42 +400,42 @@ func DataNotNil() predicate.FormSubmission {
 }
 
 // UserIDEQ applies the EQ predicate on the "user_id" field.
-func UserIDEQ(v uint32) predicate.FormSubmission {
+func UserIDEQ(v uint64) predicate.FormSubmission {
 	return predicate.FormSubmission(sql.FieldEQ(FieldUserID, v))
 }
 
 // UserIDNEQ applies the NEQ predicate on the "user_id" field.
-func UserIDNEQ(v uint32) predicate.FormSubmission {
+func UserIDNEQ(v uint64) predicate.FormSubmission {
 	return predicate.FormSubmission(sql.FieldNEQ(FieldUserID, v))
 }
 
 // UserIDIn applies the In predicate on the "user_id" field.
-func UserIDIn(vs ...uint32) predicate.FormSubmission {
+func UserIDIn(vs ...uint64) predicate.FormSubmission {
 	return predicate.FormSubmission(sql.FieldIn(FieldUserID, vs...))
 }
 
 // UserIDNotIn applies the NotIn predicate on the "user_id" field.
-func UserIDNotIn(vs ...uint32) predicate.FormSubmission {
+func UserIDNotIn(vs ...uint64) predicate.FormSubmission {
 	return predicate.FormSubmission(sql.FieldNotIn(FieldUserID, vs...))
 }
 
 // UserIDGT applies the GT predicate on the "user_id" field.
-func UserIDGT(v uint32) predicate.FormSubmission {
+func UserIDGT(v uint64) predicate.FormSubmission {
 	return predicate.FormSubmission(sql.FieldGT(FieldUserID, v))
 }
 
 // UserIDGTE applies the GTE predicate on the "user_id" field.
-func UserIDGTE(v uint32) predicate.FormSubmission {
+func UserIDGTE(v uint64) predicate.FormSubmission {
 	return predicate.FormSubmission(sql.FieldGTE(FieldUserID, v))
 }
 
 // UserIDLT applies the LT predicate on the "user_id" field.
-func UserIDLT(v uint32) predicate.FormSubmission {
+func UserIDLT(v uint64) predicate.FormSubmission {
 	return predicate.FormSubmission(sql.FieldLT(FieldUserID, v))
 }
 
 // UserIDLTE applies the LTE predicate on the "user_id" field.
-func UserIDLTE(v uint32) predicate.FormSubmission {
+func UserIDLTE(v uint64) predicate.FormSubmission {
 	return predicate.FormSubmission(sql.FieldLTE(FieldUserID, v))
 }
 

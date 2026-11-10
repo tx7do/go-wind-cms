@@ -70,14 +70,14 @@ func (_u *WebhookDeliveryUpdate) ClearDeletedAt() *WebhookDeliveryUpdate {
 }
 
 // SetWebhookID sets the "webhook_id" field.
-func (_u *WebhookDeliveryUpdate) SetWebhookID(v uint32) *WebhookDeliveryUpdate {
+func (_u *WebhookDeliveryUpdate) SetWebhookID(v uint64) *WebhookDeliveryUpdate {
 	_u.mutation.ResetWebhookID()
 	_u.mutation.SetWebhookID(v)
 	return _u
 }
 
 // SetNillableWebhookID sets the "webhook_id" field if the given value is not nil.
-func (_u *WebhookDeliveryUpdate) SetNillableWebhookID(v *uint32) *WebhookDeliveryUpdate {
+func (_u *WebhookDeliveryUpdate) SetNillableWebhookID(v *uint64) *WebhookDeliveryUpdate {
 	if v != nil {
 		_u.SetWebhookID(*v)
 	}
@@ -85,7 +85,7 @@ func (_u *WebhookDeliveryUpdate) SetNillableWebhookID(v *uint32) *WebhookDeliver
 }
 
 // AddWebhookID adds value to the "webhook_id" field.
-func (_u *WebhookDeliveryUpdate) AddWebhookID(v int32) *WebhookDeliveryUpdate {
+func (_u *WebhookDeliveryUpdate) AddWebhookID(v int64) *WebhookDeliveryUpdate {
 	_u.mutation.AddWebhookID(v)
 	return _u
 }
@@ -117,14 +117,14 @@ func (_u *WebhookDeliveryUpdate) ClearEvent() *WebhookDeliveryUpdate {
 }
 
 // SetEntityID sets the "entity_id" field.
-func (_u *WebhookDeliveryUpdate) SetEntityID(v uint32) *WebhookDeliveryUpdate {
+func (_u *WebhookDeliveryUpdate) SetEntityID(v uint64) *WebhookDeliveryUpdate {
 	_u.mutation.ResetEntityID()
 	_u.mutation.SetEntityID(v)
 	return _u
 }
 
 // SetNillableEntityID sets the "entity_id" field if the given value is not nil.
-func (_u *WebhookDeliveryUpdate) SetNillableEntityID(v *uint32) *WebhookDeliveryUpdate {
+func (_u *WebhookDeliveryUpdate) SetNillableEntityID(v *uint64) *WebhookDeliveryUpdate {
 	if v != nil {
 		_u.SetEntityID(*v)
 	}
@@ -132,7 +132,7 @@ func (_u *WebhookDeliveryUpdate) SetNillableEntityID(v *uint32) *WebhookDelivery
 }
 
 // AddEntityID adds value to the "entity_id" field.
-func (_u *WebhookDeliveryUpdate) AddEntityID(v int32) *WebhookDeliveryUpdate {
+func (_u *WebhookDeliveryUpdate) AddEntityID(v int64) *WebhookDeliveryUpdate {
 	_u.mutation.AddEntityID(v)
 	return _u
 }
@@ -289,7 +289,7 @@ func (_u *WebhookDeliveryUpdate) sqlSave(ctx context.Context) (_node int, err er
 	if err := _u.check(); err != nil {
 		return _node, err
 	}
-	_spec := sqlgraph.NewUpdateSpec(webhookdelivery.Table, webhookdelivery.Columns, sqlgraph.NewFieldSpec(webhookdelivery.FieldID, field.TypeUint32))
+	_spec := sqlgraph.NewUpdateSpec(webhookdelivery.Table, webhookdelivery.Columns, sqlgraph.NewFieldSpec(webhookdelivery.FieldID, field.TypeUint64))
 	if ps := _u.mutation.predicates; len(ps) > 0 {
 		_spec.Predicate = func(selector *sql.Selector) {
 			for i := range ps {
@@ -313,16 +313,16 @@ func (_u *WebhookDeliveryUpdate) sqlSave(ctx context.Context) (_node int, err er
 		_spec.ClearField(webhookdelivery.FieldDeletedAt, field.TypeTime)
 	}
 	if _u.mutation.TenantIDCleared() {
-		_spec.ClearField(webhookdelivery.FieldTenantID, field.TypeUint32)
+		_spec.ClearField(webhookdelivery.FieldTenantID, field.TypeUint64)
 	}
 	if value, ok := _u.mutation.WebhookID(); ok {
-		_spec.SetField(webhookdelivery.FieldWebhookID, field.TypeUint32, value)
+		_spec.SetField(webhookdelivery.FieldWebhookID, field.TypeUint64, value)
 	}
 	if value, ok := _u.mutation.AddedWebhookID(); ok {
-		_spec.AddField(webhookdelivery.FieldWebhookID, field.TypeUint32, value)
+		_spec.AddField(webhookdelivery.FieldWebhookID, field.TypeUint64, value)
 	}
 	if _u.mutation.WebhookIDCleared() {
-		_spec.ClearField(webhookdelivery.FieldWebhookID, field.TypeUint32)
+		_spec.ClearField(webhookdelivery.FieldWebhookID, field.TypeUint64)
 	}
 	if value, ok := _u.mutation.Event(); ok {
 		_spec.SetField(webhookdelivery.FieldEvent, field.TypeString, value)
@@ -331,13 +331,13 @@ func (_u *WebhookDeliveryUpdate) sqlSave(ctx context.Context) (_node int, err er
 		_spec.ClearField(webhookdelivery.FieldEvent, field.TypeString)
 	}
 	if value, ok := _u.mutation.EntityID(); ok {
-		_spec.SetField(webhookdelivery.FieldEntityID, field.TypeUint32, value)
+		_spec.SetField(webhookdelivery.FieldEntityID, field.TypeUint64, value)
 	}
 	if value, ok := _u.mutation.AddedEntityID(); ok {
-		_spec.AddField(webhookdelivery.FieldEntityID, field.TypeUint32, value)
+		_spec.AddField(webhookdelivery.FieldEntityID, field.TypeUint64, value)
 	}
 	if _u.mutation.EntityIDCleared() {
-		_spec.ClearField(webhookdelivery.FieldEntityID, field.TypeUint32)
+		_spec.ClearField(webhookdelivery.FieldEntityID, field.TypeUint64)
 	}
 	if value, ok := _u.mutation.Status(); ok {
 		_spec.SetField(webhookdelivery.FieldStatus, field.TypeEnum, value)
@@ -432,14 +432,14 @@ func (_u *WebhookDeliveryUpdateOne) ClearDeletedAt() *WebhookDeliveryUpdateOne {
 }
 
 // SetWebhookID sets the "webhook_id" field.
-func (_u *WebhookDeliveryUpdateOne) SetWebhookID(v uint32) *WebhookDeliveryUpdateOne {
+func (_u *WebhookDeliveryUpdateOne) SetWebhookID(v uint64) *WebhookDeliveryUpdateOne {
 	_u.mutation.ResetWebhookID()
 	_u.mutation.SetWebhookID(v)
 	return _u
 }
 
 // SetNillableWebhookID sets the "webhook_id" field if the given value is not nil.
-func (_u *WebhookDeliveryUpdateOne) SetNillableWebhookID(v *uint32) *WebhookDeliveryUpdateOne {
+func (_u *WebhookDeliveryUpdateOne) SetNillableWebhookID(v *uint64) *WebhookDeliveryUpdateOne {
 	if v != nil {
 		_u.SetWebhookID(*v)
 	}
@@ -447,7 +447,7 @@ func (_u *WebhookDeliveryUpdateOne) SetNillableWebhookID(v *uint32) *WebhookDeli
 }
 
 // AddWebhookID adds value to the "webhook_id" field.
-func (_u *WebhookDeliveryUpdateOne) AddWebhookID(v int32) *WebhookDeliveryUpdateOne {
+func (_u *WebhookDeliveryUpdateOne) AddWebhookID(v int64) *WebhookDeliveryUpdateOne {
 	_u.mutation.AddWebhookID(v)
 	return _u
 }
@@ -479,14 +479,14 @@ func (_u *WebhookDeliveryUpdateOne) ClearEvent() *WebhookDeliveryUpdateOne {
 }
 
 // SetEntityID sets the "entity_id" field.
-func (_u *WebhookDeliveryUpdateOne) SetEntityID(v uint32) *WebhookDeliveryUpdateOne {
+func (_u *WebhookDeliveryUpdateOne) SetEntityID(v uint64) *WebhookDeliveryUpdateOne {
 	_u.mutation.ResetEntityID()
 	_u.mutation.SetEntityID(v)
 	return _u
 }
 
 // SetNillableEntityID sets the "entity_id" field if the given value is not nil.
-func (_u *WebhookDeliveryUpdateOne) SetNillableEntityID(v *uint32) *WebhookDeliveryUpdateOne {
+func (_u *WebhookDeliveryUpdateOne) SetNillableEntityID(v *uint64) *WebhookDeliveryUpdateOne {
 	if v != nil {
 		_u.SetEntityID(*v)
 	}
@@ -494,7 +494,7 @@ func (_u *WebhookDeliveryUpdateOne) SetNillableEntityID(v *uint32) *WebhookDeliv
 }
 
 // AddEntityID adds value to the "entity_id" field.
-func (_u *WebhookDeliveryUpdateOne) AddEntityID(v int32) *WebhookDeliveryUpdateOne {
+func (_u *WebhookDeliveryUpdateOne) AddEntityID(v int64) *WebhookDeliveryUpdateOne {
 	_u.mutation.AddEntityID(v)
 	return _u
 }
@@ -664,7 +664,7 @@ func (_u *WebhookDeliveryUpdateOne) sqlSave(ctx context.Context) (_node *Webhook
 	if err := _u.check(); err != nil {
 		return _node, err
 	}
-	_spec := sqlgraph.NewUpdateSpec(webhookdelivery.Table, webhookdelivery.Columns, sqlgraph.NewFieldSpec(webhookdelivery.FieldID, field.TypeUint32))
+	_spec := sqlgraph.NewUpdateSpec(webhookdelivery.Table, webhookdelivery.Columns, sqlgraph.NewFieldSpec(webhookdelivery.FieldID, field.TypeUint64))
 	id, ok := _u.mutation.ID()
 	if !ok {
 		return nil, &ValidationError{Name: "id", err: errors.New(`ent: missing "WebhookDelivery.id" for update`)}
@@ -705,16 +705,16 @@ func (_u *WebhookDeliveryUpdateOne) sqlSave(ctx context.Context) (_node *Webhook
 		_spec.ClearField(webhookdelivery.FieldDeletedAt, field.TypeTime)
 	}
 	if _u.mutation.TenantIDCleared() {
-		_spec.ClearField(webhookdelivery.FieldTenantID, field.TypeUint32)
+		_spec.ClearField(webhookdelivery.FieldTenantID, field.TypeUint64)
 	}
 	if value, ok := _u.mutation.WebhookID(); ok {
-		_spec.SetField(webhookdelivery.FieldWebhookID, field.TypeUint32, value)
+		_spec.SetField(webhookdelivery.FieldWebhookID, field.TypeUint64, value)
 	}
 	if value, ok := _u.mutation.AddedWebhookID(); ok {
-		_spec.AddField(webhookdelivery.FieldWebhookID, field.TypeUint32, value)
+		_spec.AddField(webhookdelivery.FieldWebhookID, field.TypeUint64, value)
 	}
 	if _u.mutation.WebhookIDCleared() {
-		_spec.ClearField(webhookdelivery.FieldWebhookID, field.TypeUint32)
+		_spec.ClearField(webhookdelivery.FieldWebhookID, field.TypeUint64)
 	}
 	if value, ok := _u.mutation.Event(); ok {
 		_spec.SetField(webhookdelivery.FieldEvent, field.TypeString, value)
@@ -723,13 +723,13 @@ func (_u *WebhookDeliveryUpdateOne) sqlSave(ctx context.Context) (_node *Webhook
 		_spec.ClearField(webhookdelivery.FieldEvent, field.TypeString)
 	}
 	if value, ok := _u.mutation.EntityID(); ok {
-		_spec.SetField(webhookdelivery.FieldEntityID, field.TypeUint32, value)
+		_spec.SetField(webhookdelivery.FieldEntityID, field.TypeUint64, value)
 	}
 	if value, ok := _u.mutation.AddedEntityID(); ok {
-		_spec.AddField(webhookdelivery.FieldEntityID, field.TypeUint32, value)
+		_spec.AddField(webhookdelivery.FieldEntityID, field.TypeUint64, value)
 	}
 	if _u.mutation.EntityIDCleared() {
-		_spec.ClearField(webhookdelivery.FieldEntityID, field.TypeUint32)
+		_spec.ClearField(webhookdelivery.FieldEntityID, field.TypeUint64)
 	}
 	if value, ok := _u.mutation.Status(); ok {
 		_spec.SetField(webhookdelivery.FieldStatus, field.TypeEnum, value)

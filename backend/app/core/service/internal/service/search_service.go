@@ -105,7 +105,7 @@ func (s *SearchService) SearchPostsSuggest(ctx context.Context, prefix string, l
 
 // tenantIDFromGlobalMetadata 读取 BFF 注入的租户元数据（kratos metadata 中间件
 // 透传的 x-md-global-* 键），供匿名搜索链路在 gRPC 侧恢复租户上下文。
-func tenantIDFromGlobalMetadata(ctx context.Context) uint32 {
+func tenantIDFromGlobalMetadata(ctx context.Context) uint64 {
 	md, ok := kratosMetadata.FromServerContext(ctx)
 	if !ok {
 		return 0
@@ -118,7 +118,7 @@ func tenantIDFromGlobalMetadata(ctx context.Context) uint32 {
 	if err != nil {
 		return 0
 	}
-	return uint32(tid)
+	return uint64(tid)
 }
 
 // ReindexPost 是 asynq "search.reindex" 任务的 worker handler。
@@ -262,12 +262,12 @@ func (s *SearchService) ReindexAll() error {
 // maybeTenantFromViewerForSearch 搜索专用租户提取。
 // 与 internal_message_service.go 的 senderTenantID 取法一致，直接从 viewer
 // context 取 tenant ID。tid==0 → hasTenant=false，触发搜索返回空（不 bypass）。
-func maybeTenantFromViewerForSearch(ctx context.Context) (tenantID uint32, hasTenant bool) {
+func maybeTenantFromViewerForSearch(ctx context.Context) (tenantID uint64, hasTenant bool) {
 	vc, exist := viewer.FromContext(ctx)
 	if !exist || vc == nil {
 		return 0, false
 	}
-	tid := uint32(vc.TenantID())
+	tid := uint64(vc.TenantID())
 	if tid == 0 {
 		return 0, false
 	}

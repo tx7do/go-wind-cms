@@ -65,13 +65,13 @@ func (_c *FlowRuleCreate) SetNillableDeletedAt(v *time.Time) *FlowRuleCreate {
 }
 
 // SetCreatedBy sets the "created_by" field.
-func (_c *FlowRuleCreate) SetCreatedBy(v uint32) *FlowRuleCreate {
+func (_c *FlowRuleCreate) SetCreatedBy(v uint64) *FlowRuleCreate {
 	_c.mutation.SetCreatedBy(v)
 	return _c
 }
 
 // SetNillableCreatedBy sets the "created_by" field if the given value is not nil.
-func (_c *FlowRuleCreate) SetNillableCreatedBy(v *uint32) *FlowRuleCreate {
+func (_c *FlowRuleCreate) SetNillableCreatedBy(v *uint64) *FlowRuleCreate {
 	if v != nil {
 		_c.SetCreatedBy(*v)
 	}
@@ -79,13 +79,13 @@ func (_c *FlowRuleCreate) SetNillableCreatedBy(v *uint32) *FlowRuleCreate {
 }
 
 // SetUpdatedBy sets the "updated_by" field.
-func (_c *FlowRuleCreate) SetUpdatedBy(v uint32) *FlowRuleCreate {
+func (_c *FlowRuleCreate) SetUpdatedBy(v uint64) *FlowRuleCreate {
 	_c.mutation.SetUpdatedBy(v)
 	return _c
 }
 
 // SetNillableUpdatedBy sets the "updated_by" field if the given value is not nil.
-func (_c *FlowRuleCreate) SetNillableUpdatedBy(v *uint32) *FlowRuleCreate {
+func (_c *FlowRuleCreate) SetNillableUpdatedBy(v *uint64) *FlowRuleCreate {
 	if v != nil {
 		_c.SetUpdatedBy(*v)
 	}
@@ -93,13 +93,13 @@ func (_c *FlowRuleCreate) SetNillableUpdatedBy(v *uint32) *FlowRuleCreate {
 }
 
 // SetDeletedBy sets the "deleted_by" field.
-func (_c *FlowRuleCreate) SetDeletedBy(v uint32) *FlowRuleCreate {
+func (_c *FlowRuleCreate) SetDeletedBy(v uint64) *FlowRuleCreate {
 	_c.mutation.SetDeletedBy(v)
 	return _c
 }
 
 // SetNillableDeletedBy sets the "deleted_by" field if the given value is not nil.
-func (_c *FlowRuleCreate) SetNillableDeletedBy(v *uint32) *FlowRuleCreate {
+func (_c *FlowRuleCreate) SetNillableDeletedBy(v *uint64) *FlowRuleCreate {
 	if v != nil {
 		_c.SetDeletedBy(*v)
 	}
@@ -107,13 +107,13 @@ func (_c *FlowRuleCreate) SetNillableDeletedBy(v *uint32) *FlowRuleCreate {
 }
 
 // SetTenantID sets the "tenant_id" field.
-func (_c *FlowRuleCreate) SetTenantID(v uint32) *FlowRuleCreate {
+func (_c *FlowRuleCreate) SetTenantID(v uint64) *FlowRuleCreate {
 	_c.mutation.SetTenantID(v)
 	return _c
 }
 
 // SetNillableTenantID sets the "tenant_id" field if the given value is not nil.
-func (_c *FlowRuleCreate) SetNillableTenantID(v *uint32) *FlowRuleCreate {
+func (_c *FlowRuleCreate) SetNillableTenantID(v *uint64) *FlowRuleCreate {
 	if v != nil {
 		_c.SetTenantID(*v)
 	}
@@ -231,7 +231,7 @@ func (_c *FlowRuleCreate) SetNillableMatchCount(v *uint32) *FlowRuleCreate {
 }
 
 // SetID sets the "id" field.
-func (_c *FlowRuleCreate) SetID(v uint32) *FlowRuleCreate {
+func (_c *FlowRuleCreate) SetID(v uint64) *FlowRuleCreate {
 	_c.mutation.SetID(v)
 	return _c
 }
@@ -349,7 +349,7 @@ func (_c *FlowRuleCreate) sqlSave(ctx context.Context) (*FlowRule, error) {
 	}
 	if _spec.ID.Value != _node.ID {
 		id := _spec.ID.Value.(int64)
-		_node.ID = uint32(id)
+		_node.ID = uint64(id)
 	}
 	_c.mutation.id = &_node.ID
 	_c.mutation.done = true
@@ -359,7 +359,7 @@ func (_c *FlowRuleCreate) sqlSave(ctx context.Context) (*FlowRule, error) {
 func (_c *FlowRuleCreate) createSpec() (*FlowRule, *sqlgraph.CreateSpec) {
 	var (
 		_node = &FlowRule{config: _c.config}
-		_spec = sqlgraph.NewCreateSpec(flowrule.Table, sqlgraph.NewFieldSpec(flowrule.FieldID, field.TypeUint32))
+		_spec = sqlgraph.NewCreateSpec(flowrule.Table, sqlgraph.NewFieldSpec(flowrule.FieldID, field.TypeUint64))
 	)
 	_spec.OnConflict = _c.conflict
 	if id, ok := _c.mutation.ID(); ok {
@@ -379,19 +379,19 @@ func (_c *FlowRuleCreate) createSpec() (*FlowRule, *sqlgraph.CreateSpec) {
 		_node.DeletedAt = &value
 	}
 	if value, ok := _c.mutation.CreatedBy(); ok {
-		_spec.SetField(flowrule.FieldCreatedBy, field.TypeUint32, value)
+		_spec.SetField(flowrule.FieldCreatedBy, field.TypeUint64, value)
 		_node.CreatedBy = &value
 	}
 	if value, ok := _c.mutation.UpdatedBy(); ok {
-		_spec.SetField(flowrule.FieldUpdatedBy, field.TypeUint32, value)
+		_spec.SetField(flowrule.FieldUpdatedBy, field.TypeUint64, value)
 		_node.UpdatedBy = &value
 	}
 	if value, ok := _c.mutation.DeletedBy(); ok {
-		_spec.SetField(flowrule.FieldDeletedBy, field.TypeUint32, value)
+		_spec.SetField(flowrule.FieldDeletedBy, field.TypeUint64, value)
 		_node.DeletedBy = &value
 	}
 	if value, ok := _c.mutation.TenantID(); ok {
-		_spec.SetField(flowrule.FieldTenantID, field.TypeUint32, value)
+		_spec.SetField(flowrule.FieldTenantID, field.TypeUint64, value)
 		_node.TenantID = &value
 	}
 	if value, ok := _c.mutation.Name(); ok {
@@ -519,7 +519,7 @@ func (u *FlowRuleUpsert) ClearDeletedAt() *FlowRuleUpsert {
 }
 
 // SetCreatedBy sets the "created_by" field.
-func (u *FlowRuleUpsert) SetCreatedBy(v uint32) *FlowRuleUpsert {
+func (u *FlowRuleUpsert) SetCreatedBy(v uint64) *FlowRuleUpsert {
 	u.Set(flowrule.FieldCreatedBy, v)
 	return u
 }
@@ -531,7 +531,7 @@ func (u *FlowRuleUpsert) UpdateCreatedBy() *FlowRuleUpsert {
 }
 
 // AddCreatedBy adds v to the "created_by" field.
-func (u *FlowRuleUpsert) AddCreatedBy(v uint32) *FlowRuleUpsert {
+func (u *FlowRuleUpsert) AddCreatedBy(v uint64) *FlowRuleUpsert {
 	u.Add(flowrule.FieldCreatedBy, v)
 	return u
 }
@@ -543,7 +543,7 @@ func (u *FlowRuleUpsert) ClearCreatedBy() *FlowRuleUpsert {
 }
 
 // SetUpdatedBy sets the "updated_by" field.
-func (u *FlowRuleUpsert) SetUpdatedBy(v uint32) *FlowRuleUpsert {
+func (u *FlowRuleUpsert) SetUpdatedBy(v uint64) *FlowRuleUpsert {
 	u.Set(flowrule.FieldUpdatedBy, v)
 	return u
 }
@@ -555,7 +555,7 @@ func (u *FlowRuleUpsert) UpdateUpdatedBy() *FlowRuleUpsert {
 }
 
 // AddUpdatedBy adds v to the "updated_by" field.
-func (u *FlowRuleUpsert) AddUpdatedBy(v uint32) *FlowRuleUpsert {
+func (u *FlowRuleUpsert) AddUpdatedBy(v uint64) *FlowRuleUpsert {
 	u.Add(flowrule.FieldUpdatedBy, v)
 	return u
 }
@@ -567,7 +567,7 @@ func (u *FlowRuleUpsert) ClearUpdatedBy() *FlowRuleUpsert {
 }
 
 // SetDeletedBy sets the "deleted_by" field.
-func (u *FlowRuleUpsert) SetDeletedBy(v uint32) *FlowRuleUpsert {
+func (u *FlowRuleUpsert) SetDeletedBy(v uint64) *FlowRuleUpsert {
 	u.Set(flowrule.FieldDeletedBy, v)
 	return u
 }
@@ -579,7 +579,7 @@ func (u *FlowRuleUpsert) UpdateDeletedBy() *FlowRuleUpsert {
 }
 
 // AddDeletedBy adds v to the "deleted_by" field.
-func (u *FlowRuleUpsert) AddDeletedBy(v uint32) *FlowRuleUpsert {
+func (u *FlowRuleUpsert) AddDeletedBy(v uint64) *FlowRuleUpsert {
 	u.Add(flowrule.FieldDeletedBy, v)
 	return u
 }
@@ -837,14 +837,14 @@ func (u *FlowRuleUpsertOne) ClearDeletedAt() *FlowRuleUpsertOne {
 }
 
 // SetCreatedBy sets the "created_by" field.
-func (u *FlowRuleUpsertOne) SetCreatedBy(v uint32) *FlowRuleUpsertOne {
+func (u *FlowRuleUpsertOne) SetCreatedBy(v uint64) *FlowRuleUpsertOne {
 	return u.Update(func(s *FlowRuleUpsert) {
 		s.SetCreatedBy(v)
 	})
 }
 
 // AddCreatedBy adds v to the "created_by" field.
-func (u *FlowRuleUpsertOne) AddCreatedBy(v uint32) *FlowRuleUpsertOne {
+func (u *FlowRuleUpsertOne) AddCreatedBy(v uint64) *FlowRuleUpsertOne {
 	return u.Update(func(s *FlowRuleUpsert) {
 		s.AddCreatedBy(v)
 	})
@@ -865,14 +865,14 @@ func (u *FlowRuleUpsertOne) ClearCreatedBy() *FlowRuleUpsertOne {
 }
 
 // SetUpdatedBy sets the "updated_by" field.
-func (u *FlowRuleUpsertOne) SetUpdatedBy(v uint32) *FlowRuleUpsertOne {
+func (u *FlowRuleUpsertOne) SetUpdatedBy(v uint64) *FlowRuleUpsertOne {
 	return u.Update(func(s *FlowRuleUpsert) {
 		s.SetUpdatedBy(v)
 	})
 }
 
 // AddUpdatedBy adds v to the "updated_by" field.
-func (u *FlowRuleUpsertOne) AddUpdatedBy(v uint32) *FlowRuleUpsertOne {
+func (u *FlowRuleUpsertOne) AddUpdatedBy(v uint64) *FlowRuleUpsertOne {
 	return u.Update(func(s *FlowRuleUpsert) {
 		s.AddUpdatedBy(v)
 	})
@@ -893,14 +893,14 @@ func (u *FlowRuleUpsertOne) ClearUpdatedBy() *FlowRuleUpsertOne {
 }
 
 // SetDeletedBy sets the "deleted_by" field.
-func (u *FlowRuleUpsertOne) SetDeletedBy(v uint32) *FlowRuleUpsertOne {
+func (u *FlowRuleUpsertOne) SetDeletedBy(v uint64) *FlowRuleUpsertOne {
 	return u.Update(func(s *FlowRuleUpsert) {
 		s.SetDeletedBy(v)
 	})
 }
 
 // AddDeletedBy adds v to the "deleted_by" field.
-func (u *FlowRuleUpsertOne) AddDeletedBy(v uint32) *FlowRuleUpsertOne {
+func (u *FlowRuleUpsertOne) AddDeletedBy(v uint64) *FlowRuleUpsertOne {
 	return u.Update(func(s *FlowRuleUpsert) {
 		s.AddDeletedBy(v)
 	})
@@ -1111,7 +1111,7 @@ func (u *FlowRuleUpsertOne) ExecX(ctx context.Context) {
 }
 
 // Exec executes the UPSERT query and returns the inserted/updated ID.
-func (u *FlowRuleUpsertOne) ID(ctx context.Context) (id uint32, err error) {
+func (u *FlowRuleUpsertOne) ID(ctx context.Context) (id uint64, err error) {
 	node, err := u.create.Save(ctx)
 	if err != nil {
 		return id, err
@@ -1120,7 +1120,7 @@ func (u *FlowRuleUpsertOne) ID(ctx context.Context) (id uint32, err error) {
 }
 
 // IDX is like ID, but panics if an error occurs.
-func (u *FlowRuleUpsertOne) IDX(ctx context.Context) uint32 {
+func (u *FlowRuleUpsertOne) IDX(ctx context.Context) uint64 {
 	id, err := u.ID(ctx)
 	if err != nil {
 		panic(err)
@@ -1177,7 +1177,7 @@ func (_c *FlowRuleCreateBulk) Save(ctx context.Context) ([]*FlowRule, error) {
 				mutation.id = &nodes[i].ID
 				if specs[i].ID.Value != nil && nodes[i].ID == 0 {
 					id := specs[i].ID.Value.(int64)
-					nodes[i].ID = uint32(id)
+					nodes[i].ID = uint64(id)
 				}
 				mutation.done = true
 				return nodes[i], nil
@@ -1358,14 +1358,14 @@ func (u *FlowRuleUpsertBulk) ClearDeletedAt() *FlowRuleUpsertBulk {
 }
 
 // SetCreatedBy sets the "created_by" field.
-func (u *FlowRuleUpsertBulk) SetCreatedBy(v uint32) *FlowRuleUpsertBulk {
+func (u *FlowRuleUpsertBulk) SetCreatedBy(v uint64) *FlowRuleUpsertBulk {
 	return u.Update(func(s *FlowRuleUpsert) {
 		s.SetCreatedBy(v)
 	})
 }
 
 // AddCreatedBy adds v to the "created_by" field.
-func (u *FlowRuleUpsertBulk) AddCreatedBy(v uint32) *FlowRuleUpsertBulk {
+func (u *FlowRuleUpsertBulk) AddCreatedBy(v uint64) *FlowRuleUpsertBulk {
 	return u.Update(func(s *FlowRuleUpsert) {
 		s.AddCreatedBy(v)
 	})
@@ -1386,14 +1386,14 @@ func (u *FlowRuleUpsertBulk) ClearCreatedBy() *FlowRuleUpsertBulk {
 }
 
 // SetUpdatedBy sets the "updated_by" field.
-func (u *FlowRuleUpsertBulk) SetUpdatedBy(v uint32) *FlowRuleUpsertBulk {
+func (u *FlowRuleUpsertBulk) SetUpdatedBy(v uint64) *FlowRuleUpsertBulk {
 	return u.Update(func(s *FlowRuleUpsert) {
 		s.SetUpdatedBy(v)
 	})
 }
 
 // AddUpdatedBy adds v to the "updated_by" field.
-func (u *FlowRuleUpsertBulk) AddUpdatedBy(v uint32) *FlowRuleUpsertBulk {
+func (u *FlowRuleUpsertBulk) AddUpdatedBy(v uint64) *FlowRuleUpsertBulk {
 	return u.Update(func(s *FlowRuleUpsert) {
 		s.AddUpdatedBy(v)
 	})
@@ -1414,14 +1414,14 @@ func (u *FlowRuleUpsertBulk) ClearUpdatedBy() *FlowRuleUpsertBulk {
 }
 
 // SetDeletedBy sets the "deleted_by" field.
-func (u *FlowRuleUpsertBulk) SetDeletedBy(v uint32) *FlowRuleUpsertBulk {
+func (u *FlowRuleUpsertBulk) SetDeletedBy(v uint64) *FlowRuleUpsertBulk {
 	return u.Update(func(s *FlowRuleUpsert) {
 		s.SetDeletedBy(v)
 	})
 }
 
 // AddDeletedBy adds v to the "deleted_by" field.
-func (u *FlowRuleUpsertBulk) AddDeletedBy(v uint32) *FlowRuleUpsertBulk {
+func (u *FlowRuleUpsertBulk) AddDeletedBy(v uint64) *FlowRuleUpsertBulk {
 	return u.Update(func(s *FlowRuleUpsert) {
 		s.AddDeletedBy(v)
 	})

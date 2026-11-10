@@ -111,7 +111,7 @@ func (s *PostService) GetBySlug(ctx context.Context, req *appV1.GetPostBySlugReq
 	}
 	return resp, nil
 }
-func (s *PostService) hasValidPreviewToken(ctx context.Context, targetID uint32) bool {
+func (s *PostService) hasValidPreviewToken(ctx context.Context, targetID uint64) bool {
 	token := rawQueryValue(ctx, "preview_token")
 	if token == "" {
 		return false

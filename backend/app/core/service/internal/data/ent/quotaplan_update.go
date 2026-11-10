@@ -179,7 +179,7 @@ func (_u *QuotaPlanUpdate) sqlSave(ctx context.Context) (_node int, err error) {
 	if err := _u.check(); err != nil {
 		return _node, err
 	}
-	_spec := sqlgraph.NewUpdateSpec(quotaplan.Table, quotaplan.Columns, sqlgraph.NewFieldSpec(quotaplan.FieldID, field.TypeUint32))
+	_spec := sqlgraph.NewUpdateSpec(quotaplan.Table, quotaplan.Columns, sqlgraph.NewFieldSpec(quotaplan.FieldID, field.TypeUint64))
 	if ps := _u.mutation.predicates; len(ps) > 0 {
 		_spec.Predicate = func(selector *sql.Selector) {
 			for i := range ps {
@@ -203,7 +203,7 @@ func (_u *QuotaPlanUpdate) sqlSave(ctx context.Context) (_node int, err error) {
 		_spec.ClearField(quotaplan.FieldDeletedAt, field.TypeTime)
 	}
 	if _u.mutation.TenantIDCleared() {
-		_spec.ClearField(quotaplan.FieldTenantID, field.TypeUint32)
+		_spec.ClearField(quotaplan.FieldTenantID, field.TypeUint64)
 	}
 	if value, ok := _u.mutation.Name(); ok {
 		_spec.SetField(quotaplan.FieldName, field.TypeString, value)
@@ -402,7 +402,7 @@ func (_u *QuotaPlanUpdateOne) sqlSave(ctx context.Context) (_node *QuotaPlan, er
 	if err := _u.check(); err != nil {
 		return _node, err
 	}
-	_spec := sqlgraph.NewUpdateSpec(quotaplan.Table, quotaplan.Columns, sqlgraph.NewFieldSpec(quotaplan.FieldID, field.TypeUint32))
+	_spec := sqlgraph.NewUpdateSpec(quotaplan.Table, quotaplan.Columns, sqlgraph.NewFieldSpec(quotaplan.FieldID, field.TypeUint64))
 	id, ok := _u.mutation.ID()
 	if !ok {
 		return nil, &ValidationError{Name: "id", err: errors.New(`ent: missing "QuotaPlan.id" for update`)}
@@ -443,7 +443,7 @@ func (_u *QuotaPlanUpdateOne) sqlSave(ctx context.Context) (_node *QuotaPlan, er
 		_spec.ClearField(quotaplan.FieldDeletedAt, field.TypeTime)
 	}
 	if _u.mutation.TenantIDCleared() {
-		_spec.ClearField(quotaplan.FieldTenantID, field.TypeUint32)
+		_spec.ClearField(quotaplan.FieldTenantID, field.TypeUint64)
 	}
 	if value, ok := _u.mutation.Name(); ok {
 		_spec.SetField(quotaplan.FieldName, field.TypeString, value)

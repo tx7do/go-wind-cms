@@ -11,47 +11,47 @@ import (
 )
 
 // ID filters vertices based on their ID field.
-func ID(id uint32) predicate.Comment {
+func ID(id uint64) predicate.Comment {
 	return predicate.Comment(sql.FieldEQ(FieldID, id))
 }
 
 // IDEQ applies the EQ predicate on the ID field.
-func IDEQ(id uint32) predicate.Comment {
+func IDEQ(id uint64) predicate.Comment {
 	return predicate.Comment(sql.FieldEQ(FieldID, id))
 }
 
 // IDNEQ applies the NEQ predicate on the ID field.
-func IDNEQ(id uint32) predicate.Comment {
+func IDNEQ(id uint64) predicate.Comment {
 	return predicate.Comment(sql.FieldNEQ(FieldID, id))
 }
 
 // IDIn applies the In predicate on the ID field.
-func IDIn(ids ...uint32) predicate.Comment {
+func IDIn(ids ...uint64) predicate.Comment {
 	return predicate.Comment(sql.FieldIn(FieldID, ids...))
 }
 
 // IDNotIn applies the NotIn predicate on the ID field.
-func IDNotIn(ids ...uint32) predicate.Comment {
+func IDNotIn(ids ...uint64) predicate.Comment {
 	return predicate.Comment(sql.FieldNotIn(FieldID, ids...))
 }
 
 // IDGT applies the GT predicate on the ID field.
-func IDGT(id uint32) predicate.Comment {
+func IDGT(id uint64) predicate.Comment {
 	return predicate.Comment(sql.FieldGT(FieldID, id))
 }
 
 // IDGTE applies the GTE predicate on the ID field.
-func IDGTE(id uint32) predicate.Comment {
+func IDGTE(id uint64) predicate.Comment {
 	return predicate.Comment(sql.FieldGTE(FieldID, id))
 }
 
 // IDLT applies the LT predicate on the ID field.
-func IDLT(id uint32) predicate.Comment {
+func IDLT(id uint64) predicate.Comment {
 	return predicate.Comment(sql.FieldLT(FieldID, id))
 }
 
 // IDLTE applies the LTE predicate on the ID field.
-func IDLTE(id uint32) predicate.Comment {
+func IDLTE(id uint64) predicate.Comment {
 	return predicate.Comment(sql.FieldLTE(FieldID, id))
 }
 
@@ -71,32 +71,32 @@ func DeletedAt(v time.Time) predicate.Comment {
 }
 
 // CreatedBy applies equality check predicate on the "created_by" field. It's identical to CreatedByEQ.
-func CreatedBy(v uint32) predicate.Comment {
+func CreatedBy(v uint64) predicate.Comment {
 	return predicate.Comment(sql.FieldEQ(FieldCreatedBy, v))
 }
 
 // UpdatedBy applies equality check predicate on the "updated_by" field. It's identical to UpdatedByEQ.
-func UpdatedBy(v uint32) predicate.Comment {
+func UpdatedBy(v uint64) predicate.Comment {
 	return predicate.Comment(sql.FieldEQ(FieldUpdatedBy, v))
 }
 
 // DeletedBy applies equality check predicate on the "deleted_by" field. It's identical to DeletedByEQ.
-func DeletedBy(v uint32) predicate.Comment {
+func DeletedBy(v uint64) predicate.Comment {
 	return predicate.Comment(sql.FieldEQ(FieldDeletedBy, v))
 }
 
 // ParentID applies equality check predicate on the "parent_id" field. It's identical to ParentIDEQ.
-func ParentID(v uint32) predicate.Comment {
+func ParentID(v uint64) predicate.Comment {
 	return predicate.Comment(sql.FieldEQ(FieldParentID, v))
 }
 
 // TenantID applies equality check predicate on the "tenant_id" field. It's identical to TenantIDEQ.
-func TenantID(v uint32) predicate.Comment {
+func TenantID(v uint64) predicate.Comment {
 	return predicate.Comment(sql.FieldEQ(FieldTenantID, v))
 }
 
 // ObjectID applies equality check predicate on the "object_id" field. It's identical to ObjectIDEQ.
-func ObjectID(v uint32) predicate.Comment {
+func ObjectID(v uint64) predicate.Comment {
 	return predicate.Comment(sql.FieldEQ(FieldObjectID, v))
 }
 
@@ -106,7 +106,7 @@ func Content(v string) predicate.Comment {
 }
 
 // AuthorID applies equality check predicate on the "author_id" field. It's identical to AuthorIDEQ.
-func AuthorID(v uint32) predicate.Comment {
+func AuthorID(v uint64) predicate.Comment {
 	return predicate.Comment(sql.FieldEQ(FieldAuthorID, v))
 }
 
@@ -156,7 +156,7 @@ func IsSticky(v bool) predicate.Comment {
 }
 
 // ReplyToID applies equality check predicate on the "reply_to_id" field. It's identical to ReplyToIDEQ.
-func ReplyToID(v uint32) predicate.Comment {
+func ReplyToID(v uint64) predicate.Comment {
 	return predicate.Comment(sql.FieldEQ(FieldReplyToID, v))
 }
 
@@ -311,42 +311,42 @@ func DeletedAtNotNil() predicate.Comment {
 }
 
 // CreatedByEQ applies the EQ predicate on the "created_by" field.
-func CreatedByEQ(v uint32) predicate.Comment {
+func CreatedByEQ(v uint64) predicate.Comment {
 	return predicate.Comment(sql.FieldEQ(FieldCreatedBy, v))
 }
 
 // CreatedByNEQ applies the NEQ predicate on the "created_by" field.
-func CreatedByNEQ(v uint32) predicate.Comment {
+func CreatedByNEQ(v uint64) predicate.Comment {
 	return predicate.Comment(sql.FieldNEQ(FieldCreatedBy, v))
 }
 
 // CreatedByIn applies the In predicate on the "created_by" field.
-func CreatedByIn(vs ...uint32) predicate.Comment {
+func CreatedByIn(vs ...uint64) predicate.Comment {
 	return predicate.Comment(sql.FieldIn(FieldCreatedBy, vs...))
 }
 
 // CreatedByNotIn applies the NotIn predicate on the "created_by" field.
-func CreatedByNotIn(vs ...uint32) predicate.Comment {
+func CreatedByNotIn(vs ...uint64) predicate.Comment {
 	return predicate.Comment(sql.FieldNotIn(FieldCreatedBy, vs...))
 }
 
 // CreatedByGT applies the GT predicate on the "created_by" field.
-func CreatedByGT(v uint32) predicate.Comment {
+func CreatedByGT(v uint64) predicate.Comment {
 	return predicate.Comment(sql.FieldGT(FieldCreatedBy, v))
 }
 
 // CreatedByGTE applies the GTE predicate on the "created_by" field.
-func CreatedByGTE(v uint32) predicate.Comment {
+func CreatedByGTE(v uint64) predicate.Comment {
 	return predicate.Comment(sql.FieldGTE(FieldCreatedBy, v))
 }
 
 // CreatedByLT applies the LT predicate on the "created_by" field.
-func CreatedByLT(v uint32) predicate.Comment {
+func CreatedByLT(v uint64) predicate.Comment {
 	return predicate.Comment(sql.FieldLT(FieldCreatedBy, v))
 }
 
 // CreatedByLTE applies the LTE predicate on the "created_by" field.
-func CreatedByLTE(v uint32) predicate.Comment {
+func CreatedByLTE(v uint64) predicate.Comment {
 	return predicate.Comment(sql.FieldLTE(FieldCreatedBy, v))
 }
 
@@ -361,42 +361,42 @@ func CreatedByNotNil() predicate.Comment {
 }
 
 // UpdatedByEQ applies the EQ predicate on the "updated_by" field.
-func UpdatedByEQ(v uint32) predicate.Comment {
+func UpdatedByEQ(v uint64) predicate.Comment {
 	return predicate.Comment(sql.FieldEQ(FieldUpdatedBy, v))
 }
 
 // UpdatedByNEQ applies the NEQ predicate on the "updated_by" field.
-func UpdatedByNEQ(v uint32) predicate.Comment {
+func UpdatedByNEQ(v uint64) predicate.Comment {
 	return predicate.Comment(sql.FieldNEQ(FieldUpdatedBy, v))
 }
 
 // UpdatedByIn applies the In predicate on the "updated_by" field.
-func UpdatedByIn(vs ...uint32) predicate.Comment {
+func UpdatedByIn(vs ...uint64) predicate.Comment {
 	return predicate.Comment(sql.FieldIn(FieldUpdatedBy, vs...))
 }
 
 // UpdatedByNotIn applies the NotIn predicate on the "updated_by" field.
-func UpdatedByNotIn(vs ...uint32) predicate.Comment {
+func UpdatedByNotIn(vs ...uint64) predicate.Comment {
 	return predicate.Comment(sql.FieldNotIn(FieldUpdatedBy, vs...))
 }
 
 // UpdatedByGT applies the GT predicate on the "updated_by" field.
-func UpdatedByGT(v uint32) predicate.Comment {
+func UpdatedByGT(v uint64) predicate.Comment {
 	return predicate.Comment(sql.FieldGT(FieldUpdatedBy, v))
 }
 
 // UpdatedByGTE applies the GTE predicate on the "updated_by" field.
-func UpdatedByGTE(v uint32) predicate.Comment {
+func UpdatedByGTE(v uint64) predicate.Comment {
 	return predicate.Comment(sql.FieldGTE(FieldUpdatedBy, v))
 }
 
 // UpdatedByLT applies the LT predicate on the "updated_by" field.
-func UpdatedByLT(v uint32) predicate.Comment {
+func UpdatedByLT(v uint64) predicate.Comment {
 	return predicate.Comment(sql.FieldLT(FieldUpdatedBy, v))
 }
 
 // UpdatedByLTE applies the LTE predicate on the "updated_by" field.
-func UpdatedByLTE(v uint32) predicate.Comment {
+func UpdatedByLTE(v uint64) predicate.Comment {
 	return predicate.Comment(sql.FieldLTE(FieldUpdatedBy, v))
 }
 
@@ -411,42 +411,42 @@ func UpdatedByNotNil() predicate.Comment {
 }
 
 // DeletedByEQ applies the EQ predicate on the "deleted_by" field.
-func DeletedByEQ(v uint32) predicate.Comment {
+func DeletedByEQ(v uint64) predicate.Comment {
 	return predicate.Comment(sql.FieldEQ(FieldDeletedBy, v))
 }
 
 // DeletedByNEQ applies the NEQ predicate on the "deleted_by" field.
-func DeletedByNEQ(v uint32) predicate.Comment {
+func DeletedByNEQ(v uint64) predicate.Comment {
 	return predicate.Comment(sql.FieldNEQ(FieldDeletedBy, v))
 }
 
 // DeletedByIn applies the In predicate on the "deleted_by" field.
-func DeletedByIn(vs ...uint32) predicate.Comment {
+func DeletedByIn(vs ...uint64) predicate.Comment {
 	return predicate.Comment(sql.FieldIn(FieldDeletedBy, vs...))
 }
 
 // DeletedByNotIn applies the NotIn predicate on the "deleted_by" field.
-func DeletedByNotIn(vs ...uint32) predicate.Comment {
+func DeletedByNotIn(vs ...uint64) predicate.Comment {
 	return predicate.Comment(sql.FieldNotIn(FieldDeletedBy, vs...))
 }
 
 // DeletedByGT applies the GT predicate on the "deleted_by" field.
-func DeletedByGT(v uint32) predicate.Comment {
+func DeletedByGT(v uint64) predicate.Comment {
 	return predicate.Comment(sql.FieldGT(FieldDeletedBy, v))
 }
 
 // DeletedByGTE applies the GTE predicate on the "deleted_by" field.
-func DeletedByGTE(v uint32) predicate.Comment {
+func DeletedByGTE(v uint64) predicate.Comment {
 	return predicate.Comment(sql.FieldGTE(FieldDeletedBy, v))
 }
 
 // DeletedByLT applies the LT predicate on the "deleted_by" field.
-func DeletedByLT(v uint32) predicate.Comment {
+func DeletedByLT(v uint64) predicate.Comment {
 	return predicate.Comment(sql.FieldLT(FieldDeletedBy, v))
 }
 
 // DeletedByLTE applies the LTE predicate on the "deleted_by" field.
-func DeletedByLTE(v uint32) predicate.Comment {
+func DeletedByLTE(v uint64) predicate.Comment {
 	return predicate.Comment(sql.FieldLTE(FieldDeletedBy, v))
 }
 
@@ -461,22 +461,22 @@ func DeletedByNotNil() predicate.Comment {
 }
 
 // ParentIDEQ applies the EQ predicate on the "parent_id" field.
-func ParentIDEQ(v uint32) predicate.Comment {
+func ParentIDEQ(v uint64) predicate.Comment {
 	return predicate.Comment(sql.FieldEQ(FieldParentID, v))
 }
 
 // ParentIDNEQ applies the NEQ predicate on the "parent_id" field.
-func ParentIDNEQ(v uint32) predicate.Comment {
+func ParentIDNEQ(v uint64) predicate.Comment {
 	return predicate.Comment(sql.FieldNEQ(FieldParentID, v))
 }
 
 // ParentIDIn applies the In predicate on the "parent_id" field.
-func ParentIDIn(vs ...uint32) predicate.Comment {
+func ParentIDIn(vs ...uint64) predicate.Comment {
 	return predicate.Comment(sql.FieldIn(FieldParentID, vs...))
 }
 
 // ParentIDNotIn applies the NotIn predicate on the "parent_id" field.
-func ParentIDNotIn(vs ...uint32) predicate.Comment {
+func ParentIDNotIn(vs ...uint64) predicate.Comment {
 	return predicate.Comment(sql.FieldNotIn(FieldParentID, vs...))
 }
 
@@ -491,42 +491,42 @@ func ParentIDNotNil() predicate.Comment {
 }
 
 // TenantIDEQ applies the EQ predicate on the "tenant_id" field.
-func TenantIDEQ(v uint32) predicate.Comment {
+func TenantIDEQ(v uint64) predicate.Comment {
 	return predicate.Comment(sql.FieldEQ(FieldTenantID, v))
 }
 
 // TenantIDNEQ applies the NEQ predicate on the "tenant_id" field.
-func TenantIDNEQ(v uint32) predicate.Comment {
+func TenantIDNEQ(v uint64) predicate.Comment {
 	return predicate.Comment(sql.FieldNEQ(FieldTenantID, v))
 }
 
 // TenantIDIn applies the In predicate on the "tenant_id" field.
-func TenantIDIn(vs ...uint32) predicate.Comment {
+func TenantIDIn(vs ...uint64) predicate.Comment {
 	return predicate.Comment(sql.FieldIn(FieldTenantID, vs...))
 }
 
 // TenantIDNotIn applies the NotIn predicate on the "tenant_id" field.
-func TenantIDNotIn(vs ...uint32) predicate.Comment {
+func TenantIDNotIn(vs ...uint64) predicate.Comment {
 	return predicate.Comment(sql.FieldNotIn(FieldTenantID, vs...))
 }
 
 // TenantIDGT applies the GT predicate on the "tenant_id" field.
-func TenantIDGT(v uint32) predicate.Comment {
+func TenantIDGT(v uint64) predicate.Comment {
 	return predicate.Comment(sql.FieldGT(FieldTenantID, v))
 }
 
 // TenantIDGTE applies the GTE predicate on the "tenant_id" field.
-func TenantIDGTE(v uint32) predicate.Comment {
+func TenantIDGTE(v uint64) predicate.Comment {
 	return predicate.Comment(sql.FieldGTE(FieldTenantID, v))
 }
 
 // TenantIDLT applies the LT predicate on the "tenant_id" field.
-func TenantIDLT(v uint32) predicate.Comment {
+func TenantIDLT(v uint64) predicate.Comment {
 	return predicate.Comment(sql.FieldLT(FieldTenantID, v))
 }
 
 // TenantIDLTE applies the LTE predicate on the "tenant_id" field.
-func TenantIDLTE(v uint32) predicate.Comment {
+func TenantIDLTE(v uint64) predicate.Comment {
 	return predicate.Comment(sql.FieldLTE(FieldTenantID, v))
 }
 
@@ -571,42 +571,42 @@ func ContentTypeNotNil() predicate.Comment {
 }
 
 // ObjectIDEQ applies the EQ predicate on the "object_id" field.
-func ObjectIDEQ(v uint32) predicate.Comment {
+func ObjectIDEQ(v uint64) predicate.Comment {
 	return predicate.Comment(sql.FieldEQ(FieldObjectID, v))
 }
 
 // ObjectIDNEQ applies the NEQ predicate on the "object_id" field.
-func ObjectIDNEQ(v uint32) predicate.Comment {
+func ObjectIDNEQ(v uint64) predicate.Comment {
 	return predicate.Comment(sql.FieldNEQ(FieldObjectID, v))
 }
 
 // ObjectIDIn applies the In predicate on the "object_id" field.
-func ObjectIDIn(vs ...uint32) predicate.Comment {
+func ObjectIDIn(vs ...uint64) predicate.Comment {
 	return predicate.Comment(sql.FieldIn(FieldObjectID, vs...))
 }
 
 // ObjectIDNotIn applies the NotIn predicate on the "object_id" field.
-func ObjectIDNotIn(vs ...uint32) predicate.Comment {
+func ObjectIDNotIn(vs ...uint64) predicate.Comment {
 	return predicate.Comment(sql.FieldNotIn(FieldObjectID, vs...))
 }
 
 // ObjectIDGT applies the GT predicate on the "object_id" field.
-func ObjectIDGT(v uint32) predicate.Comment {
+func ObjectIDGT(v uint64) predicate.Comment {
 	return predicate.Comment(sql.FieldGT(FieldObjectID, v))
 }
 
 // ObjectIDGTE applies the GTE predicate on the "object_id" field.
-func ObjectIDGTE(v uint32) predicate.Comment {
+func ObjectIDGTE(v uint64) predicate.Comment {
 	return predicate.Comment(sql.FieldGTE(FieldObjectID, v))
 }
 
 // ObjectIDLT applies the LT predicate on the "object_id" field.
-func ObjectIDLT(v uint32) predicate.Comment {
+func ObjectIDLT(v uint64) predicate.Comment {
 	return predicate.Comment(sql.FieldLT(FieldObjectID, v))
 }
 
 // ObjectIDLTE applies the LTE predicate on the "object_id" field.
-func ObjectIDLTE(v uint32) predicate.Comment {
+func ObjectIDLTE(v uint64) predicate.Comment {
 	return predicate.Comment(sql.FieldLTE(FieldObjectID, v))
 }
 
@@ -696,42 +696,42 @@ func ContentContainsFold(v string) predicate.Comment {
 }
 
 // AuthorIDEQ applies the EQ predicate on the "author_id" field.
-func AuthorIDEQ(v uint32) predicate.Comment {
+func AuthorIDEQ(v uint64) predicate.Comment {
 	return predicate.Comment(sql.FieldEQ(FieldAuthorID, v))
 }
 
 // AuthorIDNEQ applies the NEQ predicate on the "author_id" field.
-func AuthorIDNEQ(v uint32) predicate.Comment {
+func AuthorIDNEQ(v uint64) predicate.Comment {
 	return predicate.Comment(sql.FieldNEQ(FieldAuthorID, v))
 }
 
 // AuthorIDIn applies the In predicate on the "author_id" field.
-func AuthorIDIn(vs ...uint32) predicate.Comment {
+func AuthorIDIn(vs ...uint64) predicate.Comment {
 	return predicate.Comment(sql.FieldIn(FieldAuthorID, vs...))
 }
 
 // AuthorIDNotIn applies the NotIn predicate on the "author_id" field.
-func AuthorIDNotIn(vs ...uint32) predicate.Comment {
+func AuthorIDNotIn(vs ...uint64) predicate.Comment {
 	return predicate.Comment(sql.FieldNotIn(FieldAuthorID, vs...))
 }
 
 // AuthorIDGT applies the GT predicate on the "author_id" field.
-func AuthorIDGT(v uint32) predicate.Comment {
+func AuthorIDGT(v uint64) predicate.Comment {
 	return predicate.Comment(sql.FieldGT(FieldAuthorID, v))
 }
 
 // AuthorIDGTE applies the GTE predicate on the "author_id" field.
-func AuthorIDGTE(v uint32) predicate.Comment {
+func AuthorIDGTE(v uint64) predicate.Comment {
 	return predicate.Comment(sql.FieldGTE(FieldAuthorID, v))
 }
 
 // AuthorIDLT applies the LT predicate on the "author_id" field.
-func AuthorIDLT(v uint32) predicate.Comment {
+func AuthorIDLT(v uint64) predicate.Comment {
 	return predicate.Comment(sql.FieldLT(FieldAuthorID, v))
 }
 
 // AuthorIDLTE applies the LTE predicate on the "author_id" field.
-func AuthorIDLTE(v uint32) predicate.Comment {
+func AuthorIDLTE(v uint64) predicate.Comment {
 	return predicate.Comment(sql.FieldLTE(FieldAuthorID, v))
 }
 
@@ -1371,42 +1371,42 @@ func IsStickyNotNil() predicate.Comment {
 }
 
 // ReplyToIDEQ applies the EQ predicate on the "reply_to_id" field.
-func ReplyToIDEQ(v uint32) predicate.Comment {
+func ReplyToIDEQ(v uint64) predicate.Comment {
 	return predicate.Comment(sql.FieldEQ(FieldReplyToID, v))
 }
 
 // ReplyToIDNEQ applies the NEQ predicate on the "reply_to_id" field.
-func ReplyToIDNEQ(v uint32) predicate.Comment {
+func ReplyToIDNEQ(v uint64) predicate.Comment {
 	return predicate.Comment(sql.FieldNEQ(FieldReplyToID, v))
 }
 
 // ReplyToIDIn applies the In predicate on the "reply_to_id" field.
-func ReplyToIDIn(vs ...uint32) predicate.Comment {
+func ReplyToIDIn(vs ...uint64) predicate.Comment {
 	return predicate.Comment(sql.FieldIn(FieldReplyToID, vs...))
 }
 
 // ReplyToIDNotIn applies the NotIn predicate on the "reply_to_id" field.
-func ReplyToIDNotIn(vs ...uint32) predicate.Comment {
+func ReplyToIDNotIn(vs ...uint64) predicate.Comment {
 	return predicate.Comment(sql.FieldNotIn(FieldReplyToID, vs...))
 }
 
 // ReplyToIDGT applies the GT predicate on the "reply_to_id" field.
-func ReplyToIDGT(v uint32) predicate.Comment {
+func ReplyToIDGT(v uint64) predicate.Comment {
 	return predicate.Comment(sql.FieldGT(FieldReplyToID, v))
 }
 
 // ReplyToIDGTE applies the GTE predicate on the "reply_to_id" field.
-func ReplyToIDGTE(v uint32) predicate.Comment {
+func ReplyToIDGTE(v uint64) predicate.Comment {
 	return predicate.Comment(sql.FieldGTE(FieldReplyToID, v))
 }
 
 // ReplyToIDLT applies the LT predicate on the "reply_to_id" field.
-func ReplyToIDLT(v uint32) predicate.Comment {
+func ReplyToIDLT(v uint64) predicate.Comment {
 	return predicate.Comment(sql.FieldLT(FieldReplyToID, v))
 }
 
 // ReplyToIDLTE applies the LTE predicate on the "reply_to_id" field.
-func ReplyToIDLTE(v uint32) predicate.Comment {
+func ReplyToIDLTE(v uint64) predicate.Comment {
 	return predicate.Comment(sql.FieldLTE(FieldReplyToID, v))
 }
 

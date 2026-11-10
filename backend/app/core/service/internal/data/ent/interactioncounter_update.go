@@ -97,14 +97,14 @@ func (_u *InteractionCounterUpdate) ClearTargetType() *InteractionCounterUpdate 
 }
 
 // SetTargetID sets the "target_id" field.
-func (_u *InteractionCounterUpdate) SetTargetID(v uint32) *InteractionCounterUpdate {
+func (_u *InteractionCounterUpdate) SetTargetID(v uint64) *InteractionCounterUpdate {
 	_u.mutation.ResetTargetID()
 	_u.mutation.SetTargetID(v)
 	return _u
 }
 
 // SetNillableTargetID sets the "target_id" field if the given value is not nil.
-func (_u *InteractionCounterUpdate) SetNillableTargetID(v *uint32) *InteractionCounterUpdate {
+func (_u *InteractionCounterUpdate) SetNillableTargetID(v *uint64) *InteractionCounterUpdate {
 	if v != nil {
 		_u.SetTargetID(*v)
 	}
@@ -112,7 +112,7 @@ func (_u *InteractionCounterUpdate) SetNillableTargetID(v *uint32) *InteractionC
 }
 
 // AddTargetID adds value to the "target_id" field.
-func (_u *InteractionCounterUpdate) AddTargetID(v int32) *InteractionCounterUpdate {
+func (_u *InteractionCounterUpdate) AddTargetID(v int64) *InteractionCounterUpdate {
 	_u.mutation.AddTargetID(v)
 	return _u
 }
@@ -216,7 +216,7 @@ func (_u *InteractionCounterUpdate) Modify(modifiers ...func(u *sql.UpdateBuilde
 }
 
 func (_u *InteractionCounterUpdate) sqlSave(ctx context.Context) (_node int, err error) {
-	_spec := sqlgraph.NewUpdateSpec(interactioncounter.Table, interactioncounter.Columns, sqlgraph.NewFieldSpec(interactioncounter.FieldID, field.TypeUint32))
+	_spec := sqlgraph.NewUpdateSpec(interactioncounter.Table, interactioncounter.Columns, sqlgraph.NewFieldSpec(interactioncounter.FieldID, field.TypeUint64))
 	if ps := _u.mutation.predicates; len(ps) > 0 {
 		_spec.Predicate = func(selector *sql.Selector) {
 			for i := range ps {
@@ -240,7 +240,7 @@ func (_u *InteractionCounterUpdate) sqlSave(ctx context.Context) (_node int, err
 		_spec.ClearField(interactioncounter.FieldDeletedAt, field.TypeTime)
 	}
 	if _u.mutation.TenantIDCleared() {
-		_spec.ClearField(interactioncounter.FieldTenantID, field.TypeUint32)
+		_spec.ClearField(interactioncounter.FieldTenantID, field.TypeUint64)
 	}
 	if value, ok := _u.mutation.TargetType(); ok {
 		_spec.SetField(interactioncounter.FieldTargetType, field.TypeUint8, value)
@@ -252,13 +252,13 @@ func (_u *InteractionCounterUpdate) sqlSave(ctx context.Context) (_node int, err
 		_spec.ClearField(interactioncounter.FieldTargetType, field.TypeUint8)
 	}
 	if value, ok := _u.mutation.TargetID(); ok {
-		_spec.SetField(interactioncounter.FieldTargetID, field.TypeUint32, value)
+		_spec.SetField(interactioncounter.FieldTargetID, field.TypeUint64, value)
 	}
 	if value, ok := _u.mutation.AddedTargetID(); ok {
-		_spec.AddField(interactioncounter.FieldTargetID, field.TypeUint32, value)
+		_spec.AddField(interactioncounter.FieldTargetID, field.TypeUint64, value)
 	}
 	if _u.mutation.TargetIDCleared() {
-		_spec.ClearField(interactioncounter.FieldTargetID, field.TypeUint32)
+		_spec.ClearField(interactioncounter.FieldTargetID, field.TypeUint64)
 	}
 	if value, ok := _u.mutation.Metric(); ok {
 		_spec.SetField(interactioncounter.FieldMetric, field.TypeUint8, value)
@@ -368,14 +368,14 @@ func (_u *InteractionCounterUpdateOne) ClearTargetType() *InteractionCounterUpda
 }
 
 // SetTargetID sets the "target_id" field.
-func (_u *InteractionCounterUpdateOne) SetTargetID(v uint32) *InteractionCounterUpdateOne {
+func (_u *InteractionCounterUpdateOne) SetTargetID(v uint64) *InteractionCounterUpdateOne {
 	_u.mutation.ResetTargetID()
 	_u.mutation.SetTargetID(v)
 	return _u
 }
 
 // SetNillableTargetID sets the "target_id" field if the given value is not nil.
-func (_u *InteractionCounterUpdateOne) SetNillableTargetID(v *uint32) *InteractionCounterUpdateOne {
+func (_u *InteractionCounterUpdateOne) SetNillableTargetID(v *uint64) *InteractionCounterUpdateOne {
 	if v != nil {
 		_u.SetTargetID(*v)
 	}
@@ -383,7 +383,7 @@ func (_u *InteractionCounterUpdateOne) SetNillableTargetID(v *uint32) *Interacti
 }
 
 // AddTargetID adds value to the "target_id" field.
-func (_u *InteractionCounterUpdateOne) AddTargetID(v int32) *InteractionCounterUpdateOne {
+func (_u *InteractionCounterUpdateOne) AddTargetID(v int64) *InteractionCounterUpdateOne {
 	_u.mutation.AddTargetID(v)
 	return _u
 }
@@ -500,7 +500,7 @@ func (_u *InteractionCounterUpdateOne) Modify(modifiers ...func(u *sql.UpdateBui
 }
 
 func (_u *InteractionCounterUpdateOne) sqlSave(ctx context.Context) (_node *InteractionCounter, err error) {
-	_spec := sqlgraph.NewUpdateSpec(interactioncounter.Table, interactioncounter.Columns, sqlgraph.NewFieldSpec(interactioncounter.FieldID, field.TypeUint32))
+	_spec := sqlgraph.NewUpdateSpec(interactioncounter.Table, interactioncounter.Columns, sqlgraph.NewFieldSpec(interactioncounter.FieldID, field.TypeUint64))
 	id, ok := _u.mutation.ID()
 	if !ok {
 		return nil, &ValidationError{Name: "id", err: errors.New(`ent: missing "InteractionCounter.id" for update`)}
@@ -541,7 +541,7 @@ func (_u *InteractionCounterUpdateOne) sqlSave(ctx context.Context) (_node *Inte
 		_spec.ClearField(interactioncounter.FieldDeletedAt, field.TypeTime)
 	}
 	if _u.mutation.TenantIDCleared() {
-		_spec.ClearField(interactioncounter.FieldTenantID, field.TypeUint32)
+		_spec.ClearField(interactioncounter.FieldTenantID, field.TypeUint64)
 	}
 	if value, ok := _u.mutation.TargetType(); ok {
 		_spec.SetField(interactioncounter.FieldTargetType, field.TypeUint8, value)
@@ -553,13 +553,13 @@ func (_u *InteractionCounterUpdateOne) sqlSave(ctx context.Context) (_node *Inte
 		_spec.ClearField(interactioncounter.FieldTargetType, field.TypeUint8)
 	}
 	if value, ok := _u.mutation.TargetID(); ok {
-		_spec.SetField(interactioncounter.FieldTargetID, field.TypeUint32, value)
+		_spec.SetField(interactioncounter.FieldTargetID, field.TypeUint64, value)
 	}
 	if value, ok := _u.mutation.AddedTargetID(); ok {
-		_spec.AddField(interactioncounter.FieldTargetID, field.TypeUint32, value)
+		_spec.AddField(interactioncounter.FieldTargetID, field.TypeUint64, value)
 	}
 	if _u.mutation.TargetIDCleared() {
-		_spec.ClearField(interactioncounter.FieldTargetID, field.TypeUint32)
+		_spec.ClearField(interactioncounter.FieldTargetID, field.TypeUint64)
 	}
 	if value, ok := _u.mutation.Metric(); ok {
 		_spec.SetField(interactioncounter.FieldMetric, field.TypeUint8, value)

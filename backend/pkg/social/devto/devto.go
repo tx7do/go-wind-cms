@@ -151,8 +151,8 @@ func (c *Client) FetchStats(ctx context.Context, creds social.Credentials, exter
 	}
 
 	return &social.Stats{
-		Likes:   clampUint32(article.PositiveReactionsCount),
-		Replies: clampUint32(article.CommentsCount),
+		Likes:   clampUint64(article.PositiveReactionsCount),
+		Replies: clampUint64(article.CommentsCount),
 	}, nil
 }
 
@@ -279,12 +279,9 @@ func classifyError(status int, raw []byte) error {
 	}
 }
 
-func clampUint32(v int64) uint32 {
+func clampUint64(v int64) uint64 {
 	if v < 0 {
 		return 0
 	}
-	if v > int64(^uint32(0)) {
-		return ^uint32(0)
-	}
-	return uint32(v)
+	return uint64(v)
 }

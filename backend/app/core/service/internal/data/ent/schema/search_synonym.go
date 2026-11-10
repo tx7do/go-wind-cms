@@ -50,8 +50,8 @@ func (SearchSynonym) Edges() []ent.Edge {
 func (SearchSynonym) Mixin() []ent.Mixin {
 	return []ent.Mixin{
 		mixin.TimeAt{},
-		mixin.AutoIncrementId{},
-		mixin.TenantID[uint32]{},
+		mixin.AutoIncrementId64{},
+		mixin.TenantID[uint64]{},
 	}
 }
 

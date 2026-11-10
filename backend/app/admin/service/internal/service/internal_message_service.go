@@ -262,7 +262,7 @@ func (s *InternalMessageService) SendMessage(ctx context.Context, req *internalM
 // isRecipientAllowed 校验收件人是否在发送者的可发送范围内。
 // 平台上下文(senderTenantID==0)可向任意租户用户发送；普通租户用户只能向本租户用户发送。
 // 收件人不存在或跨租户时拒绝。与 core InternalMessageService.SendMessage 的实现保持一致。
-func (s *InternalMessageService) isRecipientAllowed(ctx context.Context, recipientUserID uint32, senderTenantID uint32) bool {
+func (s *InternalMessageService) isRecipientAllowed(ctx context.Context, recipientUserID uint64, senderTenantID uint64) bool {
 	recipient, err := s.userServiceClient.Get(ctx, &identityV1.GetUserRequest{
 		QueryBy: &identityV1.GetUserRequest_Id{Id: recipientUserID},
 	})
@@ -278,7 +278,7 @@ func (s *InternalMessageService) isRecipientAllowed(ctx context.Context, recipie
 }
 
 // sendNotification 向客户端发送通知消息
-func (s *InternalMessageService) sendNotification(ctx context.Context, messageId uint32, recipientUserId uint32, senderUserId uint32, now *time.Time, title, content string) error {
+func (s *InternalMessageService) sendNotification(ctx context.Context, messageId uint64, recipientUserId uint64, senderUserId uint64, now *time.Time, title, content string) error {
 	recipient := &internalMessageV1.InternalMessageRecipient{
 		MessageId:       trans.Ptr(messageId),
 		RecipientUserId: trans.Ptr(recipientUserId),

@@ -17,7 +17,7 @@ type InteractionCounter struct {
 	config `json:"-"`
 	// ID of the ent.
 	// id
-	ID uint32 `json:"id,omitempty"`
+	ID uint64 `json:"id,omitempty"`
 	// 创建时间
 	CreatedAt *time.Time `json:"created_at,omitempty"`
 	// 更新时间
@@ -25,11 +25,11 @@ type InteractionCounter struct {
 	// 删除时间
 	DeletedAt *time.Time `json:"deleted_at,omitempty"`
 	// 租户ID
-	TenantID *uint32 `json:"tenant_id,omitempty"`
+	TenantID *uint64 `json:"tenant_id,omitempty"`
 	// 目标类型，对应 interaction.TargetType 枚举
 	TargetType *uint8 `json:"target_type,omitempty"`
 	// 目标ID
-	TargetID *uint32 `json:"target_id,omitempty"`
+	TargetID *uint64 `json:"target_id,omitempty"`
 	// 计数指标，对应 interaction.CounterMetric 枚举
 	Metric *uint8 `json:"metric,omitempty"`
 	// 累计计数
@@ -66,7 +66,7 @@ func (_m *InteractionCounter) assignValues(columns []string, values []any) error
 			if !ok {
 				return fmt.Errorf("unexpected type %T for field id", value)
 			}
-			_m.ID = uint32(value.Int64)
+			_m.ID = uint64(value.Int64)
 		case interactioncounter.FieldCreatedAt:
 			if value, ok := values[i].(*sql.NullTime); !ok {
 				return fmt.Errorf("unexpected type %T for field created_at", values[i])
@@ -92,8 +92,8 @@ func (_m *InteractionCounter) assignValues(columns []string, values []any) error
 			if value, ok := values[i].(*sql.NullInt64); !ok {
 				return fmt.Errorf("unexpected type %T for field tenant_id", values[i])
 			} else if value.Valid {
-				_m.TenantID = new(uint32)
-				*_m.TenantID = uint32(value.Int64)
+				_m.TenantID = new(uint64)
+				*_m.TenantID = uint64(value.Int64)
 			}
 		case interactioncounter.FieldTargetType:
 			if value, ok := values[i].(*sql.NullInt64); !ok {
@@ -106,8 +106,8 @@ func (_m *InteractionCounter) assignValues(columns []string, values []any) error
 			if value, ok := values[i].(*sql.NullInt64); !ok {
 				return fmt.Errorf("unexpected type %T for field target_id", values[i])
 			} else if value.Valid {
-				_m.TargetID = new(uint32)
-				*_m.TargetID = uint32(value.Int64)
+				_m.TargetID = new(uint64)
+				*_m.TargetID = uint64(value.Int64)
 			}
 		case interactioncounter.FieldMetric:
 			if value, ok := values[i].(*sql.NullInt64); !ok {

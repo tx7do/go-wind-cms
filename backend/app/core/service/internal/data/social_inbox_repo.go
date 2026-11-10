@@ -33,7 +33,7 @@ func NewSocialInboxRepo(ctx *bootstrap.Context, entClient *entCrud.EntClient[*en
 }
 
 // CreateIfAbsent 平台侧条目不存在时才落库（回拉幂等）。返回是否新建。
-func (r *SocialInboxRepo) CreateIfAbsent(ctx context.Context, req *socialV1.SocialInboxItem, tenantID uint32) (bool, error) {
+func (r *SocialInboxRepo) CreateIfAbsent(ctx context.Context, req *socialV1.SocialInboxItem, tenantID uint64) (bool, error) {
 	exists, err := r.entClient.Client().SocialInboxItem.Query().
 		Where(
 			socialinboxitem.PlatformEQ(socialinboxitem.Platform(*req.Platform)),
@@ -79,7 +79,7 @@ func (r *SocialInboxRepo) platformPtrToEntity(p *socialV1.Platform) *socialinbox
 }
 
 // List 收件箱列表（租户隔离；可选账号/未读过滤；按发生时间倒序）。
-func (r *SocialInboxRepo) List(ctx context.Context, tenantID uint32, accountID uint32, unreadOnly bool, limit int) ([]*ent.SocialInboxItem, uint64, error) {
+func (r *SocialInboxRepo) List(ctx context.Context, tenantID uint64, accountID uint64, unreadOnly bool, limit int) ([]*ent.SocialInboxItem, uint64, error) {
 	if limit <= 0 || limit > 200 {
 		limit = 50
 	}
@@ -114,7 +114,7 @@ func (r *SocialInboxRepo) List(ctx context.Context, tenantID uint32, accountID u
 }
 
 // MarkRead 标记已读（租户守卫；已读幂等）。
-func (r *SocialInboxRepo) MarkRead(ctx context.Context, tenantID uint32, id uint32, now time.Time) error {
+func (r *SocialInboxRepo) MarkRead(ctx context.Context, tenantID uint64, id uint64, now time.Time) error {
 	builder := r.entClient.Client().SocialInboxItem.Update().
 		Where(socialinboxitem.IDEQ(id)).
 		SetReadAt(now).

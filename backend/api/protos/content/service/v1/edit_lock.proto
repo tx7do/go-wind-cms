@@ -25,7 +25,7 @@ message EditLock {
     (gnostic.openapi.v3.property) = {description: "调用者是否持锁"}
   ]; // 调用者是否持锁
 
-  optional uint32 holder_id = 2 [
+  optional uint64 holder_id = 2 [
     json_name = "holderId",
     (gnostic.openapi.v3.property) = {description: "持锁者用户ID"}
   ]; // 持锁者用户ID
@@ -48,7 +48,7 @@ message AcquireEditLockRequest {
     (gnostic.openapi.v3.property) = {description: "目标类型（post/page）"}
   ]; // 目标类型
 
-  uint32 target_id = 2 [
+  uint64 target_id = 2 [
     json_name = "targetId",
     (gnostic.openapi.v3.property) = {description: "目标ID"}
   ]; // 目标ID
@@ -61,7 +61,7 @@ message ReleaseEditLockRequest {
     (gnostic.openapi.v3.property) = {description: "目标类型（post/page）"}
   ]; // 目标类型
 
-  uint32 target_id = 2 [
+  uint64 target_id = 2 [
     json_name = "targetId",
     (gnostic.openapi.v3.property) = {description: "目标ID"}
   ]; // 目标ID

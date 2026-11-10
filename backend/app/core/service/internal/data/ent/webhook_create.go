@@ -65,13 +65,13 @@ func (_c *WebhookCreate) SetNillableDeletedAt(v *time.Time) *WebhookCreate {
 }
 
 // SetCreatedBy sets the "created_by" field.
-func (_c *WebhookCreate) SetCreatedBy(v uint32) *WebhookCreate {
+func (_c *WebhookCreate) SetCreatedBy(v uint64) *WebhookCreate {
 	_c.mutation.SetCreatedBy(v)
 	return _c
 }
 
 // SetNillableCreatedBy sets the "created_by" field if the given value is not nil.
-func (_c *WebhookCreate) SetNillableCreatedBy(v *uint32) *WebhookCreate {
+func (_c *WebhookCreate) SetNillableCreatedBy(v *uint64) *WebhookCreate {
 	if v != nil {
 		_c.SetCreatedBy(*v)
 	}
@@ -79,13 +79,13 @@ func (_c *WebhookCreate) SetNillableCreatedBy(v *uint32) *WebhookCreate {
 }
 
 // SetUpdatedBy sets the "updated_by" field.
-func (_c *WebhookCreate) SetUpdatedBy(v uint32) *WebhookCreate {
+func (_c *WebhookCreate) SetUpdatedBy(v uint64) *WebhookCreate {
 	_c.mutation.SetUpdatedBy(v)
 	return _c
 }
 
 // SetNillableUpdatedBy sets the "updated_by" field if the given value is not nil.
-func (_c *WebhookCreate) SetNillableUpdatedBy(v *uint32) *WebhookCreate {
+func (_c *WebhookCreate) SetNillableUpdatedBy(v *uint64) *WebhookCreate {
 	if v != nil {
 		_c.SetUpdatedBy(*v)
 	}
@@ -93,13 +93,13 @@ func (_c *WebhookCreate) SetNillableUpdatedBy(v *uint32) *WebhookCreate {
 }
 
 // SetDeletedBy sets the "deleted_by" field.
-func (_c *WebhookCreate) SetDeletedBy(v uint32) *WebhookCreate {
+func (_c *WebhookCreate) SetDeletedBy(v uint64) *WebhookCreate {
 	_c.mutation.SetDeletedBy(v)
 	return _c
 }
 
 // SetNillableDeletedBy sets the "deleted_by" field if the given value is not nil.
-func (_c *WebhookCreate) SetNillableDeletedBy(v *uint32) *WebhookCreate {
+func (_c *WebhookCreate) SetNillableDeletedBy(v *uint64) *WebhookCreate {
 	if v != nil {
 		_c.SetDeletedBy(*v)
 	}
@@ -107,13 +107,13 @@ func (_c *WebhookCreate) SetNillableDeletedBy(v *uint32) *WebhookCreate {
 }
 
 // SetTenantID sets the "tenant_id" field.
-func (_c *WebhookCreate) SetTenantID(v uint32) *WebhookCreate {
+func (_c *WebhookCreate) SetTenantID(v uint64) *WebhookCreate {
 	_c.mutation.SetTenantID(v)
 	return _c
 }
 
 // SetNillableTenantID sets the "tenant_id" field if the given value is not nil.
-func (_c *WebhookCreate) SetNillableTenantID(v *uint32) *WebhookCreate {
+func (_c *WebhookCreate) SetNillableTenantID(v *uint64) *WebhookCreate {
 	if v != nil {
 		_c.SetTenantID(*v)
 	}
@@ -175,7 +175,7 @@ func (_c *WebhookCreate) SetNillableDescription(v *string) *WebhookCreate {
 }
 
 // SetID sets the "id" field.
-func (_c *WebhookCreate) SetID(v uint32) *WebhookCreate {
+func (_c *WebhookCreate) SetID(v uint64) *WebhookCreate {
 	_c.mutation.SetID(v)
 	return _c
 }
@@ -259,7 +259,7 @@ func (_c *WebhookCreate) sqlSave(ctx context.Context) (*Webhook, error) {
 	}
 	if _spec.ID.Value != _node.ID {
 		id := _spec.ID.Value.(int64)
-		_node.ID = uint32(id)
+		_node.ID = uint64(id)
 	}
 	_c.mutation.id = &_node.ID
 	_c.mutation.done = true
@@ -269,7 +269,7 @@ func (_c *WebhookCreate) sqlSave(ctx context.Context) (*Webhook, error) {
 func (_c *WebhookCreate) createSpec() (*Webhook, *sqlgraph.CreateSpec) {
 	var (
 		_node = &Webhook{config: _c.config}
-		_spec = sqlgraph.NewCreateSpec(webhook.Table, sqlgraph.NewFieldSpec(webhook.FieldID, field.TypeUint32))
+		_spec = sqlgraph.NewCreateSpec(webhook.Table, sqlgraph.NewFieldSpec(webhook.FieldID, field.TypeUint64))
 	)
 	_spec.OnConflict = _c.conflict
 	if id, ok := _c.mutation.ID(); ok {
@@ -289,19 +289,19 @@ func (_c *WebhookCreate) createSpec() (*Webhook, *sqlgraph.CreateSpec) {
 		_node.DeletedAt = &value
 	}
 	if value, ok := _c.mutation.CreatedBy(); ok {
-		_spec.SetField(webhook.FieldCreatedBy, field.TypeUint32, value)
+		_spec.SetField(webhook.FieldCreatedBy, field.TypeUint64, value)
 		_node.CreatedBy = &value
 	}
 	if value, ok := _c.mutation.UpdatedBy(); ok {
-		_spec.SetField(webhook.FieldUpdatedBy, field.TypeUint32, value)
+		_spec.SetField(webhook.FieldUpdatedBy, field.TypeUint64, value)
 		_node.UpdatedBy = &value
 	}
 	if value, ok := _c.mutation.DeletedBy(); ok {
-		_spec.SetField(webhook.FieldDeletedBy, field.TypeUint32, value)
+		_spec.SetField(webhook.FieldDeletedBy, field.TypeUint64, value)
 		_node.DeletedBy = &value
 	}
 	if value, ok := _c.mutation.TenantID(); ok {
-		_spec.SetField(webhook.FieldTenantID, field.TypeUint32, value)
+		_spec.SetField(webhook.FieldTenantID, field.TypeUint64, value)
 		_node.TenantID = &value
 	}
 	if value, ok := _c.mutation.URL(); ok {
@@ -413,7 +413,7 @@ func (u *WebhookUpsert) ClearDeletedAt() *WebhookUpsert {
 }
 
 // SetCreatedBy sets the "created_by" field.
-func (u *WebhookUpsert) SetCreatedBy(v uint32) *WebhookUpsert {
+func (u *WebhookUpsert) SetCreatedBy(v uint64) *WebhookUpsert {
 	u.Set(webhook.FieldCreatedBy, v)
 	return u
 }
@@ -425,7 +425,7 @@ func (u *WebhookUpsert) UpdateCreatedBy() *WebhookUpsert {
 }
 
 // AddCreatedBy adds v to the "created_by" field.
-func (u *WebhookUpsert) AddCreatedBy(v uint32) *WebhookUpsert {
+func (u *WebhookUpsert) AddCreatedBy(v uint64) *WebhookUpsert {
 	u.Add(webhook.FieldCreatedBy, v)
 	return u
 }
@@ -437,7 +437,7 @@ func (u *WebhookUpsert) ClearCreatedBy() *WebhookUpsert {
 }
 
 // SetUpdatedBy sets the "updated_by" field.
-func (u *WebhookUpsert) SetUpdatedBy(v uint32) *WebhookUpsert {
+func (u *WebhookUpsert) SetUpdatedBy(v uint64) *WebhookUpsert {
 	u.Set(webhook.FieldUpdatedBy, v)
 	return u
 }
@@ -449,7 +449,7 @@ func (u *WebhookUpsert) UpdateUpdatedBy() *WebhookUpsert {
 }
 
 // AddUpdatedBy adds v to the "updated_by" field.
-func (u *WebhookUpsert) AddUpdatedBy(v uint32) *WebhookUpsert {
+func (u *WebhookUpsert) AddUpdatedBy(v uint64) *WebhookUpsert {
 	u.Add(webhook.FieldUpdatedBy, v)
 	return u
 }
@@ -461,7 +461,7 @@ func (u *WebhookUpsert) ClearUpdatedBy() *WebhookUpsert {
 }
 
 // SetDeletedBy sets the "deleted_by" field.
-func (u *WebhookUpsert) SetDeletedBy(v uint32) *WebhookUpsert {
+func (u *WebhookUpsert) SetDeletedBy(v uint64) *WebhookUpsert {
 	u.Set(webhook.FieldDeletedBy, v)
 	return u
 }
@@ -473,7 +473,7 @@ func (u *WebhookUpsert) UpdateDeletedBy() *WebhookUpsert {
 }
 
 // AddDeletedBy adds v to the "deleted_by" field.
-func (u *WebhookUpsert) AddDeletedBy(v uint32) *WebhookUpsert {
+func (u *WebhookUpsert) AddDeletedBy(v uint64) *WebhookUpsert {
 	u.Add(webhook.FieldDeletedBy, v)
 	return u
 }
@@ -665,14 +665,14 @@ func (u *WebhookUpsertOne) ClearDeletedAt() *WebhookUpsertOne {
 }
 
 // SetCreatedBy sets the "created_by" field.
-func (u *WebhookUpsertOne) SetCreatedBy(v uint32) *WebhookUpsertOne {
+func (u *WebhookUpsertOne) SetCreatedBy(v uint64) *WebhookUpsertOne {
 	return u.Update(func(s *WebhookUpsert) {
 		s.SetCreatedBy(v)
 	})
 }
 
 // AddCreatedBy adds v to the "created_by" field.
-func (u *WebhookUpsertOne) AddCreatedBy(v uint32) *WebhookUpsertOne {
+func (u *WebhookUpsertOne) AddCreatedBy(v uint64) *WebhookUpsertOne {
 	return u.Update(func(s *WebhookUpsert) {
 		s.AddCreatedBy(v)
 	})
@@ -693,14 +693,14 @@ func (u *WebhookUpsertOne) ClearCreatedBy() *WebhookUpsertOne {
 }
 
 // SetUpdatedBy sets the "updated_by" field.
-func (u *WebhookUpsertOne) SetUpdatedBy(v uint32) *WebhookUpsertOne {
+func (u *WebhookUpsertOne) SetUpdatedBy(v uint64) *WebhookUpsertOne {
 	return u.Update(func(s *WebhookUpsert) {
 		s.SetUpdatedBy(v)
 	})
 }
 
 // AddUpdatedBy adds v to the "updated_by" field.
-func (u *WebhookUpsertOne) AddUpdatedBy(v uint32) *WebhookUpsertOne {
+func (u *WebhookUpsertOne) AddUpdatedBy(v uint64) *WebhookUpsertOne {
 	return u.Update(func(s *WebhookUpsert) {
 		s.AddUpdatedBy(v)
 	})
@@ -721,14 +721,14 @@ func (u *WebhookUpsertOne) ClearUpdatedBy() *WebhookUpsertOne {
 }
 
 // SetDeletedBy sets the "deleted_by" field.
-func (u *WebhookUpsertOne) SetDeletedBy(v uint32) *WebhookUpsertOne {
+func (u *WebhookUpsertOne) SetDeletedBy(v uint64) *WebhookUpsertOne {
 	return u.Update(func(s *WebhookUpsert) {
 		s.SetDeletedBy(v)
 	})
 }
 
 // AddDeletedBy adds v to the "deleted_by" field.
-func (u *WebhookUpsertOne) AddDeletedBy(v uint32) *WebhookUpsertOne {
+func (u *WebhookUpsertOne) AddDeletedBy(v uint64) *WebhookUpsertOne {
 	return u.Update(func(s *WebhookUpsert) {
 		s.AddDeletedBy(v)
 	})
@@ -862,7 +862,7 @@ func (u *WebhookUpsertOne) ExecX(ctx context.Context) {
 }
 
 // Exec executes the UPSERT query and returns the inserted/updated ID.
-func (u *WebhookUpsertOne) ID(ctx context.Context) (id uint32, err error) {
+func (u *WebhookUpsertOne) ID(ctx context.Context) (id uint64, err error) {
 	node, err := u.create.Save(ctx)
 	if err != nil {
 		return id, err
@@ -871,7 +871,7 @@ func (u *WebhookUpsertOne) ID(ctx context.Context) (id uint32, err error) {
 }
 
 // IDX is like ID, but panics if an error occurs.
-func (u *WebhookUpsertOne) IDX(ctx context.Context) uint32 {
+func (u *WebhookUpsertOne) IDX(ctx context.Context) uint64 {
 	id, err := u.ID(ctx)
 	if err != nil {
 		panic(err)
@@ -928,7 +928,7 @@ func (_c *WebhookCreateBulk) Save(ctx context.Context) ([]*Webhook, error) {
 				mutation.id = &nodes[i].ID
 				if specs[i].ID.Value != nil && nodes[i].ID == 0 {
 					id := specs[i].ID.Value.(int64)
-					nodes[i].ID = uint32(id)
+					nodes[i].ID = uint64(id)
 				}
 				mutation.done = true
 				return nodes[i], nil
@@ -1109,14 +1109,14 @@ func (u *WebhookUpsertBulk) ClearDeletedAt() *WebhookUpsertBulk {
 }
 
 // SetCreatedBy sets the "created_by" field.
-func (u *WebhookUpsertBulk) SetCreatedBy(v uint32) *WebhookUpsertBulk {
+func (u *WebhookUpsertBulk) SetCreatedBy(v uint64) *WebhookUpsertBulk {
 	return u.Update(func(s *WebhookUpsert) {
 		s.SetCreatedBy(v)
 	})
 }
 
 // AddCreatedBy adds v to the "created_by" field.
-func (u *WebhookUpsertBulk) AddCreatedBy(v uint32) *WebhookUpsertBulk {
+func (u *WebhookUpsertBulk) AddCreatedBy(v uint64) *WebhookUpsertBulk {
 	return u.Update(func(s *WebhookUpsert) {
 		s.AddCreatedBy(v)
 	})
@@ -1137,14 +1137,14 @@ func (u *WebhookUpsertBulk) ClearCreatedBy() *WebhookUpsertBulk {
 }
 
 // SetUpdatedBy sets the "updated_by" field.
-func (u *WebhookUpsertBulk) SetUpdatedBy(v uint32) *WebhookUpsertBulk {
+func (u *WebhookUpsertBulk) SetUpdatedBy(v uint64) *WebhookUpsertBulk {
 	return u.Update(func(s *WebhookUpsert) {
 		s.SetUpdatedBy(v)
 	})
 }
 
 // AddUpdatedBy adds v to the "updated_by" field.
-func (u *WebhookUpsertBulk) AddUpdatedBy(v uint32) *WebhookUpsertBulk {
+func (u *WebhookUpsertBulk) AddUpdatedBy(v uint64) *WebhookUpsertBulk {
 	return u.Update(func(s *WebhookUpsert) {
 		s.AddUpdatedBy(v)
 	})
@@ -1165,14 +1165,14 @@ func (u *WebhookUpsertBulk) ClearUpdatedBy() *WebhookUpsertBulk {
 }
 
 // SetDeletedBy sets the "deleted_by" field.
-func (u *WebhookUpsertBulk) SetDeletedBy(v uint32) *WebhookUpsertBulk {
+func (u *WebhookUpsertBulk) SetDeletedBy(v uint64) *WebhookUpsertBulk {
 	return u.Update(func(s *WebhookUpsert) {
 		s.SetDeletedBy(v)
 	})
 }
 
 // AddDeletedBy adds v to the "deleted_by" field.
-func (u *WebhookUpsertBulk) AddDeletedBy(v uint32) *WebhookUpsertBulk {
+func (u *WebhookUpsertBulk) AddDeletedBy(v uint64) *WebhookUpsertBulk {
 	return u.Update(func(s *WebhookUpsert) {
 		s.AddDeletedBy(v)
 	})

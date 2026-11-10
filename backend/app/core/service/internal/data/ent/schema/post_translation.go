@@ -32,7 +32,7 @@ func (PostTranslation) Annotations() []schema.Annotation {
 // Fields of the PostTranslation.
 func (PostTranslation) Fields() []ent.Field {
 	return []ent.Field{
-		field.Uint32("post_id").
+		field.Uint64("post_id").
 			Comment("关联的帖子ID").
 			Optional().
 			Nillable(),
@@ -83,11 +83,11 @@ func (PostTranslation) Fields() []ent.Field {
 // Mixin of the PostTranslation.
 func (PostTranslation) Mixin() []ent.Mixin {
 	return []ent.Mixin{
-		mixin.AutoIncrementId{},
+		mixin.AutoIncrementId64{},
 		mixin.TimeAt{},
-		mixin.OperatorID{},
+		mixin.OperatorID64{},
 		appMixin.Seo{},
-		mixin.TenantID[uint32]{},
+		mixin.TenantID[uint64]{},
 	}
 }
 

@@ -70,14 +70,14 @@ func (_u *PageVersionUpdate) ClearDeletedAt() *PageVersionUpdate {
 }
 
 // SetCreatedBy sets the "created_by" field.
-func (_u *PageVersionUpdate) SetCreatedBy(v uint32) *PageVersionUpdate {
+func (_u *PageVersionUpdate) SetCreatedBy(v uint64) *PageVersionUpdate {
 	_u.mutation.ResetCreatedBy()
 	_u.mutation.SetCreatedBy(v)
 	return _u
 }
 
 // SetNillableCreatedBy sets the "created_by" field if the given value is not nil.
-func (_u *PageVersionUpdate) SetNillableCreatedBy(v *uint32) *PageVersionUpdate {
+func (_u *PageVersionUpdate) SetNillableCreatedBy(v *uint64) *PageVersionUpdate {
 	if v != nil {
 		_u.SetCreatedBy(*v)
 	}
@@ -85,7 +85,7 @@ func (_u *PageVersionUpdate) SetNillableCreatedBy(v *uint32) *PageVersionUpdate 
 }
 
 // AddCreatedBy adds value to the "created_by" field.
-func (_u *PageVersionUpdate) AddCreatedBy(v int32) *PageVersionUpdate {
+func (_u *PageVersionUpdate) AddCreatedBy(v int64) *PageVersionUpdate {
 	_u.mutation.AddCreatedBy(v)
 	return _u
 }
@@ -97,14 +97,14 @@ func (_u *PageVersionUpdate) ClearCreatedBy() *PageVersionUpdate {
 }
 
 // SetUpdatedBy sets the "updated_by" field.
-func (_u *PageVersionUpdate) SetUpdatedBy(v uint32) *PageVersionUpdate {
+func (_u *PageVersionUpdate) SetUpdatedBy(v uint64) *PageVersionUpdate {
 	_u.mutation.ResetUpdatedBy()
 	_u.mutation.SetUpdatedBy(v)
 	return _u
 }
 
 // SetNillableUpdatedBy sets the "updated_by" field if the given value is not nil.
-func (_u *PageVersionUpdate) SetNillableUpdatedBy(v *uint32) *PageVersionUpdate {
+func (_u *PageVersionUpdate) SetNillableUpdatedBy(v *uint64) *PageVersionUpdate {
 	if v != nil {
 		_u.SetUpdatedBy(*v)
 	}
@@ -112,7 +112,7 @@ func (_u *PageVersionUpdate) SetNillableUpdatedBy(v *uint32) *PageVersionUpdate 
 }
 
 // AddUpdatedBy adds value to the "updated_by" field.
-func (_u *PageVersionUpdate) AddUpdatedBy(v int32) *PageVersionUpdate {
+func (_u *PageVersionUpdate) AddUpdatedBy(v int64) *PageVersionUpdate {
 	_u.mutation.AddUpdatedBy(v)
 	return _u
 }
@@ -124,14 +124,14 @@ func (_u *PageVersionUpdate) ClearUpdatedBy() *PageVersionUpdate {
 }
 
 // SetDeletedBy sets the "deleted_by" field.
-func (_u *PageVersionUpdate) SetDeletedBy(v uint32) *PageVersionUpdate {
+func (_u *PageVersionUpdate) SetDeletedBy(v uint64) *PageVersionUpdate {
 	_u.mutation.ResetDeletedBy()
 	_u.mutation.SetDeletedBy(v)
 	return _u
 }
 
 // SetNillableDeletedBy sets the "deleted_by" field if the given value is not nil.
-func (_u *PageVersionUpdate) SetNillableDeletedBy(v *uint32) *PageVersionUpdate {
+func (_u *PageVersionUpdate) SetNillableDeletedBy(v *uint64) *PageVersionUpdate {
 	if v != nil {
 		_u.SetDeletedBy(*v)
 	}
@@ -139,7 +139,7 @@ func (_u *PageVersionUpdate) SetNillableDeletedBy(v *uint32) *PageVersionUpdate 
 }
 
 // AddDeletedBy adds value to the "deleted_by" field.
-func (_u *PageVersionUpdate) AddDeletedBy(v int32) *PageVersionUpdate {
+func (_u *PageVersionUpdate) AddDeletedBy(v int64) *PageVersionUpdate {
 	_u.mutation.AddDeletedBy(v)
 	return _u
 }
@@ -151,14 +151,14 @@ func (_u *PageVersionUpdate) ClearDeletedBy() *PageVersionUpdate {
 }
 
 // SetPageID sets the "page_id" field.
-func (_u *PageVersionUpdate) SetPageID(v uint32) *PageVersionUpdate {
+func (_u *PageVersionUpdate) SetPageID(v uint64) *PageVersionUpdate {
 	_u.mutation.ResetPageID()
 	_u.mutation.SetPageID(v)
 	return _u
 }
 
 // SetNillablePageID sets the "page_id" field if the given value is not nil.
-func (_u *PageVersionUpdate) SetNillablePageID(v *uint32) *PageVersionUpdate {
+func (_u *PageVersionUpdate) SetNillablePageID(v *uint64) *PageVersionUpdate {
 	if v != nil {
 		_u.SetPageID(*v)
 	}
@@ -166,7 +166,7 @@ func (_u *PageVersionUpdate) SetNillablePageID(v *uint32) *PageVersionUpdate {
 }
 
 // AddPageID adds value to the "page_id" field.
-func (_u *PageVersionUpdate) AddPageID(v int32) *PageVersionUpdate {
+func (_u *PageVersionUpdate) AddPageID(v int64) *PageVersionUpdate {
 	_u.mutation.AddPageID(v)
 	return _u
 }
@@ -283,7 +283,7 @@ func (_u *PageVersionUpdate) Modify(modifiers ...func(u *sql.UpdateBuilder)) *Pa
 }
 
 func (_u *PageVersionUpdate) sqlSave(ctx context.Context) (_node int, err error) {
-	_spec := sqlgraph.NewUpdateSpec(pageversion.Table, pageversion.Columns, sqlgraph.NewFieldSpec(pageversion.FieldID, field.TypeUint32))
+	_spec := sqlgraph.NewUpdateSpec(pageversion.Table, pageversion.Columns, sqlgraph.NewFieldSpec(pageversion.FieldID, field.TypeUint64))
 	if ps := _u.mutation.predicates; len(ps) > 0 {
 		_spec.Predicate = func(selector *sql.Selector) {
 			for i := range ps {
@@ -307,43 +307,43 @@ func (_u *PageVersionUpdate) sqlSave(ctx context.Context) (_node int, err error)
 		_spec.ClearField(pageversion.FieldDeletedAt, field.TypeTime)
 	}
 	if value, ok := _u.mutation.CreatedBy(); ok {
-		_spec.SetField(pageversion.FieldCreatedBy, field.TypeUint32, value)
+		_spec.SetField(pageversion.FieldCreatedBy, field.TypeUint64, value)
 	}
 	if value, ok := _u.mutation.AddedCreatedBy(); ok {
-		_spec.AddField(pageversion.FieldCreatedBy, field.TypeUint32, value)
+		_spec.AddField(pageversion.FieldCreatedBy, field.TypeUint64, value)
 	}
 	if _u.mutation.CreatedByCleared() {
-		_spec.ClearField(pageversion.FieldCreatedBy, field.TypeUint32)
+		_spec.ClearField(pageversion.FieldCreatedBy, field.TypeUint64)
 	}
 	if value, ok := _u.mutation.UpdatedBy(); ok {
-		_spec.SetField(pageversion.FieldUpdatedBy, field.TypeUint32, value)
+		_spec.SetField(pageversion.FieldUpdatedBy, field.TypeUint64, value)
 	}
 	if value, ok := _u.mutation.AddedUpdatedBy(); ok {
-		_spec.AddField(pageversion.FieldUpdatedBy, field.TypeUint32, value)
+		_spec.AddField(pageversion.FieldUpdatedBy, field.TypeUint64, value)
 	}
 	if _u.mutation.UpdatedByCleared() {
-		_spec.ClearField(pageversion.FieldUpdatedBy, field.TypeUint32)
+		_spec.ClearField(pageversion.FieldUpdatedBy, field.TypeUint64)
 	}
 	if value, ok := _u.mutation.DeletedBy(); ok {
-		_spec.SetField(pageversion.FieldDeletedBy, field.TypeUint32, value)
+		_spec.SetField(pageversion.FieldDeletedBy, field.TypeUint64, value)
 	}
 	if value, ok := _u.mutation.AddedDeletedBy(); ok {
-		_spec.AddField(pageversion.FieldDeletedBy, field.TypeUint32, value)
+		_spec.AddField(pageversion.FieldDeletedBy, field.TypeUint64, value)
 	}
 	if _u.mutation.DeletedByCleared() {
-		_spec.ClearField(pageversion.FieldDeletedBy, field.TypeUint32)
+		_spec.ClearField(pageversion.FieldDeletedBy, field.TypeUint64)
 	}
 	if _u.mutation.TenantIDCleared() {
-		_spec.ClearField(pageversion.FieldTenantID, field.TypeUint32)
+		_spec.ClearField(pageversion.FieldTenantID, field.TypeUint64)
 	}
 	if value, ok := _u.mutation.PageID(); ok {
-		_spec.SetField(pageversion.FieldPageID, field.TypeUint32, value)
+		_spec.SetField(pageversion.FieldPageID, field.TypeUint64, value)
 	}
 	if value, ok := _u.mutation.AddedPageID(); ok {
-		_spec.AddField(pageversion.FieldPageID, field.TypeUint32, value)
+		_spec.AddField(pageversion.FieldPageID, field.TypeUint64, value)
 	}
 	if _u.mutation.PageIDCleared() {
-		_spec.ClearField(pageversion.FieldPageID, field.TypeUint32)
+		_spec.ClearField(pageversion.FieldPageID, field.TypeUint64)
 	}
 	if value, ok := _u.mutation.VersionNumber(); ok {
 		_spec.SetField(pageversion.FieldVersionNumber, field.TypeUint32, value)
@@ -429,14 +429,14 @@ func (_u *PageVersionUpdateOne) ClearDeletedAt() *PageVersionUpdateOne {
 }
 
 // SetCreatedBy sets the "created_by" field.
-func (_u *PageVersionUpdateOne) SetCreatedBy(v uint32) *PageVersionUpdateOne {
+func (_u *PageVersionUpdateOne) SetCreatedBy(v uint64) *PageVersionUpdateOne {
 	_u.mutation.ResetCreatedBy()
 	_u.mutation.SetCreatedBy(v)
 	return _u
 }
 
 // SetNillableCreatedBy sets the "created_by" field if the given value is not nil.
-func (_u *PageVersionUpdateOne) SetNillableCreatedBy(v *uint32) *PageVersionUpdateOne {
+func (_u *PageVersionUpdateOne) SetNillableCreatedBy(v *uint64) *PageVersionUpdateOne {
 	if v != nil {
 		_u.SetCreatedBy(*v)
 	}
@@ -444,7 +444,7 @@ func (_u *PageVersionUpdateOne) SetNillableCreatedBy(v *uint32) *PageVersionUpda
 }
 
 // AddCreatedBy adds value to the "created_by" field.
-func (_u *PageVersionUpdateOne) AddCreatedBy(v int32) *PageVersionUpdateOne {
+func (_u *PageVersionUpdateOne) AddCreatedBy(v int64) *PageVersionUpdateOne {
 	_u.mutation.AddCreatedBy(v)
 	return _u
 }
@@ -456,14 +456,14 @@ func (_u *PageVersionUpdateOne) ClearCreatedBy() *PageVersionUpdateOne {
 }
 
 // SetUpdatedBy sets the "updated_by" field.
-func (_u *PageVersionUpdateOne) SetUpdatedBy(v uint32) *PageVersionUpdateOne {
+func (_u *PageVersionUpdateOne) SetUpdatedBy(v uint64) *PageVersionUpdateOne {
 	_u.mutation.ResetUpdatedBy()
 	_u.mutation.SetUpdatedBy(v)
 	return _u
 }
 
 // SetNillableUpdatedBy sets the "updated_by" field if the given value is not nil.
-func (_u *PageVersionUpdateOne) SetNillableUpdatedBy(v *uint32) *PageVersionUpdateOne {
+func (_u *PageVersionUpdateOne) SetNillableUpdatedBy(v *uint64) *PageVersionUpdateOne {
 	if v != nil {
 		_u.SetUpdatedBy(*v)
 	}
@@ -471,7 +471,7 @@ func (_u *PageVersionUpdateOne) SetNillableUpdatedBy(v *uint32) *PageVersionUpda
 }
 
 // AddUpdatedBy adds value to the "updated_by" field.
-func (_u *PageVersionUpdateOne) AddUpdatedBy(v int32) *PageVersionUpdateOne {
+func (_u *PageVersionUpdateOne) AddUpdatedBy(v int64) *PageVersionUpdateOne {
 	_u.mutation.AddUpdatedBy(v)
 	return _u
 }
@@ -483,14 +483,14 @@ func (_u *PageVersionUpdateOne) ClearUpdatedBy() *PageVersionUpdateOne {
 }
 
 // SetDeletedBy sets the "deleted_by" field.
-func (_u *PageVersionUpdateOne) SetDeletedBy(v uint32) *PageVersionUpdateOne {
+func (_u *PageVersionUpdateOne) SetDeletedBy(v uint64) *PageVersionUpdateOne {
 	_u.mutation.ResetDeletedBy()
 	_u.mutation.SetDeletedBy(v)
 	return _u
 }
 
 // SetNillableDeletedBy sets the "deleted_by" field if the given value is not nil.
-func (_u *PageVersionUpdateOne) SetNillableDeletedBy(v *uint32) *PageVersionUpdateOne {
+func (_u *PageVersionUpdateOne) SetNillableDeletedBy(v *uint64) *PageVersionUpdateOne {
 	if v != nil {
 		_u.SetDeletedBy(*v)
 	}
@@ -498,7 +498,7 @@ func (_u *PageVersionUpdateOne) SetNillableDeletedBy(v *uint32) *PageVersionUpda
 }
 
 // AddDeletedBy adds value to the "deleted_by" field.
-func (_u *PageVersionUpdateOne) AddDeletedBy(v int32) *PageVersionUpdateOne {
+func (_u *PageVersionUpdateOne) AddDeletedBy(v int64) *PageVersionUpdateOne {
 	_u.mutation.AddDeletedBy(v)
 	return _u
 }
@@ -510,14 +510,14 @@ func (_u *PageVersionUpdateOne) ClearDeletedBy() *PageVersionUpdateOne {
 }
 
 // SetPageID sets the "page_id" field.
-func (_u *PageVersionUpdateOne) SetPageID(v uint32) *PageVersionUpdateOne {
+func (_u *PageVersionUpdateOne) SetPageID(v uint64) *PageVersionUpdateOne {
 	_u.mutation.ResetPageID()
 	_u.mutation.SetPageID(v)
 	return _u
 }
 
 // SetNillablePageID sets the "page_id" field if the given value is not nil.
-func (_u *PageVersionUpdateOne) SetNillablePageID(v *uint32) *PageVersionUpdateOne {
+func (_u *PageVersionUpdateOne) SetNillablePageID(v *uint64) *PageVersionUpdateOne {
 	if v != nil {
 		_u.SetPageID(*v)
 	}
@@ -525,7 +525,7 @@ func (_u *PageVersionUpdateOne) SetNillablePageID(v *uint32) *PageVersionUpdateO
 }
 
 // AddPageID adds value to the "page_id" field.
-func (_u *PageVersionUpdateOne) AddPageID(v int32) *PageVersionUpdateOne {
+func (_u *PageVersionUpdateOne) AddPageID(v int64) *PageVersionUpdateOne {
 	_u.mutation.AddPageID(v)
 	return _u
 }
@@ -655,7 +655,7 @@ func (_u *PageVersionUpdateOne) Modify(modifiers ...func(u *sql.UpdateBuilder)) 
 }
 
 func (_u *PageVersionUpdateOne) sqlSave(ctx context.Context) (_node *PageVersion, err error) {
-	_spec := sqlgraph.NewUpdateSpec(pageversion.Table, pageversion.Columns, sqlgraph.NewFieldSpec(pageversion.FieldID, field.TypeUint32))
+	_spec := sqlgraph.NewUpdateSpec(pageversion.Table, pageversion.Columns, sqlgraph.NewFieldSpec(pageversion.FieldID, field.TypeUint64))
 	id, ok := _u.mutation.ID()
 	if !ok {
 		return nil, &ValidationError{Name: "id", err: errors.New(`ent: missing "PageVersion.id" for update`)}
@@ -696,43 +696,43 @@ func (_u *PageVersionUpdateOne) sqlSave(ctx context.Context) (_node *PageVersion
 		_spec.ClearField(pageversion.FieldDeletedAt, field.TypeTime)
 	}
 	if value, ok := _u.mutation.CreatedBy(); ok {
-		_spec.SetField(pageversion.FieldCreatedBy, field.TypeUint32, value)
+		_spec.SetField(pageversion.FieldCreatedBy, field.TypeUint64, value)
 	}
 	if value, ok := _u.mutation.AddedCreatedBy(); ok {
-		_spec.AddField(pageversion.FieldCreatedBy, field.TypeUint32, value)
+		_spec.AddField(pageversion.FieldCreatedBy, field.TypeUint64, value)
 	}
 	if _u.mutation.CreatedByCleared() {
-		_spec.ClearField(pageversion.FieldCreatedBy, field.TypeUint32)
+		_spec.ClearField(pageversion.FieldCreatedBy, field.TypeUint64)
 	}
 	if value, ok := _u.mutation.UpdatedBy(); ok {
-		_spec.SetField(pageversion.FieldUpdatedBy, field.TypeUint32, value)
+		_spec.SetField(pageversion.FieldUpdatedBy, field.TypeUint64, value)
 	}
 	if value, ok := _u.mutation.AddedUpdatedBy(); ok {
-		_spec.AddField(pageversion.FieldUpdatedBy, field.TypeUint32, value)
+		_spec.AddField(pageversion.FieldUpdatedBy, field.TypeUint64, value)
 	}
 	if _u.mutation.UpdatedByCleared() {
-		_spec.ClearField(pageversion.FieldUpdatedBy, field.TypeUint32)
+		_spec.ClearField(pageversion.FieldUpdatedBy, field.TypeUint64)
 	}
 	if value, ok := _u.mutation.DeletedBy(); ok {
-		_spec.SetField(pageversion.FieldDeletedBy, field.TypeUint32, value)
+		_spec.SetField(pageversion.FieldDeletedBy, field.TypeUint64, value)
 	}
 	if value, ok := _u.mutation.AddedDeletedBy(); ok {
-		_spec.AddField(pageversion.FieldDeletedBy, field.TypeUint32, value)
+		_spec.AddField(pageversion.FieldDeletedBy, field.TypeUint64, value)
 	}
 	if _u.mutation.DeletedByCleared() {
-		_spec.ClearField(pageversion.FieldDeletedBy, field.TypeUint32)
+		_spec.ClearField(pageversion.FieldDeletedBy, field.TypeUint64)
 	}
 	if _u.mutation.TenantIDCleared() {
-		_spec.ClearField(pageversion.FieldTenantID, field.TypeUint32)
+		_spec.ClearField(pageversion.FieldTenantID, field.TypeUint64)
 	}
 	if value, ok := _u.mutation.PageID(); ok {
-		_spec.SetField(pageversion.FieldPageID, field.TypeUint32, value)
+		_spec.SetField(pageversion.FieldPageID, field.TypeUint64, value)
 	}
 	if value, ok := _u.mutation.AddedPageID(); ok {
-		_spec.AddField(pageversion.FieldPageID, field.TypeUint32, value)
+		_spec.AddField(pageversion.FieldPageID, field.TypeUint64, value)
 	}
 	if _u.mutation.PageIDCleared() {
-		_spec.ClearField(pageversion.FieldPageID, field.TypeUint32)
+		_spec.ClearField(pageversion.FieldPageID, field.TypeUint64)
 	}
 	if value, ok := _u.mutation.VersionNumber(); ok {
 		_spec.SetField(pageversion.FieldVersionNumber, field.TypeUint32, value)

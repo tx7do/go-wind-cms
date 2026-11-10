@@ -38,7 +38,7 @@ type quotaPlanItemDTO struct {
 // toProto ent 行 → proto QuotaPlan（items JSON 反序列化）。
 func (r *QuotaPlanRepo) toProto(e *ent.QuotaPlan) *identityV1.QuotaPlan {
 	dto := &identityV1.QuotaPlan{
-		Id:          trans.Ptr(uint32(e.ID)),
+		Id:          trans.Ptr(uint64(e.ID)),
 		Name:        e.Name,
 		Description: e.Description,
 	}
@@ -104,7 +104,7 @@ func (r *QuotaPlanRepo) List(ctx context.Context) ([]*identityV1.QuotaPlan, erro
 }
 
 // Get 按 ID 取模板。
-func (r *QuotaPlanRepo) Get(ctx context.Context, id uint32) (*identityV1.QuotaPlan, error) {
+func (r *QuotaPlanRepo) Get(ctx context.Context, id uint64) (*identityV1.QuotaPlan, error) {
 	e, err := r.entClient.Client().QuotaPlan.Get(ctx, id)
 	if err != nil {
 		if ent.IsNotFound(err) {
@@ -117,7 +117,7 @@ func (r *QuotaPlanRepo) Get(ctx context.Context, id uint32) (*identityV1.QuotaPl
 }
 
 // Create 创建模板（重名报错由唯一索引兜底）。
-func (r *QuotaPlanRepo) Create(ctx context.Context, dto *identityV1.QuotaPlan, operatorID uint32) (uint32, error) {
+func (r *QuotaPlanRepo) Create(ctx context.Context, dto *identityV1.QuotaPlan, operatorID uint64) (uint64, error) {
 	itemsJSON, err := QuotaPlanItemsToJSON(dto.GetItems())
 	if err != nil {
 		return 0, identityV1.ErrorBadRequest("invalid quota plan items")
@@ -139,7 +139,7 @@ func (r *QuotaPlanRepo) Create(ctx context.Context, dto *identityV1.QuotaPlan, o
 }
 
 // Delete 删除模板（已套用的租户配额是落库快照，不受影响）。
-func (r *QuotaPlanRepo) Delete(ctx context.Context, id uint32) error {
+func (r *QuotaPlanRepo) Delete(ctx context.Context, id uint64) error {
 	err := r.entClient.Client().QuotaPlan.DeleteOneID(id).Exec(ctx)
 	if err != nil {
 		if ent.IsNotFound(err) {

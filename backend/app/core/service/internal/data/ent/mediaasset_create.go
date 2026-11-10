@@ -65,13 +65,13 @@ func (_c *MediaAssetCreate) SetNillableDeletedAt(v *time.Time) *MediaAssetCreate
 }
 
 // SetCreatedBy sets the "created_by" field.
-func (_c *MediaAssetCreate) SetCreatedBy(v uint32) *MediaAssetCreate {
+func (_c *MediaAssetCreate) SetCreatedBy(v uint64) *MediaAssetCreate {
 	_c.mutation.SetCreatedBy(v)
 	return _c
 }
 
 // SetNillableCreatedBy sets the "created_by" field if the given value is not nil.
-func (_c *MediaAssetCreate) SetNillableCreatedBy(v *uint32) *MediaAssetCreate {
+func (_c *MediaAssetCreate) SetNillableCreatedBy(v *uint64) *MediaAssetCreate {
 	if v != nil {
 		_c.SetCreatedBy(*v)
 	}
@@ -79,13 +79,13 @@ func (_c *MediaAssetCreate) SetNillableCreatedBy(v *uint32) *MediaAssetCreate {
 }
 
 // SetUpdatedBy sets the "updated_by" field.
-func (_c *MediaAssetCreate) SetUpdatedBy(v uint32) *MediaAssetCreate {
+func (_c *MediaAssetCreate) SetUpdatedBy(v uint64) *MediaAssetCreate {
 	_c.mutation.SetUpdatedBy(v)
 	return _c
 }
 
 // SetNillableUpdatedBy sets the "updated_by" field if the given value is not nil.
-func (_c *MediaAssetCreate) SetNillableUpdatedBy(v *uint32) *MediaAssetCreate {
+func (_c *MediaAssetCreate) SetNillableUpdatedBy(v *uint64) *MediaAssetCreate {
 	if v != nil {
 		_c.SetUpdatedBy(*v)
 	}
@@ -93,13 +93,13 @@ func (_c *MediaAssetCreate) SetNillableUpdatedBy(v *uint32) *MediaAssetCreate {
 }
 
 // SetDeletedBy sets the "deleted_by" field.
-func (_c *MediaAssetCreate) SetDeletedBy(v uint32) *MediaAssetCreate {
+func (_c *MediaAssetCreate) SetDeletedBy(v uint64) *MediaAssetCreate {
 	_c.mutation.SetDeletedBy(v)
 	return _c
 }
 
 // SetNillableDeletedBy sets the "deleted_by" field if the given value is not nil.
-func (_c *MediaAssetCreate) SetNillableDeletedBy(v *uint32) *MediaAssetCreate {
+func (_c *MediaAssetCreate) SetNillableDeletedBy(v *uint64) *MediaAssetCreate {
 	if v != nil {
 		_c.SetDeletedBy(*v)
 	}
@@ -107,13 +107,13 @@ func (_c *MediaAssetCreate) SetNillableDeletedBy(v *uint32) *MediaAssetCreate {
 }
 
 // SetTenantID sets the "tenant_id" field.
-func (_c *MediaAssetCreate) SetTenantID(v uint32) *MediaAssetCreate {
+func (_c *MediaAssetCreate) SetTenantID(v uint64) *MediaAssetCreate {
 	_c.mutation.SetTenantID(v)
 	return _c
 }
 
 // SetNillableTenantID sets the "tenant_id" field if the given value is not nil.
-func (_c *MediaAssetCreate) SetNillableTenantID(v *uint32) *MediaAssetCreate {
+func (_c *MediaAssetCreate) SetNillableTenantID(v *uint64) *MediaAssetCreate {
 	if v != nil {
 		_c.SetTenantID(*v)
 	}
@@ -331,13 +331,13 @@ func (_c *MediaAssetCreate) SetNillableFileHash(v *string) *MediaAssetCreate {
 }
 
 // SetFolderID sets the "folder_id" field.
-func (_c *MediaAssetCreate) SetFolderID(v uint32) *MediaAssetCreate {
+func (_c *MediaAssetCreate) SetFolderID(v uint64) *MediaAssetCreate {
 	_c.mutation.SetFolderID(v)
 	return _c
 }
 
 // SetNillableFolderID sets the "folder_id" field if the given value is not nil.
-func (_c *MediaAssetCreate) SetNillableFolderID(v *uint32) *MediaAssetCreate {
+func (_c *MediaAssetCreate) SetNillableFolderID(v *uint64) *MediaAssetCreate {
 	if v != nil {
 		_c.SetFolderID(*v)
 	}
@@ -345,13 +345,13 @@ func (_c *MediaAssetCreate) SetNillableFolderID(v *uint32) *MediaAssetCreate {
 }
 
 // SetFileID sets the "file_id" field.
-func (_c *MediaAssetCreate) SetFileID(v uint32) *MediaAssetCreate {
+func (_c *MediaAssetCreate) SetFileID(v uint64) *MediaAssetCreate {
 	_c.mutation.SetFileID(v)
 	return _c
 }
 
 // SetNillableFileID sets the "file_id" field if the given value is not nil.
-func (_c *MediaAssetCreate) SetNillableFileID(v *uint32) *MediaAssetCreate {
+func (_c *MediaAssetCreate) SetNillableFileID(v *uint64) *MediaAssetCreate {
 	if v != nil {
 		_c.SetFileID(*v)
 	}
@@ -387,7 +387,7 @@ func (_c *MediaAssetCreate) SetNillableIsPrivate(v *bool) *MediaAssetCreate {
 }
 
 // SetID sets the "id" field.
-func (_c *MediaAssetCreate) SetID(v uint32) *MediaAssetCreate {
+func (_c *MediaAssetCreate) SetID(v uint64) *MediaAssetCreate {
 	_c.mutation.SetID(v)
 	return _c
 }
@@ -497,7 +497,7 @@ func (_c *MediaAssetCreate) sqlSave(ctx context.Context) (*MediaAsset, error) {
 	}
 	if _spec.ID.Value != _node.ID {
 		id := _spec.ID.Value.(int64)
-		_node.ID = uint32(id)
+		_node.ID = uint64(id)
 	}
 	_c.mutation.id = &_node.ID
 	_c.mutation.done = true
@@ -507,7 +507,7 @@ func (_c *MediaAssetCreate) sqlSave(ctx context.Context) (*MediaAsset, error) {
 func (_c *MediaAssetCreate) createSpec() (*MediaAsset, *sqlgraph.CreateSpec) {
 	var (
 		_node = &MediaAsset{config: _c.config}
-		_spec = sqlgraph.NewCreateSpec(mediaasset.Table, sqlgraph.NewFieldSpec(mediaasset.FieldID, field.TypeUint32))
+		_spec = sqlgraph.NewCreateSpec(mediaasset.Table, sqlgraph.NewFieldSpec(mediaasset.FieldID, field.TypeUint64))
 	)
 	_spec.OnConflict = _c.conflict
 	if id, ok := _c.mutation.ID(); ok {
@@ -527,19 +527,19 @@ func (_c *MediaAssetCreate) createSpec() (*MediaAsset, *sqlgraph.CreateSpec) {
 		_node.DeletedAt = &value
 	}
 	if value, ok := _c.mutation.CreatedBy(); ok {
-		_spec.SetField(mediaasset.FieldCreatedBy, field.TypeUint32, value)
+		_spec.SetField(mediaasset.FieldCreatedBy, field.TypeUint64, value)
 		_node.CreatedBy = &value
 	}
 	if value, ok := _c.mutation.UpdatedBy(); ok {
-		_spec.SetField(mediaasset.FieldUpdatedBy, field.TypeUint32, value)
+		_spec.SetField(mediaasset.FieldUpdatedBy, field.TypeUint64, value)
 		_node.UpdatedBy = &value
 	}
 	if value, ok := _c.mutation.DeletedBy(); ok {
-		_spec.SetField(mediaasset.FieldDeletedBy, field.TypeUint32, value)
+		_spec.SetField(mediaasset.FieldDeletedBy, field.TypeUint64, value)
 		_node.DeletedBy = &value
 	}
 	if value, ok := _c.mutation.TenantID(); ok {
-		_spec.SetField(mediaasset.FieldTenantID, field.TypeUint32, value)
+		_spec.SetField(mediaasset.FieldTenantID, field.TypeUint64, value)
 		_node.TenantID = &value
 	}
 	if value, ok := _c.mutation.Filename(); ok {
@@ -603,11 +603,11 @@ func (_c *MediaAssetCreate) createSpec() (*MediaAsset, *sqlgraph.CreateSpec) {
 		_node.FileHash = &value
 	}
 	if value, ok := _c.mutation.FolderID(); ok {
-		_spec.SetField(mediaasset.FieldFolderID, field.TypeUint32, value)
+		_spec.SetField(mediaasset.FieldFolderID, field.TypeUint64, value)
 		_node.FolderID = &value
 	}
 	if value, ok := _c.mutation.FileID(); ok {
-		_spec.SetField(mediaasset.FieldFileID, field.TypeUint32, value)
+		_spec.SetField(mediaasset.FieldFileID, field.TypeUint64, value)
 		_node.FileID = &value
 	}
 	if value, ok := _c.mutation.ReferenceCount(); ok {
@@ -707,7 +707,7 @@ func (u *MediaAssetUpsert) ClearDeletedAt() *MediaAssetUpsert {
 }
 
 // SetCreatedBy sets the "created_by" field.
-func (u *MediaAssetUpsert) SetCreatedBy(v uint32) *MediaAssetUpsert {
+func (u *MediaAssetUpsert) SetCreatedBy(v uint64) *MediaAssetUpsert {
 	u.Set(mediaasset.FieldCreatedBy, v)
 	return u
 }
@@ -719,7 +719,7 @@ func (u *MediaAssetUpsert) UpdateCreatedBy() *MediaAssetUpsert {
 }
 
 // AddCreatedBy adds v to the "created_by" field.
-func (u *MediaAssetUpsert) AddCreatedBy(v uint32) *MediaAssetUpsert {
+func (u *MediaAssetUpsert) AddCreatedBy(v uint64) *MediaAssetUpsert {
 	u.Add(mediaasset.FieldCreatedBy, v)
 	return u
 }
@@ -731,7 +731,7 @@ func (u *MediaAssetUpsert) ClearCreatedBy() *MediaAssetUpsert {
 }
 
 // SetUpdatedBy sets the "updated_by" field.
-func (u *MediaAssetUpsert) SetUpdatedBy(v uint32) *MediaAssetUpsert {
+func (u *MediaAssetUpsert) SetUpdatedBy(v uint64) *MediaAssetUpsert {
 	u.Set(mediaasset.FieldUpdatedBy, v)
 	return u
 }
@@ -743,7 +743,7 @@ func (u *MediaAssetUpsert) UpdateUpdatedBy() *MediaAssetUpsert {
 }
 
 // AddUpdatedBy adds v to the "updated_by" field.
-func (u *MediaAssetUpsert) AddUpdatedBy(v uint32) *MediaAssetUpsert {
+func (u *MediaAssetUpsert) AddUpdatedBy(v uint64) *MediaAssetUpsert {
 	u.Add(mediaasset.FieldUpdatedBy, v)
 	return u
 }
@@ -755,7 +755,7 @@ func (u *MediaAssetUpsert) ClearUpdatedBy() *MediaAssetUpsert {
 }
 
 // SetDeletedBy sets the "deleted_by" field.
-func (u *MediaAssetUpsert) SetDeletedBy(v uint32) *MediaAssetUpsert {
+func (u *MediaAssetUpsert) SetDeletedBy(v uint64) *MediaAssetUpsert {
 	u.Set(mediaasset.FieldDeletedBy, v)
 	return u
 }
@@ -767,7 +767,7 @@ func (u *MediaAssetUpsert) UpdateDeletedBy() *MediaAssetUpsert {
 }
 
 // AddDeletedBy adds v to the "deleted_by" field.
-func (u *MediaAssetUpsert) AddDeletedBy(v uint32) *MediaAssetUpsert {
+func (u *MediaAssetUpsert) AddDeletedBy(v uint64) *MediaAssetUpsert {
 	u.Add(mediaasset.FieldDeletedBy, v)
 	return u
 }
@@ -1073,7 +1073,7 @@ func (u *MediaAssetUpsert) ClearFileHash() *MediaAssetUpsert {
 }
 
 // SetFolderID sets the "folder_id" field.
-func (u *MediaAssetUpsert) SetFolderID(v uint32) *MediaAssetUpsert {
+func (u *MediaAssetUpsert) SetFolderID(v uint64) *MediaAssetUpsert {
 	u.Set(mediaasset.FieldFolderID, v)
 	return u
 }
@@ -1085,7 +1085,7 @@ func (u *MediaAssetUpsert) UpdateFolderID() *MediaAssetUpsert {
 }
 
 // AddFolderID adds v to the "folder_id" field.
-func (u *MediaAssetUpsert) AddFolderID(v uint32) *MediaAssetUpsert {
+func (u *MediaAssetUpsert) AddFolderID(v uint64) *MediaAssetUpsert {
 	u.Add(mediaasset.FieldFolderID, v)
 	return u
 }
@@ -1097,7 +1097,7 @@ func (u *MediaAssetUpsert) ClearFolderID() *MediaAssetUpsert {
 }
 
 // SetFileID sets the "file_id" field.
-func (u *MediaAssetUpsert) SetFileID(v uint32) *MediaAssetUpsert {
+func (u *MediaAssetUpsert) SetFileID(v uint64) *MediaAssetUpsert {
 	u.Set(mediaasset.FieldFileID, v)
 	return u
 }
@@ -1109,7 +1109,7 @@ func (u *MediaAssetUpsert) UpdateFileID() *MediaAssetUpsert {
 }
 
 // AddFileID adds v to the "file_id" field.
-func (u *MediaAssetUpsert) AddFileID(v uint32) *MediaAssetUpsert {
+func (u *MediaAssetUpsert) AddFileID(v uint64) *MediaAssetUpsert {
 	u.Add(mediaasset.FieldFileID, v)
 	return u
 }
@@ -1259,14 +1259,14 @@ func (u *MediaAssetUpsertOne) ClearDeletedAt() *MediaAssetUpsertOne {
 }
 
 // SetCreatedBy sets the "created_by" field.
-func (u *MediaAssetUpsertOne) SetCreatedBy(v uint32) *MediaAssetUpsertOne {
+func (u *MediaAssetUpsertOne) SetCreatedBy(v uint64) *MediaAssetUpsertOne {
 	return u.Update(func(s *MediaAssetUpsert) {
 		s.SetCreatedBy(v)
 	})
 }
 
 // AddCreatedBy adds v to the "created_by" field.
-func (u *MediaAssetUpsertOne) AddCreatedBy(v uint32) *MediaAssetUpsertOne {
+func (u *MediaAssetUpsertOne) AddCreatedBy(v uint64) *MediaAssetUpsertOne {
 	return u.Update(func(s *MediaAssetUpsert) {
 		s.AddCreatedBy(v)
 	})
@@ -1287,14 +1287,14 @@ func (u *MediaAssetUpsertOne) ClearCreatedBy() *MediaAssetUpsertOne {
 }
 
 // SetUpdatedBy sets the "updated_by" field.
-func (u *MediaAssetUpsertOne) SetUpdatedBy(v uint32) *MediaAssetUpsertOne {
+func (u *MediaAssetUpsertOne) SetUpdatedBy(v uint64) *MediaAssetUpsertOne {
 	return u.Update(func(s *MediaAssetUpsert) {
 		s.SetUpdatedBy(v)
 	})
 }
 
 // AddUpdatedBy adds v to the "updated_by" field.
-func (u *MediaAssetUpsertOne) AddUpdatedBy(v uint32) *MediaAssetUpsertOne {
+func (u *MediaAssetUpsertOne) AddUpdatedBy(v uint64) *MediaAssetUpsertOne {
 	return u.Update(func(s *MediaAssetUpsert) {
 		s.AddUpdatedBy(v)
 	})
@@ -1315,14 +1315,14 @@ func (u *MediaAssetUpsertOne) ClearUpdatedBy() *MediaAssetUpsertOne {
 }
 
 // SetDeletedBy sets the "deleted_by" field.
-func (u *MediaAssetUpsertOne) SetDeletedBy(v uint32) *MediaAssetUpsertOne {
+func (u *MediaAssetUpsertOne) SetDeletedBy(v uint64) *MediaAssetUpsertOne {
 	return u.Update(func(s *MediaAssetUpsert) {
 		s.SetDeletedBy(v)
 	})
 }
 
 // AddDeletedBy adds v to the "deleted_by" field.
-func (u *MediaAssetUpsertOne) AddDeletedBy(v uint32) *MediaAssetUpsertOne {
+func (u *MediaAssetUpsertOne) AddDeletedBy(v uint64) *MediaAssetUpsertOne {
 	return u.Update(func(s *MediaAssetUpsert) {
 		s.AddDeletedBy(v)
 	})
@@ -1686,14 +1686,14 @@ func (u *MediaAssetUpsertOne) ClearFileHash() *MediaAssetUpsertOne {
 }
 
 // SetFolderID sets the "folder_id" field.
-func (u *MediaAssetUpsertOne) SetFolderID(v uint32) *MediaAssetUpsertOne {
+func (u *MediaAssetUpsertOne) SetFolderID(v uint64) *MediaAssetUpsertOne {
 	return u.Update(func(s *MediaAssetUpsert) {
 		s.SetFolderID(v)
 	})
 }
 
 // AddFolderID adds v to the "folder_id" field.
-func (u *MediaAssetUpsertOne) AddFolderID(v uint32) *MediaAssetUpsertOne {
+func (u *MediaAssetUpsertOne) AddFolderID(v uint64) *MediaAssetUpsertOne {
 	return u.Update(func(s *MediaAssetUpsert) {
 		s.AddFolderID(v)
 	})
@@ -1714,14 +1714,14 @@ func (u *MediaAssetUpsertOne) ClearFolderID() *MediaAssetUpsertOne {
 }
 
 // SetFileID sets the "file_id" field.
-func (u *MediaAssetUpsertOne) SetFileID(v uint32) *MediaAssetUpsertOne {
+func (u *MediaAssetUpsertOne) SetFileID(v uint64) *MediaAssetUpsertOne {
 	return u.Update(func(s *MediaAssetUpsert) {
 		s.SetFileID(v)
 	})
 }
 
 // AddFileID adds v to the "file_id" field.
-func (u *MediaAssetUpsertOne) AddFileID(v uint32) *MediaAssetUpsertOne {
+func (u *MediaAssetUpsertOne) AddFileID(v uint64) *MediaAssetUpsertOne {
 	return u.Update(func(s *MediaAssetUpsert) {
 		s.AddFileID(v)
 	})
@@ -1806,7 +1806,7 @@ func (u *MediaAssetUpsertOne) ExecX(ctx context.Context) {
 }
 
 // Exec executes the UPSERT query and returns the inserted/updated ID.
-func (u *MediaAssetUpsertOne) ID(ctx context.Context) (id uint32, err error) {
+func (u *MediaAssetUpsertOne) ID(ctx context.Context) (id uint64, err error) {
 	node, err := u.create.Save(ctx)
 	if err != nil {
 		return id, err
@@ -1815,7 +1815,7 @@ func (u *MediaAssetUpsertOne) ID(ctx context.Context) (id uint32, err error) {
 }
 
 // IDX is like ID, but panics if an error occurs.
-func (u *MediaAssetUpsertOne) IDX(ctx context.Context) uint32 {
+func (u *MediaAssetUpsertOne) IDX(ctx context.Context) uint64 {
 	id, err := u.ID(ctx)
 	if err != nil {
 		panic(err)
@@ -1872,7 +1872,7 @@ func (_c *MediaAssetCreateBulk) Save(ctx context.Context) ([]*MediaAsset, error)
 				mutation.id = &nodes[i].ID
 				if specs[i].ID.Value != nil && nodes[i].ID == 0 {
 					id := specs[i].ID.Value.(int64)
-					nodes[i].ID = uint32(id)
+					nodes[i].ID = uint64(id)
 				}
 				mutation.done = true
 				return nodes[i], nil
@@ -2053,14 +2053,14 @@ func (u *MediaAssetUpsertBulk) ClearDeletedAt() *MediaAssetUpsertBulk {
 }
 
 // SetCreatedBy sets the "created_by" field.
-func (u *MediaAssetUpsertBulk) SetCreatedBy(v uint32) *MediaAssetUpsertBulk {
+func (u *MediaAssetUpsertBulk) SetCreatedBy(v uint64) *MediaAssetUpsertBulk {
 	return u.Update(func(s *MediaAssetUpsert) {
 		s.SetCreatedBy(v)
 	})
 }
 
 // AddCreatedBy adds v to the "created_by" field.
-func (u *MediaAssetUpsertBulk) AddCreatedBy(v uint32) *MediaAssetUpsertBulk {
+func (u *MediaAssetUpsertBulk) AddCreatedBy(v uint64) *MediaAssetUpsertBulk {
 	return u.Update(func(s *MediaAssetUpsert) {
 		s.AddCreatedBy(v)
 	})
@@ -2081,14 +2081,14 @@ func (u *MediaAssetUpsertBulk) ClearCreatedBy() *MediaAssetUpsertBulk {
 }
 
 // SetUpdatedBy sets the "updated_by" field.
-func (u *MediaAssetUpsertBulk) SetUpdatedBy(v uint32) *MediaAssetUpsertBulk {
+func (u *MediaAssetUpsertBulk) SetUpdatedBy(v uint64) *MediaAssetUpsertBulk {
 	return u.Update(func(s *MediaAssetUpsert) {
 		s.SetUpdatedBy(v)
 	})
 }
 
 // AddUpdatedBy adds v to the "updated_by" field.
-func (u *MediaAssetUpsertBulk) AddUpdatedBy(v uint32) *MediaAssetUpsertBulk {
+func (u *MediaAssetUpsertBulk) AddUpdatedBy(v uint64) *MediaAssetUpsertBulk {
 	return u.Update(func(s *MediaAssetUpsert) {
 		s.AddUpdatedBy(v)
 	})
@@ -2109,14 +2109,14 @@ func (u *MediaAssetUpsertBulk) ClearUpdatedBy() *MediaAssetUpsertBulk {
 }
 
 // SetDeletedBy sets the "deleted_by" field.
-func (u *MediaAssetUpsertBulk) SetDeletedBy(v uint32) *MediaAssetUpsertBulk {
+func (u *MediaAssetUpsertBulk) SetDeletedBy(v uint64) *MediaAssetUpsertBulk {
 	return u.Update(func(s *MediaAssetUpsert) {
 		s.SetDeletedBy(v)
 	})
 }
 
 // AddDeletedBy adds v to the "deleted_by" field.
-func (u *MediaAssetUpsertBulk) AddDeletedBy(v uint32) *MediaAssetUpsertBulk {
+func (u *MediaAssetUpsertBulk) AddDeletedBy(v uint64) *MediaAssetUpsertBulk {
 	return u.Update(func(s *MediaAssetUpsert) {
 		s.AddDeletedBy(v)
 	})
@@ -2480,14 +2480,14 @@ func (u *MediaAssetUpsertBulk) ClearFileHash() *MediaAssetUpsertBulk {
 }
 
 // SetFolderID sets the "folder_id" field.
-func (u *MediaAssetUpsertBulk) SetFolderID(v uint32) *MediaAssetUpsertBulk {
+func (u *MediaAssetUpsertBulk) SetFolderID(v uint64) *MediaAssetUpsertBulk {
 	return u.Update(func(s *MediaAssetUpsert) {
 		s.SetFolderID(v)
 	})
 }
 
 // AddFolderID adds v to the "folder_id" field.
-func (u *MediaAssetUpsertBulk) AddFolderID(v uint32) *MediaAssetUpsertBulk {
+func (u *MediaAssetUpsertBulk) AddFolderID(v uint64) *MediaAssetUpsertBulk {
 	return u.Update(func(s *MediaAssetUpsert) {
 		s.AddFolderID(v)
 	})
@@ -2508,14 +2508,14 @@ func (u *MediaAssetUpsertBulk) ClearFolderID() *MediaAssetUpsertBulk {
 }
 
 // SetFileID sets the "file_id" field.
-func (u *MediaAssetUpsertBulk) SetFileID(v uint32) *MediaAssetUpsertBulk {
+func (u *MediaAssetUpsertBulk) SetFileID(v uint64) *MediaAssetUpsertBulk {
 	return u.Update(func(s *MediaAssetUpsert) {
 		s.SetFileID(v)
 	})
 }
 
 // AddFileID adds v to the "file_id" field.
-func (u *MediaAssetUpsertBulk) AddFileID(v uint32) *MediaAssetUpsertBulk {
+func (u *MediaAssetUpsertBulk) AddFileID(v uint64) *MediaAssetUpsertBulk {
 	return u.Update(func(s *MediaAssetUpsert) {
 		s.AddFileID(v)
 	})

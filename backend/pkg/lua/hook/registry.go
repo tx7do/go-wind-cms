@@ -15,7 +15,7 @@ type Hook struct {
 
 // Script is imported from parent package to avoid circular dependency
 type Script struct {
-	ID          uint32
+	ID          uint64
 	Name        string
 	Hook        string
 	Source      string

@@ -94,7 +94,7 @@ func (r *NotificationRuleRepo) List(ctx context.Context, req *paginationV1.Pagin
 	}, nil
 }
 
-func (r *NotificationRuleRepo) Get(ctx context.Context, id uint32) (*notifyV1.NotificationRule, error) {
+func (r *NotificationRuleRepo) Get(ctx context.Context, id uint64) (*notifyV1.NotificationRule, error) {
 	if id == 0 {
 		return nil, errors.BadRequest("NOTIFICATION_RULE", "id is required")
 	}
@@ -154,7 +154,7 @@ func (r *NotificationRuleRepo) Count(ctx context.Context) (int, error) {
 //
 // created_at 显式写入：mixin 的列没有 DB 默认值，留给 NULL 会让
 // "按创建时间排序"的列表页出现一排空行。
-func (r *NotificationRuleRepo) Create(ctx context.Context, req *notifyV1.NotificationRule, operatorID uint32) (uint32, error) {
+func (r *NotificationRuleRepo) Create(ctx context.Context, req *notifyV1.NotificationRule, operatorID uint64) (uint64, error) {
 	if req == nil {
 		return 0, errors.BadRequest("NOTIFICATION_RULE", "invalid request")
 	}
@@ -197,7 +197,7 @@ func (r *NotificationRuleRepo) Create(ctx context.Context, req *notifyV1.Notific
 	return created.ID, nil
 }
 
-func (r *NotificationRuleRepo) Update(ctx context.Context, req *notifyV1.UpdateNotificationRuleRequest, operatorID uint32) (*notifyV1.NotificationRule, error) {
+func (r *NotificationRuleRepo) Update(ctx context.Context, req *notifyV1.UpdateNotificationRuleRequest, operatorID uint64) (*notifyV1.NotificationRule, error) {
 	if req == nil || req.Data == nil {
 		return nil, errors.BadRequest("NOTIFICATION_RULE", "invalid request")
 	}
@@ -243,7 +243,7 @@ func (r *NotificationRuleRepo) Update(ctx context.Context, req *notifyV1.UpdateN
 	return r.Get(ctx, req.GetId())
 }
 
-func (r *NotificationRuleRepo) Delete(ctx context.Context, id uint32) error {
+func (r *NotificationRuleRepo) Delete(ctx context.Context, id uint64) error {
 	if id == 0 {
 		return errors.BadRequest("NOTIFICATION_RULE", "id is required")
 	}

@@ -523,7 +523,7 @@ func extractScriptFields(script interface{}) (*hook.Script, bool) {
 
 	// Extract fields
 	hookScript := &hook.Script{
-		ID:          0, // auto-generated (hook.Script uses uint32)
+		ID:          0, // auto-generated (hook.Script uses uint64)
 		Name:        getStringField("Name"),
 		Hook:        getStringField("Hook"),
 		Source:      getStringField("Source"),

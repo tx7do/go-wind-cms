@@ -91,7 +91,7 @@ func (r *UserCredentialRepo) init() {
 	r.mapper.AppendConverters(r.credentialTypeConverter.NewConverterPair())
 }
 
-func (r *UserCredentialRepo) IsExist(ctx context.Context, id uint32) (bool, error) {
+func (r *UserCredentialRepo) IsExist(ctx context.Context, id uint64) (bool, error) {
 	exist, err := r.entClient.Client().UserCredential.Query().
 		Where(usercredential.IDEQ(id)).
 		Exist(ctx)
@@ -257,7 +257,7 @@ func (r *UserCredentialRepo) Update(ctx context.Context, req *authenticationV1.U
 	return err
 }
 
-func (r *UserCredentialRepo) Delete(ctx context.Context, id uint32) error {
+func (r *UserCredentialRepo) Delete(ctx context.Context, id uint64) error {
 	builder := r.entClient.Client().UserCredential.Delete()
 	builder.Where(usercredential.IDEQ(id))
 	if affected, err := builder.Exec(ctx); err != nil {
@@ -277,7 +277,7 @@ func (r *UserCredentialRepo) Delete(ctx context.Context, id uint32) error {
 	}
 }
 
-func (r *UserCredentialRepo) DeleteByUserId(ctx context.Context, userId uint32) error {
+func (r *UserCredentialRepo) DeleteByUserId(ctx context.Context, userId uint64) error {
 	builder := r.entClient.Client().UserCredential.Delete()
 	builder.Where(usercredential.UserIDEQ(userId))
 	if affected, err := builder.Exec(ctx); err != nil {
@@ -347,7 +347,7 @@ func (r *UserCredentialRepo) Get(ctx context.Context, req *authenticationV1.GetU
 }
 
 // maybeTenantFromViewer returns the viewer's tenant id if present and >0, plus whether a viewer context exists.
-func maybeTenantFromViewer(ctx context.Context) (tenantID uint32, hasTenant bool) {
+func maybeTenantFromViewer(ctx context.Context) (tenantID uint64, hasTenant bool) {
 	vc, exist := viewer.FromContext(ctx)
 	if !exist {
 		return 0, false
@@ -356,12 +356,12 @@ func maybeTenantFromViewer(ctx context.Context) (tenantID uint32, hasTenant bool
 	if tid == 0 {
 		return 0, false
 	}
-	return uint32(tid), true
+	return uint64(tid), true
 }
 
 // viewerUserIDFromContext 从 viewer context 提取操作人的用户 ID。
 // 用于强制按调用者身份过滤（如收件箱只能看到自己的消息）。
-func viewerUserIDFromContext(ctx context.Context) (uint32, bool) {
+func viewerUserIDFromContext(ctx context.Context) (uint64, bool) {
 	vc, exist := viewer.FromContext(ctx)
 	if !exist || vc == nil {
 		return 0, false
@@ -370,7 +370,7 @@ func viewerUserIDFromContext(ctx context.Context) (uint32, bool) {
 	if uid == 0 {
 		return 0, false
 	}
-	return uint32(uid), true
+	return uint64(uid), true
 }
 
 func (r *UserCredentialRepo) GetByIdentifier(ctx context.Context, req *authenticationV1.GetUserCredentialByIdentifierRequest) (*authenticationV1.UserCredential, error) {
@@ -416,7 +416,7 @@ const dummyPasswordHash = "$2a$10$1sbpKmhQDpXLHnDnEQ1nLe3oOnYyP2bUJyqHcX2T0Fq1qf
 // 至多一条启用的 TOTP 因子（重复绑定覆盖旧因子）。
 
 // totpCredentialPredicates TOTP 因子的公共查询谓词。
-func totpCredentialPredicates(userID uint32) []predicate.UserCredential {
+func totpCredentialPredicates(userID uint64) []predicate.UserCredential {
 	return []predicate.UserCredential{
 		usercredential.UserIDEQ(userID),
 		usercredential.CredentialTypeEQ(usercredential.CredentialTypeTOTP),
@@ -425,7 +425,7 @@ func totpCredentialPredicates(userID uint32) []predicate.UserCredential {
 }
 
 // GetTOTPCredential 取用户启用的 TOTP secret（解密后返回）；未绑定返回 NotFound。
-func (r *UserCredentialRepo) GetTOTPCredential(ctx context.Context, userID uint32) (string, error) {
+func (r *UserCredentialRepo) GetTOTPCredential(ctx context.Context, userID uint64) (string, error) {
 	entity, err := r.entClient.Client().UserCredential.Query().
 		Select(
 			usercredential.FieldUserID,
@@ -452,7 +452,7 @@ func (r *UserCredentialRepo) GetTOTPCredential(ctx context.Context, userID uint3
 }
 
 // HasTOTPCredential 用户是否已启用 TOTP 因子（登录链热路径，仅探活不取值）。
-func (r *UserCredentialRepo) HasTOTPCredential(ctx context.Context, userID uint32) (bool, error) {
+func (r *UserCredentialRepo) HasTOTPCredential(ctx context.Context, userID uint64) (bool, error) {
 	exists, err := r.entClient.Client().UserCredential.Query().
 		Where(totpCredentialPredicates(userID)...).
 		Exist(ctx)
@@ -464,7 +464,7 @@ func (r *UserCredentialRepo) HasTOTPCredential(ctx context.Context, userID uint3
 }
 
 // SaveTOTPCredential 写入（或覆盖）用户的 TOTP 因子，secret 需已加密。
-func (r *UserCredentialRepo) SaveTOTPCredential(ctx context.Context, userID, tenantID uint32, encryptedSecret string) error {
+func (r *UserCredentialRepo) SaveTOTPCredential(ctx context.Context, userID, tenantID uint64, encryptedSecret string) error {
 	client := r.entClient.Client()
 	existing, err := client.UserCredential.Query().
 		Select(usercredential.FieldID).
@@ -510,7 +510,7 @@ func (r *UserCredentialRepo) SaveTOTPCredential(ctx context.Context, userID, ten
 }
 
 // DeleteTOTPCredentials 清空用户全部 TOTP 因子（管理员救援重置）。
-func (r *UserCredentialRepo) DeleteTOTPCredentials(ctx context.Context, userID uint32) (int, error) {
+func (r *UserCredentialRepo) DeleteTOTPCredentials(ctx context.Context, userID uint64) (int, error) {
 	affected, err := r.entClient.Client().UserCredential.Delete().
 		Where(
 			usercredential.UserIDEQ(userID),
@@ -533,7 +533,7 @@ func (r *UserCredentialRepo) performDummyVerify(plainCredential string) {
 // (tenant_id, identity_type, identifier) 在该 tenant 内唯一，无需跨租户消歧。
 // needDecrypt 为 true 时，plainCredential 应为 base64+AES 加密密文，会自动解密。
 // 返回匹配到的用户 ID，调用方可据此通过 ID 查找用户。
-func (r *UserCredentialRepo) FindUserCredential(ctx context.Context, tenantID uint32, identityType authenticationV1.UserCredential_IdentityType, identifier, plainCredential string, needDecrypt bool) (uint32, error) {
+func (r *UserCredentialRepo) FindUserCredential(ctx context.Context, tenantID uint64, identityType authenticationV1.UserCredential_IdentityType, identifier, plainCredential string, needDecrypt bool) (uint64, error) {
 	if needDecrypt {
 		bytesPass, err := base64.StdEncoding.DecodeString(plainCredential)
 		if err != nil {
@@ -597,7 +597,7 @@ func (r *UserCredentialRepo) FindUserCredential(ctx context.Context, tenantID ui
 // 仅当标识符在所有租户中唯一命中一条启用凭证时才成功，返回 (userID, credentialTenantID)；
 // 命中 0 条返回 UserNotFound，命中多条（同名歧义）时要求调用方改传 tenant_code 精确登录。
 // 供未携带租户上下文的 C 端登录回退使用，避免租户用户因无 tenant_code 而永远无法登录。
-func (r *UserCredentialRepo) FindUserCredentialAcrossTenants(ctx context.Context, identityType authenticationV1.UserCredential_IdentityType, identifier, plainCredential string, needDecrypt bool) (uint32, uint32, error) {
+func (r *UserCredentialRepo) FindUserCredentialAcrossTenants(ctx context.Context, identityType authenticationV1.UserCredential_IdentityType, identifier, plainCredential string, needDecrypt bool) (uint64, uint64, error) {
 	if needDecrypt {
 		bytesPass, err := base64.StdEncoding.DecodeString(plainCredential)
 		if err != nil {

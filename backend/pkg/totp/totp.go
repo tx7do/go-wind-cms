@@ -60,10 +60,10 @@ func codeAt(secret string, t time.Time) (string, error) {
 	sum := mac.Sum(nil)
 
 	offset := sum[len(sum)-1] & 0x0f
-	bin := (uint32(sum[offset])&0x7f)<<24 |
-		uint32(sum[offset+1])<<16 |
-		uint32(sum[offset+2])<<8 |
-		uint32(sum[offset+3])
+	bin := (uint64(sum[offset])&0x7f)<<24 |
+		uint64(sum[offset+1])<<16 |
+		uint64(sum[offset+2])<<8 |
+		uint64(sum[offset+3])
 	return fmt.Sprintf("%06d", bin%1_000_000), nil
 }
 

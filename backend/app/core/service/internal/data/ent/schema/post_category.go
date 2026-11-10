@@ -30,11 +30,11 @@ func (PostCategory) Annotations() []schema.Annotation {
 // Fields of the PostCategory.
 func (PostCategory) Fields() []ent.Field {
 	return []ent.Field{
-		field.Uint32("post_id").
+		field.Uint64("post_id").
 			Comment("帖子ID").
 			Nillable(),
 
-		field.Uint32("category_id").
+		field.Uint64("category_id").
 			Comment("分类ID").
 			Nillable(),
 	}
@@ -43,9 +43,9 @@ func (PostCategory) Fields() []ent.Field {
 // Mixin of the PostCategory.
 func (PostCategory) Mixin() []ent.Mixin {
 	return []ent.Mixin{
-		mixin.AutoIncrementId{},
+		mixin.AutoIncrementId64{},
 		mixin.CreatedAt{},
-		mixin.TenantID[uint32]{},
+		mixin.TenantID[uint64]{},
 	}
 }
 

@@ -53,7 +53,7 @@ type AiContentService struct {
 	entClient    *entCrud.EntClient[*ent.Client]
 	menuRepo     *data.MenuRepo
 	roleRepo     interface {
-		GetRolesPermissionMenuIDs(ctx context.Context, roleIDs []uint32) ([]uint32, error)
+		GetRolesPermissionMenuIDs(ctx context.Context, roleIDs []uint64) ([]uint64, error)
 	}
 	userRepo interface {
 		Get(ctx context.Context, req *identityV1.GetUserRequest) (*identityV1.User, error)
@@ -141,9 +141,9 @@ func (s *AiContentService) GenerateContent(ctx context.Context, req *aiV1.Genera
 
 	// 记用量（尽力而为，不阻断返回）
 	if s.usageRepo != nil {
-		var userId, tenantId uint32
+		var userId, tenantId uint64
 		if vc, exist := viewer.FromContext(ctx); exist && vc != nil {
-			tenantId = uint32(vc.TenantID())
+			tenantId = uint64(vc.TenantID())
 		}
 		if uid, hasUser := viewerUserIDFromContext(ctx); hasUser {
 			userId = uid
@@ -259,7 +259,7 @@ var buildSearchIndexSQL = fmt.Sprintf(
 
 // menuIndexDoc 待索引菜单：真实菜单 id + 标题 + 路由。
 type menuIndexDoc struct {
-	menuId uint32
+	menuId uint64
 	title  string
 	route  string
 }
@@ -307,7 +307,7 @@ func paginationV1PagingNoLimit() *paginationV1.PagingRequest {
 // BuildMenuSearchIndex 向量化全部菜单标题并原子替换索引表里的菜单行。
 // 顺序：先离线算完全部 embedding（不持事务调外部 API），再单事务 DELETE+分批
 // 多行 INSERT——任一环节失败即回滚，旧索引原样保留。
-func (s *AiContentService) BuildMenuSearchIndex(ctx context.Context) (uint32, error) {
+func (s *AiContentService) BuildMenuSearchIndex(ctx context.Context) (uint64, error) {
 	db := s.entClient.DB()
 	if _, err := db.ExecContext(ctx, buildSearchIndexSQL); err != nil {
 		return 0, fmt.Errorf("create search index table: %w", err)
@@ -417,7 +417,7 @@ func (s *AiContentService) BuildMenuSearchIndex(ctx context.Context) (uint32, er
 		return 0, fmt.Errorf("commit search index: %w", cErr)
 	}
 	committed = true
-	return uint32(len(docs)), nil
+	return uint64(len(docs)), nil
 }
 
 // SemanticSearch 语义搜索：向量化 query 并按余弦相似度检索菜单索引。
@@ -552,13 +552,13 @@ func (s *AiContentService) RebuildSearchIndex(ctx context.Context, _ *emptypb.Em
 	if pErr != nil {
 		s.log.Errorf("rebuild post index failed: %v", pErr)
 	}
-	return &aiV1.RebuildSearchIndexResponse{IndexedCount: count + uint32(postCount)}, nil
+	return &aiV1.RebuildSearchIndexResponse{IndexedCount: uint32(count + uint64(postCount))}, nil
 }
 
 // visibleMenuIDs 解析调用者可见的菜单 ID 集。
 // 平台用户返回 nil（不过滤）；普通用户经 用户→角色→权限→菜单 链路解析，
 // 解析失败返回错误（fail-closed）。
-func (s *AiContentService) visibleMenuIDs(ctx context.Context, operatorId, tenantId uint32) ([]uint32, error) {
+func (s *AiContentService) visibleMenuIDs(ctx context.Context, operatorId, tenantId uint64) ([]uint64, error) {
 	if tenantId == 0 {
 		return nil, nil
 	}
@@ -569,16 +569,16 @@ func (s *AiContentService) visibleMenuIDs(ctx context.Context, operatorId, tenan
 		return nil, err
 	}
 	if user == nil || len(user.GetRoleIds()) == 0 {
-		return []uint32{}, nil
+		return []uint64{}, nil
 	}
 	return s.roleRepo.GetRolesPermissionMenuIDs(ctx, user.GetRoleIds())
 }
 
 // operatorIds 从 viewer 上下文取操作者（unary 中间件注入）。
-func (s *AiContentService) operatorIds(ctx context.Context) (uint32, uint32) {
-	var userId, tenantId uint32
+func (s *AiContentService) operatorIds(ctx context.Context) (uint64, uint64) {
+	var userId, tenantId uint64
 	if vc, exist := viewer.FromContext(ctx); exist && vc != nil {
-		tenantId = uint32(vc.TenantID())
+		tenantId = uint64(vc.TenantID())
 	}
 	if uid, ok := viewerUserIDFromContext(ctx); ok {
 		userId = uid

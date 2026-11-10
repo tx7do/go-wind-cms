@@ -70,14 +70,14 @@ func (_u *SocialInboxItemUpdate) ClearDeletedAt() *SocialInboxItemUpdate {
 }
 
 // SetCreatedBy sets the "created_by" field.
-func (_u *SocialInboxItemUpdate) SetCreatedBy(v uint32) *SocialInboxItemUpdate {
+func (_u *SocialInboxItemUpdate) SetCreatedBy(v uint64) *SocialInboxItemUpdate {
 	_u.mutation.ResetCreatedBy()
 	_u.mutation.SetCreatedBy(v)
 	return _u
 }
 
 // SetNillableCreatedBy sets the "created_by" field if the given value is not nil.
-func (_u *SocialInboxItemUpdate) SetNillableCreatedBy(v *uint32) *SocialInboxItemUpdate {
+func (_u *SocialInboxItemUpdate) SetNillableCreatedBy(v *uint64) *SocialInboxItemUpdate {
 	if v != nil {
 		_u.SetCreatedBy(*v)
 	}
@@ -85,7 +85,7 @@ func (_u *SocialInboxItemUpdate) SetNillableCreatedBy(v *uint32) *SocialInboxIte
 }
 
 // AddCreatedBy adds value to the "created_by" field.
-func (_u *SocialInboxItemUpdate) AddCreatedBy(v int32) *SocialInboxItemUpdate {
+func (_u *SocialInboxItemUpdate) AddCreatedBy(v int64) *SocialInboxItemUpdate {
 	_u.mutation.AddCreatedBy(v)
 	return _u
 }
@@ -97,14 +97,14 @@ func (_u *SocialInboxItemUpdate) ClearCreatedBy() *SocialInboxItemUpdate {
 }
 
 // SetUpdatedBy sets the "updated_by" field.
-func (_u *SocialInboxItemUpdate) SetUpdatedBy(v uint32) *SocialInboxItemUpdate {
+func (_u *SocialInboxItemUpdate) SetUpdatedBy(v uint64) *SocialInboxItemUpdate {
 	_u.mutation.ResetUpdatedBy()
 	_u.mutation.SetUpdatedBy(v)
 	return _u
 }
 
 // SetNillableUpdatedBy sets the "updated_by" field if the given value is not nil.
-func (_u *SocialInboxItemUpdate) SetNillableUpdatedBy(v *uint32) *SocialInboxItemUpdate {
+func (_u *SocialInboxItemUpdate) SetNillableUpdatedBy(v *uint64) *SocialInboxItemUpdate {
 	if v != nil {
 		_u.SetUpdatedBy(*v)
 	}
@@ -112,7 +112,7 @@ func (_u *SocialInboxItemUpdate) SetNillableUpdatedBy(v *uint32) *SocialInboxIte
 }
 
 // AddUpdatedBy adds value to the "updated_by" field.
-func (_u *SocialInboxItemUpdate) AddUpdatedBy(v int32) *SocialInboxItemUpdate {
+func (_u *SocialInboxItemUpdate) AddUpdatedBy(v int64) *SocialInboxItemUpdate {
 	_u.mutation.AddUpdatedBy(v)
 	return _u
 }
@@ -124,14 +124,14 @@ func (_u *SocialInboxItemUpdate) ClearUpdatedBy() *SocialInboxItemUpdate {
 }
 
 // SetDeletedBy sets the "deleted_by" field.
-func (_u *SocialInboxItemUpdate) SetDeletedBy(v uint32) *SocialInboxItemUpdate {
+func (_u *SocialInboxItemUpdate) SetDeletedBy(v uint64) *SocialInboxItemUpdate {
 	_u.mutation.ResetDeletedBy()
 	_u.mutation.SetDeletedBy(v)
 	return _u
 }
 
 // SetNillableDeletedBy sets the "deleted_by" field if the given value is not nil.
-func (_u *SocialInboxItemUpdate) SetNillableDeletedBy(v *uint32) *SocialInboxItemUpdate {
+func (_u *SocialInboxItemUpdate) SetNillableDeletedBy(v *uint64) *SocialInboxItemUpdate {
 	if v != nil {
 		_u.SetDeletedBy(*v)
 	}
@@ -139,7 +139,7 @@ func (_u *SocialInboxItemUpdate) SetNillableDeletedBy(v *uint32) *SocialInboxIte
 }
 
 // AddDeletedBy adds value to the "deleted_by" field.
-func (_u *SocialInboxItemUpdate) AddDeletedBy(v int32) *SocialInboxItemUpdate {
+func (_u *SocialInboxItemUpdate) AddDeletedBy(v int64) *SocialInboxItemUpdate {
 	_u.mutation.AddDeletedBy(v)
 	return _u
 }
@@ -171,14 +171,14 @@ func (_u *SocialInboxItemUpdate) ClearPlatform() *SocialInboxItemUpdate {
 }
 
 // SetAccountID sets the "account_id" field.
-func (_u *SocialInboxItemUpdate) SetAccountID(v uint32) *SocialInboxItemUpdate {
+func (_u *SocialInboxItemUpdate) SetAccountID(v uint64) *SocialInboxItemUpdate {
 	_u.mutation.ResetAccountID()
 	_u.mutation.SetAccountID(v)
 	return _u
 }
 
 // SetNillableAccountID sets the "account_id" field if the given value is not nil.
-func (_u *SocialInboxItemUpdate) SetNillableAccountID(v *uint32) *SocialInboxItemUpdate {
+func (_u *SocialInboxItemUpdate) SetNillableAccountID(v *uint64) *SocialInboxItemUpdate {
 	if v != nil {
 		_u.SetAccountID(*v)
 	}
@@ -186,7 +186,7 @@ func (_u *SocialInboxItemUpdate) SetNillableAccountID(v *uint32) *SocialInboxIte
 }
 
 // AddAccountID adds value to the "account_id" field.
-func (_u *SocialInboxItemUpdate) AddAccountID(v int32) *SocialInboxItemUpdate {
+func (_u *SocialInboxItemUpdate) AddAccountID(v int64) *SocialInboxItemUpdate {
 	_u.mutation.AddAccountID(v)
 	return _u
 }
@@ -409,7 +409,7 @@ func (_u *SocialInboxItemUpdate) sqlSave(ctx context.Context) (_node int, err er
 	if err := _u.check(); err != nil {
 		return _node, err
 	}
-	_spec := sqlgraph.NewUpdateSpec(socialinboxitem.Table, socialinboxitem.Columns, sqlgraph.NewFieldSpec(socialinboxitem.FieldID, field.TypeUint32))
+	_spec := sqlgraph.NewUpdateSpec(socialinboxitem.Table, socialinboxitem.Columns, sqlgraph.NewFieldSpec(socialinboxitem.FieldID, field.TypeUint64))
 	if ps := _u.mutation.predicates; len(ps) > 0 {
 		_spec.Predicate = func(selector *sql.Selector) {
 			for i := range ps {
@@ -433,34 +433,34 @@ func (_u *SocialInboxItemUpdate) sqlSave(ctx context.Context) (_node int, err er
 		_spec.ClearField(socialinboxitem.FieldDeletedAt, field.TypeTime)
 	}
 	if value, ok := _u.mutation.CreatedBy(); ok {
-		_spec.SetField(socialinboxitem.FieldCreatedBy, field.TypeUint32, value)
+		_spec.SetField(socialinboxitem.FieldCreatedBy, field.TypeUint64, value)
 	}
 	if value, ok := _u.mutation.AddedCreatedBy(); ok {
-		_spec.AddField(socialinboxitem.FieldCreatedBy, field.TypeUint32, value)
+		_spec.AddField(socialinboxitem.FieldCreatedBy, field.TypeUint64, value)
 	}
 	if _u.mutation.CreatedByCleared() {
-		_spec.ClearField(socialinboxitem.FieldCreatedBy, field.TypeUint32)
+		_spec.ClearField(socialinboxitem.FieldCreatedBy, field.TypeUint64)
 	}
 	if value, ok := _u.mutation.UpdatedBy(); ok {
-		_spec.SetField(socialinboxitem.FieldUpdatedBy, field.TypeUint32, value)
+		_spec.SetField(socialinboxitem.FieldUpdatedBy, field.TypeUint64, value)
 	}
 	if value, ok := _u.mutation.AddedUpdatedBy(); ok {
-		_spec.AddField(socialinboxitem.FieldUpdatedBy, field.TypeUint32, value)
+		_spec.AddField(socialinboxitem.FieldUpdatedBy, field.TypeUint64, value)
 	}
 	if _u.mutation.UpdatedByCleared() {
-		_spec.ClearField(socialinboxitem.FieldUpdatedBy, field.TypeUint32)
+		_spec.ClearField(socialinboxitem.FieldUpdatedBy, field.TypeUint64)
 	}
 	if value, ok := _u.mutation.DeletedBy(); ok {
-		_spec.SetField(socialinboxitem.FieldDeletedBy, field.TypeUint32, value)
+		_spec.SetField(socialinboxitem.FieldDeletedBy, field.TypeUint64, value)
 	}
 	if value, ok := _u.mutation.AddedDeletedBy(); ok {
-		_spec.AddField(socialinboxitem.FieldDeletedBy, field.TypeUint32, value)
+		_spec.AddField(socialinboxitem.FieldDeletedBy, field.TypeUint64, value)
 	}
 	if _u.mutation.DeletedByCleared() {
-		_spec.ClearField(socialinboxitem.FieldDeletedBy, field.TypeUint32)
+		_spec.ClearField(socialinboxitem.FieldDeletedBy, field.TypeUint64)
 	}
 	if _u.mutation.TenantIDCleared() {
-		_spec.ClearField(socialinboxitem.FieldTenantID, field.TypeUint32)
+		_spec.ClearField(socialinboxitem.FieldTenantID, field.TypeUint64)
 	}
 	if value, ok := _u.mutation.Platform(); ok {
 		_spec.SetField(socialinboxitem.FieldPlatform, field.TypeEnum, value)
@@ -469,13 +469,13 @@ func (_u *SocialInboxItemUpdate) sqlSave(ctx context.Context) (_node int, err er
 		_spec.ClearField(socialinboxitem.FieldPlatform, field.TypeEnum)
 	}
 	if value, ok := _u.mutation.AccountID(); ok {
-		_spec.SetField(socialinboxitem.FieldAccountID, field.TypeUint32, value)
+		_spec.SetField(socialinboxitem.FieldAccountID, field.TypeUint64, value)
 	}
 	if value, ok := _u.mutation.AddedAccountID(); ok {
-		_spec.AddField(socialinboxitem.FieldAccountID, field.TypeUint32, value)
+		_spec.AddField(socialinboxitem.FieldAccountID, field.TypeUint64, value)
 	}
 	if _u.mutation.AccountIDCleared() {
-		_spec.ClearField(socialinboxitem.FieldAccountID, field.TypeUint32)
+		_spec.ClearField(socialinboxitem.FieldAccountID, field.TypeUint64)
 	}
 	if value, ok := _u.mutation.GetType(); ok {
 		_spec.SetField(socialinboxitem.FieldType, field.TypeString, value)
@@ -588,14 +588,14 @@ func (_u *SocialInboxItemUpdateOne) ClearDeletedAt() *SocialInboxItemUpdateOne {
 }
 
 // SetCreatedBy sets the "created_by" field.
-func (_u *SocialInboxItemUpdateOne) SetCreatedBy(v uint32) *SocialInboxItemUpdateOne {
+func (_u *SocialInboxItemUpdateOne) SetCreatedBy(v uint64) *SocialInboxItemUpdateOne {
 	_u.mutation.ResetCreatedBy()
 	_u.mutation.SetCreatedBy(v)
 	return _u
 }
 
 // SetNillableCreatedBy sets the "created_by" field if the given value is not nil.
-func (_u *SocialInboxItemUpdateOne) SetNillableCreatedBy(v *uint32) *SocialInboxItemUpdateOne {
+func (_u *SocialInboxItemUpdateOne) SetNillableCreatedBy(v *uint64) *SocialInboxItemUpdateOne {
 	if v != nil {
 		_u.SetCreatedBy(*v)
 	}
@@ -603,7 +603,7 @@ func (_u *SocialInboxItemUpdateOne) SetNillableCreatedBy(v *uint32) *SocialInbox
 }
 
 // AddCreatedBy adds value to the "created_by" field.
-func (_u *SocialInboxItemUpdateOne) AddCreatedBy(v int32) *SocialInboxItemUpdateOne {
+func (_u *SocialInboxItemUpdateOne) AddCreatedBy(v int64) *SocialInboxItemUpdateOne {
 	_u.mutation.AddCreatedBy(v)
 	return _u
 }
@@ -615,14 +615,14 @@ func (_u *SocialInboxItemUpdateOne) ClearCreatedBy() *SocialInboxItemUpdateOne {
 }
 
 // SetUpdatedBy sets the "updated_by" field.
-func (_u *SocialInboxItemUpdateOne) SetUpdatedBy(v uint32) *SocialInboxItemUpdateOne {
+func (_u *SocialInboxItemUpdateOne) SetUpdatedBy(v uint64) *SocialInboxItemUpdateOne {
 	_u.mutation.ResetUpdatedBy()
 	_u.mutation.SetUpdatedBy(v)
 	return _u
 }
 
 // SetNillableUpdatedBy sets the "updated_by" field if the given value is not nil.
-func (_u *SocialInboxItemUpdateOne) SetNillableUpdatedBy(v *uint32) *SocialInboxItemUpdateOne {
+func (_u *SocialInboxItemUpdateOne) SetNillableUpdatedBy(v *uint64) *SocialInboxItemUpdateOne {
 	if v != nil {
 		_u.SetUpdatedBy(*v)
 	}
@@ -630,7 +630,7 @@ func (_u *SocialInboxItemUpdateOne) SetNillableUpdatedBy(v *uint32) *SocialInbox
 }
 
 // AddUpdatedBy adds value to the "updated_by" field.
-func (_u *SocialInboxItemUpdateOne) AddUpdatedBy(v int32) *SocialInboxItemUpdateOne {
+func (_u *SocialInboxItemUpdateOne) AddUpdatedBy(v int64) *SocialInboxItemUpdateOne {
 	_u.mutation.AddUpdatedBy(v)
 	return _u
 }
@@ -642,14 +642,14 @@ func (_u *SocialInboxItemUpdateOne) ClearUpdatedBy() *SocialInboxItemUpdateOne {
 }
 
 // SetDeletedBy sets the "deleted_by" field.
-func (_u *SocialInboxItemUpdateOne) SetDeletedBy(v uint32) *SocialInboxItemUpdateOne {
+func (_u *SocialInboxItemUpdateOne) SetDeletedBy(v uint64) *SocialInboxItemUpdateOne {
 	_u.mutation.ResetDeletedBy()
 	_u.mutation.SetDeletedBy(v)
 	return _u
 }
 
 // SetNillableDeletedBy sets the "deleted_by" field if the given value is not nil.
-func (_u *SocialInboxItemUpdateOne) SetNillableDeletedBy(v *uint32) *SocialInboxItemUpdateOne {
+func (_u *SocialInboxItemUpdateOne) SetNillableDeletedBy(v *uint64) *SocialInboxItemUpdateOne {
 	if v != nil {
 		_u.SetDeletedBy(*v)
 	}
@@ -657,7 +657,7 @@ func (_u *SocialInboxItemUpdateOne) SetNillableDeletedBy(v *uint32) *SocialInbox
 }
 
 // AddDeletedBy adds value to the "deleted_by" field.
-func (_u *SocialInboxItemUpdateOne) AddDeletedBy(v int32) *SocialInboxItemUpdateOne {
+func (_u *SocialInboxItemUpdateOne) AddDeletedBy(v int64) *SocialInboxItemUpdateOne {
 	_u.mutation.AddDeletedBy(v)
 	return _u
 }
@@ -689,14 +689,14 @@ func (_u *SocialInboxItemUpdateOne) ClearPlatform() *SocialInboxItemUpdateOne {
 }
 
 // SetAccountID sets the "account_id" field.
-func (_u *SocialInboxItemUpdateOne) SetAccountID(v uint32) *SocialInboxItemUpdateOne {
+func (_u *SocialInboxItemUpdateOne) SetAccountID(v uint64) *SocialInboxItemUpdateOne {
 	_u.mutation.ResetAccountID()
 	_u.mutation.SetAccountID(v)
 	return _u
 }
 
 // SetNillableAccountID sets the "account_id" field if the given value is not nil.
-func (_u *SocialInboxItemUpdateOne) SetNillableAccountID(v *uint32) *SocialInboxItemUpdateOne {
+func (_u *SocialInboxItemUpdateOne) SetNillableAccountID(v *uint64) *SocialInboxItemUpdateOne {
 	if v != nil {
 		_u.SetAccountID(*v)
 	}
@@ -704,7 +704,7 @@ func (_u *SocialInboxItemUpdateOne) SetNillableAccountID(v *uint32) *SocialInbox
 }
 
 // AddAccountID adds value to the "account_id" field.
-func (_u *SocialInboxItemUpdateOne) AddAccountID(v int32) *SocialInboxItemUpdateOne {
+func (_u *SocialInboxItemUpdateOne) AddAccountID(v int64) *SocialInboxItemUpdateOne {
 	_u.mutation.AddAccountID(v)
 	return _u
 }
@@ -940,7 +940,7 @@ func (_u *SocialInboxItemUpdateOne) sqlSave(ctx context.Context) (_node *SocialI
 	if err := _u.check(); err != nil {
 		return _node, err
 	}
-	_spec := sqlgraph.NewUpdateSpec(socialinboxitem.Table, socialinboxitem.Columns, sqlgraph.NewFieldSpec(socialinboxitem.FieldID, field.TypeUint32))
+	_spec := sqlgraph.NewUpdateSpec(socialinboxitem.Table, socialinboxitem.Columns, sqlgraph.NewFieldSpec(socialinboxitem.FieldID, field.TypeUint64))
 	id, ok := _u.mutation.ID()
 	if !ok {
 		return nil, &ValidationError{Name: "id", err: errors.New(`ent: missing "SocialInboxItem.id" for update`)}
@@ -981,34 +981,34 @@ func (_u *SocialInboxItemUpdateOne) sqlSave(ctx context.Context) (_node *SocialI
 		_spec.ClearField(socialinboxitem.FieldDeletedAt, field.TypeTime)
 	}
 	if value, ok := _u.mutation.CreatedBy(); ok {
-		_spec.SetField(socialinboxitem.FieldCreatedBy, field.TypeUint32, value)
+		_spec.SetField(socialinboxitem.FieldCreatedBy, field.TypeUint64, value)
 	}
 	if value, ok := _u.mutation.AddedCreatedBy(); ok {
-		_spec.AddField(socialinboxitem.FieldCreatedBy, field.TypeUint32, value)
+		_spec.AddField(socialinboxitem.FieldCreatedBy, field.TypeUint64, value)
 	}
 	if _u.mutation.CreatedByCleared() {
-		_spec.ClearField(socialinboxitem.FieldCreatedBy, field.TypeUint32)
+		_spec.ClearField(socialinboxitem.FieldCreatedBy, field.TypeUint64)
 	}
 	if value, ok := _u.mutation.UpdatedBy(); ok {
-		_spec.SetField(socialinboxitem.FieldUpdatedBy, field.TypeUint32, value)
+		_spec.SetField(socialinboxitem.FieldUpdatedBy, field.TypeUint64, value)
 	}
 	if value, ok := _u.mutation.AddedUpdatedBy(); ok {
-		_spec.AddField(socialinboxitem.FieldUpdatedBy, field.TypeUint32, value)
+		_spec.AddField(socialinboxitem.FieldUpdatedBy, field.TypeUint64, value)
 	}
 	if _u.mutation.UpdatedByCleared() {
-		_spec.ClearField(socialinboxitem.FieldUpdatedBy, field.TypeUint32)
+		_spec.ClearField(socialinboxitem.FieldUpdatedBy, field.TypeUint64)
 	}
 	if value, ok := _u.mutation.DeletedBy(); ok {
-		_spec.SetField(socialinboxitem.FieldDeletedBy, field.TypeUint32, value)
+		_spec.SetField(socialinboxitem.FieldDeletedBy, field.TypeUint64, value)
 	}
 	if value, ok := _u.mutation.AddedDeletedBy(); ok {
-		_spec.AddField(socialinboxitem.FieldDeletedBy, field.TypeUint32, value)
+		_spec.AddField(socialinboxitem.FieldDeletedBy, field.TypeUint64, value)
 	}
 	if _u.mutation.DeletedByCleared() {
-		_spec.ClearField(socialinboxitem.FieldDeletedBy, field.TypeUint32)
+		_spec.ClearField(socialinboxitem.FieldDeletedBy, field.TypeUint64)
 	}
 	if _u.mutation.TenantIDCleared() {
-		_spec.ClearField(socialinboxitem.FieldTenantID, field.TypeUint32)
+		_spec.ClearField(socialinboxitem.FieldTenantID, field.TypeUint64)
 	}
 	if value, ok := _u.mutation.Platform(); ok {
 		_spec.SetField(socialinboxitem.FieldPlatform, field.TypeEnum, value)
@@ -1017,13 +1017,13 @@ func (_u *SocialInboxItemUpdateOne) sqlSave(ctx context.Context) (_node *SocialI
 		_spec.ClearField(socialinboxitem.FieldPlatform, field.TypeEnum)
 	}
 	if value, ok := _u.mutation.AccountID(); ok {
-		_spec.SetField(socialinboxitem.FieldAccountID, field.TypeUint32, value)
+		_spec.SetField(socialinboxitem.FieldAccountID, field.TypeUint64, value)
 	}
 	if value, ok := _u.mutation.AddedAccountID(); ok {
-		_spec.AddField(socialinboxitem.FieldAccountID, field.TypeUint32, value)
+		_spec.AddField(socialinboxitem.FieldAccountID, field.TypeUint64, value)
 	}
 	if _u.mutation.AccountIDCleared() {
-		_spec.ClearField(socialinboxitem.FieldAccountID, field.TypeUint32)
+		_spec.ClearField(socialinboxitem.FieldAccountID, field.TypeUint64)
 	}
 	if value, ok := _u.mutation.GetType(); ok {
 		_spec.SetField(socialinboxitem.FieldType, field.TypeString, value)

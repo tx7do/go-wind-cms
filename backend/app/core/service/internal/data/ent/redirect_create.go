@@ -65,13 +65,13 @@ func (_c *RedirectCreate) SetNillableDeletedAt(v *time.Time) *RedirectCreate {
 }
 
 // SetCreatedBy sets the "created_by" field.
-func (_c *RedirectCreate) SetCreatedBy(v uint32) *RedirectCreate {
+func (_c *RedirectCreate) SetCreatedBy(v uint64) *RedirectCreate {
 	_c.mutation.SetCreatedBy(v)
 	return _c
 }
 
 // SetNillableCreatedBy sets the "created_by" field if the given value is not nil.
-func (_c *RedirectCreate) SetNillableCreatedBy(v *uint32) *RedirectCreate {
+func (_c *RedirectCreate) SetNillableCreatedBy(v *uint64) *RedirectCreate {
 	if v != nil {
 		_c.SetCreatedBy(*v)
 	}
@@ -79,13 +79,13 @@ func (_c *RedirectCreate) SetNillableCreatedBy(v *uint32) *RedirectCreate {
 }
 
 // SetUpdatedBy sets the "updated_by" field.
-func (_c *RedirectCreate) SetUpdatedBy(v uint32) *RedirectCreate {
+func (_c *RedirectCreate) SetUpdatedBy(v uint64) *RedirectCreate {
 	_c.mutation.SetUpdatedBy(v)
 	return _c
 }
 
 // SetNillableUpdatedBy sets the "updated_by" field if the given value is not nil.
-func (_c *RedirectCreate) SetNillableUpdatedBy(v *uint32) *RedirectCreate {
+func (_c *RedirectCreate) SetNillableUpdatedBy(v *uint64) *RedirectCreate {
 	if v != nil {
 		_c.SetUpdatedBy(*v)
 	}
@@ -93,13 +93,13 @@ func (_c *RedirectCreate) SetNillableUpdatedBy(v *uint32) *RedirectCreate {
 }
 
 // SetDeletedBy sets the "deleted_by" field.
-func (_c *RedirectCreate) SetDeletedBy(v uint32) *RedirectCreate {
+func (_c *RedirectCreate) SetDeletedBy(v uint64) *RedirectCreate {
 	_c.mutation.SetDeletedBy(v)
 	return _c
 }
 
 // SetNillableDeletedBy sets the "deleted_by" field if the given value is not nil.
-func (_c *RedirectCreate) SetNillableDeletedBy(v *uint32) *RedirectCreate {
+func (_c *RedirectCreate) SetNillableDeletedBy(v *uint64) *RedirectCreate {
 	if v != nil {
 		_c.SetDeletedBy(*v)
 	}
@@ -107,13 +107,13 @@ func (_c *RedirectCreate) SetNillableDeletedBy(v *uint32) *RedirectCreate {
 }
 
 // SetTenantID sets the "tenant_id" field.
-func (_c *RedirectCreate) SetTenantID(v uint32) *RedirectCreate {
+func (_c *RedirectCreate) SetTenantID(v uint64) *RedirectCreate {
 	_c.mutation.SetTenantID(v)
 	return _c
 }
 
 // SetNillableTenantID sets the "tenant_id" field if the given value is not nil.
-func (_c *RedirectCreate) SetNillableTenantID(v *uint32) *RedirectCreate {
+func (_c *RedirectCreate) SetNillableTenantID(v *uint64) *RedirectCreate {
 	if v != nil {
 		_c.SetTenantID(*v)
 	}
@@ -175,7 +175,7 @@ func (_c *RedirectCreate) SetNillableDescription(v *string) *RedirectCreate {
 }
 
 // SetID sets the "id" field.
-func (_c *RedirectCreate) SetID(v uint32) *RedirectCreate {
+func (_c *RedirectCreate) SetID(v uint64) *RedirectCreate {
 	_c.mutation.SetID(v)
 	return _c
 }
@@ -271,7 +271,7 @@ func (_c *RedirectCreate) sqlSave(ctx context.Context) (*Redirect, error) {
 	}
 	if _spec.ID.Value != _node.ID {
 		id := _spec.ID.Value.(int64)
-		_node.ID = uint32(id)
+		_node.ID = uint64(id)
 	}
 	_c.mutation.id = &_node.ID
 	_c.mutation.done = true
@@ -281,7 +281,7 @@ func (_c *RedirectCreate) sqlSave(ctx context.Context) (*Redirect, error) {
 func (_c *RedirectCreate) createSpec() (*Redirect, *sqlgraph.CreateSpec) {
 	var (
 		_node = &Redirect{config: _c.config}
-		_spec = sqlgraph.NewCreateSpec(redirect.Table, sqlgraph.NewFieldSpec(redirect.FieldID, field.TypeUint32))
+		_spec = sqlgraph.NewCreateSpec(redirect.Table, sqlgraph.NewFieldSpec(redirect.FieldID, field.TypeUint64))
 	)
 	_spec.OnConflict = _c.conflict
 	if id, ok := _c.mutation.ID(); ok {
@@ -301,19 +301,19 @@ func (_c *RedirectCreate) createSpec() (*Redirect, *sqlgraph.CreateSpec) {
 		_node.DeletedAt = &value
 	}
 	if value, ok := _c.mutation.CreatedBy(); ok {
-		_spec.SetField(redirect.FieldCreatedBy, field.TypeUint32, value)
+		_spec.SetField(redirect.FieldCreatedBy, field.TypeUint64, value)
 		_node.CreatedBy = &value
 	}
 	if value, ok := _c.mutation.UpdatedBy(); ok {
-		_spec.SetField(redirect.FieldUpdatedBy, field.TypeUint32, value)
+		_spec.SetField(redirect.FieldUpdatedBy, field.TypeUint64, value)
 		_node.UpdatedBy = &value
 	}
 	if value, ok := _c.mutation.DeletedBy(); ok {
-		_spec.SetField(redirect.FieldDeletedBy, field.TypeUint32, value)
+		_spec.SetField(redirect.FieldDeletedBy, field.TypeUint64, value)
 		_node.DeletedBy = &value
 	}
 	if value, ok := _c.mutation.TenantID(); ok {
-		_spec.SetField(redirect.FieldTenantID, field.TypeUint32, value)
+		_spec.SetField(redirect.FieldTenantID, field.TypeUint64, value)
 		_node.TenantID = &value
 	}
 	if value, ok := _c.mutation.FromPath(); ok {
@@ -425,7 +425,7 @@ func (u *RedirectUpsert) ClearDeletedAt() *RedirectUpsert {
 }
 
 // SetCreatedBy sets the "created_by" field.
-func (u *RedirectUpsert) SetCreatedBy(v uint32) *RedirectUpsert {
+func (u *RedirectUpsert) SetCreatedBy(v uint64) *RedirectUpsert {
 	u.Set(redirect.FieldCreatedBy, v)
 	return u
 }
@@ -437,7 +437,7 @@ func (u *RedirectUpsert) UpdateCreatedBy() *RedirectUpsert {
 }
 
 // AddCreatedBy adds v to the "created_by" field.
-func (u *RedirectUpsert) AddCreatedBy(v uint32) *RedirectUpsert {
+func (u *RedirectUpsert) AddCreatedBy(v uint64) *RedirectUpsert {
 	u.Add(redirect.FieldCreatedBy, v)
 	return u
 }
@@ -449,7 +449,7 @@ func (u *RedirectUpsert) ClearCreatedBy() *RedirectUpsert {
 }
 
 // SetUpdatedBy sets the "updated_by" field.
-func (u *RedirectUpsert) SetUpdatedBy(v uint32) *RedirectUpsert {
+func (u *RedirectUpsert) SetUpdatedBy(v uint64) *RedirectUpsert {
 	u.Set(redirect.FieldUpdatedBy, v)
 	return u
 }
@@ -461,7 +461,7 @@ func (u *RedirectUpsert) UpdateUpdatedBy() *RedirectUpsert {
 }
 
 // AddUpdatedBy adds v to the "updated_by" field.
-func (u *RedirectUpsert) AddUpdatedBy(v uint32) *RedirectUpsert {
+func (u *RedirectUpsert) AddUpdatedBy(v uint64) *RedirectUpsert {
 	u.Add(redirect.FieldUpdatedBy, v)
 	return u
 }
@@ -473,7 +473,7 @@ func (u *RedirectUpsert) ClearUpdatedBy() *RedirectUpsert {
 }
 
 // SetDeletedBy sets the "deleted_by" field.
-func (u *RedirectUpsert) SetDeletedBy(v uint32) *RedirectUpsert {
+func (u *RedirectUpsert) SetDeletedBy(v uint64) *RedirectUpsert {
 	u.Set(redirect.FieldDeletedBy, v)
 	return u
 }
@@ -485,7 +485,7 @@ func (u *RedirectUpsert) UpdateDeletedBy() *RedirectUpsert {
 }
 
 // AddDeletedBy adds v to the "deleted_by" field.
-func (u *RedirectUpsert) AddDeletedBy(v uint32) *RedirectUpsert {
+func (u *RedirectUpsert) AddDeletedBy(v uint64) *RedirectUpsert {
 	u.Add(redirect.FieldDeletedBy, v)
 	return u
 }
@@ -677,14 +677,14 @@ func (u *RedirectUpsertOne) ClearDeletedAt() *RedirectUpsertOne {
 }
 
 // SetCreatedBy sets the "created_by" field.
-func (u *RedirectUpsertOne) SetCreatedBy(v uint32) *RedirectUpsertOne {
+func (u *RedirectUpsertOne) SetCreatedBy(v uint64) *RedirectUpsertOne {
 	return u.Update(func(s *RedirectUpsert) {
 		s.SetCreatedBy(v)
 	})
 }
 
 // AddCreatedBy adds v to the "created_by" field.
-func (u *RedirectUpsertOne) AddCreatedBy(v uint32) *RedirectUpsertOne {
+func (u *RedirectUpsertOne) AddCreatedBy(v uint64) *RedirectUpsertOne {
 	return u.Update(func(s *RedirectUpsert) {
 		s.AddCreatedBy(v)
 	})
@@ -705,14 +705,14 @@ func (u *RedirectUpsertOne) ClearCreatedBy() *RedirectUpsertOne {
 }
 
 // SetUpdatedBy sets the "updated_by" field.
-func (u *RedirectUpsertOne) SetUpdatedBy(v uint32) *RedirectUpsertOne {
+func (u *RedirectUpsertOne) SetUpdatedBy(v uint64) *RedirectUpsertOne {
 	return u.Update(func(s *RedirectUpsert) {
 		s.SetUpdatedBy(v)
 	})
 }
 
 // AddUpdatedBy adds v to the "updated_by" field.
-func (u *RedirectUpsertOne) AddUpdatedBy(v uint32) *RedirectUpsertOne {
+func (u *RedirectUpsertOne) AddUpdatedBy(v uint64) *RedirectUpsertOne {
 	return u.Update(func(s *RedirectUpsert) {
 		s.AddUpdatedBy(v)
 	})
@@ -733,14 +733,14 @@ func (u *RedirectUpsertOne) ClearUpdatedBy() *RedirectUpsertOne {
 }
 
 // SetDeletedBy sets the "deleted_by" field.
-func (u *RedirectUpsertOne) SetDeletedBy(v uint32) *RedirectUpsertOne {
+func (u *RedirectUpsertOne) SetDeletedBy(v uint64) *RedirectUpsertOne {
 	return u.Update(func(s *RedirectUpsert) {
 		s.SetDeletedBy(v)
 	})
 }
 
 // AddDeletedBy adds v to the "deleted_by" field.
-func (u *RedirectUpsertOne) AddDeletedBy(v uint32) *RedirectUpsertOne {
+func (u *RedirectUpsertOne) AddDeletedBy(v uint64) *RedirectUpsertOne {
 	return u.Update(func(s *RedirectUpsert) {
 		s.AddDeletedBy(v)
 	})
@@ -874,7 +874,7 @@ func (u *RedirectUpsertOne) ExecX(ctx context.Context) {
 }
 
 // Exec executes the UPSERT query and returns the inserted/updated ID.
-func (u *RedirectUpsertOne) ID(ctx context.Context) (id uint32, err error) {
+func (u *RedirectUpsertOne) ID(ctx context.Context) (id uint64, err error) {
 	node, err := u.create.Save(ctx)
 	if err != nil {
 		return id, err
@@ -883,7 +883,7 @@ func (u *RedirectUpsertOne) ID(ctx context.Context) (id uint32, err error) {
 }
 
 // IDX is like ID, but panics if an error occurs.
-func (u *RedirectUpsertOne) IDX(ctx context.Context) uint32 {
+func (u *RedirectUpsertOne) IDX(ctx context.Context) uint64 {
 	id, err := u.ID(ctx)
 	if err != nil {
 		panic(err)
@@ -940,7 +940,7 @@ func (_c *RedirectCreateBulk) Save(ctx context.Context) ([]*Redirect, error) {
 				mutation.id = &nodes[i].ID
 				if specs[i].ID.Value != nil && nodes[i].ID == 0 {
 					id := specs[i].ID.Value.(int64)
-					nodes[i].ID = uint32(id)
+					nodes[i].ID = uint64(id)
 				}
 				mutation.done = true
 				return nodes[i], nil
@@ -1121,14 +1121,14 @@ func (u *RedirectUpsertBulk) ClearDeletedAt() *RedirectUpsertBulk {
 }
 
 // SetCreatedBy sets the "created_by" field.
-func (u *RedirectUpsertBulk) SetCreatedBy(v uint32) *RedirectUpsertBulk {
+func (u *RedirectUpsertBulk) SetCreatedBy(v uint64) *RedirectUpsertBulk {
 	return u.Update(func(s *RedirectUpsert) {
 		s.SetCreatedBy(v)
 	})
 }
 
 // AddCreatedBy adds v to the "created_by" field.
-func (u *RedirectUpsertBulk) AddCreatedBy(v uint32) *RedirectUpsertBulk {
+func (u *RedirectUpsertBulk) AddCreatedBy(v uint64) *RedirectUpsertBulk {
 	return u.Update(func(s *RedirectUpsert) {
 		s.AddCreatedBy(v)
 	})
@@ -1149,14 +1149,14 @@ func (u *RedirectUpsertBulk) ClearCreatedBy() *RedirectUpsertBulk {
 }
 
 // SetUpdatedBy sets the "updated_by" field.
-func (u *RedirectUpsertBulk) SetUpdatedBy(v uint32) *RedirectUpsertBulk {
+func (u *RedirectUpsertBulk) SetUpdatedBy(v uint64) *RedirectUpsertBulk {
 	return u.Update(func(s *RedirectUpsert) {
 		s.SetUpdatedBy(v)
 	})
 }
 
 // AddUpdatedBy adds v to the "updated_by" field.
-func (u *RedirectUpsertBulk) AddUpdatedBy(v uint32) *RedirectUpsertBulk {
+func (u *RedirectUpsertBulk) AddUpdatedBy(v uint64) *RedirectUpsertBulk {
 	return u.Update(func(s *RedirectUpsert) {
 		s.AddUpdatedBy(v)
 	})
@@ -1177,14 +1177,14 @@ func (u *RedirectUpsertBulk) ClearUpdatedBy() *RedirectUpsertBulk {
 }
 
 // SetDeletedBy sets the "deleted_by" field.
-func (u *RedirectUpsertBulk) SetDeletedBy(v uint32) *RedirectUpsertBulk {
+func (u *RedirectUpsertBulk) SetDeletedBy(v uint64) *RedirectUpsertBulk {
 	return u.Update(func(s *RedirectUpsert) {
 		s.SetDeletedBy(v)
 	})
 }
 
 // AddDeletedBy adds v to the "deleted_by" field.
-func (u *RedirectUpsertBulk) AddDeletedBy(v uint32) *RedirectUpsertBulk {
+func (u *RedirectUpsertBulk) AddDeletedBy(v uint64) *RedirectUpsertBulk {
 	return u.Update(func(s *RedirectUpsert) {
 		s.AddDeletedBy(v)
 	})

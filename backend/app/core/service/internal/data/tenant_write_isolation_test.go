@@ -55,7 +55,7 @@ func newTenantIsolationTestEnv(t *testing.T) (*ent.Client, *AiKnowledgeRepo, *Co
 }
 
 // tenantViewerContext 模拟租户用户（tid=tenantID）的请求上下文。
-func tenantViewerContext(tenantID uint32) context.Context {
+func tenantViewerContext(tenantID uint64) context.Context {
 	return viewer.WithContext(context.Background(),
 		appViewer.NewUserViewer(uint64(tenantID)+10, uint64(tenantID), 0, "", identityV1.DataScope_DATA_SCOPE_UNSPECIFIED))
 }

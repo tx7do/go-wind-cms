@@ -72,10 +72,10 @@ func (s *AccessKeyService) Create(ctx context.Context, req *accesskeyV1.CreateAc
 	}
 
 	// 凭证归属创建者的租户：机器令牌将继承该租户的隔离
-	var operatorID, tenantID uint32
+	var operatorID, tenantID uint64
 	if vc, exist := viewer.FromContext(ctx); exist && vc != nil {
-		operatorID = uint32(vc.UserID())
-		tenantID = uint32(vc.TenantID())
+		operatorID = uint64(vc.UserID())
+		tenantID = uint64(vc.TenantID())
 	}
 	req.Data.TenantId = trans.Ptr(tenantID)
 
@@ -98,7 +98,7 @@ func (s *AccessKeyService) Create(ctx context.Context, req *accesskeyV1.CreateAc
 
 	return &accesskeyV1.CreateAccessKeyResponse{
 		Data: &accesskeyV1.AccessKey{
-			Id:        trans.Ptr(uint32(entity.ID)),
+			Id:        trans.Ptr(uint64(entity.ID)),
 			Name:      entity.Name,
 			AccessKey: entity.AccessKey,
 			Status:    statusProto(entity.Status),

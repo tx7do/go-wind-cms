@@ -70,14 +70,14 @@ func (_u *SectionTranslationUpdate) ClearDeletedAt() *SectionTranslationUpdate {
 }
 
 // SetCreatedBy sets the "created_by" field.
-func (_u *SectionTranslationUpdate) SetCreatedBy(v uint32) *SectionTranslationUpdate {
+func (_u *SectionTranslationUpdate) SetCreatedBy(v uint64) *SectionTranslationUpdate {
 	_u.mutation.ResetCreatedBy()
 	_u.mutation.SetCreatedBy(v)
 	return _u
 }
 
 // SetNillableCreatedBy sets the "created_by" field if the given value is not nil.
-func (_u *SectionTranslationUpdate) SetNillableCreatedBy(v *uint32) *SectionTranslationUpdate {
+func (_u *SectionTranslationUpdate) SetNillableCreatedBy(v *uint64) *SectionTranslationUpdate {
 	if v != nil {
 		_u.SetCreatedBy(*v)
 	}
@@ -85,7 +85,7 @@ func (_u *SectionTranslationUpdate) SetNillableCreatedBy(v *uint32) *SectionTran
 }
 
 // AddCreatedBy adds value to the "created_by" field.
-func (_u *SectionTranslationUpdate) AddCreatedBy(v int32) *SectionTranslationUpdate {
+func (_u *SectionTranslationUpdate) AddCreatedBy(v int64) *SectionTranslationUpdate {
 	_u.mutation.AddCreatedBy(v)
 	return _u
 }
@@ -97,14 +97,14 @@ func (_u *SectionTranslationUpdate) ClearCreatedBy() *SectionTranslationUpdate {
 }
 
 // SetUpdatedBy sets the "updated_by" field.
-func (_u *SectionTranslationUpdate) SetUpdatedBy(v uint32) *SectionTranslationUpdate {
+func (_u *SectionTranslationUpdate) SetUpdatedBy(v uint64) *SectionTranslationUpdate {
 	_u.mutation.ResetUpdatedBy()
 	_u.mutation.SetUpdatedBy(v)
 	return _u
 }
 
 // SetNillableUpdatedBy sets the "updated_by" field if the given value is not nil.
-func (_u *SectionTranslationUpdate) SetNillableUpdatedBy(v *uint32) *SectionTranslationUpdate {
+func (_u *SectionTranslationUpdate) SetNillableUpdatedBy(v *uint64) *SectionTranslationUpdate {
 	if v != nil {
 		_u.SetUpdatedBy(*v)
 	}
@@ -112,7 +112,7 @@ func (_u *SectionTranslationUpdate) SetNillableUpdatedBy(v *uint32) *SectionTran
 }
 
 // AddUpdatedBy adds value to the "updated_by" field.
-func (_u *SectionTranslationUpdate) AddUpdatedBy(v int32) *SectionTranslationUpdate {
+func (_u *SectionTranslationUpdate) AddUpdatedBy(v int64) *SectionTranslationUpdate {
 	_u.mutation.AddUpdatedBy(v)
 	return _u
 }
@@ -124,14 +124,14 @@ func (_u *SectionTranslationUpdate) ClearUpdatedBy() *SectionTranslationUpdate {
 }
 
 // SetDeletedBy sets the "deleted_by" field.
-func (_u *SectionTranslationUpdate) SetDeletedBy(v uint32) *SectionTranslationUpdate {
+func (_u *SectionTranslationUpdate) SetDeletedBy(v uint64) *SectionTranslationUpdate {
 	_u.mutation.ResetDeletedBy()
 	_u.mutation.SetDeletedBy(v)
 	return _u
 }
 
 // SetNillableDeletedBy sets the "deleted_by" field if the given value is not nil.
-func (_u *SectionTranslationUpdate) SetNillableDeletedBy(v *uint32) *SectionTranslationUpdate {
+func (_u *SectionTranslationUpdate) SetNillableDeletedBy(v *uint64) *SectionTranslationUpdate {
 	if v != nil {
 		_u.SetDeletedBy(*v)
 	}
@@ -139,7 +139,7 @@ func (_u *SectionTranslationUpdate) SetNillableDeletedBy(v *uint32) *SectionTran
 }
 
 // AddDeletedBy adds value to the "deleted_by" field.
-func (_u *SectionTranslationUpdate) AddDeletedBy(v int32) *SectionTranslationUpdate {
+func (_u *SectionTranslationUpdate) AddDeletedBy(v int64) *SectionTranslationUpdate {
 	_u.mutation.AddDeletedBy(v)
 	return _u
 }
@@ -151,14 +151,14 @@ func (_u *SectionTranslationUpdate) ClearDeletedBy() *SectionTranslationUpdate {
 }
 
 // SetSectionID sets the "section_id" field.
-func (_u *SectionTranslationUpdate) SetSectionID(v uint32) *SectionTranslationUpdate {
+func (_u *SectionTranslationUpdate) SetSectionID(v uint64) *SectionTranslationUpdate {
 	_u.mutation.ResetSectionID()
 	_u.mutation.SetSectionID(v)
 	return _u
 }
 
 // SetNillableSectionID sets the "section_id" field if the given value is not nil.
-func (_u *SectionTranslationUpdate) SetNillableSectionID(v *uint32) *SectionTranslationUpdate {
+func (_u *SectionTranslationUpdate) SetNillableSectionID(v *uint64) *SectionTranslationUpdate {
 	if v != nil {
 		_u.SetSectionID(*v)
 	}
@@ -166,7 +166,7 @@ func (_u *SectionTranslationUpdate) SetNillableSectionID(v *uint32) *SectionTran
 }
 
 // AddSectionID adds value to the "section_id" field.
-func (_u *SectionTranslationUpdate) AddSectionID(v int32) *SectionTranslationUpdate {
+func (_u *SectionTranslationUpdate) AddSectionID(v int64) *SectionTranslationUpdate {
 	_u.mutation.AddSectionID(v)
 	return _u
 }
@@ -248,7 +248,7 @@ func (_u *SectionTranslationUpdate) Modify(modifiers ...func(u *sql.UpdateBuilde
 }
 
 func (_u *SectionTranslationUpdate) sqlSave(ctx context.Context) (_node int, err error) {
-	_spec := sqlgraph.NewUpdateSpec(sectiontranslation.Table, sectiontranslation.Columns, sqlgraph.NewFieldSpec(sectiontranslation.FieldID, field.TypeUint32))
+	_spec := sqlgraph.NewUpdateSpec(sectiontranslation.Table, sectiontranslation.Columns, sqlgraph.NewFieldSpec(sectiontranslation.FieldID, field.TypeUint64))
 	if ps := _u.mutation.predicates; len(ps) > 0 {
 		_spec.Predicate = func(selector *sql.Selector) {
 			for i := range ps {
@@ -272,43 +272,43 @@ func (_u *SectionTranslationUpdate) sqlSave(ctx context.Context) (_node int, err
 		_spec.ClearField(sectiontranslation.FieldDeletedAt, field.TypeTime)
 	}
 	if value, ok := _u.mutation.CreatedBy(); ok {
-		_spec.SetField(sectiontranslation.FieldCreatedBy, field.TypeUint32, value)
+		_spec.SetField(sectiontranslation.FieldCreatedBy, field.TypeUint64, value)
 	}
 	if value, ok := _u.mutation.AddedCreatedBy(); ok {
-		_spec.AddField(sectiontranslation.FieldCreatedBy, field.TypeUint32, value)
+		_spec.AddField(sectiontranslation.FieldCreatedBy, field.TypeUint64, value)
 	}
 	if _u.mutation.CreatedByCleared() {
-		_spec.ClearField(sectiontranslation.FieldCreatedBy, field.TypeUint32)
+		_spec.ClearField(sectiontranslation.FieldCreatedBy, field.TypeUint64)
 	}
 	if value, ok := _u.mutation.UpdatedBy(); ok {
-		_spec.SetField(sectiontranslation.FieldUpdatedBy, field.TypeUint32, value)
+		_spec.SetField(sectiontranslation.FieldUpdatedBy, field.TypeUint64, value)
 	}
 	if value, ok := _u.mutation.AddedUpdatedBy(); ok {
-		_spec.AddField(sectiontranslation.FieldUpdatedBy, field.TypeUint32, value)
+		_spec.AddField(sectiontranslation.FieldUpdatedBy, field.TypeUint64, value)
 	}
 	if _u.mutation.UpdatedByCleared() {
-		_spec.ClearField(sectiontranslation.FieldUpdatedBy, field.TypeUint32)
+		_spec.ClearField(sectiontranslation.FieldUpdatedBy, field.TypeUint64)
 	}
 	if value, ok := _u.mutation.DeletedBy(); ok {
-		_spec.SetField(sectiontranslation.FieldDeletedBy, field.TypeUint32, value)
+		_spec.SetField(sectiontranslation.FieldDeletedBy, field.TypeUint64, value)
 	}
 	if value, ok := _u.mutation.AddedDeletedBy(); ok {
-		_spec.AddField(sectiontranslation.FieldDeletedBy, field.TypeUint32, value)
+		_spec.AddField(sectiontranslation.FieldDeletedBy, field.TypeUint64, value)
 	}
 	if _u.mutation.DeletedByCleared() {
-		_spec.ClearField(sectiontranslation.FieldDeletedBy, field.TypeUint32)
+		_spec.ClearField(sectiontranslation.FieldDeletedBy, field.TypeUint64)
 	}
 	if _u.mutation.TenantIDCleared() {
-		_spec.ClearField(sectiontranslation.FieldTenantID, field.TypeUint32)
+		_spec.ClearField(sectiontranslation.FieldTenantID, field.TypeUint64)
 	}
 	if value, ok := _u.mutation.SectionID(); ok {
-		_spec.SetField(sectiontranslation.FieldSectionID, field.TypeUint32, value)
+		_spec.SetField(sectiontranslation.FieldSectionID, field.TypeUint64, value)
 	}
 	if value, ok := _u.mutation.AddedSectionID(); ok {
-		_spec.AddField(sectiontranslation.FieldSectionID, field.TypeUint32, value)
+		_spec.AddField(sectiontranslation.FieldSectionID, field.TypeUint64, value)
 	}
 	if _u.mutation.SectionIDCleared() {
-		_spec.ClearField(sectiontranslation.FieldSectionID, field.TypeUint32)
+		_spec.ClearField(sectiontranslation.FieldSectionID, field.TypeUint64)
 	}
 	if value, ok := _u.mutation.LanguageCode(); ok {
 		_spec.SetField(sectiontranslation.FieldLanguageCode, field.TypeString, value)
@@ -385,14 +385,14 @@ func (_u *SectionTranslationUpdateOne) ClearDeletedAt() *SectionTranslationUpdat
 }
 
 // SetCreatedBy sets the "created_by" field.
-func (_u *SectionTranslationUpdateOne) SetCreatedBy(v uint32) *SectionTranslationUpdateOne {
+func (_u *SectionTranslationUpdateOne) SetCreatedBy(v uint64) *SectionTranslationUpdateOne {
 	_u.mutation.ResetCreatedBy()
 	_u.mutation.SetCreatedBy(v)
 	return _u
 }
 
 // SetNillableCreatedBy sets the "created_by" field if the given value is not nil.
-func (_u *SectionTranslationUpdateOne) SetNillableCreatedBy(v *uint32) *SectionTranslationUpdateOne {
+func (_u *SectionTranslationUpdateOne) SetNillableCreatedBy(v *uint64) *SectionTranslationUpdateOne {
 	if v != nil {
 		_u.SetCreatedBy(*v)
 	}
@@ -400,7 +400,7 @@ func (_u *SectionTranslationUpdateOne) SetNillableCreatedBy(v *uint32) *SectionT
 }
 
 // AddCreatedBy adds value to the "created_by" field.
-func (_u *SectionTranslationUpdateOne) AddCreatedBy(v int32) *SectionTranslationUpdateOne {
+func (_u *SectionTranslationUpdateOne) AddCreatedBy(v int64) *SectionTranslationUpdateOne {
 	_u.mutation.AddCreatedBy(v)
 	return _u
 }
@@ -412,14 +412,14 @@ func (_u *SectionTranslationUpdateOne) ClearCreatedBy() *SectionTranslationUpdat
 }
 
 // SetUpdatedBy sets the "updated_by" field.
-func (_u *SectionTranslationUpdateOne) SetUpdatedBy(v uint32) *SectionTranslationUpdateOne {
+func (_u *SectionTranslationUpdateOne) SetUpdatedBy(v uint64) *SectionTranslationUpdateOne {
 	_u.mutation.ResetUpdatedBy()
 	_u.mutation.SetUpdatedBy(v)
 	return _u
 }
 
 // SetNillableUpdatedBy sets the "updated_by" field if the given value is not nil.
-func (_u *SectionTranslationUpdateOne) SetNillableUpdatedBy(v *uint32) *SectionTranslationUpdateOne {
+func (_u *SectionTranslationUpdateOne) SetNillableUpdatedBy(v *uint64) *SectionTranslationUpdateOne {
 	if v != nil {
 		_u.SetUpdatedBy(*v)
 	}
@@ -427,7 +427,7 @@ func (_u *SectionTranslationUpdateOne) SetNillableUpdatedBy(v *uint32) *SectionT
 }
 
 // AddUpdatedBy adds value to the "updated_by" field.
-func (_u *SectionTranslationUpdateOne) AddUpdatedBy(v int32) *SectionTranslationUpdateOne {
+func (_u *SectionTranslationUpdateOne) AddUpdatedBy(v int64) *SectionTranslationUpdateOne {
 	_u.mutation.AddUpdatedBy(v)
 	return _u
 }
@@ -439,14 +439,14 @@ func (_u *SectionTranslationUpdateOne) ClearUpdatedBy() *SectionTranslationUpdat
 }
 
 // SetDeletedBy sets the "deleted_by" field.
-func (_u *SectionTranslationUpdateOne) SetDeletedBy(v uint32) *SectionTranslationUpdateOne {
+func (_u *SectionTranslationUpdateOne) SetDeletedBy(v uint64) *SectionTranslationUpdateOne {
 	_u.mutation.ResetDeletedBy()
 	_u.mutation.SetDeletedBy(v)
 	return _u
 }
 
 // SetNillableDeletedBy sets the "deleted_by" field if the given value is not nil.
-func (_u *SectionTranslationUpdateOne) SetNillableDeletedBy(v *uint32) *SectionTranslationUpdateOne {
+func (_u *SectionTranslationUpdateOne) SetNillableDeletedBy(v *uint64) *SectionTranslationUpdateOne {
 	if v != nil {
 		_u.SetDeletedBy(*v)
 	}
@@ -454,7 +454,7 @@ func (_u *SectionTranslationUpdateOne) SetNillableDeletedBy(v *uint32) *SectionT
 }
 
 // AddDeletedBy adds value to the "deleted_by" field.
-func (_u *SectionTranslationUpdateOne) AddDeletedBy(v int32) *SectionTranslationUpdateOne {
+func (_u *SectionTranslationUpdateOne) AddDeletedBy(v int64) *SectionTranslationUpdateOne {
 	_u.mutation.AddDeletedBy(v)
 	return _u
 }
@@ -466,14 +466,14 @@ func (_u *SectionTranslationUpdateOne) ClearDeletedBy() *SectionTranslationUpdat
 }
 
 // SetSectionID sets the "section_id" field.
-func (_u *SectionTranslationUpdateOne) SetSectionID(v uint32) *SectionTranslationUpdateOne {
+func (_u *SectionTranslationUpdateOne) SetSectionID(v uint64) *SectionTranslationUpdateOne {
 	_u.mutation.ResetSectionID()
 	_u.mutation.SetSectionID(v)
 	return _u
 }
 
 // SetNillableSectionID sets the "section_id" field if the given value is not nil.
-func (_u *SectionTranslationUpdateOne) SetNillableSectionID(v *uint32) *SectionTranslationUpdateOne {
+func (_u *SectionTranslationUpdateOne) SetNillableSectionID(v *uint64) *SectionTranslationUpdateOne {
 	if v != nil {
 		_u.SetSectionID(*v)
 	}
@@ -481,7 +481,7 @@ func (_u *SectionTranslationUpdateOne) SetNillableSectionID(v *uint32) *SectionT
 }
 
 // AddSectionID adds value to the "section_id" field.
-func (_u *SectionTranslationUpdateOne) AddSectionID(v int32) *SectionTranslationUpdateOne {
+func (_u *SectionTranslationUpdateOne) AddSectionID(v int64) *SectionTranslationUpdateOne {
 	_u.mutation.AddSectionID(v)
 	return _u
 }
@@ -576,7 +576,7 @@ func (_u *SectionTranslationUpdateOne) Modify(modifiers ...func(u *sql.UpdateBui
 }
 
 func (_u *SectionTranslationUpdateOne) sqlSave(ctx context.Context) (_node *SectionTranslation, err error) {
-	_spec := sqlgraph.NewUpdateSpec(sectiontranslation.Table, sectiontranslation.Columns, sqlgraph.NewFieldSpec(sectiontranslation.FieldID, field.TypeUint32))
+	_spec := sqlgraph.NewUpdateSpec(sectiontranslation.Table, sectiontranslation.Columns, sqlgraph.NewFieldSpec(sectiontranslation.FieldID, field.TypeUint64))
 	id, ok := _u.mutation.ID()
 	if !ok {
 		return nil, &ValidationError{Name: "id", err: errors.New(`ent: missing "SectionTranslation.id" for update`)}
@@ -617,43 +617,43 @@ func (_u *SectionTranslationUpdateOne) sqlSave(ctx context.Context) (_node *Sect
 		_spec.ClearField(sectiontranslation.FieldDeletedAt, field.TypeTime)
 	}
 	if value, ok := _u.mutation.CreatedBy(); ok {
-		_spec.SetField(sectiontranslation.FieldCreatedBy, field.TypeUint32, value)
+		_spec.SetField(sectiontranslation.FieldCreatedBy, field.TypeUint64, value)
 	}
 	if value, ok := _u.mutation.AddedCreatedBy(); ok {
-		_spec.AddField(sectiontranslation.FieldCreatedBy, field.TypeUint32, value)
+		_spec.AddField(sectiontranslation.FieldCreatedBy, field.TypeUint64, value)
 	}
 	if _u.mutation.CreatedByCleared() {
-		_spec.ClearField(sectiontranslation.FieldCreatedBy, field.TypeUint32)
+		_spec.ClearField(sectiontranslation.FieldCreatedBy, field.TypeUint64)
 	}
 	if value, ok := _u.mutation.UpdatedBy(); ok {
-		_spec.SetField(sectiontranslation.FieldUpdatedBy, field.TypeUint32, value)
+		_spec.SetField(sectiontranslation.FieldUpdatedBy, field.TypeUint64, value)
 	}
 	if value, ok := _u.mutation.AddedUpdatedBy(); ok {
-		_spec.AddField(sectiontranslation.FieldUpdatedBy, field.TypeUint32, value)
+		_spec.AddField(sectiontranslation.FieldUpdatedBy, field.TypeUint64, value)
 	}
 	if _u.mutation.UpdatedByCleared() {
-		_spec.ClearField(sectiontranslation.FieldUpdatedBy, field.TypeUint32)
+		_spec.ClearField(sectiontranslation.FieldUpdatedBy, field.TypeUint64)
 	}
 	if value, ok := _u.mutation.DeletedBy(); ok {
-		_spec.SetField(sectiontranslation.FieldDeletedBy, field.TypeUint32, value)
+		_spec.SetField(sectiontranslation.FieldDeletedBy, field.TypeUint64, value)
 	}
 	if value, ok := _u.mutation.AddedDeletedBy(); ok {
-		_spec.AddField(sectiontranslation.FieldDeletedBy, field.TypeUint32, value)
+		_spec.AddField(sectiontranslation.FieldDeletedBy, field.TypeUint64, value)
 	}
 	if _u.mutation.DeletedByCleared() {
-		_spec.ClearField(sectiontranslation.FieldDeletedBy, field.TypeUint32)
+		_spec.ClearField(sectiontranslation.FieldDeletedBy, field.TypeUint64)
 	}
 	if _u.mutation.TenantIDCleared() {
-		_spec.ClearField(sectiontranslation.FieldTenantID, field.TypeUint32)
+		_spec.ClearField(sectiontranslation.FieldTenantID, field.TypeUint64)
 	}
 	if value, ok := _u.mutation.SectionID(); ok {
-		_spec.SetField(sectiontranslation.FieldSectionID, field.TypeUint32, value)
+		_spec.SetField(sectiontranslation.FieldSectionID, field.TypeUint64, value)
 	}
 	if value, ok := _u.mutation.AddedSectionID(); ok {
-		_spec.AddField(sectiontranslation.FieldSectionID, field.TypeUint32, value)
+		_spec.AddField(sectiontranslation.FieldSectionID, field.TypeUint64, value)
 	}
 	if _u.mutation.SectionIDCleared() {
-		_spec.ClearField(sectiontranslation.FieldSectionID, field.TypeUint32)
+		_spec.ClearField(sectiontranslation.FieldSectionID, field.TypeUint64)
 	}
 	if value, ok := _u.mutation.LanguageCode(); ok {
 		_spec.SetField(sectiontranslation.FieldLanguageCode, field.TypeString, value)

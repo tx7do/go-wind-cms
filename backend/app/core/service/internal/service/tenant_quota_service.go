@@ -48,7 +48,7 @@ type TenantQuotaService struct {
 
 // internalMessageSender 水位告警投递所需的最小站内信面（便于测试桩替）。
 type internalMessageSender interface {
-	SendSystemNotification(ctx context.Context, title, content string, targetUserIDs []uint32) (uint32, error)
+	SendSystemNotification(ctx context.Context, title, content string, targetUserIDs []uint64) (uint64, error)
 }
 
 // RegisterInternalMessages 注册站内信投递缝（构造完成后调用，解双向引用）。
@@ -116,7 +116,7 @@ func (s *TenantQuotaService) Delete(ctx context.Context, req *identityV1.DeleteT
 
 // buildUsage 聚合租户用量与配额（GetUsage/GetMyTenantUsage 共用）。
 // 单维度计量失败记日志后按 0 计——展示不因单表抖动整页失败（闸门另有 fail-open）。
-func (s *TenantQuotaService) buildUsage(ctx context.Context, tenantID uint32) (*identityV1.TenantUsage, error) {
+func (s *TenantQuotaService) buildUsage(ctx context.Context, tenantID uint64) (*identityV1.TenantUsage, error) {
 	sysCtx := appViewer.NewSystemViewerContext(ctx)
 	now := time.Now()
 	monthStart := time.Date(now.Year(), now.Month(), 1, 0, 0, 0, 0, time.Local)
@@ -281,7 +281,7 @@ func (s *TenantQuotaService) CheckQuota(ctx context.Context, req *identityV1.Che
 }
 
 // quotaLimitOf 取租户指定类型的配额上限；无条目返回 hasLimit=false（未限售）。
-func (s *TenantQuotaService) quotaLimitOf(ctx context.Context, tenantID uint32, qt identityV1.TenantQuota_QuotaType) (limit uint64, hasLimit bool, err error) {
+func (s *TenantQuotaService) quotaLimitOf(ctx context.Context, tenantID uint64, qt identityV1.TenantQuota_QuotaType) (limit uint64, hasLimit bool, err error) {
 	quotas, err := s.repo.ListByTenant(ctx, tenantID)
 	if err != nil {
 		return 0, false, err
@@ -330,10 +330,10 @@ func checkQuotaNotExceeded(quotaType string, limit, used, additional uint64) err
 
 // QuotaWatermarkHit 单租户单配额类型的水位命中（只读扫描结果，无任何拒绝语义）。
 type QuotaWatermarkHit struct {
-	TenantID   uint32
+	TenantID   uint64
 	TenantName string
 	// AdminUserID 租户管理员（sys_tenants.admin_user_id；0 = 未设置，投递侧跳过）。
-	AdminUserID uint32
+	AdminUserID uint64
 	// QuotaType 配额类型技术名（proto 枚举名，与用量页/闸门报错口径一致，不做翻译）。
 	QuotaType string
 	Used      uint64
@@ -377,9 +377,9 @@ func (s *TenantQuotaService) ScanQuotaWatermarks(ctx context.Context, monthStart
 	}
 
 	// 按租户归集配额；只扫描 status==ON 的租户（停用/冻结租户已被闸门拦截，告警是噪音）
-	quotaByTenant := make(map[uint32][]*tenantquotaRow, 4)
-	tenantIDs := make([]uint32, 0, 8)
-	seen := map[uint32]bool{}
+	quotaByTenant := make(map[uint64][]*tenantquotaRow, 4)
+	tenantIDs := make([]uint64, 0, 8)
+	seen := map[uint64]bool{}
 	for _, q := range quotas {
 		if !seen[q.TenantID] {
 			seen[q.TenantID] = true
@@ -406,7 +406,7 @@ func (s *TenantQuotaService) ScanQuotaWatermarks(ctx context.Context, monthStart
 		if t.Name != nil {
 			tenantName = *t.Name
 		}
-		adminUserID := uint32(0)
+		adminUserID := uint64(0)
 		if t.AdminUserID != nil {
 			adminUserID = *t.AdminUserID
 		}
@@ -491,9 +491,9 @@ func (s *TenantQuotaService) AsyncTenantQuotaWatermarkScan(taskType string, payl
 		return nil
 	}
 
-	grouped := make(map[uint32][]QuotaWatermarkHit)
-	adminOf := make(map[uint32]uint32)
-	nameOf := make(map[uint32]string)
+	grouped := make(map[uint64][]QuotaWatermarkHit)
+	adminOf := make(map[uint64]uint64)
+	nameOf := make(map[uint64]string)
 	for _, h := range hits {
 		grouped[h.TenantID] = append(grouped[h.TenantID], h)
 		adminOf[h.TenantID] = h.AdminUserID
@@ -519,7 +519,7 @@ func (s *TenantQuotaService) AsyncTenantQuotaWatermarkScan(taskType string, payl
 		locale := s.adminLocaleOf(ctx, adminID)
 		title := watermarkTitle(locale, nameOf[tenantID])
 		content := watermarkBody(locale, nameOf[tenantID], tenantHits)
-		if _, derr := s.internalMessages.SendSystemNotification(ctx, title, content, []uint32{adminID}); derr != nil {
+		if _, derr := s.internalMessages.SendSystemNotification(ctx, title, content, []uint64{adminID}); derr != nil {
 			s.log.Errorf("quota watermark: deliver to admin %d of tenant %d failed: %s", adminID, tenantID, derr.Error())
 			failed++
 		}
@@ -532,7 +532,7 @@ func (s *TenantQuotaService) AsyncTenantQuotaWatermarkScan(taskType string, payl
 }
 
 // adminLocaleOf 查租户管理员的偏好语言（未设置/未识别回落中文）。
-func (s *TenantQuotaService) adminLocaleOf(ctx context.Context, adminUserID uint32) string {
+func (s *TenantQuotaService) adminLocaleOf(ctx context.Context, adminUserID uint64) string {
 	svCtx := appViewer.NewSystemViewerContext(ctx)
 	u, err := s.repo.GetUserByID(svCtx, adminUserID)
 	if err != nil || u == nil || u.Locale == nil || *u.Locale == "" {

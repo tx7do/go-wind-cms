@@ -10,47 +10,47 @@ import (
 )
 
 // ID filters vertices based on their ID field.
-func ID(id uint32) predicate.FieldDefinitionTranslation {
+func ID(id uint64) predicate.FieldDefinitionTranslation {
 	return predicate.FieldDefinitionTranslation(sql.FieldEQ(FieldID, id))
 }
 
 // IDEQ applies the EQ predicate on the ID field.
-func IDEQ(id uint32) predicate.FieldDefinitionTranslation {
+func IDEQ(id uint64) predicate.FieldDefinitionTranslation {
 	return predicate.FieldDefinitionTranslation(sql.FieldEQ(FieldID, id))
 }
 
 // IDNEQ applies the NEQ predicate on the ID field.
-func IDNEQ(id uint32) predicate.FieldDefinitionTranslation {
+func IDNEQ(id uint64) predicate.FieldDefinitionTranslation {
 	return predicate.FieldDefinitionTranslation(sql.FieldNEQ(FieldID, id))
 }
 
 // IDIn applies the In predicate on the ID field.
-func IDIn(ids ...uint32) predicate.FieldDefinitionTranslation {
+func IDIn(ids ...uint64) predicate.FieldDefinitionTranslation {
 	return predicate.FieldDefinitionTranslation(sql.FieldIn(FieldID, ids...))
 }
 
 // IDNotIn applies the NotIn predicate on the ID field.
-func IDNotIn(ids ...uint32) predicate.FieldDefinitionTranslation {
+func IDNotIn(ids ...uint64) predicate.FieldDefinitionTranslation {
 	return predicate.FieldDefinitionTranslation(sql.FieldNotIn(FieldID, ids...))
 }
 
 // IDGT applies the GT predicate on the ID field.
-func IDGT(id uint32) predicate.FieldDefinitionTranslation {
+func IDGT(id uint64) predicate.FieldDefinitionTranslation {
 	return predicate.FieldDefinitionTranslation(sql.FieldGT(FieldID, id))
 }
 
 // IDGTE applies the GTE predicate on the ID field.
-func IDGTE(id uint32) predicate.FieldDefinitionTranslation {
+func IDGTE(id uint64) predicate.FieldDefinitionTranslation {
 	return predicate.FieldDefinitionTranslation(sql.FieldGTE(FieldID, id))
 }
 
 // IDLT applies the LT predicate on the ID field.
-func IDLT(id uint32) predicate.FieldDefinitionTranslation {
+func IDLT(id uint64) predicate.FieldDefinitionTranslation {
 	return predicate.FieldDefinitionTranslation(sql.FieldLT(FieldID, id))
 }
 
 // IDLTE applies the LTE predicate on the ID field.
-func IDLTE(id uint32) predicate.FieldDefinitionTranslation {
+func IDLTE(id uint64) predicate.FieldDefinitionTranslation {
 	return predicate.FieldDefinitionTranslation(sql.FieldLTE(FieldID, id))
 }
 
@@ -70,22 +70,22 @@ func DeletedAt(v time.Time) predicate.FieldDefinitionTranslation {
 }
 
 // CreatedBy applies equality check predicate on the "created_by" field. It's identical to CreatedByEQ.
-func CreatedBy(v uint32) predicate.FieldDefinitionTranslation {
+func CreatedBy(v uint64) predicate.FieldDefinitionTranslation {
 	return predicate.FieldDefinitionTranslation(sql.FieldEQ(FieldCreatedBy, v))
 }
 
 // UpdatedBy applies equality check predicate on the "updated_by" field. It's identical to UpdatedByEQ.
-func UpdatedBy(v uint32) predicate.FieldDefinitionTranslation {
+func UpdatedBy(v uint64) predicate.FieldDefinitionTranslation {
 	return predicate.FieldDefinitionTranslation(sql.FieldEQ(FieldUpdatedBy, v))
 }
 
 // DeletedBy applies equality check predicate on the "deleted_by" field. It's identical to DeletedByEQ.
-func DeletedBy(v uint32) predicate.FieldDefinitionTranslation {
+func DeletedBy(v uint64) predicate.FieldDefinitionTranslation {
 	return predicate.FieldDefinitionTranslation(sql.FieldEQ(FieldDeletedBy, v))
 }
 
 // FieldDefinitionID applies equality check predicate on the "field_definition_id" field. It's identical to FieldDefinitionIDEQ.
-func FieldDefinitionID(v uint32) predicate.FieldDefinitionTranslation {
+func FieldDefinitionID(v uint64) predicate.FieldDefinitionTranslation {
 	return predicate.FieldDefinitionTranslation(sql.FieldEQ(FieldFieldDefinitionID, v))
 }
 
@@ -255,42 +255,42 @@ func DeletedAtNotNil() predicate.FieldDefinitionTranslation {
 }
 
 // CreatedByEQ applies the EQ predicate on the "created_by" field.
-func CreatedByEQ(v uint32) predicate.FieldDefinitionTranslation {
+func CreatedByEQ(v uint64) predicate.FieldDefinitionTranslation {
 	return predicate.FieldDefinitionTranslation(sql.FieldEQ(FieldCreatedBy, v))
 }
 
 // CreatedByNEQ applies the NEQ predicate on the "created_by" field.
-func CreatedByNEQ(v uint32) predicate.FieldDefinitionTranslation {
+func CreatedByNEQ(v uint64) predicate.FieldDefinitionTranslation {
 	return predicate.FieldDefinitionTranslation(sql.FieldNEQ(FieldCreatedBy, v))
 }
 
 // CreatedByIn applies the In predicate on the "created_by" field.
-func CreatedByIn(vs ...uint32) predicate.FieldDefinitionTranslation {
+func CreatedByIn(vs ...uint64) predicate.FieldDefinitionTranslation {
 	return predicate.FieldDefinitionTranslation(sql.FieldIn(FieldCreatedBy, vs...))
 }
 
 // CreatedByNotIn applies the NotIn predicate on the "created_by" field.
-func CreatedByNotIn(vs ...uint32) predicate.FieldDefinitionTranslation {
+func CreatedByNotIn(vs ...uint64) predicate.FieldDefinitionTranslation {
 	return predicate.FieldDefinitionTranslation(sql.FieldNotIn(FieldCreatedBy, vs...))
 }
 
 // CreatedByGT applies the GT predicate on the "created_by" field.
-func CreatedByGT(v uint32) predicate.FieldDefinitionTranslation {
+func CreatedByGT(v uint64) predicate.FieldDefinitionTranslation {
 	return predicate.FieldDefinitionTranslation(sql.FieldGT(FieldCreatedBy, v))
 }
 
 // CreatedByGTE applies the GTE predicate on the "created_by" field.
-func CreatedByGTE(v uint32) predicate.FieldDefinitionTranslation {
+func CreatedByGTE(v uint64) predicate.FieldDefinitionTranslation {
 	return predicate.FieldDefinitionTranslation(sql.FieldGTE(FieldCreatedBy, v))
 }
 
 // CreatedByLT applies the LT predicate on the "created_by" field.
-func CreatedByLT(v uint32) predicate.FieldDefinitionTranslation {
+func CreatedByLT(v uint64) predicate.FieldDefinitionTranslation {
 	return predicate.FieldDefinitionTranslation(sql.FieldLT(FieldCreatedBy, v))
 }
 
 // CreatedByLTE applies the LTE predicate on the "created_by" field.
-func CreatedByLTE(v uint32) predicate.FieldDefinitionTranslation {
+func CreatedByLTE(v uint64) predicate.FieldDefinitionTranslation {
 	return predicate.FieldDefinitionTranslation(sql.FieldLTE(FieldCreatedBy, v))
 }
 
@@ -305,42 +305,42 @@ func CreatedByNotNil() predicate.FieldDefinitionTranslation {
 }
 
 // UpdatedByEQ applies the EQ predicate on the "updated_by" field.
-func UpdatedByEQ(v uint32) predicate.FieldDefinitionTranslation {
+func UpdatedByEQ(v uint64) predicate.FieldDefinitionTranslation {
 	return predicate.FieldDefinitionTranslation(sql.FieldEQ(FieldUpdatedBy, v))
 }
 
 // UpdatedByNEQ applies the NEQ predicate on the "updated_by" field.
-func UpdatedByNEQ(v uint32) predicate.FieldDefinitionTranslation {
+func UpdatedByNEQ(v uint64) predicate.FieldDefinitionTranslation {
 	return predicate.FieldDefinitionTranslation(sql.FieldNEQ(FieldUpdatedBy, v))
 }
 
 // UpdatedByIn applies the In predicate on the "updated_by" field.
-func UpdatedByIn(vs ...uint32) predicate.FieldDefinitionTranslation {
+func UpdatedByIn(vs ...uint64) predicate.FieldDefinitionTranslation {
 	return predicate.FieldDefinitionTranslation(sql.FieldIn(FieldUpdatedBy, vs...))
 }
 
 // UpdatedByNotIn applies the NotIn predicate on the "updated_by" field.
-func UpdatedByNotIn(vs ...uint32) predicate.FieldDefinitionTranslation {
+func UpdatedByNotIn(vs ...uint64) predicate.FieldDefinitionTranslation {
 	return predicate.FieldDefinitionTranslation(sql.FieldNotIn(FieldUpdatedBy, vs...))
 }
 
 // UpdatedByGT applies the GT predicate on the "updated_by" field.
-func UpdatedByGT(v uint32) predicate.FieldDefinitionTranslation {
+func UpdatedByGT(v uint64) predicate.FieldDefinitionTranslation {
 	return predicate.FieldDefinitionTranslation(sql.FieldGT(FieldUpdatedBy, v))
 }
 
 // UpdatedByGTE applies the GTE predicate on the "updated_by" field.
-func UpdatedByGTE(v uint32) predicate.FieldDefinitionTranslation {
+func UpdatedByGTE(v uint64) predicate.FieldDefinitionTranslation {
 	return predicate.FieldDefinitionTranslation(sql.FieldGTE(FieldUpdatedBy, v))
 }
 
 // UpdatedByLT applies the LT predicate on the "updated_by" field.
-func UpdatedByLT(v uint32) predicate.FieldDefinitionTranslation {
+func UpdatedByLT(v uint64) predicate.FieldDefinitionTranslation {
 	return predicate.FieldDefinitionTranslation(sql.FieldLT(FieldUpdatedBy, v))
 }
 
 // UpdatedByLTE applies the LTE predicate on the "updated_by" field.
-func UpdatedByLTE(v uint32) predicate.FieldDefinitionTranslation {
+func UpdatedByLTE(v uint64) predicate.FieldDefinitionTranslation {
 	return predicate.FieldDefinitionTranslation(sql.FieldLTE(FieldUpdatedBy, v))
 }
 
@@ -355,42 +355,42 @@ func UpdatedByNotNil() predicate.FieldDefinitionTranslation {
 }
 
 // DeletedByEQ applies the EQ predicate on the "deleted_by" field.
-func DeletedByEQ(v uint32) predicate.FieldDefinitionTranslation {
+func DeletedByEQ(v uint64) predicate.FieldDefinitionTranslation {
 	return predicate.FieldDefinitionTranslation(sql.FieldEQ(FieldDeletedBy, v))
 }
 
 // DeletedByNEQ applies the NEQ predicate on the "deleted_by" field.
-func DeletedByNEQ(v uint32) predicate.FieldDefinitionTranslation {
+func DeletedByNEQ(v uint64) predicate.FieldDefinitionTranslation {
 	return predicate.FieldDefinitionTranslation(sql.FieldNEQ(FieldDeletedBy, v))
 }
 
 // DeletedByIn applies the In predicate on the "deleted_by" field.
-func DeletedByIn(vs ...uint32) predicate.FieldDefinitionTranslation {
+func DeletedByIn(vs ...uint64) predicate.FieldDefinitionTranslation {
 	return predicate.FieldDefinitionTranslation(sql.FieldIn(FieldDeletedBy, vs...))
 }
 
 // DeletedByNotIn applies the NotIn predicate on the "deleted_by" field.
-func DeletedByNotIn(vs ...uint32) predicate.FieldDefinitionTranslation {
+func DeletedByNotIn(vs ...uint64) predicate.FieldDefinitionTranslation {
 	return predicate.FieldDefinitionTranslation(sql.FieldNotIn(FieldDeletedBy, vs...))
 }
 
 // DeletedByGT applies the GT predicate on the "deleted_by" field.
-func DeletedByGT(v uint32) predicate.FieldDefinitionTranslation {
+func DeletedByGT(v uint64) predicate.FieldDefinitionTranslation {
 	return predicate.FieldDefinitionTranslation(sql.FieldGT(FieldDeletedBy, v))
 }
 
 // DeletedByGTE applies the GTE predicate on the "deleted_by" field.
-func DeletedByGTE(v uint32) predicate.FieldDefinitionTranslation {
+func DeletedByGTE(v uint64) predicate.FieldDefinitionTranslation {
 	return predicate.FieldDefinitionTranslation(sql.FieldGTE(FieldDeletedBy, v))
 }
 
 // DeletedByLT applies the LT predicate on the "deleted_by" field.
-func DeletedByLT(v uint32) predicate.FieldDefinitionTranslation {
+func DeletedByLT(v uint64) predicate.FieldDefinitionTranslation {
 	return predicate.FieldDefinitionTranslation(sql.FieldLT(FieldDeletedBy, v))
 }
 
 // DeletedByLTE applies the LTE predicate on the "deleted_by" field.
-func DeletedByLTE(v uint32) predicate.FieldDefinitionTranslation {
+func DeletedByLTE(v uint64) predicate.FieldDefinitionTranslation {
 	return predicate.FieldDefinitionTranslation(sql.FieldLTE(FieldDeletedBy, v))
 }
 
@@ -405,42 +405,42 @@ func DeletedByNotNil() predicate.FieldDefinitionTranslation {
 }
 
 // FieldDefinitionIDEQ applies the EQ predicate on the "field_definition_id" field.
-func FieldDefinitionIDEQ(v uint32) predicate.FieldDefinitionTranslation {
+func FieldDefinitionIDEQ(v uint64) predicate.FieldDefinitionTranslation {
 	return predicate.FieldDefinitionTranslation(sql.FieldEQ(FieldFieldDefinitionID, v))
 }
 
 // FieldDefinitionIDNEQ applies the NEQ predicate on the "field_definition_id" field.
-func FieldDefinitionIDNEQ(v uint32) predicate.FieldDefinitionTranslation {
+func FieldDefinitionIDNEQ(v uint64) predicate.FieldDefinitionTranslation {
 	return predicate.FieldDefinitionTranslation(sql.FieldNEQ(FieldFieldDefinitionID, v))
 }
 
 // FieldDefinitionIDIn applies the In predicate on the "field_definition_id" field.
-func FieldDefinitionIDIn(vs ...uint32) predicate.FieldDefinitionTranslation {
+func FieldDefinitionIDIn(vs ...uint64) predicate.FieldDefinitionTranslation {
 	return predicate.FieldDefinitionTranslation(sql.FieldIn(FieldFieldDefinitionID, vs...))
 }
 
 // FieldDefinitionIDNotIn applies the NotIn predicate on the "field_definition_id" field.
-func FieldDefinitionIDNotIn(vs ...uint32) predicate.FieldDefinitionTranslation {
+func FieldDefinitionIDNotIn(vs ...uint64) predicate.FieldDefinitionTranslation {
 	return predicate.FieldDefinitionTranslation(sql.FieldNotIn(FieldFieldDefinitionID, vs...))
 }
 
 // FieldDefinitionIDGT applies the GT predicate on the "field_definition_id" field.
-func FieldDefinitionIDGT(v uint32) predicate.FieldDefinitionTranslation {
+func FieldDefinitionIDGT(v uint64) predicate.FieldDefinitionTranslation {
 	return predicate.FieldDefinitionTranslation(sql.FieldGT(FieldFieldDefinitionID, v))
 }
 
 // FieldDefinitionIDGTE applies the GTE predicate on the "field_definition_id" field.
-func FieldDefinitionIDGTE(v uint32) predicate.FieldDefinitionTranslation {
+func FieldDefinitionIDGTE(v uint64) predicate.FieldDefinitionTranslation {
 	return predicate.FieldDefinitionTranslation(sql.FieldGTE(FieldFieldDefinitionID, v))
 }
 
 // FieldDefinitionIDLT applies the LT predicate on the "field_definition_id" field.
-func FieldDefinitionIDLT(v uint32) predicate.FieldDefinitionTranslation {
+func FieldDefinitionIDLT(v uint64) predicate.FieldDefinitionTranslation {
 	return predicate.FieldDefinitionTranslation(sql.FieldLT(FieldFieldDefinitionID, v))
 }
 
 // FieldDefinitionIDLTE applies the LTE predicate on the "field_definition_id" field.
-func FieldDefinitionIDLTE(v uint32) predicate.FieldDefinitionTranslation {
+func FieldDefinitionIDLTE(v uint64) predicate.FieldDefinitionTranslation {
 	return predicate.FieldDefinitionTranslation(sql.FieldLTE(FieldFieldDefinitionID, v))
 }
 

@@ -32,7 +32,7 @@ func (CategoryTranslation) Annotations() []schema.Annotation {
 // Fields of the CategoryTranslation.
 func (CategoryTranslation) Fields() []ent.Field {
 	return []ent.Field{
-		field.Uint32("category_id").
+		field.Uint64("category_id").
 			Comment("关联的分类ID").
 			Optional().
 			Nillable(),
@@ -72,11 +72,11 @@ func (CategoryTranslation) Fields() []ent.Field {
 // Mixin of the CategoryTranslation.
 func (CategoryTranslation) Mixin() []ent.Mixin {
 	return []ent.Mixin{
-		mixin.AutoIncrementId{},
+		mixin.AutoIncrementId64{},
 		mixin.TimeAt{},
-		mixin.OperatorID{},
+		mixin.OperatorID64{},
 		appMixin.Seo{},
-		mixin.TenantID[uint32]{},
+		mixin.TenantID[uint64]{},
 	}
 }
 

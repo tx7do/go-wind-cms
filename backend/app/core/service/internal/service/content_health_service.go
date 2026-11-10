@@ -65,7 +65,7 @@ func (s *ContentHealthService) RegisterInternalMessages(sender internalMessageSe
 
 // healthIssue 单条问题（作者 ID → 行列表的聚合粒度）。
 type healthIssue struct {
-	postID uint32
+	postID uint64
 	title  string
 	detail string
 }
@@ -89,7 +89,7 @@ func (s *ContentHealthService) AsyncContentHealthSweep(taskType string, taskData
 	}
 
 	// 作者 → 问题行
-	byAuthor := make(map[uint32][]string, 8)
+	byAuthor := make(map[uint64][]string, 8)
 	checkedLinks := 0
 	for _, p := range resp.GetItems() {
 		author := p.GetAuthorId()
@@ -144,7 +144,7 @@ func (s *ContentHealthService) AsyncContentHealthSweep(taskType string, taskData
 			b.WriteString(fmt.Sprintf("\n…另有 %d 条问题未列出", omitted))
 		}
 		if _, nerr := s.internalMessages.SendSystemNotification(ctx,
-			"内容健康度提醒", b.String(), []uint32{author}); nerr != nil {
+			"内容健康度提醒", b.String(), []uint64{author}); nerr != nil {
 			s.log.Errorf("content health sweep: notify author [%d] failed: %s", author, nerr.Error())
 		}
 	}
@@ -218,7 +218,7 @@ func countDistinctPosts(issueLines []string) int {
 	return len(set)
 }
 
-func flattenIssues(byAuthor map[uint32][]string) []string {
+func flattenIssues(byAuthor map[uint64][]string) []string {
 	var out []string
 	for _, lines := range byAuthor {
 		out = append(out, lines...)

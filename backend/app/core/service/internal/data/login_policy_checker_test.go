@@ -7,7 +7,7 @@ import (
 	"github.com/stretchr/testify/require"
 )
 
-func lp(id uint32, typ, method, value, reason string) EffectivePolicy {
+func lp(id uint64, typ, method, value, reason string) EffectivePolicy {
 	return EffectivePolicy{TargetID: id, Type: typ, Method: method, Value: value, Reason: reason}
 }
 
@@ -104,7 +104,7 @@ func TestMatchLoginPolicyRegion(t *testing.T) {
 }
 
 // blockedHelper 跑一遍 MatchLoginPolicy 只回 blocked。
-func blockedHelper(policies []EffectivePolicy, userId uint32, clientIP, deviceId string, now time.Time, region ...string) bool {
+func blockedHelper(policies []EffectivePolicy, userId uint64, clientIP, deviceId string, now time.Time, region ...string) bool {
 	r := ""
 	if len(region) > 0 {
 		r = region[0]

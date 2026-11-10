@@ -65,13 +65,13 @@ func (_c *ContentModelTranslationCreate) SetNillableDeletedAt(v *time.Time) *Con
 }
 
 // SetCreatedBy sets the "created_by" field.
-func (_c *ContentModelTranslationCreate) SetCreatedBy(v uint32) *ContentModelTranslationCreate {
+func (_c *ContentModelTranslationCreate) SetCreatedBy(v uint64) *ContentModelTranslationCreate {
 	_c.mutation.SetCreatedBy(v)
 	return _c
 }
 
 // SetNillableCreatedBy sets the "created_by" field if the given value is not nil.
-func (_c *ContentModelTranslationCreate) SetNillableCreatedBy(v *uint32) *ContentModelTranslationCreate {
+func (_c *ContentModelTranslationCreate) SetNillableCreatedBy(v *uint64) *ContentModelTranslationCreate {
 	if v != nil {
 		_c.SetCreatedBy(*v)
 	}
@@ -79,13 +79,13 @@ func (_c *ContentModelTranslationCreate) SetNillableCreatedBy(v *uint32) *Conten
 }
 
 // SetUpdatedBy sets the "updated_by" field.
-func (_c *ContentModelTranslationCreate) SetUpdatedBy(v uint32) *ContentModelTranslationCreate {
+func (_c *ContentModelTranslationCreate) SetUpdatedBy(v uint64) *ContentModelTranslationCreate {
 	_c.mutation.SetUpdatedBy(v)
 	return _c
 }
 
 // SetNillableUpdatedBy sets the "updated_by" field if the given value is not nil.
-func (_c *ContentModelTranslationCreate) SetNillableUpdatedBy(v *uint32) *ContentModelTranslationCreate {
+func (_c *ContentModelTranslationCreate) SetNillableUpdatedBy(v *uint64) *ContentModelTranslationCreate {
 	if v != nil {
 		_c.SetUpdatedBy(*v)
 	}
@@ -93,13 +93,13 @@ func (_c *ContentModelTranslationCreate) SetNillableUpdatedBy(v *uint32) *Conten
 }
 
 // SetDeletedBy sets the "deleted_by" field.
-func (_c *ContentModelTranslationCreate) SetDeletedBy(v uint32) *ContentModelTranslationCreate {
+func (_c *ContentModelTranslationCreate) SetDeletedBy(v uint64) *ContentModelTranslationCreate {
 	_c.mutation.SetDeletedBy(v)
 	return _c
 }
 
 // SetNillableDeletedBy sets the "deleted_by" field if the given value is not nil.
-func (_c *ContentModelTranslationCreate) SetNillableDeletedBy(v *uint32) *ContentModelTranslationCreate {
+func (_c *ContentModelTranslationCreate) SetNillableDeletedBy(v *uint64) *ContentModelTranslationCreate {
 	if v != nil {
 		_c.SetDeletedBy(*v)
 	}
@@ -107,13 +107,13 @@ func (_c *ContentModelTranslationCreate) SetNillableDeletedBy(v *uint32) *Conten
 }
 
 // SetContentModelID sets the "content_model_id" field.
-func (_c *ContentModelTranslationCreate) SetContentModelID(v uint32) *ContentModelTranslationCreate {
+func (_c *ContentModelTranslationCreate) SetContentModelID(v uint64) *ContentModelTranslationCreate {
 	_c.mutation.SetContentModelID(v)
 	return _c
 }
 
 // SetNillableContentModelID sets the "content_model_id" field if the given value is not nil.
-func (_c *ContentModelTranslationCreate) SetNillableContentModelID(v *uint32) *ContentModelTranslationCreate {
+func (_c *ContentModelTranslationCreate) SetNillableContentModelID(v *uint64) *ContentModelTranslationCreate {
 	if v != nil {
 		_c.SetContentModelID(*v)
 	}
@@ -163,7 +163,7 @@ func (_c *ContentModelTranslationCreate) SetNillableDescription(v *string) *Cont
 }
 
 // SetID sets the "id" field.
-func (_c *ContentModelTranslationCreate) SetID(v uint32) *ContentModelTranslationCreate {
+func (_c *ContentModelTranslationCreate) SetID(v uint64) *ContentModelTranslationCreate {
 	_c.mutation.SetID(v)
 	return _c
 }
@@ -228,7 +228,7 @@ func (_c *ContentModelTranslationCreate) sqlSave(ctx context.Context) (*ContentM
 	}
 	if _spec.ID.Value != _node.ID {
 		id := _spec.ID.Value.(int64)
-		_node.ID = uint32(id)
+		_node.ID = uint64(id)
 	}
 	_c.mutation.id = &_node.ID
 	_c.mutation.done = true
@@ -238,7 +238,7 @@ func (_c *ContentModelTranslationCreate) sqlSave(ctx context.Context) (*ContentM
 func (_c *ContentModelTranslationCreate) createSpec() (*ContentModelTranslation, *sqlgraph.CreateSpec) {
 	var (
 		_node = &ContentModelTranslation{config: _c.config}
-		_spec = sqlgraph.NewCreateSpec(contentmodeltranslation.Table, sqlgraph.NewFieldSpec(contentmodeltranslation.FieldID, field.TypeUint32))
+		_spec = sqlgraph.NewCreateSpec(contentmodeltranslation.Table, sqlgraph.NewFieldSpec(contentmodeltranslation.FieldID, field.TypeUint64))
 	)
 	_spec.OnConflict = _c.conflict
 	if id, ok := _c.mutation.ID(); ok {
@@ -258,19 +258,19 @@ func (_c *ContentModelTranslationCreate) createSpec() (*ContentModelTranslation,
 		_node.DeletedAt = &value
 	}
 	if value, ok := _c.mutation.CreatedBy(); ok {
-		_spec.SetField(contentmodeltranslation.FieldCreatedBy, field.TypeUint32, value)
+		_spec.SetField(contentmodeltranslation.FieldCreatedBy, field.TypeUint64, value)
 		_node.CreatedBy = &value
 	}
 	if value, ok := _c.mutation.UpdatedBy(); ok {
-		_spec.SetField(contentmodeltranslation.FieldUpdatedBy, field.TypeUint32, value)
+		_spec.SetField(contentmodeltranslation.FieldUpdatedBy, field.TypeUint64, value)
 		_node.UpdatedBy = &value
 	}
 	if value, ok := _c.mutation.DeletedBy(); ok {
-		_spec.SetField(contentmodeltranslation.FieldDeletedBy, field.TypeUint32, value)
+		_spec.SetField(contentmodeltranslation.FieldDeletedBy, field.TypeUint64, value)
 		_node.DeletedBy = &value
 	}
 	if value, ok := _c.mutation.ContentModelID(); ok {
-		_spec.SetField(contentmodeltranslation.FieldContentModelID, field.TypeUint32, value)
+		_spec.SetField(contentmodeltranslation.FieldContentModelID, field.TypeUint64, value)
 		_node.ContentModelID = &value
 	}
 	if value, ok := _c.mutation.LanguageCode(); ok {
@@ -374,7 +374,7 @@ func (u *ContentModelTranslationUpsert) ClearDeletedAt() *ContentModelTranslatio
 }
 
 // SetCreatedBy sets the "created_by" field.
-func (u *ContentModelTranslationUpsert) SetCreatedBy(v uint32) *ContentModelTranslationUpsert {
+func (u *ContentModelTranslationUpsert) SetCreatedBy(v uint64) *ContentModelTranslationUpsert {
 	u.Set(contentmodeltranslation.FieldCreatedBy, v)
 	return u
 }
@@ -386,7 +386,7 @@ func (u *ContentModelTranslationUpsert) UpdateCreatedBy() *ContentModelTranslati
 }
 
 // AddCreatedBy adds v to the "created_by" field.
-func (u *ContentModelTranslationUpsert) AddCreatedBy(v uint32) *ContentModelTranslationUpsert {
+func (u *ContentModelTranslationUpsert) AddCreatedBy(v uint64) *ContentModelTranslationUpsert {
 	u.Add(contentmodeltranslation.FieldCreatedBy, v)
 	return u
 }
@@ -398,7 +398,7 @@ func (u *ContentModelTranslationUpsert) ClearCreatedBy() *ContentModelTranslatio
 }
 
 // SetUpdatedBy sets the "updated_by" field.
-func (u *ContentModelTranslationUpsert) SetUpdatedBy(v uint32) *ContentModelTranslationUpsert {
+func (u *ContentModelTranslationUpsert) SetUpdatedBy(v uint64) *ContentModelTranslationUpsert {
 	u.Set(contentmodeltranslation.FieldUpdatedBy, v)
 	return u
 }
@@ -410,7 +410,7 @@ func (u *ContentModelTranslationUpsert) UpdateUpdatedBy() *ContentModelTranslati
 }
 
 // AddUpdatedBy adds v to the "updated_by" field.
-func (u *ContentModelTranslationUpsert) AddUpdatedBy(v uint32) *ContentModelTranslationUpsert {
+func (u *ContentModelTranslationUpsert) AddUpdatedBy(v uint64) *ContentModelTranslationUpsert {
 	u.Add(contentmodeltranslation.FieldUpdatedBy, v)
 	return u
 }
@@ -422,7 +422,7 @@ func (u *ContentModelTranslationUpsert) ClearUpdatedBy() *ContentModelTranslatio
 }
 
 // SetDeletedBy sets the "deleted_by" field.
-func (u *ContentModelTranslationUpsert) SetDeletedBy(v uint32) *ContentModelTranslationUpsert {
+func (u *ContentModelTranslationUpsert) SetDeletedBy(v uint64) *ContentModelTranslationUpsert {
 	u.Set(contentmodeltranslation.FieldDeletedBy, v)
 	return u
 }
@@ -434,7 +434,7 @@ func (u *ContentModelTranslationUpsert) UpdateDeletedBy() *ContentModelTranslati
 }
 
 // AddDeletedBy adds v to the "deleted_by" field.
-func (u *ContentModelTranslationUpsert) AddDeletedBy(v uint32) *ContentModelTranslationUpsert {
+func (u *ContentModelTranslationUpsert) AddDeletedBy(v uint64) *ContentModelTranslationUpsert {
 	u.Add(contentmodeltranslation.FieldDeletedBy, v)
 	return u
 }
@@ -446,7 +446,7 @@ func (u *ContentModelTranslationUpsert) ClearDeletedBy() *ContentModelTranslatio
 }
 
 // SetContentModelID sets the "content_model_id" field.
-func (u *ContentModelTranslationUpsert) SetContentModelID(v uint32) *ContentModelTranslationUpsert {
+func (u *ContentModelTranslationUpsert) SetContentModelID(v uint64) *ContentModelTranslationUpsert {
 	u.Set(contentmodeltranslation.FieldContentModelID, v)
 	return u
 }
@@ -458,7 +458,7 @@ func (u *ContentModelTranslationUpsert) UpdateContentModelID() *ContentModelTran
 }
 
 // AddContentModelID adds v to the "content_model_id" field.
-func (u *ContentModelTranslationUpsert) AddContentModelID(v uint32) *ContentModelTranslationUpsert {
+func (u *ContentModelTranslationUpsert) AddContentModelID(v uint64) *ContentModelTranslationUpsert {
 	u.Add(contentmodeltranslation.FieldContentModelID, v)
 	return u
 }
@@ -617,14 +617,14 @@ func (u *ContentModelTranslationUpsertOne) ClearDeletedAt() *ContentModelTransla
 }
 
 // SetCreatedBy sets the "created_by" field.
-func (u *ContentModelTranslationUpsertOne) SetCreatedBy(v uint32) *ContentModelTranslationUpsertOne {
+func (u *ContentModelTranslationUpsertOne) SetCreatedBy(v uint64) *ContentModelTranslationUpsertOne {
 	return u.Update(func(s *ContentModelTranslationUpsert) {
 		s.SetCreatedBy(v)
 	})
 }
 
 // AddCreatedBy adds v to the "created_by" field.
-func (u *ContentModelTranslationUpsertOne) AddCreatedBy(v uint32) *ContentModelTranslationUpsertOne {
+func (u *ContentModelTranslationUpsertOne) AddCreatedBy(v uint64) *ContentModelTranslationUpsertOne {
 	return u.Update(func(s *ContentModelTranslationUpsert) {
 		s.AddCreatedBy(v)
 	})
@@ -645,14 +645,14 @@ func (u *ContentModelTranslationUpsertOne) ClearCreatedBy() *ContentModelTransla
 }
 
 // SetUpdatedBy sets the "updated_by" field.
-func (u *ContentModelTranslationUpsertOne) SetUpdatedBy(v uint32) *ContentModelTranslationUpsertOne {
+func (u *ContentModelTranslationUpsertOne) SetUpdatedBy(v uint64) *ContentModelTranslationUpsertOne {
 	return u.Update(func(s *ContentModelTranslationUpsert) {
 		s.SetUpdatedBy(v)
 	})
 }
 
 // AddUpdatedBy adds v to the "updated_by" field.
-func (u *ContentModelTranslationUpsertOne) AddUpdatedBy(v uint32) *ContentModelTranslationUpsertOne {
+func (u *ContentModelTranslationUpsertOne) AddUpdatedBy(v uint64) *ContentModelTranslationUpsertOne {
 	return u.Update(func(s *ContentModelTranslationUpsert) {
 		s.AddUpdatedBy(v)
 	})
@@ -673,14 +673,14 @@ func (u *ContentModelTranslationUpsertOne) ClearUpdatedBy() *ContentModelTransla
 }
 
 // SetDeletedBy sets the "deleted_by" field.
-func (u *ContentModelTranslationUpsertOne) SetDeletedBy(v uint32) *ContentModelTranslationUpsertOne {
+func (u *ContentModelTranslationUpsertOne) SetDeletedBy(v uint64) *ContentModelTranslationUpsertOne {
 	return u.Update(func(s *ContentModelTranslationUpsert) {
 		s.SetDeletedBy(v)
 	})
 }
 
 // AddDeletedBy adds v to the "deleted_by" field.
-func (u *ContentModelTranslationUpsertOne) AddDeletedBy(v uint32) *ContentModelTranslationUpsertOne {
+func (u *ContentModelTranslationUpsertOne) AddDeletedBy(v uint64) *ContentModelTranslationUpsertOne {
 	return u.Update(func(s *ContentModelTranslationUpsert) {
 		s.AddDeletedBy(v)
 	})
@@ -701,14 +701,14 @@ func (u *ContentModelTranslationUpsertOne) ClearDeletedBy() *ContentModelTransla
 }
 
 // SetContentModelID sets the "content_model_id" field.
-func (u *ContentModelTranslationUpsertOne) SetContentModelID(v uint32) *ContentModelTranslationUpsertOne {
+func (u *ContentModelTranslationUpsertOne) SetContentModelID(v uint64) *ContentModelTranslationUpsertOne {
 	return u.Update(func(s *ContentModelTranslationUpsert) {
 		s.SetContentModelID(v)
 	})
 }
 
 // AddContentModelID adds v to the "content_model_id" field.
-func (u *ContentModelTranslationUpsertOne) AddContentModelID(v uint32) *ContentModelTranslationUpsertOne {
+func (u *ContentModelTranslationUpsertOne) AddContentModelID(v uint64) *ContentModelTranslationUpsertOne {
 	return u.Update(func(s *ContentModelTranslationUpsert) {
 		s.AddContentModelID(v)
 	})
@@ -807,7 +807,7 @@ func (u *ContentModelTranslationUpsertOne) ExecX(ctx context.Context) {
 }
 
 // Exec executes the UPSERT query and returns the inserted/updated ID.
-func (u *ContentModelTranslationUpsertOne) ID(ctx context.Context) (id uint32, err error) {
+func (u *ContentModelTranslationUpsertOne) ID(ctx context.Context) (id uint64, err error) {
 	node, err := u.create.Save(ctx)
 	if err != nil {
 		return id, err
@@ -816,7 +816,7 @@ func (u *ContentModelTranslationUpsertOne) ID(ctx context.Context) (id uint32, e
 }
 
 // IDX is like ID, but panics if an error occurs.
-func (u *ContentModelTranslationUpsertOne) IDX(ctx context.Context) uint32 {
+func (u *ContentModelTranslationUpsertOne) IDX(ctx context.Context) uint64 {
 	id, err := u.ID(ctx)
 	if err != nil {
 		panic(err)
@@ -872,7 +872,7 @@ func (_c *ContentModelTranslationCreateBulk) Save(ctx context.Context) ([]*Conte
 				mutation.id = &nodes[i].ID
 				if specs[i].ID.Value != nil && nodes[i].ID == 0 {
 					id := specs[i].ID.Value.(int64)
-					nodes[i].ID = uint32(id)
+					nodes[i].ID = uint64(id)
 				}
 				mutation.done = true
 				return nodes[i], nil
@@ -1050,14 +1050,14 @@ func (u *ContentModelTranslationUpsertBulk) ClearDeletedAt() *ContentModelTransl
 }
 
 // SetCreatedBy sets the "created_by" field.
-func (u *ContentModelTranslationUpsertBulk) SetCreatedBy(v uint32) *ContentModelTranslationUpsertBulk {
+func (u *ContentModelTranslationUpsertBulk) SetCreatedBy(v uint64) *ContentModelTranslationUpsertBulk {
 	return u.Update(func(s *ContentModelTranslationUpsert) {
 		s.SetCreatedBy(v)
 	})
 }
 
 // AddCreatedBy adds v to the "created_by" field.
-func (u *ContentModelTranslationUpsertBulk) AddCreatedBy(v uint32) *ContentModelTranslationUpsertBulk {
+func (u *ContentModelTranslationUpsertBulk) AddCreatedBy(v uint64) *ContentModelTranslationUpsertBulk {
 	return u.Update(func(s *ContentModelTranslationUpsert) {
 		s.AddCreatedBy(v)
 	})
@@ -1078,14 +1078,14 @@ func (u *ContentModelTranslationUpsertBulk) ClearCreatedBy() *ContentModelTransl
 }
 
 // SetUpdatedBy sets the "updated_by" field.
-func (u *ContentModelTranslationUpsertBulk) SetUpdatedBy(v uint32) *ContentModelTranslationUpsertBulk {
+func (u *ContentModelTranslationUpsertBulk) SetUpdatedBy(v uint64) *ContentModelTranslationUpsertBulk {
 	return u.Update(func(s *ContentModelTranslationUpsert) {
 		s.SetUpdatedBy(v)
 	})
 }
 
 // AddUpdatedBy adds v to the "updated_by" field.
-func (u *ContentModelTranslationUpsertBulk) AddUpdatedBy(v uint32) *ContentModelTranslationUpsertBulk {
+func (u *ContentModelTranslationUpsertBulk) AddUpdatedBy(v uint64) *ContentModelTranslationUpsertBulk {
 	return u.Update(func(s *ContentModelTranslationUpsert) {
 		s.AddUpdatedBy(v)
 	})
@@ -1106,14 +1106,14 @@ func (u *ContentModelTranslationUpsertBulk) ClearUpdatedBy() *ContentModelTransl
 }
 
 // SetDeletedBy sets the "deleted_by" field.
-func (u *ContentModelTranslationUpsertBulk) SetDeletedBy(v uint32) *ContentModelTranslationUpsertBulk {
+func (u *ContentModelTranslationUpsertBulk) SetDeletedBy(v uint64) *ContentModelTranslationUpsertBulk {
 	return u.Update(func(s *ContentModelTranslationUpsert) {
 		s.SetDeletedBy(v)
 	})
 }
 
 // AddDeletedBy adds v to the "deleted_by" field.
-func (u *ContentModelTranslationUpsertBulk) AddDeletedBy(v uint32) *ContentModelTranslationUpsertBulk {
+func (u *ContentModelTranslationUpsertBulk) AddDeletedBy(v uint64) *ContentModelTranslationUpsertBulk {
 	return u.Update(func(s *ContentModelTranslationUpsert) {
 		s.AddDeletedBy(v)
 	})
@@ -1134,14 +1134,14 @@ func (u *ContentModelTranslationUpsertBulk) ClearDeletedBy() *ContentModelTransl
 }
 
 // SetContentModelID sets the "content_model_id" field.
-func (u *ContentModelTranslationUpsertBulk) SetContentModelID(v uint32) *ContentModelTranslationUpsertBulk {
+func (u *ContentModelTranslationUpsertBulk) SetContentModelID(v uint64) *ContentModelTranslationUpsertBulk {
 	return u.Update(func(s *ContentModelTranslationUpsert) {
 		s.SetContentModelID(v)
 	})
 }
 
 // AddContentModelID adds v to the "content_model_id" field.
-func (u *ContentModelTranslationUpsertBulk) AddContentModelID(v uint32) *ContentModelTranslationUpsertBulk {
+func (u *ContentModelTranslationUpsertBulk) AddContentModelID(v uint64) *ContentModelTranslationUpsertBulk {
 	return u.Update(func(s *ContentModelTranslationUpsert) {
 		s.AddContentModelID(v)
 	})

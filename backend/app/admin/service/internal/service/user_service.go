@@ -103,7 +103,7 @@ func (s *UserService) Create(ctx context.Context, req *identityV1.CreateUserRequ
 		return nil, err
 	}
 
-	var roleIds []uint32
+	var roleIds []uint64
 	if len(req.Data.GetRoleIds()) > 0 {
 		roleIds = req.Data.GetRoleIds()
 	}
@@ -215,7 +215,7 @@ func (s *UserService) Update(ctx context.Context, req *identityV1.UpdateUserRequ
 		}
 	}
 
-	var roleIds []uint32
+	var roleIds []uint64
 	if len(req.Data.GetRoleIds()) > 0 {
 		roleIds = req.Data.GetRoleIds()
 	}
@@ -329,7 +329,7 @@ func (s *UserService) Delete(ctx context.Context, req *identityV1.DeleteUserRequ
 	if err != nil {
 		return nil, err
 	}
-	var roleIds []uint32
+	var roleIds []uint64
 	for _, role := range userRoles.GetBindings() {
 		roleIds = append(roleIds, role.GetRoleId())
 	}

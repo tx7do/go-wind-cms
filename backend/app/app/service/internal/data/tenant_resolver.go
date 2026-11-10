@@ -23,7 +23,7 @@ func NewTenantResolver(client identityV1.TenantServiceClient) entmiddleware.Tena
 	return tenantResolver{client: client}
 }
 
-func (r tenantResolver) ResolveTenantIDByDomain(ctx context.Context, domain string) (uint32, error) {
+func (r tenantResolver) ResolveTenantIDByDomain(ctx context.Context, domain string) (uint64, error) {
 	resp, err := r.client.ResolveTenantByDomain(ctx, &identityV1.ResolveTenantByDomainRequest{Domain: domain})
 	if err != nil {
 		return 0, err

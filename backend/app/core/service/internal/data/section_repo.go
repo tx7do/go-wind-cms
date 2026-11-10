@@ -67,11 +67,11 @@ func (r *SectionRepo) init() {
 func (r *SectionRepo) BatchCreateByPage(
 	ctx context.Context,
 	tx *ent.Tx,
-	pageID uint32,
+	pageID uint64,
 	sections []*contentV1.Section,
 ) error {
 	tid, hasTenant := maybeTenantFromViewer(ctx)
-	var tenantPtr *uint32
+	var tenantPtr *uint64
 	if hasTenant {
 		tenantPtr = trans.Ptr(tid)
 	}
@@ -126,7 +126,7 @@ func (r *SectionRepo) BatchCreateByPage(
 func (r *SectionRepo) ReplaceByPage(
 	ctx context.Context,
 	tx *ent.Tx,
-	pageID uint32,
+	pageID uint64,
 	sections []*contentV1.Section,
 ) error {
 	if err := r.CleanByPageID(ctx, tx, pageID); err != nil {
@@ -137,7 +137,7 @@ func (r *SectionRepo) ReplaceByPage(
 
 // ListByPage 列出给定页面下的所有 section（含各自翻译/可用语言），
 // 供 PageRepo.Get/List 水合 Page.Sections。对齐 content_model.fillModelAssociations。
-func (r *SectionRepo) ListByPage(ctx context.Context, pageID uint32) ([]*contentV1.Section, error) {
+func (r *SectionRepo) ListByPage(ctx context.Context, pageID uint64) ([]*contentV1.Section, error) {
 	entities, err := r.entClient.Client().Section.Query().
 		Where(section.PageIDEQ(pageID)).
 		Order(section.BySortOrder(), section.ByID()).
@@ -172,13 +172,13 @@ func (r *SectionRepo) ListByPage(ctx context.Context, pageID uint32) ([]*content
 	return items, nil
 }
 
-func (r *SectionRepo) CleanTranslations(ctx context.Context, tx *ent.Tx, sectionID uint32) error {
+func (r *SectionRepo) CleanTranslations(ctx context.Context, tx *ent.Tx, sectionID uint64) error {
 	return r.sectionTranslationRepo.CleanTranslations(ctx, tx, sectionID)
 }
 
 // CleanByPageID 删除指定页面下的所有 section 及其翻译。
 // 在页面删除时调用，防止 section 成为孤儿记录。
-func (r *SectionRepo) CleanByPageID(ctx context.Context, tx *ent.Tx, pageID uint32) error {
+func (r *SectionRepo) CleanByPageID(ctx context.Context, tx *ent.Tx, pageID uint64) error {
 	if pageID == 0 {
 		return nil
 	}

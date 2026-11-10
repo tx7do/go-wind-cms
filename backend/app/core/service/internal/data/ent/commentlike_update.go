@@ -70,14 +70,14 @@ func (_u *CommentLikeUpdate) ClearDeletedAt() *CommentLikeUpdate {
 }
 
 // SetUserID sets the "user_id" field.
-func (_u *CommentLikeUpdate) SetUserID(v uint32) *CommentLikeUpdate {
+func (_u *CommentLikeUpdate) SetUserID(v uint64) *CommentLikeUpdate {
 	_u.mutation.ResetUserID()
 	_u.mutation.SetUserID(v)
 	return _u
 }
 
 // SetNillableUserID sets the "user_id" field if the given value is not nil.
-func (_u *CommentLikeUpdate) SetNillableUserID(v *uint32) *CommentLikeUpdate {
+func (_u *CommentLikeUpdate) SetNillableUserID(v *uint64) *CommentLikeUpdate {
 	if v != nil {
 		_u.SetUserID(*v)
 	}
@@ -85,7 +85,7 @@ func (_u *CommentLikeUpdate) SetNillableUserID(v *uint32) *CommentLikeUpdate {
 }
 
 // AddUserID adds value to the "user_id" field.
-func (_u *CommentLikeUpdate) AddUserID(v int32) *CommentLikeUpdate {
+func (_u *CommentLikeUpdate) AddUserID(v int64) *CommentLikeUpdate {
 	_u.mutation.AddUserID(v)
 	return _u
 }
@@ -97,14 +97,14 @@ func (_u *CommentLikeUpdate) ClearUserID() *CommentLikeUpdate {
 }
 
 // SetCommentID sets the "comment_id" field.
-func (_u *CommentLikeUpdate) SetCommentID(v uint32) *CommentLikeUpdate {
+func (_u *CommentLikeUpdate) SetCommentID(v uint64) *CommentLikeUpdate {
 	_u.mutation.ResetCommentID()
 	_u.mutation.SetCommentID(v)
 	return _u
 }
 
 // SetNillableCommentID sets the "comment_id" field if the given value is not nil.
-func (_u *CommentLikeUpdate) SetNillableCommentID(v *uint32) *CommentLikeUpdate {
+func (_u *CommentLikeUpdate) SetNillableCommentID(v *uint64) *CommentLikeUpdate {
 	if v != nil {
 		_u.SetCommentID(*v)
 	}
@@ -112,7 +112,7 @@ func (_u *CommentLikeUpdate) SetNillableCommentID(v *uint32) *CommentLikeUpdate 
 }
 
 // AddCommentID adds value to the "comment_id" field.
-func (_u *CommentLikeUpdate) AddCommentID(v int32) *CommentLikeUpdate {
+func (_u *CommentLikeUpdate) AddCommentID(v int64) *CommentLikeUpdate {
 	_u.mutation.AddCommentID(v)
 	return _u
 }
@@ -162,7 +162,7 @@ func (_u *CommentLikeUpdate) Modify(modifiers ...func(u *sql.UpdateBuilder)) *Co
 }
 
 func (_u *CommentLikeUpdate) sqlSave(ctx context.Context) (_node int, err error) {
-	_spec := sqlgraph.NewUpdateSpec(commentlike.Table, commentlike.Columns, sqlgraph.NewFieldSpec(commentlike.FieldID, field.TypeUint32))
+	_spec := sqlgraph.NewUpdateSpec(commentlike.Table, commentlike.Columns, sqlgraph.NewFieldSpec(commentlike.FieldID, field.TypeUint64))
 	if ps := _u.mutation.predicates; len(ps) > 0 {
 		_spec.Predicate = func(selector *sql.Selector) {
 			for i := range ps {
@@ -186,25 +186,25 @@ func (_u *CommentLikeUpdate) sqlSave(ctx context.Context) (_node int, err error)
 		_spec.ClearField(commentlike.FieldDeletedAt, field.TypeTime)
 	}
 	if _u.mutation.TenantIDCleared() {
-		_spec.ClearField(commentlike.FieldTenantID, field.TypeUint32)
+		_spec.ClearField(commentlike.FieldTenantID, field.TypeUint64)
 	}
 	if value, ok := _u.mutation.UserID(); ok {
-		_spec.SetField(commentlike.FieldUserID, field.TypeUint32, value)
+		_spec.SetField(commentlike.FieldUserID, field.TypeUint64, value)
 	}
 	if value, ok := _u.mutation.AddedUserID(); ok {
-		_spec.AddField(commentlike.FieldUserID, field.TypeUint32, value)
+		_spec.AddField(commentlike.FieldUserID, field.TypeUint64, value)
 	}
 	if _u.mutation.UserIDCleared() {
-		_spec.ClearField(commentlike.FieldUserID, field.TypeUint32)
+		_spec.ClearField(commentlike.FieldUserID, field.TypeUint64)
 	}
 	if value, ok := _u.mutation.CommentID(); ok {
-		_spec.SetField(commentlike.FieldCommentID, field.TypeUint32, value)
+		_spec.SetField(commentlike.FieldCommentID, field.TypeUint64, value)
 	}
 	if value, ok := _u.mutation.AddedCommentID(); ok {
-		_spec.AddField(commentlike.FieldCommentID, field.TypeUint32, value)
+		_spec.AddField(commentlike.FieldCommentID, field.TypeUint64, value)
 	}
 	if _u.mutation.CommentIDCleared() {
-		_spec.ClearField(commentlike.FieldCommentID, field.TypeUint32)
+		_spec.ClearField(commentlike.FieldCommentID, field.TypeUint64)
 	}
 	_spec.AddModifiers(_u.modifiers...)
 	if _node, err = sqlgraph.UpdateNodes(ctx, _u.driver, _spec); err != nil {
@@ -269,14 +269,14 @@ func (_u *CommentLikeUpdateOne) ClearDeletedAt() *CommentLikeUpdateOne {
 }
 
 // SetUserID sets the "user_id" field.
-func (_u *CommentLikeUpdateOne) SetUserID(v uint32) *CommentLikeUpdateOne {
+func (_u *CommentLikeUpdateOne) SetUserID(v uint64) *CommentLikeUpdateOne {
 	_u.mutation.ResetUserID()
 	_u.mutation.SetUserID(v)
 	return _u
 }
 
 // SetNillableUserID sets the "user_id" field if the given value is not nil.
-func (_u *CommentLikeUpdateOne) SetNillableUserID(v *uint32) *CommentLikeUpdateOne {
+func (_u *CommentLikeUpdateOne) SetNillableUserID(v *uint64) *CommentLikeUpdateOne {
 	if v != nil {
 		_u.SetUserID(*v)
 	}
@@ -284,7 +284,7 @@ func (_u *CommentLikeUpdateOne) SetNillableUserID(v *uint32) *CommentLikeUpdateO
 }
 
 // AddUserID adds value to the "user_id" field.
-func (_u *CommentLikeUpdateOne) AddUserID(v int32) *CommentLikeUpdateOne {
+func (_u *CommentLikeUpdateOne) AddUserID(v int64) *CommentLikeUpdateOne {
 	_u.mutation.AddUserID(v)
 	return _u
 }
@@ -296,14 +296,14 @@ func (_u *CommentLikeUpdateOne) ClearUserID() *CommentLikeUpdateOne {
 }
 
 // SetCommentID sets the "comment_id" field.
-func (_u *CommentLikeUpdateOne) SetCommentID(v uint32) *CommentLikeUpdateOne {
+func (_u *CommentLikeUpdateOne) SetCommentID(v uint64) *CommentLikeUpdateOne {
 	_u.mutation.ResetCommentID()
 	_u.mutation.SetCommentID(v)
 	return _u
 }
 
 // SetNillableCommentID sets the "comment_id" field if the given value is not nil.
-func (_u *CommentLikeUpdateOne) SetNillableCommentID(v *uint32) *CommentLikeUpdateOne {
+func (_u *CommentLikeUpdateOne) SetNillableCommentID(v *uint64) *CommentLikeUpdateOne {
 	if v != nil {
 		_u.SetCommentID(*v)
 	}
@@ -311,7 +311,7 @@ func (_u *CommentLikeUpdateOne) SetNillableCommentID(v *uint32) *CommentLikeUpda
 }
 
 // AddCommentID adds value to the "comment_id" field.
-func (_u *CommentLikeUpdateOne) AddCommentID(v int32) *CommentLikeUpdateOne {
+func (_u *CommentLikeUpdateOne) AddCommentID(v int64) *CommentLikeUpdateOne {
 	_u.mutation.AddCommentID(v)
 	return _u
 }
@@ -374,7 +374,7 @@ func (_u *CommentLikeUpdateOne) Modify(modifiers ...func(u *sql.UpdateBuilder)) 
 }
 
 func (_u *CommentLikeUpdateOne) sqlSave(ctx context.Context) (_node *CommentLike, err error) {
-	_spec := sqlgraph.NewUpdateSpec(commentlike.Table, commentlike.Columns, sqlgraph.NewFieldSpec(commentlike.FieldID, field.TypeUint32))
+	_spec := sqlgraph.NewUpdateSpec(commentlike.Table, commentlike.Columns, sqlgraph.NewFieldSpec(commentlike.FieldID, field.TypeUint64))
 	id, ok := _u.mutation.ID()
 	if !ok {
 		return nil, &ValidationError{Name: "id", err: errors.New(`ent: missing "CommentLike.id" for update`)}
@@ -415,25 +415,25 @@ func (_u *CommentLikeUpdateOne) sqlSave(ctx context.Context) (_node *CommentLike
 		_spec.ClearField(commentlike.FieldDeletedAt, field.TypeTime)
 	}
 	if _u.mutation.TenantIDCleared() {
-		_spec.ClearField(commentlike.FieldTenantID, field.TypeUint32)
+		_spec.ClearField(commentlike.FieldTenantID, field.TypeUint64)
 	}
 	if value, ok := _u.mutation.UserID(); ok {
-		_spec.SetField(commentlike.FieldUserID, field.TypeUint32, value)
+		_spec.SetField(commentlike.FieldUserID, field.TypeUint64, value)
 	}
 	if value, ok := _u.mutation.AddedUserID(); ok {
-		_spec.AddField(commentlike.FieldUserID, field.TypeUint32, value)
+		_spec.AddField(commentlike.FieldUserID, field.TypeUint64, value)
 	}
 	if _u.mutation.UserIDCleared() {
-		_spec.ClearField(commentlike.FieldUserID, field.TypeUint32)
+		_spec.ClearField(commentlike.FieldUserID, field.TypeUint64)
 	}
 	if value, ok := _u.mutation.CommentID(); ok {
-		_spec.SetField(commentlike.FieldCommentID, field.TypeUint32, value)
+		_spec.SetField(commentlike.FieldCommentID, field.TypeUint64, value)
 	}
 	if value, ok := _u.mutation.AddedCommentID(); ok {
-		_spec.AddField(commentlike.FieldCommentID, field.TypeUint32, value)
+		_spec.AddField(commentlike.FieldCommentID, field.TypeUint64, value)
 	}
 	if _u.mutation.CommentIDCleared() {
-		_spec.ClearField(commentlike.FieldCommentID, field.TypeUint32)
+		_spec.ClearField(commentlike.FieldCommentID, field.TypeUint64)
 	}
 	_spec.AddModifiers(_u.modifiers...)
 	_node = &CommentLike{config: _u.config}

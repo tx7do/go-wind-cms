@@ -30,7 +30,7 @@ func (Section) Annotations() []schema.Annotation {
 // Fields of the Section.
 func (Section) Fields() []ent.Field {
 	return []ent.Field{
-		field.Uint32("page_id").
+		field.Uint64("page_id").
 			Comment("所属页面ID").
 			Optional().
 			Nillable(),
@@ -71,11 +71,11 @@ func (Section) Fields() []ent.Field {
 // Mixin of the Section.
 func (Section) Mixin() []ent.Mixin {
 	return []ent.Mixin{
-		mixin.AutoIncrementId{},
+		mixin.AutoIncrementId64{},
 		mixin.TimeAt{},
-		mixin.OperatorID{},
+		mixin.OperatorID64{},
 		mixin.SortOrder{},
-		mixin.TenantID[uint32]{},
+		mixin.TenantID[uint64]{},
 	}
 }
 

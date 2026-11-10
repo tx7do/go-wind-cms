@@ -52,7 +52,7 @@ func newTestStatsRepo(t *testing.T) (*StatsRepo, *ent.Client, func()) {
 	return repo, db, cleanup
 }
 
-func createTestUser(t *testing.T, db *ent.Client, tid uint32, name string) {
+func createTestUser(t *testing.T, db *ent.Client, tid uint64, name string) {
 	t.Helper()
 	_, err := db.User.Create().
 		SetTenantID(tid).
@@ -61,7 +61,7 @@ func createTestUser(t *testing.T, db *ent.Client, tid uint32, name string) {
 	require.NoError(t, err, "create test user failed")
 }
 
-func createTestComment(t *testing.T, db *ent.Client, tid uint32, spam bool) {
+func createTestComment(t *testing.T, db *ent.Client, tid uint64, spam bool) {
 	t.Helper()
 	c := db.Comment.Create().
 		SetTenantID(tid).
@@ -73,7 +73,7 @@ func createTestComment(t *testing.T, db *ent.Client, tid uint32, spam bool) {
 	require.NoError(t, err, "create test comment failed")
 }
 
-func createTestLoginLog(t *testing.T, db *ent.Client, tid uint32, action loginauditlog.ActionType, status loginauditlog.Status, at time.Time) {
+func createTestLoginLog(t *testing.T, db *ent.Client, tid uint64, action loginauditlog.ActionType, status loginauditlog.Status, at time.Time) {
 	t.Helper()
 	_, err := db.LoginAuditLog.Create().
 		SetTenantID(tid).
@@ -84,7 +84,7 @@ func createTestLoginLog(t *testing.T, db *ent.Client, tid uint32, action loginau
 	require.NoError(t, err, "create test login log failed")
 }
 
-func createTestCounter(t *testing.T, db *ent.Client, tid, targetID uint32, metric interactionV1.CounterMetric, count int64) {
+func createTestCounter(t *testing.T, db *ent.Client, tid, targetID uint64, metric interactionV1.CounterMetric, count int64) {
 	t.Helper()
 	_, err := db.InteractionCounter.Create().
 		SetTenantID(tid).
@@ -96,7 +96,7 @@ func createTestCounter(t *testing.T, db *ent.Client, tid, targetID uint32, metri
 	require.NoError(t, err, "create test counter failed")
 }
 
-func createTestMediaAsset(t *testing.T, db *ent.Client, tid uint32, size int64) {
+func createTestMediaAsset(t *testing.T, db *ent.Client, tid uint64, size int64) {
 	t.Helper()
 	_, err := db.MediaAsset.Create().
 		SetTenantID(tid).

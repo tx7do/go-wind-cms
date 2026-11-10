@@ -55,7 +55,7 @@ return 1
 
 // editLockValue Redis 锁值。
 type editLockValue struct {
-	UserID     uint32 `json:"user_id"`
+	UserID     uint64 `json:"user_id"`
 	UserName   string `json:"user_name"`
 	AcquiredAt string `json:"acquired_at"`
 }
@@ -149,7 +149,7 @@ func (s *EditLockService) Release(ctx context.Context, req *contentV1.ReleaseEdi
 	return &emptypb.Empty{}, nil
 }
 
-func editLockKey(targetType string, targetID uint32) string {
+func editLockKey(targetType string, targetID uint64) string {
 	return fmt.Sprintf("gowind-cms:editlock:%s:%d", targetType, targetID)
 }
 

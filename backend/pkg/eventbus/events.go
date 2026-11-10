@@ -39,7 +39,7 @@ type EmailReceivedEvent struct {
 	Subject   string `json:"subject"`
 	Mailbox   string `json:"mailbox"`
 	AccountID string `json:"account_id"`
-	TenantID  uint32 `json:"tenant_id,omitempty"`
+	TenantID  uint64 `json:"tenant_id,omitempty"`
 }
 
 // EmailProcessedEvent represents an email processed event
@@ -53,7 +53,7 @@ type EmailProcessedEvent struct {
 
 // UserCreatedEvent represents a user created event
 type UserCreatedEvent struct {
-	UserID   uint32 `json:"user_id"`
+	UserID   uint64 `json:"user_id"`
 	Username string `json:"username"`
 	Email    string `json:"email"`
 }

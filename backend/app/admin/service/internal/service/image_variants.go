@@ -123,5 +123,5 @@ func generateImageVariantsAsync(
 // mediaVariantDeps 变体生成的依赖端口（避免直接依赖 gRPC 客户端具体类型）。
 type mediaVariantDeps struct {
 	// recordVariant 落一条 media_variants 行
-	recordVariant func(ctx context.Context, mediaID uint32, fileID uint32, variantName string) error
+	recordVariant func(ctx context.Context, mediaID uint64, fileID uint64, variantName string) error
 }

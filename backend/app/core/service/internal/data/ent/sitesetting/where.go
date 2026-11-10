@@ -10,47 +10,47 @@ import (
 )
 
 // ID filters vertices based on their ID field.
-func ID(id uint32) predicate.SiteSetting {
+func ID(id uint64) predicate.SiteSetting {
 	return predicate.SiteSetting(sql.FieldEQ(FieldID, id))
 }
 
 // IDEQ applies the EQ predicate on the ID field.
-func IDEQ(id uint32) predicate.SiteSetting {
+func IDEQ(id uint64) predicate.SiteSetting {
 	return predicate.SiteSetting(sql.FieldEQ(FieldID, id))
 }
 
 // IDNEQ applies the NEQ predicate on the ID field.
-func IDNEQ(id uint32) predicate.SiteSetting {
+func IDNEQ(id uint64) predicate.SiteSetting {
 	return predicate.SiteSetting(sql.FieldNEQ(FieldID, id))
 }
 
 // IDIn applies the In predicate on the ID field.
-func IDIn(ids ...uint32) predicate.SiteSetting {
+func IDIn(ids ...uint64) predicate.SiteSetting {
 	return predicate.SiteSetting(sql.FieldIn(FieldID, ids...))
 }
 
 // IDNotIn applies the NotIn predicate on the ID field.
-func IDNotIn(ids ...uint32) predicate.SiteSetting {
+func IDNotIn(ids ...uint64) predicate.SiteSetting {
 	return predicate.SiteSetting(sql.FieldNotIn(FieldID, ids...))
 }
 
 // IDGT applies the GT predicate on the ID field.
-func IDGT(id uint32) predicate.SiteSetting {
+func IDGT(id uint64) predicate.SiteSetting {
 	return predicate.SiteSetting(sql.FieldGT(FieldID, id))
 }
 
 // IDGTE applies the GTE predicate on the ID field.
-func IDGTE(id uint32) predicate.SiteSetting {
+func IDGTE(id uint64) predicate.SiteSetting {
 	return predicate.SiteSetting(sql.FieldGTE(FieldID, id))
 }
 
 // IDLT applies the LT predicate on the ID field.
-func IDLT(id uint32) predicate.SiteSetting {
+func IDLT(id uint64) predicate.SiteSetting {
 	return predicate.SiteSetting(sql.FieldLT(FieldID, id))
 }
 
 // IDLTE applies the LTE predicate on the ID field.
-func IDLTE(id uint32) predicate.SiteSetting {
+func IDLTE(id uint64) predicate.SiteSetting {
 	return predicate.SiteSetting(sql.FieldLTE(FieldID, id))
 }
 
@@ -70,27 +70,27 @@ func DeletedAt(v time.Time) predicate.SiteSetting {
 }
 
 // CreatedBy applies equality check predicate on the "created_by" field. It's identical to CreatedByEQ.
-func CreatedBy(v uint32) predicate.SiteSetting {
+func CreatedBy(v uint64) predicate.SiteSetting {
 	return predicate.SiteSetting(sql.FieldEQ(FieldCreatedBy, v))
 }
 
 // UpdatedBy applies equality check predicate on the "updated_by" field. It's identical to UpdatedByEQ.
-func UpdatedBy(v uint32) predicate.SiteSetting {
+func UpdatedBy(v uint64) predicate.SiteSetting {
 	return predicate.SiteSetting(sql.FieldEQ(FieldUpdatedBy, v))
 }
 
 // DeletedBy applies equality check predicate on the "deleted_by" field. It's identical to DeletedByEQ.
-func DeletedBy(v uint32) predicate.SiteSetting {
+func DeletedBy(v uint64) predicate.SiteSetting {
 	return predicate.SiteSetting(sql.FieldEQ(FieldDeletedBy, v))
 }
 
 // TenantID applies equality check predicate on the "tenant_id" field. It's identical to TenantIDEQ.
-func TenantID(v uint32) predicate.SiteSetting {
+func TenantID(v uint64) predicate.SiteSetting {
 	return predicate.SiteSetting(sql.FieldEQ(FieldTenantID, v))
 }
 
 // SiteID applies equality check predicate on the "site_id" field. It's identical to SiteIDEQ.
-func SiteID(v uint32) predicate.SiteSetting {
+func SiteID(v uint64) predicate.SiteSetting {
 	return predicate.SiteSetting(sql.FieldEQ(FieldSiteID, v))
 }
 
@@ -285,42 +285,42 @@ func DeletedAtNotNil() predicate.SiteSetting {
 }
 
 // CreatedByEQ applies the EQ predicate on the "created_by" field.
-func CreatedByEQ(v uint32) predicate.SiteSetting {
+func CreatedByEQ(v uint64) predicate.SiteSetting {
 	return predicate.SiteSetting(sql.FieldEQ(FieldCreatedBy, v))
 }
 
 // CreatedByNEQ applies the NEQ predicate on the "created_by" field.
-func CreatedByNEQ(v uint32) predicate.SiteSetting {
+func CreatedByNEQ(v uint64) predicate.SiteSetting {
 	return predicate.SiteSetting(sql.FieldNEQ(FieldCreatedBy, v))
 }
 
 // CreatedByIn applies the In predicate on the "created_by" field.
-func CreatedByIn(vs ...uint32) predicate.SiteSetting {
+func CreatedByIn(vs ...uint64) predicate.SiteSetting {
 	return predicate.SiteSetting(sql.FieldIn(FieldCreatedBy, vs...))
 }
 
 // CreatedByNotIn applies the NotIn predicate on the "created_by" field.
-func CreatedByNotIn(vs ...uint32) predicate.SiteSetting {
+func CreatedByNotIn(vs ...uint64) predicate.SiteSetting {
 	return predicate.SiteSetting(sql.FieldNotIn(FieldCreatedBy, vs...))
 }
 
 // CreatedByGT applies the GT predicate on the "created_by" field.
-func CreatedByGT(v uint32) predicate.SiteSetting {
+func CreatedByGT(v uint64) predicate.SiteSetting {
 	return predicate.SiteSetting(sql.FieldGT(FieldCreatedBy, v))
 }
 
 // CreatedByGTE applies the GTE predicate on the "created_by" field.
-func CreatedByGTE(v uint32) predicate.SiteSetting {
+func CreatedByGTE(v uint64) predicate.SiteSetting {
 	return predicate.SiteSetting(sql.FieldGTE(FieldCreatedBy, v))
 }
 
 // CreatedByLT applies the LT predicate on the "created_by" field.
-func CreatedByLT(v uint32) predicate.SiteSetting {
+func CreatedByLT(v uint64) predicate.SiteSetting {
 	return predicate.SiteSetting(sql.FieldLT(FieldCreatedBy, v))
 }
 
 // CreatedByLTE applies the LTE predicate on the "created_by" field.
-func CreatedByLTE(v uint32) predicate.SiteSetting {
+func CreatedByLTE(v uint64) predicate.SiteSetting {
 	return predicate.SiteSetting(sql.FieldLTE(FieldCreatedBy, v))
 }
 
@@ -335,42 +335,42 @@ func CreatedByNotNil() predicate.SiteSetting {
 }
 
 // UpdatedByEQ applies the EQ predicate on the "updated_by" field.
-func UpdatedByEQ(v uint32) predicate.SiteSetting {
+func UpdatedByEQ(v uint64) predicate.SiteSetting {
 	return predicate.SiteSetting(sql.FieldEQ(FieldUpdatedBy, v))
 }
 
 // UpdatedByNEQ applies the NEQ predicate on the "updated_by" field.
-func UpdatedByNEQ(v uint32) predicate.SiteSetting {
+func UpdatedByNEQ(v uint64) predicate.SiteSetting {
 	return predicate.SiteSetting(sql.FieldNEQ(FieldUpdatedBy, v))
 }
 
 // UpdatedByIn applies the In predicate on the "updated_by" field.
-func UpdatedByIn(vs ...uint32) predicate.SiteSetting {
+func UpdatedByIn(vs ...uint64) predicate.SiteSetting {
 	return predicate.SiteSetting(sql.FieldIn(FieldUpdatedBy, vs...))
 }
 
 // UpdatedByNotIn applies the NotIn predicate on the "updated_by" field.
-func UpdatedByNotIn(vs ...uint32) predicate.SiteSetting {
+func UpdatedByNotIn(vs ...uint64) predicate.SiteSetting {
 	return predicate.SiteSetting(sql.FieldNotIn(FieldUpdatedBy, vs...))
 }
 
 // UpdatedByGT applies the GT predicate on the "updated_by" field.
-func UpdatedByGT(v uint32) predicate.SiteSetting {
+func UpdatedByGT(v uint64) predicate.SiteSetting {
 	return predicate.SiteSetting(sql.FieldGT(FieldUpdatedBy, v))
 }
 
 // UpdatedByGTE applies the GTE predicate on the "updated_by" field.
-func UpdatedByGTE(v uint32) predicate.SiteSetting {
+func UpdatedByGTE(v uint64) predicate.SiteSetting {
 	return predicate.SiteSetting(sql.FieldGTE(FieldUpdatedBy, v))
 }
 
 // UpdatedByLT applies the LT predicate on the "updated_by" field.
-func UpdatedByLT(v uint32) predicate.SiteSetting {
+func UpdatedByLT(v uint64) predicate.SiteSetting {
 	return predicate.SiteSetting(sql.FieldLT(FieldUpdatedBy, v))
 }
 
 // UpdatedByLTE applies the LTE predicate on the "updated_by" field.
-func UpdatedByLTE(v uint32) predicate.SiteSetting {
+func UpdatedByLTE(v uint64) predicate.SiteSetting {
 	return predicate.SiteSetting(sql.FieldLTE(FieldUpdatedBy, v))
 }
 
@@ -385,42 +385,42 @@ func UpdatedByNotNil() predicate.SiteSetting {
 }
 
 // DeletedByEQ applies the EQ predicate on the "deleted_by" field.
-func DeletedByEQ(v uint32) predicate.SiteSetting {
+func DeletedByEQ(v uint64) predicate.SiteSetting {
 	return predicate.SiteSetting(sql.FieldEQ(FieldDeletedBy, v))
 }
 
 // DeletedByNEQ applies the NEQ predicate on the "deleted_by" field.
-func DeletedByNEQ(v uint32) predicate.SiteSetting {
+func DeletedByNEQ(v uint64) predicate.SiteSetting {
 	return predicate.SiteSetting(sql.FieldNEQ(FieldDeletedBy, v))
 }
 
 // DeletedByIn applies the In predicate on the "deleted_by" field.
-func DeletedByIn(vs ...uint32) predicate.SiteSetting {
+func DeletedByIn(vs ...uint64) predicate.SiteSetting {
 	return predicate.SiteSetting(sql.FieldIn(FieldDeletedBy, vs...))
 }
 
 // DeletedByNotIn applies the NotIn predicate on the "deleted_by" field.
-func DeletedByNotIn(vs ...uint32) predicate.SiteSetting {
+func DeletedByNotIn(vs ...uint64) predicate.SiteSetting {
 	return predicate.SiteSetting(sql.FieldNotIn(FieldDeletedBy, vs...))
 }
 
 // DeletedByGT applies the GT predicate on the "deleted_by" field.
-func DeletedByGT(v uint32) predicate.SiteSetting {
+func DeletedByGT(v uint64) predicate.SiteSetting {
 	return predicate.SiteSetting(sql.FieldGT(FieldDeletedBy, v))
 }
 
 // DeletedByGTE applies the GTE predicate on the "deleted_by" field.
-func DeletedByGTE(v uint32) predicate.SiteSetting {
+func DeletedByGTE(v uint64) predicate.SiteSetting {
 	return predicate.SiteSetting(sql.FieldGTE(FieldDeletedBy, v))
 }
 
 // DeletedByLT applies the LT predicate on the "deleted_by" field.
-func DeletedByLT(v uint32) predicate.SiteSetting {
+func DeletedByLT(v uint64) predicate.SiteSetting {
 	return predicate.SiteSetting(sql.FieldLT(FieldDeletedBy, v))
 }
 
 // DeletedByLTE applies the LTE predicate on the "deleted_by" field.
-func DeletedByLTE(v uint32) predicate.SiteSetting {
+func DeletedByLTE(v uint64) predicate.SiteSetting {
 	return predicate.SiteSetting(sql.FieldLTE(FieldDeletedBy, v))
 }
 
@@ -435,42 +435,42 @@ func DeletedByNotNil() predicate.SiteSetting {
 }
 
 // TenantIDEQ applies the EQ predicate on the "tenant_id" field.
-func TenantIDEQ(v uint32) predicate.SiteSetting {
+func TenantIDEQ(v uint64) predicate.SiteSetting {
 	return predicate.SiteSetting(sql.FieldEQ(FieldTenantID, v))
 }
 
 // TenantIDNEQ applies the NEQ predicate on the "tenant_id" field.
-func TenantIDNEQ(v uint32) predicate.SiteSetting {
+func TenantIDNEQ(v uint64) predicate.SiteSetting {
 	return predicate.SiteSetting(sql.FieldNEQ(FieldTenantID, v))
 }
 
 // TenantIDIn applies the In predicate on the "tenant_id" field.
-func TenantIDIn(vs ...uint32) predicate.SiteSetting {
+func TenantIDIn(vs ...uint64) predicate.SiteSetting {
 	return predicate.SiteSetting(sql.FieldIn(FieldTenantID, vs...))
 }
 
 // TenantIDNotIn applies the NotIn predicate on the "tenant_id" field.
-func TenantIDNotIn(vs ...uint32) predicate.SiteSetting {
+func TenantIDNotIn(vs ...uint64) predicate.SiteSetting {
 	return predicate.SiteSetting(sql.FieldNotIn(FieldTenantID, vs...))
 }
 
 // TenantIDGT applies the GT predicate on the "tenant_id" field.
-func TenantIDGT(v uint32) predicate.SiteSetting {
+func TenantIDGT(v uint64) predicate.SiteSetting {
 	return predicate.SiteSetting(sql.FieldGT(FieldTenantID, v))
 }
 
 // TenantIDGTE applies the GTE predicate on the "tenant_id" field.
-func TenantIDGTE(v uint32) predicate.SiteSetting {
+func TenantIDGTE(v uint64) predicate.SiteSetting {
 	return predicate.SiteSetting(sql.FieldGTE(FieldTenantID, v))
 }
 
 // TenantIDLT applies the LT predicate on the "tenant_id" field.
-func TenantIDLT(v uint32) predicate.SiteSetting {
+func TenantIDLT(v uint64) predicate.SiteSetting {
 	return predicate.SiteSetting(sql.FieldLT(FieldTenantID, v))
 }
 
 // TenantIDLTE applies the LTE predicate on the "tenant_id" field.
-func TenantIDLTE(v uint32) predicate.SiteSetting {
+func TenantIDLTE(v uint64) predicate.SiteSetting {
 	return predicate.SiteSetting(sql.FieldLTE(FieldTenantID, v))
 }
 
@@ -485,42 +485,42 @@ func TenantIDNotNil() predicate.SiteSetting {
 }
 
 // SiteIDEQ applies the EQ predicate on the "site_id" field.
-func SiteIDEQ(v uint32) predicate.SiteSetting {
+func SiteIDEQ(v uint64) predicate.SiteSetting {
 	return predicate.SiteSetting(sql.FieldEQ(FieldSiteID, v))
 }
 
 // SiteIDNEQ applies the NEQ predicate on the "site_id" field.
-func SiteIDNEQ(v uint32) predicate.SiteSetting {
+func SiteIDNEQ(v uint64) predicate.SiteSetting {
 	return predicate.SiteSetting(sql.FieldNEQ(FieldSiteID, v))
 }
 
 // SiteIDIn applies the In predicate on the "site_id" field.
-func SiteIDIn(vs ...uint32) predicate.SiteSetting {
+func SiteIDIn(vs ...uint64) predicate.SiteSetting {
 	return predicate.SiteSetting(sql.FieldIn(FieldSiteID, vs...))
 }
 
 // SiteIDNotIn applies the NotIn predicate on the "site_id" field.
-func SiteIDNotIn(vs ...uint32) predicate.SiteSetting {
+func SiteIDNotIn(vs ...uint64) predicate.SiteSetting {
 	return predicate.SiteSetting(sql.FieldNotIn(FieldSiteID, vs...))
 }
 
 // SiteIDGT applies the GT predicate on the "site_id" field.
-func SiteIDGT(v uint32) predicate.SiteSetting {
+func SiteIDGT(v uint64) predicate.SiteSetting {
 	return predicate.SiteSetting(sql.FieldGT(FieldSiteID, v))
 }
 
 // SiteIDGTE applies the GTE predicate on the "site_id" field.
-func SiteIDGTE(v uint32) predicate.SiteSetting {
+func SiteIDGTE(v uint64) predicate.SiteSetting {
 	return predicate.SiteSetting(sql.FieldGTE(FieldSiteID, v))
 }
 
 // SiteIDLT applies the LT predicate on the "site_id" field.
-func SiteIDLT(v uint32) predicate.SiteSetting {
+func SiteIDLT(v uint64) predicate.SiteSetting {
 	return predicate.SiteSetting(sql.FieldLT(FieldSiteID, v))
 }
 
 // SiteIDLTE applies the LTE predicate on the "site_id" field.
-func SiteIDLTE(v uint32) predicate.SiteSetting {
+func SiteIDLTE(v uint64) predicate.SiteSetting {
 	return predicate.SiteSetting(sql.FieldLTE(FieldSiteID, v))
 }
 

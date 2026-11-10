@@ -10,47 +10,47 @@ import (
 )
 
 // ID filters vertices based on their ID field.
-func ID(id uint32) predicate.Webhook {
+func ID(id uint64) predicate.Webhook {
 	return predicate.Webhook(sql.FieldEQ(FieldID, id))
 }
 
 // IDEQ applies the EQ predicate on the ID field.
-func IDEQ(id uint32) predicate.Webhook {
+func IDEQ(id uint64) predicate.Webhook {
 	return predicate.Webhook(sql.FieldEQ(FieldID, id))
 }
 
 // IDNEQ applies the NEQ predicate on the ID field.
-func IDNEQ(id uint32) predicate.Webhook {
+func IDNEQ(id uint64) predicate.Webhook {
 	return predicate.Webhook(sql.FieldNEQ(FieldID, id))
 }
 
 // IDIn applies the In predicate on the ID field.
-func IDIn(ids ...uint32) predicate.Webhook {
+func IDIn(ids ...uint64) predicate.Webhook {
 	return predicate.Webhook(sql.FieldIn(FieldID, ids...))
 }
 
 // IDNotIn applies the NotIn predicate on the ID field.
-func IDNotIn(ids ...uint32) predicate.Webhook {
+func IDNotIn(ids ...uint64) predicate.Webhook {
 	return predicate.Webhook(sql.FieldNotIn(FieldID, ids...))
 }
 
 // IDGT applies the GT predicate on the ID field.
-func IDGT(id uint32) predicate.Webhook {
+func IDGT(id uint64) predicate.Webhook {
 	return predicate.Webhook(sql.FieldGT(FieldID, id))
 }
 
 // IDGTE applies the GTE predicate on the ID field.
-func IDGTE(id uint32) predicate.Webhook {
+func IDGTE(id uint64) predicate.Webhook {
 	return predicate.Webhook(sql.FieldGTE(FieldID, id))
 }
 
 // IDLT applies the LT predicate on the ID field.
-func IDLT(id uint32) predicate.Webhook {
+func IDLT(id uint64) predicate.Webhook {
 	return predicate.Webhook(sql.FieldLT(FieldID, id))
 }
 
 // IDLTE applies the LTE predicate on the ID field.
-func IDLTE(id uint32) predicate.Webhook {
+func IDLTE(id uint64) predicate.Webhook {
 	return predicate.Webhook(sql.FieldLTE(FieldID, id))
 }
 
@@ -70,22 +70,22 @@ func DeletedAt(v time.Time) predicate.Webhook {
 }
 
 // CreatedBy applies equality check predicate on the "created_by" field. It's identical to CreatedByEQ.
-func CreatedBy(v uint32) predicate.Webhook {
+func CreatedBy(v uint64) predicate.Webhook {
 	return predicate.Webhook(sql.FieldEQ(FieldCreatedBy, v))
 }
 
 // UpdatedBy applies equality check predicate on the "updated_by" field. It's identical to UpdatedByEQ.
-func UpdatedBy(v uint32) predicate.Webhook {
+func UpdatedBy(v uint64) predicate.Webhook {
 	return predicate.Webhook(sql.FieldEQ(FieldUpdatedBy, v))
 }
 
 // DeletedBy applies equality check predicate on the "deleted_by" field. It's identical to DeletedByEQ.
-func DeletedBy(v uint32) predicate.Webhook {
+func DeletedBy(v uint64) predicate.Webhook {
 	return predicate.Webhook(sql.FieldEQ(FieldDeletedBy, v))
 }
 
 // TenantID applies equality check predicate on the "tenant_id" field. It's identical to TenantIDEQ.
-func TenantID(v uint32) predicate.Webhook {
+func TenantID(v uint64) predicate.Webhook {
 	return predicate.Webhook(sql.FieldEQ(FieldTenantID, v))
 }
 
@@ -260,42 +260,42 @@ func DeletedAtNotNil() predicate.Webhook {
 }
 
 // CreatedByEQ applies the EQ predicate on the "created_by" field.
-func CreatedByEQ(v uint32) predicate.Webhook {
+func CreatedByEQ(v uint64) predicate.Webhook {
 	return predicate.Webhook(sql.FieldEQ(FieldCreatedBy, v))
 }
 
 // CreatedByNEQ applies the NEQ predicate on the "created_by" field.
-func CreatedByNEQ(v uint32) predicate.Webhook {
+func CreatedByNEQ(v uint64) predicate.Webhook {
 	return predicate.Webhook(sql.FieldNEQ(FieldCreatedBy, v))
 }
 
 // CreatedByIn applies the In predicate on the "created_by" field.
-func CreatedByIn(vs ...uint32) predicate.Webhook {
+func CreatedByIn(vs ...uint64) predicate.Webhook {
 	return predicate.Webhook(sql.FieldIn(FieldCreatedBy, vs...))
 }
 
 // CreatedByNotIn applies the NotIn predicate on the "created_by" field.
-func CreatedByNotIn(vs ...uint32) predicate.Webhook {
+func CreatedByNotIn(vs ...uint64) predicate.Webhook {
 	return predicate.Webhook(sql.FieldNotIn(FieldCreatedBy, vs...))
 }
 
 // CreatedByGT applies the GT predicate on the "created_by" field.
-func CreatedByGT(v uint32) predicate.Webhook {
+func CreatedByGT(v uint64) predicate.Webhook {
 	return predicate.Webhook(sql.FieldGT(FieldCreatedBy, v))
 }
 
 // CreatedByGTE applies the GTE predicate on the "created_by" field.
-func CreatedByGTE(v uint32) predicate.Webhook {
+func CreatedByGTE(v uint64) predicate.Webhook {
 	return predicate.Webhook(sql.FieldGTE(FieldCreatedBy, v))
 }
 
 // CreatedByLT applies the LT predicate on the "created_by" field.
-func CreatedByLT(v uint32) predicate.Webhook {
+func CreatedByLT(v uint64) predicate.Webhook {
 	return predicate.Webhook(sql.FieldLT(FieldCreatedBy, v))
 }
 
 // CreatedByLTE applies the LTE predicate on the "created_by" field.
-func CreatedByLTE(v uint32) predicate.Webhook {
+func CreatedByLTE(v uint64) predicate.Webhook {
 	return predicate.Webhook(sql.FieldLTE(FieldCreatedBy, v))
 }
 
@@ -310,42 +310,42 @@ func CreatedByNotNil() predicate.Webhook {
 }
 
 // UpdatedByEQ applies the EQ predicate on the "updated_by" field.
-func UpdatedByEQ(v uint32) predicate.Webhook {
+func UpdatedByEQ(v uint64) predicate.Webhook {
 	return predicate.Webhook(sql.FieldEQ(FieldUpdatedBy, v))
 }
 
 // UpdatedByNEQ applies the NEQ predicate on the "updated_by" field.
-func UpdatedByNEQ(v uint32) predicate.Webhook {
+func UpdatedByNEQ(v uint64) predicate.Webhook {
 	return predicate.Webhook(sql.FieldNEQ(FieldUpdatedBy, v))
 }
 
 // UpdatedByIn applies the In predicate on the "updated_by" field.
-func UpdatedByIn(vs ...uint32) predicate.Webhook {
+func UpdatedByIn(vs ...uint64) predicate.Webhook {
 	return predicate.Webhook(sql.FieldIn(FieldUpdatedBy, vs...))
 }
 
 // UpdatedByNotIn applies the NotIn predicate on the "updated_by" field.
-func UpdatedByNotIn(vs ...uint32) predicate.Webhook {
+func UpdatedByNotIn(vs ...uint64) predicate.Webhook {
 	return predicate.Webhook(sql.FieldNotIn(FieldUpdatedBy, vs...))
 }
 
 // UpdatedByGT applies the GT predicate on the "updated_by" field.
-func UpdatedByGT(v uint32) predicate.Webhook {
+func UpdatedByGT(v uint64) predicate.Webhook {
 	return predicate.Webhook(sql.FieldGT(FieldUpdatedBy, v))
 }
 
 // UpdatedByGTE applies the GTE predicate on the "updated_by" field.
-func UpdatedByGTE(v uint32) predicate.Webhook {
+func UpdatedByGTE(v uint64) predicate.Webhook {
 	return predicate.Webhook(sql.FieldGTE(FieldUpdatedBy, v))
 }
 
 // UpdatedByLT applies the LT predicate on the "updated_by" field.
-func UpdatedByLT(v uint32) predicate.Webhook {
+func UpdatedByLT(v uint64) predicate.Webhook {
 	return predicate.Webhook(sql.FieldLT(FieldUpdatedBy, v))
 }
 
 // UpdatedByLTE applies the LTE predicate on the "updated_by" field.
-func UpdatedByLTE(v uint32) predicate.Webhook {
+func UpdatedByLTE(v uint64) predicate.Webhook {
 	return predicate.Webhook(sql.FieldLTE(FieldUpdatedBy, v))
 }
 
@@ -360,42 +360,42 @@ func UpdatedByNotNil() predicate.Webhook {
 }
 
 // DeletedByEQ applies the EQ predicate on the "deleted_by" field.
-func DeletedByEQ(v uint32) predicate.Webhook {
+func DeletedByEQ(v uint64) predicate.Webhook {
 	return predicate.Webhook(sql.FieldEQ(FieldDeletedBy, v))
 }
 
 // DeletedByNEQ applies the NEQ predicate on the "deleted_by" field.
-func DeletedByNEQ(v uint32) predicate.Webhook {
+func DeletedByNEQ(v uint64) predicate.Webhook {
 	return predicate.Webhook(sql.FieldNEQ(FieldDeletedBy, v))
 }
 
 // DeletedByIn applies the In predicate on the "deleted_by" field.
-func DeletedByIn(vs ...uint32) predicate.Webhook {
+func DeletedByIn(vs ...uint64) predicate.Webhook {
 	return predicate.Webhook(sql.FieldIn(FieldDeletedBy, vs...))
 }
 
 // DeletedByNotIn applies the NotIn predicate on the "deleted_by" field.
-func DeletedByNotIn(vs ...uint32) predicate.Webhook {
+func DeletedByNotIn(vs ...uint64) predicate.Webhook {
 	return predicate.Webhook(sql.FieldNotIn(FieldDeletedBy, vs...))
 }
 
 // DeletedByGT applies the GT predicate on the "deleted_by" field.
-func DeletedByGT(v uint32) predicate.Webhook {
+func DeletedByGT(v uint64) predicate.Webhook {
 	return predicate.Webhook(sql.FieldGT(FieldDeletedBy, v))
 }
 
 // DeletedByGTE applies the GTE predicate on the "deleted_by" field.
-func DeletedByGTE(v uint32) predicate.Webhook {
+func DeletedByGTE(v uint64) predicate.Webhook {
 	return predicate.Webhook(sql.FieldGTE(FieldDeletedBy, v))
 }
 
 // DeletedByLT applies the LT predicate on the "deleted_by" field.
-func DeletedByLT(v uint32) predicate.Webhook {
+func DeletedByLT(v uint64) predicate.Webhook {
 	return predicate.Webhook(sql.FieldLT(FieldDeletedBy, v))
 }
 
 // DeletedByLTE applies the LTE predicate on the "deleted_by" field.
-func DeletedByLTE(v uint32) predicate.Webhook {
+func DeletedByLTE(v uint64) predicate.Webhook {
 	return predicate.Webhook(sql.FieldLTE(FieldDeletedBy, v))
 }
 
@@ -410,42 +410,42 @@ func DeletedByNotNil() predicate.Webhook {
 }
 
 // TenantIDEQ applies the EQ predicate on the "tenant_id" field.
-func TenantIDEQ(v uint32) predicate.Webhook {
+func TenantIDEQ(v uint64) predicate.Webhook {
 	return predicate.Webhook(sql.FieldEQ(FieldTenantID, v))
 }
 
 // TenantIDNEQ applies the NEQ predicate on the "tenant_id" field.
-func TenantIDNEQ(v uint32) predicate.Webhook {
+func TenantIDNEQ(v uint64) predicate.Webhook {
 	return predicate.Webhook(sql.FieldNEQ(FieldTenantID, v))
 }
 
 // TenantIDIn applies the In predicate on the "tenant_id" field.
-func TenantIDIn(vs ...uint32) predicate.Webhook {
+func TenantIDIn(vs ...uint64) predicate.Webhook {
 	return predicate.Webhook(sql.FieldIn(FieldTenantID, vs...))
 }
 
 // TenantIDNotIn applies the NotIn predicate on the "tenant_id" field.
-func TenantIDNotIn(vs ...uint32) predicate.Webhook {
+func TenantIDNotIn(vs ...uint64) predicate.Webhook {
 	return predicate.Webhook(sql.FieldNotIn(FieldTenantID, vs...))
 }
 
 // TenantIDGT applies the GT predicate on the "tenant_id" field.
-func TenantIDGT(v uint32) predicate.Webhook {
+func TenantIDGT(v uint64) predicate.Webhook {
 	return predicate.Webhook(sql.FieldGT(FieldTenantID, v))
 }
 
 // TenantIDGTE applies the GTE predicate on the "tenant_id" field.
-func TenantIDGTE(v uint32) predicate.Webhook {
+func TenantIDGTE(v uint64) predicate.Webhook {
 	return predicate.Webhook(sql.FieldGTE(FieldTenantID, v))
 }
 
 // TenantIDLT applies the LT predicate on the "tenant_id" field.
-func TenantIDLT(v uint32) predicate.Webhook {
+func TenantIDLT(v uint64) predicate.Webhook {
 	return predicate.Webhook(sql.FieldLT(FieldTenantID, v))
 }
 
 // TenantIDLTE applies the LTE predicate on the "tenant_id" field.
-func TenantIDLTE(v uint32) predicate.Webhook {
+func TenantIDLTE(v uint64) predicate.Webhook {
 	return predicate.Webhook(sql.FieldLTE(FieldTenantID, v))
 }
 

@@ -163,7 +163,7 @@ func (s *MonitorAlertService) EvaluateMonitorAlerts(ctx context.Context, _ *moni
 // ==== 评估内核 ====
 
 type alertOutcome struct {
-	ruleID       uint32
+	ruleID       uint64
 	name         string
 	firing       bool
 	currentValue *float64
@@ -359,7 +359,7 @@ func (s *MonitorAlertService) sendAlert(ctx context.Context, rule *monitorAlertV
 		Title:          title,
 		Content:        content,
 		RelatedId:      rule.Id,
-		OperatorUserId: trans.Ptr(uint32(0)),
+		OperatorUserId: trans.Ptr(uint64(0)),
 	})
 	if err != nil {
 		s.log.Errorf("monitor alert [%s] notify (%s → %s) failed: %s",

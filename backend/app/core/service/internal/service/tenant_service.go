@@ -46,7 +46,7 @@ func NewTenantService(
 
 func (s *TenantService) extractRelationIDs(
 	tenants []*identityV1.Tenant,
-	userSet aggregator.ResourceMap[uint32, *identityV1.User],
+	userSet aggregator.ResourceMap[uint64, *identityV1.User],
 ) {
 	for _, t := range tenants {
 		if t.GetAdminUserId() > 0 {
@@ -57,10 +57,10 @@ func (s *TenantService) extractRelationIDs(
 
 func (s *TenantService) fetchRelationInfo(
 	ctx context.Context,
-	userSet aggregator.ResourceMap[uint32, *identityV1.User],
+	userSet aggregator.ResourceMap[uint64, *identityV1.User],
 ) error {
 	if len(userSet) > 0 {
-		userIds := make([]uint32, 0, len(userSet))
+		userIds := make([]uint64, 0, len(userSet))
 		for id := range userSet {
 			userIds = append(userIds, id)
 		}
@@ -81,12 +81,12 @@ func (s *TenantService) fetchRelationInfo(
 
 func (s *TenantService) bindRelations(
 	tenants []*identityV1.Tenant,
-	userSet aggregator.ResourceMap[uint32, *identityV1.User],
+	userSet aggregator.ResourceMap[uint64, *identityV1.User],
 ) {
 	aggregator.Populate(
 		tenants,
 		userSet,
-		func(ou *identityV1.Tenant) uint32 { return ou.GetAdminUserId() },
+		func(ou *identityV1.Tenant) uint64 { return ou.GetAdminUserId() },
 		func(ou *identityV1.Tenant, r *identityV1.User) {
 			ou.AdminUserName = r.Username
 		},
@@ -94,7 +94,7 @@ func (s *TenantService) bindRelations(
 }
 
 func (s *TenantService) enrichRelations(ctx context.Context, tenants []*identityV1.Tenant) error {
-	var userSet = make(aggregator.ResourceMap[uint32, *identityV1.User])
+	var userSet = make(aggregator.ResourceMap[uint64, *identityV1.User])
 	s.extractRelationIDs(tenants, userSet)
 	if err := s.fetchRelationInfo(ctx, userSet); err != nil {
 		return err
@@ -231,7 +231,7 @@ func (s *TenantService) CreateTenantWithAdminUser(ctx context.Context, req *iden
 	// copy tenant manager role to tenant
 	// 操作人身份必须从 viewer context 推导，忽略客户端传入的 operator_user_id，
 	// 防止伪造审计归属
-	var operatorUserID uint32
+	var operatorUserID uint64
 	if opID, hasOp := viewerUserIDFromContext(ctx); hasOp {
 		operatorUserID = opID
 	}

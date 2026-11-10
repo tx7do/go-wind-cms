@@ -70,14 +70,14 @@ func (_u *PostVersionUpdate) ClearDeletedAt() *PostVersionUpdate {
 }
 
 // SetCreatedBy sets the "created_by" field.
-func (_u *PostVersionUpdate) SetCreatedBy(v uint32) *PostVersionUpdate {
+func (_u *PostVersionUpdate) SetCreatedBy(v uint64) *PostVersionUpdate {
 	_u.mutation.ResetCreatedBy()
 	_u.mutation.SetCreatedBy(v)
 	return _u
 }
 
 // SetNillableCreatedBy sets the "created_by" field if the given value is not nil.
-func (_u *PostVersionUpdate) SetNillableCreatedBy(v *uint32) *PostVersionUpdate {
+func (_u *PostVersionUpdate) SetNillableCreatedBy(v *uint64) *PostVersionUpdate {
 	if v != nil {
 		_u.SetCreatedBy(*v)
 	}
@@ -85,7 +85,7 @@ func (_u *PostVersionUpdate) SetNillableCreatedBy(v *uint32) *PostVersionUpdate 
 }
 
 // AddCreatedBy adds value to the "created_by" field.
-func (_u *PostVersionUpdate) AddCreatedBy(v int32) *PostVersionUpdate {
+func (_u *PostVersionUpdate) AddCreatedBy(v int64) *PostVersionUpdate {
 	_u.mutation.AddCreatedBy(v)
 	return _u
 }
@@ -97,14 +97,14 @@ func (_u *PostVersionUpdate) ClearCreatedBy() *PostVersionUpdate {
 }
 
 // SetUpdatedBy sets the "updated_by" field.
-func (_u *PostVersionUpdate) SetUpdatedBy(v uint32) *PostVersionUpdate {
+func (_u *PostVersionUpdate) SetUpdatedBy(v uint64) *PostVersionUpdate {
 	_u.mutation.ResetUpdatedBy()
 	_u.mutation.SetUpdatedBy(v)
 	return _u
 }
 
 // SetNillableUpdatedBy sets the "updated_by" field if the given value is not nil.
-func (_u *PostVersionUpdate) SetNillableUpdatedBy(v *uint32) *PostVersionUpdate {
+func (_u *PostVersionUpdate) SetNillableUpdatedBy(v *uint64) *PostVersionUpdate {
 	if v != nil {
 		_u.SetUpdatedBy(*v)
 	}
@@ -112,7 +112,7 @@ func (_u *PostVersionUpdate) SetNillableUpdatedBy(v *uint32) *PostVersionUpdate 
 }
 
 // AddUpdatedBy adds value to the "updated_by" field.
-func (_u *PostVersionUpdate) AddUpdatedBy(v int32) *PostVersionUpdate {
+func (_u *PostVersionUpdate) AddUpdatedBy(v int64) *PostVersionUpdate {
 	_u.mutation.AddUpdatedBy(v)
 	return _u
 }
@@ -124,14 +124,14 @@ func (_u *PostVersionUpdate) ClearUpdatedBy() *PostVersionUpdate {
 }
 
 // SetDeletedBy sets the "deleted_by" field.
-func (_u *PostVersionUpdate) SetDeletedBy(v uint32) *PostVersionUpdate {
+func (_u *PostVersionUpdate) SetDeletedBy(v uint64) *PostVersionUpdate {
 	_u.mutation.ResetDeletedBy()
 	_u.mutation.SetDeletedBy(v)
 	return _u
 }
 
 // SetNillableDeletedBy sets the "deleted_by" field if the given value is not nil.
-func (_u *PostVersionUpdate) SetNillableDeletedBy(v *uint32) *PostVersionUpdate {
+func (_u *PostVersionUpdate) SetNillableDeletedBy(v *uint64) *PostVersionUpdate {
 	if v != nil {
 		_u.SetDeletedBy(*v)
 	}
@@ -139,7 +139,7 @@ func (_u *PostVersionUpdate) SetNillableDeletedBy(v *uint32) *PostVersionUpdate 
 }
 
 // AddDeletedBy adds value to the "deleted_by" field.
-func (_u *PostVersionUpdate) AddDeletedBy(v int32) *PostVersionUpdate {
+func (_u *PostVersionUpdate) AddDeletedBy(v int64) *PostVersionUpdate {
 	_u.mutation.AddDeletedBy(v)
 	return _u
 }
@@ -151,14 +151,14 @@ func (_u *PostVersionUpdate) ClearDeletedBy() *PostVersionUpdate {
 }
 
 // SetPostID sets the "post_id" field.
-func (_u *PostVersionUpdate) SetPostID(v uint32) *PostVersionUpdate {
+func (_u *PostVersionUpdate) SetPostID(v uint64) *PostVersionUpdate {
 	_u.mutation.ResetPostID()
 	_u.mutation.SetPostID(v)
 	return _u
 }
 
 // SetNillablePostID sets the "post_id" field if the given value is not nil.
-func (_u *PostVersionUpdate) SetNillablePostID(v *uint32) *PostVersionUpdate {
+func (_u *PostVersionUpdate) SetNillablePostID(v *uint64) *PostVersionUpdate {
 	if v != nil {
 		_u.SetPostID(*v)
 	}
@@ -166,7 +166,7 @@ func (_u *PostVersionUpdate) SetNillablePostID(v *uint32) *PostVersionUpdate {
 }
 
 // AddPostID adds value to the "post_id" field.
-func (_u *PostVersionUpdate) AddPostID(v int32) *PostVersionUpdate {
+func (_u *PostVersionUpdate) AddPostID(v int64) *PostVersionUpdate {
 	_u.mutation.AddPostID(v)
 	return _u
 }
@@ -283,7 +283,7 @@ func (_u *PostVersionUpdate) Modify(modifiers ...func(u *sql.UpdateBuilder)) *Po
 }
 
 func (_u *PostVersionUpdate) sqlSave(ctx context.Context) (_node int, err error) {
-	_spec := sqlgraph.NewUpdateSpec(postversion.Table, postversion.Columns, sqlgraph.NewFieldSpec(postversion.FieldID, field.TypeUint32))
+	_spec := sqlgraph.NewUpdateSpec(postversion.Table, postversion.Columns, sqlgraph.NewFieldSpec(postversion.FieldID, field.TypeUint64))
 	if ps := _u.mutation.predicates; len(ps) > 0 {
 		_spec.Predicate = func(selector *sql.Selector) {
 			for i := range ps {
@@ -307,43 +307,43 @@ func (_u *PostVersionUpdate) sqlSave(ctx context.Context) (_node int, err error)
 		_spec.ClearField(postversion.FieldDeletedAt, field.TypeTime)
 	}
 	if value, ok := _u.mutation.CreatedBy(); ok {
-		_spec.SetField(postversion.FieldCreatedBy, field.TypeUint32, value)
+		_spec.SetField(postversion.FieldCreatedBy, field.TypeUint64, value)
 	}
 	if value, ok := _u.mutation.AddedCreatedBy(); ok {
-		_spec.AddField(postversion.FieldCreatedBy, field.TypeUint32, value)
+		_spec.AddField(postversion.FieldCreatedBy, field.TypeUint64, value)
 	}
 	if _u.mutation.CreatedByCleared() {
-		_spec.ClearField(postversion.FieldCreatedBy, field.TypeUint32)
+		_spec.ClearField(postversion.FieldCreatedBy, field.TypeUint64)
 	}
 	if value, ok := _u.mutation.UpdatedBy(); ok {
-		_spec.SetField(postversion.FieldUpdatedBy, field.TypeUint32, value)
+		_spec.SetField(postversion.FieldUpdatedBy, field.TypeUint64, value)
 	}
 	if value, ok := _u.mutation.AddedUpdatedBy(); ok {
-		_spec.AddField(postversion.FieldUpdatedBy, field.TypeUint32, value)
+		_spec.AddField(postversion.FieldUpdatedBy, field.TypeUint64, value)
 	}
 	if _u.mutation.UpdatedByCleared() {
-		_spec.ClearField(postversion.FieldUpdatedBy, field.TypeUint32)
+		_spec.ClearField(postversion.FieldUpdatedBy, field.TypeUint64)
 	}
 	if value, ok := _u.mutation.DeletedBy(); ok {
-		_spec.SetField(postversion.FieldDeletedBy, field.TypeUint32, value)
+		_spec.SetField(postversion.FieldDeletedBy, field.TypeUint64, value)
 	}
 	if value, ok := _u.mutation.AddedDeletedBy(); ok {
-		_spec.AddField(postversion.FieldDeletedBy, field.TypeUint32, value)
+		_spec.AddField(postversion.FieldDeletedBy, field.TypeUint64, value)
 	}
 	if _u.mutation.DeletedByCleared() {
-		_spec.ClearField(postversion.FieldDeletedBy, field.TypeUint32)
+		_spec.ClearField(postversion.FieldDeletedBy, field.TypeUint64)
 	}
 	if _u.mutation.TenantIDCleared() {
-		_spec.ClearField(postversion.FieldTenantID, field.TypeUint32)
+		_spec.ClearField(postversion.FieldTenantID, field.TypeUint64)
 	}
 	if value, ok := _u.mutation.PostID(); ok {
-		_spec.SetField(postversion.FieldPostID, field.TypeUint32, value)
+		_spec.SetField(postversion.FieldPostID, field.TypeUint64, value)
 	}
 	if value, ok := _u.mutation.AddedPostID(); ok {
-		_spec.AddField(postversion.FieldPostID, field.TypeUint32, value)
+		_spec.AddField(postversion.FieldPostID, field.TypeUint64, value)
 	}
 	if _u.mutation.PostIDCleared() {
-		_spec.ClearField(postversion.FieldPostID, field.TypeUint32)
+		_spec.ClearField(postversion.FieldPostID, field.TypeUint64)
 	}
 	if value, ok := _u.mutation.VersionNumber(); ok {
 		_spec.SetField(postversion.FieldVersionNumber, field.TypeUint32, value)
@@ -429,14 +429,14 @@ func (_u *PostVersionUpdateOne) ClearDeletedAt() *PostVersionUpdateOne {
 }
 
 // SetCreatedBy sets the "created_by" field.
-func (_u *PostVersionUpdateOne) SetCreatedBy(v uint32) *PostVersionUpdateOne {
+func (_u *PostVersionUpdateOne) SetCreatedBy(v uint64) *PostVersionUpdateOne {
 	_u.mutation.ResetCreatedBy()
 	_u.mutation.SetCreatedBy(v)
 	return _u
 }
 
 // SetNillableCreatedBy sets the "created_by" field if the given value is not nil.
-func (_u *PostVersionUpdateOne) SetNillableCreatedBy(v *uint32) *PostVersionUpdateOne {
+func (_u *PostVersionUpdateOne) SetNillableCreatedBy(v *uint64) *PostVersionUpdateOne {
 	if v != nil {
 		_u.SetCreatedBy(*v)
 	}
@@ -444,7 +444,7 @@ func (_u *PostVersionUpdateOne) SetNillableCreatedBy(v *uint32) *PostVersionUpda
 }
 
 // AddCreatedBy adds value to the "created_by" field.
-func (_u *PostVersionUpdateOne) AddCreatedBy(v int32) *PostVersionUpdateOne {
+func (_u *PostVersionUpdateOne) AddCreatedBy(v int64) *PostVersionUpdateOne {
 	_u.mutation.AddCreatedBy(v)
 	return _u
 }
@@ -456,14 +456,14 @@ func (_u *PostVersionUpdateOne) ClearCreatedBy() *PostVersionUpdateOne {
 }
 
 // SetUpdatedBy sets the "updated_by" field.
-func (_u *PostVersionUpdateOne) SetUpdatedBy(v uint32) *PostVersionUpdateOne {
+func (_u *PostVersionUpdateOne) SetUpdatedBy(v uint64) *PostVersionUpdateOne {
 	_u.mutation.ResetUpdatedBy()
 	_u.mutation.SetUpdatedBy(v)
 	return _u
 }
 
 // SetNillableUpdatedBy sets the "updated_by" field if the given value is not nil.
-func (_u *PostVersionUpdateOne) SetNillableUpdatedBy(v *uint32) *PostVersionUpdateOne {
+func (_u *PostVersionUpdateOne) SetNillableUpdatedBy(v *uint64) *PostVersionUpdateOne {
 	if v != nil {
 		_u.SetUpdatedBy(*v)
 	}
@@ -471,7 +471,7 @@ func (_u *PostVersionUpdateOne) SetNillableUpdatedBy(v *uint32) *PostVersionUpda
 }
 
 // AddUpdatedBy adds value to the "updated_by" field.
-func (_u *PostVersionUpdateOne) AddUpdatedBy(v int32) *PostVersionUpdateOne {
+func (_u *PostVersionUpdateOne) AddUpdatedBy(v int64) *PostVersionUpdateOne {
 	_u.mutation.AddUpdatedBy(v)
 	return _u
 }
@@ -483,14 +483,14 @@ func (_u *PostVersionUpdateOne) ClearUpdatedBy() *PostVersionUpdateOne {
 }
 
 // SetDeletedBy sets the "deleted_by" field.
-func (_u *PostVersionUpdateOne) SetDeletedBy(v uint32) *PostVersionUpdateOne {
+func (_u *PostVersionUpdateOne) SetDeletedBy(v uint64) *PostVersionUpdateOne {
 	_u.mutation.ResetDeletedBy()
 	_u.mutation.SetDeletedBy(v)
 	return _u
 }
 
 // SetNillableDeletedBy sets the "deleted_by" field if the given value is not nil.
-func (_u *PostVersionUpdateOne) SetNillableDeletedBy(v *uint32) *PostVersionUpdateOne {
+func (_u *PostVersionUpdateOne) SetNillableDeletedBy(v *uint64) *PostVersionUpdateOne {
 	if v != nil {
 		_u.SetDeletedBy(*v)
 	}
@@ -498,7 +498,7 @@ func (_u *PostVersionUpdateOne) SetNillableDeletedBy(v *uint32) *PostVersionUpda
 }
 
 // AddDeletedBy adds value to the "deleted_by" field.
-func (_u *PostVersionUpdateOne) AddDeletedBy(v int32) *PostVersionUpdateOne {
+func (_u *PostVersionUpdateOne) AddDeletedBy(v int64) *PostVersionUpdateOne {
 	_u.mutation.AddDeletedBy(v)
 	return _u
 }
@@ -510,14 +510,14 @@ func (_u *PostVersionUpdateOne) ClearDeletedBy() *PostVersionUpdateOne {
 }
 
 // SetPostID sets the "post_id" field.
-func (_u *PostVersionUpdateOne) SetPostID(v uint32) *PostVersionUpdateOne {
+func (_u *PostVersionUpdateOne) SetPostID(v uint64) *PostVersionUpdateOne {
 	_u.mutation.ResetPostID()
 	_u.mutation.SetPostID(v)
 	return _u
 }
 
 // SetNillablePostID sets the "post_id" field if the given value is not nil.
-func (_u *PostVersionUpdateOne) SetNillablePostID(v *uint32) *PostVersionUpdateOne {
+func (_u *PostVersionUpdateOne) SetNillablePostID(v *uint64) *PostVersionUpdateOne {
 	if v != nil {
 		_u.SetPostID(*v)
 	}
@@ -525,7 +525,7 @@ func (_u *PostVersionUpdateOne) SetNillablePostID(v *uint32) *PostVersionUpdateO
 }
 
 // AddPostID adds value to the "post_id" field.
-func (_u *PostVersionUpdateOne) AddPostID(v int32) *PostVersionUpdateOne {
+func (_u *PostVersionUpdateOne) AddPostID(v int64) *PostVersionUpdateOne {
 	_u.mutation.AddPostID(v)
 	return _u
 }
@@ -655,7 +655,7 @@ func (_u *PostVersionUpdateOne) Modify(modifiers ...func(u *sql.UpdateBuilder)) 
 }
 
 func (_u *PostVersionUpdateOne) sqlSave(ctx context.Context) (_node *PostVersion, err error) {
-	_spec := sqlgraph.NewUpdateSpec(postversion.Table, postversion.Columns, sqlgraph.NewFieldSpec(postversion.FieldID, field.TypeUint32))
+	_spec := sqlgraph.NewUpdateSpec(postversion.Table, postversion.Columns, sqlgraph.NewFieldSpec(postversion.FieldID, field.TypeUint64))
 	id, ok := _u.mutation.ID()
 	if !ok {
 		return nil, &ValidationError{Name: "id", err: errors.New(`ent: missing "PostVersion.id" for update`)}
@@ -696,43 +696,43 @@ func (_u *PostVersionUpdateOne) sqlSave(ctx context.Context) (_node *PostVersion
 		_spec.ClearField(postversion.FieldDeletedAt, field.TypeTime)
 	}
 	if value, ok := _u.mutation.CreatedBy(); ok {
-		_spec.SetField(postversion.FieldCreatedBy, field.TypeUint32, value)
+		_spec.SetField(postversion.FieldCreatedBy, field.TypeUint64, value)
 	}
 	if value, ok := _u.mutation.AddedCreatedBy(); ok {
-		_spec.AddField(postversion.FieldCreatedBy, field.TypeUint32, value)
+		_spec.AddField(postversion.FieldCreatedBy, field.TypeUint64, value)
 	}
 	if _u.mutation.CreatedByCleared() {
-		_spec.ClearField(postversion.FieldCreatedBy, field.TypeUint32)
+		_spec.ClearField(postversion.FieldCreatedBy, field.TypeUint64)
 	}
 	if value, ok := _u.mutation.UpdatedBy(); ok {
-		_spec.SetField(postversion.FieldUpdatedBy, field.TypeUint32, value)
+		_spec.SetField(postversion.FieldUpdatedBy, field.TypeUint64, value)
 	}
 	if value, ok := _u.mutation.AddedUpdatedBy(); ok {
-		_spec.AddField(postversion.FieldUpdatedBy, field.TypeUint32, value)
+		_spec.AddField(postversion.FieldUpdatedBy, field.TypeUint64, value)
 	}
 	if _u.mutation.UpdatedByCleared() {
-		_spec.ClearField(postversion.FieldUpdatedBy, field.TypeUint32)
+		_spec.ClearField(postversion.FieldUpdatedBy, field.TypeUint64)
 	}
 	if value, ok := _u.mutation.DeletedBy(); ok {
-		_spec.SetField(postversion.FieldDeletedBy, field.TypeUint32, value)
+		_spec.SetField(postversion.FieldDeletedBy, field.TypeUint64, value)
 	}
 	if value, ok := _u.mutation.AddedDeletedBy(); ok {
-		_spec.AddField(postversion.FieldDeletedBy, field.TypeUint32, value)
+		_spec.AddField(postversion.FieldDeletedBy, field.TypeUint64, value)
 	}
 	if _u.mutation.DeletedByCleared() {
-		_spec.ClearField(postversion.FieldDeletedBy, field.TypeUint32)
+		_spec.ClearField(postversion.FieldDeletedBy, field.TypeUint64)
 	}
 	if _u.mutation.TenantIDCleared() {
-		_spec.ClearField(postversion.FieldTenantID, field.TypeUint32)
+		_spec.ClearField(postversion.FieldTenantID, field.TypeUint64)
 	}
 	if value, ok := _u.mutation.PostID(); ok {
-		_spec.SetField(postversion.FieldPostID, field.TypeUint32, value)
+		_spec.SetField(postversion.FieldPostID, field.TypeUint64, value)
 	}
 	if value, ok := _u.mutation.AddedPostID(); ok {
-		_spec.AddField(postversion.FieldPostID, field.TypeUint32, value)
+		_spec.AddField(postversion.FieldPostID, field.TypeUint64, value)
 	}
 	if _u.mutation.PostIDCleared() {
-		_spec.ClearField(postversion.FieldPostID, field.TypeUint32)
+		_spec.ClearField(postversion.FieldPostID, field.TypeUint64)
 	}
 	if value, ok := _u.mutation.VersionNumber(); ok {
 		_spec.SetField(postversion.FieldVersionNumber, field.TypeUint32, value)

@@ -37,13 +37,13 @@ func (_c *PostCategoryCreate) SetNillableCreatedAt(v *time.Time) *PostCategoryCr
 }
 
 // SetTenantID sets the "tenant_id" field.
-func (_c *PostCategoryCreate) SetTenantID(v uint32) *PostCategoryCreate {
+func (_c *PostCategoryCreate) SetTenantID(v uint64) *PostCategoryCreate {
 	_c.mutation.SetTenantID(v)
 	return _c
 }
 
 // SetNillableTenantID sets the "tenant_id" field if the given value is not nil.
-func (_c *PostCategoryCreate) SetNillableTenantID(v *uint32) *PostCategoryCreate {
+func (_c *PostCategoryCreate) SetNillableTenantID(v *uint64) *PostCategoryCreate {
 	if v != nil {
 		_c.SetTenantID(*v)
 	}
@@ -51,19 +51,19 @@ func (_c *PostCategoryCreate) SetNillableTenantID(v *uint32) *PostCategoryCreate
 }
 
 // SetPostID sets the "post_id" field.
-func (_c *PostCategoryCreate) SetPostID(v uint32) *PostCategoryCreate {
+func (_c *PostCategoryCreate) SetPostID(v uint64) *PostCategoryCreate {
 	_c.mutation.SetPostID(v)
 	return _c
 }
 
 // SetCategoryID sets the "category_id" field.
-func (_c *PostCategoryCreate) SetCategoryID(v uint32) *PostCategoryCreate {
+func (_c *PostCategoryCreate) SetCategoryID(v uint64) *PostCategoryCreate {
 	_c.mutation.SetCategoryID(v)
 	return _c
 }
 
 // SetID sets the "id" field.
-func (_c *PostCategoryCreate) SetID(v uint32) *PostCategoryCreate {
+func (_c *PostCategoryCreate) SetID(v uint64) *PostCategoryCreate {
 	_c.mutation.SetID(v)
 	return _c
 }
@@ -141,7 +141,7 @@ func (_c *PostCategoryCreate) sqlSave(ctx context.Context) (*PostCategory, error
 	}
 	if _spec.ID.Value != _node.ID {
 		id := _spec.ID.Value.(int64)
-		_node.ID = uint32(id)
+		_node.ID = uint64(id)
 	}
 	_c.mutation.id = &_node.ID
 	_c.mutation.done = true
@@ -151,7 +151,7 @@ func (_c *PostCategoryCreate) sqlSave(ctx context.Context) (*PostCategory, error
 func (_c *PostCategoryCreate) createSpec() (*PostCategory, *sqlgraph.CreateSpec) {
 	var (
 		_node = &PostCategory{config: _c.config}
-		_spec = sqlgraph.NewCreateSpec(postcategory.Table, sqlgraph.NewFieldSpec(postcategory.FieldID, field.TypeUint32))
+		_spec = sqlgraph.NewCreateSpec(postcategory.Table, sqlgraph.NewFieldSpec(postcategory.FieldID, field.TypeUint64))
 	)
 	_spec.OnConflict = _c.conflict
 	if id, ok := _c.mutation.ID(); ok {
@@ -163,15 +163,15 @@ func (_c *PostCategoryCreate) createSpec() (*PostCategory, *sqlgraph.CreateSpec)
 		_node.CreatedAt = &value
 	}
 	if value, ok := _c.mutation.TenantID(); ok {
-		_spec.SetField(postcategory.FieldTenantID, field.TypeUint32, value)
+		_spec.SetField(postcategory.FieldTenantID, field.TypeUint64, value)
 		_node.TenantID = &value
 	}
 	if value, ok := _c.mutation.PostID(); ok {
-		_spec.SetField(postcategory.FieldPostID, field.TypeUint32, value)
+		_spec.SetField(postcategory.FieldPostID, field.TypeUint64, value)
 		_node.PostID = &value
 	}
 	if value, ok := _c.mutation.CategoryID(); ok {
-		_spec.SetField(postcategory.FieldCategoryID, field.TypeUint32, value)
+		_spec.SetField(postcategory.FieldCategoryID, field.TypeUint64, value)
 		_node.CategoryID = &value
 	}
 	return _node, _spec
@@ -227,7 +227,7 @@ type (
 )
 
 // SetPostID sets the "post_id" field.
-func (u *PostCategoryUpsert) SetPostID(v uint32) *PostCategoryUpsert {
+func (u *PostCategoryUpsert) SetPostID(v uint64) *PostCategoryUpsert {
 	u.Set(postcategory.FieldPostID, v)
 	return u
 }
@@ -239,13 +239,13 @@ func (u *PostCategoryUpsert) UpdatePostID() *PostCategoryUpsert {
 }
 
 // AddPostID adds v to the "post_id" field.
-func (u *PostCategoryUpsert) AddPostID(v uint32) *PostCategoryUpsert {
+func (u *PostCategoryUpsert) AddPostID(v uint64) *PostCategoryUpsert {
 	u.Add(postcategory.FieldPostID, v)
 	return u
 }
 
 // SetCategoryID sets the "category_id" field.
-func (u *PostCategoryUpsert) SetCategoryID(v uint32) *PostCategoryUpsert {
+func (u *PostCategoryUpsert) SetCategoryID(v uint64) *PostCategoryUpsert {
 	u.Set(postcategory.FieldCategoryID, v)
 	return u
 }
@@ -257,7 +257,7 @@ func (u *PostCategoryUpsert) UpdateCategoryID() *PostCategoryUpsert {
 }
 
 // AddCategoryID adds v to the "category_id" field.
-func (u *PostCategoryUpsert) AddCategoryID(v uint32) *PostCategoryUpsert {
+func (u *PostCategoryUpsert) AddCategoryID(v uint64) *PostCategoryUpsert {
 	u.Add(postcategory.FieldCategoryID, v)
 	return u
 }
@@ -317,14 +317,14 @@ func (u *PostCategoryUpsertOne) Update(set func(*PostCategoryUpsert)) *PostCateg
 }
 
 // SetPostID sets the "post_id" field.
-func (u *PostCategoryUpsertOne) SetPostID(v uint32) *PostCategoryUpsertOne {
+func (u *PostCategoryUpsertOne) SetPostID(v uint64) *PostCategoryUpsertOne {
 	return u.Update(func(s *PostCategoryUpsert) {
 		s.SetPostID(v)
 	})
 }
 
 // AddPostID adds v to the "post_id" field.
-func (u *PostCategoryUpsertOne) AddPostID(v uint32) *PostCategoryUpsertOne {
+func (u *PostCategoryUpsertOne) AddPostID(v uint64) *PostCategoryUpsertOne {
 	return u.Update(func(s *PostCategoryUpsert) {
 		s.AddPostID(v)
 	})
@@ -338,14 +338,14 @@ func (u *PostCategoryUpsertOne) UpdatePostID() *PostCategoryUpsertOne {
 }
 
 // SetCategoryID sets the "category_id" field.
-func (u *PostCategoryUpsertOne) SetCategoryID(v uint32) *PostCategoryUpsertOne {
+func (u *PostCategoryUpsertOne) SetCategoryID(v uint64) *PostCategoryUpsertOne {
 	return u.Update(func(s *PostCategoryUpsert) {
 		s.SetCategoryID(v)
 	})
 }
 
 // AddCategoryID adds v to the "category_id" field.
-func (u *PostCategoryUpsertOne) AddCategoryID(v uint32) *PostCategoryUpsertOne {
+func (u *PostCategoryUpsertOne) AddCategoryID(v uint64) *PostCategoryUpsertOne {
 	return u.Update(func(s *PostCategoryUpsert) {
 		s.AddCategoryID(v)
 	})
@@ -374,7 +374,7 @@ func (u *PostCategoryUpsertOne) ExecX(ctx context.Context) {
 }
 
 // Exec executes the UPSERT query and returns the inserted/updated ID.
-func (u *PostCategoryUpsertOne) ID(ctx context.Context) (id uint32, err error) {
+func (u *PostCategoryUpsertOne) ID(ctx context.Context) (id uint64, err error) {
 	node, err := u.create.Save(ctx)
 	if err != nil {
 		return id, err
@@ -383,7 +383,7 @@ func (u *PostCategoryUpsertOne) ID(ctx context.Context) (id uint32, err error) {
 }
 
 // IDX is like ID, but panics if an error occurs.
-func (u *PostCategoryUpsertOne) IDX(ctx context.Context) uint32 {
+func (u *PostCategoryUpsertOne) IDX(ctx context.Context) uint64 {
 	id, err := u.ID(ctx)
 	if err != nil {
 		panic(err)
@@ -440,7 +440,7 @@ func (_c *PostCategoryCreateBulk) Save(ctx context.Context) ([]*PostCategory, er
 				mutation.id = &nodes[i].ID
 				if specs[i].ID.Value != nil && nodes[i].ID == 0 {
 					id := specs[i].ID.Value.(int64)
-					nodes[i].ID = uint32(id)
+					nodes[i].ID = uint64(id)
 				}
 				mutation.done = true
 				return nodes[i], nil
@@ -579,14 +579,14 @@ func (u *PostCategoryUpsertBulk) Update(set func(*PostCategoryUpsert)) *PostCate
 }
 
 // SetPostID sets the "post_id" field.
-func (u *PostCategoryUpsertBulk) SetPostID(v uint32) *PostCategoryUpsertBulk {
+func (u *PostCategoryUpsertBulk) SetPostID(v uint64) *PostCategoryUpsertBulk {
 	return u.Update(func(s *PostCategoryUpsert) {
 		s.SetPostID(v)
 	})
 }
 
 // AddPostID adds v to the "post_id" field.
-func (u *PostCategoryUpsertBulk) AddPostID(v uint32) *PostCategoryUpsertBulk {
+func (u *PostCategoryUpsertBulk) AddPostID(v uint64) *PostCategoryUpsertBulk {
 	return u.Update(func(s *PostCategoryUpsert) {
 		s.AddPostID(v)
 	})
@@ -600,14 +600,14 @@ func (u *PostCategoryUpsertBulk) UpdatePostID() *PostCategoryUpsertBulk {
 }
 
 // SetCategoryID sets the "category_id" field.
-func (u *PostCategoryUpsertBulk) SetCategoryID(v uint32) *PostCategoryUpsertBulk {
+func (u *PostCategoryUpsertBulk) SetCategoryID(v uint64) *PostCategoryUpsertBulk {
 	return u.Update(func(s *PostCategoryUpsert) {
 		s.SetCategoryID(v)
 	})
 }
 
 // AddCategoryID adds v to the "category_id" field.
-func (u *PostCategoryUpsertBulk) AddCategoryID(v uint32) *PostCategoryUpsertBulk {
+func (u *PostCategoryUpsertBulk) AddCategoryID(v uint64) *PostCategoryUpsertBulk {
 	return u.Update(func(s *PostCategoryUpsert) {
 		s.AddCategoryID(v)
 	})

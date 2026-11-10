@@ -31,7 +31,7 @@ func NewSocialStatsHistoryRepo(ctx *bootstrap.Context, entClient *entCrud.EntCli
 
 // StatsRecord 一次统计快照。
 type StatsRecord struct {
-	DistributionID uint32
+	DistributionID uint64
 	Likes          uint32
 	Replies        uint32
 	Reposts        uint32
@@ -55,7 +55,7 @@ func (r *SocialStatsHistoryRepo) Record(ctx context.Context, rec StatsRecord) er
 
 // ListByDistribution 取某分发记录的统计快照时间序列（按时间升序，至多 limit 点；
 // 倒序取最近 N 点后反转为时间升序，供趋势图直接绘制）。
-func (r *SocialStatsHistoryRepo) ListByDistribution(ctx context.Context, distributionID uint32, limit int) ([]StatsRecord, error) {
+func (r *SocialStatsHistoryRepo) ListByDistribution(ctx context.Context, distributionID uint64, limit int) ([]StatsRecord, error) {
 	if limit <= 0 || limit > 1000 {
 		limit = 200
 	}

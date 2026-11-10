@@ -65,13 +65,13 @@ func (_c *WebhookDeliveryCreate) SetNillableDeletedAt(v *time.Time) *WebhookDeli
 }
 
 // SetTenantID sets the "tenant_id" field.
-func (_c *WebhookDeliveryCreate) SetTenantID(v uint32) *WebhookDeliveryCreate {
+func (_c *WebhookDeliveryCreate) SetTenantID(v uint64) *WebhookDeliveryCreate {
 	_c.mutation.SetTenantID(v)
 	return _c
 }
 
 // SetNillableTenantID sets the "tenant_id" field if the given value is not nil.
-func (_c *WebhookDeliveryCreate) SetNillableTenantID(v *uint32) *WebhookDeliveryCreate {
+func (_c *WebhookDeliveryCreate) SetNillableTenantID(v *uint64) *WebhookDeliveryCreate {
 	if v != nil {
 		_c.SetTenantID(*v)
 	}
@@ -79,13 +79,13 @@ func (_c *WebhookDeliveryCreate) SetNillableTenantID(v *uint32) *WebhookDelivery
 }
 
 // SetWebhookID sets the "webhook_id" field.
-func (_c *WebhookDeliveryCreate) SetWebhookID(v uint32) *WebhookDeliveryCreate {
+func (_c *WebhookDeliveryCreate) SetWebhookID(v uint64) *WebhookDeliveryCreate {
 	_c.mutation.SetWebhookID(v)
 	return _c
 }
 
 // SetNillableWebhookID sets the "webhook_id" field if the given value is not nil.
-func (_c *WebhookDeliveryCreate) SetNillableWebhookID(v *uint32) *WebhookDeliveryCreate {
+func (_c *WebhookDeliveryCreate) SetNillableWebhookID(v *uint64) *WebhookDeliveryCreate {
 	if v != nil {
 		_c.SetWebhookID(*v)
 	}
@@ -107,13 +107,13 @@ func (_c *WebhookDeliveryCreate) SetNillableEvent(v *string) *WebhookDeliveryCre
 }
 
 // SetEntityID sets the "entity_id" field.
-func (_c *WebhookDeliveryCreate) SetEntityID(v uint32) *WebhookDeliveryCreate {
+func (_c *WebhookDeliveryCreate) SetEntityID(v uint64) *WebhookDeliveryCreate {
 	_c.mutation.SetEntityID(v)
 	return _c
 }
 
 // SetNillableEntityID sets the "entity_id" field if the given value is not nil.
-func (_c *WebhookDeliveryCreate) SetNillableEntityID(v *uint32) *WebhookDeliveryCreate {
+func (_c *WebhookDeliveryCreate) SetNillableEntityID(v *uint64) *WebhookDeliveryCreate {
 	if v != nil {
 		_c.SetEntityID(*v)
 	}
@@ -177,7 +177,7 @@ func (_c *WebhookDeliveryCreate) SetNillableDurationMs(v *uint32) *WebhookDelive
 }
 
 // SetID sets the "id" field.
-func (_c *WebhookDeliveryCreate) SetID(v uint32) *WebhookDeliveryCreate {
+func (_c *WebhookDeliveryCreate) SetID(v uint64) *WebhookDeliveryCreate {
 	_c.mutation.SetID(v)
 	return _c
 }
@@ -270,7 +270,7 @@ func (_c *WebhookDeliveryCreate) sqlSave(ctx context.Context) (*WebhookDelivery,
 	}
 	if _spec.ID.Value != _node.ID {
 		id := _spec.ID.Value.(int64)
-		_node.ID = uint32(id)
+		_node.ID = uint64(id)
 	}
 	_c.mutation.id = &_node.ID
 	_c.mutation.done = true
@@ -280,7 +280,7 @@ func (_c *WebhookDeliveryCreate) sqlSave(ctx context.Context) (*WebhookDelivery,
 func (_c *WebhookDeliveryCreate) createSpec() (*WebhookDelivery, *sqlgraph.CreateSpec) {
 	var (
 		_node = &WebhookDelivery{config: _c.config}
-		_spec = sqlgraph.NewCreateSpec(webhookdelivery.Table, sqlgraph.NewFieldSpec(webhookdelivery.FieldID, field.TypeUint32))
+		_spec = sqlgraph.NewCreateSpec(webhookdelivery.Table, sqlgraph.NewFieldSpec(webhookdelivery.FieldID, field.TypeUint64))
 	)
 	_spec.OnConflict = _c.conflict
 	if id, ok := _c.mutation.ID(); ok {
@@ -300,11 +300,11 @@ func (_c *WebhookDeliveryCreate) createSpec() (*WebhookDelivery, *sqlgraph.Creat
 		_node.DeletedAt = &value
 	}
 	if value, ok := _c.mutation.TenantID(); ok {
-		_spec.SetField(webhookdelivery.FieldTenantID, field.TypeUint32, value)
+		_spec.SetField(webhookdelivery.FieldTenantID, field.TypeUint64, value)
 		_node.TenantID = &value
 	}
 	if value, ok := _c.mutation.WebhookID(); ok {
-		_spec.SetField(webhookdelivery.FieldWebhookID, field.TypeUint32, value)
+		_spec.SetField(webhookdelivery.FieldWebhookID, field.TypeUint64, value)
 		_node.WebhookID = &value
 	}
 	if value, ok := _c.mutation.Event(); ok {
@@ -312,7 +312,7 @@ func (_c *WebhookDeliveryCreate) createSpec() (*WebhookDelivery, *sqlgraph.Creat
 		_node.Event = &value
 	}
 	if value, ok := _c.mutation.EntityID(); ok {
-		_spec.SetField(webhookdelivery.FieldEntityID, field.TypeUint32, value)
+		_spec.SetField(webhookdelivery.FieldEntityID, field.TypeUint64, value)
 		_node.EntityID = &value
 	}
 	if value, ok := _c.mutation.Status(); ok {
@@ -420,7 +420,7 @@ func (u *WebhookDeliveryUpsert) ClearDeletedAt() *WebhookDeliveryUpsert {
 }
 
 // SetWebhookID sets the "webhook_id" field.
-func (u *WebhookDeliveryUpsert) SetWebhookID(v uint32) *WebhookDeliveryUpsert {
+func (u *WebhookDeliveryUpsert) SetWebhookID(v uint64) *WebhookDeliveryUpsert {
 	u.Set(webhookdelivery.FieldWebhookID, v)
 	return u
 }
@@ -432,7 +432,7 @@ func (u *WebhookDeliveryUpsert) UpdateWebhookID() *WebhookDeliveryUpsert {
 }
 
 // AddWebhookID adds v to the "webhook_id" field.
-func (u *WebhookDeliveryUpsert) AddWebhookID(v uint32) *WebhookDeliveryUpsert {
+func (u *WebhookDeliveryUpsert) AddWebhookID(v uint64) *WebhookDeliveryUpsert {
 	u.Add(webhookdelivery.FieldWebhookID, v)
 	return u
 }
@@ -462,7 +462,7 @@ func (u *WebhookDeliveryUpsert) ClearEvent() *WebhookDeliveryUpsert {
 }
 
 // SetEntityID sets the "entity_id" field.
-func (u *WebhookDeliveryUpsert) SetEntityID(v uint32) *WebhookDeliveryUpsert {
+func (u *WebhookDeliveryUpsert) SetEntityID(v uint64) *WebhookDeliveryUpsert {
 	u.Set(webhookdelivery.FieldEntityID, v)
 	return u
 }
@@ -474,7 +474,7 @@ func (u *WebhookDeliveryUpsert) UpdateEntityID() *WebhookDeliveryUpsert {
 }
 
 // AddEntityID adds v to the "entity_id" field.
-func (u *WebhookDeliveryUpsert) AddEntityID(v uint32) *WebhookDeliveryUpsert {
+func (u *WebhookDeliveryUpsert) AddEntityID(v uint64) *WebhookDeliveryUpsert {
 	u.Add(webhookdelivery.FieldEntityID, v)
 	return u
 }
@@ -666,14 +666,14 @@ func (u *WebhookDeliveryUpsertOne) ClearDeletedAt() *WebhookDeliveryUpsertOne {
 }
 
 // SetWebhookID sets the "webhook_id" field.
-func (u *WebhookDeliveryUpsertOne) SetWebhookID(v uint32) *WebhookDeliveryUpsertOne {
+func (u *WebhookDeliveryUpsertOne) SetWebhookID(v uint64) *WebhookDeliveryUpsertOne {
 	return u.Update(func(s *WebhookDeliveryUpsert) {
 		s.SetWebhookID(v)
 	})
 }
 
 // AddWebhookID adds v to the "webhook_id" field.
-func (u *WebhookDeliveryUpsertOne) AddWebhookID(v uint32) *WebhookDeliveryUpsertOne {
+func (u *WebhookDeliveryUpsertOne) AddWebhookID(v uint64) *WebhookDeliveryUpsertOne {
 	return u.Update(func(s *WebhookDeliveryUpsert) {
 		s.AddWebhookID(v)
 	})
@@ -715,14 +715,14 @@ func (u *WebhookDeliveryUpsertOne) ClearEvent() *WebhookDeliveryUpsertOne {
 }
 
 // SetEntityID sets the "entity_id" field.
-func (u *WebhookDeliveryUpsertOne) SetEntityID(v uint32) *WebhookDeliveryUpsertOne {
+func (u *WebhookDeliveryUpsertOne) SetEntityID(v uint64) *WebhookDeliveryUpsertOne {
 	return u.Update(func(s *WebhookDeliveryUpsert) {
 		s.SetEntityID(v)
 	})
 }
 
 // AddEntityID adds v to the "entity_id" field.
-func (u *WebhookDeliveryUpsertOne) AddEntityID(v uint32) *WebhookDeliveryUpsertOne {
+func (u *WebhookDeliveryUpsertOne) AddEntityID(v uint64) *WebhookDeliveryUpsertOne {
 	return u.Update(func(s *WebhookDeliveryUpsert) {
 		s.AddEntityID(v)
 	})
@@ -856,7 +856,7 @@ func (u *WebhookDeliveryUpsertOne) ExecX(ctx context.Context) {
 }
 
 // Exec executes the UPSERT query and returns the inserted/updated ID.
-func (u *WebhookDeliveryUpsertOne) ID(ctx context.Context) (id uint32, err error) {
+func (u *WebhookDeliveryUpsertOne) ID(ctx context.Context) (id uint64, err error) {
 	node, err := u.create.Save(ctx)
 	if err != nil {
 		return id, err
@@ -865,7 +865,7 @@ func (u *WebhookDeliveryUpsertOne) ID(ctx context.Context) (id uint32, err error
 }
 
 // IDX is like ID, but panics if an error occurs.
-func (u *WebhookDeliveryUpsertOne) IDX(ctx context.Context) uint32 {
+func (u *WebhookDeliveryUpsertOne) IDX(ctx context.Context) uint64 {
 	id, err := u.ID(ctx)
 	if err != nil {
 		panic(err)
@@ -922,7 +922,7 @@ func (_c *WebhookDeliveryCreateBulk) Save(ctx context.Context) ([]*WebhookDelive
 				mutation.id = &nodes[i].ID
 				if specs[i].ID.Value != nil && nodes[i].ID == 0 {
 					id := specs[i].ID.Value.(int64)
-					nodes[i].ID = uint32(id)
+					nodes[i].ID = uint64(id)
 				}
 				mutation.done = true
 				return nodes[i], nil
@@ -1103,14 +1103,14 @@ func (u *WebhookDeliveryUpsertBulk) ClearDeletedAt() *WebhookDeliveryUpsertBulk 
 }
 
 // SetWebhookID sets the "webhook_id" field.
-func (u *WebhookDeliveryUpsertBulk) SetWebhookID(v uint32) *WebhookDeliveryUpsertBulk {
+func (u *WebhookDeliveryUpsertBulk) SetWebhookID(v uint64) *WebhookDeliveryUpsertBulk {
 	return u.Update(func(s *WebhookDeliveryUpsert) {
 		s.SetWebhookID(v)
 	})
 }
 
 // AddWebhookID adds v to the "webhook_id" field.
-func (u *WebhookDeliveryUpsertBulk) AddWebhookID(v uint32) *WebhookDeliveryUpsertBulk {
+func (u *WebhookDeliveryUpsertBulk) AddWebhookID(v uint64) *WebhookDeliveryUpsertBulk {
 	return u.Update(func(s *WebhookDeliveryUpsert) {
 		s.AddWebhookID(v)
 	})
@@ -1152,14 +1152,14 @@ func (u *WebhookDeliveryUpsertBulk) ClearEvent() *WebhookDeliveryUpsertBulk {
 }
 
 // SetEntityID sets the "entity_id" field.
-func (u *WebhookDeliveryUpsertBulk) SetEntityID(v uint32) *WebhookDeliveryUpsertBulk {
+func (u *WebhookDeliveryUpsertBulk) SetEntityID(v uint64) *WebhookDeliveryUpsertBulk {
 	return u.Update(func(s *WebhookDeliveryUpsert) {
 		s.SetEntityID(v)
 	})
 }
 
 // AddEntityID adds v to the "entity_id" field.
-func (u *WebhookDeliveryUpsertBulk) AddEntityID(v uint32) *WebhookDeliveryUpsertBulk {
+func (u *WebhookDeliveryUpsertBulk) AddEntityID(v uint64) *WebhookDeliveryUpsertBulk {
 	return u.Update(func(s *WebhookDeliveryUpsert) {
 		s.AddEntityID(v)
 	})

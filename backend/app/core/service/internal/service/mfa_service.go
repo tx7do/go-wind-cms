@@ -46,13 +46,13 @@ func NewMFAService(
 
 // enrollPayload 绑定流程的 Redis 暂存体（operation_id → payload）。
 type enrollPayload struct {
-	UserID   uint32 `json:"uid"`
-	TenantID uint32 `json:"tid"`
+	UserID   uint64 `json:"uid"`
+	TenantID uint64 `json:"tid"`
 	Secret   string `json:"secret"`
 }
 
 // loadUser 解析目标用户（显式 user_id，不依赖调用方上下文）。
-func (s *MFAService) loadUser(ctx context.Context, userID uint32) (*identityV1.User, error) {
+func (s *MFAService) loadUser(ctx context.Context, userID uint64) (*identityV1.User, error) {
 	if userID == 0 {
 		return nil, authenticationV1.ErrorBadRequest("user id is required")
 	}
@@ -241,7 +241,7 @@ func (s *MFAService) ResetUserMFA(ctx context.Context, req *authenticationV1.Res
 }
 
 // parseUint32 宽松解析数字串（非法返回 0）。
-func parseUint32(v string) uint32 {
+func parseUint32(v string) uint64 {
 	v = strings.TrimSpace(v)
 	var n uint64
 	for _, c := range v {
@@ -253,5 +253,5 @@ func parseUint32(v string) uint32 {
 			return 0
 		}
 	}
-	return uint32(n)
+	return uint64(n)
 }

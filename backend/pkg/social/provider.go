@@ -95,9 +95,9 @@ type PublishResult struct {
 
 // Stats 平台互动统计快照。
 type Stats struct {
-	Likes   uint32
-	Replies uint32
-	Reposts uint32
+	Likes   uint64
+	Replies uint64
+	Reposts uint64
 }
 
 // Provider 社交平台适配器接口。凭据在调用时传入（解密后的值不越过本层）。

@@ -97,7 +97,7 @@ func (r *PolicyEvaluationLogRepo) List(ctx context.Context, req *paginationV1.Pa
 	}, nil
 }
 
-func (r *PolicyEvaluationLogRepo) IsExist(ctx context.Context, id uint32) (bool, error) {
+func (r *PolicyEvaluationLogRepo) IsExist(ctx context.Context, id uint64) (bool, error) {
 	exist, err := r.entClient.Client().PolicyEvaluationLog.Query().
 		Where(policyevaluationlog.IDEQ(id)).
 		Exist(ctx)

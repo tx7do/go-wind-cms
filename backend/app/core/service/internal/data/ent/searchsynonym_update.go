@@ -174,7 +174,7 @@ func (_u *SearchSynonymUpdate) sqlSave(ctx context.Context) (_node int, err erro
 	if err := _u.check(); err != nil {
 		return _node, err
 	}
-	_spec := sqlgraph.NewUpdateSpec(searchsynonym.Table, searchsynonym.Columns, sqlgraph.NewFieldSpec(searchsynonym.FieldID, field.TypeUint32))
+	_spec := sqlgraph.NewUpdateSpec(searchsynonym.Table, searchsynonym.Columns, sqlgraph.NewFieldSpec(searchsynonym.FieldID, field.TypeUint64))
 	if ps := _u.mutation.predicates; len(ps) > 0 {
 		_spec.Predicate = func(selector *sql.Selector) {
 			for i := range ps {
@@ -198,7 +198,7 @@ func (_u *SearchSynonymUpdate) sqlSave(ctx context.Context) (_node int, err erro
 		_spec.ClearField(searchsynonym.FieldDeletedAt, field.TypeTime)
 	}
 	if _u.mutation.TenantIDCleared() {
-		_spec.ClearField(searchsynonym.FieldTenantID, field.TypeUint32)
+		_spec.ClearField(searchsynonym.FieldTenantID, field.TypeUint64)
 	}
 	if value, ok := _u.mutation.Term(); ok {
 		_spec.SetField(searchsynonym.FieldTerm, field.TypeString, value)
@@ -392,7 +392,7 @@ func (_u *SearchSynonymUpdateOne) sqlSave(ctx context.Context) (_node *SearchSyn
 	if err := _u.check(); err != nil {
 		return _node, err
 	}
-	_spec := sqlgraph.NewUpdateSpec(searchsynonym.Table, searchsynonym.Columns, sqlgraph.NewFieldSpec(searchsynonym.FieldID, field.TypeUint32))
+	_spec := sqlgraph.NewUpdateSpec(searchsynonym.Table, searchsynonym.Columns, sqlgraph.NewFieldSpec(searchsynonym.FieldID, field.TypeUint64))
 	id, ok := _u.mutation.ID()
 	if !ok {
 		return nil, &ValidationError{Name: "id", err: errors.New(`ent: missing "SearchSynonym.id" for update`)}
@@ -433,7 +433,7 @@ func (_u *SearchSynonymUpdateOne) sqlSave(ctx context.Context) (_node *SearchSyn
 		_spec.ClearField(searchsynonym.FieldDeletedAt, field.TypeTime)
 	}
 	if _u.mutation.TenantIDCleared() {
-		_spec.ClearField(searchsynonym.FieldTenantID, field.TypeUint32)
+		_spec.ClearField(searchsynonym.FieldTenantID, field.TypeUint64)
 	}
 	if value, ok := _u.mutation.Term(); ok {
 		_spec.SetField(searchsynonym.FieldTerm, field.TypeString, value)

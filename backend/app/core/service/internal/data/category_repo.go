@@ -98,7 +98,7 @@ func (r *CategoryRepo) count(ctx context.Context, whereCond []func(s *sql.Select
 	return count, err
 }
 
-func (r *CategoryRepo) IsExist(ctx context.Context, id uint32) (bool, error) {
+func (r *CategoryRepo) IsExist(ctx context.Context, id uint64) (bool, error) {
 	exist, err := r.entClient.Client().Category.Query().
 		Where(category.IDEQ(id)).
 		Exist(ctx)
@@ -187,7 +187,7 @@ func (r *CategoryRepo) prepareTranslationMaskFields(req *paginationV1.PagingRequ
 	return
 }
 
-func (r *CategoryRepo) buildCategoryTree(items []*contentV1.Category, parentId uint32) []*contentV1.Category {
+func (r *CategoryRepo) buildCategoryTree(items []*contentV1.Category, parentId uint64) []*contentV1.Category {
 	var tree []*contentV1.Category
 	for _, item := range items {
 		if item.GetParentId() == parentId {
@@ -270,7 +270,7 @@ func (r *CategoryRepo) List(ctx context.Context, req *paginationV1.PagingRequest
 }
 
 // 递归查询子节点
-func (r *CategoryRepo) getCategoryWithChildren(ctx context.Context, id uint32, locale string, viewMask *fieldmaskpb.FieldMask, translationMaskFields []string) (*contentV1.Category, error) {
+func (r *CategoryRepo) getCategoryWithChildren(ctx context.Context, id uint64, locale string, viewMask *fieldmaskpb.FieldMask, translationMaskFields []string) (*contentV1.Category, error) {
 	entity, err := r.entClient.Client().Category.Query().Where(category.IDEQ(id)).Only(ctx)
 	if err != nil {
 		if ent.IsNotFound(err) {
@@ -394,7 +394,7 @@ func (r *CategoryRepo) Get(ctx context.Context, req *contentV1.GetCategoryReques
 		return dto, nil
 	}
 
-	var id uint32
+	var id uint64
 	switch req.QueryBy.(type) {
 	case *contentV1.GetCategoryRequest_Id:
 		id = req.GetId()
@@ -625,7 +625,7 @@ func (r *CategoryRepo) Delete(ctx context.Context, req *contentV1.DeleteCategory
 	return nil
 }
 
-func (r *CategoryRepo) TranslationExists(ctx context.Context, categoryId uint32, languageCode string) (bool, error) {
+func (r *CategoryRepo) TranslationExists(ctx context.Context, categoryId uint64, languageCode string) (bool, error) {
 	return r.categoryTranslationRepo.TranslationExists(ctx, categoryId, languageCode)
 }
 
@@ -684,7 +684,7 @@ func (r *CategoryRepo) GetTranslation(ctx context.Context, req *contentV1.GetCat
 	return r.categoryTranslationRepo.GetTranslation(ctx, req.GetId(), req.GetLocale())
 }
 
-func (r *CategoryRepo) ListTranslations(ctx context.Context, categoryID uint32) ([]*contentV1.CategoryTranslation, error) {
+func (r *CategoryRepo) ListTranslations(ctx context.Context, categoryID uint64) ([]*contentV1.CategoryTranslation, error) {
 	return r.categoryTranslationRepo.ListTranslations(ctx, categoryID, "", nil)
 }
 
@@ -692,6 +692,6 @@ func (r *CategoryRepo) DeleteTranslation(ctx context.Context, req *contentV1.Del
 	return r.categoryTranslationRepo.DeleteTranslation(ctx, req)
 }
 
-func (r *CategoryRepo) CleanTranslations(ctx context.Context, tx *ent.Tx, categoryID uint32) error {
+func (r *CategoryRepo) CleanTranslations(ctx context.Context, tx *ent.Tx, categoryID uint64) error {
 	return r.categoryTranslationRepo.CleanTranslations(ctx, tx, categoryID)
 }

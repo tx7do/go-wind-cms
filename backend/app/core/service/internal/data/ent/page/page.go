@@ -137,9 +137,9 @@ var (
 	// PathValidator is a validator for the "path" field. It is called by the builders before save.
 	PathValidator func(string) error
 	// DefaultTenantID holds the default value on creation for the "tenant_id" field.
-	DefaultTenantID uint32
+	DefaultTenantID uint64
 	// DefaultAuthorID holds the default value on creation for the "author_id" field.
-	DefaultAuthorID uint32
+	DefaultAuthorID uint64
 	// DefaultDisallowComment holds the default value on creation for the "disallow_comment" field.
 	DefaultDisallowComment bool
 	// DefaultInProgress holds the default value on creation for the "in_progress" field.
@@ -151,7 +151,7 @@ var (
 	// DefaultDepth holds the default value on creation for the "depth" field.
 	DefaultDepth int32
 	// IDValidator is a validator for the "id" field. It is called by the builders before save.
-	IDValidator func(uint32) error
+	IDValidator func(uint64) error
 )
 
 // EditorType defines the type for the "editor_type" enum field.

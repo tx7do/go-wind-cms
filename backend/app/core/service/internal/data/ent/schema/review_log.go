@@ -30,7 +30,7 @@ func (ReviewLog) Fields() []ent.Field {
 			Comment("实体类型（post/page）").
 			NotEmpty().
 			MaxLen(16),
-		field.Uint32("entity_id").
+		field.Uint64("entity_id").
 			Comment("实体 ID"),
 		field.Enum("action").
 			Comment("动作").
@@ -59,9 +59,9 @@ func (ReviewLog) Edges() []ent.Edge {
 func (ReviewLog) Mixin() []ent.Mixin {
 	return []ent.Mixin{
 		mixin.TimeAt{},
-		mixin.AutoIncrementId{},
-		mixin.TenantID[uint32]{},
-		mixin.OperatorID{},
+		mixin.AutoIncrementId64{},
+		mixin.TenantID[uint64]{},
+		mixin.OperatorID64{},
 	}
 }
 

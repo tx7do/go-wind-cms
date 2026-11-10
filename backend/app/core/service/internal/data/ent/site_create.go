@@ -65,13 +65,13 @@ func (_c *SiteCreate) SetNillableDeletedAt(v *time.Time) *SiteCreate {
 }
 
 // SetCreatedBy sets the "created_by" field.
-func (_c *SiteCreate) SetCreatedBy(v uint32) *SiteCreate {
+func (_c *SiteCreate) SetCreatedBy(v uint64) *SiteCreate {
 	_c.mutation.SetCreatedBy(v)
 	return _c
 }
 
 // SetNillableCreatedBy sets the "created_by" field if the given value is not nil.
-func (_c *SiteCreate) SetNillableCreatedBy(v *uint32) *SiteCreate {
+func (_c *SiteCreate) SetNillableCreatedBy(v *uint64) *SiteCreate {
 	if v != nil {
 		_c.SetCreatedBy(*v)
 	}
@@ -79,13 +79,13 @@ func (_c *SiteCreate) SetNillableCreatedBy(v *uint32) *SiteCreate {
 }
 
 // SetUpdatedBy sets the "updated_by" field.
-func (_c *SiteCreate) SetUpdatedBy(v uint32) *SiteCreate {
+func (_c *SiteCreate) SetUpdatedBy(v uint64) *SiteCreate {
 	_c.mutation.SetUpdatedBy(v)
 	return _c
 }
 
 // SetNillableUpdatedBy sets the "updated_by" field if the given value is not nil.
-func (_c *SiteCreate) SetNillableUpdatedBy(v *uint32) *SiteCreate {
+func (_c *SiteCreate) SetNillableUpdatedBy(v *uint64) *SiteCreate {
 	if v != nil {
 		_c.SetUpdatedBy(*v)
 	}
@@ -93,13 +93,13 @@ func (_c *SiteCreate) SetNillableUpdatedBy(v *uint32) *SiteCreate {
 }
 
 // SetDeletedBy sets the "deleted_by" field.
-func (_c *SiteCreate) SetDeletedBy(v uint32) *SiteCreate {
+func (_c *SiteCreate) SetDeletedBy(v uint64) *SiteCreate {
 	_c.mutation.SetDeletedBy(v)
 	return _c
 }
 
 // SetNillableDeletedBy sets the "deleted_by" field if the given value is not nil.
-func (_c *SiteCreate) SetNillableDeletedBy(v *uint32) *SiteCreate {
+func (_c *SiteCreate) SetNillableDeletedBy(v *uint64) *SiteCreate {
 	if v != nil {
 		_c.SetDeletedBy(*v)
 	}
@@ -107,13 +107,13 @@ func (_c *SiteCreate) SetNillableDeletedBy(v *uint32) *SiteCreate {
 }
 
 // SetTenantID sets the "tenant_id" field.
-func (_c *SiteCreate) SetTenantID(v uint32) *SiteCreate {
+func (_c *SiteCreate) SetTenantID(v uint64) *SiteCreate {
 	_c.mutation.SetTenantID(v)
 	return _c
 }
 
 // SetNillableTenantID sets the "tenant_id" field if the given value is not nil.
-func (_c *SiteCreate) SetNillableTenantID(v *uint32) *SiteCreate {
+func (_c *SiteCreate) SetNillableTenantID(v *uint64) *SiteCreate {
 	if v != nil {
 		_c.SetTenantID(*v)
 	}
@@ -239,7 +239,7 @@ func (_c *SiteCreate) SetNillableTheme(v *string) *SiteCreate {
 }
 
 // SetID sets the "id" field.
-func (_c *SiteCreate) SetID(v uint32) *SiteCreate {
+func (_c *SiteCreate) SetID(v uint64) *SiteCreate {
 	_c.mutation.SetID(v)
 	return _c
 }
@@ -324,7 +324,7 @@ func (_c *SiteCreate) sqlSave(ctx context.Context) (*Site, error) {
 	}
 	if _spec.ID.Value != _node.ID {
 		id := _spec.ID.Value.(int64)
-		_node.ID = uint32(id)
+		_node.ID = uint64(id)
 	}
 	_c.mutation.id = &_node.ID
 	_c.mutation.done = true
@@ -334,7 +334,7 @@ func (_c *SiteCreate) sqlSave(ctx context.Context) (*Site, error) {
 func (_c *SiteCreate) createSpec() (*Site, *sqlgraph.CreateSpec) {
 	var (
 		_node = &Site{config: _c.config}
-		_spec = sqlgraph.NewCreateSpec(site.Table, sqlgraph.NewFieldSpec(site.FieldID, field.TypeUint32))
+		_spec = sqlgraph.NewCreateSpec(site.Table, sqlgraph.NewFieldSpec(site.FieldID, field.TypeUint64))
 	)
 	_spec.OnConflict = _c.conflict
 	if id, ok := _c.mutation.ID(); ok {
@@ -354,19 +354,19 @@ func (_c *SiteCreate) createSpec() (*Site, *sqlgraph.CreateSpec) {
 		_node.DeletedAt = &value
 	}
 	if value, ok := _c.mutation.CreatedBy(); ok {
-		_spec.SetField(site.FieldCreatedBy, field.TypeUint32, value)
+		_spec.SetField(site.FieldCreatedBy, field.TypeUint64, value)
 		_node.CreatedBy = &value
 	}
 	if value, ok := _c.mutation.UpdatedBy(); ok {
-		_spec.SetField(site.FieldUpdatedBy, field.TypeUint32, value)
+		_spec.SetField(site.FieldUpdatedBy, field.TypeUint64, value)
 		_node.UpdatedBy = &value
 	}
 	if value, ok := _c.mutation.DeletedBy(); ok {
-		_spec.SetField(site.FieldDeletedBy, field.TypeUint32, value)
+		_spec.SetField(site.FieldDeletedBy, field.TypeUint64, value)
 		_node.DeletedBy = &value
 	}
 	if value, ok := _c.mutation.TenantID(); ok {
-		_spec.SetField(site.FieldTenantID, field.TypeUint32, value)
+		_spec.SetField(site.FieldTenantID, field.TypeUint64, value)
 		_node.TenantID = &value
 	}
 	if value, ok := _c.mutation.Name(); ok {
@@ -494,7 +494,7 @@ func (u *SiteUpsert) ClearDeletedAt() *SiteUpsert {
 }
 
 // SetCreatedBy sets the "created_by" field.
-func (u *SiteUpsert) SetCreatedBy(v uint32) *SiteUpsert {
+func (u *SiteUpsert) SetCreatedBy(v uint64) *SiteUpsert {
 	u.Set(site.FieldCreatedBy, v)
 	return u
 }
@@ -506,7 +506,7 @@ func (u *SiteUpsert) UpdateCreatedBy() *SiteUpsert {
 }
 
 // AddCreatedBy adds v to the "created_by" field.
-func (u *SiteUpsert) AddCreatedBy(v uint32) *SiteUpsert {
+func (u *SiteUpsert) AddCreatedBy(v uint64) *SiteUpsert {
 	u.Add(site.FieldCreatedBy, v)
 	return u
 }
@@ -518,7 +518,7 @@ func (u *SiteUpsert) ClearCreatedBy() *SiteUpsert {
 }
 
 // SetUpdatedBy sets the "updated_by" field.
-func (u *SiteUpsert) SetUpdatedBy(v uint32) *SiteUpsert {
+func (u *SiteUpsert) SetUpdatedBy(v uint64) *SiteUpsert {
 	u.Set(site.FieldUpdatedBy, v)
 	return u
 }
@@ -530,7 +530,7 @@ func (u *SiteUpsert) UpdateUpdatedBy() *SiteUpsert {
 }
 
 // AddUpdatedBy adds v to the "updated_by" field.
-func (u *SiteUpsert) AddUpdatedBy(v uint32) *SiteUpsert {
+func (u *SiteUpsert) AddUpdatedBy(v uint64) *SiteUpsert {
 	u.Add(site.FieldUpdatedBy, v)
 	return u
 }
@@ -542,7 +542,7 @@ func (u *SiteUpsert) ClearUpdatedBy() *SiteUpsert {
 }
 
 // SetDeletedBy sets the "deleted_by" field.
-func (u *SiteUpsert) SetDeletedBy(v uint32) *SiteUpsert {
+func (u *SiteUpsert) SetDeletedBy(v uint64) *SiteUpsert {
 	u.Set(site.FieldDeletedBy, v)
 	return u
 }
@@ -554,7 +554,7 @@ func (u *SiteUpsert) UpdateDeletedBy() *SiteUpsert {
 }
 
 // AddDeletedBy adds v to the "deleted_by" field.
-func (u *SiteUpsert) AddDeletedBy(v uint32) *SiteUpsert {
+func (u *SiteUpsert) AddDeletedBy(v uint64) *SiteUpsert {
 	u.Add(site.FieldDeletedBy, v)
 	return u
 }
@@ -824,14 +824,14 @@ func (u *SiteUpsertOne) ClearDeletedAt() *SiteUpsertOne {
 }
 
 // SetCreatedBy sets the "created_by" field.
-func (u *SiteUpsertOne) SetCreatedBy(v uint32) *SiteUpsertOne {
+func (u *SiteUpsertOne) SetCreatedBy(v uint64) *SiteUpsertOne {
 	return u.Update(func(s *SiteUpsert) {
 		s.SetCreatedBy(v)
 	})
 }
 
 // AddCreatedBy adds v to the "created_by" field.
-func (u *SiteUpsertOne) AddCreatedBy(v uint32) *SiteUpsertOne {
+func (u *SiteUpsertOne) AddCreatedBy(v uint64) *SiteUpsertOne {
 	return u.Update(func(s *SiteUpsert) {
 		s.AddCreatedBy(v)
 	})
@@ -852,14 +852,14 @@ func (u *SiteUpsertOne) ClearCreatedBy() *SiteUpsertOne {
 }
 
 // SetUpdatedBy sets the "updated_by" field.
-func (u *SiteUpsertOne) SetUpdatedBy(v uint32) *SiteUpsertOne {
+func (u *SiteUpsertOne) SetUpdatedBy(v uint64) *SiteUpsertOne {
 	return u.Update(func(s *SiteUpsert) {
 		s.SetUpdatedBy(v)
 	})
 }
 
 // AddUpdatedBy adds v to the "updated_by" field.
-func (u *SiteUpsertOne) AddUpdatedBy(v uint32) *SiteUpsertOne {
+func (u *SiteUpsertOne) AddUpdatedBy(v uint64) *SiteUpsertOne {
 	return u.Update(func(s *SiteUpsert) {
 		s.AddUpdatedBy(v)
 	})
@@ -880,14 +880,14 @@ func (u *SiteUpsertOne) ClearUpdatedBy() *SiteUpsertOne {
 }
 
 // SetDeletedBy sets the "deleted_by" field.
-func (u *SiteUpsertOne) SetDeletedBy(v uint32) *SiteUpsertOne {
+func (u *SiteUpsertOne) SetDeletedBy(v uint64) *SiteUpsertOne {
 	return u.Update(func(s *SiteUpsert) {
 		s.SetDeletedBy(v)
 	})
 }
 
 // AddDeletedBy adds v to the "deleted_by" field.
-func (u *SiteUpsertOne) AddDeletedBy(v uint32) *SiteUpsertOne {
+func (u *SiteUpsertOne) AddDeletedBy(v uint64) *SiteUpsertOne {
 	return u.Update(func(s *SiteUpsert) {
 		s.AddDeletedBy(v)
 	})
@@ -1112,7 +1112,7 @@ func (u *SiteUpsertOne) ExecX(ctx context.Context) {
 }
 
 // Exec executes the UPSERT query and returns the inserted/updated ID.
-func (u *SiteUpsertOne) ID(ctx context.Context) (id uint32, err error) {
+func (u *SiteUpsertOne) ID(ctx context.Context) (id uint64, err error) {
 	node, err := u.create.Save(ctx)
 	if err != nil {
 		return id, err
@@ -1121,7 +1121,7 @@ func (u *SiteUpsertOne) ID(ctx context.Context) (id uint32, err error) {
 }
 
 // IDX is like ID, but panics if an error occurs.
-func (u *SiteUpsertOne) IDX(ctx context.Context) uint32 {
+func (u *SiteUpsertOne) IDX(ctx context.Context) uint64 {
 	id, err := u.ID(ctx)
 	if err != nil {
 		panic(err)
@@ -1178,7 +1178,7 @@ func (_c *SiteCreateBulk) Save(ctx context.Context) ([]*Site, error) {
 				mutation.id = &nodes[i].ID
 				if specs[i].ID.Value != nil && nodes[i].ID == 0 {
 					id := specs[i].ID.Value.(int64)
-					nodes[i].ID = uint32(id)
+					nodes[i].ID = uint64(id)
 				}
 				mutation.done = true
 				return nodes[i], nil
@@ -1359,14 +1359,14 @@ func (u *SiteUpsertBulk) ClearDeletedAt() *SiteUpsertBulk {
 }
 
 // SetCreatedBy sets the "created_by" field.
-func (u *SiteUpsertBulk) SetCreatedBy(v uint32) *SiteUpsertBulk {
+func (u *SiteUpsertBulk) SetCreatedBy(v uint64) *SiteUpsertBulk {
 	return u.Update(func(s *SiteUpsert) {
 		s.SetCreatedBy(v)
 	})
 }
 
 // AddCreatedBy adds v to the "created_by" field.
-func (u *SiteUpsertBulk) AddCreatedBy(v uint32) *SiteUpsertBulk {
+func (u *SiteUpsertBulk) AddCreatedBy(v uint64) *SiteUpsertBulk {
 	return u.Update(func(s *SiteUpsert) {
 		s.AddCreatedBy(v)
 	})
@@ -1387,14 +1387,14 @@ func (u *SiteUpsertBulk) ClearCreatedBy() *SiteUpsertBulk {
 }
 
 // SetUpdatedBy sets the "updated_by" field.
-func (u *SiteUpsertBulk) SetUpdatedBy(v uint32) *SiteUpsertBulk {
+func (u *SiteUpsertBulk) SetUpdatedBy(v uint64) *SiteUpsertBulk {
 	return u.Update(func(s *SiteUpsert) {
 		s.SetUpdatedBy(v)
 	})
 }
 
 // AddUpdatedBy adds v to the "updated_by" field.
-func (u *SiteUpsertBulk) AddUpdatedBy(v uint32) *SiteUpsertBulk {
+func (u *SiteUpsertBulk) AddUpdatedBy(v uint64) *SiteUpsertBulk {
 	return u.Update(func(s *SiteUpsert) {
 		s.AddUpdatedBy(v)
 	})
@@ -1415,14 +1415,14 @@ func (u *SiteUpsertBulk) ClearUpdatedBy() *SiteUpsertBulk {
 }
 
 // SetDeletedBy sets the "deleted_by" field.
-func (u *SiteUpsertBulk) SetDeletedBy(v uint32) *SiteUpsertBulk {
+func (u *SiteUpsertBulk) SetDeletedBy(v uint64) *SiteUpsertBulk {
 	return u.Update(func(s *SiteUpsert) {
 		s.SetDeletedBy(v)
 	})
 }
 
 // AddDeletedBy adds v to the "deleted_by" field.
-func (u *SiteUpsertBulk) AddDeletedBy(v uint32) *SiteUpsertBulk {
+func (u *SiteUpsertBulk) AddDeletedBy(v uint64) *SiteUpsertBulk {
 	return u.Update(func(s *SiteUpsert) {
 		s.AddDeletedBy(v)
 	})

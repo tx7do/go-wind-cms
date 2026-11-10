@@ -157,7 +157,7 @@ func (r *SearchRepo) IndexPost(ctx context.Context, doc *PostDocument) error {
 // DeletePost 删除指定帖子在 ES 中的所有语言文档。
 // 按 post_id 单条件 delete-by-query。post_id 是 ent 自增主键、全局唯一，
 // 单条件即可精确定位，覆盖软删/硬删/状态变更三种场景。
-func (r *SearchRepo) DeletePost(ctx context.Context, postID uint32) error {
+func (r *SearchRepo) DeletePost(ctx context.Context, postID uint64) error {
 	if r.esClient == nil {
 		return errors.New("elasticsearch client is nil")
 	}
@@ -223,7 +223,7 @@ func (r *SearchRepo) DeletePost(ctx context.Context, postID uint32) error {
 func (r *SearchRepo) SearchPosts(
 	ctx context.Context,
 	query string,
-	tenantID uint32,
+	tenantID uint64,
 	language string,
 	status string,
 	page int,
@@ -365,7 +365,7 @@ func (r *SearchRepo) SearchPostsExpanded(
 	ctx context.Context,
 	query string,
 	expanded []string,
-	tenantID uint32,
+	tenantID uint64,
 	language string,
 	status string,
 	page int,
@@ -511,7 +511,7 @@ func collectHighlightFragments(highlight map[string][]string) []string {
 func (r *SearchRepo) SuggestPostTitles(
 	ctx context.Context,
 	prefix string,
-	tenantID uint32,
+	tenantID uint64,
 	language string,
 	limit int,
 ) ([]string, error) {

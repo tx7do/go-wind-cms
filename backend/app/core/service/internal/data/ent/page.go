@@ -18,7 +18,7 @@ type Page struct {
 	config `json:"-"`
 	// ID of the ent.
 	// id
-	ID uint32 `json:"id,omitempty"`
+	ID uint64 `json:"id,omitempty"`
 	// 创建时间
 	CreatedAt *time.Time `json:"created_at,omitempty"`
 	// 更新时间
@@ -26,21 +26,21 @@ type Page struct {
 	// 删除时间
 	DeletedAt *time.Time `json:"deleted_at,omitempty"`
 	// 创建者ID
-	CreatedBy *uint32 `json:"created_by,omitempty"`
+	CreatedBy *uint64 `json:"created_by,omitempty"`
 	// 更新者ID
-	UpdatedBy *uint32 `json:"updated_by,omitempty"`
+	UpdatedBy *uint64 `json:"updated_by,omitempty"`
 	// 删除者ID
-	DeletedBy *uint32 `json:"deleted_by,omitempty"`
+	DeletedBy *uint64 `json:"deleted_by,omitempty"`
 	// 排序值（越小越靠前）
 	SortOrder *uint32 `json:"sort_order,omitempty"`
 	// 树路径，规范： 根节点: /，非根节点: /1/2/3/（以 / 开头且以 / 结尾）。禁止空字符串（NULL 表示未设置）。
 	Path *string `json:"path,omitempty"`
 	// 父节点ID
-	ParentID *uint32 `json:"parent_id,omitempty"`
+	ParentID *uint64 `json:"parent_id,omitempty"`
 	// 编辑器类型
 	EditorType *page.EditorType `json:"editor_type,omitempty"`
 	// 租户ID
-	TenantID *uint32 `json:"tenant_id,omitempty"`
+	TenantID *uint64 `json:"tenant_id,omitempty"`
 	// 页面状态
 	Status *page.Status `json:"status,omitempty"`
 	// 页面类型
@@ -48,7 +48,7 @@ type Page struct {
 	// 页面唯一标识
 	Slug *string `json:"slug,omitempty"`
 	// 评论作者ID，0表示游客
-	AuthorID *uint32 `json:"author_id,omitempty"`
+	AuthorID *uint64 `json:"author_id,omitempty"`
 	// 评论作者名称
 	AuthorName *string `json:"author_name,omitempty"`
 	// 是否禁止评论
@@ -68,7 +68,7 @@ type Page struct {
 	// 自定义字段
 	CustomFields *map[string]string `json:"custom_fields,omitempty"`
 	// 绑定的内容模型ID（该页面继承模型字段，0/null=无绑定）
-	ContentModelID *uint32 `json:"content_model_id,omitempty"`
+	ContentModelID *uint64 `json:"content_model_id,omitempty"`
 	// 页面层级深度
 	Depth *int32 `json:"depth,omitempty"`
 	// Edges holds the relations/edges for other nodes in the graph.
@@ -143,7 +143,7 @@ func (_m *Page) assignValues(columns []string, values []any) error {
 			if !ok {
 				return fmt.Errorf("unexpected type %T for field id", value)
 			}
-			_m.ID = uint32(value.Int64)
+			_m.ID = uint64(value.Int64)
 		case page.FieldCreatedAt:
 			if value, ok := values[i].(*sql.NullTime); !ok {
 				return fmt.Errorf("unexpected type %T for field created_at", values[i])
@@ -169,22 +169,22 @@ func (_m *Page) assignValues(columns []string, values []any) error {
 			if value, ok := values[i].(*sql.NullInt64); !ok {
 				return fmt.Errorf("unexpected type %T for field created_by", values[i])
 			} else if value.Valid {
-				_m.CreatedBy = new(uint32)
-				*_m.CreatedBy = uint32(value.Int64)
+				_m.CreatedBy = new(uint64)
+				*_m.CreatedBy = uint64(value.Int64)
 			}
 		case page.FieldUpdatedBy:
 			if value, ok := values[i].(*sql.NullInt64); !ok {
 				return fmt.Errorf("unexpected type %T for field updated_by", values[i])
 			} else if value.Valid {
-				_m.UpdatedBy = new(uint32)
-				*_m.UpdatedBy = uint32(value.Int64)
+				_m.UpdatedBy = new(uint64)
+				*_m.UpdatedBy = uint64(value.Int64)
 			}
 		case page.FieldDeletedBy:
 			if value, ok := values[i].(*sql.NullInt64); !ok {
 				return fmt.Errorf("unexpected type %T for field deleted_by", values[i])
 			} else if value.Valid {
-				_m.DeletedBy = new(uint32)
-				*_m.DeletedBy = uint32(value.Int64)
+				_m.DeletedBy = new(uint64)
+				*_m.DeletedBy = uint64(value.Int64)
 			}
 		case page.FieldSortOrder:
 			if value, ok := values[i].(*sql.NullInt64); !ok {
@@ -204,8 +204,8 @@ func (_m *Page) assignValues(columns []string, values []any) error {
 			if value, ok := values[i].(*sql.NullInt64); !ok {
 				return fmt.Errorf("unexpected type %T for field parent_id", values[i])
 			} else if value.Valid {
-				_m.ParentID = new(uint32)
-				*_m.ParentID = uint32(value.Int64)
+				_m.ParentID = new(uint64)
+				*_m.ParentID = uint64(value.Int64)
 			}
 		case page.FieldEditorType:
 			if value, ok := values[i].(*sql.NullString); !ok {
@@ -218,8 +218,8 @@ func (_m *Page) assignValues(columns []string, values []any) error {
 			if value, ok := values[i].(*sql.NullInt64); !ok {
 				return fmt.Errorf("unexpected type %T for field tenant_id", values[i])
 			} else if value.Valid {
-				_m.TenantID = new(uint32)
-				*_m.TenantID = uint32(value.Int64)
+				_m.TenantID = new(uint64)
+				*_m.TenantID = uint64(value.Int64)
 			}
 		case page.FieldStatus:
 			if value, ok := values[i].(*sql.NullString); !ok {
@@ -246,8 +246,8 @@ func (_m *Page) assignValues(columns []string, values []any) error {
 			if value, ok := values[i].(*sql.NullInt64); !ok {
 				return fmt.Errorf("unexpected type %T for field author_id", values[i])
 			} else if value.Valid {
-				_m.AuthorID = new(uint32)
-				*_m.AuthorID = uint32(value.Int64)
+				_m.AuthorID = new(uint64)
+				*_m.AuthorID = uint64(value.Int64)
 			}
 		case page.FieldAuthorName:
 			if value, ok := values[i].(*sql.NullString); !ok {
@@ -317,8 +317,8 @@ func (_m *Page) assignValues(columns []string, values []any) error {
 			if value, ok := values[i].(*sql.NullInt64); !ok {
 				return fmt.Errorf("unexpected type %T for field content_model_id", values[i])
 			} else if value.Valid {
-				_m.ContentModelID = new(uint32)
-				*_m.ContentModelID = uint32(value.Int64)
+				_m.ContentModelID = new(uint64)
+				*_m.ContentModelID = uint64(value.Int64)
 			}
 		case page.FieldDepth:
 			if value, ok := values[i].(*sql.NullInt64); !ok {

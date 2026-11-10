@@ -70,14 +70,14 @@ func (_u *ContentModelTranslationUpdate) ClearDeletedAt() *ContentModelTranslati
 }
 
 // SetCreatedBy sets the "created_by" field.
-func (_u *ContentModelTranslationUpdate) SetCreatedBy(v uint32) *ContentModelTranslationUpdate {
+func (_u *ContentModelTranslationUpdate) SetCreatedBy(v uint64) *ContentModelTranslationUpdate {
 	_u.mutation.ResetCreatedBy()
 	_u.mutation.SetCreatedBy(v)
 	return _u
 }
 
 // SetNillableCreatedBy sets the "created_by" field if the given value is not nil.
-func (_u *ContentModelTranslationUpdate) SetNillableCreatedBy(v *uint32) *ContentModelTranslationUpdate {
+func (_u *ContentModelTranslationUpdate) SetNillableCreatedBy(v *uint64) *ContentModelTranslationUpdate {
 	if v != nil {
 		_u.SetCreatedBy(*v)
 	}
@@ -85,7 +85,7 @@ func (_u *ContentModelTranslationUpdate) SetNillableCreatedBy(v *uint32) *Conten
 }
 
 // AddCreatedBy adds value to the "created_by" field.
-func (_u *ContentModelTranslationUpdate) AddCreatedBy(v int32) *ContentModelTranslationUpdate {
+func (_u *ContentModelTranslationUpdate) AddCreatedBy(v int64) *ContentModelTranslationUpdate {
 	_u.mutation.AddCreatedBy(v)
 	return _u
 }
@@ -97,14 +97,14 @@ func (_u *ContentModelTranslationUpdate) ClearCreatedBy() *ContentModelTranslati
 }
 
 // SetUpdatedBy sets the "updated_by" field.
-func (_u *ContentModelTranslationUpdate) SetUpdatedBy(v uint32) *ContentModelTranslationUpdate {
+func (_u *ContentModelTranslationUpdate) SetUpdatedBy(v uint64) *ContentModelTranslationUpdate {
 	_u.mutation.ResetUpdatedBy()
 	_u.mutation.SetUpdatedBy(v)
 	return _u
 }
 
 // SetNillableUpdatedBy sets the "updated_by" field if the given value is not nil.
-func (_u *ContentModelTranslationUpdate) SetNillableUpdatedBy(v *uint32) *ContentModelTranslationUpdate {
+func (_u *ContentModelTranslationUpdate) SetNillableUpdatedBy(v *uint64) *ContentModelTranslationUpdate {
 	if v != nil {
 		_u.SetUpdatedBy(*v)
 	}
@@ -112,7 +112,7 @@ func (_u *ContentModelTranslationUpdate) SetNillableUpdatedBy(v *uint32) *Conten
 }
 
 // AddUpdatedBy adds value to the "updated_by" field.
-func (_u *ContentModelTranslationUpdate) AddUpdatedBy(v int32) *ContentModelTranslationUpdate {
+func (_u *ContentModelTranslationUpdate) AddUpdatedBy(v int64) *ContentModelTranslationUpdate {
 	_u.mutation.AddUpdatedBy(v)
 	return _u
 }
@@ -124,14 +124,14 @@ func (_u *ContentModelTranslationUpdate) ClearUpdatedBy() *ContentModelTranslati
 }
 
 // SetDeletedBy sets the "deleted_by" field.
-func (_u *ContentModelTranslationUpdate) SetDeletedBy(v uint32) *ContentModelTranslationUpdate {
+func (_u *ContentModelTranslationUpdate) SetDeletedBy(v uint64) *ContentModelTranslationUpdate {
 	_u.mutation.ResetDeletedBy()
 	_u.mutation.SetDeletedBy(v)
 	return _u
 }
 
 // SetNillableDeletedBy sets the "deleted_by" field if the given value is not nil.
-func (_u *ContentModelTranslationUpdate) SetNillableDeletedBy(v *uint32) *ContentModelTranslationUpdate {
+func (_u *ContentModelTranslationUpdate) SetNillableDeletedBy(v *uint64) *ContentModelTranslationUpdate {
 	if v != nil {
 		_u.SetDeletedBy(*v)
 	}
@@ -139,7 +139,7 @@ func (_u *ContentModelTranslationUpdate) SetNillableDeletedBy(v *uint32) *Conten
 }
 
 // AddDeletedBy adds value to the "deleted_by" field.
-func (_u *ContentModelTranslationUpdate) AddDeletedBy(v int32) *ContentModelTranslationUpdate {
+func (_u *ContentModelTranslationUpdate) AddDeletedBy(v int64) *ContentModelTranslationUpdate {
 	_u.mutation.AddDeletedBy(v)
 	return _u
 }
@@ -151,14 +151,14 @@ func (_u *ContentModelTranslationUpdate) ClearDeletedBy() *ContentModelTranslati
 }
 
 // SetContentModelID sets the "content_model_id" field.
-func (_u *ContentModelTranslationUpdate) SetContentModelID(v uint32) *ContentModelTranslationUpdate {
+func (_u *ContentModelTranslationUpdate) SetContentModelID(v uint64) *ContentModelTranslationUpdate {
 	_u.mutation.ResetContentModelID()
 	_u.mutation.SetContentModelID(v)
 	return _u
 }
 
 // SetNillableContentModelID sets the "content_model_id" field if the given value is not nil.
-func (_u *ContentModelTranslationUpdate) SetNillableContentModelID(v *uint32) *ContentModelTranslationUpdate {
+func (_u *ContentModelTranslationUpdate) SetNillableContentModelID(v *uint64) *ContentModelTranslationUpdate {
 	if v != nil {
 		_u.SetContentModelID(*v)
 	}
@@ -166,7 +166,7 @@ func (_u *ContentModelTranslationUpdate) SetNillableContentModelID(v *uint32) *C
 }
 
 // AddContentModelID adds value to the "content_model_id" field.
-func (_u *ContentModelTranslationUpdate) AddContentModelID(v int32) *ContentModelTranslationUpdate {
+func (_u *ContentModelTranslationUpdate) AddContentModelID(v int64) *ContentModelTranslationUpdate {
 	_u.mutation.AddContentModelID(v)
 	return _u
 }
@@ -289,7 +289,7 @@ func (_u *ContentModelTranslationUpdate) sqlSave(ctx context.Context) (_node int
 	if err := _u.check(); err != nil {
 		return _node, err
 	}
-	_spec := sqlgraph.NewUpdateSpec(contentmodeltranslation.Table, contentmodeltranslation.Columns, sqlgraph.NewFieldSpec(contentmodeltranslation.FieldID, field.TypeUint32))
+	_spec := sqlgraph.NewUpdateSpec(contentmodeltranslation.Table, contentmodeltranslation.Columns, sqlgraph.NewFieldSpec(contentmodeltranslation.FieldID, field.TypeUint64))
 	if ps := _u.mutation.predicates; len(ps) > 0 {
 		_spec.Predicate = func(selector *sql.Selector) {
 			for i := range ps {
@@ -313,40 +313,40 @@ func (_u *ContentModelTranslationUpdate) sqlSave(ctx context.Context) (_node int
 		_spec.ClearField(contentmodeltranslation.FieldDeletedAt, field.TypeTime)
 	}
 	if value, ok := _u.mutation.CreatedBy(); ok {
-		_spec.SetField(contentmodeltranslation.FieldCreatedBy, field.TypeUint32, value)
+		_spec.SetField(contentmodeltranslation.FieldCreatedBy, field.TypeUint64, value)
 	}
 	if value, ok := _u.mutation.AddedCreatedBy(); ok {
-		_spec.AddField(contentmodeltranslation.FieldCreatedBy, field.TypeUint32, value)
+		_spec.AddField(contentmodeltranslation.FieldCreatedBy, field.TypeUint64, value)
 	}
 	if _u.mutation.CreatedByCleared() {
-		_spec.ClearField(contentmodeltranslation.FieldCreatedBy, field.TypeUint32)
+		_spec.ClearField(contentmodeltranslation.FieldCreatedBy, field.TypeUint64)
 	}
 	if value, ok := _u.mutation.UpdatedBy(); ok {
-		_spec.SetField(contentmodeltranslation.FieldUpdatedBy, field.TypeUint32, value)
+		_spec.SetField(contentmodeltranslation.FieldUpdatedBy, field.TypeUint64, value)
 	}
 	if value, ok := _u.mutation.AddedUpdatedBy(); ok {
-		_spec.AddField(contentmodeltranslation.FieldUpdatedBy, field.TypeUint32, value)
+		_spec.AddField(contentmodeltranslation.FieldUpdatedBy, field.TypeUint64, value)
 	}
 	if _u.mutation.UpdatedByCleared() {
-		_spec.ClearField(contentmodeltranslation.FieldUpdatedBy, field.TypeUint32)
+		_spec.ClearField(contentmodeltranslation.FieldUpdatedBy, field.TypeUint64)
 	}
 	if value, ok := _u.mutation.DeletedBy(); ok {
-		_spec.SetField(contentmodeltranslation.FieldDeletedBy, field.TypeUint32, value)
+		_spec.SetField(contentmodeltranslation.FieldDeletedBy, field.TypeUint64, value)
 	}
 	if value, ok := _u.mutation.AddedDeletedBy(); ok {
-		_spec.AddField(contentmodeltranslation.FieldDeletedBy, field.TypeUint32, value)
+		_spec.AddField(contentmodeltranslation.FieldDeletedBy, field.TypeUint64, value)
 	}
 	if _u.mutation.DeletedByCleared() {
-		_spec.ClearField(contentmodeltranslation.FieldDeletedBy, field.TypeUint32)
+		_spec.ClearField(contentmodeltranslation.FieldDeletedBy, field.TypeUint64)
 	}
 	if value, ok := _u.mutation.ContentModelID(); ok {
-		_spec.SetField(contentmodeltranslation.FieldContentModelID, field.TypeUint32, value)
+		_spec.SetField(contentmodeltranslation.FieldContentModelID, field.TypeUint64, value)
 	}
 	if value, ok := _u.mutation.AddedContentModelID(); ok {
-		_spec.AddField(contentmodeltranslation.FieldContentModelID, field.TypeUint32, value)
+		_spec.AddField(contentmodeltranslation.FieldContentModelID, field.TypeUint64, value)
 	}
 	if _u.mutation.ContentModelIDCleared() {
-		_spec.ClearField(contentmodeltranslation.FieldContentModelID, field.TypeUint32)
+		_spec.ClearField(contentmodeltranslation.FieldContentModelID, field.TypeUint64)
 	}
 	if value, ok := _u.mutation.LanguageCode(); ok {
 		_spec.SetField(contentmodeltranslation.FieldLanguageCode, field.TypeString, value)
@@ -429,14 +429,14 @@ func (_u *ContentModelTranslationUpdateOne) ClearDeletedAt() *ContentModelTransl
 }
 
 // SetCreatedBy sets the "created_by" field.
-func (_u *ContentModelTranslationUpdateOne) SetCreatedBy(v uint32) *ContentModelTranslationUpdateOne {
+func (_u *ContentModelTranslationUpdateOne) SetCreatedBy(v uint64) *ContentModelTranslationUpdateOne {
 	_u.mutation.ResetCreatedBy()
 	_u.mutation.SetCreatedBy(v)
 	return _u
 }
 
 // SetNillableCreatedBy sets the "created_by" field if the given value is not nil.
-func (_u *ContentModelTranslationUpdateOne) SetNillableCreatedBy(v *uint32) *ContentModelTranslationUpdateOne {
+func (_u *ContentModelTranslationUpdateOne) SetNillableCreatedBy(v *uint64) *ContentModelTranslationUpdateOne {
 	if v != nil {
 		_u.SetCreatedBy(*v)
 	}
@@ -444,7 +444,7 @@ func (_u *ContentModelTranslationUpdateOne) SetNillableCreatedBy(v *uint32) *Con
 }
 
 // AddCreatedBy adds value to the "created_by" field.
-func (_u *ContentModelTranslationUpdateOne) AddCreatedBy(v int32) *ContentModelTranslationUpdateOne {
+func (_u *ContentModelTranslationUpdateOne) AddCreatedBy(v int64) *ContentModelTranslationUpdateOne {
 	_u.mutation.AddCreatedBy(v)
 	return _u
 }
@@ -456,14 +456,14 @@ func (_u *ContentModelTranslationUpdateOne) ClearCreatedBy() *ContentModelTransl
 }
 
 // SetUpdatedBy sets the "updated_by" field.
-func (_u *ContentModelTranslationUpdateOne) SetUpdatedBy(v uint32) *ContentModelTranslationUpdateOne {
+func (_u *ContentModelTranslationUpdateOne) SetUpdatedBy(v uint64) *ContentModelTranslationUpdateOne {
 	_u.mutation.ResetUpdatedBy()
 	_u.mutation.SetUpdatedBy(v)
 	return _u
 }
 
 // SetNillableUpdatedBy sets the "updated_by" field if the given value is not nil.
-func (_u *ContentModelTranslationUpdateOne) SetNillableUpdatedBy(v *uint32) *ContentModelTranslationUpdateOne {
+func (_u *ContentModelTranslationUpdateOne) SetNillableUpdatedBy(v *uint64) *ContentModelTranslationUpdateOne {
 	if v != nil {
 		_u.SetUpdatedBy(*v)
 	}
@@ -471,7 +471,7 @@ func (_u *ContentModelTranslationUpdateOne) SetNillableUpdatedBy(v *uint32) *Con
 }
 
 // AddUpdatedBy adds value to the "updated_by" field.
-func (_u *ContentModelTranslationUpdateOne) AddUpdatedBy(v int32) *ContentModelTranslationUpdateOne {
+func (_u *ContentModelTranslationUpdateOne) AddUpdatedBy(v int64) *ContentModelTranslationUpdateOne {
 	_u.mutation.AddUpdatedBy(v)
 	return _u
 }
@@ -483,14 +483,14 @@ func (_u *ContentModelTranslationUpdateOne) ClearUpdatedBy() *ContentModelTransl
 }
 
 // SetDeletedBy sets the "deleted_by" field.
-func (_u *ContentModelTranslationUpdateOne) SetDeletedBy(v uint32) *ContentModelTranslationUpdateOne {
+func (_u *ContentModelTranslationUpdateOne) SetDeletedBy(v uint64) *ContentModelTranslationUpdateOne {
 	_u.mutation.ResetDeletedBy()
 	_u.mutation.SetDeletedBy(v)
 	return _u
 }
 
 // SetNillableDeletedBy sets the "deleted_by" field if the given value is not nil.
-func (_u *ContentModelTranslationUpdateOne) SetNillableDeletedBy(v *uint32) *ContentModelTranslationUpdateOne {
+func (_u *ContentModelTranslationUpdateOne) SetNillableDeletedBy(v *uint64) *ContentModelTranslationUpdateOne {
 	if v != nil {
 		_u.SetDeletedBy(*v)
 	}
@@ -498,7 +498,7 @@ func (_u *ContentModelTranslationUpdateOne) SetNillableDeletedBy(v *uint32) *Con
 }
 
 // AddDeletedBy adds value to the "deleted_by" field.
-func (_u *ContentModelTranslationUpdateOne) AddDeletedBy(v int32) *ContentModelTranslationUpdateOne {
+func (_u *ContentModelTranslationUpdateOne) AddDeletedBy(v int64) *ContentModelTranslationUpdateOne {
 	_u.mutation.AddDeletedBy(v)
 	return _u
 }
@@ -510,14 +510,14 @@ func (_u *ContentModelTranslationUpdateOne) ClearDeletedBy() *ContentModelTransl
 }
 
 // SetContentModelID sets the "content_model_id" field.
-func (_u *ContentModelTranslationUpdateOne) SetContentModelID(v uint32) *ContentModelTranslationUpdateOne {
+func (_u *ContentModelTranslationUpdateOne) SetContentModelID(v uint64) *ContentModelTranslationUpdateOne {
 	_u.mutation.ResetContentModelID()
 	_u.mutation.SetContentModelID(v)
 	return _u
 }
 
 // SetNillableContentModelID sets the "content_model_id" field if the given value is not nil.
-func (_u *ContentModelTranslationUpdateOne) SetNillableContentModelID(v *uint32) *ContentModelTranslationUpdateOne {
+func (_u *ContentModelTranslationUpdateOne) SetNillableContentModelID(v *uint64) *ContentModelTranslationUpdateOne {
 	if v != nil {
 		_u.SetContentModelID(*v)
 	}
@@ -525,7 +525,7 @@ func (_u *ContentModelTranslationUpdateOne) SetNillableContentModelID(v *uint32)
 }
 
 // AddContentModelID adds value to the "content_model_id" field.
-func (_u *ContentModelTranslationUpdateOne) AddContentModelID(v int32) *ContentModelTranslationUpdateOne {
+func (_u *ContentModelTranslationUpdateOne) AddContentModelID(v int64) *ContentModelTranslationUpdateOne {
 	_u.mutation.AddContentModelID(v)
 	return _u
 }
@@ -661,7 +661,7 @@ func (_u *ContentModelTranslationUpdateOne) sqlSave(ctx context.Context) (_node 
 	if err := _u.check(); err != nil {
 		return _node, err
 	}
-	_spec := sqlgraph.NewUpdateSpec(contentmodeltranslation.Table, contentmodeltranslation.Columns, sqlgraph.NewFieldSpec(contentmodeltranslation.FieldID, field.TypeUint32))
+	_spec := sqlgraph.NewUpdateSpec(contentmodeltranslation.Table, contentmodeltranslation.Columns, sqlgraph.NewFieldSpec(contentmodeltranslation.FieldID, field.TypeUint64))
 	id, ok := _u.mutation.ID()
 	if !ok {
 		return nil, &ValidationError{Name: "id", err: errors.New(`ent: missing "ContentModelTranslation.id" for update`)}
@@ -702,40 +702,40 @@ func (_u *ContentModelTranslationUpdateOne) sqlSave(ctx context.Context) (_node 
 		_spec.ClearField(contentmodeltranslation.FieldDeletedAt, field.TypeTime)
 	}
 	if value, ok := _u.mutation.CreatedBy(); ok {
-		_spec.SetField(contentmodeltranslation.FieldCreatedBy, field.TypeUint32, value)
+		_spec.SetField(contentmodeltranslation.FieldCreatedBy, field.TypeUint64, value)
 	}
 	if value, ok := _u.mutation.AddedCreatedBy(); ok {
-		_spec.AddField(contentmodeltranslation.FieldCreatedBy, field.TypeUint32, value)
+		_spec.AddField(contentmodeltranslation.FieldCreatedBy, field.TypeUint64, value)
 	}
 	if _u.mutation.CreatedByCleared() {
-		_spec.ClearField(contentmodeltranslation.FieldCreatedBy, field.TypeUint32)
+		_spec.ClearField(contentmodeltranslation.FieldCreatedBy, field.TypeUint64)
 	}
 	if value, ok := _u.mutation.UpdatedBy(); ok {
-		_spec.SetField(contentmodeltranslation.FieldUpdatedBy, field.TypeUint32, value)
+		_spec.SetField(contentmodeltranslation.FieldUpdatedBy, field.TypeUint64, value)
 	}
 	if value, ok := _u.mutation.AddedUpdatedBy(); ok {
-		_spec.AddField(contentmodeltranslation.FieldUpdatedBy, field.TypeUint32, value)
+		_spec.AddField(contentmodeltranslation.FieldUpdatedBy, field.TypeUint64, value)
 	}
 	if _u.mutation.UpdatedByCleared() {
-		_spec.ClearField(contentmodeltranslation.FieldUpdatedBy, field.TypeUint32)
+		_spec.ClearField(contentmodeltranslation.FieldUpdatedBy, field.TypeUint64)
 	}
 	if value, ok := _u.mutation.DeletedBy(); ok {
-		_spec.SetField(contentmodeltranslation.FieldDeletedBy, field.TypeUint32, value)
+		_spec.SetField(contentmodeltranslation.FieldDeletedBy, field.TypeUint64, value)
 	}
 	if value, ok := _u.mutation.AddedDeletedBy(); ok {
-		_spec.AddField(contentmodeltranslation.FieldDeletedBy, field.TypeUint32, value)
+		_spec.AddField(contentmodeltranslation.FieldDeletedBy, field.TypeUint64, value)
 	}
 	if _u.mutation.DeletedByCleared() {
-		_spec.ClearField(contentmodeltranslation.FieldDeletedBy, field.TypeUint32)
+		_spec.ClearField(contentmodeltranslation.FieldDeletedBy, field.TypeUint64)
 	}
 	if value, ok := _u.mutation.ContentModelID(); ok {
-		_spec.SetField(contentmodeltranslation.FieldContentModelID, field.TypeUint32, value)
+		_spec.SetField(contentmodeltranslation.FieldContentModelID, field.TypeUint64, value)
 	}
 	if value, ok := _u.mutation.AddedContentModelID(); ok {
-		_spec.AddField(contentmodeltranslation.FieldContentModelID, field.TypeUint32, value)
+		_spec.AddField(contentmodeltranslation.FieldContentModelID, field.TypeUint64, value)
 	}
 	if _u.mutation.ContentModelIDCleared() {
-		_spec.ClearField(contentmodeltranslation.FieldContentModelID, field.TypeUint32)
+		_spec.ClearField(contentmodeltranslation.FieldContentModelID, field.TypeUint64)
 	}
 	if value, ok := _u.mutation.LanguageCode(); ok {
 		_spec.SetField(contentmodeltranslation.FieldLanguageCode, field.TypeString, value)

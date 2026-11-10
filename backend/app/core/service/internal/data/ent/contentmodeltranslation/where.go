@@ -10,47 +10,47 @@ import (
 )
 
 // ID filters vertices based on their ID field.
-func ID(id uint32) predicate.ContentModelTranslation {
+func ID(id uint64) predicate.ContentModelTranslation {
 	return predicate.ContentModelTranslation(sql.FieldEQ(FieldID, id))
 }
 
 // IDEQ applies the EQ predicate on the ID field.
-func IDEQ(id uint32) predicate.ContentModelTranslation {
+func IDEQ(id uint64) predicate.ContentModelTranslation {
 	return predicate.ContentModelTranslation(sql.FieldEQ(FieldID, id))
 }
 
 // IDNEQ applies the NEQ predicate on the ID field.
-func IDNEQ(id uint32) predicate.ContentModelTranslation {
+func IDNEQ(id uint64) predicate.ContentModelTranslation {
 	return predicate.ContentModelTranslation(sql.FieldNEQ(FieldID, id))
 }
 
 // IDIn applies the In predicate on the ID field.
-func IDIn(ids ...uint32) predicate.ContentModelTranslation {
+func IDIn(ids ...uint64) predicate.ContentModelTranslation {
 	return predicate.ContentModelTranslation(sql.FieldIn(FieldID, ids...))
 }
 
 // IDNotIn applies the NotIn predicate on the ID field.
-func IDNotIn(ids ...uint32) predicate.ContentModelTranslation {
+func IDNotIn(ids ...uint64) predicate.ContentModelTranslation {
 	return predicate.ContentModelTranslation(sql.FieldNotIn(FieldID, ids...))
 }
 
 // IDGT applies the GT predicate on the ID field.
-func IDGT(id uint32) predicate.ContentModelTranslation {
+func IDGT(id uint64) predicate.ContentModelTranslation {
 	return predicate.ContentModelTranslation(sql.FieldGT(FieldID, id))
 }
 
 // IDGTE applies the GTE predicate on the ID field.
-func IDGTE(id uint32) predicate.ContentModelTranslation {
+func IDGTE(id uint64) predicate.ContentModelTranslation {
 	return predicate.ContentModelTranslation(sql.FieldGTE(FieldID, id))
 }
 
 // IDLT applies the LT predicate on the ID field.
-func IDLT(id uint32) predicate.ContentModelTranslation {
+func IDLT(id uint64) predicate.ContentModelTranslation {
 	return predicate.ContentModelTranslation(sql.FieldLT(FieldID, id))
 }
 
 // IDLTE applies the LTE predicate on the ID field.
-func IDLTE(id uint32) predicate.ContentModelTranslation {
+func IDLTE(id uint64) predicate.ContentModelTranslation {
 	return predicate.ContentModelTranslation(sql.FieldLTE(FieldID, id))
 }
 
@@ -70,22 +70,22 @@ func DeletedAt(v time.Time) predicate.ContentModelTranslation {
 }
 
 // CreatedBy applies equality check predicate on the "created_by" field. It's identical to CreatedByEQ.
-func CreatedBy(v uint32) predicate.ContentModelTranslation {
+func CreatedBy(v uint64) predicate.ContentModelTranslation {
 	return predicate.ContentModelTranslation(sql.FieldEQ(FieldCreatedBy, v))
 }
 
 // UpdatedBy applies equality check predicate on the "updated_by" field. It's identical to UpdatedByEQ.
-func UpdatedBy(v uint32) predicate.ContentModelTranslation {
+func UpdatedBy(v uint64) predicate.ContentModelTranslation {
 	return predicate.ContentModelTranslation(sql.FieldEQ(FieldUpdatedBy, v))
 }
 
 // DeletedBy applies equality check predicate on the "deleted_by" field. It's identical to DeletedByEQ.
-func DeletedBy(v uint32) predicate.ContentModelTranslation {
+func DeletedBy(v uint64) predicate.ContentModelTranslation {
 	return predicate.ContentModelTranslation(sql.FieldEQ(FieldDeletedBy, v))
 }
 
 // ContentModelID applies equality check predicate on the "content_model_id" field. It's identical to ContentModelIDEQ.
-func ContentModelID(v uint32) predicate.ContentModelTranslation {
+func ContentModelID(v uint64) predicate.ContentModelTranslation {
 	return predicate.ContentModelTranslation(sql.FieldEQ(FieldContentModelID, v))
 }
 
@@ -255,42 +255,42 @@ func DeletedAtNotNil() predicate.ContentModelTranslation {
 }
 
 // CreatedByEQ applies the EQ predicate on the "created_by" field.
-func CreatedByEQ(v uint32) predicate.ContentModelTranslation {
+func CreatedByEQ(v uint64) predicate.ContentModelTranslation {
 	return predicate.ContentModelTranslation(sql.FieldEQ(FieldCreatedBy, v))
 }
 
 // CreatedByNEQ applies the NEQ predicate on the "created_by" field.
-func CreatedByNEQ(v uint32) predicate.ContentModelTranslation {
+func CreatedByNEQ(v uint64) predicate.ContentModelTranslation {
 	return predicate.ContentModelTranslation(sql.FieldNEQ(FieldCreatedBy, v))
 }
 
 // CreatedByIn applies the In predicate on the "created_by" field.
-func CreatedByIn(vs ...uint32) predicate.ContentModelTranslation {
+func CreatedByIn(vs ...uint64) predicate.ContentModelTranslation {
 	return predicate.ContentModelTranslation(sql.FieldIn(FieldCreatedBy, vs...))
 }
 
 // CreatedByNotIn applies the NotIn predicate on the "created_by" field.
-func CreatedByNotIn(vs ...uint32) predicate.ContentModelTranslation {
+func CreatedByNotIn(vs ...uint64) predicate.ContentModelTranslation {
 	return predicate.ContentModelTranslation(sql.FieldNotIn(FieldCreatedBy, vs...))
 }
 
 // CreatedByGT applies the GT predicate on the "created_by" field.
-func CreatedByGT(v uint32) predicate.ContentModelTranslation {
+func CreatedByGT(v uint64) predicate.ContentModelTranslation {
 	return predicate.ContentModelTranslation(sql.FieldGT(FieldCreatedBy, v))
 }
 
 // CreatedByGTE applies the GTE predicate on the "created_by" field.
-func CreatedByGTE(v uint32) predicate.ContentModelTranslation {
+func CreatedByGTE(v uint64) predicate.ContentModelTranslation {
 	return predicate.ContentModelTranslation(sql.FieldGTE(FieldCreatedBy, v))
 }
 
 // CreatedByLT applies the LT predicate on the "created_by" field.
-func CreatedByLT(v uint32) predicate.ContentModelTranslation {
+func CreatedByLT(v uint64) predicate.ContentModelTranslation {
 	return predicate.ContentModelTranslation(sql.FieldLT(FieldCreatedBy, v))
 }
 
 // CreatedByLTE applies the LTE predicate on the "created_by" field.
-func CreatedByLTE(v uint32) predicate.ContentModelTranslation {
+func CreatedByLTE(v uint64) predicate.ContentModelTranslation {
 	return predicate.ContentModelTranslation(sql.FieldLTE(FieldCreatedBy, v))
 }
 
@@ -305,42 +305,42 @@ func CreatedByNotNil() predicate.ContentModelTranslation {
 }
 
 // UpdatedByEQ applies the EQ predicate on the "updated_by" field.
-func UpdatedByEQ(v uint32) predicate.ContentModelTranslation {
+func UpdatedByEQ(v uint64) predicate.ContentModelTranslation {
 	return predicate.ContentModelTranslation(sql.FieldEQ(FieldUpdatedBy, v))
 }
 
 // UpdatedByNEQ applies the NEQ predicate on the "updated_by" field.
-func UpdatedByNEQ(v uint32) predicate.ContentModelTranslation {
+func UpdatedByNEQ(v uint64) predicate.ContentModelTranslation {
 	return predicate.ContentModelTranslation(sql.FieldNEQ(FieldUpdatedBy, v))
 }
 
 // UpdatedByIn applies the In predicate on the "updated_by" field.
-func UpdatedByIn(vs ...uint32) predicate.ContentModelTranslation {
+func UpdatedByIn(vs ...uint64) predicate.ContentModelTranslation {
 	return predicate.ContentModelTranslation(sql.FieldIn(FieldUpdatedBy, vs...))
 }
 
 // UpdatedByNotIn applies the NotIn predicate on the "updated_by" field.
-func UpdatedByNotIn(vs ...uint32) predicate.ContentModelTranslation {
+func UpdatedByNotIn(vs ...uint64) predicate.ContentModelTranslation {
 	return predicate.ContentModelTranslation(sql.FieldNotIn(FieldUpdatedBy, vs...))
 }
 
 // UpdatedByGT applies the GT predicate on the "updated_by" field.
-func UpdatedByGT(v uint32) predicate.ContentModelTranslation {
+func UpdatedByGT(v uint64) predicate.ContentModelTranslation {
 	return predicate.ContentModelTranslation(sql.FieldGT(FieldUpdatedBy, v))
 }
 
 // UpdatedByGTE applies the GTE predicate on the "updated_by" field.
-func UpdatedByGTE(v uint32) predicate.ContentModelTranslation {
+func UpdatedByGTE(v uint64) predicate.ContentModelTranslation {
 	return predicate.ContentModelTranslation(sql.FieldGTE(FieldUpdatedBy, v))
 }
 
 // UpdatedByLT applies the LT predicate on the "updated_by" field.
-func UpdatedByLT(v uint32) predicate.ContentModelTranslation {
+func UpdatedByLT(v uint64) predicate.ContentModelTranslation {
 	return predicate.ContentModelTranslation(sql.FieldLT(FieldUpdatedBy, v))
 }
 
 // UpdatedByLTE applies the LTE predicate on the "updated_by" field.
-func UpdatedByLTE(v uint32) predicate.ContentModelTranslation {
+func UpdatedByLTE(v uint64) predicate.ContentModelTranslation {
 	return predicate.ContentModelTranslation(sql.FieldLTE(FieldUpdatedBy, v))
 }
 
@@ -355,42 +355,42 @@ func UpdatedByNotNil() predicate.ContentModelTranslation {
 }
 
 // DeletedByEQ applies the EQ predicate on the "deleted_by" field.
-func DeletedByEQ(v uint32) predicate.ContentModelTranslation {
+func DeletedByEQ(v uint64) predicate.ContentModelTranslation {
 	return predicate.ContentModelTranslation(sql.FieldEQ(FieldDeletedBy, v))
 }
 
 // DeletedByNEQ applies the NEQ predicate on the "deleted_by" field.
-func DeletedByNEQ(v uint32) predicate.ContentModelTranslation {
+func DeletedByNEQ(v uint64) predicate.ContentModelTranslation {
 	return predicate.ContentModelTranslation(sql.FieldNEQ(FieldDeletedBy, v))
 }
 
 // DeletedByIn applies the In predicate on the "deleted_by" field.
-func DeletedByIn(vs ...uint32) predicate.ContentModelTranslation {
+func DeletedByIn(vs ...uint64) predicate.ContentModelTranslation {
 	return predicate.ContentModelTranslation(sql.FieldIn(FieldDeletedBy, vs...))
 }
 
 // DeletedByNotIn applies the NotIn predicate on the "deleted_by" field.
-func DeletedByNotIn(vs ...uint32) predicate.ContentModelTranslation {
+func DeletedByNotIn(vs ...uint64) predicate.ContentModelTranslation {
 	return predicate.ContentModelTranslation(sql.FieldNotIn(FieldDeletedBy, vs...))
 }
 
 // DeletedByGT applies the GT predicate on the "deleted_by" field.
-func DeletedByGT(v uint32) predicate.ContentModelTranslation {
+func DeletedByGT(v uint64) predicate.ContentModelTranslation {
 	return predicate.ContentModelTranslation(sql.FieldGT(FieldDeletedBy, v))
 }
 
 // DeletedByGTE applies the GTE predicate on the "deleted_by" field.
-func DeletedByGTE(v uint32) predicate.ContentModelTranslation {
+func DeletedByGTE(v uint64) predicate.ContentModelTranslation {
 	return predicate.ContentModelTranslation(sql.FieldGTE(FieldDeletedBy, v))
 }
 
 // DeletedByLT applies the LT predicate on the "deleted_by" field.
-func DeletedByLT(v uint32) predicate.ContentModelTranslation {
+func DeletedByLT(v uint64) predicate.ContentModelTranslation {
 	return predicate.ContentModelTranslation(sql.FieldLT(FieldDeletedBy, v))
 }
 
 // DeletedByLTE applies the LTE predicate on the "deleted_by" field.
-func DeletedByLTE(v uint32) predicate.ContentModelTranslation {
+func DeletedByLTE(v uint64) predicate.ContentModelTranslation {
 	return predicate.ContentModelTranslation(sql.FieldLTE(FieldDeletedBy, v))
 }
 
@@ -405,42 +405,42 @@ func DeletedByNotNil() predicate.ContentModelTranslation {
 }
 
 // ContentModelIDEQ applies the EQ predicate on the "content_model_id" field.
-func ContentModelIDEQ(v uint32) predicate.ContentModelTranslation {
+func ContentModelIDEQ(v uint64) predicate.ContentModelTranslation {
 	return predicate.ContentModelTranslation(sql.FieldEQ(FieldContentModelID, v))
 }
 
 // ContentModelIDNEQ applies the NEQ predicate on the "content_model_id" field.
-func ContentModelIDNEQ(v uint32) predicate.ContentModelTranslation {
+func ContentModelIDNEQ(v uint64) predicate.ContentModelTranslation {
 	return predicate.ContentModelTranslation(sql.FieldNEQ(FieldContentModelID, v))
 }
 
 // ContentModelIDIn applies the In predicate on the "content_model_id" field.
-func ContentModelIDIn(vs ...uint32) predicate.ContentModelTranslation {
+func ContentModelIDIn(vs ...uint64) predicate.ContentModelTranslation {
 	return predicate.ContentModelTranslation(sql.FieldIn(FieldContentModelID, vs...))
 }
 
 // ContentModelIDNotIn applies the NotIn predicate on the "content_model_id" field.
-func ContentModelIDNotIn(vs ...uint32) predicate.ContentModelTranslation {
+func ContentModelIDNotIn(vs ...uint64) predicate.ContentModelTranslation {
 	return predicate.ContentModelTranslation(sql.FieldNotIn(FieldContentModelID, vs...))
 }
 
 // ContentModelIDGT applies the GT predicate on the "content_model_id" field.
-func ContentModelIDGT(v uint32) predicate.ContentModelTranslation {
+func ContentModelIDGT(v uint64) predicate.ContentModelTranslation {
 	return predicate.ContentModelTranslation(sql.FieldGT(FieldContentModelID, v))
 }
 
 // ContentModelIDGTE applies the GTE predicate on the "content_model_id" field.
-func ContentModelIDGTE(v uint32) predicate.ContentModelTranslation {
+func ContentModelIDGTE(v uint64) predicate.ContentModelTranslation {
 	return predicate.ContentModelTranslation(sql.FieldGTE(FieldContentModelID, v))
 }
 
 // ContentModelIDLT applies the LT predicate on the "content_model_id" field.
-func ContentModelIDLT(v uint32) predicate.ContentModelTranslation {
+func ContentModelIDLT(v uint64) predicate.ContentModelTranslation {
 	return predicate.ContentModelTranslation(sql.FieldLT(FieldContentModelID, v))
 }
 
 // ContentModelIDLTE applies the LTE predicate on the "content_model_id" field.
-func ContentModelIDLTE(v uint32) predicate.ContentModelTranslation {
+func ContentModelIDLTE(v uint64) predicate.ContentModelTranslation {
 	return predicate.ContentModelTranslation(sql.FieldLTE(FieldContentModelID, v))
 }
 

@@ -22,12 +22,12 @@ service AiChatService {
 
 // 发起对话 - 请求
 message ChatRequest {
-  optional uint32 conversation_id = 1 [
+  optional uint64 conversation_id = 1 [
     json_name = "conversationId",
     (gnostic.openapi.v3.property) = {description: "会话ID；0 表示新建会话"}
   ]; // 会话ID，0=新建
 
-  optional uint32 provider_id = 2 [
+  optional uint64 provider_id = 2 [
     json_name = "providerId",
     (gnostic.openapi.v3.property) = {description: "提供商ID；0 表示使用默认提供商"}
   ]; // 提供商ID，0=默认
@@ -37,7 +37,7 @@ message ChatRequest {
     (gnostic.openapi.v3.property) = {description: "用户输入内容"}
   ]; // 用户输入内容
 
-  optional uint32 knowledge_base_id = 4 [
+  optional uint64 knowledge_base_id = 4 [
     json_name = "knowledgeBaseId",
     (gnostic.openapi.v3.property) = {description: "知识库ID；RAG 未移植前该字段被忽略"}
   ]; // 知识库ID（暂未启用）
@@ -45,12 +45,12 @@ message ChatRequest {
   // ── 以下由 admin BFF 注入（两服务拓扑下流式 RPC 的 unary 客户端中间件
   // 不转发 operator 元数据），前端传入的值一律被 BFF 覆盖；core 信任内部跳。──
 
-  optional uint32 operator_user_id = 10 [
+  optional uint64 operator_user_id = 10 [
     json_name = "operatorUserId",
     (gnostic.openapi.v3.property) = {description: "操作者用户ID（BFF 注入）"}
   ];
 
-  optional uint32 operator_tenant_id = 11 [
+  optional uint64 operator_tenant_id = 11 [
     json_name = "operatorTenantId",
     (gnostic.openapi.v3.property) = {description: "操作者租户ID（BFF 注入）"}
   ];
@@ -67,7 +67,7 @@ message ChatResponse {
 
 // SSE `ai_chat_chunk` 事件 data 形状（protojson，camelCase 键）。
 message ChatChunkEvent {
-  uint32 conversation_id = 1 [json_name = "conversationId"]; // 所属会话
+  uint64 conversation_id = 1 [json_name = "conversationId"]; // 所属会话
   uint32 seq = 2;                                            // 片段序号（会话内单调递增，从 0 开始）
   string delta = 3;                                          // 增量文本片段
 }
@@ -76,7 +76,7 @@ message ChatChunkEvent {
 // 模型每发起一次本地工具调用并执行完成后推一帧，供前端展示
 // "模型正在调工具"；工具轮不进消息落库（落库的 assistant 消息只有最终答案）。
 message ChatToolEvent {
-  uint32 conversation_id = 1 [json_name = "conversationId"]; // 所属会话
+  uint64 conversation_id = 1 [json_name = "conversationId"]; // 所属会话
   string name = 2;                                           // 工具名（如 get_current_time）
   string arguments = 3;                                      // 模型给出的请求参数 JSON 串
   string result = 4;                                         // 执行结果文本；执行失败为 "tool error: ..." 文本

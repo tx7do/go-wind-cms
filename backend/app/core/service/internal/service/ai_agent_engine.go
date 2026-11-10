@@ -78,9 +78,9 @@ type agentGraph struct {
 
 // agentUsage 单节点/单次运行的 token 用量。
 type agentUsage struct {
-	Prompt     uint32 `json:"prompt"`
-	Completion uint32 `json:"completion"`
-	Total      uint32 `json:"total"`
+	Prompt     uint64 `json:"prompt"`
+	Completion uint64 `json:"completion"`
+	Total      uint64 `json:"total"`
 }
 
 func (u *agentUsage) add(other agentUsage) {
@@ -857,7 +857,7 @@ func agentDataString(data map[string]any, key string) string {
 	return v
 }
 
-func agentDataUint32(data map[string]any, key string) uint32 {
+func agentDataUint32(data map[string]any, key string) uint64 {
 	if data == nil {
 		return 0
 	}
@@ -866,10 +866,10 @@ func agentDataUint32(data map[string]any, key string) uint32 {
 		if v <= 0 {
 			return 0
 		}
-		return uint32(v)
+		return uint64(v)
 	case string:
 		n, _ := strconv.ParseUint(v, 10, 32)
-		return uint32(n)
+		return uint64(n)
 	default:
 		return 0
 	}

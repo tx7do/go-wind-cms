@@ -25,7 +25,7 @@ const (
 	DefaultUserPassword = "12345678"
 
 	// PlatformTenantID 平台管理员租户ID
-	PlatformTenantID = uint32(0)
+	PlatformTenantID = uint64(0)
 )
 
 // DefaultPermissionGroups 系统初始化默认权限组数据
@@ -40,7 +40,7 @@ var DefaultPermissionGroups = []*permissionV1.PermissionGroup{
 	},
 	{
 		//Id:        trans.Ptr(uint32(2)),
-		ParentId:  trans.Ptr(uint32(1)),
+		ParentId:  trans.Ptr(uint64(1)),
 		Name:      trans.Ptr("系统权限"),
 		Path:      trans.Ptr("/1/2/"),
 		Module:    trans.Ptr(SystemPermissionModule),
@@ -49,7 +49,7 @@ var DefaultPermissionGroups = []*permissionV1.PermissionGroup{
 	},
 	{
 		//Id:        trans.Ptr(uint32(3)),
-		ParentId:  trans.Ptr(uint32(1)),
+		ParentId:  trans.Ptr(uint64(1)),
 		Name:      trans.Ptr("租户管理"),
 		Path:      trans.Ptr("/1/3/"),
 		Module:    trans.Ptr(SystemPermissionModule),
@@ -58,7 +58,7 @@ var DefaultPermissionGroups = []*permissionV1.PermissionGroup{
 	},
 	{
 		//Id:        trans.Ptr(uint32(4)),
-		ParentId:  trans.Ptr(uint32(1)),
+		ParentId:  trans.Ptr(uint64(1)),
 		Name:      trans.Ptr("审计管理"),
 		Path:      trans.Ptr("/1/4/"),
 		Module:    trans.Ptr(SystemPermissionModule),
@@ -67,7 +67,7 @@ var DefaultPermissionGroups = []*permissionV1.PermissionGroup{
 	},
 	{
 		//Id:        trans.Ptr(uint32(5)),
-		ParentId:  trans.Ptr(uint32(1)),
+		ParentId:  trans.Ptr(uint64(1)),
 		Name:      trans.Ptr("安全策略"),
 		Path:      trans.Ptr("/1/5/"),
 		Module:    trans.Ptr(SystemPermissionModule),
@@ -80,7 +80,7 @@ var DefaultPermissionGroups = []*permissionV1.PermissionGroup{
 var DefaultPermissions = []*permissionV1.Permission{
 	{
 		//Id:          trans.Ptr(uint32(1)),
-		GroupId:     trans.Ptr(uint32(2)),
+		GroupId:     trans.Ptr(uint64(2)),
 		Name:        trans.Ptr("访问后台"),
 		Description: trans.Ptr("允许用户访问系统后台管理界面"),
 		Code:        trans.Ptr(SystemAccessBackendPermissionCode),
@@ -88,12 +88,12 @@ var DefaultPermissions = []*permissionV1.Permission{
 	},
 	{
 		//Id:          trans.Ptr(uint32(2)),
-		GroupId:     trans.Ptr(uint32(2)),
+		GroupId:     trans.Ptr(uint64(2)),
 		Name:        trans.Ptr("平台管理员权限"),
 		Description: trans.Ptr("拥有系统所有功能的操作权限，可管理租户、用户、角色及所有资源"),
 		Code:        trans.Ptr(SystemPlatformAdminPermissionCode),
 		Status:      trans.Ptr(permissionV1.Permission_ON),
-		MenuIds: []uint32{
+		MenuIds: []uint64{
 			1, 2, 3, 4, 5, 6,
 			10, 11,
 			20, 21, 22, 23, 24,
@@ -102,7 +102,7 @@ var DefaultPermissions = []*permissionV1.Permission{
 			50, 51, 52, 53, 54, 55,
 			60, 61, 62, 63, 64, 65, 66, 67,
 		},
-		ApiIds: []uint32{
+		ApiIds: []uint64{
 			1, 2, 3, 4, 5, 6, 7, 8, 9,
 			10, 11, 12, 13, 14, 15, 16, 17, 18, 19,
 			20, 21, 22, 23, 24, 25, 26, 27, 28, 29,
@@ -121,12 +121,12 @@ var DefaultPermissions = []*permissionV1.Permission{
 	},
 	{
 		//Id:          trans.Ptr(uint32(3)),
-		GroupId:     trans.Ptr(uint32(3)),
+		GroupId:     trans.Ptr(uint64(3)),
 		Name:        trans.Ptr("租户管理员权限"),
 		Description: trans.Ptr("拥有租户内所有功能的操作权限，可管理用户、角色及租户内所有资源"),
 		Code:        trans.Ptr(SystemTenantManagerPermissionCode),
 		Status:      trans.Ptr(permissionV1.Permission_ON),
-		MenuIds: []uint32{
+		MenuIds: []uint64{
 			1, 2,
 			20, 21, 22, 23, 24,
 			30, 32,
@@ -134,7 +134,7 @@ var DefaultPermissions = []*permissionV1.Permission{
 			50, 51,
 			60, 61, 62, 63, 64,
 		},
-		ApiIds: []uint32{
+		ApiIds: []uint64{
 			1, 2, 3, 4, 5, 6, 7, 8, 9,
 			10, 11, 12, 13, 14, 15, 16, 17, 18, 19,
 			20, 21, 22, 23, 24, 25, 26, 27, 28, 29,
@@ -153,7 +153,7 @@ var DefaultPermissions = []*permissionV1.Permission{
 
 	{
 		//Id:          trans.Ptr(uint32(4)),
-		GroupId:     trans.Ptr(uint32(3)),
+		GroupId:     trans.Ptr(uint64(3)),
 		Name:        trans.Ptr("管理租户"),
 		Description: trans.Ptr("允许创建/修改/删除租户"),
 		Code:        trans.Ptr(SystemManageTenantsPermissionCode),
@@ -161,7 +161,7 @@ var DefaultPermissions = []*permissionV1.Permission{
 	},
 	{
 		//Id:          trans.Ptr(uint32(5)),
-		GroupId:     trans.Ptr(uint32(4)),
+		GroupId:     trans.Ptr(uint64(4)),
 		Name:        trans.Ptr("查看审计日志"),
 		Description: trans.Ptr("允许查看系统操作日志"),
 		Code:        trans.Ptr(SystemAuditLogsPermissionCode),
@@ -180,7 +180,7 @@ var DefaultRoles = []*permissionV1.Role{
 		IsProtected: trans.Ptr(true),
 		Type:        trans.Ptr(permissionV1.Role_SYSTEM),
 		SortOrder:   trans.Ptr(uint32(1)),
-		Permissions: []uint32{1, 2, 4},
+		Permissions: []uint64{1, 2, 4},
 	},
 	{
 		//Id:          trans.Ptr(uint32(2)),
@@ -191,7 +191,7 @@ var DefaultRoles = []*permissionV1.Role{
 		IsProtected: trans.Ptr(true),
 		Type:        trans.Ptr(permissionV1.Role_TEMPLATE),
 		SortOrder:   trans.Ptr(uint32(2)),
-		Permissions: []uint32{1, 3},
+		Permissions: []uint64{1, 3},
 	},
 }
 
@@ -199,7 +199,7 @@ var DefaultRoles = []*permissionV1.Role{
 var DefaultRoleMetadata = []*permissionV1.RoleMetadata{
 	{
 		//Id:              trans.Ptr(uint32(1)),
-		RoleId:          trans.Ptr(uint32(1)),
+		RoleId:          trans.Ptr(uint64(1)),
 		IsTemplate:      trans.Ptr(false),
 		TemplateVersion: trans.Ptr(int32(1)),
 		Scope:           permissionV1.RoleMetadata_PLATFORM.Enum(),
@@ -207,7 +207,7 @@ var DefaultRoleMetadata = []*permissionV1.RoleMetadata{
 	},
 	{
 		//Id:              trans.Ptr(uint32(2)),
-		RoleId:          trans.Ptr(uint32(2)),
+		RoleId:          trans.Ptr(uint64(2)),
 		IsTemplate:      trans.Ptr(true),
 		TemplateFor:     trans.Ptr(TenantAdminRoleCode),
 		TemplateVersion: trans.Ptr(int32(1)),
@@ -220,7 +220,7 @@ var DefaultRoleMetadata = []*permissionV1.RoleMetadata{
 var DefaultUsers = []*identityV1.User{
 	{
 		//Id:       trans.Ptr(uint32(1)),
-		TenantId: trans.Ptr(uint32(0)),
+		TenantId: trans.Ptr(uint64(0)),
 		Username: trans.Ptr(DefaultAdminUserName),
 		Realname: trans.Ptr("喵个咪"),
 		Nickname: trans.Ptr("鹳狸猿"),
@@ -232,8 +232,8 @@ var DefaultUsers = []*identityV1.User{
 // DefaultUserCredentials 系统初始化默认用户凭证数据
 var DefaultUserCredentials = []*authenticationV1.UserCredential{
 	{
-		UserId:         trans.Ptr(uint32(1)),
-		TenantId:       trans.Ptr(uint32(0)),
+		UserId:         trans.Ptr(uint64(1)),
+		TenantId:       trans.Ptr(uint64(0)),
 		IdentityType:   authenticationV1.UserCredential_USERNAME.Enum(),
 		Identifier:     trans.Ptr(DefaultAdminUserName),
 		CredentialType: authenticationV1.UserCredential_PASSWORD_HASH.Enum(),
@@ -246,9 +246,9 @@ var DefaultUserCredentials = []*authenticationV1.UserCredential{
 // DefaultUserRoles 系统初始化默认用户角色关系数据
 var DefaultUserRoles = []*permissionV1.UserRole{
 	{
-		UserId:    trans.Ptr(uint32(1)),
-		TenantId:  trans.Ptr(uint32(0)),
-		RoleId:    trans.Ptr(uint32(1)),
+		UserId:    trans.Ptr(uint64(1)),
+		TenantId:  trans.Ptr(uint64(0)),
+		RoleId:    trans.Ptr(uint64(1)),
 		IsPrimary: trans.Ptr(true),
 		Status:    permissionV1.UserRole_ACTIVE.Enum(),
 	},
@@ -257,11 +257,11 @@ var DefaultUserRoles = []*permissionV1.UserRole{
 // DefaultMemberships 系统初始化默认用户成员关系数据
 var DefaultMemberships = []*identityV1.Membership{
 	{
-		UserId:    trans.Ptr(uint32(1)),
-		TenantId:  trans.Ptr(uint32(0)),
+		UserId:    trans.Ptr(uint64(1)),
+		TenantId:  trans.Ptr(uint64(0)),
 		Status:    identityV1.Membership_ACTIVE.Enum(),
 		IsPrimary: trans.Ptr(true),
-		RoleIds:   []uint32{1},
+		RoleIds:   []uint64{1},
 	},
 }
 
@@ -279,7 +279,7 @@ var DefaultLanguages = []*dictV1.Language{
 // DefaultMenus 系统初始化默认菜单数据
 var DefaultMenus = []*permissionV1.Menu{
 	{
-		Id:        trans.Ptr(uint32(1)),
+		Id:        trans.Ptr(uint64(1)),
 		ParentId:  nil,
 		Type:      permissionV1.Menu_CATALOG.Enum(),
 		Name:      trans.Ptr("Dashboard"),
@@ -295,8 +295,8 @@ var DefaultMenus = []*permissionV1.Menu{
 		},
 	},
 	{
-		Id:        trans.Ptr(uint32(2)),
-		ParentId:  trans.Ptr(uint32(1)),
+		Id:        trans.Ptr(uint64(2)),
+		ParentId:  trans.Ptr(uint64(1)),
 		Type:      permissionV1.Menu_MENU.Enum(),
 		Name:      trans.Ptr("Analytics"),
 		Path:      trans.Ptr("/analytics"),
@@ -312,7 +312,7 @@ var DefaultMenus = []*permissionV1.Menu{
 	},
 
 	{
-		Id:        trans.Ptr(uint32(3)),
+		Id:        trans.Ptr(uint64(3)),
 		ParentId:  nil,
 		Type:      permissionV1.Menu_CATALOG.Enum(),
 		Name:      trans.Ptr("Profile"),
@@ -325,8 +325,8 @@ var DefaultMenus = []*permissionV1.Menu{
 		},
 	},
 	{
-		Id:        trans.Ptr(uint32(4)),
-		ParentId:  trans.Ptr(uint32(3)),
+		Id:        trans.Ptr(uint64(4)),
+		ParentId:  trans.Ptr(uint64(3)),
 		Type:      permissionV1.Menu_MENU.Enum(),
 		Name:      trans.Ptr("ProfilePage"),
 		Path:      trans.Ptr("/profile"),
@@ -340,7 +340,7 @@ var DefaultMenus = []*permissionV1.Menu{
 	},
 
 	{
-		Id:        trans.Ptr(uint32(5)),
+		Id:        trans.Ptr(uint64(5)),
 		ParentId:  nil,
 		Type:      permissionV1.Menu_CATALOG.Enum(),
 		Name:      trans.Ptr("Inbox"),
@@ -353,8 +353,8 @@ var DefaultMenus = []*permissionV1.Menu{
 		},
 	},
 	{
-		Id:        trans.Ptr(uint32(6)),
-		ParentId:  trans.Ptr(uint32(5)),
+		Id:        trans.Ptr(uint64(6)),
+		ParentId:  trans.Ptr(uint64(5)),
 		Type:      permissionV1.Menu_MENU.Enum(),
 		Name:      trans.Ptr("InboxPage"),
 		Path:      trans.Ptr("/inbox"),
@@ -368,7 +368,7 @@ var DefaultMenus = []*permissionV1.Menu{
 	},
 
 	{
-		Id:        trans.Ptr(uint32(10)),
+		Id:        trans.Ptr(uint64(10)),
 		ParentId:  nil,
 		Type:      permissionV1.Menu_CATALOG.Enum(),
 		Name:      trans.Ptr("TenantManagement"),
@@ -384,8 +384,8 @@ var DefaultMenus = []*permissionV1.Menu{
 		},
 	},
 	{
-		Id:        trans.Ptr(uint32(11)),
-		ParentId:  trans.Ptr(uint32(10)),
+		Id:        trans.Ptr(uint64(11)),
+		ParentId:  trans.Ptr(uint64(10)),
 		Type:      permissionV1.Menu_MENU.Enum(),
 		Name:      trans.Ptr("TenantMemberManagement"),
 		Path:      trans.Ptr("members"),
@@ -401,7 +401,7 @@ var DefaultMenus = []*permissionV1.Menu{
 	},
 
 	{
-		Id:        trans.Ptr(uint32(20)),
+		Id:        trans.Ptr(uint64(20)),
 		ParentId:  nil,
 		Type:      permissionV1.Menu_CATALOG.Enum(),
 		Name:      trans.Ptr("OrganizationalPersonnelManagement"),
@@ -418,8 +418,8 @@ var DefaultMenus = []*permissionV1.Menu{
 		},
 	},
 	{
-		Id:        trans.Ptr(uint32(21)),
-		ParentId:  trans.Ptr(uint32(20)),
+		Id:        trans.Ptr(uint64(21)),
+		ParentId:  trans.Ptr(uint64(20)),
 		Type:      permissionV1.Menu_MENU.Enum(),
 		Name:      trans.Ptr("OrgUnitManagement"),
 		Path:      trans.Ptr("org-units"),
@@ -433,8 +433,8 @@ var DefaultMenus = []*permissionV1.Menu{
 		},
 	},
 	{
-		Id:        trans.Ptr(uint32(22)),
-		ParentId:  trans.Ptr(uint32(20)),
+		Id:        trans.Ptr(uint64(22)),
+		ParentId:  trans.Ptr(uint64(20)),
 		Type:      permissionV1.Menu_MENU.Enum(),
 		Name:      trans.Ptr("PositionManagement"),
 		Path:      trans.Ptr("positions"),
@@ -448,8 +448,8 @@ var DefaultMenus = []*permissionV1.Menu{
 		},
 	},
 	{
-		Id:        trans.Ptr(uint32(23)),
-		ParentId:  trans.Ptr(uint32(20)),
+		Id:        trans.Ptr(uint64(23)),
+		ParentId:  trans.Ptr(uint64(20)),
 		Type:      permissionV1.Menu_MENU.Enum(),
 		Name:      trans.Ptr("UserManagement"),
 		Path:      trans.Ptr("users"),
@@ -463,8 +463,8 @@ var DefaultMenus = []*permissionV1.Menu{
 		},
 	},
 	{
-		Id:        trans.Ptr(uint32(24)),
-		ParentId:  trans.Ptr(uint32(20)),
+		Id:        trans.Ptr(uint64(24)),
+		ParentId:  trans.Ptr(uint64(20)),
 		Type:      permissionV1.Menu_MENU.Enum(),
 		Name:      trans.Ptr("UserDetail"),
 		Path:      trans.Ptr("users/detail/:id"),
@@ -478,7 +478,7 @@ var DefaultMenus = []*permissionV1.Menu{
 	},
 
 	{
-		Id:        trans.Ptr(uint32(30)),
+		Id:        trans.Ptr(uint64(30)),
 		ParentId:  nil,
 		Type:      permissionV1.Menu_CATALOG.Enum(),
 		Name:      trans.Ptr("PermissionManagement"),
@@ -495,8 +495,8 @@ var DefaultMenus = []*permissionV1.Menu{
 		},
 	},
 	{
-		Id:        trans.Ptr(uint32(31)),
-		ParentId:  trans.Ptr(uint32(30)),
+		Id:        trans.Ptr(uint64(31)),
+		ParentId:  trans.Ptr(uint64(30)),
 		Type:      permissionV1.Menu_MENU.Enum(),
 		Name:      trans.Ptr("PermissionPointManagement"),
 		Path:      trans.Ptr("codes"),
@@ -510,8 +510,8 @@ var DefaultMenus = []*permissionV1.Menu{
 		},
 	},
 	{
-		Id:        trans.Ptr(uint32(32)),
-		ParentId:  trans.Ptr(uint32(30)),
+		Id:        trans.Ptr(uint64(32)),
+		ParentId:  trans.Ptr(uint64(30)),
 		Type:      permissionV1.Menu_MENU.Enum(),
 		Name:      trans.Ptr("RoleManagement"),
 		Path:      trans.Ptr("roles"),
@@ -526,7 +526,7 @@ var DefaultMenus = []*permissionV1.Menu{
 	},
 
 	{
-		Id:        trans.Ptr(uint32(40)),
+		Id:        trans.Ptr(uint64(40)),
 		ParentId:  nil,
 		Type:      permissionV1.Menu_CATALOG.Enum(),
 		Name:      trans.Ptr("InternalMessageManagement"),
@@ -543,8 +543,8 @@ var DefaultMenus = []*permissionV1.Menu{
 		},
 	},
 	{
-		Id:        trans.Ptr(uint32(41)),
-		ParentId:  trans.Ptr(uint32(40)),
+		Id:        trans.Ptr(uint64(41)),
+		ParentId:  trans.Ptr(uint64(40)),
 		Type:      permissionV1.Menu_MENU.Enum(),
 		Name:      trans.Ptr("InternalMessageList"),
 		Path:      trans.Ptr("messages"),
@@ -558,8 +558,8 @@ var DefaultMenus = []*permissionV1.Menu{
 		},
 	},
 	{
-		Id:        trans.Ptr(uint32(42)),
-		ParentId:  trans.Ptr(uint32(40)),
+		Id:        trans.Ptr(uint64(42)),
+		ParentId:  trans.Ptr(uint64(40)),
 		Type:      permissionV1.Menu_MENU.Enum(),
 		Name:      trans.Ptr("InternalMessageCategoryManagement"),
 		Path:      trans.Ptr("categories"),
@@ -574,7 +574,7 @@ var DefaultMenus = []*permissionV1.Menu{
 	},
 
 	{
-		Id:        trans.Ptr(uint32(50)),
+		Id:        trans.Ptr(uint64(50)),
 		ParentId:  nil,
 		Type:      permissionV1.Menu_CATALOG.Enum(),
 		Name:      trans.Ptr("LogAuditManagement"),
@@ -591,8 +591,8 @@ var DefaultMenus = []*permissionV1.Menu{
 		},
 	},
 	{
-		Id:        trans.Ptr(uint32(51)),
-		ParentId:  trans.Ptr(uint32(50)),
+		Id:        trans.Ptr(uint64(51)),
+		ParentId:  trans.Ptr(uint64(50)),
 		Type:      permissionV1.Menu_MENU.Enum(),
 		Name:      trans.Ptr("LoginAuditLog"),
 		Path:      trans.Ptr("login-audit-logs"),
@@ -606,8 +606,8 @@ var DefaultMenus = []*permissionV1.Menu{
 		},
 	},
 	{
-		Id:        trans.Ptr(uint32(52)),
-		ParentId:  trans.Ptr(uint32(50)),
+		Id:        trans.Ptr(uint64(52)),
+		ParentId:  trans.Ptr(uint64(50)),
 		Type:      permissionV1.Menu_MENU.Enum(),
 		Name:      trans.Ptr("ApiAuditLog"),
 		Path:      trans.Ptr("api-audit-logs"),
@@ -621,8 +621,8 @@ var DefaultMenus = []*permissionV1.Menu{
 		},
 	},
 	{
-		Id:        trans.Ptr(uint32(53)),
-		ParentId:  trans.Ptr(uint32(50)),
+		Id:        trans.Ptr(uint64(53)),
+		ParentId:  trans.Ptr(uint64(50)),
 		Type:      permissionV1.Menu_MENU.Enum(),
 		Name:      trans.Ptr("OperationAuditLog"),
 		Path:      trans.Ptr("operation-audit-logs"),
@@ -636,8 +636,8 @@ var DefaultMenus = []*permissionV1.Menu{
 		},
 	},
 	{
-		Id:        trans.Ptr(uint32(54)),
-		ParentId:  trans.Ptr(uint32(50)),
+		Id:        trans.Ptr(uint64(54)),
+		ParentId:  trans.Ptr(uint64(50)),
 		Type:      permissionV1.Menu_MENU.Enum(),
 		Name:      trans.Ptr("DataAccessAuditLog"),
 		Path:      trans.Ptr("data-access-audit-logs"),
@@ -651,8 +651,8 @@ var DefaultMenus = []*permissionV1.Menu{
 		},
 	},
 	{
-		Id:        trans.Ptr(uint32(55)),
-		ParentId:  trans.Ptr(uint32(50)),
+		Id:        trans.Ptr(uint64(55)),
+		ParentId:  trans.Ptr(uint64(50)),
 		Type:      permissionV1.Menu_MENU.Enum(),
 		Name:      trans.Ptr("PermissionAuditLog"),
 		Path:      trans.Ptr("permission-audit-logs"),
@@ -667,7 +667,7 @@ var DefaultMenus = []*permissionV1.Menu{
 	},
 
 	{
-		Id:        trans.Ptr(uint32(60)),
+		Id:        trans.Ptr(uint64(60)),
 		ParentId:  nil,
 		Type:      permissionV1.Menu_CATALOG.Enum(),
 		Name:      trans.Ptr("System"),
@@ -684,8 +684,8 @@ var DefaultMenus = []*permissionV1.Menu{
 		},
 	},
 	{
-		Id:        trans.Ptr(uint32(61)),
-		ParentId:  trans.Ptr(uint32(60)),
+		Id:        trans.Ptr(uint64(61)),
+		ParentId:  trans.Ptr(uint64(60)),
 		Type:      permissionV1.Menu_MENU.Enum(),
 		Name:      trans.Ptr("MenuManagement"),
 		Path:      trans.Ptr("menus"),
@@ -699,8 +699,8 @@ var DefaultMenus = []*permissionV1.Menu{
 		},
 	},
 	{
-		Id:        trans.Ptr(uint32(62)),
-		ParentId:  trans.Ptr(uint32(60)),
+		Id:        trans.Ptr(uint64(62)),
+		ParentId:  trans.Ptr(uint64(60)),
 		Type:      permissionV1.Menu_MENU.Enum(),
 		Name:      trans.Ptr("APIManagement"),
 		Path:      trans.Ptr("apis"),
@@ -714,8 +714,8 @@ var DefaultMenus = []*permissionV1.Menu{
 		},
 	},
 	{
-		Id:        trans.Ptr(uint32(63)),
-		ParentId:  trans.Ptr(uint32(60)),
+		Id:        trans.Ptr(uint64(63)),
+		ParentId:  trans.Ptr(uint64(60)),
 		Type:      permissionV1.Menu_MENU.Enum(),
 		Name:      trans.Ptr("DictManagement"),
 		Path:      trans.Ptr("dict"),
@@ -729,8 +729,8 @@ var DefaultMenus = []*permissionV1.Menu{
 		},
 	},
 	{
-		Id:        trans.Ptr(uint32(64)),
-		ParentId:  trans.Ptr(uint32(60)),
+		Id:        trans.Ptr(uint64(64)),
+		ParentId:  trans.Ptr(uint64(60)),
 		Type:      permissionV1.Menu_MENU.Enum(),
 		Name:      trans.Ptr("FileManagement"),
 		Path:      trans.Ptr("files"),
@@ -744,8 +744,8 @@ var DefaultMenus = []*permissionV1.Menu{
 		},
 	},
 	{
-		Id:        trans.Ptr(uint32(65)),
-		ParentId:  trans.Ptr(uint32(60)),
+		Id:        trans.Ptr(uint64(65)),
+		ParentId:  trans.Ptr(uint64(60)),
 		Type:      permissionV1.Menu_MENU.Enum(),
 		Name:      trans.Ptr("TaskManagement"),
 		Path:      trans.Ptr("tasks"),
@@ -759,8 +759,8 @@ var DefaultMenus = []*permissionV1.Menu{
 		},
 	},
 	{
-		Id:        trans.Ptr(uint32(66)),
-		ParentId:  trans.Ptr(uint32(60)),
+		Id:        trans.Ptr(uint64(66)),
+		ParentId:  trans.Ptr(uint64(60)),
 		Type:      permissionV1.Menu_MENU.Enum(),
 		Name:      trans.Ptr("LoginPolicyManagement"),
 		Path:      trans.Ptr("login-policies"),
@@ -774,8 +774,8 @@ var DefaultMenus = []*permissionV1.Menu{
 		},
 	},
 	{
-		Id:        trans.Ptr(uint32(67)),
-		ParentId:  trans.Ptr(uint32(60)),
+		Id:        trans.Ptr(uint64(67)),
+		ParentId:  trans.Ptr(uint64(60)),
 		Type:      permissionV1.Menu_MENU.Enum(),
 		Name:      trans.Ptr("LanguageManagement"),
 		Path:      trans.Ptr("languages"),
@@ -789,8 +789,8 @@ var DefaultMenus = []*permissionV1.Menu{
 		},
 	},
 	{
-		Id:        trans.Ptr(uint32(68)),
-		ParentId:  trans.Ptr(uint32(60)),
+		Id:        trans.Ptr(uint64(68)),
+		ParentId:  trans.Ptr(uint64(60)),
 		Type:      permissionV1.Menu_MENU.Enum(),
 		Name:      trans.Ptr("WebhookManagement"),
 		Path:      trans.Ptr("webhooks"),
@@ -804,8 +804,8 @@ var DefaultMenus = []*permissionV1.Menu{
 		},
 	},
 	{
-		Id:        trans.Ptr(uint32(70)),
-		ParentId:  trans.Ptr(uint32(60)),
+		Id:        trans.Ptr(uint64(70)),
+		ParentId:  trans.Ptr(uint64(60)),
 		Type:      permissionV1.Menu_MENU.Enum(),
 		Name:      trans.Ptr("ExperimentManagement"),
 		Path:      trans.Ptr("experiments"),

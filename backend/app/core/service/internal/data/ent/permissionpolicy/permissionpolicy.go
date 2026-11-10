@@ -84,7 +84,7 @@ var (
 	Hooks  [1]ent.Hook
 	Policy ent.Policy
 	// DefaultTenantID holds the default value on creation for the "tenant_id" field.
-	DefaultTenantID uint32
+	DefaultTenantID uint64
 	// DefaultVersion holds the default value on creation for the "version" field.
 	DefaultVersion uint32
 	// DefaultEvalOrder holds the default value on creation for the "eval_order" field.
@@ -92,7 +92,7 @@ var (
 	// DefaultCacheTTL holds the default value on creation for the "cache_ttl" field.
 	DefaultCacheTTL uint32
 	// IDValidator is a validator for the "id" field. It is called by the builders before save.
-	IDValidator func(uint32) error
+	IDValidator func(uint64) error
 )
 
 // Status defines the type for the "status" enum field.

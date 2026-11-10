@@ -43,8 +43,6 @@ func ToLuaValue(L *lua.LState, val any) lua.LValue {
 		return lua.LNumber(v)
 	case uint16:
 		return lua.LNumber(v)
-	case uint32:
-		return lua.LNumber(v)
 	case uint64:
 		return lua.LNumber(v)
 	case float32:

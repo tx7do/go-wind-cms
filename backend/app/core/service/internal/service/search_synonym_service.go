@@ -55,9 +55,9 @@ func (s *SearchSynonymService) Create(ctx context.Context, req *contentV1.Create
 		*req.Data.Enabled = true
 	}
 	// 租户归属按操作者 viewer 显式写入（租户隔离 mixin 无创建钩子）
-	var tenantID uint32
+	var tenantID uint64
 	if vc, exist := viewer.FromContext(ctx); exist && vc != nil {
-		tenantID = uint32(vc.TenantID())
+		tenantID = uint64(vc.TenantID())
 	}
 	return s.repo.Create(ctx, tenantID, req.Data)
 }

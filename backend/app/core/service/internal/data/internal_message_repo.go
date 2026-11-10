@@ -117,7 +117,7 @@ func (r *InternalMessageRepo) List(ctx context.Context, req *paginationV1.Paging
 	}, nil
 }
 
-func (r *InternalMessageRepo) IsExist(ctx context.Context, id uint32) (bool, error) {
+func (r *InternalMessageRepo) IsExist(ctx context.Context, id uint64) (bool, error) {
 	exist, err := r.entClient.Client().InternalMessage.Query().
 		Where(internalmessage.IDEQ(id)).
 		Exist(ctx)
@@ -235,7 +235,7 @@ func (r *InternalMessageRepo) Update(ctx context.Context, req *internalMessageV1
 	return err
 }
 
-func (r *InternalMessageRepo) Delete(ctx context.Context, id uint32) (err error) {
+func (r *InternalMessageRepo) Delete(ctx context.Context, id uint64) (err error) {
 	if id == 0 {
 		return internalMessageV1.ErrorBadRequest("invalid parameter")
 	}

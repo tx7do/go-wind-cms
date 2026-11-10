@@ -61,7 +61,7 @@ func (Page) Fields() []ent.Field {
 			Optional().
 			Nillable(),
 
-		field.Uint32("author_id").
+		field.Uint64("author_id").
 			Comment("评论作者ID，0表示游客").
 			Default(0).
 			Optional().
@@ -115,7 +115,7 @@ func (Page) Fields() []ent.Field {
 			Comment("自定义字段").
 			Optional(),
 
-		field.Uint32("content_model_id").
+		field.Uint64("content_model_id").
 			Comment("绑定的内容模型ID（该页面继承模型字段，0/null=无绑定）").
 			Optional().
 			Nillable(),
@@ -131,14 +131,14 @@ func (Page) Fields() []ent.Field {
 // Mixin of the Page.
 func (Page) Mixin() []ent.Mixin {
 	return []ent.Mixin{
-		mixin.AutoIncrementId{},
+		mixin.AutoIncrementId64{},
 		mixin.TimeAt{},
-		mixin.OperatorID{},
+		mixin.OperatorID64{},
 		mixin.SortOrder{},
 		mixin.TreePath{},
-		mixin.Tree[Page]{},
+		mixin.Tree64[Page]{},
 		appMixin.EditorType{},
-		mixin.TenantID[uint32]{},
+		mixin.TenantID[uint64]{},
 	}
 }
 

@@ -133,7 +133,7 @@ func (s *ContentModelService) ResolveContentReferences(ctx context.Context, req 
 
 	type refWant struct {
 		entityType string
-		id         uint32
+		id         uint64
 	}
 	seen := make(map[string]struct{}, len(req.GetRefs()))
 	wants := make([]refWant, 0, len(req.GetRefs()))
@@ -150,7 +150,7 @@ func (s *ContentModelService) ResolveContentReferences(ctx context.Context, req 
 		}
 		seen[m[0]] = struct{}{}
 		id, _ := strconv.ParseUint(m[2], 10, 32)
-		wants = append(wants, refWant{entityType: m[1], id: uint32(id)})
+		wants = append(wants, refWant{entityType: m[1], id: uint64(id)})
 	}
 
 	lang := req.GetLanguageCode()

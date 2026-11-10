@@ -114,13 +114,13 @@ var (
 	// DefaultSortOrder holds the default value on creation for the "sort_order" field.
 	DefaultSortOrder uint32
 	// DefaultTenantID holds the default value on creation for the "tenant_id" field.
-	DefaultTenantID uint32
+	DefaultTenantID uint64
 	// DefaultIsOpenNewTab holds the default value on creation for the "is_open_new_tab" field.
 	DefaultIsOpenNewTab bool
 	// DefaultIsInvalid holds the default value on creation for the "is_invalid" field.
 	DefaultIsInvalid bool
 	// IDValidator is a validator for the "id" field. It is called by the builders before save.
-	IDValidator func(uint32) error
+	IDValidator func(uint64) error
 )
 
 // LinkType defines the type for the "link_type" enum field.

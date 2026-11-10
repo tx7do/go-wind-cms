@@ -35,7 +35,7 @@ func NewFormSubmissionRepo(ctx *bootstrap.Context, entClient *entCrud.EntClient[
 }
 
 // Create 落一条提交。
-func (r *FormSubmissionRepo) Create(ctx context.Context, pageID, sectionID uint32, data map[string]string, userID uint32) (*contentV1.FormSubmission, error) {
+func (r *FormSubmissionRepo) Create(ctx context.Context, pageID, sectionID uint64, data map[string]string, userID uint64) (*contentV1.FormSubmission, error) {
 	builder := r.entClient.Client().FormSubmission.Create().
 		SetNillablePageID(&pageID).
 		SetNillableSectionID(&sectionID).
@@ -113,8 +113,8 @@ func (r *FormSubmissionRepo) List(ctx context.Context, req *paginationV1.PagingR
 	return items, total, nil
 }
 
-// condValueUint 把过滤条件值解析为 uint32（仅接受十进制正整数）。
-func condValueUint(v string) (uint32, bool) {
+// condValueUint 把过滤条件值解析为 uint64（仅接受十进制正整数）。
+func condValueUint(v string) (uint64, bool) {
 	if v == "" {
 		return 0, false
 	}
@@ -122,11 +122,11 @@ func condValueUint(v string) (uint32, bool) {
 	if err != nil || n == 0 {
 		return 0, false
 	}
-	return uint32(n), true
+	return uint64(n), true
 }
 
 // Get 提交详情。
-func (r *FormSubmissionRepo) Get(ctx context.Context, id uint32) (*contentV1.FormSubmission, error) {
+func (r *FormSubmissionRepo) Get(ctx context.Context, id uint64) (*contentV1.FormSubmission, error) {
 	conds := append(r.tenantConds(ctx), formsubmission.IDEQ(id))
 	row, err := r.entClient.Client().FormSubmission.Query().Where(conds...).Only(ctx)
 	if err != nil {
@@ -140,7 +140,7 @@ func (r *FormSubmissionRepo) Get(ctx context.Context, id uint32) (*contentV1.For
 }
 
 // Delete 删除提交。
-func (r *FormSubmissionRepo) Delete(ctx context.Context, id uint32) error {
+func (r *FormSubmissionRepo) Delete(ctx context.Context, id uint64) error {
 	conds := append(r.tenantConds(ctx), formsubmission.IDEQ(id))
 	count, err := r.entClient.Client().FormSubmission.Delete().Where(conds...).Exec(ctx)
 	if err != nil {
@@ -163,11 +163,11 @@ func (r *FormSubmissionRepo) tenantConds(ctx context.Context) []predicate.FormSu
 
 // tenantIDFromInternalMetadata 从内网可信元数据 x-md-global-tenant-id 读租户
 //（匿名提交链路：app BFF 按 Host 解析后注入；与 comment_repo 同口径）。
-func (r *FormSubmissionRepo) tenantIDFromInternalMetadata(ctx context.Context) uint32 {
+func (r *FormSubmissionRepo) tenantIDFromInternalMetadata(ctx context.Context) uint64 {
 	if md, ok := kratosMetadata.FromServerContext(ctx); ok {
 		if v := md.Get("x-md-global-tenant-id"); v != "" {
 			if tid, err := strconv.ParseUint(v, 10, 32); err == nil && tid > 0 {
-				return uint32(tid)
+				return uint64(tid)
 			}
 		}
 	}

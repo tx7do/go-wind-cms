@@ -40,7 +40,7 @@ func (_d *NavigationItemDelete) ExecX(ctx context.Context) int {
 }
 
 func (_d *NavigationItemDelete) sqlExec(ctx context.Context) (int, error) {
-	_spec := sqlgraph.NewDeleteSpec(navigationitem.Table, sqlgraph.NewFieldSpec(navigationitem.FieldID, field.TypeUint32))
+	_spec := sqlgraph.NewDeleteSpec(navigationitem.Table, sqlgraph.NewFieldSpec(navigationitem.FieldID, field.TypeUint64))
 	if ps := _d.mutation.predicates; len(ps) > 0 {
 		_spec.Predicate = func(selector *sql.Selector) {
 			for i := range ps {

@@ -65,13 +65,13 @@ func (_c *ExperimentParticipantCreate) SetNillableDeletedAt(v *time.Time) *Exper
 }
 
 // SetTenantID sets the "tenant_id" field.
-func (_c *ExperimentParticipantCreate) SetTenantID(v uint32) *ExperimentParticipantCreate {
+func (_c *ExperimentParticipantCreate) SetTenantID(v uint64) *ExperimentParticipantCreate {
 	_c.mutation.SetTenantID(v)
 	return _c
 }
 
 // SetNillableTenantID sets the "tenant_id" field if the given value is not nil.
-func (_c *ExperimentParticipantCreate) SetNillableTenantID(v *uint32) *ExperimentParticipantCreate {
+func (_c *ExperimentParticipantCreate) SetNillableTenantID(v *uint64) *ExperimentParticipantCreate {
 	if v != nil {
 		_c.SetTenantID(*v)
 	}
@@ -79,13 +79,13 @@ func (_c *ExperimentParticipantCreate) SetNillableTenantID(v *uint32) *Experimen
 }
 
 // SetExperimentID sets the "experiment_id" field.
-func (_c *ExperimentParticipantCreate) SetExperimentID(v uint32) *ExperimentParticipantCreate {
+func (_c *ExperimentParticipantCreate) SetExperimentID(v uint64) *ExperimentParticipantCreate {
 	_c.mutation.SetExperimentID(v)
 	return _c
 }
 
 // SetNillableExperimentID sets the "experiment_id" field if the given value is not nil.
-func (_c *ExperimentParticipantCreate) SetNillableExperimentID(v *uint32) *ExperimentParticipantCreate {
+func (_c *ExperimentParticipantCreate) SetNillableExperimentID(v *uint64) *ExperimentParticipantCreate {
 	if v != nil {
 		_c.SetExperimentID(*v)
 	}
@@ -133,7 +133,7 @@ func (_c *ExperimentParticipantCreate) SetNillableConvertedAt(v *time.Time) *Exp
 }
 
 // SetID sets the "id" field.
-func (_c *ExperimentParticipantCreate) SetID(v uint32) *ExperimentParticipantCreate {
+func (_c *ExperimentParticipantCreate) SetID(v uint64) *ExperimentParticipantCreate {
 	_c.mutation.SetID(v)
 	return _c
 }
@@ -225,7 +225,7 @@ func (_c *ExperimentParticipantCreate) sqlSave(ctx context.Context) (*Experiment
 	}
 	if _spec.ID.Value != _node.ID {
 		id := _spec.ID.Value.(int64)
-		_node.ID = uint32(id)
+		_node.ID = uint64(id)
 	}
 	_c.mutation.id = &_node.ID
 	_c.mutation.done = true
@@ -235,7 +235,7 @@ func (_c *ExperimentParticipantCreate) sqlSave(ctx context.Context) (*Experiment
 func (_c *ExperimentParticipantCreate) createSpec() (*ExperimentParticipant, *sqlgraph.CreateSpec) {
 	var (
 		_node = &ExperimentParticipant{config: _c.config}
-		_spec = sqlgraph.NewCreateSpec(experimentparticipant.Table, sqlgraph.NewFieldSpec(experimentparticipant.FieldID, field.TypeUint32))
+		_spec = sqlgraph.NewCreateSpec(experimentparticipant.Table, sqlgraph.NewFieldSpec(experimentparticipant.FieldID, field.TypeUint64))
 	)
 	_spec.OnConflict = _c.conflict
 	if id, ok := _c.mutation.ID(); ok {
@@ -255,11 +255,11 @@ func (_c *ExperimentParticipantCreate) createSpec() (*ExperimentParticipant, *sq
 		_node.DeletedAt = &value
 	}
 	if value, ok := _c.mutation.TenantID(); ok {
-		_spec.SetField(experimentparticipant.FieldTenantID, field.TypeUint32, value)
+		_spec.SetField(experimentparticipant.FieldTenantID, field.TypeUint64, value)
 		_node.TenantID = &value
 	}
 	if value, ok := _c.mutation.ExperimentID(); ok {
-		_spec.SetField(experimentparticipant.FieldExperimentID, field.TypeUint32, value)
+		_spec.SetField(experimentparticipant.FieldExperimentID, field.TypeUint64, value)
 		_node.ExperimentID = &value
 	}
 	if value, ok := _c.mutation.VisitorHash(); ok {
@@ -367,7 +367,7 @@ func (u *ExperimentParticipantUpsert) ClearDeletedAt() *ExperimentParticipantUps
 }
 
 // SetExperimentID sets the "experiment_id" field.
-func (u *ExperimentParticipantUpsert) SetExperimentID(v uint32) *ExperimentParticipantUpsert {
+func (u *ExperimentParticipantUpsert) SetExperimentID(v uint64) *ExperimentParticipantUpsert {
 	u.Set(experimentparticipant.FieldExperimentID, v)
 	return u
 }
@@ -379,7 +379,7 @@ func (u *ExperimentParticipantUpsert) UpdateExperimentID() *ExperimentParticipan
 }
 
 // AddExperimentID adds v to the "experiment_id" field.
-func (u *ExperimentParticipantUpsert) AddExperimentID(v uint32) *ExperimentParticipantUpsert {
+func (u *ExperimentParticipantUpsert) AddExperimentID(v uint64) *ExperimentParticipantUpsert {
 	u.Add(experimentparticipant.FieldExperimentID, v)
 	return u
 }
@@ -547,14 +547,14 @@ func (u *ExperimentParticipantUpsertOne) ClearDeletedAt() *ExperimentParticipant
 }
 
 // SetExperimentID sets the "experiment_id" field.
-func (u *ExperimentParticipantUpsertOne) SetExperimentID(v uint32) *ExperimentParticipantUpsertOne {
+func (u *ExperimentParticipantUpsertOne) SetExperimentID(v uint64) *ExperimentParticipantUpsertOne {
 	return u.Update(func(s *ExperimentParticipantUpsert) {
 		s.SetExperimentID(v)
 	})
 }
 
 // AddExperimentID adds v to the "experiment_id" field.
-func (u *ExperimentParticipantUpsertOne) AddExperimentID(v uint32) *ExperimentParticipantUpsertOne {
+func (u *ExperimentParticipantUpsertOne) AddExperimentID(v uint64) *ExperimentParticipantUpsertOne {
 	return u.Update(func(s *ExperimentParticipantUpsert) {
 		s.AddExperimentID(v)
 	})
@@ -660,7 +660,7 @@ func (u *ExperimentParticipantUpsertOne) ExecX(ctx context.Context) {
 }
 
 // Exec executes the UPSERT query and returns the inserted/updated ID.
-func (u *ExperimentParticipantUpsertOne) ID(ctx context.Context) (id uint32, err error) {
+func (u *ExperimentParticipantUpsertOne) ID(ctx context.Context) (id uint64, err error) {
 	node, err := u.create.Save(ctx)
 	if err != nil {
 		return id, err
@@ -669,7 +669,7 @@ func (u *ExperimentParticipantUpsertOne) ID(ctx context.Context) (id uint32, err
 }
 
 // IDX is like ID, but panics if an error occurs.
-func (u *ExperimentParticipantUpsertOne) IDX(ctx context.Context) uint32 {
+func (u *ExperimentParticipantUpsertOne) IDX(ctx context.Context) uint64 {
 	id, err := u.ID(ctx)
 	if err != nil {
 		panic(err)
@@ -726,7 +726,7 @@ func (_c *ExperimentParticipantCreateBulk) Save(ctx context.Context) ([]*Experim
 				mutation.id = &nodes[i].ID
 				if specs[i].ID.Value != nil && nodes[i].ID == 0 {
 					id := specs[i].ID.Value.(int64)
-					nodes[i].ID = uint32(id)
+					nodes[i].ID = uint64(id)
 				}
 				mutation.done = true
 				return nodes[i], nil
@@ -907,14 +907,14 @@ func (u *ExperimentParticipantUpsertBulk) ClearDeletedAt() *ExperimentParticipan
 }
 
 // SetExperimentID sets the "experiment_id" field.
-func (u *ExperimentParticipantUpsertBulk) SetExperimentID(v uint32) *ExperimentParticipantUpsertBulk {
+func (u *ExperimentParticipantUpsertBulk) SetExperimentID(v uint64) *ExperimentParticipantUpsertBulk {
 	return u.Update(func(s *ExperimentParticipantUpsert) {
 		s.SetExperimentID(v)
 	})
 }
 
 // AddExperimentID adds v to the "experiment_id" field.
-func (u *ExperimentParticipantUpsertBulk) AddExperimentID(v uint32) *ExperimentParticipantUpsertBulk {
+func (u *ExperimentParticipantUpsertBulk) AddExperimentID(v uint64) *ExperimentParticipantUpsertBulk {
 	return u.Update(func(s *ExperimentParticipantUpsert) {
 		s.AddExperimentID(v)
 	})

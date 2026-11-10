@@ -30,7 +30,7 @@ func (WebhookDelivery) Annotations() []schema.Annotation {
 // Fields of the WebhookDelivery.
 func (WebhookDelivery) Fields() []ent.Field {
 	return []ent.Field{
-		field.Uint32("webhook_id").
+		field.Uint64("webhook_id").
 			Comment("关联的 Webhook ID").
 			Optional().
 			Nillable(),
@@ -38,7 +38,7 @@ func (WebhookDelivery) Fields() []ent.Field {
 			Comment("事件类型（post.published 等）").
 			Optional().
 			Nillable(),
-		field.Uint32("entity_id").
+		field.Uint64("entity_id").
 			Comment("事件主体 ID（帖子/页面）").
 			Default(0).
 			Optional().
@@ -72,9 +72,9 @@ func (WebhookDelivery) Fields() []ent.Field {
 // Mixin of the WebhookDelivery.
 func (WebhookDelivery) Mixin() []ent.Mixin {
 	return []ent.Mixin{
-		mixin.AutoIncrementId{},
+		mixin.AutoIncrementId64{},
 		mixin.TimeAt{},
-		mixin.TenantID[uint32]{},
+		mixin.TenantID[uint64]{},
 	}
 }
 

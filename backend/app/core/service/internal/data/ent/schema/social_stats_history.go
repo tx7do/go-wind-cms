@@ -25,7 +25,7 @@ func (SocialStatsHistory) Annotations() []schema.Annotation {
 
 func (SocialStatsHistory) Fields() []ent.Field {
 	return []ent.Field{
-		field.Uint32("distribution_id").
+		field.Uint64("distribution_id").
 			Comment("分发记录ID").
 			Optional().
 			Nillable(),
@@ -52,7 +52,7 @@ func (SocialStatsHistory) Fields() []ent.Field {
 
 func (SocialStatsHistory) Mixin() []ent.Mixin {
 	return []ent.Mixin{
-		mixin.AutoIncrementId{},
+		mixin.AutoIncrementId64{},
 		mixin.TimeAt{}, // created_at 即快照时间
 	}
 }

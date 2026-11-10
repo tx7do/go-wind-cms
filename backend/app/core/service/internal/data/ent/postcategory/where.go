@@ -10,47 +10,47 @@ import (
 )
 
 // ID filters vertices based on their ID field.
-func ID(id uint32) predicate.PostCategory {
+func ID(id uint64) predicate.PostCategory {
 	return predicate.PostCategory(sql.FieldEQ(FieldID, id))
 }
 
 // IDEQ applies the EQ predicate on the ID field.
-func IDEQ(id uint32) predicate.PostCategory {
+func IDEQ(id uint64) predicate.PostCategory {
 	return predicate.PostCategory(sql.FieldEQ(FieldID, id))
 }
 
 // IDNEQ applies the NEQ predicate on the ID field.
-func IDNEQ(id uint32) predicate.PostCategory {
+func IDNEQ(id uint64) predicate.PostCategory {
 	return predicate.PostCategory(sql.FieldNEQ(FieldID, id))
 }
 
 // IDIn applies the In predicate on the ID field.
-func IDIn(ids ...uint32) predicate.PostCategory {
+func IDIn(ids ...uint64) predicate.PostCategory {
 	return predicate.PostCategory(sql.FieldIn(FieldID, ids...))
 }
 
 // IDNotIn applies the NotIn predicate on the ID field.
-func IDNotIn(ids ...uint32) predicate.PostCategory {
+func IDNotIn(ids ...uint64) predicate.PostCategory {
 	return predicate.PostCategory(sql.FieldNotIn(FieldID, ids...))
 }
 
 // IDGT applies the GT predicate on the ID field.
-func IDGT(id uint32) predicate.PostCategory {
+func IDGT(id uint64) predicate.PostCategory {
 	return predicate.PostCategory(sql.FieldGT(FieldID, id))
 }
 
 // IDGTE applies the GTE predicate on the ID field.
-func IDGTE(id uint32) predicate.PostCategory {
+func IDGTE(id uint64) predicate.PostCategory {
 	return predicate.PostCategory(sql.FieldGTE(FieldID, id))
 }
 
 // IDLT applies the LT predicate on the ID field.
-func IDLT(id uint32) predicate.PostCategory {
+func IDLT(id uint64) predicate.PostCategory {
 	return predicate.PostCategory(sql.FieldLT(FieldID, id))
 }
 
 // IDLTE applies the LTE predicate on the ID field.
-func IDLTE(id uint32) predicate.PostCategory {
+func IDLTE(id uint64) predicate.PostCategory {
 	return predicate.PostCategory(sql.FieldLTE(FieldID, id))
 }
 
@@ -60,17 +60,17 @@ func CreatedAt(v time.Time) predicate.PostCategory {
 }
 
 // TenantID applies equality check predicate on the "tenant_id" field. It's identical to TenantIDEQ.
-func TenantID(v uint32) predicate.PostCategory {
+func TenantID(v uint64) predicate.PostCategory {
 	return predicate.PostCategory(sql.FieldEQ(FieldTenantID, v))
 }
 
 // PostID applies equality check predicate on the "post_id" field. It's identical to PostIDEQ.
-func PostID(v uint32) predicate.PostCategory {
+func PostID(v uint64) predicate.PostCategory {
 	return predicate.PostCategory(sql.FieldEQ(FieldPostID, v))
 }
 
 // CategoryID applies equality check predicate on the "category_id" field. It's identical to CategoryIDEQ.
-func CategoryID(v uint32) predicate.PostCategory {
+func CategoryID(v uint64) predicate.PostCategory {
 	return predicate.PostCategory(sql.FieldEQ(FieldCategoryID, v))
 }
 
@@ -125,42 +125,42 @@ func CreatedAtNotNil() predicate.PostCategory {
 }
 
 // TenantIDEQ applies the EQ predicate on the "tenant_id" field.
-func TenantIDEQ(v uint32) predicate.PostCategory {
+func TenantIDEQ(v uint64) predicate.PostCategory {
 	return predicate.PostCategory(sql.FieldEQ(FieldTenantID, v))
 }
 
 // TenantIDNEQ applies the NEQ predicate on the "tenant_id" field.
-func TenantIDNEQ(v uint32) predicate.PostCategory {
+func TenantIDNEQ(v uint64) predicate.PostCategory {
 	return predicate.PostCategory(sql.FieldNEQ(FieldTenantID, v))
 }
 
 // TenantIDIn applies the In predicate on the "tenant_id" field.
-func TenantIDIn(vs ...uint32) predicate.PostCategory {
+func TenantIDIn(vs ...uint64) predicate.PostCategory {
 	return predicate.PostCategory(sql.FieldIn(FieldTenantID, vs...))
 }
 
 // TenantIDNotIn applies the NotIn predicate on the "tenant_id" field.
-func TenantIDNotIn(vs ...uint32) predicate.PostCategory {
+func TenantIDNotIn(vs ...uint64) predicate.PostCategory {
 	return predicate.PostCategory(sql.FieldNotIn(FieldTenantID, vs...))
 }
 
 // TenantIDGT applies the GT predicate on the "tenant_id" field.
-func TenantIDGT(v uint32) predicate.PostCategory {
+func TenantIDGT(v uint64) predicate.PostCategory {
 	return predicate.PostCategory(sql.FieldGT(FieldTenantID, v))
 }
 
 // TenantIDGTE applies the GTE predicate on the "tenant_id" field.
-func TenantIDGTE(v uint32) predicate.PostCategory {
+func TenantIDGTE(v uint64) predicate.PostCategory {
 	return predicate.PostCategory(sql.FieldGTE(FieldTenantID, v))
 }
 
 // TenantIDLT applies the LT predicate on the "tenant_id" field.
-func TenantIDLT(v uint32) predicate.PostCategory {
+func TenantIDLT(v uint64) predicate.PostCategory {
 	return predicate.PostCategory(sql.FieldLT(FieldTenantID, v))
 }
 
 // TenantIDLTE applies the LTE predicate on the "tenant_id" field.
-func TenantIDLTE(v uint32) predicate.PostCategory {
+func TenantIDLTE(v uint64) predicate.PostCategory {
 	return predicate.PostCategory(sql.FieldLTE(FieldTenantID, v))
 }
 
@@ -175,82 +175,82 @@ func TenantIDNotNil() predicate.PostCategory {
 }
 
 // PostIDEQ applies the EQ predicate on the "post_id" field.
-func PostIDEQ(v uint32) predicate.PostCategory {
+func PostIDEQ(v uint64) predicate.PostCategory {
 	return predicate.PostCategory(sql.FieldEQ(FieldPostID, v))
 }
 
 // PostIDNEQ applies the NEQ predicate on the "post_id" field.
-func PostIDNEQ(v uint32) predicate.PostCategory {
+func PostIDNEQ(v uint64) predicate.PostCategory {
 	return predicate.PostCategory(sql.FieldNEQ(FieldPostID, v))
 }
 
 // PostIDIn applies the In predicate on the "post_id" field.
-func PostIDIn(vs ...uint32) predicate.PostCategory {
+func PostIDIn(vs ...uint64) predicate.PostCategory {
 	return predicate.PostCategory(sql.FieldIn(FieldPostID, vs...))
 }
 
 // PostIDNotIn applies the NotIn predicate on the "post_id" field.
-func PostIDNotIn(vs ...uint32) predicate.PostCategory {
+func PostIDNotIn(vs ...uint64) predicate.PostCategory {
 	return predicate.PostCategory(sql.FieldNotIn(FieldPostID, vs...))
 }
 
 // PostIDGT applies the GT predicate on the "post_id" field.
-func PostIDGT(v uint32) predicate.PostCategory {
+func PostIDGT(v uint64) predicate.PostCategory {
 	return predicate.PostCategory(sql.FieldGT(FieldPostID, v))
 }
 
 // PostIDGTE applies the GTE predicate on the "post_id" field.
-func PostIDGTE(v uint32) predicate.PostCategory {
+func PostIDGTE(v uint64) predicate.PostCategory {
 	return predicate.PostCategory(sql.FieldGTE(FieldPostID, v))
 }
 
 // PostIDLT applies the LT predicate on the "post_id" field.
-func PostIDLT(v uint32) predicate.PostCategory {
+func PostIDLT(v uint64) predicate.PostCategory {
 	return predicate.PostCategory(sql.FieldLT(FieldPostID, v))
 }
 
 // PostIDLTE applies the LTE predicate on the "post_id" field.
-func PostIDLTE(v uint32) predicate.PostCategory {
+func PostIDLTE(v uint64) predicate.PostCategory {
 	return predicate.PostCategory(sql.FieldLTE(FieldPostID, v))
 }
 
 // CategoryIDEQ applies the EQ predicate on the "category_id" field.
-func CategoryIDEQ(v uint32) predicate.PostCategory {
+func CategoryIDEQ(v uint64) predicate.PostCategory {
 	return predicate.PostCategory(sql.FieldEQ(FieldCategoryID, v))
 }
 
 // CategoryIDNEQ applies the NEQ predicate on the "category_id" field.
-func CategoryIDNEQ(v uint32) predicate.PostCategory {
+func CategoryIDNEQ(v uint64) predicate.PostCategory {
 	return predicate.PostCategory(sql.FieldNEQ(FieldCategoryID, v))
 }
 
 // CategoryIDIn applies the In predicate on the "category_id" field.
-func CategoryIDIn(vs ...uint32) predicate.PostCategory {
+func CategoryIDIn(vs ...uint64) predicate.PostCategory {
 	return predicate.PostCategory(sql.FieldIn(FieldCategoryID, vs...))
 }
 
 // CategoryIDNotIn applies the NotIn predicate on the "category_id" field.
-func CategoryIDNotIn(vs ...uint32) predicate.PostCategory {
+func CategoryIDNotIn(vs ...uint64) predicate.PostCategory {
 	return predicate.PostCategory(sql.FieldNotIn(FieldCategoryID, vs...))
 }
 
 // CategoryIDGT applies the GT predicate on the "category_id" field.
-func CategoryIDGT(v uint32) predicate.PostCategory {
+func CategoryIDGT(v uint64) predicate.PostCategory {
 	return predicate.PostCategory(sql.FieldGT(FieldCategoryID, v))
 }
 
 // CategoryIDGTE applies the GTE predicate on the "category_id" field.
-func CategoryIDGTE(v uint32) predicate.PostCategory {
+func CategoryIDGTE(v uint64) predicate.PostCategory {
 	return predicate.PostCategory(sql.FieldGTE(FieldCategoryID, v))
 }
 
 // CategoryIDLT applies the LT predicate on the "category_id" field.
-func CategoryIDLT(v uint32) predicate.PostCategory {
+func CategoryIDLT(v uint64) predicate.PostCategory {
 	return predicate.PostCategory(sql.FieldLT(FieldCategoryID, v))
 }
 
 // CategoryIDLTE applies the LTE predicate on the "category_id" field.
-func CategoryIDLTE(v uint32) predicate.PostCategory {
+func CategoryIDLTE(v uint64) predicate.PostCategory {
 	return predicate.PostCategory(sql.FieldLTE(FieldCategoryID, v))
 }
 

@@ -65,13 +65,13 @@ func (_c *SectionCreate) SetNillableDeletedAt(v *time.Time) *SectionCreate {
 }
 
 // SetCreatedBy sets the "created_by" field.
-func (_c *SectionCreate) SetCreatedBy(v uint32) *SectionCreate {
+func (_c *SectionCreate) SetCreatedBy(v uint64) *SectionCreate {
 	_c.mutation.SetCreatedBy(v)
 	return _c
 }
 
 // SetNillableCreatedBy sets the "created_by" field if the given value is not nil.
-func (_c *SectionCreate) SetNillableCreatedBy(v *uint32) *SectionCreate {
+func (_c *SectionCreate) SetNillableCreatedBy(v *uint64) *SectionCreate {
 	if v != nil {
 		_c.SetCreatedBy(*v)
 	}
@@ -79,13 +79,13 @@ func (_c *SectionCreate) SetNillableCreatedBy(v *uint32) *SectionCreate {
 }
 
 // SetUpdatedBy sets the "updated_by" field.
-func (_c *SectionCreate) SetUpdatedBy(v uint32) *SectionCreate {
+func (_c *SectionCreate) SetUpdatedBy(v uint64) *SectionCreate {
 	_c.mutation.SetUpdatedBy(v)
 	return _c
 }
 
 // SetNillableUpdatedBy sets the "updated_by" field if the given value is not nil.
-func (_c *SectionCreate) SetNillableUpdatedBy(v *uint32) *SectionCreate {
+func (_c *SectionCreate) SetNillableUpdatedBy(v *uint64) *SectionCreate {
 	if v != nil {
 		_c.SetUpdatedBy(*v)
 	}
@@ -93,13 +93,13 @@ func (_c *SectionCreate) SetNillableUpdatedBy(v *uint32) *SectionCreate {
 }
 
 // SetDeletedBy sets the "deleted_by" field.
-func (_c *SectionCreate) SetDeletedBy(v uint32) *SectionCreate {
+func (_c *SectionCreate) SetDeletedBy(v uint64) *SectionCreate {
 	_c.mutation.SetDeletedBy(v)
 	return _c
 }
 
 // SetNillableDeletedBy sets the "deleted_by" field if the given value is not nil.
-func (_c *SectionCreate) SetNillableDeletedBy(v *uint32) *SectionCreate {
+func (_c *SectionCreate) SetNillableDeletedBy(v *uint64) *SectionCreate {
 	if v != nil {
 		_c.SetDeletedBy(*v)
 	}
@@ -121,13 +121,13 @@ func (_c *SectionCreate) SetNillableSortOrder(v *uint32) *SectionCreate {
 }
 
 // SetTenantID sets the "tenant_id" field.
-func (_c *SectionCreate) SetTenantID(v uint32) *SectionCreate {
+func (_c *SectionCreate) SetTenantID(v uint64) *SectionCreate {
 	_c.mutation.SetTenantID(v)
 	return _c
 }
 
 // SetNillableTenantID sets the "tenant_id" field if the given value is not nil.
-func (_c *SectionCreate) SetNillableTenantID(v *uint32) *SectionCreate {
+func (_c *SectionCreate) SetNillableTenantID(v *uint64) *SectionCreate {
 	if v != nil {
 		_c.SetTenantID(*v)
 	}
@@ -135,13 +135,13 @@ func (_c *SectionCreate) SetNillableTenantID(v *uint32) *SectionCreate {
 }
 
 // SetPageID sets the "page_id" field.
-func (_c *SectionCreate) SetPageID(v uint32) *SectionCreate {
+func (_c *SectionCreate) SetPageID(v uint64) *SectionCreate {
 	_c.mutation.SetPageID(v)
 	return _c
 }
 
 // SetNillablePageID sets the "page_id" field if the given value is not nil.
-func (_c *SectionCreate) SetNillablePageID(v *uint32) *SectionCreate {
+func (_c *SectionCreate) SetNillablePageID(v *uint64) *SectionCreate {
 	if v != nil {
 		_c.SetPageID(*v)
 	}
@@ -183,7 +183,7 @@ func (_c *SectionCreate) SetConfig(v *map[string]string) *SectionCreate {
 }
 
 // SetID sets the "id" field.
-func (_c *SectionCreate) SetID(v uint32) *SectionCreate {
+func (_c *SectionCreate) SetID(v uint64) *SectionCreate {
 	_c.mutation.SetID(v)
 	return _c
 }
@@ -268,7 +268,7 @@ func (_c *SectionCreate) sqlSave(ctx context.Context) (*Section, error) {
 	}
 	if _spec.ID.Value != _node.ID {
 		id := _spec.ID.Value.(int64)
-		_node.ID = uint32(id)
+		_node.ID = uint64(id)
 	}
 	_c.mutation.id = &_node.ID
 	_c.mutation.done = true
@@ -278,7 +278,7 @@ func (_c *SectionCreate) sqlSave(ctx context.Context) (*Section, error) {
 func (_c *SectionCreate) createSpec() (*Section, *sqlgraph.CreateSpec) {
 	var (
 		_node = &Section{config: _c.config}
-		_spec = sqlgraph.NewCreateSpec(section.Table, sqlgraph.NewFieldSpec(section.FieldID, field.TypeUint32))
+		_spec = sqlgraph.NewCreateSpec(section.Table, sqlgraph.NewFieldSpec(section.FieldID, field.TypeUint64))
 	)
 	_spec.OnConflict = _c.conflict
 	if id, ok := _c.mutation.ID(); ok {
@@ -298,15 +298,15 @@ func (_c *SectionCreate) createSpec() (*Section, *sqlgraph.CreateSpec) {
 		_node.DeletedAt = &value
 	}
 	if value, ok := _c.mutation.CreatedBy(); ok {
-		_spec.SetField(section.FieldCreatedBy, field.TypeUint32, value)
+		_spec.SetField(section.FieldCreatedBy, field.TypeUint64, value)
 		_node.CreatedBy = &value
 	}
 	if value, ok := _c.mutation.UpdatedBy(); ok {
-		_spec.SetField(section.FieldUpdatedBy, field.TypeUint32, value)
+		_spec.SetField(section.FieldUpdatedBy, field.TypeUint64, value)
 		_node.UpdatedBy = &value
 	}
 	if value, ok := _c.mutation.DeletedBy(); ok {
-		_spec.SetField(section.FieldDeletedBy, field.TypeUint32, value)
+		_spec.SetField(section.FieldDeletedBy, field.TypeUint64, value)
 		_node.DeletedBy = &value
 	}
 	if value, ok := _c.mutation.SortOrder(); ok {
@@ -314,11 +314,11 @@ func (_c *SectionCreate) createSpec() (*Section, *sqlgraph.CreateSpec) {
 		_node.SortOrder = &value
 	}
 	if value, ok := _c.mutation.TenantID(); ok {
-		_spec.SetField(section.FieldTenantID, field.TypeUint32, value)
+		_spec.SetField(section.FieldTenantID, field.TypeUint64, value)
 		_node.TenantID = &value
 	}
 	if value, ok := _c.mutation.PageID(); ok {
-		_spec.SetField(section.FieldPageID, field.TypeUint32, value)
+		_spec.SetField(section.FieldPageID, field.TypeUint64, value)
 		_node.PageID = &value
 	}
 	if value, ok := _c.mutation.GetType(); ok {
@@ -422,7 +422,7 @@ func (u *SectionUpsert) ClearDeletedAt() *SectionUpsert {
 }
 
 // SetCreatedBy sets the "created_by" field.
-func (u *SectionUpsert) SetCreatedBy(v uint32) *SectionUpsert {
+func (u *SectionUpsert) SetCreatedBy(v uint64) *SectionUpsert {
 	u.Set(section.FieldCreatedBy, v)
 	return u
 }
@@ -434,7 +434,7 @@ func (u *SectionUpsert) UpdateCreatedBy() *SectionUpsert {
 }
 
 // AddCreatedBy adds v to the "created_by" field.
-func (u *SectionUpsert) AddCreatedBy(v uint32) *SectionUpsert {
+func (u *SectionUpsert) AddCreatedBy(v uint64) *SectionUpsert {
 	u.Add(section.FieldCreatedBy, v)
 	return u
 }
@@ -446,7 +446,7 @@ func (u *SectionUpsert) ClearCreatedBy() *SectionUpsert {
 }
 
 // SetUpdatedBy sets the "updated_by" field.
-func (u *SectionUpsert) SetUpdatedBy(v uint32) *SectionUpsert {
+func (u *SectionUpsert) SetUpdatedBy(v uint64) *SectionUpsert {
 	u.Set(section.FieldUpdatedBy, v)
 	return u
 }
@@ -458,7 +458,7 @@ func (u *SectionUpsert) UpdateUpdatedBy() *SectionUpsert {
 }
 
 // AddUpdatedBy adds v to the "updated_by" field.
-func (u *SectionUpsert) AddUpdatedBy(v uint32) *SectionUpsert {
+func (u *SectionUpsert) AddUpdatedBy(v uint64) *SectionUpsert {
 	u.Add(section.FieldUpdatedBy, v)
 	return u
 }
@@ -470,7 +470,7 @@ func (u *SectionUpsert) ClearUpdatedBy() *SectionUpsert {
 }
 
 // SetDeletedBy sets the "deleted_by" field.
-func (u *SectionUpsert) SetDeletedBy(v uint32) *SectionUpsert {
+func (u *SectionUpsert) SetDeletedBy(v uint64) *SectionUpsert {
 	u.Set(section.FieldDeletedBy, v)
 	return u
 }
@@ -482,7 +482,7 @@ func (u *SectionUpsert) UpdateDeletedBy() *SectionUpsert {
 }
 
 // AddDeletedBy adds v to the "deleted_by" field.
-func (u *SectionUpsert) AddDeletedBy(v uint32) *SectionUpsert {
+func (u *SectionUpsert) AddDeletedBy(v uint64) *SectionUpsert {
 	u.Add(section.FieldDeletedBy, v)
 	return u
 }
@@ -518,7 +518,7 @@ func (u *SectionUpsert) ClearSortOrder() *SectionUpsert {
 }
 
 // SetPageID sets the "page_id" field.
-func (u *SectionUpsert) SetPageID(v uint32) *SectionUpsert {
+func (u *SectionUpsert) SetPageID(v uint64) *SectionUpsert {
 	u.Set(section.FieldPageID, v)
 	return u
 }
@@ -530,7 +530,7 @@ func (u *SectionUpsert) UpdatePageID() *SectionUpsert {
 }
 
 // AddPageID adds v to the "page_id" field.
-func (u *SectionUpsert) AddPageID(v uint32) *SectionUpsert {
+func (u *SectionUpsert) AddPageID(v uint64) *SectionUpsert {
 	u.Add(section.FieldPageID, v)
 	return u
 }
@@ -692,14 +692,14 @@ func (u *SectionUpsertOne) ClearDeletedAt() *SectionUpsertOne {
 }
 
 // SetCreatedBy sets the "created_by" field.
-func (u *SectionUpsertOne) SetCreatedBy(v uint32) *SectionUpsertOne {
+func (u *SectionUpsertOne) SetCreatedBy(v uint64) *SectionUpsertOne {
 	return u.Update(func(s *SectionUpsert) {
 		s.SetCreatedBy(v)
 	})
 }
 
 // AddCreatedBy adds v to the "created_by" field.
-func (u *SectionUpsertOne) AddCreatedBy(v uint32) *SectionUpsertOne {
+func (u *SectionUpsertOne) AddCreatedBy(v uint64) *SectionUpsertOne {
 	return u.Update(func(s *SectionUpsert) {
 		s.AddCreatedBy(v)
 	})
@@ -720,14 +720,14 @@ func (u *SectionUpsertOne) ClearCreatedBy() *SectionUpsertOne {
 }
 
 // SetUpdatedBy sets the "updated_by" field.
-func (u *SectionUpsertOne) SetUpdatedBy(v uint32) *SectionUpsertOne {
+func (u *SectionUpsertOne) SetUpdatedBy(v uint64) *SectionUpsertOne {
 	return u.Update(func(s *SectionUpsert) {
 		s.SetUpdatedBy(v)
 	})
 }
 
 // AddUpdatedBy adds v to the "updated_by" field.
-func (u *SectionUpsertOne) AddUpdatedBy(v uint32) *SectionUpsertOne {
+func (u *SectionUpsertOne) AddUpdatedBy(v uint64) *SectionUpsertOne {
 	return u.Update(func(s *SectionUpsert) {
 		s.AddUpdatedBy(v)
 	})
@@ -748,14 +748,14 @@ func (u *SectionUpsertOne) ClearUpdatedBy() *SectionUpsertOne {
 }
 
 // SetDeletedBy sets the "deleted_by" field.
-func (u *SectionUpsertOne) SetDeletedBy(v uint32) *SectionUpsertOne {
+func (u *SectionUpsertOne) SetDeletedBy(v uint64) *SectionUpsertOne {
 	return u.Update(func(s *SectionUpsert) {
 		s.SetDeletedBy(v)
 	})
 }
 
 // AddDeletedBy adds v to the "deleted_by" field.
-func (u *SectionUpsertOne) AddDeletedBy(v uint32) *SectionUpsertOne {
+func (u *SectionUpsertOne) AddDeletedBy(v uint64) *SectionUpsertOne {
 	return u.Update(func(s *SectionUpsert) {
 		s.AddDeletedBy(v)
 	})
@@ -804,14 +804,14 @@ func (u *SectionUpsertOne) ClearSortOrder() *SectionUpsertOne {
 }
 
 // SetPageID sets the "page_id" field.
-func (u *SectionUpsertOne) SetPageID(v uint32) *SectionUpsertOne {
+func (u *SectionUpsertOne) SetPageID(v uint64) *SectionUpsertOne {
 	return u.Update(func(s *SectionUpsert) {
 		s.SetPageID(v)
 	})
 }
 
 // AddPageID adds v to the "page_id" field.
-func (u *SectionUpsertOne) AddPageID(v uint32) *SectionUpsertOne {
+func (u *SectionUpsertOne) AddPageID(v uint64) *SectionUpsertOne {
 	return u.Update(func(s *SectionUpsert) {
 		s.AddPageID(v)
 	})
@@ -910,7 +910,7 @@ func (u *SectionUpsertOne) ExecX(ctx context.Context) {
 }
 
 // Exec executes the UPSERT query and returns the inserted/updated ID.
-func (u *SectionUpsertOne) ID(ctx context.Context) (id uint32, err error) {
+func (u *SectionUpsertOne) ID(ctx context.Context) (id uint64, err error) {
 	node, err := u.create.Save(ctx)
 	if err != nil {
 		return id, err
@@ -919,7 +919,7 @@ func (u *SectionUpsertOne) ID(ctx context.Context) (id uint32, err error) {
 }
 
 // IDX is like ID, but panics if an error occurs.
-func (u *SectionUpsertOne) IDX(ctx context.Context) uint32 {
+func (u *SectionUpsertOne) IDX(ctx context.Context) uint64 {
 	id, err := u.ID(ctx)
 	if err != nil {
 		panic(err)
@@ -976,7 +976,7 @@ func (_c *SectionCreateBulk) Save(ctx context.Context) ([]*Section, error) {
 				mutation.id = &nodes[i].ID
 				if specs[i].ID.Value != nil && nodes[i].ID == 0 {
 					id := specs[i].ID.Value.(int64)
-					nodes[i].ID = uint32(id)
+					nodes[i].ID = uint64(id)
 				}
 				mutation.done = true
 				return nodes[i], nil
@@ -1157,14 +1157,14 @@ func (u *SectionUpsertBulk) ClearDeletedAt() *SectionUpsertBulk {
 }
 
 // SetCreatedBy sets the "created_by" field.
-func (u *SectionUpsertBulk) SetCreatedBy(v uint32) *SectionUpsertBulk {
+func (u *SectionUpsertBulk) SetCreatedBy(v uint64) *SectionUpsertBulk {
 	return u.Update(func(s *SectionUpsert) {
 		s.SetCreatedBy(v)
 	})
 }
 
 // AddCreatedBy adds v to the "created_by" field.
-func (u *SectionUpsertBulk) AddCreatedBy(v uint32) *SectionUpsertBulk {
+func (u *SectionUpsertBulk) AddCreatedBy(v uint64) *SectionUpsertBulk {
 	return u.Update(func(s *SectionUpsert) {
 		s.AddCreatedBy(v)
 	})
@@ -1185,14 +1185,14 @@ func (u *SectionUpsertBulk) ClearCreatedBy() *SectionUpsertBulk {
 }
 
 // SetUpdatedBy sets the "updated_by" field.
-func (u *SectionUpsertBulk) SetUpdatedBy(v uint32) *SectionUpsertBulk {
+func (u *SectionUpsertBulk) SetUpdatedBy(v uint64) *SectionUpsertBulk {
 	return u.Update(func(s *SectionUpsert) {
 		s.SetUpdatedBy(v)
 	})
 }
 
 // AddUpdatedBy adds v to the "updated_by" field.
-func (u *SectionUpsertBulk) AddUpdatedBy(v uint32) *SectionUpsertBulk {
+func (u *SectionUpsertBulk) AddUpdatedBy(v uint64) *SectionUpsertBulk {
 	return u.Update(func(s *SectionUpsert) {
 		s.AddUpdatedBy(v)
 	})
@@ -1213,14 +1213,14 @@ func (u *SectionUpsertBulk) ClearUpdatedBy() *SectionUpsertBulk {
 }
 
 // SetDeletedBy sets the "deleted_by" field.
-func (u *SectionUpsertBulk) SetDeletedBy(v uint32) *SectionUpsertBulk {
+func (u *SectionUpsertBulk) SetDeletedBy(v uint64) *SectionUpsertBulk {
 	return u.Update(func(s *SectionUpsert) {
 		s.SetDeletedBy(v)
 	})
 }
 
 // AddDeletedBy adds v to the "deleted_by" field.
-func (u *SectionUpsertBulk) AddDeletedBy(v uint32) *SectionUpsertBulk {
+func (u *SectionUpsertBulk) AddDeletedBy(v uint64) *SectionUpsertBulk {
 	return u.Update(func(s *SectionUpsert) {
 		s.AddDeletedBy(v)
 	})
@@ -1269,14 +1269,14 @@ func (u *SectionUpsertBulk) ClearSortOrder() *SectionUpsertBulk {
 }
 
 // SetPageID sets the "page_id" field.
-func (u *SectionUpsertBulk) SetPageID(v uint32) *SectionUpsertBulk {
+func (u *SectionUpsertBulk) SetPageID(v uint64) *SectionUpsertBulk {
 	return u.Update(func(s *SectionUpsert) {
 		s.SetPageID(v)
 	})
 }
 
 // AddPageID adds v to the "page_id" field.
-func (u *SectionUpsertBulk) AddPageID(v uint32) *SectionUpsertBulk {
+func (u *SectionUpsertBulk) AddPageID(v uint64) *SectionUpsertBulk {
 	return u.Update(func(s *SectionUpsert) {
 		s.AddPageID(v)
 	})

@@ -109,7 +109,7 @@ type DailyCountRow struct {
 
 // TopLikedPost 点赞 TOP 榜条目。
 type TopLikedPost struct {
-	TargetID  uint32
+	TargetID  uint64
 	Title     string
 	LikeCount int64
 }
@@ -375,7 +375,7 @@ func (r *StatsRepo) GetTopLikedPosts(ctx context.Context, topN int32) ([]TopLike
 	}
 
 	var rows []struct {
-		TargetID uint32 `json:"target_id"`
+		TargetID uint64 `json:"target_id"`
 		Total    int64  `json:"total"`
 	}
 	err := query.
@@ -395,7 +395,7 @@ func (r *StatsRepo) GetTopLikedPosts(ctx context.Context, topN int32) ([]TopLike
 	}
 
 	// 剔除回收站/已不存在的帖子
-	ids := make([]uint32, 0, len(rows))
+	ids := make([]uint64, 0, len(rows))
 	for _, row := range rows {
 		ids = append(ids, row.TargetID)
 	}
@@ -408,7 +408,7 @@ func (r *StatsRepo) GetTopLikedPosts(ctx context.Context, topN int32) ([]TopLike
 		r.log.Errorf("query existing posts failed: %s", err.Error())
 		return nil, statsV1.ErrorInternalServerError("query existing posts failed")
 	}
-	existingSet := make(map[uint32]struct{}, len(existing))
+	existingSet := make(map[uint64]struct{}, len(existing))
 	for _, id := range existing {
 		existingSet[id] = struct{}{}
 	}
@@ -423,7 +423,7 @@ func (r *StatsRepo) GetTopLikedPosts(ctx context.Context, topN int32) ([]TopLike
 		r.log.Errorf("query post titles failed: %s", err.Error())
 		return nil, statsV1.ErrorInternalServerError("query post titles failed")
 	}
-	titles := make(map[uint32]string, len(titleRows))
+	titles := make(map[uint64]string, len(titleRows))
 	for _, t := range titleRows {
 		if t.PostID == nil || t.Title == nil || *t.Title == "" {
 			continue
@@ -461,7 +461,7 @@ func (r *StatsRepo) GetTopViewedPosts(ctx context.Context, topN int32) ([]TopLik
 	}
 
 	var rows []struct {
-		TargetID uint32 `json:"target_id"`
+		TargetID uint64 `json:"target_id"`
 		Total    int64  `json:"total"`
 	}
 	err := query.
@@ -480,7 +480,7 @@ func (r *StatsRepo) GetTopViewedPosts(ctx context.Context, topN int32) ([]TopLik
 		return nil, nil
 	}
 
-	ids := make([]uint32, 0, len(rows))
+	ids := make([]uint64, 0, len(rows))
 	for _, row := range rows {
 		ids = append(ids, row.TargetID)
 	}
@@ -493,7 +493,7 @@ func (r *StatsRepo) GetTopViewedPosts(ctx context.Context, topN int32) ([]TopLik
 		r.log.Errorf("query existing posts failed: %s", err.Error())
 		return nil, statsV1.ErrorInternalServerError("query existing posts failed")
 	}
-	existingSet := make(map[uint32]struct{}, len(existing))
+	existingSet := make(map[uint64]struct{}, len(existing))
 	for _, id := range existing {
 		existingSet[id] = struct{}{}
 	}
@@ -507,7 +507,7 @@ func (r *StatsRepo) GetTopViewedPosts(ctx context.Context, topN int32) ([]TopLik
 		r.log.Errorf("query post titles failed: %s", err.Error())
 		return nil, statsV1.ErrorInternalServerError("query post titles failed")
 	}
-	titles := make(map[uint32]string, len(titleRows))
+	titles := make(map[uint64]string, len(titleRows))
 	for _, t := range titleRows {
 		if t.PostID == nil || t.Title == nil || *t.Title == "" {
 			continue

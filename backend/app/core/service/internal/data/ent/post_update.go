@@ -70,14 +70,14 @@ func (_u *PostUpdate) ClearDeletedAt() *PostUpdate {
 }
 
 // SetCreatedBy sets the "created_by" field.
-func (_u *PostUpdate) SetCreatedBy(v uint32) *PostUpdate {
+func (_u *PostUpdate) SetCreatedBy(v uint64) *PostUpdate {
 	_u.mutation.ResetCreatedBy()
 	_u.mutation.SetCreatedBy(v)
 	return _u
 }
 
 // SetNillableCreatedBy sets the "created_by" field if the given value is not nil.
-func (_u *PostUpdate) SetNillableCreatedBy(v *uint32) *PostUpdate {
+func (_u *PostUpdate) SetNillableCreatedBy(v *uint64) *PostUpdate {
 	if v != nil {
 		_u.SetCreatedBy(*v)
 	}
@@ -85,7 +85,7 @@ func (_u *PostUpdate) SetNillableCreatedBy(v *uint32) *PostUpdate {
 }
 
 // AddCreatedBy adds value to the "created_by" field.
-func (_u *PostUpdate) AddCreatedBy(v int32) *PostUpdate {
+func (_u *PostUpdate) AddCreatedBy(v int64) *PostUpdate {
 	_u.mutation.AddCreatedBy(v)
 	return _u
 }
@@ -97,14 +97,14 @@ func (_u *PostUpdate) ClearCreatedBy() *PostUpdate {
 }
 
 // SetUpdatedBy sets the "updated_by" field.
-func (_u *PostUpdate) SetUpdatedBy(v uint32) *PostUpdate {
+func (_u *PostUpdate) SetUpdatedBy(v uint64) *PostUpdate {
 	_u.mutation.ResetUpdatedBy()
 	_u.mutation.SetUpdatedBy(v)
 	return _u
 }
 
 // SetNillableUpdatedBy sets the "updated_by" field if the given value is not nil.
-func (_u *PostUpdate) SetNillableUpdatedBy(v *uint32) *PostUpdate {
+func (_u *PostUpdate) SetNillableUpdatedBy(v *uint64) *PostUpdate {
 	if v != nil {
 		_u.SetUpdatedBy(*v)
 	}
@@ -112,7 +112,7 @@ func (_u *PostUpdate) SetNillableUpdatedBy(v *uint32) *PostUpdate {
 }
 
 // AddUpdatedBy adds value to the "updated_by" field.
-func (_u *PostUpdate) AddUpdatedBy(v int32) *PostUpdate {
+func (_u *PostUpdate) AddUpdatedBy(v int64) *PostUpdate {
 	_u.mutation.AddUpdatedBy(v)
 	return _u
 }
@@ -124,14 +124,14 @@ func (_u *PostUpdate) ClearUpdatedBy() *PostUpdate {
 }
 
 // SetDeletedBy sets the "deleted_by" field.
-func (_u *PostUpdate) SetDeletedBy(v uint32) *PostUpdate {
+func (_u *PostUpdate) SetDeletedBy(v uint64) *PostUpdate {
 	_u.mutation.ResetDeletedBy()
 	_u.mutation.SetDeletedBy(v)
 	return _u
 }
 
 // SetNillableDeletedBy sets the "deleted_by" field if the given value is not nil.
-func (_u *PostUpdate) SetNillableDeletedBy(v *uint32) *PostUpdate {
+func (_u *PostUpdate) SetNillableDeletedBy(v *uint64) *PostUpdate {
 	if v != nil {
 		_u.SetDeletedBy(*v)
 	}
@@ -139,7 +139,7 @@ func (_u *PostUpdate) SetNillableDeletedBy(v *uint32) *PostUpdate {
 }
 
 // AddDeletedBy adds value to the "deleted_by" field.
-func (_u *PostUpdate) AddDeletedBy(v int32) *PostUpdate {
+func (_u *PostUpdate) AddDeletedBy(v int64) *PostUpdate {
 	_u.mutation.AddDeletedBy(v)
 	return _u
 }
@@ -318,14 +318,14 @@ func (_u *PostUpdate) ClearIsFeatured() *PostUpdate {
 }
 
 // SetAuthorID sets the "author_id" field.
-func (_u *PostUpdate) SetAuthorID(v uint32) *PostUpdate {
+func (_u *PostUpdate) SetAuthorID(v uint64) *PostUpdate {
 	_u.mutation.ResetAuthorID()
 	_u.mutation.SetAuthorID(v)
 	return _u
 }
 
 // SetNillableAuthorID sets the "author_id" field if the given value is not nil.
-func (_u *PostUpdate) SetNillableAuthorID(v *uint32) *PostUpdate {
+func (_u *PostUpdate) SetNillableAuthorID(v *uint64) *PostUpdate {
 	if v != nil {
 		_u.SetAuthorID(*v)
 	}
@@ -333,7 +333,7 @@ func (_u *PostUpdate) SetNillableAuthorID(v *uint32) *PostUpdate {
 }
 
 // AddAuthorID adds value to the "author_id" field.
-func (_u *PostUpdate) AddAuthorID(v int32) *PostUpdate {
+func (_u *PostUpdate) AddAuthorID(v int64) *PostUpdate {
 	_u.mutation.AddAuthorID(v)
 	return _u
 }
@@ -493,7 +493,7 @@ func (_u *PostUpdate) sqlSave(ctx context.Context) (_node int, err error) {
 	if err := _u.check(); err != nil {
 		return _node, err
 	}
-	_spec := sqlgraph.NewUpdateSpec(post.Table, post.Columns, sqlgraph.NewFieldSpec(post.FieldID, field.TypeUint32))
+	_spec := sqlgraph.NewUpdateSpec(post.Table, post.Columns, sqlgraph.NewFieldSpec(post.FieldID, field.TypeUint64))
 	if ps := _u.mutation.predicates; len(ps) > 0 {
 		_spec.Predicate = func(selector *sql.Selector) {
 			for i := range ps {
@@ -517,31 +517,31 @@ func (_u *PostUpdate) sqlSave(ctx context.Context) (_node int, err error) {
 		_spec.ClearField(post.FieldDeletedAt, field.TypeTime)
 	}
 	if value, ok := _u.mutation.CreatedBy(); ok {
-		_spec.SetField(post.FieldCreatedBy, field.TypeUint32, value)
+		_spec.SetField(post.FieldCreatedBy, field.TypeUint64, value)
 	}
 	if value, ok := _u.mutation.AddedCreatedBy(); ok {
-		_spec.AddField(post.FieldCreatedBy, field.TypeUint32, value)
+		_spec.AddField(post.FieldCreatedBy, field.TypeUint64, value)
 	}
 	if _u.mutation.CreatedByCleared() {
-		_spec.ClearField(post.FieldCreatedBy, field.TypeUint32)
+		_spec.ClearField(post.FieldCreatedBy, field.TypeUint64)
 	}
 	if value, ok := _u.mutation.UpdatedBy(); ok {
-		_spec.SetField(post.FieldUpdatedBy, field.TypeUint32, value)
+		_spec.SetField(post.FieldUpdatedBy, field.TypeUint64, value)
 	}
 	if value, ok := _u.mutation.AddedUpdatedBy(); ok {
-		_spec.AddField(post.FieldUpdatedBy, field.TypeUint32, value)
+		_spec.AddField(post.FieldUpdatedBy, field.TypeUint64, value)
 	}
 	if _u.mutation.UpdatedByCleared() {
-		_spec.ClearField(post.FieldUpdatedBy, field.TypeUint32)
+		_spec.ClearField(post.FieldUpdatedBy, field.TypeUint64)
 	}
 	if value, ok := _u.mutation.DeletedBy(); ok {
-		_spec.SetField(post.FieldDeletedBy, field.TypeUint32, value)
+		_spec.SetField(post.FieldDeletedBy, field.TypeUint64, value)
 	}
 	if value, ok := _u.mutation.AddedDeletedBy(); ok {
-		_spec.AddField(post.FieldDeletedBy, field.TypeUint32, value)
+		_spec.AddField(post.FieldDeletedBy, field.TypeUint64, value)
 	}
 	if _u.mutation.DeletedByCleared() {
-		_spec.ClearField(post.FieldDeletedBy, field.TypeUint32)
+		_spec.ClearField(post.FieldDeletedBy, field.TypeUint64)
 	}
 	if value, ok := _u.mutation.SortOrder(); ok {
 		_spec.SetField(post.FieldSortOrder, field.TypeUint32, value)
@@ -559,7 +559,7 @@ func (_u *PostUpdate) sqlSave(ctx context.Context) (_node int, err error) {
 		_spec.ClearField(post.FieldEditorType, field.TypeEnum)
 	}
 	if _u.mutation.TenantIDCleared() {
-		_spec.ClearField(post.FieldTenantID, field.TypeUint32)
+		_spec.ClearField(post.FieldTenantID, field.TypeUint64)
 	}
 	if value, ok := _u.mutation.Status(); ok {
 		_spec.SetField(post.FieldStatus, field.TypeEnum, value)
@@ -598,13 +598,13 @@ func (_u *PostUpdate) sqlSave(ctx context.Context) (_node int, err error) {
 		_spec.ClearField(post.FieldIsFeatured, field.TypeBool)
 	}
 	if value, ok := _u.mutation.AuthorID(); ok {
-		_spec.SetField(post.FieldAuthorID, field.TypeUint32, value)
+		_spec.SetField(post.FieldAuthorID, field.TypeUint64, value)
 	}
 	if value, ok := _u.mutation.AddedAuthorID(); ok {
-		_spec.AddField(post.FieldAuthorID, field.TypeUint32, value)
+		_spec.AddField(post.FieldAuthorID, field.TypeUint64, value)
 	}
 	if _u.mutation.AuthorIDCleared() {
-		_spec.ClearField(post.FieldAuthorID, field.TypeUint32)
+		_spec.ClearField(post.FieldAuthorID, field.TypeUint64)
 	}
 	if value, ok := _u.mutation.AuthorName(); ok {
 		_spec.SetField(post.FieldAuthorName, field.TypeString, value)
@@ -699,14 +699,14 @@ func (_u *PostUpdateOne) ClearDeletedAt() *PostUpdateOne {
 }
 
 // SetCreatedBy sets the "created_by" field.
-func (_u *PostUpdateOne) SetCreatedBy(v uint32) *PostUpdateOne {
+func (_u *PostUpdateOne) SetCreatedBy(v uint64) *PostUpdateOne {
 	_u.mutation.ResetCreatedBy()
 	_u.mutation.SetCreatedBy(v)
 	return _u
 }
 
 // SetNillableCreatedBy sets the "created_by" field if the given value is not nil.
-func (_u *PostUpdateOne) SetNillableCreatedBy(v *uint32) *PostUpdateOne {
+func (_u *PostUpdateOne) SetNillableCreatedBy(v *uint64) *PostUpdateOne {
 	if v != nil {
 		_u.SetCreatedBy(*v)
 	}
@@ -714,7 +714,7 @@ func (_u *PostUpdateOne) SetNillableCreatedBy(v *uint32) *PostUpdateOne {
 }
 
 // AddCreatedBy adds value to the "created_by" field.
-func (_u *PostUpdateOne) AddCreatedBy(v int32) *PostUpdateOne {
+func (_u *PostUpdateOne) AddCreatedBy(v int64) *PostUpdateOne {
 	_u.mutation.AddCreatedBy(v)
 	return _u
 }
@@ -726,14 +726,14 @@ func (_u *PostUpdateOne) ClearCreatedBy() *PostUpdateOne {
 }
 
 // SetUpdatedBy sets the "updated_by" field.
-func (_u *PostUpdateOne) SetUpdatedBy(v uint32) *PostUpdateOne {
+func (_u *PostUpdateOne) SetUpdatedBy(v uint64) *PostUpdateOne {
 	_u.mutation.ResetUpdatedBy()
 	_u.mutation.SetUpdatedBy(v)
 	return _u
 }
 
 // SetNillableUpdatedBy sets the "updated_by" field if the given value is not nil.
-func (_u *PostUpdateOne) SetNillableUpdatedBy(v *uint32) *PostUpdateOne {
+func (_u *PostUpdateOne) SetNillableUpdatedBy(v *uint64) *PostUpdateOne {
 	if v != nil {
 		_u.SetUpdatedBy(*v)
 	}
@@ -741,7 +741,7 @@ func (_u *PostUpdateOne) SetNillableUpdatedBy(v *uint32) *PostUpdateOne {
 }
 
 // AddUpdatedBy adds value to the "updated_by" field.
-func (_u *PostUpdateOne) AddUpdatedBy(v int32) *PostUpdateOne {
+func (_u *PostUpdateOne) AddUpdatedBy(v int64) *PostUpdateOne {
 	_u.mutation.AddUpdatedBy(v)
 	return _u
 }
@@ -753,14 +753,14 @@ func (_u *PostUpdateOne) ClearUpdatedBy() *PostUpdateOne {
 }
 
 // SetDeletedBy sets the "deleted_by" field.
-func (_u *PostUpdateOne) SetDeletedBy(v uint32) *PostUpdateOne {
+func (_u *PostUpdateOne) SetDeletedBy(v uint64) *PostUpdateOne {
 	_u.mutation.ResetDeletedBy()
 	_u.mutation.SetDeletedBy(v)
 	return _u
 }
 
 // SetNillableDeletedBy sets the "deleted_by" field if the given value is not nil.
-func (_u *PostUpdateOne) SetNillableDeletedBy(v *uint32) *PostUpdateOne {
+func (_u *PostUpdateOne) SetNillableDeletedBy(v *uint64) *PostUpdateOne {
 	if v != nil {
 		_u.SetDeletedBy(*v)
 	}
@@ -768,7 +768,7 @@ func (_u *PostUpdateOne) SetNillableDeletedBy(v *uint32) *PostUpdateOne {
 }
 
 // AddDeletedBy adds value to the "deleted_by" field.
-func (_u *PostUpdateOne) AddDeletedBy(v int32) *PostUpdateOne {
+func (_u *PostUpdateOne) AddDeletedBy(v int64) *PostUpdateOne {
 	_u.mutation.AddDeletedBy(v)
 	return _u
 }
@@ -947,14 +947,14 @@ func (_u *PostUpdateOne) ClearIsFeatured() *PostUpdateOne {
 }
 
 // SetAuthorID sets the "author_id" field.
-func (_u *PostUpdateOne) SetAuthorID(v uint32) *PostUpdateOne {
+func (_u *PostUpdateOne) SetAuthorID(v uint64) *PostUpdateOne {
 	_u.mutation.ResetAuthorID()
 	_u.mutation.SetAuthorID(v)
 	return _u
 }
 
 // SetNillableAuthorID sets the "author_id" field if the given value is not nil.
-func (_u *PostUpdateOne) SetNillableAuthorID(v *uint32) *PostUpdateOne {
+func (_u *PostUpdateOne) SetNillableAuthorID(v *uint64) *PostUpdateOne {
 	if v != nil {
 		_u.SetAuthorID(*v)
 	}
@@ -962,7 +962,7 @@ func (_u *PostUpdateOne) SetNillableAuthorID(v *uint32) *PostUpdateOne {
 }
 
 // AddAuthorID adds value to the "author_id" field.
-func (_u *PostUpdateOne) AddAuthorID(v int32) *PostUpdateOne {
+func (_u *PostUpdateOne) AddAuthorID(v int64) *PostUpdateOne {
 	_u.mutation.AddAuthorID(v)
 	return _u
 }
@@ -1135,7 +1135,7 @@ func (_u *PostUpdateOne) sqlSave(ctx context.Context) (_node *Post, err error) {
 	if err := _u.check(); err != nil {
 		return _node, err
 	}
-	_spec := sqlgraph.NewUpdateSpec(post.Table, post.Columns, sqlgraph.NewFieldSpec(post.FieldID, field.TypeUint32))
+	_spec := sqlgraph.NewUpdateSpec(post.Table, post.Columns, sqlgraph.NewFieldSpec(post.FieldID, field.TypeUint64))
 	id, ok := _u.mutation.ID()
 	if !ok {
 		return nil, &ValidationError{Name: "id", err: errors.New(`ent: missing "Post.id" for update`)}
@@ -1176,31 +1176,31 @@ func (_u *PostUpdateOne) sqlSave(ctx context.Context) (_node *Post, err error) {
 		_spec.ClearField(post.FieldDeletedAt, field.TypeTime)
 	}
 	if value, ok := _u.mutation.CreatedBy(); ok {
-		_spec.SetField(post.FieldCreatedBy, field.TypeUint32, value)
+		_spec.SetField(post.FieldCreatedBy, field.TypeUint64, value)
 	}
 	if value, ok := _u.mutation.AddedCreatedBy(); ok {
-		_spec.AddField(post.FieldCreatedBy, field.TypeUint32, value)
+		_spec.AddField(post.FieldCreatedBy, field.TypeUint64, value)
 	}
 	if _u.mutation.CreatedByCleared() {
-		_spec.ClearField(post.FieldCreatedBy, field.TypeUint32)
+		_spec.ClearField(post.FieldCreatedBy, field.TypeUint64)
 	}
 	if value, ok := _u.mutation.UpdatedBy(); ok {
-		_spec.SetField(post.FieldUpdatedBy, field.TypeUint32, value)
+		_spec.SetField(post.FieldUpdatedBy, field.TypeUint64, value)
 	}
 	if value, ok := _u.mutation.AddedUpdatedBy(); ok {
-		_spec.AddField(post.FieldUpdatedBy, field.TypeUint32, value)
+		_spec.AddField(post.FieldUpdatedBy, field.TypeUint64, value)
 	}
 	if _u.mutation.UpdatedByCleared() {
-		_spec.ClearField(post.FieldUpdatedBy, field.TypeUint32)
+		_spec.ClearField(post.FieldUpdatedBy, field.TypeUint64)
 	}
 	if value, ok := _u.mutation.DeletedBy(); ok {
-		_spec.SetField(post.FieldDeletedBy, field.TypeUint32, value)
+		_spec.SetField(post.FieldDeletedBy, field.TypeUint64, value)
 	}
 	if value, ok := _u.mutation.AddedDeletedBy(); ok {
-		_spec.AddField(post.FieldDeletedBy, field.TypeUint32, value)
+		_spec.AddField(post.FieldDeletedBy, field.TypeUint64, value)
 	}
 	if _u.mutation.DeletedByCleared() {
-		_spec.ClearField(post.FieldDeletedBy, field.TypeUint32)
+		_spec.ClearField(post.FieldDeletedBy, field.TypeUint64)
 	}
 	if value, ok := _u.mutation.SortOrder(); ok {
 		_spec.SetField(post.FieldSortOrder, field.TypeUint32, value)
@@ -1218,7 +1218,7 @@ func (_u *PostUpdateOne) sqlSave(ctx context.Context) (_node *Post, err error) {
 		_spec.ClearField(post.FieldEditorType, field.TypeEnum)
 	}
 	if _u.mutation.TenantIDCleared() {
-		_spec.ClearField(post.FieldTenantID, field.TypeUint32)
+		_spec.ClearField(post.FieldTenantID, field.TypeUint64)
 	}
 	if value, ok := _u.mutation.Status(); ok {
 		_spec.SetField(post.FieldStatus, field.TypeEnum, value)
@@ -1257,13 +1257,13 @@ func (_u *PostUpdateOne) sqlSave(ctx context.Context) (_node *Post, err error) {
 		_spec.ClearField(post.FieldIsFeatured, field.TypeBool)
 	}
 	if value, ok := _u.mutation.AuthorID(); ok {
-		_spec.SetField(post.FieldAuthorID, field.TypeUint32, value)
+		_spec.SetField(post.FieldAuthorID, field.TypeUint64, value)
 	}
 	if value, ok := _u.mutation.AddedAuthorID(); ok {
-		_spec.AddField(post.FieldAuthorID, field.TypeUint32, value)
+		_spec.AddField(post.FieldAuthorID, field.TypeUint64, value)
 	}
 	if _u.mutation.AuthorIDCleared() {
-		_spec.ClearField(post.FieldAuthorID, field.TypeUint32)
+		_spec.ClearField(post.FieldAuthorID, field.TypeUint64)
 	}
 	if value, ok := _u.mutation.AuthorName(); ok {
 		_spec.SetField(post.FieldAuthorName, field.TypeString, value)

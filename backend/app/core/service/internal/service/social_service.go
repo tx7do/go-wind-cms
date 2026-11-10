@@ -506,7 +506,7 @@ func (s *SocialService) RefreshSocialDistributionStats(ctx context.Context, req 
 	}
 
 	now := time.Now()
-	if err = s.distributionRepo.UpdateStats(ctx, req.GetId(), stats.Likes, stats.Replies, stats.Reposts, now); err != nil {
+	if err = s.distributionRepo.UpdateStats(ctx, req.GetId(), uint32(stats.Likes), uint32(stats.Replies), uint32(stats.Reposts), now); err != nil {
 		return nil, err
 	}
 	s.recordStatsHistory(ctx, req.GetId(), stats, now)
@@ -744,8 +744,8 @@ func (s *SocialService) enrichDistributions(ctx context.Context, items []*social
 		return
 	}
 
-	accountNames := make(map[uint32]string)
-	postTitles := make(map[uint32]string)
+	accountNames := make(map[uint64]string)
+	postTitles := make(map[uint64]string)
 	for _, item := range items {
 		if item == nil {
 			continue
@@ -893,7 +893,7 @@ func (s *SocialService) StatsSyncWorker(taskType string, payload *task.StatsSync
 		}
 
 		if uerr := s.distributionRepo.UpdateStats(ctx, item.GetId(),
-			stats.Likes, stats.Replies, stats.Reposts, now); uerr != nil {
+			uint32(stats.Likes), uint32(stats.Replies), uint32(stats.Reposts), now); uerr != nil {
 			s.log.Errorf("stats sync: update stats failed (distribution=%d): %v", item.GetId(), uerr)
 			failCount++
 			continue
@@ -913,9 +913,9 @@ func (s *SocialService) StatsSyncWorker(taskType string, payload *task.StatsSync
 
 // GetSocialDistributionSummary 当前租户的分发汇总指标（KPI 卡片）。
 func (s *SocialService) GetSocialDistributionSummary(ctx context.Context, _ *emptypb.Empty) (*socialV1.SocialDistributionSummary, error) {
-	tid := uint32(0)
+	tid := uint64(0)
 	if vc, exist := viewer.FromContext(ctx); exist && vc != nil {
-		tid = uint32(vc.TenantID())
+		tid = uint64(vc.TenantID())
 	}
 	row, err := s.distributionRepo.Summary(ctx, tid, time.Now().Add(-7*24*time.Hour))
 	if err != nil {
@@ -964,7 +964,7 @@ const socialMaxMediaPerPost = 4
 
 // resolveMedia 把媒体资产 ID 解析为图片字节（SystemViewer 上下文跨租户读取）。
 // 单张失败跳过并记日志；仅接受图片类型；至多解析 socialMaxMediaPerPost 张。
-func (s *SocialService) resolveMedia(ctx context.Context, mediaIDs []uint32) []social.MediaAttachment {
+func (s *SocialService) resolveMedia(ctx context.Context, mediaIDs []uint64) []social.MediaAttachment {
 	if len(mediaIDs) == 0 {
 		return nil
 	}
@@ -1033,15 +1033,15 @@ func (s *SocialService) resolveMedia(ctx context.Context, mediaIDs []uint32) []s
 }
 
 // recordStatsHistory 追加一行统计快照（趋势数据从今天开始积累；失败不影响主流程）。
-func (s *SocialService) recordStatsHistory(ctx context.Context, distributionID uint32, stats *social.Stats, now time.Time) {
+func (s *SocialService) recordStatsHistory(ctx context.Context, distributionID uint64, stats *social.Stats, now time.Time) {
 	if s.statsHistoryRepo == nil || stats == nil {
 		return
 	}
 	if err := s.statsHistoryRepo.Record(ctx, data.StatsRecord{
 		DistributionID: distributionID,
-		Likes:          stats.Likes,
-		Replies:        stats.Replies,
-		Reposts:        stats.Reposts,
+		Likes:          uint32(stats.Likes),
+		Replies:        uint32(stats.Replies),
+		Reposts:        uint32(stats.Reposts),
 		RecordedAt:     now,
 	}); err != nil {
 		s.log.Errorf("record stats history failed (distribution=%d): %v", distributionID, err)
@@ -1219,7 +1219,7 @@ func (s *SocialService) InboxSyncWorker(taskType string, payload *task.PublishSw
 }
 
 // maybeTenantFromViewerSocial viewer → 租户 ID（服务包内复用）。
-func maybeTenantFromViewerSocial(ctx context.Context) (uint32, bool) {
+func maybeTenantFromViewerSocial(ctx context.Context) (uint64, bool) {
 	vc, exist := viewer.FromContext(ctx)
 	if !exist || vc == nil {
 		return 0, false
@@ -1228,13 +1228,13 @@ func maybeTenantFromViewerSocial(ctx context.Context) (uint32, bool) {
 	if tid == 0 {
 		return 0, false
 	}
-	return uint32(tid), true
+	return uint64(tid), true
 }
 
 // socialTenantIDFromViewerContext SystemViewer 上下文下的租户 ID（无则 0 平台）。
-func socialTenantIDFromViewerContext(ctx context.Context) uint32 {
+func socialTenantIDFromViewerContext(ctx context.Context) uint64 {
 	if vc, exist := viewer.FromContext(ctx); exist && vc != nil {
-		return uint32(vc.TenantID())
+		return uint64(vc.TenantID())
 	}
 	return 0
 }

@@ -30,11 +30,11 @@ func (PostTag) Annotations() []schema.Annotation {
 // Fields of the PostTag.
 func (PostTag) Fields() []ent.Field {
 	return []ent.Field{
-		field.Uint32("post_id").
+		field.Uint64("post_id").
 			Comment("帖子ID").
 			Nillable(),
 
-		field.Uint32("tag_id").
+		field.Uint64("tag_id").
 			Comment("标签ID").
 			Nillable(),
 	}
@@ -43,9 +43,9 @@ func (PostTag) Fields() []ent.Field {
 // Mixin of the PostTag.
 func (PostTag) Mixin() []ent.Mixin {
 	return []ent.Mixin{
-		mixin.AutoIncrementId{},
+		mixin.AutoIncrementId64{},
 		mixin.CreatedAt{},
-		mixin.TenantID[uint32]{},
+		mixin.TenantID[uint64]{},
 	}
 }
 

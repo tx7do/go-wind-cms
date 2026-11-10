@@ -133,7 +133,7 @@ func (s *Service) seedRoom(room string, doc *crdt.Doc) {
 }
 
 // parseRoom 解析房间名 post:{id}:{locale} / page:{id}:{locale}。
-func parseRoom(room string) (targetType string, targetID uint32, locale string, ok bool) {
+func parseRoom(room string) (targetType string, targetID uint64, locale string, ok bool) {
 	parts := strings.SplitN(room, ":", 3)
 	if len(parts) != 3 {
 		return "", 0, "", false
@@ -142,7 +142,7 @@ func parseRoom(room string) (targetType string, targetID uint32, locale string, 
 	if err != nil || id == 0 {
 		return "", 0, "", false
 	}
-	return parts[0], uint32(id), parts[2], true
+	return parts[0], uint64(id), parts[2], true
 }
 
 // pickTranslationContent 挑选语言内容：精确匹配 locale，回退第一条。

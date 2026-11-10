@@ -14,7 +14,7 @@ import (
 // 安全性:payload 不做签名与时效校验,仅作为"刷新令牌绑定键"的来源;
 // 真正的凭证校验由 core 侧 VerifyAndRevokeTokenPair 以 refresh token 值
 // 完成(随机秘密,伪造 uid/jti 无法通过)。
-func ParseUnverifiedBearerJWTClaims(ctx context.Context) (uid uint32, jti string, err error) {
+func ParseUnverifiedBearerJWTClaims(ctx context.Context) (uid uint64, jti string, err error) {
 	header := HeaderFromContext(ctx)
 	if header == nil {
 		return 0, "", errors.New("no http header in context")
@@ -35,7 +35,7 @@ func ParseUnverifiedBearerJWTClaims(ctx context.Context) (uid uint32, jti string
 	}
 
 	var claims struct {
-		UID uint32 `json:"uid"`
+		UID uint64 `json:"uid"`
 		Jti string `json:"jti"`
 	}
 	if err := json.Unmarshal(payload, &claims); err != nil {

@@ -82,14 +82,14 @@ func (Menu) Fields() []ent.Field {
 
 func (Menu) Mixin() []ent.Mixin {
 	return []ent.Mixin{
-		mixin.AutoIncrementId{},
+		mixin.AutoIncrementId64{},
 		mixin.TimeAt{},
-		mixin.OperatorID{},
-		mixin.Tree[Menu]{},
+		mixin.OperatorID64{},
+		mixin.Tree64[Menu]{},
 		//mixin.TreePath{},
 		mixin.Remark{},
 		mixin.SwitchStatus{},
-		mixin.TenantID[uint32]{},
+		mixin.TenantID[uint64]{},
 	}
 }
 

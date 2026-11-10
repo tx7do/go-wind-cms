@@ -10,47 +10,47 @@ import (
 )
 
 // ID filters vertices based on their ID field.
-func ID(id uint32) predicate.SocialStatsHistory {
+func ID(id uint64) predicate.SocialStatsHistory {
 	return predicate.SocialStatsHistory(sql.FieldEQ(FieldID, id))
 }
 
 // IDEQ applies the EQ predicate on the ID field.
-func IDEQ(id uint32) predicate.SocialStatsHistory {
+func IDEQ(id uint64) predicate.SocialStatsHistory {
 	return predicate.SocialStatsHistory(sql.FieldEQ(FieldID, id))
 }
 
 // IDNEQ applies the NEQ predicate on the ID field.
-func IDNEQ(id uint32) predicate.SocialStatsHistory {
+func IDNEQ(id uint64) predicate.SocialStatsHistory {
 	return predicate.SocialStatsHistory(sql.FieldNEQ(FieldID, id))
 }
 
 // IDIn applies the In predicate on the ID field.
-func IDIn(ids ...uint32) predicate.SocialStatsHistory {
+func IDIn(ids ...uint64) predicate.SocialStatsHistory {
 	return predicate.SocialStatsHistory(sql.FieldIn(FieldID, ids...))
 }
 
 // IDNotIn applies the NotIn predicate on the ID field.
-func IDNotIn(ids ...uint32) predicate.SocialStatsHistory {
+func IDNotIn(ids ...uint64) predicate.SocialStatsHistory {
 	return predicate.SocialStatsHistory(sql.FieldNotIn(FieldID, ids...))
 }
 
 // IDGT applies the GT predicate on the ID field.
-func IDGT(id uint32) predicate.SocialStatsHistory {
+func IDGT(id uint64) predicate.SocialStatsHistory {
 	return predicate.SocialStatsHistory(sql.FieldGT(FieldID, id))
 }
 
 // IDGTE applies the GTE predicate on the ID field.
-func IDGTE(id uint32) predicate.SocialStatsHistory {
+func IDGTE(id uint64) predicate.SocialStatsHistory {
 	return predicate.SocialStatsHistory(sql.FieldGTE(FieldID, id))
 }
 
 // IDLT applies the LT predicate on the ID field.
-func IDLT(id uint32) predicate.SocialStatsHistory {
+func IDLT(id uint64) predicate.SocialStatsHistory {
 	return predicate.SocialStatsHistory(sql.FieldLT(FieldID, id))
 }
 
 // IDLTE applies the LTE predicate on the ID field.
-func IDLTE(id uint32) predicate.SocialStatsHistory {
+func IDLTE(id uint64) predicate.SocialStatsHistory {
 	return predicate.SocialStatsHistory(sql.FieldLTE(FieldID, id))
 }
 
@@ -70,7 +70,7 @@ func DeletedAt(v time.Time) predicate.SocialStatsHistory {
 }
 
 // DistributionID applies equality check predicate on the "distribution_id" field. It's identical to DistributionIDEQ.
-func DistributionID(v uint32) predicate.SocialStatsHistory {
+func DistributionID(v uint64) predicate.SocialStatsHistory {
 	return predicate.SocialStatsHistory(sql.FieldEQ(FieldDistributionID, v))
 }
 
@@ -240,42 +240,42 @@ func DeletedAtNotNil() predicate.SocialStatsHistory {
 }
 
 // DistributionIDEQ applies the EQ predicate on the "distribution_id" field.
-func DistributionIDEQ(v uint32) predicate.SocialStatsHistory {
+func DistributionIDEQ(v uint64) predicate.SocialStatsHistory {
 	return predicate.SocialStatsHistory(sql.FieldEQ(FieldDistributionID, v))
 }
 
 // DistributionIDNEQ applies the NEQ predicate on the "distribution_id" field.
-func DistributionIDNEQ(v uint32) predicate.SocialStatsHistory {
+func DistributionIDNEQ(v uint64) predicate.SocialStatsHistory {
 	return predicate.SocialStatsHistory(sql.FieldNEQ(FieldDistributionID, v))
 }
 
 // DistributionIDIn applies the In predicate on the "distribution_id" field.
-func DistributionIDIn(vs ...uint32) predicate.SocialStatsHistory {
+func DistributionIDIn(vs ...uint64) predicate.SocialStatsHistory {
 	return predicate.SocialStatsHistory(sql.FieldIn(FieldDistributionID, vs...))
 }
 
 // DistributionIDNotIn applies the NotIn predicate on the "distribution_id" field.
-func DistributionIDNotIn(vs ...uint32) predicate.SocialStatsHistory {
+func DistributionIDNotIn(vs ...uint64) predicate.SocialStatsHistory {
 	return predicate.SocialStatsHistory(sql.FieldNotIn(FieldDistributionID, vs...))
 }
 
 // DistributionIDGT applies the GT predicate on the "distribution_id" field.
-func DistributionIDGT(v uint32) predicate.SocialStatsHistory {
+func DistributionIDGT(v uint64) predicate.SocialStatsHistory {
 	return predicate.SocialStatsHistory(sql.FieldGT(FieldDistributionID, v))
 }
 
 // DistributionIDGTE applies the GTE predicate on the "distribution_id" field.
-func DistributionIDGTE(v uint32) predicate.SocialStatsHistory {
+func DistributionIDGTE(v uint64) predicate.SocialStatsHistory {
 	return predicate.SocialStatsHistory(sql.FieldGTE(FieldDistributionID, v))
 }
 
 // DistributionIDLT applies the LT predicate on the "distribution_id" field.
-func DistributionIDLT(v uint32) predicate.SocialStatsHistory {
+func DistributionIDLT(v uint64) predicate.SocialStatsHistory {
 	return predicate.SocialStatsHistory(sql.FieldLT(FieldDistributionID, v))
 }
 
 // DistributionIDLTE applies the LTE predicate on the "distribution_id" field.
-func DistributionIDLTE(v uint32) predicate.SocialStatsHistory {
+func DistributionIDLTE(v uint64) predicate.SocialStatsHistory {
 	return predicate.SocialStatsHistory(sql.FieldLTE(FieldDistributionID, v))
 }
 

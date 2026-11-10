@@ -70,14 +70,14 @@ func (_u *PostWatchUpdate) ClearDeletedAt() *PostWatchUpdate {
 }
 
 // SetUserID sets the "user_id" field.
-func (_u *PostWatchUpdate) SetUserID(v uint32) *PostWatchUpdate {
+func (_u *PostWatchUpdate) SetUserID(v uint64) *PostWatchUpdate {
 	_u.mutation.ResetUserID()
 	_u.mutation.SetUserID(v)
 	return _u
 }
 
 // SetNillableUserID sets the "user_id" field if the given value is not nil.
-func (_u *PostWatchUpdate) SetNillableUserID(v *uint32) *PostWatchUpdate {
+func (_u *PostWatchUpdate) SetNillableUserID(v *uint64) *PostWatchUpdate {
 	if v != nil {
 		_u.SetUserID(*v)
 	}
@@ -85,7 +85,7 @@ func (_u *PostWatchUpdate) SetNillableUserID(v *uint32) *PostWatchUpdate {
 }
 
 // AddUserID adds value to the "user_id" field.
-func (_u *PostWatchUpdate) AddUserID(v int32) *PostWatchUpdate {
+func (_u *PostWatchUpdate) AddUserID(v int64) *PostWatchUpdate {
 	_u.mutation.AddUserID(v)
 	return _u
 }
@@ -97,14 +97,14 @@ func (_u *PostWatchUpdate) ClearUserID() *PostWatchUpdate {
 }
 
 // SetPostID sets the "post_id" field.
-func (_u *PostWatchUpdate) SetPostID(v uint32) *PostWatchUpdate {
+func (_u *PostWatchUpdate) SetPostID(v uint64) *PostWatchUpdate {
 	_u.mutation.ResetPostID()
 	_u.mutation.SetPostID(v)
 	return _u
 }
 
 // SetNillablePostID sets the "post_id" field if the given value is not nil.
-func (_u *PostWatchUpdate) SetNillablePostID(v *uint32) *PostWatchUpdate {
+func (_u *PostWatchUpdate) SetNillablePostID(v *uint64) *PostWatchUpdate {
 	if v != nil {
 		_u.SetPostID(*v)
 	}
@@ -112,7 +112,7 @@ func (_u *PostWatchUpdate) SetNillablePostID(v *uint32) *PostWatchUpdate {
 }
 
 // AddPostID adds value to the "post_id" field.
-func (_u *PostWatchUpdate) AddPostID(v int32) *PostWatchUpdate {
+func (_u *PostWatchUpdate) AddPostID(v int64) *PostWatchUpdate {
 	_u.mutation.AddPostID(v)
 	return _u
 }
@@ -162,7 +162,7 @@ func (_u *PostWatchUpdate) Modify(modifiers ...func(u *sql.UpdateBuilder)) *Post
 }
 
 func (_u *PostWatchUpdate) sqlSave(ctx context.Context) (_node int, err error) {
-	_spec := sqlgraph.NewUpdateSpec(postwatch.Table, postwatch.Columns, sqlgraph.NewFieldSpec(postwatch.FieldID, field.TypeUint32))
+	_spec := sqlgraph.NewUpdateSpec(postwatch.Table, postwatch.Columns, sqlgraph.NewFieldSpec(postwatch.FieldID, field.TypeUint64))
 	if ps := _u.mutation.predicates; len(ps) > 0 {
 		_spec.Predicate = func(selector *sql.Selector) {
 			for i := range ps {
@@ -186,25 +186,25 @@ func (_u *PostWatchUpdate) sqlSave(ctx context.Context) (_node int, err error) {
 		_spec.ClearField(postwatch.FieldDeletedAt, field.TypeTime)
 	}
 	if _u.mutation.TenantIDCleared() {
-		_spec.ClearField(postwatch.FieldTenantID, field.TypeUint32)
+		_spec.ClearField(postwatch.FieldTenantID, field.TypeUint64)
 	}
 	if value, ok := _u.mutation.UserID(); ok {
-		_spec.SetField(postwatch.FieldUserID, field.TypeUint32, value)
+		_spec.SetField(postwatch.FieldUserID, field.TypeUint64, value)
 	}
 	if value, ok := _u.mutation.AddedUserID(); ok {
-		_spec.AddField(postwatch.FieldUserID, field.TypeUint32, value)
+		_spec.AddField(postwatch.FieldUserID, field.TypeUint64, value)
 	}
 	if _u.mutation.UserIDCleared() {
-		_spec.ClearField(postwatch.FieldUserID, field.TypeUint32)
+		_spec.ClearField(postwatch.FieldUserID, field.TypeUint64)
 	}
 	if value, ok := _u.mutation.PostID(); ok {
-		_spec.SetField(postwatch.FieldPostID, field.TypeUint32, value)
+		_spec.SetField(postwatch.FieldPostID, field.TypeUint64, value)
 	}
 	if value, ok := _u.mutation.AddedPostID(); ok {
-		_spec.AddField(postwatch.FieldPostID, field.TypeUint32, value)
+		_spec.AddField(postwatch.FieldPostID, field.TypeUint64, value)
 	}
 	if _u.mutation.PostIDCleared() {
-		_spec.ClearField(postwatch.FieldPostID, field.TypeUint32)
+		_spec.ClearField(postwatch.FieldPostID, field.TypeUint64)
 	}
 	_spec.AddModifiers(_u.modifiers...)
 	if _node, err = sqlgraph.UpdateNodes(ctx, _u.driver, _spec); err != nil {
@@ -269,14 +269,14 @@ func (_u *PostWatchUpdateOne) ClearDeletedAt() *PostWatchUpdateOne {
 }
 
 // SetUserID sets the "user_id" field.
-func (_u *PostWatchUpdateOne) SetUserID(v uint32) *PostWatchUpdateOne {
+func (_u *PostWatchUpdateOne) SetUserID(v uint64) *PostWatchUpdateOne {
 	_u.mutation.ResetUserID()
 	_u.mutation.SetUserID(v)
 	return _u
 }
 
 // SetNillableUserID sets the "user_id" field if the given value is not nil.
-func (_u *PostWatchUpdateOne) SetNillableUserID(v *uint32) *PostWatchUpdateOne {
+func (_u *PostWatchUpdateOne) SetNillableUserID(v *uint64) *PostWatchUpdateOne {
 	if v != nil {
 		_u.SetUserID(*v)
 	}
@@ -284,7 +284,7 @@ func (_u *PostWatchUpdateOne) SetNillableUserID(v *uint32) *PostWatchUpdateOne {
 }
 
 // AddUserID adds value to the "user_id" field.
-func (_u *PostWatchUpdateOne) AddUserID(v int32) *PostWatchUpdateOne {
+func (_u *PostWatchUpdateOne) AddUserID(v int64) *PostWatchUpdateOne {
 	_u.mutation.AddUserID(v)
 	return _u
 }
@@ -296,14 +296,14 @@ func (_u *PostWatchUpdateOne) ClearUserID() *PostWatchUpdateOne {
 }
 
 // SetPostID sets the "post_id" field.
-func (_u *PostWatchUpdateOne) SetPostID(v uint32) *PostWatchUpdateOne {
+func (_u *PostWatchUpdateOne) SetPostID(v uint64) *PostWatchUpdateOne {
 	_u.mutation.ResetPostID()
 	_u.mutation.SetPostID(v)
 	return _u
 }
 
 // SetNillablePostID sets the "post_id" field if the given value is not nil.
-func (_u *PostWatchUpdateOne) SetNillablePostID(v *uint32) *PostWatchUpdateOne {
+func (_u *PostWatchUpdateOne) SetNillablePostID(v *uint64) *PostWatchUpdateOne {
 	if v != nil {
 		_u.SetPostID(*v)
 	}
@@ -311,7 +311,7 @@ func (_u *PostWatchUpdateOne) SetNillablePostID(v *uint32) *PostWatchUpdateOne {
 }
 
 // AddPostID adds value to the "post_id" field.
-func (_u *PostWatchUpdateOne) AddPostID(v int32) *PostWatchUpdateOne {
+func (_u *PostWatchUpdateOne) AddPostID(v int64) *PostWatchUpdateOne {
 	_u.mutation.AddPostID(v)
 	return _u
 }
@@ -374,7 +374,7 @@ func (_u *PostWatchUpdateOne) Modify(modifiers ...func(u *sql.UpdateBuilder)) *P
 }
 
 func (_u *PostWatchUpdateOne) sqlSave(ctx context.Context) (_node *PostWatch, err error) {
-	_spec := sqlgraph.NewUpdateSpec(postwatch.Table, postwatch.Columns, sqlgraph.NewFieldSpec(postwatch.FieldID, field.TypeUint32))
+	_spec := sqlgraph.NewUpdateSpec(postwatch.Table, postwatch.Columns, sqlgraph.NewFieldSpec(postwatch.FieldID, field.TypeUint64))
 	id, ok := _u.mutation.ID()
 	if !ok {
 		return nil, &ValidationError{Name: "id", err: errors.New(`ent: missing "PostWatch.id" for update`)}
@@ -415,25 +415,25 @@ func (_u *PostWatchUpdateOne) sqlSave(ctx context.Context) (_node *PostWatch, er
 		_spec.ClearField(postwatch.FieldDeletedAt, field.TypeTime)
 	}
 	if _u.mutation.TenantIDCleared() {
-		_spec.ClearField(postwatch.FieldTenantID, field.TypeUint32)
+		_spec.ClearField(postwatch.FieldTenantID, field.TypeUint64)
 	}
 	if value, ok := _u.mutation.UserID(); ok {
-		_spec.SetField(postwatch.FieldUserID, field.TypeUint32, value)
+		_spec.SetField(postwatch.FieldUserID, field.TypeUint64, value)
 	}
 	if value, ok := _u.mutation.AddedUserID(); ok {
-		_spec.AddField(postwatch.FieldUserID, field.TypeUint32, value)
+		_spec.AddField(postwatch.FieldUserID, field.TypeUint64, value)
 	}
 	if _u.mutation.UserIDCleared() {
-		_spec.ClearField(postwatch.FieldUserID, field.TypeUint32)
+		_spec.ClearField(postwatch.FieldUserID, field.TypeUint64)
 	}
 	if value, ok := _u.mutation.PostID(); ok {
-		_spec.SetField(postwatch.FieldPostID, field.TypeUint32, value)
+		_spec.SetField(postwatch.FieldPostID, field.TypeUint64, value)
 	}
 	if value, ok := _u.mutation.AddedPostID(); ok {
-		_spec.AddField(postwatch.FieldPostID, field.TypeUint32, value)
+		_spec.AddField(postwatch.FieldPostID, field.TypeUint64, value)
 	}
 	if _u.mutation.PostIDCleared() {
-		_spec.ClearField(postwatch.FieldPostID, field.TypeUint32)
+		_spec.ClearField(postwatch.FieldPostID, field.TypeUint64)
 	}
 	_spec.AddModifiers(_u.modifiers...)
 	_node = &PostWatch{config: _u.config}

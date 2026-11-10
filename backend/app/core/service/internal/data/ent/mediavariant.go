@@ -17,15 +17,15 @@ type MediaVariant struct {
 	config `json:"-"`
 	// ID of the ent.
 	// id
-	ID uint32 `json:"id,omitempty"`
+	ID uint64 `json:"id,omitempty"`
 	// 创建时间
 	CreatedAt *time.Time `json:"created_at,omitempty"`
 	// 租户ID
-	TenantID *uint32 `json:"tenant_id,omitempty"`
+	TenantID *uint64 `json:"tenant_id,omitempty"`
 	// 媒体资源ID
-	MediaID *uint32 `json:"media_id,omitempty"`
+	MediaID *uint64 `json:"media_id,omitempty"`
 	// 文件ID
-	FileID *uint32 `json:"file_id,omitempty"`
+	FileID *uint64 `json:"file_id,omitempty"`
 	// 变体名称
 	VariantName  *uint32 `json:"variant_name,omitempty"`
 	selectValues sql.SelectValues
@@ -60,7 +60,7 @@ func (_m *MediaVariant) assignValues(columns []string, values []any) error {
 			if !ok {
 				return fmt.Errorf("unexpected type %T for field id", value)
 			}
-			_m.ID = uint32(value.Int64)
+			_m.ID = uint64(value.Int64)
 		case mediavariant.FieldCreatedAt:
 			if value, ok := values[i].(*sql.NullTime); !ok {
 				return fmt.Errorf("unexpected type %T for field created_at", values[i])
@@ -72,22 +72,22 @@ func (_m *MediaVariant) assignValues(columns []string, values []any) error {
 			if value, ok := values[i].(*sql.NullInt64); !ok {
 				return fmt.Errorf("unexpected type %T for field tenant_id", values[i])
 			} else if value.Valid {
-				_m.TenantID = new(uint32)
-				*_m.TenantID = uint32(value.Int64)
+				_m.TenantID = new(uint64)
+				*_m.TenantID = uint64(value.Int64)
 			}
 		case mediavariant.FieldMediaID:
 			if value, ok := values[i].(*sql.NullInt64); !ok {
 				return fmt.Errorf("unexpected type %T for field media_id", values[i])
 			} else if value.Valid {
-				_m.MediaID = new(uint32)
-				*_m.MediaID = uint32(value.Int64)
+				_m.MediaID = new(uint64)
+				*_m.MediaID = uint64(value.Int64)
 			}
 		case mediavariant.FieldFileID:
 			if value, ok := values[i].(*sql.NullInt64); !ok {
 				return fmt.Errorf("unexpected type %T for field file_id", values[i])
 			} else if value.Valid {
-				_m.FileID = new(uint32)
-				*_m.FileID = uint32(value.Int64)
+				_m.FileID = new(uint64)
+				*_m.FileID = uint64(value.Int64)
 			}
 		case mediavariant.FieldVariantName:
 			if value, ok := values[i].(*sql.NullInt64); !ok {

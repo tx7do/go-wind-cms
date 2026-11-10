@@ -18,7 +18,7 @@ type FormSubmission struct {
 	config `json:"-"`
 	// ID of the ent.
 	// id
-	ID uint32 `json:"id,omitempty"`
+	ID uint64 `json:"id,omitempty"`
 	// 创建时间
 	CreatedAt *time.Time `json:"created_at,omitempty"`
 	// 更新时间
@@ -26,15 +26,15 @@ type FormSubmission struct {
 	// 删除时间
 	DeletedAt *time.Time `json:"deleted_at,omitempty"`
 	// 租户ID
-	TenantID *uint32 `json:"tenant_id,omitempty"`
+	TenantID *uint64 `json:"tenant_id,omitempty"`
 	// 所属页面ID
-	PageID *uint32 `json:"page_id,omitempty"`
+	PageID *uint64 `json:"page_id,omitempty"`
 	// 所属区块ID（FORM 类型 Section）
-	SectionID *uint32 `json:"section_id,omitempty"`
+	SectionID *uint64 `json:"section_id,omitempty"`
 	// 提交数据（字段名→值；字段集须为该区块 config.fields 的子集）
 	Data *map[string]string `json:"data,omitempty"`
 	// 提交者用户ID（匿名提交为 0）
-	UserID       *uint32 `json:"user_id,omitempty"`
+	UserID       *uint64 `json:"user_id,omitempty"`
 	selectValues sql.SelectValues
 }
 
@@ -69,7 +69,7 @@ func (_m *FormSubmission) assignValues(columns []string, values []any) error {
 			if !ok {
 				return fmt.Errorf("unexpected type %T for field id", value)
 			}
-			_m.ID = uint32(value.Int64)
+			_m.ID = uint64(value.Int64)
 		case formsubmission.FieldCreatedAt:
 			if value, ok := values[i].(*sql.NullTime); !ok {
 				return fmt.Errorf("unexpected type %T for field created_at", values[i])
@@ -95,22 +95,22 @@ func (_m *FormSubmission) assignValues(columns []string, values []any) error {
 			if value, ok := values[i].(*sql.NullInt64); !ok {
 				return fmt.Errorf("unexpected type %T for field tenant_id", values[i])
 			} else if value.Valid {
-				_m.TenantID = new(uint32)
-				*_m.TenantID = uint32(value.Int64)
+				_m.TenantID = new(uint64)
+				*_m.TenantID = uint64(value.Int64)
 			}
 		case formsubmission.FieldPageID:
 			if value, ok := values[i].(*sql.NullInt64); !ok {
 				return fmt.Errorf("unexpected type %T for field page_id", values[i])
 			} else if value.Valid {
-				_m.PageID = new(uint32)
-				*_m.PageID = uint32(value.Int64)
+				_m.PageID = new(uint64)
+				*_m.PageID = uint64(value.Int64)
 			}
 		case formsubmission.FieldSectionID:
 			if value, ok := values[i].(*sql.NullInt64); !ok {
 				return fmt.Errorf("unexpected type %T for field section_id", values[i])
 			} else if value.Valid {
-				_m.SectionID = new(uint32)
-				*_m.SectionID = uint32(value.Int64)
+				_m.SectionID = new(uint64)
+				*_m.SectionID = uint64(value.Int64)
 			}
 		case formsubmission.FieldData:
 			if value, ok := values[i].(*[]byte); !ok {
@@ -124,8 +124,8 @@ func (_m *FormSubmission) assignValues(columns []string, values []any) error {
 			if value, ok := values[i].(*sql.NullInt64); !ok {
 				return fmt.Errorf("unexpected type %T for field user_id", values[i])
 			} else if value.Valid {
-				_m.UserID = new(uint32)
-				*_m.UserID = uint32(value.Int64)
+				_m.UserID = new(uint64)
+				*_m.UserID = uint64(value.Int64)
 			}
 		default:
 			_m.selectValues.Set(columns[i], values[i])

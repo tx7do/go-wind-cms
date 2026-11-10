@@ -40,7 +40,7 @@ func (_d *SocialStatsHistoryDelete) ExecX(ctx context.Context) int {
 }
 
 func (_d *SocialStatsHistoryDelete) sqlExec(ctx context.Context) (int, error) {
-	_spec := sqlgraph.NewDeleteSpec(socialstatshistory.Table, sqlgraph.NewFieldSpec(socialstatshistory.FieldID, field.TypeUint32))
+	_spec := sqlgraph.NewDeleteSpec(socialstatshistory.Table, sqlgraph.NewFieldSpec(socialstatshistory.FieldID, field.TypeUint64))
 	if ps := _d.mutation.predicates; len(ps) > 0 {
 		_spec.Predicate = func(selector *sql.Selector) {
 			for i := range ps {

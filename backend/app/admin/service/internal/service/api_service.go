@@ -187,7 +187,7 @@ func (s *ApiService) syncWithOpenAPI(ctx context.Context) error {
 			count++
 
 			apiList = append(apiList, &permissionV1.Api{
-				Id:                trans.Ptr(count),
+				Id:                trans.Ptr(uint64(count)),
 				Path:              trans.Ptr(path),
 				Method:            trans.Ptr(method),
 				Module:            trans.Ptr(module),
@@ -224,7 +224,7 @@ func (s *ApiService) syncWithWalkRoute(ctx context.Context) error {
 		count++
 
 		apiList = append(apiList, &permissionV1.Api{
-			Id:     trans.Ptr(count),
+			Id:                trans.Ptr(uint64(count)),
 			Path:   trans.Ptr(info.Path),
 			Method: trans.Ptr(info.Method),
 		})
@@ -266,7 +266,7 @@ func (s *ApiService) GetWalkRouteData(_ context.Context, _ *emptypb.Empty) (*per
 		//log.Infof("Path[%s] Method[%s]", info.Path, info.Method)
 		count++
 		resp.Items = append(resp.Items, &permissionV1.Api{
-			Id:     trans.Ptr(count),
+			Id:                trans.Ptr(uint64(count)),
 			Path:   trans.Ptr(info.Path),
 			Method: trans.Ptr(info.Method),
 			Status: trans.Ptr(permissionV1.Api_ON),

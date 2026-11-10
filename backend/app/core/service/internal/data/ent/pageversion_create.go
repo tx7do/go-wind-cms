@@ -65,13 +65,13 @@ func (_c *PageVersionCreate) SetNillableDeletedAt(v *time.Time) *PageVersionCrea
 }
 
 // SetCreatedBy sets the "created_by" field.
-func (_c *PageVersionCreate) SetCreatedBy(v uint32) *PageVersionCreate {
+func (_c *PageVersionCreate) SetCreatedBy(v uint64) *PageVersionCreate {
 	_c.mutation.SetCreatedBy(v)
 	return _c
 }
 
 // SetNillableCreatedBy sets the "created_by" field if the given value is not nil.
-func (_c *PageVersionCreate) SetNillableCreatedBy(v *uint32) *PageVersionCreate {
+func (_c *PageVersionCreate) SetNillableCreatedBy(v *uint64) *PageVersionCreate {
 	if v != nil {
 		_c.SetCreatedBy(*v)
 	}
@@ -79,13 +79,13 @@ func (_c *PageVersionCreate) SetNillableCreatedBy(v *uint32) *PageVersionCreate 
 }
 
 // SetUpdatedBy sets the "updated_by" field.
-func (_c *PageVersionCreate) SetUpdatedBy(v uint32) *PageVersionCreate {
+func (_c *PageVersionCreate) SetUpdatedBy(v uint64) *PageVersionCreate {
 	_c.mutation.SetUpdatedBy(v)
 	return _c
 }
 
 // SetNillableUpdatedBy sets the "updated_by" field if the given value is not nil.
-func (_c *PageVersionCreate) SetNillableUpdatedBy(v *uint32) *PageVersionCreate {
+func (_c *PageVersionCreate) SetNillableUpdatedBy(v *uint64) *PageVersionCreate {
 	if v != nil {
 		_c.SetUpdatedBy(*v)
 	}
@@ -93,13 +93,13 @@ func (_c *PageVersionCreate) SetNillableUpdatedBy(v *uint32) *PageVersionCreate 
 }
 
 // SetDeletedBy sets the "deleted_by" field.
-func (_c *PageVersionCreate) SetDeletedBy(v uint32) *PageVersionCreate {
+func (_c *PageVersionCreate) SetDeletedBy(v uint64) *PageVersionCreate {
 	_c.mutation.SetDeletedBy(v)
 	return _c
 }
 
 // SetNillableDeletedBy sets the "deleted_by" field if the given value is not nil.
-func (_c *PageVersionCreate) SetNillableDeletedBy(v *uint32) *PageVersionCreate {
+func (_c *PageVersionCreate) SetNillableDeletedBy(v *uint64) *PageVersionCreate {
 	if v != nil {
 		_c.SetDeletedBy(*v)
 	}
@@ -107,13 +107,13 @@ func (_c *PageVersionCreate) SetNillableDeletedBy(v *uint32) *PageVersionCreate 
 }
 
 // SetTenantID sets the "tenant_id" field.
-func (_c *PageVersionCreate) SetTenantID(v uint32) *PageVersionCreate {
+func (_c *PageVersionCreate) SetTenantID(v uint64) *PageVersionCreate {
 	_c.mutation.SetTenantID(v)
 	return _c
 }
 
 // SetNillableTenantID sets the "tenant_id" field if the given value is not nil.
-func (_c *PageVersionCreate) SetNillableTenantID(v *uint32) *PageVersionCreate {
+func (_c *PageVersionCreate) SetNillableTenantID(v *uint64) *PageVersionCreate {
 	if v != nil {
 		_c.SetTenantID(*v)
 	}
@@ -121,13 +121,13 @@ func (_c *PageVersionCreate) SetNillableTenantID(v *uint32) *PageVersionCreate {
 }
 
 // SetPageID sets the "page_id" field.
-func (_c *PageVersionCreate) SetPageID(v uint32) *PageVersionCreate {
+func (_c *PageVersionCreate) SetPageID(v uint64) *PageVersionCreate {
 	_c.mutation.SetPageID(v)
 	return _c
 }
 
 // SetNillablePageID sets the "page_id" field if the given value is not nil.
-func (_c *PageVersionCreate) SetNillablePageID(v *uint32) *PageVersionCreate {
+func (_c *PageVersionCreate) SetNillablePageID(v *uint64) *PageVersionCreate {
 	if v != nil {
 		_c.SetPageID(*v)
 	}
@@ -177,7 +177,7 @@ func (_c *PageVersionCreate) SetNillableComment(v *string) *PageVersionCreate {
 }
 
 // SetID sets the "id" field.
-func (_c *PageVersionCreate) SetID(v uint32) *PageVersionCreate {
+func (_c *PageVersionCreate) SetID(v uint64) *PageVersionCreate {
 	_c.mutation.SetID(v)
 	return _c
 }
@@ -253,7 +253,7 @@ func (_c *PageVersionCreate) sqlSave(ctx context.Context) (*PageVersion, error) 
 	}
 	if _spec.ID.Value != _node.ID {
 		id := _spec.ID.Value.(int64)
-		_node.ID = uint32(id)
+		_node.ID = uint64(id)
 	}
 	_c.mutation.id = &_node.ID
 	_c.mutation.done = true
@@ -263,7 +263,7 @@ func (_c *PageVersionCreate) sqlSave(ctx context.Context) (*PageVersion, error) 
 func (_c *PageVersionCreate) createSpec() (*PageVersion, *sqlgraph.CreateSpec) {
 	var (
 		_node = &PageVersion{config: _c.config}
-		_spec = sqlgraph.NewCreateSpec(pageversion.Table, sqlgraph.NewFieldSpec(pageversion.FieldID, field.TypeUint32))
+		_spec = sqlgraph.NewCreateSpec(pageversion.Table, sqlgraph.NewFieldSpec(pageversion.FieldID, field.TypeUint64))
 	)
 	_spec.OnConflict = _c.conflict
 	if id, ok := _c.mutation.ID(); ok {
@@ -283,23 +283,23 @@ func (_c *PageVersionCreate) createSpec() (*PageVersion, *sqlgraph.CreateSpec) {
 		_node.DeletedAt = &value
 	}
 	if value, ok := _c.mutation.CreatedBy(); ok {
-		_spec.SetField(pageversion.FieldCreatedBy, field.TypeUint32, value)
+		_spec.SetField(pageversion.FieldCreatedBy, field.TypeUint64, value)
 		_node.CreatedBy = &value
 	}
 	if value, ok := _c.mutation.UpdatedBy(); ok {
-		_spec.SetField(pageversion.FieldUpdatedBy, field.TypeUint32, value)
+		_spec.SetField(pageversion.FieldUpdatedBy, field.TypeUint64, value)
 		_node.UpdatedBy = &value
 	}
 	if value, ok := _c.mutation.DeletedBy(); ok {
-		_spec.SetField(pageversion.FieldDeletedBy, field.TypeUint32, value)
+		_spec.SetField(pageversion.FieldDeletedBy, field.TypeUint64, value)
 		_node.DeletedBy = &value
 	}
 	if value, ok := _c.mutation.TenantID(); ok {
-		_spec.SetField(pageversion.FieldTenantID, field.TypeUint32, value)
+		_spec.SetField(pageversion.FieldTenantID, field.TypeUint64, value)
 		_node.TenantID = &value
 	}
 	if value, ok := _c.mutation.PageID(); ok {
-		_spec.SetField(pageversion.FieldPageID, field.TypeUint32, value)
+		_spec.SetField(pageversion.FieldPageID, field.TypeUint64, value)
 		_node.PageID = &value
 	}
 	if value, ok := _c.mutation.VersionNumber(); ok {
@@ -403,7 +403,7 @@ func (u *PageVersionUpsert) ClearDeletedAt() *PageVersionUpsert {
 }
 
 // SetCreatedBy sets the "created_by" field.
-func (u *PageVersionUpsert) SetCreatedBy(v uint32) *PageVersionUpsert {
+func (u *PageVersionUpsert) SetCreatedBy(v uint64) *PageVersionUpsert {
 	u.Set(pageversion.FieldCreatedBy, v)
 	return u
 }
@@ -415,7 +415,7 @@ func (u *PageVersionUpsert) UpdateCreatedBy() *PageVersionUpsert {
 }
 
 // AddCreatedBy adds v to the "created_by" field.
-func (u *PageVersionUpsert) AddCreatedBy(v uint32) *PageVersionUpsert {
+func (u *PageVersionUpsert) AddCreatedBy(v uint64) *PageVersionUpsert {
 	u.Add(pageversion.FieldCreatedBy, v)
 	return u
 }
@@ -427,7 +427,7 @@ func (u *PageVersionUpsert) ClearCreatedBy() *PageVersionUpsert {
 }
 
 // SetUpdatedBy sets the "updated_by" field.
-func (u *PageVersionUpsert) SetUpdatedBy(v uint32) *PageVersionUpsert {
+func (u *PageVersionUpsert) SetUpdatedBy(v uint64) *PageVersionUpsert {
 	u.Set(pageversion.FieldUpdatedBy, v)
 	return u
 }
@@ -439,7 +439,7 @@ func (u *PageVersionUpsert) UpdateUpdatedBy() *PageVersionUpsert {
 }
 
 // AddUpdatedBy adds v to the "updated_by" field.
-func (u *PageVersionUpsert) AddUpdatedBy(v uint32) *PageVersionUpsert {
+func (u *PageVersionUpsert) AddUpdatedBy(v uint64) *PageVersionUpsert {
 	u.Add(pageversion.FieldUpdatedBy, v)
 	return u
 }
@@ -451,7 +451,7 @@ func (u *PageVersionUpsert) ClearUpdatedBy() *PageVersionUpsert {
 }
 
 // SetDeletedBy sets the "deleted_by" field.
-func (u *PageVersionUpsert) SetDeletedBy(v uint32) *PageVersionUpsert {
+func (u *PageVersionUpsert) SetDeletedBy(v uint64) *PageVersionUpsert {
 	u.Set(pageversion.FieldDeletedBy, v)
 	return u
 }
@@ -463,7 +463,7 @@ func (u *PageVersionUpsert) UpdateDeletedBy() *PageVersionUpsert {
 }
 
 // AddDeletedBy adds v to the "deleted_by" field.
-func (u *PageVersionUpsert) AddDeletedBy(v uint32) *PageVersionUpsert {
+func (u *PageVersionUpsert) AddDeletedBy(v uint64) *PageVersionUpsert {
 	u.Add(pageversion.FieldDeletedBy, v)
 	return u
 }
@@ -475,7 +475,7 @@ func (u *PageVersionUpsert) ClearDeletedBy() *PageVersionUpsert {
 }
 
 // SetPageID sets the "page_id" field.
-func (u *PageVersionUpsert) SetPageID(v uint32) *PageVersionUpsert {
+func (u *PageVersionUpsert) SetPageID(v uint64) *PageVersionUpsert {
 	u.Set(pageversion.FieldPageID, v)
 	return u
 }
@@ -487,7 +487,7 @@ func (u *PageVersionUpsert) UpdatePageID() *PageVersionUpsert {
 }
 
 // AddPageID adds v to the "page_id" field.
-func (u *PageVersionUpsert) AddPageID(v uint32) *PageVersionUpsert {
+func (u *PageVersionUpsert) AddPageID(v uint64) *PageVersionUpsert {
 	u.Add(pageversion.FieldPageID, v)
 	return u
 }
@@ -655,14 +655,14 @@ func (u *PageVersionUpsertOne) ClearDeletedAt() *PageVersionUpsertOne {
 }
 
 // SetCreatedBy sets the "created_by" field.
-func (u *PageVersionUpsertOne) SetCreatedBy(v uint32) *PageVersionUpsertOne {
+func (u *PageVersionUpsertOne) SetCreatedBy(v uint64) *PageVersionUpsertOne {
 	return u.Update(func(s *PageVersionUpsert) {
 		s.SetCreatedBy(v)
 	})
 }
 
 // AddCreatedBy adds v to the "created_by" field.
-func (u *PageVersionUpsertOne) AddCreatedBy(v uint32) *PageVersionUpsertOne {
+func (u *PageVersionUpsertOne) AddCreatedBy(v uint64) *PageVersionUpsertOne {
 	return u.Update(func(s *PageVersionUpsert) {
 		s.AddCreatedBy(v)
 	})
@@ -683,14 +683,14 @@ func (u *PageVersionUpsertOne) ClearCreatedBy() *PageVersionUpsertOne {
 }
 
 // SetUpdatedBy sets the "updated_by" field.
-func (u *PageVersionUpsertOne) SetUpdatedBy(v uint32) *PageVersionUpsertOne {
+func (u *PageVersionUpsertOne) SetUpdatedBy(v uint64) *PageVersionUpsertOne {
 	return u.Update(func(s *PageVersionUpsert) {
 		s.SetUpdatedBy(v)
 	})
 }
 
 // AddUpdatedBy adds v to the "updated_by" field.
-func (u *PageVersionUpsertOne) AddUpdatedBy(v uint32) *PageVersionUpsertOne {
+func (u *PageVersionUpsertOne) AddUpdatedBy(v uint64) *PageVersionUpsertOne {
 	return u.Update(func(s *PageVersionUpsert) {
 		s.AddUpdatedBy(v)
 	})
@@ -711,14 +711,14 @@ func (u *PageVersionUpsertOne) ClearUpdatedBy() *PageVersionUpsertOne {
 }
 
 // SetDeletedBy sets the "deleted_by" field.
-func (u *PageVersionUpsertOne) SetDeletedBy(v uint32) *PageVersionUpsertOne {
+func (u *PageVersionUpsertOne) SetDeletedBy(v uint64) *PageVersionUpsertOne {
 	return u.Update(func(s *PageVersionUpsert) {
 		s.SetDeletedBy(v)
 	})
 }
 
 // AddDeletedBy adds v to the "deleted_by" field.
-func (u *PageVersionUpsertOne) AddDeletedBy(v uint32) *PageVersionUpsertOne {
+func (u *PageVersionUpsertOne) AddDeletedBy(v uint64) *PageVersionUpsertOne {
 	return u.Update(func(s *PageVersionUpsert) {
 		s.AddDeletedBy(v)
 	})
@@ -739,14 +739,14 @@ func (u *PageVersionUpsertOne) ClearDeletedBy() *PageVersionUpsertOne {
 }
 
 // SetPageID sets the "page_id" field.
-func (u *PageVersionUpsertOne) SetPageID(v uint32) *PageVersionUpsertOne {
+func (u *PageVersionUpsertOne) SetPageID(v uint64) *PageVersionUpsertOne {
 	return u.Update(func(s *PageVersionUpsert) {
 		s.SetPageID(v)
 	})
 }
 
 // AddPageID adds v to the "page_id" field.
-func (u *PageVersionUpsertOne) AddPageID(v uint32) *PageVersionUpsertOne {
+func (u *PageVersionUpsertOne) AddPageID(v uint64) *PageVersionUpsertOne {
 	return u.Update(func(s *PageVersionUpsert) {
 		s.AddPageID(v)
 	})
@@ -852,7 +852,7 @@ func (u *PageVersionUpsertOne) ExecX(ctx context.Context) {
 }
 
 // Exec executes the UPSERT query and returns the inserted/updated ID.
-func (u *PageVersionUpsertOne) ID(ctx context.Context) (id uint32, err error) {
+func (u *PageVersionUpsertOne) ID(ctx context.Context) (id uint64, err error) {
 	node, err := u.create.Save(ctx)
 	if err != nil {
 		return id, err
@@ -861,7 +861,7 @@ func (u *PageVersionUpsertOne) ID(ctx context.Context) (id uint32, err error) {
 }
 
 // IDX is like ID, but panics if an error occurs.
-func (u *PageVersionUpsertOne) IDX(ctx context.Context) uint32 {
+func (u *PageVersionUpsertOne) IDX(ctx context.Context) uint64 {
 	id, err := u.ID(ctx)
 	if err != nil {
 		panic(err)
@@ -918,7 +918,7 @@ func (_c *PageVersionCreateBulk) Save(ctx context.Context) ([]*PageVersion, erro
 				mutation.id = &nodes[i].ID
 				if specs[i].ID.Value != nil && nodes[i].ID == 0 {
 					id := specs[i].ID.Value.(int64)
-					nodes[i].ID = uint32(id)
+					nodes[i].ID = uint64(id)
 				}
 				mutation.done = true
 				return nodes[i], nil
@@ -1099,14 +1099,14 @@ func (u *PageVersionUpsertBulk) ClearDeletedAt() *PageVersionUpsertBulk {
 }
 
 // SetCreatedBy sets the "created_by" field.
-func (u *PageVersionUpsertBulk) SetCreatedBy(v uint32) *PageVersionUpsertBulk {
+func (u *PageVersionUpsertBulk) SetCreatedBy(v uint64) *PageVersionUpsertBulk {
 	return u.Update(func(s *PageVersionUpsert) {
 		s.SetCreatedBy(v)
 	})
 }
 
 // AddCreatedBy adds v to the "created_by" field.
-func (u *PageVersionUpsertBulk) AddCreatedBy(v uint32) *PageVersionUpsertBulk {
+func (u *PageVersionUpsertBulk) AddCreatedBy(v uint64) *PageVersionUpsertBulk {
 	return u.Update(func(s *PageVersionUpsert) {
 		s.AddCreatedBy(v)
 	})
@@ -1127,14 +1127,14 @@ func (u *PageVersionUpsertBulk) ClearCreatedBy() *PageVersionUpsertBulk {
 }
 
 // SetUpdatedBy sets the "updated_by" field.
-func (u *PageVersionUpsertBulk) SetUpdatedBy(v uint32) *PageVersionUpsertBulk {
+func (u *PageVersionUpsertBulk) SetUpdatedBy(v uint64) *PageVersionUpsertBulk {
 	return u.Update(func(s *PageVersionUpsert) {
 		s.SetUpdatedBy(v)
 	})
 }
 
 // AddUpdatedBy adds v to the "updated_by" field.
-func (u *PageVersionUpsertBulk) AddUpdatedBy(v uint32) *PageVersionUpsertBulk {
+func (u *PageVersionUpsertBulk) AddUpdatedBy(v uint64) *PageVersionUpsertBulk {
 	return u.Update(func(s *PageVersionUpsert) {
 		s.AddUpdatedBy(v)
 	})
@@ -1155,14 +1155,14 @@ func (u *PageVersionUpsertBulk) ClearUpdatedBy() *PageVersionUpsertBulk {
 }
 
 // SetDeletedBy sets the "deleted_by" field.
-func (u *PageVersionUpsertBulk) SetDeletedBy(v uint32) *PageVersionUpsertBulk {
+func (u *PageVersionUpsertBulk) SetDeletedBy(v uint64) *PageVersionUpsertBulk {
 	return u.Update(func(s *PageVersionUpsert) {
 		s.SetDeletedBy(v)
 	})
 }
 
 // AddDeletedBy adds v to the "deleted_by" field.
-func (u *PageVersionUpsertBulk) AddDeletedBy(v uint32) *PageVersionUpsertBulk {
+func (u *PageVersionUpsertBulk) AddDeletedBy(v uint64) *PageVersionUpsertBulk {
 	return u.Update(func(s *PageVersionUpsert) {
 		s.AddDeletedBy(v)
 	})
@@ -1183,14 +1183,14 @@ func (u *PageVersionUpsertBulk) ClearDeletedBy() *PageVersionUpsertBulk {
 }
 
 // SetPageID sets the "page_id" field.
-func (u *PageVersionUpsertBulk) SetPageID(v uint32) *PageVersionUpsertBulk {
+func (u *PageVersionUpsertBulk) SetPageID(v uint64) *PageVersionUpsertBulk {
 	return u.Update(func(s *PageVersionUpsert) {
 		s.SetPageID(v)
 	})
 }
 
 // AddPageID adds v to the "page_id" field.
-func (u *PageVersionUpsertBulk) AddPageID(v uint32) *PageVersionUpsertBulk {
+func (u *PageVersionUpsertBulk) AddPageID(v uint64) *PageVersionUpsertBulk {
 	return u.Update(func(s *PageVersionUpsert) {
 		s.AddPageID(v)
 	})

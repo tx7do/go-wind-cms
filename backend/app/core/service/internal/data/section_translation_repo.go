@@ -66,7 +66,7 @@ func (r *SectionTranslationRepo) init() {
 func (r *SectionTranslationRepo) CleanTranslations(
 	ctx context.Context,
 	tx *ent.Tx,
-	sectionID uint32,
+	sectionID uint64,
 ) error {
 	if _, err := tx.SectionTranslation.Delete().
 		Where(
@@ -79,7 +79,7 @@ func (r *SectionTranslationRepo) CleanTranslations(
 	return nil
 }
 
-func (r *SectionTranslationRepo) ListTranslations(ctx context.Context, sectionID uint32, locale string, viewMask *fieldmaskpb.FieldMask) ([]*contentV1.SectionTranslation, error) {
+func (r *SectionTranslationRepo) ListTranslations(ctx context.Context, sectionID uint64, locale string, viewMask *fieldmaskpb.FieldMask) ([]*contentV1.SectionTranslation, error) {
 	builder := r.entClient.Client().SectionTranslation.Query().
 		Where(
 			sectiontranslation.SectionIDEQ(sectionID),
@@ -120,7 +120,7 @@ func (r *SectionTranslationRepo) ListTranslations(ctx context.Context, sectionID
 
 // ListTranslationsWithFallback 优先返回指定语言的译文；该语言缺译时返回全部译文，
 // 供前端按"匹配当前语言→回退第一条"兜底（只回传空数组会让前端无 fallback 可用）。
-func (r *SectionTranslationRepo) ListTranslationsWithFallback(ctx context.Context, sectionID uint32, locale string, viewMask *fieldmaskpb.FieldMask) ([]*contentV1.SectionTranslation, error) {
+func (r *SectionTranslationRepo) ListTranslationsWithFallback(ctx context.Context, sectionID uint64, locale string, viewMask *fieldmaskpb.FieldMask) ([]*contentV1.SectionTranslation, error) {
 	translations, err := r.ListTranslations(ctx, sectionID, locale, viewMask)
 	if err != nil {
 		return nil, err
@@ -170,7 +170,7 @@ func (r *SectionTranslationRepo) BatchCreate(ctx context.Context, tx *ent.Tx, it
 }
 
 // ListAvailedLanguages lists the language codes of all translations available for the given section ID.
-func (r *SectionTranslationRepo) ListAvailedLanguages(ctx context.Context, sectionId uint32) ([]string, error) {
+func (r *SectionTranslationRepo) ListAvailedLanguages(ctx context.Context, sectionId uint64) ([]string, error) {
 	entities, err := r.entClient.Client().SectionTranslation.Query().
 		Where(
 			sectiontranslation.SectionIDEQ(sectionId),

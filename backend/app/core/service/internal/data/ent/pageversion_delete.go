@@ -40,7 +40,7 @@ func (_d *PageVersionDelete) ExecX(ctx context.Context) int {
 }
 
 func (_d *PageVersionDelete) sqlExec(ctx context.Context) (int, error) {
-	_spec := sqlgraph.NewDeleteSpec(pageversion.Table, sqlgraph.NewFieldSpec(pageversion.FieldID, field.TypeUint32))
+	_spec := sqlgraph.NewDeleteSpec(pageversion.Table, sqlgraph.NewFieldSpec(pageversion.FieldID, field.TypeUint64))
 	if ps := _d.mutation.predicates; len(ps) > 0 {
 		_spec.Predicate = func(selector *sql.Selector) {
 			for i := range ps {

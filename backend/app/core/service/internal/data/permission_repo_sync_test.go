@@ -102,7 +102,7 @@ func TestPermissionSyncRepoMergePrimitives(t *testing.T) {
 	// —— ListBizPermissions：业务集含两条业务权限、不含 sys: 前缀 ——
 	biz, err := repo.ListBizPermissions(ctx)
 	require.NoError(t, err)
-	codes := make(map[string]uint32, len(biz))
+	codes := make(map[string]uint64, len(biz))
 	for _, p := range biz {
 		codes[p.GetCode()] = p.GetId()
 	}
@@ -132,21 +132,21 @@ func TestPermissionSyncRepoMergePrimitives(t *testing.T) {
 	require.Equal(t, pKeep.ID, after.ID, "原位更新必须保 id")
 
 	// —— AssignSyncBindings：绑定按派生集整体替换（旧 9002 → 新 11,12） ——
-	require.NoError(t, repo.AssignSyncBindings(ctx, pKeep.ID, []uint32{11, 12}, []uint32{21}))
-	apiIDs, err := repo.ListApiIDsByPermissionIDs(ctx, []uint32{pKeep.ID})
+	require.NoError(t, repo.AssignSyncBindings(ctx, pKeep.ID, []uint64{11, 12}, []uint64{21}))
+	apiIDs, err := repo.ListApiIDsByPermissionIDs(ctx, []uint64{pKeep.ID})
 	require.NoError(t, err)
-	require.ElementsMatch(t, []uint32{11, 12}, apiIDs)
-	menuIDs, err := repo.ListMenuIDsByPermissionIDs(ctx, []uint32{pKeep.ID})
+	require.ElementsMatch(t, []uint64{11, 12}, apiIDs)
+	menuIDs, err := repo.ListMenuIDsByPermissionIDs(ctx, []uint64{pKeep.ID})
 	require.NoError(t, err)
-	require.ElementsMatch(t, []uint32{21}, menuIDs)
+	require.ElementsMatch(t, []uint64{21}, menuIDs)
 	// 空派生 = 清空该权限全部绑定
 	require.NoError(t, repo.AssignSyncBindings(ctx, pKeep.ID, nil, nil))
-	apiIDs, err = repo.ListApiIDsByPermissionIDs(ctx, []uint32{pKeep.ID})
+	apiIDs, err = repo.ListApiIDsByPermissionIDs(ctx, []uint64{pKeep.ID})
 	require.NoError(t, err)
 	require.Empty(t, apiIDs)
 
 	// —— DeleteByIDs：删行并级联清理接口/菜单/角色授权绑定 ——
-	require.NoError(t, repo.DeleteByIDs(ctx, []uint32{pGone.ID}))
+	require.NoError(t, repo.DeleteByIDs(ctx, []uint64{pGone.ID}))
 	_, err = entClient.Permission.Get(ctx, pGone.ID)
 	require.Error(t, err, "权限行应已删除")
 

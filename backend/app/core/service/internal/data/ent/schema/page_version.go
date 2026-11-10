@@ -30,7 +30,7 @@ func (PageVersion) Annotations() []schema.Annotation {
 // Fields of the PageVersion.
 func (PageVersion) Fields() []ent.Field {
 	return []ent.Field{
-		field.Uint32("page_id").
+		field.Uint64("page_id").
 			Comment("关联的页面ID").
 			Optional().
 			Nillable(),
@@ -56,10 +56,10 @@ func (PageVersion) Fields() []ent.Field {
 // Mixin of the PageVersion.
 func (PageVersion) Mixin() []ent.Mixin {
 	return []ent.Mixin{
-		mixin.AutoIncrementId{},
+		mixin.AutoIncrementId64{},
 		mixin.TimeAt{},
-		mixin.OperatorID{},
-		mixin.TenantID[uint32]{},
+		mixin.OperatorID64{},
+		mixin.TenantID[uint64]{},
 	}
 }
 

@@ -128,7 +128,7 @@ func (r *PositionRepo) List(ctx context.Context, req *paginationV1.PagingRequest
 	}, nil
 }
 
-func (r *PositionRepo) IsExist(ctx context.Context, id uint32) (bool, error) {
+func (r *PositionRepo) IsExist(ctx context.Context, id uint64) (bool, error) {
 	exist, err := r.entClient.Client().Position.Query().
 		Where(position.IDEQ(id)).
 		Exist(ctx)
@@ -176,7 +176,7 @@ func (r *PositionRepo) Get(ctx context.Context, req *identityV1.GetPositionReque
 }
 
 // ListPositionByIds 通过多个ID获取职位信息
-func (r *PositionRepo) ListPositionByIds(ctx context.Context, ids []uint32) ([]*identityV1.Position, error) {
+func (r *PositionRepo) ListPositionByIds(ctx context.Context, ids []uint64) ([]*identityV1.Position, error) {
 	if len(ids) == 0 {
 		return []*identityV1.Position{}, nil
 	}

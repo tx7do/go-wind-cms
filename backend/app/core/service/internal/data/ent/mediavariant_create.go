@@ -37,13 +37,13 @@ func (_c *MediaVariantCreate) SetNillableCreatedAt(v *time.Time) *MediaVariantCr
 }
 
 // SetTenantID sets the "tenant_id" field.
-func (_c *MediaVariantCreate) SetTenantID(v uint32) *MediaVariantCreate {
+func (_c *MediaVariantCreate) SetTenantID(v uint64) *MediaVariantCreate {
 	_c.mutation.SetTenantID(v)
 	return _c
 }
 
 // SetNillableTenantID sets the "tenant_id" field if the given value is not nil.
-func (_c *MediaVariantCreate) SetNillableTenantID(v *uint32) *MediaVariantCreate {
+func (_c *MediaVariantCreate) SetNillableTenantID(v *uint64) *MediaVariantCreate {
 	if v != nil {
 		_c.SetTenantID(*v)
 	}
@@ -51,13 +51,13 @@ func (_c *MediaVariantCreate) SetNillableTenantID(v *uint32) *MediaVariantCreate
 }
 
 // SetMediaID sets the "media_id" field.
-func (_c *MediaVariantCreate) SetMediaID(v uint32) *MediaVariantCreate {
+func (_c *MediaVariantCreate) SetMediaID(v uint64) *MediaVariantCreate {
 	_c.mutation.SetMediaID(v)
 	return _c
 }
 
 // SetFileID sets the "file_id" field.
-func (_c *MediaVariantCreate) SetFileID(v uint32) *MediaVariantCreate {
+func (_c *MediaVariantCreate) SetFileID(v uint64) *MediaVariantCreate {
 	_c.mutation.SetFileID(v)
 	return _c
 }
@@ -77,7 +77,7 @@ func (_c *MediaVariantCreate) SetNillableVariantName(v *uint32) *MediaVariantCre
 }
 
 // SetID sets the "id" field.
-func (_c *MediaVariantCreate) SetID(v uint32) *MediaVariantCreate {
+func (_c *MediaVariantCreate) SetID(v uint64) *MediaVariantCreate {
 	_c.mutation.SetID(v)
 	return _c
 }
@@ -155,7 +155,7 @@ func (_c *MediaVariantCreate) sqlSave(ctx context.Context) (*MediaVariant, error
 	}
 	if _spec.ID.Value != _node.ID {
 		id := _spec.ID.Value.(int64)
-		_node.ID = uint32(id)
+		_node.ID = uint64(id)
 	}
 	_c.mutation.id = &_node.ID
 	_c.mutation.done = true
@@ -165,7 +165,7 @@ func (_c *MediaVariantCreate) sqlSave(ctx context.Context) (*MediaVariant, error
 func (_c *MediaVariantCreate) createSpec() (*MediaVariant, *sqlgraph.CreateSpec) {
 	var (
 		_node = &MediaVariant{config: _c.config}
-		_spec = sqlgraph.NewCreateSpec(mediavariant.Table, sqlgraph.NewFieldSpec(mediavariant.FieldID, field.TypeUint32))
+		_spec = sqlgraph.NewCreateSpec(mediavariant.Table, sqlgraph.NewFieldSpec(mediavariant.FieldID, field.TypeUint64))
 	)
 	_spec.OnConflict = _c.conflict
 	if id, ok := _c.mutation.ID(); ok {
@@ -177,15 +177,15 @@ func (_c *MediaVariantCreate) createSpec() (*MediaVariant, *sqlgraph.CreateSpec)
 		_node.CreatedAt = &value
 	}
 	if value, ok := _c.mutation.TenantID(); ok {
-		_spec.SetField(mediavariant.FieldTenantID, field.TypeUint32, value)
+		_spec.SetField(mediavariant.FieldTenantID, field.TypeUint64, value)
 		_node.TenantID = &value
 	}
 	if value, ok := _c.mutation.MediaID(); ok {
-		_spec.SetField(mediavariant.FieldMediaID, field.TypeUint32, value)
+		_spec.SetField(mediavariant.FieldMediaID, field.TypeUint64, value)
 		_node.MediaID = &value
 	}
 	if value, ok := _c.mutation.FileID(); ok {
-		_spec.SetField(mediavariant.FieldFileID, field.TypeUint32, value)
+		_spec.SetField(mediavariant.FieldFileID, field.TypeUint64, value)
 		_node.FileID = &value
 	}
 	if value, ok := _c.mutation.VariantName(); ok {
@@ -245,7 +245,7 @@ type (
 )
 
 // SetMediaID sets the "media_id" field.
-func (u *MediaVariantUpsert) SetMediaID(v uint32) *MediaVariantUpsert {
+func (u *MediaVariantUpsert) SetMediaID(v uint64) *MediaVariantUpsert {
 	u.Set(mediavariant.FieldMediaID, v)
 	return u
 }
@@ -257,13 +257,13 @@ func (u *MediaVariantUpsert) UpdateMediaID() *MediaVariantUpsert {
 }
 
 // AddMediaID adds v to the "media_id" field.
-func (u *MediaVariantUpsert) AddMediaID(v uint32) *MediaVariantUpsert {
+func (u *MediaVariantUpsert) AddMediaID(v uint64) *MediaVariantUpsert {
 	u.Add(mediavariant.FieldMediaID, v)
 	return u
 }
 
 // SetFileID sets the "file_id" field.
-func (u *MediaVariantUpsert) SetFileID(v uint32) *MediaVariantUpsert {
+func (u *MediaVariantUpsert) SetFileID(v uint64) *MediaVariantUpsert {
 	u.Set(mediavariant.FieldFileID, v)
 	return u
 }
@@ -275,7 +275,7 @@ func (u *MediaVariantUpsert) UpdateFileID() *MediaVariantUpsert {
 }
 
 // AddFileID adds v to the "file_id" field.
-func (u *MediaVariantUpsert) AddFileID(v uint32) *MediaVariantUpsert {
+func (u *MediaVariantUpsert) AddFileID(v uint64) *MediaVariantUpsert {
 	u.Add(mediavariant.FieldFileID, v)
 	return u
 }
@@ -359,14 +359,14 @@ func (u *MediaVariantUpsertOne) Update(set func(*MediaVariantUpsert)) *MediaVari
 }
 
 // SetMediaID sets the "media_id" field.
-func (u *MediaVariantUpsertOne) SetMediaID(v uint32) *MediaVariantUpsertOne {
+func (u *MediaVariantUpsertOne) SetMediaID(v uint64) *MediaVariantUpsertOne {
 	return u.Update(func(s *MediaVariantUpsert) {
 		s.SetMediaID(v)
 	})
 }
 
 // AddMediaID adds v to the "media_id" field.
-func (u *MediaVariantUpsertOne) AddMediaID(v uint32) *MediaVariantUpsertOne {
+func (u *MediaVariantUpsertOne) AddMediaID(v uint64) *MediaVariantUpsertOne {
 	return u.Update(func(s *MediaVariantUpsert) {
 		s.AddMediaID(v)
 	})
@@ -380,14 +380,14 @@ func (u *MediaVariantUpsertOne) UpdateMediaID() *MediaVariantUpsertOne {
 }
 
 // SetFileID sets the "file_id" field.
-func (u *MediaVariantUpsertOne) SetFileID(v uint32) *MediaVariantUpsertOne {
+func (u *MediaVariantUpsertOne) SetFileID(v uint64) *MediaVariantUpsertOne {
 	return u.Update(func(s *MediaVariantUpsert) {
 		s.SetFileID(v)
 	})
 }
 
 // AddFileID adds v to the "file_id" field.
-func (u *MediaVariantUpsertOne) AddFileID(v uint32) *MediaVariantUpsertOne {
+func (u *MediaVariantUpsertOne) AddFileID(v uint64) *MediaVariantUpsertOne {
 	return u.Update(func(s *MediaVariantUpsert) {
 		s.AddFileID(v)
 	})
@@ -444,7 +444,7 @@ func (u *MediaVariantUpsertOne) ExecX(ctx context.Context) {
 }
 
 // Exec executes the UPSERT query and returns the inserted/updated ID.
-func (u *MediaVariantUpsertOne) ID(ctx context.Context) (id uint32, err error) {
+func (u *MediaVariantUpsertOne) ID(ctx context.Context) (id uint64, err error) {
 	node, err := u.create.Save(ctx)
 	if err != nil {
 		return id, err
@@ -453,7 +453,7 @@ func (u *MediaVariantUpsertOne) ID(ctx context.Context) (id uint32, err error) {
 }
 
 // IDX is like ID, but panics if an error occurs.
-func (u *MediaVariantUpsertOne) IDX(ctx context.Context) uint32 {
+func (u *MediaVariantUpsertOne) IDX(ctx context.Context) uint64 {
 	id, err := u.ID(ctx)
 	if err != nil {
 		panic(err)
@@ -510,7 +510,7 @@ func (_c *MediaVariantCreateBulk) Save(ctx context.Context) ([]*MediaVariant, er
 				mutation.id = &nodes[i].ID
 				if specs[i].ID.Value != nil && nodes[i].ID == 0 {
 					id := specs[i].ID.Value.(int64)
-					nodes[i].ID = uint32(id)
+					nodes[i].ID = uint64(id)
 				}
 				mutation.done = true
 				return nodes[i], nil
@@ -649,14 +649,14 @@ func (u *MediaVariantUpsertBulk) Update(set func(*MediaVariantUpsert)) *MediaVar
 }
 
 // SetMediaID sets the "media_id" field.
-func (u *MediaVariantUpsertBulk) SetMediaID(v uint32) *MediaVariantUpsertBulk {
+func (u *MediaVariantUpsertBulk) SetMediaID(v uint64) *MediaVariantUpsertBulk {
 	return u.Update(func(s *MediaVariantUpsert) {
 		s.SetMediaID(v)
 	})
 }
 
 // AddMediaID adds v to the "media_id" field.
-func (u *MediaVariantUpsertBulk) AddMediaID(v uint32) *MediaVariantUpsertBulk {
+func (u *MediaVariantUpsertBulk) AddMediaID(v uint64) *MediaVariantUpsertBulk {
 	return u.Update(func(s *MediaVariantUpsert) {
 		s.AddMediaID(v)
 	})
@@ -670,14 +670,14 @@ func (u *MediaVariantUpsertBulk) UpdateMediaID() *MediaVariantUpsertBulk {
 }
 
 // SetFileID sets the "file_id" field.
-func (u *MediaVariantUpsertBulk) SetFileID(v uint32) *MediaVariantUpsertBulk {
+func (u *MediaVariantUpsertBulk) SetFileID(v uint64) *MediaVariantUpsertBulk {
 	return u.Update(func(s *MediaVariantUpsert) {
 		s.SetFileID(v)
 	})
 }
 
 // AddFileID adds v to the "file_id" field.
-func (u *MediaVariantUpsertBulk) AddFileID(v uint32) *MediaVariantUpsertBulk {
+func (u *MediaVariantUpsertBulk) AddFileID(v uint64) *MediaVariantUpsertBulk {
 	return u.Update(func(s *MediaVariantUpsert) {
 		s.AddFileID(v)
 	})

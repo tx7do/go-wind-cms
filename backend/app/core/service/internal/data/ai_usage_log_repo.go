@@ -62,10 +62,10 @@ func NewAiUsageLogRepo(ctx *bootstrap.Context, entClient *entCrud.EntClient[*ent
 
 // UsageRecord 一次成功模型调用的记账条目（服务层便捷形态，内部转 DTO 落库）。
 type UsageRecord struct {
-	ProviderID       uint32
-	ConversationID   uint32
-	UserID           uint32
-	TenantID         uint32
+	ProviderID       uint64
+	ConversationID   uint64
+	UserID           uint64
+	TenantID         uint64
 	ModelName        string
 	PromptTokens     uint32
 	CompletionTokens uint32
@@ -119,7 +119,7 @@ func (r *AiUsageLogRepo) CreateDTO(ctx context.Context, data *aiV1.AiUsageLog) e
 }
 
 // Count 流水条数（tenantId>0 限本租户）。
-func (r *AiUsageLogRepo) Count(ctx context.Context, req *paginationV1.PagingRequest, tenantId uint32) (*aiV1.CountAiUsageLogResponse, error) {
+func (r *AiUsageLogRepo) Count(ctx context.Context, req *paginationV1.PagingRequest, tenantId uint64) (*aiV1.CountAiUsageLogResponse, error) {
 	builder := r.entClient.Client().AiUsageLog.Query()
 	if tenantId > 0 {
 		builder = builder.Where(aiusagelog.TenantIDEQ(tenantId))
@@ -140,7 +140,7 @@ func (r *AiUsageLogRepo) Count(ctx context.Context, req *paginationV1.PagingRequ
 }
 
 // List 流水分页（tenantId>0 限本租户）。
-func (r *AiUsageLogRepo) List(ctx context.Context, req *paginationV1.PagingRequest, tenantId uint32) (*aiV1.ListAiUsageLogResponse, error) {
+func (r *AiUsageLogRepo) List(ctx context.Context, req *paginationV1.PagingRequest, tenantId uint64) (*aiV1.ListAiUsageLogResponse, error) {
 	if req == nil {
 		return nil, aiV1.ErrorBadRequest("invalid parameter")
 	}
@@ -163,7 +163,7 @@ func (r *AiUsageLogRepo) List(ctx context.Context, req *paginationV1.PagingReque
 
 // MonthStats 聚合本月（自 monthStart 起）的用量：tokens 总和与调用次数。
 // 口径与流水列表一致：租户用户按本租户，平台管理员（tenantId=0）算全量。
-func (r *AiUsageLogRepo) MonthStats(ctx context.Context, tenantId uint32, monthStart time.Time) (uint64, uint64, error) {
+func (r *AiUsageLogRepo) MonthStats(ctx context.Context, tenantId uint64, monthStart time.Time) (uint64, uint64, error) {
 	var rows []struct {
 		Total uint64 `sql:"total"`
 		Cnt   uint64 `sql:"cnt"`
@@ -188,9 +188,9 @@ func (r *AiUsageLogRepo) MonthStats(ctx context.Context, tenantId uint32, monthS
 
 // MonthBreakdown 当月用量按 provider×模型 聚合（tokens 三项 + 调用次数）。
 // 返回行含 ProviderID 供服务层解析 provider 名。
-func (r *AiUsageLogRepo) MonthBreakdown(ctx context.Context, tenantId uint32, monthStart time.Time) ([]*aiV1.UsageBreakdown, error) {
+func (r *AiUsageLogRepo) MonthBreakdown(ctx context.Context, tenantId uint64, monthStart time.Time) ([]*aiV1.UsageBreakdown, error) {
 	var rows []struct {
-		ProviderID  uint32 `sql:"provider_id"`
+		ProviderID  uint64 `sql:"provider_id"`
 		ModelName   string `sql:"model_name"`
 		PromptTotal uint64 `sql:"prompt_total"`
 		CompTotal   uint64 `sql:"comp_total"`
@@ -229,7 +229,7 @@ func (r *AiUsageLogRepo) MonthBreakdown(ctx context.Context, tenantId uint32, mo
 	return out, nil
 }
 
-func nillableUint32(v uint32) *uint32 {
+func nillableUint32[T ~uint32 | ~uint64](v T) *T {
 	if v == 0 {
 		return nil
 	}

@@ -65,13 +65,13 @@ func (_c *SocialDistributionCreate) SetNillableDeletedAt(v *time.Time) *SocialDi
 }
 
 // SetCreatedBy sets the "created_by" field.
-func (_c *SocialDistributionCreate) SetCreatedBy(v uint32) *SocialDistributionCreate {
+func (_c *SocialDistributionCreate) SetCreatedBy(v uint64) *SocialDistributionCreate {
 	_c.mutation.SetCreatedBy(v)
 	return _c
 }
 
 // SetNillableCreatedBy sets the "created_by" field if the given value is not nil.
-func (_c *SocialDistributionCreate) SetNillableCreatedBy(v *uint32) *SocialDistributionCreate {
+func (_c *SocialDistributionCreate) SetNillableCreatedBy(v *uint64) *SocialDistributionCreate {
 	if v != nil {
 		_c.SetCreatedBy(*v)
 	}
@@ -79,13 +79,13 @@ func (_c *SocialDistributionCreate) SetNillableCreatedBy(v *uint32) *SocialDistr
 }
 
 // SetUpdatedBy sets the "updated_by" field.
-func (_c *SocialDistributionCreate) SetUpdatedBy(v uint32) *SocialDistributionCreate {
+func (_c *SocialDistributionCreate) SetUpdatedBy(v uint64) *SocialDistributionCreate {
 	_c.mutation.SetUpdatedBy(v)
 	return _c
 }
 
 // SetNillableUpdatedBy sets the "updated_by" field if the given value is not nil.
-func (_c *SocialDistributionCreate) SetNillableUpdatedBy(v *uint32) *SocialDistributionCreate {
+func (_c *SocialDistributionCreate) SetNillableUpdatedBy(v *uint64) *SocialDistributionCreate {
 	if v != nil {
 		_c.SetUpdatedBy(*v)
 	}
@@ -93,13 +93,13 @@ func (_c *SocialDistributionCreate) SetNillableUpdatedBy(v *uint32) *SocialDistr
 }
 
 // SetDeletedBy sets the "deleted_by" field.
-func (_c *SocialDistributionCreate) SetDeletedBy(v uint32) *SocialDistributionCreate {
+func (_c *SocialDistributionCreate) SetDeletedBy(v uint64) *SocialDistributionCreate {
 	_c.mutation.SetDeletedBy(v)
 	return _c
 }
 
 // SetNillableDeletedBy sets the "deleted_by" field if the given value is not nil.
-func (_c *SocialDistributionCreate) SetNillableDeletedBy(v *uint32) *SocialDistributionCreate {
+func (_c *SocialDistributionCreate) SetNillableDeletedBy(v *uint64) *SocialDistributionCreate {
 	if v != nil {
 		_c.SetDeletedBy(*v)
 	}
@@ -107,13 +107,13 @@ func (_c *SocialDistributionCreate) SetNillableDeletedBy(v *uint32) *SocialDistr
 }
 
 // SetTenantID sets the "tenant_id" field.
-func (_c *SocialDistributionCreate) SetTenantID(v uint32) *SocialDistributionCreate {
+func (_c *SocialDistributionCreate) SetTenantID(v uint64) *SocialDistributionCreate {
 	_c.mutation.SetTenantID(v)
 	return _c
 }
 
 // SetNillableTenantID sets the "tenant_id" field if the given value is not nil.
-func (_c *SocialDistributionCreate) SetNillableTenantID(v *uint32) *SocialDistributionCreate {
+func (_c *SocialDistributionCreate) SetNillableTenantID(v *uint64) *SocialDistributionCreate {
 	if v != nil {
 		_c.SetTenantID(*v)
 	}
@@ -135,13 +135,13 @@ func (_c *SocialDistributionCreate) SetNillablePlatform(v *socialdistribution.Pl
 }
 
 // SetAccountID sets the "account_id" field.
-func (_c *SocialDistributionCreate) SetAccountID(v uint32) *SocialDistributionCreate {
+func (_c *SocialDistributionCreate) SetAccountID(v uint64) *SocialDistributionCreate {
 	_c.mutation.SetAccountID(v)
 	return _c
 }
 
 // SetNillableAccountID sets the "account_id" field if the given value is not nil.
-func (_c *SocialDistributionCreate) SetNillableAccountID(v *uint32) *SocialDistributionCreate {
+func (_c *SocialDistributionCreate) SetNillableAccountID(v *uint64) *SocialDistributionCreate {
 	if v != nil {
 		_c.SetAccountID(*v)
 	}
@@ -149,13 +149,13 @@ func (_c *SocialDistributionCreate) SetNillableAccountID(v *uint32) *SocialDistr
 }
 
 // SetPostID sets the "post_id" field.
-func (_c *SocialDistributionCreate) SetPostID(v uint32) *SocialDistributionCreate {
+func (_c *SocialDistributionCreate) SetPostID(v uint64) *SocialDistributionCreate {
 	_c.mutation.SetPostID(v)
 	return _c
 }
 
 // SetNillablePostID sets the "post_id" field if the given value is not nil.
-func (_c *SocialDistributionCreate) SetNillablePostID(v *uint32) *SocialDistributionCreate {
+func (_c *SocialDistributionCreate) SetNillablePostID(v *uint64) *SocialDistributionCreate {
 	if v != nil {
 		_c.SetPostID(*v)
 	}
@@ -275,7 +275,7 @@ func (_c *SocialDistributionCreate) SetNillableTitle(v *string) *SocialDistribut
 }
 
 // SetMediaIds sets the "media_ids" field.
-func (_c *SocialDistributionCreate) SetMediaIds(v []uint32) *SocialDistributionCreate {
+func (_c *SocialDistributionCreate) SetMediaIds(v []uint64) *SocialDistributionCreate {
 	_c.mutation.SetMediaIds(v)
 	return _c
 }
@@ -351,7 +351,7 @@ func (_c *SocialDistributionCreate) SetNillablePublishAttempts(v *uint32) *Socia
 }
 
 // SetID sets the "id" field.
-func (_c *SocialDistributionCreate) SetID(v uint32) *SocialDistributionCreate {
+func (_c *SocialDistributionCreate) SetID(v uint64) *SocialDistributionCreate {
 	_c.mutation.SetID(v)
 	return _c
 }
@@ -449,7 +449,7 @@ func (_c *SocialDistributionCreate) sqlSave(ctx context.Context) (*SocialDistrib
 	}
 	if _spec.ID.Value != _node.ID {
 		id := _spec.ID.Value.(int64)
-		_node.ID = uint32(id)
+		_node.ID = uint64(id)
 	}
 	_c.mutation.id = &_node.ID
 	_c.mutation.done = true
@@ -459,7 +459,7 @@ func (_c *SocialDistributionCreate) sqlSave(ctx context.Context) (*SocialDistrib
 func (_c *SocialDistributionCreate) createSpec() (*SocialDistribution, *sqlgraph.CreateSpec) {
 	var (
 		_node = &SocialDistribution{config: _c.config}
-		_spec = sqlgraph.NewCreateSpec(socialdistribution.Table, sqlgraph.NewFieldSpec(socialdistribution.FieldID, field.TypeUint32))
+		_spec = sqlgraph.NewCreateSpec(socialdistribution.Table, sqlgraph.NewFieldSpec(socialdistribution.FieldID, field.TypeUint64))
 	)
 	_spec.OnConflict = _c.conflict
 	if id, ok := _c.mutation.ID(); ok {
@@ -479,19 +479,19 @@ func (_c *SocialDistributionCreate) createSpec() (*SocialDistribution, *sqlgraph
 		_node.DeletedAt = &value
 	}
 	if value, ok := _c.mutation.CreatedBy(); ok {
-		_spec.SetField(socialdistribution.FieldCreatedBy, field.TypeUint32, value)
+		_spec.SetField(socialdistribution.FieldCreatedBy, field.TypeUint64, value)
 		_node.CreatedBy = &value
 	}
 	if value, ok := _c.mutation.UpdatedBy(); ok {
-		_spec.SetField(socialdistribution.FieldUpdatedBy, field.TypeUint32, value)
+		_spec.SetField(socialdistribution.FieldUpdatedBy, field.TypeUint64, value)
 		_node.UpdatedBy = &value
 	}
 	if value, ok := _c.mutation.DeletedBy(); ok {
-		_spec.SetField(socialdistribution.FieldDeletedBy, field.TypeUint32, value)
+		_spec.SetField(socialdistribution.FieldDeletedBy, field.TypeUint64, value)
 		_node.DeletedBy = &value
 	}
 	if value, ok := _c.mutation.TenantID(); ok {
-		_spec.SetField(socialdistribution.FieldTenantID, field.TypeUint32, value)
+		_spec.SetField(socialdistribution.FieldTenantID, field.TypeUint64, value)
 		_node.TenantID = &value
 	}
 	if value, ok := _c.mutation.Platform(); ok {
@@ -499,11 +499,11 @@ func (_c *SocialDistributionCreate) createSpec() (*SocialDistribution, *sqlgraph
 		_node.Platform = &value
 	}
 	if value, ok := _c.mutation.AccountID(); ok {
-		_spec.SetField(socialdistribution.FieldAccountID, field.TypeUint32, value)
+		_spec.SetField(socialdistribution.FieldAccountID, field.TypeUint64, value)
 		_node.AccountID = &value
 	}
 	if value, ok := _c.mutation.PostID(); ok {
-		_spec.SetField(socialdistribution.FieldPostID, field.TypeUint32, value)
+		_spec.SetField(socialdistribution.FieldPostID, field.TypeUint64, value)
 		_node.PostID = &value
 	}
 	if value, ok := _c.mutation.OverrideText(); ok {
@@ -651,7 +651,7 @@ func (u *SocialDistributionUpsert) ClearDeletedAt() *SocialDistributionUpsert {
 }
 
 // SetCreatedBy sets the "created_by" field.
-func (u *SocialDistributionUpsert) SetCreatedBy(v uint32) *SocialDistributionUpsert {
+func (u *SocialDistributionUpsert) SetCreatedBy(v uint64) *SocialDistributionUpsert {
 	u.Set(socialdistribution.FieldCreatedBy, v)
 	return u
 }
@@ -663,7 +663,7 @@ func (u *SocialDistributionUpsert) UpdateCreatedBy() *SocialDistributionUpsert {
 }
 
 // AddCreatedBy adds v to the "created_by" field.
-func (u *SocialDistributionUpsert) AddCreatedBy(v uint32) *SocialDistributionUpsert {
+func (u *SocialDistributionUpsert) AddCreatedBy(v uint64) *SocialDistributionUpsert {
 	u.Add(socialdistribution.FieldCreatedBy, v)
 	return u
 }
@@ -675,7 +675,7 @@ func (u *SocialDistributionUpsert) ClearCreatedBy() *SocialDistributionUpsert {
 }
 
 // SetUpdatedBy sets the "updated_by" field.
-func (u *SocialDistributionUpsert) SetUpdatedBy(v uint32) *SocialDistributionUpsert {
+func (u *SocialDistributionUpsert) SetUpdatedBy(v uint64) *SocialDistributionUpsert {
 	u.Set(socialdistribution.FieldUpdatedBy, v)
 	return u
 }
@@ -687,7 +687,7 @@ func (u *SocialDistributionUpsert) UpdateUpdatedBy() *SocialDistributionUpsert {
 }
 
 // AddUpdatedBy adds v to the "updated_by" field.
-func (u *SocialDistributionUpsert) AddUpdatedBy(v uint32) *SocialDistributionUpsert {
+func (u *SocialDistributionUpsert) AddUpdatedBy(v uint64) *SocialDistributionUpsert {
 	u.Add(socialdistribution.FieldUpdatedBy, v)
 	return u
 }
@@ -699,7 +699,7 @@ func (u *SocialDistributionUpsert) ClearUpdatedBy() *SocialDistributionUpsert {
 }
 
 // SetDeletedBy sets the "deleted_by" field.
-func (u *SocialDistributionUpsert) SetDeletedBy(v uint32) *SocialDistributionUpsert {
+func (u *SocialDistributionUpsert) SetDeletedBy(v uint64) *SocialDistributionUpsert {
 	u.Set(socialdistribution.FieldDeletedBy, v)
 	return u
 }
@@ -711,7 +711,7 @@ func (u *SocialDistributionUpsert) UpdateDeletedBy() *SocialDistributionUpsert {
 }
 
 // AddDeletedBy adds v to the "deleted_by" field.
-func (u *SocialDistributionUpsert) AddDeletedBy(v uint32) *SocialDistributionUpsert {
+func (u *SocialDistributionUpsert) AddDeletedBy(v uint64) *SocialDistributionUpsert {
 	u.Add(socialdistribution.FieldDeletedBy, v)
 	return u
 }
@@ -741,7 +741,7 @@ func (u *SocialDistributionUpsert) ClearPlatform() *SocialDistributionUpsert {
 }
 
 // SetAccountID sets the "account_id" field.
-func (u *SocialDistributionUpsert) SetAccountID(v uint32) *SocialDistributionUpsert {
+func (u *SocialDistributionUpsert) SetAccountID(v uint64) *SocialDistributionUpsert {
 	u.Set(socialdistribution.FieldAccountID, v)
 	return u
 }
@@ -753,7 +753,7 @@ func (u *SocialDistributionUpsert) UpdateAccountID() *SocialDistributionUpsert {
 }
 
 // AddAccountID adds v to the "account_id" field.
-func (u *SocialDistributionUpsert) AddAccountID(v uint32) *SocialDistributionUpsert {
+func (u *SocialDistributionUpsert) AddAccountID(v uint64) *SocialDistributionUpsert {
 	u.Add(socialdistribution.FieldAccountID, v)
 	return u
 }
@@ -765,7 +765,7 @@ func (u *SocialDistributionUpsert) ClearAccountID() *SocialDistributionUpsert {
 }
 
 // SetPostID sets the "post_id" field.
-func (u *SocialDistributionUpsert) SetPostID(v uint32) *SocialDistributionUpsert {
+func (u *SocialDistributionUpsert) SetPostID(v uint64) *SocialDistributionUpsert {
 	u.Set(socialdistribution.FieldPostID, v)
 	return u
 }
@@ -777,7 +777,7 @@ func (u *SocialDistributionUpsert) UpdatePostID() *SocialDistributionUpsert {
 }
 
 // AddPostID adds v to the "post_id" field.
-func (u *SocialDistributionUpsert) AddPostID(v uint32) *SocialDistributionUpsert {
+func (u *SocialDistributionUpsert) AddPostID(v uint64) *SocialDistributionUpsert {
 	u.Add(socialdistribution.FieldPostID, v)
 	return u
 }
@@ -933,7 +933,7 @@ func (u *SocialDistributionUpsert) ClearTitle() *SocialDistributionUpsert {
 }
 
 // SetMediaIds sets the "media_ids" field.
-func (u *SocialDistributionUpsert) SetMediaIds(v []uint32) *SocialDistributionUpsert {
+func (u *SocialDistributionUpsert) SetMediaIds(v []uint64) *SocialDistributionUpsert {
 	u.Set(socialdistribution.FieldMediaIds, v)
 	return u
 }
@@ -1161,14 +1161,14 @@ func (u *SocialDistributionUpsertOne) ClearDeletedAt() *SocialDistributionUpsert
 }
 
 // SetCreatedBy sets the "created_by" field.
-func (u *SocialDistributionUpsertOne) SetCreatedBy(v uint32) *SocialDistributionUpsertOne {
+func (u *SocialDistributionUpsertOne) SetCreatedBy(v uint64) *SocialDistributionUpsertOne {
 	return u.Update(func(s *SocialDistributionUpsert) {
 		s.SetCreatedBy(v)
 	})
 }
 
 // AddCreatedBy adds v to the "created_by" field.
-func (u *SocialDistributionUpsertOne) AddCreatedBy(v uint32) *SocialDistributionUpsertOne {
+func (u *SocialDistributionUpsertOne) AddCreatedBy(v uint64) *SocialDistributionUpsertOne {
 	return u.Update(func(s *SocialDistributionUpsert) {
 		s.AddCreatedBy(v)
 	})
@@ -1189,14 +1189,14 @@ func (u *SocialDistributionUpsertOne) ClearCreatedBy() *SocialDistributionUpsert
 }
 
 // SetUpdatedBy sets the "updated_by" field.
-func (u *SocialDistributionUpsertOne) SetUpdatedBy(v uint32) *SocialDistributionUpsertOne {
+func (u *SocialDistributionUpsertOne) SetUpdatedBy(v uint64) *SocialDistributionUpsertOne {
 	return u.Update(func(s *SocialDistributionUpsert) {
 		s.SetUpdatedBy(v)
 	})
 }
 
 // AddUpdatedBy adds v to the "updated_by" field.
-func (u *SocialDistributionUpsertOne) AddUpdatedBy(v uint32) *SocialDistributionUpsertOne {
+func (u *SocialDistributionUpsertOne) AddUpdatedBy(v uint64) *SocialDistributionUpsertOne {
 	return u.Update(func(s *SocialDistributionUpsert) {
 		s.AddUpdatedBy(v)
 	})
@@ -1217,14 +1217,14 @@ func (u *SocialDistributionUpsertOne) ClearUpdatedBy() *SocialDistributionUpsert
 }
 
 // SetDeletedBy sets the "deleted_by" field.
-func (u *SocialDistributionUpsertOne) SetDeletedBy(v uint32) *SocialDistributionUpsertOne {
+func (u *SocialDistributionUpsertOne) SetDeletedBy(v uint64) *SocialDistributionUpsertOne {
 	return u.Update(func(s *SocialDistributionUpsert) {
 		s.SetDeletedBy(v)
 	})
 }
 
 // AddDeletedBy adds v to the "deleted_by" field.
-func (u *SocialDistributionUpsertOne) AddDeletedBy(v uint32) *SocialDistributionUpsertOne {
+func (u *SocialDistributionUpsertOne) AddDeletedBy(v uint64) *SocialDistributionUpsertOne {
 	return u.Update(func(s *SocialDistributionUpsert) {
 		s.AddDeletedBy(v)
 	})
@@ -1266,14 +1266,14 @@ func (u *SocialDistributionUpsertOne) ClearPlatform() *SocialDistributionUpsertO
 }
 
 // SetAccountID sets the "account_id" field.
-func (u *SocialDistributionUpsertOne) SetAccountID(v uint32) *SocialDistributionUpsertOne {
+func (u *SocialDistributionUpsertOne) SetAccountID(v uint64) *SocialDistributionUpsertOne {
 	return u.Update(func(s *SocialDistributionUpsert) {
 		s.SetAccountID(v)
 	})
 }
 
 // AddAccountID adds v to the "account_id" field.
-func (u *SocialDistributionUpsertOne) AddAccountID(v uint32) *SocialDistributionUpsertOne {
+func (u *SocialDistributionUpsertOne) AddAccountID(v uint64) *SocialDistributionUpsertOne {
 	return u.Update(func(s *SocialDistributionUpsert) {
 		s.AddAccountID(v)
 	})
@@ -1294,14 +1294,14 @@ func (u *SocialDistributionUpsertOne) ClearAccountID() *SocialDistributionUpsert
 }
 
 // SetPostID sets the "post_id" field.
-func (u *SocialDistributionUpsertOne) SetPostID(v uint32) *SocialDistributionUpsertOne {
+func (u *SocialDistributionUpsertOne) SetPostID(v uint64) *SocialDistributionUpsertOne {
 	return u.Update(func(s *SocialDistributionUpsert) {
 		s.SetPostID(v)
 	})
 }
 
 // AddPostID adds v to the "post_id" field.
-func (u *SocialDistributionUpsertOne) AddPostID(v uint32) *SocialDistributionUpsertOne {
+func (u *SocialDistributionUpsertOne) AddPostID(v uint64) *SocialDistributionUpsertOne {
 	return u.Update(func(s *SocialDistributionUpsert) {
 		s.AddPostID(v)
 	})
@@ -1490,7 +1490,7 @@ func (u *SocialDistributionUpsertOne) ClearTitle() *SocialDistributionUpsertOne 
 }
 
 // SetMediaIds sets the "media_ids" field.
-func (u *SocialDistributionUpsertOne) SetMediaIds(v []uint32) *SocialDistributionUpsertOne {
+func (u *SocialDistributionUpsertOne) SetMediaIds(v []uint64) *SocialDistributionUpsertOne {
 	return u.Update(func(s *SocialDistributionUpsert) {
 		s.SetMediaIds(v)
 	})
@@ -1659,7 +1659,7 @@ func (u *SocialDistributionUpsertOne) ExecX(ctx context.Context) {
 }
 
 // Exec executes the UPSERT query and returns the inserted/updated ID.
-func (u *SocialDistributionUpsertOne) ID(ctx context.Context) (id uint32, err error) {
+func (u *SocialDistributionUpsertOne) ID(ctx context.Context) (id uint64, err error) {
 	node, err := u.create.Save(ctx)
 	if err != nil {
 		return id, err
@@ -1668,7 +1668,7 @@ func (u *SocialDistributionUpsertOne) ID(ctx context.Context) (id uint32, err er
 }
 
 // IDX is like ID, but panics if an error occurs.
-func (u *SocialDistributionUpsertOne) IDX(ctx context.Context) uint32 {
+func (u *SocialDistributionUpsertOne) IDX(ctx context.Context) uint64 {
 	id, err := u.ID(ctx)
 	if err != nil {
 		panic(err)
@@ -1725,7 +1725,7 @@ func (_c *SocialDistributionCreateBulk) Save(ctx context.Context) ([]*SocialDist
 				mutation.id = &nodes[i].ID
 				if specs[i].ID.Value != nil && nodes[i].ID == 0 {
 					id := specs[i].ID.Value.(int64)
-					nodes[i].ID = uint32(id)
+					nodes[i].ID = uint64(id)
 				}
 				mutation.done = true
 				return nodes[i], nil
@@ -1906,14 +1906,14 @@ func (u *SocialDistributionUpsertBulk) ClearDeletedAt() *SocialDistributionUpser
 }
 
 // SetCreatedBy sets the "created_by" field.
-func (u *SocialDistributionUpsertBulk) SetCreatedBy(v uint32) *SocialDistributionUpsertBulk {
+func (u *SocialDistributionUpsertBulk) SetCreatedBy(v uint64) *SocialDistributionUpsertBulk {
 	return u.Update(func(s *SocialDistributionUpsert) {
 		s.SetCreatedBy(v)
 	})
 }
 
 // AddCreatedBy adds v to the "created_by" field.
-func (u *SocialDistributionUpsertBulk) AddCreatedBy(v uint32) *SocialDistributionUpsertBulk {
+func (u *SocialDistributionUpsertBulk) AddCreatedBy(v uint64) *SocialDistributionUpsertBulk {
 	return u.Update(func(s *SocialDistributionUpsert) {
 		s.AddCreatedBy(v)
 	})
@@ -1934,14 +1934,14 @@ func (u *SocialDistributionUpsertBulk) ClearCreatedBy() *SocialDistributionUpser
 }
 
 // SetUpdatedBy sets the "updated_by" field.
-func (u *SocialDistributionUpsertBulk) SetUpdatedBy(v uint32) *SocialDistributionUpsertBulk {
+func (u *SocialDistributionUpsertBulk) SetUpdatedBy(v uint64) *SocialDistributionUpsertBulk {
 	return u.Update(func(s *SocialDistributionUpsert) {
 		s.SetUpdatedBy(v)
 	})
 }
 
 // AddUpdatedBy adds v to the "updated_by" field.
-func (u *SocialDistributionUpsertBulk) AddUpdatedBy(v uint32) *SocialDistributionUpsertBulk {
+func (u *SocialDistributionUpsertBulk) AddUpdatedBy(v uint64) *SocialDistributionUpsertBulk {
 	return u.Update(func(s *SocialDistributionUpsert) {
 		s.AddUpdatedBy(v)
 	})
@@ -1962,14 +1962,14 @@ func (u *SocialDistributionUpsertBulk) ClearUpdatedBy() *SocialDistributionUpser
 }
 
 // SetDeletedBy sets the "deleted_by" field.
-func (u *SocialDistributionUpsertBulk) SetDeletedBy(v uint32) *SocialDistributionUpsertBulk {
+func (u *SocialDistributionUpsertBulk) SetDeletedBy(v uint64) *SocialDistributionUpsertBulk {
 	return u.Update(func(s *SocialDistributionUpsert) {
 		s.SetDeletedBy(v)
 	})
 }
 
 // AddDeletedBy adds v to the "deleted_by" field.
-func (u *SocialDistributionUpsertBulk) AddDeletedBy(v uint32) *SocialDistributionUpsertBulk {
+func (u *SocialDistributionUpsertBulk) AddDeletedBy(v uint64) *SocialDistributionUpsertBulk {
 	return u.Update(func(s *SocialDistributionUpsert) {
 		s.AddDeletedBy(v)
 	})
@@ -2011,14 +2011,14 @@ func (u *SocialDistributionUpsertBulk) ClearPlatform() *SocialDistributionUpsert
 }
 
 // SetAccountID sets the "account_id" field.
-func (u *SocialDistributionUpsertBulk) SetAccountID(v uint32) *SocialDistributionUpsertBulk {
+func (u *SocialDistributionUpsertBulk) SetAccountID(v uint64) *SocialDistributionUpsertBulk {
 	return u.Update(func(s *SocialDistributionUpsert) {
 		s.SetAccountID(v)
 	})
 }
 
 // AddAccountID adds v to the "account_id" field.
-func (u *SocialDistributionUpsertBulk) AddAccountID(v uint32) *SocialDistributionUpsertBulk {
+func (u *SocialDistributionUpsertBulk) AddAccountID(v uint64) *SocialDistributionUpsertBulk {
 	return u.Update(func(s *SocialDistributionUpsert) {
 		s.AddAccountID(v)
 	})
@@ -2039,14 +2039,14 @@ func (u *SocialDistributionUpsertBulk) ClearAccountID() *SocialDistributionUpser
 }
 
 // SetPostID sets the "post_id" field.
-func (u *SocialDistributionUpsertBulk) SetPostID(v uint32) *SocialDistributionUpsertBulk {
+func (u *SocialDistributionUpsertBulk) SetPostID(v uint64) *SocialDistributionUpsertBulk {
 	return u.Update(func(s *SocialDistributionUpsert) {
 		s.SetPostID(v)
 	})
 }
 
 // AddPostID adds v to the "post_id" field.
-func (u *SocialDistributionUpsertBulk) AddPostID(v uint32) *SocialDistributionUpsertBulk {
+func (u *SocialDistributionUpsertBulk) AddPostID(v uint64) *SocialDistributionUpsertBulk {
 	return u.Update(func(s *SocialDistributionUpsert) {
 		s.AddPostID(v)
 	})
@@ -2235,7 +2235,7 @@ func (u *SocialDistributionUpsertBulk) ClearTitle() *SocialDistributionUpsertBul
 }
 
 // SetMediaIds sets the "media_ids" field.
-func (u *SocialDistributionUpsertBulk) SetMediaIds(v []uint32) *SocialDistributionUpsertBulk {
+func (u *SocialDistributionUpsertBulk) SetMediaIds(v []uint64) *SocialDistributionUpsertBulk {
 	return u.Update(func(s *SocialDistributionUpsert) {
 		s.SetMediaIds(v)
 	})

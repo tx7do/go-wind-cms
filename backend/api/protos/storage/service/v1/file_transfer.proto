@@ -23,7 +23,7 @@ service FileTransferService {
 // 文件下载请求
 message DownloadFileRequest {
   oneof selector {
-    uint32 file_id = 1 [
+    uint64 file_id = 1 [
       json_name = "fileId",
       (gnostic.openapi.v3.property) = { description: "服务端内部文件 ID" }
     ]; // 服务端内部文件 ID
@@ -149,11 +149,11 @@ message UploadFileRequest {
     (gnostic.openapi.v3.property) = { description: "文件大小（字节）" }
   ]; // 文件大小（字节）
 
-  optional uint32 tenant_id = 10 [
+  optional uint64 tenant_id = 10 [
     json_name = "tenantId",
     (gnostic.openapi.v3.property) = {description: "租户ID，0代表系统全局角色"}
   ];
-  optional uint32 user_id = 11 [
+  optional uint64 user_id = 11 [
     json_name = "userId",
     (gnostic.openapi.v3.property) = {description: "用户ID"}
   ];
@@ -195,11 +195,11 @@ message UploadMediaAssetRequest {
     }
   ];
 
-  optional uint32 tenant_id = 10 [
+  optional uint64 tenant_id = 10 [
     json_name = "tenantId",
     (gnostic.openapi.v3.property) = {description: "租户ID，0代表系统全局角色"}
   ];
-  optional uint32 user_id = 11 [
+  optional uint64 user_id = 11 [
     json_name = "userId",
     (gnostic.openapi.v3.property) = {description: "用户ID"}
   ];

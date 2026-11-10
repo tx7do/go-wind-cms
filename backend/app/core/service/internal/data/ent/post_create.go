@@ -65,13 +65,13 @@ func (_c *PostCreate) SetNillableDeletedAt(v *time.Time) *PostCreate {
 }
 
 // SetCreatedBy sets the "created_by" field.
-func (_c *PostCreate) SetCreatedBy(v uint32) *PostCreate {
+func (_c *PostCreate) SetCreatedBy(v uint64) *PostCreate {
 	_c.mutation.SetCreatedBy(v)
 	return _c
 }
 
 // SetNillableCreatedBy sets the "created_by" field if the given value is not nil.
-func (_c *PostCreate) SetNillableCreatedBy(v *uint32) *PostCreate {
+func (_c *PostCreate) SetNillableCreatedBy(v *uint64) *PostCreate {
 	if v != nil {
 		_c.SetCreatedBy(*v)
 	}
@@ -79,13 +79,13 @@ func (_c *PostCreate) SetNillableCreatedBy(v *uint32) *PostCreate {
 }
 
 // SetUpdatedBy sets the "updated_by" field.
-func (_c *PostCreate) SetUpdatedBy(v uint32) *PostCreate {
+func (_c *PostCreate) SetUpdatedBy(v uint64) *PostCreate {
 	_c.mutation.SetUpdatedBy(v)
 	return _c
 }
 
 // SetNillableUpdatedBy sets the "updated_by" field if the given value is not nil.
-func (_c *PostCreate) SetNillableUpdatedBy(v *uint32) *PostCreate {
+func (_c *PostCreate) SetNillableUpdatedBy(v *uint64) *PostCreate {
 	if v != nil {
 		_c.SetUpdatedBy(*v)
 	}
@@ -93,13 +93,13 @@ func (_c *PostCreate) SetNillableUpdatedBy(v *uint32) *PostCreate {
 }
 
 // SetDeletedBy sets the "deleted_by" field.
-func (_c *PostCreate) SetDeletedBy(v uint32) *PostCreate {
+func (_c *PostCreate) SetDeletedBy(v uint64) *PostCreate {
 	_c.mutation.SetDeletedBy(v)
 	return _c
 }
 
 // SetNillableDeletedBy sets the "deleted_by" field if the given value is not nil.
-func (_c *PostCreate) SetNillableDeletedBy(v *uint32) *PostCreate {
+func (_c *PostCreate) SetNillableDeletedBy(v *uint64) *PostCreate {
 	if v != nil {
 		_c.SetDeletedBy(*v)
 	}
@@ -135,13 +135,13 @@ func (_c *PostCreate) SetNillableEditorType(v *post.EditorType) *PostCreate {
 }
 
 // SetTenantID sets the "tenant_id" field.
-func (_c *PostCreate) SetTenantID(v uint32) *PostCreate {
+func (_c *PostCreate) SetTenantID(v uint64) *PostCreate {
 	_c.mutation.SetTenantID(v)
 	return _c
 }
 
 // SetNillableTenantID sets the "tenant_id" field if the given value is not nil.
-func (_c *PostCreate) SetNillableTenantID(v *uint32) *PostCreate {
+func (_c *PostCreate) SetNillableTenantID(v *uint64) *PostCreate {
 	if v != nil {
 		_c.SetTenantID(*v)
 	}
@@ -233,13 +233,13 @@ func (_c *PostCreate) SetNillableIsFeatured(v *bool) *PostCreate {
 }
 
 // SetAuthorID sets the "author_id" field.
-func (_c *PostCreate) SetAuthorID(v uint32) *PostCreate {
+func (_c *PostCreate) SetAuthorID(v uint64) *PostCreate {
 	_c.mutation.SetAuthorID(v)
 	return _c
 }
 
 // SetNillableAuthorID sets the "author_id" field if the given value is not nil.
-func (_c *PostCreate) SetNillableAuthorID(v *uint32) *PostCreate {
+func (_c *PostCreate) SetNillableAuthorID(v *uint64) *PostCreate {
 	if v != nil {
 		_c.SetAuthorID(*v)
 	}
@@ -309,7 +309,7 @@ func (_c *PostCreate) SetNillablePublishTime(v *time.Time) *PostCreate {
 }
 
 // SetID sets the "id" field.
-func (_c *PostCreate) SetID(v uint32) *PostCreate {
+func (_c *PostCreate) SetID(v uint64) *PostCreate {
 	_c.mutation.SetID(v)
 	return _c
 }
@@ -423,7 +423,7 @@ func (_c *PostCreate) sqlSave(ctx context.Context) (*Post, error) {
 	}
 	if _spec.ID.Value != _node.ID {
 		id := _spec.ID.Value.(int64)
-		_node.ID = uint32(id)
+		_node.ID = uint64(id)
 	}
 	_c.mutation.id = &_node.ID
 	_c.mutation.done = true
@@ -433,7 +433,7 @@ func (_c *PostCreate) sqlSave(ctx context.Context) (*Post, error) {
 func (_c *PostCreate) createSpec() (*Post, *sqlgraph.CreateSpec) {
 	var (
 		_node = &Post{config: _c.config}
-		_spec = sqlgraph.NewCreateSpec(post.Table, sqlgraph.NewFieldSpec(post.FieldID, field.TypeUint32))
+		_spec = sqlgraph.NewCreateSpec(post.Table, sqlgraph.NewFieldSpec(post.FieldID, field.TypeUint64))
 	)
 	_spec.OnConflict = _c.conflict
 	if id, ok := _c.mutation.ID(); ok {
@@ -453,15 +453,15 @@ func (_c *PostCreate) createSpec() (*Post, *sqlgraph.CreateSpec) {
 		_node.DeletedAt = &value
 	}
 	if value, ok := _c.mutation.CreatedBy(); ok {
-		_spec.SetField(post.FieldCreatedBy, field.TypeUint32, value)
+		_spec.SetField(post.FieldCreatedBy, field.TypeUint64, value)
 		_node.CreatedBy = &value
 	}
 	if value, ok := _c.mutation.UpdatedBy(); ok {
-		_spec.SetField(post.FieldUpdatedBy, field.TypeUint32, value)
+		_spec.SetField(post.FieldUpdatedBy, field.TypeUint64, value)
 		_node.UpdatedBy = &value
 	}
 	if value, ok := _c.mutation.DeletedBy(); ok {
-		_spec.SetField(post.FieldDeletedBy, field.TypeUint32, value)
+		_spec.SetField(post.FieldDeletedBy, field.TypeUint64, value)
 		_node.DeletedBy = &value
 	}
 	if value, ok := _c.mutation.SortOrder(); ok {
@@ -473,7 +473,7 @@ func (_c *PostCreate) createSpec() (*Post, *sqlgraph.CreateSpec) {
 		_node.EditorType = &value
 	}
 	if value, ok := _c.mutation.TenantID(); ok {
-		_spec.SetField(post.FieldTenantID, field.TypeUint32, value)
+		_spec.SetField(post.FieldTenantID, field.TypeUint64, value)
 		_node.TenantID = &value
 	}
 	if value, ok := _c.mutation.Status(); ok {
@@ -501,7 +501,7 @@ func (_c *PostCreate) createSpec() (*Post, *sqlgraph.CreateSpec) {
 		_node.IsFeatured = &value
 	}
 	if value, ok := _c.mutation.AuthorID(); ok {
-		_spec.SetField(post.FieldAuthorID, field.TypeUint32, value)
+		_spec.SetField(post.FieldAuthorID, field.TypeUint64, value)
 		_node.AuthorID = &value
 	}
 	if value, ok := _c.mutation.AuthorName(); ok {
@@ -613,7 +613,7 @@ func (u *PostUpsert) ClearDeletedAt() *PostUpsert {
 }
 
 // SetCreatedBy sets the "created_by" field.
-func (u *PostUpsert) SetCreatedBy(v uint32) *PostUpsert {
+func (u *PostUpsert) SetCreatedBy(v uint64) *PostUpsert {
 	u.Set(post.FieldCreatedBy, v)
 	return u
 }
@@ -625,7 +625,7 @@ func (u *PostUpsert) UpdateCreatedBy() *PostUpsert {
 }
 
 // AddCreatedBy adds v to the "created_by" field.
-func (u *PostUpsert) AddCreatedBy(v uint32) *PostUpsert {
+func (u *PostUpsert) AddCreatedBy(v uint64) *PostUpsert {
 	u.Add(post.FieldCreatedBy, v)
 	return u
 }
@@ -637,7 +637,7 @@ func (u *PostUpsert) ClearCreatedBy() *PostUpsert {
 }
 
 // SetUpdatedBy sets the "updated_by" field.
-func (u *PostUpsert) SetUpdatedBy(v uint32) *PostUpsert {
+func (u *PostUpsert) SetUpdatedBy(v uint64) *PostUpsert {
 	u.Set(post.FieldUpdatedBy, v)
 	return u
 }
@@ -649,7 +649,7 @@ func (u *PostUpsert) UpdateUpdatedBy() *PostUpsert {
 }
 
 // AddUpdatedBy adds v to the "updated_by" field.
-func (u *PostUpsert) AddUpdatedBy(v uint32) *PostUpsert {
+func (u *PostUpsert) AddUpdatedBy(v uint64) *PostUpsert {
 	u.Add(post.FieldUpdatedBy, v)
 	return u
 }
@@ -661,7 +661,7 @@ func (u *PostUpsert) ClearUpdatedBy() *PostUpsert {
 }
 
 // SetDeletedBy sets the "deleted_by" field.
-func (u *PostUpsert) SetDeletedBy(v uint32) *PostUpsert {
+func (u *PostUpsert) SetDeletedBy(v uint64) *PostUpsert {
 	u.Set(post.FieldDeletedBy, v)
 	return u
 }
@@ -673,7 +673,7 @@ func (u *PostUpsert) UpdateDeletedBy() *PostUpsert {
 }
 
 // AddDeletedBy adds v to the "deleted_by" field.
-func (u *PostUpsert) AddDeletedBy(v uint32) *PostUpsert {
+func (u *PostUpsert) AddDeletedBy(v uint64) *PostUpsert {
 	u.Add(post.FieldDeletedBy, v)
 	return u
 }
@@ -835,7 +835,7 @@ func (u *PostUpsert) ClearIsFeatured() *PostUpsert {
 }
 
 // SetAuthorID sets the "author_id" field.
-func (u *PostUpsert) SetAuthorID(v uint32) *PostUpsert {
+func (u *PostUpsert) SetAuthorID(v uint64) *PostUpsert {
 	u.Set(post.FieldAuthorID, v)
 	return u
 }
@@ -847,7 +847,7 @@ func (u *PostUpsert) UpdateAuthorID() *PostUpsert {
 }
 
 // AddAuthorID adds v to the "author_id" field.
-func (u *PostUpsert) AddAuthorID(v uint32) *PostUpsert {
+func (u *PostUpsert) AddAuthorID(v uint64) *PostUpsert {
 	u.Add(post.FieldAuthorID, v)
 	return u
 }
@@ -1045,14 +1045,14 @@ func (u *PostUpsertOne) ClearDeletedAt() *PostUpsertOne {
 }
 
 // SetCreatedBy sets the "created_by" field.
-func (u *PostUpsertOne) SetCreatedBy(v uint32) *PostUpsertOne {
+func (u *PostUpsertOne) SetCreatedBy(v uint64) *PostUpsertOne {
 	return u.Update(func(s *PostUpsert) {
 		s.SetCreatedBy(v)
 	})
 }
 
 // AddCreatedBy adds v to the "created_by" field.
-func (u *PostUpsertOne) AddCreatedBy(v uint32) *PostUpsertOne {
+func (u *PostUpsertOne) AddCreatedBy(v uint64) *PostUpsertOne {
 	return u.Update(func(s *PostUpsert) {
 		s.AddCreatedBy(v)
 	})
@@ -1073,14 +1073,14 @@ func (u *PostUpsertOne) ClearCreatedBy() *PostUpsertOne {
 }
 
 // SetUpdatedBy sets the "updated_by" field.
-func (u *PostUpsertOne) SetUpdatedBy(v uint32) *PostUpsertOne {
+func (u *PostUpsertOne) SetUpdatedBy(v uint64) *PostUpsertOne {
 	return u.Update(func(s *PostUpsert) {
 		s.SetUpdatedBy(v)
 	})
 }
 
 // AddUpdatedBy adds v to the "updated_by" field.
-func (u *PostUpsertOne) AddUpdatedBy(v uint32) *PostUpsertOne {
+func (u *PostUpsertOne) AddUpdatedBy(v uint64) *PostUpsertOne {
 	return u.Update(func(s *PostUpsert) {
 		s.AddUpdatedBy(v)
 	})
@@ -1101,14 +1101,14 @@ func (u *PostUpsertOne) ClearUpdatedBy() *PostUpsertOne {
 }
 
 // SetDeletedBy sets the "deleted_by" field.
-func (u *PostUpsertOne) SetDeletedBy(v uint32) *PostUpsertOne {
+func (u *PostUpsertOne) SetDeletedBy(v uint64) *PostUpsertOne {
 	return u.Update(func(s *PostUpsert) {
 		s.SetDeletedBy(v)
 	})
 }
 
 // AddDeletedBy adds v to the "deleted_by" field.
-func (u *PostUpsertOne) AddDeletedBy(v uint32) *PostUpsertOne {
+func (u *PostUpsertOne) AddDeletedBy(v uint64) *PostUpsertOne {
 	return u.Update(func(s *PostUpsert) {
 		s.AddDeletedBy(v)
 	})
@@ -1304,14 +1304,14 @@ func (u *PostUpsertOne) ClearIsFeatured() *PostUpsertOne {
 }
 
 // SetAuthorID sets the "author_id" field.
-func (u *PostUpsertOne) SetAuthorID(v uint32) *PostUpsertOne {
+func (u *PostUpsertOne) SetAuthorID(v uint64) *PostUpsertOne {
 	return u.Update(func(s *PostUpsert) {
 		s.SetAuthorID(v)
 	})
 }
 
 // AddAuthorID adds v to the "author_id" field.
-func (u *PostUpsertOne) AddAuthorID(v uint32) *PostUpsertOne {
+func (u *PostUpsertOne) AddAuthorID(v uint64) *PostUpsertOne {
 	return u.Update(func(s *PostUpsert) {
 		s.AddAuthorID(v)
 	})
@@ -1452,7 +1452,7 @@ func (u *PostUpsertOne) ExecX(ctx context.Context) {
 }
 
 // Exec executes the UPSERT query and returns the inserted/updated ID.
-func (u *PostUpsertOne) ID(ctx context.Context) (id uint32, err error) {
+func (u *PostUpsertOne) ID(ctx context.Context) (id uint64, err error) {
 	node, err := u.create.Save(ctx)
 	if err != nil {
 		return id, err
@@ -1461,7 +1461,7 @@ func (u *PostUpsertOne) ID(ctx context.Context) (id uint32, err error) {
 }
 
 // IDX is like ID, but panics if an error occurs.
-func (u *PostUpsertOne) IDX(ctx context.Context) uint32 {
+func (u *PostUpsertOne) IDX(ctx context.Context) uint64 {
 	id, err := u.ID(ctx)
 	if err != nil {
 		panic(err)
@@ -1518,7 +1518,7 @@ func (_c *PostCreateBulk) Save(ctx context.Context) ([]*Post, error) {
 				mutation.id = &nodes[i].ID
 				if specs[i].ID.Value != nil && nodes[i].ID == 0 {
 					id := specs[i].ID.Value.(int64)
-					nodes[i].ID = uint32(id)
+					nodes[i].ID = uint64(id)
 				}
 				mutation.done = true
 				return nodes[i], nil
@@ -1699,14 +1699,14 @@ func (u *PostUpsertBulk) ClearDeletedAt() *PostUpsertBulk {
 }
 
 // SetCreatedBy sets the "created_by" field.
-func (u *PostUpsertBulk) SetCreatedBy(v uint32) *PostUpsertBulk {
+func (u *PostUpsertBulk) SetCreatedBy(v uint64) *PostUpsertBulk {
 	return u.Update(func(s *PostUpsert) {
 		s.SetCreatedBy(v)
 	})
 }
 
 // AddCreatedBy adds v to the "created_by" field.
-func (u *PostUpsertBulk) AddCreatedBy(v uint32) *PostUpsertBulk {
+func (u *PostUpsertBulk) AddCreatedBy(v uint64) *PostUpsertBulk {
 	return u.Update(func(s *PostUpsert) {
 		s.AddCreatedBy(v)
 	})
@@ -1727,14 +1727,14 @@ func (u *PostUpsertBulk) ClearCreatedBy() *PostUpsertBulk {
 }
 
 // SetUpdatedBy sets the "updated_by" field.
-func (u *PostUpsertBulk) SetUpdatedBy(v uint32) *PostUpsertBulk {
+func (u *PostUpsertBulk) SetUpdatedBy(v uint64) *PostUpsertBulk {
 	return u.Update(func(s *PostUpsert) {
 		s.SetUpdatedBy(v)
 	})
 }
 
 // AddUpdatedBy adds v to the "updated_by" field.
-func (u *PostUpsertBulk) AddUpdatedBy(v uint32) *PostUpsertBulk {
+func (u *PostUpsertBulk) AddUpdatedBy(v uint64) *PostUpsertBulk {
 	return u.Update(func(s *PostUpsert) {
 		s.AddUpdatedBy(v)
 	})
@@ -1755,14 +1755,14 @@ func (u *PostUpsertBulk) ClearUpdatedBy() *PostUpsertBulk {
 }
 
 // SetDeletedBy sets the "deleted_by" field.
-func (u *PostUpsertBulk) SetDeletedBy(v uint32) *PostUpsertBulk {
+func (u *PostUpsertBulk) SetDeletedBy(v uint64) *PostUpsertBulk {
 	return u.Update(func(s *PostUpsert) {
 		s.SetDeletedBy(v)
 	})
 }
 
 // AddDeletedBy adds v to the "deleted_by" field.
-func (u *PostUpsertBulk) AddDeletedBy(v uint32) *PostUpsertBulk {
+func (u *PostUpsertBulk) AddDeletedBy(v uint64) *PostUpsertBulk {
 	return u.Update(func(s *PostUpsert) {
 		s.AddDeletedBy(v)
 	})
@@ -1958,14 +1958,14 @@ func (u *PostUpsertBulk) ClearIsFeatured() *PostUpsertBulk {
 }
 
 // SetAuthorID sets the "author_id" field.
-func (u *PostUpsertBulk) SetAuthorID(v uint32) *PostUpsertBulk {
+func (u *PostUpsertBulk) SetAuthorID(v uint64) *PostUpsertBulk {
 	return u.Update(func(s *PostUpsert) {
 		s.SetAuthorID(v)
 	})
 }
 
 // AddAuthorID adds v to the "author_id" field.
-func (u *PostUpsertBulk) AddAuthorID(v uint32) *PostUpsertBulk {
+func (u *PostUpsertBulk) AddAuthorID(v uint64) *PostUpsertBulk {
 	return u.Update(func(s *PostUpsert) {
 		s.AddAuthorID(v)
 	})

@@ -11,47 +11,47 @@ import (
 )
 
 // ID filters vertices based on their ID field.
-func ID(id uint32) predicate.Category {
+func ID(id uint64) predicate.Category {
 	return predicate.Category(sql.FieldEQ(FieldID, id))
 }
 
 // IDEQ applies the EQ predicate on the ID field.
-func IDEQ(id uint32) predicate.Category {
+func IDEQ(id uint64) predicate.Category {
 	return predicate.Category(sql.FieldEQ(FieldID, id))
 }
 
 // IDNEQ applies the NEQ predicate on the ID field.
-func IDNEQ(id uint32) predicate.Category {
+func IDNEQ(id uint64) predicate.Category {
 	return predicate.Category(sql.FieldNEQ(FieldID, id))
 }
 
 // IDIn applies the In predicate on the ID field.
-func IDIn(ids ...uint32) predicate.Category {
+func IDIn(ids ...uint64) predicate.Category {
 	return predicate.Category(sql.FieldIn(FieldID, ids...))
 }
 
 // IDNotIn applies the NotIn predicate on the ID field.
-func IDNotIn(ids ...uint32) predicate.Category {
+func IDNotIn(ids ...uint64) predicate.Category {
 	return predicate.Category(sql.FieldNotIn(FieldID, ids...))
 }
 
 // IDGT applies the GT predicate on the ID field.
-func IDGT(id uint32) predicate.Category {
+func IDGT(id uint64) predicate.Category {
 	return predicate.Category(sql.FieldGT(FieldID, id))
 }
 
 // IDGTE applies the GTE predicate on the ID field.
-func IDGTE(id uint32) predicate.Category {
+func IDGTE(id uint64) predicate.Category {
 	return predicate.Category(sql.FieldGTE(FieldID, id))
 }
 
 // IDLT applies the LT predicate on the ID field.
-func IDLT(id uint32) predicate.Category {
+func IDLT(id uint64) predicate.Category {
 	return predicate.Category(sql.FieldLT(FieldID, id))
 }
 
 // IDLTE applies the LTE predicate on the ID field.
-func IDLTE(id uint32) predicate.Category {
+func IDLTE(id uint64) predicate.Category {
 	return predicate.Category(sql.FieldLTE(FieldID, id))
 }
 
@@ -71,17 +71,17 @@ func DeletedAt(v time.Time) predicate.Category {
 }
 
 // CreatedBy applies equality check predicate on the "created_by" field. It's identical to CreatedByEQ.
-func CreatedBy(v uint32) predicate.Category {
+func CreatedBy(v uint64) predicate.Category {
 	return predicate.Category(sql.FieldEQ(FieldCreatedBy, v))
 }
 
 // UpdatedBy applies equality check predicate on the "updated_by" field. It's identical to UpdatedByEQ.
-func UpdatedBy(v uint32) predicate.Category {
+func UpdatedBy(v uint64) predicate.Category {
 	return predicate.Category(sql.FieldEQ(FieldUpdatedBy, v))
 }
 
 // DeletedBy applies equality check predicate on the "deleted_by" field. It's identical to DeletedByEQ.
-func DeletedBy(v uint32) predicate.Category {
+func DeletedBy(v uint64) predicate.Category {
 	return predicate.Category(sql.FieldEQ(FieldDeletedBy, v))
 }
 
@@ -96,12 +96,12 @@ func Path(v string) predicate.Category {
 }
 
 // ParentID applies equality check predicate on the "parent_id" field. It's identical to ParentIDEQ.
-func ParentID(v uint32) predicate.Category {
+func ParentID(v uint64) predicate.Category {
 	return predicate.Category(sql.FieldEQ(FieldParentID, v))
 }
 
 // TenantID applies equality check predicate on the "tenant_id" field. It's identical to TenantIDEQ.
-func TenantID(v uint32) predicate.Category {
+func TenantID(v uint64) predicate.Category {
 	return predicate.Category(sql.FieldEQ(FieldTenantID, v))
 }
 
@@ -141,7 +141,7 @@ func Depth(v int32) predicate.Category {
 }
 
 // ContentModelID applies equality check predicate on the "content_model_id" field. It's identical to ContentModelIDEQ.
-func ContentModelID(v uint32) predicate.Category {
+func ContentModelID(v uint64) predicate.Category {
 	return predicate.Category(sql.FieldEQ(FieldContentModelID, v))
 }
 
@@ -296,42 +296,42 @@ func DeletedAtNotNil() predicate.Category {
 }
 
 // CreatedByEQ applies the EQ predicate on the "created_by" field.
-func CreatedByEQ(v uint32) predicate.Category {
+func CreatedByEQ(v uint64) predicate.Category {
 	return predicate.Category(sql.FieldEQ(FieldCreatedBy, v))
 }
 
 // CreatedByNEQ applies the NEQ predicate on the "created_by" field.
-func CreatedByNEQ(v uint32) predicate.Category {
+func CreatedByNEQ(v uint64) predicate.Category {
 	return predicate.Category(sql.FieldNEQ(FieldCreatedBy, v))
 }
 
 // CreatedByIn applies the In predicate on the "created_by" field.
-func CreatedByIn(vs ...uint32) predicate.Category {
+func CreatedByIn(vs ...uint64) predicate.Category {
 	return predicate.Category(sql.FieldIn(FieldCreatedBy, vs...))
 }
 
 // CreatedByNotIn applies the NotIn predicate on the "created_by" field.
-func CreatedByNotIn(vs ...uint32) predicate.Category {
+func CreatedByNotIn(vs ...uint64) predicate.Category {
 	return predicate.Category(sql.FieldNotIn(FieldCreatedBy, vs...))
 }
 
 // CreatedByGT applies the GT predicate on the "created_by" field.
-func CreatedByGT(v uint32) predicate.Category {
+func CreatedByGT(v uint64) predicate.Category {
 	return predicate.Category(sql.FieldGT(FieldCreatedBy, v))
 }
 
 // CreatedByGTE applies the GTE predicate on the "created_by" field.
-func CreatedByGTE(v uint32) predicate.Category {
+func CreatedByGTE(v uint64) predicate.Category {
 	return predicate.Category(sql.FieldGTE(FieldCreatedBy, v))
 }
 
 // CreatedByLT applies the LT predicate on the "created_by" field.
-func CreatedByLT(v uint32) predicate.Category {
+func CreatedByLT(v uint64) predicate.Category {
 	return predicate.Category(sql.FieldLT(FieldCreatedBy, v))
 }
 
 // CreatedByLTE applies the LTE predicate on the "created_by" field.
-func CreatedByLTE(v uint32) predicate.Category {
+func CreatedByLTE(v uint64) predicate.Category {
 	return predicate.Category(sql.FieldLTE(FieldCreatedBy, v))
 }
 
@@ -346,42 +346,42 @@ func CreatedByNotNil() predicate.Category {
 }
 
 // UpdatedByEQ applies the EQ predicate on the "updated_by" field.
-func UpdatedByEQ(v uint32) predicate.Category {
+func UpdatedByEQ(v uint64) predicate.Category {
 	return predicate.Category(sql.FieldEQ(FieldUpdatedBy, v))
 }
 
 // UpdatedByNEQ applies the NEQ predicate on the "updated_by" field.
-func UpdatedByNEQ(v uint32) predicate.Category {
+func UpdatedByNEQ(v uint64) predicate.Category {
 	return predicate.Category(sql.FieldNEQ(FieldUpdatedBy, v))
 }
 
 // UpdatedByIn applies the In predicate on the "updated_by" field.
-func UpdatedByIn(vs ...uint32) predicate.Category {
+func UpdatedByIn(vs ...uint64) predicate.Category {
 	return predicate.Category(sql.FieldIn(FieldUpdatedBy, vs...))
 }
 
 // UpdatedByNotIn applies the NotIn predicate on the "updated_by" field.
-func UpdatedByNotIn(vs ...uint32) predicate.Category {
+func UpdatedByNotIn(vs ...uint64) predicate.Category {
 	return predicate.Category(sql.FieldNotIn(FieldUpdatedBy, vs...))
 }
 
 // UpdatedByGT applies the GT predicate on the "updated_by" field.
-func UpdatedByGT(v uint32) predicate.Category {
+func UpdatedByGT(v uint64) predicate.Category {
 	return predicate.Category(sql.FieldGT(FieldUpdatedBy, v))
 }
 
 // UpdatedByGTE applies the GTE predicate on the "updated_by" field.
-func UpdatedByGTE(v uint32) predicate.Category {
+func UpdatedByGTE(v uint64) predicate.Category {
 	return predicate.Category(sql.FieldGTE(FieldUpdatedBy, v))
 }
 
 // UpdatedByLT applies the LT predicate on the "updated_by" field.
-func UpdatedByLT(v uint32) predicate.Category {
+func UpdatedByLT(v uint64) predicate.Category {
 	return predicate.Category(sql.FieldLT(FieldUpdatedBy, v))
 }
 
 // UpdatedByLTE applies the LTE predicate on the "updated_by" field.
-func UpdatedByLTE(v uint32) predicate.Category {
+func UpdatedByLTE(v uint64) predicate.Category {
 	return predicate.Category(sql.FieldLTE(FieldUpdatedBy, v))
 }
 
@@ -396,42 +396,42 @@ func UpdatedByNotNil() predicate.Category {
 }
 
 // DeletedByEQ applies the EQ predicate on the "deleted_by" field.
-func DeletedByEQ(v uint32) predicate.Category {
+func DeletedByEQ(v uint64) predicate.Category {
 	return predicate.Category(sql.FieldEQ(FieldDeletedBy, v))
 }
 
 // DeletedByNEQ applies the NEQ predicate on the "deleted_by" field.
-func DeletedByNEQ(v uint32) predicate.Category {
+func DeletedByNEQ(v uint64) predicate.Category {
 	return predicate.Category(sql.FieldNEQ(FieldDeletedBy, v))
 }
 
 // DeletedByIn applies the In predicate on the "deleted_by" field.
-func DeletedByIn(vs ...uint32) predicate.Category {
+func DeletedByIn(vs ...uint64) predicate.Category {
 	return predicate.Category(sql.FieldIn(FieldDeletedBy, vs...))
 }
 
 // DeletedByNotIn applies the NotIn predicate on the "deleted_by" field.
-func DeletedByNotIn(vs ...uint32) predicate.Category {
+func DeletedByNotIn(vs ...uint64) predicate.Category {
 	return predicate.Category(sql.FieldNotIn(FieldDeletedBy, vs...))
 }
 
 // DeletedByGT applies the GT predicate on the "deleted_by" field.
-func DeletedByGT(v uint32) predicate.Category {
+func DeletedByGT(v uint64) predicate.Category {
 	return predicate.Category(sql.FieldGT(FieldDeletedBy, v))
 }
 
 // DeletedByGTE applies the GTE predicate on the "deleted_by" field.
-func DeletedByGTE(v uint32) predicate.Category {
+func DeletedByGTE(v uint64) predicate.Category {
 	return predicate.Category(sql.FieldGTE(FieldDeletedBy, v))
 }
 
 // DeletedByLT applies the LT predicate on the "deleted_by" field.
-func DeletedByLT(v uint32) predicate.Category {
+func DeletedByLT(v uint64) predicate.Category {
 	return predicate.Category(sql.FieldLT(FieldDeletedBy, v))
 }
 
 // DeletedByLTE applies the LTE predicate on the "deleted_by" field.
-func DeletedByLTE(v uint32) predicate.Category {
+func DeletedByLTE(v uint64) predicate.Category {
 	return predicate.Category(sql.FieldLTE(FieldDeletedBy, v))
 }
 
@@ -571,22 +571,22 @@ func PathContainsFold(v string) predicate.Category {
 }
 
 // ParentIDEQ applies the EQ predicate on the "parent_id" field.
-func ParentIDEQ(v uint32) predicate.Category {
+func ParentIDEQ(v uint64) predicate.Category {
 	return predicate.Category(sql.FieldEQ(FieldParentID, v))
 }
 
 // ParentIDNEQ applies the NEQ predicate on the "parent_id" field.
-func ParentIDNEQ(v uint32) predicate.Category {
+func ParentIDNEQ(v uint64) predicate.Category {
 	return predicate.Category(sql.FieldNEQ(FieldParentID, v))
 }
 
 // ParentIDIn applies the In predicate on the "parent_id" field.
-func ParentIDIn(vs ...uint32) predicate.Category {
+func ParentIDIn(vs ...uint64) predicate.Category {
 	return predicate.Category(sql.FieldIn(FieldParentID, vs...))
 }
 
 // ParentIDNotIn applies the NotIn predicate on the "parent_id" field.
-func ParentIDNotIn(vs ...uint32) predicate.Category {
+func ParentIDNotIn(vs ...uint64) predicate.Category {
 	return predicate.Category(sql.FieldNotIn(FieldParentID, vs...))
 }
 
@@ -601,42 +601,42 @@ func ParentIDNotNil() predicate.Category {
 }
 
 // TenantIDEQ applies the EQ predicate on the "tenant_id" field.
-func TenantIDEQ(v uint32) predicate.Category {
+func TenantIDEQ(v uint64) predicate.Category {
 	return predicate.Category(sql.FieldEQ(FieldTenantID, v))
 }
 
 // TenantIDNEQ applies the NEQ predicate on the "tenant_id" field.
-func TenantIDNEQ(v uint32) predicate.Category {
+func TenantIDNEQ(v uint64) predicate.Category {
 	return predicate.Category(sql.FieldNEQ(FieldTenantID, v))
 }
 
 // TenantIDIn applies the In predicate on the "tenant_id" field.
-func TenantIDIn(vs ...uint32) predicate.Category {
+func TenantIDIn(vs ...uint64) predicate.Category {
 	return predicate.Category(sql.FieldIn(FieldTenantID, vs...))
 }
 
 // TenantIDNotIn applies the NotIn predicate on the "tenant_id" field.
-func TenantIDNotIn(vs ...uint32) predicate.Category {
+func TenantIDNotIn(vs ...uint64) predicate.Category {
 	return predicate.Category(sql.FieldNotIn(FieldTenantID, vs...))
 }
 
 // TenantIDGT applies the GT predicate on the "tenant_id" field.
-func TenantIDGT(v uint32) predicate.Category {
+func TenantIDGT(v uint64) predicate.Category {
 	return predicate.Category(sql.FieldGT(FieldTenantID, v))
 }
 
 // TenantIDGTE applies the GTE predicate on the "tenant_id" field.
-func TenantIDGTE(v uint32) predicate.Category {
+func TenantIDGTE(v uint64) predicate.Category {
 	return predicate.Category(sql.FieldGTE(FieldTenantID, v))
 }
 
 // TenantIDLT applies the LT predicate on the "tenant_id" field.
-func TenantIDLT(v uint32) predicate.Category {
+func TenantIDLT(v uint64) predicate.Category {
 	return predicate.Category(sql.FieldLT(FieldTenantID, v))
 }
 
 // TenantIDLTE applies the LTE predicate on the "tenant_id" field.
-func TenantIDLTE(v uint32) predicate.Category {
+func TenantIDLTE(v uint64) predicate.Category {
 	return predicate.Category(sql.FieldLTE(FieldTenantID, v))
 }
 
@@ -1086,42 +1086,42 @@ func CustomFieldsNotNil() predicate.Category {
 }
 
 // ContentModelIDEQ applies the EQ predicate on the "content_model_id" field.
-func ContentModelIDEQ(v uint32) predicate.Category {
+func ContentModelIDEQ(v uint64) predicate.Category {
 	return predicate.Category(sql.FieldEQ(FieldContentModelID, v))
 }
 
 // ContentModelIDNEQ applies the NEQ predicate on the "content_model_id" field.
-func ContentModelIDNEQ(v uint32) predicate.Category {
+func ContentModelIDNEQ(v uint64) predicate.Category {
 	return predicate.Category(sql.FieldNEQ(FieldContentModelID, v))
 }
 
 // ContentModelIDIn applies the In predicate on the "content_model_id" field.
-func ContentModelIDIn(vs ...uint32) predicate.Category {
+func ContentModelIDIn(vs ...uint64) predicate.Category {
 	return predicate.Category(sql.FieldIn(FieldContentModelID, vs...))
 }
 
 // ContentModelIDNotIn applies the NotIn predicate on the "content_model_id" field.
-func ContentModelIDNotIn(vs ...uint32) predicate.Category {
+func ContentModelIDNotIn(vs ...uint64) predicate.Category {
 	return predicate.Category(sql.FieldNotIn(FieldContentModelID, vs...))
 }
 
 // ContentModelIDGT applies the GT predicate on the "content_model_id" field.
-func ContentModelIDGT(v uint32) predicate.Category {
+func ContentModelIDGT(v uint64) predicate.Category {
 	return predicate.Category(sql.FieldGT(FieldContentModelID, v))
 }
 
 // ContentModelIDGTE applies the GTE predicate on the "content_model_id" field.
-func ContentModelIDGTE(v uint32) predicate.Category {
+func ContentModelIDGTE(v uint64) predicate.Category {
 	return predicate.Category(sql.FieldGTE(FieldContentModelID, v))
 }
 
 // ContentModelIDLT applies the LT predicate on the "content_model_id" field.
-func ContentModelIDLT(v uint32) predicate.Category {
+func ContentModelIDLT(v uint64) predicate.Category {
 	return predicate.Category(sql.FieldLT(FieldContentModelID, v))
 }
 
 // ContentModelIDLTE applies the LTE predicate on the "content_model_id" field.
-func ContentModelIDLTE(v uint32) predicate.Category {
+func ContentModelIDLTE(v uint64) predicate.Category {
 	return predicate.Category(sql.FieldLTE(FieldContentModelID, v))
 }
 

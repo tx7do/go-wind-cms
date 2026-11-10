@@ -107,7 +107,7 @@ func (s *InteractionService) GetInteractionStatus(ctx context.Context, req *inte
 	if err != nil {
 		return nil, err
 	}
-	return &interactionV1.GetInteractionStatusResponse{Statuses: statuses}, nil
+	return &interactionV1.GetInteractionStatusResponse{Statuses: toUint32KeyMap(statuses)}, nil
 }
 
 // ListWatchedPosts 列出当前 viewer 收藏的 post。
@@ -131,7 +131,7 @@ func (s *InteractionService) GetCounts(ctx context.Context, req *interactionV1.G
 	if err != nil {
 		return nil, err
 	}
-	return &interactionV1.GetCountsResponse{Counts: counts}, nil
+	return &interactionV1.GetCountsResponse{Counts: toUint32KeyMap(counts)}, nil
 }
 
 // RecordView 浏览量上报（匿名可调用）。
@@ -144,9 +144,9 @@ func (s *InteractionService) RecordView(ctx context.Context, req *interactionV1.
 		return nil, interactionV1.ErrorBadRequest("invalid parameter")
 	}
 
-	var tid uint32
+	var tid uint64
 	if vc, exist := viewer.FromContext(ctx); exist && vc != nil && vc.TenantID() > 0 {
-		tid = uint32(vc.TenantID())
+		tid = uint64(vc.TenantID())
 	} else {
 		tid = tenantIDFromInternalMetadata(ctx)
 	}
@@ -160,13 +160,22 @@ func (s *InteractionService) RecordView(ctx context.Context, req *interactionV1.
 
 // tenantIDFromInternalMetadata 从内网可信元数据 x-md-global-tenant-id 读租户
 //（app BFF 按请求 Host 解析后注入；该 header 仅内网 gRPC 可达，外部不可伪造）。
-func tenantIDFromInternalMetadata(ctx context.Context) uint32 {
+func tenantIDFromInternalMetadata(ctx context.Context) uint64 {
 	if md, ok := kratosMetadata.FromServerContext(ctx); ok {
 		if v := md.Get("x-md-global-tenant-id"); v != "" {
 			if tid, err := strconv.ParseUint(v, 10, 32); err == nil && tid > 0 {
-				return uint32(tid)
+				return uint64(tid)
 			}
 		}
 	}
 	return 0
+}
+
+// toUint32KeyMap map[uint64]V -> map[uint32]V（proto 计数键为 uint32；现网 ID 均在范围内）。
+func toUint32KeyMap[V any](m map[uint64]V) map[uint32]V {
+	out := make(map[uint32]V, len(m))
+	for k, v := range m {
+		out[uint32(k)] = v
+	}
+	return out
 }

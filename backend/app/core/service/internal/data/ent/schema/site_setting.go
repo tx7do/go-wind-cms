@@ -29,7 +29,7 @@ func (SiteSetting) Annotations() []schema.Annotation {
 // Fields of the SiteSetting.
 func (SiteSetting) Fields() []ent.Field {
 	return []ent.Field{
-		field.Uint32("site_id").
+		field.Uint64("site_id").
 			Comment("站点ID").
 			Optional().
 			Nillable(),
@@ -106,10 +106,10 @@ func (SiteSetting) Fields() []ent.Field {
 // Mixin of the SiteSetting.
 func (SiteSetting) Mixin() []ent.Mixin {
 	return []ent.Mixin{
-		mixin.AutoIncrementId{},
+		mixin.AutoIncrementId64{},
 		mixin.TimeAt{},
-		mixin.OperatorID{},
-		mixin.TenantID[uint32]{},
+		mixin.OperatorID64{},
+		mixin.TenantID[uint64]{},
 	}
 }
 

@@ -76,7 +76,7 @@ var (
 	Hooks  [1]ent.Hook
 	Policy ent.Policy
 	// DefaultTenantID holds the default value on creation for the "tenant_id" field.
-	DefaultTenantID uint32
+	DefaultTenantID uint64
 	// SourceTypeValidator is a validator for the "source_type" field. It is called by the builders before save.
 	SourceTypeValidator func(string) error
 	// TargetTypeValidator is a validator for the "target_type" field. It is called by the builders before save.
@@ -86,7 +86,7 @@ var (
 	// FieldValidator is a validator for the "field" field. It is called by the builders before save.
 	FieldValidator func(string) error
 	// IDValidator is a validator for the "id" field. It is called by the builders before save.
-	IDValidator func(uint32) error
+	IDValidator func(uint64) error
 )
 
 // OrderOption defines the ordering options for the ContentReference queries.

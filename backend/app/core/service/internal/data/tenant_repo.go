@@ -128,7 +128,7 @@ func (r *TenantRepo) List(ctx context.Context, req *paginationV1.PagingRequest) 
 	}, nil
 }
 
-func (r *TenantRepo) IsExist(ctx context.Context, id uint32) (bool, error) {
+func (r *TenantRepo) IsExist(ctx context.Context, id uint64) (bool, error) {
 	exist, err := r.entClient.Client().Tenant.Query().
 		Where(tenant.IDEQ(id)).
 		Exist(ctx)
@@ -304,7 +304,7 @@ func (r *TenantRepo) Update(ctx context.Context, req *identityV1.UpdateTenantReq
 }
 
 // AssignTenantAdmin assigns an admin user to a tenant within a transaction.
-func (r *TenantRepo) AssignTenantAdmin(ctx context.Context, tx *ent.Tx, tenantId uint32, userId uint32) error {
+func (r *TenantRepo) AssignTenantAdmin(ctx context.Context, tx *ent.Tx, tenantId uint64, userId uint64) error {
 	_, err := tx.Tenant.Update().
 		Where(tenant.IDEQ(tenantId)).
 		SetAdminUserID(userId).
@@ -358,7 +358,7 @@ func (r *TenantRepo) TenantExists(ctx context.Context, req *identityV1.TenantExi
 // 仅供 app BFF 在匿名（白名单）请求中按 Host 解析 tenant_id。domain 现为全局
 // 唯一索引，至多匹配一行；未匹配到（含 domain 为空）返回 (0, nil)，调用方据此
 // fail-closed。仅返回 id，不映射/泄露其他租户字段。
-func (r *TenantRepo) GetTenantIdByDomain(ctx context.Context, domain string) (uint32, error) {
+func (r *TenantRepo) GetTenantIdByDomain(ctx context.Context, domain string) (uint64, error) {
 	if domain == "" {
 		return 0, nil
 	}
@@ -396,7 +396,7 @@ func (r *TenantRepo) GetTenantIdByDomain(ctx context.Context, domain string) (ui
 }
 
 // ListTenantsByIds gets tenants by a list of IDs.
-func (r *TenantRepo) ListTenantsByIds(ctx context.Context, ids []uint32) ([]*identityV1.Tenant, error) {
+func (r *TenantRepo) ListTenantsByIds(ctx context.Context, ids []uint64) ([]*identityV1.Tenant, error) {
 	if len(ids) == 0 {
 		return []*identityV1.Tenant{}, nil
 	}

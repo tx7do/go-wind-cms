@@ -65,13 +65,13 @@ func (_c *PageCreate) SetNillableDeletedAt(v *time.Time) *PageCreate {
 }
 
 // SetCreatedBy sets the "created_by" field.
-func (_c *PageCreate) SetCreatedBy(v uint32) *PageCreate {
+func (_c *PageCreate) SetCreatedBy(v uint64) *PageCreate {
 	_c.mutation.SetCreatedBy(v)
 	return _c
 }
 
 // SetNillableCreatedBy sets the "created_by" field if the given value is not nil.
-func (_c *PageCreate) SetNillableCreatedBy(v *uint32) *PageCreate {
+func (_c *PageCreate) SetNillableCreatedBy(v *uint64) *PageCreate {
 	if v != nil {
 		_c.SetCreatedBy(*v)
 	}
@@ -79,13 +79,13 @@ func (_c *PageCreate) SetNillableCreatedBy(v *uint32) *PageCreate {
 }
 
 // SetUpdatedBy sets the "updated_by" field.
-func (_c *PageCreate) SetUpdatedBy(v uint32) *PageCreate {
+func (_c *PageCreate) SetUpdatedBy(v uint64) *PageCreate {
 	_c.mutation.SetUpdatedBy(v)
 	return _c
 }
 
 // SetNillableUpdatedBy sets the "updated_by" field if the given value is not nil.
-func (_c *PageCreate) SetNillableUpdatedBy(v *uint32) *PageCreate {
+func (_c *PageCreate) SetNillableUpdatedBy(v *uint64) *PageCreate {
 	if v != nil {
 		_c.SetUpdatedBy(*v)
 	}
@@ -93,13 +93,13 @@ func (_c *PageCreate) SetNillableUpdatedBy(v *uint32) *PageCreate {
 }
 
 // SetDeletedBy sets the "deleted_by" field.
-func (_c *PageCreate) SetDeletedBy(v uint32) *PageCreate {
+func (_c *PageCreate) SetDeletedBy(v uint64) *PageCreate {
 	_c.mutation.SetDeletedBy(v)
 	return _c
 }
 
 // SetNillableDeletedBy sets the "deleted_by" field if the given value is not nil.
-func (_c *PageCreate) SetNillableDeletedBy(v *uint32) *PageCreate {
+func (_c *PageCreate) SetNillableDeletedBy(v *uint64) *PageCreate {
 	if v != nil {
 		_c.SetDeletedBy(*v)
 	}
@@ -135,13 +135,13 @@ func (_c *PageCreate) SetNillablePath(v *string) *PageCreate {
 }
 
 // SetParentID sets the "parent_id" field.
-func (_c *PageCreate) SetParentID(v uint32) *PageCreate {
+func (_c *PageCreate) SetParentID(v uint64) *PageCreate {
 	_c.mutation.SetParentID(v)
 	return _c
 }
 
 // SetNillableParentID sets the "parent_id" field if the given value is not nil.
-func (_c *PageCreate) SetNillableParentID(v *uint32) *PageCreate {
+func (_c *PageCreate) SetNillableParentID(v *uint64) *PageCreate {
 	if v != nil {
 		_c.SetParentID(*v)
 	}
@@ -163,13 +163,13 @@ func (_c *PageCreate) SetNillableEditorType(v *page.EditorType) *PageCreate {
 }
 
 // SetTenantID sets the "tenant_id" field.
-func (_c *PageCreate) SetTenantID(v uint32) *PageCreate {
+func (_c *PageCreate) SetTenantID(v uint64) *PageCreate {
 	_c.mutation.SetTenantID(v)
 	return _c
 }
 
 // SetNillableTenantID sets the "tenant_id" field if the given value is not nil.
-func (_c *PageCreate) SetNillableTenantID(v *uint32) *PageCreate {
+func (_c *PageCreate) SetNillableTenantID(v *uint64) *PageCreate {
 	if v != nil {
 		_c.SetTenantID(*v)
 	}
@@ -219,13 +219,13 @@ func (_c *PageCreate) SetNillableSlug(v *string) *PageCreate {
 }
 
 // SetAuthorID sets the "author_id" field.
-func (_c *PageCreate) SetAuthorID(v uint32) *PageCreate {
+func (_c *PageCreate) SetAuthorID(v uint64) *PageCreate {
 	_c.mutation.SetAuthorID(v)
 	return _c
 }
 
 // SetNillableAuthorID sets the "author_id" field if the given value is not nil.
-func (_c *PageCreate) SetNillableAuthorID(v *uint32) *PageCreate {
+func (_c *PageCreate) SetNillableAuthorID(v *uint64) *PageCreate {
 	if v != nil {
 		_c.SetAuthorID(*v)
 	}
@@ -351,13 +351,13 @@ func (_c *PageCreate) SetCustomFields(v *map[string]string) *PageCreate {
 }
 
 // SetContentModelID sets the "content_model_id" field.
-func (_c *PageCreate) SetContentModelID(v uint32) *PageCreate {
+func (_c *PageCreate) SetContentModelID(v uint64) *PageCreate {
 	_c.mutation.SetContentModelID(v)
 	return _c
 }
 
 // SetNillableContentModelID sets the "content_model_id" field if the given value is not nil.
-func (_c *PageCreate) SetNillableContentModelID(v *uint32) *PageCreate {
+func (_c *PageCreate) SetNillableContentModelID(v *uint64) *PageCreate {
 	if v != nil {
 		_c.SetContentModelID(*v)
 	}
@@ -379,7 +379,7 @@ func (_c *PageCreate) SetNillableDepth(v *int32) *PageCreate {
 }
 
 // SetID sets the "id" field.
-func (_c *PageCreate) SetID(v uint32) *PageCreate {
+func (_c *PageCreate) SetID(v uint64) *PageCreate {
 	_c.mutation.SetID(v)
 	return _c
 }
@@ -390,14 +390,14 @@ func (_c *PageCreate) SetParent(v *Page) *PageCreate {
 }
 
 // AddChildIDs adds the "children" edge to the Page entity by IDs.
-func (_c *PageCreate) AddChildIDs(ids ...uint32) *PageCreate {
+func (_c *PageCreate) AddChildIDs(ids ...uint64) *PageCreate {
 	_c.mutation.AddChildIDs(ids...)
 	return _c
 }
 
 // AddChildren adds the "children" edges to the Page entity.
 func (_c *PageCreate) AddChildren(v ...*Page) *PageCreate {
-	ids := make([]uint32, len(v))
+	ids := make([]uint64, len(v))
 	for i := range v {
 		ids[i] = v[i].ID
 	}
@@ -531,7 +531,7 @@ func (_c *PageCreate) sqlSave(ctx context.Context) (*Page, error) {
 	}
 	if _spec.ID.Value != _node.ID {
 		id := _spec.ID.Value.(int64)
-		_node.ID = uint32(id)
+		_node.ID = uint64(id)
 	}
 	_c.mutation.id = &_node.ID
 	_c.mutation.done = true
@@ -541,7 +541,7 @@ func (_c *PageCreate) sqlSave(ctx context.Context) (*Page, error) {
 func (_c *PageCreate) createSpec() (*Page, *sqlgraph.CreateSpec) {
 	var (
 		_node = &Page{config: _c.config}
-		_spec = sqlgraph.NewCreateSpec(page.Table, sqlgraph.NewFieldSpec(page.FieldID, field.TypeUint32))
+		_spec = sqlgraph.NewCreateSpec(page.Table, sqlgraph.NewFieldSpec(page.FieldID, field.TypeUint64))
 	)
 	_spec.OnConflict = _c.conflict
 	if id, ok := _c.mutation.ID(); ok {
@@ -561,15 +561,15 @@ func (_c *PageCreate) createSpec() (*Page, *sqlgraph.CreateSpec) {
 		_node.DeletedAt = &value
 	}
 	if value, ok := _c.mutation.CreatedBy(); ok {
-		_spec.SetField(page.FieldCreatedBy, field.TypeUint32, value)
+		_spec.SetField(page.FieldCreatedBy, field.TypeUint64, value)
 		_node.CreatedBy = &value
 	}
 	if value, ok := _c.mutation.UpdatedBy(); ok {
-		_spec.SetField(page.FieldUpdatedBy, field.TypeUint32, value)
+		_spec.SetField(page.FieldUpdatedBy, field.TypeUint64, value)
 		_node.UpdatedBy = &value
 	}
 	if value, ok := _c.mutation.DeletedBy(); ok {
-		_spec.SetField(page.FieldDeletedBy, field.TypeUint32, value)
+		_spec.SetField(page.FieldDeletedBy, field.TypeUint64, value)
 		_node.DeletedBy = &value
 	}
 	if value, ok := _c.mutation.SortOrder(); ok {
@@ -585,7 +585,7 @@ func (_c *PageCreate) createSpec() (*Page, *sqlgraph.CreateSpec) {
 		_node.EditorType = &value
 	}
 	if value, ok := _c.mutation.TenantID(); ok {
-		_spec.SetField(page.FieldTenantID, field.TypeUint32, value)
+		_spec.SetField(page.FieldTenantID, field.TypeUint64, value)
 		_node.TenantID = &value
 	}
 	if value, ok := _c.mutation.Status(); ok {
@@ -601,7 +601,7 @@ func (_c *PageCreate) createSpec() (*Page, *sqlgraph.CreateSpec) {
 		_node.Slug = &value
 	}
 	if value, ok := _c.mutation.AuthorID(); ok {
-		_spec.SetField(page.FieldAuthorID, field.TypeUint32, value)
+		_spec.SetField(page.FieldAuthorID, field.TypeUint64, value)
 		_node.AuthorID = &value
 	}
 	if value, ok := _c.mutation.AuthorName(); ok {
@@ -641,7 +641,7 @@ func (_c *PageCreate) createSpec() (*Page, *sqlgraph.CreateSpec) {
 		_node.CustomFields = value
 	}
 	if value, ok := _c.mutation.ContentModelID(); ok {
-		_spec.SetField(page.FieldContentModelID, field.TypeUint32, value)
+		_spec.SetField(page.FieldContentModelID, field.TypeUint64, value)
 		_node.ContentModelID = &value
 	}
 	if value, ok := _c.mutation.Depth(); ok {
@@ -656,7 +656,7 @@ func (_c *PageCreate) createSpec() (*Page, *sqlgraph.CreateSpec) {
 			Columns: []string{page.ParentColumn},
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
-				IDSpec: sqlgraph.NewFieldSpec(page.FieldID, field.TypeUint32),
+				IDSpec: sqlgraph.NewFieldSpec(page.FieldID, field.TypeUint64),
 			},
 		}
 		for _, k := range nodes {
@@ -673,7 +673,7 @@ func (_c *PageCreate) createSpec() (*Page, *sqlgraph.CreateSpec) {
 			Columns: []string{page.ChildrenColumn},
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
-				IDSpec: sqlgraph.NewFieldSpec(page.FieldID, field.TypeUint32),
+				IDSpec: sqlgraph.NewFieldSpec(page.FieldID, field.TypeUint64),
 			},
 		}
 		for _, k := range nodes {
@@ -770,7 +770,7 @@ func (u *PageUpsert) ClearDeletedAt() *PageUpsert {
 }
 
 // SetCreatedBy sets the "created_by" field.
-func (u *PageUpsert) SetCreatedBy(v uint32) *PageUpsert {
+func (u *PageUpsert) SetCreatedBy(v uint64) *PageUpsert {
 	u.Set(page.FieldCreatedBy, v)
 	return u
 }
@@ -782,7 +782,7 @@ func (u *PageUpsert) UpdateCreatedBy() *PageUpsert {
 }
 
 // AddCreatedBy adds v to the "created_by" field.
-func (u *PageUpsert) AddCreatedBy(v uint32) *PageUpsert {
+func (u *PageUpsert) AddCreatedBy(v uint64) *PageUpsert {
 	u.Add(page.FieldCreatedBy, v)
 	return u
 }
@@ -794,7 +794,7 @@ func (u *PageUpsert) ClearCreatedBy() *PageUpsert {
 }
 
 // SetUpdatedBy sets the "updated_by" field.
-func (u *PageUpsert) SetUpdatedBy(v uint32) *PageUpsert {
+func (u *PageUpsert) SetUpdatedBy(v uint64) *PageUpsert {
 	u.Set(page.FieldUpdatedBy, v)
 	return u
 }
@@ -806,7 +806,7 @@ func (u *PageUpsert) UpdateUpdatedBy() *PageUpsert {
 }
 
 // AddUpdatedBy adds v to the "updated_by" field.
-func (u *PageUpsert) AddUpdatedBy(v uint32) *PageUpsert {
+func (u *PageUpsert) AddUpdatedBy(v uint64) *PageUpsert {
 	u.Add(page.FieldUpdatedBy, v)
 	return u
 }
@@ -818,7 +818,7 @@ func (u *PageUpsert) ClearUpdatedBy() *PageUpsert {
 }
 
 // SetDeletedBy sets the "deleted_by" field.
-func (u *PageUpsert) SetDeletedBy(v uint32) *PageUpsert {
+func (u *PageUpsert) SetDeletedBy(v uint64) *PageUpsert {
 	u.Set(page.FieldDeletedBy, v)
 	return u
 }
@@ -830,7 +830,7 @@ func (u *PageUpsert) UpdateDeletedBy() *PageUpsert {
 }
 
 // AddDeletedBy adds v to the "deleted_by" field.
-func (u *PageUpsert) AddDeletedBy(v uint32) *PageUpsert {
+func (u *PageUpsert) AddDeletedBy(v uint64) *PageUpsert {
 	u.Add(page.FieldDeletedBy, v)
 	return u
 }
@@ -884,7 +884,7 @@ func (u *PageUpsert) ClearPath() *PageUpsert {
 }
 
 // SetParentID sets the "parent_id" field.
-func (u *PageUpsert) SetParentID(v uint32) *PageUpsert {
+func (u *PageUpsert) SetParentID(v uint64) *PageUpsert {
 	u.Set(page.FieldParentID, v)
 	return u
 }
@@ -974,7 +974,7 @@ func (u *PageUpsert) ClearSlug() *PageUpsert {
 }
 
 // SetAuthorID sets the "author_id" field.
-func (u *PageUpsert) SetAuthorID(v uint32) *PageUpsert {
+func (u *PageUpsert) SetAuthorID(v uint64) *PageUpsert {
 	u.Set(page.FieldAuthorID, v)
 	return u
 }
@@ -986,7 +986,7 @@ func (u *PageUpsert) UpdateAuthorID() *PageUpsert {
 }
 
 // AddAuthorID adds v to the "author_id" field.
-func (u *PageUpsert) AddAuthorID(v uint32) *PageUpsert {
+func (u *PageUpsert) AddAuthorID(v uint64) *PageUpsert {
 	u.Add(page.FieldAuthorID, v)
 	return u
 }
@@ -1160,7 +1160,7 @@ func (u *PageUpsert) ClearCustomFields() *PageUpsert {
 }
 
 // SetContentModelID sets the "content_model_id" field.
-func (u *PageUpsert) SetContentModelID(v uint32) *PageUpsert {
+func (u *PageUpsert) SetContentModelID(v uint64) *PageUpsert {
 	u.Set(page.FieldContentModelID, v)
 	return u
 }
@@ -1172,7 +1172,7 @@ func (u *PageUpsert) UpdateContentModelID() *PageUpsert {
 }
 
 // AddContentModelID adds v to the "content_model_id" field.
-func (u *PageUpsert) AddContentModelID(v uint32) *PageUpsert {
+func (u *PageUpsert) AddContentModelID(v uint64) *PageUpsert {
 	u.Add(page.FieldContentModelID, v)
 	return u
 }
@@ -1304,14 +1304,14 @@ func (u *PageUpsertOne) ClearDeletedAt() *PageUpsertOne {
 }
 
 // SetCreatedBy sets the "created_by" field.
-func (u *PageUpsertOne) SetCreatedBy(v uint32) *PageUpsertOne {
+func (u *PageUpsertOne) SetCreatedBy(v uint64) *PageUpsertOne {
 	return u.Update(func(s *PageUpsert) {
 		s.SetCreatedBy(v)
 	})
 }
 
 // AddCreatedBy adds v to the "created_by" field.
-func (u *PageUpsertOne) AddCreatedBy(v uint32) *PageUpsertOne {
+func (u *PageUpsertOne) AddCreatedBy(v uint64) *PageUpsertOne {
 	return u.Update(func(s *PageUpsert) {
 		s.AddCreatedBy(v)
 	})
@@ -1332,14 +1332,14 @@ func (u *PageUpsertOne) ClearCreatedBy() *PageUpsertOne {
 }
 
 // SetUpdatedBy sets the "updated_by" field.
-func (u *PageUpsertOne) SetUpdatedBy(v uint32) *PageUpsertOne {
+func (u *PageUpsertOne) SetUpdatedBy(v uint64) *PageUpsertOne {
 	return u.Update(func(s *PageUpsert) {
 		s.SetUpdatedBy(v)
 	})
 }
 
 // AddUpdatedBy adds v to the "updated_by" field.
-func (u *PageUpsertOne) AddUpdatedBy(v uint32) *PageUpsertOne {
+func (u *PageUpsertOne) AddUpdatedBy(v uint64) *PageUpsertOne {
 	return u.Update(func(s *PageUpsert) {
 		s.AddUpdatedBy(v)
 	})
@@ -1360,14 +1360,14 @@ func (u *PageUpsertOne) ClearUpdatedBy() *PageUpsertOne {
 }
 
 // SetDeletedBy sets the "deleted_by" field.
-func (u *PageUpsertOne) SetDeletedBy(v uint32) *PageUpsertOne {
+func (u *PageUpsertOne) SetDeletedBy(v uint64) *PageUpsertOne {
 	return u.Update(func(s *PageUpsert) {
 		s.SetDeletedBy(v)
 	})
 }
 
 // AddDeletedBy adds v to the "deleted_by" field.
-func (u *PageUpsertOne) AddDeletedBy(v uint32) *PageUpsertOne {
+func (u *PageUpsertOne) AddDeletedBy(v uint64) *PageUpsertOne {
 	return u.Update(func(s *PageUpsert) {
 		s.AddDeletedBy(v)
 	})
@@ -1437,7 +1437,7 @@ func (u *PageUpsertOne) ClearPath() *PageUpsertOne {
 }
 
 // SetParentID sets the "parent_id" field.
-func (u *PageUpsertOne) SetParentID(v uint32) *PageUpsertOne {
+func (u *PageUpsertOne) SetParentID(v uint64) *PageUpsertOne {
 	return u.Update(func(s *PageUpsert) {
 		s.SetParentID(v)
 	})
@@ -1542,14 +1542,14 @@ func (u *PageUpsertOne) ClearSlug() *PageUpsertOne {
 }
 
 // SetAuthorID sets the "author_id" field.
-func (u *PageUpsertOne) SetAuthorID(v uint32) *PageUpsertOne {
+func (u *PageUpsertOne) SetAuthorID(v uint64) *PageUpsertOne {
 	return u.Update(func(s *PageUpsert) {
 		s.SetAuthorID(v)
 	})
 }
 
 // AddAuthorID adds v to the "author_id" field.
-func (u *PageUpsertOne) AddAuthorID(v uint32) *PageUpsertOne {
+func (u *PageUpsertOne) AddAuthorID(v uint64) *PageUpsertOne {
 	return u.Update(func(s *PageUpsert) {
 		s.AddAuthorID(v)
 	})
@@ -1759,14 +1759,14 @@ func (u *PageUpsertOne) ClearCustomFields() *PageUpsertOne {
 }
 
 // SetContentModelID sets the "content_model_id" field.
-func (u *PageUpsertOne) SetContentModelID(v uint32) *PageUpsertOne {
+func (u *PageUpsertOne) SetContentModelID(v uint64) *PageUpsertOne {
 	return u.Update(func(s *PageUpsert) {
 		s.SetContentModelID(v)
 	})
 }
 
 // AddContentModelID adds v to the "content_model_id" field.
-func (u *PageUpsertOne) AddContentModelID(v uint32) *PageUpsertOne {
+func (u *PageUpsertOne) AddContentModelID(v uint64) *PageUpsertOne {
 	return u.Update(func(s *PageUpsert) {
 		s.AddContentModelID(v)
 	})
@@ -1830,7 +1830,7 @@ func (u *PageUpsertOne) ExecX(ctx context.Context) {
 }
 
 // Exec executes the UPSERT query and returns the inserted/updated ID.
-func (u *PageUpsertOne) ID(ctx context.Context) (id uint32, err error) {
+func (u *PageUpsertOne) ID(ctx context.Context) (id uint64, err error) {
 	node, err := u.create.Save(ctx)
 	if err != nil {
 		return id, err
@@ -1839,7 +1839,7 @@ func (u *PageUpsertOne) ID(ctx context.Context) (id uint32, err error) {
 }
 
 // IDX is like ID, but panics if an error occurs.
-func (u *PageUpsertOne) IDX(ctx context.Context) uint32 {
+func (u *PageUpsertOne) IDX(ctx context.Context) uint64 {
 	id, err := u.ID(ctx)
 	if err != nil {
 		panic(err)
@@ -1896,7 +1896,7 @@ func (_c *PageCreateBulk) Save(ctx context.Context) ([]*Page, error) {
 				mutation.id = &nodes[i].ID
 				if specs[i].ID.Value != nil && nodes[i].ID == 0 {
 					id := specs[i].ID.Value.(int64)
-					nodes[i].ID = uint32(id)
+					nodes[i].ID = uint64(id)
 				}
 				mutation.done = true
 				return nodes[i], nil
@@ -2077,14 +2077,14 @@ func (u *PageUpsertBulk) ClearDeletedAt() *PageUpsertBulk {
 }
 
 // SetCreatedBy sets the "created_by" field.
-func (u *PageUpsertBulk) SetCreatedBy(v uint32) *PageUpsertBulk {
+func (u *PageUpsertBulk) SetCreatedBy(v uint64) *PageUpsertBulk {
 	return u.Update(func(s *PageUpsert) {
 		s.SetCreatedBy(v)
 	})
 }
 
 // AddCreatedBy adds v to the "created_by" field.
-func (u *PageUpsertBulk) AddCreatedBy(v uint32) *PageUpsertBulk {
+func (u *PageUpsertBulk) AddCreatedBy(v uint64) *PageUpsertBulk {
 	return u.Update(func(s *PageUpsert) {
 		s.AddCreatedBy(v)
 	})
@@ -2105,14 +2105,14 @@ func (u *PageUpsertBulk) ClearCreatedBy() *PageUpsertBulk {
 }
 
 // SetUpdatedBy sets the "updated_by" field.
-func (u *PageUpsertBulk) SetUpdatedBy(v uint32) *PageUpsertBulk {
+func (u *PageUpsertBulk) SetUpdatedBy(v uint64) *PageUpsertBulk {
 	return u.Update(func(s *PageUpsert) {
 		s.SetUpdatedBy(v)
 	})
 }
 
 // AddUpdatedBy adds v to the "updated_by" field.
-func (u *PageUpsertBulk) AddUpdatedBy(v uint32) *PageUpsertBulk {
+func (u *PageUpsertBulk) AddUpdatedBy(v uint64) *PageUpsertBulk {
 	return u.Update(func(s *PageUpsert) {
 		s.AddUpdatedBy(v)
 	})
@@ -2133,14 +2133,14 @@ func (u *PageUpsertBulk) ClearUpdatedBy() *PageUpsertBulk {
 }
 
 // SetDeletedBy sets the "deleted_by" field.
-func (u *PageUpsertBulk) SetDeletedBy(v uint32) *PageUpsertBulk {
+func (u *PageUpsertBulk) SetDeletedBy(v uint64) *PageUpsertBulk {
 	return u.Update(func(s *PageUpsert) {
 		s.SetDeletedBy(v)
 	})
 }
 
 // AddDeletedBy adds v to the "deleted_by" field.
-func (u *PageUpsertBulk) AddDeletedBy(v uint32) *PageUpsertBulk {
+func (u *PageUpsertBulk) AddDeletedBy(v uint64) *PageUpsertBulk {
 	return u.Update(func(s *PageUpsert) {
 		s.AddDeletedBy(v)
 	})
@@ -2210,7 +2210,7 @@ func (u *PageUpsertBulk) ClearPath() *PageUpsertBulk {
 }
 
 // SetParentID sets the "parent_id" field.
-func (u *PageUpsertBulk) SetParentID(v uint32) *PageUpsertBulk {
+func (u *PageUpsertBulk) SetParentID(v uint64) *PageUpsertBulk {
 	return u.Update(func(s *PageUpsert) {
 		s.SetParentID(v)
 	})
@@ -2315,14 +2315,14 @@ func (u *PageUpsertBulk) ClearSlug() *PageUpsertBulk {
 }
 
 // SetAuthorID sets the "author_id" field.
-func (u *PageUpsertBulk) SetAuthorID(v uint32) *PageUpsertBulk {
+func (u *PageUpsertBulk) SetAuthorID(v uint64) *PageUpsertBulk {
 	return u.Update(func(s *PageUpsert) {
 		s.SetAuthorID(v)
 	})
 }
 
 // AddAuthorID adds v to the "author_id" field.
-func (u *PageUpsertBulk) AddAuthorID(v uint32) *PageUpsertBulk {
+func (u *PageUpsertBulk) AddAuthorID(v uint64) *PageUpsertBulk {
 	return u.Update(func(s *PageUpsert) {
 		s.AddAuthorID(v)
 	})
@@ -2532,14 +2532,14 @@ func (u *PageUpsertBulk) ClearCustomFields() *PageUpsertBulk {
 }
 
 // SetContentModelID sets the "content_model_id" field.
-func (u *PageUpsertBulk) SetContentModelID(v uint32) *PageUpsertBulk {
+func (u *PageUpsertBulk) SetContentModelID(v uint64) *PageUpsertBulk {
 	return u.Update(func(s *PageUpsert) {
 		s.SetContentModelID(v)
 	})
 }
 
 // AddContentModelID adds v to the "content_model_id" field.
-func (u *PageUpsertBulk) AddContentModelID(v uint32) *PageUpsertBulk {
+func (u *PageUpsertBulk) AddContentModelID(v uint64) *PageUpsertBulk {
 	return u.Update(func(s *PageUpsert) {
 		s.AddContentModelID(v)
 	})

@@ -169,7 +169,7 @@ func TestEncryptPayload_PreservesMetadata(t *testing.T) {
 	InitGlobalEncryptor("test-key", true)
 
 	payload := map[string]interface{}{
-		"task_id":   uint32(123),
+		"task_id":   uint64(123),
 		"task_type": "email_processor",
 		"username":  "admin",
 		"password":  "secret123",
@@ -182,7 +182,7 @@ func TestEncryptPayload_PreservesMetadata(t *testing.T) {
 	}
 
 	// task_id should be preserved for routing
-	if encrypted["task_id"] != uint32(123) {
+	if encrypted["task_id"] != uint64(123) {
 		t.Errorf("task_id not preserved, got %v", encrypted["task_id"])
 	}
 
@@ -220,7 +220,7 @@ func compareValues(expected, actual interface{}) bool {
 		if i, ok := actual.(int); ok {
 			return e == float64(i)
 		}
-	case uint32:
+	case uint64:
 		if f, ok := actual.(float64); ok {
 			return float64(e) == f
 		}

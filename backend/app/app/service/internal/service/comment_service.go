@@ -92,7 +92,7 @@ func (s *CommentService) Create(ctx context.Context, req *commentV1.CreateCommen
 	// ── 可选认证:白名单操作不会注入 operator,手动校验 bearer(存在才解析) ──
 	var (
 		isLogin       bool
-		loginUserID   uint32
+		loginUserID   uint64
 		loginUsername string
 	)
 	if s.accessTokenChecker != nil {
@@ -134,8 +134,8 @@ func (s *CommentService) Create(ctx context.Context, req *commentV1.CreateCommen
 			return nil, commentV1.ErrorBadRequest("author name and email are required for guest comments")
 		}
 		req.Data.AuthorType = trans.Ptr(commentV1.Comment_AUTHOR_TYPE_GUEST)
-		req.Data.AuthorId = trans.Ptr(uint32(0))
-		req.Data.CreatedBy = trans.Ptr(uint32(0))
+		req.Data.AuthorId = trans.Ptr(uint64(0))
+		req.Data.CreatedBy = trans.Ptr(uint64(0))
 	}
 
 	// 统一待审核入库,审核通过后前台可见
@@ -146,7 +146,7 @@ func (s *CommentService) Create(ctx context.Context, req *commentV1.CreateCommen
 
 
 // ensureCommentOwner 校验调用者是否为目标评论的作者，防止任意登录用户改/删他人评论（IDOR）。
-func (s *CommentService) ensureCommentOwner(ctx context.Context, commentID uint32) error {
+func (s *CommentService) ensureCommentOwner(ctx context.Context, commentID uint64) error {
 	operator, err := auth.FromContext(ctx)
 	if err != nil {
 		return commentV1.ErrorUnauthorized("authentication required")

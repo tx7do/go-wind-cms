@@ -70,14 +70,14 @@ func (_u *InternalMessageCategoryUpdate) ClearDeletedAt() *InternalMessageCatego
 }
 
 // SetCreatedBy sets the "created_by" field.
-func (_u *InternalMessageCategoryUpdate) SetCreatedBy(v uint32) *InternalMessageCategoryUpdate {
+func (_u *InternalMessageCategoryUpdate) SetCreatedBy(v uint64) *InternalMessageCategoryUpdate {
 	_u.mutation.ResetCreatedBy()
 	_u.mutation.SetCreatedBy(v)
 	return _u
 }
 
 // SetNillableCreatedBy sets the "created_by" field if the given value is not nil.
-func (_u *InternalMessageCategoryUpdate) SetNillableCreatedBy(v *uint32) *InternalMessageCategoryUpdate {
+func (_u *InternalMessageCategoryUpdate) SetNillableCreatedBy(v *uint64) *InternalMessageCategoryUpdate {
 	if v != nil {
 		_u.SetCreatedBy(*v)
 	}
@@ -85,7 +85,7 @@ func (_u *InternalMessageCategoryUpdate) SetNillableCreatedBy(v *uint32) *Intern
 }
 
 // AddCreatedBy adds value to the "created_by" field.
-func (_u *InternalMessageCategoryUpdate) AddCreatedBy(v int32) *InternalMessageCategoryUpdate {
+func (_u *InternalMessageCategoryUpdate) AddCreatedBy(v int64) *InternalMessageCategoryUpdate {
 	_u.mutation.AddCreatedBy(v)
 	return _u
 }
@@ -97,14 +97,14 @@ func (_u *InternalMessageCategoryUpdate) ClearCreatedBy() *InternalMessageCatego
 }
 
 // SetUpdatedBy sets the "updated_by" field.
-func (_u *InternalMessageCategoryUpdate) SetUpdatedBy(v uint32) *InternalMessageCategoryUpdate {
+func (_u *InternalMessageCategoryUpdate) SetUpdatedBy(v uint64) *InternalMessageCategoryUpdate {
 	_u.mutation.ResetUpdatedBy()
 	_u.mutation.SetUpdatedBy(v)
 	return _u
 }
 
 // SetNillableUpdatedBy sets the "updated_by" field if the given value is not nil.
-func (_u *InternalMessageCategoryUpdate) SetNillableUpdatedBy(v *uint32) *InternalMessageCategoryUpdate {
+func (_u *InternalMessageCategoryUpdate) SetNillableUpdatedBy(v *uint64) *InternalMessageCategoryUpdate {
 	if v != nil {
 		_u.SetUpdatedBy(*v)
 	}
@@ -112,7 +112,7 @@ func (_u *InternalMessageCategoryUpdate) SetNillableUpdatedBy(v *uint32) *Intern
 }
 
 // AddUpdatedBy adds value to the "updated_by" field.
-func (_u *InternalMessageCategoryUpdate) AddUpdatedBy(v int32) *InternalMessageCategoryUpdate {
+func (_u *InternalMessageCategoryUpdate) AddUpdatedBy(v int64) *InternalMessageCategoryUpdate {
 	_u.mutation.AddUpdatedBy(v)
 	return _u
 }
@@ -124,14 +124,14 @@ func (_u *InternalMessageCategoryUpdate) ClearUpdatedBy() *InternalMessageCatego
 }
 
 // SetDeletedBy sets the "deleted_by" field.
-func (_u *InternalMessageCategoryUpdate) SetDeletedBy(v uint32) *InternalMessageCategoryUpdate {
+func (_u *InternalMessageCategoryUpdate) SetDeletedBy(v uint64) *InternalMessageCategoryUpdate {
 	_u.mutation.ResetDeletedBy()
 	_u.mutation.SetDeletedBy(v)
 	return _u
 }
 
 // SetNillableDeletedBy sets the "deleted_by" field if the given value is not nil.
-func (_u *InternalMessageCategoryUpdate) SetNillableDeletedBy(v *uint32) *InternalMessageCategoryUpdate {
+func (_u *InternalMessageCategoryUpdate) SetNillableDeletedBy(v *uint64) *InternalMessageCategoryUpdate {
 	if v != nil {
 		_u.SetDeletedBy(*v)
 	}
@@ -139,7 +139,7 @@ func (_u *InternalMessageCategoryUpdate) SetNillableDeletedBy(v *uint32) *Intern
 }
 
 // AddDeletedBy adds value to the "deleted_by" field.
-func (_u *InternalMessageCategoryUpdate) AddDeletedBy(v int32) *InternalMessageCategoryUpdate {
+func (_u *InternalMessageCategoryUpdate) AddDeletedBy(v int64) *InternalMessageCategoryUpdate {
 	_u.mutation.AddDeletedBy(v)
 	return _u
 }
@@ -218,13 +218,13 @@ func (_u *InternalMessageCategoryUpdate) ClearPath() *InternalMessageCategoryUpd
 }
 
 // SetParentID sets the "parent_id" field.
-func (_u *InternalMessageCategoryUpdate) SetParentID(v uint32) *InternalMessageCategoryUpdate {
+func (_u *InternalMessageCategoryUpdate) SetParentID(v uint64) *InternalMessageCategoryUpdate {
 	_u.mutation.SetParentID(v)
 	return _u
 }
 
 // SetNillableParentID sets the "parent_id" field if the given value is not nil.
-func (_u *InternalMessageCategoryUpdate) SetNillableParentID(v *uint32) *InternalMessageCategoryUpdate {
+func (_u *InternalMessageCategoryUpdate) SetNillableParentID(v *uint64) *InternalMessageCategoryUpdate {
 	if v != nil {
 		_u.SetParentID(*v)
 	}
@@ -350,14 +350,14 @@ func (_u *InternalMessageCategoryUpdate) SetParent(v *InternalMessageCategory) *
 }
 
 // AddChildIDs adds the "children" edge to the InternalMessageCategory entity by IDs.
-func (_u *InternalMessageCategoryUpdate) AddChildIDs(ids ...uint32) *InternalMessageCategoryUpdate {
+func (_u *InternalMessageCategoryUpdate) AddChildIDs(ids ...uint64) *InternalMessageCategoryUpdate {
 	_u.mutation.AddChildIDs(ids...)
 	return _u
 }
 
 // AddChildren adds the "children" edges to the InternalMessageCategory entity.
 func (_u *InternalMessageCategoryUpdate) AddChildren(v ...*InternalMessageCategory) *InternalMessageCategoryUpdate {
-	ids := make([]uint32, len(v))
+	ids := make([]uint64, len(v))
 	for i := range v {
 		ids[i] = v[i].ID
 	}
@@ -382,14 +382,14 @@ func (_u *InternalMessageCategoryUpdate) ClearChildren() *InternalMessageCategor
 }
 
 // RemoveChildIDs removes the "children" edge to InternalMessageCategory entities by IDs.
-func (_u *InternalMessageCategoryUpdate) RemoveChildIDs(ids ...uint32) *InternalMessageCategoryUpdate {
+func (_u *InternalMessageCategoryUpdate) RemoveChildIDs(ids ...uint64) *InternalMessageCategoryUpdate {
 	_u.mutation.RemoveChildIDs(ids...)
 	return _u
 }
 
 // RemoveChildren removes "children" edges to InternalMessageCategory entities.
 func (_u *InternalMessageCategoryUpdate) RemoveChildren(v ...*InternalMessageCategory) *InternalMessageCategoryUpdate {
-	ids := make([]uint32, len(v))
+	ids := make([]uint64, len(v))
 	for i := range v {
 		ids[i] = v[i].ID
 	}
@@ -453,7 +453,7 @@ func (_u *InternalMessageCategoryUpdate) sqlSave(ctx context.Context) (_node int
 	if err := _u.check(); err != nil {
 		return _node, err
 	}
-	_spec := sqlgraph.NewUpdateSpec(internalmessagecategory.Table, internalmessagecategory.Columns, sqlgraph.NewFieldSpec(internalmessagecategory.FieldID, field.TypeUint32))
+	_spec := sqlgraph.NewUpdateSpec(internalmessagecategory.Table, internalmessagecategory.Columns, sqlgraph.NewFieldSpec(internalmessagecategory.FieldID, field.TypeUint64))
 	if ps := _u.mutation.predicates; len(ps) > 0 {
 		_spec.Predicate = func(selector *sql.Selector) {
 			for i := range ps {
@@ -477,31 +477,31 @@ func (_u *InternalMessageCategoryUpdate) sqlSave(ctx context.Context) (_node int
 		_spec.ClearField(internalmessagecategory.FieldDeletedAt, field.TypeTime)
 	}
 	if value, ok := _u.mutation.CreatedBy(); ok {
-		_spec.SetField(internalmessagecategory.FieldCreatedBy, field.TypeUint32, value)
+		_spec.SetField(internalmessagecategory.FieldCreatedBy, field.TypeUint64, value)
 	}
 	if value, ok := _u.mutation.AddedCreatedBy(); ok {
-		_spec.AddField(internalmessagecategory.FieldCreatedBy, field.TypeUint32, value)
+		_spec.AddField(internalmessagecategory.FieldCreatedBy, field.TypeUint64, value)
 	}
 	if _u.mutation.CreatedByCleared() {
-		_spec.ClearField(internalmessagecategory.FieldCreatedBy, field.TypeUint32)
+		_spec.ClearField(internalmessagecategory.FieldCreatedBy, field.TypeUint64)
 	}
 	if value, ok := _u.mutation.UpdatedBy(); ok {
-		_spec.SetField(internalmessagecategory.FieldUpdatedBy, field.TypeUint32, value)
+		_spec.SetField(internalmessagecategory.FieldUpdatedBy, field.TypeUint64, value)
 	}
 	if value, ok := _u.mutation.AddedUpdatedBy(); ok {
-		_spec.AddField(internalmessagecategory.FieldUpdatedBy, field.TypeUint32, value)
+		_spec.AddField(internalmessagecategory.FieldUpdatedBy, field.TypeUint64, value)
 	}
 	if _u.mutation.UpdatedByCleared() {
-		_spec.ClearField(internalmessagecategory.FieldUpdatedBy, field.TypeUint32)
+		_spec.ClearField(internalmessagecategory.FieldUpdatedBy, field.TypeUint64)
 	}
 	if value, ok := _u.mutation.DeletedBy(); ok {
-		_spec.SetField(internalmessagecategory.FieldDeletedBy, field.TypeUint32, value)
+		_spec.SetField(internalmessagecategory.FieldDeletedBy, field.TypeUint64, value)
 	}
 	if value, ok := _u.mutation.AddedDeletedBy(); ok {
-		_spec.AddField(internalmessagecategory.FieldDeletedBy, field.TypeUint32, value)
+		_spec.AddField(internalmessagecategory.FieldDeletedBy, field.TypeUint64, value)
 	}
 	if _u.mutation.DeletedByCleared() {
-		_spec.ClearField(internalmessagecategory.FieldDeletedBy, field.TypeUint32)
+		_spec.ClearField(internalmessagecategory.FieldDeletedBy, field.TypeUint64)
 	}
 	if value, ok := _u.mutation.IsEnabled(); ok {
 		_spec.SetField(internalmessagecategory.FieldIsEnabled, field.TypeBool, value)
@@ -531,7 +531,7 @@ func (_u *InternalMessageCategoryUpdate) sqlSave(ctx context.Context) (_node int
 		_spec.ClearField(internalmessagecategory.FieldRemark, field.TypeString)
 	}
 	if _u.mutation.TenantIDCleared() {
-		_spec.ClearField(internalmessagecategory.FieldTenantID, field.TypeUint32)
+		_spec.ClearField(internalmessagecategory.FieldTenantID, field.TypeUint64)
 	}
 	if value, ok := _u.mutation.Name(); ok {
 		_spec.SetField(internalmessagecategory.FieldName, field.TypeString, value)
@@ -568,7 +568,7 @@ func (_u *InternalMessageCategoryUpdate) sqlSave(ctx context.Context) (_node int
 			Columns: []string{internalmessagecategory.ParentColumn},
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
-				IDSpec: sqlgraph.NewFieldSpec(internalmessagecategory.FieldID, field.TypeUint32),
+				IDSpec: sqlgraph.NewFieldSpec(internalmessagecategory.FieldID, field.TypeUint64),
 			},
 		}
 		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
@@ -581,7 +581,7 @@ func (_u *InternalMessageCategoryUpdate) sqlSave(ctx context.Context) (_node int
 			Columns: []string{internalmessagecategory.ParentColumn},
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
-				IDSpec: sqlgraph.NewFieldSpec(internalmessagecategory.FieldID, field.TypeUint32),
+				IDSpec: sqlgraph.NewFieldSpec(internalmessagecategory.FieldID, field.TypeUint64),
 			},
 		}
 		for _, k := range nodes {
@@ -597,7 +597,7 @@ func (_u *InternalMessageCategoryUpdate) sqlSave(ctx context.Context) (_node int
 			Columns: []string{internalmessagecategory.ChildrenColumn},
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
-				IDSpec: sqlgraph.NewFieldSpec(internalmessagecategory.FieldID, field.TypeUint32),
+				IDSpec: sqlgraph.NewFieldSpec(internalmessagecategory.FieldID, field.TypeUint64),
 			},
 		}
 		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
@@ -610,7 +610,7 @@ func (_u *InternalMessageCategoryUpdate) sqlSave(ctx context.Context) (_node int
 			Columns: []string{internalmessagecategory.ChildrenColumn},
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
-				IDSpec: sqlgraph.NewFieldSpec(internalmessagecategory.FieldID, field.TypeUint32),
+				IDSpec: sqlgraph.NewFieldSpec(internalmessagecategory.FieldID, field.TypeUint64),
 			},
 		}
 		for _, k := range nodes {
@@ -626,7 +626,7 @@ func (_u *InternalMessageCategoryUpdate) sqlSave(ctx context.Context) (_node int
 			Columns: []string{internalmessagecategory.ChildrenColumn},
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
-				IDSpec: sqlgraph.NewFieldSpec(internalmessagecategory.FieldID, field.TypeUint32),
+				IDSpec: sqlgraph.NewFieldSpec(internalmessagecategory.FieldID, field.TypeUint64),
 			},
 		}
 		for _, k := range nodes {
@@ -697,14 +697,14 @@ func (_u *InternalMessageCategoryUpdateOne) ClearDeletedAt() *InternalMessageCat
 }
 
 // SetCreatedBy sets the "created_by" field.
-func (_u *InternalMessageCategoryUpdateOne) SetCreatedBy(v uint32) *InternalMessageCategoryUpdateOne {
+func (_u *InternalMessageCategoryUpdateOne) SetCreatedBy(v uint64) *InternalMessageCategoryUpdateOne {
 	_u.mutation.ResetCreatedBy()
 	_u.mutation.SetCreatedBy(v)
 	return _u
 }
 
 // SetNillableCreatedBy sets the "created_by" field if the given value is not nil.
-func (_u *InternalMessageCategoryUpdateOne) SetNillableCreatedBy(v *uint32) *InternalMessageCategoryUpdateOne {
+func (_u *InternalMessageCategoryUpdateOne) SetNillableCreatedBy(v *uint64) *InternalMessageCategoryUpdateOne {
 	if v != nil {
 		_u.SetCreatedBy(*v)
 	}
@@ -712,7 +712,7 @@ func (_u *InternalMessageCategoryUpdateOne) SetNillableCreatedBy(v *uint32) *Int
 }
 
 // AddCreatedBy adds value to the "created_by" field.
-func (_u *InternalMessageCategoryUpdateOne) AddCreatedBy(v int32) *InternalMessageCategoryUpdateOne {
+func (_u *InternalMessageCategoryUpdateOne) AddCreatedBy(v int64) *InternalMessageCategoryUpdateOne {
 	_u.mutation.AddCreatedBy(v)
 	return _u
 }
@@ -724,14 +724,14 @@ func (_u *InternalMessageCategoryUpdateOne) ClearCreatedBy() *InternalMessageCat
 }
 
 // SetUpdatedBy sets the "updated_by" field.
-func (_u *InternalMessageCategoryUpdateOne) SetUpdatedBy(v uint32) *InternalMessageCategoryUpdateOne {
+func (_u *InternalMessageCategoryUpdateOne) SetUpdatedBy(v uint64) *InternalMessageCategoryUpdateOne {
 	_u.mutation.ResetUpdatedBy()
 	_u.mutation.SetUpdatedBy(v)
 	return _u
 }
 
 // SetNillableUpdatedBy sets the "updated_by" field if the given value is not nil.
-func (_u *InternalMessageCategoryUpdateOne) SetNillableUpdatedBy(v *uint32) *InternalMessageCategoryUpdateOne {
+func (_u *InternalMessageCategoryUpdateOne) SetNillableUpdatedBy(v *uint64) *InternalMessageCategoryUpdateOne {
 	if v != nil {
 		_u.SetUpdatedBy(*v)
 	}
@@ -739,7 +739,7 @@ func (_u *InternalMessageCategoryUpdateOne) SetNillableUpdatedBy(v *uint32) *Int
 }
 
 // AddUpdatedBy adds value to the "updated_by" field.
-func (_u *InternalMessageCategoryUpdateOne) AddUpdatedBy(v int32) *InternalMessageCategoryUpdateOne {
+func (_u *InternalMessageCategoryUpdateOne) AddUpdatedBy(v int64) *InternalMessageCategoryUpdateOne {
 	_u.mutation.AddUpdatedBy(v)
 	return _u
 }
@@ -751,14 +751,14 @@ func (_u *InternalMessageCategoryUpdateOne) ClearUpdatedBy() *InternalMessageCat
 }
 
 // SetDeletedBy sets the "deleted_by" field.
-func (_u *InternalMessageCategoryUpdateOne) SetDeletedBy(v uint32) *InternalMessageCategoryUpdateOne {
+func (_u *InternalMessageCategoryUpdateOne) SetDeletedBy(v uint64) *InternalMessageCategoryUpdateOne {
 	_u.mutation.ResetDeletedBy()
 	_u.mutation.SetDeletedBy(v)
 	return _u
 }
 
 // SetNillableDeletedBy sets the "deleted_by" field if the given value is not nil.
-func (_u *InternalMessageCategoryUpdateOne) SetNillableDeletedBy(v *uint32) *InternalMessageCategoryUpdateOne {
+func (_u *InternalMessageCategoryUpdateOne) SetNillableDeletedBy(v *uint64) *InternalMessageCategoryUpdateOne {
 	if v != nil {
 		_u.SetDeletedBy(*v)
 	}
@@ -766,7 +766,7 @@ func (_u *InternalMessageCategoryUpdateOne) SetNillableDeletedBy(v *uint32) *Int
 }
 
 // AddDeletedBy adds value to the "deleted_by" field.
-func (_u *InternalMessageCategoryUpdateOne) AddDeletedBy(v int32) *InternalMessageCategoryUpdateOne {
+func (_u *InternalMessageCategoryUpdateOne) AddDeletedBy(v int64) *InternalMessageCategoryUpdateOne {
 	_u.mutation.AddDeletedBy(v)
 	return _u
 }
@@ -845,13 +845,13 @@ func (_u *InternalMessageCategoryUpdateOne) ClearPath() *InternalMessageCategory
 }
 
 // SetParentID sets the "parent_id" field.
-func (_u *InternalMessageCategoryUpdateOne) SetParentID(v uint32) *InternalMessageCategoryUpdateOne {
+func (_u *InternalMessageCategoryUpdateOne) SetParentID(v uint64) *InternalMessageCategoryUpdateOne {
 	_u.mutation.SetParentID(v)
 	return _u
 }
 
 // SetNillableParentID sets the "parent_id" field if the given value is not nil.
-func (_u *InternalMessageCategoryUpdateOne) SetNillableParentID(v *uint32) *InternalMessageCategoryUpdateOne {
+func (_u *InternalMessageCategoryUpdateOne) SetNillableParentID(v *uint64) *InternalMessageCategoryUpdateOne {
 	if v != nil {
 		_u.SetParentID(*v)
 	}
@@ -977,14 +977,14 @@ func (_u *InternalMessageCategoryUpdateOne) SetParent(v *InternalMessageCategory
 }
 
 // AddChildIDs adds the "children" edge to the InternalMessageCategory entity by IDs.
-func (_u *InternalMessageCategoryUpdateOne) AddChildIDs(ids ...uint32) *InternalMessageCategoryUpdateOne {
+func (_u *InternalMessageCategoryUpdateOne) AddChildIDs(ids ...uint64) *InternalMessageCategoryUpdateOne {
 	_u.mutation.AddChildIDs(ids...)
 	return _u
 }
 
 // AddChildren adds the "children" edges to the InternalMessageCategory entity.
 func (_u *InternalMessageCategoryUpdateOne) AddChildren(v ...*InternalMessageCategory) *InternalMessageCategoryUpdateOne {
-	ids := make([]uint32, len(v))
+	ids := make([]uint64, len(v))
 	for i := range v {
 		ids[i] = v[i].ID
 	}
@@ -1009,14 +1009,14 @@ func (_u *InternalMessageCategoryUpdateOne) ClearChildren() *InternalMessageCate
 }
 
 // RemoveChildIDs removes the "children" edge to InternalMessageCategory entities by IDs.
-func (_u *InternalMessageCategoryUpdateOne) RemoveChildIDs(ids ...uint32) *InternalMessageCategoryUpdateOne {
+func (_u *InternalMessageCategoryUpdateOne) RemoveChildIDs(ids ...uint64) *InternalMessageCategoryUpdateOne {
 	_u.mutation.RemoveChildIDs(ids...)
 	return _u
 }
 
 // RemoveChildren removes "children" edges to InternalMessageCategory entities.
 func (_u *InternalMessageCategoryUpdateOne) RemoveChildren(v ...*InternalMessageCategory) *InternalMessageCategoryUpdateOne {
-	ids := make([]uint32, len(v))
+	ids := make([]uint64, len(v))
 	for i := range v {
 		ids[i] = v[i].ID
 	}
@@ -1093,7 +1093,7 @@ func (_u *InternalMessageCategoryUpdateOne) sqlSave(ctx context.Context) (_node 
 	if err := _u.check(); err != nil {
 		return _node, err
 	}
-	_spec := sqlgraph.NewUpdateSpec(internalmessagecategory.Table, internalmessagecategory.Columns, sqlgraph.NewFieldSpec(internalmessagecategory.FieldID, field.TypeUint32))
+	_spec := sqlgraph.NewUpdateSpec(internalmessagecategory.Table, internalmessagecategory.Columns, sqlgraph.NewFieldSpec(internalmessagecategory.FieldID, field.TypeUint64))
 	id, ok := _u.mutation.ID()
 	if !ok {
 		return nil, &ValidationError{Name: "id", err: errors.New(`ent: missing "InternalMessageCategory.id" for update`)}
@@ -1134,31 +1134,31 @@ func (_u *InternalMessageCategoryUpdateOne) sqlSave(ctx context.Context) (_node 
 		_spec.ClearField(internalmessagecategory.FieldDeletedAt, field.TypeTime)
 	}
 	if value, ok := _u.mutation.CreatedBy(); ok {
-		_spec.SetField(internalmessagecategory.FieldCreatedBy, field.TypeUint32, value)
+		_spec.SetField(internalmessagecategory.FieldCreatedBy, field.TypeUint64, value)
 	}
 	if value, ok := _u.mutation.AddedCreatedBy(); ok {
-		_spec.AddField(internalmessagecategory.FieldCreatedBy, field.TypeUint32, value)
+		_spec.AddField(internalmessagecategory.FieldCreatedBy, field.TypeUint64, value)
 	}
 	if _u.mutation.CreatedByCleared() {
-		_spec.ClearField(internalmessagecategory.FieldCreatedBy, field.TypeUint32)
+		_spec.ClearField(internalmessagecategory.FieldCreatedBy, field.TypeUint64)
 	}
 	if value, ok := _u.mutation.UpdatedBy(); ok {
-		_spec.SetField(internalmessagecategory.FieldUpdatedBy, field.TypeUint32, value)
+		_spec.SetField(internalmessagecategory.FieldUpdatedBy, field.TypeUint64, value)
 	}
 	if value, ok := _u.mutation.AddedUpdatedBy(); ok {
-		_spec.AddField(internalmessagecategory.FieldUpdatedBy, field.TypeUint32, value)
+		_spec.AddField(internalmessagecategory.FieldUpdatedBy, field.TypeUint64, value)
 	}
 	if _u.mutation.UpdatedByCleared() {
-		_spec.ClearField(internalmessagecategory.FieldUpdatedBy, field.TypeUint32)
+		_spec.ClearField(internalmessagecategory.FieldUpdatedBy, field.TypeUint64)
 	}
 	if value, ok := _u.mutation.DeletedBy(); ok {
-		_spec.SetField(internalmessagecategory.FieldDeletedBy, field.TypeUint32, value)
+		_spec.SetField(internalmessagecategory.FieldDeletedBy, field.TypeUint64, value)
 	}
 	if value, ok := _u.mutation.AddedDeletedBy(); ok {
-		_spec.AddField(internalmessagecategory.FieldDeletedBy, field.TypeUint32, value)
+		_spec.AddField(internalmessagecategory.FieldDeletedBy, field.TypeUint64, value)
 	}
 	if _u.mutation.DeletedByCleared() {
-		_spec.ClearField(internalmessagecategory.FieldDeletedBy, field.TypeUint32)
+		_spec.ClearField(internalmessagecategory.FieldDeletedBy, field.TypeUint64)
 	}
 	if value, ok := _u.mutation.IsEnabled(); ok {
 		_spec.SetField(internalmessagecategory.FieldIsEnabled, field.TypeBool, value)
@@ -1188,7 +1188,7 @@ func (_u *InternalMessageCategoryUpdateOne) sqlSave(ctx context.Context) (_node 
 		_spec.ClearField(internalmessagecategory.FieldRemark, field.TypeString)
 	}
 	if _u.mutation.TenantIDCleared() {
-		_spec.ClearField(internalmessagecategory.FieldTenantID, field.TypeUint32)
+		_spec.ClearField(internalmessagecategory.FieldTenantID, field.TypeUint64)
 	}
 	if value, ok := _u.mutation.Name(); ok {
 		_spec.SetField(internalmessagecategory.FieldName, field.TypeString, value)
@@ -1225,7 +1225,7 @@ func (_u *InternalMessageCategoryUpdateOne) sqlSave(ctx context.Context) (_node 
 			Columns: []string{internalmessagecategory.ParentColumn},
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
-				IDSpec: sqlgraph.NewFieldSpec(internalmessagecategory.FieldID, field.TypeUint32),
+				IDSpec: sqlgraph.NewFieldSpec(internalmessagecategory.FieldID, field.TypeUint64),
 			},
 		}
 		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
@@ -1238,7 +1238,7 @@ func (_u *InternalMessageCategoryUpdateOne) sqlSave(ctx context.Context) (_node 
 			Columns: []string{internalmessagecategory.ParentColumn},
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
-				IDSpec: sqlgraph.NewFieldSpec(internalmessagecategory.FieldID, field.TypeUint32),
+				IDSpec: sqlgraph.NewFieldSpec(internalmessagecategory.FieldID, field.TypeUint64),
 			},
 		}
 		for _, k := range nodes {
@@ -1254,7 +1254,7 @@ func (_u *InternalMessageCategoryUpdateOne) sqlSave(ctx context.Context) (_node 
 			Columns: []string{internalmessagecategory.ChildrenColumn},
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
-				IDSpec: sqlgraph.NewFieldSpec(internalmessagecategory.FieldID, field.TypeUint32),
+				IDSpec: sqlgraph.NewFieldSpec(internalmessagecategory.FieldID, field.TypeUint64),
 			},
 		}
 		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
@@ -1267,7 +1267,7 @@ func (_u *InternalMessageCategoryUpdateOne) sqlSave(ctx context.Context) (_node 
 			Columns: []string{internalmessagecategory.ChildrenColumn},
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
-				IDSpec: sqlgraph.NewFieldSpec(internalmessagecategory.FieldID, field.TypeUint32),
+				IDSpec: sqlgraph.NewFieldSpec(internalmessagecategory.FieldID, field.TypeUint64),
 			},
 		}
 		for _, k := range nodes {
@@ -1283,7 +1283,7 @@ func (_u *InternalMessageCategoryUpdateOne) sqlSave(ctx context.Context) (_node 
 			Columns: []string{internalmessagecategory.ChildrenColumn},
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
-				IDSpec: sqlgraph.NewFieldSpec(internalmessagecategory.FieldID, field.TypeUint32),
+				IDSpec: sqlgraph.NewFieldSpec(internalmessagecategory.FieldID, field.TypeUint64),
 			},
 		}
 		for _, k := range nodes {

@@ -65,13 +65,13 @@ func (_c *NavigationItemCreate) SetNillableDeletedAt(v *time.Time) *NavigationIt
 }
 
 // SetCreatedBy sets the "created_by" field.
-func (_c *NavigationItemCreate) SetCreatedBy(v uint32) *NavigationItemCreate {
+func (_c *NavigationItemCreate) SetCreatedBy(v uint64) *NavigationItemCreate {
 	_c.mutation.SetCreatedBy(v)
 	return _c
 }
 
 // SetNillableCreatedBy sets the "created_by" field if the given value is not nil.
-func (_c *NavigationItemCreate) SetNillableCreatedBy(v *uint32) *NavigationItemCreate {
+func (_c *NavigationItemCreate) SetNillableCreatedBy(v *uint64) *NavigationItemCreate {
 	if v != nil {
 		_c.SetCreatedBy(*v)
 	}
@@ -79,13 +79,13 @@ func (_c *NavigationItemCreate) SetNillableCreatedBy(v *uint32) *NavigationItemC
 }
 
 // SetUpdatedBy sets the "updated_by" field.
-func (_c *NavigationItemCreate) SetUpdatedBy(v uint32) *NavigationItemCreate {
+func (_c *NavigationItemCreate) SetUpdatedBy(v uint64) *NavigationItemCreate {
 	_c.mutation.SetUpdatedBy(v)
 	return _c
 }
 
 // SetNillableUpdatedBy sets the "updated_by" field if the given value is not nil.
-func (_c *NavigationItemCreate) SetNillableUpdatedBy(v *uint32) *NavigationItemCreate {
+func (_c *NavigationItemCreate) SetNillableUpdatedBy(v *uint64) *NavigationItemCreate {
 	if v != nil {
 		_c.SetUpdatedBy(*v)
 	}
@@ -93,13 +93,13 @@ func (_c *NavigationItemCreate) SetNillableUpdatedBy(v *uint32) *NavigationItemC
 }
 
 // SetDeletedBy sets the "deleted_by" field.
-func (_c *NavigationItemCreate) SetDeletedBy(v uint32) *NavigationItemCreate {
+func (_c *NavigationItemCreate) SetDeletedBy(v uint64) *NavigationItemCreate {
 	_c.mutation.SetDeletedBy(v)
 	return _c
 }
 
 // SetNillableDeletedBy sets the "deleted_by" field if the given value is not nil.
-func (_c *NavigationItemCreate) SetNillableDeletedBy(v *uint32) *NavigationItemCreate {
+func (_c *NavigationItemCreate) SetNillableDeletedBy(v *uint64) *NavigationItemCreate {
 	if v != nil {
 		_c.SetDeletedBy(*v)
 	}
@@ -121,13 +121,13 @@ func (_c *NavigationItemCreate) SetNillableSortOrder(v *uint32) *NavigationItemC
 }
 
 // SetParentID sets the "parent_id" field.
-func (_c *NavigationItemCreate) SetParentID(v uint32) *NavigationItemCreate {
+func (_c *NavigationItemCreate) SetParentID(v uint64) *NavigationItemCreate {
 	_c.mutation.SetParentID(v)
 	return _c
 }
 
 // SetNillableParentID sets the "parent_id" field if the given value is not nil.
-func (_c *NavigationItemCreate) SetNillableParentID(v *uint32) *NavigationItemCreate {
+func (_c *NavigationItemCreate) SetNillableParentID(v *uint64) *NavigationItemCreate {
 	if v != nil {
 		_c.SetParentID(*v)
 	}
@@ -135,13 +135,13 @@ func (_c *NavigationItemCreate) SetNillableParentID(v *uint32) *NavigationItemCr
 }
 
 // SetTenantID sets the "tenant_id" field.
-func (_c *NavigationItemCreate) SetTenantID(v uint32) *NavigationItemCreate {
+func (_c *NavigationItemCreate) SetTenantID(v uint64) *NavigationItemCreate {
 	_c.mutation.SetTenantID(v)
 	return _c
 }
 
 // SetNillableTenantID sets the "tenant_id" field if the given value is not nil.
-func (_c *NavigationItemCreate) SetNillableTenantID(v *uint32) *NavigationItemCreate {
+func (_c *NavigationItemCreate) SetNillableTenantID(v *uint64) *NavigationItemCreate {
 	if v != nil {
 		_c.SetTenantID(*v)
 	}
@@ -163,13 +163,13 @@ func (_c *NavigationItemCreate) SetNillableLinkType(v *navigationitem.LinkType) 
 }
 
 // SetNavigationID sets the "navigation_id" field.
-func (_c *NavigationItemCreate) SetNavigationID(v uint32) *NavigationItemCreate {
+func (_c *NavigationItemCreate) SetNavigationID(v uint64) *NavigationItemCreate {
 	_c.mutation.SetNavigationID(v)
 	return _c
 }
 
 // SetNillableNavigationID sets the "navigation_id" field if the given value is not nil.
-func (_c *NavigationItemCreate) SetNillableNavigationID(v *uint32) *NavigationItemCreate {
+func (_c *NavigationItemCreate) SetNillableNavigationID(v *uint64) *NavigationItemCreate {
 	if v != nil {
 		_c.SetNavigationID(*v)
 	}
@@ -205,13 +205,13 @@ func (_c *NavigationItemCreate) SetNillableURL(v *string) *NavigationItemCreate 
 }
 
 // SetObjectID sets the "object_id" field.
-func (_c *NavigationItemCreate) SetObjectID(v uint32) *NavigationItemCreate {
+func (_c *NavigationItemCreate) SetObjectID(v uint64) *NavigationItemCreate {
 	_c.mutation.SetObjectID(v)
 	return _c
 }
 
 // SetNillableObjectID sets the "object_id" field if the given value is not nil.
-func (_c *NavigationItemCreate) SetNillableObjectID(v *uint32) *NavigationItemCreate {
+func (_c *NavigationItemCreate) SetNillableObjectID(v *uint64) *NavigationItemCreate {
 	if v != nil {
 		_c.SetObjectID(*v)
 	}
@@ -289,7 +289,7 @@ func (_c *NavigationItemCreate) SetNillableRequiredPermission(v *string) *Naviga
 }
 
 // SetID sets the "id" field.
-func (_c *NavigationItemCreate) SetID(v uint32) *NavigationItemCreate {
+func (_c *NavigationItemCreate) SetID(v uint64) *NavigationItemCreate {
 	_c.mutation.SetID(v)
 	return _c
 }
@@ -300,14 +300,14 @@ func (_c *NavigationItemCreate) SetParent(v *NavigationItem) *NavigationItemCrea
 }
 
 // AddChildIDs adds the "children" edge to the NavigationItem entity by IDs.
-func (_c *NavigationItemCreate) AddChildIDs(ids ...uint32) *NavigationItemCreate {
+func (_c *NavigationItemCreate) AddChildIDs(ids ...uint64) *NavigationItemCreate {
 	_c.mutation.AddChildIDs(ids...)
 	return _c
 }
 
 // AddChildren adds the "children" edges to the NavigationItem entity.
 func (_c *NavigationItemCreate) AddChildren(v ...*NavigationItem) *NavigationItemCreate {
-	ids := make([]uint32, len(v))
+	ids := make([]uint64, len(v))
 	for i := range v {
 		ids[i] = v[i].ID
 	}
@@ -402,7 +402,7 @@ func (_c *NavigationItemCreate) sqlSave(ctx context.Context) (*NavigationItem, e
 	}
 	if _spec.ID.Value != _node.ID {
 		id := _spec.ID.Value.(int64)
-		_node.ID = uint32(id)
+		_node.ID = uint64(id)
 	}
 	_c.mutation.id = &_node.ID
 	_c.mutation.done = true
@@ -412,7 +412,7 @@ func (_c *NavigationItemCreate) sqlSave(ctx context.Context) (*NavigationItem, e
 func (_c *NavigationItemCreate) createSpec() (*NavigationItem, *sqlgraph.CreateSpec) {
 	var (
 		_node = &NavigationItem{config: _c.config}
-		_spec = sqlgraph.NewCreateSpec(navigationitem.Table, sqlgraph.NewFieldSpec(navigationitem.FieldID, field.TypeUint32))
+		_spec = sqlgraph.NewCreateSpec(navigationitem.Table, sqlgraph.NewFieldSpec(navigationitem.FieldID, field.TypeUint64))
 	)
 	_spec.OnConflict = _c.conflict
 	if id, ok := _c.mutation.ID(); ok {
@@ -432,15 +432,15 @@ func (_c *NavigationItemCreate) createSpec() (*NavigationItem, *sqlgraph.CreateS
 		_node.DeletedAt = &value
 	}
 	if value, ok := _c.mutation.CreatedBy(); ok {
-		_spec.SetField(navigationitem.FieldCreatedBy, field.TypeUint32, value)
+		_spec.SetField(navigationitem.FieldCreatedBy, field.TypeUint64, value)
 		_node.CreatedBy = &value
 	}
 	if value, ok := _c.mutation.UpdatedBy(); ok {
-		_spec.SetField(navigationitem.FieldUpdatedBy, field.TypeUint32, value)
+		_spec.SetField(navigationitem.FieldUpdatedBy, field.TypeUint64, value)
 		_node.UpdatedBy = &value
 	}
 	if value, ok := _c.mutation.DeletedBy(); ok {
-		_spec.SetField(navigationitem.FieldDeletedBy, field.TypeUint32, value)
+		_spec.SetField(navigationitem.FieldDeletedBy, field.TypeUint64, value)
 		_node.DeletedBy = &value
 	}
 	if value, ok := _c.mutation.SortOrder(); ok {
@@ -448,7 +448,7 @@ func (_c *NavigationItemCreate) createSpec() (*NavigationItem, *sqlgraph.CreateS
 		_node.SortOrder = &value
 	}
 	if value, ok := _c.mutation.TenantID(); ok {
-		_spec.SetField(navigationitem.FieldTenantID, field.TypeUint32, value)
+		_spec.SetField(navigationitem.FieldTenantID, field.TypeUint64, value)
 		_node.TenantID = &value
 	}
 	if value, ok := _c.mutation.LinkType(); ok {
@@ -456,7 +456,7 @@ func (_c *NavigationItemCreate) createSpec() (*NavigationItem, *sqlgraph.CreateS
 		_node.LinkType = &value
 	}
 	if value, ok := _c.mutation.NavigationID(); ok {
-		_spec.SetField(navigationitem.FieldNavigationID, field.TypeUint32, value)
+		_spec.SetField(navigationitem.FieldNavigationID, field.TypeUint64, value)
 		_node.NavigationID = &value
 	}
 	if value, ok := _c.mutation.Title(); ok {
@@ -468,7 +468,7 @@ func (_c *NavigationItemCreate) createSpec() (*NavigationItem, *sqlgraph.CreateS
 		_node.URL = &value
 	}
 	if value, ok := _c.mutation.ObjectID(); ok {
-		_spec.SetField(navigationitem.FieldObjectID, field.TypeUint32, value)
+		_spec.SetField(navigationitem.FieldObjectID, field.TypeUint64, value)
 		_node.ObjectID = &value
 	}
 	if value, ok := _c.mutation.Icon(); ok {
@@ -499,7 +499,7 @@ func (_c *NavigationItemCreate) createSpec() (*NavigationItem, *sqlgraph.CreateS
 			Columns: []string{navigationitem.ParentColumn},
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
-				IDSpec: sqlgraph.NewFieldSpec(navigationitem.FieldID, field.TypeUint32),
+				IDSpec: sqlgraph.NewFieldSpec(navigationitem.FieldID, field.TypeUint64),
 			},
 		}
 		for _, k := range nodes {
@@ -516,7 +516,7 @@ func (_c *NavigationItemCreate) createSpec() (*NavigationItem, *sqlgraph.CreateS
 			Columns: []string{navigationitem.ChildrenColumn},
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
-				IDSpec: sqlgraph.NewFieldSpec(navigationitem.FieldID, field.TypeUint32),
+				IDSpec: sqlgraph.NewFieldSpec(navigationitem.FieldID, field.TypeUint64),
 			},
 		}
 		for _, k := range nodes {
@@ -613,7 +613,7 @@ func (u *NavigationItemUpsert) ClearDeletedAt() *NavigationItemUpsert {
 }
 
 // SetCreatedBy sets the "created_by" field.
-func (u *NavigationItemUpsert) SetCreatedBy(v uint32) *NavigationItemUpsert {
+func (u *NavigationItemUpsert) SetCreatedBy(v uint64) *NavigationItemUpsert {
 	u.Set(navigationitem.FieldCreatedBy, v)
 	return u
 }
@@ -625,7 +625,7 @@ func (u *NavigationItemUpsert) UpdateCreatedBy() *NavigationItemUpsert {
 }
 
 // AddCreatedBy adds v to the "created_by" field.
-func (u *NavigationItemUpsert) AddCreatedBy(v uint32) *NavigationItemUpsert {
+func (u *NavigationItemUpsert) AddCreatedBy(v uint64) *NavigationItemUpsert {
 	u.Add(navigationitem.FieldCreatedBy, v)
 	return u
 }
@@ -637,7 +637,7 @@ func (u *NavigationItemUpsert) ClearCreatedBy() *NavigationItemUpsert {
 }
 
 // SetUpdatedBy sets the "updated_by" field.
-func (u *NavigationItemUpsert) SetUpdatedBy(v uint32) *NavigationItemUpsert {
+func (u *NavigationItemUpsert) SetUpdatedBy(v uint64) *NavigationItemUpsert {
 	u.Set(navigationitem.FieldUpdatedBy, v)
 	return u
 }
@@ -649,7 +649,7 @@ func (u *NavigationItemUpsert) UpdateUpdatedBy() *NavigationItemUpsert {
 }
 
 // AddUpdatedBy adds v to the "updated_by" field.
-func (u *NavigationItemUpsert) AddUpdatedBy(v uint32) *NavigationItemUpsert {
+func (u *NavigationItemUpsert) AddUpdatedBy(v uint64) *NavigationItemUpsert {
 	u.Add(navigationitem.FieldUpdatedBy, v)
 	return u
 }
@@ -661,7 +661,7 @@ func (u *NavigationItemUpsert) ClearUpdatedBy() *NavigationItemUpsert {
 }
 
 // SetDeletedBy sets the "deleted_by" field.
-func (u *NavigationItemUpsert) SetDeletedBy(v uint32) *NavigationItemUpsert {
+func (u *NavigationItemUpsert) SetDeletedBy(v uint64) *NavigationItemUpsert {
 	u.Set(navigationitem.FieldDeletedBy, v)
 	return u
 }
@@ -673,7 +673,7 @@ func (u *NavigationItemUpsert) UpdateDeletedBy() *NavigationItemUpsert {
 }
 
 // AddDeletedBy adds v to the "deleted_by" field.
-func (u *NavigationItemUpsert) AddDeletedBy(v uint32) *NavigationItemUpsert {
+func (u *NavigationItemUpsert) AddDeletedBy(v uint64) *NavigationItemUpsert {
 	u.Add(navigationitem.FieldDeletedBy, v)
 	return u
 }
@@ -709,7 +709,7 @@ func (u *NavigationItemUpsert) ClearSortOrder() *NavigationItemUpsert {
 }
 
 // SetParentID sets the "parent_id" field.
-func (u *NavigationItemUpsert) SetParentID(v uint32) *NavigationItemUpsert {
+func (u *NavigationItemUpsert) SetParentID(v uint64) *NavigationItemUpsert {
 	u.Set(navigationitem.FieldParentID, v)
 	return u
 }
@@ -745,7 +745,7 @@ func (u *NavigationItemUpsert) ClearLinkType() *NavigationItemUpsert {
 }
 
 // SetNavigationID sets the "navigation_id" field.
-func (u *NavigationItemUpsert) SetNavigationID(v uint32) *NavigationItemUpsert {
+func (u *NavigationItemUpsert) SetNavigationID(v uint64) *NavigationItemUpsert {
 	u.Set(navigationitem.FieldNavigationID, v)
 	return u
 }
@@ -757,7 +757,7 @@ func (u *NavigationItemUpsert) UpdateNavigationID() *NavigationItemUpsert {
 }
 
 // AddNavigationID adds v to the "navigation_id" field.
-func (u *NavigationItemUpsert) AddNavigationID(v uint32) *NavigationItemUpsert {
+func (u *NavigationItemUpsert) AddNavigationID(v uint64) *NavigationItemUpsert {
 	u.Add(navigationitem.FieldNavigationID, v)
 	return u
 }
@@ -805,7 +805,7 @@ func (u *NavigationItemUpsert) ClearURL() *NavigationItemUpsert {
 }
 
 // SetObjectID sets the "object_id" field.
-func (u *NavigationItemUpsert) SetObjectID(v uint32) *NavigationItemUpsert {
+func (u *NavigationItemUpsert) SetObjectID(v uint64) *NavigationItemUpsert {
 	u.Set(navigationitem.FieldObjectID, v)
 	return u
 }
@@ -817,7 +817,7 @@ func (u *NavigationItemUpsert) UpdateObjectID() *NavigationItemUpsert {
 }
 
 // AddObjectID adds v to the "object_id" field.
-func (u *NavigationItemUpsert) AddObjectID(v uint32) *NavigationItemUpsert {
+func (u *NavigationItemUpsert) AddObjectID(v uint64) *NavigationItemUpsert {
 	u.Add(navigationitem.FieldObjectID, v)
 	return u
 }
@@ -1015,14 +1015,14 @@ func (u *NavigationItemUpsertOne) ClearDeletedAt() *NavigationItemUpsertOne {
 }
 
 // SetCreatedBy sets the "created_by" field.
-func (u *NavigationItemUpsertOne) SetCreatedBy(v uint32) *NavigationItemUpsertOne {
+func (u *NavigationItemUpsertOne) SetCreatedBy(v uint64) *NavigationItemUpsertOne {
 	return u.Update(func(s *NavigationItemUpsert) {
 		s.SetCreatedBy(v)
 	})
 }
 
 // AddCreatedBy adds v to the "created_by" field.
-func (u *NavigationItemUpsertOne) AddCreatedBy(v uint32) *NavigationItemUpsertOne {
+func (u *NavigationItemUpsertOne) AddCreatedBy(v uint64) *NavigationItemUpsertOne {
 	return u.Update(func(s *NavigationItemUpsert) {
 		s.AddCreatedBy(v)
 	})
@@ -1043,14 +1043,14 @@ func (u *NavigationItemUpsertOne) ClearCreatedBy() *NavigationItemUpsertOne {
 }
 
 // SetUpdatedBy sets the "updated_by" field.
-func (u *NavigationItemUpsertOne) SetUpdatedBy(v uint32) *NavigationItemUpsertOne {
+func (u *NavigationItemUpsertOne) SetUpdatedBy(v uint64) *NavigationItemUpsertOne {
 	return u.Update(func(s *NavigationItemUpsert) {
 		s.SetUpdatedBy(v)
 	})
 }
 
 // AddUpdatedBy adds v to the "updated_by" field.
-func (u *NavigationItemUpsertOne) AddUpdatedBy(v uint32) *NavigationItemUpsertOne {
+func (u *NavigationItemUpsertOne) AddUpdatedBy(v uint64) *NavigationItemUpsertOne {
 	return u.Update(func(s *NavigationItemUpsert) {
 		s.AddUpdatedBy(v)
 	})
@@ -1071,14 +1071,14 @@ func (u *NavigationItemUpsertOne) ClearUpdatedBy() *NavigationItemUpsertOne {
 }
 
 // SetDeletedBy sets the "deleted_by" field.
-func (u *NavigationItemUpsertOne) SetDeletedBy(v uint32) *NavigationItemUpsertOne {
+func (u *NavigationItemUpsertOne) SetDeletedBy(v uint64) *NavigationItemUpsertOne {
 	return u.Update(func(s *NavigationItemUpsert) {
 		s.SetDeletedBy(v)
 	})
 }
 
 // AddDeletedBy adds v to the "deleted_by" field.
-func (u *NavigationItemUpsertOne) AddDeletedBy(v uint32) *NavigationItemUpsertOne {
+func (u *NavigationItemUpsertOne) AddDeletedBy(v uint64) *NavigationItemUpsertOne {
 	return u.Update(func(s *NavigationItemUpsert) {
 		s.AddDeletedBy(v)
 	})
@@ -1127,7 +1127,7 @@ func (u *NavigationItemUpsertOne) ClearSortOrder() *NavigationItemUpsertOne {
 }
 
 // SetParentID sets the "parent_id" field.
-func (u *NavigationItemUpsertOne) SetParentID(v uint32) *NavigationItemUpsertOne {
+func (u *NavigationItemUpsertOne) SetParentID(v uint64) *NavigationItemUpsertOne {
 	return u.Update(func(s *NavigationItemUpsert) {
 		s.SetParentID(v)
 	})
@@ -1169,14 +1169,14 @@ func (u *NavigationItemUpsertOne) ClearLinkType() *NavigationItemUpsertOne {
 }
 
 // SetNavigationID sets the "navigation_id" field.
-func (u *NavigationItemUpsertOne) SetNavigationID(v uint32) *NavigationItemUpsertOne {
+func (u *NavigationItemUpsertOne) SetNavigationID(v uint64) *NavigationItemUpsertOne {
 	return u.Update(func(s *NavigationItemUpsert) {
 		s.SetNavigationID(v)
 	})
 }
 
 // AddNavigationID adds v to the "navigation_id" field.
-func (u *NavigationItemUpsertOne) AddNavigationID(v uint32) *NavigationItemUpsertOne {
+func (u *NavigationItemUpsertOne) AddNavigationID(v uint64) *NavigationItemUpsertOne {
 	return u.Update(func(s *NavigationItemUpsert) {
 		s.AddNavigationID(v)
 	})
@@ -1239,14 +1239,14 @@ func (u *NavigationItemUpsertOne) ClearURL() *NavigationItemUpsertOne {
 }
 
 // SetObjectID sets the "object_id" field.
-func (u *NavigationItemUpsertOne) SetObjectID(v uint32) *NavigationItemUpsertOne {
+func (u *NavigationItemUpsertOne) SetObjectID(v uint64) *NavigationItemUpsertOne {
 	return u.Update(func(s *NavigationItemUpsert) {
 		s.SetObjectID(v)
 	})
 }
 
 // AddObjectID adds v to the "object_id" field.
-func (u *NavigationItemUpsertOne) AddObjectID(v uint32) *NavigationItemUpsertOne {
+func (u *NavigationItemUpsertOne) AddObjectID(v uint64) *NavigationItemUpsertOne {
 	return u.Update(func(s *NavigationItemUpsert) {
 		s.AddObjectID(v)
 	})
@@ -1387,7 +1387,7 @@ func (u *NavigationItemUpsertOne) ExecX(ctx context.Context) {
 }
 
 // Exec executes the UPSERT query and returns the inserted/updated ID.
-func (u *NavigationItemUpsertOne) ID(ctx context.Context) (id uint32, err error) {
+func (u *NavigationItemUpsertOne) ID(ctx context.Context) (id uint64, err error) {
 	node, err := u.create.Save(ctx)
 	if err != nil {
 		return id, err
@@ -1396,7 +1396,7 @@ func (u *NavigationItemUpsertOne) ID(ctx context.Context) (id uint32, err error)
 }
 
 // IDX is like ID, but panics if an error occurs.
-func (u *NavigationItemUpsertOne) IDX(ctx context.Context) uint32 {
+func (u *NavigationItemUpsertOne) IDX(ctx context.Context) uint64 {
 	id, err := u.ID(ctx)
 	if err != nil {
 		panic(err)
@@ -1453,7 +1453,7 @@ func (_c *NavigationItemCreateBulk) Save(ctx context.Context) ([]*NavigationItem
 				mutation.id = &nodes[i].ID
 				if specs[i].ID.Value != nil && nodes[i].ID == 0 {
 					id := specs[i].ID.Value.(int64)
-					nodes[i].ID = uint32(id)
+					nodes[i].ID = uint64(id)
 				}
 				mutation.done = true
 				return nodes[i], nil
@@ -1634,14 +1634,14 @@ func (u *NavigationItemUpsertBulk) ClearDeletedAt() *NavigationItemUpsertBulk {
 }
 
 // SetCreatedBy sets the "created_by" field.
-func (u *NavigationItemUpsertBulk) SetCreatedBy(v uint32) *NavigationItemUpsertBulk {
+func (u *NavigationItemUpsertBulk) SetCreatedBy(v uint64) *NavigationItemUpsertBulk {
 	return u.Update(func(s *NavigationItemUpsert) {
 		s.SetCreatedBy(v)
 	})
 }
 
 // AddCreatedBy adds v to the "created_by" field.
-func (u *NavigationItemUpsertBulk) AddCreatedBy(v uint32) *NavigationItemUpsertBulk {
+func (u *NavigationItemUpsertBulk) AddCreatedBy(v uint64) *NavigationItemUpsertBulk {
 	return u.Update(func(s *NavigationItemUpsert) {
 		s.AddCreatedBy(v)
 	})
@@ -1662,14 +1662,14 @@ func (u *NavigationItemUpsertBulk) ClearCreatedBy() *NavigationItemUpsertBulk {
 }
 
 // SetUpdatedBy sets the "updated_by" field.
-func (u *NavigationItemUpsertBulk) SetUpdatedBy(v uint32) *NavigationItemUpsertBulk {
+func (u *NavigationItemUpsertBulk) SetUpdatedBy(v uint64) *NavigationItemUpsertBulk {
 	return u.Update(func(s *NavigationItemUpsert) {
 		s.SetUpdatedBy(v)
 	})
 }
 
 // AddUpdatedBy adds v to the "updated_by" field.
-func (u *NavigationItemUpsertBulk) AddUpdatedBy(v uint32) *NavigationItemUpsertBulk {
+func (u *NavigationItemUpsertBulk) AddUpdatedBy(v uint64) *NavigationItemUpsertBulk {
 	return u.Update(func(s *NavigationItemUpsert) {
 		s.AddUpdatedBy(v)
 	})
@@ -1690,14 +1690,14 @@ func (u *NavigationItemUpsertBulk) ClearUpdatedBy() *NavigationItemUpsertBulk {
 }
 
 // SetDeletedBy sets the "deleted_by" field.
-func (u *NavigationItemUpsertBulk) SetDeletedBy(v uint32) *NavigationItemUpsertBulk {
+func (u *NavigationItemUpsertBulk) SetDeletedBy(v uint64) *NavigationItemUpsertBulk {
 	return u.Update(func(s *NavigationItemUpsert) {
 		s.SetDeletedBy(v)
 	})
 }
 
 // AddDeletedBy adds v to the "deleted_by" field.
-func (u *NavigationItemUpsertBulk) AddDeletedBy(v uint32) *NavigationItemUpsertBulk {
+func (u *NavigationItemUpsertBulk) AddDeletedBy(v uint64) *NavigationItemUpsertBulk {
 	return u.Update(func(s *NavigationItemUpsert) {
 		s.AddDeletedBy(v)
 	})
@@ -1746,7 +1746,7 @@ func (u *NavigationItemUpsertBulk) ClearSortOrder() *NavigationItemUpsertBulk {
 }
 
 // SetParentID sets the "parent_id" field.
-func (u *NavigationItemUpsertBulk) SetParentID(v uint32) *NavigationItemUpsertBulk {
+func (u *NavigationItemUpsertBulk) SetParentID(v uint64) *NavigationItemUpsertBulk {
 	return u.Update(func(s *NavigationItemUpsert) {
 		s.SetParentID(v)
 	})
@@ -1788,14 +1788,14 @@ func (u *NavigationItemUpsertBulk) ClearLinkType() *NavigationItemUpsertBulk {
 }
 
 // SetNavigationID sets the "navigation_id" field.
-func (u *NavigationItemUpsertBulk) SetNavigationID(v uint32) *NavigationItemUpsertBulk {
+func (u *NavigationItemUpsertBulk) SetNavigationID(v uint64) *NavigationItemUpsertBulk {
 	return u.Update(func(s *NavigationItemUpsert) {
 		s.SetNavigationID(v)
 	})
 }
 
 // AddNavigationID adds v to the "navigation_id" field.
-func (u *NavigationItemUpsertBulk) AddNavigationID(v uint32) *NavigationItemUpsertBulk {
+func (u *NavigationItemUpsertBulk) AddNavigationID(v uint64) *NavigationItemUpsertBulk {
 	return u.Update(func(s *NavigationItemUpsert) {
 		s.AddNavigationID(v)
 	})
@@ -1858,14 +1858,14 @@ func (u *NavigationItemUpsertBulk) ClearURL() *NavigationItemUpsertBulk {
 }
 
 // SetObjectID sets the "object_id" field.
-func (u *NavigationItemUpsertBulk) SetObjectID(v uint32) *NavigationItemUpsertBulk {
+func (u *NavigationItemUpsertBulk) SetObjectID(v uint64) *NavigationItemUpsertBulk {
 	return u.Update(func(s *NavigationItemUpsert) {
 		s.SetObjectID(v)
 	})
 }
 
 // AddObjectID adds v to the "object_id" field.
-func (u *NavigationItemUpsertBulk) AddObjectID(v uint32) *NavigationItemUpsertBulk {
+func (u *NavigationItemUpsertBulk) AddObjectID(v uint64) *NavigationItemUpsertBulk {
 	return u.Update(func(s *NavigationItemUpsert) {
 		s.AddObjectID(v)
 	})

@@ -65,13 +65,13 @@ func (_c *ExperimentCreate) SetNillableDeletedAt(v *time.Time) *ExperimentCreate
 }
 
 // SetCreatedBy sets the "created_by" field.
-func (_c *ExperimentCreate) SetCreatedBy(v uint32) *ExperimentCreate {
+func (_c *ExperimentCreate) SetCreatedBy(v uint64) *ExperimentCreate {
 	_c.mutation.SetCreatedBy(v)
 	return _c
 }
 
 // SetNillableCreatedBy sets the "created_by" field if the given value is not nil.
-func (_c *ExperimentCreate) SetNillableCreatedBy(v *uint32) *ExperimentCreate {
+func (_c *ExperimentCreate) SetNillableCreatedBy(v *uint64) *ExperimentCreate {
 	if v != nil {
 		_c.SetCreatedBy(*v)
 	}
@@ -79,13 +79,13 @@ func (_c *ExperimentCreate) SetNillableCreatedBy(v *uint32) *ExperimentCreate {
 }
 
 // SetUpdatedBy sets the "updated_by" field.
-func (_c *ExperimentCreate) SetUpdatedBy(v uint32) *ExperimentCreate {
+func (_c *ExperimentCreate) SetUpdatedBy(v uint64) *ExperimentCreate {
 	_c.mutation.SetUpdatedBy(v)
 	return _c
 }
 
 // SetNillableUpdatedBy sets the "updated_by" field if the given value is not nil.
-func (_c *ExperimentCreate) SetNillableUpdatedBy(v *uint32) *ExperimentCreate {
+func (_c *ExperimentCreate) SetNillableUpdatedBy(v *uint64) *ExperimentCreate {
 	if v != nil {
 		_c.SetUpdatedBy(*v)
 	}
@@ -93,13 +93,13 @@ func (_c *ExperimentCreate) SetNillableUpdatedBy(v *uint32) *ExperimentCreate {
 }
 
 // SetDeletedBy sets the "deleted_by" field.
-func (_c *ExperimentCreate) SetDeletedBy(v uint32) *ExperimentCreate {
+func (_c *ExperimentCreate) SetDeletedBy(v uint64) *ExperimentCreate {
 	_c.mutation.SetDeletedBy(v)
 	return _c
 }
 
 // SetNillableDeletedBy sets the "deleted_by" field if the given value is not nil.
-func (_c *ExperimentCreate) SetNillableDeletedBy(v *uint32) *ExperimentCreate {
+func (_c *ExperimentCreate) SetNillableDeletedBy(v *uint64) *ExperimentCreate {
 	if v != nil {
 		_c.SetDeletedBy(*v)
 	}
@@ -107,13 +107,13 @@ func (_c *ExperimentCreate) SetNillableDeletedBy(v *uint32) *ExperimentCreate {
 }
 
 // SetTenantID sets the "tenant_id" field.
-func (_c *ExperimentCreate) SetTenantID(v uint32) *ExperimentCreate {
+func (_c *ExperimentCreate) SetTenantID(v uint64) *ExperimentCreate {
 	_c.mutation.SetTenantID(v)
 	return _c
 }
 
 // SetNillableTenantID sets the "tenant_id" field if the given value is not nil.
-func (_c *ExperimentCreate) SetNillableTenantID(v *uint32) *ExperimentCreate {
+func (_c *ExperimentCreate) SetNillableTenantID(v *uint64) *ExperimentCreate {
 	if v != nil {
 		_c.SetTenantID(*v)
 	}
@@ -127,13 +127,13 @@ func (_c *ExperimentCreate) SetName(v string) *ExperimentCreate {
 }
 
 // SetPageID sets the "page_id" field.
-func (_c *ExperimentCreate) SetPageID(v uint32) *ExperimentCreate {
+func (_c *ExperimentCreate) SetPageID(v uint64) *ExperimentCreate {
 	_c.mutation.SetPageID(v)
 	return _c
 }
 
 // SetNillablePageID sets the "page_id" field if the given value is not nil.
-func (_c *ExperimentCreate) SetNillablePageID(v *uint32) *ExperimentCreate {
+func (_c *ExperimentCreate) SetNillablePageID(v *uint64) *ExperimentCreate {
 	if v != nil {
 		_c.SetPageID(*v)
 	}
@@ -183,7 +183,7 @@ func (_c *ExperimentCreate) SetNillableDescription(v *string) *ExperimentCreate 
 }
 
 // SetID sets the "id" field.
-func (_c *ExperimentCreate) SetID(v uint32) *ExperimentCreate {
+func (_c *ExperimentCreate) SetID(v uint64) *ExperimentCreate {
 	_c.mutation.SetID(v)
 	return _c
 }
@@ -281,7 +281,7 @@ func (_c *ExperimentCreate) sqlSave(ctx context.Context) (*Experiment, error) {
 	}
 	if _spec.ID.Value != _node.ID {
 		id := _spec.ID.Value.(int64)
-		_node.ID = uint32(id)
+		_node.ID = uint64(id)
 	}
 	_c.mutation.id = &_node.ID
 	_c.mutation.done = true
@@ -291,7 +291,7 @@ func (_c *ExperimentCreate) sqlSave(ctx context.Context) (*Experiment, error) {
 func (_c *ExperimentCreate) createSpec() (*Experiment, *sqlgraph.CreateSpec) {
 	var (
 		_node = &Experiment{config: _c.config}
-		_spec = sqlgraph.NewCreateSpec(experiment.Table, sqlgraph.NewFieldSpec(experiment.FieldID, field.TypeUint32))
+		_spec = sqlgraph.NewCreateSpec(experiment.Table, sqlgraph.NewFieldSpec(experiment.FieldID, field.TypeUint64))
 	)
 	_spec.OnConflict = _c.conflict
 	if id, ok := _c.mutation.ID(); ok {
@@ -311,19 +311,19 @@ func (_c *ExperimentCreate) createSpec() (*Experiment, *sqlgraph.CreateSpec) {
 		_node.DeletedAt = &value
 	}
 	if value, ok := _c.mutation.CreatedBy(); ok {
-		_spec.SetField(experiment.FieldCreatedBy, field.TypeUint32, value)
+		_spec.SetField(experiment.FieldCreatedBy, field.TypeUint64, value)
 		_node.CreatedBy = &value
 	}
 	if value, ok := _c.mutation.UpdatedBy(); ok {
-		_spec.SetField(experiment.FieldUpdatedBy, field.TypeUint32, value)
+		_spec.SetField(experiment.FieldUpdatedBy, field.TypeUint64, value)
 		_node.UpdatedBy = &value
 	}
 	if value, ok := _c.mutation.DeletedBy(); ok {
-		_spec.SetField(experiment.FieldDeletedBy, field.TypeUint32, value)
+		_spec.SetField(experiment.FieldDeletedBy, field.TypeUint64, value)
 		_node.DeletedBy = &value
 	}
 	if value, ok := _c.mutation.TenantID(); ok {
-		_spec.SetField(experiment.FieldTenantID, field.TypeUint32, value)
+		_spec.SetField(experiment.FieldTenantID, field.TypeUint64, value)
 		_node.TenantID = &value
 	}
 	if value, ok := _c.mutation.Name(); ok {
@@ -331,7 +331,7 @@ func (_c *ExperimentCreate) createSpec() (*Experiment, *sqlgraph.CreateSpec) {
 		_node.Name = value
 	}
 	if value, ok := _c.mutation.PageID(); ok {
-		_spec.SetField(experiment.FieldPageID, field.TypeUint32, value)
+		_spec.SetField(experiment.FieldPageID, field.TypeUint64, value)
 		_node.PageID = &value
 	}
 	if value, ok := _c.mutation.Status(); ok {
@@ -435,7 +435,7 @@ func (u *ExperimentUpsert) ClearDeletedAt() *ExperimentUpsert {
 }
 
 // SetCreatedBy sets the "created_by" field.
-func (u *ExperimentUpsert) SetCreatedBy(v uint32) *ExperimentUpsert {
+func (u *ExperimentUpsert) SetCreatedBy(v uint64) *ExperimentUpsert {
 	u.Set(experiment.FieldCreatedBy, v)
 	return u
 }
@@ -447,7 +447,7 @@ func (u *ExperimentUpsert) UpdateCreatedBy() *ExperimentUpsert {
 }
 
 // AddCreatedBy adds v to the "created_by" field.
-func (u *ExperimentUpsert) AddCreatedBy(v uint32) *ExperimentUpsert {
+func (u *ExperimentUpsert) AddCreatedBy(v uint64) *ExperimentUpsert {
 	u.Add(experiment.FieldCreatedBy, v)
 	return u
 }
@@ -459,7 +459,7 @@ func (u *ExperimentUpsert) ClearCreatedBy() *ExperimentUpsert {
 }
 
 // SetUpdatedBy sets the "updated_by" field.
-func (u *ExperimentUpsert) SetUpdatedBy(v uint32) *ExperimentUpsert {
+func (u *ExperimentUpsert) SetUpdatedBy(v uint64) *ExperimentUpsert {
 	u.Set(experiment.FieldUpdatedBy, v)
 	return u
 }
@@ -471,7 +471,7 @@ func (u *ExperimentUpsert) UpdateUpdatedBy() *ExperimentUpsert {
 }
 
 // AddUpdatedBy adds v to the "updated_by" field.
-func (u *ExperimentUpsert) AddUpdatedBy(v uint32) *ExperimentUpsert {
+func (u *ExperimentUpsert) AddUpdatedBy(v uint64) *ExperimentUpsert {
 	u.Add(experiment.FieldUpdatedBy, v)
 	return u
 }
@@ -483,7 +483,7 @@ func (u *ExperimentUpsert) ClearUpdatedBy() *ExperimentUpsert {
 }
 
 // SetDeletedBy sets the "deleted_by" field.
-func (u *ExperimentUpsert) SetDeletedBy(v uint32) *ExperimentUpsert {
+func (u *ExperimentUpsert) SetDeletedBy(v uint64) *ExperimentUpsert {
 	u.Set(experiment.FieldDeletedBy, v)
 	return u
 }
@@ -495,7 +495,7 @@ func (u *ExperimentUpsert) UpdateDeletedBy() *ExperimentUpsert {
 }
 
 // AddDeletedBy adds v to the "deleted_by" field.
-func (u *ExperimentUpsert) AddDeletedBy(v uint32) *ExperimentUpsert {
+func (u *ExperimentUpsert) AddDeletedBy(v uint64) *ExperimentUpsert {
 	u.Add(experiment.FieldDeletedBy, v)
 	return u
 }
@@ -519,7 +519,7 @@ func (u *ExperimentUpsert) UpdateName() *ExperimentUpsert {
 }
 
 // SetPageID sets the "page_id" field.
-func (u *ExperimentUpsert) SetPageID(v uint32) *ExperimentUpsert {
+func (u *ExperimentUpsert) SetPageID(v uint64) *ExperimentUpsert {
 	u.Set(experiment.FieldPageID, v)
 	return u
 }
@@ -531,7 +531,7 @@ func (u *ExperimentUpsert) UpdatePageID() *ExperimentUpsert {
 }
 
 // AddPageID adds v to the "page_id" field.
-func (u *ExperimentUpsert) AddPageID(v uint32) *ExperimentUpsert {
+func (u *ExperimentUpsert) AddPageID(v uint64) *ExperimentUpsert {
 	u.Add(experiment.FieldPageID, v)
 	return u
 }
@@ -693,14 +693,14 @@ func (u *ExperimentUpsertOne) ClearDeletedAt() *ExperimentUpsertOne {
 }
 
 // SetCreatedBy sets the "created_by" field.
-func (u *ExperimentUpsertOne) SetCreatedBy(v uint32) *ExperimentUpsertOne {
+func (u *ExperimentUpsertOne) SetCreatedBy(v uint64) *ExperimentUpsertOne {
 	return u.Update(func(s *ExperimentUpsert) {
 		s.SetCreatedBy(v)
 	})
 }
 
 // AddCreatedBy adds v to the "created_by" field.
-func (u *ExperimentUpsertOne) AddCreatedBy(v uint32) *ExperimentUpsertOne {
+func (u *ExperimentUpsertOne) AddCreatedBy(v uint64) *ExperimentUpsertOne {
 	return u.Update(func(s *ExperimentUpsert) {
 		s.AddCreatedBy(v)
 	})
@@ -721,14 +721,14 @@ func (u *ExperimentUpsertOne) ClearCreatedBy() *ExperimentUpsertOne {
 }
 
 // SetUpdatedBy sets the "updated_by" field.
-func (u *ExperimentUpsertOne) SetUpdatedBy(v uint32) *ExperimentUpsertOne {
+func (u *ExperimentUpsertOne) SetUpdatedBy(v uint64) *ExperimentUpsertOne {
 	return u.Update(func(s *ExperimentUpsert) {
 		s.SetUpdatedBy(v)
 	})
 }
 
 // AddUpdatedBy adds v to the "updated_by" field.
-func (u *ExperimentUpsertOne) AddUpdatedBy(v uint32) *ExperimentUpsertOne {
+func (u *ExperimentUpsertOne) AddUpdatedBy(v uint64) *ExperimentUpsertOne {
 	return u.Update(func(s *ExperimentUpsert) {
 		s.AddUpdatedBy(v)
 	})
@@ -749,14 +749,14 @@ func (u *ExperimentUpsertOne) ClearUpdatedBy() *ExperimentUpsertOne {
 }
 
 // SetDeletedBy sets the "deleted_by" field.
-func (u *ExperimentUpsertOne) SetDeletedBy(v uint32) *ExperimentUpsertOne {
+func (u *ExperimentUpsertOne) SetDeletedBy(v uint64) *ExperimentUpsertOne {
 	return u.Update(func(s *ExperimentUpsert) {
 		s.SetDeletedBy(v)
 	})
 }
 
 // AddDeletedBy adds v to the "deleted_by" field.
-func (u *ExperimentUpsertOne) AddDeletedBy(v uint32) *ExperimentUpsertOne {
+func (u *ExperimentUpsertOne) AddDeletedBy(v uint64) *ExperimentUpsertOne {
 	return u.Update(func(s *ExperimentUpsert) {
 		s.AddDeletedBy(v)
 	})
@@ -791,14 +791,14 @@ func (u *ExperimentUpsertOne) UpdateName() *ExperimentUpsertOne {
 }
 
 // SetPageID sets the "page_id" field.
-func (u *ExperimentUpsertOne) SetPageID(v uint32) *ExperimentUpsertOne {
+func (u *ExperimentUpsertOne) SetPageID(v uint64) *ExperimentUpsertOne {
 	return u.Update(func(s *ExperimentUpsert) {
 		s.SetPageID(v)
 	})
 }
 
 // AddPageID adds v to the "page_id" field.
-func (u *ExperimentUpsertOne) AddPageID(v uint32) *ExperimentUpsertOne {
+func (u *ExperimentUpsertOne) AddPageID(v uint64) *ExperimentUpsertOne {
 	return u.Update(func(s *ExperimentUpsert) {
 		s.AddPageID(v)
 	})
@@ -897,7 +897,7 @@ func (u *ExperimentUpsertOne) ExecX(ctx context.Context) {
 }
 
 // Exec executes the UPSERT query and returns the inserted/updated ID.
-func (u *ExperimentUpsertOne) ID(ctx context.Context) (id uint32, err error) {
+func (u *ExperimentUpsertOne) ID(ctx context.Context) (id uint64, err error) {
 	node, err := u.create.Save(ctx)
 	if err != nil {
 		return id, err
@@ -906,7 +906,7 @@ func (u *ExperimentUpsertOne) ID(ctx context.Context) (id uint32, err error) {
 }
 
 // IDX is like ID, but panics if an error occurs.
-func (u *ExperimentUpsertOne) IDX(ctx context.Context) uint32 {
+func (u *ExperimentUpsertOne) IDX(ctx context.Context) uint64 {
 	id, err := u.ID(ctx)
 	if err != nil {
 		panic(err)
@@ -963,7 +963,7 @@ func (_c *ExperimentCreateBulk) Save(ctx context.Context) ([]*Experiment, error)
 				mutation.id = &nodes[i].ID
 				if specs[i].ID.Value != nil && nodes[i].ID == 0 {
 					id := specs[i].ID.Value.(int64)
-					nodes[i].ID = uint32(id)
+					nodes[i].ID = uint64(id)
 				}
 				mutation.done = true
 				return nodes[i], nil
@@ -1144,14 +1144,14 @@ func (u *ExperimentUpsertBulk) ClearDeletedAt() *ExperimentUpsertBulk {
 }
 
 // SetCreatedBy sets the "created_by" field.
-func (u *ExperimentUpsertBulk) SetCreatedBy(v uint32) *ExperimentUpsertBulk {
+func (u *ExperimentUpsertBulk) SetCreatedBy(v uint64) *ExperimentUpsertBulk {
 	return u.Update(func(s *ExperimentUpsert) {
 		s.SetCreatedBy(v)
 	})
 }
 
 // AddCreatedBy adds v to the "created_by" field.
-func (u *ExperimentUpsertBulk) AddCreatedBy(v uint32) *ExperimentUpsertBulk {
+func (u *ExperimentUpsertBulk) AddCreatedBy(v uint64) *ExperimentUpsertBulk {
 	return u.Update(func(s *ExperimentUpsert) {
 		s.AddCreatedBy(v)
 	})
@@ -1172,14 +1172,14 @@ func (u *ExperimentUpsertBulk) ClearCreatedBy() *ExperimentUpsertBulk {
 }
 
 // SetUpdatedBy sets the "updated_by" field.
-func (u *ExperimentUpsertBulk) SetUpdatedBy(v uint32) *ExperimentUpsertBulk {
+func (u *ExperimentUpsertBulk) SetUpdatedBy(v uint64) *ExperimentUpsertBulk {
 	return u.Update(func(s *ExperimentUpsert) {
 		s.SetUpdatedBy(v)
 	})
 }
 
 // AddUpdatedBy adds v to the "updated_by" field.
-func (u *ExperimentUpsertBulk) AddUpdatedBy(v uint32) *ExperimentUpsertBulk {
+func (u *ExperimentUpsertBulk) AddUpdatedBy(v uint64) *ExperimentUpsertBulk {
 	return u.Update(func(s *ExperimentUpsert) {
 		s.AddUpdatedBy(v)
 	})
@@ -1200,14 +1200,14 @@ func (u *ExperimentUpsertBulk) ClearUpdatedBy() *ExperimentUpsertBulk {
 }
 
 // SetDeletedBy sets the "deleted_by" field.
-func (u *ExperimentUpsertBulk) SetDeletedBy(v uint32) *ExperimentUpsertBulk {
+func (u *ExperimentUpsertBulk) SetDeletedBy(v uint64) *ExperimentUpsertBulk {
 	return u.Update(func(s *ExperimentUpsert) {
 		s.SetDeletedBy(v)
 	})
 }
 
 // AddDeletedBy adds v to the "deleted_by" field.
-func (u *ExperimentUpsertBulk) AddDeletedBy(v uint32) *ExperimentUpsertBulk {
+func (u *ExperimentUpsertBulk) AddDeletedBy(v uint64) *ExperimentUpsertBulk {
 	return u.Update(func(s *ExperimentUpsert) {
 		s.AddDeletedBy(v)
 	})
@@ -1242,14 +1242,14 @@ func (u *ExperimentUpsertBulk) UpdateName() *ExperimentUpsertBulk {
 }
 
 // SetPageID sets the "page_id" field.
-func (u *ExperimentUpsertBulk) SetPageID(v uint32) *ExperimentUpsertBulk {
+func (u *ExperimentUpsertBulk) SetPageID(v uint64) *ExperimentUpsertBulk {
 	return u.Update(func(s *ExperimentUpsert) {
 		s.SetPageID(v)
 	})
 }
 
 // AddPageID adds v to the "page_id" field.
-func (u *ExperimentUpsertBulk) AddPageID(v uint32) *ExperimentUpsertBulk {
+func (u *ExperimentUpsertBulk) AddPageID(v uint64) *ExperimentUpsertBulk {
 	return u.Update(func(s *ExperimentUpsert) {
 		s.AddPageID(v)
 	})

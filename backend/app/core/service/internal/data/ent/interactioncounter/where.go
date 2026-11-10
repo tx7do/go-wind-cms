@@ -10,47 +10,47 @@ import (
 )
 
 // ID filters vertices based on their ID field.
-func ID(id uint32) predicate.InteractionCounter {
+func ID(id uint64) predicate.InteractionCounter {
 	return predicate.InteractionCounter(sql.FieldEQ(FieldID, id))
 }
 
 // IDEQ applies the EQ predicate on the ID field.
-func IDEQ(id uint32) predicate.InteractionCounter {
+func IDEQ(id uint64) predicate.InteractionCounter {
 	return predicate.InteractionCounter(sql.FieldEQ(FieldID, id))
 }
 
 // IDNEQ applies the NEQ predicate on the ID field.
-func IDNEQ(id uint32) predicate.InteractionCounter {
+func IDNEQ(id uint64) predicate.InteractionCounter {
 	return predicate.InteractionCounter(sql.FieldNEQ(FieldID, id))
 }
 
 // IDIn applies the In predicate on the ID field.
-func IDIn(ids ...uint32) predicate.InteractionCounter {
+func IDIn(ids ...uint64) predicate.InteractionCounter {
 	return predicate.InteractionCounter(sql.FieldIn(FieldID, ids...))
 }
 
 // IDNotIn applies the NotIn predicate on the ID field.
-func IDNotIn(ids ...uint32) predicate.InteractionCounter {
+func IDNotIn(ids ...uint64) predicate.InteractionCounter {
 	return predicate.InteractionCounter(sql.FieldNotIn(FieldID, ids...))
 }
 
 // IDGT applies the GT predicate on the ID field.
-func IDGT(id uint32) predicate.InteractionCounter {
+func IDGT(id uint64) predicate.InteractionCounter {
 	return predicate.InteractionCounter(sql.FieldGT(FieldID, id))
 }
 
 // IDGTE applies the GTE predicate on the ID field.
-func IDGTE(id uint32) predicate.InteractionCounter {
+func IDGTE(id uint64) predicate.InteractionCounter {
 	return predicate.InteractionCounter(sql.FieldGTE(FieldID, id))
 }
 
 // IDLT applies the LT predicate on the ID field.
-func IDLT(id uint32) predicate.InteractionCounter {
+func IDLT(id uint64) predicate.InteractionCounter {
 	return predicate.InteractionCounter(sql.FieldLT(FieldID, id))
 }
 
 // IDLTE applies the LTE predicate on the ID field.
-func IDLTE(id uint32) predicate.InteractionCounter {
+func IDLTE(id uint64) predicate.InteractionCounter {
 	return predicate.InteractionCounter(sql.FieldLTE(FieldID, id))
 }
 
@@ -70,7 +70,7 @@ func DeletedAt(v time.Time) predicate.InteractionCounter {
 }
 
 // TenantID applies equality check predicate on the "tenant_id" field. It's identical to TenantIDEQ.
-func TenantID(v uint32) predicate.InteractionCounter {
+func TenantID(v uint64) predicate.InteractionCounter {
 	return predicate.InteractionCounter(sql.FieldEQ(FieldTenantID, v))
 }
 
@@ -80,7 +80,7 @@ func TargetType(v uint8) predicate.InteractionCounter {
 }
 
 // TargetID applies equality check predicate on the "target_id" field. It's identical to TargetIDEQ.
-func TargetID(v uint32) predicate.InteractionCounter {
+func TargetID(v uint64) predicate.InteractionCounter {
 	return predicate.InteractionCounter(sql.FieldEQ(FieldTargetID, v))
 }
 
@@ -245,42 +245,42 @@ func DeletedAtNotNil() predicate.InteractionCounter {
 }
 
 // TenantIDEQ applies the EQ predicate on the "tenant_id" field.
-func TenantIDEQ(v uint32) predicate.InteractionCounter {
+func TenantIDEQ(v uint64) predicate.InteractionCounter {
 	return predicate.InteractionCounter(sql.FieldEQ(FieldTenantID, v))
 }
 
 // TenantIDNEQ applies the NEQ predicate on the "tenant_id" field.
-func TenantIDNEQ(v uint32) predicate.InteractionCounter {
+func TenantIDNEQ(v uint64) predicate.InteractionCounter {
 	return predicate.InteractionCounter(sql.FieldNEQ(FieldTenantID, v))
 }
 
 // TenantIDIn applies the In predicate on the "tenant_id" field.
-func TenantIDIn(vs ...uint32) predicate.InteractionCounter {
+func TenantIDIn(vs ...uint64) predicate.InteractionCounter {
 	return predicate.InteractionCounter(sql.FieldIn(FieldTenantID, vs...))
 }
 
 // TenantIDNotIn applies the NotIn predicate on the "tenant_id" field.
-func TenantIDNotIn(vs ...uint32) predicate.InteractionCounter {
+func TenantIDNotIn(vs ...uint64) predicate.InteractionCounter {
 	return predicate.InteractionCounter(sql.FieldNotIn(FieldTenantID, vs...))
 }
 
 // TenantIDGT applies the GT predicate on the "tenant_id" field.
-func TenantIDGT(v uint32) predicate.InteractionCounter {
+func TenantIDGT(v uint64) predicate.InteractionCounter {
 	return predicate.InteractionCounter(sql.FieldGT(FieldTenantID, v))
 }
 
 // TenantIDGTE applies the GTE predicate on the "tenant_id" field.
-func TenantIDGTE(v uint32) predicate.InteractionCounter {
+func TenantIDGTE(v uint64) predicate.InteractionCounter {
 	return predicate.InteractionCounter(sql.FieldGTE(FieldTenantID, v))
 }
 
 // TenantIDLT applies the LT predicate on the "tenant_id" field.
-func TenantIDLT(v uint32) predicate.InteractionCounter {
+func TenantIDLT(v uint64) predicate.InteractionCounter {
 	return predicate.InteractionCounter(sql.FieldLT(FieldTenantID, v))
 }
 
 // TenantIDLTE applies the LTE predicate on the "tenant_id" field.
-func TenantIDLTE(v uint32) predicate.InteractionCounter {
+func TenantIDLTE(v uint64) predicate.InteractionCounter {
 	return predicate.InteractionCounter(sql.FieldLTE(FieldTenantID, v))
 }
 
@@ -345,42 +345,42 @@ func TargetTypeNotNil() predicate.InteractionCounter {
 }
 
 // TargetIDEQ applies the EQ predicate on the "target_id" field.
-func TargetIDEQ(v uint32) predicate.InteractionCounter {
+func TargetIDEQ(v uint64) predicate.InteractionCounter {
 	return predicate.InteractionCounter(sql.FieldEQ(FieldTargetID, v))
 }
 
 // TargetIDNEQ applies the NEQ predicate on the "target_id" field.
-func TargetIDNEQ(v uint32) predicate.InteractionCounter {
+func TargetIDNEQ(v uint64) predicate.InteractionCounter {
 	return predicate.InteractionCounter(sql.FieldNEQ(FieldTargetID, v))
 }
 
 // TargetIDIn applies the In predicate on the "target_id" field.
-func TargetIDIn(vs ...uint32) predicate.InteractionCounter {
+func TargetIDIn(vs ...uint64) predicate.InteractionCounter {
 	return predicate.InteractionCounter(sql.FieldIn(FieldTargetID, vs...))
 }
 
 // TargetIDNotIn applies the NotIn predicate on the "target_id" field.
-func TargetIDNotIn(vs ...uint32) predicate.InteractionCounter {
+func TargetIDNotIn(vs ...uint64) predicate.InteractionCounter {
 	return predicate.InteractionCounter(sql.FieldNotIn(FieldTargetID, vs...))
 }
 
 // TargetIDGT applies the GT predicate on the "target_id" field.
-func TargetIDGT(v uint32) predicate.InteractionCounter {
+func TargetIDGT(v uint64) predicate.InteractionCounter {
 	return predicate.InteractionCounter(sql.FieldGT(FieldTargetID, v))
 }
 
 // TargetIDGTE applies the GTE predicate on the "target_id" field.
-func TargetIDGTE(v uint32) predicate.InteractionCounter {
+func TargetIDGTE(v uint64) predicate.InteractionCounter {
 	return predicate.InteractionCounter(sql.FieldGTE(FieldTargetID, v))
 }
 
 // TargetIDLT applies the LT predicate on the "target_id" field.
-func TargetIDLT(v uint32) predicate.InteractionCounter {
+func TargetIDLT(v uint64) predicate.InteractionCounter {
 	return predicate.InteractionCounter(sql.FieldLT(FieldTargetID, v))
 }
 
 // TargetIDLTE applies the LTE predicate on the "target_id" field.
-func TargetIDLTE(v uint32) predicate.InteractionCounter {
+func TargetIDLTE(v uint64) predicate.InteractionCounter {
 	return predicate.InteractionCounter(sql.FieldLTE(FieldTargetID, v))
 }
 

@@ -77,7 +77,7 @@ func (r *NavigationRepo) init() {
 	r.mapper.AppendConverters(r.locationConverter.NewConverterPair())
 }
 
-func (r *NavigationRepo) IsExist(ctx context.Context, id uint32) (bool, error) {
+func (r *NavigationRepo) IsExist(ctx context.Context, id uint64) (bool, error) {
 	exist, err := r.entClient.Client().Navigation.Query().
 		Where(navigation.IDEQ(id)).
 		Exist(ctx)

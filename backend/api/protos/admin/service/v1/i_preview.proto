@@ -28,14 +28,14 @@ service PreviewService {
 
 // 请求 - 签发帖子预览令牌
 message CreatePostPreviewTokenRequest {
-  uint32 id = 1 [
+  uint64 id = 1 [
     (gnostic.openapi.v3.property) = {description: "帖子ID"}
   ];
 }
 
 // 请求 - 签发页面预览令牌
 message CreatePagePreviewTokenRequest {
-  uint32 id = 1 [
+  uint64 id = 1 [
     (gnostic.openapi.v3.property) = {description: "页面ID"}
   ];
 }

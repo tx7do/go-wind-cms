@@ -10,47 +10,47 @@ import (
 )
 
 // ID filters vertices based on their ID field.
-func ID(id uint32) predicate.ExperimentParticipant {
+func ID(id uint64) predicate.ExperimentParticipant {
 	return predicate.ExperimentParticipant(sql.FieldEQ(FieldID, id))
 }
 
 // IDEQ applies the EQ predicate on the ID field.
-func IDEQ(id uint32) predicate.ExperimentParticipant {
+func IDEQ(id uint64) predicate.ExperimentParticipant {
 	return predicate.ExperimentParticipant(sql.FieldEQ(FieldID, id))
 }
 
 // IDNEQ applies the NEQ predicate on the ID field.
-func IDNEQ(id uint32) predicate.ExperimentParticipant {
+func IDNEQ(id uint64) predicate.ExperimentParticipant {
 	return predicate.ExperimentParticipant(sql.FieldNEQ(FieldID, id))
 }
 
 // IDIn applies the In predicate on the ID field.
-func IDIn(ids ...uint32) predicate.ExperimentParticipant {
+func IDIn(ids ...uint64) predicate.ExperimentParticipant {
 	return predicate.ExperimentParticipant(sql.FieldIn(FieldID, ids...))
 }
 
 // IDNotIn applies the NotIn predicate on the ID field.
-func IDNotIn(ids ...uint32) predicate.ExperimentParticipant {
+func IDNotIn(ids ...uint64) predicate.ExperimentParticipant {
 	return predicate.ExperimentParticipant(sql.FieldNotIn(FieldID, ids...))
 }
 
 // IDGT applies the GT predicate on the ID field.
-func IDGT(id uint32) predicate.ExperimentParticipant {
+func IDGT(id uint64) predicate.ExperimentParticipant {
 	return predicate.ExperimentParticipant(sql.FieldGT(FieldID, id))
 }
 
 // IDGTE applies the GTE predicate on the ID field.
-func IDGTE(id uint32) predicate.ExperimentParticipant {
+func IDGTE(id uint64) predicate.ExperimentParticipant {
 	return predicate.ExperimentParticipant(sql.FieldGTE(FieldID, id))
 }
 
 // IDLT applies the LT predicate on the ID field.
-func IDLT(id uint32) predicate.ExperimentParticipant {
+func IDLT(id uint64) predicate.ExperimentParticipant {
 	return predicate.ExperimentParticipant(sql.FieldLT(FieldID, id))
 }
 
 // IDLTE applies the LTE predicate on the ID field.
-func IDLTE(id uint32) predicate.ExperimentParticipant {
+func IDLTE(id uint64) predicate.ExperimentParticipant {
 	return predicate.ExperimentParticipant(sql.FieldLTE(FieldID, id))
 }
 
@@ -70,12 +70,12 @@ func DeletedAt(v time.Time) predicate.ExperimentParticipant {
 }
 
 // TenantID applies equality check predicate on the "tenant_id" field. It's identical to TenantIDEQ.
-func TenantID(v uint32) predicate.ExperimentParticipant {
+func TenantID(v uint64) predicate.ExperimentParticipant {
 	return predicate.ExperimentParticipant(sql.FieldEQ(FieldTenantID, v))
 }
 
 // ExperimentID applies equality check predicate on the "experiment_id" field. It's identical to ExperimentIDEQ.
-func ExperimentID(v uint32) predicate.ExperimentParticipant {
+func ExperimentID(v uint64) predicate.ExperimentParticipant {
 	return predicate.ExperimentParticipant(sql.FieldEQ(FieldExperimentID, v))
 }
 
@@ -250,42 +250,42 @@ func DeletedAtNotNil() predicate.ExperimentParticipant {
 }
 
 // TenantIDEQ applies the EQ predicate on the "tenant_id" field.
-func TenantIDEQ(v uint32) predicate.ExperimentParticipant {
+func TenantIDEQ(v uint64) predicate.ExperimentParticipant {
 	return predicate.ExperimentParticipant(sql.FieldEQ(FieldTenantID, v))
 }
 
 // TenantIDNEQ applies the NEQ predicate on the "tenant_id" field.
-func TenantIDNEQ(v uint32) predicate.ExperimentParticipant {
+func TenantIDNEQ(v uint64) predicate.ExperimentParticipant {
 	return predicate.ExperimentParticipant(sql.FieldNEQ(FieldTenantID, v))
 }
 
 // TenantIDIn applies the In predicate on the "tenant_id" field.
-func TenantIDIn(vs ...uint32) predicate.ExperimentParticipant {
+func TenantIDIn(vs ...uint64) predicate.ExperimentParticipant {
 	return predicate.ExperimentParticipant(sql.FieldIn(FieldTenantID, vs...))
 }
 
 // TenantIDNotIn applies the NotIn predicate on the "tenant_id" field.
-func TenantIDNotIn(vs ...uint32) predicate.ExperimentParticipant {
+func TenantIDNotIn(vs ...uint64) predicate.ExperimentParticipant {
 	return predicate.ExperimentParticipant(sql.FieldNotIn(FieldTenantID, vs...))
 }
 
 // TenantIDGT applies the GT predicate on the "tenant_id" field.
-func TenantIDGT(v uint32) predicate.ExperimentParticipant {
+func TenantIDGT(v uint64) predicate.ExperimentParticipant {
 	return predicate.ExperimentParticipant(sql.FieldGT(FieldTenantID, v))
 }
 
 // TenantIDGTE applies the GTE predicate on the "tenant_id" field.
-func TenantIDGTE(v uint32) predicate.ExperimentParticipant {
+func TenantIDGTE(v uint64) predicate.ExperimentParticipant {
 	return predicate.ExperimentParticipant(sql.FieldGTE(FieldTenantID, v))
 }
 
 // TenantIDLT applies the LT predicate on the "tenant_id" field.
-func TenantIDLT(v uint32) predicate.ExperimentParticipant {
+func TenantIDLT(v uint64) predicate.ExperimentParticipant {
 	return predicate.ExperimentParticipant(sql.FieldLT(FieldTenantID, v))
 }
 
 // TenantIDLTE applies the LTE predicate on the "tenant_id" field.
-func TenantIDLTE(v uint32) predicate.ExperimentParticipant {
+func TenantIDLTE(v uint64) predicate.ExperimentParticipant {
 	return predicate.ExperimentParticipant(sql.FieldLTE(FieldTenantID, v))
 }
 
@@ -300,42 +300,42 @@ func TenantIDNotNil() predicate.ExperimentParticipant {
 }
 
 // ExperimentIDEQ applies the EQ predicate on the "experiment_id" field.
-func ExperimentIDEQ(v uint32) predicate.ExperimentParticipant {
+func ExperimentIDEQ(v uint64) predicate.ExperimentParticipant {
 	return predicate.ExperimentParticipant(sql.FieldEQ(FieldExperimentID, v))
 }
 
 // ExperimentIDNEQ applies the NEQ predicate on the "experiment_id" field.
-func ExperimentIDNEQ(v uint32) predicate.ExperimentParticipant {
+func ExperimentIDNEQ(v uint64) predicate.ExperimentParticipant {
 	return predicate.ExperimentParticipant(sql.FieldNEQ(FieldExperimentID, v))
 }
 
 // ExperimentIDIn applies the In predicate on the "experiment_id" field.
-func ExperimentIDIn(vs ...uint32) predicate.ExperimentParticipant {
+func ExperimentIDIn(vs ...uint64) predicate.ExperimentParticipant {
 	return predicate.ExperimentParticipant(sql.FieldIn(FieldExperimentID, vs...))
 }
 
 // ExperimentIDNotIn applies the NotIn predicate on the "experiment_id" field.
-func ExperimentIDNotIn(vs ...uint32) predicate.ExperimentParticipant {
+func ExperimentIDNotIn(vs ...uint64) predicate.ExperimentParticipant {
 	return predicate.ExperimentParticipant(sql.FieldNotIn(FieldExperimentID, vs...))
 }
 
 // ExperimentIDGT applies the GT predicate on the "experiment_id" field.
-func ExperimentIDGT(v uint32) predicate.ExperimentParticipant {
+func ExperimentIDGT(v uint64) predicate.ExperimentParticipant {
 	return predicate.ExperimentParticipant(sql.FieldGT(FieldExperimentID, v))
 }
 
 // ExperimentIDGTE applies the GTE predicate on the "experiment_id" field.
-func ExperimentIDGTE(v uint32) predicate.ExperimentParticipant {
+func ExperimentIDGTE(v uint64) predicate.ExperimentParticipant {
 	return predicate.ExperimentParticipant(sql.FieldGTE(FieldExperimentID, v))
 }
 
 // ExperimentIDLT applies the LT predicate on the "experiment_id" field.
-func ExperimentIDLT(v uint32) predicate.ExperimentParticipant {
+func ExperimentIDLT(v uint64) predicate.ExperimentParticipant {
 	return predicate.ExperimentParticipant(sql.FieldLT(FieldExperimentID, v))
 }
 
 // ExperimentIDLTE applies the LTE predicate on the "experiment_id" field.
-func ExperimentIDLTE(v uint32) predicate.ExperimentParticipant {
+func ExperimentIDLTE(v uint64) predicate.ExperimentParticipant {
 	return predicate.ExperimentParticipant(sql.FieldLTE(FieldExperimentID, v))
 }
 

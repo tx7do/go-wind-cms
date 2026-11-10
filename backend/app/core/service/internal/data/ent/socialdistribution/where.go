@@ -10,47 +10,47 @@ import (
 )
 
 // ID filters vertices based on their ID field.
-func ID(id uint32) predicate.SocialDistribution {
+func ID(id uint64) predicate.SocialDistribution {
 	return predicate.SocialDistribution(sql.FieldEQ(FieldID, id))
 }
 
 // IDEQ applies the EQ predicate on the ID field.
-func IDEQ(id uint32) predicate.SocialDistribution {
+func IDEQ(id uint64) predicate.SocialDistribution {
 	return predicate.SocialDistribution(sql.FieldEQ(FieldID, id))
 }
 
 // IDNEQ applies the NEQ predicate on the ID field.
-func IDNEQ(id uint32) predicate.SocialDistribution {
+func IDNEQ(id uint64) predicate.SocialDistribution {
 	return predicate.SocialDistribution(sql.FieldNEQ(FieldID, id))
 }
 
 // IDIn applies the In predicate on the ID field.
-func IDIn(ids ...uint32) predicate.SocialDistribution {
+func IDIn(ids ...uint64) predicate.SocialDistribution {
 	return predicate.SocialDistribution(sql.FieldIn(FieldID, ids...))
 }
 
 // IDNotIn applies the NotIn predicate on the ID field.
-func IDNotIn(ids ...uint32) predicate.SocialDistribution {
+func IDNotIn(ids ...uint64) predicate.SocialDistribution {
 	return predicate.SocialDistribution(sql.FieldNotIn(FieldID, ids...))
 }
 
 // IDGT applies the GT predicate on the ID field.
-func IDGT(id uint32) predicate.SocialDistribution {
+func IDGT(id uint64) predicate.SocialDistribution {
 	return predicate.SocialDistribution(sql.FieldGT(FieldID, id))
 }
 
 // IDGTE applies the GTE predicate on the ID field.
-func IDGTE(id uint32) predicate.SocialDistribution {
+func IDGTE(id uint64) predicate.SocialDistribution {
 	return predicate.SocialDistribution(sql.FieldGTE(FieldID, id))
 }
 
 // IDLT applies the LT predicate on the ID field.
-func IDLT(id uint32) predicate.SocialDistribution {
+func IDLT(id uint64) predicate.SocialDistribution {
 	return predicate.SocialDistribution(sql.FieldLT(FieldID, id))
 }
 
 // IDLTE applies the LTE predicate on the ID field.
-func IDLTE(id uint32) predicate.SocialDistribution {
+func IDLTE(id uint64) predicate.SocialDistribution {
 	return predicate.SocialDistribution(sql.FieldLTE(FieldID, id))
 }
 
@@ -70,32 +70,32 @@ func DeletedAt(v time.Time) predicate.SocialDistribution {
 }
 
 // CreatedBy applies equality check predicate on the "created_by" field. It's identical to CreatedByEQ.
-func CreatedBy(v uint32) predicate.SocialDistribution {
+func CreatedBy(v uint64) predicate.SocialDistribution {
 	return predicate.SocialDistribution(sql.FieldEQ(FieldCreatedBy, v))
 }
 
 // UpdatedBy applies equality check predicate on the "updated_by" field. It's identical to UpdatedByEQ.
-func UpdatedBy(v uint32) predicate.SocialDistribution {
+func UpdatedBy(v uint64) predicate.SocialDistribution {
 	return predicate.SocialDistribution(sql.FieldEQ(FieldUpdatedBy, v))
 }
 
 // DeletedBy applies equality check predicate on the "deleted_by" field. It's identical to DeletedByEQ.
-func DeletedBy(v uint32) predicate.SocialDistribution {
+func DeletedBy(v uint64) predicate.SocialDistribution {
 	return predicate.SocialDistribution(sql.FieldEQ(FieldDeletedBy, v))
 }
 
 // TenantID applies equality check predicate on the "tenant_id" field. It's identical to TenantIDEQ.
-func TenantID(v uint32) predicate.SocialDistribution {
+func TenantID(v uint64) predicate.SocialDistribution {
 	return predicate.SocialDistribution(sql.FieldEQ(FieldTenantID, v))
 }
 
 // AccountID applies equality check predicate on the "account_id" field. It's identical to AccountIDEQ.
-func AccountID(v uint32) predicate.SocialDistribution {
+func AccountID(v uint64) predicate.SocialDistribution {
 	return predicate.SocialDistribution(sql.FieldEQ(FieldAccountID, v))
 }
 
 // PostID applies equality check predicate on the "post_id" field. It's identical to PostIDEQ.
-func PostID(v uint32) predicate.SocialDistribution {
+func PostID(v uint64) predicate.SocialDistribution {
 	return predicate.SocialDistribution(sql.FieldEQ(FieldPostID, v))
 }
 
@@ -310,42 +310,42 @@ func DeletedAtNotNil() predicate.SocialDistribution {
 }
 
 // CreatedByEQ applies the EQ predicate on the "created_by" field.
-func CreatedByEQ(v uint32) predicate.SocialDistribution {
+func CreatedByEQ(v uint64) predicate.SocialDistribution {
 	return predicate.SocialDistribution(sql.FieldEQ(FieldCreatedBy, v))
 }
 
 // CreatedByNEQ applies the NEQ predicate on the "created_by" field.
-func CreatedByNEQ(v uint32) predicate.SocialDistribution {
+func CreatedByNEQ(v uint64) predicate.SocialDistribution {
 	return predicate.SocialDistribution(sql.FieldNEQ(FieldCreatedBy, v))
 }
 
 // CreatedByIn applies the In predicate on the "created_by" field.
-func CreatedByIn(vs ...uint32) predicate.SocialDistribution {
+func CreatedByIn(vs ...uint64) predicate.SocialDistribution {
 	return predicate.SocialDistribution(sql.FieldIn(FieldCreatedBy, vs...))
 }
 
 // CreatedByNotIn applies the NotIn predicate on the "created_by" field.
-func CreatedByNotIn(vs ...uint32) predicate.SocialDistribution {
+func CreatedByNotIn(vs ...uint64) predicate.SocialDistribution {
 	return predicate.SocialDistribution(sql.FieldNotIn(FieldCreatedBy, vs...))
 }
 
 // CreatedByGT applies the GT predicate on the "created_by" field.
-func CreatedByGT(v uint32) predicate.SocialDistribution {
+func CreatedByGT(v uint64) predicate.SocialDistribution {
 	return predicate.SocialDistribution(sql.FieldGT(FieldCreatedBy, v))
 }
 
 // CreatedByGTE applies the GTE predicate on the "created_by" field.
-func CreatedByGTE(v uint32) predicate.SocialDistribution {
+func CreatedByGTE(v uint64) predicate.SocialDistribution {
 	return predicate.SocialDistribution(sql.FieldGTE(FieldCreatedBy, v))
 }
 
 // CreatedByLT applies the LT predicate on the "created_by" field.
-func CreatedByLT(v uint32) predicate.SocialDistribution {
+func CreatedByLT(v uint64) predicate.SocialDistribution {
 	return predicate.SocialDistribution(sql.FieldLT(FieldCreatedBy, v))
 }
 
 // CreatedByLTE applies the LTE predicate on the "created_by" field.
-func CreatedByLTE(v uint32) predicate.SocialDistribution {
+func CreatedByLTE(v uint64) predicate.SocialDistribution {
 	return predicate.SocialDistribution(sql.FieldLTE(FieldCreatedBy, v))
 }
 
@@ -360,42 +360,42 @@ func CreatedByNotNil() predicate.SocialDistribution {
 }
 
 // UpdatedByEQ applies the EQ predicate on the "updated_by" field.
-func UpdatedByEQ(v uint32) predicate.SocialDistribution {
+func UpdatedByEQ(v uint64) predicate.SocialDistribution {
 	return predicate.SocialDistribution(sql.FieldEQ(FieldUpdatedBy, v))
 }
 
 // UpdatedByNEQ applies the NEQ predicate on the "updated_by" field.
-func UpdatedByNEQ(v uint32) predicate.SocialDistribution {
+func UpdatedByNEQ(v uint64) predicate.SocialDistribution {
 	return predicate.SocialDistribution(sql.FieldNEQ(FieldUpdatedBy, v))
 }
 
 // UpdatedByIn applies the In predicate on the "updated_by" field.
-func UpdatedByIn(vs ...uint32) predicate.SocialDistribution {
+func UpdatedByIn(vs ...uint64) predicate.SocialDistribution {
 	return predicate.SocialDistribution(sql.FieldIn(FieldUpdatedBy, vs...))
 }
 
 // UpdatedByNotIn applies the NotIn predicate on the "updated_by" field.
-func UpdatedByNotIn(vs ...uint32) predicate.SocialDistribution {
+func UpdatedByNotIn(vs ...uint64) predicate.SocialDistribution {
 	return predicate.SocialDistribution(sql.FieldNotIn(FieldUpdatedBy, vs...))
 }
 
 // UpdatedByGT applies the GT predicate on the "updated_by" field.
-func UpdatedByGT(v uint32) predicate.SocialDistribution {
+func UpdatedByGT(v uint64) predicate.SocialDistribution {
 	return predicate.SocialDistribution(sql.FieldGT(FieldUpdatedBy, v))
 }
 
 // UpdatedByGTE applies the GTE predicate on the "updated_by" field.
-func UpdatedByGTE(v uint32) predicate.SocialDistribution {
+func UpdatedByGTE(v uint64) predicate.SocialDistribution {
 	return predicate.SocialDistribution(sql.FieldGTE(FieldUpdatedBy, v))
 }
 
 // UpdatedByLT applies the LT predicate on the "updated_by" field.
-func UpdatedByLT(v uint32) predicate.SocialDistribution {
+func UpdatedByLT(v uint64) predicate.SocialDistribution {
 	return predicate.SocialDistribution(sql.FieldLT(FieldUpdatedBy, v))
 }
 
 // UpdatedByLTE applies the LTE predicate on the "updated_by" field.
-func UpdatedByLTE(v uint32) predicate.SocialDistribution {
+func UpdatedByLTE(v uint64) predicate.SocialDistribution {
 	return predicate.SocialDistribution(sql.FieldLTE(FieldUpdatedBy, v))
 }
 
@@ -410,42 +410,42 @@ func UpdatedByNotNil() predicate.SocialDistribution {
 }
 
 // DeletedByEQ applies the EQ predicate on the "deleted_by" field.
-func DeletedByEQ(v uint32) predicate.SocialDistribution {
+func DeletedByEQ(v uint64) predicate.SocialDistribution {
 	return predicate.SocialDistribution(sql.FieldEQ(FieldDeletedBy, v))
 }
 
 // DeletedByNEQ applies the NEQ predicate on the "deleted_by" field.
-func DeletedByNEQ(v uint32) predicate.SocialDistribution {
+func DeletedByNEQ(v uint64) predicate.SocialDistribution {
 	return predicate.SocialDistribution(sql.FieldNEQ(FieldDeletedBy, v))
 }
 
 // DeletedByIn applies the In predicate on the "deleted_by" field.
-func DeletedByIn(vs ...uint32) predicate.SocialDistribution {
+func DeletedByIn(vs ...uint64) predicate.SocialDistribution {
 	return predicate.SocialDistribution(sql.FieldIn(FieldDeletedBy, vs...))
 }
 
 // DeletedByNotIn applies the NotIn predicate on the "deleted_by" field.
-func DeletedByNotIn(vs ...uint32) predicate.SocialDistribution {
+func DeletedByNotIn(vs ...uint64) predicate.SocialDistribution {
 	return predicate.SocialDistribution(sql.FieldNotIn(FieldDeletedBy, vs...))
 }
 
 // DeletedByGT applies the GT predicate on the "deleted_by" field.
-func DeletedByGT(v uint32) predicate.SocialDistribution {
+func DeletedByGT(v uint64) predicate.SocialDistribution {
 	return predicate.SocialDistribution(sql.FieldGT(FieldDeletedBy, v))
 }
 
 // DeletedByGTE applies the GTE predicate on the "deleted_by" field.
-func DeletedByGTE(v uint32) predicate.SocialDistribution {
+func DeletedByGTE(v uint64) predicate.SocialDistribution {
 	return predicate.SocialDistribution(sql.FieldGTE(FieldDeletedBy, v))
 }
 
 // DeletedByLT applies the LT predicate on the "deleted_by" field.
-func DeletedByLT(v uint32) predicate.SocialDistribution {
+func DeletedByLT(v uint64) predicate.SocialDistribution {
 	return predicate.SocialDistribution(sql.FieldLT(FieldDeletedBy, v))
 }
 
 // DeletedByLTE applies the LTE predicate on the "deleted_by" field.
-func DeletedByLTE(v uint32) predicate.SocialDistribution {
+func DeletedByLTE(v uint64) predicate.SocialDistribution {
 	return predicate.SocialDistribution(sql.FieldLTE(FieldDeletedBy, v))
 }
 
@@ -460,42 +460,42 @@ func DeletedByNotNil() predicate.SocialDistribution {
 }
 
 // TenantIDEQ applies the EQ predicate on the "tenant_id" field.
-func TenantIDEQ(v uint32) predicate.SocialDistribution {
+func TenantIDEQ(v uint64) predicate.SocialDistribution {
 	return predicate.SocialDistribution(sql.FieldEQ(FieldTenantID, v))
 }
 
 // TenantIDNEQ applies the NEQ predicate on the "tenant_id" field.
-func TenantIDNEQ(v uint32) predicate.SocialDistribution {
+func TenantIDNEQ(v uint64) predicate.SocialDistribution {
 	return predicate.SocialDistribution(sql.FieldNEQ(FieldTenantID, v))
 }
 
 // TenantIDIn applies the In predicate on the "tenant_id" field.
-func TenantIDIn(vs ...uint32) predicate.SocialDistribution {
+func TenantIDIn(vs ...uint64) predicate.SocialDistribution {
 	return predicate.SocialDistribution(sql.FieldIn(FieldTenantID, vs...))
 }
 
 // TenantIDNotIn applies the NotIn predicate on the "tenant_id" field.
-func TenantIDNotIn(vs ...uint32) predicate.SocialDistribution {
+func TenantIDNotIn(vs ...uint64) predicate.SocialDistribution {
 	return predicate.SocialDistribution(sql.FieldNotIn(FieldTenantID, vs...))
 }
 
 // TenantIDGT applies the GT predicate on the "tenant_id" field.
-func TenantIDGT(v uint32) predicate.SocialDistribution {
+func TenantIDGT(v uint64) predicate.SocialDistribution {
 	return predicate.SocialDistribution(sql.FieldGT(FieldTenantID, v))
 }
 
 // TenantIDGTE applies the GTE predicate on the "tenant_id" field.
-func TenantIDGTE(v uint32) predicate.SocialDistribution {
+func TenantIDGTE(v uint64) predicate.SocialDistribution {
 	return predicate.SocialDistribution(sql.FieldGTE(FieldTenantID, v))
 }
 
 // TenantIDLT applies the LT predicate on the "tenant_id" field.
-func TenantIDLT(v uint32) predicate.SocialDistribution {
+func TenantIDLT(v uint64) predicate.SocialDistribution {
 	return predicate.SocialDistribution(sql.FieldLT(FieldTenantID, v))
 }
 
 // TenantIDLTE applies the LTE predicate on the "tenant_id" field.
-func TenantIDLTE(v uint32) predicate.SocialDistribution {
+func TenantIDLTE(v uint64) predicate.SocialDistribution {
 	return predicate.SocialDistribution(sql.FieldLTE(FieldTenantID, v))
 }
 
@@ -540,42 +540,42 @@ func PlatformNotNil() predicate.SocialDistribution {
 }
 
 // AccountIDEQ applies the EQ predicate on the "account_id" field.
-func AccountIDEQ(v uint32) predicate.SocialDistribution {
+func AccountIDEQ(v uint64) predicate.SocialDistribution {
 	return predicate.SocialDistribution(sql.FieldEQ(FieldAccountID, v))
 }
 
 // AccountIDNEQ applies the NEQ predicate on the "account_id" field.
-func AccountIDNEQ(v uint32) predicate.SocialDistribution {
+func AccountIDNEQ(v uint64) predicate.SocialDistribution {
 	return predicate.SocialDistribution(sql.FieldNEQ(FieldAccountID, v))
 }
 
 // AccountIDIn applies the In predicate on the "account_id" field.
-func AccountIDIn(vs ...uint32) predicate.SocialDistribution {
+func AccountIDIn(vs ...uint64) predicate.SocialDistribution {
 	return predicate.SocialDistribution(sql.FieldIn(FieldAccountID, vs...))
 }
 
 // AccountIDNotIn applies the NotIn predicate on the "account_id" field.
-func AccountIDNotIn(vs ...uint32) predicate.SocialDistribution {
+func AccountIDNotIn(vs ...uint64) predicate.SocialDistribution {
 	return predicate.SocialDistribution(sql.FieldNotIn(FieldAccountID, vs...))
 }
 
 // AccountIDGT applies the GT predicate on the "account_id" field.
-func AccountIDGT(v uint32) predicate.SocialDistribution {
+func AccountIDGT(v uint64) predicate.SocialDistribution {
 	return predicate.SocialDistribution(sql.FieldGT(FieldAccountID, v))
 }
 
 // AccountIDGTE applies the GTE predicate on the "account_id" field.
-func AccountIDGTE(v uint32) predicate.SocialDistribution {
+func AccountIDGTE(v uint64) predicate.SocialDistribution {
 	return predicate.SocialDistribution(sql.FieldGTE(FieldAccountID, v))
 }
 
 // AccountIDLT applies the LT predicate on the "account_id" field.
-func AccountIDLT(v uint32) predicate.SocialDistribution {
+func AccountIDLT(v uint64) predicate.SocialDistribution {
 	return predicate.SocialDistribution(sql.FieldLT(FieldAccountID, v))
 }
 
 // AccountIDLTE applies the LTE predicate on the "account_id" field.
-func AccountIDLTE(v uint32) predicate.SocialDistribution {
+func AccountIDLTE(v uint64) predicate.SocialDistribution {
 	return predicate.SocialDistribution(sql.FieldLTE(FieldAccountID, v))
 }
 
@@ -590,42 +590,42 @@ func AccountIDNotNil() predicate.SocialDistribution {
 }
 
 // PostIDEQ applies the EQ predicate on the "post_id" field.
-func PostIDEQ(v uint32) predicate.SocialDistribution {
+func PostIDEQ(v uint64) predicate.SocialDistribution {
 	return predicate.SocialDistribution(sql.FieldEQ(FieldPostID, v))
 }
 
 // PostIDNEQ applies the NEQ predicate on the "post_id" field.
-func PostIDNEQ(v uint32) predicate.SocialDistribution {
+func PostIDNEQ(v uint64) predicate.SocialDistribution {
 	return predicate.SocialDistribution(sql.FieldNEQ(FieldPostID, v))
 }
 
 // PostIDIn applies the In predicate on the "post_id" field.
-func PostIDIn(vs ...uint32) predicate.SocialDistribution {
+func PostIDIn(vs ...uint64) predicate.SocialDistribution {
 	return predicate.SocialDistribution(sql.FieldIn(FieldPostID, vs...))
 }
 
 // PostIDNotIn applies the NotIn predicate on the "post_id" field.
-func PostIDNotIn(vs ...uint32) predicate.SocialDistribution {
+func PostIDNotIn(vs ...uint64) predicate.SocialDistribution {
 	return predicate.SocialDistribution(sql.FieldNotIn(FieldPostID, vs...))
 }
 
 // PostIDGT applies the GT predicate on the "post_id" field.
-func PostIDGT(v uint32) predicate.SocialDistribution {
+func PostIDGT(v uint64) predicate.SocialDistribution {
 	return predicate.SocialDistribution(sql.FieldGT(FieldPostID, v))
 }
 
 // PostIDGTE applies the GTE predicate on the "post_id" field.
-func PostIDGTE(v uint32) predicate.SocialDistribution {
+func PostIDGTE(v uint64) predicate.SocialDistribution {
 	return predicate.SocialDistribution(sql.FieldGTE(FieldPostID, v))
 }
 
 // PostIDLT applies the LT predicate on the "post_id" field.
-func PostIDLT(v uint32) predicate.SocialDistribution {
+func PostIDLT(v uint64) predicate.SocialDistribution {
 	return predicate.SocialDistribution(sql.FieldLT(FieldPostID, v))
 }
 
 // PostIDLTE applies the LTE predicate on the "post_id" field.
-func PostIDLTE(v uint32) predicate.SocialDistribution {
+func PostIDLTE(v uint64) predicate.SocialDistribution {
 	return predicate.SocialDistribution(sql.FieldLTE(FieldPostID, v))
 }
 

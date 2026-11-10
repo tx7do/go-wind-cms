@@ -43,13 +43,13 @@ var reHTMLImg = regexp.MustCompile(`(?i)<img[^>]+src\s*=\s*("([^"]+)"|'([^']+)'|
 var reMarkdownImg = regexp.MustCompile(`!\[[^\]]*\]\(([^)\s]+)`)
 
 // RemoveSource 源内容删除时清空其引用边并重算受影响目标计数。
-func (s *ReferenceTrackingService) RemoveSource(ctx context.Context, sourceType string, sourceID uint32) {
+func (s *ReferenceTrackingService) RemoveSource(ctx context.Context, sourceType string, sourceID uint64) {
 	s.syncWithTargets(ctx, sourceType, sourceID, nil)
 }
 
 // SyncPostReferences 抽取并重建一篇文章的媒体引用。
 // translations 取保存后回读的完整翻译集（部分更新也能拿到最终状态）。
-func (s *ReferenceTrackingService) SyncPostReferences(ctx context.Context, postID uint32, translations []*contentV1.PostTranslation, thumbnailURL string) {
+func (s *ReferenceTrackingService) SyncPostReferences(ctx context.Context, postID uint64, translations []*contentV1.PostTranslation, thumbnailURL string) {
 	s.sync(ctx, "post", postID, thumbnailURL, func() []string {
 		bodies := make([]string, 0, len(translations))
 		for _, tr := range translations {
@@ -65,7 +65,7 @@ func (s *ReferenceTrackingService) SyncPostReferences(ctx context.Context, postI
 // 与 sections 内容值中的图片（field=section）。
 // section 内容值形状随区块类型而异（直接 URL / HTML / Markdown / JSON 图列表），
 // 统一走通用值提取，不感知区块类型。
-func (s *ReferenceTrackingService) SyncPageReferences(ctx context.Context, pageID uint32, translations []*contentV1.PageTranslation, sections []*contentV1.Section) {
+func (s *ReferenceTrackingService) SyncPageReferences(ctx context.Context, pageID uint64, translations []*contentV1.PageTranslation, sections []*contentV1.Section) {
 	covers := make([]string, 0, len(translations))
 	for _, tr := range translations {
 		if tr != nil && tr.GetCoverImage() != "" {
@@ -92,7 +92,7 @@ func (s *ReferenceTrackingService) SyncPageReferences(ctx context.Context, pageI
 		s.log.Errorf("resolve page refs for page [%d] failed: %s", pageID, err.Error())
 		return
 	}
-	resolve := func(u string) uint32 {
+	resolve := func(u string) uint64 {
 		if id := urlByID[u]; id != 0 {
 			return id
 		}
@@ -183,7 +183,7 @@ func isURLLike(v string) bool {
 }
 
 // sync 抽取 → URL 解析为资产 ID → 重建引用行 → 回写引用计数。
-func (s *ReferenceTrackingService) sync(ctx context.Context, sourceType string, sourceID uint32, thumbnailURL string, bodies func() []string) {
+func (s *ReferenceTrackingService) sync(ctx context.Context, sourceType string, sourceID uint64, thumbnailURL string, bodies func() []string) {
 	// 1) 正文内嵌图片（全语言正文合并抽取）；缩略图单独记边（field=thumbnail）
 	// 注意：抽取为空也要走到底——重建为空引用集正是"去图后计数归零"的清除语义。
 	seenURLs := make(map[string]struct{})
@@ -223,7 +223,7 @@ func (s *ReferenceTrackingService) sync(ctx context.Context, sourceType string, 
 		return
 	}
 
-	resolve := func(u string) uint32 {
+	resolve := func(u string) uint64 {
 		if id := urlByID[u]; id != 0 {
 			return id
 		}
@@ -249,7 +249,7 @@ func (s *ReferenceTrackingService) sync(ctx context.Context, sourceType string, 
 
 // syncWithTargets 用给定的引用目标集重建引用行并回写目标侧计数。
 // targets 为空表示清空该源的引用（源内容删除时）。
-func (s *ReferenceTrackingService) syncWithTargets(ctx context.Context, sourceType string, sourceID uint32, targets []data.RefTarget) {
+func (s *ReferenceTrackingService) syncWithTargets(ctx context.Context, sourceType string, sourceID uint64, targets []data.RefTarget) {
 	// 重建引用行（旧目标并入受影响集合，删除的引用计数也会归零）
 	affected, err := s.referenceRepo.ReplaceSourceReferences(ctx, sourceType, sourceID, targets)
 	if err != nil {
@@ -261,7 +261,7 @@ func (s *ReferenceTrackingService) syncWithTargets(ctx context.Context, sourceTy
 	}
 
 	// 回写 reference_count
-	ids := make([]uint32, 0, len(affected))
+	ids := make([]uint64, 0, len(affected))
 	for id := range affected {
 		ids = append(ids, id)
 	}

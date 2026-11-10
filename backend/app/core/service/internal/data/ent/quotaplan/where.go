@@ -10,47 +10,47 @@ import (
 )
 
 // ID filters vertices based on their ID field.
-func ID(id uint32) predicate.QuotaPlan {
+func ID(id uint64) predicate.QuotaPlan {
 	return predicate.QuotaPlan(sql.FieldEQ(FieldID, id))
 }
 
 // IDEQ applies the EQ predicate on the ID field.
-func IDEQ(id uint32) predicate.QuotaPlan {
+func IDEQ(id uint64) predicate.QuotaPlan {
 	return predicate.QuotaPlan(sql.FieldEQ(FieldID, id))
 }
 
 // IDNEQ applies the NEQ predicate on the ID field.
-func IDNEQ(id uint32) predicate.QuotaPlan {
+func IDNEQ(id uint64) predicate.QuotaPlan {
 	return predicate.QuotaPlan(sql.FieldNEQ(FieldID, id))
 }
 
 // IDIn applies the In predicate on the ID field.
-func IDIn(ids ...uint32) predicate.QuotaPlan {
+func IDIn(ids ...uint64) predicate.QuotaPlan {
 	return predicate.QuotaPlan(sql.FieldIn(FieldID, ids...))
 }
 
 // IDNotIn applies the NotIn predicate on the ID field.
-func IDNotIn(ids ...uint32) predicate.QuotaPlan {
+func IDNotIn(ids ...uint64) predicate.QuotaPlan {
 	return predicate.QuotaPlan(sql.FieldNotIn(FieldID, ids...))
 }
 
 // IDGT applies the GT predicate on the ID field.
-func IDGT(id uint32) predicate.QuotaPlan {
+func IDGT(id uint64) predicate.QuotaPlan {
 	return predicate.QuotaPlan(sql.FieldGT(FieldID, id))
 }
 
 // IDGTE applies the GTE predicate on the ID field.
-func IDGTE(id uint32) predicate.QuotaPlan {
+func IDGTE(id uint64) predicate.QuotaPlan {
 	return predicate.QuotaPlan(sql.FieldGTE(FieldID, id))
 }
 
 // IDLT applies the LT predicate on the ID field.
-func IDLT(id uint32) predicate.QuotaPlan {
+func IDLT(id uint64) predicate.QuotaPlan {
 	return predicate.QuotaPlan(sql.FieldLT(FieldID, id))
 }
 
 // IDLTE applies the LTE predicate on the ID field.
-func IDLTE(id uint32) predicate.QuotaPlan {
+func IDLTE(id uint64) predicate.QuotaPlan {
 	return predicate.QuotaPlan(sql.FieldLTE(FieldID, id))
 }
 
@@ -70,7 +70,7 @@ func DeletedAt(v time.Time) predicate.QuotaPlan {
 }
 
 // TenantID applies equality check predicate on the "tenant_id" field. It's identical to TenantIDEQ.
-func TenantID(v uint32) predicate.QuotaPlan {
+func TenantID(v uint64) predicate.QuotaPlan {
 	return predicate.QuotaPlan(sql.FieldEQ(FieldTenantID, v))
 }
 
@@ -240,42 +240,42 @@ func DeletedAtNotNil() predicate.QuotaPlan {
 }
 
 // TenantIDEQ applies the EQ predicate on the "tenant_id" field.
-func TenantIDEQ(v uint32) predicate.QuotaPlan {
+func TenantIDEQ(v uint64) predicate.QuotaPlan {
 	return predicate.QuotaPlan(sql.FieldEQ(FieldTenantID, v))
 }
 
 // TenantIDNEQ applies the NEQ predicate on the "tenant_id" field.
-func TenantIDNEQ(v uint32) predicate.QuotaPlan {
+func TenantIDNEQ(v uint64) predicate.QuotaPlan {
 	return predicate.QuotaPlan(sql.FieldNEQ(FieldTenantID, v))
 }
 
 // TenantIDIn applies the In predicate on the "tenant_id" field.
-func TenantIDIn(vs ...uint32) predicate.QuotaPlan {
+func TenantIDIn(vs ...uint64) predicate.QuotaPlan {
 	return predicate.QuotaPlan(sql.FieldIn(FieldTenantID, vs...))
 }
 
 // TenantIDNotIn applies the NotIn predicate on the "tenant_id" field.
-func TenantIDNotIn(vs ...uint32) predicate.QuotaPlan {
+func TenantIDNotIn(vs ...uint64) predicate.QuotaPlan {
 	return predicate.QuotaPlan(sql.FieldNotIn(FieldTenantID, vs...))
 }
 
 // TenantIDGT applies the GT predicate on the "tenant_id" field.
-func TenantIDGT(v uint32) predicate.QuotaPlan {
+func TenantIDGT(v uint64) predicate.QuotaPlan {
 	return predicate.QuotaPlan(sql.FieldGT(FieldTenantID, v))
 }
 
 // TenantIDGTE applies the GTE predicate on the "tenant_id" field.
-func TenantIDGTE(v uint32) predicate.QuotaPlan {
+func TenantIDGTE(v uint64) predicate.QuotaPlan {
 	return predicate.QuotaPlan(sql.FieldGTE(FieldTenantID, v))
 }
 
 // TenantIDLT applies the LT predicate on the "tenant_id" field.
-func TenantIDLT(v uint32) predicate.QuotaPlan {
+func TenantIDLT(v uint64) predicate.QuotaPlan {
 	return predicate.QuotaPlan(sql.FieldLT(FieldTenantID, v))
 }
 
 // TenantIDLTE applies the LTE predicate on the "tenant_id" field.
-func TenantIDLTE(v uint32) predicate.QuotaPlan {
+func TenantIDLTE(v uint64) predicate.QuotaPlan {
 	return predicate.QuotaPlan(sql.FieldLTE(FieldTenantID, v))
 }
 

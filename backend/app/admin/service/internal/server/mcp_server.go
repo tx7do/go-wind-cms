@@ -129,7 +129,7 @@ func mcpAuthz(ctx context.Context, token string) (context.Context, error) {
 	}
 	return auth.NewContext(ctx, &authenticationV1.UserTokenPayload{
 		UserId:   0,
-		TenantId: trans.Ptr(uint32(0)),
+		TenantId: trans.Ptr(uint64(0)),
 		Username: trans.Ptr("mcp"),
 	}), nil
 }
@@ -254,7 +254,7 @@ func registerMcpTools(
 			return mcp.NewToolResultError(err.Error()), nil
 		}
 		resp, perr := socialService.PublishSocialDistribution(ctx, &socialV1.PublishSocialDistributionRequest{
-			Id: uint32(idF),
+			Id: uint64(idF),
 		})
 		if perr != nil {
 			return mcp.NewToolResultError("publish failed: " + perr.Error()), nil
@@ -281,7 +281,7 @@ func registerMcpTools(
 			return mcp.NewToolResultError(err.Error()), nil
 		}
 		post, gerr := postService.Get(ctx, &contentV1.GetPostRequest{
-			QueryBy: &contentV1.GetPostRequest_Id{Id: uint32(idF)},
+			QueryBy: &contentV1.GetPostRequest_Id{Id: uint64(idF)},
 		})
 		if gerr != nil {
 			return mcp.NewToolResultError("get post failed: " + gerr.Error()), nil

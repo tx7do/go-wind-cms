@@ -71,14 +71,14 @@ func (_u *SocialDistributionUpdate) ClearDeletedAt() *SocialDistributionUpdate {
 }
 
 // SetCreatedBy sets the "created_by" field.
-func (_u *SocialDistributionUpdate) SetCreatedBy(v uint32) *SocialDistributionUpdate {
+func (_u *SocialDistributionUpdate) SetCreatedBy(v uint64) *SocialDistributionUpdate {
 	_u.mutation.ResetCreatedBy()
 	_u.mutation.SetCreatedBy(v)
 	return _u
 }
 
 // SetNillableCreatedBy sets the "created_by" field if the given value is not nil.
-func (_u *SocialDistributionUpdate) SetNillableCreatedBy(v *uint32) *SocialDistributionUpdate {
+func (_u *SocialDistributionUpdate) SetNillableCreatedBy(v *uint64) *SocialDistributionUpdate {
 	if v != nil {
 		_u.SetCreatedBy(*v)
 	}
@@ -86,7 +86,7 @@ func (_u *SocialDistributionUpdate) SetNillableCreatedBy(v *uint32) *SocialDistr
 }
 
 // AddCreatedBy adds value to the "created_by" field.
-func (_u *SocialDistributionUpdate) AddCreatedBy(v int32) *SocialDistributionUpdate {
+func (_u *SocialDistributionUpdate) AddCreatedBy(v int64) *SocialDistributionUpdate {
 	_u.mutation.AddCreatedBy(v)
 	return _u
 }
@@ -98,14 +98,14 @@ func (_u *SocialDistributionUpdate) ClearCreatedBy() *SocialDistributionUpdate {
 }
 
 // SetUpdatedBy sets the "updated_by" field.
-func (_u *SocialDistributionUpdate) SetUpdatedBy(v uint32) *SocialDistributionUpdate {
+func (_u *SocialDistributionUpdate) SetUpdatedBy(v uint64) *SocialDistributionUpdate {
 	_u.mutation.ResetUpdatedBy()
 	_u.mutation.SetUpdatedBy(v)
 	return _u
 }
 
 // SetNillableUpdatedBy sets the "updated_by" field if the given value is not nil.
-func (_u *SocialDistributionUpdate) SetNillableUpdatedBy(v *uint32) *SocialDistributionUpdate {
+func (_u *SocialDistributionUpdate) SetNillableUpdatedBy(v *uint64) *SocialDistributionUpdate {
 	if v != nil {
 		_u.SetUpdatedBy(*v)
 	}
@@ -113,7 +113,7 @@ func (_u *SocialDistributionUpdate) SetNillableUpdatedBy(v *uint32) *SocialDistr
 }
 
 // AddUpdatedBy adds value to the "updated_by" field.
-func (_u *SocialDistributionUpdate) AddUpdatedBy(v int32) *SocialDistributionUpdate {
+func (_u *SocialDistributionUpdate) AddUpdatedBy(v int64) *SocialDistributionUpdate {
 	_u.mutation.AddUpdatedBy(v)
 	return _u
 }
@@ -125,14 +125,14 @@ func (_u *SocialDistributionUpdate) ClearUpdatedBy() *SocialDistributionUpdate {
 }
 
 // SetDeletedBy sets the "deleted_by" field.
-func (_u *SocialDistributionUpdate) SetDeletedBy(v uint32) *SocialDistributionUpdate {
+func (_u *SocialDistributionUpdate) SetDeletedBy(v uint64) *SocialDistributionUpdate {
 	_u.mutation.ResetDeletedBy()
 	_u.mutation.SetDeletedBy(v)
 	return _u
 }
 
 // SetNillableDeletedBy sets the "deleted_by" field if the given value is not nil.
-func (_u *SocialDistributionUpdate) SetNillableDeletedBy(v *uint32) *SocialDistributionUpdate {
+func (_u *SocialDistributionUpdate) SetNillableDeletedBy(v *uint64) *SocialDistributionUpdate {
 	if v != nil {
 		_u.SetDeletedBy(*v)
 	}
@@ -140,7 +140,7 @@ func (_u *SocialDistributionUpdate) SetNillableDeletedBy(v *uint32) *SocialDistr
 }
 
 // AddDeletedBy adds value to the "deleted_by" field.
-func (_u *SocialDistributionUpdate) AddDeletedBy(v int32) *SocialDistributionUpdate {
+func (_u *SocialDistributionUpdate) AddDeletedBy(v int64) *SocialDistributionUpdate {
 	_u.mutation.AddDeletedBy(v)
 	return _u
 }
@@ -172,14 +172,14 @@ func (_u *SocialDistributionUpdate) ClearPlatform() *SocialDistributionUpdate {
 }
 
 // SetAccountID sets the "account_id" field.
-func (_u *SocialDistributionUpdate) SetAccountID(v uint32) *SocialDistributionUpdate {
+func (_u *SocialDistributionUpdate) SetAccountID(v uint64) *SocialDistributionUpdate {
 	_u.mutation.ResetAccountID()
 	_u.mutation.SetAccountID(v)
 	return _u
 }
 
 // SetNillableAccountID sets the "account_id" field if the given value is not nil.
-func (_u *SocialDistributionUpdate) SetNillableAccountID(v *uint32) *SocialDistributionUpdate {
+func (_u *SocialDistributionUpdate) SetNillableAccountID(v *uint64) *SocialDistributionUpdate {
 	if v != nil {
 		_u.SetAccountID(*v)
 	}
@@ -187,7 +187,7 @@ func (_u *SocialDistributionUpdate) SetNillableAccountID(v *uint32) *SocialDistr
 }
 
 // AddAccountID adds value to the "account_id" field.
-func (_u *SocialDistributionUpdate) AddAccountID(v int32) *SocialDistributionUpdate {
+func (_u *SocialDistributionUpdate) AddAccountID(v int64) *SocialDistributionUpdate {
 	_u.mutation.AddAccountID(v)
 	return _u
 }
@@ -199,14 +199,14 @@ func (_u *SocialDistributionUpdate) ClearAccountID() *SocialDistributionUpdate {
 }
 
 // SetPostID sets the "post_id" field.
-func (_u *SocialDistributionUpdate) SetPostID(v uint32) *SocialDistributionUpdate {
+func (_u *SocialDistributionUpdate) SetPostID(v uint64) *SocialDistributionUpdate {
 	_u.mutation.ResetPostID()
 	_u.mutation.SetPostID(v)
 	return _u
 }
 
 // SetNillablePostID sets the "post_id" field if the given value is not nil.
-func (_u *SocialDistributionUpdate) SetNillablePostID(v *uint32) *SocialDistributionUpdate {
+func (_u *SocialDistributionUpdate) SetNillablePostID(v *uint64) *SocialDistributionUpdate {
 	if v != nil {
 		_u.SetPostID(*v)
 	}
@@ -214,7 +214,7 @@ func (_u *SocialDistributionUpdate) SetNillablePostID(v *uint32) *SocialDistribu
 }
 
 // AddPostID adds value to the "post_id" field.
-func (_u *SocialDistributionUpdate) AddPostID(v int32) *SocialDistributionUpdate {
+func (_u *SocialDistributionUpdate) AddPostID(v int64) *SocialDistributionUpdate {
 	_u.mutation.AddPostID(v)
 	return _u
 }
@@ -386,13 +386,13 @@ func (_u *SocialDistributionUpdate) ClearTitle() *SocialDistributionUpdate {
 }
 
 // SetMediaIds sets the "media_ids" field.
-func (_u *SocialDistributionUpdate) SetMediaIds(v []uint32) *SocialDistributionUpdate {
+func (_u *SocialDistributionUpdate) SetMediaIds(v []uint64) *SocialDistributionUpdate {
 	_u.mutation.SetMediaIds(v)
 	return _u
 }
 
 // AppendMediaIds appends value to the "media_ids" field.
-func (_u *SocialDistributionUpdate) AppendMediaIds(v []uint32) *SocialDistributionUpdate {
+func (_u *SocialDistributionUpdate) AppendMediaIds(v []uint64) *SocialDistributionUpdate {
 	_u.mutation.AppendMediaIds(v)
 	return _u
 }
@@ -588,7 +588,7 @@ func (_u *SocialDistributionUpdate) sqlSave(ctx context.Context) (_node int, err
 	if err := _u.check(); err != nil {
 		return _node, err
 	}
-	_spec := sqlgraph.NewUpdateSpec(socialdistribution.Table, socialdistribution.Columns, sqlgraph.NewFieldSpec(socialdistribution.FieldID, field.TypeUint32))
+	_spec := sqlgraph.NewUpdateSpec(socialdistribution.Table, socialdistribution.Columns, sqlgraph.NewFieldSpec(socialdistribution.FieldID, field.TypeUint64))
 	if ps := _u.mutation.predicates; len(ps) > 0 {
 		_spec.Predicate = func(selector *sql.Selector) {
 			for i := range ps {
@@ -612,34 +612,34 @@ func (_u *SocialDistributionUpdate) sqlSave(ctx context.Context) (_node int, err
 		_spec.ClearField(socialdistribution.FieldDeletedAt, field.TypeTime)
 	}
 	if value, ok := _u.mutation.CreatedBy(); ok {
-		_spec.SetField(socialdistribution.FieldCreatedBy, field.TypeUint32, value)
+		_spec.SetField(socialdistribution.FieldCreatedBy, field.TypeUint64, value)
 	}
 	if value, ok := _u.mutation.AddedCreatedBy(); ok {
-		_spec.AddField(socialdistribution.FieldCreatedBy, field.TypeUint32, value)
+		_spec.AddField(socialdistribution.FieldCreatedBy, field.TypeUint64, value)
 	}
 	if _u.mutation.CreatedByCleared() {
-		_spec.ClearField(socialdistribution.FieldCreatedBy, field.TypeUint32)
+		_spec.ClearField(socialdistribution.FieldCreatedBy, field.TypeUint64)
 	}
 	if value, ok := _u.mutation.UpdatedBy(); ok {
-		_spec.SetField(socialdistribution.FieldUpdatedBy, field.TypeUint32, value)
+		_spec.SetField(socialdistribution.FieldUpdatedBy, field.TypeUint64, value)
 	}
 	if value, ok := _u.mutation.AddedUpdatedBy(); ok {
-		_spec.AddField(socialdistribution.FieldUpdatedBy, field.TypeUint32, value)
+		_spec.AddField(socialdistribution.FieldUpdatedBy, field.TypeUint64, value)
 	}
 	if _u.mutation.UpdatedByCleared() {
-		_spec.ClearField(socialdistribution.FieldUpdatedBy, field.TypeUint32)
+		_spec.ClearField(socialdistribution.FieldUpdatedBy, field.TypeUint64)
 	}
 	if value, ok := _u.mutation.DeletedBy(); ok {
-		_spec.SetField(socialdistribution.FieldDeletedBy, field.TypeUint32, value)
+		_spec.SetField(socialdistribution.FieldDeletedBy, field.TypeUint64, value)
 	}
 	if value, ok := _u.mutation.AddedDeletedBy(); ok {
-		_spec.AddField(socialdistribution.FieldDeletedBy, field.TypeUint32, value)
+		_spec.AddField(socialdistribution.FieldDeletedBy, field.TypeUint64, value)
 	}
 	if _u.mutation.DeletedByCleared() {
-		_spec.ClearField(socialdistribution.FieldDeletedBy, field.TypeUint32)
+		_spec.ClearField(socialdistribution.FieldDeletedBy, field.TypeUint64)
 	}
 	if _u.mutation.TenantIDCleared() {
-		_spec.ClearField(socialdistribution.FieldTenantID, field.TypeUint32)
+		_spec.ClearField(socialdistribution.FieldTenantID, field.TypeUint64)
 	}
 	if value, ok := _u.mutation.Platform(); ok {
 		_spec.SetField(socialdistribution.FieldPlatform, field.TypeEnum, value)
@@ -648,22 +648,22 @@ func (_u *SocialDistributionUpdate) sqlSave(ctx context.Context) (_node int, err
 		_spec.ClearField(socialdistribution.FieldPlatform, field.TypeEnum)
 	}
 	if value, ok := _u.mutation.AccountID(); ok {
-		_spec.SetField(socialdistribution.FieldAccountID, field.TypeUint32, value)
+		_spec.SetField(socialdistribution.FieldAccountID, field.TypeUint64, value)
 	}
 	if value, ok := _u.mutation.AddedAccountID(); ok {
-		_spec.AddField(socialdistribution.FieldAccountID, field.TypeUint32, value)
+		_spec.AddField(socialdistribution.FieldAccountID, field.TypeUint64, value)
 	}
 	if _u.mutation.AccountIDCleared() {
-		_spec.ClearField(socialdistribution.FieldAccountID, field.TypeUint32)
+		_spec.ClearField(socialdistribution.FieldAccountID, field.TypeUint64)
 	}
 	if value, ok := _u.mutation.PostID(); ok {
-		_spec.SetField(socialdistribution.FieldPostID, field.TypeUint32, value)
+		_spec.SetField(socialdistribution.FieldPostID, field.TypeUint64, value)
 	}
 	if value, ok := _u.mutation.AddedPostID(); ok {
-		_spec.AddField(socialdistribution.FieldPostID, field.TypeUint32, value)
+		_spec.AddField(socialdistribution.FieldPostID, field.TypeUint64, value)
 	}
 	if _u.mutation.PostIDCleared() {
-		_spec.ClearField(socialdistribution.FieldPostID, field.TypeUint32)
+		_spec.ClearField(socialdistribution.FieldPostID, field.TypeUint64)
 	}
 	if value, ok := _u.mutation.OverrideText(); ok {
 		_spec.SetField(socialdistribution.FieldOverrideText, field.TypeString, value)
@@ -829,14 +829,14 @@ func (_u *SocialDistributionUpdateOne) ClearDeletedAt() *SocialDistributionUpdat
 }
 
 // SetCreatedBy sets the "created_by" field.
-func (_u *SocialDistributionUpdateOne) SetCreatedBy(v uint32) *SocialDistributionUpdateOne {
+func (_u *SocialDistributionUpdateOne) SetCreatedBy(v uint64) *SocialDistributionUpdateOne {
 	_u.mutation.ResetCreatedBy()
 	_u.mutation.SetCreatedBy(v)
 	return _u
 }
 
 // SetNillableCreatedBy sets the "created_by" field if the given value is not nil.
-func (_u *SocialDistributionUpdateOne) SetNillableCreatedBy(v *uint32) *SocialDistributionUpdateOne {
+func (_u *SocialDistributionUpdateOne) SetNillableCreatedBy(v *uint64) *SocialDistributionUpdateOne {
 	if v != nil {
 		_u.SetCreatedBy(*v)
 	}
@@ -844,7 +844,7 @@ func (_u *SocialDistributionUpdateOne) SetNillableCreatedBy(v *uint32) *SocialDi
 }
 
 // AddCreatedBy adds value to the "created_by" field.
-func (_u *SocialDistributionUpdateOne) AddCreatedBy(v int32) *SocialDistributionUpdateOne {
+func (_u *SocialDistributionUpdateOne) AddCreatedBy(v int64) *SocialDistributionUpdateOne {
 	_u.mutation.AddCreatedBy(v)
 	return _u
 }
@@ -856,14 +856,14 @@ func (_u *SocialDistributionUpdateOne) ClearCreatedBy() *SocialDistributionUpdat
 }
 
 // SetUpdatedBy sets the "updated_by" field.
-func (_u *SocialDistributionUpdateOne) SetUpdatedBy(v uint32) *SocialDistributionUpdateOne {
+func (_u *SocialDistributionUpdateOne) SetUpdatedBy(v uint64) *SocialDistributionUpdateOne {
 	_u.mutation.ResetUpdatedBy()
 	_u.mutation.SetUpdatedBy(v)
 	return _u
 }
 
 // SetNillableUpdatedBy sets the "updated_by" field if the given value is not nil.
-func (_u *SocialDistributionUpdateOne) SetNillableUpdatedBy(v *uint32) *SocialDistributionUpdateOne {
+func (_u *SocialDistributionUpdateOne) SetNillableUpdatedBy(v *uint64) *SocialDistributionUpdateOne {
 	if v != nil {
 		_u.SetUpdatedBy(*v)
 	}
@@ -871,7 +871,7 @@ func (_u *SocialDistributionUpdateOne) SetNillableUpdatedBy(v *uint32) *SocialDi
 }
 
 // AddUpdatedBy adds value to the "updated_by" field.
-func (_u *SocialDistributionUpdateOne) AddUpdatedBy(v int32) *SocialDistributionUpdateOne {
+func (_u *SocialDistributionUpdateOne) AddUpdatedBy(v int64) *SocialDistributionUpdateOne {
 	_u.mutation.AddUpdatedBy(v)
 	return _u
 }
@@ -883,14 +883,14 @@ func (_u *SocialDistributionUpdateOne) ClearUpdatedBy() *SocialDistributionUpdat
 }
 
 // SetDeletedBy sets the "deleted_by" field.
-func (_u *SocialDistributionUpdateOne) SetDeletedBy(v uint32) *SocialDistributionUpdateOne {
+func (_u *SocialDistributionUpdateOne) SetDeletedBy(v uint64) *SocialDistributionUpdateOne {
 	_u.mutation.ResetDeletedBy()
 	_u.mutation.SetDeletedBy(v)
 	return _u
 }
 
 // SetNillableDeletedBy sets the "deleted_by" field if the given value is not nil.
-func (_u *SocialDistributionUpdateOne) SetNillableDeletedBy(v *uint32) *SocialDistributionUpdateOne {
+func (_u *SocialDistributionUpdateOne) SetNillableDeletedBy(v *uint64) *SocialDistributionUpdateOne {
 	if v != nil {
 		_u.SetDeletedBy(*v)
 	}
@@ -898,7 +898,7 @@ func (_u *SocialDistributionUpdateOne) SetNillableDeletedBy(v *uint32) *SocialDi
 }
 
 // AddDeletedBy adds value to the "deleted_by" field.
-func (_u *SocialDistributionUpdateOne) AddDeletedBy(v int32) *SocialDistributionUpdateOne {
+func (_u *SocialDistributionUpdateOne) AddDeletedBy(v int64) *SocialDistributionUpdateOne {
 	_u.mutation.AddDeletedBy(v)
 	return _u
 }
@@ -930,14 +930,14 @@ func (_u *SocialDistributionUpdateOne) ClearPlatform() *SocialDistributionUpdate
 }
 
 // SetAccountID sets the "account_id" field.
-func (_u *SocialDistributionUpdateOne) SetAccountID(v uint32) *SocialDistributionUpdateOne {
+func (_u *SocialDistributionUpdateOne) SetAccountID(v uint64) *SocialDistributionUpdateOne {
 	_u.mutation.ResetAccountID()
 	_u.mutation.SetAccountID(v)
 	return _u
 }
 
 // SetNillableAccountID sets the "account_id" field if the given value is not nil.
-func (_u *SocialDistributionUpdateOne) SetNillableAccountID(v *uint32) *SocialDistributionUpdateOne {
+func (_u *SocialDistributionUpdateOne) SetNillableAccountID(v *uint64) *SocialDistributionUpdateOne {
 	if v != nil {
 		_u.SetAccountID(*v)
 	}
@@ -945,7 +945,7 @@ func (_u *SocialDistributionUpdateOne) SetNillableAccountID(v *uint32) *SocialDi
 }
 
 // AddAccountID adds value to the "account_id" field.
-func (_u *SocialDistributionUpdateOne) AddAccountID(v int32) *SocialDistributionUpdateOne {
+func (_u *SocialDistributionUpdateOne) AddAccountID(v int64) *SocialDistributionUpdateOne {
 	_u.mutation.AddAccountID(v)
 	return _u
 }
@@ -957,14 +957,14 @@ func (_u *SocialDistributionUpdateOne) ClearAccountID() *SocialDistributionUpdat
 }
 
 // SetPostID sets the "post_id" field.
-func (_u *SocialDistributionUpdateOne) SetPostID(v uint32) *SocialDistributionUpdateOne {
+func (_u *SocialDistributionUpdateOne) SetPostID(v uint64) *SocialDistributionUpdateOne {
 	_u.mutation.ResetPostID()
 	_u.mutation.SetPostID(v)
 	return _u
 }
 
 // SetNillablePostID sets the "post_id" field if the given value is not nil.
-func (_u *SocialDistributionUpdateOne) SetNillablePostID(v *uint32) *SocialDistributionUpdateOne {
+func (_u *SocialDistributionUpdateOne) SetNillablePostID(v *uint64) *SocialDistributionUpdateOne {
 	if v != nil {
 		_u.SetPostID(*v)
 	}
@@ -972,7 +972,7 @@ func (_u *SocialDistributionUpdateOne) SetNillablePostID(v *uint32) *SocialDistr
 }
 
 // AddPostID adds value to the "post_id" field.
-func (_u *SocialDistributionUpdateOne) AddPostID(v int32) *SocialDistributionUpdateOne {
+func (_u *SocialDistributionUpdateOne) AddPostID(v int64) *SocialDistributionUpdateOne {
 	_u.mutation.AddPostID(v)
 	return _u
 }
@@ -1144,13 +1144,13 @@ func (_u *SocialDistributionUpdateOne) ClearTitle() *SocialDistributionUpdateOne
 }
 
 // SetMediaIds sets the "media_ids" field.
-func (_u *SocialDistributionUpdateOne) SetMediaIds(v []uint32) *SocialDistributionUpdateOne {
+func (_u *SocialDistributionUpdateOne) SetMediaIds(v []uint64) *SocialDistributionUpdateOne {
 	_u.mutation.SetMediaIds(v)
 	return _u
 }
 
 // AppendMediaIds appends value to the "media_ids" field.
-func (_u *SocialDistributionUpdateOne) AppendMediaIds(v []uint32) *SocialDistributionUpdateOne {
+func (_u *SocialDistributionUpdateOne) AppendMediaIds(v []uint64) *SocialDistributionUpdateOne {
 	_u.mutation.AppendMediaIds(v)
 	return _u
 }
@@ -1359,7 +1359,7 @@ func (_u *SocialDistributionUpdateOne) sqlSave(ctx context.Context) (_node *Soci
 	if err := _u.check(); err != nil {
 		return _node, err
 	}
-	_spec := sqlgraph.NewUpdateSpec(socialdistribution.Table, socialdistribution.Columns, sqlgraph.NewFieldSpec(socialdistribution.FieldID, field.TypeUint32))
+	_spec := sqlgraph.NewUpdateSpec(socialdistribution.Table, socialdistribution.Columns, sqlgraph.NewFieldSpec(socialdistribution.FieldID, field.TypeUint64))
 	id, ok := _u.mutation.ID()
 	if !ok {
 		return nil, &ValidationError{Name: "id", err: errors.New(`ent: missing "SocialDistribution.id" for update`)}
@@ -1400,34 +1400,34 @@ func (_u *SocialDistributionUpdateOne) sqlSave(ctx context.Context) (_node *Soci
 		_spec.ClearField(socialdistribution.FieldDeletedAt, field.TypeTime)
 	}
 	if value, ok := _u.mutation.CreatedBy(); ok {
-		_spec.SetField(socialdistribution.FieldCreatedBy, field.TypeUint32, value)
+		_spec.SetField(socialdistribution.FieldCreatedBy, field.TypeUint64, value)
 	}
 	if value, ok := _u.mutation.AddedCreatedBy(); ok {
-		_spec.AddField(socialdistribution.FieldCreatedBy, field.TypeUint32, value)
+		_spec.AddField(socialdistribution.FieldCreatedBy, field.TypeUint64, value)
 	}
 	if _u.mutation.CreatedByCleared() {
-		_spec.ClearField(socialdistribution.FieldCreatedBy, field.TypeUint32)
+		_spec.ClearField(socialdistribution.FieldCreatedBy, field.TypeUint64)
 	}
 	if value, ok := _u.mutation.UpdatedBy(); ok {
-		_spec.SetField(socialdistribution.FieldUpdatedBy, field.TypeUint32, value)
+		_spec.SetField(socialdistribution.FieldUpdatedBy, field.TypeUint64, value)
 	}
 	if value, ok := _u.mutation.AddedUpdatedBy(); ok {
-		_spec.AddField(socialdistribution.FieldUpdatedBy, field.TypeUint32, value)
+		_spec.AddField(socialdistribution.FieldUpdatedBy, field.TypeUint64, value)
 	}
 	if _u.mutation.UpdatedByCleared() {
-		_spec.ClearField(socialdistribution.FieldUpdatedBy, field.TypeUint32)
+		_spec.ClearField(socialdistribution.FieldUpdatedBy, field.TypeUint64)
 	}
 	if value, ok := _u.mutation.DeletedBy(); ok {
-		_spec.SetField(socialdistribution.FieldDeletedBy, field.TypeUint32, value)
+		_spec.SetField(socialdistribution.FieldDeletedBy, field.TypeUint64, value)
 	}
 	if value, ok := _u.mutation.AddedDeletedBy(); ok {
-		_spec.AddField(socialdistribution.FieldDeletedBy, field.TypeUint32, value)
+		_spec.AddField(socialdistribution.FieldDeletedBy, field.TypeUint64, value)
 	}
 	if _u.mutation.DeletedByCleared() {
-		_spec.ClearField(socialdistribution.FieldDeletedBy, field.TypeUint32)
+		_spec.ClearField(socialdistribution.FieldDeletedBy, field.TypeUint64)
 	}
 	if _u.mutation.TenantIDCleared() {
-		_spec.ClearField(socialdistribution.FieldTenantID, field.TypeUint32)
+		_spec.ClearField(socialdistribution.FieldTenantID, field.TypeUint64)
 	}
 	if value, ok := _u.mutation.Platform(); ok {
 		_spec.SetField(socialdistribution.FieldPlatform, field.TypeEnum, value)
@@ -1436,22 +1436,22 @@ func (_u *SocialDistributionUpdateOne) sqlSave(ctx context.Context) (_node *Soci
 		_spec.ClearField(socialdistribution.FieldPlatform, field.TypeEnum)
 	}
 	if value, ok := _u.mutation.AccountID(); ok {
-		_spec.SetField(socialdistribution.FieldAccountID, field.TypeUint32, value)
+		_spec.SetField(socialdistribution.FieldAccountID, field.TypeUint64, value)
 	}
 	if value, ok := _u.mutation.AddedAccountID(); ok {
-		_spec.AddField(socialdistribution.FieldAccountID, field.TypeUint32, value)
+		_spec.AddField(socialdistribution.FieldAccountID, field.TypeUint64, value)
 	}
 	if _u.mutation.AccountIDCleared() {
-		_spec.ClearField(socialdistribution.FieldAccountID, field.TypeUint32)
+		_spec.ClearField(socialdistribution.FieldAccountID, field.TypeUint64)
 	}
 	if value, ok := _u.mutation.PostID(); ok {
-		_spec.SetField(socialdistribution.FieldPostID, field.TypeUint32, value)
+		_spec.SetField(socialdistribution.FieldPostID, field.TypeUint64, value)
 	}
 	if value, ok := _u.mutation.AddedPostID(); ok {
-		_spec.AddField(socialdistribution.FieldPostID, field.TypeUint32, value)
+		_spec.AddField(socialdistribution.FieldPostID, field.TypeUint64, value)
 	}
 	if _u.mutation.PostIDCleared() {
-		_spec.ClearField(socialdistribution.FieldPostID, field.TypeUint32)
+		_spec.ClearField(socialdistribution.FieldPostID, field.TypeUint64)
 	}
 	if value, ok := _u.mutation.OverrideText(); ok {
 		_spec.SetField(socialdistribution.FieldOverrideText, field.TypeString, value)

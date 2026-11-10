@@ -83,7 +83,7 @@ func (r *MediaAssetRepo) init() {
 	r.mapper.AppendConverters(r.processingStatusConverter.NewConverterPair())
 }
 
-func (r *MediaAssetRepo) IsExist(ctx context.Context, id uint32) (bool, error) {
+func (r *MediaAssetRepo) IsExist(ctx context.Context, id uint64) (bool, error) {
 	exist, err := r.entClient.Client().MediaAsset.Query().
 		Where(mediaasset.IDEQ(id)).
 		Exist(ctx)
@@ -254,9 +254,9 @@ func (r *MediaAssetRepo) ListDuplicatedGroups(ctx context.Context, limit int) ([
 
 // FindByPathCandidates 按存储路径候选（storage_path 精确 / url 精确）批量找资源。
 // 返回 (storagePath→id) 与 (url→id) 两张映射，供引用抽取把正文 URL 解析成资产 ID。
-func (r *MediaAssetRepo) FindByPathCandidates(ctx context.Context, paths, urls []string) (map[string]uint32, map[string]uint32, error) {
-	pathByID := make(map[string]uint32, len(paths))
-	urlByID := make(map[string]uint32, len(urls))
+func (r *MediaAssetRepo) FindByPathCandidates(ctx context.Context, paths, urls []string) (map[string]uint64, map[string]uint64, error) {
+	pathByID := make(map[string]uint64, len(paths))
+	urlByID := make(map[string]uint64, len(urls))
 	if len(paths) == 0 && len(urls) == 0 {
 		return pathByID, urlByID, nil
 	}
@@ -290,7 +290,7 @@ func (r *MediaAssetRepo) FindByPathCandidates(ctx context.Context, paths, urls [
 }
 
 // UpdateReferenceCounts 按给定计数回写 reference_count（引用追踪维护）。
-func (r *MediaAssetRepo) UpdateReferenceCounts(ctx context.Context, counts map[uint32]int) error {
+func (r *MediaAssetRepo) UpdateReferenceCounts(ctx context.Context, counts map[uint64]int) error {
 	for id, n := range counts {
 		if _, err := r.entClient.Client().MediaAsset.UpdateOneID(id).
 			SetReferenceCount(uint32(n)).

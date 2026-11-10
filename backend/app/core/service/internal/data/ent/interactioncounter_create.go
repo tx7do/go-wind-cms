@@ -65,13 +65,13 @@ func (_c *InteractionCounterCreate) SetNillableDeletedAt(v *time.Time) *Interact
 }
 
 // SetTenantID sets the "tenant_id" field.
-func (_c *InteractionCounterCreate) SetTenantID(v uint32) *InteractionCounterCreate {
+func (_c *InteractionCounterCreate) SetTenantID(v uint64) *InteractionCounterCreate {
 	_c.mutation.SetTenantID(v)
 	return _c
 }
 
 // SetNillableTenantID sets the "tenant_id" field if the given value is not nil.
-func (_c *InteractionCounterCreate) SetNillableTenantID(v *uint32) *InteractionCounterCreate {
+func (_c *InteractionCounterCreate) SetNillableTenantID(v *uint64) *InteractionCounterCreate {
 	if v != nil {
 		_c.SetTenantID(*v)
 	}
@@ -93,13 +93,13 @@ func (_c *InteractionCounterCreate) SetNillableTargetType(v *uint8) *Interaction
 }
 
 // SetTargetID sets the "target_id" field.
-func (_c *InteractionCounterCreate) SetTargetID(v uint32) *InteractionCounterCreate {
+func (_c *InteractionCounterCreate) SetTargetID(v uint64) *InteractionCounterCreate {
 	_c.mutation.SetTargetID(v)
 	return _c
 }
 
 // SetNillableTargetID sets the "target_id" field if the given value is not nil.
-func (_c *InteractionCounterCreate) SetNillableTargetID(v *uint32) *InteractionCounterCreate {
+func (_c *InteractionCounterCreate) SetNillableTargetID(v *uint64) *InteractionCounterCreate {
 	if v != nil {
 		_c.SetTargetID(*v)
 	}
@@ -135,7 +135,7 @@ func (_c *InteractionCounterCreate) SetNillableCount(v *int64) *InteractionCount
 }
 
 // SetID sets the "id" field.
-func (_c *InteractionCounterCreate) SetID(v uint32) *InteractionCounterCreate {
+func (_c *InteractionCounterCreate) SetID(v uint64) *InteractionCounterCreate {
 	_c.mutation.SetID(v)
 	return _c
 }
@@ -211,7 +211,7 @@ func (_c *InteractionCounterCreate) sqlSave(ctx context.Context) (*InteractionCo
 	}
 	if _spec.ID.Value != _node.ID {
 		id := _spec.ID.Value.(int64)
-		_node.ID = uint32(id)
+		_node.ID = uint64(id)
 	}
 	_c.mutation.id = &_node.ID
 	_c.mutation.done = true
@@ -221,7 +221,7 @@ func (_c *InteractionCounterCreate) sqlSave(ctx context.Context) (*InteractionCo
 func (_c *InteractionCounterCreate) createSpec() (*InteractionCounter, *sqlgraph.CreateSpec) {
 	var (
 		_node = &InteractionCounter{config: _c.config}
-		_spec = sqlgraph.NewCreateSpec(interactioncounter.Table, sqlgraph.NewFieldSpec(interactioncounter.FieldID, field.TypeUint32))
+		_spec = sqlgraph.NewCreateSpec(interactioncounter.Table, sqlgraph.NewFieldSpec(interactioncounter.FieldID, field.TypeUint64))
 	)
 	_spec.OnConflict = _c.conflict
 	if id, ok := _c.mutation.ID(); ok {
@@ -241,7 +241,7 @@ func (_c *InteractionCounterCreate) createSpec() (*InteractionCounter, *sqlgraph
 		_node.DeletedAt = &value
 	}
 	if value, ok := _c.mutation.TenantID(); ok {
-		_spec.SetField(interactioncounter.FieldTenantID, field.TypeUint32, value)
+		_spec.SetField(interactioncounter.FieldTenantID, field.TypeUint64, value)
 		_node.TenantID = &value
 	}
 	if value, ok := _c.mutation.TargetType(); ok {
@@ -249,7 +249,7 @@ func (_c *InteractionCounterCreate) createSpec() (*InteractionCounter, *sqlgraph
 		_node.TargetType = &value
 	}
 	if value, ok := _c.mutation.TargetID(); ok {
-		_spec.SetField(interactioncounter.FieldTargetID, field.TypeUint32, value)
+		_spec.SetField(interactioncounter.FieldTargetID, field.TypeUint64, value)
 		_node.TargetID = &value
 	}
 	if value, ok := _c.mutation.Metric(); ok {
@@ -373,7 +373,7 @@ func (u *InteractionCounterUpsert) ClearTargetType() *InteractionCounterUpsert {
 }
 
 // SetTargetID sets the "target_id" field.
-func (u *InteractionCounterUpsert) SetTargetID(v uint32) *InteractionCounterUpsert {
+func (u *InteractionCounterUpsert) SetTargetID(v uint64) *InteractionCounterUpsert {
 	u.Set(interactioncounter.FieldTargetID, v)
 	return u
 }
@@ -385,7 +385,7 @@ func (u *InteractionCounterUpsert) UpdateTargetID() *InteractionCounterUpsert {
 }
 
 // AddTargetID adds v to the "target_id" field.
-func (u *InteractionCounterUpsert) AddTargetID(v uint32) *InteractionCounterUpsert {
+func (u *InteractionCounterUpsert) AddTargetID(v uint64) *InteractionCounterUpsert {
 	u.Add(interactioncounter.FieldTargetID, v)
 	return u
 }
@@ -569,14 +569,14 @@ func (u *InteractionCounterUpsertOne) ClearTargetType() *InteractionCounterUpser
 }
 
 // SetTargetID sets the "target_id" field.
-func (u *InteractionCounterUpsertOne) SetTargetID(v uint32) *InteractionCounterUpsertOne {
+func (u *InteractionCounterUpsertOne) SetTargetID(v uint64) *InteractionCounterUpsertOne {
 	return u.Update(func(s *InteractionCounterUpsert) {
 		s.SetTargetID(v)
 	})
 }
 
 // AddTargetID adds v to the "target_id" field.
-func (u *InteractionCounterUpsertOne) AddTargetID(v uint32) *InteractionCounterUpsertOne {
+func (u *InteractionCounterUpsertOne) AddTargetID(v uint64) *InteractionCounterUpsertOne {
 	return u.Update(func(s *InteractionCounterUpsert) {
 		s.AddTargetID(v)
 	})
@@ -668,7 +668,7 @@ func (u *InteractionCounterUpsertOne) ExecX(ctx context.Context) {
 }
 
 // Exec executes the UPSERT query and returns the inserted/updated ID.
-func (u *InteractionCounterUpsertOne) ID(ctx context.Context) (id uint32, err error) {
+func (u *InteractionCounterUpsertOne) ID(ctx context.Context) (id uint64, err error) {
 	node, err := u.create.Save(ctx)
 	if err != nil {
 		return id, err
@@ -677,7 +677,7 @@ func (u *InteractionCounterUpsertOne) ID(ctx context.Context) (id uint32, err er
 }
 
 // IDX is like ID, but panics if an error occurs.
-func (u *InteractionCounterUpsertOne) IDX(ctx context.Context) uint32 {
+func (u *InteractionCounterUpsertOne) IDX(ctx context.Context) uint64 {
 	id, err := u.ID(ctx)
 	if err != nil {
 		panic(err)
@@ -734,7 +734,7 @@ func (_c *InteractionCounterCreateBulk) Save(ctx context.Context) ([]*Interactio
 				mutation.id = &nodes[i].ID
 				if specs[i].ID.Value != nil && nodes[i].ID == 0 {
 					id := specs[i].ID.Value.(int64)
-					nodes[i].ID = uint32(id)
+					nodes[i].ID = uint64(id)
 				}
 				mutation.done = true
 				return nodes[i], nil
@@ -943,14 +943,14 @@ func (u *InteractionCounterUpsertBulk) ClearTargetType() *InteractionCounterUpse
 }
 
 // SetTargetID sets the "target_id" field.
-func (u *InteractionCounterUpsertBulk) SetTargetID(v uint32) *InteractionCounterUpsertBulk {
+func (u *InteractionCounterUpsertBulk) SetTargetID(v uint64) *InteractionCounterUpsertBulk {
 	return u.Update(func(s *InteractionCounterUpsert) {
 		s.SetTargetID(v)
 	})
 }
 
 // AddTargetID adds v to the "target_id" field.
-func (u *InteractionCounterUpsertBulk) AddTargetID(v uint32) *InteractionCounterUpsertBulk {
+func (u *InteractionCounterUpsertBulk) AddTargetID(v uint64) *InteractionCounterUpsertBulk {
 	return u.Update(func(s *InteractionCounterUpsert) {
 		s.AddTargetID(v)
 	})

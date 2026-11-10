@@ -148,8 +148,8 @@ func (l *LoginAuditLogMiddleware) signature(loginAuditLog *auditV1.LoginAuditLog
 	createdAt := loginAuditLog.GetCreatedAt()
 
 	type signContent struct {
-		TenantID uint32 `json:"tenant_id"`
-		UserID   uint32 `json:"user_id"`
+		TenantID uint64 `json:"tenant_id"`
+		UserID   uint64 `json:"user_id"`
 		Username string `json:"username"`
 		Sec      int64  `json:"sec"`   // createdAt 秒数
 		Nanos    int32  `json:"nanos"` // createdAt 纳秒数

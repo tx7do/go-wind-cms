@@ -70,14 +70,14 @@ func (_u *SectionUpdate) ClearDeletedAt() *SectionUpdate {
 }
 
 // SetCreatedBy sets the "created_by" field.
-func (_u *SectionUpdate) SetCreatedBy(v uint32) *SectionUpdate {
+func (_u *SectionUpdate) SetCreatedBy(v uint64) *SectionUpdate {
 	_u.mutation.ResetCreatedBy()
 	_u.mutation.SetCreatedBy(v)
 	return _u
 }
 
 // SetNillableCreatedBy sets the "created_by" field if the given value is not nil.
-func (_u *SectionUpdate) SetNillableCreatedBy(v *uint32) *SectionUpdate {
+func (_u *SectionUpdate) SetNillableCreatedBy(v *uint64) *SectionUpdate {
 	if v != nil {
 		_u.SetCreatedBy(*v)
 	}
@@ -85,7 +85,7 @@ func (_u *SectionUpdate) SetNillableCreatedBy(v *uint32) *SectionUpdate {
 }
 
 // AddCreatedBy adds value to the "created_by" field.
-func (_u *SectionUpdate) AddCreatedBy(v int32) *SectionUpdate {
+func (_u *SectionUpdate) AddCreatedBy(v int64) *SectionUpdate {
 	_u.mutation.AddCreatedBy(v)
 	return _u
 }
@@ -97,14 +97,14 @@ func (_u *SectionUpdate) ClearCreatedBy() *SectionUpdate {
 }
 
 // SetUpdatedBy sets the "updated_by" field.
-func (_u *SectionUpdate) SetUpdatedBy(v uint32) *SectionUpdate {
+func (_u *SectionUpdate) SetUpdatedBy(v uint64) *SectionUpdate {
 	_u.mutation.ResetUpdatedBy()
 	_u.mutation.SetUpdatedBy(v)
 	return _u
 }
 
 // SetNillableUpdatedBy sets the "updated_by" field if the given value is not nil.
-func (_u *SectionUpdate) SetNillableUpdatedBy(v *uint32) *SectionUpdate {
+func (_u *SectionUpdate) SetNillableUpdatedBy(v *uint64) *SectionUpdate {
 	if v != nil {
 		_u.SetUpdatedBy(*v)
 	}
@@ -112,7 +112,7 @@ func (_u *SectionUpdate) SetNillableUpdatedBy(v *uint32) *SectionUpdate {
 }
 
 // AddUpdatedBy adds value to the "updated_by" field.
-func (_u *SectionUpdate) AddUpdatedBy(v int32) *SectionUpdate {
+func (_u *SectionUpdate) AddUpdatedBy(v int64) *SectionUpdate {
 	_u.mutation.AddUpdatedBy(v)
 	return _u
 }
@@ -124,14 +124,14 @@ func (_u *SectionUpdate) ClearUpdatedBy() *SectionUpdate {
 }
 
 // SetDeletedBy sets the "deleted_by" field.
-func (_u *SectionUpdate) SetDeletedBy(v uint32) *SectionUpdate {
+func (_u *SectionUpdate) SetDeletedBy(v uint64) *SectionUpdate {
 	_u.mutation.ResetDeletedBy()
 	_u.mutation.SetDeletedBy(v)
 	return _u
 }
 
 // SetNillableDeletedBy sets the "deleted_by" field if the given value is not nil.
-func (_u *SectionUpdate) SetNillableDeletedBy(v *uint32) *SectionUpdate {
+func (_u *SectionUpdate) SetNillableDeletedBy(v *uint64) *SectionUpdate {
 	if v != nil {
 		_u.SetDeletedBy(*v)
 	}
@@ -139,7 +139,7 @@ func (_u *SectionUpdate) SetNillableDeletedBy(v *uint32) *SectionUpdate {
 }
 
 // AddDeletedBy adds value to the "deleted_by" field.
-func (_u *SectionUpdate) AddDeletedBy(v int32) *SectionUpdate {
+func (_u *SectionUpdate) AddDeletedBy(v int64) *SectionUpdate {
 	_u.mutation.AddDeletedBy(v)
 	return _u
 }
@@ -178,14 +178,14 @@ func (_u *SectionUpdate) ClearSortOrder() *SectionUpdate {
 }
 
 // SetPageID sets the "page_id" field.
-func (_u *SectionUpdate) SetPageID(v uint32) *SectionUpdate {
+func (_u *SectionUpdate) SetPageID(v uint64) *SectionUpdate {
 	_u.mutation.ResetPageID()
 	_u.mutation.SetPageID(v)
 	return _u
 }
 
 // SetNillablePageID sets the "page_id" field if the given value is not nil.
-func (_u *SectionUpdate) SetNillablePageID(v *uint32) *SectionUpdate {
+func (_u *SectionUpdate) SetNillablePageID(v *uint64) *SectionUpdate {
 	if v != nil {
 		_u.SetPageID(*v)
 	}
@@ -193,7 +193,7 @@ func (_u *SectionUpdate) SetNillablePageID(v *uint32) *SectionUpdate {
 }
 
 // AddPageID adds value to the "page_id" field.
-func (_u *SectionUpdate) AddPageID(v int32) *SectionUpdate {
+func (_u *SectionUpdate) AddPageID(v int64) *SectionUpdate {
 	_u.mutation.AddPageID(v)
 	return _u
 }
@@ -308,7 +308,7 @@ func (_u *SectionUpdate) sqlSave(ctx context.Context) (_node int, err error) {
 	if err := _u.check(); err != nil {
 		return _node, err
 	}
-	_spec := sqlgraph.NewUpdateSpec(section.Table, section.Columns, sqlgraph.NewFieldSpec(section.FieldID, field.TypeUint32))
+	_spec := sqlgraph.NewUpdateSpec(section.Table, section.Columns, sqlgraph.NewFieldSpec(section.FieldID, field.TypeUint64))
 	if ps := _u.mutation.predicates; len(ps) > 0 {
 		_spec.Predicate = func(selector *sql.Selector) {
 			for i := range ps {
@@ -332,31 +332,31 @@ func (_u *SectionUpdate) sqlSave(ctx context.Context) (_node int, err error) {
 		_spec.ClearField(section.FieldDeletedAt, field.TypeTime)
 	}
 	if value, ok := _u.mutation.CreatedBy(); ok {
-		_spec.SetField(section.FieldCreatedBy, field.TypeUint32, value)
+		_spec.SetField(section.FieldCreatedBy, field.TypeUint64, value)
 	}
 	if value, ok := _u.mutation.AddedCreatedBy(); ok {
-		_spec.AddField(section.FieldCreatedBy, field.TypeUint32, value)
+		_spec.AddField(section.FieldCreatedBy, field.TypeUint64, value)
 	}
 	if _u.mutation.CreatedByCleared() {
-		_spec.ClearField(section.FieldCreatedBy, field.TypeUint32)
+		_spec.ClearField(section.FieldCreatedBy, field.TypeUint64)
 	}
 	if value, ok := _u.mutation.UpdatedBy(); ok {
-		_spec.SetField(section.FieldUpdatedBy, field.TypeUint32, value)
+		_spec.SetField(section.FieldUpdatedBy, field.TypeUint64, value)
 	}
 	if value, ok := _u.mutation.AddedUpdatedBy(); ok {
-		_spec.AddField(section.FieldUpdatedBy, field.TypeUint32, value)
+		_spec.AddField(section.FieldUpdatedBy, field.TypeUint64, value)
 	}
 	if _u.mutation.UpdatedByCleared() {
-		_spec.ClearField(section.FieldUpdatedBy, field.TypeUint32)
+		_spec.ClearField(section.FieldUpdatedBy, field.TypeUint64)
 	}
 	if value, ok := _u.mutation.DeletedBy(); ok {
-		_spec.SetField(section.FieldDeletedBy, field.TypeUint32, value)
+		_spec.SetField(section.FieldDeletedBy, field.TypeUint64, value)
 	}
 	if value, ok := _u.mutation.AddedDeletedBy(); ok {
-		_spec.AddField(section.FieldDeletedBy, field.TypeUint32, value)
+		_spec.AddField(section.FieldDeletedBy, field.TypeUint64, value)
 	}
 	if _u.mutation.DeletedByCleared() {
-		_spec.ClearField(section.FieldDeletedBy, field.TypeUint32)
+		_spec.ClearField(section.FieldDeletedBy, field.TypeUint64)
 	}
 	if value, ok := _u.mutation.SortOrder(); ok {
 		_spec.SetField(section.FieldSortOrder, field.TypeUint32, value)
@@ -368,16 +368,16 @@ func (_u *SectionUpdate) sqlSave(ctx context.Context) (_node int, err error) {
 		_spec.ClearField(section.FieldSortOrder, field.TypeUint32)
 	}
 	if _u.mutation.TenantIDCleared() {
-		_spec.ClearField(section.FieldTenantID, field.TypeUint32)
+		_spec.ClearField(section.FieldTenantID, field.TypeUint64)
 	}
 	if value, ok := _u.mutation.PageID(); ok {
-		_spec.SetField(section.FieldPageID, field.TypeUint32, value)
+		_spec.SetField(section.FieldPageID, field.TypeUint64, value)
 	}
 	if value, ok := _u.mutation.AddedPageID(); ok {
-		_spec.AddField(section.FieldPageID, field.TypeUint32, value)
+		_spec.AddField(section.FieldPageID, field.TypeUint64, value)
 	}
 	if _u.mutation.PageIDCleared() {
-		_spec.ClearField(section.FieldPageID, field.TypeUint32)
+		_spec.ClearField(section.FieldPageID, field.TypeUint64)
 	}
 	if value, ok := _u.mutation.GetType(); ok {
 		_spec.SetField(section.FieldType, field.TypeEnum, value)
@@ -460,14 +460,14 @@ func (_u *SectionUpdateOne) ClearDeletedAt() *SectionUpdateOne {
 }
 
 // SetCreatedBy sets the "created_by" field.
-func (_u *SectionUpdateOne) SetCreatedBy(v uint32) *SectionUpdateOne {
+func (_u *SectionUpdateOne) SetCreatedBy(v uint64) *SectionUpdateOne {
 	_u.mutation.ResetCreatedBy()
 	_u.mutation.SetCreatedBy(v)
 	return _u
 }
 
 // SetNillableCreatedBy sets the "created_by" field if the given value is not nil.
-func (_u *SectionUpdateOne) SetNillableCreatedBy(v *uint32) *SectionUpdateOne {
+func (_u *SectionUpdateOne) SetNillableCreatedBy(v *uint64) *SectionUpdateOne {
 	if v != nil {
 		_u.SetCreatedBy(*v)
 	}
@@ -475,7 +475,7 @@ func (_u *SectionUpdateOne) SetNillableCreatedBy(v *uint32) *SectionUpdateOne {
 }
 
 // AddCreatedBy adds value to the "created_by" field.
-func (_u *SectionUpdateOne) AddCreatedBy(v int32) *SectionUpdateOne {
+func (_u *SectionUpdateOne) AddCreatedBy(v int64) *SectionUpdateOne {
 	_u.mutation.AddCreatedBy(v)
 	return _u
 }
@@ -487,14 +487,14 @@ func (_u *SectionUpdateOne) ClearCreatedBy() *SectionUpdateOne {
 }
 
 // SetUpdatedBy sets the "updated_by" field.
-func (_u *SectionUpdateOne) SetUpdatedBy(v uint32) *SectionUpdateOne {
+func (_u *SectionUpdateOne) SetUpdatedBy(v uint64) *SectionUpdateOne {
 	_u.mutation.ResetUpdatedBy()
 	_u.mutation.SetUpdatedBy(v)
 	return _u
 }
 
 // SetNillableUpdatedBy sets the "updated_by" field if the given value is not nil.
-func (_u *SectionUpdateOne) SetNillableUpdatedBy(v *uint32) *SectionUpdateOne {
+func (_u *SectionUpdateOne) SetNillableUpdatedBy(v *uint64) *SectionUpdateOne {
 	if v != nil {
 		_u.SetUpdatedBy(*v)
 	}
@@ -502,7 +502,7 @@ func (_u *SectionUpdateOne) SetNillableUpdatedBy(v *uint32) *SectionUpdateOne {
 }
 
 // AddUpdatedBy adds value to the "updated_by" field.
-func (_u *SectionUpdateOne) AddUpdatedBy(v int32) *SectionUpdateOne {
+func (_u *SectionUpdateOne) AddUpdatedBy(v int64) *SectionUpdateOne {
 	_u.mutation.AddUpdatedBy(v)
 	return _u
 }
@@ -514,14 +514,14 @@ func (_u *SectionUpdateOne) ClearUpdatedBy() *SectionUpdateOne {
 }
 
 // SetDeletedBy sets the "deleted_by" field.
-func (_u *SectionUpdateOne) SetDeletedBy(v uint32) *SectionUpdateOne {
+func (_u *SectionUpdateOne) SetDeletedBy(v uint64) *SectionUpdateOne {
 	_u.mutation.ResetDeletedBy()
 	_u.mutation.SetDeletedBy(v)
 	return _u
 }
 
 // SetNillableDeletedBy sets the "deleted_by" field if the given value is not nil.
-func (_u *SectionUpdateOne) SetNillableDeletedBy(v *uint32) *SectionUpdateOne {
+func (_u *SectionUpdateOne) SetNillableDeletedBy(v *uint64) *SectionUpdateOne {
 	if v != nil {
 		_u.SetDeletedBy(*v)
 	}
@@ -529,7 +529,7 @@ func (_u *SectionUpdateOne) SetNillableDeletedBy(v *uint32) *SectionUpdateOne {
 }
 
 // AddDeletedBy adds value to the "deleted_by" field.
-func (_u *SectionUpdateOne) AddDeletedBy(v int32) *SectionUpdateOne {
+func (_u *SectionUpdateOne) AddDeletedBy(v int64) *SectionUpdateOne {
 	_u.mutation.AddDeletedBy(v)
 	return _u
 }
@@ -568,14 +568,14 @@ func (_u *SectionUpdateOne) ClearSortOrder() *SectionUpdateOne {
 }
 
 // SetPageID sets the "page_id" field.
-func (_u *SectionUpdateOne) SetPageID(v uint32) *SectionUpdateOne {
+func (_u *SectionUpdateOne) SetPageID(v uint64) *SectionUpdateOne {
 	_u.mutation.ResetPageID()
 	_u.mutation.SetPageID(v)
 	return _u
 }
 
 // SetNillablePageID sets the "page_id" field if the given value is not nil.
-func (_u *SectionUpdateOne) SetNillablePageID(v *uint32) *SectionUpdateOne {
+func (_u *SectionUpdateOne) SetNillablePageID(v *uint64) *SectionUpdateOne {
 	if v != nil {
 		_u.SetPageID(*v)
 	}
@@ -583,7 +583,7 @@ func (_u *SectionUpdateOne) SetNillablePageID(v *uint32) *SectionUpdateOne {
 }
 
 // AddPageID adds value to the "page_id" field.
-func (_u *SectionUpdateOne) AddPageID(v int32) *SectionUpdateOne {
+func (_u *SectionUpdateOne) AddPageID(v int64) *SectionUpdateOne {
 	_u.mutation.AddPageID(v)
 	return _u
 }
@@ -711,7 +711,7 @@ func (_u *SectionUpdateOne) sqlSave(ctx context.Context) (_node *Section, err er
 	if err := _u.check(); err != nil {
 		return _node, err
 	}
-	_spec := sqlgraph.NewUpdateSpec(section.Table, section.Columns, sqlgraph.NewFieldSpec(section.FieldID, field.TypeUint32))
+	_spec := sqlgraph.NewUpdateSpec(section.Table, section.Columns, sqlgraph.NewFieldSpec(section.FieldID, field.TypeUint64))
 	id, ok := _u.mutation.ID()
 	if !ok {
 		return nil, &ValidationError{Name: "id", err: errors.New(`ent: missing "Section.id" for update`)}
@@ -752,31 +752,31 @@ func (_u *SectionUpdateOne) sqlSave(ctx context.Context) (_node *Section, err er
 		_spec.ClearField(section.FieldDeletedAt, field.TypeTime)
 	}
 	if value, ok := _u.mutation.CreatedBy(); ok {
-		_spec.SetField(section.FieldCreatedBy, field.TypeUint32, value)
+		_spec.SetField(section.FieldCreatedBy, field.TypeUint64, value)
 	}
 	if value, ok := _u.mutation.AddedCreatedBy(); ok {
-		_spec.AddField(section.FieldCreatedBy, field.TypeUint32, value)
+		_spec.AddField(section.FieldCreatedBy, field.TypeUint64, value)
 	}
 	if _u.mutation.CreatedByCleared() {
-		_spec.ClearField(section.FieldCreatedBy, field.TypeUint32)
+		_spec.ClearField(section.FieldCreatedBy, field.TypeUint64)
 	}
 	if value, ok := _u.mutation.UpdatedBy(); ok {
-		_spec.SetField(section.FieldUpdatedBy, field.TypeUint32, value)
+		_spec.SetField(section.FieldUpdatedBy, field.TypeUint64, value)
 	}
 	if value, ok := _u.mutation.AddedUpdatedBy(); ok {
-		_spec.AddField(section.FieldUpdatedBy, field.TypeUint32, value)
+		_spec.AddField(section.FieldUpdatedBy, field.TypeUint64, value)
 	}
 	if _u.mutation.UpdatedByCleared() {
-		_spec.ClearField(section.FieldUpdatedBy, field.TypeUint32)
+		_spec.ClearField(section.FieldUpdatedBy, field.TypeUint64)
 	}
 	if value, ok := _u.mutation.DeletedBy(); ok {
-		_spec.SetField(section.FieldDeletedBy, field.TypeUint32, value)
+		_spec.SetField(section.FieldDeletedBy, field.TypeUint64, value)
 	}
 	if value, ok := _u.mutation.AddedDeletedBy(); ok {
-		_spec.AddField(section.FieldDeletedBy, field.TypeUint32, value)
+		_spec.AddField(section.FieldDeletedBy, field.TypeUint64, value)
 	}
 	if _u.mutation.DeletedByCleared() {
-		_spec.ClearField(section.FieldDeletedBy, field.TypeUint32)
+		_spec.ClearField(section.FieldDeletedBy, field.TypeUint64)
 	}
 	if value, ok := _u.mutation.SortOrder(); ok {
 		_spec.SetField(section.FieldSortOrder, field.TypeUint32, value)
@@ -788,16 +788,16 @@ func (_u *SectionUpdateOne) sqlSave(ctx context.Context) (_node *Section, err er
 		_spec.ClearField(section.FieldSortOrder, field.TypeUint32)
 	}
 	if _u.mutation.TenantIDCleared() {
-		_spec.ClearField(section.FieldTenantID, field.TypeUint32)
+		_spec.ClearField(section.FieldTenantID, field.TypeUint64)
 	}
 	if value, ok := _u.mutation.PageID(); ok {
-		_spec.SetField(section.FieldPageID, field.TypeUint32, value)
+		_spec.SetField(section.FieldPageID, field.TypeUint64, value)
 	}
 	if value, ok := _u.mutation.AddedPageID(); ok {
-		_spec.AddField(section.FieldPageID, field.TypeUint32, value)
+		_spec.AddField(section.FieldPageID, field.TypeUint64, value)
 	}
 	if _u.mutation.PageIDCleared() {
-		_spec.ClearField(section.FieldPageID, field.TypeUint32)
+		_spec.ClearField(section.FieldPageID, field.TypeUint64)
 	}
 	if value, ok := _u.mutation.GetType(); ok {
 		_spec.SetField(section.FieldType, field.TypeEnum, value)

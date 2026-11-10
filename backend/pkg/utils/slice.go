@@ -23,9 +23,9 @@ func FilterBlacklist(data []string, blacklist []string) []string {
 	return data[:n]
 }
 
-func NumberSliceToString(numbers []uint32) string {
+func NumberSliceToString(numbers []uint64) string {
 	return strings.Join(
-		sliceutil.Map(numbers, func(value uint32, _ int, _ []uint32) string { return strconv.FormatUint(uint64(value), 10) }),
+		sliceutil.Map(numbers, func(value uint64, _ int, _ []uint64) string { return strconv.FormatUint(uint64(value), 10) }),
 		",",
 	)
 }

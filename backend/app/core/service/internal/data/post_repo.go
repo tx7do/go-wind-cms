@@ -113,7 +113,7 @@ func (r *PostRepo) count(ctx context.Context, whereCond []func(s *sql.Selector))
 	return cnt, err
 }
 
-func (r *PostRepo) IsExist(ctx context.Context, id uint32) (bool, error) {
+func (r *PostRepo) IsExist(ctx context.Context, id uint64) (bool, error) {
 	exist, err := r.entClient.Client().Post.Query().
 		Where(post.IDEQ(id)).
 		Exist(ctx)
@@ -182,10 +182,10 @@ func (r *PostRepo) List(ctx context.Context, req *paginationV1.PagingRequest) (*
 	}
 
 	if len(excludeConditions) > 0 {
-		var postIDs []uint32
+		var postIDs []uint64
 
-		var tagIDs []uint32
-		var categoryIDs []uint32
+		var tagIDs []uint64
+		var categoryIDs []uint64
 		for _, cond := range excludeConditions {
 			//r.log.Debugf("exclude condition: %s %v", cond.GetField(), cond.GetValues())
 
@@ -194,7 +194,7 @@ func (r *PostRepo) List(ctx context.Context, req *paginationV1.PagingRequest) (*
 			case "tag_ids":
 				for _, v := range cond.GetValues() {
 					if val, err = strconv.ParseUint(v, 10, 64); err == nil {
-						tagIDs = append(tagIDs, uint32(val))
+						tagIDs = append(tagIDs, uint64(val))
 					} else {
 						r.log.Errorf("parse tag_ids value failed: %s", err.Error())
 					}
@@ -203,7 +203,7 @@ func (r *PostRepo) List(ctx context.Context, req *paginationV1.PagingRequest) (*
 			case "category_ids":
 				for _, v := range cond.GetValues() {
 					if val, err = strconv.ParseUint(v, 10, 64); err == nil {
-						categoryIDs = append(categoryIDs, uint32(val))
+						categoryIDs = append(categoryIDs, uint64(val))
 					} else {
 						r.log.Errorf("parse category_ids value failed: %s", err.Error())
 					}
@@ -212,7 +212,7 @@ func (r *PostRepo) List(ctx context.Context, req *paginationV1.PagingRequest) (*
 		}
 
 		if len(tagIDs) > 0 {
-			var tempIDs []uint32
+			var tempIDs []uint64
 			tempIDs, err = r.postTagRepo.ListPostIDsByTagIDs(ctx, tagIDs)
 			if err != nil {
 				r.log.Errorf("query post IDs by tag IDs failed: %s", err.Error())
@@ -222,7 +222,7 @@ func (r *PostRepo) List(ctx context.Context, req *paginationV1.PagingRequest) (*
 		}
 
 		if len(categoryIDs) > 0 {
-			var tempIDs []uint32
+			var tempIDs []uint64
 			tempIDs, err = r.postCategoryRepo.ListPostIDsByCategoryIDs(ctx, categoryIDs)
 			if err != nil {
 				r.log.Errorf("query post IDs by category IDs failed: %s", err.Error())
@@ -358,8 +358,8 @@ func (r *PostRepo) List(ctx context.Context, req *paginationV1.PagingRequest) (*
 // fillAuthorNames 为缺失作者名称的文章按 author_id 批量回填（昵称优先，回退用户名）。
 // 历史数据创建时未写 author_name 冗余列，读时兜底可同时修复存量行与用户改名的展示。
 func (r *PostRepo) fillAuthorNames(ctx context.Context, dtos []*contentV1.Post) {
-	need := make(map[uint32]struct{})
-	ids := make([]uint32, 0, len(dtos))
+	need := make(map[uint64]struct{})
+	ids := make([]uint64, 0, len(dtos))
 	for _, dto := range dtos {
 		if dto.GetAuthorName() != "" || dto.GetAuthorId() == 0 {
 			continue
@@ -383,7 +383,7 @@ func (r *PostRepo) fillAuthorNames(ctx context.Context, dtos []*contentV1.Post) 
 		return
 	}
 
-	names := make(map[uint32]string, len(users))
+	names := make(map[uint64]string, len(users))
 	for _, u := range users {
 		name := u.Nickname
 		if name == nil || *name == "" {
@@ -405,7 +405,7 @@ func (r *PostRepo) fillAuthorNames(ctx context.Context, dtos []*contentV1.Post) 
 
 // ListDueScheduledPostIDs 兜底扫描用：到期（publish_time 为空或已过）仍未转正的
 // SCHEDULED 文章 ID。SystemViewer 上下文调用（跨租户扫描）。
-func (r *PostRepo) ListDueScheduledPostIDs(ctx context.Context, now time.Time) ([]uint32, error) {
+func (r *PostRepo) ListDueScheduledPostIDs(ctx context.Context, now time.Time) ([]uint64, error) {
 	ids, err := r.entClient.Client().Post.Query().
 		Where(
 			post.StatusEQ(post.StatusPostStatusScheduled),
@@ -767,7 +767,7 @@ func (r *PostRepo) Delete(ctx context.Context, req *contentV1.DeletePostRequest)
 	return nil
 }
 
-func (r *PostRepo) TranslationExists(ctx context.Context, postId uint32, languageCode string) (bool, error) {
+func (r *PostRepo) TranslationExists(ctx context.Context, postId uint64, languageCode string) (bool, error) {
 	return r.postTranslationRepo.TranslationExists(ctx, postId, languageCode)
 }
 
@@ -826,7 +826,7 @@ func (r *PostRepo) GetTranslation(ctx context.Context, req *contentV1.GetPostReq
 	return r.postTranslationRepo.GetTranslation(ctx, req.GetId(), req.GetLocale())
 }
 
-func (r *PostRepo) ListTranslations(ctx context.Context, postId uint32) ([]*contentV1.PostTranslation, error) {
+func (r *PostRepo) ListTranslations(ctx context.Context, postId uint64) ([]*contentV1.PostTranslation, error) {
 	return r.postTranslationRepo.ListTranslations(ctx, postId, "", nil)
 }
 
@@ -834,11 +834,11 @@ func (r *PostRepo) DeleteTranslation(ctx context.Context, req *contentV1.DeleteP
 	return r.postTranslationRepo.DeleteTranslation(ctx, req)
 }
 
-func (r *PostRepo) CleanTranslations(ctx context.Context, tx *ent.Tx, postID uint32) error {
+func (r *PostRepo) CleanTranslations(ctx context.Context, tx *ent.Tx, postID uint64) error {
 	return r.postTranslationRepo.CleanTranslations(ctx, tx, postID)
 }
 
-func (r *PostRepo) CleanCategories(ctx context.Context, tx *ent.Tx, postID uint32) error {
+func (r *PostRepo) CleanCategories(ctx context.Context, tx *ent.Tx, postID uint64) error {
 	return r.postCategoryRepo.CleanCategories(ctx, tx, postID)
 }
 
@@ -854,8 +854,8 @@ func (r *PostRepo) CleanCategories(ctx context.Context, tx *ent.Tx, postID uint3
 // PostReindexDocument 是 PostRepo 返回给 SearchService 的单条 ES 文档数据。
 // TenantID 取自 ent.Post.TenantID（DB 真实值）。
 type PostReindexDocument struct {
-	TenantID uint32
-	PostID   uint32
+	TenantID uint64
+	PostID   uint64
 	Language string
 	Status   string
 	Title    string
@@ -870,7 +870,7 @@ type PostReindexDocument struct {
 //   - 跳过非 PUBLISHED 状态的帖子（不入索引）
 //   - 跳过 title/content 均空的翻译（避免索引无意义文档）
 //   - 调用方须以 SystemViewer ctx 调用，方能跨租户读取
-func (r *PostRepo) GetReindexDocuments(ctx context.Context, postID uint32) ([]PostReindexDocument, error) {
+func (r *PostRepo) GetReindexDocuments(ctx context.Context, postID uint64) ([]PostReindexDocument, error) {
 	if postID == 0 {
 		return nil, contentV1.ErrorBadRequest("invalid post id")
 	}
@@ -887,7 +887,7 @@ func (r *PostRepo) GetReindexDocuments(ctx context.Context, postID uint32) ([]Po
 	}
 
 	// tenant_id 取自 DB 记录，非 viewer
-	var tenantID uint32
+	var tenantID uint64
 	if entity.TenantID != nil {
 		tenantID = *entity.TenantID
 	}
@@ -933,7 +933,7 @@ func (r *PostRepo) GetReindexDocuments(ctx context.Context, postID uint32) ([]Po
 
 // ListPublishedPostIDs 列出所有 PUBLISHED 状态帖子的 ID。
 // 供 SearchService.ReindexAll 周期全量重索引使用。
-func (r *PostRepo) ListPublishedPostIDs(ctx context.Context) ([]uint32, error) {
+func (r *PostRepo) ListPublishedPostIDs(ctx context.Context) ([]uint64, error) {
 	entities, err := r.entClient.Client().Post.Query().
 		Select(post.FieldID).
 		All(ctx)
@@ -942,7 +942,7 @@ func (r *PostRepo) ListPublishedPostIDs(ctx context.Context) ([]uint32, error) {
 		return nil, contentV1.ErrorInternalServerError("list post ids for reindex failed")
 	}
 
-	ids := make([]uint32, 0, len(entities))
+	ids := make([]uint64, 0, len(entities))
 	for _, e := range entities {
 		if e == nil || e.Status == nil {
 			continue

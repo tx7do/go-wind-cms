@@ -10,47 +10,47 @@ import (
 )
 
 // ID filters vertices based on their ID field.
-func ID(id uint32) predicate.CollabDocState {
+func ID(id uint64) predicate.CollabDocState {
 	return predicate.CollabDocState(sql.FieldEQ(FieldID, id))
 }
 
 // IDEQ applies the EQ predicate on the ID field.
-func IDEQ(id uint32) predicate.CollabDocState {
+func IDEQ(id uint64) predicate.CollabDocState {
 	return predicate.CollabDocState(sql.FieldEQ(FieldID, id))
 }
 
 // IDNEQ applies the NEQ predicate on the ID field.
-func IDNEQ(id uint32) predicate.CollabDocState {
+func IDNEQ(id uint64) predicate.CollabDocState {
 	return predicate.CollabDocState(sql.FieldNEQ(FieldID, id))
 }
 
 // IDIn applies the In predicate on the ID field.
-func IDIn(ids ...uint32) predicate.CollabDocState {
+func IDIn(ids ...uint64) predicate.CollabDocState {
 	return predicate.CollabDocState(sql.FieldIn(FieldID, ids...))
 }
 
 // IDNotIn applies the NotIn predicate on the ID field.
-func IDNotIn(ids ...uint32) predicate.CollabDocState {
+func IDNotIn(ids ...uint64) predicate.CollabDocState {
 	return predicate.CollabDocState(sql.FieldNotIn(FieldID, ids...))
 }
 
 // IDGT applies the GT predicate on the ID field.
-func IDGT(id uint32) predicate.CollabDocState {
+func IDGT(id uint64) predicate.CollabDocState {
 	return predicate.CollabDocState(sql.FieldGT(FieldID, id))
 }
 
 // IDGTE applies the GTE predicate on the ID field.
-func IDGTE(id uint32) predicate.CollabDocState {
+func IDGTE(id uint64) predicate.CollabDocState {
 	return predicate.CollabDocState(sql.FieldGTE(FieldID, id))
 }
 
 // IDLT applies the LT predicate on the ID field.
-func IDLT(id uint32) predicate.CollabDocState {
+func IDLT(id uint64) predicate.CollabDocState {
 	return predicate.CollabDocState(sql.FieldLT(FieldID, id))
 }
 
 // IDLTE applies the LTE predicate on the ID field.
-func IDLTE(id uint32) predicate.CollabDocState {
+func IDLTE(id uint64) predicate.CollabDocState {
 	return predicate.CollabDocState(sql.FieldLTE(FieldID, id))
 }
 

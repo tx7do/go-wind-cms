@@ -41,7 +41,7 @@ func sign(payload string, key []byte) string {
 }
 
 // Mint 签发预览令牌。
-func Mint(kind string, id uint32, ttl time.Duration, now time.Time) (string, time.Time, error) {
+func Mint(kind string, id uint64, ttl time.Duration, now time.Time) (string, time.Time, error) {
 	if id == 0 {
 		return "", time.Time{}, fmt.Errorf("preview: target id required")
 	}
@@ -55,7 +55,7 @@ func Mint(kind string, id uint32, ttl time.Duration, now time.Time) (string, tim
 }
 
 // Verify 校验令牌，返回目标 id。kind 不匹配 / 签名不符 / 已过期均返回错误。
-func Verify(token, kind string, now time.Time) (uint32, error) {
+func Verify(token, kind string, now time.Time) (uint64, error) {
 	dot := strings.LastIndex(token, ".")
 	if dot <= 0 {
 		return 0, fmt.Errorf("preview: malformed token")
@@ -80,5 +80,5 @@ func Verify(token, kind string, now time.Time) (uint32, error) {
 	if err != nil || now.Unix() > expUnix {
 		return 0, fmt.Errorf("preview: token expired")
 	}
-	return uint32(id64), nil
+	return uint64(id64), nil
 }

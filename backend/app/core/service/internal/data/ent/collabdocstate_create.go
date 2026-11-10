@@ -77,7 +77,7 @@ func (_c *CollabDocStateCreate) SetDocUpdate(v []byte) *CollabDocStateCreate {
 }
 
 // SetID sets the "id" field.
-func (_c *CollabDocStateCreate) SetID(v uint32) *CollabDocStateCreate {
+func (_c *CollabDocStateCreate) SetID(v uint64) *CollabDocStateCreate {
 	_c.mutation.SetID(v)
 	return _c
 }
@@ -145,7 +145,7 @@ func (_c *CollabDocStateCreate) sqlSave(ctx context.Context) (*CollabDocState, e
 	}
 	if _spec.ID.Value != _node.ID {
 		id := _spec.ID.Value.(int64)
-		_node.ID = uint32(id)
+		_node.ID = uint64(id)
 	}
 	_c.mutation.id = &_node.ID
 	_c.mutation.done = true
@@ -155,7 +155,7 @@ func (_c *CollabDocStateCreate) sqlSave(ctx context.Context) (*CollabDocState, e
 func (_c *CollabDocStateCreate) createSpec() (*CollabDocState, *sqlgraph.CreateSpec) {
 	var (
 		_node = &CollabDocState{config: _c.config}
-		_spec = sqlgraph.NewCreateSpec(collabdocstate.Table, sqlgraph.NewFieldSpec(collabdocstate.FieldID, field.TypeUint32))
+		_spec = sqlgraph.NewCreateSpec(collabdocstate.Table, sqlgraph.NewFieldSpec(collabdocstate.FieldID, field.TypeUint64))
 	)
 	_spec.OnConflict = _c.conflict
 	if id, ok := _c.mutation.ID(); ok {
@@ -444,7 +444,7 @@ func (u *CollabDocStateUpsertOne) ExecX(ctx context.Context) {
 }
 
 // Exec executes the UPSERT query and returns the inserted/updated ID.
-func (u *CollabDocStateUpsertOne) ID(ctx context.Context) (id uint32, err error) {
+func (u *CollabDocStateUpsertOne) ID(ctx context.Context) (id uint64, err error) {
 	node, err := u.create.Save(ctx)
 	if err != nil {
 		return id, err
@@ -453,7 +453,7 @@ func (u *CollabDocStateUpsertOne) ID(ctx context.Context) (id uint32, err error)
 }
 
 // IDX is like ID, but panics if an error occurs.
-func (u *CollabDocStateUpsertOne) IDX(ctx context.Context) uint32 {
+func (u *CollabDocStateUpsertOne) IDX(ctx context.Context) uint64 {
 	id, err := u.ID(ctx)
 	if err != nil {
 		panic(err)
@@ -509,7 +509,7 @@ func (_c *CollabDocStateCreateBulk) Save(ctx context.Context) ([]*CollabDocState
 				mutation.id = &nodes[i].ID
 				if specs[i].ID.Value != nil && nodes[i].ID == 0 {
 					id := specs[i].ID.Value.(int64)
-					nodes[i].ID = uint32(id)
+					nodes[i].ID = uint64(id)
 				}
 				mutation.done = true
 				return nodes[i], nil

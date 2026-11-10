@@ -176,7 +176,7 @@ func (s *PageService) Delete(ctx context.Context, req *contentV1.DeletePageReque
 }
 
 // syncPageReferences 回读完整页面后同步媒体引用（保存钩子，best-effort）。
-func (s *PageService) syncPageReferences(ctx context.Context, pageID uint32) {
+func (s *PageService) syncPageReferences(ctx context.Context, pageID uint64) {
 	if s.referenceTracker == nil {
 		return
 	}
@@ -286,7 +286,7 @@ func (s *PageService) RestoreVersion(ctx context.Context, req *contentV1.Restore
 
 // snapshotPageVersion 写入当前页面完整状态快照（含 translations/sections）。
 // best-effort：版本化失败只记日志不阻断保存——内容保存是主链路，版本是附加保障。
-func (s *PageService) snapshotPageVersion(ctx context.Context, pageID uint32) {
+func (s *PageService) snapshotPageVersion(ctx context.Context, pageID uint64) {
 	if pageID == 0 {
 		return
 	}
@@ -308,7 +308,7 @@ func (s *PageService) snapshotPageVersion(ctx context.Context, pageID uint32) {
 // 端点绑定可调用角色即完成分权（无需新的权限码机制）。状态机本身在此处强校验。
 
 // loadPageForReview 取页面并校验可流转状态；返回 (page, error)。
-func (s *PageService) loadPageForReview(ctx context.Context, pageID uint32) (*contentV1.Page, error) {
+func (s *PageService) loadPageForReview(ctx context.Context, pageID uint64) (*contentV1.Page, error) {
 	page, err := s.pageRepo.Get(ctx, &contentV1.GetPageRequest{
 		QueryBy: &contentV1.GetPageRequest_Id{Id: pageID},
 	})

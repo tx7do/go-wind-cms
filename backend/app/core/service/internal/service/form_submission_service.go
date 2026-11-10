@@ -81,9 +81,9 @@ func (s *FormSubmissionService) Submit(ctx context.Context, req *contentV1.Submi
 	}
 
 	// 提交者：登录态取 viewer 用户，匿名 0
-	var userID uint32
+	var userID uint64
 	if vc, exist := viewer.FromContext(ctx); exist && vc != nil {
-		userID = uint32(vc.UserID())
+		userID = uint64(vc.UserID())
 	}
 
 	return s.formRepo.Create(ctx, req.GetPageId(), req.GetSectionId(), req.GetData(), userID)

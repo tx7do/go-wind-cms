@@ -51,8 +51,8 @@ func (QuotaPlan) Edges() []ent.Edge {
 func (QuotaPlan) Mixin() []ent.Mixin {
 	return []ent.Mixin{
 		mixin.TimeAt{},
-		mixin.AutoIncrementId{},
-		mixin.TenantID[uint32]{},
+		mixin.AutoIncrementId64{},
+		mixin.TenantID[uint64]{},
 	}
 }
 

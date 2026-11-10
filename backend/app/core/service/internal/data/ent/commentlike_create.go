@@ -65,13 +65,13 @@ func (_c *CommentLikeCreate) SetNillableDeletedAt(v *time.Time) *CommentLikeCrea
 }
 
 // SetTenantID sets the "tenant_id" field.
-func (_c *CommentLikeCreate) SetTenantID(v uint32) *CommentLikeCreate {
+func (_c *CommentLikeCreate) SetTenantID(v uint64) *CommentLikeCreate {
 	_c.mutation.SetTenantID(v)
 	return _c
 }
 
 // SetNillableTenantID sets the "tenant_id" field if the given value is not nil.
-func (_c *CommentLikeCreate) SetNillableTenantID(v *uint32) *CommentLikeCreate {
+func (_c *CommentLikeCreate) SetNillableTenantID(v *uint64) *CommentLikeCreate {
 	if v != nil {
 		_c.SetTenantID(*v)
 	}
@@ -79,13 +79,13 @@ func (_c *CommentLikeCreate) SetNillableTenantID(v *uint32) *CommentLikeCreate {
 }
 
 // SetUserID sets the "user_id" field.
-func (_c *CommentLikeCreate) SetUserID(v uint32) *CommentLikeCreate {
+func (_c *CommentLikeCreate) SetUserID(v uint64) *CommentLikeCreate {
 	_c.mutation.SetUserID(v)
 	return _c
 }
 
 // SetNillableUserID sets the "user_id" field if the given value is not nil.
-func (_c *CommentLikeCreate) SetNillableUserID(v *uint32) *CommentLikeCreate {
+func (_c *CommentLikeCreate) SetNillableUserID(v *uint64) *CommentLikeCreate {
 	if v != nil {
 		_c.SetUserID(*v)
 	}
@@ -93,13 +93,13 @@ func (_c *CommentLikeCreate) SetNillableUserID(v *uint32) *CommentLikeCreate {
 }
 
 // SetCommentID sets the "comment_id" field.
-func (_c *CommentLikeCreate) SetCommentID(v uint32) *CommentLikeCreate {
+func (_c *CommentLikeCreate) SetCommentID(v uint64) *CommentLikeCreate {
 	_c.mutation.SetCommentID(v)
 	return _c
 }
 
 // SetNillableCommentID sets the "comment_id" field if the given value is not nil.
-func (_c *CommentLikeCreate) SetNillableCommentID(v *uint32) *CommentLikeCreate {
+func (_c *CommentLikeCreate) SetNillableCommentID(v *uint64) *CommentLikeCreate {
 	if v != nil {
 		_c.SetCommentID(*v)
 	}
@@ -107,7 +107,7 @@ func (_c *CommentLikeCreate) SetNillableCommentID(v *uint32) *CommentLikeCreate 
 }
 
 // SetID sets the "id" field.
-func (_c *CommentLikeCreate) SetID(v uint32) *CommentLikeCreate {
+func (_c *CommentLikeCreate) SetID(v uint64) *CommentLikeCreate {
 	_c.mutation.SetID(v)
 	return _c
 }
@@ -179,7 +179,7 @@ func (_c *CommentLikeCreate) sqlSave(ctx context.Context) (*CommentLike, error) 
 	}
 	if _spec.ID.Value != _node.ID {
 		id := _spec.ID.Value.(int64)
-		_node.ID = uint32(id)
+		_node.ID = uint64(id)
 	}
 	_c.mutation.id = &_node.ID
 	_c.mutation.done = true
@@ -189,7 +189,7 @@ func (_c *CommentLikeCreate) sqlSave(ctx context.Context) (*CommentLike, error) 
 func (_c *CommentLikeCreate) createSpec() (*CommentLike, *sqlgraph.CreateSpec) {
 	var (
 		_node = &CommentLike{config: _c.config}
-		_spec = sqlgraph.NewCreateSpec(commentlike.Table, sqlgraph.NewFieldSpec(commentlike.FieldID, field.TypeUint32))
+		_spec = sqlgraph.NewCreateSpec(commentlike.Table, sqlgraph.NewFieldSpec(commentlike.FieldID, field.TypeUint64))
 	)
 	_spec.OnConflict = _c.conflict
 	if id, ok := _c.mutation.ID(); ok {
@@ -209,15 +209,15 @@ func (_c *CommentLikeCreate) createSpec() (*CommentLike, *sqlgraph.CreateSpec) {
 		_node.DeletedAt = &value
 	}
 	if value, ok := _c.mutation.TenantID(); ok {
-		_spec.SetField(commentlike.FieldTenantID, field.TypeUint32, value)
+		_spec.SetField(commentlike.FieldTenantID, field.TypeUint64, value)
 		_node.TenantID = &value
 	}
 	if value, ok := _c.mutation.UserID(); ok {
-		_spec.SetField(commentlike.FieldUserID, field.TypeUint32, value)
+		_spec.SetField(commentlike.FieldUserID, field.TypeUint64, value)
 		_node.UserID = &value
 	}
 	if value, ok := _c.mutation.CommentID(); ok {
-		_spec.SetField(commentlike.FieldCommentID, field.TypeUint32, value)
+		_spec.SetField(commentlike.FieldCommentID, field.TypeUint64, value)
 		_node.CommentID = &value
 	}
 	return _node, _spec
@@ -309,7 +309,7 @@ func (u *CommentLikeUpsert) ClearDeletedAt() *CommentLikeUpsert {
 }
 
 // SetUserID sets the "user_id" field.
-func (u *CommentLikeUpsert) SetUserID(v uint32) *CommentLikeUpsert {
+func (u *CommentLikeUpsert) SetUserID(v uint64) *CommentLikeUpsert {
 	u.Set(commentlike.FieldUserID, v)
 	return u
 }
@@ -321,7 +321,7 @@ func (u *CommentLikeUpsert) UpdateUserID() *CommentLikeUpsert {
 }
 
 // AddUserID adds v to the "user_id" field.
-func (u *CommentLikeUpsert) AddUserID(v uint32) *CommentLikeUpsert {
+func (u *CommentLikeUpsert) AddUserID(v uint64) *CommentLikeUpsert {
 	u.Add(commentlike.FieldUserID, v)
 	return u
 }
@@ -333,7 +333,7 @@ func (u *CommentLikeUpsert) ClearUserID() *CommentLikeUpsert {
 }
 
 // SetCommentID sets the "comment_id" field.
-func (u *CommentLikeUpsert) SetCommentID(v uint32) *CommentLikeUpsert {
+func (u *CommentLikeUpsert) SetCommentID(v uint64) *CommentLikeUpsert {
 	u.Set(commentlike.FieldCommentID, v)
 	return u
 }
@@ -345,7 +345,7 @@ func (u *CommentLikeUpsert) UpdateCommentID() *CommentLikeUpsert {
 }
 
 // AddCommentID adds v to the "comment_id" field.
-func (u *CommentLikeUpsert) AddCommentID(v uint32) *CommentLikeUpsert {
+func (u *CommentLikeUpsert) AddCommentID(v uint64) *CommentLikeUpsert {
 	u.Add(commentlike.FieldCommentID, v)
 	return u
 }
@@ -453,14 +453,14 @@ func (u *CommentLikeUpsertOne) ClearDeletedAt() *CommentLikeUpsertOne {
 }
 
 // SetUserID sets the "user_id" field.
-func (u *CommentLikeUpsertOne) SetUserID(v uint32) *CommentLikeUpsertOne {
+func (u *CommentLikeUpsertOne) SetUserID(v uint64) *CommentLikeUpsertOne {
 	return u.Update(func(s *CommentLikeUpsert) {
 		s.SetUserID(v)
 	})
 }
 
 // AddUserID adds v to the "user_id" field.
-func (u *CommentLikeUpsertOne) AddUserID(v uint32) *CommentLikeUpsertOne {
+func (u *CommentLikeUpsertOne) AddUserID(v uint64) *CommentLikeUpsertOne {
 	return u.Update(func(s *CommentLikeUpsert) {
 		s.AddUserID(v)
 	})
@@ -481,14 +481,14 @@ func (u *CommentLikeUpsertOne) ClearUserID() *CommentLikeUpsertOne {
 }
 
 // SetCommentID sets the "comment_id" field.
-func (u *CommentLikeUpsertOne) SetCommentID(v uint32) *CommentLikeUpsertOne {
+func (u *CommentLikeUpsertOne) SetCommentID(v uint64) *CommentLikeUpsertOne {
 	return u.Update(func(s *CommentLikeUpsert) {
 		s.SetCommentID(v)
 	})
 }
 
 // AddCommentID adds v to the "comment_id" field.
-func (u *CommentLikeUpsertOne) AddCommentID(v uint32) *CommentLikeUpsertOne {
+func (u *CommentLikeUpsertOne) AddCommentID(v uint64) *CommentLikeUpsertOne {
 	return u.Update(func(s *CommentLikeUpsert) {
 		s.AddCommentID(v)
 	})
@@ -524,7 +524,7 @@ func (u *CommentLikeUpsertOne) ExecX(ctx context.Context) {
 }
 
 // Exec executes the UPSERT query and returns the inserted/updated ID.
-func (u *CommentLikeUpsertOne) ID(ctx context.Context) (id uint32, err error) {
+func (u *CommentLikeUpsertOne) ID(ctx context.Context) (id uint64, err error) {
 	node, err := u.create.Save(ctx)
 	if err != nil {
 		return id, err
@@ -533,7 +533,7 @@ func (u *CommentLikeUpsertOne) ID(ctx context.Context) (id uint32, err error) {
 }
 
 // IDX is like ID, but panics if an error occurs.
-func (u *CommentLikeUpsertOne) IDX(ctx context.Context) uint32 {
+func (u *CommentLikeUpsertOne) IDX(ctx context.Context) uint64 {
 	id, err := u.ID(ctx)
 	if err != nil {
 		panic(err)
@@ -590,7 +590,7 @@ func (_c *CommentLikeCreateBulk) Save(ctx context.Context) ([]*CommentLike, erro
 				mutation.id = &nodes[i].ID
 				if specs[i].ID.Value != nil && nodes[i].ID == 0 {
 					id := specs[i].ID.Value.(int64)
-					nodes[i].ID = uint32(id)
+					nodes[i].ID = uint64(id)
 				}
 				mutation.done = true
 				return nodes[i], nil
@@ -771,14 +771,14 @@ func (u *CommentLikeUpsertBulk) ClearDeletedAt() *CommentLikeUpsertBulk {
 }
 
 // SetUserID sets the "user_id" field.
-func (u *CommentLikeUpsertBulk) SetUserID(v uint32) *CommentLikeUpsertBulk {
+func (u *CommentLikeUpsertBulk) SetUserID(v uint64) *CommentLikeUpsertBulk {
 	return u.Update(func(s *CommentLikeUpsert) {
 		s.SetUserID(v)
 	})
 }
 
 // AddUserID adds v to the "user_id" field.
-func (u *CommentLikeUpsertBulk) AddUserID(v uint32) *CommentLikeUpsertBulk {
+func (u *CommentLikeUpsertBulk) AddUserID(v uint64) *CommentLikeUpsertBulk {
 	return u.Update(func(s *CommentLikeUpsert) {
 		s.AddUserID(v)
 	})
@@ -799,14 +799,14 @@ func (u *CommentLikeUpsertBulk) ClearUserID() *CommentLikeUpsertBulk {
 }
 
 // SetCommentID sets the "comment_id" field.
-func (u *CommentLikeUpsertBulk) SetCommentID(v uint32) *CommentLikeUpsertBulk {
+func (u *CommentLikeUpsertBulk) SetCommentID(v uint64) *CommentLikeUpsertBulk {
 	return u.Update(func(s *CommentLikeUpsert) {
 		s.SetCommentID(v)
 	})
 }
 
 // AddCommentID adds v to the "comment_id" field.
-func (u *CommentLikeUpsertBulk) AddCommentID(v uint32) *CommentLikeUpsertBulk {
+func (u *CommentLikeUpsertBulk) AddCommentID(v uint64) *CommentLikeUpsertBulk {
 	return u.Update(func(s *CommentLikeUpsert) {
 		s.AddCommentID(v)
 	})

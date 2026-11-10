@@ -268,7 +268,7 @@ func NewRestServer(
 			if err != nil || id64 == 0 {
 				return mediaV1.ErrorBadRequest("invalid media asset id")
 			}
-			return mediaAssetService.ServeContent(ctx, ctx.Response(), ctx.Request(), uint32(id64))
+			return mediaAssetService.ServeContent(ctx, ctx.Response(), ctx.Request(), uint64(id64))
 		})
 	}
 

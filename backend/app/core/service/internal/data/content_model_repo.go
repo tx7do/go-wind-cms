@@ -476,7 +476,7 @@ func (r *ContentModelRepo) fillModelAssociations(ctx context.Context, dto *conte
 	return nil
 }
 
-func (r *ContentModelRepo) listFieldTranslations(ctx context.Context, fieldDefinitionID uint32) ([]*contentV1.FieldDefinitionTranslation, error) {
+func (r *ContentModelRepo) listFieldTranslations(ctx context.Context, fieldDefinitionID uint64) ([]*contentV1.FieldDefinitionTranslation, error) {
 	entities, err := r.entClient.Client().FieldDefinitionTranslation.Query().
 		Where(fielddefinitiontranslation.FieldDefinitionIDEQ(fieldDefinitionID)).
 		Order(ent.Asc(fielddefinitiontranslation.FieldID)).
@@ -551,7 +551,7 @@ func (r *ContentModelRepo) newFieldCreateBuilder(fd *ent.FieldDefinitionClient, 
 	return builder
 }
 
-func (r *ContentModelRepo) batchCreateFields(ctx context.Context, tx *ent.Tx, modelID uint32, fields []*contentV1.FieldDefinition) error {
+func (r *ContentModelRepo) batchCreateFields(ctx context.Context, tx *ent.Tx, modelID uint64, fields []*contentV1.FieldDefinition) error {
 	for _, f := range fields {
 		if f == nil || f.GetName() == "" {
 			return contentV1.ErrorBadRequest("field definition name is required")
@@ -584,7 +584,7 @@ func (r *ContentModelRepo) batchCreateFields(ctx context.Context, tx *ent.Tx, mo
 	return nil
 }
 
-func (r *ContentModelRepo) replaceFields(ctx context.Context, tx *ent.Tx, modelID uint32, fields []*contentV1.FieldDefinition) error {
+func (r *ContentModelRepo) replaceFields(ctx context.Context, tx *ent.Tx, modelID uint64, fields []*contentV1.FieldDefinition) error {
 	// 清旧（含字段翻译）
 	oldIDs, err := tx.FieldDefinition.Query().
 		Where(fielddefinition.ContentModelIDEQ(modelID)).
@@ -611,7 +611,7 @@ func (r *ContentModelRepo) replaceFields(ctx context.Context, tx *ent.Tx, modelI
 	return r.batchCreateFields(ctx, tx, modelID, fields)
 }
 
-func (r *ContentModelRepo) batchCreateModelTranslations(ctx context.Context, tx *ent.Tx, modelID uint32, translations []*contentV1.ContentModelTranslation) error {
+func (r *ContentModelRepo) batchCreateModelTranslations(ctx context.Context, tx *ent.Tx, modelID uint64, translations []*contentV1.ContentModelTranslation) error {
 	for _, tr := range translations {
 		if tr == nil || tr.GetLanguageCode() == "" {
 			continue
@@ -632,7 +632,7 @@ func (r *ContentModelRepo) batchCreateModelTranslations(ctx context.Context, tx 
 	return nil
 }
 
-func (r *ContentModelRepo) replaceModelTranslations(ctx context.Context, tx *ent.Tx, modelID uint32, translations []*contentV1.ContentModelTranslation) error {
+func (r *ContentModelRepo) replaceModelTranslations(ctx context.Context, tx *ent.Tx, modelID uint64, translations []*contentV1.ContentModelTranslation) error {
 	if _, err := tx.ContentModelTranslation.Delete().
 		Where(contentmodeltranslation.ContentModelIDEQ(modelID)).
 		Exec(ctx); err != nil {
@@ -646,7 +646,7 @@ func (r *ContentModelRepo) replaceModelTranslations(ctx context.Context, tx *ent
 
 // ResolveModelIDByCategories 返回分类列表里第一个绑定模型的 ID（0=无绑定）。
 // 用于 Post 写入 custom_fields 前解析其所属分类链上的模型。
-func (r *ContentModelRepo) ResolveModelIDByCategories(ctx context.Context, categoryIds []uint32) uint32 {
+func (r *ContentModelRepo) ResolveModelIDByCategories(ctx context.Context, categoryIds []uint64) uint64 {
 	if len(categoryIds) == 0 {
 		return 0
 	}
@@ -673,7 +673,7 @@ func (r *ContentModelRepo) ResolveModelIDByCategories(ctx context.Context, categ
 // relation 引用格式（entity:ID）+ 实体类型白名单 + 目标实体存在性与租户归属
 // （AllowCrossTenant=false 时目标 tenant_id 必须等于当前租户）。
 // 未在模型字段定义中的多余键会被拒绝，防止匿名写入任意键。
-func (r *ContentModelRepo) ValidateValues(ctx context.Context, contentModelID uint32, customFields map[string]string, tenantID uint32) error {
+func (r *ContentModelRepo) ValidateValues(ctx context.Context, contentModelID uint64, customFields map[string]string, tenantID uint64) error {
 	if contentModelID == 0 {
 		// 未绑定模型：customFields 必须为空，防止绕过模型校验写入任意键
 		if len(customFields) > 0 {
@@ -791,7 +791,7 @@ func (r *ContentModelRepo) ValidateValues(ctx context.Context, contentModelID ui
 }
 
 // parseStringRef 解析 "<prefix><id>" 形式的字符串化引用。
-func parseStringRef(value, prefix string) (uint32, bool) {
+func parseStringRef(value, prefix string) (uint64, bool) {
 	if !strings.HasPrefix(value, prefix) {
 		return 0, false
 	}
@@ -799,11 +799,11 @@ func parseStringRef(value, prefix string) (uint32, bool) {
 	if err != nil || id == 0 {
 		return 0, false
 	}
-	return uint32(id), true
+	return uint64(id), true
 }
 
 // parseEntityRef 解析 "entity:id" 形式的关联引用。
-func parseEntityRef(value string) (string, uint32, bool) {
+func parseEntityRef(value string) (string, uint64, bool) {
 	parts := strings.SplitN(value, ":", 2)
 	if len(parts) != 2 {
 		return "", 0, false
@@ -813,12 +813,12 @@ func parseEntityRef(value string) (string, uint32, bool) {
 	if err != nil || id == 0 {
 		return "", 0, false
 	}
-	return entityType, uint32(id), true
+	return entityType, uint64(id), true
 }
 
 // queryEntityTenant 查询目标实体的租户归属（白名单实体类型）。
-func (r *ContentModelRepo) queryEntityTenant(ctx context.Context, entityType string, id uint32) (uint32, error) {
-	var tenantID *uint32
+func (r *ContentModelRepo) queryEntityTenant(ctx context.Context, entityType string, id uint64) (uint64, error) {
+	var tenantID *uint64
 	var err error
 	switch entityType {
 	case "post":
@@ -857,7 +857,7 @@ func (r *ContentModelRepo) queryEntityTenant(ctx context.Context, entityType str
 // ============ 组件定义（Components / 可重复字段组 / 动态区，见设计文档 §2/§5） ============
 
 // listComponentFieldDefinitions 列组件字段（与模型字段同表，按 component_id 归属）。
-func (r *ContentModelRepo) listComponentFieldDefinitions(ctx context.Context, componentID uint32) (*contentV1.ListFieldDefinitionsResponse, error) {
+func (r *ContentModelRepo) listComponentFieldDefinitions(ctx context.Context, componentID uint64) (*contentV1.ListFieldDefinitionsResponse, error) {
 	entities, err := r.entClient.Client().FieldDefinition.Query().
 		Where(fielddefinition.ComponentIDEQ(componentID)).
 		Order(ent.Asc(fielddefinition.FieldSortOrder), ent.Asc(fielddefinition.FieldID)).
@@ -907,7 +907,7 @@ func (r *ContentModelRepo) ListComponentDefinitions(ctx context.Context, req *pa
 }
 
 // componentFieldCounts 一次查询统计各组件的字段数（组件字段行 component_id 非空）。
-func (r *ContentModelRepo) componentFieldCounts(ctx context.Context) (map[uint32]uint32, error) {
+func (r *ContentModelRepo) componentFieldCounts(ctx context.Context) (map[uint64]uint32, error) {
 	rows, err := r.entClient.Client().FieldDefinition.Query().
 		Where(fielddefinition.ComponentIDNotNil()).
 		Select(fielddefinition.FieldComponentID).
@@ -916,7 +916,7 @@ func (r *ContentModelRepo) componentFieldCounts(ctx context.Context) (map[uint32
 		r.log.Errorf("count component fields failed: %s", err.Error())
 		return nil, contentV1.ErrorInternalServerError("count component fields failed")
 	}
-	counts := make(map[uint32]uint32)
+	counts := make(map[uint64]uint32)
 	for _, row := range rows {
 		if row.ComponentID != nil {
 			counts[*row.ComponentID]++
@@ -926,7 +926,7 @@ func (r *ContentModelRepo) componentFieldCounts(ctx context.Context) (map[uint32
 }
 
 // GetComponentDefinition 组件定义详情。
-func (r *ContentModelRepo) GetComponentDefinition(ctx context.Context, id uint32) (*contentV1.ComponentDefinition, error) {
+func (r *ContentModelRepo) GetComponentDefinition(ctx context.Context, id uint64) (*contentV1.ComponentDefinition, error) {
 	row, err := r.entClient.Client().ComponentDefinition.Get(ctx, id)
 	if err != nil {
 		if ent.IsNotFound(err) {
@@ -973,7 +973,7 @@ func (r *ContentModelRepo) CreateComponentDefinition(ctx context.Context, dto *c
 }
 
 // UpdateComponentDefinition 更新组件定义（code 创建后不可改——模型字段按 code 引用）。
-func (r *ContentModelRepo) UpdateComponentDefinition(ctx context.Context, id uint32, dto *contentV1.ComponentDefinition) (*contentV1.ComponentDefinition, error) {
+func (r *ContentModelRepo) UpdateComponentDefinition(ctx context.Context, id uint64, dto *contentV1.ComponentDefinition) (*contentV1.ComponentDefinition, error) {
 	// 归属校验：UpdateOneID 是 ent 变更路径，TenantPrivacy 不覆盖，无条件先做
 	// 作用域读（Get 走 ent 查询，租户视图下自动注入 tenant_id 过滤），
 	// 跨租户/不存在一律 NotFound——不能只在改 code 的分支才读。
@@ -1010,7 +1010,7 @@ func (r *ContentModelRepo) UpdateComponentDefinition(ctx context.Context, id uin
 
 // DeleteComponentDefinition 删除组件定义：被模型字段的 component_config 按 code
 // 引用时拒绝（先解绑再删）；组件自身字段随删（含翻译）。
-func (r *ContentModelRepo) DeleteComponentDefinition(ctx context.Context, id uint32) error {
+func (r *ContentModelRepo) DeleteComponentDefinition(ctx context.Context, id uint64) error {
 	row, err := r.entClient.Client().ComponentDefinition.Get(ctx, id)
 	if err != nil {
 		if ent.IsNotFound(err) {
@@ -1068,7 +1068,7 @@ func (r *ContentModelRepo) DeleteComponentDefinition(ctx context.Context, id uin
 }
 
 // SaveComponentFieldDefinitions 整体替换组件字段集（replace 语义，同模型字段）。
-func (r *ContentModelRepo) SaveComponentFieldDefinitions(ctx context.Context, componentID uint32, fields []*contentV1.FieldDefinition) (*contentV1.ListFieldDefinitionsResponse, error) {
+func (r *ContentModelRepo) SaveComponentFieldDefinitions(ctx context.Context, componentID uint64, fields []*contentV1.FieldDefinition) (*contentV1.ListFieldDefinitionsResponse, error) {
 	if _, err := r.entClient.Client().ComponentDefinition.Get(ctx, componentID); err != nil {
 		if ent.IsNotFound(err) {
 			return nil, contentV1.ErrorNotFound("component definition not found")
@@ -1163,7 +1163,7 @@ func containsString(list []string, target string) bool {
 
 // validateComponentLeafValue 组件叶子字段值校验（文本/数字/媒体引用/关联引用，
 // 与 ValidateValues 主链的叶子规则同款——组件实例内独立成函数，避免动主链）。
-func (r *ContentModelRepo) validateComponentLeafValue(ctx context.Context, fd *ent.FieldDefinition, qualName, value string, tenantID uint32) error {
+func (r *ContentModelRepo) validateComponentLeafValue(ctx context.Context, fd *ent.FieldDefinition, qualName, value string, tenantID uint64) error {
 	fieldType := fielddefinition.DefaultType
 	if fd.Type != nil {
 		fieldType = *fd.Type
@@ -1220,7 +1220,7 @@ func (r *ContentModelRepo) componentFieldsByCode(ctx context.Context, codes []st
 		r.log.Errorf("query component definitions for validation failed: %s", err.Error())
 		return nil, contentV1.ErrorInternalServerError("query component definitions failed")
 	}
-	byID := make(map[uint32]string, len(comps))
+	byID := make(map[uint64]string, len(comps))
 	for _, c := range comps {
 		byID[c.ID] = c.Code
 	}
@@ -1254,8 +1254,8 @@ func (r *ContentModelRepo) componentFieldsByCode(ctx context.Context, codes []st
 	return out, nil
 }
 
-func keysOf(m map[uint32]string) []uint32 {
-	keys := make([]uint32, 0, len(m))
+func keysOf(m map[uint64]string) []uint64 {
+	keys := make([]uint64, 0, len(m))
 	for k := range m {
 		keys = append(keys, k)
 	}
@@ -1264,7 +1264,7 @@ func keysOf(m map[uint32]string) []uint32 {
 
 // validateComponentInstances 校验组件实例数组/对象：键集 ⊆ 组件字段、组件内
 // 必填、叶子值类型与引用合法性。instances 为解析后的实例切片。
-func (r *ContentModelRepo) validateComponentInstances(ctx context.Context, fields []*ent.FieldDefinition, instances []map[string]any, qualName string, tenantID uint32) error {
+func (r *ContentModelRepo) validateComponentInstances(ctx context.Context, fields []*ent.FieldDefinition, instances []map[string]any, qualName string, tenantID uint64) error {
 	derefStr := func(p *string) string {
 		if p == nil {
 			return ""
@@ -1306,7 +1306,7 @@ func (r *ContentModelRepo) validateComponentInstances(ctx context.Context, field
 }
 
 // validateComponentFieldValue COMPONENT/DYNAMIC_ZONE 字段值校验（值形状见设计文档 §3）。
-func (r *ContentModelRepo) validateComponentFieldValue(ctx context.Context, def *ent.FieldDefinition, name, value string, tenantID uint32) error {
+func (r *ContentModelRepo) validateComponentFieldValue(ctx context.Context, def *ent.FieldDefinition, name, value string, tenantID uint64) error {
 	if def.ComponentConfig == nil {
 		return contentV1.ErrorBadRequest("%s", fmt.Sprintf("custom field %q is a component field without component config", name))
 	}
@@ -1395,7 +1395,7 @@ func (r *ContentModelRepo) FillModelComponents(ctx context.Context, dto *content
 		r.log.Errorf("query components for model failed: %s", err.Error())
 		return contentV1.ErrorInternalServerError("query components failed")
 	}
-	byID := make(map[uint32]string, len(comps))
+	byID := make(map[uint64]string, len(comps))
 	byCode := make(map[string]*contentV1.ContentModelComponent, len(comps))
 	items := make([]*contentV1.ContentModelComponent, 0, len(comps))
 	for _, c := range comps {

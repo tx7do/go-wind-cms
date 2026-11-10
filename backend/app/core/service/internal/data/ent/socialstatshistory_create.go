@@ -65,13 +65,13 @@ func (_c *SocialStatsHistoryCreate) SetNillableDeletedAt(v *time.Time) *SocialSt
 }
 
 // SetDistributionID sets the "distribution_id" field.
-func (_c *SocialStatsHistoryCreate) SetDistributionID(v uint32) *SocialStatsHistoryCreate {
+func (_c *SocialStatsHistoryCreate) SetDistributionID(v uint64) *SocialStatsHistoryCreate {
 	_c.mutation.SetDistributionID(v)
 	return _c
 }
 
 // SetNillableDistributionID sets the "distribution_id" field if the given value is not nil.
-func (_c *SocialStatsHistoryCreate) SetNillableDistributionID(v *uint32) *SocialStatsHistoryCreate {
+func (_c *SocialStatsHistoryCreate) SetNillableDistributionID(v *uint64) *SocialStatsHistoryCreate {
 	if v != nil {
 		_c.SetDistributionID(*v)
 	}
@@ -121,7 +121,7 @@ func (_c *SocialStatsHistoryCreate) SetNillableReposts(v *uint32) *SocialStatsHi
 }
 
 // SetID sets the "id" field.
-func (_c *SocialStatsHistoryCreate) SetID(v uint32) *SocialStatsHistoryCreate {
+func (_c *SocialStatsHistoryCreate) SetID(v uint64) *SocialStatsHistoryCreate {
 	_c.mutation.SetID(v)
 	return _c
 }
@@ -198,7 +198,7 @@ func (_c *SocialStatsHistoryCreate) sqlSave(ctx context.Context) (*SocialStatsHi
 	}
 	if _spec.ID.Value != _node.ID {
 		id := _spec.ID.Value.(int64)
-		_node.ID = uint32(id)
+		_node.ID = uint64(id)
 	}
 	_c.mutation.id = &_node.ID
 	_c.mutation.done = true
@@ -208,7 +208,7 @@ func (_c *SocialStatsHistoryCreate) sqlSave(ctx context.Context) (*SocialStatsHi
 func (_c *SocialStatsHistoryCreate) createSpec() (*SocialStatsHistory, *sqlgraph.CreateSpec) {
 	var (
 		_node = &SocialStatsHistory{config: _c.config}
-		_spec = sqlgraph.NewCreateSpec(socialstatshistory.Table, sqlgraph.NewFieldSpec(socialstatshistory.FieldID, field.TypeUint32))
+		_spec = sqlgraph.NewCreateSpec(socialstatshistory.Table, sqlgraph.NewFieldSpec(socialstatshistory.FieldID, field.TypeUint64))
 	)
 	_spec.OnConflict = _c.conflict
 	if id, ok := _c.mutation.ID(); ok {
@@ -228,7 +228,7 @@ func (_c *SocialStatsHistoryCreate) createSpec() (*SocialStatsHistory, *sqlgraph
 		_node.DeletedAt = &value
 	}
 	if value, ok := _c.mutation.DistributionID(); ok {
-		_spec.SetField(socialstatshistory.FieldDistributionID, field.TypeUint32, value)
+		_spec.SetField(socialstatshistory.FieldDistributionID, field.TypeUint64, value)
 		_node.DistributionID = &value
 	}
 	if value, ok := _c.mutation.Likes(); ok {
@@ -332,7 +332,7 @@ func (u *SocialStatsHistoryUpsert) ClearDeletedAt() *SocialStatsHistoryUpsert {
 }
 
 // SetDistributionID sets the "distribution_id" field.
-func (u *SocialStatsHistoryUpsert) SetDistributionID(v uint32) *SocialStatsHistoryUpsert {
+func (u *SocialStatsHistoryUpsert) SetDistributionID(v uint64) *SocialStatsHistoryUpsert {
 	u.Set(socialstatshistory.FieldDistributionID, v)
 	return u
 }
@@ -344,7 +344,7 @@ func (u *SocialStatsHistoryUpsert) UpdateDistributionID() *SocialStatsHistoryUps
 }
 
 // AddDistributionID adds v to the "distribution_id" field.
-func (u *SocialStatsHistoryUpsert) AddDistributionID(v uint32) *SocialStatsHistoryUpsert {
+func (u *SocialStatsHistoryUpsert) AddDistributionID(v uint64) *SocialStatsHistoryUpsert {
 	u.Add(socialstatshistory.FieldDistributionID, v)
 	return u
 }
@@ -521,14 +521,14 @@ func (u *SocialStatsHistoryUpsertOne) ClearDeletedAt() *SocialStatsHistoryUpsert
 }
 
 // SetDistributionID sets the "distribution_id" field.
-func (u *SocialStatsHistoryUpsertOne) SetDistributionID(v uint32) *SocialStatsHistoryUpsertOne {
+func (u *SocialStatsHistoryUpsertOne) SetDistributionID(v uint64) *SocialStatsHistoryUpsertOne {
 	return u.Update(func(s *SocialStatsHistoryUpsert) {
 		s.SetDistributionID(v)
 	})
 }
 
 // AddDistributionID adds v to the "distribution_id" field.
-func (u *SocialStatsHistoryUpsertOne) AddDistributionID(v uint32) *SocialStatsHistoryUpsertOne {
+func (u *SocialStatsHistoryUpsertOne) AddDistributionID(v uint64) *SocialStatsHistoryUpsertOne {
 	return u.Update(func(s *SocialStatsHistoryUpsert) {
 		s.AddDistributionID(v)
 	})
@@ -648,7 +648,7 @@ func (u *SocialStatsHistoryUpsertOne) ExecX(ctx context.Context) {
 }
 
 // Exec executes the UPSERT query and returns the inserted/updated ID.
-func (u *SocialStatsHistoryUpsertOne) ID(ctx context.Context) (id uint32, err error) {
+func (u *SocialStatsHistoryUpsertOne) ID(ctx context.Context) (id uint64, err error) {
 	node, err := u.create.Save(ctx)
 	if err != nil {
 		return id, err
@@ -657,7 +657,7 @@ func (u *SocialStatsHistoryUpsertOne) ID(ctx context.Context) (id uint32, err er
 }
 
 // IDX is like ID, but panics if an error occurs.
-func (u *SocialStatsHistoryUpsertOne) IDX(ctx context.Context) uint32 {
+func (u *SocialStatsHistoryUpsertOne) IDX(ctx context.Context) uint64 {
 	id, err := u.ID(ctx)
 	if err != nil {
 		panic(err)
@@ -714,7 +714,7 @@ func (_c *SocialStatsHistoryCreateBulk) Save(ctx context.Context) ([]*SocialStat
 				mutation.id = &nodes[i].ID
 				if specs[i].ID.Value != nil && nodes[i].ID == 0 {
 					id := specs[i].ID.Value.(int64)
-					nodes[i].ID = uint32(id)
+					nodes[i].ID = uint64(id)
 				}
 				mutation.done = true
 				return nodes[i], nil
@@ -892,14 +892,14 @@ func (u *SocialStatsHistoryUpsertBulk) ClearDeletedAt() *SocialStatsHistoryUpser
 }
 
 // SetDistributionID sets the "distribution_id" field.
-func (u *SocialStatsHistoryUpsertBulk) SetDistributionID(v uint32) *SocialStatsHistoryUpsertBulk {
+func (u *SocialStatsHistoryUpsertBulk) SetDistributionID(v uint64) *SocialStatsHistoryUpsertBulk {
 	return u.Update(func(s *SocialStatsHistoryUpsert) {
 		s.SetDistributionID(v)
 	})
 }
 
 // AddDistributionID adds v to the "distribution_id" field.
-func (u *SocialStatsHistoryUpsertBulk) AddDistributionID(v uint32) *SocialStatsHistoryUpsertBulk {
+func (u *SocialStatsHistoryUpsertBulk) AddDistributionID(v uint64) *SocialStatsHistoryUpsertBulk {
 	return u.Update(func(s *SocialStatsHistoryUpsert) {
 		s.AddDistributionID(v)
 	})

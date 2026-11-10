@@ -72,7 +72,7 @@ func (s *InternalMessageSender) Send(ctx context.Context, req *channel.SendReque
 // userInQuietWindow 判定收件人此刻是否处在实时推送静音时段。
 // 全链 fail-open：偏好缺失/读失败/配置非法一律不静音（推送是即时性的加分项，不该成为故障面）。
 // 跨零点窗口（start > end，如 22:00→08:00）合法；start == end 视为无效配置。
-func userInQuietWindow(ctx context.Context, prefRepo *data.NotificationPreferenceRepo, log *log.Helper, userID uint32, now time.Time) bool {
+func userInQuietWindow(ctx context.Context, prefRepo *data.NotificationPreferenceRepo, log *log.Helper, userID uint64, now time.Time) bool {
 	if prefRepo == nil {
 		return false
 	}

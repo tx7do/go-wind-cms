@@ -65,13 +65,13 @@ func (_c *NavigationCreate) SetNillableDeletedAt(v *time.Time) *NavigationCreate
 }
 
 // SetCreatedBy sets the "created_by" field.
-func (_c *NavigationCreate) SetCreatedBy(v uint32) *NavigationCreate {
+func (_c *NavigationCreate) SetCreatedBy(v uint64) *NavigationCreate {
 	_c.mutation.SetCreatedBy(v)
 	return _c
 }
 
 // SetNillableCreatedBy sets the "created_by" field if the given value is not nil.
-func (_c *NavigationCreate) SetNillableCreatedBy(v *uint32) *NavigationCreate {
+func (_c *NavigationCreate) SetNillableCreatedBy(v *uint64) *NavigationCreate {
 	if v != nil {
 		_c.SetCreatedBy(*v)
 	}
@@ -79,13 +79,13 @@ func (_c *NavigationCreate) SetNillableCreatedBy(v *uint32) *NavigationCreate {
 }
 
 // SetUpdatedBy sets the "updated_by" field.
-func (_c *NavigationCreate) SetUpdatedBy(v uint32) *NavigationCreate {
+func (_c *NavigationCreate) SetUpdatedBy(v uint64) *NavigationCreate {
 	_c.mutation.SetUpdatedBy(v)
 	return _c
 }
 
 // SetNillableUpdatedBy sets the "updated_by" field if the given value is not nil.
-func (_c *NavigationCreate) SetNillableUpdatedBy(v *uint32) *NavigationCreate {
+func (_c *NavigationCreate) SetNillableUpdatedBy(v *uint64) *NavigationCreate {
 	if v != nil {
 		_c.SetUpdatedBy(*v)
 	}
@@ -93,13 +93,13 @@ func (_c *NavigationCreate) SetNillableUpdatedBy(v *uint32) *NavigationCreate {
 }
 
 // SetDeletedBy sets the "deleted_by" field.
-func (_c *NavigationCreate) SetDeletedBy(v uint32) *NavigationCreate {
+func (_c *NavigationCreate) SetDeletedBy(v uint64) *NavigationCreate {
 	_c.mutation.SetDeletedBy(v)
 	return _c
 }
 
 // SetNillableDeletedBy sets the "deleted_by" field if the given value is not nil.
-func (_c *NavigationCreate) SetNillableDeletedBy(v *uint32) *NavigationCreate {
+func (_c *NavigationCreate) SetNillableDeletedBy(v *uint64) *NavigationCreate {
 	if v != nil {
 		_c.SetDeletedBy(*v)
 	}
@@ -107,13 +107,13 @@ func (_c *NavigationCreate) SetNillableDeletedBy(v *uint32) *NavigationCreate {
 }
 
 // SetTenantID sets the "tenant_id" field.
-func (_c *NavigationCreate) SetTenantID(v uint32) *NavigationCreate {
+func (_c *NavigationCreate) SetTenantID(v uint64) *NavigationCreate {
 	_c.mutation.SetTenantID(v)
 	return _c
 }
 
 // SetNillableTenantID sets the "tenant_id" field if the given value is not nil.
-func (_c *NavigationCreate) SetNillableTenantID(v *uint32) *NavigationCreate {
+func (_c *NavigationCreate) SetNillableTenantID(v *uint64) *NavigationCreate {
 	if v != nil {
 		_c.SetTenantID(*v)
 	}
@@ -177,7 +177,7 @@ func (_c *NavigationCreate) SetNillableIsActive(v *bool) *NavigationCreate {
 }
 
 // SetID sets the "id" field.
-func (_c *NavigationCreate) SetID(v uint32) *NavigationCreate {
+func (_c *NavigationCreate) SetID(v uint64) *NavigationCreate {
 	_c.mutation.SetID(v)
 	return _c
 }
@@ -262,7 +262,7 @@ func (_c *NavigationCreate) sqlSave(ctx context.Context) (*Navigation, error) {
 	}
 	if _spec.ID.Value != _node.ID {
 		id := _spec.ID.Value.(int64)
-		_node.ID = uint32(id)
+		_node.ID = uint64(id)
 	}
 	_c.mutation.id = &_node.ID
 	_c.mutation.done = true
@@ -272,7 +272,7 @@ func (_c *NavigationCreate) sqlSave(ctx context.Context) (*Navigation, error) {
 func (_c *NavigationCreate) createSpec() (*Navigation, *sqlgraph.CreateSpec) {
 	var (
 		_node = &Navigation{config: _c.config}
-		_spec = sqlgraph.NewCreateSpec(navigation.Table, sqlgraph.NewFieldSpec(navigation.FieldID, field.TypeUint32))
+		_spec = sqlgraph.NewCreateSpec(navigation.Table, sqlgraph.NewFieldSpec(navigation.FieldID, field.TypeUint64))
 	)
 	_spec.OnConflict = _c.conflict
 	if id, ok := _c.mutation.ID(); ok {
@@ -292,19 +292,19 @@ func (_c *NavigationCreate) createSpec() (*Navigation, *sqlgraph.CreateSpec) {
 		_node.DeletedAt = &value
 	}
 	if value, ok := _c.mutation.CreatedBy(); ok {
-		_spec.SetField(navigation.FieldCreatedBy, field.TypeUint32, value)
+		_spec.SetField(navigation.FieldCreatedBy, field.TypeUint64, value)
 		_node.CreatedBy = &value
 	}
 	if value, ok := _c.mutation.UpdatedBy(); ok {
-		_spec.SetField(navigation.FieldUpdatedBy, field.TypeUint32, value)
+		_spec.SetField(navigation.FieldUpdatedBy, field.TypeUint64, value)
 		_node.UpdatedBy = &value
 	}
 	if value, ok := _c.mutation.DeletedBy(); ok {
-		_spec.SetField(navigation.FieldDeletedBy, field.TypeUint32, value)
+		_spec.SetField(navigation.FieldDeletedBy, field.TypeUint64, value)
 		_node.DeletedBy = &value
 	}
 	if value, ok := _c.mutation.TenantID(); ok {
-		_spec.SetField(navigation.FieldTenantID, field.TypeUint32, value)
+		_spec.SetField(navigation.FieldTenantID, field.TypeUint64, value)
 		_node.TenantID = &value
 	}
 	if value, ok := _c.mutation.Name(); ok {
@@ -412,7 +412,7 @@ func (u *NavigationUpsert) ClearDeletedAt() *NavigationUpsert {
 }
 
 // SetCreatedBy sets the "created_by" field.
-func (u *NavigationUpsert) SetCreatedBy(v uint32) *NavigationUpsert {
+func (u *NavigationUpsert) SetCreatedBy(v uint64) *NavigationUpsert {
 	u.Set(navigation.FieldCreatedBy, v)
 	return u
 }
@@ -424,7 +424,7 @@ func (u *NavigationUpsert) UpdateCreatedBy() *NavigationUpsert {
 }
 
 // AddCreatedBy adds v to the "created_by" field.
-func (u *NavigationUpsert) AddCreatedBy(v uint32) *NavigationUpsert {
+func (u *NavigationUpsert) AddCreatedBy(v uint64) *NavigationUpsert {
 	u.Add(navigation.FieldCreatedBy, v)
 	return u
 }
@@ -436,7 +436,7 @@ func (u *NavigationUpsert) ClearCreatedBy() *NavigationUpsert {
 }
 
 // SetUpdatedBy sets the "updated_by" field.
-func (u *NavigationUpsert) SetUpdatedBy(v uint32) *NavigationUpsert {
+func (u *NavigationUpsert) SetUpdatedBy(v uint64) *NavigationUpsert {
 	u.Set(navigation.FieldUpdatedBy, v)
 	return u
 }
@@ -448,7 +448,7 @@ func (u *NavigationUpsert) UpdateUpdatedBy() *NavigationUpsert {
 }
 
 // AddUpdatedBy adds v to the "updated_by" field.
-func (u *NavigationUpsert) AddUpdatedBy(v uint32) *NavigationUpsert {
+func (u *NavigationUpsert) AddUpdatedBy(v uint64) *NavigationUpsert {
 	u.Add(navigation.FieldUpdatedBy, v)
 	return u
 }
@@ -460,7 +460,7 @@ func (u *NavigationUpsert) ClearUpdatedBy() *NavigationUpsert {
 }
 
 // SetDeletedBy sets the "deleted_by" field.
-func (u *NavigationUpsert) SetDeletedBy(v uint32) *NavigationUpsert {
+func (u *NavigationUpsert) SetDeletedBy(v uint64) *NavigationUpsert {
 	u.Set(navigation.FieldDeletedBy, v)
 	return u
 }
@@ -472,7 +472,7 @@ func (u *NavigationUpsert) UpdateDeletedBy() *NavigationUpsert {
 }
 
 // AddDeletedBy adds v to the "deleted_by" field.
-func (u *NavigationUpsert) AddDeletedBy(v uint32) *NavigationUpsert {
+func (u *NavigationUpsert) AddDeletedBy(v uint64) *NavigationUpsert {
 	u.Add(navigation.FieldDeletedBy, v)
 	return u
 }
@@ -652,14 +652,14 @@ func (u *NavigationUpsertOne) ClearDeletedAt() *NavigationUpsertOne {
 }
 
 // SetCreatedBy sets the "created_by" field.
-func (u *NavigationUpsertOne) SetCreatedBy(v uint32) *NavigationUpsertOne {
+func (u *NavigationUpsertOne) SetCreatedBy(v uint64) *NavigationUpsertOne {
 	return u.Update(func(s *NavigationUpsert) {
 		s.SetCreatedBy(v)
 	})
 }
 
 // AddCreatedBy adds v to the "created_by" field.
-func (u *NavigationUpsertOne) AddCreatedBy(v uint32) *NavigationUpsertOne {
+func (u *NavigationUpsertOne) AddCreatedBy(v uint64) *NavigationUpsertOne {
 	return u.Update(func(s *NavigationUpsert) {
 		s.AddCreatedBy(v)
 	})
@@ -680,14 +680,14 @@ func (u *NavigationUpsertOne) ClearCreatedBy() *NavigationUpsertOne {
 }
 
 // SetUpdatedBy sets the "updated_by" field.
-func (u *NavigationUpsertOne) SetUpdatedBy(v uint32) *NavigationUpsertOne {
+func (u *NavigationUpsertOne) SetUpdatedBy(v uint64) *NavigationUpsertOne {
 	return u.Update(func(s *NavigationUpsert) {
 		s.SetUpdatedBy(v)
 	})
 }
 
 // AddUpdatedBy adds v to the "updated_by" field.
-func (u *NavigationUpsertOne) AddUpdatedBy(v uint32) *NavigationUpsertOne {
+func (u *NavigationUpsertOne) AddUpdatedBy(v uint64) *NavigationUpsertOne {
 	return u.Update(func(s *NavigationUpsert) {
 		s.AddUpdatedBy(v)
 	})
@@ -708,14 +708,14 @@ func (u *NavigationUpsertOne) ClearUpdatedBy() *NavigationUpsertOne {
 }
 
 // SetDeletedBy sets the "deleted_by" field.
-func (u *NavigationUpsertOne) SetDeletedBy(v uint32) *NavigationUpsertOne {
+func (u *NavigationUpsertOne) SetDeletedBy(v uint64) *NavigationUpsertOne {
 	return u.Update(func(s *NavigationUpsert) {
 		s.SetDeletedBy(v)
 	})
 }
 
 // AddDeletedBy adds v to the "deleted_by" field.
-func (u *NavigationUpsertOne) AddDeletedBy(v uint32) *NavigationUpsertOne {
+func (u *NavigationUpsertOne) AddDeletedBy(v uint64) *NavigationUpsertOne {
 	return u.Update(func(s *NavigationUpsert) {
 		s.AddDeletedBy(v)
 	})
@@ -835,7 +835,7 @@ func (u *NavigationUpsertOne) ExecX(ctx context.Context) {
 }
 
 // Exec executes the UPSERT query and returns the inserted/updated ID.
-func (u *NavigationUpsertOne) ID(ctx context.Context) (id uint32, err error) {
+func (u *NavigationUpsertOne) ID(ctx context.Context) (id uint64, err error) {
 	node, err := u.create.Save(ctx)
 	if err != nil {
 		return id, err
@@ -844,7 +844,7 @@ func (u *NavigationUpsertOne) ID(ctx context.Context) (id uint32, err error) {
 }
 
 // IDX is like ID, but panics if an error occurs.
-func (u *NavigationUpsertOne) IDX(ctx context.Context) uint32 {
+func (u *NavigationUpsertOne) IDX(ctx context.Context) uint64 {
 	id, err := u.ID(ctx)
 	if err != nil {
 		panic(err)
@@ -901,7 +901,7 @@ func (_c *NavigationCreateBulk) Save(ctx context.Context) ([]*Navigation, error)
 				mutation.id = &nodes[i].ID
 				if specs[i].ID.Value != nil && nodes[i].ID == 0 {
 					id := specs[i].ID.Value.(int64)
-					nodes[i].ID = uint32(id)
+					nodes[i].ID = uint64(id)
 				}
 				mutation.done = true
 				return nodes[i], nil
@@ -1082,14 +1082,14 @@ func (u *NavigationUpsertBulk) ClearDeletedAt() *NavigationUpsertBulk {
 }
 
 // SetCreatedBy sets the "created_by" field.
-func (u *NavigationUpsertBulk) SetCreatedBy(v uint32) *NavigationUpsertBulk {
+func (u *NavigationUpsertBulk) SetCreatedBy(v uint64) *NavigationUpsertBulk {
 	return u.Update(func(s *NavigationUpsert) {
 		s.SetCreatedBy(v)
 	})
 }
 
 // AddCreatedBy adds v to the "created_by" field.
-func (u *NavigationUpsertBulk) AddCreatedBy(v uint32) *NavigationUpsertBulk {
+func (u *NavigationUpsertBulk) AddCreatedBy(v uint64) *NavigationUpsertBulk {
 	return u.Update(func(s *NavigationUpsert) {
 		s.AddCreatedBy(v)
 	})
@@ -1110,14 +1110,14 @@ func (u *NavigationUpsertBulk) ClearCreatedBy() *NavigationUpsertBulk {
 }
 
 // SetUpdatedBy sets the "updated_by" field.
-func (u *NavigationUpsertBulk) SetUpdatedBy(v uint32) *NavigationUpsertBulk {
+func (u *NavigationUpsertBulk) SetUpdatedBy(v uint64) *NavigationUpsertBulk {
 	return u.Update(func(s *NavigationUpsert) {
 		s.SetUpdatedBy(v)
 	})
 }
 
 // AddUpdatedBy adds v to the "updated_by" field.
-func (u *NavigationUpsertBulk) AddUpdatedBy(v uint32) *NavigationUpsertBulk {
+func (u *NavigationUpsertBulk) AddUpdatedBy(v uint64) *NavigationUpsertBulk {
 	return u.Update(func(s *NavigationUpsert) {
 		s.AddUpdatedBy(v)
 	})
@@ -1138,14 +1138,14 @@ func (u *NavigationUpsertBulk) ClearUpdatedBy() *NavigationUpsertBulk {
 }
 
 // SetDeletedBy sets the "deleted_by" field.
-func (u *NavigationUpsertBulk) SetDeletedBy(v uint32) *NavigationUpsertBulk {
+func (u *NavigationUpsertBulk) SetDeletedBy(v uint64) *NavigationUpsertBulk {
 	return u.Update(func(s *NavigationUpsert) {
 		s.SetDeletedBy(v)
 	})
 }
 
 // AddDeletedBy adds v to the "deleted_by" field.
-func (u *NavigationUpsertBulk) AddDeletedBy(v uint32) *NavigationUpsertBulk {
+func (u *NavigationUpsertBulk) AddDeletedBy(v uint64) *NavigationUpsertBulk {
 	return u.Update(func(s *NavigationUpsert) {
 		s.AddDeletedBy(v)
 	})

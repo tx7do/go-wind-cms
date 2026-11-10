@@ -115,7 +115,7 @@ func (r *CommentRepo) Count(ctx context.Context, req *paginationV1.PagingRequest
 	return count, nil
 }
 
-func (r *CommentRepo) IsExist(ctx context.Context, id uint32) (bool, error) {
+func (r *CommentRepo) IsExist(ctx context.Context, id uint64) (bool, error) {
 	exist, err := r.entClient.Client().Comment.Query().
 		Where(comment.IDEQ(id)).
 		Exist(ctx)
@@ -126,7 +126,7 @@ func (r *CommentRepo) IsExist(ctx context.Context, id uint32) (bool, error) {
 	return exist, nil
 }
 
-func (r *CommentRepo) buildCommentTree(items []*commentV1.Comment, parentId uint32) []*commentV1.Comment {
+func (r *CommentRepo) buildCommentTree(items []*commentV1.Comment, parentId uint64) []*commentV1.Comment {
 	var tree []*commentV1.Comment
 	for _, item := range items {
 		if item.GetParentId() == parentId {
@@ -206,11 +206,11 @@ func (r *CommentRepo) Create(ctx context.Context, req *commentV1.CreateCommentRe
 
 	// 租户归属:游客/匿名链路 BFF 经 x-md-global-tenant-id 元数据注入(内网可信);
 	// 读取失败回落 0(平台)。与搜索链路的租户注入口径一致。
-	tenantID := uint32(0)
+	tenantID := uint64(0)
 	if md, ok := kratosMetadata.FromServerContext(ctx); ok {
 		if v := md.Get("x-md-global-tenant-id"); v != "" {
 			if parsed, perr := strconv.ParseUint(v, 10, 32); perr == nil {
-				tenantID = uint32(parsed)
+				tenantID = uint64(parsed)
 			}
 		}
 	}

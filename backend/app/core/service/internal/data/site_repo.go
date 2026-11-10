@@ -68,7 +68,7 @@ func (r *SiteRepo) init() {
 	r.mapper.AppendConverters(r.statusConverter.NewConverterPair())
 }
 
-func (r *SiteRepo) IsExist(ctx context.Context, id uint32) (bool, error) {
+func (r *SiteRepo) IsExist(ctx context.Context, id uint64) (bool, error) {
 	exist, err := r.entClient.Client().Site.Query().
 		Where(site.IDEQ(id)).
 		Exist(ctx)

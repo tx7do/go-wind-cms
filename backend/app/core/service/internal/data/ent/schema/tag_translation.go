@@ -32,7 +32,7 @@ func (TagTranslation) Annotations() []schema.Annotation {
 // Fields of the TagTranslation.
 func (TagTranslation) Fields() []ent.Field {
 	return []ent.Field{
-		field.Uint32("tag_id").
+		field.Uint64("tag_id").
 			Comment("关联的标签ID").
 			Optional().
 			Nillable(),
@@ -72,11 +72,11 @@ func (TagTranslation) Fields() []ent.Field {
 // Mixin of the TagTranslation.
 func (TagTranslation) Mixin() []ent.Mixin {
 	return []ent.Mixin{
-		mixin.AutoIncrementId{},
+		mixin.AutoIncrementId64{},
 		mixin.TimeAt{},
-		mixin.OperatorID{},
+		mixin.OperatorID64{},
 		appMixin.Seo{},
-		mixin.TenantID[uint32]{},
+		mixin.TenantID[uint64]{},
 	}
 }
 

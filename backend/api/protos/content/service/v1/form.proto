@@ -30,17 +30,17 @@ service FormSubmissionService {
 
 // 表单提交
 message FormSubmission {
-  optional uint32 id = 1 [
+  optional uint64 id = 1 [
     json_name = "id",
     (gnostic.openapi.v3.property) = {description: "提交ID"}
   ]; // 提交ID
 
-  optional uint32 page_id = 2 [
+  optional uint64 page_id = 2 [
     json_name = "pageId",
     (gnostic.openapi.v3.property) = {description: "所属页面ID"}
   ]; // 所属页面ID
 
-  optional uint32 section_id = 3 [
+  optional uint64 section_id = 3 [
     json_name = "sectionId",
     (gnostic.openapi.v3.property) = {description: "所属区块ID"}
   ]; // 所属区块ID
@@ -50,7 +50,7 @@ message FormSubmission {
     (gnostic.openapi.v3.property) = {description: "提交数据（字段名→值）"}
   ]; // 提交数据
 
-  optional uint32 user_id = 5 [
+  optional uint64 user_id = 5 [
     json_name = "userId",
     (gnostic.openapi.v3.property) = {description: "提交者用户ID（匿名提交为 0）"}
   ]; // 提交者用户ID
@@ -66,12 +66,12 @@ message ListFormSubmissionsResponse {
 
 // 请求 - 提交表单
 message SubmitFormSubmissionRequest {
-  uint32 page_id = 1 [
+  uint64 page_id = 1 [
     json_name = "pageId",
     (gnostic.openapi.v3.property) = {description: "页面ID"}
   ];
 
-  uint32 section_id = 2 [
+  uint64 section_id = 2 [
     json_name = "sectionId",
     (gnostic.openapi.v3.property) = {description: "区块ID（须为该页面的 FORM 区块）"}
   ];
@@ -84,10 +84,10 @@ message SubmitFormSubmissionRequest {
 
 // 请求 - 提交详情
 message GetFormSubmissionRequest {
-  uint32 id = 1;
+  uint64 id = 1;
 }
 
 // 请求 - 删除提交
 message DeleteFormSubmissionRequest {
-  uint32 id = 1;
+  uint64 id = 1;
 }

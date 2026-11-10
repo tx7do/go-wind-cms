@@ -66,7 +66,7 @@ service ContentModelService {
 
 // 内容模型
 message ContentModel {
-  optional uint32 id = 1 [
+  optional uint64 id = 1 [
     json_name = "id",
     (gnostic.openapi.v3.property) = {description: "模型ID"}
   ]; // 模型ID
@@ -110,13 +110,13 @@ message ContentModel {
     (gnostic.openapi.v3.property) = {description: "名称/描述的多语言翻译"}
   ]; // 翻译列表
 
-  optional uint32 tenant_id = 40 [
+  optional uint64 tenant_id = 40 [
     json_name = "tenantId",
     (gnostic.openapi.v3.property) = {description: "租户ID"}
   ]; // 租户ID
 
-  optional uint32 created_by = 100 [json_name = "createdBy", (gnostic.openapi.v3.property) = {description: "创建者用户ID"}];
-  optional uint32 updated_by = 101 [json_name = "updatedBy", (gnostic.openapi.v3.property) = {description: "更新者用户ID"}];
+  optional uint64 created_by = 100 [json_name = "createdBy", (gnostic.openapi.v3.property) = {description: "创建者用户ID"}];
+  optional uint64 updated_by = 101 [json_name = "updatedBy", (gnostic.openapi.v3.property) = {description: "更新者用户ID"}];
 
   optional google.protobuf.Timestamp created_at = 200 [json_name = "createdAt", (gnostic.openapi.v3.property) = {description: "创建时间"}];
   optional google.protobuf.Timestamp updated_at = 201 [json_name = "updatedAt", (gnostic.openapi.v3.property) = {description: "更新时间"}];
@@ -136,12 +136,12 @@ message FieldDefinition {
     FIELD_TYPE_DYNAMIC_ZONE = 7; // 动态区（混合组件有序数组）
   }
 
-  optional uint32 id = 1 [
+  optional uint64 id = 1 [
     json_name = "id",
     (gnostic.openapi.v3.property) = {description: "字段定义ID"}
   ]; // 字段定义ID
 
-  optional uint32 content_model_id = 2 [
+  optional uint64 content_model_id = 2 [
     json_name = "contentModelId",
     (gnostic.openapi.v3.property) = {description: "所属内容模型ID"}
   ]; // 所属内容模型ID
@@ -191,7 +191,7 @@ message FieldDefinition {
     (gnostic.openapi.v3.property) = {description: "relation 类型字段的引用配置（仅 FIELD_TYPE_RELATION 适用）"}
   ]; // 引用配置
 
-  optional uint32 component_id = 14 [
+  optional uint64 component_id = 14 [
     json_name = "componentId",
     (gnostic.openapi.v3.property) = {description: "所属组件定义ID（与 contentModelId 恰好其一非空）"}
   ]; // 所属组件定义ID
@@ -211,7 +211,7 @@ message FieldDefinition {
     (gnostic.openapi.v3.property) = {description: "label/description/placeholder 的多语言翻译"}
   ]; // 翻译列表
 
-  optional uint32 created_by = 100 [json_name = "createdBy", (gnostic.openapi.v3.property) = {description: "创建者用户ID"}];
+  optional uint64 created_by = 100 [json_name = "createdBy", (gnostic.openapi.v3.property) = {description: "创建者用户ID"}];
 
   optional google.protobuf.Timestamp created_at = 200 [json_name = "createdAt", (gnostic.openapi.v3.property) = {description: "创建时间"}];
 }
@@ -228,7 +228,7 @@ message RelationConfig {
     (gnostic.openapi.v3.property) = {description: "是否允许跨租户引用"}
   ]; // 是否允许跨租户引用
 
-  optional uint32 filter_category_id = 3 [
+  optional uint64 filter_category_id = 3 [
     json_name = "filterCategoryId",
     (gnostic.openapi.v3.property) = {description: "可选：限定目标 post 所属分类"}
   ]; // 限定分类
@@ -265,31 +265,31 @@ message ComponentConfig {
 
 // 内容模型翻译
 message ContentModelTranslation {
-  optional uint32 id = 1 [json_name = "id", (gnostic.openapi.v3.property) = {description: "ID"}];
-  optional uint32 content_model_id = 2 [json_name = "contentModelId", (gnostic.openapi.v3.property) = {description: "内容模型ID"}];
+  optional uint64 id = 1 [json_name = "id", (gnostic.openapi.v3.property) = {description: "ID"}];
+  optional uint64 content_model_id = 2 [json_name = "contentModelId", (gnostic.openapi.v3.property) = {description: "内容模型ID"}];
   optional string language_code = 3 [json_name = "languageCode", (gnostic.openapi.v3.property) = {description: "语言代码"}];
   optional string name = 4 [json_name = "name", (gnostic.openapi.v3.property) = {description: "翻译后名称"}];
   optional string description = 5 [json_name = "description", (gnostic.openapi.v3.property) = {description: "翻译后描述"}];
-  optional uint32 created_by = 100 [json_name = "createdBy", (gnostic.openapi.v3.property) = {description: "创建者用户ID"}];
+  optional uint64 created_by = 100 [json_name = "createdBy", (gnostic.openapi.v3.property) = {description: "创建者用户ID"}];
   optional google.protobuf.Timestamp created_at = 200 [json_name = "createdAt", (gnostic.openapi.v3.property) = {description: "创建时间"}];
 }
 
 // 字段定义翻译
 message FieldDefinitionTranslation {
-  optional uint32 id = 1 [json_name = "id", (gnostic.openapi.v3.property) = {description: "ID"}];
-  optional uint32 field_definition_id = 2 [json_name = "fieldDefinitionId", (gnostic.openapi.v3.property) = {description: "字段定义ID"}];
+  optional uint64 id = 1 [json_name = "id", (gnostic.openapi.v3.property) = {description: "ID"}];
+  optional uint64 field_definition_id = 2 [json_name = "fieldDefinitionId", (gnostic.openapi.v3.property) = {description: "字段定义ID"}];
   optional string language_code = 3 [json_name = "languageCode", (gnostic.openapi.v3.property) = {description: "语言代码"}];
   optional string label = 4 [json_name = "label", (gnostic.openapi.v3.property) = {description: "翻译后标签"}];
   optional string description = 5 [json_name = "description", (gnostic.openapi.v3.property) = {description: "翻译后描述"}];
   optional string placeholder = 6 [json_name = "placeholder", (gnostic.openapi.v3.property) = {description: "翻译后占位符"}];
-  optional uint32 created_by = 100 [json_name = "createdBy", (gnostic.openapi.v3.property) = {description: "创建者用户ID"}];
+  optional uint64 created_by = 100 [json_name = "createdBy", (gnostic.openapi.v3.property) = {description: "创建者用户ID"}];
   optional google.protobuf.Timestamp created_at = 200 [json_name = "createdAt", (gnostic.openapi.v3.property) = {description: "创建时间"}];
 }
 
 // 查询内容模型列表 - 回应
 // 请求 - 按文章取内容模型
 message GetModelByPostRequest {
-  uint32 post_id = 1 [
+  uint64 post_id = 1 [
     json_name = "postId",
     (gnostic.openapi.v3.property) = {description: "文章 ID"}
   ]; // 文章 ID
@@ -307,7 +307,7 @@ message CountContentModelResponse {
 // 查询内容模型详情 - 请求
 message GetContentModelRequest {
   oneof query_by {
-    uint32 id = 1 [
+    uint64 id = 1 [
       (gnostic.openapi.v3.property) = {description: "ID", read_only: true},
       json_name = "id"
     ]; // ID
@@ -332,7 +332,7 @@ message CreateContentModelRequest {
 
 // 更新内容模型 - 请求
 message UpdateContentModelRequest {
-  uint32 id = 1;
+  uint64 id = 1;
 
   ContentModel data = 2;
 
@@ -345,7 +345,7 @@ message UpdateContentModelRequest {
 // 删除内容模型 - 请求
 message DeleteContentModelRequest {
   oneof query_by {
-    uint32 id = 1 [
+    uint64 id = 1 [
       (gnostic.openapi.v3.property) = {description: "ID", read_only: true},
       json_name = "id"
     ]; // ID
@@ -354,12 +354,12 @@ message DeleteContentModelRequest {
 
 // 查询字段定义列表 - 请求（component_id 非 0 时列组件字段，content_model_id 忽略）
 message ListFieldDefinitionsRequest {
-  uint32 content_model_id = 1 [
+  uint64 content_model_id = 1 [
     json_name = "contentModelId",
     (gnostic.openapi.v3.property) = {description: "内容模型ID"}
   ]; // 内容模型ID
 
-  optional uint32 component_id = 2 [
+  optional uint64 component_id = 2 [
     json_name = "componentId",
     (gnostic.openapi.v3.property) = {description: "组件定义ID（非 0 时列该组件的字段）"}
   ]; // 组件定义ID
@@ -401,7 +401,7 @@ message ContentReferenceSummary {
     (gnostic.openapi.v3.property) = {description: "目标实体类型：post/page"}
   ]; // 目标实体类型
 
-  optional uint32 target_id = 3 [
+  optional uint64 target_id = 3 [
     json_name = "targetId",
     (gnostic.openapi.v3.property) = {description: "目标实体 ID"}
   ]; // 目标实体 ID
@@ -427,7 +427,7 @@ message ResolveContentReferencesResponse {
 
 // 组件定义：具名可复用字段组（字段经 FieldDefinition 面 按 componentId 存取）
 message ComponentDefinition {
-  optional uint32 id = 1 [
+  optional uint64 id = 1 [
     json_name = "id",
     (gnostic.openapi.v3.property) = {description: "组件ID"}
   ]; // 组件ID
@@ -464,7 +464,7 @@ message ListComponentDefinitionsResponse {
 
 // 组件定义详情 - 请求
 message GetComponentDefinitionRequest {
-  uint32 id = 1 [json_name = "id"]; // 组件ID
+  uint64 id = 1 [json_name = "id"]; // 组件ID
 }
 
 // 创建组件定义 - 请求
@@ -474,7 +474,7 @@ message CreateComponentDefinitionRequest {
 
 // 更新组件定义 - 请求
 message UpdateComponentDefinitionRequest {
-  uint32 id = 1 [json_name = "id"]; // 组件ID
+  uint64 id = 1 [json_name = "id"]; // 组件ID
 
   ComponentDefinition data = 2 [json_name = "data"]; // 组件
 
@@ -483,12 +483,12 @@ message UpdateComponentDefinitionRequest {
 
 // 删除组件定义 - 请求
 message DeleteComponentDefinitionRequest {
-  uint32 id = 1 [json_name = "id"]; // 组件ID
+  uint64 id = 1 [json_name = "id"]; // 组件ID
 }
 
 // 保存组件字段定义 - 请求（整体替换）
 message SaveComponentFieldDefinitionsRequest {
-  uint32 component_id = 1 [json_name = "componentId"]; // 组件ID
+  uint64 component_id = 1 [json_name = "componentId"]; // 组件ID
 
   repeated FieldDefinition fields = 2; // 字段定义集
 }

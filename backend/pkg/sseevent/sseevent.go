@@ -16,7 +16,7 @@ const RedisChannelNotify = "go-wind-cms:notify:v1"
 
 // NotifyEvent 跨服务通知事件载荷（Redis 内 JSON 序列化）。
 type NotifyEvent struct {
-	UserID  uint32 `json:"user_id"`
+	UserID  uint64 `json:"user_id"`
 	Title   string `json:"title"`
 	Content string `json:"content"`
 }
@@ -35,6 +35,6 @@ const RedisChannelAgentRun = "go-wind-cms:agent-run:v1"
 // AgentRunEvent 跨服务试运行事件载荷（Redis 内 JSON 序列化）：
 // Frame 是 ai.service.v1.AgentRunEvent 的 protojson 字节。
 type AgentRunEvent struct {
-	UserID uint32          `json:"user_id"`
+	UserID uint64          `json:"user_id"`
 	Frame  json.RawMessage `json:"frame"`
 }

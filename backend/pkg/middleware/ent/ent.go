@@ -26,7 +26,7 @@ import (
 // tenant_id，注入只读 tenant-scoped viewer，使公开读按 tenant 隔离而非跨租户。
 // admin/core 不注入，保持原 SystemViewer 兜底。
 type TenantResolver interface {
-	ResolveTenantIDByDomain(ctx context.Context, domain string) (uint32, error)
+	ResolveTenantIDByDomain(ctx context.Context, domain string) (uint64, error)
 }
 
 type entMiddlewareOptions struct {

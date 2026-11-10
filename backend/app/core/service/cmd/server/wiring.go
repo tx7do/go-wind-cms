@@ -346,7 +346,7 @@ func initApp(ctx *bootstrap.Context) (*kratos.App, func(), error) {
 	searchSynonymRepo := data.NewSearchSynonymRepo(ctx, entClient)
 	reviewLogRepo := data.NewReviewLogRepo(ctx, entClient)
 	reviewLogService := service.NewReviewLogService(ctx, reviewLogRepo)
-	reviewPolicy := service.NewReviewPolicy(ctx, configRepo, func(ctx context.Context, userID uint32) []string {
+	reviewPolicy := service.NewReviewPolicy(ctx, configRepo, func(ctx context.Context, userID uint64) []string {
 		roleIDs, err := userRepo.ListRoleIDsByUserID(appViewer.NewSystemViewerContext(ctx), userID)
 		if err != nil || len(roleIDs) == 0 {
 			return nil

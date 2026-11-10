@@ -15,7 +15,7 @@ import (
 // RefTarget 引用目标（一条边指向的资源 + 所在字段）。
 type RefTarget struct {
 	TargetType string // media_asset
-	TargetID   uint32
+	TargetID   uint64
 	Field      string // body / thumbnail
 }
 
@@ -35,9 +35,9 @@ func NewContentReferenceRepo(ctx *bootstrap.Context, entClient *entCrud.EntClien
 // ReplaceSourceReferences 重建某源内容的全部引用行：先删旧行（含跨租户残留，
 // 以源定位为准），再批量插入新行（(源,字段,目标) 唯一，重复目标自动去重）。
 // 返回受影响的目标 ID 集合（新旧行并集，供调用方重算目标侧计数）。
-func (r *ContentReferenceRepo) ReplaceSourceReferences(ctx context.Context, sourceType string, sourceID uint32, targets []RefTarget) (map[uint32]struct{}, error) {
+func (r *ContentReferenceRepo) ReplaceSourceReferences(ctx context.Context, sourceType string, sourceID uint64, targets []RefTarget) (map[uint64]struct{}, error) {
 	client := r.entClient.Client()
-	affected := make(map[uint32]struct{})
+	affected := make(map[uint64]struct{})
 
 	// 旧行目标并入受影响集合
 	oldRows, err := client.ContentReference.Query().
@@ -100,7 +100,7 @@ func (r *ContentReferenceRepo) ReplaceSourceReferences(ctx context.Context, sour
 }
 
 // ListByTarget 查目标资源（如某媒体）被引用的全部行。
-func (r *ContentReferenceRepo) ListByTarget(ctx context.Context, targetType string, targetID uint32) ([]*ent.ContentReference, error) {
+func (r *ContentReferenceRepo) ListByTarget(ctx context.Context, targetType string, targetID uint64) ([]*ent.ContentReference, error) {
 	rows, err := r.entClient.Client().ContentReference.Query().
 		Where(
 			contentreference.TargetTypeEQ(targetType),
@@ -117,8 +117,8 @@ func (r *ContentReferenceRepo) ListByTarget(ctx context.Context, targetType stri
 
 // CountByTargetIDs 批量统计各目标被引用次数。
 // 受影响目标数有限（单次保存涉及数个），逐 ID 计数即可，避免 GroupBy 多列 Scan 的映射歧义。
-func (r *ContentReferenceRepo) CountByTargetIDs(ctx context.Context, targetType string, targetIDs []uint32) (map[uint32]int, error) {
-	counts := make(map[uint32]int, len(targetIDs))
+func (r *ContentReferenceRepo) CountByTargetIDs(ctx context.Context, targetType string, targetIDs []uint64) (map[uint64]int, error) {
+	counts := make(map[uint64]int, len(targetIDs))
 	for _, id := range targetIDs {
 		n, cErr := r.entClient.Client().ContentReference.Query().
 			Where(

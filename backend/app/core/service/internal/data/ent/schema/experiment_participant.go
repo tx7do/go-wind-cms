@@ -32,7 +32,7 @@ func (ExperimentParticipant) Annotations() []schema.Annotation {
 // Fields of the ExperimentParticipant.
 func (ExperimentParticipant) Fields() []ent.Field {
 	return []ent.Field{
-		field.Uint32("experiment_id").
+		field.Uint64("experiment_id").
 			Comment("实验 ID").
 			Optional().
 			Nillable(),
@@ -57,9 +57,9 @@ func (ExperimentParticipant) Fields() []ent.Field {
 // Mixin of the ExperimentParticipant.
 func (ExperimentParticipant) Mixin() []ent.Mixin {
 	return []ent.Mixin{
-		mixin.AutoIncrementId{},
+		mixin.AutoIncrementId64{},
 		mixin.TimeAt{},
-		mixin.TenantID[uint32]{},
+		mixin.TenantID[uint64]{},
 	}
 }
 

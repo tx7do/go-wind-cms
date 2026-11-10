@@ -96,7 +96,7 @@ func (s *PostService) SearchPosts(ctx context.Context, req *contentV1.SearchPost
 	}
 
 	// 转换 data.PostSearchResult → contentV1.SearchPostsResponse
-	// ES 文档中 post_id 存为 string（keyword），转回 uint32 用于 proto 响应
+	// ES 文档中 post_id 存为 string（keyword），转回 uint64 用于 proto 响应
 	resp := &contentV1.SearchPostsResponse{
 		Total: int32(result.Total),
 		Items: make([]*contentV1.SearchPostHit, 0, len(result.Hits)),
@@ -108,7 +108,7 @@ func (s *PostService) SearchPosts(ctx context.Context, req *contentV1.SearchPost
 			continue
 		}
 		resp.Items = append(resp.Items, &contentV1.SearchPostHit{
-			PostId:             uint32(pid),
+			PostId:             uint64(pid),
 			Language:           hit.Language,
 			Title:              hit.Title,
 			Summary:            hit.Summary,
@@ -303,7 +303,7 @@ func (s *PostService) Delete(ctx context.Context, req *contentV1.DeletePostReque
 
 // syncPostReferences 回读完整文章后同步媒体引用（保存钩子，best-effort）。
 // 回读而非用请求值：部分更新（update_mask）只带变更字段，回读拿最终态。
-func (s *PostService) syncPostReferences(ctx context.Context, postID uint32) {
+func (s *PostService) syncPostReferences(ctx context.Context, postID uint64) {
 	if s.referenceTracker == nil {
 		return
 	}
@@ -389,15 +389,15 @@ func (s *PostService) DeleteTranslation(ctx context.Context, req *contentV1.Dele
 //   - op=index 时 worker 重取该 post 所有翻译 upsert ES
 //   - op=delete 时 worker 按 post_id 删 ES 所有语言文档
 //   - best-effort：入队失败仅记日志，不阻断主业务
-func (s *PostService) enqueuePostReindex(ctx context.Context, postID uint32, op string) {
+func (s *PostService) enqueuePostReindex(ctx context.Context, postID uint64, op string) {
 	if postID == 0 {
 		return
 	}
 
 	// tenant_id 仅用于日志，取自 viewer（与 internal_message_service 同模式）
-	var tenantID uint32
+	var tenantID uint64
 	if vc, exist := viewer.FromContext(ctx); exist && vc != nil {
-		tenantID = uint32(vc.TenantID())
+		tenantID = uint64(vc.TenantID())
 	}
 
 	payload := &task.SearchReindexPayload{
@@ -611,7 +611,7 @@ func (s *PostService) RestoreVersion(ctx context.Context, req *contentV1.Restore
 
 // snapshotPostVersion 写入当前帖子完整状态快照。
 // best-effort：版本化失败只记日志不阻断保存——内容保存是主链路，版本是附加保障。
-func (s *PostService) snapshotPostVersion(ctx context.Context, postID uint32) {
+func (s *PostService) snapshotPostVersion(ctx context.Context, postID uint64) {
 	if postID == 0 {
 		return
 	}
@@ -628,7 +628,7 @@ func (s *PostService) snapshotPostVersion(ctx context.Context, postID uint32) {
 }
 
 // dispatchWebhookEvent Webhook 事件外发统一入口（best-effort，失败只记日志）。
-func (s *PostService) dispatchWebhookEvent(ctx context.Context, event string, postID uint32, _ contentV1.Post_PostStatus) {
+func (s *PostService) dispatchWebhookEvent(ctx context.Context, event string, postID uint64, _ contentV1.Post_PostStatus) {
 	if s.webhookService == nil || postID == 0 {
 		return
 	}
@@ -641,7 +641,7 @@ func (s *PostService) dispatchWebhookEvent(ctx context.Context, event string, po
 // 端点绑定可调用角色即完成分权（无需新的权限码机制）。状态机本身在此处强校验。
 
 // loadPostForReview 取帖并校验可流转状态；返回 (post, error)。
-func (s *PostService) loadPostForReview(ctx context.Context, postID uint32) (*contentV1.Post, error) {
+func (s *PostService) loadPostForReview(ctx context.Context, postID uint64) (*contentV1.Post, error) {
 	post, err := s.postRepo.Get(ctx, &contentV1.GetPostRequest{
 		QueryBy: &contentV1.GetPostRequest_Id{Id: postID},
 	})

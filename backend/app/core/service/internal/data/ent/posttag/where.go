@@ -10,47 +10,47 @@ import (
 )
 
 // ID filters vertices based on their ID field.
-func ID(id uint32) predicate.PostTag {
+func ID(id uint64) predicate.PostTag {
 	return predicate.PostTag(sql.FieldEQ(FieldID, id))
 }
 
 // IDEQ applies the EQ predicate on the ID field.
-func IDEQ(id uint32) predicate.PostTag {
+func IDEQ(id uint64) predicate.PostTag {
 	return predicate.PostTag(sql.FieldEQ(FieldID, id))
 }
 
 // IDNEQ applies the NEQ predicate on the ID field.
-func IDNEQ(id uint32) predicate.PostTag {
+func IDNEQ(id uint64) predicate.PostTag {
 	return predicate.PostTag(sql.FieldNEQ(FieldID, id))
 }
 
 // IDIn applies the In predicate on the ID field.
-func IDIn(ids ...uint32) predicate.PostTag {
+func IDIn(ids ...uint64) predicate.PostTag {
 	return predicate.PostTag(sql.FieldIn(FieldID, ids...))
 }
 
 // IDNotIn applies the NotIn predicate on the ID field.
-func IDNotIn(ids ...uint32) predicate.PostTag {
+func IDNotIn(ids ...uint64) predicate.PostTag {
 	return predicate.PostTag(sql.FieldNotIn(FieldID, ids...))
 }
 
 // IDGT applies the GT predicate on the ID field.
-func IDGT(id uint32) predicate.PostTag {
+func IDGT(id uint64) predicate.PostTag {
 	return predicate.PostTag(sql.FieldGT(FieldID, id))
 }
 
 // IDGTE applies the GTE predicate on the ID field.
-func IDGTE(id uint32) predicate.PostTag {
+func IDGTE(id uint64) predicate.PostTag {
 	return predicate.PostTag(sql.FieldGTE(FieldID, id))
 }
 
 // IDLT applies the LT predicate on the ID field.
-func IDLT(id uint32) predicate.PostTag {
+func IDLT(id uint64) predicate.PostTag {
 	return predicate.PostTag(sql.FieldLT(FieldID, id))
 }
 
 // IDLTE applies the LTE predicate on the ID field.
-func IDLTE(id uint32) predicate.PostTag {
+func IDLTE(id uint64) predicate.PostTag {
 	return predicate.PostTag(sql.FieldLTE(FieldID, id))
 }
 
@@ -60,17 +60,17 @@ func CreatedAt(v time.Time) predicate.PostTag {
 }
 
 // TenantID applies equality check predicate on the "tenant_id" field. It's identical to TenantIDEQ.
-func TenantID(v uint32) predicate.PostTag {
+func TenantID(v uint64) predicate.PostTag {
 	return predicate.PostTag(sql.FieldEQ(FieldTenantID, v))
 }
 
 // PostID applies equality check predicate on the "post_id" field. It's identical to PostIDEQ.
-func PostID(v uint32) predicate.PostTag {
+func PostID(v uint64) predicate.PostTag {
 	return predicate.PostTag(sql.FieldEQ(FieldPostID, v))
 }
 
 // TagID applies equality check predicate on the "tag_id" field. It's identical to TagIDEQ.
-func TagID(v uint32) predicate.PostTag {
+func TagID(v uint64) predicate.PostTag {
 	return predicate.PostTag(sql.FieldEQ(FieldTagID, v))
 }
 
@@ -125,42 +125,42 @@ func CreatedAtNotNil() predicate.PostTag {
 }
 
 // TenantIDEQ applies the EQ predicate on the "tenant_id" field.
-func TenantIDEQ(v uint32) predicate.PostTag {
+func TenantIDEQ(v uint64) predicate.PostTag {
 	return predicate.PostTag(sql.FieldEQ(FieldTenantID, v))
 }
 
 // TenantIDNEQ applies the NEQ predicate on the "tenant_id" field.
-func TenantIDNEQ(v uint32) predicate.PostTag {
+func TenantIDNEQ(v uint64) predicate.PostTag {
 	return predicate.PostTag(sql.FieldNEQ(FieldTenantID, v))
 }
 
 // TenantIDIn applies the In predicate on the "tenant_id" field.
-func TenantIDIn(vs ...uint32) predicate.PostTag {
+func TenantIDIn(vs ...uint64) predicate.PostTag {
 	return predicate.PostTag(sql.FieldIn(FieldTenantID, vs...))
 }
 
 // TenantIDNotIn applies the NotIn predicate on the "tenant_id" field.
-func TenantIDNotIn(vs ...uint32) predicate.PostTag {
+func TenantIDNotIn(vs ...uint64) predicate.PostTag {
 	return predicate.PostTag(sql.FieldNotIn(FieldTenantID, vs...))
 }
 
 // TenantIDGT applies the GT predicate on the "tenant_id" field.
-func TenantIDGT(v uint32) predicate.PostTag {
+func TenantIDGT(v uint64) predicate.PostTag {
 	return predicate.PostTag(sql.FieldGT(FieldTenantID, v))
 }
 
 // TenantIDGTE applies the GTE predicate on the "tenant_id" field.
-func TenantIDGTE(v uint32) predicate.PostTag {
+func TenantIDGTE(v uint64) predicate.PostTag {
 	return predicate.PostTag(sql.FieldGTE(FieldTenantID, v))
 }
 
 // TenantIDLT applies the LT predicate on the "tenant_id" field.
-func TenantIDLT(v uint32) predicate.PostTag {
+func TenantIDLT(v uint64) predicate.PostTag {
 	return predicate.PostTag(sql.FieldLT(FieldTenantID, v))
 }
 
 // TenantIDLTE applies the LTE predicate on the "tenant_id" field.
-func TenantIDLTE(v uint32) predicate.PostTag {
+func TenantIDLTE(v uint64) predicate.PostTag {
 	return predicate.PostTag(sql.FieldLTE(FieldTenantID, v))
 }
 
@@ -175,82 +175,82 @@ func TenantIDNotNil() predicate.PostTag {
 }
 
 // PostIDEQ applies the EQ predicate on the "post_id" field.
-func PostIDEQ(v uint32) predicate.PostTag {
+func PostIDEQ(v uint64) predicate.PostTag {
 	return predicate.PostTag(sql.FieldEQ(FieldPostID, v))
 }
 
 // PostIDNEQ applies the NEQ predicate on the "post_id" field.
-func PostIDNEQ(v uint32) predicate.PostTag {
+func PostIDNEQ(v uint64) predicate.PostTag {
 	return predicate.PostTag(sql.FieldNEQ(FieldPostID, v))
 }
 
 // PostIDIn applies the In predicate on the "post_id" field.
-func PostIDIn(vs ...uint32) predicate.PostTag {
+func PostIDIn(vs ...uint64) predicate.PostTag {
 	return predicate.PostTag(sql.FieldIn(FieldPostID, vs...))
 }
 
 // PostIDNotIn applies the NotIn predicate on the "post_id" field.
-func PostIDNotIn(vs ...uint32) predicate.PostTag {
+func PostIDNotIn(vs ...uint64) predicate.PostTag {
 	return predicate.PostTag(sql.FieldNotIn(FieldPostID, vs...))
 }
 
 // PostIDGT applies the GT predicate on the "post_id" field.
-func PostIDGT(v uint32) predicate.PostTag {
+func PostIDGT(v uint64) predicate.PostTag {
 	return predicate.PostTag(sql.FieldGT(FieldPostID, v))
 }
 
 // PostIDGTE applies the GTE predicate on the "post_id" field.
-func PostIDGTE(v uint32) predicate.PostTag {
+func PostIDGTE(v uint64) predicate.PostTag {
 	return predicate.PostTag(sql.FieldGTE(FieldPostID, v))
 }
 
 // PostIDLT applies the LT predicate on the "post_id" field.
-func PostIDLT(v uint32) predicate.PostTag {
+func PostIDLT(v uint64) predicate.PostTag {
 	return predicate.PostTag(sql.FieldLT(FieldPostID, v))
 }
 
 // PostIDLTE applies the LTE predicate on the "post_id" field.
-func PostIDLTE(v uint32) predicate.PostTag {
+func PostIDLTE(v uint64) predicate.PostTag {
 	return predicate.PostTag(sql.FieldLTE(FieldPostID, v))
 }
 
 // TagIDEQ applies the EQ predicate on the "tag_id" field.
-func TagIDEQ(v uint32) predicate.PostTag {
+func TagIDEQ(v uint64) predicate.PostTag {
 	return predicate.PostTag(sql.FieldEQ(FieldTagID, v))
 }
 
 // TagIDNEQ applies the NEQ predicate on the "tag_id" field.
-func TagIDNEQ(v uint32) predicate.PostTag {
+func TagIDNEQ(v uint64) predicate.PostTag {
 	return predicate.PostTag(sql.FieldNEQ(FieldTagID, v))
 }
 
 // TagIDIn applies the In predicate on the "tag_id" field.
-func TagIDIn(vs ...uint32) predicate.PostTag {
+func TagIDIn(vs ...uint64) predicate.PostTag {
 	return predicate.PostTag(sql.FieldIn(FieldTagID, vs...))
 }
 
 // TagIDNotIn applies the NotIn predicate on the "tag_id" field.
-func TagIDNotIn(vs ...uint32) predicate.PostTag {
+func TagIDNotIn(vs ...uint64) predicate.PostTag {
 	return predicate.PostTag(sql.FieldNotIn(FieldTagID, vs...))
 }
 
 // TagIDGT applies the GT predicate on the "tag_id" field.
-func TagIDGT(v uint32) predicate.PostTag {
+func TagIDGT(v uint64) predicate.PostTag {
 	return predicate.PostTag(sql.FieldGT(FieldTagID, v))
 }
 
 // TagIDGTE applies the GTE predicate on the "tag_id" field.
-func TagIDGTE(v uint32) predicate.PostTag {
+func TagIDGTE(v uint64) predicate.PostTag {
 	return predicate.PostTag(sql.FieldGTE(FieldTagID, v))
 }
 
 // TagIDLT applies the LT predicate on the "tag_id" field.
-func TagIDLT(v uint32) predicate.PostTag {
+func TagIDLT(v uint64) predicate.PostTag {
 	return predicate.PostTag(sql.FieldLT(FieldTagID, v))
 }
 
 // TagIDLTE applies the LTE predicate on the "tag_id" field.
-func TagIDLTE(v uint32) predicate.PostTag {
+func TagIDLTE(v uint64) predicate.PostTag {
 	return predicate.PostTag(sql.FieldLTE(FieldTagID, v))
 }
 

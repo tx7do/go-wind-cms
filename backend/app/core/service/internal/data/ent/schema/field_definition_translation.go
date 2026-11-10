@@ -30,7 +30,7 @@ func (FieldDefinitionTranslation) Annotations() []schema.Annotation {
 
 func (FieldDefinitionTranslation) Fields() []ent.Field {
 	return []ent.Field{
-		field.Uint32("field_definition_id").
+		field.Uint64("field_definition_id").
 			Comment("字段定义ID").
 			Optional().
 			Nillable(),
@@ -60,9 +60,9 @@ func (FieldDefinitionTranslation) Fields() []ent.Field {
 
 func (FieldDefinitionTranslation) Mixin() []ent.Mixin {
 	return []ent.Mixin{
-		mixin.AutoIncrementId{},
+		mixin.AutoIncrementId64{},
 		mixin.TimeAt{},
-		mixin.OperatorID{},
+		mixin.OperatorID64{},
 	}
 }
 

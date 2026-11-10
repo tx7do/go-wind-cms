@@ -169,7 +169,7 @@ func (s *AuthenticationService) doGrantTypeOidcAuthorizationCode(ctx context.Con
 		Identifier:   identifier,
 	})
 
-	var userID uint32
+	var userID uint64
 	switch {
 	case credErr == nil && credential != nil && credential.GetUserId() != 0:
 		userID = credential.GetUserId()
@@ -332,7 +332,7 @@ func (s *AuthenticationService) oidcFetchUserinfo(ctx context.Context, userinfoU
 
 // oidcProvisionUser 首次 OIDC 登录自动建号：用户 + ENTERPRISE_SSO 凭证。
 // 用户名取 preferred_username（冲突追加 sub 后缀保证唯一）；平台租户（tenant 0）。
-func (s *AuthenticationService) oidcProvisionUser(ctx context.Context, issuer string, userinfo *oidcUserInfo) (uint32, error) {
+func (s *AuthenticationService) oidcProvisionUser(ctx context.Context, issuer string, userinfo *oidcUserInfo) (uint64, error) {
 	username := firstNonEmptyStr(userinfo.PreferredUsername, userinfo.Email, userinfo.Sub)
 	// 用户名冲突：追加 OIDC sub 后缀保证唯一
 	if exist, err := s.userRepo.Get(ctx, &identityV1.GetUserRequest{
@@ -343,7 +343,7 @@ func (s *AuthenticationService) oidcProvisionUser(ctx context.Context, issuer st
 
 	created, err := s.userRepo.Create(ctx, &identityV1.CreateUserRequest{
 		Data: &identityV1.User{
-			TenantId: trans.Ptr(uint32(0)),
+			TenantId: trans.Ptr(uint64(0)),
 			Username: trans.Ptr(username),
 			Nickname: trans.Ptr(firstNonEmptyStr(userinfo.Name, username)),
 			Email:    trans.Ptr(userinfo.Email),
@@ -357,7 +357,7 @@ func (s *AuthenticationService) oidcProvisionUser(ctx context.Context, issuer st
 
 	if err = s.userCredentialRepo.Create(ctx, &authenticationV1.CreateUserCredentialRequest{
 		Data: &authenticationV1.UserCredential{
-			TenantId:       trans.Ptr(uint32(0)),
+			TenantId:       trans.Ptr(uint64(0)),
 			UserId:         trans.Ptr(userID),
 			IdentityType:   authenticationV1.UserCredential_ENTERPRISE_SSO.Enum(),
 			Identifier:     trans.Ptr(issuer + "|" + userinfo.Sub),
@@ -379,7 +379,7 @@ func (s *AuthenticationService) oidcProvisionUser(ctx context.Context, issuer st
 			s.log.Warnf("oidc: default role [%s] not found in platform tenant, provisioned user [%d] has no roles", roleCode, userID)
 		} else if aerr := s.userRepo.AssignUserRole(ctx, &permissionV1.UserRole{
 			UserId:    trans.Ptr(userID),
-			TenantId:  trans.Ptr(uint32(0)),
+			TenantId:  trans.Ptr(uint64(0)),
 			RoleId:    trans.Ptr(role.GetId()),
 			IsPrimary: trans.Ptr(true),
 			Status:    permissionV1.UserRole_ACTIVE.Enum(),

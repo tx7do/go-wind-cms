@@ -69,7 +69,7 @@ func (s *FormSubmissionService) Submit(ctx context.Context, req *contentV1.Submi
 
 // attributeConversion 表单提交 → 实验转化归因（后台协程执行）。
 // 页面上运行中的首个实验若已记录该访客的参与，则标记转化。
-func (s *FormSubmissionService) attributeConversion(tenantMD string, pageID uint32, vidValue string) {
+func (s *FormSubmissionService) attributeConversion(tenantMD string, pageID uint64, vidValue string) {
 	if s.experimentClient == nil || pageID == 0 || vidValue == "" {
 		return
 	}

@@ -66,13 +66,13 @@ func (_c *FieldDefinitionCreate) SetNillableDeletedAt(v *time.Time) *FieldDefini
 }
 
 // SetCreatedBy sets the "created_by" field.
-func (_c *FieldDefinitionCreate) SetCreatedBy(v uint32) *FieldDefinitionCreate {
+func (_c *FieldDefinitionCreate) SetCreatedBy(v uint64) *FieldDefinitionCreate {
 	_c.mutation.SetCreatedBy(v)
 	return _c
 }
 
 // SetNillableCreatedBy sets the "created_by" field if the given value is not nil.
-func (_c *FieldDefinitionCreate) SetNillableCreatedBy(v *uint32) *FieldDefinitionCreate {
+func (_c *FieldDefinitionCreate) SetNillableCreatedBy(v *uint64) *FieldDefinitionCreate {
 	if v != nil {
 		_c.SetCreatedBy(*v)
 	}
@@ -80,13 +80,13 @@ func (_c *FieldDefinitionCreate) SetNillableCreatedBy(v *uint32) *FieldDefinitio
 }
 
 // SetUpdatedBy sets the "updated_by" field.
-func (_c *FieldDefinitionCreate) SetUpdatedBy(v uint32) *FieldDefinitionCreate {
+func (_c *FieldDefinitionCreate) SetUpdatedBy(v uint64) *FieldDefinitionCreate {
 	_c.mutation.SetUpdatedBy(v)
 	return _c
 }
 
 // SetNillableUpdatedBy sets the "updated_by" field if the given value is not nil.
-func (_c *FieldDefinitionCreate) SetNillableUpdatedBy(v *uint32) *FieldDefinitionCreate {
+func (_c *FieldDefinitionCreate) SetNillableUpdatedBy(v *uint64) *FieldDefinitionCreate {
 	if v != nil {
 		_c.SetUpdatedBy(*v)
 	}
@@ -94,13 +94,13 @@ func (_c *FieldDefinitionCreate) SetNillableUpdatedBy(v *uint32) *FieldDefinitio
 }
 
 // SetDeletedBy sets the "deleted_by" field.
-func (_c *FieldDefinitionCreate) SetDeletedBy(v uint32) *FieldDefinitionCreate {
+func (_c *FieldDefinitionCreate) SetDeletedBy(v uint64) *FieldDefinitionCreate {
 	_c.mutation.SetDeletedBy(v)
 	return _c
 }
 
 // SetNillableDeletedBy sets the "deleted_by" field if the given value is not nil.
-func (_c *FieldDefinitionCreate) SetNillableDeletedBy(v *uint32) *FieldDefinitionCreate {
+func (_c *FieldDefinitionCreate) SetNillableDeletedBy(v *uint64) *FieldDefinitionCreate {
 	if v != nil {
 		_c.SetDeletedBy(*v)
 	}
@@ -122,13 +122,13 @@ func (_c *FieldDefinitionCreate) SetNillableSortOrder(v *uint32) *FieldDefinitio
 }
 
 // SetTenantID sets the "tenant_id" field.
-func (_c *FieldDefinitionCreate) SetTenantID(v uint32) *FieldDefinitionCreate {
+func (_c *FieldDefinitionCreate) SetTenantID(v uint64) *FieldDefinitionCreate {
 	_c.mutation.SetTenantID(v)
 	return _c
 }
 
 // SetNillableTenantID sets the "tenant_id" field if the given value is not nil.
-func (_c *FieldDefinitionCreate) SetNillableTenantID(v *uint32) *FieldDefinitionCreate {
+func (_c *FieldDefinitionCreate) SetNillableTenantID(v *uint64) *FieldDefinitionCreate {
 	if v != nil {
 		_c.SetTenantID(*v)
 	}
@@ -136,13 +136,13 @@ func (_c *FieldDefinitionCreate) SetNillableTenantID(v *uint32) *FieldDefinition
 }
 
 // SetContentModelID sets the "content_model_id" field.
-func (_c *FieldDefinitionCreate) SetContentModelID(v uint32) *FieldDefinitionCreate {
+func (_c *FieldDefinitionCreate) SetContentModelID(v uint64) *FieldDefinitionCreate {
 	_c.mutation.SetContentModelID(v)
 	return _c
 }
 
 // SetNillableContentModelID sets the "content_model_id" field if the given value is not nil.
-func (_c *FieldDefinitionCreate) SetNillableContentModelID(v *uint32) *FieldDefinitionCreate {
+func (_c *FieldDefinitionCreate) SetNillableContentModelID(v *uint64) *FieldDefinitionCreate {
 	if v != nil {
 		_c.SetContentModelID(*v)
 	}
@@ -150,13 +150,13 @@ func (_c *FieldDefinitionCreate) SetNillableContentModelID(v *uint32) *FieldDefi
 }
 
 // SetComponentID sets the "component_id" field.
-func (_c *FieldDefinitionCreate) SetComponentID(v uint32) *FieldDefinitionCreate {
+func (_c *FieldDefinitionCreate) SetComponentID(v uint64) *FieldDefinitionCreate {
 	_c.mutation.SetComponentID(v)
 	return _c
 }
 
 // SetNillableComponentID sets the "component_id" field if the given value is not nil.
-func (_c *FieldDefinitionCreate) SetNillableComponentID(v *uint32) *FieldDefinitionCreate {
+func (_c *FieldDefinitionCreate) SetNillableComponentID(v *uint64) *FieldDefinitionCreate {
 	if v != nil {
 		_c.SetComponentID(*v)
 	}
@@ -280,7 +280,7 @@ func (_c *FieldDefinitionCreate) SetComponentConfig(v *schema.ComponentConfig) *
 }
 
 // SetID sets the "id" field.
-func (_c *FieldDefinitionCreate) SetID(v uint32) *FieldDefinitionCreate {
+func (_c *FieldDefinitionCreate) SetID(v uint64) *FieldDefinitionCreate {
 	_c.mutation.SetID(v)
 	return _c
 }
@@ -374,7 +374,7 @@ func (_c *FieldDefinitionCreate) sqlSave(ctx context.Context) (*FieldDefinition,
 	}
 	if _spec.ID.Value != _node.ID {
 		id := _spec.ID.Value.(int64)
-		_node.ID = uint32(id)
+		_node.ID = uint64(id)
 	}
 	_c.mutation.id = &_node.ID
 	_c.mutation.done = true
@@ -384,7 +384,7 @@ func (_c *FieldDefinitionCreate) sqlSave(ctx context.Context) (*FieldDefinition,
 func (_c *FieldDefinitionCreate) createSpec() (*FieldDefinition, *sqlgraph.CreateSpec) {
 	var (
 		_node = &FieldDefinition{config: _c.config}
-		_spec = sqlgraph.NewCreateSpec(fielddefinition.Table, sqlgraph.NewFieldSpec(fielddefinition.FieldID, field.TypeUint32))
+		_spec = sqlgraph.NewCreateSpec(fielddefinition.Table, sqlgraph.NewFieldSpec(fielddefinition.FieldID, field.TypeUint64))
 	)
 	_spec.OnConflict = _c.conflict
 	if id, ok := _c.mutation.ID(); ok {
@@ -404,15 +404,15 @@ func (_c *FieldDefinitionCreate) createSpec() (*FieldDefinition, *sqlgraph.Creat
 		_node.DeletedAt = &value
 	}
 	if value, ok := _c.mutation.CreatedBy(); ok {
-		_spec.SetField(fielddefinition.FieldCreatedBy, field.TypeUint32, value)
+		_spec.SetField(fielddefinition.FieldCreatedBy, field.TypeUint64, value)
 		_node.CreatedBy = &value
 	}
 	if value, ok := _c.mutation.UpdatedBy(); ok {
-		_spec.SetField(fielddefinition.FieldUpdatedBy, field.TypeUint32, value)
+		_spec.SetField(fielddefinition.FieldUpdatedBy, field.TypeUint64, value)
 		_node.UpdatedBy = &value
 	}
 	if value, ok := _c.mutation.DeletedBy(); ok {
-		_spec.SetField(fielddefinition.FieldDeletedBy, field.TypeUint32, value)
+		_spec.SetField(fielddefinition.FieldDeletedBy, field.TypeUint64, value)
 		_node.DeletedBy = &value
 	}
 	if value, ok := _c.mutation.SortOrder(); ok {
@@ -420,15 +420,15 @@ func (_c *FieldDefinitionCreate) createSpec() (*FieldDefinition, *sqlgraph.Creat
 		_node.SortOrder = &value
 	}
 	if value, ok := _c.mutation.TenantID(); ok {
-		_spec.SetField(fielddefinition.FieldTenantID, field.TypeUint32, value)
+		_spec.SetField(fielddefinition.FieldTenantID, field.TypeUint64, value)
 		_node.TenantID = &value
 	}
 	if value, ok := _c.mutation.ContentModelID(); ok {
-		_spec.SetField(fielddefinition.FieldContentModelID, field.TypeUint32, value)
+		_spec.SetField(fielddefinition.FieldContentModelID, field.TypeUint64, value)
 		_node.ContentModelID = &value
 	}
 	if value, ok := _c.mutation.ComponentID(); ok {
-		_spec.SetField(fielddefinition.FieldComponentID, field.TypeUint32, value)
+		_spec.SetField(fielddefinition.FieldComponentID, field.TypeUint64, value)
 		_node.ComponentID = &value
 	}
 	if value, ok := _c.mutation.Name(); ok {
@@ -560,7 +560,7 @@ func (u *FieldDefinitionUpsert) ClearDeletedAt() *FieldDefinitionUpsert {
 }
 
 // SetCreatedBy sets the "created_by" field.
-func (u *FieldDefinitionUpsert) SetCreatedBy(v uint32) *FieldDefinitionUpsert {
+func (u *FieldDefinitionUpsert) SetCreatedBy(v uint64) *FieldDefinitionUpsert {
 	u.Set(fielddefinition.FieldCreatedBy, v)
 	return u
 }
@@ -572,7 +572,7 @@ func (u *FieldDefinitionUpsert) UpdateCreatedBy() *FieldDefinitionUpsert {
 }
 
 // AddCreatedBy adds v to the "created_by" field.
-func (u *FieldDefinitionUpsert) AddCreatedBy(v uint32) *FieldDefinitionUpsert {
+func (u *FieldDefinitionUpsert) AddCreatedBy(v uint64) *FieldDefinitionUpsert {
 	u.Add(fielddefinition.FieldCreatedBy, v)
 	return u
 }
@@ -584,7 +584,7 @@ func (u *FieldDefinitionUpsert) ClearCreatedBy() *FieldDefinitionUpsert {
 }
 
 // SetUpdatedBy sets the "updated_by" field.
-func (u *FieldDefinitionUpsert) SetUpdatedBy(v uint32) *FieldDefinitionUpsert {
+func (u *FieldDefinitionUpsert) SetUpdatedBy(v uint64) *FieldDefinitionUpsert {
 	u.Set(fielddefinition.FieldUpdatedBy, v)
 	return u
 }
@@ -596,7 +596,7 @@ func (u *FieldDefinitionUpsert) UpdateUpdatedBy() *FieldDefinitionUpsert {
 }
 
 // AddUpdatedBy adds v to the "updated_by" field.
-func (u *FieldDefinitionUpsert) AddUpdatedBy(v uint32) *FieldDefinitionUpsert {
+func (u *FieldDefinitionUpsert) AddUpdatedBy(v uint64) *FieldDefinitionUpsert {
 	u.Add(fielddefinition.FieldUpdatedBy, v)
 	return u
 }
@@ -608,7 +608,7 @@ func (u *FieldDefinitionUpsert) ClearUpdatedBy() *FieldDefinitionUpsert {
 }
 
 // SetDeletedBy sets the "deleted_by" field.
-func (u *FieldDefinitionUpsert) SetDeletedBy(v uint32) *FieldDefinitionUpsert {
+func (u *FieldDefinitionUpsert) SetDeletedBy(v uint64) *FieldDefinitionUpsert {
 	u.Set(fielddefinition.FieldDeletedBy, v)
 	return u
 }
@@ -620,7 +620,7 @@ func (u *FieldDefinitionUpsert) UpdateDeletedBy() *FieldDefinitionUpsert {
 }
 
 // AddDeletedBy adds v to the "deleted_by" field.
-func (u *FieldDefinitionUpsert) AddDeletedBy(v uint32) *FieldDefinitionUpsert {
+func (u *FieldDefinitionUpsert) AddDeletedBy(v uint64) *FieldDefinitionUpsert {
 	u.Add(fielddefinition.FieldDeletedBy, v)
 	return u
 }
@@ -656,7 +656,7 @@ func (u *FieldDefinitionUpsert) ClearSortOrder() *FieldDefinitionUpsert {
 }
 
 // SetContentModelID sets the "content_model_id" field.
-func (u *FieldDefinitionUpsert) SetContentModelID(v uint32) *FieldDefinitionUpsert {
+func (u *FieldDefinitionUpsert) SetContentModelID(v uint64) *FieldDefinitionUpsert {
 	u.Set(fielddefinition.FieldContentModelID, v)
 	return u
 }
@@ -668,7 +668,7 @@ func (u *FieldDefinitionUpsert) UpdateContentModelID() *FieldDefinitionUpsert {
 }
 
 // AddContentModelID adds v to the "content_model_id" field.
-func (u *FieldDefinitionUpsert) AddContentModelID(v uint32) *FieldDefinitionUpsert {
+func (u *FieldDefinitionUpsert) AddContentModelID(v uint64) *FieldDefinitionUpsert {
 	u.Add(fielddefinition.FieldContentModelID, v)
 	return u
 }
@@ -680,7 +680,7 @@ func (u *FieldDefinitionUpsert) ClearContentModelID() *FieldDefinitionUpsert {
 }
 
 // SetComponentID sets the "component_id" field.
-func (u *FieldDefinitionUpsert) SetComponentID(v uint32) *FieldDefinitionUpsert {
+func (u *FieldDefinitionUpsert) SetComponentID(v uint64) *FieldDefinitionUpsert {
 	u.Set(fielddefinition.FieldComponentID, v)
 	return u
 }
@@ -692,7 +692,7 @@ func (u *FieldDefinitionUpsert) UpdateComponentID() *FieldDefinitionUpsert {
 }
 
 // AddComponentID adds v to the "component_id" field.
-func (u *FieldDefinitionUpsert) AddComponentID(v uint32) *FieldDefinitionUpsert {
+func (u *FieldDefinitionUpsert) AddComponentID(v uint64) *FieldDefinitionUpsert {
 	u.Add(fielddefinition.FieldComponentID, v)
 	return u
 }
@@ -980,14 +980,14 @@ func (u *FieldDefinitionUpsertOne) ClearDeletedAt() *FieldDefinitionUpsertOne {
 }
 
 // SetCreatedBy sets the "created_by" field.
-func (u *FieldDefinitionUpsertOne) SetCreatedBy(v uint32) *FieldDefinitionUpsertOne {
+func (u *FieldDefinitionUpsertOne) SetCreatedBy(v uint64) *FieldDefinitionUpsertOne {
 	return u.Update(func(s *FieldDefinitionUpsert) {
 		s.SetCreatedBy(v)
 	})
 }
 
 // AddCreatedBy adds v to the "created_by" field.
-func (u *FieldDefinitionUpsertOne) AddCreatedBy(v uint32) *FieldDefinitionUpsertOne {
+func (u *FieldDefinitionUpsertOne) AddCreatedBy(v uint64) *FieldDefinitionUpsertOne {
 	return u.Update(func(s *FieldDefinitionUpsert) {
 		s.AddCreatedBy(v)
 	})
@@ -1008,14 +1008,14 @@ func (u *FieldDefinitionUpsertOne) ClearCreatedBy() *FieldDefinitionUpsertOne {
 }
 
 // SetUpdatedBy sets the "updated_by" field.
-func (u *FieldDefinitionUpsertOne) SetUpdatedBy(v uint32) *FieldDefinitionUpsertOne {
+func (u *FieldDefinitionUpsertOne) SetUpdatedBy(v uint64) *FieldDefinitionUpsertOne {
 	return u.Update(func(s *FieldDefinitionUpsert) {
 		s.SetUpdatedBy(v)
 	})
 }
 
 // AddUpdatedBy adds v to the "updated_by" field.
-func (u *FieldDefinitionUpsertOne) AddUpdatedBy(v uint32) *FieldDefinitionUpsertOne {
+func (u *FieldDefinitionUpsertOne) AddUpdatedBy(v uint64) *FieldDefinitionUpsertOne {
 	return u.Update(func(s *FieldDefinitionUpsert) {
 		s.AddUpdatedBy(v)
 	})
@@ -1036,14 +1036,14 @@ func (u *FieldDefinitionUpsertOne) ClearUpdatedBy() *FieldDefinitionUpsertOne {
 }
 
 // SetDeletedBy sets the "deleted_by" field.
-func (u *FieldDefinitionUpsertOne) SetDeletedBy(v uint32) *FieldDefinitionUpsertOne {
+func (u *FieldDefinitionUpsertOne) SetDeletedBy(v uint64) *FieldDefinitionUpsertOne {
 	return u.Update(func(s *FieldDefinitionUpsert) {
 		s.SetDeletedBy(v)
 	})
 }
 
 // AddDeletedBy adds v to the "deleted_by" field.
-func (u *FieldDefinitionUpsertOne) AddDeletedBy(v uint32) *FieldDefinitionUpsertOne {
+func (u *FieldDefinitionUpsertOne) AddDeletedBy(v uint64) *FieldDefinitionUpsertOne {
 	return u.Update(func(s *FieldDefinitionUpsert) {
 		s.AddDeletedBy(v)
 	})
@@ -1092,14 +1092,14 @@ func (u *FieldDefinitionUpsertOne) ClearSortOrder() *FieldDefinitionUpsertOne {
 }
 
 // SetContentModelID sets the "content_model_id" field.
-func (u *FieldDefinitionUpsertOne) SetContentModelID(v uint32) *FieldDefinitionUpsertOne {
+func (u *FieldDefinitionUpsertOne) SetContentModelID(v uint64) *FieldDefinitionUpsertOne {
 	return u.Update(func(s *FieldDefinitionUpsert) {
 		s.SetContentModelID(v)
 	})
 }
 
 // AddContentModelID adds v to the "content_model_id" field.
-func (u *FieldDefinitionUpsertOne) AddContentModelID(v uint32) *FieldDefinitionUpsertOne {
+func (u *FieldDefinitionUpsertOne) AddContentModelID(v uint64) *FieldDefinitionUpsertOne {
 	return u.Update(func(s *FieldDefinitionUpsert) {
 		s.AddContentModelID(v)
 	})
@@ -1120,14 +1120,14 @@ func (u *FieldDefinitionUpsertOne) ClearContentModelID() *FieldDefinitionUpsertO
 }
 
 // SetComponentID sets the "component_id" field.
-func (u *FieldDefinitionUpsertOne) SetComponentID(v uint32) *FieldDefinitionUpsertOne {
+func (u *FieldDefinitionUpsertOne) SetComponentID(v uint64) *FieldDefinitionUpsertOne {
 	return u.Update(func(s *FieldDefinitionUpsert) {
 		s.SetComponentID(v)
 	})
 }
 
 // AddComponentID adds v to the "component_id" field.
-func (u *FieldDefinitionUpsertOne) AddComponentID(v uint32) *FieldDefinitionUpsertOne {
+func (u *FieldDefinitionUpsertOne) AddComponentID(v uint64) *FieldDefinitionUpsertOne {
 	return u.Update(func(s *FieldDefinitionUpsert) {
 		s.AddComponentID(v)
 	})
@@ -1373,7 +1373,7 @@ func (u *FieldDefinitionUpsertOne) ExecX(ctx context.Context) {
 }
 
 // Exec executes the UPSERT query and returns the inserted/updated ID.
-func (u *FieldDefinitionUpsertOne) ID(ctx context.Context) (id uint32, err error) {
+func (u *FieldDefinitionUpsertOne) ID(ctx context.Context) (id uint64, err error) {
 	node, err := u.create.Save(ctx)
 	if err != nil {
 		return id, err
@@ -1382,7 +1382,7 @@ func (u *FieldDefinitionUpsertOne) ID(ctx context.Context) (id uint32, err error
 }
 
 // IDX is like ID, but panics if an error occurs.
-func (u *FieldDefinitionUpsertOne) IDX(ctx context.Context) uint32 {
+func (u *FieldDefinitionUpsertOne) IDX(ctx context.Context) uint64 {
 	id, err := u.ID(ctx)
 	if err != nil {
 		panic(err)
@@ -1439,7 +1439,7 @@ func (_c *FieldDefinitionCreateBulk) Save(ctx context.Context) ([]*FieldDefiniti
 				mutation.id = &nodes[i].ID
 				if specs[i].ID.Value != nil && nodes[i].ID == 0 {
 					id := specs[i].ID.Value.(int64)
-					nodes[i].ID = uint32(id)
+					nodes[i].ID = uint64(id)
 				}
 				mutation.done = true
 				return nodes[i], nil
@@ -1620,14 +1620,14 @@ func (u *FieldDefinitionUpsertBulk) ClearDeletedAt() *FieldDefinitionUpsertBulk 
 }
 
 // SetCreatedBy sets the "created_by" field.
-func (u *FieldDefinitionUpsertBulk) SetCreatedBy(v uint32) *FieldDefinitionUpsertBulk {
+func (u *FieldDefinitionUpsertBulk) SetCreatedBy(v uint64) *FieldDefinitionUpsertBulk {
 	return u.Update(func(s *FieldDefinitionUpsert) {
 		s.SetCreatedBy(v)
 	})
 }
 
 // AddCreatedBy adds v to the "created_by" field.
-func (u *FieldDefinitionUpsertBulk) AddCreatedBy(v uint32) *FieldDefinitionUpsertBulk {
+func (u *FieldDefinitionUpsertBulk) AddCreatedBy(v uint64) *FieldDefinitionUpsertBulk {
 	return u.Update(func(s *FieldDefinitionUpsert) {
 		s.AddCreatedBy(v)
 	})
@@ -1648,14 +1648,14 @@ func (u *FieldDefinitionUpsertBulk) ClearCreatedBy() *FieldDefinitionUpsertBulk 
 }
 
 // SetUpdatedBy sets the "updated_by" field.
-func (u *FieldDefinitionUpsertBulk) SetUpdatedBy(v uint32) *FieldDefinitionUpsertBulk {
+func (u *FieldDefinitionUpsertBulk) SetUpdatedBy(v uint64) *FieldDefinitionUpsertBulk {
 	return u.Update(func(s *FieldDefinitionUpsert) {
 		s.SetUpdatedBy(v)
 	})
 }
 
 // AddUpdatedBy adds v to the "updated_by" field.
-func (u *FieldDefinitionUpsertBulk) AddUpdatedBy(v uint32) *FieldDefinitionUpsertBulk {
+func (u *FieldDefinitionUpsertBulk) AddUpdatedBy(v uint64) *FieldDefinitionUpsertBulk {
 	return u.Update(func(s *FieldDefinitionUpsert) {
 		s.AddUpdatedBy(v)
 	})
@@ -1676,14 +1676,14 @@ func (u *FieldDefinitionUpsertBulk) ClearUpdatedBy() *FieldDefinitionUpsertBulk 
 }
 
 // SetDeletedBy sets the "deleted_by" field.
-func (u *FieldDefinitionUpsertBulk) SetDeletedBy(v uint32) *FieldDefinitionUpsertBulk {
+func (u *FieldDefinitionUpsertBulk) SetDeletedBy(v uint64) *FieldDefinitionUpsertBulk {
 	return u.Update(func(s *FieldDefinitionUpsert) {
 		s.SetDeletedBy(v)
 	})
 }
 
 // AddDeletedBy adds v to the "deleted_by" field.
-func (u *FieldDefinitionUpsertBulk) AddDeletedBy(v uint32) *FieldDefinitionUpsertBulk {
+func (u *FieldDefinitionUpsertBulk) AddDeletedBy(v uint64) *FieldDefinitionUpsertBulk {
 	return u.Update(func(s *FieldDefinitionUpsert) {
 		s.AddDeletedBy(v)
 	})
@@ -1732,14 +1732,14 @@ func (u *FieldDefinitionUpsertBulk) ClearSortOrder() *FieldDefinitionUpsertBulk 
 }
 
 // SetContentModelID sets the "content_model_id" field.
-func (u *FieldDefinitionUpsertBulk) SetContentModelID(v uint32) *FieldDefinitionUpsertBulk {
+func (u *FieldDefinitionUpsertBulk) SetContentModelID(v uint64) *FieldDefinitionUpsertBulk {
 	return u.Update(func(s *FieldDefinitionUpsert) {
 		s.SetContentModelID(v)
 	})
 }
 
 // AddContentModelID adds v to the "content_model_id" field.
-func (u *FieldDefinitionUpsertBulk) AddContentModelID(v uint32) *FieldDefinitionUpsertBulk {
+func (u *FieldDefinitionUpsertBulk) AddContentModelID(v uint64) *FieldDefinitionUpsertBulk {
 	return u.Update(func(s *FieldDefinitionUpsert) {
 		s.AddContentModelID(v)
 	})
@@ -1760,14 +1760,14 @@ func (u *FieldDefinitionUpsertBulk) ClearContentModelID() *FieldDefinitionUpsert
 }
 
 // SetComponentID sets the "component_id" field.
-func (u *FieldDefinitionUpsertBulk) SetComponentID(v uint32) *FieldDefinitionUpsertBulk {
+func (u *FieldDefinitionUpsertBulk) SetComponentID(v uint64) *FieldDefinitionUpsertBulk {
 	return u.Update(func(s *FieldDefinitionUpsert) {
 		s.SetComponentID(v)
 	})
 }
 
 // AddComponentID adds v to the "component_id" field.
-func (u *FieldDefinitionUpsertBulk) AddComponentID(v uint32) *FieldDefinitionUpsertBulk {
+func (u *FieldDefinitionUpsertBulk) AddComponentID(v uint64) *FieldDefinitionUpsertBulk {
 	return u.Update(func(s *FieldDefinitionUpsert) {
 		s.AddComponentID(v)
 	})

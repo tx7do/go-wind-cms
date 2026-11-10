@@ -49,12 +49,12 @@ func (FieldDefinition) Annotations() []schema.Annotation {
 
 func (FieldDefinition) Fields() []ent.Field {
 	return []ent.Field{
-		field.Uint32("content_model_id").
+		field.Uint64("content_model_id").
 			Comment("所属内容模型ID").
 			Optional().
 			Nillable(),
 
-		field.Uint32("component_id").
+		field.Uint64("component_id").
 			Comment("所属组件定义ID（与 content_model_id 恰好其一非空）").
 			Optional().
 			Nillable(),
@@ -123,11 +123,11 @@ func (FieldDefinition) Fields() []ent.Field {
 
 func (FieldDefinition) Mixin() []ent.Mixin {
 	return []ent.Mixin{
-		mixin.AutoIncrementId{},
+		mixin.AutoIncrementId64{},
 		mixin.TimeAt{},
-		mixin.OperatorID{},
+		mixin.OperatorID64{},
 		mixin.SortOrder{},
-		mixin.TenantID[uint32]{},
+		mixin.TenantID[uint64]{},
 	}
 }
 

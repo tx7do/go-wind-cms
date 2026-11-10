@@ -81,7 +81,7 @@ func (r *NotificationTemplateRepo) List(ctx context.Context, req *paginationV1.P
 	}, nil
 }
 
-func (r *NotificationTemplateRepo) Get(ctx context.Context, id uint32) (*notifyV1.NotificationTemplate, error) {
+func (r *NotificationTemplateRepo) Get(ctx context.Context, id uint64) (*notifyV1.NotificationTemplate, error) {
 	if id == 0 {
 		return nil, errors.BadRequest("NOTIFICATION_TEMPLATE", "id is required")
 	}
@@ -122,7 +122,7 @@ func (r *NotificationTemplateRepo) GetByCode(ctx context.Context, code string) (
 
 // Create 建一条模板；code 全局唯一，撞码在写入前显式拒掉（唯一索引兜底）。
 // created_at 显式写入，理由同规则表（mixin 列没有 DB 默认值）。
-func (r *NotificationTemplateRepo) Create(ctx context.Context, req *notifyV1.NotificationTemplate, operatorID uint32) (uint32, error) {
+func (r *NotificationTemplateRepo) Create(ctx context.Context, req *notifyV1.NotificationTemplate, operatorID uint64) (uint64, error) {
 	if req == nil {
 		return 0, errors.BadRequest("NOTIFICATION_TEMPLATE", "invalid request")
 	}
@@ -163,7 +163,7 @@ func (r *NotificationTemplateRepo) Create(ctx context.Context, req *notifyV1.Not
 	return created.ID, nil
 }
 
-func (r *NotificationTemplateRepo) Update(ctx context.Context, req *notifyV1.UpdateNotificationTemplateRequest, operatorID uint32) (*notifyV1.NotificationTemplate, error) {
+func (r *NotificationTemplateRepo) Update(ctx context.Context, req *notifyV1.UpdateNotificationTemplateRequest, operatorID uint64) (*notifyV1.NotificationTemplate, error) {
 	if req == nil || req.Data == nil {
 		return nil, errors.BadRequest("NOTIFICATION_TEMPLATE", "invalid request")
 	}
@@ -228,7 +228,7 @@ func (r *NotificationTemplateRepo) Update(ctx context.Context, req *notifyV1.Upd
 	return r.Get(ctx, req.GetId())
 }
 
-func (r *NotificationTemplateRepo) Delete(ctx context.Context, id uint32) error {
+func (r *NotificationTemplateRepo) Delete(ctx context.Context, id uint64) error {
 	if id == 0 {
 		return errors.BadRequest("NOTIFICATION_TEMPLATE", "id is required")
 	}

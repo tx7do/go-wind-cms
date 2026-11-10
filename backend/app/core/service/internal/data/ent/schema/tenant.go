@@ -59,7 +59,7 @@ func (Tenant) Fields() []ent.Field {
 			Optional().
 			Nillable(),
 
-		field.Uint32("admin_user_id").
+		field.Uint64("admin_user_id").
 			Comment("管理员用户ID").
 			Optional().
 			Nillable(),
@@ -124,9 +124,9 @@ func (Tenant) Fields() []ent.Field {
 // Mixin of the Tenant.
 func (Tenant) Mixin() []ent.Mixin {
 	return []ent.Mixin{
-		mixin.AutoIncrementId{},
+		mixin.AutoIncrementId64{},
 		mixin.TimeAt{},
-		mixin.OperatorID{},
+		mixin.OperatorID64{},
 		mixin.Remark{},
 	}
 }

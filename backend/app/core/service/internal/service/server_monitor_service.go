@@ -69,7 +69,7 @@ func (s *ServerMonitorService) goRuntimeInfo() *serverMonitorV1.GoRuntimeInfo {
 		NumGoroutine:  trans.Ptr(uint32(runtime.NumGoroutine())),
 		MemAllocBytes: trans.Ptr(ms.Alloc),
 		MemSysBytes:   trans.Ptr(ms.Sys),
-		GcCycles:      trans.Ptr(uint32(ms.NumGC)),
+		GcCycles:      trans.Ptr(ms.NumGC),
 		UptimeSeconds: trans.Ptr(uint64(time.Since(startedAt).Seconds())),
 		StartedAt:     timestamppb.New(startedAt),
 	}

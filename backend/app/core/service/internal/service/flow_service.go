@@ -48,7 +48,7 @@ type flowAction struct {
 	// 邮件触达按 EN 文案渲染（站内信仍共享主文案单行）；任一为空即忽略变体。
 	TitleEn       string   `json:"title_en,omitempty"`
 	ContentEn     string   `json:"content_en,omitempty"`
-	TargetUserIDs []uint32 `json:"target_user_ids"`
+	TargetUserIDs []uint64 `json:"target_user_ids"`
 	Seconds       int      `json:"seconds"` // delay 动作：延时秒数
 	// http 动作：自定义 HTTP 外呼（webhook 动作的泛化形态）
 	Method  string            `json:"method"`  // GET/POST（缺省 POST）
@@ -328,13 +328,13 @@ func UserEventSnapshot(user *identityV1.User) map[string]string {
 // DispatchFlow 内容事件触发流规则（内容写路径钩子，best-effort：入队失败仅记日志）。
 // snapshot 为触发时刻的实体字段快照（值统一字符串），供字段级条件与占位符渲染；
 // 旧调用方可传 nil（条件判定回退 DB 只支持 status）。
-func (s *FlowService) DispatchFlow(ctx context.Context, event string, entityID uint32, snapshot map[string]string) {
+func (s *FlowService) DispatchFlow(ctx context.Context, event string, entityID uint64, snapshot map[string]string) {
 	if s.taskService == nil || entityID == 0 {
 		return
 	}
-	var tenantID uint32
+	var tenantID uint64
 	if vc, exist := viewer.FromContext(ctx); exist && vc != nil {
-		tenantID = uint32(vc.TenantID())
+		tenantID = uint64(vc.TenantID())
 	}
 	if err := s.taskService.EnqueueFlowExecute(&task.FlowExecutePayload{
 		RuleID:   0, // 0=按事件扇出所有匹配规则
@@ -350,7 +350,7 @@ func (s *FlowService) DispatchFlow(ctx context.Context, event string, entityID u
 // enrichSnapshot 快照补全：触发点 DTO 常不带翻译（title/slug 只在 translations
 // 里），此处 best-effort 回查补齐（已删除实体回查失败则保留原样——删除事件的
 // title 类条件判不命中，status/prev_status 不受影响）。
-func (s *FlowService) enrichSnapshot(ctx context.Context, event string, entityID uint32, snapshot map[string]string) map[string]string {
+func (s *FlowService) enrichSnapshot(ctx context.Context, event string, entityID uint64, snapshot map[string]string) map[string]string {
 	if snapshot == nil {
 		snapshot = map[string]string{}
 	}
@@ -547,7 +547,7 @@ func (s *FlowService) evaluateCondition(ctx context.Context, rule *flowV1.FlowRu
 }
 
 // entityStatus 按事件族加载实体当前状态（供条件判定）。
-func (s *FlowService) entityStatus(ctx context.Context, event string, entityID uint32) (string, error) {
+func (s *FlowService) entityStatus(ctx context.Context, event string, entityID uint64) (string, error) {
 	if strings.HasPrefix(event, "post.") {
 		post, err := s.postRepo.Get(ctx, &contentV1.GetPostRequest{
 			QueryBy: &contentV1.GetPostRequest_Id{Id: entityID},

@@ -30,7 +30,7 @@ func (ContentModelTranslation) Annotations() []schema.Annotation {
 
 func (ContentModelTranslation) Fields() []ent.Field {
 	return []ent.Field{
-		field.Uint32("content_model_id").
+		field.Uint64("content_model_id").
 			Comment("内容模型ID").
 			Optional().
 			Nillable(),
@@ -55,9 +55,9 @@ func (ContentModelTranslation) Fields() []ent.Field {
 
 func (ContentModelTranslation) Mixin() []ent.Mixin {
 	return []ent.Mixin{
-		mixin.AutoIncrementId{},
+		mixin.AutoIncrementId64{},
 		mixin.TimeAt{},
-		mixin.OperatorID{},
+		mixin.OperatorID64{},
 	}
 }
 

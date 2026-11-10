@@ -47,7 +47,7 @@ func NewInteractionAdminService(
 // requireAdminOperator 校验调用者为平台/系统管理员，返回操作人的 (tenantID, userID)。
 // 非管理员上下文一律 403。这是仓库首个“硬性平台管理员 gate”
 // （现有 IsPlatformContext||IsSystemContext 用法均为 bypass 放行）。
-func (s *InteractionAdminService) requireAdminOperator(ctx context.Context) (operatorTenantID, operatorUserID uint32, err error) {
+func (s *InteractionAdminService) requireAdminOperator(ctx context.Context) (operatorTenantID, operatorUserID uint64, err error) {
 	vc, exist := viewer.FromContext(ctx)
 	if !exist || vc == nil {
 		return 0, 0, interactionV1.ErrorUnauthorized("operator identity required")
@@ -55,11 +55,11 @@ func (s *InteractionAdminService) requireAdminOperator(ctx context.Context) (ope
 	if !(vc.IsPlatformContext() || vc.IsSystemContext()) {
 		return 0, 0, interactionV1.ErrorForbidden("platform admin only")
 	}
-	return uint32(vc.TenantID()), uint32(vc.UserID()), nil
+	return uint64(vc.TenantID()), uint64(vc.UserID()), nil
 }
 
 // writeAudit 写一条 OperationAuditLog（Action=DELETE）。resourceID 标识被操作目标。
-func (s *InteractionAdminService) writeAudit(ctx context.Context, operatorTenantID, operatorUserID uint32, resourceType, resourceID string, success bool) {
+func (s *InteractionAdminService) writeAudit(ctx context.Context, operatorTenantID, operatorUserID uint64, resourceType, resourceID string, success bool) {
 	req := &auditV1.CreateOperationAuditLogRequest{
 		Data: &auditV1.OperationAuditLog{
 			TenantId:     trans.Ptr(operatorTenantID),
@@ -87,7 +87,7 @@ func (s *InteractionAdminService) PurgeTargetInteractions(ctx context.Context, r
 	if err != nil {
 		return nil, err
 	}
-	return &interactionV1.PurgeTargetInteractionsResponse{AffectedRows: affected}, nil
+	return &interactionV1.PurgeTargetInteractionsResponse{AffectedRows: uint32(affected)}, nil
 }
 
 func (s *InteractionAdminService) PurgeUserInteractions(ctx context.Context, req *interactionV1.PurgeUserInteractionsRequest) (*interactionV1.PurgeUserInteractionsResponse, error) {
@@ -102,7 +102,7 @@ func (s *InteractionAdminService) PurgeUserInteractions(ctx context.Context, req
 	if err != nil {
 		return nil, err
 	}
-	return &interactionV1.PurgeUserInteractionsResponse{AffectedRows: affected}, nil
+	return &interactionV1.PurgeUserInteractionsResponse{AffectedRows: uint32(affected)}, nil
 }
 
 func (s *InteractionAdminService) ResetCounter(ctx context.Context, req *interactionV1.ResetCounterRequest) (*interactionV1.ResetCounterResponse, error) {

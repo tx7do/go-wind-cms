@@ -220,7 +220,7 @@ func (s *NotificationRuleService) TestDispatch(ctx context.Context, req *notifyV
 // 留空时只有 WEBHOOK 兜得出默认值：那条渠道登记的 webhook_url 就是"这个事件该发去哪"，
 // 于是顺手把 channel_id 也钉成同一行 —— 否则 sender 会另选一条启用的 WEBHOOK 配置，
 // 管理员在 A 行点测试、实际打到 B 行。EMAIL 没有可兜的收件地址，留空即报错。
-func (s *NotificationRuleService) testDispatchTarget(ctx context.Context, rule *notifyV1.NotificationRule, requested string) (string, *uint32, error) {
+func (s *NotificationRuleService) testDispatchTarget(ctx context.Context, rule *notifyV1.NotificationRule, requested string) (string, *uint64, error) {
 	if target := strings.TrimSpace(requested); target != "" {
 		return target, nil, nil
 	}
@@ -241,7 +241,7 @@ func (s *NotificationRuleService) testDispatchTarget(ctx context.Context, rule *
 }
 
 // ruleTestNotificationCopy 测试投递的缺省文案（请求显式给 title/content 时被覆盖）。
-func ruleTestNotificationCopy(ruleID uint32, eventType string) (string, string) {
+func ruleTestNotificationCopy(ruleID uint64, eventType string) (string, string) {
 	title := fmt.Sprintf("通知规则测试 #%d", ruleID)
 	content := fmt.Sprintf("这是一条测试通知（规则 #%d，事件类型 %s）。收到本消息说明该通知规则的渠道链路工作正常。", ruleID, eventType)
 	return title, content

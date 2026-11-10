@@ -32,7 +32,7 @@ func Server(checker Checker) middleware.Middleware {
 			}
 
 			if op, err := metadata.FromContext(ctx, true); err == nil && op != nil {
-				if tenantID := uint32(op.GetTenantId()); tenantID != 0 {
+				if tenantID := uint64(op.GetTenantId()); tenantID != 0 {
 					method, path := requestInfo(ctx)
 					if _, err := checker.CheckTenantAccess(ctx, &identityV1.CheckTenantAccessRequest{
 						TenantId: tenantID,

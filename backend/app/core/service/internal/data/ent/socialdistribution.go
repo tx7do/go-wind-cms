@@ -18,7 +18,7 @@ type SocialDistribution struct {
 	config `json:"-"`
 	// ID of the ent.
 	// id
-	ID uint32 `json:"id,omitempty"`
+	ID uint64 `json:"id,omitempty"`
 	// 创建时间
 	CreatedAt *time.Time `json:"created_at,omitempty"`
 	// 更新时间
@@ -26,19 +26,19 @@ type SocialDistribution struct {
 	// 删除时间
 	DeletedAt *time.Time `json:"deleted_at,omitempty"`
 	// 创建者ID
-	CreatedBy *uint32 `json:"created_by,omitempty"`
+	CreatedBy *uint64 `json:"created_by,omitempty"`
 	// 更新者ID
-	UpdatedBy *uint32 `json:"updated_by,omitempty"`
+	UpdatedBy *uint64 `json:"updated_by,omitempty"`
 	// 删除者ID
-	DeletedBy *uint32 `json:"deleted_by,omitempty"`
+	DeletedBy *uint64 `json:"deleted_by,omitempty"`
 	// 租户ID
-	TenantID *uint32 `json:"tenant_id,omitempty"`
+	TenantID *uint64 `json:"tenant_id,omitempty"`
 	// 社交平台
 	Platform *socialdistribution.Platform `json:"platform,omitempty"`
 	// 使用的社交账号ID
-	AccountID *uint32 `json:"account_id,omitempty"`
+	AccountID *uint64 `json:"account_id,omitempty"`
 	// 关联的 CMS 文章ID
-	PostID *uint32 `json:"post_id,omitempty"`
+	PostID *uint64 `json:"post_id,omitempty"`
 	// 按平台覆盖的发布文案
 	OverrideText *string `json:"override_text,omitempty"`
 	// 分发状态
@@ -56,7 +56,7 @@ type SocialDistribution struct {
 	// 平台文章标题（DEV.to 等需要标题的平台）
 	Title *string `json:"title,omitempty"`
 	// 配图媒体资产ID列表（支持图片的平台）
-	MediaIds []uint32 `json:"media_ids,omitempty"`
+	MediaIds []uint64 `json:"media_ids,omitempty"`
 	// 点赞数（平台回拉快照）
 	Likes *uint32 `json:"likes,omitempty"`
 	// 回复数（平台回拉快照）
@@ -103,7 +103,7 @@ func (_m *SocialDistribution) assignValues(columns []string, values []any) error
 			if !ok {
 				return fmt.Errorf("unexpected type %T for field id", value)
 			}
-			_m.ID = uint32(value.Int64)
+			_m.ID = uint64(value.Int64)
 		case socialdistribution.FieldCreatedAt:
 			if value, ok := values[i].(*sql.NullTime); !ok {
 				return fmt.Errorf("unexpected type %T for field created_at", values[i])
@@ -129,29 +129,29 @@ func (_m *SocialDistribution) assignValues(columns []string, values []any) error
 			if value, ok := values[i].(*sql.NullInt64); !ok {
 				return fmt.Errorf("unexpected type %T for field created_by", values[i])
 			} else if value.Valid {
-				_m.CreatedBy = new(uint32)
-				*_m.CreatedBy = uint32(value.Int64)
+				_m.CreatedBy = new(uint64)
+				*_m.CreatedBy = uint64(value.Int64)
 			}
 		case socialdistribution.FieldUpdatedBy:
 			if value, ok := values[i].(*sql.NullInt64); !ok {
 				return fmt.Errorf("unexpected type %T for field updated_by", values[i])
 			} else if value.Valid {
-				_m.UpdatedBy = new(uint32)
-				*_m.UpdatedBy = uint32(value.Int64)
+				_m.UpdatedBy = new(uint64)
+				*_m.UpdatedBy = uint64(value.Int64)
 			}
 		case socialdistribution.FieldDeletedBy:
 			if value, ok := values[i].(*sql.NullInt64); !ok {
 				return fmt.Errorf("unexpected type %T for field deleted_by", values[i])
 			} else if value.Valid {
-				_m.DeletedBy = new(uint32)
-				*_m.DeletedBy = uint32(value.Int64)
+				_m.DeletedBy = new(uint64)
+				*_m.DeletedBy = uint64(value.Int64)
 			}
 		case socialdistribution.FieldTenantID:
 			if value, ok := values[i].(*sql.NullInt64); !ok {
 				return fmt.Errorf("unexpected type %T for field tenant_id", values[i])
 			} else if value.Valid {
-				_m.TenantID = new(uint32)
-				*_m.TenantID = uint32(value.Int64)
+				_m.TenantID = new(uint64)
+				*_m.TenantID = uint64(value.Int64)
 			}
 		case socialdistribution.FieldPlatform:
 			if value, ok := values[i].(*sql.NullString); !ok {
@@ -164,15 +164,15 @@ func (_m *SocialDistribution) assignValues(columns []string, values []any) error
 			if value, ok := values[i].(*sql.NullInt64); !ok {
 				return fmt.Errorf("unexpected type %T for field account_id", values[i])
 			} else if value.Valid {
-				_m.AccountID = new(uint32)
-				*_m.AccountID = uint32(value.Int64)
+				_m.AccountID = new(uint64)
+				*_m.AccountID = uint64(value.Int64)
 			}
 		case socialdistribution.FieldPostID:
 			if value, ok := values[i].(*sql.NullInt64); !ok {
 				return fmt.Errorf("unexpected type %T for field post_id", values[i])
 			} else if value.Valid {
-				_m.PostID = new(uint32)
-				*_m.PostID = uint32(value.Int64)
+				_m.PostID = new(uint64)
+				*_m.PostID = uint64(value.Int64)
 			}
 		case socialdistribution.FieldOverrideText:
 			if value, ok := values[i].(*sql.NullString); !ok {

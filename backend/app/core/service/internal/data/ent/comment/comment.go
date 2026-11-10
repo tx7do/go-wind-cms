@@ -127,15 +127,15 @@ var (
 	Hooks  [1]ent.Hook
 	Policy ent.Policy
 	// DefaultTenantID holds the default value on creation for the "tenant_id" field.
-	DefaultTenantID uint32
+	DefaultTenantID uint64
 	// DefaultAuthorID holds the default value on creation for the "author_id" field.
-	DefaultAuthorID uint32
+	DefaultAuthorID uint64
 	// DefaultIsSpam holds the default value on creation for the "is_spam" field.
 	DefaultIsSpam bool
 	// DefaultIsSticky holds the default value on creation for the "is_sticky" field.
 	DefaultIsSticky bool
 	// IDValidator is a validator for the "id" field. It is called by the builders before save.
-	IDValidator func(uint32) error
+	IDValidator func(uint64) error
 )
 
 // ContentType defines the type for the "content_type" enum field.

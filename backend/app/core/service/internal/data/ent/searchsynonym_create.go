@@ -65,13 +65,13 @@ func (_c *SearchSynonymCreate) SetNillableDeletedAt(v *time.Time) *SearchSynonym
 }
 
 // SetTenantID sets the "tenant_id" field.
-func (_c *SearchSynonymCreate) SetTenantID(v uint32) *SearchSynonymCreate {
+func (_c *SearchSynonymCreate) SetTenantID(v uint64) *SearchSynonymCreate {
 	_c.mutation.SetTenantID(v)
 	return _c
 }
 
 // SetNillableTenantID sets the "tenant_id" field if the given value is not nil.
-func (_c *SearchSynonymCreate) SetNillableTenantID(v *uint32) *SearchSynonymCreate {
+func (_c *SearchSynonymCreate) SetNillableTenantID(v *uint64) *SearchSynonymCreate {
 	if v != nil {
 		_c.SetTenantID(*v)
 	}
@@ -113,7 +113,7 @@ func (_c *SearchSynonymCreate) SetNillableEnabled(v *bool) *SearchSynonymCreate 
 }
 
 // SetID sets the "id" field.
-func (_c *SearchSynonymCreate) SetID(v uint32) *SearchSynonymCreate {
+func (_c *SearchSynonymCreate) SetID(v uint64) *SearchSynonymCreate {
 	_c.mutation.SetID(v)
 	return _c
 }
@@ -209,7 +209,7 @@ func (_c *SearchSynonymCreate) sqlSave(ctx context.Context) (*SearchSynonym, err
 	}
 	if _spec.ID.Value != _node.ID {
 		id := _spec.ID.Value.(int64)
-		_node.ID = uint32(id)
+		_node.ID = uint64(id)
 	}
 	_c.mutation.id = &_node.ID
 	_c.mutation.done = true
@@ -219,7 +219,7 @@ func (_c *SearchSynonymCreate) sqlSave(ctx context.Context) (*SearchSynonym, err
 func (_c *SearchSynonymCreate) createSpec() (*SearchSynonym, *sqlgraph.CreateSpec) {
 	var (
 		_node = &SearchSynonym{config: _c.config}
-		_spec = sqlgraph.NewCreateSpec(searchsynonym.Table, sqlgraph.NewFieldSpec(searchsynonym.FieldID, field.TypeUint32))
+		_spec = sqlgraph.NewCreateSpec(searchsynonym.Table, sqlgraph.NewFieldSpec(searchsynonym.FieldID, field.TypeUint64))
 	)
 	_spec.OnConflict = _c.conflict
 	if id, ok := _c.mutation.ID(); ok {
@@ -239,7 +239,7 @@ func (_c *SearchSynonymCreate) createSpec() (*SearchSynonym, *sqlgraph.CreateSpe
 		_node.DeletedAt = &value
 	}
 	if value, ok := _c.mutation.TenantID(); ok {
-		_spec.SetField(searchsynonym.FieldTenantID, field.TypeUint32, value)
+		_spec.SetField(searchsynonym.FieldTenantID, field.TypeUint64, value)
 		_node.TenantID = &value
 	}
 	if value, ok := _c.mutation.Term(); ok {
@@ -545,7 +545,7 @@ func (u *SearchSynonymUpsertOne) ExecX(ctx context.Context) {
 }
 
 // Exec executes the UPSERT query and returns the inserted/updated ID.
-func (u *SearchSynonymUpsertOne) ID(ctx context.Context) (id uint32, err error) {
+func (u *SearchSynonymUpsertOne) ID(ctx context.Context) (id uint64, err error) {
 	node, err := u.create.Save(ctx)
 	if err != nil {
 		return id, err
@@ -554,7 +554,7 @@ func (u *SearchSynonymUpsertOne) ID(ctx context.Context) (id uint32, err error) 
 }
 
 // IDX is like ID, but panics if an error occurs.
-func (u *SearchSynonymUpsertOne) IDX(ctx context.Context) uint32 {
+func (u *SearchSynonymUpsertOne) IDX(ctx context.Context) uint64 {
 	id, err := u.ID(ctx)
 	if err != nil {
 		panic(err)
@@ -611,7 +611,7 @@ func (_c *SearchSynonymCreateBulk) Save(ctx context.Context) ([]*SearchSynonym, 
 				mutation.id = &nodes[i].ID
 				if specs[i].ID.Value != nil && nodes[i].ID == 0 {
 					id := specs[i].ID.Value.(int64)
-					nodes[i].ID = uint32(id)
+					nodes[i].ID = uint64(id)
 				}
 				mutation.done = true
 				return nodes[i], nil

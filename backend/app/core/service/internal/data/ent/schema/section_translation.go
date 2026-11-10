@@ -30,7 +30,7 @@ func (SectionTranslation) Annotations() []schema.Annotation {
 // Fields of the SectionTranslation.
 func (SectionTranslation) Fields() []ent.Field {
 	return []ent.Field{
-		field.Uint32("section_id").
+		field.Uint64("section_id").
 			Comment("关联的区块ID").
 			Optional().
 			Nillable(),
@@ -49,10 +49,10 @@ func (SectionTranslation) Fields() []ent.Field {
 // Mixin of the SectionTranslation.
 func (SectionTranslation) Mixin() []ent.Mixin {
 	return []ent.Mixin{
-		mixin.AutoIncrementId{},
+		mixin.AutoIncrementId64{},
 		mixin.TimeAt{},
-		mixin.OperatorID{},
-		mixin.TenantID[uint32]{},
+		mixin.OperatorID64{},
+		mixin.TenantID[uint64]{},
 	}
 }
 

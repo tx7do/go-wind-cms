@@ -52,26 +52,26 @@ type UserRepo interface {
 	UserExists(ctx context.Context, req *identityV1.UserExistsRequest) (*identityV1.UserExistsResponse, error)
 
 	AssignUserRole(ctx context.Context, data *permissionV1.UserRole) error
-	AssignUserRoles(ctx context.Context, userID uint32, datas []*permissionV1.UserRole) error
+	AssignUserRoles(ctx context.Context, userID uint64, datas []*permissionV1.UserRole) error
 
 	AssignUserOrgUnit(ctx context.Context, data *identityV1.UserOrgUnit) error
-	AssignUserOrgUnits(ctx context.Context, userID uint32, datas []*identityV1.UserOrgUnit) error
+	AssignUserOrgUnits(ctx context.Context, userID uint64, datas []*identityV1.UserOrgUnit) error
 
 	AssignUserPosition(ctx context.Context, data *identityV1.UserPosition) error
-	AssignUserPositions(ctx context.Context, userID uint32, datas []*identityV1.UserPosition) error
+	AssignUserPositions(ctx context.Context, userID uint64, datas []*identityV1.UserPosition) error
 
-	ListUsersByIds(ctx context.Context, ids []uint32) ([]*identityV1.User, error)
+	ListUsersByIds(ctx context.Context, ids []uint64) ([]*identityV1.User, error)
 
-	ListRoleIDsByUserID(ctx context.Context, userID uint32) ([]uint32, error)
+	ListRoleIDsByUserID(ctx context.Context, userID uint64) ([]uint64, error)
 
-	ListPositionIDsByUserID(ctx context.Context, userID uint32) ([]uint32, error)
+	ListPositionIDsByUserID(ctx context.Context, userID uint64) ([]uint64, error)
 
-	ListOrgUnitIDsByUserID(ctx context.Context, userID uint32) ([]uint32, error)
-	ListUserRelationIDs(ctx context.Context, userID uint32) (roleIDs []uint32, positionIDs []uint32, orgUnitIDs []uint32, err error)
+	ListOrgUnitIDsByUserID(ctx context.Context, userID uint64) ([]uint64, error)
+	ListUserRelationIDs(ctx context.Context, userID uint64) (roleIDs []uint64, positionIDs []uint64, orgUnitIDs []uint64, err error)
 
-	ListUserIDsByOrgUnitIDs(ctx context.Context, orgUnitIDs []uint32, excludeExpired bool) ([]uint32, error)
-	ListUserIDsByPositionIDs(ctx context.Context, positionIDs []uint32, excludeExpired bool) ([]uint32, error)
-	ListUserIDsByRoleIDs(ctx context.Context, roleIDs []uint32, excludeExpired bool) ([]uint32, error)
+	ListUserIDsByOrgUnitIDs(ctx context.Context, orgUnitIDs []uint64, excludeExpired bool) ([]uint64, error)
+	ListUserIDsByPositionIDs(ctx context.Context, positionIDs []uint64, excludeExpired bool) ([]uint64, error)
+	ListUserIDsByRoleIDs(ctx context.Context, roleIDs []uint64, excludeExpired bool) ([]uint64, error)
 }
 
 type userRepo struct {
@@ -159,7 +159,7 @@ func (r *userRepo) Count(ctx context.Context, req *paginationV1.PagingRequest) (
 }
 
 // queryUserIDsByRelationIDs 根据关联关系查询用户ID列表
-func (r *userRepo) queryUserIDsByRelationIDs(ctx context.Context, roleIDs []uint32, orgUnitIDs []uint32, positionIDs []uint32) ([]uint32, error) {
+func (r *userRepo) queryUserIDsByRelationIDs(ctx context.Context, roleIDs []uint64, orgUnitIDs []uint64, positionIDs []uint64) ([]uint64, error) {
 	if len(roleIDs) == 0 && len(orgUnitIDs) == 0 && len(positionIDs) == 0 {
 		return nil, nil
 	}
@@ -175,16 +175,16 @@ func (r *userRepo) queryUserIDsByRelationIDs(ctx context.Context, roleIDs []uint
 }
 
 // queryUserIDsByRelationIDsUserTenantRelationOneToMany 根据关联关系一对多查询用户ID列表
-func (r *userRepo) queryUserIDsByRelationIDsUserTenantRelationOneToMany(ctx context.Context, roleIDs []uint32, orgUnitIDs []uint32, positionIDs []uint32) ([]uint32, error) {
+func (r *userRepo) queryUserIDsByRelationIDsUserTenantRelationOneToMany(ctx context.Context, roleIDs []uint64, orgUnitIDs []uint64, positionIDs []uint64) ([]uint64, error) {
 	if len(roleIDs) == 0 && len(orgUnitIDs) == 0 && len(positionIDs) == 0 {
 		return nil, nil
 	}
 
 	var err error
 
-	var orgUnitUserIDs []uint32
-	var positionUserIDs []uint32
-	var roleUserIDs []uint32
+	var orgUnitUserIDs []uint64
+	var positionUserIDs []uint64
+	var roleUserIDs []uint64
 
 	if len(orgUnitIDs) > 0 {
 		orgUnitUserIDs, err = r.membershipRepo.ListUserIDsByOrgUnitIDs(ctx, orgUnitIDs, false)
@@ -206,7 +206,7 @@ func (r *userRepo) queryUserIDsByRelationIDsUserTenantRelationOneToMany(ctx cont
 	}
 
 	// 收集所有非空列表用于求交集
-	lists := make([][]uint32, 0, 3)
+	lists := make([][]uint64, 0, 3)
 	if orgUnitUserIDs != nil {
 		lists = append(lists, orgUnitUserIDs)
 	}
@@ -219,7 +219,7 @@ func (r *userRepo) queryUserIDsByRelationIDsUserTenantRelationOneToMany(ctx cont
 
 	// 如果没有任何实际列表（例如对应 ids 为空导致查询未执行），返回空
 	if len(lists) == 0 {
-		return []uint32{}, nil
+		return []uint64{}, nil
 	}
 
 	// 逐步求交集
@@ -235,16 +235,16 @@ func (r *userRepo) queryUserIDsByRelationIDsUserTenantRelationOneToMany(ctx cont
 }
 
 // queryUserIDsByRelationIDsUserTenantRelationOneToOne 根据关联关系一对一查询用户ID列表
-func (r *userRepo) queryUserIDsByRelationIDsUserTenantRelationOneToOne(ctx context.Context, roleIDs []uint32, orgUnitIDs []uint32, positionIDs []uint32) ([]uint32, error) {
+func (r *userRepo) queryUserIDsByRelationIDsUserTenantRelationOneToOne(ctx context.Context, roleIDs []uint64, orgUnitIDs []uint64, positionIDs []uint64) ([]uint64, error) {
 	if len(roleIDs) == 0 && len(orgUnitIDs) == 0 && len(positionIDs) == 0 {
 		return nil, nil
 	}
 
 	var err error
 
-	var orgUnitUserIDs []uint32
-	var positionUserIDs []uint32
-	var roleUserIDs []uint32
+	var orgUnitUserIDs []uint64
+	var positionUserIDs []uint64
+	var roleUserIDs []uint64
 	if len(orgUnitIDs) > 0 {
 		orgUnitUserIDs, err = r.userOrgUnitRepo.ListUserIDsByOrgUnitIDs(ctx, orgUnitIDs, false)
 		if err != nil {
@@ -265,7 +265,7 @@ func (r *userRepo) queryUserIDsByRelationIDsUserTenantRelationOneToOne(ctx conte
 	}
 
 	// 收集所有非空列表用于求交集
-	lists := make([][]uint32, 0, 3)
+	lists := make([][]uint64, 0, 3)
 	if orgUnitUserIDs != nil {
 		lists = append(lists, orgUnitUserIDs)
 	}
@@ -278,7 +278,7 @@ func (r *userRepo) queryUserIDsByRelationIDsUserTenantRelationOneToOne(ctx conte
 
 	// 如果没有任何实际列表（例如对应 ids 为空导致查询未执行），返回空
 	if len(lists) == 0 {
-		return []uint32{}, nil
+		return []uint64{}, nil
 	}
 
 	// 逐步求交集
@@ -313,9 +313,9 @@ func (r *userRepo) List(ctx context.Context, req *paginationV1.PagingRequest) (*
 		"role_id", "role_ids",
 	})
 
-	var orgUnitIDs []uint32
-	var positionIDs []uint32
-	var roleIDs []uint32
+	var orgUnitIDs []uint64
+	var positionIDs []uint64
+	var roleIDs []uint64
 	for _, cond := range excludeConditions {
 		//r.log.Debugf("excluding filter condition: field=%s operator=%s value=%v", cond.GetField(), cond.GetOp(), cond.GetValue())
 
@@ -323,14 +323,14 @@ func (r *userRepo) List(ctx context.Context, req *paginationV1.PagingRequest) (*
 		switch cond.GetField() {
 		case "org_unit_id":
 			if val, err = strconv.ParseUint(cond.GetValue(), 10, 64); err == nil {
-				orgUnitIDs = append(orgUnitIDs, uint32(val))
+				orgUnitIDs = append(orgUnitIDs, uint64(val))
 			} else {
 				r.log.Errorf("parse org_unit_id value failed: %s", err.Error())
 			}
 		case "org_unit_ids":
 			for _, v := range cond.GetValues() {
 				if val, err = strconv.ParseUint(v, 10, 64); err == nil {
-					orgUnitIDs = append(orgUnitIDs, uint32(val))
+					orgUnitIDs = append(orgUnitIDs, uint64(val))
 				} else {
 					r.log.Errorf("parse org_unit_ids value failed: %s", err.Error())
 				}
@@ -338,14 +338,14 @@ func (r *userRepo) List(ctx context.Context, req *paginationV1.PagingRequest) (*
 
 		case "position_id":
 			if val, err = strconv.ParseUint(cond.GetValue(), 10, 64); err == nil {
-				positionIDs = append(positionIDs, uint32(val))
+				positionIDs = append(positionIDs, uint64(val))
 			} else {
 				r.log.Errorf("parse position_id value failed: %s", err.Error())
 			}
 		case "position_ids":
 			for _, v := range cond.GetValues() {
 				if val, err = strconv.ParseUint(v, 10, 64); err == nil {
-					positionIDs = append(positionIDs, uint32(val))
+					positionIDs = append(positionIDs, uint64(val))
 				} else {
 					r.log.Errorf("parse position_ids value failed: %s", err.Error())
 				}
@@ -353,14 +353,14 @@ func (r *userRepo) List(ctx context.Context, req *paginationV1.PagingRequest) (*
 
 		case "role_id":
 			if val, err = strconv.ParseUint(cond.GetValue(), 10, 64); err == nil {
-				roleIDs = append(roleIDs, uint32(val))
+				roleIDs = append(roleIDs, uint64(val))
 			} else {
 				r.log.Errorf("parse role_id value failed: %s", err.Error())
 			}
 		case "role_ids":
 			for _, v := range cond.GetValues() {
 				if val, err = strconv.ParseUint(v, 10, 64); err == nil {
-					roleIDs = append(roleIDs, uint32(val))
+					roleIDs = append(roleIDs, uint64(val))
 				} else {
 					r.log.Errorf("parse role_ids value failed: %s", err.Error())
 				}
@@ -368,7 +368,7 @@ func (r *userRepo) List(ctx context.Context, req *paginationV1.PagingRequest) (*
 		}
 	}
 
-	var mergedUserIDs []uint32
+	var mergedUserIDs []uint64
 	mergedUserIDs, err = r.queryUserIDsByRelationIDs(ctx, roleIDs, orgUnitIDs, positionIDs)
 	if err != nil {
 		r.log.Errorf("query user ids by relation ids failed: %s", err.Error())
@@ -642,7 +642,7 @@ func (r *userRepo) Update(ctx context.Context, req *identityV1.UpdateUserRequest
 		}
 	}()
 
-	var roleIds []uint32
+	var roleIds []uint64
 	if len(req.Data.GetRoleIds()) > 0 {
 		roleIds = req.Data.GetRoleIds()
 	}
@@ -651,7 +651,7 @@ func (r *userRepo) Update(ctx context.Context, req *identityV1.UpdateUserRequest
 	}
 	roleIds = sliceutil.Unique(roleIds)
 
-	var orgUnitIds []uint32
+	var orgUnitIds []uint64
 	if len(req.Data.GetOrgUnitIds()) > 0 {
 		orgUnitIds = req.Data.GetOrgUnitIds()
 	}
@@ -660,7 +660,7 @@ func (r *userRepo) Update(ctx context.Context, req *identityV1.UpdateUserRequest
 	}
 	orgUnitIds = sliceutil.Unique(orgUnitIds)
 
-	var positionIds []uint32
+	var positionIds []uint64
 	if len(req.Data.GetPositionIds()) > 0 {
 		positionIds = req.Data.GetPositionIds()
 	}
@@ -826,7 +826,7 @@ func (r *userRepo) Delete(ctx context.Context, req *identityV1.DeleteUserRequest
 }
 
 // removeUserRelations 移除用户关联关系
-func (r *userRepo) removeUserRelations(ctx context.Context, tx *ent.Tx, userID uint32) error {
+func (r *userRepo) removeUserRelations(ctx context.Context, tx *ent.Tx, userID uint64) error {
 	var errs []error
 	if err := r.userRoleRepo.CleanRelationsByUserID(ctx, tx, userID); err != nil {
 		r.log.Errorf("clean user role relations failed: %s", err.Error())
@@ -847,7 +847,7 @@ func (r *userRepo) removeUserRelations(ctx context.Context, tx *ent.Tx, userID u
 }
 
 // removeMembershipRelations 移除用户关联关系（通过 Membership 关联）
-func (r *userRepo) removeMembershipRelations(ctx context.Context, tx *ent.Tx, userID uint32) error {
+func (r *userRepo) removeMembershipRelations(ctx context.Context, tx *ent.Tx, userID uint64) error {
 	if err := r.membershipRepo.CleanRelationsByUserID(ctx, tx, userID); err != nil {
 		r.log.Errorf("clean user membership relations failed: %s", err.Error())
 		return err
@@ -895,8 +895,8 @@ func (r *userRepo) UserExists(ctx context.Context, req *identityV1.UserExistsReq
 
 // assignMembershipRelations 分配用户关联关系（通过 Membership 关联）
 func (r *userRepo) assignMembershipRelations(ctx context.Context, tx *ent.Tx,
-	tenantID, userID uint32,
-	roleIDs, orgUnitIDs, positionIDs []uint32,
+	tenantID, userID uint64,
+	roleIDs, orgUnitIDs, positionIDs []uint64,
 ) error {
 	now := time.Now()
 	err := r.membershipRepo.AssignTenantMembershipWithTx(ctx, tx, &identityV1.Membership{
@@ -919,8 +919,8 @@ func (r *userRepo) assignMembershipRelations(ctx context.Context, tx *ent.Tx,
 
 // assignUserRelations 分配用户关联关系
 func (r *userRepo) assignUserRelations(ctx context.Context, tx *ent.Tx,
-	tenantID, userID uint32,
-	roleIDs, orgUnitIDs, positionIDs []uint32,
+	tenantID, userID uint64,
+	roleIDs, orgUnitIDs, positionIDs []uint64,
 ) (err error) {
 	if len(roleIDs) == 0 && len(orgUnitIDs) == 0 && len(positionIDs) == 0 {
 		return nil
@@ -1010,7 +1010,7 @@ func (r *userRepo) AssignUserRole(ctx context.Context, data *permissionV1.UserRo
 }
 
 // AssignUserRoles 分配角色
-func (r *userRepo) AssignUserRoles(ctx context.Context, userID uint32, datas []*permissionV1.UserRole) (err error) {
+func (r *userRepo) AssignUserRoles(ctx context.Context, userID uint64, datas []*permissionV1.UserRole) (err error) {
 	var tx *ent.Tx
 	tx, err = r.entClient.Client().Tx(ctx)
 	if err != nil {
@@ -1058,7 +1058,7 @@ func (r *userRepo) AssignUserOrgUnit(ctx context.Context, data *identityV1.UserO
 }
 
 // AssignUserOrgUnits 分配组织单元给用户
-func (r *userRepo) AssignUserOrgUnits(ctx context.Context, userID uint32, datas []*identityV1.UserOrgUnit) (err error) {
+func (r *userRepo) AssignUserOrgUnits(ctx context.Context, userID uint64, datas []*identityV1.UserOrgUnit) (err error) {
 	var tx *ent.Tx
 	tx, err = r.entClient.Client().Tx(ctx)
 	if err != nil {
@@ -1106,7 +1106,7 @@ func (r *userRepo) AssignUserPosition(ctx context.Context, data *identityV1.User
 }
 
 // AssignUserPositions 分配岗位给用户
-func (r *userRepo) AssignUserPositions(ctx context.Context, userID uint32, datas []*identityV1.UserPosition) (err error) {
+func (r *userRepo) AssignUserPositions(ctx context.Context, userID uint64, datas []*identityV1.UserPosition) (err error) {
 	var tx *ent.Tx
 	tx, err = r.entClient.Client().Tx(ctx)
 	if err != nil {
@@ -1130,7 +1130,7 @@ func (r *userRepo) AssignUserPositions(ctx context.Context, userID uint32, datas
 }
 
 // ListUsersByIds 根据ID列表获取用户列表
-func (r *userRepo) ListUsersByIds(ctx context.Context, ids []uint32) ([]*identityV1.User, error) {
+func (r *userRepo) ListUsersByIds(ctx context.Context, ids []uint64) ([]*identityV1.User, error) {
 	if len(ids) == 0 {
 		return []*identityV1.User{}, nil
 	}
@@ -1152,7 +1152,7 @@ func (r *userRepo) ListUsersByIds(ctx context.Context, ids []uint32) ([]*identit
 	return dtos, nil
 }
 
-func (r *userRepo) ListRoleIDsByUserID(ctx context.Context, userID uint32) ([]uint32, error) {
+func (r *userRepo) ListRoleIDsByUserID(ctx context.Context, userID uint64) ([]uint64, error) {
 	switch constants.DefaultUserTenantRelationType {
 	default:
 		fallthrough
@@ -1163,7 +1163,7 @@ func (r *userRepo) ListRoleIDsByUserID(ctx context.Context, userID uint32) ([]ui
 	}
 }
 
-func (r *userRepo) ListPositionIDsByUserID(ctx context.Context, userID uint32) ([]uint32, error) {
+func (r *userRepo) ListPositionIDsByUserID(ctx context.Context, userID uint64) ([]uint64, error) {
 	switch constants.DefaultUserTenantRelationType {
 	default:
 		fallthrough
@@ -1174,7 +1174,7 @@ func (r *userRepo) ListPositionIDsByUserID(ctx context.Context, userID uint32) (
 	}
 }
 
-func (r *userRepo) ListOrgUnitIDsByUserID(ctx context.Context, userID uint32) ([]uint32, error) {
+func (r *userRepo) ListOrgUnitIDsByUserID(ctx context.Context, userID uint64) ([]uint64, error) {
 	switch constants.DefaultUserTenantRelationType {
 	default:
 		fallthrough
@@ -1186,7 +1186,7 @@ func (r *userRepo) ListOrgUnitIDsByUserID(ctx context.Context, userID uint32) ([
 }
 
 // ListUserRelationIDs 列出用户关联的角色、岗位、组织单元ID列表
-func (r *userRepo) ListUserRelationIDs(ctx context.Context, userID uint32) (roleIDs []uint32, positionIDs []uint32, orgUnitIDs []uint32, err error) {
+func (r *userRepo) ListUserRelationIDs(ctx context.Context, userID uint64) (roleIDs []uint64, positionIDs []uint64, orgUnitIDs []uint64, err error) {
 	if userID == 0 {
 		return
 	}
@@ -1202,7 +1202,7 @@ func (r *userRepo) ListUserRelationIDs(ctx context.Context, userID uint32) (role
 }
 
 // listUserRelationIDsOneToOne 列出用户关联的角色、岗位、组织单元ID列表（一对一关系）
-func (r *userRepo) listUserRelationIDs(ctx context.Context, userID uint32) (roleIDs []uint32, positionIDs []uint32, orgUnitIDs []uint32, err error) {
+func (r *userRepo) listUserRelationIDs(ctx context.Context, userID uint64) (roleIDs []uint64, positionIDs []uint64, orgUnitIDs []uint64, err error) {
 	if userID == 0 {
 		r.log.Errorf("invalid user id: %d", userID)
 		return
@@ -1228,7 +1228,7 @@ func (r *userRepo) listUserRelationIDs(ctx context.Context, userID uint32) (role
 	return
 }
 
-func (r *userRepo) ListUserIDsByOrgUnitIDs(ctx context.Context, orgUnitIDs []uint32, excludeExpired bool) ([]uint32, error) {
+func (r *userRepo) ListUserIDsByOrgUnitIDs(ctx context.Context, orgUnitIDs []uint64, excludeExpired bool) ([]uint64, error) {
 	switch constants.DefaultUserTenantRelationType {
 	default:
 		fallthrough
@@ -1239,7 +1239,7 @@ func (r *userRepo) ListUserIDsByOrgUnitIDs(ctx context.Context, orgUnitIDs []uin
 	}
 }
 
-func (r *userRepo) ListUserIDsByPositionIDs(ctx context.Context, positionIDs []uint32, excludeExpired bool) ([]uint32, error) {
+func (r *userRepo) ListUserIDsByPositionIDs(ctx context.Context, positionIDs []uint64, excludeExpired bool) ([]uint64, error) {
 	switch constants.DefaultUserTenantRelationType {
 	default:
 		fallthrough
@@ -1250,7 +1250,7 @@ func (r *userRepo) ListUserIDsByPositionIDs(ctx context.Context, positionIDs []u
 	}
 }
 
-func (r *userRepo) ListUserIDsByRoleIDs(ctx context.Context, roleIDs []uint32, excludeExpired bool) ([]uint32, error) {
+func (r *userRepo) ListUserIDsByRoleIDs(ctx context.Context, roleIDs []uint64, excludeExpired bool) ([]uint64, error) {
 	switch constants.DefaultUserTenantRelationType {
 	default:
 		fallthrough

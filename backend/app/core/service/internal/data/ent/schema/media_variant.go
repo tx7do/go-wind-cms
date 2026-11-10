@@ -30,11 +30,11 @@ func (MediaVariant) Annotations() []schema.Annotation {
 // Fields of the MediaVariant.
 func (MediaVariant) Fields() []ent.Field {
 	return []ent.Field{
-		field.Uint32("media_id").
+		field.Uint64("media_id").
 			Comment("媒体资源ID").
 			Nillable(),
 
-		field.Uint32("file_id").
+		field.Uint64("file_id").
 			Comment("文件ID").
 			Nillable(),
 
@@ -48,9 +48,9 @@ func (MediaVariant) Fields() []ent.Field {
 // Mixin of the MediaVariant.
 func (MediaVariant) Mixin() []ent.Mixin {
 	return []ent.Mixin{
-		mixin.AutoIncrementId{},
+		mixin.AutoIncrementId64{},
 		mixin.CreatedAt{},
-		mixin.TenantID[uint32]{},
+		mixin.TenantID[uint64]{},
 	}
 }
 

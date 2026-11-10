@@ -41,7 +41,7 @@ func (SocialInboxItem) Fields() []ent.Field {
 			Optional().
 			Nillable(),
 
-		field.Uint32("account_id").
+		field.Uint64("account_id").
 			Comment("关联的社交账号ID").
 			Optional().
 			Nillable(),
@@ -90,10 +90,10 @@ func (SocialInboxItem) Fields() []ent.Field {
 
 func (SocialInboxItem) Mixin() []ent.Mixin {
 	return []ent.Mixin{
-		mixin.AutoIncrementId{},
+		mixin.AutoIncrementId64{},
 		mixin.TimeAt{},
-		mixin.OperatorID{},
-		mixin.TenantID[uint32]{},
+		mixin.OperatorID64{},
+		mixin.TenantID[uint64]{},
 	}
 }
 

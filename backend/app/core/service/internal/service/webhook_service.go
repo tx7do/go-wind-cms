@@ -106,9 +106,9 @@ func (s *WebhookService) TestPing(ctx context.Context, req *webhookV1.TestWebhoo
 		return nil, err
 	}
 
-	var tenantID uint32
+	var tenantID uint64
 	if vc, exist := viewer.FromContext(ctx); exist && vc != nil {
-		tenantID = uint32(vc.TenantID())
+		tenantID = uint64(vc.TenantID())
 	}
 
 	deliveryID, err := s.webhookRepo.CreateDelivery(ctx, wh.GetId(), "ping", 0, tenantID)
@@ -151,13 +151,13 @@ func (s *WebhookService) ListDeliveries(ctx context.Context, req *webhookV1.List
 
 // DispatchEvent 扇出一个内容事件（best-effort：调度器未注入或入队失败仅记日志，
 // 不阻断内容保存主链路）。
-func (s *WebhookService) DispatchEvent(ctx context.Context, event string, entityID uint32) {
+func (s *WebhookService) DispatchEvent(ctx context.Context, event string, entityID uint64) {
 	if s.taskService == nil || entityID == 0 {
 		return
 	}
-	var tenantID uint32
+	var tenantID uint64
 	if vc, exist := viewer.FromContext(ctx); exist && vc != nil {
-		tenantID = uint32(vc.TenantID())
+		tenantID = uint64(vc.TenantID())
 	}
 	if err := s.taskService.EnqueueWebhookFanout(&task.WebhookFanoutPayload{
 		Event:    event,
@@ -242,7 +242,7 @@ func (s *WebhookService) DeliverWorker(taskType string, payload *task.WebhookDel
 }
 
 // post 执行签名投递。body 为最小 envelope（不含内容全文）。
-func (s *WebhookService) post(url, secret, event string, webhookID, entityID, tenantID uint32) (bool, int, string, uint32) {
+func (s *WebhookService) post(url, secret, event string, webhookID, entityID, tenantID uint64) (bool, int, string, uint32) {
 	body, _ := json.Marshal(map[string]any{
 		"event":      event,
 		"webhook_id": webhookID,
