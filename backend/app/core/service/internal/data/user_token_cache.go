@@ -606,10 +606,13 @@ func (r *UserTokenCache) ListSessionEntries(ctx context.Context) ([]SessionEntry
 		if len(parts) != 5 {
 			continue
 		}
-		clientTypeNum, uErr := strconv.ParseInt(parts[2], 10, 64)
+		clientTypeNum, uErr := strconv.ParseInt(parts[2], 10, 32)
 		userId, idErr := strconv.ParseInt(parts[3], 10, 64)
 		if uErr != nil || idErr != nil {
 			continue
+		}
+		if _, ok := authenticationV1.ClientType_name[int32(clientTypeNum)]; !ok {
+			continue // 未知客户端类型：脏键，不进会话列表
 		}
 		raw, gErr := r.rdb.Get(ctx, key).Result()
 		if gErr != nil || raw == "" {
