@@ -30,7 +30,6 @@ import (
 	permissionV1 "go-wind-cms/api/gen/go/permission/service/v1"
 
 	"go-wind-cms/pkg/constants"
-	"go-wind-cms/pkg/utils"
 )
 
 type UserRepo interface {
@@ -669,7 +668,7 @@ func (r *userRepo) Update(ctx context.Context, req *identityV1.UpdateUserRequest
 	}
 	positionIds = sliceutil.Unique(positionIds)
 
-	req.GetUpdateMask().Paths = utils.FilterBlacklist(req.GetUpdateMask().Paths, []string{
+	req.GetUpdateMask().Paths = sliceutil.FilterBlacklist(req.GetUpdateMask().Paths, []string{
 		"role_ids",
 		"position_ids",
 		"org_unit_ids",

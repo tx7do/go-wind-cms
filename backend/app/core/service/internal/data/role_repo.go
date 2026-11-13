@@ -21,8 +21,8 @@ import (
 
 	permissionV1 "go-wind-cms/api/gen/go/permission/service/v1"
 
+	"github.com/tx7do/go-utils/sliceutil"
 	"go-wind-cms/pkg/constants"
-	"go-wind-cms/pkg/utils"
 )
 
 type RoleRepo struct {
@@ -617,7 +617,7 @@ func (r *RoleRepo) Update(ctx context.Context, req *permissionV1.UpdateRoleReque
 	updateParentID := req.UpdateMask != nil &&
 		(hasPath("parent_id", req.UpdateMask) || hasPath("parentId", req.UpdateMask))
 	if req.UpdateMask != nil {
-		req.UpdateMask.Paths = utils.FilterBlacklist(req.UpdateMask.GetPaths(), []string{
+		req.UpdateMask.Paths = sliceutil.FilterBlacklist(req.UpdateMask.GetPaths(), []string{
 			"permissions",
 		})
 	}

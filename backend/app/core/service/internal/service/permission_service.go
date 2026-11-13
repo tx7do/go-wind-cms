@@ -21,9 +21,10 @@ import (
 	identityV1 "go-wind-cms/api/gen/go/identity/service/v1"
 	permissionV1 "go-wind-cms/api/gen/go/permission/service/v1"
 
+	converter "github.com/tx7do/go-utils/converter"
 	"go-wind-cms/pkg/constants"
 	appViewer "go-wind-cms/pkg/entgo/viewer"
-	"go-wind-cms/pkg/utils/converter"
+	menuconverter "go-wind-cms/pkg/utils/converter"
 )
 
 type PermissionService struct {
@@ -39,7 +40,7 @@ type PermissionService struct {
 
 	roleRepo *data.RoleRepo
 
-	menuPermissionConverter *converter.MenuPermissionConverter
+	menuPermissionConverter *menuconverter.MenuPermissionConverter
 	apiPermissionConverter  *converter.ApiPermissionConverter
 }
 
@@ -58,7 +59,7 @@ func NewPermissionService(
 		menuRepo:                menuRepo,
 		apiRepo:                 apiRepo,
 		roleRepo:                roleRepo,
-		menuPermissionConverter: converter.NewMenuPermissionConverter(),
+		menuPermissionConverter: menuconverter.NewMenuPermissionConverter(),
 		apiPermissionConverter:  converter.NewApiPermissionConverter(),
 	}
 

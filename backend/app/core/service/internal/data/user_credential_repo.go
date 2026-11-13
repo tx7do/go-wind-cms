@@ -5,12 +5,12 @@ import (
 	"encoding/json"
 
 	"encoding/base64"
+	passwordpolicy "github.com/tx7do/go-utils/password"
 	"go-wind-cms/pkg/constants"
-	passwordpolicy "go-wind-cms/pkg/password"
 	"strconv"
 	"time"
 
-	pkgcrypto "go-wind-cms/pkg/crypto"
+	pkgcrypto "github.com/tx7do/go-utils/crypto"
 
 	"entgo.io/ent/dialect/sql"
 	"github.com/go-kratos/kratos/v2/log"

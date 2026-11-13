@@ -7,6 +7,7 @@ import (
 
 	"github.com/go-kratos/kratos/v2/log"
 	"github.com/golang-jwt/jwt/v5"
+	jwtutil "github.com/tx7do/go-utils/jwtutil"
 	"github.com/tx7do/go-utils/trans"
 
 	authn "github.com/tx7do/kratos-authn/engine"
@@ -28,9 +29,6 @@ const (
 )
 
 const (
-	// defaultTokenLeeway 令牌时间容差，防止因时间不同步导致的验证失败
-	defaultTokenLeeway = 60 * time.Second
-
 	// DefaultTokenExpiration 默认令牌过期时间：2 小时
 	DefaultTokenExpiration = 2 * time.Hour
 
@@ -259,34 +257,12 @@ func NewUserTokenPayloadWithJwtMapClaims(claims jwt.MapClaims) (*authenticationV
 	return payload, nil
 }
 
-// IsTokenExpired 检查令牌是否过期
+// IsTokenExpired 检查令牌是否过期（判定口径委托库 jwtutil：nil 即过期、
+// 缺 exp 不视为过期、60s leeway；库 claims_expiry.go 注释明写与本项目
+// 历史实现约定一致，勿单独漂移）。
 func IsTokenExpired(claims *authn.AuthClaims) bool {
 	if claims == nil {
 		return true
 	}
-
-	exp, _ := claims.GetExpirationTime()
-	if exp == nil {
-		// 没有 exp 声明时不认为是过期（按原逻辑）
-		return false
-	}
-
-	now := time.Now().UTC()
-	return now.After(exp.Time.UTC().Add(defaultTokenLeeway))
-}
-
-// IsTokenNotValidYet 检查令牌是否未生效
-func IsTokenNotValidYet(claims *authn.AuthClaims) bool {
-	if claims == nil {
-		return true
-	}
-
-	nbf, _ := claims.GetNotBefore()
-	if nbf == nil {
-		// 没有 nbf 声明时不认为是未生效
-		return false
-	}
-
-	now := time.Now().UTC()
-	return now.Add(defaultTokenLeeway).Before(nbf.Time.UTC())
+	return jwtutil.IsTokenExpired(jwt.MapClaims(*claims))
 }

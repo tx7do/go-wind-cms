@@ -12,12 +12,12 @@ import (
 	"google.golang.org/protobuf/types/known/emptypb"
 	"google.golang.org/protobuf/types/known/timestamppb"
 
-	pkgcrypto "go-wind-cms/pkg/crypto"
+	pkgcrypto "github.com/tx7do/go-utils/crypto"
 
+	"github.com/tx7do/go-utils/totp"
 	authenticationV1 "go-wind-cms/api/gen/go/authentication/service/v1"
 	identityV1 "go-wind-cms/api/gen/go/identity/service/v1"
 	"go-wind-cms/app/core/service/internal/data/ent/privacy"
-	"go-wind-cms/pkg/totp"
 )
 
 // otpauthIssuer 绑定 URI 的 issuer 段（验证器 App 里展示的条目来源名）。

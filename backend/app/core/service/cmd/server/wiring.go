@@ -8,7 +8,7 @@ import (
 	"github.com/go-kratos/kratos/v2/log"
 	"github.com/tx7do/kratos-bootstrap/bootstrap"
 
-	pkgcrypto "go-wind-cms/pkg/crypto"
+	pkgcrypto "github.com/tx7do/go-utils/crypto"
 	appViewer "go-wind-cms/pkg/entgo/viewer"
 
 	"github.com/tx7do/go-utils/geoip/geolite"

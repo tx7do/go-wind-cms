@@ -23,7 +23,7 @@ import (
 	"go-wind-cms/app/core/service/internal/data/ent/predicate"
 	"go-wind-cms/app/core/service/internal/data/ent/tag"
 
-	"go-wind-cms/pkg/utils"
+	"github.com/tx7do/go-utils/sliceutil"
 
 	contentV1 "go-wind-cms/api/gen/go/content/service/v1"
 )
@@ -376,7 +376,7 @@ func (r *TagRepo) Update(ctx context.Context, req *contentV1.UpdateTagRequest) (
 	// 剔除关联字段：translations / available_languages 是子表数据，非本表列，
 	// 放入 updateMask 会触发列不存在或误更新，关联由专用翻译接口单独维护。
 	if req.UpdateMask != nil {
-		req.UpdateMask.Paths = utils.FilterBlacklist(req.UpdateMask.GetPaths(), []string{
+		req.UpdateMask.Paths = sliceutil.FilterBlacklist(req.UpdateMask.GetPaths(), []string{
 			"translations", "available_languages",
 		})
 	}

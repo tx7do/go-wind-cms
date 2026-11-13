@@ -19,7 +19,6 @@ import (
 	permissionV1 "go-wind-cms/api/gen/go/permission/service/v1"
 
 	"go-wind-cms/pkg/middleware/auth"
-	"go-wind-cms/pkg/utils"
 )
 
 type UserService struct {
@@ -119,12 +118,12 @@ func (s *UserService) Create(ctx context.Context, req *identityV1.CreateUserRequ
 	var queryString string
 	if operator.GetTenantId() > 0 || req.Data.GetTenantId() > 0 {
 		queryString = fmt.Sprintf(`{"id__in": "[%s]", "type": "TENANT", "tenant_id": %d}`,
-			utils.NumberSliceToString(roleIds),
+			sliceutil.NumberSliceToString(roleIds),
 			req.Data.GetTenantId(),
 		)
 	} else {
 		queryString = fmt.Sprintf(`{"id__in": "[%s]", "type": "SYSTEM"}`,
-			utils.NumberSliceToString(roleIds),
+			sliceutil.NumberSliceToString(roleIds),
 		)
 	}
 	roles, err := s.roleServiceClient.List(ctx, &paginationV1.PagingRequest{
@@ -180,7 +179,7 @@ func (s *UserService) Update(ctx context.Context, req *identityV1.UpdateUserRequ
 		// 管理端 Update 排除租户/用户名/密码/创建者等敏感字段，
 		// 这些字段不可经通用更新路径修改（租户由后端按操作人强制、用户名创建后不可变、
 		// 密码走专用改密流程、创建者不可改）。updated_by 由上方强制注入。
-		req.UpdateMask.Paths = utils.FilterBlacklist(req.UpdateMask.GetPaths(), []string{
+		req.UpdateMask.Paths = sliceutil.FilterBlacklist(req.UpdateMask.GetPaths(), []string{
 			"tenant_id", "username", "password", "created_by",
 		})
 		req.UpdateMask.Paths = append(req.UpdateMask.Paths, "updated_by")
@@ -231,12 +230,12 @@ func (s *UserService) Update(ctx context.Context, req *identityV1.UpdateUserRequ
 	var queryString string
 	if operator.GetTenantId() > 0 || req.Data.GetTenantId() > 0 {
 		queryString = fmt.Sprintf(`{"id__in": "[%s]", "type": "TENANT", "tenant_id": %d}`,
-			utils.NumberSliceToString(roleIds),
+			sliceutil.NumberSliceToString(roleIds),
 			req.Data.GetTenantId(),
 		)
 	} else {
 		queryString = fmt.Sprintf(`{"id__in": "[%s]", "type": "SYSTEM"}`,
-			utils.NumberSliceToString(roleIds),
+			sliceutil.NumberSliceToString(roleIds),
 		)
 	}
 	roles, err := s.roleServiceClient.List(ctx, &paginationV1.PagingRequest{

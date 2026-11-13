@@ -30,7 +30,7 @@ import (
 
 	"github.com/minio/minio-go/v7"
 
-	"go-wind-cms/pkg/crypto"
+	"github.com/tx7do/go-utils/crypto"
 	"go-wind-cms/pkg/oss"
 	_ "go-wind-cms/pkg/social/bluesky"  // 注册 Bluesky 平台适配器
 	_ "go-wind-cms/pkg/social/devto"    // 注册 DEV.to 平台适配器

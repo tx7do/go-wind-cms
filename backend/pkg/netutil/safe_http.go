@@ -8,6 +8,8 @@ import (
 	"net/http"
 	"net/url"
 	"time"
+
+	libnetutil "github.com/tx7do/go-utils/netutil"
 )
 
 const (
@@ -20,20 +22,13 @@ const (
 
 // isBlockedIP reports whether ip points at an internal or reserved range
 // that must not be reachable from a server-side fetch (SSRF mitigation).
+// 判定委托库版 CIDR 黑名单（20 段，覆盖 CGNAT 100.64/10、0.0.0.0/8、
+// TEST-NET×3 等 net.IP 方法判定遗漏的保留段）。
 func isBlockedIP(ip net.IP) bool {
 	if ip == nil {
 		return true
 	}
-	switch {
-	case ip.IsLoopback(),
-		ip.IsUnspecified(),
-		ip.IsLinkLocalUnicast(),
-		ip.IsLinkLocalMulticast(),
-		ip.IsMulticast(),
-		ip.IsPrivate(): // RFC 1918 (10/8, 172.16/12, 192.168/16) + RFC 4193 (fc00::/7)
-		return true
-	}
-	return false
+	return libnetutil.IsBlockedIPAddr(ip)
 }
 
 // safeTransport returns an http.Transport whose DialContext resolves the
@@ -76,9 +71,13 @@ func SafeHTTPClient() *http.Client {
 	}
 }
 
-// ValidateURL parses rawURL and ensures it uses an http(s) scheme.  It returns
-// the parsed URL on success so the caller avoids a second parse.
+// ValidateURL parses rawURL and ensures it uses an http(s) scheme and carries
+// no userinfo（user:pass@host，常见 SSRF 混淆手法）.  It returns the parsed URL
+// on success so the caller avoids a second parse.
 func ValidateURL(rawURL string) (*url.URL, error) {
+	if rawURL == "" {
+		return nil, fmt.Errorf("empty url")
+	}
 	u, err := url.Parse(rawURL)
 	if err != nil {
 		return nil, fmt.Errorf("invalid url: %w", err)
@@ -88,6 +87,9 @@ func ValidateURL(rawURL string) (*url.URL, error) {
 	}
 	if u.Host == "" {
 		return nil, fmt.Errorf("missing host")
+	}
+	if u.User != nil {
+		return nil, fmt.Errorf("userinfo not allowed in url")
 	}
 	return u, nil
 }

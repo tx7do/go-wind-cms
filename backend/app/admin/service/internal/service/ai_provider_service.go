@@ -12,7 +12,7 @@ import (
 	adminV1 "go-wind-cms/api/gen/go/admin/service/v1"
 	aiV1 "go-wind-cms/api/gen/go/ai/service/v1"
 
-	"go-wind-cms/pkg/crypto"
+	"github.com/tx7do/go-utils/crypto"
 	"go-wind-cms/pkg/middleware/auth"
 )
 

@@ -25,7 +25,7 @@ import (
 	permissionV1 "go-wind-cms/api/gen/go/permission/service/v1"
 
 	"go-wind-cms/pkg/constants"
-	"go-wind-cms/pkg/utils"
+	"github.com/tx7do/go-utils/sliceutil"
 )
 
 type PermissionRepo struct {
@@ -430,7 +430,7 @@ func (r *PermissionRepo) Update(ctx context.Context, req *permissionV1.UpdatePer
 	// 若保留在 updateMask 中，当其值为空时会被当作 nil 字段生成 SET api_ids=NULL 的 SQL，触发列不存在错误。
 	// 关联关系由下方的 AssignApis / AssignMenus 单独维护。
 	if req.UpdateMask != nil {
-		req.UpdateMask.Paths = utils.FilterBlacklist(req.UpdateMask.GetPaths(), []string{
+		req.UpdateMask.Paths = sliceutil.FilterBlacklist(req.UpdateMask.GetPaths(), []string{
 			"api_ids", "menu_ids",
 		})
 	}

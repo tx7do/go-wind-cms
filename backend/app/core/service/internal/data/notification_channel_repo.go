@@ -12,7 +12,7 @@ import (
 	"github.com/tx7do/go-utils/trans"
 	"github.com/tx7do/kratos-bootstrap/bootstrap"
 
-	pkgcrypto "go-wind-cms/pkg/crypto"
+	pkgcrypto "github.com/tx7do/go-utils/crypto"
 
 	"go-wind-cms/app/core/service/internal/data/ent"
 	"go-wind-cms/app/core/service/internal/data/ent/notificationchannel"

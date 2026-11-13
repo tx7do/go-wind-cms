@@ -8,7 +8,7 @@ import (
 	"fmt"
 	"strings"
 
-	pkgcrypto "go-wind-cms/pkg/crypto"
+	pkgcrypto "github.com/tx7do/go-utils/crypto"
 )
 
 // NormalizeSettingsForStore 保存前规范化：JSON 解析 → required 校验 → sensitive 字段加密。

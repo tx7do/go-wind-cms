@@ -18,6 +18,7 @@ import (
 
 	paginationV1 "github.com/tx7do/go-crud/api/gen/go/pagination/v1"
 
+	"github.com/tx7do/go-utils/crypto"
 	aiV1 "go-wind-cms/api/gen/go/ai/service/v1"
 	identityV1 "go-wind-cms/api/gen/go/identity/service/v1"
 	permissionV1 "go-wind-cms/api/gen/go/permission/service/v1"
@@ -25,7 +26,6 @@ import (
 	"go-wind-cms/app/core/service/internal/data/ent"
 	"go-wind-cms/app/core/service/internal/data/ent/aiprovider"
 	pkgAi "go-wind-cms/pkg/ai"
-	"go-wind-cms/pkg/crypto"
 )
 
 const aiContentCallTimeout = 60 * time.Second

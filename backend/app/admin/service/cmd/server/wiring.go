@@ -8,7 +8,7 @@ import (
 	kratosTransport "github.com/go-kratos/kratos/v2/transport"
 	"github.com/tx7do/kratos-bootstrap/bootstrap"
 
-	pkgcrypto "go-wind-cms/pkg/crypto"
+	pkgcrypto "github.com/tx7do/go-utils/crypto"
 
 	"go-wind-cms/app/admin/service/internal/data"
 	"go-wind-cms/app/admin/service/internal/server"
