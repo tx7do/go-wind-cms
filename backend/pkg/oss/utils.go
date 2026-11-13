@@ -27,8 +27,6 @@ const (
 	BucketFiles  = "files"
 )
 
-var staticHMACSecret = []byte("0123456789abcdef0123456789abcdef") // 32 bytes secret for HMAC
-
 // ContentTypeToBucketName 根据文件类型获取存储桶名称
 func ContentTypeToBucketName(contentType string) string {
 	if strings.TrimSpace(contentType) == "" {

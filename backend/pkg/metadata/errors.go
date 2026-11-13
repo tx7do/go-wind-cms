@@ -16,6 +16,4 @@ var (
 	ErrNilOperatorMetadata         = errors.Unauthorized(reason, "metadata: nil operator metadata")
 	ErrEmptyOperatorMetadataString = errors.Unauthorized(reason, "metadata: empty operator metadata string")
 	ErrNilRequestHeader            = errors.Unauthorized(reason, "metadata: nil request headers map")
-
-	ErrSignatureMismatch = errors.Unauthorized(reason, "metadata: signature mismatch")
 )

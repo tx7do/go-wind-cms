@@ -32,19 +32,17 @@ const (
 
 // MinIOClient MinIO 客户端封装
 type MinIOClient struct {
-	mc         *minio.Client
-	conf       *conf.OSS
-	log        *log.Helper
-	hmacSecret []byte
+	mc   *minio.Client
+	conf *conf.OSS
+	log  *log.Helper
 }
 
 func NewMinIoClient(cfg *conf.Bootstrap, logger log.Logger) *MinIOClient {
 	l := log.NewHelper(log.With(logger, "module", "minio/data/admin-service"))
 	return &MinIOClient{
-		log:        l,
-		conf:       cfg.Oss,
-		mc:         ossMinio.NewClient(cfg.Oss),
-		hmacSecret: staticHMACSecret,
+		log:  l,
+		conf: cfg.Oss,
+		mc:   ossMinio.NewClient(cfg.Oss),
 	}
 }
 
