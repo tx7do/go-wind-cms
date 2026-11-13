@@ -47,10 +47,6 @@ func FromServerContext(ctx context.Context) (*authenticationV1.OperatorMetadata,
 	return FromContext(ctx, true)
 }
 
-func FromClientContext(ctx context.Context) (*authenticationV1.OperatorMetadata, error) {
-	return FromContext(ctx, false)
-}
-
 func FromContext(ctx context.Context, server bool) (*authenticationV1.OperatorMetadata, error) {
 	var md metadata.Metadata
 	var ok bool
@@ -136,23 +132,4 @@ func SetOperatorToRequestHeader(reqHeaders transport.Header, info *authenticatio
 	}
 	reqHeaders.Set(mdOperatorKey, str)
 	return nil
-}
-
-func GetOperatorFromRequestHeader(reqHeaders transport.Header) (*authenticationV1.OperatorMetadata, error) {
-	if reqHeaders == nil {
-		return nil, ErrNilRequestHeader
-	}
-
-	val := reqHeaders.Get(mdOperatorKey)
-	if val == "" {
-		log.Debugf("metadata: no operator metadata found in request headers [%v]", reqHeaders)
-		return nil, ErrNoOperatorHeader
-	}
-
-	info, err := DecodeOperatorMetadata(val)
-	if err != nil {
-		return nil, ErrInvalidOperator
-	}
-
-	return info, nil
 }

@@ -128,26 +128,3 @@ func (e *Encryptor) Decrypt(ciphertext string) (string, error) {
 
 	return string(plaintext), nil
 }
-
-// IsEncrypted checks if the given string is encrypted (has the prefix)
-func IsEncrypted(data string) bool {
-	return strings.HasPrefix(data, EncryptedPrefix)
-}
-
-// MustEncrypt encrypts data and panics on error (useful for testing)
-func (e *Encryptor) MustEncrypt(plaintext string) string {
-	encrypted, err := e.Encrypt(plaintext)
-	if err != nil {
-		panic(err)
-	}
-	return encrypted
-}
-
-// MustDecrypt decrypts data and panics on error (useful for testing)
-func (e *Encryptor) MustDecrypt(ciphertext string) string {
-	decrypted, err := e.Decrypt(ciphertext)
-	if err != nil {
-		panic(err)
-	}
-	return decrypted
-}

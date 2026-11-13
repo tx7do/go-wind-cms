@@ -1,9 +1,6 @@
 package oss
 
 import (
-	"crypto/hmac"
-	"crypto/sha256"
-	"encoding/hex"
 	"regexp"
 	"strconv"
 	"strings"
@@ -41,40 +38,6 @@ func TestContentTypeToBucketName(t *testing.T) {
 			got := ContentTypeToBucketName(tt.in)
 			if got != tt.want {
 				t.Errorf("ContentTypeToBucketName(%q) = %q, want %q", tt.in, got, tt.want)
-			}
-		})
-	}
-}
-
-func TestFileExtensionToBucketName(t *testing.T) {
-	tests := []struct {
-		name string
-		in   string
-		want string
-	}{
-		{"image mime", "image/jpeg", BucketImages},
-		{"jpg lowercase", "jpg", BucketImages},
-		{"jpg uppercase with dot", ".JPG", BucketImages},
-		{"png with dot", ".png", BucketImages},
-		{"video mp4", "mp4", BucketVideos},
-		{"video MP4 uppercase with dot", ".MP4", BucketVideos},
-		{"audio mp3", "mp3", BucketAudios},
-		{"js extension", "js", BucketDocs},
-		{"json extension", "json", BucketDocs},
-		{"pdf extension", "pdf", BucketDocs},
-		{"text mime with charset", "text/plain; charset=utf-8", BucketDocs},
-		{"application octet-stream mime", "application/octet-stream", BucketFiles},
-		{"unknown extension", "unknownext", BucketFiles},
-		{"empty input", "", BucketFiles},
-	}
-
-	for _, tt := range tests {
-		tt := tt
-		t.Run(tt.name, func(t *testing.T) {
-			t.Parallel()
-			got := FileExtensionToBucketName(tt.in)
-			if got != tt.want {
-				t.Errorf("FileExtensionToBucketName(%q) = %q, want %q", tt.in, got, tt.want)
 			}
 		})
 	}
@@ -177,136 +140,6 @@ func TestGeneraUUIDFileName_Uniqueness(t *testing.T) {
 		t.Fatalf("expected two generated names to differ, both: %q", a)
 	}
 	t.Logf("Generated names: %q and %q", a, b)
-}
-
-func TestGeneraContentSHA265FileName_NoExt(t *testing.T) {
-	t.Parallel()
-	// SHA256("hello") 已知值
-	want := "2cf24dba5fb0a30e26e83b2ac5b9e29e1b161e5c1fa7425e73043362938b9824"
-	got := GeneraContentSHA265FileName([]byte("hello"), "")
-	if got != want {
-		t.Fatalf("GeneraContentSHA265FileName(%q, %q) = %q, want %q", "hello", "", got, want)
-	}
-}
-
-func TestGeneraContentSHA265FileName_WithDotExt(t *testing.T) {
-	t.Parallel()
-	got := GeneraContentSHA265FileName([]byte("some data"), ".txt")
-	if !strings.HasSuffix(got, ".txt") {
-		t.Fatalf("expected suffix .txt, got %q", got)
-	}
-	matched, _ := regexp.MatchString(`^[0-9a-f]{64}\.txt$`, got)
-	if !matched {
-		t.Fatalf("unexpected format: %q", got)
-	}
-	t.Logf("Generated name: %q", got)
-}
-
-func TestGeneraContentSHA265FileName_WithExt_NoLeadingDot_And_CasePreserved(t *testing.T) {
-	t.Parallel()
-	got := GeneraContentSHA265FileName([]byte("some data"), "JPG")
-	if !strings.HasSuffix(got, ".JPG") {
-		t.Fatalf("expected suffix .JPG, got %q", got)
-	}
-	matched, _ := regexp.MatchString(`^[0-9a-f]{64}\.JPG$`, got)
-	if !matched {
-		t.Fatalf("unexpected format for uppercase ext: %q", got)
-	}
-}
-
-func TestGeneraContentSHA265FileName_DifferentContentDifferentName(t *testing.T) {
-	t.Parallel()
-	a := GeneraContentSHA265FileName([]byte("first"), ".bin")
-	b := GeneraContentSHA265FileName([]byte("second"), ".bin")
-	if a == b {
-		t.Fatalf("expected different names for different content, both: %q", a)
-	}
-	// 验证哈希长度和后缀
-	if len(strings.TrimSuffix(a, ".bin")) != 64 || len(strings.TrimSuffix(b, ".bin")) != 64 {
-		t.Fatalf("expected 64-hex hash prefix, got %q and %q", a, b)
-	}
-}
-
-func TestGenerateHMACContentFileName_DeterministicAndMatchesManual(t *testing.T) {
-	t.Parallel()
-	secret := []byte("test-secret-123")
-	content := []byte("hello hmac content")
-	ext := ".bin"
-
-	// 调用被测函数
-	got := GenerateHMACContentFileName(secret, content, ext)
-	got2 := GenerateHMACContentFileName(secret, content, ext)
-	if got != got2 {
-		t.Fatalf("expected deterministic results, got %q and %q", got, got2)
-	}
-
-	// 手工计算期望值（与函数实现一致的方式）
-	sum := sha256.Sum256(content)
-	mac := hmac.New(sha256.New, secret)
-	_, _ = mac.Write(sum[:])
-	expected := hex.EncodeToString(mac.Sum(nil))
-	expectedWithExt := expected + ".bin"
-
-	if got != expectedWithExt {
-		t.Fatalf("expected %q, got %q", expectedWithExt, got)
-	}
-}
-
-func TestGenerateHMACContentFileName_NoExt_Format(t *testing.T) {
-	t.Parallel()
-	secret := []byte("s")
-	content := []byte("payload")
-	got := GenerateHMACContentFileName(secret, content, "")
-	// 仅 64 个小写十六进制字符
-	matched, _ := regexp.MatchString(`^[0-9a-f]{64}$`, got)
-	if !matched {
-		t.Fatalf("unexpected format without ext: %q", got)
-	}
-	t.Logf("Generated name without ext: %q", got)
-}
-
-func TestGenerateHMACContentFileName_WithExt_CasePreserved(t *testing.T) {
-	t.Parallel()
-	secret := []byte("s2")
-	content := []byte("payload")
-	got := GenerateHMACContentFileName(secret, content, ".txt")
-	if !strings.HasSuffix(got, ".txt") {
-		t.Fatalf("expected suffix .txt, got %q", got)
-	}
-	matched, _ := regexp.MatchString(`^[0-9a-f]{64}\.txt$`, got)
-	if !matched {
-		t.Fatalf("unexpected format with .txt ext: %q", got)
-	}
-
-	got2 := GenerateHMACContentFileName(secret, content, "JPG")
-	if !strings.HasSuffix(got2, ".JPG") {
-		t.Fatalf("expected suffix .JPG (case preserved), got %q", got2)
-	}
-	matched2, _ := regexp.MatchString(`^[0-9a-f]{64}\.JPG$`, got2)
-	if !matched2 {
-		t.Fatalf("unexpected format with JPG ext: %q", got2)
-	}
-}
-
-func TestGenerateHMACContentFileName_DifferentSecretOrContent(t *testing.T) {
-	t.Parallel()
-	secretA := []byte("a")
-	secretB := []byte("b")
-	contentA := []byte("one")
-	contentB := []byte("two")
-
-	a := GenerateHMACContentFileName(secretA, contentA, ".bin")
-	b := GenerateHMACContentFileName(secretB, contentA, ".bin")
-	if a == b {
-		t.Fatalf("expected different names for different secrets, both: %q", a)
-	}
-	t.Logf("Generated names with different secrets: %q and %q", a, b)
-
-	c := GenerateHMACContentFileName(secretA, contentB, ".bin")
-	if a == c {
-		t.Fatalf("expected different names for different content, both: %q", a)
-	}
-	t.Logf("Generated names with different content: %q and %q", a, c)
 }
 
 func TestGeneraTimeBaseFileName_NoExt(t *testing.T) {

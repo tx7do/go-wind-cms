@@ -36,10 +36,6 @@ func IsPlatformRoleCode(roleCode string) bool {
 	return HasRoleCodePrefix(roleCode, PlatformRoleCodePrefix)
 }
 
-func IsTenantRoleCode(roleCode string) bool {
-	return HasRoleCodePrefix(roleCode, TenantRoleCodePrefix)
-}
-
 func IsTemplateRoleCode(roleCode string) bool {
 	return HasRoleCodePrefix(roleCode, TemplateRoleCodePrefix)
 }

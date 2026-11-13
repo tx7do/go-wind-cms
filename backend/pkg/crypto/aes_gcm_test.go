@@ -150,38 +150,6 @@ func TestEncryptor_InvalidCiphertext(t *testing.T) {
 	}
 }
 
-func TestIsEncrypted(t *testing.T) {
-	tests := []struct {
-		name string
-		data string
-		want bool
-	}{
-		{
-			name: "encrypted data",
-			data: "enc:some-encrypted-data",
-			want: true,
-		},
-		{
-			name: "plaintext",
-			data: "plain text data",
-			want: false,
-		},
-		{
-			name: "empty string",
-			data: "",
-			want: false,
-		},
-	}
-
-	for _, tt := range tests {
-		t.Run(tt.name, func(t *testing.T) {
-			if got := IsEncrypted(tt.data); got != tt.want {
-				t.Errorf("IsEncrypted() = %v, want %v", got, tt.want)
-			}
-		})
-	}
-}
-
 func TestEncryptor_DifferentKeys(t *testing.T) {
 	// Test that different keys produce different results
 	encryptor1, _ := NewEncryptor("key1")

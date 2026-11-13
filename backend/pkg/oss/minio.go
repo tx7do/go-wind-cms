@@ -172,24 +172,6 @@ func (c *MinIOClient) GetUploadPresignedUrl(ctx context.Context, req *storageV1.
 	}, nil
 }
 
-// ListFile 获取文件夹下面的文件列表
-func (c *MinIOClient) ListFile(ctx context.Context, req *storageV1.ListOssFileRequest) (*storageV1.ListOssFileResponse, error) {
-	resp := &storageV1.ListOssFileResponse{
-		Files: make([]string, 0),
-	}
-	for object := range c.mc.ListObjects(ctx,
-		req.GetBucketName(),
-		minio.ListObjectsOptions{
-			Prefix:    req.GetFolder(),
-			Recursive: req.GetRecursive(),
-		},
-	) {
-		//fmt.Printf("%+v\n", object)
-		resp.Files = append(resp.Files, object.Key)
-	}
-	return resp, nil
-}
-
 // DeleteFile 删除一个文件
 func (c *MinIOClient) DeleteFile(ctx context.Context, bucketName, objectName string) error {
 	if bucketName == "" {

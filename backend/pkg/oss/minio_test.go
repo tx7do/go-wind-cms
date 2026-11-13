@@ -43,20 +43,6 @@ func TestMinIoClient(t *testing.T) {
 	assert.NotNil(t, resp)
 }
 
-func TestListFile(t *testing.T) {
-	cli := createTestClient()
-	assert.NotNil(t, cli)
-
-	req := &storageV1.ListOssFileRequest{
-		BucketName: trans.Ptr("users"),
-		Folder:     trans.Ptr("1"),
-		Recursive:  trans.Ptr(true),
-	}
-	files, err := cli.ListFile(t.Context(), req)
-	assert.Nil(t, err)
-	fmt.Println(files)
-}
-
 func TestDownloadFile(t *testing.T) {
 	cli := createTestClient()
 	assert.NotNil(t, cli)

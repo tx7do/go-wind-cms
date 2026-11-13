@@ -3,6 +3,7 @@ package crypto_test
 import (
 	"fmt"
 	"log"
+	"strings"
 
 	"go-wind-cms/pkg/crypto"
 )
@@ -22,7 +23,7 @@ func ExampleEncryptor_Encrypt() {
 	}
 
 	// Encrypted data has the "enc:" prefix
-	fmt.Println("Data encrypted:", crypto.IsEncrypted(encrypted))
+	fmt.Println("Data encrypted:", strings.HasPrefix(encrypted, "enc:"))
 	// Output: Data encrypted: true
 }
 
@@ -68,17 +69,6 @@ func ExampleEncryptor_Decrypt_backwardCompatibility() {
 	// Output: Legacy data handled: true
 }
 
-func ExampleIsEncrypted() {
-	encryptedData := "enc:SGVsbG8gV29ybGQh"
-	plaintextData := "Hello, World!"
-
-	fmt.Println("Encrypted:", crypto.IsEncrypted(encryptedData))
-	fmt.Println("Plaintext:", crypto.IsEncrypted(plaintextData))
-	// Output:
-	// Encrypted: true
-	// Plaintext: false
-}
-
 func ExampleEncryptIfNeeded() {
 	// Initialize global encryptor
 	crypto.InitGlobalEncryptor("global-secret-key", true)
@@ -89,7 +79,7 @@ func ExampleEncryptIfNeeded() {
 		log.Fatal(err)
 	}
 
-	fmt.Println("Encrypted:", crypto.IsEncrypted(encrypted))
+	fmt.Println("Encrypted:", strings.HasPrefix(encrypted, "enc:"))
 	// Output: Encrypted: true
 }
 
@@ -131,7 +121,7 @@ func Example_taskConfiguration() {
 	}
 
 	// Store in database (simulated)
-	fmt.Println("Stored in DB:", crypto.IsEncrypted(encryptedConfig))
+	fmt.Println("Stored in DB:", strings.HasPrefix(encryptedConfig, "enc:"))
 
 	// When reading from database, decrypt the configuration
 	decryptedConfig, err := crypto.DecryptIfNeeded(encryptedConfig)
