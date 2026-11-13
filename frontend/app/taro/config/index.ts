@@ -57,6 +57,10 @@ export default defineConfig<'vite'>(async (merge, {}) => {
           }),
         );
       }
+      // 生产构建剥离 console/debugger——凭据与请求日志不进产物
+      if (process.env.NODE_ENV === 'production') {
+        config.esbuild = {...config.esbuild, drop: ['console', 'debugger']};
+      }
     },
     alias: {
       '@': path.resolve(__dirname, '..', 'src'),

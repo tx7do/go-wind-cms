@@ -11,15 +11,13 @@
  * ```
  */
 
-// 声明全局常量类型
+// 声明全局常量类型（APP_NAMESPACE/AES_KEY 的全局声明在各自使用文件内）
 declare const API_BASE_URL: string;
 declare const APP_TITLE: string;
 declare const ENABLE_MOCK: string;
 declare const DEFAULT_LOCALE: string;
 declare const TOKEN_KEY: string;
 declare const REFRESH_TOKEN_KEY: string;
-declare const APP_NAMESPACE: string;
-declare const AES_KEY: string;
 
 export const env = {
     /**
