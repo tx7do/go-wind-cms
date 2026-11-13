@@ -632,6 +632,8 @@ github.com/tx7do/go-utils/slug v0.0.1 h1:U/8micay7kQGMQiEP0WTLX5JiyTrLP2M5rQ6iTB
 github.com/tx7do/go-utils/slug v0.0.1/go.mod h1:xtwLns5uOYP+//LMsB9vXOBtycP5KW+n/N9gCl1Ag9M=
 github.com/tx7do/go-utils/translator v1.1.3 h1:kqA4iY1A7+n1zWoTaEjIElaBOVtisbaOHt/6sOVVsis=
 github.com/tx7do/go-utils/translator v1.1.3/go.mod h1:jKzL0a5ocwAnCVKg3iUiB36loRfX0iWCtrcmjqjW6Ng=
+github.com/tx7do/go-utils/translator/baidu v0.0.2 h1:zCMCreanpH9nW8NdJfVhnIS2qEQktUA9QFmwB/P2QE8=
+github.com/tx7do/go-utils/translator/baidu v0.0.2/go.mod h1:X8v9o4UbrIAOOamybYk2gM58BJ/DqQvsV5kyMMb+ZII=
 github.com/tx7do/go-wind v0.0.2 h1:kuI2QpwGacfROQpugPFWIcrtztv7qwFwQ4ts+LTsq2k=
 github.com/tx7do/go-wind v0.0.2/go.mod h1:BgeqjCLtGfTlT709176kd2KuLq7I1Am9tqQBrzYssc0=
 github.com/tx7do/go-wind-plugins/ai/openai v0.0.1 h1:/oMoMWswDWk1t8kTZWVsGrX6zHxmWAySvPBILQuHfAs=

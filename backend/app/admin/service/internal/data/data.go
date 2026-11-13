@@ -19,9 +19,8 @@ import (
 
 	"github.com/tx7do/go-utils/captcha"
 	"github.com/tx7do/go-utils/translator"
+	baidu "github.com/tx7do/go-utils/translator/baidu"
 	"github.com/tx7do/go-utils/translator/google"
-
-	"go-wind-cms/pkg/translator/baidu"
 
 	accesskeyV1 "go-wind-cms/api/gen/go/access_key/service/v1"
 	aiV1 "go-wind-cms/api/gen/go/ai/service/v1"
@@ -120,8 +119,8 @@ func NewTranslator(_ *bootstrap.Context) translator.Translator {
 	switch strings.ToLower(strings.TrimSpace(os.Getenv("TRANSLATOR_PROVIDER"))) {
 	case "baidu":
 		return baidu.NewTranslator(
-			baidu.WithAppID(strings.TrimSpace(os.Getenv("BAIDU_TRANSLATE_APP_ID"))),
-			baidu.WithSecret(strings.TrimSpace(os.Getenv("BAIDU_TRANSLATE_SECRET"))),
+			strings.TrimSpace(os.Getenv("BAIDU_TRANSLATE_APP_ID")),
+			strings.TrimSpace(os.Getenv("BAIDU_TRANSLATE_SECRET")),
 		)
 	}
 
