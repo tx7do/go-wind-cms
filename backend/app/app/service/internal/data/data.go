@@ -1,6 +1,8 @@
 package data
 
 import (
+	"time"
+
 	"github.com/redis/go-redis/v9"
 
 	authnEngine "github.com/tx7do/kratos-authn/engine"
@@ -8,6 +10,8 @@ import (
 
 	authzEngine "github.com/tx7do/kratos-authz/engine"
 	"github.com/tx7do/kratos-authz/engine/noop"
+
+	"github.com/tx7do/go-utils/captcha"
 
 	"github.com/go-kratos/kratos/v2/registry"
 
@@ -291,4 +295,18 @@ func NewMediaAssetServiceClient(ctx *bootstrap.Context, r registry.Discovery) me
 	}
 
 	return mediaV1.NewMediaAssetServiceClient(cli)
+}
+
+// NewCaptcha 图形验证码客户端（渐进式登录验证码：生成/存取/校验）。
+// 键前缀沿用全仓 ProjectName 约定（gwc:captcha:*），与 admin 服务同一 Redis 键空间
+// 也互不冲突（captchaId 全局唯一）。
+func NewCaptcha(rdb *redis.Client) *captcha.Captcha {
+	captchaInstance := captcha.NewCaptcha(rdb,
+		captcha.WithDriverType(captcha.DriverString),
+		captcha.WithExpire(10*time.Minute),
+		captcha.WithKeyPrefix(serviceid.ProjectName+":captcha"),
+		captcha.WithStringCount(6),
+		captcha.WithStringSource("ABCDEFGHJKLMNPQRSTUVWXYZ23456789"),
+	)
+	return captchaInstance
 }

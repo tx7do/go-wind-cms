@@ -6,8 +6,10 @@ import (
 	"regexp"
 	"strings"
 
+	"github.com/go-kratos/kratos/v2/errors"
 	"github.com/go-kratos/kratos/v2/log"
 	khttp "github.com/go-kratos/kratos/v2/transport/http"
+	"github.com/tx7do/go-utils/captcha"
 	"github.com/tx7do/go-utils/crypto"
 	"github.com/tx7do/go-utils/trans"
 	"github.com/tx7do/kratos-bootstrap/bootstrap"
@@ -18,9 +20,35 @@ import (
 	identityV1 "go-wind-cms/api/gen/go/identity/service/v1"
 	entmiddleware "go-wind-cms/pkg/middleware/ent"
 
+	"go-wind-cms/app/app/service/internal/data"
 	"go-wind-cms/pkg/middleware/auth"
 	"go-wind-cms/pkg/netutil"
 )
+
+// 验证码相关请求头（渐进式验证码：通过 header 传递以避免改动 proto 与四端生成代码）。
+const (
+	headerCaptchaID        = "X-Captcha-Id"
+	headerCaptchaValue     = "X-Captcha-Value"
+	headerCaptchaSupported = "X-Captcha-Supported"
+)
+
+// CaptchaEnabled 控制登录是否启用验证码校验（渐进式闸门的总开关）。
+const CaptchaEnabled = true
+
+// captchaRequiredThreshold 渐进式验证码阈值：同一 ip+用户名的登录失败计数
+// 达到该值后，声明支持验证码的客户端（X-Captcha-Supported）强制验证码。
+// 计数由登录失败自增（rateLimiter.CheckAndIncr）维护、登录成功 Reset，
+// 滑动窗口 loginFailKeyTTL 过期自然清零。
+const captchaRequiredThreshold = 1
+
+// credentialFailReasons 计入登录失败数的凭据错误 reason 族。
+// 验证码错误与基础设施错误不计；INVALID_TENANT 为 core 对齐 reason 后
+// 自动生效的预留项。
+var credentialFailReasons = map[string]struct{}{
+	"INVALID_PASSWORD": {},
+	"USER_NOT_FOUND":   {},
+	"INVALID_TENANT":   {},
+}
 
 type AuthenticationService struct {
 	appV1.AuthenticationServiceHTTPServer
@@ -28,6 +56,9 @@ type AuthenticationService struct {
 	authenticationServiceClient authenticationV1.AuthenticationServiceClient
 	tenantClient                identityV1.TenantServiceClient
 	tenantResolve               entmiddleware.TenantResolver
+
+	captchaClient *captcha.Captcha
+	rateLimiter   *data.LoginRateLimiter
 
 	log *log.Helper
 }
@@ -37,12 +68,16 @@ func NewAuthenticationService(
 	authenticationServiceClient authenticationV1.AuthenticationServiceClient,
 	tenantClient identityV1.TenantServiceClient,
 	tenantResolve entmiddleware.TenantResolver,
+	captchaClient *captcha.Captcha,
+	rateLimiter *data.LoginRateLimiter,
 ) *AuthenticationService {
 	return &AuthenticationService{
 		log:                         ctx.NewLoggerHelper("authn/service/app-service"),
 		authenticationServiceClient: authenticationServiceClient,
 		tenantClient:                tenantClient,
 		tenantResolve:               tenantResolve,
+		captchaClient:               captchaClient,
+		rateLimiter:                 rateLimiter,
 	}
 }
 
@@ -70,7 +105,129 @@ func (s *AuthenticationService) Login(ctx context.Context, req *authenticationV1
 		req.UserId = trans.Ptr(operator.GetUserId())
 	}
 
-	return s.authenticationServiceClient.Login(ctx, req)
+	if req.GetGrantType() == authenticationV1.GrantType_password {
+		clientIP := req.GetClientIp()
+		username := req.GetUsername()
+
+		// ===== 闸门 1：登录限流前置（IP + 用户名双维度，5 次失败锁 15 分钟）=====
+		// 全端生效——未声明验证码支持的端（taro/flutter）无免验证码豁免，
+		// 锁定是防爆破主力，不因端能力而放行。
+		if s.rateLimiter != nil {
+			if locked, lerr := s.rateLimiter.IsLocked(ctx, clientIP, username); lerr != nil {
+				s.log.Errorf("login rate limiter pre-check failed: %s", lerr.Error())
+			} else if locked {
+				s.log.Warnf("login blocked by rate limiter: ip=%s, username=%s", clientIP, username)
+				return nil, appV1.ErrorBadRequest("too many login failures, please try again later")
+			}
+		}
+
+		// ===== 闸门 2：渐进式验证码（仅声明支持验证码的客户端）=====
+		// taro/flutter 未实现验证码 UI，上报 X-Captcha-Supported 免受验证码 gate
+		// （否则错一次密码就会在 15 分钟窗口内被 CAPTCHA_REQUIRED 卡死无法登录）。
+		if s.captchaSupported(ctx) {
+			if err := s.verifyLoginCaptcha(ctx, clientIP, username); err != nil {
+				return nil, err
+			}
+		}
+	}
+
+	resp, err := s.authenticationServiceClient.Login(ctx, req)
+	if err != nil {
+		// 登录失败（凭据族错误）时自增失败计数（按 IP + 用户名双维度），
+		// 供渐进式验证码与锁定闸门使用；验证码错误/基础设施错误不计数。
+		if req.GetGrantType() == authenticationV1.GrantType_password && isCredentialFailure(err) && s.rateLimiter != nil {
+			if _, _, _, cerr := s.rateLimiter.CheckAndIncr(ctx, req.GetClientIp(), req.GetUsername()); cerr != nil {
+				s.log.Errorf("login rate limiter incr failed: %s", cerr.Error())
+			}
+		}
+		return nil, err
+	}
+
+	// 登录成功后清零失败计数（回到免验证码态）
+	if req.GetGrantType() == authenticationV1.GrantType_password && s.rateLimiter != nil {
+		s.rateLimiter.Reset(ctx, req.GetClientIp(), req.GetUsername())
+	}
+
+	return resp, nil
+}
+
+// GenerateCaptcha 生成图形验证码（透传 captchaClient；免鉴权端点，见 rest_server 白名单）。
+func (s *AuthenticationService) GenerateCaptcha(ctx context.Context, _ *emptypb.Empty) (*authenticationV1.GenerateCaptchaResponse, error) {
+	if s.captchaClient == nil {
+		return nil, appV1.ErrorServiceUnavailable("captcha unavailable")
+	}
+	captchaId, captchaImage, answer, err := s.captchaClient.Generate()
+	if err != nil {
+		s.log.Errorf("generate captcha failed: %s", err.Error())
+		return nil, appV1.ErrorInternalServerError("generate captcha failed")
+	}
+
+	// Generate() 只生成验证码但不落盘，必须手动 Save 到 Redis，否则 Verify 时查不到。
+	if err = s.captchaClient.Save(ctx, captchaId, answer); err != nil {
+		s.log.Errorf("save captcha failed: %s", err.Error())
+		return nil, appV1.ErrorInternalServerError("save captcha failed")
+	}
+
+	return &authenticationV1.GenerateCaptchaResponse{
+		CaptchaId:   captchaId,
+		ImageBase64: captchaImage,
+	}, nil
+}
+
+// captchaSupported 判断客户端是否声明支持验证码 UI（X-Captcha-Supported: 1）。
+// 声明缺失（老前端/未适配端）视为不支持——渐进式验证码只对明确支持的端生效。
+func (s *AuthenticationService) captchaSupported(ctx context.Context) bool {
+	if !CaptchaEnabled || s.captchaClient == nil {
+		return false
+	}
+	header := netutil.HeaderFromContext(ctx)
+	return header != nil && strings.TrimSpace(header.Get(headerCaptchaSupported)) == "1"
+}
+
+// verifyLoginCaptcha 渐进式校验登录请求携带的验证码。
+// 验证码 id/value 通过 HTTP Header（X-Captcha-Id / X-Captcha-Value）传递。
+// 仅当同一 ip+用户名的登录失败计数达到 captchaRequiredThreshold 时强制——
+// 计数由登录失败自增维护、登录成功 Reset，未达阈值时不校验也不消费验证码。
+// captchaClient.Verify 已是 verify-and-delete 单次有效语义。
+func (s *AuthenticationService) verifyLoginCaptcha(ctx context.Context, clientIP, username string) error {
+	// 渐进式闸门：失败计数读的是限流器的只读快照；Redis 不可用时返回 0，
+	// 与锁定闸门的 fail-open 语义一致（限流是防御增强，不应故障时堵死登录）。
+	if s.rateLimiter == nil || s.rateLimiter.FailureAttempts(ctx, clientIP, username) < captchaRequiredThreshold {
+		return nil
+	}
+	header := netutil.HeaderFromContext(ctx)
+	if header == nil {
+		return appV1.ErrorCaptchaRequired("captcha required")
+	}
+	captchaID := strings.TrimSpace(header.Get(headerCaptchaID))
+	captchaValue := strings.TrimSpace(header.Get(headerCaptchaValue))
+	if captchaID == "" || captchaValue == "" {
+		return appV1.ErrorCaptchaRequired("captcha required")
+	}
+	ok, err := s.captchaClient.Verify(ctx, captchaID, captchaValue)
+	if err != nil {
+		s.log.Errorf("verify captcha failed: %s", err.Error())
+		// 校验异常也销毁该验证码（不可信状态下让单码不再可用，缩小在线试猜窗口）。
+		_ = s.captchaClient.Delete(ctx, captchaID)
+		return appV1.ErrorCaptchaInvalid("invalid captcha")
+	}
+	if !ok {
+		// 校验失败（含不匹配/过期不存在）销毁验证码——失败后单码仍可用会在
+		// 10 分钟 TTL 内形成在线试猜窗口。
+		_ = s.captchaClient.Delete(ctx, captchaID)
+		return appV1.ErrorCaptchaInvalid("invalid captcha")
+	}
+	return nil
+}
+
+// isCredentialFailure 判断转发错误是否为凭据校验失败（该计入登录失败数的类型）。
+func isCredentialFailure(err error) bool {
+	se := errors.FromError(err)
+	if se == nil {
+		return false
+	}
+	_, ok := credentialFailReasons[se.Reason]
+	return ok
 }
 
 // Logout 登出

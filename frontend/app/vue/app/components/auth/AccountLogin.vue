@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import { useAuthStore } from '@/stores/modules/app/auth.state'
+import { apiClient, declareCaptchaSupport, setCaptchaValues } from '@/api/client'
 
 const { t } = useI18n()
 const { resolveApiError } = useApiError()
@@ -12,6 +13,45 @@ const password = ref('')
 const rememberMe = ref(false)
 const loading = ref(false)
 const errorMsg = ref('')
+
+// 渐进式验证码：初始不要求；后端对失败达阈值的登录投递 CAPTCHA_REQUIRED
+// reason 后点亮输入与图片，图片拉取随之懒加载。
+const captchaRequired = ref(false)
+const captchaId = ref('')
+const captchaImage = ref('')
+const captchaValue = ref('')
+
+// 本端有验证码 UI：声明支持（后端仅对声明方启用验证码 gate）；
+// 卸载时清掉验证码 header，避免残留值污染后续请求。
+onMounted(() => {
+  declareCaptchaSupport()
+})
+
+onUnmounted(() => {
+  setCaptchaValues(undefined, undefined)
+})
+
+// 点亮后懒拉验证码图
+watch(captchaRequired, (required) => {
+  if (!required) return
+  refreshCaptcha()
+})
+
+// captcha id/value 变化同步到请求 header（id/value 齐备才携带）
+watch([captchaId, captchaValue], ([id, value]) => {
+  setCaptchaValues(id, value)
+})
+
+const refreshCaptcha = async () => {
+  try {
+    const resp = await apiClient.authenticationService.GenerateCaptcha({})
+    captchaId.value = resp.captchaId ?? ''
+    captchaImage.value = resp.imageBase64 ?? ''
+  } catch (e) {
+    // 验证码获取失败不阻断页面（登录时会再次校验），原始错误留控制台
+    console.warn('fetch captcha failed', e)
+  }
+}
 
 const handleLogin = async () => {
   errorMsg.value = ''
@@ -37,6 +77,16 @@ const handleLogin = async () => {
       await navigateTo(target.startsWith('/') ? target : localePath('/'))
     })
   } catch (e: any) {
+    // 渐进式验证码：CAPTCHA_REQUIRED 点亮输入与图片；已处于要求态的失败刷新图片。
+    if (e?.reason === 'CAPTCHA_REQUIRED') {
+      if (!captchaRequired.value) {
+        captchaRequired.value = true
+      } else {
+        refreshCaptcha()
+      }
+    } else if (captchaRequired.value) {
+      refreshCaptcha()
+    }
     errorMsg.value = resolveApiError(e)
   } finally {
     loading.value = false
@@ -82,6 +132,40 @@ const inputBase = 'w-full rounded-lg border border-border bg-background px-4 py-
         autocomplete="current-password"
         @keydown.enter="handleLogin"
       />
+    </div>
+
+    <div v-if="captchaRequired" class="space-y-2">
+      <label for="login-captcha" class="block text-sm font-medium text-foreground">
+        {{ t('authentication.login.captcha_label') }}
+      </label>
+      <div class="flex w-full items-center gap-2">
+        <input
+          id="login-captcha"
+          v-model="captchaValue"
+          type="text"
+          :class="inputBase + ' min-w-0 flex-1'"
+          :placeholder="t('authentication.login.placeholder_code')"
+          autocomplete="off"
+          maxlength="6"
+          @keydown.enter="handleLogin"
+        />
+        <!-- 图片盒：点击刷新；加载失败退化为可点占位 -->
+        <div
+          class="flex h-[42px] w-[126px] shrink-0 cursor-pointer items-center justify-center overflow-hidden rounded-lg border border-border bg-muted"
+          :title="t('authentication.login.captcha_refresh')"
+          @click="refreshCaptcha"
+        >
+          <img
+            v-if="captchaImage"
+            :src="captchaImage"
+            alt="captcha"
+            class="h-full w-full object-cover"
+          >
+          <span v-else class="text-xs text-muted-foreground">
+            {{ t('authentication.login.captcha_refresh') }}
+          </span>
+        </div>
+      </div>
     </div>
 
     <div class="flex w-full items-center justify-between">

@@ -25,6 +25,7 @@ const (
 	AuthenticationService_Logout_FullMethodName              = "/app.service.v1.AuthenticationService/Logout"
 	AuthenticationService_RefreshToken_FullMethodName        = "/app.service.v1.AuthenticationService/RefreshToken"
 	AuthenticationService_GetOidcAuthorizeUrl_FullMethodName = "/app.service.v1.AuthenticationService/GetOidcAuthorizeUrl"
+	AuthenticationService_GenerateCaptcha_FullMethodName     = "/app.service.v1.AuthenticationService/GenerateCaptcha"
 )
 
 // AuthenticationServiceClient is the client API for AuthenticationService service.
@@ -41,6 +42,8 @@ type AuthenticationServiceClient interface {
 	RefreshToken(ctx context.Context, in *v1.LoginRequest, opts ...grpc.CallOption) (*v1.LoginResponse, error)
 	// 获取 OIDC 授权跳转地址（core 生成 state 暂存 Redis，防 CSRF；免鉴权）
 	GetOidcAuthorizeUrl(ctx context.Context, in *v1.GetOidcAuthorizeUrlRequest, opts ...grpc.CallOption) (*v1.GetOidcAuthorizeUrlResponse, error)
+	// 生成图形验证码（渐进式验证码：登录失败达阈值后登录页点亮验证码字段再拉取；免鉴权）
+	GenerateCaptcha(ctx context.Context, in *emptypb.Empty, opts ...grpc.CallOption) (*v1.GenerateCaptchaResponse, error)
 }
 
 type authenticationServiceClient struct {
@@ -91,6 +94,16 @@ func (c *authenticationServiceClient) GetOidcAuthorizeUrl(ctx context.Context, i
 	return out, nil
 }
 
+func (c *authenticationServiceClient) GenerateCaptcha(ctx context.Context, in *emptypb.Empty, opts ...grpc.CallOption) (*v1.GenerateCaptchaResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(v1.GenerateCaptchaResponse)
+	err := c.cc.Invoke(ctx, AuthenticationService_GenerateCaptcha_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 // AuthenticationServiceServer is the server API for AuthenticationService service.
 // All implementations must embed UnimplementedAuthenticationServiceServer
 // for forward compatibility.
@@ -105,6 +118,8 @@ type AuthenticationServiceServer interface {
 	RefreshToken(context.Context, *v1.LoginRequest) (*v1.LoginResponse, error)
 	// 获取 OIDC 授权跳转地址（core 生成 state 暂存 Redis，防 CSRF；免鉴权）
 	GetOidcAuthorizeUrl(context.Context, *v1.GetOidcAuthorizeUrlRequest) (*v1.GetOidcAuthorizeUrlResponse, error)
+	// 生成图形验证码（渐进式验证码：登录失败达阈值后登录页点亮验证码字段再拉取；免鉴权）
+	GenerateCaptcha(context.Context, *emptypb.Empty) (*v1.GenerateCaptchaResponse, error)
 	mustEmbedUnimplementedAuthenticationServiceServer()
 }
 
@@ -126,6 +141,9 @@ func (UnimplementedAuthenticationServiceServer) RefreshToken(context.Context, *v
 }
 func (UnimplementedAuthenticationServiceServer) GetOidcAuthorizeUrl(context.Context, *v1.GetOidcAuthorizeUrlRequest) (*v1.GetOidcAuthorizeUrlResponse, error) {
 	return nil, status.Error(codes.Unimplemented, "method GetOidcAuthorizeUrl not implemented")
+}
+func (UnimplementedAuthenticationServiceServer) GenerateCaptcha(context.Context, *emptypb.Empty) (*v1.GenerateCaptchaResponse, error) {
+	return nil, status.Error(codes.Unimplemented, "method GenerateCaptcha not implemented")
 }
 func (UnimplementedAuthenticationServiceServer) mustEmbedUnimplementedAuthenticationServiceServer() {}
 func (UnimplementedAuthenticationServiceServer) testEmbeddedByValue()                               {}
@@ -220,6 +238,24 @@ func _AuthenticationService_GetOidcAuthorizeUrl_Handler(srv interface{}, ctx con
 	return interceptor(ctx, in, info, handler)
 }
 
+func _AuthenticationService_GenerateCaptcha_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(emptypb.Empty)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(AuthenticationServiceServer).GenerateCaptcha(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: AuthenticationService_GenerateCaptcha_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(AuthenticationServiceServer).GenerateCaptcha(ctx, req.(*emptypb.Empty))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 // AuthenticationService_ServiceDesc is the grpc.ServiceDesc for AuthenticationService service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
@@ -242,6 +278,10 @@ var AuthenticationService_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "GetOidcAuthorizeUrl",
 			Handler:    _AuthenticationService_GetOidcAuthorizeUrl_Handler,
+		},
+		{
+			MethodName: "GenerateCaptcha",
+			Handler:    _AuthenticationService_GenerateCaptcha_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},

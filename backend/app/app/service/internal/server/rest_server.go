@@ -62,6 +62,10 @@ func NewRestMiddleware(
 		// 尚无 token），与 Login 同列免鉴权；state 防 CSRF 由 core 生成校验。
 		appV1.OperationAuthenticationServiceGetOidcAuthorizeUrl,
 
+		// AuthenticationService.GenerateCaptcha：渐进式登录验证码的取图端点
+		// （登录页尚无 token），与 Login 同列免鉴权。
+		appV1.OperationAuthenticationServiceGenerateCaptcha,
+
 		appV1.OperationNavigationServiceList,
 
 		// AuthenticationService.RefreshToken：access token 过期后凭 refresh_token 换新，

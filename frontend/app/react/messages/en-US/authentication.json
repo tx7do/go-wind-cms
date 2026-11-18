@@ -27,6 +27,8 @@
         "placeholder_password": "Enter password",
         "placeholder_phone": "Enter phone number",
         "placeholder_code": "Enter verification code",
+        "captcha_label": "Captcha",
+        "captcha_refresh": "Click to refresh",
         "social_github": "Continue with GitHub",
         "social_google": "Continue with Google",
         "terms_prefix": "By signing in, you agree to our",

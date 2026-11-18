@@ -21,12 +21,15 @@ var _ = binding.EncodeURL
 
 const _ = http.SupportPackageIsVersion1
 
+const OperationAuthenticationServiceGenerateCaptcha = "/app.service.v1.AuthenticationService/GenerateCaptcha"
 const OperationAuthenticationServiceGetOidcAuthorizeUrl = "/app.service.v1.AuthenticationService/GetOidcAuthorizeUrl"
 const OperationAuthenticationServiceLogin = "/app.service.v1.AuthenticationService/Login"
 const OperationAuthenticationServiceLogout = "/app.service.v1.AuthenticationService/Logout"
 const OperationAuthenticationServiceRefreshToken = "/app.service.v1.AuthenticationService/RefreshToken"
 
 type AuthenticationServiceHTTPServer interface {
+	// GenerateCaptcha 生成图形验证码（渐进式验证码：登录失败达阈值后登录页点亮验证码字段再拉取；免鉴权）
+	GenerateCaptcha(context.Context, *emptypb.Empty) (*v1.GenerateCaptchaResponse, error)
 	// GetOidcAuthorizeUrl 获取 OIDC 授权跳转地址（core 生成 state 暂存 Redis，防 CSRF；免鉴权）
 	GetOidcAuthorizeUrl(context.Context, *v1.GetOidcAuthorizeUrlRequest) (*v1.GetOidcAuthorizeUrlResponse, error)
 	// Login 登录
@@ -43,6 +46,7 @@ func RegisterAuthenticationServiceHTTPServer(s *http.Server, srv AuthenticationS
 	r.POST("/app/v1/logout", _AuthenticationService_Logout0_HTTP_Handler(srv))
 	r.POST("/app/v1/refresh-token", _AuthenticationService_RefreshToken0_HTTP_Handler(srv))
 	r.POST("/app/v1/oidc/authorize-url", _AuthenticationService_GetOidcAuthorizeUrl0_HTTP_Handler(srv))
+	r.GET("/app/v1/captcha", _AuthenticationService_GenerateCaptcha0_HTTP_Handler(srv))
 }
 
 func _AuthenticationService_Login0_HTTP_Handler(srv AuthenticationServiceHTTPServer) func(ctx http.Context) error {
@@ -133,7 +137,28 @@ func _AuthenticationService_GetOidcAuthorizeUrl0_HTTP_Handler(srv Authentication
 	}
 }
 
+func _AuthenticationService_GenerateCaptcha0_HTTP_Handler(srv AuthenticationServiceHTTPServer) func(ctx http.Context) error {
+	return func(ctx http.Context) error {
+		var in emptypb.Empty
+		if err := ctx.BindQuery(&in); err != nil {
+			return err
+		}
+		http.SetOperation(ctx, OperationAuthenticationServiceGenerateCaptcha)
+		h := ctx.Middleware(func(ctx context.Context, req interface{}) (interface{}, error) {
+			return srv.GenerateCaptcha(ctx, req.(*emptypb.Empty))
+		})
+		out, err := h(ctx, &in)
+		if err != nil {
+			return err
+		}
+		reply := out.(*v1.GenerateCaptchaResponse)
+		return ctx.Result(200, reply)
+	}
+}
+
 type AuthenticationServiceHTTPClient interface {
+	// GenerateCaptcha 生成图形验证码（渐进式验证码：登录失败达阈值后登录页点亮验证码字段再拉取；免鉴权）
+	GenerateCaptcha(ctx context.Context, req *emptypb.Empty, opts ...http.CallOption) (rsp *v1.GenerateCaptchaResponse, err error)
 	// GetOidcAuthorizeUrl 获取 OIDC 授权跳转地址（core 生成 state 暂存 Redis，防 CSRF；免鉴权）
 	GetOidcAuthorizeUrl(ctx context.Context, req *v1.GetOidcAuthorizeUrlRequest, opts ...http.CallOption) (rsp *v1.GetOidcAuthorizeUrlResponse, err error)
 	// Login 登录
@@ -150,6 +175,20 @@ type AuthenticationServiceHTTPClientImpl struct {
 
 func NewAuthenticationServiceHTTPClient(client *http.Client) AuthenticationServiceHTTPClient {
 	return &AuthenticationServiceHTTPClientImpl{client}
+}
+
+// GenerateCaptcha 生成图形验证码（渐进式验证码：登录失败达阈值后登录页点亮验证码字段再拉取；免鉴权）
+func (c *AuthenticationServiceHTTPClientImpl) GenerateCaptcha(ctx context.Context, in *emptypb.Empty, opts ...http.CallOption) (*v1.GenerateCaptchaResponse, error) {
+	var out v1.GenerateCaptchaResponse
+	pattern := "/app/v1/captcha"
+	path := binding.EncodeURL(pattern, in, true)
+	opts = append(opts, http.Operation(OperationAuthenticationServiceGenerateCaptcha))
+	opts = append(opts, http.PathTemplate(pattern))
+	err := c.cc.Invoke(ctx, "GET", path, nil, &out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return &out, nil
 }
 
 // GetOidcAuthorizeUrl 获取 OIDC 授权跳转地址（core 生成 state 暂存 Redis，防 CSRF；免鉴权）

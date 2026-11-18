@@ -51,6 +51,15 @@ func initApp(ctx *bootstrap.Context) (*kratos.App, func(), error) {
 	tenantServiceClient := data.NewTenantServiceClient(ctx, discovery)
 	tenantResolver := data.NewTenantResolver(tenantServiceClient)
 
+	// 渐进式登录验证码基建：Redis + 图形验证码客户端 + 登录失败计数限流器
+	redisClient, cleanupRedis, err := data.NewRedisClient(ctx)
+	if err != nil {
+		return nil, nil, err
+	}
+	cleanups = append(cleanups, cleanupRedis)
+	captchaClient := data.NewCaptcha(redisClient)
+	loginRateLimiter := data.NewLoginRateLimiter(ctx, redisClient)
+
 	// ═══════════════════════ 二、服务客户端(internal/data) ═══════════════════════
 
 	// 身份
@@ -81,7 +90,7 @@ func initApp(ctx *bootstrap.Context) (*kratos.App, func(), error) {
 	// ═══════════════════════ 三、服务层(internal/service) ═══════════════════════
 
 	// 认证
-	authenticationService := service.NewAuthenticationService(ctx, authenticationServiceClient, tenantServiceClient, tenantResolver)
+	authenticationService := service.NewAuthenticationService(ctx, authenticationServiceClient, tenantServiceClient, tenantResolver, captchaClient, loginRateLimiter)
 
 	// 文件
 	fileTransferService := service.NewFileTransferService(ctx, minIOClient, fileServiceClient)

@@ -14,6 +14,21 @@ info:
         url: https://github.com/tx7do/go-wind-cms/blob/master/LICENSE
     version: "1.0"
 paths:
+    /app/v1/captcha:
+        get:
+            tags:
+                - AuthenticationService
+            description: 生成图形验证码（渐进式验证码：登录失败达阈值后登录页点亮验证码字段再拉取；免鉴权）
+            operationId: AuthenticationService_GenerateCaptcha
+            responses:
+                "200":
+                    description: OK
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/authentication.service.v1.GenerateCaptchaResponse'
+            security:
+                - {}
     /app/v1/categories:
         get:
             tags:
@@ -1996,6 +2011,15 @@ components:
                     type: object
                     description: 元数据
             description: Kratos错误返回
+        authentication.service.v1.GenerateCaptchaResponse:
+            type: object
+            properties:
+                captchaId:
+                    type: string
+                    description: 验证码ID，客户端应在后续请求中提供该ID以验证用户输入的验证码
+                imageBase64:
+                    type: string
+                    description: 验证码图片的Base64编码字符串，客户端可以解码并显示给用户
         authentication.service.v1.GetOidcAuthorizeUrlRequest:
             type: object
             properties:

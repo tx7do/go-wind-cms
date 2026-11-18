@@ -12,6 +12,8 @@ import '../../../proto_wire.dart';
 enum AppErrorReason {
   badGateway('BAD_GATEWAY', 2200),
   badRequest('BAD_REQUEST', 0),
+  captchaInvalid('CAPTCHA_INVALID', 5),
+  captchaRequired('CAPTCHA_REQUIRED', 7),
   conflict('CONFLICT', 900),
   expectationFailed('EXPECTATION_FAILED', 1070),
   failedDependency('FAILED_DEPENDENCY', 1120),
@@ -27,6 +29,7 @@ enum AppErrorReason {
   internalServerError('INTERNAL_SERVER_ERROR', 2000),
   invalidGrantType('INVALID_GRANT_TYPE', 1),
   invalidPassword('INVALID_PASSWORD', 4),
+  invalidTenant('INVALID_TENANT', 6),
   invalidToken('INVALID_TOKEN', 3),
   invalidUserid('INVALID_USERID', 2),
   lengthRequired('LENGTH_REQUIRED', 1010),
@@ -125,6 +128,16 @@ class AuthenticationServiceClient {
       method: 'GetOidcAuthorizeUrl',
     ), headers: headers);
     return AuthenticationServiceV1GetOidcAuthorizeUrlResponse.fromJson(result as Map<String, dynamic>);
+  }
+
+  /// 生成图形验证码（渐进式验证码：登录失败达阈值后登录页点亮验证码字段再拉取；免鉴权）
+  Future<AuthenticationServiceV1GenerateCaptchaResponse> generateCaptcha(Map<String, dynamic> _request, {Map<String, String>? headers}) async {
+    final path = '/app/v1/captcha';
+    final result = await _transport.unary(path, 'GET', null, TransportMeta(
+      service: 'AuthenticationService',
+      method: 'GenerateCaptcha',
+    ), headers: headers);
+    return AuthenticationServiceV1GenerateCaptchaResponse.fromJson(result as Map<String, dynamic>);
   }
 }
 
@@ -1043,6 +1056,107 @@ class AuthenticationServiceV1GetOidcAuthorizeUrlResponse {
         // field 1: authorizeUrl
         case 1: {
           m.authorizeUrl = r.readString();
+          break;
+        }
+        default: {
+          r.skip();
+        }
+      }
+    }
+    return m;
+  }
+
+}
+
+class AuthenticationServiceV1GenerateCaptchaResponse {
+  String? captchaId;
+  String? imageBase64;
+
+  AuthenticationServiceV1GenerateCaptchaResponse({
+    this.captchaId,
+    this.imageBase64,
+  });
+
+  factory AuthenticationServiceV1GenerateCaptchaResponse.fromJson(Map<String, dynamic> json) {
+    return AuthenticationServiceV1GenerateCaptchaResponse(
+      captchaId: json['captchaId'] as String?,
+      imageBase64: json['imageBase64'] as String?,
+    );
+  }
+
+  Map<String, dynamic> toJson() {
+    final json = <String, dynamic>{};
+    if (captchaId != null) json['captchaId'] = captchaId;
+    if (imageBase64 != null) json['imageBase64'] = imageBase64;
+    return json;
+  }
+
+  @override
+  String toString() {
+    return 'AuthenticationServiceV1GenerateCaptchaResponse(captchaId: $captchaId, imageBase64: $imageBase64)';
+  }
+
+  @override
+  bool operator ==(Object other) =>
+    identical(this, other) ||
+    other is AuthenticationServiceV1GenerateCaptchaResponse &&
+      runtimeType == other.runtimeType
+      && captchaId == other.captchaId
+      && imageBase64 == other.imageBase64
+    ;
+
+  @override
+  int get hashCode => Object.hashAll([
+    captchaId,
+    imageBase64,
+  ]);
+
+  AuthenticationServiceV1GenerateCaptchaResponse copyWith({
+    String? captchaId,
+    String? imageBase64,
+  }) {
+    return AuthenticationServiceV1GenerateCaptchaResponse(
+      captchaId: captchaId ?? this.captchaId,
+      imageBase64: imageBase64 ?? this.imageBase64,
+    );
+  }
+
+  /// 二进制 proto 编码（MQTT 等二进制传输用；字段按编号升序写出）
+  Uint8List writeToBuffer() {
+    final w = ProtoWireWriter();
+    _writeTo(w);
+    return w.toBuffer();
+  }
+
+  void _writeTo(ProtoWireWriter w) {
+    // field 1: captchaId
+    final f1 = captchaId;
+    if (f1 != null) {
+      w.writeString(1, f1);
+    }
+    // field 2: imageBase64
+    final f2 = imageBase64;
+    if (f2 != null) {
+      w.writeString(2, f2);
+    }
+  }
+
+  factory AuthenticationServiceV1GenerateCaptchaResponse.fromBuffer(List<int> bytes) {
+    return AuthenticationServiceV1GenerateCaptchaResponse._readFrom(ProtoWireReader(bytes));
+  }
+
+  static AuthenticationServiceV1GenerateCaptchaResponse _readFrom(ProtoWireReader r) {
+    final m = AuthenticationServiceV1GenerateCaptchaResponse();
+    while (r.next()) {
+      switch (r.fieldNumber) {
+        // field 1: captchaId
+        case 1: {
+          m.captchaId = r.readString();
+          break;
+        }
+        // field 2: imageBase64
+        case 2: {
+          m.imageBase64 = r.readString();
           break;
         }
         default: {

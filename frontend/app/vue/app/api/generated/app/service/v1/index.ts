@@ -38,6 +38,8 @@ export type AppErrorReason =
   | 'BAD_GATEWAY'
   // 400
   | 'BAD_REQUEST'
+  | 'CAPTCHA_INVALID'
+  | 'CAPTCHA_REQUIRED'
   // 409
   | 'CONFLICT'
   // 417
@@ -63,6 +65,7 @@ export type AppErrorReason =
   | 'INTERNAL_SERVER_ERROR'
   | 'INVALID_GRANT_TYPE'
   | 'INVALID_PASSWORD'
+  | 'INVALID_TENANT'
   | 'INVALID_TOKEN'
   | 'INVALID_USERID'
   // 411
@@ -147,6 +150,10 @@ export interface AuthenticationService {
   GetOidcAuthorizeUrl(
     request: authenticationservicev1_GetOidcAuthorizeUrlRequest,
   ): Promise<authenticationservicev1_GetOidcAuthorizeUrlResponse>;
+  // 生成图形验证码（渐进式验证码：登录失败达阈值后登录页点亮验证码字段再拉取；免鉴权）
+  GenerateCaptcha(
+    request: wellKnownEmpty,
+  ): Promise<authenticationservicev1_GenerateCaptchaResponse>;
 }
 
 export function createAuthenticationServiceClient(
@@ -184,6 +191,14 @@ export function createAuthenticationServiceClient(
         service: 'AuthenticationService',
         method: 'GetOidcAuthorizeUrl',
       }) as Promise<authenticationservicev1_GetOidcAuthorizeUrlResponse>;
+    },
+    GenerateCaptcha(_request) {
+      const path = `/app/v1/captcha`;
+      const body = null;
+      return transport.unary(path, 'GET', body, {
+        service: 'AuthenticationService',
+        method: 'GenerateCaptcha',
+      }) as Promise<authenticationservicev1_GenerateCaptchaResponse>;
     },
   };
 }
@@ -260,6 +275,11 @@ export type authenticationservicev1_GetOidcAuthorizeUrlRequest = {
 // OIDC 授权跳转地址 - 响应
 export type authenticationservicev1_GetOidcAuthorizeUrlResponse = {
   authorizeUrl?: string;
+};
+
+export type authenticationservicev1_GenerateCaptchaResponse = {
+  captchaId: string | undefined;
+  imageBase64: string | undefined;
 };
 
 // 类别服务

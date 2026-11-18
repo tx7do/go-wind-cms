@@ -9,6 +9,10 @@ server:
         - "X-Request-ID"
         - "Content-Type"
         - "Authorization"
+        # 渐进式登录验证码的自定义头（缺失时预检 403，C 端登录被浏览器拦成"网络异常"）
+        - "X-Captcha-Supported"
+        - "X-Captcha-Id"
+        - "X-Captcha-Value"
       methods:
         - "GET"
         - "POST"
