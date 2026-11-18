@@ -47,6 +47,9 @@ const Login: React.FC = () => {
 
   // 验证码状态
   const [captchaId, setCaptchaId] = useState<string>('');
+  // 渐进式验证码：初始不要求，后端对失败达阈值的登录投递
+  // CAPTCHA_REQUIRED reason 才点亮输入与图片，图片拉取随之懒加载。
+  const [captchaRequired, setCaptchaRequired] = useState(false);
   const [captchaImage, setCaptchaImage] = useState<string>('');
   const [captchaLoading, setCaptchaLoading] = useState(false);
 
@@ -88,6 +91,8 @@ const Login: React.FC = () => {
   }, []);
 
   useEffect(() => {
+    // 渐进式验证码：未要求时不预拉图片。
+    if (!captchaRequired) return;
     // React 18 StrictMode 下 effect 会执行两次，导致两个并发的
     // fetchGenerateCaptcha 请求；后到的响应会覆盖先到的 captchaId，
     // 而后端通常一次性消费 captcha，登录时用的 captchaId 可能对应已被
@@ -111,7 +116,7 @@ const Login: React.FC = () => {
     return () => {
       cancelled = true;
     };
-  }, []);
+  }, [captchaRequired]);
 
   // ===== OIDC 授权码回调：IdP 携 code+state 跳回本页，直接换发本仓令牌 =====
   // 登录成功走 store 默认的整页跳 homePath：本页本就经整页跳转到达，
@@ -202,13 +207,27 @@ const Login: React.FC = () => {
         // 定时器的 pushState 又把地址栏推回 redirect，两者各说各话——
         // 复现为"URL /content/posts 渲染着仪表盘"，手动刷新才恢复。
         () => navigate(resolveSafeRedirect()),
-        { id: captchaId, value: values.captcha ?? '' },
+        // 渐进式验证码：未要求时不传——login 封装的 setCaptchaHeaders 无空值守卫，
+        // 恒传会把空值头发给后端（后端空 header 即校验失败）。
+        captchaRequired
+          ? { id: captchaId, value: values.captcha ?? '' }
+          : undefined,
       );
 
       message.success(t('loginSuccess'));
     } catch (error: any) {
-      // 登录失败后刷新验证码
-      refreshCaptcha();
+      // 渐进式验证码：CAPTCHA_REQUIRED 点亮输入与图片；已处于要求态的失败刷新图片。
+      if (error?.reason === 'CAPTCHA_REQUIRED') {
+        if (!captchaRequired) {
+          setCaptchaRequired(true);
+          refreshCaptcha();
+          return;
+        }
+        refreshCaptcha();
+      } else if (captchaRequired) {
+        // 验证码错误/凭据错误等：要求态下的失败刷新图片防试猜
+        refreshCaptcha();
+      }
       // 弹出错误提示（与 CRUD 页面统一模式：优先用后端 message，兜底走 i18n）
       message.error(error?.message || t('loginFailed'));
     }
@@ -328,23 +347,26 @@ const Login: React.FC = () => {
           </Form.Item>
 
           {/* 验证码 —— 输入框与图片盒组成单一受控组件（CaptchaField），
-              校验错误渲染在整行下方，图片盒与输入框始终保持等高对齐 */}
-          <Form.Item
-            name="captcha"
-            rules={[
-              {
-                required: true,
-                message: t('captchaRequired'),
-              },
-            ]}
-            className="login-form-item"
-          >
-            <CaptchaField
-              label={t('captchaLabel')}
-              placeholder={t('captchaPlaceholder')}
-              imageEl={captchaImageEl}
-            />
-          </Form.Item>
+              校验错误渲染在整行下方，图片盒与输入框始终保持等高对齐。
+              渐进式：初始不渲染，后端投递 CAPTCHA_REQUIRED 后点亮 */}
+          {captchaRequired && (
+            <Form.Item
+              name="captcha"
+              rules={[
+                {
+                  required: true,
+                  message: t('captchaRequired'),
+                },
+              ]}
+              className="login-form-item"
+            >
+              <CaptchaField
+                label={t('captchaLabel')}
+                placeholder={t('captchaPlaceholder')}
+                imageEl={captchaImageEl}
+              />
+            </Form.Item>
+          )}
 
           <Form.Item className="login-remember-item">
             <Form.Item name="remember" valuePropName="checked" noStyle>

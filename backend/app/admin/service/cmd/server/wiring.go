@@ -69,6 +69,7 @@ func initApp(ctx *bootstrap.Context) (*kratos.App, func(), error) {
 	cleanups = append(cleanups, cleanupRedis)
 
 	captcha := data.NewCaptcha(redisClient)
+	loginRateLimiter := data.NewLoginRateLimiter(ctx, redisClient)
 	minIOClient := data.NewMinIoClient(ctx)
 	translator := data.NewTranslator(ctx)
 
@@ -178,7 +179,7 @@ func initApp(ctx *bootstrap.Context) (*kratos.App, func(), error) {
 	// ═══════════════════════ 三、服务层(internal/service) ═══════════════════════
 
 	// 认证与登录策略
-	authenticationService := service.NewAuthenticationService(ctx, authenticationServiceClient, captcha)
+	authenticationService := service.NewAuthenticationService(ctx, authenticationServiceClient, captcha, loginRateLimiter)
 	loginPolicyService := service.NewLoginPolicyService(ctx, loginPolicyServiceClient)
 
 	// 身份与组织
