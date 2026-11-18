@@ -419,7 +419,7 @@ const PostList = () => {
         rowKey="id"
         search={{
           labelWidth: 'auto',
-          defaultCollapsed: false,
+          defaultCollapsed: true,
           span: 12,
         }}
         pagination={{

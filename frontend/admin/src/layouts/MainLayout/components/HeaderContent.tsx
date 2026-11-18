@@ -115,6 +115,12 @@ const searchHintKbdStyle: React.CSSProperties = {
   borderRadius: 4,
 };
 
+/**
+ * 窄屏隐藏面包屑的档位（三端统一，权威值见 docs/design-language.md §4）：
+ * 1024 即 vben 头部 `hidden lg:block` 的 lg 断点，不是本端自定的新数。
+ */
+const HEADER_BREADCRUMB_MIN_VIEWPORT = 1024;
+
 /** 全局搜索结果行（形态对齐 vben SearchPanel：图标 + 标题，选中主色实底白字） */
 const SearchRow = ({
   iconNode,
@@ -254,6 +260,20 @@ export const HeaderContent = ({
   // 面包屑偏好设置
   const breadcrumbPreferences = usePreferencesStore((state) => state.preferences.breadcrumb);
   const breadcrumbStyleType = breadcrumbPreferences?.styleType ?? 'normal';
+
+  // 三端统一硬闸：视口宽 < 1024px 整体隐藏面包屑。1024 不是新值——它就是 vben
+  // 头部 `hidden lg:block` 的 lg 档（CSSOM 现量：@media (min-width: 1024px)）。
+  // 容量判据（下面 fit 逻辑）继续生效，作为宽屏但文案过长时的第二道防线。
+  const [viewportWideEnough, setViewportWideEnough] = useState(
+    () => window.innerWidth >= HEADER_BREADCRUMB_MIN_VIEWPORT,
+  );
+  useEffect(() => {
+    const mq = window.matchMedia(`(min-width: ${HEADER_BREADCRUMB_MIN_VIEWPORT}px)`);
+    const sync = () => setViewportWideEnough(mq.matches);
+    sync();
+    mq.addEventListener('change', sync);
+    return () => mq.removeEventListener('change', sync);
+  }, []);
 
   // 默认头像（与 ele/vben 三端统一，取 preferences.app.defaultAvatar）
   const defaultAvatar = usePreferencesStore((state) => state.preferences.app.defaultAvatar);
@@ -917,14 +937,14 @@ export const HeaderContent = ({
           }}
         />
 
-        {/* 面包屑（过窄整体隐藏，见上方 hook 注释） */}
+        {/* 面包屑（窄屏硬闸 + 过窄整体隐藏，见上方 hook 注释） */}
         <div
           ref={breadcrumbWrapRef}
           style={{
             display: 'flex',
             minWidth: 0,
             overflow: 'hidden',
-            ...(breadcrumbHidden
+            ...(breadcrumbHidden || !viewportWideEnough
               ? { visibility: 'hidden', width: 0, flexShrink: 0 }
               : {}),
           }}

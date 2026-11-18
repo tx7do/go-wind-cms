@@ -161,7 +161,7 @@ const NavigationList: React.FC<NavigationListProps> = ({
           rowKey="id"
           search={{
             labelWidth: 'auto',
-            defaultCollapsed: false,
+            defaultCollapsed: true,
             span: 12,
           }}
           pagination={{

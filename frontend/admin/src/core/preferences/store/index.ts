@@ -4,6 +4,7 @@ import {persist} from 'zustand/middleware';
 import {defaultPreferences} from '../config/default';
 import type {DeepPartial, Preferences} from '../types';
 import {mergeDeep} from "../utils/merge";
+import {persistKey} from '@/utils/persist-key';
 
 
 export interface PreferencesState {
@@ -33,7 +34,7 @@ export const usePreferencesStore = create<PreferencesState>()(
             },
         }),
         {
-            name: 'app-preferences',
+            name: persistKey('app-preferences'),
             // v1 → v2：设计语言规范（docs/design-language.md）回归 vben 深蓝
             // hsl(212 100% 45%) 并统一默认圆角 8。历史上 v0→v1 曾把默认主色迁到
             // #3B82F6；本版把默认主题的两种旧蓝一并收敛到规范值。仅当主题仍为

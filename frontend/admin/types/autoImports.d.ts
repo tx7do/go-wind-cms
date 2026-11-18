@@ -51,6 +51,7 @@ declare global {
   const Github: typeof import('../src/components/common/Github/index').default
   const GlobalSearch: typeof import('../src/components/common/GlobalSearch/index').default
   const I18n: typeof import('../src/components/common/I18n/index').default
+  const IconPicker: typeof import('../src/components/common/IconPicker').default
   const IframeModal: typeof import('../src/components/common/Editor/src/TiptapEditor/modals').IframeModal
   const ImportModal: typeof import('../src/components/common/ImportModal/index').default
   const JsonEditor: typeof import('../src/components/common/Editor/src/JsonEditor').default
@@ -78,6 +79,7 @@ declare global {
   const SearchResult: typeof import('../src/components/common/GlobalSearch/components/SearchResult').default
   const SettingBoltIcon: typeof import('../src/components/common/settingBoltIcon').SettingBoltIcon
   const SloganIcon: typeof import('../src/components/bussiness/AuthLayout/icons/SloganIcon').default
+  const SplitPane: typeof import('../src/components/common/SplitPane/index').default
   const StatusBar: typeof import('../src/components/common/Editor/src/TiptapEditor/index').StatusBar
   const StrengthBar: typeof import('../src/components/PasswordStrength/components/StrengthBar').default
   const SubmitBottom: typeof import('../src/components/Bottom/SubmitBottom').default
@@ -129,6 +131,7 @@ declare global {
   const isDarkMode: typeof import('../src/components/common/Editor/src/utils').isDarkMode
   const languages: typeof import('../src/components/common/Editor/src/TiptapEditor/index').languages
   const lazy: typeof import('react').lazy
+  const lucideIconNames: typeof import('../src/components/common/iconifyOffline').lucideIconNames
   const memo: typeof import('react').memo
   const monacoLoader: typeof import('../src/components/common/Editor/src/monaco-loader').default
   const reconnectSSEServer: typeof import('../src/hooks/useTokenRefresh').reconnectSSEServer
@@ -203,6 +206,6 @@ declare global {
 // for type re-export
 declare global {
   // @ts-ignore
-  export type { ResizableCellProps, TableActionConfirm, TableAction, FC, ECOption, AuthLayoutProps, EditorProps, CodeEditorProps, JsonEditorProps, MarkdownEditorProps, PlainTextEditorProps, CollaborationOptions, TiptapEditorProps, CodeBlockModalProps, VideoModalProps, IframeModalProps, ImportModalProps, TableSkeletonProps, ThemeLoadingProps, TableExportServerExport, TableExportButtonProps, VersionHistoryDrawerProps, DiffLineType, DiffLine, TokenPayload, AuthState, UserState, TabItem } from './autoImports.d'
+  export type { SplitPanePanelProps, SplitPaneProps, ResizableCellProps, TableActionConfirm, TableAction, FC, ECOption, AuthLayoutProps, EditorProps, CodeEditorProps, JsonEditorProps, MarkdownEditorProps, PlainTextEditorProps, CollaborationOptions, TiptapEditorProps, CodeBlockModalProps, VideoModalProps, IframeModalProps, ImportModalProps, TableSkeletonProps, ThemeLoadingProps, TableExportServerExport, TableExportButtonProps, VersionHistoryDrawerProps, DiffLineType, DiffLine, TokenPayload, AuthState, UserState, TabItem } from './autoImports.d'
   import('./autoImports.d')
 }

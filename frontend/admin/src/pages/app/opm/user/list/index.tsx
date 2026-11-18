@@ -1,4 +1,4 @@
-import { Splitter } from 'antd';
+import SplitPane from '@/components/common/SplitPane';
 import { useState } from 'react';
 
 import ContentContainer from '@/layouts/components/PageContainer/ContentContainer';
@@ -15,19 +15,19 @@ const UserManagement = () => {
 
   return (
     <ContentContainer heightMode="fixed" padding="16px" bottomMargin={0}>
-      <Splitter style={{ height: '100%', flex: 1, minHeight: 0 }}>
-        <Splitter.Panel collapsible defaultSize="25%" min="15%" max="40%" style={{ display: 'flex', flexDirection: 'column' }}>
+      <SplitPane>
+        <SplitPane.Panel collapsible defaultSize="25%" min="15%" max="40%" style={{ display: 'flex', flexDirection: 'column' }}>
           <OrgList
             currentOrgUnitId={currentOrgUnitId}
             currentTenantId={currentTenantId}
             onTenantSelect={setCurrentTenantId}
             onOrgSelect={setCurrentOrgUnitId}
           />
-        </Splitter.Panel>
-        <Splitter.Panel style={{ display: 'flex', flexDirection: 'column' }}>
+        </SplitPane.Panel>
+        <SplitPane.Panel style={{ display: 'flex', flexDirection: 'column' }}>
           <UserList tenantId={currentTenantId} orgUnitId={currentOrgUnitId} />
-        </Splitter.Panel>
-      </Splitter>
+        </SplitPane.Panel>
+      </SplitPane>
     </ContentContainer>
   );
 };

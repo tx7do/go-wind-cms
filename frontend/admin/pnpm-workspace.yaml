@@ -7,6 +7,10 @@ allowBuilds:
   json-editor-vue: false
   vue-demi: false
 patchedDependencies:
+  # TreeSelect 弃用 prop 迁移：pro-field 注入的 onDropdownVisibleChange/bordered
+  # 改传 onOpenChange/variant（antd6 已弃用前者；pro-components 2.8.10 / pro-field
+  # 3.1.0 仍发旧 props——上游迁移后删掉本 patch）
+  '@ant-design/pro-field@3.1.0': patches/@ant-design__pro-field@3.1.0.patch
   '@ant-design/pro-form@2.32.0': patches/@ant-design__pro-form@2.32.0.patch
   # scrollbarSize prop 暴露：ListTable 表体滚动条宽度实时下传（表头补偿列/固定列 sticky 对齐根修）
   '@rc-component/table@1.10.0': patches/@rc-component__table@1.10.0.patch

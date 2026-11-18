@@ -230,7 +230,7 @@ export default function TenantQuotaPage() {
           actionRef={actionRef}
           columns={columns}
           rowKey="id"
-          search={{ labelWidth: 'auto', defaultCollapsed: false }}
+          search={{ labelWidth: 'auto', defaultCollapsed: true }}
           scroll={{ y: tableScrollY }}
           pagination={{
             defaultPageSize: 20,

@@ -1,4 +1,4 @@
-import { Splitter } from 'antd';
+import SplitPane from '@/components/common/SplitPane';
 import { useState } from 'react';
 
 import ContentContainer from '@/layouts/components/PageContainer/ContentContainer';
@@ -14,14 +14,14 @@ const DictManagement = () => {
 
   return (
     <ContentContainer heightMode="fixed" padding="16px" bottomMargin={0}>
-      <Splitter style={{ height: '100%', flex: 1, minHeight: 0 }}>
-        <Splitter.Panel collapsible defaultSize="45%" min="25%" max="75%" style={{ display: 'flex', flexDirection: 'column' }}>
+      <SplitPane>
+        <SplitPane.Panel collapsible defaultSize="45%" min="25%" max="75%" style={{ display: 'flex', flexDirection: 'column' }}>
           <DictTypeList currentTypeId={currentTypeId} onTypeSelect={setCurrentTypeId} />
-        </Splitter.Panel>
-        <Splitter.Panel style={{ display: 'flex', flexDirection: 'column' }}>
+        </SplitPane.Panel>
+        <SplitPane.Panel style={{ display: 'flex', flexDirection: 'column' }}>
           <DictEntryList typeId={currentTypeId} />
-        </Splitter.Panel>
-      </Splitter>
+        </SplitPane.Panel>
+      </SplitPane>
     </ContentContainer>
   );
 };

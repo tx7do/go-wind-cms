@@ -1,4 +1,4 @@
-import { Splitter } from 'antd';
+import SplitPane from '@/components/common/SplitPane';
 import { useState } from 'react';
 
 import ContentContainer from '@/layouts/components/PageContainer/ContentContainer';
@@ -16,8 +16,8 @@ const NavigationManagement = () => {
 
   return (
     <ContentContainer heightMode="fixed" padding="16px" bottomMargin={0}>
-      <Splitter style={{ height: '100%', flex: 1, minHeight: 0 }}>
-        <Splitter.Panel
+      <SplitPane>
+        <SplitPane.Panel
           collapsible
           defaultSize="45%"
           min="25%"
@@ -28,11 +28,11 @@ const NavigationManagement = () => {
             currentNavigationId={currentNavigationId}
             onNavigationSelect={setCurrentNavigationId}
           />
-        </Splitter.Panel>
-        <Splitter.Panel style={{ display: 'flex', flexDirection: 'column' }}>
+        </SplitPane.Panel>
+        <SplitPane.Panel style={{ display: 'flex', flexDirection: 'column' }}>
           <NavigationItemList navigationId={currentNavigationId} />
-        </Splitter.Panel>
-      </Splitter>
+        </SplitPane.Panel>
+      </SplitPane>
     </ContentContainer>
   );
 };

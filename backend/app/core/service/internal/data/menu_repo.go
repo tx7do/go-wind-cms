@@ -2,14 +2,17 @@ package data
 
 import (
 	"context"
+	"fmt"
 	"strings"
 	"time"
 
 	"entgo.io/ent/dialect/sql"
 	"github.com/go-kratos/kratos/v2/log"
 	"github.com/tx7do/kratos-bootstrap/bootstrap"
+	"google.golang.org/genproto/protobuf/field_mask"
 
 	"github.com/tx7do/go-utils/copierutil"
+	"github.com/tx7do/go-utils/fieldmaskutil"
 	"github.com/tx7do/go-utils/mapper"
 
 	paginationV1 "github.com/tx7do/go-crud/api/gen/go/pagination/v1"
@@ -259,13 +262,32 @@ func (r *MenuRepo) Update(ctx context.Context, req *permissionV1.UpdateMenuReque
 		}
 	}
 
+	// go-crud UpdateX 会先 NormalizeFieldMaskPaths（把 "meta.title" 拗平成
+	// "meta_title"）再 FilterByFieldMask 按消息字段校验，点路径会让整次更新被拒。
+	// meta 子字段的落库走下方 updateMetaField(metaPaths)，所以喂给 UpdateX 的
+	// 掩码只保留顶层路径；meta 整体带上（非空值不会被 NULL 校验削掉），
+	// 保住 Data.Meta 不被过滤器从 dto 上剥走。
+	var sanitizedMask *field_mask.FieldMask
+	if req.UpdateMask != nil {
+		var topPaths []string
+		for _, v := range req.UpdateMask.GetPaths() {
+			if !strings.Contains(v, ".") {
+				topPaths = append(topPaths, v)
+			}
+		}
+		if len(metaPaths) > 0 {
+			topPaths = append(topPaths, "meta")
+		}
+		sanitizedMask = &field_mask.FieldMask{Paths: topPaths}
+	}
+
 	builder := r.entClient.Client().Debug().Menu.Update()
 	// 租户作用域：仅更新本租户菜单，避免跨租户改他人菜单
 	if tid, hasTenant := maybeTenantFromViewer(ctx); hasTenant {
 		builder.Where(menu.TenantIDEQ(tid))
 	}
 	callerUserID, hasUser := viewerUserIDFromContext(ctx)
-	err := r.repository.UpdateX(ctx, builder, req.Data, req.GetUpdateMask(),
+	err := r.repository.UpdateX(ctx, builder, req.Data, sanitizedMask,
 		func(dto *permissionV1.Menu) {
 			builder.
 				SetNillableParentID(req.Data.ParentId).
@@ -296,18 +318,26 @@ func (r *MenuRepo) Update(ctx context.Context, req *permissionV1.UpdateMenuReque
 }
 
 func (r *MenuRepo) updateMetaField(builder *ent.MenuUpdate, meta *permissionV1.MenuMeta, metaPaths []string) {
-	//builder.SetMeta(meta)
+	if meta == nil || len(metaPaths) == 0 {
+		return
+	}
 
-	// 删除空值
-	nullUpdater := entgoUpdate.SetJsonFieldValueUpdateBuilder(menu.FieldMeta, meta, metaPaths, false)
-	if nullUpdater != nil {
-		builder.Modify(nullUpdater)
+	// 掩码选中的子字段合并进 meta；掩码选中但值为空的子字段显式写 json null，
+	// 避免清空图标/标题后旧值残留。而 meta 列可能为 NULL（老同步/API 直建的
+	// 菜单没有 meta），"meta" || jsonb_build_object(...) 对 NULL 列结果仍是 NULL，
+	// 合并会静默丢失，所以列先 COALESCE 成 '{}'。
+	keyValues := entgoUpdate.ExtractJsonFieldKeyValues(meta, metaPaths, false)
+	for _, p := range fieldmaskutil.NilValuePaths(meta, metaPaths) {
+		keyValues = append(keyValues, fmt.Sprintf("'%s'", p), "NULL")
 	}
-	// 更新字段
-	setUpdater := entgoUpdate.SetJsonNullFieldUpdateBuilder(menu.FieldMeta, meta, metaPaths)
-	if setUpdater != nil {
-		builder.Modify(setUpdater)
+	if len(keyValues) == 0 {
+		return
 	}
+	builder.Modify(func(u *sql.UpdateBuilder) {
+		u.Set(menu.FieldMeta, sql.Expr(
+			fmt.Sprintf(`COALESCE("%s", '{}'::jsonb) || jsonb_build_object(%s)`, menu.FieldMeta, strings.Join(keyValues, ", ")),
+		))
+	})
 }
 
 func (r *MenuRepo) Delete(ctx context.Context, req *permissionV1.DeleteMenuRequest) error {

@@ -3,6 +3,7 @@ import type { ProColumns, ActionType } from '@ant-design/pro-components';
 import TableExportButton from '@/components/common/TableExportButton';
 import TableActions from '@/components/common/TableActions';
 import ListTable from '@/components/common/ListTable';
+import SplitPane from '@/components/common/SplitPane';
 import { Button, Tag, App } from 'antd';
 import {
   EditOutlined,
@@ -20,13 +21,15 @@ import { useProTableScrollY } from '@/hooks/useProTableScrollY';
 import ContentContainer from '@/layouts/components/PageContainer/ContentContainer';
 import { getStatusMap, getStatusOptions, getOrgTypeMap, getOrgTypeOptions } from './constants';
 import OrgDrawer from './components/OrgDrawer';
+import OrgList from '../user/list/OrgList';
 import { searchOptionRender } from '@/components/common/searchSubmitter';
 import { ColumnSlidersIcon } from '@/components/common/columnSettingIcon';
 
 /**
  * 组织架构管理页面
  *
- * 树形表格展示组织层级结构，支持搜索、CRUD 操作
+ * 左树右表（issue #5）：左侧复用用户页 OrgList 导航，右侧树形表格按选中
+ * 机构 parentId 精确过滤；窄容器下 SplitPane 自动改为上下堆叠。
  */
 const OrgUnitManagement = () => {
   const { t } = useTranslation('org-unit');
@@ -44,6 +47,17 @@ const OrgUnitManagement = () => {
 
   // 树数据
   const [treeData, setTreeData] = useState<OrgUnit[]>([]);
+
+  // 左树选中（issue #5）：undefined = 全部。回显键与 OrgList 树键同构（node.key）；
+  // 右表按 parentId 精确过滤（Id$ 后缀键走 EQ 不带 __contains）。
+  const [selectedOrgNode, setSelectedOrgNode] = useState<any | null>(null);
+  const selectedOrgKey: React.Key | undefined = selectedOrgNode
+    ? (selectedOrgNode.key as React.Key)
+    : undefined;
+  const handleOrgNodeSelect = (node: any | null) => {
+    setSelectedOrgNode(node);
+    actionRef.current?.reload();
+  };
 
   const statusMap = getStatusMap(t);
   const orgTypeMap = getOrgTypeMap(t);
@@ -204,17 +218,35 @@ const OrgUnitManagement = () => {
   return (
     <>
       <ContentContainer heightMode="fixed" padding="16px" bottomMargin={0}>
-        <div ref={containerRef} className="page-container-content">
+        <SplitPane>
+          <SplitPane.Panel defaultSize="25%" min="15%" max="40%">
+            <OrgList
+              currentOrgUnitId={undefined}
+              currentTenantId={undefined}
+              onTenantSelect={() => {}}
+              onOrgSelect={() => {}}
+              externalSelectedKey={selectedOrgKey}
+              onOrgSelectNode={handleOrgNodeSelect}
+            />
+          </SplitPane.Panel>
+          <SplitPane.Panel>
+            {/* ref 必须挂在 ListTable 的直接包裹层：useProTableScrollY 测这
+                个容器的高度反推 .ant-table-body 的scroll.y，漏挂到外层则
+                scroll.y 恒为初值、卡片不撑满面板高度 */}
+            <div ref={containerRef} style={{ height: '100%', paddingLeft: 8 }}>
           <ListTable<OrgUnit>
             actionRef={actionRef}
             columns={columns}
             request={async (params, _sorter, _filter) => {
+              const formEntries = Object.entries(params).filter(
+                ([key]) => !['current', 'pageSize'].includes(key),
+              );
+              // 左树选中注入 parentId（Id$ 后缀键走精确匹配）
+              if (selectedOrgNode?.id) {
+                formEntries.push(['parentId', String(selectedOrgNode.id)]);
+              }
               const query = new PaginationQuery({
-                formValues: Object.fromEntries(
-                  Object.entries(params).filter(
-                    ([key]) => !['current', 'pageSize'].includes(key),
-                  ),
-                ),
+                formValues: Object.fromEntries(formEntries),
               });
 
               const response = await fetchListOrgUnits(query);
@@ -228,12 +260,12 @@ const OrgUnitManagement = () => {
                 total: (response as any).total ?? items.length,
                 success: true,
               };
-            
+
 }}
             rowKey="id"
             search={{ optionRender: searchOptionRender,
               labelWidth: 'auto',
-              defaultCollapsed: false,
+              defaultCollapsed: true,
             }}
             pagination={false}
             toolBarRender={() => [
@@ -277,7 +309,9 @@ const OrgUnitManagement = () => {
               onExpandedRowsChange: (keys) => setExpandedRowKeys(keys),
             }}
           />
-        </div>
+            </div>
+          </SplitPane.Panel>
+        </SplitPane>
       </ContentContainer>
 
       {/* 组织架构编辑/创建 Drawer */}

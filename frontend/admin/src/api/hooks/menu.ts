@@ -58,16 +58,28 @@ export function useCreateMenu(
 }
 
 export function useUpdateMenu(
-  options?: UseMutationOptions<unknown, Error, { id: string; values: Record<string, unknown> }>,
+  options?: UseMutationOptions<
+    unknown,
+    Error,
+    { id: string; values: Record<string, unknown>; updateMask?: string[] }
+  >,
 ) {
   return useMutation({
-    mutationFn: ({ id, values }: { id: string; values: Record<string, unknown> }) =>
+    mutationFn: ({
+      id,
+      values,
+      updateMask,
+    }: {
+      id: string;
+      values: Record<string, unknown>;
+      updateMask?: string[];
+    }) =>
       apiClient.menuService.Update({
         id,
         // 表单 Partial → proto 消息边界：字段集为真子集，运行时安全
           // eslint-disable-next-line @typescript-eslint/no-explicit-any -- 表单/proto 边界
           data: { ...values } as any,
-        updateMask: makeUpdateMask(Object.keys(values ?? {})),
+        updateMask: makeUpdateMask(updateMask ?? Object.keys(values ?? {})),
       }),
     ...options,
   });

@@ -18,6 +18,7 @@ import { PaginationQuery } from '@/core';
 import { fetchListMenus, useDeleteMenu } from '@/api/hooks/menu';
 import { useProTableScrollY } from '@/hooks/useProTableScrollY';
 import ContentContainer from '@/layouts/components/PageContainer/ContentContainer';
+import { getIconFromName } from '@/layouts/MainLayout/utils/iconResolver';
 import { getRandomColor } from '@/utils/color';
 import {
   getMenuTypeMap,
@@ -190,8 +191,18 @@ const MenuManagement = () => {
         // meta 缺失（如直接 API 创建的菜单）时回退展示 name，避免整列显示 "-"
         const titleText =
           translateMenuTitle(meta.title) || (record as any).name || '-';
+        // 标题前展示图标：按钮行固定安全图标，其余用 meta.icon（对齐 vben/ele 基准）
+        const icon =
+          record.type === 'BUTTON'
+            ? getIconFromName('carbon:security')
+            : getIconFromName(meta.icon);
         return (
           <Space>
+            {icon && (
+              <span style={{ display: 'inline-flex', verticalAlign: '-0.125em' }}>
+                {icon}
+              </span>
+            )}
             <span>{titleText}</span>
           </Space>
         );
@@ -349,7 +360,7 @@ const MenuManagement = () => {
             rowKey="id"
             search={{ optionRender: searchOptionRender,
               labelWidth: 'auto',
-              defaultCollapsed: false,
+              defaultCollapsed: true,
             }}
             pagination={false}
             toolBarRender={() => [

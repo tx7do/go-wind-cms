@@ -38,6 +38,23 @@ interface PermissionDrawerProps {
   onSuccess: () => void;
 }
 
+// 菜单/API 目录的 60s TTL 缓存（对齐上游 staleTime 语义）：准静态目录不再每次
+// 开抽屉全量重拉（API 全量 payload 数百行，60 秒内复用）；提交成功面走
+// invalidateDirCache 失效，保证下次开抽屉勾选到最新目录。
+const DIR_CACHE_TTL_MS = 60_000;
+const dirCache = new Map<string, { at: number; data: any }>();
+const fetchDirCached = (key: string, fetcher: () => Promise<any>): Promise<any> => {
+  const hit = dirCache.get(key);
+  if (hit && Date.now() - hit.at < DIR_CACHE_TTL_MS) return Promise.resolve(hit.data);
+  return fetcher().then((data) => {
+    dirCache.set(key, { at: Date.now(), data });
+    return data;
+  });
+};
+const invalidateDirCache = (): void => {
+  dirCache.clear();
+};
+
 /**
  * 权限点编辑/创建抽屉组件
  */
@@ -85,9 +102,9 @@ const PermissionDrawer: React.FC<PermissionDrawerProps> = ({
         })
         .catch(() => setGroupTreeData([]));
 
-      // 加载菜单树
+      // 加载菜单树（60s TTL 缓存）
       setMenuTreeLoading(true);
-      fetchListMenus(new PaginationQuery({ formValues: { status: 'ON' } }))
+      fetchDirCached('menus', () => fetchListMenus(new PaginationQuery({ formValues: { status: 'ON' } })))
         .then((res) => {
           const tree = buildMenuTree(res?.items);
           setMenuTreeData(tree);
@@ -98,9 +115,9 @@ const PermissionDrawer: React.FC<PermissionDrawerProps> = ({
         .catch(() => setMenuTreeData([]))
         .finally(() => setMenuTreeLoading(false));
 
-      // 加载 API 树
+      // 加载 API 树（60s TTL 缓存）
       setApiTreeLoading(true);
-      fetchListApis(new PaginationQuery({}))
+      fetchDirCached('apis', () => fetchListApis(new PaginationQuery({})))
         .then((res) => {
           const tree = buildApiTree(res?.items, t);
           setApiTreeData(tree);
@@ -224,6 +241,7 @@ const PermissionDrawer: React.FC<PermissionDrawerProps> = ({
     onSuccess: () => {
       message.success(t('createSuccess'));
       queryClient.invalidateQueries({ queryKey: ['listPermissions'] });
+      invalidateDirCache();
       onSuccess();
       onClose();
     },
@@ -237,6 +255,7 @@ const PermissionDrawer: React.FC<PermissionDrawerProps> = ({
     onSuccess: () => {
       message.success(t('updateSuccess'));
       queryClient.invalidateQueries({ queryKey: ['listPermissions'] });
+      invalidateDirCache();
       onSuccess();
       onClose();
     },

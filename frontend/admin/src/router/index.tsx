@@ -20,6 +20,7 @@ import { errorRoutes } from './config/error-routes';
 import Loading from '@/components/common/Loading';
 import { authRoutes } from './config/auth';
 import { staticRoutes } from './config/static';
+import { useDocumentTitle } from './useDocumentTitle';
 
 // 布局组件映射（后端 component 字段 → React 组件）
 // 后端模式：BasicLayout 需要包裹 AuthGuard（前端模式已在 staticRoutes 中包裹）
@@ -95,6 +96,10 @@ export const AppRouter = () => {
   const { t } = useI18n('common');
 
   const isAuthenticated = !!accessToken;
+
+  // 全局标签标题（登录/错误页等不走 PageContainer 的路由兜底）：
+  // hooks 无条件调用，内部自行判空 router/routes
+  useDocumentTitle(routerBundle?.router ?? null, allRoutes);
 
   useEffect(() => {
     let stale = false;
