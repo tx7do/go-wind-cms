@@ -9,6 +9,7 @@ import (
 	"github.com/tx7do/go-crud/viewer"
 	"github.com/tx7do/kratos-transport/broker"
 	"go.opentelemetry.io/otel/trace"
+	"google.golang.org/protobuf/proto"
 
 	"github.com/go-kratos/kratos/v2/encoding"
 	_ "github.com/go-kratos/kratos/v2/encoding/json"
@@ -70,11 +71,19 @@ func Publish() broker.PublishMiddleware {
 			//msg.SetHeader("x-audit", strconv.FormatBool(vCtx.ShouldAudit()))
 
 			if len(vCtx.DataScope()) > 0 {
-				buf, err := codec.Marshal(vCtx.DataScope())
-				if err != nil {
-					log.Warnf("ent broker middleware: failed to marshal data scope: %v", err)
+				// 防护钉子：proto codec 的 Marshal 对非 proto.Message 直接类型断言
+				// （panic），而 viewer.DataScope 是普通 struct——UserViewer 默认自带
+				// 一个 datascope，走到这里必炸。先校验可编码性，不可编码 warn 跳过
+				// （trace/uid 头照常携带，消费端仅丢 datascope）。
+				if _, ok := any(vCtx.DataScope()).(proto.Message); !ok {
+					log.Warnf("ent broker middleware: data scope is not proto-encodable (%T); header skipped", vCtx.DataScope())
+				} else {
+					buf, err := codec.Marshal(vCtx.DataScope())
+					if err != nil {
+						log.Warnf("ent broker middleware: failed to marshal data scope: %v", err)
+					}
+					msg.SetHeader(DataScopeHeaderKey, string(buf))
 				}
-				msg.SetHeader(DataScopeHeaderKey, string(buf))
 			}
 
 			return handler(ctx, topic, msg, opts...)
@@ -91,9 +100,15 @@ func Subscriber() broker.SubscriberMiddleware {
 
 			traceID := evt.Message().GetHeader(TraceIDHeaderKey)
 			if traceID != "" {
-				ctx = trace.ContextWithSpanContext(ctx, trace.SpanContextFromContext(ctx).WithTraceID(
-					trace.TraceID([]byte(traceID))),
-				)
+				// Publish 侧写的是 TraceID().String()（32 位 hex）。此前用
+				// trace.TraceID([]byte(...)) 直接转 16 字节数组——长度不是 16
+				// 就 panic（32 位 hex 必炸，消费端整条消息处理中断）。
+				// 改走 TraceIDFromHex：hex 合法才回填，否则 warn 跳过。
+				if scID, err := trace.TraceIDFromHex(traceID); err == nil {
+					ctx = trace.ContextWithSpanContext(ctx, trace.SpanContextFromContext(ctx).WithTraceID(scID))
+				} else {
+					log.Warnf("ent broker middleware: invalid trace id header %q: %v", traceID, err)
+				}
 			}
 
 			userIDStr := evt.Message().GetHeader(UserIDHeaderKey)

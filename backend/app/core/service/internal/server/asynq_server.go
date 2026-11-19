@@ -41,6 +41,12 @@ func NewAsynqServer(ctx *bootstrap.Context, taskService *service.TaskService, se
 	// 注册搜索重索引任务订阅者。
 	// worker 收到 search.reindex 任务后，调 SearchService.ReindexPost 从 DB 取
 	// 最新数据写入/删除 ES。详见 search_service.go / search_repo.go 安全模型。
+	//
+	// 注意：SearchReindexAllTaskType 是本类型的前缀超集（"search.reindex.all"），
+	// 与下方 RegisterSubscriber(SearchReindexAllTaskType) 是同一 mux 上的成对注册
+	// ——精确匹配优先才不踩前缀兜底路由。两条注册行必须同生共死，删除其一
+	// 会让周期任务的 payload `{}` 被前缀兜底吞进单条 handler 静默 no-op
+	// （post.publish.sweep 事故同款；pkg/task 测试已豁免钉住这一对）。
 	if err = asynq.RegisterSubscriber(srv, task.SearchReindexTaskType, searchService.ReindexPost); err != nil {
 		log.Error(err)
 	}

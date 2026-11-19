@@ -58,6 +58,11 @@ func setRequestOperationId(req interface{}, payload *authenticationV1.UserTokenP
 	return nil
 }
 
+// setRequestTenantId 注意：FieldByName("tenantId") 在 proto 生成结构体上永不
+// 命中——生成字段名是导出的 TenantId，且未导出字段即使命中也无法 Set（reflect
+// 会 panic）。当前 WithInjectTenantId 未在生产 wiring 启用，此函数是休眠空操作；
+// 若未来要启用租户注入，须改为 "TenantId" 并确认目标请求体确有该字段
+// （pkg/middleware/auth 测试已钉住 OperatorId 注入行为）。
 func setRequestTenantId(req interface{}, payload *authenticationV1.UserTokenPayload) error {
 	if req == nil {
 		return ErrInvalidRequest
