@@ -184,6 +184,7 @@ func NewRestServer(
 	ctx *bootstrap.Context,
 
 	middlewares []middleware.Middleware,
+	accessTokenChecker auth.AccessTokenChecker,
 
 	authenticationService *service.AuthenticationService,
 	fileTransferService *service.FileTransferService,
@@ -214,6 +215,10 @@ func NewRestServer(
 	if err != nil {
 		panic(err)
 	}
+
+	// 全站请求体护栏包在最外层（CORS/pprof 过滤器与路由都在其内层），
+	// 使 401/413 的判定发生在任何 body 读取之前。
+	srv.Handler = requestBodyGuard(accessTokenChecker)(srv.Handler)
 
 	appV1.RegisterAuthenticationServiceHTTPServer(srv, authenticationService)
 
