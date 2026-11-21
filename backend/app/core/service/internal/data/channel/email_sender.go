@@ -157,6 +157,7 @@ func smtpConfigOf(account *data.SmtpAccount) mailer.Config {
 		Username: account.Username,
 		Password: account.Password,
 		From:     account.From,
+		FromName: account.FromName,
 		TLSMode:  tlsMode,
 	}
 }
