@@ -100,6 +100,15 @@
 - 管理页「接口同步」失败仍显示成功：admin BFF 用 `_, _ =` 忽略 core 同步
   错误，权限表未更新而无感知；改为错误传播到管理页（同步本身自 1.2.0 起已
   是对账式 upsert，非空表安全）。
+- 跨租户写越权（BOLA/CWE-639，公开披露
+  [GHSA-wrc7-xq69-c24r](https://github.com/tx7do/go-wind-cms/security/advisories/GHSA-wrc7-xq69-c24r)，v1.4.0 修复）：
+  AI 知识库/文档/消息、内容模型、组件定义、AccessKey、AI Agent 应用、
+  Flow 规则等管理写路径仅按主键定位（go-crud `TenantPrivacy.EvalMutation`
+  仅覆盖 Create），已认证租户用户可跨租户改删他人数据。根治：go-crud/entgo
+  升至 v0.0.57，对非 Create 变更经 entql 注入 `tenant_id` 行级谓词（跨租户
+  0 行命中返回 NotFound）；受影响仓储显式租户谓词 + service 先读后写归属
+  预检（404 语义）保留作纵深防御；新增 sqlite+enttest 租户写隔离回归测试。
+  感谢 Nikhil Agrawal（MettleLabs）负责任上报。
 
 ### 变更
 
